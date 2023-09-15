@@ -25,5 +25,5 @@ jobs:
     - run: aio app deploy
       working-directory: actions
       env:
-        AIO_runtime_auth: ${{ secrets.AIO_RUNTIME_AUTH }}
-        AIO_runtime_namespace: ${{ secrets.AIO_RUNTIME_NAMESPACE }}
+        AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH }}
+        AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE }}
