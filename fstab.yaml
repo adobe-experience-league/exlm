@@ -1,0 +1,5 @@
+mountpoints:
+  /:
+    url: https://258616-exl-dev.adobeioruntime.net/api/v1/web/main/convert
+    type: markup
+    suffix: ".md"
