@@ -1,0 +1,161 @@
+
+<!DOCTYPE HTML>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    
+    
+    
+    
+    
+<link rel="stylesheet" href="/etc.clientlibs/foundation/clientlibs/main.lc-b4994788cf1eaeed300a0aa7af53f3c8-lc.min.css" type="text/css">
+<script src="/etc.clientlibs/clientlibs/granite/jquery.lc-7842899024219bcbdb5e72c946870b79-lc.min.js"></script>
+<script src="/etc.clientlibs/clientlibs/granite/utils.lc-e7bf340a353e643d198b25d0c8ccce47-lc.min.js"></script>
+<script src="/etc.clientlibs/clientlibs/granite/jquery/granite.lc-543d214c88dfa6f4a3233b630c82d875-lc.min.js"></script>
+<script src="/etc.clientlibs/foundation/clientlibs/jquery.lc-dd9b395c741ce2784096e26619e14910-lc.min.js"></script>
+<script src="/etc.clientlibs/foundation/clientlibs/shared.lc-41f79c8a45bb1766981ec4ca82d7e0e6-lc.min.js"></script>
+<script src="/etc.clientlibs/foundation/clientlibs/main.lc-690ba627a9a2eeef0733ede272cf726b-lc.min.js"></script>
+
+
+
+    
+    
+
+    
+
+
+
+
+
+
+
+
+    
+
+    
+
+    
+    
+<link rel="stylesheet" href="/etc.clientlibs/danaher/clientlibs/clientlib-dependencies.lc-d41d8cd98f00b204e9800998ecf8427e-lc.min.css" type="text/css">
+<link rel="stylesheet" href="/etc.clientlibs/danaher/clientlibs/clientlib-site.lc-4aa65879b32d7e181b7b8261aa3aae1d-lc.min.css" type="text/css">
+
+
+
+
+
+    
+    <title>Header</title>
+</head>
+    <body class="xf-web-container">
+
+
+
+
+<div id="danaher" class="container">
+    <div class="root container responsivegrid">
+
+    
+    
+    
+    <div id="container-6c4f4b00f3" class="cmp-container">
+        
+        <div class="header">
+<danaher-header>
+    <template #brandnav>
+        <div class="brandnav brandnavigation">
+<div>
+    <brand-navigation brands="[{&#34;brandimage&#34;:&#34;/content/dam/danaher/brand-logos/svg/1-color/BECKMAN.svg&#34;,&#34;brandimagealt&#34;:&#34;Beckman Coulter&#34;,&#34;brandlink&#34;:&#34;https://www.beckman.com?utm_source=dhls_website&amp;utm_medium=referral&amp;utm_content=header&#34;},{&#34;brandimage&#34;:&#34;/content/dam/danaher/brand-logos/svg/1-color/IDBS.svg&#34;,&#34;brandimagealt&#34;:&#34;IDBS&#34;,&#34;brandlink&#34;:&#34;https://www.idbs.com?utm_source=dhls_website&amp;utm_medium=referral&amp;utm_content=header&#34;},{&#34;brandimage&#34;:&#34;/content/dam/danaher/brand-logos/svg/1-color/LEICA.svg&#34;,&#34;brandimagealt&#34;:&#34;Leica&#34;,&#34;brandlink&#34;:&#34;https://www.leica-microsystems.com?utm_source=dhls_website&amp;utm_medium=referral&amp;utm_content=header&#34;},{&#34;brandimage&#34;:&#34;/content/dam/danaher/brand-logos/svg/1-color/MOLDEV.svg&#34;,&#34;brandimagealt&#34;:&#34;Molecular Devices&#34;,&#34;brandlink&#34;:&#34;http://www.moleculardevices.com?utm_source=dhls_website&amp;utm_medium=referral&amp;utm_content=header&#34;},{&#34;brandimage&#34;:&#34;/content/dam/danaher/brand-logos/svg/1-color/PHENOMENEX.svg&#34;,&#34;brandimagealt&#34;:&#34;Phenomenex&#34;,&#34;brandlink&#34;:&#34;http://www.phenomenex.com?utm_source=dhls_website&amp;utm_medium=referral&amp;utm_content=header&#34;},{&#34;brandimage&#34;:&#34;/content/dam/danaher/brand-logos/svg/1-color/SCIEX.svg&#34;,&#34;brandimagealt&#34;:&#34;Sciex&#34;,&#34;brandlink&#34;:&#34;https://sciex.com?utm_source=dhls_website&amp;utm_medium=referral&amp;utm_content=header&#34;},{&#34;brandimage&#34;:&#34;/content/dam/danaher/brand-logos/svg/1-color/aldevron-1c.svg&#34;,&#34;brandimagealt&#34;:&#34;Aldevron&#34;,&#34;brandlink&#34;:&#34;https://www.aldevron.com?utm_source=dhls_website&amp;utm_medium=referral&amp;utm_content=header&#34;},{&#34;brandimage&#34;:&#34;/content/dam/danaher/brand-logos/svg/1-color/IDT-integrated-dna-technologies-1c.svg&#34;,&#34;brandimagealt&#34;:&#34;IDT&#34;,&#34;brandlink&#34;:&#34;https://www.idtdna.com/pages?utm_source=dhls_website&amp;utm_medium=referral&amp;utm_content=header&#34;}]">
+	<!-- /* <template #navslidemenu>
+	    	<sly data-sly-resource="navslidemenu"></sly>
+	   	</template> */ -->
+    </brand-navigation>
+</div></div>
+
+    </template>
+    <template #navbar>
+        <navbar>
+            <template #logo>
+                <div class="logo">
+<div>
+    <logo image="/content/dam/danaher/lifescience-biologics.png" imagealt="Workflows" link="https://sandbox.pall.com/en/danaherbiologics/home.html"></logo>
+</div></div>
+
+            </template>
+            
+                <template #search>
+                    <div class="search-combo">
+
+
+	<component :is="'script'" type="module" src="https://static.cloud.coveo.com/atomic/v2/atomic.esm.js"></component>
+	<component :is="'style'" rel="stylesheet">
+		atomic-search-box::part(submit-button) {
+		margin: auto;
+		margin-right: 9px;
+		background-color: #dc6016;
+		width: 2rem;
+		height: 2rem;
+		border-radius: 0.375rem;
+		text-align: center;
+		line-height: 1em;
+		}
+	</component>
+	<component :is="'style'" rel="stylesheet" href="https://static.cloud.coveo.com/atomic/v2/themes/coveo.css"></component>
+	<search-combo linkurl="https://stage.lifesciences.danaher.com/content/danaher/ls/us/en/search.html"></search-combo>
+</div>
+
+                </template>
+            
+            <template #links>
+                <div class="header-links headerlinks">
+<div>
+    	<header-links headerlinks="[{&#34;linkName&#34;:&#34;Login Register&#34;,&#34;linkUrl&#34;:&#34;https://stage.lifesciences.danaher.com/content/danaher/ls/us/en/signin.html&#34;,&#34;linkIcon&#34;:&#34;UserIcon&#34;},{&#34;linkName&#34;:&#34;Quote&#34;,&#34;linkUrl&#34;:&#34;https://stage.lifesciences.danaher.com/content/danaher/ls/us/en/quote-cart.html&#34;,&#34;linkIcon&#34;:&#34;ChatBubbleLeftEllipsisIcon&#34;}]" linkname="My Account" linkurl="https://stage.lifesciences.danaher.com/content/danaher/ls/us/en/signin/dashboard.html">
+      	</header-links>
+</div></div>
+
+            </template>
+        </navbar>
+    </template>
+    <template #megamenu>
+        <div class="megamenu mega-menu">
+<div>
+	
+		<megamenuhover menuheadervalues="[&#34;Research Areas&#34;,&#34;Support&#34;]">
+		</megamenuhover>
+	
+</div></div>
+
+    </template>
+</danaher-header>
+</div>
+<div class="breadcrumb">
+
+
+
+  	<div>
+		<breadcrumb breadcrumbdetailslist="[{&#34;title&#34;:&#34;Header&#34;,&#34;url&#34;:&#34;/content/experience-fragments/danaher/us/en/site/header&#34;},{&#34;title&#34;:&#34;Header&#34;,&#34;url&#34;:&#34;/content/experience-fragments/danaher/us/en/site/header/master&#34;}]">
+		</breadcrumb>
+  	</div>
+
+
+</div>
+
+        
+    </div>
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+    
+<script src="/etc.clientlibs/danaher/clientlibs/clientlib-dependencies.lc-d41d8cd98f00b204e9800998ecf8427e-lc.min.js"></script>
+<script src="/etc.clientlibs/danaher/clientlibs/clientlib-site.lc-bc386c716f615e1ba54925d6cd5b22f7-lc.min.js"></script>
+
+
+</body>
+</html>

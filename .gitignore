@@ -9,3 +9,5 @@ helix-importer-ui
 .idea
 
 actions/convert/node_modules/
+
+actions/mdconverter.action/node_modules/
