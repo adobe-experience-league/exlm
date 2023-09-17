@@ -24,7 +24,7 @@ jobs:
       working-directory: actions/mdconverter.action
     - name: Deploy (mdconverter)
       run: aio app deploy
-      working-directory: actions/mdconverter.action
+      working-directory: actions
       env:
         AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH }}
         AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE }}
