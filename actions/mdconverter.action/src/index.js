@@ -12,10 +12,10 @@
 /* eslint-disable import/no-relative-packages */
 /* eslint-disable no-underscore-dangle */
 
-import fetch from 'node-fetch';
-import md2html from './modules/md2html.js';
-import Logger from '@adobe/aio-lib-core-logging'
-let aioLogger = Logger('App')
+import fetch from "node-fetch";
+import md2html from "./modules/md2html.js";
+import Logger from "@adobe/aio-lib-core-logging";
+let aioLogger = Logger("App");
 
 function addExtensionIfNotExists(str, ext) {
   if (!str.endsWith(ext)) {
@@ -25,9 +25,8 @@ function addExtensionIfNotExists(str, ext) {
 }
 
 export async function render(path, params) {
-
   const url = new URL(path, "https://raw.githubusercontent.com");
-  const mdUrl = addExtensionIfNotExists(url.toString(), '.md')
+  const mdUrl = addExtensionIfNotExists(url.toString(), ".md");
   const resp = await fetch(mdUrl);
 
   if (!resp.ok) {
@@ -35,14 +34,14 @@ export async function render(path, params) {
   }
 
   const md = await resp.text();
-  const html = md2html(md)
+  const html = md2html(md);
   return { md, html };
 }
 
 export async function main(params) {
-  aioLogger.info({params})
-  const path = params.__ow_path ? params.__ow_path : '';
-  const { html, error } = await render(path, { ...params});
+  aioLogger.info({ params });
+  const path = params.__ow_path ? params.__ow_path : "";
+  const { html, error } = await render(path, { ...params });
 
   if (!error) {
     return {
