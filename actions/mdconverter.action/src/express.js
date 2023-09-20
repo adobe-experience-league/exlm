@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import express from 'express';
-import { render } from './index.js';
+const express = require('express');
+const render = require('./index.js').render;
 const app = express();
 const port = 3030;
 
@@ -22,6 +22,8 @@ const handler = (req, res) => {
     ...query,
   };
 
+  console.log('path', path);
+
   render(path, params).then(({ html, md, error }) => {
     if (error) {
       res.status(error.code || 503);
@@ -31,16 +33,10 @@ const handler = (req, res) => {
 
     res.status(200);
 
-    if (serveMd) {
-      res.contentType('.md');
-      res.send(md.md);
-    } else {
-      res.send(html);
-    }
+    res.send(html);
   });
 };
 
-app.get('/**.html', handler);
-app.get('/**.md', handler);
+app.get('/**', handler);
 // eslint-disable-next-line no-console
 app.listen(port, () => console.log(`Converter listening on port ${port}`));

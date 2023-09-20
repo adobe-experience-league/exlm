@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="spectrum spectrum--medium spectrum--light" lang="zz" dir="ltr">
+<head>
+  <title>${data.title || ''}</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta name=viewport content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#EAEAEA">
+  <meta charset="UTF-8">
+  <meta name="description" content="${data.description || ''}">
+  <meta name="keywords" content="${data.keywords || ''}">
+  <meta name="role" content="${data.role || ''}">
+  <meta name="level" content="${data.level || ''}">
+  <meta name="id" content="{{id}}">
+  <meta name="google" value="notranslate">
+  <meta property="og:title" content="${data.title || ''}">
+  <meta property="og:type" content="website">
+  <meta property="og:description" content="${data.description || ''}">
+  <meta property="og:url" content="${data.metadata['publish-url'] || ''}">
+  ${data.meta || ''}
+  <link rel="manifest" href="/manifest.json">
+  <link rel="dns-prefetch" href="//cdn.experienceleague.adobe.com">
+  <link rel="dns-prefetch" href="//www.adobe.com">
+  <link rel="dns-prefetch" href="//geolocation.onetrust.com">
+  <link rel="dns-prefetch" href="//munchkin.marketo.net">
+  <link rel="shortcut icon" href="/assets/img/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="/assets/img/icon_192.png">
+  <link rel="stylesheet" type="text/css" href="/assets/css/typekit.css" media="print,screen">
+  <link rel="stylesheet" type="text/css" href="/assets/css/other.css" media="print,screen">
+  <!-- Need to add the certification.css -->
+  <link rel="stylesheet" type="text/css" href="/assets/css/certification.css" media="print,screen">
+  <link rel="stylesheet" type="text/css" href="/assets/css/prism.css" media="print,screen">
+  <link rel="stylesheet" type="text/css" href="/assets/css/spectrum.css" media="print,screen">
+  <link rel="stylesheet" type="text/css" href="/assets/css/print.css" media="print">
+  <!--# include virtual="/assets/views/sentry.html?lang=$lang" -->
+  <script type="application/javascript" src="/assets/js/auth.js" defer></script>
+  <script type="application/javascript" src="/assets/js/imslib2.js" defer></script>
+  <script type="application/javascript" src="/assets/js/docs.js" defer></script>
+  <script type="application/javascript" src="/assets/js/dtm.js" defer></script>
+  <script type="application/javascript" src="/assets/js/scripts.js" defer></script>
+  <script type="application/javascript"
+          src="/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js" defer></script>
+
+  <link rel="stylesheet" href="https://static.cloud.coveo.com/searchui/v2.10081/css/CoveoFullSearch.min.css" />
+  <link rel="stylesheet" href="/assets/css/custom-header-style.css" />
+  <script class="coveo-script" src="https://static.cloud.coveo.com/searchui/v2.10081/js/CoveoJsSearch.Lazy.min.js">
+  </script>
+  <script src="https://static.cloud.coveo.com/searchui/v2.10081/js/templates/templates.js"></script>
+
+</head>
+<body>
+<div data-id="spectrum-notice-container" class="is-hidden"></div>
+
+<div id="wrap">
+  <div>
+    <!--# include virtual="/assets/views/header.html?lang=$lang" -->
+  </div>
+  <div id="app" data-type="${(data.type || '').toLowerCase()}">
+    <div id="toc-toggle" class="columns is-hidden-touch is-absolute-full-width is-marginless">
+      <div class="column col-a sp-col-2 is-right">
+        <a class="is-active">
+          <figure class="image is-16x16 is-inline-block">
+            <img src="/assets/img/left-rail-open.svg" loading="lazy">
+          </figure>
+        </a>
+      </div>
+      <div class="column col-b sp-col-2 is-hidden-touch is-left">
+        <a class="is-active">
+          <figure class="image is-16x16 is-inline-block">
+            <img src="/assets/img/left-rail-open.svg" loading="lazy">
+          </figure>
+        </a>
+      </div>
+    </div>
+    <div id="container" class="columns is-desktop is-marginless is-paddingless">
+      <div class="column sp-col-2 sp-pt-700" data-id="toc">
+        <div class="column is-hidden-desktop">
+          <button id="dropdown-nav" type="button" class="spectrum-Picker spectrum-Picker--sizeXL" aria-haspopup="listbox" style="width: 100%;" ="true">
+            <span class="spectrum-Picker-label">Table of contents</span>
+            <object data="/assets/img/chevron_down.svg" height="20" class="spectrum-PickerButton-UIIcon spectrum-Icon is-rotated" focusable="false" aria-hidden="true"> </object>
+          </button>
+        </div>
+
+        <div id="toc-content" class="spectrum-Site-nav is-hidden-touch">
+          <ul id="product" class="spectrum-SideNav">
+            <li>
+              <span class="product-icon"></span>
+              <h3></h3>
+            </li>
+          </ul>
+          ${data.toc || ''}
+          <hr class="related-topics is-hidden">
+          <ul class="related-topics is-hidden">
+            <li><a href="/?lang=zz#related-topics">Related Topics</a>
+              <ul>
+                <li><a href="#"></a></li>
+              </ul>
+            </li>
+          </ul>
+        
+          <hr class="related-content is-hidden">
+          <ul class="related-content is-hidden">
+            <li><a href="/?lang=zz#related-content">Related Content</a>
+              <ul>
+                <li><a href="#"></a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="column" data-id="main">
+        <div id="header">
+          <dx-docs-mt mt="${data.lang !== 'en' && ((data.meta || '').split('\n').filter(i => i.includes('ht-degree'))[0] || '').includes('100') === false}"
+                    toggle="true"
+                    togglemsg="Automatic Translation"
+                    toggleurl="/docs/contributor/contributor-guide/localization/machine-translation.html?lang=zz"
+                    lang="zz"
+                    visible="false"
+                    class="is-block is-margin-bottom-big is-hidden-tablet"></dx-docs-mt>
+          ${data.breadcrumbs || ''}
+        </div>
+        <div data-id="body">
+          <h1 id="title">${data.heading || ''}</h1>
+          {{docs-post-meta}} ${data.body || ''}
+
+          
+        <div class="doc-pagination columns is-mobile mt-6 ${(!data.metadata['prev-page'] && !data.metadata['next-page']) ? 'is-hidden' : ''}">
+          <div class="column is-left-desktop">
+            <a type="button" href="${data.metadata['prev-page'] || ''}" class="spectrum-Button ${data.metadata['prev-page'] ? '' : 'is-disabled'} spectrum-Button--sizeM spectrum-Button--outline spectrum-Button--accent">
+              <span class="spectrum-Button-label">Previous page</span>
+            </a>
+          </div>
+          <div class="column is-right-desktop">
+            <a type="button" href="${data.metadata['next-page'] || ''}" class="spectrum-Button ${data.metadata['next-page'] ? '' : 'is-disabled'} spectrum-Button--sizeM spectrum-Button--outline spectrum-Button--accent">
+              <span class="spectrum-Button-label">Next page</span>
+            </a>
+          </div>
+        </div>
+          <div data-id="footer" class="columns is-marginless is-margin-top-big-big ${data.footer.length === 0  || data.lang !== 'en' ? 'is-hidden' : ''}">
+            <div class="column">
+              <div class="is-flex is-vcentered">
+                <h4>Business.Adobe.com resources</h4>
+                <a href="https://business.adobe.com/resources/main.html" target="_blank">
+                  <figure class="image is-32x32">
+                      <img src="/assets/img/link-arrow.svg" loading="lazy" alt="Docs links">
+                  </figure>
+                </a>
+              </div>
+              <div class="links">
+                ${data.footer || ''}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column sp-col-2 sp-pt-700 is-padded-bottom-0-mobile" data-id="other">
+        <div class="pinned">
+          <dx-docs-mt mt="${data.lang !== 'en' && ((data.meta || '').split('\n').filter(i => i.includes('ht-degree'))[0] || '').includes('100') === false}"
+                      toggle="true"
+                      togglemsg="Automatic Translation"
+                      toggleurl="/docs/contributor/contributor-guide/localization/machine-translation.html?lang=zz"
+                      lang="zz"
+                      visible="false"
+                      class="is-block is-hidden-mobile"></dx-docs-mt>
+          <div>
+            <dx-docs-mt msg="Was the translation useful?"
+                        togglemsg="Automatic Translation"
+                        mt="${data.lang !== 'en' && ((data.meta || '').split('\n').filter(i => i.includes('ht-degree'))[0] || '').includes('100') === false}"
+                        yes="Yes" no="No"></dx-docs-mt>
+          </div>
+          <div class="doc-actions">
+            <dx-bookmark></dx-bookmark>
+            <dx-link-page></dx-link-page>
+          </div>
+          <h2 class="is-hidden-mobile">On this page</h2>
+          <div data-id="mtoc" class="is-hidden-mobile"></div>
+          <div class="is-margin-top-big-big is-hidden">
+            <h2 class="is-size-6 is-margin-bottom-small">View next:</h2>
+            <a class="is-margin-left-big is-padded-left" data-id="next"></a>
+          </div>
+          <div data-id="sidead" class="is-margin-top-big-big ${'sidead' in data && data.sidead.length > 0 ? '' : 'is-hidden'}">
+            ${data.sidead || ''}
+          </div>
+          <dx-latest-update></dx-latest-update>
+        </div>
+      </div>
+    </div>
+    <dx-docs-feedback-bar></dx-docs-feedback-bar>
+  </div>
+  <div>
+    <!--# include virtual="/assets/views/footer.html?lang=$lang" -->
+  </div>
+</div>
+<div class="has-text-centered">
+  <div class="spectrum-Toast spectrum-Toast--info notification animated is-hidden">
+    <figure id="toast-icon" class="spectrum-Icon spectrum-Icon--sizeM spectrum-Toast-typeIcon" focusable="false" aria-hidden="true">
+      <img src="/assets/img/spectrum-info-icon.svg" loading="lazy" alt="Info">
+    </figure>
+    <div class="spectrum-Toast-body">
+      <div class="spectrum-Toast-content"></div>
+    </div>
+    <div class="spectrum-Toast-buttons">
+      <button id="dismiss" class="spectrum-ClearButton spectrum-ClearButton--overBackground spectrum-ClearButton--sizeM">
+        <div class="spectrum-ClearButton-fill">
+          <figure class="spectrum-ClearButton-icon spectrum-Icon spectrum-UIIcon-Cross100 image is-18x18" focusable="false" aria-hidden="true">
+            <img src="/assets/img/close_white.svg" loading="lazy" alt="Close">
+          </figure>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-content has-text-centered"></div>
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<a id="launcher" class="is-hidden"></a>
+
+<script type="application/javascript" src="/assets/js/prism.js" data-manual></script>
+<script type="application/javascript">
+  try {
+    _satellite.pageBottom();
+  } catch (e) {
+  }
+</script>
+<script type="application/javascript" src="/assets/js/markdown.js" defer></script>
+<!-- Certification Template -->
+</body>
+</html>

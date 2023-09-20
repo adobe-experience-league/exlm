@@ -1,0 +1,29 @@
+{
+  "indexes": {
+    "articles": [
+      "Archived|Markdown",
+      "ID",
+      "ID|Markdown",
+      "File|Markdown",
+      "Markdown",
+      "Markdown|Original URL",
+      "Markdown|URL",
+      "File",
+      "URL",
+      "docId"
+    ],
+    "markdown-sources": [
+      "File",
+      "Archived|File"
+    ]
+  },
+  "files": {
+    "articles": [
+      "articles.json"
+    ],
+    "markdown-sources": [
+      "markdown-sources.json"
+    ]
+  },
+  "sort": "Publish desc, Archived asc, timestamp desc"
+}

@@ -1,0 +1,21 @@
+<!-- docs-main view start -->
+${data.badges || ''}
+<div class="docs-main">
+  <!-- Docs page metadata-->
+  ${data.heading || ''}
+  <div class="doc-meta">
+    <div class="doc-meta--item summary is-hidden">
+    </div>
+    <div class="doc-meta--item last-updated ${data.metadata['last-update'] ? '' : 'is-hidden'}">
+      Last update: <span class="date-format">${data.metadata['last-update'] || ''}</span>
+    </div>
+    ${data.topics || ''}
+    ${data.levels || ''}
+    <div class="doc-actions is-hidden-desktop">
+      <dx-bookmark></dx-bookmark>
+      <dx-link-page></dx-link-page>
+    </div>
+  </div>
+  ${data.body || ''}
+</div>
+<!-- docs-main view end -->

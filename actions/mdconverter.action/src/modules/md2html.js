@@ -10,23 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import { toHast as mdast2hast, defaultHandlers } from 'mdast-util-to-hast';
-import { raw } from 'hast-util-raw';
-import remarkGridTable from '@adobe/remark-gridtables';
-import {
-  mdast2hastGridTablesHandler,
-  TYPE_TABLE,
-} from '@adobe/mdast-util-gridtables';
-import { toHtml } from 'hast-util-to-html';
-import rehypeFormat from 'rehype-format';
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkGfm from 'remark-gfm';
-import createPageBlocks from '@adobe/helix-html-pipeline/src/steps/create-page-blocks.js';
-import { h } from 'hastscript';
-import fixSections from '@adobe/helix-html-pipeline/src/steps/fix-sections.js';
+const mdast2hast = import('mdast-util-to-hast').toHast;
+const defaultHandlers = import('mdast-util-to-hast').defaultHandlers;
+const raw = import('hast-util-raw').raw;
+const remarkGridTable = import('@adobe/remark-gridtables');
+const mdast2hastGridTablesHandler = import('@adobe/mdast-util-gridtables').mdast2hastGridTablesHandler;
+const TYPE_TABLE = import('@adobe/mdast-util-gridtables').TYPE_TABLE;
+const toHtml = import('hast-util-to-html').toHtml;
+const rehypeFormat = import('rehype-format');
+const unified = import('unified');
+const remarkParse = import('remark-parse');
+const remarkGfm = import('remark-gfm');
+const createPageBlocks = import('@adobe/helix-html-pipeline/src/steps/create-page-blocks.js');
+const h = import('hastscript').h;
+const fixSections = import('@adobe/helix-html-pipeline/src/steps/fix-sections.js');
 
-export default function md2html(md) {
+module.exports = function md2html(md) {
   // note: we could use the entire unified chain, but it would need to be async -
   // which would require too much of a change
   const mdast = unified()

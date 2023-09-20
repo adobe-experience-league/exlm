@@ -11,6 +11,8 @@
  */
 const path = require('path');
 const webpack = require('webpack');
+const CopyPlugin = require("copy-webpack-plugin");
+
 
 module.exports = {
   mode: 'development',
@@ -18,7 +20,7 @@ module.exports = {
   target: 'node',
   output: {
     filename: 'main.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist', 'mdconverter'),
     library: {
       type: 'commonjs2',
     },
@@ -38,6 +40,11 @@ module.exports = {
     },
   },
   plugins: [
+    new CopyPlugin({
+      patterns: [
+          { from: 'src/modules/clue/configs', to: '../configs' }
+      ]
+  }),
     new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
     // Provide dependencies/context for import.js
     new webpack.ProvidePlugin({
@@ -50,14 +57,14 @@ module.exports = {
     // on the execution path
     new webpack.IgnorePlugin({ resourceRegExp: /canvas/ }),
     new webpack.IgnorePlugin({ resourceRegExp: /bufferutil/ }),
-    new webpack.IgnorePlugin({ resourceRegExp: /utf-8-validate/ }),
+    new webpack.IgnorePlugin({ resourceRegExp: /utf-8-validate/ })
   ],
   module: {
     rules: [
       {
         test: /\.ya?ml$/,
         use: 'yaml-loader',
-      },
+      }
     ],
   },
 };

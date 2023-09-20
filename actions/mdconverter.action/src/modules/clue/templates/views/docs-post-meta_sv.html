@@ -1,0 +1,24 @@
+<!-- Docs page metadata-->
+<div class="doc-meta">
+  <div class="doc-meta--item summary is-hidden">
+  </div>
+  <div class="doc-meta--item last-updated ${data.metadata['last-update'] ? '' : 'is-hidden'}">
+    Last update: <span class="date-format">${data.metadata['last-update'] || ''}</span>
+  </div>
+  <div class="doc-meta--item topics ${data.topics ? '' : 'is-hidden'}">
+    <ul>
+      <li>Topics:</li>
+      <li>${data.topics || ''}</li>
+    </ul>
+  </div>
+  <div class="doc-meta--item tags ${data.metadata['level'] ? '' : 'is-hidden'}">
+    <ul>
+      <li>Created for:</li>
+      <li>${data.metadata['level'] || ''}</li>
+    </ul>
+  </div>
+  <div class="doc-actions is-hidden-desktop">
+    <dx-bookmark></dx-bookmark>
+    <dx-link-page></dx-link-page>
+  </div>
+</div>
