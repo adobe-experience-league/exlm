@@ -1,9 +1,0 @@
-{
-  "options": {
-    "readPreference": "secondaryPreferred",
-    "replicaSet": "rs0",
-    "useNewUrlParser": true,
-    "useUnifiedTopology": true
-  },
-  "url": ""
-}
