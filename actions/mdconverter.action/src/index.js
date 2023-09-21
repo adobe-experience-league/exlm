@@ -69,16 +69,11 @@ async function render(path) {
   // return { md, html };
   const html = `<!DOCTYPE html>
   <html>
-    <head>
-      <title>Some title</title>
-    </head>
     <body>
-      <header></header>
       <main>
         <h1>Some title</h1>
         <p>Some content</p>
       </main>
-      <footer></footer>
     </body>
   </html>
   `
