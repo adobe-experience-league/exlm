@@ -70,10 +70,8 @@ async function render(path) {
   const html = `<!DOCTYPE html>
   <html>
     <body>
-      <main>
         <h1>Some title</h1>
         <p>Some content</p>
-      </main>
     </body>
   </html>
   `
