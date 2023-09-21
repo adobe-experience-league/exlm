@@ -76,7 +76,7 @@ async function render(path) {
       <div class="carousel">
         <div>
           <div>
-            <img src="https://main--wknd--hlxsites.hlx.page/media_155b25af34e98a6a947b87ecc48fc2d1ea50bc16a.png">
+            <img src="https://cc-prod.scene7.com/is/image/CCProdAuthor/desktop-image-1-1" alt="text">
           </div>
           <div>
             <h2 id="wknd-adventures"><a href="/adventures">WKND Adventures</a></h2>
