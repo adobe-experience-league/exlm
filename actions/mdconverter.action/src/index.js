@@ -40,33 +40,49 @@ const parseDocsPath = (path) => {
 };
 
 async function render(path) {
-  const mdPath = addExtensionIfNotExists(path, ".md");
-  const url = new URL(mdPath, "https://raw.githubusercontent.com");
-  const parsedPath = parseDocsPath(mdPath);
-  const resp = await fetch(url);
-  console.log("fetched..", url);
+  // const mdPath = addExtensionIfNotExists(path, ".md");
+  // const url = new URL(mdPath, "https://raw.githubusercontent.com");
+  // const parsedPath = parseDocsPath(mdPath);
+  // const resp = await fetch(url);
+  // console.log("fetched..", url);
 
-  if (!resp.ok) {
-    return { error: { code: resp.status, message: resp.statusText } };
-  }
+  // if (!resp.ok) {
+  //   return { error: { code: resp.status, message: resp.statusText } };
+  // }
 
-  const md = await resp.text();
+  // const md = await resp.text();
 
-  const result = await transform({
-    src: parsedPath.folderPath,
-    file: parsedPath.fileName,
-    raw: md,
-    base: "",
-    lang: "en",
-    type: "docs",
-    solution: [],
-    admonition: {},
-  });
+  // const result = await transform({
+  //   src: parsedPath.folderPath,
+  //   file: parsedPath.fileName,
+  //   raw: md,
+  //   base: "",
+  //   lang: "en",
+  //   type: "docs",
+  //   solution: [],
+  //   admonition: {},
+  // });
 
-  const html = result.lhtml.split("<body>")[1].split("</body>")[0];;
+  // const html = result.lhtml.split("<body>")[1].split("</body>")[0];;
 
 
-  return { md, html };
+  // return { md, html };
+  const html = `<!DOCTYPE html>
+  <html>
+    <head>
+      <title>Some title</title>
+    </head>
+    <body>
+      <header></header>
+      <main>
+        <h1>Some title</h1>
+        <p>Some content</p>
+      </main>
+      <footer></footer>
+    </body>
+  </html>
+  `
+  return { md: "hello", html };
 }
 
 async function main(params) {
