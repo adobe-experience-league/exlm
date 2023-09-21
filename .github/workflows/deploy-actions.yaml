@@ -19,7 +19,6 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
-    - run: npm install -g @adobe/aio-cli
     - name: Run npm ci (actions)
       run: npm ci
       working-directory: actions
