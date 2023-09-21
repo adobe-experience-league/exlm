@@ -67,33 +67,25 @@ async function render(path) {
 
 
   // return { md, html };
-  const html = `<!DOCTYPE html>
-  <html>
-  <body>
-  <header></header>
-  <main>
+  const html = `<div>
+  <div class="carousel">
     <div>
-      <div class="carousel">
-        <div>
-          <div>
-            <picture>
-              <source type="image/webp" srcset="./media_155b25af34e98a6a947b87ecc48fc2d1ea50bc16a.png?width=2000&#x26;format=webply&#x26;optimize=medium" media="(min-width: 600px)">
-              <source type="image/webp" srcset="./media_155b25af34e98a6a947b87ecc48fc2d1ea50bc16a.png?width=750&#x26;format=webply&#x26;optimize=medium">
-              <source type="image/png" srcset="./media_155b25af34e98a6a947b87ecc48fc2d1ea50bc16a.png?width=2000&#x26;format=png&#x26;optimize=medium" media="(min-width: 600px)">
-              <img loading="lazy" alt="" src="./media_155b25af34e98a6a947b87ecc48fc2d1ea50bc16a.png?width=750&#x26;format=png&#x26;optimize=medium" width="1600" height="900">
-            </picture>
-          </div>
-          <div>
-            <h2 id="wknd-adventures"><a href="/adventures">WKND Adventures</a></h2>
-            <p>Join us on one of our next adventures. Browse our list of curated experiences and sign up for one when you're ready to explore with us. Test for demo!</p>
-            <p><a href="/adventures">Book your trip now! 50% off</a></p>
-          </div>
-        </div>
+      <div>
+        <picture>
+          <source type="image/webp" srcset="./media_155b25af34e98a6a947b87ecc48fc2d1ea50bc16a.png?width=2000&#x26;format=webply&#x26;optimize=medium" media="(min-width: 600px)">
+          <source type="image/webp" srcset="./media_155b25af34e98a6a947b87ecc48fc2d1ea50bc16a.png?width=750&#x26;format=webply&#x26;optimize=medium">
+          <source type="image/png" srcset="./media_155b25af34e98a6a947b87ecc48fc2d1ea50bc16a.png?width=2000&#x26;format=png&#x26;optimize=medium" media="(min-width: 600px)">
+          <img loading="lazy" alt="" src="./media_155b25af34e98a6a947b87ecc48fc2d1ea50bc16a.png?width=750&#x26;format=png&#x26;optimize=medium" width="1600" height="900">
+        </picture>
+      </div>
+      <div>
+        <h2 id="wknd-adventures"><a href="/adventures">WKND Adventures</a></h2>
+        <p>Join us on one of our next adventures. Browse our list of curated experiences and sign up for one when you're ready to explore with us. Test for demo!</p>
+        <p><a href="/adventures">Book your trip now! 50% off</a></p>
       </div>
     </div>
-  </main>
-  </body>
-  </html>
+  </div>
+</div>
   `
   return { md: "hello", html };
 }
