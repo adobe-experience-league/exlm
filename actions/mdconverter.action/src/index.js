@@ -67,13 +67,8 @@ async function render(path) {
 
 
   // return { md, html };
-  const html = `<!DOCTYPE html>
-  <html>
-    <body>
-        <h1>Some title</h1>
-        <p>Some content</p>
-    </body>
-  </html>
+  const html = `<h1>Some title</h1>
+  <p>Some content</p>
   `
   return { md: "hello", html };
 }
