@@ -233,6 +233,8 @@ async function render(path) {
     <div class="modal-content has-text-centered" style="background-image: none;"></div> <button class="modal-close is-large" aria-label="close" style="background-image: none;"></button>
   </div>
 </body>`
+
+const md = `# Help Center`
   return { md, html };
 }
 
