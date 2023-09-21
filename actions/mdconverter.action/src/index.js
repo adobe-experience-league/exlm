@@ -63,7 +63,8 @@ async function render(path) {
     admonition: {},
   });
 
-  const html = result.lhtml;
+  const html = result.lhtml.split("<body>")[1].split("</body>")[0];;
+
 
   return { md, html };
 }

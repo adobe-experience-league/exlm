@@ -31,14 +31,7 @@ const handler = (req, res) => {
 
     res.status(200);
 
-    console.log('serveMd', md);
-
-    if (serveMd) {
-      res.contentType('.md');
-      res.send(md.md);
-    } else {
-      res.send(html);
-    }
+    res.send(html);
   });
 };
 
