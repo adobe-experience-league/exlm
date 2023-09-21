@@ -22,44 +22,40 @@ import { existsSync } from "node:fs";
 import { readdir } from "node:fs/promises";
 
 // read all directories, for those that have a webpack executable, run it with --mode production
-
 const webpackArgs = ["--mode", "production"];
 const dirname = url.fileURLToPath(new URL(".", import.meta.url));
 const children = await readdir(dirname, { withFileTypes: true });
 
+
 await Promise.all(
   children
     .filter((child) => child.name.endsWith("action")) // only folder ending with `action`
+    .filter((child) => child.isDirectory) // only directories
     .map(async (child) => {
-      if (child.isDirectory) {
-        const childDir = path.resolve(dirname, child.name);
-        const webpackScript = path.resolve(
-          childDir,
-          "node_modules/.bin/webpack"
-        );
-        if (existsSync(webpackScript)) {
-          return new Promise((resolve, reject) => {
-            // run the webpack script in the childDir
-            // eslint-disable-next-line no-console
-            console.log(`Bundling ${child.name} ... `);
-            const webpackProcess = fork(webpackScript, webpackArgs, {
-              cwd: childDir,
-              silent: false,
-            });
-            webpackProcess.on("error", (err) => reject(err));
-            webpackProcess.on("exit", (code) => {
-              if (code > 0) {
-                reject(code);
-              } else {
-                resolve();
-              }
-            });
-          }).catch((err) => {
-            // eslint-disable-next-line no-console
-            console.log(`Failed bundling ${child.name}.`);
-            throw err;
+      const childDir = path.resolve(dirname, child.name);
+      const webpackScript = path.resolve(childDir, "node_modules/.bin/webpack");
+      if (existsSync(webpackScript)) {
+        return new Promise((resolve, reject) => {
+          // run the webpack script in the childDir
+          // eslint-disable-next-line no-console
+          console.log(`Bundling ${child.name} ... `);
+          const webpackProcess = fork(webpackScript, webpackArgs, {
+            cwd: childDir,
+            silent: false,
           });
-        }
+          webpackProcess.on("error", (err) => reject(err));
+          webpackProcess.on("exit", (code) => {
+            if (code > 0) {
+              reject(code);
+            } else {
+              resolve();
+            }
+          });
+        }).catch((err) => {
+          // eslint-disable-next-line no-console
+          console.log(`Failed bundling ${child.name}.`);
+          throw err;
+        });
       }
 
       return Promise.resolve();

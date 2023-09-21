@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+const CopyPlugin = require("copy-webpack-plugin");
 const path = require('path');
 const webpack = require('webpack');
 
@@ -18,7 +19,7 @@ module.exports = {
   target: 'node',
   output: {
     filename: 'main.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist/main'),
     library: {
       type: 'commonjs2',
     },
@@ -38,14 +39,21 @@ module.exports = {
     },
   },
   plugins: [
+    new CopyPlugin({
+      patterns: [
+          { from: 'src/modules/clue/configs', to: '../configs' },
+          { from: 'src/modules/clue/footer', to: '../footer' },
+          { from: 'src/modules/clue/templates', to: '../templates' },
+          { from: 'static/package.json', to: '../package.json' }
+      ]
+  }),
     new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
     // Provide dependencies/context for import.js
     new webpack.ProvidePlugin({
       WebImporter: '@adobe/helix-importer',
       decodeHtmlEntities: ['html-entities', 'decode'],
-      fetch: ['node-fetch', 'default'],
     }),
-    new webpack.DefinePlugin({ window: null }),
+    new webpack.DefinePlugin({ window: {}, global: {} }),
     // for those jsdom dependencies we want to throw a missing module error if they would be used
     // on the execution path
     new webpack.IgnorePlugin({ resourceRegExp: /canvas/ }),

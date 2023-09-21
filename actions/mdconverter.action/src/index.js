@@ -12,9 +12,8 @@
 /* eslint-disable import/no-relative-packages */
 /* eslint-disable no-underscore-dangle */
 
-import fetch from "node-fetch";
-import md2html from "./modules/md2html.js";
-import Logger from "@adobe/aio-lib-core-logging";
+const Logger = require("@adobe/aio-lib-core-logging");
+const transform = require("./modules/clue/transformer/transformer.js");
 let aioLogger = Logger("App");
 
 function addExtensionIfNotExists(str, ext) {
@@ -24,21 +23,52 @@ function addExtensionIfNotExists(str, ext) {
   return str;
 }
 
-export async function render(path, params) {
-  const url = new URL(path, "https://raw.githubusercontent.com");
-  const mdUrl = addExtensionIfNotExists(url.toString(), ".md");
-  const resp = await fetch(mdUrl);
+const parseDocsPath = (path) => {
+  if (!path.startsWith("/")) {
+    throw new Error("path must start with /");
+  }
+  const [, org, repo, branch, ...rest] = path.split("/");
+  const fileName = rest[rest.length - 1];
+  const folderPath = `/${rest.slice(0, -1).join("/")}`;
+  return {
+    org,
+    repo,
+    branch,
+    fileName,
+    folderPath,
+  };
+};
+
+async function render(path) {
+  const mdPath = addExtensionIfNotExists(path, ".md");
+  const url = new URL(mdPath, "https://raw.githubusercontent.com");
+  const parsedPath = parseDocsPath(mdPath);
+  const resp = await fetch(url);
+  console.log("fetched..", url);
 
   if (!resp.ok) {
     return { error: { code: resp.status, message: resp.statusText } };
   }
 
   const md = await resp.text();
-  const html = md2html(md);
+
+  const result = await transform({
+    src: parsedPath.folderPath,
+    file: parsedPath.fileName,
+    raw: md,
+    base: "",
+    lang: "en",
+    type: "docs",
+    solution: [],
+    admonition: {},
+  });
+
+  const html = result.lhtml;
+
   return { md, html };
 }
 
-export async function main(params) {
+async function main(params) {
   aioLogger.info({ params });
   const path = params.__ow_path ? params.__ow_path : "";
   const { html, error } = await render(path, { ...params });
@@ -51,4 +81,12 @@ export async function main(params) {
   }
 
   return { statusCode: error.code, body: error.message };
+}
+
+
+
+
+module.exports = {
+  render,
+  main,
 }

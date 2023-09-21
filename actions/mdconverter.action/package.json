@@ -2,10 +2,11 @@
   "name": "xwalk-converter",
   "version": "1.0.0",
   "description": "",
+  
   "scripts": {
     "serve": "npm-run-all build --parallel serve:*",
     "serve:build": "webpack ./src/express.js --watch",
-    "serve:server": "nodemon --inspect ./dist/main.js --watch ./dist",
+    "serve:server": "nodemon --inspect ./dist/main/main.js --watch ./dist",
     "build": "rimraf dist/ && webpack",
     "test": "instant-mocha"
   },
@@ -21,6 +22,7 @@
     "@adobe/helix-importer": "2.9.22",
     "@adobe/mdast-util-gridtables": "2.0.2",
     "@adobe/remark-gridtables": "1.0.4",
+    "copy-webpack-plugin": "^11.0.0",
     "hast-util-raw": "8.0.0",
     "hast-util-select": "5.0.5",
     "hast-util-to-html": "8.0.4",
@@ -28,7 +30,6 @@
     "html-entities": "2.4.0",
     "jsdom": "22.1.0",
     "mdast-util-to-hast": "12.3.0",
-    "node-fetch": "3.2.4",
     "rehype-format": "4.0.1",
     "remark-gfm": "3.0.1",
     "remark-parse": "10.0.2",

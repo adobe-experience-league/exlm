@@ -1,0 +1,138 @@
+<div class="container columns is-tablet">
+    <div class="left column is-two-thirds">
+        <div class="qualtrics-feedback"></div>
+        <div class="first-question">
+            <div class="question">
+                <h3>¿Fue útil este contenido?</h3>
+                <span class="like-buttons">
+                    <button disabled class="up spectrum-Button spectrum-Button--fill spectrum-Button--accent u-tooltip-showOnHover" role="button">
+                        <sp-icon-thumb-up></sp-icon-thumb-up>
+                        <div class="no-auth spectrum-Tooltip spectrum-Tooltip--top">
+                            <span class="spectrum-Tooltip-label">Error al cargar. Actualizar página.</span>
+                            <span class="spectrum-Tooltip-tip"></span>
+                        </div>
+                    </button>
+                    <button disabled class="down spectrum-Button spectrum-Button--fill spectrum-Button--accent u-tooltip-showOnHover" role="button">
+                        <sp-icon-thumb-down></sp-icon-thumb-down>
+                        <div class="no-auth spectrum-Tooltip spectrum-Tooltip--top">
+                            <span class="spectrum-Tooltip-label">Error al cargar. Actualizar página.</span>
+                            <span class="spectrum-Tooltip-tip"></span>
+                        </div>
+                    </button>
+                    <button class="up spectrum-Button spectrum-Button--fill spectrum-Button--accent u-tooltip-showOnHover" role="button">
+                        <sp-icon-thumb-up></sp-icon-thumb-up>
+                        <div class="spectrum-Tooltip spectrum-Tooltip--top">
+                            <span class="spectrum-Tooltip-label">El contenido es útil</span>
+                            <span class="spectrum-Tooltip-tip"></span>
+                        </div>
+                    </button>
+                    <button class="down spectrum-Button spectrum-Button--fill spectrum-Button--accent u-tooltip-showOnHover" role="button">
+                        <sp-icon-thumb-down></sp-icon-thumb-down>
+                        <div class="spectrum-Tooltip spectrum-Tooltip--top">
+                            <span class="spectrum-Tooltip-label">El contenido no es útil</span>
+                            <span class="spectrum-Tooltip-tip"></span>
+                        </div>
+                    </button>
+                </span>
+                <div class="spinner">
+                    <div class="spectrum-ProgressCircle spectrum-ProgressCircle--indeterminate">
+                        <div class="spectrum-ProgressCircle-track"></div>
+                        <div class="spectrum-ProgressCircle-fills">
+                          <div class="spectrum-ProgressCircle-fillMask1">
+                            <div class="spectrum-ProgressCircle-fillSubMask1">
+                              <div class="spectrum-ProgressCircle-fill"></div>
+                            </div>
+                          </div>
+                          <div class="spectrum-ProgressCircle-fillMask2">
+                            <div class="spectrum-ProgressCircle-fillSubMask2">
+                              <div class="spectrum-ProgressCircle-fill"></div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="mobile-toggle" role="button">
+                    <sp-icon-chevron-up></sp-icon-chevron-up>
+                    <sp-icon-chevron-down></sp-icon-chevron-down>
+                </button>
+            </div>
+            <div class="follow-up">
+                <h3>Gracias por sus comentarios.</h3>
+                <button class="mobile-toggle" role="button">
+                    <sp-icon-chevron-up></sp-icon-chevron-up>
+                    <sp-icon-chevron-down></sp-icon-chevron-down>
+                </button>
+                <span class="refresh-prompt">Actualice la página para proporcionar más comentarios.</span>
+                <span class="feedback-prompt">Dedique un momento a explicar su selección o cómo podemos mejorarla.</span>
+            </div>
+        </div>
+        <div class="second-question">
+            <sp-textfield disabled multiline placeholder="Vote para proporcionar comentarios opcionales y enviar"></sp-textfield>
+            <div>
+                <button class="submit spectrum-Button spectrum-Button--accent spectrum-Button--fill spectrum-Button--sizeM u-tooltip-showOnHover" role="button" disabled>
+                    <span class="spectrum-Button-label">Enviar</span>
+                    <div class="is-disabled spectrum-Tooltip spectrum-Tooltip--top">
+                        <span class="spectrum-Tooltip-label">Proporcione comentarios para enviar</span>
+                        <span class="spectrum-Tooltip-tip"></span>
+                    </div>
+                    <div class="is-enabled spectrum-Tooltip spectrum-Tooltip--top">
+                        <span class="spectrum-Tooltip-label">Enviar comentarios</span>
+                        <span class="spectrum-Tooltip-tip"></span>
+                    </div>
+                </button>
+                </button>
+                <button class="dismiss spectrum-Button spectrum-Button--outline spectrum-Button--secondary spectrum-Button--sizeM" role="button">
+                    <span class="spectrum-Button-label">Descartar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="right column is-one-third">
+        <div class="opened-controls">
+            <span>Opciones de comentarios detalladas</span>
+            <button class="open-toggle" role="button">
+                <sp-icon-chevron-up></sp-icon-chevron-up>
+                <sp-icon-chevron-down></sp-icon-chevron-down>
+            </button>
+        </div>
+        <div class="header-text-mobile">
+            <span>Otras opciones de comentarios</span>
+        </div>
+        <div class="expanded-controls">
+            <div class="git-buttons">
+                <button class="file-bug spectrum-ActionButton spectrum-ActionButton--sizeM u-tooltip-showOnHover" role="button">
+                    <sp-icon-bug></sp-icon-bug>
+                    <span class="spectrum-ActionButton-label">Informar de un problema</span>
+                    <div class="is-enabled spectrum-Tooltip spectrum-Tooltip--top">
+                        <span class="spectrum-Tooltip-label">Abrir GitHub para crear un informe</span>
+                        <span class="spectrum-Tooltip-tip"></span>
+                    </div>
+                    <div class="is-disabled spectrum-Tooltip spectrum-Tooltip--top">
+                        <span class="spectrum-Tooltip-label">Esta función no está disponible en esta página</span>
+                        <span class="spectrum-Tooltip-tip"></span>
+                    </div>
+                </button>
+                <button class="suggest-edit spectrum-ActionButton spectrum-ActionButton--sizeM u-tooltip-showOnHover" role="button">
+                    <sp-icon-edit></sp-icon-edit>
+                    <span class="spectrum-ActionButton-label">Sugerir una edición</span>
+                    <div class="is-enabled spectrum-Tooltip spectrum-Tooltip--top">
+                        <span class="spectrum-Tooltip-label">Abrir GitHub para editar</span>
+                        <span class="spectrum-Tooltip-tip"></span>
+                    </div>
+                    <div class="is-disabled spectrum-Tooltip spectrum-Tooltip--top">
+                        <span class="spectrum-Tooltip-label">Esta función no está disponible en esta página</span>
+                        <span class="spectrum-Tooltip-tip"></span>
+                    </div>
+                </button>
+            </div>
+            <a href="/docs/contributor/contributor-guide/introduction.html?lang=es" target="_blank">Aprenda a contribuir.</a>
+        </div>
+    </div>
+
+    <button class="close" role="button">
+        <figure class="image is-14x14">
+            <img src="/assets/img/close.svg" loading="lazy">
+        </figure>
+    </button>
+</div>

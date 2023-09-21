@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import express from 'express';
-import { render } from './index.js';
+const express = require('express');
+const render = require('./index.js').render;
 const app = express();
 const port = 3030;
 
@@ -30,6 +30,8 @@ const handler = (req, res) => {
     }
 
     res.status(200);
+
+    console.log('serveMd', md);
 
     if (serveMd) {
       res.contentType('.md');
