@@ -20,11 +20,14 @@ jobs:
         node-version: '18'
         cache: 'npm'
     - run: npm install -g @adobe/aio-cli
+    - name: Run npm ci (actions)
+      run: npm ci
+      working-directory: actions
     - name: Run npm ci (mdconverter)
       run: npm ci
       working-directory: actions/mdconverter.action
     - name: Deploy (mdconverter)
-      run: aio app deploy
+      run: ./node_modules/.bin/aio app deploy
       working-directory: actions
       env:
         AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH }}

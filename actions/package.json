@@ -1,5 +1,8 @@
 {
     "name": "actions",
     "version": "1.0.0",
-    "type": "module"
+    "type": "module",
+    "devDependencies": {
+        "@adobe/aio-cli": "^9.3.0"
+    }
 }

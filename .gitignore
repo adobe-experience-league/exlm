@@ -11,3 +11,5 @@ helix-importer-ui
 actions/convert/node_modules/
 
 actions/mdconverter.action/node_modules/
+
+actions/node_modules/
