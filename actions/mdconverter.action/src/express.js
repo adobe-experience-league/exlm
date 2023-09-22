@@ -29,8 +29,8 @@ const handler = (req, res) => {
       return;
     }
 
+    console.log(md)
     res.status(200);
-
     res.send(html);
   });
 };

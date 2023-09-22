@@ -1,8 +1,0 @@
-{
- "Business Practitioner": "User",
- "Administrator": "Admin",
- "Executive": "Leader",
- "Architect": "Developer",
- "Data Architect": "Developer",
- "Data Engineer": "Developer"
-}

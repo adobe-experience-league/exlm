@@ -13,8 +13,12 @@
 /* eslint-disable no-underscore-dangle */
 
 const Logger = require("@adobe/aio-lib-core-logging");
-const transform = require("./modules/clue/transformer/transformer.js");
+const { default: ExlClient } = require("./modules/ExlClient.js");
+import md2html from './modules/md2html.js';
 let aioLogger = Logger("App");
+
+
+const exlClient = new ExlClient();
 
 function addExtensionIfNotExists(str, ext) {
   if (!str.endsWith(ext)) {
@@ -39,58 +43,11 @@ const parseDocsPath = (path) => {
   };
 };
 
-async function render(path) {
-  // const mdPath = addExtensionIfNotExists(path, ".md");
-  // const url = new URL(mdPath, "https://raw.githubusercontent.com");
-  // const parsedPath = parseDocsPath(mdPath);
-  // const resp = await fetch(url);
-  // console.log("fetched..", url);
-
-  // if (!resp.ok) {
-  //   return { error: { code: resp.status, message: resp.statusText } };
-  // }
-
-  // const md = await resp.text();
-
-  // const result = await transform({
-  //   src: parsedPath.folderPath,
-  //   file: parsedPath.fileName,
-  //   raw: md,
-  //   base: "",
-  //   lang: "en",
-  //   type: "docs",
-  //   solution: [],
-  //   admonition: {},
-  // });
-
-  // const html = result.lhtml.split("<body>")[1].split("</body>")[0];;
-
-
-  // return { md, html };
-  const html = `<!DOCTYPE html>
-  <html>
-  <body>
-  <header></header>
-  <main>
-    <div>
-      <div class="carousel">
-        <div>
-          <div>
-            <img src="https://cc-prod.scene7.com/is/image/CCProdAuthor/desktop-image-1-1" alt="text">
-          </div>
-          <div>
-            <h2 id="wknd-adventures"><a href="/adventures">WKND Adventures</a></h2>
-            <p>Join us on one of our next adventures. Browse our list of curated experiences and sign up for one when you're ready to explore with us. Test for demo!</p>
-            <p><a href="/adventures">Book your trip now! 50% off</a></p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-  </body>
-  </html>
-  `
-  return { md: "hello", html };
+export const render = async function render(path) {
+  const response = await exlClient.getArticle('recXZZxBo4pkOnx9k')
+  const md = response.data.FullBody;
+  const html = md2html(md)
+  return { md, html };
 }
 
 async function main(params) {
@@ -106,12 +63,4 @@ async function main(params) {
   }
 
   return { statusCode: error.code, body: error.message };
-}
-
-
-
-
-module.exports = {
-  render,
-  main,
 }
