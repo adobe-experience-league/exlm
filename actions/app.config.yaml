@@ -7,7 +7,7 @@ application:
         license: Apache-2.0
         actions:
           convert:
-            function: mdconverter.action/dist
+            function: mdconverter.action/dist/main.js
             web: 'yes'
             runtime: 'nodejs:18'
             inputs:
