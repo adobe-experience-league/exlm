@@ -50,7 +50,7 @@ export const render = async function render(path) {
   return { md, html };
 }
 
-async function main(params) {
+export const main = async function main(params) {
   aioLogger.info({ params });
   const path = params.__ow_path ? params.__ow_path : "";
   const { html, error } = await render(path, { ...params });
