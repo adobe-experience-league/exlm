@@ -43,10 +43,20 @@ const parseDocsPath = (path) => {
   };
 };
 
+const getLastPart = (path) => {
+  const parts = path.split("/");
+  return parts[parts.length - 1];
+}
+
 export const render = async function render(path) {
-  const response = await exlClient.getArticle('recXZZxBo4pkOnx9k')
+  // in today's ExL site, this ID is in the HTML as meta[name="id"], example:
+  // this page: https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/overview/introduction.html?lang=en
+  // has:  <meta name="id" content="recXh9qG5sL543CUD">
+  // ExL API does not provide a way to lookup by path, so for now, we can use the ID
+  const id = getLastPart(path);
+  const response = await exlClient.getArticle(id);
   const md = response.data.FullBody;
-  const html = md2html(md)
+  const html = md2html(md);
   return { md, html };
 }
 
