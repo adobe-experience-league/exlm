@@ -14,7 +14,7 @@
 
 const Logger = require("@adobe/aio-lib-core-logging");
 const { default: ExlClient } = require("./modules/ExlClient.js");
-import md2html from './modules/md2html.js';
+import md2html from './modules/ExlMd2Html.js';
 let aioLogger = Logger("App");
 
 

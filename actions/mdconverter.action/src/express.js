@@ -28,9 +28,11 @@ const handler = (req, res) => {
       res.send(error.message);
       return;
     }
-
-    console.log(md)
     res.status(200);
+    if (path.endsWith('.md')) {
+      res.setHeader('Content-Type', 'text/plain');
+      res.send(md);
+    }
     res.send(html);
   });
 };

@@ -11,6 +11,7 @@
  */
 
 import { toHast as mdast2hast, defaultHandlers } from 'mdast-util-to-hast';
+
 import { raw } from 'hast-util-raw';
 import remarkGridTable from '@adobe/remark-gridtables';
 import {
@@ -27,6 +28,7 @@ import { h } from 'hastscript';
 import fixSections from '@adobe/helix-html-pipeline/src/steps/fix-sections.js';
 
 export default function md2html(md) {
+
   // note: we could use the entire unified chain, but it would need to be async -
   // which would require too much of a change
   const mdast = unified()
