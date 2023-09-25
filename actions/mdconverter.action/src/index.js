@@ -48,12 +48,17 @@ const getLastPart = (path) => {
   return parts[parts.length - 1];
 }
 
+const removeExtension = (path) => {
+  const parts = path.split(".");
+  return parts.slice(0, -1).join(".");
+}
+
 export const render = async function render(path) {
   // in today's ExL site, this ID is in the HTML as meta[name="id"], example:
   // this page: https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/overview/introduction.html?lang=en
   // has:  <meta name="id" content="recXh9qG5sL543CUD">
   // ExL API does not provide a way to lookup by path, so for now, we can use the ID
-  const id = getLastPart(path);
+  const id = removeExtension(getLastPart(path));
   const response = await exlClient.getArticle(id);
   const md = response.data.FullBody;
   const html = md2html(md);
