@@ -9,7 +9,9 @@
     "lint:css": "stylelint blocks/**/*.css styles/*.css",
     "lint": "npm run lint:js && npm run lint:css",
     "semantic-release": "semantic-release --debug",
-    "up": "node sass-compile.js & hlx up"
+    "sass:watch": "node sass-compile.js --watch",
+    "sass:compile": "node sass-compile.js --compile",
+    "up": "npm run sass:watch & hlx up"
   },
   "repository": {
     "type": "git",
