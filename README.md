@@ -1,9 +1,9 @@
 # Your Project's Title...
-EXLM
+GANDAL EXLM
 
 ## Environments
-- Preview: https://main--exlm--adobe-experience-league.hlx.page/
-- Live: https://main--exlm--adobe-experience-league.hlx.live/
+- Preview: https://main--exlm--gandal-adobe.hlx.page/
+- Live: https://main--exlm--gandal-adobe.hlx.live/
 
 ## Installation
 
