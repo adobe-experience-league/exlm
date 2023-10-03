@@ -9,7 +9,7 @@
 
 .cards > ul > li {
   border: 1px solid var(--highlight-background-color);
-  background-color: var(--background-color);
+  background-color: var(--background-color)
 }
 
 .cards .cards-card-body {
@@ -26,6 +26,6 @@
 
 .cards > ul > li img {
   width: 100%;
-  aspect-ratio: 4/3;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
 }
