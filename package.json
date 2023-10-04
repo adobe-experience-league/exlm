@@ -12,7 +12,8 @@
     "semantic-release": "semantic-release --debug",
     "sass:watch": "node sass-compile.js --watch",
     "sass:compile": "node sass-compile.js --compile",
-    "up": "npm run sass:watch & hlx up"
+    "up": "npm run sass:watch & hlx up",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -37,11 +38,24 @@
     "eslint": "8.35.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.27.5",
+    "husky": "^8.0.3",
+    "lint-staged": "^14.0.1",
+    "prettier": "^3.0.3",
     "sass": "^1.68.0",
     "semantic-release": "21.0.5",
     "sinon": "15.0.1",
     "stylelint": "^15.2.0",
     "stylelint-config-standard": "30.0.1",
     "stylelint-scss": "^5.2.1"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint",
+      "prettier --write"
+    ],
+    "*.css": [
+      "stylelint",
+      "prettier --write"
+    ]
   }
 }
