@@ -1,7 +1,7 @@
 $breakpoints: (
-    'small': 600px,
-    'medium': 900px,
-    'large': 1200px) !default;
+    'mobile': 600px,
+    'tablet': 900px,
+    'desktop': 1200px) !default;
 
 @mixin breakpoint($breakpoint) {
 
@@ -16,6 +16,6 @@ $breakpoints: (
 
     // If the key doesn't exist in the map
     @else {
-        @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. ";
+        @warn "`#{$breakpoint}`. not found in list of breakpoints";
     }
 }
