@@ -1,13 +1,14 @@
-import * as sass from "sass";
-import path from "path";
-import { writeFile, readdir, watch } from "fs/promises";
+/* eslint-disable no-console */
+import * as sass from 'sass';
+import path from 'path';
+import { writeFile, readdir, watch } from 'fs/promises';
 
 /**
  * Compile the given sass file and write the result in a sibling .css file
  * @param {string} sassFile
  */
 export const compileFileInPlace = async (sassFile) => {
-  const dest = sassFile.replace(path.extname(sassFile), ".css");
+  const dest = sassFile.replace(path.extname(sassFile), '.css');
   const promise = writeFile(dest, sass.compile(sassFile).css);
   console.log(`Compiled: ${sassFile} => ${dest}`);
   return promise;
@@ -22,18 +23,18 @@ export const compileFileInPlace = async (sassFile) => {
 export const compileDirectoryInPlace = async (
   directory,
   ignoredFiles = [],
-  promises = []
+  promises = [],
 ) => {
   const files = await readdir(directory, { withFileTypes: true });
-  for (const file of files) {
+  files.forEach((file) => {
     if (file.isDirectory()) {
       compileDirectoryInPlace(
         path.join(directory, file.name),
         ignoredFiles,
-        promises
+        promises,
       ); // recurse
     }
-    if (path.extname(file.name) === ".scss") {
+    if (path.extname(file.name) === '.scss') {
       if (!ignoredFiles.includes(file.name)) {
         const promise = compileFileInPlace(path.join(directory, file.name));
         promises.push(promise);
@@ -41,32 +42,29 @@ export const compileDirectoryInPlace = async (
         console.log(`${file.name} has been explicitly ignored for compilation`);
       }
     }
-  }
+  });
   return promises;
 };
 
 /**
  * Compiles all provided directories scss into css in-place
- * @param {string[]} directories 
- * @param {string[]} ignoredFiles 
- * @returns 
+ * @param {string[]} directories
+ * @param {string[]} ignoredFiles
+ * @returns
  */
 export const compileDirectoriesInPlace = async (
   directories,
-  ignoredFiles = []
+  ignoredFiles = [],
 ) => {
   let promises = [];
-  for (const directory of directories) {
+  directories.forEach(async (directory) => {
     try {
-      const batchPromises = await compileDirectoryInPlace(
-        directory,
-        ignoredFiles
-      );
-      promises = [...promises, ...batchPromises]
+      const batchPromises = compileDirectoryInPlace(directory, ignoredFiles);
+      promises = [...promises, ...batchPromises];
     } catch (error) {
       console.error(error);
     }
-  }
+  });
   return Promise.all(promises);
 };
 
@@ -78,9 +76,10 @@ export const compileDirectoriesInPlace = async (
 export const watchAndCompile = async (directory, ignoredFiles) => {
   console.log(`watching for changes in folder ${directory}...`);
   const watcher = watch(directory, { recursive: true });
+  // eslint-disable-next-line no-restricted-syntax
   for await (const event of watcher) {
     const { filename, eventType } = event;
-    if (path.extname(filename) === ".scss" && eventType === "change") {
+    if (path.extname(filename) === '.scss' && eventType === 'change') {
       console.log(`Change: ${filename}`);
       if (!ignoredFiles.includes(filename)) {
         compileFileInPlace(path.join(directory, filename));
