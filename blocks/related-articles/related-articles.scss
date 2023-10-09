@@ -13,16 +13,16 @@
     font-weight: bold;
   }
 
-  ul.related-article-links-container {
+  .related-article-links {
     margin-top: 0;
     margin-bottom: 0;
-  }
 
-  li.related-article-link {
-    margin-bottom: 1rem;
+    li {
+      margin-bottom: 1rem;
 
-    &:last-child {
-      margin-bottom: 0;
+      &:last-child {
+        margin-bottom: 0;
+      }
     }
   }
 }
