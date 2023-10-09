@@ -11,6 +11,7 @@ main .embed-video {
   height: 0;
   position: relative;
   padding-bottom: 56.25%;
+  border: 1px solid #1e1e1e;
 }
 
 main .embed > div {
