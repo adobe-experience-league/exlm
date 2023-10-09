@@ -13,12 +13,12 @@
     font-weight: bold;
   }
 
-  ul {
+  ul.related-article-links-container {
     margin-top: 0;
     margin-bottom: 0;
   }
 
-  li {
+  li.related-article-link {
     margin-bottom: 1rem;
 
     &:last-child {
