@@ -2,4 +2,4 @@ mountpoints:
   /:
     url: https://51837-exlmdconverter-exlmworkspace.adobeioruntime.net/api/v1/web/main/convert
     type: markup
-    suffix: ".md"
+    suffix: '.md'
