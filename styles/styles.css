@@ -1,16 +1,18 @@
 @charset "UTF-8";
-
 :root {
+  /* colors */
   --link-color: #035fe6;
   --link-hover-color: #136ff6;
   --background-color: #fff;
   --overlay-background-color: #eee;
   --highlight-background-color: #ccc;
   --text-color: #000;
+  /* fonts */
   --body-font-family: adobe-clean, roboto, roboto-fallback;
   --heading-font-family: var(--body-font-family);
-  --fixed-font-family: 'Roboto Mono', menlo, consolas, 'Liberation Mono',
+  --fixed-font-family: "Roboto Mono", menlo, consolas, "Liberation Mono",
     monospace;
+  /* default font sizes */
   --spectrum-font-size-50: 11px;
   --spectrum-font-size-75: 12px;
   --spectrum-font-size-100: 14px;
@@ -26,6 +28,7 @@
   --spectrum-font-size-1100: 45px;
   --spectrum-font-size-1200: 50px;
   --spectrum-font-size-1300: 60px;
+  /* heading font sizes */
   --spectrum-heading-size-xxxl: var(--spectrum-font-size-1300);
   --spectrum-heading-size-xxl: var(--spectrum-font-size-1100);
   --spectrum-heading-size-xl: var(--spectrum-font-size-900);
@@ -34,6 +37,7 @@
   --spectrum-heading-size-s: var(--spectrum-font-size-300);
   --spectrum-heading-size-xs: var(--spectrum-font-size-200);
   --spectrum-heading-size-xxs: var(--spectrum-font-size-100);
+  /* body font sizes */
   --spectrum-body-size-xxxl: var(--spectrum-font-size-600);
   --spectrum-body-size-xxl: var(--spectrum-font-size-500);
   --spectrum-body-size-xl: var(--spectrum-font-size-400);
@@ -43,7 +47,10 @@
   --spectrum-body-size-xs: var(--spectrum-font-size-75);
   --spectrum-body-line-height: var(--spectrum-line-height-200);
   --spectrum-body-color: var(--spectrum-gray-800);
+  /* nav height */
   --nav-height: 64px;
+  /* spectrum color palettes - light theme only
+  https: //spectrum.adobe.com/page/color-palette/#Latest-Spectrum-colors */
   --spectrum-gray-50: #fff;
   --spectrum-gray-75: #fdfdfd;
   --spectrum-gray-100: #f8f8f8;
@@ -230,9 +237,8 @@
   font-family: roboto-fallback;
   size-adjust: 100.06%;
   ascent-override: 95%;
-  src: local('Arial');
+  src: local("Arial");
 }
-
 body {
   font-size: var(--spectrum-body-size-l);
   margin: 0;
@@ -340,6 +346,7 @@ a:hover {
   color: var(--link-hover-color);
 }
 
+/* buttons */
 a.button:any-link,
 button {
   font-family: var(--body-font-family);
@@ -408,12 +415,12 @@ main blockquote {
 }
 
 main blockquote p::before {
-  content: '“';
+  content: "“";
   line-height: 0;
 }
 
 main blockquote p::after {
-  content: '”';
+  content: "”";
   line-height: 0;
 }
 
@@ -443,14 +450,13 @@ main .section {
     padding: 64px 32px;
   }
 }
-
 @media (min-width: 900px) {
   .section > div {
     max-width: 1200px;
     margin: auto;
   }
 }
-
+/* section metadata */
 main .section.highlight {
   background-color: var(--highlight-background-color);
 }
