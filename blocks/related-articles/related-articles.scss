@@ -1,26 +1,28 @@
 .related-articles {
-    color: #000;
-    padding: 1rem;
-    border: 1px solid #1e1e1e;
-    border-left-width: 3rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,.1), 0 0px 0 1px rgba(10,10,10,.02);
+  color: var(--text-color);
+  padding: 1rem;
+  border: 1px solid #1e1e1e;
+  border-left-width: 3rem;
+  margin-bottom: 2rem;
+  box-shadow:
+    0 0.5em 1em -0.125em #0a0a0a1a,
+    0 0 0 1px #0a0a0a05;
 
-    div:first-child{
-        margin-bottom: 8px;
-        font-weight: bold;
+  div:first-child {
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+
+  ul {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  li {
+    margin-bottom: 1rem;
+
+    &:last-child {
+      margin-bottom: 0;
     }
-
-    ul {
-        margin-top: 0;
-        margin-bottom: 0;
-    }
-
-    li {
-        margin-bottom: 1rem;
-        &:last-child {
-            margin-bottom: 0;
-        }
-    }
-
+  }
 }
