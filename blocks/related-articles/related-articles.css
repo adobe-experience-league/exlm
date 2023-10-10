@@ -1,0 +1,22 @@
+.related-articles {
+  color: var(--text-color);
+  padding: 1rem;
+  border: 1px solid #1e1e1e;
+  border-left-width: 3rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1019607843), 0 0 0 1px rgba(10, 10, 10, 0.0196078431);
+}
+.related-articles div:first-child {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+.related-articles .related-article-links {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.related-articles .related-article-links li {
+  margin-bottom: 1rem;
+}
+.related-articles .related-article-links li:last-child {
+  margin-bottom: 0;
+}
