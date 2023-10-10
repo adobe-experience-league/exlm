@@ -1,0 +1,22 @@
+.related-articles {
+  color: var(--text-color);
+  padding: 1rem;
+  border: 1px solid var(--non-spectrum-eerie-black);
+  border-left-width: 3rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--box-shadow-1);
+}
+.related-articles div:first-child {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+.related-articles .related-article-links {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.related-articles .related-article-links li {
+  margin-bottom: 1rem;
+}
+.related-articles .related-article-links li:last-child {
+  margin-bottom: 0;
+}

@@ -231,6 +231,10 @@
   --spectrum-yellow-1100: #5b4300;
   --spectrum-yellow-1200: #483300;
   --spectrum-yellow-1300: #362500;
+  /* Non-Spectrum custom colors */
+  --non-spectrum-eerie-black: #1e1e1e;
+  /* Box Shadows */
+  --box-shadow-1: 0 0.5em 1em -0.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
 }
 
 @font-face {
