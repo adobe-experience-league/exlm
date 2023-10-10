@@ -237,6 +237,15 @@
   --non-spectrum-tawny-orange: #d16100;
   --non-spectrum-ue-red: #bb0202;
   --non-spectrum-viridian: #007e50;
+  /* Spacing Tokens */
+  --space-token-xxs: 8px;
+  --space-token-xs: 16px;
+  --space-token-s: 24px;
+  --space-token-m: 32px;
+  --space-token-l: 40px;
+  --space-token-xl: 56px;
+  --space-token-xxl: 80px;
+  --space-token-xxxl: 104px;
   /* Box Shadows */
   --box-shadow-1: 0 0.5em 1em -0.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
 }
