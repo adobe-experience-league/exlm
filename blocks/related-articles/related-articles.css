@@ -1,10 +1,10 @@
 .related-articles {
   color: var(--text-color);
   padding: 1rem;
-  border: 1px solid #1e1e1e;
+  border: 1px solid var(--non-spectrum-eerie-black);
   border-left-width: 3rem;
   margin-bottom: 2rem;
-  box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1019607843), 0 0 0 1px rgba(10, 10, 10, 0.0196078431);
+  box-shadow: var(--box-shadow-1);
 }
 .related-articles div:first-child {
   margin-bottom: 8px;
