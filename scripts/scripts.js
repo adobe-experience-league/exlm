@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 import {
   sampleRUM,
   buildBlock,
@@ -23,7 +24,11 @@ function buildHeroBlock(main) {
   const h1 = main.querySelector('h1');
   const picture = main.querySelector('picture');
   // eslint-disable-next-line no-bitwise
-  if (h1 && picture && (h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING)) {
+  if (
+    h1 &&
+    picture &&
+    h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING
+  ) {
     const section = document.createElement('div');
     section.append(buildBlock('hero', { elems: [picture, h1] }));
     main.prepend(section);
@@ -36,7 +41,8 @@ function buildHeroBlock(main) {
 async function loadFonts() {
   await loadCSS(`${window.hlx.codeBasePath}/styles/fonts.css`);
   try {
-    if (!window.location.hostname.includes('localhost')) sessionStorage.setItem('fonts-loaded', 'true');
+    if (!window.location.hostname.includes('localhost'))
+      sessionStorage.setItem('fonts-loaded', 'true');
   } catch (e) {
     // do nothing
   }
@@ -133,3 +139,25 @@ async function loadPage() {
 }
 
 loadPage();
+
+/**
+ * Helper function to create DOM elements
+ * @param {string} tag DOM element to be created
+ * @param {array} attributes attributes to be added
+ */
+export function createTag(tag, attributes, html) {
+  const el = document.createElement(tag);
+  if (html) {
+    if (html instanceof HTMLElement || html instanceof SVGElement) {
+      el.append(html);
+    } else {
+      el.insertAdjacentHTML('beforeend', html);
+    }
+  }
+  if (attributes) {
+    Object.entries(attributes).forEach(([key, val]) => {
+      el.setAttribute(key, val);
+    });
+  }
+  return el;
+}

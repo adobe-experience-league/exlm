@@ -1,6 +1,6 @@
 Please always provide the Jira Issue your PR is for, as well as test URLs where your change can be observed (before and after):
 
-Jira ID: 
+Jira ID:
 
 Test URLs:
 

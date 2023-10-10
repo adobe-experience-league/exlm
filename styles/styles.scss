@@ -1,17 +1,7 @@
-// Copyright 2020 Adobe. All rights reserved.
-// This file is licensed to you under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License. You may obtain a copy
-// of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-// Unless required by applicable law or agreed to in writing, software distributed under
-// the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-// OF ANY KIND, either express or implied. See the License for the specific language
-// governing permissions and limitations under the License.
-
-@import "sass/breakpoints";
+@import './sass/breakpoints';
 
 :root {
-  // colors 
+  /* colors */
   --link-color: #035fe6;
   --link-hover-color: #136ff6;
   --background-color: #fff;
@@ -19,12 +9,13 @@
   --highlight-background-color: #ccc;
   --text-color: #000;
 
-  // fonts 
+  /* fonts */
   --body-font-family: adobe-clean, roboto, roboto-fallback;
   --heading-font-family: var(--body-font-family);
-  --fixed-font-family: 'Roboto Mono', menlo, consolas, 'Liberation Mono', monospace;
+  --fixed-font-family: 'Roboto Mono', menlo, consolas, 'Liberation Mono',
+    monospace;
 
-  // default font sizes 
+  /* default font sizes */
   --spectrum-font-size-50: 11px;
   --spectrum-font-size-75: 12px;
   --spectrum-font-size-100: 14px;
@@ -41,7 +32,7 @@
   --spectrum-font-size-1200: 50px;
   --spectrum-font-size-1300: 60px;
 
-  // heading font sizes 
+  /* heading font sizes */
   --spectrum-heading-size-xxxl: var(--spectrum-font-size-1300);
   --spectrum-heading-size-xxl: var(--spectrum-font-size-1100);
   --spectrum-heading-size-xl: var(--spectrum-font-size-900);
@@ -51,7 +42,7 @@
   --spectrum-heading-size-xs: var(--spectrum-font-size-200);
   --spectrum-heading-size-xxs: var(--spectrum-font-size-100);
 
-  // body font sizes 
+  /* body font sizes */
   --spectrum-body-size-xxxl: var(--spectrum-font-size-600);
   --spectrum-body-size-xxl: var(--spectrum-font-size-500);
   --spectrum-body-size-xl: var(--spectrum-font-size-400);
@@ -62,11 +53,11 @@
   --spectrum-body-line-height: var(--spectrum-line-height-200);
   --spectrum-body-color: var(--spectrum-gray-800);
 
-  // nav height 
+  /* nav height */
   --nav-height: 64px;
 
-  // spectrum color palettes - light theme only 
-  // https: //spectrum.adobe.com/page/color-palette/#Latest-Spectrum-colors 
+  /* spectrum color palettes - light theme only
+  https: //spectrum.adobe.com/page/color-palette/#Latest-Spectrum-colors */
   --spectrum-gray-50: #fff;
   --spectrum-gray-75: #fdfdfd;
   --spectrum-gray-100: #f8f8f8;
@@ -247,14 +238,23 @@
   --spectrum-yellow-1100: #5b4300;
   --spectrum-yellow-1200: #483300;
   --spectrum-yellow-1300: #362500;
+
+  /* Non-Spectrum custom colors */
+  --non-spectrum-eerie-black: #1e1e1e;
+  --non-spectrum-true-blue: #0469e3;
+  --non-spectrum-tawny-orange: #d16100;
+  --non-spectrum-ue-red: #bb0202;
+  --non-spectrum-viridian: #007e50;
+
+  /* Box Shadows */
+  --box-shadow-1: 0 0.5em 1em -0.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
 }
 
 @font-face {
   font-family: roboto-fallback;
   size-adjust: 100.06%;
   ascent-override: 95%;
-  src: local('Arial'
-    );
+  src: local('Arial');
 }
 
 body {
@@ -285,32 +285,32 @@ h6 {
   font-weight: 600;
   line-height: 1.25;
   margin-top: 1em;
-  margin-bottom: .5em;
+  margin-bottom: 0.5em;
   scroll-margin: calc(var(--nav-height) + 1em);
 }
 
 h1 {
-  font-size: var(--spectrum-heading-size-xl)
+  font-size: var(--spectrum-heading-size-xl);
 }
 
 h2 {
-  font-size: var(--spectrum-heading-size-l)
+  font-size: var(--spectrum-heading-size-l);
 }
 
 h3 {
-  font-size: var(--spectrum-heading-size-m)
+  font-size: var(--spectrum-heading-size-m);
 }
 
 h4 {
-  font-size: var(--spectrum-heading-size-s)
+  font-size: var(--spectrum-heading-size-s);
 }
 
 h5 {
-  font-size: var(--spectrum-heading-size-xs)
+  font-size: var(--spectrum-heading-size-xs);
 }
 
 h6 {
-  font-size: var(--spectrum-heading-size-xxs)
+  font-size: var(--spectrum-heading-size-xxs);
 }
 
 p,
@@ -339,7 +339,7 @@ samp {
 
 code,
 samp {
-  padding: .125em;
+  padding: 0.125em;
 }
 
 pre {
@@ -349,7 +349,7 @@ pre {
 main pre {
   background-color: var(--overlay-background-color);
   padding: 1em;
-  border-radius: .25em;
+  border-radius: 0.25em;
   overflow-x: auto;
   white-space: pre;
 }
@@ -364,7 +364,7 @@ a:hover {
   color: var(--link-hover-color);
 }
 
-// buttons 
+/* buttons */
 a.button:any-link,
 button {
   font-family: var(--body-font-family);
@@ -404,7 +404,7 @@ a.button.secondary,
 button.secondary {
   background-color: unset;
   border: 2px solid currentcolor;
-  color: var(--text-color)
+  color: var(--text-color);
 }
 
 main input {
@@ -433,12 +433,12 @@ main blockquote {
 }
 
 main blockquote p::before {
-  content: "“";
+  content: '“';
   line-height: 0;
 }
 
 main blockquote p::after {
-  content: "”";
+  content: '”';
   line-height: 0;
 }
 
@@ -476,7 +476,7 @@ main .section {
   }
 }
 
-// section metadata 
+/* section metadata */
 main .section.highlight {
   background-color: var(--highlight-background-color);
 }

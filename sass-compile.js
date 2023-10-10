@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import path from 'path';
 import { fileURLToPath } from 'url';
 import {
@@ -5,19 +6,17 @@ import {
   watchAndCompile,
 } from './build/sass-util.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const dirname = path.dirname(fileURLToPath(import.meta.url));
 const IGNORED_FILES = ['_breakpoints.scss']; // list of files to ignore from compilation
 const SASS_FOLDERS = ['styles', 'blocks']; // list of folders to compile
 
 // MAIN
 
-var args = process.argv.slice(2);
+const args = process.argv.slice(2);
 if (args.includes('--watch')) {
-  await watchAndCompile(path.join(__dirname), IGNORED_FILES);
+  await watchAndCompile(path.join(dirname), IGNORED_FILES);
 } else if (args.includes('--compile')) {
-  const directories = SASS_FOLDERS.map((folder) =>
-    path.join(__dirname, folder),
-  );
+  const directories = SASS_FOLDERS.map((folder) => path.join(dirname, folder));
   await compileDirectoriesInPlace(directories, IGNORED_FILES);
 } else {
   console.log('Please specify a flag: --watch or --compile');
