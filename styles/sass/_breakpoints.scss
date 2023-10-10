@@ -1,8 +1,6 @@
 $breakpoints: (
-  'mobile': 600px,
-  'tablet': 900px,
-  'desktop': 1200px,
-) !default;
+    'tablet': 600px,
+    'desktop': 900px) !default;
 
 @mixin breakpoint($breakpoint) {
   // If the key exists in the map

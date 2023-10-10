@@ -463,14 +463,14 @@ main .section {
   padding: 64px 16px;
 }
 
-@include breakpoint(mobile) {
+@include breakpoint(tablet) {
   main .section {
     padding: 64px 32px;
   }
 }
 
-@include breakpoint(tablet) {
-  .section > div {
+@include breakpoint(desktop) {
+  .section>div {
     max-width: 1200px;
     margin: auto;
   }
