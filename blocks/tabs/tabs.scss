@@ -1,8 +1,8 @@
 .tabs {
   background-color: var(--spectrum-gray-100);
-  padding: 16px 24px 24px;
+  padding: 14px 21px 21px;
   border-radius: 8px;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 
   &::before {
     content: '';
@@ -47,7 +47,7 @@
   }
 
   .tab-content {
-    padding: 12px 0;
+    padding: 10.5px 0;
     color: var(--spectrum-gray-800);
     font-family: var(--body-font-family);
     font-size: var(--spectrum-body-size-m);
