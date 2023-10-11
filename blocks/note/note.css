@@ -1,7 +1,7 @@
 .note {
   color: var(--spectrum-gray-800);
   background-color: var(--background-color);
-  font-size: 16px;
+  font-size: var(--spectrum-body-size-m);
   line-height: 25.6px;
   margin-bottom: 28px;
   padding: 14px;
@@ -15,7 +15,7 @@
   color: var(--text-color);
   display: flex;
   align-items: center;
-  font-size: 14px;
+  font-size: var(--spectrum-heading-size-xxs);
   font-weight: bold;
   line-height: 21px;
   margin-bottom: 8px;
