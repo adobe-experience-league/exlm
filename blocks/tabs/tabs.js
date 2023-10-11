@@ -41,7 +41,7 @@ export default function decorate(block) {
       if (index === 0) {
         tabNames.push(el.textContent.trim());
       } else {
-        tabContents.push(el.textContent.trim());
+        tabContents.push(el.innerHTML);
       }
     });
   });
