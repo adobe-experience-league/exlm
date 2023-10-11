@@ -14,7 +14,7 @@
   top: 56px;
 }
 .tabs .tab-list {
-  overflow-x: scroll;
+  overflow-x: auto;
   white-space: nowrap;
 }
 .tabs .tab-list button.tab-title {
