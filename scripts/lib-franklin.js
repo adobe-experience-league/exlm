@@ -701,6 +701,14 @@ export function decorateButtons(element) {
 }
 
 /**
+ * Check if the browser is firefox or not.
+ * @returns boolean
+ */
+function isFirefox() {
+  return navigator.userAgent.toLowerCase().includes('firefox');
+}
+
+/**
  * Load LCP block and/or wait for LCP in default content.
  */
 export async function waitForLCP(lcpBlocks) {
@@ -712,6 +720,7 @@ export async function waitForLCP(lcpBlocks) {
   const lcpCandidate = document.querySelector('main img');
   await new Promise((resolve) => {
     if (lcpCandidate && !lcpCandidate.complete) {
+      if (isFirefox()) resolve();
       lcpCandidate.setAttribute('loading', 'eager');
       lcpCandidate.addEventListener('load', resolve);
       lcpCandidate.addEventListener('error', resolve);
