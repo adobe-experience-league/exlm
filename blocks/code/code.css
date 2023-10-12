@@ -197,7 +197,7 @@ code[class*=language-],pre[class*=language-] {
     top: .3em;
     right: .2em;
     transition: opacity .3s ease-in-out;
-    opacity: 0
+    opacity: 0;
   }
   
   div.code-toolbar:hover>.toolbar {
@@ -209,7 +209,12 @@ code[class*=language-],pre[class*=language-] {
   }
   
   div.code-toolbar>.toolbar>.toolbar-item {
-    display: inline-block
+    display: inline-block;
+  }
+
+  div.code-toolbar>.toolbar>.toolbar-item:not(:last-child) {
+    margin-right: 7px;
+    display: inline-block;
   }
   
   div.code-toolbar>.toolbar>.toolbar-item>a {
@@ -229,7 +234,7 @@ code[class*=language-],pre[class*=language-] {
   
   div.code-toolbar>.toolbar>.toolbar-item>a,div.code-toolbar>.toolbar>.toolbar-item>button,div.code-toolbar>.toolbar>.toolbar-item>span {
     color: #bbb;
-    font-size: .8em;
+    font-size: 14px;
     padding: .5em;
     background: #f5f2f0;
     background: rgba(224,224,224,.2);
@@ -238,7 +243,7 @@ code[class*=language-],pre[class*=language-] {
   }
   
   div.code-toolbar>.toolbar>.toolbar-item>a:focus,div.code-toolbar>.toolbar>.toolbar-item>a:hover,div.code-toolbar>.toolbar>.toolbar-item>button:focus,div.code-toolbar>.toolbar>.toolbar-item>button:hover,div.code-toolbar>.toolbar>.toolbar-item>span:focus,div.code-toolbar>.toolbar>.toolbar-item>span:hover {
-    color: inherit;
+    color: #eee;
     text-decoration: none
   }
   
