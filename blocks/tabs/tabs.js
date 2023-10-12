@@ -41,19 +41,20 @@ export default function decorate(block) {
       if (index === 0) {
         tabNames.push(el.textContent.trim());
       } else {
-        tabContents.push(el.textContent.trim());
+        tabContents.push(el.innerHTML);
       }
     });
   });
 
   tabNames.forEach((name, i) => {
+    const nameId = name.toLowerCase().split(' ').join('-');
     const tabBtnAttributes = {
       role: 'tab',
       class: 'tab-title',
-      id: `tab-${initCount}-${name}`,
+      id: `tab-${initCount}-${nameId}`,
       tabindex: i > 0 ? '0' : '-1',
       'aria-selected': i === 0 ? 'true' : 'false',
-      'aria-controls': `tab-panel-${initCount}-${name}`,
+      'aria-controls': `tab-panel-${initCount}-${nameId}`,
       'aria-label': name,
       'data-tab-id': i,
     };
@@ -65,18 +66,20 @@ export default function decorate(block) {
 
   tabContents.forEach((content, i) => {
     const name = tabNames[i];
+    const nameId = name.toLowerCase().split(' ').join('-');
+
     const tabContentAttributes = {
-      id: `tab-panel-${initCount}-${name}`,
+      id: `tab-panel-${initCount}-${nameId}`,
       role: 'tabpanel',
       class: 'tabpanel',
       tabindex: '0',
-      'aria-labelledby': `tab-${initCount}-${name}`,
+      'aria-labelledby': `tab-${initCount}-${nameId}`,
     };
 
     const tabContentDiv = createTag('div', tabContentAttributes);
     // default first tab is active
     if (i === 0) tabContentDiv.classList.add('active');
-    tabContentDiv.textContent = content;
+    tabContentDiv.innerHTML = content;
     tabContent.appendChild(tabContentDiv);
   });
 
