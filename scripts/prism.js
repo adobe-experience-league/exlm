@@ -12139,3 +12139,26 @@ Prism.languages.wgsl = {
         })
       : console.warn('Copy to Clipboard plugin loaded before Toolbar plugin.'));
 })();
+
+function prismInitialize() {
+  const codeBlocks = document.querySelectorAll('pre code') || {};
+  if (codeBlocks.length > 0) {
+    Prism.plugins.toolbar.registerButton('toggle-wrap', function (env) {
+      var button = document.createElement('button');
+      return (
+        (button.textContent = 'Toggle Text Wrapping'),
+        button.addEventListener('click', function () {
+          return (
+            env.element.parentNode.classList.toggle('code-wrap'),
+            Prism.highlightElement(env.element),
+            !1
+          );
+        }),
+        button
+      );
+    });
+    for (const codeBlock of codeBlocks) Prism.highlightElement(codeBlock);
+  }
+}
+
+prismInitialize();
