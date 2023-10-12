@@ -1,0 +1,6 @@
+.shade-box {
+  background-color: var(--spectrum-gray-100);
+  padding: 1rem 1.5rem 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+}
