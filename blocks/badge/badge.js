@@ -13,10 +13,10 @@ export default function decorate(block) {
       ? `title="${secondChildDiv.textContent.trim()}"`
       : '';
 
-    if (anchorElement) {
-      const parts = anchorElement.split('#');
-      const target = parts.length > 1 ? parts[1] : '';
+    if (anchorElement) {      
       const href = anchorElement.getAttribute('href');
+      const parts = href.split('#');
+      const target = parts.length > 1 ? parts[1] : '';
       content = `<a href="${href}" class="${classes}" ${titleAttribute} ${target}>${firstDivContent}</a>`;
     } else {
       content = `<div class="${classes}" ${titleAttribute}>${firstDivContent}</div>`;

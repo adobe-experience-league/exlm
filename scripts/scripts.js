@@ -67,8 +67,9 @@ export function decorateExternalLinks(main) {
     const titleAttribute = '';
     const href = anchorElement.getAttribute('href');
     const parts = href.split('#');
-    const target = parts.length > 1 ? parts[1] : '';    
-    console.log(`<a href="${href}" ${titleAttribute} ${target}>${text}</a>`);
+    const url = parts[0] || '';
+    const target = parts[1] ? `target="${parts[1]}"` : '';
+    console.log(`<a href="${url}" ${titleAttribute} ${target}>${text}</a>`);
   });
 }
 
