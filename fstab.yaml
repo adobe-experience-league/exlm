@@ -1,5 +1,6 @@
 mountpoints:
   /:
-    url: https://51837-exlmconverter-dev.adobeioruntime.net/api/v1/web/main/convert
+    url: https://51837-767olivekite-dev.adobeioruntime.net/api/v1/web/main/convert 
     type: markup
     suffix: '.md'
+
