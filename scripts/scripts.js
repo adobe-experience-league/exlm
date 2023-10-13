@@ -61,6 +61,17 @@ function buildAutoBlocks(main) {
   }
 }
 
+export function decorateExternalLinks(main) {
+  main.querySelectorAll('a').forEach((anchorElement) => {
+    const text = a.innerText;
+    const titleAttribute = '';
+    const parts = anchorElement.split('#');
+    const target = parts.length > 1 ? parts[1] : '';
+    const href = anchorElement.getAttribute('href');
+    console.log(`<a href="${href}" ${titleAttribute} ${target}>${text}</a>`);
+  });
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -73,6 +84,7 @@ export function decorateMain(main) {
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  decorateExternalLinks(main);
 }
 
 /**
