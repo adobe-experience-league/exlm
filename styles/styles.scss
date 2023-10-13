@@ -1,4 +1,5 @@
 @import './sass/breakpoints';
+@import './sass/typography';
 
 :root {
   /* colors */
@@ -10,7 +11,9 @@
   --text-color: #000;
 
   /* fonts */
-  --body-font-family: adobe-clean, sans-serif, roboto, roboto-fallback;
+  --body-font-family: 'Adobe Clean', adobe-clean, 'Source Sans Pro',
+    -apple-system, system-ui, 'Segoe UI', roboto, ubuntu, 'Trebuchet MS',
+    'Lucida Grande', sans-serif;
   --heading-font-family: var(--body-font-family);
   --fixed-font-family: 'Roboto Mono', menlo, consolas, 'Liberation Mono',
     monospace;
@@ -31,6 +34,19 @@
   --spectrum-font-size-1100: 45px;
   --spectrum-font-size-1200: 50px;
   --spectrum-font-size-1300: 60px;
+
+  /* font weight */
+  --spectrum-font-weight-700: 700;
+  --spectrum-font-weight-600: 600;
+  --spectrum-font-weight-400: 400;
+
+  /* line height */
+  --spectrum-line-height-xxxl: 57.2px;
+  --spectrum-line-height-xxl: 36.4px;
+  --spectrum-line-height-xl: 28.6px;
+  --spectrum-line-height-l: 27px;
+  --spectrum-line-height-m: 25.6px;
+  --spectrum-line-height-s: 19.2px;
 
   /* heading font sizes */
   --spectrum-heading-size-xxxl: var(--spectrum-font-size-1300);
@@ -241,10 +257,14 @@
 
   /* Non-Spectrum custom colors */
   --non-spectrum-eerie-black: #1e1e1e;
+  --non-spectrum-custom-dark: #363636;
   --non-spectrum-true-blue: #0469e3;
   --non-spectrum-tawny-orange: #d16100;
   --non-spectrum-ue-red: #bb0202;
   --non-spectrum-viridian: #007e50;
+  --non-spectrum-grey: #4a4a4a;
+  --non-spectrum-grey-updated: #6e6e6e;
+  --non-spectrum-link: #378ef0;
 
   /* Spacing Tokens */
   --space-token-xxs: 8px;
@@ -285,36 +305,6 @@ header {
   height: var(--nav-height);
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--heading-font-family);
-  font-weight: 600;
-  line-height: 1.25;
-  margin-top: 1em;
-  margin-bottom: 0.5em;
-  scroll-margin: calc(var(--nav-height) + 1em);
-}
-
-h1 {
-  font-size: var(--spectrum-heading-size-xl);
-}
-
-h2 {
-  font-size: var(--spectrum-heading-size-l);
-}
-
-h3 {
-  font-size: var(--spectrum-heading-size-m);
-}
-
-h4 {
-  font-size: var(--spectrum-heading-size-s);
-}
-
 h5 {
   font-size: var(--spectrum-heading-size-xs);
 }
@@ -323,7 +313,6 @@ h6 {
   font-size: var(--spectrum-heading-size-xxs);
 }
 
-p,
 dl,
 ol,
 ul,
@@ -365,13 +354,14 @@ main pre {
 }
 
 a:any-link {
-  color: var(--link-color);
+  @include text-styles($color: var(--non-spectrum-link));
+
+  cursor: pointer;
   text-decoration: none;
 }
 
 a:hover {
-  text-decoration: underline;
-  color: var(--link-hover-color);
+  color: var(--non-spectrum-custom-dark);
 }
 
 /* buttons */
@@ -480,7 +470,7 @@ main .section {
 }
 
 @include breakpoint(desktop) {
-  .section>div {
+  .section > div {
     max-width: 1200px;
     margin: auto;
   }
