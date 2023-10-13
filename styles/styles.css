@@ -1,5 +1,6 @@
 @charset "UTF-8";
-.h1, h1 {
+.h1,
+h1 {
   font-family: var(--body-font-family);
   font-size: 44px;
   font-weight: var(--spectrum-font-weight-700);
@@ -10,7 +11,8 @@
   margin-bottom: 16px;
 }
 
-.h2, h2 {
+.h2,
+h2 {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-heading-size-l);
   font-weight: var(--spectrum-font-weight-700);
@@ -21,7 +23,8 @@
   margin-bottom: 7px;
 }
 
-.h3, h3 {
+.h3,
+h3 {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-heading-size-m);
   font-weight: var(--spectrum-font-weight-700);
@@ -32,7 +35,8 @@
   margin-bottom: 5.5px;
 }
 
-.h4, h4 {
+.h4,
+h4 {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-heading-size-s);
   font-weight: var(--spectrum-font-weight-600);
@@ -43,7 +47,8 @@
   margin-bottom: 7px;
 }
 
-.p, p {
+.p,
+p {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-body-size-m);
   font-weight: var(--spectrum-font-weight-400);
@@ -67,7 +72,8 @@ h3 + p {
   margin-bottom: 16px;
 }
 
-.a, a {
+.a,
+a {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-body-size-m);
   font-weight: var(--spectrum-font-weight-400);
@@ -108,7 +114,9 @@ strong {
   --highlight-background-color: #ccc;
   --text-color: #000;
   /* fonts */
-  --body-font-family: "Adobe Clean", adobe-clean, "Source Sans Pro", -apple-system, system-ui, "Segoe UI", roboto, ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif;
+  --body-font-family: "Adobe Clean", adobe-clean, "Source Sans Pro",
+    -apple-system, system-ui, "Segoe UI", roboto, ubuntu, "Trebuchet MS",
+    "Lucida Grande", sans-serif;
   --heading-font-family: var(--body-font-family);
   --fixed-font-family: "Roboto Mono", menlo, consolas, "Liberation Mono",
     monospace;
