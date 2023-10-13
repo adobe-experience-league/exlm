@@ -73,7 +73,9 @@ export function decorateExternalLinks(main) {
       const url = parts[0];
       content = `<a href="${url}" ${titleAttribute} target="_blank">${text}</a>`;
     }
-    content = `<a href="${href}" ${titleAttribute}>${text}</a>`;
+    else {
+      content = `<a href="${href}" ${titleAttribute}>${text}</a>`;
+    }
     console.log(content);
   });
 }
