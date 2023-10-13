@@ -66,10 +66,15 @@ export function decorateExternalLinks(main) {
     const text = anchorElement.innerText;
     const titleAttribute = '';
     const href = anchorElement.getAttribute('href');
-    const parts = href.split('#');
-    const url = parts[0] || '';
-    const target = parts[1] ? `target="${parts[1]}"` : '';
-    console.log(`<a href="${url}" ${titleAttribute} ${target}>${text}</a>`);
+    const key = "#_blank";
+    let content;
+    if (href.includes(key)) {
+      const parts = href.split(key);
+      const url = parts[0];
+      content = `<a href="${url}" ${titleAttribute} target="_blank">${text}</a>`;
+    }
+    content = `<a href="${href}" ${titleAttribute}>${text}</a>`;
+    console.log(content);
   });
 }
 

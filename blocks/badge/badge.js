@@ -13,11 +13,17 @@ export default function decorate(block) {
       ? `title="${secondChildDiv.textContent.trim()}"`
       : '';
 
-    if (anchorElement) {      
+    if (anchorElement) {
       const href = anchorElement.getAttribute('href');
-      const parts = href.split('#');
-      const target = parts.length > 1 ? parts[1] : '';
-      content = `<a href="${href}" class="${classes}" ${titleAttribute} ${target}>${firstDivContent}</a>`;
+      const key = "#_blank";
+      if (href.includes(key)) {
+        const parts = href.split(key);
+        const url = parts[0];
+        content = `<a href="${url}" class="${classes}" ${titleAttribute} target="_blank">${firstDivContent}</a>`;
+      }
+      else {
+        content = `<a href="${href}" class="${classes}" ${titleAttribute}>${firstDivContent}</a>`;
+      }      
     } else {
       content = `<div class="${classes}" ${titleAttribute}>${firstDivContent}</div>`;
     }
@@ -25,4 +31,3 @@ export default function decorate(block) {
 
   wrapper.innerHTML = content;
 }
- 
