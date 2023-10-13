@@ -65,9 +65,9 @@ export function decorateExternalLinks(main) {
   main.querySelectorAll('a').forEach((anchorElement) => {
     const text = anchorElement.innerText;
     const titleAttribute = '';
-    const parts = anchorElement.split('#');
-    const target = parts.length > 1 ? parts[1] : '';
     const href = anchorElement.getAttribute('href');
+    const parts = href.split('#');
+    const target = parts.length > 1 ? parts[1] : '';    
     console.log(`<a href="${href}" ${titleAttribute} ${target}>${text}</a>`);
   });
 }
