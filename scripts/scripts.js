@@ -63,7 +63,7 @@ function buildAutoBlocks(main) {
 
 export function decorateExternalLinks(main) {
   main.querySelectorAll('a').forEach((anchorElement) => {
-    const text = a.innerText;
+    const text = anchorElement.innerText;
     const titleAttribute = '';
     const parts = anchorElement.split('#');
     const target = parts.length > 1 ? parts[1] : '';
