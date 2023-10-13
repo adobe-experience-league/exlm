@@ -14,8 +14,10 @@ export default function decorate(block) {
       : '';
 
     if (anchorElement) {
+      const parts = anchorElement.split('#');
+      const target = parts.length > 1 ? parts[1] : '';
       const href = anchorElement.getAttribute('href');
-      content = `<a href="${href}" class="${classes}" ${titleAttribute}>${firstDivContent}</a>`;
+      content = `<a href="${href}" class="${classes}" ${titleAttribute} ${target}>${firstDivContent}</a>`;
     } else {
       content = `<div class="${classes}" ${titleAttribute}>${firstDivContent}</div>`;
     }
@@ -23,3 +25,4 @@ export default function decorate(block) {
 
   wrapper.innerHTML = content;
 }
+ 
