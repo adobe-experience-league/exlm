@@ -1,4 +1,110 @@
 @charset "UTF-8";
+.h1,
+h1 {
+  font-family: var(--body-font-family);
+  font-size: var(--exlm-font-size-h1);
+  font-weight: var(--font-weight-700);
+  font-style: normal;
+  line-height: var(--spectrum-line-height-xxxl);
+  color: var(--non-spectrum-grey);
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+
+.h2,
+h2 {
+  font-family: var(--body-font-family);
+  font-size: var(--exlm-font-size-h2);
+  font-weight: var(--font-weight-700);
+  font-style: normal;
+  line-height: var(--spectrum-line-height-xxl);
+  color: var(--non-spectrum-grey);
+  margin-top: 40px;
+  margin-bottom: 7px;
+}
+
+.h3,
+h3 {
+  font-family: var(--body-font-family);
+  font-size: var(--exlm-font-size-h3);
+  font-weight: var(--font-weight-700);
+  font-style: normal;
+  line-height: var(--spectrum-line-height-xl);
+  color: var(--text-color);
+  margin-top: 40px;
+  margin-bottom: 5.5px;
+}
+
+.h4,
+h4 {
+  font-family: var(--body-font-family);
+  font-size: var(--exlm-font-size-h4);
+  font-weight: var(--font-weight-600);
+  font-style: normal;
+  line-height: var(--spectrum-line-height-l);
+  color: var(--text-color);
+  margin-top: 12px;
+  margin-bottom: 7px;
+}
+
+.p,
+p {
+  font-family: var(--body-font-family);
+  font-size: var(--exlm-font-size-p);
+  font-weight: var(--font-weight-400);
+  font-style: normal;
+  line-height: var(--spectrum-line-height-m);
+  color: var(--spectrum-gray-800);
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+h1 + p,
+h2 + p,
+h3 + p {
+  font-family: var(--body-font-family);
+  font-size: var(--exlm-font-size-p);
+  font-weight: var(--font-weight-400);
+  font-style: normal;
+  line-height: var(--spectrum-line-height-m);
+  color: var(--spectrum-gray-800);
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+
+.a,
+a {
+  font-family: var(--body-font-family);
+  font-size: var(--exlm-font-size-p);
+  font-weight: var(--font-weight-400);
+  font-style: normal;
+  line-height: var(--spectrum-line-height-m);
+  color: var(--non-spectrum-link);
+  margin-top: 12px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.last-updated {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-400);
+  font-style: normal;
+  line-height: var(--spectrum-line-height-s);
+  color: var(--non-spectrum-grey-updated);
+  margin-top: 4px;
+  margin-bottom: 9px;
+}
+
+a:hover {
+  color: var(--non-spectrum-custom-dark);
+}
+
+strong {
+  color: var(--non-spectrum-custom-dark);
+}
+
 :root {
   /* colors */
   --link-color: #035fe6;
@@ -8,7 +114,9 @@
   --highlight-background-color: #ccc;
   --text-color: #000;
   /* fonts */
-  --body-font-family: adobe-clean, sans-serif, roboto, roboto-fallback;
+  --body-font-family: "Adobe Clean", adobe-clean, "Source Sans Pro",
+    -apple-system, system-ui, "Segoe UI", roboto, ubuntu, "Trebuchet MS",
+    "Lucida Grande", sans-serif;
   --heading-font-family: var(--body-font-family);
   --fixed-font-family: "Roboto Mono", menlo, consolas, "Liberation Mono",
     monospace;
@@ -28,6 +136,22 @@
   --spectrum-font-size-1100: 45px;
   --spectrum-font-size-1200: 50px;
   --spectrum-font-size-1300: 60px;
+  /* exlm dev.corp font values */
+  --exlm-font-size-h1: 28px;
+  --exlm-font-size-h2: 24px;
+  --exlm-font-size-h3: 20px;
+  --exlm-font-size-p: 16px;
+  /* font weight */
+  --font-weight-700: 700;
+  --font-weight-600: 600;
+  --font-weight-400: 400;
+  /* line height */
+  --spectrum-line-height-xxxl: 57.2px;
+  --spectrum-line-height-xxl: 36.4px;
+  --spectrum-line-height-xl: 28.6px;
+  --spectrum-line-height-l: 27px;
+  --spectrum-line-height-m: 25.6px;
+  --spectrum-line-height-s: 19.2px;
   /* heading font sizes */
   --spectrum-heading-size-xxxl: var(--spectrum-font-size-1300);
   --spectrum-heading-size-xxl: var(--spectrum-font-size-1100);
@@ -233,10 +357,14 @@
   --spectrum-yellow-1300: #362500;
   /* Non-Spectrum custom colors */
   --non-spectrum-eerie-black: #1e1e1e;
+  --non-spectrum-custom-dark: #363636;
   --non-spectrum-true-blue: #0469e3;
   --non-spectrum-tawny-orange: #d16100;
   --non-spectrum-ue-red: #bb0202;
   --non-spectrum-viridian: #007e50;
+  --non-spectrum-grey: #4a4a4a;
+  --non-spectrum-grey-updated: #6e6e6e;
+  --non-spectrum-link: #378ef0;
   /* Spacing Tokens */
   --space-token-xxs: 8px;
   --space-token-xs: 16px;
@@ -250,6 +378,16 @@
   --box-shadow-1: 0 0.5em 1em -0.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
 }
 
+@media (min-width: 900px) {
+  :root {
+    /* exlm dev.corp font values */
+    --exlm-font-size-h1: 44px;
+    --exlm-font-size-h2: 28px;
+    --exlm-font-size-h3: 22px;
+    --exlm-font-size-h4: 18px;
+    --exlm-font-size-p: 16px;
+  }
+}
 @font-face {
   font-family: roboto-fallback;
   size-adjust: 100.06%;
@@ -274,36 +412,6 @@ header {
   height: var(--nav-height);
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--heading-font-family);
-  font-weight: 600;
-  line-height: 1.25;
-  margin-top: 1em;
-  margin-bottom: 0.5em;
-  scroll-margin: calc(var(--nav-height) + 1em);
-}
-
-h1 {
-  font-size: var(--spectrum-heading-size-xl);
-}
-
-h2 {
-  font-size: var(--spectrum-heading-size-l);
-}
-
-h3 {
-  font-size: var(--spectrum-heading-size-m);
-}
-
-h4 {
-  font-size: var(--spectrum-heading-size-s);
-}
-
 h5 {
   font-size: var(--spectrum-heading-size-xs);
 }
@@ -312,7 +420,6 @@ h6 {
   font-size: var(--spectrum-heading-size-xxs);
 }
 
-p,
 dl,
 ol,
 ul,
@@ -354,13 +461,20 @@ main pre {
 }
 
 a:any-link {
-  color: var(--link-color);
+  font-family: var(--body-font-family);
+  font-size: var(--exlm-font-size-p);
+  font-weight: var(--font-weight-400);
+  font-style: normal;
+  line-height: var(--spectrum-line-height-m);
+  color: var(--non-spectrum-link);
+  margin-top: 12px;
+  margin-bottom: 16px;
+  cursor: pointer;
   text-decoration: none;
 }
 
 a:hover {
-  text-decoration: underline;
-  color: var(--link-hover-color);
+  color: var(--non-spectrum-custom-dark);
 }
 
 /* buttons */
@@ -476,4 +590,8 @@ main .section {
 /* section metadata */
 main .section.highlight {
   background-color: var(--highlight-background-color);
+}
+
+.section > .default-content-wrapper:last-child > p:last-child {
+  margin-bottom: 0;
 }
