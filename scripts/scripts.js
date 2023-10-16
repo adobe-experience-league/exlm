@@ -4,7 +4,6 @@ import {
   buildBlock,
   loadHeader,
   loadFooter,
-  decorateButtons,
   decorateIcons,
   decorateSections,
   decorateBlocks,
@@ -67,8 +66,14 @@ function buildAutoBlocks(main) {
  */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
-  // hopefully forward compatible button decoration
-  decorateButtons(main);
+  /**
+   * Franklin converts paragraphs containing a single
+   * link as buttons. This is not the behaviour we need.
+   * The original decorateButtons function is however
+   * retained and will be revisited during button specific
+   * decoration.
+   */
+  // decorateButtons(main);
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);
