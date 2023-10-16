@@ -35,10 +35,16 @@
   --spectrum-font-size-1200: 50px;
   --spectrum-font-size-1300: 60px;
 
+  /* exlm dev.corp font values */
+  --exlm-font-size-h1: 28px;
+  --exlm-font-size-h2: 24px;
+  --exlm-font-size-h3: 20px;
+  --exlm-font-size-p: 16px;
+
   /* font weight */
-  --spectrum-font-weight-700: 700;
-  --spectrum-font-weight-600: 600;
-  --spectrum-font-weight-400: 400;
+  --font-weight-700: 700;
+  --font-weight-600: 600;
+  --font-weight-400: 400;
 
   /* line height */
   --spectrum-line-height-xxxl: 57.2px;
@@ -280,6 +286,17 @@
   --box-shadow-1: 0 0.5em 1em -0.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
 }
 
+@include breakpoint('desktop') {
+  :root {
+    /* exlm dev.corp font values */
+    --exlm-font-size-h1: 44px;
+    --exlm-font-size-h2: 28px;
+    --exlm-font-size-h3: 22px;
+    --exlm-font-size-h4: 18px;
+    --exlm-font-size-p: 16px;
+  }
+}
+
 @font-face {
   font-family: roboto-fallback;
   size-adjust: 100.06%;
@@ -479,4 +496,8 @@ main .section {
 /* section metadata */
 main .section.highlight {
   background-color: var(--highlight-background-color);
+}
+
+.section > .default-content-wrapper:last-child > p:last-child {
+  margin-bottom: 0;
 }

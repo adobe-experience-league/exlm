@@ -2,8 +2,8 @@
 .h1,
 h1 {
   font-family: var(--body-font-family);
-  font-size: 44px;
-  font-weight: var(--spectrum-font-weight-700);
+  font-size: var(--exlm-font-size-h1);
+  font-weight: var(--font-weight-700);
   font-style: normal;
   line-height: var(--spectrum-line-height-xxxl);
   color: var(--non-spectrum-grey);
@@ -14,8 +14,8 @@ h1 {
 .h2,
 h2 {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-heading-size-l);
-  font-weight: var(--spectrum-font-weight-700);
+  font-size: var(--exlm-font-size-h2);
+  font-weight: var(--font-weight-700);
   font-style: normal;
   line-height: var(--spectrum-line-height-xxl);
   color: var(--non-spectrum-grey);
@@ -26,8 +26,8 @@ h2 {
 .h3,
 h3 {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-heading-size-m);
-  font-weight: var(--spectrum-font-weight-700);
+  font-size: var(--exlm-font-size-h3);
+  font-weight: var(--font-weight-700);
   font-style: normal;
   line-height: var(--spectrum-line-height-xl);
   color: var(--text-color);
@@ -38,8 +38,8 @@ h3 {
 .h4,
 h4 {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-heading-size-s);
-  font-weight: var(--spectrum-font-weight-600);
+  font-size: var(--exlm-font-size-h4);
+  font-weight: var(--font-weight-600);
   font-style: normal;
   line-height: var(--spectrum-line-height-l);
   color: var(--text-color);
@@ -50,8 +50,8 @@ h4 {
 .p,
 p {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-body-size-m);
-  font-weight: var(--spectrum-font-weight-400);
+  font-size: var(--exlm-font-size-p);
+  font-weight: var(--font-weight-400);
   font-style: normal;
   line-height: var(--spectrum-line-height-m);
   color: var(--spectrum-gray-800);
@@ -63,8 +63,8 @@ h1 + p,
 h2 + p,
 h3 + p {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-body-size-m);
-  font-weight: var(--spectrum-font-weight-400);
+  font-size: var(--exlm-font-size-p);
+  font-weight: var(--font-weight-400);
   font-style: normal;
   line-height: var(--spectrum-line-height-m);
   color: var(--spectrum-gray-800);
@@ -75,8 +75,8 @@ h3 + p {
 .a,
 a {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-body-size-m);
-  font-weight: var(--spectrum-font-weight-400);
+  font-size: var(--exlm-font-size-p);
+  font-weight: var(--font-weight-400);
   font-style: normal;
   line-height: var(--spectrum-line-height-m);
   color: var(--non-spectrum-link);
@@ -89,7 +89,7 @@ a {
 .last-updated {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
-  font-weight: var(--spectrum-font-weight-400);
+  font-weight: var(--font-weight-400);
   font-style: normal;
   line-height: var(--spectrum-line-height-s);
   color: var(--non-spectrum-grey-updated);
@@ -136,10 +136,15 @@ strong {
   --spectrum-font-size-1100: 45px;
   --spectrum-font-size-1200: 50px;
   --spectrum-font-size-1300: 60px;
+  /* exlm dev.corp font values */
+  --exlm-font-size-h1: 28px;
+  --exlm-font-size-h2: 24px;
+  --exlm-font-size-h3: 20px;
+  --exlm-font-size-p: 16px;
   /* font weight */
-  --spectrum-font-weight-700: 700;
-  --spectrum-font-weight-600: 600;
-  --spectrum-font-weight-400: 400;
+  --font-weight-700: 700;
+  --font-weight-600: 600;
+  --font-weight-400: 400;
   /* line height */
   --spectrum-line-height-xxxl: 57.2px;
   --spectrum-line-height-xxl: 36.4px;
@@ -373,6 +378,16 @@ strong {
   --box-shadow-1: 0 0.5em 1em -0.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
 }
 
+@media (min-width: 900px) {
+  :root {
+    /* exlm dev.corp font values */
+    --exlm-font-size-h1: 44px;
+    --exlm-font-size-h2: 28px;
+    --exlm-font-size-h3: 22px;
+    --exlm-font-size-h4: 18px;
+    --exlm-font-size-p: 16px;
+  }
+}
 @font-face {
   font-family: roboto-fallback;
   size-adjust: 100.06%;
@@ -447,8 +462,8 @@ main pre {
 
 a:any-link {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-body-size-m);
-  font-weight: var(--spectrum-font-weight-400);
+  font-size: var(--exlm-font-size-p);
+  font-weight: var(--font-weight-400);
   font-style: normal;
   line-height: var(--spectrum-line-height-m);
   color: var(--non-spectrum-link);
@@ -575,4 +590,8 @@ main .section {
 /* section metadata */
 main .section.highlight {
   background-color: var(--highlight-background-color);
+}
+
+.section > .default-content-wrapper:last-child > p:last-child {
+  margin-bottom: 0;
 }

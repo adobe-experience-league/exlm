@@ -1,7 +1,7 @@
 @mixin text-styles(
   $font-family: var(--body-font-family),
-  $font-size: var(--spectrum-body-size-m),
-  $font-weight: var(--spectrum-font-weight-400),
+  $font-size: var(--exlm-font-size-p),
+  $font-weight: var(--font-weight-400),
   $font-style: normal,
   $line-height: var(--spectrum-line-height-m),
   $color: var(--spectrum-gray-800),
@@ -21,8 +21,8 @@
 .h1,
 h1 {
   @include text-styles(
-    $font-size: 44px,
-    $font-weight: var(--spectrum-font-weight-700),
+    $font-size: var(--exlm-font-size-h1),
+    $font-weight: var(--font-weight-700),
     $line-height: var(--spectrum-line-height-xxxl),
     $margin-top: 12px,
     $margin-bottom: 16px,
@@ -33,8 +33,8 @@ h1 {
 .h2,
 h2 {
   @include text-styles(
-    $font-size: var(--spectrum-heading-size-l),
-    $font-weight: var(--spectrum-font-weight-700),
+    $font-size: var(--exlm-font-size-h2),
+    $font-weight: var(--font-weight-700),
     $line-height: var(--spectrum-line-height-xxl),
     $margin-top: 40px,
     $margin-bottom: 7px,
@@ -45,8 +45,8 @@ h2 {
 .h3,
 h3 {
   @include text-styles(
-    $font-size: var(--spectrum-heading-size-m),
-    $font-weight: var(--spectrum-font-weight-700),
+    $font-size: var(--exlm-font-size-h3),
+    $font-weight: var(--font-weight-700),
     $line-height: var(--spectrum-line-height-xl),
     $margin-top: 40px,
     $margin-bottom: 5.5px,
@@ -57,8 +57,8 @@ h3 {
 .h4,
 h4 {
   @include text-styles(
-    $font-size: var(--spectrum-heading-size-s),
-    $font-weight: var(--spectrum-font-weight-600),
+    $font-size: var(--exlm-font-size-h4),
+    $font-weight: var(--font-weight-600),
     $line-height: var(--spectrum-line-height-l),
     $margin-bottom: 7px,
     $color: var(--text-color)
