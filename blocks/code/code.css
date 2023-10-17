@@ -373,6 +373,38 @@ div.code-toolbar>.toolbar>.toolbar-item>button>span:hover {
   color: #ededed
 }
 
+.code-toolbar, pre code .token, .code-toolbar code .token {
+  align-items: unset;
+  background-color: unset;
+  border-radius: unset;
+  display: unset;
+  font-size: unset;
+  height: unset;
+  justify-content: unset;
+  margin-right: unset;
+  min-width: unset;
+  padding: unset;
+  text-align: unset;
+  vertical-align: unset;
+}
+
+.code-toolbar pre code .tag, .code-toolbar code .tag {
+  align-items: unset;
+  background-color: unset;
+  border-radius: unset;
+  color: unset;
+  display: unset;
+  font-size: unset;
+  height: unset;
+  justify-content: unset;
+  line-height: unset;
+  padding-left: unset;
+  padding-right: unset;
+  white-space: unset;
+}
+
+/* Prism.js overridding styles from docs.css */
+
 .code-toolbar {
   font-size: 14px;
 }
