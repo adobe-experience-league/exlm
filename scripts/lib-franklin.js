@@ -532,11 +532,7 @@ export function tableToBlock(table) {
 
   // add classes to result block
   const resultBlock = document.createElement('div');
-  blockClassNames
-    .split(' ')
-    .map((c) => c.trim())
-    .filter((c) => c.length > 0)
-    .forEach((c) => resultBlock.classList.add(c));
+  resultBlock.className = blockClassNames;
 
   // convert all table rows/cells to div rows/cells
   rows.forEach((row) => {
