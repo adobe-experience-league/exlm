@@ -17,6 +17,7 @@
   --heading-font-family: var(--body-font-family);
   --fixed-font-family: 'Roboto Mono', menlo, consolas, 'Liberation Mono',
     monospace;
+  --spectrum-code-font-family: 'Source Code Pro', 'monaco', monospace;
 
   /* default font sizes */
   --spectrum-font-size-50: 11px;
@@ -356,6 +357,15 @@ samp {
 code,
 samp {
   padding: 0.125em;
+}
+
+code:not([class^='language-']) {
+  font-family: var(--spectrum-code-font-family);
+  font-size: var(--spectrum-body-size-s);
+  background-color: var(--spectrum-gray-100);
+  padding: 4px;
+  border: 1px solid var(--spectrum-gray-300);
+  border-radius: 4px;
 }
 
 pre {
