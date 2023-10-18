@@ -7,6 +7,7 @@ import {
   decorateIcons,
   decorateSections,
   decorateBlocks,
+  decorateBlock,
   decorateTemplateAndTheme,
   waitForLCP,
   loadBlocks,
@@ -48,12 +49,71 @@ async function loadFonts() {
 }
 
 /**
+ * Convert Table to block HTMl
+ * @param {HTMLTableElement} table
+ */
+export function tableToBlock(table) {
+  let blockClassNames = '';
+  const rows = [];
+  [...table.children].forEach((child) => {
+    if (child.tagName.toLowerCase() === 'thead') {
+      [...child.children].forEach((hRow, hRowIndex) => {
+        if (hRowIndex === 0) {
+          blockClassNames = hRow.textContent.toLowerCase(); // first header cell in first header row is block class names
+        } else {
+          rows.push(hRow.children); // all other header rows are rows
+        }
+      });
+    } else if (child.tagName.toLowerCase() === 'tbody') {
+      rows.push(...child.children); // all body rows are rows
+    }
+  });
+
+  // add classes to result block
+  const resultBlock = document.createElement('div');
+  resultBlock.className = blockClassNames;
+
+  // convert all table rows/cells to div rows/cells
+  rows.forEach((row) => {
+    const blockRow = document.createElement('div');
+    [...row.children].forEach((cell) => {
+      const blockCell = document.createElement('div');
+      blockCell.append(...cell.childNodes);
+      blockRow.appendChild(blockCell);
+    });
+    resultBlock.appendChild(blockRow);
+  });
+
+  return resultBlock;
+}
+
+/**
+ * Build synthetic blocks nested in the given block.
+ * A synthetic block is a table whose first header is the block class names (sort of like the tables in doc authoring)
+ * @param {HTMLElement} block
+ */
+export function buildSyntheticBlocks(main) {
+  main.querySelectorAll('div > div > div').forEach((block) => {
+    const tables = [...block.querySelectorAll('table')];
+    return tables.map((table) => {
+      const syntheticBlock = tableToBlock(table);
+      const syntheticBlockWrapper = document.createElement('div');
+      syntheticBlockWrapper.appendChild(syntheticBlock);
+      table.replaceWith(syntheticBlockWrapper);
+      decorateBlock(syntheticBlock);
+      return syntheticBlock;
+    });
+  });
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
   try {
     buildHeroBlock(main);
+    buildSyntheticBlocks(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);

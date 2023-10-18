@@ -5,11 +5,17 @@
  */
 
 function buildCell(rowIndex) {
-  const cell = rowIndex ? document.createElement('td') : document.createElement('th');
+  const cell = rowIndex
+    ? document.createElement('td')
+    : document.createElement('th');
   if (!rowIndex) cell.setAttribute('scope', 'col');
   return cell;
 }
 
+/**
+ *
+ * @param {HTMLDivElement} block
+ */
 export default async function decorate(block) {
   const table = document.createElement('table');
   const thead = document.createElement('thead');
@@ -21,10 +27,9 @@ export default async function decorate(block) {
     else thead.append(row);
     [...child.children].forEach((col) => {
       const cell = buildCell(i);
-      cell.innerHTML = col.innerHTML;
+      cell.append(...col.childNodes);
       row.append(cell);
     });
   });
-  block.innerHTML = '';
   block.append(table);
 }
