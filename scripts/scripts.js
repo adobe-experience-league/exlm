@@ -35,6 +35,33 @@ function buildHeroBlock(main) {
   }
 }
 
+function buildLayout(main) {
+  if (main) {
+    // Get all child div elements
+    const childDivs = main.getElementsByTagName('div');
+
+    // Ensure there are at least 3 child divs
+    if (childDivs.length === 0) {
+      console.error('Not enough child divs to create the layout');
+      return;
+    }
+
+    // Set CSS styles for the layout
+    main.style.display = 'grid';
+    main.style.gridTemplateColumns = `20% 1fr 20%`;
+    main.style.width = '100%';
+
+    const preCodeElements = main.querySelectorAll('pre');
+    const imgElements = main.querySelectorAll('img');
+    Array.from(preCodeElements).forEach((preCodeElement) => {
+      preCodeElement.style.whiteSpace = 'pre-wrap';
+    });
+    Array.from(imgElements).forEach((imgElement) => {
+      imgElement.style.maxWidth = '100%';
+    });
+  }
+}
+
 /**
  * load fonts.css and set a session storage flag
  */
@@ -113,6 +140,7 @@ export function buildSyntheticBlocks(main) {
 function buildAutoBlocks(main) {
   try {
     buildHeroBlock(main);
+    buildLayout(main);
     buildSyntheticBlocks(main);
   } catch (error) {
     // eslint-disable-next-line no-console
