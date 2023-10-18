@@ -510,62 +510,6 @@ function getBlockConfig(block) {
 }
 
 /**
- * Convert Table to block HTMl
- * @param {HTMLTableElement} table
- */
-export function tableToBlock(table) {
-  let blockClassNames = '';
-  const rows = [];
-  [...table.children].forEach((child) => {
-    if (child.tagName.toLowerCase() === 'thead') {
-      [...child.children].forEach((hRow, hRowIndex) => {
-        if (hRowIndex === 0) {
-          blockClassNames = hRow.textContent.toLowerCase(); // first header cell in first header row is block class names
-        } else {
-          rows.push(hRow.children); // all other header rows are rows
-        }
-      });
-    } else if (child.tagName.toLowerCase() === 'tbody') {
-      rows.push(...child.children); // all body rows are rows
-    }
-  });
-
-  // add classes to result block
-  const resultBlock = document.createElement('div');
-  resultBlock.className = blockClassNames;
-
-  // convert all table rows/cells to div rows/cells
-  rows.forEach((row) => {
-    const blockRow = document.createElement('div');
-    [...row.children].forEach((cell) => {
-      const blockCell = document.createElement('div');
-      blockCell.innerHTML = cell.innerHTML;
-      blockRow.appendChild(blockCell);
-    });
-    resultBlock.appendChild(blockRow);
-  });
-
-  return resultBlock;
-}
-
-/**
- * Build synthetic blocks nested in the given block.
- * A synthetic block is a table whose first header is the block class names (sort of like the tables in doc authoring)
- * @param {HTMLDivElement} block
- */
-export function buildSyntheticBlocks(block) {
-  const tables = [...block.querySelectorAll('table')];
-  return tables.map((table) => {
-    const syntheticBlock = tableToBlock(table);
-    const syntheticBlockWrapper = document.createElement('div');
-    syntheticBlockWrapper.appendChild(syntheticBlock);
-    table.replaceWith(syntheticBlockWrapper);
-    decorateBlock(syntheticBlock);
-    return syntheticBlock;
-  });
-}
-
-/**
  * Loads JS and CSS for a block.
  * @param {Element} block The block element
  */
@@ -608,20 +552,7 @@ export async function loadBlocks(main) {
   const blocks = [...main.querySelectorAll('div.block')];
   for (let i = 0; i < blocks.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
-    const block = blocks[i];
-
-    // load syntheticBlocks first and in parallell
-    // this is crucial to ensure all nested blocks are loaded, before the parent block is loaded
-    // given that blocks tend to make a lot of dom changes.
-    const syntheticBlocks = buildSyntheticBlocks(block);
-    // eslint-disable-next-line no-await-in-loop
-    await Promise.all(
-      syntheticBlocks.map((syntheticBlock) => loadBlock(syntheticBlock)),
-    );
-
-    // load the parent block.
-    // eslint-disable-next-line no-await-in-loop
-    await loadBlock(block);
+    await loadBlock(blocks[i]);
     updateSectionsStatus(main);
   }
 }
