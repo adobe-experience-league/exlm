@@ -1,0 +1,54 @@
+.video-transcript.block {
+  details {
+    display: block;
+    background-color: var(--background-color);
+    margin: 0 25px;
+    padding: 0 var(--space-token-xs);
+    font-size: var(--spectrum-font-size-100);
+    line-height: 21px;
+
+    &[open] {
+      padding: var(--space-token-xs);
+      padding-top: 0;
+    }
+
+    p {
+      font-size: var(--spectrum-font-size-100);
+      line-height: 21px;
+    }
+
+    summary {
+      list-style: none;
+      font-weight: var(--font-weight-700);
+      cursor: pointer;
+      font-size: var(--spectrum-font-size-100);
+      color: var(--non-spectrum-navy-blue);
+      padding: var(--space-token-xs) 0;
+
+      &:focus {
+        outline: none;
+      }
+
+      &::marker {
+        content: none;
+      }
+    }
+
+    & > *:not(summary) {
+      margin-left: 1rem;
+      margin-top: 1rem;
+    }
+  }
+
+  details summary::after {
+    content: '>';
+    display: inline-block;
+    margin-left: 5px;
+    font-weight: var(--font-weight-900);
+    transition: transform 0.15s ease-in-out;
+  }
+
+  details[open] summary::after {
+    transform: rotate(90deg);
+  }
+}

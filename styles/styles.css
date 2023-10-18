@@ -143,6 +143,7 @@ strong {
   --exlm-font-size-h3: 20px;
   --exlm-font-size-p: 16px;
   /* font weight */
+  --font-weight-900: 900;
   --font-weight-700: 700;
   --font-weight-600: 600;
   --font-weight-400: 400;
@@ -366,6 +367,7 @@ strong {
   --non-spectrum-grey: #4a4a4a;
   --non-spectrum-grey-updated: #6e6e6e;
   --non-spectrum-link: #378ef0;
+  --non-spectrum-navy-blue: #1473E6;
   /* Spacing Tokens */
   --space-token-xxs: 8px;
   --space-token-xs: 16px;
