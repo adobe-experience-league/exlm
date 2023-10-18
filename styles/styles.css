@@ -366,6 +366,8 @@ strong {
   --non-spectrum-grey: #4a4a4a;
   --non-spectrum-grey-updated: #6e6e6e;
   --non-spectrum-link: #378ef0;
+  --non-spectrum-bg: #fafafa;
+  --non-spectrum-hover-bg: #f5f5f5;
   /* Spacing Tokens */
   --space-token-xxs: 8px;
   --space-token-xs: 16px;
