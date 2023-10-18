@@ -48,6 +48,10 @@
     transition: transform 0.15s ease-in-out;
   }
 
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+
   details[open] summary::after {
     transform: rotate(90deg);
   }

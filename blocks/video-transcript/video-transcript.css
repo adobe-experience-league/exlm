@@ -20,7 +20,6 @@
   cursor: pointer;
   font-size: var(--spectrum-font-size-100);
   color: var(--non-spectrum-navy-blue);
-  padding-left: 0;
   padding: var(--space-token-xs) 0;
 }
 .video-transcript.block details summary:focus {
@@ -39,6 +38,9 @@
   margin-left: 5px;
   font-weight: var(--font-weight-900);
   transition: transform 0.15s ease-in-out;
+}
+.video-transcript.block details summary::-webkit-details-marker {
+  display: none;
 }
 .video-transcript.block details[open] summary::after {
   transform: rotate(90deg);
