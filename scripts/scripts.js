@@ -35,20 +35,108 @@ function buildHeroBlock(main) {
   }
 }
 
+function createToggleLayoutSection(main, railElement, isLeftSection = true) {
+  railElement.style.position = 'relative';
+  const wrapperElement = document.createElement('div');
+  wrapperElement.classList.add('wrapper');
+  wrapperElement.style.overflow = 'scroll';
+  wrapperElement.style.width = '100%';
+  const leftRailChildren = railElement.innerHTML;
+  wrapperElement.innerHTML = leftRailChildren;
+  railElement.classList.add('expanded');
+  railElement.replaceChildren(wrapperElement);
+  const expanderElement = document.createElement('div');
+  expanderElement.classList.add('expander');
+  expanderElement.innerHTML = `<img src="https://experienceleague-dev.corp.adobe.com/assets/img/left-rail-open.svg">`;
+  expanderElement.style.position = 'absolute';
+  expanderElement.style.cursor = 'pointer';
+  expanderElement.style.top = '0px';
+  expanderElement.classList.add('expanded');
+  if (isLeftSection) {
+    expanderElement.style.right = '20px';
+  } else {
+    expanderElement.style.left = '0px';
+    expanderElement.firstChild.style.transform = `rotate(180deg)`;
+  }
+
+  railElement.style.display = 'flex';
+  railElement.style.gap = '8px';
+  if (!isLeftSection) {
+    railElement.style.flexDirection = 'row-reverse';
+  }
+  railElement.appendChild(expanderElement);
+
+  expanderElement.onclick = () => {
+    const MIN_RAIL_WIDTH = '40px';
+    let leftSectionWidth;
+    let rightSectionWidth;
+    let iconTransform;
+    let displayValue;
+    if (expanderElement.classList.contains('expanded')) {
+      expanderElement.classList.remove('expanded');
+      railElement.classList.remove('expanded');
+      if (isLeftSection) {
+        leftSectionWidth = MIN_RAIL_WIDTH;
+        rightSectionWidth = main.children[2]?.classList?.contains('expanded')
+          ? '20%'
+          : MIN_RAIL_WIDTH;
+      } else {
+        leftSectionWidth = main.children[0]?.classList?.contains('expanded')
+          ? '20%'
+          : MIN_RAIL_WIDTH;
+        rightSectionWidth = MIN_RAIL_WIDTH;
+      }
+      displayValue = 'none';
+      iconTransform = isLeftSection ? 'rotate(180deg)' : '';
+    } else {
+      expanderElement.classList.add('expanded');
+      railElement.classList.add('expanded');
+      if (isLeftSection) {
+        leftSectionWidth = '20%';
+        rightSectionWidth = main?.children?.[2]?.classList?.contains('expanded')
+          ? '20%'
+          : MIN_RAIL_WIDTH;
+      } else {
+        leftSectionWidth = main?.children?.[0]?.classList?.contains('expanded')
+          ? '20%'
+          : MIN_RAIL_WIDTH;
+        rightSectionWidth = '20%';
+      }
+      displayValue = '';
+      iconTransform = isLeftSection ? '' : 'rotate(180deg)';
+    }
+    wrapperElement.style.display = displayValue;
+    expanderElement.firstChild.style.transform = iconTransform;
+    main.style.gridTemplateColumns = `${leftSectionWidth} 1fr ${rightSectionWidth}`;
+  };
+}
+
 function buildLayout(main) {
   // Get all child div elements
-  const childDivs = main.getElementsByTagName('div');
+  const childDivs = main?.children;
 
   // Ensure there are at least 3 child divs
-  if (childDivs.length !== 3) {
-    console.error('Not enough child divs to create the layout');
+  if (childDivs?.length !== 3) {
     return;
   }
 
   // Set CSS styles for the layout
   main.style.display = 'grid';
   main.style.gridTemplateColumns = `20% 1fr 20%`;
+  main.style.gap = '8px';
   main.style.width = '100%';
+
+  const [leftRail, , rightRail] = main.children;
+  createToggleLayoutSection(main, leftRail, true);
+  createToggleLayoutSection(main, rightRail, false);
+
+  // Setting additional css so that child elements don't mess up the overall layout
+  Array.from(main.querySelectorAll('pre')).forEach((preElement) => {
+    preElement.style.whiteSpace = 'pre-wrap';
+  });
+  Array.from(main.querySelectorAll('img')).forEach((imgElement) => {
+    imgElement.style.maxWidth = '100%';
+  });
 }
 
 /**
