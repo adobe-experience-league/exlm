@@ -26,9 +26,6 @@
   border-bottom: 1px solid var(--spectrum-gray-200);
   height: 64px;
 }
-.header .exl-topnav-wrapper .nav-hamburger {
-  display: none;
-}
 .header .exl-topnav-wrapper h2, .header .exl-topnav-wrapper a {
   color: var(--spectrum-gray-800);
   font-size: var(--spectrum-font-size-100);
@@ -43,7 +40,11 @@
 .header .exl-topnav-wrapper a:hover {
   color: var(--link-color);
 }
-.header .exl-topnav-wrapper .exl-brand-container h2, .header .exl-topnav-wrapper .exl-brand-container h2 a {
+.header .exl-topnav-wrapper .nav-hamburger {
+  display: none;
+}
+.header .exl-topnav-wrapper .exl-brand-container h2,
+.header .exl-topnav-wrapper .exl-brand-container h2 a {
   font-size: var(--spectrum-font-size-200);
   font-weight: 600;
 }
@@ -54,14 +55,14 @@
   gap: 44px;
   justify-content: flex-start;
 }
-.header .exl-navItem.large-menu {
+.header .exl-nav-item.large-menu {
   margin-right: 15px;
 }
-.header .exl-navItem.large-menu h2 a {
+.header .exl-nav-item.large-menu h2 a {
   display: inline-block;
   position: relative;
 }
-.header .exl-navItem.large-menu h2 a::after {
+.header .exl-nav-item.large-menu h2 a::after {
   border-width: 0 1px 1px 0;
   border-style: solid;
   border-color: var(--spectrum-gray-800);
@@ -78,30 +79,30 @@
   top: 50%;
   width: 6px;
 }
-.header .exl-navAction {
+.header .exl-nav-action {
   align-items: center;
   display: flex;
   gap: 17px;
   justify-content: space-between;
 }
-.header .exl-navAction .search > div:nth-child(1) {
+.header .exl-nav-action .search > div:nth-child(1) {
   display: none;
 }
-.header .exl-navAction .adobe-logo a svg {
+.header .exl-nav-action .adobe-logo a svg {
   fill: inherit;
   height: 20px;
   vertical-align: middle;
   width: 22px;
 }
-.header .exl-navAction .language-selector {
+.header .exl-nav-action .language-selector {
   position: relative;
 }
-.header .exl-navAction .language-selector a img {
+.header .exl-nav-action .language-selector a img {
   height: 18px;
   vertical-align: middle;
   width: 18px;
 }
-.header .exl-navAction .language-selector .language-dropdown {
+.header .exl-nav-action .language-selector .language-dropdown {
   background: var(--non-spectrum-bg);
   display: none;
   left: 50%;
@@ -111,15 +112,15 @@
   transform: translate(-50%, 0);
   top: 20px;
 }
-.header .exl-navAction .language-selector .language-dropdown a.language-item {
+.header .exl-nav-action .language-selector .language-dropdown a.language-item {
   cursor: pointer;
   display: block;
   padding: 5px 25px;
   white-space: nowrap;
 }
-.header .exl-navAction .language-selector .language-dropdown a.language-item:hover {
+.header .exl-nav-action .language-selector .language-dropdown a.language-item:hover {
   background: var(--non-spectrum-hover-bg);
 }
-.header .exl-navAction .language-selector:hover .language-dropdown {
+.header .exl-nav-action .language-selector:hover .language-dropdown {
   display: block;
 }

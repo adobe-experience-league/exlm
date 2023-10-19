@@ -26,9 +26,9 @@ const CONFIG = {
 
 // Utility function for removing Extra Divs within div block
 const removeExtraDivs = (sel, tag) => {
-  const h2Tag = sel.querySelector(tag);
-  if (h2Tag) {
-    sel.innerHTML = h2Tag.outerHTML;
+  const tagType = sel.querySelector(tag);
+  if (tagType) {
+    sel.innerHTML = tagType.outerHTML;
   }
 };
 
@@ -42,7 +42,16 @@ export default async function decorate(block) {
 
   if (response.ok) {
     const topNavContent = (await response.text()).trim();
-    block.innerHTML = `<div class="exl-topnav-wrapper"><nav class="exl-topnav" aria-label="Main">${topNavContent}</nav></div>`;
+    const topNavWrapper = document.createElement('div');
+    topNavWrapper.className = 'exl-topnav-wrapper';
+    const navWrapper = document.createElement('nav');
+    navWrapper.className = 'exl-topnav';
+    navWrapper.setAttribute('aria-label', 'Main navigation');
+    navWrapper.setAttribute('role', 'navigation');
+
+    navWrapper.innerHTML = topNavContent;
+    topNavWrapper.innerHTML = navWrapper.outerHTML;
+    block.innerHTML = topNavWrapper.outerHTML;
 
     const wrapper = block.closest('.header');
     const exlLogo = wrapper.querySelector(
@@ -53,7 +62,7 @@ export default async function decorate(block) {
     // Remove extra Div blocks from logo block
     removeExtraDivs(exlLogo, 'h2');
 
-    // Assign class identifiers to parent div blocks
+    // Assign slector identifier only to specific nav elements
     const selectors = [
       wrapper.querySelector(
         '.exl-topnav-wrapper .exl-topnav > div:nth-child(2)',
@@ -88,20 +97,20 @@ export default async function decorate(block) {
           '.exl-topnav-wrapper .exl-topnav > div:nth-child(10)',
         )
       ) {
-        selector.className = 'exl-navAction';
+        selector.className = 'exl-nav-action';
       } else if (selector.querySelector('.large-menu')) {
-        selector.className = 'exl-navItem large-menu';
+        selector.className = 'exl-nav-item large-menu';
       } else {
-        selector.className = 'exl-navItem';
+        selector.className = 'exl-nav-item';
       }
     });
 
-    // Wrap all nav items in a parent div block
+    // Wrap only nav items in a parent div block
     const exlNav = document.createElement('div');
     exlNav.className = 'exl-nav';
 
     const exlTopNav = block.querySelector('.exl-topnav');
-    const navItems = exlTopNav.querySelectorAll('.exl-navItem');
+    const navItems = exlTopNav.querySelectorAll('.exl-nav-item');
     const profile = exlTopNav.querySelector('.profile');
 
     navItems.forEach((item) => {
@@ -123,7 +132,7 @@ export default async function decorate(block) {
     exlTopNav.insertBefore(hamburger, exlNav);
 
     // Reposition Sign Link
-    const exlNavAction = exlTopNav.querySelector('.exl-navAction');
+    const exlNavAction = exlTopNav.querySelector('.exl-nav-action');
     const adobeLogo = block.querySelector('.adobe-logo');
     exlNavAction.insertBefore(profile, adobeLogo);
 
