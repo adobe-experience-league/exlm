@@ -36,81 +36,77 @@ function buildHeroBlock(main) {
 }
 
 function createToggleLayoutSection(main, railElement, isLeftSection = true) {
-  railElement.style.position = 'relative';
+  const secondaryClassName = isLeftSection
+    ? 'rail-section-left'
+    : 'rail-section-right';
+  railElement.classList.add(
+    'rail-section',
+    secondaryClassName,
+    'rail-section-expanded',
+  );
   const wrapperElement = document.createElement('div');
-  wrapperElement.classList.add('wrapper');
-  wrapperElement.style.overflow = 'scroll';
-  wrapperElement.style.width = '100%';
-  const leftRailChildren = railElement.innerHTML;
-  wrapperElement.innerHTML = leftRailChildren;
-  railElement.classList.add('expanded');
+  wrapperElement.classList.add('rail-section-wrapper');
+  const railChildren = railElement.innerHTML;
+  wrapperElement.innerHTML = railChildren;
   railElement.replaceChildren(wrapperElement);
-  const expanderElement = document.createElement('div');
-  expanderElement.classList.add('expander');
-  expanderElement.innerHTML = `<img src="https://experienceleague-dev.corp.adobe.com/assets/img/left-rail-open.svg">`;
-  expanderElement.style.position = 'absolute';
-  expanderElement.style.cursor = 'pointer';
-  expanderElement.style.top = '0px';
-  expanderElement.classList.add('expanded');
-  if (isLeftSection) {
-    expanderElement.style.right = '20px';
-  } else {
-    expanderElement.style.left = '0px';
-    expanderElement.firstChild.style.transform = `rotate(180deg)`;
-  }
+  const toggleElement = document.createElement('div');
+  toggleElement.classList.add(
+    'rail-section-toggler',
+    'rail-section-toggler-expanded',
+  );
+  toggleElement.innerHTML = `<img src="https://experienceleague-dev.corp.adobe.com/assets/img/left-rail-open.svg">`;
+  railElement.appendChild(toggleElement);
 
-  railElement.style.display = 'flex';
-  railElement.style.gap = '8px';
-  if (!isLeftSection) {
-    railElement.style.flexDirection = 'row-reverse';
-  }
-  railElement.appendChild(expanderElement);
-
-  expanderElement.onclick = () => {
+  toggleElement.onclick = () => {
     const MIN_RAIL_WIDTH = '40px';
+    const MAX_RAIL_WIDTH = '20%';
     let leftSectionWidth;
     let rightSectionWidth;
-    let iconTransform;
-    let displayValue;
-    if (expanderElement.classList.contains('expanded')) {
-      expanderElement.classList.remove('expanded');
-      railElement.classList.remove('expanded');
+    if (toggleElement.classList.contains('rail-section-toggler-expanded')) {
+      toggleElement.classList.remove('rail-section-toggler-expanded');
+      railElement.classList.remove('rail-section-expanded');
       if (isLeftSection) {
         leftSectionWidth = MIN_RAIL_WIDTH;
-        rightSectionWidth = main.children[2]?.classList?.contains('expanded')
-          ? '20%'
+        rightSectionWidth = main.children[2]?.classList?.contains(
+          'rail-section-expanded',
+        )
+          ? MAX_RAIL_WIDTH
           : MIN_RAIL_WIDTH;
       } else {
-        leftSectionWidth = main.children[0]?.classList?.contains('expanded')
-          ? '20%'
+        leftSectionWidth = main.children[0]?.classList?.contains(
+          'rail-section-expanded',
+        )
+          ? MAX_RAIL_WIDTH
           : MIN_RAIL_WIDTH;
         rightSectionWidth = MIN_RAIL_WIDTH;
       }
-      displayValue = 'none';
-      iconTransform = isLeftSection ? 'rotate(180deg)' : '';
     } else {
-      expanderElement.classList.add('expanded');
-      railElement.classList.add('expanded');
+      toggleElement.classList.add('rail-section-toggler-expanded');
+      railElement.classList.add('rail-section-expanded');
       if (isLeftSection) {
-        leftSectionWidth = '20%';
-        rightSectionWidth = main?.children?.[2]?.classList?.contains('expanded')
-          ? '20%'
+        leftSectionWidth = MAX_RAIL_WIDTH;
+        rightSectionWidth = main?.children?.[2]?.classList?.contains(
+          'rail-section-expanded',
+        )
+          ? MAX_RAIL_WIDTH
           : MIN_RAIL_WIDTH;
       } else {
-        leftSectionWidth = main?.children?.[0]?.classList?.contains('expanded')
-          ? '20%'
+        leftSectionWidth = main?.children?.[0]?.classList?.contains(
+          'rail-section-expanded',
+        )
+          ? MAX_RAIL_WIDTH
           : MIN_RAIL_WIDTH;
-        rightSectionWidth = '20%';
+        rightSectionWidth = MAX_RAIL_WIDTH;
       }
-      displayValue = '';
-      iconTransform = isLeftSection ? '' : 'rotate(180deg)';
     }
-    wrapperElement.style.display = displayValue;
-    expanderElement.firstChild.style.transform = iconTransform;
     main.style.gridTemplateColumns = `${leftSectionWidth} 1fr ${rightSectionWidth}`;
   };
 }
 
+/**
+ * Builds three column grid layout with left/right toggle section
+ * @param {Element} main The container element
+ */
 function buildLayout(main) {
   // Get all child div elements
   const childDivs = main?.children;
@@ -121,10 +117,7 @@ function buildLayout(main) {
   }
 
   // Set CSS styles for the layout
-  main.style.display = 'grid';
-  main.style.gridTemplateColumns = `20% 1fr 20%`;
-  main.style.gap = '8px';
-  main.style.width = '100%';
+  main.classList.add('three-col-layout');
 
   const [leftRail, , rightRail] = main.children;
   createToggleLayoutSection(main, leftRail, true);
