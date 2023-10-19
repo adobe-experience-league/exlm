@@ -42,21 +42,16 @@ export default async function decorate(block) {
 
   if (response.ok) {
     const topNavContent = (await response.text()).trim();
-    const topNavWrapper = document.createElement('div');
-    topNavWrapper.className = 'exl-topnav-wrapper';
     const navWrapper = document.createElement('nav');
     navWrapper.className = 'exl-topnav';
     navWrapper.setAttribute('aria-label', 'Main navigation');
     navWrapper.setAttribute('role', 'navigation');
 
     navWrapper.innerHTML = topNavContent;
-    topNavWrapper.innerHTML = navWrapper.outerHTML;
-    block.innerHTML = topNavWrapper.outerHTML;
+    block.innerHTML = navWrapper.outerHTML;
 
     const wrapper = block.closest('.header');
-    const exlLogo = wrapper.querySelector(
-      '.exl-topnav-wrapper .exl-topnav > div:nth-child(1)',
-    );
+    const exlLogo = wrapper.querySelector('.exl-topnav > div:nth-child(1)');
     exlLogo.className = 'exl-brand-container';
 
     // Remove extra Div blocks from logo block
@@ -64,38 +59,19 @@ export default async function decorate(block) {
 
     // Assign slector identifier only to specific nav elements
     const selectors = [
-      wrapper.querySelector(
-        '.exl-topnav-wrapper .exl-topnav > div:nth-child(2)',
-      ),
-      wrapper.querySelector(
-        '.exl-topnav-wrapper .exl-topnav > div:nth-child(3)',
-      ),
-      wrapper.querySelector(
-        '.exl-topnav-wrapper .exl-topnav > div:nth-child(4)',
-      ),
-      wrapper.querySelector(
-        '.exl-topnav-wrapper .exl-topnav > div:nth-child(5)',
-      ),
-      wrapper.querySelector(
-        '.exl-topnav-wrapper .exl-topnav > div:nth-child(6)',
-      ),
-      wrapper.querySelector(
-        '.exl-topnav-wrapper .exl-topnav > div:nth-child(7)',
-      ),
-      wrapper.querySelector(
-        '.exl-topnav-wrapper .exl-topnav > div:nth-child(8)',
-      ),
-      wrapper.querySelector(
-        '.exl-topnav-wrapper .exl-topnav > div:nth-child(10)',
-      ),
+      wrapper.querySelector('.exl-topnav > div:nth-child(2)'),
+      wrapper.querySelector('.exl-topnav > div:nth-child(3)'),
+      wrapper.querySelector('.exl-topnav > div:nth-child(4)'),
+      wrapper.querySelector('.exl-topnav > div:nth-child(5)'),
+      wrapper.querySelector('.exl-topnav > div:nth-child(6)'),
+      wrapper.querySelector('.exl-topnav > div:nth-child(7)'),
+      wrapper.querySelector('.exl-topnav > div:nth-child(8)'),
+      wrapper.querySelector('.exl-topnav > div:nth-child(10)'),
     ];
 
     selectors.forEach((selector) => {
       if (
-        selector ===
-        wrapper.querySelector(
-          '.exl-topnav-wrapper .exl-topnav > div:nth-child(10)',
-        )
+        selector === wrapper.querySelector('.exl-topnav > div:nth-child(10)')
       ) {
         selector.className = 'exl-nav-action';
       } else if (selector.querySelector('.large-menu')) {

@@ -1,3 +1,7 @@
+.header {
+  border-bottom: 1px solid var(--spectrum-gray-200);
+  height: 64px;
+}
 .header * {
   box-sizing: border-box;
   margin: 0;
@@ -13,6 +17,20 @@
   max-width: 1440px;
   margin: 0 auto;
 }
+.header .exl-topnav h2, .header .exl-topnav a {
+  color: var(--spectrum-gray-800);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: 100;
+  line-height: 21px;
+  padding: 0;
+  margin: 0;
+}
+.header .exl-topnav a {
+  text-decoration: none;
+}
+.header .exl-topnav a:hover {
+  color: var(--link-color);
+}
 .header .exl-topnav .profile > div:nth-child(1) p {
   display: none;
 }
@@ -22,29 +40,11 @@
 .header .exl-topnav .profile > div:nth-child(2) {
   display: none;
 }
-.header .exl-topnav-wrapper {
-  border-bottom: 1px solid var(--spectrum-gray-200);
-  height: 64px;
-}
-.header .exl-topnav-wrapper h2, .header .exl-topnav-wrapper a {
-  color: var(--spectrum-gray-800);
-  font-size: var(--spectrum-font-size-100);
-  font-weight: 100;
-  line-height: 21px;
-  padding: 0;
-  margin: 0;
-}
-.header .exl-topnav-wrapper a {
-  text-decoration: none;
-}
-.header .exl-topnav-wrapper a:hover {
-  color: var(--link-color);
-}
-.header .exl-topnav-wrapper .nav-hamburger {
+.header .exl-topnav .nav-hamburger {
   display: none;
 }
-.header .exl-topnav-wrapper .exl-brand-container h2,
-.header .exl-topnav-wrapper .exl-brand-container h2 a {
+.header .exl-topnav .exl-brand-container h2,
+.header .exl-topnav .exl-brand-container h2 a {
   font-size: var(--spectrum-font-size-200);
   font-weight: 600;
 }
