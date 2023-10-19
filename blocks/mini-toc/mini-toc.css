@@ -1,0 +1,48 @@
+.mini-toc-wrapper {
+  padding-left: 0px;
+  padding-top: 46px;
+  flex: none;
+  width: 19.5%;
+}
+
+.mini-toc-wrapper .mini-toc {
+  margin-top: var(--spectrum-spacing-200);
+  overflow: hidden;
+  font-size: var(--spectrum-font-size-50);
+  font-weight: var(--spectrum-extra-bold-font-weight);
+  padding-left: 18px;
+  overflow: hidden;
+}
+
+.mini-toc-wrapper .mini-toc h2 {
+  font-size: var(--spectrum-font-size-50);
+  font-weight: var(--spectrum-extra-bold-font-weight);
+  text-transform: uppercase;
+}
+
+.mini-toc-wrapper .mini-toc ul {
+  list-style: none;
+  max-height: 50vh;
+  margin: var(--spectrum-spacing-200) var(--spectrum-spacing-100) 0 17px;
+}
+.mini-toc-wrapper .mini-toc ul.scrollable {
+  overflow-y: scroll;
+}
+.mini-toc-wrapper .mini-toc ul li a {
+  font-size: var(--spectrum-font-size-100);
+  display: inline-flex;
+  width: 100%;
+  margin: 0;
+  color: var(--spectrum-sidenav-item-text-color-hover, var(--spectrum-alias-text-color-hover));
+}
+.mini-toc-wrapper .mini-toc ul li a:hover {
+  background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
+  color: var(--spectrum-sidenav-item-text-color-hover, var(--spectrum-alias-text-color-hover));
+}
+.mini-toc-wrapper .mini-toc ul li a.is-active {
+  font-weight: var(--spectrum-font-size-100);
+  background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
+  color: #1e1e1e;
+}
+
+/*# sourceMappingURL=mini-toc.css.map */

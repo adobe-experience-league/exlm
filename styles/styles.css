@@ -146,6 +146,7 @@ strong {
   --font-weight-700: 700;
   --font-weight-600: 600;
   --font-weight-400: 400;
+  --spectrum-extra-bold-font-weight: 800;
   /* line height */
   --spectrum-line-height-xxxl: 57.2px;
   --spectrum-line-height-xxl: 36.4px;
@@ -356,6 +357,12 @@ strong {
   --spectrum-yellow-1100: #5b4300;
   --spectrum-yellow-1200: #483300;
   --spectrum-yellow-1300: #362500;
+  --spectrum-global-color-gray-900-rgb: 0, 0, 0;
+  /* mini toc spectrum vars */
+  --spectrum-sidenav-item-background-color-hover: ButtonFace;
+  --spectrum-alias-highlight-hover: rgba(0, 0, 0, 0.06);
+  --spectrum-sidenav-item-text-color-hover: ButtonText;
+  --spectrum-alias-text-color-hover: var(--spectrum-global-color-gray-900);
   /* Non-Spectrum custom colors */
   --non-spectrum-eerie-black: #1e1e1e;
   --non-spectrum-custom-dark: #363636;
