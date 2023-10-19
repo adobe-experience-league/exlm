@@ -57,7 +57,7 @@ function createToggleLayoutSection(main, railElement, isLeftSection = true) {
   toggleElement.innerHTML = `<img src="https://experienceleague-dev.corp.adobe.com/assets/img/left-rail-open.svg">`;
   railElement.appendChild(toggleElement);
 
-  toggleElement.onclick = () => {
+  toggleElement.addEventListener('click', () => {
     const MIN_RAIL_WIDTH = '40px';
     const MAX_RAIL_WIDTH = '20%';
     let leftSectionWidth;
@@ -100,7 +100,7 @@ function createToggleLayoutSection(main, railElement, isLeftSection = true) {
       }
     }
     main.style.gridTemplateColumns = `${leftSectionWidth} 1fr ${rightSectionWidth}`;
-  };
+  });
 }
 
 /**
