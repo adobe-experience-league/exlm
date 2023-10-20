@@ -1,51 +1,156 @@
-.table {
-  width: 100%;
-  overflow-x: auto;
+.table.block {
+  margin-bottom: var(--space-token-s);
 }
-
-.table table {
-  width: 100%;
-  max-width: 100%;
-  border-collapse: collapse;
-  font-size: var(--body-font-size-xs);
+.table.block table,
+.table.block th,
+.table.block td,
+.table.block tr,
+.table.block thead,
+.table.block tbody {
+  display: block;
 }
-
+.table.block table,
+.table.block thead,
+.table.block tbody {
+  width: 100%;
+}
 @media (min-width: 600px) {
-  .table table {
-    font-size: var(--body-font-size-s);
+  .table.block table {
+    display: table;
+  }
+  .table.block thead {
+    display: table-header-group;
+  }
+  .table.block tbody {
+    display: table-row-group;
+  }
+  .table.block tr {
+    display: table-row;
+  }
+  .table.block th,
+  .table.block td {
+    display: table-cell;
   }
 }
-
-@media (min-width: 900px) {
-  .table table {
-    font-size: var(--body-font-size-m);
+.table.block table {
+  font-size: var(--spectrum-body-size-m);
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-top: var(--space-token-m);
+  line-height: 24px;
+  color: var(--non-spectrum-custom-dark);
+}
+.table.block table thead {
+  background-color: #fafafa;
+  border: none;
+}
+@media (min-width: 600px) {
+  .table.block table thead {
+    border: 1px solid #dbdbdb;
   }
 }
-
-.table table thead tr {
-  border-top: 2px solid;
-  border-bottom: 2px solid;
+.table.block table thead th {
+  touch-action: pan-x pan-y;
+  padding: 8px 12px;
+  vertical-align: top;
+  border-bottom-width: 1px;
+  text-align: inherit;
 }
-
-.table table tbody tr {
-  border-bottom: 1px solid;
+.table.block table thead tr {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
 }
-
-.table table th {
-  font-weight: 700;
+@media (min-width: 600px) {
+  .table.block table thead tr {
+    position: static;
+  }
 }
-
-.table table th, .table table td {
-  padding: 8px 16px;
+.table.block table tbody {
+  vertical-align: middle;
+  border-color: inherit;
+}
+.table.block table tbody tr {
+  border: 1px solid #dbdbdb;
+  margin-bottom: var(--space-token-xs);
+}
+.table.block table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+@media (min-width: 600px) {
+  .table.block table tbody tr {
+    margin-bottom: 0;
+  }
+}
+.table.block table tbody td {
+  position: relative;
+  padding: 8px 12px;
+  touch-action: pan-x pan-y;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
+  border: 1px solid #eee;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  white-space-collapse: collapse;
+  text-overflow: ellipsis;
+}
+.table.block table tbody td p {
+  margin-top: 12px;
+  margin-bottom: 0;
+  line-height: 24px;
+}
+.table.block table tbody td p:first-child {
+  margin-top: 0;
+}
+.table.block table tbody td strong {
+  text-wrap: wrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.table.block table tbody td ul {
+  margin: 16px 0 16px 32px;
+}
+.table.block table tbody td ul li {
+  margin-bottom: 5px;
+}
+.table.block table tbody td a {
+  margin: 0;
+}
+@media (min-width: 600px) {
+  .table.block table tbody td {
+    padding: 8px 12px;
+    display: table-cell;
+    border: none;
+  }
+}
+.table.block table tbody td > * {
+  grid-column: 2/2;
+}
+.table.block table tbody td::before {
+  content: attr(data-title);
+  font-size: var(--spectrum-body-size-m);
+  grid-column: 1/2;
+  padding-right: 10px;
   text-align: left;
+  font-weight: bold;
 }
-
-/* striped variant */
-.table.striped tbody tr:nth-child(odd) {
-  background-color: var(--overlay-background-color);
+@media (min-width: 600px) {
+  .table.block table tbody td::before {
+    content: none;
+  }
 }
-
-/* bordered variant */
-.table.bordered table th, .table.bordered table td {
-  border: 1px solid;
+.table.block code:not([class^=language-]) {
+  font-family: var(--spectrum-code-font-family);
+  font-size: var(--spectrum-body-size-s);
+  background-color: unset;
+  padding: unset;
+  border: none;
+  border-radius: unset;
+}
+.table.block.layout-fixed > table {
+  table-layout: fixed;
+}
+.table.block.layout-auto > table {
+  table-layout: auto;
 }
