@@ -307,8 +307,12 @@
   src: local('Arial');
 }
 
+html {
+  -webkit-font-smoothing: antialiased;
+}
+
 body {
-  font-size: var(--spectrum-body-size-l);
+  font-size: var(--spectrum-body-size-s);
   margin: 0;
   font-family: var(--body-font-family);
   line-height: 1.6;
@@ -334,10 +338,7 @@ h6 {
 }
 
 dl,
-ol,
-ul,
-pre,
-blockquote {
+pre {
   margin-top: 1em;
   margin-bottom: 1em;
 }
@@ -455,10 +456,8 @@ main input:hover {
 }
 
 main blockquote {
-  font-style: italic;
-  margin: 3rem;
-  text-indent: -1rem;
-  hanging-punctuation: first;
+  margin: 0;
+  color: var(--non-spectrum-grey);
 }
 
 main blockquote p::before {
@@ -469,6 +468,26 @@ main blockquote p::before {
 main blockquote p::after {
   content: '”';
   line-height: 0;
+}
+
+ol > li > p {
+  margin-bottom: 8px;
+}
+
+ul > li > p {
+  margin-bottom: 8px;
+}
+
+main blockquote > p:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+ol > li > blockquote > p:last-child {
+  margin-bottom: 0;
+}
+
+ul > li > blockquote > p:last-child {
+  margin-bottom: 0;
 }
 
 main img {
@@ -512,4 +531,40 @@ main .section.highlight {
 
 .section > .default-content-wrapper:last-child > p:last-child {
   margin-bottom: 0;
+}
+
+ol {
+  @include text-styles(
+    $margin-bottom: 2em,
+    $margin-top: 0,
+    $color: var(--non-spectrum-grey),
+    $line-height: 24px
+  );
+
+  margin-left: 28px;
+  list-style-type: decimal;
+  padding: 0;
+}
+
+ol > li:not(:last-child) {
+  margin-bottom: 14px;
+  color: inherit;
+}
+
+ul {
+  @include text-styles(
+    $margin-top: 1em,
+    $margin-bottom: 2em,
+    $line-height: 24px,
+    $color: var(--non-spectrum-grey)
+  );
+
+  margin-left: 28px;
+  list-style-type: disc;
+  padding: 0;
+}
+
+ul > li:not(:last-child) {
+  margin-bottom: 0.875em;
+  color: inherit;
 }
