@@ -188,24 +188,6 @@ async function loadLazy(doc) {
 }
 
 /**
- * Loads everything that happens a lot later,
- * without impacting the user experience.
- */
-function loadDelayed() {
-  // eslint-disable-next-line import/no-cycle
-  window.setTimeout(() => import('./delayed.js'), 3000);
-  // load anything that can be postponed to the latest here
-}
-
-async function loadPage() {
-  await loadEager(document);
-  await loadLazy(document);
-  loadDelayed();
-}
-
-loadPage();
-
-/**
  * Helper function to create DOM elements
  * @param {string} tag DOM element to be created
  * @param {array} attributes attributes to be added
@@ -226,3 +208,82 @@ export function createTag(tag, attributes, html) {
   }
   return el;
 }
+
+export function loadPrevNextBtn() {
+  const mainDoc = document.querySelector('main >div:nth-child(2)');
+  if (!mainDoc) return;
+
+  const prevPageMeta = document.querySelector('meta[name="prev-page"]');
+  const nextPageMeta = document.querySelector('meta[name="next-page"]');
+  const prevPageMetaContent = prevPageMeta
+    ?.getAttribute('content')
+    .trim()
+    .split('.html')[0];
+  const nextPageMetaContent = nextPageMeta
+    ?.getAttribute('content')
+    .trim()
+    .split('.html')[0];
+  const PREV_PAGE = 'Previous page';
+  const NEXT_PAGE = 'Next page';
+
+  if (prevPageMeta || nextPageMeta) {
+    if (prevPageMetaContent === '' && nextPageMetaContent === '') return;
+
+    const docPagination = createTag('div', { class: 'doc-pagination' });
+    const btnGotoLeft = createTag('div', { class: 'btn-goto is-left-desktop' });
+
+    const anchorLeftAttr = {
+      href: `${prevPageMetaContent}`,
+      class: 'pagination-btn',
+    };
+    const anchorLeft = createTag('a', anchorLeftAttr);
+    const spanLeft = createTag('span', '', PREV_PAGE);
+
+    anchorLeft.append(spanLeft);
+    btnGotoLeft.append(anchorLeft);
+
+    const btnGotoRight = createTag('div', {
+      class: 'btn-goto is-right-desktop',
+    });
+
+    const anchorRightAttr = {
+      href: `${nextPageMetaContent}`,
+      class: 'pagination-btn',
+    };
+    const anchorRight = createTag('a', anchorRightAttr);
+    const spanRight = createTag('span', '', NEXT_PAGE);
+
+    anchorRight.append(spanRight);
+    btnGotoRight.append(anchorRight);
+
+    if (!prevPageMeta || prevPageMetaContent === '') {
+      anchorLeft.classList.add('is-disabled');
+    }
+
+    if (!nextPageMeta || nextPageMetaContent === '') {
+      anchorRight.classList.add('is-disabled');
+    }
+
+    docPagination.append(btnGotoLeft, btnGotoRight);
+    mainDoc.append(docPagination);
+  }
+}
+
+/**
+ * Loads everything that happens a lot later,
+ * without impacting the user experience.
+ */
+function loadDelayed() {
+  // eslint-disable-next-line import/no-cycle
+  window.setTimeout(() => import('./delayed.js'), 3000);
+  // load anything that can be postponed to the latest here
+}
+
+async function loadPage() {
+  await loadEager(document);
+  await loadLazy(document);
+  loadDelayed();
+  loadPrevNextBtn();
+}
+
+loadPage();

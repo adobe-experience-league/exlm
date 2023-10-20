@@ -275,6 +275,9 @@
   --non-spectrum-link: #378ef0;
   --non-spectrum-navy-blue: #1473e6;
 
+  /* rgba transparent values */
+  --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
+
   /* Spacing Tokens */
   --space-token-xxs: 8px;
   --space-token-xs: 16px;
