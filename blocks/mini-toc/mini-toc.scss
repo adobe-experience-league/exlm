@@ -1,13 +1,15 @@
 .mini-toc-wrapper {
-  padding-left: 0px;
+  padding-left: 0;
   padding-top: 46px;
   flex: none;
   width: 19.5%;
+  position: sticky;
+  top: 32px;
+  overflow: visible;
 }
 
 .mini-toc-wrapper .mini-toc {
   margin-top: var(--spectrum-spacing-200);
-  overflow: hidden;
   font-size: var(--spectrum-font-size-50);
   font-weight: var(--spectrum-extra-bold-font-weight);
   padding-left: 18px;
@@ -15,6 +17,7 @@
 
   .scrollable-div {
     max-height: 50vh;
+    overflow: hidden;
   }
 
   .scrollable-div:hover {
@@ -40,26 +43,36 @@
     justify-content: start;
     box-sizing: border-box;
     width: 100%;
-    min-height: var(--spectrum-sidenav-item-height, var(--spectrum-alias-single-line-height));
-    padding-left: var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150));
-    padding-right: var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150));
-    padding-top: var(--spectrum-sidenav-item-padding-y);
-    padding-bottom: var(--spectrum-sidenav-item-padding-y);
+    min-height: var(
+      --spectrum-sidenav-item-height,
+      var(--spectrum-alias-single-line-height)
+    );
+    padding: var(--spectrum-sidenav-item-padding-y)
+      var(
+        --spectrum-sidenav-item-padding-x,
+        var(--spectrum-global-dimension-size-150)
+      )
+      var(--spectrum-sidenav-item-padding-y)
+      var(
+        --spectrum-sidenav-item-padding-x,
+        var(--spectrum-global-dimension-size-150)
+      );
+    margin: 8px 0;
 
     .is-padded-left-big {
-      padding-left: var(--spectrum-spacing-400) !important
+      padding-left: var(--spectrum-spacing-400) !important;
     }
 
     .is-padded-left-big-big {
-      padding-left: var(--spectrum-spacing-500) !important
+      padding-left: var(--spectrum-spacing-500) !important;
     }
 
     .is-padded-left-big-big-big {
-      padding-left: var(--spectrum-spacing-600) !important
+      padding-left: var(--spectrum-spacing-600) !important;
     }
 
     .is-padded-left-big-big-big-big {
-      padding-left: var(--spectrum-spacing-700) !important
+      padding-left: var(--spectrum-spacing-700) !important;
     }
 
     a {
@@ -67,20 +80,32 @@
       display: inline-flex;
       width: 100%;
       margin: 0;
-      color: var(--spectrum-sidenav-item-text-color-hover, var(--spectrum-alias-text-color-hover))
+      border-radius: 4px;
+      padding: 5px 12px;
+      color: var(
+        --non-spectrum-grey-updated,
+        var(--spectrum-alias-text-color-hover)
+      );
     }
 
     a:hover {
-      background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
-      color: var(--spectrum-sidenav-item-text-color-hover, var(--spectrum-alias-text-color-hover))
+      background-color: var(
+        --spectrum-alias-highlight-hover,
+        var(--spectrum-alias-highlight-hover)
+      );
+      color: var(
+        --spectrum-sidenav-item-text-color-hover,
+        var(--spectrum-alias-text-color-hover)
+      );
     }
 
     a.is-active {
       font-weight: var(--spectrum-font-size-100);
-      background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
+      background-color: var(
+        --spectrum-sidenav-item-background-color-hover,
+        var(--spectrum-alias-highlight-hover)
+      );
       color: #1e1e1e;
     }
-
   }
-
 }
