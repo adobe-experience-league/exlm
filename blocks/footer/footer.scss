@@ -1,0 +1,116 @@
+.footer {
+	background-color: var(--footer-background-color);
+	padding: 20px 0;
+
+	&-copyrights {
+		color: var(--non-spectrum-charcoal-gray);
+		font-size: 0.75rem;
+		line-height: 1.6875rem;
+		margin: 0 32px;
+
+		a {
+			color: var(--non-spectrum-dark-gray);
+			font-size: 0.75rem;
+			line-height: 1.6875rem;
+			margin: 0;
+			padding: 0;
+		}
+	}
+
+	&-item {
+		h2 {
+			border-bottom: 1px solid var(--footer-border-color);
+			font-size: 14px;
+			line-height: 1.4;
+			margin: 0;
+			padding: 12px 44px 12px 32px;
+			position: relative;
+
+			&::after {
+				border-color: var(--spectrum-gray-900);
+				border-style: solid;
+				border-width: 0 1px 1px 0;
+				box-sizing: content-box;
+				content: "";
+				display: flex;
+				height: 6px;
+				margin-top: -3px;
+				position: absolute;
+				right: 30px;
+				top: 50%;
+				transform: rotateZ(45deg);
+				transform-origin: 75% 75%;
+				transition: transform 0.1s ease;
+				width: 6px;
+			}
+		}
+
+		ul {
+			border-bottom: 1px solid var(--footer-border-color);
+			display: none;
+			list-style-type: none;
+			margin: 0;
+			padding: 12px 0;
+		}
+
+		li a {
+			color: var(--non-spectrum-dark-gray);
+			display: block;
+			font-size: 0.75rem;
+			line-height: 1.6875rem;
+			margin: 0;
+			padding: 0 32px;
+		}
+	}
+
+	&-item-active {
+		position: relative;
+
+		&::before {
+			background: var(--spectrum-gray-900);
+			bottom: 0;
+			content: "";
+			left: 0;
+			position: absolute;
+			top: 0;
+			width: 2px;
+			z-index: 1;
+		}
+
+		h2 {
+			&::after {
+				transform: rotateZ(-135deg);
+			}
+		}
+
+		ul {
+			display: block;
+		}
+	}
+
+	&-lang-social {
+		display: flex;
+		flex-direction: column;
+		margin: 30px 32px 0;
+
+		.language-selector a {
+			color: var(--non-spectrum-dark-gray);
+			font-size: 0.75rem;
+			line-height: 1.6875rem;
+
+			&::after {
+				border-color: inherit;
+				border-style: solid;
+				border-width: 0 1px 1px 0;
+				content: '';
+				display: inline-block;
+				height: 6px;
+				margin-left: 10px;
+				transform: rotateZ(45deg);
+				transform-origin: 75% 75%;
+				transition: transform 0.1s ease;
+				width: 6px;
+			}
+		}
+	}
+}

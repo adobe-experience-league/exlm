@@ -1,14 +1,99 @@
-footer {
-  padding: 2rem;
-  background-color: var(--overlay-background-color);
-  font-size: var(--body-font-size-s);
+.footer {
+  background-color: var(--footer-background-color);
+  padding: 20px 0;
 }
-
-footer .footer {
-  max-width: 1200px;
-  margin: auto;
-}
-
-footer .footer p {
+.footer-item h2 {
+  border-bottom: 1px solid var(--footer-border-color);
+  font-size: 14px;
+  line-height: 1.4;
   margin: 0;
+  padding: 12px 44px 12px 32px;
+  position: relative;
+}
+.footer-item h2:after {
+  border-color: var(--spectrum-gray-900);
+  border-style: solid;
+  border-width: 0 1px 1px 0;
+  box-sizing: content-box;
+  content: "";
+  display: flex;
+  height: 6px;
+  margin-top: -3px;
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: rotateZ(45deg);
+  transform-origin: 75% 75%;
+  transition: transform 0.1s ease;
+  width: 6px;
+}
+.footer-item ul {
+  border-bottom: 1px solid var(--footer-border-color);
+  display: none;
+  list-style-type: none;
+  margin: 0;
+  padding: 12px 0;
+}
+.footer-item li a {
+  color: var(--non-spectrum-dark-gray);
+  display: block;
+  font-size: 0.75rem;
+  line-height: 1.6875rem;
+  margin: 0;
+  padding: 0 32px;
+}
+.footer-item-active {
+  position: relative;
+}
+.footer-item-active:before {
+  background: var(--spectrum-gray-900);
+  bottom: 0;
+  content: "";
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 2px;
+  z-index: 1;
+}
+.footer-item-active h2:after {
+  transform: rotateZ(-135deg);
+}
+.footer-item-active ul {
+  display: block;
+}
+.footer-lang-social {
+  display: flex;
+  flex-direction: column;
+  margin: 30px 32px 0;
+}
+.footer-lang-social .language-selector a {
+  color: var(--non-spectrum-dark-gray);
+  font-size: 0.75rem;
+  line-height: 1.6875rem;
+}
+.footer-lang-social .language-selector a:after {
+  border-color: inherit;
+  border-style: solid;
+  border-width: 0 1px 1px 0;
+  content: "";
+  display: inline-block;
+  height: 6px;
+  margin-left: 10px;
+  transform: rotateZ(45deg);
+  transform-origin: 75% 75%;
+  transition: transform 0.1s ease;
+  width: 6px;
+}
+.footer-copyrights {
+  color: var(--non-spectrum-charcoal-gray);
+  font-size: 0.75rem;
+  line-height: 1.6875rem;
+  margin: 0 32px;
+}
+.footer-copyrights a {
+  color: var(--non-spectrum-dark-gray);
+  font-size: 0.75rem;
+  line-height: 1.6875rem;
+  margin: 0;
+  padding: 0;
 }
