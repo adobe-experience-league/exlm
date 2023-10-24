@@ -1,6 +1,4 @@
-import { hashFragment } from '../../util/hashfragment.js';
-import { highlight } from '../../util/highlight.js';
-import { setLevels } from '../../util/setlevels.js';
+import { highlight, setLevels, hashFragment } from './utils.js';
 
 function setPadding(arg = '') {
   const num = parseInt(arg.split('')[1], 10),
@@ -16,11 +14,9 @@ function headerExclusions(header) {
     !header.closest('sp-tabs');
 }
 
-
 export default async function decorate(block) {
   const miniTOCHeading = 'ON THIS PAGE';
   const render = window.requestAnimationFrame;
-  const first = true; // tbd
   const ctx = document.querySelector('.mini-toc'),
     levels = document.querySelector('meta[name="mini-toc-levels"]');
 
@@ -34,10 +30,7 @@ export default async function decorate(block) {
         lhash = url.hash.length > 0;
 
       render(() => {
-        // ctx.previousElementSibling.classList.remove('is-hidden');   tbd
-        // ctx.classList.remove('is-hidden');   tbd
         const tocHeadingDivNode = `<div><h2>${miniTOCHeading}</h2></div>`;
-        // const rightNavDivNode = document.createElement('div');
         ctx.innerHTML = `${tocHeadingDivNode}\n<div class='scrollable-div'><ul>${html.join('\n')}</ul></div>`;
 
         const anchors = Array.from(ctx.querySelectorAll('a'));
@@ -74,14 +67,8 @@ export default async function decorate(block) {
       });
     } else {
       render(() => {
-        ctx.previousElementSibling.classList.add('is-hidden');
-        ctx.classList.add('is-hidden');
+        ctx.parentElement.parentElement.classList.add('is-hidden');
       });
     }
-  } else {
-    render(() => {
-      ctx.previousElementSibling.classList.add('is-hidden');
-      ctx.classList.add('is-hidden');
-    });
   }
 }

@@ -1,3 +1,13 @@
+.mini-toc-container .is-hidden {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .mini-toc-container {
+    display: none;
+  }
+}
+
 .mini-toc-wrapper {
   padding-left: 0;
   padding-top: 46px;

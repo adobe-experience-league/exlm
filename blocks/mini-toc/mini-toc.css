@@ -1,13 +1,24 @@
+.mini-toc-container .is-hidden {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .mini-toc-container {
+    display: none;
+  }
+}
 .mini-toc-wrapper {
-  padding-left: 0px;
+  padding-left: 0;
   padding-top: 46px;
   flex: none;
   width: 19.5%;
+  position: sticky;
+  top: 32px;
+  overflow: visible;
 }
 
 .mini-toc-wrapper .mini-toc {
   margin-top: var(--spectrum-spacing-200);
-  overflow: hidden;
   font-size: var(--spectrum-font-size-50);
   font-weight: var(--spectrum-extra-bold-font-weight);
   padding-left: 18px;
@@ -15,6 +26,7 @@
 }
 .mini-toc-wrapper .mini-toc .scrollable-div {
   max-height: 50vh;
+  overflow: hidden;
 }
 .mini-toc-wrapper .mini-toc .scrollable-div:hover {
   overflow-y: scroll;
@@ -39,10 +51,8 @@
   box-sizing: border-box;
   width: 100%;
   min-height: var(--spectrum-sidenav-item-height, var(--spectrum-alias-single-line-height));
-  padding-left: var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150));
-  padding-right: var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150));
-  padding-top: var(--spectrum-sidenav-item-padding-y);
-  padding-bottom: var(--spectrum-sidenav-item-padding-y);
+  padding: var(--spectrum-sidenav-item-padding-y) var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150)) var(--spectrum-sidenav-item-padding-y) var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150));
+  margin: 8px 0;
 }
 .mini-toc-wrapper .mini-toc ul li .is-padded-left-big {
   padding-left: var(--spectrum-spacing-400) !important;
@@ -61,10 +71,12 @@
   display: inline-flex;
   width: 100%;
   margin: 0;
-  color: var(--spectrum-sidenav-item-text-color-hover, var(--spectrum-alias-text-color-hover));
+  border-radius: 4px;
+  padding: 5px 12px;
+  color: var(--non-spectrum-grey-updated, var(--spectrum-alias-text-color-hover));
 }
 .mini-toc-wrapper .mini-toc ul li a:hover {
-  background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
+  background-color: var(--spectrum-alias-highlight-hover, var(--spectrum-alias-highlight-hover));
   color: var(--spectrum-sidenav-item-text-color-hover, var(--spectrum-alias-text-color-hover));
 }
 .mini-toc-wrapper .mini-toc ul li a.is-active {

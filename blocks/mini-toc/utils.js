@@ -1,6 +1,20 @@
 'use strict';
 
-import { setLevels } from './setlevels.js';
+export const timers = new Map();
+
+export function setLevels(val = 2) {
+    const selectors = [];
+
+    if (val > 6) {
+        val = 6;
+    }
+
+    for (let i = val; i >= 1; i--) {
+        selectors.push(`h${i + 1}:not(#lists-documentation)`);
+    }
+
+    return selectors.join(',');
+}
 
 export function highlight(replace = false) {
     const render = window.requestAnimationFrame;
@@ -36,4 +50,12 @@ export function highlight(replace = false) {
             });
         }
     }
+}
+
+export function hashFragment(arg = '') {
+    const url = new URL(location.href),
+        lhash = arg.replace(/^#/, '');
+
+    url.hash = lhash.length > 0 ? lhash : arg;
+    history.replaceState({}, '', url.href);
 }
