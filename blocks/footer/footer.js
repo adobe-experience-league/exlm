@@ -115,7 +115,7 @@ export default async function decorate(block) {
   block.textContent = '';
 
   // fetch footer content
-  const footerPath = cfg.footer || 'http://127.0.0.1:5500/footer_footer';
+  const footerPath = cfg.footer || 'http://127.0.0.1:5500/footer-new';
   const resp = await fetch(
     `${footerPath}.plain.html`,
     window.location.pathname.endsWith('/footer') ? { cache: 'reload' } : {},

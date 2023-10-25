@@ -233,7 +233,7 @@
           padding: 0 16px;
           position: relative;
           top: -2px;
-          color: #505050;
+          color: var(--non-spectrum-charcoal-gray);
         }
       }
 
@@ -277,7 +277,7 @@
     }
 
     .footer-copyrights-element {
-      color: #4b4b4b;
+      color: var(--non-spectrum-graphite-gray);
     }
 
     .footer-copyrights-element span {
@@ -295,7 +295,7 @@
     .footer-social-icon-item-wrapper span,
     .footer-social-icon-item-wrapper a {
       cursor: pointer;
-      color: #4b4b4b;
+      color: var(--non-spectrum-graphite-gray);
     }
 
     .footer-copyrights-element span.icon {
