@@ -741,3 +741,6 @@ main.three-col-layout > .rail-section.rail-section-left.rail-section-expanded .r
 main.three-col-layout > .rail-section.rail-section-expanded.rail-section-right .rail-section-toggler .icon-rail {
   transform: rotate(180deg);
 }
+main.three-col-layout > .rail-section.rail-hidden {
+  display: none;
+}

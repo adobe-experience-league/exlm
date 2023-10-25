@@ -115,10 +115,18 @@ function buildLayout(main) {
     return;
   }
 
+  const [leftRail, content, rightRail] = main.children;
+
+  const { matches: isNonMobile } = window.matchMedia('(min-width: 600px)');
+  if (!isNonMobile) {
+    if (rightRail) {
+      rightRail.classList.add('rail-hidden');
+    }
+    return;
+  }
+
   // Set CSS styles for the layout
   main.classList.add('three-col-layout');
-
-  const [leftRail, content, rightRail] = main.children;
   content.classList.add('content-section');
   createToggleLayoutSection(main, leftRail, true);
   createToggleLayoutSection(main, rightRail, false);

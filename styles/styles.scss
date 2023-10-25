@@ -674,5 +674,9 @@ main.three-col-layout {
         }
       }
     }
+
+    &.rail-hidden {
+      display: none;
+    }
   }
 }
