@@ -138,10 +138,6 @@
           transform-origin: 75% 75%;
           transition: transform 0.1s ease;
           width: 6px;
-
-          @include breakpoint(desktop) {
-            display: none;
-          }
         }
       }
 
@@ -209,6 +205,105 @@
           font-weight: 700;
         }
       }
+    }
+  }
+
+  &-breadcrumb {
+    margin: 32px 32px 0;
+    display: none;
+
+    @include breakpoint(desktop) {
+      display: block;
+
+      .footer-breadcrumb-item-wrapper {
+        display: flex;
+        gap: 8px;
+      }
+
+      .icon {
+        height: 14px;
+        width: 14px;
+      }
+
+      a {
+        cursor: default;
+
+        &::after {
+          content: '›';
+          padding: 0 16px;
+          position: relative;
+          top: -2px;
+          color: #505050;
+        }
+      }
+
+      p:last-child a::after {
+        display: none;
+      }
+
+      .icon svg {
+        cursor: pointer;
+      }
+    }
+  }
+
+  &-last-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    flex-direction: column;
+    gap: 12px;
+
+    @include breakpoint(desktop) {
+      flex-direction: row;
+    }
+
+    .footer-lang-social {
+      flex-direction: row;
+      gap: 40px;
+      margin-top: 0;
+      width: calc(100% - 64px);
+
+      @include breakpoint(desktop) {
+        width: auto;
+      }
+    }
+
+    .social {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer-copyrights-element {
+      color: #4b4b4b;
+    }
+
+    .footer-copyrights-element span {
+      margin: 0 12px;
+    }
+
+    .footer-copyrights-element a {
+      display: inline-block;
+    }
+
+    .footer-social-icon-item-wrapper {
+      display: flex;
+    }
+
+    .footer-social-icon-item-wrapper span,
+    .footer-social-icon-item-wrapper a {
+      cursor: pointer;
+      color: #4b4b4b;
+    }
+
+    .footer-copyrights-element span.icon {
+      margin: 0;
+      height: 16px;
+      width: 16px;
+      position: relative;
+      top: 5px;
     }
   }
 }
