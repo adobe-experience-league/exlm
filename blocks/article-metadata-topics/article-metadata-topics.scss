@@ -16,10 +16,12 @@
   padding-right: 4px;
 }
 
-.meta-topic-list li:not(:first-child),
-.meta-topic-list li:not(:last-child) {
-  margin-bottom: 14px;
-  margin-right: 8px;
+.meta-topic-list {
+  li:not(:first-child),
+  li:not(:last-child) {
+    margin-bottom: 14px;
+    margin-right: 8px;
+  }
 }
 
 .meta-topic-list li a {
