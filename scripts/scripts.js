@@ -128,7 +128,8 @@ function buildAutoBlocks(main) {
 export function decorateExternalLinks(main) {
   main.querySelectorAll('a').forEach((a) => {
     const href = a.getAttribute('href');
-    if (href.includes('#_target')) {
+    const regex = /#_blank/;
+    if (regex.test(href) || href.includes('#_target')) {
       a.setAttribute('target', '_blank');
     }
   });
