@@ -35,6 +35,35 @@ function buildHeroBlock(main) {
   }
 }
 
+function hideMobileLayoutToggle(e) {
+  const wrapper = document.querySelector('.rail-mobile-wrapper-visible');
+  if (wrapper && (!e.target || (e.target && !wrapper.contains(e.target)))) {
+    wrapper.classList.remove('rail-mobile-wrapper-visible');
+    document.removeEventListener('click', hideMobileLayoutToggle);
+  }
+}
+
+function buildMobileToggle(leftRail) {
+  leftRail.classList.add('rail-mobile-section', 'rail-section');
+  const leftRailContents = leftRail.innerHTML;
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('rail-mobile-wrapper');
+  const button = document.createElement('button');
+  button.classList.add('rail-mobile-button');
+  button.innerText = 'Table of Contents';
+  button.addEventListener('click', (e) => {
+    if (!wrapper.classList.contains('rail-mobile-wrapper-visible')) {
+      wrapper.classList.add('rail-mobile-wrapper-visible');
+      e.stopPropagation();
+      document.addEventListener('click', hideMobileLayoutToggle);
+    }
+  });
+  wrapper.innerHTML = leftRailContents;
+  leftRail.innerHTML = '';
+  leftRail.appendChild(button);
+  leftRail.appendChild(wrapper);
+}
+
 function createToggleLayoutSection(main, railElement, isLeftSection = true) {
   const secondaryClassName = isLeftSection
     ? 'rail-section-left'
@@ -121,6 +150,9 @@ function buildLayout(main) {
   if (!isNonMobile) {
     if (rightRail) {
       rightRail.classList.add('rail-hidden');
+    }
+    if (leftRail) {
+      buildMobileToggle(leftRail);
     }
     return;
   }
