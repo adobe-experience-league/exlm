@@ -121,6 +121,20 @@ function buildAutoBlocks(main) {
 }
 
 /**
+ * Decorates links within the specified container element by setting their "target" attribute to "_blank" if they contain "#_target" in the URL.
+ *
+ * @param {HTMLElement} main - The main container element to search for and decorate links.
+ */
+export function decorateExternalLinks(main) {
+  main.querySelectorAll('a').forEach((a) => {
+    const href = a.getAttribute('href');
+    if (href.includes('#_target')) {
+      a.setAttribute('target', '_blank');
+    }
+  });
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -135,6 +149,7 @@ export function decorateMain(main) {
    */
   // decorateButtons(main);
   decorateIcons(main);
+  decorateExternalLinks(main);
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
