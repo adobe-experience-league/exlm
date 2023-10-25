@@ -54,7 +54,7 @@ function createToggleLayoutSection(main, railElement, isLeftSection = true) {
     'rail-section-toggler',
     'rail-section-toggler-expanded',
   );
-  toggleElement.innerHTML = `<img src="https://experienceleague-dev.corp.adobe.com/assets/img/left-rail-open.svg">`;
+  toggleElement.innerHTML = '<span class="icon icon-rail"></span>';
   railElement.appendChild(toggleElement);
 
   toggleElement.addEventListener('click', () => {
@@ -85,13 +85,13 @@ function createToggleLayoutSection(main, railElement, isLeftSection = true) {
       railElement.classList.add('rail-section-expanded');
       if (isLeftSection) {
         leftSectionWidth = MAX_RAIL_WIDTH;
-        rightSectionWidth = main?.children?.[2]?.classList?.contains(
+        rightSectionWidth = main.children[2].classList.contains(
           'rail-section-expanded',
         )
           ? MAX_RAIL_WIDTH
           : MIN_RAIL_WIDTH;
       } else {
-        leftSectionWidth = main?.children?.[0]?.classList?.contains(
+        leftSectionWidth = main.children[0].classList.contains(
           'rail-section-expanded',
         )
           ? MAX_RAIL_WIDTH

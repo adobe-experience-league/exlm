@@ -603,7 +603,7 @@ main.three-col-layout {
       }
 
       .rail-section-toggler {
-        img {
+        .icon-rail {
           transform: none;
         }
       }
@@ -617,7 +617,7 @@ main.three-col-layout {
       .rail-section-toggler {
         left: 0;
 
-        img {
+        .icon-rail {
           transform: none;
         }
       }
@@ -630,14 +630,14 @@ main.three-col-layout {
       .rail-section-toggler {
         right: 20px;
 
-        img {
+        .icon-rail {
           transform: rotate(180deg);
         }
       }
 
       &.rail-section-expanded {
         .rail-section-toggler {
-          img {
+          .icon-rail {
             transform: none;
           }
         }
@@ -647,7 +647,7 @@ main.three-col-layout {
     &.rail-section-expanded {
       &.rail-section-right {
         .rail-section-toggler {
-          img {
+          .icon-rail {
             transform: rotate(180deg);
           }
         }
