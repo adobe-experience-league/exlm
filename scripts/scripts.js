@@ -56,7 +56,6 @@ function createToggleLayoutSection(main, railElement, isLeftSection = true) {
   );
   toggleElement.innerHTML = '<span class="icon icon-rail"></span>';
   railElement.appendChild(toggleElement);
-
   toggleElement.addEventListener('click', () => {
     const MIN_RAIL_WIDTH = '40px';
     const MAX_RAIL_WIDTH = '20%';
@@ -119,17 +118,11 @@ function buildLayout(main) {
   // Set CSS styles for the layout
   main.classList.add('three-col-layout');
 
-  const [leftRail, , rightRail] = main.children;
+  const [leftRail, content, rightRail] = main.children;
+  content.classList.add('content-section');
   createToggleLayoutSection(main, leftRail, true);
   createToggleLayoutSection(main, rightRail, false);
-
-  // Setting additional css so that child elements don't mess up the overall layout
-  Array.from(main.querySelectorAll('pre')).forEach((preElement) => {
-    preElement.style.whiteSpace = 'pre-wrap';
-  });
-  Array.from(main.querySelectorAll('img')).forEach((imgElement) => {
-    imgElement.style.maxWidth = '100%';
-  });
+  decorateIcons(main);
 }
 
 /**
@@ -210,7 +203,6 @@ export function buildSyntheticBlocks(main) {
 function buildAutoBlocks(main) {
   try {
     buildHeroBlock(main);
-    buildLayout(main);
     buildSyntheticBlocks(main);
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -236,6 +228,7 @@ export function decorateMain(main) {
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  buildLayout(main);
 }
 
 /**
