@@ -35,6 +35,96 @@ function buildHeroBlock(main) {
   }
 }
 
+function createToggleLayoutSection(main, railElement, isLeftSection = true) {
+  const secondaryClassName = isLeftSection
+    ? 'rail-section-left'
+    : 'rail-section-right';
+  railElement.classList.add(
+    'rail-section',
+    secondaryClassName,
+    'rail-section-expanded',
+  );
+  const wrapperElement = document.createElement('div');
+  wrapperElement.classList.add('rail-section-wrapper');
+  const railChildren = railElement.innerHTML;
+  wrapperElement.innerHTML = railChildren;
+  railElement.replaceChildren(wrapperElement);
+  const toggleElement = document.createElement('div');
+  toggleElement.classList.add(
+    'rail-section-toggler',
+    'rail-section-toggler-expanded',
+  );
+  toggleElement.innerHTML = '<span class="icon icon-rail"></span>';
+  railElement.appendChild(toggleElement);
+  toggleElement.addEventListener('click', () => {
+    const MIN_RAIL_WIDTH = '40px';
+    const MAX_RAIL_WIDTH = '20%';
+    let leftSectionWidth;
+    let rightSectionWidth;
+    if (toggleElement.classList.contains('rail-section-toggler-expanded')) {
+      toggleElement.classList.remove('rail-section-toggler-expanded');
+      railElement.classList.remove('rail-section-expanded');
+      if (isLeftSection) {
+        leftSectionWidth = MIN_RAIL_WIDTH;
+        rightSectionWidth = main.children[2]?.classList?.contains(
+          'rail-section-expanded',
+        )
+          ? MAX_RAIL_WIDTH
+          : MIN_RAIL_WIDTH;
+      } else {
+        leftSectionWidth = main.children[0]?.classList?.contains(
+          'rail-section-expanded',
+        )
+          ? MAX_RAIL_WIDTH
+          : MIN_RAIL_WIDTH;
+        rightSectionWidth = MIN_RAIL_WIDTH;
+      }
+    } else {
+      toggleElement.classList.add('rail-section-toggler-expanded');
+      railElement.classList.add('rail-section-expanded');
+      if (isLeftSection) {
+        leftSectionWidth = MAX_RAIL_WIDTH;
+        rightSectionWidth = main.children[2].classList.contains(
+          'rail-section-expanded',
+        )
+          ? MAX_RAIL_WIDTH
+          : MIN_RAIL_WIDTH;
+      } else {
+        leftSectionWidth = main.children[0].classList.contains(
+          'rail-section-expanded',
+        )
+          ? MAX_RAIL_WIDTH
+          : MIN_RAIL_WIDTH;
+        rightSectionWidth = MAX_RAIL_WIDTH;
+      }
+    }
+    main.style.gridTemplateColumns = `${leftSectionWidth} 1fr ${rightSectionWidth}`;
+  });
+}
+
+/**
+ * Builds three column grid layout with left/right toggle section
+ * @param {Element} main The container element
+ */
+function buildLayout(main) {
+  // Get all child div elements
+  const childDivs = main?.children;
+
+  // Ensure there are at least 3 child divs
+  if (childDivs?.length !== 3) {
+    return;
+  }
+
+  // Set CSS styles for the layout
+  main.classList.add('three-col-layout');
+
+  const [leftRail, content, rightRail] = main.children;
+  content.classList.add('content-section');
+  createToggleLayoutSection(main, leftRail, true);
+  createToggleLayoutSection(main, rightRail, false);
+  decorateIcons(main);
+}
+
 /**
  * load fonts.css and set a session storage flag
  */
@@ -121,6 +211,20 @@ function buildAutoBlocks(main) {
 }
 
 /**
+ * Decorates links within the specified container element by setting their "target" attribute to "_blank" if they contain "#_target" in the URL.
+ *
+ * @param {HTMLElement} main - The main container element to search for and decorate links.
+ */
+export function decorateExternalLinks(main) {
+  main.querySelectorAll('a').forEach((a) => {
+    const href = a.getAttribute('href');
+    if (href.includes('#_blank')) {
+      a.setAttribute('target', '_blank');
+    }
+  });
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -135,9 +239,11 @@ export function decorateMain(main) {
    */
   // decorateButtons(main);
   decorateIcons(main);
+  decorateExternalLinks(main);
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  buildLayout(main);
 }
 
 /**

@@ -1,0 +1,23 @@
+.meta-created-for ul {
+  list-style: none;
+  margin-top: 4px;
+  margin-bottom: 9px;
+}
+
+.meta-created-for li {
+  display: inline-block;
+}
+
+.meta-created-for li:first-child {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding-right: 4px;
+}
+
+.meta-created-for li:not(:first-child) {
+  font-size: 0.875rem;
+  border: 1px solid var(--non-spectrurm-article-light-gray);
+  color: var(--non-spectrurm-article-dark-gray);
+  padding: 4px 9px;
+}
