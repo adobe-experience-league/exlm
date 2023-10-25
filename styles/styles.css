@@ -669,3 +669,63 @@ ul > li:not(:last-child) {
   margin-bottom: 0.875em;
   color: inherit;
 }
+
+/* three column layout */
+main.three-col-layout {
+  width: 100%;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 20% 1fr 20%;
+}
+main.three-col-layout .content-section {
+  width: auto;
+  overflow: auto;
+}
+main.three-col-layout > .rail-section {
+  grid-column: 2/3;
+  position: relative;
+  display: flex;
+  gap: 8px;
+}
+main.three-col-layout > .rail-section .rail-section-wrapper {
+  overflow: auto;
+  width: 100%;
+  display: none;
+  margin: 0;
+}
+main.three-col-layout > .rail-section .rail-section-toggler {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+}
+main.three-col-layout > .rail-section-expanded .rail-section-wrapper {
+  display: block;
+}
+main.three-col-layout > .rail-section-expanded .rail-section-toggler .icon-rail {
+  transform: none;
+}
+main.three-col-layout > .rail-section.rail-section-right {
+  grid-column: 3/4;
+  flex-direction: row-reverse;
+}
+main.three-col-layout > .rail-section.rail-section-right .rail-section-toggler {
+  left: 0;
+}
+main.three-col-layout > .rail-section.rail-section-right .rail-section-toggler .icon-rail {
+  transform: none;
+}
+main.three-col-layout > .rail-section.rail-section-left {
+  grid-column: 1/2;
+}
+main.three-col-layout > .rail-section.rail-section-left .rail-section-toggler {
+  right: 20px;
+}
+main.three-col-layout > .rail-section.rail-section-left .rail-section-toggler .icon-rail {
+  transform: rotate(180deg);
+}
+main.three-col-layout > .rail-section.rail-section-left.rail-section-expanded .rail-section-toggler .icon-rail {
+  transform: none;
+}
+main.three-col-layout > .rail-section.rail-section-expanded.rail-section-right .rail-section-toggler .icon-rail {
+  transform: rotate(180deg);
+}
