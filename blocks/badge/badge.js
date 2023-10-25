@@ -17,8 +17,12 @@ export default function decorate(block) {
 
         if (href) {
           const key = '#_blank';
-          const url = href.includes(key) ? href.split(key)[0] : href;
-          wrapper.innerHTML = `<a href="${url}" class="${classes}" target="_blank" ${titleAttribute}>${firstDivContent}</a>`;
+          if (href.includes(key)) {
+            const url = href.split(key)[0];
+            wrapper.innerHTML = `<a href="${url}" class="${classes}" target="_blank" ${titleAttribute}>${firstDivContent}</a>`;
+          } else {
+            wrapper.innerHTML = `<a href="${href}" class="${classes}"  ${titleAttribute}>${firstDivContent}</a>`;
+          }
         } else {
           wrapper.innerHTML = `<div class="${classes}" ${titleAttribute}>${firstDivContent}</div>`;
         }
