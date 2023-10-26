@@ -443,7 +443,16 @@ export function updateSectionsStatus(main) {
         break;
       } else {
         section.dataset.sectionStatus = 'loaded';
-        section.style.display = null;
+        /**
+         * FIXME: All sections are loaded with first section
+         * to improve performance. Revisit this section and identify a proper
+         * fix.
+         * */
+        if (i === 0) {
+          sections.forEach((sec) => {
+            sec.style.display = null;
+          });
+        }
       }
     }
   }
