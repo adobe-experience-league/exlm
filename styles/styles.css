@@ -113,6 +113,8 @@ strong {
   --overlay-background-color: #eee;
   --highlight-background-color: #ccc;
   --text-color: #000;
+  --footer-background-color: #fafafa;
+  --footer-border-color: #e1e1e1;
   /* fonts */
   --body-font-family: "Adobe Clean", adobe-clean, "Source Sans Pro",
     -apple-system, system-ui, "Segoe UI", roboto, ubuntu, "Trebuchet MS",
@@ -372,6 +374,7 @@ strong {
   /* Non-Spectrum custom colors */
   --non-spectrum-eerie-black: #1e1e1e;
   --non-spectrum-custom-dark: #363636;
+  --non-spectrum-dark-charcoal: #323232;
   --non-spectrum-true-blue: #0469e3;
   --non-spectrum-tawny-orange: #d16100;
   --non-spectrum-ue-red: #bb0202;
@@ -386,6 +389,9 @@ strong {
   --non-spectrum-hover-bg: #f5f5f5;
   --non-spectrum-input-text: #4b4b4b;
 
+  --non-spectrum-dark-gray: #2c2c2c;
+  --non-spectrum-charcoal-gray: #505050;
+  --non-spectrum-graphite-gray: #4b4b4b;
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
   /* Spacing Tokens */
