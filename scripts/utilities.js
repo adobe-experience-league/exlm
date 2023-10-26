@@ -21,3 +21,8 @@ export const cleanUpDivElems = (sel, tag) => {
     sel.innerHTML = tagType.outerHTML;
   }
 };
+
+export const isMobileResolution = () => {
+  const { matches: isMobileRes } = window.matchMedia('(max-width: 900px)');
+  return isMobileRes;
+};

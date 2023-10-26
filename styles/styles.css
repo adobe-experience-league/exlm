@@ -391,6 +391,7 @@ strong {
   --non-spectrum-dark-gray: #2c2c2c;
   --non-spectrum-charcoal-gray: #505050;
   --non-spectrum-graphite-gray: #4b4b4b;
+  --non-spectrurm-whisper-gray: #eaeaea;
   --non-spectrum-max-width: 1440px;
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
@@ -697,12 +698,30 @@ ul > li:not(:last-child) {
   color: inherit;
 }
 
+main .rail-mobile-section .rail-section-toggler {
+  display: none;
+}
+
+main button.rail-mobile-button {
+  border-radius: 4px;
+  background-color: var(--spectrum-gray-50);
+  color: var(--spectrum-gray-800);
+  border: 1px solid var(--spectrum-gray-400);
+  width: 72vw;
+  height: 48px;
+  margin: 0;
+  text-align: left;
+  display: none;
+}
+
 /* three column layout */
 main.three-col-layout {
   width: 100%;
   display: grid;
   gap: 8px;
   grid-template-columns: 20% 1fr 20%;
+  max-width: 1700px;
+  margin: 0 auto;
 }
 main.three-col-layout .content-section {
   width: auto;
@@ -713,6 +732,7 @@ main.three-col-layout > .rail-section {
   position: relative;
   display: flex;
   gap: 8px;
+  padding: 0 16px;
 }
 main.three-col-layout > .rail-section .rail-section-wrapper {
   overflow: auto;
@@ -738,6 +758,7 @@ main.three-col-layout > .rail-section-expanded .rail-section-toggler .icon-rail 
 main.three-col-layout > .rail-section.rail-section-right {
   grid-column: 3/4;
   flex-direction: row-reverse;
+  padding: 0 16px 0 0;
 }
 main.three-col-layout > .rail-section.rail-section-right .rail-section-toggler {
   left: 0;
@@ -754,6 +775,11 @@ main.three-col-layout > .rail-section.rail-section-left .rail-section-toggler {
 main.three-col-layout > .rail-section.rail-section-left .rail-section-toggler .icon-rail {
   transform: rotate(180deg);
 }
+@media (min-width: 900px) {
+  main.three-col-layout > .rail-section.rail-section-left.rail-section-expanded {
+    border-right: 1px solid var(--non-spectrurm-whisper-gray);
+  }
+}
 main.three-col-layout > .rail-section.rail-section-left.rail-section-expanded .rail-section-toggler .icon-rail {
   transform: none;
 }
@@ -768,6 +794,9 @@ main .rail-mobile-section {
   position: relative;
   padding: 0;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 main .rail-mobile-section .rail-mobile-wrapper {
   position: absolute;
@@ -777,22 +806,16 @@ main .rail-mobile-section .rail-mobile-wrapper {
   padding: 12px 24px;
   border-radius: 8px;
   left: 5%;
-  top: 60px;
+  top: 90px;
   width: 80%;
 }
 main .rail-mobile-section .rail-mobile-wrapper-visible {
   display: block;
 }
-
-main button.rail-mobile-button {
-  border-radius: 4px;
-  background-color: var(--spectrum-gray-50);
-  color: var(--spectrum-gray-800);
-  border: 1px solid var(--spectrum-gray-400);
-  width: 72vw;
-  height: 48px;
-  margin: 0;
-  text-align: left;
+main .rail-mobile-section button.rail-mobile-button {
+  display: block;
+  margin-top: 32px;
+  margin-bottom: 1px;
 }
 
 .article-metadata > div > div {

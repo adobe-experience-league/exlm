@@ -1,7 +1,7 @@
 @import '../../styles/sass/breakpoints';
 
 .table.block {
-  margin-bottom: var(--space-token-s);
+  margin-bottom: 21px;
 
   table,
   th,
@@ -42,11 +42,11 @@
   }
 
   table {
-    font-size: var(--spectrum-body-size-m);
+    font-size: var(--spectrum-body-size-s);
     border-collapse: collapse;
     border-spacing: 0;
-    margin-top: var(--space-token-m);
-    line-height: 24px;
+    margin-top: 28px;
+    line-height: 21px;
     color: var(--non-spectrum-custom-dark);
 
     thead {
@@ -59,7 +59,7 @@
 
       th {
         touch-action: pan-x pan-y;
-        padding: 8px 12px;
+        padding: 12px 24px 16px 16px;
         vertical-align: top;
         border-bottom-width: 1px;
         text-align: inherit;
@@ -95,7 +95,7 @@
 
       td {
         position: relative;
-        padding: 8px 12px;
+        padding: 16px 24px 16px 16px;
         touch-action: pan-x pan-y;
         overflow: hidden;
         vertical-align: top;
@@ -108,7 +108,7 @@
         p {
           margin-top: 12px;
           margin-bottom: 0;
-          line-height: 24px;
+          line-height: 25.6px;
 
           &:first-child {
             margin-top: 0;
@@ -122,10 +122,11 @@
         }
 
         ul {
-          margin: 16px 0 16px 32px;
+          margin: 16px 0 32px 28px;
 
           li {
-            margin-bottom: 5px;
+            color: var(--non-spectrum-custom-dark);
+            margin-bottom: 11.2px;
           }
         }
 
@@ -136,6 +137,7 @@
         code:not([class^='language-']) {
           font-family: var(--spectrum-code-font-family);
           font-size: var(--spectrum-body-size-s);
+          color: var(--non-spectrum-custom-dark);
           background-color: unset;
           padding: unset;
           border: none;
@@ -143,7 +145,6 @@
         }
 
         @include breakpoint(tablet) {
-          padding: 8px 12px;
           display: table-cell;
           border: none;
         }
@@ -154,7 +155,7 @@
 
         &::before {
           content: attr(data-title);
-          font-size: var(--spectrum-body-size-m);
+          font-size: var(--spectrum-body-size-s);
           grid-column: 1 / 2;
           padding-right: 10px;
           text-align: left;

@@ -1,5 +1,5 @@
 .table.block {
-  margin-bottom: var(--space-token-s);
+  margin-bottom: 21px;
 }
 .table.block table,
 .table.block th,
@@ -33,11 +33,11 @@
   }
 }
 .table.block table {
-  font-size: var(--spectrum-body-size-m);
+  font-size: var(--spectrum-body-size-s);
   border-collapse: collapse;
   border-spacing: 0;
-  margin-top: var(--space-token-m);
-  line-height: 24px;
+  margin-top: 28px;
+  line-height: 21px;
   color: var(--non-spectrum-custom-dark);
 }
 .table.block table thead {
@@ -51,7 +51,7 @@
 }
 .table.block table thead th {
   touch-action: pan-x pan-y;
-  padding: 8px 12px;
+  padding: 12px 24px 16px 16px;
   vertical-align: top;
   border-bottom-width: 1px;
   text-align: inherit;
@@ -84,10 +84,9 @@
 }
 .table.block table tbody td {
   position: relative;
-  padding: 8px 12px;
+  padding: 16px 24px 16px 16px;
   touch-action: pan-x pan-y;
   overflow: hidden;
-  text-overflow: ellipsis;
   vertical-align: top;
   border: 1px solid #eee;
   display: grid;
@@ -98,7 +97,7 @@
 .table.block table tbody td p {
   margin-top: 12px;
   margin-bottom: 0;
-  line-height: 24px;
+  line-height: 25.6px;
 }
 .table.block table tbody td p:first-child {
   margin-top: 0;
@@ -109,17 +108,26 @@
   overflow: hidden;
 }
 .table.block table tbody td ul {
-  margin: 16px 0 16px 32px;
+  margin: 16px 0 32px 28px;
 }
 .table.block table tbody td ul li {
-  margin-bottom: 5px;
+  color: var(--non-spectrum-custom-dark);
+  margin-bottom: 11.2px;
 }
 .table.block table tbody td a {
   margin: 0;
 }
+.table.block table tbody td code:not([class^=language-]) {
+  font-family: var(--spectrum-code-font-family);
+  font-size: var(--spectrum-body-size-s);
+  color: var(--non-spectrum-custom-dark);
+  background-color: unset;
+  padding: unset;
+  border: none;
+  border-radius: unset;
+}
 @media (min-width: 600px) {
   .table.block table tbody td {
-    padding: 8px 12px;
     display: table-cell;
     border: none;
   }
@@ -129,7 +137,7 @@
 }
 .table.block table tbody td::before {
   content: attr(data-title);
-  font-size: var(--spectrum-body-size-m);
+  font-size: var(--spectrum-body-size-s);
   grid-column: 1/2;
   padding-right: 10px;
   text-align: left;
@@ -139,14 +147,6 @@
   .table.block table tbody td::before {
     content: none;
   }
-}
-.table.block code:not([class^=language-]) {
-  font-family: var(--spectrum-code-font-family);
-  font-size: var(--spectrum-body-size-s);
-  background-color: unset;
-  padding: unset;
-  border: none;
-  border-radius: unset;
 }
 .table.block.layout-fixed > table {
   table-layout: fixed;
