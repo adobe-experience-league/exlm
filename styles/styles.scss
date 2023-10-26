@@ -299,6 +299,7 @@
   --non-spectrum-dark-gray: #2c2c2c;
   --non-spectrum-charcoal-gray: #505050;
   --non-spectrum-graphite-gray: #4b4b4b;
+  --non-spectrurm-whisper-gray: #eaeaea;
 
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
@@ -603,12 +604,30 @@ ul > li:not(:last-child) {
   color: inherit;
 }
 
+main .rail-mobile-section .rail-section-toggler {
+  display: none;
+}
+
+main button.rail-mobile-button {
+  border-radius: 4px;
+  background-color: var(--spectrum-gray-50);
+  color: var(--spectrum-gray-800);
+  border: 1px solid var(--spectrum-gray-400);
+  width: 72vw;
+  height: 48px;
+  margin: 0;
+  text-align: left;
+  display: none;
+}
+
 /* three column layout */
 main.three-col-layout {
   width: 100%;
   display: grid;
   gap: 8px;
   grid-template-columns: 20% 1fr 20%;
+  max-width: 1700px;
+  margin: 0 auto;
 
   .content-section {
     width: auto;
@@ -620,6 +639,7 @@ main.three-col-layout {
     position: relative;
     display: flex;
     gap: 8px;
+    padding: 0 16px;
 
     .rail-section-wrapper {
       overflow: auto;
@@ -654,6 +674,7 @@ main.three-col-layout {
     &.rail-section-right {
       grid-column: 3/4;
       flex-direction: row-reverse;
+      padding: 0 16px 0 0;
 
       .rail-section-toggler {
         left: 0;
@@ -676,6 +697,10 @@ main.three-col-layout {
       }
 
       &.rail-section-expanded {
+        @include breakpoint(desktop) {
+          border-right: 1px solid var(--non-spectrurm-whisper-gray);
+        }
+
         .rail-section-toggler {
           .icon-rail {
             transform: none;
@@ -704,6 +729,9 @@ main .rail-mobile-section {
   position: relative;
   padding: 0;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   .rail-mobile-wrapper {
     position: absolute;
@@ -715,24 +743,19 @@ main .rail-mobile-section {
     padding: 12px 24px;
     border-radius: 8px;
     left: 5%;
-    top: 60px;
+    top: 90px;
     width: 80%;
 
     &-visible {
       display: block;
     }
   }
-}
 
-main button.rail-mobile-button {
-  border-radius: 4px;
-  background-color: var(--spectrum-gray-50);
-  color: var(--spectrum-gray-800);
-  border: 1px solid var(--spectrum-gray-400);
-  width: 72vw;
-  height: 48px;
-  margin: 0;
-  text-align: left;
+  button.rail-mobile-button {
+    display: block;
+    margin-top: 32px;
+    margin-bottom: 1px;
+  }
 }
 
 .article-metadata > div > div {
