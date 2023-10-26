@@ -580,6 +580,11 @@ ol > li:not(:last-child) {
   color: inherit;
 }
 
+ol > li > ol {
+  margin-bottom: 14px;
+  list-style-type: lower-alpha;
+}
+
 ul {
   @include text-styles(
     $margin-top: 1em,

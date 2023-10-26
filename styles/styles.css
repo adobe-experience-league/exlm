@@ -672,6 +672,11 @@ ol > li:not(:last-child) {
   color: inherit;
 }
 
+ol > li > ol {
+  margin-bottom: 14px;
+  list-style-type: lower-alpha;
+}
+
 ul {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-p);
