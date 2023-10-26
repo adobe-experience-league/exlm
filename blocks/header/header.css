@@ -4,7 +4,7 @@
 }
 @media (width <= 1289px) {
   .exl-curtain {
-    background: rgba(0, 0, 0, 0.5019607843) 0% 0% no-repeat padding-box;
+    background: rgba(0, 0, 0, 0.5);
     height: 100%;
     left: 0;
     overflow: hidden;
@@ -81,9 +81,10 @@
   width: 22px;
 }
 .header .exl-subnav-wrapper ul li a {
+  border-radius: 4px;
   display: block;
   margin: 0;
-  padding: 10px;
+  padding: 10px 12px;
 }
 .header .exl-nav-item:last-child > a {
   background: var(--spectrum-blue-900);
@@ -97,9 +98,10 @@
 }
 @media (width <= 1024px) {
   .header .exl-nav-item:last-child > a {
+    line-height: inherit;
     position: fixed;
     right: 20px;
-    top: -4px;
+    top: -8px;
     text-transform: capitalize;
   }
 }
@@ -119,6 +121,20 @@
 }
 .header .language-dropdown a:hover {
   background: var(--non-spectrum-hover-bg);
+}
+.header .exl-subnav-wrapper .browse-all-content {
+  text-align: right;
+}
+@media (width <= 1024px) {
+  .header .exl-subnav-wrapper .browse-all-content {
+    display: none;
+  }
+}
+.header .exl-subnav-wrapper .browse-all-content a {
+  color: var(--link-color);
+  font-size: var(--spectrum-font-size-100);
+  line-height: 18.2px;
+  letter-spacing: normal;
 }
 .header .exl-subnav-wrapper .link-group p {
   font-size: 12px;
