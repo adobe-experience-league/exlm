@@ -581,6 +581,11 @@ ol > li:not(:last-child) {
   color: inherit;
 }
 
+ol > li > ol {
+  margin-bottom: 14px;
+  list-style-type: lower-alpha;
+}
+
 ul {
   @include text-styles(
     $margin-top: 1em,
@@ -627,7 +632,12 @@ main.three-col-layout {
     .rail-section-toggler {
       position: absolute;
       cursor: pointer;
-      top: 0;
+      top: 16px;
+
+      .icon-rail {
+        height: 16px;
+        width: 16px;
+      }
     }
 
     &-expanded {
@@ -724,4 +734,14 @@ main button.rail-mobile-button {
   height: 48px;
   margin: 0;
   text-align: left;
+}
+
+.article-metadata > div > div {
+  @include text-styles(
+    $font-size: var(--spectrum-font-size-75),
+    $line-height: var(--spectrum-line-height-s),
+    $color: var(--non-spectrum-grey-updated),
+    $margin-top: 4px,
+    $margin-bottom: 9px
+  );
 }
