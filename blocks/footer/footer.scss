@@ -1,14 +1,13 @@
 @import '../../styles/sass/breakpoints';
+.footer-wrapper {
+  border-top: 2px solid var(--non-spectrurm-whisper-gray);
+  background-color: var(--footer-background-color);
+  padding: 25px 0 20px;
+}
 
 .footer {
-  max-width: 1700px;
   margin: 0 auto;
-
-  &-wrapper {
-    background-color: var(--footer-background-color);
-    padding: 25px 0 20px;
-    border-top: 2px solid var(--non-spectrurm-whisper-gray);
-  }
+  max-width: var(--non-spectrum-max-width);
 
   &-copyrights {
     color: var(--non-spectrum-charcoal-gray);

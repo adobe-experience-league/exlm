@@ -8,10 +8,6 @@ import {
 
 // Configurable data
 const CONFIG = {
-  icon: {
-    aLogo:
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 133.46 118.11" alt="Adobe, Inc."><defs><style>.cls-1{fill:#fa0f00;}</style></defs><polygon class="cls-1" points="84.13 0 133.46 0 133.46 118.11 84.13 0"></polygon><polygon class="cls-1" points="49.37 0 0 0 0 118.11 49.37 0"></polygon><polygon class="cls-1" points="66.75 43.53 98.18 118.11 77.58 118.11 68.18 94.36 45.18 94.36 66.75 43.53"></polygon></svg>',
-  },
   basePath: '/fragments/en',
   topNavPath: '/header/topnav.plain.html',
   learnPath: '/header/learn.plain.html',
@@ -46,6 +42,12 @@ export default async function decorate(block) {
   navWrapper.innerHTML = topNavContent;
   block.innerHTML = navWrapper.outerHTML;
 
+  // Prepend curtain wrapper inside Body tag
+  const exlOverlay = document.createElement('div');
+  exlOverlay.className = 'exl-curtain';
+  document.querySelector('body').prepend(exlOverlay);
+
+  // Exl Logo Branding
   const wrapper = block.closest('.header');
   const exlLogo = wrapper.querySelector('.gnav-brand');
   exlLogo.className = 'exl-brand-container';
@@ -104,8 +106,6 @@ export default async function decorate(block) {
 
   searchFirstChild.innerHTML = searchContent;
   searchSecondChild.className = 'search-popover';
-  search.querySelector('.exl-search-input').style.background =
-    CONFIG.icon.search;
 
   const exlDropdownPicker = search.querySelector('.exl-dropdown-picker');
   const exlSearchPopover = search.querySelector('.search-popover');
@@ -122,6 +122,7 @@ export default async function decorate(block) {
     (event) => {
       if (event.target.matches('.search') || !event.target.closest('.search')) {
         exlSearchPopover.classList.remove('show');
+        exlDropdownArrow.classList.remove('arrow');
       }
     },
     false,
@@ -143,13 +144,11 @@ export default async function decorate(block) {
   // Replace anchor text with Adobe Logo image
   const adobeLogo = wrapper.querySelector('.adobe-logo');
   cleanUpDivElems(adobeLogo, 'a');
-  adobeLogo.querySelector('a').innerHTML = CONFIG.icon.aLogo;
 
   // Reposition Sign Link
   exlTopNavFirstChild.insertBefore(profile, adobeLogo);
 
   // fetch Sub navigation content
-
   const exlNavItems = wrapper.querySelectorAll('.exl-nav .exl-nav-item');
   const exlNavWithLargeMenu = wrapper.querySelectorAll(
     '.exl-nav .exl-nav-item.large-menu',
@@ -171,11 +170,6 @@ export default async function decorate(block) {
     ) {
       subNavigationWrapper.innerHTML = communityTabContent;
       navitem.appendChild(subNavigationWrapper);
-    } else if (
-      !navitem.classList.contains('large-menu') &&
-      navitemLink.innerText.trim().toLowerCase() === 'sign up'
-    ) {
-      navitemLink.setAttribute('id', 'topnav-signup');
     }
   });
 

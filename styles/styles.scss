@@ -275,7 +275,7 @@
 
   /* mini toc spectrum vars */
   --spectrum-sidenav-item-background-color-hover: ButtonFace;
-  --spectrum-alias-highlight-hover: rgba(0 0 0 / 6%);
+  --spectrum-alias-highlight-hover: rgb(0 0 0 / 6%);
   --spectrum-sidenav-item-text-color-hover: ButtonText;
   --spectrum-alias-text-color-hover: var(--spectrum-global-color-gray-900);
 
@@ -300,6 +300,7 @@
   --non-spectrum-charcoal-gray: #505050;
   --non-spectrum-graphite-gray: #4b4b4b;
   --non-spectrurm-whisper-gray: #eaeaea;
+  --non-spectrum-max-width: 1440px;
 
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
