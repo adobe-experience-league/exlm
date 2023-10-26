@@ -368,7 +368,7 @@ strong {
   --spectrum-spacing-700: 48px;
   /* mini toc spectrum vars */
   --spectrum-sidenav-item-background-color-hover: ButtonFace;
-  --spectrum-alias-highlight-hover: rgba(0, 0, 0, 0.06);
+  --spectrum-alias-highlight-hover: rgb(0 0 0 / 6%);
   --spectrum-sidenav-item-text-color-hover: ButtonText;
   --spectrum-alias-text-color-hover: var(--spectrum-global-color-gray-900);
   /* Non-Spectrum custom colors */
@@ -388,7 +388,6 @@ strong {
   --non-spectrum-bg: #fafafa;
   --non-spectrum-hover-bg: #f5f5f5;
   --non-spectrum-input-text: #4b4b4b;
-
   --non-spectrum-dark-gray: #2c2c2c;
   --non-spectrum-charcoal-gray: #505050;
   --non-spectrum-graphite-gray: #4b4b4b;
@@ -784,4 +783,15 @@ main button.rail-mobile-button {
   height: 48px;
   margin: 0;
   text-align: left;
+}
+
+.article-metadata > div > div {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-400);
+  font-style: normal;
+  line-height: var(--spectrum-line-height-s);
+  color: var(--non-spectrum-grey-updated);
+  margin-top: 4px;
+  margin-bottom: 9px;
 }

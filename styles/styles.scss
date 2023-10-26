@@ -275,7 +275,7 @@
 
   /* mini toc spectrum vars */
   --spectrum-sidenav-item-background-color-hover: ButtonFace;
-  --spectrum-alias-highlight-hover: rgba(0, 0, 0, 0.06);
+  --spectrum-alias-highlight-hover: rgb(0 0 0 / 6%);
   --spectrum-sidenav-item-text-color-hover: ButtonText;
   --spectrum-alias-text-color-hover: var(--spectrum-global-color-gray-900);
 
@@ -547,7 +547,7 @@ main .section {
 }
 
 @include breakpoint(desktop) {
-  .section>div {
+  .section > div {
     max-width: 1200px;
     margin: auto;
   }
@@ -558,7 +558,7 @@ main .section.highlight {
   background-color: var(--highlight-background-color);
 }
 
-.section>.default-content-wrapper:last-child>p:last-child {
+.section > .default-content-wrapper:last-child > p:last-child {
   margin-bottom: 0;
 }
 
@@ -723,4 +723,14 @@ main button.rail-mobile-button {
   height: 48px;
   margin: 0;
   text-align: left;
+}
+
+.article-metadata > div > div {
+  @include text-styles(
+    $font-size: var(--spectrum-font-size-75),
+    $line-height: var(--spectrum-line-height-s),
+    $color: var(--non-spectrum-grey-updated),
+    $margin-top: 4px,
+    $margin-bottom: 9px
+  );
 }
