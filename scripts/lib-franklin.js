@@ -444,14 +444,14 @@ export function updateSectionsStatus(main) {
       } else {
         section.dataset.sectionStatus = 'loaded';
         /**
-         * FIXME: First section is currently loaded with
-         * second, but ideally all sections should load separately and
-         * in sync. Revisit this section and identify a proper
+         * FIXME: All sections are loaded with first section
+         * to improve performance. Revisit this section and identify a proper
          * fix.
          * */
-        if (i !== 0) {
-          section.style.display = null;
-          sections[0].style.display = null;
+        if (i === 0) {
+          sections.forEach((sec) => {
+            sec.style.display = null;
+          });
         }
       }
     }
