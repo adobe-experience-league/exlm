@@ -1,5 +1,10 @@
-const isDesktop = window.matchMedia('(min-width: 1025px)');
-const isMobile = window.matchMedia('(max-width: 1024px)');
+/* eslint-disable no-bitwise */
+import {
+  isDesktop,
+  isMobile,
+  fetchContent,
+  cleanUpDivElems,
+} from '../../scripts/utilities.js';
 
 // Configurable data
 const CONFIG = {
@@ -14,33 +19,25 @@ const CONFIG = {
   languagePath: '/languages/languages.plain.html',
 };
 
-// Utility function for http call
-const getHTMLData = async (url) => {
-  const response = await fetch(url);
-  if (response.ok) {
-    const responseData = response.text();
-    return responseData;
-  }
-  throw new Error(`${url} not found`);
-};
-
-// Utility function for removing Extra Divs within div block
-const removeExtraDivs = (sel, tag) => {
-  const tagType = sel.querySelector(tag);
-  if (tagType) {
-    sel.innerHTML = tagType.outerHTML;
-  }
-};
+// Get fragement Data
+const topNavContent = await fetchContent(
+  `${CONFIG.basePath}${CONFIG.topNavPath}`,
+);
+const languageTabContent = await fetchContent(
+  `${CONFIG.basePath}${CONFIG.languagePath}`,
+);
+const learnTabContent = await fetchContent(
+  `${CONFIG.basePath}${CONFIG.learnPath}`,
+);
+const communityTabContent = await fetchContent(
+  `${CONFIG.basePath}${CONFIG.communityPath}`,
+);
 
 /**
  * decorates the header, mainly the nav
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
-  const topNavContent = await getHTMLData(
-    `${CONFIG.basePath}${CONFIG.topNavPath}`,
-  );
-
   const navWrapper = document.createElement('nav');
   navWrapper.className = 'exl-topnav';
   navWrapper.setAttribute('aria-label', 'Main navigation');
@@ -54,7 +51,7 @@ export default async function decorate(block) {
   exlLogo.className = 'exl-brand-container';
 
   // Remove extra Div blocks from logo block
-  removeExtraDivs(exlLogo, 'h2');
+  cleanUpDivElems(exlLogo, 'h2');
 
   // Assign slector identifier only to specific nav elements
   const selectors = wrapper.querySelectorAll('.exl-topnav .topnav-item');
@@ -120,37 +117,38 @@ export default async function decorate(block) {
     });
   }
 
+  document.addEventListener(
+    'click',
+    (event) => {
+      if (event.target.matches('.search') || !event.target.closest('.search')) {
+        exlSearchPopover.classList.remove('show');
+      }
+    },
+    false,
+  );
+
   // Update language selector content
   const languageDiv = document.createElement('div');
   languageDiv.className = 'language-dropdown';
   languageDiv.setAttribute('data-id', 'lang-menu');
 
   const languageSelector = wrapper.querySelector('.language-selector');
-  removeExtraDivs(languageSelector, 'a');
+  cleanUpDivElems(languageSelector, 'a');
 
   // fetch language selector content
-  const languageTabContent = await getHTMLData(
-    `${CONFIG.basePath}${CONFIG.languagePath}`,
-  );
   languageDiv.innerHTML = languageTabContent;
-  removeExtraDivs(languageDiv, 'ul');
+  cleanUpDivElems(languageDiv, 'ul');
   languageSelector.appendChild(languageDiv);
 
   // Replace anchor text with Adobe Logo image
   const adobeLogo = wrapper.querySelector('.adobe-logo');
-  removeExtraDivs(adobeLogo, 'a');
+  cleanUpDivElems(adobeLogo, 'a');
   adobeLogo.querySelector('a').innerHTML = CONFIG.icon.aLogo;
 
   // Reposition Sign Link
   exlTopNavFirstChild.insertBefore(profile, adobeLogo);
 
   // fetch Sub navigation content
-  const subNavContentObj = {
-    learnTabContent: await getHTMLData(`${CONFIG.basePath}${CONFIG.learnPath}`),
-    communityTabContent: await getHTMLData(
-      `${CONFIG.basePath}${CONFIG.communityPath}`,
-    ),
-  };
 
   const exlNavItems = wrapper.querySelectorAll('.exl-nav .exl-nav-item');
   const exlNavWithLargeMenu = wrapper.querySelectorAll(
@@ -165,13 +163,13 @@ export default async function decorate(block) {
       navitem.classList.contains('large-menu') &&
       navitemLink.innerText.trim().toLowerCase() === 'learn'
     ) {
-      subNavigationWrapper.innerHTML = subNavContentObj.learnTabContent;
+      subNavigationWrapper.innerHTML = learnTabContent;
       navitem.appendChild(subNavigationWrapper);
     } else if (
       navitem.classList.contains('large-menu') &&
       navitemLink.innerText.trim().toLowerCase() === 'community'
     ) {
-      subNavigationWrapper.innerHTML = subNavContentObj.communityTabContent;
+      subNavigationWrapper.innerHTML = communityTabContent;
       navitem.appendChild(subNavigationWrapper);
     } else if (
       !navitem.classList.contains('large-menu') &&
@@ -181,9 +179,9 @@ export default async function decorate(block) {
     }
   });
 
-  if (isDesktop) {
-    exlNavWithLargeMenu.forEach((largemenu) => {
-      const largemenuAnchor = largemenu.querySelector('a');
+  exlNavWithLargeMenu.forEach((largemenu) => {
+    const largemenuAnchor = largemenu.querySelector('a');
+    if (isDesktop) {
       largemenu.addEventListener('mouseover', () => {
         wrapper.classList.add('exl-overlay');
         largemenuAnchor.classList.add('active');
@@ -195,16 +193,19 @@ export default async function decorate(block) {
         largemenuAnchor.classList.remove('active');
         largemenuAnchor.nextElementSibling.style.display = 'none';
       });
-    });
-  }
-  if (isMobile) {
-    exlNavWithLargeMenu.forEach((largemenu) => {
-      largemenu.addEventListener('mousedown', (event) => {
-        event.target.removeAttribute('href');
-        largemenu.classList.toggle('is-expanded');
-      });
-    });
+    }
 
+    if (isMobile) {
+      largemenu.addEventListener('mousedown', () => {
+        largemenuAnchor.removeAttribute('href');
+        largemenuAnchor.nextElementSibling.removeAttribute('style');
+        largemenu.classList.toggle('is-expanded');
+        largemenuAnchor.classList.toggle('active');
+      });
+    }
+  });
+
+  if (isMobile) {
     hamburger.addEventListener('mousedown', () => {
       hamburger.classList.toggle('is-active');
       document.querySelector('body').classList.toggle('is-shown');

@@ -1,19 +1,8 @@
-body.is-shown {
-  overflow: hidden;
-}
-body.is-shown .exl-nav {
-  left: 0;
-}
-
 .header {
   border-bottom: 1px solid var(--spectrum-gray-200);
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-100);
-}
-@media (width <= 1024px) {
-  .header {
-    padding: 0 29px;
-  }
+  padding: 0 29px;
 }
 .header * {
   box-sizing: border-box;
@@ -66,6 +55,14 @@ body.is-shown .exl-nav {
   width: 18px;
   text-indent: -99999px;
 }
+.header .language-dropdown a {
+  color: var(--spectrum-gray-800);
+  cursor: pointer;
+  display: block;
+  padding: 5px 25px;
+  white-space: nowrap;
+  margin: 0;
+}
 .header .exl-subnav-wrapper ul li a {
   color: var(--spectrum-gray-700);
   display: block;
@@ -75,6 +72,9 @@ body.is-shown .exl-nav {
   line-height: 17px;
   margin: 0;
   padding: 10px;
+}
+.header .language-dropdown a:hover {
+  background: var(--non-spectrum-hover-bg);
 }
 .header .exl-subnav-wrapper .link-group p {
   font-size: 12px;
@@ -89,6 +89,11 @@ body.is-shown .exl-nav {
   display: flex;
   gap: 36px;
   justify-content: space-between;
+}
+@media (width >= 1024px) and (width <= 1440px) {
+  .header .exl-topnav > div {
+    gap: 16px;
+  }
 }
 @media (width <= 1024px) {
   .header .exl-topnav > div {
@@ -235,17 +240,6 @@ body.is-shown .exl-nav {
     top: 0;
   }
 }
-.header .language-dropdown a {
-  color: var(--spectrum-gray-800);
-  cursor: pointer;
-  display: block;
-  padding: 5px 25px;
-  white-space: nowrap;
-  margin: 0;
-}
-.header .language-dropdown a:hover {
-  background: var(--non-spectrum-hover-bg);
-}
 .header .exl-topnav .exl-brand-container h2,
 .header .exl-topnav .exl-brand-container h2 a {
   color: var(--spectrum-gray-800);
@@ -314,7 +308,7 @@ body.is-shown .exl-nav {
   display: block;
 }
 .header.exl-overlay .exl-nav-item.large-menu > a.active::after {
-  transform: rotateZ(45deg);
+  transform: rotateZ(225deg);
 }
 .header a#topnav-signup {
   background: var(--spectrum-blue-900);
@@ -351,6 +345,9 @@ body.is-shown .exl-nav {
   vertical-align: middle;
   width: 22px;
 }
+.header .language-selector .language-dropdown ul li {
+  margin: 0;
+}
 .header .search {
   position: relative;
 }
@@ -373,7 +370,12 @@ body.is-shown .exl-nav {
   padding: 7px 5px 7px 28px;
   width: 200px;
 }
-@media (width <= 1024px) {
+@media (width >= 1290px) and (width <= 1440px) {
+  .header .search .exl-search-input {
+    width: 120px;
+  }
+}
+@media (width <= 1289px) {
   .header .search .exl-search-input {
     display: none;
   }
@@ -389,6 +391,14 @@ body.is-shown .exl-nav {
   .header .search .exl-search-icon {
     display: block;
     left: -100px;
+    position: absolute;
+    top: -8px;
+  }
+}
+@media (width >= 1025px) and (width <= 1289px) {
+  .header .search .exl-search-icon {
+    display: block;
+    left: -20px;
     position: absolute;
     top: -8px;
   }
@@ -418,7 +428,7 @@ body.is-shown .exl-nav {
   padding: 7px;
   text-align: right;
 }
-@media (width <= 1024px) {
+@media (width <= 1289px) {
   .header .search .exl-dropdown-picker {
     display: none;
   }
@@ -426,9 +436,6 @@ body.is-shown .exl-nav {
 .header .search .exl-icon.arrow {
   transform: rotateZ(180deg);
   transition: transform 0.1s ease;
-}
-.header .search .language-dropdown ul li {
-  margin: 0;
 }
 .header .search .search-popover {
   background: var(--spectrum-gray-50);
@@ -472,4 +479,11 @@ body.is-shown .exl-nav {
 }
 .header .language-selector:hover .language-dropdown {
   display: block;
+}
+
+.is-shown {
+  overflow: hidden;
+}
+.is-shown .exl-nav {
+  left: 0;
 }
