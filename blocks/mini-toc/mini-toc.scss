@@ -1,18 +1,18 @@
-.mini-toc-container .is-hidden {
-  display: none;
-}
+@import '../../styles/sass/breakpoints';
 
-@media (max-width: 899px) {
-  .mini-toc-container {
-    display: none;
+.mini-toc-container {
+  display: none;
+
+  @include breakpoint(desktop) {
+    display: block;
   }
 }
 
 .mini-toc-wrapper {
   padding-left: 0;
-  padding-top: 46px;
+  padding-top: 0;
   flex: none;
-  width: 19.5%;
+  width: 100%;
   position: sticky;
   top: 32px;
   overflow: visible;

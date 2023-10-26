@@ -1,17 +1,17 @@
-.mini-toc-container .is-hidden {
+.mini-toc-container {
   display: none;
 }
-
-@media (max-width: 899px) {
+@media (min-width: 900px) {
   .mini-toc-container {
-    display: none;
+    display: block;
   }
 }
+
 .mini-toc-wrapper {
   padding-left: 0;
-  padding-top: 46px;
+  padding-top: 0;
   flex: none;
-  width: 19.5%;
+  width: 100%;
   position: sticky;
   top: 32px;
   overflow: visible;
@@ -84,5 +84,3 @@
   background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
   color: #1e1e1e;
 }
-
-/*# sourceMappingURL=mini-toc.css.map */

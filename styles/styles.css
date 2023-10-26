@@ -368,7 +368,7 @@ strong {
   --spectrum-spacing-700: 48px;
   /* mini toc spectrum vars */
   --spectrum-sidenav-item-background-color-hover: ButtonFace;
-  --spectrum-alias-highlight-hover: rgb(0 0 0 / 6%);
+  --spectrum-alias-highlight-hover: rgba(0 0 0 / 6%);
   --spectrum-sidenav-item-text-color-hover: ButtonText;
   --spectrum-alias-text-color-hover: var(--spectrum-global-color-gray-900);
   /* Non-Spectrum custom colors */
@@ -717,7 +717,11 @@ main.three-col-layout > .rail-section .rail-section-wrapper {
 main.three-col-layout > .rail-section .rail-section-toggler {
   position: absolute;
   cursor: pointer;
-  top: 0;
+  top: 16px;
+}
+main.three-col-layout > .rail-section .rail-section-toggler .icon-rail {
+  height: 16px;
+  width: 16px;
 }
 main.three-col-layout > .rail-section-expanded .rail-section-wrapper {
   display: block;
