@@ -443,6 +443,12 @@ export function updateSectionsStatus(main) {
         break;
       } else {
         section.dataset.sectionStatus = 'loaded';
+        /**
+         * FIXME: First section is currently loaded with
+         * second, but ideally all sections should load separately and
+         * in sync. Revisit this section and identify a proper
+         * fix.
+         * */
         if (i !== 0) {
           section.style.display = null;
           sections[0].style.display = null;
