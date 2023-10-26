@@ -1,3 +1,5 @@
+@import '../../styles/sass/breakpoints';
+
 .mini-toc-container {
   display: none;
 
@@ -8,7 +10,7 @@
 
 .mini-toc-wrapper {
   padding-left: 0;
-  padding-top: 46px;
+  padding-top: 0;
   flex: none;
   width: 100%;
   position: sticky;
