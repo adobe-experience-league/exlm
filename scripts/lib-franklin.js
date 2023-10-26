@@ -443,7 +443,10 @@ export function updateSectionsStatus(main) {
         break;
       } else {
         section.dataset.sectionStatus = 'loaded';
-        section.style.display = null;
+        if (i !== 0) {
+          section.style.display = null;
+          sections[0].style.display = null;
+        }
       }
     }
   }
