@@ -1,4 +1,9 @@
-import { readBlockConfig, decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
+
+const CONFIG = {
+  basePath: '/fragments/en',
+  footerPath: '/footer/footer.plain.html',
+};
 
 function decorateMenu(footer) {
   const childElements = footer.querySelectorAll('.footer-item');
@@ -106,23 +111,27 @@ function decorateCopyrightsMenu() {
   footerMenu.parentElement.appendChild(footerLastRow);
 }
 
+// Utility function for http call
+const getHTMLData = async (url) => {
+  const response = await fetch(url);
+  if (response.ok) {
+    const responseData = response.text();
+    return responseData;
+  }
+  throw new Error(`${url} not found`);
+};
+
 /**
  * loads and decorates the footer
  * @param {Element} block The footer block element
  */
 export default async function decorate(block) {
-  const cfg = readBlockConfig(block);
-  block.textContent = '';
-
   // fetch footer content
-  const footerPath = cfg.footer || 'http://127.0.0.1:5500/footer-new';
-  const resp = await fetch(
-    `${footerPath}.plain.html`,
-    window.location.pathname.endsWith('/footer') ? { cache: 'reload' } : {},
-  );
+  const footerPath = `${CONFIG.basePath}${CONFIG.footerPath}`;
+  const resp = await getHTMLData(footerPath);
 
-  if (resp.ok) {
-    const html = await resp.text();
+  if (resp) {
+    const html = resp;
 
     // decorate footer DOM
     const footer = document.createElement('div');
@@ -130,7 +139,6 @@ export default async function decorate(block) {
     decorateMenu(footer);
     decorateSocial(footer);
     decorateBreadcrumb(footer);
-    // decorateIcons(footer);
     block.append(footer);
     decorateCopyrightsMenu();
     decorateIcons(footer);
