@@ -674,5 +674,44 @@ main.three-col-layout {
         }
       }
     }
+
+    &.rail-hidden {
+      display: none;
+    }
   }
+}
+
+main .rail-mobile-section {
+  position: relative;
+  padding: 0;
+  text-align: center;
+
+  .rail-mobile-wrapper {
+    position: absolute;
+    display: none;
+    background-color: var(--spectrum-gray-50);
+    box-shadow:
+      0 0.5em 1em -0.125em #0a0a0a1f,
+      0 0 0 1px #0a0a0a17;
+    padding: 12px 24px;
+    border-radius: 8px;
+    left: 5%;
+    top: 60px;
+    width: 80%;
+
+    &-visible {
+      display: block;
+    }
+  }
+}
+
+main button.rail-mobile-button {
+  border-radius: 4px;
+  background-color: var(--spectrum-gray-50);
+  color: var(--spectrum-gray-800);
+  border: 1px solid var(--spectrum-gray-400);
+  width: 72vw;
+  height: 48px;
+  margin: 0;
+  text-align: left;
 }

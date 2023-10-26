@@ -741,3 +741,37 @@ main.three-col-layout > .rail-section.rail-section-left.rail-section-expanded .r
 main.three-col-layout > .rail-section.rail-section-expanded.rail-section-right .rail-section-toggler .icon-rail {
   transform: rotate(180deg);
 }
+main.three-col-layout > .rail-section.rail-hidden {
+  display: none;
+}
+
+main .rail-mobile-section {
+  position: relative;
+  padding: 0;
+  text-align: center;
+}
+main .rail-mobile-section .rail-mobile-wrapper {
+  position: absolute;
+  display: none;
+  background-color: var(--spectrum-gray-50);
+  box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1215686275), 0 0 0 1px rgba(10, 10, 10, 0.0901960784);
+  padding: 12px 24px;
+  border-radius: 8px;
+  left: 5%;
+  top: 60px;
+  width: 80%;
+}
+main .rail-mobile-section .rail-mobile-wrapper-visible {
+  display: block;
+}
+
+main button.rail-mobile-button {
+  border-radius: 4px;
+  background-color: var(--spectrum-gray-50);
+  color: var(--spectrum-gray-800);
+  border: 1px solid var(--spectrum-gray-400);
+  width: 72vw;
+  height: 48px;
+  margin: 0;
+  text-align: left;
+}
