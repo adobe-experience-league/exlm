@@ -11,7 +11,7 @@
   padding-left: 0;
   padding-top: 46px;
   flex: none;
-  width: 19.5%;
+  width: 100%;
   position: sticky;
   top: 32px;
   overflow: visible;
@@ -84,5 +84,3 @@
   background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
   color: #1e1e1e;
 }
-
-/*# sourceMappingURL=mini-toc.css.map */
