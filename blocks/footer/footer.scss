@@ -1,7 +1,12 @@
 @import '../../styles/sass/breakpoints';
 
-.footer {
+.footer-wrapper {
   background-color: var(--footer-background-color);
+}
+
+.footer {
+  margin: 0 auto;
+  max-width: var(--non-spectrum-max-width);
   padding: 20px 0;
 
   &-copyrights {
