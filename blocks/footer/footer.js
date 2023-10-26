@@ -3,6 +3,17 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 const CONFIG = {
   basePath: '/fragments/en',
   footerPath: '/footer/footer.plain.html',
+  languagePath: '/languages/languages.plain.html',
+};
+
+// Utility function for http call
+const getHTMLData = async (url) => {
+  const response = await fetch(url);
+  if (response.ok) {
+    const responseData = response.text();
+    return responseData;
+  }
+  throw new Error(`${url} not found`);
 };
 
 function decorateMenu(footer) {
@@ -54,28 +65,46 @@ function extractDomain(domain) {
   return match?.[1] || '';
 }
 
-function decorateSocial(footer) {
+async function decorateSocial(footer) {
   const languageSelector = footer.querySelector('.language-selector');
   const social = footer.querySelector('.social');
   const groupDiv = document.createElement('div');
   groupDiv.classList.add('footer-lang-social');
+  // fetch language content
+  const languagePath = `${CONFIG.basePath}${CONFIG.languagePath}`;
+  const html = await getHTMLData(languagePath);
+  if (html) {
+    const frag = document.createElement('div');
+    frag.innerHTML = html;
+    const languageNav = frag.querySelector('.language-nav');
+    const dropdownMenu = languageNav.firstElementChild;
+    const dropdownMenuContent = dropdownMenu.firstElementChild;
+    dropdownMenu.classList.add('dropdown-menu');
+    dropdownMenuContent.classList.add('dropdown-content');
+    languageSelector.firstElementChild.classList.add(
+      'language-selector-button',
+    );
+    languageSelector.appendChild(languageNav);
+  }
   groupDiv.appendChild(languageSelector);
   groupDiv.appendChild(social);
   const elem = footer.children[0];
   elem.insertBefore(groupDiv, elem.children[2]);
   const socialEl = footer.querySelector('.social');
   const socialParas = socialEl.querySelectorAll('p');
-  const socailFrag = document.createDocumentFragment();
+  const socialFrag = document.createDocumentFragment();
   Array.from(socialParas).forEach((p) => {
     const { textContent } = p;
     const domainName = extractDomain(textContent).toLowerCase();
-    const holder = document.createElement('div');
+    const holder = document.createElement('a');
+    holder.href = textContent;
+    holder.target = '_blank';
     holder.classList.add('footer-social-icon-item-wrapper');
     holder.innerHTML = `<span class="icon icon-${domainName}"></span>`;
-    socailFrag.appendChild(holder);
+    socialFrag.appendChild(holder);
   });
   socialEl.innerHTML = '';
-  socialEl.appendChild(socailFrag);
+  socialEl.appendChild(socialFrag);
 }
 
 function decorateBreadcrumb(footer) {
@@ -99,8 +128,14 @@ function decorateCopyrightsMenu() {
   const footerMenu = document.querySelector('.footer-menu');
   const firstFooterAnchor = footerRights.querySelector('a');
   const copyRightWrapper = firstFooterAnchor.parentElement;
+  Array.from(copyRightWrapper.querySelectorAll('a')).forEach((anchor) => {
+    if (anchor?.href) {
+      anchor.target = '_blank';
+    }
+  });
   const adChoice = copyRightWrapper.querySelector('a:last-child');
   if (adChoice?.text?.toLowerCase() === 'adchoices') {
+    adChoice.target = '_blank';
     adChoice.innerHTML = `<span class="icon icon-adchoices-small"></span> AdChoices`;
   }
   copyRightWrapper.innerHTML = copyRightWrapper.innerHTML.replaceAll(
@@ -110,16 +145,6 @@ function decorateCopyrightsMenu() {
   copyRightWrapper.classList.add('footer-copyrights-element');
   footerMenu.parentElement.appendChild(footerLastRow);
 }
-
-// Utility function for http call
-const getHTMLData = async (url) => {
-  const response = await fetch(url);
-  if (response.ok) {
-    const responseData = response.text();
-    return responseData;
-  }
-  throw new Error(`${url} not found`);
-};
 
 /**
  * loads and decorates the footer
@@ -137,7 +162,7 @@ export default async function decorate(block) {
     const footer = document.createElement('div');
     footer.innerHTML = html;
     decorateMenu(footer);
-    decorateSocial(footer);
+    await decorateSocial(footer);
     decorateBreadcrumb(footer);
     block.append(footer);
     decorateCopyrightsMenu();
