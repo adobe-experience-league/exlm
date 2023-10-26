@@ -72,6 +72,14 @@
   color: var(--spectrum-gray-700);
   line-height: 17px;
 }
+.header .adobe-logo > a {
+  background: url("../../icons/adobe-red-logo.svg") 0 0 no-repeat;
+  background-size: cover;
+  display: inline-block;
+  height: 20px;
+  text-indent: -99999px;
+  width: 22px;
+}
 .header .exl-nav-item:last-child > a {
   background: var(--spectrum-blue-900);
   border-radius: 16px;
@@ -385,14 +393,6 @@
   .header .adobe-logo {
     display: none;
   }
-}
-.header .adobe-logo > a {
-  background: url("../../icons/adobe-red-logo.svg") 0 0 no-repeat;
-  background-size: cover;
-  display: inline-block;
-  height: 20px;
-  text-indent: -99999px;
-  width: 22px;
 }
 .header .language-selector .language-dropdown ul li {
   margin: 0;
