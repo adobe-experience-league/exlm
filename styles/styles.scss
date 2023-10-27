@@ -621,13 +621,16 @@ main button.rail-mobile-button {
   display: none;
 }
 
-main > .section:nth-child(1) {
-  position: relative;
-  padding: 0;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* stylelint-disable-next-line media-feature-range-notation */
+@media (max-width: 600px) {
+  main > .section:nth-child(1) {
+    position: relative;
+    padding: 0;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 /* three column layout */
