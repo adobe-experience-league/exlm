@@ -715,81 +715,89 @@ main button.rail-mobile-button {
 }
 
 /* three column layout */
-main.three-col-layout {
-  width: 100%;
-  display: grid;
-  gap: 8px;
-  grid-template-columns: 20% 1fr 20%;
-  max-width: 1700px;
-  margin: 0 auto;
-}
-main.three-col-layout .content-section {
-  width: auto;
-  overflow: auto;
-}
-main.three-col-layout > .rail-section {
-  grid-column: 2/3;
-  position: relative;
-  display: flex;
-  gap: 8px;
-  padding: 0 16px;
-}
-main.three-col-layout > .rail-section .rail-section-wrapper {
-  overflow: auto;
-  width: 100%;
-  display: none;
-  margin: 0;
-}
-main.three-col-layout > .rail-section .rail-section-toggler {
-  position: absolute;
-  cursor: pointer;
-  top: 16px;
-}
-main.three-col-layout > .rail-section .rail-section-toggler .icon-rail {
-  height: 16px;
-  width: 16px;
-}
-main.three-col-layout > .rail-section-expanded .rail-section-wrapper {
-  display: block;
-}
-main.three-col-layout > .rail-section-expanded .rail-section-toggler .icon-rail {
-  transform: none;
-}
-main.three-col-layout > .rail-section.rail-section-right {
-  grid-column: 3/4;
-  flex-direction: row-reverse;
-  padding: 0 16px 0 0;
-}
-main.three-col-layout > .rail-section.rail-section-right .rail-section-toggler {
-  left: 0;
-}
-main.three-col-layout > .rail-section.rail-section-right .rail-section-toggler .icon-rail {
-  transform: none;
-}
-main.three-col-layout > .rail-section.rail-section-left {
-  grid-column: 1/2;
-}
-main.three-col-layout > .rail-section.rail-section-left .rail-section-toggler {
-  right: 20px;
-}
-main.three-col-layout > .rail-section.rail-section-left .rail-section-toggler .icon-rail {
-  transform: rotate(180deg);
-}
 @media (min-width: 900px) {
-  main.three-col-layout > .rail-section.rail-section-left.rail-section-expanded {
+  main {
+    width: 100%;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 20% 1fr 20%;
+    max-width: 1700px;
+    margin: 0 auto;
+  }
+  main > .rail-section .rail-section-wrapper {
+    overflow: auto;
+    width: 100%;
+    display: none;
+    margin: 0;
+  }
+  main > .rail-section .rail-section-toggler {
+    position: absolute;
+    cursor: pointer;
+    top: 16px;
+  }
+  main > .rail-section .rail-section-toggler .icon-rail {
+    height: 16px;
+    width: 16px;
+  }
+  main > .rail-section-expanded .rail-section-wrapper {
+    display: block;
+  }
+  main > .rail-section-expanded .rail-section-toggler .icon-rail {
+    transform: none;
+  }
+  main > .rail-section.rail-section-right {
+    grid-column: 3/4;
+    flex-direction: row-reverse;
+    padding: 0 16px 0 0;
+  }
+  main > .rail-section.rail-section-right .rail-section-toggler {
+    left: 0;
+  }
+  main > .rail-section.rail-section-right .rail-section-toggler .icon-rail {
+    transform: none;
+  }
+  main > .rail-section.rail-section-left .rail-section-toggler {
+    right: 20px;
+  }
+  main > .rail-section.rail-section-left .rail-section-toggler .icon-rail {
+    transform: rotate(180deg);
+  }
+}
+@media (min-width: 900px) and (min-width: 900px) {
+  main > .rail-section.rail-section-left.rail-section-expanded {
     border-right: 1px solid var(--non-spectrurm-whisper-gray);
   }
 }
-main.three-col-layout > .rail-section.rail-section-left.rail-section-expanded .rail-section-toggler .icon-rail {
-  transform: none;
+@media (min-width: 900px) {
+  main > .rail-section.rail-section-left.rail-section-expanded .rail-section-toggler .icon-rail {
+    transform: none;
+  }
+  main > .rail-section.rail-section-expanded.rail-section-right .rail-section-toggler .icon-rail {
+    transform: rotate(180deg);
+  }
+  main > .rail-section.rail-hidden {
+    display: none;
+  }
+  main > .section:not(:nth-child(2)) {
+    grid-column: 2/3;
+    position: relative;
+    display: flex;
+    gap: 8px;
+    padding: 0 16px;
+  }
+  main > .section.mini-toc-container {
+    grid-column: 3/4;
+    flex-direction: row-reverse;
+    padding: 0 16px 0 0;
+  }
+  main > .section:nth-child(1) {
+    grid-column: 1/2;
+  }
+  main > .section:nth-child(2) {
+    width: auto;
+    overflow: auto;
+  }
 }
-main.three-col-layout > .rail-section.rail-section-expanded.rail-section-right .rail-section-toggler .icon-rail {
-  transform: rotate(180deg);
-}
-main.three-col-layout > .rail-section.rail-hidden {
-  display: none;
-}
-
 main .rail-mobile-section {
   position: relative;
   padding: 0;

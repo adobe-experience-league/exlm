@@ -622,84 +622,37 @@ main button.rail-mobile-button {
 }
 
 /* three column layout */
-main.three-col-layout {
-  width: 100%;
-  display: grid;
-  gap: 8px;
-  grid-template-columns: 20% 1fr 20%;
-  max-width: 1700px;
-  margin: 0 auto;
-
-  .content-section {
-    width: auto;
-    overflow: auto;
-  }
-
-  & > .rail-section {
-    grid-column: 2/3;
-    position: relative;
-    display: flex;
+@include breakpoint('desktop') {
+  main {
+    width: 100%;
+    display: grid;
     gap: 8px;
-    padding: 0 16px;
+    grid-template-columns: 20% 1fr 20%;
+    max-width: 1700px;
+    margin: 0 auto;
 
-    .rail-section-wrapper {
-      overflow: auto;
-      width: 100%;
-      display: none;
-      margin: 0;
-    }
-
-    .rail-section-toggler {
-      position: absolute;
-      cursor: pointer;
-      top: 16px;
-
-      .icon-rail {
-        height: 16px;
-        width: 16px;
-      }
-    }
-
-    &-expanded {
+    & > .rail-section {
       .rail-section-wrapper {
-        display: block;
+        overflow: auto;
+        width: 100%;
+        display: none;
+        margin: 0;
       }
 
       .rail-section-toggler {
-        .icon-rail {
-          transform: none;
-        }
-      }
-    }
-
-    &.rail-section-right {
-      grid-column: 3/4;
-      flex-direction: row-reverse;
-      padding: 0 16px 0 0;
-
-      .rail-section-toggler {
-        left: 0;
+        position: absolute;
+        cursor: pointer;
+        top: 16px;
 
         .icon-rail {
-          transform: none;
-        }
-      }
-    }
-
-    &.rail-section-left {
-      grid-column: 1/2;
-
-      .rail-section-toggler {
-        right: 20px;
-
-        .icon-rail {
-          transform: rotate(180deg);
+          height: 16px;
+          width: 16px;
         }
       }
 
-      &.rail-section-expanded {
-        @include breakpoint(desktop) {
-          border-right: 1px solid var(--non-spectrurm-whisper-gray);
+      &-expanded {
+        .rail-section-wrapper {
+          display: block;
         }
 
         .rail-section-toggler {
@@ -708,21 +661,80 @@ main.three-col-layout {
           }
         }
       }
-    }
 
-    &.rail-section-expanded {
       &.rail-section-right {
+        grid-column: 3/4;
+        flex-direction: row-reverse;
+        padding: 0 16px 0 0;
+
         .rail-section-toggler {
+          left: 0;
+
+          .icon-rail {
+            transform: none;
+          }
+        }
+      }
+
+      &.rail-section-left {
+        .rail-section-toggler {
+          right: 20px;
+
           .icon-rail {
             transform: rotate(180deg);
           }
         }
+
+        &.rail-section-expanded {
+          @include breakpoint(desktop) {
+            border-right: 1px solid var(--non-spectrurm-whisper-gray);
+          }
+
+          .rail-section-toggler {
+            .icon-rail {
+              transform: none;
+            }
+          }
+        }
+      }
+
+      &.rail-section-expanded {
+        &.rail-section-right {
+          .rail-section-toggler {
+            .icon-rail {
+              transform: rotate(180deg);
+            }
+          }
+        }
+      }
+
+      &.rail-hidden {
+        display: none;
       }
     }
+  }
 
-    &.rail-hidden {
-      display: none;
-    }
+  main > .section:not(:nth-child(2)) {
+    grid-column: 2/3;
+    position: relative;
+    display: flex;
+    gap: 8px;
+    padding: 0 16px;
+  }
+
+  main > .section.mini-toc-container {
+    grid-column: 3/4;
+    flex-direction: row-reverse;
+    padding: 0 16px 0 0;
+  }
+
+  main > .section:nth-child(1) {
+    grid-column: 1/2;
+  }
+
+  main > .section:nth-child(2) {
+    width: auto;
+    overflow: auto;
   }
 }
 
