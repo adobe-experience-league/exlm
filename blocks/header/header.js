@@ -4,6 +4,7 @@ import {
   isMobile,
   fetchContent,
   cleanUpDivElems,
+  manageElemState,
 } from '../../scripts/utilities.js';
 
 // Configurable data
@@ -34,6 +35,7 @@ const communityTabContent = await fetchContent(
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
+  const bodyTag = document.querySelector('body');
   const navWrapper = document.createElement('nav');
   navWrapper.className = 'exl-topnav';
   navWrapper.setAttribute('aria-label', 'Main navigation');
@@ -45,7 +47,7 @@ export default async function decorate(block) {
   // Prepend curtain wrapper inside Body tag
   const exlOverlay = document.createElement('div');
   exlOverlay.className = 'exl-curtain';
-  document.querySelector('body').prepend(exlOverlay);
+  bodyTag.prepend(exlOverlay);
 
   // Exl Logo Branding
   const wrapper = block.closest('.header');
@@ -145,8 +147,24 @@ export default async function decorate(block) {
   const adobeLogo = wrapper.querySelector('.adobe-logo');
   cleanUpDivElems(adobeLogo, 'a');
 
-  // Reposition Sign Link
+  // Reposition Sign up Link
   exlTopNavFirstChild.insertBefore(profile, adobeLogo);
+
+  // Move nav action items into a parent div block
+  const exlNavActionItems = [
+    '.search',
+    '.language-selector',
+    '.profile',
+    '.adobe-logo',
+  ];
+  const exlNavAction = document.createElement('div');
+  exlNavAction.className = 'exl-nav-action';
+
+  exlNavActionItems.forEach((actionitem) => {
+    exlNavAction.appendChild(exlTopNav.querySelector(actionitem));
+  });
+
+  exlNav.parentNode.insertBefore(exlNavAction, exlNav.nextSibling);
 
   // fetch Sub navigation content
   const exlNavItems = wrapper.querySelectorAll('.exl-nav .exl-nav-item');
@@ -190,19 +208,31 @@ export default async function decorate(block) {
     }
 
     if (isMobile) {
-      largemenu.addEventListener('mousedown', () => {
-        largemenuAnchor.removeAttribute('href');
+      largemenuAnchor.removeAttribute('href');
+      largemenuAnchor.addEventListener('mousedown', (e) => {
+        e.preventDefault();
         largemenuAnchor.nextElementSibling.removeAttribute('style');
-        largemenu.classList.toggle('is-expanded');
-        largemenuAnchor.classList.toggle('active');
+        manageElemState(largemenuAnchor, 'active');
+        manageElemState(largemenu, 'is-expanded');
       });
     }
   });
 
   if (isMobile) {
     hamburger.addEventListener('mousedown', () => {
-      hamburger.classList.toggle('is-active');
-      document.querySelector('body').classList.toggle('is-shown');
+      manageElemState(hamburger, 'is-active');
+      manageElemState(bodyTag, 'is-shown');
     });
   }
+
+  // Assign redirects to sub menu anchor links
+  const subMenuAnchorLinks = exlTopNav.querySelectorAll(
+    '.exl-subnav-wrapper a',
+  );
+
+  subMenuAnchorLinks.forEach((submenuanchor) => {
+    if (submenuanchor.getAttribute('href').indexOf('#_blank') !== -1) {
+      submenuanchor.classList.add('redirect');
+    }
+  });
 }
