@@ -621,6 +621,15 @@ main button.rail-mobile-button {
   display: none;
 }
 
+main > .section:nth-child(1) {
+  position: relative;
+  padding: 0;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* three column layout */
 @include breakpoint('desktop') {
   main {
