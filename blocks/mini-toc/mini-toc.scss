@@ -28,6 +28,7 @@
   .scrollable-div {
     max-height: 50vh;
     overflow: hidden;
+    margin-top: 12px;
   }
 
   .scrollable-div:hover {
@@ -46,7 +47,7 @@
 .mini-toc-wrapper .mini-toc ul {
   list-style: none;
   padding-left: 0;
-  margin: var(--spectrum-spacing-200) var(--spectrum-spacing-100) 0 17px;
+  margin: 0 8px 0 0;
 
   li {
     display: inline-flex;
@@ -68,7 +69,7 @@
         --spectrum-sidenav-item-padding-x,
         var(--spectrum-global-dimension-size-150)
       );
-    margin: 8px 0;
+    margin: 4px 0;
 
     .is-padded-left-big {
       padding-left: var(--spectrum-spacing-400) !important;
@@ -88,7 +89,10 @@
 
     a {
       font-size: var(--spectrum-font-size-100);
+      line-height: 21px;
       display: inline-flex;
+      min-height: 32px;
+      box-sizing: border-box;
       width: 100%;
       margin: 0;
       border-radius: 4px;

@@ -48,10 +48,13 @@ export default async function decorate(block) {
 
             i.addEventListener('click', () => {
               const ahash = (i.href.length > 0 ? new URL(i.href).hash || '' : '').replace(/^#/, '');
-
+              let activeAnchor = i;
+              if (!i.classList.contains('is-padded-left-big') && i.parentElement?.nextElementSibling?.firstElementChild?.classList?.contains('is-padded-left-big')) {
+                activeAnchor = i.parentElement.nextElementSibling.firstChild;
+              }
               render(() => {
                 anchors.forEach(a => a.classList.remove('is-active'));
-                i.classList.add('is-active');
+                activeAnchor.classList.add('is-active');
 
                 if (ahash.length > 0) {
                   hashFragment(ahash);
@@ -63,6 +66,22 @@ export default async function decorate(block) {
               highlight(false);
             }
           });
+          const anchor = anchors[0].parentElement;
+          const scrollableDiv = ctx.querySelector('.scrollable-div');
+          if (scrollableDiv) {
+            // dynamically make sure no item is partially visible
+            const anchorClientHeight = anchor.offsetHeight;
+            const anchorStylyes = getComputedStyle(anchor);
+            const marginTop = parseInt(anchorStylyes.marginTop || '0', 10);
+            const marginBottom = parseInt(anchorStylyes.marginBottom || '0', 10);
+            const anchorHeight = anchorClientHeight + marginTop + marginBottom;
+            const halfWindowHeight = window.innerHeight / 2;
+            const visibleAnchorsCount = Math.floor(halfWindowHeight / anchorHeight);
+            if (visibleAnchorsCount && anchors.length > visibleAnchorsCount) {
+              scrollableDiv.style.maxHeight = `${visibleAnchorsCount * anchorHeight}px`;
+            }
+          }
+
         }
       });
     } else {
