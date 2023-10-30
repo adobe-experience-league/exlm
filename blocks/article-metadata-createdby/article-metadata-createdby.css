@@ -1,7 +1,7 @@
 .article-metadata-createdby-wrapper {
   border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
   padding-bottom: 38px;
-  margin-bottom: 32px;
+  margin-bottom: 32px !important;
 }
 
 ul.meta-created-for {
