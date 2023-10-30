@@ -134,16 +134,21 @@ function createToggleLayoutSection(main, railElement, isLeftSection = true) {
     secondaryClassName,
     'rail-section-expanded',
   );
-  const wrapperElement =
-    railElement.querySelector('.rail-section-wrapper') ||
-    document.createElement('div');
+  const originalWrapper = railElement.querySelector('.rail-section-wrapper');
+  const wrapperElement = originalWrapper || document.createElement('div');
   wrapperElement.classList.add('rail-section-wrapper');
-  const railChildren = railElement.innerHTML;
-  wrapperElement.innerHTML = railChildren;
-  railElement.replaceChildren(wrapperElement);
-  const toggleElement =
-    railElement.querySelector('.rail-section-toggler') ||
-    document.createElement('div');
+  if (!originalWrapper) {
+    const railChildren = railElement.innerHTML;
+    wrapperElement.innerHTML = railChildren;
+    railElement.replaceChildren(wrapperElement);
+  }
+  const originalToggleElement = railElement.querySelector(
+    '.rail-section-toggler',
+  );
+  if (originalToggleElement) {
+    return;
+  }
+  const toggleElement = document.createElement('div');
   toggleElement.classList.add(
     'rail-section-toggler',
     'rail-section-toggler-expanded',
@@ -183,6 +188,7 @@ function handleLayoutResize() {
       mRailWrapper.classList.remove('rail-mobile-wrapper');
       mRailWrapper.classList.add('rail-section-wrapper');
     }
+    main.style.gridTemplateColumns = '';
     createToggleLayoutSection(main, leftRail, true);
     createToggleLayoutSection(main, rightRail, false);
     decorateIcons(main);
