@@ -736,7 +736,7 @@ main.three-col-layout > .rail-section {
   padding: 0 16px;
 }
 main.three-col-layout > .rail-section .rail-section-wrapper {
-  overflow: auto;
+  overflow: visible;
   width: 100%;
   display: none;
   margin: 0;
