@@ -1,0 +1,5 @@
+mappings:
+ - /content/exlm/:/
+
+includes:
+ - /content/exlm/
