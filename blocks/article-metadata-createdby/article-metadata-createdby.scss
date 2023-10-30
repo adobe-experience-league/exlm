@@ -1,9 +1,3 @@
-.article-metadata-createdby-wrapper {
-  border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
-  padding-bottom: 38px;
-  margin-bottom: 32px !important;
-}
-
 ul.meta-created-for {
   list-style: none;
   margin-top: 0;
@@ -35,4 +29,10 @@ ul.meta-created-for > li {
   -webkit-font-smoothing: subpixel-antialiased;
   border-radius: 4px;
   line-height: 15.6px;
+}
+
+.article-metadata-container .article-metadata-createdby-wrapper {
+  border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
+  padding-bottom: 38px;
+  margin-bottom: 32px;
 }
