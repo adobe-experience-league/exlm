@@ -12,7 +12,7 @@
     transition: all 200ms;
     top: 65px;
     width: 100%;
-    z-index: 0;
+    z-index: 9;
   }
 }
 
@@ -72,6 +72,10 @@ body.is-shown .exl-curtain {
     top: 0;
   }
 }
+.header-wrapper {
+  position: relative;
+  z-index: 11;
+}
 .header * {
   box-sizing: border-box;
   margin: 0;
@@ -108,10 +112,11 @@ body.is-shown .exl-curtain {
   }
 }
 .header .language-selector > a {
-  background: url("/icons/globegrid.svg") 0 0 no-repeat;
-  background-size: cover;
+  background: url("/icons/globegrid.svg") 0 24px no-repeat;
+  background-size: contain;
   display: inline-block;
-  height: 18px;
+  height: 64px;
+  margin: 0;
   vertical-align: middle;
   width: 18px;
   text-indent: -99999px;
@@ -720,7 +725,7 @@ body.is-shown .exl-curtain {
 }
 .header .language-selector {
   height: 64px;
-  padding: 13px 10px 0;
+  padding: 0 8px;
   position: relative;
 }
 @media (width <= 1024px) {
