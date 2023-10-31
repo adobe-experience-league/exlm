@@ -32,7 +32,7 @@ const communityTabContent = await fetchContent(
   `${CONFIG.basePath}${CONFIG.communityPath}`,
 );
 
-// REUSABLE VARIABLES
+// Body Tag
 const bodyTag = document.querySelector('body');
 
 // Paint header content to DOM
