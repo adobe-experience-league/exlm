@@ -169,7 +169,7 @@ function decorateCopyrightsMenu() {
     adChoice.innerHTML = `<span class="icon icon-adchoices-small"></span> AdChoices`;
   }
   copyRightWrapper.innerHTML = copyRightWrapper.innerHTML.replaceAll(
-    /(?<=\s)\/(?=\s)/g,
+    /\s\/\s/g,
     '<span class="footer-slash">/</span>',
   );
   if (copyRightWrapper?.firstChild instanceof Text) {
@@ -185,17 +185,19 @@ function decorateCopyrightsMenu() {
 function handleSocialIconStyles(footer) {
   Array.from(footer.querySelectorAll('.social a')).forEach((anchor) => {
     const svg = anchor.querySelector('svg');
-    anchor.addEventListener('mouseover', () => {
+    anchor.addEventListener('mouseenter', () => {
       const symbolPath = svg.firstElementChild?.href?.baseVal;
       const symbol = symbolPath ? document.querySelector(symbolPath) : null;
       if (symbol) {
+        svg.style.fill = '#909090';
         symbol.firstElementChild.style.fill = '#909090';
       }
     });
-    anchor.addEventListener('mouseout', () => {
+    anchor.addEventListener('mouseleave', () => {
       const symbolPath = svg.firstElementChild?.href?.baseVal;
       const symbol = symbolPath ? document.querySelector(symbolPath) : null;
       if (symbol) {
+        svg.style.fill = '';
         symbol.firstElementChild.style.fill = '';
       }
     });
