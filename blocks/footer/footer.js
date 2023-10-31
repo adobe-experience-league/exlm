@@ -65,6 +65,29 @@ function extractDomain(domain) {
   return match?.[1] || '';
 }
 
+function hideLangSelectionDropdown(e) {
+  const langDropdown = document.querySelector(
+    '.footer .dropdown-menu.dropdown-menu-active',
+  );
+  if (
+    langDropdown &&
+    (!e.target || (e.target && !langDropdown.contains(e.target)))
+  ) {
+    langDropdown.classList.remove('dropdown-menu-active');
+    document.removeEventListener('click', hideLangSelectionDropdown);
+  }
+}
+
+function showLangSelectionDropdown(e) {
+  const langDropdownBase = document.querySelector('.footer .language-nav');
+  const langDropdown = langDropdownBase?.querySelector('.dropdown-menu');
+  if (langDropdown) {
+    e.stopPropagation();
+    langDropdown.classList.add('dropdown-menu-active');
+    document.addEventListener('click', hideLangSelectionDropdown);
+  }
+}
+
 async function decorateSocial(footer) {
   const languageSelector = footer.querySelector('.language-selector');
   const social = footer.querySelector('.social');
@@ -81,10 +104,13 @@ async function decorateSocial(footer) {
     const dropdownMenuContent = dropdownMenu.firstElementChild;
     dropdownMenu.classList.add('dropdown-menu');
     dropdownMenuContent.classList.add('dropdown-content');
-    languageSelector.firstElementChild.classList.add(
-      'language-selector-button',
-    );
+    const langSelectorButton = languageSelector.firstElementChild;
+    langSelectorButton.classList.add('language-selector-button');
+    const icon = document.createElement('span');
+    icon.classList.add('icon', 'icon-globegrid');
+    langSelectorButton.appendChild(icon);
     languageSelector.appendChild(languageNav);
+    langSelectorButton.addEventListener('click', showLangSelectionDropdown);
   }
   groupDiv.appendChild(languageSelector);
   groupDiv.appendChild(social);
@@ -109,6 +135,9 @@ async function decorateSocial(footer) {
 
 function decorateBreadcrumb(footer) {
   const breadCrumb = footer.querySelector('.footer-breadcrumb');
+  if (breadCrumb?.parentElement) {
+    breadCrumb.parentElement.classList.add('footer-container');
+  }
   const para = breadCrumb.querySelector('p');
   para.parentElement.classList.add('footer-breadcrumb-item-wrapper');
   Array.from(breadCrumb.querySelectorAll('a')).forEach((a) => {
@@ -135,15 +164,42 @@ function decorateCopyrightsMenu() {
   });
   const adChoice = copyRightWrapper.querySelector('a:last-child');
   if (adChoice?.text?.toLowerCase() === 'adchoices') {
+    adChoice.classList.add('footer-adchoice-wrapper');
     adChoice.target = '_blank';
     adChoice.innerHTML = `<span class="icon icon-adchoices-small"></span> AdChoices`;
   }
   copyRightWrapper.innerHTML = copyRightWrapper.innerHTML.replaceAll(
     /(?<=\s)\/(?=\s)/g,
-    '<span>/</span>',
+    '<span class="footer-slash">/</span>',
   );
+  if (copyRightWrapper?.firstChild instanceof Text) {
+    copyRightWrapper.innerHTML = copyRightWrapper.innerHTML.replace(
+      copyRightWrapper.firstChild.textContent,
+      `<span class="footer-copyrights-text">${copyRightWrapper.firstChild.textContent}</span>`,
+    );
+  }
   copyRightWrapper.classList.add('footer-copyrights-element');
   footerMenu.parentElement.appendChild(footerLastRow);
+}
+
+function handleSocialIconStyles(footer) {
+  Array.from(footer.querySelectorAll('.social a')).forEach((anchor) => {
+    const svg = anchor.querySelector('svg');
+    anchor.addEventListener('mouseover', () => {
+      const symbolPath = svg.firstElementChild?.href?.baseVal;
+      const symbol = symbolPath ? document.querySelector(symbolPath) : null;
+      if (symbol) {
+        symbol.firstElementChild.style.fill = '#909090';
+      }
+    });
+    anchor.addEventListener('mouseout', () => {
+      const symbolPath = svg.firstElementChild?.href?.baseVal;
+      const symbol = symbolPath ? document.querySelector(symbolPath) : null;
+      if (symbol) {
+        symbol.firstElementChild.style.fill = '';
+      }
+    });
+  });
 }
 
 /**
@@ -166,6 +222,7 @@ export default async function decorate(block) {
     decorateBreadcrumb(footer);
     block.append(footer);
     decorateCopyrightsMenu();
-    decorateIcons(footer);
+    await decorateIcons(footer);
+    handleSocialIconStyles(footer);
   }
 }
