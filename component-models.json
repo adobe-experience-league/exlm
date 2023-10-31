@@ -111,25 +111,6 @@
     ]
   },
   {
-    "id": "columns",
-    "fields": [
-      {
-        "component": "text-input",
-        "valueType": "number",
-        "name": "columns",
-        "value": "",
-        "label": "Columns"
-      },
-      {
-        "component": "text-input",
-        "valueType": "number",
-        "name": "rows",
-        "value": "",
-        "label": "Rows"
-      }
-    ]
-  },
-  {
     "id": "section",
     "fields": [
       {
