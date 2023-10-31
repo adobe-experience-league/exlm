@@ -71,9 +71,9 @@ export default async function decorate(block) {
           if (scrollableDiv) {
             // dynamically make sure no item is partially visible
             const anchorClientHeight = anchor.offsetHeight;
-            const anchorStylyes = getComputedStyle(anchor);
-            const marginTop = parseInt(anchorStylyes.marginTop || '0', 10);
-            const marginBottom = parseInt(anchorStylyes.marginBottom || '0', 10);
+            const anchorStyles = getComputedStyle(anchor);
+            const marginTop = parseInt(anchorStyles.marginTop || '0', 10);
+            const marginBottom = parseInt(anchorStyles.marginBottom || '0', 10);
             const anchorHeight = anchorClientHeight + marginTop + marginBottom;
             const halfWindowHeight = window.innerHeight / 2;
             const visibleAnchorsCount = Math.floor(halfWindowHeight / anchorHeight);
