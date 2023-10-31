@@ -1,0 +1,6 @@
+.accordion {
+  background-color: var(--spectrum-gray-100);
+  padding: 0 16px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
