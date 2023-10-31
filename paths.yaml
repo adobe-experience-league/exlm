@@ -1,5 +1,5 @@
 mappings:
- - /content/exlm/:/
+ - /content/exlm/us/en/:/
 
 includes:
- - /content/exlm/
+ - /content/exlm/us/en/
