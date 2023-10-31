@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import { sampleRUM } from './lib-franklin.js';
-import buildLayout from './rail.js';
+import buildLayout from './rails.js';
 
 // Core Web Vitals RUM collection
 sampleRUM('cwv');
