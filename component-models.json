@@ -1,5 +1,235 @@
 [
   {
+    "id": "teaser",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Image",
+        "description" : "The teaser image, min Xpx x Ypx...",
+        "multi": false,
+        "required": true
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "imageAlt",
+        "value": "",
+        "label": "Image Description",
+        "description" : "A descriptive text of the image will be shown as tooltip.",
+        "required": true
+      },
+      {
+        "component": "radio-group",
+        "name": "classes",
+        "value": "light left",
+        "label": "Theme / Order",
+        "valueType": "string",
+        "description" : "Select a theme and the order of output",
+        "required": true,
+        "options": [
+          {
+            "name": "Light / Text Left",
+            "value": "light left"
+          },
+          {
+            "name": "Light / Text right",
+            "value": "light right"
+          },
+          {
+            "name": "Dark / Text left",
+            "value": "dark left"
+          },
+          {
+            "name": "Dark / Text right",
+            "value": "dark right"
+          }
+        ]
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "eyebrow",
+        "value": "",
+        "label": "Eyebrow",
+        "description" : "Sets the small pre-title above the title."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Heading",
+        "description" : "Sets the main title of the teaser.",
+        "required": true
+      },
+      {
+        "component": "text-area",
+        "valueType": "string",
+        "name": "longDescr",
+        "value": "true",
+        "label": "Long Description",
+        "description" : "The description shown in Desktop and Tablet view.",
+        "required": true
+      },    
+      {
+        "component": "text-area",
+        "valueType": "string",
+        "name": "shortDescr",
+        "value": "",
+        "label": "Short Description",
+        "description" : "The description shown in Mobile view.",
+        "required": true
+      },
+      {
+        "component": "select",
+        "name": "backgroundColor",
+        "value": "",
+        "label": "Background Color",
+        "description" : "The teaser background color when in mobile view.",
+        "valueType": "string",
+        "required": true,
+        "options": [
+          {
+            "name": "Grey 600",
+            "value": "--spectrum-global-color-gray-600"
+          },
+          {
+            "name": "Blue 600",
+            "value": "--spectrum-global-color-blue-600"
+          },
+          {
+            "name": "Orange 600",
+            "value": "--spectrum-global-color-orange-600"
+          },
+          {
+            "name": "Red 600",
+            "value": "--spectrum-global-color-red-600"
+          },
+          {
+            "name": "Celery 600",
+            "value": "--spectrum-global-color-celery-600"
+          },
+          {
+            "name": "Chartreuse 600",
+            "value": "--spectrum-global-color-chartreuse-600"
+          },
+          {
+            "name": "Cyan 600",
+            "value": "--spectrum-global-color-cyan-600"
+          },
+          {
+            "name": "Fuchsia 600",
+            "value": "--spectrum-global-color-fuchsia-600"
+          },
+          {
+            "name": "Indigo 600",
+            "value": "--spectrum-global-color-indigo-600"
+          },
+          {
+            "name": "Magenta 600",
+            "value": "--spectrum-global-color-magenta-600"
+          },
+          {
+            "name": "Purple 600",
+            "value": "--spectrum-global-color-purple-600"
+          },
+          {
+            "name": "Seafoam 600",
+            "value": "--spectrum-global-color-seafoam-600"
+          },
+          {
+            "name": "Yellow 600",
+            "value": "--spectrum-global-color-yellow-600"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "cta1Type",
+        "value": "primary",
+        "label": "First CTA Type",
+        "description" : "'Primary' will render button filled, 'Secondary' with an outline.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cta1Text",
+        "value": "",
+        "label": "First CTA Text",
+        "description" : "Text to be shown inside button."
+      }, 
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cta1Url",
+        "value": "",
+        "label": "First CTA Link",
+        "description" : "What link to open when clicking the button."
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "cta1newWindow",
+        "label": "Open Link in new Tab",
+        "description" : "If enabled a new Tab will be opened when clicked."
+      },
+      {
+        "component": "select",
+        "name": "cta2Type",
+        "value": "primary",
+        "label": "Second CTA Type",
+        "description" : "'Primary' will render button filled, 'Secondary' with an outline.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": ""
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cta2Text",
+        "value": "",
+        "label": "Second CTA Text",
+        "description" : "Text to be shown inside button."
+      }, 
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cta2Url",
+        "value": "",
+        "label": "Second CTA Link",
+        "description" : "What link to open when clicking the button."
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "cta2newWindow",
+        "label": "Open in new Tab",
+        "description" : "If enabled a new Tab will be opened when clicked."
+      } 
+    ]
+  },
+  {
     "id": "title",
     "fields": [
       {

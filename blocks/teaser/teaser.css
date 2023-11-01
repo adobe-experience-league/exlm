@@ -1,0 +1,31 @@
+/* The teaser main div */
+.teaser.block > .teaser {
+  display: flex;
+  background-color: white;
+}
+
+.teaser.block.dark-right > .teaser,
+.teaser.block.dark-left > .teaser {
+  background-color: lightgrey;
+}
+
+.teaser.block > .teaser > .text {
+  width:50%;
+  order: 0;
+}
+
+.teaser.block > .teaser > .image {
+  width:50%;
+  order: 1;
+}
+
+.teaser.block.light-right > .teaser > .text,
+.teaser.block.dark-right > .teaser > .text {
+  order: 1;
+}
+
+.teaser.block.light-right > .teaser > .image,
+.teaser.block.dark-right > .teaser > .image {
+  order: 0;
+}
+

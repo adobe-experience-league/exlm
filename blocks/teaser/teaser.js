@@ -1,0 +1,71 @@
+export default function decorate(block) {
+  // 1. extract properties (always same order as in model)
+  // const image = block.querySelector("div:nth-child(1) > div").innerHTML;
+  // const imageDescr = block.querySelector("div:nth-child(2) > div").textContent.trim();
+  const eyebrow = block
+    .querySelector('div:nth-child(3) > div')
+    .textContent.trim();
+  const title = block
+    .querySelector('div:nth-child(4) > div')
+    .textContent.trim();
+  const longDescr = block.querySelector('div:nth-child(5) > div').innerHTML;
+  // const shortDescr = block.querySelector("div:nth-child(6) > div").innerHTML;
+  // const backgroundColor = block.querySelector("div:nth-child(7) > div").textContent.trim();
+  const firstCTAType = block
+    .querySelector('div:nth-child(8) > div')
+    .textContent.trim();
+  const firstCTAText = block
+    .querySelector('div:nth-child(9) > div')
+    .textContent.trim();
+  const firstCTALink = block
+    .querySelector('div:nth-child(10) > div')
+    .textContent.trim();
+  const firstCTANewTab = block
+    .querySelector('div:nth-child(11) > div')
+    .textContent.trim();
+  const secondCTAType = block
+    .querySelector('div:nth-child(12) > div')
+    .textContent.trim();
+  const secondCTAText = block
+    .querySelector('div:nth-child(13) > div')
+    .textContent.trim();
+  const secondCTALink = block
+    .querySelector('div:nth-child(14) > div')
+    .textContent.trim();
+  const secondCTANewTab = block
+    .querySelector('div:nth-child(15) > div')
+    .textContent.trim();
+
+  // 2. build DOM
+  const teaserDOM = document.createRange().createContextualFragment(`
+    <div class='teaser'>
+      <div class='text'>
+        ${eyebrow ? `<div class='eyebrow'>${eyebrow}</div>` : ''}
+        <div class='title'>${title}</div>
+        <div class='description'>${longDescr}</div>
+        <div class='cta'>
+          ${
+            (firstCTAText !== '') !== (firstCTALink !== '')
+              ? `button text or link missing!`
+              : `<button><a class='${firstCTAType}' ${
+                  firstCTANewTab === 'true' ? `target='_blank'` : ''
+                } href='${firstCTALink}'>${firstCTAText}</a></button>`
+          }
+          ${
+            secondCTAText !== '' && secondCTALink !== ''
+              ? `<button><a class='${secondCTAType}' ${
+                  secondCTANewTab === 'true' ? `target='_blank'` : ''
+                } href='${secondCTALink}'>${secondCTAText}</a></button>`
+              : ``
+          }
+        </div>
+      </div>
+      <div class='image'>
+      </div>
+    </div>
+  `);
+
+  // 3. add DOM
+  block.textContent = '';
+  block.append(teaserDOM);
+}

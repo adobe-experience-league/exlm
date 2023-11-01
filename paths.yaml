@@ -2,6 +2,8 @@ mappings:
  - /content/exlm/us/en:/
  - /content/exlm/us/en/:/us/en/
  - /content/exlm/metadata:/metadata.json
+ # to enable loading of fragments from localhost
+ - /content/exlm.resource/fragments/:/fragments/
 
 includes:
  - /content/exlm/us/en
