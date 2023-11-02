@@ -22,6 +22,15 @@ export const cleanUpDivElems = (sel, tag) => {
   }
 };
 
+// Expand/Collapse
+export const manageElemState = (elem, sel) => {
+  if (elem.classList.contains(sel)) {
+    elem.classList.remove(sel);
+  } else {
+    elem.classList.add(sel);
+  }
+};
+
 export const isMobileResolution = () => {
   const { matches: isMobileRes } = window.matchMedia('(max-width: 900px)');
   return isMobileRes;
