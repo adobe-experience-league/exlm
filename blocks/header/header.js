@@ -233,27 +233,34 @@ function decorateSubNavigation(block) {
   });
 
   exlNavWithLargeMenu.forEach((largemenu) => {
+    const largemenuHeadings = largemenu.querySelectorAll('h5');
     const largemenuAnchor = largemenu.querySelector('a');
     if (isDesktop) {
       largemenu.addEventListener('mouseover', () => {
         block.classList.add('exl-overlay');
         largemenuAnchor.classList.add('active');
-        largemenuAnchor.nextElementSibling.style.display = 'block';
       });
 
       largemenu.addEventListener('mouseout', () => {
         block.classList.remove('exl-overlay');
         largemenuAnchor.classList.remove('active');
-        largemenuAnchor.nextElementSibling.style.display = 'none';
       });
     }
 
     if (isMobile) {
-      largemenu.addEventListener('click', (event) => {
+      largemenuAnchor.addEventListener('click', (event) => {
         event.preventDefault();
         largemenuAnchor.removeAttribute('href');
         largemenuAnchor.nextElementSibling.removeAttribute('style');
         manageElemState(largemenu, 'is-expanded');
+      });
+
+      largemenuHeadings.forEach((heading) => {
+        heading.addEventListener('click', () => {
+          heading.parentElement.parentElement.parentElement.classList.toggle(
+            'show',
+          );
+        });
       });
     }
   });

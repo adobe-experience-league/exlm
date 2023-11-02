@@ -225,14 +225,6 @@ body.is-shown {
     }
   }
 
-  & .exl-nav-item > a.active {
-    @include breakpoint(large) {
-      border-bottom: 2px solid var(--spectrum-gray-700);
-    }
-
-    background: var(--spectrum-gray-100);
-  }
-
   & .exl-subnav-wrapper p {
     color: var(--spectrum-gray-700);
     font-size: var(--spectrum-font-size-50);
@@ -621,11 +613,33 @@ body.is-shown {
         padding: 0 0 19px;
         margin-top: 19px;
       }
+
+      @include custom-breakpoint(large) {
+        &.show {
+          & h5::after {
+            transform: rotateZ(225deg);
+          }
+
+          & > div:nth-child(2) {
+            display: block;
+          }
+        }
+      }
     }
 
     & .quick-links {
       @include custom-breakpoint(large) {
         margin: 0 24px;
+
+        &.show {
+          & h5::after {
+            transform: rotateZ(225deg);
+          }
+
+          & > div:not(:first-child):nth-child(2) {
+            display: block;
+          }
+        }
       }
     }
 
@@ -637,13 +651,33 @@ body.is-shown {
     }
   }
 
+  & .exl-nav-item > a.active {
+    @include breakpoint(large) {
+      border-bottom: 2px solid var(--spectrum-gray-700);
+    }
+
+    background: var(--spectrum-gray-100);
+
+    & + .exl-subnav-wrapper {
+      display: block;
+
+      @include custom-breakpoint(large) {
+        display: none;
+      }
+    }
+  }
+
   & .exl-nav-item.large-menu.is-expanded {
     > a::after {
       transform: rotateZ(225deg);
     }
 
     & .exl-subnav-wrapper {
-      display: block;
+      display: none;
+
+      @include custom-breakpoint(large) {
+        display: block;
+      }
     }
   }
 
