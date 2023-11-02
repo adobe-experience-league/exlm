@@ -101,7 +101,7 @@ body.is-shown .exl-curtain {
   margin: 0;
   padding: 20px 22px 0;
 }
-@media (width >= 1024px) and (width <= 1200px) {
+@media (max-width: 1200px) {
   .header .exl-nav-item > a {
     padding: 20px 18px 0;
   }
@@ -353,6 +353,7 @@ body.is-shown .exl-curtain {
     position: relative;
     top: 27px;
     width: 18px;
+    z-index: 10;
   }
   .header .nav-hamburger > span {
     background-color: var(--spectrum-gray-700);
@@ -667,7 +668,7 @@ body.is-shown .exl-curtain {
     width: 120px;
   }
 }
-@media (width <= 1200px) {
+@media (max-width: 1200px) {
   .header .search .exl-search-input {
     display: none;
   }
@@ -679,22 +680,19 @@ body.is-shown .exl-curtain {
   top: 7px;
   width: 15px;
 }
-@media (width >= 900px) and (width <= 1200px) {
+@media (max-width: 1200px) {
   .header .search .exl-search-icon {
     left: auto;
-    right: -10px;
-    top: -6px;
+    top: auto;
   }
 }
-@media (width >= 900px) and (width <= 1024px) {
+@media (max-width: 1024px) {
   .header .search .exl-search-icon {
-    left: auto;
-    position: fixed;
-    right: 117px;
-    top: 26px;
+    left: -105px;
+    top: auto;
   }
 }
-@media (width <= 900px) {
+@media (max-width: 900px) {
   .header .search .exl-search-icon {
     display: none;
   }
@@ -719,7 +717,7 @@ body.is-shown .exl-curtain {
   padding: 7px;
   text-align: right;
 }
-@media (width <= 1200px) {
+@media (max-width: 1200px) {
   .header .search .exl-dropdown-picker {
     display: none;
   }
