@@ -93,35 +93,35 @@
         "required": true,
         "options": [
           {
-            "name": "Grey 600",
+            "name": "Grey",
             "value": "--spectrum-gray-600"
           },
           {
-            "name": "Blue 600",
+            "name": "Blue",
             "value": "--spectrum-blue-600"
           },
           {
-            "name": "Orange 600",
+            "name": "Orange",
             "value": "--spectrum-orange-600"
           },
           {
-            "name": "Red 600",
+            "name": "Red",
             "value": "--spectrum-red-600"
           },
           {
-            "name": "Celery 600",
+            "name": "Celery",
             "value": "--spectrum-celery-600"
           },
           {
-            "name": "Chartreuse 600",
+            "name": "Chartreuse",
             "value": "--spectrum-chartreuse-600"
           },
           {
-            "name": "Cyan 600",
+            "name": "Cyan",
             "value": "--spectrum-cyan-600"
           },
           {
-            "name": "Fuchsia 600",
+            "name": "Fuchsia",
             "value": "--spectrum-fuchsia-600"
           },
           {
@@ -129,19 +129,19 @@
             "value": "--spectrum-indigo-600"
           },
           {
-            "name": "Magenta 600",
+            "name": "Magenta",
             "value": "--spectrum-magenta-600"
           },
           {
-            "name": "Purple 600",
+            "name": "Purple",
             "value": "--spectrum-purple-600"
           },
           {
-            "name": "Seafoam 600",
+            "name": "Seafoam",
             "value": "--spectrum-seafoam-600"
           },
           {
-            "name": "Yellow 600",
+            "name": "Yellow",
             "value": "--spectrum-yellow-600"
           }
         ]

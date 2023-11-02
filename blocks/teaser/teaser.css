@@ -3,7 +3,7 @@
 /* The teaser main div */
 .teaser.block > .teaser {
   --teaser-background-color :  var(--spectrum-blue-600); 
-   
+
   background-color: var(--teaser-background-color);
   padding: var(--spectrum-spacing-400) var(--spectrum-spacing-500);
 }
@@ -60,7 +60,7 @@
 }
 
 /* in mobile view all primary and secondary buttons are outlined */
-.teaser.block > .teaser > .text > a.button {
+.teaser.block > .teaser > .text > .cta > a.button {
   background-color: unset;
   border: 2px solid var(--background-color);
   color: var(--background-color);
@@ -81,13 +81,13 @@
   }
 
   /* revert to normal button behavior for primary and secondary */
-  .teaser.block > .teaser > .text > a.button {
+  .teaser.block > .teaser > .text > .cta > a.button {
     background-color: var(--link-color);
     border: 2px solid transparent;
     color: var(--background-color);
   }
 
-  .teaser.block > .teaser  a.button.secondary {
+  .teaser.block > .teaser > .text > .cta > a.button.secondary {
     background-color: unset;
     border: 2px solid currentcolor;
     color: var(--text-color);
