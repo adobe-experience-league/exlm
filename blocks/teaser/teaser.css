@@ -1,31 +1,156 @@
+/* ----- MOBILE ----- */
+
 /* The teaser main div */
 .teaser.block > .teaser {
-  display: flex;
-  background-color: white;
+  --teaser-background-color :  var(--spectrum-blue-600); 
+   
+  background-color: var(--teaser-background-color);
+  padding: var(--spectrum-spacing-400) var(--spectrum-spacing-500);
 }
 
+/* the eybrow title */
+.teaser.block > .teaser > .text > .eyebrow {
+  display:none;
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-700);
+  color: var(--spectrum-gray-700);
+  margin-bottom: var(--space-token-xs);
+}
+
+/* the main title */
+.teaser.block > .teaser > .text > .title {
+  display: none;
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-900);
+  font-weight: var(--font-weight-700);
+  line-height: var(--spectrum-line-height-xxl);
+  margin-bottom: var(--space-token-xxs);
+}
+
+/* the short description */
+.teaser.block > .teaser > .text > .short-description > p {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-300);
+  font-weight: var(--font-weight-700);
+  line-height: var(--spectrum-line-height-l);
+  color: var(--background-color);
+  margin: 0;
+}
+
+/* the long description */
+.teaser.block > .teaser > .text > .long-description {
+  display: none;
+}
+
+.teaser.block > .teaser > .text > .long-description p {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-300);
+  line-height: var(--spectrum-line-height-l);
+  margin: 0;
+}
+
+/* the list of CTA's */
+.teaser.block > .teaser > .text > .cta {
+  display: flex;
+  gap: var(--spectrum-spacing-400);
+  margin: 0;
+  padding: 0;
+  width:min-content;
+}
+
+/* in mobile view all primary and secondary buttons are outlined */
+.teaser.block > .teaser > .text > a.button {
+  background-color: unset;
+  border: 2px solid var(--background-color);
+  color: var(--background-color);
+}
+
+/* the image */
+.teaser.block > .teaser > .image {
+  display:none;
+}
+
+/* ----- TABLET ----- */
+@media (min-width: 600px) {
+  /* turn the block into a flex, remove background color */
+  .teaser.block > .teaser {
+    display: flex;
+    background-color: var(--background-color);
+    padding: var(--spectrum-spacing-500) var(--space-token-xxl);
+  }
+
+  /* revert to normal button behavior for primary and secondary */
+  .teaser.block > .teaser > .text > a.button {
+    background-color: var(--link-color);
+    border: 2px solid transparent;
+    color: var(--background-color);
+  }
+
+  .teaser.block > .teaser  a.button.secondary {
+    background-color: unset;
+    border: 2px solid currentcolor;
+    color: var(--text-color);
+  }
+
+  /* limit width of text part and set order */
+  .teaser.block > .teaser > .text {
+    width:50%;
+    order: 0;
+    padding: var(--spectrum-spacing-500);
+  }
+
+  /* change the order text should be on the right */
+  .teaser.block.light-right > .teaser > .text,
+  .teaser.block.dark-right > .teaser > .text {
+    order: 1;
+  }
+  
+  /* turn on the title */
+  .teaser.block > .teaser > .text > .title {
+    display: block;
+  }
+
+  /* turn on the eybrow */
+  .teaser.block > .teaser > .text > .eyebrow {
+    display: block;
+  }
+
+  /* turn of short description */
+  .teaser.block > .teaser > .text > .short-description {
+    display: none;
+  }
+
+  /* turn on long description */
+  .teaser.block > .teaser > .text > .long-description {
+    display: block;
+  }
+
+
+  /* limit width of image part and set order */
+  .teaser.block > .teaser > .image {
+    display:block;
+    width:50%;
+    order: 1;
+  }
+
+  /* change the order text should be on the right */
+  .teaser.block.light-right > .teaser > .image,
+  .teaser.block.dark-right > .teaser > .image {
+    order: 0;
+  }
+}
+
+/* dummy for testing theme */
 .teaser.block.dark-right > .teaser,
 .teaser.block.dark-left > .teaser {
   background-color: lightgrey;
 }
 
-.teaser.block > .teaser > .text {
-  width:50%;
-  order: 0;
+/* ----- DESKTOP ------ */
+@media (min-width: 900px) {
+.teaser.block > .teaser {
+  padding: var(--spectrum-spacing-500) var(--spectrum-spacing-600) var(--spectrum-spacing-600) var(--spectrum-spacing-700);
 }
-
-.teaser.block > .teaser > .image {
-  width:50%;
-  order: 1;
 }
-
-.teaser.block.light-right > .teaser > .text,
-.teaser.block.dark-right > .teaser > .text {
-  order: 1;
-}
-
-.teaser.block.light-right > .teaser > .image,
-.teaser.block.dark-right > .teaser > .image {
-  order: 0;
-}
-
+  

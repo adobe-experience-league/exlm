@@ -68,7 +68,8 @@
         "component": "text-area",
         "valueType": "string",
         "name": "longDescr",
-        "value": "true",
+        "value": "",
+        
         "label": "Long Description",
         "description" : "The description shown in Desktop and Tablet view.",
         "required": true
@@ -93,55 +94,55 @@
         "options": [
           {
             "name": "Grey 600",
-            "value": "--spectrum-global-color-gray-600"
+            "value": "--spectrum-gray-600"
           },
           {
             "name": "Blue 600",
-            "value": "--spectrum-global-color-blue-600"
+            "value": "--spectrum-blue-600"
           },
           {
             "name": "Orange 600",
-            "value": "--spectrum-global-color-orange-600"
+            "value": "--spectrum-orange-600"
           },
           {
             "name": "Red 600",
-            "value": "--spectrum-global-color-red-600"
+            "value": "--spectrum-red-600"
           },
           {
             "name": "Celery 600",
-            "value": "--spectrum-global-color-celery-600"
+            "value": "--spectrum-celery-600"
           },
           {
             "name": "Chartreuse 600",
-            "value": "--spectrum-global-color-chartreuse-600"
+            "value": "--spectrum-chartreuse-600"
           },
           {
             "name": "Cyan 600",
-            "value": "--spectrum-global-color-cyan-600"
+            "value": "--spectrum-cyan-600"
           },
           {
             "name": "Fuchsia 600",
-            "value": "--spectrum-global-color-fuchsia-600"
+            "value": "--spectrum-fuchsia-600"
           },
           {
             "name": "Indigo 600",
-            "value": "--spectrum-global-color-indigo-600"
+            "value": "--spectrum-indigo-600"
           },
           {
             "name": "Magenta 600",
-            "value": "--spectrum-global-color-magenta-600"
+            "value": "--spectrum-magenta-600"
           },
           {
             "name": "Purple 600",
-            "value": "--spectrum-global-color-purple-600"
+            "value": "--spectrum-purple-600"
           },
           {
             "name": "Seafoam 600",
-            "value": "--spectrum-global-color-seafoam-600"
+            "value": "--spectrum-seafoam-600"
           },
           {
             "name": "Yellow 600",
-            "value": "--spectrum-global-color-yellow-600"
+            "value": "--spectrum-yellow-600"
           }
         ]
       },
