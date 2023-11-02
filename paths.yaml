@@ -1,6 +1,6 @@
 mappings:
  - /content/exlm/us/en:/
- - /content/exlm/us/en/:/us/en/
+ - /content/exlm/us/en/:/
  - /content/exlm/metadata:/metadata.json
 
 includes:
