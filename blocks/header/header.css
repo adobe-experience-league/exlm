@@ -593,6 +593,9 @@ body.is-shown .exl-curtain {
   .header .exl-nav-item > a.active {
     border-bottom: 2px solid var(--spectrum-gray-700);
   }
+  .header .exl-nav-item > a.active::after {
+    transform: rotateZ(225deg);
+  }
 }
 .header .exl-nav-item > a.active + .exl-subnav-wrapper {
   display: block;

@@ -1,7 +1,8 @@
 $breakpoints: (
   'tablet': 600px,
   'desktop': 900px,
-  'large': 1024px,
+  'custom': 1024px,
+  'large': 1200px,
 ) !default;
 
 @mixin breakpoint($breakpoint) {
