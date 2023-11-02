@@ -105,7 +105,7 @@ body.is-shown {
     margin: 0;
     padding: 20px 22px 0;
 
-    @media (width >= 1024px) and (width <= 1200px) {
+    @include custom-breakpoint(large) {
       padding: 20px 18px 0;
     }
 
@@ -380,6 +380,7 @@ body.is-shown {
       position: relative;
       top: 27px;
       width: 18px;
+      z-index: 10;
 
       & > span {
         background-color: var(--spectrum-gray-700);
@@ -736,7 +737,7 @@ body.is-shown {
         width: 120px;
       }
 
-      @media (width <= 1200px) {
+      @include custom-breakpoint(large) {
         display: none;
       }
     }
@@ -748,20 +749,17 @@ body.is-shown {
       top: 7px;
       width: 15px;
 
-      @media (width >= 900px) and (width <= 1200px) {
+      @include custom-breakpoint(large) {
         left: auto;
-        right: -10px;
-        top: -6px;
+        top: auto;
       }
 
-      @media (width >= 900px) and (width <= 1024px) {
-        left: auto;
-        position: fixed;
-        right: 117px;
-        top: 26px;
+      @include custom-breakpoint(custom) {
+        left: -105px;
+        top: auto;
       }
 
-      @media (width <= 900px) {
+      @include custom-breakpoint(desktop) {
         display: none;
       }
     }
@@ -786,7 +784,7 @@ body.is-shown {
       padding: 7px;
       text-align: right;
 
-      @media (width <= 1200px) {
+      @include custom-breakpoint(large) {
         display: none;
       }
     }
