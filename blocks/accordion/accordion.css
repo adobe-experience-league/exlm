@@ -2,3 +2,7 @@
   background-color: var(--spectrum-gray-100);
   padding: 16px;
 }
+
+.accordion details div {
+  padding: 16px;
+}
