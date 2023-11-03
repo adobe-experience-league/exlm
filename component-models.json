@@ -58,7 +58,6 @@
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
-        "value": "/content/dam/exlm/content-at-scale.png",        
         "label": "Image",
         "multi": false
       },
