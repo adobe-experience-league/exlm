@@ -51,7 +51,7 @@
 }
 .table.block table thead th {
   touch-action: pan-x pan-y;
-  padding: 12px 24px 16px 16px;
+  padding: 0.5em 0.75em;
   vertical-align: top;
   border-bottom-width: 1px;
   text-align: inherit;
@@ -84,7 +84,7 @@
 }
 .table.block table tbody td {
   position: relative;
-  padding: 16px 24px 16px 16px;
+  padding: 0.5em 0.75em;
   touch-action: pan-x pan-y;
   overflow: hidden;
   vertical-align: top;
