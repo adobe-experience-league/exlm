@@ -12,7 +12,7 @@
     "semantic-release": "semantic-release --debug",
     "sass:watch": "node sass-compile.js --watch",
     "sass:compile": "node sass-compile.js --compile",
-    "up": "npm run sass:watch & aem up",
+    "up": "npm run sass:watch & hlx up",
     "prepare": "husky install",
     "preview": "node preview.js"
   },
