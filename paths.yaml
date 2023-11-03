@@ -1,7 +1,7 @@
 mappings:
- - /content/exlm/us/en:/
- - /content/exlm/us/en/:/
+ - /content/exlm/global/:/
+ - /content/exlm/global/en:/
  - /content/exlm/metadata:/metadata.json
 
 includes:
- - /content/exlm/us/en
+ - /content/exlm/global/en
