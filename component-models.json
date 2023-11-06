@@ -8,8 +8,7 @@
         "name": "fileReference",
         "label": "Image",
         "description" : "The teaser image, min Xpx x Ypx...",
-        "multi": false,
-        "required": true
+        "multi": false
       },
       {
         "component": "text-input",
@@ -17,33 +16,30 @@
         "name": "imageAlt",
         "value": "",
         "label": "Image Description",
-        "description" : "A descriptive text of the image will be shown as tooltip.",
-        "required": true
+        "description" : "A descriptive text of the image will be shown as tooltip."
       },
       {
-        "component": "radio-group",
+        "component": "select",
         "name": "classes",
-        "value": "light left",
         "label": "Theme / Order",
         "valueType": "string",
-        "description" : "Select a theme and the order of output",
-        "required": true,
+        "multi": true,
         "options": [
           {
-            "name": "Light / Text Left",
-            "value": "light left"
+            "name": "Light Theme",
+            "value": "light"
           },
           {
-            "name": "Light / Text right",
-            "value": "light right"
+            "name": "Dark Theme",
+            "value": "dark"
           },
           {
-            "name": "Dark / Text left",
-            "value": "dark left"
+            "name": "Text left",
+            "value": "left"
           },
           {
-            "name": "Dark / Text right",
-            "value": "dark right"
+            "name": "Text right",
+            "value": "right"
           }
         ]
       },
@@ -61,18 +57,15 @@
         "name": "title",
         "value": "",
         "label": "Heading",
-        "description" : "Sets the main title of the teaser.",
-        "required": true
+        "description" : "Sets the main title of the teaser."
       },
       {
         "component": "text-area",
         "valueType": "string",
         "name": "longDescr",
-        "value": "",
-        
+        "value": "",    
         "label": "Long Description",
-        "description" : "The description shown in Desktop and Tablet view.",
-        "required": true
+        "description" : "The description shown in Desktop and Tablet view."
       },    
       {
         "component": "text-area",
@@ -80,8 +73,7 @@
         "name": "shortDescr",
         "value": "",
         "label": "Short Description",
-        "description" : "The description shown in Mobile view.",
-        "required": true
+        "description" : "The description shown in Mobile view."
       },
       {
         "component": "select",
@@ -90,7 +82,6 @@
         "label": "Background Color",
         "description" : "The teaser background color when in mobile view.",
         "valueType": "string",
-        "required": true,
         "options": [
           {
             "name": "Grey",

@@ -43,6 +43,7 @@
   display: none;
 }
 
+.teaser.block > .teaser > .text > .long-description,
 .teaser.block > .teaser > .text > .long-description p {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
@@ -60,7 +61,9 @@
 }
 
 /* in mobile view all primary and secondary buttons are outlined */
-.teaser.block > .teaser > .text > .cta > a.button {
+.teaser.block > .teaser > .text > .cta > a.button,
+.teaser.block.dark > .teaser > .text > .cta > a.button.secondary,
+.teaser.block.dark > .teaser > .text > .cta > a.button {
   background-color: unset;
   border: 2px solid var(--background-color);
   color: var(--background-color);
@@ -101,8 +104,7 @@
   }
 
   /* change the order text should be on the right */
-  .teaser.block.light-right > .teaser > .text,
-  .teaser.block.dark-right > .teaser > .text {
+  .teaser.block.right > .teaser > .text {
     order: 1;
   }
   
@@ -135,15 +137,13 @@
   }
 
   /* change the order text should be on the right */
-  .teaser.block.light-right > .teaser > .image,
-  .teaser.block.dark-right > .teaser > .image {
+  .teaser.block.right > .teaser > .image {
     order: 0;
   }
 }
 
 /* dummy for testing theme */
-.teaser.block.dark-right > .teaser,
-.teaser.block.dark-left > .teaser {
+.teaser.block.dark > .teaser {
   background-color: lightgrey;
 }
 

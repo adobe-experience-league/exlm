@@ -51,20 +51,6 @@
               }
             }
           }
-        },
-        {
-          "title": "Section",
-          "id": "section",
-          "plugins": {
-            "aem": {
-              "page": {
-                "resourceType": "core/franklin/components/section/v1/section",
-                "template": {
-                  "allowedComponents": ["group:default", "group:blocks"]
-                }
-              }
-            }
-          }
         }
       ]
     },
@@ -105,7 +91,8 @@
                   "fileReference": "/content/dam/franklin-examples/widen-the-talent-pool.png",
                   "title": "Teaser Title",
                   "longDescr": "Teaser Description (long)",
-                  "shortDescr": "Teaser Description (short)"
+                  "shortDescr": "Teaser Description (short)",
+                  "classes": ["light","left"]
                 }
               }
             }
