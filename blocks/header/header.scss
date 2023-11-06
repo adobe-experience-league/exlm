@@ -1,8 +1,10 @@
+@import '../../styles/sass/breakpoints';
+
 .exl-curtain {
   display: none;
   opacity: 0;
 
-  @media (width <= 1289px) {
+  @include custom-breakpoint(custom) {
     background: rgba(0 0 0 / 50%);
     height: 100%;
     left: 0;
@@ -11,7 +13,46 @@
     transition: all 200ms;
     top: 65px;
     width: 100%;
-    z-index: 8;
+    z-index: 9;
+  }
+}
+
+.header .exl-topnav > div {
+  align-items: center;
+  display: flex;
+  gap: 36px;
+  justify-content: space-between;
+
+  @include breakpoint(custom) {
+    gap: 16px;
+  }
+
+  @include custom-breakpoint(custom) {
+    background: var(--non-spectrum-bg);
+    display: block;
+    height: 100%;
+    left: -350px;
+    max-width: 350px;
+    overflow-y: scroll;
+    padding: 24px;
+    position: fixed;
+    transition: all 200ms ease-in-out;
+    top: 65px;
+    width: 100%;
+    z-index: 9;
+  }
+}
+
+body.is-shown .exl-topnav > div {
+  left: 0;
+}
+
+body.is-shown {
+  overflow: hidden;
+
+  & .exl-curtain {
+    opacity: 1;
+    display: block;
   }
 }
 
@@ -19,7 +60,21 @@
   border-bottom: 1px solid var(--spectrum-gray-200);
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-100);
+  height: var(--nav-height);
   padding: 0 29px;
+
+  @include custom-breakpoint(custom) {
+    background: var(--background-color);
+    position: fixed;
+    width: 100%;
+    left: 0;
+    top: 0;
+  }
+
+  &-wrapper {
+    position: relative;
+    z-index: 11;
+  }
 
   * {
     box-sizing: border-box;
@@ -34,11 +89,12 @@
   & a {
     color: var(--spectrum-gray-800);
     font-size: var(--spectrum-font-size-100);
-    font-weight: 400;
+    font-weight: 500;
     text-decoration: none;
 
     &:hover {
-      color: var(--link-color);
+      color: var(--spectrum-gray-800);
+      text-decoration: none;
     }
   }
 
@@ -49,26 +105,59 @@
     margin: 0;
     padding: 20px 22px 0;
 
-    @media (width <= 1024px) {
+    @include custom-breakpoint(large) {
+      padding: 20px 18px 0;
+    }
+
+    @include custom-breakpoint(custom) {
       height: auto;
     }
   }
 
   & .language-selector > a {
-    background: url('/icons/globegrid.svg') 0 0 no-repeat;
-    background-size: cover;
+    background: url('/icons/globegrid.svg') 0 24px no-repeat;
+    background-size: contain;
     display: inline-block;
-    height: 18px;
+    height: var(--nav-height);
+    margin: 0;
     vertical-align: middle;
     width: 18px;
     text-indent: -99999px;
+
+    @include custom-breakpoint(custom) {
+      background: none;
+      color: var(--spectrum-gray-800);
+      display: block;
+      font-size: var(--spectrum-font-size-75);
+      margin: 0;
+      text-indent: 0;
+      text-transform: uppercase;
+      width: auto;
+
+      &::after {
+        border-width: 0 1.5px 1.5px 0;
+        border-style: solid;
+        border-color: var(--spectrum-gray-800);
+        box-sizing: content-box;
+        content: '';
+        display: flex;
+        height: 6px;
+        position: absolute;
+        right: 20px;
+        transform-origin: 75% 75%;
+        transform: rotateZ(45deg);
+        transition: transform 0.1s ease;
+        top: 20px;
+        width: 6px;
+      }
+    }
   }
 
   & .language-dropdown a {
     color: var(--spectrum-gray-800);
     cursor: pointer;
     display: block;
-    padding: 5px 25px;
+    padding: 3px 15px;
     white-space: nowrap;
     margin: 0;
   }
@@ -76,15 +165,31 @@
   & .exl-subnav-wrapper a {
     color: var(--spectrum-gray-700);
     line-height: 17px;
+    margin: 0;
+
+    &.redirect {
+      display: inline-block;
+      position: relative;
+
+      &::after {
+        background: url('../../icons/redirect.png') 0 0 no-repeat;
+        background-size: cover;
+        content: '';
+        right: -10px;
+        position: absolute;
+        top: 11px;
+        width: 15px;
+        height: 15px;
+      }
+    }
   }
 
   & .adobe-logo > a {
-    background: url('../../icons/adobe-red-logo.svg') 0 0 no-repeat;
-    background-size: cover;
+    background: url('../../icons/adobe-red-logo.svg') 0 5px no-repeat;
     display: inline-block;
-    height: 20px;
     text-indent: -99999px;
     width: 22px;
+    margin: 0;
   }
 
   & .exl-subnav-wrapper ul li a {
@@ -92,6 +197,11 @@
     display: block;
     margin: 0;
     padding: 10px 12px;
+
+    @include custom-breakpoint(custom) {
+      margin-top: 16px;
+      padding: 0 8px;
+    }
   }
 
   & .exl-nav-item:last-child > a {
@@ -102,23 +212,17 @@
     font-size: var(--spectrum-font-size-100);
     font-weight: 600;
     height: inherit;
+    line-height: inherit;
     padding: 5px 16px;
+    white-space: nowrap;
 
-    @media (width <= 1024px) {
+    @include custom-breakpoint(custom) {
       line-height: inherit;
       position: fixed;
       right: 20px;
       top: -8px;
-      text-transform: capitalize;
+      text-transform: inherit;
     }
-  }
-
-  & .exl-nav-item > a.active {
-    @media (width >= 1025px) {
-      border-bottom: 2px solid var(--spectrum-gray-700);
-    }
-
-    background: var(--spectrum-gray-100);
   }
 
   & .exl-subnav-wrapper p {
@@ -126,6 +230,13 @@
     font-size: var(--spectrum-font-size-50);
     letter-spacing: normal;
     line-height: 14.3px;
+
+    & a.redirect {
+      &::after {
+        right: -20px;
+        top: 2px;
+      }
+    }
   }
 
   & .language-dropdown a:hover {
@@ -133,17 +244,26 @@
   }
 
   & .exl-subnav-wrapper .browse-all-content {
+    grid-column: 1/3;
     text-align: right;
 
-    @media (width <= 1024px) {
+    @include custom-breakpoint(custom) {
       display: none;
     }
 
     & a {
-      color: var(--link-color);
+      color: var(--spectrum-blue-900);
       font-size: var(--spectrum-font-size-100);
       line-height: 18.2px;
       letter-spacing: normal;
+      position: relative;
+
+      &::after {
+        content: '>';
+        position: absolute;
+        right: -15px;
+        top: 0;
+      }
     }
   }
 
@@ -156,28 +276,21 @@
     max-width: var(--non-spectrum-max-width);
     margin: 0 auto;
 
-    > div {
-      align-items: center;
-      display: flex;
-      gap: 36px;
-      justify-content: space-between;
-
-      @media (width >= 1024px) and (width <= 1440px) {
-        gap: 16px;
-      }
-
-      @media (width <= 1024px) {
-        height: 64px;
+    & .quick-links div > p:nth-child(2) {
+      @include custom-breakpoint(custom) {
+        display: none;
       }
     }
 
     & .profile {
-      @media (width <= 1024px) {
+      @include custom-breakpoint(custom) {
         display: none;
       }
 
       & a {
         color: var(--spectrum-gray-800);
+        margin: 0;
+        white-space: nowrap;
       }
 
       > div:nth-child(1) p {
@@ -193,7 +306,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
 
-      @media (width <= 1024px) {
+      @include custom-breakpoint(custom) {
         display: block;
       }
     }
@@ -204,37 +317,47 @@
       font-weight: 800;
       letter-spacing: 0.72px;
       line-height: 18px;
+      position: relative;
       text-transform: uppercase;
+
+      &::after {
+        @include custom-breakpoint(custom) {
+          border-width: 0 1.5px 1.5px 0;
+          border-style: solid;
+          border-color: var(--spectrum-gray-800);
+          box-sizing: content-box;
+          content: '';
+          display: flex;
+          height: 6px;
+          position: absolute;
+          right: 20px;
+          transform-origin: 75% 75%;
+          transform: rotateZ(45deg);
+          transition: transform 0.1s ease;
+          top: 0;
+          width: 6px;
+        }
+      }
     }
 
     & .exl-subnav-wrapper > div > div:nth-child(1) h5 {
-      margin-bottom: 19px;
+      margin-bottom: 15px;
 
-      @media (width <= 1024px) {
-        margin-top: 19px;
+      @include custom-breakpoint(custom) {
+        margin-top: 15px;
       }
     }
 
     & .exl-subnav-wrapper > div > div:nth-child(2) h5 {
-      margin-bottom: 19px;
+      margin-bottom: 15px;
 
-      @media (width <= 1024px) {
-        margin-top: 19px;
+      @include custom-breakpoint(custom) {
+        margin-top: 15px;
       }
     }
 
     & .exl-subnav-wrapper .two-section div:nth-child(2) h5 {
-      margin-top: 19px;
-    }
-
-    & .exl-subnav-wrapper .featured-products,
-    & .exl-subnav-wrapper .communities-by-product {
-      @media (width <= 1024px) {
-        border-bottom: 1px solid var(--spectrum-gray-200);
-        border-top: 1px solid var(--spectrum-gray-200);
-        padding: 0 0 19px;
-        margin-top: 19px;
-      }
+      margin-top: 15px;
     }
 
     & .search > div:nth-child(1) {
@@ -248,14 +371,16 @@
     }
   }
 
-  & .exl-topnav .nav-hamburger {
+  & .nav-hamburger {
     display: none;
 
-    @media (width <= 1024px) {
+    @include custom-breakpoint(custom) {
       display: block;
-      position: relative;
-      width: 18px;
       height: 9px;
+      position: relative;
+      top: 27px;
+      width: 18px;
+      z-index: 10;
 
       & > span {
         background-color: var(--spectrum-gray-700);
@@ -280,6 +405,7 @@
         > span {
           &:nth-child(1) {
             transform: rotate(45deg);
+            top: 5px;
           }
 
           &:nth-child(2) {
@@ -288,7 +414,7 @@
 
           &:nth-child(3) {
             transform: rotate(-45deg);
-            top: 0;
+            top: 5px;
           }
         }
       }
@@ -299,22 +425,12 @@
     align-items: center;
     display: flex;
     flex-grow: 1;
-    height: 64px;
+    height: var(--nav-height);
     justify-content: flex-start;
 
-    @media (width <= 1024px) {
-      background: var(--non-spectrum-bg);
+    @include custom-breakpoint(custom) {
       display: block;
-      height: 100%;
-      left: -350px;
-      max-width: 350px;
-      overflow-y: scroll;
-      padding: 24px;
-      position: fixed;
-      transition: all 200ms ease-in-out;
-      top: 65px;
-      width: 100%;
-      z-index: 9;
+      height: auto;
 
       &-item {
         & > a {
@@ -324,7 +440,7 @@
           font-weight: 600;
           line-height: 15px;
           letter-spacing: 0.72px;
-          margin-top: 24px;
+          margin-top: 25px;
           padding: 0;
           position: relative;
           text-transform: uppercase;
@@ -345,12 +461,12 @@
       padding-right: 37px;
       position: relative;
 
-      @media (width <= 1024px) {
+      @include custom-breakpoint(custom) {
         display: block;
       }
 
       &::after {
-        border-width: 0 1px 1px 0;
+        border-width: 0 1.5px 1.5px 0;
         border-style: solid;
         border-color: var(--spectrum-gray-800);
         box-sizing: content-box;
@@ -365,7 +481,7 @@
         top: 28px;
         width: 6px;
 
-        @media (width <= 1024px) {
+        @include custom-breakpoint(custom) {
           transform: rotateZ(45deg);
           top: 0;
         }
@@ -373,12 +489,26 @@
     }
   }
 
-  .exl-topnav .exl-brand-container h2,
-  .exl-topnav .exl-brand-container h2 a {
-    color: var(--spectrum-gray-800);
-    font-size: var(--spectrum-font-size-200);
-    font-weight: 600;
-    margin: 0;
+  .exl-topnav .exl-brand-container {
+    white-space: nowrap;
+
+    @include custom-breakpoint(custom) {
+      left: 7%;
+      margin: 0;
+      position: fixed;
+      top: 14px;
+      width: 75%;
+      text-align: center;
+      z-index: 2;
+    }
+
+    & h2,
+    & h2 a {
+      color: var(--spectrum-gray-800);
+      font-size: var(--spectrum-font-size-200);
+      font-weight: 600;
+      margin: 0;
+    }
   }
 
   & .exl-subnav-wrapper {
@@ -392,15 +522,20 @@
     transition: all 200ms;
     z-index: 10;
 
-    @media (width <= 1024px) {
+    @include custom-breakpoint(custom) {
+      margin-top: 19px;
       min-width: auto;
-      padding: 0 8px;
+      padding: 0;
       position: static;
     }
 
     & ul {
       list-style: none;
       margin-left: 15px;
+
+      @include custom-breakpoint(custom) {
+        margin-left: 0;
+      }
     }
 
     & ul li {
@@ -418,9 +553,20 @@
       color: var(--spectrum-gray-700);
     }
 
-    & .quick-links,
-    & .two-section {
-      @media (width <= 1024px) {
+    & .communities-by-product > div:nth-child(2) {
+      @include custom-breakpoint(custom) {
+        display: none;
+      }
+    }
+
+    & .featured-products {
+      @include custom-breakpoint(custom) {
+        display: none;
+      }
+    }
+
+    & .two-section > div:nth-child(1) {
+      @include custom-breakpoint(custom) {
         display: none;
       }
     }
@@ -428,6 +574,10 @@
     & .quick-links div:not(:first-child) {
       margin-bottom: 20px;
       margin-left: 24px;
+
+      @include custom-breakpoint(custom) {
+        display: none;
+      }
     }
 
     & > div:nth-child(2) > div:nth-child(2) {
@@ -437,29 +587,103 @@
     & .two-section div:nth-child(2) > div {
       margin-bottom: 20px;
       margin-left: 24px;
-    }
-  }
 
-  & .exl-nav-item.large-menu.is-expanded {
-    & > a {
-      &::after {
-        transform: rotateZ(45deg);
+      @include custom-breakpoint(custom) {
+        margin-bottom: 20px;
+        margin-left: 0;
+      }
+    }
+
+    & .two-section > div:nth-child(2) > div:first-child {
+      @include custom-breakpoint(custom) {
+        display: none;
+      }
+    }
+
+    & .two-section > div:nth-child(2) > div > p:nth-child(2) {
+      @include custom-breakpoint(custom) {
+        display: none;
+      }
+    }
+
+    & .featured-products,
+    & .communities-by-product {
+      @include custom-breakpoint(custom) {
+        border-bottom: 1px solid var(--spectrum-gray-200);
+        border-top: 1px solid var(--spectrum-gray-200);
+        padding: 0 0 19px;
+        margin-top: 19px;
       }
 
-      &.active {
-        &::after {
-          transform: rotateZ(225deg);
+      @include custom-breakpoint(custom) {
+        &.show {
+          & h5::after {
+            transform: rotateZ(225deg);
+          }
+
+          & > div:nth-child(2) {
+            display: block;
+          }
         }
       }
     }
 
-    & .exl-subnav-wrapper {
-      display: block;
+    & .quick-links {
+      @include custom-breakpoint(custom) {
+        margin: 0 24px;
+
+        &.show {
+          & h5::after {
+            transform: rotateZ(225deg);
+          }
+
+          & > div:not(:first-child):nth-child(2) {
+            display: block;
+          }
+        }
+      }
+    }
+
+    & .communities-by-product {
+      @include custom-breakpoint(custom) {
+        margin: 0 24px;
+        padding: 0;
+      }
     }
   }
 
-  &.exl-overlay .exl-nav-item.large-menu > a.active::after {
-    transform: rotateZ(225deg);
+  & .exl-nav-item > a.active {
+    @include breakpoint(custom) {
+      border-bottom: 2px solid var(--spectrum-gray-700);
+
+      &::after {
+        transform: rotateZ(225deg);
+      }
+    }
+
+    background: var(--spectrum-gray-100);
+
+    & + .exl-subnav-wrapper {
+      display: block;
+
+      @include custom-breakpoint(custom) {
+        display: none;
+      }
+    }
+  }
+
+  & .exl-nav-item.large-menu.is-expanded {
+    > a::after {
+      transform: rotateZ(225deg);
+    }
+
+    & .exl-subnav-wrapper {
+      display: none;
+
+      @include custom-breakpoint(custom) {
+        display: block;
+      }
+    }
   }
 
   & .exl-nav-action {
@@ -467,10 +691,16 @@
     display: flex;
     gap: 17px;
     justify-content: space-between;
+    position: relative;
+
+    @include custom-breakpoint(custom) {
+      gap: 5px;
+      display: block;
+    }
   }
 
   & .adobe-logo {
-    @media (width <= 1024px) {
+    @include custom-breakpoint(custom) {
       display: none;
     }
   }
@@ -482,8 +712,11 @@
   & .search {
     position: relative;
 
-    @media (width <= 1024px) {
+    @include custom-breakpoint(custom) {
       display: block;
+      position: fixed;
+      right: 30px;
+      top: 35px;
     }
 
     & .exl-search-input {
@@ -500,11 +733,11 @@
       padding: 7px 5px 7px 28px;
       width: 200px;
 
-      @media (width >= 1290px) and (width <= 1440px) {
+      @media (width >= 1024px) and (width <= 1200px) {
         width: 120px;
       }
 
-      @media (width <= 1289px) {
+      @include custom-breakpoint(large) {
         display: none;
       }
     }
@@ -516,21 +749,17 @@
       top: 7px;
       width: 15px;
 
-      @media (width >= 769px) and (width <= 1024px) {
-        display: block;
-        left: -100px;
-        position: absolute;
-        top: -8px;
+      @include custom-breakpoint(large) {
+        left: auto;
+        top: auto;
       }
 
-      @media (width >= 1025px) and (width <= 1289px) {
-        display: block;
-        left: -20px;
-        position: absolute;
-        top: -8px;
+      @include custom-breakpoint(custom) {
+        left: -105px;
+        top: auto;
       }
 
-      @media (width <= 768px) {
+      @include custom-breakpoint(desktop) {
         display: none;
       }
     }
@@ -555,7 +784,7 @@
       padding: 7px;
       text-align: right;
 
-      @media (width <= 1289px) {
+      @include custom-breakpoint(large) {
         display: none;
       }
     }
@@ -570,7 +799,7 @@
       border: 1px solid var(--spectrum-gray-400);
       display: none;
       right: 0;
-      width: 120px;
+      width: 110px;
       position: absolute;
       top: 29px;
       z-index: 11;
@@ -581,7 +810,8 @@
 
       & ul li {
         cursor: pointer;
-        padding: 5px 10px;
+        font-size: var(--spectrum-font-size-100);
+        padding: 2px 8px;
         margin: 0;
 
         &:hover {
@@ -596,10 +826,30 @@
   }
 
   & .language-selector {
+    height: var(--nav-height);
+    padding: 0 8px;
     position: relative;
 
-    @media (width <= 1024px) {
-      display: none;
+    @include custom-breakpoint(custom) {
+      border-top: 1px solid var(--spectrum-gray-200);
+      padding: 13px 0 0;
+      top: 15px;
+    }
+
+    &.active {
+      background: var(--non-spectrum-bg);
+
+      @include custom-breakpoint(custom) {
+        padding: 13px 0 0;
+
+        & a::after {
+          transform: rotateZ(225deg);
+        }
+
+        & .language-dropdown {
+          display: block;
+        }
+      }
     }
 
     & .language-dropdown {
@@ -610,25 +860,13 @@
       padding: 5px 0;
       position: absolute;
       transform: translate(-50%, 0);
-      top: 30px;
+      top: 57px;
       z-index: 10;
+
+      @include custom-breakpoint(custom) {
+        top: 40px;
+        width: 100%;
+      }
     }
-
-    &:hover .language-dropdown {
-      display: block;
-    }
-  }
-}
-
-.is-shown {
-  overflow: hidden;
-
-  & .exl-curtain {
-    opacity: 1;
-    display: block;
-  }
-
-  & .exl-nav {
-    left: 0;
   }
 }

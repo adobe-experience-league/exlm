@@ -1,0 +1,15 @@
+.img.block {
+  display: flex;
+}
+.img.block.left-align {
+  justify-content: flex-start;
+}
+.img.block.center-align {
+  justify-content: center;
+}
+.img.block.right-align {
+  justify-content: flex-end;
+}
+.img.block.modal-image img {
+  cursor: zoom-in;
+}

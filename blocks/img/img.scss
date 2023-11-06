@@ -1,0 +1,19 @@
+.img.block {
+  display: flex;
+
+  &.left-align {
+    justify-content: flex-start;
+  }
+
+  &.center-align {
+    justify-content: center;
+  }
+
+  &.right-align {
+    justify-content: flex-end;
+  }
+
+  &.modal-image img {
+    cursor: zoom-in;
+  }
+}
