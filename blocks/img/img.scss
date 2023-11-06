@@ -17,3 +17,88 @@
     cursor: zoom-in;
   }
 }
+
+.modal {
+  display: none;
+  align-items: center;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  overflow: hidden;
+  z-index: 99999;
+
+  &-background {
+    background: rgba(10 10 10 / 86%);
+    height: 100%;
+    left: 0;
+    position: fixed;
+    transition: all 200ms;
+    top: 0;
+    width: 100%;
+    z-index: 12;
+  }
+
+  &-content {
+    background: var(--spectrum-gray-100);
+    border-radius: 7px;
+    max-height: calc(100vh - 40px);
+    margin: 0 auto;
+    overflow-y: auto;
+    padding: 5px;
+    position: relative;
+    width: 98vw;
+    z-index: 14;
+
+    & .img.block.modal-image img {
+      cursor: auto;
+      height: auto;
+      width: 100%;
+    }
+  }
+
+  &-close {
+    background: transparent;
+    border-radius: 50px;
+    cursor: pointer;
+    display: inline-block;
+    height: 32px;
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    width: 32px;
+    z-index: 99;
+
+    &::before,
+    &::after {
+      background-color: var(--spectrum-gray-50);
+      box-sizing: inherit;
+      content: '';
+      display: block;
+      height: 2px;
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translateX(-50%) translateY(-50%) rotate(45deg);
+      transform-origin: center center;
+      width: 50%;
+    }
+
+    &::after {
+      height: 50%;
+      width: 2px;
+    }
+
+    &:hover {
+      background: rgba(10 10 10 / 30%);
+    }
+  }
+
+  &.is-active {
+    display: flex;
+
+    & .img.block {
+      display: block;
+    }
+  }
+}
