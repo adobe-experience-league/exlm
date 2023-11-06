@@ -35,7 +35,9 @@
             "aem": {
               "page": {
                 "resourceType": "core/franklin/components/image/v1/image",
-                "template": {}
+                "template": {
+                  "fileReference":"/content/dam/exlm/content-at-scale.png"
+                }
               }
             }
           }
