@@ -4,4 +4,4 @@ mappings:
  - /content/exlm/metadata.json:/metadata.json
 
 includes:
- - /content/exlm/global/en
+ - /content/exlm/
