@@ -1,4 +1,6 @@
-export function imgZoomable() {
+import { createTag } from '../../scripts/scripts.js';
+
+function imgZoomable() {
   const modalImage = Array.from(document?.querySelectorAll('.img.modal-image'));
 
   function openModal(el) {
@@ -18,9 +20,11 @@ export function imgZoomable() {
 
   function insertModalTemplate() {
     if (!document.querySelector('.modal')) {
-      const modalTemplate = document.createElement('div');
-      modalTemplate.className = 'modal';
-      modalTemplate.innerHTML = `<div class="modal-background"></div><div class="modal-content"><div class="img-container"></div><span class="modal-close" aria-label="close"></span></div>`;
+      const modalTemplate = createTag(
+        'div',
+        { class: 'modal' },
+        `<div class="modal-background"></div><div class="modal-content"><div class="img-container"></div><span class="modal-close" aria-label="close"></span></div>`,
+      );
       document.body.prepend(modalTemplate);
     }
   }
@@ -78,4 +82,6 @@ export default async function decorate(block) {
       img.style.width = `${width}px`;
     }
   }
+
+  imgZoomable();
 }
