@@ -1,9 +1,6 @@
-import { createTag } from '../../scripts/scripts.js';
-
-function imgZoomable() {
+export function imgZoomable() {
   const modalImage = Array.from(document?.querySelectorAll('.img.modal-image'));
 
-  // Functions to open and close a modal
   function openModal(el) {
     el.classList.add('is-active');
   }
@@ -21,16 +18,13 @@ function imgZoomable() {
 
   function insertModalTemplate() {
     if (!document.querySelector('.modal')) {
-      const modalTemplate = createTag(
-        'div',
-        { class: 'modal' },
-        `<div class="modal-background"></div><div class="modal-content"><div class="img-container"></div><span class="modal-close" aria-label="close"></span></div>`,
-      );
+      const modalTemplate = document.createElement('div');
+      modalTemplate.className = 'modal';
+      modalTemplate.innerHTML = `<div class="modal-background"></div><div class="modal-content"><div class="img-container"></div><span class="modal-close" aria-label="close"></span></div>`;
       document.body.prepend(modalTemplate);
     }
   }
 
-  // Add a click event on images to open a specific modal
   modalImage.forEach((img) => {
     img.addEventListener('click', () => {
       insertModalTemplate();
@@ -40,7 +34,6 @@ function imgZoomable() {
       targetContent.innerHTML = modalContent;
       openModal(target);
 
-      // Add a click event on various child elements to close the parent modal
       const modalActions = document.querySelectorAll(
         '.modal-background, .modal-close',
       );
@@ -55,7 +48,6 @@ function imgZoomable() {
     });
   });
 
-  // Add a keyboard event to close all modals
   document.addEventListener('keydown', (event) => {
     if (event.code === 'Escape') {
       closeAllModals();
@@ -86,6 +78,4 @@ export default async function decorate(block) {
       img.style.width = `${width}px`;
     }
   }
-
-  imgZoomable();
 }
