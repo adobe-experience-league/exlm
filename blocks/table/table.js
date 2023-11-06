@@ -51,28 +51,28 @@ export default async function decorate(block) {
     });
 
     table.querySelectorAll('tr, th, td').forEach((cell, i) => {
-      if (data[0] === String(i) && data[1] === 'colspan') {
-        cell.setAttribute('colspan', data[2]);
-      }
-      if (data[0] === String(i) && data[1] === 'rowspan') {
-        cell.setAttribute('rowspan', data[2]);
-      }
-      if (data[0] === String(i) && data[1] === 'width') {
-        cell.setAttribute('width', data[2]);
-      }
-      if (data[0] === String(i) && data[1] === 'height') {
-        cell.setAttribute('height', data[2]);
-      }
-      if (data[0] === String(i) && data[1] === 'align') {
-        [, , cell.style.textAlign] = data;
-        // cell.style.textAlign = data[2]
-      }
-      if (data[0] === String(i) && data[1] === 'bgcolor') {
-        cell.style.backgroundColor = `#${data[2]}`;
-      }
-      if (data[0] === String(i) && data[1] === 'border') {
-        [, , cell.style.border] = data;
-        // cell.style.border = data[2];
+      if (data[0] === String(i)) {
+        if (data[1] === 'colspan') {
+          cell.setAttribute('colspan', data[2]);
+        }
+        if (data[1] === 'rowspan') {
+          cell.setAttribute('rowspan', data[2]);
+        }
+        if (data[1] === 'width') {
+          cell.setAttribute('width', data[2]);
+        }
+        if (data[1] === 'height') {
+          cell.setAttribute('height', data[2]);
+        }
+        if (data[1] === 'align') {
+          [, , cell.style.textAlign] = data;
+        }
+        if (data[1] === 'bgcolor') {
+          cell.style.backgroundColor = `#${data[2]}`;
+        }
+        if (data[1] === 'border') {
+          [, , cell.style.border] = data;
+        }
       }
     });
   });
