@@ -219,17 +219,16 @@
   background-color: var(--non-spectrum-bg);
 }
 
-.table.block.html-authored.no-header table tbody tr {
+.table.block.html-authored table tbody tr:nth-child(even) {
   background-color: unset;
 }
-
-.table.table.block.html-authored table tr:nth-child(odd) {
+.table.block.html-authored table tbody tr:nth-child(odd) {
   background-color: var(--non-spectrum-bg);
 }
-.table.table.block.html-authored table tr:nth-child(even) {
+
+.table.block.html-authored.no-header table tbody tr:nth-child(odd) {
   background-color: unset;
 }
-
 .table.block.html-authored.no-header table tbody tr:nth-child(even) {
   background-color: var(--non-spectrum-bg);
 }

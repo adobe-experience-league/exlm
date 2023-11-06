@@ -97,10 +97,6 @@
         border: 1px solid var(--non-spectrum-gainsboro-gray);
         margin-bottom: var(--space-token-xs);
 
-        // &:nth-child(even) {
-        //   background-color: var(--non-spectrum-bg);
-        // }
-
         @include breakpoint(tablet) {
           margin-bottom: 0;
         }
@@ -237,16 +233,6 @@
       background-color: unset;
     }
 
-    // tbody {
-    //   tr:nth-child(odd) {
-    //     background-color: var(--non-spectrum-bg);
-    //   }
-
-    //   tr:nth-child(even) {
-    //     background-color: unset;
-    //   }
-    // }
-
     th {
       border: 1px solid var(--non-spectrum-gainsboro-gray);
     }
@@ -270,25 +256,23 @@
   background-color: var(--non-spectrum-bg);
 }
 
-.table.block.html-authored.no-header table tbody tr {
-  background-color: unset;
-}
+.table.block.html-authored table tbody {
+  tr:nth-child(even) {
+    background-color: unset;
+  }
 
-.table.table.block.html-authored {
-  table {
-    tr:nth-child(odd) {
-      background-color: var(--non-spectrum-bg);
-    }
-
-    tr:nth-child(even) {
-      background-color: unset;
-    }
+  tr:nth-child(odd) {
+    background-color: var(--non-spectrum-bg);
   }
 }
 
 .table.block.html-authored.no-header {
   table {
     tbody {
+      tr:nth-child(odd) {
+        background-color: unset;
+      }
+
       tr:nth-child(even) {
         background-color: var(--non-spectrum-bg);
       }
