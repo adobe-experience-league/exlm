@@ -2,6 +2,19 @@
 
 .table.block {
   margin-bottom: 21px;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  &::-webkit-scrollbar {
+    background: var(--non-spectrum-hover-bg);
+    width: 7px;
+    height: 7px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 7px;
+    background-color: var(--non-spectrum-scrollbar-thumb);
+  }
 
   table,
   th,
@@ -45,16 +58,16 @@
     font-size: var(--spectrum-body-size-s);
     border-collapse: collapse;
     border-spacing: 0;
-    margin-top: 28px;
+    margin: 28px 0;
     line-height: 21px;
     color: var(--non-spectrum-custom-dark);
 
     thead {
-      background-color: #fafafa;
+      background-color: var(--non-spectrum-bg);
       border: none;
 
       @include breakpoint(tablet) {
-        border: 1px solid #dbdbdb;
+        border: 1px solid var(--non-spectrum-gainsboro-gray);
       }
 
       th {
@@ -81,12 +94,12 @@
       border-color: inherit;
 
       tr {
-        border: 1px solid #dbdbdb;
+        border: 1px solid var(--non-spectrum-gainsboro-gray);
         margin-bottom: var(--space-token-xs);
 
-        &:nth-child(even) {
-          background-color: #fafafa;
-        }
+        // &:nth-child(even) {
+        //   background-color: var(--non-spectrum-bg);
+        // }
 
         @include breakpoint(tablet) {
           margin-bottom: 0;
@@ -99,7 +112,7 @@
         touch-action: pan-x pan-y;
         overflow: hidden;
         vertical-align: top;
-        border: 1px solid #eee;
+        border: 1px solid var(--overlay-background-color);
         display: grid;
         grid-template-columns: 50% 50%;
         white-space-collapse: collapse;
@@ -115,10 +128,31 @@
           }
         }
 
+        a {
+          margin: 0;
+          font-size: var(--spectrum-font-size-100);
+          line-height: 21px;
+        }
+
         strong {
           text-wrap: wrap;
           text-overflow: ellipsis;
           overflow: hidden;
+
+          a {
+            display: inline-block;
+            font-weight: 700;
+            line-height: 21px;
+          }
+        }
+
+        em {
+          display: inline-block;
+          font-size: var(--spectrum-font-size-100);
+          font-style: italic;
+          text-align: start;
+          color: var(--non-spectrum-custom-dark);
+          line-height: 21px;
         }
 
         ul {
@@ -128,10 +162,6 @@
             color: var(--non-spectrum-custom-dark);
             margin-bottom: 11.2px;
           }
-        }
-
-        a {
-          margin: 0;
         }
 
         code:not([class^='language-']) {
@@ -175,5 +205,93 @@
 
   &.layout-auto > table {
     table-layout: auto;
+  }
+}
+
+.table.block.html-authored {
+  thead {
+    display: table-header-group;
+  }
+
+  tbody {
+    display: table-row-group;
+  }
+
+  tr {
+    position: static;
+    display: table-row;
+  }
+
+  th,
+  td {
+    display: table-cell;
+  }
+
+  table {
+    display: table;
+    table-layout: fixed;
+    margin-bottom: unset;
+
+    thead {
+      border: 1px solid var(--non-spectrum-gainsboro-gray);
+      background-color: unset;
+    }
+
+    // tbody {
+    //   tr:nth-child(odd) {
+    //     background-color: var(--non-spectrum-bg);
+    //   }
+
+    //   tr:nth-child(even) {
+    //     background-color: unset;
+    //   }
+    // }
+
+    th {
+      border: 1px solid var(--non-spectrum-gainsboro-gray);
+    }
+
+    td {
+      border: none;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &.layout-fixed > table {
+    table-layout: fixed;
+  }
+
+  &.layout-auto > table {
+    table-layout: auto;
+  }
+}
+
+.table.block table tbody tr:nth-child(even) {
+  background-color: var(--non-spectrum-bg);
+}
+
+.table.block.html-authored.no-header table tbody tr {
+  background-color: unset;
+}
+
+.table.table.block.html-authored {
+  table {
+    tr:nth-child(odd) {
+      background-color: var(--non-spectrum-bg);
+    }
+
+    tr:nth-child(even) {
+      background-color: unset;
+    }
+  }
+}
+
+.table.block.html-authored.no-header {
+  table {
+    tbody {
+      tr:nth-child(even) {
+        background-color: var(--non-spectrum-bg);
+      }
+    }
   }
 }
