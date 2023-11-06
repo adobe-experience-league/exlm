@@ -557,6 +557,7 @@ main .section {
 }
 
 /* section metadata */
+// TODO: Add theme class to apply this specific to doc site
 main .section.highlight {
   background-color: var(--highlight-background-color);
 }
@@ -588,6 +589,7 @@ ol > li > ol {
   list-style-type: lower-alpha;
 }
 
+// TODO: Add theme class to apply this specific to doc site
 ul {
   @include text-styles(
     $margin-top: 1em,
@@ -606,10 +608,12 @@ ul > li:not(:last-child) {
   color: inherit;
 }
 
+// TODO: Add theme class to apply this specific to doc site
 main .rail-mobile-section .rail-section-toggler {
   display: none;
 }
 
+// TODO: Add theme class to apply this specific to doc site
 main button.rail-mobile-button {
   border-radius: 4px;
   background-color: var(--spectrum-gray-50);
@@ -624,6 +628,7 @@ main button.rail-mobile-button {
 
 /* stylelint-disable-next-line media-feature-range-notation */
 @media (max-width: 600px) {
+  // TODO: Add theme class to apply this specific to doc site
   main > .section:nth-child(1) {
     position: relative;
     padding: 0;
@@ -636,6 +641,7 @@ main button.rail-mobile-button {
 
 /* three column layout */
 @include breakpoint('desktop') {
+  // TODO: Add theme class to apply this specific to doc site
   main {
     width: 100%;
     display: grid;
@@ -751,6 +757,7 @@ main button.rail-mobile-button {
   }
 }
 
+// TODO: Add theme class to apply this specific to doc site
 main .rail-mobile-section {
   position: relative;
   padding: 0;
