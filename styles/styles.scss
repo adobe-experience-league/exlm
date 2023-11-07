@@ -557,7 +557,6 @@ main .section {
 }
 
 /* section metadata */
-// TODO: Add theme class to apply this specific to doc site
 main .section.highlight {
   background-color: var(--highlight-background-color);
 }
@@ -589,7 +588,6 @@ ol > li > ol {
   list-style-type: lower-alpha;
 }
 
-// TODO: Add theme class to apply this specific to doc site
 ul {
   @include text-styles(
     $margin-top: 1em,
@@ -608,105 +606,105 @@ ul > li:not(:last-child) {
   color: inherit;
 }
 
-// TODO: Add theme class to apply this specific to doc site
-main .rail-mobile-section .rail-section-toggler {
-  display: none;
-}
+.docs {
+  main .rail-mobile-section .rail-section-toggler {
+    display: none;
+  }
 
-// TODO: Add theme class to apply this specific to doc site
-main button.rail-mobile-button {
-  border-radius: 4px;
-  background-color: var(--spectrum-gray-50);
-  color: var(--spectrum-gray-800);
-  border: 1px solid var(--spectrum-gray-400);
-  width: 72vw;
-  height: 48px;
-  margin: 0;
-  text-align: left;
-  display: none;
-}
+  main button.rail-mobile-button {
+    border-radius: 4px;
+    background-color: var(--spectrum-gray-50);
+    color: var(--spectrum-gray-800);
+    border: 1px solid var(--spectrum-gray-400);
+    width: 72vw;
+    height: 48px;
+    margin: 0;
+    text-align: left;
+    display: none;
+  }
 
-/* stylelint-disable-next-line media-feature-range-notation */
-@media (max-width: 600px) {
-  // TODO: Add theme class to apply this specific to doc site
-  main > .section:nth-child(1) {
+  main .rail-mobile-section {
     position: relative;
     padding: 0;
     text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    .rail-mobile-wrapper {
+      position: absolute;
+      display: none;
+      background-color: var(--spectrum-gray-50);
+      box-shadow:
+        0 0.5em 1em -0.125em #0a0a0a1f,
+        0 0 0 1px #0a0a0a17;
+      padding: 12px 24px;
+      border-radius: 8px;
+      left: 5%;
+      top: 90px;
+      width: 80%;
+
+      &-visible {
+        display: block;
+      }
+    }
+
+    button.rail-mobile-button {
+      display: block;
+      margin-top: 32px;
+      margin-bottom: 1px;
+    }
+  }
+}
+
+/* stylelint-disable-next-line media-feature-range-notation */
+@media (max-width: 600px) {
+  // TODO: Add theme class to apply this specific to doc site
+  .docs {
+    main > .section:nth-child(1) {
+      position: relative;
+      padding: 0;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 }
 
 /* three column layout */
 @include breakpoint('desktop') {
-  // TODO: Add theme class to apply this specific to doc site
-  main {
-    width: 100%;
-    display: grid;
-    gap: 8px;
-    grid-template-columns: 20% 1fr 20%;
-    max-width: 1700px;
-    margin: 0 auto;
+  .docs {
+    main {
+      width: 100%;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 20% 1fr 20%;
+      max-width: 1700px;
+      margin: 0 auto;
 
-    & > .rail-section {
-      .rail-section-wrapper {
-        overflow: auto;
-        width: 100%;
-        display: none;
-        margin: 0;
-      }
-
-      .rail-section-toggler {
-        position: absolute;
-        cursor: pointer;
-        top: 16px;
-
-        .icon-rail {
-          height: 16px;
-          width: 16px;
-        }
-      }
-
-      &-expanded {
+      & > .rail-section {
         .rail-section-wrapper {
-          display: block;
+          overflow: auto;
+          width: 100%;
+          display: none;
+          margin: 0;
         }
 
         .rail-section-toggler {
-          .icon-rail {
-            transform: none;
-          }
-        }
-      }
-
-      &.rail-section-right {
-        grid-column: 3/4;
-        flex-direction: row-reverse;
-        padding: 0 16px 0 0;
-
-        .rail-section-toggler {
-          left: 0;
+          position: absolute;
+          cursor: pointer;
+          top: 16px;
 
           .icon-rail {
-            transform: none;
-          }
-        }
-      }
-
-      &.rail-section-left {
-        .rail-section-toggler {
-          right: 20px;
-
-          .icon-rail {
-            transform: rotate(180deg);
+            height: 16px;
+            width: 16px;
           }
         }
 
-        &.rail-section-expanded {
-          @include breakpoint(desktop) {
-            border-right: 1px solid var(--non-spectrurm-whisper-gray);
+        &-expanded {
+          .rail-section-wrapper {
+            display: block;
           }
 
           .rail-section-toggler {
@@ -715,79 +713,81 @@ main button.rail-mobile-button {
             }
           }
         }
-      }
 
-      &.rail-section-expanded {
         &.rail-section-right {
+          grid-column: 3/4;
+          flex-direction: row-reverse;
+          padding: 0 16px 0 0;
+
           .rail-section-toggler {
+            left: 0;
+
+            .icon-rail {
+              transform: none;
+            }
+          }
+        }
+
+        &.rail-section-left {
+          .rail-section-toggler {
+            right: 20px;
+
             .icon-rail {
               transform: rotate(180deg);
             }
           }
+
+          &.rail-section-expanded {
+            @include breakpoint(desktop) {
+              border-right: 1px solid var(--non-spectrurm-whisper-gray);
+            }
+
+            .rail-section-toggler {
+              .icon-rail {
+                transform: none;
+              }
+            }
+          }
+        }
+
+        &.rail-section-expanded {
+          &.rail-section-right {
+            .rail-section-toggler {
+              .icon-rail {
+                transform: rotate(180deg);
+              }
+            }
+          }
+        }
+
+        &.rail-hidden {
+          display: none;
         }
       }
-
-      &.rail-hidden {
-        display: none;
-      }
     }
-  }
 
-  main > .section:not(:nth-child(2)) {
-    grid-column: 2/3;
-    position: relative;
-    display: flex;
-    gap: 8px;
-    padding: 0 16px;
-  }
-
-  main > .section.mini-toc-container {
-    grid-column: 3/4;
-    flex-direction: row-reverse;
-    padding: 0 16px 0 0;
-  }
-
-  main > .section:nth-child(1) {
-    grid-column: 1/2;
-  }
-
-  main > .section:nth-child(2) {
-    width: auto;
-    overflow: auto;
-  }
-}
-
-// TODO: Add theme class to apply this specific to doc site
-main .rail-mobile-section {
-  position: relative;
-  padding: 0;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  .rail-mobile-wrapper {
-    position: absolute;
-    display: none;
-    background-color: var(--spectrum-gray-50);
-    box-shadow:
-      0 0.5em 1em -0.125em #0a0a0a1f,
-      0 0 0 1px #0a0a0a17;
-    padding: 12px 24px;
-    border-radius: 8px;
-    left: 5%;
-    top: 90px;
-    width: 80%;
-
-    &-visible {
-      display: block;
+    main > .section:not(:nth-child(2)) {
+      grid-column: 2/3;
+      position: relative;
+      display: flex;
+      gap: 8px;
+      padding: 0 16px;
     }
-  }
 
-  button.rail-mobile-button {
-    display: block;
-    margin-top: 32px;
-    margin-bottom: 1px;
+    main > .section.mini-toc-container {
+      grid-column: 3/4;
+      flex-direction: row-reverse;
+      padding: 0 16px 0 0;
+    }
+
+    main > .section:nth-child(1) {
+      grid-column: 1/2;
+    }
+
+    main > .section:nth-child(2) {
+      width: auto;
+      overflow: auto;
+    }
   }
 }
 
