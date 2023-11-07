@@ -678,14 +678,7 @@ export function decorateButtons(element) {
     if (a.href !== a.textContent) {
       const up = a.parentElement;
       const twoup = a.parentElement.parentElement;
-      if (!a.querySelector('img')) {
-        if (
-          up.childNodes.length === 1 &&
-          (up.tagName === 'P' || up.tagName === 'DIV')
-        ) {
-          a.className = 'button primary'; // default
-          up.classList.add('button-container');
-        }
+      if (!a.querySelector('img') && !a.querySelector('svg')) {
         if (
           up.childNodes.length === 1 &&
           up.tagName === 'STRONG' &&
@@ -703,6 +696,13 @@ export function decorateButtons(element) {
         ) {
           a.className = 'button secondary';
           twoup.classList.add('button-container');
+        }
+        const href = a.getAttribute('href');
+        if (href && !href.includes('experienceleague-dev.corp.adobe.com')) {
+          a.target = '_blank';
+          if (!href.startsWith('/') && !href.startsWith('http')) {
+            a.href = `//${href}`;
+          }
         }
       }
     }

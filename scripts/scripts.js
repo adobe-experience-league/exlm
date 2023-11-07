@@ -12,6 +12,7 @@ import {
   waitForLCP,
   loadBlocks,
   loadCSS,
+  decorateButtons,
 } from './lib-franklin.js';
 import { isMobileResolution } from './utilities.js';
 
@@ -341,7 +342,7 @@ export function decorateMain(main) {
    * retained and will be revisited during button specific
    * decoration.
    */
-  // decorateButtons(main);
+  decorateButtons(main);
   decorateIcons(main);
   decorateExternalLinks(main);
   buildAutoBlocks(main);
