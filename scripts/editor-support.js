@@ -17,7 +17,7 @@ function handleEditorUpdate(event) {
         const blockItemId = block?.getAttribute('itemid');
         if (block && blockItemId?.startsWith('urn:aemconnection:')) {
           const path = blockItemId.substring(18);
-          const resp = await fetch(`${path}.html`);
+          const resp = await fetch(`${path}.html${window.location.search}`);
           if (resp.ok) {
             const text = await resp.text();
             const newBlock = new DOMParser().parseFromString(text, 'text/html')
