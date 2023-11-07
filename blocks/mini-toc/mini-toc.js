@@ -1,8 +1,8 @@
 import { highlight, setLevels, hashFragment } from './utils.js';
 
 function setPadding(arg = '') {
-  const num = parseInt(arg.split('')[1], 10),
-    indent = '-big';
+  const num = parseInt(arg.split('')[1], 10);
+  const indent = '-big';
 
   return num >= 3 ? `is-padded-left${indent.repeat(num - 2)}` : '';
 }
@@ -14,20 +14,21 @@ function headerExclusions(header) {
     !header.closest('sp-tabs');
 }
 
-export default async function decorate(block) {
+export default async function decorate() {
   const miniTOCHeading = 'ON THIS PAGE';
   const render = window.requestAnimationFrame;
-  const ctx = document.querySelector('.mini-toc'),
-    levels = document.querySelector('meta[name="mini-toc-levels"]');
+  const ctx = document.querySelector('.mini-toc');
+  const levels = document.querySelector('meta[name="mini-toc-levels"]');
 
   if (ctx !== null) {
     const headers = Array.from(document.querySelector('main').querySelectorAll(setLevels(levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : void 0)))
       .filter(headerExclusions);
 
     if (headers.length > 1) {
-      const html = headers.map(i => `<li><a href="#${i.id}" class="${setPadding(i.nodeName)}">${i.innerText}</a></li>`),
-        url = new URL(location.href),
-        lhash = url.hash.length > 0;
+      const html = headers.map(i => `<li><a href="#${i.id}" class="${setPadding(i.nodeName)}">${i.innerText}</a></li>`);
+      // eslint-disable-next-line no-restricted-globals
+      const url = new URL(location.href);
+      const lhash = url.hash.length > 0;
 
       render(() => {
         const tocHeadingDivNode = `<div><h2>${miniTOCHeading}</h2></div>`;
