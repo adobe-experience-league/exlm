@@ -1,9 +1,9 @@
 mappings:
- - /content/exlm/global/:/
- - /content/exlm/global/en:/
- - /content/exlm/metadata:/metadata.json
- # load fragments as resource from codebus in the editor (sw.js)
- - /content/exlm.resource/fragments/:/fragments/
- 
+  - /content/exlm/global/:/
+  - /content/exlm/global/en:/
+  - /content/exlm/metadata:/metadata.json
+  # load fragments as resource from codebus in the editor (sw.js)
+  - /content/exlm.resource/fragments/:/fragments/
+
 includes:
- - /content/exlm/
+  - /content/exlm/
