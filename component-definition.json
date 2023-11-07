@@ -36,7 +36,7 @@
               "page": {
                 "resourceType": "core/franklin/components/image/v1/image",
                 "template": {
-                  "fileReference":"/content/dam/exlm/content-at-scale.png"
+                  "fileReference": "/content/dam/exlm/content-at-scale.png"
                 }
               }
             }
@@ -67,8 +67,7 @@
             "aem": {
               "page": {
                 "resourceType": "core/franklin/components/section/v1/section",
-                "template": {
-                }
+                "template": {}
               }
             }
           }
@@ -78,8 +77,7 @@
     {
       "title": "Blocks",
       "id": "blocks",
-      "components": [
-      ]
+      "components": []
     }
   ]
 }
