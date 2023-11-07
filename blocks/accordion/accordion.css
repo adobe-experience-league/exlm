@@ -51,7 +51,9 @@
   margin-left: 0;
   margin-top: 0;
 }
-.accordion.block details h1, .accordion.block details h2, .accordion.block details h3 {
+.accordion.block details h1,
+.accordion.block details h2,
+.accordion.block details h3 {
   margin-top: 14px;
 }
 .accordion.block ul {
