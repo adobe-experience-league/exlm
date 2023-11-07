@@ -14,6 +14,7 @@ import {
   loadCSS,
   decorateButtons,
 } from './lib-franklin.js';
+import decorateRails from './decorate-rails.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 
@@ -228,7 +229,7 @@ export function createTag(tag, attributes, html) {
 }
 
 export function loadPrevNextBtn() {
-  const mainDoc = document.querySelector('main >div:nth-child(2)');
+  const mainDoc = document.querySelector('main > div:nth-child(1)');
   if (!mainDoc) return;
 
   const prevPageMeta = document.querySelector('meta[name="prev-page"]');
@@ -287,6 +288,11 @@ export function loadPrevNextBtn() {
   }
 }
 
+async function loadRails(document) {
+  const main = document.querySelector('main');
+  if (main) await decorateRails(main);
+}
+
 /**
  * Loads everything that happens a lot later,
  * without impacting the user experience.
@@ -300,6 +306,7 @@ function loadDelayed() {
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
+  await loadRails(document);
   loadDelayed();
   loadPrevNextBtn();
 }
