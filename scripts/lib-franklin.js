@@ -662,10 +662,6 @@ export function decorateTemplateAndTheme() {
       element.classList.add(toClassName(c.trim()));
     });
   };
-  const meta = document.createElement('meta');
-  meta.setAttribute('name', 'theme');
-  meta.setAttribute('content', 'docs');
-  document.head.append(meta);
 
   const template = getMetadata('template');
   if (template) addClasses(document.body, template);
