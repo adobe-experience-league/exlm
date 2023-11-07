@@ -88,7 +88,7 @@
                 "template": {
                   "name": "Teaser",
                   "model": "teaser",
-                  "fileReference": "/content/dam/franklin-examples/widen-the-talent-pool.png",
+                  "fileReference": "/content/dam/placeholder.jpeg",
                   "title": "Teaser Title",
                   "longDescr": "Teaser Description (long)",
                   "shortDescr": "Teaser Description (short)",
