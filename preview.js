@@ -16,6 +16,7 @@ const owner = 'adobe-experience-league';
 const repo = 'exlm';
 const apiUrl = `https://admin.hlx.page/preview/${owner}/${repo}/${branch}${url}`;
 
+// eslint-disable-next-line no-console
 console.log('\x1b[32m', `Previewing: ${apiUrl}\n`);
 
 const res = await fetch(apiUrl, { method: 'POST' });
@@ -24,5 +25,6 @@ if (res.ok) {
   const data = await res.json();
   await open(data.preview.url);
 } else {
+  // eslint-disable-next-line no-console
   console.log('API error');
 }

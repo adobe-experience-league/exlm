@@ -6,15 +6,18 @@
   "type": "module",
   "scripts": {
     "lint:js": "eslint .",
-    "lint:sass": "stylelint blocks/**/*.scss styles/*.scss --fix",
+    "lint:sass": "stylelint blocks/**/*.scss styles/*.scss",
+    "lint:sass:fix": "stylelint blocks/**/*.scss styles/*.scss --fix",
     "format:js": "prettier --write .",
+    "format:check": "prettier --check .",
     "lint": "npm run lint:js && npm run lint:sass",
     "semantic-release": "semantic-release --debug",
     "sass:watch": "node sass-compile.js --watch",
     "sass:compile": "node sass-compile.js --compile",
     "up": "npm run sass:watch & hlx up",
     "prepare": "husky install",
-    "preview": "node preview.js"
+    "preview": "node preview.js",
+    "quality": "npm run format:check && npm run lint"
   },
   "repository": {
     "type": "git",
