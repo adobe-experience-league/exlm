@@ -1,5 +1,9 @@
 /* ----- MOBILE ----- */
 
+main .teaser-wrapper {
+  margin-bottom: var(--spectrum-spacing-500);
+}
+
 /* The teaser main div */
 .teaser.block > .teaser,
 .teaser.block.dark > .teaser {

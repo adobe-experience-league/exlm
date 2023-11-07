@@ -79,7 +79,11 @@ export default function decorate(block) {
   `);
 
   // add the image description
-  teaserDOM.querySelector('.image picture img').setAttribute('alt', imageDescr);
+  if (imageDescr) {
+    teaserDOM
+      .querySelector('.image picture img')
+      .setAttribute('alt', imageDescr);
+  }
 
   // set the mobile background
   teaserDOM
