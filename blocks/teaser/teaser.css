@@ -2,6 +2,8 @@
 
 main .teaser-wrapper {
   margin-bottom: var(--spectrum-spacing-500);
+  margin-left: -16px;
+  margin-right: -16px;
 }
 
 /* The teaser main div */
@@ -95,6 +97,12 @@ main .teaser-wrapper {
 
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
+
+  main .teaser-wrapper {
+    margin-bottom: var(--spectrum-spacing-500);
+    margin-left: unset;
+    margin-right: unset;
+  }
   /* turn the block into a flex, remove background color */
   .teaser.block > .teaser {
     display: flex;
