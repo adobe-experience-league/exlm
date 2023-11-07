@@ -105,7 +105,7 @@ body.is-shown {
     margin: 0;
     padding: 20px 22px 0;
 
-    @include custom-breakpoint(large) {
+    @include custom-breakpoint(desktop-lg) {
       padding: 20px 18px 0;
     }
 
@@ -737,7 +737,7 @@ body.is-shown {
         width: 120px;
       }
 
-      @include custom-breakpoint(large) {
+      @include custom-breakpoint(desktop-lg) {
         display: none;
       }
     }
@@ -749,7 +749,7 @@ body.is-shown {
       top: 7px;
       width: 15px;
 
-      @include custom-breakpoint(large) {
+      @include custom-breakpoint(desktop-lg) {
         left: auto;
         top: auto;
       }
@@ -784,7 +784,7 @@ body.is-shown {
       padding: 7px;
       text-align: right;
 
-      @include custom-breakpoint(large) {
+      @include custom-breakpoint(desktop-lg) {
         display: none;
       }
     }
