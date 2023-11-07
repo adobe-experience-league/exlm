@@ -1,14 +1,15 @@
 /* ----- MOBILE ----- */
 
 /* The teaser main div */
-.teaser.block > .teaser {
+.teaser.block > .teaser,
+.teaser.block.dark > .teaser {
   --teaser-background-color :  var(--spectrum-blue-600); 
 
   background-color: var(--teaser-background-color);
   padding: var(--spectrum-spacing-400) var(--spectrum-spacing-500);
 }
 
-/* the eybrow title */
+/* the eybrow title, hidden in mobile */
 .teaser.block > .teaser > .text > .eyebrow {
   display:none;
   font-family: var(--body-font-family);
@@ -18,7 +19,7 @@
   margin-bottom: var(--space-token-xs);
 }
 
-/* the main title */
+/* the main title, hidden in mobile */
 .teaser.block > .teaser > .text > .title {
   display: none;
   font-family: var(--body-font-family);
@@ -26,6 +27,10 @@
   font-weight: var(--font-weight-700);
   line-height: var(--spectrum-line-height-xxl);
   margin-bottom: var(--space-token-xxs);
+}
+
+.teaser.block.dark > .teaser > .text > .title {
+  color: var(--background-color);
 }
 
 /* the short description */
@@ -38,7 +43,7 @@
   margin: 0;
 }
 
-/* the long description */
+/* hide the long description */
 .teaser.block > .teaser > .text > .long-description {
   display: none;
 }
@@ -51,6 +56,11 @@
   margin: 0;
 }
 
+.teaser.block.dark > .teaser > .text > .long-description,
+.teaser.block.dark > .teaser > .text > .long-description p {
+  color: var(--background-color);
+}
+
 /* the list of CTA's */
 .teaser.block > .teaser > .text > .cta {
   display: flex;
@@ -60,18 +70,25 @@
   width:min-content;
 }
 
-/* in mobile view all primary and secondary buttons are outlined */
-.teaser.block > .teaser > .text > .cta > a.button,
-.teaser.block.dark > .teaser > .text > .cta > a.button.secondary,
-.teaser.block.dark > .teaser > .text > .cta > a.button {
+/* the cta buttons */
+.teaser.block > .teaser > .text > .cta > a.button {
+  background-color: var(--background-color);
+  border: 2px solid transparent;
+  color:var(--teaser-background-color);
+}
+
+.teaser.block > .teaser > .text > .cta > a.button.secondary {
   background-color: unset;
   border: 2px solid var(--background-color);
-  color: var(--background-color);
+  color:var(--background-color);
 }
 
 /* the image */
-.teaser.block > .teaser > .image {
+.teaser.block > .teaser > .image img {
   display:none;
+  width: auto;
+  height: max-content;
+  object-fit: cover;
 }
 
 /* ----- TABLET ----- */
@@ -80,7 +97,12 @@
   .teaser.block > .teaser {
     display: flex;
     background-color: var(--background-color);
-    padding: var(--spectrum-spacing-500) var(--space-token-xxl);
+    padding: 0;
+  }
+
+  .teaser.block.dark > .teaser {
+    background-color: grey;
+    padding: 0;
   }
 
   /* revert to normal button behavior for primary and secondary */
@@ -96,11 +118,24 @@
     color: var(--text-color);
   }
 
+  .teaser.block.dark > .teaser > .text > .cta > a.button {
+    background-color: var(--background-color);
+    border: 2px solid transparent;
+    color: grey;
+  }
+
+  .teaser.block.dark > .teaser > .text > .cta > a.button.secondary {
+    background-color: unset;
+    border: 2px solid currentcolor;
+    color: var(--background-color);
+  }
+
   /* limit width of text part and set order */
   .teaser.block > .teaser > .text {
     width:50%;
     order: 0;
     padding: var(--spectrum-spacing-500);
+
   }
 
   /* change the order text should be on the right */
@@ -118,6 +153,10 @@
     display: block;
   }
 
+  .teaser.block.dark > .teaser > .text > .eyebrow {
+    color: var(--background-color);
+  }
+  
   /* turn of short description */
   .teaser.block > .teaser > .text > .short-description {
     display: none;
@@ -140,16 +179,17 @@
   .teaser.block.right > .teaser > .image {
     order: 0;
   }
+
+  /* the image */
+  .teaser.block > .teaser > .image img {
+    display:block;
+  }
 }
 
-/* dummy for testing theme */
-.teaser.block.dark > .teaser {
-  background-color: lightgrey;
-}
 
 /* ----- DESKTOP ------ */
 @media (min-width: 900px) {
-.teaser.block > .teaser {
+.teaser.block > .teaser > .text {
   padding: var(--spectrum-spacing-500) var(--spectrum-spacing-600) var(--spectrum-spacing-600) var(--spectrum-spacing-700);
 }
 }
