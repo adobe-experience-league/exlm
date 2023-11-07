@@ -1,9 +1,9 @@
 @mixin text-styles(
   $font-family: var(--body-font-family),
-  $font-size: var(--exlm-font-size-p),
+  $font-size: var(--exlm-font-size-content),
   $font-weight: var(--font-weight-400),
   $font-style: normal,
-  $line-height: var(--spectrum-line-height-m),
+  $line-height: var(--spectrum-line-height-l),
   $color: var(--spectrum-gray-800),
   $margin-top: 12px,
   $margin-bottom: 16px
@@ -18,48 +18,62 @@
   margin-bottom: #{$margin-bottom};
 }
 
-.h1,
-h1 {
+.h1, h1 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h1),
     $font-weight: var(--font-weight-700),
-    $line-height: var(--spectrum-line-height-xxxl),
-    $margin-top: 12px,
-    $margin-bottom: 16px,
+    $line-height: var(--exlm-line-height-h1),
     $color: var(--non-spectrum-grey)
   );
 }
 
-.h2,
-h2 {
+.h2, h2 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h2),
     $font-weight: var(--font-weight-700),
-    $line-height: var(--spectrum-line-height-xxl),
+    $line-height: var(--exlm-line-height-h2),
     $margin-top: 40px,
     $margin-bottom: 7px,
     $color: var(--non-spectrum-grey)
   );
 }
 
-.h3,
-h3 {
+.h3, h3 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h3),
     $font-weight: var(--font-weight-700),
-    $line-height: var(--spectrum-line-height-xl),
+    $line-height: var(--exlm-line-height-h3),
     $margin-top: 40px,
     $margin-bottom: 5.5px,
     $color: var(--text-color)
   );
 }
 
-.h4,
-h4 {
+.h4, h4 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h4),
-    $font-weight: var(--font-weight-600),
-    $line-height: var(--spectrum-line-height-l),
+    $font-weight: var(--font-weight-700),
+    $line-height: var(--exlm-line-height-h4),
+    $margin-bottom: 7px,
+    $color: var(--text-color)
+  );
+}
+
+.h5, h5 {
+  @include text-styles(
+    $font-size: var(--exlm-font-size-h5),
+    $font-weight: var(--font-weight-700),
+    $line-height: var(--exlm-line-height-h5),
+    $margin-bottom: 7px,
+    $color: var(--text-color)
+  );
+}
+
+.h6, h6 {
+  @include text-styles(
+    $font-size: var(--exlm-font-size-h6),
+    $font-weight: var(--font-weight-700),
+    $line-height: var(--exlm-line-height-h6),
     $margin-bottom: 7px,
     $color: var(--text-color)
   );
