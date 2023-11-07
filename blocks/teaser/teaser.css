@@ -52,14 +52,14 @@ main .teaser-wrapper {
   display: none;
 }
 
-.teaser.block > .teaser > .text > .long-description p {
+.teaser.block > .teaser > .text > .long-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
   line-height: var(--spectrum-line-height-l);
   margin: 0;
 }
 
-.teaser.block.dark > .teaser > .text > .long-description p {
+.teaser.block.dark > .teaser > .text > .long-description * {
   color: var(--background-color);
 }
 
