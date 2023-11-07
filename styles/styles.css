@@ -393,6 +393,9 @@ strong {
   --non-spectrum-graphite-gray: #4b4b4b;
   --non-spectrurm-whisper-gray: #eaeaea;
   --non-spectrum-trolley-gray: #808080;
+  --non-spectrum-gainsboro-gray: #dbdbdb;
+  --non-spectrum-scrollbar-thumb: rgba(0 0 0 / 50%);
+  --non-spectrum-raisin-black: #222;
   --non-spectrum-max-width: 1440px;
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
