@@ -662,7 +662,6 @@ export function decorateTemplateAndTheme() {
       element.classList.add(toClassName(c.trim()));
     });
   };
-
   const template = getMetadata('template');
   if (template) addClasses(document.body, template);
   const theme = getMetadata('theme');
