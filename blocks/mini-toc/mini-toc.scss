@@ -1,11 +1,7 @@
 @import '../../styles/sass/breakpoints';
 
 .mini-toc-container {
-  display: none;
-
-  @include breakpoint(desktop) {
-    display: block;
-  }
+  display: block;
 }
 
 .mini-toc-wrapper {
@@ -14,12 +10,12 @@
   flex: none;
   width: 100%;
   position: sticky;
+  margin-top: 0 !important; // neccessaary for sticky
   top: 32px;
   overflow: visible;
 }
 
 .mini-toc-wrapper .mini-toc {
-  margin-top: 56px;
   font-size: var(--spectrum-font-size-50);
   font-weight: var(--spectrum-extra-bold-font-weight);
   padding-left: 0;

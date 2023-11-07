@@ -13,6 +13,7 @@ import {
   loadBlocks,
   loadCSS,
   decorateButtons,
+  getMetadata,
 } from './lib-franklin.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
@@ -228,7 +229,7 @@ export function createTag(tag, attributes, html) {
 }
 
 export function loadPrevNextBtn() {
-  const mainDoc = document.querySelector('main >div:nth-child(2)');
+  const mainDoc = document.querySelector('main > div:nth-child(1)');
   if (!mainDoc) return;
 
   const prevPageMeta = document.querySelector('meta[name="prev-page"]');
@@ -288,6 +289,53 @@ export function loadPrevNextBtn() {
 }
 
 /**
+ * Decorate rail section
+ * @param {Element} railSection The rail section element
+ * @param {'left'|'right'} position The rail position
+ */
+async function decorateRail(railSection, position) {
+  // wrap content in a wrapper div
+  const content = document.createElement('div');
+  content.classList.add('rail-content');
+  content.replaceChildren(...railSection.children);
+  railSection.replaceChildren(content);
+
+  // add toggle button
+  const railToggler = document.createElement('a');
+  railToggler.classList.add('rail-toggle');
+  railToggler.innerHTML = '<span class="icon icon-rail"></span>';
+  railSection.prepend(railToggler);
+  await decorateIcons(railToggler);
+  railToggler.addEventListener('click', () => {
+    railSection.classList.toggle('closed');
+  });
+  railSection.classList.add('rail');
+  railSection.classList.add(`rail-${position}`);
+}
+
+/**
+ * Builds three column grid layout with left/right toggle section
+ * @param {Document} document The container element
+ */
+async function loadRails(document) {
+  const main = document.querySelector('main');
+  // Get all child div elements
+  const leftRail = main?.children[1];
+  const rightRail = main?.children[2];
+  // ensure this is the docs theme
+  const theme = getMetadata('theme');
+  const isDocs = theme
+    .split(',')
+    .map((t) => t.toLowerCase())
+    .includes('docs');
+
+  if (isDocs) {
+    await decorateRail(leftRail, 'left');
+    await decorateRail(rightRail, 'right');
+  }
+}
+
+/**
  * Loads everything that happens a lot later,
  * without impacting the user experience.
  */
@@ -300,6 +348,7 @@ function loadDelayed() {
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
+  loadRails();
   loadDelayed();
   loadPrevNextBtn();
 }

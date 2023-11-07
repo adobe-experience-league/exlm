@@ -1,13 +1,28 @@
-/* eslint-disable no-bitwise */
-import {
-  isDesktop,
-  isMobile,
-  fetchContent,
-  cleanUpDivElems,
-  manageElemState,
-} from '../../scripts/utilities.js';
-
 import { createTag } from '../../scripts/scripts.js';
+
+/**
+ * Removes all elements in el; except the one child matching the provided selector
+ * @param {HTMLElement} el
+ * @param {string} selector
+ */
+export const removeAllButSelector = (el, selector) => {
+  const selectedChild = el.querySelector(selector);
+  if (selectedChild) {
+    el.innerHTML = selectedChild.outerHTML;
+  }
+};
+
+// fetch fragment html
+const fetchContent = async (url) => {
+  const response = await fetch(url);
+  return response.text();
+};
+
+// Desktop Only (1025px onwards)
+const isDesktop = window.matchMedia('(min-width: 1025px)');
+
+// Mobile Only (Until 1024px)
+const isMobile = window.matchMedia('(max-width: 1024px)');
 
 // Configurable data
 const CONFIG = {
@@ -54,7 +69,10 @@ function exlCurtain() {
   bodyTag.prepend(exlOverlay);
 }
 
-// Add Hamburger for Mobile
+/**
+ * Add Hamburger for Mobile
+ * @param {HTMLElement} block
+ */
 function exlHamburger(block) {
   const hamburgerAttributes = {
     role: 'button',
@@ -69,8 +87,8 @@ function exlHamburger(block) {
 
   if (isMobile) {
     hamburger.addEventListener('mousedown', () => {
-      manageElemState(hamburger, 'is-active');
-      manageElemState(bodyTag, 'is-shown');
+      hamburger.classList.toggle('is-active');
+      bodyTag.classList.toggle('is-shown');
     });
   }
 }
@@ -81,7 +99,7 @@ function exlBrand(block) {
   exlLogo.className = 'exl-brand-container';
 
   // Remove unwanted Div blocks from logo block
-  cleanUpDivElems(exlLogo, 'h2');
+  removeAllButSelector(exlLogo, 'h2');
 }
 
 // Decorate Exl Navigation
@@ -115,7 +133,7 @@ function decorateExlNavigation(block) {
 
   // Replace anchor text with Adobe Logo image
   const adobeLogo = block.querySelector('.adobe-logo');
-  cleanUpDivElems(adobeLogo, 'a');
+  removeAllButSelector(adobeLogo, 'a');
 
   // Reposition Sign up Link
   exlTopNavFirstChild.insertBefore(profile, adobeLogo);
@@ -175,9 +193,9 @@ function manageLocale(block) {
   });
   const languageSelector = block.querySelector('.language-selector');
 
-  cleanUpDivElems(languageSelector, 'a');
+  removeAllButSelector(languageSelector, 'a');
   languageDiv.innerHTML = languageTabContent;
-  cleanUpDivElems(languageDiv, 'ul');
+  removeAllButSelector(languageDiv, 'ul');
   languageSelector.appendChild(languageDiv);
 
   const langAnchor = languageSelector.querySelector('a');
@@ -204,7 +222,10 @@ function manageLocale(block) {
   }
 }
 
-// Decoration Sub navigation content
+/**
+ * Decoration Sub navigation content
+ * @param {HTMLElement} block
+ */
 function decorateSubNavigation(block) {
   const exlNavItems = block.querySelectorAll('.exl-nav .exl-nav-item');
   const exlNavWithLargeMenu = block.querySelectorAll(
@@ -252,7 +273,7 @@ function decorateSubNavigation(block) {
         event.preventDefault();
         largemenuAnchor.removeAttribute('href');
         largemenuAnchor.nextElementSibling.removeAttribute('style');
-        manageElemState(largemenu, 'is-expanded');
+        largemenu.classList.toggle('is-expanded');
       });
 
       largemenuHeadings.forEach((heading) => {

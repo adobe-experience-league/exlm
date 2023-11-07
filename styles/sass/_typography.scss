@@ -1,24 +1,7 @@
-@mixin text-styles(
-  $font-family: var(--body-font-family),
-  $font-size: var(--exlm-font-size-content),
-  $font-weight: var(--font-weight-400),
-  $font-style: normal,
-  $line-height: var(--spectrum-line-height-l),
-  $color: var(--spectrum-gray-800),
-  $margin-top: 12px,
-  $margin-bottom: 16px
-) {
-  font-family: #{$font-family};
-  font-size: #{$font-size};
-  font-weight: #{$font-weight};
-  font-style: #{$font-style};
-  line-height: #{$line-height};
-  color: #{$color};
-  margin-top: #{$margin-top};
-  margin-bottom: #{$margin-bottom};
-}
+@import 'mixins';
 
-.h1, h1 {
+.h1,
+h1 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h1),
     $font-weight: var(--font-weight-700),
@@ -27,7 +10,8 @@
   );
 }
 
-.h2, h2 {
+.h2,
+h2 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h2),
     $font-weight: var(--font-weight-700),
@@ -38,7 +22,8 @@
   );
 }
 
-.h3, h3 {
+.h3,
+h3 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h3),
     $font-weight: var(--font-weight-700),
@@ -49,7 +34,8 @@
   );
 }
 
-.h4, h4 {
+.h4,
+h4 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h4),
     $font-weight: var(--font-weight-700),
@@ -59,7 +45,8 @@
   );
 }
 
-.h5, h5 {
+.h5,
+h5 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h5),
     $font-weight: var(--font-weight-700),
@@ -69,7 +56,8 @@
   );
 }
 
-.h6, h6 {
+.h6,
+h6 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h6),
     $font-weight: var(--font-weight-700),
