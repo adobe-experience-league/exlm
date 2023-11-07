@@ -90,8 +90,8 @@
                   "model": "teaser",
                   "fileReference": "/content/dam/placeholder.jpeg",
                   "title": "Teaser Title",
-                  "longDescr": "Teaser Description (long)",
-                  "shortDescr": "Teaser Description (short)",
+                  "longDescr": "<p>Teaser Description (long)</p>",
+                  "shortDescr": "<p>Teaser Description (short)</p>",
                   "classes": ["light","left"]
                 }
               }

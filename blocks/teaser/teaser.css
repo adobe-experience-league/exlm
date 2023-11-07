@@ -52,7 +52,6 @@ main .teaser-wrapper {
   display: none;
 }
 
-.teaser.block > .teaser > .text > .long-description,
 .teaser.block > .teaser > .text > .long-description p {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
@@ -60,7 +59,6 @@ main .teaser-wrapper {
   margin: 0;
 }
 
-.teaser.block.dark > .teaser > .text > .long-description,
 .teaser.block.dark > .teaser > .text > .long-description p {
   color: var(--background-color);
 }
