@@ -697,13 +697,6 @@ export function decorateButtons(element) {
           a.className = 'button secondary';
           twoup.classList.add('button-container');
         }
-        const href = a.getAttribute('href');
-        if (href && !href.includes('experienceleague-dev.corp.adobe.com')) {
-          a.target = '_blank';
-          if (!href.startsWith('/') && !href.startsWith('http')) {
-            a.href = `//${href}`;
-          }
-        }
       }
     }
   });

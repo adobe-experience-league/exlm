@@ -325,6 +325,15 @@ export function decorateExternalLinks(main) {
     const href = a.getAttribute('href');
     if (href.includes('#_blank')) {
       a.setAttribute('target', '_blank');
+    } else if (
+      a.classList.contains('button') &&
+      href &&
+      !href.includes('experienceleague-dev.corp.adobe.com')
+    ) {
+      a.target = '_blank';
+      if (!href.startsWith('/') && !href.startsWith('http')) {
+        a.href = `//${href}`;
+      }
     }
   });
 }
@@ -335,13 +344,6 @@ export function decorateExternalLinks(main) {
  */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
-  /**
-   * Franklin converts paragraphs containing a single
-   * link as buttons. This is not the behaviour we need.
-   * The original decorateButtons function is however
-   * retained and will be revisited during button specific
-   * decoration.
-   */
   decorateButtons(main);
   decorateIcons(main);
   decorateExternalLinks(main);
