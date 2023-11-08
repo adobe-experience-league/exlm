@@ -121,6 +121,7 @@ main .teaser-wrapper {
   }
 
   .teaser.block.dark > .teaser {
+    background-color: var(--background-color);
     padding: 0;
   }
 
