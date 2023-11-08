@@ -50,14 +50,14 @@ async function loadRails(document) {
     .includes('docs');
 
   if (isDocs) {
-    loadCSS(`${window.hlx.codeBasePath}/styles/rail-styles.css`);
+    await loadCSS(`${window.hlx.codeBasePath}/styles/rail-styles.css`);
     await decorateRail(leftRail, 'left');
     await decorateRail(rightRail, 'right');
   }
 }
-await loadRails(document);
+requestIdleCallback(() => loadRails(document));
+requestIdleCallback(() => import('./prism.js'));
 // Core Web Vitals RUM collection
 sampleRUM('cwv');
 
 // eslint-disable-next-line
-import './prism.js';
