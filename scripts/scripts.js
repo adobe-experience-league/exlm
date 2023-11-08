@@ -14,6 +14,7 @@ import {
   loadCSS,
   decorateButtons,
 } from './lib-franklin.js';
+import { isDocPage } from './utils.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 
@@ -150,7 +151,9 @@ export function decorateExternalLinks(main) {
  */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
-  decorateButtons(main);
+  if (!isDocPage()) {
+    decorateButtons(main);
+  }
   decorateIcons(main);
   decorateExternalLinks(main);
   buildAutoBlocks(main);

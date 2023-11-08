@@ -1,10 +1,6 @@
 // eslint-disable-next-line import/no-cycle
-import {
-  decorateIcons,
-  getMetadata,
-  loadCSS,
-  sampleRUM,
-} from './lib-franklin.js';
+import { decorateIcons, loadCSS, sampleRUM } from './lib-franklin.js';
+import { isDocPage } from './utils.js';
 // add more delayed functionality here
 
 /**
@@ -43,11 +39,7 @@ async function loadRails(document) {
   const leftRail = main?.children[1];
   const rightRail = main?.children[2];
   // ensure this is the docs theme
-  const theme = getMetadata('theme');
-  const isDocs = theme
-    .split(',')
-    .map((t) => t.toLowerCase())
-    .includes('docs');
+  const isDocs = isDocPage();
 
   if (isDocs) {
     await loadCSS(`${window.hlx.codeBasePath}/styles/rail-styles.css`);
