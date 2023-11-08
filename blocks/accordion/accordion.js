@@ -1,21 +1,13 @@
 export default function decorate(block) {
-  // get 1st div element text to create summary element; then remove 1st div element from block
-  const summaryElement = document.createElement('summary');
-  const summaryText = block.querySelector('div > div:first-child')
-    .firstElementChild.innerText;
-  summaryElement.innerText = summaryText;
-  const detailsElement = document.createElement('details');
-  block.removeChild(block.querySelector('div > div:first-child'));
-  detailsElement.appendChild(summaryElement);
-  // next div element(s) form the accordion details
-  Array.from(block.children).forEach((element) => {
-    detailsElement.appendChild(element);
+  const details = document.createElement('details');
+  const summary = document.createElement('summary');
+  details.append(summary);
+  Array.from(block.children).forEach((element, i) => {
+    if (i === 0) summary.append(block.children[0].textContent);
+    else {
+      details.append(element);
+    }
   });
-
-  detailsElement.querySelectorAll('div.accordion').forEach((nestedBlock) => {
-    decorate(nestedBlock);
-    nestedBlock.dataset.blockStatus = 'loaded';
-  });
-
-  block.innerHTML = detailsElement.outerHTML;
+  block.innerHTML = '';
+  block.append(details);
 }

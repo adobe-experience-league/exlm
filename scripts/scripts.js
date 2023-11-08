@@ -13,6 +13,7 @@ import {
   loadBlocks,
   loadCSS,
   decorateButtons,
+  getMetadata,
 } from './lib-franklin.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
@@ -132,9 +133,9 @@ export function decorateExternalLinks(main) {
     if (href.includes('#_blank')) {
       a.setAttribute('target', '_blank');
     } else if (
-      a.classList.contains('button') &&
       href &&
-      !href.includes('experienceleague-dev.corp.adobe.com')
+      !href.includes('experienceleague-dev.corp.adobe.com') &&
+      href !== '#'
     ) {
       a.target = '_blank';
       if (!href.startsWith('/') && !href.startsWith('http')) {
@@ -297,9 +298,30 @@ function loadDelayed() {
   // load anything that can be postponed to the latest here
 }
 
+/**
+ * Custom - Loads the right and left rails for doc pages only.
+ */
+function loadRails() {
+  requestIdleCallback(async () => {
+    const theme = getMetadata('theme');
+    const isDocs = theme
+      .split(',')
+      .map((t) => t.toLowerCase().trim())
+      .includes('docs');
+    if (isDocs) {
+      loadCSS(`${window.hlx.codeBasePath}/scripts/rails/rails.css`);
+      const mod = await import('./rails/rails.js');
+      if (mod.default) {
+        await mod.default();
+      }
+    }
+  });
+}
+
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
+  loadRails();
   loadDelayed();
   loadPrevNextBtn();
 }

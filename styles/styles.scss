@@ -298,6 +298,7 @@
   --non-spectrum-gainsboro-gray: #dbdbdb;
   --non-spectrum-scrollbar-thumb: rgba(0 0 0 / 50%);
   --non-spectrum-raisin-black: #222;
+  --non-spectrum-silver: #f5f5f5;
   --non-spectrum-max-width: 1440px;
 
   /* rgba transparent values */
@@ -331,24 +332,6 @@
   --exlm-line-height-h5: 20.8px;
   --exlm-line-height-h6: 20.8px;
   --exlm-line-height-content: var(--spectrum-line-height-l);
-}
-
-@include breakpoint('desktop') {
-  /* exlm doc-pages fonts definition - Mobile */
-  .docs {
-    --exlm-font-size-h1: 44px;
-    --exlm-font-size-h2: var(--spectrum-heading-size-l);
-    --exlm-font-size-h3: var(--spectrum-heading-size-m);
-    --exlm-font-size-h4: var(--spectrum-heading-size-s);
-    --exlm-font-size-h5: var(--spectrum-heading-size-xs);
-    --exlm-font-size-h6: var(--spectrum-heading-size-xxs);
-    --exlm-line-height-h1: var(--spectrum-line-height-xxxl);
-    --exlm-line-height-h2: var(--spectrum-line-height-xxl);
-    --exlm-line-height-h3: var(--spectrum-line-height-xl);
-    --exlm-line-height-h4: 23.4px;
-    --exlm-line-height-h5: 20.8px;
-    --exlm-line-height-h6: 18.2px;
-  }
 }
 
 @include breakpoint('desktop-lg') {
@@ -478,18 +461,8 @@ samp {
   padding: 0.125em;
 }
 
-code:not([class^='language-']) {
-  font-family: var(--spectrum-code-font-family);
-  font-size: var(--spectrum-body-size-s);
-  background-color: var(--spectrum-gray-100);
-  padding: 4px;
-  border: 1px solid var(--spectrum-gray-300);
-  border-radius: 4px;
-  line-height: 21px;
-}
-
 pre {
-  background-color: var(--overlay-background-color);
+  background-color: var(--non-spectrum-silver);
   padding: 1em;
   border-radius: 0.25em;
   overflow-y: scroll;
@@ -637,7 +610,36 @@ img {
   --exlm-line-height-h4: 23.4px;
   --exlm-line-height-h5: 23.4px;
   --exlm-line-height-h6: 23.4px;
-  --exlm-line-height-content: 20.8px;
+  --exlm-line-height-content: 25.6px;
+
+  @include breakpoint('desktop') {
+    --exlm-font-size-h1: 44px;
+    --exlm-font-size-h2: var(--spectrum-heading-size-l);
+    --exlm-font-size-h3: var(--spectrum-heading-size-m);
+    --exlm-font-size-h4: var(--spectrum-heading-size-s);
+    --exlm-font-size-h5: var(--spectrum-heading-size-xs);
+    --exlm-font-size-h6: var(--spectrum-heading-size-xxs);
+    --exlm-line-height-h1: var(--spectrum-line-height-xxxl);
+    --exlm-line-height-h2: var(--spectrum-line-height-xxl);
+    --exlm-line-height-h3: var(--spectrum-line-height-xl);
+    --exlm-line-height-h4: 23.4px;
+    --exlm-line-height-h5: 20.8px;
+    --exlm-line-height-h6: 18.2px;
+  }
+
+  code:not([class^='language-']) {
+    font-family: var(--spectrum-code-font-family);
+    font-size: var(--spectrum-body-size-s);
+    background-color: var(--spectrum-gray-100);
+    padding: 4px;
+    border: 1px solid var(--spectrum-gray-300);
+    border-radius: 4px;
+    line-height: 21px;
+  }
+
+  pre {
+    background-color: var(--overlay-background-color);
+  }
 
   code,
   pre,
@@ -683,6 +685,7 @@ img {
     > div {
       padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500)
         var(--spectrum-spacing-500) !important;
+      box-sizing: border-box;
     }
 
     > div:first-child {
@@ -694,6 +697,11 @@ img {
     > div:nth-child(2) {
       order: 1;
       gap: 8px;
+      height: 70px; // predefined height to help with CLS
+      padding: 32px 10px 10px; // predefined padding to help with CLS
+      .rail-content {
+        display: none; // display none on ddesktop to hep with CLS
+      }
     }
 
     > div:last-child {
@@ -714,6 +722,10 @@ img {
       > div:nth-child(2) {
         order: 1;
         width: 20%;
+
+        .rail-content {
+          display: block;
+        }
       }
 
       // mini toc
