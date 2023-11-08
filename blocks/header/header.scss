@@ -31,15 +31,21 @@
     background: var(--non-spectrum-bg);
     display: block;
     height: 100%;
-    left: -350px;
-    max-width: 350px;
+    left: -360px;
+    max-width: 360px;
     overflow-y: scroll;
-    padding: 24px;
+    padding: 0;
     position: fixed;
     transition: all 200ms ease-in-out;
     top: 65px;
     width: 100%;
     z-index: 9;
+  }
+
+  @include custom-breakpoint(tablet) {
+    height: auto;
+    left: -600px;
+    max-width: 600px;
   }
 }
 
@@ -89,7 +95,7 @@ body.is-shown {
   & a {
     color: var(--spectrum-gray-800);
     font-size: var(--spectrum-font-size-100);
-    font-weight: 500;
+    font-weight: var(--font-weight-400);
     text-decoration: none;
 
     &:hover {
@@ -101,12 +107,17 @@ body.is-shown {
   & .exl-nav-item > a {
     border-bottom: 2px solid transparent;
     display: inline-block;
-    height: 65px;
+    height: 64px;
+    line-height: 21px;
     margin: 0;
-    padding: 20px 22px 0;
+    padding: 23px 20px;
+
+    @media (width <= 1350px) {
+      padding: 23px 10px;
+    }
 
     @include custom-breakpoint(large) {
-      padding: 20px 18px 0;
+      padding: 23px 16px;
     }
 
     @include custom-breakpoint(custom) {
@@ -115,9 +126,10 @@ body.is-shown {
   }
 
   & .language-selector > a {
-    background: url('/icons/globegrid.svg') 0 24px no-repeat;
+    background: url('../../icons/globegrid.svg') 0 24px no-repeat;
     background-size: contain;
     display: inline-block;
+    font-weight: var(--font-weight-600);
     height: var(--nav-height);
     margin: 0;
     vertical-align: middle;
@@ -129,7 +141,8 @@ body.is-shown {
       color: var(--spectrum-gray-800);
       display: block;
       font-size: var(--spectrum-font-size-75);
-      margin: 0;
+      letter-spacing: 0.72px;
+      padding: 12px 24px;
       text-indent: 0;
       text-transform: uppercase;
       width: auto;
@@ -143,7 +156,7 @@ body.is-shown {
         display: flex;
         height: 6px;
         position: absolute;
-        right: 20px;
+        right: 30px;
         transform-origin: 75% 75%;
         transform: rotateZ(45deg);
         transition: transform 0.1s ease;
@@ -157,9 +170,15 @@ body.is-shown {
     color: var(--spectrum-gray-800);
     cursor: pointer;
     display: block;
-    padding: 3px 15px;
+    padding: 3px 25px;
     white-space: nowrap;
     margin: 0;
+
+    &.selected {
+      background: url('../../icons/checkmark.svg') 88% 10px no-repeat;
+      background-size: 12px;
+      font-weight: var(--font-weight-700);
+    }
   }
 
   & .exl-subnav-wrapper a {
@@ -180,6 +199,11 @@ body.is-shown {
         top: 11px;
         width: 15px;
         height: 15px;
+
+        @include custom-breakpoint(custom) {
+          right: -15px;
+          top: 2px;
+        }
       }
     }
   }
@@ -210,7 +234,7 @@ body.is-shown {
     color: var(--spectrum-gray-50);
     display: inline-block;
     font-size: var(--spectrum-font-size-100);
-    font-weight: 600;
+    font-weight: var(--font-weight-600);
     height: inherit;
     line-height: inherit;
     padding: 5px 16px;
@@ -220,7 +244,7 @@ body.is-shown {
       line-height: inherit;
       position: fixed;
       right: 20px;
-      top: -8px;
+      top: 16px;
       text-transform: inherit;
     }
   }
@@ -240,7 +264,7 @@ body.is-shown {
   }
 
   & .language-dropdown a:hover {
-    background: var(--non-spectrum-hover-bg);
+    background-color: var(--non-spectrum-hover-bg);
   }
 
   & .exl-subnav-wrapper .browse-all-content {
@@ -314,7 +338,7 @@ body.is-shown {
     & .exl-subnav-wrapper h5 {
       color: var(--spectrum-gray-700);
       font-size: var(--spectrum-font-size-75);
-      font-weight: 800;
+      font-weight: var(--spectrum-extra-bold-font-weight);
       letter-spacing: 0.72px;
       line-height: 18px;
       position: relative;
@@ -377,8 +401,9 @@ body.is-shown {
     @include custom-breakpoint(custom) {
       display: block;
       height: 9px;
+      padding: 10px;
       position: relative;
-      top: 27px;
+      top: 22px;
       width: 18px;
       z-index: 10;
 
@@ -387,17 +412,17 @@ body.is-shown {
         display: inline-block;
         height: 2px;
         position: absolute;
-        left: 0;
+        left: 3px;
         transition: all 200ms ease-in-out;
-        top: 0;
+        top: 6px;
         width: 14px;
 
         &:nth-child(2) {
-          top: 4px;
+          top: 10px;
         }
 
         &:nth-child(3) {
-          top: 8px;
+          top: 14px;
         }
       }
 
@@ -405,7 +430,7 @@ body.is-shown {
         > span {
           &:nth-child(1) {
             transform: rotate(45deg);
-            top: 5px;
+            top: 10px;
           }
 
           &:nth-child(2) {
@@ -414,7 +439,7 @@ body.is-shown {
 
           &:nth-child(3) {
             transform: rotate(-45deg);
-            top: 5px;
+            top: 10px;
           }
         }
       }
@@ -437,11 +462,11 @@ body.is-shown {
           color: var(--spectrum-gray-800);
           display: block;
           font-size: var(--spectrum-font-size-75);
-          font-weight: 600;
+          font-weight: var(--font-weight-600);
           line-height: 15px;
           letter-spacing: 0.72px;
-          margin-top: 25px;
-          padding: 0;
+          margin: 0;
+          padding: 12px 24px;
           position: relative;
           text-transform: uppercase;
         }
@@ -466,7 +491,7 @@ body.is-shown {
       }
 
       &::after {
-        border-width: 0 1.5px 1.5px 0;
+        border-width: 0 1.9px 1.9px 0;
         border-style: solid;
         border-color: var(--spectrum-gray-800);
         box-sizing: content-box;
@@ -478,18 +503,44 @@ body.is-shown {
         transform-origin: 75% 75%;
         transform: rotateZ(45deg);
         transition: transform 0.1s ease;
-        top: 28px;
+        top: 29px;
         width: 6px;
 
         @include custom-breakpoint(custom) {
+          right: 30px;
           transform: rotateZ(45deg);
-          top: 0;
+          top: 13px;
         }
       }
     }
+
+    &:first-child > a:first-child {
+      @include custom-breakpoint(custom) {
+        padding-bottom: 16px;
+        padding-top: 26px;
+
+        &::after {
+          top: 27px;
+        }
+      }
+    }
+
+    & .exl-topnav .exl-brand-container h2,
+    & .exl-topnav .exl-brand-container h2 a {
+      color: var(--spectrum-gray-800);
+      font-size: var(--spectrum-font-size-200);
+      font-weight: var(--font-weight-600);
+      margin: 0;
+    }
+
+    & .exl-subnav-wrapper ul li a:hover {
+      background: var(--spectrum-gray-200);
+      border-radius: 4px;
+      color: var(--spectrum-gray-700);
+    }
   }
 
-  .exl-topnav .exl-brand-container {
+  & .exl-topnav .exl-brand-container {
     white-space: nowrap;
 
     @include custom-breakpoint(custom) {
@@ -500,14 +551,6 @@ body.is-shown {
       width: 75%;
       text-align: center;
       z-index: 2;
-    }
-
-    & h2,
-    & h2 a {
-      color: var(--spectrum-gray-800);
-      font-size: var(--spectrum-font-size-200);
-      font-weight: 600;
-      margin: 0;
     }
   }
 
@@ -523,9 +566,8 @@ body.is-shown {
     z-index: 10;
 
     @include custom-breakpoint(custom) {
-      margin-top: 19px;
       min-width: auto;
-      padding: 0;
+      padding: 0 24px;
       position: static;
     }
 
@@ -541,16 +583,10 @@ body.is-shown {
     & ul li {
       color: var(--spectrum-gray-700);
       font-size: var(--spectrum-font-size-100);
-      font-weight: 500;
+      font-weight: var(--font-weight-600);
       letter-spacing: normal;
       line-height: 17px;
       margin: 0;
-    }
-
-    & ul li a:hover {
-      background: var(--spectrum-gray-200);
-      border-radius: 4px;
-      color: var(--spectrum-gray-700);
     }
 
     & .communities-by-product > div:nth-child(2) {
@@ -577,6 +613,9 @@ body.is-shown {
 
       @include custom-breakpoint(custom) {
         display: none;
+        margin-bottom: 0;
+        margin-left: 7px;
+        padding-bottom: 5px;
       }
     }
 
@@ -623,6 +662,7 @@ body.is-shown {
 
           & > div:nth-child(2) {
             display: block;
+            padding-bottom: 19px;
           }
         }
       }
@@ -630,7 +670,7 @@ body.is-shown {
 
     & .quick-links {
       @include custom-breakpoint(custom) {
-        margin: 0 24px;
+        margin: 0 12px;
 
         &.show {
           & h5::after {
@@ -646,7 +686,7 @@ body.is-shown {
 
     & .communities-by-product {
       @include custom-breakpoint(custom) {
-        margin: 0 24px;
+        margin: 0 12px;
         padding: 0;
       }
     }
@@ -673,6 +713,10 @@ body.is-shown {
   }
 
   & .exl-nav-item.large-menu.is-expanded {
+    &:first-child {
+      border-bottom: 1px solid var(--spectrum-gray-200);
+    }
+
     > a::after {
       transform: rotateZ(225deg);
     }
@@ -689,7 +733,7 @@ body.is-shown {
   & .exl-nav-action {
     align-items: center;
     display: flex;
-    gap: 17px;
+    gap: 15px;
     justify-content: space-between;
     position: relative;
 
@@ -730,19 +774,28 @@ body.is-shown {
       font-size: var(--spectrum-font-size-100);
       height: 30px;
       line-height: 17px;
-      padding: 7px 5px 7px 28px;
+      padding: 7px 5px 9px 28px;
       width: 200px;
 
-      @media (width >= 1024px) and (width <= 1200px) {
-        width: 120px;
+      @media (width <= 1350px) {
+        width: 150px;
       }
 
       @include custom-breakpoint(large) {
         display: none;
       }
+
+      &::placeholder {
+        color: var(--spectrum-gray-600);
+        font-size: var(--spectrum-font-size-75);
+        font-style: italic;
+        letter-spacing: 0.14px;
+      }
     }
 
     & .exl-search-icon {
+      background: url('../../icons/search.svg') 0 0 no-repeat;
+      background-size: contain;
       height: 15px;
       left: 7px;
       position: absolute;
@@ -750,16 +803,33 @@ body.is-shown {
       width: 15px;
 
       @include custom-breakpoint(large) {
+        display: none;
+      }
+    }
+
+    & .exl-search-link {
+      background: url('../../icons/search.svg') 0 0 no-repeat;
+      background-size: contain;
+      display: none;
+      height: 15px;
+      left: 7px;
+      position: absolute;
+      top: 7px;
+      width: 15px;
+      text-indent: -99999px;
+
+      @include custom-breakpoint(large) {
+        display: inline-block;
         left: auto;
-        top: auto;
+        top: -18px;
       }
 
       @include custom-breakpoint(custom) {
-        left: -105px;
-        top: auto;
+        left: -95px;
+        top: -21px;
       }
 
-      @include custom-breakpoint(desktop) {
+      @include custom-breakpoint(tablet) {
         display: none;
       }
     }
@@ -768,18 +838,19 @@ body.is-shown {
       align-items: center;
       background: none;
       border: 1px solid var(--spectrum-gray-400);
+      border-left: 0 none;
       border-radius: 0;
       border-top-right-radius: 4px;
       border-bottom-right-radius: 4px;
       box-shadow: none;
-      color: var(--non-spectrum-input-text);
+      color: var(--spectrum-gray-700);
       display: flex;
       font-family: var(--body-font-family);
-      font-size: var(--spectrum-font-size-100);
+      font-size: var(--spectrum-font-size-75);
       justify-content: space-between;
       height: 30px;
       line-height: 17px;
-      width: 110px;
+      width: 105px;
       opacity: 0.7;
       padding: 7px;
       text-align: right;
@@ -799,7 +870,7 @@ body.is-shown {
       border: 1px solid var(--spectrum-gray-400);
       display: none;
       right: 0;
-      width: 110px;
+      width: 105px;
       position: absolute;
       top: 29px;
       z-index: 11;
@@ -827,45 +898,43 @@ body.is-shown {
 
   & .language-selector {
     height: var(--nav-height);
-    padding: 0 8px;
+    padding: 0 10px;
     position: relative;
 
     @include custom-breakpoint(custom) {
       border-top: 1px solid var(--spectrum-gray-200);
-      padding: 13px 0 0;
-      top: 15px;
+      padding: 0;
+    }
+
+    & .language-dropdown {
+      background: var(--non-spectrum-bg);
+      box-shadow: 0 8px 8px rgba(10 10 10 / 10%);
+      display: none;
+      left: 50%;
+      width: 120px;
+      position: absolute;
+      transform: translate(-50%, 0);
+      top: 64px;
+      z-index: 10;
+
+      @include custom-breakpoint(custom) {
+        box-shadow: none;
+        top: 48px;
+        width: 95%;
+      }
     }
 
     &.active {
       background: var(--non-spectrum-bg);
 
-      @include custom-breakpoint(custom) {
-        padding: 13px 0 0;
+      & .language-dropdown {
+        display: block;
+      }
 
+      @include custom-breakpoint(custom) {
         & a::after {
           transform: rotateZ(225deg);
         }
-
-        & .language-dropdown {
-          display: block;
-        }
-      }
-    }
-
-    & .language-dropdown {
-      background: var(--non-spectrum-bg);
-      display: none;
-      left: 50%;
-      max-width: 320px;
-      padding: 5px 0;
-      position: absolute;
-      transform: translate(-50%, 0);
-      top: 57px;
-      z-index: 10;
-
-      @include custom-breakpoint(custom) {
-        top: 40px;
-        width: 100%;
       }
     }
   }
