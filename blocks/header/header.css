@@ -879,7 +879,11 @@ body.is-shown .exl-curtain {
 }
 .header .language-selector.active {
   background: var(--non-spectrum-bg);
-  height: 100vh;
+}
+@media (max-width: 1024px) {
+  .header .language-selector.active {
+    height: 100vh;
+  }
 }
 .header .language-selector.active .language-dropdown {
   display: block;

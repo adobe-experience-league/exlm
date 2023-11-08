@@ -951,7 +951,10 @@ body.is-shown {
 
     &.active {
       background: var(--non-spectrum-bg);
-      height: 100vh;
+
+      @include custom-breakpoint(custom) {
+        height: 100vh;
+      }
 
       & .language-dropdown {
         display: block;
