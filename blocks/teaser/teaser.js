@@ -49,7 +49,7 @@ export default function decorate(block) {
         <div class='title'>${title}</div>
         <div class='long-description'>${longDescr}</div>
         <div class='short-description'>${
-          shortDescr !== '' ? shortDescr : longDescr
+          shortDescr === '' ? shortDescr : longDescr
         }</div>
         <div class='cta'>
           ${
