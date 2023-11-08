@@ -158,7 +158,14 @@ function decorateSearchContent(block) {
   const search = block.querySelector('.exl-topnav .search');
   const searchFirstChild = block.querySelector('.search > div:nth-child(1)');
   const searchSecondChild = block.querySelector('.search > div:nth-child(2)');
-  const searchContent = `<span class="exl-search-icon"><svg focusable="false" enable-background="new 0 0 20 20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Search" class="exl-search-svg"><title>Search</title><g fill="currentColor"><path class="exl-magnifier-circle-svg" d="m8.368 16.736c-4.614 0-8.368-3.754-8.368-8.368s3.754-8.368 8.368-8.368 8.368 3.754 8.368 8.368-3.754 8.368-8.368 8.368m0-14.161c-3.195 0-5.793 2.599-5.793 5.793s2.599 5.793 5.793 5.793 5.793-2.599 5.793-5.793-2.599-5.793-5.793-5.793"></path><path d="m18.713 20c-.329 0-.659-.126-.91-.377l-4.552-4.551c-.503-.503-.503-1.318 0-1.82.503-.503 1.318-.503 1.82 0l4.552 4.551c.503.503.503 1.318 0 1.82-.252.251-.581.377-.91.377"></path></g></svg></span><input autocomplete="off" class="exl-search-input" type="text" role="combobox" placeholder="Search Experience League"><button id="dropdownButton" type="button" class="exl-dropdown-picker" aria-haspopup="true"><span class="exl-picker-label">All</span><img src="https://experienceleague.adobe.com/assets/img/chevron_down.svg" height="20" class="exl-icon" aria-hidden="true" /></button>`;
+  const searchSVG = `<svg focusable="false" enable-background="new 0 0 20 20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Search" class="exl-search-svg"><title>Search</title><g fill="currentColor"><path class="exl-magnifier-circle-svg" d="m8.368 16.736c-4.614 0-8.368-3.754-8.368-8.368s3.754-8.368 8.368-8.368 8.368 3.754 8.368 8.368-3.754 8.368-8.368 8.368m0-14.161c-3.195 0-5.793 2.599-5.793 5.793s2.599 5.793 5.793 5.793 5.793-2.599 5.793-5.793-2.599-5.793-5.793-5.793"></path><path d="m18.713 20c-.329 0-.659-.126-.91-.377l-4.552-4.551c-.503-.503-.503-1.318 0-1.82.503-.503 1.318-.503 1.82 0l4.552 4.551c.503.503.503 1.318 0 1.82-.252.251-.581.377-.91.377"></path></g></svg>`;
+  const searchContent = `
+    <span class="exl-search-icon">${searchSVG}</span>
+    <input autocomplete="off" aria-autocomplete="list" class="exl-search-input" type="text" role="combobox" placeholder="Search Experience League">
+    <button id="dropdownButton" type="button" class="exl-dropdown-picker" aria-haspopup="true">
+      <span class="exl-picker-label">All</span>
+      <img src="/icons/chevron_down.svg" height="20" class="exl-icon" aria-hidden="true" />
+    </button>`;
 
   searchFirstChild.innerHTML = searchContent;
   searchSecondChild.className = 'search-popover';
