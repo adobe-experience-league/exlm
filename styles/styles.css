@@ -1,5 +1,6 @@
 @charset "UTF-8";
-.h1, h1 {
+.h1,
+h1 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h1);
   font-weight: var(--font-weight-700);
@@ -10,7 +11,8 @@
   margin-bottom: 16px;
 }
 
-.h2, h2 {
+.h2,
+h2 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h2);
   font-weight: var(--font-weight-700);
@@ -21,7 +23,8 @@
   margin-bottom: 7px;
 }
 
-.h3, h3 {
+.h3,
+h3 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h3);
   font-weight: var(--font-weight-700);
@@ -32,7 +35,8 @@
   margin-bottom: 5.5px;
 }
 
-.h4, h4 {
+.h4,
+h4 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h4);
   font-weight: var(--font-weight-700);
@@ -43,7 +47,8 @@
   margin-bottom: 7px;
 }
 
-.h5, h5 {
+.h5,
+h5 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h5);
   font-weight: var(--font-weight-700);
@@ -54,7 +59,8 @@
   margin-bottom: 7px;
 }
 
-.h6, h6 {
+.h6,
+h6 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h6);
   font-weight: var(--font-weight-700);
@@ -394,7 +400,7 @@ strong {
   --non-spectrum-viridian: #007e50;
   --non-spectrum-grey: #4a4a4a;
   --non-spectrum-grey-updated: #6e6e6e;
-  --non-spectrum-link: #378ef0;
+  --non-spectrum-link: #485fc7; /* this provides better contrast for a11y */
   --non-spectrum-navy-blue: #1473e6;
   --non-spectrurm-article-light-gray: #d3d3d3;
   --non-spectrurm-article-dark-gray: #505050;
@@ -555,11 +561,14 @@ ol > li > ol {
   list-style-type: lower-alpha;
 }
 
-ol > li:not(:last-child), ul > li:not(:last-child) {
+/* stylelint-disable no-descending-specificity */
+ol > li:not(:last-child),
+ul > li:not(:last-child) {
   margin-bottom: 0.875em;
   color: inherit;
 }
-ol > blockquote > p:last-child, ul > blockquote > p:last-child {
+ol > blockquote > p:last-child,
+ul > blockquote > p:last-child {
   margin-bottom: 0;
 }
 
@@ -588,13 +597,10 @@ code:not([class^=language-]) {
 }
 
 pre {
-  overflow: scroll;
-}
-
-main pre {
   background-color: var(--overlay-background-color);
   padding: 1em;
   border-radius: 0.25em;
+  overflow-y: scroll;
   overflow-x: auto;
   white-space: pre;
 }
@@ -659,7 +665,7 @@ button.secondary {
   color: var(--text-color);
 }
 
-main input {
+input {
   font-size: 1.25rem;
   width: 100%;
   max-width: 50rem;
@@ -672,26 +678,27 @@ main input {
   color: var(--text-color);
   background-color: var(--background-color);
 }
-main input:hover {
+input:hover {
   border: 1px solid var(--text-color);
 }
-main blockquote {
+
+blockquote {
   margin: 0;
   color: var(--non-spectrum-grey);
 }
-main blockquote p::before {
+blockquote p::before {
   content: "“";
   line-height: 0;
 }
-main blockquote p::after {
+blockquote p::after {
   content: "”";
   line-height: 0;
 }
-main blockquote > p:not(:last-child) {
+blockquote > p:not(:last-child) {
   margin-bottom: 8px;
 }
 
-main img {
+img {
   max-width: 100%;
   width: auto;
   height: auto;
@@ -708,23 +715,22 @@ main img {
   width: 100%;
 }
 
-main .section {
+.section {
   padding: 64px 16px;
+  /* section metadata */
 }
-main .section > .default-content-wrapper:last-child > p:last-child {
+.section > .default-content-wrapper:last-child > p:last-child {
   margin-bottom: 0;
 }
-
-/* section metadata */
-main .section.highlight {
-  background-color: var(--highlight-background-color);
-}
-
 @media (min-width: 600px) {
-  main .section {
+  .section {
     padding: 64px 32px;
   }
 }
+.section.highlight {
+  background-color: var(--highlight-background-color);
+}
+
 /* three column layout */
 .docs {
   --exlm-font-size-h1: var(--spectrum-heading-size-l);
@@ -795,9 +801,8 @@ main .section.highlight {
 }
 .docs main > div:first-child {
   order: 2;
-  overflow: auto;
   width: 100%;
-  flex: 1 1 0;
+  box-sizing: border-box;
 }
 .docs main > div:nth-child(2) {
   order: 1;
@@ -806,9 +811,6 @@ main .section.highlight {
 .docs main > div:last-child {
   order: 3;
 }
-.docs main .rail-toggle {
-  display: none;
-}
 @media (min-width: 900px) {
   .docs main {
     flex-direction: row;
@@ -816,6 +818,7 @@ main .section.highlight {
   .docs main > div:first-child {
     order: 2;
     overflow: auto;
+    flex: 1 1 0;
   }
   .docs main > div:nth-child(2) {
     order: 1;
@@ -827,49 +830,6 @@ main .section.highlight {
     position: relative;
     display: flex;
     gap: 8px;
-  }
-  .docs main .rail {
-    position: relative;
-    padding: 46px 0.75rem 0.75rem;
-  }
-  .docs main .rail .rail-content {
-    margin-top: 0;
-  }
-  .docs main .rail .rail-toggle {
-    display: block;
-    position: absolute;
-    cursor: pointer;
-    top: 15px;
-    margin: 0;
-    padding: 0 12px;
-  }
-  .docs main .rail .rail-toggle .icon {
-    width: 16px;
-    height: 16px;
-  }
-  .docs main .rail.rail-right .rail-toggle {
-    left: 0;
-    transform: rotate(180deg);
-  }
-  .docs main .rail.rail-left .rail-toggle {
-    right: 20px;
-  }
-  .docs main .rail.closed {
-    width: 0;
-    padding: 0 !important;
-  }
-  .docs main .rail.closed .rail-content {
-    display: none;
-  }
-  .docs main .rail.closed.rail-right .rail-toggle {
-    left: unset;
-    right: 0;
-    transform: rotate(0deg);
-  }
-  .docs main .rail.closed.rail-left .rail-toggle {
-    right: unset;
-    left: 0;
-    transform: rotate(180deg);
   }
 }
 @media (min-width: 600px) {

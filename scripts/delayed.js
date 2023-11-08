@@ -1,9 +1,10 @@
 // eslint-disable-next-line import/no-cycle
-import { decorateIcons, getMetadata, sampleRUM } from './lib-franklin.js';
-
-// Core Web Vitals RUM collection
-sampleRUM('cwv');
-
+import {
+  decorateIcons,
+  getMetadata,
+  loadCSS,
+  sampleRUM,
+} from './lib-franklin.js';
 // add more delayed functionality here
 
 /**
@@ -19,7 +20,8 @@ async function decorateRail(railSection, position) {
   railSection.replaceChildren(content);
 
   // add toggle button
-  const railToggler = document.createElement('a');
+  const railToggler = document.createElement('button');
+  railToggler.style.background = 'none'; // override default button styles
   railToggler.classList.add('rail-toggle');
   railToggler.innerHTML = '<span class="icon icon-rail"></span>';
   railSection.prepend(railToggler);
@@ -48,11 +50,14 @@ async function loadRails(document) {
     .includes('docs');
 
   if (isDocs) {
+    loadCSS(`${window.hlx.codeBasePath}/styles/rail-styles.css`);
     await decorateRail(leftRail, 'left');
     await decorateRail(rightRail, 'right');
   }
 }
-loadRails(document);
+await loadRails(document);
+// Core Web Vitals RUM collection
+sampleRUM('cwv');
 
 // eslint-disable-next-line
 import './prism.js';

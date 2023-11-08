@@ -1,0 +1,69 @@
+@import './sass/breakpoints';
+
+.docs {
+  .rail-toggle {
+    display: none;
+  }
+
+  @include breakpoint(desktop) {
+    // rail
+    .rail {
+      position: relative;
+      padding: 46px 0.75rem 0.75rem;
+
+      .rail-content {
+        margin-top: 0;
+      }
+
+      .rail-toggle {
+        background: none;
+        display: block;
+        position: absolute;
+        cursor: pointer;
+        top: 15px;
+        margin: 0;
+        padding: 0 12px;
+
+        .icon {
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      &.rail-right {
+        .rail-toggle {
+          left: 0;
+          transform: rotate(180deg);
+        }
+      }
+
+      &.rail-left {
+        .rail-toggle {
+          right: 20px;
+        }
+      }
+
+      // closed state
+      &.closed {
+        width: 0;
+        padding: 0 !important;
+
+        .rail-content {
+          display: none;
+        }
+
+        &.rail-right .rail-toggle {
+          left: unset;
+          right: 0;
+          transform: rotate(0deg);
+        }
+
+        &.rail-left .rail-toggle {
+          right: unset;
+          left: 0;
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+}

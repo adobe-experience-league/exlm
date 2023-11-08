@@ -283,7 +283,7 @@
   --non-spectrum-viridian: #007e50;
   --non-spectrum-grey: #4a4a4a;
   --non-spectrum-grey-updated: #6e6e6e;
-  --non-spectrum-link: #378ef0;
+  --non-spectrum-link: #485fc7; /* this provides better contrast for a11y */
   --non-spectrum-navy-blue: #1473e6;
   --non-spectrurm-article-light-gray: #d3d3d3;
   --non-spectrurm-article-dark-gray: #505050;
@@ -489,13 +489,10 @@ code:not([class^='language-']) {
 }
 
 pre {
-  overflow: scroll;
-}
-
-main pre {
   background-color: var(--overlay-background-color);
   padding: 1em;
   border-radius: 0.25em;
+  overflow-y: scroll;
   overflow-x: auto;
   white-space: pre;
 }
@@ -554,46 +551,44 @@ button.secondary {
   color: var(--text-color);
 }
 
-main {
-  input {
-    font-size: 1.25rem;
-    width: 100%;
-    max-width: 50rem;
-    display: block;
-    margin-bottom: 1rem;
-    padding: 0.75rem 0.6rem;
-    border-radius: 0.25rem;
-    box-sizing: border-box;
+input {
+  font-size: 1.25rem;
+  width: 100%;
+  max-width: 50rem;
+  display: block;
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.6rem;
+  border-radius: 0.25rem;
+  box-sizing: border-box;
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  background-color: var(--background-color);
+
+  &:hover {
     border: 1px solid var(--text-color);
-    color: var(--text-color);
-    background-color: var(--background-color);
-
-    &:hover {
-      border: 1px solid var(--text-color);
-    }
-  }
-
-  blockquote {
-    margin: 0;
-    color: var(--non-spectrum-grey);
-
-    p::before {
-      content: '“';
-      line-height: 0;
-    }
-
-    p::after {
-      content: '”';
-      line-height: 0;
-    }
-
-    > p:not(:last-child) {
-      margin-bottom: 8px;
-    }
   }
 }
 
-main img {
+blockquote {
+  margin: 0;
+  color: var(--non-spectrum-grey);
+
+  p::before {
+    content: '“';
+    line-height: 0;
+  }
+
+  p::after {
+    content: '”';
+    line-height: 0;
+  }
+
+  > p:not(:last-child) {
+    margin-bottom: 8px;
+  }
+}
+
+img {
   max-width: 100%;
   width: auto;
   height: auto;
@@ -610,22 +605,20 @@ main img {
   width: 100%;
 }
 
-main .section {
+.section {
   padding: 64px 16px;
 
   & > .default-content-wrapper:last-child > p:last-child {
     margin-bottom: 0;
   }
-}
 
-/* section metadata */
-main .section.highlight {
-  background-color: var(--highlight-background-color);
-}
-
-@include breakpoint(tablet) {
-  main .section {
+  @include breakpoint(tablet) {
     padding: 64px 32px;
+  }
+
+  /* section metadata */
+  &.highlight {
+    background-color: var(--highlight-background-color);
   }
 }
 
@@ -694,9 +687,8 @@ main .section.highlight {
 
     > div:first-child {
       order: 2;
-      overflow: auto;
       width: 100%;
-      flex: 1 1 0;
+      box-sizing: border-box;
     }
 
     > div:nth-child(2) {
@@ -708,17 +700,14 @@ main .section.highlight {
       order: 3;
     }
 
-    .rail-toggle {
-      display: none;
-    }
-
     @include breakpoint(desktop) {
       flex-direction: row;
 
-      // main doc
+      // doc
       > div:first-child {
         order: 2;
         overflow: auto;
+        flex: 1 1 0;
       }
 
       // toc
@@ -734,65 +723,6 @@ main .section.highlight {
         position: relative;
         display: flex;
         gap: 8px;
-      }
-
-      // rail
-      .rail {
-        position: relative;
-        padding: 46px 0.75rem 0.75rem;
-
-        .rail-content {
-          margin-top: 0;
-        }
-
-        .rail-toggle {
-          display: block;
-          position: absolute;
-          cursor: pointer;
-          top: 15px;
-          margin: 0;
-          padding: 0 12px;
-
-          .icon {
-            width: 16px;
-            height: 16px;
-          }
-        }
-
-        &.rail-right {
-          .rail-toggle {
-            left: 0;
-            transform: rotate(180deg);
-          }
-        }
-
-        &.rail-left {
-          .rail-toggle {
-            right: 20px;
-          }
-        }
-
-        // closed state
-        &.closed {
-          width: 0;
-          padding: 0 !important;
-
-          .rail-content {
-            display: none;
-          }
-
-          &.rail-right .rail-toggle {
-            left: unset;
-            right: 0;
-            transform: rotate(0deg);
-          }
-
-          &.rail-left .rail-toggle {
-            right: unset;
-            left: 0;
-            transform: rotate(180deg);
-          }
-        }
       }
     }
 
