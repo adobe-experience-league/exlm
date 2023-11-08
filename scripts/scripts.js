@@ -15,7 +15,6 @@ import {
   decorateButtons,
   getMetadata,
 } from './lib-franklin.js';
-import { isDocPage } from './utils.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 
@@ -144,6 +143,14 @@ export function decorateExternalLinks(main) {
       }
     }
   });
+}
+
+export function isDocPage() {
+  const theme = getMetadata('theme');
+  return theme
+    .split(',')
+    .map((t) => t.toLowerCase())
+    .includes('docs');
 }
 
 /**
@@ -306,12 +313,7 @@ function loadDelayed() {
  */
 function loadRails() {
   requestIdleCallback(async () => {
-    const theme = getMetadata('theme');
-    const isDocs = theme
-      .split(',')
-      .map((t) => t.toLowerCase().trim())
-      .includes('docs');
-    if (isDocs) {
+    if (isDocPage()) {
       loadCSS(`${window.hlx.codeBasePath}/scripts/rails/rails.css`);
       const mod = await import('./rails/rails.js');
       if (mod.default) {
