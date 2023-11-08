@@ -1,5 +1,6 @@
 @charset "UTF-8";
-.h1, h1 {
+.h1,
+h1 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h1);
   font-weight: var(--font-weight-700);
@@ -10,7 +11,8 @@
   margin-bottom: 16px;
 }
 
-.h2, h2 {
+.h2,
+h2 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h2);
   font-weight: var(--font-weight-700);
@@ -21,7 +23,8 @@
   margin-bottom: 7px;
 }
 
-.h3, h3 {
+.h3,
+h3 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h3);
   font-weight: var(--font-weight-700);
@@ -32,7 +35,8 @@
   margin-bottom: 5.5px;
 }
 
-.h4, h4 {
+.h4,
+h4 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h4);
   font-weight: var(--font-weight-700);
@@ -43,7 +47,8 @@
   margin-bottom: 7px;
 }
 
-.h5, h5 {
+.h5,
+h5 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h5);
   font-weight: var(--font-weight-700);
@@ -54,7 +59,8 @@
   margin-bottom: 7px;
 }
 
-.h6, h6 {
+.h6,
+h6 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h6);
   font-weight: var(--font-weight-700);
@@ -555,11 +561,14 @@ ol > li > ol {
   list-style-type: lower-alpha;
 }
 
-ol > li:not(:last-child), ul > li:not(:last-child) {
+/* stylelint-disable no-descending-specificity */
+ol > li:not(:last-child),
+ul > li:not(:last-child) {
   margin-bottom: 0.875em;
   color: inherit;
 }
-ol > blockquote > p:last-child, ul > blockquote > p:last-child {
+ol > blockquote > p:last-child,
+ul > blockquote > p:last-child {
   margin-bottom: 0;
 }
 
@@ -795,9 +804,8 @@ main .section.highlight {
 }
 .docs main > div:first-child {
   order: 2;
-  overflow: auto;
   width: 100%;
-  flex: 1 1 0;
+  box-sizing: border-box;
 }
 .docs main > div:nth-child(2) {
   order: 1;
@@ -816,6 +824,7 @@ main .section.highlight {
   .docs main > div:first-child {
     order: 2;
     overflow: auto;
+    flex: 1 1 0;
   }
   .docs main > div:nth-child(2) {
     order: 1;
