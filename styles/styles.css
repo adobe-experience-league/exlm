@@ -415,6 +415,7 @@ strong {
   --non-spectrum-gainsboro-gray: #dbdbdb;
   --non-spectrum-scrollbar-thumb: rgba(0 0 0 / 50%);
   --non-spectrum-raisin-black: #222;
+  --non-spectrum-silver: #f5f5f5;
   --non-spectrum-max-width: 1440px;
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
@@ -586,18 +587,8 @@ samp {
   padding: 0.125em;
 }
 
-code:not([class^=language-]) {
-  font-family: var(--spectrum-code-font-family);
-  font-size: var(--spectrum-body-size-s);
-  background-color: var(--spectrum-gray-100);
-  padding: 4px;
-  border: 1px solid var(--spectrum-gray-300);
-  border-radius: 4px;
-  line-height: 21px;
-}
-
 pre {
-  background-color: var(--overlay-background-color);
+  background-color: var(--non-spectrum-silver);
   padding: 1em;
   border-radius: 0.25em;
   overflow-y: scroll;
@@ -747,6 +738,18 @@ img {
   --exlm-line-height-h5: 23.4px;
   --exlm-line-height-h6: 23.4px;
   --exlm-line-height-content: 20.8px;
+}
+.docs pre {
+  background-color: var(--overlay-background-color);
+}
+.docs code:not([class^=language-]) {
+  font-family: var(--spectrum-code-font-family);
+  font-size: var(--spectrum-body-size-s);
+  background-color: var(--spectrum-gray-100);
+  padding: 4px;
+  border: 1px solid var(--spectrum-gray-300);
+  border-radius: 4px;
+  line-height: 21px;
 }
 .docs code,
 .docs pre,
