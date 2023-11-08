@@ -146,12 +146,27 @@ export function decorateExternalLinks(main) {
 }
 
 /**
+ * Check if current page is a MD Docs Page.
+ * theme = docs is set in bulk metadata for docs paths.
+ */
+export function isDocPage() {
+  const theme = getMetadata('theme');
+  return theme
+    .split(',')
+    .map((t) => t.toLowerCase())
+    .includes('docs');
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
-  decorateButtons(main);
+  // docs pages do not use buttons, only links
+  if (!isDocPage()) {
+    decorateButtons(main);
+  }
   decorateIcons(main);
   decorateExternalLinks(main);
   buildAutoBlocks(main);
@@ -303,12 +318,7 @@ function loadDelayed() {
  */
 function loadRails() {
   requestIdleCallback(async () => {
-    const theme = getMetadata('theme');
-    const isDocs = theme
-      .split(',')
-      .map((t) => t.toLowerCase().trim())
-      .includes('docs');
-    if (isDocs) {
+    if (isDocPage()) {
       loadCSS(`${window.hlx.codeBasePath}/scripts/rails/rails.css`);
       const mod = await import('./rails/rails.js');
       if (mod.default) {
