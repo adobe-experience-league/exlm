@@ -131,11 +131,6 @@ main .teaser-wrapper {
     padding: 0;
   }
 
-  /* text part is always on top */
-  .teaser.block > .teaser > .text {
-    Z-index: 2;
-  }
-
   /* revert to normal button behavior for primary and secondary */
   .teaser.block > .teaser > .text > .cta > a.button {
     background-color: var(--link-color);
@@ -165,7 +160,7 @@ main .teaser-wrapper {
     width:60%;
     order: 0;
     padding: var(--spectrum-spacing-500);
-
+    z-index: 2;
   }
 
   /* change the order text should be on the right */
