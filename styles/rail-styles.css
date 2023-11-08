@@ -1,13 +1,11 @@
 .docs .rail-toggle {
   display: none;
 }
+
 @media (min-width: 900px) {
   .docs .rail {
     position: relative;
     padding: 46px 0.75rem 0.75rem;
-  }
-  .docs .rail .rail-content {
-    margin-top: 0;
   }
   .docs .rail .rail-toggle {
     background: none;

@@ -798,6 +798,7 @@ img {
 }
 .docs main > div {
   padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500) var(--spectrum-spacing-500) !important;
+  box-sizing: border-box;
 }
 .docs main > div:first-child {
   order: 2;
@@ -807,6 +808,11 @@ img {
 .docs main > div:nth-child(2) {
   order: 1;
   gap: 8px;
+  height: 70px;
+  padding: 32px 10px 10px 10px;
+}
+.docs main > div:nth-child(2) .rail-content {
+  display: none;
 }
 .docs main > div:last-child {
   order: 3;
@@ -823,6 +829,9 @@ img {
   .docs main > div:nth-child(2) {
     order: 1;
     width: 20%;
+  }
+  .docs main > div:nth-child(2) .rail-content {
+    display: block;
   }
   .docs main > div:last-child {
     order: 3;

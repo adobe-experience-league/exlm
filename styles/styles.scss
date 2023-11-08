@@ -683,6 +683,7 @@ img {
     > div {
       padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500)
         var(--spectrum-spacing-500) !important;
+      box-sizing: border-box;
     }
 
     > div:first-child {
@@ -694,6 +695,11 @@ img {
     > div:nth-child(2) {
       order: 1;
       gap: 8px;
+      height: 70px; // predefined height to help with CLS
+      padding: 32px 10px 10px; // predefined padding to help with CLS
+      .rail-content {
+        display: none; // display none on ddesktop to hep with CLS
+      }
     }
 
     > div:last-child {
@@ -714,6 +720,10 @@ img {
       > div:nth-child(2) {
         order: 1;
         width: 20%;
+
+        .rail-content {
+          display: block;
+        }
       }
 
       // mini toc
