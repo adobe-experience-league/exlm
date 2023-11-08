@@ -5,17 +5,23 @@ ul.meta-created-for {
   margin-left: 0;
   line-height: 25.6px;
 }
+@media (min-width: 600px) {
+  ul.meta-created-for {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
 
 .meta-created-for li.meta-created-for-element {
-  font-size: 12px;
-  border: 1px solid var(--non-spectrurm-article-light-gray);
-  color: var(--non-spectrurm-article-dark-gray);
-  padding: 4px 9px;
-  padding-top: 3px;
+  font-size: var(--spectrum-font-size-75);
+  border: 1px solid var(--non-spectrum-article-light-gray);
+  color: var(--non-spectrum-article-dark-gray);
+  padding: 3px 9px 4px;
   cursor: default;
   -webkit-font-smoothing: subpixel-antialiased;
   border-radius: 4px;
-  line-height: 15.6px;
+  line-height: var(--spectrum-line-height-xs);
 }
 
 ul.meta-created-for > li.meta-created-for-element {
@@ -27,6 +33,7 @@ ul.meta-created-for .meta-created-for-wrapper {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+  margin: 0;
 }
 
 .meta-created-for li:first-child:not(.meta-created-for-element) {
@@ -40,6 +47,7 @@ ul.meta-created-for .meta-created-for-wrapper {
 @media (min-width: 600px) {
   .meta-created-for li:first-child:not(.meta-created-for-element) {
     display: inline-block;
+    margin-top: 0;
   }
 }
 
