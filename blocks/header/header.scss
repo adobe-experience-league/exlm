@@ -143,7 +143,7 @@ body.is-shown {
       display: block;
       font-size: var(--spectrum-font-size-75);
       letter-spacing: 0.72px;
-      padding: 12px 24px;
+      padding: 0 24px;
       text-indent: 0;
       text-transform: uppercase;
       width: auto;
@@ -161,7 +161,7 @@ body.is-shown {
         transform-origin: 75% 75%;
         transform: rotateZ(45deg);
         transition: transform 0.1s ease;
-        top: 20px;
+        top: 4px;
         width: 6px;
       }
     }
@@ -383,7 +383,7 @@ body.is-shown {
 
       &:first-child > a:first-child {
         @include custom-breakpoint(custom) {
-          padding-bottom: 16px;
+          padding-bottom: 10px;
           padding-top: 26px;
 
           &::after {
@@ -774,6 +774,11 @@ body.is-shown {
       top: 35px;
     }
 
+    @include custom-breakpoint(tablet) {
+      border-top: 1px solid var(--spectrum-gray-200);
+      position: static;
+    }
+
     & .exl-search-input {
       border: 1px solid var(--spectrum-gray-400);
       border-top-left-radius: 4px;
@@ -841,7 +846,17 @@ body.is-shown {
       }
 
       @include custom-breakpoint(tablet) {
-        display: none;
+        background: transparent;
+        display: block;
+        font-size: var(--spectrum-font-size-75);
+        font-weight: var(--font-weight-600);
+        letter-spacing: 0.72px;
+        line-height: 15px;
+        padding: 0 24px;
+        position: static;
+        text-indent: inherit;
+        text-transform: uppercase;
+        width: 100%;
       }
     }
 
@@ -913,7 +928,6 @@ body.is-shown {
     position: relative;
 
     @include custom-breakpoint(custom) {
-      border-top: 1px solid var(--spectrum-gray-200);
       padding: 0;
     }
 
@@ -930,13 +944,14 @@ body.is-shown {
 
       @include custom-breakpoint(custom) {
         box-shadow: none;
-        top: 48px;
+        top: 35px;
         width: 95%;
       }
     }
 
     &.active {
       background: var(--non-spectrum-bg);
+      height: 100vh;
 
       & .language-dropdown {
         display: block;

@@ -143,7 +143,7 @@ body.is-shown .exl-curtain {
     display: block;
     font-size: var(--spectrum-font-size-75);
     letter-spacing: 0.72px;
-    padding: 12px 24px;
+    padding: 0 24px;
     text-indent: 0;
     text-transform: uppercase;
     width: auto;
@@ -161,7 +161,7 @@ body.is-shown .exl-curtain {
     transform-origin: 75% 75%;
     transform: rotateZ(45deg);
     transition: transform 0.1s ease;
-    top: 20px;
+    top: 4px;
     width: 6px;
   }
 }
@@ -363,7 +363,7 @@ body.is-shown .exl-curtain {
 }
 @media (max-width: 1024px) {
   .header .exl-topnav .exl-nav-item.large-menu:first-child > a:first-child {
-    padding-bottom: 16px;
+    padding-bottom: 10px;
     padding-top: 26px;
   }
   .header .exl-topnav .exl-nav-item.large-menu:first-child > a:first-child::after {
@@ -705,6 +705,12 @@ body.is-shown .exl-curtain {
     top: 35px;
   }
 }
+@media (max-width: 600px) {
+  .header .search {
+    border-top: 1px solid var(--spectrum-gray-200);
+    position: static;
+  }
+}
 .header .search .exl-search-input {
   border: 1px solid var(--spectrum-gray-400);
   border-top-left-radius: 4px;
@@ -775,7 +781,17 @@ body.is-shown .exl-curtain {
 }
 @media (max-width: 600px) {
   .header .search .exl-search-link {
-    display: none;
+    background: transparent;
+    display: block;
+    font-size: var(--spectrum-font-size-75);
+    font-weight: var(--font-weight-600);
+    letter-spacing: 0.72px;
+    line-height: 15px;
+    padding: 0 24px;
+    position: static;
+    text-indent: inherit;
+    text-transform: uppercase;
+    width: 100%;
   }
 }
 .header .search .exl-dropdown-picker {
@@ -840,7 +856,6 @@ body.is-shown .exl-curtain {
 }
 @media (max-width: 1024px) {
   .header .language-selector {
-    border-top: 1px solid var(--spectrum-gray-200);
     padding: 0;
   }
 }
@@ -858,12 +873,13 @@ body.is-shown .exl-curtain {
 @media (max-width: 1024px) {
   .header .language-selector .language-dropdown {
     box-shadow: none;
-    top: 48px;
+    top: 35px;
     width: 95%;
   }
 }
 .header .language-selector.active {
   background: var(--non-spectrum-bg);
+  height: 100vh;
 }
 .header .language-selector.active .language-dropdown {
   display: block;
