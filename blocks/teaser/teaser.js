@@ -38,29 +38,31 @@ export default function decorate(block) {
   // 2. build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
     <div class='teaser'>
-      <div class='text'>
-        <div class='eyebrow'>${eyebrow}</div>
-        <div class='title'>${title}</div>
-        <div class='long-description'>${longDescr}</div>
-        <div class='short-description'>${
-          shortDescr === '' ? shortDescr : longDescr
-        }</div>
-        <div class='cta'>
-          ${
-            firstCTAText !== '' && firstCTALink !== ''
-              ? `<a class='button ${firstCTAType}' 
-            href='${firstCTALink}'>${firstCTAText}</a>`
-              : ``
-          }
-          ${
-            secondCTAText !== '' && secondCTALink !== ''
-              ? `<a class='button ${secondCTAType}'  
-           href='${secondCTALink}'>${secondCTAText}</a>`
-              : ``
-          }
+      <div class='foreground'>
+        <div class='text'>
+          <div class='eyebrow'>${eyebrow}</div>
+          <div class='title'>${title}</div>
+          <div class='long-description'>${longDescr}</div>
+          <div class='short-description'>${
+            shortDescr === '' ? shortDescr : longDescr
+          }</div>
+          <div class='cta'>
+            ${
+              firstCTAText !== '' && firstCTALink !== ''
+                ? `<a class='button ${firstCTAType}' 
+              href='${firstCTALink}'>${firstCTAText}</a>`
+                : ``
+            }
+            ${
+              secondCTAText !== '' && secondCTALink !== ''
+                ? `<a class='button ${secondCTAType}'  
+            href='${secondCTALink}'>${secondCTAText}</a>`
+                : ``
+            }
+          </div>
         </div>
-      </div>
-      <div class='spacer'>
+        <div class='spacer'>
+        </div>
       </div>
       <div class='background'>
       </div>

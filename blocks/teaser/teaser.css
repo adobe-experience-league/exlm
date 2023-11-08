@@ -18,7 +18,7 @@ main .teaser-wrapper {
 }
 
 /* the eybrow title, hidden in mobile */
-.teaser.block > .teaser > .text > .eyebrow {
+.teaser.block > .teaser > .foreground > .text > .eyebrow {
   display:none;
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
@@ -28,7 +28,7 @@ main .teaser-wrapper {
 }
 
 /* the main title, hidden in mobile */
-.teaser.block > .teaser > .text > .title {
+.teaser.block > .teaser > .foreground > .text > .title {
   display: none;
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-900);
@@ -37,12 +37,12 @@ main .teaser-wrapper {
   margin-bottom: var(--space-token-xxs);
 }
 
-.teaser.block.dark > .teaser > .text > .title {
+.teaser.block.dark > .teaser > .foreground > .text > .title {
   color: var(--background-color);
 }
 
 /* the short description */
-.teaser.block > .teaser > .text > .short-description > p {
+.teaser.block > .teaser > .foreground > .text > .short-description > p {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
   font-weight: var(--font-weight-700);
@@ -52,23 +52,23 @@ main .teaser-wrapper {
 }
 
 /* hide the long description */
-.teaser.block > .teaser > .text > .long-description {
+.teaser.block > .teaser > .foreground > .text > .long-description {
   display: none;
 }
 
-.teaser.block > .teaser > .text > .long-description * {
+.teaser.block > .teaser > .foreground > .text > .long-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
   line-height: var(--spectrum-line-height-l);
   margin: 0;
 }
 
-.teaser.block.dark > .teaser > .text > .long-description * {
+.teaser.block.dark > .teaser > .foreground > .text > .long-description * {
   color: var(--background-color);
 }
 
 /* the list of CTA's */
-.teaser.block > .teaser > .text > .cta {
+.teaser.block > .teaser > .foreground > .text > .cta {
   display: flex;
   gap: var(--spectrum-spacing-400);
   margin: 0;
@@ -77,13 +77,13 @@ main .teaser-wrapper {
 }
 
 /* the cta buttons */
-.teaser.block > .teaser > .text > .cta > a.button {
+.teaser.block > .teaser > .foreground > .text > .cta > a.button {
   background-color: var(--background-color);
   border: 2px solid transparent;
   color:var(--teaser-background-color);
 }
 
-.teaser.block > .teaser > .text > .cta > a.button.secondary {
+.teaser.block > .teaser > .foreground > .text > .cta > a.button.secondary {
   background-color: unset;
   border: 2px solid var(--background-color);
   color:var(--background-color);
@@ -130,63 +130,69 @@ main .teaser-wrapper {
     padding: 0;
   }
 
+  /* foreground container */
+  .teaser.block > .teaser > .foreground {
+    z-index: 2;
+    max-width: 1440px;
+    margin: auto;
+  }
+
   /* limit width of text part and set order */
-  .teaser.block > .teaser > .text {
+  .teaser.block > .teaser > .foreground > .text {
     width:60%;
     order: 0;
     padding: var(--spectrum-spacing-500);
-    z-index: 2;
   }
 
   /* change the order text should be on the right */
-  .teaser.block.right > .teaser > .text {
+  .teaser.block.right > .teaser > .foreground > .text {
     order: 1;
   }
 
   /* turn on the eybrow */
-  .teaser.block > .teaser > .text > .eyebrow {
-    display: block;
-  }
-  
-  /* turn on the title */
-  .teaser.block > .teaser > .text > .title {
+  .teaser.block > .teaser > .foreground > .text > .eyebrow {
     display: block;
   }
 
-  .teaser.block.dark > .teaser > .text > .eyebrow {
+  /* turn on the title */
+  .teaser.block > .teaser > .foreground > .text > .title {
+    display: block;
+  }
+
+  .teaser.block.dark > .teaser > .foreground > .text > .eyebrow {
     color: var(--background-color);
   }
   
   /* turn of short description */
-  .teaser.block > .teaser > .text > .short-description {
+  .teaser.block > .teaser > .foreground > .text > .short-description {
     display: none;
   }
 
   /* turn on long description */
-  .teaser.block > .teaser > .text > .long-description {
+  .teaser.block > .teaser > .foreground > .text > .long-description {
     display: block;
   }
 
   /* revert to normal button behavior for primary and secondary */
-  .teaser.block > .teaser > .text > .cta > a.button {
+  .teaser.block > .teaser > .foreground > .text > .cta > a.button {
     background-color: var(--link-color);
     border: 2px solid transparent;
     color: var(--background-color);
   }
 
-  .teaser.block > .teaser > .text > .cta > a.button.secondary {
+  .teaser.block > .teaser > .foreground > .text > .cta > a.button.secondary {
     background-color: unset;
     border: 2px solid currentcolor;
     color: currentcolor;
   }
 
-  .teaser.block.dark > .teaser > .text > .cta > a.button {
+  .teaser.block.dark > .teaser > .foreground > .text > .cta > a.button {
     background-color: var(--background-color);
     border: 2px solid transparent;
     color: currentcolor;
   }
 
-  .teaser.block.dark > .teaser > .text > .cta > a.button.secondary {
+  .teaser.block.dark > .teaser > .foreground > .text > .cta > a.button.secondary {
     background-color: unset;
     border: 2px solid currentcolor;
     color: var(--background-color);
@@ -228,7 +234,7 @@ main .teaser-wrapper {
     max-width: unset;
   }
 
-  .teaser.block > .teaser > .text {
+  .teaser.block > .teaser > .foreground > .text {
     padding: var(--spectrum-spacing-500) var(--spectrum-spacing-600) var(--spectrum-spacing-600) var(--spectrum-spacing-700);
   }
 }
