@@ -68,22 +68,24 @@ export default function decorate(block) {
           }
         </div>
       </div>
-      <div class='image'>
+      <div class='background'>
       </div>
     </div>
   `);
 
   // add image
-  teaserDOM.querySelector('.image').append(picture);
+  if (picture) {
+    teaserDOM.querySelector('.background').append(picture);
+  }
 
   // add the image description
   if (imageDescr) {
     teaserDOM
-      .querySelector('.image picture img')
+      .querySelector('.background picture img')
       .setAttribute('alt', imageDescr);
   }
 
-  // set the mobile background
+  // set the mobile background color
   teaserDOM
     .querySelector('.teaser')
     .style.setProperty('--teaser-background-color', `var(${backgroundColor})`);
