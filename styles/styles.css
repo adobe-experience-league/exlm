@@ -690,15 +690,28 @@ img {
 }
 
 .section {
-  padding: 64px 16px;
+  padding: 30px 48px;
   /* section metadata */
+}
+.section h1 {
+  line-height: var(--spectrum-line-height-xxl);
+}
+@media (min-width: 900px) {
+  .section h1 {
+    line-height: var(--spectrum-line-height-xxxl);
+  }
 }
 .section > .default-content-wrapper:last-child > p:last-child {
   margin-bottom: 0;
 }
 @media (min-width: 600px) {
   .section {
-    padding: 64px 32px;
+    padding: 64px 78px;
+  }
+}
+@media (min-width: 900px) {
+  .section {
+    padding: 64px 16px;
   }
 }
 .section.highlight {

@@ -579,14 +579,26 @@ img {
 }
 
 .section {
-  padding: 64px 16px;
+  padding: 30px 48px;
+
+  h1 {
+    line-height: var(--spectrum-line-height-xxl);
+
+    @include breakpoint(desktop) {
+      line-height: var(--spectrum-line-height-xxxl);
+    }
+  }
 
   & > .default-content-wrapper:last-child > p:last-child {
     margin-bottom: 0;
   }
 
   @include breakpoint(tablet) {
-    padding: 64px 32px;
+    padding: 64px 78px;
+  }
+
+  @include breakpoint(desktop) {
+    padding: 64px 16px;
   }
 
   /* section metadata */
