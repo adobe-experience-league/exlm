@@ -1,6 +1,9 @@
-@import './sass/breakpoints';
+@import '../../styles/sass/breakpoints';
 
 .docs {
+  --rail-toggler-y: 15px;
+  --rail-toggler-x: 20px;
+
   .rail-toggle {
     display: none;
   }
@@ -9,10 +12,12 @@
     // rail
     .rail {
       position: relative;
+      box-sizing: border-box;
       padding: 46px 0.75rem 0.75rem;
 
       .rail-content {
         margin-top: 0;
+        padding-top: 8px;
       }
 
       .rail-toggle {
@@ -20,7 +25,8 @@
         display: block;
         position: absolute;
         cursor: pointer;
-        top: 15px;
+        top: var(--rail-toggler-y);
+        bottom: unset;
         margin: 0;
         padding: 0 12px;
 
@@ -33,13 +39,13 @@
       &.rail-right {
         .rail-toggle {
           left: 0;
-          transform: rotate(180deg);
+          transform: scaleX(-1);
         }
       }
 
       &.rail-left {
         .rail-toggle {
-          right: 20px;
+          right: 0;
         }
       }
 
@@ -55,7 +61,7 @@
         &.rail-right .rail-toggle {
           left: unset;
           right: 0;
-          transform: rotate(0deg);
+          transform: scaleX(1);
         }
 
         &.rail-left .rail-toggle {
