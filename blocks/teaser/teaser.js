@@ -48,7 +48,9 @@ export default function decorate(block) {
         ${eyebrow ? `<div class='eyebrow'>${eyebrow}</div>` : ''}
         <div class='title'>${title}</div>
         <div class='long-description'>${longDescr}</div>
-        <div class='short-description'>${shortDescr}</div>
+        <div class='short-description'>${
+          shortDescr !== '' ? shortDescr : longDescr
+        }</div>
         <div class='cta'>
           ${
             firstCTAText !== '' && firstCTALink !== ''
