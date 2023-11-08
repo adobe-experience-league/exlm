@@ -90,7 +90,7 @@ main .teaser-wrapper {
 }
 
 /* spacer div */
-.teaser.block > .teaser > .spacer {
+.teaser.block > .teaser > .foreground > .spacer {
   display:none;
   width:40%;
 }
@@ -116,7 +116,6 @@ main .teaser-wrapper {
 
   /* turn the block into a flex, remove background color */
   .teaser.block > .teaser {
-    display: flex;
     position: relative;
     background-color: var(--background-color);
     padding: 0;
@@ -132,6 +131,8 @@ main .teaser-wrapper {
 
   /* foreground container */
   .teaser.block > .teaser > .foreground {
+    position: relative;
+    display: flex;
     z-index: 2;
     max-width: var(--non-spectrum-max-width);
     width: 100%;
@@ -200,13 +201,13 @@ main .teaser-wrapper {
   }
 
   /* spacer */
-  .teaser.block > .teaser > .spacer {
+  .teaser.block > .teaser > .foreground > .spacer {
     display:block;
     order: 1;
   }
 
   /* change the order text should be on the right */
-  .teaser.block.right > .teaser > .spacer {
+  .teaser.block.right > .teaser > .foreground > .spacer {
     order: 0;
   }
 
