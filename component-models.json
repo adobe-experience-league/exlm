@@ -73,7 +73,7 @@
         "name": "shortDescr",
         "value": "",
         "label": "Short Description",
-        "description" : "The description shown in Mobile view."
+        "description" : "The description shown in Mobile view. If not set long text is used."
       },
       {
         "component": "select",
