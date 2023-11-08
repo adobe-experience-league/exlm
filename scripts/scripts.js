@@ -145,6 +145,10 @@ export function decorateExternalLinks(main) {
   });
 }
 
+/**
+ * Check if current page is a MD Docs Page.
+ * theme = docs is set in bulk metadata for docs paths.
+ */
 export function isDocPage() {
   const theme = getMetadata('theme');
   return theme
@@ -159,6 +163,7 @@ export function isDocPage() {
  */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
+  // docs pages do not use buttons, only links
   if (!isDocPage()) {
     decorateButtons(main);
   }
