@@ -70,6 +70,8 @@ export default function decorate(block) {
           }
         </div>
       </div>
+      <div class='spacer'>
+      </div>
       <div class='background'>
       </div>
     </div>
