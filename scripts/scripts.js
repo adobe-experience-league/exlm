@@ -132,9 +132,9 @@ export function decorateExternalLinks(main) {
     if (href.includes('#_blank')) {
       a.setAttribute('target', '_blank');
     } else if (
-      a.classList.contains('button') &&
       href &&
-      !href.includes('experienceleague-dev.corp.adobe.com')
+      !href.includes('experienceleague-dev.corp.adobe.com') &&
+      href !== '#'
     ) {
       a.target = '_blank';
       if (!href.startsWith('/') && !href.startsWith('http')) {
