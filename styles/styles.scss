@@ -694,9 +694,8 @@ main .section.highlight {
 
     > div:first-child {
       order: 2;
-      overflow: auto;
       width: 100%;
-      flex: 1 1 0;
+      box-sizing: border-box;
     }
 
     > div:nth-child(2) {
@@ -719,6 +718,7 @@ main .section.highlight {
       > div:first-child {
         order: 2;
         overflow: auto;
+        flex: 1 1 0;
       }
 
       // toc
