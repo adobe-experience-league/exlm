@@ -10,6 +10,7 @@
     margin-top: 0;
   }
   .docs .rail .rail-toggle {
+    background: none;
     display: block;
     position: absolute;
     cursor: pointer;

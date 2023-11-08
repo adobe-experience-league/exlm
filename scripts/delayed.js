@@ -20,7 +20,7 @@ async function decorateRail(railSection, position) {
   railSection.replaceChildren(content);
 
   // add toggle button
-  const railToggler = document.createElement('a');
+  const railToggler = document.createElement('button');
   railToggler.classList.add('rail-toggle');
   railToggler.innerHTML = '<span class="icon icon-rail"></span>';
   railSection.prepend(railToggler);
