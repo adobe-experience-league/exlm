@@ -116,21 +116,21 @@ async function decorateSocial(footer) {
   groupDiv.appendChild(social);
   const elem = footer.children[0];
   elem.insertBefore(groupDiv, elem.children[2]);
-  const socialEl = footer.querySelector('.social');
-  const socialParas = socialEl.querySelectorAll('p');
+  const socialParas = social.querySelectorAll('p');
   const socialFrag = document.createDocumentFragment();
   Array.from(socialParas).forEach((p) => {
     const { textContent } = p;
     const domainName = extractDomain(textContent).toLowerCase();
     const holder = document.createElement('a');
     holder.href = textContent;
+    holder.setAttribute('aria-label', domainName);
     holder.target = '_blank';
     holder.classList.add('footer-social-icon-item-wrapper');
     holder.innerHTML = `<span class="icon icon-${domainName}"></span>`;
     socialFrag.appendChild(holder);
   });
-  socialEl.innerHTML = '';
-  socialEl.appendChild(socialFrag);
+  social.innerHTML = '';
+  social.appendChild(socialFrag);
 }
 
 function decorateBreadcrumb(footer) {

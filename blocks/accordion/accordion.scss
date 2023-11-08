@@ -1,0 +1,94 @@
+.accordion.block {
+  details {
+    display: block;
+    background-color: var(--spectrum-gray-100);
+    color: var(--non-spectrum-grey);
+    padding: 0 16px;
+
+    summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 16px 0;
+      font-weight: var(--font-weight-700);
+      font-size: var(--spectrum-font-size-100);
+      line-height: 21px;
+
+      &::before {
+        display: inline-block;
+        content: url('/icons/chevron_right.svg');
+        position: relative;
+        top: 3.5px;
+        left: -4.2px;
+      }
+
+      &::-webkit-details-marker {
+        display: none;
+      }
+
+      &::marker {
+        content: none;
+      }
+    }
+
+    div > div {
+      color: var(--non-spectrum-raisin-black);
+      font-size: var(--spectrum-font-size-200);
+      line-height: 25.6px;
+      margin-left: 14px;
+      margin-top: 14px;
+    }
+
+    div > div > p:last-child {
+      margin-bottom: 0;
+    }
+
+    .code-wrapper {
+      margin-left: 0;
+      margin-top: 0;
+    }
+
+    .code-wrapper div {
+      margin-left: 0;
+      margin-top: 0;
+    }
+
+    .note-wrapper {
+      margin-left: 0;
+      margin-top: 0;
+    }
+
+    .note-wrapper div {
+      margin-left: 0;
+      margin-top: 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin-top: 14px;
+    }
+  }
+
+  ul {
+    margin: 14px 0 32px 14px;
+
+    li {
+      margin-left: 14px;
+    }
+  }
+
+  details details {
+    summary {
+      font-size: var(--spectrum-font-size-200);
+      line-height: 24px;
+    }
+  }
+
+  details[open] {
+    padding-bottom: 16px;
+  }
+
+  details[open] summary::before {
+    content: url('/icons/chevron_down.svg');
+  }
+}

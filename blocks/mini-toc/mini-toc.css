@@ -1,10 +1,5 @@
 .mini-toc-container {
-  display: none;
-}
-@media (min-width: 900px) {
-  .mini-toc-container {
-    display: block;
-  }
+  display: block;
 }
 
 .mini-toc-wrapper {
@@ -13,12 +8,12 @@
   flex: none;
   width: 100%;
   position: sticky;
+  margin-top: 0 !important;
   top: 32px;
   overflow: visible;
 }
 
 .mini-toc-wrapper .mini-toc {
-  margin-top: 56px;
   font-size: var(--spectrum-font-size-50);
   font-weight: var(--spectrum-extra-bold-font-weight);
   padding-left: 0;
