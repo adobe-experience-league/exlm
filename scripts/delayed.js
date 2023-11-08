@@ -56,7 +56,7 @@ async function loadRails(document) {
   }
 }
 requestIdleCallback(() => loadRails(document));
-requestIdleCallback(() => import('./prism.js'));
+// requestIdleCallback(() => import('./prism.js'));
 // Core Web Vitals RUM collection
 sampleRUM('cwv');
 
