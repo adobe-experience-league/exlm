@@ -579,7 +579,7 @@ img {
 }
 
 .section {
-  padding: 30px 48px;
+  padding: 30px 2px;
 
   h1 {
     line-height: var(--spectrum-line-height-xxl);
@@ -696,8 +696,28 @@ img {
 
     > div {
       padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500)
-        var(--spectrum-spacing-500) !important;
+        var(--spectrum-spacing-500);
       box-sizing: border-box;
+
+      &.section {
+        padding: 30px 2px;
+
+        @include breakpoint(tablet) {
+          padding: 64px 32px;
+        }
+
+        @include breakpoint(desktop) {
+          padding: 64px 16px;
+        }
+      }
+
+      &.rail.rail-left {
+        display: none;
+
+        @include breakpoint(desktop) {
+          display: block;
+        }
+      }
     }
 
     > div:first-child {
