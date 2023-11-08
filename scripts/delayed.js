@@ -1,9 +1,10 @@
 // eslint-disable-next-line import/no-cycle
-import { decorateIcons, getMetadata, sampleRUM } from './lib-franklin.js';
-
-// Core Web Vitals RUM collection
-sampleRUM('cwv');
-
+import {
+  decorateIcons,
+  getMetadata,
+  loadCSS,
+  sampleRUM,
+} from './lib-franklin.js';
 // add more delayed functionality here
 
 /**
@@ -48,11 +49,14 @@ async function loadRails(document) {
     .includes('docs');
 
   if (isDocs) {
+    loadCSS(`${window.hlx.codeBasePath}/styles/rail-styles.css`);
     await decorateRail(leftRail, 'left');
     await decorateRail(rightRail, 'right');
   }
 }
-loadRails(document);
+await loadRails(document);
+// Core Web Vitals RUM collection
+sampleRUM('cwv');
 
 // eslint-disable-next-line
 import './prism.js';

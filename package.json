@@ -14,7 +14,7 @@
     "semantic-release": "semantic-release --debug",
     "sass:watch": "node sass-compile.js --watch",
     "sass:compile": "node sass-compile.js --compile",
-    "up": "npm run sass:watch & hlx up",
+    "up": "npm run sass:watch & aem up",
     "prepare": "husky install",
     "preview": "node preview.js",
     "quality": "npm run format:check && npm run lint"
