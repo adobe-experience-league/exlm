@@ -172,13 +172,6 @@
         "description" : "What link to open when clicking the button."
       },
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "cta1newWindow",
-        "label": "Open Link in new Tab",
-        "description" : "If enabled a new Tab will be opened when clicked."
-      },
-      {
         "component": "select",
         "name": "cta2Type",
         "value": "primary",
@@ -211,14 +204,7 @@
         "value": "",
         "label": "Second CTA Link",
         "description" : "What link to open when clicking the button."
-      },
-      {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "cta2newWindow",
-        "label": "Open in new Tab",
-        "description" : "If enabled a new Tab will be opened when clicked."
-      } 
+      }
     ]
   },
   {

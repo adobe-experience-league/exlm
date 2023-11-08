@@ -25,27 +25,21 @@ export default function decorate(block) {
   const firstCTALink = block
     .querySelector('div:nth-child(10) > div')
     .textContent.trim();
-  const firstCTANewTab = block
+  const secondCTAType = block
     .querySelector('div:nth-child(11) > div')
     .textContent.trim();
-  const secondCTAType = block
+  const secondCTAText = block
     .querySelector('div:nth-child(12) > div')
     .textContent.trim();
-  const secondCTAText = block
-    .querySelector('div:nth-child(13) > div')
-    .textContent.trim();
   const secondCTALink = block
-    .querySelector('div:nth-child(14) > div')
-    .textContent.trim();
-  const secondCTANewTab = block
-    .querySelector('div:nth-child(15) > div')
+    .querySelector('div:nth-child(13) > div')
     .textContent.trim();
 
   // 2. build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
     <div class='teaser'>
       <div class='text'>
-        ${eyebrow ? `<div class='eyebrow'>${eyebrow}</div>` : ''}
+        <div class='eyebrow'>${eyebrow}</div>
         <div class='title'>${title}</div>
         <div class='long-description'>${longDescr}</div>
         <div class='short-description'>${
@@ -54,17 +48,13 @@ export default function decorate(block) {
         <div class='cta'>
           ${
             firstCTAText !== '' && firstCTALink !== ''
-              ? `<a class='button ${firstCTAType}' ${
-                  firstCTANewTab === 'true' ? `target='_blank'` : ''
-                } 
+              ? `<a class='button ${firstCTAType}' 
             href='${firstCTALink}'>${firstCTAText}</a>`
               : ``
           }
           ${
             secondCTAText !== '' && secondCTALink !== ''
-              ? `<a class='button ${secondCTAType}' ${
-                  secondCTANewTab === 'true' ? `target='_blank'` : ''
-                } 
+              ? `<a class='button ${secondCTAType}'  
            href='${secondCTALink}'>${secondCTAText}</a>`
               : ``
           }

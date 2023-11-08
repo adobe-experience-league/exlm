@@ -130,6 +130,43 @@ main .teaser-wrapper {
     padding: 0;
   }
 
+  /* limit width of text part and set order */
+  .teaser.block > .teaser > .text {
+    width:60%;
+    order: 0;
+    padding: var(--spectrum-spacing-500);
+    z-index: 2;
+  }
+
+  /* change the order text should be on the right */
+  .teaser.block.right > .teaser > .text {
+    order: 1;
+  }
+
+  /* turn on the eybrow */
+  .teaser.block > .teaser > .text > .eyebrow {
+    display: block;
+  }
+  
+  /* turn on the title */
+  .teaser.block > .teaser > .text > .title {
+    display: block;
+  }
+
+  .teaser.block.dark > .teaser > .text > .eyebrow {
+    color: var(--background-color);
+  }
+  
+  /* turn of short description */
+  .teaser.block > .teaser > .text > .short-description {
+    display: none;
+  }
+
+  /* turn on long description */
+  .teaser.block > .teaser > .text > .long-description {
+    display: block;
+  }
+
   /* revert to normal button behavior for primary and secondary */
   .teaser.block > .teaser > .text > .cta > a.button {
     background-color: var(--link-color);
@@ -153,43 +190,6 @@ main .teaser-wrapper {
     background-color: unset;
     border: 2px solid currentcolor;
     color: var(--background-color);
-  }
-
-  /* limit width of text part and set order */
-  .teaser.block > .teaser > .text {
-    width:60%;
-    order: 0;
-    padding: var(--spectrum-spacing-500);
-    z-index: 2;
-  }
-
-  /* change the order text should be on the right */
-  .teaser.block.right > .teaser > .text {
-    order: 1;
-  }
-  
-  /* turn on the title */
-  .teaser.block > .teaser > .text > .title {
-    display: block;
-  }
-
-  /* turn on the eybrow */
-  .teaser.block > .teaser > .text > .eyebrow {
-    display: block;
-  }
-
-  .teaser.block.dark > .teaser > .text > .eyebrow {
-    color: var(--background-color);
-  }
-  
-  /* turn of short description */
-  .teaser.block > .teaser > .text > .short-description {
-    display: none;
-  }
-
-  /* turn on long description */
-  .teaser.block > .teaser > .text > .long-description {
-    display: block;
   }
 
   /* spacer */
@@ -224,8 +224,12 @@ main .teaser-wrapper {
 
 /* ----- DESKTOP ------ */
 @media (min-width: 900px) {
-.teaser.block > .teaser > .text {
-  padding: var(--spectrum-spacing-500) var(--spectrum-spacing-600) var(--spectrum-spacing-600) var(--spectrum-spacing-700);
-}
+  .section > div.teaser-wrapper {
+    max-width: unset;
+  }
+
+  .teaser.block > .teaser > .text {
+    padding: var(--spectrum-spacing-500) var(--spectrum-spacing-600) var(--spectrum-spacing-600) var(--spectrum-spacing-700);
+  }
 }
   
