@@ -3,6 +3,7 @@ import {
   decorateIcons,
   getMetadata,
   loadCSS,
+  loadScript,
   sampleRUM,
 } from './lib-franklin.js';
 // add more delayed functionality here
@@ -56,7 +57,14 @@ async function loadRails(document) {
   }
 }
 requestIdleCallback(() => loadRails(document));
-requestIdleCallback(() => import('./prism.js'));
+
+requestIdleCallback(async () => {
+  /* to allow running prism manually instead of automatic highlighting. This must be done here. */
+  window.Prism = window.Prism || {};
+  window.Prism.manual = true;
+  await loadScript('/scripts/prism.js', { async: true });
+  window.Prism.highlightAll(true); // run prism in async mode
+});
 // Core Web Vitals RUM collection
 sampleRUM('cwv');
 
