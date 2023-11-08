@@ -21,6 +21,7 @@ async function decorateRail(railSection, position) {
 
   // add toggle button
   const railToggler = document.createElement('button');
+  railToggler.style.background = 'none'; // override default button styles
   railToggler.classList.add('rail-toggle');
   railToggler.innerHTML = '<span class="icon icon-rail"></span>';
   railSection.prepend(railToggler);
