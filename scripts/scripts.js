@@ -228,7 +228,7 @@ export function createTag(tag, attributes, html) {
 }
 
 export function loadPrevNextBtn() {
-  const mainDoc = document.querySelector('main >div:nth-child(2)');
+  const mainDoc = document.querySelector('main > div:nth-child(1)');
   if (!mainDoc) return;
 
   const prevPageMeta = document.querySelector('meta[name="prev-page"]');

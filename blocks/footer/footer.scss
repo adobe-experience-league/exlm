@@ -25,7 +25,8 @@
 
   &-copyrights {
     color: var(--non-spectrum-charcoal-gray);
-    font-size: 0.75rem;
+    font-size: 1rem; // needs to be this large for accessiabity
+    padding: 0.5rem 0;
     line-height: 1.6875rem;
     margin: 24px 0 0;
 
@@ -35,10 +36,10 @@
 
     a {
       color: var(--non-spectrum-dark-gray);
-      font-size: 0.75rem;
+      font-size: 1rem; // needs to be this large for accessiabity
       line-height: 1.6875rem;
       margin: 0;
-      padding: 0;
+      padding: 0.5rem 0;
     }
   }
 

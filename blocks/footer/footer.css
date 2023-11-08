@@ -25,7 +25,8 @@
 }
 .footer-copyrights {
   color: var(--non-spectrum-charcoal-gray);
-  font-size: 0.75rem;
+  font-size: 1rem;
+  padding: 0.5rem 0;
   line-height: 1.6875rem;
   margin: 24px 0 0;
 }
@@ -36,10 +37,10 @@
 }
 .footer-copyrights a {
   color: var(--non-spectrum-dark-gray);
-  font-size: 0.75rem;
+  font-size: 1rem;
   line-height: 1.6875rem;
   margin: 0;
-  padding: 0;
+  padding: 0.5rem 0;
 }
 .footer-item h2 {
   border-bottom: 1px solid var(--footer-border-color);
