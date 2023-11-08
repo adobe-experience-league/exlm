@@ -168,18 +168,16 @@ function decorateSearchContent(block) {
   const search = block.querySelector('.exl-topnav .search');
   const searchFirstChild = block.querySelector('.search > div:nth-child(1)');
   const searchSecondChild = block.querySelector('.search > div:nth-child(2)');
-  const searchContent = `<a href="https://experienceleague.adobe.com/search.html" class="exl-search-link">Search</a><span class="exl-search-icon"></span><input autocomplete="off" class="exl-search-input" type="text" role="combobox" placeholder="Search Experience League"><button id="dropdownButton" type="button" class="exl-dropdown-picker" aria-haspopup="true"><span class="exl-picker-label">All</span><img src="https://experienceleague.adobe.com/assets/img/chevron_down.svg" height="20" class="exl-icon" aria-hidden="true" /></button>`;
+  const searchContent = `<a href="https://experienceleague.adobe.com/search.html" class="exl-search-link">Search</a><span class="exl-search-icon"></span><input autocomplete="off" class="exl-search-input" type="text" role="combobox" placeholder="Search Experience League"><button id="dropdownButton" type="button" class="exl-dropdown-picker" aria-haspopup="true"><span class="exl-picker-label">All</span></button>`;
 
   searchFirstChild.innerHTML = searchContent;
   searchSecondChild.className = 'search-popover';
 
   const exlDropdownPicker = search.querySelector('.exl-dropdown-picker');
   const exlSearchPopover = search.querySelector('.search-popover');
-  const exlDropdownArrow = search.querySelector('.exl-icon');
   if (exlDropdownPicker) {
     exlDropdownPicker.addEventListener('mousedown', () => {
-      exlSearchPopover.classList.toggle('show');
-      exlDropdownArrow.classList.toggle('arrow');
+      search.classList.toggle('show');
     });
   }
 
@@ -188,7 +186,6 @@ function decorateSearchContent(block) {
     (event) => {
       if (event.target.matches('.search') || !event.target.closest('.search')) {
         exlSearchPopover.classList.remove('show');
-        exlDropdownArrow.classList.remove('arrow');
       }
     },
     false,

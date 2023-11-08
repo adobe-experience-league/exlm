@@ -248,6 +248,7 @@ body.is-shown .exl-curtain {
   font-size: var(--spectrum-font-size-50);
   letter-spacing: normal;
   line-height: 14.3px;
+  margin: 0;
 }
 .header .exl-subnav-wrapper p a.redirect::after {
   right: -20px;
@@ -359,6 +360,11 @@ body.is-shown .exl-curtain {
     right: 30px;
     transform: rotateZ(45deg);
     top: 13px;
+  }
+}
+@media (min-width: 1024px) {
+  .header .exl-topnav .exl-nav-item.large-menu > a.active::after {
+    transform: rotateZ(225deg);
   }
 }
 @media (max-width: 1024px) {
@@ -796,7 +802,7 @@ body.is-shown .exl-curtain {
 }
 .header .search .exl-dropdown-picker {
   align-items: center;
-  background: none;
+  background: transparent;
   border: 1px solid var(--spectrum-gray-400);
   border-left: 0 none;
   border-radius: 0;
@@ -810,10 +816,26 @@ body.is-shown .exl-curtain {
   justify-content: space-between;
   height: 30px;
   line-height: 17px;
+  position: relative;
   width: 105px;
-  opacity: 0.7;
   padding: 7px;
   text-align: right;
+}
+.header .search .exl-dropdown-picker::after {
+  border-width: 0 1.9px 1.9px 0;
+  border-style: solid;
+  border-color: var(--spectrum-gray-800);
+  box-sizing: content-box;
+  content: "";
+  display: flex;
+  height: 6px;
+  position: absolute;
+  right: 14px;
+  transform-origin: 75% 75%;
+  transform: rotateZ(45deg);
+  transition: transform 0.1s ease;
+  top: 9px;
+  width: 6px;
 }
 @media (max-width: 1200px) {
   .header .search .exl-dropdown-picker {
@@ -846,8 +868,11 @@ body.is-shown .exl-curtain {
 .header .search .search-popover ul li:hover {
   background: var(--non-spectrum-hover-bg);
 }
-.header .search .search-popover.show {
+.header .search.show .search-popover {
   display: block;
+}
+.header .search.show .exl-dropdown-picker::after {
+  transform: rotateZ(225deg);
 }
 .header .language-selector {
   height: var(--nav-height);
