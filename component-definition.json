@@ -91,7 +91,6 @@
                   "fileReference": "/content/dam/default-teaser-banner.png",
                   "title": "Teaser Title",
                   "longDescr": "<p>Teaser Description (long)</p>",
-                  "shortDescr": "<p>Teaser Description (short)</p>",
                   "classes": ["light","left"]
                 }
               }
