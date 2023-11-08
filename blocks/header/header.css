@@ -90,6 +90,7 @@ body.is-shown .exl-curtain {
 }
 .header ul {
   list-style: none;
+  margin: 0;
 }
 .header a {
   color: var(--spectrum-gray-800);
@@ -111,7 +112,7 @@ body.is-shown .exl-curtain {
 }
 @media (width <= 1350px) {
   .header .exl-nav-item > a {
-    padding: 23px 10px;
+    padding: 23px 12px;
   }
 }
 @media (max-width: 1200px) {
@@ -302,9 +303,77 @@ body.is-shown .exl-curtain {
 }
 .header .exl-topnav .profile > div:nth-child(1) p {
   display: none;
+  margin: 0;
 }
 .header .exl-topnav .profile > div:nth-child(1) p:first-child {
   display: block;
+}
+.header .exl-topnav .exl-brand-container h2, .header .exl-topnav .exl-brand-container h2 a {
+  color: var(--spectrum-gray-800);
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-600);
+  line-height: inherit;
+  margin: 0;
+}
+.header .exl-topnav .exl-nav-item.large-menu {
+  position: relative;
+}
+.header .exl-topnav .exl-nav-item.large-menu > a {
+  display: inline-block;
+  padding-right: 37px;
+  position: relative;
+}
+@media (width <= 1350px) {
+  .header .exl-topnav .exl-nav-item.large-menu > a {
+    padding-right: 28px;
+  }
+}
+@media (max-width: 1024px) {
+  .header .exl-topnav .exl-nav-item.large-menu > a {
+    display: block;
+  }
+}
+.header .exl-topnav .exl-nav-item.large-menu > a::after {
+  border-width: 0 1.9px 1.9px 0;
+  border-style: solid;
+  border-color: var(--spectrum-gray-800);
+  box-sizing: content-box;
+  content: "";
+  display: flex;
+  height: 6px;
+  position: absolute;
+  right: 20px;
+  transform-origin: 75% 75%;
+  transform: rotateZ(45deg);
+  transition: transform 0.1s ease;
+  top: 29px;
+  width: 6px;
+}
+@media (width <= 1350px) {
+  .header .exl-topnav .exl-nav-item.large-menu > a::after {
+    right: 15px;
+  }
+}
+@media (max-width: 1024px) {
+  .header .exl-topnav .exl-nav-item.large-menu > a::after {
+    right: 30px;
+    transform: rotateZ(45deg);
+    top: 13px;
+  }
+}
+@media (max-width: 1024px) {
+  .header .exl-topnav .exl-nav-item.large-menu:first-child > a:first-child {
+    padding-bottom: 16px;
+    padding-top: 26px;
+  }
+  .header .exl-topnav .exl-nav-item.large-menu:first-child > a:first-child::after {
+    top: 27px;
+  }
+}
+.header .exl-topnav .exl-nav-item.large-menu .exl-subnav-wrapper ul li a:hover {
+  background: var(--spectrum-gray-200);
+  border-radius: 4px;
+  color: var(--spectrum-gray-700);
 }
 .header .exl-topnav .exl-subnav-wrapper > div {
   display: grid;
@@ -437,62 +506,6 @@ body.is-shown .exl-curtain {
   .header .exl-nav-item:first-child > a {
     margin-top: 0;
   }
-}
-.header .exl-nav-item.large-menu {
-  position: relative;
-}
-.header .exl-nav-item.large-menu > a {
-  display: inline-block;
-  padding-right: 37px;
-  position: relative;
-}
-@media (max-width: 1024px) {
-  .header .exl-nav-item.large-menu > a {
-    display: block;
-  }
-}
-.header .exl-nav-item.large-menu > a::after {
-  border-width: 0 1.9px 1.9px 0;
-  border-style: solid;
-  border-color: var(--spectrum-gray-800);
-  box-sizing: content-box;
-  content: "";
-  display: flex;
-  height: 6px;
-  position: absolute;
-  right: 20px;
-  transform-origin: 75% 75%;
-  transform: rotateZ(45deg);
-  transition: transform 0.1s ease;
-  top: 29px;
-  width: 6px;
-}
-@media (max-width: 1024px) {
-  .header .exl-nav-item.large-menu > a::after {
-    right: 30px;
-    transform: rotateZ(45deg);
-    top: 13px;
-  }
-}
-@media (max-width: 1024px) {
-  .header .exl-nav-item.large-menu:first-child > a:first-child {
-    padding-bottom: 16px;
-    padding-top: 26px;
-  }
-  .header .exl-nav-item.large-menu:first-child > a:first-child::after {
-    top: 27px;
-  }
-}
-.header .exl-nav-item.large-menu .exl-topnav .exl-brand-container h2, .header .exl-nav-item.large-menu .exl-topnav .exl-brand-container h2 a {
-  color: var(--spectrum-gray-800);
-  font-size: var(--spectrum-font-size-200);
-  font-weight: var(--font-weight-600);
-  margin: 0;
-}
-.header .exl-nav-item.large-menu .exl-subnav-wrapper ul li a:hover {
-  background: var(--spectrum-gray-200);
-  border-radius: 4px;
-  color: var(--spectrum-gray-700);
 }
 .header .exl-topnav .exl-brand-container {
   white-space: nowrap;
@@ -708,7 +721,7 @@ body.is-shown .exl-curtain {
 }
 @media (width <= 1350px) {
   .header .search .exl-search-input {
-    width: 150px;
+    width: 130px;
   }
 }
 @media (max-width: 1200px) {
