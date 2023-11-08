@@ -140,12 +140,12 @@ main .teaser-wrapper {
   .teaser.block > .teaser > .text > .cta > a.button.secondary {
     background-color: unset;
     border: 2px solid currentcolor;
-    color: var(--text-color);
   }
 
   .teaser.block.dark > .teaser > .text > .cta > a.button {
     background-color: var(--background-color);
     border: 2px solid transparent;
+    color: transparent;
   }
 
   .teaser.block.dark > .teaser > .text > .cta > a.button.secondary {
