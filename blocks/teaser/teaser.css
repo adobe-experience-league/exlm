@@ -106,7 +106,8 @@ main .teaser-wrapper {
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
   /* remove background color , add border */
-  .teaser.block > .teaser {
+  .teaser.block > .teaser,
+  .teaser.block.dark > .teaser {
     position: relative;
     background-color: var(--background-color);
     padding: 0;
