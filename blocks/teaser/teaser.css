@@ -4,8 +4,8 @@ main .teaser-wrapper {
   margin-bottom: var(--spectrum-spacing-500);
 
   /* stretches to window edge in mobile */
-  margin-left: calc(-1 * var(--space-token-xs));
-  margin-right: calc(-1 * var( --space-token-xs));
+  margin-left: calc(-1 * var(--spectrum-spacing-500));
+  margin-right: calc(-1 * var(--spectrum-spacing-500));
 }
 
 /* The teaser main div */
@@ -105,14 +105,6 @@ main .teaser-wrapper {
 
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
-  main .teaser-wrapper {
-    margin-bottom: var(--spectrum-spacing-500);
-
-    /* stretches to window edge */
-    margin-left: calc(-1 * var(--spectrum-spacing-500));
-    margin-right: calc(-1 * var(--spectrum-spacing-500));
-  }
-
   /* remove background color , add border */
   .teaser.block > .teaser {
     position: relative;
@@ -128,16 +120,14 @@ main .teaser-wrapper {
     position: relative;
     display: flex;
     z-index: 2;
-    max-width: var(--non-spectrum-max-width);
-    width: 100%;
-    margin: auto;
+    padding: 0 var(--spectrum-spacing-500);
   }
 
   /* limit width of text part and set order */
   .teaser.block > .teaser > .foreground > .text {
     width:60%;
     order: 0;
-    padding: var(--spectrum-spacing-500);
+    padding: var(--spectrum-spacing-500) 0;
   }
 
   /* change the order if text should be on the right */
@@ -231,8 +221,9 @@ main .teaser-wrapper {
     max-width: unset;
   }
 
-  .teaser.block > .teaser > .foreground > .text {
-    padding: var(--spectrum-spacing-500) var(--spectrum-spacing-600) var(--spectrum-spacing-600) var(--spectrum-spacing-700);
+  .teaser.block > .teaser > .foreground  {
+    max-width: var(--non-spectrum-max-width);
+    margin: auto;
   }
 }
   
