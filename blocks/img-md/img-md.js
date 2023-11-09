@@ -11,17 +11,17 @@ function imgZoomable(modalImage) {
   }
 
   function closeAllModals() {
-    (document?.querySelectorAll('.modal') || []).forEach((modal) => {
+    (document?.querySelectorAll('.img-modal') || []).forEach((modal) => {
       closeModal(modal);
     });
   }
 
   function insertModalTemplate() {
-    if (!document.querySelector('.modal')) {
+    if (!document.querySelector('.img-modal')) {
       const modalTemplate = createTag(
         'div',
-        { class: 'modal' },
-        `<div class="modal-background"></div><div class="modal-content"><div class="img-container"></div><span class="modal-close" aria-label="close"></span></div>`,
+        { class: 'img-modal' },
+        `<div class="img-modal-background"></div><div class="img-modal-content"><div class="img-container"></div><span class="img-modal-close" aria-label="close"></span></div>`,
       );
       document.body.prepend(modalTemplate);
     }
@@ -30,17 +30,17 @@ function imgZoomable(modalImage) {
   modalImage.addEventListener('click', () => {
     insertModalTemplate();
     const modalContent = modalImage.outerHTML;
-    const target = document?.querySelector('.modal');
+    const target = document?.querySelector('.img-modal');
     const targetContent = target.querySelector('.img-container');
     targetContent.innerHTML = modalContent;
     openModal(target);
 
     const modalActions = document.querySelectorAll(
-      '.modal-background, .modal-close',
+      '.img-modal-background, .img-modal-close',
     );
     if (modalActions.length > 0) {
       modalActions.forEach((close) => {
-        const closestModal = close.closest('.modal');
+        const closestModal = close.closest('.img-modal');
         close.addEventListener('click', () => {
           closeModal(closestModal);
         });
