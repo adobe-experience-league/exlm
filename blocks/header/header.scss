@@ -175,10 +175,13 @@ body.is-shown {
     white-space: nowrap;
     margin: 0;
 
-    &.selected {
-      background: url('../../icons/checkmark.svg') 88% 10px no-repeat;
-      background-size: 12px;
-      font-weight: var(--font-weight-700);
+    & .icon.icon-checkmark {
+      display: inline-block;
+      height: 16px;
+      position: absolute;
+      right: 10px;
+      top: 6px;
+      width: 16px;
     }
   }
 
@@ -769,6 +772,7 @@ body.is-shown {
 
   & .language-selector .language-dropdown ul li {
     margin: 0;
+    position: relative;
   }
 
   & .search {
@@ -817,8 +821,6 @@ body.is-shown {
     }
 
     & .exl-search-icon {
-      background: url('../../icons/search.svg') 0 0 no-repeat;
-      background-size: contain;
       height: 15px;
       left: 7px;
       position: absolute;
@@ -831,25 +833,40 @@ body.is-shown {
     }
 
     & .exl-search-link {
-      background: url('../../icons/search.svg') 0 0 no-repeat;
-      background-size: contain;
       display: none;
-      height: 15px;
+      height: 18px;
       left: 7px;
       position: absolute;
       top: 7px;
-      width: 15px;
-      text-indent: -99999px;
+      width: 18px;
+
+      & .label {
+        display: inline-block;
+        text-indent: -99999px;
+
+        @include custom-breakpoint(tablet) {
+          text-indent: inherit;
+        }
+      }
+
+      & .icon-search {
+        width: 18px;
+        height: 18px;
+
+        @include custom-breakpoint(tablet) {
+          display: none;
+        }
+      }
 
       @include custom-breakpoint(desktop-lg) {
         display: inline-block;
         left: auto;
-        top: -18px;
+        top: -20px;
       }
 
       @include custom-breakpoint(custom) {
-        left: -95px;
-        top: -21px;
+        left: -98px;
+        top: -23px;
       }
 
       @include custom-breakpoint(tablet) {

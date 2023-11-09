@@ -173,10 +173,13 @@ body.is-shown .exl-curtain {
   white-space: nowrap;
   margin: 0;
 }
-.header .language-dropdown a.selected {
-  background: url("../../icons/checkmark.svg") 88% 10px no-repeat;
-  background-size: 12px;
-  font-weight: var(--font-weight-700);
+.header .language-dropdown a .icon.icon-checkmark {
+  display: inline-block;
+  height: 16px;
+  position: absolute;
+  right: 10px;
+  top: 6px;
+  width: 16px;
 }
 .header .exl-subnav-wrapper a {
   color: var(--spectrum-gray-700);
@@ -699,6 +702,7 @@ body.is-shown .exl-curtain {
 }
 .header .language-selector .language-dropdown ul li {
   margin: 0;
+  position: relative;
 }
 .header .search {
   position: relative;
@@ -748,8 +752,6 @@ body.is-shown .exl-curtain {
   letter-spacing: 0.14px;
 }
 .header .search .exl-search-icon {
-  background: url("../../icons/search.svg") 0 0 no-repeat;
-  background-size: contain;
   height: 15px;
   left: 7px;
   position: absolute;
@@ -762,27 +764,42 @@ body.is-shown .exl-curtain {
   }
 }
 .header .search .exl-search-link {
-  background: url("../../icons/search.svg") 0 0 no-repeat;
-  background-size: contain;
   display: none;
-  height: 15px;
+  height: 18px;
   left: 7px;
   position: absolute;
   top: 7px;
-  width: 15px;
+  width: 18px;
+}
+.header .search .exl-search-link .label {
+  display: inline-block;
   text-indent: -99999px;
+}
+@media (max-width: 600px) {
+  .header .search .exl-search-link .label {
+    text-indent: inherit;
+  }
+}
+.header .search .exl-search-link .icon-search {
+  width: 18px;
+  height: 18px;
+}
+@media (max-width: 600px) {
+  .header .search .exl-search-link .icon-search {
+    display: none;
+  }
 }
 @media (max-width: 1200px) {
   .header .search .exl-search-link {
     display: inline-block;
     left: auto;
-    top: -18px;
+    top: -20px;
   }
 }
 @media (max-width: 1024px) {
   .header .search .exl-search-link {
-    left: -95px;
-    top: -21px;
+    left: -98px;
+    top: -23px;
   }
 }
 @media (max-width: 600px) {

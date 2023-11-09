@@ -1,3 +1,4 @@
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { createTag } from '../../scripts/scripts.js';
 
 /**
@@ -85,12 +86,10 @@ function exlHamburger(block) {
   const hamburger = createTag('a', hamburgerAttributes, hamburgerTextContent);
   block.prepend(hamburger);
 
-  if (isMobile.matches) {
-    hamburger.addEventListener('mousedown', () => {
-      hamburger.classList.toggle('is-active');
-      bodyTag.classList.toggle('is-shown');
-    });
-  }
+  hamburger.addEventListener('mousedown', () => {
+    hamburger.classList.toggle('is-active');
+    bodyTag.classList.toggle('is-shown');
+  });
 }
 
 // Exl Logo Branding
@@ -168,7 +167,15 @@ function decorateSearchContent(block) {
   const search = block.querySelector('.exl-topnav .search');
   const searchFirstChild = block.querySelector('.search > div:nth-child(1)');
   const searchSecondChild = block.querySelector('.search > div:nth-child(2)');
-  const searchContent = `<a href="https://experienceleague.adobe.com/search.html" class="exl-search-link">Search</a><span class="exl-search-icon"></span><input autocomplete="off" class="exl-search-input" type="text" role="combobox" placeholder="Search Experience League"><button id="dropdownButton" type="button" class="exl-dropdown-picker" aria-haspopup="true"><span class="exl-picker-label">All</span></button>`;
+  const searchContent = `
+          <a href="https://experienceleague.adobe.com/search.html" class="exl-search-link">
+            <span class="icon icon-search"></span><span class="label">Search</span>
+          </a>
+          <span class="icon icon-search exl-search-icon"></span>
+          <input autocomplete="off" class="exl-search-input" type="text" role="combobox" placeholder="Search Experience League">
+          <button id="dropdownButton" type="button" class="exl-dropdown-picker" aria-haspopup="true">
+            <span class="exl-picker-label">All</span>
+          </button>`;
 
   searchFirstChild.innerHTML = searchContent;
   searchSecondChild.className = 'search-popover';
@@ -207,7 +214,8 @@ function manageLocale(block) {
 
   const langAnchor = languageSelector.querySelector('a');
   if (CONFIG.basePath.indexOf('en' !== -1)) {
-    languageDiv.querySelector('li:nth-child(2) > a').classList.add('selected');
+    languageDiv.querySelector('li:nth-child(2) > a').innerHTML =
+      'English <span class="icon icon-checkmark"></span>';
   }
 
   if (isDesktop.matches) {
@@ -314,4 +322,5 @@ export default async function decorate(block) {
   decorateSearchContent(block);
   manageLocale(block);
   decorateSubNavigation(block);
+  await decorateIcons(block);
 }
