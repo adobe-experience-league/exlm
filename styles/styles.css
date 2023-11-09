@@ -714,7 +714,7 @@ img {
 }
 
 .section {
-  padding: 64px var(--spectrum-spacing-500) 64px var(--spectrum-spacing-500);
+  padding: 64px var(--spectrum-spacing-500);
 
   /* section metadata */
 }
