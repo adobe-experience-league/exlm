@@ -1,4 +1,4 @@
-/* ----- MOBILE ----- */
+/* ----- MOBILE / Default ----- */
 
 main .teaser-wrapper {
   margin-bottom: var(--spectrum-spacing-500);
@@ -51,7 +51,7 @@ main .teaser-wrapper {
   margin: 0;
 }
 
-/* hide the long description */
+/* long description , hidden in mobile */
 .teaser.block > .teaser > .foreground > .text > .long-description {
   display: none;
 }
@@ -95,7 +95,7 @@ main .teaser-wrapper {
   width:40%;
 }
 
-/* the image */
+/* the background image , hidden in mobile */
 .teaser.block > .teaser > .background img {
   display:none;
   width: auto;
@@ -108,13 +108,12 @@ main .teaser-wrapper {
   main .teaser-wrapper {
     margin-bottom: var(--spectrum-spacing-500);
 
-    /* stretches to window edge in mobile */
+    /* stretches to window edge */
     margin-left: calc(-1 * var(--spectrum-spacing-500));
     margin-right: calc(-1 * var(--spectrum-spacing-500));
   }
 
-
-  /* turn the block into a flex, remove background color */
+  /* remove background color , add border */
   .teaser.block > .teaser {
     position: relative;
     background-color: var(--background-color);
@@ -124,12 +123,7 @@ main .teaser-wrapper {
     overflow: hidden;
   }
 
-  .teaser.block.dark > .teaser {
-    background-color: var(--background-color);
-    padding: 0;
-  }
-
-  /* foreground container */
+  /* foreground container, flex (text + spacer) */
   .teaser.block > .teaser > .foreground {
     position: relative;
     display: flex;
@@ -146,7 +140,7 @@ main .teaser-wrapper {
     padding: var(--spectrum-spacing-500);
   }
 
-  /* change the order text should be on the right */
+  /* change the order if text should be on the right */
   .teaser.block.right > .teaser > .foreground > .text {
     order: 1;
   }
@@ -206,12 +200,12 @@ main .teaser-wrapper {
     order: 1;
   }
 
-  /* change the order text should be on the right */
+  /* change the order if text should be on the right */
   .teaser.block.right > .teaser > .foreground > .spacer {
     order: 0;
   }
 
-  /* limit width of image part and set order */
+  /* the background image container */
   .teaser.block > .teaser > .background {
     display:block;
     position: absolute;
@@ -232,6 +226,7 @@ main .teaser-wrapper {
 
 /* ----- DESKTOP ------ */
 @media (min-width: 900px) {
+  /* a section that contains teaser gets full width */
   .section > div.teaser-wrapper {
     max-width: unset;
   }
