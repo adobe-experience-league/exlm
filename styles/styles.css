@@ -604,7 +604,7 @@ button {
   box-sizing: border-box;
   text-decoration: none;
   border: 2px solid transparent;
-  padding: 5px 30px 6px;
+  padding: 5px 30px;
   text-align: center;
   font-style: normal;
   font-weight: 600;
