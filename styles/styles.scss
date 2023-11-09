@@ -582,7 +582,7 @@ img {
 .section {
   padding: 30px 2px;
 
-  h1 {
+  &.article-metadata-createdby-container h1 {
     line-height: var(--spectrum-line-height-xxl);
 
     @include breakpoint(desktop) {

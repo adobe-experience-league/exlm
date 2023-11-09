@@ -694,11 +694,11 @@ img {
   padding: 30px 2px;
   /* section metadata */
 }
-.section h1 {
+.section.article-metadata-createdby-container h1 {
   line-height: var(--spectrum-line-height-xxl);
 }
 @media (min-width: 900px) {
-  .section h1 {
+  .section.article-metadata-createdby-container h1 {
     line-height: var(--spectrum-line-height-xxxl);
   }
 }
