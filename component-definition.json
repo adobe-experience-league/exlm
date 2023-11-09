@@ -35,7 +35,9 @@
             "aem": {
               "page": {
                 "resourceType": "core/franklin/components/image/v1/image",
-                "template": {}
+                "template": {
+                  "fileReference": "/content/dam/exlm/content-at-scale.png"
+                }
               }
             }
           }
@@ -65,9 +67,7 @@
             "aem": {
               "page": {
                 "resourceType": "core/franklin/components/section/v1/section",
-                "template": {
-                  "allowedComponents": ["group:default", "group:blocks"]
-                }
+                "template": {}
               }
             }
           }
@@ -90,7 +90,7 @@
                   "model": "teaser",
                   "fileReference": "/content/dam/default-teaser-banner.png",
                   "title": "Teaser Title",
-                  "longDescr": "<p>Teaser Description (long)</p>",
+                  "longDescr": "<p>Teaser Description</p>",
                   "classes": ["light","left"]
                 }
               }

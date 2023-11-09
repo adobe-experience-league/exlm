@@ -1,11 +1,7 @@
 @import '../../styles/sass/breakpoints';
 
 .mini-toc-container {
-  display: none;
-
-  @include breakpoint(desktop) {
-    display: block;
-  }
+  display: block;
 }
 
 .mini-toc-wrapper {
@@ -14,12 +10,12 @@
   flex: none;
   width: 100%;
   position: sticky;
+  margin-top: 0 !important; // neccessaary for sticky
   top: 32px;
   overflow: visible;
 }
 
 .mini-toc-wrapper .mini-toc {
-  margin-top: 56px;
   font-size: var(--spectrum-font-size-50);
   font-weight: var(--spectrum-extra-bold-font-weight);
   padding-left: 0;
@@ -28,6 +24,7 @@
   .scrollable-div {
     max-height: 50vh;
     overflow: hidden;
+    margin-top: 12px;
   }
 
   .scrollable-div:hover {
@@ -46,7 +43,7 @@
 .mini-toc-wrapper .mini-toc ul {
   list-style: none;
   padding-left: 0;
-  margin: var(--spectrum-spacing-200) var(--spectrum-spacing-100) 0 17px;
+  margin: 0 8px 0 0;
 
   li {
     display: inline-flex;
@@ -68,7 +65,7 @@
         --spectrum-sidenav-item-padding-x,
         var(--spectrum-global-dimension-size-150)
       );
-    margin: 8px 0;
+    margin: 4px 0;
 
     .is-padded-left-big {
       padding-left: var(--spectrum-spacing-400) !important;
@@ -88,7 +85,10 @@
 
     a {
       font-size: var(--spectrum-font-size-100);
+      line-height: 21px;
       display: inline-flex;
+      min-height: 32px;
+      box-sizing: border-box;
       width: 100%;
       margin: 0;
       border-radius: 4px;

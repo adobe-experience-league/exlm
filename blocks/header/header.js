@@ -1,10 +1,28 @@
-/* eslint-disable no-bitwise */
-import {
-  isDesktop,
-  isMobile,
-  fetchContent,
-  cleanUpDivElems,
-} from '../../scripts/utilities.js';
+import { createTag } from '../../scripts/scripts.js';
+
+/**
+ * Removes all elements in el; except the one child matching the provided selector
+ * @param {HTMLElement} el
+ * @param {string} selector
+ */
+export const removeAllButSelector = (el, selector) => {
+  const selectedChild = el.querySelector(selector);
+  if (selectedChild) {
+    el.innerHTML = selectedChild.outerHTML;
+  }
+};
+
+// fetch fragment html
+const fetchContent = async (url) => {
+  const response = await fetch(url);
+  return response.text();
+};
+
+// Desktop Only (1025px onwards)
+const isDesktop = window.matchMedia('(min-width: 1025px)');
+
+// Mobile Only (Until 1024px)
+const isMobile = window.matchMedia('(max-width: 1024px)');
 
 // Configurable data
 const CONFIG = {
@@ -29,34 +47,64 @@ const communityTabContent = await fetchContent(
   `${CONFIG.basePath}${CONFIG.communityPath}`,
 );
 
-/**
- * decorates the header, mainly the nav
- * @param {Element} block The header block element
- */
-export default async function decorate(block) {
-  const navWrapper = document.createElement('nav');
-  navWrapper.className = 'exl-topnav';
-  navWrapper.setAttribute('aria-label', 'Main navigation');
-  navWrapper.setAttribute('role', 'navigation');
+// Body Tag
+const bodyTag = document.querySelector('body');
 
+// Paint header content to DOM
+function displayHeaderContent(block) {
+  const navAttributes = {
+    role: 'navigation',
+    class: 'exl-topnav',
+    'aria-label': 'Main navigation',
+  };
+
+  const navWrapper = createTag('nav', navAttributes);
   navWrapper.innerHTML = topNavContent;
   block.innerHTML = navWrapper.outerHTML;
+}
 
-  // Prepend curtain wrapper inside Body tag
-  const exlOverlay = document.createElement('div');
-  exlOverlay.className = 'exl-curtain';
-  document.querySelector('body').prepend(exlOverlay);
+// Prepend curtain wrapper inside Body tag
+function exlCurtain() {
+  const exlOverlay = createTag('div', { class: 'exl-curtain' });
+  bodyTag.prepend(exlOverlay);
+}
 
-  // Exl Logo Branding
-  const wrapper = block.closest('.header');
-  const exlLogo = wrapper.querySelector('.gnav-brand');
+/**
+ * Add Hamburger for Mobile
+ * @param {HTMLElement} block
+ */
+function exlHamburger(block) {
+  const hamburgerAttributes = {
+    role: 'button',
+    class: 'nav-hamburger',
+    'aria-label': 'menu',
+    'aria-expanded': 'false',
+  };
+  const hamburgerTextContent =
+    '<span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>';
+  const hamburger = createTag('a', hamburgerAttributes, hamburgerTextContent);
+  block.prepend(hamburger);
+
+  if (isMobile) {
+    hamburger.addEventListener('mousedown', () => {
+      hamburger.classList.toggle('is-active');
+      bodyTag.classList.toggle('is-shown');
+    });
+  }
+}
+
+// Exl Logo Branding
+function exlBrand(block) {
+  const exlLogo = block.querySelector('.gnav-brand');
   exlLogo.className = 'exl-brand-container';
 
-  // Remove extra Div blocks from logo block
-  cleanUpDivElems(exlLogo, 'h2');
+  // Remove unwanted Div blocks from logo block
+  removeAllButSelector(exlLogo, 'h2');
+}
 
-  // Assign slector identifier only to specific nav elements
-  const selectors = wrapper.querySelectorAll('.exl-topnav .topnav-item');
+// Decorate Exl Navigation
+function decorateExlNavigation(block) {
+  const selectors = block.querySelectorAll('.exl-topnav .topnav-item');
 
   selectors.forEach((selector) => {
     if (selector.classList.contains('large-menu')) {
@@ -67,10 +115,8 @@ export default async function decorate(block) {
   });
 
   // Wrap only nav items in a parent div block
-  const exlNav = document.createElement('div');
-  exlNav.className = 'exl-nav';
-
-  const exlTopNav = wrapper.querySelector('.exl-topnav');
+  const exlNav = createTag('div', { class: 'exl-nav' });
+  const exlTopNav = block.querySelector('.exl-topnav');
   const exlTopNavFirstChild = exlTopNav.querySelector('.exl-topnav > div');
   const navItems = exlTopNav.querySelectorAll('.exl-nav-item');
   const profile = exlTopNav.querySelector('.profile');
@@ -85,24 +131,41 @@ export default async function decorate(block) {
 
   exlTopNavFirstChild.insertBefore(exlNav, profile);
 
-  // Add Hamburger for Mobile
-  const hamburger = document.createElement('a');
-  hamburger.className = 'nav-hamburger';
-  hamburger.setAttribute('role', 'button');
-  hamburger.setAttribute('aria-label', 'menu');
-  hamburger.setAttribute('aria-expanded', 'false');
-  hamburger.innerHTML = `<span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>`;
-  exlTopNavFirstChild.insertBefore(hamburger, exlLogo);
+  // Replace anchor text with Adobe Logo image
+  const adobeLogo = block.querySelector('.adobe-logo');
+  removeAllButSelector(adobeLogo, 'a');
 
-  // Update Search content
+  // Reposition Sign up Link
+  exlTopNavFirstChild.insertBefore(profile, adobeLogo);
+
+  // Move nav action items into a parent div block
+  const exlNavActionItems = [
+    '.search',
+    '.language-selector',
+    '.profile',
+    '.adobe-logo',
+  ];
+  const exlNavAction = createTag('div', { class: 'exl-nav-action' });
+  exlNavActionItems.forEach((actionitem) => {
+    exlNavAction.appendChild(exlTopNav.querySelector(actionitem));
+  });
+
+  exlNav.parentNode.insertBefore(exlNavAction, exlNav.nextSibling);
+}
+
+// Update Search content
+function decorateSearchContent(block) {
   const search = block.querySelector('.exl-topnav .search');
-  const searchFirstChild = exlTopNav.querySelector(
-    '.search > div:nth-child(1)',
-  );
-  const searchSecondChild = exlTopNav.querySelector(
-    '.search > div:nth-child(2)',
-  );
-  const searchContent = `<span class="exl-search-icon"><svg focusable="false" enable-background="new 0 0 20 20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Search" class="exl-search-svg"><title>Search</title><g fill="currentColor"><path class="exl-magnifier-circle-svg" d="m8.368 16.736c-4.614 0-8.368-3.754-8.368-8.368s3.754-8.368 8.368-8.368 8.368 3.754 8.368 8.368-3.754 8.368-8.368 8.368m0-14.161c-3.195 0-5.793 2.599-5.793 5.793s2.599 5.793 5.793 5.793 5.793-2.599 5.793-5.793-2.599-5.793-5.793-5.793"></path><path d="m18.713 20c-.329 0-.659-.126-.91-.377l-4.552-4.551c-.503-.503-.503-1.318 0-1.82.503-.503 1.318-.503 1.82 0l4.552 4.551c.503.503.503 1.318 0 1.82-.252.251-.581.377-.91.377"></path></g></svg></span><input autocomplete="off" class="exl-search-input" type="text" role="combobox" placeholder="Search Experience League"><button id="dropdownButton" type="button" class="exl-dropdown-picker" aria-haspopup="true"><span class="exl-picker-label">All</span><img src="https://experienceleague.adobe.com/assets/img/chevron_down.svg" height="20" class="exl-icon" aria-hidden="true" /></button>`;
+  const searchFirstChild = block.querySelector('.search > div:nth-child(1)');
+  const searchSecondChild = block.querySelector('.search > div:nth-child(2)');
+  const searchSVG = `<svg focusable="false" enable-background="new 0 0 20 20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Search" class="exl-search-svg"><title>Search</title><g fill="currentColor"><path class="exl-magnifier-circle-svg" d="m8.368 16.736c-4.614 0-8.368-3.754-8.368-8.368s3.754-8.368 8.368-8.368 8.368 3.754 8.368 8.368-3.754 8.368-8.368 8.368m0-14.161c-3.195 0-5.793 2.599-5.793 5.793s2.599 5.793 5.793 5.793 5.793-2.599 5.793-5.793-2.599-5.793-5.793-5.793"></path><path d="m18.713 20c-.329 0-.659-.126-.91-.377l-4.552-4.551c-.503-.503-.503-1.318 0-1.82.503-.503 1.318-.503 1.82 0l4.552 4.551c.503.503.503 1.318 0 1.82-.252.251-.581.377-.91.377"></path></g></svg>`;
+  const searchContent = `
+    <span class="exl-search-icon">${searchSVG}</span>
+    <input autocomplete="off" aria-autocomplete="list" class="exl-search-input" type="text" role="combobox" placeholder="Search Experience League">
+    <button id="dropdownButton" type="button" class="exl-dropdown-picker" aria-haspopup="true">
+      <span class="exl-picker-label">All</span>
+      <img src="/icons/chevron_down.svg" height="20" class="exl-icon" aria-hidden="true" />
+    </button>`;
 
   searchFirstChild.innerHTML = searchContent;
   searchSecondChild.className = 'search-popover';
@@ -127,37 +190,61 @@ export default async function decorate(block) {
     },
     false,
   );
+}
 
-  // Update language selector content
-  const languageDiv = document.createElement('div');
-  languageDiv.className = 'language-dropdown';
-  languageDiv.setAttribute('data-id', 'lang-menu');
+// Update language selector content
+function manageLocale(block) {
+  const languageDiv = createTag('div', {
+    class: 'language-dropdown',
+    'data-id': 'lang-menu',
+  });
+  const languageSelector = block.querySelector('.language-selector');
 
-  const languageSelector = wrapper.querySelector('.language-selector');
-  cleanUpDivElems(languageSelector, 'a');
-
-  // fetch language selector content
+  removeAllButSelector(languageSelector, 'a');
   languageDiv.innerHTML = languageTabContent;
-  cleanUpDivElems(languageDiv, 'ul');
+  removeAllButSelector(languageDiv, 'ul');
   languageSelector.appendChild(languageDiv);
 
-  // Replace anchor text with Adobe Logo image
-  const adobeLogo = wrapper.querySelector('.adobe-logo');
-  cleanUpDivElems(adobeLogo, 'a');
+  const langAnchor = languageSelector.querySelector('a');
 
-  // Reposition Sign Link
-  exlTopNavFirstChild.insertBefore(profile, adobeLogo);
+  if (isDesktop) {
+    languageSelector.addEventListener('mouseover', () => {
+      languageSelector.classList.add('active');
+      langAnchor.nextElementSibling.style.display = 'block';
+    });
 
-  // fetch Sub navigation content
-  const exlNavItems = wrapper.querySelectorAll('.exl-nav .exl-nav-item');
-  const exlNavWithLargeMenu = wrapper.querySelectorAll(
+    languageSelector.addEventListener('mouseout', () => {
+      languageSelector.classList.remove('active');
+      langAnchor.nextElementSibling.style.display = 'none';
+    });
+  }
+
+  if (isMobile) {
+    languageSelector.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      langAnchor.removeAttribute('href');
+      languageDiv.removeAttribute('style');
+      languageSelector.classList.toggle('active');
+    });
+  }
+}
+
+/**
+ * Decoration Sub navigation content
+ * @param {HTMLElement} block
+ */
+function decorateSubNavigation(block) {
+  const exlNavItems = block.querySelectorAll('.exl-nav .exl-nav-item');
+  const exlNavWithLargeMenu = block.querySelectorAll(
     '.exl-nav .exl-nav-item.large-menu',
   );
 
   exlNavItems.forEach((navitem) => {
     const navitemLink = navitem.querySelector('a');
-    const subNavigationWrapper = document.createElement('div');
-    subNavigationWrapper.className = 'exl-subnav-wrapper';
+    const subNavigationWrapper = createTag('div', {
+      class: 'exl-subnav-wrapper',
+    });
+
     if (
       navitem.classList.contains('large-menu') &&
       navitemLink.innerText.trim().toLowerCase() === 'learn'
@@ -174,35 +261,59 @@ export default async function decorate(block) {
   });
 
   exlNavWithLargeMenu.forEach((largemenu) => {
+    const largemenuHeadings = largemenu.querySelectorAll('h5');
     const largemenuAnchor = largemenu.querySelector('a');
     if (isDesktop) {
       largemenu.addEventListener('mouseover', () => {
-        wrapper.classList.add('exl-overlay');
+        block.classList.add('exl-overlay');
         largemenuAnchor.classList.add('active');
-        largemenuAnchor.nextElementSibling.style.display = 'block';
       });
 
       largemenu.addEventListener('mouseout', () => {
-        wrapper.classList.remove('exl-overlay');
+        block.classList.remove('exl-overlay');
         largemenuAnchor.classList.remove('active');
-        largemenuAnchor.nextElementSibling.style.display = 'none';
       });
     }
 
     if (isMobile) {
-      largemenu.addEventListener('mousedown', () => {
+      largemenuAnchor.addEventListener('click', (event) => {
+        event.preventDefault();
         largemenuAnchor.removeAttribute('href');
         largemenuAnchor.nextElementSibling.removeAttribute('style');
         largemenu.classList.toggle('is-expanded');
-        largemenuAnchor.classList.toggle('active');
+      });
+
+      largemenuHeadings.forEach((heading) => {
+        heading.addEventListener('click', () => {
+          heading.parentElement.parentElement.parentElement.classList.toggle(
+            'show',
+          );
+        });
       });
     }
   });
 
-  if (isMobile) {
-    hamburger.addEventListener('mousedown', () => {
-      hamburger.classList.toggle('is-active');
-      document.querySelector('body').classList.toggle('is-shown');
-    });
-  }
+  // Assign redirects to sub menu anchor links
+  const subMenuAnchorLinks = block.querySelectorAll('.exl-subnav-wrapper a');
+
+  subMenuAnchorLinks.forEach((submenuanchor) => {
+    if (submenuanchor.getAttribute('href').indexOf('#_blank') !== -1) {
+      submenuanchor.classList.add('redirect');
+    }
+  });
+}
+
+/**
+ * decorates the header, mainly the nav
+ * @param {Element} block The header block element
+ */
+export default async function decorate(block) {
+  displayHeaderContent(block);
+  exlCurtain();
+  exlHamburger(block);
+  exlBrand(block);
+  decorateExlNavigation(block);
+  decorateSearchContent(block);
+  manageLocale(block);
+  decorateSubNavigation(block);
 }

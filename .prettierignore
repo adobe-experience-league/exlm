@@ -1,0 +1,5 @@
+prism.js
+blocks/**/**.css
+styles/**/**.css
+scripts/prism-grammars/**
+scripts/**/**.css
