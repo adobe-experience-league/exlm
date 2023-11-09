@@ -18,6 +18,7 @@ module.exports = {
       'error',
       {
         js: 'always',
+        code: 120
       },
     ],
     'import/no-extraneous-dependencies': [
