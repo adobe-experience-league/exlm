@@ -524,6 +524,33 @@ button.secondary {
   color: var(--text-color);
 }
 
+.button-container {
+  margin: 0;
+
+  a.button {
+    font-size: var(--spectrum-font-size-100);
+    font-weight: var(--font-weight-700);
+    line-height: 16.8px;
+    margin: 0;
+    padding: 7px 14px 8px;
+    min-width: 72px;
+    min-height: 32px;
+    border-radius: 16px;
+
+    &.primary {
+      border: 0;
+      background-color: var(--spectrum-blue-900);
+    }
+
+    &.secondary {
+      color: var(--spectrum-gray-800);
+      border: 1.67px solid var(--spectrum-gray-800);
+      padding-top: 5px;
+      padding-bottom: 6px;
+    }
+  }
+}
+
 input {
   font-size: 1.25rem;
   width: 100%;
