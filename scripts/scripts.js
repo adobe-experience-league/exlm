@@ -134,10 +134,11 @@ export function decorateExternalLinks(main) {
       a.setAttribute('target', '_blank');
     } else if (
       href &&
-      !href.includes('experienceleague-dev.corp.adobe.com') &&
-      href !== '#'
+      !href.startsWith('#')
     ) {
-      a.target = '_blank';
+      if (a.hostname !== window.location.hostname) {
+        a.setAttribute('target', '_blank');
+      }
       if (!href.startsWith('/') && !href.startsWith('http')) {
         a.href = `//${href}`;
       }
