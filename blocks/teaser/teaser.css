@@ -1,16 +1,16 @@
 /* ----- MOBILE / Default ----- */
 
-main .teaser-wrapper {
+/* teaser wrapper */
+.section div.teaser-wrapper {
   margin-bottom: var(--spectrum-spacing-500);
 
-  /* stretches to window edge in mobile */
+  /* stretches to window edge in mobile view */
   margin-left: calc(-1 * var(--spectrum-spacing-500));
   margin-right: calc(-1 * var(--spectrum-spacing-500));
 }
 
-/* The teaser main div */
-.teaser.block > .teaser,
-.teaser.block.dark > .teaser {
+/* The teaser block div */
+.teaser.block , .teaser.block.dark {
   --teaser-background-color :  var(--spectrum-blue-600); 
 
   background-color: var(--teaser-background-color);
@@ -18,7 +18,7 @@ main .teaser-wrapper {
 }
 
 /* the eybrow title, hidden in mobile */
-.teaser.block > .teaser > .foreground > .text > .eyebrow {
+.teaser.block > .foreground > .text > .eyebrow {
   display:none;
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
@@ -28,7 +28,7 @@ main .teaser-wrapper {
 }
 
 /* the main title, hidden in mobile */
-.teaser.block > .teaser > .foreground > .text > .title {
+.teaser.block > .foreground > .text > .title {
   display: none;
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-900);
@@ -37,12 +37,12 @@ main .teaser-wrapper {
   margin-bottom: var(--space-token-xxs);
 }
 
-.teaser.block.dark > .teaser > .foreground > .text > .title {
+.teaser.block.dark > .foreground > .text > .title {
   color: var(--background-color);
 }
 
 /* the short description */
-.teaser.block > .teaser > .foreground > .text > .short-description > p {
+.teaser.block > .foreground > .text > .short-description > p {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
   font-weight: var(--font-weight-700);
@@ -52,23 +52,23 @@ main .teaser-wrapper {
 }
 
 /* long description , hidden in mobile */
-.teaser.block > .teaser > .foreground > .text > .long-description {
+.teaser.block > .foreground > .text > .long-description {
   display: none;
 }
 
-.teaser.block > .teaser > .foreground > .text > .long-description * {
+.teaser.block > .foreground > .text > .long-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
   line-height: var(--spectrum-line-height-l);
   margin: 0;
 }
 
-.teaser.block.dark > .teaser > .foreground > .text > .long-description * {
+.teaser.block.dark > .foreground > .text > .long-description * {
   color: var(--background-color);
 }
 
 /* the list of CTA's */
-.teaser.block > .teaser > .foreground > .text > .cta {
+.teaser.block > .foreground > .text > .cta {
   display: flex;
   gap: var(--spectrum-spacing-400);
   margin: 0;
@@ -76,27 +76,27 @@ main .teaser-wrapper {
   width:min-content;
 }
 
-/* the cta buttons */
-.teaser.block > .teaser > .foreground > .text > .cta > a.button {
+/* the cta buttons in mobile view */
+.teaser.block > .foreground > .text > .cta > a.button {
   background-color: var(--background-color);
   border: 2px solid transparent;
   color:var(--teaser-background-color);
 }
 
-.teaser.block > .teaser > .foreground > .text > .cta > a.button.secondary {
+.teaser.block > .foreground > .text > .cta > a.button.secondary {
   background-color: unset;
   border: 2px solid var(--background-color);
   color:var(--background-color);
 }
 
 /* spacer div */
-.teaser.block > .teaser > .foreground > .spacer {
+.teaser.block > .foreground > .spacer {
   display:none;
   width:40%;
 }
 
 /* the background image , hidden in mobile */
-.teaser.block > .teaser > .background img {
+.teaser.block > .background img {
   display:none;
   width: auto;
   height: max-content;
@@ -106,8 +106,8 @@ main .teaser-wrapper {
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
   /* remove background color , add border */
-  .teaser.block > .teaser,
-  .teaser.block.dark > .teaser {
+  .teaser.block,
+  .teaser.block.dark {
     position: relative;
     background-color: var(--background-color);
     padding: 0;
@@ -116,8 +116,8 @@ main .teaser-wrapper {
     overflow: hidden;
   }
 
-  /* foreground container, flex (text + spacer) */
-  .teaser.block > .teaser > .foreground {
+  /* foreground container, flex (text + spacer), always on top */
+  .teaser.block > .foreground {
     position: relative;
     display: flex;
     z-index: 2;
@@ -125,79 +125,79 @@ main .teaser-wrapper {
   }
 
   /* limit width of text part and set order */
-  .teaser.block > .teaser > .foreground > .text {
+  .teaser.block > .foreground > .text {
     width:60%;
     order: 0;
     padding: var(--spectrum-spacing-500) 0;
   }
 
   /* change the order if text should be on the right */
-  .teaser.block.right > .teaser > .foreground > .text {
+  .teaser.block.right > .foreground > .text {
     order: 1;
   }
 
   /* turn on the eybrow */
-  .teaser.block > .teaser > .foreground > .text > .eyebrow {
+  .teaser.block > .foreground > .text > .eyebrow {
     display: block;
   }
 
   /* turn on the title */
-  .teaser.block > .teaser > .foreground > .text > .title {
+  .teaser.block > .foreground > .text > .title {
     display: block;
   }
 
-  .teaser.block.dark > .teaser > .foreground > .text > .eyebrow {
+  .teaser.block.dark > .foreground > .text > .eyebrow {
     color: var(--background-color);
   }
   
   /* turn of short description */
-  .teaser.block > .teaser > .foreground > .text > .short-description {
+  .teaser.block > .foreground > .text > .short-description {
     display: none;
   }
 
   /* turn on long description */
-  .teaser.block > .teaser > .foreground > .text > .long-description {
+  .teaser.block > .foreground > .text > .long-description {
     display: block;
   }
 
   /* revert to normal button behavior for primary and secondary */
-  .teaser.block > .teaser > .foreground > .text > .cta > a.button {
+  .teaser.block > .foreground > .text > .cta > a.button {
     background-color: var(--link-color);
     border: 2px solid transparent;
     color: var(--background-color);
   }
 
-  .teaser.block > .teaser > .foreground > .text > .cta > a.button.secondary {
+  .teaser.block > .foreground > .text > .cta > a.button.secondary {
     background-color: unset;
     border: 2px solid currentcolor;
     color: currentcolor;
   }
 
-  .teaser.block.dark > .teaser > .foreground > .text > .cta > a.button {
+  .teaser.block.dark > .foreground > .text > .cta > a.button {
     background-color: var(--background-color);
     border: 2px solid transparent;
     color: currentcolor;
   }
 
-  .teaser.block.dark > .teaser > .foreground > .text > .cta > a.button.secondary {
+  .teaser.block.dark > .foreground > .text > .cta > a.button.secondary {
     background-color: unset;
     border: 2px solid currentcolor;
     color: var(--background-color);
   }
 
   /* spacer */
-  .teaser.block > .teaser > .foreground > .spacer {
+  .teaser.block > .foreground > .spacer {
     display:block;
     order: 1;
   }
 
   /* change the order if text should be on the right */
-  .teaser.block.right > .teaser > .foreground > .spacer {
+  .teaser.block.right > .foreground > .spacer {
     order: 0;
   }
 
   /* the background image container */
-  .teaser.block > .teaser > .background {
+  .teaser.block > .background {
     display:block;
     position: absolute;
     width:100%;
@@ -207,7 +207,7 @@ main .teaser-wrapper {
   }
 
   /* the image */
-  .teaser.block > .teaser > .background img {
+  .teaser.block > .background img {
     display:block;
     height:100%;
     width: 100%;
@@ -222,7 +222,7 @@ main .teaser-wrapper {
     max-width: unset;
   }
 
-  .teaser.block > .teaser > .foreground  {
+  .teaser.block > .foreground  {
     max-width: var(--non-spectrum-max-width);
     margin: auto;
   }
