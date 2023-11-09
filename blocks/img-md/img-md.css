@@ -1,16 +1,16 @@
-.img.block {
+.img-md.block {
   display: flex;
 }
-.img.block.left-align {
+.img-md.block.left-align {
   justify-content: flex-start;
 }
-.img.block.center-align {
+.img-md.block.center-align {
   justify-content: center;
 }
-.img.block.right-align {
+.img-md.block.right-align {
   justify-content: flex-end;
 }
-.img.block.modal-image img {
+.img-md.block.modal-image img {
   cursor: zoom-in;
 }
 
