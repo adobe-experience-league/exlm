@@ -814,14 +814,6 @@ img {
     padding: 30px 32px 32px;
   }
 }
-.docs main > div.rail.rail-left {
-  display: none;
-}
-@media (min-width: 900px) {
-  .docs main > div.rail.rail-left {
-    display: block;
-  }
-}
 .docs main > div:first-child {
   order: 2;
   width: 100%;
