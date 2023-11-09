@@ -1,6 +1,6 @@
 export default function decorate(block) {
-  // 1. extract properties (always same order as in model)
-  const picture = block.querySelector('div:nth-child(1) > div picture');
+  // Extract properties (always same order as in model)
+  const pictureElem = block.querySelector('div:nth-child(1) > div picture');
   const imageDescr = block
     .querySelector('div:nth-child(2) > div')
     .textContent.trim();
@@ -35,7 +35,7 @@ export default function decorate(block) {
     .querySelector('div:nth-child(13) > div')
     .textContent.trim();
 
-  // 2. build DOM
+  // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
     <div class='teaser'>
       <div class='foreground'>
@@ -49,7 +49,7 @@ export default function decorate(block) {
           <div class='cta'>
             ${
               firstCTAText !== '' && firstCTALink !== ''
-                ? `<a class='button ${firstCTAType}' 
+                ? `<a class='button ${firstCTAType}'
               href='${firstCTALink}'>${firstCTAText}</a>`
                 : ``
             }
@@ -70,8 +70,8 @@ export default function decorate(block) {
   `);
 
   // add image
-  if (picture) {
-    teaserDOM.querySelector('.background').append(picture);
+  if (pictureElem) {
+    teaserDOM.querySelector('.background').append(pictureElem);
   }
 
   // add the image description
@@ -86,7 +86,7 @@ export default function decorate(block) {
     .querySelector('.teaser')
     .style.setProperty('--teaser-background-color', `var(${backgroundColor})`);
 
-  // 3. add DOM
+  // add final teaser DOM
   block.textContent = '';
   block.append(teaserDOM);
 }

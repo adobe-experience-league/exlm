@@ -715,16 +715,27 @@ img {
 
 .section {
   padding: 64px 16px;
+
   /* section metadata */
 }
+
 .section > .default-content-wrapper:last-child > p:last-child {
   margin-bottom: 0;
 }
+
 @media (min-width: 600px) {
   .section {
     padding: 64px 32px;
   }
 }
+
+@media (min-width: 900px) {
+  .section > div {
+    max-width: var(--non-spectrum-max-width);
+    margin: auto;
+  }
+}
+
 .section.highlight {
   background-color: var(--highlight-background-color);
 }
