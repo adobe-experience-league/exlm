@@ -132,12 +132,10 @@ export function decorateExternalLinks(main) {
     const href = a.getAttribute('href');
     if (href.includes('#_blank')) {
       a.setAttribute('target', '_blank');
-    } else if (
-      href &&
-      !href.includes('experienceleague-dev.corp.adobe.com') &&
-      href !== '#'
-    ) {
-      a.target = '_blank';
+    } else if (href && !href.startsWith('#')) {
+      if (a.hostname !== window.location.hostname) {
+        a.setAttribute('target', '_blank');
+      }
       if (!href.startsWith('/') && !href.startsWith('http')) {
         a.href = `//${href}`;
       }
