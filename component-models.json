@@ -121,5 +121,71 @@
         "valueType": "string"
       }
     ]
+  },
+  {
+    "id": "icon-card",
+    "fields": [
+      {
+        "component": "select",
+        "name": "cardIcon",
+        "label": "Icon",
+        "value":"",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "Community",
+            "value": "community"
+          },
+          {
+            "name": "Instructor-led Training",
+            "value": "instructor-led-training"
+          },
+          {
+            "name": "Events",
+            "value": "events"
+          },
+          {
+            "name": "Courses",
+            "value": "courses"
+          }
+        ]
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cardHeading",
+        "value": "",
+        "label": "Heading",
+        "description" : "Sets the heading for Card."
+      },
+	  {
+        "component": "text-area",
+        "valueType": "string",
+        "name": "cardDescription",
+        "value": "",
+        "label": "Description",
+        "description" : "Sets the description for Card."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cardLinkText",
+        "value": "",
+        "label": "Link Text",
+        "description" : "Sets the link text for Card."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cardLinkURL",
+        "value": "",
+        "label": "Link URL",
+        "description" : "Sets the link URL for Card."
+      }
+    ]
   }
 ]
