@@ -103,11 +103,11 @@
                 "template": {
                   "name": "Icon Card",
                   "model": "icon-card",
-                  "cardIcon":"documentation",
-                  "cardHeading":"Default Heading",
-                  "cardDescription":"Default description",
-                  "cardLinkText":"Default Link Text",
-                  "cardLinkURL":"#"
+                  "cardIcon": "documentation",
+                  "cardHeading": "Default Heading",
+                  "cardDescription": "Default description",
+                  "cardLinkText": "Default Link Text",
+                  "cardLinkURL": "#"
                 }
               }
             }

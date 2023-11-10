@@ -129,7 +129,7 @@
         "component": "select",
         "name": "cardIcon",
         "label": "Icon",
-        "value":"",
+        "value": "",
         "valueType": "string",
         "options": [
           {
@@ -160,15 +160,15 @@
         "name": "cardHeading",
         "value": "",
         "label": "Heading",
-        "description" : "Sets the heading for Card."
+        "description": "Sets the heading for Card."
       },
-	  {
+      {
         "component": "text-area",
         "valueType": "string",
         "name": "cardDescription",
         "value": "",
         "label": "Description",
-        "description" : "Sets the description for Card."
+        "description": "Sets the description for Card."
       },
       {
         "component": "text-input",
@@ -176,7 +176,7 @@
         "name": "cardLinkText",
         "value": "",
         "label": "Link Text",
-        "description" : "Sets the link text for Card."
+        "description": "Sets the link text for Card."
       },
       {
         "component": "text-input",
@@ -184,7 +184,7 @@
         "name": "cardLinkURL",
         "value": "",
         "label": "Link URL",
-        "description" : "Sets the link URL for Card."
+        "description": "Sets the link URL for Card."
       }
     ]
   }
