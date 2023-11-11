@@ -1,326 +1,190 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { createTag } from '../../scripts/scripts.js';
 
 /**
- * Removes all elements in el; except the one child matching the provided selector
+ * @param {HTMLElement} block
+ * @returns {HTMLElement}
+ */
+const getBlockFirstCell = (block) => block.querySelector(':scope > div > div');
+
+/**
+ * @param {HTMLElement} block
+ * @returns {HTMLElement}
+ */
+const getBlockFirstRow = (block) => block.querySelector(':scope > div');
+
+/**
+ * simplified single cell block to one wrapper div.
  * @param {HTMLElement} el
  * @param {string} selector
+ * @returns {HTMLElement}
  */
-export const removeAllButSelector = (el, selector) => {
-  const selectedChild = el.querySelector(selector);
-  if (selectedChild) {
-    el.innerHTML = selectedChild.outerHTML;
-  }
+const simplifySingleCellBlock = (block) => {
+  const firstRowFirstCell = getBlockFirstCell(block);
+  block.innerHTML = firstRowFirstCell.innerHTML;
+  return block;
 };
 
 // fetch fragment html
-const fetchContent = async (url) => {
-  const response = await fetch(url);
+const fetchFragment = async (rePath, lang = 'en') => {
+  const response = await fetch(`/fragments/${lang}/${rePath}.plain.html`);
   return response.text();
 };
+// // Desktop Only (1025px onwards)
+// const isDesktop = window.matchMedia('(min-width: 1025px)');
+// // Mobile Only (Until 1024px)
+// const isMobile = window.matchMedia('(max-width: 1024px)');
 
-// Desktop Only (1025px onwards)
-const isDesktop = window.matchMedia('(min-width: 1025px)');
+/** @param {HTMLElement} brandBlock */
+const brandDecorator = (brandBlock) => {
+  simplifySingleCellBlock(brandBlock);
 
-// Mobile Only (Until 1024px)
-const isMobile = window.matchMedia('(max-width: 1024px)');
+  const brandLink = brandBlock.querySelector('a'); // we expect one.
+  const logoIcon = brandLink.querySelector('.icon').cloneNode(true);
+  const brandText = brandLink.childNodes[0].textContent; // first text node is the brand text
 
-// Configurable data
-const CONFIG = {
-  basePath: '/fragments/en',
-  topNavPath: '/header/topnav.plain.html',
-  learnPath: '/header/learn.plain.html',
-  communityPath: '/header/community.plain.html',
-  languagePath: '/languages/languages.plain.html',
+  // desktop brand is a text link
+  const desktopLink = brandLink.cloneNode(true);
+  desktopLink.classList.add('brand-desktop');
+  desktopLink.innerHTML = brandText;
+
+  // mobile brand is an icon link
+  const mobileLink = brandLink.cloneNode(true);
+  mobileLink.innerHTML = '';
+  mobileLink.ariaLabel = brandText;
+  mobileLink.classList.add('brand-mobile');
+  mobileLink.appendChild(logoIcon);
+
+  // replace the brand block with the two links
+  brandBlock.replaceChildren(desktopLink, mobileLink);
 };
 
-// Get fragement Data
-const topNavContent = await fetchContent(
-  `${CONFIG.basePath}${CONFIG.topNavPath}`,
-);
-const languageTabContent = await fetchContent(
-  `${CONFIG.basePath}${CONFIG.languagePath}`,
-);
-const learnTabContent = await fetchContent(
-  `${CONFIG.basePath}${CONFIG.learnPath}`,
-);
-const communityTabContent = await fetchContent(
-  `${CONFIG.basePath}${CONFIG.communityPath}`,
-);
-
-// Body Tag
-const bodyTag = document.querySelector('body');
-
-// Paint header content to DOM
-function displayHeaderContent(block) {
-  const navAttributes = {
-    role: 'navigation',
-    class: 'exl-topnav',
-    'aria-label': 'Main navigation',
-  };
-
-  const navWrapper = createTag('nav', navAttributes);
-  navWrapper.innerHTML = topNavContent;
-  block.innerHTML = navWrapper.outerHTML;
-}
-
-// Prepend curtain wrapper inside Body tag
-function exlCurtain() {
-  const exlOverlay = createTag('div', { class: 'exl-curtain' });
-  bodyTag.prepend(exlOverlay);
-}
-
-/**
- * Add Hamburger for Mobile
- * @param {HTMLElement} block
- */
-function exlHamburger(block) {
-  const hamburgerAttributes = {
-    role: 'button',
-    class: 'nav-hamburger',
-    'aria-label': 'menu',
-    'aria-expanded': 'false',
-  };
-  const hamburgerTextContent =
-    '<span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>';
-  const hamburger = createTag('a', hamburgerAttributes, hamburgerTextContent);
-  block.prepend(hamburger);
-
-  hamburger.addEventListener('mousedown', () => {
-    hamburger.classList.toggle('is-active');
-    bodyTag.classList.toggle('is-shown');
+const hamburgerButton = (navWrapper) => {
+  const button = document.createElement('button');
+  button.classList.add('nav-hamburger');
+  button.ariaLabel = 'Navigation menu';
+  button.ariaExpanded = 'false';
+  button.setAttribute('aria-haspopup', 'true');
+  button.setAttribute('aria-controls', 'nav-wrapper');
+  button.addEventListener('click', () => {
+    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+    button.setAttribute('aria-expanded', !isExpanded);
+    navWrapper.classList.toggle('nav-wrapper-expanded');
   });
+  return button;
+};
+
+/** @param {string} html */
+function htmlToElement(html) {
+  const template = document.createElement('template');
+  const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
+  template.innerHTML = trimmedHtml;
+  return template.content.firstChild;
 }
 
-// Exl Logo Branding
-function exlBrand(block) {
-  const exlLogo = block.querySelector('.gnav-brand');
-  exlLogo.className = 'exl-brand-container';
+const buildNavItems = (ul) => {
+  [...ul.children].forEach((navItem, index) => {
+    navItem.classList.add('nav-item');
+    const controlName = `content-${index}`;
+    const content = navItem.querySelector(':scope > ul');
+    if (content) {
+      const firstEl = navItem.firstElementChild;
+      const toggler = htmlToElement(
+        `<button class="nav-item-toggle" aria-controls="${controlName}" aria-expanded="false">${firstEl.innerHTML}</button>`,
+      );
+      firstEl.replaceWith(toggler);
+      content.setAttribute('id', controlName);
+      content.classList.add('nav-item-content');
 
-  // Remove unwanted Div blocks from logo block
-  removeAllButSelector(exlLogo, 'h2');
-}
-
-// Decorate Exl Navigation
-function decorateExlNavigation(block) {
-  const selectors = block.querySelectorAll('.exl-topnav .topnav-item');
-
-  selectors.forEach((selector) => {
-    if (selector.classList.contains('large-menu')) {
-      selector.className = 'exl-nav-item large-menu';
+      toggler.addEventListener('click', () => {
+        const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
+        toggler.setAttribute('aria-expanded', !isExpanded);
+        content.classList.toggle('nav-item-content-expanded');
+      });
+      buildNavItems(content);
     } else {
-      selector.className = 'exl-nav-item';
+      // navItem.classList.add('nav-item--leaf');
     }
   });
+};
 
-  // Wrap only nav items in a parent div block
-  const exlNav = createTag('div', { class: 'exl-nav' });
-  const exlTopNav = block.querySelector('.exl-topnav');
-  const exlTopNavFirstChild = exlTopNav.querySelector('.exl-topnav > div');
-  const navItems = exlTopNav.querySelectorAll('.exl-nav-item');
-  const profile = exlTopNav.querySelector('.profile');
+/** @param {HTMLElement} navBlock  */
+const navDecorator = (navBlock) => {
+  simplifySingleCellBlock(navBlock);
 
-  navItems.forEach((item) => {
-    const h2Tag = item.querySelector('h2');
-    if (h2Tag) {
-      item.innerHTML = h2Tag.innerHTML;
-    }
-    exlNav.appendChild(item);
-  });
+  const navWrapper = document.createElement('div');
+  navWrapper.classList.add('nav-wrapper');
+  const hamburger = hamburgerButton(navWrapper);
+  navWrapper.replaceChildren(hamburger, ...navBlock.children);
+  navBlock.replaceChildren(navWrapper);
 
-  exlTopNavFirstChild.insertBefore(exlNav, profile);
+  // build navItems
+  const ul = navWrapper.querySelector(':scope > ul');
+  buildNavItems(ul);
 
-  // Replace anchor text with Adobe Logo image
-  const adobeLogo = block.querySelector('.adobe-logo');
-  removeAllButSelector(adobeLogo, 'a');
+  navBlock.firstChild.id = hamburger.getAttribute('aria-controls');
 
-  // Reposition Sign up Link
-  exlTopNavFirstChild.insertBefore(profile, adobeLogo);
+  navBlock.prepend(hamburger);
+};
 
-  // Move nav action items into a parent div block
-  const exlNavActionItems = [
-    '.search',
-    '.language-selector',
-    '.profile',
-    '.adobe-logo',
-  ];
-  const exlNavAction = createTag('div', { class: 'exl-nav-action' });
-  exlNavActionItems.forEach((actionitem) => {
-    exlNavAction.appendChild(exlTopNav.querySelector(actionitem));
-  });
+const searchDecorator = (searchBlock) => {
+  simplifySingleCellBlock(searchBlock);
+};
 
-  exlNav.parentNode.insertBefore(exlNavAction, exlNav.nextSibling);
+const signUpDecorator = (signUpBlock) => {
+  simplifySingleCellBlock(signUpBlock);
+};
 
-  const exlNavLastItem = document?.querySelector(
-    '.header .exl-nav-item:last-child > a',
-  );
+const languageDecorator = (languageBlock) => {
+  simplifySingleCellBlock(languageBlock);
+};
 
-  if (isDesktop.matches) {
-    exlNavLastItem.innerHTML = 'Sign up';
-  } else if (isMobile.matches) {
-    exlNavLastItem.innerHTML = 'Sign in';
-  }
-}
+const signInDecorator = (signInBlock) => {
+  simplifySingleCellBlock(signInBlock);
+};
 
-// Update Search content
-function decorateSearchContent(block) {
-  const search = block.querySelector('.exl-topnav .search');
-  const searchFirstChild = block.querySelector('.search > div:nth-child(1)');
-  const searchSecondChild = block.querySelector('.search > div:nth-child(2)');
-  const searchContent = `
-          <a href="https://experienceleague.adobe.com/search.html" class="exl-search-link">
-            <span class="icon icon-search"></span><span class="label">Search</span>
-          </a>
-          <span class="icon icon-search exl-search-icon"></span>
-          <input autocomplete="off" class="exl-search-input" type="text" role="combobox" placeholder="Search Experience League">
-          <button id="dropdownButton" type="button" class="exl-dropdown-picker" aria-haspopup="true">
-            <span class="exl-picker-label">All</span>
-          </button>`;
+const adobeLogoDecorator = (adobeLogoBlock) => {
+  simplifySingleCellBlock(adobeLogoBlock);
+};
 
-  searchFirstChild.innerHTML = searchContent;
-  searchSecondChild.className = 'search-popover';
-
-  const exlDropdownPicker = search.querySelector('.exl-dropdown-picker');
-  const exlSearchPopover = search.querySelector('.search-popover');
-  if (exlDropdownPicker) {
-    exlDropdownPicker.addEventListener('mousedown', () => {
-      search.classList.toggle('show');
-    });
-  }
-
-  document.addEventListener(
-    'click',
-    (event) => {
-      if (event.target.matches('.search') || !event.target.closest('.search')) {
-        exlSearchPopover.classList.remove('show');
-      }
-    },
-    false,
-  );
-}
-
-// Update language selector content
-function manageLocale(block) {
-  const languageDiv = createTag('div', {
-    class: 'language-dropdown',
-    'data-id': 'lang-menu',
-  });
-  const languageSelector = block.querySelector('.language-selector');
-
-  removeAllButSelector(languageSelector, 'a');
-  languageDiv.innerHTML = languageTabContent;
-  removeAllButSelector(languageDiv, 'ul');
-  languageSelector.appendChild(languageDiv);
-
-  const langAnchor = languageSelector.querySelector('a');
-  if (CONFIG.basePath.indexOf('en' !== -1)) {
-    languageDiv.querySelector('li:nth-child(2) > a').innerHTML =
-      'English <span class="icon icon-checkmark"></span>';
-  }
-
-  if (isDesktop.matches) {
-    languageSelector.addEventListener('mouseover', () => {
-      languageSelector.classList.add('active');
-    });
-
-    languageSelector.addEventListener('mouseout', () => {
-      languageSelector.classList.remove('active');
-    });
-  } else if (isMobile.matches) {
-    langAnchor.innerHTML = 'Change region';
-    languageSelector.addEventListener('mousedown', (e) => {
-      e.preventDefault();
-      langAnchor.removeAttribute('href');
-      languageDiv.removeAttribute('style');
-      languageSelector.classList.toggle('active');
-    });
-  }
-}
+const headerDecorators = {
+  brand: brandDecorator,
+  nav: navDecorator,
+  search: searchDecorator,
+  'sign-up': signUpDecorator,
+  'language-selector': languageDecorator,
+  'sign-in': signInDecorator,
+  'adobe-logo': adobeLogoDecorator,
+};
 
 /**
- * Decoration Sub navigation content
- * @param {HTMLElement} block
+ *
+ * @param {HTMLElement} headerBlock
  */
-function decorateSubNavigation(block) {
-  const exlNavItems = block.querySelectorAll('.exl-nav .exl-nav-item');
-  const exlNavWithLargeMenu = block.querySelectorAll(
-    '.exl-nav .exl-nav-item.large-menu',
-  );
+export default async function decorate(headerBlock) {
+  // eslint-disable-next-line no-unused-vars
+  const [headerFragment, languagesFragment] = await Promise.all([
+    fetchFragment('header/header'),
+    fetchFragment('languages/languages'),
+  ]);
+  headerBlock.innerHTML = headerFragment;
 
-  exlNavItems.forEach((navitem) => {
-    const navitemLink = navitem.querySelector('a');
-    const subNavigationWrapper = createTag('div', {
-      class: 'exl-subnav-wrapper',
-    });
+  const headerBlockFirstRow = getBlockFirstRow(headerBlock);
+  headerBlockFirstRow.outerHTML = `<nav>${headerBlockFirstRow.innerHTML}</nav>`;
+  const nav = headerBlock.querySelector('nav');
+  nav.role = 'navigation';
+  nav.ariaLabel = 'Main navigation';
 
-    if (
-      navitem.classList.contains('large-menu') &&
-      navitemLink.innerText.trim().toLowerCase() === 'learn'
-    ) {
-      subNavigationWrapper.innerHTML = learnTabContent;
-      navitem.appendChild(subNavigationWrapper);
-    } else if (
-      navitem.classList.contains('large-menu') &&
-      navitemLink.innerText.trim().toLowerCase() === 'community'
-    ) {
-      subNavigationWrapper.innerHTML = communityTabContent;
-      navitem.appendChild(subNavigationWrapper);
+  // decorate each header block sequentially
+  [...nav.children].forEach((block) => {
+    const blockName = block.className;
+    const decorator = headerDecorators[blockName];
+    if (decorator) {
+      decorator(block);
+    } else {
+      // eslint-disable-next-line no-console
+      console.warn(`No decorator found for header block: ${blockName}`);
     }
   });
 
-  exlNavWithLargeMenu.forEach((largemenu) => {
-    const largemenuHeadings = largemenu.querySelectorAll('h5');
-    const largemenuAnchor = largemenu.querySelector('a');
-    if (isDesktop.matches) {
-      largemenu.addEventListener('mouseover', () => {
-        block.classList.add('exl-overlay');
-        largemenuAnchor.classList.add('active');
-      });
-
-      largemenu.addEventListener('mouseout', () => {
-        block.classList.remove('exl-overlay');
-        largemenuAnchor.classList.remove('active');
-      });
-    } else if (isMobile.matches) {
-      largemenuAnchor.addEventListener('click', (event) => {
-        event.preventDefault();
-        largemenuAnchor.removeAttribute('href');
-        largemenuAnchor.nextElementSibling.removeAttribute('style');
-        largemenu.classList.toggle('is-expanded');
-      });
-
-      largemenuHeadings.forEach((heading) => {
-        heading.addEventListener('click', () => {
-          heading.parentElement.parentElement.parentElement.classList.toggle(
-            'show',
-          );
-        });
-      });
-    }
-  });
-
-  // Assign redirects to sub menu anchor links
-  const subMenuAnchorLinks = block.querySelectorAll('.exl-subnav-wrapper a');
-
-  subMenuAnchorLinks.forEach((submenuanchor) => {
-    if (submenuanchor.getAttribute('href').indexOf('#_blank') !== -1) {
-      submenuanchor.classList.add('redirect');
-    }
-  });
-}
-
-/**
- * decorates the header, mainly the nav
- * @param {Element} block The header block element
- */
-export default async function decorate(block) {
-  displayHeaderContent(block);
-  exlCurtain();
-  exlHamburger(block);
-  exlBrand(block);
-  decorateExlNavigation(block);
-  decorateSearchContent(block);
-  manageLocale(block);
-  decorateSubNavigation(block);
-  await decorateIcons(block);
+  decorateIcons(headerBlock);
 }

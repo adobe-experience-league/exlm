@@ -1,1015 +1,197 @@
 @import '../../styles/sass/breakpoints';
+@import '../../styles/sass/mixins';
 
-.exl-curtain {
-  display: none;
-  opacity: 0;
-
-  @include custom-breakpoint(custom) {
-    background: rgba(0 0 0 / 50%);
-    height: 100%;
-    left: 0;
-    overflow: hidden;
-    position: fixed;
-    transition: all 200ms;
-    top: 65px;
-    width: 100%;
-    z-index: 9;
-  }
-}
-
-.header .exl-topnav > div {
-  align-items: center;
-  display: flex;
-  gap: 36px;
-  justify-content: space-between;
+:root {
+  --header-padding-x: 0px;
+  --brand-desktop-display: none;
+  --brand-mobile-display: flex;
+  --search-display: none;
+  --sign-up-display: none;
+  --sign-in-display: flex;
+  --language-selector-display: none;
+  --adobe-logo-display: none;
+  --nav-hamburger-display: block;
+  --nav-order: 1;
+  --brand-order: 2;
+  --sign-in-order: 3;
 
   @include breakpoint(custom) {
-    gap: 16px;
-  }
-
-  @include custom-breakpoint(custom) {
-    background: var(--non-spectrum-bg);
-    display: block;
-    height: 100%;
-    left: -360px;
-    max-width: 360px;
-    overflow-y: scroll;
-    padding: 0;
-    position: fixed;
-    transition: all 200ms ease-in-out;
-    top: 65px;
-    width: 100%;
-    z-index: 9;
-  }
-
-  @include custom-breakpoint(tablet) {
-    height: auto;
-    left: -600px;
-    max-width: 600px;
+    --brand-desktop-display: block;
+    --brand-mobile-display: none;
+    --search-display: block;
+    --language-selector-display: block;
+    --adobe-logo-display: block;
+    --nav-hamburger-display: none;
+    --nav-order: unset;
+    --brand-order: unset;
+    --sign-in-order: unset;
   }
 }
 
-body.is-shown .exl-topnav > div {
-  left: 0;
+@mixin button-reset {
+  border-radius: 0;
+  margin: 0;
+  text-align: left;
+  background: none;
 }
 
-body.is-shown {
-  overflow: hidden;
-
-  & .exl-curtain {
-    opacity: 1;
-    display: block;
-  }
+header {
+  position: relative;
 }
 
 .header {
-  border-bottom: 1px solid var(--spectrum-gray-200);
-  font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-100);
-  height: var(--nav-height);
-  padding: 0 29px;
-
-  @include custom-breakpoint(custom) {
-    background: var(--background-color);
-    position: fixed;
-    width: 100%;
-    left: 0;
-    top: 0;
-  }
-
-  &-wrapper {
-    position: relative;
-    z-index: 11;
-  }
-
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  ul {
-    list-style: none;
-    margin: 0;
-  }
-
-  & a {
-    color: var(--spectrum-gray-800);
-    font-size: var(--spectrum-font-size-100);
-    font-weight: var(--font-weight-400);
-    text-decoration: none;
-
-    &:hover {
-      color: var(--spectrum-gray-800);
-      text-decoration: none;
-    }
-  }
-
-  & .exl-nav-item > a {
-    border-bottom: 2px solid transparent;
-    display: inline-block;
-    height: 64px;
-    line-height: 21px;
-    margin: 0;
-    padding: 23px 20px;
-
-    @media (width <= 1350px) {
-      padding: 23px 12px;
-    }
-
-    @include custom-breakpoint(desktop-lg) {
-      padding: 23px 16px;
-    }
-
-    @include custom-breakpoint(custom) {
-      height: auto;
-    }
-  }
-
-  & .language-selector > a {
-    background: url('../../icons/globegrid.svg') 0 24px no-repeat;
-    background-size: contain;
-    display: inline-block;
-    font-weight: var(--font-weight-600);
-    height: var(--nav-height);
-    margin: 0;
-    vertical-align: middle;
-    width: 18px;
-    text-indent: -99999px;
-
-    @include custom-breakpoint(custom) {
-      background: none;
-      color: var(--spectrum-gray-800);
-      display: block;
-      font-size: var(--spectrum-font-size-75);
-      letter-spacing: 0.72px;
-      padding: 0 24px;
-      text-indent: 0;
-      text-transform: uppercase;
-      width: auto;
-
-      &::after {
-        border-width: 0 1.5px 1.5px 0;
-        border-style: solid;
-        border-color: var(--spectrum-gray-800);
-        box-sizing: content-box;
-        content: '';
-        display: flex;
-        height: 6px;
-        position: absolute;
-        right: 30px;
-        transform-origin: 75% 75%;
-        transform: rotateZ(45deg);
-        transition: transform 0.1s ease;
-        top: 4px;
-        width: 6px;
-      }
-    }
-  }
-
-  & .language-dropdown a {
-    color: var(--spectrum-gray-800);
-    cursor: pointer;
-    display: block;
-    padding: 3px 25px;
-    white-space: nowrap;
-    margin: 0;
-
-    & .icon.icon-checkmark {
-      display: inline-block;
-      height: 16px;
-      position: absolute;
-      right: 10px;
-      top: 6px;
-      width: 16px;
-    }
-  }
-
-  & .exl-subnav-wrapper a {
-    color: var(--spectrum-gray-700);
-    line-height: 17px;
-    margin: 0;
-
-    &.redirect {
-      display: inline-block;
-      position: relative;
-
-      &::after {
-        background: url('../../icons/redirect.png') 0 0 no-repeat;
-        background-size: cover;
-        content: '';
-        right: -10px;
-        position: absolute;
-        top: 11px;
-        width: 15px;
-        height: 15px;
-
-        @include custom-breakpoint(custom) {
-          right: -15px;
-          top: 2px;
-        }
-      }
-    }
-  }
-
-  & .adobe-logo > a {
-    background: url('../../icons/adobe-red-logo.svg') 0 5px no-repeat;
-    display: inline-block;
-    text-indent: -99999px;
-    width: 22px;
-    margin: 0;
-  }
-
-  & .exl-subnav-wrapper ul li a {
-    border-radius: 4px;
-    display: block;
-    margin: 0;
-    padding: 10px 12px;
-
-    @include custom-breakpoint(custom) {
-      margin-top: 16px;
-      padding: 0 8px;
-    }
-  }
-
-  & .exl-nav-item:last-child > a {
-    background: var(--spectrum-blue-900);
-    border-radius: 16px;
-    color: var(--spectrum-gray-50);
-    display: inline-block;
-    font-size: var(--spectrum-font-size-100);
-    font-weight: var(--font-weight-600);
-    height: inherit;
-    line-height: inherit;
-    padding: 5px 16px;
-    white-space: nowrap;
-
-    @include custom-breakpoint(custom) {
-      line-height: inherit;
-      position: fixed;
-      right: 20px;
-      top: 16px;
-      text-transform: inherit;
-    }
-  }
-
-  & .exl-subnav-wrapper p {
-    color: var(--spectrum-gray-700);
-    font-size: var(--spectrum-font-size-50);
-    letter-spacing: normal;
-    line-height: 14.3px;
-    margin: 0;
-
-    & a.redirect {
-      &::after {
-        right: -20px;
-        top: 2px;
-      }
-    }
-  }
-
-  & .language-dropdown a:hover {
-    background-color: var(--non-spectrum-hover-bg);
-  }
-
-  & .exl-subnav-wrapper .browse-all-content {
-    grid-column: 1/3;
-    text-align: right;
-
-    @include custom-breakpoint(custom) {
-      display: none;
-    }
-
-    & a {
-      color: var(--spectrum-blue-900);
-      font-size: var(--spectrum-font-size-100);
-      line-height: 18.2px;
-      letter-spacing: normal;
-      position: relative;
-
-      &::after {
-        content: '>';
-        position: absolute;
-        right: -15px;
-        top: 0;
-      }
-    }
-  }
-
-  & .exl-subnav-wrapper .link-group p {
-    font-size: 12px;
-  }
-
-  & .exl-topnav {
-    font-size: var(--spectrum-font-size-100);
-    max-width: var(--non-spectrum-max-width);
-    margin: 0 auto;
-
-    & .quick-links div > p:nth-child(2) {
-      @include custom-breakpoint(custom) {
-        display: none;
-      }
-    }
-
-    & .profile {
-      @include custom-breakpoint(custom) {
-        display: none;
-      }
-
-      & a {
-        color: var(--spectrum-gray-800);
-        margin: 0;
-        white-space: nowrap;
-      }
-
-      > div:nth-child(1) p {
-        display: none;
-        margin: 0;
-
-        &:first-child {
-          display: block;
-        }
-      }
-    }
-
-    & .exl-brand-container h2,
-    & .exl-brand-container h2 a {
-      color: var(--spectrum-gray-800);
-      font-size: var(--spectrum-font-size-200);
-      font-weight: var(--font-weight-600);
-      line-height: inherit;
-      margin: 0;
-    }
-
-    & .exl-nav-item.large-menu {
-      position: relative;
-
-      & > a {
-        display: inline-block;
-        padding-right: 37px;
-        position: relative;
-
-        @media (width <= 1350px) {
-          padding-right: 28px;
-        }
-
-        @include custom-breakpoint(custom) {
-          display: block;
-        }
-
-        &::after {
-          border-width: 0 1.9px 1.9px 0;
-          border-style: solid;
-          border-color: var(--spectrum-gray-800);
-          box-sizing: content-box;
-          content: '';
-          display: flex;
-          height: 6px;
-          position: absolute;
-          right: 20px;
-          transform-origin: 75% 75%;
-          transform: rotateZ(45deg);
-          transition: transform 0.1s ease;
-          top: 29px;
-          width: 6px;
-
-          @media (width <= 1350px) {
-            right: 15px;
-          }
-
-          @include custom-breakpoint(custom) {
-            right: 30px;
-            transform: rotateZ(45deg);
-            top: 13px;
-          }
-        }
-
-        &.active::after {
-          @include breakpoint(custom) {
-            transform: rotateZ(225deg);
-          }
-        }
-      }
-
-      &:first-child > a:first-child {
-        @include custom-breakpoint(custom) {
-          padding-bottom: 10px;
-          padding-top: 26px;
-
-          &::after {
-            top: 27px;
-          }
-        }
-      }
-
-      & .exl-subnav-wrapper ul li a:hover {
-        background: var(--spectrum-gray-200);
-        border-radius: 4px;
-        color: var(--spectrum-gray-700);
-      }
-    }
-
-    & .exl-subnav-wrapper > div {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-
-      @include custom-breakpoint(custom) {
-        display: block;
-      }
-    }
-
-    & .exl-subnav-wrapper h5 {
-      color: var(--spectrum-gray-700);
-      font-size: var(--spectrum-font-size-75);
-      font-weight: var(--spectrum-extra-bold-font-weight);
-      letter-spacing: 0.72px;
-      line-height: 18px;
-      position: relative;
-      text-transform: uppercase;
-
-      &::after {
-        @include custom-breakpoint(custom) {
-          border-width: 0 1.5px 1.5px 0;
-          border-style: solid;
-          border-color: var(--spectrum-gray-800);
-          box-sizing: content-box;
-          content: '';
-          display: flex;
-          height: 6px;
-          position: absolute;
-          right: 20px;
-          transform-origin: 75% 75%;
-          transform: rotateZ(45deg);
-          transition: transform 0.1s ease;
-          top: 0;
-          width: 6px;
-        }
-      }
-    }
-
-    & .exl-subnav-wrapper > div > div:nth-child(1) h5 {
-      margin-bottom: 15px;
-
-      @include custom-breakpoint(custom) {
-        margin-top: 15px;
-      }
-    }
-
-    & .exl-subnav-wrapper > div > div:nth-child(2) h5 {
-      margin-bottom: 15px;
-
-      @include custom-breakpoint(custom) {
-        margin-top: 15px;
-      }
-    }
-
-    & .exl-subnav-wrapper .two-section div:nth-child(2) h5 {
-      margin-top: 15px;
-    }
-
-    & .search > div:nth-child(1) {
-      align-items: center;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    & .profile > div:nth-child(2) {
-      display: none;
-    }
-  }
-
-  & .nav-hamburger {
-    display: none;
-
-    @include custom-breakpoint(custom) {
-      display: block;
-      height: 9px;
-      padding: 10px;
-      position: relative;
-      top: 22px;
-      width: 18px;
-      z-index: 10;
-
-      & > span {
-        background-color: var(--spectrum-gray-700);
-        display: inline-block;
-        height: 2px;
-        position: absolute;
-        left: 3px;
-        transition: all 200ms ease-in-out;
-        top: 6px;
-        width: 14px;
-
-        &:nth-child(2) {
-          top: 10px;
-        }
-
-        &:nth-child(3) {
-          top: 14px;
-        }
-      }
-
-      &.is-active {
-        > span {
-          &:nth-child(1) {
-            transform: rotate(45deg);
-            top: 10px;
-          }
-
-          &:nth-child(2) {
-            display: none;
-          }
-
-          &:nth-child(3) {
-            transform: rotate(-45deg);
-            top: 10px;
-          }
-        }
-      }
-    }
-  }
-
-  & .exl-nav {
-    align-items: center;
+  padding: 0 var(--header-padding-x);
+  height: 100%;
+  position: relative;
+
+  > nav {
     display: flex;
-    flex-grow: 1;
-    height: var(--nav-height);
-    justify-content: flex-start;
-
-    @include custom-breakpoint(custom) {
-      display: block;
-      height: auto;
-
-      &-item {
-        & > a {
-          color: var(--spectrum-gray-800);
-          display: block;
-          font-size: var(--spectrum-font-size-75);
-          font-weight: var(--font-weight-600);
-          line-height: 15px;
-          letter-spacing: 0.72px;
-          margin: 0;
-          padding: 12px 24px;
-          position: relative;
-          text-transform: uppercase;
-        }
-
-        &:first-child > a {
-          margin-top: 0;
-        }
-      }
-    }
+    flex-direction: row;
+    justify-content: space-between;
+    height: 100%;
   }
 
-  & .exl-topnav .exl-brand-container {
-    white-space: nowrap;
-
-    @include custom-breakpoint(custom) {
-      left: 7%;
-      margin: 0;
-      position: fixed;
-      top: 14px;
-      width: 75%;
-      text-align: center;
-      z-index: 2;
-    }
+  .brand {
+    order: var(--brand-order);
   }
 
-  & .exl-subnav-wrapper {
-    background: var(--spectrum-gray-100);
-    display: none;
-    min-width: 600px;
-    padding: 24px;
-    position: absolute;
-    left: 0;
-    top: 65px;
-    transition: all 200ms;
-    z-index: 10;
-
-    @include custom-breakpoint(custom) {
-      min-width: auto;
-      padding: 0 24px;
-      position: static;
-    }
-
-    & ul {
-      list-style: none;
-      margin-left: 15px;
-
-      @include custom-breakpoint(custom) {
-        margin-left: 0;
-      }
-    }
-
-    & ul li {
-      color: var(--spectrum-gray-700);
-      font-size: var(--spectrum-font-size-100);
-      font-weight: var(--font-weight-600);
-      letter-spacing: normal;
-      line-height: 17px;
-      margin: 0;
-    }
-
-    & .communities-by-product > div:nth-child(2) {
-      @include custom-breakpoint(custom) {
-        display: none;
-      }
-    }
-
-    & .featured-products {
-      @include custom-breakpoint(custom) {
-        display: none;
-      }
-    }
-
-    & .two-section > div:nth-child(1) {
-      @include custom-breakpoint(custom) {
-        display: none;
-      }
-    }
-
-    & .quick-links div:not(:first-child) {
-      margin-bottom: 20px;
-      margin-left: 24px;
-
-      @include custom-breakpoint(custom) {
-        display: none;
-        margin-bottom: 0;
-        margin-left: 7px;
-        padding-bottom: 5px;
-      }
-    }
-
-    & > div:nth-child(2) > div:nth-child(2) {
-      margin-top: 32px;
-    }
-
-    & .two-section div:nth-child(2) > div {
-      margin-bottom: 20px;
-      margin-left: 24px;
-
-      @include custom-breakpoint(custom) {
-        margin-bottom: 20px;
-        margin-left: 0;
-      }
-    }
-
-    & .two-section > div:nth-child(2) > div:first-child {
-      @include custom-breakpoint(custom) {
-        display: none;
-      }
-    }
-
-    & .two-section > div:nth-child(2) > div > p:nth-child(2) {
-      @include custom-breakpoint(custom) {
-        display: none;
-      }
-    }
-
-    & .featured-products,
-    & .communities-by-product {
-      @include custom-breakpoint(custom) {
-        border-bottom: 1px solid var(--spectrum-gray-200);
-        border-top: 1px solid var(--spectrum-gray-200);
-        padding: 0 0 19px;
-        margin-top: 19px;
-      }
-
-      @include custom-breakpoint(custom) {
-        &.show {
-          & h5::after {
-            transform: rotateZ(225deg);
-          }
-
-          & > div:nth-child(2) {
-            display: block;
-            padding-bottom: 19px;
-          }
-        }
-      }
-    }
-
-    & .quick-links {
-      @include custom-breakpoint(custom) {
-        margin: 0 12px;
-
-        &.show {
-          & h5::after {
-            transform: rotateZ(225deg);
-          }
-
-          & > div:not(:first-child):nth-child(2) {
-            display: block;
-          }
-        }
-      }
-    }
-
-    & .communities-by-product {
-      @include custom-breakpoint(custom) {
-        margin: 0 12px;
-        padding: 0;
-      }
-    }
+  .brand-desktop {
+    display: var(--brand-desktop-display);
   }
 
-  & .exl-nav-item > a.active {
+  .brand-mobile {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav {
+    order: var(--nav-order);
+
     @include breakpoint(custom) {
-      border-bottom: 2px solid var(--spectrum-gray-700);
-
-      &::after {
-        transform: rotateZ(225deg);
-      }
-    }
-
-    background: var(--spectrum-gray-100);
-
-    & + .exl-subnav-wrapper {
       display: block;
-
-      @include custom-breakpoint(custom) {
-        display: none;
-      }
     }
   }
 
-  & .exl-nav-item.large-menu.is-expanded {
-    &:first-child {
-      border-bottom: 1px solid var(--spectrum-gray-200);
+  .nav-wrapper {
+    display: none;
+
+    ul {
+      margin: 0;
     }
 
-    > a::after {
-      transform: rotateZ(225deg);
+    li {
+      display: block;
+      line-height: 1.5;
+      position: relative;
     }
 
-    & .exl-subnav-wrapper {
-      display: none;
-
-      @include custom-breakpoint(custom) {
-        display: block;
-      }
+    > ul {
+      max-height: 100%;
     }
   }
 
-  & .exl-nav-action {
-    align-items: center;
-    display: flex;
-    gap: 15px;
+  .nav-wrapper-expanded {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    right: 0;
+    background-color: #fafafa;
+  }
+
+  .nav-item {
+    border-bottom: 2px solid #f5f5f5;
+    padding-left: 1rem;
+  }
+
+  .nav-item-toggle {
+    @include button-reset;
+
+    color: #4a4a4a !important;
     justify-content: space-between;
     position: relative;
+    width: 100%;
+    padding: 0.5rem 0.5rem 0.5rem 0;
 
-    @include custom-breakpoint(custom) {
-      gap: 5px;
-      display: block;
-    }
-  }
-
-  & .adobe-logo {
-    @include custom-breakpoint(custom) {
-      display: none;
-    }
-  }
-
-  & .language-selector .language-dropdown ul li {
-    margin: 0;
-    position: relative;
-  }
-
-  & .search {
-    position: relative;
-
-    @include custom-breakpoint(custom) {
-      display: block;
-      position: fixed;
-      right: 30px;
-      top: 35px;
-    }
-
-    @include custom-breakpoint(tablet) {
-      border-top: 1px solid var(--spectrum-gray-200);
-      position: static;
-    }
-
-    & .exl-search-input {
-      border: 1px solid var(--spectrum-gray-400);
-      border-top-left-radius: 4px;
-      border-bottom-left-radius: 4px;
-      box-shadow: none;
-      color: var(--non-spectrum-input-text);
-      outline: none;
-      font-family: var(--body-font-family);
-      font-size: var(--spectrum-font-size-100);
-      height: 30px;
-      line-height: 17px;
-      padding: 7px 5px 9px 28px;
-      width: 200px;
-
-      @media (width <= 1350px) {
-        width: 130px;
-      }
-
-      @include custom-breakpoint(desktop-lg) {
-        display: none;
-      }
-
-      &::placeholder {
-        color: var(--spectrum-gray-600);
-        font-size: var(--spectrum-font-size-75);
-        font-style: italic;
-        letter-spacing: 0.14px;
-      }
-    }
-
-    & .exl-search-icon {
-      height: 15px;
-      left: 7px;
+    &::after {
       position: absolute;
-      top: 7px;
-      width: 15px;
-
-      @include custom-breakpoint(desktop-lg) {
-        display: none;
-      }
-    }
-
-    & .exl-search-link {
-      display: none;
-      height: 18px;
-      left: 7px;
-      position: absolute;
-      top: 7px;
-      width: 18px;
-
-      & .label {
-        display: inline-block;
-        text-indent: -99999px;
-
-        @include custom-breakpoint(tablet) {
-          text-indent: inherit;
-        }
-      }
-
-      & .icon-search {
-        width: 18px;
-        height: 18px;
-
-        @include custom-breakpoint(tablet) {
-          display: none;
-        }
-      }
-
-      @include custom-breakpoint(desktop-lg) {
-        display: inline-block;
-        left: auto;
-        top: -20px;
-      }
-
-      @include custom-breakpoint(custom) {
-        left: -98px;
-        top: -23px;
-      }
-
-      @include custom-breakpoint(tablet) {
-        background: transparent;
-        display: block;
-        font-size: var(--spectrum-font-size-75);
-        font-weight: var(--font-weight-600);
-        letter-spacing: 0.72px;
-        line-height: 15px;
-        padding: 0 24px;
-        position: static;
-        text-indent: inherit;
-        text-transform: uppercase;
-        width: 100%;
-      }
-    }
-
-    & .exl-dropdown-picker {
-      align-items: center;
-      background: transparent;
-      border: 1px solid var(--spectrum-gray-400);
-      border-left: 0 none;
-      border-radius: 0;
-      border-top-right-radius: 4px;
-      border-bottom-right-radius: 4px;
-      box-shadow: none;
-      color: var(--spectrum-gray-700);
+      right: 18px;
+      top: 50%;
       display: flex;
-      font-family: var(--body-font-family);
-      font-size: var(--spectrum-font-size-75);
-      justify-content: space-between;
-      height: 30px;
-      line-height: 17px;
-      position: relative;
-      width: 105px;
-      padding: 7px;
-      text-align: right;
-
-      &::after {
-        border-width: 0 1.9px 1.9px 0;
-        border-style: solid;
-        border-color: var(--spectrum-gray-800);
-        box-sizing: content-box;
-        content: '';
-        display: flex;
-        height: 6px;
-        position: absolute;
-        right: 14px;
-        transform-origin: 75% 75%;
-        transform: rotateZ(45deg);
-        transition: transform 0.1s ease;
-        top: 9px;
-        width: 6px;
-      }
-
-      @include custom-breakpoint(desktop-lg) {
-        display: none;
-      }
-    }
-
-    & .exl-icon.arrow {
-      transform: rotateZ(180deg);
+      width: 6px;
+      height: 6px;
+      margin-top: -3px;
+      border-width: 0 1px 1px 0;
+      border-style: solid;
+      transform-origin: 75% 75%;
+      transform: rotateZ(45deg);
       transition: transform 0.1s ease;
-    }
-
-    & .search-popover {
-      background: var(--spectrum-gray-50);
-      border: 1px solid var(--spectrum-gray-400);
-      display: none;
-      right: 0;
-      width: 105px;
-      position: absolute;
-      top: 29px;
-      z-index: 11;
-
-      & ul {
-        list-style: none;
-      }
-
-      & ul li {
-        cursor: pointer;
-        font-size: var(--spectrum-font-size-100);
-        padding: 2px 8px;
-        margin: 0;
-
-        &:hover {
-          background: var(--non-spectrum-hover-bg);
-        }
-      }
-    }
-
-    &.show .search-popover {
-      display: block;
-    }
-
-    &.show .exl-dropdown-picker::after {
-      transform: rotateZ(225deg);
+      content: '';
+      box-sizing: content-box;
     }
   }
 
-  & .language-selector {
-    height: var(--nav-height);
-    padding: 0 10px;
-    position: relative;
+  .nav-item-toggle[aria-expanded='true'] {
+    &::after {
+      transform: rotateZ(-135deg);
+    }
+  }
 
-    @include custom-breakpoint(custom) {
-      padding: 0;
+  .nav-item-content {
+    display: none;
+  }
+
+  .nav-item-content-expanded {
+    display: block;
+  }
+
+  .nav-hamburger {
+    display: var(--nav-hamburger-display);
+    width: 60px;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    color: #2d2d2d;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 300;
+
+    &::before {
+      content: '\2630'; // hamburger icon
     }
 
-    & .language-dropdown {
-      background: var(--non-spectrum-bg);
-      box-shadow: 0 8px 8px rgba(10 10 10 / 10%);
-      display: none;
-      left: 50%;
-      width: 120px;
-      position: absolute;
-      transform: translate(-50%, 0);
-      top: 64px;
-      z-index: 10;
-
-      @include custom-breakpoint(custom) {
-        box-shadow: none;
-        top: 35px;
-        width: 95%;
-      }
+    &[aria-expanded='true']::before {
+      content: '\2715'; // close icon
     }
+  }
 
-    &.active {
-      background: var(--non-spectrum-bg);
+  .sign-up {
+    display: var(--sign-up-display);
+  }
 
-      @include custom-breakpoint(custom) {
-        height: 100vh;
-      }
+  .search {
+    display: var(--search-display);
+  }
 
-      & .language-dropdown {
-        display: block;
-      }
+  .language-selector {
+    display: var(--language-selector-display);
+  }
 
-      @include custom-breakpoint(custom) {
-        & a::after {
-          transform: rotateZ(225deg);
-        }
-      }
+  .sign-in {
+    display: var(--sign-in-display);
+    order: var(--sign-in-order);
+
+    a {
+      @include button;
     }
+  }
+
+  .adobe-logo {
+    display: var(--adobe-logo-display);
   }
 }
