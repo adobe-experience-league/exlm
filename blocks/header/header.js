@@ -81,6 +81,9 @@ function htmlToElement(html) {
   return template.content.firstChild;
 }
 
+/**
+ * @param {HTMLUListElement} ul
+ */
 const buildNavItems = (ul) => {
   [...ul.children].forEach((navItem, index) => {
     navItem.classList.add('nav-item');
@@ -89,7 +92,7 @@ const buildNavItems = (ul) => {
     if (content) {
       const firstEl = navItem.firstElementChild;
       const toggler = htmlToElement(
-        `<button class="nav-item-toggle" aria-controls="${controlName}" aria-expanded="false">${firstEl.innerHTML}</button>`,
+        `<button class="nav-item-toggle" aria-controls="${controlName}" aria-expanded="false">${firstEl.textContent}</button>`,
       );
       firstEl.replaceWith(toggler);
       content.setAttribute('id', controlName);
@@ -102,7 +105,7 @@ const buildNavItems = (ul) => {
       });
       buildNavItems(content);
     } else {
-      // navItem.classList.add('nav-item--leaf');
+      navItem.classList.add('nav-item-leaf');
     }
   });
 };

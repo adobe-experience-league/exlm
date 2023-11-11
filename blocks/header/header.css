@@ -1,6 +1,6 @@
 @charset "UTF-8";
 :root {
-  --header-padding-x: 0px;
+  --header-padding-x: 16px;
   --brand-desktop-display: none;
   --brand-mobile-display: flex;
   --search-display: none;
@@ -29,10 +29,11 @@
 
 header {
   position: relative;
+  box-sizing: content-box;
 }
 
 .header {
-  padding: 0 var(--header-padding-x);
+  padding-right: var(--header-padding-x);
   height: 100%;
   position: relative;
 }
@@ -49,7 +50,6 @@ header {
   display: var(--brand-desktop-display);
 }
 .header .brand-mobile {
-  display: var(--brand-mobile-display);
   height: 100%;
   margin: 0;
   display: flex;
@@ -65,17 +65,15 @@ header {
 }
 .header .nav-wrapper {
   display: none;
-}
-.header .nav-wrapper ul {
-  margin: 0;
-}
-.header .nav-wrapper li {
-  display: block;
-  line-height: 1.5;
-  position: relative;
+  padding: 0.5rem 0;
+  box-shadow: 0 8px 16px rgba(10, 10, 10, 0.1);
 }
 .header .nav-wrapper > ul {
   max-height: 100%;
+  margin: 0;
+}
+.header .nav-wrapper p {
+  margin: 0;
 }
 .header .nav-wrapper-expanded {
   display: block;
@@ -86,19 +84,43 @@ header {
   background-color: #fafafa;
 }
 .header .nav-item {
-  border-bottom: 2px solid #f5f5f5;
-  padding-left: 1rem;
+  display: block;
+  line-height: 1.5;
+  position: relative;
+  padding: 0;
+  margin: 0;
+  line-height: 2;
+}
+.header .nav-item > * {
+  padding-left: var(--header-padding-x) !important;
+  padding-right: var(--header-padding-x) !important;
+}
+.header .nav-item a {
+  color: #4a4a4a;
+  display: block;
+  line-height: 1.5;
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  position: relative;
+  margin: 0;
+  font-size: 14px;
+  font-weight: inherit;
+}
+.header .nav-item-leaf > *:not(:first-child) {
+  display: none;
 }
 .header .nav-item-toggle {
   border-radius: 0;
   margin: 0;
+  border: 0;
   text-align: left;
   background: none;
+  font-weight: initial;
   color: #4a4a4a !important;
   justify-content: space-between;
   position: relative;
   width: 100%;
-  padding: 0.5rem 0.5rem 0.5rem 0;
+  padding: 0.5rem;
+  line-height: 2;
 }
 .header .nav-item-toggle::after {
   position: absolute;
@@ -116,19 +138,21 @@ header {
   content: "";
   box-sizing: content-box;
 }
+.header .nav-item-toggle[aria-expanded=true] {
+  border-bottom: 2px solid var(--non-spectrum-silver);
+}
 .header .nav-item-toggle[aria-expanded=true]::after {
   transform: rotateZ(-135deg);
 }
 .header .nav-item-content {
   display: none;
+  margin: 0;
 }
 .header .nav-item-content-expanded {
   display: block;
 }
 .header .nav-hamburger {
   display: var(--nav-hamburger-display);
-  background: none;
-  cursor: pointer;
   width: 60px;
   height: 100%;
   margin: 0;
@@ -141,10 +165,10 @@ header {
   font-size: 20px;
   font-weight: 300;
 }
-.header .nav-hamburger:before {
+.header .nav-hamburger::before {
   content: "☰";
 }
-.header .nav-hamburger[aria-expanded=true]:before {
+.header .nav-hamburger[aria-expanded=true]::before {
   content: "✕";
 }
 .header .sign-up {
@@ -159,6 +183,7 @@ header {
 .header .sign-in {
   display: var(--sign-in-display);
   order: var(--sign-in-order);
+  align-items: center;
 }
 .header .sign-in a {
   background: var(--spectrum-blue-900);
@@ -167,10 +192,7 @@ header {
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-600);
   padding: 5px 16px;
-  padding-top: 5px;
-  padding-right: 16px;
-  padding-bottom: 5px;
-  padding-left: 16px;
+  padding: 5px 16px;
   white-space: nowrap;
   line-height: unset;
 }
