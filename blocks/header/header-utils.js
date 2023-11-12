@@ -36,7 +36,9 @@ export const registerResizeHandler = (callback) => {
       }),
     );
     // observe immediately
-    window.pageResizeObserver.observe(document.body, { box: 'border-box' });
+    pageResizeObserver.observe(document.querySelector('header'), {
+      box: 'border-box',
+    });
     window.pageResizeObserver = pageResizeObserver;
   }
   // push handler
