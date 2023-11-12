@@ -85,17 +85,20 @@ header {
   }
 
   > nav {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-areas: 'nav brand sign-in';
     justify-content: space-between;
     height: 100%;
 
     @include breakpoint(custom) {
       width: 100%;
+      grid-template-areas: 'brand nav sign-up search language sign-in adobe-log';
+      grid-template-columns: auto 1fr 1fr;
     }
   }
 
   .brand {
+    grid-area: brand;
     order: var(--brand-order);
 
     @include breakpoint(custom) {
@@ -121,6 +124,7 @@ header {
   }
 
   .sign-up {
+    grid-area: sign-up;
     display: var(--sign-up-display);
     align-items: center;
 
@@ -130,16 +134,27 @@ header {
   }
 
   .sign-in {
+    grid-area: sign-in;
     display: var(--sign-in-display);
     order: var(--sign-in-order);
     align-items: center;
 
     a {
       color: #000;
+
+      @include button;
+
+      @include breakpoint(custom) {
+        @include button-reset;
+
+        color: #000;
+        padding: var(--nav-root-item-padding-x);
+      }
     }
   }
 
   .nav {
+    grid-area: nav;
     order: var(--nav-order);
 
     @include breakpoint(custom) {
@@ -149,7 +164,7 @@ header {
 
   .nav-wrapper {
     display: none;
-    padding: 0.5rem 0;
+    padding: 0.5rem var(--header-padding-x);
     box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
 
     @include breakpoint(custom) {
@@ -194,6 +209,26 @@ header {
       left: initial;
       right: initial;
       background-color: initial;
+    }
+  }
+
+  .nav-item-root {
+    a {
+      padding-left: 0;
+
+      @include breakpoint(custom) {
+        padding: var(--nav-root-item-padding-x);
+      }
+    }
+
+    @include breakpoint(custom) {
+      > .nav-item-content {
+        padding: 24px 12px;
+
+        > .nav-item {
+          width: 224px;
+        }
+      }
     }
   }
 
@@ -260,18 +295,6 @@ header {
         margin-top: -10px; // bring subtitle close to title
         padding: 0 24px;
         line-height: 1.5;
-      }
-    }
-  }
-
-  .nav-item-root {
-    @include breakpoint(custom) {
-      > .nav-item-content {
-        padding: 24px 12px;
-
-        > .nav-item {
-          width: 224px;
-        }
       }
     }
   }
@@ -410,6 +433,7 @@ header {
   }
 
   .search {
+    grid-area: search;
     display: var(--search-display);
     align-items: center;
     padding: var(--nav-root-item-padding-x);
@@ -490,6 +514,7 @@ header {
   }
 
   .language-selector {
+    grid-area: language;
     display: var(--language-selector-display);
     align-items: center;
     padding: var(--nav-root-item-padding-x);
@@ -509,6 +534,7 @@ header {
   }
 
   .adobe-logo {
+    grid-area: adobe-log;
     display: var(--adobe-logo-display);
     align-items: center;
 

@@ -56,17 +56,20 @@ header {
   }
 }
 .header > nav {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-areas: "nav brand sign-in";
   justify-content: space-between;
   height: 100%;
 }
 @media (min-width: 1024px) {
   .header > nav {
     width: 100%;
+    grid-template-areas: "brand nav sign-up search language sign-in adobe-log";
+    grid-template-columns: auto 1fr 1fr;
   }
 }
 .header .brand {
+  grid-area: brand;
   order: var(--brand-order);
 }
 @media (min-width: 1024px) {
@@ -90,6 +93,7 @@ header {
   align-items: center;
 }
 .header .sign-up {
+  grid-area: sign-up;
   display: var(--sign-up-display);
   align-items: center;
 }
@@ -105,14 +109,38 @@ header {
   line-height: unset;
 }
 .header .sign-in {
+  grid-area: sign-in;
   display: var(--sign-in-display);
   order: var(--sign-in-order);
   align-items: center;
 }
 .header .sign-in a {
   color: #000;
+  background: var(--spectrum-blue-900);
+  border-radius: 16px;
+  color: var(--spectrum-gray-50);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-600);
+  padding: 5px 16px;
+  padding: 5px 16px;
+  white-space: nowrap;
+  line-height: unset;
+}
+@media (min-width: 1024px) {
+  .header .sign-in a {
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    text-align: left;
+    background: none;
+    font-weight: initial;
+    color: #000;
+    padding: var(--nav-root-item-padding-x);
+  }
 }
 .header .nav {
+  grid-area: nav;
   order: var(--nav-order);
 }
 @media (min-width: 1024px) {
@@ -122,7 +150,7 @@ header {
 }
 .header .nav-wrapper {
   display: none;
-  padding: 0.5rem 0;
+  padding: 0.5rem var(--header-padding-x);
   box-shadow: 0 8px 16px rgba(10, 10, 10, 0.1);
 }
 @media (min-width: 1024px) {
@@ -229,6 +257,14 @@ header {
   margin-top: -10px;
   padding: 0 24px;
   line-height: 1.5;
+}
+.header .nav-item-root a {
+  padding-left: 0;
+}
+@media (min-width: 1024px) {
+  .header .nav-item-root a {
+    padding: var(--nav-root-item-padding-x);
+  }
 }
 @media (min-width: 1024px) {
   .header .nav-item-root > .nav-item-content {
@@ -381,6 +417,7 @@ header {
   }
 }
 .header .search {
+  grid-area: search;
   display: var(--search-display);
   align-items: center;
   padding: var(--nav-root-item-padding-x);
@@ -465,6 +502,7 @@ header {
   display: none;
 }
 .header .language-selector {
+  grid-area: language;
   display: var(--language-selector-display);
   align-items: center;
   padding: var(--nav-root-item-padding-x);
@@ -486,6 +524,7 @@ header {
   display: none;
 }
 .header .adobe-logo {
+  grid-area: adobe-log;
   display: var(--adobe-logo-display);
   align-items: center;
 }
