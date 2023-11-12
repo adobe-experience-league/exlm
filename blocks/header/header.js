@@ -36,6 +36,16 @@ const getCell = (block, row, cell) =>
     `:scope > div:nth-child(${row}) > div:nth-child(${cell})`,
   );
 
+/**
+ * creates an element from html string
+ * @param {string} html
+ */
+function htmlToElement(html) {
+  const template = document.createElement('template');
+  const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
+  template.innerHTML = trimmedHtml;
+  return template.content.firstChild;
+}
 // fetch fragment html
 const fetchFragment = async (rePath, lang = 'en') => {
   const response = await fetch(`/fragments/${lang}/${rePath}.plain.html`);
@@ -44,7 +54,10 @@ const fetchFragment = async (rePath, lang = 'en') => {
 // Mobile Only (Until 1024px)
 const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
-/** @param {HTMLElement} brandBlock */
+/**
+ * Decorates the brand block
+ * @param {HTMLElement} brandBlock
+ * */
 const brandDecorator = (brandBlock) => {
   simplifySingleCellBlock(brandBlock);
 
@@ -69,13 +82,21 @@ const brandDecorator = (brandBlock) => {
   return brandBlock;
 };
 
+/**
+ * adds hambuger button to nav wrapper
+ * @param {HTMLElement} navWrapper
+ * @returns {HTMLButtonElement}
+ */
 const hamburgerButton = (navWrapper) => {
-  const button = document.createElement('button');
-  button.classList.add('nav-hamburger');
-  button.ariaLabel = 'Navigation menu';
-  button.ariaExpanded = 'false';
-  button.setAttribute('aria-haspopup', 'true');
-  button.setAttribute('aria-controls', 'nav-wrapper');
+  const navWrapperId = 'nav-wrapper';
+  const button = htmlToElement(`
+    <button 
+      class="nav-hamburger"
+      aria-label="Navigation menu"
+      aria-expanded="false"
+      aria-haspopup="true"
+      aria-controls="${navWrapperId}"></button>`);
+  navWrapper.id = navWrapperId;
   button.addEventListener('click', () => {
     const isExpanded = button.getAttribute('aria-expanded') === 'true';
     button.setAttribute('aria-expanded', !isExpanded);
@@ -84,15 +105,8 @@ const hamburgerButton = (navWrapper) => {
   return button;
 };
 
-/** @param {string} html */
-function htmlToElement(html) {
-  const template = document.createElement('template');
-  const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
-  template.innerHTML = trimmedHtml;
-  return template.content.firstChild;
-}
-
 /**
+ * Builds nav items from the provided basic list
  * @param {HTMLUListElement} ul
  */
 const buildNavItems = (ul, level = 0) => {
@@ -127,8 +141,10 @@ const buildNavItems = (ul, level = 0) => {
           });
         }
       };
+      // listen for page resize, update events accordingly
       registerResizeHandler(() => {
         if (isMobile()) {
+          // if mobile, add click event, remove mouseenter/mouseleave
           toggler.addEventListener('click', toggleExpandContent);
           toggler.parentElement.removeEventListener(
             'mouseenter',
@@ -139,6 +155,7 @@ const buildNavItems = (ul, level = 0) => {
             toggleExpandContent,
           );
         } else {
+          // if desktop, add mouseenter/mouseleave, remove click event
           toggler.removeEventListener('click', toggleExpandContent);
           if (level === 0) {
             toggler.parentElement.addEventListener(
@@ -155,17 +172,19 @@ const buildNavItems = (ul, level = 0) => {
       buildNavItems(content, level + 1);
     } else {
       navItem.classList.add('nav-item-leaf');
+      // if nav item is a leaf, remove the <p> wrapper
       const firstEl = navItem.firstElementChild;
       if (firstEl?.tagName === 'P') {
         if (firstEl.firstElementChild?.tagName === 'A') {
           firstEl.replaceWith(firstEl.firstElementChild);
         }
       }
+      // if nav item has a second element, it's a subtitle
       const secondEl = navItem.children[1];
       if (secondEl?.tagName === 'P') {
-        const subtitle = document.createElement('span');
-        subtitle.className = 'nav-item-subtitle';
-        subtitle.innerHTML = secondEl.innerHTML;
+        const subtitle = htmlToElement(
+          `<span class="nav-item-subtitle">${secondEl.innerHTML}</span>`,
+        );
         navItem.firstElementChild.appendChild(subtitle);
         secondEl.remove();
       }
@@ -173,12 +192,13 @@ const buildNavItems = (ul, level = 0) => {
   });
 };
 
-/** @param {HTMLElement} navBlock  */
+/**
+ * Decorates the nav block
+ * @param {HTMLElement} navBlock
+ */
 const navDecorator = (navBlock) => {
   simplifySingleCellBlock(navBlock);
-
-  const navWrapper = document.createElement('div');
-  navWrapper.classList.add('nav-wrapper');
+  const navWrapper = htmlToElement('<div class="nav-wrapper"></div>');
   const hamburger = hamburgerButton(navWrapper);
   navWrapper.replaceChildren(hamburger, ...navBlock.children);
   navBlock.replaceChildren(navWrapper);
@@ -193,6 +213,10 @@ const navDecorator = (navBlock) => {
   return navBlock;
 };
 
+/**
+ * Decorates the search block
+ * @param {HTMLElement} searchBlock
+ */
 const searchDecorator = (searchBlock) => {
   const title = getCell(searchBlock, 1, 1)?.firstChild;
   const searchOptions =
@@ -204,7 +228,7 @@ const searchDecorator = (searchBlock) => {
     )
     .join('');
 
-  const searchHtml = `<div>
+  searchBlock.innerHTML = `<div>
     <div class="search-short">
       <a href="https://experienceleague.adobe.com/search.html">
         <span class="icon icon-search"></span>
@@ -221,17 +245,23 @@ const searchDecorator = (searchBlock) => {
       </div>
     <div>
   </div>`;
-
-  searchBlock.innerHTML = searchHtml;
   decorateIcons(searchBlock);
   return searchBlock;
 };
 
+/**
+ * Decorates the sign-up block
+ * @param {HTMLElement} signUpBlock
+ */
 const signUpDecorator = (signUpBlock) => {
   simplifySingleCellBlock(signUpBlock);
   return signUpBlock;
 };
 
+/**
+ * Decorates the language-selector block
+ * @param {HTMLElement} languageBlock
+ */
 const languageDecorator = (languageBlock) => {
   const title = getCell(languageBlock, 1, 1)?.firstChild;
   const languageOptions =
@@ -255,16 +285,27 @@ const languageDecorator = (languageBlock) => {
   return languageBlock;
 };
 
+/**
+ * Decorates the sign-in block
+ * @param {HTMLElement} signInBlock
+ */
 const signInDecorator = (signInBlock) => {
   simplifySingleCellBlock(signInBlock);
   return signInBlock;
 };
 
+/**
+ * Decorates the adobe-logo block
+ * @param {HTMLElement} adobeLogoBlock
+ */
 const adobeLogoDecorator = (adobeLogoBlock) => {
   simplifySingleCellBlock(adobeLogoBlock);
   return adobeLogoBlock;
 };
 
+/**
+ * an object that matches header block classes to their respective decorators
+ */
 const headerDecorators = {
   brand: brandDecorator,
   nav: navDecorator,
@@ -276,7 +317,7 @@ const headerDecorators = {
 };
 
 /**
- *
+ * Main header decorator, calls all the other decorators
  * @param {HTMLElement} headerBlock
  */
 export default async function decorate(headerBlock) {

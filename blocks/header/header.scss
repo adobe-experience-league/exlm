@@ -1,6 +1,9 @@
 @import '../../styles/sass/breakpoints';
 @import '../../styles/sass/mixins';
 
+// Mobile-First Header
+// All default styles apply to mobile, then custom breakpoint styles are applied (for desktop)
+
 :root {
   --header-padding-x: 16px;
   --brand-desktop-display: none;
@@ -97,6 +100,7 @@ header {
     }
   }
 
+  // Experience League left-side brand
   .brand {
     grid-area: brand;
     order: var(--brand-order);
@@ -123,6 +127,7 @@ header {
     align-items: center;
   }
 
+  // header sign-up
   .sign-up {
     grid-area: sign-up;
     display: var(--sign-up-display);
@@ -133,6 +138,7 @@ header {
     }
   }
 
+  // header sign-in
   .sign-in {
     grid-area: sign-in;
     display: var(--sign-in-display);
@@ -153,6 +159,7 @@ header {
     }
   }
 
+  // navigation
   .nav {
     grid-area: nav;
     order: var(--nav-order);
@@ -432,6 +439,7 @@ header {
     }
   }
 
+  // Search
   .search {
     grid-area: search;
     display: var(--search-display);
@@ -513,6 +521,7 @@ header {
     display: none;
   }
 
+  // language selector
   .language-selector {
     grid-area: language;
     display: var(--language-selector-display);
@@ -533,6 +542,7 @@ header {
     display: none;
   }
 
+  // adobe logo
   .adobe-logo {
     grid-area: adobe-log;
     display: var(--adobe-logo-display);
