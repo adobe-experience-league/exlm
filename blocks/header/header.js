@@ -262,26 +262,36 @@ const signUpDecorator = (signUpBlock) => {
  * Decorates the language-selector block
  * @param {HTMLElement} languageBlock
  */
-const languageDecorator = (languageBlock) => {
+const languageDecorator = async (languageBlock) => {
+  const popoverId = 'language-picker-popover';
+  const prependLanguagePopover = async (parent) => {
+    const languages = await fetchFragment('languages/languages');
+    let languagesEl = htmlToElement(languages);
+    languagesEl = languagesEl.querySelector('ul');
+    const languageOptions = languagesEl?.children || [];
+    const options = [...languageOptions]
+      .map(
+        (option) =>
+          `<span class="language-selector-label">${option.textContent}</span>`,
+      )
+      .join('');
+    const popover = htmlToElement(`
+      <div class="language-selector-popover" id="${popoverId}">
+        ${options}
+      </div>`);
+    parent.append(popover);
+  };
+
   const title = getCell(languageBlock, 1, 1)?.firstChild;
-  const languageOptions =
-    getCell(languageBlock, 1, 2)?.firstElementChild?.children || [];
-  const options = [...languageOptions]
-    .map(
-      (option) =>
-        `<span class="language-selector-label">${option.textContent}</span>`,
-    )
-    .join('');
 
   const languageHtml = `
       <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover" aria-label="${title}">
         <span class="icon icon-globegrid"></span>
       </button>
-      <div class="language-selector-popover" id="language-picker-popover">
-        ${options}
-      </div>`;
+    `;
   languageBlock.innerHTML = languageHtml;
   decorateIcons(languageBlock);
+  await prependLanguagePopover(languageBlock);
   return languageBlock;
 };
 
@@ -322,10 +332,7 @@ const headerDecorators = {
  */
 export default async function decorate(headerBlock) {
   // eslint-disable-next-line no-unused-vars
-  const [headerFragment, languagesFragment] = await Promise.all([
-    fetchFragment('header/header'),
-    fetchFragment('languages/languages'),
-  ]);
+  const headerFragment = await fetchFragment('header/header');
   headerBlock.innerHTML = headerFragment;
 
   const headerBlockFirstRow = getBlockFirstRow(headerBlock);
