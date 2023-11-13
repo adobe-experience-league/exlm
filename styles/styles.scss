@@ -614,6 +614,8 @@ img {
 
   @include breakpoint(tablet) {
     padding: 64px 32px;
+    max-width: var(--non-spectrum-max-width);
+    margin: auto;
   }
 
   /* section metadata */

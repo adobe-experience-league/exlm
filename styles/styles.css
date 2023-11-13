@@ -714,29 +714,19 @@ img {
 }
 
 .section {
-  padding: 64px var(--spectrum-spacing-500);
-
+  padding: 64px 16px;
   /* section metadata */
 }
-
 .section > .default-content-wrapper:last-child > p:last-child {
   margin-bottom: 0;
 }
-
-/* @media (min-width: 600px) {
+@media (min-width: 600px) {
   .section {
-    padding: 64px var(--spectrum-spacing-500);
-  }
-}
-*/
-
-@media (min-width: 900px) {
-  .section > div {
+    padding: 64px 32px;
     max-width: var(--non-spectrum-max-width);
     margin: auto;
   }
 }
-
 .section.highlight {
   background-color: var(--highlight-background-color);
 }
