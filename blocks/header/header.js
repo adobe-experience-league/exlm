@@ -150,16 +150,6 @@ function decorateExlNavigation(block) {
   });
 
   exlNav.parentNode.insertBefore(exlNavAction, exlNav.nextSibling);
-
-  const exlNavLastItem = document?.querySelector(
-    '.header .exl-nav-item:last-child > a',
-  );
-
-  if (isDesktop.matches) {
-    exlNavLastItem.innerHTML = 'Sign up';
-  } else if (isMobile.matches) {
-    exlNavLastItem.innerHTML = 'Sign in';
-  }
 }
 
 // Update Search content

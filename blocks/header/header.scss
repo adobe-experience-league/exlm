@@ -111,14 +111,14 @@ body.is-shown {
     height: 64px;
     line-height: 21px;
     margin: 0;
-    padding: 23px 20px;
+    padding: 22px 20px;
 
     @media (width <= 1350px) {
-      padding: 23px 12px;
+      padding: 22px 13px;
     }
 
     @include custom-breakpoint(desktop-lg) {
-      padding: 23px 16px;
+      padding: 22px 16px;
     }
 
     @include custom-breakpoint(custom) {
@@ -128,11 +128,11 @@ body.is-shown {
 
   & .language-selector > a {
     background: url('../../icons/globegrid.svg') 0 24px no-repeat;
-    background-size: contain;
+    background-size: 18px;
     display: inline-block;
     font-weight: var(--font-weight-600);
     height: var(--nav-height);
-    margin: 0;
+    margin: 0 16px;
     vertical-align: middle;
     width: 18px;
     text-indent: -99999px;
@@ -143,6 +143,7 @@ body.is-shown {
       display: block;
       font-size: var(--spectrum-font-size-75);
       letter-spacing: 0.72px;
+      margin: 0;
       padding: 0 24px;
       text-indent: 0;
       text-transform: uppercase;
@@ -232,6 +233,7 @@ body.is-shown {
     }
   }
 
+  & .exl-nav-item:nth-child(7) > a,
   & .exl-nav-item:last-child > a {
     background: var(--spectrum-blue-900);
     border-radius: 16px;
@@ -245,11 +247,20 @@ body.is-shown {
     white-space: nowrap;
 
     @include custom-breakpoint(custom) {
+      display: none;
       line-height: inherit;
       position: fixed;
       right: 20px;
       top: 16px;
       text-transform: inherit;
+    }
+  }
+
+  & .exl-nav-item:last-child > a {
+    display: none;
+
+    @include custom-breakpoint(custom) {
+      display: inline-block;
     }
   }
 
@@ -296,10 +307,6 @@ body.is-shown {
     }
   }
 
-  & .exl-subnav-wrapper .link-group p {
-    font-size: 12px;
-  }
-
   & .exl-topnav {
     font-size: var(--spectrum-font-size-100);
     max-width: var(--non-spectrum-max-width);
@@ -312,6 +319,8 @@ body.is-shown {
     }
 
     & .profile {
+      margin-right: 16px;
+
       @include custom-breakpoint(custom) {
         display: none;
       }
@@ -393,6 +402,7 @@ body.is-shown {
 
       &:first-child > a:first-child {
         @include custom-breakpoint(custom) {
+          border-bottom: 1px solid var(--spectrum-gray-200);
           padding-bottom: 10px;
           padding-top: 26px;
 
@@ -412,6 +422,7 @@ body.is-shown {
     & .exl-subnav-wrapper > div {
       display: grid;
       grid-template-columns: 1fr 1fr;
+      gap: 20px;
 
       @include custom-breakpoint(custom) {
         display: block;
@@ -565,12 +576,10 @@ body.is-shown {
     white-space: nowrap;
 
     @include custom-breakpoint(custom) {
-      left: 7%;
-      margin: 0;
+      left: 50%;
       position: fixed;
-      top: 14px;
-      width: 75%;
-      text-align: center;
+      transform: translate(-50%, 0);
+      top: 18px;
       z-index: 2;
     }
   }
@@ -594,11 +603,7 @@ body.is-shown {
 
     & ul {
       list-style: none;
-      margin-left: 15px;
-
-      @include custom-breakpoint(custom) {
-        margin-left: 0;
-      }
+      margin: 0;
     }
 
     & ul li {
@@ -628,16 +633,20 @@ body.is-shown {
       }
     }
 
-    & .quick-links div:not(:first-child) {
+    & .quick-links > div:not(:first-child) {
       margin-bottom: 20px;
       margin-left: 24px;
 
       @include custom-breakpoint(custom) {
         display: none;
-        margin-bottom: 0;
+        margin-bottom: 10px;
         margin-left: 7px;
         padding-bottom: 5px;
       }
+    }
+
+    & .content-types.desktop > div {
+      margin: 20px 0 0;
     }
 
     & > div:nth-child(2) > div:nth-child(2) {
@@ -651,6 +660,38 @@ body.is-shown {
       @include custom-breakpoint(custom) {
         margin-bottom: 20px;
         margin-left: 0;
+      }
+    }
+
+    & .content-types.desktop > div:first-child {
+      margin: 0;
+    }
+
+    & .content-types.desktop {
+      @include custom-breakpoint(custom) {
+        display: none;
+      }
+    }
+
+    & .search .search-popover ul {
+      list-style: none;
+    }
+
+    & .content-types.mobile {
+      display: none;
+
+      @include custom-breakpoint(custom) {
+        display: block;
+      }
+
+      & > div:first-child {
+        @include custom-breakpoint(custom) {
+          display: none;
+        }
+      }
+
+      & ul {
+        margin: 0 0 19px;
       }
     }
 
@@ -698,7 +739,7 @@ body.is-shown {
             transform: rotateZ(225deg);
           }
 
-          & > div:not(:first-child):nth-child(2) {
+          & > div {
             display: block;
           }
         }
@@ -754,12 +795,10 @@ body.is-shown {
   & .exl-nav-action {
     align-items: center;
     display: flex;
-    gap: 15px;
     justify-content: space-between;
     position: relative;
 
     @include custom-breakpoint(custom) {
-      gap: 5px;
       display: block;
     }
   }
@@ -792,8 +831,7 @@ body.is-shown {
 
     & .exl-search-input {
       border: 1px solid var(--spectrum-gray-400);
-      border-top-left-radius: 4px;
-      border-bottom-left-radius: 4px;
+      border-radius: 4px 0 0 4px;
       box-shadow: none;
       color: var(--non-spectrum-input-text);
       outline: none;
@@ -860,7 +898,7 @@ body.is-shown {
 
       @include custom-breakpoint(desktop-lg) {
         display: inline-block;
-        left: auto;
+        left: -16px;
         top: -20px;
       }
 
@@ -942,10 +980,6 @@ body.is-shown {
       top: 29px;
       z-index: 11;
 
-      & ul {
-        list-style: none;
-      }
-
       & ul li {
         cursor: pointer;
         font-size: var(--spectrum-font-size-100);
@@ -969,7 +1003,6 @@ body.is-shown {
 
   & .language-selector {
     height: var(--nav-height);
-    padding: 0 10px;
     position: relative;
 
     @include custom-breakpoint(custom) {
