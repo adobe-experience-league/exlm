@@ -65,20 +65,19 @@ export default function decorate(block) {
   // add image
   if (pictureElem) {
     teaserDOM.querySelector('.background').append(pictureElem);
-  }
-
-  // add the image description
-  if (imageDescr) {
-    teaserDOM
-      .querySelector('.background picture img')
-      .setAttribute('alt', imageDescr);
+    // add the image description
+    if (imageDescr) {
+      pictureElem.querySelector('img').setAttribute('alt', imageDescr);
+    }
   }
 
   // set the mobile background color
-  block.style.setProperty(
-    '--teaser-background-color',
-    `var(${backgroundColor})`,
-  );
+  if (backgroundColor) {
+    block.style.setProperty(
+      '--teaser-background-color',
+      `var(${backgroundColor})`,
+    );
+  }
 
   // add final teaser DOM
   block.textContent = '';
