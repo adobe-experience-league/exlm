@@ -1,4 +1,4 @@
-.img.block {
+.img-md {
   display: flex;
 
   &.left-align {
@@ -18,7 +18,7 @@
   }
 }
 
-.modal {
+.img-modal {
   display: none;
   align-items: center;
   position: fixed;
