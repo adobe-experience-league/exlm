@@ -1,20 +1,31 @@
 /* ----- MOBILE / Default ----- */
 
-/* teaser wrapper */
+/* teaser wrapper stretches over complete width */
 .section div.teaser-wrapper {
   margin-bottom: var(--spectrum-spacing-500);
+  max-width: unset;
 
   /* stretches to window edge in mobile view */
-  margin-left: calc(-1 * var(--spectrum-spacing-500));
-  margin-right: calc(-1 * var(--spectrum-spacing-500));
+  margin-left: calc(-1 * var(--space-token-xs));
+  margin-right: calc(-1 * var(--space-token-xs));
 }
 
 /* The teaser block div */
 .teaser.block , .teaser.block.dark {
-  --teaser-background-color :  var(--spectrum-blue-600); 
+  --teaser-background-color :  var(--spectrum-red-700); 
 
   background-color: var(--teaser-background-color);
-  padding: var(--spectrum-spacing-400) var(--spectrum-spacing-500);
+}
+
+/* the foreground contains text and spacer */
+.teaser.block > .foreground {
+  max-width: var(--non-spectrum-max-width);
+  margin: auto;
+}
+
+/* the text block (eyebrow, title , descr , ctr) */
+.teaser.block > .foreground > .text {
+  padding: var(--spectrum-spacing-400) var(--space-token-xs);
 }
 
 /* the eybrow title, hidden in mobile */
@@ -71,9 +82,13 @@
 .teaser.block > .foreground > .text > .cta {
   display: flex;
   gap: var(--spectrum-spacing-400);
-  margin: 0;
+  margin-top: var(--spectrum-spacing-400);
   padding: 0;
   width:min-content;
+}
+
+.teaser.block > .foreground > .text > .cta:empty {
+  display: none;
 }
 
 /* the cta buttons in mobile view */
@@ -81,6 +96,7 @@
   background-color: var(--background-color);
   border: 2px solid transparent;
   color:var(--teaser-background-color);
+  margin: 0;
 }
 
 .teaser.block > .foreground > .text > .cta > a.button.secondary {
@@ -105,6 +121,12 @@
 
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
+  .section div.teaser-wrapper {
+    /* stretches to window edge, cover section padding */
+    margin-left: calc(-1 * var(--spectrum-spacing-500));
+    margin-right: calc(-1 * var(--spectrum-spacing-500));
+  }
+
   /* remove background color , add border */
   .teaser.block,
   .teaser.block.dark {
@@ -212,19 +234,6 @@
     height:100%;
     width: 100%;
     object-position: right;
-  }
-}
-
-/* ----- DESKTOP ------ */
-@media (min-width: 900px) {
-  /* a section that contains teaser gets full width */
-  .section > div.teaser-wrapper {
-    max-width: unset;
-  }
-
-  .teaser.block > .foreground  {
-    max-width: var(--non-spectrum-max-width);
-    margin: auto;
   }
 }
   

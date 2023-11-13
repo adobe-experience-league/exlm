@@ -614,14 +614,18 @@ img {
 
   @include breakpoint(tablet) {
     padding: 64px 32px;
-    max-width: var(--non-spectrum-max-width);
-    margin: auto;
   }
 
   /* section metadata */
   &.highlight {
     background-color: var(--highlight-background-color);
   }
+}
+
+/* limit block wrappers max width */
+.section > div {
+  max-width: var(--non-spectrum-max-width);
+  margin: auto;
 }
 
 /* three column layout */

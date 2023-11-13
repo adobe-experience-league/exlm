@@ -723,12 +723,16 @@ img {
 @media (min-width: 600px) {
   .section {
     padding: 64px 32px;
-    max-width: var(--non-spectrum-max-width);
-    margin: auto;
   }
 }
 .section.highlight {
   background-color: var(--highlight-background-color);
+}
+
+/* limit block wrappers max width */
+.section > div {
+  max-width: var(--non-spectrum-max-width);
+  margin: auto;
 }
 
 /* three column layout */
