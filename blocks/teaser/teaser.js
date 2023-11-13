@@ -1,11 +1,11 @@
 export default function decorate(block) {
   // Extract properties
-  // always same order as in model , empty string if not set
+  // always same order as in model, empty string if not set
   const props = [...block.querySelectorAll(':scope div > div')];
 
   const picture = props[0].innerHTML.trim();
   const imageDescr = props[1].textContent.trim();
-  const eyebrow = props[2].textContent.trim().toUpperCase();
+  const eyebrow = props[2].textContent.trim();
   const title = props[3].textContent.trim();
   const longDescr = props[4].innerHTML.trim();
   const shortDescr = props[5];
@@ -21,12 +21,12 @@ export default function decorate(block) {
   const teaserDOM = document.createRange().createContextualFragment(`
     <div class='foreground'>
       <div class='text'>
-        ${eyebrow ? `<div class='eyebrow'>${eyebrow}</div>` : ``}
+        ${eyebrow ? `<div class='eyebrow'>${eyebrow.toUpperCase()}</div>` : ``}
         <div class='title'>${title}</div>
         <div class='long-description'>${longDescr}</div>
         <div class='short-description'>${
           shortDescr.textContent.trim() !== ''
-            ? shortDescr.innerHTML
+            ? shortDescr.innerHTML.trim()
             : longDescr
         }</div>
         <div class='cta'>${
