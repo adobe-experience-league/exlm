@@ -1,56 +1,40 @@
 export default function decorate(block) {
-  // Extract properties (always same order as in model)
-  const pictureElem = block.querySelector('div:nth-child(1) > div picture');
-  const imageDescr = block
-    .querySelector('div:nth-child(2) > div')
-    .textContent.trim();
-  const eyebrow = block
-    .querySelector('div:nth-child(3) > div')
-    .textContent.trim()
-    .toUpperCase();
-  const title = block
-    .querySelector('div:nth-child(4) > div')
-    .textContent.trim();
-  const longDescr = block.querySelector('div:nth-child(5) > div').innerHTML;
-  const shortDescr = block.querySelector('div:nth-child(6) > div').innerHTML;
-  const backgroundColor = block
-    .querySelector('div:nth-child(7) > div')
-    .textContent.trim();
-  const firstCTAType = block
-    .querySelector('div:nth-child(8) > div')
-    .textContent.trim();
-  const firstCTAText = block
-    .querySelector('div:nth-child(9) > div')
-    .textContent.trim();
-  const firstCTALink = block
-    .querySelector('div:nth-child(10) > div')
-    .textContent.trim();
-  const secondCTAType = block
-    .querySelector('div:nth-child(11) > div')
-    .textContent.trim();
-  const secondCTAText = block
-    .querySelector('div:nth-child(12) > div')
-    .textContent.trim();
-  const secondCTALink = block
-    .querySelector('div:nth-child(13) > div')
-    .textContent.trim();
+  // Extract properties
+  // always same order as in model , empty string if not set
+  const props = [...block.querySelectorAll(':scope div > div')];
+
+  const picture = props[0].innerHTML.trim();
+  const imageDescr = props[1].textContent.trim();
+  const eyebrow = props[2].textContent.trim().toUpperCase();
+  const title = props[3].textContent.trim();
+  const longDescr = props[4].innerHTML.trim();
+  const shortDescr = props[5];
+  const backgroundColor = props[6].textContent.trim();
+  const firstCTAType = props[7].textContent.trim();
+  const firstCTAText = props[8].textContent.trim();
+  const firstCTALink = props[9].textContent.trim();
+  const secondCTAType = props[10].textContent.trim();
+  const secondCTAText = props[11].textContent.trim();
+  const secondCTALink = props[12].textContent.trim();
 
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
     <div class='foreground'>
       <div class='text'>
-        ${eyebrow !== '' ? `<div class='eyebrow'>${eyebrow}</div>` : ``}
+        ${eyebrow ? `<div class='eyebrow'>${eyebrow}</div>` : ``}
         <div class='title'>${title}</div>
         <div class='long-description'>${longDescr}</div>
         <div class='short-description'>${
-          shortDescr === '' ? shortDescr : longDescr
+          shortDescr.textContent.trim() !== ''
+            ? shortDescr.innerHTML
+            : longDescr
         }</div>
         <div class='cta'>${
-          firstCTAText !== '' && firstCTALink !== ''
+          firstCTAText && firstCTALink
             ? `<a class='button ${firstCTAType}' href='${firstCTALink}'>${firstCTAText}</a>`
             : ``
         }${
-          secondCTAText !== '' && secondCTALink !== ''
+          secondCTAText && secondCTALink
             ? `<a class='button ${secondCTAType}' href='${secondCTALink}'>${secondCTAText}</a>`
             : ``
         }</div>
@@ -58,17 +42,14 @@ export default function decorate(block) {
       <div class='spacer'>
       </div>
     </div>
-    <div class='background'>
-    </div>
+    <div class='background'>${picture}</div>
   `);
 
-  // add image
-  if (pictureElem) {
-    teaserDOM.querySelector('.background').append(pictureElem);
-    // add the image description
-    if (imageDescr) {
-      pictureElem.querySelector('img').setAttribute('alt', imageDescr);
-    }
+  // set image description
+  if (imageDescr) {
+    teaserDOM
+      .querySelector('.background picture img')
+      .setAttribute('alt', imageDescr);
   }
 
   // set the mobile background color
