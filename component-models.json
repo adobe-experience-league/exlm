@@ -7,7 +7,7 @@
         "valueType": "string",
         "name": "fileReference",
         "label": "Image",
-        "description" : "The teaser image, min Xpx x Ypx...",
+        "description": "The teaser image, min Xpx x Ypx...",
         "multi": false
       },
       {
@@ -16,7 +16,7 @@
         "name": "imageAlt",
         "value": "",
         "label": "Image Description",
-        "description" : "A descriptive text of the image will be shown as tooltip."
+        "description": "A descriptive text of the image will be shown as tooltip."
       },
       {
         "component": "select",
@@ -49,7 +49,7 @@
         "name": "eyebrow",
         "value": "",
         "label": "Eyebrow",
-        "description" : "Sets the small pre-title above the title."
+        "description": "Sets the small pre-title above the title."
       },
       {
         "component": "text-input",
@@ -57,30 +57,30 @@
         "name": "title",
         "value": "",
         "label": "Heading",
-        "description" : "Sets the main title of the teaser."
+        "description": "Sets the main title of the teaser."
       },
       {
         "component": "text-area",
         "valueType": "string",
         "name": "longDescr",
-        "value": "",    
+        "value": "",
         "label": "Long Description",
-        "description" : "The description shown in Desktop and Tablet view."
-      },    
+        "description": "The description shown in Desktop and Tablet view."
+      },
       {
         "component": "text-area",
         "valueType": "string",
         "name": "shortDescr",
         "value": "",
         "label": "Short Description",
-        "description" : "The description shown in Mobile view. If not set long text is used."
+        "description": "The description shown in Mobile view. If not set long text is used."
       },
       {
         "component": "select",
         "name": "backgroundColor",
         "value": "",
         "label": "Background Color",
-        "description" : "The teaser background color when in mobile view.",
+        "description": "The teaser background color when in mobile view.",
         "valueType": "string",
         "options": [
           {
@@ -142,7 +142,7 @@
         "name": "cta1Type",
         "value": "primary",
         "label": "First CTA Type",
-        "description" : "'Primary' will render button filled, 'Secondary' with an outline.",
+        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
         "valueType": "string",
         "options": [
           {
@@ -161,22 +161,22 @@
         "name": "cta1Text",
         "value": "",
         "label": "First CTA Text",
-        "description" : "Text to be shown inside button."
-      }, 
+        "description": "Text to be shown inside button."
+      },
       {
         "component": "text-input",
         "valueType": "string",
         "name": "cta1Url",
         "value": "",
         "label": "First CTA Link",
-        "description" : "What link to open when clicking the button."
+        "description": "What link to open when clicking the button."
       },
       {
         "component": "select",
         "name": "cta2Type",
         "value": "primary",
         "label": "Second CTA Type",
-        "description" : "'Primary' will render button filled, 'Secondary' with an outline.",
+        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
         "valueType": "string",
         "options": [
           {
@@ -195,15 +195,15 @@
         "name": "cta2Text",
         "value": "",
         "label": "Second CTA Text",
-        "description" : "Text to be shown inside button."
-      }, 
+        "description": "Text to be shown inside button."
+      },
       {
         "component": "text-input",
         "valueType": "string",
         "name": "cta2Url",
         "value": "",
         "label": "Second CTA Link",
-        "description" : "What link to open when clicking the button."
+        "description": "What link to open when clicking the button."
       }
     ]
   },
