@@ -62,7 +62,8 @@
 .accordion .code code {
   font-size: var(--spectrum-font-size-100);
 }
-.accordion .note-wrapper, .accordion .note-wrapper div {
+.accordion .note-wrapper,
+.accordion .note-wrapper div {
   margin-left: 0;
   margin-top: 0;
 }
