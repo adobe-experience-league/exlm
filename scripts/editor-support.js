@@ -5,6 +5,8 @@ import {
   loadBlock,
 } from './lib-franklin.js';
 
+const connectionPrefix = 'urn:aemconnection:';
+
 function handleEditorUpdate(event) {
   const {
     detail: { itemids },
@@ -15,8 +17,8 @@ function handleEditorUpdate(event) {
       .map(async (element) => {
         const block = element.closest('.block');
         const blockItemId = block?.getAttribute('itemid');
-        if (block && blockItemId?.startsWith('urn:aemconnection:')) {
-          const path = blockItemId.substring(18);
+        if (block && blockItemId?.startsWith(connectionPrefix)) {
+          const path = blockItemId.substring(connectionPrefix.length);
           const resp = await fetch(`${path}.html${window.location.search}`);
           if (resp.ok) {
             const text = await resp.text();
