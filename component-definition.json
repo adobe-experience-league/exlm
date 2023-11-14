@@ -88,7 +88,7 @@
                 "template": {
                   "allowedComponents": "icon-block",
                   "name": "Icon Block",
-                  "item1":{
+                  "item1": {
                     "name": "Icon Card",
                     "model": "icon-card",
                     "cardIcon": "/content/dam/exlm/content-at-scale.png",
@@ -97,7 +97,7 @@
                     "cardLinkText": "Default Link Text",
                     "cardLink": "#"
                   },
-                  "item2":{
+                  "item2": {
                     "name": "Icon Card",
                     "model": "icon-card",
                     "cardIcon": "/content/dam/exlm/content-at-scale.png",
@@ -106,7 +106,7 @@
                     "cardLinkText": "Default Link Text",
                     "cardLink": "#"
                   },
-                  "item3":{
+                  "item3": {
                     "name": "Icon Card",
                     "model": "icon-card",
                     "cardIcon": "/content/dam/exlm/content-at-scale.png",
