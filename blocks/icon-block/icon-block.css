@@ -1,0 +1,39 @@
+.icon-block {
+  display: grid;
+  min-width: 320px;
+  text-align: center;
+  margin: 0 auto;
+  gap: 32px;
+}
+.icon-block > div {
+  max-width: 283px;
+  min-height: 147.95px;
+  margin: 0 auto;
+}
+.icon-block > div > div img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+.icon-block .icon-heading {
+  font-size: 20px;
+  margin: 0;
+  line-height: 30px;
+  color: var(--spectrum-gray-800);
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.icon-block .icon-description {
+  margin-bottom: 16px;
+  color: var(--spectrum-gray-700);
+}
+.icon-block .icon-link {
+  font-size: 14px;
+  line-height: 18.2px;
+  color: var(--spectrum-blue-900);
+}
+.icon-block .icon-link::after {
+  content: ">";
+  padding-left: 4px;
+}
