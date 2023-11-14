@@ -16,9 +16,9 @@
 .accordion details summary::before {
   content: url("/icons/chevron_right.svg");
   position: relative;
-  margin-right: -5px;
-  top: 3px;
-  left: -4px;
+  margin-right: -0.4em;
+  top: 0.25em;
+  left: -0.3em;
 }
 .accordion details summary::-webkit-details-marker {
   display: none;
