@@ -166,5 +166,24 @@
         "description": "Sets the link URL for Card."
       }
     ]
+  },
+  {
+    "id": "columns",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "number",
+        "name": "columns",
+        "value": "",
+        "label": "Columns"
+      },
+      {
+        "component": "text-input",
+        "valueType": "number",
+        "name": "rows",
+        "value": "",
+        "label": "Rows"
+      }
+    ]
   }
 ]
