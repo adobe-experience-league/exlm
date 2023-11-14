@@ -141,6 +141,20 @@
           }
         },
         {
+          "title": "Columns",
+          "id": "columns",
+          "plugins": {
+            "aem": {
+              "page": {
+                "resourceType": "core/franklin/components/columns/v1/columns",
+                "template": {
+                  "allowedComponents": ["group:default"]
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Curated Cards",
           "id": "curated-cards",
           "plugins": {
