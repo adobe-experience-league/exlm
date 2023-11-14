@@ -185,5 +185,18 @@
         "label": "Rows"
       }
     ]
+  },
+  {
+    "id": "curated-cards",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading for Card."
+      }
+    ]
   }
 ]
