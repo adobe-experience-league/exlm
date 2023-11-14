@@ -1,3 +1,7 @@
+/* stylelint-disable at-rule-empty-line-before */
+/* stylelint-disable media-feature-range-notation */
+/* stylelint-disable comment-empty-line-before */
+/* stylelint-disable rule-empty-line-before */
 @charset "UTF-8";
 .h1,
 h1 {
@@ -119,10 +123,6 @@ a {
   color: var(--non-spectrum-grey-updated);
   margin-top: 4px;
   margin-bottom: 9px;
-}
-
-a:hover {
-  color: var(--non-spectrum-custom-dark);
 }
 
 strong {
@@ -489,6 +489,7 @@ body.appear {
 
 header {
   height: var(--nav-height);
+  border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
 }
 
 dl,
@@ -766,7 +767,7 @@ img {
     --exlm-line-height-h6: 18.2px;
   }
 }
-.docs code:not([class^=language-]) {
+.docs code:not([class^="language-"]) {
   font-family: var(--spectrum-code-font-family);
   font-size: var(--spectrum-body-size-s);
   background-color: var(--spectrum-gray-100);
