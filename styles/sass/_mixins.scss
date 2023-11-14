@@ -17,3 +17,15 @@
   margin-top: #{$margin-top};
   margin-bottom: #{$margin-bottom};
 }
+
+@mixin button {
+  background: var(--spectrum-blue-900);
+  border-radius: 16px;
+  color: var(--spectrum-gray-50);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-600);
+  padding: 5px 16px;
+  padding: 5px 16px;
+  white-space: nowrap;
+  line-height: unset;
+}
