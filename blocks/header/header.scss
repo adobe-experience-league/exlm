@@ -472,6 +472,13 @@ header {
 
     .search-short {
       display: flex !important;
+      align-items: center;
+
+      a {
+        display: flex !important;
+        align-items: center;
+        line-height: 1;
+      }
     }
   }
 

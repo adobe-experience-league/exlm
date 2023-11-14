@@ -18,7 +18,7 @@
   --nav-root-item-padding-x: 0 15px;
   --nav-action-item-padding-x: 0 10px;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   :root {
     --brand-desktop-display: block;
     --brand-mobile-display: none;
@@ -38,7 +38,7 @@ header {
   box-sizing: content-box;
   overflow: hidden;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   header {
     display: flex;
     flex-direction: row;
@@ -52,7 +52,7 @@ header {
   position: relative;
   max-width: 1440px;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header {
     width: 100%;
   }
@@ -63,7 +63,7 @@ header {
   justify-content: space-between;
   height: 100%;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header > nav {
     width: 100%;
     justify-content: initial;
@@ -75,7 +75,7 @@ header {
   grid-area: brand;
   order: var(--brand-order);
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .brand {
     display: flex;
     align-items: center;
@@ -100,7 +100,7 @@ header {
   display: var(--sign-up-display);
   align-items: center;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .sign-up {
     padding: var(--nav-root-item-padding-x);
   }
@@ -134,7 +134,7 @@ header {
   white-space: nowrap;
   line-height: unset;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .sign-in a {
     border-radius: 0;
     margin: 0;
@@ -151,7 +151,7 @@ header {
   grid-area: nav;
   order: var(--nav-order);
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav {
     display: block;
   }
@@ -161,7 +161,7 @@ header {
   padding: 0.5rem var(--header-padding-x);
   box-shadow: 0 8px 16px rgba(10, 10, 10, 0.1);
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-wrapper {
     display: flex;
     align-items: center;
@@ -174,7 +174,7 @@ header {
   max-height: 100%;
   margin: 0;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-wrapper > ul {
     display: flex;
     flex-direction: row;
@@ -184,7 +184,7 @@ header {
 .header .nav-wrapper p {
   margin: 0;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-wrapper p {
     height: 100%;
   }
@@ -197,7 +197,7 @@ header {
   right: 0;
   background-color: var(--hover-backgroud);
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-wrapper-expanded {
     position: initial;
     z-index: initial;
@@ -209,12 +209,12 @@ header {
 .header .nav-item-root a {
   padding-left: 0;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-item-root a {
     padding: var(--nav-root-item-padding-x);
   }
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-item-root > .nav-item-content {
     padding: 24px 12px;
   }
@@ -229,7 +229,7 @@ header {
   margin: 0;
   line-height: 2;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-item {
     display: flex;
     flex-direction: column;
@@ -242,7 +242,7 @@ header {
 .header .nav-item > * {
   padding: 0.5rem var(--header-padding-x);
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-item > * {
     padding: 0 12px;
   }
@@ -259,7 +259,7 @@ header {
   font-size: 13px;
   font-weight: inherit;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-item a {
     padding: var(--nav-root-item-padding-x);
     height: 100%;
@@ -285,7 +285,7 @@ header {
 .header .nav-item-subtitle {
   display: none;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-item-subtitle {
     display: block;
     font-size: 10px;
@@ -305,7 +305,7 @@ header {
   width: 100%;
   line-height: 2;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-item-toggle {
     height: fit-content;
     font-weight: 700;
@@ -328,7 +328,7 @@ header {
   content: "";
   box-sizing: content-box;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-item-toggle::after {
     display: none;
   }
@@ -336,13 +336,13 @@ header {
 .header .nav-item-toggle-root {
   font-weight: initial;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-item-toggle-root {
     height: 100%;
     padding: var(--nav-root-item-padding-x);
   }
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-item-toggle-root::after {
     position: initial;
     display: inline-block;
@@ -353,7 +353,7 @@ header {
 .header .nav-item-toggle[aria-expanded=true] {
   border-bottom: 2px solid var(--non-spectrum-silver);
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-item-toggle[aria-expanded=true] {
     border-bottom: none;
     background-color: var(--hover-backgroud);
@@ -366,7 +366,7 @@ header {
   display: none;
   margin: 0;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-item-content {
     padding: 0 12px;
   }
@@ -374,7 +374,7 @@ header {
 .header .nav-item-content-expanded {
   display: block;
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-item-content-expanded {
     position: absolute;
     display: flex;
@@ -411,7 +411,7 @@ header {
 .header .nav-hamburger::before {
   content: "☰";
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-hamburger::before {
     content: "";
   }
@@ -419,7 +419,7 @@ header {
 .header .nav-hamburger[aria-expanded=true]::before {
   content: "✕";
 }
-@media (min-width: 1000px) {
+@media (width >= 1000px) {
   .header .nav-hamburger[aria-expanded=true]::before {
     content: "";
   }
@@ -440,6 +440,12 @@ header {
   }
   .header .search-short {
     display: flex !important;
+    align-items: center;
+  }
+  .header .search-short a {
+    display: flex !important;
+    align-items: center;
+    line-height: 1;
   }
 }
 .header .search-short {
