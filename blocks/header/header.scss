@@ -4,6 +4,13 @@
 // Mobile-First Header
 // All default styles apply to mobile, then custom breakpoint styles are applied (for desktop)
 
+@mixin desktop {
+  // custom breakpoint because we need to fit all header content on desktop
+  @media (width >= 1000px) {
+    @content;
+  }
+}
+
 :root {
   --header-padding-x: 16px;
   --brand-desktop-display: none;
@@ -21,11 +28,12 @@
   --hover-backgroud: #fafafa;
   --hover-background-dark: #f5f5f5;
   --nav-root-item-padding-x: 0 15px;
+  --nav-action-item-padding-x: 0 10px;
 
-  @include breakpoint(custom) {
+  @include desktop {
     --brand-desktop-display: block;
     --brand-mobile-display: none;
-    --search-display: flex;
+    --search-display: inline-flex;
     --language-selector-display: flex;
     --adobe-logo-display: flex;
     --sign-up-display: flex;
@@ -69,8 +77,9 @@
 header {
   position: relative;
   box-sizing: content-box;
+  overflow: hidden;
 
-  @include breakpoint(custom) {
+  @include desktop {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -83,7 +92,7 @@ header {
   position: relative;
   max-width: 1440px;
 
-  @include breakpoint(custom) {
+  @include desktop {
     width: 100%;
   }
 
@@ -93,10 +102,11 @@ header {
     justify-content: space-between;
     height: 100%;
 
-    @include breakpoint(custom) {
+    @include desktop {
       width: 100%;
+      justify-content: initial;
       grid-template-areas: 'brand nav sign-up search language sign-in adobe-log';
-      grid-template-columns: auto 1fr 1fr;
+      grid-template-columns: min-content min-content min-content auto max-content max-content max-content;
     }
   }
 
@@ -105,7 +115,7 @@ header {
     grid-area: brand;
     order: var(--brand-order);
 
-    @include breakpoint(custom) {
+    @include desktop {
       display: flex;
       align-items: center;
       padding: var(--nav-root-item-padding-x);
@@ -133,6 +143,10 @@ header {
     display: var(--sign-up-display);
     align-items: center;
 
+    @include desktop {
+      padding: var(--nav-root-item-padding-x);
+    }
+
     a {
       @include button;
     }
@@ -150,7 +164,7 @@ header {
 
       @include button;
 
-      @include breakpoint(custom) {
+      @include desktop {
         @include button-reset;
 
         color: #000;
@@ -164,7 +178,7 @@ header {
     grid-area: nav;
     order: var(--nav-order);
 
-    @include breakpoint(custom) {
+    @include desktop {
       display: block;
     }
   }
@@ -174,7 +188,7 @@ header {
     padding: 0.5rem var(--header-padding-x);
     box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
 
-    @include breakpoint(custom) {
+    @include desktop {
       display: flex;
       align-items: center;
       box-shadow: initial;
@@ -186,7 +200,7 @@ header {
       max-height: 100%;
       margin: 0;
 
-      @include breakpoint(custom) {
+      @include desktop {
         display: flex;
         flex-direction: row;
         height: 100%;
@@ -196,7 +210,7 @@ header {
     p {
       margin: 0;
 
-      @include breakpoint(custom) {
+      @include desktop {
         height: 100%;
       }
     }
@@ -210,7 +224,7 @@ header {
     right: 0;
     background-color: var(--hover-backgroud);
 
-    @include breakpoint(custom) {
+    @include desktop {
       position: initial;
       z-index: initial;
       left: initial;
@@ -223,12 +237,12 @@ header {
     a {
       padding-left: 0;
 
-      @include breakpoint(custom) {
+      @include desktop {
         padding: var(--nav-root-item-padding-x);
       }
     }
 
-    @include breakpoint(custom) {
+    @include desktop {
       > .nav-item-content {
         padding: 24px 12px;
 
@@ -246,7 +260,7 @@ header {
     margin: 0;
     line-height: 2;
 
-    @include breakpoint(custom) {
+    @include desktop {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -259,7 +273,7 @@ header {
     > * {
       padding: 0.5rem var(--header-padding-x);
 
-      @include breakpoint(custom) {
+      @include desktop {
         padding: 0 12px;
 
         .nav-item {
@@ -277,7 +291,7 @@ header {
       font-size: 13px;
       font-weight: inherit;
 
-      @include breakpoint(custom) {
+      @include desktop {
         padding: var(--nav-root-item-padding-x);
         height: 100%;
         display: flex;
@@ -309,7 +323,7 @@ header {
   .nav-item-subtitle {
     display: none;
 
-    @include breakpoint(custom) {
+    @include desktop {
       display: block;
       font-size: 10px;
     }
@@ -324,7 +338,7 @@ header {
     width: 100%;
     line-height: 2;
 
-    @include breakpoint(custom) {
+    @include desktop {
       height: fit-content;
       font-weight: 700;
     }
@@ -335,7 +349,7 @@ header {
       content: '';
       box-sizing: content-box;
 
-      @include breakpoint(custom) {
+      @include desktop {
         display: none;
       }
     }
@@ -344,13 +358,13 @@ header {
   .nav-item-toggle-root {
     font-weight: initial;
 
-    @include breakpoint(custom) {
+    @include desktop {
       height: 100%;
       padding: var(--nav-root-item-padding-x);
     }
 
     &::after {
-      @include breakpoint(custom) {
+      @include desktop {
         position: initial;
         display: inline-block;
         margin-left: 16px;
@@ -362,7 +376,7 @@ header {
   .nav-item-toggle[aria-expanded='true'] {
     border-bottom: 2px solid var(--non-spectrum-silver);
 
-    @include breakpoint(custom) {
+    @include desktop {
       border-bottom: none;
       background-color: var(--hover-backgroud);
     }
@@ -376,7 +390,7 @@ header {
     display: none;
     margin: 0;
 
-    @include breakpoint(custom) {
+    @include desktop {
       padding: 0 12px;
     }
 
@@ -386,7 +400,7 @@ header {
   .nav-item-content-expanded {
     display: block;
 
-    @include breakpoint(custom) {
+    @include desktop {
       position: absolute;
       display: flex;
       flex-direction: row;
@@ -425,7 +439,7 @@ header {
     &::before {
       content: '\2630'; // hamburger icon
 
-      @include breakpoint(custom) {
+      @include desktop {
         content: '';
       }
     }
@@ -433,7 +447,7 @@ header {
     &[aria-expanded='true']::before {
       content: '\2715'; // close icon
 
-      @include breakpoint(custom) {
+      @include desktop {
         content: '';
       }
     }
@@ -443,16 +457,26 @@ header {
   .search {
     grid-area: search;
     display: var(--search-display);
+    justify-content: flex-end;
     align-items: center;
     padding: var(--nav-root-item-padding-x);
+    container-type: inline-size;
+    container-name: searchs;
+  }
+
+  @container searchs (max-width: 150px) {
+    .search-full {
+      background-color: red;
+      display: none !important;
+    }
+
+    .search-short {
+      display: flex !important;
+    }
   }
 
   .search-short {
     display: none;
-
-    @media (width <= 1200px) {
-      display: block;
-    }
 
     .icon {
       height: 18px;
@@ -460,20 +484,35 @@ header {
   }
 
   .search-full {
-    display: none;
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
 
-    @media (width >= 1200px) {
-      display: flex;
-      align-items: center;
-    }
+    // display: none;
+
+    // @media (width >= 1200px) {
+
+    // }
 
     .icon {
-      margin-right: -20px;
+      svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      position: absolute;
+      left: 8px;
+      height: 100%;
       z-index: 1;
+      display: flex;
+      align-items: center;
     }
   }
 
   .search-input {
+    max-width: 200px;
     border: 1px solid var(--spectrum-gray-400);
     border-radius: 0;
     border-top-left-radius: 4px;
@@ -485,10 +524,20 @@ header {
     height: 30px;
     padding: 7px 5px 9px 28px;
     margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .search-picker-button {
+    max-width: 200px;
+    min-width: 75px;
+    padding: 7px;
+    padding-right: 25px;
+    width: fit-content;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
+    position: relative;
     background: transparent;
     border: 1px solid var(--spectrum-gray-400);
     border-left: 0 none;
@@ -497,15 +546,10 @@ header {
     border-bottom-right-radius: 4px;
     box-shadow: none;
     color: var(--spectrum-gray-700);
-    display: flex;
     font-family: var(--body-font-family);
     font-size: var(--spectrum-font-size-75);
-    justify-content: space-between;
     height: 30px;
     line-height: 17px;
-    position: relative;
-    width: 105px;
-    padding: 7px;
     text-align: right;
 
     &::after {
@@ -517,6 +561,11 @@ header {
     }
   }
 
+  .search-picker-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .search-picker-popover {
     display: none;
   }
@@ -526,7 +575,7 @@ header {
     grid-area: language;
     display: var(--language-selector-display);
     align-items: center;
-    padding: var(--nav-root-item-padding-x);
+    padding: 0;
 
     .icon {
       height: 18px;
@@ -536,6 +585,8 @@ header {
 
   .language-selector-button {
     @include button-reset;
+
+    padding: 15px;
   }
 
   .language-selector-popover {
@@ -547,8 +598,14 @@ header {
     grid-area: adobe-log;
     display: var(--adobe-logo-display);
     align-items: center;
+    padding: var(--nav-root-item-padding-x);
 
     .icon {
+      svg {
+        height: 24px;
+        width: 24px;
+      }
+
       vertical-align: middle;
     }
   }
