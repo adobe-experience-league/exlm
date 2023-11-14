@@ -17,9 +17,9 @@
       &::before {
         content: url('/icons/chevron_right.svg');
         position: relative;
-        margin-right: -5.6px;
-        top: 3.5px;
-        left: -4.2px;
+        margin-right: -5px;
+        top: 3px;
+        left: -4px;
       }
 
       &::-webkit-details-marker {
@@ -34,7 +34,7 @@
     div > div {
       color: var(--non-spectrum-raisin-black);
       font-size: var(--spectrum-font-size-200);
-      line-height: 25.6px;
+      line-height: var(--spectrum-line-height-m);
       margin-left: 14px;
       margin-top: 14px;
     }
