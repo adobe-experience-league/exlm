@@ -259,6 +259,16 @@ header {
     margin: 0;
     line-height: 2;
 
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      height: 14px;
+
+      svg {
+        height: 14px;
+      }
+    }
+
     @include desktop {
       display: flex;
       flex-direction: column;
@@ -309,6 +319,10 @@ header {
       a {
         padding: 10px 24px;
         width: 100%;
+
+        @include desktop {
+          display: block;
+        }
       }
 
       p {

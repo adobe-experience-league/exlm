@@ -325,7 +325,41 @@ const headerDecorators = {
   'sign-in': signInDecorator,
   'adobe-logo': adobeLogoDecorator,
 };
+/** @param {HTMLElement} block  */
+const decorateNewTabLinks = (block) => {
+  const links = block.querySelectorAll('a[target="_blank"]');
+  links.forEach((link) => {
+    link.setAttribute('rel', 'noopener noreferrer');
+    // insert before first text child node
+    const icon = htmlToElement('<span class="icon icon-link-out"></span>');
+    link.firstChild.after(icon);
+  });
+};
 
+/** @param {HTMLElement} block  */
+const decorateLinks = (block) => {
+  const links = block.querySelectorAll('a');
+  links.forEach((link) => {
+    const decodedHref = decodeURIComponent(link.getAttribute('href'));
+    const firstCurlyIndex = decodedHref.indexOf('{');
+    const lastCurlyIndex = decodedHref.lastIndexOf('}');
+    if (firstCurlyIndex > -1 && lastCurlyIndex > -1) {
+      // get string between curly braces including curly braces
+      const options = decodedHref.substring(
+        firstCurlyIndex,
+        lastCurlyIndex + 1,
+      );
+      Object.entries(JSON.parse(options)).forEach(([key, value]) => {
+        link.setAttribute(key.trim(), value);
+      });
+      const endIndex =
+        decodedHref.charAt(firstCurlyIndex - 1) === '#'
+          ? firstCurlyIndex - 1
+          : firstCurlyIndex;
+      link.href = decodedHref.substring(0, endIndex);
+    }
+  });
+};
 /**
  * Main header decorator, calls all the other decorators
  * @param {HTMLElement} headerBlock
@@ -352,6 +386,7 @@ export default async function decorate(headerBlock) {
       console.warn(`No decorator found for header block: ${blockName}`);
     }
   });
-
+  decorateLinks(headerBlock);
+  decorateNewTabLinks(headerBlock);
   decorateIcons(headerBlock);
 }

@@ -215,7 +215,7 @@ header {
 }
 @media (width >= 1000px) {
   .header .nav-item-root > .nav-item-content {
-    padding: 24px 24px;
+    padding: 24px;
   }
   .header .nav-item-root > .nav-item-content > .nav-item {
     width: 224px;
@@ -227,6 +227,14 @@ header {
   padding: 0;
   margin: 0;
   line-height: 2;
+}
+.header .nav-item .icon {
+  display: inline-block;
+  vertical-align: middle;
+  height: 14px;
+}
+.header .nav-item .icon svg {
+  height: 14px;
 }
 @media (width >= 1000px) {
   .header .nav-item {
@@ -275,6 +283,11 @@ header {
 .header .nav-item .nav-item a {
   padding: 10px 24px;
   width: 100%;
+}
+@media (width >= 1000px) {
+  .header .nav-item .nav-item a {
+    display: block;
+  }
 }
 .header .nav-item .nav-item p {
   margin-top: -10px;
