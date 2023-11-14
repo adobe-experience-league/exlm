@@ -1,4 +1,5 @@
 .embed {
+  width: unset;
   text-align: center;
   width: 100%;
   margin: 32px auto;
@@ -23,7 +24,10 @@
       align-items: center;
       justify-content: center;
       position: absolute;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
     }
 
     picture img {
