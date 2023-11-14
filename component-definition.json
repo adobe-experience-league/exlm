@@ -87,7 +87,34 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "allowedComponents": "icon-block",
-                  "name": "Icon Block"
+                  "name": "Icon Block",
+                  "item1":{
+                    "name": "Icon Card",
+                    "model": "icon-card",
+                    "cardIcon": "/content/dam/exlm/content-at-scale.png",
+                    "cardHeading": "Default Heading",
+                    "cardDescription": "Default description",
+                    "cardLinkText": "Default Link Text",
+                    "cardLink": "#"
+                  },
+                  "item2":{
+                    "name": "Icon Card",
+                    "model": "icon-card",
+                    "cardIcon": "/content/dam/exlm/content-at-scale.png",
+                    "cardHeading": "Default Heading",
+                    "cardDescription": "Default description",
+                    "cardLinkText": "Default Link Text",
+                    "cardLink": "#"
+                  },
+                  "item3":{
+                    "name": "Icon Card",
+                    "model": "icon-card",
+                    "cardIcon": "/content/dam/exlm/content-at-scale.png",
+                    "cardHeading": "Default Heading",
+                    "cardDescription": "Default description",
+                    "cardLinkText": "Default Link Text",
+                    "cardLink": "#"
+                  }
                 }
               }
             }
@@ -103,7 +130,7 @@
                 "template": {
                   "name": "Icon Card",
                   "model": "icon-card",
-                  "cardIcon": "documentation",
+                  "cardIcon": "/content/dam/exlm/content-at-scale.png",
                   "cardHeading": "Default Heading",
                   "cardDescription": "Default description",
                   "cardLinkText": "Default Link Text",

@@ -126,33 +126,12 @@
     "id": "icon-card",
     "fields": [
       {
-        "component": "select",
+        "component": "reference",
+        "valueType": "string",
         "name": "cardIcon",
         "label": "Icon",
-        "value": "",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Documentation",
-            "value": "documentation"
-          },
-          {
-            "name": "Community",
-            "value": "community"
-          },
-          {
-            "name": "Instructor-led Training",
-            "value": "instructor-led-training"
-          },
-          {
-            "name": "Events",
-            "value": "events"
-          },
-          {
-            "name": "Courses",
-            "value": "courses"
-          }
-        ]
+        "description": "Sets the Card icon",
+        "multi": false
       },
       {
         "component": "text-input",
