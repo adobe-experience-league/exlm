@@ -215,7 +215,7 @@ header {
 }
 @media (width >= 1000px) {
   .header .nav-item-root > .nav-item-content {
-    padding: 24px 12px;
+    padding: 24px 24px;
   }
   .header .nav-item-root > .nav-item-content > .nav-item {
     width: 224px;
@@ -367,7 +367,7 @@ header {
 }
 @media (width >= 1000px) {
   .header .nav-item-content {
-    padding: 0 12px;
+    padding: 0;
   }
 }
 .header .nav-item-content-expanded {

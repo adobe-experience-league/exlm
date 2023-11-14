@@ -243,7 +243,7 @@ header {
 
     @include desktop {
       > .nav-item-content {
-        padding: 24px 12px;
+        padding: 24px;
 
         > .nav-item {
           width: 224px;
@@ -390,7 +390,7 @@ header {
     margin: 0;
 
     @include desktop {
-      padding: 0 12px;
+      padding: 0;
     }
 
     // margin-left: var(--header-padding-x);
