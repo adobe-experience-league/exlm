@@ -77,7 +77,6 @@
 header {
   position: relative;
   box-sizing: content-box;
-  overflow: hidden;
 
   @include desktop {
     display: flex;
