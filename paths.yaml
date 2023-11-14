@@ -6,6 +6,7 @@ mappings:
   - /content/exlm.resource/fragments/:/fragments/
 
   - /content/exlm/redirects:/redirects.json
+  - /content/exlm/placeholders:/placeholders.json
 
 includes:
   - /content/exlm/
