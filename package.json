@@ -8,7 +8,7 @@
     "lint:js": "eslint .",
     "lint:sass": "stylelint blocks/**/*.scss styles/*.scss",
     "lint:sass:fix": "stylelint blocks/**/*.scss styles/*.scss --fix",
-    "format:js": "prettier --write .",
+    "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "npm run lint:js && npm run lint:sass",
     "semantic-release": "semantic-release --debug",
@@ -56,11 +56,13 @@
   },
   "lint-staged": {
     "*.js": [
-      "eslint",
-      "prettier --write"
+      "eslint"
     ],
     "*.scss": [
       "stylelint --fix",
+      "prettier --write"
+    ],
+    "*": [
       "prettier --write"
     ]
   },
