@@ -26,6 +26,15 @@ const simplifySingleCellBlock = (block) => {
 };
 
 /**
+ * https://www.codemzy.com/blog/random-unique-id-javascript
+ * @param {number} length
+ */
+const randomId = (length = 6) =>
+  Math.random()
+    .toString(36)
+    .substring(2, length + 2);
+
+/**
  * @param {HTMLElement} block
  * @param {number} row
  * @param {number} cell
@@ -116,11 +125,11 @@ const buildNavItems = (ul, level = 0) => {
       ),
     );
   }
-  [...ul.children].forEach((navItem, index) => {
+  [...ul.children].forEach((navItem) => {
     const navItemClasses = ['nav-item'];
     if (level === 0) navItemClasses.push('nav-item-root');
     navItem.classList.add(...navItemClasses);
-    const controlName = `content-${level}-${Date.now() + index}`; // unique id
+    const controlName = `content-${level}-${randomId()}`; // unique id
     const content = navItem.querySelector(':scope > ul');
     if (content) {
       const firstEl = navItem.firstElementChild;
