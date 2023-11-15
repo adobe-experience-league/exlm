@@ -27,23 +27,43 @@
     color: var(--spectrum-gray-800);
     font-weight: bold;
     margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 229px;
   }
 
   .icon-description {
     margin-bottom: 16px;
     line-height: 18.2px;
     color: var(--spectrum-gray-700);
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    display: -webkit-box;
   }
 
   .icon-link {
     font-size: 14px;
     line-height: 18.2px;
     color: var(--spectrum-blue-900);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 135px;
+    display: inline-block;
   }
 
   .icon-link::after {
     content: '>';
     padding-left: 4px;
+  }
+
+  .icon-link.external::after {
+    content: url('/icons/new-tab.svg');
+    position: relative;
+    top: 4px;
   }
 }
 

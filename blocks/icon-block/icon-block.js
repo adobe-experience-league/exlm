@@ -1,4 +1,4 @@
-import { createTag } from '../../scripts/scripts.js';
+import { createTag, decorateExternalLinks } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   const columns = block.querySelectorAll('.icon-block > div');
@@ -17,7 +17,7 @@ export default function decorate(block) {
       'a',
       {
         href: linkUrl,
-        class: 'icon-link', // TODO: handle external links
+        class: 'icon-link',
       },
       linkText,
     );
@@ -33,5 +33,12 @@ export default function decorate(block) {
     link.nextElementSibling.remove();
     link.replaceWith(a);
     heading.replaceWith(h3);
+  });
+
+  decorateExternalLinks(block);
+
+  const anchorEls = [...block.querySelectorAll('a')];
+  anchorEls.forEach((a) => {
+    if (a.target === '_blank') a.classList.add('external');
   });
 }
