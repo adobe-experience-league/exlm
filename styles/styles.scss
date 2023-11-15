@@ -13,12 +13,10 @@
   --footer-border-color: #e1e1e1;
 
   /* fonts */
-  --body-font-family: 'Adobe Clean', adobe-clean, 'Source Sans Pro',
-    -apple-system, system-ui, 'Segoe UI', roboto, ubuntu, 'Trebuchet MS',
-    'Lucida Grande', sans-serif;
+  --body-font-family: 'Adobe Clean', adobe-clean, 'Source Sans Pro', -apple-system, system-ui, 'Segoe UI', roboto,
+    ubuntu, 'Trebuchet MS', 'Lucida Grande', sans-serif;
   --heading-font-family: var(--body-font-family);
-  --fixed-font-family: 'Roboto Mono', menlo, consolas, 'Liberation Mono',
-    monospace;
+  --fixed-font-family: 'Roboto Mono', menlo, consolas, 'Liberation Mono', monospace;
   --spectrum-code-font-family: 'Source Code Pro', 'monaco', monospace;
 
   /* default font sizes */
@@ -400,12 +398,7 @@ ul {
   padding: 0;
 
   > li {
-    @include text-styles(
-      $margin-top: 1em,
-      $margin-bottom: 2em,
-      $line-height: 27px,
-      $color: var(--non-spectrum-grey)
-    );
+    @include text-styles($margin-top: 1em, $margin-bottom: 2em, $line-height: 27px, $color: var(--non-spectrum-grey));
 
     > p {
       margin-bottom: 8px;
@@ -419,12 +412,7 @@ ol {
   padding: 0;
 
   > li {
-    @include text-styles(
-      $margin-bottom: 2em,
-      $margin-top: 0,
-      $color: var(--non-spectrum-grey),
-      $line-height: 27px
-    );
+    @include text-styles($margin-bottom: 2em, $margin-top: 0, $color: var(--non-spectrum-grey), $line-height: 27px);
 
     > p {
       margin-bottom: 8px;
@@ -696,21 +684,11 @@ img {
   }
 
   ol {
-    @include text-styles(
-      $margin-bottom: 2em,
-      $margin-top: 0,
-      $color: var(--non-spectrum-grey),
-      $line-height: 24px
-    );
+    @include text-styles($margin-bottom: 2em, $margin-top: 0, $color: var(--non-spectrum-grey), $line-height: 24px);
   }
 
   ul {
-    @include text-styles(
-      $margin-top: 1em,
-      $margin-bottom: 2em,
-      $line-height: 24px,
-      $color: var(--non-spectrum-grey)
-    );
+    @include text-styles($margin-top: 1em, $margin-bottom: 2em, $line-height: 24px, $color: var(--non-spectrum-grey));
   }
 
   main {
@@ -724,8 +702,7 @@ img {
     max-width: 1700px;
 
     > div {
-      padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500)
-        var(--spectrum-spacing-500);
+      padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500) var(--spectrum-spacing-500);
       box-sizing: border-box;
 
       &.section {

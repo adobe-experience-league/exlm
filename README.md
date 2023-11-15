@@ -19,6 +19,28 @@ npm i
 npm run lint
 ```
 
+### Fix auto-fixable CSS lint issues
+
+```sh
+npm run quality
+```
+
+## Code Formatting
+
+this should happen on commit automatically, but you can run manually with:
+
+```sh
+npm run format
+```
+
+## Code Quality Check
+
+If you want to run all code quality scripts to ensure your PR will pass:
+
+```sh
+npm run quality
+```
+
 ## Run sass auto-compile and Helix Pages
 
 ```sh

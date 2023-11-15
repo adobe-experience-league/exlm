@@ -1,9 +1,4 @@
-import {
-  decorateBlock,
-  decorateButtons,
-  decorateIcons,
-  loadBlock,
-} from './lib-franklin.js';
+import { decorateBlock, decorateButtons, decorateIcons, loadBlock } from './lib-franklin.js';
 
 const connectionPrefix = 'urn:aemconnection:';
 
@@ -22,8 +17,7 @@ function handleEditorUpdate(event) {
           const resp = await fetch(`${path}.html${window.location.search}`);
           if (resp.ok) {
             const text = await resp.text();
-            const newBlock = new DOMParser().parseFromString(text, 'text/html')
-              .body.firstElementChild;
+            const newBlock = new DOMParser().parseFromString(text, 'text/html').body.firstElementChild;
             // hide the new block, and insert it after the existing one
             const currentStyle = newBlock.style.display;
             newBlock.style.display = 'none';

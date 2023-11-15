@@ -8,9 +8,7 @@ export default function decorate(block) {
   try {
     if (firstChildDiv) {
       const firstDivContent = firstChildDiv.textContent.trim();
-      const titleAttribute = secondChildDiv
-        ? `title="${secondChildDiv.textContent.trim()}"`
-        : '';
+      const titleAttribute = secondChildDiv ? `title="${secondChildDiv.textContent.trim()}"` : '';
 
       if (anchorElement) {
         const href = anchorElement.getAttribute('href');

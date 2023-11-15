@@ -40,10 +40,7 @@ const randomId = (length = 6) =>
  * @param {number} cell
  * @returns
  */
-const getCell = (block, row, cell) =>
-  block.querySelector(
-    `:scope > div:nth-child(${row}) > div:nth-child(${cell})`,
-  );
+const getCell = (block, row, cell) => block.querySelector(`:scope > div:nth-child(${row}) > div:nth-child(${cell})`);
 
 /**
  * creates an element from html string
@@ -106,20 +103,14 @@ const hamburgerButton = (navWrapper) => {
  */
 const buildNavItems = (ul, level = 0) => {
   if (level === 0) {
-    ul.appendChild(
-      htmlToElement(
-        `<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`,
-      ),
-    );
+    ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
 
     ul.appendChild(
       htmlToElement(
         `<li class="nav-item-mobile">
           <p>${decoratorState.languageTitle}</p>
           <ul>
-            ${decoratorState.languages
-              .map((l) => `<li><a href="${l.lang}">${l.title}</a></li>`)
-              .join('')}
+            ${decoratorState.languages.map((l) => `<li><a href="${l.lang}">${l.title}</a></li>`).join('')}
           </ul>
         </li>`,
       ),
@@ -133,10 +124,7 @@ const buildNavItems = (ul, level = 0) => {
     const content = navItem.querySelector(':scope > ul');
     if (content) {
       const firstEl = navItem.firstElementChild;
-      const toggleClass =
-        level === 0
-          ? 'nav-item-toggle nav-item-toggle-root'
-          : 'nav-item-toggle';
+      const toggleClass = level === 0 ? 'nav-item-toggle nav-item-toggle-root' : 'nav-item-toggle';
       const toggler = htmlToElement(
         `<button class="${toggleClass}" aria-controls="${controlName}" aria-expanded="false">${firstEl.textContent}</button>`,
       );
@@ -162,26 +150,14 @@ const buildNavItems = (ul, level = 0) => {
         if (isMobile()) {
           // if mobile, add click event, remove mouseenter/mouseleave
           toggler.addEventListener('click', toggleExpandContent);
-          toggler.parentElement.removeEventListener(
-            'mouseenter',
-            toggleExpandContent,
-          );
-          toggler.parentElement.removeEventListener(
-            'mouseleave',
-            toggleExpandContent,
-          );
+          toggler.parentElement.removeEventListener('mouseenter', toggleExpandContent);
+          toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
         } else {
           // if desktop, add mouseenter/mouseleave, remove click event
           toggler.removeEventListener('click', toggleExpandContent);
           if (level === 0) {
-            toggler.parentElement.addEventListener(
-              'mouseenter',
-              toggleExpandContent,
-            );
-            toggler.parentElement.addEventListener(
-              'mouseleave',
-              toggleExpandContent,
-            );
+            toggler.parentElement.addEventListener('mouseenter', toggleExpandContent);
+            toggler.parentElement.addEventListener('mouseleave', toggleExpandContent);
           }
         }
       });
@@ -198,9 +174,7 @@ const buildNavItems = (ul, level = 0) => {
       // if nav item has a second element, it's a subtitle
       const secondEl = navItem.children[1];
       if (secondEl?.tagName === 'P') {
-        const subtitle = htmlToElement(
-          `<span class="nav-item-subtitle">${secondEl.innerHTML}</span>`,
-        );
+        const subtitle = htmlToElement(`<span class="nav-item-subtitle">${secondEl.innerHTML}</span>`);
         navItem.firstElementChild.appendChild(subtitle);
         secondEl.remove();
       }
@@ -241,14 +215,10 @@ const searchDecorator = (searchBlock) => {
   // get search placeholder
   const searchPlaceholder = getCell(searchBlock, 1, 2)?.firstChild;
   // build search options
-  const searchOptions =
-    getCell(searchBlock, 1, 3)?.firstElementChild?.children || [];
+  const searchOptions = getCell(searchBlock, 1, 3)?.firstElementChild?.children || [];
 
   const options = [...searchOptions]
-    .map(
-      (option) =>
-        `<span class="search-picker-label">${option.textContent}</span>`,
-    )
+    .map((option) => `<span class="search-picker-label">${option.textContent}</span>`)
     .join('');
 
   searchBlock.innerHTML = `<div class="search-wrapper">
@@ -304,10 +274,7 @@ const languageDecorator = async (languageBlock) => {
     decoratorState.languages = languages;
 
     const options = languages
-      .map(
-        (option) =>
-          `<span class="language-selector-label" data-value="${option.lang}">${option.title}</span>`,
-      )
+      .map((option) => `<span class="language-selector-label" data-value="${option.lang}">${option.title}</span>`)
       .join('');
     const popover = htmlToElement(`
       <div class="language-selector-popover" id="${popoverId}">
@@ -365,17 +332,11 @@ const decorateLinks = (block) => {
     const lastCurlyIndex = decodedHref.lastIndexOf('}');
     if (firstCurlyIndex > -1 && lastCurlyIndex > -1) {
       // get string between curly braces including curly braces
-      const options = decodedHref.substring(
-        firstCurlyIndex,
-        lastCurlyIndex + 1,
-      );
+      const options = decodedHref.substring(firstCurlyIndex, lastCurlyIndex + 1);
       Object.entries(JSON.parse(options)).forEach(([key, value]) => {
         link.setAttribute(key.trim(), value);
       });
-      const endIndex =
-        decodedHref.charAt(firstCurlyIndex - 1) === '#'
-          ? firstCurlyIndex - 1
-          : firstCurlyIndex;
+      const endIndex = decodedHref.charAt(firstCurlyIndex - 1) === '#' ? firstCurlyIndex - 1 : firstCurlyIndex;
       link.href = decodedHref.substring(0, endIndex);
     }
   });

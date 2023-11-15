@@ -21,8 +21,7 @@ function loadPrism(document) {
   import('./prism.js')
     .then(() => {
       // see: https://prismjs.com/plugins/autoloader/
-      window.Prism.plugins.autoloader.languages_path =
-        '/scripts/prism-grammars/';
+      window.Prism.plugins.autoloader.languages_path = '/scripts/prism-grammars/';
       // run prism in async mode; uses webworker.
       window.Prism.highlightAll(true);
     })

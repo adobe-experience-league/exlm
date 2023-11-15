@@ -27,11 +27,7 @@ export function highlight(replace = false) {
       document
         .querySelector('main')
         .querySelectorAll(
-          setLevels(
-            levels !== null && parseInt(levels.content, 10) > 0
-              ? parseInt(levels.content, 10)
-              : undefined,
-          ),
+          setLevels(levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined),
         ),
     ).filter((i) => i.id.length > 0);
     const anchors = Array.from(ctx.querySelectorAll('a'));
@@ -47,9 +43,7 @@ export function highlight(replace = false) {
 
     if (el !== undefined) {
       render(() => {
-        ctx
-          .querySelectorAll('a.is-active')
-          .forEach((i) => i.classList.remove('is-active'));
+        ctx.querySelectorAll('a.is-active').forEach((i) => i.classList.remove('is-active'));
         el.classList.add('is-active');
 
         if (mtocScroll) {
