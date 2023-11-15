@@ -1,10 +1,11 @@
-.accordion.block details {
+.accordion details {
   display: block;
   background-color: var(--spectrum-gray-100);
   color: var(--non-spectrum-grey);
   padding: 0 16px;
 }
-.accordion.block details summary {
+.accordion details summary {
+  box-sizing: content-box;
   cursor: pointer;
   list-style: none;
   padding: 16px 0;
@@ -12,63 +13,61 @@
   font-size: var(--spectrum-font-size-100);
   line-height: 21px;
 }
-.accordion.block details summary::before {
-  display: inline-block;
+.accordion details summary::before {
   content: url("/icons/chevron_right.svg");
   position: relative;
-  top: 3.5px;
-  left: -4.2px;
+  margin-right: -0.4em;
+  top: 0.25em;
+  left: -0.3em;
 }
-.accordion.block details summary::-webkit-details-marker {
+.accordion details summary::-webkit-details-marker {
   display: none;
 }
-.accordion.block details summary::marker {
+.accordion details summary::marker {
   content: none;
 }
-.accordion.block details div > div {
+.accordion details div > div {
   color: var(--non-spectrum-raisin-black);
   font-size: var(--spectrum-font-size-200);
-  line-height: 25.6px;
+  line-height: var(--spectrum-line-height-m);
   margin-left: 14px;
   margin-top: 14px;
 }
-.accordion.block details div > div > p:last-child {
-  margin-bottom: 0;
-}
-.accordion.block details .code-wrapper {
-  margin-left: 0;
-  margin-top: 0;
-}
-.accordion.block details .code-wrapper div {
-  margin-left: 0;
-  margin-top: 0;
-}
-.accordion.block details .note-wrapper {
-  margin-left: 0;
-  margin-top: 0;
-}
-.accordion.block details .note-wrapper div {
-  margin-left: 0;
-  margin-top: 0;
-}
-.accordion.block details h1,
-.accordion.block details h2,
-.accordion.block details h3 {
+.accordion details h1,
+.accordion details h2,
+.accordion details h3 {
   margin-top: 14px;
 }
-.accordion.block ul {
-  margin: 14px 0 32px 14px;
+.accordion details .accordion {
+  margin: 0;
 }
-.accordion.block ul li {
-  margin-left: 14px;
-}
-.accordion.block details details summary {
+.accordion details details summary {
   font-size: var(--spectrum-font-size-200);
   line-height: 24px;
 }
-.accordion.block details[open] {
+.accordion details[open] {
   padding-bottom: 16px;
 }
-.accordion.block details[open] summary::before {
+.accordion details[open] summary::before {
   content: url("/icons/chevron_down.svg");
+}
+.accordion .code-wrapper {
+  margin-left: 0;
+  margin-top: 0;
+}
+.accordion .code-wrapper div {
+  margin-left: 0;
+  margin-top: 0;
+}
+.accordion .code code {
+  font-size: var(--spectrum-font-size-100);
+}
+.accordion .note-wrapper,
+.accordion .note-wrapper div {
+  margin-left: 0;
+  margin-top: 0;
+}
+
+.shade-box .accordion-wrapper:first-child details {
+  padding-top: 16px;
 }
