@@ -1,4 +1,4 @@
-.accordion.block {
+.accordion {
   details {
     display: block;
     background-color: var(--spectrum-gray-100);
@@ -6,6 +6,7 @@
     padding: 0 16px;
 
     summary {
+      box-sizing: content-box;
       cursor: pointer;
       list-style: none;
       padding: 16px 0;
@@ -14,11 +15,11 @@
       line-height: 21px;
 
       &::before {
-        display: inline-block;
         content: url('/icons/chevron_right.svg');
         position: relative;
-        top: 3.5px;
-        left: -4.2px;
+        margin-right: -0.4em;
+        top: 0.25em;
+        left: -0.3em;
       }
 
       &::-webkit-details-marker {
@@ -33,33 +34,9 @@
     div > div {
       color: var(--non-spectrum-raisin-black);
       font-size: var(--spectrum-font-size-200);
-      line-height: 25.6px;
+      line-height: var(--spectrum-line-height-m);
       margin-left: 14px;
       margin-top: 14px;
-    }
-
-    div > div > p:last-child {
-      margin-bottom: 0;
-    }
-
-    .code-wrapper {
-      margin-left: 0;
-      margin-top: 0;
-    }
-
-    .code-wrapper div {
-      margin-left: 0;
-      margin-top: 0;
-    }
-
-    .note-wrapper {
-      margin-left: 0;
-      margin-top: 0;
-    }
-
-    .note-wrapper div {
-      margin-left: 0;
-      margin-top: 0;
     }
 
     h1,
@@ -69,12 +46,8 @@
     }
   }
 
-  ul {
-    margin: 14px 0 32px 14px;
-
-    li {
-      margin-left: 14px;
-    }
+  details .accordion {
+    margin: 0;
   }
 
   details details {
@@ -90,5 +63,31 @@
 
   details[open] summary::before {
     content: url('/icons/chevron_down.svg');
+  }
+
+  .code-wrapper {
+    margin-left: 0;
+    margin-top: 0;
+  }
+
+  .code-wrapper div {
+    margin-left: 0;
+    margin-top: 0;
+  }
+
+  .code code {
+    font-size: var(--spectrum-font-size-100);
+  }
+
+  .note-wrapper,
+  .note-wrapper div {
+    margin-left: 0;
+    margin-top: 0;
+  }
+}
+
+.shade-box {
+  .accordion-wrapper:first-child details {
+    padding-top: 16px;
   }
 }
