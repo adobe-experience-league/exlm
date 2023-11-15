@@ -191,7 +191,7 @@ header {
 
     @include tablet {
       max-width: 360px;
-      height: calc(100vh - var(--nav-height));
+      min-height: calc(100vh - var(--nav-height));
     }
 
     @include desktop {
