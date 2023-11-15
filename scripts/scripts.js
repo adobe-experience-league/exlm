@@ -314,16 +314,14 @@ function loadDelayed() {
 /**
  * Custom - Loads the right and left rails for doc pages only.
  */
-function loadRails() {
-  requestIdleCallback(async () => {
-    if (isDocPage()) {
-      loadCSS(`${window.hlx.codeBasePath}/scripts/rails/rails.css`);
-      const mod = await import('./rails/rails.js');
-      if (mod.default) {
-        await mod.default();
-      }
+async function loadRails() {
+  if (isDocPage()) {
+    loadCSS(`${window.hlx.codeBasePath}/scripts/rails/rails.css`);
+    const mod = await import('./rails/rails.js');
+    if (mod.default) {
+      await mod.default();
     }
-  });
+  }
 }
 
 async function loadPage() {

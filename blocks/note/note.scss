@@ -11,7 +11,7 @@
   box-shadow: var(--box-shadow-1);
   text-rendering: optimizelegibility;
 
-  div:first-child > div {
+  & > div:first-child > div {
     color: var(--text-color);
     display: flex;
     align-items: center;
@@ -41,5 +41,9 @@
 
   &.success {
     border-color: var(--non-spectrum-viridian);
+  }
+
+  .accordion summary {
+    color: var(--text-color);
   }
 }

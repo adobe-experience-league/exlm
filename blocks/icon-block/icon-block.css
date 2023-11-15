@@ -1,0 +1,85 @@
+.icon-block {
+  display: grid;
+  min-width: 320px;
+  text-align: center;
+  margin: 0 auto;
+  gap: 32px;
+}
+.icon-block > div {
+  max-width: 283px;
+  min-height: 147.95px;
+  margin: 0 auto;
+}
+.icon-block > div > div img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+.icon-block .icon-heading {
+  font-size: 20px;
+  margin: 0;
+  line-height: 33px;
+  color: var(--spectrum-gray-800);
+  font-weight: bold;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 229px;
+}
+.icon-block .icon-description {
+  margin-bottom: 16px;
+  line-height: 18.2px;
+  color: var(--spectrum-gray-700);
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  display: -webkit-box;
+}
+.icon-block .icon-link {
+  font-size: 14px;
+  line-height: 18.2px;
+  color: var(--spectrum-blue-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 135px;
+  display: inline-block;
+}
+.icon-block .icon-link::after {
+  content: ">";
+  padding-left: 4px;
+}
+.icon-block .icon-link.external::after {
+  content: url("/icons/new-tab.svg");
+  position: relative;
+  top: 4px;
+}
+
+@media (min-width: 600px) {
+  .icon-block {
+    grid-template-columns: repeat(auto-fit, minmax(286px, 1fr));
+    column-gap: 24px;
+    max-width: 596px;
+  }
+  .icon-block > div {
+    max-width: 286px;
+    min-height: 180px;
+  }
+  .icon-block .icon-description {
+    min-height: 53px;
+  }
+}
+@media (min-width: 900px) {
+  .icon-block {
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    column-gap: 24px;
+    max-width: 1278px;
+  }
+  .icon-block > div {
+    max-width: 230px;
+    min-height: 180px;
+  }
+}
