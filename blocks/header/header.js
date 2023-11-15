@@ -116,11 +116,11 @@ const buildNavItems = (ul, level = 0) => {
       ),
     );
   }
-  [...ul.children].forEach((navItem) => {
+  [...ul.children].forEach((navItem, index) => {
     const navItemClasses = ['nav-item'];
     if (level === 0) navItemClasses.push('nav-item-root');
     navItem.classList.add(...navItemClasses);
-    const controlName = `content-${level}-${Date.now()}`;
+    const controlName = `content-${level}-${Date.now() + index}`; // unique id
     const content = navItem.querySelector(':scope > ul');
     if (content) {
       const firstEl = navItem.firstElementChild;
