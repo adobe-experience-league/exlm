@@ -19,6 +19,7 @@
   --nav-item-expanded-border: 2px solid #222;
   --nav-item-expanded-bg: #fafafa;
   --nav-item-text-color: #222;
+  --nav-font: "Adobe Clean";
 }
 @media (width >= 1024px) {
   :root {
@@ -85,7 +86,7 @@ header {
 .header .brand a {
   color: var(--nav-item-text-color) !important;
   /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-  font: normal normal bold 16px/21px "Adobe Clean" !important;
+  font: normal normal bold 16px/21px var(--nav-font) !important;
   margin: 0;
 }
 .header .sign-up {
@@ -167,6 +168,7 @@ header {
     box-shadow: initial;
     padding: 0;
     height: 100%;
+    min-height: initial;
   }
 }
 .header .nav-wrapper > ul {
@@ -207,6 +209,9 @@ header {
 .header .nav-item-root > a {
   border-top: 1px solid var(--spectrum-gray-200);
   border-bottom: 1px solid var(--spectrum-gray-200);
+}
+.header .nav-item-root a {
+  color: var(--nav-item-text-color);
 }
 @media (width >= 1024px) {
   .header .nav-item-root a {
@@ -280,7 +285,7 @@ header {
 .header .nav-item .nav-item a {
   width: 100%;
   /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-  font: normal normal bold 14px/30px "Adobe Clean";
+  font: normal normal bold 14px/30px var(--nav-font);
   padding: 5px 0 5px var(--nav-item-padding-x);
 }
 @media (width >= 1024px) {
@@ -314,13 +319,13 @@ header {
 .header .nav-item-subtitle {
   display: none;
   /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-  font: normal normal normal 11px/14px "Adobe Clean";
+  font: normal normal normal 11px/14px var(--nav-font);
   white-space: break-spaces;
 }
 @media (width >= 1024px) {
   .header .nav-item-subtitle {
     display: block;
-    font-size: 10px;
+    font-size: 11px;
   }
 }
 .header .nav-item-toggle {
@@ -336,13 +341,11 @@ header {
   justify-content: space-between;
   position: relative;
   width: 100%;
-  line-height: 2;
   padding: calc(var(--nav-item-padding-x) / 2) var(--nav-item-padding-x);
 }
 @media (width >= 1024px) {
   .header .nav-item-toggle {
     height: fit-content;
-    font-weight: 700;
     /* to upper case */
     text-transform: uppercase;
   }
@@ -367,6 +370,14 @@ header {
 @media (width >= 1024px) {
   .header .nav-item-toggle::after {
     display: none;
+  }
+}
+@media (width >= 1024px) {
+  .header .nav-item-toggle:not(.nav-item-toggle-root) {
+    font: normal normal bold 12px/18px var(--nav-font);
+    padding: var(--nav-item-padding-x);
+    padding-bottom: calc(var(--nav-item-padding-x) / 2);
+    color: var(--spectrum-gray-700);
   }
 }
 .header .nav-item-toggle-root {
@@ -533,7 +544,7 @@ header {
   color: var(--non-spectrum-input-text);
   outline: none;
   /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-  font: italic normal normal 12px/15px "Adobe Clean";
+  font: italic normal normal 12px/15px var(--nav-font);
   height: 30px;
   padding: 7px 5px 9px 28px;
   margin: 0;
