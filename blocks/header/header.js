@@ -120,7 +120,7 @@ const buildNavItems = (ul, level = 0) => {
     const navItemClasses = ['nav-item'];
     if (level === 0) navItemClasses.push('nav-item-root');
     navItem.classList.add(...navItemClasses);
-    const controlName = `${level}-${index}`;
+    const controlName = `content-${level}-${index}`;
     const content = navItem.querySelector(':scope > ul');
     if (content) {
       const firstEl = navItem.firstElementChild;
