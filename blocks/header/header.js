@@ -64,6 +64,8 @@ const fetchFragment = async (rePath, lang = 'en') => {
 // Mobile Only (Until 1024px)
 const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
+const headerFragment = fetchFragment('header/header');
+const languageFragment = fetchFragment('languages/languages');
 const decoratorState = {};
 
 /**
@@ -291,8 +293,7 @@ const languageDecorator = async (languageBlock) => {
 
   const popoverId = 'language-picker-popover';
   const prependLanguagePopover = async (parent) => {
-    const languagesHtml = await fetchFragment('languages/languages');
-    let languagesEl = htmlToElement(languagesHtml);
+    let languagesEl = htmlToElement(await languageFragment);
     languagesEl = languagesEl.querySelector('ul');
 
     const languageOptions = languagesEl?.children || [];
@@ -387,8 +388,7 @@ const decorateLinks = (block) => {
 export default async function decorate(headerBlock) {
   headerBlock.style.display = 'none';
   // eslint-disable-next-line no-unused-vars
-  const headerFragment = await fetchFragment('header/header');
-  headerBlock.innerHTML = headerFragment;
+  headerBlock.innerHTML = await headerFragment;
 
   const headerBlockFirstRow = getBlockFirstRow(headerBlock);
   headerBlockFirstRow.outerHTML = `<nav>${headerBlockFirstRow.innerHTML}</nav>`;
