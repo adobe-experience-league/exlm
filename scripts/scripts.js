@@ -26,11 +26,7 @@ function buildHeroBlock(main) {
   const h1 = main.querySelector('h1');
   const picture = main.querySelector('picture');
   // eslint-disable-next-line no-bitwise
-  if (
-    h1 &&
-    picture &&
-    h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING
-  ) {
+  if (h1 && picture && h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING) {
     const section = document.createElement('div');
     section.append(buildBlock('hero', { elems: [picture, h1] }));
     main.prepend(section);
@@ -43,8 +39,7 @@ function buildHeroBlock(main) {
 async function loadFonts() {
   await loadCSS(`${window.hlx.codeBasePath}/styles/fonts.css`);
   try {
-    if (!window.location.hostname.includes('localhost'))
-      sessionStorage.setItem('fonts-loaded', 'true');
+    if (!window.location.hostname.includes('localhost')) sessionStorage.setItem('fonts-loaded', 'true');
   } catch (e) {
     // do nothing
   }
@@ -247,14 +242,8 @@ export function loadPrevNextBtn() {
 
   const prevPageMeta = document.querySelector('meta[name="prev-page"]');
   const nextPageMeta = document.querySelector('meta[name="next-page"]');
-  const prevPageMetaContent = prevPageMeta
-    ?.getAttribute('content')
-    .trim()
-    .split('.html')[0];
-  const nextPageMetaContent = nextPageMeta
-    ?.getAttribute('content')
-    .trim()
-    .split('.html')[0];
+  const prevPageMetaContent = prevPageMeta?.getAttribute('content').trim().split('.html')[0];
+  const nextPageMetaContent = nextPageMeta?.getAttribute('content').trim().split('.html')[0];
   const PREV_PAGE = 'Previous page';
   const NEXT_PAGE = 'Next page';
 

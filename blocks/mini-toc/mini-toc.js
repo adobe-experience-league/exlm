@@ -27,20 +27,13 @@ export default async function decorate() {
       document
         .querySelector('main')
         .querySelectorAll(
-          setLevels(
-            levels !== null && parseInt(levels.content, 10) > 0
-              ? parseInt(levels.content, 10)
-              : undefined,
-          ),
+          setLevels(levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined),
         ),
     ).filter(headerExclusions);
 
     if (headers.length > 1) {
       const html = headers.map(
-        (i) =>
-          `<li><a href="#${i.id}" class="${setPadding(i.nodeName)}">${
-            i.innerText
-          }</a></li>`,
+        (i) => `<li><a href="#${i.id}" class="${setPadding(i.nodeName)}">${i.innerText}</a></li>`,
       );
       // eslint-disable-next-line no-restricted-globals
       const url = new URL(location.href);
@@ -48,9 +41,7 @@ export default async function decorate() {
 
       render(() => {
         const tocHeadingDivNode = `<div><h2>${miniTOCHeading}</h2></div>`;
-        ctx.innerHTML = `${tocHeadingDivNode}\n<div class='scrollable-div'><ul>${html.join(
-          '\n',
-        )}</ul></div>`;
+        ctx.innerHTML = `${tocHeadingDivNode}\n<div class='scrollable-div'><ul>${html.join('\n')}</ul></div>`;
 
         const anchors = Array.from(ctx.querySelectorAll('a'));
         let lactive = false;
@@ -68,15 +59,11 @@ export default async function decorate() {
             i.addEventListener(
               'click',
               () => {
-                const ahash = (
-                  i.href.length > 0 ? new URL(i.href).hash || '' : ''
-                ).replace(/^#/, '');
+                const ahash = (i.href.length > 0 ? new URL(i.href).hash || '' : '').replace(/^#/, '');
                 let activeAnchor = i;
                 if (
                   !i.classList.contains('is-padded-left-big') &&
-                  i.parentElement?.nextElementSibling?.firstElementChild?.classList?.contains(
-                    'is-padded-left-big',
-                  )
+                  i.parentElement?.nextElementSibling?.firstElementChild?.classList?.contains('is-padded-left-big')
                 ) {
                   activeAnchor = i.parentElement.nextElementSibling.firstChild;
                 }
@@ -106,9 +93,7 @@ export default async function decorate() {
             const marginBottom = parseInt(anchorStyles.marginBottom || '0', 10);
             const anchorHeight = anchorClientHeight + marginTop + marginBottom;
             const halfWindowHeight = window.innerHeight / 2;
-            const visibleAnchorsCount = Math.floor(
-              halfWindowHeight / anchorHeight,
-            );
+            const visibleAnchorsCount = Math.floor(halfWindowHeight / anchorHeight);
             if (visibleAnchorsCount && anchors.length > visibleAnchorsCount) {
               // scrollableDiv.style.maxHeight = `${visibleAnchorsCount * anchorHeight}px`;
             }

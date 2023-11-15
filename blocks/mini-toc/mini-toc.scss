@@ -51,20 +51,11 @@
     justify-content: start;
     box-sizing: border-box;
     width: 100%;
-    min-height: var(
-      --spectrum-sidenav-item-height,
-      var(--spectrum-alias-single-line-height)
-    );
+    min-height: var(--spectrum-sidenav-item-height, var(--spectrum-alias-single-line-height));
     padding: var(--spectrum-sidenav-item-padding-y)
-      var(
-        --spectrum-sidenav-item-padding-x,
-        var(--spectrum-global-dimension-size-150)
-      )
+      var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150))
       var(--spectrum-sidenav-item-padding-y)
-      var(
-        --spectrum-sidenav-item-padding-x,
-        var(--spectrum-global-dimension-size-150)
-      );
+      var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150));
     margin: 4px 0;
 
     .is-padded-left-big {
@@ -93,29 +84,17 @@
       margin: 0;
       border-radius: 4px;
       padding: 5px 12px;
-      color: var(
-        --non-spectrum-grey-updated,
-        var(--spectrum-alias-text-color-hover)
-      );
+      color: var(--non-spectrum-grey-updated, var(--spectrum-alias-text-color-hover));
     }
 
     a:hover {
-      background-color: var(
-        --spectrum-alias-highlight-hover,
-        var(--spectrum-alias-highlight-hover)
-      );
-      color: var(
-        --spectrum-sidenav-item-text-color-hover,
-        var(--spectrum-alias-text-color-hover)
-      );
+      background-color: var(--spectrum-alias-highlight-hover, var(--spectrum-alias-highlight-hover));
+      color: var(--spectrum-sidenav-item-text-color-hover, var(--spectrum-alias-text-color-hover));
     }
 
     a.is-active {
       font-weight: var(--font-weight-600);
-      background-color: var(
-        --spectrum-sidenav-item-background-color-hover,
-        var(--spectrum-alias-highlight-hover)
-      );
+      background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
       color: #1e1e1e;
     }
   }

@@ -7,10 +7,7 @@ const execAsync = util.promisify(exec);
 let ref = await execAsync('git branch --show-current');
 ref = ref.stdout.replace(/\//g, '-');
 
-const [
-  url = '/docs/authoring-guide-exl/using/markdown/cheatsheet',
-  branch = ref,
-] = process.argv.slice(2);
+const [url = '/docs/authoring-guide-exl/using/markdown/cheatsheet', branch = ref] = process.argv.slice(2);
 
 const owner = 'adobe-experience-league';
 const repo = 'exlm';

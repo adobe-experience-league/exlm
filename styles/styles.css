@@ -121,6 +121,10 @@ a {
   margin-bottom: 9px;
 }
 
+a:hover {
+  color: var(--non-spectrum-custom-dark);
+}
+
 strong {
   color: var(--non-spectrum-custom-dark);
 }
@@ -136,12 +140,10 @@ strong {
   --footer-background-color: #fafafa;
   --footer-border-color: #e1e1e1;
   /* fonts */
-  --body-font-family: "Adobe Clean", adobe-clean, "Source Sans Pro",
-    -apple-system, system-ui, "Segoe UI", roboto, ubuntu, "Trebuchet MS",
-    "Lucida Grande", sans-serif;
+  --body-font-family: "Adobe Clean", adobe-clean, "Source Sans Pro", -apple-system, system-ui, "Segoe UI", roboto,
+    ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif;
   --heading-font-family: var(--body-font-family);
-  --fixed-font-family: "Roboto Mono", menlo, consolas, "Liberation Mono",
-    monospace;
+  --fixed-font-family: "Roboto Mono", menlo, consolas, "Liberation Mono", monospace;
   --spectrum-code-font-family: "Source Code Pro", "monaco", monospace;
   /* default font sizes */
   --spectrum-font-size-50: 11px;
