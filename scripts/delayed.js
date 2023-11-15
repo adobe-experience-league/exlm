@@ -30,4 +30,4 @@ function loadPrism(document) {
     .catch((err) => console.error(err));
 }
 
-requestIdleCallback(() => loadPrism(document));
+loadPrism(document);
