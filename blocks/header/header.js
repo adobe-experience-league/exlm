@@ -26,6 +26,15 @@ const simplifySingleCellBlock = (block) => {
 };
 
 /**
+ * https://www.codemzy.com/blog/random-unique-id-javascript
+ * @param {number} length
+ */
+const randomId = (length = 6) =>
+  Math.random()
+    .toString(36)
+    .substring(2, length + 2);
+
+/**
  * @param {HTMLElement} block
  * @param {number} row
  * @param {number} cell
@@ -39,12 +48,13 @@ const getCell = (block, row, cell) =>
 /**
  * creates an element from html string
  * @param {string} html
+ * @returns {HTMLElement}
  */
 function htmlToElement(html) {
   const template = document.createElement('template');
   const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
   template.innerHTML = trimmedHtml;
-  return template.content.firstChild;
+  return template.content.firstElementChild;
 }
 // fetch fragment html
 const fetchFragment = async (rePath, lang = 'en') => {
@@ -54,31 +64,16 @@ const fetchFragment = async (rePath, lang = 'en') => {
 // Mobile Only (Until 1024px)
 const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
+const decoratorState = {};
+
 /**
  * Decorates the brand block
  * @param {HTMLElement} brandBlock
  * */
 const brandDecorator = (brandBlock) => {
   simplifySingleCellBlock(brandBlock);
-
   const brandLink = brandBlock.querySelector('a'); // we expect one.
-  const logoIcon = brandLink.querySelector('.icon').cloneNode(true);
-  const brandText = brandLink.childNodes[0].textContent; // first text node is the brand text
-
-  // desktop brand is a text link
-  const desktopLink = brandLink.cloneNode(true);
-  desktopLink.classList.add('brand-desktop');
-  desktopLink.innerHTML = brandText;
-
-  // mobile brand is an icon link
-  const mobileLink = brandLink.cloneNode(true);
-  mobileLink.innerHTML = '';
-  mobileLink.ariaLabel = brandText;
-  mobileLink.classList.add('brand-mobile');
-  mobileLink.appendChild(logoIcon);
-
-  // replace the brand block with the two links
-  brandBlock.replaceChildren(desktopLink, mobileLink);
+  brandBlock.replaceChildren(brandLink);
   return brandBlock;
 };
 
@@ -110,11 +105,31 @@ const hamburgerButton = (navWrapper) => {
  * @param {HTMLUListElement} ul
  */
 const buildNavItems = (ul, level = 0) => {
-  [...ul.children].forEach((navItem, index) => {
-    const navItemClass = level === 0 ? 'nav-item nav-item-root' : 'nav-item';
+  if (level === 0) {
+    ul.appendChild(
+      htmlToElement(
+        `<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`,
+      ),
+    );
 
-    navItem.className = navItemClass;
-    const controlName = `content-${index}`;
+    ul.appendChild(
+      htmlToElement(
+        `<li class="nav-item-mobile">
+          <p>${decoratorState.languageTitle}</p>
+          <ul>
+            ${decoratorState.languages
+              .map((l) => `<li><a href="${l.lang}">${l.title}</a></li>`)
+              .join('')}
+          </ul>
+        </li>`,
+      ),
+    );
+  }
+  [...ul.children].forEach((navItem) => {
+    const navItemClasses = ['nav-item'];
+    if (level === 0) navItemClasses.push('nav-item-root');
+    navItem.classList.add(...navItemClasses);
+    const controlName = `content-${level}-${randomId()}`; // unique id
     const content = navItem.querySelector(':scope > ul');
     if (content) {
       const firstEl = navItem.firstElementChild;
@@ -134,6 +149,7 @@ const buildNavItems = (ul, level = 0) => {
         const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
         toggler.setAttribute('aria-expanded', !isExpanded);
         content.classList.toggle('nav-item-content-expanded');
+        content.parentElement.classList.toggle('nav-item-expanded');
         if (e.type === 'mouseenter') {
           const childContents = e.target.querySelectorAll('.nav-item-content');
           childContents.forEach((childContent) => {
@@ -218,9 +234,16 @@ const navDecorator = (navBlock) => {
  * @param {HTMLElement} searchBlock
  */
 const searchDecorator = (searchBlock) => {
-  const title = getCell(searchBlock, 1, 1)?.firstChild;
+  // save this for later use in mobile nav.
+  const searchLink = getCell(searchBlock, 1, 1)?.firstChild;
+  decoratorState.searchLinkHtml = searchLink.outerHTML;
+
+  // get search placeholder
+  const searchPlaceholder = getCell(searchBlock, 1, 2)?.firstChild;
+  // build search options
   const searchOptions =
-    getCell(searchBlock, 1, 2)?.firstElementChild?.children || [];
+    getCell(searchBlock, 1, 3)?.firstElementChild?.children || [];
+
   const options = [...searchOptions]
     .map(
       (option) =>
@@ -228,7 +251,7 @@ const searchDecorator = (searchBlock) => {
     )
     .join('');
 
-  searchBlock.innerHTML = `<div>
+  searchBlock.innerHTML = `<div class="search-wrapper">
     <div class="search-short">
       <a href="https://experienceleague.adobe.com/search.html">
         <span class="icon icon-search"></span>
@@ -236,7 +259,7 @@ const searchDecorator = (searchBlock) => {
     </div>
     <div class="search-full">
       <span class="icon icon-search"></span>
-      <input autocomplete="off" class="search-input" type="text" role="combobox" placeholder="${title.textContent}">
+      <input autocomplete="off" class="search-input" type="text" role="combobox" placeholder="${searchPlaceholder.textContent}">
       <button type="button" class="search-picker-button" aria-haspopup="true" aria-controls="search-picker-popover">
         <span class="search-picker-label">All</span>
       </button>
@@ -263,16 +286,27 @@ const signUpDecorator = (signUpBlock) => {
  * @param {HTMLElement} languageBlock
  */
 const languageDecorator = async (languageBlock) => {
+  const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
+  decoratorState.languageTitle = title;
+
   const popoverId = 'language-picker-popover';
   const prependLanguagePopover = async (parent) => {
-    const languages = await fetchFragment('languages/languages');
-    let languagesEl = htmlToElement(languages);
+    const languagesHtml = await fetchFragment('languages/languages');
+    let languagesEl = htmlToElement(languagesHtml);
     languagesEl = languagesEl.querySelector('ul');
+
     const languageOptions = languagesEl?.children || [];
-    const options = [...languageOptions]
+    const languages = [...languageOptions].map((option) => ({
+      title: option.textContent,
+      lang: option?.firstElementChild?.href,
+    }));
+
+    decoratorState.languages = languages;
+
+    const options = languages
       .map(
         (option) =>
-          `<span class="language-selector-label">${option.textContent}</span>`,
+          `<span class="language-selector-label" data-value="${option.lang}">${option.title}</span>`,
       )
       .join('');
     const popover = htmlToElement(`
@@ -281,8 +315,6 @@ const languageDecorator = async (languageBlock) => {
       </div>`);
     parent.append(popover);
   };
-
-  const title = getCell(languageBlock, 1, 1)?.firstChild;
 
   const languageHtml = `
       <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover" aria-label="${title}">
@@ -313,18 +345,6 @@ const adobeLogoDecorator = (adobeLogoBlock) => {
   return adobeLogoBlock;
 };
 
-/**
- * an object that matches header block classes to their respective decorators
- */
-const headerDecorators = {
-  brand: brandDecorator,
-  nav: navDecorator,
-  search: searchDecorator,
-  'sign-up': signUpDecorator,
-  'language-selector': languageDecorator,
-  'sign-in': signInDecorator,
-  'adobe-logo': adobeLogoDecorator,
-};
 /** @param {HTMLElement} block  */
 const decorateNewTabLinks = (block) => {
   const links = block.querySelectorAll('a[target="_blank"]');
@@ -365,6 +385,7 @@ const decorateLinks = (block) => {
  * @param {HTMLElement} headerBlock
  */
 export default async function decorate(headerBlock) {
+  headerBlock.style.display = 'none';
   // eslint-disable-next-line no-unused-vars
   const headerFragment = await fetchFragment('header/header');
   headerBlock.innerHTML = headerFragment;
@@ -375,18 +396,33 @@ export default async function decorate(headerBlock) {
   nav.role = 'navigation';
   nav.ariaLabel = 'Main navigation';
 
-  // decorate each header block sequentially
-  [...nav.children].forEach((block) => {
-    const blockName = block.className;
-    const decorator = headerDecorators[blockName];
-    if (decorator) {
-      decorator(block);
+  // order matters.
+  const decorators = [
+    { className: 'brand', decorator: brandDecorator },
+    { className: 'search', decorator: searchDecorator },
+    { className: 'sign-up', decorator: signUpDecorator },
+    { className: 'language-selector', decorator: languageDecorator },
+    { className: 'sign-in', decorator: signInDecorator },
+    { className: 'adobe-logo', decorator: adobeLogoDecorator },
+    { className: 'nav', decorator: navDecorator },
+  ];
+
+  for (let i = 0; i < decorators.length; i += 1) {
+    const { className, decorator } = decorators[i];
+    const block = nav.querySelector(`:scope > .${className}`);
+    if (block) {
+      // eslint-disable-next-line no-await-in-loop
+      await decorator(block);
     } else {
       // eslint-disable-next-line no-console
-      console.warn(`No decorator found for header block: ${blockName}`);
+      console.warn(`No header block found for class: ${className}`);
     }
-  });
+  }
+
   decorateLinks(headerBlock);
   decorateNewTabLinks(headerBlock);
+
+  // do this at the end, always.
   decorateIcons(headerBlock);
+  headerBlock.style.display = '';
 }
