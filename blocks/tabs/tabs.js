@@ -5,19 +5,13 @@ function changeTabs(e) {
   const tabMenu = target.parentNode;
   const tabContent = tabMenu.nextElementSibling;
 
-  tabMenu
-    .querySelectorAll('[aria-selected="true"]')
-    .forEach((t) => t.setAttribute('aria-selected', false));
+  tabMenu.querySelectorAll('[aria-selected="true"]').forEach((t) => t.setAttribute('aria-selected', false));
 
   target.setAttribute('aria-selected', true);
 
-  tabContent
-    .querySelectorAll('[role="tabpanel"]')
-    .forEach((p) => p.classList.remove('active'));
+  tabContent.querySelectorAll('[role="tabpanel"]').forEach((p) => p.classList.remove('active'));
 
-  tabContent.parentNode
-    .querySelector(`#${target.getAttribute('aria-controls')}`)
-    .classList.add('active');
+  tabContent.parentNode.querySelector(`#${target.getAttribute('aria-controls')}`).classList.add('active');
 }
 
 function initTabs(block) {

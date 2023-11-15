@@ -1,10 +1,7 @@
 /* eslint-disable no-console */
 import path from 'path';
 import { fileURLToPath } from 'url';
-import {
-  compileDirectoriesInPlace,
-  watchAndCompile,
-} from './build/sass-util.js';
+import { compileDirectoriesInPlace, watchAndCompile } from './build/sass-util.js';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const IGNORED_FILES = ['_breakpoints.scss', '_typography.scss']; // list of files to ignore from compilation

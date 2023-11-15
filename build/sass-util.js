@@ -20,19 +20,11 @@ export const compileFileInPlace = async (sassFile) => {
  * @param {string[]} ignoredFiles Array of strings of files to ignore
  * @returns {Promise[]} Array of promises - for recursion
  */
-export const compileDirectoryInPlace = async (
-  directory,
-  ignoredFiles = [],
-  promises = [],
-) => {
+export const compileDirectoryInPlace = async (directory, ignoredFiles = [], promises = []) => {
   const files = await readdir(directory, { withFileTypes: true });
   files.forEach((file) => {
     if (file.isDirectory()) {
-      compileDirectoryInPlace(
-        path.join(directory, file.name),
-        ignoredFiles,
-        promises,
-      ); // recurse
+      compileDirectoryInPlace(path.join(directory, file.name), ignoredFiles, promises); // recurse
     }
     if (path.extname(file.name) === '.scss') {
       if (!ignoredFiles.includes(file.name)) {
@@ -52,10 +44,7 @@ export const compileDirectoryInPlace = async (
  * @param {string[]} ignoredFiles
  * @returns
  */
-export const compileDirectoriesInPlace = async (
-  directories,
-  ignoredFiles = [],
-) => {
+export const compileDirectoriesInPlace = async (directories, ignoredFiles = []) => {
   let promises = [];
   directories.forEach(async (directory) => {
     try {

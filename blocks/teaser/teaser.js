@@ -25,9 +25,7 @@ export default function decorate(block) {
         <div class='title'>${title}</div>
         <div class='long-description'>${longDescr}</div>
         <div class='short-description'>${
-          shortDescr.textContent.trim() !== ''
-            ? shortDescr.innerHTML.trim()
-            : longDescr
+          shortDescr.textContent.trim() !== '' ? shortDescr.innerHTML.trim() : longDescr
         }</div>
         <div class='cta'>${
           firstCTAText && firstCTALink
@@ -47,17 +45,12 @@ export default function decorate(block) {
 
   // set image description
   if (imageDescr) {
-    teaserDOM
-      .querySelector('.background picture img')
-      .setAttribute('alt', imageDescr);
+    teaserDOM.querySelector('.background picture img').setAttribute('alt', imageDescr);
   }
 
   // set the mobile background color
   if (backgroundColor) {
-    block.style.setProperty(
-      '--teaser-background-color',
-      `var(${backgroundColor})`,
-    );
+    block.style.setProperty('--teaser-background-color', `var(${backgroundColor})`);
   }
 
   // add final teaser DOM

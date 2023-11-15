@@ -35,9 +35,7 @@ function imgZoomable(modalImage) {
     targetContent.innerHTML = modalContent;
     openModal(target);
 
-    const modalActions = document.querySelectorAll(
-      '.img-modal-background, .img-modal-close',
-    );
+    const modalActions = document.querySelectorAll('.img-modal-background, .img-modal-close');
     if (modalActions.length > 0) {
       modalActions.forEach((close) => {
         const closestModal = close.closest('.img-modal');
@@ -65,8 +63,7 @@ export default async function decorate(block) {
     return;
   }
 
-  const classNames =
-    block.firstElementChild?.firstElementChild?.textContent?.split(' ');
+  const classNames = block.firstElementChild?.firstElementChild?.textContent?.split(' ');
   if (!classNames) {
     return;
   }

@@ -40,9 +40,7 @@ const loadEmbed = (block, link, autoplay) => {
     },
   ];
 
-  const config = EMBEDS_CONFIG.find((e) =>
-    e.match.some((match) => link.includes(match)),
-  );
+  const config = EMBEDS_CONFIG.find((e) => e.match.some((match) => link.includes(match)));
   const url = new URL(link);
   if (config) {
     block.innerHTML = config.embed(url, autoplay);
@@ -62,8 +60,7 @@ export default function decorate(block) {
   if (placeholder) {
     const wrapper = document.createElement('div');
     wrapper.className = 'embed-placeholder';
-    wrapper.innerHTML =
-      '<div class="embed-placeholder-play"><button title="Play"></button></div>';
+    wrapper.innerHTML = '<div class="embed-placeholder-play"><button title="Play"></button></div>';
     wrapper.prepend(placeholder);
     wrapper.addEventListener('click', () => {
       loadEmbed(block, link, true);
