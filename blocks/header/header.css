@@ -18,6 +18,7 @@
   --nav-item-padding-x: 20px;
   --nav-item-expanded-border: 2px solid #222;
   --nav-item-expanded-bg: #fafafa;
+  --nav-item-text-color: #222;
 }
 @media (width >= 1024px) {
   :root {
@@ -82,7 +83,8 @@ header {
   white-space: nowrap;
 }
 .header .brand a {
-  color: #000 !important;
+  color: var(--nav-item-text-color) !important;
+  /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
   font: normal normal bold 16px/21px "Adobe Clean" !important;
   margin: 0;
 }
@@ -103,7 +105,6 @@ header {
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-600);
   padding: 5px 16px;
-  padding: 5px 16px;
   white-space: nowrap;
   line-height: unset;
 }
@@ -114,13 +115,12 @@ header {
   align-items: center;
 }
 .header .sign-in a {
-  color: #000;
+  color: var(--nav-item-text-color);
   background: var(--spectrum-blue-900);
   border-radius: 16px;
   color: var(--spectrum-gray-50);
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-600);
-  padding: 5px 16px;
   padding: 5px 16px;
   white-space: nowrap;
   line-height: unset;
@@ -134,7 +134,7 @@ header {
     text-align: left;
     background: none;
     font-weight: initial;
-    color: #000;
+    color: var(--nav-item-text-color);
     padding: var(--nav-root-item-padding-x);
   }
 }
@@ -279,6 +279,7 @@ header {
 }
 .header .nav-item .nav-item a {
   width: 100%;
+  /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
   font: normal normal bold 14px/30px "Adobe Clean";
   padding: 5px 0 5px var(--nav-item-padding-x);
 }
@@ -312,6 +313,7 @@ header {
 }
 .header .nav-item-subtitle {
   display: none;
+  /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
   font: normal normal normal 11px/14px "Adobe Clean";
   white-space: break-spaces;
 }
@@ -530,6 +532,7 @@ header {
   border-bottom-left-radius: 4px;
   color: var(--non-spectrum-input-text);
   outline: none;
+  /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
   font: italic normal normal 12px/15px "Adobe Clean";
   height: 30px;
   padding: 7px 5px 9px 28px;

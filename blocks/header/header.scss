@@ -37,6 +37,7 @@
   --nav-item-padding-x: 20px;
   --nav-item-expanded-border: 2px solid #222;
   --nav-item-expanded-bg: #fafafa;
+  --nav-item-text-color: #222;
 
   @include desktop {
     --nav-item-padding-x: 24px;
@@ -129,7 +130,7 @@ header {
     white-space: nowrap;
 
     a {
-      color: #000 !important;
+      color: var(--nav-item-text-color) !important;
       /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
       font: normal normal bold 16px/21px 'Adobe Clean' !important;
       margin: 0;
@@ -159,14 +160,14 @@ header {
     align-items: center;
 
     a {
-      color: #000;
+      color: var(--nav-item-text-color);
 
       @include button;
 
       @include desktop {
         @include button-reset;
 
-        color: #000;
+        color: var(--nav-item-text-color);
         padding: var(--nav-root-item-padding-x);
       }
     }
