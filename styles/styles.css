@@ -121,10 +121,6 @@ a {
   margin-bottom: 9px;
 }
 
-a:hover {
-  color: var(--non-spectrum-custom-dark);
-}
-
 strong {
   color: var(--non-spectrum-custom-dark);
 }
