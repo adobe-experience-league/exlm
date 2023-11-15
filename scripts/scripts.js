@@ -311,6 +311,22 @@ function loadDelayed() {
   // load anything that can be postponed to the latest here
 }
 
+async function importScript(url) {
+  return new Promise((resolve, reject) => {
+    const scriptElement = document.createElement('script');
+    scriptElement.src = url;
+    document.head.appendChild(scriptElement);
+    scriptElement.onload = () => {
+      resolve();
+    };
+
+    scriptElement.onabort = () => {
+      console.error(`script failed to load :: ${url}`);
+      reject();
+    };
+  });
+}
+
 /**
  * Custom - Loads the right and left rails for doc pages only.
  */
@@ -327,6 +343,11 @@ function loadRails() {
 }
 
 async function loadPage() {
+  if (!window.requestIdleCallback) {
+    await importScript(
+      'https://polyfill.io/v3/polyfill.min.js?features=requestIdleCallback',
+    );
+  }
   await loadEager(document);
   await loadLazy(document);
   loadRails();
