@@ -18,7 +18,6 @@ export default function decorate(block) {
   const secondCTAText = props[11].textContent.trim();
   const secondCTALink = props[12].textContent.trim();
 
-
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
     <div class='foreground'>
@@ -26,13 +25,15 @@ export default function decorate(block) {
         ${eyebrow ? `<div class='eyebrow'>${eyebrow.toUpperCase()}</div>` : ``}
         <div class='title'>${title}</div>
         <div class='long-description'>${longDescr}</div>
-        <div class='cta'>${firstCTAText && firstCTALink
-      ? `<a class='button ${firstCTAType}' href='${firstCTALink}'>${firstCTAText}</a>`
-      : ``
-    }${secondCTAText && secondCTALink
-      ? `<a class='button ${secondCTAType}' href='${secondCTALink}'>${secondCTAText}</a>`
-      : ``
-    }</div>
+        <div class='cta'>${
+          firstCTAText && firstCTALink
+            ? `<a class='button ${firstCTAType}' href='${firstCTALink}'>${firstCTAText}</a>`
+            : ``
+        }${
+          secondCTAText && secondCTALink
+            ? `<a class='button ${secondCTAType}' href='${secondCTALink}'>${secondCTAText}</a>`
+            : ``
+        }</div>
       </div>
       ${subjectPicture ? `<div class='subject'>${subjectPicture}</div>` : `<div class='spacer'></div>`}
       </div>
@@ -42,15 +43,11 @@ export default function decorate(block) {
 
   // set image description
   if (backgroundImageDescr) {
-    teaserDOM
-      .querySelector('.background picture img')
-      .setAttribute('alt', backgroundImageDescr);
+    teaserDOM.querySelector('.background picture img').setAttribute('alt', backgroundImageDescr);
   }
 
   if (subjectPicture && subjectImageDescr) {
-    teaserDOM
-      .querySelector('.foreground .subject picture img')
-      .setAttribute('alt', subjectImageDescr);
+    teaserDOM.querySelector('.foreground .subject picture img').setAttribute('alt', subjectImageDescr);
   }
 
   // add final teaser DOM

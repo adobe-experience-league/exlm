@@ -182,10 +182,7 @@
                   "fileReference": "/content/dam/default-teaser-banner.png",
                   "title": "Teaser Title",
                   "longDescr": "<p>Teaser Description</p>",
-                  "classes": [
-                    "light",
-                    "left"
-                  ]
+                  "classes": ["light", "left"]
                 }
               }
             }
@@ -204,10 +201,7 @@
                   "fileReference": "/content/dam/default-teaser-banner.png",
                   "title": "Marquee Title",
                   "longDescr": "<p>Marquee Description</p>",
-                  "classes": [
-                    "light",
-                    "left"
-                  ]
+                  "classes": ["light", "left"]
                 }
               }
             }
