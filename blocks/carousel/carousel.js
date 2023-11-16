@@ -9,7 +9,7 @@ export default function decorate(block) {
   const buttonContainer = document.createElement('div');
   buttonContainer.classList.add('button-container');
 
-  // get all children elements , each row is a teaser block
+  // get all children elements
   const panels = [...block.children];
 
   // loop through all teaser blocks
@@ -24,7 +24,17 @@ export default function decorate(block) {
     // generate the button
     const button = document.createElement('button');
     buttonContainer.append(button);
-    button.innerText = `Slide ${i + 1}`;
+    button.title = `Slide ${i + 1}`;
+    if (!i) button.classList.add('selected');
+
+    // add event listener to button
+    button.addEventListener('click', () => {
+      panelContainer.scrollTo({ top: 0, left: panel.offsetLeft - panel.parentNode.offsetLeft, behavior: 'smooth' });
+
+      // updated button selected states
+      [...buttonContainer.children].forEach((b) => b.classList.remove('selected'));
+      button.classList.add('selected');
+    });
   });
 
   block.textContent = '';

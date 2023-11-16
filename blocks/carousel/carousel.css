@@ -8,9 +8,49 @@
   margin-right: calc(-1 * var(--space-token-xs));
 }
 
+.carousel.block > .panel-container {
+  display: flex;
+  scroll-snap-type: x mandatory;
+  overflow: hidden;
+  scroll-behavior: smooth;
+  margin: auto;
+}
+
+.carousel.block.center > .panel-container {
+  align-items: center;
+}
+
+.carousel.block.top > .panel-container {
+  align-items: flex-start;
+}
+
+.carousel.block.bottom > .panel-container {
+  align-items: flex-end;
+}
+
+.carousel.block > .panel-container > .teaser.block {
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+
 .carousel.block > .button-container {
   display:flex;
   justify-content: center;
+}
+
+.carousel.block > .button-container button {
+  display: block;
+  height: 10px;
+  width: 10px;
+  padding: 0;
+  margin: 5px;
+  border-radius: 5px;
+  border: 1px solid grey;
+  background-color: transparent;
+}
+
+.carousel.block > .button-container button.selected {
+  background-color: grey;
 }
 
 /* ----- TABLET ----- */

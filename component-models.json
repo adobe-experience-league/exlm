@@ -436,7 +436,7 @@
     "fields": [
       {
         "component": "select",
-        "name": "alignment",
+        "name": "classes",
         "value": "center",
         "label": "Vertical Alignment",
         "valueType": "string",
@@ -452,10 +452,6 @@
           {
             "name": "Bottom",
             "value": "bottom"
-          },
-          {
-            "name": "Fix (400px)",
-            "value": "fix"
           }
         ]
       }

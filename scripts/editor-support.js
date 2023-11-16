@@ -19,7 +19,6 @@ function handleEditorUpdate(event) {
             const text = await resp.text();
             const newBlock = new DOMParser().parseFromString(text, 'text/html').body.firstElementChild;
             // hide the new block, and insert it after the existing one
-            const currentStyle = newBlock.style.display;
             newBlock.style.display = 'none';
             block.insertAdjacentElement('afterend', newBlock);
             // decorate buttons and icons
@@ -30,7 +29,7 @@ function handleEditorUpdate(event) {
             await loadBlock(newBlock);
             // remove the old block and show the new one
             block.remove();
-            newBlock.style.display = currentStyle;
+            newBlock.style.display = null;
             return Promise.resolve();
           }
         }

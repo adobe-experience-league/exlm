@@ -191,6 +191,7 @@
         {
           "title": "Carousel",
           "id": "carousel",
+          "classes": "center",
           "plugins": {
             "aem": {
               "page": {
@@ -198,9 +199,8 @@
                 "template": {
                   "name": "Carousel",
                   "model": "carousel",
-                  "fileReference": "/content/dam/default-teaser-banner.png",
-                  "fileReferenceSecond": "/content/dam/default-teaser-banner.png",
-                  "allowedComponents": "carousel",
+                  "allowedComponents": "teaser",
+                  "classes": "center",
                   "teaser": {
                     "name": "Teaser",
                     "model": "teaser",
