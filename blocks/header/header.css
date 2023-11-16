@@ -345,12 +345,12 @@ header {
   justify-content: space-between;
   position: relative;
   width: 100%;
-  padding: calc(var(--nav-item-padding-x) / 2) var(--nav-item-padding-x);
+  padding: var(--nav-item-padding-x);
 }
 @media (width >= 1024px) {
   .header .nav-item-toggle {
     height: fit-content;
-    padding: var(--nav-item-padding-x);
+    padding: calc(var(--nav-item-padding-x) / 2) var(--nav-item-padding-x);
     /* to upper case */
     text-transform: uppercase;
   }
