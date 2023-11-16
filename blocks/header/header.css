@@ -156,8 +156,8 @@ header {
 }
 @media (width >= 600px) {
   .header .nav-wrapper {
-    max-width: 360px;
     min-height: calc(100vh - var(--nav-height));
+    max-width: 360px;
   }
 }
 @media (width >= 1024px) {
@@ -169,6 +169,7 @@ header {
     padding: 0;
     height: 100%;
     min-height: initial;
+    max-width: initial;
   }
 }
 .header .nav-wrapper ul {
@@ -311,12 +312,14 @@ header {
     display: none;
   }
 }
-.header .nav-item-root.nav-item-expanded {
-  border-left: var(--nav-item-expanded-border);
+.header .nav-item-expanded {
   margin-left: 0;
 }
+.header .nav-item-expanded.nav-item-expanded-active {
+  border-left: var(--nav-item-expanded-border);
+}
 @media (width >= 1024px) {
-  .header .nav-item-root.nav-item-expanded {
+  .header .nav-item-expanded.nav-item-expanded-active {
     border-left: none;
   }
 }
@@ -346,11 +349,12 @@ header {
   justify-content: space-between;
   position: relative;
   width: 100%;
-  padding: calc(var(--nav-item-padding-x) / 2) var(--nav-item-padding-x);
+  padding: var(--nav-item-padding-x);
 }
 @media (width >= 1024px) {
   .header .nav-item-toggle {
     height: fit-content;
+    padding: calc(var(--nav-item-padding-x) / 2) var(--nav-item-padding-x);
     /* to upper case */
     text-transform: uppercase;
   }
@@ -435,7 +439,11 @@ header {
 }
 .header .nav-item-content-expanded > ul {
   background-color: var(--nav-item-expanded-bg);
-  padding: 10px 0;
+}
+@media (width >= 1024px) {
+  .header .nav-item-content-expanded > ul {
+    padding: 10px 0;
+  }
 }
 @media (width >= 1024px) {
   .header .nav-item-content-expanded {
@@ -482,7 +490,7 @@ header {
     font: normal normal normal 14px/18px var(--nav-font);
     color: var(--spectrum-blue-900) !important;
     text-align: right;
-    margin-right: 0px;
+    margin-right: 0;
   }
   .header .nav-items-secondary a::after {
     position: absolute;

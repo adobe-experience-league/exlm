@@ -195,18 +195,18 @@ header {
     background-color: #fff;
 
     @include tablet {
-      max-width: 360px;
       min-height: calc(100vh - var(--nav-height));
+      max-width: 360px;
     }
 
     @include desktop {
-      max-width: initial;
       display: flex;
       align-items: center;
       box-shadow: initial;
       padding: 0;
       height: 100%;
       min-height: initial;
+      max-width: initial;
     }
 
     ul {
@@ -364,12 +364,15 @@ header {
     }
   }
 
-  .nav-item-root.nav-item-expanded {
-    border-left: var(--nav-item-expanded-border);
+  .nav-item-expanded {
     margin-left: 0;
 
-    @include desktop {
-      border-left: none;
+    &.nav-item-expanded-active {
+      border-left: var(--nav-item-expanded-border);
+
+      @include desktop {
+        border-left: none;
+      }
     }
   }
 
@@ -395,10 +398,11 @@ header {
     justify-content: space-between;
     position: relative;
     width: 100%;
-    padding: calc(var(--nav-item-padding-x) / 2) var(--nav-item-padding-x);
+    padding: var(--nav-item-padding-x);
 
     @include desktop {
       height: fit-content;
+      padding: calc(var(--nav-item-padding-x) / 2) var(--nav-item-padding-x);
 
       /* to upper case */
       text-transform: uppercase;
@@ -482,7 +486,10 @@ header {
 
     > ul {
       background-color: var(--nav-item-expanded-bg);
-      padding: 10px 0;
+
+      @include desktop {
+        padding: 10px 0;
+      }
     }
 
     @include desktop {
