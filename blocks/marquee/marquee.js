@@ -11,7 +11,6 @@ export default function decorate(block) {
   const eyebrow = props[4].textContent.trim();
   const title = props[5].textContent.trim();
   const longDescr = props[6].innerHTML.trim();
-  const backgroundColor = '#FFFFFF';
   const firstCTAType = props[7].textContent.trim();
   const firstCTAText = props[8].textContent.trim();
   const firstCTALink = props[9].textContent.trim();
@@ -48,13 +47,11 @@ export default function decorate(block) {
       .setAttribute('alt', backgroundImageDescr);
   }
 
-  // set the mobile background color
-  // if (backgroundColor) {
-  //   block.style.setProperty(
-  //     '--teaser-background-color',
-  //     `var(${backgroundColor})`,
-  //   );
-  // }
+  if (subjectPicture && subjectImageDescr) {
+    teaserDOM
+      .querySelector('.foreground .subject picture img')
+      .setAttribute('alt', subjectImageDescr);
+  }
 
   // add final teaser DOM
   block.textContent = '';
