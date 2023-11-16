@@ -131,24 +131,63 @@ const buildNavItems = (ul, level = 0) => {
       const toggler = htmlToElement(
         `<button class="${toggleClass}" aria-controls="${controlName}" aria-expanded="false">${firstEl.textContent}</button>`,
       );
-      const contentWrapper = document.createElement('div');
-      contentWrapper.append(content);
-      contentWrapper.setAttribute('id', controlName);
-      contentWrapper.classList.add('nav-item-content');
+      const navItemContent = document.createElement('div');
+      navItemContent.append(content);
+      navItemContent.setAttribute('id', controlName);
+      navItemContent.classList.add('nav-item-content');
       if (secondaryContent) {
         secondaryContent.classList.add('nav-items-secondary');
-        contentWrapper.append(secondaryContent);
+        navItemContent.append(secondaryContent);
       }
-      const children = [toggler, contentWrapper];
+      const children = [toggler, navItemContent];
 
       navItem.replaceChildren(...children);
+      const currentActiveClass = 'nav-item-expanded-active';
+      const itemContentExpanded = 'nav-item-content-expanded';
+      const itemExpanded = 'nav-item-expanded';
+
+      const isNotAncestorOfToggler = (parent) =>
+        parent && !parent.contains(toggler) && !parent.parentElement.contains(toggler);
+      const getAllByClass = (className) => [...document.querySelectorAll(`.${className}`)];
+      const removeClassFromAll = (className) =>
+        getAllByClass(className).forEach((el) => el.classList.remove(className));
+      const removeClassFromNonAncestorAll = (className) => {
+        getAllByClass(className)
+          .filter(isNotAncestorOfToggler)
+          .forEach((el) => el.classList.remove(className));
+      };
+
+      const resetExpandedAttribute = () => {
+        const els = document.querySelectorAll(`header [aria-expanded="true"]`);
+        if (els && els.length)
+          [...els].filter(isNotAncestorOfToggler).forEach((el) => el.setAttribute('aria-expanded', false));
+      };
+
+      const setExpandedState = (toggleElement, containerElement, expanded) => {
+        // reset state
+
+        // set new state
+        resetExpandedAttribute();
+        toggleElement.setAttribute('aria-expanded', expanded);
+        // remove active class from all other expanded nav items
+        removeClassFromNonAncestorAll(itemExpanded);
+        removeClassFromNonAncestorAll(itemContentExpanded);
+        removeClassFromAll(currentActiveClass);
+        if (expanded) {
+          containerElement.classList.add(itemContentExpanded);
+          containerElement.parentElement.classList.add(itemExpanded);
+          containerElement.parentElement.classList.add(currentActiveClass);
+        } else {
+          containerElement.classList.remove(itemContentExpanded);
+          containerElement.parentElement.classList.remove(itemExpanded);
+          containerElement.parentElement.classList.remove(currentActiveClass);
+        }
+      };
 
       /** @param {Event} e */
       const toggleExpandContent = (e) => {
         const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
-        toggler.setAttribute('aria-expanded', !isExpanded);
-        contentWrapper.classList.toggle('nav-item-content-expanded');
-        contentWrapper.parentElement.classList.toggle('nav-item-expanded');
+        setExpandedState(toggler, navItemContent, !isExpanded);
         if (e.type === 'mouseenter') {
           const childContents = e.target.querySelectorAll('.nav-item-content');
           childContents.forEach((childContent) => {

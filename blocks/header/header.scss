@@ -363,12 +363,15 @@ header {
     }
   }
 
-  .nav-item-root.nav-item-expanded {
-    border-left: var(--nav-item-expanded-border);
+  .nav-item-expanded {
     margin-left: 0;
 
-    @include desktop {
-      border-left: none;
+    &.nav-item-expanded-active {
+      border-left: var(--nav-item-expanded-border);
+
+      @include desktop {
+        border-left: none;
+      }
     }
   }
 
@@ -482,7 +485,10 @@ header {
 
     > ul {
       background-color: var(--nav-item-expanded-bg);
-      padding: 10px 0;
+
+      @include desktop {
+        padding: 10px 0;
+      }
     }
 
     @include desktop {
