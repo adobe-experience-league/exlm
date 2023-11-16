@@ -430,5 +430,134 @@
         "description": "Sets the text url."
       }
     ]
+  },
+  {
+    "id": "marquee",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Background Image",
+        "description": "The marquee background image, defaults to white if none is selected.",
+        "multi": false
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "imageAlt",
+        "value": "",
+        "label": "Background Image Description",
+        "description": "A descriptive text of the image will be shown as tooltip."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReferenceSecond",
+        "label": "Subject Image",
+        "description": "The optional marquee subject image, min Xpx x Ypx...",
+        "multi": false
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "imageAltSecond",
+        "value": "",
+        "label": "Subject Image Description",
+        "description": "A descriptive text of the image will be shown as tooltip."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "eyebrow",
+        "value": "",
+        "label": "Eyebrow",
+        "description": "Sets the small pre-title above the title."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the main title of the marquee."
+      },
+      {
+        "component": "text-area",
+        "valueType": "string",
+        "name": "longDescr",
+        "value": "",
+        "label": "Long Description",
+        "description": "The description shown in Desktop and Tablet view."
+      },
+      {
+        "component": "select",
+        "name": "cta1Type",
+        "value": "primary",
+        "label": "First CTA Type",
+        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cta1Text",
+        "value": "",
+        "label": "First CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cta1Url",
+        "value": "",
+        "label": "First CTA Link",
+        "description": "What link to open when clicking the button."
+      },
+      {
+        "component": "select",
+        "name": "cta2Type",
+        "value": "primary",
+        "label": "Second CTA Type",
+        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": ""
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cta2Text",
+        "value": "",
+        "label": "Second CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cta2Url",
+        "value": "",
+        "label": "Second CTA Link",
+        "description": "What link to open when clicking the button."
+      }
+    ]
   }
 ]

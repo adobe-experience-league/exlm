@@ -1,0 +1,239 @@
+/* ----- MOBILE / Default ----- */
+
+/* marquee wrapper stretches over complete width */
+.section div.marquee-wrapper {
+  margin-bottom: var(--spectrum-spacing-500);
+  max-width: unset;
+
+  /* stretches to window edge in mobile view */
+  margin-left: calc(-1 * var(--space-token-xs));
+  margin-right: calc(-1 * var(--space-token-xs));
+}
+
+/* The marquee block div */
+.marquee.block,
+.marquee.block.dark {
+  --marquee-background-color: var(--spectrum-red-700);
+
+  background-color: var(--marquee-background-color);
+}
+
+/* the foreground contains text and spacer */
+.marquee.block>.foreground {
+  max-width: var(--non-spectrum-max-width);
+  margin: auto;
+}
+
+/* the text block (eyebrow, title , descr , ctr) */
+.marquee.block>.foreground>.text {
+  padding: var(--spectrum-spacing-400) var(--space-token-xs);
+}
+
+/* the eybrow title, hidden in mobile */
+.marquee.block>.foreground>.text>.eyebrow {
+  display: none;
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-700);
+  color: var(--spectrum-gray-700);
+  margin-bottom: var(--space-token-xs);
+}
+
+/* the main title, hidden in mobile */
+.marquee.block>.foreground>.text>.title {
+  display: none;
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-900);
+  font-weight: var(--font-weight-700);
+  line-height: var(--spectrum-line-height-xxl);
+  margin-bottom: var(--space-token-xxs);
+}
+
+.marquee.block.dark>.foreground>.text>.title {
+  color: var(--background-color);
+}
+
+/* the short description */
+.marquee.block>.foreground>.text>.short-description * {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-300);
+  font-weight: var(--font-weight-700);
+  line-height: var(--spectrum-line-height-l);
+  color: var(--background-color);
+  margin: 0;
+}
+
+/* long description , hidden in mobile */
+.marquee.block>.foreground>.text>.long-description {
+  display: none;
+}
+
+.marquee.block>.foreground>.text>.long-description * {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-300);
+  line-height: var(--spectrum-line-height-l);
+  margin: 0;
+}
+
+.marquee.block.dark>.foreground>.text>.long-description * {
+  color: var(--background-color);
+}
+
+/* the list of CTA's */
+.marquee.block>.foreground>.text>.cta {
+  display: flex;
+  gap: var(--spectrum-spacing-400);
+  margin-top: var(--spectrum-spacing-400);
+  padding: 0;
+  width: min-content;
+}
+
+.marquee.block>.foreground>.text>.cta:empty {
+  display: none;
+}
+
+/* the cta buttons in mobile view */
+.marquee.block>.foreground>.text>.cta>a.button {
+  background-color: var(--background-color);
+  border: 2px solid transparent;
+  color: var(--marquee-background-color);
+  margin: 0;
+}
+
+.marquee.block>.foreground>.text>.cta>a.button.secondary {
+  background-color: unset;
+  border: 2px solid var(--background-color);
+  color: var(--background-color);
+}
+
+/* spacer div */
+.marquee.block>.foreground>.spacer {
+  display: none;
+  width: 40%;
+}
+
+/* the background image , hidden in mobile */
+.marquee.block>.background img {
+  display: none;
+  width: auto;
+  height: max-content;
+  object-fit: cover;
+}
+
+/* ----- TABLET ----- */
+@media (min-width: 600px) {
+  .section div.marquee-wrapper {
+    /* stretches to window edge, cover section padding */
+    margin-left: calc(-1 * var(--spectrum-spacing-500));
+    margin-right: calc(-1 * var(--spectrum-spacing-500));
+  }
+
+  /* remove background color , add border */
+  .marquee.block,
+  .marquee.block.dark {
+    position: relative;
+    background-color: var(--background-color);
+    padding: 0;
+    border: 1px solid var(--spectrum-gray-200);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* foreground container, flex (text + spacer), always on top */
+  .marquee.block>.foreground {
+    position: relative;
+    display: flex;
+    z-index: 2;
+    padding: 0 var(--spectrum-spacing-500);
+  }
+
+  /* limit width of text part and set order */
+  .marquee.block>.foreground>.text {
+    width: 60%;
+    order: 0;
+    padding: var(--spectrum-spacing-500) 0;
+  }
+
+  /* change the order if text should be on the right */
+  .marquee.block.right>.foreground>.text {
+    order: 1;
+  }
+
+  /* turn on the eybrow */
+  .marquee.block>.foreground>.text>.eyebrow {
+    display: block;
+  }
+
+  /* turn on the title */
+  .marquee.block>.foreground>.text>.title {
+    display: block;
+  }
+
+  .marquee.block.dark>.foreground>.text>.eyebrow {
+    color: var(--background-color);
+  }
+
+  /* turn of short description */
+  .marquee.block>.foreground>.text>.short-description {
+    display: none;
+  }
+
+  /* turn on long description */
+  .marquee.block>.foreground>.text>.long-description {
+    display: block;
+  }
+
+  /* revert to normal button behavior for primary and secondary */
+  .marquee.block>.foreground>.text>.cta>a.button {
+    background-color: var(--link-color);
+    border: 2px solid transparent;
+    color: var(--background-color);
+  }
+
+  .marquee.block>.foreground>.text>.cta>a.button.secondary {
+    background-color: unset;
+    border: 2px solid currentcolor;
+    color: currentcolor;
+  }
+
+  .marquee.block.dark>.foreground>.text>.cta>a.button {
+    background-color: var(--background-color);
+    border: 2px solid transparent;
+    color: currentcolor;
+  }
+
+  .marquee.block.dark>.foreground>.text>.cta>a.button.secondary {
+    background-color: unset;
+    border: 2px solid currentcolor;
+    color: var(--background-color);
+  }
+
+  /* spacer */
+  .marquee.block>.foreground>.spacer {
+    display: block;
+    order: 1;
+  }
+
+  /* change the order if text should be on the right */
+  .marquee.block.right>.foreground>.spacer {
+    order: 0;
+  }
+
+  /* the background image container */
+  .marquee.block>.background {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  /* the image */
+  .marquee.block>.background img {
+    display: block;
+    height: 100%;
+    width: 100%;
+    object-position: right;
+  }
+}
