@@ -11,14 +11,14 @@ export default function decorate(block) {
   const eyebrow = props[4].textContent.trim();
   const title = props[5].textContent.trim();
   const longDescr = props[6].innerHTML.trim();
-  //const shortDescr = props[7];
-  //const backgroundColor = props[8].textContent.trim();
+  const backgroundColor = '#FFFFFF';
   const firstCTAType = props[7].textContent.trim();
   const firstCTAText = props[8].textContent.trim();
   const firstCTALink = props[9].textContent.trim();
   const secondCTAType = props[10].textContent.trim();
   const secondCTAText = props[11].textContent.trim();
   const secondCTALink = props[12].textContent.trim();
+
 
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
@@ -36,6 +36,7 @@ export default function decorate(block) {
     }</div>
       </div>
       ${subjectPicture ? `<div class='subject'>${subjectPicture}</div>` : `<div class='spacer'></div>`}
+      </div>
     </div>
     <div class='background'>${backgroundPicture}</div>
   `);
@@ -46,19 +47,14 @@ export default function decorate(block) {
       .querySelector('.background picture img')
       .setAttribute('alt', backgroundImageDescr);
   }
-  if (subjectPicture && subjectImageDescr) {
-    teaserDOM
-      .querySelector('.foreground picture img')
-      .setAttribute('alt', subjectImageDescr);
-  }
 
   // set the mobile background color
-  if (backgroundColor) {
-    block.style.setProperty(
-      '--teaser-background-color',
-      `var(${backgroundColor})`,
-    );
-  }
+  // if (backgroundColor) {
+  //   block.style.setProperty(
+  //     '--teaser-background-color',
+  //     `var(${backgroundColor})`,
+  //   );
+  // }
 
   // add final teaser DOM
   block.textContent = '';
