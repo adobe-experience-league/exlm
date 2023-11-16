@@ -37,6 +37,8 @@
   --nav-item-padding-x: 20px;
   --nav-item-expanded-border: 2px solid #222;
   --nav-item-expanded-bg: #fafafa;
+  --nav-item-text-color: #222;
+  --nav-font: 'Adobe Clean';
 
   @include desktop {
     --nav-item-padding-x: 24px;
@@ -61,7 +63,7 @@
   font-weight: initial;
 }
 
-@mixin chevron-down {
+@mixin chevron($thickness: 2px) {
   position: absolute;
   right: calc(var(--nav-item-padding-x) + 5px);
   top: 50%;
@@ -69,7 +71,7 @@
   width: 6px;
   height: 6px;
   margin-top: -3px;
-  border-width: 0 2px 2px 0;
+  border-width: 0 $thickness $thickness 0;
   border-style: solid;
   transform-origin: 75% 75%;
   transform: rotateZ(45deg);
@@ -79,6 +81,10 @@
 
 @mixin chevron-up {
   transform: rotateZ(-135deg);
+}
+
+@mixin chevron-right {
+  transform: rotateZ(-45deg);
 }
 
 header {
@@ -129,9 +135,9 @@ header {
     white-space: nowrap;
 
     a {
-      color: #000 !important;
+      color: var(--nav-item-text-color) !important;
       /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-      font: normal normal bold 16px/21px 'Adobe Clean' !important;
+      font: normal normal bold 16px/21px var(--nav-font) !important;
       margin: 0;
     }
   }
@@ -159,14 +165,14 @@ header {
     align-items: center;
 
     a {
-      color: #000;
+      color: var(--nav-item-text-color);
 
       @include button;
 
       @include desktop {
         @include button-reset;
 
-        color: #000;
+        color: var(--nav-item-text-color);
         padding: var(--nav-root-item-padding-x);
       }
     }
@@ -190,7 +196,7 @@ header {
 
     @include tablet {
       max-width: 360px;
-      height: calc(100vh - var(--nav-height));
+      min-height: calc(100vh - var(--nav-height));
     }
 
     @include desktop {
@@ -200,6 +206,12 @@ header {
       box-shadow: initial;
       padding: 0;
       height: 100%;
+      min-height: initial;
+    }
+
+    ul {
+      padding: 0;
+      margin: 0;
     }
 
     > ul {
@@ -245,6 +257,8 @@ header {
     }
 
     a {
+      color: var(--nav-item-text-color);
+
       @include desktop {
         padding: var(--nav-root-item-padding-x);
         border-bottom: none;
@@ -325,7 +339,7 @@ header {
       a {
         width: 100%;
         /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-        font: normal normal bold 14px/30px 'Adobe Clean';
+        font: normal normal bold 14px/30px var(--nav-font);
         padding: 5px 0 5px var(--nav-item-padding-x);
 
         @include desktop {
@@ -362,16 +376,18 @@ header {
   .nav-item-subtitle {
     display: none;
     /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-    font: normal normal normal 11px/14px 'Adobe Clean';
+    font: normal normal normal 11px/14px var(--nav-font);
     white-space: break-spaces;
 
     @include desktop {
       display: block;
-      font-size: 10px;
+      font-size: 11px;
     }
   }
 
   .nav-item-toggle {
+    text-overflow: initial;
+
     @include button-reset;
 
     font-size: 14px;
@@ -379,25 +395,32 @@ header {
     justify-content: space-between;
     position: relative;
     width: 100%;
-    line-height: 2;
     padding: calc(var(--nav-item-padding-x) / 2) var(--nav-item-padding-x);
 
     @include desktop {
       height: fit-content;
-      font-weight: 700;
 
       /* to upper case */
       text-transform: uppercase;
     }
 
     &::after {
-      @include chevron-down;
+      @include chevron;
 
       content: '';
       box-sizing: content-box;
 
       @include desktop {
         display: none;
+      }
+    }
+
+    &:not(.nav-item-toggle-root) {
+      @include desktop {
+        font: normal normal bold 12px/18px var(--nav-font);
+        padding: var(--nav-item-padding-x);
+        padding-bottom: calc(var(--nav-item-padding-x) / 2);
+        color: var(--spectrum-gray-700);
       }
     }
   }
@@ -456,8 +479,11 @@ header {
 
   .nav-item-content-expanded {
     display: block;
-    background-color: var(--nav-item-expanded-bg);
-    padding: 10px 0;
+
+    > ul {
+      background-color: var(--nav-item-expanded-bg);
+      padding: 10px 0;
+    }
 
     @include desktop {
       padding: 0;
@@ -471,13 +497,56 @@ header {
       width: min-content;
       background: #fafafa;
 
+      > ul {
+        display: flex;
+        flex-direction: row;
+      }
+
       &::after {
         display: block;
       }
 
       .nav-item-content-expanded {
         position: initial;
-        flex-direction: column;
+
+        > ul {
+          flex-direction: column;
+        }
+      }
+    }
+  }
+
+  .nav-items-secondary {
+    display: none;
+
+    @include desktop {
+      display: flex;
+      position: absolute;
+      margin: 0;
+      padding: 0 !important;
+      bottom: var(--nav-item-padding-x);
+      right: var(--nav-item-padding-x);
+      list-style-type: none;
+      align-items: center;
+
+      a {
+        font: normal normal normal 14px/18px var(--nav-font);
+        color: var(--spectrum-blue-900) !important;
+        text-align: right;
+        margin-right: 0;
+
+        &::after {
+          @include chevron(1px);
+          @include chevron-right;
+
+          right: 5px;
+          top: 7px;
+        }
+      }
+
+      li {
+        margin: 0;
+        padding: 0;
       }
     }
   }
@@ -593,7 +662,7 @@ header {
     color: var(--non-spectrum-input-text);
     outline: none;
     /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-    font: italic normal normal 12px/15px 'Adobe Clean';
+    font: italic normal normal 12px/15px var(--nav-font);
     height: 30px;
     padding: 7px 5px 9px 28px;
     margin: 0;
@@ -625,7 +694,7 @@ header {
     text-align: right;
 
     &::after {
-      @include chevron-down;
+      @include chevron;
 
       right: 10px;
     }

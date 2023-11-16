@@ -61,6 +61,8 @@ const fetchFragment = async (rePath, lang = 'en') => {
 // Mobile Only (Until 1024px)
 const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
+const headerFragment = fetchFragment('header/header');
+const languageFragment = fetchFragment('languages/languages');
 const decoratorState = {};
 
 /**
@@ -103,8 +105,9 @@ const hamburgerButton = (navWrapper) => {
  */
 const buildNavItems = (ul, level = 0) => {
   if (level === 0) {
+    // add search link (visible on mobile only)
     ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
-
+    // add language select (visible on mobile only)
     ul.appendChild(
       htmlToElement(
         `<li class="nav-item-mobile">
@@ -121,23 +124,31 @@ const buildNavItems = (ul, level = 0) => {
     if (level === 0) navItemClasses.push('nav-item-root');
     navItem.classList.add(...navItemClasses);
     const controlName = `content-${level}-${randomId()}`; // unique id
-    const content = navItem.querySelector(':scope > ul');
+    const [content, secondaryContent] = navItem.querySelectorAll(':scope > ul');
     if (content) {
       const firstEl = navItem.firstElementChild;
       const toggleClass = level === 0 ? 'nav-item-toggle nav-item-toggle-root' : 'nav-item-toggle';
       const toggler = htmlToElement(
         `<button class="${toggleClass}" aria-controls="${controlName}" aria-expanded="false">${firstEl.textContent}</button>`,
       );
-      firstEl.replaceWith(toggler);
-      content.setAttribute('id', controlName);
-      content.classList.add('nav-item-content');
+      const contentWrapper = document.createElement('div');
+      contentWrapper.append(content);
+      contentWrapper.setAttribute('id', controlName);
+      contentWrapper.classList.add('nav-item-content');
+      if (secondaryContent) {
+        secondaryContent.classList.add('nav-items-secondary');
+        contentWrapper.append(secondaryContent);
+      }
+      const children = [toggler, contentWrapper];
+
+      navItem.replaceChildren(...children);
 
       /** @param {Event} e */
       const toggleExpandContent = (e) => {
         const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
         toggler.setAttribute('aria-expanded', !isExpanded);
-        content.classList.toggle('nav-item-content-expanded');
-        content.parentElement.classList.toggle('nav-item-expanded');
+        contentWrapper.classList.toggle('nav-item-content-expanded');
+        contentWrapper.parentElement.classList.toggle('nav-item-expanded');
         if (e.type === 'mouseenter') {
           const childContents = e.target.querySelectorAll('.nav-item-content');
           childContents.forEach((childContent) => {
@@ -198,8 +209,6 @@ const navDecorator = (navBlock) => {
   buildNavItems(ul);
 
   navBlock.firstChild.id = hamburger.getAttribute('aria-controls');
-
-  navBlock.prepend(hamburger);
   return navBlock;
 };
 
@@ -261,8 +270,7 @@ const languageDecorator = async (languageBlock) => {
 
   const popoverId = 'language-picker-popover';
   const prependLanguagePopover = async (parent) => {
-    const languagesHtml = await fetchFragment('languages/languages');
-    let languagesEl = htmlToElement(languagesHtml);
+    let languagesEl = htmlToElement(await languageFragment);
     languagesEl = languagesEl.querySelector('ul');
 
     const languageOptions = languagesEl?.children || [];
@@ -348,8 +356,7 @@ const decorateLinks = (block) => {
 export default async function decorate(headerBlock) {
   headerBlock.style.display = 'none';
   // eslint-disable-next-line no-unused-vars
-  const headerFragment = await fetchFragment('header/header');
-  headerBlock.innerHTML = headerFragment;
+  headerBlock.innerHTML = await headerFragment;
 
   const headerBlockFirstRow = getBlockFirstRow(headerBlock);
   headerBlockFirstRow.outerHTML = `<nav>${headerBlockFirstRow.innerHTML}</nav>`;
