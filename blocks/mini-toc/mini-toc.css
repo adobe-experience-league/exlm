@@ -22,7 +22,6 @@
 .mini-toc-wrapper .mini-toc .scrollable-div {
   max-height: 50vh;
   overflow: hidden;
-  margin-top: 12px;
 }
 .mini-toc-wrapper .mini-toc .scrollable-div:hover {
   overflow-y: scroll;
@@ -34,12 +33,14 @@
   font-weight: var(--spectrum-extra-bold-font-weight);
   text-transform: uppercase;
   margin: 0;
+  padding-left: 18px;
+  line-height: 31px;
 }
 
 .mini-toc-wrapper .mini-toc ul {
   list-style: none;
   padding-left: 0;
-  margin: 0 8px 0 0;
+  margin: 12px 8px 0 17px;
 }
 .mini-toc-wrapper .mini-toc ul li {
   display: inline-flex;
@@ -83,4 +84,10 @@
   font-weight: var(--font-weight-600);
   background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
   color: #1e1e1e;
+}
+
+@media (min-width: 900px) {
+  .mini-toc-wrapper .mini-toc h2 {
+    line-height: 14px;
+  }
 }

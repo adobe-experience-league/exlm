@@ -695,7 +695,6 @@ img {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 8px;
     margin: 0 auto;
     padding: 0 46px;
     box-sizing: border-box;
@@ -722,7 +721,6 @@ img {
 
     > div:nth-child(2) {
       order: 1;
-      gap: 8px;
       height: 70px; // predefined height to help with CLS
       padding: 32px 10px 10px; // predefined padding to help with CLS
       .rail-content {
@@ -732,6 +730,22 @@ img {
 
     > div:last-child {
       order: 3;
+      padding: 32px 10px 0 0;
+    }
+
+    @include breakpoint(tablet) {
+      > .div:nth-child(1) {
+        position: relative;
+        padding: 0;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      > div:last-child {
+        padding: 32px 10px 10px 0;
+      }
     }
 
     @include breakpoint(desktop) {
@@ -743,12 +757,14 @@ img {
         order: 2;
         overflow: auto;
         flex: 1 1 0;
+        padding: 54px 37px 50px 50px;
       }
 
       // toc
       > div:nth-child(2) {
         order: 1;
         width: 20%;
+        padding: 46px 10px 10px;
 
         .rail-content {
           display: block;
@@ -762,17 +778,7 @@ img {
         position: relative;
         display: flex;
         gap: 8px;
-      }
-    }
-
-    @include breakpoint(tablet) {
-      > .div:nth-child(1) {
-        position: relative;
-        padding: 0;
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        padding: 46px 10px 10px 0;
       }
     }
   }
