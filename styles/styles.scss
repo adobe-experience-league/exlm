@@ -736,6 +736,7 @@ img {
 
     @include breakpoint(desktop) {
       flex-direction: row;
+      padding: 0;
 
       // doc
       > div:first-child {

@@ -865,6 +865,7 @@ img {
 @media (min-width: 900px) {
   .docs main {
     flex-direction: row;
+    padding: 0;
   }
   .docs main > div:first-child {
     order: 2;
