@@ -195,7 +195,6 @@ header {
     background-color: #fff;
 
     @include tablet {
-      max-width: 360px;
       min-height: calc(100vh - var(--nav-height));
     }
 
@@ -399,6 +398,7 @@ header {
 
     @include desktop {
       height: fit-content;
+      padding: var(--nav-item-padding-x);
 
       /* to upper case */
       text-transform: uppercase;

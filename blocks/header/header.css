@@ -156,7 +156,6 @@ header {
 }
 @media (width >= 600px) {
   .header .nav-wrapper {
-    max-width: 360px;
     min-height: calc(100vh - var(--nav-height));
   }
 }
@@ -351,6 +350,7 @@ header {
 @media (width >= 1024px) {
   .header .nav-item-toggle {
     height: fit-content;
+    padding: var(--nav-item-padding-x);
     /* to upper case */
     text-transform: uppercase;
   }
@@ -482,7 +482,7 @@ header {
     font: normal normal normal 14px/18px var(--nav-font);
     color: var(--spectrum-blue-900) !important;
     text-align: right;
-    margin-right: 0px;
+    margin-right: 0;
   }
   .header .nav-items-secondary a::after {
     position: absolute;
