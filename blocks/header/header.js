@@ -209,7 +209,7 @@ const navDecorator = (navBlock) => {
   buildNavItems(ul);
 
   navBlock.firstChild.id = hamburger.getAttribute('aria-controls');
-  return navBlock;
+  navBlock.prepend(hamburger);
 };
 
 /**
