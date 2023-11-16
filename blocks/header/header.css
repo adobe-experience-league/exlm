@@ -157,6 +157,7 @@ header {
 @media (width >= 600px) {
   .header .nav-wrapper {
     min-height: calc(100vh - var(--nav-height));
+    max-width: 360px;
   }
 }
 @media (width >= 1024px) {
@@ -168,6 +169,7 @@ header {
     padding: 0;
     height: 100%;
     min-height: initial;
+    max-width: initial;
   }
 }
 .header .nav-wrapper ul {

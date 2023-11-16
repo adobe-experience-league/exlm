@@ -196,16 +196,17 @@ header {
 
     @include tablet {
       min-height: calc(100vh - var(--nav-height));
+      max-width: 360px;
     }
 
     @include desktop {
-      max-width: initial;
       display: flex;
       align-items: center;
       box-shadow: initial;
       padding: 0;
       height: 100%;
       min-height: initial;
+      max-width: initial;
     }
 
     ul {
