@@ -1,33 +1,25 @@
 .columns > div {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.columns > div > div {
+  padding: 16px;
 }
 
 .columns img {
   width: 100%;
 }
 
-.columns > div > div {
-  order: 1;
-}
-
-.columns > div > .columns-img-col {
-  order: 0;
-}
-
-.columns > div > .columns-img-col img {
-  display: block;
+@media (min-width: 600px) {
+  .columns > div {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (min-width: 900px) {
   .columns > div {
-    align-items: center;
-    flex-direction: unset;
-    gap: 32px;
-  }
-
-  .columns > div > div {
-    flex: 1;
-    order: unset;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
   }
 }
