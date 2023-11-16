@@ -1,7 +1,6 @@
-export default function decorate(block) {
+export function generateTeaserDOM(props) {
   // Extract properties
   // always same order as in model, empty string if not set
-  const props = [...block.querySelectorAll(':scope div > div')];
 
   const picture = props[0].innerHTML.trim();
   const imageDescr = props[1].textContent.trim();
@@ -50,10 +49,15 @@ export default function decorate(block) {
 
   // set the mobile background color
   if (backgroundColor) {
-    block.style.setProperty('--teaser-background-color', `var(${backgroundColor})`);
+    teaserDOM.querySelector('.background').style.setProperty('--teaser-background-color', `var(${backgroundColor})`);
   }
 
   // add final teaser DOM
+  return teaserDOM;
+}
+
+export default function decorate(block) {
+  const teaserDOM = generateTeaserDOM(block.children);
   block.textContent = '';
   block.append(teaserDOM);
 }

@@ -430,5 +430,35 @@
         "description": "Sets the text url."
       }
     ]
+  },
+  {
+    "id": "carousel",
+    "fields": [
+      {
+        "component": "select",
+        "name": "alignment",
+        "value": "center",
+        "label": "Vertical Alignment",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Top",
+            "value": "top"
+          },
+          {
+            "name": "Center",
+            "value": "center"
+          },
+          {
+            "name": "Bottom",
+            "value": "bottom"
+          },
+          {
+            "name": "Fix (400px)",
+            "value": "fix"
+          }
+        ]
+      }
+    ]
   }
 ]

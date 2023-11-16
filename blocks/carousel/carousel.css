@@ -1,0 +1,23 @@
+/* carousel wrapper stretches over complete width */
+.section div.carousel-wrapper {
+  margin-bottom: var(--spectrum-spacing-500);
+  max-width: unset;
+
+  /* stretches to window edge in mobile view */
+  margin-left: calc(-1 * var(--space-token-xs));
+  margin-right: calc(-1 * var(--space-token-xs));
+}
+
+.carousel.block > .button-container {
+  display:flex;
+  justify-content: center;
+}
+
+/* ----- TABLET ----- */
+@media (min-width: 600px) {
+  .section div.carousel-wrapper {
+    /* stretches to window edge, cover section padding */
+    margin-left: calc(-1 * var(--spectrum-spacing-500));
+    margin-right: calc(-1 * var(--spectrum-spacing-500));
+  }
+}

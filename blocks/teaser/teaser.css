@@ -10,13 +10,6 @@
   margin-right: calc(-1 * var(--space-token-xs));
 }
 
-/* The teaser block div */
-.teaser.block , .teaser.block.dark {
-  --teaser-background-color :  var(--spectrum-red-700); 
-
-  background-color: var(--teaser-background-color);
-}
-
 /* the foreground contains text and spacer */
 .teaser.block > .foreground {
   max-width: var(--non-spectrum-max-width);
@@ -109,6 +102,14 @@
 .teaser.block > .foreground > .spacer {
   display:none;
   width:40%;
+}
+
+/* The background color for mobile view */
+.teaser.block > .background , 
+.teaser.block.dark > .background {
+  --teaser-background-color :  var(--spectrum-red-700); 
+
+  background-color: var(--teaser-background-color);
 }
 
 /* the background image , hidden in mobile */
