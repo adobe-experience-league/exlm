@@ -9,9 +9,10 @@ export default function decorate(block) {
 
     description.classList.add('icon-description');
 
-    const link = column.querySelector('div:nth-child(4)');
+    const linkWrapper = column.querySelector('div:nth-child(4)');
+    const link = linkWrapper.querySelector('a');
     const linkText = link.innerHTML.trim();
-    const linkUrl = column.querySelector('div:nth-child(5)').innerHTML.trim();
+    const linkUrl = link.href;
 
     const a = createTag(
       'a',
@@ -30,8 +31,7 @@ export default function decorate(block) {
       heading.innerHTML.trim(),
     );
 
-    link.nextElementSibling.remove();
-    link.replaceWith(a);
+    linkWrapper.replaceWith(a);
     heading.replaceWith(h3);
   });
 

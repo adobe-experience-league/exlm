@@ -9,6 +9,10 @@
   max-width: 283px;
   min-height: 147.95px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .icon-block > div > div img {
   width: 50px;
@@ -46,7 +50,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 135px;
-  display: inline-block;
+  display: flex;
+  align-items: center;
 }
 .icon-block .icon-link::after {
   content: ">";
@@ -55,7 +60,7 @@
 .icon-block .icon-link.external::after {
   content: url("/icons/new-tab.svg");
   position: relative;
-  top: 4px;
+  top: 3px;
 }
 
 @media (min-width: 600px) {
