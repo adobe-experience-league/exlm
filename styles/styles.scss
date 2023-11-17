@@ -627,6 +627,48 @@ img {
   }
 }
 
+.tooltip {
+  position: relative;
+
+  .tooltip-text {
+    visibility: hidden;
+    background-color: #0D66D0;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 4px 9px 5px 10px;
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 100%;
+    margin-top: -14px;
+    margin-left: 10px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: inline-block;
+    width: max-content;
+    font-size: 12px;
+    line-height: 15px;
+  }
+
+  .tooltip-text::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-top: -4px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #0D66D0 transparent transparent;
+    display: inline-block;
+  }
+
+  &:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
 /* three column layout */
 .docs {
   --exlm-font-size-h1: var(--spectrum-heading-size-l);
