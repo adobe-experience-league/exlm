@@ -130,11 +130,7 @@
                 "template": {
                   "name": "Icon Card",
                   "model": "icon-card",
-                  "cardIcon": "/content/dam/exlm/content-at-scale.png",
-                  "cardHeading": "Default Heading",
-                  "cardDescription": "Default description",
-                  "cardLinkText": "Default Link Text",
-                  "cardLink": "/content/exlm/global/en"
+                  "cardIcon": "/content/dam/exlm/content-at-scale.png"
                 }
               }
             }
