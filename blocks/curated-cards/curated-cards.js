@@ -1,3 +1,4 @@
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 import CardsAbstraction from "../../scripts/cards/cardsAbstraction.js";
 import API_COVEO from "../../scripts/constants.js";
 
@@ -62,6 +63,8 @@ export default async function decorate(block) {
   // Appending header and content divs to the block
   block.appendChild(headerDiv);
   block.appendChild(contentDiv);
+
+  decorateIcons(block);
 
   // Defining data sources for CardsAbstraction
   const dataSources = [{
