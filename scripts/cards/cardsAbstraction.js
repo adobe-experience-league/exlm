@@ -80,7 +80,7 @@ export default function CardsAbstraction(dataSources) {
                 title: result?.title,
                 description: result?.excerpt,
                 tags: [{
-                    icon: result?.raw?.el_view_status ? "eye" : "avatar",
+                    icon: result?.raw?.el_view_status ? "view" : "user",
                     text: result?.raw?.el_view_status || this.placeholders.developer
                 },{
                     icon: result?.raw?.el_reply_status ? "reply" : "book",
