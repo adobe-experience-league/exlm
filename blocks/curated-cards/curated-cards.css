@@ -1,0 +1,31 @@
+.curated-cards-header h4 {
+    padding: 0;
+    margin: 0;
+}
+
+.curated-cards-title {
+    display: flex;
+    margin: 0;
+}
+
+.curated-cards-view a {
+    font-size: inherit;
+    line-height: 17px;
+    margin: 2px 0 0 0;
+}
+
+.curated-cards-content {
+    margin-top: 24px;
+}
+
+@media (min-width: 600px) {
+    .curated-cards-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .curated-cards .tooltip {
+        margin-top: 10px;
+    }
+}
+

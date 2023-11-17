@@ -1,4 +1,3 @@
-import toTitleCase from "../utils.js";
 import { fetchPlaceholders } from "../lib-franklin.js";
 import API_COVEO from "../constants.js";
 
@@ -18,6 +17,14 @@ export default function CardsAbstraction(dataSources) {
      * @type {Array}
      */
     this.dataSources = dataSources;
+
+    /**
+     * Converts a string to title case.
+     *
+     * @param {string} str - The input string to be converted to title case.
+     * @returns {string} - The title case version of the input string.
+     */
+    this.toTitleCase = (str) => str.replace(/\b\w/g, (match) => match.toUpperCase());
 
     /**
      * Fetches data from a specified data source.
@@ -89,7 +96,7 @@ export default function CardsAbstraction(dataSources) {
                 copyLink: result?.uri,
                 bookmarkLink: "",
                 viewLink: result?.uri,
-                viewLinkText: contentType ? this.placeholders[`viewLink${toTitleCase(contentType)}`] : ""
+                viewLinkText: contentType ? this.placeholders[`viewLink${this.toTitleCase(contentType)}`] : ""
             };
         }
         return mappedResult;
