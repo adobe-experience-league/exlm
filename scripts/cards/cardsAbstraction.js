@@ -39,7 +39,7 @@ export default function CardsAbstraction(dataSources) {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ2OCI6dHJ1ZSwidG9rZW5JZCI6InZxZDdlNnV4eDNzaDM0M3ZzcmNrc3gyYXB1Iiwib3JnYW5pemF0aW9uIjoiYWRvYmV2MnByb2Q5ZTM4MmgxcSIsInVzZXJJZHMiOlt7InR5cGUiOiJVc2VyIiwibmFtZSI6Im5tb2hhbW1lQGFkb2JlLmNvbSIsInByb3ZpZGVyIjoiRW1haWwgU2VjdXJpdHkgUHJvdmlkZXIifV0sInJvbGVzIjpbInF1ZXJ5RXhlY3V0b3IiXSwiaXNzIjoiU2VhcmNoQXBpIiwiZXhwIjoxNzAwMjI3Mjk1LCJpYXQiOjE3MDAyMjM2OTV9.Ac3fpIThlOlI1FaWkxlRP1VYyjAmA281btI98HmZQd0'
+                    'Authorization': ''
                 },
                 body: dataSource.body
             });
