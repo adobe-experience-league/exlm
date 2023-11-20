@@ -134,6 +134,7 @@
     /* stretches to window edge, cover section padding */
     margin-left: calc(-1 * var(--spectrum-spacing-500));
     margin-right: calc(-1 * var(--spectrum-spacing-500));
+    margin-bottom: 40px;
   }
 
   /* remove background color , add border */
