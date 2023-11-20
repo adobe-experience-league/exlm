@@ -1,5 +1,5 @@
 import { fetchPlaceholders } from '../lib-franklin.js';
-import COVEO_API_MOCKS from './coveo-api-mocks.js';
+import API_MOCKS from './api-mocks.js';
 /**
  * Module for handling cards.
  * @module BrowseCardsCoveoSource
@@ -16,7 +16,7 @@ export default function BrowseCardsCoveoSource(params) {
    * @type {Object}
    */
   this.dataSource = {
-    url: COVEO_API_MOCKS[params.contentType.toUpperCase()],
+    url: API_MOCKS[params.contentType.toUpperCase()],
     params,
   };
 
