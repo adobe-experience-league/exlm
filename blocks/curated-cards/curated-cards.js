@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import BrowseCardsCoveoSource from '../../scripts/browse-cards/BrowseCardsCoveoSource.js';
-import buildCard from '../../scripts/browseCard/browseCard.js';
+import BrowseCardsCoveoSource from '../../scripts/browse-card/BrowseCardsCoveoSource.js';
+import buildCard from '../../scripts/browse-card/browse-card.js';
 
 /**
  * Decorate function to process and log the mapped data.

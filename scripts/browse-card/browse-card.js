@@ -1,19 +1,21 @@
-export const generateContributorsMarkup = (contributor) => {
+import { loadCSS } from '../lib-franklin.js';
+
+const generateContributorsMarkup = (contributor) => {
   const { name, thumbnail, level, date } = contributor;
   const contributorElement = document.createDocumentFragment();
   const img = document.createElement('img');
   img.src = thumbnail;
   contributorElement.appendChild(img);
   const namePlate = document.createElement('div');
-  namePlate.classList.add('card-name-plate');
+  namePlate.classList.add('browse-card-name-plate');
   contributorElement.appendChild(namePlate);
   const nameElement = document.createElement('span');
-  nameElement.classList.add('card-contributor-name');
+  nameElement.classList.add('browse-card-contributor-name');
   nameElement.textContent = name;
   namePlate.appendChild(nameElement);
 
   const levelElement = document.createElement('div');
-  levelElement.classList.add('card-contributor-level');
+  levelElement.classList.add('browse-card-contributor-level');
   const levelNum = document.createElement('span');
   levelNum.textContent = `L${level}`;
   const levelVal = document.createElement('span');
@@ -29,29 +31,29 @@ export const generateContributorsMarkup = (contributor) => {
   return contributorElement;
 };
 
-export const buildCardContent = (card, model) => {
+const buildCardContent = (card, model) => {
   const { description, contentType: type, viewLinkText, viewLink, copyLink, tags, contributor, eventDateTime } = model;
   const contentType = type.toLowerCase();
-  const cardContent = card.querySelector('.card-content');
-  const cardFooter = card.querySelector('.card-footer');
+  const cardContent = card.querySelector('.browse-card-content');
+  const cardFooter = card.querySelector('.browse-card-footer');
   const { matches: isDesktopResolution } = window.matchMedia('(min-width: 900px)');
 
   if (description) {
     const stringContent = description.length > 100 ? `${description.substring(0, 100).trim()}...` : description;
     const descriptionElement = document.createElement('p');
-    descriptionElement.classList.add('card-description-text');
+    descriptionElement.classList.add('browse-card-description-text');
     descriptionElement.textContent = stringContent;
     cardContent.appendChild(descriptionElement);
   }
 
   const cardMeta = document.createElement('div');
-  cardMeta.classList.add('card-meta-info');
+  cardMeta.classList.add('browse-card-meta-info');
 
   if (contentType === 'course') {
     tags.forEach((tag) => {
       const { icon: iconName, text } = tag;
       const anchor = document.createElement('a');
-      anchor.classList.add('card-meta-anchor');
+      anchor.classList.add('browse-card-meta-anchor');
       const span = document.createElement('span');
       span.classList.add('icon', `icon-${iconName}`);
       anchor.textContent = text;
@@ -63,13 +65,13 @@ export const buildCardContent = (card, model) => {
   if (isDesktopResolution) {
     cardContent.appendChild(cardMeta);
   } else {
-    const titleEl = card.querySelector('.card-title-text');
+    const titleEl = card.querySelector('.browse-card-title-text');
     cardContent.insertBefore(cardMeta, titleEl);
   }
 
   if (contentType === 'community') {
     const contributorInfo = document.createElement('div');
-    contributorInfo.classList.add('card-contributor-info');
+    contributorInfo.classList.add('browse-card-contributor-info');
     const contributorElement = generateContributorsMarkup(contributor);
     contributorInfo.appendChild(contributorElement);
 
@@ -77,7 +79,7 @@ export const buildCardContent = (card, model) => {
       const { icon: iconName, text } = tag;
       if (iconName) {
         const anchor = document.createElement('a');
-        anchor.classList.add('card-meta-anchor');
+        anchor.classList.add('browse-card-meta-anchor');
         const span = document.createElement('span');
         span.classList.add('icon', `icon-${iconName}`);
         anchor.textContent = text || '100';
@@ -116,25 +118,25 @@ export const buildCardContent = (card, model) => {
       .padStart(2, '0')} ${enddayDuration} PDT`;
     dateString += `<h6>${time}</h6>`;
     const eventInfo = document.createElement('div');
-    eventInfo.classList.add('card-event-info');
+    eventInfo.classList.add('browse-card-event-info');
     eventInfo.innerHTML = `<span class="icon icon-time"></span>`;
     const dateElement = document.createElement('div');
-    dateElement.classList.add('card-event-time');
+    dateElement.classList.add('browse-card-event-time');
     dateElement.innerHTML = dateString;
     eventInfo.appendChild(dateElement);
-    const title = card.querySelector('.card-title-text');
+    const title = card.querySelector('.browse-card-title-text');
     cardContent.insertBefore(eventInfo, title.nextElementSibling);
   }
 
   const cardOptions = document.createElement('div');
-  cardOptions.classList.add('card-options');
+  cardOptions.classList.add('browse-card-options');
   if (copyLink) {
     cardOptions.innerHTML = `<a href="${copyLink}"><span class="icon icon-copy"></span></a>`;
   }
   cardOptions.innerHTML += `<a><span class="icon icon-bookmark"></span></a>`;
 
   const anchorLink = document.createElement('a');
-  anchorLink.classList.add('card-cta-element');
+  anchorLink.classList.add('browse-card-cta-element');
   anchorLink.target = '_blank';
   let icon = null;
   if (contentType === 'tutorial') {
@@ -152,7 +154,7 @@ export const buildCardContent = (card, model) => {
   cardFooter.appendChild(anchorLink);
 };
 
-export const setupCopyAction = (wrapper) => {
+const setupCopyAction = (wrapper) => {
   Array.from(wrapper.querySelectorAll('.icon.icon-copy')).forEach((svg) => {
     const anchor = svg.parentElement;
     if (anchor?.href) {
@@ -168,3 +170,44 @@ export const setupCopyAction = (wrapper) => {
     }
   });
 };
+
+export default async function buildCard(element, model) {
+  // load css dynamically
+  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
+  const { thumbnail: _thumbnail, product, title, contentType } = model;
+  const type = contentType?.toLowerCase();
+  const thumbnail = _thumbnail;
+  const card = document.createElement('div');
+  card.classList.add('browse-card', `${type}-card`);
+  card.innerHTML = `<div class="browse-card-figure"></div><div class="browse-card-content"></div><div class="browse-card-footer"></div>`;
+  const cardFigure = card.querySelector('.browse-card-figure');
+  const cardContent = card.querySelector('.browse-card-content');
+
+  if (thumbnail) {
+    const img = document.createElement('img');
+    img.src = thumbnail;
+    cardFigure.appendChild(img);
+  }
+
+  const bannerElement = document.createElement('span');
+  bannerElement.classList.add('browse-card-banner');
+  bannerElement.innerText = contentType;
+  cardFigure.appendChild(bannerElement);
+
+  if (product) {
+    const tagElement = document.createElement('p');
+    tagElement.classList.add('browse-card-tag-text');
+    tagElement.textContent = product;
+    cardContent.appendChild(tagElement);
+  }
+
+  if (title) {
+    const titleElement = document.createElement('p');
+    titleElement.classList.add('browse-card-title-text');
+    titleElement.textContent = title;
+    cardContent.appendChild(titleElement);
+  }
+  buildCardContent(card, model);
+  setupCopyAction(card);
+  element.appendChild(card);
+}
