@@ -1,5 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsCoveoSource from "../../scripts/browse-cards/BrowseCardsCoveoSource.js";
+import buildCards from '../../scripts/browseCard/browseCard.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -74,5 +75,8 @@ export default async function decorate(block) {
 		const browseCards = new BrowseCardsCoveoSource(params);
 		const data = await browseCards.fetchBrowseCardsContent();
 		console.log(data);
+		if (data) {
+			buildCards(block.querySelector('.curated-cards-content'), data);
+		}
 	}
 }
