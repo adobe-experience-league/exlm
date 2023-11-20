@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsCoveoSource from "../../scripts/browse-cards/BrowseCardsCoveoSource.js";
-import buildCards from '../../scripts/browseCard/browseCard.js';
+import buildCard from '../../scripts/browseCard/browseCard.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -12,6 +12,7 @@ export default async function decorate(block) {
 	const toolTipElement = block.querySelector('div:nth-child(2) > div');
 	const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
 	const contentType = block.querySelector('div:nth-child(4) > div')?.textContent.trim();
+	const noOfResults = 4;
 
 	// Creating header div
 	const headerDiv = document.createElement('div');
@@ -61,22 +62,23 @@ export default async function decorate(block) {
 	// Clearing the block's content
 	block.innerHTML = '';
 
-	// Appending header and content divs to the block
+	// Appending header div to the block
 	block.appendChild(headerDiv);
+
+	const params = {
+		contentType,
+		noOfResults
+	}
+	const browseCards = new BrowseCardsCoveoSource(params);
+	const browseCardsContent = await browseCards.fetchBrowseCardsContent();
+	for (let i = 0; i < Math.min(noOfResults, browseCardsContent.length); i++) {
+		const cardData = browseCardsContent[i];
+		const cardDiv = document.createElement("div");
+		buildCard(cardDiv, cardData);
+		contentDiv.appendChild(cardDiv);
+	}
+	// Appending content divs to the block
 	block.appendChild(contentDiv);
 
 	decorateIcons(block);
-
-	if (contentType) {
-		const params = {
-			contentType,
-			noOfResults: 4,
-		}
-		const browseCards = new BrowseCardsCoveoSource(params);
-		const data = await browseCards.fetchBrowseCardsContent();
-		console.log(data);
-		if (data) {
-			buildCards(block.querySelector('.curated-cards-content'), data);
-		}
-	}
 }

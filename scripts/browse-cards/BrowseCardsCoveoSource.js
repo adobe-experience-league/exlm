@@ -1,5 +1,5 @@
 import { fetchPlaceholders } from "../lib-franklin.js";
-
+import COVEO_API_MOCKS from "./coveo-api-mocks.js";
 /**
  * Module for handling cards.
  * @module BrowseCardsCoveoSource
@@ -16,7 +16,7 @@ export default function BrowseCardsCoveoSource(params) {
      * @type {Object}
      */
     this.dataSource = {
-        url: "https://platform.cloud.coveo.com/rest/search/v2?", // Mock URL for COVEO
+        url: COVEO_API_MOCKS[params.contentType],
         params: params,
     };
 
@@ -54,8 +54,7 @@ export default function BrowseCardsCoveoSource(params) {
             const response = await fetch(this.dataSource.url, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-                    "Authorization": `Bearer eyJhbGciOiJIUzI1NiJ9.eyJ2OCI6dHJ1ZSwidG9rZW5JZCI6Ing0czJjeDN0a2NvenJvN2lzbzM2NW9rY2VtIiwib3JnYW5pemF0aW9uIjoiYWRvYmV2MnByb2Q5ZTM4MmgxcSIsInVzZXJJZHMiOlt7InR5cGUiOiJVc2VyIiwibmFtZSI6Im5tb2hhbW1lQGFkb2JlLmNvbSIsInByb3ZpZGVyIjoiRW1haWwgU2VjdXJpdHkgUHJvdmlkZXIifV0sInJvbGVzIjpbInF1ZXJ5RXhlY3V0b3IiXSwiaXNzIjoiU2VhcmNoQXBpIiwiZXhwIjoxNzAwNDczMDEwLCJpYXQiOjE3MDA0Njk0MTB9.aefvkys4PyIHqq25s04NM5PXuo3Hr5PwYgAepULPwC0`,
+                    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
                 },
                 body: this.constructCoveoSearchParams(),
             });

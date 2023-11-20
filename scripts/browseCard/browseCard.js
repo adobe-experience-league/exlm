@@ -1,7 +1,7 @@
 import { loadCSS, decorateIcons } from "../lib-franklin.js";
 import { buildCardContent, setupCopyAction } from "./utils.js";
 
-function buildCard(element, model) {
+export default async function buildCard(element, model) {
     // load css dynamically
     loadCSS(`${window.hlx.codeBasePath}/scripts/browseCard/browseCard.css`);
     const { thumbnail: _thumbnail, product, title, contentType } = model;
@@ -43,11 +43,11 @@ function buildCard(element, model) {
     element.appendChild(card);
 }
 
-export default async function buildCards(gridWrapper, dataModel, /*authoredConfig*/) {
-    const wrapper = document.createDocumentFragment();
-    dataModel.forEach((model) => {
-        buildCard(wrapper, model);
-    });
-    await decorateIcons(wrapper);
-    gridWrapper.appendChild(wrapper);
-}
+// export default async function buildCards(gridWrapper, dataModel, /*authoredConfig*/) {
+//     const wrapper = document.createDocumentFragment();
+//     dataModel.forEach((model) => {
+//         buildCard(wrapper, model);
+//     });
+//     await decorateIcons(wrapper);
+//     gridWrapper.appendChild(wrapper);
+// }
