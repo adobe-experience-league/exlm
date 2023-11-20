@@ -15,10 +15,10 @@
 }
 .accordion details summary::before {
   content: url("/icons/chevron_right.svg");
-  position: relative;
-  margin-right: -0.4em;
-  top: 0.25em;
-  left: -0.3em;
+  position: relative; 
+  top: 3.5px;
+  left: -4.2px;
+  margin-right: -2px;
 }
 .accordion details summary::-webkit-details-marker {
   display: none;
@@ -38,6 +38,45 @@
 .accordion details h3 {
   margin-top: 14px;
 }
+
+.accordion p {
+  margin-top: 14px;
+}
+
+.accordion p:last-child {
+  margin-bottom: 0;
+}
+
+.accordion ul {
+  margin-top: 14px;
+}
+
+.accordion ul li {
+  margin-top: 0;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.accordion ul li:last-child {
+  margin-bottom: 0;
+}
+
+.accordion ul li ul {
+  margin-bottom: 14px;
+}
+
+.accordion ol li p {
+  margin-bottom: 8px;
+}
+
+ol .accordion summary {
+  font-size: var(--spectrum-font-size-200);
+}
+
+ol .accordion ul {
+  margin-bottom: 14px;
+}
+
 .accordion details .accordion {
   margin: 0;
 }
@@ -51,21 +90,21 @@
 .accordion details[open] summary::before {
   content: url("/icons/chevron_down.svg");
 }
-.accordion .code-wrapper {
-  margin-left: 0;
-  margin-top: 0;
-}
-.accordion .code-wrapper div {
-  margin-left: 0;
-  margin-top: 0;
-}
-.accordion .code code {
-  font-size: var(--spectrum-font-size-100);
-}
+.accordion .code-wrapper, 
+.accordion .code-wrapper div, 
 .accordion .note-wrapper,
 .accordion .note-wrapper div {
   margin-left: 0;
   margin-top: 0;
+}
+
+.accordion .code pre {
+  padding: 14px;
+  line-height: 21px;
+}
+
+.accordion .code code {
+  font-size: var(--spectrum-font-size-100);
 }
 
 .shade-box .accordion-wrapper:first-child details {
