@@ -1,0 +1,36 @@
+ .breadcrumbs > div > div {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .breadcrumbs > div > div > a {
+   font-size: 16px;
+   margin: 0px;
+   color: var(--non-spectrum-grey-updated);
+  }
+
+  .breadcrumbs > div > div > a::before {
+    display: inline-block;
+    background-image: url("/icons/chevron_right.svg");
+    content:"";
+    margin-right: 5px;
+    margin-left: 5px;
+    height: 16px;
+    width: 16px;
+    position: relative;
+    bottom: -2px;
+  } 
+
+  .breadcrumbs > div > div > a:first-child::before {
+    content: none;
+  }
+
+  .breadcrumbs > div > div > a:last-child {
+    color: var(--spectrum-global-color-gray-900);
+    font-weight: bold;
+  }
+
+
+
+
