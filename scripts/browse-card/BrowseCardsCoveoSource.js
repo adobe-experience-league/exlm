@@ -16,7 +16,7 @@ export default function BrowseCardsCoveoSource(params) {
    * @type {Object}
    */
   this.dataSource = {
-    url: COVEO_API_MOCKS[params.contentType],
+    url: COVEO_API_MOCKS[params.contentType.toUpperCase()],
     params,
   };
 
@@ -79,11 +79,11 @@ export default function BrowseCardsCoveoSource(params) {
     if (contentType === 'Course') {
       tags.push({
         icon: 'user',
-        text: this.placeholders.developer,
+        text: '',
       });
       tags.push({
         icon: 'book',
-        text: this.placeholders.lesson,
+        text: `0 ${this.placeholders.lesson}`,
       });
     } else {
       tags.push({
@@ -102,7 +102,10 @@ export default function BrowseCardsCoveoSource(params) {
       title: result?.title,
       description: result?.excerpt,
       tags,
-      eventDateTime: result?.raw?.date,
+      event: {
+        startTime: '',
+        endTime: ''
+      },
       contributor: {
         thumbnail: '',
         name: '',
