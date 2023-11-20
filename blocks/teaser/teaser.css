@@ -98,6 +98,11 @@
   border: 2px solid transparent;
   color:var(--teaser-background-color);
   margin: 0;
+  font-family: var(--body-font-family);
+  font-size: 13px;
+  font-weight: var(--font-weight-700);
+  line-height: 16px;
+  padding: 6px 14px;
 }
 
 .teaser.block > .foreground > .text > .cta > a.button.secondary {
@@ -201,11 +206,6 @@
     background-color: var(--link-color);
     border: 2px solid transparent;
     color: var(--background-color);
-    font-family: var(--body-font-family);
-    font-size: 13px;
-    font-weight: var(--font-weight-700);
-    line-height: 16px;
-    padding: 6px 14px 6px 14px;
   }
 
   .teaser.block > .foreground > .text > .cta > a.button.secondary {
