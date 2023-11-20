@@ -104,7 +104,7 @@ export default function BrowseCardsCoveoSource(params) {
       tags,
       event: {
         startTime: '',
-        endTime: ''
+        endTime: '',
       },
       contributor: {
         thumbnail: '',
