@@ -1,0 +1,35 @@
+.breadcrumbs > div > div {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.breadcrumbs > div > div > a {
+  color: var(--spectrum-gray-700);
+  display: inline-block;
+  font-size: var(--spectrum-font-size-200);
+  line-height: 24px;
+  margin: 0;
+}
+
+.breadcrumbs > div > div > a::before {
+  background-image: url("/icons/chevron_right.svg");
+  background-size: 16px;
+  bottom: -3px;
+  content: "";
+  display: inline-block;
+  height: 16px;
+  margin-right: 5px;
+  margin-left: 5px;
+  position: relative;
+  width: 16px;
+}
+
+.breadcrumbs > div > div > a:first-child::before {
+  content: none;
+}
+
+.breadcrumbs > div > div > a:last-child {
+  color: var(--spectrum-gray-900);
+  font-weight: var(--font-weight-700);
+}

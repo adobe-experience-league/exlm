@@ -95,7 +95,7 @@
                     "cardHeading": "Default Heading",
                     "cardDescription": "Default description",
                     "cardLinkText": "Default Link Text",
-                    "cardLink": "#"
+                    "cardLink": "/content/exlm/global/en"
                   },
                   "item2": {
                     "name": "Icon Card",
@@ -104,7 +104,7 @@
                     "cardHeading": "Default Heading",
                     "cardDescription": "Default description",
                     "cardLinkText": "Default Link Text",
-                    "cardLink": "#"
+                    "cardLink": "/content/exlm/global/en"
                   },
                   "item3": {
                     "name": "Icon Card",
@@ -113,7 +113,7 @@
                     "cardHeading": "Default Heading",
                     "cardDescription": "Default description",
                     "cardLinkText": "Default Link Text",
-                    "cardLink": "#"
+                    "cardLink": "/content/exlm/global/en"
                   }
                 }
               }
@@ -130,11 +130,7 @@
                 "template": {
                   "name": "Icon Card",
                   "model": "icon-card",
-                  "cardIcon": "/content/dam/exlm/content-at-scale.png",
-                  "cardHeading": "Default Heading",
-                  "cardDescription": "Default description",
-                  "cardLinkText": "Default Link Text",
-                  "cardLink": "#"
+                  "cardIcon": "/content/dam/exlm/content-at-scale.png"
                 }
               }
             }

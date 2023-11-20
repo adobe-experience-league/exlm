@@ -51,6 +51,7 @@
 }
 
 /* the short description */
+.teaser.block > .foreground > .text > .short-description,
 .teaser.block > .foreground > .text > .short-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
@@ -65,6 +66,7 @@
   display: none;
 }
 
+.teaser.block > .foreground > .text > .long-description,
 .teaser.block > .foreground > .text > .long-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
@@ -72,6 +74,7 @@
   margin: 0;
 }
 
+.teaser.block.dark > .foreground > .text > .long-description,
 .teaser.block.dark > .foreground > .text > .long-description * {
   color: var(--background-color);
 }
