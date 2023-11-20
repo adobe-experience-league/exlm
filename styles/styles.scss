@@ -302,15 +302,15 @@
   --non-spectrum-royal-blue: #0D66D0;
   --non-spectrum-light-coral: #73B53A;
   --non-spectrum-dim-gray: #747474;
-  --non-spectrum-dim-orange: #E2A43E;
-  --non-spectrum-victoria-blue: #46A8F7;
-  --non-spectrum-lime-green: #12805C;
-  --non-spectrum-royal-crest : #F46700;
-  --non-spectrum-dark-princess-pink :#D83790;
-  --non-spectrum-frost-bite: #962AF0;
+  --non-spectrum-dim-orange: #e2a43e;
+  --non-spectrum-victoria-blue: #46a8f7;
+  --non-spectrum-lime-green: #12805c;
+  --non-spectrum-royal-crest: #f46700;
+  --non-spectrum-dark-princess-pink: #d83790;
+  --non-spectrum-frost-bite: #962af0;
   --non-spectrum-cyan-paprika: #004396;
-  --non-spectrum-venetian-green: #00C001;
-  --non-spectrum-bright-cyan: #00A6AA;
+  --non-spectrum-venetian-green: #00c001;
+  --non-spectrum-bright-cyan: #00a6aa;
   --non-spectrum-max-width: 1440px;
 
   /* rgba transparent values */
@@ -667,7 +667,7 @@ img {
     border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
     border-style: solid;
     border-width: 5px;
-    content: "";
+    content: '';
     display: inline-block;
     margin-top: -4px;
     position: absolute;
