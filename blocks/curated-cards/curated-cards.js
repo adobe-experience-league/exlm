@@ -1,6 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import CardsAbstraction from "../../scripts/cards/cardsAbstraction.js";
-import API_COVEO from "../../scripts/constants.js";
+import BrowseCardsCoveoSource from "../../scripts/browse-cards/BrowseCardsCoveoSource.js";
 
 /**
  * Decorate function to process and log the mapped data.
@@ -68,24 +67,12 @@ export default async function decorate(block) {
 	decorateIcons(block);
 
 	if (contentType) {
-		var urlSearchParams = new URLSearchParams();
-		urlSearchParams.append('sortCriteria', 'relevancy');
-		urlSearchParams.append('facets', `[{"facetId":"@el_role","field":"el_role","type":"specific","injectionDepth":1000,"filterFacetCount":true,"currentValues":[],"numberOfValues":5,"freezeCurrentValues":false,"preventAutoSelect":false,"isFieldExpanded":false},{"facetId":"@el_contenttype","field":"el_contenttype","type":"hierarchical","injectionDepth":1000,"delimitingCharacter":"|","filterFacetCount":true,"basePath":[],"filterByBasePath":false,"currentValues":[{"value":"${contentType}","state":"selected","children":[],"retrieveChildren":true,"retrieveCount":5}],"preventAutoSelect":false,"numberOfValues":1,"isFieldExpanded":false},{"facetId":"el_product","field":"el_product","type":"hierarchical","injectionDepth":1000,"delimitingCharacter":"|","filterFacetCount":true,"basePath":[],"filterByBasePath":false,"currentValues":[],"preventAutoSelect":false,"numberOfValues":10000,"isFieldExpanded":false}]`);
-		urlSearchParams.append('numberOfResults', 4);
-
-
-		// Defining data sources for CardsAbstraction
-		const dataSources = [{
-			name: API_COVEO.NAME,
-			url: API_COVEO.URL,
-			body: urlSearchParams
-		}];
-
-		// Creating CardsAbstraction instance
-		const curatedCards = new CardsAbstraction(dataSources);
-
-		// Getting card data asynchronously
-		const data = await curatedCards.getCardData();
+		const params = {
+			contentType,
+			noOfResults: 4,
+		}
+		const browseCards = new BrowseCardsCoveoSource(params);
+		const data = await browseCards.fetchBrowseCardsContent();
 		console.log(data);
 	}
 }
