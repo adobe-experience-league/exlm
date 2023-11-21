@@ -1,3 +1,5 @@
+@import "../teaser/teaser.css";
+
 /* carousel wrapper stretches over complete width */
 .section div.carousel-wrapper {
   margin-bottom: var(--spectrum-spacing-500);
@@ -28,9 +30,27 @@
   align-items: flex-end;
 }
 
+.carousel.block.sametop > .panel-container {
+  align-items: stretch;
+}
+
 .carousel.block > .panel-container > .teaser.block {
   flex-shrink: 0;
   scroll-snap-align: start;
+}
+
+.carousel.block.samecenter > .panel-container > .teaser.block,
+.carousel.block.sametop > .panel-container > .teaser.block {
+  height:auto;
+}
+
+.carousel.block.samecenter > .panel-container > .teaser.block > .foreground {
+  height: 100%;
+}
+
+.carousel.block.samecenter > .panel-container > .teaser.block > .foreground > .text {
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .carousel.block > .button-container {

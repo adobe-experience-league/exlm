@@ -460,6 +460,14 @@
           {
             "name": "Bottom",
             "value": "bottom"
+          },
+          {
+            "name": "Same Height, text top",
+            "value": "sametop"
+          },
+          {
+            "name": "Same Height, text center",
+            "value": "samecenter"
           }
         ]
       }
