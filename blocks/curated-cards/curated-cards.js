@@ -1,5 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import BrowseCardsCoveoSource from '../../scripts/browse-card/BrowseCardsCoveoSource.js';
+import BrowseCardsFacade from '../../scripts/browse-card/browse-cards-facade.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 
 /**
@@ -55,10 +55,6 @@ export default async function decorate(block) {
   headerDiv.appendChild(titleDiv);
   headerDiv.appendChild(viewDiv);
 
-  // Creating content div
-  const contentDiv = document.createElement('div');
-  contentDiv.classList.add('curated-cards-content');
-
   // Clearing the block's content
   block.innerHTML = '';
 
@@ -69,16 +65,23 @@ export default async function decorate(block) {
     contentType,
     noOfResults,
   };
-  const browseCards = new BrowseCardsCoveoSource(params);
-  const browseCardsContent = await browseCards.fetchBrowseCardsContent();
-  for (let i = 0; i < Math.min(noOfResults, browseCardsContent.length); i += 1) {
-    const cardData = browseCardsContent[i];
-    const cardDiv = document.createElement('div');
-    buildCard(cardDiv, cardData);
-    contentDiv.appendChild(cardDiv);
+  const browseCards = new BrowseCardsFacade(params);
+  const browseCardsContent = await browseCards.fetchCardData();
+
+  if (browseCardsContent?.length) {
+    // Creating content div
+    const contentDiv = document.createElement('div');
+    contentDiv.classList.add('curated-cards-content');
+
+    for (let i = 0; i < Math.min(noOfResults, browseCardsContent.length); i += 1) {
+      const cardData = browseCardsContent[i];
+      const cardDiv = document.createElement('div');
+      buildCard(cardDiv, cardData);
+      contentDiv.appendChild(cardDiv);
+    }
+    // Appending content divs to the block
+    block.appendChild(contentDiv);
   }
-  // Appending content divs to the block
-  block.appendChild(contentDiv);
 
   decorateIcons(block);
 }
