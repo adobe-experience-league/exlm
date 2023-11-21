@@ -1,4 +1,5 @@
 import { loadCSS } from '../lib-franklin.js';
+import { createTag } from '../scripts.js';
 
 const generateContributorsMarkup = (contributor) => {
   const { name, thumbnail, level, date } = contributor;
@@ -32,7 +33,7 @@ const generateContributorsMarkup = (contributor) => {
 };
 
 const buildCardContent = (card, model) => {
-  const { description, contentType: type, viewLinkText, viewLink, copyLink, tags, contributor, eventDateTime } = model;
+  const { description, contentType: type, viewLinkText, viewLink, copyLink, tags, contributor, event = {} } = model;
   const contentType = type.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
   const cardFooter = card.querySelector('.browse-card-footer');
@@ -52,14 +53,15 @@ const buildCardContent = (card, model) => {
   if (contentType === 'course') {
     tags.forEach((tag) => {
       const { icon: iconName, text } = tag;
-      const anchor = document.createElement('a');
-      anchor.classList.add('browse-card-meta-anchor');
-      const span = document.createElement('span');
-      span.classList.add('icon', `icon-${iconName}`);
-      anchor.textContent = text;
-      anchor.appendChild(span);
-
-      cardMeta.appendChild(anchor);
+      if (text) {
+        const anchor = document.createElement('a');
+        anchor.classList.add('browse-card-meta-anchor');
+        const span = document.createElement('span');
+        span.classList.add('icon', `icon-${iconName}`);
+        anchor.textContent = text;
+        anchor.appendChild(span);
+        cardMeta.appendChild(anchor);
+      }
     });
   }
   if (isDesktopResolution) {
@@ -91,12 +93,13 @@ const buildCardContent = (card, model) => {
     cardContent.insertBefore(contributorInfo, cardMeta);
   }
 
-  if (contentType.includes('event') && eventDateTime) {
-    const startDate = new Date(eventDateTime);
+  if (contentType.includes('event') && Object.values(event).length) {
+    const { startTime, endTime } = event;
+    const startDate = new Date(startTime);
     const dateInfo = new Date(startDate.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
     const hrs = dateInfo.getHours();
 
-    const endDate = new Date(startDate);
+    const endDate = new Date(endTime);
     endDate.setHours(endDate.getHours() + 1);
     const endDateInfo = new Date(endDate.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
     const weekday = dateInfo.toLocaleDateString('en-US', { weekday: 'long' });
@@ -119,7 +122,8 @@ const buildCardContent = (card, model) => {
     dateString += `<h6>${time}</h6>`;
     const eventInfo = document.createElement('div');
     eventInfo.classList.add('browse-card-event-info');
-    eventInfo.innerHTML = `<span class="icon icon-time"></span>`;
+    const timeIcon = createTag('span', { class: 'icon icon-time' });
+    eventInfo.appendChild(timeIcon);
     const dateElement = document.createElement('div');
     dateElement.classList.add('browse-card-event-time');
     dateElement.innerHTML = dateString;
@@ -174,12 +178,13 @@ const setupCopyAction = (wrapper) => {
 export default async function buildCard(element, model) {
   // load css dynamically
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
-  const { thumbnail: _thumbnail, product, title, contentType } = model;
+  const { thumbnail, product, title, contentType } = model;
   const type = contentType?.toLowerCase();
-  const thumbnail = _thumbnail;
-  const card = document.createElement('div');
-  card.classList.add('browse-card', `${type}-card`);
-  card.innerHTML = `<div class="browse-card-figure"></div><div class="browse-card-content"></div><div class="browse-card-footer"></div>`;
+  const card = createTag(
+    'div',
+    { class: `browse-card ${type}-card` },
+    `<div class="browse-card-figure"></div><div class="browse-card-content"></div><div class="browse-card-footer"></div>`,
+  );
   const cardFigure = card.querySelector('.browse-card-figure');
   const cardContent = card.querySelector('.browse-card-content');
 
