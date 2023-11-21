@@ -162,7 +162,6 @@ header {
 }
 @media (width >= 1024px) {
   .header .nav-wrapper {
-    max-width: initial;
     display: flex;
     align-items: center;
     box-shadow: initial;
@@ -700,4 +699,62 @@ header {
 .header .adobe-logo .icon svg {
   height: 24px;
   width: 24px;
+}
+.header .sign-in .profile {
+  display: none;
+  position: initial;
+}
+@media (width >= 1024px) {
+  .header .sign-in .profile {
+    position: relative;
+  }
+}
+.header .sign-in.signed-in .profile {
+  display: flex;
+  height: 100%;
+}
+.header .sign-in.signed-in .profile a {
+  border-radius: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-align: left;
+  background: none;
+  font-weight: initial;
+  color: black;
+}
+.header .profile-toggle {
+  border-radius: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-align: left;
+  background: none;
+  font-weight: initial;
+  height: 100%;
+  padding: 0 var(--nav-item-padding-x);
+  box-sizing: border-box;
+}
+.header .profile-menu {
+  display: none;
+}
+.header .profile-menu.profile-menu-expanded {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  align-items: flex-end;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  top: 100%;
+  background-color: white;
+  color: redl;
+  z-index: 20000;
+  padding: 2em;
+  box-shadow: 0 8px 16px rgba(10, 10, 10, 0.1);
+}
+@media (width >= 1024px) {
+  .header .profile-menu.profile-menu-expanded {
+    width: fit-content;
+  }
 }

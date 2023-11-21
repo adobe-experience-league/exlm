@@ -217,12 +217,12 @@ export async function loadIms() {
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
         debug: false,
         onReady: (args) => {
+          // eslint-disable-next-line no-console
+          console.log('Adobe IMS Ready!', args);
           resolve({
             ...args,
             // eslint-disable-next-line no-undef
-            signin: adobeIMS.signIn,
-            // eslint-disable-next-line no-undef
-            signout: adobeIMS.signOut,
+            adobeIMS,
           });
           clearTimeout(timeout);
         },
