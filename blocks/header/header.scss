@@ -760,4 +760,54 @@ header {
       vertical-align: middle;
     }
   }
+
+  .signed-in {
+    .profile {
+      position: initial;
+      display: flex;
+      height: 100%;
+
+      a {
+        @include button-reset;
+
+        color: black;
+      }
+
+      @include desktop {
+        position: relative;
+      }
+    }
+  }
+
+  .profile-toggle {
+    @include button-reset;
+
+    height: 100%;
+    padding: 0 var(--nav-item-padding-x);
+    box-sizing: border-box;
+  }
+
+  .profile-menu {
+    display: none;
+  }
+
+  .profile-menu.profile-menu-expanded {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    align-items: flex-end;
+    right: 0;
+    width: 100%;
+    box-sizing: border-box;
+    top: 100%;
+    background-color: white;
+    color: redl;
+    z-index: 20000;
+    padding: 2em;
+    box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
+
+    @include desktop {
+      width: fit-content;
+    }
+  }
 }

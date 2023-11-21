@@ -14,6 +14,7 @@ import {
   loadCSS,
   decorateButtons,
   getMetadata,
+  loadScript,
 } from './lib-franklin.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
@@ -191,6 +192,47 @@ async function loadEager(doc) {
   }
 }
 
+export const locales = new Map([
+  ['de', 'de_DE'],
+  ['en', 'en_US'],
+  ['es', 'es_ES'],
+  ['fr', 'fr_FR'],
+  ['it', 'it_IT'],
+  ['ja', 'ja_JP'],
+  ['ko', 'ko_KO'],
+  ['pt-BR', 'pt_BR'],
+  ['zh-Hans', 'zh_HANS'],
+]);
+
+let imsLoaded;
+export async function loadIms() {
+  imsLoaded =
+    imsLoaded ||
+    new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => reject(new Error('IMS timeout')), 5000);
+      window.adobeid = {
+        client_id: 'ExperienceLeague_Dev',
+        scope:
+          'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read',
+        locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
+        debug: false,
+        onReady: (args) => {
+          // eslint-disable-next-line no-console
+          console.log('Adobe IMS Ready!', args);
+          resolve({
+            ...args,
+            // eslint-disable-next-line no-undef
+            adobeIMS,
+          });
+          clearTimeout(timeout);
+        },
+        onError: reject,
+      };
+      loadScript('https://auth.services.adobe.com/imslib/imslib.min.js');
+    });
+  return imsLoaded;
+}
+
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
@@ -202,7 +244,7 @@ async function loadLazy(doc) {
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
-
+  loadIms(); // start it early, asyncronously
   loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
 
