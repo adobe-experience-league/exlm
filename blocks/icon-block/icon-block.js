@@ -1,3 +1,4 @@
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { createTag, decorateExternalLinks } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
@@ -39,6 +40,12 @@ export default function decorate(block) {
 
   const anchorEls = [...block.querySelectorAll('a')];
   anchorEls.forEach((a) => {
-    if (a.target === '_blank') a.classList.add('external');
+    if (a.target === '_blank') {
+      const icon = '<span class="icon icon-new-tab"></span>';
+      a.classList.add('external');
+      a.insertAdjacentHTML('beforeend', icon);
+    }
   });
+
+  decorateIcons(block);
 }
