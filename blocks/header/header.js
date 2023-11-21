@@ -1,4 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { loadIms } from '../../scripts/scripts.js';
 import { registerResizeHandler } from './header-utils.js';
 
 /**
@@ -345,8 +346,71 @@ const languageDecorator = async (languageBlock) => {
  * Decorates the sign-in block
  * @param {HTMLElement} signInBlock
  */
-const signInDecorator = (signInBlock) => {
+const signInDecorator = async (signInBlock) => {
   simplifySingleCellBlock(signInBlock);
+
+  let adobeIMS = {
+    isSignedInUser: () => false,
+  };
+  try {
+    const ims = await loadIms();
+    adobeIMS = ims.adobeIMS;
+  } catch {
+    // eslint-disable-next-line no-console
+    console.warn('Adobe IMS not available.');
+  }
+  const isSignedIn = adobeIMS?.isSignedInUser();
+  if (isSignedIn) {
+    signInBlock.classList.add('signed-in');
+    signInBlock.replaceChildren(
+      htmlToElement(
+        `<div class="profile">
+          <button class="profile-toggle" aria-controls="profile-menu">
+            <span class="icon icon-profile"></span>
+          </button>
+          <div class="profile-menu" id="profile-menu">
+            <a href="#dashboard/profile">Profile</a>
+            <a href="#dashboard/awards">Achievements</a>
+            <a href="#dashboard/bookmarks">Bookmarks</a>
+            <a data-id="sign-out">Sign Out</a>
+          </div>
+        </div>`,
+      ),
+    );
+    const toggler = signInBlock.querySelector('.profile-toggle');
+    signInBlock.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
+      adobeIMS.signOut();
+    });
+    const toggleExpandContent = () => {
+      const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
+      toggler.setAttribute('aria-expanded', !isExpanded);
+      const profileMenu = toggler.nextElementSibling;
+      const expandedClass = 'profile-menu-expanded';
+      if (!isExpanded) {
+        profileMenu.classList.add(expandedClass);
+      } else {
+        profileMenu.classList.remove(expandedClass);
+      }
+    };
+    registerResizeHandler(() => {
+      if (isMobile()) {
+        // if mobile, add click event, remove mouseenter/mouseleave
+        toggler.addEventListener('click', toggleExpandContent);
+        toggler.parentElement.removeEventListener('mouseenter', toggleExpandContent);
+        toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
+      } else {
+        // if desktop, add mouseenter/mouseleave, remove click event
+        toggler.removeEventListener('click', toggleExpandContent);
+        toggler.parentElement.addEventListener('mouseenter', toggleExpandContent);
+        toggler.parentElement.addEventListener('mouseleave', toggleExpandContent);
+      }
+    });
+  } else {
+    signInBlock.classList.remove('signed-in');
+    signInBlock.firstChild.addEventListener('click', async () => {
+      adobeIMS.signIn();
+    });
+  }
   return signInBlock;
 };
 
