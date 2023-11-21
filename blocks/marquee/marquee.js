@@ -1,3 +1,5 @@
+import { decorateIcons } from '../../scripts/lib-franklin.js';
+
 export default function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
@@ -27,7 +29,7 @@ export default function decorate(block) {
         <div class='long-description'>${longDescr}</div>
         <div class='cta'>${
           firstCTAText && firstCTALink
-            ? `<a class='button ${firstCTAType}' href='${firstCTALink}'>${firstCTAText}</a>`
+            ? `<a class='button ${firstCTAType}' href='${firstCTALink}'><span class="icon icon-play"></span>${firstCTAText}</a>`
             : ``
         }${
           secondCTAText && secondCTALink
@@ -52,5 +54,6 @@ export default function decorate(block) {
 
   // add final teaser DOM
   block.textContent = '';
+  decorateIcons(teaserDOM);
   block.append(teaserDOM);
 }
