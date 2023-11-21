@@ -64,7 +64,7 @@
   font-weight: initial;
 }
 
-@mixin chevron($thickness: 1.5px) {
+@mixin chevron($thickness: 2px) {
   position: absolute;
   right: calc(var(--nav-item-padding-x) + 5px);
   top: 50%;
