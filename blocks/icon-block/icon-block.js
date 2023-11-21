@@ -10,8 +10,19 @@ export default function decorate(block) {
 
     description.classList.add('icon-description');
 
+    const h3 = createTag(
+      'h3',
+      {
+        class: 'icon-heading',
+      },
+      heading.innerHTML.trim(),
+    );
+
+    heading.replaceWith(h3);
+
     const linkWrapper = column.querySelector('div:nth-child(4)');
     const link = linkWrapper.querySelector('a');
+    if (!link) return;
     const linkText = link.innerHTML.trim();
     const linkUrl = link.href;
 
@@ -24,16 +35,7 @@ export default function decorate(block) {
       linkText,
     );
 
-    const h3 = createTag(
-      'h3',
-      {
-        class: 'icon-heading',
-      },
-      heading.innerHTML.trim(),
-    );
-
     linkWrapper.replaceWith(a);
-    heading.replaceWith(h3);
   });
 
   decorateExternalLinks(block);
