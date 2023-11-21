@@ -1,35 +1,56 @@
 import { loadCSS } from '../lib-franklin.js';
-import { createTag } from '../scripts.js';
+import { createTag, htmlToElement } from '../scripts.js';
 
 const generateContributorsMarkup = (contributor) => {
   const { name, thumbnail, level, date } = contributor;
-  const contributorElement = document.createDocumentFragment();
-  const img = document.createElement('img');
-  img.src = thumbnail;
-  contributorElement.appendChild(img);
-  const namePlate = document.createElement('div');
-  namePlate.classList.add('browse-card-name-plate');
-  contributorElement.appendChild(namePlate);
-  const nameElement = document.createElement('span');
-  nameElement.classList.add('browse-card-contributor-name');
-  nameElement.textContent = name;
-  namePlate.appendChild(nameElement);
+  return htmlToElement(
+    `<div class="browse-card-contributor-info"><img src="${thumbnail}"><div class="browse-card-name-plate"><span class="browse-card-contributor-name">${name}</span><div class="browse-card-contributor-level"><span>L</span><span>Level ${level}</span></div><span>${date}</span></div></div>`,
+  );
+};
 
-  const levelElement = document.createElement('div');
-  levelElement.classList.add('browse-card-contributor-level');
-  const levelNum = document.createElement('span');
-  levelNum.textContent = `L${level}`;
-  const levelVal = document.createElement('span');
-  levelVal.textContent = `Level ${level}`;
-  levelElement.appendChild(levelNum);
-  levelElement.appendChild(levelVal);
-  namePlate.appendChild(levelElement);
+const getTimeString = (date) => {
+  const hrs = date.getHours();
+  const timePeriod = hrs < 12 ? 'AM' : 'PM';
+  const hours = hrs === 0 ? 12 : hrs % 12;
+  return `${hours}:${date.getMinutes().toString().padStart(2, '0')} ${timePeriod}`;
+};
 
-  const dateElement = document.createElement('span');
-  dateElement.textContent = date;
-  namePlate.appendChild(dateElement);
+const generateDateWithTZ = (time) => {
+  const date = new Date(time);
+  return new Date(date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })); // TODO: apply localization once region selection is in place
+};
 
-  return contributorElement;
+const buildTags = (cardMeta, tags = []) => {
+  tags.forEach((tag) => {
+    const { icon: iconName, text } = tag;
+    if (text) {
+      const anchor = createTag('a', { class: 'browse-card-meta-anchor' });
+      const span = createTag('span', { class: `icon icon-${iconName}` });
+      anchor.textContent = text;
+      anchor.appendChild(span);
+      cardMeta.appendChild(anchor);
+    }
+  });
+};
+
+const buildEventContent = ({ event, cardContent, card }) => {
+  const { startTime, endTime } = event;
+  const dateInfo = generateDateWithTZ(startTime);
+  const endDateInfo = generateDateWithTZ(endTime);
+
+  const weekday = dateInfo.toLocaleDateString('en-US', { weekday: 'long' });
+  const month = dateInfo.toLocaleDateString('en-US', { month: 'long' });
+  const dayNow = createTag('h6', {}, `${weekday}, ${month} ${dateInfo.getDate()}`);
+  const timeNow = createTag('h6', {}, `${getTimeString(dateInfo)} - ${getTimeString(endDateInfo)} PDT`);
+  const eventInfo = createTag('div', { class: 'browse-card-event-info' });
+  const timeIcon = createTag('span', { class: 'icon icon-time' });
+  eventInfo.appendChild(timeIcon);
+  const dateElement = createTag('div', { class: 'browse-card-event-time' });
+  dateElement.appendChild(dayNow);
+  dateElement.appendChild(timeNow);
+  eventInfo.appendChild(dateElement);
+  const title = card.querySelector('.browse-card-title-text');
+  cardContent.insertBefore(eventInfo, title.nextElementSibling);
 };
 
 const buildCardContent = (card, model) => {
@@ -51,18 +72,7 @@ const buildCardContent = (card, model) => {
   cardMeta.classList.add('browse-card-meta-info');
 
   if (contentType === 'course') {
-    tags.forEach((tag) => {
-      const { icon: iconName, text } = tag;
-      if (text) {
-        const anchor = document.createElement('a');
-        anchor.classList.add('browse-card-meta-anchor');
-        const span = document.createElement('span');
-        span.classList.add('icon', `icon-${iconName}`);
-        anchor.textContent = text;
-        anchor.appendChild(span);
-        cardMeta.appendChild(anchor);
-      }
-    });
+    buildTags(cardMeta, tags);
   }
   if (isDesktopResolution) {
     cardContent.appendChild(cardMeta);
@@ -76,59 +86,12 @@ const buildCardContent = (card, model) => {
     contributorInfo.classList.add('browse-card-contributor-info');
     const contributorElement = generateContributorsMarkup(contributor);
     contributorInfo.appendChild(contributorElement);
-
-    tags.forEach((tag) => {
-      const { icon: iconName, text } = tag;
-      if (iconName) {
-        const anchor = document.createElement('a');
-        anchor.classList.add('browse-card-meta-anchor');
-        const span = document.createElement('span');
-        span.classList.add('icon', `icon-${iconName}`);
-        anchor.textContent = text || '100';
-        anchor.appendChild(span);
-        cardMeta.appendChild(anchor);
-      }
-    });
+    buildTags(cardMeta, tags);
     cardContent.insertBefore(contributorInfo, cardMeta);
   }
 
   if (contentType.includes('event') && Object.values(event).length) {
-    const { startTime, endTime } = event;
-    const startDate = new Date(startTime);
-    const dateInfo = new Date(startDate.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
-    const hrs = dateInfo.getHours();
-
-    const endDate = new Date(endTime);
-    endDate.setHours(endDate.getHours() + 1);
-    const endDateInfo = new Date(endDate.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
-    const weekday = dateInfo.toLocaleDateString('en-US', { weekday: 'long' });
-    const month = dateInfo.toLocaleDateString('en-US', { month: 'long' });
-    const dayNow = createTag('h6', {}, `${weekday}, ${month} ${dateInfo.getDate()}`);
-
-    const dayDuration = hrs < 12 ? 'AM' : 'PM';
-    const startHours = hrs === 0 ? 12 : hrs % 12;
-    const endHrs = endDateInfo.getHours();
-    const endHours = endHrs === 0 ? 12 : endHrs % 12;
-    const enddayDuration = endHrs < 12 ? 'AM' : 'PM';
-    const time = `${startHours}:${dateInfo
-      .getMinutes()
-      .toString()
-      .padStart(2, '0')} ${dayDuration} - ${endHours}:${endDateInfo
-      .getMinutes()
-      .toString()
-      .padStart(2, '0')} ${enddayDuration} PDT`;
-    const timeNow = createTag('h6', {}, time);
-    const eventInfo = document.createElement('div');
-    eventInfo.classList.add('browse-card-event-info');
-    const timeIcon = createTag('span', { class: 'icon icon-time' });
-    eventInfo.appendChild(timeIcon);
-    const dateElement = document.createElement('div');
-    dateElement.classList.add('browse-card-event-time');
-    dateElement.appendChild(dayNow);
-    dateElement.appendChild(timeNow);
-    eventInfo.appendChild(dateElement);
-    const title = card.querySelector('.browse-card-title-text');
-    cardContent.insertBefore(eventInfo, title.nextElementSibling);
+    buildEventContent({ event, cardContent, card });
   }
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
@@ -188,21 +151,18 @@ export default async function buildCard(element, model) {
     cardFigure.appendChild(img);
   }
 
-  const bannerElement = document.createElement('span');
-  bannerElement.classList.add('browse-card-banner');
+  const bannerElement = createTag('p', { class: 'browse-card-banner' });
   bannerElement.innerText = contentType;
   cardFigure.appendChild(bannerElement);
 
   if (product) {
-    const tagElement = document.createElement('p');
-    tagElement.classList.add('browse-card-tag-text');
+    const tagElement = createTag('p', { class: 'browse-card-tag-text' });
     tagElement.textContent = product;
     cardContent.appendChild(tagElement);
   }
 
   if (title) {
-    const titleElement = document.createElement('p');
-    titleElement.classList.add('browse-card-title-text');
+    const titleElement = createTag('p', { class: 'browse-card-title-text' });
     titleElement.textContent = title;
     cardContent.appendChild(titleElement);
   }

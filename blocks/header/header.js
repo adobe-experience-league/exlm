@@ -1,6 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { loadIms } from '../../scripts/scripts.js';
 import { registerResizeHandler } from './header-utils.js';
+import { htmlToElement } from '../../scripts/scripts.js';
 
 /**
  * @param {HTMLElement} block
@@ -43,17 +44,6 @@ const randomId = (length = 6) =>
  */
 const getCell = (block, row, cell) => block.querySelector(`:scope > div:nth-child(${row}) > div:nth-child(${cell})`);
 
-/**
- * creates an element from html string
- * @param {string} html
- * @returns {HTMLElement}
- */
-function htmlToElement(html) {
-  const template = document.createElement('template');
-  const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
-  template.innerHTML = trimmedHtml;
-  return template.content.firstElementChild;
-}
 // fetch fragment html
 const fetchFragment = async (rePath, lang = 'en') => {
   const response = await fetch(`/fragments/${lang}/${rePath}.plain.html`);

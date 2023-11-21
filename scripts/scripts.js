@@ -278,6 +278,18 @@ export function createTag(tag, attributes, html) {
   return el;
 }
 
+/**
+ * creates an element from html string
+ * @param {string} html
+ * @returns {HTMLElement}
+ */
+export function htmlToElement(html) {
+  const template = document.createElement('template');
+  const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
+  template.innerHTML = trimmedHtml;
+  return template.content.firstElementChild;
+}
+
 export function loadPrevNextBtn() {
   const mainDoc = document.querySelector('main > div:nth-child(1)');
   if (!mainDoc) return;
