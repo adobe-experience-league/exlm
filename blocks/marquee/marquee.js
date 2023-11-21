@@ -22,12 +22,12 @@ export default function decorate(block) {
 
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
-    <div class='foreground'>
-      <div class='text'>
-        ${eyebrow ? `<div class='eyebrow'>${eyebrow.toUpperCase()}</div>` : ``}
-        <div class='title'>${title}</div>
-        <div class='long-description'>${longDescr}</div>
-        <div class='cta'>${
+    <div class='marquee-foreground'>
+      <div class='marquee-text'>
+        ${eyebrow ? `<div class='marquee-eyebrow'>${eyebrow.toUpperCase()}</div>` : ``}
+        <div class='marquee-title'>${title}</div>
+        <div class='marquee-long-description'>${longDescr}</div>
+        <div class='marquee-cta'>${
           firstCTAText && firstCTALink
             ? `<a class='button ${firstCTAType}' href='${firstCTALink}'><span class="icon icon-play"></span>${firstCTAText}</a>`
             : ``
@@ -37,10 +37,10 @@ export default function decorate(block) {
             : ``
         }</div>
       </div>
-      ${subjectPicture ? `<div class='subject'>${subjectPicture}</div>` : `<div class='spacer'></div>`}
+      ${subjectPicture ? `<div class='marquee-subject'>${subjectPicture}</div>` : `<div class='spacer'></div>`}
       </div>
     </div>
-    <div class='background'>${backgroundPicture}</div>
+    <div class='marquee-background'>${backgroundPicture}</div>
   `);
 
   // set image description
@@ -49,7 +49,7 @@ export default function decorate(block) {
   }
 
   if (subjectPicture && subjectImageDescr) {
-    teaserDOM.querySelector('.foreground .subject picture img').setAttribute('alt', subjectImageDescr);
+    teaserDOM.querySelector('.marquee-foreground .marquee-subject picture img').setAttribute('alt', subjectImageDescr);
   }
 
   // add final teaser DOM

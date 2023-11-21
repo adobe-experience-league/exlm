@@ -12,14 +12,14 @@
   position: relative;
 }
 
-.marquee>.foreground {
+.marquee-foreground {
   display: flex;
   flex-direction: column-reverse;
   max-width: var(--non-spectrum-max-width);
   margin: auto;
 }
 
-.marquee>.foreground>.subject {
+.marquee-subject {
   overflow: hidden;
   max-height: 270px;
   display: flex;
@@ -27,19 +27,19 @@
   justify-content: center;
 }
 
-.marquee >.foreground>.subject img {
+.marquee-subject img {
   max-height: 270px;
   position: relative;
   z-index: 2;
 }
 
-.marquee>.foreground>.text {
+.marquee-text {
   position: relative;
   z-index: 2;
   padding: var(--spectrum-spacing-400) var(--space-token-xs);
 }
 
-.marquee>.foreground>.text>.eyebrow {
+.marquee-eyebrow {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
   font-weight: var(--font-weight-700);
@@ -48,7 +48,7 @@
   line-height: 18px;
 }
 
-.marquee>.foreground>.text>.title {
+.marquee-title {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-900);
   font-weight: var(--font-weight-700);
@@ -56,8 +56,8 @@
   margin-bottom: var(--space-token-xs);
 }
 
-.marquee>.foreground>.text>.short-description,
-.marquee>.foreground>.text>.short-description * {
+.marquee-short-description,
+.marquee-short-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-600);
   font-weight: var(--font-weight-700);
@@ -66,15 +66,15 @@
   margin: 0;
 }
 
-.marquee>.foreground>.text>.long-description,
-.marquee>.foreground>.text>.long-description * {
+.marqueelong-description,
+.marquee-long-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
   line-height: var(--spectrum-line-height-l);
   margin: 0;
 }
 
-.marquee>.foreground>.text>.cta {
+.marquee-cta {
   display: flex;
   flex-direction: column-reverse;
   font-size: 19px;
@@ -84,7 +84,7 @@
   align-items: center;
 }
 
-.marquee>.foreground>.text>.cta>a.button {
+.marquee-cta > a.button {
   font-size: 19px;
   background-color: var(--background-color);
   border: 2px solid var(--spectrum-gray-700);
@@ -94,20 +94,20 @@
   min-width: 250px;
 }
 
-.marquee>.foreground>.text>.cta>a>span.icon {
+.marquee-cta > a > span.icon {
   width: 14px;
   height: 14px;
   margin-right: 7px;
 }
 
-.marquee>.foreground>.text>.cta>a.button.secondary {
+.marquee-cta > a.button.secondary {
   background-color: var( --non-spectrum-true-blue);
   border: none;
   color: var(--background-color);
   min-width: 250px;
 }
 
-.marquee>.background {
+.marquee-background {
   position: absolute;
   top: 0;
   width: 100%;
@@ -116,7 +116,7 @@
   overflow: hidden;
 }
 
-.marquee>.background img {
+.marquee-background img {
   transform: scale(50) translate(-130px, 5px)
 }
 
