@@ -89,7 +89,6 @@ const buildCardContent = (card, model) => {
         cardMeta.appendChild(anchor);
       }
     });
-
     cardContent.insertBefore(contributorInfo, cardMeta);
   }
 
@@ -104,11 +103,10 @@ const buildCardContent = (card, model) => {
     const endDateInfo = new Date(endDate.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
     const weekday = dateInfo.toLocaleDateString('en-US', { weekday: 'long' });
     const month = dateInfo.toLocaleDateString('en-US', { month: 'long' });
-    let dateString = `<h6>${weekday}, ${month} ${dateInfo.getDate()}</h6>`;
+    const dayNow = createTag('h6', {}, `${weekday}, ${month} ${dateInfo.getDate()}`);
 
     const dayDuration = hrs < 12 ? 'AM' : 'PM';
     const startHours = hrs === 0 ? 12 : hrs % 12;
-
     const endHrs = endDateInfo.getHours();
     const endHours = endHrs === 0 ? 12 : endHrs % 12;
     const enddayDuration = endHrs < 12 ? 'AM' : 'PM';
@@ -119,41 +117,37 @@ const buildCardContent = (card, model) => {
       .getMinutes()
       .toString()
       .padStart(2, '0')} ${enddayDuration} PDT`;
-    dateString += `<h6>${time}</h6>`;
+    const timeNow = createTag('h6', {}, time);
     const eventInfo = document.createElement('div');
     eventInfo.classList.add('browse-card-event-info');
     const timeIcon = createTag('span', { class: 'icon icon-time' });
     eventInfo.appendChild(timeIcon);
     const dateElement = document.createElement('div');
     dateElement.classList.add('browse-card-event-time');
-    dateElement.innerHTML = dateString;
+    dateElement.appendChild(dayNow);
+    dateElement.appendChild(timeNow);
     eventInfo.appendChild(dateElement);
     const title = card.querySelector('.browse-card-title-text');
     cardContent.insertBefore(eventInfo, title.nextElementSibling);
   }
-
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
   if (copyLink) {
-    cardOptions.innerHTML = `<a href="${copyLink}"><span class="icon icon-copy"></span></a>`;
+    const copyLinkAnchor = createTag('a', { href: copyLink }, `<span class="icon icon-copy"></span>`);
+    cardOptions.appendChild(copyLinkAnchor);
   }
-  cardOptions.innerHTML += `<a><span class="icon icon-bookmark"></span></a>`;
+  const bookmarkAnchor = createTag('a', {}, `<span class="icon icon-bookmark"></span>`);
+  cardOptions.appendChild(bookmarkAnchor);
 
-  const anchorLink = document.createElement('a');
-  anchorLink.classList.add('browse-card-cta-element');
-  anchorLink.target = '_blank';
   let icon = null;
   if (contentType === 'tutorial') {
     icon = 'play';
   } else if (contentType.includes('event')) {
     icon = 'new-tab';
   }
-  if (icon) {
-    anchorLink.innerHTML = `${viewLinkText || ''} <span class="icon icon-${icon}"></span>`;
-  } else {
-    anchorLink.innerText = viewLinkText || '';
-  }
-  anchorLink.href = viewLink;
+  const contents = icon ? `${viewLinkText || ''} <span class="icon icon-${icon}"></span>` : viewLinkText || '';
+  const anchorLink = createTag('a', { class: 'browse-card-cta-element', target: '_blank', href: viewLink }, contents);
+
   cardFooter.appendChild(cardOptions);
   cardFooter.appendChild(anchorLink);
 };
