@@ -601,5 +601,18 @@
         "description": "What link to open when clicking the button."
       }
     ]
+  },
+  {
+    "id": "embed",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "videoUrl",
+        "value": "",
+        "label": "MPC Video URL",
+        "description": "Please provide a URL to an MPC video."
+      }
+    ]
   }
 ]
