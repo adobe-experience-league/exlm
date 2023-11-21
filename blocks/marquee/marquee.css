@@ -1,7 +1,7 @@
 /* ----- MOBILE / Default ----- */
 
-/* teaser wrapper stretches over complete width */
-.section div.teaser-wrapper {
+/* marquee wrapper stretches over complete width */
+.section div.marquee-wrapper {
   margin-bottom: var(--spectrum-spacing-500);
   max-width: unset;
 
@@ -10,25 +10,28 @@
   margin-right: calc(-1 * var(--space-token-xs));
 }
 
-.teaser.block {
-  width: 100%;
-  height:100%;
+/* The marquee block div */
+.marquee.block,
+.marquee.block.dark {
+  --marquee-background-color: var(--spectrum-red-700);
+
+  background-color: var(--marquee-background-color);
 }
 
 /* the foreground contains text and spacer */
-.teaser.block > .foreground {
+.marquee.block>.foreground {
   max-width: var(--non-spectrum-max-width);
   margin: auto;
 }
 
 /* the text block (eyebrow, title , descr , ctr) */
-.teaser.block > .foreground > .text {
+.marquee.block>.foreground>.text {
   padding: var(--spectrum-spacing-400) var(--space-token-xs);
 }
 
 /* the eybrow title, hidden in mobile */
-.teaser.block > .foreground > .text > .eyebrow {
-  display:none;
+.marquee.block>.foreground>.text>.eyebrow {
+  display: none;
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
   font-weight: var(--font-weight-700);
@@ -37,22 +40,21 @@
 }
 
 /* the main title, hidden in mobile */
-.teaser.block > .foreground > .text > .title {
+.marquee.block>.foreground>.text>.title {
   display: none;
   font-family: var(--body-font-family);
-  font-size: 25px;
+  font-size: var(--spectrum-font-size-900);
   font-weight: var(--font-weight-700);
-  line-height: 37.5px;
+  line-height: var(--spectrum-line-height-xxl);
   margin-bottom: var(--space-token-xxs);
 }
 
-.teaser.block.dark > .foreground > .text > .title {
+.marquee.block.dark>.foreground>.text>.title {
   color: var(--background-color);
 }
 
 /* the short description */
-.teaser.block > .foreground > .text > .short-description,
-.teaser.block > .foreground > .text > .short-description * {
+.marquee.block>.foreground>.text>.short-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
   font-weight: var(--font-weight-700);
@@ -62,72 +64,57 @@
 }
 
 /* long description , hidden in mobile */
-.teaser.block > .foreground > .text > .long-description {
+.marquee.block>.foreground>.text>.long-description {
   display: none;
 }
 
-.teaser.block > .foreground > .text > .long-description,
-.teaser.block > .foreground > .text > .long-description * {
+.marquee.block>.foreground>.text>.long-description * {
   font-family: var(--body-font-family);
-  font-size: 14px;
-  line-height: 18.2px;
+  font-size: var(--spectrum-font-size-300);
+  line-height: var(--spectrum-line-height-l);
   margin: 0;
 }
 
-.teaser.block.dark > .foreground > .text > .long-description,
-.teaser.block.dark > .foreground > .text > .long-description * {
+.marquee.block.dark>.foreground>.text>.long-description * {
   color: var(--background-color);
 }
 
 /* the list of CTA's */
-.teaser.block > .foreground > .text > .cta {
+.marquee.block>.foreground>.text>.cta {
   display: flex;
   gap: var(--spectrum-spacing-400);
   margin-top: var(--spectrum-spacing-400);
   padding: 0;
-  width:min-content;
+  width: min-content;
 }
 
-.teaser.block > .foreground > .text > .cta:empty {
+.marquee.block>.foreground>.text>.cta:empty {
   display: none;
 }
 
 /* the cta buttons in mobile view */
-.teaser.block > .foreground > .text > .cta > a.button {
+.marquee.block>.foreground>.text>.cta>a.button {
   background-color: var(--background-color);
   border: 2px solid transparent;
-  color:var(--teaser-background-color);
+  color: var(--marquee-background-color);
   margin: 0;
-  font-family: var(--body-font-family);
-  font-size: 13px;
-  font-weight: var(--font-weight-700);
-  line-height: 16px;
-  padding: 6px 14px;
 }
 
-.teaser.block > .foreground > .text > .cta > a.button.secondary {
+.marquee.block>.foreground>.text>.cta>a.button.secondary {
   background-color: unset;
   border: 2px solid var(--background-color);
-  color:var(--background-color);
+  color: var(--background-color);
 }
 
 /* spacer div */
-.teaser.block > .foreground > .spacer {
-  display:none;
-  width:40%;
-}
-
-/* The background color for mobile view */
-.teaser.block > .foreground , 
-.teaser.block.dark > .foreground {
-  --teaser-background-color :  var(--spectrum-red-700); 
-
-  background-color: var(--teaser-background-color);
+.marquee.block>.foreground>.spacer {
+  display: none;
+  width: 40%;
 }
 
 /* the background image , hidden in mobile */
-.teaser.block > .background img {
-  display:none;
+.marquee.block>.background img {
+  display: none;
   width: auto;
   height: max-content;
   object-fit: cover;
@@ -135,16 +122,15 @@
 
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
-  .section div.teaser-wrapper {
+  .section div.marquee-wrapper {
     /* stretches to window edge, cover section padding */
     margin-left: calc(-1 * var(--spectrum-spacing-500));
     margin-right: calc(-1 * var(--spectrum-spacing-500));
-    margin-bottom: 40px;
   }
 
   /* remove background color , add border */
-  .teaser.block,
-  .teaser.block.dark {
+  .marquee.block,
+  .marquee.block.dark {
     position: relative;
     background-color: var(--background-color);
     padding: 0;
@@ -154,112 +140,100 @@
   }
 
   /* foreground container, flex (text + spacer), always on top */
-  .teaser.block > .foreground {
+  .marquee.block>.foreground {
     position: relative;
     display: flex;
+    z-index: 2;
     padding: 0 var(--spectrum-spacing-500);
-    background-color: unset;
-  }
-
-  .teaser.block.dark > .foreground {
-    background-color: unset;
   }
 
   /* limit width of text part and set order */
-  .teaser.block > .foreground > .text {
-    width:60%;
+  .marquee.block>.foreground>.text {
+    width: 60%;
     order: 0;
-    padding: 35px 0 45px;
+    padding: var(--spectrum-spacing-500) 0;
   }
 
   /* change the order if text should be on the right */
-  .teaser.block.right > .foreground > .text {
+  .marquee.block.right>.foreground>.text {
     order: 1;
   }
 
   /* turn on the eybrow */
-  .teaser.block > .foreground > .text > .eyebrow {
+  .marquee.block>.foreground>.text>.eyebrow {
     display: block;
   }
 
   /* turn on the title */
-  .teaser.block > .foreground > .text > .title {
+  .marquee.block>.foreground>.text>.title {
     display: block;
   }
 
-  .teaser.block.dark > .foreground > .text > .eyebrow {
+  .marquee.block.dark>.foreground>.text>.eyebrow {
     color: var(--background-color);
   }
-  
+
   /* turn of short description */
-  .teaser.block > .foreground > .text > .short-description {
+  .marquee.block>.foreground>.text>.short-description {
     display: none;
   }
 
   /* turn on long description */
-  .teaser.block > .foreground > .text > .long-description {
+  .marquee.block>.foreground>.text>.long-description {
     display: block;
   }
 
   /* revert to normal button behavior for primary and secondary */
-  .teaser.block > .foreground > .text > .cta > a.button {
+  .marquee.block>.foreground>.text>.cta>a.button {
     background-color: var(--link-color);
     border: 2px solid transparent;
     color: var(--background-color);
   }
 
-  .teaser.block > .foreground > .text > .cta > a.button.secondary {
+  .marquee.block>.foreground>.text>.cta>a.button.secondary {
     background-color: unset;
     border: 2px solid currentcolor;
     color: currentcolor;
   }
 
-  .teaser.block.dark > .foreground > .text > .cta > a.button {
+  .marquee.block.dark>.foreground>.text>.cta>a.button {
     background-color: var(--background-color);
     border: 2px solid transparent;
     color: currentcolor;
   }
 
-  .teaser.block.dark > .foreground > .text > .cta > a.button.secondary {
+  .marquee.block.dark>.foreground>.text>.cta>a.button.secondary {
     background-color: unset;
     border: 2px solid currentcolor;
     color: var(--background-color);
   }
 
   /* spacer */
-  .teaser.block > .foreground > .spacer {
-    display:block;
+  .marquee.block>.foreground>.spacer {
+    display: block;
     order: 1;
   }
 
   /* change the order if text should be on the right */
-  .teaser.block.right > .foreground > .spacer {
+  .marquee.block.right>.foreground>.spacer {
     order: 0;
   }
 
   /* the background image container */
-  .teaser.block > .background {
-    display:block;
+  .marquee.block>.background {
+    display: block;
     position: absolute;
-    width:100%;
+    width: 100%;
     height: 100%;
     top: 0;
     left: 0;
   }
 
-  
-  /* reomve background color to avoid flicker on load */
-  .teaser.block > .background , 
-  .teaser.block.dark > .background {
-    background-color: unset;
-  }
-
   /* the image */
-  .teaser.block > .background img {
-    display:block;
-    height:100%;
+  .marquee.block>.background img {
+    display: block;
+    height: 100%;
     width: 100%;
     object-position: right;
   }
 }
-  
