@@ -31,14 +31,15 @@
   --sign-in-order: 3;
   --nav-item-desktop-padding-x: 1.25rem;
   --hover-backgroud: #fafafa;
-  --hover-background-dark: #f5f5f5;
+  --hover-background-dark: #f8f8f8;
+  --hover-item-content-background: #e6e6e6;
   --nav-root-item-padding-x: 0 15px;
   --nav-action-item-padding-x: 0 10px;
   --nav-item-padding-x: 20px;
   --nav-item-expanded-border: 2px solid #222;
   --nav-item-expanded-bg: #fafafa;
   --nav-item-text-color: #222;
-  --nav-font: 'Adobe Clean';
+  --nav-font: var(--body-font-family);
 
   @include desktop {
     --nav-item-padding-x: 24px;
@@ -63,7 +64,7 @@
   font-weight: initial;
 }
 
-@mixin chevron($thickness: 2px) {
+@mixin chevron($thickness: 1.5px) {
   position: absolute;
   right: calc(var(--nav-item-padding-x) + 5px);
   top: 50%;
@@ -197,6 +198,7 @@ header {
     @include tablet {
       min-height: calc(100vh - var(--nav-height));
       max-width: 360px;
+      width: 100%;
     }
 
     @include desktop {
@@ -278,7 +280,6 @@ header {
     position: relative;
     padding: 0;
     margin: 0;
-    line-height: 2;
 
     .icon {
       display: inline-block;
@@ -305,15 +306,20 @@ header {
 
         .nav-item {
           padding: 0;
+          margin-top: 5px;
           min-width: 250px;
+
+          &:first-child {
+            margin-top: 0;
+          }
         }
       }
     }
 
     a {
-      color: #4a4a4a;
+      color: var(--spectrum-gray-800);
       display: block;
-      line-height: 1.5;
+      line-height: 24px;
       position: relative;
       margin: 0;
       font-size: 14px;
@@ -321,6 +327,7 @@ header {
       padding: var(--nav-item-padding-x);
 
       @include desktop {
+        line-height: 21px;
         padding: var(--nav-root-item-padding-x);
         height: 100%;
         display: flex;
@@ -339,8 +346,8 @@ header {
       a {
         width: 100%;
         /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-        font: normal normal bold 14px/30px var(--nav-font);
-        padding: 5px 0 5px var(--nav-item-padding-x);
+        font: normal normal bold 14px/21px var(--nav-font);
+        padding: 8px 8px 8px var(--nav-item-padding-x);
 
         @include desktop {
           display: block;
@@ -394,7 +401,7 @@ header {
     @include button-reset;
 
     font-size: 14px;
-    color: #4a4a4a !important;
+    color: var(--spectrum-gray-800);
     justify-content: space-between;
     position: relative;
     width: 100%;
@@ -411,7 +418,6 @@ header {
     &::after {
       @include chevron;
 
-      content: '';
       box-sizing: content-box;
 
       @include desktop {
@@ -445,7 +451,7 @@ header {
       @include desktop {
         position: initial;
         display: inline-block;
-        margin-left: 16px;
+        margin-left: 10px;
         margin-bottom: 3px;
       }
     }
@@ -488,11 +494,12 @@ header {
       background-color: var(--nav-item-expanded-bg);
 
       @include desktop {
-        padding: 10px 0;
+        padding: 0;
       }
     }
 
     @include desktop {
+      align-items: baseline;
       padding: 0;
       position: absolute;
       display: flex;
@@ -518,6 +525,15 @@ header {
 
         > ul {
           flex-direction: column;
+
+          & li > a {
+            color: var(--spectrum-gray-700);
+
+            &:hover {
+              background: var(--hover-item-content-background);
+              border-radius: 4px;
+            }
+          }
         }
       }
     }
@@ -703,6 +719,7 @@ header {
     &::after {
       @include chevron;
 
+      margin-top: -5px;
       right: 10px;
     }
 
@@ -726,21 +743,52 @@ header {
     display: var(--language-selector-display);
     align-items: center;
     padding: 0;
+    position: relative;
 
     .icon {
       height: 18px;
       width: 18px;
     }
-  }
 
-  .language-selector-button {
-    @include button-reset;
+    .language-selector-button {
+      @include button-reset;
 
-    padding: 15px;
-  }
+      padding: 15px;
+      position: relative;
+      top: 2px;
+    }
 
-  .language-selector-popover {
-    display: none;
+    .language-selector-popover {
+      background: var(--non-spectrum-bg);
+      box-shadow: 0 8px 8px rgba(10 10 10 / 10%);
+      display: none;
+      left: 50%;
+      width: 120px;
+      position: absolute;
+      transform: translate(-50%, 0);
+      top: 64px;
+      z-index: 10;
+
+      .language-selector-label {
+        cursor: pointer;
+        display: block;
+        font-size: var(--spectrum-font-size-100);
+        padding: 5px 15px;
+        margin: 0;
+
+        &:hover {
+          background: var(--non-spectrum-hover-bg);
+        }
+      }
+    }
+
+    &:hover {
+      background: var(--non-spectrum-bg);
+
+      & .language-selector-popover {
+        display: block;
+      }
+    }
   }
 
   // adobe logo

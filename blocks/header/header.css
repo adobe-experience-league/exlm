@@ -12,14 +12,15 @@
   --sign-in-order: 3;
   --nav-item-desktop-padding-x: 1.25rem;
   --hover-backgroud: #fafafa;
-  --hover-background-dark: #f5f5f5;
+  --hover-background-dark: #f8f8f8;
+  --hover-item-content-background: #e6e6e6;
   --nav-root-item-padding-x: 0 15px;
   --nav-action-item-padding-x: 0 10px;
   --nav-item-padding-x: 20px;
   --nav-item-expanded-border: 2px solid #222;
   --nav-item-expanded-bg: #fafafa;
   --nav-item-text-color: #222;
-  --nav-font: "Adobe Clean";
+  --nav-font: var(--body-font-family);
 }
 @media (width >= 1024px) {
   :root {
@@ -158,11 +159,11 @@ header {
   .header .nav-wrapper {
     min-height: calc(100vh - var(--nav-height));
     max-width: 360px;
+    width: 100%;
   }
 }
 @media (width >= 1024px) {
   .header .nav-wrapper {
-    max-width: initial;
     display: flex;
     align-items: center;
     box-shadow: initial;
@@ -235,7 +236,6 @@ header {
   position: relative;
   padding: 0;
   margin: 0;
-  line-height: 2;
 }
 .header .nav-item .icon {
   display: inline-block;
@@ -260,13 +260,17 @@ header {
   }
   .header .nav-item > * .nav-item {
     padding: 0;
+    margin-top: 5px;
     min-width: 250px;
+  }
+  .header .nav-item > * .nav-item:first-child {
+    margin-top: 0;
   }
 }
 .header .nav-item a {
-  color: #4a4a4a;
+  color: var(--spectrum-gray-800);
   display: block;
-  line-height: 1.5;
+  line-height: 24px;
   position: relative;
   margin: 0;
   font-size: 14px;
@@ -275,6 +279,7 @@ header {
 }
 @media (width >= 1024px) {
   .header .nav-item a {
+    line-height: 21px;
     padding: var(--nav-root-item-padding-x);
     height: 100%;
     display: flex;
@@ -290,8 +295,8 @@ header {
 .header .nav-item .nav-item a {
   width: 100%;
   /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-  font: normal normal bold 14px/30px var(--nav-font);
-  padding: 5px 0 5px var(--nav-item-padding-x);
+  font: normal normal bold 14px/21px var(--nav-font);
+  padding: 8px 8px 8px var(--nav-item-padding-x);
 }
 @media (width >= 1024px) {
   .header .nav-item .nav-item a {
@@ -345,7 +350,7 @@ header {
   background: none;
   font-weight: initial;
   font-size: 14px;
-  color: #4a4a4a !important;
+  color: var(--spectrum-gray-800);
   justify-content: space-between;
   position: relative;
   width: 100%;
@@ -367,12 +372,11 @@ header {
   width: 6px;
   height: 6px;
   margin-top: -3px;
-  border-width: 0 2px 2px 0;
+  border-width: 0 1.5px 1.5px 0;
   border-style: solid;
   transform-origin: 75% 75%;
   transform: rotateZ(45deg);
   transition: transform 0.1s ease;
-  content: "";
   content: "";
   box-sizing: content-box;
 }
@@ -406,7 +410,7 @@ header {
   .header .nav-item-toggle-root::after {
     position: initial;
     display: inline-block;
-    margin-left: 16px;
+    margin-left: 10px;
     margin-bottom: 3px;
   }
 }
@@ -442,11 +446,12 @@ header {
 }
 @media (width >= 1024px) {
   .header .nav-item-content-expanded > ul {
-    padding: 10px 0;
+    padding: 0;
   }
 }
 @media (width >= 1024px) {
   .header .nav-item-content-expanded {
+    align-items: baseline;
     padding: 0;
     position: absolute;
     display: flex;
@@ -470,6 +475,13 @@ header {
   }
   .header .nav-item-content-expanded .nav-item-content-expanded > ul {
     flex-direction: column;
+  }
+  .header .nav-item-content-expanded .nav-item-content-expanded > ul li > a {
+    color: var(--spectrum-gray-700);
+  }
+  .header .nav-item-content-expanded .nav-item-content-expanded > ul li > a:hover {
+    background: var(--hover-item-content-background);
+    border-radius: 4px;
   }
 }
 .header .nav-items-secondary {
@@ -646,12 +658,13 @@ header {
   width: 6px;
   height: 6px;
   margin-top: -3px;
-  border-width: 0 2px 2px 0;
+  border-width: 0 1.5px 1.5px 0;
   border-style: solid;
   transform-origin: 75% 75%;
   transform: rotateZ(45deg);
   transition: transform 0.1s ease;
   content: "";
+  margin-top: -5px;
   right: 10px;
 }
 .header .search-picker-button[aria-expanded=true]::after {
@@ -669,12 +682,13 @@ header {
   display: var(--language-selector-display);
   align-items: center;
   padding: 0;
+  position: relative;
 }
 .header .language-selector .icon {
   height: 18px;
   width: 18px;
 }
-.header .language-selector-button {
+.header .language-selector .language-selector-button {
   border-radius: 0;
   margin: 0;
   padding: 0;
@@ -683,9 +697,35 @@ header {
   background: none;
   font-weight: initial;
   padding: 15px;
+  position: relative;
+  top: 2px;
 }
-.header .language-selector-popover {
+.header .language-selector .language-selector-popover {
+  background: var(--non-spectrum-bg);
+  box-shadow: 0 8px 8px rgba(10, 10, 10, 0.1);
   display: none;
+  left: 50%;
+  width: 120px;
+  position: absolute;
+  transform: translate(-50%, 0);
+  top: 64px;
+  z-index: 10;
+}
+.header .language-selector .language-selector-popover .language-selector-label {
+  cursor: pointer;
+  display: block;
+  font-size: var(--spectrum-font-size-100);
+  padding: 5px 15px;
+  margin: 0;
+}
+.header .language-selector .language-selector-popover .language-selector-label:hover {
+  background: var(--non-spectrum-hover-bg);
+}
+.header .language-selector:hover {
+  background: var(--non-spectrum-bg);
+}
+.header .language-selector:hover .language-selector-popover {
+  display: block;
 }
 .header .adobe-logo {
   grid-area: adobe-logo;
