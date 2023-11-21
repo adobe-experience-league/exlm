@@ -1,8 +1,5 @@
-export default function decorate(block) {
-  // Extract properties
-  // always same order as in model, empty string if not set
-  const props = [...block.querySelectorAll(':scope div > div')];
-
+export function generateTeaserDOM(props) {
+  // Extract properties, always same order as in model, empty string if not set
   const picture = props[0].innerHTML.trim();
   const imageDescr = props[1].textContent.trim();
   const eyebrow = props[2].textContent.trim();
@@ -19,6 +16,7 @@ export default function decorate(block) {
 
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
+    <div class='background'>${picture}</div>
     <div class='foreground'>
       <div class='text'>
         ${eyebrow ? `<div class='eyebrow'>${eyebrow.toUpperCase()}</div>` : ``}
@@ -40,7 +38,6 @@ export default function decorate(block) {
       <div class='spacer'>
       </div>
     </div>
-    <div class='background'>${picture}</div>
   `);
 
   // set image description
@@ -50,10 +47,17 @@ export default function decorate(block) {
 
   // set the mobile background color
   if (backgroundColor) {
-    block.style.setProperty('--teaser-background-color', `var(${backgroundColor})`);
+    teaserDOM.querySelector('.foreground').style.setProperty('--teaser-background-color', `var(${backgroundColor})`);
   }
 
   // add final teaser DOM
+  return teaserDOM;
+}
+
+export default function decorate(block) {
+  // get the first and only cell from each row
+  const props = [...block.children].map((row) => row.firstElementChild);
+  const teaserDOM = generateTeaserDOM(props);
   block.textContent = '';
   block.append(teaserDOM);
 }

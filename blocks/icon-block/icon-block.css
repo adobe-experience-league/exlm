@@ -21,10 +21,10 @@
   margin-bottom: 8px;
 }
 .icon-block .icon-heading {
-  font-size: 20px;
+  font-size: 22px;
   margin: 0 auto;
   line-height: 33px;
-  color: var(--spectrum-gray-800);
+  color: var(--non-spectrum-custom-dark);
   font-weight: bold;
   margin-bottom: 8px;
   white-space: nowrap;
@@ -52,15 +52,20 @@
   max-width: 135px;
   display: flex;
   align-items: center;
+  margin-top: 0;
 }
 .icon-block .icon-link::after {
   content: ">";
   padding-left: 4px;
 }
 .icon-block .icon-link.external::after {
-  content: url("/icons/new-tab.svg");
+  content: "";
+}
+.icon-block .icon-new-tab {
   position: relative;
-  top: 3px;
+  top: 1px;
+  width: 17px;
+  height: 17px;
 }
 
 @media (min-width: 600px) {
