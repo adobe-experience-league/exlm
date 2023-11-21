@@ -194,11 +194,11 @@ header {
     padding: 0;
     box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
     background-color: #fff;
+    width: 100%;
 
     @include tablet {
       min-height: calc(100vh - var(--nav-height));
       max-width: 360px;
-      width: 100%;
     }
 
     @include desktop {
@@ -208,7 +208,6 @@ header {
       padding: 0;
       height: 100%;
       min-height: initial;
-      max-width: initial;
     }
 
     ul {
