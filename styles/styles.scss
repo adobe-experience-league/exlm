@@ -658,6 +658,18 @@ img {
     --exlm-line-height-h6: 18.2px;
   }
 
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    code:not([class^='language-']) {
+      font-size: inherit;
+      line-height: 36px;
+    }
+  }
+
   code:not([class^='language-']) {
     font-family: var(--spectrum-code-font-family);
     font-size: var(--spectrum-font-size-100);
