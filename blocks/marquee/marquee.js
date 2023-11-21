@@ -54,6 +54,9 @@ export default function decorate(block) {
 
   // add final teaser DOM
   block.textContent = '';
+  if (!subjectPicture) {
+    block.classList.add('no-foreground-img');
+  }
   decorateIcons(teaserDOM);
   block.append(teaserDOM);
 }

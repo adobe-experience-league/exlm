@@ -20,6 +20,7 @@
 }
 
 .marquee>.foreground>.subject {
+  margin: 2em 0;
   overflow: hidden;
   max-height: 270px;
   display: flex;
@@ -125,6 +126,22 @@
   width: 40%;
 }
 
+.marquee.no-foreground-img {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.marquee.no-foreground-img>.background {
+  position: unset;
+}
+
+.marquee.no-foreground-img>.background img {
+  transform: none;
+  object-fit: cover;
+  object-position: center;
+}
+
+
 @media (min-width: 600px) {
   .section div.marquee-wrapper {
     margin-left: calc(-1 * var(--spectrum-spacing-500));
@@ -217,5 +234,13 @@
     width: 100%;
     transform: none;
   }
+
+  .marquee.no-foreground-img>.background {
+    position: absolute;
+  }
+
+  .marquee.no-foreground-img {
+    display: block;
+}
 } 
 
