@@ -17,47 +17,18 @@
   overflow: hidden;
   scroll-behavior: smooth;
   margin: auto;
-}
-
-/* if teasers are centered vertically */
-.carousel.block.center > .panel-container {
-  align-items: center;
-}
-
-/* if teasers are aligned at the top border */
-.carousel.block.top > .panel-container {
-  align-items: flex-start;
-}
-
-/* if teasers are aligned at the bottom border */
-.carousel.block.bottom > .panel-container {
-  align-items: flex-end;
-}
-
-/* if teaser have the same height as the tallest one */
-.carousel.block.sametop > .panel-container {
   align-items: stretch;
 }
 
-/* teaser should not shrink and snap to start when scrolling */
+/* teaser inside carousel have same height and texts are centered */
 .carousel.block > .panel-container > .teaser.block {
   flex-shrink: 0;
   scroll-snap-align: start;
-}
-
-/* for full height versions we set height to auto */
-.carousel.block.samecenter > .panel-container > .teaser.block,
-.carousel.block.sametop > .panel-container > .teaser.block {
   height:auto;
 }
-/* .. and forground to 100% */
-.carousel.block.sametop > .panel-container > .teaser.block > .foreground,
-.carousel.block.samecenter > .panel-container > .teaser.block > .foreground {
-  height: 100%;
-}
 
-/* for same height , text centered we use flex */
-.carousel.block.samecenter > .panel-container > .teaser.block > .foreground {
+.carousel.block > .panel-container > .teaser.block > .foreground {
+  height: 100%;
   display: flex;
   align-items: center;
 }
