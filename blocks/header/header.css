@@ -19,7 +19,7 @@
   --nav-item-padding-x: 20px;
   --nav-item-expanded-border: 2px solid #222;
   --nav-item-expanded-bg: #fafafa;
-  --nav-item-text-color: #222;
+  --nav-item-text-color: #2c2c2c;
   --nav-font: var(--body-font-family);
 }
 @media (min-width: 1024px) {
@@ -268,7 +268,7 @@ header {
   }
 }
 .header .nav-item a {
-  color: var(--spectrum-gray-800);
+  color: var(--nav-item-text-color);
   display: block;
   line-height: 24px;
   position: relative;
@@ -308,6 +308,22 @@ header {
   margin-top: -10px;
   padding: 0 24px;
   line-height: 1.5;
+}
+@media (max-width: 1024px) {
+  .header .nav-item:has(.nav-item-expanded-active) .nav-items-secondary {
+    display: block;
+    margin: 0;
+  }
+  .header .nav-item:has(.nav-item-expanded-active) .nav-items-secondary li {
+    margin: 0;
+    padding: 0;
+  }
+  .header .nav-item:has(.nav-item-expanded-active) .nav-items-secondary a {
+    display: inline-block;
+    font: normal normal bold 14px/21px var(--nav-font);
+    padding: 8px 8px 15px 40px;
+    width: 100%;
+  }
 }
 .header .nav-item-mobile {
   display: block;
@@ -382,7 +398,7 @@ header {
     font: normal normal bold 12px/18px var(--nav-font);
     padding: var(--nav-item-padding-x);
     padding-bottom: calc(var(--nav-item-padding-x) / 2);
-    color: var(--spectrum-gray-700);
+    color: var(--non-spectrum-article-dark-gray);
   }
 }
 .header .nav-item-toggle-root {
@@ -443,7 +459,6 @@ header {
 }
 @media (min-width: 1024px) {
   .header .nav-item-content-expanded {
-    align-items: baseline;
     padding: 0;
     position: absolute;
     display: flex;
@@ -456,6 +471,7 @@ header {
     background: #fafafa;
   }
   .header .nav-item-content-expanded > ul {
+    align-items: baseline;
     display: flex;
     flex-direction: row;
   }
@@ -512,7 +528,7 @@ header {
     content: "";
     transform: rotateZ(-45deg);
     right: 5px;
-    top: 7px;
+    top: 13px;
   }
   .header .nav-items-secondary li {
     margin: 0;
@@ -734,20 +750,12 @@ header {
   height: 24px;
   width: 24px;
 }
-.header .sign-in .profile {
-  display: none;
+.header .signed-in .profile {
   position: initial;
-}
-@media (width >= 1024px) {
-  .header .sign-in .profile {
-    position: relative;
-  }
-}
-.header .sign-in.signed-in .profile {
   display: flex;
   height: 100%;
 }
-.header .sign-in.signed-in .profile a {
+.header .signed-in .profile a {
   border-radius: 0;
   margin: 0;
   padding: 0;
@@ -756,6 +764,11 @@ header {
   background: none;
   font-weight: initial;
   color: black;
+}
+@media (min-width: 1024px) {
+  .header .signed-in .profile {
+    position: relative;
+  }
 }
 .header .profile-toggle {
   border-radius: 0;
@@ -787,7 +800,7 @@ header {
   padding: 2em;
   box-shadow: 0 8px 16px rgba(10, 10, 10, 0.1);
 }
-@media (width >= 1024px) {
+@media (min-width: 1024px) {
   .header .profile-menu.profile-menu-expanded {
     width: fit-content;
   }
