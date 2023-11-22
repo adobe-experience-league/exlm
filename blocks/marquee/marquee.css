@@ -1,4 +1,4 @@
-.section div.marquee-wrapper {
+div.marquee-wrapper {
   max-width: unset;
   margin-left: calc(-1 * var(--space-token-xs));
   margin-right: calc(-1 * var(--space-token-xs));
@@ -8,35 +8,33 @@
   position: relative;
 }
 
-.marquee>.foreground {
+.marquee-foreground {
   display: flex;
   flex-direction: column-reverse;
   max-width: var(--non-spectrum-max-width);
   margin: auto;
-  padding: 1em 0;
 }
 
-.marquee>.foreground>.subject {
+.marquee-subject {
   overflow: hidden;
-  max-height: 270px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.marquee >.foreground>.subject img {
-  max-height: 270px;
+.marquee-subject img {
+  padding: 10px;
   position: relative;
   z-index: 2;
 }
 
-.marquee>.foreground>.text {
+.marquee-text {
   position: relative;
   z-index: 2;
   padding: var(--spectrum-spacing-400) var(--space-token-xs);
 }
 
-.marquee>.foreground>.text>.eyebrow {
+.marquee-eyebrow {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
   font-weight: var(--font-weight-700);
@@ -45,7 +43,7 @@
   line-height: 18px;
 }
 
-.marquee>.foreground>.text>.title {
+.marquee-title {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-900);
   font-weight: var(--font-weight-700);
@@ -53,8 +51,8 @@
   margin-bottom: var(--space-token-xs);
 }
 
-.marquee>.foreground>.text>.short-description,
-.marquee>.foreground>.text>.short-description * {
+.marquee-short-description,
+.marquee-short-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-600);
   font-weight: var(--font-weight-700);
@@ -63,15 +61,15 @@
   margin: 0;
 }
 
-.marquee>.foreground>.text>.long-description,
-.marquee>.foreground>.text>.long-description * {
+.marquee-long-description,
+.marquee-long-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
   line-height: var(--spectrum-line-height-l);
   margin: 0;
 }
 
-.marquee>.foreground>.text>.cta {
+.marquee-cta {
   display: flex;
   flex-direction: column-reverse;
   font-size: 19px;
@@ -81,58 +79,57 @@
   align-items: center;
 }
 
-.marquee>.foreground>.text>.cta>a.button {
+.marquee-cta>a.button {
   font-size: 19px;
   background-color: var(--background-color);
   border: 2px solid var(--spectrum-gray-700);
   color: var(--spectrum-gray-700);
   margin: 0;
+  padding: 8px 40px;
   width: min-content;
-  min-width: 250px;
+  min-width: 264px;
 }
 
-.marquee>.foreground>.text>.cta>a>span.icon {
+.marquee-cta>a>span.icon {
   width: 14px;
   height: 14px;
   margin-right: 7px;
 }
 
-.marquee>.foreground>.text>.cta>a.button.secondary {
+.marquee-cta>a.button.secondary {
   background-color: var( --non-spectrum-true-blue);
   border: none;
   color: var(--background-color);
-  min-width: 250px;
 }
 
-.marquee>.background {
+.marquee-background {
   position: absolute;
   top: 0;
   width: 100%;
   height: auto;
-  min-height: 270px;
   overflow: hidden;
 }
 
-.marquee>.background img {
-  transform: scale(50) translate(-130px, 5px)
+.marquee-background img {
+  display: none;
 }
 
-.marquee>.foreground>.spacer {
+.marquee-spacer {
   display: none;
   width: 40%;
 }
 
-.marquee.no-foreground-img {
+.marquee.no-subject {
   display: flex;
   flex-direction: column-reverse;
 }
 
-.marquee.no-foreground-img>.background {
+.marquee.no-subject>.marquee-background {
   position: unset;
   min-height: unset;
 }
 
-.marquee.no-foreground-img>.background img {
+.marquee.no-subject>.marquee-background img {
   transform: none;
   object-fit: cover;
   object-position: center;
@@ -140,105 +137,106 @@
 
 
 @media (min-width: 600px) {
-  .section div.marquee-wrapper {
+  div.marquee-wrapper {
     margin-left: calc(-1 * var(--spectrum-spacing-500));
     margin-right: calc(-1 * var(--spectrum-spacing-500));
   }
 
-  .marquee>.foreground>.subject {
+  .marquee-subject {
     min-height: 350px;
   }
   
-  .marquee >.foreground>.subject img {
-    max-width: 550px;
+  .marquee-subject img {
     position: relative;
     z-index: 2;
   }
 
-  .marquee>.background {
-    max-height: 350px;
+  .marquee-background {
+    min-height: 350px;
     width: 100%;
   }
 
-  .marquee>.background img {
-    min-height: 350px;
+  .marquee-background img {
+    display: block;
     transform: translate(-230px, 10px) scale(3);
   }
 
-  .marquee>.foreground>.text {
-    padding: var(--space-token-xxl);
+  .marquee-text {
+    padding: var(--space-token-l) var(--space-token-xxl);
   }
 
-  .marquee>.foreground>.text>.cta {
+  .marquee-cta {
     flex-direction: row;
   }
 
-  .marquee.block>.foreground>.spacer {
+  .marquee-cta>a.button { 
+    padding: 8px 20px;
+  }
+
+  .marquee-spacer {
     display: block;
     order: 1;
   }
 }
 
 @media (min-width: 900px) {
-
   .marquee {
     overflow: hidden;
   }
 
-  .marquee>.foreground {
+  .marquee-foreground {
     display: flex;
     flex-direction: row;
+    justify-content: center;
     width: 100%;
  }
 
-  .marquee>.foreground>.text {
+  .marquee-text {
     width: 50%;
     margin: auto 0;
   }
 
-  .marquee>.foreground>.text>.title {
+  .marquee-title {
     font-size: var(--spectrum-font-size-1100);
   }
-  
-  .marquee>.foreground>.subject {
-    overflow: hidden;
-    width: 50%;
-    max-height: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
+  .marquee-cta>a.button { 
+    padding: 12px 22px;
   }
-    
-  .marquee >.foreground>.subject picture {
-    width: 100%;
+  
+  .marquee-subject {
+    width: 50%;
+    min-width: 400px;
+    display: block;
+    margin: auto;
+    overflow: hidden;
   }
 
-  .marquee >.foreground>.subject img {
-    max-height: none;
+  .marquee-subject img {
+    object-fit: cover;
     width: 100%;
-    max-width: 550px;
     position: relative;
     z-index: 2;
   }
 
-  .marquee>.background {
-    width: 100%;
-    min-height: 100%;
+  .marquee-background {
+    bottom: 0;
   }
 
-  .marquee>.background img {
+  .marquee-background img {
+    object-fit: cover;
     height: 100%;
     width: 100%;
     transform: none;
   }
 
-  .marquee.no-foreground-img>.background {
+  .marquee.no-subject {
+    display: block;
+  }
+
+  .marquee.no-subject>.marquee-background {
     position: absolute;
     min-height: 100%;
   }
-
-  .marquee.no-foreground-img {
-    display: block;
-}
 } 
 
