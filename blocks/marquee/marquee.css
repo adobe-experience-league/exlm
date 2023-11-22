@@ -1,239 +1,242 @@
-/* ----- MOBILE / Default ----- */
-
-/* marquee wrapper stretches over complete width */
-.section div.marquee-wrapper {
-  margin-bottom: var(--spectrum-spacing-500);
+div.marquee-wrapper {
   max-width: unset;
-
-  /* stretches to window edge in mobile view */
   margin-left: calc(-1 * var(--space-token-xs));
   margin-right: calc(-1 * var(--space-token-xs));
 }
 
-/* The marquee block div */
-.marquee.block,
-.marquee.block.dark {
-  --marquee-background-color: var(--spectrum-red-700);
-
-  background-color: var(--marquee-background-color);
+.marquee {
+  position: relative;
 }
 
-/* the foreground contains text and spacer */
-.marquee.block>.foreground {
+.marquee-foreground {
+  display: flex;
+  flex-direction: column-reverse;
   max-width: var(--non-spectrum-max-width);
   margin: auto;
 }
 
-/* the text block (eyebrow, title , descr , ctr) */
-.marquee.block>.foreground>.text {
+.marquee-subject {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marquee-subject img {
+  padding: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.marquee-text {
+  position: relative;
+  z-index: 2;
   padding: var(--spectrum-spacing-400) var(--space-token-xs);
 }
 
-/* the eybrow title, hidden in mobile */
-.marquee.block>.foreground>.text>.eyebrow {
-  display: none;
+.marquee-eyebrow {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
   font-weight: var(--font-weight-700);
   color: var(--spectrum-gray-700);
   margin-bottom: var(--space-token-xs);
+  line-height: 18px;
 }
 
-/* the main title, hidden in mobile */
-.marquee.block>.foreground>.text>.title {
-  display: none;
+.marquee-title {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-900);
   font-weight: var(--font-weight-700);
-  line-height: var(--spectrum-line-height-xxl);
-  margin-bottom: var(--space-token-xxs);
+  line-height: var(--spectrum-line-height-xxxl);
+  margin-bottom: var(--space-token-xs);
 }
 
-.marquee.block.dark>.foreground>.text>.title {
-  color: var(--background-color);
-}
-
-/* the short description */
-.marquee.block>.foreground>.text>.short-description * {
+.marquee-short-description,
+.marquee-short-description * {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-300);
+  font-size: var(--spectrum-font-size-600);
   font-weight: var(--font-weight-700);
   line-height: var(--spectrum-line-height-l);
   color: var(--background-color);
   margin: 0;
 }
 
-/* long description , hidden in mobile */
-.marquee.block>.foreground>.text>.long-description {
-  display: none;
-}
-
-.marquee.block>.foreground>.text>.long-description * {
+.marquee-long-description,
+.marquee-long-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
   line-height: var(--spectrum-line-height-l);
   margin: 0;
 }
 
-.marquee.block.dark>.foreground>.text>.long-description * {
-  color: var(--background-color);
-}
-
-/* the list of CTA's */
-.marquee.block>.foreground>.text>.cta {
+.marquee-cta {
   display: flex;
+  flex-direction: column-reverse;
+  font-size: 19px;
   gap: var(--spectrum-spacing-400);
   margin-top: var(--spectrum-spacing-400);
   padding: 0;
-  width: min-content;
+  align-items: center;
 }
 
-.marquee.block>.foreground>.text>.cta:empty {
-  display: none;
-}
-
-/* the cta buttons in mobile view */
-.marquee.block>.foreground>.text>.cta>a.button {
+.marquee-cta>a.button {
+  font-size: 19px;
   background-color: var(--background-color);
-  border: 2px solid transparent;
-  color: var(--marquee-background-color);
+  border: 2px solid var(--spectrum-gray-700);
+  color: var(--spectrum-gray-700);
   margin: 0;
+  padding: 8px 40px;
+  width: min-content;
+  min-width: 264px;
 }
 
-.marquee.block>.foreground>.text>.cta>a.button.secondary {
-  background-color: unset;
-  border: 2px solid var(--background-color);
+.marquee-cta>a>span.icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 7px;
+}
+
+.marquee-cta>a.button.secondary {
+  background-color: var( --non-spectrum-true-blue);
+  border: none;
   color: var(--background-color);
 }
 
-/* spacer div */
-.marquee.block>.foreground>.spacer {
+.marquee-background {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+.marquee-background img {
+  display: none;
+}
+
+.marquee-spacer {
   display: none;
   width: 40%;
 }
 
-/* the background image , hidden in mobile */
-.marquee.block>.background img {
-  display: none;
-  width: auto;
-  height: max-content;
-  object-fit: cover;
+.marquee.no-subject {
+  display: flex;
+  flex-direction: column-reverse;
 }
 
-/* ----- TABLET ----- */
+.marquee.no-subject>.marquee-background {
+  position: unset;
+  min-height: unset;
+}
+
+.marquee.no-subject>.marquee-background img {
+  transform: none;
+  object-fit: cover;
+  object-position: center;
+}
+
+
 @media (min-width: 600px) {
-  .section div.marquee-wrapper {
-    /* stretches to window edge, cover section padding */
+  div.marquee-wrapper {
     margin-left: calc(-1 * var(--spectrum-spacing-500));
     margin-right: calc(-1 * var(--spectrum-spacing-500));
   }
 
-  /* remove background color , add border */
-  .marquee.block,
-  .marquee.block.dark {
+  .marquee-subject {
+    min-height: 350px;
+  }
+  
+  .marquee-subject img {
     position: relative;
-    background-color: var(--background-color);
-    padding: 0;
-    border: 1px solid var(--spectrum-gray-200);
-    border-radius: 4px;
+    z-index: 2;
+  }
+
+  .marquee-background {
+    min-height: 350px;
+    width: 100%;
+  }
+
+  .marquee-background img {
+    display: block;
+    transform: translate(-230px, 10px) scale(3);
+  }
+
+  .marquee-text {
+    padding: var(--space-token-l) var(--space-token-xxl);
+  }
+
+  .marquee-cta {
+    flex-direction: row;
+  }
+
+  .marquee-cta>a.button { 
+    padding: 8px 20px;
+  }
+
+  .marquee-spacer {
+    display: block;
+    order: 1;
+  }
+}
+
+@media (min-width: 900px) {
+  .marquee {
     overflow: hidden;
   }
 
-  /* foreground container, flex (text + spacer), always on top */
-  .marquee.block>.foreground {
-    position: relative;
+  .marquee-foreground {
     display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+ }
+
+  .marquee-text {
+    width: 50%;
+    margin: auto 0;
+  }
+
+  .marquee-title {
+    font-size: var(--spectrum-font-size-1100);
+  }
+
+  .marquee-cta>a.button { 
+    padding: 12px 22px;
+  }
+  
+  .marquee-subject {
+    width: 50%;
+    min-width: 400px;
+    display: block;
+    margin: auto;
+    overflow: hidden;
+  }
+
+  .marquee-subject img {
+    object-fit: cover;
+    width: 100%;
+    position: relative;
     z-index: 2;
-    padding: 0 var(--spectrum-spacing-500);
   }
 
-  /* limit width of text part and set order */
-  .marquee.block>.foreground>.text {
-    width: 60%;
-    order: 0;
-    padding: var(--spectrum-spacing-500) 0;
+  .marquee-background {
+    bottom: 0;
   }
 
-  /* change the order if text should be on the right */
-  .marquee.block.right>.foreground>.text {
-    order: 1;
+  .marquee-background img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    transform: none;
   }
 
-  /* turn on the eybrow */
-  .marquee.block>.foreground>.text>.eyebrow {
+  .marquee.no-subject {
     display: block;
   }
 
-  /* turn on the title */
-  .marquee.block>.foreground>.text>.title {
-    display: block;
-  }
-
-  .marquee.block.dark>.foreground>.text>.eyebrow {
-    color: var(--background-color);
-  }
-
-  /* turn of short description */
-  .marquee.block>.foreground>.text>.short-description {
-    display: none;
-  }
-
-  /* turn on long description */
-  .marquee.block>.foreground>.text>.long-description {
-    display: block;
-  }
-
-  /* revert to normal button behavior for primary and secondary */
-  .marquee.block>.foreground>.text>.cta>a.button {
-    background-color: var(--link-color);
-    border: 2px solid transparent;
-    color: var(--background-color);
-  }
-
-  .marquee.block>.foreground>.text>.cta>a.button.secondary {
-    background-color: unset;
-    border: 2px solid currentcolor;
-    color: currentcolor;
-  }
-
-  .marquee.block.dark>.foreground>.text>.cta>a.button {
-    background-color: var(--background-color);
-    border: 2px solid transparent;
-    color: currentcolor;
-  }
-
-  .marquee.block.dark>.foreground>.text>.cta>a.button.secondary {
-    background-color: unset;
-    border: 2px solid currentcolor;
-    color: var(--background-color);
-  }
-
-  /* spacer */
-  .marquee.block>.foreground>.spacer {
-    display: block;
-    order: 1;
-  }
-
-  /* change the order if text should be on the right */
-  .marquee.block.right>.foreground>.spacer {
-    order: 0;
-  }
-
-  /* the background image container */
-  .marquee.block>.background {
-    display: block;
+  .marquee.no-subject>.marquee-background {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
+    min-height: 100%;
   }
+} 
 
-  /* the image */
-  .marquee.block>.background img {
-    display: block;
-    height: 100%;
-    width: 100%;
-    object-position: right;
-  }
-}

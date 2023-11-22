@@ -415,6 +415,7 @@ strong {
   --non-spectrum-scrollbar-thumb: rgba(0 0 0 / 50%);
   --non-spectrum-raisin-black: #222;
   --non-spectrum-silver: #f5f5f5;
+  --non-spectrum-neo-blue: #0265dc;
   --non-spectrum-max-width: 1440px;
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
@@ -775,7 +776,12 @@ img {
     --exlm-line-height-h6: 18.2px;
   }
 }
-.docs h1 code:not([class^=language-]), .docs h2 code:not([class^=language-]), .docs h3 code:not([class^=language-]), .docs h4 code:not([class^=language-]), .docs h5 code:not([class^=language-]), .docs h6 code:not([class^=language-]) {
+.docs h1 code:not([class^=language-]),
+.docs h2 code:not([class^=language-]),
+.docs h3 code:not([class^=language-]),
+.docs h4 code:not([class^=language-]),
+.docs h5 code:not([class^=language-]),
+.docs h6 code:not([class^=language-]) {
   font-size: inherit;
   line-height: 36px;
 }
