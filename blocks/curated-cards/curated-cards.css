@@ -1,5 +1,6 @@
 .curated-cards {
     margin-bottom: 40px;
+    min-height: 340px;
 }
 
 .curated-cards-header h4 {
