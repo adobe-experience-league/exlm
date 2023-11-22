@@ -517,12 +517,16 @@
         "valueType": "string",
         "options": [
           {
-            "name": "Grey",
+            "name": "Gray",
             "value": "--spectrum-gray-700"
           },
           {
             "name": "Blue",
             "value": "--spectrum-blue-700"
+          },
+          {
+            "name": "Green",
+            "value": "--spectrum-green-700"
           },
           {
             "name": "Orange",
