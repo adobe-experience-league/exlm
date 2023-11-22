@@ -3,9 +3,18 @@ import { createTag, htmlToElement } from '../scripts.js';
 
 const generateContributorsMarkup = (contributor) => {
   const { name, thumbnail, level, date } = contributor;
-  return htmlToElement(
-    `<div class="browse-card-contributor-info"><img src="${thumbnail}"><div class="browse-card-name-plate"><span class="browse-card-contributor-name">${name}</span><div class="browse-card-contributor-level"><span>L</span><span>Level ${level}</span></div><span>${date}</span></div></div>`,
-  );
+  return htmlToElement(`
+        <div class="browse-card-contributor-info">
+            <img src="${thumbnail}">
+            <div class="browse-card-name-plate">
+            <span class="browse-card-contributor-name">${name}</span>
+            <div class="browse-card-contributor-level">
+                <span>L</span>
+                <span>Level ${level}</span>
+            </div>
+            <span>${date}</span>
+            </div>
+        </div>`);
 };
 
 const getTimeString = (date) => {
@@ -40,17 +49,37 @@ const buildEventContent = ({ event, cardContent, card }) => {
 
   const weekday = dateInfo.toLocaleDateString('en-US', { weekday: 'long' });
   const month = dateInfo.toLocaleDateString('en-US', { month: 'long' });
-  const dayNow = createTag('h6', {}, `${weekday}, ${month} ${dateInfo.getDate()}`);
-  const timeNow = createTag('h6', {}, `${getTimeString(dateInfo)} - ${getTimeString(endDateInfo)} PDT`);
-  const eventInfo = createTag('div', { class: 'browse-card-event-info' });
-  const timeIcon = createTag('span', { class: 'icon icon-time' });
-  eventInfo.appendChild(timeIcon);
-  const dateElement = createTag('div', { class: 'browse-card-event-time' });
-  dateElement.appendChild(dayNow);
-  dateElement.appendChild(timeNow);
-  eventInfo.appendChild(dateElement);
+
+  const eventInfo = htmlToElement(`
+    <div class="browse-card-event-info">
+        <span class="icon icon-time"></span>
+        <div class="browse-card-event-time">
+            <h6>${weekday}, ${month} ${dateInfo.getDate()}</h6>
+            <h6>${getTimeString(dateInfo)} - ${getTimeString(endDateInfo)} PDT</h6>
+        </div>
+    </div>
+  `);
   const title = card.querySelector('.browse-card-title-text');
   cardContent.insertBefore(eventInfo, title.nextElementSibling);
+};
+
+const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }) => {
+  let icon = null;
+  let isLeftPlacement = false;
+  if (contentType === 'tutorial') {
+    icon = 'play';
+    isLeftPlacement = true;
+  } else if (contentType.includes('event')) {
+    icon = 'new-tab';
+  }
+  const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
+  const ctaText = viewLinkText || '';
+  const anchorLink = htmlToElement(`
+        <a class="browse-card-cta-element" target="_blank" href="${viewLink}">
+            ${isLeftPlacement ? `${iconMarkup} ${ctaText}` : `${ctaText} ${iconMarkup}`}
+        </a>
+    `);
+  cardFooter.appendChild(anchorLink);
 };
 
 const buildCardContent = (card, model) => {
@@ -101,18 +130,8 @@ const buildCardContent = (card, model) => {
   }
   const bookmarkAnchor = createTag('a', {}, `<span class="icon icon-bookmark"></span>`);
   cardOptions.appendChild(bookmarkAnchor);
-
-  let icon = null;
-  if (contentType === 'tutorial') {
-    icon = 'play';
-  } else if (contentType.includes('event')) {
-    icon = 'new-tab';
-  }
-  const contents = icon ? `${viewLinkText || ''} <span class="icon icon-${icon}"></span>` : viewLinkText || '';
-  const anchorLink = createTag('a', { class: 'browse-card-cta-element', target: '_blank', href: viewLink }, contents);
-
   cardFooter.appendChild(cardOptions);
-  cardFooter.appendChild(anchorLink);
+  buildCardCtaContent({ cardFooter, contentType, viewLink, viewLinkText });
 };
 
 const setupCopyAction = (wrapper) => {
@@ -133,8 +152,7 @@ const setupCopyAction = (wrapper) => {
 };
 
 export default async function buildCard(element, model) {
-  // load css dynamically
-  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
+  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
   const { thumbnail, product, title, contentType } = model;
   const type = contentType?.toLowerCase();
   const card = createTag(
