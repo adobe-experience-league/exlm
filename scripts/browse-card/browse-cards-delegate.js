@@ -2,11 +2,11 @@ import CoveoDataService from '../data-service/coveo-data-service.js';
 import CONTENT_TYPES from './browse-cards-constants.js';
 
 /**
- * BrowseCardsFacade class provides a facade for fetching card data based on different content types.
+ * BrowseCardsDelegate class provides a facade for fetching card data based on different content types.
  */
-export default class BrowseCardsFacade {
+export default class BrowseCardsDelegate {
   /**
-   * Constructor for BrowseCardsFacade.
+   * Constructor for BrowseCardsDelegate.
    * @param {Object} param - Parameters for configuring the browse cards facade.
    */
   constructor(param) {
@@ -14,12 +14,12 @@ export default class BrowseCardsFacade {
   }
 
   /**
-   * getActionForContentType retrieves the action associated with a specific content type.
+   * getServiceForContentType retrieves the action associated with a specific content type.
    * @param {string} contentType - The content type for which to retrieve the action.
    * @returns {Function} - The action associated with the specified content type.
    */
-  getActionForContentType(contentType) {
-    const contentTypesActions = {
+  getServiceForContentType(contentType) {
+    const contentTypesServices = {
       [CONTENT_TYPES.COURSE]: this.handleCoveoService,
       [CONTENT_TYPES.TUTORIAL]: this.handleCoveoService,
       [CONTENT_TYPES.ON_DEMAND_EVENT]: this.handleCoveoService,
@@ -31,7 +31,7 @@ export default class BrowseCardsFacade {
       [CONTENT_TYPES.INSTRUCTOR_LED_TRANING]: this.handleADLSCatalogService,
     };
 
-    return contentTypesActions[contentType];
+    return contentTypesServices[contentType];
   }
 
   /**
@@ -50,10 +50,10 @@ export default class BrowseCardsFacade {
    */
   async fetchCardData() {
     const { contentType } = this.param;
-    const action = this.getActionForContentType(contentType?.toUpperCase());
-    if (action) {
+    const service = this.getServiceForContentType(contentType?.toUpperCase());
+    if (service) {
       /* eslint-disable no-return-await */
-      return await action();
+      return await service();
     }
     return null;
   }
