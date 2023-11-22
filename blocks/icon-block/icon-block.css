@@ -33,6 +33,7 @@
   max-width: 229px;
 }
 .icon-block .icon-description {
+  font-size: 14px;
   margin-bottom: 16px;
   line-height: 18.2px;
   color: var(--spectrum-gray-700);
