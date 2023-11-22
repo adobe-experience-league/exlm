@@ -62,30 +62,30 @@ export default async function decorate(block) {
   // Appending header div to the block
   block.appendChild(headerDiv);
 
-  // setTimeout(async () => {
+  setTimeout(async () => {
 
-  //   const params = {
-  //     contentType,
-  //     noOfResults,
-  //   };
-  //   const browseCards = new BrowseCardsDelegate(params);
-  //   const browseCardsContent = await browseCards.fetchCardData();
+    const params = {
+      contentType,
+      noOfResults,
+    };
+    const browseCards = new BrowseCardsDelegate(params);
+    const browseCardsContent = await browseCards.fetchCardData();
   
-  //   if (browseCardsContent?.length) {
-  //     // Creating content div
-  //     const contentDiv = document.createElement('div');
-  //     contentDiv.classList.add('curated-cards-content');
+    if (browseCardsContent?.length) {
+      // Creating content div
+      const contentDiv = document.createElement('div');
+      contentDiv.classList.add('curated-cards-content');
   
-  //     for (let i = 0; i < Math.min(noOfResults, browseCardsContent.length); i += 1) {
-  //       const cardData = browseCardsContent[i];
-  //       const cardDiv = document.createElement('div');
-  //       buildCard(cardDiv, cardData);
-  //       contentDiv.appendChild(cardDiv);
-  //     }
-  //     // Appending content divs to the block
-  //     block.appendChild(contentDiv);
-  //   }
+      for (let i = 0; i < Math.min(noOfResults, browseCardsContent.length); i += 1) {
+        const cardData = browseCardsContent[i];
+        const cardDiv = document.createElement('div');
+        buildCard(cardDiv, cardData);
+        contentDiv.appendChild(cardDiv);
+      }
+      // Appending content divs to the block
+      block.appendChild(contentDiv);
+    }
   
-  //   decorateIcons(block);
-  // }, 10);
+    decorateIcons(block);
+  }, 20);
 }
