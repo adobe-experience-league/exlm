@@ -62,8 +62,7 @@ export default async function decorate(block) {
   // Appending header div to the block
   block.appendChild(headerDiv);
 
-  // setTimeout(async () => {
-
+  setTimeout(async () => {
     const params = {
       contentType,
       noOfResults,
@@ -87,5 +86,5 @@ export default async function decorate(block) {
     }
   
     decorateIcons(block);
-  // }, 10);
+  }, 0);
 }
