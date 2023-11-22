@@ -1,3 +1,4 @@
+// FIXME: This is a dummy component put up to show case the cards rendered via API
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsFacade from '../../scripts/browse-card/browse-cards-facade.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
