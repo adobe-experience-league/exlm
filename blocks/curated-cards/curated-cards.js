@@ -61,22 +61,21 @@ export default async function decorate(block) {
 
   // Appending header div to the block
   block.appendChild(headerDiv);
+  const params = {
+    contentType,
+    noOfResults,
+  };
+  const browseCards = new BrowseCardsDelegate(params);
+  const browseCardsContent = browseCards.fetchCardData();
 
-  setTimeout(async () => {
-    const params = {
-      contentType,
-      noOfResults,
-    };
-    const browseCards = new BrowseCardsDelegate(params);
-    const browseCardsContent = await browseCards.fetchCardData();
-  
-    if (browseCardsContent?.length) {
+  browseCardsContent.then((data) => {
+    if (data?.length) {
       // Creating content div
       const contentDiv = document.createElement('div');
       contentDiv.classList.add('curated-cards-content');
   
-      for (let i = 0; i < Math.min(noOfResults, browseCardsContent.length); i += 1) {
-        const cardData = browseCardsContent[i];
+      for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
+        const cardData = data[i];
         const cardDiv = document.createElement('div');
         buildCard(cardDiv, cardData);
         contentDiv.appendChild(cardDiv);
@@ -86,5 +85,8 @@ export default async function decorate(block) {
     }
   
     decorateIcons(block);
-  }, 0);
+  })
+  .catch((error) => {
+    console.error('Error fetching data:', error);
+  });
 }

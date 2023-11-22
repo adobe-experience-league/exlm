@@ -39,9 +39,11 @@ export default class BrowseCardsDelegate {
    * @returns {Promise<Array>} - A promise resolving to an array of browse cards data.
    */
   handleCoveoService = async () => {
-    const cards = new CoveoDataService(this.param);
-    /* eslint-disable no-return-await */
-    return await cards.fetchBrowseCardsContent();
+    return new Promise((resolve, reject) => {
+      const cards = new CoveoDataService(this.param);
+      /* eslint-disable no-return-await */
+      resolve(cards.fetchBrowseCardsContent());
+    });
   };
 
   /**
