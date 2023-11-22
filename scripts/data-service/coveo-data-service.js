@@ -56,8 +56,13 @@ export default class CoveoDataService {
    * @returns {Array} - An array of results obtained from the data source.
    */
   async fetchDataFromSource() {
+    let url = this.dataSource.url;
+    if (this.dataSource.params.contentType === 'Tutorial') {
+      url = "https://run.mocky.io/v3/e010b048-2840-4a65-b27c-43d0e13c6fe1"
+    }
+
     try {
-      const response = await fetch(this.dataSource.url, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
