@@ -92,6 +92,10 @@
             "value": "--spectrum-blue-700"
           },
           {
+            "name": "Green",
+            "value": "--spectrum-green-700"
+          },
+          {
             "name": "Orange",
             "value": "--spectrum-orange-700"
           },
@@ -441,37 +445,7 @@
   },
   {
     "id": "carousel",
-    "fields": [
-      {
-        "component": "select",
-        "name": "classes",
-        "value": "center",
-        "label": "Vertical Alignment",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Top",
-            "value": "top"
-          },
-          {
-            "name": "Center",
-            "value": "center"
-          },
-          {
-            "name": "Bottom",
-            "value": "bottom"
-          },
-          {
-            "name": "Same Height, text top",
-            "value": "sametop"
-          },
-          {
-            "name": "Same Height, text center",
-            "value": "samecenter"
-          }
-        ]
-      }
-    ]
+    "fields": []
   },
   {
     "id": "marquee",
