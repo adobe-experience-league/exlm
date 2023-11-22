@@ -2,21 +2,6 @@
 @import '../../styles/sass/mixins';
 
 // Mobile-First Header
-// All default styles apply to mobile, then custom breakpoint styles are applied (for desktop)
-
-@mixin desktop {
-  // custom breakpoint because we need to fit all header content on desktop
-  @media (width >= 1024px) {
-    @content;
-  }
-}
-
-@mixin tablet {
-  // custom breakpoint because we need to fit all header content on desktop
-  @media (width >= 600px) {
-    @content;
-  }
-}
 
 :root {
   --header-padding-x: 16px;
@@ -31,16 +16,17 @@
   --sign-in-order: 3;
   --nav-item-desktop-padding-x: 1.25rem;
   --hover-backgroud: #fafafa;
-  --hover-background-dark: #f5f5f5;
+  --hover-background-dark: #f8f8f8;
+  --hover-item-content-background: #e6e6e6;
   --nav-root-item-padding-x: 0 15px;
   --nav-action-item-padding-x: 0 10px;
   --nav-item-padding-x: 20px;
   --nav-item-expanded-border: 2px solid #222;
   --nav-item-expanded-bg: #fafafa;
-  --nav-item-text-color: #222;
-  --nav-font: 'Adobe Clean';
+  --nav-item-text-color: #2c2c2c;
+  --nav-font: var(--body-font-family);
 
-  @include desktop {
+  @include breakpoint(custom) {
     --nav-item-padding-x: 24px;
     --search-display: inline-flex;
     --language-selector-display: flex;
@@ -70,7 +56,7 @@
   display: flex;
   width: 6px;
   height: 6px;
-  margin-top: -3px;
+  margin-top: -8px;
   border-width: 0 $thickness $thickness 0;
   border-style: solid;
   transform-origin: 75% 75%;
@@ -91,7 +77,7 @@ header {
   position: relative;
   box-sizing: content-box;
 
-  @include desktop {
+  @include breakpoint(custom) {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -105,7 +91,7 @@ header {
   max-width: 1440px;
   background-color: #fff;
 
-  @include desktop {
+  @include breakpoint(custom) {
     width: 100%;
   }
 
@@ -115,7 +101,7 @@ header {
     justify-content: space-between;
     height: 100%;
 
-    @include desktop {
+    @include breakpoint(custom) {
       width: 100%;
       justify-content: initial;
       grid-template-areas: 'adobe-logo brand nav sign-up search language sign-in';
@@ -148,7 +134,7 @@ header {
     display: var(--sign-up-display);
     align-items: center;
 
-    @include desktop {
+    @include breakpoint(custom) {
       padding: var(--nav-root-item-padding-x);
     }
 
@@ -169,7 +155,7 @@ header {
 
       @include button;
 
-      @include desktop {
+      @include breakpoint(custom) {
         @include button-reset;
 
         color: var(--nav-item-text-color);
@@ -183,7 +169,7 @@ header {
     grid-area: nav;
     order: var(--nav-order);
 
-    @include desktop {
+    @include breakpoint(custom) {
       display: block;
     }
   }
@@ -193,13 +179,14 @@ header {
     padding: 0;
     box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
     background-color: #fff;
+    width: 100%;
 
-    @include tablet {
+    @include breakpoint(tablet) {
       min-height: calc(100vh - var(--nav-height));
       max-width: 360px;
     }
 
-    @include desktop {
+    @include breakpoint(custom) {
       display: flex;
       align-items: center;
       box-shadow: initial;
@@ -218,7 +205,7 @@ header {
       max-height: 100%;
       margin: 0;
 
-      @include desktop {
+      @include breakpoint(custom) {
         display: flex;
         flex-direction: row;
         height: 100%;
@@ -228,7 +215,7 @@ header {
     p {
       margin: 0;
 
-      @include desktop {
+      @include breakpoint(custom) {
         height: 100%;
       }
     }
@@ -241,7 +228,7 @@ header {
     left: 0;
     right: 0;
 
-    @include desktop {
+    @include breakpoint(custom) {
       position: initial;
       z-index: initial;
       left: initial;
@@ -259,13 +246,13 @@ header {
     a {
       color: var(--nav-item-text-color);
 
-      @include desktop {
+      @include breakpoint(custom) {
         padding: var(--nav-root-item-padding-x);
         border-bottom: none;
       }
     }
 
-    @include desktop {
+    @include breakpoint(custom) {
       > .nav-item-content {
         padding-bottom: calc(var(--nav-item-padding-x) / 2);
         box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
@@ -278,7 +265,6 @@ header {
     position: relative;
     padding: 0;
     margin: 0;
-    line-height: 2;
 
     .icon {
       display: inline-block;
@@ -289,7 +275,7 @@ header {
       }
     }
 
-    @include desktop {
+    @include breakpoint(custom) {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -300,27 +286,33 @@ header {
     }
 
     > * {
-      @include desktop {
+      @include breakpoint(custom) {
         padding: 0 12px;
 
         .nav-item {
           padding: 0;
+          margin-top: 5px;
           min-width: 250px;
+
+          &:first-child {
+            margin-top: 0;
+          }
         }
       }
     }
 
     a {
-      color: #4a4a4a;
+      color: var(--nav-item-text-color);
       display: block;
-      line-height: 1.5;
+      line-height: 24px;
       position: relative;
       margin: 0;
       font-size: 14px;
       font-weight: inherit;
       padding: var(--nav-item-padding-x);
 
-      @include desktop {
+      @include breakpoint(custom) {
+        line-height: 21px;
         padding: var(--nav-root-item-padding-x);
         height: 100%;
         display: flex;
@@ -339,10 +331,10 @@ header {
       a {
         width: 100%;
         /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-        font: normal normal bold 14px/30px var(--nav-font);
-        padding: 5px 0 5px var(--nav-item-padding-x);
+        font: normal normal bold 14px/21px var(--nav-font);
+        padding: 8px 8px 8px var(--nav-item-padding-x);
 
-        @include desktop {
+        @include breakpoint(custom) {
           display: block;
           font-weight: initial;
         }
@@ -354,26 +346,39 @@ header {
         line-height: 1.5;
       }
     }
+
+    &:has(.nav-item-expanded-active) {
+      @include custom-breakpoint(custom) {
+        & .nav-items-secondary {
+          display: block;
+          margin: 0;
+
+          li {
+            margin: 0;
+            padding: 0;
+          }
+
+          a {
+            display: inline-block;
+            font: normal normal bold 14px/21px var(--nav-font);
+            padding: 8px 8px 15px 40px;
+            width: 100%;
+          }
+        }
+      }
+    }
   }
 
   .nav-item-mobile {
     display: block;
 
-    @include desktop {
+    @include breakpoint(custom) {
       display: none;
     }
   }
 
   .nav-item-expanded {
     margin-left: 0;
-
-    &.nav-item-expanded-active {
-      border-left: var(--nav-item-expanded-border);
-
-      @include desktop {
-        border-left: none;
-      }
-    }
   }
 
   .nav-item-subtitle {
@@ -382,7 +387,7 @@ header {
     font: normal normal normal 11px/14px var(--nav-font);
     white-space: break-spaces;
 
-    @include desktop {
+    @include breakpoint(custom) {
       display: block;
       font-size: 11px;
     }
@@ -394,13 +399,13 @@ header {
     @include button-reset;
 
     font-size: 14px;
-    color: #4a4a4a !important;
+    color: var(--spectrum-gray-800);
     justify-content: space-between;
     position: relative;
     width: 100%;
     padding: var(--nav-item-padding-x);
 
-    @include desktop {
+    @include breakpoint(custom) {
       height: fit-content;
       padding: calc(var(--nav-item-padding-x) / 2) var(--nav-item-padding-x);
 
@@ -411,20 +416,19 @@ header {
     &::after {
       @include chevron;
 
-      content: '';
       box-sizing: content-box;
 
-      @include desktop {
+      @include breakpoint(custom) {
         display: none;
       }
     }
 
     &:not(.nav-item-toggle-root) {
-      @include desktop {
+      @include breakpoint(custom) {
         font: normal normal bold 12px/18px var(--nav-font);
         padding: var(--nav-item-padding-x);
         padding-bottom: calc(var(--nav-item-padding-x) / 2);
-        color: var(--spectrum-gray-700);
+        color: var(--non-spectrum-article-dark-gray);
       }
     }
   }
@@ -435,18 +439,18 @@ header {
     border-top: 1px solid var(--spectrum-gray-200);
     border-bottom: 1px solid var(--spectrum-gray-200);
 
-    @include desktop {
+    @include breakpoint(custom) {
       height: 100%;
       padding: var(--nav-root-item-padding-x);
       border-bottom: none;
     }
 
     &::after {
-      @include desktop {
+      @include breakpoint(custom) {
         position: initial;
         display: inline-block;
-        margin-left: 16px;
-        margin-bottom: 3px;
+        margin-left: 10px;
+        margin-bottom: 2px;
       }
     }
   }
@@ -454,7 +458,7 @@ header {
   .nav-item-toggle[aria-expanded='true'] {
     border-bottom: 2px solid var(--non-spectrum-silver);
 
-    @include desktop {
+    @include breakpoint(custom) {
       border-bottom: none;
       background-color: var(--hover-backgroud);
     }
@@ -464,7 +468,7 @@ header {
     }
 
     &.nav-item-toggle-root {
-      @include desktop {
+      @include breakpoint(custom) {
         border-bottom: var(--nav-item-expanded-border);
       }
     }
@@ -477,8 +481,6 @@ header {
     .nav-item-content {
       padding: 0 var(--nav-item-padding-x);
     }
-
-    // margin-left: var(--header-padding-x);
   }
 
   .nav-item-content-expanded {
@@ -487,12 +489,12 @@ header {
     > ul {
       background-color: var(--nav-item-expanded-bg);
 
-      @include desktop {
-        padding: 10px 0;
+      @include breakpoint(custom) {
+        padding: 0;
       }
     }
 
-    @include desktop {
+    @include breakpoint(custom) {
       padding: 0;
       position: absolute;
       display: flex;
@@ -505,6 +507,7 @@ header {
       background: #fafafa;
 
       > ul {
+        align-items: baseline;
         display: flex;
         flex-direction: row;
       }
@@ -518,6 +521,15 @@ header {
 
         > ul {
           flex-direction: column;
+
+          & li > a {
+            color: var(--spectrum-gray-700);
+
+            &:hover {
+              background: var(--hover-item-content-background);
+              border-radius: 4px;
+            }
+          }
         }
       }
     }
@@ -526,7 +538,7 @@ header {
   .nav-items-secondary {
     display: none;
 
-    @include desktop {
+    @include breakpoint(custom) {
       display: flex;
       position: absolute;
       margin: 0;
@@ -547,7 +559,7 @@ header {
           @include chevron-right;
 
           right: 5px;
-          top: 7px;
+          top: 13px;
         }
       }
 
@@ -575,7 +587,7 @@ header {
     &::before {
       content: '\2630'; // hamburger icon
 
-      @include desktop {
+      @include breakpoint(custom) {
         content: '';
       }
     }
@@ -583,7 +595,7 @@ header {
     &[aria-expanded='true']::before {
       content: '\2715'; // close icon
 
-      @include desktop {
+      @include breakpoint(custom) {
         content: '';
       }
     }
@@ -621,6 +633,7 @@ header {
         display: flex !important;
         align-items: center;
         line-height: 1;
+        margin: 0;
       }
     }
   }
@@ -703,6 +716,7 @@ header {
     &::after {
       @include chevron;
 
+      margin-top: -5px;
       right: 10px;
     }
 
@@ -726,21 +740,52 @@ header {
     display: var(--language-selector-display);
     align-items: center;
     padding: 0;
+    position: relative;
 
     .icon {
       height: 18px;
       width: 18px;
     }
-  }
 
-  .language-selector-button {
-    @include button-reset;
+    .language-selector-button {
+      @include button-reset;
 
-    padding: 15px;
-  }
+      padding: 15px;
+      position: relative;
+      top: 2px;
+    }
 
-  .language-selector-popover {
-    display: none;
+    .language-selector-popover {
+      background: var(--non-spectrum-bg);
+      box-shadow: 0 8px 8px rgba(10 10 10 / 10%);
+      display: none;
+      left: 50%;
+      width: 120px;
+      position: absolute;
+      transform: translate(-50%, 0);
+      top: 64px;
+      z-index: 10;
+
+      .language-selector-label {
+        cursor: pointer;
+        display: block;
+        font-size: var(--spectrum-font-size-100);
+        padding: 5px 15px;
+        margin: 0;
+
+        &:hover {
+          background: var(--non-spectrum-hover-bg);
+        }
+      }
+    }
+
+    &:hover {
+      background: var(--non-spectrum-bg);
+
+      & .language-selector-popover {
+        display: block;
+      }
+    }
   }
 
   // adobe logo
@@ -773,7 +818,7 @@ header {
         color: black;
       }
 
-      @include desktop {
+      @include breakpoint(custom) {
         position: relative;
       }
     }
@@ -806,7 +851,7 @@ header {
     padding: 2em;
     box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
 
-    @include desktop {
+    @include breakpoint(custom) {
       width: fit-content;
     }
   }
