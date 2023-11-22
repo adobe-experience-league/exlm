@@ -9,6 +9,7 @@ ul.meta-topic-list {
 .meta-topic-list li {
   display: inline-block;
   font-size: 14px;
+  margin-top: 0px
 }
 
 .meta-topic-list li:first-child {
@@ -17,6 +18,7 @@ ul.meta-topic-list {
   font-weight: bold;
   padding-right: 4px;
   margin-bottom: 0;
+  margin-top: 0px
 }
 
 ul.meta-topic-list > li:not(:first-child) {
