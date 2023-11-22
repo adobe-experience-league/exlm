@@ -513,7 +513,7 @@
         "name": "backgroundColor",
         "value": "",
         "label": "Background Color",
-        "description": "The teaser background color when in mobile view.",
+        "description": "The marquee background color when in mobile view.",
         "valueType": "string",
         "options": [
           {
