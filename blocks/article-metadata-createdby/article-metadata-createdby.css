@@ -27,6 +27,9 @@
   margin-bottom: 0;
   color: var(--non-spectrum-article-dark-gray);
 }
+.article-metadata-createdby ul > li:empty {
+  display: none;
+}
 .article-metadata-createdby p {
   font-size: 0.75rem;
   text-transform: uppercase;
