@@ -32,6 +32,10 @@
     color: var(--non-spectrum-article-dark-gray);
   }
 
+  ul > li:empty {
+    display: none;
+  }
+
   p {
     font-size: 0.75rem;
     text-transform: uppercase;
