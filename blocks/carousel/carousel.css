@@ -14,10 +14,15 @@
 .carousel.block > .panel-container {
   display: flex;
   scroll-snap-type: x mandatory;
-  overflow: hidden;
+  overflow: auto;
   scroll-behavior: smooth;
   margin: auto;
   align-items: stretch;
+  -ms-overflow-style: none;
+}
+
+.carousel.block > .panel-container::-webkit-scrollbar {
+  display:none;
 }
 
 /* teaser inside carousel have same height and texts are centered */
