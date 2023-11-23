@@ -46,7 +46,7 @@ export default async function decorate(block) {
         const contentDiv = document.createElement('div');
         contentDiv.classList.add('curated-cards-content');
 
-        for (let i = 0; i < Math.min(noOfResults, data.length); i++) {
+        for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
           const cardData = data[i];
           const cardDiv = document.createElement('div');
           buildCard(cardDiv, cardData);
@@ -58,7 +58,7 @@ export default async function decorate(block) {
 
       decorateIcons(block);
     })
-    .catch((error) => {
-      console.error('Error fetching data:', error);
+    .catch(() => {
+      // console.error('Error fetching data:', error);
     });
 }
