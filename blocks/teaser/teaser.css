@@ -23,6 +23,9 @@
 
 /* the text block (eyebrow, title , descr , ctr) */
 .teaser.block > .foreground > .text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: var(--spectrum-spacing-400) var(--space-token-xs);
 }
 
@@ -40,9 +43,9 @@
 .teaser.block > .foreground > .text > .title {
   display: none;
   font-family: var(--body-font-family);
-  font-size: 25px;
+  font-size: var(--spectrum-heading-size-l);
   font-weight: var(--font-weight-700);
-  line-height: 37.5px;
+  line-height: var(--spectrum-line-height-xxl);
   margin-bottom: var(--space-token-xxs);
 }
 
@@ -69,8 +72,8 @@
 .teaser.block > .foreground > .text > .long-description,
 .teaser.block > .foreground > .text > .long-description * {
   font-family: var(--body-font-family);
-  font-size: 14px;
-  line-height: 18.2px;
+  font-size: var(--spectrum-body-size-l);
+  line-height: var(--spectrum-line-height-l);
   margin: 0;
 }
 
@@ -99,10 +102,10 @@
   color:var(--teaser-background-color);
   margin: 0;
   font-family: var(--body-font-family);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: var(--font-weight-700);
-  line-height: 16px;
-  padding: 6px 14px;
+  line-height: 15px;
+  padding: 5px 14px 6px;
 }
 
 .teaser.block > .foreground > .text > .cta > a.button.secondary {
@@ -148,8 +151,6 @@
     position: relative;
     background-color: var(--background-color);
     padding: 0;
-    border: 1px solid var(--spectrum-gray-200);
-    border-radius: 4px;
     overflow: hidden;
   }
 
@@ -159,6 +160,7 @@
     display: flex;
     padding: 0 var(--spectrum-spacing-500);
     background-color: unset;
+    min-height:420px;
   }
 
   .teaser.block.dark > .foreground {
@@ -169,7 +171,7 @@
   .teaser.block > .foreground > .text {
     width:60%;
     order: 0;
-    padding: 35px 0 45px;
+    padding: var(--spectrum-spacing-500) 0;
   }
 
   /* change the order if text should be on the right */
@@ -263,3 +265,15 @@
   }
 }
   
+@media (min-width: 1200px) {
+  /* the eybrow title */
+  .teaser.block > .foreground > .text > .eyebrow {
+    font-size: var(--spectrum-font-size-100);
+  }
+
+  /* the main title, hidden in mobile */
+  .teaser.block > .foreground > .text > .title {
+    font-size: var(--spectrum-heading-size-xl);
+    line-height: 46.8px;
+  }
+}
