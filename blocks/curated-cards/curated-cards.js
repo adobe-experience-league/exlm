@@ -39,25 +39,26 @@ export default async function decorate(block) {
   const browseCards = new BrowseCardsDelegate(params);
   const browseCardsContent = browseCards.fetchCardData();
 
-  browseCardsContent.then((data) => {
-    if (data?.length) {
-      // Creating content div
-      const contentDiv = document.createElement('div');
-      contentDiv.classList.add('curated-cards-content');
-  
-      for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
-        const cardData = data[i];
-        const cardDiv = document.createElement('div');
-        buildCard(cardDiv, cardData);
-        contentDiv.appendChild(cardDiv);
+  browseCardsContent
+    .then((data) => {
+      if (data?.length) {
+        // Creating content div
+        const contentDiv = document.createElement('div');
+        contentDiv.classList.add('curated-cards-content');
+
+        for (let i = 0; i < Math.min(noOfResults, data.length); i++) {
+          const cardData = data[i];
+          const cardDiv = document.createElement('div');
+          buildCard(cardDiv, cardData);
+          contentDiv.appendChild(cardDiv);
+        }
+        // Appending content divs to the block
+        block.appendChild(contentDiv);
       }
-      // Appending content divs to the block
-      block.appendChild(contentDiv);
-    }
-  
-    decorateIcons(block);
-  })
-  .catch((error) => {
-    console.error('Error fetching data:', error);
-  });
+
+      decorateIcons(block);
+    })
+    .catch((error) => {
+      console.error('Error fetching data:', error);
+    });
 }
