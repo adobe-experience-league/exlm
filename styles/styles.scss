@@ -299,6 +299,18 @@
   --non-spectrum-raisin-black: #222;
   --non-spectrum-silver: #f5f5f5;
   --non-spectrum-neo-blue: #0265dc;
+  --non-spectrum-royal-blue: #0d66d0;
+  --non-spectrum-light-coral: #73b53a;
+  --non-spectrum-dim-gray: #747474;
+  --non-spectrum-dim-orange: #e2a43e;
+  --non-spectrum-victoria-blue: #46a8f7;
+  --non-spectrum-lime-green: #12805c;
+  --non-spectrum-royal-crest: #f46700;
+  --non-spectrum-dark-princess-pink: #d83790;
+  --non-spectrum-frost-bite: #962af0;
+  --non-spectrum-cyan-paprika: #004396;
+  --non-spectrum-venetian-green: #00c001;
+  --non-spectrum-bright-cyan: #00a6aa;
   --non-spectrum-max-width: 1440px;
 
   /* rgba transparent values */
@@ -789,7 +801,7 @@ img {
         order: 3;
         width: 20%;
         position: relative;
-        display: flex;
+        display: block;
         gap: 8px;
         padding: 46px 10px 10px 0;
       }

@@ -1,0 +1,102 @@
+.curated-cards {
+    margin-bottom: 40px;
+    min-height: 340px;
+}
+
+.curated-cards-header h4 {
+    padding: 0;
+    margin: 0;
+}
+
+.curated-cards-title {
+    display: flex;
+    margin: 0;
+}
+
+.curated-cards-view a {
+    font-size: inherit;
+    line-height: 17px;
+    margin: 2px 0 0 0;
+}
+
+.curated-cards-content {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.curated-cards .tooltip {
+    position: relative;
+    margin: 4px 0 0 9px;
+}
+
+.curated-cards .tooltip .icon-info {
+    width: 15px;
+    height: 15px;
+}
+
+.curated-cards .tooltip .tooltip-text {
+    background-color: var(--non-spectrum-royal-blue);
+    border-radius: 4px;
+    color: var(--spectrum-gray-50);
+    display: inline-block;
+    font-size: 12px;
+    left: 100%;
+    line-height: 15px;
+    margin-left: 10px;
+    margin-top: -16px;
+    opacity: 0;
+    padding: 4px 9px 5px 10px;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transition: opacity 0.3s;
+    visibility: hidden;
+    width: max-content;
+    z-index: 1;
+}
+
+.curated-cards .tooltip .tooltip-text::before {
+    border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
+    border-style: solid;
+    border-width: 5px;
+    content: "";
+    display: inline-block;
+    margin-top: -4px;
+    position: absolute;
+    right: 100%;
+    top: 50%;
+}
+
+.curated-cards .tooltip:hover .tooltip-text {
+    opacity: 1;
+    visibility: visible;
+}
+
+@media (min-width: 600px) {
+    .curated-cards {
+        margin-bottom: 56px;
+    }
+
+    .curated-cards-header {
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+@media (min-width: 1200px) {
+    .curated-cards {
+        margin-bottom: 80px ;
+    }
+
+    .curated-cards-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .curated-cards .tooltip {
+        margin-top: 7px;
+    }
+}

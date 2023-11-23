@@ -1,0 +1,270 @@
+.browse-card {
+  position: relative;
+  width: 256px;
+  min-height: 284px;
+  background-color: var(--background-color);
+  border: 1px solid var(--non-spectrurm-whisper-gray);
+  display: flex;
+  flex-direction: column;
+}
+
+@media only screen and (min-width: 900px) {
+  .browse-card {
+    min-height: 390px;
+  }
+  .browse-card.tutorial-card .browse-card-figure {
+    max-height: 199px;
+  }
+  .browse-card.course-card {
+    min-height: 390px;
+  }
+
+  .browse-card.course-card .browse-card-figure {
+    max-height: 199px;
+  }
+
+  .browse-card.course-card .browse-card-content {
+    padding: 16px 16px 12px;
+  }
+
+  .browse-card.course-card .browse-card-meta-info, .browse-card.course-card .browse-card-title-text {
+    margin: 8px 0;
+  }
+}
+.browse-card * {
+  box-sizing: border-box;
+}
+.browse-card > * {
+  flex-grow: 1;
+  margin-bottom: 0;
+}
+
+.browse-card .browse-card-banner {
+  position: absolute;
+  top: 32px;
+  left: 0;
+  background-color: var(--non-spectrum-light-coral);
+  color: var(--background-color);
+  padding: 8px 16px;
+  border-radius: 0 4px 4px 0;
+  text-transform: uppercase;
+  font-size: var(--spectrum-font-size-75);
+  line-height: 17px;
+  font-weight: var(--font-weight-700);
+  letter-spacing: 0.72px;
+}
+.browse-card .browse-card-tag-text {
+  text-transform: uppercase;
+  margin: 0 0 8px;
+  font-size: var(--spectrum-font-size-100);
+  line-height: 21px;
+  color: var(--non-spectrum-charcoal-gray);
+}
+.browse-card .browse-card-title-text {
+  margin: 8px 0;
+  line-height: 22.5px;
+  color: var(--non-spectrum-dark-charcoal);
+  font-weight: var(--font-weight-700);
+}
+.browse-card .browse-card-event-info {
+  display: flex;
+  gap: 4px;
+  margin: 8px 0;
+}
+.browse-card .browse-card-event-time {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.browse-card .browse-card-event-time > * {
+  color: var(--non-spectrum-grey-updated);
+  line-height: 17px;
+  margin: 0;
+}
+.browse-card .browse-card-description-text {
+  margin: 0;
+  font-size: var(--spectrum-font-size-100);
+  line-height: 21px;
+  color: var( --non-spectrum-dim-gray);
+}
+.browse-card .browse-card-figure {
+  max-height: 200px;
+  min-height: 72px;
+  overflow: hidden;
+  position: relative;
+}
+.browse-card .browse-card-figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.browse-card .browse-card-content {
+  padding: 16px 16px 12px 15px;
+}
+.browse-card .browse-card-meta-info {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0;
+}
+.browse-card .browse-card-meta-info span {
+  color: var(--non-spectrum-grey-updated);
+  font-size: var(--spectrum-font-size-75);
+  line-height: 17px;
+}
+.browse-card .browse-card-event-info .icon {
+  height: 16px;
+  width: 16px;
+  margin-top: 2px;
+}
+.browse-card .browse-card-footer {
+  padding: 0 16px 22px 15px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+}
+.browse-card .browse-card-footer .browse-card-options {
+  position: relative;
+  top: 12px;
+  margin: 0;
+}
+.browse-card .browse-card-footer .browse-card-cta-element {
+  background-color: var(--background-color);
+  color: var(--non-spectrum-navy-blue);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  top: 4px;
+  position: relative;
+  font-weight: var(--font-weight-600);
+  font-size: var(--spectrum-font-size-100);
+  line-height: 17px;
+}
+.browse-card .browse-card-footer .browse-card-cta-element .icon {
+  height: 22px;
+  width: 22px;
+}
+.browse-card .icon {
+  color: var( --non-spectrum-dim-gray);
+  fill: var( --non-spectrum-dim-gray);
+  cursor: pointer;
+  margin-right: 2px;
+  height: 24px;
+  width: 24px;
+}
+.browse-card .browse-card-meta-anchor {
+  margin: 0;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 4px;
+  color: var(--non-spectrum-grey-updated);
+  text-decoration: none;
+  font-size: var(--spectrum-font-size-75);
+}
+
+.browse-card .browse-card-contributor-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 16px 0 8px;
+}
+.browse-card .browse-card-contributor-level {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.browse-card .browse-card-contributor-level span:first-child {
+  background-color: var(--non-spectrum-dim-orange);
+  color: var(--background-color);
+  border-radius: 1px;
+  font-size: 9px;
+  height: 12px;
+  width: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.browse-card .browse-card-name-plate {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+.browse-card .browse-card-contributor-info img {
+  height: 48px;
+  width: 48px;
+  border-radius: 100%;
+}
+.browse-card .browse-card-name-plate span {
+  font-size: var(--spectrum-font-size-75);
+  line-height: 18px;
+  color: var(--non-spectrum-grey-updated);
+}
+.browse-card .browse-card-name-plate .browse-card-contributor-name {
+  font-size: var(--spectrum-font-size-100);
+  color: var(--non-spectrum-navy-blue);
+}
+.browse-card.course-card {
+  min-height: 284px;
+}
+.browse-card.course-card .browse-card-banner {
+  background-color: var(--non-spectrum-victoria-blue);
+}
+.browse-card.course-card .browse-card-figure {
+  max-height: 143px;
+}
+.browse-card.course-card .browse-card-meta-info .icon {
+  height: 11px;
+  width: 11px;
+  margin-right: 0;
+  margin-top: -2px;
+}
+.browse-card.course-card .browse-card-content {
+  padding: 16px 16px 0;
+}
+.browse-card.course-card .browse-card-meta-info, .browse-card.course-card .browse-card-title-text {
+  margin: 0;
+}
+.browse-card.tutorial-card .browse-card-banner {
+  background-color: var(--non-spectrum-light-coral);
+}
+.browse-card.tutorial-card .browse-card-figure {
+  max-height: 140px;
+}
+.browse-card.article-card .browse-card-banner, .browse-card.troubleshoot-card .browse-card-banner, .browse-card.certificate-card .browse-card-banner, .browse-card.certification-card .browse-card-banner, .browse-card.instructor-card .browse-card-banner {
+  background-color: var(--non-spectrum-lime-green);
+}
+.browse-card.article-card .browse-card-figure, .browse-card.troubleshoot-card .browse-card-figure, .browse-card.certificate-card .browse-card-figure, .browse-card.certification-card .browse-card-figure, .browse-card.instructor-card .browse-card-figure {
+  min-height: 72px;
+}
+.browse-card.troubleshoot-card .browse-card-banner {
+  background-color: var(--non-spectrum-royal-crest);
+}
+.browse-card.event-card .browse-card-banner {
+  background-color: var(--non-spectrum-dark-princess-pink);
+}
+.browse-card.certificate-card .browse-card-banner, .browse-card.certification-card .browse-card-banner {
+  background-color: var(--non-spectrum-frost-bite);
+}
+.browse-card.instructor-card .browse-card-banner {
+  background-color: var(--non-spectrum-cyan-paprika);
+}
+.browse-card.tutorial-card .browse-card-banner {
+  background-color: var(--non-spectrum-venetian-green);
+}
+.browse-card.community-card .browse-card-banner {
+  background-color: var(--non-spectrum-bright-cyan);
+}
+.browse-card.community-card .browse-card-meta-info {
+  margin: 0;
+}
+.browse-card.community-card .browse-card-meta-anchor .icon {
+  height: 15px;
+  width: 15px;
+}
+.browse-card.community-card .browse-card-meta-anchor .icon.icon-book {
+  height: 12px;
+  width: 11px;
+}
