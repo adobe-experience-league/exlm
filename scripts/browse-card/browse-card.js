@@ -29,7 +29,7 @@ const generateDateWithTZ = (time) => {
   return new Date(date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })); // TODO: apply localization once region selection is in place
 };
 
-const buildTags = (cardMeta, tags = []) => {
+const buildTagsContent = (cardMeta, tags = []) => {
   tags.forEach((tag) => {
     const { icon: iconName, text } = tag;
     if (text) {
@@ -67,7 +67,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
   let icon = null;
   let isLeftPlacement = false;
   if (contentType === 'tutorial') {
-    icon = 'browse-card-play';
+    icon = 'play-outline';
     isLeftPlacement = true;
   } else if (contentType.includes('event')) {
     icon = 'new-tab';
@@ -101,7 +101,7 @@ const buildCardContent = (card, model) => {
   cardMeta.classList.add('browse-card-meta-info');
 
   if (contentType === 'course') {
-    buildTags(cardMeta, tags);
+    buildTagsContent(cardMeta, tags);
   }
   if (isDesktopResolution) {
     cardContent.appendChild(cardMeta);
@@ -115,7 +115,7 @@ const buildCardContent = (card, model) => {
     contributorInfo.classList.add('browse-card-contributor-info');
     const contributorElement = generateContributorsMarkup(contributor);
     contributorInfo.appendChild(contributorElement);
-    buildTags(cardMeta, tags);
+    buildTagsContent(cardMeta, tags);
     cardContent.insertBefore(contributorInfo, cardMeta);
   }
 
