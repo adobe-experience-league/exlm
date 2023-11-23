@@ -67,7 +67,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
   let icon = null;
   let isLeftPlacement = false;
   if (contentType === 'tutorial') {
-    icon = 'play';
+    icon = 'browse-card-play';
     isLeftPlacement = true;
   } else if (contentType.includes('event')) {
     icon = 'new-tab';

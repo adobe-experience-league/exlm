@@ -10,49 +10,30 @@
   margin-right: calc(-1 * var(--space-token-xs));
 }
 
+/* contains all teaser divs */
 .carousel.block > .panel-container {
   display: flex;
   scroll-snap-type: x mandatory;
   overflow: hidden;
   scroll-behavior: smooth;
   margin: auto;
-}
-
-.carousel.block.center > .panel-container {
-  align-items: center;
-}
-
-.carousel.block.top > .panel-container {
-  align-items: flex-start;
-}
-
-.carousel.block.bottom > .panel-container {
-  align-items: flex-end;
-}
-
-.carousel.block.sametop > .panel-container {
   align-items: stretch;
 }
 
+/* teaser inside carousel have same height and texts are centered */
 .carousel.block > .panel-container > .teaser.block {
   flex-shrink: 0;
   scroll-snap-align: start;
-}
-
-.carousel.block.samecenter > .panel-container > .teaser.block,
-.carousel.block.sametop > .panel-container > .teaser.block {
   height:auto;
 }
 
-.carousel.block.samecenter > .panel-container > .teaser.block > .foreground {
+.carousel.block > .panel-container > .teaser.block > .foreground {
   height: 100%;
+  display: flex;
+  align-items: center;
 }
 
-.carousel.block.samecenter > .panel-container > .teaser.block > .foreground > .text {
-  margin-top: auto;
-  margin-bottom: auto;
-}
-
+/* contains the carousel buttons */
 .carousel.block > .button-container {
   display:flex;
   justify-content: center;
@@ -60,6 +41,7 @@
   padding-top:22px;
 }
 
+/* defines look of a button */
 .carousel.block > .button-container button {
   display: block;
   height: 10px;

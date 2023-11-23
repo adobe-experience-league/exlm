@@ -23,7 +23,7 @@
   --nav-item-padding-x: 20px;
   --nav-item-expanded-border: 2px solid #222;
   --nav-item-expanded-bg: #fafafa;
-  --nav-item-text-color: #222;
+  --nav-item-text-color: #2c2c2c;
   --nav-font: var(--body-font-family);
 
   @include breakpoint(custom) {
@@ -302,7 +302,7 @@ header {
     }
 
     a {
-      color: var(--spectrum-gray-800);
+      color: var(--nav-item-text-color);
       display: block;
       line-height: 24px;
       position: relative;
@@ -344,6 +344,27 @@ header {
         margin-top: -10px; // bring subtitle close to title
         padding: 0 24px;
         line-height: 1.5;
+      }
+    }
+
+    &:has(.nav-item-expanded-active) {
+      @include custom-breakpoint(custom) {
+        & .nav-items-secondary {
+          display: block;
+          margin: 0;
+
+          li {
+            margin: 0;
+            padding: 0;
+          }
+
+          a {
+            display: inline-block;
+            font: normal normal bold 14px/21px var(--nav-font);
+            padding: 8px 8px 15px 40px;
+            width: 100%;
+          }
+        }
       }
     }
   }
@@ -407,7 +428,7 @@ header {
         font: normal normal bold 12px/18px var(--nav-font);
         padding: var(--nav-item-padding-x);
         padding-bottom: calc(var(--nav-item-padding-x) / 2);
-        color: var(--spectrum-gray-700);
+        color: var(--non-spectrum-article-dark-gray);
       }
     }
   }
@@ -460,8 +481,6 @@ header {
     .nav-item-content {
       padding: 0 var(--nav-item-padding-x);
     }
-
-    // margin-left: var(--header-padding-x);
   }
 
   .nav-item-content-expanded {
@@ -476,7 +495,6 @@ header {
     }
 
     @include breakpoint(custom) {
-      align-items: baseline;
       padding: 0;
       position: absolute;
       display: flex;
@@ -489,6 +507,7 @@ header {
       background: #fafafa;
 
       > ul {
+        align-items: baseline;
         display: flex;
         flex-direction: row;
       }
@@ -540,7 +559,7 @@ header {
           @include chevron-right;
 
           right: 5px;
-          top: 7px;
+          top: 13px;
         }
       }
 
@@ -799,7 +818,7 @@ header {
         color: black;
       }
 
-      @include desktop {
+      @include breakpoint(custom) {
         position: relative;
       }
     }
@@ -832,7 +851,7 @@ header {
     padding: 2em;
     box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
 
-    @include desktop {
+    @include breakpoint(custom) {
       width: fit-content;
     }
   }
