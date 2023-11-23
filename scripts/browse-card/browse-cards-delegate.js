@@ -38,13 +38,16 @@ export default class BrowseCardsDelegate {
    * handleCoveoService is an asynchronous method that handles fetching browse cards content using CoveoDataService.
    * @returns {Promise<Array>} - A promise resolving to an array of browse cards data.
    */
-  handleCoveoService = async () => {
-    return new Promise((resolve, reject) => {
+  handleCoveoService = () =>
+    new Promise((resolve, reject) => {
       const cards = new CoveoDataService(this.param);
-      /* eslint-disable no-return-await */
-      resolve(cards.fetchBrowseCardsContent());
+      const cardsData = cards.fetchBrowseCardsContent();
+      if (cardsData) {
+        resolve(cardsData);
+      } else {
+        reject(new Error('An Error Occured'));
+      }
     });
-  };
 
   /**
    * fetchCardData is an asynchronous method that fetches card data based on the configured content type.
