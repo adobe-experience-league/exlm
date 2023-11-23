@@ -91,7 +91,7 @@
                   "item1": {
                     "name": "Icon Card",
                     "model": "icon-card",
-                    "cardIcon": "/content/dam/exlm/content-at-scale.png",
+                    "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                     "cardHeading": "Default Heading",
                     "cardDescription": "Default description",
                     "cardLinkText": "Default Link Text",
@@ -100,7 +100,7 @@
                   "item2": {
                     "name": "Icon Card",
                     "model": "icon-card",
-                    "cardIcon": "/content/dam/exlm/content-at-scale.png",
+                    "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                     "cardHeading": "Default Heading",
                     "cardDescription": "Default description",
                     "cardLinkText": "Default Link Text",
@@ -109,7 +109,7 @@
                   "item3": {
                     "name": "Icon Card",
                     "model": "icon-card",
-                    "cardIcon": "/content/dam/exlm/content-at-scale.png",
+                    "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                     "cardHeading": "Default Heading",
                     "cardDescription": "Default description",
                     "cardLinkText": "Default Link Text",
@@ -130,7 +130,7 @@
                 "template": {
                   "name": "Icon Card",
                   "model": "icon-card",
-                  "cardIcon": "/content/dam/exlm/content-at-scale.png"
+                  "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg"
                 }
               }
             }
