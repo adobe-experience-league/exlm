@@ -755,45 +755,6 @@ img {
   }
 }
 
-.tooltip {
-  position: relative;
-}
-.tooltip .tooltip-text {
-  background-color: var(--non-spectrum-royal-blue);
-  border-radius: 4px;
-  color: var(--spectrum-gray-50);
-  display: inline-block;
-  font-size: 12px;
-  left: 100%;
-  line-height: 15px;
-  margin-left: 10px;
-  margin-top: -16px;
-  opacity: 0;
-  padding: 4px 9px 5px 10px;
-  position: absolute;
-  text-align: center;
-  top: 50%;
-  transition: opacity 0.3s;
-  visibility: hidden;
-  width: max-content;
-  z-index: 1;
-}
-.tooltip .tooltip-text::before {
-  border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
-  border-style: solid;
-  border-width: 5px;
-  content: "";
-  display: inline-block;
-  margin-top: -4px;
-  position: absolute;
-  right: 100%;
-  top: 50%;
-}
-.tooltip:hover .tooltip-text {
-  opacity: 1;
-  visibility: visible;
-}
-
 /* three column layout */
 .docs {
   --exlm-font-size-h1: var(--spectrum-heading-size-l);
