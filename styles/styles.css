@@ -923,4 +923,7 @@ img {
     gap: 8px;
     padding: 46px 10px 10px 0;
   }
+  .docs main > div:last-child.mini-toc-container {
+    display: flex;
+  }
 }

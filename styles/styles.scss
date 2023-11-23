@@ -804,6 +804,10 @@ img {
         display: block;
         gap: 8px;
         padding: 46px 10px 10px 0;
+
+        &.mini-toc-container {
+          display: flex;
+        }
       }
     }
   }
