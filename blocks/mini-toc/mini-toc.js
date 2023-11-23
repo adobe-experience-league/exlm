@@ -98,6 +98,29 @@ export default async function decorate() {
               // scrollableDiv.style.maxHeight = `${visibleAnchorsCount * anchorHeight}px`;
             }
           }
+
+          window.addEventListener('scroll', () => {
+            const section = document.querySelector('.section');
+            const headings = section.querySelectorAll('h2, h3');
+            const miniTocBlock = document.querySelector('.mini-toc .scrollable-div');
+            const scrollY = window.pageYOffset;
+            if (headings.length > 0) {
+              headings.forEach((current) => {
+                const headingHeight = current.offsetHeight;
+                const headingTop = current.offsetTop - 50;
+                const headingId = current.getAttribute('id');
+                if (scrollY > headingTop && scrollY <= headingTop + headingHeight) {
+                  anchors.forEach((link) => {
+                    link.classList.remove('is-active');
+                  });
+                  const activeAnchor = miniTocBlock.querySelector(`a[href*=${headingId}]`);
+                  activeAnchor.classList.add('is-active');
+                  const anchorTopPos = activeAnchor.offsetTop;
+                  miniTocBlock.scrollTop = anchorTopPos - 30;
+                }
+              });
+            }
+          });
         }
       });
     } else {
