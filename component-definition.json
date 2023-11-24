@@ -196,8 +196,7 @@
                   "model": "marquee",
                   "fileReference": "/content/dam/default-teaser-banner.png",
                   "title": "Marquee Title",
-                  "longDescr": "<p>Marquee Description</p>",
-                  "classes": ["light", "left"]
+                  "longDescr": "<p>Marquee Description</p>"
                 }
               }
             }

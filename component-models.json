@@ -454,30 +454,14 @@
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
-        "label": "Background Image",
-        "description": "The marquee background image, defaults to white if none is selected.",
+        "label": "Subject Image",
+        "description": "The marquee subject image, min Xpx x Ypx...",
         "multi": false
       },
       {
         "component": "text-input",
         "valueType": "string",
         "name": "imageAlt",
-        "value": "",
-        "label": "Background Image Description",
-        "description": "A descriptive text of the image will be shown as tooltip."
-      },
-      {
-        "component": "reference",
-        "valueType": "string",
-        "name": "fileReferenceSecond",
-        "label": "Subject Image",
-        "description": "The optional marquee subject image, min Xpx x Ypx...",
-        "multi": false
-      },
-      {
-        "component": "text-input",
-        "valueType": "string",
-        "name": "imageAltSecond",
         "value": "",
         "label": "Subject Image Description",
         "description": "A descriptive text of the image will be shown as tooltip."
@@ -487,7 +471,7 @@
         "name": "backgroundColor",
         "value": "",
         "label": "Background Color",
-        "description": "The marquee background color when in mobile view.",
+        "description": "The marquee background color",
         "valueType": "string",
         "options": [
           {
