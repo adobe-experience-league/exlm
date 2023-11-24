@@ -50,7 +50,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 135px;
+  max-width: 100%;
   display: flex;
   align-items: center;
   margin-top: 0;
