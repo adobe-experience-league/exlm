@@ -46,7 +46,7 @@ export default function decorate(block) {
   `);
 
   if (subjectPicture && subjectImageDescr) {
-    marqueeDOM.querySelector('.foreground .subject picture img').setAttribute('alt', subjectImageDescr);
+    marqueeDOM.querySelector('.marquee-foreground .marquee-subject picture img').setAttribute('alt', subjectImageDescr);
   }
 
   // add final teaser DOM
