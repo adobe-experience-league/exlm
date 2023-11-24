@@ -463,7 +463,7 @@ header {
     position: absolute;
     display: flex;
     flex-direction: row;
-    z-index: 1;
+    z-index: 10;
     left: 0;
     top: 100%;
     min-width: 100%;
