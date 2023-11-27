@@ -7,7 +7,7 @@ export default function decorate(block) {
   // loop through all accordion blocks
   [...accordions].forEach((accordion) => {
     // generate the accordion
-    const accordionDOM = generateAccordionDOM(accordion.children);
+    const accordionDOM = generateAccordionDOM(accordion);
     // empty the content ,keep root element with UE instrumentation
     accordion.textContent = '';
     // add block classes

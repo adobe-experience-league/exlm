@@ -1,9 +1,9 @@
-export function generateAccordionDOM(props) {
+export function generateAccordionDOM(block) {
   const details = document.createElement('details');
   const summary = document.createElement('summary');
   details.append(summary);
-  Array.from(props).forEach((element, i) => {
-    if (i === 0) summary.append(props[0].textContent.trim());
+  Array.from(block.children).forEach((element, i) => {
+    if (i === 0) summary.append(block.children[0].textContent.trim());
     else {
       details.append(element);
     }
@@ -12,7 +12,7 @@ export function generateAccordionDOM(props) {
 }
 
 export default function decorate(block) {
-  const props = [...block.children].map((row) => row.firstElementChild);
+  const dom = generateAccordionDOM(block);
   block.textContent = '';
-  block.append(generateAccordionDOM(props));
+  block.append(dom);
 }
