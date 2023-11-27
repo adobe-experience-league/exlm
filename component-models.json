@@ -638,5 +638,26 @@
         "description": "Please provide a URL to an MPC video."
       }
     ]
+  },
+  {
+    "id": "secondary-search",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the title for Secondary Search"
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "searchBar",
+        "value": "",
+        "label": "Search Bar Text",
+        "description": "Search the search bar Placeholder Text"
+      }
+    ]
   }
 ]
