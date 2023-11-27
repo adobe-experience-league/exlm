@@ -744,6 +744,7 @@ img {
 .section.highlight {
   background-color: var(--highlight-background-color);
 }
+
 .section > div {
   /* limit block wrappers max width */
   max-width: var(--non-spectrum-max-width);
