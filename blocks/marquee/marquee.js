@@ -7,7 +7,6 @@ export default function decorate(block) {
 
   const subjectPicture = props[0].innerHTML.trim();
   const subjectImageDescr = props[1].textContent.trim();
-  // Add this as a data- attribute
   const bgColor = props[2].textContent.trim();
   const eyebrow = props[3].textContent.trim();
   const title = props[4].textContent.trim();
