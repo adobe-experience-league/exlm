@@ -742,7 +742,7 @@ img {
   margin-bottom: 0;
 }
 .section.highlight {
-  background-color: var(--spectrum-gray-100);
+  background-color: var(--highlight-background-color);
 }
 .section > div {
   /* limit block wrappers max width */
