@@ -330,7 +330,7 @@
         "name": "style",
         "value": "",
         "label": "Style",
-        "description": "The section hightlight color",
+        "description": "The section style",
         "valueType": "string",
         "options": [
           {
