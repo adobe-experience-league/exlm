@@ -656,7 +656,7 @@
         "name": "searchBar",
         "value": "",
         "label": "Search Bar Text",
-        "description": "Search Input Text from User"
+        "description": "Search the search bar Placeholder Text"
       }
     ]
   }
