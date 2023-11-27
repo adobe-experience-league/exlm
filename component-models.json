@@ -326,25 +326,11 @@
     "id": "section",
     "fields": [
       {
-        "component": "select",
+        "component": "text-input",
         "name": "style",
         "value": "",
-        "label": "Type",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "default",
-            "value": ""
-          },
-          {
-            "name": "Hightlight",
-            "value": "highlight"
-          },
-          {
-            "name": "FAQ",
-            "value": "accordion-group"
-          }
-        ]
+        "label": "Style",
+        "valueType": "string"
       }
     ]
   },
@@ -675,7 +661,7 @@
     ]
   },
   {
-    "id": "collapsible",
+    "id": "accordion-group",
     "fields": []
   },
   {

@@ -112,9 +112,3 @@ ol .accordion ul {
 .shade-box .accordion-wrapper:first-child details {
   padding-top: 16px;
 }
-
-.section.accordion-group > .accordion-wrapper {
-  background-color: var(--spectrum-gray-100);
-  padding: 0 21px;
-  margin:auto;
-}
