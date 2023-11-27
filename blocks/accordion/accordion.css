@@ -26,6 +26,8 @@
 .accordion details summary::marker {
   content: none;
 }
+
+.accordion details div,
 .accordion details div > div {
   color: var(--non-spectrum-raisin-black);
   font-size: var(--spectrum-font-size-200);
