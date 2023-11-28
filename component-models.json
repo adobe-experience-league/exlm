@@ -326,11 +326,22 @@
     "id": "section",
     "fields": [
       {
-        "component": "text-input",
+        "component": "select",
         "name": "style",
         "value": "",
         "label": "Style",
-        "valueType": "string"
+        "description": "The section style",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "default",
+            "value": "default"
+          },
+          {
+            "name": "highlight",
+            "value": "highlight"
+          }
+        ]
       }
     ]
   },
