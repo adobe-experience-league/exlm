@@ -10,7 +10,9 @@
   margin-top: 14px;
 }
 
-.accordion-group > .accordion details div p {
+.accordion-group > .accordion details div p,
+.accordion-group > .accordion details div ul li,
+.accordion-group > .accordion details div ol li {
   font-size: var(--spectrum-font-size-200);
   line-height: var(--spectrum-line-height-m);
 }
@@ -23,7 +25,9 @@
   margin-top: 14px;
 }
 
-.section.marketing .accordion-group > .accordion details div p {
+.section.marketing .accordion-group > .accordion details div p,
+.section.marketing .accordion-group > .accordion details div ul li,
+.section.marketing .accordion-group > .accordion details div ol li{
   font-size: var(--exlm-font-size-content);
   line-height: var(--exlm-line-height-h4);
 }
