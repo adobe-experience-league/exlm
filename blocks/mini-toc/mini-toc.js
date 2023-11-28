@@ -99,14 +99,12 @@ export default async function decorate() {
             }
           }
 
-          window.addEventListener('scroll', () => {
+          document.addEventListener('scroll', () => {
             const section = document.querySelector('.section');
             const headings = section.querySelectorAll('h2, h3');
             const miniTocBlock = document.querySelector('.mini-toc .scrollable-div');
-            const scrollY =
-              window.pageYOffset !== undefined
-                ? window.pageYOffset
-                : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+            // eslint-disable-next-line
+            const scrollY = window.scrollY;
             if (headings.length > 0) {
               headings.forEach((current) => {
                 const headingHeight = current.offsetHeight;
