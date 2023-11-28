@@ -7,11 +7,7 @@ export default function decorate(block) {
 
   const subjectPicture = props[0].innerHTML.trim();
   const subjectImageDescr = props[1].textContent.trim();
-
-  // To be tracked as part of https://jira.corp.adobe.com/browse/EXLM-485
-  // eslint-disable-next-line
   const bgColor = props[2].textContent.trim();
-
   const eyebrow = props[3].textContent.trim();
   const title = props[4].textContent.trim();
   const longDescr = props[5].innerHTML.trim();
@@ -31,7 +27,7 @@ export default function decorate(block) {
         <div class='marquee-long-description'>${longDescr}</div>
         <div class='marquee-cta'>${
           firstCTAText && firstCTALink
-            ? `<a class='button ${firstCTAType}' href='${firstCTALink}'><span class="icon icon-play"></span>${firstCTAText}</a>`
+            ? `<a class='button ${firstCTAType}' href='${firstCTALink}'>${firstCTAText}</a>`
             : ``
         }${
           secondCTAText && secondCTALink
@@ -39,21 +35,27 @@ export default function decorate(block) {
             : ``
         }</div>
       </div>
-      ${subjectPicture ? `<div class='marquee-subject'>${subjectPicture}</div>` : `<div class='marquee-spacer'></div>`}
+      ${
+        subjectPicture
+          ? `<div class='marquee-subject' style="background-color : var(${bgColor})">${subjectPicture}</div>`
+          : `<div class='marquee-spacer'></div>`
+      }
       </div>
     </div>
-    <div class='marquee-background'></div>
+    <div class='marquee-background'>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1562 571.212"><path fill="#fff" d="M0 1.212h1562v570H0z" data-name="Rectangle 1"></path><path class="bg" fill="var(${bgColor})" d="M752.813-1495s115.146 210.072 471.053 309.516 291.355 261.7 291.355 261.7h150.039V-1495Z" data-name="Path 1" transform="translate(-103.26 1495)"></path></svg>
+    </div>
   `);
 
   if (subjectPicture && subjectImageDescr) {
-    marqueeDOM.querySelector('.marquee-foreground .marquee-subject picture img').setAttribute('alt', subjectImageDescr);
+    marqueeDOM.querySelector('.marquee-subject picture img').setAttribute('alt', subjectImageDescr);
   }
 
-  // add final teaser DOM
   block.textContent = '';
   if (!subjectPicture) {
     block.classList.add('no-subject');
   }
+
   decorateIcons(marqueeDOM);
   block.append(marqueeDOM);
 }
