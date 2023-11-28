@@ -99,28 +99,35 @@ export default async function decorate() {
             }
           }
 
-          document.addEventListener('scroll', () => {
-            const section = document.querySelector('.section');
-            const headings = section.querySelectorAll('h2, h3');
-            const miniTocBlock = document.querySelector('.mini-toc .scrollable-div');
-            // eslint-disable-next-line
-            const scrollY = window.scrollY;
-            if (headings.length > 0) {
-              headings.forEach((current) => {
-                const headingHeight = current.offsetHeight;
-                const headingTop = current.offsetTop - 50;
-                const headingId = current.getAttribute('id');
-                if (scrollY > headingTop && scrollY <= headingTop + headingHeight) {
-                  anchors.forEach((link) => {
-                    link.classList.remove('is-active');
+          // eslint-disable-next-line
+          ['scroll', 'touchmove'].forEach(function (e) {
+            window.addEventListener(
+              e,
+              () => {
+                const section = document.querySelector('.section');
+                const headings = section.querySelectorAll('h2, h3');
+                const miniTocBlock = document.querySelector('.mini-toc .scrollable-div');
+                // eslint-disable-next-line
+                const scrollY = window.scrollY;
+                if (headings.length > 0) {
+                  headings.forEach((current) => {
+                    const headingHeight = current.offsetHeight;
+                    const headingTop = current.offsetTop - 50;
+                    const headingId = current.getAttribute('id');
+                    if (scrollY > headingTop && scrollY <= headingTop + headingHeight) {
+                      anchors.forEach((link) => {
+                        link.classList.remove('is-active');
+                      });
+                      const activeAnchor = miniTocBlock.querySelector(`a[href*=${headingId}]`);
+                      activeAnchor.classList.add('is-active');
+                      const anchorTopPos = activeAnchor.offsetTop;
+                      miniTocBlock.scrollTop = anchorTopPos - 30;
+                    }
                   });
-                  const activeAnchor = miniTocBlock.querySelector(`a[href*=${headingId}]`);
-                  activeAnchor.classList.add('is-active');
-                  const anchorTopPos = activeAnchor.offsetTop;
-                  miniTocBlock.scrollTop = anchorTopPos - 30;
                 }
-              });
-            }
+              },
+              false,
+            );
           });
         }
       });
