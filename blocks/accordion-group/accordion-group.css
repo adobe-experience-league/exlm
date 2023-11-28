@@ -1,1 +1,28 @@
 @import "../shade-box/shade-box.css";
+@import "../accordion/accordion.css";
+
+/* when used inside accordion group we have one less div 
+  TODO : change font size to default of 18px; */
+.accordion-group > .accordion details div *,
+.accordion-group > .accordion details div {
+  color: var(--non-spectrum-raisin-black);
+  font-size: var(--spectrum-font-size-200);
+  line-height: var(--spectrum-line-height-m);
+  margin-left: 14px;
+  margin-top: 14px;
+}
+
+/* Temporary: to demonstrate marking font sizes */
+.section.marketing .accordion-group > .accordion details div *,
+.section.marketing .accordion-group > .accordion details div {
+  color: var(--non-spectrum-raisin-black);
+  font-size: var(--exlm-font-size-content);
+  line-height: var(--spectrum-line-height-m);
+  margin-left: 14px;
+  margin-top: 14px;
+}
+
+/* Temporary to demonstrate marking font sizes */
+.section.marketing .accordion-group > .accordion details summary {
+  font-size: var(--spectrum-font-size-200);
+}
