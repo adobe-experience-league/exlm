@@ -103,7 +103,10 @@ export default async function decorate() {
             const section = document.querySelector('.section');
             const headings = section.querySelectorAll('h2, h3');
             const miniTocBlock = document.querySelector('.mini-toc .scrollable-div');
-            const scrollY = window.pageYOffset;
+            const scrollY =
+              window.pageYOffset !== undefined
+                ? window.pageYOffset
+                : (document.documentElement || document.body.parentNode || document.body).scrollTop;
             if (headings.length > 0) {
               headings.forEach((current) => {
                 const headingHeight = current.offsetHeight;
