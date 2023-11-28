@@ -1,3 +1,4 @@
+/* this function also gets called by accordion-group */
 export function generateAccordionDOM(block) {
   const details = document.createElement('details');
   const summary = document.createElement('summary');
