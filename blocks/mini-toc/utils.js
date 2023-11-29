@@ -72,6 +72,11 @@ export function highlight(replace = false) {
           ctx.scroll(scrollOptions);
         }
 
+        const scrollableDivBlock = ctx.querySelector('.scrollable-div');
+        const anchorTopPos = el.offsetTop;
+        el.classList.add('is-active');
+        scrollableDivBlock.scrollTop = anchorTopPos - 30;
+
         if (replace) {
           window.history.replaceState({}, '', el.href);
         }
