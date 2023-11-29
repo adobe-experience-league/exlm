@@ -1,7 +1,7 @@
 import { generateAccordionDOM } from '../accordion/accordion.js';
 
 export default function decorate(block) {
-  // get all children elements
+  // each row is an accordion entry
   const accordions = [...block.children];
 
   // loop through all accordion blocks
@@ -13,6 +13,7 @@ export default function decorate(block) {
     // add block classes
     accordion.classList.add('accordion', 'block');
     accordion.append(accordionDOM);
+    // use same styling as shade-box from /docs
     block.classList.add('shade-box');
     block.append(accordion);
   });

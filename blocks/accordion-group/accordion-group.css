@@ -1,39 +1,16 @@
 @import "../shade-box/shade-box.css";
 @import "../accordion/accordion.css";
 
-/* when used inside accordion group we have one less div 
-  TODO : change font size to default of 18px; */
+/* inside accordion group we can have text below first div */
 .accordion-group > .accordion details div {
-  font-size: var(--spectrum-font-size-200);
-  line-height: var(--spectrum-line-height-m);
-  margin-left: 14px;
-  margin-top: 14px;
-}
-
-.accordion-group > .accordion details div p,
-.accordion-group > .accordion details div ul li,
-.accordion-group > .accordion details div ol li {
-  font-size: var(--spectrum-font-size-200);
-  line-height: var(--spectrum-line-height-m);
-}
-
-/* Temporary: to demonstrate marking font sizes */
-.section.marketing .accordion-group > .accordion details div {
   font-size: var(--exlm-font-size-content);
   line-height: var(--exlm-line-height-h4);
   margin-left: 14px;
   margin-top: 14px;
 }
 
-.section.marketing .accordion-group > .accordion details div p,
-.section.marketing .accordion-group > .accordion details div ul li,
-.section.marketing .accordion-group > .accordion details div ol li{
-  font-size: var(--exlm-font-size-content);
-  line-height: var(--exlm-line-height-h4);
-}
-
-/* Temporary to demonstrate marking font sizes */
-.section.marketing .accordion-group > .accordion details summary {
+/* override /docs font size */
+.accordion-group > .accordion details summary {
   font-size: var(--spectrum-font-size-200);
   line-height: var(--exlm-line-height-h4);
 }
