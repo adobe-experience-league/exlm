@@ -16,6 +16,8 @@ import {
   getMetadata,
   loadScript,
 } from './lib-franklin.js';
+import { JWT } from './auth/session-keys.js';
+import fetchAndStoreJWT from './auth/jwt.js';
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
@@ -233,18 +235,37 @@ export async function loadIms() {
   return imsLoaded;
 }
 
+let token;
+export async function loadJWT() {
+  token =
+    token ||
+    new Promise((resolve) => {
+      const isSignedInUser = window.adobeIMS && window.adobeIMS?.isSignedInUser(); // eslint-disable-line
+      if (isSignedInUser) {
+        // If JWT is present in session storage, return it; otherwise, fetch and store JWT
+        if (JWT in sessionStorage) {
+          resolve(sessionStorage.getItem(JWT));
+        }
+        const jwt = fetchAndStoreJWT();
+        resolve(jwt);
+      }
+      resolve(null);
+    });
+  return token;
+}
+
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
+  loadIms(); // start it early, asyncronously
   await loadBlocks(main);
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
-  loadIms(); // start it early, asyncronously
   loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
 

@@ -1,5 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { loadIms } from '../../scripts/scripts.js';
+import { signOut } from '../../scripts/auth/auth-operations.js';
 import { registerResizeHandler } from './header-utils.js';
 
 /**
@@ -379,7 +380,7 @@ const signInDecorator = async (signInBlock) => {
     );
     const toggler = signInBlock.querySelector('.profile-toggle');
     signInBlock.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
-      adobeIMS.signOut();
+      signOut();
     });
     const toggleExpandContent = () => {
       const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
