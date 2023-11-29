@@ -101,10 +101,16 @@ div.marquee-wrapper {
   margin-right: 7px;
 }
 
-.marquee-cta>a.button.secondary {
+.marquee-cta>a.button.primary {
   background-color: var( --non-spectrum-true-blue);
   border: none;
   color: var(--background-color);
+}
+
+.marquee-cta>a.button.secondary {
+  background-color: var(--background-color);
+  border: 2px solid var(--spectrum-gray-700);
+  color: var(--spectrum-gray-700);
 }
 
 .marquee-background {
