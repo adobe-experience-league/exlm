@@ -3,6 +3,8 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import { htmlToElement, loadJWT, loadIms } from '../../scripts/scripts.js';
+import loadCoveoToken from '../../scripts/data-service/coveo/coveo-token-service.js';
+import { JWT, COVEO_TOKEN } from '../../scripts/auth/session-keys.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -34,9 +36,8 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   try {
-    let adobeIMS = {
-      isSignedInUser: () => false,
-    };
+    let adobeIMS = { isSignedInUser: () => false };
+
     try {
       const ims = await loadIms();
       adobeIMS = ims.adobeIMS;
@@ -44,38 +45,48 @@ export default async function decorate(block) {
       // eslint-disable-next-line no-console
       console.warn('Adobe IMS not available.');
     }
+
     const isSignedIn = adobeIMS?.isSignedInUser();
+
     if (isSignedIn) {
-      await loadJWT();
+      if (!sessionStorage[JWT]) {
+        sessionStorage.removeItem(COVEO_TOKEN);
+        await loadJWT();
+      }
+      if (!sessionStorage[COVEO_TOKEN]) {
+        await loadCoveoToken();
+      }
+    } else {
+      const isCoveoAvailable = !sessionStorage[COVEO_TOKEN];
+      if (isCoveoAvailable) {
+        await loadCoveoToken();
+      }
     }
 
-    const params = {
+    const param = {
       contentType,
       noOfResults,
     };
-    const browseCards = new BrowseCardsDelegate(params);
-    const browseCardsContent = browseCards.fetchCardData();
 
-    browseCardsContent.then((data) => {
-      if (data?.length) {
-        // Creating content div
-        const contentDiv = document.createElement('div');
-        contentDiv.classList.add('curated-cards-content');
+    const browseCardsContent = await BrowseCardsDelegate.fetchCardData(param);
 
-        for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
-          const cardData = data[i];
-          const cardDiv = document.createElement('div');
-          buildCard(cardDiv, cardData);
-          contentDiv.appendChild(cardDiv);
-        }
-        // Appending content divs to the block
-        block.appendChild(contentDiv);
+    if (browseCardsContent?.length) {
+      const contentDiv = document.createElement('div');
+      contentDiv.classList.add('curated-cards-content');
+
+      for (let i = 0; i < Math.min(noOfResults, browseCardsContent.length); i += 1) {
+        const cardData = browseCardsContent[i];
+        const cardDiv = document.createElement('div');
+        buildCard(cardDiv, cardData);
+        contentDiv.appendChild(cardDiv);
       }
 
-      decorateIcons(block);
-    });
+      block.appendChild(contentDiv);
+    }
+
+    decorateIcons(block);
   } catch {
     // eslint-disable-next-line no-console
-    console.warn('Adobe IMS / JWT Token not available.');
+    console.warn('Error occured');
   }
 }

@@ -1,6 +1,6 @@
 import { JWT } from './session-keys.js';
 import { signOut } from './auth-operations.js';
-import { JWTToken as JWTTokenUrl } from './urls.js';
+import { jwtTokenUrl } from '../urls.js';
 import csrf from './csrf.js';
 import fetchData from '../request.js';
 
@@ -29,13 +29,13 @@ export default async function fetchAndStoreJWT() {
     };
 
     // Send a request to fetch JWT token from the server
-    const response = await fetchData(JWTTokenUrl, {
+    const response = await fetchData(jwtTokenUrl, {
       credentials: 'include',
       method: 'POST',
       headers: {
         accept: 'application/json',
         'content-type': 'application/json',
-        'x-csrf-token': await csrf(JWTTokenUrl),
+        'x-csrf-token': await csrf(jwtTokenUrl),
       },
       body: JSON.stringify(requestBody),
     });

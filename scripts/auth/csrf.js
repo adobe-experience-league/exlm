@@ -1,4 +1,4 @@
-import { JWTToken as JWTTokenUrl } from './urls.js';
+import { jwtTokenUrl } from '../urls.js';
 import { JWT } from './session-keys.js';
 import fetchData from '../request.js';
 
@@ -42,7 +42,7 @@ function hash(arg = '') {
  * @param {string} uri - The URI for which to retrieve the CSRF token.
  * @returns {Promise<string>} A promise that resolves with the CSRF token.
  */
-export default async function csrf(uri = JWTTokenUrl) {
+export default async function csrf(uri = jwtTokenUrl) {
   let result = tokens.get(uri) || '';
 
   if (result.length === 0) {
