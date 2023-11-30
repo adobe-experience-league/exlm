@@ -1,19 +1,36 @@
-# Your Project's Title...
+# Experience League
 
-EXLM
+Experience League site implementation on https://aem.live
 
 ## Environments
 
 - Preview: https://main--exlm--adobe-experience-league.hlx.page/
 - Live: https://main--exlm--adobe-experience-league.hlx.live/
 
-## Installation
+## Getting started
 
-```sh
-npm i
-```
+1. Clone or fork this repo (see nopte bleow on forking)
+2. Create your brannch
+3. Install the [AEM CLI](https://github.com/adobe/aem-cli): `npm install -g @adobe/aem-cli`
+4. Install deopendecies `npm i`
+5. Start Local Proxy: `aem up` (opens your browser at `http://localhost:3000`)
+6. Start coding!
 
-## Linting
+### On forking this repo
+
+If you want/need to fork this repository remember to add the [AEM Code Sync GitHub App](https://github.com/apps/aem-code-sync) to the fork repository.
+
+### Content Source
+
+The default content source is set in `fstab.yaml`, by default it's pointing to the main [exlm-converter](https://github.com/adobe-experience-league/exlm-converter) action.
+
+The action is the entry point for all HTML delivered to https://aem.live services.
+
+> while developing, and if you need to update the source HTML, you are free to deploy [exlm-converter](https://github.com/adobe-experience-league/exlm-converter) action to your own project on Adobe Runtime. (Remember to point your forked repon `fstab.yaml` to your own action).
+
+## Helpful Commands
+
+### Linting
 
 ```sh
 npm run lint
@@ -25,7 +42,7 @@ npm run lint
 npm run quality
 ```
 
-## Code Formatting
+### Code Formatting
 
 this should happen on commit automatically, but you can run manually with:
 
@@ -33,7 +50,7 @@ this should happen on commit automatically, but you can run manually with:
 npm run format
 ```
 
-## Code Quality Check
+### Code Quality Check
 
 If you want to run all code quality scripts to ensure your PR will pass:
 
@@ -41,7 +58,7 @@ If you want to run all code quality scripts to ensure your PR will pass:
 npm run quality
 ```
 
-## Run sass auto-compile and Helix Pages
+### Run sass auto-compile and Helix Pages
 
 ```sh
 npm run up
@@ -61,11 +78,3 @@ Examples:
 As both `sass-compile.js` and `hlx up` are watching for changes, changes made to your sass files while using the `rpm run up` command will be reflected automatically in your localhost.
 
 Note that using only the `hlx up` command will not trigger updates on-change for sass files.
-
-## Local development
-
-1. Create a new repository based on the `helix-project-boilerplate` template and add a mountpoint in the `fstab.yaml`
-1. Add the [helix-bot](https://github.com/apps/helix-bot) to the repository
-1. Install the [Helix CLI](https://github.com/adobe/helix-cli): `npm install -g @adobe/helix-cli`
-1. Start Franklin Proxy: `hlx up` (opens your browser at `http://localhost:3000`)
-1. Open the `{repo}` directory in your favorite IDE and start coding :)
