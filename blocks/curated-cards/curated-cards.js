@@ -46,7 +46,7 @@ export default async function decorate(block) {
       console.warn('Adobe IMS not available.');
     }
     const isSignedIn = adobeIMS?.isSignedInUser();
-    if (isSignedIn && !isJWTTokenAvailable) {
+    if (isSignedIn && !isJWTTokenAvailable()) {
       await loadJWT();
     }
 

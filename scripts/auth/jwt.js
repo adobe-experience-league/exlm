@@ -1,6 +1,6 @@
 import { JWT } from './session-keys.js';
 import { signOut } from './auth-operations.js';
-import { JWTTokenUrl } from './urls.js';
+import { JWTTokenUrl } from '../urls.js';
 import csrf from './csrf.js';
 import fetchData from '../request.js';
 
