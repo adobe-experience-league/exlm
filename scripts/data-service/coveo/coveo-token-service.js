@@ -3,7 +3,7 @@ import fetchData from '../../request.js';
 import { coveoTokenUrl } from '../../urls.js';
 import { COVEO_TOKEN } from '../../auth/session-keys.js';
 import { loadIms } from '../../scripts.js';
-import { loadJWT, isJWTTokenAvailable } from '../../auth/jwt.js';
+import loadJWT from '../../auth/jwt.js';
 
 const timers = new Map();
 
@@ -125,14 +125,6 @@ async function fetchAndStoreCoveoToken() {
   return coveoToken;
 }
 
-function isCoveoTokenAvailable() {
-  return !!sessionStorage[COVEO_TOKEN];
-}
-
-function removeCoveoToken() {
-  sessionStorage.removeItem(COVEO_TOKEN);
-}
-
 let coveoResponseToken = '';
 export default async function loadCoveoToken() {
   coveoResponseToken =
@@ -141,19 +133,17 @@ export default async function loadCoveoToken() {
     new Promise(async (resolve) => {
       const isSignedInUser = window.adobeIMS && window.adobeIMS?.isSignedInUser();
       if (isSignedInUser) {
-        if (!isJWTTokenAvailable()) {
-          removeCoveoToken();
-          await loadJWT();
-        }
-        if (isCoveoTokenAvailable()) {
-          resolve(sessionStorage.getItem(COVEO_TOKEN));
-        } else {
-          const token = await fetchAndStoreCoveoToken();
-          resolve(token);
-        }
+        loadJWT().then(async () => {
+          if (sessionStorage[COVEO_TOKEN]) {
+            resolve(sessionStorage.getItem(COVEO_TOKEN));
+          } else {
+            const token = await fetchAndStoreCoveoToken();
+            resolve(token);
+          }
+        });
       } else {
         // eslint-disable-next-line no-lonely-if
-        if (isCoveoTokenAvailable()) {
+        if (sessionStorage[COVEO_TOKEN]) {
           resolve(sessionStorage.getItem(COVEO_TOKEN));
         } else {
           const token = await fetchAndStoreCoveoToken();

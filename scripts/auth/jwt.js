@@ -1,4 +1,4 @@
-import { JWT } from './session-keys.js';
+import { JWT, COVEO_TOKEN } from './session-keys.js';
 import { signOut } from './auth-operations.js';
 import { JWTTokenUrl } from '../urls.js';
 import csrf from './csrf.js';
@@ -60,11 +60,7 @@ async function fetchAndStoreJWT() {
   }
 }
 
-export function isJWTTokenAvailable() {
-  return !!sessionStorage[JWT];
-}
-
-export async function loadJWT() {
+export default async function loadJWT() {
   JWTToken =
     JWTToken ||
     new Promise((resolve) => {
@@ -73,9 +69,11 @@ export async function loadJWT() {
         // If JWT is present in session storage, return it; otherwise, fetch and store JWT
         if (JWT in sessionStorage) {
           resolve(sessionStorage.getItem(JWT));
+        } else {
+          sessionStorage.removeItem(COVEO_TOKEN);
+          const jwt = fetchAndStoreJWT();
+          resolve(jwt);
         }
-        const jwt = fetchAndStoreJWT();
-        resolve(jwt);
       }
       resolve(null);
     });

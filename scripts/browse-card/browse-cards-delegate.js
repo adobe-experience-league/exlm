@@ -17,12 +17,20 @@ const BrowseCardsDelegate = (() => {
   const constructCoveoSearchParams = () => {
     const { noOfResults, contentType } = param;
     const urlSearchParams = new URLSearchParams();
+    urlSearchParams.append('searchHub', 'Experience League Learning Hub');
+    urlSearchParams.append('locale', 'en');
+    urlSearchParams.append('numberOfResults', noOfResults);
+    urlSearchParams.append('excerptLength', '200');
     urlSearchParams.append('sortCriteria', 'relevancy');
     urlSearchParams.append(
       'facets',
-      `[{"facetId":"@el_role","field":"el_role","type":"specific","injectionDepth":1000,"filterFacetCount":true,"currentValues":[],"numberOfValues":5,"freezeCurrentValues":false,"preventAutoSelect":false,"isFieldExpanded":false},{"facetId":"@el_contenttype","field":"el_contenttype","type":"hierarchical","injectionDepth":1000,"delimitingCharacter":"|","filterFacetCount":true,"basePath":[],"filterByBasePath":false,"currentValues":[{"value":"${contentType}","state":"selected","children":[],"retrieveChildren":true,"retrieveCount":5}],"preventAutoSelect":false,"numberOfValues":1,"isFieldExpanded":false},{"facetId":"el_product","field":"el_product","type":"hierarchical","injectionDepth":1000,"delimitingCharacter":"|","filterFacetCount":true,"basePath":[],"filterByBasePath":false,"currentValues":[],"preventAutoSelect":false,"numberOfValues":10000,"isFieldExpanded":false}]`,
+      `[{"facetId":"@el_role","field":"el_role","type":"specific","injectionDepth":1000,"filterFacetCount":true,"currentValues":[{"value":"Admin","state":"idle"},{"value":"Developer","state":"idle"},{"value":"Leader","state":"idle"},{"value":"User","state":"idle"}],"numberOfValues":5,"freezeCurrentValues":false,"preventAutoSelect":false,"isFieldExpanded":false},{"facetId":"@el_contenttype","field":"el_contenttype","type":"hierarchical","injectionDepth":1000,"delimitingCharacter":"|","filterFacetCount":true,"basePath":[],"filterByBasePath":false,"currentValues":[{"value":"${contentType}","state":"selected","children":[],"retrieveChildren":true,"retrieveCount":5}],"preventAutoSelect":true,"numberOfValues":1,"isFieldExpanded":false},{"facetId":"el_product","field":"el_product","type":"hierarchical","injectionDepth":1000,"delimitingCharacter":"|","filterFacetCount":true,"basePath":[],"filterByBasePath":false,"currentValues":[],"preventAutoSelect":false,"numberOfValues":10000,"isFieldExpanded":false}]`,
     );
-    urlSearchParams.append('numberOfResults', noOfResults);
+    urlSearchParams.append('timezone', 'Asia/Calcutta');
+    urlSearchParams.append('enableQuerySyntax', 'true');
+    urlSearchParams.append('enableDuplicateFiltering', 'false');
+    urlSearchParams.append('enableCollaborativeRating', 'false');
+    urlSearchParams.append('debug', 'false');
     return urlSearchParams;
   };
 
