@@ -273,6 +273,7 @@
                   "model": "accordion-group",
                   "allowedComponents": "accordion",
                   "item": {
+                    "resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Accordion",
                     "model": "accordion",
                     "heading": "Lorem ipsum",
@@ -289,7 +290,7 @@
           "plugins": {
             "aem": {
               "page": {
-                "resourceType": "core/franklin/components/block/v1/block",
+                "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
                   "name": "Accordion",
                   "model": "accordion",
