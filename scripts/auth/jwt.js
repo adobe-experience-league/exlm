@@ -61,7 +61,7 @@ async function fetchAndStoreJWT() {
 }
 
 export function isJWTTokenAvailable() {
-  return sessionStorage[JWT];
+  return !!sessionStorage[JWT];
 }
 
 export async function loadJWT() {
