@@ -57,8 +57,8 @@ export default async function decorate(block) {
         await loadCoveoToken();
       }
     } else {
-      const isCoveoAvailable = !sessionStorage[COVEO_TOKEN];
-      if (isCoveoAvailable) {
+      const isCoveoAvailable = sessionStorage[COVEO_TOKEN];
+      if (!isCoveoAvailable) {
         await loadCoveoToken();
       }
     }
