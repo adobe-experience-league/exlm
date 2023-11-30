@@ -326,11 +326,22 @@
     "id": "section",
     "fields": [
       {
-        "component": "text-input",
+        "component": "select",
         "name": "style",
         "value": "",
         "label": "Style",
-        "valueType": "string"
+        "description": "The section style",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "default",
+            "value": "default"
+          },
+          {
+            "name": "highlight",
+            "value": "highlight"
+          }
+        ]
       }
     ]
   },
@@ -627,7 +638,7 @@
     ]
   },
   {
-    "id": "embed",
+    "id": "video-embed",
     "fields": [
       {
         "component": "text-input",
@@ -657,6 +668,29 @@
         "value": "",
         "label": "Search Bar Text",
         "description": "Search the search bar Placeholder Text"
+      }
+    ]
+  },
+  {
+    "id": "accordion-group",
+    "fields": []
+  },
+  {
+    "id": "accordion",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "text-area",
+        "valueType": "string",
+        "name": "body",
+        "value": "",
+        "label": "Body"
       }
     ]
   }
