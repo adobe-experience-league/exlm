@@ -1,4 +1,4 @@
-import { JWTToken as JWTTokenUrl } from './urls.js';
+import { JWTTokenUrl } from './urls.js';
 import { JWT } from './session-keys.js';
 import fetchData from '../request.js';
 

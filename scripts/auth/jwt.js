@@ -1,8 +1,10 @@
 import { JWT } from './session-keys.js';
 import { signOut } from './auth-operations.js';
-import { JWTToken as JWTTokenUrl } from './urls.js';
+import { JWTTokenUrl } from './urls.js';
 import csrf from './csrf.js';
 import fetchData from '../request.js';
+
+let JWTToken;
 
 /**
  * Fetches and stores JWT token in the session storage.
@@ -10,7 +12,7 @@ import fetchData from '../request.js';
  * @throws {Error} If JWT retrieval fails.
  * @returns {Promise<string | Error>} A promise that resolves with the JWT token or an error.
  */
-export default async function fetchAndStoreJWT() {
+async function fetchAndStoreJWT() {
   try {
     // Get user profile data from Adobe IMS
     const profileData = await adobeIMS?.getProfile(); // eslint-disable-line
@@ -42,10 +44,10 @@ export default async function fetchAndStoreJWT() {
 
     // Check if the request was successful and the JWT is present in the response headers
     if (response.ok && response.headers.has('authorization')) {
-      const JWTToken = response.headers.get('authorization');
+      const token = response.headers.get('authorization');
       // Store the JWT token in session storage
-      sessionStorage.setItem(JWT, JWTToken);
-      return JWTToken;
+      sessionStorage.setItem(JWT, token);
+      return token;
     }
 
     // If the request was not successful or JWT is not present, sign out and throw an error
@@ -56,4 +58,26 @@ export default async function fetchAndStoreJWT() {
     signOut();
     return new Error(`Failed to retrieve JWT: ${error}`);
   }
+}
+
+export function isJWTTokenAvailable() {
+  return sessionStorage[JWT];
+}
+
+export async function loadJWT() {
+  JWTToken =
+    JWTToken ||
+    new Promise((resolve) => {
+      const isSignedInUser = window.adobeIMS && window.adobeIMS?.isSignedInUser(); // eslint-disable-line
+      if (isSignedInUser) {
+        // If JWT is present in session storage, return it; otherwise, fetch and store JWT
+        if (JWT in sessionStorage) {
+          resolve(sessionStorage.getItem(JWT));
+        }
+        const jwt = fetchAndStoreJWT();
+        resolve(jwt);
+      }
+      resolve(null);
+    });
+  return JWTToken;
 }

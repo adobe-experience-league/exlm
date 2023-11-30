@@ -2,7 +2,8 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
-import { htmlToElement, loadJWT, loadIms } from '../../scripts/scripts.js';
+import { htmlToElement, loadIms } from '../../scripts/scripts.js';
+import { loadJWT, isJWTTokenAvailable } from '../../scripts/auth/jwt.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -45,7 +46,7 @@ export default async function decorate(block) {
       console.warn('Adobe IMS not available.');
     }
     const isSignedIn = adobeIMS?.isSignedInUser();
-    if (isSignedIn) {
+    if (isSignedIn && !isJWTTokenAvailable) {
       await loadJWT();
     }
 
