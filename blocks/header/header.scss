@@ -705,7 +705,7 @@ header {
         width: 6px;
         height: 6px;
         padding: 4px;
-        background: #d2d2d2;
+        background: var(--non-spectrum-silver-mist);
         border-radius: 100%;
         right: 4px;
 
@@ -736,7 +736,7 @@ header {
       font-style: italic;
       font-size: var(--spectrum-font-size-75);
       letter-spacing: 0.14px;
-      color: #6D6D6D;
+      color: var(--spectrum-gray-600);
       opacity: 0.5;
       font-weight: 100;
     }
@@ -769,7 +769,7 @@ header {
 
       margin-top: -5px;
       right: 16px;
-      color: #6E6E6E;
+      color: var(--non-spectrum-grey-updated);
     }
 
     &[aria-expanded='true']::after {
@@ -786,8 +786,8 @@ header {
     display: block;
   }
 
-  .search-picker-popover, .search-suggestions-popover {
-    // display: none;
+  .search-picker-popover,
+  .search-suggestions-popover {
     position: absolute;
     z-index: 1;
     right: 0;
@@ -799,11 +799,15 @@ header {
     border-radius: 6px;
     visibility: hidden;
     opacity: 0;
-    transition: transform 130ms ease-in-out,opacity 130ms ease-in-out,visibility 0ms linear 130ms;
+    transition:
+      transform 130ms ease-in-out,
+      opacity 130ms ease-in-out,
+      visibility 0ms linear 130ms;
     pointer-events: none;
     touch-action: none;
 
-    &.search-picker-popover-visible, &.search-suggestions-popover-visible {
+    &.search-picker-popover-visible,
+    &.search-suggestions-popover-visible {
       visibility: visible;
       opacity: 1;
       pointer-events: auto;
@@ -815,7 +819,6 @@ header {
     margin: 0;
     padding: 0;
   }
-
 
   .search-suggestions-popover {
     left: 0;
@@ -961,34 +964,33 @@ header {
   }
 
   .search-picker-popover .search-picker-label,
-    .search-suggestions-popover .search-picker-label {
-      margin: 0;
-      padding: 7px 12px 7px 32px;
-      position: relative;
-      color: var(--spectrum-gray-800);
-      font-size: var(--spectrum-font-size-100);
-      line-height: var(--exlm-line-height-h6);
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      min-width: auto;
-  
-      &:hover {
-        background: rgba(0 0 0 / 4%);
-        cursor: pointer;
-      }
-  
-      .icon {
-        position: absolute;
-        height: 28px;
-        width: 28px;
-        left: 8px;
-        top: 4px;
-      }
-  
-      .icon path {
-        fill: #378EF0;
-      }
-  
+  .search-suggestions-popover .search-picker-label {
+    margin: 0;
+    padding: 7px 12px 7px 32px;
+    position: relative;
+    color: var(--spectrum-gray-800);
+    font-size: var(--spectrum-font-size-100);
+    line-height: var(--exlm-line-height-h6);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: auto;
+
+    &:hover {
+      background: rgba(0 0 0 / 4%);
+      cursor: pointer;
     }
+
+    .icon {
+      position: absolute;
+      height: 28px;
+      width: 28px;
+      left: 8px;
+      top: 4px;
+    }
+
+    .icon path {
+      fill: var(--non-spectrum-azure-blue);
+    }
+  }
 }
