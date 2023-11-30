@@ -76,8 +76,9 @@ const BrowseCardsDelegate = (() => {
     const { contentType } = paramObj;
     const service = getServiceForContentType(contentType?.toUpperCase());
     if (service) {
-      /* eslint-disable-next-line no-return-await */
-      return await service();
+      return new Promise((resolve) => {
+        resolve(service());
+      });
     }
     return null;
   };
