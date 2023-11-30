@@ -670,5 +670,28 @@
         "description": "Search the search bar Placeholder Text"
       }
     ]
+  },
+  {
+    "id": "accordion-group",
+    "fields": []
+  },
+  {
+    "id": "accordion",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "text-area",
+        "valueType": "string",
+        "name": "body",
+        "value": "",
+        "label": "Body"
+      }
+    ]
   }
 ]
