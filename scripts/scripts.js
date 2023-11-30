@@ -16,8 +16,6 @@ import {
   getMetadata,
   loadScript,
 } from './lib-franklin.js';
-import { JWT } from './auth/session-keys.js';
-import fetchAndStoreJWT from './auth/jwt.js';
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
@@ -233,25 +231,6 @@ export async function loadIms() {
       loadScript('https://auth.services.adobe.com/imslib/imslib.min.js');
     });
   return imsLoaded;
-}
-
-let JWTToken;
-export async function loadJWT() {
-  JWTToken =
-    JWTToken ||
-    new Promise((resolve) => {
-      const isSignedInUser = window.adobeIMS && window.adobeIMS?.isSignedInUser();
-      if (isSignedInUser) {
-        // If JWT is present in session storage, return it; otherwise, fetch and store JWT
-        if (JWT in sessionStorage) {
-          resolve(sessionStorage.getItem(JWT));
-        }
-        const jwt = fetchAndStoreJWT();
-        resolve(jwt);
-      }
-      resolve(null);
-    });
-  return JWTToken;
 }
 
 /**
