@@ -650,7 +650,7 @@ header {
   width: 6px;
   height: 6px;
   padding: 4px;
-  background: #d2d2d2;
+  background: var(--non-spectrum-silver-mist);
   border-radius: 100%;
   right: 4px;
 }
@@ -677,7 +677,7 @@ header {
   font-style: italic;
   font-size: var(--spectrum-font-size-75);
   letter-spacing: 0.14px;
-  color: #6D6D6D;
+  color: var(--spectrum-gray-600);
   opacity: 0.5;
   font-weight: 100;
 }
@@ -719,7 +719,7 @@ header {
   content: "";
   margin-top: -5px;
   right: 16px;
-  color: #6E6E6E;
+  color: var(--non-spectrum-grey-updated);
 }
 .header .search-picker-button[aria-expanded=true]::after {
   transform: rotateZ(-135deg);
@@ -921,5 +921,5 @@ header {
 }
 .header .search-picker-popover .search-picker-label .icon path,
 .header .search-suggestions-popover .search-picker-label .icon path {
-  fill: #378EF0;
+  fill: var(--non-spectrum-azure-blue);
 }

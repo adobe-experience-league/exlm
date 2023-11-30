@@ -47,8 +47,8 @@ const BrowseCardsDelegate = (() => {
       };
       const coveoService = new CoveoDataService(dataSource);
       const cardData = await coveoService.fetchDataFromSource();
-      if (cardData) {
-        resolve(BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData));
+      if (cardData?.results) {
+        resolve(BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData.results));
       } else {
         reject(new Error('An Error Occured'));
       }
