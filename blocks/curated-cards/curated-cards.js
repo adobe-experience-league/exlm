@@ -70,20 +70,18 @@ export default async function decorate(block) {
 
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
     browseCardsContent.then((data) => {
-      if (data?.length) {
-        const contentDiv = document.createElement('div');
-        contentDiv.classList.add('curated-cards-content');
+      const contentDiv = document.createElement('div');
+      contentDiv.classList.add('curated-cards-content');
 
-        for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
-          const cardData = data[i];
-          const cardDiv = document.createElement('div');
-          buildCard(cardDiv, cardData);
-          contentDiv.appendChild(cardDiv);
-        }
-
-        block.appendChild(contentDiv);
-        decorateIcons(block);
+      for (let i = 0; i < Math.min(noOfResults, data ? data.length : 0); i += 1) {
+        const cardData = data[i];
+        const cardDiv = document.createElement('div');
+        buildCard(cardDiv, cardData);
+        contentDiv.appendChild(cardDiv);
       }
+
+      block.appendChild(contentDiv);
+      decorateIcons(block);
     });
   } catch {
     // eslint-disable-next-line no-console
