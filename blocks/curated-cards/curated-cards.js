@@ -68,23 +68,23 @@ export default async function decorate(block) {
       noOfResults,
     };
 
-    const browseCardsContent = await BrowseCardsDelegate.fetchCardData(param);
+    const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
+    browseCardsContent.then((data) => {
+      if (data?.length) {
+        const contentDiv = document.createElement('div');
+        contentDiv.classList.add('curated-cards-content');
 
-    if (browseCardsContent?.length) {
-      const contentDiv = document.createElement('div');
-      contentDiv.classList.add('curated-cards-content');
+        for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
+          const cardData = data[i];
+          const cardDiv = document.createElement('div');
+          buildCard(cardDiv, cardData);
+          contentDiv.appendChild(cardDiv);
+        }
 
-      for (let i = 0; i < Math.min(noOfResults, browseCardsContent.length); i += 1) {
-        const cardData = browseCardsContent[i];
-        const cardDiv = document.createElement('div');
-        buildCard(cardDiv, cardData);
-        contentDiv.appendChild(cardDiv);
+        block.appendChild(contentDiv);
+        decorateIcons(block);
       }
-
-      block.appendChild(contentDiv);
-    }
-
-    decorateIcons(block);
+    });
   } catch {
     // eslint-disable-next-line no-console
     console.warn('Error occured');
