@@ -68,7 +68,7 @@ export async function loadJWT() {
   JWTToken =
     JWTToken ||
     new Promise((resolve) => {
-      const isSignedInUser = window.adobeIMS && window.adobeIMS?.isSignedInUser(); // eslint-disable-line
+      const isSignedInUser = window.adobeIMS && window.adobeIMS?.isSignedInUser();
       if (isSignedInUser) {
         // If JWT is present in session storage, return it; otherwise, fetch and store JWT
         if (JWT in sessionStorage) {

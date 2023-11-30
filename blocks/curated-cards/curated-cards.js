@@ -4,8 +4,6 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 import loadCoveoToken from '../../scripts/data-service/coveo/coveo-token-service.js';
-import { COVEO_TOKEN } from '../../scripts/auth/session-keys.js';
-import { loadJWT, isJWTTokenAvailable } from '../../scripts/auth/jwt.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -37,53 +35,31 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   try {
-    let adobeIMS = { isSignedInUser: () => false };
+    await loadIms();
+    loadCoveoToken().then((response) => {
+      if (response) {
+        const param = {
+          contentType,
+          noOfResults,
+        };
 
-    try {
-      const ims = await loadIms();
-      adobeIMS = ims.adobeIMS;
-    } catch {
-      // eslint-disable-next-line no-console
-      console.warn('Adobe IMS not available.');
-    }
+        const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
+        browseCardsContent.then((data) => {
+          if (data?.length) {
+            const contentDiv = document.createElement('div');
+            contentDiv.classList.add('curated-cards-content');
 
-    const isSignedIn = adobeIMS?.isSignedInUser();
+            for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
+              const cardData = data[i];
+              const cardDiv = document.createElement('div');
+              buildCard(cardDiv, cardData);
+              contentDiv.appendChild(cardDiv);
+            }
 
-    if (isSignedIn) {
-      if (!isJWTTokenAvailable()) {
-        sessionStorage.removeItem(COVEO_TOKEN);
-        await loadJWT();
-      }
-      if (!sessionStorage[COVEO_TOKEN]) {
-        await loadCoveoToken();
-      }
-    } else {
-      const isCoveoAvailable = sessionStorage[COVEO_TOKEN];
-      if (!isCoveoAvailable) {
-        await loadCoveoToken();
-      }
-    }
-
-    const param = {
-      contentType,
-      noOfResults,
-    };
-
-    const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
-    browseCardsContent.then((data) => {
-      if (data?.length) {
-        const contentDiv = document.createElement('div');
-        contentDiv.classList.add('curated-cards-content');
-
-        for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
-          const cardData = data[i];
-          const cardDiv = document.createElement('div');
-          buildCard(cardDiv, cardData);
-          contentDiv.appendChild(cardDiv);
-        }
-
-        block.appendChild(contentDiv);
-        decorateIcons(block);
+            block.appendChild(contentDiv);
+            decorateIcons(block);
+          }
+        });
       }
     });
   } catch {
