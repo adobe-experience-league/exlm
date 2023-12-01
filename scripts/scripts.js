@@ -239,12 +239,12 @@ export async function loadIms() {
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
+  loadIms(); // start it early, asyncronously
   await loadBlocks(main);
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
-  loadIms(); // start it early, asyncronously
   loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
 

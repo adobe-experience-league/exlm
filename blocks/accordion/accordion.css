@@ -4,6 +4,7 @@
   color: var(--non-spectrum-grey);
   padding: 0 16px;
 }
+
 .accordion details summary {
   box-sizing: content-box;
   cursor: pointer;
@@ -13,19 +14,23 @@
   font-size: var(--spectrum-font-size-100);
   line-height: 21px;
 }
+
 .accordion details summary::before {
-  content: url("/icons/chevron_right.svg");
+  content: url("../../icons/chevron_right.svg");
   position: relative; 
   top: 3.5px;
   left: -4.2px;
   margin-right: -2px;
 }
+
 .accordion details summary::-webkit-details-marker {
   display: none;
 }
+
 .accordion details summary::marker {
   content: none;
 }
+
 .accordion details div > div {
   color: var(--non-spectrum-raisin-black);
   font-size: var(--spectrum-font-size-200);
@@ -33,6 +38,7 @@
   margin-left: 14px;
   margin-top: 14px;
 }
+
 .accordion details h1,
 .accordion details h2,
 .accordion details h3 {
@@ -80,16 +86,20 @@ ol .accordion ul {
 .accordion details .accordion {
   margin: 0;
 }
+
 .accordion details details summary {
   font-size: var(--spectrum-font-size-200);
   line-height: 24px;
 }
+
 .accordion details[open] {
   padding-bottom: 16px;
 }
+
 .accordion details[open] summary::before {
-  content: url("/icons/chevron_down.svg");
+  content: url("../../icons/chevron_down.svg");
 }
+
 .accordion .code-wrapper, 
 .accordion .code-wrapper div, 
 .accordion .note-wrapper,

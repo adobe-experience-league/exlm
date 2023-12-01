@@ -1,3 +1,7 @@
+.section.marquee-container {
+  padding-top: 0;
+}
+
 div.marquee-wrapper {
   max-width: unset;
   margin-left: calc(-1 * var(--space-token-xs));
@@ -31,7 +35,8 @@ div.marquee-wrapper {
 .marquee-text {
   position: relative;
   z-index: 2;
-  padding: var(--spectrum-spacing-400) var(--space-token-xs);
+  padding: 32px 20px;
+
 }
 
 .marquee-eyebrow {
@@ -79,38 +84,44 @@ div.marquee-wrapper {
   align-items: center;
 }
 
-.marquee-cta>a.button {
+.marquee-cta > a.button {
   font-size: 19px;
-  background-color: var(--background-color);
-  border: 2px solid var(--spectrum-gray-700);
-  color: var(--spectrum-gray-700);
   margin: 0;
   padding: 8px 40px;
   width: min-content;
   min-width: 264px;
+  background-color: var( --non-spectrum-true-blue);
+  border: 2px solid var(--non-spectrum-true-blue);
+  color: var(--background-color);
 }
 
-.marquee-cta>a>span.icon {
+.marquee-cta > a > span.icon {
   width: 14px;
   height: 14px;
   margin-right: 7px;
 }
 
-.marquee-cta>a.button.secondary {
+.marquee-cta > a.button.primary {
   background-color: var( --non-spectrum-true-blue);
-  border: none;
+  border: 2px solid var(--non-spectrum-true-blue);
   color: var(--background-color);
+}
+
+.marquee-cta > a.button.secondary {
+  background-color: var(--background-color);
+  border: 2px solid var(--spectrum-gray-700);
+  color: var(--spectrum-gray-700);
 }
 
 .marquee-background {
   position: absolute;
   top: 0;
   width: 100%;
-  height: auto;
   overflow: hidden;
+  background-color: inherit;
 }
 
-.marquee-background img {
+.marquee-background svg {
   display: none;
 }
 
@@ -124,12 +135,12 @@ div.marquee-wrapper {
   flex-direction: column-reverse;
 }
 
-.marquee.no-subject>.marquee-background {
+.marquee.no-subject > .marquee-background {
   position: unset;
   min-height: unset;
 }
 
-.marquee.no-subject>.marquee-background img {
+.marquee.no-subject > .marquee-background img {
   transform: none;
   object-fit: cover;
   object-position: center;
@@ -144,6 +155,7 @@ div.marquee-wrapper {
 
   .marquee-subject {
     min-height: 350px;
+    background: none !important;
   }
   
   .marquee-subject img {
@@ -153,12 +165,15 @@ div.marquee-wrapper {
 
   .marquee-background {
     min-height: 350px;
+    height: 100%;
     width: 100%;
+    bottom: 0;
+    overflow: hidden;
   }
 
-  .marquee-background img {
-    display: block;
-    transform: translate(-230px, 10px) scale(3);
+  .marquee-background svg {
+    display: inline-block;
+    transform: translate(-320px, 70px) scale(3);
   }
 
   .marquee-text {
@@ -167,9 +182,10 @@ div.marquee-wrapper {
 
   .marquee-cta {
     flex-direction: row;
+    flex-wrap: wrap;
   }
 
-  .marquee-cta>a.button { 
+  .marquee-cta > a.button { 
     padding: 8px 20px;
   }
 
@@ -193,6 +209,7 @@ div.marquee-wrapper {
 
   .marquee-text {
     width: 50%;
+    max-width: 500px;
     margin: auto 0;
   }
 
@@ -200,12 +217,17 @@ div.marquee-wrapper {
     font-size: var(--spectrum-font-size-1100);
   }
 
-  .marquee-cta>a.button { 
-    padding: 12px 22px;
+  .marquee-cta {
+    flex-wrap: nowrap;
+  }
+
+  .marquee-cta > a.button { 
+    min-width: auto;
+    padding: 10px 22px;
   }
   
   .marquee-subject {
-    width: 50%;
+    width: 40%;
     min-width: 400px;
     display: block;
     margin: auto;
@@ -219,22 +241,17 @@ div.marquee-wrapper {
     z-index: 2;
   }
 
-  .marquee-background {
-    bottom: 0;
-  }
-
-  .marquee-background img {
-    object-fit: cover;
-    height: 100%;
-    width: 100%;
+  .marquee-background svg {
     transform: none;
+    min-width: 105%;
+    min-height: 100%;
   }
 
   .marquee.no-subject {
     display: block;
   }
 
-  .marquee.no-subject>.marquee-background {
+  .marquee.no-subject > .marquee-background {
     position: absolute;
     min-height: 100%;
   }

@@ -1,3 +1,4 @@
 helix-importer-ui
 scripts/prism.js
 scripts/prism-grammars/**
+scripts/universal-editor-embedded.js

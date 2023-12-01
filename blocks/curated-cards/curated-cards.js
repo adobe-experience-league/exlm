@@ -2,7 +2,8 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, loadIms } from '../../scripts/scripts.js';
+import { loadJWT, isJWTTokenAvailable } from '../../scripts/auth/jwt.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -32,15 +33,31 @@ export default async function decorate(block) {
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
-  const params = {
-    contentType,
-    noOfResults,
-  };
-  const browseCards = new BrowseCardsDelegate(params);
-  const browseCardsContent = browseCards.fetchCardData();
 
-  browseCardsContent
-    .then((data) => {
+  try {
+    let adobeIMS = {
+      isSignedInUser: () => false,
+    };
+    try {
+      const ims = await loadIms();
+      adobeIMS = ims.adobeIMS;
+    } catch {
+      // eslint-disable-next-line no-console
+      console.warn('Adobe IMS not available.');
+    }
+    const isSignedIn = adobeIMS?.isSignedInUser();
+    if (isSignedIn && !isJWTTokenAvailable()) {
+      await loadJWT();
+    }
+
+    const params = {
+      contentType,
+      noOfResults,
+    };
+    const browseCards = new BrowseCardsDelegate(params);
+    const browseCardsContent = browseCards.fetchCardData();
+
+    browseCardsContent.then((data) => {
       if (data?.length) {
         // Creating content div
         const contentDiv = document.createElement('div');
@@ -57,8 +74,9 @@ export default async function decorate(block) {
       }
 
       decorateIcons(block);
-    })
-    .catch(() => {
-      // console.error('Error fetching data:', error);
     });
+  } catch {
+    // eslint-disable-next-line no-console
+    console.warn('Adobe IMS / JWT Token not available.');
+  }
 }
