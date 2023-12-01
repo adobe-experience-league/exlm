@@ -1,6 +1,40 @@
 import { htmlToElement, loadIms } from '../scripts.js';
 import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
 import SearchDelegate from './search-delegate.js';
+import { searchUrl } from '../urls.js';
+
+// Extracts the language code from the provided URL string
+const extractLanguageCodeFromURL = (urlString) => {
+  const url = new URL(urlString);
+  const pathParts = url.pathname.split('/');
+  const globalIndex = pathParts.indexOf('global');
+  const languageCode = globalIndex !== -1 && globalIndex + 1 < pathParts.length ? pathParts[globalIndex + 1] : 'en';
+  return languageCode;
+};
+
+// Redirects to the search page based on the provided search input and filters
+const redirectToSearchPage = (searchInput, filters) => {
+  const languageCode = extractLanguageCodeFromURL(window.location.href);
+  const baseTargetUrl = searchUrl;
+  let targetUrlWithLanguage = `${baseTargetUrl}?lang=${languageCode}`;
+
+  if (searchInput) {
+    const trimmedSearchInput = encodeURIComponent(searchInput.trim());
+    const filterValue = filters && filters.toLowerCase() === 'all' ? '' : filters;
+
+    if (trimmedSearchInput === '') {
+      targetUrlWithLanguage += `&f:@el_contenttype=${encodeURIComponent(filterValue ? `[${filterValue}]` : '[]')}`;
+    } else {
+      targetUrlWithLanguage += `#q=${trimmedSearchInput}`;
+
+      if (filterValue) {
+        targetUrlWithLanguage += `&f:@el_contenttype=${encodeURIComponent(`[${filterValue}]`)}`;
+      }
+    }
+  }
+
+  window.location.href = targetUrlWithLanguage;
+};
 
 export default class Search {
   constructor({ searchBlock }) {
@@ -55,6 +89,19 @@ export default class Search {
   }
 
   setupAutoCompleteEvents() {
+    // Redirects the Search Icon to Required Search Page with Params
+    const searchContainer = this.searchBlock.querySelector('.search-full .search-container');
+    if (searchContainer) {
+      const iconSearchElement = searchContainer.querySelector('.icon-search');
+      if (iconSearchElement) {
+        iconSearchElement.addEventListener('click', () => {
+          const searchInputValue = this.searchInput.value.trim();
+          const filterValue = this.searchPickerLabelEl.textContent;
+          redirectToSearchPage(searchInputValue, filterValue);
+        });
+      }
+    }
+
     const searchButton = this.searchBlock.querySelector('.search-picker-button');
     if (searchButton && this.searchPickerPopover) {
       searchButton.addEventListener('click', () => {
@@ -93,6 +140,7 @@ export default class Search {
       this.searchInput.addEventListener('blur', () => {
         this.searchInput.removeEventListener('keydown', this.searchKeydown);
       });
+      this.searchInput.addEventListener('keydown', (e) => this.handleEnterKey(e));
     }
 
     if (this.clearSearchIcon) {
@@ -105,11 +153,23 @@ export default class Search {
       });
     }
 
+    // Redirects the Search Icon to Required Search Page with Params
     const searchIcon = this.searchBlock.querySelector('.search-icon');
     if (searchIcon) {
       searchIcon.addEventListener('click', () => {
-        // TODO :: Add route navigation
+        const searchInputValue = this.searchInput.value.trim();
+        const filterValue = this.searchPickerLabelEl.textContent;
+        redirectToSearchPage(searchInputValue, filterValue);
       });
+    }
+  }
+
+  // Redirects to Required Search Page with Params on Click on Enter Key
+  handleEnterKey(e) {
+    if (e.key === 'Enter') {
+      const searchInputValue = this.searchInput.value.trim();
+      const filterValue = this.searchPickerLabelEl.textContent;
+      redirectToSearchPage(searchInputValue, filterValue);
     }
   }
 
@@ -257,6 +317,7 @@ export default class Search {
     }
   }
 
+  // Redirects to Suggestions to quired Search Page with Params
   handleSearchSuggestion(e) {
     const suggestion = e.target?.textContent || '';
     this.searchInput.value = suggestion;
@@ -264,8 +325,7 @@ export default class Search {
       this.clearSearchIcon.classList.add('search-icon-show');
     }
     this.hideSearchSuggestions(e, true);
-    console.log('****** selected suggestion:', suggestion);
-    // TODO :: Add route navigation
+    redirectToSearchPage(suggestion, this.searchPickerLabelEl.textContent);
   }
 
   setSelectedSearchOption(option) {
