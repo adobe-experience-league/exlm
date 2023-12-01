@@ -1,10 +1,12 @@
-import { JWT } from './session-keys.js';
+import { COVEO_TOKEN, JWT } from './session-keys.js';
 
 export function signIn() {
-  window.adobeIMS?.signIn(); // eslint-disable-line
+  sessionStorage.removeItem(COVEO_TOKEN);
+  window.adobeIMS?.signIn();
 }
 
 export function signOut() {
   sessionStorage.removeItem(JWT);
-  window.adobeIMS?.signOut(); // eslint-disable-line
+  sessionStorage.removeItem(COVEO_TOKEN);
+  window.adobeIMS?.signOut();
 }
