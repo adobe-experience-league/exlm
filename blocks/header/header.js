@@ -52,7 +52,8 @@ const getCell = (block, row, cell) => block.querySelector(`:scope > div:nth-chil
  */
 function htmlToElement(html) {
   const template = document.createElement('template');
-  const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
+  // Never return a text node of whitespace as the result
+  const trimmedHtml = html.trim();
   template.innerHTML = trimmedHtml;
   return template.content.firstElementChild;
 }
@@ -280,7 +281,9 @@ const searchDecorator = async (searchBlock) => {
       <div class="search-full">
         <div class="search-container">
           <span title="Search" class="icon icon-search"></span>
-          <input autocomplete="off" class="search-input" type="text" title="Insert a query. Press enter to send" role="combobox" placeholder="${searchPlaceholder.textContent}">
+          <input autocomplete="off" class="search-input" type="text" title="Insert a query. Press enter to send" role="combobox" placeholder="${
+            searchPlaceholder.textContent
+          }">
           <span title="Clear" class="icon icon-clear search-clear-icon"></span>
           <div class="search-suggestions-popover">
             <ul role="listbox">
@@ -288,22 +291,32 @@ const searchDecorator = async (searchBlock) => {
           </div>
         </div>
         <button type="button" class="search-picker-button" aria-haspopup="true" aria-controls="search-picker-popover">
-          <span class="search-picker-label">${options[0] || ""}</span>
+          <span class="search-picker-label">${options[0] || ''}</span>
         </button>
         <div class="search-picker-popover" id="search-picker-popover">
           <ul role="listbox">
-            ${options.map((option, index) => `<li tabindex="0" role="option" class="search-picker-label">${index === 0 ? `<span class="icon icon-checkmark"></span> <span>${option}</span>` : `<span>${option}</span>` }</li>`).join('')}
+            ${options
+              .map(
+                (option, index) =>
+                  `<li tabindex="0" role="option" class="search-picker-label">${
+                    index === 0
+                      ? `<span class="icon icon-checkmark"></span> <span>${option}</span>`
+                      : `<span>${option}</span>`
+                  }</li>`,
+              )
+              .join('')}
           </ul>
         </div>
       <div>
     </div>
-  `);
+  `,
+  );
   searchBlock.append(searchWrapper);
   await decorateIcons(searchBlock);
 
   const searchItem = new Search({ searchBlock });
   searchItem.configureAutoComplete({
-    searchOptions: options
+    searchOptions: options,
   });
   return searchBlock;
 };
