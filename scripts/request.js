@@ -81,7 +81,7 @@ export async function request(uri, options = { method: 'GET', headers: {}, body:
     }
   }
 
-  if (options.params && Reflect.ownKeys(options.params).length) {
+  if (options.params) {
     url.search = new URLSearchParams(options.params).toString();
   }
 

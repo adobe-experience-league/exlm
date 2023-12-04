@@ -53,9 +53,9 @@ export function merge(a = {}, b = {}) {
   let result = clone(a);
 
   // eslint-disable-next-line
-  for (const key of Reflect.ownKeys(b)) {
+  Object.keys(b).forEach((key) => {
     result[key] = Object.assign(clone(result[key] || {}), b[key]);
-  }
+  });
 }
 
 // eslint-disable-next-line
@@ -147,7 +147,7 @@ export async function profile(reuse = false, cstream = true, explicit = false) {
   }
 
   if (result !== null) {
-    if (Reflect.ownKeys(meta).length === 0) {
+    if (!meta) {
       meta = await profileAttributes();
     }
 
@@ -168,11 +168,12 @@ export async function profile(reuse = false, cstream = true, explicit = false) {
 export async function updateProfile(key, val, replace = false) {
   const data = await profile(false, false, true);
 
-  if (Reflect.ownKeys(meta).length === 0) {
+  if (!meta) {
     meta = await profileAttributes();
   }
 
-  Reflect.ownKeys(data).forEach((i) => {
+  // TODO - explore meta.write - writes does not seem to be an object anywhere
+  Object.keys(data).forEach((i) => {
     if (meta.write.includes(i) === false) {
       delete data[i];
     }
