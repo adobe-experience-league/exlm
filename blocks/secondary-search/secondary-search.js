@@ -1,4 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { redirectToSearchPage } from '../../scripts/search/search.js';
 
 export default function decorate(block) {
   const heading = block.children[0].textContent.trim();
@@ -9,6 +10,7 @@ export default function decorate(block) {
     <form role="search">
         <button title="Search Icon" type="submit"><span class="icon icon-search"></button>
         <input
+        autocomplete="off"
         type="search"
         role="searchbox"
         id="secondary-search"
@@ -26,14 +28,14 @@ export default function decorate(block) {
   searchIcon?.addEventListener('click', (e) => {
     e.preventDefault();
     const SearchInputValue = searchInput?.value.trim();
-    console.log(SearchInputValue);
+    redirectToSearchPage(SearchInputValue);
   });
 
   searchInput?.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       const SearchInputValue = searchInput?.value.trim();
-      console.log(SearchInputValue);
+      redirectToSearchPage(SearchInputValue);
     }
   });
 }
