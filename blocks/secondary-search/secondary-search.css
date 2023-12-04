@@ -19,13 +19,13 @@
 
 .secondary-search form {
     display: flex;
-    border: 1px solid black;
+    border: 1px solid var(--spectrum-gray-900);
     border-radius: 50px;
     margin-top: 24px;
     padding: 11px 16px;
     width: 100%;
     max-width: 540px;
-    background-color: #fff;
+    background-color: var(--background-color);
 }
 
 .secondary-search input {
@@ -54,7 +54,7 @@
 
 .secondary-search input::placeholder {
     font-style: italic;
-    color: #E6E6E6;
+    color: var(--spectrum-gray-200);
 } 
 
 .secondary-search button {
