@@ -3,3 +3,4 @@ blocks/**/**.css
 styles/**/**.css
 scripts/prism-grammars/**
 scripts/**/**.css
+scripts/universal-editor-embedded.js
