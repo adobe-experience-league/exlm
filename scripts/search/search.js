@@ -267,7 +267,6 @@ export default class Search {
     const searchText = e.target.value;
     const textIsEmptied = this.searchQuery.length && searchText.length === 0;
     this.searchQuery = e.target.value;
-    console.log('***text', this.searchQuery);
     const containsText = this.searchQuery.length > 0;
 
     if (!containsText) {
