@@ -1,0 +1,31 @@
+.toc ul {
+    list-style: none;
+    margin-left: 0;
+}
+
+.toc ul li {
+    justify-content: start;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: var(--spectrum-sidenav-item-height, var(--spectrum-alias-single-line-height));
+    padding: var(--spectrum-sidenav-item-padding-y) var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150)) var(--spectrum-sidenav-item-padding-y) var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150));
+    margin: 4px 0;
+}
+
+.toc ul li ul {
+    margin-left: 12px;
+}
+
+.toc ul li a {
+    font-size: var(--spectrum-font-size-100);
+    line-height: 21px;
+    display: inline-flex;
+    min-height: 32px;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    border-radius: 4px;
+    padding: 5px 12px;
+    color: var(--non-spectrum-grey-updated, var(--spectrum-alias-text-color-hover));
+    padding-left: 24px;
+}
