@@ -288,7 +288,13 @@ function handleClosingFeedbackBar(el) {
   el.querySelector('.cta .dismiss').addEventListener('click', () => hideFeedbackBar());
 }
 
+function showFeedbackBar() {
+  return getMetadata('id');
+}
+
 export default async function loadFeedbackUi() {
+  if (!showFeedbackBar()) return;
+
   loadCSS(`${window.hlx.codeBasePath}/scripts/feedback/feedback.css`);
 
   let feedbackHtml = convertTextToHTML(await feedbackFragment);
