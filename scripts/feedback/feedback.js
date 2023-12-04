@@ -187,7 +187,7 @@ function decorateFeedback(el) {
     class: 'feedback-ui',
     'aria-expanded': 'false',
     'aria-hidden': 'false',
-    'aria-role': 'dialog',
+    role: 'dialog',
   });
 
   const qualtricsEl = el.querySelector('.qualtrics-feedback');
