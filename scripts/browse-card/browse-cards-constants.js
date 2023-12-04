@@ -17,11 +17,11 @@ const CONTENT_TYPES = Object.freeze({
     LABEL: 'Community',
   },
   LIVE_EVENTS: {
-    MAPPING_KEY: 'live_events',
+    MAPPING_KEY: 'live-events',
     LABEL: 'Live Events',
   },
   INSTRUCTOR_LED_TRANING: {
-    MAPPING_KEY: 'instructor_led_training',
+    MAPPING_KEY: 'instructor-led-training',
     LABEL: 'Instructor Led Training',
   },
   CERTIFICATION: {
