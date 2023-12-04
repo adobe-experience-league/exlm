@@ -184,10 +184,11 @@ function decorateFeedback(el) {
   const leftEl = createTag('div', { class: 'left' });
   const rightEl = createTag('div', { class: 'right' });
   const container = createTag('div', {
-    class: 'feedback-ui',
-    'aria-expanded': 'false',
-    'aria-hidden': 'false',
     role: 'dialog',
+    class: 'feedback-ui',
+    'aria-label': 'feedback bar',
+    'aria-hidden': 'false',
+    'aria-expanded': 'false',
   });
 
   const qualtricsEl = el.querySelector('.qualtrics-feedback');
