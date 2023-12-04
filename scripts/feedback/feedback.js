@@ -286,13 +286,11 @@ export default async function loadFeedbackUi() {
   loadCSS(`${window.hlx.codeBasePath}/scripts/feedback/feedback.css`);
 
   let feedbackHtml = convertTextToHTML(await feedbackFragment);
-  // console.log(feedbackHtml);
   feedbackHtml = htmlToElement(feedbackHtml);
 
   const body = document.querySelector('body');
   const fb = decorateFeedback(feedbackHtml);
   decorateIcons(fb);
-  // console.log(fb);
   body.append(fb);
   handleFeedbackToggle(fb);
   handleClosingFeedbackBar(fb);
