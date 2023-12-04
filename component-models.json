@@ -19,38 +19,27 @@
         "description": "A descriptive text of the image will be shown as tooltip."
       },
       {
-        "component": "multiselect",
+        "component": "select",
         "name": "classes",
-        "label": "Style",
+        "label": "Theme / Order",
         "valueType": "string",
-        "required": true,
-        "maxSize": 2,
+        "multi": true,
         "options": [
           {
-            "name": "Theme",
-            "children": [
-              {
-                "name": "Light",
-                "value": "light"
-              },
-              {
-                "name": "Dark",
-                "value": "dark"
-              }
-            ]
+            "name": "Light Theme",
+            "value": "light"
           },
           {
-            "name": "Alignment",
-            "children": [
-              {
-                "name": "Left",
-                "value": "left"
-              },
-              {
-                "name": "Right",
-                "value": "right"
-              }
-            ]
+            "name": "Dark Theme",
+            "value": "dark"
+          },
+          {
+            "name": "Text left",
+            "value": "left"
+          },
+          {
+            "name": "Text right",
+            "value": "right"
           }
         ]
       },
