@@ -1,7 +1,7 @@
 @charset "UTF-8";
 :root {
   --header-padding-x: 16px;
-  --search-display: none;
+  --search-display: inline-flex;
   --sign-up-display: none;
   --sign-in-display: flex;
   --language-selector-display: none;
@@ -39,6 +39,7 @@
 header {
   position: relative;
   box-sizing: content-box;
+  z-index: 1;
 }
 @media (min-width: 1024px) {
   header {
@@ -54,6 +55,8 @@ header {
   position: relative;
   max-width: 1440px;
   background-color: #fff;
+  container-name: headersection;
+  container-type: inline-size;
 }
 @media (min-width: 1024px) {
   .header {
@@ -573,12 +576,19 @@ header {
   padding: var(--nav-root-item-padding-x);
   container-type: inline-size;
   container-name: searchs;
+  z-index: 1;
 }
 .header .search-wrapper {
   display: flex;
   flex-grow: 1;
   max-width: 320px;
   justify-content: flex-end;
+}
+.header .search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
 }
 @container searchs (max-width: 200px) {
   .header .search-full {
@@ -596,6 +606,13 @@ header {
     margin: 0;
   }
 }
+@container headersection (max-width: 1024px) {
+  .header .search {
+    position: absolute;
+    right: 80px;
+    top: 20px;
+  }
+}
 .header .search-short {
   display: none;
 }
@@ -611,36 +628,63 @@ header {
 }
 .header .search-full .icon {
   position: absolute;
-  left: 8px;
   height: 100%;
   z-index: 1;
   display: flex;
   align-items: center;
+  right: 0;
+  cursor: pointer;
 }
 .header .search-full .icon svg {
   width: 14px;
   height: 14px;
+}
+.header .search-full .icon.icon-search {
+  left: 8px;
+}
+.header .search-full .icon.search-clear-icon {
+  display: none;
+}
+.header .search-full .icon.search-clear-icon.search-icon-show {
+  display: flex;
+  width: 6px;
+  height: 6px;
+  padding: 4px;
+  background: var(--non-spectrum-silver-mist);
+  border-radius: 100%;
+  right: 4px;
+}
+.header .search-full .icon.search-clear-icon.search-icon-show .fill {
+  fill: var(--background-color);
 }
 .header .search-input {
   border: 1px solid var(--spectrum-gray-400);
   border-radius: 0;
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
-  color: var(--non-spectrum-input-text);
   outline: none;
-  /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-  font: italic normal normal 12px/15px var(--nav-font);
-  height: 30px;
-  padding: 7px 5px 9px 28px;
+  font-size: var(--spectrum-font-size-100);
+  font-family: var(--body-font-family);
+  color: var(--non-spectrum-graphite-gray);
+  line-height: 15px;
+  height: 32px;
+  padding: 7px 22px 9px 28px;
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.header .search-input::placeholder {
+  font-style: italic;
+  font-size: var(--spectrum-font-size-75);
+  letter-spacing: 0.14px;
+  color: var(--spectrum-gray-600);
+  opacity: 0.5;
+  font-weight: 100;
+}
 .header .search-picker-button {
   flex-grow: 1;
-  min-width: 100px;
-  padding: 7px;
-  padding-right: 25px;
+  min-width: 115px;
+  padding: 7px 25px 7px 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -655,8 +699,8 @@ header {
   color: var(--spectrum-gray-700);
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
-  height: 30px;
-  line-height: 17px;
+  height: 32px;
+  line-height: 15px;
   text-align: right;
 }
 .header .search-picker-button::after {
@@ -674,17 +718,61 @@ header {
   transition: transform 0.1s ease;
   content: "";
   margin-top: -5px;
-  right: 10px;
+  right: 16px;
+  color: var(--non-spectrum-grey-updated);
 }
 .header .search-picker-button[aria-expanded=true]::after {
   transform: rotateZ(-135deg);
+}
+.header .search-picker-button.search-picker-open::after {
+  transform: rotateZ(225deg);
 }
 .header .search-picker-label {
   min-width: max-content;
   display: block;
 }
-.header .search-picker-popover {
-  display: none;
+.header .search-picker-popover, .header .search-suggestions-popover {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  top: 50px;
+  background-color: var(--background-color);
+  box-shadow: 0 8px 8px rgba(10, 10, 10, 0.1);
+  border: 1px solid var(--spectrum-gray-400);
+  padding: 8px 0;
+  border-radius: 6px;
+  visibility: hidden;
+  opacity: 0;
+  transition: transform 130ms ease-in-out, opacity 130ms ease-in-out, visibility 0ms linear 130ms;
+  pointer-events: none;
+  touch-action: none;
+}
+.header .search-picker-popover.search-picker-popover-visible, .header .search-picker-popover.search-suggestions-popover-visible, .header .search-suggestions-popover.search-picker-popover-visible, .header .search-suggestions-popover.search-suggestions-popover-visible {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  touch-action: auto;
+}
+.header .search-picker-popover ul {
+  margin: 0;
+  padding: 0;
+}
+.header .search-suggestions-popover {
+  left: 0;
+  top: 32px;
+}
+.header .search-suggestions-popover ul {
+  margin: 0;
+  list-style: none;
+}
+.header .search-suggestions-popover li.search-picker-label {
+  padding: 3px 12px;
+  font-size: var(--spectrum-font-size-100);
+  line-height: 18px;
+  color: var(--non-spectrum-charcoal-gray);
+}
+.header .search-suggestions-popover li.search-picker-label .search-highlight-text {
+  color: var(--text-color);
 }
 .header .language-selector {
   grid-area: language;
@@ -804,4 +892,34 @@ header {
   .header .profile-menu.profile-menu-expanded {
     width: fit-content;
   }
+}
+.header .search-picker-popover .search-picker-label,
+.header .search-suggestions-popover .search-picker-label {
+  margin: 0;
+  padding: 7px 12px 7px 32px;
+  position: relative;
+  color: var(--spectrum-gray-800);
+  font-size: var(--spectrum-font-size-100);
+  line-height: var(--exlm-line-height-h6);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: auto;
+}
+.header .search-picker-popover .search-picker-label:hover,
+.header .search-suggestions-popover .search-picker-label:hover {
+  background: rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+}
+.header .search-picker-popover .search-picker-label .icon,
+.header .search-suggestions-popover .search-picker-label .icon {
+  position: absolute;
+  height: 28px;
+  width: 28px;
+  left: 8px;
+  top: 4px;
+}
+.header .search-picker-popover .search-picker-label .icon path,
+.header .search-suggestions-popover .search-picker-label .icon path {
+  fill: var(--non-spectrum-azure-blue);
 }
