@@ -22,7 +22,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
    * @returns {Object} The BrowseCards data model.
    */
   const mapResultToCardsDataModel = (result) => {
-    const contentType = CONTENT_TYPES.LIVE_EVENTS;
+    const contentType = CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY;
     const { productFocus, eventTitle, eventDescription, startTime, endTime, cta } = result || {};
     const product = Array.isArray(productFocus) ? productFocus[0] : '';
     const { ctaLabel, ctaLink } = cta || {};
@@ -30,6 +30,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
     return {
       ...browseCardDataModel,
       contentType,
+      badgeTitle: CONTENT_TYPES.LIVE_EVENTS.LABEL,
       product,
       title: eventTitle || '',
       description: eventDescription || '',
@@ -39,7 +40,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
       },
       copyLink: ctaLink || '',
       viewLink: ctaLink || '',
-      viewLinkText: ctaLabel ? ctaLabel : placeholders[`viewLink${convertToTitleCase(contentType)}`],
+      viewLinkText: ctaLabel || placeholders[`viewLink${convertToTitleCase(contentType)}`],
     };
   };
 

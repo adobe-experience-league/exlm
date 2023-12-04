@@ -101,7 +101,7 @@ const buildCardContent = (card, model) => {
   const cardMeta = document.createElement('div');
   cardMeta.classList.add('browse-card-meta-info');
 
-  if (contentType === CONTENT_TYPES.COURSE.toLowerCase()) {
+  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
     buildTagsContent(cardMeta, tags);
   }
   if (isDesktopResolution) {
@@ -111,7 +111,7 @@ const buildCardContent = (card, model) => {
     cardContent.insertBefore(cardMeta, titleEl);
   }
 
-  if (contentType === CONTENT_TYPES.COMMUNITY.toLowerCase()) {
+  if (contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY.toLowerCase()) {
     const contributorInfo = document.createElement('div');
     contributorInfo.classList.add('browse-card-contributor-info');
     const contributorElement = generateContributorsMarkup(contributor);
@@ -120,7 +120,7 @@ const buildCardContent = (card, model) => {
     cardContent.insertBefore(contributorInfo, cardMeta);
   }
 
-  if (contentType === CONTENT_TYPES.LIVE_EVENTS.toLowerCase()) {
+  if (contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY.toLowerCase()) {
     buildEventContent({ event, cardContent, card });
   }
   const cardOptions = document.createElement('div');
@@ -154,7 +154,7 @@ const setupCopyAction = (wrapper) => {
 
 export default async function buildCard(element, model) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
-  const { thumbnail, product, title, contentType } = model;
+  const { thumbnail, product, title, contentType, badgeTitle } = model;
   const type = contentType?.toLowerCase();
   const card = createTag(
     'div',
@@ -171,7 +171,7 @@ export default async function buildCard(element, model) {
   }
 
   const bannerElement = createTag('p', { class: 'browse-card-banner' });
-  bannerElement.innerText = contentType;
+  bannerElement.innerText = badgeTitle;
   cardFigure.appendChild(bannerElement);
 
   if (product) {

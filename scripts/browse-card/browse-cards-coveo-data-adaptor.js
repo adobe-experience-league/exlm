@@ -25,7 +25,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
   const createTags = (result, contentType) => {
     const tags = [];
 
-    if (contentType.toUpperCase() === CONTENT_TYPES.COURSE) {
+    if (contentType.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
       tags.push({ icon: 'user', text: '' });
       tags.push({ icon: 'book', text: `0 ${placeholders.lesson}` });
     } else {
@@ -53,6 +53,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     return {
       ...browseCardDataModel,
       contentType,
+      badgeTitle: CONTENT_TYPES[contentType.toUpperCase()]?.LABEL,
       product,
       title: title || '',
       description: excerpt || '',

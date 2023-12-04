@@ -49,7 +49,7 @@ const BrowseCardsDelegate = (() => {
       };
       const coveoService = new CoveoDataService(dataSource);
       const cardData = await coveoService.fetchDataFromSource();
-      if (cardData) {
+      if (cardData?.length) {
         resolve(BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData));
       } else {
         reject(new Error('An Error Occured'));
@@ -79,15 +79,15 @@ const BrowseCardsDelegate = (() => {
    */
   const getServiceForContentType = (contentType) => {
     const contentTypesServices = {
-      [CONTENT_TYPES.COURSE]: handleCoveoService,
-      [CONTENT_TYPES.TUTORIAL]: handleCoveoService,
-      [CONTENT_TYPES.ON_DEMAND_EVENT]: handleCoveoService,
-      [CONTENT_TYPES.CERTIFICATION]: handleCoveoService,
-      [CONTENT_TYPES.TROUBLESHOOTING]: handleCoveoService,
-      [CONTENT_TYPES.DOCUMENTATION]: handleCoveoService,
-      [CONTENT_TYPES.LIVE_EVENTS]: handleLiveEventsService,
-      [CONTENT_TYPES.COMMUNITY]: null, // placeholder for handleKhorosService,
-      [CONTENT_TYPES.INSTRUCTOR_LED_TRANING]: null, // placeholder for handleADLSCatalogService,
+      [CONTENT_TYPES.COURSE.MAPPING_KEY]: handleCoveoService,
+      [CONTENT_TYPES.TUTORIAL.MAPPING_KEY]: handleCoveoService,
+      [CONTENT_TYPES.EVENT.MAPPING_KEY]: handleCoveoService,
+      [CONTENT_TYPES.CERTIFICATION.MAPPING_KEY]: handleCoveoService,
+      [CONTENT_TYPES.TROUBLESHOOTING.MAPPING_KEY]: handleCoveoService,
+      [CONTENT_TYPES.DOCUMENTATION.MAPPING_KEY]: handleCoveoService,
+      [CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY]: handleLiveEventsService,
+      [CONTENT_TYPES.COMMUNITY.MAPPING_KEY]: null, // placeholder for handleKhorosService,
+      [CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY]: null, // placeholder for handleADLSCatalogService,
     };
 
     return contentTypesServices[contentType];
@@ -100,7 +100,7 @@ const BrowseCardsDelegate = (() => {
   const fetchCardData = async (paramObj) => {
     param = paramObj;
     const { contentType } = paramObj;
-    const service = getServiceForContentType(contentType?.toUpperCase());
+    const service = getServiceForContentType(contentType?.toLowerCase());
     if (service) {
       return new Promise((resolve) => {
         resolve(service());
