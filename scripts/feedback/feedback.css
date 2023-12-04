@@ -43,15 +43,23 @@
   font-size: 20px;
 }
 
-.feedback-ui .left .icon {
+.feedback-ui .left .icon,
+.feedback-ui .is-desktop.icon-chevron {
   width: 17px;
   height: 17px;
   cursor: pointer;
 }
 
-.feedback-ui .left .icon-chevron {
+.feedback-ui .left .icon-chevron,
+.feedback-ui .right .icon-chevron {
   margin-right: 10px;
   padding: 5px 6px 1px;
+  vertical-align: bottom;
+}
+
+.feedback-ui .right .icon-chevron {
+  display: none;
+  transform: translateY(-1px);
 }
 
 .feedback-ui .like-btns {
@@ -204,6 +212,10 @@
   transform: translateY(-3px) rotate(180deg);
 }
 
+.feedback-ui[aria-expanded='true'] .right .icon-chevron {
+  transform: translateY(1px) rotate(180deg);
+}
+
 .feedback-ui[aria-hidden='true'] {
   display: none;
 }
@@ -264,7 +276,7 @@
   }
 
   .feedback-ui .opened-controls > span {
-    display: block;
+    display: inline-block;
     padding-left: 20px;
   }
 
@@ -297,10 +309,6 @@
 
 /* Just following https://experienceleague.adobe.com/docs/analytics/analyze/home.html */
 @media (min-width: 1024px) {
-  .feedback-ui {
-    max-width:960px
-  }
-
   .feedback-ui .left {
     padding-left: 60px;
     padding-top: 9px;
@@ -311,17 +319,19 @@
   }
 
   .feedback-ui .left .icon-chevron {
-    right: 110px;
+    display: none;
+  }
+
+  .feedback-ui .right .icon-chevron {
+    display: inline-block;
+    position: absolute;
   }
 }
 
-@media (min-width: 1215px) {
+@media (min-width: 1301px) {
   .feedback-ui {
-    max-width:1152px
-  }
-
-  .feedback-ui .left .icon-chevron {
-    right: 177px;
+    width: 60%;
+    max-width: 850px;
   }
 }
 
@@ -329,12 +339,4 @@
   .feedback-ui {
     max-width:1344px
   }
-  
-  .feedback-ui .left .icon-chevron {
-    right: 243px;
-  }
 }
-
-/* TODO: I have skipped font related and line-height and 
-a few other styling from original styles. Please incorporate them
-before raising PR. */

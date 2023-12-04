@@ -160,9 +160,11 @@ function decorateCloseBtnEl() {
 function decorateOpenedCtrl(openedControl) {
   const detailedFb = createTag('span');
   const text = openedControl.querySelector('div:nth-child(1) > div').textContent.trim();
+  const desktopChevronIcon = htmlToElement('<span class="icon is-desktop icon-chevron"></span>');
   detailedFb.textContent = text;
   openedControl.innerHTML = '';
   openedControl.append(detailedFb);
+  openedControl.append(desktopChevronIcon);
 }
 
 function hideFeedbackBar(state = true) {
@@ -213,13 +215,15 @@ function decorateFeedback(el) {
 }
 
 function handleFeedbackToggle(el) {
-  const chevron = el.querySelector('.icon-chevron');
+  const chevrons = el.querySelectorAll('.icon-chevron');
 
-  chevron.addEventListener('click', () => {
-    const isExpanded = el.getAttribute('aria-expanded') === 'true';
+  chevrons.forEach((chevron) => {
+    chevron.addEventListener('click', () => {
+      const isExpanded = el.getAttribute('aria-expanded') === 'true';
 
-    if (isExpanded) toggleFeedbackBar(el, false);
-    else toggleFeedbackBar(el, true);
+      if (isExpanded) toggleFeedbackBar(el, false);
+      else toggleFeedbackBar(el, true);
+    });
   });
 }
 
