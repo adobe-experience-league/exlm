@@ -7,6 +7,7 @@ export default function decorate(block) {
   const lastUpdateISO = new Date(lastUpdateDate).toISOString();
   const date = new Date(lastUpdateISO);
   const formatOptions = { month: 'long', day: 'numeric', year: 'numeric' };
+  // FIXME: Revisit this implementation and add support for multiple locales
   const formattedDate = date.toLocaleDateString('en-US', formatOptions);
   lastUpdateElement.innerHTML = `Last update: ${formattedDate}`;
 }
