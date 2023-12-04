@@ -25,7 +25,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
   const createTags = (result, contentType) => {
     const tags = [];
 
-    if (contentType.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
+    if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
       tags.push({ icon: 'user', text: '' });
       tags.push({ icon: 'book', text: `0 ${placeholders.lesson}` });
     } else {
@@ -45,7 +45,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     /* eslint-disable-next-line camelcase */
     const { contenttype, el_product } = raw || {};
 
-    const contentType = Array.isArray(contenttype) ? contenttype[0] : contenttype;
+    const contentType = Array.isArray(contenttype) ? contenttype[0]?.toLowerCase() : contenttype?.toLowerCase();
     /* eslint-disable-next-line camelcase */
     const product = Array.isArray(el_product) ? el_product[0] : el_product;
     const tags = createTags(result, contentType, placeholders);

@@ -101,7 +101,7 @@ const buildCardContent = (card, model) => {
   const cardMeta = document.createElement('div');
   cardMeta.classList.add('browse-card-meta-info');
 
-  if (contentType.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
+  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
     buildTagsContent(cardMeta, tags);
   }
   if (isDesktopResolution) {
@@ -111,7 +111,7 @@ const buildCardContent = (card, model) => {
     cardContent.insertBefore(cardMeta, titleEl);
   }
 
-  if (contentType.toLowerCase() === CONTENT_TYPES.COMMUNITY.MAPPING_KEY.toLowerCase()) {
+  if (contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
     const contributorInfo = document.createElement('div');
     contributorInfo.classList.add('browse-card-contributor-info');
     const contributorElement = generateContributorsMarkup(contributor);
@@ -120,7 +120,7 @@ const buildCardContent = (card, model) => {
     cardContent.insertBefore(contributorInfo, cardMeta);
   }
 
-  if (contentType.toLowerCase() === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY.toLowerCase()) {
+  if (contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY) {
     buildEventContent({ event, cardContent, card });
   }
   const cardOptions = document.createElement('div');

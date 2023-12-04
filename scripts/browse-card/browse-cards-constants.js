@@ -25,7 +25,7 @@ const CONTENT_TYPES = Object.freeze({
     LABEL: 'Instructor Led Training',
   },
   CERTIFICATION: {
-    MAPPING_KEY: 'Certification',
+    MAPPING_KEY: 'certification',
     LABEL: 'Certification',
   },
   TROUBLESHOOTING: {
