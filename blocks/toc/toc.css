@@ -16,7 +16,7 @@
     margin-left: 12px;
 }
 
-.toc ul li a {
+.toc ul li a, .toc ul li ul li:last-child{
     font-size: var(--spectrum-font-size-100);
     line-height: 21px;
     display: inline-flex;
