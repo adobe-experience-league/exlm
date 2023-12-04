@@ -147,7 +147,7 @@ export async function profile(reuse = false, cstream = true, explicit = false) {
   }
 
   if (result !== null) {
-    if (!meta) {
+    if (!meta || Object.keys(meta).length === 0) {
       meta = await profileAttributes();
     }
 
@@ -168,7 +168,7 @@ export async function profile(reuse = false, cstream = true, explicit = false) {
 export async function updateProfile(key, val, replace = false) {
   const data = await profile(false, false, true);
 
-  if (!meta) {
+  if (!meta || Object.keys(meta).length === 0) {
     meta = await profileAttributes();
   }
 
