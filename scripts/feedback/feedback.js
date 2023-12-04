@@ -19,14 +19,14 @@ function decorateFirstQuestion(firstQuestion) {
     .textContent.trim();
   const wasThisHelpful = firstQuestion.querySelector('div:nth-child(1) > div:nth-child(1) > h3').textContent.trim();
 
-  const thumbUpButton = document.createElement('button');
+  const thumbUpButton = createTag('button', { 'aria-label': 'thumbs up' });
   thumbUpButton.innerHTML = `
     <span class="icon icon-thumb-up"></span>
     <span class="tooltip">${helpFul}</span>
   `;
   newDiv.appendChild(thumbUpButton);
 
-  const thumbDownButton = document.createElement('button');
+  const thumbDownButton = createTag('button', { 'aria-label': 'thumbs down' });
   thumbDownButton.innerHTML = `
     <span class="icon icon-thumb-down"></span>
     <span class="tooltip">${notHelpFul}</span>
@@ -187,6 +187,7 @@ function decorateFeedback(el) {
     class: 'feedback-ui',
     'aria-expanded': 'false',
     'aria-hidden': 'false',
+    'aria-role': 'dialog',
   });
 
   const qualtricsEl = el.querySelector('.qualtrics-feedback');
