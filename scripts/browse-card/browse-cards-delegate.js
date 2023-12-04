@@ -1,7 +1,9 @@
 import CoveoDataService from '../data-service/coveo/coveo-data-service.js';
+import LiveEventsDataService from '../data-service/live-events-data-service.js';
 import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
+import BrowseCardsLiveEventsAdaptor from './browse-cards-live-events-adaptor.js';
 import CONTENT_TYPES from './browse-cards-constants.js';
-import { coveoSearchResultsUrl } from '../urls.js';
+import { coveoSearchResultsUrl, liveEventsUrl } from '../urls.js';
 
 /**
  * Module that provides a facade for fetching card data based on different content types.
@@ -55,6 +57,22 @@ const BrowseCardsDelegate = (() => {
     });
 
   /**
+   * handleLiveEventsService is a method that handles fetching browse cards content using LiveEventsDataService.
+   * @returns {Promise<Array>} - A promise resolving to an array of browse cards data.
+   */
+  const handleLiveEventsService = () =>
+    /* eslint-disable-next-line no-async-promise-executor */
+    new Promise(async (resolve, reject) => {
+      const liveEventsService = new LiveEventsDataService(liveEventsUrl);
+      const events = await liveEventsService.fetchDataFromSource();
+      if (events?.length) {
+        resolve(BrowseCardsLiveEventsAdaptor.mapResultsToCardsData(events));
+      } else {
+        reject(new Error('An Error Occured'));
+      }
+    });
+
+  /**
    * getServiceForContentType retrieves the action associated with a specific content type.
    * @param {string} contentType - The content type for which to retrieve the action.
    * @returns {Function} - The action associated with the specified content type.
@@ -67,7 +85,7 @@ const BrowseCardsDelegate = (() => {
       [CONTENT_TYPES.CERTIFICATION]: handleCoveoService,
       [CONTENT_TYPES.TROUBLESHOOTING]: handleCoveoService,
       [CONTENT_TYPES.DOCUMENTATION]: handleCoveoService,
-      [CONTENT_TYPES.LIVE_EVENT]: null, // placeholder for handleLiveEventService,
+      [CONTENT_TYPES.LIVE_EVENTS]: handleLiveEventsService,
       [CONTENT_TYPES.COMMUNITY]: null, // placeholder for handleKhorosService,
       [CONTENT_TYPES.INSTRUCTOR_LED_TRANING]: null, // placeholder for handleADLSCatalogService,
     };

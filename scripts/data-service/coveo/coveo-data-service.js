@@ -1,5 +1,5 @@
 // TODO: Add additional methods and headers specific to Coveo Data Service.
-import { COVEO_TOKEN } from '../../auth/session-keys.js';
+import { COVEO_TOKEN } from '../../session-keys.js';
 
 /**
  * CoveoDataService class for fetching data from a Coveo Data Service.
