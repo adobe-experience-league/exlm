@@ -1,6 +1,6 @@
 /* ----- MOBILE / Default ----- */
 
-/* media wrapper complete width inside section */
+/* media wrapper  */
 .section div.media-wrapper {
   margin-bottom: var(--spectrum-spacing-400);
 }
@@ -10,18 +10,21 @@
   height:100%;
   display:flex;
   flex-flow: column nowrap;
+  justify-content: center;
 }
 
 /* the image */
 .media.block > .image {
   order : 0;
-  margin-bottom: var(--spectrum-spacing-400);
+  margin: 0 auto var(--spectrum-spacing-400);
 }
 
 .media.block > .image img {
-  width: auto;
-  height: max-content;
   object-fit: cover;
+  max-height:300px;
+  max-width:400px;
+  width: 400px;
+  height: 300px;
 }
 
 /* the text block (eyebrow, title , descr , ctr) */
@@ -78,28 +81,57 @@
 
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
+  /* media wrapper  */
+  .section div.media-wrapper {
+    margin-bottom: 40px;
+  }
+
   /* the block */
   .media.block {
     flex-flow: row nowrap;
     align-items: center;
+    gap: var(--spectrum-spacing-500);
   }
 
   /* the image */
   .media.block > .image {
-    width:50%;
     margin: 0;
+    max-width: 50%;
   }
 
+  .media.block > .image img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  .media.block > .text {
+    width: 50%;
+  }
+  
   .media.block.left > .image {
     order: 1;
-  }
-
-  /* limit width of text part and set order */
-  .media.block > .text {
-    width:50%;
   }
 
   .media.block.left > .text {
     order: 0;
   }
+
+  /* the cta buttons in mobile view */
+  .media.block .text > .cta > a.button {
+    margin: 0;
+    font-family: var(--body-font-family);
+    font-size: 15px;
+    font-weight: var(--font-weight-700);
+    line-height: 15px;
+    padding: 5px 14px 6px;
+  }
 }
+
+@media (min-width: 768px) {
+  .media.block > .image img {
+    width: 400px;
+    height: 300px;
+  }
+}
+
