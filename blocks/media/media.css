@@ -128,7 +128,7 @@
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 800px) {
   .media.block > .image img {
     width: 400px;
     height: 300px;
