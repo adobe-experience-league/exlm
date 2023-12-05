@@ -1,5 +1,5 @@
 // FIXME: This is a dummy component put up to show case the cards rendered via API
-// import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 
@@ -66,5 +66,6 @@ export default async function decorate(block) {
   //     .catch((err) => {
   //       console.error(err);
   //     });
+  decorateIcons(block);
  });
 }
