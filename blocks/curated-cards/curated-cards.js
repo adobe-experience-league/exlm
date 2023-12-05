@@ -1,7 +1,7 @@
 // FIXME: This is a dummy component put up to show case the cards rendered via API
 // import { decorateIcons } from '../../scripts/lib-franklin.js';
 // import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, loadIms } from '../../scripts/scripts.js';
+import { htmlToElement } from '../../scripts/scripts.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -12,8 +12,8 @@ export default async function decorate(block) {
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
-  const contentType = block.querySelector('div:nth-child(4) > div')?.textContent.trim();
-  const noOfResults = 4;
+  // const contentType = block.querySelector('div:nth-child(4) > div')?.textContent.trim();
+  // const noOfResults = 4;
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -32,12 +32,12 @@ export default async function decorate(block) {
   // Appending header div to the block
   block.appendChild(headerDiv);
 
-  try {
-    await loadIms();
-  } catch {
-    // eslint-disable-next-line no-console
-    console.warn('Adobe IMS not available.');
-  }
+  // try {
+  //   await loadIms();
+  // } catch {
+  //   // eslint-disable-next-line no-console
+  //   console.warn('Adobe IMS not available.');
+  // }
 
   // const param = {
   //   contentType,
