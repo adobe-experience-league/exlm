@@ -60,5 +60,5 @@ export default async function decorate(block) {
       block.appendChild(contentDiv);
       decorateIcons(block);
     }
- });
+  });
 }
