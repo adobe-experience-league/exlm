@@ -2,7 +2,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import { redirectToSearchPage } from '../../scripts/search/search.js';
 
-function redirect(inputElement, event) {
+function redirectTo(inputElement, event) {
   event.preventDefault();
   const SearchInputValue = inputElement?.value.trim();
   redirectToSearchPage(SearchInputValue);
@@ -36,12 +36,13 @@ export default function decorate(block) {
   const searchIcon = block.querySelector('.icon-search');
 
   searchIcon?.addEventListener('click', (e) => {
-    redirect(searchInput, e);
+    redirectTo(searchInput, e);
   });
 
   searchInput?.addEventListener('keydown', (e) => {
+    if (e.repeat) return;
     if (e.key === 'Enter') {
-      redirect(searchInput, e);
+      redirectTo(searchInput, e);
     }
   });
 }
