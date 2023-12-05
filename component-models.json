@@ -705,13 +705,6 @@
         "description": "The media image"
       },
       {
-        "component": "reference",
-        "valueType": "string",
-        "name": "fileReferenceSecond",
-        "label": "Image",
-        "description": "The second image"
-      },
-      {
         "component": "text-input",
         "valueType": "string",
         "name": "imageAlt",
