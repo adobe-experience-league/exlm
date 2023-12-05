@@ -1,6 +1,6 @@
 // FIXME: This is a dummy component put up to show case the cards rendered via API
 // import { decorateIcons } from '../../scripts/lib-franklin.js';
-import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
+// import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 
 /**
@@ -39,32 +39,32 @@ export default async function decorate(block) {
     console.warn('Adobe IMS not available.');
   }
 
-  const param = {
-    contentType,
-    noOfResults,
-  };
+  // const param = {
+  //   contentType,
+  //   noOfResults,
+  // };
 
-  const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
-  browseCardsContent.then((data) => {
-    import('../../scripts/browse-card/browse-card.js')
-      .then((buildCard) => {
-        // if (data?.length) {
-        //   const contentDiv = document.createElement('div');
-        //   contentDiv.classList.add('curated-cards-content');
+  // const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
+  // browseCardsContent.then((data) => {
+  //   import('../../scripts/browse-card/browse-card.js')
+  //     .then((buildCard) => {
+  //       if (data?.length) {
+  //         const contentDiv = document.createElement('div');
+  //         contentDiv.classList.add('curated-cards-content');
 
-        //   for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
-        //     const cardData = data[i];
-        //     const cardDiv = document.createElement('div');
-        //     buildCard.default(cardDiv, cardData);
-        //     contentDiv.appendChild(cardDiv);
-        //   }
+  //         for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
+  //           const cardData = data[i];
+  //           const cardDiv = document.createElement('div');
+  //           buildCard.default(cardDiv, cardData);
+  //           contentDiv.appendChild(cardDiv);
+  //         }
 
-        //   block.appendChild(contentDiv);
-        //   decorateIcons(block);
-        // }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  });
+  //         block.appendChild(contentDiv);
+  //         decorateIcons(block);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error(err);
+  //     });
+  // });
 }
