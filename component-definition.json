@@ -315,6 +315,7 @@
                   "name": "Media",
                   "model": "media",
                   "fileReference": "/content/dam/exlm/Community_headshot_single.png",
+                  "fileReferenceSecond": "/content/dam/default-teaser-banner.png",
                   "title": "Lorem ipsum",
                   "description": "<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</p>",
                   "classes": "left"

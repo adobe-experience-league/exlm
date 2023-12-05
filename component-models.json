@@ -702,8 +702,14 @@
         "valueType": "string",
         "name": "fileReference",
         "label": "Image",
-        "description": "The media image",
-        "multi": false
+        "description": "The media image"
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReferenceSecond",
+        "label": "Image",
+        "description": "The second image"
       },
       {
         "component": "text-input",
