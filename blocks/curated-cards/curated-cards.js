@@ -1,7 +1,7 @@
 // FIXME: This is a dummy component put up to show case the cards rendered via API
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 /**
  * Decorate function to process and log the mapped data.
