@@ -46,26 +46,19 @@ export default async function decorate(block) {
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent.then((data) => {
-  //   import('../../scripts/browse-card/browse-card.js')
-  //     .then((buildCard) => {
-  //       if (data?.length) {
-  //         const contentDiv = document.createElement('div');
-  //         contentDiv.classList.add('curated-cards-content');
+    if (data?.length) {
+      const contentDiv = document.createElement('div');
+      contentDiv.classList.add('curated-cards-content');
 
-  //         for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
-  //           const cardData = data[i];
-  //           const cardDiv = document.createElement('div');
-  //           buildCard.default(cardDiv, cardData);
-  //           contentDiv.appendChild(cardDiv);
-  //         }
+      // for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
+      //   const cardData = data[i];
+      //   const cardDiv = document.createElement('div');
+      //   buildCard.default(cardDiv, cardData);
+      //   contentDiv.appendChild(cardDiv);
+      // }
 
-  //         block.appendChild(contentDiv);
-  //         decorateIcons(block);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.error(err);
-  //     });
-  decorateIcons(block);
+      block.appendChild(contentDiv);
+      decorateIcons(block);
+    }
  });
 }
