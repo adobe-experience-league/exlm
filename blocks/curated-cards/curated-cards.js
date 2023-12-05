@@ -3,7 +3,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
-import { loadJWT, isJWTTokenAvailable } from '../../scripts/auth/jwt.js';
+import loadCoveoToken from '../../scripts/data-service/coveo/coveo-token-service.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -35,48 +35,36 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   try {
-    let adobeIMS = {
-      isSignedInUser: () => false,
-    };
-    try {
-      const ims = await loadIms();
-      adobeIMS = ims.adobeIMS;
-    } catch {
-      // eslint-disable-next-line no-console
-      console.warn('Adobe IMS not available.');
-    }
-    const isSignedIn = adobeIMS?.isSignedInUser();
-    if (isSignedIn && !isJWTTokenAvailable()) {
-      await loadJWT();
-    }
-
-    const params = {
-      contentType,
-      noOfResults,
-    };
-    const browseCards = new BrowseCardsDelegate(params);
-    const browseCardsContent = browseCards.fetchCardData();
-
-    browseCardsContent.then((data) => {
-      if (data?.length) {
-        // Creating content div
-        const contentDiv = document.createElement('div');
-        contentDiv.classList.add('curated-cards-content');
-
-        for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
-          const cardData = data[i];
-          const cardDiv = document.createElement('div');
-          buildCard(cardDiv, cardData);
-          contentDiv.appendChild(cardDiv);
-        }
-        // Appending content divs to the block
-        block.appendChild(contentDiv);
-      }
-
-      decorateIcons(block);
-    });
+    await loadIms();
   } catch {
     // eslint-disable-next-line no-console
-    console.warn('Adobe IMS / JWT Token not available.');
+    console.warn('Adobe IMS not available.');
   }
+
+  loadCoveoToken().then((response) => {
+    if (response) {
+      const param = {
+        contentType,
+        noOfResults,
+      };
+
+      const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
+      browseCardsContent.then((data) => {
+        if (data?.length) {
+          const contentDiv = document.createElement('div');
+          contentDiv.classList.add('curated-cards-content');
+
+          for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
+            const cardData = data[i];
+            const cardDiv = document.createElement('div');
+            buildCard(cardDiv, cardData);
+            contentDiv.appendChild(cardDiv);
+          }
+
+          block.appendChild(contentDiv);
+          decorateIcons(block);
+        }
+      });
+    }
+  });
 }
