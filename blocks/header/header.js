@@ -1,6 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { loadIms } from '../../scripts/scripts.js';
 import { signOut } from '../../scripts/auth/auth-operations.js';
+import Search from '../../scripts/search/search.js';
 import { registerResizeHandler } from './header-utils.js';
 
 /**
@@ -51,7 +52,8 @@ const getCell = (block, row, cell) => block.querySelector(`:scope > div:nth-chil
  */
 function htmlToElement(html) {
   const template = document.createElement('template');
-  const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
+  // Never return a text node of whitespace as the result
+  const trimmedHtml = html.trim();
   template.innerHTML = trimmedHtml;
   return template.content.firstElementChild;
 }
@@ -257,7 +259,7 @@ const navDecorator = (navBlock) => {
  * Decorates the search block
  * @param {HTMLElement} searchBlock
  */
-const searchDecorator = (searchBlock) => {
+const searchDecorator = async (searchBlock) => {
   // save this for later use in mobile nav.
   const searchLink = getCell(searchBlock, 1, 1)?.firstChild;
   decoratorState.searchLinkHtml = searchLink.outerHTML;
@@ -266,29 +268,56 @@ const searchDecorator = (searchBlock) => {
   const searchPlaceholder = getCell(searchBlock, 1, 2)?.firstChild;
   // build search options
   const searchOptions = getCell(searchBlock, 1, 3)?.firstElementChild?.children || [];
+  const options = [...searchOptions].map((option) => option.textContent);
 
-  const options = [...searchOptions]
-    .map((option) => `<span class="search-picker-label">${option.textContent}</span>`)
-    .join('');
-
-  searchBlock.innerHTML = `<div class="search-wrapper">
-    <div class="search-short">
-      <a href="https://experienceleague.adobe.com/search.html">
-        <span class="icon icon-search"></span>
-      </a>
-    </div>
-    <div class="search-full">
-      <span class="icon icon-search"></span>
-      <input autocomplete="off" class="search-input" type="text" role="combobox" placeholder="${searchPlaceholder.textContent}">
-      <button type="button" class="search-picker-button" aria-haspopup="true" aria-controls="search-picker-popover">
-        <span class="search-picker-label">All</span>
-      </button>
-      <div class="search-picker-popover" id="search-picker-popover">
-        ${options}
+  searchBlock.innerHTML = '';
+  const searchWrapper = htmlToElement(
+    `<div class="search-wrapper">
+      <div class="search-short">
+        <a href="https://experienceleague.adobe.com/search.html">
+          <span class="icon icon-search search-icon"></span>
+        </a>
       </div>
-    <div>
-  </div>`;
-  decorateIcons(searchBlock);
+      <div class="search-full">
+        <div class="search-container">
+          <span title="Search" class="icon icon-search"></span>
+          <input autocomplete="off" class="search-input" type="text" title="Insert a query. Press enter to send" role="combobox" placeholder="${
+            searchPlaceholder.textContent
+          }">
+          <span title="Clear" class="icon icon-clear search-clear-icon"></span>
+          <div class="search-suggestions-popover">
+            <ul role="listbox">
+            </ul>
+          </div>
+        </div>
+        <button type="button" class="search-picker-button" aria-haspopup="true" aria-controls="search-picker-popover">
+          <span class="search-picker-label">${options[0] || ''}</span>
+        </button>
+        <div class="search-picker-popover" id="search-picker-popover">
+          <ul role="listbox">
+            ${options
+              .map(
+                (option, index) =>
+                  `<li tabindex="0" role="option" class="search-picker-label">${
+                    index === 0
+                      ? `<span class="icon icon-checkmark"></span> <span>${option}</span>`
+                      : `<span>${option}</span>`
+                  }</li>`,
+              )
+              .join('')}
+          </ul>
+        </div>
+      <div>
+    </div>
+  `,
+  );
+  searchBlock.append(searchWrapper);
+  await decorateIcons(searchBlock);
+
+  const searchItem = new Search({ searchBlock });
+  searchItem.configureAutoComplete({
+    searchOptions: options,
+  });
   return searchBlock;
 };
 
