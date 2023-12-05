@@ -24,7 +24,9 @@ export default class ADLSDataService {
       }
       console.log("Current ADLS URL");
       console.log(this.url);
-      const response = await fetch(this.url, {
+      console.log("Data Source URL");
+      console.log(this.dataSource.url);
+      const response = await fetch(this.dataSource.url, {
         method: 'GET',
       });
       const data = await response.json();
