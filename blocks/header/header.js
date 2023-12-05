@@ -1,7 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { loadIms } from '../../scripts/scripts.js';
 import { signOut } from '../../scripts/auth/auth-operations.js';
-import Search from '../../scripts/search/search.js';
+// import Search from '../../scripts/search/search.js';
 import { registerResizeHandler } from './header-utils.js';
 
 /**
@@ -314,10 +314,10 @@ const searchDecorator = async (searchBlock) => {
   searchBlock.append(searchWrapper);
   await decorateIcons(searchBlock);
 
-  const searchItem = new Search({ searchBlock });
-  searchItem.configureAutoComplete({
-    searchOptions: options,
-  });
+  // const searchItem = new Search({ searchBlock });
+  // searchItem.configureAutoComplete({
+  //   searchOptions: options,
+  // });
   return searchBlock;
 };
 
