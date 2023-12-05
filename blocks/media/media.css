@@ -1,0 +1,72 @@
+/* ----- MOBILE / Default ----- */
+
+/* media wrapper complete width inside section */
+.section div.media-wrapper {
+  margin-bottom: var(--spectrum-spacing-400);
+}
+
+.media.block {
+  width: 100%;
+  height:100%;
+}
+
+/* the text block (eyebrow, title , descr , ctr) */
+.media.block > .text {
+  display: flex;
+  flex-direction: column;
+  justify-content:left;
+}
+
+/* the eybrow title */
+.media.block > .text > .eyebrow {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-700);
+  color: var(--spectrum-gray-700);
+  line-height: 18px;
+  margin-bottom: var(--space-token-xxs);
+}
+
+/* the main title */
+.media.block > .text > .title {
+  font-family: var(--body-font-family);
+  font-size: 24px;
+  font-weight: var(--font-weight-700);
+  line-height: 30px;
+  margin-bottom: var(--space-token-xxs);
+}
+
+.media.block > .text > .description,
+.media.block > .text > .description * {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-200);
+  line-height: 24px;
+}
+
+/* the list of CTA's */
+.media.block > .text > .cta {
+  display: flex;
+  flex-flow: row wrap;
+  gap: var(--spectrum-spacing-400);
+  margin-top: var(--spectrum-spacing-400);
+  padding: 0;
+}
+
+.media.block > .text > .cta:empty {
+  display: none;
+}
+
+/* the cta buttons */
+.media.block > .text > .cta > a.button {
+  margin: 0;
+}
+
+.media.block > .image {
+  margin-bottom: var(--spectrum-spacing-400);
+}
+
+.media.block > .image img {
+  width: auto;
+  height: max-content;
+  object-fit: cover;
+}
