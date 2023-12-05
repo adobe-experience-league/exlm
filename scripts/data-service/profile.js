@@ -91,7 +91,6 @@ export async function profile(reuse = false, cstream = true, explicit = false) {
 
     if (data !== null) {
       if (profileData === null || explicit) {
-        console.log('Retrieving Experience League profile');
         const res = await request(profileUrl, {
           credentials: 'include',
           headers: {
