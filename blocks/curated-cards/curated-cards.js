@@ -2,7 +2,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import browseCard from '../../scripts/browse-card/browse-card.js';
+import buildCard from '../../scripts/browse-card/browse-card.js';
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
