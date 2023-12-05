@@ -44,7 +44,7 @@ const BrowseCardsDelegate = (() => {
    */
     const constructADLSSearchParams = () => {
       const urlSearchParams = new URLSearchParams();
-      urlSearchParams.append('TrainingMethod', 'Live Instructor Courses');
+      urlSearchParams.append('trainingMethod', 'Live Instructor Courses');
       urlSearchParams.append('pageIndex', '1');
       urlSearchParams.append('sort', 'recommended');
       urlSearchParams.append('learningType', 'catalog');
