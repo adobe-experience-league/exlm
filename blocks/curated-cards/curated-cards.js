@@ -32,12 +32,12 @@ export default async function decorate(block) {
   // Appending header div to the block
   block.appendChild(headerDiv);
 
-  // try {
-  //   await loadIms();
-  // } catch {
-  //   // eslint-disable-next-line no-console
-  //   console.warn('Adobe IMS not available.');
-  // }
+  try {
+    await loadIms();
+  } catch {
+    // eslint-disable-next-line no-console
+    console.warn('Adobe IMS not available.');
+  }
 
   // const param = {
   //   contentType,
