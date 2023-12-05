@@ -6,10 +6,10 @@ import { ADLS } from '../session-keys.js';
 export default class ADLSDataService {
   /**
    * Creates an instance of ADLSDataService.
-   * @param {Object} dataSource - The data source configuration for ADLS Service.
+   * @param {Object} dataSource - The data source configuration for ADLS Data Service.
    */
-  constructor(url) {
-    this.url = url;
+  constructor(dataSource) {
+    this.dataSource = dataSource;
   }
 
   /**
@@ -26,7 +26,11 @@ export default class ADLSDataService {
       console.log(this.url);
       console.log("Data Source URL");
       console.log(this.dataSource.url);
-      const response = await fetch(this.dataSource.url, {
+      const adlsURL = new URL(this.dataSource.url);
+      adlsURL.search = this.dataSource.param;
+      console.log("ADLS Final URL");
+      console.log(adlsURL);
+      const response = await fetch(adlsURL, {
         method: 'GET',
       });
       const data = await response.json();
