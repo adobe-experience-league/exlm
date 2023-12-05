@@ -13,7 +13,7 @@ const extractLanguageCodeFromURL = (urlString) => {
 };
 
 // Redirects to the search page based on the provided search input and filters
-export const redirectToSearchPage = (searchInput, filters) => {
+export const redirectToSearchPage = (searchInput, filters = '') => {
   const languageCode = extractLanguageCodeFromURL(window.location.href);
   const baseTargetUrl = searchUrl;
   let targetUrlWithLanguage = `${baseTargetUrl}?lang=${languageCode}`;
