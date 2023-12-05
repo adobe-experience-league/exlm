@@ -22,6 +22,8 @@ export default class ADLSDataService {
       if (ADLS in sessionStorage) {
         return JSON.parse(sessionStorage[ADLS]);
       }
+      console.log("Current ADLS URL");
+      console.log(this.url);
       const response = await fetch(this.url, {
         method: 'GET',
       });
