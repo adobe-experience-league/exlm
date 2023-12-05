@@ -3,28 +3,6 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
-import loadCoveoToken from '../../scripts/data-service/coveo/coveo-token-service.js';
-import CONTENT_TYPES from '../../scripts/browse-card/browse-cards-constants.js';
-
-const renderBrowseCards = (block, param) => {
-  const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
-  browseCardsContent.then((data) => {
-    if (data?.length) {
-      const contentDiv = document.createElement('div');
-      contentDiv.classList.add('curated-cards-content');
-
-      for (let i = 0; i < Math.min(param.noOfResults, data.length); i += 1) {
-        const cardData = data[i];
-        const cardDiv = document.createElement('div');
-        buildCard(cardDiv, cardData);
-        contentDiv.appendChild(cardDiv);
-      }
-
-      block.appendChild(contentDiv);
-      decorateIcons(block);
-    }
-  });
-};
 
 /**
  * Decorate function to process and log the mapped data.
@@ -37,10 +15,6 @@ export default async function decorate(block) {
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
   const contentType = block.querySelector('div:nth-child(4) > div')?.textContent.trim();
   const noOfResults = 4;
-  const param = {
-    contentType,
-    noOfResults,
-  };
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -66,13 +40,26 @@ export default async function decorate(block) {
     console.warn('Adobe IMS not available.');
   }
 
-  if (contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY) {
-    renderBrowseCards(block, param);
-  } else {
-    loadCoveoToken().then((response) => {
-      if (response) {
-        renderBrowseCards(block, param);
+  const param = {
+    contentType,
+    noOfResults,
+  };
+
+  const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
+  browseCardsContent.then((data) => {
+    if (data?.length) {
+      const contentDiv = document.createElement('div');
+      contentDiv.classList.add('curated-cards-content');
+
+      for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
+        const cardData = data[i];
+        const cardDiv = document.createElement('div');
+        buildCard(cardDiv, cardData);
+        contentDiv.appendChild(cardDiv);
       }
-    });
-  }
+
+      block.appendChild(contentDiv);
+      decorateIcons(block);
+    }
+  });
 }
