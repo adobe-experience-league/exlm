@@ -22,8 +22,9 @@ export default class ADLSDataService {
       if (ADLS in sessionStorage) {
         return JSON.parse(sessionStorage[ADLS]);
       }
-      console.log("Current ADLS URL");
-      console.log(this.url);
+      Object.entries(this.dataSource.param).forEach(([key, value]) => {
+        url.searchParams.set(key, encodeURIComponent(value));
+      })
       console.log("Data Source URL");
       console.log(this.dataSource.url);
       const adlsURL = new URL(this.dataSource.url);
