@@ -30,6 +30,7 @@ export default class ADLSDataService {
       adlsURL.search = this.dataSource.param;
       console.log("ADLS Final URL");
       console.log(adlsURL);
+      console.log(adlsURL.toString());
       const response = await fetch(adlsURL, {
         method: 'GET',
       });
