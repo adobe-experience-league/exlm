@@ -1,6 +1,6 @@
 import { isDocPage } from '../../scripts/scripts.js';
 import loadJWT from '../../scripts/auth/jwt.js';
-import { log, adobeIMS, updateProfile } from '../../scripts/data-service/profile.js';
+import { log, adobeIMS, profile, updateProfile } from '../../scripts/data-service/profile.js';
 
 const CONFIG = {
   BOOKMARK_SET: 'Success! This is bookmarked to your profile.',
@@ -76,18 +76,9 @@ export function decorateBookmark(block) {
       if (id.length === 0) {
         log('Hooking bookmark failed. No id present.');
       } else {
-        loadJWT().then(async (token) => {
-          // eslint-disable-next-line
-          console.log(token, 'hello token');
-          const getProfileData = await adobeIMS?.getProfile();
-          const tempUP = await updateProfile('bookmarks', id);
-          // eslint-disable-next-line
-          console.log(id, 'hello id....');
-          // eslint-disable-next-line
-          console.log(getProfileData, 'hello getProfileData....');
-          // eslint-disable-next-line
-          console.log(tempUP, 'hello update profile if?....');
-          // bookmarkAuthedToolTipIcon.classList.add('authed');
+        loadJWT().then(async () => {
+          const getProfileCheck = profile();
+          console.log(getProfileCheck, 'hello get profile check');
           bookmarkAuthed.addEventListener('click', async () => {
             if (bookmarkAuthedToolTipIcon.classList.contains('authed')) {
               await updateProfile('bookmarks', id);
