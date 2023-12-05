@@ -45,7 +45,7 @@ export default async function decorate(block) {
   };
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
-  // browseCardsContent.then((data) => {
+  browseCardsContent.then((data) => {
   //   import('../../scripts/browse-card/browse-card.js')
   //     .then((buildCard) => {
   //       if (data?.length) {
@@ -66,5 +66,5 @@ export default async function decorate(block) {
   //     .catch((err) => {
   //       console.error(err);
   //     });
-  // });
+ });
 }
