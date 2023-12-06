@@ -57,7 +57,7 @@
 .media.block > .text > .description,
 .media.block > .text > .description * {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-body-size-l);
   line-height: 24px;
 }
 
