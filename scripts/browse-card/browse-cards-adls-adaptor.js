@@ -34,7 +34,7 @@ const BrowseCardsADLSAdaptor = (() => {
       description: description || '',
       copyLink: path || '',
       viewLink: path || '',
-      viewLinkText: "contentType" || placeholders[`viewLink${convertToTitleCase(contentType)}`],
+      viewLinkText: placeholders['viewLinkCourse'],
     };
   };
 

@@ -70,7 +70,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
   if (contentType === 'tutorial') {
     icon = 'play-outline';
     isLeftPlacement = true;
-  } else if (contentType.includes('event')) {
+  } else if (contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY || contentType === CONTENT_TYPES.EVENT.MAPPING_KEY || contentType === CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY) {
     icon = 'new-tab';
   }
   const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
