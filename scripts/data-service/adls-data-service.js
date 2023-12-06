@@ -25,9 +25,10 @@ export default class ADLSDataService {
       console.log("Data Source URL");
       console.log(this.dataSource.url);
       console.log(this.dataSource.param);
-      const response = await fetch(this.dataSource.url, {
-        method: 'GET',
-        param: this.dataSource.param,
+      const urlWithParams = `${this.dataSource.url}?${this.dataSource.param.toString()}`;
+      console.log(urlWithParams);
+      const response = await fetch(turlWithParams, {
+        method: 'GET'
       });
       const data = await response.json();
       sessionStorage.setItem(ADLS, JSON.stringify(data.results));
