@@ -143,7 +143,7 @@
     font-size: var(--spectrum-font-size-100);
   }
 
-  /* the main title, hidden in mobile */
+  /* the main title */
   .media.block > .text > .title {
     font-size: var(--spectrum-heading-size-xl);
     line-height: 46.8px;
