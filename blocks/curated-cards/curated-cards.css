@@ -1,6 +1,7 @@
+/* FIXME: This is a dummy component put up to show case the cards rendered via API - CSS to be updated later*/
 .curated-cards {
     margin-bottom: 40px;
-    min-height: 340px;
+    min-height: 1260px;
 }
 
 .curated-cards-header h4 {
@@ -21,10 +22,14 @@
 
 .curated-cards-content {
     margin-top: 24px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
+    flex-wrap: wrap;
     gap: 16px;
     margin-bottom: 32px;
+}
+
+.curated-cards-content > div {
+    width: 256px;
 }
 
 .curated-cards .tooltip {
@@ -78,6 +83,7 @@
 @media (min-width: 600px) {
     .curated-cards {
         margin-bottom: 56px;
+        min-height: 588px;
     }
 
     .curated-cards-header {
@@ -86,9 +92,21 @@
     }
 }
 
+@media (min-width: 900px) {
+    .curated-cards {
+        margin-bottom: 56px;
+    }
+
+    .curated-cards-header {
+        display: flex;
+        justify-content: space-between;
+    }   
+}
+
 @media (min-width: 1200px) {
     .curated-cards {
-        margin-bottom: 80px ;
+        margin-bottom: 80px;
+        min-height: 340px;
     }
 
     .curated-cards-header {

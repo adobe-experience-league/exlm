@@ -1,5 +1,6 @@
 import { loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
+import CONTENT_TYPES from './browse-cards-constants.js';
 
 const generateContributorsMarkup = (contributor) => {
   const { name, thumbnail, level, date } = contributor;
@@ -100,7 +101,7 @@ const buildCardContent = (card, model) => {
   const cardMeta = document.createElement('div');
   cardMeta.classList.add('browse-card-meta-info');
 
-  if (contentType === 'course') {
+  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
     buildTagsContent(cardMeta, tags);
   }
   if (isDesktopResolution) {
@@ -110,7 +111,7 @@ const buildCardContent = (card, model) => {
     cardContent.insertBefore(cardMeta, titleEl);
   }
 
-  if (contentType === 'community') {
+  if (contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
     const contributorInfo = document.createElement('div');
     contributorInfo.classList.add('browse-card-contributor-info');
     const contributorElement = generateContributorsMarkup(contributor);
@@ -119,7 +120,7 @@ const buildCardContent = (card, model) => {
     cardContent.insertBefore(contributorInfo, cardMeta);
   }
 
-  if (contentType.includes('event') && Object.values(event).length) {
+  if (contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY) {
     buildEventContent({ event, cardContent, card });
   }
   const cardOptions = document.createElement('div');
@@ -153,7 +154,7 @@ const setupCopyAction = (wrapper) => {
 
 export default async function buildCard(element, model) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
-  const { thumbnail, product, title, contentType } = model;
+  const { thumbnail, product, title, contentType, badgeTitle } = model;
   const type = contentType?.toLowerCase();
   const card = createTag(
     'div',
@@ -170,7 +171,7 @@ export default async function buildCard(element, model) {
   }
 
   const bannerElement = createTag('p', { class: 'browse-card-banner' });
-  bannerElement.innerText = contentType;
+  bannerElement.innerText = badgeTitle;
   cardFigure.appendChild(bannerElement);
 
   if (product) {

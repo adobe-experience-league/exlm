@@ -3,7 +3,7 @@ import { signOut } from '../auth/auth-operations.js';
 import loadJWT from '../auth/jwt.js';
 import csrf from '../auth/csrf.js';
 import { JWTTokenUrl, profileUrl } from '../urls.js';
-import { Profile, ProfileAttributes } from '../auth/session-keys.js';
+import { Profile, ProfileAttributes } from '../session-keys.js';
 import { request, headerKeys, headerValues } from '../request.js';
 
 export const override = /^(recommended|votes)$/;

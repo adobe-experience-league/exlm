@@ -1,10 +1,8 @@
 // FIXME: This is a dummy component put up to show case the cards rendered via API
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import buildCard from '../../scripts/browse-card/browse-card.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
-import loadCoveoToken from '../../scripts/data-service/coveo/coveo-token-service.js';
-
+import buildCard from '../../scripts/browse-card/browse-card.js';
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -41,30 +39,26 @@ export default async function decorate(block) {
     console.warn('Adobe IMS not available.');
   }
 
-  loadCoveoToken().then((response) => {
-    if (response) {
-      const param = {
-        contentType,
-        noOfResults,
-      };
+  const param = {
+    contentType,
+    noOfResults,
+  };
 
-      const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
-      browseCardsContent.then((data) => {
-        if (data?.length) {
-          const contentDiv = document.createElement('div');
-          contentDiv.classList.add('curated-cards-content');
+  const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
+  browseCardsContent.then((data) => {
+    if (data?.length) {
+      const contentDiv = document.createElement('div');
+      contentDiv.classList.add('curated-cards-content');
 
-          for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
-            const cardData = data[i];
-            const cardDiv = document.createElement('div');
-            buildCard(cardDiv, cardData);
-            contentDiv.appendChild(cardDiv);
-          }
+      for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
+        const cardData = data[i];
+        const cardDiv = document.createElement('div');
+        buildCard(cardDiv, cardData);
+        contentDiv.appendChild(cardDiv);
+      }
 
-          block.appendChild(contentDiv);
-          decorateIcons(block);
-        }
-      });
+      block.appendChild(contentDiv);
+      decorateIcons(block);
     }
   });
 }
