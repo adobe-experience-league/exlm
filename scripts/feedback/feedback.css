@@ -34,6 +34,7 @@
   height: 14px;
   width: 14px;
   padding: 6px;
+  cursor: pointer;
 }
 
 .feedback-ui .left h3 {
@@ -72,6 +73,7 @@
   background-color: var(--non-spectrum-neo-blue);
   position: relative;
   overflow: visible;
+  border-radius: 50%;
 }
 
 .feedback-ui .cta {
@@ -139,6 +141,7 @@
 
 .feedback-ui .opened-controls > span {
   display: none;
+  font-weight: 400;
 }
 
 .feedback-ui .cta button span:nth-child(1) {
@@ -159,6 +162,12 @@
   color: var(--spectrum-body-color);
   background-color: var(--spectrum-gray-75);
   overflow: visible;
+}
+
+.feedback-ui .git-buttons button:hover {
+  background-color: var(--spectrum-gray-200);
+  border-color: var(--spectrum-gray-500);
+  color: var(--text-color);
 }
 
 .feedback-ui .git-buttons .action-btn {
@@ -278,6 +287,11 @@
   .feedback-ui .opened-controls > span {
     display: inline-block;
     padding-left: 20px;
+    margin-right: 4px;
+  }
+
+  .feedback-ui .right[aria-hidden='true'] .opened-controls > span {
+    margin-right: 2px;
   }
 
   .feedback-ui .left .icon-chevron {
@@ -298,6 +312,9 @@
     display: block;
     margin-top: auto;
     margin-bottom: auto;
+  }
+
+  .feedback-ui .right[aria-hidden='true'] .opened-controls {
     border-left: 2px solid var(--spectrum-gray-200);
   }
 

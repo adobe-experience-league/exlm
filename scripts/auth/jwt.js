@@ -1,4 +1,4 @@
-import { JWT, COVEO_TOKEN } from './session-keys.js';
+import { JWT, COVEO_TOKEN } from '../session-keys.js';
 import { signOut } from './auth-operations.js';
 import { JWTTokenUrl } from '../urls.js';
 import csrf from './csrf.js';

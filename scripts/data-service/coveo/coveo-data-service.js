@@ -1,5 +1,6 @@
 // TODO: Add additional methods and headers specific to Coveo Data Service.
-import { COVEO_TOKEN } from '../../auth/session-keys.js';
+import { COVEO_TOKEN } from '../../session-keys.js';
+import loadCoveoToken from './coveo-token-service.js';
 
 /**
  * CoveoDataService class for fetching data from a Coveo Data Service.
@@ -20,12 +21,14 @@ export default class CoveoDataService {
    */
   async fetchDataFromSource() {
     try {
+      // Load the Coveo Token
+      const coveoToken = await loadCoveoToken();
       // Send a POST request to the Coveo Data Service
       const response = await fetch(this.dataSource.url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          Authorization: `Bearer ${sessionStorage.getItem(COVEO_TOKEN)}`,
+          Authorization: `Bearer ${coveoToken}`,
         },
         body: this.dataSource.param,
       });

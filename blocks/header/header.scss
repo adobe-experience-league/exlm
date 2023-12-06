@@ -76,8 +76,8 @@
 header {
   position: relative;
   box-sizing: content-box;
-  z-index: 3;
-
+  z-index: 10;
+  
   @include breakpoint(custom) {
     display: flex;
     flex-direction: row;

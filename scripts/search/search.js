@@ -1,5 +1,4 @@
 import { htmlToElement, loadIms } from '../scripts.js';
-import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
 import SearchDelegate from './search-delegate.js';
 import { searchUrl } from '../urls.js';
 
@@ -52,11 +51,9 @@ export default class Search {
       console.warn('Adobe IMS not available.');
     }
 
-    loadCoveoToken().then(() => {
-      if (this.callbackFn) {
-        this.callbackFn.call(this);
-      }
-    });
+    if (this.callbackFn) {
+      this.callbackFn.call(this);
+    }
   }
 
   configureAutoComplete({ searchOptions }) {

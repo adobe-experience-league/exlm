@@ -1,5 +1,6 @@
 const browseCardDataModel = {
   contentType: '',
+  badgeTitle: '',
   thumbnail: '',
   product: '',
   title: '',

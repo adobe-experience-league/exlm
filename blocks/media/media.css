@@ -1,0 +1,152 @@
+/* ----- MOBILE / Default ----- */
+
+/* media wrapper  */
+.section div.media-wrapper {
+  margin-bottom: var(--spectrum-spacing-400);
+}
+
+.media.block {
+  width: 100%;
+  height:100%;
+  display:flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+}
+
+/* the image */
+.media.block > .image {
+  order : 0;
+  margin: 0 auto var(--spectrum-spacing-400);
+}
+
+.media.block > .image img {
+  object-fit: cover;
+  max-height:300px;
+  max-width:400px;
+  width: 400px;
+  height: 300px;
+}
+
+/* the text block (eyebrow, title , descr , ctr) */
+.media.block > .text {
+  order: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content:left;
+}
+
+/* the eybrow title */
+.media.block > .text > .eyebrow {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-700);
+  color: var(--spectrum-gray-700);
+  line-height: 18px;
+  margin-bottom: var(--space-token-xxs);
+}
+
+/* the main title */
+.media.block > .text > .title {
+  font-family: var(--body-font-family);
+  font-size: 24px;
+  font-weight: var(--font-weight-700);
+  line-height: 30px;
+  margin-bottom: var(--space-token-xxs);
+}
+
+.media.block > .text > .description,
+.media.block > .text > .description * {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-body-size-l);
+  line-height: 24px;
+}
+
+/* the list of CTA's */
+.media.block > .text > .cta {
+  display: flex;
+  flex-flow: row wrap;
+  gap: var(--spectrum-spacing-400);
+  margin-top: var(--spectrum-spacing-400);
+  padding: 0;
+}
+
+.media.block > .text > .cta:empty {
+  display: none;
+}
+
+/* the cta buttons */
+.media.block > .text > .cta > a.button {
+  margin: 0;
+}
+
+/* ----- TABLET ----- */
+@media (min-width: 600px) {
+  /* media wrapper  */
+  .section div.media-wrapper {
+    margin-bottom: 40px;
+  }
+
+  /* the block */
+  .media.block {
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: var(--spectrum-spacing-500);
+  }
+
+  /* the image */
+  .media.block > .image {
+    margin: 0;
+    max-width: 50%;
+  }
+
+  .media.block > .image img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  .media.block.left > .image {
+    order: 1;
+  }
+
+  .media.block > .text {
+    width: 50%;
+  }
+  
+  .media.block.left > .text {
+    order: 0;
+  }
+
+  /* the cta buttons are smaller non-mobile */
+  .media.block .text > .cta > a.button {
+    margin: 0;
+    font-family: var(--body-font-family);
+    font-size: 15px;
+    font-weight: var(--font-weight-700);
+    line-height: 15px;
+    padding: 5px 14px 6px;
+  }
+}
+
+/* when enough width set fixed image size */
+@media (min-width: 800px) {
+  .media.block > .image img {
+    width: 400px;
+    height: 300px;
+  }
+}
+
+/* larger font size above 1200px */
+@media (min-width: 1200px) {
+  /* the eybrow title */
+  .media.block > .text > .eyebrow {
+    font-size: var(--spectrum-font-size-100);
+  }
+
+  /* the main title */
+  .media.block > .text > .title {
+    font-size: var(--spectrum-heading-size-xl);
+    line-height: 46.8px;
+  }
+}
+
