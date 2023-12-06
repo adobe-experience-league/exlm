@@ -57,7 +57,7 @@
 .media.block > .text > .description,
 .media.block > .text > .description * {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-body-size-l);
   line-height: 24px;
 }
 
@@ -105,19 +105,19 @@
     height: 100%;
   }
 
-  .media.block > .text {
-    width: 50%;
-  }
-  
   .media.block.left > .image {
     order: 1;
   }
 
+  .media.block > .text {
+    width: 50%;
+  }
+  
   .media.block.left > .text {
     order: 0;
   }
 
-  /* the cta buttons in mobile view */
+  /* the cta buttons are smaller non-mobile */
   .media.block .text > .cta > a.button {
     margin: 0;
     font-family: var(--body-font-family);
@@ -128,10 +128,25 @@
   }
 }
 
+/* when enough width set fixed image size */
 @media (min-width: 800px) {
   .media.block > .image img {
     width: 400px;
     height: 300px;
+  }
+}
+
+/* larger font size above 1200px */
+@media (min-width: 1200px) {
+  /* the eybrow title */
+  .media.block > .text > .eyebrow {
+    font-size: var(--spectrum-font-size-100);
+  }
+
+  /* the main title */
+  .media.block > .text > .title {
+    font-size: var(--spectrum-heading-size-xl);
+    line-height: 46.8px;
   }
 }
 
