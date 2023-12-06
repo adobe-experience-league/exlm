@@ -22,18 +22,12 @@ export default class ADLSDataService {
       if (ADLS in sessionStorage) {
         return JSON.parse(sessionStorage[ADLS]);
       }
-      Object.entries(this.dataSource.param).forEach(([key, value]) => {
-        url.searchParams.set(key, encodeURIComponent(value));
-      })
       console.log("Data Source URL");
       console.log(this.dataSource.url);
-      const adlsURL = new URL(this.dataSource.url);
-      adlsURL.search = this.dataSource.param;
-      console.log("ADLS Final URL");
-      console.log(adlsURL);
-      console.log(adlsURL.toString());
-      const response = await fetch(adlsURL, {
+      console.log(this.dataSource.param);
+      const response = await fetch(this.dataSource.url, {
         method: 'GET',
+        param: this.dataSource.param,
       });
       const data = await response.json();
       sessionStorage.setItem(ADLS, JSON.stringify(data.results));
