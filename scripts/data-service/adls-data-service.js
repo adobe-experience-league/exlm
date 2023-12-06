@@ -27,7 +27,7 @@ export default class ADLSDataService {
       console.log(this.dataSource.param);
       const urlWithParams = `${this.dataSource.url}?${this.dataSource.param.toString()}`;
       console.log(urlWithParams);
-      const response = await fetch(turlWithParams, {
+      const response = await fetch(urlWithParams, {
         method: 'GET'
       });
       const data = await response.json();
