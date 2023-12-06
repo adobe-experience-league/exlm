@@ -77,7 +77,7 @@ header {
   position: relative;
   box-sizing: content-box;
   z-index: 10;
-  
+
   @include breakpoint(custom) {
     display: flex;
     flex-direction: row;
@@ -787,8 +787,7 @@ header {
   }
 
   button > .search-picker-label {
-    color: var(--spectrum-gray-800);
-    font-size: var(--spectrum-font-size-100);
+    color: var(--spectrum-gray-700);
     font-weight: var(--font-weight-400);
   }
 

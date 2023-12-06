@@ -304,8 +304,10 @@ const searchDecorator = async (searchBlock) => {
                     option.split(':')[1]
                   }">${
                     index === 0
-                      ? `<span class="icon icon-checkmark"></span> <span>${option.split(':')[0]}</span>`
-                      : `<span>${option.split(':')[0]}</span>`
+                      ? `<span class="icon icon-checkmark"></span> <span data-filter-value="${option.split(':')[1]}">${
+                          option.split(':')[0]
+                        }</span>`
+                      : `<span data-filter-value="${option.split(':')[1]}">${option.split(':')[0]}</span>`
                   }</li>`,
               )
               .join('')}

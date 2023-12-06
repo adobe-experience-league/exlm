@@ -93,7 +93,6 @@ export default class Search {
       if (iconSearchElement) {
         iconSearchElement.addEventListener('click', () => {
           const searchInputValue = this.searchInput.value.trim();
-          // const filterValue = this.searchPickerLabelEl.textContent;
           const filterValue = this.searchPickerLabelEl.getAttribute('data-filter-value');
           redirectToSearchPage(searchInputValue, filterValue);
         });
@@ -156,7 +155,6 @@ export default class Search {
     if (searchIcon) {
       searchIcon.addEventListener('click', () => {
         const searchInputValue = this.searchInput.value.trim();
-        // const filterValue = this.searchPickerLabelEl.textContent;
         const filterValue = this.searchPickerLabelEl.getAttribute('data-filter-value');
         redirectToSearchPage(searchInputValue, filterValue);
       });
@@ -167,7 +165,6 @@ export default class Search {
   handleEnterKey(e) {
     if (e.key === 'Enter') {
       const searchInputValue = this.searchInput.value.trim();
-      // const filterValue = this.searchPickerLabelEl.textContent;
       const filterValue = this.searchPickerLabelEl.getAttribute('data-filter-value');
       redirectToSearchPage(searchInputValue, filterValue);
     }
@@ -325,7 +322,7 @@ export default class Search {
       this.clearSearchIcon.classList.add('search-icon-show');
     }
     this.hideSearchSuggestions(e, true);
-    redirectToSearchPage(suggestion, this.searchPickerLabelEl.textContent);
+    redirectToSearchPage(suggestion, this.searchPickerLabelEl.getAttribute('data-filter-value'));
   }
 
   setSelectedSearchOption(option, filterValue) {

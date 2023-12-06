@@ -732,8 +732,7 @@ header {
   display: block;
 }
 .header button > .search-picker-label {
-  color: var(--spectrum-gray-800);
-  font-size: var(--spectrum-font-size-100);
+  color: var(--spectrum-gray-700);
   font-weight: var(--font-weight-400);
 }
 .header .search-picker-popover,
