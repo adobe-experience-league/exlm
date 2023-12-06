@@ -99,7 +99,7 @@ const buildCardContent = (card, model) => {
     const doc = parser.parseFromString(stringContent, 'text/html');
     // Extract text content
     const descriptionText = doc.body.textContent.trim();
-    descriptionElement.textContent = stringContent;
+    descriptionElement.textContent = descriptionText;
     cardContent.appendChild(descriptionElement);
   }
 
