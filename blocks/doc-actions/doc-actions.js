@@ -47,6 +47,19 @@ const sendNotice = (noticelabel) => {
   }
 };
 
+/**
+ * Emit a custom event on an element.
+ * @param {HTMLElement} element - The element on which to emit the custom event.
+ * @param {string} eventName - The name of the custom event.
+ */
+function emitCustomEvent(element, eventName) {
+  // Create a new custom event
+  const customEvent = new Event(eventName);
+
+  // Dispatch the custom event on the element
+  element.dispatchEvent(customEvent);
+}
+
 const isSignedIn = adobeIMS?.isSignedInUser();
 
 export function decorateBookmark(block) {
@@ -80,11 +93,13 @@ export function decorateBookmark(block) {
         loadJWT().then(async () => {
           profile().then(async (data) => {
             if (data.bookmarks.includes(id)) {
+              emitCustomEvent(block, 'ProfileLoadedEvent');
               bookmarkAuthedToolTipIcon.classList.add('authed');
               bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_REMOVE;
             }
           });
 
+          emitCustomEvent(block, 'JwtLoadedEvent');
           bookmarkAuthed.addEventListener('click', async () => {
             if (bookmarkAuthedToolTipIcon.classList.contains('authed')) {
               await updateProfile('bookmarks', id);
@@ -112,19 +127,79 @@ export function decorateCopyLink(block) {
   copyLinkDivNode.innerHTML = tooltipTemplate('copy-link-url', CONFIG.NOTICE_LABEL, CONFIG.NOTICE_TIPTEXT);
 
   block.appendChild(copyLinkDivNode);
+}
+
+function hasArticleMetaData() {
+  return document.querySelector('.article-metadata-wrapper');
+}
+
+function hasArticleMetadataCreatedby() {
+  return document.querySelector('.article-metadata-createdby-wrapper');
+}
+
+function consolidateEventListeners(block, clonedBlock) {
   const copyLinkIcon = block.querySelector('.icon.copy-link-url');
-  if (copyLinkIcon) {
-    copyLinkIcon.addEventListener('click', (e) => {
+  const copyLinkIconMobile = clonedBlock.querySelector('.icon.copy-link-url');
+
+  [copyLinkIcon, copyLinkIconMobile].forEach((icon) => {
+    icon.addEventListener('click', (e) => {
       e.preventDefault();
       navigator.clipboard.writeText(window.location.href);
       sendNotice(CONFIG.NOTICE_SET);
     });
+  });
+}
+
+function listenForEventAfterPromise(cloned) {
+  const id = ((document.querySelector('meta[name="id"]') || {}).content || '').trim();
+  const bookmarkAuthed = cloned.querySelector('.bookmark.auth');
+  const bookmarkAuthedToolTipLabel = bookmarkAuthed.querySelector('.exl-tooltip-label');
+  const bookmarkAuthedToolTipIcon = bookmarkAuthed.querySelector('.icon.bookmark-icon');
+
+  cloned.addEventListener('ProfileLoadedEvent', () => {
+    bookmarkAuthedToolTipIcon.classList.add('authed');
+    bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_REMOVE;
+  });
+
+  cloned.addEventListener('JwtLoadedEvent', () => {
+    bookmarkAuthed.addEventListener('click', async () => {
+      if (bookmarkAuthedToolTipIcon.classList.contains('authed')) {
+        await updateProfile('bookmarks', id);
+        bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_SET;
+        bookmarkAuthedToolTipIcon.classList.remove('authed');
+        sendNotice(CONFIG.BOOKMARK_UNSET);
+      } else {
+        await updateProfile('bookmarks', id);
+        bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_REMOVE;
+        bookmarkAuthedToolTipIcon.classList.add('authed');
+        sendNotice(CONFIG.BOOKMARK_SET);
+      }
+    });
+  });
+}
+
+function cloneBookmarkAndCopyLink(block) {
+  const clonedBlock = block.cloneNode(true);
+  clonedBlock.classList.add('doc-actions-mobile');
+  const createdByEl = document.querySelector('.article-metadata-createdby-wrapper');
+  const articleMetaDataEl = document.querySelector('.article-metadata-wrapper');
+  const parent = createdByEl.parentNode;
+  if (hasArticleMetaData() || hasArticleMetadataCreatedby()) {
+    if (hasArticleMetadataCreatedby()) {
+      parent.insertBefore(clonedBlock, createdByEl.nextSibling);
+    } else if (hasArticleMetaData()) {
+      parent.insertBefore(clonedBlock, articleMetaDataEl.nextSibling);
+    }
   }
+
+  consolidateEventListeners(block, clonedBlock);
+  listenForEventAfterPromise(clonedBlock);
 }
 
 export default async function decorateDocActions(block) {
   if (isDocPage) {
     decorateBookmark(block);
     decorateCopyLink(block);
+    cloneBookmarkAndCopyLink(block);
   }
 }
