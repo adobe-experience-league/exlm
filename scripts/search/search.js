@@ -96,7 +96,8 @@ export default class Search {
       if (iconSearchElement) {
         iconSearchElement.addEventListener('click', () => {
           const searchInputValue = this.searchInput.value.trim();
-          const filterValue = this.searchPickerLabelEl.textContent;
+          // const filterValue = this.searchPickerLabelEl.textContent;
+          const filterValue = this.searchPickerLabelEl.getAttribute('data-filter-value');
           redirectToSearchPage(searchInputValue, filterValue);
         });
       }
@@ -158,7 +159,8 @@ export default class Search {
     if (searchIcon) {
       searchIcon.addEventListener('click', () => {
         const searchInputValue = this.searchInput.value.trim();
-        const filterValue = this.searchPickerLabelEl.textContent;
+        // const filterValue = this.searchPickerLabelEl.textContent;
+        const filterValue = this.searchPickerLabelEl.getAttribute('data-filter-value');
         redirectToSearchPage(searchInputValue, filterValue);
       });
     }
@@ -168,7 +170,8 @@ export default class Search {
   handleEnterKey(e) {
     if (e.key === 'Enter') {
       const searchInputValue = this.searchInput.value.trim();
-      const filterValue = this.searchPickerLabelEl.textContent;
+      // const filterValue = this.searchPickerLabelEl.textContent;
+      const filterValue = this.searchPickerLabelEl.getAttribute('data-filter-value');
       redirectToSearchPage(searchInputValue, filterValue);
     }
   }
@@ -190,9 +193,10 @@ export default class Search {
   }
 
   onSearchPopoverClick(e) {
-    if (e.target && this.searchOptions.includes(e.target.textContent.trim())) {
+    const searchParams = this.searchOptions.map((option) => option.split(':')[0]);
+    if (e.target && searchParams.includes(e.target.textContent.trim())) {
       this.searchPickerPopover.querySelector('.icon').remove();
-      this.setSelectedSearchOption(e.target.textContent);
+      this.setSelectedSearchOption(e.target.textContent, e.target.getAttribute('data-filter-value'));
       e.target.append(this.selectedCheckmarkEl);
     }
   }
@@ -200,7 +204,7 @@ export default class Search {
   onSearchPopoverKeydown(e) {
     if (e.key === 'Enter' && e.target && this.searchOptions.includes(e.target.textContent.trim())) {
       this.searchPickerPopover.querySelector('.icon').remove();
-      this.setSelectedSearchOption(e.target.textContent);
+      this.setSelectedSearchOption(e.target.textContent, e.target.getAttribute('data-filter-value'));
       e.target.append(this.selectedCheckmarkEl);
     }
   }
@@ -327,9 +331,10 @@ export default class Search {
     redirectToSearchPage(suggestion, this.searchPickerLabelEl.textContent);
   }
 
-  setSelectedSearchOption(option) {
+  setSelectedSearchOption(option, filterValue) {
     this.selectedSearchOption = option;
     this.searchPickerLabelEl.textContent = this.selectedSearchOption;
+    this.searchPickerLabelEl.setAttribute('data-filter-value', filterValue);
   }
 
   async fetchSearchSuggestions(query = '') {
