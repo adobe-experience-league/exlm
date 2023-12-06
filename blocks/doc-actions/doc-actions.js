@@ -50,8 +50,13 @@ const sendNotice = (noticelabel) => {
 function decorateBookmarkMobileBlock() {
   const docActionsMobile = document.createElement('div');
   docActionsMobile.classList.add('doc-actions-mobile');
-  if (document.querySelector('.article-metadata-createdby-wrapper')) {
-    document.querySelector('.article-metadata-createdby-wrapper').appendChild(docActionsMobile);
+
+  const createdByEl = document.querySelector('.article-metadata-createdby-wrapper');
+  const articleMetaDataEl = document.querySelector('.article-metadata-wrapper');
+  if (articleMetaDataEl.nextSibling === createdByEl) {
+    createdByEl.appendChild(docActionsMobile);
+  } else if (articleMetaDataEl) {
+    articleMetaDataEl.appendChild(docActionsMobile);
   }
 }
 
