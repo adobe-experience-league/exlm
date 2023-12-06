@@ -27,8 +27,8 @@ export default class ADLSDataService {
         method: 'GET'
       });
       const data = await response.json();
-      sessionStorage.setItem(ADLS, JSON.stringify(data[0]));
-      return data[0];
+      sessionStorage.setItem(ADLS, JSON.stringify(data));
+      return data;
     } catch (error) {
       sessionStorage.removeItem(ADLS);
       /* eslint-disable no-console */
