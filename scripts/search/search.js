@@ -93,7 +93,7 @@ export default class Search {
       if (iconSearchElement) {
         iconSearchElement.addEventListener('click', () => {
           const searchInputValue = this.searchInput.value.trim();
-          const filterValue = this.searchPickerLabelEl.getAttribute('data-filter-value');
+          const { filterValue } = this.searchPickerLabelEl.dataset;
           redirectToSearchPage(searchInputValue, filterValue);
         });
       }
@@ -155,7 +155,7 @@ export default class Search {
     if (searchIcon) {
       searchIcon.addEventListener('click', () => {
         const searchInputValue = this.searchInput.value.trim();
-        const filterValue = this.searchPickerLabelEl.getAttribute('data-filter-value');
+        const { filterValue } = this.searchPickerLabelEl.dataset;
         redirectToSearchPage(searchInputValue, filterValue);
       });
     }
@@ -165,7 +165,7 @@ export default class Search {
   handleEnterKey(e) {
     if (e.key === 'Enter') {
       const searchInputValue = this.searchInput.value.trim();
-      const filterValue = this.searchPickerLabelEl.getAttribute('data-filter-value');
+      const { filterValue } = this.searchPickerLabelEl.dataset;
       redirectToSearchPage(searchInputValue, filterValue);
     }
   }
@@ -190,7 +190,7 @@ export default class Search {
     const searchParams = this.searchOptions.map((option) => option.split(':')[0]);
     if (e.target && searchParams.includes(e.target.textContent.trim())) {
       this.searchPickerPopover.querySelector('.icon').remove();
-      this.setSelectedSearchOption(e.target.textContent, e.target.getAttribute('data-filter-value'));
+      this.setSelectedSearchOption(e.target.textContent, e.target.dataset.filterValue);
       e.target.append(this.selectedCheckmarkEl);
     }
   }
@@ -198,7 +198,7 @@ export default class Search {
   onSearchPopoverKeydown(e) {
     if (e.key === 'Enter' && e.target && this.searchOptions.includes(e.target.textContent.trim())) {
       this.searchPickerPopover.querySelector('.icon').remove();
-      this.setSelectedSearchOption(e.target.textContent, e.target.getAttribute('data-filter-value'));
+      this.setSelectedSearchOption(e.target.textContent, e.target.dataset.filterValue);
       e.target.append(this.selectedCheckmarkEl);
     }
   }
@@ -322,7 +322,7 @@ export default class Search {
       this.clearSearchIcon.classList.add('search-icon-show');
     }
     this.hideSearchSuggestions(e, true);
-    redirectToSearchPage(suggestion, this.searchPickerLabelEl.getAttribute('data-filter-value'));
+    redirectToSearchPage(suggestion, this.searchPickerLabelEl.dataset.filterValue);
   }
 
   setSelectedSearchOption(option, filterValue) {
