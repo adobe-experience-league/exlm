@@ -52,13 +52,15 @@
   font-weight: var(--font-weight-700);
   line-height: 30px;
   margin-bottom: var(--space-token-xxs);
+  color: var(--spectrum-gray-800);
 }
 
 .media.block > .text > .description,
 .media.block > .text > .description * {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-body-size-l);
+  font-size: var(--spectrum-body-size-m);
   line-height: 24px;
+  color: var(--spectrum-gray-800);
 }
 
 /* the list of CTA's */
@@ -77,6 +79,8 @@
 /* the cta buttons */
 .media.block > .text > .cta > a.button {
   margin: 0;
+  color: var(--spectrum-gray-700);
+  border: 2px solid var(--non-spectrum-article-dark-gray);
 }
 
 /* ----- TABLET ----- */
@@ -105,7 +109,7 @@
     height: 100%;
   }
 
-  .media.block.left > .image {
+  .media.block.right > .image {
     order: 1;
   }
 
@@ -113,7 +117,7 @@
     width: 50%;
   }
   
-  .media.block.left > .text {
+  .media.block.right > .text {
     order: 0;
   }
 
@@ -138,15 +142,21 @@
 
 /* larger font size above 1200px */
 @media (min-width: 1200px) {
+  .media.block > .text > .description,
+  .media.block > .text > .description * {
+    font-size: var(--spectrum-body-size-l);
+    line-height: 23.4px;
+  }
+
   /* the eybrow title */
   .media.block > .text > .eyebrow {
-    font-size: var(--spectrum-font-size-100);
+    font-size: var(--spectrum-heading-size-xxs);
+    line-height: 21px;
   }
 
   /* the main title */
   .media.block > .text > .title {
-    font-size: var(--spectrum-heading-size-xl);
-    line-height: 46.8px;
+    font-size: var(--spectrum-heading-size-l);
+    line-height: 42px;
   }
 }
-
