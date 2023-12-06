@@ -94,6 +94,11 @@ const buildCardContent = (card, model) => {
     const stringContent = description.length > 100 ? `${description.substring(0, 100).trim()}...` : description;
     const descriptionElement = document.createElement('p');
     descriptionElement.classList.add('browse-card-description-text');
+    // Parse the HTML string
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(stringContent, 'text/html');
+    // Extract text content
+    const descriptionText = doc.body.textContent.trim();
     descriptionElement.textContent = stringContent;
     cardContent.appendChild(descriptionElement);
   }
