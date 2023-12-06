@@ -34,6 +34,7 @@
   height: 14px;
   width: 14px;
   padding: 6px;
+  cursor: pointer;
 }
 
 .feedback-ui .left h3 {
