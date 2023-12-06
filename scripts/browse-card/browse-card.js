@@ -70,7 +70,11 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
   if (contentType === 'tutorial') {
     icon = 'play-outline';
     isLeftPlacement = true;
-  } else if (contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY || contentType === CONTENT_TYPES.EVENT.MAPPING_KEY || contentType === CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY) {
+  } else if (
+    contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY ||
+    contentType === CONTENT_TYPES.EVENT.MAPPING_KEY ||
+    contentType === CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
+  ) {
     icon = 'new-tab';
   }
   const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
@@ -97,7 +101,7 @@ const buildCardContent = (card, model) => {
     // Parse the HTML string
     const parser = new DOMParser();
     const doc = parser.parseFromString(stringContent, 'text/html');
-    // Extract text content
+    // Extract text content from the element
     const descriptionText = doc.body.textContent.trim();
     descriptionElement.textContent = descriptionText;
     cardContent.appendChild(descriptionElement);

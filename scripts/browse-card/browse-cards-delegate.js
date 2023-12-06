@@ -38,18 +38,18 @@ const BrowseCardsDelegate = (() => {
     return urlSearchParams;
   };
 
-    /**
+  /**
    * constructADLSSearchParams is a method that constructs search parameters for the data source.
-   * @returns {URLSearchParams} - The URLSearchParams object containing the constructed parameters.
+   * @returns {URLSearchParams} - The URLSearchParams object containing the constructed parameters
    */
-    const constructADLSSearchParams = () => {
-      const urlSearchParams = new URLSearchParams();
-      urlSearchParams.append('trainingMethod', 'Live Instructor Courses');
-      urlSearchParams.append('pageIndex', '1');
-      urlSearchParams.append('sort', 'recommended');
-      urlSearchParams.append('learningType', 'catalog');
-      return urlSearchParams;
-    };
+  const constructADLSSearchParams = () => {
+    const urlSearchParams = new URLSearchParams();
+    urlSearchParams.append('trainingMethod', 'Live Instructor Courses');
+    urlSearchParams.append('pageIndex', '1');
+    urlSearchParams.append('sort', 'recommended');
+    urlSearchParams.append('learningType', 'catalog');
+    return urlSearchParams;
+  };
 
   /**
    * handleCoveoService is a method that handles fetching browse cards content using CoveoDataService.

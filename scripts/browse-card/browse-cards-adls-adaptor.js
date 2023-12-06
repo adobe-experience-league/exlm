@@ -3,19 +3,14 @@ import browseCardDataModel from '../data-model/browse-cards-model.js';
 import CONTENT_TYPES from './browse-cards-constants.js';
 
 /**
- * Module that provides functionality for adapting ADLS results to BrowseCards data model.
+ * Module that provides functionality for adapting ADLS results to BrowseCards data model
  * @module BrowseCardsADLSAdaptor
  */
 const BrowseCardsADLSAdaptor = (() => {
   let placeholders;
 
-  /**
-   * Converts a string to title case.
-   * @param {string} str - The input string.
-   * @returns {string} The string in title case.
-   */
-  const convertToTitleCase = (str) => str.replace(/\b\w/g, (match) => match.toUpperCase());
-
+  // Placeholder for ViewLinkCourse
+  const viewLinkTextPlaceholder = 'viewLinkCourse';
   /**
    * Maps a result to the BrowseCards data model.
    * @param {Object} result - The result object.
@@ -23,7 +18,7 @@ const BrowseCardsADLSAdaptor = (() => {
    */
   const mapResultToCardsDataModel = (result) => {
     const contentType = CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY;
-    const {solution, name, description, path } = result || {};
+    const { solution, name, description, path } = result || {};
 
     return {
       ...browseCardDataModel,
@@ -34,7 +29,7 @@ const BrowseCardsADLSAdaptor = (() => {
       description: description || '',
       copyLink: path || '',
       viewLink: path || '',
-      viewLinkText: placeholders['viewLinkCourse'],
+      viewLinkText: placeholders[viewLinkTextPlaceholder],
     };
   };
 
