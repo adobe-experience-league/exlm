@@ -100,6 +100,8 @@ const BrowseCardsDelegate = (() => {
       };
       const adlsService = new ADLSDataService(dataSource);
       const cardData = await adlsService.fetchDataFromSource();
+      console.log(cardData);
+      console.log(cardData.results);
       if (cardData?.results?.length) {
         resolve(BrowseCardsADLSAdaptor.mapResultsToCardsData(cardData.results));
       } else {
