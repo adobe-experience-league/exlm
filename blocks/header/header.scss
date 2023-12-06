@@ -786,6 +786,11 @@ header {
     display: block;
   }
 
+  button > .search-picker-label {
+    color: var(--spectrum-gray-700);
+    font-weight: var(--font-weight-400);
+  }
+
   .search-picker-popover,
   .search-suggestions-popover {
     position: absolute;
@@ -830,10 +835,15 @@ header {
     }
 
     li.search-picker-label {
+      border-top: 1px solid var(--non-spectrum-bg);
       padding: 3px 12px;
       font-size: var(--spectrum-font-size-100);
       line-height: 18px;
       color: var(--non-spectrum-charcoal-gray);
+
+      &:first-child {
+        border-top: none;
+      }
     }
 
     li.search-picker-label .search-highlight-text {

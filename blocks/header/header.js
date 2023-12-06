@@ -291,17 +291,23 @@ const searchDecorator = async (searchBlock) => {
           </div>
         </div>
         <button type="button" class="search-picker-button" aria-haspopup="true" aria-controls="search-picker-popover">
-          <span class="search-picker-label">${options[0] || ''}</span>
+          <span class="search-picker-label" data-filter-value="${options[0].split(':')[1]}">${
+            options[0].split(':')[0] || ''
+          }</span>
         </button>
         <div class="search-picker-popover" id="search-picker-popover">
           <ul role="listbox">
             ${options
               .map(
                 (option, index) =>
-                  `<li tabindex="0" role="option" class="search-picker-label">${
+                  `<li tabindex="0" role="option" class="search-picker-label" data-filter-value="${
+                    option.split(':')[1]
+                  }">${
                     index === 0
-                      ? `<span class="icon icon-checkmark"></span> <span>${option}</span>`
-                      : `<span>${option}</span>`
+                      ? `<span class="icon icon-checkmark"></span> <span data-filter-value="${option.split(':')[1]}">${
+                          option.split(':')[0]
+                        }</span>`
+                      : `<span data-filter-value="${option.split(':')[1]}">${option.split(':')[0]}</span>`
                   }</li>`,
               )
               .join('')}
