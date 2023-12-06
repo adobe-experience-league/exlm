@@ -22,17 +22,13 @@ export default class ADLSDataService {
       if (ADLS in sessionStorage) {
         return JSON.parse(sessionStorage[ADLS]);
       }
-      console.log("Data Source URL");
-      console.log(this.dataSource.url);
-      console.log(this.dataSource.param);
       const urlWithParams = `${this.dataSource.url}?${this.dataSource.param.toString()}`;
-      console.log(urlWithParams);
       const response = await fetch(urlWithParams, {
         method: 'GET'
       });
       const data = await response.json();
-      sessionStorage.setItem(ADLS, JSON.stringify(data.results));
-      return data.results;
+      sessionStorage.setItem(ADLS, JSON.stringify(data[0]));
+      return data[0];
     } catch (error) {
       sessionStorage.removeItem(ADLS);
       /* eslint-disable no-console */
