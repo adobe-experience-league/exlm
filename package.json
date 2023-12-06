@@ -67,6 +67,7 @@
     ]
   },
   "dependencies": {
+    "@coveo/headless": "^2.41.0",
     "open": "^9.1.0"
   }
 }
