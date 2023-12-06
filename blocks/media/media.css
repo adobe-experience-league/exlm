@@ -80,7 +80,11 @@
 .media.block > .text > .cta > a.button {
   margin: 0;
   color: var(--spectrum-gray-700);
-  border: 2px solid var(--non-spectrum-article-dark-gray);
+}
+
+.media.block > .text > .cta > a.button.primary {
+  border: 2px solid var(--non-spectrum-link);
+  color: white;
 }
 
 /* ----- TABLET ----- */
