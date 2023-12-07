@@ -121,7 +121,7 @@ const BrowseCardsDelegate = (() => {
       [CONTENT_TYPES.TROUBLESHOOTING.MAPPING_KEY]: handleCoveoService,
       [CONTENT_TYPES.DOCUMENTATION.MAPPING_KEY]: handleCoveoService,
       [CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY]: handleLiveEventsService,
-      [CONTENT_TYPES.COMMUNITY.MAPPING_KEY]: null, // placeholder for handleKhorosService,
+      [CONTENT_TYPES.COMMUNITY.MAPPING_KEY]: handleCoveoService,
       [CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY]: handleADLSService,
     };
 
