@@ -101,22 +101,22 @@ export function decorateBookmark(block) {
               }
             });
 
-            elem.addEventListener('mousedown', async () => {
+            bookmarkAuthedToolTipIcon.addEventListener('click', async () => {
               if (bookmarkAuthedToolTipIcon.classList.contains('authed')) {
                 await updateProfile('bookmarks', id);
                 bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_SET;
                 bookmarkAuthedToolTipIcon.classList.remove('authed');
                 sendNotice(CONFIG.BOOKMARK_UNSET);
-                elem.style.pointerEvents = 'none';
+                bookmarkAuthedToolTipIcon.style.pointerEvents = 'none';
               } else {
                 await updateProfile('bookmarks', id);
                 bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_REMOVE;
                 bookmarkAuthedToolTipIcon.classList.add('authed');
                 sendNotice(CONFIG.BOOKMARK_SET);
-                elem.style.pointerEvents = 'none';
+                bookmarkAuthedToolTipIcon.style.pointerEvents = 'none';
               }
               setTimeout(() => {
-                elem.style.pointerEvents = 'auto';
+                bookmarkAuthedToolTipIcon.style.pointerEvents = 'auto';
               }, 3000);
             });
           });
@@ -124,10 +124,10 @@ export function decorateBookmark(block) {
       });
     }
   } else {
+    block.appendChild(unAuthBookmark);
     if (document.querySelector('.doc-actions-mobile')) {
       document.querySelector('.doc-actions-mobile').appendChild(unAuthBookmark.cloneNode(true));
     }
-    block.appendChild(unAuthBookmark);
   }
 }
 
@@ -136,10 +136,10 @@ export function decorateCopyLink(block) {
   copyLinkDivNode.className = 'copy-link';
   copyLinkDivNode.innerHTML = tooltipTemplate('copy-link-url', CONFIG.NOTICE_LABEL, CONFIG.NOTICE_TIPTEXT);
 
+  block.appendChild(copyLinkDivNode);
   if (document.querySelector('.doc-actions-mobile')) {
     document.querySelector('.doc-actions-mobile').appendChild(copyLinkDivNode.cloneNode(true));
   }
-  block.appendChild(copyLinkDivNode);
   const copyLinkIcons = document.querySelectorAll('.icon.copy-link-url');
   copyLinkIcons.forEach((copyLinkIcon) => {
     if (copyLinkIcon) {
