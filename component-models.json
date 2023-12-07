@@ -830,5 +830,42 @@
         "description": "What link to open when clicking the button."
       }
     ]
+  },
+  {
+    "id": "events-cards",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "tooltip",
+        "value": "",
+        "label": "Tooltip",
+        "description": "Sets the tooltip."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "linkText",
+        "value": "",
+        "label": "Link text",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "description": "Sets the text url."
+      }
+    ]
   }
 ]
