@@ -45,7 +45,11 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     /* eslint-disable-next-line camelcase */
     const { el_contenttype, el_product } = raw || {};
     /* eslint-disable-next-line camelcase */
-    const contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.toLowerCase() : el_contenttype?.toLowerCase();
+    const contentType = Array.isArray(el_contenttype)
+      ? /* eslint-disable-next-line camelcase */
+        el_contenttype[0]?.toLowerCase()
+      : /* eslint-disable-next-line camelcase */
+        el_contenttype?.toLowerCase();
     /* eslint-disable-next-line camelcase */
     const product = Array.isArray(el_product) ? el_product[0] : el_product;
     const tags = createTags(result, contentType, placeholders);
