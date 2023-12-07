@@ -101,7 +101,7 @@ export function decorateBookmark(block) {
               }
             });
 
-            elem.addEventListener('click', async () => {
+            elem.addEventListener('mousedown', async () => {
               if (bookmarkAuthedToolTipIcon.classList.contains('authed')) {
                 await updateProfile('bookmarks', id);
                 bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_SET;
