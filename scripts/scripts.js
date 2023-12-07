@@ -14,6 +14,7 @@ import {
   decorateButtons,
   getMetadata,
   loadScript,
+  toClassName,
 } from './lib-franklin.js';
 import {
   analyticsTrack404,
@@ -246,6 +247,14 @@ async function loadLazy(doc) {
   sampleRUM('lazy');
   sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
   sampleRUM.observe(main.querySelectorAll('picture > img'));
+
+  const context = {
+    getMetadata,
+    toClassName,
+  };
+  // eslint-disable-next-line import/no-relative-packages
+  const { initConversionTracking } = await import('../plugins/rum-conversion/src/index.js');
+  await initConversionTracking.call(context, document);
 }
 
 /**
