@@ -25,9 +25,9 @@ const tooltipTemplate = (sel, label, tiptext) => {
 
 const noticeTemplate = (info) => {
   const noticeContent = document.createElement('div');
-  noticeContent.className = 'exl-notice';
+  noticeContent.className = 'exl-toast';
   noticeContent.innerHTML = `<div class="icon-info"></div>
-        <div class="exl-notice-content">${info}</div>
+        <div class="exl-toast-content">${info}</div>
         <div class="icon-close"></div>`;
   return noticeContent;
 };
@@ -35,9 +35,9 @@ const noticeTemplate = (info) => {
 const sendNotice = (noticelabel) => {
   const sendNoticeContent = noticeTemplate(noticelabel);
   document.body.prepend(sendNoticeContent);
-  const isExlNotice = document.querySelector('.exl-notice');
+  const isExlNotice = document.querySelector('.exl-toast');
   if (isExlNotice) {
-    document.querySelector('.exl-notice .icon-close').addEventListener('click', () => {
+    document.querySelector('.exl-toast .icon-close').addEventListener('click', () => {
       isExlNotice.remove();
     });
 
@@ -46,6 +46,19 @@ const sendNotice = (noticelabel) => {
     }, 3000);
   }
 };
+
+function decorateBookmarkMobileBlock() {
+  const docActionsMobile = document.createElement('div');
+  docActionsMobile.classList.add('doc-actions-mobile');
+
+  const createdByEl = document.querySelector('.article-metadata-createdby-wrapper');
+  const articleMetaDataEl = document.querySelector('.article-metadata-wrapper');
+  if (articleMetaDataEl.nextSibling === createdByEl) {
+    createdByEl.appendChild(docActionsMobile);
+  } else if (articleMetaDataEl) {
+    articleMetaDataEl.appendChild(docActionsMobile);
+  }
+}
 
 const isSignedIn = adobeIMS?.isSignedInUser();
 
@@ -69,40 +82,52 @@ export function decorateBookmark(block) {
 
   if (isSignedIn) {
     block.appendChild(authBookmark);
-    const bookmarkAuthed = block.querySelector('.bookmark.auth');
-    if (bookmarkAuthed) {
-      const bookmarkAuthedToolTipLabel = bookmarkAuthed.querySelector('.exl-tooltip-label');
-      const bookmarkAuthedToolTipIcon = bookmarkAuthed.querySelector('.icon.bookmark-icon');
-      if (id.length === 0) {
-        // eslint-disable-next-line
-        console.log('Hooking bookmark failed. No id present.');
-      } else {
-        loadJWT().then(async () => {
-          profile().then(async (data) => {
-            if (data.bookmarks.includes(id)) {
-              bookmarkAuthedToolTipIcon.classList.add('authed');
-              bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_REMOVE;
-            }
-          });
+    if (document.querySelector('.doc-actions-mobile')) {
+      document.querySelector('.doc-actions-mobile').appendChild(authBookmark.cloneNode(true));
+    }
+    const bookmarkAuthed = document.querySelectorAll('.bookmark.auth');
+    if (bookmarkAuthed.length > 0) {
+      bookmarkAuthed.forEach((elem) => {
+        const bookmarkAuthedToolTipLabel = elem.querySelector('.exl-tooltip-label');
+        const bookmarkAuthedToolTipIcon = elem.querySelector('.icon.bookmark-icon');
+        if (id.length === 0) {
+          console.log('Hooking bookmark failed. No id present.');
+        } else {
+          loadJWT().then(async () => {
+            profile().then(async (data) => {
+              if (data.bookmarks.includes(id)) {
+                bookmarkAuthedToolTipIcon.classList.add('authed');
+                bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_REMOVE;
+              }
+            });
 
-          bookmarkAuthed.addEventListener('click', async () => {
-            if (bookmarkAuthedToolTipIcon.classList.contains('authed')) {
-              await updateProfile('bookmarks', id);
-              bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_SET;
-              bookmarkAuthedToolTipIcon.classList.remove('authed');
-              sendNotice(CONFIG.BOOKMARK_UNSET);
-            } else {
-              await updateProfile('bookmarks', id);
-              bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_REMOVE;
-              bookmarkAuthedToolTipIcon.classList.add('authed');
-              sendNotice(CONFIG.BOOKMARK_SET);
-            }
+            bookmarkAuthedToolTipIcon.addEventListener('click', async () => {
+              if (bookmarkAuthedToolTipIcon.classList.contains('authed')) {
+                await updateProfile('bookmarks', id);
+                bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_SET;
+                bookmarkAuthedToolTipIcon.classList.remove('authed');
+                sendNotice(CONFIG.BOOKMARK_UNSET);
+                bookmarkAuthedToolTipIcon.style.pointerEvents = 'none';
+              } else {
+                await updateProfile('bookmarks', id);
+                bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_REMOVE;
+                bookmarkAuthedToolTipIcon.classList.add('authed');
+                sendNotice(CONFIG.BOOKMARK_SET);
+                bookmarkAuthedToolTipIcon.style.pointerEvents = 'none';
+              }
+              setTimeout(() => {
+                bookmarkAuthedToolTipIcon.style.pointerEvents = 'auto';
+              }, 3000);
+            });
           });
-        });
-      }
+        }
+      });
     }
   } else {
     block.appendChild(unAuthBookmark);
+    if (document.querySelector('.doc-actions-mobile')) {
+      document.querySelector('.doc-actions-mobile').appendChild(unAuthBookmark.cloneNode(true));
+    }
   }
 }
 
@@ -112,18 +137,24 @@ export function decorateCopyLink(block) {
   copyLinkDivNode.innerHTML = tooltipTemplate('copy-link-url', CONFIG.NOTICE_LABEL, CONFIG.NOTICE_TIPTEXT);
 
   block.appendChild(copyLinkDivNode);
-  const copyLinkIcon = block.querySelector('.icon.copy-link-url');
-  if (copyLinkIcon) {
-    copyLinkIcon.addEventListener('click', (e) => {
-      e.preventDefault();
-      navigator.clipboard.writeText(window.location.href);
-      sendNotice(CONFIG.NOTICE_SET);
-    });
+  if (document.querySelector('.doc-actions-mobile')) {
+    document.querySelector('.doc-actions-mobile').appendChild(copyLinkDivNode.cloneNode(true));
   }
+  const copyLinkIcons = document.querySelectorAll('.icon.copy-link-url');
+  copyLinkIcons.forEach((copyLinkIcon) => {
+    if (copyLinkIcon) {
+      copyLinkIcon.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href);
+        sendNotice(CONFIG.NOTICE_SET);
+      });
+    }
+  });
 }
 
 export default async function decorateDocActions(block) {
   if (isDocPage) {
+    decorateBookmarkMobileBlock();
     decorateBookmark(block);
     decorateCopyLink(block);
   }

@@ -1,79 +1,84 @@
-.exl-notice {
+.exl-toast {
   align-items: center;
   background: var(--spectrum-green-900);
   border-radius: 5px;
   color: var(--spectrum-gray-50);
   display: flex;
-  gap: 5px;
   left: 50%;
   padding: 0 10px;
   position: fixed;
   transition: all 200ms ease-in-out;
   transform: translate(-50%, -50%);
-  top: 50px;
+  top: 10%;
+  bottom: unset;
   z-index: 15;
 }
-.exl-notice-content {
-  border-right: 1px solid var(--spectrum-gray-300);
-  padding: 5px 15px 5px 5px;
-  margin: 5px 0;
+.exl-toast-content {
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+  color: var(--spectrum-gray-50);
+  font-weight: var(--font-weight-400);
+  line-height: 18.2px;
+  padding: 7px 15px 7px 5px;
+  margin: 8px 0;
+  white-space: pre;
 }
-.exl-notice .icon-info {
+.exl-toast .icon-info {
   background-image: url("../../icons/info-circle.svg");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: 15px;
+  background-size: 18px;
   cursor: pointer;
-  height: 15px;
-  margin-left: 5px;
+  height: 18px;
   padding: 5px;
-  width: 15px;
+  width: 18px;
   vertical-align: middle;
 }
-.exl-notice .icon-close {
+.exl-toast .icon-close {
   background-image: url("../../icons/icon-close.svg");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: 15px;
+  background-size: 20px;
   cursor: pointer;
-  height: 15px;
+  height: 20px;
   padding: 5px;
-  width: 15px;
+  width: 20px;
+  margin-left: 5px;
   vertical-align: middle;
 }
 
-.doc-actions-wrapper {
-  position: sticky;
-  top: 0;
-}
-
-.doc-actions {
+.doc-actions,
+.doc-actions-mobile {
   align-items: center;
   display: inline-flex;
   font-size: var(--spectrum-font-size-75);
   margin: 10px;
 }
-.doc-actions .exl-tooltip {
+.doc-actions .exl-tooltip,
+.doc-actions-mobile .exl-tooltip {
   display: inline-block;
   font-size: 12px;
   position: relative;
   transition: all 130ms ease-in-out;
 }
-.doc-actions .exl-tooltip-label {
+.doc-actions .exl-tooltip-label,
+.doc-actions-mobile .exl-tooltip-label {
   background-color: var(--spectrum-gray-600);
   border-radius: 4px;
   bottom: 120%;
   color: var(--spectrum-gray-50);
+  font-weight: var(--font-weight-400);
   left: 50%;
   padding: 2px 8px 4px;
   position: absolute;
   text-align: center;
   text-wrap: nowrap;
   transform: translateX(-50%);
+  white-space: pre;
   visibility: hidden;
   z-index: 1;
 }
-.doc-actions .exl-tooltip-label::after {
+.doc-actions .exl-tooltip-label::after,
+.doc-actions-mobile .exl-tooltip-label::after {
   border-width: 4px;
   border-style: solid;
   border-color: var(--spectrum-gray-600) transparent transparent transparent;
@@ -83,54 +88,91 @@
   position: absolute;
   top: 100%;
 }
-.doc-actions .icon {
+.doc-actions .exl-link-label,
+.doc-actions-mobile .exl-link-label {
+  color: var(--non-spectrum-grey);
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-400);
+  line-height: 28px;
+}
+.doc-actions .icon,
+.doc-actions-mobile .icon {
   background-size: 20px 20px;
   background-repeat: no-repeat;
+  color: var(--spectrum-gray-800);
   cursor: pointer;
   height: 20px;
-  padding: 5px;
+  padding: 5px 2px 5px 5px;
   transition: all 200ms ease-in-out;
   vertical-align: middle;
   width: 20px;
 }
-.doc-actions .bookmark {
+.doc-actions .bookmark,
+.doc-actions-mobile .bookmark {
   margin-right: 10px;
 }
-.doc-actions .bookmark .icon.bookmark-icon {
+.doc-actions .bookmark .icon.bookmark-icon,
+.doc-actions-mobile .bookmark .icon.bookmark-icon {
   background-image: url("../../icons/bookmark-outline.svg");
   background-position: center 3px;
   cursor: inherit;
-  margin-right: 2px;
 }
-.doc-actions .bookmark .icon.bookmark-icon:hover + .exl-tooltip-label {
+.doc-actions .bookmark .icon.bookmark-icon:hover + .exl-tooltip-label,
+.doc-actions-mobile .bookmark .icon.bookmark-icon:hover + .exl-tooltip-label {
   visibility: visible;
 }
-.doc-actions .bookmark.auth .bookmark-icon {
+.doc-actions .bookmark.auth .bookmark-icon,
+.doc-actions-mobile .bookmark.auth .bookmark-icon {
   cursor: pointer;
 }
-.doc-actions .bookmark.auth .bookmark-icon.authed {
+.doc-actions .bookmark.auth .bookmark-icon.authed,
+.doc-actions-mobile .bookmark.auth .bookmark-icon.authed {
   background-image: url("../../icons/bookmark-active.svg");
   background-position: center 3px;
   cursor: pointer;
 }
-.doc-actions .bookmark.auth .bookmark-icon.authed:hover + .exl-tooltip-label {
+.doc-actions .bookmark.auth .bookmark-icon.authed:hover + .exl-tooltip-label,
+.doc-actions-mobile .bookmark.auth .bookmark-icon.authed:hover + .exl-tooltip-label {
   visibility: visible;
 }
-.doc-actions .bookmark.auth .bookmark-icon:hover {
+.doc-actions .bookmark.auth .bookmark-icon:hover,
+.doc-actions-mobile .bookmark.auth .bookmark-icon:hover {
   background-color: var(--spectrum-gray-200);
   border-radius: 4px;
 }
-.doc-actions .copy-link .icon.copy-link-url {
+.doc-actions .copy-link .icon.copy-link-url,
+.doc-actions-mobile .copy-link .icon.copy-link-url {
   background-image: url("../../icons/copy-link.svg");
   background-position: center 2px;
   margin-right: 5px;
   transition: all 200ms ease-in-out;
-  /* stylelint-disable-next-line */
 }
-.doc-actions .copy-link .icon.copy-link-url:hover {
+.doc-actions .copy-link .icon.copy-link-url:hover,
+.doc-actions-mobile .copy-link .icon.copy-link-url:hover {
   background-color: var(--spectrum-gray-200);
   border-radius: 4px;
 }
-.doc-actions .copy-link .icon.copy-link-url:hover + .exl-tooltip-label {
+.doc-actions .copy-link .icon.copy-link-url:hover + .exl-tooltip-label,
+.doc-actions-mobile .copy-link .icon.copy-link-url:hover + .exl-tooltip-label {
   visibility: visible;
+}
+
+.doc-actions-wrapper {
+  display: none;
+}
+
+.doc-actions-mobile {
+  display: flex;
+  margin: 30px 0 0 -8px;
+}
+@media (min-width: 900px) {
+  .doc-actions-wrapper {
+    display: flex;
+    position: sticky;
+    top: 0;
+  }
+
+  .doc-actions-mobile {
+    display: none;
+  }
 }

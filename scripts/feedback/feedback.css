@@ -58,6 +58,11 @@
   vertical-align: bottom;
 }
 
+.feedback-ui .left .icon-chevron {
+  position: absolute;
+  right: -3px;
+}
+
 .feedback-ui .right .icon-chevron {
   display: none;
   transform: translateY(-1px);
@@ -295,8 +300,6 @@
   }
 
   .feedback-ui .left .icon-chevron {
-    position: absolute;
-    right: -3px;
     transform: translateY(-1px);
   }
 

@@ -70,7 +70,11 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
   if (contentType === 'tutorial') {
     icon = 'play-outline';
     isLeftPlacement = true;
-  } else if (contentType.includes('event')) {
+  } else if (
+    contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY ||
+    contentType === CONTENT_TYPES.EVENT.MAPPING_KEY ||
+    contentType === CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
+  ) {
     icon = 'new-tab';
   }
   const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
@@ -83,6 +87,8 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
   cardFooter.appendChild(anchorLink);
 };
 
+const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+
 const buildCardContent = (card, model) => {
   const { description, contentType: type, viewLinkText, viewLink, copyLink, tags, contributor, event = {} } = model;
   const contentType = type.toLowerCase();
@@ -94,7 +100,7 @@ const buildCardContent = (card, model) => {
     const stringContent = description.length > 100 ? `${description.substring(0, 100).trim()}...` : description;
     const descriptionElement = document.createElement('p');
     descriptionElement.classList.add('browse-card-description-text');
-    descriptionElement.textContent = stringContent;
+    descriptionElement.innerHTML = stripScriptTags(stringContent);
     cardContent.appendChild(descriptionElement);
   }
 

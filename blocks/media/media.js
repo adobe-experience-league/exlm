@@ -38,7 +38,7 @@ export default function decorate(block) {
 
   // set image description
   if (imageDescr) {
-    mediaDOM.querySelector(':scope .image picture img').setAttribute('alt', imageDescr);
+    mediaDOM.querySelector('.image picture img').setAttribute('alt', imageDescr);
   }
 
   // attach DOM
