@@ -23,8 +23,8 @@
   object-fit: cover;
   max-height:300px;
   max-width:400px;
-  width: 400px;
-  height: 300px;
+  width: 100%;
+  height: 100%;
 }
 
 /* the text block (eyebrow, title , descr , ctr) */
@@ -110,18 +110,13 @@
     max-width: 50%;
   }
 
-  .media.block > .image img {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-  }
-
   .media.block.right > .image {
     order: 1;
   }
 
   .media.block > .text {
     width: 50%;
+    flex-grow: 1;
   }
   
   .media.block.right > .text {
