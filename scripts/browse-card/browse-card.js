@@ -87,9 +87,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
   cardFooter.appendChild(anchorLink);
 };
 
-const stripScriptTags = function (input) {
-  return input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-};
+const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
 const buildCardContent = (card, model) => {
   const { description, contentType: type, viewLinkText, viewLink, copyLink, tags, contributor, event = {} } = model;
