@@ -726,16 +726,16 @@
       {
         "component": "select",
         "name": "classes",
-        "label": "Alignment",
+        "label": "Image Alignment",
         "valueType": "string",
         "options": [
           {
-            "name": "Text left",
-            "value": "left"
+            "name": "Right",
+            "value": "right"
           },
           {
-            "name": "Text right",
-            "value": "right"
+            "name": "Left",
+            "value": "left"
           }
         ]
       },

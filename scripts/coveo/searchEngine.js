@@ -7,7 +7,7 @@ import {
 } from "@coveo/headless";
 import loadCoveoToken from "../data-service/coveo/coveo-token-service.js";
 
-export async function buildCoveoSearchHeadlessEngine () {
+async function buildCoveoSearchHeadlessEngine () {
   const headlessEngine = buildSearchEngine({
     configuration: {
       organizationId: "adobesystemsincorporatednonprod1",

@@ -52,13 +52,15 @@
   font-weight: var(--font-weight-700);
   line-height: 30px;
   margin-bottom: var(--space-token-xxs);
+  color: var(--spectrum-gray-800);
 }
 
 .media.block > .text > .description,
 .media.block > .text > .description * {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-body-size-m);
   line-height: 24px;
+  color: var(--spectrum-gray-800);
 }
 
 /* the list of CTA's */
@@ -77,6 +79,15 @@
 /* the cta buttons */
 .media.block > .text > .cta > a.button {
   margin: 0;
+  color: var(--background-color);
+  border: 2px solid var(--non-spectrum-link);
+  background: var(--non-spectrum-link);
+}
+
+.media.block > .text > .cta > a.button.secondary {
+  color: var(--spectrum-gray-700);
+  background-color: unset;
+  border: 2px solid currentcolor;
 }
 
 /* ----- TABLET ----- */
@@ -105,19 +116,19 @@
     height: 100%;
   }
 
+  .media.block.right > .image {
+    order: 1;
+  }
+
   .media.block > .text {
     width: 50%;
   }
   
-  .media.block.left > .image {
-    order: 1;
-  }
-
-  .media.block.left > .text {
+  .media.block.right > .text {
     order: 0;
   }
 
-  /* the cta buttons in mobile view */
+  /* the cta buttons are smaller non-mobile */
   .media.block .text > .cta > a.button {
     margin: 0;
     font-family: var(--body-font-family);
@@ -128,6 +139,7 @@
   }
 }
 
+/* when enough width set fixed image size */
 @media (min-width: 800px) {
   .media.block > .image img {
     width: 400px;
@@ -135,3 +147,23 @@
   }
 }
 
+/* larger font size above 1200px */
+@media (min-width: 1200px) {
+  .media.block > .text > .description,
+  .media.block > .text > .description * {
+    font-size: var(--spectrum-body-size-l);
+    line-height: 23.4px;
+  }
+
+  /* the eybrow title */
+  .media.block > .text > .eyebrow {
+    font-size: var(--spectrum-heading-size-xxs);
+    line-height: 21px;
+  }
+
+  /* the main title */
+  .media.block > .text > .title {
+    font-size: var(--spectrum-heading-size-l);
+    line-height: 42px;
+  }
+}

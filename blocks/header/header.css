@@ -731,7 +731,12 @@ header {
   min-width: max-content;
   display: block;
 }
-.header .search-picker-popover, .header .search-suggestions-popover {
+.header button > .search-picker-label {
+  color: var(--spectrum-gray-700);
+  font-weight: var(--font-weight-400);
+}
+.header .search-picker-popover,
+.header .search-suggestions-popover {
   position: absolute;
   z-index: 1;
   right: 0;
@@ -747,7 +752,9 @@ header {
   pointer-events: none;
   touch-action: none;
 }
-.header .search-picker-popover.search-picker-popover-visible, .header .search-picker-popover.search-suggestions-popover-visible, .header .search-suggestions-popover.search-picker-popover-visible, .header .search-suggestions-popover.search-suggestions-popover-visible {
+.header .search-picker-popover.search-picker-popover-visible, .header .search-picker-popover.search-suggestions-popover-visible,
+.header .search-suggestions-popover.search-picker-popover-visible,
+.header .search-suggestions-popover.search-suggestions-popover-visible {
   visibility: visible;
   opacity: 1;
   pointer-events: auto;
@@ -766,10 +773,14 @@ header {
   list-style: none;
 }
 .header .search-suggestions-popover li.search-picker-label {
+  border-top: 1px solid var(--non-spectrum-bg);
   padding: 3px 12px;
   font-size: var(--spectrum-font-size-100);
   line-height: 18px;
   color: var(--non-spectrum-charcoal-gray);
+}
+.header .search-suggestions-popover li.search-picker-label:first-child {
+  border-top: none;
 }
 .header .search-suggestions-popover li.search-picker-label .search-highlight-text {
   color: var(--text-color);
