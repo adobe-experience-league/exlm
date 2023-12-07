@@ -1,6 +1,6 @@
 import { isDocPage } from '../../scripts/scripts.js';
 import loadJWT from '../../scripts/auth/jwt.js';
-import { adobeIMS, profile, updateProfile } from '../../scripts/data-service/profile.js';
+import { adobeIMS, profile, updateProfile } from '../../scripts/data-service/profile-service.js';
 
 const CONFIG = {
   BOOKMARK_SET: 'Success! This is bookmarked to your profile.',
@@ -91,6 +91,7 @@ export function decorateBookmark(block) {
         const bookmarkAuthedToolTipLabel = elem.querySelector('.exl-tooltip-label');
         const bookmarkAuthedToolTipIcon = elem.querySelector('.icon.bookmark-icon');
         if (id.length === 0) {
+          // eslint-disable-next-line
           console.log('Hooking bookmark failed. No id present.');
         } else {
           loadJWT().then(async () => {

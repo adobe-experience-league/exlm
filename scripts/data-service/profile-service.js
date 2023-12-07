@@ -4,16 +4,14 @@ import loadJWT from '../auth/jwt.js';
 import csrf from '../auth/csrf.js';
 import { JWTTokenUrl, profileUrl } from '../urls.js';
 import { Profile, ProfileAttributes } from '../session-keys.js';
-import { request, headerKeys, headerValues } from '../request.js';
+import { request } from '../request.js';
 
 export const override = /^(recommended|votes)$/;
-
-const sC = typeof structuredClone === 'function';
 
 export function clone(arg = {}, transferables = []) {
   let result;
 
-  if (sC) {
+  if (typeof structuredClone === 'function') {
     result = structuredClone(arg, transferables);
   } else {
     result = JSON.parse(JSON.stringify(arg));
@@ -60,8 +58,8 @@ export async function profileAttributes() {
     const res = await request(profileUrl, {
       credentials: 'include',
       headers: {
-        [headerKeys.auth]: await loadJWT(),
-        [headerKeys.accept]: headerValues.json,
+        authorization: await loadJWT(),
+        accept: 'application/json',
       },
       method: 'OPTIONS',
     });
@@ -94,8 +92,8 @@ export async function profile(reuse = false, cstream = true, explicit = false) {
         const res = await request(profileUrl, {
           credentials: 'include',
           headers: {
-            [headerKeys.auth]: await loadJWT(),
-            [headerKeys.accept]: headerValues.json,
+            authorization: await loadJWT(),
+            accept: 'application/json',
           },
         });
 
