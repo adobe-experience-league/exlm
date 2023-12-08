@@ -28,13 +28,29 @@ const BrowseCardsDelegate = (() => {
     urlSearchParams.append('sortCriteria', 'relevancy');
     urlSearchParams.append(
       'facets',
-      `[{"facetId":"@el_role","field":"el_role","type":"specific","injectionDepth":1000,"filterFacetCount":true,"currentValues":[{"value":"Admin","state":"idle"},{"value":"Developer","state":"idle"},{"value":"Leader","state":"idle"},{"value":"User","state":"idle"}],"numberOfValues":5,"freezeCurrentValues":false,"preventAutoSelect":false,"isFieldExpanded":false},{"facetId":"@el_contenttype","field":"el_contenttype","type":"hierarchical","injectionDepth":1000,"delimitingCharacter":"|","filterFacetCount":true,"basePath":[],"filterByBasePath":false,"currentValues":[{"value":"${contentType}","state":"selected","children":[],"retrieveChildren":true,"retrieveCount":5}],"preventAutoSelect":true,"numberOfValues":1,"isFieldExpanded":false},{"facetId":"el_product","field":"el_product","type":"hierarchical","injectionDepth":1000,"delimitingCharacter":"|","filterFacetCount":true,"basePath":[],"filterByBasePath":false,"currentValues":[],"preventAutoSelect":false,"numberOfValues":10000,"isFieldExpanded":false}]`,
+      `[{
+            "facetId": "@el_contenttype",
+            "field": "el_contenttype",
+            "type": "hierarchical",
+            "injectionDepth": 1000,
+            "delimitingCharacter": "|",
+            "filterFacetCount": true,
+            "basePath": [],
+            "filterByBasePath": false,
+            "currentValues": [
+                {
+                    "value": "${contentType}",
+                    "state": "selected",
+                    "children": [],
+                    "retrieveChildren": true,
+                    "retrieveCount": 5
+                }
+            ],
+            "preventAutoSelect": true,
+            "numberOfValues": 1,
+            "isFieldExpanded": false
+        }]`,
     );
-    urlSearchParams.append('timezone', 'Asia/Calcutta');
-    urlSearchParams.append('enableQuerySyntax', 'true');
-    urlSearchParams.append('enableDuplicateFiltering', 'false');
-    urlSearchParams.append('enableCollaborativeRating', 'false');
-    urlSearchParams.append('debug', 'false');
     return urlSearchParams;
   };
 
@@ -60,7 +76,22 @@ const BrowseCardsDelegate = (() => {
     new Promise(async (resolve, reject) => {
       const dataSource = {
         url: coveoSearchResultsUrl,
-        param: constructCoveoSearchParams(),
+        // param: constructCoveoSearchParams(),
+        param: {
+          "locale": "en",
+          "searchHub": "Experience League Learning Hub",
+          "q": "adobe",
+          "numberOfResults": param.noOfResults,
+          "excerptLength": 200,
+          "facets": [{
+            "facetId": "@el_contenttype",
+            "field": "el_contenttype",
+            "currentValues": [{
+              "state": "selected",
+              "value": param.contentType
+            }]
+          }]
+        },
       };
       const coveoService = new CoveoDataService(dataSource);
       const cardData = await coveoService.fetchDataFromSource();
@@ -121,7 +152,7 @@ const BrowseCardsDelegate = (() => {
       [CONTENT_TYPES.TROUBLESHOOTING.MAPPING_KEY]: handleCoveoService,
       [CONTENT_TYPES.DOCUMENTATION.MAPPING_KEY]: handleCoveoService,
       [CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY]: handleLiveEventsService,
-      [CONTENT_TYPES.COMMUNITY.MAPPING_KEY]: null, // placeholder for handleKhorosService,
+      [CONTENT_TYPES.COMMUNITY.MAPPING_KEY]: handleCoveoService,
       [CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY]: handleADLSService,
     };
 

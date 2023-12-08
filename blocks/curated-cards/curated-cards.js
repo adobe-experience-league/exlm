@@ -3,7 +3,6 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
-import { initCoveo } from '../../scripts/coveo/searchEngine.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -33,8 +32,6 @@ export default async function decorate(block) {
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
-
-  initCoveo();
 
   try {
     await loadIms();
