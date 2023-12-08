@@ -90,10 +90,7 @@ export function decorateBookmark(block) {
       bookmarkAuthed.forEach((elem) => {
         const bookmarkAuthedToolTipLabel = elem.querySelector('.exl-tooltip-label');
         const bookmarkAuthedToolTipIcon = elem.querySelector('.icon.bookmark-icon');
-        if (id.length === 0) {
-          // eslint-disable-next-line
-          console.log('Hooking bookmark failed. No id present.');
-        } else {
+        if (id) {
           loadJWT().then(async () => {
             profile().then(async (data) => {
               if (data.bookmarks.includes(id)) {
