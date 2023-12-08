@@ -22,7 +22,7 @@
   line-height: 18.2px;
   padding: 7px 15px 7px 5px;
   margin: 8px 0;
-  white-space: inherit;
+  white-space: unset;
 }
 .exl-toast .icon-info {
   background-image: url("../../icons/info-circle.svg");

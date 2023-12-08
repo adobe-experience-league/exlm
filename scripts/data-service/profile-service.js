@@ -8,33 +8,7 @@ import { request } from '../request.js';
 
 export const override = /^(recommended|votes)$/;
 
-export function clone(arg = {}, transferables = []) {
-  let result;
-
-  if (typeof structuredClone === 'function') {
-    result = structuredClone(arg, transferables);
-  } else {
-    result = JSON.parse(JSON.stringify(arg));
-
-    // eslint-disable-next-line
-    for (const key of transferables) {
-      result[key] = arg[key];
-    }
-  }
-
-  // eslint-disable-next-line
-  return result;
-}
-
-export function merge(a = {}, b = {}) {
-  // eslint-disable-next-line
-  let result = clone(a);
-
-  // eslint-disable-next-line
-  Object.keys(b).forEach((key) => {
-    result[key] = Object.assign(clone(result[key] || {}), b[key]);
-  });
-}
+const clone = (arg = {}, transferables = []) => structuredClone(arg, transferables);
 
 // eslint-disable-next-line
 export let adobeIMS = {
@@ -81,7 +55,7 @@ async function profileMerge(arg) {
   return Object.assign({}, tmp, arg, { avatarUrl: adobeIMS.avatarUrl(tmp.userId) });
 }
 
-export async function profile(reuse = false, cstream = true, explicit = false) {
+export async function profile(reuse = false, explicit = false) {
   let result = null;
 
   if (reuse === false) {
@@ -102,10 +76,6 @@ export async function profile(reuse = false, cstream = true, explicit = false) {
 
           result = await profileMerge(arg.data);
           profileData = clone(result);
-
-          if (cstream) {
-            // createStream();
-          }
         } else {
           signOut();
         }
@@ -131,7 +101,7 @@ export async function profile(reuse = false, cstream = true, explicit = false) {
 }
 
 export async function updateProfile(key, val, replace = false) {
-  const data = await profile(false, false, true);
+  const data = await profile(false, true);
 
   if (!meta || Object.keys(meta).length === 0) {
     meta = await profileAttributes();
