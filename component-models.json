@@ -830,5 +830,174 @@
         "description": "What link to open when clicking the button."
       }
     ]
+  },
+  {
+    "id": "cards",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "tooltip",
+        "value": "",
+        "label": "Tooltip",
+        "description": "Sets the tooltip."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "linkText",
+        "value": "",
+        "label": "Link text",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "description": "Sets the text url."
+      }
+    ]
+  },
+  {
+    "id": "card",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "contentURL",
+        "value": "",
+        "label": "Content URL",
+        "description": "Provide a link to one of the following content types: Course, Tutorial, Documentation, Troubleshooting, On-Demand Event, or Certification"
+      }
+    ]
+  },
+  {
+    "id": "browse-filters",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Browse Filters heading."
+      },
+      {
+        "component": "text-area",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Browse Filters Description"
+      },
+      {
+        "component": "multiselect",
+        "name": "role",
+        "label": "Role",
+        "valueType": "string",
+        "description": "Sets the Role.",
+        "options": [
+          {
+            "name": "Admin",
+            "value": "Admin"
+          },
+          {
+            "name": "Developer",
+            "value": "Developer"
+          },
+          {
+            "name": "Leader",
+            "value": "Leader"
+          },
+          {
+            "name": "User",
+            "value": "User"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "name": "contentType",
+        "label": "Content Type",
+        "valueType": "string",
+        "description": "Sets the Content Type.",
+        "options": [
+          {
+            "name": "Certification",
+            "value": "Certification"
+          },
+          {
+            "name": "Community",
+            "value": "Community"
+          },
+          {
+            "name": "Courses",
+            "value": "Courses"
+          },
+          {
+            "name": "Documentation",
+            "value": "Documentation"
+          },
+          {
+            "name": "On-Demand Events",
+            "value": "On-Demand Events"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "Troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "Tutorials"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "name": "experienceLevel",
+        "label": "Experience Level",
+        "valueType": "string",
+        "description": "Sets the Experience Level.",
+        "options": [
+          {
+            "name": "Beginner",
+            "value": "Beginner"
+          },
+          {
+            "name": "Intermediate",
+            "value": "Intermediate"
+          },
+          {
+            "name": "Experienced",
+            "value": "Experienced"
+          }
+        ]
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "keywordsSearch",
+        "value": "",
+        "label": "Keywords search",
+        "description": "Search the Keywords search Placeholder Text"
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "clearFiltersText",
+        "value": "",
+        "label": "Text",
+        "description": "Sets the Clear Filters Text"
+      }
+    ]
   }
 ]

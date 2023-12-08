@@ -322,6 +322,71 @@
               }
             }
           }
+        },
+        {
+          "title": "Cards",
+          "id": "cards",
+          "plugins": {
+            "aem": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "allowedComponents": "card",
+                  "name": "Cards",
+                  "item1": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Card",
+                    "model": "card"
+                  },
+                  "item2": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Card",
+                    "model": "card"
+                  },
+                  "item3": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Card",
+                    "model": "card"
+                  },
+                  "item4": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Card",
+                    "model": "card"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Card",
+          "id": "card",
+          "plugins": {
+            "aem": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Card",
+                  "model": "card"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Browse filters",
+          "id": "browse-filters",
+          "plugins": {
+            "aem": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Browse filters",
+                  "model": "browse-filters"
+                }
+              }
+            }
+          }
         }
       ]
     }
