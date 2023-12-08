@@ -832,7 +832,7 @@
     ]
   },
   {
-    "id": "cards",
+    "id": "authorable-card",
     "fields": [
       {
         "component": "text-input",
