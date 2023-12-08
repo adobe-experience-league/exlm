@@ -80,6 +80,18 @@ const brandDecorator = (brandBlock) => {
   return brandBlock;
 };
 
+let adobeIMS = {
+  isSignedInUser: () => false,
+};
+try {
+  const ims = await loadIms();
+  adobeIMS = ims.adobeIMS;
+} catch {
+  // eslint-disable-next-line no-console
+  console.warn('Adobe IMS not available.');
+}
+const isSignedIn = adobeIMS?.isSignedInUser();
+
 /**
  * adds hambuger button to nav wrapper
  * @param {HTMLElement} navWrapper
@@ -253,6 +265,55 @@ const navDecorator = (navBlock) => {
 
   navBlock.firstChild.id = hamburger.getAttribute('aria-controls');
   navBlock.prepend(hamburger);
+
+  if (isSignedIn) {
+    // Product Grid - Authenticated
+    const productGridBlock = document.createElement('div');
+    productGridBlock.classList.add('product-grid', 'signed-in');
+    productGridBlock.innerHTML = `<button class="product-toggle" aria-controls="product-dropdown" aria-expanded="false">
+                                    <span class="icon-grid"></span>
+                                  </button>
+                                  <div class="product-dropdown">
+                                      <a href="//experience.adobe.com/" target="_blank" title="Adobe Experience Cloud">Adobe Experience Cloud</a>
+                                      <a href="//documentcloud.adobe.com/link/home/" target="_blank" title="Adobe Document Cloud">Adobe Document Cloud</a>
+                                  </div>`;
+    document.querySelector('nav').insertBefore(productGridBlock, document.querySelector('nav').lastChild);
+
+    const gridToggler = document.querySelector('.product-toggle');
+    const toggleExpandGridContent = () => {
+      const isExpanded = gridToggler.getAttribute('aria-expanded') === 'true';
+      gridToggler.setAttribute('aria-expanded', !isExpanded);
+      const productGridMenu = gridToggler.nextElementSibling;
+      const expandedClass = 'product-dropdown-expanded';
+      if (!isExpanded) {
+        productGridMenu.classList.add(expandedClass);
+      } else {
+        productGridMenu.classList.remove(expandedClass);
+      }
+    };
+
+    registerResizeHandler(() => {
+      if (isMobile()) {
+        // if mobile, hide product grid block
+        gridToggler.style.display = 'none';
+      } else {
+        // if desktop, add mouseenter/mouseleave, remove click event
+        gridToggler.parentElement.addEventListener('mouseenter', toggleExpandGridContent);
+        gridToggler.parentElement.addEventListener('mouseleave', toggleExpandGridContent);
+      }
+    });
+
+    // New Link under Learn Menu - Authenticated
+    const recCourses = document.createElement('li');
+    recCourses.classList.add('nav-item', 'nav-item-leaf');
+    recCourses.innerHTML = `<a href="https://experienceleague.adobe.com/#dashboard/learning">Recommended courses<span class="nav-item-subtitle">Your expertly curated courses</span></a></li>`;
+    document.querySelectorAll('.nav-item-toggle').forEach((el) => {
+      const elContent = el.innerHTML.toLowerCase();
+      if (elContent === 'content types') {
+        el.nextSibling.querySelector('ul').prepend(recCourses);
+      }
+    });
+  }
 };
 
 /**
@@ -382,20 +443,9 @@ const languageDecorator = async (languageBlock) => {
  * Decorates the sign-in block
  * @param {HTMLElement} signInBlock
  */
+
 const signInDecorator = async (signInBlock) => {
   simplifySingleCellBlock(signInBlock);
-
-  let adobeIMS = {
-    isSignedInUser: () => false,
-  };
-  try {
-    const ims = await loadIms();
-    adobeIMS = ims.adobeIMS;
-  } catch {
-    // eslint-disable-next-line no-console
-    console.warn('Adobe IMS not available.');
-  }
-  const isSignedIn = adobeIMS?.isSignedInUser();
   if (isSignedIn) {
     signInBlock.classList.add('signed-in');
     signInBlock.replaceChildren(
@@ -441,6 +491,9 @@ const signInDecorator = async (signInBlock) => {
         toggler.parentElement.addEventListener('mouseleave', toggleExpandContent);
       }
     });
+
+    // Hide Signup - Authenticated
+    document.querySelector('.sign-up').style.display = 'none';
   } else {
     signInBlock.classList.remove('signed-in');
     signInBlock.firstChild.addEventListener('click', async () => {
