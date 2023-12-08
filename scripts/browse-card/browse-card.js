@@ -2,7 +2,7 @@ import { loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
 import CONTENT_TYPES from './browse-cards-constants.js';
 
-/* User Info for Community Section - Will accomodate once we Khoros integration */
+/* User Info for Community Section - Will accomodate once we have KHOROS integration */
 // const generateContributorsMarkup = (contributor) => {
 //   const { name, thumbnail, level, date } = contributor;
 //   return htmlToElement(`
@@ -118,7 +118,7 @@ const buildCardContent = (card, model) => {
     cardContent.insertBefore(cardMeta, titleEl);
   }
 
-  /* User Info for Community Section - Will accomodate once we Khoros integration */
+  /* User Info for Community Section - Will accomodate once we have KHOROS integration */
   // if (contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
   //   const contributorInfo = document.createElement('div');
   //   contributorInfo.classList.add('browse-card-contributor-info');
