@@ -869,7 +869,7 @@
     ]
   },
   {
-    "id": "card",
+    "id": "authored-card",
     "fields": [
       {
         "component": "text-input",
