@@ -473,7 +473,7 @@
         "options": [
           {
             "name": "All",
-            "value": ""
+            "value": "Certification,Community,Course,Documentation,Event,Troubleshooting,Tutorial"
           },
           {
             "name": "Certification",
@@ -511,7 +511,48 @@
         "label": "Solution(s)",
         "valueType": "string",
         "description": "Sets the solution(s) param.",
-        "options": []
+        "options": [
+          {
+            "value": "Experience Manager",
+            "name": "Experience Manager"
+          },
+          {
+            "value": "Marketo Engage",
+            "name": "Marketo Engage"
+          },
+          {
+            "value": "Workfront",
+            "name": "Workfront"
+          },
+          {
+            "value": "Analytics",
+            "name": "Analytics"
+          },
+          {
+            "value": "Campaign",
+            "name": "Campaign"
+          },
+          {
+            "value": "Experience Platform",
+            "name": "Experience Platform"
+          },
+          {
+            "value": "Commerce",
+            "name": "Commerce"
+          },
+          {
+            "value": "Target",
+            "name": "Target"
+          },
+          {
+            "value": "Primetime",
+            "name": "Primetime"
+          },
+          {
+            "value": "Experience Cloud",
+            "name": "Experience Cloud"
+          }
+        ]
       },
       {
         "component": "multiselect",
@@ -519,7 +560,48 @@
         "label": "Feature(s)",
         "valueType": "string",
         "description": "Sets the Feature(s) param.",
-        "options": []
+        "options": [
+          {
+            "value": "Experience Cloud Integration",
+            "name": "Experience Cloud Integration"
+          },
+          {
+            "value": "Events",
+            "name": "Events"
+          },
+          {
+            "value": "Workspace",
+            "name": "Workspace"
+          },
+          {
+            "value": "Workfront API",
+            "name": "Workfront API"
+          },
+          {
+            "value": "User Management",
+            "name": "User Management"
+          },
+          {
+            "value": "Workbench",
+            "name": "Workbench"
+          },
+          {
+            "value": "Video",
+            "name": "Video"
+          },
+          {
+            "value": "Workflow",
+            "name": "Workflow"
+          },
+          {
+            "value": "User Roles",
+            "name": "User Roles"
+          },
+          {
+            "value": "Target Integration",
+            "name": "Target Integration"
+          }
+        ]
       },
       {
         "component": "multiselect",
@@ -530,7 +612,7 @@
         "options": [
           {
             "name": "All",
-            "value": "All"
+            "value": "Admin,Developer,Leader,User"
           },
           {
             "name": "Admin",
@@ -559,7 +641,7 @@
         "options": [
           {
             "name": "All",
-            "value": "All"
+            "value": "Beginner,Intermediate,Advanced"
           },
           {
             "name": "Beginner",
@@ -584,7 +666,7 @@
         "options": [
           {
             "name": "All",
-            "value": "All"
+            "value": "Financial services,High tech,Government,Telecommunications,Healthcare,Education.Manufacturing,Media and entertainment,Retail,Travel and hospitality"
           },
           {
             "name": "Financial services",
