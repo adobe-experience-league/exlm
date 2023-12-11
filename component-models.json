@@ -462,6 +462,192 @@
         "value": "",
         "label": "Content type",
         "description": "Sets the content type."
+      },
+      {
+        "component": "checkbox-group",
+        "valueType": "string",
+        "name": "contentTypes",
+        "value": "",
+        "label": "Content type(s)",
+        "description": "Sets the content type(s).",
+        "options": [
+          {
+            "name": "All",
+            "value": ""
+          },
+          {
+            "name": "Certification",
+            "value": "Certification"
+          },
+          {
+            "name": "Communities",
+            "value": "Community"
+          },
+          {
+            "name": "Courses",
+            "value": "Course"
+          },
+          {
+            "name": "Documentation",
+            "value": "Documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "Event"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "Troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "Tutorial"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "name": "solutions",
+        "label": "Solution(s)",
+        "valueType": "string",
+        "description": "Sets the solution(s) param.",
+        "options": []
+      },
+      {
+        "component": "multiselect",
+        "name": "features",
+        "label": "Feature(s)",
+        "valueType": "string",
+        "description": "Sets the Feature(s) param.",
+        "options": []
+      },
+      {
+        "component": "multiselect",
+        "name": "roles",
+        "label": "Role(s)",
+        "valueType": "string",
+        "description": "Sets the Role(s).",
+        "options": [
+          {
+            "name": "All",
+            "value": "All"
+          },
+          {
+            "name": "Admin",
+            "value": "Admin"
+          },
+          {
+            "name": "Developer",
+            "value": "Developer"
+          },
+          {
+            "name": "Leader",
+            "value": "Leader"
+          },
+          {
+            "name": "User",
+            "value": "User"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "name": "experienceLevels",
+        "label": "Experience Level(s)",
+        "valueType": "string",
+        "description": "Sets the Experience Level(s).",
+        "options": [
+          {
+            "name": "All",
+            "value": "All"
+          },
+          {
+            "name": "Beginner",
+            "value": "Beginner"
+          },
+          {
+            "name": "Intermediate",
+            "value": "Intermediate"
+          },
+          {
+            "name": "Advanced",
+            "value": "Advanced"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "name": "industries",
+        "label": "Industries",
+        "valueType": "string",
+        "description": "Sets the industries param.",
+        "options": [
+          {
+            "name": "All",
+            "value": "All"
+          },
+          {
+            "name": "Financial services",
+            "value": "Financial services"
+          },
+          {
+            "name": "High tech",
+            "value": "High tech"
+          },
+          {
+            "name": "Government",
+            "value": "Government"
+          },
+          {
+            "name": "Telecommunications",
+            "value": "Telecommunications"
+          },
+          {
+            "name": "Healthcare",
+            "value": "Healthcare"
+          },
+          {
+            "name": "Education",
+            "value": "Education"
+          },
+          {
+            "name": "Manufacturing",
+            "value": "Manufacturing"
+          },
+          {
+            "name": "Media and entertainment",
+            "value": "Media and entertainment"
+          },
+          {
+            "name": "Retail",
+            "value": "Retail"
+          },
+          {
+            "name": "Travel and hospitality",
+            "value": "Travel and hospitality"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "sortBy",
+        "value": "",
+        "label": "Sort by",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Relevance",
+            "value": "Relevance"
+          },
+          {
+            "name": "Most recent",
+            "value": "Most recent"
+          },
+          {
+            "name": "Most popular",
+            "value": "Most popular"
+          }
+        ]
       }
     ]
   },
@@ -900,102 +1086,19 @@
         "label": "Browse Filters Description"
       },
       {
-        "component": "multiselect",
-        "name": "role",
-        "label": "Role",
-        "valueType": "string",
-        "description": "Sets the Role.",
-        "options": [
-          {
-            "name": "Admin",
-            "value": "Admin"
-          },
-          {
-            "name": "Developer",
-            "value": "Developer"
-          },
-          {
-            "name": "Leader",
-            "value": "Leader"
-          },
-          {
-            "name": "User",
-            "value": "User"
-          }
-        ]
-      },
-      {
-        "component": "multiselect",
-        "name": "contentType",
-        "label": "Content Type",
-        "valueType": "string",
-        "description": "Sets the Content Type.",
-        "options": [
-          {
-            "name": "Certification",
-            "value": "Certification"
-          },
-          {
-            "name": "Community",
-            "value": "Community"
-          },
-          {
-            "name": "Courses",
-            "value": "Courses"
-          },
-          {
-            "name": "Documentation",
-            "value": "Documentation"
-          },
-          {
-            "name": "On-Demand Events",
-            "value": "On-Demand Events"
-          },
-          {
-            "name": "Troubleshooting",
-            "value": "Troubleshooting"
-          },
-          {
-            "name": "Tutorials",
-            "value": "Tutorials"
-          }
-        ]
-      },
-      {
-        "component": "multiselect",
-        "name": "experienceLevel",
-        "label": "Experience Level",
-        "valueType": "string",
-        "description": "Sets the Experience Level.",
-        "options": [
-          {
-            "name": "Beginner",
-            "value": "Beginner"
-          },
-          {
-            "name": "Intermediate",
-            "value": "Intermediate"
-          },
-          {
-            "name": "Experienced",
-            "value": "Experienced"
-          }
-        ]
-      },
-      {
         "component": "text-input",
         "valueType": "string",
         "name": "keywordsSearch",
         "value": "",
         "label": "Keywords search",
-        "description": "Search the Keywords search Placeholder Text"
+        "description": "Keywords search Placeholder Text"
       },
       {
         "component": "text-input",
         "valueType": "string",
         "name": "clearFiltersText",
         "value": "",
-        "label": "Text",
+        "label": "Clear Filters Text",
         "description": "Sets the Clear Filters Text"
       }
     ]
