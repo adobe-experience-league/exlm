@@ -1,19 +1,9 @@
+import { fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { isDocPage } from '../../scripts/scripts.js';
 import loadJWT from '../../scripts/auth/jwt.js';
-import { adobeIMS, profile, updateProfile } from '../../scripts/data-service/profile.js';
+import { adobeIMS, profile, updateProfile } from '../../scripts/data-service/profile-service.js';
 
-const CONFIG = {
-  BOOKMARK_SET: 'Success! This is bookmarked to your profile.',
-  BOOKMARK_UNSET: 'Success! This is no longer bookmarked to your profile.',
-  BOOKMARK_UNAUTH_LABEL: 'Sign-in to bookmark',
-  BOOKMARK_UNAUTH_TIPTEXT: 'Bookmark',
-  BOOKMARK_AUTH_LABEL_SET: 'Bookmark page',
-  BOOKMARK_AUTH_LABEL_REMOVE: 'Remove Bookmark',
-  BOOKMARK_AUTH_TIPTEXT: 'Bookmark',
-  NOTICE_LABEL: 'Copy link',
-  NOTICE_TIPTEXT: 'Copy link URL',
-  NOTICE_SET: 'URL copied',
-};
+const placeholders = await fetchPlaceholders();
 
 const tooltipTemplate = (sel, label, tiptext) => {
   const tooltipContent = `<div class="exl-tooltip">
@@ -68,16 +58,16 @@ export function decorateBookmark(block) {
   unAuthBookmark.className = 'bookmark';
   unAuthBookmark.innerHTML = tooltipTemplate(
     'bookmark-icon',
-    CONFIG.BOOKMARK_UNAUTH_TIPTEXT,
-    CONFIG.BOOKMARK_UNAUTH_LABEL,
+    `${placeholders.bookmarkUnauthTiptext}`,
+    `${placeholders.bookmarkUnauthLabel}`,
   );
 
   const authBookmark = document.createElement('div');
   authBookmark.className = 'bookmark auth';
   authBookmark.innerHTML = tooltipTemplate(
     'bookmark-icon',
-    CONFIG.BOOKMARK_AUTH_TIPTEXT,
-    CONFIG.BOOKMARK_AUTH_LABEL_SET,
+    `${placeholders.bookmarkAuthTiptext}`,
+    `${placeholders.bookmarkAuthLabelSet}`,
   );
 
   if (isSignedIn) {
@@ -90,29 +80,27 @@ export function decorateBookmark(block) {
       bookmarkAuthed.forEach((elem) => {
         const bookmarkAuthedToolTipLabel = elem.querySelector('.exl-tooltip-label');
         const bookmarkAuthedToolTipIcon = elem.querySelector('.icon.bookmark-icon');
-        if (id.length === 0) {
-          console.log('Hooking bookmark failed. No id present.');
-        } else {
+        if (id) {
           loadJWT().then(async () => {
             profile().then(async (data) => {
               if (data.bookmarks.includes(id)) {
                 bookmarkAuthedToolTipIcon.classList.add('authed');
-                bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_REMOVE;
+                bookmarkAuthedToolTipLabel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
               }
             });
 
             bookmarkAuthedToolTipIcon.addEventListener('click', async () => {
               if (bookmarkAuthedToolTipIcon.classList.contains('authed')) {
                 await updateProfile('bookmarks', id);
-                bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_SET;
+                bookmarkAuthedToolTipLabel.innerHTML = `${placeholders.bookmarkAuthLabelSet}`;
                 bookmarkAuthedToolTipIcon.classList.remove('authed');
-                sendNotice(CONFIG.BOOKMARK_UNSET);
+                sendNotice(`${placeholders.bookmarkUnset}`);
                 bookmarkAuthedToolTipIcon.style.pointerEvents = 'none';
               } else {
                 await updateProfile('bookmarks', id);
-                bookmarkAuthedToolTipLabel.innerHTML = CONFIG.BOOKMARK_AUTH_LABEL_REMOVE;
+                bookmarkAuthedToolTipLabel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
                 bookmarkAuthedToolTipIcon.classList.add('authed');
-                sendNotice(CONFIG.BOOKMARK_SET);
+                sendNotice(`${placeholders.bookmarkSet}`);
                 bookmarkAuthedToolTipIcon.style.pointerEvents = 'none';
               }
               setTimeout(() => {
@@ -134,7 +122,11 @@ export function decorateBookmark(block) {
 export function decorateCopyLink(block) {
   const copyLinkDivNode = document.createElement('div');
   copyLinkDivNode.className = 'copy-link';
-  copyLinkDivNode.innerHTML = tooltipTemplate('copy-link-url', CONFIG.NOTICE_LABEL, CONFIG.NOTICE_TIPTEXT);
+  copyLinkDivNode.innerHTML = tooltipTemplate(
+    'copy-link-url',
+    `${placeholders.toastLabel}`,
+    `${placeholders.toastTiptext}`,
+  );
 
   block.appendChild(copyLinkDivNode);
   if (document.querySelector('.doc-actions-mobile')) {
@@ -146,7 +138,7 @@ export function decorateCopyLink(block) {
       copyLinkIcon.addEventListener('click', (e) => {
         e.preventDefault();
         navigator.clipboard.writeText(window.location.href);
-        sendNotice(CONFIG.NOTICE_SET);
+        sendNotice(`${placeholders.toastSet}`);
       });
     }
   });
