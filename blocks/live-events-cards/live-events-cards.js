@@ -51,12 +51,14 @@ export default async function decorate(block) {
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent.then((data) => {
-    if (data?.length) {
+    // eslint-disable-next-line no-use-before-define
+    const filteredLiveEventsData = fetchFilteredCardData(data, solutionsParam);
+    if (filteredLiveEventsData?.length) {
       const contentDiv = document.createElement('div');
       contentDiv.classList.add('live-events-cards-content');
 
-      for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
-        const cardData = data[i];
+      for (let i = 0; i < Math.min(noOfResults, filteredLiveEventsData.length); i += 1) {
+        const cardData = filteredLiveEventsData[i];
         const cardDiv = document.createElement('div');
         buildCard(cardDiv, cardData);
         contentDiv.appendChild(cardDiv);
@@ -66,4 +68,22 @@ export default async function decorate(block) {
       decorateIcons(block);
     }
   });
+
+  const fetchFilteredCardData = (data, params) => {
+    const eventData = { data };
+    // Function to filter events based on product focus
+    function filterEventsByProduct(product) {
+      const paramArray = product.split(',');
+      // Check if data is not null
+      if (eventData.data) {
+        return eventData.data.filter((event) =>
+          // eslint-disable-next-line no-shadow
+          paramArray.some((param) => event.product.includes(param.trim())),
+        );
+      }
+      return []; // Return an empty array if the structure is not as expected
+    }
+    const filteredLiveEvents = filterEventsByProduct(params);
+    return filteredLiveEvents;
+  };
 }

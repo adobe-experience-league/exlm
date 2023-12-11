@@ -873,12 +873,53 @@
         "label": "All Solutions?"
       },
       {
-        "component": "text-input",
+        "component": "multiselect",
+        "name": "solutions",
+        "label": "Solution(s)",
         "valueType": "string",
-        "name": "solution",
-        "value": "",
-        "label": "Solution",
-        "description": "Ignored if All Solutions is active."
+        "description": "Ignored if All Solutions is active.",
+        "options": [
+          {
+            "name": "Experience Manager",
+            "value": "Experience Manager"
+          },
+          {
+            "name": "Marketo Engage",
+            "value": "Marketo Engage"
+          },
+          {
+            "name": "Workfront",
+            "value": "Workfront"
+          },
+          {
+            "name": "Analytics",
+            "value": "Analytics"
+          },
+          {
+            "name": "Campaign",
+            "value": "Campaign"
+          },
+          {
+            "name": "Experience Platform",
+            "value": "Experience Platform"
+          },
+          {
+            "name": "Commerce",
+            "value": "Commerce"
+          },
+          {
+            "name": "Target",
+            "value": "Target"
+          },
+          {
+            "name": "Primetime",
+            "value": "Primetime"
+          },
+          {
+            "name": "Experience Cloud",
+            "value": "Experience Cloud"
+          }
+        ]
       }
     ]
   }
