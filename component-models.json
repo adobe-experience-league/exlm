@@ -456,14 +456,6 @@
         "description": "Sets the text url."
       },
       {
-        "component": "text-input",
-        "valueType": "string",
-        "name": "contentType",
-        "value": "",
-        "label": "Content type",
-        "description": "Sets the content type."
-      },
-      {
         "component": "checkbox-group",
         "valueType": "string",
         "name": "contentTypes",
@@ -513,44 +505,44 @@
         "description": "Sets the solution(s) param.",
         "options": [
           {
-            "value": "Experience Manager",
-            "name": "Experience Manager"
+            "name": "Experience Manager",
+            "value": "Experience Manager"
           },
           {
-            "value": "Marketo Engage",
-            "name": "Marketo Engage"
+            "name": "Marketo Engage",
+            "value": "Marketo Engage"
           },
           {
-            "value": "Workfront",
-            "name": "Workfront"
+            "name": "Workfront",
+            "value": "Workfront"
           },
           {
-            "value": "Analytics",
-            "name": "Analytics"
+            "name": "Analytics",
+            "value": "Analytics"
           },
           {
-            "value": "Campaign",
-            "name": "Campaign"
+            "name": "Campaign",
+            "value": "Campaign"
           },
           {
-            "value": "Experience Platform",
-            "name": "Experience Platform"
+            "name": "Experience Platform",
+            "value": "Experience Platform"
           },
           {
-            "value": "Commerce",
-            "name": "Commerce"
+            "name": "Commerce",
+            "value": "Commerce"
           },
           {
-            "value": "Target",
-            "name": "Target"
+            "name": "Target",
+            "value": "Target"
           },
           {
-            "value": "Primetime",
-            "name": "Primetime"
+            "name": "Primetime",
+            "value": "Primetime"
           },
           {
-            "value": "Experience Cloud",
-            "name": "Experience Cloud"
+            "name": "Experience Cloud",
+            "value": "Experience Cloud"
           }
         ]
       },
@@ -562,44 +554,44 @@
         "description": "Sets the Feature(s) param.",
         "options": [
           {
-            "value": "Experience Cloud Integration",
-            "name": "Experience Cloud Integration"
+            "name": "Experience Cloud Integration",
+            "value": "Experience Cloud Integration"
           },
           {
-            "value": "Events",
-            "name": "Events"
+            "name": "Events",
+            "value": "Events"
           },
           {
-            "value": "Workspace",
-            "name": "Workspace"
+            "name": "Workspace",
+            "value": "Workspace"
           },
           {
-            "value": "Workfront API",
-            "name": "Workfront API"
+            "name": "Workfront API",
+            "value": "Workfront API"
           },
           {
-            "value": "User Management",
-            "name": "User Management"
+            "name": "User Management",
+            "value": "User Management"
           },
           {
-            "value": "Workbench",
-            "name": "Workbench"
+            "name": "Workbench",
+            "value": "Workbench"
           },
           {
-            "value": "Video",
-            "name": "Video"
+            "name": "Video",
+            "value": "Video"
           },
           {
-            "value": "Workflow",
-            "name": "Workflow"
+            "name": "Workflow",
+            "value": "Workflow"
           },
           {
-            "value": "User Roles",
-            "name": "User Roles"
+            "name": "User Roles",
+            "value": "User Roles"
           },
           {
-            "value": "Target Integration",
-            "name": "Target Integration"
+            "name": "Target Integration",
+            "value": "Target Integration"
           }
         ]
       },
@@ -730,6 +722,14 @@
             "value": "Most popular"
           }
         ]
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "contentType",
+        "value": "",
+        "label": "Content type",
+        "description": "Sets the content type."
       }
     ]
   },

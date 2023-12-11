@@ -12,7 +12,7 @@ export default async function decorate(block) {
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
-  const contentType = block.querySelector('div:nth-child(4) > div')?.textContent.trim();
+  const contentType = block.querySelector('div:nth-child(11) > div')?.textContent.trim();
   const noOfResults = 4;
 
   // Clearing the block's content
