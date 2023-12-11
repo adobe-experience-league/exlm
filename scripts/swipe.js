@@ -1,5 +1,5 @@
 export default function detectSwipe(container, swipeLeft, swipeRight) {
-  const THRESHOLD = 15;
+  const THRESHOLD = 5;
   let x = 0;
   let y = 0;
   let x1 = 0;
@@ -29,7 +29,7 @@ export default function detectSwipe(container, swipeLeft, swipeRight) {
         recordedTime = new Date().getTime();
       }
     },
-    !1,
+    { passive: true },
   );
   container.addEventListener(
     'touchend',
@@ -41,7 +41,7 @@ export default function detectSwipe(container, swipeLeft, swipeRight) {
       dir();
       recordedTime = new Date().getTime();
     },
-    !1,
+    { passive: true },
   );
   container.addEventListener(
     'mousedown',
@@ -52,7 +52,7 @@ export default function detectSwipe(container, swipeLeft, swipeRight) {
         recordedTime = new Date().getTime();
       }
     },
-    !1,
+    { passive: true },
   );
   container.addEventListener(
     'mouseup',
@@ -64,7 +64,7 @@ export default function detectSwipe(container, swipeLeft, swipeRight) {
       dir();
       recordedTime = new Date().getTime();
     },
-    !1,
+    { passive: true },
   );
 
   container.style.userSelect = 'none';

@@ -102,11 +102,11 @@ export default async function decorate(block) {
       carouselContainer.classList.add('card-carousel-container');
 
       const carouselControls = htmlToElement(`
-      <div class="carousel-controls">
-        <button id="carousel-tab-1" type="button" role="tab" aria-label="Slide 1" data-slide-value="slide-1" aria-selected="true" aria-controls="carousel-item-1"></button>
-        <button id="carousel-tab-2" type="button" role="tab" aria-label="Slide 2" data-slide-value="slide-2" aria-selected="false" aria-controls="carousel-item-2"></button>
-        <button id="carousel-tab-3" type="button" role="tab" aria-label="Slide 3" data-slide-value="slide-3" aria-selected="false" aria-controls="carousel-item-3"></button>
-        <button id="carousel-tab-4" type="button" role="tab" aria-label="Slide 4" data-slide-value="slide-4" aria-selected="false" aria-controls="carousel-item-4"></button>
+      <div class="carousel-controls" role="tablist" aria-label="Slides">
+        <button class="carousel-tab-1" type="button" role="tab" aria-label="Slide 1" data-slide-value="slide-1" aria-selected="true" aria-controls="carousel-item-1"></button>
+        <button class="carousel-tab-2" type="button" role="tab" aria-label="Slide 2" data-slide-value="slide-2" aria-selected="false" aria-controls="carousel-item-2"></button>
+        <button class="carousel-tab-3" type="button" role="tab" aria-label="Slide 3" data-slide-value="slide-3" aria-selected="false" aria-controls="carousel-item-3"></button>
+        <button class="carousel-tab-4" type="button" role="tab" aria-label="Slide 4" data-slide-value="slide-4" aria-selected="false" aria-controls="carousel-item-4"></button>
       </div>
     `);
       carouselContainer.appendChild(contentDiv);
