@@ -865,6 +865,20 @@
         "value": "",
         "label": "Link URL",
         "description": "Sets the text url."
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "allSolutions",
+        "label": "All Solutions?"
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "solution",
+        "value": "",
+        "label": "Solution",
+        "description": "Ignored if All Solutions is active."
       }
     ]
   }
