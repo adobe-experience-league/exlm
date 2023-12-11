@@ -2,6 +2,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
+import CONTENT_TYPES from '../../scripts/browse-card/browse-cards-constants.js';
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -13,9 +14,10 @@ export default async function decorate(block) {
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
   const allSolutions = block.querySelector('div:nth-child(4) > div').textContent.trim();
   const solutions = block.querySelector('div:nth-child(5) > div').textContent.trim();
-  const noOfResults = 4;
+
   const solutionsParam = allSolutions === 'true' ? '' : solutions;
-  const contentType = 'live-events';
+  const contentType = CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY;
+  const noOfResults = 4;
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -48,7 +50,6 @@ export default async function decorate(block) {
   };
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
-  const cardDiv = document.createElement('div');
   browseCardsContent.then((data) => {
     if (data?.length) {
       const contentDiv = document.createElement('div');
@@ -56,6 +57,7 @@ export default async function decorate(block) {
 
       for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
         const cardData = data[i];
+        const cardDiv = document.createElement('div');
         buildCard(cardDiv, cardData);
         contentDiv.appendChild(cardDiv);
       }
