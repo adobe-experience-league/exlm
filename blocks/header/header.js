@@ -267,42 +267,6 @@ const navDecorator = (navBlock) => {
   navBlock.prepend(hamburger);
 
   if (isSignedIn) {
-    // Product Grid - Authenticated
-    const productGridBlock = document.createElement('div');
-    productGridBlock.classList.add('product-grid', 'signed-in');
-    productGridBlock.innerHTML = `<button class="product-toggle" aria-controls="product-dropdown" aria-expanded="false">
-                                    <span class="icon-grid"></span>
-                                  </button>
-                                  <div class="product-dropdown">
-                                      <a href="//experience.adobe.com/" target="_blank" title="Adobe Experience Cloud">Adobe Experience Cloud</a>
-                                      <a href="//documentcloud.adobe.com/link/home/" target="_blank" title="Adobe Document Cloud">Adobe Document Cloud</a>
-                                  </div>`;
-    document.querySelector('nav').insertBefore(productGridBlock, document.querySelector('nav').lastChild);
-
-    const gridToggler = document.querySelector('.product-toggle');
-    const toggleExpandGridContent = () => {
-      const isExpanded = gridToggler.getAttribute('aria-expanded') === 'true';
-      gridToggler.setAttribute('aria-expanded', !isExpanded);
-      const productGridMenu = gridToggler.nextElementSibling;
-      const expandedClass = 'product-dropdown-expanded';
-      if (!isExpanded) {
-        productGridMenu.classList.add(expandedClass);
-      } else {
-        productGridMenu.classList.remove(expandedClass);
-      }
-    };
-
-    registerResizeHandler(() => {
-      if (isMobile()) {
-        // if mobile, hide product grid block
-        gridToggler.style.display = 'none';
-      } else {
-        // if desktop, add mouseenter/mouseleave, remove click event
-        gridToggler.parentElement.addEventListener('mouseenter', toggleExpandGridContent);
-        gridToggler.parentElement.addEventListener('mouseleave', toggleExpandGridContent);
-      }
-    });
-
     // New Link under Learn Menu - Authenticated
     const recCourses = document.createElement('li');
     recCourses.classList.add('nav-item', 'nav-item-leaf');
@@ -504,6 +468,60 @@ const signInDecorator = async (signInBlock) => {
 };
 
 /**
+ * Decorates the product-grid block
+ * @param {HTMLElement} productGrid
+ */
+
+const productGridDecorator = async (productGridBlock) => {
+  simplifySingleCellBlock(productGridBlock);
+  if (isSignedIn) {
+    productGridBlock.classList.add('signed-in');
+    const productDropdown = document.createElement('div');
+    productDropdown.classList.add('product-dropdown');
+    const pTags = productGridBlock.querySelectorAll('p');
+    if (pTags.length > 0) {
+      pTags.forEach((p) => {
+        productDropdown.innerHTML += p.innerHTML;
+      });
+    }
+    const productToggle = document.createElement('button');
+    productToggle.classList.add('product-toggle');
+    productToggle.setAttribute('aria-controls', 'product-dropdown');
+    productToggle.innerHTML = `<span class="icon-grid"></span>`;
+    productGridBlock.innerHTML = `${productToggle.outerHTML}${productDropdown.outerHTML}`;
+    const gridToggler = document.querySelector('.product-toggle');
+    const toggleExpandGridContent = () => {
+      const isExpanded = gridToggler.getAttribute('aria-expanded') === 'true';
+      gridToggler.setAttribute('aria-expanded', !isExpanded);
+      const productGridMenu = gridToggler.nextElementSibling;
+      const expandedClass = 'product-dropdown-expanded';
+      if (!isExpanded) {
+        productGridMenu.classList.add(expandedClass);
+      } else {
+        productGridMenu.classList.remove(expandedClass);
+      }
+    };
+
+    registerResizeHandler(() => {
+      if (isMobile()) {
+        // if mobile, hide product grid block
+        gridToggler.style.display = 'none';
+      } else {
+        // if desktop, add mouseenter/mouseleave, remove click event
+        gridToggler.parentElement.addEventListener('mouseenter', toggleExpandGridContent);
+        gridToggler.parentElement.addEventListener('mouseleave', toggleExpandGridContent);
+      }
+    });
+  } else {
+    const isProductGrid = document.querySelector('.product-grid');
+    if (isProductGrid) {
+      document.querySelector('nav').removeChild(isProductGrid);
+    }
+  }
+  return productGridBlock;
+};
+
+/**
  * Decorates the adobe-logo block
  * @param {HTMLElement} adobeLogoBlock
  */
@@ -562,6 +580,7 @@ export default async function decorate(headerBlock) {
     { className: 'search', decorator: searchDecorator },
     { className: 'sign-up', decorator: signUpDecorator },
     { className: 'language-selector', decorator: languageDecorator },
+    { className: 'product-grid', decorator: productGridDecorator },
     { className: 'sign-in', decorator: signInDecorator },
     { className: 'adobe-logo', decorator: adobeLogoDecorator },
     { className: 'nav', decorator: navDecorator },
