@@ -81,7 +81,8 @@
   line-height: 17px;
   margin: 0;
 }
-.browse-card .browse-card-description-text {
+.browse-card .browse-card-description-text,
+.browse-card .browse-card-description-text * {
   margin: 0;
   font-size: var(--spectrum-font-size-100);
   line-height: 21px;

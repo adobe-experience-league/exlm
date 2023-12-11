@@ -41,25 +41,10 @@ export function hash(arg = '') {
   return result;
 }
 
-export const headerKeys = {
-  accept: 'accept',
-  apiKey: 'x-api-key',
-  auth: 'authorization',
-  csrf: 'x-csrf-token',
-  ctype: 'content-type',
-  lang: 'accept-language',
-};
-
-// eslint-disable-next-line
-export const headerValues = {
-  html: 'text/html',
-  json: 'application/json',
-};
-
 const requests = new Map();
 
 export async function request(url, options = { method: 'GET', headers: {}, body: '', params: {} }) {
-  const key = `${options.method || 'GET'}_${hash(url)}_${hash(options.headers[headerKeys.auth] || 'anon')}_${hash(
+  const key = `${options.method || 'GET'}_${hash(url)}_${hash(options.headers.authorization || 'anon')}_${hash(
     JSON.stringify(options.body || ''),
   )}`;
 
