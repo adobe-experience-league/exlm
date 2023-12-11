@@ -1076,30 +1076,14 @@
         "name": "heading",
         "value": "",
         "label": "Heading",
-        "description": "Browse Filters heading."
+        "description": "Sets the heading for Browse Filters."
       },
       {
         "component": "text-area",
         "valueType": "string",
         "name": "description",
         "value": "",
-        "label": "Browse Filters Description"
-      },
-      {
-        "component": "text-input",
-        "valueType": "string",
-        "name": "keywordsSearch",
-        "value": "",
-        "label": "Keywords search",
-        "description": "Keywords search Placeholder Text"
-      },
-      {
-        "component": "text-input",
-        "valueType": "string",
-        "name": "clearFiltersText",
-        "value": "",
-        "label": "Clear Filters Text",
-        "description": "Sets the Clear Filters Text"
+        "label": "Sets the description for Browse Filters"
       }
     ]
   }
