@@ -27,33 +27,68 @@ const BrowseCardsDelegate = (() => {
     return urlSearchParams;
   };
 
+  const constructCoveoFacet = (facets) => {
+    // const facetObj = {
+    //   "injectionDepth": 1000,
+    //   "delimitingCharacter": "|",
+    //   "filterFacetCount": true,
+    //   "basePath": [],
+    //   "filterByBasePath": false,
+    //   "preventAutoSelect": false,      
+    //   "isFieldExpanded": false
+    // };
+
+    const facetsArray = facets.map(facet => ({
+      // ...facetObj,
+      facetId: `@${facet.id}`,
+      field: facet.id,
+      type: facet.type,
+      numberOfValues: facet.currentValues?.length || 2,
+      currentValues: facet.currentValues.map(value => ({
+        value,
+        state: "selected"
+      }))
+    }));
+
+    return facetsArray;
+  }
+
+  const constructCoveoAdvancedQuery = () => {
+    const featureQuery = param.feature.map(type => `@el_features=="${type}"`).join(' OR ');
+    const contentTypeQuery = param.contentType.map(type => `@el_contenttype=="${type}"`).join(' OR ');
+    const query = `${featureQuery} AND (${contentTypeQuery})`;
+    return { aq: query };
+  }
+
   /**
    * handleCoveoService is a method that handles fetching browse cards content using CoveoDataService.
    * @returns {Promise<Array>} - A promise resolving to an array of browse cards data.
    */
-  const handleCoveoService = () =>
+  const handleCoveoService = () => {
+    const facets = [{
+      id: "el_contenttype",
+      type: "specific",
+      currentValues: param.contentType
+    }, {
+      id: "el_product",
+      type: "specific",
+      currentValues: param.product
+    }, {
+      id: "el_role",
+      type: "specific",
+      currentValues: param.role
+    }];
     /* eslint-disable-next-line no-async-promise-executor */
-    new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const dataSource = {
         url: coveoSearchResultsUrl,
         param: {
           locale: 'en',
           searchHub: 'Experience League Learning Hub',
-          q: 'adobe',
           numberOfResults: param.noOfResults,
           excerptLength: 200,
-          facets: [
-            {
-              facetId: '@el_contenttype',
-              field: 'el_contenttype',
-              currentValues: [
-                {
-                  state: 'selected',
-                  value: param.contentType,
-                },
-              ],
-            },
-          ],
+          ...(param.feature ? constructCoveoAdvancedQuery() : ''),
+          ...(!param.feature ? { facets: constructCoveoFacet(facets) } : '')          
         },
       };
       const coveoService = new CoveoDataService(dataSource);
@@ -61,10 +96,10 @@ const BrowseCardsDelegate = (() => {
       if (cardData?.results?.length) {
         resolve(BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData.results));
       } else {
-        reject(new Error('An Error Occured'));
+        resolve([]);
       }
     });
-
+  }
   /**
    * handleLiveEventsService is a method that handles fetching browse cards content using LiveEventsDataService.
    * @returns {Promise<Array>} - A promise resolving to an array of browse cards data.
@@ -118,7 +153,6 @@ const BrowseCardsDelegate = (() => {
       [CONTENT_TYPES.COMMUNITY.MAPPING_KEY]: handleCoveoService,
       [CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY]: handleADLSService,
     };
-
     return contentTypesServices[contentType];
   };
 
@@ -128,8 +162,8 @@ const BrowseCardsDelegate = (() => {
    */
   const fetchCardData = async (paramObj) => {
     param = paramObj;
-    const { contentType } = paramObj;
-    const service = getServiceForContentType(contentType?.toLowerCase());
+    const { multipleTypes, contentType } = paramObj;
+    const service = multipleTypes ? handleCoveoService : getServiceForContentType(source, contentType?.toLowerCase());
     if (service) {
       return new Promise((resolve) => {
         resolve(service());

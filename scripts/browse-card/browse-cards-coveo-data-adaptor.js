@@ -24,9 +24,9 @@ const BrowseCardsCoveoDataAdaptor = (() => {
    */
   const createTags = (result, contentType) => {
     const tags = [];
-
+    const role = result?.raw?.el_role || '';
     if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
-      tags.push({ icon: 'user', text: '' });
+      tags.push({ icon: 'user', text: role || '' });
       tags.push({ icon: 'book', text: `0 ${placeholders.lesson}` });
     } else {
       tags.push({ icon: result?.raw?.el_view_status ? 'view' : '', text: result?.raw?.el_view_status || '' });

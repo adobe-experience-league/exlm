@@ -12,8 +12,12 @@ export default async function decorate(block) {
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
-  const contentType = block.querySelector('div:nth-child(4) > div')?.textContent.trim();
-  const noOfResults = 4;
+  const contentType = "course,tutorial,documentation,troubleshooting"; // block.querySelector('div:nth-child(4) > div')?.textContent.trim();
+  const product = 'Experience Manager,Campaign';
+  const feature = undefined; //'Analytics Basics,Analytics';
+  const role = 'Admin,User';
+  const noOfResults = 500;
+  const multipleTypes = true;
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -40,7 +44,11 @@ export default async function decorate(block) {
   }
 
   const param = {
-    contentType,
+    multipleTypes,
+    contentType: contentType.split(','),
+    product: product && product.split(','),
+    feature: feature && feature.split(','),
+    role: role.split(','),
     noOfResults,
   };
 
