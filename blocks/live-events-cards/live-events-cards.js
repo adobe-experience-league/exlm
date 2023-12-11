@@ -14,21 +14,21 @@ export default async function decorate(block) {
   const allSolutions = block.querySelector('div:nth-child(4) > div').textContent.trim();
   const solutions = block.querySelector('div:nth-child(5) > div').textContent.trim();
   const noOfResults = 4;
-  const solutionsParam = allSolutions === 'true' ? 'All' : solutions;
+  const solutionsParam = allSolutions === 'true' ? '' : solutions;
   const contentType = 'live-events';
 
   // Clearing the block's content
   block.innerHTML = '';
 
   const headerDiv = htmlToElement(`
-    <div class="events-cards-header">
-      <div class="events-cards-title">
+    <div class="live-events-cards-header">
+      <div class="live-events-cards-title">
           <h4>${headingElement?.textContent.trim()}</h4>
           <div class="tooltip">
             <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
           </div>
       </div>
-      <div class="events-cards-view">${linkTextElement?.outerHTML}</div>
+      <div class="live-events-cards-view">${linkTextElement?.outerHTML}</div>
     </div>
   `);
   // Appending header div to the block
@@ -48,14 +48,14 @@ export default async function decorate(block) {
   };
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
+  const cardDiv = document.createElement('div');
   browseCardsContent.then((data) => {
     if (data?.length) {
       const contentDiv = document.createElement('div');
-      contentDiv.classList.add('events-cards-content');
+      contentDiv.classList.add('live-events-cards-content');
 
       for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
         const cardData = data[i];
-        const cardDiv = document.createElement('div');
         buildCard(cardDiv, cardData);
         contentDiv.appendChild(cardDiv);
       }

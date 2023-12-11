@@ -1,26 +1,25 @@
-/* FIXME: This is a dummy component put up to show case the cards rendered via API - CSS to be updated later*/
-.events-cards {
+.live-events-cards {
     margin-bottom: 40px;
     min-height: 1260px;
 }
 
-.events-cards-header h4 {
+.live-events-cards-header h4 {
     padding: 0;
     margin: 0;
 }
 
-.events-cards-title {
+.live-events-cards-title {
     display: flex;
     margin: 0;
 }
 
-.events-cards-view a {
+.live-events-cards-view a {
     font-size: inherit;
     line-height: 17px;
     margin: 2px 0 0 0;
 }
 
-.events-cards-content {
+.live-events-cards-content {
     margin-top: 24px;
     display: flex;
     flex-wrap: wrap;
@@ -28,21 +27,21 @@
     margin-bottom: 32px;
 }
 
-.events-cards-content > div {
+.live-events-cards-content > div {
     width: 256px;
 }
 
-.events-cards .tooltip {
+.live-events-cards .tooltip {
     position: relative;
     margin: 4px 0 0 9px;
 }
 
-.events-cards .tooltip .icon-info {
+.live-events-cards .tooltip .icon-info {
     width: 15px;
     height: 15px;
 }
 
-.events-cards .tooltip .tooltip-text {
+.live-events-cards .tooltip .tooltip-text {
     background-color: var(--non-spectrum-royal-blue);
     border-radius: 4px;
     color: var(--spectrum-gray-50);
@@ -63,7 +62,7 @@
     z-index: 1;
 }
 
-.events-cards .tooltip .tooltip-text::before {
+.live-events-cards .tooltip .tooltip-text::before {
     border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
     border-style: solid;
     border-width: 5px;
@@ -75,46 +74,46 @@
     top: 50%;
 }
 
-.events-cards .tooltip:hover .tooltip-text {
+.live-events-cards .tooltip:hover .tooltip-text {
     opacity: 1;
     visibility: visible;
 }
 
 @media (min-width: 600px) {
-    .events-cards {
+    .live-events-cards {
         margin-bottom: 56px;
         min-height: 588px;
     }
 
-    .events-cards-header {
+    .live-events-cards-header {
         display: flex;
         justify-content: space-between;
     }
 }
 
 @media (min-width: 900px) {
-    .events-cards {
+    .live-events-cards {
         margin-bottom: 56px;
     }
 
-    .events-cards-header {
+    .live-events-cards-header {
         display: flex;
         justify-content: space-between;
     }   
 }
 
 @media (min-width: 1200px) {
-    .events-cards {
+    .live-events-cards {
         margin-bottom: 80px;
         min-height: 340px;
     }
 
-    .events-cards-header {
+    .live-events-cards-header {
         display: flex;
         justify-content: space-between;
     }
 
-    .events-cards .tooltip {
+    .live-events-cards .tooltip {
         margin-top: 7px;
     }
 }
