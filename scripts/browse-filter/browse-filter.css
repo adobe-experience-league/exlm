@@ -1,0 +1,153 @@
+/* Basic styling for the dropdown container */
+.dropdown {
+  position: relative;
+  display: block;
+}
+
+/* Styling for the button to toggle the dropdown */
+.dropdown button {
+  cursor: pointer;
+  position: relative;
+  height: 32px;
+  background: #fff;
+  border: 1px solid #D3D3D3;
+  border-radius: 4px;
+  padding: 9px 12px;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+  color: #222;
+  line-height: 10px;
+  font-weight: normal;
+  margin: 0;
+}
+
+/* Styling for the dropdown arrow icon */
+
+/* TODO: change this guy */
+.dropdown button::after {
+  content: "\25BC";
+  font-size: 12px;
+  color: #333;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  transition: transform 0.3s ease;
+}
+
+/* Styling for the dropdown content */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0 8px 16px rgb(0 0 0 / 20%);
+  z-index: 1;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+
+  /* add top: 0 for mobile  */
+}
+
+/* Styling for the custom checkbox container */
+.custom-checkbox {
+  padding: 8px 0;
+  line-height: 16px;
+}
+
+/* Styling for the checkbox input */
+.custom-checkbox input {
+  display: none;
+}
+
+/* Styling for the custom checkbox label */
+.custom-checkbox label {
+  position: relative;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-right: 40px;
+  box-sizing: border-box;
+}
+
+.custom-checkbox label .title {
+  display: block;
+  font-weight: normal;
+  font-size: 14px;
+  text-align: left;
+  color: #222;
+}
+
+.custom-checkbox label .description {
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: left;
+  color: #909090;
+}
+
+/* Styling for the custom checkbox tick mark */
+.custom-checkbox label .icon-checked {
+  display: none;
+}
+
+/* Styling for the tick mark when checkbox is checked */
+.custom-checkbox input:checked+label .icon-checked {
+  /* Unicode character for check mark */
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  line-height: 18px;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(calc(50% - 12px));
+  width: 12px;
+  height: 12px;
+  box-sizing: border-box;
+  display: inline-block;
+}
+
+/* Rotate the arrow when dropdown is open */
+.dropdown.open button::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.browse-tags-container {
+  display: inline-flex;
+  flex-flow: row wrap;
+}
+
+.browse-tags {
+  border-radius: 4px;
+  background: #fff;
+  border: 1px solid #909090;
+  margin-right: 10px;
+  padding: 4px 25px 5px 12px;
+  margin-bottom: 10px;
+  font-weight: normal;
+  font-size: 12px;
+  text-align: left;
+  color: #909090;
+  line-height: normal;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+.browse-tags .icon-close {
+  width: 13px;
+  height: auto;
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-6px);
+}
+
+.browse-tags .icon-close svg path {
+  fill: #909090;
+}
