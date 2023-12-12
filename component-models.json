@@ -456,12 +456,272 @@
         "description": "Sets the text url."
       },
       {
-        "component": "text-input",
+        "component": "checkbox-group",
         "valueType": "string",
-        "name": "contentType",
+        "name": "contentTypes",
         "value": "",
-        "label": "Content type",
-        "description": "Sets the content type."
+        "label": "Content type(s)",
+        "description": "Sets the content type(s).",
+        "options": [
+          {
+            "name": "All",
+            "value": "certification,community,course,documentation,event,troubleshooting,tutorial"
+          },
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "name": "solutions",
+        "label": "Solution(s)",
+        "valueType": "string",
+        "description": "Sets the solution(s) param.",
+        "options": [
+          {
+            "name": "Experience Manager",
+            "value": "Experience Manager"
+          },
+          {
+            "name": "Marketo Engage",
+            "value": "Marketo Engage"
+          },
+          {
+            "name": "Workfront",
+            "value": "Workfront"
+          },
+          {
+            "name": "Analytics",
+            "value": "Analytics"
+          },
+          {
+            "name": "Campaign",
+            "value": "Campaign"
+          },
+          {
+            "name": "Experience Platform",
+            "value": "Experience Platform"
+          },
+          {
+            "name": "Commerce",
+            "value": "Commerce"
+          },
+          {
+            "name": "Target",
+            "value": "Target"
+          },
+          {
+            "name": "Experience Cloud",
+            "value": "Experience Cloud"
+          },
+          {
+            "name": "Audience Manager",
+            "value": "Audience Manager"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "name": "features",
+        "label": "Feature(s)",
+        "valueType": "string",
+        "description": "Sets the Feature(s) param.",
+        "options": [
+          {
+            "name": "Experience Cloud Integration",
+            "value": "Experience Cloud Integration"
+          },
+          {
+            "name": "Events",
+            "value": "Events"
+          },
+          {
+            "name": "Workspace",
+            "value": "Workspace"
+          },
+          {
+            "name": "Workfront API",
+            "value": "Workfront API"
+          },
+          {
+            "name": "User Management",
+            "value": "User Management"
+          },
+          {
+            "name": "Workbench",
+            "value": "Workbench"
+          },
+          {
+            "name": "Video",
+            "value": "Video"
+          },
+          {
+            "name": "Workflow",
+            "value": "Workflow"
+          },
+          {
+            "name": "User Roles",
+            "value": "User Roles"
+          },
+          {
+            "name": "Target Integration",
+            "value": "Target Integration"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "name": "roles",
+        "label": "Role(s)",
+        "valueType": "string",
+        "description": "Sets the Role(s).",
+        "options": [
+          {
+            "name": "All",
+            "value": "Admin,Developer,Leader,User"
+          },
+          {
+            "name": "Admin",
+            "value": "Admin"
+          },
+          {
+            "name": "Developer",
+            "value": "Developer"
+          },
+          {
+            "name": "Leader",
+            "value": "Leader"
+          },
+          {
+            "name": "User",
+            "value": "User"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "name": "experienceLevels",
+        "label": "Experience Level(s)",
+        "valueType": "string",
+        "description": "Sets the Experience Level(s).",
+        "options": [
+          {
+            "name": "All",
+            "value": "Beginner,Intermediate,Advanced"
+          },
+          {
+            "name": "Beginner",
+            "value": "Beginner"
+          },
+          {
+            "name": "Intermediate",
+            "value": "Intermediate"
+          },
+          {
+            "name": "Advanced",
+            "value": "Advanced"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "name": "industries",
+        "label": "Industries",
+        "valueType": "string",
+        "description": "Sets the industries param.",
+        "options": [
+          {
+            "name": "All",
+            "value": "Financial services,High tech,Government,Telecommunications,Healthcare,Education.Manufacturing,Media and entertainment,Retail,Travel and hospitality"
+          },
+          {
+            "name": "Financial services",
+            "value": "Financial services"
+          },
+          {
+            "name": "High tech",
+            "value": "High tech"
+          },
+          {
+            "name": "Government",
+            "value": "Government"
+          },
+          {
+            "name": "Telecommunications",
+            "value": "Telecommunications"
+          },
+          {
+            "name": "Healthcare",
+            "value": "Healthcare"
+          },
+          {
+            "name": "Education",
+            "value": "Education"
+          },
+          {
+            "name": "Manufacturing",
+            "value": "Manufacturing"
+          },
+          {
+            "name": "Media and entertainment",
+            "value": "Media and entertainment"
+          },
+          {
+            "name": "Retail",
+            "value": "Retail"
+          },
+          {
+            "name": "Travel and hospitality",
+            "value": "Travel and hospitality"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "sortBy",
+        "value": "",
+        "label": "Sort by",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Relevance",
+            "value": "Relevance"
+          },
+          {
+            "name": "Most recent",
+            "value": "Most recent"
+          },
+          {
+            "name": "Most popular",
+            "value": "Most popular"
+          }
+        ]
       }
     ]
   },
@@ -828,6 +1088,76 @@
         "value": "",
         "label": "Second CTA Link",
         "description": "What link to open when clicking the button."
+      }
+    ]
+  },
+  {
+    "id": "authorable-card",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "tooltip",
+        "value": "",
+        "label": "Tooltip",
+        "description": "Sets the tooltip."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "linkText",
+        "value": "",
+        "label": "Link text",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "description": "Sets the text url."
+      }
+    ]
+  },
+  {
+    "id": "authored-card",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "contentURL",
+        "value": "",
+        "label": "Content URL",
+        "description": "Provide a link to one of the following content types: Course, Tutorial, Documentation, Troubleshooting, On-Demand Event, or Certification"
+      }
+    ]
+  },
+  {
+    "id": "browse-filters",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading for Browse Filters."
+      },
+      {
+        "component": "text-area",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Sets the description for Browse Filters"
       }
     ]
   }
