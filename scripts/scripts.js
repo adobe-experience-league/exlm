@@ -1,6 +1,7 @@
 /* eslint-disable no-bitwise */
 import {
   sampleRUM,
+  buildBlock,
   loadHeader,
   loadFooter,
   decorateIcons,
@@ -89,12 +90,35 @@ export function buildSyntheticBlocks(main) {
 }
 
 /**
+ * add a section for the left rail when on a browse product page.
+ */
+function buildBrowseRail(main) {
+  const section = document.createElement('div');
+  section.classList.add('browse-rail');
+  section.append(buildBlock('browse-rail', []));
+  main.prepend(section);
+}
+
+/**
+ * return browse page theme if its browse page otherwise undefined.
+ * theme = browse-* is set in bulk metadata for /en/browse paths.
+ */
+export function getBrowsePage() {
+  const theme = getMetadata('theme');
+  return theme.split(',').find((t) => t.toLowerCase().startsWith('browse-'));
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
+    // if we are on a product browse page
+    if (getBrowsePage()) {
+      buildBrowseRail(main);
+    }
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);

@@ -1,0 +1,23 @@
+/* the rail only appears above 900px */
+main > div.browse-rail {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  body[class^="browse-"] > main {
+    display: grid;
+    grid-template: "browse-rail main" 
+    /* / minmax(max-content,1fr) minmax(0,3fr)  ; */
+  }
+
+  main > div.section {
+    grid-area: main;
+  }
+
+  main > div.section.browse-rail {
+    display: initial;
+    grid-area: browse-rail;
+    width:256px;
+    background-color: lightgrey;
+  }
+}
