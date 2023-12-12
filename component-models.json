@@ -722,14 +722,6 @@
             "value": "Most popular"
           }
         ]
-      },
-      {
-        "component": "text-input",
-        "valueType": "string",
-        "name": "contentType",
-        "value": "",
-        "label": "Content type",
-        "description": "Sets the content type."
       }
     ]
   },
