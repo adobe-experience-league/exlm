@@ -136,23 +136,27 @@ const BrowseCardsDelegate = (() => {
     });
 
   /**
-   * getServiceForContentType retrieves the action associated with a specific content type.
-   * @param {string} contentType - The content type for which to retrieve the action.
-   * @returns {Function} - The action associated with the specified content type.
+   * Determines and returns the appropriate service based on the provided content type.
+   *
+   * @param {string | string[]} contentType - The content type or an array of content types.
+   * @returns {function} - The corresponding service function.
    */
   const getServiceForContentType = (contentType) => {
     const contentTypesServices = {
-      [CONTENT_TYPES.COURSE.MAPPING_KEY]: handleCoveoService,
-      [CONTENT_TYPES.TUTORIAL.MAPPING_KEY]: handleCoveoService,
-      [CONTENT_TYPES.EVENT.MAPPING_KEY]: handleCoveoService,
-      [CONTENT_TYPES.CERTIFICATION.MAPPING_KEY]: handleCoveoService,
-      [CONTENT_TYPES.TROUBLESHOOTING.MAPPING_KEY]: handleCoveoService,
-      [CONTENT_TYPES.DOCUMENTATION.MAPPING_KEY]: handleCoveoService,
       [CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY]: handleLiveEventsService,
-      [CONTENT_TYPES.COMMUNITY.MAPPING_KEY]: handleCoveoService,
       [CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY]: handleADLSService,
     };
-    return contentTypesServices[contentType];
+
+    // If the content type is an array, use the handleCoveoService (Works only with coveo related content types)
+    if (Array.isArray(contentType)) {
+      return handleCoveoService;
+    }
+
+    // Use the mapping object to get the service for the other content types
+    const service = contentTypesServices[contentType?.toLowerCase()];
+
+    // If no specific match is found, use the default handleCoveoService
+    return service || handleCoveoService;
   };
 
   /**
@@ -162,7 +166,7 @@ const BrowseCardsDelegate = (() => {
   const fetchCardData = async (paramObj) => {
     param = paramObj;
     const { contentType } = paramObj;
-    const service = handleCoveoService; //Array.isArray(contentType) ? handleCoveoService : getServiceForContentType(contentType?.toLowerCase());
+    const service = getServiceForContentType(contentType);
     if (service) {
       return new Promise((resolve) => {
         resolve(service());

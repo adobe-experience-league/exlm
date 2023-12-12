@@ -13,11 +13,11 @@ export default async function decorate(block) {
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
-  const contentType = "course,tutorial"; // block.querySelector('div:nth-child(4) > div')?.textContent.trim();
-  const product =  'campaign';
-  const feature = undefined; //'Analytics Basics,Analytics';
-  const role =  undefined; //'admin,user';
-  const sortBy =  undefined; //SORT_OPTIONS['MOST_RECENT'];
+  const contentType = block.querySelector('div:nth-child(4) > div')?.textContent?.trim()?.toLowerCase();
+  const product =  block.querySelector('div:nth-child(5) > div')?.textContent?.trim()?.toLowerCase();
+  const feature =  undefined; //block.querySelector('div:nth-child(6) > div')?.textContent?.trim()?.toLowerCase();
+  const role = block.querySelector('div:nth-child(7) > div')?.textContent?.trim()?.toLowerCase();
+  const sortBy =  SORT_OPTIONS['MOST_RECENT']; // block.querySelector('div:nth-child(10) > div')?.textContent?.trim()?.toLowerCase();
   const noOfResults = 4;
 
   // Clearing the block's content
@@ -26,9 +26,9 @@ export default async function decorate(block) {
   const headerDiv = htmlToElement(`
     <div class="curated-cards-header">
       <div class="curated-cards-title">
-          <h4>${headingElement?.textContent.trim()}</h4>
+          <h4>${headingElement?.textContent?.trim()}</h4>
           <div class="tooltip">
-            <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
+            <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent?.trim()}</span>
           </div>
       </div>
       <div class="curated-cards-view">${linkTextElement?.outerHTML}</div>
