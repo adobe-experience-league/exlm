@@ -465,35 +465,35 @@
         "options": [
           {
             "name": "All",
-            "value": "Certification,Community,Course,Documentation,Event,Troubleshooting,Tutorial"
+            "value": "certification,community,course,documentation,event,troubleshooting,tutorial"
           },
           {
             "name": "Certification",
-            "value": "Certification"
+            "value": "certification"
           },
           {
             "name": "Communities",
-            "value": "Community"
+            "value": "community"
           },
           {
             "name": "Courses",
-            "value": "Course"
+            "value": "course"
           },
           {
             "name": "Documentation",
-            "value": "Documentation"
+            "value": "documentation"
           },
           {
             "name": "On-Demand Event",
-            "value": "Event"
+            "value": "event"
           },
           {
             "name": "Troubleshooting",
-            "value": "Troubleshooting"
+            "value": "troubleshooting"
           },
           {
             "name": "Tutorials",
-            "value": "Tutorial"
+            "value": "tutorial"
           }
         ]
       },
