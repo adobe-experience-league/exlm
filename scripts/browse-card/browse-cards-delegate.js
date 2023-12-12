@@ -4,7 +4,7 @@ import ADLSDataService from '../data-service/adls-data-service.js';
 import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
 import BrowseCardsLiveEventsAdaptor from './browse-cards-live-events-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
-import CONTENT_TYPES from './browse-cards-constants.js';
+import { CONTENT_TYPES } from './browse-cards-constants.js';
 import { coveoSearchResultsUrl, liveEventsUrl, adlsUrl } from '../urls.js';
 
 /**
@@ -28,18 +28,7 @@ const BrowseCardsDelegate = (() => {
   };
 
   const constructCoveoFacet = (facets) => {
-    // const facetObj = {
-    //   "injectionDepth": 1000,
-    //   "delimitingCharacter": "|",
-    //   "filterFacetCount": true,
-    //   "basePath": [],
-    //   "filterByBasePath": false,
-    //   "preventAutoSelect": false,      
-    //   "isFieldExpanded": false
-    // };
-
     const facetsArray = facets.map(facet => ({
-      // ...facetObj,
       facetId: `@${facet.id}`,
       field: facet.id,
       type: facet.type,
@@ -49,14 +38,25 @@ const BrowseCardsDelegate = (() => {
         state: "selected"
       }))
     }));
-
     return facetsArray;
   }
 
   const constructCoveoAdvancedQuery = () => {
-    const featureQuery = param.feature.map(type => `@el_features=="${type}"`).join(' OR ');
-    const contentTypeQuery = param.contentType.map(type => `@el_contenttype=="${type}"`).join(' OR ');
-    const query = `${featureQuery} AND (${contentTypeQuery})`;
+    const featureQueryMap = param.feature ? param.feature.map(type => `@el_features=="${type}"`).join(' OR ') : '';
+    const contentTypeQueryMap = param.contentType ? param.contentType.map(type => `@el_contenttype=="${type}"`).join(' OR ') : '';
+    const productQueryMap = param.product ? param.product.map(type => `@el_product=="${type}"`).join(' OR ') : '';
+    const roleQueryMap = param.role ? param.role.map(type => `@el_role=="${type}"`).join(' OR ') : '';
+
+    const featureQuery = featureQueryMap?.length ? `(${featureQueryMap})` : '';
+    const contentTypeQuery = contentTypeQueryMap?.length ? `(${contentTypeQueryMap})` : '';
+    const productQuery = productQueryMap?.length ? `(${productQueryMap})` : '';
+    const roleQuery = roleQueryMap?.length ? `(${roleQueryMap})` : '';
+
+    const featureQuerySeparator = featureQuery && (contentTypeQuery || productQuery || roleQuery)? ' AND ' : '';
+    const contentTypeQuerySeparator = contentTypeQuery && (productQuery || roleQuery) ? ' AND ' : '';
+    const productQuerySeparator = productQuery && roleQuery ? ' AND ' : '';
+
+    const query = `${featureQuery}${featureQuerySeparator}${contentTypeQuery}${contentTypeQuerySeparator}${productQuery}${productQuerySeparator}${roleQuery}`;
     return { aq: query };
   }
 
@@ -65,21 +65,19 @@ const BrowseCardsDelegate = (() => {
    * @returns {Promise<Array>} - A promise resolving to an array of browse cards data.
    */
   const handleCoveoService = () => {
-    const facets = [{
-      id: "el_contenttype",
-      type: "specific",
-      currentValues: param.contentType
-    }, {
-      id: "el_product",
-      type: "specific",
-      currentValues: param.product
-    }, {
-      id: "el_role",
-      type: "specific",
-      currentValues: param.role
-    }];
+    const facets = [
+      ...(param.contentType
+        ? [{ id: "el_contenttype", type: "specific", currentValues: param.contentType }]
+        : []),
+      ...(param.product
+        ? [{ id: "el_product", type: "specific", currentValues: param.product }]
+        : []),
+      ...(param.role
+        ? [{ id: "el_role", type: "specific", currentValues: param.role }]
+        : [])
+    ];
     /* eslint-disable-next-line no-async-promise-executor */
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       const dataSource = {
         url: coveoSearchResultsUrl,
         param: {
@@ -87,6 +85,7 @@ const BrowseCardsDelegate = (() => {
           searchHub: 'Experience League Learning Hub',
           numberOfResults: param.noOfResults,
           excerptLength: 200,
+          ...(param.sortBy ? {sortCriteria: param.sortBy} : ''),
           ...(param.feature ? constructCoveoAdvancedQuery() : ''),
           ...(!param.feature ? { facets: constructCoveoFacet(facets) } : '')          
         },
@@ -162,8 +161,8 @@ const BrowseCardsDelegate = (() => {
    */
   const fetchCardData = async (paramObj) => {
     param = paramObj;
-    const { multipleTypes, contentType } = paramObj;
-    const service = multipleTypes ? handleCoveoService : getServiceForContentType(source, contentType?.toLowerCase());
+    const { contentType } = paramObj;
+    const service = handleCoveoService; //Array.isArray(contentType) ? handleCoveoService : getServiceForContentType(contentType?.toLowerCase());
     if (service) {
       return new Promise((resolve) => {
         resolve(service());

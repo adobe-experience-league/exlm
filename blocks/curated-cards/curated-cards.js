@@ -3,6 +3,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
+import { SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -12,12 +13,12 @@ export default async function decorate(block) {
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
-  const contentType = "course,tutorial,documentation,troubleshooting"; // block.querySelector('div:nth-child(4) > div')?.textContent.trim();
-  const product = 'Experience Manager,Campaign';
+  const contentType = "course,tutorial"; // block.querySelector('div:nth-child(4) > div')?.textContent.trim();
+  const product =  'campaign';
   const feature = undefined; //'Analytics Basics,Analytics';
-  const role = 'Admin,User';
-  const noOfResults = 500;
-  const multipleTypes = true;
+  const role =  undefined; //'admin,user';
+  const sortBy =  undefined; //SORT_OPTIONS['MOST_RECENT'];
+  const noOfResults = 4;
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -44,11 +45,11 @@ export default async function decorate(block) {
   }
 
   const param = {
-    multipleTypes,
-    contentType: contentType.split(','),
+    contentType: contentType && contentType.split(','),
     product: product && product.split(','),
     feature: feature && feature.split(','),
-    role: role.split(','),
+    role: role && role.split(','),
+    sortBy,
     noOfResults,
   };
 
