@@ -1,25 +1,25 @@
-.live-events-cards {
+.events-cards {
     margin-bottom: 40px;
     min-height: 1260px;
 }
 
-.live-events-cards-header h4 {
+.events-cards-header h4 {
     padding: 0;
     margin: 0;
 }
 
-.live-events-cards-title {
+.events-cards-title {
     display: flex;
     margin: 0;
 }
 
-.live-events-cards-view a {
+.events-cards-view a {
     font-size: inherit;
     line-height: 17px;
     margin: 2px 0 0 0;
 }
 
-.live-events-cards-content {
+.events-cards-content {
     margin-top: 24px;
     display: flex;
     flex-wrap: wrap;
@@ -27,21 +27,21 @@
     margin-bottom: 32px;
 }
 
-.live-events-cards-content > div {
+.events-cards-content > div {
     width: 256px;
 }
 
-.live-events-cards .tooltip {
+.events-cards .tooltip {
     position: relative;
     margin: 4px 0 0 9px;
 }
 
-.live-events-cards .tooltip .icon-info {
+.events-cards .tooltip .icon-info {
     width: 15px;
     height: 15px;
 }
 
-.live-events-cards .tooltip .tooltip-text {
+.events-cards .tooltip .tooltip-text {
     background-color: var(--non-spectrum-royal-blue);
     border-radius: 4px;
     color: var(--spectrum-gray-50);
@@ -62,7 +62,7 @@
     z-index: 1;
 }
 
-.live-events-cards .tooltip .tooltip-text::before {
+.events-cards .tooltip .tooltip-text::before {
     border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
     border-style: solid;
     border-width: 5px;
@@ -74,46 +74,46 @@
     top: 50%;
 }
 
-.live-events-cards .tooltip:hover .tooltip-text {
+.events-cards .tooltip:hover .tooltip-text {
     opacity: 1;
     visibility: visible;
 }
 
 @media (min-width: 600px) {
-    .live-events-cards {
+    .events-cards {
         margin-bottom: 56px;
         min-height: 588px;
     }
 
-    .live-events-cards-header {
+    .events-cards-header {
         display: flex;
         justify-content: space-between;
     }
 }
 
 @media (min-width: 900px) {
-    .live-events-cards {
+    .events-cards {
         margin-bottom: 56px;
     }
 
-    .live-events-cards-header {
+    .events-cards-header {
         display: flex;
         justify-content: space-between;
     }   
 }
 
 @media (min-width: 1200px) {
-    .live-events-cards {
+    .events-cards {
         margin-bottom: 80px;
         min-height: 340px;
     }
 
-    .live-events-cards-header {
+    .events-cards-header {
         display: flex;
         justify-content: space-between;
     }
 
-    .live-events-cards .tooltip {
+    .events-cards .tooltip {
         margin-top: 7px;
     }
 }

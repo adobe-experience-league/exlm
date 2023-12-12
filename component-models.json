@@ -832,7 +832,7 @@
     ]
   },
   {
-    "id": "live-events-cards",
+    "id": "events-cards",
     "fields": [
       {
         "component": "text-input",

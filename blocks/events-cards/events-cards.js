@@ -23,14 +23,14 @@ export default async function decorate(block) {
   block.innerHTML = '';
 
   const headerDiv = htmlToElement(`
-    <div class="live-events-cards-header">
-      <div class="live-events-cards-title">
+    <div class="events-cards-header">
+      <div class="events-cards-title">
           <h4>${headingElement?.textContent.trim()}</h4>
           <div class="tooltip">
             <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
           </div>
       </div>
-      <div class="live-events-cards-view">${linkTextElement?.outerHTML}</div>
+      <div class="events-cards-view">${linkTextElement?.outerHTML}</div>
     </div>
   `);
   // Appending header div to the block
@@ -55,7 +55,7 @@ export default async function decorate(block) {
     const filteredLiveEventsData = fetchFilteredCardData(data, solutionsParam);
     if (filteredLiveEventsData?.length) {
       const contentDiv = document.createElement('div');
-      contentDiv.classList.add('live-events-cards-content');
+      contentDiv.classList.add('events-cards-content');
 
       for (let i = 0; i < Math.min(noOfResults, filteredLiveEventsData.length); i += 1) {
         const cardData = filteredLiveEventsData[i];
