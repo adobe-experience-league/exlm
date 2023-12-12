@@ -13,6 +13,7 @@
 }
 
 .breadcrumbs > div > div > a::before {
+  color: var(--spectrum-gray-800);
   background-image: url("/icons/chevron_right.svg");
   background-size: 16px;
   bottom: -3px;
