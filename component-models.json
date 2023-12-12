@@ -912,12 +912,12 @@
             "value": "Target"
           },
           {
-            "name": "Primetime",
-            "value": "Primetime"
-          },
-          {
             "name": "Experience Cloud",
             "value": "Experience Cloud"
+          },
+          {
+            "name": "Audience Manager",
+            "value": "Audience Manager"
           }
         ]
       }
