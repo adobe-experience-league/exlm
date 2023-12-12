@@ -19,5 +19,6 @@ main > div.browse-rail {
     grid-area: browse-rail;
     width:256px;
     background-color: lightgrey;
+    padding: 0  0 0 32px;
   }
 }
