@@ -1,6 +1,5 @@
 import { htmlToElement } from './scripts.js';
 
-const transformValue = -272; // Width of card + Gap between the cards
 const threshold = 5; // Touch hold threshold
 
 export default class CardCarousel {
@@ -8,7 +7,6 @@ export default class CardCarousel {
     this.cardsContainer = cardsContainer;
     this.createCarouselControls();
     this.controlsContainer = this.cardsContainer.nextElementSibling;
-
     const ro = new ResizeObserver(() => {
       carouselContainer.children[0].replaceWith(carouselContainer.children[0].cloneNode(true));
       this.initialize(carouselContainer.children[0]);
@@ -17,10 +15,15 @@ export default class CardCarousel {
     ro.observe(carouselContainer);
   }
 
+  getCardWidth() {
+    return this.cardsContainer.children[0].offsetLeft - this.cardsContainer.children[1].offsetLeft;
+  }
+
   initialize(cardsContainer) {
     this.cardsContainer = cardsContainer;
     this.reset();
     if (window.innerWidth < 1200 || this.cardsContainer.children.length >= 5) {
+      this.transformValue = this.getCardWidth();
       this.cardsContainer.dataset.activeSlide = 'slide-1';
       this.controlsContainer.style.display = 'flex';
       this.handleClick();
@@ -41,7 +44,7 @@ export default class CardCarousel {
 
   animate() {
     const currentTab = parseInt(this.cardsContainer.dataset.activeSlide.split('-')[1], 10);
-    this.cardsContainer.style.transform = `translateX(${transformValue * (currentTab - 1)}px)`;
+    this.cardsContainer.style.transform = `translateX(${this.transformValue * (currentTab - 1)}px)`;
   }
 
   handleClick() {

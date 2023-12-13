@@ -1,3 +1,5 @@
+@import "../../styles/swipe.css";
+
 .curated-cards-header h4 {
     padding: 0;
     margin: 0;
@@ -78,27 +80,6 @@
     overflow: hidden;
 }
 
-.carousel-controls {
-    display: flex;
-    justify-content: center;
-    gap: 4px;
-    margin: 1em 0;
-}
-
-.carousel-controls button {
-    display: block;
-    height: 10px;
-    width: 10px;
-    padding: 0;
-    margin: 0;
-    border-radius: 5px;
-    border: 1px solid grey;
-    background-color: transparent;
-}
-
-.carousel-controls button[aria-selected="true"] {
-    background-color: grey;
-}
 
 @media (min-width: 600px) {
 
@@ -123,9 +104,5 @@
 
     .curated-cards .tooltip {
         margin-top: 7px;
-    }
-
-    .curated-cards .carousel-controls {
-        display: none;
     }
 }
