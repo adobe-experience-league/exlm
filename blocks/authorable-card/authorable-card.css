@@ -1,0 +1,120 @@
+/* FIXME: This is a dummy component put up to show case the cards rendered via API - CSS to be updated later*/
+.authorable-card {
+    margin-bottom: 40px;
+    min-height: 1260px;
+}
+
+.authorable-card-header h4 {
+    padding: 0;
+    margin: 0;
+}
+
+.authorable-card-title {
+    display: flex;
+    margin: 0;
+}
+
+.authorable-card-view a {
+    font-size: inherit;
+    line-height: 17px;
+    margin: 2px 0 0 0;
+}
+
+.authorable-card-content {
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.authorable-card-content > div {
+    width: 256px;
+}
+
+.authorable-card .tooltip {
+    position: relative;
+    margin: 4px 0 0 9px;
+}
+
+.authorable-card .tooltip .icon-info {
+    width: 15px;
+    height: 15px;
+}
+
+.authorable-card .tooltip .tooltip-text {
+    background-color: var(--non-spectrum-royal-blue);
+    border-radius: 4px;
+    color: var(--spectrum-gray-50);
+    display: inline-block;
+    font-size: 12px;
+    left: 100%;
+    line-height: 15px;
+    margin-left: 10px;
+    margin-top: -16px;
+    opacity: 0;
+    padding: 4px 9px 5px 10px;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transition: opacity 0.3s;
+    visibility: hidden;
+    width: max-content;
+    z-index: 1;
+}
+
+.authorable-card .tooltip .tooltip-text::before {
+    border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
+    border-style: solid;
+    border-width: 5px;
+    content: "";
+    display: inline-block;
+    margin-top: -4px;
+    position: absolute;
+    right: 100%;
+    top: 50%;
+}
+
+.authorable-card .tooltip:hover .tooltip-text {
+    opacity: 1;
+    visibility: visible;
+}
+
+@media (min-width: 600px) {
+    .authorable-card {
+        margin-bottom: 56px;
+        min-height: 588px;
+    }
+
+    .authorable-card-header {
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+@media (min-width: 900px) {
+    .authorable-card {
+        margin-bottom: 56px;
+    }
+
+    .authorable-card-header {
+        display: flex;
+        justify-content: space-between;
+    }   
+}
+
+@media (min-width: 1200px) {
+    .authorable-card {
+        margin-bottom: 80px;
+        min-height: 340px;
+    }
+
+    .authorable-card-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .authorable-card .tooltip {
+        margin-top: 7px;
+    }
+}
