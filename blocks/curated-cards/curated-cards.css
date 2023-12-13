@@ -19,6 +19,7 @@
 .curated-cards-content {
     margin-top: 24px;
     display: flex;
+    flex-wrap: wrap;
     gap: 16px;
     margin-bottom: 32px;
     transition: all .5s ease-in-out;
@@ -75,11 +76,6 @@
     opacity: 1;
     visibility: visible;
 }
-
-.card-carousel-container {
-    overflow: hidden;
-}
-
 
 @media (min-width: 600px) {
 

@@ -5,6 +5,7 @@ const threshold = 5; // Touch hold threshold
 export default class CardCarousel {
   constructor(carouselContainer, cardsContainer) {
     this.cardsContainer = cardsContainer;
+    this.carouselContainer = carouselContainer;
     this.createCarouselControls();
     this.controlsContainer = this.cardsContainer.nextElementSibling;
     const ro = new ResizeObserver(() => {
@@ -23,8 +24,11 @@ export default class CardCarousel {
     this.cardsContainer = cardsContainer;
     this.reset();
     if (window.innerWidth < 1200 || this.cardsContainer.children.length >= 5) {
+      this.carouselContainer.style.overflow = 'hidden';
       this.transformValue = this.getCardWidth();
       this.cardsContainer.dataset.activeSlide = 'slide-1';
+      this.cardsContainer.style.display = 'flex';
+      this.cardsContainer.style.flexWrap = 'nowrap';
       this.controlsContainer.style.display = 'flex';
       this.handleClick();
       this.handleSwipe();
