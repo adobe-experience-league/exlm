@@ -41,9 +41,9 @@ const BrowseCardsCoveoDataAdaptor = (() => {
    * @returns {Object} The BrowseCards data model.
    */
   const mapResultToCardsDataModel = (result) => {
-    const { raw, title, excerpt, uri } = result || {};
+    const { raw, parentResult, title, excerpt, uri } = result || {};
     /* eslint-disable camelcase */
-    const { el_contenttype, el_product } = raw || {};
+    const { el_contenttype, el_product } = parentResult?.raw || raw || {};
     const contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
     const product = Array.isArray(el_product) ? el_product[0] : el_product;
     /* eslint-enable camelcase */
@@ -54,11 +54,11 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       contentType,
       badgeTitle: CONTENT_TYPES[contentType.toUpperCase()]?.LABEL,
       product,
-      title: title || '',
-      description: excerpt || '',
+      title: parentResult?.title || title || '',
+      description: parentResult?.excerpt || excerpt || '',
       tags,
-      copyLink: uri || '',
-      viewLink: uri || '',
+      copyLink: parentResult?.uri || uri || '',
+      viewLink: parentResult?.uri || uri || '',
       viewLinkText: contentType ? placeholders[`viewLink${convertToTitleCase(contentType)}`] : '',
     };
   };

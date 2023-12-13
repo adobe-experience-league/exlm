@@ -42,21 +42,12 @@ const BrowseCardsDelegate = (() => {
   }
 
   const constructCoveoAdvancedQuery = () => {
-    const featureQueryMap = param.feature ? param.feature.map(type => `@el_features=="${type}"`).join(' OR ') : '';
-    const contentTypeQueryMap = param.contentType ? param.contentType.map(type => `@el_contenttype=="${type}"`).join(' OR ') : '';
-    const productQueryMap = param.product ? param.product.map(type => `@el_product=="${type}"`).join(' OR ') : '';
-    const roleQueryMap = param.role ? param.role.map(type => `@el_role=="${type}"`).join(' OR ') : '';
-
-    const featureQuery = featureQueryMap?.length ? `(${featureQueryMap})` : '';
-    const contentTypeQuery = contentTypeQueryMap?.length ? `(${contentTypeQueryMap})` : '';
-    const productQuery = productQueryMap?.length ? `(${productQueryMap})` : '';
-    const roleQuery = roleQueryMap?.length ? `(${roleQueryMap})` : '';
-
-    const featureQuerySeparator = featureQuery && (contentTypeQuery || productQuery || roleQuery)? ' AND ' : '';
-    const contentTypeQuerySeparator = contentTypeQuery && (productQuery || roleQuery) ? ' AND ' : '';
-    const productQuerySeparator = productQuery && roleQuery ? ' AND ' : '';
-
-    const query = `${featureQuery}${featureQuerySeparator}${contentTypeQuery}${contentTypeQuerySeparator}${productQuery}${productQuerySeparator}${roleQuery}`;
+    const featureQuery = param.feature ? param.feature.map(type => `@el_features=="${type}"`).join(' OR ') : '';
+    const contentTypeQuery = param.contentType ? param.contentType.map(type => `@el_contenttype=="${type}"`).join(' OR ') : '';
+    const productQuery = param.product ? param.product.map(type => `@el_product=="${type}"`).join(' OR ') : '';
+    const roleQuery = param.role ? param.role.map(type => `@el_role=="${type}"`).join(' OR ') : '';
+    const levelQuery = param.level ? param.level.map(type => `@el_level=="${type}"`).join(' OR ') : '';
+    const query = `${featureQuery}${contentTypeQuery}${productQuery}${roleQuery}${levelQuery}`;
     return { aq: query };
   }
 
@@ -74,7 +65,10 @@ const BrowseCardsDelegate = (() => {
         : []),
       ...(param.role
         ? [{ id: "el_role", type: "specific", currentValues: param.role }]
-        : [])
+        : []),
+      ...(param.level
+          ? [{ id: "el_level", type: "specific", currentValues: param.level }]
+          : [])
     ];
     /* eslint-disable-next-line no-async-promise-executor */
     return new Promise(async (resolve) => {
@@ -84,10 +78,14 @@ const BrowseCardsDelegate = (() => {
           locale: 'en',
           searchHub: 'Experience League Learning Hub',
           numberOfResults: param.noOfResults,
-          excerptLength: 200,
-          ...(param.sortBy ? {sortCriteria: param.sortBy} : ''),
+          excerptLength: 200,    
+          sortCriteria: param.sortBy,          
+          context: {"entitlements":{},"role":{},"interests":{},"industryInterests":{}},
+          filterField: "@foldingcollection",
+          parentField: "@foldingchild",
+          childField: "@foldingparent",
           ...(param.feature ? constructCoveoAdvancedQuery() : ''),
-          ...(!param.feature ? { facets: constructCoveoFacet(facets) } : '')          
+          ...(!param.feature ? { facets: constructCoveoFacet(facets) } : ''),
         },
       };
       const coveoService = new CoveoDataService(dataSource);
