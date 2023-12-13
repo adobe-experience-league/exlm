@@ -1,24 +1,29 @@
-/* the rail only appears above 900px */
+/* the rail is hidden by default */
 main > div.browse-rail {
   display: none;
 }
 
-@media (min-width: 900px) {
+/* same breakpoint as switch to hamburger menu */
+@media (min-width: 1024px ) {
   body[class^="browse-"] > main {
     display: grid;
-    grid-template: "browse-rail main" 
-    /* / minmax(max-content,1fr) minmax(0,3fr)  ; */
+    grid-template: "browse-rail main";
+
+    /* on pages with rails the max width must be on main */
+    max-width: var(--non-spectrum-max-width);
+    margin: auto;
   }
 
   main > div.section {
-    grid-area: main;
+    grid-column: 2;
   }
 
   main > div.section.browse-rail {
     display: initial;
-    grid-area: browse-rail;
-    width:256px;
-    background-color: lightgrey;
+    grid-column: 1;
+    grid-row: 1 / infinite;
+    width:224px;
+    height: 100%;
     padding: 0  0 0 32px;
   }
 }

@@ -428,10 +428,9 @@ strong {
   --non-spectrum-cyan-paprika: #004396;
   --non-spectrum-venetian-green: #00c001;
   --non-spectrum-bright-cyan: #00a6aa;
-  --non-spectrum-azure-blue: #378EF0;
+  --non-spectrum-azure-blue: #378ef0;
   --non-spectrum-silver-mist: #d2d2d2;
   --non-spectrum-link-blue: #378ef0;
-  /* max-width */
   --non-spectrum-max-width: 1440px;
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
@@ -494,7 +493,7 @@ body {
   font-family: var(--body-font-family);
   line-height: 1.6;
   color: var(--text-color);
-  background-color: var(--background-color);
+  background-color: var(--spectrum-gray-100);
   display: none;
 }
 
@@ -792,6 +791,9 @@ img {
     --exlm-line-height-h6: 18.2px;
   }
 }
+.docs body {
+  background-color: var(--background-color);
+}
 .docs h1 code:not([class^=language-]),
 .docs h2 code:not([class^=language-]),
 .docs h3 code:not([class^=language-]),
@@ -857,6 +859,7 @@ img {
   padding: 0 46px;
   box-sizing: border-box;
   max-width: 1700px;
+  background-color: var(--background-color);
 }
 .docs main > div {
   padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500) var(--spectrum-spacing-500);

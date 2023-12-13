@@ -90,22 +90,22 @@ export function buildSyntheticBlocks(main) {
 }
 
 /**
- * add a section for the left rail when on a browse product page.
- */
-function buildBrowseRail(main) {
-  const section = document.createElement('div');
-  section.classList.add('browse-rail');
-  section.append(buildBlock('browse-rail', []));
-  main.prepend(section);
-}
-
-/**
  * return browse page theme if its browse page otherwise undefined.
  * theme = browse-* is set in bulk metadata for /en/browse paths.
  */
 export function getBrowsePage() {
   const theme = getMetadata('theme');
   return theme.split(',').find((t) => t.toLowerCase().startsWith('browse-'));
+}
+
+/**
+ * add a section for the left rail when on a browse product page.
+ */
+function addBrowseRail(main) {
+  const leftRailSection = document.createElement('div');
+  leftRailSection.classList.add('browse-rail', getBrowsePage());
+  leftRailSection.append(buildBlock('browse-rail', []));
+  main.append(leftRailSection);
 }
 
 /**
@@ -117,7 +117,7 @@ function buildAutoBlocks(main) {
     buildSyntheticBlocks(main);
     // if we are on a product browse page
     if (getBrowsePage()) {
-      buildBrowseRail(main);
+      addBrowseRail(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
