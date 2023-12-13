@@ -456,46 +456,11 @@
         "description": "Sets the text url."
       },
       {
-        "component": "checkbox-group",
-        "valueType": "string",
+        "component": "aem-tag",
         "name": "contentTypes",
-        "value": "",
-        "label": "Content type(s)",
-        "description": "Sets the content type(s).",
-        "options": [
-          {
-            "name": "All",
-            "value": "certification,community,course,documentation,event,troubleshooting,tutorial"
-          },
-          {
-            "name": "Certification",
-            "value": "certification"
-          },
-          {
-            "name": "Communities",
-            "value": "community"
-          },
-          {
-            "name": "Courses",
-            "value": "course"
-          },
-          {
-            "name": "Documentation",
-            "value": "documentation"
-          },
-          {
-            "name": "On-Demand Event",
-            "value": "event"
-          },
-          {
-            "name": "Troubleshooting",
-            "value": "troubleshooting"
-          },
-          {
-            "name": "Tutorials",
-            "value": "tutorial"
-          }
-        ]
+        "label": "Tags",
+        "valueType": "string",
+        "description": "Sets the content type(s)."
       },
       {
         "component": "multiselect",
