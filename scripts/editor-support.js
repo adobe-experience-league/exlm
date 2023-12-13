@@ -3,16 +3,15 @@ import {
 } from './lib-franklin.js';
 
 function handleEditorUpdate(event) {
-  const { detail: { payload } } = event;
-  const updates = payload?.updates;
+  const { detail: { updates } } = event;
   Promise.all(updates
     .map(async (update) => {
-      const { itemid, content } = update;
+      const { itemid, payload } = update;
       const element = document.querySelector(`[itemid="${itemid}"]`);
       const block = element.closest('.block');
       const blockItemId = block?.getAttribute('itemid');
       if (block && blockItemId?.startsWith('urn:aemconnection:')) {
-        const htmlContent = content?.html;
+        const htmlContent = payload?.html;
         const main = new DOMParser().parseFromString(htmlContent, 'text/html');
         const newBlock = main?.querySelector(`[itemid="${blockItemId}"]`);
         if(newBlock) {
