@@ -477,111 +477,25 @@
         "description": "Sets the Feature(s) param."
       },
       {
-        "component": "multiselect",
+        "component": "aem-tag",
         "name": "roles",
-        "label": "Role(s)",
+        "label": "Roles",
         "valueType": "string",
-        "description": "Sets the Role(s).",
-        "options": [
-          {
-            "name": "All",
-            "value": "Admin,Developer,Leader,User"
-          },
-          {
-            "name": "Admin",
-            "value": "Admin"
-          },
-          {
-            "name": "Developer",
-            "value": "Developer"
-          },
-          {
-            "name": "Leader",
-            "value": "Leader"
-          },
-          {
-            "name": "User",
-            "value": "User"
-          }
-        ]
+        "description": "Sets the Role(s)."
       },
       {
-        "component": "multiselect",
+        "component": "aem-tag",
         "name": "experienceLevels",
         "label": "Experience Level(s)",
         "valueType": "string",
-        "description": "Sets the Experience Level(s).",
-        "options": [
-          {
-            "name": "All",
-            "value": "Beginner,Intermediate,Advanced"
-          },
-          {
-            "name": "Beginner",
-            "value": "Beginner"
-          },
-          {
-            "name": "Intermediate",
-            "value": "Intermediate"
-          },
-          {
-            "name": "Advanced",
-            "value": "Advanced"
-          }
-        ]
+        "description": "Sets the Experience Level(s)."
       },
       {
-        "component": "multiselect",
+        "component": "aem-tag",
         "name": "industries",
         "label": "Industries",
         "valueType": "string",
-        "description": "Sets the industries param.",
-        "options": [
-          {
-            "name": "All",
-            "value": "Financial services,High tech,Government,Telecommunications,Healthcare,Education.Manufacturing,Media and entertainment,Retail,Travel and hospitality"
-          },
-          {
-            "name": "Financial services",
-            "value": "Financial services"
-          },
-          {
-            "name": "High tech",
-            "value": "High tech"
-          },
-          {
-            "name": "Government",
-            "value": "Government"
-          },
-          {
-            "name": "Telecommunications",
-            "value": "Telecommunications"
-          },
-          {
-            "name": "Healthcare",
-            "value": "Healthcare"
-          },
-          {
-            "name": "Education",
-            "value": "Education"
-          },
-          {
-            "name": "Manufacturing",
-            "value": "Manufacturing"
-          },
-          {
-            "name": "Media and entertainment",
-            "value": "Media and entertainment"
-          },
-          {
-            "name": "Retail",
-            "value": "Retail"
-          },
-          {
-            "name": "Travel and hospitality",
-            "value": "Travel and hospitality"
-          }
-        ]
+        "description": "Sets the industries param."
       },
       {
         "component": "select",
