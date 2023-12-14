@@ -480,6 +480,7 @@
         "component": "aem-tag",
         "name": "roles",
         "label": "Roles",
+        "rootPath": "/content/cq:tags/exl/role",
         "valueType": "string",
         "description": "Sets the Role(s)."
       },
