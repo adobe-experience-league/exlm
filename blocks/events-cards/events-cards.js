@@ -39,8 +39,6 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   const param = {
-    solutionsParam,
-    noOfResults,
     contentType,
   };
 
