@@ -500,6 +500,7 @@
         "name": "industries",
         "label": "Industries",
         "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/industry",
         "description": "Sets the industries param."
       },
       {
