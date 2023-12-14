@@ -7,7 +7,8 @@ main > div.browse-rail {
 @media (min-width: 1024px ) {
   body[class^="browse-"] > main {
     display: grid;
-    grid-template: "browse-rail main";
+    grid-template: "browse-rail main"
+                   / 256px 1fr;
 
     /* on pages with rails the max width must be on main */
     max-width: var(--non-spectrum-max-width);
