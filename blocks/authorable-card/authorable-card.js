@@ -3,7 +3,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 // import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 // import buildCard from '../../scripts/browse-card/browse-card.js';
-import fetchArticleByURL from '../../scripts/data-service/article-data-service.js';
+// import fetchArticleByURL from '../../scripts/data-service/article-data-service.js';
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -44,25 +44,25 @@ export default async function decorate(block) {
   }
 
   // const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
-  // browseCardsContent.then((data) => {
-  //   if (data?.length) {
-  //     const contentDiv = document.createElement('div');
-  //     contentDiv.classList.add('curated-cards-content');
+  // let data = fetchArticleByURL(
+  //   'https://experienceleague.adobe.com/docs/workfront-known-issues/issues/proof/workfrontproof.html?lang=en',
+  // )
+  //     data.then((data)=>{
+  //       console.log(data)
+  //       // data.contentType = "Documentation"
+  //       const contentDiv = document.createElement('div');
+  //       contentDiv.classList.add('curated-cards-content');
+  //         const cardData = data;
+  //         const cardDiv = document.createElement('div');
+  //         buildCard(cardDiv, cardData);
+  //         contentDiv.appendChild(cardDiv);
 
-  //     for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
-  //       const cardData = data[i];
-  //       const cardDiv = document.createElement('div');
-  //       buildCard(cardDiv, cardData);
-  //       contentDiv.appendChild(cardDiv);
-  //     }
-
-  //     block.appendChild(contentDiv);
-  //     decorateIcons(block);
-  //   }
-  // });
+  //       block.appendChild(contentDiv);
+  //       decorateIcons(block);
+  //     })
 
   decorateIcons(block);
-  fetchArticleByURL(
-    'https://experienceleague.adobe.com/docs/workfront-known-issues/issues/proof/workfrontproof.html?lang=en',
-  );
+  // fetchArticleByURL(
+  //   'https://experienceleague.adobe.com/docs/workfront-known-issues/issues/proof/workfrontproof.html?lang=en',
+  // );
 }
