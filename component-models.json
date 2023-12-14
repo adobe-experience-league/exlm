@@ -460,6 +460,7 @@
         "name": "contentTypes",
         "label": "Content Type(s)",
         "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/type",
         "description": "Sets the content type(s)."
       },
       {
@@ -467,6 +468,7 @@
         "name": "solutions",
         "label": "Solution(s)",
         "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/solution",
         "description": "Sets the solution(s) param."
       },
       {
@@ -474,6 +476,7 @@
         "name": "features",
         "label": "Feature(s)",
         "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/feature",
         "description": "Sets the Feature(s) param."
       },
       {
@@ -489,6 +492,7 @@
         "name": "experienceLevels",
         "label": "Experience Level(s)",
         "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/experience-level",
         "description": "Sets the Experience Level(s)."
       },
       {
@@ -496,6 +500,7 @@
         "name": "industries",
         "label": "Industries",
         "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/industry",
         "description": "Sets the industries param."
       },
       {
