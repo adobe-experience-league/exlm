@@ -24,26 +24,24 @@
     margin-bottom: 32px;
     transition: all .5s ease-in-out;
 
-    @media only screen and (min-width: 361px) {
+    @media only screen and (min-width: 600px) {
         gap: 25px;
     }
-    @media only screen and (min-width: 769px) {
+    @media only screen and (min-width: 900px) {
         gap: 32px;
     }
 }
 
 .curated-cards-content > div {
-    /*width: 256px;*/
-    flex: 1;
-    min-width : 90%;
-    @media only screen and (min-width: 361px) {
-        min-width : 44%; 
+    flex: 1 0 264px;
+    width : 264px;
+    @media only screen and (min-width: 600px) {
+        width : 286px;
+        flex: 1 0 286px; 
     }
-    @media only screen and (min-width: 769px) {
-        min-width : 29%;
-    }
-    @media only screen and (min-width: 1025px) {
-        min-width : auto; 
+    @media only screen and (min-width: 900px) {
+        width : 256px; 
+        flex: 1 0 256px;
     }
 }
 

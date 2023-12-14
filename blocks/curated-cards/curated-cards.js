@@ -43,11 +43,16 @@ export default async function decorate(block) {
   const param = {
     contentType,
     noOfResults,
+    showLoader : true,
+    block
   };
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent.then((data) => {
     if (data?.length) {
+      block.querySelectorAll('.card--isloading').forEach((el)=>{
+        el.classList.add('is-hidden');
+      })
       const contentDiv = document.createElement('div');
       contentDiv.classList.add('curated-cards-content');
 
