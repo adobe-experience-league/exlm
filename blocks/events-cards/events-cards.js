@@ -14,10 +14,11 @@ export default async function decorate(block) {
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
   const allSolutions = block.querySelector('div:nth-child(4) > div').textContent.trim();
   const solutions = block.querySelector('div:nth-child(5) > div').textContent.trim();
-
-  const solutionsParam = allSolutions === 'true' ? '' : solutions;
   const contentType = CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY;
   const noOfResults = 4;
+  // eslint-disable-next-line no-use-before-define
+  const solutionsTags = solutions !== '' ? formattedSolutionTags(solutions) : '';
+  const solutionsParam = allSolutions === 'true' ? '' : solutionsTags;
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -36,12 +37,19 @@ export default async function decorate(block) {
   // Appending header div to the block
   block.appendChild(headerDiv);
 
+  let adobeIMS = {
+    isSignedInUser: () => false,
+  };
   try {
-    await loadIms();
+    const ims = await loadIms();
+    adobeIMS = ims.adobeIMS;
   } catch {
     // eslint-disable-next-line no-console
     console.warn('Adobe IMS not available.');
   }
+  const isSignedIn = adobeIMS?.isSignedInUser();
+  // eslint-disable-next-line no-console
+  console.warn(isSignedIn);
 
   const param = {
     solutionsParam,
@@ -69,21 +77,29 @@ export default async function decorate(block) {
     }
   });
 
+  // Function to filter events based on productFocus key in JSON
   const fetchFilteredCardData = (data, params) => {
     const eventData = { data };
-    // Function to filter events based on product focus
-    function filterEventsByProduct(product) {
-      const paramArray = product.split(',');
-      // Check if data is not null
-      if (eventData.data) {
-        return eventData.data.filter((event) =>
-          // eslint-disable-next-line no-shadow
-          paramArray.some((param) => event.product.includes(param.trim())),
-        );
-      }
-      return []; // Return an empty array if the structure is not as expected
+    if (eventData.data) {
+      // Convert each filter parameter to lowercase for case-insensitive comparison
+      const lowercaseParams = params.map((parameter) => parameter.toLowerCase());
+      return eventData.data.filter((event) => {
+        // Check if the product property is an array
+        const productArray = Array.isArray(event.product) ? event.product : [event.product];
+
+        // Convert each product value to lowercase for case-insensitive comparison
+        const lowercaseProduct = productArray.map((item) => item.toLowerCase().replaceAll(' ', '-'));
+        // Check if any of the lowercaseParams is included in lowercaseProduct in JSON response
+        return lowercaseParams.some((parameter) => lowercaseProduct.includes(parameter.trim()));
+      });
     }
-    const filteredLiveEvents = filterEventsByProduct(params);
-    return filteredLiveEvents;
+    return [];
   };
+
+  function formattedSolutionTags(inputString) {
+    return inputString
+      .replace(/exl:solution\//g, '')
+      .split(',')
+      .map((part) => part.trim());
+  }
 }

@@ -1203,53 +1203,11 @@
         "label": "All Solutions?"
       },
       {
-        "component": "multiselect",
-        "name": "solutions",
+        "component": "aem-tag",
+        "name": "cq:tags",
         "label": "Solution(s)",
         "valueType": "string",
-        "description": "Ignored if All Solutions is active.",
-        "options": [
-          {
-            "name": "Experience Manager",
-            "value": "Experience Manager"
-          },
-          {
-            "name": "Marketo Engage",
-            "value": "Marketo Engage"
-          },
-          {
-            "name": "Workfront",
-            "value": "Workfront"
-          },
-          {
-            "name": "Analytics",
-            "value": "Analytics"
-          },
-          {
-            "name": "Campaign",
-            "value": "Campaign"
-          },
-          {
-            "name": "Experience Platform",
-            "value": "Experience Platform"
-          },
-          {
-            "name": "Commerce",
-            "value": "Commerce"
-          },
-          {
-            "name": "Target",
-            "value": "Target"
-          },
-          {
-            "name": "Experience Cloud",
-            "value": "Experience Cloud"
-          },
-          {
-            "name": "Audience Manager",
-            "value": "Audience Manager"
-          }
-        ]
+        "description": "Ignored if All Solutions is active."
       }
     ]
   }
