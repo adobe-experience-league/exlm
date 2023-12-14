@@ -464,10 +464,6 @@
         "description": "Sets the content type(s).",
         "options": [
           {
-            "name": "All",
-            "value": "certification,community,course,documentation,event,troubleshooting,tutorial"
-          },
-          {
             "name": "Certification",
             "value": "certification"
           },
@@ -499,17 +495,10 @@
       },
       {
         "component": "aem-tag",
-        "name": "solutions",
-        "label": "Solution(s)",
+        "name": "cq:tags",
+        "label": "Solution(s) or Feature(s)",
         "valueType": "string",
         "description": "Select either Solution(s) or Feature(s)"
-      },
-      {
-        "component": "aem-tag",
-        "name": "features",
-        "label": "Feature(s)",
-        "valueType": "string",
-        "description": "Select either Feature(s) or Solution(s)"
       },
       {
         "component": "multiselect",
@@ -518,10 +507,6 @@
         "valueType": "string",
         "description": "Sets the Role(s).",
         "options": [
-          {
-            "name": "All",
-            "value": "Admin,Developer,Leader,User"
-          },
           {
             "name": "Admin",
             "value": "Admin"
@@ -548,10 +533,6 @@
         "description": "Sets the Experience Level(s).",
         "options": [
           {
-            "name": "All",
-            "value": "Beginner,Intermediate,Advanced"
-          },
-          {
             "name": "Beginner",
             "value": "Beginner"
           },
@@ -572,10 +553,6 @@
         "valueType": "string",
         "description": "Sets the industries param.",
         "options": [
-          {
-            "name": "All",
-            "value": "Financial services,High tech,Government,Telecommunications,Healthcare,Education.Manufacturing,Media and entertainment,Retail,Travel and hospitality"
-          },
           {
             "name": "Financial services",
             "value": "Financial services"
@@ -627,15 +604,15 @@
         "options": [
           {
             "name": "Relevance",
-            "value": "Relevance"
+            "value": "RELEVANCE"
           },
           {
             "name": "Most recent",
-            "value": "Most recent"
+            "value": "MOST_RECENT"
           },
           {
             "name": "Most popular",
-            "value": "Most popular"
+            "value": "MOST_POPULAR"
           }
         ]
       }
