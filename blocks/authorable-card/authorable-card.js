@@ -1,9 +1,8 @@
 // FIXME: This is a dummy component put up to show case the cards rendered via API
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-// import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, loadIms } from '../../scripts/scripts.js';
-// import buildCard from '../../scripts/browse-card/browse-card.js';
-// import fetchArticleByURL from '../../scripts/data-service/article-data-service.js';
+import { htmlToElement } from '../../scripts/scripts.js';
+import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
+import buildCard from '../../scripts/browse-card/browse-card.js';
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -17,6 +16,7 @@ export default async function decorate(block) {
   links.push(block.querySelector('div:nth-child(4) > div').textContent);
   links.push(block.querySelector('div:nth-child(5) > div').textContent);
   links.push(block.querySelector('div:nth-child(6) > div').textContent);
+  links.push(block.querySelector('div:nth-child(7) > div').textContent);
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -35,34 +35,15 @@ export default async function decorate(block) {
   // Appending header div to the block
   block.appendChild(headerDiv);
 
-  // Check what this is doing?
-  try {
-    await loadIms();
-  } catch {
-    // eslint-disable-next-line no-console
-    console.warn('Adobe IMS not available.');
-  }
-
-  // const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
-  // let data = fetchArticleByURL(
-  //   'https://experienceleague.adobe.com/docs/workfront-known-issues/issues/proof/workfrontproof.html?lang=en',
-  // )
-  //     data.then((data)=>{
-  //       console.log(data)
-  //       // data.contentType = "Documentation"
-  //       const contentDiv = document.createElement('div');
-  //       contentDiv.classList.add('curated-cards-content');
-  //         const cardData = data;
-  //         const cardDiv = document.createElement('div');
-  //         buildCard(cardDiv, cardData);
-  //         contentDiv.appendChild(cardDiv);
-
-  //       block.appendChild(contentDiv);
-  //       decorateIcons(block);
-  //     })
-
-  decorateIcons(block);
-  // fetchArticleByURL(
-  //   'https://experienceleague.adobe.com/docs/workfront-known-issues/issues/proof/workfrontproof.html?lang=en',
-  // );
+  const contentDiv = document.createElement('div');
+  contentDiv.classList.add('authorable-card-content');
+  links.forEach((link) => {
+    BrowseCardsDelegate.handleArticleDataService(link).then((data) => {
+      const cardDiv = document.createElement('div');
+      buildCard(cardDiv, data);
+      contentDiv.appendChild(cardDiv);
+      decorateIcons(block);
+    });
+  });
+  block.appendChild(contentDiv);
 }

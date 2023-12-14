@@ -6,6 +6,8 @@ import BrowseCardsLiveEventsAdaptor from './browse-cards-live-events-adaptor.js'
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
 import CONTENT_TYPES from './browse-cards-constants.js';
 import { coveoSearchResultsUrl, liveEventsUrl, adlsUrl } from '../urls.js';
+import ArticleDataService from '../data-service/article-data-service.js';
+import BrowseCardsArticleDataAdaptor from './browse-cards-article-data-adapter.js';
 
 /**
  * Module that provides a facade for fetching card data based on different content types.
@@ -138,8 +140,15 @@ const BrowseCardsDelegate = (() => {
     return null;
   };
 
+  const handleArticleDataService = async (url) => {
+    const articleDataService = new ArticleDataService();
+    const cardData = await articleDataService.fetchArticleByURL(url);
+    return BrowseCardsArticleDataAdaptor.mapResultToCardsData(cardData);
+  };
+
   return {
     fetchCardData,
+    handleArticleDataService,
   };
 })();
 
