@@ -19,14 +19,32 @@
 .curated-cards-content {
     margin-top: 24px;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 16px;
     margin-bottom: 32px;
     transition: all .5s ease-in-out;
+
+    @media only screen and (min-width: 361px) {
+        gap: 25px;
+    }
+    @media only screen and (min-width: 769px) {
+        gap: 32px;
+    }
 }
 
 .curated-cards-content > div {
-    width: 256px;
+    /*width: 256px;*/
+    flex: 1;
+    min-width : 90%;
+    @media only screen and (min-width: 361px) {
+        min-width : 44%; 
+    }
+    @media only screen and (min-width: 769px) {
+        min-width : 29%;
+    }
+    @media only screen and (min-width: 1025px) {
+        min-width : auto; 
+    }
 }
 
 .curated-cards .tooltip {
