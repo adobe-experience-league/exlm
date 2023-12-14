@@ -498,102 +498,18 @@
         ]
       },
       {
-        "component": "multiselect",
+        "component": "aem-tag",
         "name": "solutions",
         "label": "Solution(s)",
         "valueType": "string",
-        "description": "Sets the solution(s) param.",
-        "options": [
-          {
-            "name": "Experience Manager",
-            "value": "Experience Manager"
-          },
-          {
-            "name": "Marketo Engage",
-            "value": "Marketo Engage"
-          },
-          {
-            "name": "Workfront",
-            "value": "Workfront"
-          },
-          {
-            "name": "Analytics",
-            "value": "Analytics"
-          },
-          {
-            "name": "Campaign",
-            "value": "Campaign"
-          },
-          {
-            "name": "Experience Platform",
-            "value": "Experience Platform"
-          },
-          {
-            "name": "Commerce",
-            "value": "Commerce"
-          },
-          {
-            "name": "Target",
-            "value": "Target"
-          },
-          {
-            "name": "Experience Cloud",
-            "value": "Experience Cloud"
-          },
-          {
-            "name": "Audience Manager",
-            "value": "Audience Manager"
-          }
-        ]
+        "description": "Select either Solution(s) or Feature(s)"
       },
       {
-        "component": "multiselect",
+        "component": "aem-tag",
         "name": "features",
         "label": "Feature(s)",
         "valueType": "string",
-        "description": "Sets the Feature(s) param.",
-        "options": [
-          {
-            "name": "Experience Cloud Integration",
-            "value": "Experience Cloud Integration"
-          },
-          {
-            "name": "Events",
-            "value": "Events"
-          },
-          {
-            "name": "Workspace",
-            "value": "Workspace"
-          },
-          {
-            "name": "Workfront API",
-            "value": "Workfront API"
-          },
-          {
-            "name": "User Management",
-            "value": "User Management"
-          },
-          {
-            "name": "Workbench",
-            "value": "Workbench"
-          },
-          {
-            "name": "Video",
-            "value": "Video"
-          },
-          {
-            "name": "Workflow",
-            "value": "Workflow"
-          },
-          {
-            "name": "User Roles",
-            "value": "User Roles"
-          },
-          {
-            "name": "Target Integration",
-            "value": "Target Integration"
-          }
-        ]
+        "description": "Select either Feature(s) or Solution(s)"
       },
       {
         "component": "multiselect",
