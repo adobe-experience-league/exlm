@@ -28,28 +28,34 @@ const BrowseCardsDelegate = (() => {
   };
 
   const constructCoveoFacet = (facets) => {
-    const facetsArray = facets.map(facet => ({
+    const facetsArray = facets.map((facet) => ({
       facetId: `@${facet.id}`,
       field: facet.id,
       type: facet.type,
       numberOfValues: facet.currentValues?.length || 2,
-      currentValues: facet.currentValues.map(value => ({
+      currentValues: facet.currentValues.map((value) => ({
         value,
-        state: "selected"
-      }))
+        state: 'selected',
+      })),
     }));
     return facetsArray;
-  }
+  };
 
   const constructCoveoAdvancedQuery = () => {
-    const featureQuery = param.feature ? param.feature.map(type => `@el_features=="${type}"`).join(' OR ') : '';
-    const contentTypeQuery = param.contentType ? param.contentType.map(type => `@el_contenttype=="${type}"`).join(' OR ') : '';
-    const productQuery = param.product ? param.product.map(type => `@el_product=="${type}"`).join(' OR ') : '';
-    const roleQuery = param.role ? param.role.map(type => `@el_role=="${type}"`).join(' OR ') : '';
-    const levelQuery = param.level ? param.level.map(type => `@el_level=="${type}"`).join(' OR ') : '';
-    const query = `${featureQuery}${contentTypeQuery}${productQuery}${roleQuery}${levelQuery}`;
+    const featureQuery = param.feature
+      ? `(${param.feature.map((type) => `@el_features=="${type}"`).join(' OR ')})`
+      : '';
+    const contentTypeQuery = param.contentType
+      ? `AND (${param.contentType.map((type) => `@el_contenttype=="${type}"`).join(' OR ')})`
+      : '';
+    const productQuery = param.product
+      ? `AND (${param.product.map((type) => `@el_product=="${type}"`).join(' OR ')})`
+      : '';
+    const roleQuery = param.role ? `AND (${param.role.map((type) => `@el_role=="${type}"`).join(' OR ')})` : '';
+    const levelQuery = param.level ? `AND (${param.level.map((type) => `@el_level=="${type}"`).join(' OR ')})` : '';
+    const query = `${featureQuery} ${contentTypeQuery} ${productQuery} ${roleQuery} ${levelQuery}`;
     return { aq: query };
-  }
+  };
 
   /**
    * handleCoveoService is a method that handles fetching browse cards content using CoveoDataService.
@@ -57,18 +63,10 @@ const BrowseCardsDelegate = (() => {
    */
   const handleCoveoService = () => {
     const facets = [
-      ...(param.contentType
-        ? [{ id: "el_contenttype", type: "specific", currentValues: param.contentType }]
-        : []),
-      ...(param.product
-        ? [{ id: "el_product", type: "specific", currentValues: param.product }]
-        : []),
-      ...(param.role
-        ? [{ id: "el_role", type: "specific", currentValues: param.role }]
-        : []),
-      ...(param.level
-          ? [{ id: "el_level", type: "specific", currentValues: param.level }]
-          : [])
+      ...(param.contentType ? [{ id: 'el_contenttype', type: 'specific', currentValues: param.contentType }] : []),
+      ...(param.product ? [{ id: 'el_product', type: 'specific', currentValues: param.product }] : []),
+      ...(param.role ? [{ id: 'el_role', type: 'specific', currentValues: param.role }] : []),
+      ...(param.level ? [{ id: 'el_level', type: 'specific', currentValues: param.level }] : []),
     ];
     /* eslint-disable-next-line no-async-promise-executor */
     return new Promise(async (resolve) => {
@@ -78,12 +76,12 @@ const BrowseCardsDelegate = (() => {
           locale: 'en',
           searchHub: 'Experience League Learning Hub',
           numberOfResults: param.noOfResults,
-          excerptLength: 200,    
-          sortCriteria: param.sortBy,          
-          context: {"entitlements":{},"role":{},"interests":{},"industryInterests":{}},
-          filterField: "@foldingcollection",
-          parentField: "@foldingchild",
-          childField: "@foldingparent",
+          excerptLength: 200,
+          sortCriteria: param.sortCriteria,
+          context: { entitlements: {}, role: {}, interests: {}, industryInterests: {} },
+          filterField: '@foldingcollection',
+          parentField: '@foldingchild',
+          childField: '@foldingparent',
           ...(param.feature ? constructCoveoAdvancedQuery() : ''),
           ...(!param.feature ? { facets: constructCoveoFacet(facets) } : ''),
         },
@@ -96,7 +94,7 @@ const BrowseCardsDelegate = (() => {
         resolve([]);
       }
     });
-  }
+  };
   /**
    * handleLiveEventsService is a method that handles fetching browse cards content using LiveEventsDataService.
    * @returns {Promise<Array>} - A promise resolving to an array of browse cards data.

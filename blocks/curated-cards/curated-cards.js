@@ -14,11 +14,12 @@ export default async function decorate(block) {
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
   const contentType = block.querySelector('div:nth-child(4) > div')?.textContent?.trim()?.toLowerCase();
-  const product =  block.querySelector('div:nth-child(5) > div')?.textContent?.trim()?.toLowerCase();
+  const product = block.querySelector('div:nth-child(5) > div')?.textContent?.trim()?.toLowerCase();
   const feature = block.querySelector('div:nth-child(6) > div')?.textContent?.trim()?.toLowerCase();
   const role = block.querySelector('div:nth-child(7) > div')?.textContent?.trim()?.toLowerCase();
   const level = block.querySelector('div:nth-child(8) > div')?.textContent?.trim()?.toLowerCase();
   const sortBy = block.querySelector('div:nth-child(10) > div')?.textContent?.trim()?.toLowerCase();
+  const sortCriteria = SORT_OPTIONS[sortBy];
   const noOfResults = 4;
 
   // Clearing the block's content
@@ -51,7 +52,7 @@ export default async function decorate(block) {
     feature: feature && feature.split(','),
     role: role && role.split(','),
     level: level && level.split(','),
-    sortBy,
+    sortCriteria,
     noOfResults,
   };
 
