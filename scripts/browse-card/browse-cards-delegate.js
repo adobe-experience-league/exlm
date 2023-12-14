@@ -27,6 +27,11 @@ const BrowseCardsDelegate = (() => {
     return urlSearchParams;
   };
 
+  /**
+   * constructCoveoFacet is a method that constructs Coveo facets based on the provided facet data.
+   * @param {Array} facets - An array of facet objects.
+   * @returns {Array} - An array of Coveo facet objects.
+   */
   const constructCoveoFacet = (facets) => {
     const facetsArray = facets.map((facet) => ({
       facetId: `@${facet.id}`,
@@ -41,6 +46,10 @@ const BrowseCardsDelegate = (() => {
     return facetsArray;
   };
 
+  /**
+   * constructCoveoAdvancedQuery is a method that constructs an advanced Coveo query based on the provided parameters.
+   * @returns {Object} - An object containing the advanced Coveo query.
+   */
   const constructCoveoAdvancedQuery = () => {
     const featureQuery = param.feature
       ? `(${param.feature.map((type) => `@el_features=="${type}"`).join(' OR ')})`
@@ -95,6 +104,7 @@ const BrowseCardsDelegate = (() => {
       }
     });
   };
+
   /**
    * handleLiveEventsService is a method that handles fetching browse cards content using LiveEventsDataService.
    * @returns {Promise<Array>} - A promise resolving to an array of browse cards data.
@@ -107,7 +117,7 @@ const BrowseCardsDelegate = (() => {
       if (events?.length) {
         resolve(BrowseCardsLiveEventsAdaptor.mapResultsToCardsData(events));
       } else {
-        reject(new Error('An Error Occured'));
+        reject(new Error('An Error Occurred'));
       }
     });
 
@@ -127,7 +137,7 @@ const BrowseCardsDelegate = (() => {
       if (cardData[0]?.results?.length) {
         resolve(BrowseCardsADLSAdaptor.mapResultsToCardsData(cardData[0].results));
       } else {
-        reject(new Error('An Error Occured'));
+        reject(new Error('An Error Occurred'));
       }
     });
 
@@ -137,13 +147,13 @@ const BrowseCardsDelegate = (() => {
    * @param {string | string[]} contentType - The content type or an array of content types.
    * @returns {function} - The corresponding service function.
    */
-  const getServiceForContentType = (contentType) => {
+  const getService = (contentType) => {
     const contentTypesServices = {
       [CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY]: handleLiveEventsService,
       [CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY]: handleADLSService,
     };
 
-    // If the content type is an array, use the handleCoveoService (Works only with coveo related content types)
+    // If the content type is an array, use the handleCoveoService (Works only with Coveo related content types)
     if (Array.isArray(contentType)) {
       return handleCoveoService;
     }
@@ -157,12 +167,13 @@ const BrowseCardsDelegate = (() => {
 
   /**
    * fetchCardData is an asynchronous method that fetches card data based on the configured content type.
+   * @param {Object} paramObj - An object containing parameters for fetching card data.
    * @returns {Promise<Array>|null} - A promise resolving to an array of browse cards data, or null if the content type is not handled.
    */
   const fetchCardData = async (paramObj) => {
     param = paramObj;
-    const { contentType } = paramObj;
-    const service = getServiceForContentType(contentType);
+    const { contentType } = param;
+    const service = getService(contentType);
     if (service) {
       return new Promise((resolve) => {
         resolve(service());
