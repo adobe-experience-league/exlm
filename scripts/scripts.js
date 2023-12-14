@@ -15,7 +15,6 @@ import {
   getMetadata,
   loadScript,
 } from './lib-franklin.js';
-import decorateBrowseFiler from './browse-filter/browse-filter.js';
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
@@ -358,8 +357,6 @@ async function loadPage() {
   loadRails();
   loadDelayed();
   loadPrevNextBtn();
-  await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-filter/browse-filter.css`);
-  decorateBrowseFiler(); // remove me
 }
 
 loadPage();
