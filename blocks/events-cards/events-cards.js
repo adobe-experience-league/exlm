@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, loadIms } from '../../scripts/scripts.js';
+import { htmlToElement } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import CONTENT_TYPES from '../../scripts/browse-card/browse-cards-constants.js';
 /**
@@ -18,6 +18,7 @@ export default async function decorate(block) {
   const noOfResults = 4;
   // eslint-disable-next-line no-use-before-define
   const solutionsTags = solutions !== '' ? formattedSolutionTags(solutions) : '';
+  // If All Solutions toggle is on, solution param will be empty, else use solutions tag as param
   const solutionsParam = allSolutions === 'true' ? '' : solutionsTags;
 
   // Clearing the block's content
@@ -36,20 +37,6 @@ export default async function decorate(block) {
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
-
-  let adobeIMS = {
-    isSignedInUser: () => false,
-  };
-  try {
-    const ims = await loadIms();
-    adobeIMS = ims.adobeIMS;
-  } catch {
-    // eslint-disable-next-line no-console
-    console.warn('Adobe IMS not available.');
-  }
-  const isSignedIn = adobeIMS?.isSignedInUser();
-  // eslint-disable-next-line no-console
-  console.warn(isSignedIn);
 
   const param = {
     solutionsParam,
@@ -77,29 +64,46 @@ export default async function decorate(block) {
     }
   });
 
-  // Function to filter events based on productFocus key in JSON
+  /**
+   * fetchFilteredCardData filters the events data based on productFocus key in events JSON
+   * @param {string} data - The events json data.
+   * @param {string} params - The solutions tag parameter(s) from AEM UE.
+   * @returns The data for event cards associated with the specified solution tag in startTime ascending order.
+   */
   const fetchFilteredCardData = (data, params) => {
     const eventData = { data };
     if (eventData.data) {
-      // Convert each filter parameter to lowercase for case-insensitive comparison
-      const lowercaseParams = params.map((parameter) => parameter.toLowerCase());
-      return eventData.data.filter((event) => {
-        // Check if the product property is an array
-        const productArray = Array.isArray(event.product) ? event.product : [event.product];
+      const paramsArray = Array.isArray(params) ? params : [params];
+      if (paramsArray.length === 0 || paramsArray.some((p) => p === '')) {
+        return eventData.data;
+      }
 
-        // Convert each product value to lowercase for case-insensitive comparison
+      const lowercaseParams = paramsArray.map((parameter) => parameter.toLowerCase());
+
+      const filteredData = eventData.data.filter((event) => {
+        const productArray = Array.isArray(event.product) ? event.product : [event.product];
         const lowercaseProduct = productArray.map((item) => item.toLowerCase().replaceAll(' ', '-'));
-        // Check if any of the lowercaseParams is included in lowercaseProduct in JSON response
         return lowercaseParams.some((parameter) => lowercaseProduct.includes(parameter.trim()));
       });
+
+      // Sort events by startTime in ascending order
+      const sortedData = filteredData.sort(
+        (card1, card2) => new Date(card1.event.startTime) - new Date(card2.event.startTime),
+      );
+      return sortedData;
     }
     return [];
   };
+}
 
-  function formattedSolutionTags(inputString) {
-    return inputString
-      .replace(/exl:solution\//g, '')
-      .split(',')
-      .map((part) => part.trim());
-  }
+/**
+ * formattedSolutionTags returns the solution type by stripping off the exl:solution/ string
+ * @param {string} inputString - The solution tag. E.g. exl:solution/experience-cloud
+ * @returns the solution tag. E.g. experience-cloud
+ */
+function formattedSolutionTags(inputString) {
+  return inputString
+    .replace(/exl:solution\//g, '')
+    .split(',')
+    .map((part) => part.trim());
 }
