@@ -1,4 +1,4 @@
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import { createTag, htmlToElement } from '../../scripts/scripts.js';
 
 // TODO: Move these constants to a separate file
@@ -53,6 +53,21 @@ const contentType = [
   },
 ];
 
+const expLevel = [
+  {
+    title: 'Beginner',
+    description: 'I am a beginner',
+  },
+  {
+    title: 'Intermediate',
+    description: 'I am an intermediate',
+  },
+  {
+    title: 'Experienced',
+    description: 'I have some experience',
+  },
+];
+
 const roleOptions = {
   name: 'Role',
   items: roles,
@@ -62,6 +77,12 @@ const roleOptions = {
 const contentTypeOptions = {
   name: 'Content Type',
   items: contentType,
+  selected: 0,
+};
+
+const expTypeOptions = {
+  name: 'Experience Level',
+  items: expLevel,
   selected: 0,
 };
 
@@ -82,9 +103,16 @@ const tags = [
     name: 'Content Type',
     value: 'Business Leader',
   },
+  {
+    name: 'Experience Level',
+    value: 'Intermediate',
+  },
 ];
 
+const isBrowseProdPage = getMetadata('browse product');
 const dropdownOptions = [roleOptions, contentTypeOptions];
+
+if (isBrowseProdPage) dropdownOptions.push(expTypeOptions);
 
 /**
  * Generate HTML for a single checkbox item.
