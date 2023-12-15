@@ -8,29 +8,22 @@ import { CONTENT_TYPES } from './browse-cards-constants.js';
 import { coveoSearchResultsUrl, liveEventsUrl, adlsUrl } from '../urls.js';
 
 /**
- * Module that provides a facade for fetching card data based on different content types.
  * @module BrowseCardsDelegate
+ * @description A module that handles the delegation of fetching card data based on content types.
  */
 const BrowseCardsDelegate = (() => {
+  /**
+   * Object to store query parameters for fetching data.
+   * @type {Object}
+   * @private
+   */
   let param = {};
 
   /**
-   * constructADLSSearchParams is a method that constructs search parameters for the data source.
-   * @returns {URLSearchParams} - The URLSearchParams object containing the constructed parameters
-   */
-  const constructADLSSearchParams = () => {
-    const urlSearchParams = new URLSearchParams();
-    urlSearchParams.append('trainingMethod', 'Live Instructor Courses');
-    urlSearchParams.append('pageIndex', '1');
-    urlSearchParams.append('sort', 'recommended');
-    urlSearchParams.append('learningType', 'catalog');
-    return urlSearchParams;
-  };
-
-  /**
-   * constructCoveoFacet is a method that constructs Coveo facets based on the provided facet data.
+   * Constructs Coveo facet structure based on provided facets.
    * @param {Array} facets - An array of facet objects.
-   * @returns {Array} - An array of Coveo facet objects.
+   * @returns {Array} Array of Coveo facet objects.
+   * @private
    */
   const constructCoveoFacet = (facets) => {
     const facetsArray = facets.map((facet) => ({
@@ -47,8 +40,9 @@ const BrowseCardsDelegate = (() => {
   };
 
   /**
-   * constructCoveoAdvancedQuery is a method that constructs an advanced Coveo query based on the provided parameters.
-   * @returns {Object} - An object containing the advanced Coveo query.
+   * Constructs advanced query for Coveo data service based on query parameters.
+   * @returns {Object} Object containing the advanced query.
+   * @private
    */
   const constructCoveoAdvancedQuery = () => {
     const featureQuery = param.feature
@@ -67,87 +61,106 @@ const BrowseCardsDelegate = (() => {
   };
 
   /**
-   * handleCoveoService is a method that handles fetching browse cards content using CoveoDataService.
-   * @returns {Promise<Array>} - A promise resolving to an array of browse cards data.
+   * Handles Coveo data service to fetch card data.
+   * @returns {Array} Array of card data.
+   * @throws {Error} Throws an error if an issue occurs during data fetching.
+   * @private
    */
-  const handleCoveoService = () => {
+  const handleCoveoService = async () => {
     const facets = [
       ...(param.contentType ? [{ id: 'el_contenttype', type: 'specific', currentValues: param.contentType }] : []),
       ...(param.product ? [{ id: 'el_product', type: 'specific', currentValues: param.product }] : []),
       ...(param.role ? [{ id: 'el_role', type: 'specific', currentValues: param.role }] : []),
       ...(param.level ? [{ id: 'el_level', type: 'specific', currentValues: param.level }] : []),
     ];
-    /* eslint-disable-next-line no-async-promise-executor */
-    return new Promise(async (resolve) => {
-      const dataSource = {
-        url: coveoSearchResultsUrl,
-        param: {
-          locale: 'en',
-          searchHub: 'Experience League Learning Hub',
-          numberOfResults: param.noOfResults,
-          excerptLength: 200,
-          sortCriteria: param.sortCriteria,
-          context: { entitlements: {}, role: {}, interests: {}, industryInterests: {} },
-          filterField: '@foldingcollection',
-          parentField: '@foldingchild',
-          childField: '@foldingparent',
-          ...(param.feature ? constructCoveoAdvancedQuery() : ''),
-          ...(!param.feature ? { facets: constructCoveoFacet(facets) } : ''),
-        },
-      };
-      const coveoService = new CoveoDataService(dataSource);
-      const cardData = await coveoService.fetchDataFromSource();
-      if (cardData?.results?.length) {
-        resolve(BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData.results));
-      } else {
-        resolve([]);
-      }
-    });
+    const dataSource = {
+      url: coveoSearchResultsUrl,
+      param: {
+        locale: 'en',
+        searchHub: 'Experience League Learning Hub',
+        numberOfResults: param.noOfResults,
+        excerptLength: 200,
+        sortCriteria: param.sortCriteria,
+        context: { entitlements: {}, role: {}, interests: {}, industryInterests: {} },
+        filterField: '@foldingcollection',
+        parentField: '@foldingchild',
+        childField: '@foldingparent',
+        ...(param.feature ? constructCoveoAdvancedQuery() : ''),
+        ...(!param.feature ? { facets: constructCoveoFacet(facets) } : ''),
+      },
+    };
+    const coveoService = new CoveoDataService(dataSource);
+    const cardData = await coveoService.fetchDataFromSource();
+    if (!cardData) {
+      throw new Error('An error occurred');
+    }
+    if (cardData?.results?.length) {
+      return BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData.results);
+    }
+    return [];
   };
 
   /**
-   * handleLiveEventsService is a method that handles fetching browse cards content using LiveEventsDataService.
-   * @returns {Promise<Array>} - A promise resolving to an array of browse cards data.
+   * Handles Live Events data service to fetch card data.
+   * @returns {Array} Array of card data.
+   * @throws {Error} Throws an error if an issue occurs during data fetching.
+   * @private
    */
-  const handleLiveEventsService = () =>
-    /* eslint-disable-next-line no-async-promise-executor */
-    new Promise(async (resolve, reject) => {
-      const liveEventsService = new LiveEventsDataService(liveEventsUrl);
-      const events = await liveEventsService.fetchDataFromSource();
-      if (events?.length) {
-        resolve(BrowseCardsLiveEventsAdaptor.mapResultsToCardsData(events));
-      } else {
-        reject(new Error('An Error Occurred'));
-      }
-    });
+  const handleLiveEventsService = async () => {
+    const liveEventsService = new LiveEventsDataService(liveEventsUrl);
+    const events = await liveEventsService.fetchDataFromSource();
+    if (!events) {
+      throw new Error('An error occurred');
+    }
+    if (events?.length) {
+      return BrowseCardsLiveEventsAdaptor.mapResultsToCardsData(events);
+    }
+    return [];
+  };
 
   /**
-   * handleADLSService is a method that handles fetching browse cards content using ADLSService.
-   * @returns {Promise<Array>} - A promise resolving to an array of browse cards data.
+   * Constructs search parameters for ADLS data service.
+   * @returns {URLSearchParams} Constructed URLSearchParams object.
+   * @private
    */
-  const handleADLSService = () =>
-    /* eslint-disable-next-line no-async-promise-executor */
-    new Promise(async (resolve, reject) => {
-      const dataSource = {
-        url: adlsUrl,
-        param: constructADLSSearchParams(),
-      };
-      const adlsService = new ADLSDataService(dataSource);
-      const cardData = await adlsService.fetchDataFromSource();
-      if (cardData[0]?.results?.length) {
-        resolve(BrowseCardsADLSAdaptor.mapResultsToCardsData(cardData[0].results));
-      } else {
-        reject(new Error('An Error Occurred'));
-      }
-    });
+  const constructADLSSearchParams = () => {
+    const urlSearchParams = new URLSearchParams();
+    urlSearchParams.append('trainingMethod', 'Live Instructor Courses');
+    urlSearchParams.append('pageIndex', '1');
+    urlSearchParams.append('sort', 'recommended');
+    urlSearchParams.append('learningType', 'catalog');
+    return urlSearchParams;
+  };
 
   /**
-   * Determines and returns the appropriate service based on the provided content type.
-   *
-   * @param {string | string[]} contentType - The content type or an array of content types.
-   * @returns {function} - The corresponding service function.
+   * Handles ADLS data service to fetch card data.
+   * @returns {Array} Array of card data.
+   * @throws {Error} Throws an error if an issue occurs during data fetching.
+   * @private
    */
-  const getService = (contentType) => {
+  const handleADLSService = async () => {
+    const dataSource = {
+      url: adlsUrl,
+      param: constructADLSSearchParams(),
+    };
+    const adlsService = new ADLSDataService(dataSource);
+    const cardData = await adlsService.fetchDataFromSource();
+    if (!cardData) {
+      throw new Error('An error occurred');
+    }
+    if (cardData[0]?.results?.length) {
+      return BrowseCardsADLSAdaptor.mapResultsToCardsData(cardData[0].results);
+    }
+    return [];
+  };
+
+  /**
+   * Retrieves the appropriate service function based on the content type.
+   * @param {string} contentType - The content type for which the service is needed.
+   * @returns {Function} The corresponding service function for the content type.
+   * @private
+   */
+  const getServiceForContentType = (contentType) => {
     const contentTypesServices = {
       [CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY]: handleLiveEventsService,
       [CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY]: handleADLSService,
@@ -166,21 +179,28 @@ const BrowseCardsDelegate = (() => {
   };
 
   /**
-   * fetchCardData is an asynchronous method that fetches card data based on the configured content type.
-   * @param {Object} paramObj - An object containing parameters for fetching card data.
-   * @returns {Promise<Array>|null} - A promise resolving to an array of browse cards data, or null if the content type is not handled.
+   * Fetches card data based on the provided parameters.
+   * @param {Object} paramObj - Parameters for fetching card data.
+   * @returns {Promise} A promise that resolves to an array of card data.
    */
-  const fetchCardData = async (paramObj) => {
-    param = paramObj;
-    const { contentType } = param;
-    const service = getService(contentType);
-    if (service) {
-      return new Promise((resolve) => {
-        resolve(service());
-      });
-    }
-    return null;
-  };
+  const fetchCardData = (paramObj) =>
+    new Promise((resolve, reject) => {
+      param = paramObj;
+      const { contentType } = param;
+      const cardDataService = getServiceForContentType(contentType);
+      if (cardDataService) {
+        const cardDataPromise = cardDataService();
+        cardDataPromise
+          .then((data) => {
+            resolve(data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      } else {
+        reject(new Error('Service Unavailable'));
+      }
+    });
 
   return {
     fetchCardData,

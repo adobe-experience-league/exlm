@@ -14,13 +14,30 @@ export default async function decorate(block) {
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
   const contentType = block.querySelector('div:nth-child(4) > div')?.textContent?.trim()?.toLowerCase();
-  const product = block.querySelector('div:nth-child(5) > div')?.textContent?.trim()?.toLowerCase();
-  const feature = block.querySelector('div:nth-child(6) > div')?.textContent?.trim()?.toLowerCase();
+  const capabilityElement = 'exl:solution/experience-platform'; // block.querySelector('div:nth-child(5) > div')?.textContent?.trim()?.toLowerCase();
   const role = block.querySelector('div:nth-child(7) > div')?.textContent?.trim()?.toLowerCase();
   const level = block.querySelector('div:nth-child(8) > div')?.textContent?.trim()?.toLowerCase();
   const sortBy = block.querySelector('div:nth-child(10) > div')?.textContent?.trim()?.toLowerCase();
-  const sortCriteria = SORT_OPTIONS[sortBy];
+  const sortCriteria = SORT_OPTIONS[sortBy?.toUpperCase()];
   const noOfResults = 4;
+  const productKey = 'exl:solution';
+  const featureKey = 'exl:feature';
+  const capability = {};
+  const regex = /(?:exl:solution\/|exl:feature\/)([^,]+)/g;
+  const matches = capabilityElement.match(regex);
+
+  if (capabilityElement) {
+    if (matches) {
+      matches.forEach((match) => {
+        const type = match.split('/')[0];
+        const text = match.split('/')[1];
+        if (!capability[type]) {
+          capability[type] = [];
+        }
+        capability[type].push(text);
+      });
+    }
+  }
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -48,8 +65,8 @@ export default async function decorate(block) {
 
   const param = {
     contentType: contentType && contentType.split(','),
-    product: product && product.split(','),
-    feature: feature && feature.split(','),
+    product: capability[productKey],
+    feature: capability[featureKey],
     role: role && role.split(','),
     level: level && level.split(','),
     sortCriteria,
@@ -57,20 +74,25 @@ export default async function decorate(block) {
   };
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
-  browseCardsContent.then((data) => {
-    if (data?.length) {
-      const contentDiv = document.createElement('div');
-      contentDiv.classList.add('curated-cards-content');
+  browseCardsContent
+    .then((data) => {
+      if (data?.length) {
+        const contentDiv = document.createElement('div');
+        contentDiv.classList.add('curated-cards-content');
 
-      for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
-        const cardData = data[i];
-        const cardDiv = document.createElement('div');
-        buildCard(cardDiv, cardData);
-        contentDiv.appendChild(cardDiv);
+        for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
+          const cardData = data[i];
+          const cardDiv = document.createElement('div');
+          buildCard(cardDiv, cardData);
+          contentDiv.appendChild(cardDiv);
+        }
+
+        block.appendChild(contentDiv);
+        decorateIcons(block);
       }
-
-      block.appendChild(contentDiv);
-      decorateIcons(block);
-    }
-  });
+    })
+    .catch((err) => {
+      /* eslint-disable-next-line no-console */
+      console.log('Curated Cards:', err);
+    });
 }
