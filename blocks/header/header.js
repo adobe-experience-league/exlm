@@ -80,17 +80,16 @@ const brandDecorator = (brandBlock) => {
   return brandBlock;
 };
 
-let adobeIMS = {
+window.adobeIMS = window.adobeIMS || {
   isSignedInUser: () => false,
 };
 try {
-  const ims = await loadIms();
-  adobeIMS = ims.adobeIMS;
+  await loadIms();
 } catch {
   // eslint-disable-next-line no-console
   console.warn('Adobe IMS not available.');
 }
-const isSignedIn = adobeIMS?.isSignedInUser();
+const isSignedIn = window.adobeIMS?.isSignedInUser();
 
 /**
  * adds hambuger button to nav wrapper
@@ -461,7 +460,7 @@ const signInDecorator = async (signInBlock) => {
   } else {
     signInBlock.classList.remove('signed-in');
     signInBlock.firstChild.addEventListener('click', async () => {
-      adobeIMS.signIn();
+      window.adobeIMS.signIn();
     });
   }
   return signInBlock;
