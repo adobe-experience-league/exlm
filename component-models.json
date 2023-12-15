@@ -1160,5 +1160,82 @@
         "label": "Sets the description for Browse Filters"
       }
     ]
+  },
+  {
+    "id": "featured-card",
+    "fields": [
+      {
+        "component": "text-input",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "valueType": "string",
+        "description": "Heading text"
+      },
+      {
+        "component": "text-area",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "valueType": "string",
+        "description": "Lorem ipsum dolor sit amet"
+      },
+      {
+        "component": "checkbox-group",
+        "name": "contentTypes",
+        "value": "",
+        "label": "Content Types",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "All",
+            "value": "all"
+          },
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "communities"
+          },
+          {
+            "name": "Courses",
+            "value": "courses"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "on-demand event"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorials"
+          }
+        ]
+      },
+      {
+        "component": "text-input",
+        "name": "linkText",
+        "value": "",
+        "label": "Link Text",
+        "valueType": "string",
+        "description": "Browse more learning content"
+      },
+      {
+        "component": "text-input",
+        "name": "linkUrl",
+        "value": "",
+        "label": "Link URL",
+        "valueType": "string"
+      }
+    ]
   }
 ]
