@@ -596,9 +596,9 @@
         ]
       },
       {
-        "component": "select",
+        "component": "radio-group",
         "name": "sortBy",
-        "value": "",
+        "value": "RELEVANCE",
         "label": "Sort by",
         "valueType": "string",
         "options": [

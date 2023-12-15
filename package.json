@@ -62,7 +62,7 @@
       "stylelint --fix",
       "prettier --write"
     ],
-    "*": [
+    "*.{ejs,html,md,mdx,toml,yaml,xml}": [
       "prettier --write"
     ]
   },
