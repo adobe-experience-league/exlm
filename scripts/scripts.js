@@ -199,14 +199,10 @@ export async function loadIms() {
           'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read',
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
         debug: false,
-        onReady: (args) => {
+        onReady: () => {
           // eslint-disable-next-line no-console
-          console.log('Adobe IMS Ready!', args);
-          resolve({
-            ...args,
-            // eslint-disable-next-line no-undef
-            adobeIMS,
-          });
+          console.log('Adobe IMS Ready!');
+          resolve(); // resolve the promise, consumers can now use window.adobeIMS
           clearTimeout(timeout);
         },
         onError: reject,
