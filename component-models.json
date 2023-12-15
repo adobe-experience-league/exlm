@@ -1094,6 +1094,7 @@
         "name": "cq:tags",
         "label": "Solution(s)",
         "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/solution",
         "description": "Optional - all are included if no selection is made."
       }
     ]
