@@ -46,28 +46,31 @@ export default async function decorate(block) {
 
   block.innerHTML += loader;
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
-  
-  browseCardsContent.then((data) => {
-    block.querySelectorAll('.shimmer-block').forEach((el)=>{
-      el.remove()
-    })
-    if (data?.length) {
-      const contentDiv = document.createElement('div');
-      contentDiv.classList.add('curated-cards-content');
 
-      for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
-        const cardData = data[i];
-        const cardDiv = document.createElement('div');
-        buildCard(cardDiv, cardData);
-        contentDiv.appendChild(cardDiv);
+  browseCardsContent
+    .then((data) => {
+      block.querySelectorAll('.shimmer-block').forEach((el) => {
+        el.remove();
+      });
+      if (data?.length) {
+        const contentDiv = document.createElement('div');
+        contentDiv.classList.add('curated-cards-content');
+
+        for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
+          const cardData = data[i];
+          const cardDiv = document.createElement('div');
+          buildCard(cardDiv, cardData);
+          contentDiv.appendChild(cardDiv);
+        }
+        block.appendChild(contentDiv);
+        decorateIcons(block);
       }
-      block.appendChild(contentDiv);
-      decorateIcons(block);
-    }
-  }).catch((err) => {
-    block.querySelectorAll('.shimmer-block').forEach((el)=>{
-      el.remove()
     })
-    console.error("ERROR:",err)
-  });
+    .catch((err) => {
+      block.querySelectorAll('.shimmer-block').forEach((el) => {
+        el.remove();
+      });
+      // eslint-disable-next-line no-console
+      console.error('ERROR:', err);
+    });
 }

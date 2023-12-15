@@ -1,4 +1,4 @@
-import { htmlToElement } from '../scripts.js'
+import { htmlToElement } from '../scripts.js';
 import { loadCSS } from '../lib-franklin.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-placeholder.css`); // load placeholder css dynamically
@@ -9,7 +9,7 @@ const shimmerParent = document.createElement('div');
 shimmerParent.classList.add('shimmer-block');
 
 const loader = (() => {
-  for ( let i= 0; i < defaultNumberOfCards; i +=1 ) {
+  for (let i = 0; i < defaultNumberOfCards; i += 1) {
     shimmerContent = htmlToElement(
       `<div class="shimmer-block-isloading">
         <div class="shimmer-block-image"></div>
@@ -19,11 +19,11 @@ const loader = (() => {
           <div class="shimmer-block-sub-text"></div>
         </div>
         <div class="shimmer-block-btn"></div>
-      </div>`
+      </div>`,
     );
-    shimmerParent.append(shimmerContent)
+    shimmerParent.append(shimmerContent);
   }
-    return shimmerParent.outerHTML;
+  return shimmerParent.outerHTML;
 })();
 
 export default loader;

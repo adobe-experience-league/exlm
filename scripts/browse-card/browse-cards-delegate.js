@@ -131,13 +131,15 @@ const BrowseCardsDelegate = (() => {
     const { contentType } = paramObj;
     const service = getServiceForContentType(contentType?.toLowerCase());
     if (service) {
-      return new Promise(( resolve, reject ) => {
+      return new Promise((resolve, reject) => {
         const serviceYes = service();
-        serviceYes.then((data) => {
-          resolve(data);
-        }).catch((err) => {
-          reject(err);
-        });
+        serviceYes
+          .then((data) => {
+            resolve(data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
       });
     }
     return null;
