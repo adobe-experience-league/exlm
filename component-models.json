@@ -1188,10 +1188,6 @@
         "valueType": "string",
         "options": [
           {
-            "name": "All",
-            "value": "all"
-          },
-          {
             "name": "Certification",
             "value": "certification"
           },
