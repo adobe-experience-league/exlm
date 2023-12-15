@@ -3,6 +3,7 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import CardCarousel from '../../scripts/swipe.js';
+import loader from '../../scripts/browse-card/broswe-card-placeholder.js'
 
 /**
  * Decorate function to process and log the mapped data.
@@ -42,16 +43,16 @@ export default async function decorate(block) {
 
   const param = {
     contentType,
-    noOfResults,
-    showLoader : true,
-    block
+    noOfResults
   };
+
+  block.innerHTML += loader;
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent.then((data) => {
     if (data?.length) {
-      block.querySelectorAll('.card--isloading').forEach((el)=>{
-        el.classList.add('is-hidden');
+      block.querySelectorAll('.shimmer-curated-cards-content').forEach((el)=>{
+         el.classList.add('is-hidden');
       })
       const contentDiv = document.createElement('div');
       contentDiv.classList.add('curated-cards-content');

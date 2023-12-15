@@ -6,12 +6,12 @@ loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-placeholder.
 let defaultNumberOfCards = 4;
 let shimmerContent = '';
 let shimmerParent = document.createElement('div');
-shimmerParent.classList.add('curated-cards-content');
+shimmerParent.classList.add('shimmer-curated-cards-content');
 
 const loader = (() => {
   for (let i= 0; i < defaultNumberOfCards; i++){
     shimmerContent =  htmlToElement(
-      `<div><div class="card--isloading">
+      `<div><div class="card-isloading">
         <div class="loading-image"></div>
         <div class="loading-content">
         <div class="loading-text-container">
@@ -21,9 +21,9 @@ const loader = (() => {
         <div class="loading-btn"></div>
       </div><div>`,
     );
-    shimmerParent.appendChild(shimmerContent)
+    shimmerParent.append(shimmerContent)
   }
-    return shimmerParent
+    return shimmerParent.outerHTML
 })();
 
 export default loader;

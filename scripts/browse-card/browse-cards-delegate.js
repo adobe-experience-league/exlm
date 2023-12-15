@@ -6,7 +6,6 @@ import BrowseCardsLiveEventsAdaptor from './browse-cards-live-events-adaptor.js'
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
 import CONTENT_TYPES from './browse-cards-constants.js';
 import { coveoSearchResultsUrl, liveEventsUrl, adlsUrl } from '../urls.js';
-import loader from './broswe-card-placeholder.js'
 
 /**
  * Module that provides a facade for fetching card data based on different content types.
@@ -129,13 +128,10 @@ const BrowseCardsDelegate = (() => {
    */
   const fetchCardData = async (paramObj) => {
     param = paramObj;
-    const { contentType, showLoader, block } = paramObj;
+    const { contentType } = paramObj;
     const service = getServiceForContentType(contentType?.toLowerCase());
     if (service) {
       return new Promise((resolve) => {
-        if(showLoader){
-          block.append(loader);
-        }
         resolve(service());
       });
     }

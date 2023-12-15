@@ -1,14 +1,47 @@
-    .card--isloading {
+  .shimmer-curated-cards-content{
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 16px;
+    margin-bottom: 32px;
+    transition: all .5s ease-in-out;
+
+    @media only screen and (min-width: 600px) {
+        gap: 25px;
+    }
+    @media only screen and (min-width: 900px) {
+        gap: 32px;
+    }
+  }
+
+  .shimmer-curated-cards-content > div {
+    flex: 1 0 264px;
+    width : 264px;
+    max-width: 264px;
+    @media only screen and (min-width: 600px) {
+        width : 286px;
+        flex: 1 0 286px;
+        max-width: 286px; 
+    }
+    @media only screen and (min-width: 900px) {
+        width : 256px; 
+        flex: 1 0 256px;
+        max-width: 256px;
+    }
+  }
+
+  .shimmer-curated-cards-content.is-hidden {
+    display: none;
+  }
+  
+  .card-isloading {
     width: 100%;
     height: 100%;
     border-radius: 4px;
     overflow: hidden;
   }
-  .card--isloading.is-hidden {
-    display: none;
-  }
-  
-  .card--isloading .loading-image {
+
+  .card-isloading .loading-image {
     height: 190px;
     background-image: -webkit-linear-gradient(left, #ececec 0px, #f4f4f4 40px, #ececec 80px);
     background-image: -o-linear-gradient(left, #ececec 0px, #f4f4f4 40px, #ececec 80px);
@@ -18,7 +51,7 @@
             animation: shine-loading-image 2s infinite ease-out;
   }
   
-  .card--isloading .loading-content {
+  .card-isloading .loading-content {
     background: #f7f7f7;
     padding: 15px;
     display: -webkit-box;
@@ -32,12 +65,12 @@
             justify-content: center;
   }
   
-  .card--isloading .loading-content .loading-text-container {
+  .card-isloading .loading-content .loading-text-container {
     -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
+    flex-basis: 100%;
   }
   
-  .card--isloading .loading-content .loading-main-text {
+  .card-isloading .loading-content .loading-main-text {
     height: 10px;
     width: 65%;
     margin-bottom: 10px;
@@ -48,10 +81,10 @@
     background-size: 250px;
     border-radius: 10px;
     -webkit-animation: shine-loading-container-items 2s infinite ease-out;
-            animation: shine-loading-container-items 2s infinite ease-out;
+    animation: shine-loading-container-items 2s infinite ease-out;
   }
   
-  .card--isloading .loading-content .loading-sub-text {
+  .card-isloading .loading-content .loading-sub-text {
     height: 10px;
     width: 50%;
     background: #ececec;
@@ -64,7 +97,7 @@
             animation: shine-loading-container-items 2s infinite ease-out;
   }
   
-  .card--isloading .loading-content .loading-btn {
+  .card-isloading .loading-content .loading-btn {
     width: 60px;
     height: 25px;
     background: #ececec;
@@ -74,7 +107,7 @@
     background-size: 250px;
     border-radius: 3px;
     -webkit-animation: shine-loading-container-items 2s infinite ease-out;
-            animation: shine-loading-container-items 2s infinite ease-out;
+    animation: shine-loading-container-items 2s infinite ease-out;
   }
   
   

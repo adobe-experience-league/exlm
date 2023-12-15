@@ -35,13 +35,16 @@
 .curated-cards-content > div {
     flex: 1 0 264px;
     width : 264px;
+    max-width: 264px;
     @media only screen and (min-width: 600px) {
         width : 286px;
-        flex: 1 0 286px; 
+        flex: 1 0 286px;
+        max-width: 286px; 
     }
     @media only screen and (min-width: 900px) {
         width : 256px; 
         flex: 1 0 256px;
+        max-width: 256px;
     }
 }
 
