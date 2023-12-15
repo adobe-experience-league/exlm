@@ -456,10 +456,9 @@
         "description": "Sets the text url."
       },
       {
-        "component": "checkbox-group",
+        "component": "multiselect",
         "valueType": "string",
         "name": "contentTypes",
-        "value": "",
         "label": "Filter by Content Type",
         "description": "Select the content type(s).",
         "options": [
