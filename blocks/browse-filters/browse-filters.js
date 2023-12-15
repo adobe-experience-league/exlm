@@ -293,6 +293,16 @@ function decorateBlockTitle(block) {
   secondChild.parentNode.replaceChild(pEl, secondChild);
 }
 
+function onInputSearch(block) {
+  const searchEl = block.querySelector('.filter-input-search input[type="search"]');
+  searchEl.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      console.log('add search logic here');
+    }
+  });
+}
+
 export default function decorate(block) {
   decorateBlockTitle(block);
   appendFormEl(block);
@@ -306,4 +316,5 @@ export default function decorate(block) {
   appendToForm(block, renderTags());
   decorateIcons(block);
   handleDropdownToggle();
+  onInputSearch(block);
 }
