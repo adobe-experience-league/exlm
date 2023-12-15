@@ -1,35 +1,10 @@
 .browse-card {
   position: relative;
-  width: 256px;
-  min-height: 284px;
   background-color: var(--background-color);
   border: 1px solid var(--non-spectrurm-whisper-gray);
   display: flex;
   flex-direction: column;
-}
-
-@media only screen and (min-width: 900px) {
-  .browse-card {
-    min-height: 390px;
-  }
-  .browse-card.tutorial-card .browse-card-figure {
-    max-height: 199px;
-  }
-  .browse-card.course-card {
-    min-height: 390px;
-  }
-
-  .browse-card.course-card .browse-card-figure {
-    max-height: 199px;
-  }
-
-  .browse-card.course-card .browse-card-content {
-    padding: 16px 16px 12px;
-  }
-
-  .browse-card.course-card .browse-card-meta-info, .browse-card.course-card .browse-card-title-text {
-    margin: 8px 0;
-  }
+  height: 100%;
 }
 .browse-card * {
   box-sizing: border-box;
@@ -38,7 +13,6 @@
   flex-grow: 1;
   margin-bottom: 0;
 }
-
 .browse-card .browse-card-banner {
   position: absolute;
   top: 32px;
@@ -164,7 +138,6 @@
   text-decoration: none;
   font-size: var(--spectrum-font-size-75);
 }
-
 .browse-card .browse-card-contributor-info {
   display: flex;
   gap: 12px;
@@ -206,9 +179,6 @@
 .browse-card .browse-card-name-plate .browse-card-contributor-name {
   font-size: var(--spectrum-font-size-100);
   color: var(--non-spectrum-navy-blue);
-}
-.browse-card.course-card {
-  min-height: 284px;
 }
 .browse-card.course-card .browse-card-banner {
   background-color: var(--non-spectrum-victoria-blue);
@@ -268,4 +238,18 @@
 .browse-card.community-card .browse-card-meta-anchor .icon.icon-book {
   height: 12px;
   width: 11px;
+}
+@media only screen and (min-width: 900px) {
+  .browse-card.tutorial-card .browse-card-figure {
+    max-height: 199px;
+  }
+  .browse-card.course-card .browse-card-figure {
+    max-height: 199px;
+  }
+  .browse-card.course-card .browse-card-content {
+    padding: 16px 16px 12px;
+  }
+  .browse-card.course-card .browse-card-meta-info, .browse-card.course-card .browse-card-title-text {
+    margin: 8px 0;
+  }
 }
