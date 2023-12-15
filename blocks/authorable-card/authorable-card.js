@@ -1,8 +1,9 @@
 // FIXME: This is a dummy component put up to show case the cards rendered via API
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
+import ArticleDataService from '../../scripts/data-service/article-data-service.js';
+
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -37,13 +38,21 @@ export default async function decorate(block) {
 
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('authorable-card-content');
+
   links.forEach((link) => {
-    BrowseCardsDelegate.handleArticleDataService(link).then((data) => {
-      const cardDiv = document.createElement('div');
-      buildCard(cardDiv, data);
-      contentDiv.appendChild(cardDiv);
-      decorateIcons(block);
-    });
+    const articleDataService = new ArticleDataService();
+    articleDataService
+      .handleArticleDataService(link)
+      .then((data) => {
+        const cardDiv = document.createElement('div');
+        buildCard(cardDiv, data);
+        contentDiv.appendChild(cardDiv);
+        decorateIcons(block);
+      })
+      .catch((error) => {
+        console.error('Error fetching data: ', error);
+      });
   });
+
   block.appendChild(contentDiv);
 }
