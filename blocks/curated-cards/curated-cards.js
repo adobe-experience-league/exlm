@@ -3,6 +3,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
+import loader from '../../scripts/browse-card/browse-card-placeholder.js';
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -17,7 +18,6 @@ export default async function decorate(block) {
 
   // Clearing the block's content
   block.innerHTML = '';
-
   const headerDiv = htmlToElement(`
     <div class="curated-cards-header">
       <div class="curated-cards-title">
@@ -30,7 +30,7 @@ export default async function decorate(block) {
     </div>
   `);
   // Appending header div to the block
-  block.appendChild(headerDiv);
+  block.append(headerDiv);
 
   try {
     await loadIms();
@@ -44,8 +44,13 @@ export default async function decorate(block) {
     noOfResults,
   };
 
+  block.innerHTML += loader;
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
+  
   browseCardsContent.then((data) => {
+    block.querySelectorAll('.shimmer-block').forEach((el)=>{
+      el.remove()
+    })
     if (data?.length) {
       const contentDiv = document.createElement('div');
       contentDiv.classList.add('curated-cards-content');
@@ -56,9 +61,13 @@ export default async function decorate(block) {
         buildCard(cardDiv, cardData);
         contentDiv.appendChild(cardDiv);
       }
-
       block.appendChild(contentDiv);
       decorateIcons(block);
     }
+  }).catch((err) => {
+    block.querySelectorAll('.shimmer-block').forEach((el)=>{
+      el.remove()
+    })
+    console.error("ERROR:",err)
   });
 }
