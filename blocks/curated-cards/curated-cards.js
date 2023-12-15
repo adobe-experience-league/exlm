@@ -14,10 +14,10 @@ export default async function decorate(block) {
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
   const contentType = block.querySelector('div:nth-child(4) > div')?.textContent?.trim()?.toLowerCase();
-  const capabilityElement = 'exl:solution/experience-platform'; // block.querySelector('div:nth-child(5) > div')?.textContent?.trim()?.toLowerCase();
-  const role = block.querySelector('div:nth-child(7) > div')?.textContent?.trim()?.toLowerCase();
-  const level = block.querySelector('div:nth-child(8) > div')?.textContent?.trim()?.toLowerCase();
-  const sortBy = block.querySelector('div:nth-child(10) > div')?.textContent?.trim()?.toLowerCase();
+  const capabilityElement = block.querySelector('div:nth-child(5) > div')?.textContent?.trim()?.toLowerCase();
+  const role = block.querySelector('div:nth-child(6) > div')?.textContent?.trim()?.toLowerCase();
+  const level = block.querySelector('div:nth-child(7) > div')?.textContent?.trim()?.toLowerCase();
+  const sortBy = block.querySelector('div:nth-child(9) > div')?.textContent?.trim()?.toLowerCase();
   const sortCriteria = SORT_OPTIONS[sortBy?.toUpperCase()];
   const noOfResults = 4;
   const productKey = 'exl:solution';
