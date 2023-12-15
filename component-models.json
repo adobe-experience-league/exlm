@@ -1074,12 +1074,11 @@
         "description": "Sets the description."
       },
       {
-        "component": "checkbox-group",
-        "name": "contentTypes",
-        "value": "",
-        "label": "Content Types",
+        "component": "multiselect",
         "valueType": "string",
-        "description": "Select the content types.",
+        "name": "contentTypes",
+        "label": "Content type(s)",
+        "description": "Select the content type(s).",
         "options": [
           {
             "name": "Certification",
@@ -1087,11 +1086,11 @@
           },
           {
             "name": "Communities",
-            "value": "communities"
+            "value": "community"
           },
           {
             "name": "Courses",
-            "value": "courses"
+            "value": "course"
           },
           {
             "name": "Documentation",
@@ -1099,7 +1098,7 @@
           },
           {
             "name": "On-Demand Event",
-            "value": "on-demand event"
+            "value": "event"
           },
           {
             "name": "Troubleshooting",
@@ -1107,7 +1106,7 @@
           },
           {
             "name": "Tutorials",
-            "value": "tutorials"
+            "value": "tutorial"
           }
         ]
       },
@@ -1121,7 +1120,7 @@
       },
       {
         "component": "text-input",
-        "name": "linkUrl",
+        "name": "link",
         "value": "",
         "label": "Link URL",
         "valueType": "string",
