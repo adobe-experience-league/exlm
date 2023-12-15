@@ -51,7 +51,7 @@
     gap: 16px;
     margin-bottom: 32px;
     transition: all .5s ease-in-out;
-    overflow-x: scroll;
+    overflow-x: auto;
     overflow-y: hidden;
     padding-bottom: 2px;
 }
@@ -78,7 +78,7 @@
     }
     .curated-cards-content {
         gap: 25px;
-        overflow-x: scroll;
+        overflow-x: auto;
         overflow-y: hidden;
     }
     .curated-cards-content > div {
