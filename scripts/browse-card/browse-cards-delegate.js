@@ -143,7 +143,8 @@ const BrowseCardsDelegate = (() => {
   const handleArticleDataService = async (url) => {
     const articleDataService = new ArticleDataService();
     const cardData = await articleDataService.fetchArticleByURL(url);
-    return BrowseCardsArticleDataAdaptor.mapResultToCardsData(cardData);
+    const articleDataAdapter = new BrowseCardsArticleDataAdaptor();
+    return articleDataAdapter.mapResultToCardsData(cardData);
   };
 
   return {
