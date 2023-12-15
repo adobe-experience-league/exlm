@@ -51,8 +51,8 @@ async function fetchAndStoreCoveoToken() {
   };
 
   try {
-    const imsResponse = await loadIms();
-    adobeIMS = imsResponse.adobeIMS;
+    await loadIms();
+    adobeIMS = window.adobeIMS;
   } catch {
     /* eslint-disable no-console */
     console.warn('Adobe IMS not available.');

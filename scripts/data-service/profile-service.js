@@ -16,8 +16,8 @@ export let adobeIMS = {
 };
 
 try {
-  const ims = await loadIms();
-  adobeIMS = ims.adobeIMS;
+  await loadIms();
+  adobeIMS = window.adobeIMS;
 } catch {
   // eslint-disable-next-line no-console
   console.warn('Adobe IMS not available.');
