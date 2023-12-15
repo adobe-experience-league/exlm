@@ -460,13 +460,9 @@
         "valueType": "string",
         "name": "contentTypes",
         "value": "",
-        "label": "Content type(s)",
-        "description": "Sets the content type(s).",
+        "label": "Filter by Content Type",
+        "description": "Select the content type(s).",
         "options": [
-          {
-            "name": "All",
-            "value": "certification,community,course,documentation,event,troubleshooting,tutorial"
-          },
           {
             "name": "Certification",
             "value": "certification"
@@ -498,102 +494,11 @@
         ]
       },
       {
-        "component": "multiselect",
-        "name": "solutions",
-        "label": "Solution(s)",
+        "component": "aem-tag",
+        "name": "cq:tags",
+        "label": "Solution(s) or Feature(s)",
         "valueType": "string",
-        "description": "Sets the solution(s) param.",
-        "options": [
-          {
-            "name": "Experience Manager",
-            "value": "Experience Manager"
-          },
-          {
-            "name": "Marketo Engage",
-            "value": "Marketo Engage"
-          },
-          {
-            "name": "Workfront",
-            "value": "Workfront"
-          },
-          {
-            "name": "Analytics",
-            "value": "Analytics"
-          },
-          {
-            "name": "Campaign",
-            "value": "Campaign"
-          },
-          {
-            "name": "Experience Platform",
-            "value": "Experience Platform"
-          },
-          {
-            "name": "Commerce",
-            "value": "Commerce"
-          },
-          {
-            "name": "Target",
-            "value": "Target"
-          },
-          {
-            "name": "Experience Cloud",
-            "value": "Experience Cloud"
-          },
-          {
-            "name": "Audience Manager",
-            "value": "Audience Manager"
-          }
-        ]
-      },
-      {
-        "component": "multiselect",
-        "name": "features",
-        "label": "Feature(s)",
-        "valueType": "string",
-        "description": "Sets the Feature(s) param.",
-        "options": [
-          {
-            "name": "Experience Cloud Integration",
-            "value": "Experience Cloud Integration"
-          },
-          {
-            "name": "Events",
-            "value": "Events"
-          },
-          {
-            "name": "Workspace",
-            "value": "Workspace"
-          },
-          {
-            "name": "Workfront API",
-            "value": "Workfront API"
-          },
-          {
-            "name": "User Management",
-            "value": "User Management"
-          },
-          {
-            "name": "Workbench",
-            "value": "Workbench"
-          },
-          {
-            "name": "Video",
-            "value": "Video"
-          },
-          {
-            "name": "Workflow",
-            "value": "Workflow"
-          },
-          {
-            "name": "User Roles",
-            "value": "User Roles"
-          },
-          {
-            "name": "Target Integration",
-            "value": "Target Integration"
-          }
-        ]
+        "description": "Optional - all are included if no selection is made."
       },
       {
         "component": "multiselect",
@@ -602,10 +507,6 @@
         "valueType": "string",
         "description": "Sets the Role(s).",
         "options": [
-          {
-            "name": "All",
-            "value": "Admin,Developer,Leader,User"
-          },
           {
             "name": "Admin",
             "value": "Admin"
@@ -632,10 +533,6 @@
         "description": "Sets the Experience Level(s).",
         "options": [
           {
-            "name": "All",
-            "value": "Beginner,Intermediate,Advanced"
-          },
-          {
             "name": "Beginner",
             "value": "Beginner"
           },
@@ -656,10 +553,6 @@
         "valueType": "string",
         "description": "Sets the industries param.",
         "options": [
-          {
-            "name": "All",
-            "value": "Financial services,High tech,Government,Telecommunications,Healthcare,Education.Manufacturing,Media and entertainment,Retail,Travel and hospitality"
-          },
           {
             "name": "Financial services",
             "value": "Financial services"
@@ -703,23 +596,23 @@
         ]
       },
       {
-        "component": "select",
+        "component": "radio-group",
         "name": "sortBy",
-        "value": "",
+        "value": "RELEVANCE",
         "label": "Sort by",
         "valueType": "string",
         "options": [
           {
             "name": "Relevance",
-            "value": "Relevance"
+            "value": "RELEVANCE"
           },
           {
             "name": "Most recent",
-            "value": "Most recent"
+            "value": "MOST_RECENT"
           },
           {
             "name": "Most popular",
-            "value": "Most popular"
+            "value": "MOST_POPULAR"
           }
         ]
       }
