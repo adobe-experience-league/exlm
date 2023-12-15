@@ -460,8 +460,8 @@
         "valueType": "string",
         "name": "contentTypes",
         "value": "",
-        "label": "Content type(s)",
-        "description": "Sets the content type(s).",
+        "label": "Filter by Content Type",
+        "description": "Select the content type(s).",
         "options": [
           {
             "name": "Certification",
@@ -498,7 +498,7 @@
         "name": "cq:tags",
         "label": "Solution(s) or Feature(s)",
         "valueType": "string",
-        "description": "Select either Solution(s) or Feature(s)"
+        "description": "Optional - all are included if no selection is made."
       },
       {
         "component": "multiselect",
