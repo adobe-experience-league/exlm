@@ -69,8 +69,9 @@ export default async function decorate(block) {
     const eventData = { data };
     if (eventData.data) {
       const paramsArray = Array.isArray(params) ? params : [params];
+      // If solutions param is empty or contains an empty value, return all the results in startTime ascending order
       if (paramsArray.length === 0 || paramsArray.some((p) => p === '')) {
-        return eventData.data;
+        return eventData.data.sort((card1, card2) => new Date(card1.event.startTime) - new Date(card2.event.startTime));
       }
 
       const lowercaseParams = paramsArray.map((parameter) => parameter.toLowerCase());
@@ -82,11 +83,9 @@ export default async function decorate(block) {
       });
 
       // Sort events by startTime in ascending order
-      const sortedData = filteredData.sort(
-        (card1, card2) => new Date(card1.event.startTime) - new Date(card2.event.startTime),
-      );
-      return sortedData;
+      return filteredData.sort((card1, card2) => new Date(card1.event.startTime) - new Date(card2.event.startTime));
     }
+    // In case of invalid solution param, return empty results.
     return [];
   };
 }
