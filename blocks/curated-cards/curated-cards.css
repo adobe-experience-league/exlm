@@ -1,19 +1,3 @@
-.curated-cards-content {
-    margin-top: 24px;
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 16px;
-    margin-bottom: 32px;
-    transition: all .5s ease-in-out;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    padding-bottom: 2px;
-}
-.curated-cards-content > div {
-    flex: 1 0 264px;
-    width : 264px;
-    max-width: 264px;
-}
 .curated-cards {
     min-height: 340px;
 }
@@ -60,6 +44,20 @@
     opacity: 1;
     visibility: visible;
 }
+.curated-cards-content {
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 16px;
+    margin-bottom: 32px;
+    transition: all .5s ease-in-out;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    padding-bottom: 2px;
+}
+.curated-cards-content > div {
+    flex: 0 0 264px;
+}
 .curated-cards-header h4 {
     padding: 0;
     margin: 0;
@@ -84,9 +82,7 @@
         overflow-y: hidden;
     }
     .curated-cards-content > div {
-        width : 286px;
-        flex: 1 0 286px;
-        max-width: 286px;
+        flex: 0 0 286px;
     } 
 }
 @media only screen and (min-width: 900px) {
@@ -98,9 +94,7 @@
         gap: 32px;
     }
     .curated-cards-content > div {
-        width : 256px; 
-        flex: 1 0 256px;
-        max-width: 256px;
+        flex: 0 0 256px;
     }
 }
 @media only screen and (min-width: 1200px) {
