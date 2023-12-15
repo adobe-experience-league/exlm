@@ -497,6 +497,7 @@
         "name": "cq:tags",
         "label": "Solution(s) or Feature(s)",
         "valueType": "string",
+        "rootPath": "/content/cq:tags/exl",
         "description": "Optional - all are included if no selection is made."
       },
       {
