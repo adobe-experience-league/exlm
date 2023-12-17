@@ -1055,7 +1055,7 @@
     ]
   },
   {
-    "id": "featured-card",
+    "id": "featured-cards",
     "fields": [
       {
         "component": "text-input",
