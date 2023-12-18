@@ -43,10 +43,19 @@ const BrowseCardsCoveoDataAdaptor = (() => {
   const mapResultToCardsDataModel = (result) => {
     const { raw, title, excerpt, uri } = result || {};
     /* eslint-disable camelcase */
-    const { el_contenttype, el_product } = raw || {};
-    const contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
-    const product = Array.isArray(el_product) ? el_product[0] : el_product;
-    /* eslint-enable camelcase */
+    const { el_contenttype, el_product, el_solution, el_type } = raw || {};
+    let contentType;
+    if (el_type) {
+      contentType = el_type.trim();
+    } else {
+      contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
+    }
+    let product;
+    if (el_solution) {
+      product = Array.isArray(el_solution) ? el_solution[0] : el_solution;
+    } else {
+      product = Array.isArray(el_product) ? el_product[0] : el_product;
+    }
     const tags = createTags(result, contentType.toLowerCase(), placeholders);
 
     return {

@@ -1,5 +1,6 @@
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import { createTag, htmlToElement } from '../../scripts/scripts.js';
+import initiateCoveoHeadlessSearch from '../../scripts/search/coveo-headless-poc.js';
 
 // TODO: Move these constants to a separate file
 // TODO: Refactor pending
@@ -163,6 +164,22 @@ function handleCheckboxClick(el, options) {
       selectionCount += 1;
       // eslint-disable-next-line no-console
       console.log(`Checkbox with ID ${checkboxId} is checked. Element clicked:`, label);
+      if (window.headlessCategoryFacet) {
+        const value = label.querySelector('.title')?.textContent;
+        // eslint-disable-next-line no-console
+        console.log('------> value: ', value);
+        const action = window.headlessCategoryFacet.toggleSelectCategoryFacetValue({
+          facetId: '@el_contenttype',
+          selection: {
+            numberOfResults: 10,
+            path: [],
+            children: [],
+            state: 'selected',
+            value: 'Tutorial',
+          },
+        });
+        window.headlessSearchEngine.dispatch(action);
+      }
     } else {
       selectionCount -= 1;
       // eslint-disable-next-line no-console
@@ -261,6 +278,7 @@ function onInputSearch(block) {
     if (event.key === 'Enter') {
       event.preventDefault();
       toggleSectionsBelow(block, false);
+      // eslint-disable-next-line no-console
       console.log('add search logic here');
     }
   });
@@ -334,6 +352,7 @@ export default function decorate(block) {
   constructKeywordSearchEl(block);
   constructClearFilterBtn(block);
   appendToForm(block, renderTags());
+  initiateCoveoHeadlessSearch();
   decorateIcons(block);
   handleDropdownToggle();
   onInputSearch(block);
