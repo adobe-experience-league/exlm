@@ -4,6 +4,7 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import ArticleDataService from '../../scripts/data-service/article-data-service.js';
 import mapResultToCardsData from './article-data-adapter.js';
+import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
 
 /**
@@ -44,21 +45,30 @@ export default async function decorate(block) {
   contentDiv.classList.add('authorable-card-content', 'browse-cards-block-content');
 
   const placeholders = await fetchPlaceholders()
+  block.innerHTML += buildPlaceholder;
 
   links.forEach((link) => {
-    const articleDataService = new ArticleDataService();
-    articleDataService
+    if(link) {
+      const articleDataService = new ArticleDataService();
+      articleDataService
       .handleArticleDataService(link)
       .then(async (data) => {
-        const cardData = await mapResultToCardsData(data, placeholders)
-        const cardDiv = document.createElement('div');
-        buildCard(cardDiv, cardData);
-        contentDiv.appendChild(cardDiv);
-        decorateIcons(block);
-      })
-      .catch((error) => {
-        console.error('Error fetching data: ', error);
-      });
+        block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+          el.remove();
+        });
+          const cardDiv = document.createElement('div');
+          const cardData = await mapResultToCardsData(data, placeholders)
+          buildCard(cardDiv, cardData);
+          contentDiv.appendChild(cardDiv);
+          decorateIcons(block);
+        })
+        .catch((error) => {
+          block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+            el.remove();
+          });
+          console.error('Error fetching data: ', error);
+        });
+    }
   });
 
   block.appendChild(contentDiv);
