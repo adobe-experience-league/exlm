@@ -456,10 +456,9 @@
         "description": "Sets the text url."
       },
       {
-        "component": "checkbox-group",
+        "component": "multiselect",
         "valueType": "string",
         "name": "contentTypes",
-        "value": "",
         "label": "Filter by Content Type",
         "description": "Select the content type(s).",
         "options": [
@@ -498,6 +497,7 @@
         "name": "cq:tags",
         "label": "Solution(s) or Feature(s)",
         "valueType": "string",
+        "rootPath": "/content/cq:tags/exl",
         "description": "Optional - all are included if no selection is made."
       },
       {
@@ -543,55 +543,6 @@
           {
             "name": "Advanced",
             "value": "Advanced"
-          }
-        ]
-      },
-      {
-        "component": "multiselect",
-        "name": "industries",
-        "label": "Industries",
-        "valueType": "string",
-        "description": "Sets the industries param.",
-        "options": [
-          {
-            "name": "Financial services",
-            "value": "Financial services"
-          },
-          {
-            "name": "High tech",
-            "value": "High tech"
-          },
-          {
-            "name": "Government",
-            "value": "Government"
-          },
-          {
-            "name": "Telecommunications",
-            "value": "Telecommunications"
-          },
-          {
-            "name": "Healthcare",
-            "value": "Healthcare"
-          },
-          {
-            "name": "Education",
-            "value": "Education"
-          },
-          {
-            "name": "Manufacturing",
-            "value": "Manufacturing"
-          },
-          {
-            "name": "Media and entertainment",
-            "value": "Media and entertainment"
-          },
-          {
-            "name": "Retail",
-            "value": "Retail"
-          },
-          {
-            "name": "Travel and hospitality",
-            "value": "Travel and hospitality"
           }
         ]
       },
@@ -1051,6 +1002,80 @@
         "name": "description",
         "value": "",
         "label": "Sets the description for Browse Filters"
+      }
+    ]
+  },
+  {
+    "id": "featured-cards",
+    "fields": [
+      {
+        "component": "text-input",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "valueType": "string",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-area",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "valueType": "string",
+        "description": "Sets the description."
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "contentTypes",
+        "label": "Content type(s)",
+        "description": "Select the content type(s).",
+        "options": [
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "text-input",
+        "name": "linkText",
+        "value": "",
+        "label": "Link Text",
+        "valueType": "string",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text-input",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "valueType": "string",
+        "description": "Sets the text url."
       }
     ]
   }
