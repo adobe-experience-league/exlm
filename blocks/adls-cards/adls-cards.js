@@ -1,8 +1,9 @@
+// FIXME: This is a dummy component put up to show case the cards rendered via API
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
-import CONTENT_TYPES from '../../scripts/browse-card/browse-cards-constants.js';
+import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -49,8 +50,12 @@ export default async function decorate(block) {
     contentType,
   };
 
+  block.innerHTML += buildPlaceholder;
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent.then((data) => {
+    block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+      el.remove();
+    });
     if (data?.length) {
       const contentDiv = document.createElement('div');
       contentDiv.classList.add('adls-cards-content');
@@ -65,5 +70,12 @@ export default async function decorate(block) {
       block.appendChild(contentDiv);
       decorateIcons(block);
     }
+  })
+  .catch((err) => {
+    block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+      el.remove();
+    });
+    /* eslint-disable-next-line no-console */
+    console.error(err);
   });
 }
