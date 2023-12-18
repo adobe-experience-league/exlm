@@ -49,7 +49,7 @@ export default async function decorate(block) {
 
   browseCardsContent
     .then((data) => {
-      block.querySelectorAll('.shimmer-block').forEach((el) => {
+      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
         el.remove();
       });
       if (data?.length) {
@@ -67,7 +67,7 @@ export default async function decorate(block) {
       }
     })
     .catch((err) => {
-      block.querySelectorAll('.shimmer-block').forEach((el) => {
+      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
         el.remove();
       });
       // eslint-disable-next-line no-console
