@@ -37,9 +37,10 @@ export default async function decorate(block) {
       <div>${linkTextElement?.outerHTML}</div>
     </div>
   `);
-
-
+  
+  
   // Appending header div to the block
+  block.innerHTML='';
   block.appendChild(headerDiv);
 
   const contentDiv = document.createElement('div');
@@ -70,6 +71,5 @@ export default async function decorate(block) {
         });
     }
   });
-  block.innerHTML='';
   block.appendChild(contentDiv);
 }
