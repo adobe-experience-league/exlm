@@ -137,8 +137,10 @@ const buildCardContent = (card, model) => {
     const copyLinkAnchor = createTag('a', { href: copyLink }, `<span class="icon icon-copy"></span>`);
     cardOptions.appendChild(copyLinkAnchor);
   }
-  const bookmarkAnchor = createTag('a', {}, `<span class="icon icon-bookmark"></span>`);
-  cardOptions.appendChild(bookmarkAnchor);
+  if (contentType !== CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY) {
+    const bookmarkAnchor = createTag('a', {}, `<span class="icon icon-bookmark"></span>`);
+    cardOptions.appendChild(bookmarkAnchor);
+  }
   cardFooter.appendChild(cardOptions);
   buildCardCtaContent({ cardFooter, contentType, viewLink, viewLinkText });
 };
