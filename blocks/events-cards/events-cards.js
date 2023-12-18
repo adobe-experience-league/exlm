@@ -2,7 +2,8 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
-import CONTENT_TYPES from '../../scripts/browse-card/browse-cards-constants.js';
+import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 
 /**
  * formattedSolutionTags returns the solution type by stripping off the exl:solution/ string
@@ -45,18 +46,22 @@ export default async function decorate(block) {
     </div>
   `);
   // Appending header div to the block
-  block.append(headerDiv);
+  block.appendChild(headerDiv);
   block.classList.add('browse-cards-block');
 
   const parameters = {
     contentType,
   };
 
+  block.innerHTML += buildPlaceholder;
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(parameters);
   browseCardsContent
     .then((data) => {
       // eslint-disable-next-line no-use-before-define
       const filteredLiveEventsData = fetchFilteredCardData(data, solutionsParam);
+      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+        el.remove();
+      });
       if (filteredLiveEventsData?.length) {
         const contentDiv = document.createElement('div');
         contentDiv.classList.add('events-cards-content');
@@ -73,6 +78,9 @@ export default async function decorate(block) {
       }
     })
     .catch((err) => {
+      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+        el.remove();
+      });
       // eslint-disable-next-line no-console
       console.error('Events Cards:', err);
     });
