@@ -4,6 +4,7 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -21,21 +22,23 @@ export default async function decorate(block) {
 
   // Clearing the block's content
   block.innerHTML = '';
+  block.classList.add('browse-cards-block');
 
   const headerDiv = htmlToElement(`
-    <div class="adls-cards-header">
-      <div class="adls-cards-title">
+    <div class="browse-cards-block-header">
+      <div class="browse-cards-block-title">
           <h4>${headingElement?.textContent.trim()}</h4>
           <div class="tooltip">
             <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
           </div>
       </div>
-      <div class="adls-cards-view">${linkTextElement?.outerHTML}</div>
+      <div class="browse-cards-block-view">${linkTextElement?.outerHTML}</div>
     </div>
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
-
+  const contentDiv = document.createElement('div');
+  contentDiv.classList.add('browse-cards-block-content');
   try {
     await loadIms();
   } catch {
@@ -57,8 +60,6 @@ export default async function decorate(block) {
       el.remove();
     });
     if (data?.length) {
-      const contentDiv = document.createElement('div');
-      contentDiv.classList.add('adls-cards-content');
 
       for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
         const cardData = data[i];

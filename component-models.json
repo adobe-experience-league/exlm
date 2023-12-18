@@ -1123,5 +1123,158 @@
         "description": "Optional - all are included if no selection is made."
       }
     ]
+  },
+  {
+    "id": "adls-cards",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "tooltip",
+        "value": "",
+        "label": "Tooltip",
+        "description": "Sets the tooltip."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "linkText",
+        "value": "",
+        "label": "Link text",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "description": "Sets the text url."
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "solutions",
+        "label": "Solution(s)",
+        "description": "All are included if no selection is made",
+        "options": [
+          {
+            "name": "Adobe Commerce (Magento)",
+            "value": "Adobe Commerce (Magento)"
+          },
+          {
+            "name": "Adobe Workfront",
+            "value": "Adobe Workfront"
+          },
+          {
+            "name": "Analytics",
+            "value": "Analytics"
+          },
+          {
+            "name": "Audience Manager",
+            "value": "Audience Manager"
+          },
+          {
+            "name": "Campaign Classic",
+            "value": "Campaign Classic"
+          },
+          {
+            "name": "Campaign Standard",
+            "value": "Campaign Standard"
+          },
+          {
+            "name": "Experience Cloud",
+            "value": "Experience Cloud"
+          },
+          {
+            "name": "Experience Manager Assets (DAM)",
+            "value": "Experience Manager Assets (DAM)"
+          },
+          {
+            "name": "Experience Manager Forms",
+            "value": "Experience Manager Forms"
+          },
+          {
+            "name": "Experience Manager Sites (CMS)",
+            "value": "Experience Manager Sites (CMS)"
+          },
+          {
+            "name": "Experience Platform",
+            "value": "Experience Platform"
+          },
+          {
+            "name": "Journey Optimizer",
+            "value": "Journey Optimizer"
+          },
+          {
+            "name": "Marketo Engage",
+            "value": "Marketo Engage"
+          },
+          {
+            "name": "Target",
+            "value": "Target"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "roles",
+        "label": "Role(s)",
+        "description": "All are included if no selection is made",
+        "options": [
+          {
+            "name": "Administrator",
+            "value": "Administrator"
+          },
+          {
+            "name": "Architect",
+            "value": "Architect"
+          },
+          {
+            "name": "Business User",
+            "value": "Business User"
+          },
+          {
+            "name": "Creative",
+            "value": "Creative"
+          },
+          {
+            "name": "Developer",
+            "value": "Developer"
+          }
+        ]
+      },
+      {
+        "component": "radio-group",
+        "name": "sortby",
+        "value": "recommended",
+        "label": "Sort by",
+        "description": "'Sorts baseed on the Options",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Recommended",
+            "value": "recommended"
+          },
+          {
+            "name": "Alphabetical (A-Z)",
+            "value": "ascending"
+          },
+          {
+            "name": "Alphabetical (Z-A)",
+            "value": "descending"
+          }
+        ]
+      }
+    ]
   }
 ]
