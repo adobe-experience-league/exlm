@@ -139,6 +139,11 @@ strong {
   --text-color: #000;
   --footer-background-color: #fafafa;
   --footer-border-color: #e1e1e1;
+  /* Placeholder */
+  --shimmer-image-slide-start: #ececec;
+  --shimmer-image-slide-mid: #ddd;
+  --shimmer-image-slide-end: #f4f4f4;
+  --shimmer-content-background: #f7f7f7;
   /* fonts */
   --body-font-family: "Adobe Clean", adobe-clean, "Source Sans Pro", -apple-system, system-ui, "Segoe UI", roboto,
     ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif;
@@ -428,10 +433,9 @@ strong {
   --non-spectrum-cyan-paprika: #004396;
   --non-spectrum-venetian-green: #00c001;
   --non-spectrum-bright-cyan: #00a6aa;
-  --non-spectrum-azure-blue: #378EF0;
+  --non-spectrum-azure-blue: #378ef0;
   --non-spectrum-silver-mist: #d2d2d2;
   --non-spectrum-link-blue: #378ef0;
-  /* max-width */
   --non-spectrum-max-width: 1440px;
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);

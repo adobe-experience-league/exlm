@@ -1,0 +1,130 @@
+@keyframes shine-loading-image {
+  0% {
+    background-position: -32px;
+  }
+  40%, 100% {
+    background-position: 208px;
+  }
+}
+@keyframes shine-loading-container-items {
+  0% {
+    background-position: -100px;
+  }
+  40%, 100% {
+    background-position: 140px;
+  }
+}
+.shimmer-placeholder{
+  margin-top: 24px;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 16px;
+  margin-bottom: 32px;
+  transition: all .5s ease-in-out;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.shimmer-placeholder.is-hidden {
+  display: none;
+}
+.shimmer-placeholder-isloading {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  flex: 0 0 264px;
+}
+.shimmer-placeholder-isloading .shimmer-placeholder-image {
+  height: 190px;
+  background-image: -webkit-linear-gradient(left, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
+  background-image: -o-linear-gradient(left, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
+  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
+  background-size: 250px;
+  -webkit-animation: shine-loading-image 2s infinite ease-out;
+          animation: shine-loading-image 2s infinite ease-out;
+}
+.shimmer-placeholder-isloading .shimmer-placeholder-content {
+  background: var(--shimmer-content-background);
+  padding: 15px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-flow: wrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.shimmer-placeholder-isloading .shimmer-placeholder-content .shimmer-placeholder-text-container {
+  flex: 1 0 50%;
+}
+.shimmer-placeholder-isloading .shimmer-placeholder-content .shimmer-placeholder-description {
+  height: 10px;
+  flex: 1 0 100%;
+  width: 100%;
+  margin-bottom: 10px;
+  background: var(--shimmer-image-slide-start);
+  background-image: -webkit-linear-gradient(left, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-mid) 40px, var(--shimmer-image-slide-start) 80px);
+  background-image: -o-linear-gradient(left, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-mid) 40px, var(--shimmer-image-slide-start) 80px);
+  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-mid) 40px, var(--shimmer-image-slide-start) 80px);
+  background-size: 250px;
+  border-radius: 10px;
+  -webkit-animation: shine-loading-container-items 2s infinite ease-out;
+  animation: shine-loading-container-items 2s infinite ease-out;
+}
+
+.shimmer-placeholder-isloading .shimmer-placeholder-content .shimmer-placeholder-main-text {
+  height: 10px;
+  width: 65%;
+  margin-bottom: 10px;
+  background: var(--shimmer-image-slide-start);
+  background-image: -webkit-linear-gradient(left, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-mid) 40px, var(--shimmer-image-slide-start) 80px);
+  background-image: -o-linear-gradient(left, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-mid) 40px, var(--shimmer-image-slide-start) 80px);
+  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-mid) 40px, var(--shimmer-image-slide-start) 80px);
+  background-size: 250px;
+  border-radius: 10px;
+  -webkit-animation: shine-loading-container-items 2s infinite ease-out;
+  animation: shine-loading-container-items 2s infinite ease-out;
+}
+.shimmer-placeholder-isloading .shimmer-placeholder-content .shimmer-placeholder-sub-text {
+  height: 10px;
+  width: 50%;
+  background: var(--shimmer-image-slide-start);
+  background-image: -webkit-linear-gradient(left, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-mid) 40px, var(--shimmer-image-slide-start) 80px);
+  background-image: -o-linear-gradient(left, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-mid) 40px, var(--shimmer-image-slide-start) 80px);
+  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-mid) 40px, var(--shimmer-image-slide-start) 80px);
+  background-size: 250px;
+  border-radius: 10px;
+  -webkit-animation: shine-loading-container-items 2s infinite ease-out;
+          animation: shine-loading-container-items 2s infinite ease-out;
+}
+.shimmer-placeholder-isloading .shimmer-placeholder-content .shimmer-placeholder-btn {
+  width: 60px;
+  height: 25px;
+  background: var(--shimmer-image-slide-start);
+  background-image: -webkit-linear-gradient(left, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-mid) 40px, var(--shimmer-image-slide-start) 80px);
+  background-image: -o-linear-gradient(left, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-mid) 40px, var(--shimmer-image-slide-start) 80px);
+  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-mid) 40px, var(--shimmer-image-slide-start) 80px);
+  background-size: 250px;
+  border-radius: 3px;
+  -webkit-animation: shine-loading-container-items 2s infinite ease-out;
+  animation: shine-loading-container-items 2s infinite ease-out;
+}
+@media only screen and (min-width: 600px) {
+  .shimmer-placeholder{
+    gap: 25px;
+  }
+  .shimmer-placeholder-isloading {
+    flex: 0 0 286px; 
+  }
+}
+@media only screen and (min-width: 900px) {
+  .shimmer-placeholder{
+    gap: 32px;
+  }
+  .shimmer-placeholder-isloading {
+    flex: 0 0 256px;
+  }
+}
