@@ -99,7 +99,7 @@ export function getBrowsePage() {
 }
 
 /**
- * add a section for the left rail when on a browse product page.
+ * add a section for the left rail when on a browse page.
  */
 function addBrowseRail(main) {
   const leftRailSection = document.createElement('div');
