@@ -242,6 +242,36 @@ function constructKeywordSearchEl(block) {
   appendToFormInputContainer(block, searchEl);
 }
 
+function toggleSectionsBelow(block, show) {
+  const parent = block.closest('.section');
+  if (parent) {
+    const siblings = Array.from(parent.parentNode.children);
+    const clickedIndex = siblings.indexOf(parent);
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = clickedIndex + 1; i < siblings.length; i++) {
+      siblings[i].style.display = show ? 'block' : 'none';
+    }
+  }
+}
+
+function onInputSearch(block) {
+  const searchEl = block.querySelector('.filter-input-search input[type="search"]');
+  searchEl.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      toggleSectionsBelow(block, false);
+      console.log('add search logic here');
+    }
+  });
+}
+
+function handleClearFilter(block) {
+  // show the hidden sections again
+  const clearFilterEl = block.querySelector('.browse-filters-clear');
+  clearFilterEl.addEventListener('click', () => toggleSectionsBelow(block, true));
+}
+
 function constructClearFilterBtn(block) {
   const clearBtn = htmlToElement(`
     <button class="browse-filters-clear">Clear filters</button>
@@ -293,16 +323,6 @@ function decorateBlockTitle(block) {
   secondChild.parentNode.replaceChild(pEl, secondChild);
 }
 
-function onInputSearch(block) {
-  const searchEl = block.querySelector('.filter-input-search input[type="search"]');
-  searchEl.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      console.log('add search logic here');
-    }
-  });
-}
-
 export default function decorate(block) {
   decorateBlockTitle(block);
   appendFormEl(block);
@@ -317,4 +337,5 @@ export default function decorate(block) {
   decorateIcons(block);
   handleDropdownToggle();
   onInputSearch(block);
+  handleClearFilter(block);
 }
