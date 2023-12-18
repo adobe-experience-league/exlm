@@ -20,13 +20,8 @@ export default async function decorate(block) {
   const linksContainer = [];
   for(let i=0;i<=numberOfCards;i+=1){
     linksContainer.push(block.querySelector(`div:nth-child(${i+4})`))
-    console.log(linksContainer[i])
     links.push(block.querySelector(`div:nth-child(${i+4}) > div`)?.textContent)
   }
-  // links.push();
-  // links.push(block.querySelector('div:nth-child(5) > div').textContent);
-  // links.push(block.querySelector('div:nth-child(6) > div').textContent);
-  // links.push(block.querySelector('div:nth-child(7) > div').textContent);
 
   // Clearing the block's content
   block.classList.add('browse-cards-block');
@@ -62,7 +57,6 @@ export default async function decorate(block) {
           block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
             el.remove();
           });
-          console.log(linksContainer[i])
           linksContainer[i].innerHTML = ``;
           const cardData = await mapResultToCardsData(data, placeholders);
           buildCard(linksContainer[i], cardData);
