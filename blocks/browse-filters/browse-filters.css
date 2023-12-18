@@ -231,16 +231,27 @@ button.browse-tags:focus {
     grid-template-columns: repeat(6, 1fr);
   }
 
+  .browse-filters-input-container:has(.filter-dropdown:nth-child(4)) {
+    grid-template-areas:
+      "label label label label label label"
+      "role role ctype ctype exp exp"
+      "search search search search search cfilter";
+  }
+
   .browse-filters-label {
     grid-area: label;
   }
 
-  .browse-filters-input-container > div:nth-child(2) {
+  .browse-filters-input-container .filter-dropdown:nth-child(2) {
     grid-area: role;
   }
 
-  .browse-filters-input-container > div:nth-child(3) {
+  .browse-filters-input-container .filter-dropdown:nth-child(3) {
     grid-area: ctype;
+  }
+  
+  .browse-filters-input-container .filter-dropdown:nth-child(4) {
+    grid-area: exp;
   }
 
   .filter-input-search {
@@ -261,5 +272,9 @@ button.browse-tags:focus {
     grid-template-areas: "label role ctype search cfilter";
     grid-template-columns: auto 1fr 1fr 1fr auto;
     align-items: center;
+  }
+
+  .browse-filters-input-container:has(.filter-dropdown:nth-child(4)) {
+    grid-template-areas: "label role ctype exp search cfilter";
   }
 }

@@ -1,4 +1,4 @@
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import { createTag, htmlToElement } from '../../scripts/scripts.js';
 
 // TODO: Move these constants to a separate file
@@ -53,6 +53,21 @@ const contentType = [
   },
 ];
 
+const expLevel = [
+  {
+    title: 'Beginner',
+    description: 'I am a beginner',
+  },
+  {
+    title: 'Intermediate',
+    description: 'I am an intermediate',
+  },
+  {
+    title: 'Experienced',
+    description: 'I have some experience',
+  },
+];
+
 const roleOptions = {
   name: 'Role',
   items: roles,
@@ -62,6 +77,12 @@ const roleOptions = {
 const contentTypeOptions = {
   name: 'Content Type',
   items: contentType,
+  selected: 0,
+};
+
+const expTypeOptions = {
+  name: 'Experience Level',
+  items: expLevel,
   selected: 0,
 };
 
@@ -82,9 +103,16 @@ const tags = [
     name: 'Content Type',
     value: 'Business Leader',
   },
+  {
+    name: 'Experience Level',
+    value: 'Intermediate',
+  },
 ];
 
+const isBrowseProdPage = getMetadata('browse product');
 const dropdownOptions = [roleOptions, contentTypeOptions];
+
+if (isBrowseProdPage) dropdownOptions.push(expTypeOptions);
 
 /**
  * Generate HTML for a single checkbox item.
@@ -214,6 +242,36 @@ function constructKeywordSearchEl(block) {
   appendToFormInputContainer(block, searchEl);
 }
 
+function toggleSectionsBelow(block, show) {
+  const parent = block.closest('.section');
+  if (parent) {
+    const siblings = Array.from(parent.parentNode.children);
+    const clickedIndex = siblings.indexOf(parent);
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = clickedIndex + 1; i < siblings.length; i++) {
+      siblings[i].style.display = show ? 'block' : 'none';
+    }
+  }
+}
+
+function onInputSearch(block) {
+  const searchEl = block.querySelector('.filter-input-search input[type="search"]');
+  searchEl.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      toggleSectionsBelow(block, false);
+      console.log('add search logic here');
+    }
+  });
+}
+
+function handleClearFilter(block) {
+  // show the hidden sections again
+  const clearFilterEl = block.querySelector('.browse-filters-clear');
+  clearFilterEl.addEventListener('click', () => toggleSectionsBelow(block, true));
+}
+
 function constructClearFilterBtn(block) {
   const clearBtn = htmlToElement(`
     <button class="browse-filters-clear">Clear filters</button>
@@ -278,4 +336,6 @@ export default function decorate(block) {
   appendToForm(block, renderTags());
   decorateIcons(block);
   handleDropdownToggle();
+  onInputSearch(block);
+  handleClearFilter(block);
 }
