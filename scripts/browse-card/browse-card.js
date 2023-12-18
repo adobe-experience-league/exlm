@@ -1,6 +1,6 @@
 import { loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
-import CONTENT_TYPES from './browse-cards-constants.js';
+import { CONTENT_TYPES } from './browse-cards-constants.js';
 
 /* User Info for Community Section - Will accomodate once we have KHOROS integration */
 // const generateContributorsMarkup = (contributor) => {
@@ -166,6 +166,8 @@ export default async function buildCard(element, model) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
   const { thumbnail, product, title, contentType, badgeTitle } = model;
   const type = contentType?.toLowerCase();
+  const courseMappingKey = CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase();
+  const tutorialMappingKey = CONTENT_TYPES.TUTORIAL.MAPPING_KEY.toLowerCase();
   const card = createTag(
     'div',
     { class: `browse-card ${type}-card` },
@@ -174,7 +176,7 @@ export default async function buildCard(element, model) {
   const cardFigure = card.querySelector('.browse-card-figure');
   const cardContent = card.querySelector('.browse-card-content');
 
-  if (thumbnail) {
+  if ((type === courseMappingKey || type === tutorialMappingKey) && thumbnail) {
     const img = document.createElement('img');
     img.src = thumbnail;
     cardFigure.appendChild(img);
