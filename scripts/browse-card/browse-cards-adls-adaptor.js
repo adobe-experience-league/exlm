@@ -1,6 +1,6 @@
 import { fetchPlaceholders } from '../lib-franklin.js';
 import browseCardDataModel from '../data-model/browse-cards-model.js';
-import CONTENT_TYPES from './browse-cards-constants.js';
+import { CONTENT_TYPES } from './browse-cards-constants.js';
 
 /**
  * Module that provides functionality for adapting ADLS results to BrowseCards data model
