@@ -6,13 +6,11 @@ import ArticleDataService from '../../scripts/data-service/article-data-service.
 import mapResultToCardsData from './article-data-adapter.js';
 import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
-
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
-
   // Extracting elements from the block
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
@@ -25,7 +23,7 @@ export default async function decorate(block) {
 
   // Clearing the block's content
   block.innerHTML = '';
-  block.classList.add("browse-cards-block")
+  block.classList.add('browse-cards-block');
 
   const headerDiv = htmlToElement(`
     <div class="authorable-card-header browse-cards-block-header">
@@ -44,29 +42,28 @@ export default async function decorate(block) {
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('authorable-card-content', 'browse-cards-block-content');
 
-  const placeholders = await fetchPlaceholders()
+  const placeholders = await fetchPlaceholders();
   block.innerHTML += buildPlaceholder;
 
   links.forEach((link) => {
-    if(link) {
+    if (link) {
       const articleDataService = new ArticleDataService();
       articleDataService
-      .handleArticleDataService(link)
-      .then(async (data) => {
-        block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-          el.remove();
-        });
+        .handleArticleDataService(link)
+        .then(async (data) => {
+          block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+            el.remove();
+          });
           const cardDiv = document.createElement('div');
-          const cardData = await mapResultToCardsData(data, placeholders)
+          const cardData = await mapResultToCardsData(data, placeholders);
           buildCard(cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
           decorateIcons(block);
         })
-        .catch((error) => {
+        .catch(() => {
           block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
             el.remove();
           });
-          console.error('Error fetching data: ', error);
         });
     }
   });
