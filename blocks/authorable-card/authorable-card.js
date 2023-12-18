@@ -37,11 +37,6 @@ export default async function decorate(block) {
       <div>${linkTextElement?.outerHTML}</div>
     </div>
   `);
-  
-  
-  // Appending header div to the block
-  block.innerHTML='';
-  block.appendChild(headerDiv);
 
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
@@ -71,5 +66,8 @@ export default async function decorate(block) {
         });
     }
   });
+
+  block.innerHTML='';
+  block.appendChild(headerDiv);
   block.appendChild(contentDiv);
 }
