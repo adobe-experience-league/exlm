@@ -1,14 +1,17 @@
 // FIXME: This is a dummy component put up to show case the cards rendered via API
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import ArticleDataService from '../../scripts/data-service/article-data-service.js';
+import mapResultToCardsData from './article-data-adapter.js';
+
 
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
+
   // Extracting elements from the block
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
@@ -21,10 +24,11 @@ export default async function decorate(block) {
 
   // Clearing the block's content
   block.innerHTML = '';
+  block.classList.add("browse-cards-block")
 
   const headerDiv = htmlToElement(`
-    <div class="authorable-card-header">
-      <div class="authorable-card-title">
+    <div class="authorable-card-header browse-cards-block-header">
+      <div class="authorable-card-title browse-cards-block-title">
           <h4>${headingElement?.textContent.trim()}</h4>
           <div class="tooltip">
             <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
@@ -37,15 +41,18 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   const contentDiv = document.createElement('div');
-  contentDiv.classList.add('authorable-card-content');
+  contentDiv.classList.add('authorable-card-content', 'browse-cards-block-content');
+
+  const placeholders = await fetchPlaceholders()
 
   links.forEach((link) => {
     const articleDataService = new ArticleDataService();
     articleDataService
       .handleArticleDataService(link)
-      .then((data) => {
+      .then(async (data) => {
+        const cardData = await mapResultToCardsData(data, placeholders)
         const cardDiv = document.createElement('div');
-        buildCard(cardDiv, data);
+        buildCard(cardDiv, cardData);
         contentDiv.appendChild(cardDiv);
         decorateIcons(block);
       })
