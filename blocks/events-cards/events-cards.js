@@ -14,7 +14,7 @@ function formattedSolutionTags(inputString) {
     .replace(/exl:solution\//g, '')
     .split(',')
     .map((part) => part.trim());
-};
+}
 
 /**
  * Decorate function to process and log the mapped data.
@@ -45,7 +45,7 @@ export default async function decorate(block) {
     </div>
   `);
   // Appending header div to the block
-  block.appendChild(headerDiv);
+  block.append(headerDiv);
   block.classList.add('browse-cards-block');
 
   const parameters = {
@@ -73,8 +73,8 @@ export default async function decorate(block) {
       }
     })
     .catch((err) => {
-      /* eslint-disable-next-line no-console */
-      console.log('Curated Cards:', err);
+      // eslint-disable-next-line no-console
+      console.error('Events Cards:', err);
     });
 
   /**
@@ -95,10 +95,10 @@ export default async function decorate(block) {
       }
 
       const lowercaseParams = solutionsList.map((parameter) => parameter.toLowerCase());
-
+      const regex = /[^a-zA-Z0-9().]+/g;
       const filteredData = eventData.data.filter((event) => {
         const productArray = Array.isArray(event.product) ? event.product : [event.product];
-        const lowercaseProduct = productArray.map((item) => item.toLowerCase().replaceAll(' ', '-'));
+        const lowercaseProduct = productArray.map((item) => item.toLowerCase().replaceAll(regex, '-'));
         return lowercaseParams.some((parameter) => lowercaseProduct.includes(parameter.trim()));
       });
 
