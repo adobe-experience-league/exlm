@@ -28,7 +28,7 @@ export default async function decorate(block) {
     }
     const items = input.split(',').map((item) => item.trim());
     const result = [];
-    for (let i = 0; i < items.length; i+=1) {
+    for (let i = 0; i < items.length; i += 1) {
       const item = items[i];
       if (item.startsWith(prefix)) {
         result.push(item.substring(prefix.length));
