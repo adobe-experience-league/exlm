@@ -48,6 +48,8 @@ export default async function decorate(block) {
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
+  await decorateIcons(headerDiv);
+
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
 
@@ -73,7 +75,7 @@ export default async function decorate(block) {
         }
 
         block.appendChild(contentDiv);
-        decorateIcons(block);
+        decorateIcons(contentDiv);
       }
     })
     .catch((err) => {
