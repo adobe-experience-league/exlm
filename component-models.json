@@ -501,10 +501,9 @@
         "description": "Optional - all are included if no selection is made."
       },
       {
-        "component": "aem-tag",
+        "component": "multiselect",
         "name": "roles",
-        "label": "Roles",
-        "rootPath": "/content/cq:tags/exl/role",
+        "label": "Role(s)",
         "valueType": "string",
         "description": "Sets the Role(s).",
         "options": [
@@ -527,7 +526,7 @@
         ]
       },
       {
-        "component": "aem-tag",
+        "component": "multiselect",
         "name": "experienceLevels",
         "label": "Experience Level(s)",
         "valueType": "string",
