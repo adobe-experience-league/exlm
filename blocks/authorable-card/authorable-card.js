@@ -19,9 +19,9 @@ export default async function decorate(block) {
   const links = [];
   const linksContainer = [];
   for(let i=0;i<=numberOfCards;i+=1){
-    linksContainer.push(block.querySelector(`div:nth-child(${i})`))
+    linksContainer.push(block.querySelector(`div:nth-child(${i+4})`))
     console.log(linksContainer[i])
-    links.push(block.querySelector('div:nth-child(4) > div').textContent)
+    links.push(block.querySelector(`div:nth-child(${i+4}) > div`)?.textContent)
   }
   // links.push();
   // links.push(block.querySelector('div:nth-child(5) > div').textContent);
@@ -43,7 +43,7 @@ export default async function decorate(block) {
     </div>
   `);
 
-  block.innerHTML=``
+
   // Appending header div to the block
   block.appendChild(headerDiv);
 
@@ -76,5 +76,6 @@ export default async function decorate(block) {
         });
     }
   });
+  block.innerHTML='';
   block.appendChild(contentDiv);
 }
