@@ -52,6 +52,7 @@ export default async function decorate(block) {
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
+  await decorateIcons(headerDiv);
 
   try {
     await loadIms();
@@ -88,7 +89,7 @@ export default async function decorate(block) {
           contentDiv.appendChild(cardDiv);
         }
         block.appendChild(contentDiv);
-        decorateIcons(block);
+        decorateIcons(contentDiv);
       }
     })
     .catch((err) => {
