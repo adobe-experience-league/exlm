@@ -1,4 +1,3 @@
-// FIXME: This is a dummy component put up to show case the cards rendered via API
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
@@ -55,28 +54,28 @@ export default async function decorate(block) {
 
   block.innerHTML += buildPlaceholder;
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
-  browseCardsContent.then((data) => {
-    block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-      el.remove();
-    });
-    if (data?.length) {
+  browseCardsContent
+    .then((data) => {
+      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+        el.remove();
+      });
+      if (data?.length) {
+        for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
+          const cardData = data[i];
+          const cardDiv = document.createElement('div');
+          buildCard(cardDiv, cardData);
+          contentDiv.appendChild(cardDiv);
+        }
 
-      for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
-        const cardData = data[i];
-        const cardDiv = document.createElement('div');
-        buildCard(cardDiv, cardData);
-        contentDiv.appendChild(cardDiv);
+        block.appendChild(contentDiv);
+        decorateIcons(block);
       }
-
-      block.appendChild(contentDiv);
-      decorateIcons(block);
-    }
-  })
-  .catch((err) => {
-    block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-      el.remove();
+    })
+    .catch((err) => {
+      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+        el.remove();
+      });
+      /* eslint-disable-next-line no-console */
+      console.error(err);
     });
-    /* eslint-disable-next-line no-console */
-    console.error(err);
-  });
 }
