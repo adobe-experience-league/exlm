@@ -5,6 +5,8 @@ import ArticleDataService from '../../scripts/data-service/article-data-service.
 import mapResultToCardsData from './article-data-adapter.js';
 import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
+const numberOfCards = 4;
+
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -15,10 +17,16 @@ export default async function decorate(block) {
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
   const links = [];
-  links.push(block.querySelector('div:nth-child(4) > div').textContent);
-  links.push(block.querySelector('div:nth-child(5) > div').textContent);
-  links.push(block.querySelector('div:nth-child(6) > div').textContent);
-  links.push(block.querySelector('div:nth-child(7) > div').textContent);
+  const linksContainer = [];
+  for(let i=0;i<=numberOfCards;i+=1){
+    linksContainer.push(block.querySelector(`div:nth-child(${i})`))
+    console.log(linksContainer[i])
+    links.push(block.querySelector('div:nth-child(4) > div').textContent)
+  }
+  // links.push();
+  // links.push(block.querySelector('div:nth-child(5) > div').textContent);
+  // links.push(block.querySelector('div:nth-child(6) > div').textContent);
+  // links.push(block.querySelector('div:nth-child(7) > div').textContent);
 
   // Clearing the block's content
   block.classList.add('browse-cards-block');
@@ -34,6 +42,8 @@ export default async function decorate(block) {
       <div>${linkTextElement?.outerHTML}</div>
     </div>
   `);
+
+  block.innerHTML=``
   // Appending header div to the block
   block.appendChild(headerDiv);
 
@@ -43,7 +53,7 @@ export default async function decorate(block) {
   const placeholders = await fetchPlaceholders();
   block.innerHTML += buildPlaceholder;
   
-  links.forEach((link) => {
+  links.forEach((link, i) => {
     if (link) {
       const articleDataService = new ArticleDataService();
       articleDataService
@@ -52,10 +62,11 @@ export default async function decorate(block) {
           block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
             el.remove();
           });
-          const cardDiv = document.createElement('div');
+          console.log(linksContainer[i])
+          linksContainer[i].innerHTML = ``;
           const cardData = await mapResultToCardsData(data, placeholders);
-          buildCard(cardDiv, cardData);
-          contentDiv.appendChild(cardDiv);
+          buildCard(linksContainer[i], cardData);
+          contentDiv.appendChild(linksContainer[i]);
           decorateIcons(block);
         })
         .catch(() => {
