@@ -135,6 +135,7 @@ const BrowseCardsDelegate = (() => {
       urlSearchParams.append('roles', param.roles);
     }
     urlSearchParams.append('sort', param.sortBy);
+    return urlSearchParams;
   };
 
   /**
