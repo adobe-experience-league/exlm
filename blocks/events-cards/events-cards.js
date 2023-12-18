@@ -36,20 +36,20 @@ export default async function decorate(block) {
   block.classList.add('browse-cards-block');
 
   const headerDiv = htmlToElement(`
-    <div class="events-cards-header browse-cards-block-header">
-      <div class="events-cards-title browse-cards-block-title">
+    <div class="browse-cards-block-header">
+      <div class="browse-cards-block-title">
           <h4>${headingElement?.textContent.trim()}</h4>
           <div class="tooltip">
             <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
           </div>
       </div>
-      <div class="events-cards-view">${linkTextElement?.outerHTML}</div>
+      <div class="browse-cards-block-view">${linkTextElement?.outerHTML}</div>
     </div>
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
   const contentDiv = document.createElement('div');
-  contentDiv.classList.add('events-cards-content', 'browse-cards-block-content');
+  contentDiv.classList.add('browse-cards-block-content');
 
   const parameters = {
     contentType,
