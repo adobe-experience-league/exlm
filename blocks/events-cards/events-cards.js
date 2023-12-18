@@ -3,6 +3,19 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { htmlToElement } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import CONTENT_TYPES from '../../scripts/browse-card/browse-cards-constants.js';
+
+/**
+ * formattedSolutionTags returns the solution type by stripping off the exl:solution/ string
+ * @param {string} inputString - The solution tag. E.g. exl:solution/experience-cloud
+ * @returns the solution tag. E.g. experience-cloud
+ */
+function formattedSolutionTags(inputString) {
+  return inputString
+    .replace(/exl:solution\//g, '')
+    .split(',')
+    .map((part) => part.trim());
+};
+
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -15,7 +28,6 @@ export default async function decorate(block) {
   const solutions = block.querySelector('div:nth-child(4) > div').textContent.trim();
   const contentType = CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY;
   const noOfResults = 4;
-  // eslint-disable-next-line no-use-before-define
   const solutionsParam = solutions !== '' ? formattedSolutionTags(solutions) : '';
 
   // Clearing the block's content
@@ -34,30 +46,36 @@ export default async function decorate(block) {
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
+  block.classList.add('browse-cards-block');
 
-  const param = {
+  const parameters = {
     contentType,
   };
 
-  const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
-  browseCardsContent.then((data) => {
-    // eslint-disable-next-line no-use-before-define
-    const filteredLiveEventsData = fetchFilteredCardData(data, solutionsParam);
-    if (filteredLiveEventsData?.length) {
-      const contentDiv = document.createElement('div');
-      contentDiv.classList.add('events-cards-content');
+  const browseCardsContent = BrowseCardsDelegate.fetchCardData(parameters);
+  browseCardsContent
+    .then((data) => {
+      // eslint-disable-next-line no-use-before-define
+      const filteredLiveEventsData = fetchFilteredCardData(data, solutionsParam);
+      if (filteredLiveEventsData?.length) {
+        const contentDiv = document.createElement('div');
+        contentDiv.classList.add('events-cards-content');
 
-      for (let i = 0; i < Math.min(noOfResults, filteredLiveEventsData.length); i += 1) {
-        const cardData = filteredLiveEventsData[i];
-        const cardDiv = document.createElement('div');
-        buildCard(cardDiv, cardData);
-        contentDiv.appendChild(cardDiv);
+        for (let i = 0; i < Math.min(noOfResults, filteredLiveEventsData.length); i += 1) {
+          const cardData = filteredLiveEventsData[i];
+          const cardDiv = document.createElement('div');
+          buildCard(cardDiv, cardData);
+          contentDiv.appendChild(cardDiv);
+        }
+
+        block.appendChild(contentDiv);
+        decorateIcons(block);
       }
-
-      block.appendChild(contentDiv);
-      decorateIcons(block);
-    }
-  });
+    })
+    .catch((err) => {
+      /* eslint-disable-next-line no-console */
+      console.log('Curated Cards:', err);
+    });
 
   /**
    * fetchFilteredCardData filters the events data based on productFocus key in events JSON
@@ -68,13 +86,15 @@ export default async function decorate(block) {
   const fetchFilteredCardData = (data, params) => {
     const eventData = { data };
     if (eventData.data) {
-      const paramsArray = Array.isArray(params) ? params : [params];
+      const solutionsList = Array.isArray(params) ? params : [params];
       // If solutions param is empty or contains an empty value, return all the results in startTime ascending order
-      if (paramsArray.length === 0 || paramsArray.some((p) => p === '')) {
-        return eventData.data.sort((card1, card2) => new Date(card1.event.startTime) - new Date(card2.event.startTime));
+      if (solutionsList.length === 0 || solutionsList.some((param) => param === '')) {
+        return eventData.data
+          .filter((card) => card.event.startTime)
+          .sort((card1, card2) => new Date(card1.event.startTime) - new Date(card2.event.startTime));
       }
 
-      const lowercaseParams = paramsArray.map((parameter) => parameter.toLowerCase());
+      const lowercaseParams = solutionsList.map((parameter) => parameter.toLowerCase());
 
       const filteredData = eventData.data.filter((event) => {
         const productArray = Array.isArray(event.product) ? event.product : [event.product];
@@ -83,21 +103,11 @@ export default async function decorate(block) {
       });
 
       // Sort events by startTime in ascending order
-      return filteredData.sort((card1, card2) => new Date(card1.event.startTime) - new Date(card2.event.startTime));
+      return filteredData
+        .filter((card) => card.event.startTime)
+        .sort((card1, card2) => new Date(card1.event.startTime) - new Date(card2.event.startTime));
     }
     // In case of invalid solution param, return empty results.
     return [];
   };
-}
-
-/**
- * formattedSolutionTags returns the solution type by stripping off the exl:solution/ string
- * @param {string} inputString - The solution tag. E.g. exl:solution/experience-cloud
- * @returns the solution tag. E.g. experience-cloud
- */
-function formattedSolutionTags(inputString) {
-  return inputString
-    .replace(/exl:solution\//g, '')
-    .split(',')
-    .map((part) => part.trim());
 }
