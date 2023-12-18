@@ -8,8 +8,8 @@ function createThumbnailURL(result) {
     if (result.contentType === 'Tutorial') {
       const videoUrl = result['Full Body'].match(/embedded-video src\s*=\s*['"]?([^'"]*)['"]?/)[1];
       result.videoUrl = videoUrl;
-      [,result.videoId] = videoUrl.match(/\/v\/([^]*)/);
-      return result.videoId ? `https://video.tv.adobe.com/v/${result.videoId}?format=jpeg` : '';
+      [,result.videoId] = videoUrl.match(/\/v\/([^/]*)/);
+      thumbnail = result.videoId ? `https://video.tv.adobe.com/v/${result.videoId}?format=jpeg` : '';
     }
     return thumbnail;
   }
