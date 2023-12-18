@@ -74,7 +74,7 @@ export default async function decorate(block) {
   block.innerHTML += buildPlaceholder;
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent
-    .then(async (data) => {
+    .then((data) => {
       block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
         el.remove();
       });
@@ -89,7 +89,7 @@ export default async function decorate(block) {
           contentDiv.appendChild(cardDiv);
         }
         block.appendChild(contentDiv);
-        await decorateIcons(contentDiv);
+        decorateIcons(contentDiv);
       }
     })
     .catch((err) => {

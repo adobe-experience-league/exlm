@@ -60,7 +60,7 @@ export default async function decorate(block) {
   block.innerHTML += buildPlaceholder;
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(parameters);
   browseCardsContent
-    .then(async (data) => {
+    .then((data) => {
       // eslint-disable-next-line no-use-before-define
       const filteredLiveEventsData = fetchFilteredCardData(data, solutionsParam);
       block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
@@ -75,7 +75,7 @@ export default async function decorate(block) {
         }
 
         block.appendChild(contentDiv);
-        await decorateIcons(contentDiv);
+        decorateIcons(contentDiv);
       }
     })
     .catch((err) => {
