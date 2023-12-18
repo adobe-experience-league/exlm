@@ -353,10 +353,6 @@
   --exlm-line-height-h5: 20.8px;
   --exlm-line-height-h6: 20.8px;
   --exlm-line-height-content: var(--spectrum-line-height-l);
-
-  /* breakpoint for show/hide browse-rail,
-  currently same as hamburger menu switch */
-  --browse-rail-breakpoint: 1024px;
 }
 
 @include breakpoint('desktop-lg') {
@@ -392,10 +388,13 @@ body {
   font-family: var(--body-font-family);
   line-height: 1.6;
   color: var(--text-color);
-
-  /* default background color for marketing pages */
-  background-color: var(--spectrum-gray-100);
+  background-color: var(--background-color);
   display: none;
+}
+
+body[class^='browse-'] {
+  /* default background color for browse pages */
+  background-color: var(--spectrum-gray-100);
 }
 
 body.appear {
@@ -686,11 +685,6 @@ img {
     --exlm-line-height-h6: 18.2px;
   }
 
-  body {
-    /* background color for /docs pages */
-    background-color: var(--background-color);
-  }
-
   h1,
   h2,
   h3,
@@ -744,7 +738,6 @@ img {
     padding: 0 46px;
     box-sizing: border-box;
     max-width: 1700px;
-    background-color: var(--background-color);
 
     > div {
       padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500) var(--spectrum-spacing-500);

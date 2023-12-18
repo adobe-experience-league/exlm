@@ -498,8 +498,13 @@ body {
   font-family: var(--body-font-family);
   line-height: 1.6;
   color: var(--text-color);
-  background-color: var(--spectrum-gray-100);
+  background-color: var(--background-color);
   display: none;
+}
+
+body[class^=browse-] {
+  /* default background color for browse pages */
+  background-color: var(--spectrum-gray-100);
 }
 
 body.appear {
@@ -796,9 +801,6 @@ img {
     --exlm-line-height-h6: 18.2px;
   }
 }
-.docs body {
-  background-color: var(--background-color);
-}
 .docs h1 code:not([class^=language-]),
 .docs h2 code:not([class^=language-]),
 .docs h3 code:not([class^=language-]),
@@ -864,7 +866,6 @@ img {
   padding: 0 46px;
   box-sizing: border-box;
   max-width: 1700px;
-  background-color: var(--background-color);
 }
 .docs main > div {
   padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500) var(--spectrum-spacing-500);
