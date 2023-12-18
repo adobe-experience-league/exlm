@@ -5,3 +5,4 @@ export const coveoSearchResultsUrl = 'https://adobesystemsincorporatednonprod1.o
 export const liveEventsUrl = 'https://cdn.experienceleague.adobe.com/thumb/upcoming-events.json';
 export const adlsUrl = 'https://learning.adobe.com/catalog.result.json';
 export const searchUrl = 'https://experienceleague.adobe.com/search.html';
+export const articleUrl = 'https://experienceleague.adobe.com/api/articles/';
