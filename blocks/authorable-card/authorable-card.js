@@ -21,35 +21,34 @@ export default async function decorate(block) {
   links.push(block.querySelector('div:nth-child(7) > div').textContent);
 
   // Clearing the block's content
-  block.innerHTML = '';
   block.classList.add('browse-cards-block');
 
   const headerDiv = htmlToElement(`
-    <div class="authorable-card-header browse-cards-block-header">
-      <div class="authorable-card-title browse-cards-block-title">
+    <div class="browse-cards-block-header">
+      <div class="browse-cards-block-title">
           <h4>${headingElement?.textContent.trim()}</h4>
           <div class="tooltip">
             <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
           </div>
       </div>
-      <div class="authorable-card-view">${linkTextElement?.outerHTML}</div>
+      <div>${linkTextElement?.outerHTML}</div>
     </div>
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
 
   const contentDiv = document.createElement('div');
-  contentDiv.classList.add('authorable-card-content', 'browse-cards-block-content');
+  contentDiv.classList.add('browse-cards-block-content');
 
   const placeholders = await fetchPlaceholders();
   block.innerHTML += buildPlaceholder;
-
+  
   links.forEach((link) => {
     if (link) {
       const articleDataService = new ArticleDataService();
       articleDataService
-        .handleArticleDataService(link)
-        .then(async (data) => {
+      .handleArticleDataService(link)
+      .then(async (data) => {
           block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
             el.remove();
           });
@@ -66,6 +65,5 @@ export default async function decorate(block) {
         });
     }
   });
-
   block.appendChild(contentDiv);
 }
