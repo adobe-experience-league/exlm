@@ -128,10 +128,10 @@ const BrowseCardsDelegate = (() => {
     urlSearchParams.append('trainingMethod', 'Live Instructor Courses');
     urlSearchParams.append('pageIndex', '1');
     urlSearchParams.append('learningType', 'catalog');
-    if (param.solutions !== '') {
+    if (param.solutions) {
       urlSearchParams.append('products', param.solutions);
     }
-    if (param.roles !== '') {
+    if (param.roles) {
       urlSearchParams.append('roles', param.roles);
     }
     urlSearchParams.append('sort', param.sortBy);
