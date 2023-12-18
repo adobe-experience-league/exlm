@@ -127,8 +127,14 @@ const BrowseCardsDelegate = (() => {
     const urlSearchParams = new URLSearchParams();
     urlSearchParams.append('trainingMethod', 'Live Instructor Courses');
     urlSearchParams.append('pageIndex', '1');
-    urlSearchParams.append('sort', 'recommended');
     urlSearchParams.append('learningType', 'catalog');
+    if (param.solutions) {
+      urlSearchParams.append('products', param.solutions);
+    }
+    if (param.roles) {
+      urlSearchParams.append('roles', param.roles);
+    }
+    urlSearchParams.append('sort', param.sortBy);
     return urlSearchParams;
   };
 
