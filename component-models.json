@@ -547,55 +547,6 @@
         ]
       },
       {
-        "component": "multiselect",
-        "name": "industries",
-        "label": "Industries",
-        "valueType": "string",
-        "description": "Sets the industries param.",
-        "options": [
-          {
-            "name": "Financial services",
-            "value": "Financial services"
-          },
-          {
-            "name": "High tech",
-            "value": "High tech"
-          },
-          {
-            "name": "Government",
-            "value": "Government"
-          },
-          {
-            "name": "Telecommunications",
-            "value": "Telecommunications"
-          },
-          {
-            "name": "Healthcare",
-            "value": "Healthcare"
-          },
-          {
-            "name": "Education",
-            "value": "Education"
-          },
-          {
-            "name": "Manufacturing",
-            "value": "Manufacturing"
-          },
-          {
-            "name": "Media and entertainment",
-            "value": "Media and entertainment"
-          },
-          {
-            "name": "Retail",
-            "value": "Retail"
-          },
-          {
-            "name": "Travel and hospitality",
-            "value": "Travel and hospitality"
-          }
-        ]
-      },
-      {
         "component": "radio-group",
         "name": "sortBy",
         "value": "RELEVANCE",
