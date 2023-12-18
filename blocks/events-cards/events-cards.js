@@ -48,7 +48,7 @@ export default async function decorate(block) {
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
-  decorateIcons(headerDiv);
+  await decorateIcons(headerDiv);
 
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
@@ -60,7 +60,7 @@ export default async function decorate(block) {
   block.innerHTML += buildPlaceholder;
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(parameters);
   browseCardsContent
-    .then((data) => {
+    .then(async (data) => {
       // eslint-disable-next-line no-use-before-define
       const filteredLiveEventsData = fetchFilteredCardData(data, solutionsParam);
       block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
@@ -75,7 +75,7 @@ export default async function decorate(block) {
         }
 
         block.appendChild(contentDiv);
-        decorateIcons(block);
+        await decorateIcons(contentDiv);
       }
     })
     .catch((err) => {

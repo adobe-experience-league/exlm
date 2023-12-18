@@ -52,7 +52,7 @@ export default async function decorate(block) {
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
-  decorateIcons(headerDiv);
+  await decorateIcons(headerDiv);
 
   try {
     await loadIms();
@@ -74,7 +74,7 @@ export default async function decorate(block) {
   block.innerHTML += buildPlaceholder;
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent
-    .then((data) => {
+    .then(async (data) => {
       block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
         el.remove();
       });
@@ -89,7 +89,7 @@ export default async function decorate(block) {
           contentDiv.appendChild(cardDiv);
         }
         block.appendChild(contentDiv);
-        decorateIcons(block);
+        await decorateIcons(contentDiv);
       }
     })
     .catch((err) => {
