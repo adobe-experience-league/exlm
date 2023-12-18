@@ -1,4 +1,4 @@
-.shimmer-block{
+.shimmer-placeholder{
   margin-top: 24px;
   display: flex;
   flex-wrap: nowrap;
@@ -8,27 +8,27 @@
   overflow-x: auto;
   overflow-y: hidden;
 }
-.shimmer-block.is-hidden {
+.shimmer-placeholder.is-hidden {
   display: none;
 }
-.shimmer-block-isloading {
+.shimmer-placeholder-isloading {
   width: 100%;
   height: 100%;
   border-radius: 4px;
   overflow: hidden;
   flex: 0 0 264px;
 }
-.shimmer-block-isloading .shimmer-block-image {
+.shimmer-placeholder-isloading .shimmer-placeholder-image {
   height: 190px;
-  background-image: -webkit-linear-gradient(left, #ececec 0px, #f4f4f4 40px, #ececec 80px);
-  background-image: -o-linear-gradient(left, #ececec 0px, #f4f4f4 40px, #ececec 80px);
-  background-image: linear-gradient(90deg, #ececec 0px, #f4f4f4 40px, #ececec 80px);
+  background-image: -webkit-linear-gradient(left, var(--shimmer) 0px, var(--shimmer-light-background) 40px, var(--shimmer) 80px);
+  background-image: -o-linear-gradient(left, var(--shimmer) 0px, var(--shimmer-light-background) 40px, var(--shimmer) 80px);
+  background-image: linear-gradient(90deg, var(--shimmer) 0px, var(--shimmer-light-background) 40px, var(--shimmer) 80px);
   background-size: 250px;
   -webkit-animation: shine-loading-image 2s infinite ease-out;
           animation: shine-loading-image 2s infinite ease-out;
 }
-.shimmer-block-isloading .shimmer-block-content {
-  background: #f7f7f7;
+.shimmer-placeholder-isloading .shimmer-placeholder-content {
+  background: var(--shimmer-background);
   padding: 15px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -40,46 +40,9 @@
       -ms-flex-pack: center;
           justify-content: center;
 }
-.shimmer-block-isloading .shimmer-block-content .shimmer-block-text-container {
+.shimmer-placeholder-isloading .shimmer-placeholder-content .shimmer-placeholder-text-container {
   -ms-flex-preferred-size: 100%;
   flex-basis: 100%;
-}
-.shimmer-block-isloading .shimmer-block-content .shimmer-block-main-text {
-  height: 10px;
-  width: 65%;
-  margin-bottom: 10px;
-  background: #ececec;
-  background-image: -webkit-linear-gradient(left, #ececec 0px, #ddd 40px, #ececec 80px);
-  background-image: -o-linear-gradient(left, #ececec 0px, #ddd 40px, #ececec 80px);
-  background-image: linear-gradient(90deg, #ececec 0px, #ddd 40px, #ececec 80px);
-  background-size: 250px;
-  border-radius: 10px;
-  -webkit-animation: shine-loading-container-items 2s infinite ease-out;
-  animation: shine-loading-container-items 2s infinite ease-out;
-}
-.shimmer-block-isloading .shimmer-block-content .shimmer-block-sub-text {
-  height: 10px;
-  width: 50%;
-  background: #ececec;
-  background-image: -webkit-linear-gradient(left, #ececec 0px, #ddd 40px, #ececec 80px);
-  background-image: -o-linear-gradient(left, #ececec 0px, #ddd 40px, #ececec 80px);
-  background-image: linear-gradient(90deg, #ececec 0px, #ddd 40px, #ececec 80px);
-  background-size: 250px;
-  border-radius: 10px;
-  -webkit-animation: shine-loading-container-items 2s infinite ease-out;
-          animation: shine-loading-container-items 2s infinite ease-out;
-}
-.shimmer-block-isloading .shimmer-block-content .shimmer-block-btn {
-  width: 60px;
-  height: 25px;
-  background: #ececec;
-  background-image: -webkit-linear-gradient(left, #ececec 0px, #ddd 40px, #ececec 80px);
-  background-image: -o-linear-gradient(left, #ececec 0px, #ddd 40px, #ececec 80px);
-  background-image: linear-gradient(90deg, #ececec 0px, #ddd 40px, #ececec 80px);
-  background-size: 250px;
-  border-radius: 3px;
-  -webkit-animation: shine-loading-container-items 2s infinite ease-out;
-  animation: shine-loading-container-items 2s infinite ease-out;
 }
 @-webkit-keyframes shine-loading-image {
   0% {
@@ -113,19 +76,56 @@
     background-position: 140px;
   }
 }
+.shimmer-placeholder-isloading .shimmer-placeholder-content .shimmer-placeholder-main-text {
+  height: 10px;
+  width: 65%;
+  margin-bottom: 10px;
+  background: var(--shimmer);
+  background-image: -webkit-linear-gradient(left, var(--shimmer) 0px, var(--shimmer-dark-background) 40px, var(--shimmer) 80px);
+  background-image: -o-linear-gradient(left, var(--shimmer) 0px, var(--shimmer-dark-background) 40px, var(--shimmer) 80px);
+  background-image: linear-gradient(90deg, var(--shimmer) 0px, var(--shimmer-dark-background) 40px, var(--shimmer) 80px);
+  background-size: 250px;
+  border-radius: 10px;
+  -webkit-animation: shine-loading-container-items 2s infinite ease-out;
+  animation: shine-loading-container-items 2s infinite ease-out;
+}
+.shimmer-placeholder-isloading .shimmer-placeholder-content .shimmer-placeholder-sub-text {
+  height: 10px;
+  width: 50%;
+  background: var(--shimmer);
+  background-image: -webkit-linear-gradient(left, var(--shimmer) 0px, var(--shimmer-dark-background) 40px, var(--shimmer) 80px);
+  background-image: -o-linear-gradient(left, var(--shimmer) 0px, var(--shimmer-dark-background) 40px, var(--shimmer) 80px);
+  background-image: linear-gradient(90deg, var(--shimmer) 0px, var(--shimmer-dark-background) 40px, var(--shimmer) 80px);
+  background-size: 250px;
+  border-radius: 10px;
+  -webkit-animation: shine-loading-container-items 2s infinite ease-out;
+          animation: shine-loading-container-items 2s infinite ease-out;
+}
+.shimmer-placeholder-isloading .shimmer-placeholder-content .shimmer-placeholder-btn {
+  width: 60px;
+  height: 25px;
+  background: var(--shimmer);
+  background-image: -webkit-linear-gradient(left, var(--shimmer) 0px, var(--shimmer-dark-background) 40px, var(--shimmer) 80px);
+  background-image: -o-linear-gradient(left, var(--shimmer) 0px, var(--shimmer-dark-background) 40px, var(--shimmer) 80px);
+  background-image: linear-gradient(90deg, var(--shimmer) 0px, var(--shimmer-dark-background) 40px, var(--shimmer) 80px);
+  background-size: 250px;
+  border-radius: 3px;
+  -webkit-animation: shine-loading-container-items 2s infinite ease-out;
+  animation: shine-loading-container-items 2s infinite ease-out;
+}
 @media only screen and (min-width: 600px) {
-  .shimmer-block{
+  .shimmer-placeholder{
     gap: 25px;
   }
-  .shimmer-block-isloading {
+  .shimmer-placeholder-isloading {
     flex: 0 0 286px; 
   }
 }
 @media only screen and (min-width: 900px) {
-  .shimmer-block{
+  .shimmer-placeholder{
     gap: 32px;
   }
-  .shimmer-block-isloading {
+  .shimmer-placeholder-isloading {
     flex: 0 0 256px;
   }
 }
