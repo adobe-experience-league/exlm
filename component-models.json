@@ -456,28 +456,49 @@
         "description": "Sets the text url."
       },
       {
-        "component": "aem-tag",
+        "component": "multiselect",
+        "valueType": "string",
         "name": "contentTypes",
-        "label": "Content Type(s)",
-        "valueType": "string",
-        "rootPath": "/content/cq:tags/exl/type",
-        "description": "Sets the content type(s)."
+        "label": "Filter by Content Type",
+        "description": "Select the content type(s).",
+        "options": [
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
       },
       {
         "component": "aem-tag",
-        "name": "solutions",
-        "label": "Solution(s)",
+        "name": "cq:tags",
+        "label": "Solution(s) or Feature(s)",
         "valueType": "string",
-        "rootPath": "/content/cq:tags/exl/solution",
-        "description": "Sets the solution(s) param."
-      },
-      {
-        "component": "aem-tag",
-        "name": "features",
-        "label": "Feature(s)",
-        "valueType": "string",
-        "rootPath": "/content/cq:tags/exl/feature",
-        "description": "Sets the Feature(s) param."
+        "rootPath": "/content/cq:tags/exl",
+        "description": "Optional - all are included if no selection is made."
       },
       {
         "component": "aem-tag",
@@ -485,42 +506,65 @@
         "label": "Roles",
         "rootPath": "/content/cq:tags/exl/role",
         "valueType": "string",
-        "description": "Sets the Role(s)."
+        "description": "Sets the Role(s).",
+        "options": [
+          {
+            "name": "Admin",
+            "value": "Admin"
+          },
+          {
+            "name": "Developer",
+            "value": "Developer"
+          },
+          {
+            "name": "Leader",
+            "value": "Leader"
+          },
+          {
+            "name": "User",
+            "value": "User"
+          }
+        ]
       },
       {
         "component": "aem-tag",
         "name": "experienceLevels",
         "label": "Experience Level(s)",
         "valueType": "string",
-        "rootPath": "/content/cq:tags/exl/experience-level",
-        "description": "Sets the Experience Level(s)."
+        "description": "Sets the Experience Level(s).",
+        "options": [
+          {
+            "name": "Beginner",
+            "value": "Beginner"
+          },
+          {
+            "name": "Intermediate",
+            "value": "Intermediate"
+          },
+          {
+            "name": "Advanced",
+            "value": "Advanced"
+          }
+        ]
       },
       {
-        "component": "aem-tag",
-        "name": "industries",
-        "label": "Industries",
-        "valueType": "string",
-        "rootPath": "/content/cq:tags/exl/industry",
-        "description": "Sets the industries param."
-      },
-      {
-        "component": "select",
+        "component": "radio-group",
         "name": "sortBy",
-        "value": "",
+        "value": "RELEVANCE",
         "label": "Sort by",
         "valueType": "string",
         "options": [
           {
             "name": "Relevance",
-            "value": "Relevance"
+            "value": "RELEVANCE"
           },
           {
             "name": "Most recent",
-            "value": "Most recent"
+            "value": "MOST_RECENT"
           },
           {
             "name": "Most popular",
-            "value": "Most popular"
+            "value": "MOST_POPULAR"
           }
         ]
       }
@@ -959,6 +1003,80 @@
         "name": "description",
         "value": "",
         "label": "Sets the description for Browse Filters"
+      }
+    ]
+  },
+  {
+    "id": "featured-cards",
+    "fields": [
+      {
+        "component": "text-input",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "valueType": "string",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-area",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "valueType": "string",
+        "description": "Sets the description."
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "contentTypes",
+        "label": "Content type(s)",
+        "description": "Select the content type(s).",
+        "options": [
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "text-input",
+        "name": "linkText",
+        "value": "",
+        "label": "Link Text",
+        "valueType": "string",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text-input",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "valueType": "string",
+        "description": "Sets the text url."
       }
     ]
   }
