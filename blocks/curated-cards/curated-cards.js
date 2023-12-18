@@ -52,6 +52,7 @@ export default async function decorate(block) {
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
+  decorateIcons(headerDiv);
 
   try {
     await loadIms();
