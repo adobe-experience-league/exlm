@@ -53,6 +53,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       ...browseCardDataModel,
       contentType,
       badgeTitle: CONTENT_TYPES[contentType.toUpperCase()]?.LABEL,
+      thumbnail: raw?.video_url ? raw?.video_url.replace(/\?.*/, '?format=jpeg') : '',
       product,
       title: parentResult?.title || title || '',
       description: parentResult?.excerpt || excerpt || '',

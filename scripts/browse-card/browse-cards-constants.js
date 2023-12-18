@@ -38,7 +38,7 @@ export const CONTENT_TYPES = Object.freeze({
   },
 });
 
-export const SORT_OPTIONS = Object.freeze({
+export const COVEO_SORT_OPTIONS = Object.freeze({
   RELEVANCE: 'relevancy',
   MOST_RECENT: 'date descending',
   MOST_POPULAR: '@el_view_count descending',

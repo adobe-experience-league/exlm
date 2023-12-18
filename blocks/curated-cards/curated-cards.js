@@ -3,7 +3,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
-import { SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
+import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -14,30 +14,28 @@ export default async function decorate(block) {
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
   const contentType = block.querySelector('div:nth-child(4) > div')?.textContent?.trim()?.toLowerCase();
-  const capabilityElement = block.querySelector('div:nth-child(5) > div')?.textContent?.trim()?.toLowerCase();
+  const capabilities = block.querySelector('div:nth-child(5) > div')?.textContent?.trim()?.toLowerCase();
   const role = block.querySelector('div:nth-child(6) > div')?.textContent?.trim()?.toLowerCase();
   const level = block.querySelector('div:nth-child(7) > div')?.textContent?.trim()?.toLowerCase();
-  const sortBy = block.querySelector('div:nth-child(9) > div')?.textContent?.trim()?.toLowerCase();
-  const sortCriteria = SORT_OPTIONS[sortBy?.toUpperCase()];
+  const sortBy = block.querySelector('div:nth-child(8) > div')?.textContent?.trim()?.toLowerCase();
+  const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase()];
   const noOfResults = 4;
-  const productKey = 'exl:solution';
-  const featureKey = 'exl:feature';
-  const capability = {};
-  const regex = /(?:exl:solution\/|exl:feature\/)([^,]+)/g;
-  const matches = capabilityElement.match(regex);
-
-  if (capabilityElement) {
-    if (matches) {
-      matches.forEach((match) => {
-        const type = match.split('/')[0];
-        const text = match.split('/')[1];
-        if (!capability[type]) {
-          capability[type] = [];
-        }
-        capability[type].push(text);
-      });
+  const productKey = 'exl:solution/';
+  const featureKey = 'exl:feature/';
+  const extractCapability = (input, prefix) => {
+    if (!input) {
+      return null;
     }
-  }
+    const items = input.split(',').map((item) => item.trim());
+    const result = [];
+    for (let i = 0; i < items.length; i+=1) {
+      const item = items[i];
+      if (item.startsWith(prefix)) {
+        result.push(item.substring(prefix.length));
+      }
+    }
+    return result.length > 0 ? result : null;
+  };
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -65,8 +63,8 @@ export default async function decorate(block) {
 
   const param = {
     contentType: contentType && contentType.split(','),
-    product: capability[productKey],
-    feature: capability[featureKey],
+    product: extractCapability(capabilities, productKey),
+    feature: extractCapability(capabilities, featureKey),
     role: role && role.split(','),
     level: level && level.split(','),
     sortCriteria,
@@ -93,6 +91,6 @@ export default async function decorate(block) {
     })
     .catch((err) => {
       /* eslint-disable-next-line no-console */
-      console.log('Curated Cards:', err);
+      console.error(err);
     });
 }
