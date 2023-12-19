@@ -1,117 +1,12 @@
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import { createTag, htmlToElement } from '../../scripts/scripts.js';
+import { roleOptions, contentTypeOptions, expTypeOptions, getObjectByName } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch from '../../scripts/search/coveo-headless-poc.js';
 
-// TODO: Move these constants to a separate file
-// TODO: Refactor pending
-const roles = [
-  {
-    title: 'Business User',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
-  },
-  {
-    title: 'Developer',
-    description: 'Responsible for nothing until there"s an issue.',
-  },
-  {
-    title: 'Administrator',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
-  },
-  {
-    title: 'Business Leader',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
-  },
-];
-
-const contentType = [
-  {
-    title: 'Certification',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
-  },
-  {
-    title: 'Community',
-    description: 'Responsible for nothing until there"s an issue.',
-  },
-  {
-    title: 'Courses',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
-  },
-  {
-    title: 'Documentation',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
-  },
-  {
-    title: 'On-Demand Events',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
-  },
-  {
-    title: 'Troubleshooting',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
-  },
-  {
-    title: 'Tutorials',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
-  },
-];
-
-const expLevel = [
-  {
-    title: 'Beginner',
-    description: 'I am a beginner',
-  },
-  {
-    title: 'Intermediate',
-    description: 'I am an intermediate',
-  },
-  {
-    title: 'Experienced',
-    description: 'I have some experience',
-  },
-];
-
-const roleOptions = {
-  name: 'Role',
-  items: roles,
-  selected: 0,
-};
-
-const contentTypeOptions = {
-  name: 'Content Type',
-  items: contentType,
-  selected: 0,
-};
-
-const expTypeOptions = {
-  name: 'Experience Level',
-  items: expLevel,
-  selected: 0,
-};
-
-const tags = [
-  {
-    name: 'Content Type',
-    value: 'Business User',
-  },
-  {
-    name: 'Role',
-    value: 'Developer',
-  },
-  {
-    name: 'Role',
-    value: 'Developer',
-  },
-  {
-    name: 'Content Type',
-    value: 'Business Leader',
-  },
-  {
-    name: 'Experience Level',
-    value: 'Intermediate',
-  },
-];
-
 const isBrowseProdPage = getMetadata('browse product');
+// const isBrowseAllPage = getMetadata('browse all');
 const dropdownOptions = [roleOptions, contentTypeOptions];
+const tags = [];
 
 if (isBrowseProdPage) dropdownOptions.push(expTypeOptions);
 
@@ -125,7 +20,7 @@ if (isBrowseProdPage) dropdownOptions.push(expTypeOptions);
 function generateCheckboxItem(item, index, id) {
   return `
       <div class="custom-checkbox">
-          <input type="checkbox" id="option${id}${index + 1}" value="option${id}${index + 1}">
+          <input type="checkbox" id="option${id}${index + 1}" value="${item.title}">
           <label for="option${id}${index + 1}">
               <span class="title">${item.title}</span>
               <span class="description">${item.description}</span>
@@ -137,7 +32,7 @@ function generateCheckboxItem(item, index, id) {
 
 const constructDropdownEl = (options, id) =>
   htmlToElement(`
-    <div class="filter-dropdown filter-input">
+    <div class="filter-dropdown filter-input" data-filter-type="${options.name}">
       <button>
         ${options.name}
         <span class="icon icon-chevron"></span>
@@ -148,8 +43,90 @@ const constructDropdownEl = (options, id) =>
     </div>
 `);
 
-function handleCheckboxClick(el, options) {
-  let selectionCount = 0;
+function appendToForm(block, target) {
+  const formEl = block.querySelector('.browse-filters-form');
+  formEl.append(target);
+}
+
+function renderTags() {
+  let tagEl = '';
+
+  function renderTag(tag) {
+    tagEl += `
+      <button class="browse-tags">
+        <span>${tag.name}</span>
+        <span> : </span>
+        <span>${tag.value}</span>
+        <span class="icon icon-close"></span>
+      </button>
+    `;
+  }
+
+  tags.forEach(renderTag);
+  tagEl = `<div class="browse-tags-container">${tagEl}</div>`;
+  return htmlToElement(tagEl);
+}
+
+function appendTag(block, tag) {
+  const tagsContainer = block.querySelector('.browse-tags-container');
+  const tagEl = htmlToElement(`
+    <button class="browse-tags">
+      <span>${tag.name}</span>
+      <span> : </span>
+      <span>${tag.value}</span>
+      <span class="icon icon-close"></span>
+    </button>
+  `);
+  tagsContainer.append(tagEl);
+  decorateIcons(tagEl);
+}
+
+function removeFromTags(block, value) {
+  const tagsContainer = block.querySelector('.browse-tags-container');
+  [...tagsContainer.children].forEach((tag) => {
+    if (tag.textContent.includes(value)) {
+      tag.remove();
+    }
+  });
+}
+
+function updateCountAndCheckedState(block, name, value) {
+  const tagRole = block.querySelector(`.filter-dropdown[data-filter-type="${name}"]`);
+  const btnEl = tagRole.querySelector(':scope > button');
+  const ddOptions = [...tagRole.querySelector('.filter-dropdown-content').children];
+  const ddObject = getObjectByName(dropdownOptions, name);
+  ddObject.selected = 0;
+
+  function syncCheckedState(option) {
+    const selected = option.querySelector(`input[type="checkbox"][value="${value}"]`);
+    if (selected) selected.checked = false;
+    if (option.querySelector('input[type="checkbox"]').checked) {
+      ddObject.selected += 1;
+    }
+  }
+
+  ddOptions.forEach((option) => {
+    syncCheckedState(option);
+  });
+
+  if (ddObject.selected !== 0) btnEl.firstChild.textContent = `${name} (${ddObject.selected})`;
+  if (ddObject.selected === 0) btnEl.firstChild.textContent = `${name}`;
+}
+
+function handleTagsClick(block) {
+  block.addEventListener('click', (event) => {
+    const isTag = event.target.closest('.browse-tags');
+    if (isTag) {
+      const name = isTag.querySelector('span:nth-child(1)').textContent.trim();
+      const value = isTag.querySelector('span:nth-child(3)').textContent.trim();
+      removeFromTags(block, value);
+      // TODO: Update checked state and numbers
+      updateCountAndCheckedState(block, name, value);
+    }
+  });
+}
+
+function handleCheckboxClick(block, el, options) {
   const checkboxes = el.querySelectorAll('.custom-checkbox input[type="checkbox"]');
   const btnEl = el.querySelector(':scope > button');
 
@@ -157,13 +134,16 @@ function handleCheckboxClick(el, options) {
   function handleCheckboxChange(event) {
     const checkbox = event.target;
     const label = checkbox.closest('.custom-checkbox').querySelector('label');
-    const checkboxId = checkbox.id;
+    const name = checkbox.closest('.filter-dropdown').dataset.filterType;
     const isChecked = checkbox.checked;
 
     if (isChecked) {
-      selectionCount += 1;
-      // eslint-disable-next-line no-console
-      console.log(`Checkbox with ID ${checkboxId} is checked. Element clicked:`, label);
+      options.selected += 1;
+      appendTag(block, {
+        name,
+        value: checkbox.value,
+      });
+
       if (window.headlessCategoryFacet) {
         const value = label.querySelector('.title')?.textContent;
         // eslint-disable-next-line no-console
@@ -181,11 +161,9 @@ function handleCheckboxClick(el, options) {
         window.headlessSearchEngine.dispatch(action);
       }
     } else {
-      selectionCount -= 1;
-      // eslint-disable-next-line no-console
-      console.log(`Checkbox with ID ${checkboxId} is unchecked. Element clicked:`, label);
+      options.selected -= 1;
+      removeFromTags(block, checkbox.value);
     }
-    options.selected = selectionCount;
     if (options.selected !== 0) btnEl.firstChild.textContent = `${options.name} (${options.selected})`;
     if (options.selected === 0) btnEl.firstChild.textContent = `${options.name}`;
   }
@@ -194,29 +172,6 @@ function handleCheckboxClick(el, options) {
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener('change', handleCheckboxChange);
   });
-}
-
-function renderTags() {
-  let tagEl = '';
-
-  function renderTag(tag) {
-    tagEl += `
-      <button class="browse-tags">
-        <span>${tag.name} :</span>
-        <span>${tag.value}</span>
-        <span class="icon icon-close"></span>
-      </button>
-    `;
-  }
-
-  tags.forEach(renderTag);
-  tagEl = `<div class="browse-tags-container">${tagEl}</div>`;
-  return htmlToElement(tagEl);
-}
-
-function appendToForm(block, target) {
-  const formEl = block.querySelector('.browse-filters-form');
-  formEl.append(target);
 }
 
 function appendToFormInputContainer(block, target) {
@@ -228,7 +183,7 @@ function constructMultiSelectDropdown(block, options, index) {
   const dropdownEl = constructDropdownEl(options, index);
 
   appendToFormInputContainer(block, dropdownEl);
-  handleCheckboxClick(dropdownEl, options);
+  handleCheckboxClick(block, dropdownEl, options);
   return dropdownEl;
 }
 
@@ -342,6 +297,9 @@ function decorateBlockTitle(block) {
 }
 
 export default function decorate(block) {
+  // TODO: Enable once metadata is done
+  // if (!isBrowseAllPage || !isBrowseProdPage) return;
+
   decorateBlockTitle(block);
   appendFormEl(block);
   constructFilterInputContainer(block);
@@ -357,4 +315,5 @@ export default function decorate(block) {
   handleDropdownToggle();
   onInputSearch(block);
   handleClearFilter(block);
+  handleTagsClick(block);
 }
