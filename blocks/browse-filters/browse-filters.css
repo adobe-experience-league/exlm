@@ -167,7 +167,7 @@ button.browse-filters-clear {
   font-weight: 500;
   font-size: var(--spectrum-body-size-s);
   text-align: left;
-  color: var(--non-spectrum-article-dark-gray);
+  color: var(--spectrum-blue-900);
   background: transparent;
   display: inline-block;
   width: fit-content;
@@ -175,6 +175,15 @@ button.browse-filters-clear {
   margin: 0;
   line-height: 17px;
   border-radius: 0;
+}
+
+button.browse-filters-clear:disabled {
+  color: var(--non-spectrum-article-dark-gray);
+  cursor: not-allowed;
+}
+
+button.browse-filters-clear:disabled:hover {
+  background: transparent;
 }
 
 .browse-tags-container {

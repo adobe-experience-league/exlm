@@ -3,10 +3,36 @@ import { createTag, htmlToElement } from '../../scripts/scripts.js';
 import { roleOptions, contentTypeOptions, expTypeOptions, getObjectByName } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch from '../../scripts/search/coveo-headless-poc.js';
 
-const isBrowseProdPage = getMetadata('browse product');
+const isBrowseProdPage = getMetadata('browse-product');
 // const isBrowseAllPage = getMetadata('browse all');
 const dropdownOptions = [roleOptions, contentTypeOptions];
-let tags = [];
+const tags = [];
+let tagsProxy;
+
+function enableTagsAsProxy(block) {
+  tagsProxy = new Proxy(tags, {
+    set(target, property, value) {
+      // Intercepting array updates
+      target[property] = value;
+      // eslint-disable-next-line no-use-before-define
+      tagsUpdateHandler(block);
+      return true;
+    },
+  });
+}
+
+function updateClearFilterStatus(block) {
+  const searchEl = block.querySelector('.filter-input-search > input[type="search"]');
+  const clearFilterBtn = block.querySelector('.browse-filters-clear');
+  if (tagsProxy.length !== 0 || searchEl.value) {
+    clearFilterBtn.disabled = false;
+  } else clearFilterBtn.disabled = true;
+}
+
+// Function to run when the tags array is updated
+function tagsUpdateHandler(block) {
+  updateClearFilterStatus(block);
+}
 
 if (isBrowseProdPage) dropdownOptions.push(expTypeOptions);
 
@@ -55,14 +81,14 @@ function renderTags() {
     tagEl += `
       <button class="browse-tags">
         <span>${tag.name}</span>
-        <span> : </span>
+        <span>: </span>
         <span>${tag.value}</span>
         <span class="icon icon-close"></span>
       </button>
     `;
   }
 
-  tags.forEach(renderTag);
+  tagsProxy.forEach(renderTag);
   tagEl = `<div class="browse-tags-container">${tagEl}</div>`;
   return htmlToElement(tagEl);
 }
@@ -72,12 +98,16 @@ function appendTag(block, tag) {
   const tagEl = htmlToElement(`
     <button class="browse-tags">
       <span>${tag.name}</span>
-      <span> : </span>
+      <span>: </span>
       <span>${tag.value}</span>
       <span class="icon icon-close"></span>
     </button>
   `);
   tagsContainer.append(tagEl);
+  tagsProxy.push({
+    name: tag.name,
+    value: tag.value,
+  });
   decorateIcons(tagEl);
 }
 
@@ -86,6 +116,10 @@ function removeFromTags(block, value) {
   [...tagsContainer.children].forEach((tag) => {
     if (tag.textContent.includes(value)) {
       tag.remove();
+      const itemToRemove = tagsProxy.findIndex((obj) => obj.value === value);
+      if (itemToRemove !== -1) {
+        tagsProxy.splice(itemToRemove, 1);
+      }
     }
   });
 }
@@ -237,6 +271,10 @@ function onInputSearch(block) {
       console.log('add search logic here');
     }
   });
+
+  searchEl.addEventListener('input', () => {
+    updateClearFilterStatus(block);
+  });
 }
 
 function uncheckAllFiltersFromDropdown(block) {
@@ -256,7 +294,7 @@ function uncheckAllFiltersFromDropdown(block) {
 }
 
 function clearAllSelectedTag(block) {
-  tags = [];
+  tagsProxy = [];
   const tagsEl = block.querySelector('.browse-tags-container');
   tagsEl.innerHTML = '';
 }
@@ -270,6 +308,7 @@ function clearSelectedFilters(block) {
   uncheckAllFiltersFromDropdown(block);
   clearAllSelectedTag(block);
   clearSearchQuery(block);
+  updateClearFilterStatus(block);
 }
 
 function handleClearFilter(block) {
@@ -283,7 +322,7 @@ function handleClearFilter(block) {
 
 function constructClearFilterBtn(block) {
   const clearBtn = htmlToElement(`
-    <button class="browse-filters-clear">Clear filters</button>
+    <button class="browse-filters-clear" disabled>Clear filters</button>
   `);
   appendToFormInputContainer(block, clearBtn);
 }
@@ -335,7 +374,7 @@ function decorateBlockTitle(block) {
 export default function decorate(block) {
   // TODO: Enable once metadata is done
   // if (!isBrowseAllPage || !isBrowseProdPage) return;
-
+  enableTagsAsProxy(block);
   decorateBlockTitle(block);
   appendFormEl(block);
   constructFilterInputContainer(block);
@@ -352,4 +391,5 @@ export default function decorate(block) {
   onInputSearch(block);
   handleClearFilter(block);
   handleTagsClick(block);
+  updateClearFilterStatus(block);
 }
