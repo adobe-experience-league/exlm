@@ -5,3 +5,5 @@ scripts/prism-grammars/**
 scripts/**/**.css
 scripts/universal-editor-embedded.js
 scripts/preact-htm/**.js
+plugins/rum-conversion/**
+scripts/analytics/alloy.min.js
