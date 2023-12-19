@@ -1,22 +1,23 @@
 import { loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
-import CONTENT_TYPES from './browse-cards-constants.js';
+import { CONTENT_TYPES } from './browse-cards-constants.js';
 
-const generateContributorsMarkup = (contributor) => {
-  const { name, thumbnail, level, date } = contributor;
-  return htmlToElement(`
-        <div class="browse-card-contributor-info">
-            <img src="${thumbnail}">
-            <div class="browse-card-name-plate">
-            <span class="browse-card-contributor-name">${name}</span>
-            <div class="browse-card-contributor-level">
-                <span>L</span>
-                <span>Level ${level}</span>
-            </div>
-            <span>${date}</span>
-            </div>
-        </div>`);
-};
+/* User Info for Community Section - Will accomodate once we have KHOROS integration */
+// const generateContributorsMarkup = (contributor) => {
+//   const { name, thumbnail, level, date } = contributor;
+//   return htmlToElement(`
+//         <div class="browse-card-contributor-info">
+//             <img src="${thumbnail}">
+//             <div class="browse-card-name-plate">
+//             <span class="browse-card-contributor-name">${name}</span>
+//             <div class="browse-card-contributor-level">
+//                 <span>L</span>
+//                 <span>Level ${level}</span>
+//             </div>
+//             <span>${date}</span>
+//             </div>
+//         </div>`);
+// };
 
 const getTimeString = (date) => {
   const hrs = date.getHours();
@@ -90,7 +91,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
 const buildCardContent = (card, model) => {
-  const { description, contentType: type, viewLinkText, viewLink, copyLink, tags, contributor, event = {} } = model;
+  const { description, contentType: type, viewLinkText, viewLink, copyLink, tags, event = {} } = model;
   const contentType = type.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
   const cardFooter = card.querySelector('.browse-card-footer');
@@ -98,7 +99,7 @@ const buildCardContent = (card, model) => {
 
   if (description) {
     const stringContent = description.length > 100 ? `${description.substring(0, 100).trim()}...` : description;
-    const descriptionElement = document.createElement('p');
+    const descriptionElement = document.createElement('div');
     descriptionElement.classList.add('browse-card-description-text');
     descriptionElement.innerHTML = stripScriptTags(stringContent);
     cardContent.appendChild(descriptionElement);
@@ -117,14 +118,15 @@ const buildCardContent = (card, model) => {
     cardContent.insertBefore(cardMeta, titleEl);
   }
 
-  if (contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
-    const contributorInfo = document.createElement('div');
-    contributorInfo.classList.add('browse-card-contributor-info');
-    const contributorElement = generateContributorsMarkup(contributor);
-    contributorInfo.appendChild(contributorElement);
-    buildTagsContent(cardMeta, tags);
-    cardContent.insertBefore(contributorInfo, cardMeta);
-  }
+  /* User Info for Community Section - Will accomodate once we have KHOROS integration */
+  // if (contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
+  //   const contributorInfo = document.createElement('div');
+  //   contributorInfo.classList.add('browse-card-contributor-info');
+  //   const contributorElement = generateContributorsMarkup(contributor);
+  //   contributorInfo.appendChild(contributorElement);
+  //   buildTagsContent(cardMeta, tags);
+  //   cardContent.insertBefore(contributorInfo, cardMeta);
+  // }
 
   if (contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY) {
     buildEventContent({ event, cardContent, card });
@@ -135,8 +137,10 @@ const buildCardContent = (card, model) => {
     const copyLinkAnchor = createTag('a', { href: copyLink }, `<span class="icon icon-copy"></span>`);
     cardOptions.appendChild(copyLinkAnchor);
   }
-  const bookmarkAnchor = createTag('a', {}, `<span class="icon icon-bookmark"></span>`);
-  cardOptions.appendChild(bookmarkAnchor);
+  if (contentType !== CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY) {
+    const bookmarkAnchor = createTag('a', {}, `<span class="icon icon-bookmark"></span>`);
+    cardOptions.appendChild(bookmarkAnchor);
+  }
   cardFooter.appendChild(cardOptions);
   buildCardCtaContent({ cardFooter, contentType, viewLink, viewLinkText });
 };
@@ -162,6 +166,8 @@ export default async function buildCard(element, model) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
   const { thumbnail, product, title, contentType, badgeTitle } = model;
   const type = contentType?.toLowerCase();
+  const courseMappingKey = CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase();
+  const tutorialMappingKey = CONTENT_TYPES.TUTORIAL.MAPPING_KEY.toLowerCase();
   const card = createTag(
     'div',
     { class: `browse-card ${type}-card` },
@@ -170,7 +176,7 @@ export default async function buildCard(element, model) {
   const cardFigure = card.querySelector('.browse-card-figure');
   const cardContent = card.querySelector('.browse-card-content');
 
-  if (thumbnail) {
+  if ((type === courseMappingKey || type === tutorialMappingKey) && thumbnail) {
     const img = document.createElement('img');
     img.src = thumbnail;
     cardFigure.appendChild(img);

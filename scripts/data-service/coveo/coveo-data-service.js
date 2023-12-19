@@ -27,10 +27,11 @@ export default class CoveoDataService {
       const response = await fetch(this.dataSource.url, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
           Authorization: `Bearer ${coveoToken}`,
         },
-        body: this.dataSource.param,
+        body: JSON.stringify(this.dataSource.param),
       });
 
       if (response.status === 200) {
@@ -44,9 +45,7 @@ export default class CoveoDataService {
 
       return null;
     } catch (error) {
-      /* eslint-disable no-console */
-      console.error('Error fetching data', error);
-      return null;
+      throw new Error(error);
     }
   }
 }

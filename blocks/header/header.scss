@@ -25,6 +25,8 @@
   --nav-item-expanded-bg: #fafafa;
   --nav-item-text-color: #2c2c2c;
   --nav-font: var(--body-font-family);
+  --color-white: #fff;
+  --color-black: #000;
 
   @include breakpoint(custom) {
     --nav-item-padding-x: 24px;
@@ -85,12 +87,17 @@ header {
   }
 }
 
+.header-wrapper {
+  /* header is always white */
+  background-color: var(--color-white);
+}
+
 .header {
   padding-right: var(--header-padding-x);
   height: 100%;
   position: relative;
   max-width: 1440px;
-  background-color: #fff;
+  background-color: var(--color-white);
   container-name: headersection;
   container-type: inline-size;
 
@@ -100,15 +107,15 @@ header {
 
   > nav {
     display: grid;
-    grid-template-areas: 'nav brand sign-in';
+    grid-template-areas: 'nav brand product-grid sign-in';
     justify-content: space-between;
     height: 100%;
 
     @include breakpoint(custom) {
       width: 100%;
       justify-content: initial;
-      grid-template-areas: 'adobe-logo brand nav sign-up search language sign-in';
-      grid-template-columns: min-content min-content max-content min-content auto max-content max-content;
+      grid-template-areas: 'adobe-logo brand nav sign-up search language product-grid sign-in';
+      grid-template-columns: min-content min-content max-content min-content auto max-content max-content max-content;
     }
   }
 
@@ -167,6 +174,27 @@ header {
     }
   }
 
+  // header prouct-grid
+  .product-grid.signed-in {
+    grid-area: product-grid;
+    display: var(--sign-in-display);
+    order: var(--sign-in-order);
+    align-items: center;
+
+    a {
+      color: var(--nav-item-text-color);
+
+      @include button;
+
+      @include breakpoint(custom) {
+        @include button-reset;
+
+        color: var(--nav-item-text-color);
+        padding: var(--nav-root-item-padding-x);
+      }
+    }
+  }
+
   // navigation
   .nav {
     grid-area: nav;
@@ -181,7 +209,7 @@ header {
     display: none;
     padding: 0;
     box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
-    background-color: #fff;
+    background-color: var(--color-white);
     width: 100%;
 
     @include breakpoint(tablet) {
@@ -241,11 +269,13 @@ header {
   }
 
   .nav-item-root {
+    /* stylelint-disable-next-line */
     > a {
       border-top: 1px solid var(--spectrum-gray-200);
       border-bottom: 1px solid var(--spectrum-gray-200);
     }
 
+    /* stylelint-disable-next-line */
     a {
       color: var(--nav-item-text-color);
 
@@ -304,6 +334,7 @@ header {
       }
     }
 
+    /* stylelint-disable-next-line */
     a {
       color: var(--nav-item-text-color);
       display: block;
@@ -932,7 +963,7 @@ header {
       a {
         @include button-reset;
 
-        color: black;
+        color: var(--color-black);
       }
 
       @include breakpoint(custom) {
@@ -941,7 +972,8 @@ header {
     }
   }
 
-  .profile-toggle {
+  .profile-toggle,
+  .product-toggle {
     @include button-reset;
 
     height: 100%;
@@ -949,28 +981,59 @@ header {
     box-sizing: border-box;
   }
 
-  .profile-menu {
+  .profile-menu,
+  .product-dropdown,
+  .product-dropdown a span {
+    /* stylelint-disable-next-line */
     display: none;
   }
 
-  .profile-menu.profile-menu-expanded {
+  /* stylelint-disable-next-line */
+  .product-dropdown a {
+    color: var(--non-spectrum-grey);
+    font-size: var(--spectrum-font-size-100);
+    font-weight: var(--font-weight-400);
+    line-height: 21px;
+  }
+
+  .profile-menu.profile-menu-expanded,
+  .product-dropdown.product-dropdown-expanded {
     display: flex;
     flex-direction: column;
     position: absolute;
-    align-items: flex-end;
+    gap: 8px;
+    align-items: flex-start;
     right: 0;
     width: 100%;
     box-sizing: border-box;
     top: 100%;
-    background-color: white;
-    color: redl;
+    background-color: var(--color-white);
     z-index: 20000;
-    padding: 2em;
+    padding: 1.5em;
     box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
 
     @include breakpoint(custom) {
       width: fit-content;
     }
+  }
+
+  .product-toggle {
+    display: none;
+
+    @include breakpoint(desktop) {
+      display: block;
+    }
+  }
+
+  .product-toggle .icon-grid {
+    background: url('../../icons/apps_gray.svg') no-repeat center center;
+    background-size: 18px;
+    color: var(--spectrum-gray-800);
+    cursor: pointer;
+    display: inline-block;
+    height: 18px;
+    vertical-align: middle;
+    width: 18px;
   }
 
   .search-picker-popover .search-picker-label,

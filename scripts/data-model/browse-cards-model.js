@@ -5,7 +5,7 @@ const browseCardDataModel = {
   product: '',
   title: '',
   description: '',
-  tags: '',
+  tags: [],
   event: {
     startTime: '',
     endTime: '',
