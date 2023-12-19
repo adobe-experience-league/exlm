@@ -153,7 +153,7 @@ export async function analyticsSetConsent(approved) {
  * @param additionalXdmFields
  * @returns {Promise<*>}
  */
-export async function analyticsTrackPageViews(document, additionalXdmFields = {}) {
+export async function analyticsTrackPageViews(document) {
   const xdmData = {
     eventType: 'web.webpagedetails.pageViews',
     web: {
@@ -163,7 +163,7 @@ export async function analyticsTrackPageViews(document, additionalXdmFields = {}
         },
         name: `${document.title}`,
       },
-    }    
+    },
   };
 
   return sendAnalyticsEvent(xdmData);
@@ -270,17 +270,18 @@ export async function analyticsTrack404(data, additionalXdmFields = {}) {
   return sendAnalyticsEvent(xdmData);
 }
 
-export async function analyticsTrackError(data, additionalXdmFields = {}) {
+export async function analyticsTrackError(data) {
   const xdmData = {
     eventType: 'web.webpagedetails.pageViews',
     web: {
       webPageDetails: {
+        page: data.source,
         pageViews: {
           value: 0,
         },
         isErrorPage: true,
       },
-    },    
+    },
   };
 
   return sendAnalyticsEvent(xdmData);
