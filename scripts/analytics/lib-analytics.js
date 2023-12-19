@@ -163,10 +163,7 @@ export async function analyticsTrackPageViews(document, additionalXdmFields = {}
         },
         name: `${document.title}`,
       },
-    },
-    [CUSTOM_SCHEMA_NAMESPACE]: {
-      ...additionalXdmFields,
-    },
+    }    
   };
 
   return sendAnalyticsEvent(xdmData);
@@ -283,10 +280,7 @@ export async function analyticsTrackError(data, additionalXdmFields = {}) {
         },
         isErrorPage: true,
       },
-    },
-    [CUSTOM_SCHEMA_NAMESPACE]: {
-      ...additionalXdmFields,
-    },
+    },    
   };
 
   return sendAnalyticsEvent(xdmData);
