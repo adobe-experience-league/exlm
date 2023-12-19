@@ -51,6 +51,10 @@ header {
   }
 }
 
+.header-wrapper {
+  background-color: var(--color-white);
+}
+
 .header {
   padding-right: var(--header-padding-x);
   height: 100%;

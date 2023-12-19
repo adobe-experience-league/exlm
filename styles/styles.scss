@@ -392,6 +392,11 @@ body {
   display: none;
 }
 
+body[class^='browse-'] {
+  /* default background color for browse pages */
+  background-color: var(--spectrum-gray-100);
+}
+
 body.appear {
   display: unset;
 }
