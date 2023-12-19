@@ -19,18 +19,6 @@ import { CONTENT_TYPES } from './browse-cards-constants.js';
 //         </div>`);
 // };
 
-const getTimeString = (date) => {
-  const hrs = date.getHours();
-  const timePeriod = hrs < 12 ? 'AM' : 'PM';
-  const hours = hrs === 0 ? 12 : hrs % 12;
-  return `${hours}:${date.getMinutes().toString().padStart(2, '0')} ${timePeriod}`;
-};
-
-const generateDateWithTZ = (time) => {
-  const date = new Date(time);
-  return new Date(date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })); // TODO: apply localization once region selection is in place
-};
-
 const buildTagsContent = (cardMeta, tags = []) => {
   tags.forEach((tag) => {
     const { icon: iconName, text } = tag;
@@ -45,19 +33,12 @@ const buildTagsContent = (cardMeta, tags = []) => {
 };
 
 const buildEventContent = ({ event, cardContent, card }) => {
-  const { startTime, endTime } = event;
-  const dateInfo = generateDateWithTZ(startTime);
-  const endDateInfo = generateDateWithTZ(endTime);
-
-  const weekday = dateInfo.toLocaleDateString('en-US', { weekday: 'long' });
-  const month = dateInfo.toLocaleDateString('en-US', { month: 'long' });
-
+  const { time } = event;
   const eventInfo = htmlToElement(`
     <div class="browse-card-event-info">
         <span class="icon icon-time"></span>
         <div class="browse-card-event-time">
-            <h6>${weekday}, ${month} ${dateInfo.getDate()}</h6>
-            <h6>${getTimeString(dateInfo)} - ${getTimeString(endDateInfo)} PDT</h6>
+            <h6>${time}</h6>
         </div>
     </div>
   `);
