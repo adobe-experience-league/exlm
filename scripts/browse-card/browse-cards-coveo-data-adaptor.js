@@ -24,10 +24,11 @@ const BrowseCardsCoveoDataAdaptor = (() => {
    */
   const createTags = (result, contentType) => {
     const tags = [];
-    const role = result?.raw?.el_role || '';
+    const role = result?.raw?.role ? result.raw.role.replace(/,/g, ', ') : '';
     if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
       tags.push({ icon: 'user', text: role || '' });
-      tags.push({ icon: 'book', text: `0 ${placeholders.lesson}` });
+      /* TODO: Will enable once we have the API changes ready from ExL */
+      // tags.push({ icon: 'book', text: `0 ${placeholders.lesson}` });
     } else {
       tags.push({ icon: result?.raw?.el_view_status ? 'view' : '', text: result?.raw?.el_view_status || '' });
       tags.push({ icon: result?.raw?.el_reply_status ? 'reply' : '', text: result?.raw?.el_reply_status || '' });
