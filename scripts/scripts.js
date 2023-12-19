@@ -385,8 +385,11 @@ export async function fetchIndex() {
   // define promise function
   const loadIndex = async () => {
     const resp = await fetch(`/query-index.json`);
-    window.exlmIndex.data = (await resp.json()).data;
-    return window.exlmIndex.data;
+    if(resp.ok) {
+      window.exlmIndex.data = (await resp.json()).data;
+      return window.exlmIndex.data;
+    }
+    return null;
   };
 
   // start download
