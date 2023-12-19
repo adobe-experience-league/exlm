@@ -29,9 +29,32 @@ function updateClearFilterStatus(block) {
   } else clearFilterBtn.disabled = true;
 }
 
+function renderTags(block) {
+  let tagEl = '';
+
+  function renderTag(tag) {
+    tagEl += `
+      <button class="browse-tags">
+        <span>${tag.name}</span>
+        <span>: </span>
+        <span>${tag.value}</span>
+        <span class="icon icon-close"></span>
+      </button>
+    `;
+  }
+
+  tagsProxy.forEach(renderTag);
+  const tagParent = block.querySelector('.browse-tags-container');
+  tagParent.innerHTML = '';
+  tagParent.innerHTML += tagEl;
+}
+
 // Function to run when the tags array is updated
 function tagsUpdateHandler(block) {
+  console.log('tags array modified!!');
+  renderTags(block);
   updateClearFilterStatus(block);
+  decorateIcons(block);
 }
 
 if (isBrowseProdPage) dropdownOptions.push(expTypeOptions);
@@ -74,54 +97,23 @@ function appendToForm(block, target) {
   formEl.append(target);
 }
 
-function renderTags() {
-  let tagEl = '';
-
-  function renderTag(tag) {
-    tagEl += `
-      <button class="browse-tags">
-        <span>${tag.name}</span>
-        <span>: </span>
-        <span>${tag.value}</span>
-        <span class="icon icon-close"></span>
-      </button>
-    `;
-  }
-
-  tagsProxy.forEach(renderTag);
-  tagEl = `<div class="browse-tags-container">${tagEl}</div>`;
-  return htmlToElement(tagEl);
+function decorateTags() {
+  const tagEl = createTag('div', { class: 'browse-tags-container' });
+  return tagEl;
 }
 
-function appendTag(block, tag) {
-  const tagsContainer = block.querySelector('.browse-tags-container');
-  const tagEl = htmlToElement(`
-    <button class="browse-tags">
-      <span>${tag.name}</span>
-      <span>: </span>
-      <span>${tag.value}</span>
-      <span class="icon icon-close"></span>
-    </button>
-  `);
-  tagsContainer.append(tagEl);
+function addTag(tag) {
   tagsProxy.push({
     name: tag.name,
     value: tag.value,
   });
-  decorateIcons(tagEl);
 }
 
-function removeFromTags(block, value) {
-  const tagsContainer = block.querySelector('.browse-tags-container');
-  [...tagsContainer.children].forEach((tag) => {
-    if (tag.textContent.includes(value)) {
-      tag.remove();
-      const itemToRemove = tagsProxy.findIndex((obj) => obj.value === value);
-      if (itemToRemove !== -1) {
-        tagsProxy.splice(itemToRemove, 1);
-      }
-    }
-  });
+function removeTag(value) {
+  const itemToRemove = tagsProxy.findIndex((obj) => obj.value === value);
+  if (itemToRemove !== -1) {
+    tagsProxy.splice(itemToRemove, 1);
+  }
 }
 
 function updateCountAndCheckedState(block, name, value) {
@@ -153,16 +145,15 @@ function handleTagsClick(block) {
     if (isTag) {
       const name = isTag.querySelector('span:nth-child(1)').textContent.trim();
       const value = isTag.querySelector('span:nth-child(3)').textContent.trim();
-      removeFromTags(block, value);
-      // TODO: Update checked state and numbers
+      removeTag(value);
       updateCountAndCheckedState(block, name, value);
     }
   });
 }
 
-function handleCheckboxClick(block, el, options) {
+function handleCheckboxClick(el) {
   const checkboxes = el.querySelectorAll('.custom-checkbox input[type="checkbox"]');
-  const btnEl = el.querySelector(':scope > button');
+  // const btnEl = el.querySelector(':scope > button');
 
   // Function to handle checkbox state changes
   function handleCheckboxChange(event) {
@@ -172,8 +163,8 @@ function handleCheckboxClick(block, el, options) {
     const isChecked = checkbox.checked;
 
     if (isChecked) {
-      options.selected += 1;
-      appendTag(block, {
+      // option.selected += 1;
+      addTag({
         name,
         value: checkbox.value,
       });
@@ -195,14 +186,18 @@ function handleCheckboxClick(block, el, options) {
         window.headlessSearchEngine.dispatch(action);
       }
     } else {
-      options.selected -= 1;
-      removeFromTags(block, checkbox.value);
+      // option.selected -= 1;
+      removeTag(checkbox.value);
     }
-    if (options.selected !== 0) btnEl.firstChild.textContent = `${options.name} (${options.selected})`;
-    if (options.selected === 0) btnEl.firstChild.textContent = `${options.name}`;
+    // if (option.selected !== 0) btnEl.firstChild.textContent = `${option.name} (${option.selected})`;
+    // if (option.selected === 0) btnEl.firstChild.textContent = `${option.name}`;
   }
 
   // Attach event listener to each checkbox
+  document.addEventListener('click', (event) => {
+    console.log(event.target);
+  });
+
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener('change', handleCheckboxChange);
   });
@@ -213,11 +208,10 @@ function appendToFormInputContainer(block, target) {
   divEl.append(target);
 }
 
-function constructMultiSelectDropdown(block, options, index) {
-  const dropdownEl = constructDropdownEl(options, index);
+function constructMultiSelectDropdown(block, option, index) {
+  const dropdownEl = constructDropdownEl(option, index);
 
   appendToFormInputContainer(block, dropdownEl);
-  handleCheckboxClick(block, dropdownEl, options);
   return dropdownEl;
 }
 
@@ -294,7 +288,7 @@ function uncheckAllFiltersFromDropdown(block) {
 }
 
 function clearAllSelectedTag(block) {
-  tagsProxy = [];
+  tagsProxy.length = 0;
   const tagsEl = block.querySelector('.browse-tags-container');
   tagsEl.innerHTML = '';
 }
@@ -379,17 +373,18 @@ export default function decorate(block) {
   appendFormEl(block);
   constructFilterInputContainer(block);
   addLabel(block);
-  dropdownOptions.forEach((options, index) => {
-    constructMultiSelectDropdown(block, options, index + 1);
+  dropdownOptions.forEach((option, index) => {
+    constructMultiSelectDropdown(block, option, index + 1);
   });
+  handleCheckboxClick(block);
   constructKeywordSearchEl(block);
   constructClearFilterBtn(block);
-  appendToForm(block, renderTags());
+  appendToForm(block, decorateTags());
   initiateCoveoHeadlessSearch();
-  decorateIcons(block);
   handleDropdownToggle();
   onInputSearch(block);
   handleClearFilter(block);
   handleTagsClick(block);
   updateClearFilterStatus(block);
+  decorateIcons(block);
 }
