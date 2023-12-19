@@ -5,3 +5,4 @@ scripts/prism-grammars/**
 scripts/**/**.css
 scripts/universal-editor-embedded.js
 scripts/preact-htm/**.js
+helix-query.yaml
