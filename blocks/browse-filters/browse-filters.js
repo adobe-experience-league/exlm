@@ -320,7 +320,7 @@ function uncheckAllFiltersFromDropdown(block) {
 }
 
 function clearAllSelectedTag(block) {
-  tagsProxy = [];
+  tagsProxy.length = 0;
   const tagsEl = block.querySelector('.browse-tags-container');
   tagsEl.innerHTML = '';
 }
