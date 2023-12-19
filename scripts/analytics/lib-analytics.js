@@ -47,10 +47,10 @@ function getAlloyInitScript() {
  * @returns {{edgeConfigId: string, orgId: string}}
  */
 function getDatastreamConfiguration() {
-  // Sites Internal
+  // EXLM
   return {
-    edgeConfigId: 'caad777c-c410-4ceb-8b36-167f1cecc3de',
-    orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+    edgeConfigId: 'a79fa341-435b-4dd8-86e0-a71d4d9ff0e2',
+    orgId: '8F99160E571FC0427F000101@AdobeOrg',
   };
 }
 
