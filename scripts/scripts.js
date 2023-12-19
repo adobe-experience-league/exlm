@@ -371,6 +371,32 @@ async function loadRails() {
   }
 }
 
+/**
+ * loads the index into window.exlm.data
+ */
+export async function fetchIndex() {
+  // return query index for this language
+  if (window.exlmIndex?.data) {
+    return window.exlmIndex.data;
+  }
+
+  window.exlmIndex = window.exlmIndex || {};
+
+  // define promise function
+  const loadIndex = async () => {
+    const resp = await fetch(`/query-index.json`);
+    window.exlmIndex.data = (await resp.json()).data;
+    return window.exlmIndex.data;
+  };
+
+  // start download
+  if (!window.exlmIndex.promise) {
+    // create promise
+    window.exlmIndex.promise = loadIndex();
+  }
+  return window.exlmIndex.promise;
+}
+
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
