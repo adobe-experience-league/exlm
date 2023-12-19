@@ -10,6 +10,7 @@ import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-const
  */
 export default async function decorate(block) {
   // Extracting elements from the block
+  console.log("Hey tHis is Featured Block");
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const descriptionElement = block.querySelector('div:nth-child(2) > div');
   const contentType = block.querySelector('div:nth-child(3) > div')?.textContent?.trim()?.toLowerCase();
@@ -23,6 +24,7 @@ export default async function decorate(block) {
   // Clearing the block's content
   block.innerHTML = '';
   const headerDiv = htmlToElement(`
+    <h1>"SampleTest</h1>"
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
           <h4>${headingElement?.textContent?.trim()}</h4>
