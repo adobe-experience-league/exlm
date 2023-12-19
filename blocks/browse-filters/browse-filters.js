@@ -6,7 +6,7 @@ import initiateCoveoHeadlessSearch from '../../scripts/search/coveo-headless-poc
 const isBrowseProdPage = getMetadata('browse product');
 // const isBrowseAllPage = getMetadata('browse all');
 const dropdownOptions = [roleOptions, contentTypeOptions];
-const tags = [];
+let tags = [];
 
 if (isBrowseProdPage) dropdownOptions.push(expTypeOptions);
 
@@ -239,10 +239,46 @@ function onInputSearch(block) {
   });
 }
 
+function uncheckAllFiltersFromDropdown(block) {
+  const dropdownFilters = block.querySelectorAll('.filter-dropdown');
+  dropdownFilters.forEach((dropdownEl) => {
+    const { filterType } = dropdownEl.dataset;
+    const dropdownObj = getObjectByName(dropdownOptions, filterType);
+
+    dropdownObj.selected = 0;
+    dropdownEl.querySelector(':scope > button').firstChild.textContent = filterType;
+
+    const dOptions = dropdownEl.querySelectorAll('.filter-dropdown-content > .custom-checkbox');
+    dOptions.forEach((option) => {
+      option.querySelector('input').checked = false;
+    });
+  });
+}
+
+function clearAllSelectedTag(block) {
+  tags = [];
+  const tagsEl = block.querySelector('.browse-tags-container');
+  tagsEl.innerHTML = '';
+}
+
+function clearSearchQuery(block) {
+  const searchEl = block.querySelector('.filter-input-search input');
+  searchEl.value = '';
+}
+
+function clearSelectedFilters(block) {
+  uncheckAllFiltersFromDropdown(block);
+  clearAllSelectedTag(block);
+  clearSearchQuery(block);
+}
+
 function handleClearFilter(block) {
   // show the hidden sections again
   const clearFilterEl = block.querySelector('.browse-filters-clear');
-  clearFilterEl.addEventListener('click', () => toggleSectionsBelow(block, true));
+  clearFilterEl.addEventListener('click', () => {
+    toggleSectionsBelow(block, true);
+    clearSelectedFilters(block);
+  });
 }
 
 function constructClearFilterBtn(block) {
