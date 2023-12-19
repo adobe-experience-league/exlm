@@ -14,8 +14,8 @@ indices:
         select: head > meta[property="og:image"]
         value: |
           match(attribute(el, 'content'), 'https:\/\/[^/]+(\/.*)')
-            theme:
-        select: head > meta[property="theme"]
+      theme:
+        select: head > meta[name="theme"]
         value: |
           attribute(el, 'content')
       lastModified:
