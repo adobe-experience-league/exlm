@@ -105,7 +105,7 @@ function addBrowseRail(main) {
   const leftRailSection = document.createElement('div');
   leftRailSection.classList.add('browse-rail', getBrowsePage());
   leftRailSection.append(buildBlock('browse-rail', []));
-  main.append(leftRailSection);
+  main.prepend(leftRailSection);
 }
 
 /**
