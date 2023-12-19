@@ -40,14 +40,14 @@ export default async function decorate(block) {
   // Clearing the block's content
   block.innerHTML = '';
   const headerDiv = htmlToElement(`
-    <div class="curated-cards-header">
-      <div class="curated-cards-title">
+    <div class="browse-cards-block-header">
+      <div class="browse-cards-block-title">
           <h4>${headingElement?.textContent?.trim()}</h4>
           <div class="tooltip">
             <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent?.trim()}</span>
           </div>
       </div>
-      <div class="curated-cards-view">${linkTextElement?.outerHTML}</div>
+      <div class="browse-cards-block-view">${linkTextElement?.outerHTML}</div>
     </div>
   `);
   // Appending header div to the block
@@ -80,7 +80,7 @@ export default async function decorate(block) {
       });
       if (data?.length) {
         const contentDiv = document.createElement('div');
-        contentDiv.classList.add('curated-cards-content');
+        contentDiv.classList.add('browse-cards-block-content');
 
         for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
           const cardData = data[i];
