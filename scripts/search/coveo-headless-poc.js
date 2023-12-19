@@ -1,120 +1,139 @@
 import buildHeadlessSearchEngine from '../data-service/coveo/headless-engine.js';
 import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
-import BrowseCardsCoveoDataAdaptor from '../browse-card/browse-cards-coveo-data-adaptor.js';
-import buildCard from '../browse-card/browse-card.js';
 
 const coveoToken = await loadCoveoToken();
 
-export default async function coveoSearchEnginePOC() {
-  const resultsEl = document.createElement('div');
-  resultsEl.style.display = 'grid';
-  resultsEl.style.gridTemplateColumns = 'repeat(4, 1fr)';
-  resultsEl.style.gap = '8px';
+function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contextObject }) {
+  // const advancedQuery = module.loadAdvancedSearchQueryActions(searchEngine).updateAdvancedSearchQueries({
+  //   aq: advancedQueryRule || '',
+  // });
+  const context = module.loadContextActions(searchEngine).setContext(contextObject);
+  const searchConfiguration = module.loadSearchConfigurationActions(searchEngine).updateSearchConfiguration({
+    locale: document.documentElement.lang,
+    searchHub,
+  });
+  const fields = module.loadFieldActions(searchEngine).registerFieldsToInclude(['el_solution', 'el_type']);
 
-  // or via dymanic import
-  setTimeout(async () => {
+  // searchEngine.dispatch(advancedQuery);
+  searchEngine.dispatch(context);
+  searchEngine.dispatch(searchConfiguration);
+  searchEngine.dispatch(fields);
+}
+
+export const fragment = () => window.location.hash.slice(1);
+
+export default async function coveoSearchEnginePOC(handleSearchEngineSubscription) {
+  return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
-    import('../coveo/browser/headless.esm.js').then((module) => {
-      const headlessSearchEngine = buildHeadlessSearchEngine(module, coveoToken);
+    import('../coveo/browser/headless.esm.js')
+      .then((module) => {
+        const headlessSearchEngine = buildHeadlessSearchEngine(module, coveoToken);
+        const statusControllers = module.buildSearchStatus(headlessSearchEngine);
 
-      function configureSearchHeadlessEngine(searchEngine, searchHub, contextObject, advancedQueryRule) {
-        const advancedQuery = module.loadAdvancedSearchQueryActions(searchEngine).updateAdvancedSearchQueries({
-          aq: advancedQueryRule || '',
-        });
-        const context = module.loadContextActions(searchEngine).setContext(contextObject);
-        const searchConfiguration = module.loadSearchConfigurationActions(searchEngine).updateSearchConfiguration({
-          locale: document.documentElement.lang,
-          searchHub,
-        });
-        const fields = module.loadFieldActions(searchEngine).registerFieldsToInclude(['el_solution', 'el_type']);
-
-        const contentTypeCategoryField = module
-          .loadCategoryFacetSetActions(headlessSearchEngine)
-          .registerCategoryFacet({
-            numberOfValues: 10,
-            facetId: '@el_contenttype',
-            field: 'el_contenttype',
-            delimitingCharacter: '|',
-            sortCriteria: 'occurrences',
-          });
-        const roleTypeCategoryField = module.loadCategoryFacetSetActions(headlessSearchEngine).registerCategoryFacet({
-          numberOfValues: 10,
-          facetId: '@el_role',
-          field: 'el_role',
-          delimitingCharacter: '|',
-          sortCriteria: 'occurrences',
+        configureSearchHeadlessEngine({
+          module,
+          searchEngine: headlessSearchEngine,
+          searchHub: 'Experience League Learning Hub',
+          contextObject: { topic: 'Customers' },
+          advancedQueryRule: null, // '@el_features="Customers"',
         });
 
-        window.headlessCategoryFacet = module.loadCategoryFacetSetActions(headlessSearchEngine);
+        const headlessSearchBox = module.buildSearchBox(headlessSearchEngine, {
+          options: {
+            numberOfSuggestions: 0,
+          },
+        });
 
-        headlessSearchEngine.dispatch(advancedQuery);
-        headlessSearchEngine.dispatch(context);
-        headlessSearchEngine.dispatch(searchConfiguration);
-        headlessSearchEngine.dispatch(fields);
-        headlessSearchEngine.dispatch(contentTypeCategoryField);
-        headlessSearchEngine.dispatch(roleTypeCategoryField);
-      }
+        const headlessTypeFacet = module.buildFacet(headlessSearchEngine, {
+          options: {
+            field: 'el_type',
+          },
+        });
 
-      configureSearchHeadlessEngine(
-        headlessSearchEngine,
-        'Experience League Learning Hub',
-        { topic: 'Customers' },
-        '@el_features="Customers"',
-      );
+        const headlessRoleFacet = module.buildFacet(headlessSearchEngine, {
+          options: {
+            field: 'el_role',
+          },
+        });
 
-      headlessSearchEngine.subscribe(async () => {
-        // eslint-disable-next-line
-        const search = headlessSearchEngine.state.search;
-        // eslint-disable-next-line
-        const results = search.results;
-        resultsEl.innerHTML = '';
-        if (results.length > 0) {
-          const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
-          cardsData.forEach((cardData) => {
-            const cardDiv = document.createElement('div');
-            buildCard(cardDiv, cardData);
-            resultsEl.appendChild(cardDiv);
-          });
-        } else {
-          resultsEl.innerHTML = 'No results';
+        const headlessExperienceFacet = module.buildFacet(headlessSearchEngine, {
+          options: {
+            field: 'el_experience', // TODO : Is this the right name?
+          },
+        });
+
+        const urlManager = module.buildUrlManager(headlessSearchEngine, {
+          initialState: { fragment: fragment() },
+        });
+
+        urlManager.subscribe(() => {
+          const hash = `#${urlManager.state.fragment}`;
+          if (!statusControllers.state.firstSearchExecuted) {
+            window.history.replaceState(null, document.title, hash);
+            return;
+          }
+          window.history.pushState(null, document.title, hash);
+        });
+
+        headlessSearchEngine.subscribe(handleSearchEngineSubscription);
+
+        urlManager.synchronize(fragment());
+
+        function onHashChange() {
+          urlManager.synchronize(fragment());
         }
-        return resultsEl;
-      });
+        window.addEventListener('hashchange', onHashChange);
 
-      headlessSearchEngine.executeFirstSearch();
-      // eslint-disable-next-line
-      console.log(headlessSearchEngine, 'hello search engine data');
+        const submitSearchHandler = () => {
+          const key = headlessSearchBox.state.value;
+          const [currentSearchString] = window.location.hash.match(/\bq=([^&#]*)/) || [];
+          if (currentSearchString) {
+            window.location.hash = window.location.hash.replace(currentSearchString, `q=${key || ''}`);
+          } else {
+            window.location.hash = `#q=${key || ''}&${fragment()}`;
+          }
+          // headlessSearchBox.submit();
+        };
+        const clearSearchHandler = () => {
+          const [currentSearchString] = window.location.hash.match(/\bq=([^&#]*)/) || [];
+          if (currentSearchString) {
+            window.location.hash = window.location.hash.replace(currentSearchString, `q=""`);
+          }
+        };
+        const searchInputKeyupHandler = (e) => {
+          // eslint-disable-next-line
+          console.log('onKeyUp', e.target.value);
+          headlessSearchBox.updateText(e.target.value);
+        };
+        const searchInputKeydownHandler = (e) => {
+          if (e.key === 'Enter') {
+            submitSearchHandler();
+          }
+        };
+        const searchInputOnChangeHandler = (e) => {
+          if (e.target.value === '') {
+            clearSearchHandler();
+          }
+        };
 
-      const headlessSearchBox = module.buildSearchBox(headlessSearchEngine, {
-        options: {
-          numberOfSuggestions: 0,
-        },
-      });
+        window.headlessSearchBox = headlessSearchBox;
+        window.headlessSearchEngine = headlessSearchEngine;
+        window.headlessTypeFacet = headlessTypeFacet;
+        window.headlessRoleFacet = headlessRoleFacet;
+        window.headlessExperienceFacet = headlessExperienceFacet;
 
-      const browseFiltersSection = document.querySelector('.browse-filters-form');
-      const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
-      const searchIcon = filterInputSection.querySelector('.icon-search');
-      const searchInput = filterInputSection.querySelector('input');
-
-      searchInput.addEventListener('change', (e) => {
+        resolve({
+          submitSearchHandler,
+          searchInputKeydownHandler,
+          searchInputKeyupHandler,
+          clearSearchHandler,
+          searchInputOnChangeHandler,
+        });
+      })
+      .catch((e) => {
         // eslint-disable-next-line
-        console.log('onChange', e.target.value);
+        console.log('failed to load coveo headless module', e);
+        reject(e);
       });
-      searchInput.addEventListener('keyup', (e) => {
-        // eslint-disable-next-line
-        console.log('onKeyUp', e.target.value);
-        headlessSearchBox.updateText(e.target.value);
-      });
-
-      searchIcon.addEventListener('click', () => headlessSearchBox.submit());
-
-      // window.headlessCategoryFacet = headlessCategoryFacet;
-      window.headlessSearchBox = headlessSearchBox;
-      window.headlessSearchEngine = headlessSearchEngine;
-
-      browseFiltersSection.appendChild(resultsEl);
-      // targetedDiv.insertBefore(searchInput, targetedDiv.lastChild);
-      // targetedDiv.insertBefore(resultsEl, targetedDiv.lastChild);
-    });
-  }, 1000);
+  });
 }

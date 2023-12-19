@@ -209,6 +209,12 @@ button.browse-filters-clear:disabled:hover {
   margin-top: 0;
 }
 
+.browse-filters-results {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr;
+}
+
 button.browse-tags:hover,
 button.browse-tags:focus {
   background-color:var(--background-color);
@@ -251,6 +257,10 @@ button.browse-tags:focus {
     grid-area: label;
   }
 
+  .browse-filters-results {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .browse-filters-input-container .filter-dropdown:nth-child(2) {
     grid-area: role;
   }
@@ -281,6 +291,10 @@ button.browse-tags:focus {
     grid-template-areas: "label role ctype search cfilter";
     grid-template-columns: auto 1fr 1fr 1fr auto;
     align-items: center;
+  }
+
+  .browse-filters-results {
+    grid-template-columns: repeat(4, 1fr);
   }
 
   .browse-filters-input-container:has(.filter-dropdown:nth-child(4)) {
