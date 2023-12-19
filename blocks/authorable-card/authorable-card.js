@@ -6,6 +6,7 @@ import mapResultToCardsData from './article-data-adapter.js';
 import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
 const numberOfCards = 4;
+const rowCount = 4;
 
 /**
  * Decorate function to process and log the mapped data.
@@ -18,9 +19,9 @@ export default async function decorate(block) {
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
   const links = [];
   const linksContainer = [];
-  for(let i=0;i<=numberOfCards;i+=1){
-    linksContainer.push(block.querySelector(`div:nth-child(${i+4})`))
-    links.push(block.querySelector(`div:nth-child(${i+4}) > div`)?.textContent)
+  for (let i = 0; i <= numberOfCards; i += 1) {
+    linksContainer.push(block.querySelector(`div:nth-child(${i + rowCount})`));
+    links.push(block.querySelector(`div:nth-child(${i + rowCount}) > div`)?.textContent);
   }
 
   // Clearing the block's content
@@ -42,21 +43,20 @@ export default async function decorate(block) {
   contentDiv.classList.add('browse-cards-block-content');
 
   const placeholders = await fetchPlaceholders();
-  block.innerHTML += buildPlaceholder;
-  
+
   links.forEach((link, i) => {
     if (link) {
       const articleDataService = new ArticleDataService();
       articleDataService
-      .handleArticleDataService(link)
-      .then(async (data) => {
+        .handleArticleDataService(link)
+        .then(async (data) => {
           block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
             el.remove();
           });
           linksContainer[i].innerHTML = ``;
           const cardData = await mapResultToCardsData(data, placeholders);
-          buildCard(linksContainer[i], cardData);
-          contentDiv.appendChild(linksContainer[i]);
+          await buildCard(linksContainer[i], cardData);
+          await contentDiv.appendChild(linksContainer[i]);
           decorateIcons(block);
         })
         .catch(() => {
@@ -67,7 +67,8 @@ export default async function decorate(block) {
     }
   });
 
-  block.innerHTML='';
+  block.innerHTML = '';
   block.appendChild(headerDiv);
+  block.innerHTML += buildPlaceholder;
   block.appendChild(contentDiv);
 }
