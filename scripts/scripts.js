@@ -93,7 +93,7 @@ export function buildSyntheticBlocks(main) {
  * return browse page theme if its browse page otherwise undefined.
  * theme = browse-* is set in bulk metadata for /en/browse paths.
  */
-export function getBrowsePage() {
+export function isBrowsePage() {
   const theme = getMetadata('theme');
   return theme.split(',').find((t) => t.toLowerCase().startsWith('browse-'));
 }
@@ -103,9 +103,9 @@ export function getBrowsePage() {
  */
 function addBrowseRail(main) {
   const leftRailSection = document.createElement('div');
-  leftRailSection.classList.add('browse-rail', getBrowsePage());
+  leftRailSection.classList.add('browse-rail', isBrowsePage());
   leftRailSection.append(buildBlock('browse-rail', []));
-  main.prepend(leftRailSection);
+  main.append(leftRailSection);
 }
 
 /**
@@ -116,7 +116,7 @@ function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
     // if we are on a product browse page
-    if (getBrowsePage()) {
+    if (isBrowsePage()) {
       addBrowseRail(main);
     }
   } catch (error) {
