@@ -23,6 +23,7 @@
   transition: all .5s ease-in-out;
   overflow-x: auto;
   overflow-y: hidden;
+  min-height: 400px;
 }
 .shimmer-placeholder.is-hidden {
   display: none;
@@ -57,14 +58,14 @@
       -ms-flex-pack: center;
           justify-content: center;
 }
-.shimmer-placeholder-isloading .shimmer-placeholder-content .shimmer-placeholder-text-container {
+.shimmer-placeholder-isloading .shimmer-placeholder-text-container {
   flex: 1 0 50%;
 }
-.shimmer-placeholder-isloading .shimmer-placeholder-content .shimmer-placeholder-description {
+.shimmer-placeholder-isloading .shimmer-placeholder-description {
   height: 10px;
   flex: 1 0 100%;
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 60px;
   background: var(--shimmer-image-slide-start);
   background-image: -webkit-linear-gradient(left, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-mid) 40px, var(--shimmer-image-slide-start) 80px);
   background-image: -o-linear-gradient(left, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-mid) 40px, var(--shimmer-image-slide-start) 80px);
@@ -74,8 +75,7 @@
   -webkit-animation: shine-loading-container-items 2s infinite ease-out;
   animation: shine-loading-container-items 2s infinite ease-out;
 }
-
-.shimmer-placeholder-isloading .shimmer-placeholder-content .shimmer-placeholder-main-text {
+.shimmer-placeholder-isloading .shimmer-placeholder-main-text {
   height: 10px;
   width: 65%;
   margin-bottom: 10px;
@@ -88,7 +88,7 @@
   -webkit-animation: shine-loading-container-items 2s infinite ease-out;
   animation: shine-loading-container-items 2s infinite ease-out;
 }
-.shimmer-placeholder-isloading .shimmer-placeholder-content .shimmer-placeholder-sub-text {
+.shimmer-placeholder-isloading .shimmer-placeholder-sub-text {
   height: 10px;
   width: 50%;
   background: var(--shimmer-image-slide-start);
@@ -100,7 +100,7 @@
   -webkit-animation: shine-loading-container-items 2s infinite ease-out;
           animation: shine-loading-container-items 2s infinite ease-out;
 }
-.shimmer-placeholder-isloading .shimmer-placeholder-content .shimmer-placeholder-btn {
+.shimmer-placeholder-isloading .shimmer-placeholder-btn {
   width: 60px;
   height: 25px;
   background: var(--shimmer-image-slide-start);

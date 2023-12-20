@@ -15,8 +15,6 @@ const buildPlaceholder = (() => {
         <div class="shimmer-placeholder-image"></div>
         <div class="shimmer-placeholder-content">
           <div class="shimmer-placeholder-description"></div>
-          <div class="shimmer-placeholder-description"></div>
-          <div class="shimmer-placeholder-description"></div>
           <div class="shimmer-placeholder-text-container">
             <div class="shimmer-placeholder-main-text"></div>
             <div class="shimmer-placeholder-sub-text"></div>
