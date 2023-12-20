@@ -492,11 +492,16 @@ export default function decorate(block) {
   constructKeywordSearchEl(block);
   constructClearFilterBtn(block);
   appendToForm(block, renderTags());
-  initiateCoveoHeadlessSearch(handleSearchEngineSubscription).then((data) => {
-    handleCoveoHeadlessSearch(data);
-    decorateIcons(block);
-  });
-  decorateIcons(block);
+  initiateCoveoHeadlessSearch(handleSearchEngineSubscription)
+    .then(
+      (data) => {
+        handleCoveoHeadlessSearch(data);
+      },
+      (err) => {
+        throw new Error(err);
+      },
+    )
+    .finally(() => decorateIcons(block));
   handleDropdownToggle();
   onInputSearch(block);
   handleClearFilter(block);
