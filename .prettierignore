@@ -9,3 +9,4 @@ scripts/preact-htm/**.js
 plugins/rum-conversion/**
 scripts/analytics/alloy.min.js
 scripts/feedback/qualtrics/qualtrics-embed.js
+scripts/ffetch.js
