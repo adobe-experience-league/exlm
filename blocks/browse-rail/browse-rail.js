@@ -1,8 +1,8 @@
-import { fetchIndex, getBrowsePage } from '../../scripts/scripts.js';
+import ffetch from '../../scripts/ffetch.js';
+import { getBrowsePage } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   /* for now just some dummy output */
   block.textContent = getBrowsePage();
-  const index = await fetchIndex();
-  console.log(`index: ${index }`)
+  console.log(await ffetch('/query-index.json').first());
 }
