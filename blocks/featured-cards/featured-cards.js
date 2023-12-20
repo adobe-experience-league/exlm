@@ -3,10 +3,14 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { htmlToElement } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
-import { CONTENT_TYPES, DEFAULT_OPTIONS, ROLE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
+import { CONTENT_TYPES, ROLE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import SolutionDataService from '../../scripts/data-service/solutions-data-service.js';
 import { solutionsUrl } from '../../scripts/urls.js';
 
+export const DEFAULT_OPTIONS = Object.freeze({
+  ROLE: 'Role',
+  SOLUTION: 'Solution',
+});
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -60,31 +64,36 @@ export default async function decorate(block) {
     }
   });
 
-  const handleSolutionsService = async () => {
-    const solutionsService = new SolutionDataService(solutionsUrl);
-    const solutions = await solutionsService.fetchDataFromSource();
+  const handleSolutionsService = () =>
+    new Promise((resolve, reject) => {
+      try {
+        const solutionsService = new SolutionDataService(solutionsUrl);
+        const solutions = solutionsService.fetchDataFromSource();
+        resolve(solutions);
+      } catch (error) {
+        reject(error);
+      }
+    });
 
-    if (!solutions) {
-      throw new Error('An error occurred');
-    }
+  handleSolutionsService()
+    .then((solutions) => {
+      if (solutions?.length) {
+        const solutionsDropdownData = document.getElementById('solutions-dropdown');
+        const defaultSolutionOption = document.createElement('option');
+        defaultSolutionOption.text = DEFAULT_OPTIONS.SOLUTION;
+        solutionsDropdownData.add(defaultSolutionOption);
 
-    if (solutions?.length) {
-      const solutionsDropdownData = document.getElementById('solutions-dropdown');
-      const defaultSolutionOption = document.createElement('option');
-      defaultSolutionOption.text = DEFAULT_OPTIONS.SOLUTION;
-      solutionsDropdownData.add(defaultSolutionOption);
-
-      solutions.forEach((optionText) => {
-        const option = document.createElement('option');
-        option.text = optionText;
-        solutionsDropdownData.add(option);
-      });
-    }
-
-    return [];
-  };
-
-  handleSolutionsService();
+        solutions.forEach((optionText) => {
+          const option = document.createElement('option');
+          option.text = optionText;
+          solutionsDropdownData.add(option);
+        });
+      }
+    })
+    .catch((error) => {
+      /* eslint-disable-next-line no-console */
+      console.log(error);
+    });
 
   const filterResults = (data, contentTypesToFilter) => {
     const filteredResults = [];
