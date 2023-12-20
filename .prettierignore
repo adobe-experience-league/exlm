@@ -8,3 +8,4 @@ scripts/coveo-headless/libs/browser/*
 scripts/preact-htm/**.js
 plugins/rum-conversion/**
 scripts/analytics/alloy.min.js
+scripts/feedback/qualtrics/qualtrics-embed.js

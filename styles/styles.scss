@@ -655,6 +655,38 @@ img {
   }
 }
 
+/* the browse rail is hidden by default */
+main > div.browse-rail {
+  display: none;
+}
+
+/* browse rail breakpoint same as main hamburger menu */
+@media (width >= 1024px) {
+  body[class^='browse-'] > main {
+    display: grid;
+    grid-template:
+      'browse-rail main'
+      / 256px 1fr;
+
+    /* on pages with rails the max width must be on main */
+    max-width: var(--non-spectrum-max-width);
+    margin: auto;
+  }
+
+  main > div.section {
+    grid-column: 2;
+  }
+
+  main > div.section.browse-rail {
+    display: initial;
+    grid-column: 1;
+    grid-row: 1 / infinite;
+    width: 224px;
+    height: 100%;
+    padding: 0 0 0 32px;
+  }
+}
+
 /* three column layout */
 .docs {
   --exlm-font-size-h1: var(--spectrum-heading-size-l);

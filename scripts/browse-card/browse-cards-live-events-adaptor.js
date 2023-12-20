@@ -23,25 +23,29 @@ const BrowseCardsLiveEventsAdaptor = (() => {
    */
   const mapResultToCardsDataModel = (result) => {
     const contentType = CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY;
-    const { productFocus, eventTitle, eventDescription, startTime, endTime, cta } = result || {};
+    const { productFocus, eventTitle, eventDescription, startTime, endTime, time, cta } = result || {};
     const product = Array.isArray(productFocus) ? productFocus[0] : '';
     const { ctaLabel, ctaLink } = cta || {};
-
-    return {
-      ...browseCardDataModel,
-      contentType,
-      badgeTitle: CONTENT_TYPES.LIVE_EVENTS.LABEL,
-      product,
-      title: eventTitle || '',
-      description: eventDescription || '',
-      event: {
-        startTime,
-        endTime,
-      },
-      copyLink: ctaLink || '',
-      viewLink: ctaLink || '',
-      viewLinkText: ctaLabel || placeholders[`viewLink${convertToTitleCase(contentType)}`],
-    };
+    const eventStartTime = new Date(`${startTime}Z`);
+    const eventEndTime = new Date(`${endTime}Z`);
+    const currentDate = new Date();
+    if (currentDate >= eventStartTime && currentDate <= eventEndTime) {
+      return {
+        ...browseCardDataModel,
+        contentType,
+        badgeTitle: CONTENT_TYPES.LIVE_EVENTS.LABEL,
+        product,
+        title: eventTitle || '',
+        description: eventDescription || '',
+        event: {
+          time,
+        },
+        copyLink: ctaLink || '',
+        viewLink: ctaLink || '',
+        viewLinkText: ctaLabel || placeholders[`viewLink${convertToTitleCase(contentType)}`],
+      };
+    }
+    return null;
   };
 
   /**
@@ -51,7 +55,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
    */
   const mapResultsToCardsData = async (data) => {
     placeholders = await fetchPlaceholders();
-    return data.map((result) => mapResultToCardsDataModel(result));
+    return data.map((result) => mapResultToCardsDataModel(result)).filter((item) => item !== null);
   };
 
   return {

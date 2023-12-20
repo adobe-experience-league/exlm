@@ -102,7 +102,7 @@ export function buildSyntheticBlocks(main) {
  * return browse page theme if its browse page otherwise undefined.
  * theme = browse-* is set in bulk metadata for /en/browse paths.
  */
-export function getBrowsePage() {
+export function isBrowsePage() {
   const theme = getMetadata('theme');
   return theme.split(',').find((t) => t.toLowerCase().startsWith('browse-'));
 }
@@ -112,7 +112,7 @@ export function getBrowsePage() {
  */
 function addBrowseRail(main) {
   const leftRailSection = document.createElement('div');
-  leftRailSection.classList.add('browse-rail', getBrowsePage());
+  leftRailSection.classList.add('browse-rail', isBrowsePage());
   leftRailSection.append(buildBlock('browse-rail', []));
   main.append(leftRailSection);
 }
@@ -125,7 +125,7 @@ function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
     // if we are on a product browse page
-    if (getBrowsePage()) {
+    if (isBrowsePage()) {
       addBrowseRail(main);
     }
   } catch (error) {
@@ -366,6 +366,27 @@ export function loadPrevNextBtn() {
 }
 
 /**
+ * Copies all meta tags to window.EXL_META
+ * These are consumed by Qualtrics to pass additional data along with the feedback survey.
+ */
+function addMetaTagsToWindow() {
+  window.EXL_META = {};
+
+  document.querySelectorAll('meta').forEach((tag) => {
+    if (
+      typeof tag.name === 'string' &&
+      tag.name.length > 0 &&
+      typeof tag.content === 'string' &&
+      tag.content.length > 0
+    ) {
+      window.EXL_META[tag.name] = tag.content;
+    }
+  });
+
+  window.EXL_META.lang = document.documentElement.lang;
+}
+
+/**
  * Loads everything that happens a lot later,
  * without impacting the user experience.
  */
@@ -373,6 +394,9 @@ function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
+  // eslint-disable-next-line import/no-cycle
+  addMetaTagsToWindow();
+  // eslint-disable-next-line import/no-cycle
   if (isDocPage()) window.setTimeout(() => import('./feedback/feedback.js'), 3000);
 }
 

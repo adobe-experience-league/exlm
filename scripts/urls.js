@@ -6,3 +6,5 @@ export const liveEventsUrl = 'https://cdn.experienceleague.adobe.com/thumb/upcom
 export const adlsUrl = 'https://learning.adobe.com/catalog.result.json';
 export const searchUrl = 'https://experienceleague.adobe.com/search.html';
 export const articleUrl = 'https://experienceleague.adobe.com/api/articles/';
+export const solutionsUrl = 'https://experienceleague.adobe.com/api/solutions?page_size=100';
+export const adlsRedirectUrl = 'https://learning.adobe.com';

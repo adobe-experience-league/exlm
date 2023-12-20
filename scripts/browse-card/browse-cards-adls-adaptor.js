@@ -1,6 +1,7 @@
 import { fetchPlaceholders } from '../lib-franklin.js';
 import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
+import { adlsRedirectUrl } from '../urls.js';
 
 /**
  * Module that provides functionality for adapting ADLS results to BrowseCards data model
@@ -27,8 +28,8 @@ const BrowseCardsADLSAdaptor = (() => {
       product: solution,
       title: name || '',
       description: description || '',
-      copyLink: path || '',
-      viewLink: path || '',
+      copyLink: adlsRedirectUrl + path || '',
+      viewLink: adlsRedirectUrl + path || '',
       viewLinkText: placeholders[viewLinkTextPlaceholder],
     };
   };

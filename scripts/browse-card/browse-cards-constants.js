@@ -43,3 +43,15 @@ export const COVEO_SORT_OPTIONS = Object.freeze({
   MOST_RECENT: 'date descending',
   MOST_POPULAR: '@el_view_count descending',
 });
+
+export const ROLE_OPTIONS = Object.freeze({
+  ADMIN: 'Admin',
+  DEVELOPER: 'Developer',
+  USER: 'User',
+  LEADER: 'Leader',
+});
+
+export const DEFAULT_OPTIONS = Object.freeze({
+  ROLE: 'Role',
+  SOLUTION: 'Solution',
+});
