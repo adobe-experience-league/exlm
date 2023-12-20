@@ -501,7 +501,11 @@ export default function decorate(block) {
         throw new Error(err);
       },
     )
-    .finally(() => decorateIcons(block));
+    .finally(() => {
+      // enable/disable the clear filter btn based on latest data
+      updateClearFilterStatus(block);
+      decorateIcons(block);
+    });
   handleDropdownToggle();
   onInputSearch(block);
   handleClearFilter(block);
