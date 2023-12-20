@@ -311,21 +311,6 @@ export function htmlToElement(html) {
   return template.content.firstElementChild;
 }
 
-/**
- * @param {String} responseText
- */
-export function convertTextToHTML(responseText) {
-  // Create a new HTML document
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(responseText, 'text/html');
-
-  // Extract the body content
-  const bodyContent = doc.body.innerHTML;
-
-  // Return the HTML content
-  return bodyContent;
-}
-
 export function loadPrevNextBtn() {
   const mainDoc = document.querySelector('main > div:nth-child(1)');
   if (!mainDoc) return;

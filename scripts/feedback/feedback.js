@@ -1,5 +1,5 @@
 import { decorateIcons, getMetadata, loadCSS, fetchPlaceholders } from '../lib-franklin.js';
-import { convertTextToHTML, createTag, htmlToElement } from '../scripts.js'; // eslint-disable-line import/no-cycle
+import { createTag, htmlToElement } from '../scripts.js'; // eslint-disable-line import/no-cycle
 import { QUALTRICS_LOADED_EVENT_NAME } from './qualtrics/constants.js';
 import { embedQualtricsSurveyIntercept } from './qualtrics/qualtrics-embed.js';
 
@@ -403,7 +403,7 @@ export default async function loadFeedbackUi() {
 
   loadCSS(`${window.hlx.codeBasePath}/scripts/feedback/feedback.css`);
 
-  let feedbackHtml = convertTextToHTML(await feedbackFragment);
+  let feedbackHtml = await feedbackFragment;
   feedbackHtml = htmlToElement(feedbackHtml);
 
   const body = document.querySelector('body');
