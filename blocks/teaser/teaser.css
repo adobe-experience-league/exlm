@@ -261,27 +261,17 @@
     width: 100%;
     object-position: right;
   }
-}
-  
-/* when shown on a page with a rail */
-@media (min-width: 1024px) {
-  /* no longer goes from end to end */
-  body[class ^= 'browse-'] .section div.teaser-wrapper {
-    margin-left: unset;
-    margin-right: unset;
-  }
 
-  /* it gets a border */
+    /* it gets a border */
   body[class ^= 'browse-'] .section div.teaser-wrapper .background img {
     border-radius: 4px;
   }
-  
-  /* it gets a border */
+
   body[class ^= 'browse-'] .section div.teaser-wrapper .foreground {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
     min-height:240px;
-    padding: 0 var(--spectrum-spacing-600);
+    padding: 0 var(--space-token-xxl);
   }
 
   /* the main title, hidden in mobile */
@@ -301,12 +291,37 @@
     line-height: 16px;
     padding: 4px 14px 6px;
   }
+
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text {
+    width:55%;
+  }
+}
+  
+/* when shown on a page with a rail */
+@media (min-width: 1024px) {
+  /* no longer goes from end to end */
+  body[class ^= 'browse-'] .section div.teaser-wrapper {
+    margin-left: unset;
+    margin-right: unset;
+  }
+
+  body[class ^= 'browse-'] .section div.teaser-wrapper .foreground {
+    padding: 0 var(--space-token-l);
+  }
+
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text {
+    width:65%;
+  }
 }
 
 @media (min-width: 1200px) {
   /* the eybrow title */
   body:not([class ^= 'browse-']) .teaser.block > .foreground > .text > .eyebrow {
     font-size: var(--spectrum-font-size-100);
+  }
+
+  body[class ^= 'browse-'] .section div.teaser-wrapper .foreground {
+    padding: 0 var(--spectrum-spacing-600);
   }
 
   /* the main title, hidden in mobile */
