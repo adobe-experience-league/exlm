@@ -1,8 +1,8 @@
 import ffetch from '../../scripts/ffetch.js';
-import { getBrowsePage } from '../../scripts/scripts.js';
+import { isBrowsePage } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   /* for now just some dummy output */
-  block.textContent = getBrowsePage();
+  block.textContent = isBrowsePage();
   console.log(await ffetch('/query-index.json').first());
 }

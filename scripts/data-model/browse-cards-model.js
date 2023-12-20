@@ -7,8 +7,7 @@ const browseCardDataModel = {
   description: '',
   tags: [],
   event: {
-    startTime: '',
-    endTime: '',
+    time: '',
   },
   contributor: {
     thumbnail: '',
