@@ -213,6 +213,7 @@ button.browse-filters-clear:disabled:hover {
   display: grid;
   gap: 8px;
   grid-template-columns: 1fr;
+  margin: 0 auto;
 }
 
 button.browse-tags:hover,

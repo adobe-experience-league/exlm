@@ -58,7 +58,7 @@ export default async function coveoSearchEnginePOC(handleSearchEngineSubscriptio
 
         const headlessExperienceFacet = module.buildFacet(headlessSearchEngine, {
           options: {
-            field: 'el_experience', // TODO : Is this the right name?
+            field: 'el_level',
           },
         });
 
@@ -92,12 +92,15 @@ export default async function coveoSearchEnginePOC(handleSearchEngineSubscriptio
           } else {
             window.location.hash = `#q=${key || ''}&${fragment()}`;
           }
-          // headlessSearchBox.submit();
         };
         const clearSearchHandler = () => {
           const [currentSearchString] = window.location.hash.match(/\bq=([^&#]*)/) || [];
           if (currentSearchString) {
-            window.location.hash = window.location.hash.replace(currentSearchString, `q=""`);
+            let updatedHash = window.location.hash.replace(currentSearchString, '');
+            if (updatedHash.slice(1).startsWith('&')) {
+              updatedHash = `#${updatedHash.slice(2)}`;
+            }
+            window.location.hash = updatedHash;
           }
         };
         const searchInputKeyupHandler = (e) => {
@@ -110,7 +113,7 @@ export default async function coveoSearchEnginePOC(handleSearchEngineSubscriptio
             submitSearchHandler();
           }
         };
-        const searchInputOnChangeHandler = (e) => {
+        const searchInputEventHandler = (e) => {
           if (e.target.value === '') {
             clearSearchHandler();
           }
@@ -127,7 +130,7 @@ export default async function coveoSearchEnginePOC(handleSearchEngineSubscriptio
           searchInputKeydownHandler,
           searchInputKeyupHandler,
           clearSearchHandler,
-          searchInputOnChangeHandler,
+          searchInputEventHandler,
         });
       })
       .catch((e) => {

@@ -14,7 +14,7 @@ const coveoFacetMap = {
 const coveoFacetFilterNameMap = {
   el_type: 'Content Type',
   el_role: 'Role',
-  el_experience: 'Experience Level',
+  el_level: 'Experience Level',
 };
 
 const isBrowseProdPage = getMetadata('browse-product');
@@ -336,7 +336,6 @@ function clearSelectedFilters(block) {
   clearSearchQuery(block);
   updateClearFilterStatus(block);
   window.location.hash = '';
-  window.history.pushState(null, document.title, window.location.hash);
 }
 
 function handleClearFilter(block) {
@@ -399,11 +398,73 @@ function decorateBlockTitle(block) {
   secondChild.parentNode.replaceChild(pEl, secondChild);
 }
 
+function handleUriHash() {
+  const hash = fragment();
+  const browseFiltersSection = document.querySelector('.browse-filters-form');
+  const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
+  const searchInput = filterInputSection.querySelector('input');
+  if (!hash) {
+    clearAllSelectedTag(browseFiltersSection);
+    updateClearFilterStatus(browseFiltersSection);
+    searchInput.value = '';
+    return;
+  }
+  const decodedHash = decodeURIComponent(hash);
+
+  clearAllSelectedTag(browseFiltersSection);
+  let containsSearchQuery = false;
+  const filtersInfo = decodedHash.split('&').filter((s) => !!s);
+
+  filtersInfo.forEach((filterInfo) => {
+    const [facetKeys, facetValueInfo] = filterInfo.split('=');
+    const facetKey = facetKeys.replace('f-', '');
+    const facetValues = facetValueInfo.split(',');
+    // console.log('facetKey', facetKey);
+    // console.log('facetValues', facetValues);
+    const keyName = coveoFacetFilterNameMap[facetKey];
+    if (keyName) {
+      const filterOptionEl = browseFiltersSection.querySelector(`.filter-dropdown[data-filter-type="${keyName}"]`);
+      if (filterOptionEl) {
+        facetValues.forEach((facetValue) => {
+          const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
+          inputEl.checked = true;
+          appendTag(browseFiltersSection, {
+            name: keyName,
+            value: facetValue,
+          });
+        });
+        const ddObject = getObjectByName(dropdownOptions, keyName);
+        const btnEl = filterOptionEl.querySelector(':scope > button');
+        const selectedCount = facetValues.length;
+        ddObject.selected = selectedCount;
+        if (selectedCount === 0) {
+          btnEl.firstChild.textContent = keyName;
+        } else {
+          btnEl.firstChild.textContent = `${keyName} (${selectedCount})`;
+        }
+      }
+    } else if (facetKey === 'q') {
+      containsSearchQuery = true;
+      const [searchValue] = facetValues;
+      if (searchValue) {
+        searchInput.value = searchValue.trim();
+      } else {
+        searchInput.value = '';
+      }
+    }
+  });
+  if (!containsSearchQuery) {
+    searchInput.value = '';
+  }
+  updateClearFilterStatus(browseFiltersSection);
+  window.headlessSearchEngine.executeFirstSearch();
+}
+
 function handleCoveoHeadlessSearch({
   submitSearchHandler,
   searchInputKeyupHandler,
   searchInputKeydownHandler,
-  searchInputOnChangeHandler,
+  searchInputEventHandler,
 }) {
   const filterResultsEl = document.createElement('div');
   filterResultsEl.classList.add('browse-filters-results');
@@ -412,51 +473,14 @@ function handleCoveoHeadlessSearch({
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchIcon = filterInputSection.querySelector('.icon-search');
   const searchInput = filterInputSection.querySelector('input');
+  browseFiltersSection.appendChild(filterResultsEl);
+
   searchIcon.addEventListener('click', submitSearchHandler);
   searchInput.addEventListener('keyup', searchInputKeyupHandler);
   searchInput.addEventListener('keydown', searchInputKeydownHandler);
-  searchInput.addEventListener('change', searchInputOnChangeHandler);
-
-  browseFiltersSection.appendChild(filterResultsEl);
-
-  const hash = fragment();
-  if (hash) {
-    const decodedHash = decodeURIComponent(hash);
-    decodedHash.split('&').forEach((filterInfo) => {
-      const [facetKeys, facetValueInfo] = filterInfo.split('=');
-      const facetKey = facetKeys.replace('f-', '');
-      const facetValues = facetValueInfo.split(',');
-      // console.log('facetKey', facetKey);
-      // console.log('facetValues', facetValues);
-      const keyName = coveoFacetFilterNameMap[facetKey];
-      if (keyName) {
-        const filterOptionEl = browseFiltersSection.querySelector(`.filter-dropdown[data-filter-type="${keyName}"]`);
-        if (filterOptionEl) {
-          facetValues.forEach((facetValue) => {
-            const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
-            inputEl.checked = true;
-            appendTag(browseFiltersSection, {
-              name: keyName,
-              value: facetValue,
-            });
-          });
-          const ddObject = getObjectByName(dropdownOptions, keyName);
-          const btnEl = filterOptionEl.querySelector(':scope > button');
-          const selectedCount = facetValues.length;
-          ddObject.selected = selectedCount;
-          if (selectedCount === 0) {
-            btnEl.firstChild.textContent = keyName;
-          } else {
-            btnEl.firstChild.textContent = `${keyName} (${selectedCount})`;
-          }
-        }
-      } else if (facetKey === 'q') {
-        const [searchValue] = facetValues;
-        searchInput.value = searchValue;
-      }
-    });
-    window.headlessSearchEngine.executeFirstSearch();
-  }
+  searchInput.addEventListener('input', searchInputEventHandler);
+  window.addEventListener('hashchange', handleUriHash);
+  handleUriHash();
 }
 
 async function handleSearchEngineSubscription() {
