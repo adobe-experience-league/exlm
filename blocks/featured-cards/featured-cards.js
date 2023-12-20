@@ -5,7 +5,6 @@ import buildCard from "../../scripts/browse-card/browse-card.js";
 import buildPlaceholder from "../../scripts/browse-card/browse-card-placeholder.js";
 import {
   CONTENT_TYPES,
-  DEFAULT_OPTIONS,
   ROLE_OPTIONS,
 } from "../../scripts/browse-card/browse-cards-constants.js";
 import SolutionDataService from "../../scripts/data-service/solutions-data-service.js";
@@ -24,6 +23,8 @@ export default async function decorate(block) {
     ?.toLowerCase();
   const linkTextElement = block.querySelector("div:nth-child(4) > div > a");
   const noOfResults = 16;
+  const ROLE = 'Role';
+  const SOLUTION = 'Solution';
 
   block.innerHTML = "";
   const headerDiv = htmlToElement(`
@@ -56,7 +57,7 @@ export default async function decorate(block) {
 
   const rolesDropdownData = document.getElementById("roles-dropdown");
   const defaultRolesOption = document.createElement("option");
-  defaultRolesOption.text = DEFAULT_OPTIONS.ROLE;
+  defaultRolesOption.text = ROLE;
   rolesDropdownData.add(defaultRolesOption);
   
   Object.keys(ROLE_OPTIONS).forEach(roleData => {
@@ -82,7 +83,7 @@ export default async function decorate(block) {
       if (solutions?.length) {
         const solutionsDropdownData = document.getElementById("solutions-dropdown");
         const defaultSolutionOption = document.createElement("option");
-        defaultSolutionOption.text = DEFAULT_OPTIONS.SOLUTION;
+        defaultSolutionOption.text = SOLUTION;
         solutionsDropdownData.add(defaultSolutionOption);
 
         solutions.forEach((optionText) => {
@@ -191,7 +192,7 @@ export default async function decorate(block) {
   const rolesDropdown = block.querySelector(".roles-dropdown");
 
   rolesDropdown.addEventListener("change", function handleDropdownChange() {
-    const roleValue = this.value === DEFAULT_OPTIONS.ROLE ? [] : [this.value];
+    const roleValue = this.value === ROLE ? [] : [this.value];
     param.role = roleValue;
   
     [...contentDiv.children].forEach((cards) => {
@@ -206,7 +207,7 @@ export default async function decorate(block) {
   const solutionsDropdown = block.querySelector(".solutions-dropdown");
 
   solutionsDropdown.addEventListener("change", function handleSolutionDropdownChange() {
-    const solutionValue = this.value === DEFAULT_OPTIONS.SOLUTION ? [] : [this.value];
+    const solutionValue = this.value === SOLUTION ? [] : [this.value];
     param.product = solutionValue;
   
     [...contentDiv.children].forEach((cards) => {

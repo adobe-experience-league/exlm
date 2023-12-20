@@ -50,8 +50,3 @@ export const ROLE_OPTIONS = Object.freeze({
   USER: 'User',
   LEADER: 'Leader'
 });
-
-export const DEFAULT_OPTIONS = Object.freeze({
-  ROLE: 'Role',
-  SOLUTION: 'Solution'
-});
