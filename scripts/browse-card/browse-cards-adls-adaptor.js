@@ -28,8 +28,8 @@ const BrowseCardsADLSAdaptor = (() => {
       product: solution,
       title: name || '',
       description: description || '',
-      copyLink: adlsRedirectUrl+path || '',
-      viewLink: adlsRedirectUrl+path || '',
+      copyLink: adlsRedirectUrl + path || '',
+      viewLink: adlsRedirectUrl + path || '',
       viewLinkText: placeholders[viewLinkTextPlaceholder],
     };
   };
