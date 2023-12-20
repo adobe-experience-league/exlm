@@ -4,8 +4,8 @@ Experience League site implementation on https://aem.live
 
 ## Environments
 
-- Preview: https://main--exlm-stage--adobe-experience-league.hlx.page/en/
-- Live: https://main--exlm-stage--adobe-experience-league.hlx.live/en/
+- Preview: https://main--exlm-stage--adobe-experience-league.hlx.page/
+- Live: https://main--exlm-stage--adobe-experience-league.hlx.live/
 
 ## Getting started
 
