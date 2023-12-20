@@ -132,6 +132,76 @@ export default async function coveoSearchEnginePOC(handleSearchEngineSubscriptio
           clearSearchHandler,
           searchInputEventHandler,
         });
+
+        const criteria = [
+          ['Relevance', module.buildRelevanceSortCriterion()],
+        ];
+
+        const initialCriterion = criteria[0][1];
+
+        const headlessBuildSort = module.buildSort(headlessSearchEngine, {
+          initialState: {criterion: initialCriterion},
+        });
+
+        const sortWrapperEl = document.createElement("div");
+          sortWrapperEl.classList.add('sort-dropdown-content');
+
+        const sortingOptions = [
+            { label: 'Relevance', sortCriteria: 'relevancy' },
+            { label: 'Popularity', sortCriteria: 'el_view_count descending' },
+            { label: 'Newest', sortCriteria: 'descending' },
+            { label: 'Oldest', sortCriteria: 'ascending' }
+        ];
+
+        sortingOptions.forEach(option => {
+            const aElement = document.createElement('a');
+              aElement.setAttribute("data-sort-criteria", option.sortCriteria);
+              aElement.setAttribute("data-sort-caption", option.label);
+              aElement.innerHTML = option.label;
+              sortWrapperEl.appendChild(aElement);
+        });
+
+        document.querySelector(".sort-container").appendChild(sortWrapperEl);
+
+        const sortAnchors = document.querySelectorAll(".sort-dropdown-content a");
+        const sortBtn = document.querySelector(".sort-drop-btn");
+
+        headlessBuildSort.sortBy(module.buildRelevanceSortCriterion());
+
+        if(sortAnchors.length > 0){
+          sortAnchors.forEach((anchor) =>{
+            const anchorCaption = anchor.getAttribute("data-sort-caption");
+
+            if(anchorCaption === sortBtn.innerHTML){
+              anchor.classList.add("selected");
+            };
+
+            anchor.addEventListener("click", ()=>{
+              sortAnchors.forEach((anch) =>{
+                anch.classList.remove("selected");
+              });
+              anchor.classList.add("selected");
+              sortBtn.innerHTML = anchorCaption;
+
+              switch(anchor.innerHTML) {
+                case "Relevance":
+                  headlessBuildSort.sortBy(module.buildRelevanceSortCriterion());
+                  break;
+                case "Popularity":
+                  headlessBuildSort.sortBy(module.buildFieldSortCriterion("el_view_count","descending"));
+                  break;
+                case "Newest":
+                  headlessBuildSort.sortBy(module.buildDateSortCriterion("descending"));
+                  break;
+                case "Oldest":
+                  headlessBuildSort.sortBy(module.buildDateSortCriterion("ascending"));
+                    break;
+                default:
+                  headlessBuildSort.sortBy(module.buildRelevanceSortCriterion());
+              }
+            });
+          });
+        }
       })
       .catch((e) => {
         // eslint-disable-next-line
@@ -139,4 +209,4 @@ export default async function coveoSearchEnginePOC(handleSearchEngineSubscriptio
         reject(e);
       });
   });
-}
+} 
