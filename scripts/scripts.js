@@ -366,6 +366,27 @@ export function loadPrevNextBtn() {
 }
 
 /**
+ * Copies all meta tags to window.EXL_META
+ * These are consumed by Qualtrics to pass additional data along with the feedback survey.
+ */
+function addMetaTagsToWindow() {
+  window.EXL_META = {};
+
+  document.querySelectorAll('meta').forEach((tag) => {
+    if (
+      typeof tag.name === 'string' &&
+      tag.name.length > 0 &&
+      typeof tag.content === 'string' &&
+      tag.content.length > 0
+    ) {
+      window.EXL_META[tag.name] = tag.content;
+    }
+  });
+
+  window.EXL_META.lang = document.documentElement.lang;
+}
+
+/**
  * Loads everything that happens a lot later,
  * without impacting the user experience.
  */
@@ -373,6 +394,9 @@ function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
+  // eslint-disable-next-line import/no-cycle
+  addMetaTagsToWindow();
+  // eslint-disable-next-line import/no-cycle
   if (isDocPage()) window.setTimeout(() => import('./feedback/feedback.js'), 3000);
 }
 
