@@ -512,29 +512,29 @@ async function handleSearchEngineSubscription() {
 
 function renderSortContainer(block) {
   const browseTagsForm = block.querySelector('.browse-filters-form');
-  const sortContainer = document.createElement("div");
-    sortContainer.classList.add("sort-container");
-    sortContainer.innerHTML = `<span>Sort</span>
+  const sortContainer = document.createElement('div');
+  sortContainer.classList.add('sort-container');
+  sortContainer.innerHTML = `<span>Sort</span>
                   <button class="sort-drop-btn">Relevance</button>`;
-    
-    browseTagsForm.insertBefore(sortContainer, browseTagsForm.children[1]);
 
-    const dropDownBtn = document.querySelector(".sort-drop-btn");
+  browseTagsForm.insertBefore(sortContainer, browseTagsForm.children[1]);
 
-    if(dropDownBtn){
-      dropDownBtn.addEventListener("click", () =>{
-        dropDownBtn.classList.toggle("active");
-        dropDownBtn.nextSibling.classList.toggle("show");
-      });
-    };
+  const dropDownBtn = document.querySelector('.sort-drop-btn');
 
-    // Close the dropdown menu if the user clicks outside of it
-    window.addEventListener("click", (event) => {
-      if (!event.target.matches(".sort-drop-btn") && !event.target.nextSibling) {
-        const sortDropDown = document.querySelector(".sort-dropdown-content");
-          sortDropDown.classList.remove("show");
-      }
+  if (dropDownBtn) {
+    dropDownBtn.addEventListener('click', () => {
+      dropDownBtn.classList.toggle('active');
+      dropDownBtn.nextSibling.classList.toggle('show');
     });
+  }
+
+  // Close the dropdown menu if the user clicks outside of it
+  window.addEventListener('click', (event) => {
+    if (!event.target.matches('.sort-drop-btn') && !event.target.nextSibling) {
+      const sortDropDown = document.querySelector('.sort-dropdown-content');
+      sortDropDown.classList.remove('show');
+    }
+  });
 }
 
 export default function decorate(block) {
