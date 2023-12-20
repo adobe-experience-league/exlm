@@ -456,17 +456,12 @@
         "description": "Sets the text url."
       },
       {
-        "component": "checkbox-group",
+        "component": "multiselect",
         "valueType": "string",
         "name": "contentTypes",
-        "value": "",
-        "label": "Content type(s)",
-        "description": "Sets the content type(s).",
+        "label": "Filter by Content Type",
+        "description": "Select the content type(s).",
         "options": [
-          {
-            "name": "All",
-            "value": "certification,community,course,documentation,event,troubleshooting,tutorial"
-          },
           {
             "name": "Certification",
             "value": "certification"
@@ -498,102 +493,12 @@
         ]
       },
       {
-        "component": "multiselect",
-        "name": "solutions",
-        "label": "Solution(s)",
+        "component": "aem-tag",
+        "name": "cq:tags",
+        "label": "Solution(s) or Feature(s)",
         "valueType": "string",
-        "description": "Sets the solution(s) param.",
-        "options": [
-          {
-            "name": "Experience Manager",
-            "value": "Experience Manager"
-          },
-          {
-            "name": "Marketo Engage",
-            "value": "Marketo Engage"
-          },
-          {
-            "name": "Workfront",
-            "value": "Workfront"
-          },
-          {
-            "name": "Analytics",
-            "value": "Analytics"
-          },
-          {
-            "name": "Campaign",
-            "value": "Campaign"
-          },
-          {
-            "name": "Experience Platform",
-            "value": "Experience Platform"
-          },
-          {
-            "name": "Commerce",
-            "value": "Commerce"
-          },
-          {
-            "name": "Target",
-            "value": "Target"
-          },
-          {
-            "name": "Experience Cloud",
-            "value": "Experience Cloud"
-          },
-          {
-            "name": "Audience Manager",
-            "value": "Audience Manager"
-          }
-        ]
-      },
-      {
-        "component": "multiselect",
-        "name": "features",
-        "label": "Feature(s)",
-        "valueType": "string",
-        "description": "Sets the Feature(s) param.",
-        "options": [
-          {
-            "name": "Experience Cloud Integration",
-            "value": "Experience Cloud Integration"
-          },
-          {
-            "name": "Events",
-            "value": "Events"
-          },
-          {
-            "name": "Workspace",
-            "value": "Workspace"
-          },
-          {
-            "name": "Workfront API",
-            "value": "Workfront API"
-          },
-          {
-            "name": "User Management",
-            "value": "User Management"
-          },
-          {
-            "name": "Workbench",
-            "value": "Workbench"
-          },
-          {
-            "name": "Video",
-            "value": "Video"
-          },
-          {
-            "name": "Workflow",
-            "value": "Workflow"
-          },
-          {
-            "name": "User Roles",
-            "value": "User Roles"
-          },
-          {
-            "name": "Target Integration",
-            "value": "Target Integration"
-          }
-        ]
+        "rootPath": "/content/cq:tags/exl",
+        "description": "Optional - all are included if no selection is made."
       },
       {
         "component": "multiselect",
@@ -602,10 +507,6 @@
         "valueType": "string",
         "description": "Sets the Role(s).",
         "options": [
-          {
-            "name": "All",
-            "value": "Admin,Developer,Leader,User"
-          },
           {
             "name": "Admin",
             "value": "Admin"
@@ -632,10 +533,6 @@
         "description": "Sets the Experience Level(s).",
         "options": [
           {
-            "name": "All",
-            "value": "Beginner,Intermediate,Advanced"
-          },
-          {
             "name": "Beginner",
             "value": "Beginner"
           },
@@ -650,76 +547,23 @@
         ]
       },
       {
-        "component": "multiselect",
-        "name": "industries",
-        "label": "Industries",
-        "valueType": "string",
-        "description": "Sets the industries param.",
-        "options": [
-          {
-            "name": "All",
-            "value": "Financial services,High tech,Government,Telecommunications,Healthcare,Education.Manufacturing,Media and entertainment,Retail,Travel and hospitality"
-          },
-          {
-            "name": "Financial services",
-            "value": "Financial services"
-          },
-          {
-            "name": "High tech",
-            "value": "High tech"
-          },
-          {
-            "name": "Government",
-            "value": "Government"
-          },
-          {
-            "name": "Telecommunications",
-            "value": "Telecommunications"
-          },
-          {
-            "name": "Healthcare",
-            "value": "Healthcare"
-          },
-          {
-            "name": "Education",
-            "value": "Education"
-          },
-          {
-            "name": "Manufacturing",
-            "value": "Manufacturing"
-          },
-          {
-            "name": "Media and entertainment",
-            "value": "Media and entertainment"
-          },
-          {
-            "name": "Retail",
-            "value": "Retail"
-          },
-          {
-            "name": "Travel and hospitality",
-            "value": "Travel and hospitality"
-          }
-        ]
-      },
-      {
-        "component": "select",
+        "component": "radio-group",
         "name": "sortBy",
-        "value": "",
+        "value": "RELEVANCE",
         "label": "Sort by",
         "valueType": "string",
         "options": [
           {
             "name": "Relevance",
-            "value": "Relevance"
+            "value": "RELEVANCE"
           },
           {
             "name": "Most recent",
-            "value": "Most recent"
+            "value": "MOST_RECENT"
           },
           {
             "name": "Most popular",
-            "value": "Most popular"
+            "value": "MOST_POPULAR"
           }
         ]
       }
@@ -1143,6 +987,84 @@
   },
   {
     "id": "browse-filters",
+    "fields": []
+  },
+  {
+    "id": "featured-cards",
+    "fields": [
+      {
+        "component": "text-input",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "valueType": "string",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-area",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "valueType": "string",
+        "description": "Sets the description."
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "contentTypes",
+        "label": "Content type(s)",
+        "description": "Select the content type(s).",
+        "options": [
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "text-input",
+        "name": "linkText",
+        "value": "",
+        "label": "Link Text",
+        "valueType": "string",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text-input",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "valueType": "string",
+        "description": "Sets the text url."
+      }
+    ]
+  },
+  {
+    "id": "events-cards",
     "fields": [
       {
         "component": "text-input",
@@ -1150,14 +1072,192 @@
         "name": "heading",
         "value": "",
         "label": "Heading",
-        "description": "Sets the heading for Browse Filters."
+        "description": "Sets the heading."
       },
       {
-        "component": "text-area",
+        "component": "text-input",
         "valueType": "string",
-        "name": "description",
+        "name": "tooltip",
         "value": "",
-        "label": "Sets the description for Browse Filters"
+        "label": "Tooltip",
+        "description": "Sets the tooltip."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "linkText",
+        "value": "",
+        "label": "Link text",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "description": "Sets the text url."
+      },
+      {
+        "component": "aem-tag",
+        "name": "cq:tags",
+        "label": "Solution(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/solution",
+        "description": "Optional - all are included if no selection is made."
+      }
+    ]
+  },
+  {
+    "id": "adls-cards",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "tooltip",
+        "value": "",
+        "label": "Tooltip",
+        "description": "Sets the tooltip."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "linkText",
+        "value": "",
+        "label": "Link text",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "description": "Sets the text url."
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "solutions",
+        "label": "Solution(s)",
+        "description": "All are included if no selection is made",
+        "options": [
+          {
+            "name": "Adobe Commerce (Magento)",
+            "value": "Adobe Commerce (Magento)"
+          },
+          {
+            "name": "Adobe Workfront",
+            "value": "Adobe Workfront"
+          },
+          {
+            "name": "Analytics",
+            "value": "Analytics"
+          },
+          {
+            "name": "Audience Manager",
+            "value": "Audience Manager"
+          },
+          {
+            "name": "Campaign Classic",
+            "value": "Campaign Classic"
+          },
+          {
+            "name": "Campaign Standard",
+            "value": "Campaign Standard"
+          },
+          {
+            "name": "Experience Cloud",
+            "value": "Experience Cloud"
+          },
+          {
+            "name": "Experience Manager Assets (DAM)",
+            "value": "Experience Manager Assets (DAM)"
+          },
+          {
+            "name": "Experience Manager Forms",
+            "value": "Experience Manager Forms"
+          },
+          {
+            "name": "Experience Manager Sites (CMS)",
+            "value": "Experience Manager Sites (CMS)"
+          },
+          {
+            "name": "Experience Platform",
+            "value": "Experience Platform"
+          },
+          {
+            "name": "Journey Optimizer",
+            "value": "Journey Optimizer"
+          },
+          {
+            "name": "Marketo Engage",
+            "value": "Marketo Engage"
+          },
+          {
+            "name": "Target",
+            "value": "Target"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "roles",
+        "label": "Role(s)",
+        "description": "All are included if no selection is made",
+        "options": [
+          {
+            "name": "Administrator",
+            "value": "Administrator"
+          },
+          {
+            "name": "Architect",
+            "value": "Architect"
+          },
+          {
+            "name": "Business User",
+            "value": "Business User"
+          },
+          {
+            "name": "Creative",
+            "value": "Creative"
+          },
+          {
+            "name": "Developer",
+            "value": "Developer"
+          }
+        ]
+      },
+      {
+        "component": "radio-group",
+        "name": "sortby",
+        "value": "recommended",
+        "label": "Sort by",
+        "description": "'Sorts baseed on the Options",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Recommended",
+            "value": "recommended"
+          },
+          {
+            "name": "Alphabetical (A-Z)",
+            "value": "ascending"
+          },
+          {
+            "name": "Alphabetical (Z-A)",
+            "value": "descending"
+          }
+        ]
       }
     ]
   }

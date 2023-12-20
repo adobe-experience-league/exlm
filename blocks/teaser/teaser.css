@@ -149,7 +149,6 @@
   .teaser.block,
   .teaser.block.dark {
     position: relative;
-    background-color: var(--background-color);
     padding: 0;
     overflow: hidden;
   }
@@ -265,6 +264,27 @@
   }
 }
   
+/* when shown on a page with a rail */
+@media (min-width: 1024px) {
+  /* no longer goes from end to end */
+  body[class ^= 'browse-'] .section div.teaser-wrapper {
+    margin-left: unset;
+    margin-right: unset;
+  }
+
+  /* it gets a border */
+  body[class ^= 'browse-'] .section div.teaser-wrapper .background img {
+    border-radius: 4px;
+  }
+  
+  /* it gets a border */
+  body[class ^= 'browse-'] .section div.teaser-wrapper .foreground {
+    border: 1px solid var(--spectrum-gray-200);
+    border-radius: 4px;
+    min-height:240px;
+  }
+}
+
 @media (min-width: 1200px) {
   /* the eybrow title */
   .teaser.block > .foreground > .text > .eyebrow {

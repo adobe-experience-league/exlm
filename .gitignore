@@ -8,3 +8,5 @@ helix-importer-ui
 *.bak
 .idea
 /scripts/coveo/node_modules*
+.aio
+.env

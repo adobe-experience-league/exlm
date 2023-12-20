@@ -87,6 +87,11 @@ header {
   }
 }
 
+.header-wrapper {
+  /* header is always white */
+  background-color: var(--color-white);
+}
+
 .header {
   padding-right: var(--header-padding-x);
   height: 100%;

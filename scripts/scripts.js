@@ -1,6 +1,7 @@
 /* eslint-disable no-bitwise */
 import {
   sampleRUM,
+  buildBlock,
   loadHeader,
   loadFooter,
   decorateIcons,
@@ -14,7 +15,16 @@ import {
   decorateButtons,
   getMetadata,
   loadScript,
+  toClassName,
 } from './lib-franklin.js';
+import {
+  analyticsTrack404,
+  analyticsTrackConversion,
+  analyticsTrackCWV,
+  analyticsTrackError,
+  initAnalyticsTrackingQueue,
+  setupAnalyticsTrackingWithAlloy,
+} from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
@@ -89,12 +99,35 @@ export function buildSyntheticBlocks(main) {
 }
 
 /**
+ * return browse page theme if its browse page otherwise undefined.
+ * theme = browse-* is set in bulk metadata for /en/browse paths.
+ */
+export function getBrowsePage() {
+  const theme = getMetadata('theme');
+  return theme.split(',').find((t) => t.toLowerCase().startsWith('browse-'));
+}
+
+/**
+ * add a section for the left rail when on a browse page.
+ */
+function addBrowseRail(main) {
+  const leftRailSection = document.createElement('div');
+  leftRailSection.classList.add('browse-rail', getBrowsePage());
+  leftRailSection.append(buildBlock('browse-rail', []));
+  main.append(leftRailSection);
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
+    // if we are on a product browse page
+    if (getBrowsePage()) {
+      addBrowseRail(main);
+    }
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -160,6 +193,7 @@ async function loadEager(doc) {
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
+    await initAnalyticsTrackingQueue();
     decorateMain(main);
     document.body.classList.add('appear');
     await waitForLCP(LCP_BLOCKS);
@@ -199,14 +233,10 @@ export async function loadIms() {
           'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read',
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
         debug: false,
-        onReady: (args) => {
+        onReady: () => {
           // eslint-disable-next-line no-console
-          console.log('Adobe IMS Ready!', args);
-          resolve({
-            ...args,
-            // eslint-disable-next-line no-undef
-            adobeIMS,
-          });
+          console.log('Adobe IMS Ready!');
+          resolve(); // resolve the promise, consumers can now use window.adobeIMS
           clearTimeout(timeout);
         },
         onError: reject,
@@ -237,6 +267,14 @@ async function loadLazy(doc) {
   sampleRUM('lazy');
   sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
   sampleRUM.observe(main.querySelectorAll('picture > img'));
+
+  const context = {
+    getMetadata,
+    toClassName,
+  };
+  // eslint-disable-next-line import/no-relative-packages
+  const { initConversionTracking } = await import('../plugins/rum-conversion/src/index.js');
+  await initConversionTracking.call(context, document);
 }
 
 /**
@@ -355,8 +393,77 @@ async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadRails();
+  const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
   loadDelayed();
+  await setupAnalytics;
   loadPrevNextBtn();
 }
+
+const cwv = {};
+
+// Forward the RUM CWV cached measurements to edge using WebSDK before the page unloads
+window.addEventListener('beforeunload', () => {
+  if (!Object.keys(cwv).length) return;
+  analyticsTrackCWV(cwv);
+});
+
+// Callback to RUM CWV checkpoint in order to cache the measurements
+sampleRUM.always.on('cwv', async (data) => {
+  if (!data.cwv) return;
+  Object.assign(cwv, data.cwv);
+});
+
+sampleRUM.always.on('404', analyticsTrack404);
+sampleRUM.always.on('error', analyticsTrackError);
+
+// Declare conversionEvent, bufferTimeoutId and tempConversionEvent,
+// outside the convert function to persist them for buffering between
+// subsequent convert calls
+const CONVERSION_EVENT_TIMEOUT_MS = 100;
+let bufferTimeoutId;
+let conversionEvent;
+let tempConversionEvent;
+sampleRUM.always.on('convert', (data) => {
+  const { element } = data;
+  // eslint-disable-next-line no-undef
+  if (!element || !alloy) {
+    return;
+  }
+
+  if (element.tagName === 'FORM') {
+    conversionEvent = {
+      ...data,
+      event: 'Form Complete',
+    };
+
+    if (
+      conversionEvent.event === 'Form Complete' &&
+      // Check for undefined, since target can contain value 0 as well, which is falsy
+      (data.target === undefined || data.source === undefined)
+    ) {
+      // If a buffer has already been set and tempConversionEvent exists,
+      // merge the two conversionEvent objects to send to alloy
+      if (bufferTimeoutId && tempConversionEvent) {
+        conversionEvent = { ...tempConversionEvent, ...conversionEvent };
+      } else {
+        // Temporarily hold the conversionEvent object until the timeout is complete
+        tempConversionEvent = { ...conversionEvent };
+
+        // If there is partial form conversion data,
+        // set the timeout buffer to wait for additional data
+        bufferTimeoutId = setTimeout(async () => {
+          analyticsTrackConversion({ ...conversionEvent });
+          tempConversionEvent = undefined;
+          conversionEvent = undefined;
+        }, CONVERSION_EVENT_TIMEOUT_MS);
+      }
+    }
+    return;
+  }
+
+  analyticsTrackConversion({ ...data });
+  tempConversionEvent = undefined;
+  conversionEvent = undefined;
+});
 
 loadPage();
