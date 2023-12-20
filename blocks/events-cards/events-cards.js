@@ -57,7 +57,7 @@ export default async function decorate(block) {
     contentType,
   };
 
-  block.innerHTML += buildPlaceholder;
+  block.appendChild(buildPlaceholder())
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(parameters);
   browseCardsContent
     .then((data) => {

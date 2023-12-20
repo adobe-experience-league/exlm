@@ -69,6 +69,6 @@ export default async function decorate(block) {
 
   block.innerHTML = '';
   block.appendChild(headerDiv);
-  block.innerHTML += buildPlaceholder;
+  block.appendChild(buildPlaceholder())
   block.appendChild(contentDiv);
 }

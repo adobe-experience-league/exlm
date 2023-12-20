@@ -73,7 +73,8 @@ export default async function decorate(block) {
     noOfResults,
   };
 
-  block.innerHTML += buildPlaceholder;
+  block.appendChild(buildPlaceholder())
+
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent
     .then((data) => {
