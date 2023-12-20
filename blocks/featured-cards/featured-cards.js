@@ -67,32 +67,36 @@ export default async function decorate(block) {
     }
   });  
 
-  const handleSolutionsService = async () => {
-    const solutionsService = new SolutionDataService(solutionsUrl);
-    const solutions = await solutionsService.fetchDataFromSource();
-    
-    if (!solutions) {
-      throw new Error("An error occurred");
+  const handleSolutionsService = () => new Promise((resolve, reject) => {
+    try {
+      const solutionsService = new SolutionDataService(solutionsUrl);
+      const solutions = solutionsService.fetchDataFromSource(); 
+      resolve(solutions);
+    } catch (error) {
+      reject(error);
     }
+  });
   
-    if (solutions?.length) {
-      const solutionsDropdownData = document.getElementById("solutions-dropdown");
-      const defaultSolutionOption = document.createElement("option");
-      defaultSolutionOption.text = DEFAULT_OPTIONS.SOLUTION;
-      solutionsDropdownData.add(defaultSolutionOption);
-  
-      solutions.forEach((optionText) => {
-        const option = document.createElement("option");
-        option.text = optionText;
-        solutionsDropdownData.add(option);
-      });
-    }
-  
-    return [];
-  };
-  
-  handleSolutionsService();
+  handleSolutionsService()
+    .then((solutions) => {
+      if (solutions?.length) {
+        const solutionsDropdownData = document.getElementById("solutions-dropdown");
+        const defaultSolutionOption = document.createElement("option");
+        defaultSolutionOption.text = DEFAULT_OPTIONS.SOLUTION;
+        solutionsDropdownData.add(defaultSolutionOption);
 
+        solutions.forEach((optionText) => {
+          const option = document.createElement("option");
+          option.text = optionText;
+          solutionsDropdownData.add(option);
+        });
+      }
+    })
+    .catch((error) => {
+        /* eslint-disable-next-line no-console */
+        console.log(error);
+    });
+  
   const filterResults = (data, contentTypesToFilter) => {
     const filteredResults = [];
     const resultsByContentType = {};
