@@ -300,5 +300,6 @@ button.browse-tags:focus {
 
   .browse-filters-input-container:has(.filter-dropdown:nth-child(4)) {
     grid-template-areas: "label role ctype exp search cfilter";
+    grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
   }
 }

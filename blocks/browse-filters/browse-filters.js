@@ -17,8 +17,8 @@ const coveoFacetFilterNameMap = {
   el_level: 'Experience Level',
 };
 
-const isBrowseProdPage = getMetadata('browse-product');
-// const isBrowseAllPage = getMetadata('browse all');
+const theme = getMetadata('theme').trim();
+const isBrowseProdPage = theme === 'browse-product';
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
@@ -35,12 +35,35 @@ function enableTagsAsProxy(block) {
   });
 }
 
+/**
+ * Hides or shows sections below a given filter.
+ *
+ * @param {HTMLElement} block - The HTML element to apply the filter to.
+ * @param {boolean} show - A boolean indicating whether to show or hide the sections.
+ */
+function hideSectionsBelowFilter(block, show) {
+  const parent = block.closest('.section');
+  if (parent) {
+    const siblings = Array.from(parent.parentNode.children);
+    const clickedIndex = siblings.indexOf(parent);
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = clickedIndex + 1; i < siblings.length; i++) {
+      siblings[i].style.display = show ? 'block' : 'none';
+    }
+  }
+}
+
 function updateClearFilterStatus(block) {
   const searchEl = block.querySelector('.filter-input-search > input[type="search"]');
   const clearFilterBtn = block.querySelector('.browse-filters-clear');
   if (tagsProxy.length !== 0 || searchEl.value) {
     clearFilterBtn.disabled = false;
-  } else clearFilterBtn.disabled = true;
+    hideSectionsBelowFilter(block, false);
+  } else {
+    clearFilterBtn.disabled = true;
+    hideSectionsBelowFilter(block, true);
+  }
 }
 
 // Function to run when the tags array is updated
@@ -274,25 +297,11 @@ function constructKeywordSearchEl(block) {
   appendToFormInputContainer(block, searchEl);
 }
 
-function toggleSectionsBelow(block, show) {
-  const parent = block.closest('.section');
-  if (parent) {
-    const siblings = Array.from(parent.parentNode.children);
-    const clickedIndex = siblings.indexOf(parent);
-
-    // eslint-disable-next-line no-plusplus
-    for (let i = clickedIndex + 1; i < siblings.length; i++) {
-      siblings[i].style.display = show ? 'block' : 'none';
-    }
-  }
-}
-
 function onInputSearch(block) {
   const searchEl = block.querySelector('.filter-input-search input[type="search"]');
   searchEl.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      toggleSectionsBelow(block, false);
       // eslint-disable-next-line no-console
       console.log('add search logic here');
     }
@@ -342,7 +351,6 @@ function handleClearFilter(block) {
   // show the hidden sections again
   const clearFilterEl = block.querySelector('.browse-filters-clear');
   clearFilterEl.addEventListener('click', () => {
-    toggleSectionsBelow(block, true);
     clearSelectedFilters(block);
   });
 }
@@ -503,8 +511,6 @@ async function handleSearchEngineSubscription() {
 }
 
 export default function decorate(block) {
-  // TODO: Enable once metadata is done
-  // if (!isBrowseAllPage || !isBrowseProdPage) return;
   enableTagsAsProxy(block);
   decorateBlockTitle(block);
   appendFormEl(block);
