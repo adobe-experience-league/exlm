@@ -7,6 +7,6 @@ helix-importer-ui
 .DS_Store
 *.bak
 .idea
-/scripts/coveo/node_modules*
+/scripts/coveo-headless/libs/node_modules*
 .aio
 .env

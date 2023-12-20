@@ -3,9 +3,6 @@ import { loadIms } from '../../scripts/scripts.js';
 import { signOut } from '../../scripts/auth/auth-operations.js';
 import Search from '../../scripts/search/search.js';
 import { registerResizeHandler } from './header-utils.js';
-// import coveoSearchEnginePOC from '../../scripts/search/coveo-headless-poc.js';
-
-// coveoSearchEnginePOC();
 
 /**
  * @param {HTMLElement} block

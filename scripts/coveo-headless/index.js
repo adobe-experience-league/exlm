@@ -1,4 +1,4 @@
-import buildHeadlessSearchEngine from '../data-service/coveo/headless-engine.js';
+import buildHeadlessSearchEngine from './engine.js';
 import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
 
 const coveoToken = await loadCoveoToken();
@@ -25,7 +25,7 @@ export const fragment = () => window.location.hash.slice(1);
 export default async function coveoSearchEnginePOC(handleSearchEngineSubscription) {
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
-    import('../coveo/browser/headless.esm.js')
+    import('./libs/browser/headless.esm.js')
       .then((module) => {
         const headlessSearchEngine = buildHeadlessSearchEngine(module, coveoToken);
         const statusControllers = module.buildSearchStatus(headlessSearchEngine);

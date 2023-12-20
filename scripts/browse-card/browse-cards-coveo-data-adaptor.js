@@ -44,7 +44,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
   const mapResultToCardsDataModel = (result) => {
     const { raw, parentResult, title, excerpt, uri } = result || {};
     /* eslint-disable camelcase */
-    const { el_contenttype, el_product, el_solution, el_type } = raw || {};
+    const { el_contenttype, el_product, el_solution, el_type } = parentResult?.raw || raw || {};
     let contentType;
     if (el_type) {
       contentType = el_type.trim();

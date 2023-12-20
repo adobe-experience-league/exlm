@@ -2,14 +2,10 @@ import { htmlToElement, loadIms } from '../scripts.js';
 import SearchDelegate from './search-delegate.js';
 import { searchUrl } from '../urls.js';
 
-// eslint-disable-next-line import/no-relative-packages
-// import { buildSearchEngine } from '../coveo/browser/headless.esm.js';
-// console.log('buildSearchEngine', buildSearchEngine);
-
 // or via dymanic import
 setTimeout(async () => {
   // eslint-disable-next-line import/no-relative-packages
-  import('../coveo/browser/headless.esm.js').then((module) => {
+  import('../coveo-headless/libs/browser/headless.esm.js').then((module) => {
     // eslint-disable-next-line no-console
     console.log('hey look! it loaded!', module.buildSearchEngine);
   });

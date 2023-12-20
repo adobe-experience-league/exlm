@@ -1,7 +1,7 @@
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import { createTag, htmlToElement } from '../../scripts/scripts.js';
 import { roleOptions, contentTypeOptions, expTypeOptions, getObjectByName } from './browse-filter-utils.js';
-import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/search/coveo-headless-poc.js';
+import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 

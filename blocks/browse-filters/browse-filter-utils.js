@@ -43,7 +43,7 @@ export const contentType = [
     description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
   },
   {
-    title: 'Tutorials',
+    title: 'Tutorial',
     description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
   },
 ];

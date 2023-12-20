@@ -4,7 +4,7 @@ styles/**/**.css
 scripts/prism-grammars/**
 scripts/**/**.css
 scripts/universal-editor-embedded.js
-scripts/coveo/browser/*
+scripts/coveo-headless/libs/browser/*
 scripts/preact-htm/**.js
 plugins/rum-conversion/**
 scripts/analytics/alloy.min.js
