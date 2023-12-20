@@ -64,6 +64,7 @@ export default async function decorate(block) {
     }
   });
 
+  /* Populate Solutions from Solutions API */
   const handleSolutionsService = () =>
     new Promise((resolve, reject) => {
       try {
@@ -95,6 +96,7 @@ export default async function decorate(block) {
       console.log(error);
     });
 
+  /* Filter Results based on Content Type from UE */
   const filterResults = (data, contentTypesToFilter) => {
     const filteredResults = [];
     const resultsByContentType = {};
@@ -185,6 +187,7 @@ export default async function decorate(block) {
 
   const rolesDropdown = block.querySelector('.roles-dropdown');
 
+  /* Event handlers for Roles dropdown */
   rolesDropdown.addEventListener('change', function handleDropdownChange() {
     const roleValue = this.value === DEFAULT_OPTIONS.ROLE ? [] : [this.value];
     param.role = roleValue;
@@ -199,6 +202,7 @@ export default async function decorate(block) {
 
   const solutionsDropdown = block.querySelector('.solutions-dropdown');
 
+  /* Event handlers for Solutions dropdown */
   solutionsDropdown.addEventListener('change', function handleSolutionDropdownChange() {
     const solutionValue = this.value === DEFAULT_OPTIONS.SOLUTION ? [] : [this.value];
     param.product = solutionValue;
