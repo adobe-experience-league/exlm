@@ -105,14 +105,19 @@ function slice(upstream, context, from, to) {
 
 function follow(upstream, context, name, newName, maxInFlight = 5) {
   const { fetch, parseHtml } = context;
-  return map(upstream, context, async (entry) => {
-    const value = entry[name];
-    if (value) {
-      const resp = await fetch(value);
-      return { ...entry, [newName || name]: resp.ok ? parseHtml(await resp.text()) : null };
-    }
-    return entry;
-  }, maxInFlight);
+  return map(
+    upstream,
+    context,
+    async (entry) => {
+      const value = entry[name];
+      if (value) {
+        const resp = await fetch(value);
+        return { ...entry, [newName || name]: resp.ok ? parseHtml(await resp.text()) : null };
+      }
+      return entry;
+    },
+    maxInFlight,
+  );
 }
 
 async function all(upstream) {
@@ -172,7 +177,9 @@ export default function ffetch(url) {
       // request smaller chunks in save data mode
       chunkSize = 64;
     }
-  } catch (e) { /* ignore */ }
+  } catch (e) {
+    /* ignore */
+  }
 
   const context = { chunkSize, fetch, parseHtml };
   const generator = request(url, context);
