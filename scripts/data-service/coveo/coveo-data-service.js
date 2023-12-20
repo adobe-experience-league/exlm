@@ -33,7 +33,6 @@ export default class CoveoDataService {
         },
         body: JSON.stringify(this.dataSource.param),
       });
-
       if (response.status === 200) {
         const data = await response.json();
         return data || [];
