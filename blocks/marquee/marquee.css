@@ -330,6 +330,12 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
     box-sizing: border-box;
+    background-color: var(--background-color);
+  }
+
+  body[class ^= 'browse-'] .section div.marquee-wrapper .marquee-background svg{
+    min-width: 130%;
+    min-height: 0%;
   }
 }
 
