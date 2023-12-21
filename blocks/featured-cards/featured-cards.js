@@ -51,7 +51,7 @@ export default async function decorate(block) {
     noOfResults,
   };
 
-  const rolesDropdownData =  block.querySelector('.roles-dropdown');
+  const rolesDropdownData = block.querySelector('.roles-dropdown');
   const defaultRolesOption = document.createElement('option');
   defaultRolesOption.text = DEFAULT_OPTIONS.ROLE;
   rolesDropdownData.add(defaultRolesOption);
