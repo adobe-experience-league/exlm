@@ -504,11 +504,11 @@ async function handleSearchEngineSubscription() {
       const clonedResult = JSON.parse(JSON.stringify(result));
       const contentType = clonedResult.raw.el_type || clonedResult.el_contenttype;
       if (!contentType) {
-         // TODO :: Need to avoid this
+        // TODO :: Need to avoid this
         if (clonedResult.raw) {
-          clonedResult.raw.el_type = 'N/A'
+          clonedResult.raw.el_type = 'N/A';
         }
-        clonedResult.el_contenttype = 'N/A'
+        clonedResult.el_contenttype = 'N/A';
       }
       return clonedResult;
     });
