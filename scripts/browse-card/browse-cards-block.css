@@ -1,9 +1,6 @@
-.browse-cards-block {
-    min-height: 340px;
-}
 .browse-cards-block .tooltip {
     position: relative;
-    margin: 4px 0 0 9px;
+    margin: 0px 0 0 9px;
 }
 .browse-cards-block .tooltip .icon-info {
     width: 15px;
@@ -45,15 +42,16 @@
     visibility: visible;
 }
 .browse-cards-block-content {
-    margin-top: 24px;
+    margin-top: 16px;
     display: flex;
     flex-wrap: nowrap;
     gap: 16px;
-    margin-bottom: 32px;
+    margin-bottom: 40px;
     transition: all .5s ease-in-out;
     overflow-x: auto;
     overflow-y: hidden;
     padding-bottom: 2px;
+    min-height: 400px;
 }
 .browse-cards-block-content > div {
     flex: 0 0 264px;
@@ -65,21 +63,23 @@
 .browse-cards-block-title {
     display: flex;
     margin: 0;
+    align-items: baseline;
+}
+.browse-cards-block-title h2 {
+    margin: 0px;
 }
 .browse-cards-block-view a {
-    font-size: inherit;
+    font-size: 18px;
     line-height: 17px;
     margin: 2px 0 0 0;
 }
 @media only screen and (min-width: 600px) {
-    .browse-cards-block-header {
-        display: flex;
-        justify-content: space-between;
-    }
     .browse-cards-block-content {
         gap: 25px;
         overflow-x: auto;
         overflow-y: hidden;
+        margin-bottom: 56px;
+        margin-top: 16px;
     }
     .browse-cards-block-content > div {
         flex: 0 0 286px;
@@ -89,9 +89,12 @@
     .browse-cards-block-header {
         display: flex;
         justify-content: space-between;
+        align-items: center;
     }
     .browse-cards-block-content {
         gap: 32px;
+        margin-bottom: 80px;
+        margin-top: 24px;
     }
     .browse-cards-block-content > div {
         flex: 0 0 256px;
@@ -101,8 +104,6 @@
     .browse-cards-block-header {
         display: flex;
         justify-content: space-between;
-    }
-    .browse-cards-block .tooltip {
-        margin-top: 7px;
+        align-items: center;
     }
 }

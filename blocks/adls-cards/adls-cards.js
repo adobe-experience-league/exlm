@@ -26,7 +26,7 @@ export default async function decorate(block) {
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
-          <h4>${headingElement?.textContent.trim()}</h4>
+          <h2>${headingElement?.textContent.trim()}</h2>
           <div class="tooltip">
             <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
           </div>
@@ -46,7 +46,8 @@ export default async function decorate(block) {
     contentType,
   };
 
-  block.innerHTML += buildPlaceholder;
+  block.appendChild(buildPlaceholder());
+
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent
     .then((data) => {

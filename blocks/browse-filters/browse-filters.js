@@ -504,9 +504,11 @@ async function handleSearchEngineSubscription() {
       const cardDiv = document.createElement('div');
       buildCard(cardDiv, cardData);
       filterResultsEl.appendChild(cardDiv);
+      document.querySelector('.browse-filters-form').classList.add('is-result');
     });
   } else {
     filterResultsEl.innerHTML = 'No results';
+    document.querySelector('.browse-filters-form').classList.remove('is-result');
   }
 }
 
@@ -517,7 +519,7 @@ function renderSortContainer(block) {
   sortContainer.innerHTML = `<span>Sort</span>
                   <button class="sort-drop-btn">Relevance</button>`;
 
-  browseTagsForm.insertBefore(sortContainer, browseTagsForm.children[1]);
+  browseTagsForm.insertBefore(sortContainer, browseTagsForm.children[2]);
 
   const dropDownBtn = document.querySelector('.sort-drop-btn');
 
