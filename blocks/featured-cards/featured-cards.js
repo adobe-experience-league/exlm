@@ -8,7 +8,7 @@ import SolutionDataService from '../../scripts/data-service/solutions-data-servi
 import { solutionsUrl } from '../../scripts/urls.js';
 
 export const DEFAULT_OPTIONS = Object.freeze({
-  ROLE: 'Role',
+  ROLE: 'Business User',
   SOLUTION: 'Solution',
 });
 /**
