@@ -1,18 +1,16 @@
 @keyframes placeholder-wave {
   50% {
-    opacity: 1;
+    opacity: .6;
   }
 }
 .shimmer-placeholder{
-  margin-top: 16px;
+  margin: 16px 0 40px 0;
   display: flex;
   flex-wrap: nowrap;
   gap: 16px;
-  margin-bottom: 40px;
   transition: all .5s ease-in-out;
   overflow-x: auto;
   overflow-y: hidden;
-  padding-bottom: 2px;
   min-height: 400px;
 }
 .shimmer-placeholder.is-hidden {
@@ -82,8 +80,7 @@
     gap: 25px;
     overflow-x: auto;
     overflow-y: hidden;
-    margin-bottom: 56px;
-    margin-top: 16px;
+    margin: 16px 0 56px 0;
   }
   .shimmer-placeholder-isloading {
     flex: 0 0 286px; 
@@ -92,8 +89,7 @@
 @media only screen and (min-width: 900px) {
   .shimmer-placeholder{
     gap: 32px;
-    margin-bottom: 80px;
-    margin-top: 24px;
+    margin: 24px 0 80px 0;
   }
   .shimmer-placeholder-isloading {
     flex: 0 0 256px;
