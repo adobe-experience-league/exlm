@@ -64,7 +64,12 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       ...browseCardDataModel,
       contentType,
       badgeTitle: CONTENT_TYPES[contentType.toUpperCase()]?.LABEL,
-      thumbnail: raw?.video_url && (raw.video_url.includes('?') ? raw.video_url.replace(/\?.*/, '?format=jpeg') : `${raw.video_url}?format=jpeg`) || '',
+      thumbnail:
+        (raw?.video_url &&
+          (raw.video_url.includes('?')
+            ? raw.video_url.replace(/\?.*/, '?format=jpeg')
+            : `${raw.video_url}?format=jpeg`)) ||
+        '',
       product,
       title: parentResult?.title || title || '',
       description: parentResult?.excerpt || excerpt || '',
