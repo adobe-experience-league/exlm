@@ -519,7 +519,7 @@ function renderSortContainer(block) {
   sortContainer.innerHTML = `<span>Sort</span>
                   <button class="sort-drop-btn">Relevance</button>`;
 
-  browseTagsForm.insertBefore(sortContainer, browseTagsForm.children[1]);
+  browseTagsForm.insertBefore(sortContainer, browseTagsForm.children[2]);
 
   const dropDownBtn = document.querySelector('.sort-drop-btn');
 
