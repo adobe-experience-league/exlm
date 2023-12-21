@@ -395,6 +395,8 @@ strong {
   --spectrum-sidenav-item-text-color-hover: ButtonText;
   --spectrum-alias-text-color-hover: var(--spectrum-global-color-gray-900);
   /* Non-Spectrum custom colors */
+  --non-spectrum-grey-100: #f9f9f9;
+  --non-spectrum-grey-333: #333;
   --non-spectrum-eerie-black: #1e1e1e;
   --non-spectrum-custom-dark: #363636;
   --non-spectrum-dark-charcoal: #323232;

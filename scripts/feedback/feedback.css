@@ -97,6 +97,12 @@
   overflow: visible;
 }
 
+.feedback-ui .cta button.submit {
+  background-color: var(--non-spectrum-neo-blue);
+  border-color: var(--non-spectrum-neo-blue);
+  color: var(--spectrum-gray-50);
+}
+
 .feedback-ui .first-question button {
   margin: 0;
   margin-right: 10px;
@@ -218,6 +224,10 @@
   display: none;
 }
 
+.feedback-ui .second-question.complete {
+  display: none;
+}
+
 .feedback-ui[aria-expanded='false'] {
   padding-bottom: 0;
 }
@@ -268,6 +278,26 @@
 .feedback-ui .cta button:disabled:hover .tooltip {
   visibility: visible;
   opacity: 1;
+}
+
+.feedback-ui .first-question.answered .like-btns,
+.feedback-ui .qualtrics-feedback,
+.feedback-ui .error {
+  display: none;
+}
+
+.feedback-ui .error[aria-hidden='false'] {
+  display: block;
+}
+
+.feedback-ui .left .subtitle,
+.feedback-ui .error {
+  font-size: var(--spectrum-font-size-100);
+  line-height: normal;
+}
+
+.feedback-ui .error {
+  color: var(--spectrum-red-900);
 }
 
 @media (min-width: 600px) {
