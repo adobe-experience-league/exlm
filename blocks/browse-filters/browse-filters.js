@@ -504,11 +504,11 @@ async function handleSearchEngineSubscription() {
       const cardDiv = document.createElement('div');
       buildCard(cardDiv, cardData);
       filterResultsEl.appendChild(cardDiv);
-      document.querySelector(".browse-filters-form").classList.add("is-result");
+      document.querySelector('.browse-filters-form').classList.add('is-result');
     });
   } else {
     filterResultsEl.innerHTML = 'No results';
-    document.querySelector(".browse-filters-form").classList.remove("is-result");
+    document.querySelector('.browse-filters-form').classList.remove('is-result');
   }
 }
 
