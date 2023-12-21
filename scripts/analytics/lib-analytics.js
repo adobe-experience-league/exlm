@@ -65,6 +65,7 @@ function enhanceAnalyticsEvent(options) {
     ...options.xdm[CUSTOM_SCHEMA_NAMESPACE],
     ...(experiment && { experiment }), // add experiment details, if existing, to all events
   };
+  // eslint-disable-next-line no-console
   console.debug(`enhanceAnalyticsEvent complete: ${JSON.stringify(options)}`);
 }
 
@@ -111,6 +112,7 @@ function createInlineScript(document, element, innerHTML, type) {
 async function sendAnalyticsEvent(xdmData) {
   // eslint-disable-next-line no-undef
   if (!alloy) {
+    // eslint-disable-next-line no-console
     console.warn('alloy not initialized, cannot send analytics event');
     return Promise.resolve();
   }
@@ -130,6 +132,7 @@ async function sendAnalyticsEvent(xdmData) {
 export async function analyticsSetConsent(approved) {
   // eslint-disable-next-line no-undef
   if (!alloy) {
+    // eslint-disable-next-line no-console
     console.warn('alloy not initialized, cannot set consent');
     return Promise.resolve();
   }
@@ -185,6 +188,7 @@ export async function initAnalyticsTrackingQueue() {
 export async function setupAnalyticsTrackingWithAlloy(document) {
   // eslint-disable-next-line no-undef
   if (!alloy) {
+    // eslint-disable-next-line no-console
     console.warn('alloy not initialized, cannot configure');
     return;
   }

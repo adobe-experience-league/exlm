@@ -133,7 +133,7 @@ export default async function decorate(block) {
     return filteredResults;
   };
 
-  block.innerHTML += buildPlaceholder;
+  block.appendChild(buildPlaceholder());
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);

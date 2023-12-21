@@ -23,7 +23,7 @@ const buildTagsContent = (cardMeta, tags = []) => {
   tags.forEach((tag) => {
     const { icon: iconName, text } = tag;
     if (text) {
-      const anchor = createTag('a', { class: 'browse-card-meta-anchor' });
+      const anchor = createTag('a', { class: 'browse-card-meta-anchor', title: 'user', href: '#' });
       const span = createTag('span', { class: `icon icon-${iconName}` });
       anchor.textContent = text;
       anchor.appendChild(span);
@@ -115,11 +115,14 @@ const buildCardContent = (card, model) => {
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
   if (copyLink) {
-    const copyLinkAnchor = createTag('a', { href: copyLink }, `<span class="icon icon-copy"></span>`);
+    const copyLinkAnchor = createTag('a', { href: copyLink, title: 'copy' }, `<span class="icon icon-copy"></span>`);
     cardOptions.appendChild(copyLinkAnchor);
   }
-  if (contentType !== CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY) {
-    const bookmarkAnchor = createTag('a', {}, `<span class="icon icon-bookmark"></span>`);
+  if (
+    contentType !== CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY &&
+    contentType !== CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
+  ) {
+    const bookmarkAnchor = createTag('a', { href: '#', title: 'copy' }, `<span class="icon icon-bookmark"></span>`);
     cardOptions.appendChild(bookmarkAnchor);
   }
   cardFooter.appendChild(cardOptions);
@@ -160,6 +163,10 @@ export default async function buildCard(element, model) {
   if ((type === courseMappingKey || type === tutorialMappingKey) && thumbnail) {
     const img = document.createElement('img');
     img.src = thumbnail;
+    img.loading = 'lazy';
+    img.alt = title;
+    img.width = 254;
+    img.height = 165;
     cardFigure.appendChild(img);
   }
 
