@@ -12,7 +12,7 @@ const DEFAULT_OPTIONS = Object.freeze({
   SOLUTION: 'Solution',
 });
 /**
- * Decorate function to process and log the mapped data.
+ * Decorate Featured Card Block function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
