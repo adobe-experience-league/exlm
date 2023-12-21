@@ -47,8 +47,8 @@ export const COVEO_SORT_OPTIONS = Object.freeze({
 export const ROLE_OPTIONS = Object.freeze({
   ADMIN: 'Admin',
   DEVELOPER: 'Developer',
-  USER: 'User',
   LEADER: 'Leader',
+  USER: 'User',
 });
 
 export const DEFAULT_OPTIONS = Object.freeze({
