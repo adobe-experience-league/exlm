@@ -22,7 +22,7 @@ export const CONTENT_TYPES = Object.freeze({
   },
   INSTRUCTOR_LED_TRANING: {
     MAPPING_KEY: 'instructor-led-training',
-    LABEL: 'Instructor Led Training',
+    LABEL: 'Instructor-Led',
   },
   CERTIFICATION: {
     MAPPING_KEY: 'certification',
