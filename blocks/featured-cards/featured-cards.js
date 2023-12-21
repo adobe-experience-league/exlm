@@ -54,7 +54,7 @@ export default async function decorate(block) {
   const rolesDropdownData = document.getElementById('roles-dropdown');
   const defaultRolesOption = document.createElement('label');
   defaultRolesOption.text = DEFAULT_OPTIONS.ROLE;
-  rolesDropdownData.add(defaultRolesOption);
+  rolesDropdownData.appendChild(defaultRolesOption);
 
   Object.keys(ROLE_OPTIONS).forEach((roleData) => {
     if (Object.prototype.hasOwnProperty.call(ROLE_OPTIONS, roleData)) {
@@ -82,7 +82,7 @@ export default async function decorate(block) {
         const solutionsDropdownData = document.getElementById('solutions-dropdown');
         const defaultSolutionOption = document.createElement('label');
         defaultSolutionOption.text = DEFAULT_OPTIONS.SOLUTION;
-        solutionsDropdownData.add(defaultSolutionOption);
+        solutionsDropdownData.appendChild(defaultSolutionOption);
 
         solutions.forEach((optionText) => {
           const option = document.createElement('option');
