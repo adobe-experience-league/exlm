@@ -241,7 +241,7 @@ button.browse-tags:focus {
   align-items: center;
   color: var(--spectrum-gray-700);
   font-size: var(--spectrum-font-size-75);
-  display: flex;
+  display: none;
   justify-content: flex-end;
   line-height: 15.6px;
   margin-top: 10px;
@@ -323,6 +323,10 @@ button.browse-tags:focus {
 
 .sort-container .sort-dropdown-content.show{
   display: block;
+}
+
+.is-result .sort-container{
+  display: flex;
 }
 
 @media (min-width: 600px) {
