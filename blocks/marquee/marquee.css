@@ -332,5 +332,11 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
     box-sizing: border-box;
     background-color: red;
   }
+
+  body[class ^= 'browse-'] .marquee-background svg {
+    transform: none;
+    width: 100%;
+    height: 100%;
+  }
 }
 
