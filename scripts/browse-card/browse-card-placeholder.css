@@ -4,7 +4,7 @@
   }
 }
 .shimmer-placeholder{
-  margin: 16px 0 40px 0;
+  margin: 16px 0px 40px 0px;
   display: flex;
   flex-wrap: nowrap;
   gap: 16px;
@@ -80,7 +80,7 @@
     gap: 25px;
     overflow-x: auto;
     overflow-y: hidden;
-    margin: 16px 0 56px 0;
+    margin: 16px 0px 56px 0px;
   }
   .shimmer-placeholder-isloading {
     flex: 0 0 286px; 
@@ -89,7 +89,7 @@
 @media only screen and (min-width: 900px) {
   .shimmer-placeholder{
     gap: 32px;
-    margin: 24px 0 80px 0;
+    margin: 24px 0px 80px 0px;
   }
   .shimmer-placeholder-isloading {
     flex: 0 0 256px;
