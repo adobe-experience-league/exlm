@@ -22,7 +22,7 @@ export const CONTENT_TYPES = Object.freeze({
   },
   INSTRUCTOR_LED_TRANING: {
     MAPPING_KEY: 'instructor-led-training',
-    LABEL: 'Instructor Led Training',
+    LABEL: 'Instructor-Led',
   },
   CERTIFICATION: {
     MAPPING_KEY: 'certification',
@@ -47,11 +47,11 @@ export const COVEO_SORT_OPTIONS = Object.freeze({
 export const ROLE_OPTIONS = Object.freeze({
   ADMIN: 'Admin',
   DEVELOPER: 'Developer',
-  USER: 'User',
   LEADER: 'Leader',
+  USER: 'User',
 });
 
 export const DEFAULT_OPTIONS = Object.freeze({
-  ROLE: 'Role',
+  ROLE: 'Business User',
   SOLUTION: 'Solution',
 });

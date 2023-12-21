@@ -779,7 +779,7 @@ main > div.browse-rail {
 }
 
 /* browse rail breakpoint same as main hamburger menu */
-@media (width >= 1024px) {
+@media (min-width: 1024px) {
   body[class^=browse-] > main {
     display: grid;
     grid-template: "browse-rail main"/256px 1fr;
