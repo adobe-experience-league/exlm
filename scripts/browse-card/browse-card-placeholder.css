@@ -4,14 +4,17 @@
   }
 }
 .shimmer-placeholder{
-  margin: 16px 0px 40px 0px;
   display: flex;
   flex-wrap: nowrap;
   gap: 16px;
   transition: all .5s ease-in-out;
   overflow-x: auto;
   overflow-y: hidden;
-  min-height: 377px;
+  position: absolute;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0
 }
 .shimmer-placeholder.is-hidden {
   display: none;
@@ -80,7 +83,6 @@
     gap: 25px;
     overflow-x: auto;
     overflow-y: hidden;
-    margin: 16px 0px 56px 0px;
   }
   .shimmer-placeholder-isloading {
     flex: 0 0 286px; 
@@ -89,7 +91,6 @@
 @media only screen and (min-width: 900px) {
   .shimmer-placeholder{
     gap: 32px;
-    margin: 24px 0px 80px 0px;
   }
   .shimmer-placeholder-isloading {
     flex: 0 0 256px;

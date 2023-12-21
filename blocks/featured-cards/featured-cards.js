@@ -29,8 +29,8 @@ export default async function decorate(block) {
       </div>
       <div class="browse-card-dropdown">
         <p>Tell us about yourself</p>
-        <select id="roles-dropdown" class="roles-dropdown"></select>
-        <select id="solutions-dropdown" class="solutions-dropdown"></select>
+        <select aria-labelledby="roles-dropdown" id="roles-dropdown" class="roles-dropdown"></select>
+        <select aria-labelledby="solutions-dropdown" id="solutions-dropdown" class="solutions-dropdown"></select>
       </div>
     </div>
   `);

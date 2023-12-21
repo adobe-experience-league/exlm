@@ -1,5 +1,6 @@
 .browse-cards-block {
-    height: 528px;
+    height: 390px;
+    position: relative;
 }
 .browse-cards-block .tooltip {
     position: relative;
@@ -54,7 +55,6 @@
     overflow-x: auto;
     overflow-y: hidden;
     padding-bottom: 2px;
-    min-height: 377px;
 }
 .browse-cards-block-content > div {
     flex: 0 0 264px;
