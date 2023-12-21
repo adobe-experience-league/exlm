@@ -493,13 +493,27 @@ function handleCoveoHeadlessSearch({
 
 async function handleSearchEngineSubscription() {
   const filterResultsEl = document.querySelector('.browse-filters-results');
+  if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
+    return;
+  }
   // eslint-disable-next-line
   const search = window.headlessSearchEngine.state.search;
   const { results } = search;
-  filterResultsEl.innerHTML = '';
   if (results.length > 0) {
-    const parsedResults = results.filter((result) => !!(result.raw.el_type || result.el_contenttype)); // TODO :: Need to avoid this
+    const parsedResults = results.map((result) => {
+      const clonedResult = JSON.parse(JSON.stringify(result));
+      const contentType = clonedResult.raw.el_type || clonedResult.el_contenttype;
+      if (!contentType) {
+         // TODO :: Need to avoid this
+        if (clonedResult.raw) {
+          clonedResult.raw.el_type = 'N/A'
+        }
+        clonedResult.el_contenttype = 'N/A'
+      }
+      return clonedResult;
+    });
     const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(parsedResults);
+    filterResultsEl.innerHTML = '';
     cardsData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
       buildCard(cardDiv, cardData);
