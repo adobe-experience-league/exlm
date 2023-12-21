@@ -11,7 +11,7 @@
   transition: all .5s ease-in-out;
   overflow-x: auto;
   overflow-y: hidden;
-  min-height: 400px;
+  min-height: 377px;
 }
 .shimmer-placeholder.is-hidden {
   display: none;
