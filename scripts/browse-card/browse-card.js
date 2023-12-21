@@ -163,7 +163,7 @@ export default async function buildCard(element, model) {
   if ((type === courseMappingKey || type === tutorialMappingKey) && thumbnail) {
     const img = document.createElement('img');
     img.src = thumbnail;
-    img.loading = "lazy";
+    img.loading = 'lazy';
     img.alt = title;
     img.width = 254;
     img.height = 165;
