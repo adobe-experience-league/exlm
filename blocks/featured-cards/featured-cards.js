@@ -52,7 +52,7 @@ export default async function decorate(block) {
   };
 
   const rolesDropdownData = document.getElementById('roles-dropdown');
-  const defaultRolesOption = document.createElement('option');
+  const defaultRolesOption = document.createElement('label');
   defaultRolesOption.text = DEFAULT_OPTIONS.ROLE;
   rolesDropdownData.add(defaultRolesOption);
 
@@ -80,7 +80,7 @@ export default async function decorate(block) {
     .then((solutions) => {
       if (solutions?.length) {
         const solutionsDropdownData = document.getElementById('solutions-dropdown');
-        const defaultSolutionOption = document.createElement('option');
+        const defaultSolutionOption = document.createElement('label');
         defaultSolutionOption.text = DEFAULT_OPTIONS.SOLUTION;
         solutionsDropdownData.add(defaultSolutionOption);
 
