@@ -663,7 +663,7 @@ main > div.browse-rail {
 }
 
 /* browse rail breakpoint same as main hamburger menu */
-@media (width >= 1024px) {
+@media (width >=1024px) {
   body[class^='browse-'] > main {
     display: grid;
     grid-template:
