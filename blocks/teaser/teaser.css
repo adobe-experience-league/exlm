@@ -117,7 +117,6 @@
 /* spacer div */
 .teaser.block > .foreground > .spacer {
   display:none;
-  width:40%;
 }
 
 /* The background color for mobile view */
@@ -168,7 +167,7 @@
 
   /* limit width of text part and set order */
   .teaser.block > .foreground > .text {
-    width:60%;
+    width:65%;
     order: 0;
     padding: var(--spectrum-spacing-500) 0;
   }
@@ -262,6 +261,40 @@
     width: 100%;
     object-position: right;
   }
+
+    /* it gets a border */
+  body[class ^= 'browse-'] .section div.teaser-wrapper .background img {
+    border-radius: 4px;
+  }
+
+  body[class ^= 'browse-'] .section div.teaser-wrapper .foreground {
+    border: 1px solid var(--spectrum-gray-200);
+    border-radius: 4px;
+    min-height:240px;
+    padding: 0 var(--space-token-xxl);
+  }
+
+  /* the main title, hidden in mobile */
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text > .title {
+    font-size: var(--spectrum-font-size-600);
+    line-height: 37.5px;
+  }
+
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text > .long-description,
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text > .long-description * {
+    font-size: var(--spectrum-body-size-s);
+    line-height: 18.2px;
+}
+
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text > .cta > a.button {
+    font-size: 13px;
+    line-height: 16px;
+    padding: 4px 14px 6px;
+  }
+
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text {
+    width:55%;
+  }
 }
   
 /* when shown on a page with a rail */
@@ -272,27 +305,27 @@
     margin-right: unset;
   }
 
-  /* it gets a border */
-  body[class ^= 'browse-'] .section div.teaser-wrapper .background img {
-    border-radius: 4px;
-  }
-  
-  /* it gets a border */
   body[class ^= 'browse-'] .section div.teaser-wrapper .foreground {
-    border: 1px solid var(--spectrum-gray-200);
-    border-radius: 4px;
-    min-height:240px;
+    padding: 0 var(--space-token-l);
+  }
+
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text {
+    width:65%;
   }
 }
 
 @media (min-width: 1200px) {
   /* the eybrow title */
-  .teaser.block > .foreground > .text > .eyebrow {
+  body:not([class ^= 'browse-']) .teaser.block > .foreground > .text > .eyebrow {
     font-size: var(--spectrum-font-size-100);
   }
 
+  body[class ^= 'browse-'] .section div.teaser-wrapper .foreground {
+    padding: 0 var(--spectrum-spacing-600);
+  }
+
   /* the main title, hidden in mobile */
-  .teaser.block > .foreground > .text > .title {
+  body:not([class ^= 'browse-']) .teaser.block > .foreground > .text > .title {
     font-size: var(--spectrum-heading-size-xl);
     line-height: 46.8px;
   }

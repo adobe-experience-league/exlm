@@ -1,5 +1,7 @@
-import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
-import { convertTextToHTML, createTag, htmlToElement } from './utils.js';
+import { decorateIcons, getMetadata, loadCSS, fetchPlaceholders } from '../lib-franklin.js';
+import { createTag, htmlToElement } from '../scripts.js'; // eslint-disable-line import/no-cycle
+import { QUALTRICS_LOADED_EVENT_NAME } from './qualtrics/constants.js';
+import { embedQualtricsSurveyIntercept } from './qualtrics/qualtrics-embed.js';
 
 // fetch fragment html
 const fetchFragment = async (rePath, lang = 'en') => {
@@ -18,6 +20,14 @@ function decorateFirstQuestion(firstQuestion) {
     .querySelector('div:nth-child(1) > div:nth-child(2) > p:last-child')
     .textContent.trim();
   const wasThisHelpful = firstQuestion.querySelector('div:nth-child(1) > div:nth-child(1) > h3').textContent.trim();
+  const thankyouForYourFeedback = firstQuestion
+    .querySelector('div:nth-child(2) > div:nth-child(1) > h3')
+    .textContent.trim();
+  const subTitle = firstQuestion.querySelector('div:nth-child(2) > div:nth-child(4)').textContent.trim();
+  const surveyCompletedText = firstQuestion.querySelector('div:nth-child(2) > div:nth-child(3)').textContent.trim();
+  const loadingErrorText = firstQuestion
+    .querySelector('div:nth-child(1) > div:nth-child(2) > p:first-child')
+    .textContent.trim();
 
   const thumbUpButton = createTag('button', { 'aria-label': 'thumbs up' });
   thumbUpButton.innerHTML = `
@@ -45,13 +55,19 @@ function decorateFirstQuestion(firstQuestion) {
   firstQuestion.innerHTML = '';
   firstQuestion.appendChild(document.createElement('h3')).textContent = wasThisHelpful;
   firstQuestion.appendChild(newDiv);
+  firstQuestion.appendChild(createTag('div', { class: 'error' }));
   firstQuestion.innerHTML += '<span class="icon icon-chevron"></span>';
+  firstQuestion.dataset.updatedTitle = thankyouForYourFeedback;
+  firstQuestion.dataset.subtitle = subTitle;
+  firstQuestion.dataset.surveyCompletedText = surveyCompletedText;
+  firstQuestion.dataset.loadingError = loadingErrorText;
 
   return firstQuestion;
 }
 
 function decorateSecondQuestion(secondQuestion) {
-  const textareaText = secondQuestion.querySelector('div:nth-child(1) > div:last-child').textContent.trim();
+  const initialPlaceholder = secondQuestion.querySelector('div:nth-child(1) > div:last-child').textContent.trim();
+  const updatedPlaceholder = secondQuestion.querySelector('div:nth-child(1) > div:first-child').textContent.trim();
   const submitText = secondQuestion
     .querySelector('div:nth-child(2) > div:nth-child(1) > p:first-child')
     .textContent.trim();
@@ -64,8 +80,9 @@ function decorateSecondQuestion(secondQuestion) {
   const textarea = createTag('textarea', {
     class: 'input',
     'aria-describedby': 'additional',
-    'aria-label': textareaText,
-    placeholder: textareaText,
+    'aria-label': initialPlaceholder,
+    placeholder: initialPlaceholder,
+    'data-updated-placeholder': updatedPlaceholder,
     disabled: '',
   });
   const newDiv = createTag('div', { class: 'more-question' }, textarea);
@@ -74,6 +91,7 @@ function decorateSecondQuestion(secondQuestion) {
     'button',
     {
       disabled: '',
+      class: 'submit',
     },
     `<span>${submitText}</span><span class="tooltip">${submitFeedbackText}</span>`,
   );
@@ -191,7 +209,10 @@ function decorateFeedback(el) {
     'aria-expanded': 'false',
   });
 
+  // Qualtrics expects a <dx-docs-feedback /> element with a .qualtrics-feedback child element
+  const qualtricsElContainer = createTag('dx-docs-feedback', { class: 'qualtrics-feedback-container' });
   const qualtricsEl = el.querySelector('.qualtrics-feedback');
+  qualtricsElContainer.appendChild(qualtricsEl);
   const firstEl = el.querySelector('.first-question');
   const secondEl = el.querySelector('.second-question');
   secondEl.setAttribute('aria-hidden', true);
@@ -208,7 +229,7 @@ function decorateFeedback(el) {
 
   closeBtnEl.addEventListener('click', () => hideFeedbackBar());
 
-  leftEl.append(qualtricsEl, firstEl, secondEl);
+  leftEl.append(qualtricsElContainer, firstEl, secondEl);
   rightEl.append(openedCtrlEl, headerTxtMobileEl, expandedCtrlEl);
   rightEl.setAttribute('aria-hidden', true);
   container.append(closeBtnEl, leftEl, rightEl);
@@ -292,12 +313,97 @@ function showFeedbackBar() {
   return getMetadata('id');
 }
 
+function showQualtricsLoadingError(el) {
+  const firstQuestionEl = el.querySelector('.first-question');
+  const { loadingError } = firstQuestionEl.dataset;
+  const errorEl = el.querySelector('.error');
+  errorEl.setAttribute('aria-hidden', false);
+  errorEl.textContent = loadingError;
+}
+
+function handleFeedbackIcons(el) {
+  const feedbackIcon = el.querySelectorAll('.like-btns > button');
+  const firstQuestionElement = el.querySelector('.first-question');
+  const secondQuestionElement = el.querySelector('.second-question');
+  const moreQuestion = secondQuestionElement.querySelector('.second-question > .more-question');
+  const textArea = moreQuestion.querySelector('.more-question > textarea');
+  const title = el.querySelector('.first-question > h3');
+
+  [...feedbackIcon].forEach((icon) => {
+    icon.addEventListener('click', () => {
+      const textarea = el.querySelector('.more-question > textarea');
+      textarea.disabled = false;
+      toggleFeedbackBar(el, true);
+      firstQuestionElement.classList.add('answered');
+      const iconVariation = icon.getAttribute('aria-label').replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+      const qualtricsIcon = el.querySelector(`.QSI__EmbeddedFeedbackContainer_SVGButton[title="${iconVariation}"]`);
+
+      if (qualtricsIcon && icon) {
+        qualtricsIcon.click();
+
+        if (textArea) {
+          textArea.placeholder = textArea.getAttribute('data-updated-placeholder');
+        }
+
+        const { updatedTitle, subtitle } = firstQuestionElement.dataset;
+        title.textContent = updatedTitle;
+        const subtitleElement = createTag('p', { class: 'subtitle' }, subtitle);
+        moreQuestion.insertAdjacentElement('beforebegin', subtitleElement);
+      } else {
+        console.log('Qualtrics feedback malformed.'); // eslint-disable-line no-console
+        showQualtricsLoadingError(el);
+        toggleFeedbackBar(el, false);
+      }
+    });
+  });
+}
+
+function handleFeedbackSubmit(el) {
+  const submitButton = el.querySelector('button.submit');
+  const textArea = el.querySelector('.more-question > textarea');
+  const secondQuestionElement = el.querySelector('.second-question');
+  const firstQuestionElement = el.querySelector('.first-question');
+
+  textArea.addEventListener('input', () => {
+    submitButton.disabled = textArea.value === '';
+  });
+
+  submitButton.addEventListener('click', () => {
+    const qualtricsSubmitButton = el.querySelector('.QSI__EmbeddedFeedbackContainer_TextButton');
+    const qualtricsTextArea = el.querySelector('.QSI__EmbeddedFeedbackContainer_OpenText');
+
+    if (qualtricsTextArea && qualtricsSubmitButton) {
+      qualtricsTextArea.click();
+      qualtricsTextArea.value = textArea.value || '';
+
+      // Qualtrics pulls the value off the element referenced in an InputEvent
+      qualtricsTextArea.dispatchEvent(new InputEvent('input'));
+
+      // There is also a race condition — sometimes the form can be submitted before the value is validated in the InputEvent.
+      setTimeout(() => {
+        toggleFeedbackBar(el, false);
+        qualtricsSubmitButton.click();
+        secondQuestionElement.classList.add('complete');
+        const { surveyCompletedText } = firstQuestionElement.dataset;
+        const surveyCompletedElement = createTag('p', { class: 'subtitle' }, surveyCompletedText);
+        firstQuestionElement.insertAdjacentElement('afterend', surveyCompletedElement);
+      }, 300);
+    } else {
+      console.log('Qualtrics text feedback malformed.'); // eslint-disable-line no-console
+      showQualtricsLoadingError(el);
+      toggleFeedbackBar(el, false);
+    }
+  });
+}
+
 export default async function loadFeedbackUi() {
+  const placeholders = await fetchPlaceholders();
+
   if (!showFeedbackBar()) return;
 
   loadCSS(`${window.hlx.codeBasePath}/scripts/feedback/feedback.css`);
 
-  let feedbackHtml = convertTextToHTML(await feedbackFragment);
+  let feedbackHtml = await feedbackFragment;
   feedbackHtml = htmlToElement(feedbackHtml);
 
   const body = document.querySelector('body');
@@ -308,6 +414,26 @@ export default async function loadFeedbackUi() {
   handleClosingFeedbackBar(fb);
   handleGithubBtns(fb);
   handleFeedbackBarVisibilityOnScroll();
+
+  try {
+    embedQualtricsSurveyIntercept(placeholders.feedbackSurveyId);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("Couldn't embed Qualtrics survey intercept.", err);
+    showQualtricsLoadingError(fb);
+    toggleFeedbackBar(fb, false);
+  }
+
+  function interceptLoaded() {
+    // wait for Qualtrics to load
+    // eslint-disable-next-line no-undef
+    if (QSI.API) {
+      handleFeedbackIcons(fb);
+      handleFeedbackSubmit(fb);
+    }
+  }
+
+  window.addEventListener(QUALTRICS_LOADED_EVENT_NAME, interceptLoaded, false);
 }
 
 loadFeedbackUi();
