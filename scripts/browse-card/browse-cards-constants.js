@@ -52,6 +52,6 @@ export const ROLE_OPTIONS = Object.freeze({
 });
 
 export const DEFAULT_OPTIONS = Object.freeze({
-  ROLE: 'Role',
+  ROLE: 'Business User',
   SOLUTION: 'Solution',
 });
