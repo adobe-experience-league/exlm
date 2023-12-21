@@ -7,7 +7,7 @@ import { CONTENT_TYPES, ROLE_OPTIONS } from '../../scripts/browse-card/browse-ca
 import SolutionDataService from '../../scripts/data-service/solutions-data-service.js';
 import { solutionsUrl } from '../../scripts/urls.js';
 
-export const DEFAULT_OPTIONS = Object.freeze({
+const DEFAULT_OPTIONS = Object.freeze({
   ROLE: 'Business User',
   SOLUTION: 'Solution',
 });
@@ -33,8 +33,8 @@ export default async function decorate(block) {
       </div>
       <div class="browse-card-dropdown">
         <p>Tell us about yourself</p>
-        <select id="roles-dropdown" class="roles-dropdown"></select>
-        <select id="solutions-dropdown" class="solutions-dropdown"></select>
+        <select class="roles-dropdown"></select>
+        <select class="solutions-dropdown"></select>
       </div>
     </div>
   `);
@@ -51,7 +51,7 @@ export default async function decorate(block) {
     noOfResults,
   };
 
-  const rolesDropdownData = document.getElementById('roles-dropdown');
+  const rolesDropdownData =  block.querySelector('.roles-dropdown');
   const defaultRolesOption = document.createElement('option');
   defaultRolesOption.text = DEFAULT_OPTIONS.ROLE;
   rolesDropdownData.add(defaultRolesOption);
@@ -79,7 +79,7 @@ export default async function decorate(block) {
   handleSolutionsService()
     .then((solutions) => {
       if (solutions?.length) {
-        const solutionsDropdownData = document.getElementById('solutions-dropdown');
+        const solutionsDropdownData = block.querySelector('.solutions-dropdown');
         const defaultSolutionOption = document.createElement('option');
         defaultSolutionOption.text = DEFAULT_OPTIONS.SOLUTION;
         solutionsDropdownData.add(defaultSolutionOption);
@@ -175,7 +175,6 @@ export default async function decorate(block) {
         console.error(err);
       });
   };
-  /* eslint-disable-next-line */
   fetchDataAndRenderBlock(param, contentType, block, contentDiv);
 
   const linkDiv = htmlToElement(`
@@ -196,7 +195,6 @@ export default async function decorate(block) {
       cards.remove();
     });
 
-    /* eslint-disable-next-line */
     fetchDataAndRenderBlock(param, contentType, block, contentDiv);
   });
 
@@ -211,7 +209,6 @@ export default async function decorate(block) {
       cards.remove();
     });
 
-    /* eslint-disable-next-line */
     fetchDataAndRenderBlock(param, contentType, block, contentDiv);
   });
 }
