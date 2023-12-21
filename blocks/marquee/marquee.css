@@ -174,7 +174,6 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
     width: 100%;
     bottom: 0;
     overflow: hidden;
-    background-color: white;
   }
 
   .marquee-background svg {
@@ -331,6 +330,7 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
     box-sizing: border-box;
+    background-color: white;
   }
 }
 
