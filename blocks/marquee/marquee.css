@@ -252,6 +252,7 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
     transform: none;
     min-width: 105%;
     min-height: 100%;
+    background-color: white;
   }
 
   .marquee.no-subject {
