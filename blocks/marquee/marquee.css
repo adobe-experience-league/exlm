@@ -332,5 +332,10 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
     box-sizing: border-box;
     background-color: var(--background-color);
   }
+
+  body[class ^= 'browse-'] .section div.marquee-wrapper .marquee-background svg{
+    min-width: 130%;
+    min-height: 0%;
+  }
 }
 
