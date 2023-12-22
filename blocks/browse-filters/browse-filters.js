@@ -500,19 +500,7 @@ async function handleSearchEngineSubscription() {
   const search = window.headlessSearchEngine.state.search;
   const { results } = search;
   if (results.length > 0) {
-    const parsedResults = results.map((result) => {
-      const clonedResult = JSON.parse(JSON.stringify(result));
-      const contentType = clonedResult.raw.el_type || clonedResult.el_contenttype;
-      if (!contentType) {
-        // TODO :: Need to avoid this
-        if (clonedResult.raw) {
-          clonedResult.raw.el_type = 'N/A';
-        }
-        clonedResult.el_contenttype = 'N/A';
-      }
-      return clonedResult;
-    });
-    const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(parsedResults);
+    const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
     filterResultsEl.innerHTML = '';
     cardsData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
