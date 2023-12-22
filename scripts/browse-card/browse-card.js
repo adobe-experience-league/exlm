@@ -171,7 +171,7 @@ export default async function buildCard(element, model) {
   }
 
   const bannerElement = createTag('p', { class: 'browse-card-banner' });
-  bannerElement.innerText = badgeTitle || 'N/A';
+  bannerElement.innerText = badgeTitle;
   cardFigure.appendChild(bannerElement);
 
   if (product) {
