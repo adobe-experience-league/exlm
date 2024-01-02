@@ -17,6 +17,7 @@
   display: grid; 
   grid-template-columns: 1fr; 
   gap: 32px;
+  min-height: fit-content;
 }
 .shimmer-placeholder.is-hidden {
   display: none;

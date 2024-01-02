@@ -10,13 +10,16 @@
     text-align: center;
 }
 .browse-cards-block-content {  
-    display: grid; 
-    grid-template-columns: 1fr; 
-    gap: 32px;
-  }
-  .browse-cards-block-content >div  {
-    min-height: 400px;
-  }
+  display: grid; 
+  grid-template-columns: 1fr; 
+  gap: 32px;
+}
+.featured-cards .browse-cards-block-content {
+  min-height: fit-content;
+}
+.browse-cards-block-content >div  {
+  min-height: 400px;
+}
   .browse-card-dropdown {
     display:flex ;
     justify-content:center;
