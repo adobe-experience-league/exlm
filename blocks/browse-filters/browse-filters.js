@@ -493,13 +493,15 @@ function handleCoveoHeadlessSearch({
 
 async function handleSearchEngineSubscription() {
   const filterResultsEl = document.querySelector('.browse-filters-results');
+  if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
+    return;
+  }
   // eslint-disable-next-line
   const search = window.headlessSearchEngine.state.search;
   const { results } = search;
-  filterResultsEl.innerHTML = '';
   if (results.length > 0) {
-    const parsedResults = results.filter((result) => !!(result.raw.el_type || result.el_contenttype)); // TODO :: Need to avoid this
-    const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(parsedResults);
+    const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
+    filterResultsEl.innerHTML = '';
     cardsData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
       buildCard(cardDiv, cardData);

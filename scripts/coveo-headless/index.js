@@ -12,7 +12,9 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
     locale: document.documentElement.lang,
     searchHub,
   });
-  const fields = module.loadFieldActions(searchEngine).registerFieldsToInclude(['el_solution', 'el_type']);
+  const fields = module
+    .loadFieldActions(searchEngine)
+    .registerFieldsToInclude(['el_solution', 'el_type', 'el_contenttype']);
 
   // searchEngine.dispatch(advancedQuery);
   searchEngine.dispatch(context);
