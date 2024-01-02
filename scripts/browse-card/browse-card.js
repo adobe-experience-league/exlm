@@ -166,7 +166,8 @@ export default async function buildCard(element, model) {
     img.loading = 'lazy';
     img.alt = title;
     img.width = 254;
-    img.height = 165;
+    img.height = 153;
+    cardFigure.classList.add('img-custom-height');
     cardFigure.appendChild(img);
   }
 

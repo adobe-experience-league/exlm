@@ -52,14 +52,14 @@
   height: 90px;
   flex: 1 0 100%;
   width: 100%;
-  margin-bottom: 60px;
+  margin: 0px 0px 60px 0px;
   background: var(--shimmer-image-slide-start);
   border-radius: 10px;
 }
 .shimmer-placeholder-isloading .shimmer-placeholder-main-text {
   height: 10px;
   width: 65%;
-  margin-bottom: 10px;
+  margin: 0px 0px 10px 0px;
   background: var(--shimmer-image-slide-start);
   border-radius: 10px;
 }
