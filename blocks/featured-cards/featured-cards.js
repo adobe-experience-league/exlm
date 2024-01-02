@@ -8,8 +8,8 @@ import SolutionDataService from '../../scripts/data-service/solutions-data-servi
 import { solutionsUrl } from '../../scripts/urls.js';
 
 const DEFAULT_OPTIONS = Object.freeze({
-  ROLE: 'Business User',
-  SOLUTION: 'Solution',
+  ROLE: 'Role',
+  SOLUTION: 'Product',
 });
 /**
  * Decorate function to process and log the mapped data.
