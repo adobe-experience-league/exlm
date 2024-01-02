@@ -1,3 +1,6 @@
+.browse-cards-block {
+    min-height: 446px;
+}
 .browse-cards-block .tooltip {
     position: relative;
     margin: 0px 0 0 9px;

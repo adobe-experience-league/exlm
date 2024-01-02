@@ -224,6 +224,10 @@ button.browse-tags:focus {
   cursor: pointer;
 }
 
+.browse-filters-results > div { 
+  min-width: 0;
+}
+
 .browse-tags .icon-close {
   width: 13px;
   height: auto;
