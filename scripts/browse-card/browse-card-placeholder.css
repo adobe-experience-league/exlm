@@ -14,10 +14,6 @@
   min-height: 400px;
   margin: 16px 0 40px 0;
 }
-.browse-card-shimmer {
-  min-height: 1698px;
-  position: relative;
-}
 .featured-cards .shimmer-placeholder {
   display: grid; 
   grid-template-columns: 1fr; 
@@ -28,9 +24,15 @@
   right: 0;
   bottom: 0;
   margin: 0;
-  transform: scale(1);
 }
+.browse-card-shimmer {
+  position: relative;
+}
+
 .featured-cards .shimmer-placeholder.hide-shimmer {
+  height: 0px;
+  min-height: 0;
+  margin: 0;
   transform: scale(0);
 }
 .shimmer-placeholder.is-hidden {
@@ -63,7 +65,7 @@
 .shimmer-placeholder-btn{
   background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
   background-size: 200% 100%;
-  animation: placeholder-wave 2s ease-in-out infinite;
+  animation: placeholder-wave 1.5s infinite;
 }
 .shimmer-placeholder-isloading .shimmer-placeholder-image {
   height: 190px;
@@ -102,12 +104,8 @@
     overflow-y: hidden;
     margin: 16px 0 56px 0;
   }
-  .browse-card-shimmer {
-    min-height: 800px;
-  }
   .featured-cards .shimmer-placeholder {  
     grid-template-columns: 1fr 1fr;
-    margin: 0;
   }
   .shimmer-placeholder-isloading {
     flex: 0 0 286px; 
@@ -118,13 +116,9 @@
     gap: 32px;
     margin: 24px 0 80px 0;
   }
-  .browse-card-shimmer {
-    min-height: 400px;
-  }
   .featured-cards .shimmer-placeholder {
     display: flex;
     gap: 32px;
-    margin: 0;
   }
   .shimmer-placeholder-isloading {
     flex: 0 0 256px;

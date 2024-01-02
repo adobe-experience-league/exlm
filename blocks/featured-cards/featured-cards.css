@@ -77,7 +77,7 @@
        gap: 32px;
       }
     .browse-cards-block-view {
-        /* margin-top: -72px; */
+        margin-top: -72px;
         text-align: right;
     }
 }
