@@ -149,7 +149,7 @@ export default async function decorate(block) {
         /* eslint-disable-next-line */
         data = filterResults(data, contentType);
         block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-          el.remove();
+          el.classList.add('hide-shimmer');
         });
 
         if (data?.length) {
@@ -165,7 +165,7 @@ export default async function decorate(block) {
       })
       .catch((err) => {
         block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-          el.remove();
+          el.classList.add('hide-shimmer');
         });
         /* eslint-disable-next-line no-console */
         console.error(err);
