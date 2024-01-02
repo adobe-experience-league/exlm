@@ -136,9 +136,9 @@ export default async function decorate(block) {
 
     return filteredResults;
   };
-  const parentElement  = document.createElement('div')
-  parentElement.classList.add('browse-card-shimmer')
-  block.appendChild(parentElement)
+  const parentElement = document.createElement('div');
+  parentElement.classList.add('browse-card-shimmer');
+  block.appendChild(parentElement);
 
   parentElement.appendChild(buildPlaceholder());
   /* eslint-disable-next-line */
