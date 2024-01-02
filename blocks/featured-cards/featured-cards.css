@@ -13,6 +13,9 @@
     grid-template-columns: 1fr; 
     gap: 32px;
   }
+  .browse-cards-block-content >div  {
+    min-height: 400px;
+  }
   .browse-card-dropdown {
     display:flex ;
     justify-content:center;
