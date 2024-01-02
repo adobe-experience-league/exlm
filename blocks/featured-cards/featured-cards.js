@@ -136,8 +136,11 @@ export default async function decorate(block) {
 
     return filteredResults;
   };
+  const parentElement  = document.createElement('div')
+  parentElement.classList.add('browse-card-shimmer')
+  block.appendChild(parentElement)
 
-  block.appendChild(buildPlaceholder());
+  parentElement.appendChild(buildPlaceholder());
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
@@ -175,7 +178,7 @@ export default async function decorate(block) {
     <div class="browse-cards-block-view">${linkTextElement?.outerHTML}</div>
   `);
 
-  block.appendChild(contentDiv);
+  parentElement.appendChild(contentDiv);
   block.appendChild(linkDiv);
 
   const rolesDropdown = block.querySelector('.roles-dropdown');
