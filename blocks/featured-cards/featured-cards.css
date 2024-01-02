@@ -1,4 +1,5 @@
 @import "../../scripts/browse-card/browse-cards-block.css";
+@import "../../scripts/browse-card/browse-card.css";
 .browse-cards-block-header {
     display:flex ;
     justify-content:center;
