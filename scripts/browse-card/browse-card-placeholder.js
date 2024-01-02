@@ -19,7 +19,7 @@ export default function buildPlaceholder() {
       </div>`;
   }
   const shimmerParent = document.createElement('div');
-  shimmerParent.classList.add('shimmer-placeholder');
+  shimmerParent.classList.add('shimmer-placeholder', 'browse-cards-block-content');
   shimmerParent.innerHTML = shimmerContent;
   return shimmerParent;
 }
