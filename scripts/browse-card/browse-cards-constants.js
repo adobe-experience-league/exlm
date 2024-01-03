@@ -10,7 +10,7 @@ export const CONTENT_TYPES = Object.freeze({
   },
   EVENT: {
     MAPPING_KEY: 'event',
-    LABEL: 'Event',
+    LABEL: 'On-Demand Event',
   },
   COMMUNITY: {
     MAPPING_KEY: 'community',
