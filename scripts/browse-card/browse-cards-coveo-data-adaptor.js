@@ -51,11 +51,9 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     } else {
       contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
     }
-    let product;
-    if (el_solution) {
+    let product = Array.isArray(el_product) ? el_product[0] : el_product;
+    if (!product && el_solution) {
       product = Array.isArray(el_solution) ? el_solution[0] : el_solution;
-    } else {
-      product = Array.isArray(el_product) ? el_product[0] : el_product;
     }
     const tags = createTags(result, contentType.toLowerCase(), placeholders);
     const url = parentResult?.clickableuri || parentResult?.uri || clickUri || uri || '';

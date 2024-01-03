@@ -14,7 +14,50 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
   });
   const fields = module
     .loadFieldActions(searchEngine)
-    .registerFieldsToInclude(['el_solution', 'el_type', 'el_contenttype', "type","el_product","el_version","date","el_contenttype","objecttype","filetype","outlookformacuri","outlookuri","connectortype","urihash","collection","source","author","liboardinteractionstyle","lithreadhassolution","sourcetype","el_interactionstyle","contenttype","el_rank_icon","el_lirank","el_solutions_authored","el_reply_status","el_kudo_status","el_usergenerictext","documenttype","video_url","sysdocumenttype","language","permanentid","@foldingcollection","@foldingparent","@foldingchild","el_rank_icon","el_lirank","liMessageLabels","licommunityurl","el_view_status","video_url"]);
+    .registerFieldsToInclude([
+      'el_solution',
+      'el_type',
+      'el_contenttype',
+      'type',
+      'el_product',
+      'el_version',
+      'date',
+      'el_contenttype',
+      'objecttype',
+      'filetype',
+      'outlookformacuri',
+      'outlookuri',
+      'connectortype',
+      'urihash',
+      'collection',
+      'source',
+      'author',
+      'liboardinteractionstyle',
+      'lithreadhassolution',
+      'sourcetype',
+      'el_interactionstyle',
+      'contenttype',
+      'el_rank_icon',
+      'el_lirank',
+      'el_solutions_authored',
+      'el_reply_status',
+      'el_kudo_status',
+      'el_usergenerictext',
+      'documenttype',
+      'video_url',
+      'sysdocumenttype',
+      'language',
+      'permanentid',
+      '@foldingcollection',
+      '@foldingparent',
+      '@foldingchild',
+      'el_rank_icon',
+      'el_lirank',
+      'liMessageLabels',
+      'licommunityurl',
+      'el_view_status',
+      'video_url',
+    ]);
 
   // searchEngine.dispatch(advancedQuery);
   searchEngine.dispatch(context);
@@ -24,7 +67,12 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
 
 export const fragment = () => window.location.hash.slice(1);
 
-export default async function coveoSearchEnginePOC({ handleSearchEngineSubscription, renderPageNumbers, numberOfResults }) {
+export default async function coveoSearchEnginePOC({
+  handleSearchEngineSubscription,
+  renderPageNumbers,
+  numberOfResults,
+  renderSearchQuerySummary,
+}) {
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
     import('./libs/browser/headless.esm.js')
@@ -70,14 +118,16 @@ export default async function coveoSearchEnginePOC({ handleSearchEngineSubscript
         const headlessPager = module.buildPager(headlessSearchEngine, {
           initialState: {
             page: 1,
-          }
+          },
         });
         let headlessResultsPerPage = null;
         if (numberOfResults) {
           headlessResultsPerPage = module.buildResultsPerPage(headlessSearchEngine, {
-            initialState: { numberOfResults }
+            initialState: { numberOfResults },
           });
         }
+
+        const headlessQuerySummary = module.buildQuerySummary(headlessSearchEngine);
 
         const urlManager = module.buildUrlManager(headlessSearchEngine, {
           initialState: { fragment: fragment() },
@@ -97,6 +147,12 @@ export default async function coveoSearchEnginePOC({ handleSearchEngineSubscript
         headlessPager.subscribe(() => {
           if (renderPageNumbers) {
             renderPageNumbers();
+          }
+        });
+
+        headlessQuerySummary.subscribe(() => {
+          if (renderSearchQuerySummary) {
+            renderSearchQuerySummary();
           }
         });
 
@@ -150,6 +206,7 @@ export default async function coveoSearchEnginePOC({ handleSearchEngineSubscript
         window.headlessStatusControllers = statusControllers;
         window.headlessPager = headlessPager;
         window.headlessResultsPerPage = headlessResultsPerPage;
+        window.headlessQuerySummary = headlessQuerySummary;
 
         resolve({
           submitSearchHandler,

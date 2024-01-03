@@ -81,19 +81,25 @@ export const expTypeOptions = {
   selected: 0,
 };
 
+const FILTER_RESULTS_COUNT = {
+  MOBILE: 4,
+  IPAD: 8,
+  DESKTOP: 16,
+};
+
 // Function to get an object by name
 export function getObjectByName(obj, name) {
   return obj.find((option) => option.name === name);
 }
 
-export const getFiltersPaginationText = (pgCount) => `of ${pgCount} page${pgCount > 1 ? 's': ''}`;
+export const getFiltersPaginationText = (pgCount) => `of ${pgCount} page${pgCount > 1 ? 's' : ''}`;
 
 export const getBrowseFiltersResultCount = () => {
-  let resultCount = 4;
+  let resultCount = FILTER_RESULTS_COUNT.MOBILE;
   if (window.matchMedia('(min-width:900px)').matches) {
-    resultCount = 16;
+    resultCount = FILTER_RESULTS_COUNT.DESKTOP;
   } else if (window.matchMedia('(min-width:600px)').matches) {
-    resultCount = 8;
+    resultCount = FILTER_RESULTS_COUNT.IPAD;
   }
   return resultCount;
-}
+};

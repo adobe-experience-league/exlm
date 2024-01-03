@@ -216,6 +216,19 @@ button.browse-filters-clear:disabled:hover {
   margin: 0 auto;
 }
 
+.browse-filters-results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.browse-filters-results-count {
+  font-style: italic;
+  color: var(--spectrum-gray-700);
+  line-height: 18px;
+}
+
 .browse-filters-pagination {
   display: flex;
   justify-content: center;
@@ -316,7 +329,6 @@ button.browse-tags:focus {
   display: none;
   justify-content: flex-end;
   line-height: 15.6px;
-  margin-top: 10px;
   position: relative;
   text-align: right;
 }
@@ -399,6 +411,11 @@ button.browse-tags:focus {
 
 .browse-filters-form.is-result .sort-container{
   display: flex;
+}
+
+.browse-filters-form:not(.is-result) .browse-filters-results{
+  grid-template-columns: auto;
+  color: var(--spectrum-gray-700);
 }
 
 @media (min-width: 600px) {
