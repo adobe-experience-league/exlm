@@ -1,6 +1,6 @@
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
-import { createTag, htmlToElement } from '../../scripts/scripts.js';
-import { roleOptions, contentTypeOptions, expTypeOptions, getObjectByName } from './browse-filter-utils.js';
+import { createTag, htmlToElement, debounce } from '../../scripts/scripts.js';
+import { roleOptions, contentTypeOptions, expTypeOptions, getObjectByName, getFiltersPaginationText, getBrowseFiltersResultCount } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
@@ -468,6 +468,103 @@ function handleUriHash() {
   window.headlessSearchEngine.executeFirstSearch();
 }
 
+function constructFilterPagination() {
+  const browseFiltersSection = document.querySelector('.browse-filters-form');
+  if (!browseFiltersSection) {
+    return;
+  }
+  const currentPageNumber = window.headlessPager?.state?.currentPage || 1;
+  const pgCount = window.headlessPager?.state?.maxPage || 1;
+  const filtersPaginationEl = htmlToElement(`
+    <div class="browse-filters-pagination">
+      <button class="nav-arrow"></button>
+      <input type="text" value=${currentPageNumber}>
+      <span class="browse-filters-pagination-text">${getFiltersPaginationText(pgCount)}</span>
+      <button class="nav-arrow right-nav-arrow"></button>
+    </div>`
+  );
+
+  const navButtons = Array.from(filtersPaginationEl.querySelectorAll('button.nav-arrow'));
+  navButtons.forEach((navButton) => {
+    navButton.addEventListener('click', (e) => {
+      const jumpToPreviousPg = !e.currentTarget.classList.contains('right-nav-arrow');
+      if (window.headlessPager) {
+        const newPageNumber = window.headlessPager.state.currentPage + (jumpToPreviousPg ? -1 : 1);
+        if (newPageNumber < 1 || newPageNumber > window.headlessPager.state.maxPage) {
+          return;
+        }
+        window.headlessPager.selectPage(newPageNumber);
+      }
+    });
+  });
+  const filterInputEl = filtersPaginationEl.querySelector('input');
+  if (filterInputEl) {
+    filterInputEl.addEventListener('change', (e) => {
+      let newPageNum = +e.target.value;
+      if (newPageNum < 1) {
+        newPageNum = 1;
+        e.target.value = newPageNum;
+      } else if (window.headlessPager?.state?.maxPage && newPageNum > window.headlessPager.state.maxPage) {
+        newPageNum = window.headlessPager.state.maxPage;
+        e.target.value = newPageNum;
+      }
+      if (window.headlessPager) {
+        if (Number.isNaN(newPageNum)) {
+          e.target.value = window.headlessPager?.state?.currentPage || 1;
+        } else {
+          window.headlessPager.selectPage(newPageNum);
+        }
+      }
+    });
+    filterInputEl.addEventListener('keyup', (e) => {
+      const pgNumber = +e.target.value;
+      if (window.headlessPager?.state) {
+        if (Number.isNaN(pgNumber)) {
+          e.target.value = window.headlessPager.state.currentPage || 1;
+        } else if (pgNumber > window.headlessPager.state.maxPage) {
+          e.target.value = window.headlessPager.state.maxPage;
+        }
+      }
+      if (e.key === 'Enter') {
+        window.headlessPager.selectPage(+e.target.value);
+      }
+    });
+  }
+  browseFiltersSection.appendChild(filtersPaginationEl);
+}
+
+function renderPageNumbers() {
+  const filtersPaginationEl = document.querySelector('.browse-filters-pagination');
+  if (!filtersPaginationEl || !window.headlessPager) {
+    return;
+  }
+
+  const currentPageNumber = window.headlessPager?.state?.currentPage || 1;
+  const pgCount = window.headlessPager?.state?.maxPage || 1;
+  const paginationTextEl = filtersPaginationEl.querySelector('.browse-filters-pagination-text');
+  const inputText = filtersPaginationEl.querySelector('input');
+  inputText.value = currentPageNumber;
+  paginationTextEl.textContent = getFiltersPaginationText(pgCount);
+
+  const leftNavButton = filtersPaginationEl.querySelector('.nav-arrow');
+  const rightNavButton = filtersPaginationEl.querySelector('.nav-arrow.right-nav-arrow');
+  if (currentPageNumber === 1) {
+    leftNavButton.classList.add('nav-arrow-hidden');
+  } else {
+    leftNavButton.classList.remove('nav-arrow-hidden');
+  }
+  if (currentPageNumber === pgCount) {
+    rightNavButton.classList.add('nav-arrow-hidden');
+  } else {
+    rightNavButton.classList.remove('nav-arrow-hidden');
+  }
+  if (pgCount === 1) {
+    filtersPaginationEl.classList.add('browse-filters-pagination-hidden');
+  } else {
+    filtersPaginationEl.classList.remove('browse-filters-pagination-hidden');
+  }
+}
+
 function handleCoveoHeadlessSearch({
   submitSearchHandler,
   searchInputKeyupHandler,
@@ -488,7 +585,19 @@ function handleCoveoHeadlessSearch({
   searchInput.addEventListener('keydown', searchInputKeydownHandler);
   searchInput.addEventListener('input', searchInputEventHandler);
   window.addEventListener('hashchange', handleUriHash);
+  if (window.headlessResultsPerPage) {
+    window.addEventListener('resize', () => {
+      debounce('win-resize-browse-filters', () => {
+        const newResultsPerPage = getBrowseFiltersResultCount();
+        if (window.headlessResultsPerPage.state.numberOfResults !== newResultsPerPage) {
+          window.headlessResultsPerPage.set(newResultsPerPage);
+        }
+      }, 50)
+    })
+  }
+  constructFilterPagination();
   handleUriHash();
+  renderPageNumbers();
 }
 
 async function handleSearchEngineSubscription() {
@@ -512,6 +621,10 @@ async function handleSearchEngineSubscription() {
     filterResultsEl.innerHTML = 'No results';
     document.querySelector('.browse-filters-form').classList.remove('is-result');
   }
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
 }
 
 function renderSortContainer(block) {
@@ -553,7 +666,11 @@ export default function decorate(block) {
   constructKeywordSearchEl(block);
   constructClearFilterBtn(block);
   appendToForm(block, renderTags());
-  initiateCoveoHeadlessSearch(handleSearchEngineSubscription)
+  initiateCoveoHeadlessSearch({
+    handleSearchEngineSubscription,
+    renderPageNumbers,
+    numberOfResults: getBrowseFiltersResultCount()
+  })
     .then(
       (data) => {
         handleCoveoHeadlessSearch(data);

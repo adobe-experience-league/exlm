@@ -1,22 +1,3 @@
-export const timers = new Map();
-
-// eslint-disable-next-line
-export function debounce(id = '', fn = () => void 0, ms = 250) {
-  if (id.length > 0) {
-    if (timers.has(id)) {
-      clearTimeout(timers.get(id));
-    }
-
-    timers.set(
-      id,
-      setTimeout(() => {
-        timers.delete(id);
-        fn();
-      }, ms),
-    );
-  }
-}
-
 export function setLevels(val = 2) {
   const selectors = [];
 

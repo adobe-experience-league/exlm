@@ -85,3 +85,15 @@ export const expTypeOptions = {
 export function getObjectByName(obj, name) {
   return obj.find((option) => option.name === name);
 }
+
+export const getFiltersPaginationText = (pgCount) => `of ${pgCount} page${pgCount > 1 ? 's': ''}`;
+
+export const getBrowseFiltersResultCount = () => {
+  let resultCount = 4;
+  if (window.matchMedia('(min-width:900px)').matches) {
+    resultCount = 16;
+  } else if (window.matchMedia('(min-width:600px)').matches) {
+    resultCount = 8;
+  }
+  return resultCount;
+}
