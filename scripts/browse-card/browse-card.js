@@ -51,7 +51,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
   let isLeftPlacement = false;
   if (contentType === 'tutorial') {
     icon = 'play-outline';
-    isLeftPlacement = true;
+    isLeftPlacement = false;
   } else if (
     contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY ||
     contentType === CONTENT_TYPES.EVENT.MAPPING_KEY ||
