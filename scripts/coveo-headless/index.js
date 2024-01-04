@@ -14,7 +14,50 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
   });
   const fields = module
     .loadFieldActions(searchEngine)
-    .registerFieldsToInclude(['el_solution', 'el_type', 'el_contenttype']);
+    .registerFieldsToInclude([
+      'el_solution',
+      'el_type',
+      'el_contenttype',
+      'type',
+      'el_product',
+      'el_version',
+      'date',
+      'el_contenttype',
+      'objecttype',
+      'filetype',
+      'outlookformacuri',
+      'outlookuri',
+      'connectortype',
+      'urihash',
+      'collection',
+      'source',
+      'author',
+      'liboardinteractionstyle',
+      'lithreadhassolution',
+      'sourcetype',
+      'el_interactionstyle',
+      'contenttype',
+      'el_rank_icon',
+      'el_lirank',
+      'el_solutions_authored',
+      'el_reply_status',
+      'el_kudo_status',
+      'el_usergenerictext',
+      'documenttype',
+      'video_url',
+      'sysdocumenttype',
+      'language',
+      'permanentid',
+      '@foldingcollection',
+      '@foldingparent',
+      '@foldingchild',
+      'el_rank_icon',
+      'el_lirank',
+      'liMessageLabels',
+      'licommunityurl',
+      'el_view_status',
+      'video_url',
+    ]);
 
   // searchEngine.dispatch(advancedQuery);
   searchEngine.dispatch(context);
@@ -24,7 +67,12 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
 
 export const fragment = () => window.location.hash.slice(1);
 
-export default async function coveoSearchEnginePOC(handleSearchEngineSubscription) {
+export default async function coveoSearchEnginePOC({
+  handleSearchEngineSubscription,
+  renderPageNumbers,
+  numberOfResults,
+  renderSearchQuerySummary,
+}) {
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
     import('./libs/browser/headless.esm.js')
@@ -50,19 +98,36 @@ export default async function coveoSearchEnginePOC(handleSearchEngineSubscriptio
           options: {
             field: 'el_type',
           },
+          numberOfValues: 8,
         });
 
         const headlessRoleFacet = module.buildFacet(headlessSearchEngine, {
           options: {
             field: 'el_role',
           },
+          numberOfValues: 8,
         });
 
         const headlessExperienceFacet = module.buildFacet(headlessSearchEngine, {
           options: {
             field: 'el_level',
           },
+          numberOfValues: 8,
         });
+
+        const headlessPager = module.buildPager(headlessSearchEngine, {
+          initialState: {
+            page: 1,
+          },
+        });
+        let headlessResultsPerPage = null;
+        if (numberOfResults) {
+          headlessResultsPerPage = module.buildResultsPerPage(headlessSearchEngine, {
+            initialState: { numberOfResults },
+          });
+        }
+
+        const headlessQuerySummary = module.buildQuerySummary(headlessSearchEngine);
 
         const urlManager = module.buildUrlManager(headlessSearchEngine, {
           initialState: { fragment: fragment() },
@@ -78,6 +143,18 @@ export default async function coveoSearchEnginePOC(handleSearchEngineSubscriptio
         });
 
         headlessSearchEngine.subscribe(handleSearchEngineSubscription);
+
+        headlessPager.subscribe(() => {
+          if (renderPageNumbers) {
+            renderPageNumbers();
+          }
+        });
+
+        headlessQuerySummary.subscribe(() => {
+          if (renderSearchQuerySummary) {
+            renderSearchQuerySummary();
+          }
+        });
 
         urlManager.synchronize(fragment());
 
@@ -126,6 +203,10 @@ export default async function coveoSearchEnginePOC(handleSearchEngineSubscriptio
         window.headlessTypeFacet = headlessTypeFacet;
         window.headlessRoleFacet = headlessRoleFacet;
         window.headlessExperienceFacet = headlessExperienceFacet;
+        window.headlessStatusControllers = statusControllers;
+        window.headlessPager = headlessPager;
+        window.headlessResultsPerPage = headlessResultsPerPage;
+        window.headlessQuerySummary = headlessQuerySummary;
 
         resolve({
           submitSearchHandler,
