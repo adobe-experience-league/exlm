@@ -392,13 +392,13 @@ function addMetaTagsToWindow() {
  * without impacting the user experience.
  */
 function loadDelayed() {
-  // eslint-disable-next-line import/no-cycle
+  /* eslint-disable import/no-cycle */
   window.setTimeout(() => import('./delayed.js'), 3000);
-    // load anything that can be postponed to the latest here
-  // eslint-disable-next-line import/no-cycle
-  addMetaTagsToWindow();
+  // load anything that can be postponed to the latest here
+  addMetaTagsToWindow();  
   // load anything that can be postponed to the latest here
   if (isDocPage()) window.setTimeout(() => import('./feedback/feedback.js'), 3000);
+  /* eslint-enable import/no-cycle */
 }
 
 /**
