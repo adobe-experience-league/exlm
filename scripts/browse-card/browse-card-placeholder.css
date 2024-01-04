@@ -5,6 +5,7 @@
 }
 .browse-card-shimmer {
   position: relative;
+  height: 100%;
 }
 .shimmer-placeholder {
   display: flex;
@@ -34,7 +35,9 @@
 .browse-filters-wrapper .shimmer-placeholder{
   gap: 8px;
   display: grid; 
-  grid-template-columns: 1fr; 
+  grid-template-columns: 1fr;
+  overflow: unset;
+  height: fit-content;
 }
 .shimmer-placeholder-isloading {
   width: 100%;
