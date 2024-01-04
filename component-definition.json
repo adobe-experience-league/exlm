@@ -11,7 +11,9 @@
             "aem": {
               "page": {
                 "resourceType": "core/franklin/components/text/v1/text",
-                "template": {}
+                "template": {
+                  "text": "<p>Placeholder text</p>"
+                }
               }
             }
           }
