@@ -214,6 +214,8 @@ button.browse-filters-clear:disabled:hover {
   gap: 8px;
   grid-template-columns: 1fr;
   margin: 0 auto;
+  transition: all .5s ease-in-out;
+  min-height: 330px;
 }
 
 button.browse-tags:hover,
@@ -226,6 +228,7 @@ button.browse-tags:focus {
 
 .browse-filters-results > div { 
   min-width: 0;
+  min-height: 330px;
 }
 
 .browse-tags .icon-close {

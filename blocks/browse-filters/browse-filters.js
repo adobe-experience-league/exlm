@@ -4,6 +4,7 @@ import { roleOptions, contentTypeOptions, expTypeOptions, getObjectByName } from
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
+import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
 const coveoFacetMap = {
   Role: 'headlessRoleFacet',
@@ -22,6 +23,7 @@ const isBrowseProdPage = theme === 'browse-product';
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
+const shimmerCardParent = document.createElement('div');
 
 function enableTagsAsProxy(block) {
   tagsProxy = new Proxy(tags, {
@@ -483,6 +485,12 @@ function handleCoveoHeadlessSearch({
   const searchInput = filterInputSection.querySelector('input');
   browseFiltersSection.appendChild(filterResultsEl);
 
+  /* ---- Start of This code is to add shimmer placeholder ---- */
+  shimmerCardParent.classList.add('browse-card-shimmer');
+  browseFiltersSection.appendChild(shimmerCardParent);
+  shimmerCardParent.appendChild(buildPlaceholder(10));
+  /* ---- End of This code is to add shimmer placeholder ----  */
+
   searchIcon.addEventListener('click', submitSearchHandler);
   searchInput.addEventListener('keyup', searchInputKeyupHandler);
   searchInput.addEventListener('keydown', searchInputKeydownHandler);
@@ -501,15 +509,22 @@ async function handleSearchEngineSubscription() {
   const { results } = search;
   if (results.length > 0) {
     const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
+    filterResultsEl.parentElement.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+      el.classList.add('hide-shimmer');
+    });
     filterResultsEl.innerHTML = '';
     cardsData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
       buildCard(cardDiv, cardData);
       filterResultsEl.appendChild(cardDiv);
+      shimmerCardParent.appendChild(filterResultsEl);
       document.querySelector('.browse-filters-form').classList.add('is-result');
     });
   } else {
-    filterResultsEl.innerHTML = 'No results';
+    filterResultsEl.parentElement.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+      el.classList.add('hide-shimmer');
+    });
+    filterResultsEl.innerHTML = 'No Results';
     document.querySelector('.browse-filters-form').classList.remove('is-result');
   }
 }
