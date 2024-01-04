@@ -485,12 +485,6 @@ function handleCoveoHeadlessSearch({
   const searchInput = filterInputSection.querySelector('input');
   browseFiltersSection.appendChild(filterResultsEl);
 
-  /* ---- Start of This code is to add shimmer placeholder ---- */
-  shimmerCardParent.classList.add('browse-card-shimmer');
-  browseFiltersSection.appendChild(shimmerCardParent);
-  shimmerCardParent.appendChild(buildPlaceholder(10));
-  /* ---- End of This code is to add shimmer placeholder ----  */
-
   searchIcon.addEventListener('click', submitSearchHandler);
   searchInput.addEventListener('keyup', searchInputKeyupHandler);
   searchInput.addEventListener('keydown', searchInputKeydownHandler);
@@ -508,10 +502,10 @@ async function handleSearchEngineSubscription() {
   const search = window.headlessSearchEngine.state.search;
   const { results } = search;
   if (results.length > 0) {
-    const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
     filterResultsEl.parentElement.querySelectorAll('.shimmer-placeholder').forEach((el) => {
       el.classList.add('hide-shimmer');
     });
+    const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
     filterResultsEl.innerHTML = '';
     cardsData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
@@ -556,6 +550,12 @@ function renderSortContainer(block) {
   });
 }
 
+function addShimmer(block) {
+  shimmerCardParent.classList.add('browse-card-shimmer');
+  block.querySelector('.browse-filters-form').appendChild(shimmerCardParent);
+  shimmerCardParent.appendChild(buildPlaceholder(10));
+}
+
 export default function decorate(block) {
   enableTagsAsProxy(block);
   decorateBlockTitle(block);
@@ -568,6 +568,7 @@ export default function decorate(block) {
   constructKeywordSearchEl(block);
   constructClearFilterBtn(block);
   appendToForm(block, renderTags());
+  addShimmer(block);
   initiateCoveoHeadlessSearch(handleSearchEngineSubscription)
     .then(
       (data) => {
