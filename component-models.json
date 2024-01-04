@@ -1293,7 +1293,7 @@
         "name": "cq:tags",
         "label": "Topics & Features",
         "valueType": "string",
-        "rootPath": "/content/cq:tags/exl",
+        "rootPath": "/content/cq:tags/exl-encoded",
         "description": "Select up to 15 topics."
       }
     ]
