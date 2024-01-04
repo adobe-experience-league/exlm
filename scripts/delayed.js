@@ -52,4 +52,8 @@ async function loadScript(src, parent, attrs) {
   });
 }
 
-await loadScript('https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-4114a6d5a42e-development.min.js', 'head', { async: true });
+await loadScript(
+  'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-4114a6d5a42e-development.min.js',
+  'head',
+  { async: true },
+);

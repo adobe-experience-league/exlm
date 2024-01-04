@@ -395,7 +395,7 @@ function loadDelayed() {
   /* eslint-disable import/no-cycle */
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
-  addMetaTagsToWindow();  
+  addMetaTagsToWindow();
   // load anything that can be postponed to the latest here
   if (isDocPage()) window.setTimeout(() => import('./feedback/feedback.js'), 3000);
   /* eslint-enable import/no-cycle */
