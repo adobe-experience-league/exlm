@@ -45,15 +45,14 @@ export default async function decorate(block) {
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-topics-block-content');
 
-  allTopicsTags.forEach(function(topicsButtonTitle) {
-          const topicsButtonDiv = document.createElement("div");
-          topicsButtonDiv.classList.add('browse-topics');
-          topicsButtonDiv.classList.add('topic');
-          // decode tags here using atob
-          topicsButtonDiv.innerHTML = atob(topicsButtonTitle);
-          //click event goes here
-          contentDiv.appendChild(topicsButtonDiv);
-      });
-      block.appendChild(contentDiv);
-
+  allTopicsTags.forEach((topicsButtonTitle) => {
+    const topicsButtonDiv = document.createElement('div');
+    topicsButtonDiv.classList.add('browse-topics');
+    topicsButtonDiv.classList.add('topic');
+    // decode tags here using atob
+    topicsButtonDiv.innerHTML = atob(topicsButtonTitle);
+    // click event goes here
+    contentDiv.appendChild(topicsButtonDiv);
+  });
+  block.appendChild(contentDiv);
 }
