@@ -3,7 +3,7 @@ import { loadCSS } from '../lib-franklin.js';
 loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-placeholder.css`); // load placeholder css dynamically
 
 export default function buildPlaceholder(records) {
-  const defaultNumberOfCards = records !== undefined ? records : 4;
+  const defaultNumberOfCards = records || 4;
   let shimmerContent = '';
   for (let i = 0; i < defaultNumberOfCards; i += 1) {
     shimmerContent += `<div class="shimmer-placeholder-isloading">
