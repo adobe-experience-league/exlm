@@ -243,7 +243,7 @@ export default async function coveoSearchEnginePOC({
         });
         const sortContainer = document.querySelector('.sort-container');
         sortContainer.appendChild(sortWrapperEl);
-        const sortDropdown = sortContainer.querySelector('.sort-dropdown-content')
+        const sortDropdown = sortContainer.querySelector('.sort-dropdown-content');
         const sortAnchors = sortDropdown.querySelectorAll('a');
         const sortBtn = sortContainer.querySelector('.sort-drop-btn');
 
