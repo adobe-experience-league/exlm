@@ -648,10 +648,6 @@ async function handleSearchEngineSubscription() {
     filterResultsEl.innerHTML = 'No results';
     document.querySelector('.browse-filters-form').classList.remove('is-result');
   }
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth',
-  });
 }
 
 function renderSortContainer(block) {
