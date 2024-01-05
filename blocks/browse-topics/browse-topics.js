@@ -1,23 +1,22 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 
-
 /**
  * formattedTopicsTags returns the array of base64 encoded tags after extracting from the tags selected in dialog
  * @param {string} inputString - The topics tag. E.g. exl-encoded:topic/QXBwIEJ1aWxkZXI=
  * @returns the topic tag. E.g. QXBwIEJ1aWxkZXI=
  */
 function formattedTopicsTags(inputString) {
-    const splitArray = inputString.split(',');
-    const base64EncodedTagsArray = splitArray.map(function(item) {
-        const lastIndex = item.lastIndexOf('/');
-                if (lastIndex !== -1) {
-                    const actualTagBase64Encoded = item.substring(lastIndex + 1);
-                    return actualTagBase64Encoded;
-                }
-
-    });
-    return base64EncodedTagsArray;
+  const splitArray = inputString.split(',');
+  // eslint-disable-next-line array-callback-return, consistent-return
+  const base64EncodedTagsArray = splitArray.map((item) => {
+    const lastIndex = item.lastIndexOf('/');
+    if (lastIndex !== -1) {
+      const actualTagBase64Encoded = item.substring(lastIndex + 1);
+      return actualTagBase64Encoded;
+    }
+  });
+  return base64EncodedTagsArray;
 }
 
 export default async function decorate(block) {
@@ -25,7 +24,6 @@ export default async function decorate(block) {
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const topics = block.querySelector('div:nth-child(2) > div').textContent.trim();
   const allTopicsTags = topics !== '' ? formattedTopicsTags(topics) : '';
-  console.log(allTopicsTags);
 
   // Clearing the block's content
   block.innerHTML = '';
