@@ -312,6 +312,16 @@ export function htmlToElement(html) {
   return template.content.firstElementChild;
 }
 
+/**
+ * Custom - Loads the right and left rails for doc pages only.
+ */
+async function loadAnalytics() {
+  const mod = await import('./analytics/analytics.js');
+  if (mod.default) {
+    await mod.default();
+  }
+}
+
 export function loadPrevNextBtn() {
   const mainDoc = document.querySelector('main > div:nth-child(1)');
   if (!mainDoc) return;
@@ -397,6 +407,7 @@ function loadDelayed() {
   // load anything that can be postponed to the latest here
   addMetaTagsToWindow();
   // load anything that can be postponed to the latest here
+  loadAnalytics();
   if (isDocPage()) window.setTimeout(() => import('./feedback/feedback.js'), 3000);
   /* eslint-enable import/no-cycle */
 }

@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { sampleRUM } from './lib-franklin.js';
+import { sampleRUM, loadScript } from './lib-franklin.js';
 // add more delayed functionality here
 
 // Core Web Vitals RUM collection
@@ -31,29 +31,6 @@ function loadPrism(document) {
 
 loadPrism(document);
 
-// add more delayed functionality here
-async function loadScript(src, parent, attrs) {
-  return new Promise((resolve, reject) => {
-    if (!document.querySelector(`${parent} > script[src="${src}"]`)) {
-      const script = document.createElement('script');
-      script.src = src;
-      if (attrs) {
-        // eslint-disable-next-line no-restricted-syntax, guard-for-in
-        for (const attr in attrs) {
-          script.setAttribute(attr, attrs[attr]);
-        }
-      }
-      script.onload = resolve;
-      script.onerror = reject;
-      document.head.append(script);
-    } else {
-      resolve();
-    }
-  });
-}
-
-await loadScript(
-  'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-4114a6d5a42e-development.min.js',
-  'head',
-  { async: true },
-);
+await loadScript('https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-4114a6d5a42e-development.min.js', {
+  async: true,
+});
