@@ -8,30 +8,16 @@ import { htmlToElement } from '../../scripts/scripts.js';
  * @returns the topic tag. E.g. QXBwIEJ1aWxkZXI=
  */
 function formattedTopicsTags(inputString) {
-  let base64EncodedTagsArray = [];
-  if (inputString.includes(',')){
     const splitArray = inputString.split(',');
-     base64EncodedTagsArray = splitArray.map(function(item) {
-      getTags(item);
-
-    });
-    return base64EncodedTagsArray;
-  } else{
-
-    return [getTags(inputString)];
-  }
-
-}
-
-function getTags(item){
-  let actualTagBase64Encoded = '';
-  const lastIndex = item.lastIndexOf('/');
+    const base64EncodedTagsArray = splitArray.map(function(item) {
+        const lastIndex = item.lastIndexOf('/');
                 if (lastIndex !== -1) {
-                    actualTagBase64Encoded = item.substring(lastIndex + 1);
+                    const actualTagBase64Encoded = item.substring(lastIndex + 1);
                     return actualTagBase64Encoded;
                 }
 
-                return actualTagBase64Encoded;
+    });
+    return base64EncodedTagsArray;
 }
 
 export default async function decorate(block) {
