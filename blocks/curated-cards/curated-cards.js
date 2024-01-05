@@ -20,8 +20,8 @@ export default async function decorate(block) {
   const sortBy = block.querySelector('div:nth-child(8) > div')?.textContent?.trim()?.toLowerCase();
   const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase()];
   const noOfResults = 4;
-  const productKey = 'exl:solution/';
-  const featureKey = 'exl:feature/';
+  const productKey = 'exl-encoded:solution/';
+  const featureKey = 'exl-encoded:feature/';
   const extractCapability = (input, prefix) => {
     if (!input) {
       return null;
@@ -31,7 +31,7 @@ export default async function decorate(block) {
     for (let i = 0; i < items.length; i += 1) {
       const item = items[i];
       if (item.startsWith(prefix)) {
-        result.push(item.substring(prefix.length));
+        result.push(window.atob(item.substring(prefix.length)));
       }
     }
     return result.length > 0 ? result : null;
