@@ -12,7 +12,7 @@ import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.
  */
 function formattedSolutionTags(inputString) {
   return inputString
-    .replace(/exl:solution\//g, '')
+    .replace(/exl-encoded:solution\//g, '')
     .split(',')
     .map((part) => part.trim());
 }
@@ -30,7 +30,7 @@ export default async function decorate(block) {
   const contentType = CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY;
   const noOfResults = 4;
   const solutionsParam = solutions !== '' ? formattedSolutionTags(solutions) : '';
-
+  
   // Clearing the block's content
   block.innerHTML = '';
   block.classList.add('browse-cards-block');
@@ -145,12 +145,10 @@ export default async function decorate(block) {
           .filter((card) => card.event.time)
           .sort((card1, card2) => convertTimeString(card1.event.time) - convertTimeString(card2.event.time));
       }
-
-      const lowercaseParams = solutionsList.map((parameter) => parameter.toLowerCase());
-      const regex = /[^a-zA-Z0-9().]+/g;
-      const filteredData = eventData.data.filter((event) => {
+        const lowercaseParams = solutionsList.map((parameter) => window.atob(parameter));
+        const filteredData = eventData.data.filter((event) => {
         const productArray = Array.isArray(event.product) ? event.product : [event.product];
-        const lowercaseProduct = productArray.map((item) => item.toLowerCase().replaceAll(regex, '-'));
+        const lowercaseProduct = productArray.map((item) => item);
         return lowercaseParams.some((parameter) => lowercaseProduct.includes(parameter.trim()));
       });
 
