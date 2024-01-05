@@ -97,11 +97,13 @@
   position: absolute;
   background-color: var(--non-spectrum-grey-100);
   min-width: 160px;
-  box-shadow: 0 8px 16px rgb(0 0 0 / 20%);
   z-index: 2;
   width: 100%;
   box-sizing: border-box;
   padding: 12px;
+  border-radius: 4px;
+  box-shadow: 0px 1px 4px rgba(0 0 0 / 15%);
+  border: 1px solid var(--spectrum-gray-400);
 }
 
 .filter-dropdown .custom-checkbox {
