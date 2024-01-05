@@ -198,7 +198,12 @@
 
   /* turn on long description */
   .teaser.block > .foreground > .text > .long-description {
-    display: block;
+    /* display: block; */
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* revert to normal button behavior for primary and secondary */
