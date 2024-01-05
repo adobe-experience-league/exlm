@@ -43,7 +43,7 @@ export default function decorate(block) {
     panel.append(teaserDOM);
     panelContainer.append(panel);
 
-    if(panels.length > 1) {
+    if (panels.length > 1) {
       // generate the button
       const button = document.createElement('button');
       buttonContainer.append(button);
@@ -62,5 +62,5 @@ export default function decorate(block) {
 
   block.textContent = '';
   block.append(panelContainer);
-  if(buttonContainer.children.length) block.append(buttonContainer);
+  if (buttonContainer.children.length) block.append(buttonContainer);
 }
