@@ -4,6 +4,10 @@
   border-top: 2px solid var(--non-spectrurm-whisper-gray);
   background-color: var(--footer-background-color);
   padding: 25px 0 20px;
+
+  @include breakpoint(desktop) {
+    min-height: 527px;
+  }
 }
 
 .footer {

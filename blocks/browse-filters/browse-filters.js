@@ -11,6 +11,7 @@ import {
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
+import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
 const coveoFacetMap = {
   Role: 'headlessRoleFacet',
@@ -29,6 +30,7 @@ const isBrowseProdPage = theme === 'browse-product';
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
+const shimmerCardParent = document.createElement('div');
 
 function enableTagsAsProxy(block) {
   tagsProxy = new Proxy(tags, {
@@ -636,16 +638,23 @@ async function handleSearchEngineSubscription() {
   const search = window.headlessSearchEngine.state.search;
   const { results } = search;
   if (results.length > 0) {
+    filterResultsEl.parentElement.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+      el.classList.add('hide-shimmer');
+    });
     const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
     filterResultsEl.innerHTML = '';
     cardsData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
       buildCard(cardDiv, cardData);
       filterResultsEl.appendChild(cardDiv);
+      shimmerCardParent.appendChild(filterResultsEl);
       document.querySelector('.browse-filters-form').classList.add('is-result');
     });
   } else {
-    filterResultsEl.innerHTML = 'No results';
+    filterResultsEl.parentElement.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+      el.classList.add('hide-shimmer');
+    });
+    filterResultsEl.innerHTML = 'No Results';
     document.querySelector('.browse-filters-form').classList.remove('is-result');
   }
 }
@@ -683,6 +692,12 @@ function renderSortContainer(block) {
   }
 }
 
+function addShimmer(block) {
+  shimmerCardParent.classList.add('browse-card-shimmer');
+  block.querySelector('.browse-filters-form').appendChild(shimmerCardParent);
+  shimmerCardParent.appendChild(buildPlaceholder(10));
+}
+
 export default function decorate(block) {
   enableTagsAsProxy(block);
   decorateBlockTitle(block);
@@ -696,6 +711,7 @@ export default function decorate(block) {
   constructClearFilterBtn(block);
   appendToForm(block, renderTags());
   appendToForm(block, renderFilterResultsHeader());
+  addShimmer(block);
   initiateCoveoHeadlessSearch({
     handleSearchEngineSubscription,
     renderPageNumbers,
