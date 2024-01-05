@@ -21,6 +21,7 @@ function formattedTopicsTags(inputString) {
   let base64EncodedTagsArray = [];
   if (inputString.includes(',')) {
     const splitArray = inputString.split(',');
+    // eslint-disable-next-line array-callback-return
     base64EncodedTagsArray = splitArray.map((item) => {
       getTags(item);
     });
