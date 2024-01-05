@@ -41,7 +41,7 @@ const BrowseCardsADLSAdaptor = (() => {
       placeholders = await fetchPlaceholders();
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.error("Error fetching placeholders:", err);
+      console.error('Error fetching placeholders:', err);
     }
     return data.map((result) => mapResultToCardsDataModel(result));
   };

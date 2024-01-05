@@ -14,7 +14,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
    * @param {string} str - The input string.
    * @returns {string} The string in title case.
    */
-  const convertToTitleCase = (str) => str ? str.replace(/\b\w/g, (match) => match.toUpperCase()) : '';
+  const convertToTitleCase = (str) => (str ? str.replace(/\b\w/g, (match) => match.toUpperCase()) : '');
 
   /**
    * Creates tags based on the result and content type.
@@ -88,7 +88,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       placeholders = await fetchPlaceholders();
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.error("Error fetching placeholders:", err);
+      console.error('Error fetching placeholders:', err);
     }
     return data.map((result) => mapResultToCardsDataModel(result));
   };

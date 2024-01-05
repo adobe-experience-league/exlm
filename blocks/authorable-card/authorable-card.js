@@ -47,7 +47,7 @@ export default async function decorate(block) {
     placeholders = await fetchPlaceholders();
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error("Error fetching placeholders:", err);
+    console.error('Error fetching placeholders:', err);
   }
 
   links.forEach(async (link, i) => {
