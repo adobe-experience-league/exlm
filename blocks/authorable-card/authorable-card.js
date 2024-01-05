@@ -42,7 +42,13 @@ export default async function decorate(block) {
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
 
-  const placeholders = await fetchPlaceholders();
+  let placeholders = {};
+  try {
+    placeholders = await fetchPlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
 
   links.forEach(async (link, i) => {
     if (link) {
