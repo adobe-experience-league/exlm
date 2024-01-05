@@ -1,4 +1,4 @@
-/* Content Type Mapping Keys */
+/* Content Type Mapping Keys for Label and Link */
 const CONTENT_TYPES = Object.freeze({
   COURSE: {
     LABEL: 'Courses',
