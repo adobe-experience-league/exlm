@@ -665,16 +665,22 @@ function renderSortContainer(block) {
     dropDownBtn.addEventListener('click', () => {
       dropDownBtn.classList.toggle('active');
       dropDownBtn.nextSibling.classList.toggle('show');
+      setTimeout(() => {
+        // Close the dropdown menu if the user clicks outside of it
+        document.addEventListener(
+          'click',
+          (event) => {
+            if (!event.target || !dropDownBtn.nextSibling.contains(event.target)) {
+              dropDownBtn.nextSibling.classList.remove('show');
+            }
+          },
+          {
+            once: true,
+          },
+        );
+      });
     });
   }
-
-  // Close the dropdown menu if the user clicks outside of it
-  window.addEventListener('click', (event) => {
-    if (!event.target.matches('.sort-drop-btn') && !event.target.nextSibling) {
-      const sortDropDown = document.querySelector('.sort-dropdown-content');
-      sortDropDown.classList.remove('show');
-    }
-  });
 }
 
 export default function decorate(block) {
