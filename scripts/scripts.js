@@ -117,6 +117,17 @@ export function isBrowsePage() {
   return theme.split(',').find((t) => t.toLowerCase().startsWith('browse-'));
 }
 
+function pageLoadModel() {
+  return {
+    event: 'pageLoaded',
+    web: {
+      webPageDetails: {
+        URL: 'roger.htm',
+      },
+    },
+  };
+}
+
 /**
  * add a section for the left rail when on a browse page.
  */
@@ -421,6 +432,7 @@ async function loadPage() {
     async: true,
   });
   loadRails();
+  window.adobeDataLayer.push(pageLoadModel());
   loadDelayed();
   loadPrevNextBtn();
 }
