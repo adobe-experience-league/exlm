@@ -123,6 +123,18 @@ function pageLoadModel() {
     web: {
       webPageDetails: {
         URL: 'roger.htm',
+        cleanURL: 'experienceleague.adobe.com/#home',
+        domain: 'experienceleague.adobe.com',
+        mainSiteSection: 'learn',
+        name: 'xl:docs:analytics:documentation:adobe analytics overview',
+        pageLanguage: 'en',
+        pageName: 'xl:docs:analytics:documentation:adobe analytics overview',
+
+        pageType: 'webpage',
+
+        pageViews: { value: 1 },
+
+        prevPage: 'xl:learn:home',
       },
     },
   };
