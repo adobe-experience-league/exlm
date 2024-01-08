@@ -43,22 +43,24 @@ export default function decorate(block) {
     panel.append(teaserDOM);
     panelContainer.append(panel);
 
-    // generate the button
-    const button = document.createElement('button');
-    buttonContainer.append(button);
-    button.title = `Slide ${i + 1}`;
-    button.dataset.panel = `panel_${i}`;
-    if (!i) button.classList.add('selected');
+    if (panels.length > 1) {
+      // generate the button
+      const button = document.createElement('button');
+      buttonContainer.append(button);
+      button.title = `Slide ${i + 1}`;
+      button.dataset.panel = `panel_${i}`;
+      if (!i) button.classList.add('selected');
 
-    observer.observe(panel);
+      observer.observe(panel);
 
-    // add event listener to button
-    button.addEventListener('click', () => {
-      panelContainer.scrollTo({ top: 0, left: panel.offsetLeft - panel.parentNode.offsetLeft, behavior: 'smooth' });
-    });
+      // add event listener to button
+      button.addEventListener('click', () => {
+        panelContainer.scrollTo({ top: 0, left: panel.offsetLeft - panel.parentNode.offsetLeft, behavior: 'smooth' });
+      });
+    }
   });
 
   block.textContent = '';
   block.append(panelContainer);
-  block.append(buttonContainer);
+  if (buttonContainer.children.length) block.append(buttonContainer);
 }
