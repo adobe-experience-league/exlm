@@ -3,7 +3,7 @@ version: 1
 indices:
   site:
     include:
-      - '/**'
+      - '/en/browse/**'
     target: /query-index.json
     properties:
       title:
