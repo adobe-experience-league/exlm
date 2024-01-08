@@ -153,6 +153,32 @@ function pageLoadModel() {
   };
 }
 
+function linkClickModel(e) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'linkClicked',
+    link: {
+      destinationDomain: '<Link HREF Value>',
+      linkLocation: '<Position of link on page>',
+      linkTitle: '<name of the link clicked>',
+      linkType: '<’other’ || ‘exit’ || ‘download’>',
+      solution: '<Adobe Solution link pertains to>',
+    },
+    web: {
+      webInteraction: {
+        URL: '<Link HREF Value>',
+        linkClicks: { value: 1 },
+        name: '<name of the link clicked>',
+        type: '<’other’ || ‘exit’ || ‘download’>',
+      },
+    },
+  });
+  window.setTimeout(() => {
+    window.location.href = e.target.href;
+  }, 1000);
+}
+
 /**
  * add a section for the left rail when on a browse page.
  */
@@ -450,6 +476,19 @@ async function loadRails() {
   }
 }
 
+function loadAnalyticsEvents() {
+  const linkClicked = document.querySelectorAll('a');
+  linkClicked.forEach((linkElement) => {
+    linkElement.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log(e);
+      if (e.target.tagName === 'A') {
+        linkClickModel(e);
+      }
+    });
+  });
+}
+
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
@@ -458,6 +497,7 @@ async function loadPage() {
   });
   loadRails();
   window.adobeDataLayer.push(pageLoadModel());
+  loadAnalyticsEvents();
   loadDelayed();
   loadPrevNextBtn();
 }
