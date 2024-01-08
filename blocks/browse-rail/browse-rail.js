@@ -3,6 +3,12 @@ import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 
 const placeholders = await fetchPlaceholders();
 
+// Function to check if the element is visible on page.
+function isVisible(element) {
+  const style = getComputedStyle(element);
+  return style.display !== 'none' && style.visibility !== 'hidden';
+}
+
 // Function to create dynamic list items
 function createListItem(item) {
   const li = document.createElement('li');
@@ -98,9 +104,11 @@ export default async function decorate(block) {
 
       // Loop through each topic element and create a li element for each
       topicElements.forEach((topicElement) => {
-        const liElement = document.createElement('li');
-        liElement.innerHTML = `<a href="#">${topicElement.textContent}</a>`;
-        ulElement.appendChild(liElement);
+        if (isVisible(topicElement)) {
+          const liElement = document.createElement('li');
+          liElement.innerHTML = `<a href="#">${topicElement.textContent}</a>`;
+          ulElement.appendChild(liElement);
+        }
       });
 
       const topicsUL = document.createElement('ul');
