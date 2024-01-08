@@ -14,6 +14,7 @@
   z-index: 15;
   width: 90%;
 }
+
 .exl-toast-content {
   border-right: 1px solid rgba(255, 255, 255, 0.25);
   color: var(--spectrum-gray-50);
@@ -24,6 +25,7 @@
   margin: 8px 0;
   white-space: unset;
 }
+
 .exl-toast .icon-info {
   background-image: url("../../icons/info-circle.svg");
   background-repeat: no-repeat;
@@ -35,6 +37,7 @@
   width: 18px;
   vertical-align: middle;
 }
+
 .exl-toast .icon-close {
   background-image: url("../../icons/icon-close.svg");
   background-repeat: no-repeat;
@@ -51,19 +54,20 @@
 .doc-actions,
 .doc-actions-mobile {
   align-items: center;
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
   font-size: var(--spectrum-font-size-75);
   margin: 10px;
 }
-.doc-actions .exl-tooltip,
-.doc-actions-mobile .exl-tooltip {
+
+.doc-actions .exl-tooltip {
   display: inline-block;
   font-size: 12px;
   position: relative;
   transition: all 130ms ease-in-out;
 }
-.doc-actions .exl-tooltip-label,
-.doc-actions-mobile .exl-tooltip-label {
+
+.doc-actions .exl-tooltip-label {
   background-color: var(--spectrum-gray-600);
   border-radius: 4px;
   bottom: 120%;
@@ -79,8 +83,8 @@
   visibility: hidden;
   z-index: 1;
 }
-.doc-actions .exl-tooltip-label::after,
-.doc-actions-mobile .exl-tooltip-label::after {
+
+.doc-actions .exl-tooltip-label::after {
   border-width: 4px;
   border-style: solid;
   border-color: var(--spectrum-gray-600) transparent transparent transparent;
@@ -90,15 +94,15 @@
   position: absolute;
   top: 100%;
 }
-.doc-actions .exl-link-label,
-.doc-actions-mobile .exl-link-label {
+
+.doc-actions .exl-link-label {
   color: var(--non-spectrum-grey);
   font-size: var(--spectrum-font-size-75);
   font-weight: var(--font-weight-400);
   line-height: 28px;
 }
-.doc-actions .icon,
-.doc-actions-mobile .icon {
+
+.doc-actions .icon {
   background-size: 20px 20px;
   background-repeat: no-repeat;
   color: var(--spectrum-gray-800);
@@ -109,54 +113,96 @@
   vertical-align: middle;
   width: 20px;
 }
-.doc-actions .bookmark,
-.doc-actions-mobile .bookmark {
+
+.doc-actions .bookmark {
   margin-right: 10px;
 }
-.doc-actions .bookmark .icon.bookmark-icon,
-.doc-actions-mobile .bookmark .icon.bookmark-icon {
+
+.doc-actions .bookmark .icon.bookmark-icon {
   background-image: url("../../icons/bookmark-outline.svg");
   background-position: center 3px;
   cursor: inherit;
 }
-.doc-actions .bookmark .icon.bookmark-icon:hover + .exl-tooltip-label,
-.doc-actions-mobile .bookmark .icon.bookmark-icon:hover + .exl-tooltip-label {
+
+.doc-actions .bookmark .icon.bookmark-icon:hover+.exl-tooltip-label {
   visibility: visible;
 }
-.doc-actions .bookmark.auth .bookmark-icon,
-.doc-actions-mobile .bookmark.auth .bookmark-icon {
+
+.doc-actions .bookmark.auth .bookmark-icon {
   cursor: pointer;
 }
-.doc-actions .bookmark.auth .bookmark-icon.authed,
-.doc-actions-mobile .bookmark.auth .bookmark-icon.authed {
+
+.doc-actions .bookmark.auth .bookmark-icon.authed {
   background-image: url("../../icons/bookmark-active.svg");
   background-position: center 3px;
   cursor: pointer;
 }
-.doc-actions .bookmark.auth .bookmark-icon.authed:hover + .exl-tooltip-label,
-.doc-actions-mobile .bookmark.auth .bookmark-icon.authed:hover + .exl-tooltip-label {
+
+.doc-actions .bookmark.auth .bookmark-icon.authed:hover+.exl-tooltip-label {
   visibility: visible;
 }
-.doc-actions .bookmark.auth .bookmark-icon:hover,
-.doc-actions-mobile .bookmark.auth .bookmark-icon:hover {
+
+.doc-actions .bookmark.auth .bookmark-icon:hover {
   background-color: var(--spectrum-gray-200);
   border-radius: 4px;
 }
-.doc-actions .copy-link .icon.copy-link-url,
-.doc-actions-mobile .copy-link .icon.copy-link-url {
+
+.doc-actions .copy-link .icon.copy-link-url {
   background-image: url("../../icons/copy-link.svg");
   background-position: center 2px;
   margin-right: 5px;
   transition: all 200ms ease-in-out;
 }
-.doc-actions .copy-link .icon.copy-link-url:hover,
-.doc-actions-mobile .copy-link .icon.copy-link-url:hover {
+
+.doc-actions .copy-link .icon.copy-link-url:hover {
   background-color: var(--spectrum-gray-200);
   border-radius: 4px;
 }
-.doc-actions .copy-link .icon.copy-link-url:hover + .exl-tooltip-label,
-.doc-actions-mobile .copy-link .icon.copy-link-url:hover + .exl-tooltip-label {
+
+.doc-actions .copy-link .icon.copy-link-url:hover+.exl-tooltip-label {
   visibility: visible;
+}
+
+.doc-actions .doc-mt-toggle {
+  flex-basis: 100%;
+}
+
+.doc-actions .doc-mt-toggle input[type="checkbox"] {
+  appearance: none;
+  width: 2rem;
+  background: var(--spectrum-gray-300);
+  border-radius: 3rem;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: all .2s ease-in-out;
+  padding: 0;
+  height: 1rem;
+  border: 0;
+}
+
+.doc-actions .doc-mt-toggle input[type="checkbox"]:checked {
+  background: var(--spectrum-blue-900);
+}
+
+.doc-actions .doc-mt-toggle input[type="checkbox"]::after {
+  position: absolute;
+  content: "";
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  outline: 2px solid var(--spectrum-gray-600);
+  outline-offset: -1px;   
+  background: #fff;
+  transform: scale(0.7);
+  left: 0;
+  transition: all .2s ease-in-out;
+}
+
+.doc-actions .doc-mt-toggle input[type="checkbox"]:checked::after {
+  left: calc(100% - 0.95rem);
+  border: 0;
+  outline: 2px solid var(--spectrum-blue-900);
 }
 
 .doc-actions-wrapper {
@@ -167,6 +213,7 @@
   display: flex;
   margin: 30px 0 0 -8px;
 }
+
 @media (min-width: 900px) {
   .doc-actions-wrapper {
     display: flex;
@@ -178,11 +225,12 @@
     display: none;
   }
 }
-@media (min-width: 600px) {
 
+@media (min-width: 600px) {
   .exl-toast {
     width: auto;
   }
+
   .exl-toast-content {
     white-space: pre;
   }
