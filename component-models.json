@@ -318,7 +318,7 @@
         "valueType": "string",
         "options": [
           {
-            "name": "default",
+            "name": "hyperlink",
             "value": ""
           },
           {

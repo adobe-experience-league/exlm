@@ -28,6 +28,25 @@ import {
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
+export const timers = new Map();
+
+// eslint-disable-next-line
+export function debounce(id = '', fn = () => void 0, ms = 250) {
+  if (id.length > 0) {
+    if (timers.has(id)) {
+      clearTimeout(timers.get(id));
+    }
+
+    timers.set(
+      id,
+      setTimeout(() => {
+        timers.delete(id);
+        fn();
+      }, ms),
+    );
+  }
+}
+
 /**
  * load fonts.css and set a session storage flag
  */
