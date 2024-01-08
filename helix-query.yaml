@@ -22,7 +22,7 @@ indices:
         select: none
         value: |
           parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
-    browse:
+  browse:
     include:
       - /en/browse/**
     target: /browse-index.json
