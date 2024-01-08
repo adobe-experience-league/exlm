@@ -93,15 +93,21 @@ export default async function decorate(block) {
 
   // Create tab list for different content types
   const tabList = document.createElement('div');
-  tabList.classList.add('tabbed-cards');
+  tabList.classList.add('tabbed-cards-label');
+  const tabListUlElement = document.createElement('ul');
   tabsElementLabel.forEach((tabLabelData) => {
     // Create individual tab labels and attach click event listener
-    const tabLabel = document.createElement('p');
-    tabLabel.classList.add('tab-label');
+    const tabLabel = document.createElement('li');
     tabLabel.textContent = CONTENT_TYPES[tabLabelData.toUpperCase()].LABEL;
     tabLabel.addEventListener('click', () => {
+      // Clear Existing Label
+      const tabLabelsListElements = document.querySelectorAll('.tabbed-cards-label ul li');
+      tabLabelsListElements.forEach((label) => {
+        label.classList.remove('active');
+      });
       // Clear existing cards
       const tabbedContent = block.querySelector('.tabbed-cards-block');
+      tabLabel.classList.add('active');
       if (tabbedContent) {
         [...tabbedContent.children].forEach((cards) => {
           cards.remove();
@@ -114,9 +120,9 @@ export default async function decorate(block) {
       tabList.appendChild(viewLinkURLElement);
       fetchDataAndRenderBlock(tabLabelData, block);
     });
-
+    tabListUlElement.appendChild(tabLabel);
     // Append tab label to the tab list
-    tabList.appendChild(tabLabel);
+    tabList.appendChild(tabListUlElement);
   });
 
   // Append tab list and Shimmer Card to the main block
@@ -128,5 +134,13 @@ export default async function decorate(block) {
 
   // Fetch and render data for the initial content type
   const initialContentType = contentTypeList.split(',')[0];
+
+  // Update view link for initial content type
+  viewLinkURLElement.innerHTML = CONTENT_TYPES[initialContentType.toUpperCase()].VIEW_TEXT;
+  viewLinkURLElement.setAttribute('href', CONTENT_TYPES[initialContentType.toUpperCase()].VIEW_LINK);
+  tabList.appendChild(viewLinkURLElement);
+  tabList.children[0].children[0].classList.add('active');
+
+  // Render Block content
   fetchDataAndRenderBlock(initialContentType, block);
 }

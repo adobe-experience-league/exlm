@@ -1,29 +1,60 @@
 @import "../../scripts/browse-card/browse-cards-block.css";
 
-.tabbed-cards .tab-view-text{
+.tabbed-cards-label {
+    border-bottom: 1px solid var(--spectrum-gray-500);
+    color: var(--spectrum-gray-700);
+    display: flex;
+    font-size: 16px;
+    line-height: 20.8px;
+    justify-content: space-between;
+}
+
+.tabbed-cards-label>ul {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    gap: 23px;
+}
+
+.tabbed-cards-label>ul li {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    white-space: pre;
+}
+
+.tabbed-cards-label>ul li.active {
+    color: var(--spectrum-blue-900);
+}
+
+.tabbed-cards-label>ul li.active::after {
+    border-bottom: 3px solid var(--spectrum-blue-900);
+    content: "";
+    position: absolute;
+    bottom: -14px;
+    left: 0;
+    width: 100%;
+}
+
+.tabbed-cards-label>a {
+    color: var(--spectrum-blue-900);
     font-size: 18px;
-    line-height: 17px;
-    margin: 2px 0 0 0;
-    text-align: right;
+    line-height: 23.4px;
 }
 
+@media (max-width: 1024px) {
+    .tabbed-cards-label {
+        border-bottom: 0 none;
+        display: block;
+    }
 
-.tabbed-cards{
-    /* Set display to inline-block to make labels appear horizontally */
-    display: inline-block;
-    margin-right: 10px; /* Optional: Add some spacing between labels */
-    cursor: pointer; /* Optional: Add pointer cursor for better user experience */
-}
-
-.tabbed-cards .tab-label {
-    top: 638px;
-    left: 288px;
-    width: 1120px;
-    height: 32px;
-    opacity: 1;
-}
-
-.tabbed-cards p {
-    display: inline-block;
-    margin-right: 20px; /* Optional: add some spacing between tabs */
+    .tabbed-cards-label>ul {
+        border-bottom: 1px solid var(--spectrum-gray-500);
+        margin-bottom: 20px;
+        overflow-x: scroll;
+        padding-bottom: 12px;
+    }
 }
