@@ -90,13 +90,27 @@ export default async function decorate(block) {
 
   if (theme !== 'browse-all') {
     // Topics
-    const topicsUL = document.createElement('ul');
-    topicsUL.classList.add('topics');
-    const topicsLI = document.createElement('li');
-    topicsLI.innerHTML = `<a href="#">${label} ${placeholders.topics}</a><ul><li><a href="#">Topic 1</a></li></ul>`;
-    topicsUL.append(topicsLI);
-    block.append(topicsUL);
+    const browseTopicsContainer = document.querySelector('.browse-topics-container');
+    if (browseTopicsContainer !== null) {
+      const ulElement = document.createElement('ul');
+      // Get all the topic elements inside the container
+      const topicElements = browseTopicsContainer.querySelectorAll('.browse-topics.topic');
 
+      // Loop through each topic element and create a li element for each
+      topicElements.forEach((topicElement) => {
+        const liElement = document.createElement('li');
+        liElement.innerHTML = `<a href="#">${topicElement.textContent}</a>`;
+        ulElement.appendChild(liElement);
+      });
+
+      const topicsUL = document.createElement('ul');
+      topicsUL.classList.add('topics');
+      const topicsLI = document.createElement('li');
+      topicsLI.innerHTML = `<a href="#">${label} ${placeholders.topics}</a>`;
+      topicsLI.append(ulElement);
+      topicsUL.append(topicsLI);
+      block.append(topicsUL);
+    }
     // Add "Browse more products" link
     const browseMoreProducts = document.createElement('div');
     browseMoreProducts.classList.add('browse-more-products');
