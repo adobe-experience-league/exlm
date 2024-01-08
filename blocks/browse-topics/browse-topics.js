@@ -48,7 +48,7 @@ export default async function decorate(block) {
     topicsButtonDiv.classList.add('browse-topics');
     topicsButtonDiv.classList.add('topic');
     // decode tags here using atob
-    topicsButtonDiv.innerHTML = window.atob(topicsButtonTitle);
+    topicsButtonDiv.innerHTML = atob(topicsButtonTitle);
     // click event goes here
     contentDiv.appendChild(topicsButtonDiv);
   });
