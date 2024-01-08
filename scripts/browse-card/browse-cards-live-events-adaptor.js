@@ -7,15 +7,7 @@ import { CONTENT_TYPES } from './browse-cards-constants.js';
  * @module BrowseCardsLiveEventsAdaptor
  */
 const BrowseCardsLiveEventsAdaptor = (() => {
-  let placeholders;
-
-  /**
-   * Converts a string to title case.
-   * @param {string} str - The input string.
-   * @returns {string} The string in title case.
-   */
-  const convertToTitleCase = (str) => str.replace(/\b\w/g, (match) => match.toUpperCase());
-
+  let placeholders = {};
   /**
    * Maps a result to the BrowseCards data model.
    * @param {Object} result - The result object.
@@ -42,7 +34,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
         },
         copyLink: ctaLink || '',
         viewLink: ctaLink || '',
-        viewLinkText: ctaLabel || placeholders[`viewLink${convertToTitleCase(contentType)}`],
+        viewLinkText: ctaLabel || placeholders.viewLinkLiveEvent || 'Register',
       };
     }
     return null;
@@ -54,7 +46,12 @@ const BrowseCardsLiveEventsAdaptor = (() => {
    * @returns {Promise<Array>} A promise that resolves with an array of BrowseCards data models.
    */
   const mapResultsToCardsData = async (data) => {
-    placeholders = await fetchPlaceholders();
+    try {
+      placeholders = await fetchPlaceholders();
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching placeholders:', err);
+    }
     return data.map((result) => mapResultToCardsDataModel(result)).filter((item) => item !== null);
   };
 

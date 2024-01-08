@@ -1,39 +1,32 @@
 /* Content Type Mapping Keys for Label and Link */
 const CONTENT_TYPES = Object.freeze({
   COURSE: {
+    MAPPING_KEY: 'course',
     LABEL: 'Courses',
-    VIEW_TEXT: 'View all Courses',
-    VIEW_LINK: '/en',
   },
   TUTORIAL: {
+    MAPPING_KEY: 'tutorial',
     LABEL: 'Tutorials',
-    VIEW_TEXT: 'View all Tutorials',
-    VIEW_LINK: '/en',
   },
   DOCUMENTATION: {
+    MAPPING_KEY: 'documentation',
     LABEL: 'Documentation',
-    VIEW_TEXT: 'View all Documentation',
-    VIEW_LINK: '/en',
   },
   TROUBLESHOOTING: {
+    MAPPING_KEY: 'troubleshooting',
     LABEL: 'Troubleshooting',
-    VIEW_TEXT: 'View all Troubleshooting',
-    VIEW_LINK: '/en',
   },
   EVENT: {
+    MAPPING_KEY: 'event',
     LABEL: 'On-Demand Events',
-    VIEW_TEXT: 'View all On-Demand events',
-    VIEW_LINK: '/en',
   },
   COMMUNITY: {
+    MAPPING_KEY: 'community',
     LABEL: 'Community',
-    VIEW_TEXT: 'View all Community posts',
-    VIEW_LINK: '/en',
   },
   CERTIFICATION: {
+    MAPPING_KEY: 'certification',
     LABEL: 'Certification',
-    VIEW_TEXT: 'View all Certifications',
-    VIEW_LINK: '/en',
   },
 });
 

@@ -1278,6 +1278,27 @@
     ]
   },
   {
+    "id": "browse-topics",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "aem-tag",
+        "name": "cq:tags",
+        "label": "Topics & Features",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl-encoded",
+        "description": "Select up to 15 topics."
+      }
+    ]
+  },
+  {
     "id": "tabbed-cards",
     "fields": [
       {

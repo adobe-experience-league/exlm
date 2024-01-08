@@ -1,4 +1,4 @@
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
@@ -8,36 +8,36 @@ import CONTENT_TYPES from './tabbed-cards-constants.js';
 
 /**
  * Decorate function to process and log the mapped data.
- * @param {HTMLElement} block - The block of data to process.
+ * @param {HTMLElement} blockElement - The block of data to process.
  */
-export default async function decorate(block) {
+export default async function decorate(blockElement) {
   // Extracting elements from the block
-  const headingElement = block.querySelector('div:nth-child(1) > div');
-  const toolTipElement = block.querySelector('div:nth-child(2) > div');
-  const contentTypeList = block.querySelector('div:nth-child(3) > div').textContent?.trim()?.toLowerCase();
-  const sortBy = block.querySelector('div:nth-child(4) > div')?.textContent?.trim()?.toLowerCase();
-  const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase()];
-  const tabsElementLabel = contentTypeList.split(',');
-  const noOfResults = 4;
+  const blockDataElements = [...blockElement.querySelectorAll(':scope div > div')];
+  const headingElementContent = blockDataElements[0].innerHTML.trim();
+  const toolTipElementContent = blockDataElements[1].innerHTML.trim();
+  const contentTypeListContent = blockDataElements[2].innerHTML?.trim()?.toLowerCase();
+  const sortByContent = blockDataElements[3].innerHTML?.trim()?.toLowerCase();
+  const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase()];
+  const tabsLabels = contentTypeListContent.split(',');
+  const numberOfResults = 4;
 
-  // Clearing the block's content
-  block.innerHTML = '';
-  block.classList.add('browse-cards-block');
+  // Clearing the block's content and applying CSS class
+  blockElement.innerHTML = '';
+  blockElement.classList.add('browse-cards-block');
 
   // Creating the header div with title and tooltip
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
-          <h2>${headingElement?.textContent?.trim()}</h2>
-          <div class="tooltip">
-            <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent?.trim()}</span>
-          </div>
+        <h2>${headingElementContent}</h2>
+        <div class="tooltip">
+          <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElementContent}</span>
+        </div>
       </div>
     </div> 
   `);
   // Appending header div to the block
-  block.appendChild(headerDiv);
-  await decorateIcons(headerDiv);
+  blockElement.appendChild(headerDiv);
 
   // Create content div and shimmer card parent
   const contentDiv = document.createElement('div');
@@ -46,15 +46,20 @@ export default async function decorate(block) {
   const shimmerCardParent = document.createElement('div');
   shimmerCardParent.classList.add('browse-card-shimmer');
 
+  // Function to convert a string to title case
+  const convertToTitleCase = (str) => str.replace(/\b\w/g, (match) => match.toUpperCase());
+
+  const placeholders = await fetchPlaceholders();
+
   // Function to fetch data and render block
   const fetchDataAndRenderBlock = (contentType, tabbedBlock) => {
-    const param = {
+    const params = {
       contentType: contentType && contentType.split(','),
       sortCriteria,
-      noOfResults,
+      numberOfResults,
     };
 
-    const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
+    const browseCardsContent = BrowseCardsDelegate.fetchCardData(params);
     browseCardsContent
       .then((data) => {
         // Hide shimmer placeholders
@@ -64,7 +69,7 @@ export default async function decorate(block) {
 
         if (data?.length) {
           // Render cards
-          for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
+          for (let i = 0; i < Math.min(numberOfResults, data.length); i += 1) {
             const cardData = data[i];
             const cardDiv = document.createElement('div');
             buildCard(cardDiv, cardData);
@@ -95,7 +100,7 @@ export default async function decorate(block) {
   const tabList = document.createElement('div');
   tabList.classList.add('tabbed-cards-label');
   const tabListUlElement = document.createElement('ul');
-  tabsElementLabel.forEach((tabLabelData) => {
+  tabsLabels.forEach((tabLabelData) => {
     // Create individual tab labels and attach click event listener
     const tabLabel = document.createElement('li');
     tabLabel.textContent = CONTENT_TYPES[tabLabelData.toUpperCase()].LABEL;
@@ -106,19 +111,19 @@ export default async function decorate(block) {
         label.classList.remove('active');
       });
       // Clear existing cards
-      const tabbedContent = block.querySelector('.tabbed-cards-block');
+      const tabbedContent = blockElement.querySelector('.tabbed-cards-block');
       tabLabel.classList.add('active');
       if (tabbedContent) {
         [...tabbedContent.children].forEach((cards) => {
           cards.remove();
         });
       }
-
       // Update view link and fetch/render data for the selected tab
-      viewLinkURLElement.innerHTML = CONTENT_TYPES[tabLabelData.toUpperCase()].VIEW_TEXT;
-      viewLinkURLElement.setAttribute('href', CONTENT_TYPES[tabLabelData.toUpperCase()].VIEW_LINK);
+      const viewLinkMappingKey = CONTENT_TYPES[tabLabelData.toUpperCase()].MAPPING_KEY;
+      viewLinkURLElement.innerHTML = placeholders[`viewAll${convertToTitleCase(viewLinkMappingKey)}`];
+      viewLinkURLElement.setAttribute('href', placeholders[`viewAll${convertToTitleCase(viewLinkMappingKey)}Link`]);
       tabList.appendChild(viewLinkURLElement);
-      fetchDataAndRenderBlock(tabLabelData, block);
+      fetchDataAndRenderBlock(tabLabelData, blockElement);
     });
     tabListUlElement.appendChild(tabLabel);
     // Append tab label to the tab list
@@ -126,21 +131,23 @@ export default async function decorate(block) {
   });
 
   // Append tab list and Shimmer Card to the main block
-  block.appendChild(tabList);
-  block.appendChild(shimmerCardParent);
+  blockElement.appendChild(tabList);
+  blockElement.appendChild(shimmerCardParent);
 
   // Append placeholder to shimmer card parent
   shimmerCardParent.appendChild(buildPlaceholder());
 
   // Fetch and render data for the initial content type
-  const initialContentType = contentTypeList.split(',')[0];
+  const initialContentType = tabsLabels[0];
+  const viewLinkInitialMappingKey = CONTENT_TYPES[initialContentType.toUpperCase()].MAPPING_KEY;
 
   // Update view link for initial content type
-  viewLinkURLElement.innerHTML = CONTENT_TYPES[initialContentType.toUpperCase()].VIEW_TEXT;
-  viewLinkURLElement.setAttribute('href', CONTENT_TYPES[initialContentType.toUpperCase()].VIEW_LINK);
+  viewLinkURLElement.innerHTML = placeholders[`viewAll${convertToTitleCase(viewLinkInitialMappingKey)}`];
+  viewLinkURLElement.setAttribute('href', placeholders[`viewAll${convertToTitleCase(viewLinkInitialMappingKey)}Link`]);
   tabList.appendChild(viewLinkURLElement);
   tabList.children[0].children[0].classList.add('active');
 
   // Render Block content
-  fetchDataAndRenderBlock(initialContentType, block);
+  fetchDataAndRenderBlock(initialContentType, blockElement);
+  decorateIcons(headerDiv);
 }

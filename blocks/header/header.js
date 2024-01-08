@@ -298,7 +298,7 @@ const searchDecorator = async (searchBlock) => {
   const searchWrapper = htmlToElement(
     `<div class="search-wrapper">
       <div class="search-short">
-        <a href="https://experienceleague.adobe.com/search.html" aria-label="search">
+        <a href="https://experienceleague.adobe.com/search.html" aria-label="Search">
           <span class="icon icon-search search-icon"></span>
         </a>
       </div>

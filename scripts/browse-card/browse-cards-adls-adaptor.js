@@ -8,10 +8,7 @@ import { adlsRedirectUrl } from '../urls.js';
  * @module BrowseCardsADLSAdaptor
  */
 const BrowseCardsADLSAdaptor = (() => {
-  let placeholders;
-
-  // Placeholder for ViewLinkCourse
-  const viewLinkTextPlaceholder = 'viewLinkCourse';
+  let placeholders = {};
   /**
    * Maps a result to the BrowseCards data model.
    * @param {Object} result - The result object.
@@ -30,7 +27,7 @@ const BrowseCardsADLSAdaptor = (() => {
       description: description || '',
       copyLink: adlsRedirectUrl + path || '',
       viewLink: adlsRedirectUrl + path || '',
-      viewLinkText: placeholders[viewLinkTextPlaceholder],
+      viewLinkText: placeholders.viewLinkCourse || 'View course',
     };
   };
 
@@ -40,7 +37,12 @@ const BrowseCardsADLSAdaptor = (() => {
    * @returns {Promise<Array>} A promise that resolves with an array of BrowseCards data models.
    */
   const mapResultsToCardsData = async (data) => {
-    placeholders = await fetchPlaceholders();
+    try {
+      placeholders = await fetchPlaceholders();
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching placeholders:', err);
+    }
     return data.map((result) => mapResultToCardsDataModel(result));
   };
 
