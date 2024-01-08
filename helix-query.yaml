@@ -3,8 +3,8 @@ version: 1
 indices:
   site:
     include:
-      - '/en/browse/**'
-    target: /browse-index.json
+      - '/**'
+    target: /query-index.json
     properties:
       title:
         select: head > meta[property="og:title"]
@@ -14,6 +14,23 @@ indices:
         select: head > meta[property="og:image"]
         value: |
           match(attribute(el, 'content'), 'https:\/\/[^/]+(\/.*)')
+      theme:
+        select: head > meta[name="theme"]
+        value: |
+          attribute(el, 'content')
+      lastModified:
+        select: none
+        value: |
+          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+  browse:
+    include:
+      - /en/browse/**
+    target: /browse-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: |
+          attribute(el, 'content')
       theme:
         select: head > meta[name="theme"]
         value: |
