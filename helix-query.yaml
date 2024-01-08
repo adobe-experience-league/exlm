@@ -1,15 +1,19 @@
 version: 1
 
 indices:
-  browse:
+  site:
     include:
-      - /en/browse/**
+      - '/en/browse/**'
     target: /browse-index.json
     properties:
       title:
         select: head > meta[property="og:title"]
         value: |
           attribute(el, 'content')
+      image:
+        select: head > meta[property="og:image"]
+        value: |
+          match(attribute(el, 'content'), 'https:\/\/[^/]+(\/.*)')
       theme:
         select: head > meta[name="theme"]
         value: |
@@ -17,4 +21,4 @@ indices:
       lastModified:
         select: none
         value: |
-          parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
+          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
