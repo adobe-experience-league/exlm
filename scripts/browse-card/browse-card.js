@@ -51,7 +51,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
   let isLeftPlacement = false;
   if (contentType === 'tutorial') {
     icon = 'play-outline';
-    isLeftPlacement = true;
+    isLeftPlacement = false;
   } else if (
     contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY ||
     contentType === CONTENT_TYPES.EVENT.MAPPING_KEY ||
@@ -166,7 +166,8 @@ export default async function buildCard(element, model) {
     img.loading = 'lazy';
     img.alt = title;
     img.width = 254;
-    img.height = 165;
+    img.height = 153;
+    cardFigure.classList.add('img-custom-height');
     cardFigure.appendChild(img);
   }
 

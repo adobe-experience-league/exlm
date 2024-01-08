@@ -42,7 +42,13 @@ export default async function decorate(block) {
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
 
-  const placeholders = await fetchPlaceholders();
+  let placeholders = {};
+  try {
+    placeholders = await fetchPlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
 
   links.forEach(async (link, i) => {
     if (link) {
@@ -51,7 +57,7 @@ export default async function decorate(block) {
         .handleArticleDataService(link)
         .then(async (data) => {
           block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-            el.remove();
+            el.classList.add('hide-shimmer');
           });
           linksContainer[i].innerHTML = '';
           const cardData = await mapResultToCardsData(data, placeholders);
@@ -61,7 +67,7 @@ export default async function decorate(block) {
         })
         .catch(() => {
           block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-            el.remove();
+            el.classList.add('hide-shimmer');
           });
         });
     }
@@ -69,6 +75,10 @@ export default async function decorate(block) {
 
   block.innerHTML = '';
   block.appendChild(headerDiv);
-  block.appendChild(buildPlaceholder());
-  block.appendChild(contentDiv);
+  const shimmerCardParent = document.createElement('div');
+  shimmerCardParent.classList.add('browse-card-shimmer');
+  block.appendChild(shimmerCardParent);
+
+  shimmerCardParent.appendChild(buildPlaceholder());
+  shimmerCardParent.appendChild(contentDiv);
 }

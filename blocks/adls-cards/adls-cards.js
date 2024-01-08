@@ -46,13 +46,17 @@ export default async function decorate(block) {
     contentType,
   };
 
-  block.appendChild(buildPlaceholder());
+  const shimmerCardParent = document.createElement('div');
+  shimmerCardParent.classList.add('browse-card-shimmer');
+  block.appendChild(shimmerCardParent);
+
+  shimmerCardParent.appendChild(buildPlaceholder());
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent
     .then((data) => {
       block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-        el.remove();
+        el.classList.add('hide-shimmer');
       });
       if (data?.length) {
         for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
@@ -62,13 +66,13 @@ export default async function decorate(block) {
           contentDiv.appendChild(cardDiv);
         }
 
-        block.appendChild(contentDiv);
+        shimmerCardParent.appendChild(contentDiv);
         decorateIcons(block);
       }
     })
     .catch((err) => {
       block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-        el.remove();
+        el.classList.add('hide-shimmer');
       });
       /* eslint-disable-next-line no-console */
       console.error(err);

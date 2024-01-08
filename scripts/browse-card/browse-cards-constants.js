@@ -10,7 +10,7 @@ export const CONTENT_TYPES = Object.freeze({
   },
   EVENT: {
     MAPPING_KEY: 'event',
-    LABEL: 'Event',
+    LABEL: 'On-Demand Event',
   },
   COMMUNITY: {
     MAPPING_KEY: 'community',
@@ -49,9 +49,4 @@ export const ROLE_OPTIONS = Object.freeze({
   DEVELOPER: 'Developer',
   LEADER: 'Leader',
   USER: 'User',
-});
-
-export const DEFAULT_OPTIONS = Object.freeze({
-  ROLE: 'Business User',
-  SOLUTION: 'Solution',
 });

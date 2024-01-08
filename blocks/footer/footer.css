@@ -4,6 +4,11 @@
   background-color: var(--footer-background-color);
   padding: 25px 0 20px;
 }
+@media (min-width: 900px) {
+  .footer-wrapper {
+    min-height: 527px;
+  }
+}
 
 .footer {
   margin: 0 auto;

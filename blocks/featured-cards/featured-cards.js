@@ -3,10 +3,14 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { htmlToElement } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
-import { CONTENT_TYPES, DEFAULT_OPTIONS, ROLE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
+import { CONTENT_TYPES, ROLE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import SolutionDataService from '../../scripts/data-service/solutions-data-service.js';
 import { solutionsUrl } from '../../scripts/urls.js';
 
+const DEFAULT_OPTIONS = Object.freeze({
+  ROLE: 'Role',
+  SOLUTION: 'Product',
+});
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -29,8 +33,8 @@ export default async function decorate(block) {
       </div>
       <div class="browse-card-dropdown">
         <p>Tell us about yourself</p>
-        <select id="roles-dropdown" class="roles-dropdown"></select>
-        <select id="solutions-dropdown" class="solutions-dropdown"></select>
+        <select class="roles-dropdown"></select>
+        <select class="solutions-dropdown"></select>
       </div>
     </div>
   `);
@@ -47,7 +51,7 @@ export default async function decorate(block) {
     noOfResults,
   };
 
-  const rolesDropdownData = document.getElementById('roles-dropdown');
+  const rolesDropdownData = block.querySelector('.roles-dropdown');
   const defaultRolesOption = document.createElement('option');
   defaultRolesOption.text = DEFAULT_OPTIONS.ROLE;
   rolesDropdownData.add(defaultRolesOption);
@@ -69,7 +73,7 @@ export default async function decorate(block) {
     }
 
     if (solutions?.length) {
-      const solutionsDropdownData = document.getElementById('solutions-dropdown');
+      const solutionsDropdownData = block.querySelector('.solutions-dropdown');
       const defaultSolutionOption = document.createElement('option');
       defaultSolutionOption.text = DEFAULT_OPTIONS.SOLUTION;
       solutionsDropdownData.add(defaultSolutionOption);
@@ -132,8 +136,11 @@ export default async function decorate(block) {
 
     return filteredResults;
   };
+  const shimmerCardParent = document.createElement('div');
+  shimmerCardParent.classList.add('browse-card-shimmer');
+  block.appendChild(shimmerCardParent);
 
-  block.appendChild(buildPlaceholder());
+  shimmerCardParent.appendChild(buildPlaceholder());
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
@@ -142,7 +149,7 @@ export default async function decorate(block) {
         /* eslint-disable-next-line */
         data = filterResults(data, contentType);
         block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-          el.remove();
+          el.classList.add('hide-shimmer');
         });
 
         if (data?.length) {
@@ -158,7 +165,7 @@ export default async function decorate(block) {
       })
       .catch((err) => {
         block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-          el.remove();
+          el.classList.add('hide-shimmer');
         });
         /* eslint-disable-next-line no-console */
         console.error(err);
@@ -171,7 +178,7 @@ export default async function decorate(block) {
     <div class="browse-cards-block-view">${linkTextElement?.outerHTML}</div>
   `);
 
-  block.appendChild(contentDiv);
+  shimmerCardParent.appendChild(contentDiv);
   block.appendChild(linkDiv);
 
   const rolesDropdown = block.querySelector('.roles-dropdown');
