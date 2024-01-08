@@ -24,7 +24,7 @@ function initTabs(block) {
 
 let initCount = 0;
 export default function decorate(block) {
-  const tabList = createTag('div', { class: 'tab-list' });
+  const tabList = createTag('div', { class: 'tab-list', role: 'tablist' });
   const tabContent = createTag('div', { class: 'tab-content' });
 
   const tabNames = [];
