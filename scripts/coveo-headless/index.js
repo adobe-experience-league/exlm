@@ -241,11 +241,11 @@ export default async function coveoSearchEnginePOC({
           aElement.innerHTML = option.label;
           sortWrapperEl.appendChild(aElement);
         });
-
-        document.querySelector('.sort-container').appendChild(sortWrapperEl);
-
-        const sortAnchors = document.querySelectorAll('.sort-dropdown-content a');
-        const sortBtn = document.querySelector('.sort-drop-btn');
+        const sortContainer = document.querySelector('.sort-container');
+        sortContainer.appendChild(sortWrapperEl);
+        const sortDropdown = sortContainer.querySelector('.sort-dropdown-content');
+        const sortAnchors = sortDropdown.querySelectorAll('a');
+        const sortBtn = sortContainer.querySelector('.sort-drop-btn');
 
         headlessBuildSort.sortBy(module.buildRelevanceSortCriterion());
 
@@ -262,6 +262,7 @@ export default async function coveoSearchEnginePOC({
                 anch.classList.remove('selected');
               });
               anchor.classList.add('selected');
+              sortDropdown.classList.remove('show');
               sortBtn.innerHTML = anchorCaption;
 
               switch (anchor.innerHTML) {

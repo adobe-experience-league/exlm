@@ -5,6 +5,7 @@
 }
 .browse-card-shimmer {
   position: relative;
+  height: 100%;
 }
 .shimmer-placeholder {
   display: flex;
@@ -31,12 +32,23 @@
   grid-template-columns: 1fr; 
   gap: 32px;
 }
+.browse-filters-wrapper .shimmer-placeholder{
+  gap: 8px;
+  display: grid; 
+  grid-template-columns: 1fr;
+  overflow: unset;
+  height: fit-content;
+}
 .shimmer-placeholder-isloading {
   width: 100%;
   height: 100%;
   border-radius: 4px;
   overflow: hidden;
   flex: 0 0 264px;
+  border: 1px solid var(--spectrum-gray-200);
+}
+.browse-filters-wrapper .shimmer-placeholder-isloading {
+  min-height: 336px;
 }
 .shimmer-placeholder-isloading .shimmer-placeholder-content {
   background: var(--shimmer-content-background);
@@ -62,6 +74,10 @@
 }
 .shimmer-placeholder-isloading .shimmer-placeholder-image {
   height: 190px;
+}
+.browse-filters-wrapper .shimmer-placeholder-isloading .shimmer-placeholder-description {
+  height: 80px;
+  margin: 0px 0px 10px 0px;
 }
 .shimmer-placeholder-isloading .shimmer-placeholder-description {
   height: 90px;
@@ -96,7 +112,8 @@
     overflow-x: auto;
     overflow-y: hidden;
   }
-  .featured-cards .shimmer-placeholder {  
+  .featured-cards .shimmer-placeholder, 
+  .browse-filters-wrapper .shimmer-placeholder {  
     grid-template-columns: 1fr 1fr;
   }
   .shimmer-placeholder-isloading {
@@ -110,6 +127,10 @@
   .featured-cards .shimmer-placeholder {
     display: flex;
     gap: 32px;
+  }
+  .browse-filters-wrapper .shimmer-placeholder {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
   }
   .shimmer-placeholder-isloading {
     flex: 0 0 256px;

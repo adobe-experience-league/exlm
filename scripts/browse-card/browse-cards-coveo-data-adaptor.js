@@ -7,14 +7,14 @@ import { CONTENT_TYPES } from './browse-cards-constants.js';
  * @module BrowseCardsCoveoDataAdaptor
  */
 const BrowseCardsCoveoDataAdaptor = (() => {
-  let placeholders;
+  let placeholders = {};
 
   /**
    * Converts a string to title case.
    * @param {string} str - The input string.
    * @returns {string} The string in title case.
    */
-  const convertToTitleCase = (str) => str.replace(/\b\w/g, (match) => match.toUpperCase());
+  const convertToTitleCase = (str) => (str ? str.replace(/\b\w/g, (match) => match.toUpperCase()) : '');
 
   /**
    * Creates tags based on the result and content type.
@@ -55,7 +55,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     if (!product && el_solution) {
       product = Array.isArray(el_solution) ? el_solution[0] : el_solution;
     }
-    const tags = createTags(result, contentType.toLowerCase(), placeholders);
+    const tags = createTags(result, contentType.toLowerCase());
     const url = parentResult?.clickableuri || parentResult?.uri || clickUri || uri || '';
 
     return {
@@ -74,7 +74,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       tags,
       copyLink: url,
       viewLink: url,
-      viewLinkText: contentType ? placeholders[`viewLink${convertToTitleCase(contentType)}`] : '',
+      viewLinkText: placeholders[`viewLink${convertToTitleCase(contentType)}`] || 'View',
     };
   };
 
@@ -84,7 +84,12 @@ const BrowseCardsCoveoDataAdaptor = (() => {
    * @returns {Promise<Array>} A promise that resolves with an array of BrowseCards data models.
    */
   const mapResultsToCardsData = async (data) => {
-    placeholders = await fetchPlaceholders();
+    try {
+      placeholders = await fetchPlaceholders();
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching placeholders:', err);
+    }
     return data.map((result) => mapResultToCardsDataModel(result));
   };
 
