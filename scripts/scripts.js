@@ -119,7 +119,7 @@ export function isBrowsePage() {
 
 function pageLoadModel() {
   return {
-    event: 'pageLoaded',
+    event: 'page loaded',
     web: {
       webPageDetails: {
         URL: 'roger.htm',
