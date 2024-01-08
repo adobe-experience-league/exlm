@@ -122,19 +122,32 @@ function pageLoadModel() {
     event: 'page loaded',
     web: {
       webPageDetails: {
-        URL: 'roger.htm',
+        URL: window.location.href,
         cleanURL: 'experienceleague.adobe.com/#home',
-        domain: 'experienceleague.adobe.com',
-        mainSiteSection: 'learn',
-        name: 'xl:docs:analytics:documentation:adobe analytics overview',
-        pageLanguage: 'en',
-        pageName: 'xl:docs:analytics:documentation:adobe analytics overview',
-
+        domain: window.location.host,
+        mainSiteSection: '',
+        name: document.title,
+        pageLanguage: window.document.getElementsByTagName('html')[0].getAttribute('lang') || 'en',
+        pageName: `xl${window.location.pathname.replace('/', ':').replace('-', ' ')}`,
         pageType: 'webpage',
-
         pageViews: { value: 1 },
-
-        prevPage: 'xl:learn:home',
+        prevPage: '',
+        userAgent: window.navigator.userAgent,
+        previousPageName: '',
+        recordid: '',
+        server: window.location.host,
+        siteSection: '',
+        siteSubSection1: '',
+        siteSubSection2: '',
+        siteSubSection3: '',
+        siteSubSection4: '',
+        siteSubSection5: '',
+        solution: document.querySelector('meta[name="solution"]')
+          ? document.querySelector('meta[name="solution"]').content
+          : '',
+        solutionVersion: '',
+        subSolution: '',
+        type: document.querySelector('meta[name="type"]') ? document.querySelector('meta[name="type"]').content : '',
       },
     },
   };
