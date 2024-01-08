@@ -145,7 +145,7 @@ export default async function decorate(block) {
           .filter((card) => card.event.time)
           .sort((card1, card2) => convertTimeString(card1.event.time) - convertTimeString(card2.event.time));
       }
-      const solutionParam = solutionsList.map((parameter) => window.atob(parameter));
+      const solutionParam = solutionsList.map((parameter) => atob(parameter));
       const filteredData = eventData.data.filter((event) => {
         const productArray = Array.isArray(event.product) ? event.product : [event.product];
         const productKey = productArray.map((item) => item);
