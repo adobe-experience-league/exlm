@@ -4,7 +4,7 @@ indices:
   site:
     include:
       - '/en/browse/**'
-    target: /query-index.json
+    target: /browse-index.json
     properties:
       title:
         select: head > meta[property="og:title"]
