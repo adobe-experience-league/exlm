@@ -14,6 +14,7 @@ export default async function decorate(block) {
   // split the path at browse root
   const browseRootName = 'browse';
   const pathParts = document.location.pathname.split(browseRootName);
+  
   const browseRoot = `${pathParts[0]}${browseRootName}`;
 
   // set the root breadcrumb
