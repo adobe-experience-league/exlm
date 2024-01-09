@@ -37,8 +37,10 @@
     position: relative;
 }
 
+
 .browse-rail ul.topics>li>a::after,
-.browse-rail ul.products>li>a::after {
+.browse-rail ul.products>li>a::after,
+.browse-rail ul.subPages>li>a::after {
     content: url("../../icons/chevron_down.svg");
     position: absolute;
     right: 0;
