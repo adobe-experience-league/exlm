@@ -191,6 +191,12 @@ export default async function decorate(block) {
 
   // For Browse Product Page
   if (theme !== 'browse-all') {
+    // Add "Browse more products" link
+    const browseMoreProducts = document.createElement('div');
+    browseMoreProducts.classList.add('browse-more-products');
+    browseMoreProducts.innerHTML = `<a href="/en/browse">${placeholders.browseMoreProducts}</a>`;
+    block.append(browseMoreProducts);
+
     // Browse By
     const browseByUL = document.createElement('ul');
     browseByUL.classList.add('browse-by');
@@ -212,7 +218,7 @@ export default async function decorate(block) {
       document.querySelector(
         '.browse-by > li',
       ).innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="${pagePath}">${parts[3]}</a></li></ul>`;
-      document.querySelector('.topics > li').innerHTML = `<a href="#">${parts[3]} ${placeholders.topics}</a>`;
+      // document.querySelector('.topics > li').innerHTML = `<a href="#">${parts[3]} ${placeholders.topics}</a>`;
     } else {
       // Product page
       const result = hasDirectLeafNodes(results, currentPagePath);
@@ -249,10 +255,5 @@ export default async function decorate(block) {
         block.append(topicsUL);
       }
     }
-    // Add "Browse more products" link
-    const browseMoreProducts = document.createElement('div');
-    browseMoreProducts.classList.add('browse-more-products');
-    browseMoreProducts.innerHTML = `<a href="/en/browse">${placeholders.browseMoreProducts}</a>`;
-    block.prepend(browseMoreProducts);
   }
 }
