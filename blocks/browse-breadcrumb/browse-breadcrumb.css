@@ -46,7 +46,7 @@
   content: none;
 }
 
-/* the root crubm is never bold */
+/* the root crumb is never bold */
 .browse-breadcrumb.block > a:first-child {
   font-weight: var(--font-weight-400);
 }
