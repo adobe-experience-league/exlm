@@ -20,8 +20,8 @@ export default async function decorate(block) {
   const sortBy = block.querySelector('div:nth-child(8) > div')?.textContent?.trim()?.toLowerCase();
   const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase()];
   const noOfResults = 4;
-  const productKey = 'exl-encoded:solution/';
-  const featureKey = 'exl-encoded:feature/';
+  const productKey = 'exl:solution/';
+  const featureKey = 'exl:feature/';
   const extractCapability = (input, prefix) => {
     if (!input) {
       return null;

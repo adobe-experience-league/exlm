@@ -12,7 +12,7 @@ import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.
  */
 function formattedSolutionTags(inputString) {
   return inputString
-    .replace(/exl-encoded:solution\//g, '')
+    .replace(/exl:solution\//g, '')
     .split(',')
     .map((part) => part.trim());
 }
