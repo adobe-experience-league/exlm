@@ -76,7 +76,6 @@ const buildCardContent = (card, model) => {
   const contentType = type.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
   const cardFooter = card.querySelector('.browse-card-footer');
-  const { matches: isDesktopResolution } = window.matchMedia('(min-width: 900px)');
 
   if (description) {
     const stringContent = description.length > 100 ? `${description.substring(0, 100).trim()}...` : description;
@@ -92,12 +91,8 @@ const buildCardContent = (card, model) => {
   if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
     buildTagsContent(cardMeta, tags);
   }
-  if (isDesktopResolution) {
-    cardContent.appendChild(cardMeta);
-  } else {
-    const titleEl = card.querySelector('.browse-card-title-text');
-    cardContent.insertBefore(cardMeta, titleEl);
-  }
+
+  cardContent.appendChild(cardMeta);
 
   /* User Info for Community Section - Will accomodate once we have KHOROS integration */
   // if (contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
