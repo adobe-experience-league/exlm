@@ -136,6 +136,10 @@ function addBrowseRail(main) {
   main.append(leftRailSection);
 }
 
+function addBrowseBreadCrumb(main) {
+  main.querySelector('div').prepend(buildBlock('browse-breadcrumb',[]));
+}
+
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
@@ -145,6 +149,7 @@ function buildAutoBlocks(main) {
     buildSyntheticBlocks(main);
     // if we are on a product browse page
     if (isBrowsePage()) {
+      addBrowseBreadCrumb(main);
       addBrowseRail(main);
     }
   } catch (error) {
