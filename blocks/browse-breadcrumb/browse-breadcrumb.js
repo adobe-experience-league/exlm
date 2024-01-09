@@ -3,8 +3,13 @@ import {fetchPlaceholders}  from '../../scripts/lib-franklin.js';
 
 export default async function decorate(block) {
 
+  let browseText = 'Browse';
+
   // get placeholders
-  const placeholders = await fetchPlaceholders();
+  try {
+    const placeholders = await fetchPlaceholders();
+    browseText = placeholders.browse;
+  } catch { /* empty */ }
 
   // split the path at browse root
   const browseRootName = 'browse';
@@ -13,7 +18,7 @@ export default async function decorate(block) {
 
   // set the root breadcrumb
   const rootCrumb = document.createElement("a");
-  rootCrumb.innerText = placeholders.browse;
+  rootCrumb.innerText = browseText;
   rootCrumb.setAttribute('href',browseRoot);
   block.append(rootCrumb);
 
