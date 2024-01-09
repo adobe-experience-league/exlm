@@ -37,13 +37,17 @@ export default function decorate(block) {
       </div>
       ${
         subjectPicture
-          ? `<div class='marquee-subject' style="background-color : var(${bgColor})">${subjectPicture}</div>`
+          ? `<div class='marquee-subject' style="background-color : var(${
+              bgColor || '--spectrum-gray-700'
+            })">${subjectPicture}</div>`
           : `<div class='marquee-spacer'></div>`
       }
       </div>
     </div>
     <div class='marquee-background'>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1562 571.212"><path fill="#fff" d="M0 1.212h1562v570H0z" data-name="Rectangle 1"></path><path class="bg" fill="var(${bgColor})" d="M752.813-1495s115.146 210.072 471.053 309.516 291.355 261.7 291.355 261.7h150.039V-1495Z" data-name="Path 1" transform="translate(-103.26 1495)"></path></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1562 571.212"><path fill="#fff" d="M0 1.212h1562v570H0z" data-name="Rectangle 1"></path><path class="bg" fill="var(${
+        bgColor || '--spectrum-gray-700'
+      })" d="M752.813-1495s115.146 210.072 471.053 309.516 291.355 261.7 291.355 261.7h150.039V-1495Z" data-name="Path 1" transform="translate(-103.26 1495)"></path></svg>
     </div>
   `);
 
