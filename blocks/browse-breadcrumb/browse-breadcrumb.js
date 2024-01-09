@@ -11,16 +11,21 @@ export default async function decorate(block) {
     browseText = placeholders.browse;
   } catch { /* empty */ }
 
+  let path = document.location.pathname;
+  // are we on author
+  const suffix = path.endsWith('.html') ? '.html': '';
+  // cut of suffix if any
+  path = suffix ? path.substring(0,path.indexOf(suffix)): path;
   // split the path at browse root
   const browseRootName = 'browse';
-  const pathParts = document.location.pathname.split(browseRootName);
-  
+  const pathParts = path.split(browseRootName);
+  // the language and instance dependent root path
   const browseRoot = `${pathParts[0]}${browseRootName}`;
 
   // set the root breadcrumb
   const rootCrumb = document.createElement("a");
   rootCrumb.innerText = browseText;
-  rootCrumb.setAttribute('href',browseRoot);
+  rootCrumb.setAttribute('href',`${browseRoot}${suffix}`);
   block.append(rootCrumb);
 
   // get the browse index
@@ -31,11 +36,12 @@ export default async function decorate(block) {
     // create the next sub path
     const nextSubPath = `${prevSubPath}/${nextPathElem}`;
     // construct full crumb path
-    const url = `${browseRoot}${nextSubPath}`;
+    let url = `${browseRoot}${nextSubPath}`;
     // has page been published and indexed ?
     const indexEntry = index.find((e) => e.path === url);  
     if (indexEntry) {
       let elem;
+      url += suffix;
       // create crumb element, either 'a' or 'span'
       if (url !== document.location.pathname) {
         elem = document.createElement('a'); 
