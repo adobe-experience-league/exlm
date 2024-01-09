@@ -11,7 +11,7 @@ import {
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
-import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
 const coveoFacetMap = {
   Role: 'headlessRoleFacet',
@@ -30,25 +30,7 @@ const isBrowseProdPage = theme === 'browse-product';
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
-const shimmerCardParent = document.createElement('div');
-
-function initializeShimmer(block) {
-  shimmerCardParent.classList.add('browse-card-shimmer');
-  block.querySelector('.browse-filters-form').appendChild(shimmerCardParent);
-  shimmerCardParent.appendChild(buildPlaceholder(10));
-}
-
-function hideShimmer(block) {
-  block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-    el.classList.add('hide-shimmer');
-  });
-}
-
-function showShimmer(block) {
-  block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-    el.classList.remove('hide-shimmer');
-  });
-}
+const buildCardsShimmer = new BuildPlaceholder(getBrowseFiltersResultCount());
 
 function enableTagsAsProxy(block) {
   tagsProxy = new Proxy(tags, {
@@ -648,7 +630,7 @@ function handleCoveoHeadlessSearch(
 
 async function handleSearchEngineSubscription() {
   const filterResultsEl = document.querySelector('.browse-filters-results');
-  showShimmer(filterResultsEl.parentElement);
+  buildCardsShimmer.show();
   if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
     return;
   }
@@ -656,18 +638,18 @@ async function handleSearchEngineSubscription() {
   const search = window.headlessSearchEngine.state.search;
   const { results } = search;
   if (results.length > 0) {
-    hideShimmer(filterResultsEl.parentElement);
+    buildCardsShimmer.hide();
     const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
     filterResultsEl.innerHTML = '';
     cardsData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
       buildCard(cardDiv, cardData);
       filterResultsEl.appendChild(cardDiv);
-      shimmerCardParent.appendChild(filterResultsEl);
+      buildCardsShimmer.setParent(filterResultsEl);
       document.querySelector('.browse-filters-form').classList.add('is-result');
     });
   } else {
-    hideShimmer(filterResultsEl.parentElement);
+    buildCardsShimmer.hide();
     filterResultsEl.innerHTML = 'No Results';
     document.querySelector('.browse-filters-form').classList.remove('is-result');
   }
@@ -719,7 +701,7 @@ export default async function decorate(block) {
   constructClearFilterBtn(block);
   appendToForm(block, renderTags());
   appendToForm(block, renderFilterResultsHeader());
-  initializeShimmer(block);
+  buildCardsShimmer.init(block.querySelector('.browse-filters-form'));
   initiateCoveoHeadlessSearch({
     handleSearchEngineSubscription,
     renderPageNumbers,
