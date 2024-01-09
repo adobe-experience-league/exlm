@@ -2,9 +2,8 @@ import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js'
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
-import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
-import CONTENT_TYPES from './tabbed-cards-constants.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -43,11 +42,12 @@ export default async function decorate(blockElement) {
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content', 'tabbed-cards-block');
 
-  const shimmerCardParent = document.createElement('div');
-  shimmerCardParent.classList.add('browse-card-shimmer');
+  const buildCardsShimmer = new BuildPlaceholder(numberOfResults);
+  buildCardsShimmer.init(blockElement);
 
   // Function to convert a string to title case
-  const convertToTitleCase = (str) => str.replace(/\b\w/g, (match) => match.toUpperCase());
+  const convertToTitleCaseAndRemove = (str) =>
+    str.replace(/[-\s]/g, '').replace(/\b\w/g, (match) => match.toUpperCase());
 
   const placeholders = await fetchPlaceholders();
 
@@ -63,10 +63,7 @@ export default async function decorate(blockElement) {
     browseCardsContent
       .then((data) => {
         // Hide shimmer placeholders
-        tabbedBlock.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-          el.classList.add('hide-shimmer');
-        });
-
+        buildCardsShimmer.hide();
         if (data?.length) {
           // Render cards
           for (let i = 0; i < Math.min(numberOfResults, data.length); i += 1) {
@@ -76,15 +73,13 @@ export default async function decorate(blockElement) {
             contentDiv.appendChild(cardDiv);
           }
           // Append content div to shimmer card parent and decorate icons
-          shimmerCardParent.appendChild(contentDiv);
+          buildCardsShimmer.setParent(contentDiv);
           decorateIcons(tabbedBlock);
         }
       })
       .catch((err) => {
         // Hide shimmer placeholders on error
-        tabbedBlock.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-          el.classList.add('hide-shimmer');
-        });
+        buildCardsShimmer.hide();
         /* eslint-disable-next-line no-console */
         console.error(err);
       });
@@ -103,7 +98,7 @@ export default async function decorate(blockElement) {
   tabsLabels.forEach((tabLabelData) => {
     // Create individual tab labels and attach click event listener
     const tabLabel = document.createElement('li');
-    tabLabel.textContent = CONTENT_TYPES[tabLabelData.toUpperCase()].LABEL;
+    tabLabel.textContent = placeholders[`${tabLabelData}LabelKey`];
     tabLabel.addEventListener('click', () => {
       // Clear Existing Label
       const tabLabelsListElements = document.querySelectorAll('.tabbed-cards-label ul li');
@@ -114,15 +109,17 @@ export default async function decorate(blockElement) {
       const tabbedContent = blockElement.querySelector('.tabbed-cards-block');
       tabLabel.classList.add('active');
       if (tabbedContent) {
-        [...tabbedContent.children].forEach((cards) => {
-          cards.remove();
-        });
+        tabbedContent.innerHTML = '';
       }
       // Update view link and fetch/render data for the selected tab
-      const viewLinkMappingKey = CONTENT_TYPES[tabLabelData.toUpperCase()].MAPPING_KEY;
-      viewLinkURLElement.innerHTML = placeholders[`viewAll${convertToTitleCase(viewLinkMappingKey)}`];
-      viewLinkURLElement.setAttribute('href', placeholders[`viewAll${convertToTitleCase(viewLinkMappingKey)}Link`]);
+      const viewLinkMappingKey = placeholders[`${tabLabelData}LabelKey`];
+      viewLinkURLElement.innerHTML = placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkMappingKey)}`];
+      viewLinkURLElement.setAttribute(
+        'href',
+        placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkMappingKey)}Link`],
+      );
       tabList.appendChild(viewLinkURLElement);
+      buildCardsShimmer.init(blockElement);
       fetchDataAndRenderBlock(tabLabelData, blockElement);
     });
     tabListUlElement.appendChild(tabLabel);
@@ -132,18 +129,18 @@ export default async function decorate(blockElement) {
 
   // Append tab list and Shimmer Card to the main block
   blockElement.appendChild(tabList);
-  blockElement.appendChild(shimmerCardParent);
-
-  // Append placeholder to shimmer card parent
-  shimmerCardParent.appendChild(buildPlaceholder());
+  buildCardsShimmer.init(blockElement);
 
   // Fetch and render data for the initial content type
   const initialContentType = tabsLabels[0];
-  const viewLinkInitialMappingKey = CONTENT_TYPES[initialContentType.toUpperCase()].MAPPING_KEY;
+  const viewLinkInitialMappingKey = placeholders[`${initialContentType}LabelKey`];
 
   // Update view link for initial content type
-  viewLinkURLElement.innerHTML = placeholders[`viewAll${convertToTitleCase(viewLinkInitialMappingKey)}`];
-  viewLinkURLElement.setAttribute('href', placeholders[`viewAll${convertToTitleCase(viewLinkInitialMappingKey)}Link`]);
+  viewLinkURLElement.innerHTML = placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkInitialMappingKey)}`];
+  viewLinkURLElement.setAttribute(
+    'href',
+    placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkInitialMappingKey)}Link`],
+  );
   tabList.appendChild(viewLinkURLElement);
   tabList.children[0].children[0].classList.add('active');
 
