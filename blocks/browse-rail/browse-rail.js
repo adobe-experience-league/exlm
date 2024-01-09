@@ -89,7 +89,6 @@ function convertToMultiMap(jsonData, page) {
 
 // Function to convert multi-map to nested list
 function convertToULList(multiMap) {
-  console.log(multiMap);
   const ulList = document.createElement('ul');
   ulList.classList.add('subPages');
   multiMap.forEach((value) => {
@@ -136,7 +135,7 @@ export default async function decorate(block) {
     browseByUL.classList.add('browse-by');
     const browseByLI = document.createElement('li');
     const browseByLinkText = `${label} content`;
-    browseByLI.innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="#">${browseByLinkText}</a></li></ul>`;
+    browseByLI.innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="#" class="is-active">${browseByLinkText}</a></li></ul>`;
     browseByUL.append(browseByLI);
     block.append(browseByUL);
 
@@ -197,7 +196,7 @@ export default async function decorate(block) {
     browseByUL.classList.add('browse-by');
     const browseByLI = document.createElement('li');
     const browseByLinkText = `All ${label} Content`;
-    browseByLI.innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="#">${browseByLinkText}</a></li></ul>`;
+    browseByLI.innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="#" class="is-active">${browseByLinkText}</a></li></ul>`;
     browseByUL.append(browseByLI);
     block.append(browseByUL);
 
@@ -210,6 +209,10 @@ export default async function decorate(block) {
       const resultMultiMap = convertToMultiMap(subPages, currentPagePath.split('/')[3]);
       const htmlList = convertToULList(resultMultiMap);
       block.appendChild(htmlList);
+      document.querySelector(
+        '.browse-by > li',
+      ).innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="${pagePath}">${parts[3]}</a></li></ul>`;
+      document.querySelector('.topics > li').innerHTML = `<a href="#">${parts[3]} ${placeholders.topics}</a>`;
     } else {
       // Product page
       const result = hasDirectLeafNodes(results, currentPagePath);
@@ -227,25 +230,25 @@ export default async function decorate(block) {
       const ulElement = document.createElement('ul');
       // Get all the topic elements inside the container
       const topicElements = browseTopicsContainer.querySelectorAll('.browse-topics.topic');
+      if (topicElements.length > 0) {
+        // Loop through each topic element and create a li element for each
+        topicElements.forEach((topicElement) => {
+          if (isVisible(topicElement)) {
+            const liElement = document.createElement('li');
+            liElement.innerHTML = `<a href="#">${topicElement.textContent}</a>`;
+            ulElement.appendChild(liElement);
+          }
+        });
 
-      // Loop through each topic element and create a li element for each
-      topicElements.forEach((topicElement) => {
-        if (isVisible(topicElement)) {
-          const liElement = document.createElement('li');
-          liElement.innerHTML = `<a href="#">${topicElement.textContent}</a>`;
-          ulElement.appendChild(liElement);
-        }
-      });
-
-      const topicsUL = document.createElement('ul');
-      topicsUL.classList.add('topics');
-      const topicsLI = document.createElement('li');
-      topicsLI.innerHTML = `<a href="#">${label} ${placeholders.topics}</a>`;
-      topicsLI.append(ulElement);
-      topicsUL.append(topicsLI);
-      block.append(topicsUL);
+        const topicsUL = document.createElement('ul');
+        topicsUL.classList.add('topics');
+        const topicsLI = document.createElement('li');
+        topicsLI.innerHTML = `<a href="#">${label} ${placeholders.topics}</a>`;
+        topicsLI.append(ulElement);
+        topicsUL.append(topicsLI);
+        block.append(topicsUL);
+      }
     }
-
     // Add "Browse more products" link
     const browseMoreProducts = document.createElement('div');
     browseMoreProducts.classList.add('browse-more-products');
