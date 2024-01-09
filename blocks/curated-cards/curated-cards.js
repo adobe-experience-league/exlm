@@ -14,7 +14,7 @@ export default async function decorate(block) {
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
   const contentType = block.querySelector('div:nth-child(4) > div')?.textContent?.trim()?.toLowerCase();
-  const capabilities = block.querySelector('div:nth-child(5) > div')?.textContent?.trim()?.toLowerCase();
+  const capabilities = block.querySelector('div:nth-child(5) > div')?.textContent?.trim();
   const role = block.querySelector('div:nth-child(6) > div')?.textContent?.trim()?.toLowerCase();
   const level = block.querySelector('div:nth-child(7) > div')?.textContent?.trim()?.toLowerCase();
   const sortBy = block.querySelector('div:nth-child(8) > div')?.textContent?.trim()?.toLowerCase();
@@ -31,7 +31,7 @@ export default async function decorate(block) {
     for (let i = 0; i < items.length; i += 1) {
       const item = items[i];
       if (item.startsWith(prefix)) {
-        result.push(item.substring(prefix.length));
+        result.push(atob(item.substring(prefix.length)));
       }
     }
     return result.length > 0 ? result : null;
