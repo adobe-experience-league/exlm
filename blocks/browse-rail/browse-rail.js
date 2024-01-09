@@ -80,13 +80,16 @@ function convertToMultiMap(jsonData, page) {
     if (!multiMap.has(category)) {
       multiMap.set(category, []);
     }
-    multiMap.get(category).push(item);
+    if (category !== item.title) {
+      multiMap.get(category).push(item);
+    }
   });
   return multiMap;
 }
 
 // Function to convert multi-map to nested list
 function convertToULList(multiMap) {
+  console.log(multiMap);
   const ulList = document.createElement('ul');
   ulList.classList.add('subPages');
   multiMap.forEach((value) => {
@@ -198,24 +201,24 @@ export default async function decorate(block) {
     browseByUL.append(browseByLI);
     block.append(browseByUL);
 
-    // Products/Sub-pages
-
-    const result = hasDirectLeafNodes(results, currentPagePath);
-    if (result) {
-      const subPages = filterSubPages(results, currentPagePath);
-      const resultMultiMap = convertToMultiMap(subPages, currentPagePath.split('/')[3]);
-      const htmlList = convertToULList(resultMultiMap);
-      block.appendChild(htmlList);
-    }
-
-    // For sub-pages
+    // For Products and sub-pages
     const parts = currentPagePath.split('/');
-    if (parts.length > 5 && parts[3] === currentPagePath.split('/')[3]) {
+    // Product sub page
+    if (parts.length >= 5 && parts[3] === currentPagePath.split('/')[3]) {
       const pagePath = getPathUntilLevel(currentPagePath, 3);
       const subPages = filterSubPages(results, pagePath);
       const resultMultiMap = convertToMultiMap(subPages, currentPagePath.split('/')[3]);
       const htmlList = convertToULList(resultMultiMap);
       block.appendChild(htmlList);
+    } else {
+      // Product page
+      const result = hasDirectLeafNodes(results, currentPagePath);
+      if (result) {
+        const subPages = filterSubPages(results, currentPagePath);
+        const resultMultiMap = convertToMultiMap(subPages, currentPagePath.split('/')[3]);
+        const htmlList = convertToULList(resultMultiMap);
+        block.appendChild(htmlList);
+      }
     }
 
     // Topics
