@@ -750,6 +750,9 @@ img {
   padding: 30px 16px;
   /* section metadata */
 }
+.section[data-section-status=loading], .section [data-section-status=initialized] {
+  visibility: hidden;
+}
 .section.article-metadata-createdby-container h1 {
   line-height: var(--spectrum-line-height-xxl);
 }

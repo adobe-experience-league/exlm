@@ -32,6 +32,24 @@ const tags = [];
 let tagsProxy;
 const shimmerCardParent = document.createElement('div');
 
+function initializeShimmer(block) {
+  shimmerCardParent.classList.add('browse-card-shimmer');
+  block.querySelector('.browse-filters-form').appendChild(shimmerCardParent);
+  shimmerCardParent.appendChild(buildPlaceholder(10));
+}
+
+function hideShimmer(block) {
+  block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+    el.classList.add('hide-shimmer');
+  });
+}
+
+function showShimmer(block) {
+  block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+    el.classList.remove('hide-shimmer');
+  });
+}
+
 function enableTagsAsProxy(block) {
   tagsProxy = new Proxy(tags, {
     set(target, property, value) {
@@ -55,7 +73,6 @@ function hideSectionsBelowFilter(block, show) {
   if (parent) {
     const siblings = Array.from(parent.parentNode.children);
     const clickedIndex = siblings.indexOf(parent);
-
     // eslint-disable-next-line no-plusplus
     for (let i = clickedIndex + 1; i < siblings.length; i++) {
       siblings[i].style.display = show ? 'block' : 'none';
@@ -631,6 +648,7 @@ function handleCoveoHeadlessSearch(
 
 async function handleSearchEngineSubscription() {
   const filterResultsEl = document.querySelector('.browse-filters-results');
+  showShimmer(filterResultsEl.parentElement);
   if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
     return;
   }
@@ -638,9 +656,7 @@ async function handleSearchEngineSubscription() {
   const search = window.headlessSearchEngine.state.search;
   const { results } = search;
   if (results.length > 0) {
-    filterResultsEl.parentElement.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-      el.classList.add('hide-shimmer');
-    });
+    hideShimmer(filterResultsEl.parentElement);
     const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
     filterResultsEl.innerHTML = '';
     cardsData.forEach((cardData) => {
@@ -651,9 +667,7 @@ async function handleSearchEngineSubscription() {
       document.querySelector('.browse-filters-form').classList.add('is-result');
     });
   } else {
-    filterResultsEl.parentElement.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-      el.classList.add('hide-shimmer');
-    });
+    hideShimmer(filterResultsEl.parentElement);
     filterResultsEl.innerHTML = 'No Results';
     document.querySelector('.browse-filters-form').classList.remove('is-result');
   }
@@ -692,13 +706,7 @@ function renderSortContainer(block) {
   }
 }
 
-function addShimmer(block) {
-  shimmerCardParent.classList.add('browse-card-shimmer');
-  block.querySelector('.browse-filters-form').appendChild(shimmerCardParent);
-  shimmerCardParent.appendChild(buildPlaceholder(10));
-}
-
-export default function decorate(block) {
+export default async function decorate(block) {
   enableTagsAsProxy(block);
   decorateBlockTitle(block);
   appendFormEl(block);
@@ -711,7 +719,7 @@ export default function decorate(block) {
   constructClearFilterBtn(block);
   appendToForm(block, renderTags());
   appendToForm(block, renderFilterResultsHeader());
-  addShimmer(block);
+  initializeShimmer(block);
   initiateCoveoHeadlessSearch({
     handleSearchEngineSubscription,
     renderPageNumbers,
