@@ -204,6 +204,7 @@ export default async function decorate(block) {
 
       // "View More" and "View Less" links
       const viewMoreDiv = document.createElement('div');
+      viewMoreDiv.classList.add('left-rail-view-more');
       viewMoreDiv.innerHTML = `<a id="viewMoreLink">${placeholders.viewMore}</a>`;
       block.append(viewMoreDiv);
 
