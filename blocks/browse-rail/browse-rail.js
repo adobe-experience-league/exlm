@@ -116,7 +116,10 @@ function convertToULList(multiMap) {
           subLiItem.appendChild(subAnchor);
           subUlList.appendChild(subLiItem);
         });
-
+      const toggleIcon = document.createElement('span');
+      toggleIcon.textContent = 'test';
+      toggleIcon.classList.add('js-toggle');
+      liItem.append(toggleIcon);
       liItem.appendChild(subUlList);
     }
     ulList.appendChild(liItem);
@@ -177,7 +180,7 @@ export default async function decorate(block) {
       const productsUL = document.createElement('ul');
       productsUL.classList.add('products');
       const productsLI = document.createElement('li');
-      productsLI.innerHTML = `<a href="#">${placeholders.products}</a>`;
+      productsLI.innerHTML = `<a href="#">${placeholders.products}</a><span class="js-toggle">test</span>`;
 
       const ul = document.createElement('ul');
       const sortedResults = directChildNodes.sort((a, b) => {
@@ -286,9 +289,9 @@ export default async function decorate(block) {
         const topicsLI = document.createElement('li');
         // Topics heading for product sub-pages
         if (parts.length >= 5 && parts[3] === currentPagePath.split('/')[3]) {
-          topicsLI.innerHTML = `<a href="#">${parentPageTitle} ${placeholders.topics}</a>`;
+          topicsLI.innerHTML = `<a href="#">${parentPageTitle} ${placeholders.topics}</a><span class="js-toggle">test</span>`;
         } else {
-          topicsLI.innerHTML = `<a href="#">${label} ${placeholders.topics}</a>`;
+          topicsLI.innerHTML = `<a href="#">${label} ${placeholders.topics}</a><span class="js-toggle">test</span>`;
         }
         topicsLI.append(ulElement);
         topicsUL.append(topicsLI);
@@ -296,4 +299,16 @@ export default async function decorate(block) {
       }
     }
   }
+  // Toggle functionality for products/sub-pages/topics
+  const toggleElements = document.querySelectorAll('.js-toggle');
+  block.querySelector('.js-toggle').classList.add('expanded');
+  toggleElements.forEach((toggleElement) => {
+    const subMenu = toggleElement.parentElement.querySelector('ul');
+    toggleElement.addEventListener('click', (event) => {
+      event.preventDefault();
+      subMenu.style.display = subMenu.style.display === 'block' || subMenu.style.display === '' ? 'none' : 'block';
+      toggleElement.classList.toggle('collapsed', subMenu.style.display === 'none');
+      toggleElement.classList.toggle('expanded', subMenu.style.display === 'block');
+    });
+  });
 }
