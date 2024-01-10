@@ -136,8 +136,7 @@ export default async function decorate(block) {
 
     return filteredResults;
   };
-  const buildCardsShimmer = new BuildPlaceholder(noOfResults);
-  buildCardsShimmer.init(block);
+  const buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
 
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
