@@ -3,10 +3,11 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import ArticleDataService from '../../scripts/data-service/article-data-service.js';
 import mapResultToCardsData from './article-data-adapter.js';
-import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
 const numberOfCards = 4;
 const rowCount = 4;
+let buildCardsShimmer = '';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -56,9 +57,7 @@ export default async function decorate(block) {
       articleDataService
         .handleArticleDataService(link)
         .then(async (data) => {
-          block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-            el.classList.add('hide-shimmer');
-          });
+          buildCardsShimmer.hide();
           linksContainer[i].innerHTML = '';
           const cardData = await mapResultToCardsData(data, placeholders);
           await buildCard(linksContainer[i], cardData);
@@ -66,19 +65,13 @@ export default async function decorate(block) {
           decorateIcons(block);
         })
         .catch(() => {
-          block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-            el.classList.add('hide-shimmer');
-          });
+          buildCardsShimmer.hide();
         });
     }
   });
 
   block.innerHTML = '';
   block.appendChild(headerDiv);
-  const shimmerCardParent = document.createElement('div');
-  shimmerCardParent.classList.add('browse-card-shimmer');
-  block.appendChild(shimmerCardParent);
-
-  shimmerCardParent.appendChild(buildPlaceholder());
-  shimmerCardParent.appendChild(contentDiv);
+  buildCardsShimmer = new BuildPlaceholder(numberOfCards, block);
+  buildCardsShimmer.setParent(contentDiv);
 }

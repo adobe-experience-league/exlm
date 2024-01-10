@@ -632,6 +632,11 @@ img {
 .section {
   padding: 30px 16px;
 
+  &[data-section-status='loading'],
+  &[data-section-status='initialized'] {
+    visibility: hidden;
+  }
+
   &.article-metadata-createdby-container h1 {
     line-height: var(--spectrum-line-height-xxl);
 

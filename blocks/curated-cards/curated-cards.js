@@ -2,7 +2,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
-import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 /**
  * Decorate function to process and log the mapped data.
@@ -73,18 +73,12 @@ export default async function decorate(block) {
     noOfResults,
   };
 
-  const shimmerCardParent = document.createElement('div');
-  shimmerCardParent.classList.add('browse-card-shimmer');
-  block.appendChild(shimmerCardParent);
-
-  shimmerCardParent.appendChild(buildPlaceholder());
+  const buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent
     .then((data) => {
-      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-        el.classList.add('hide-shimmer');
-      });
+      buildCardsShimmer.hide();
       if (data?.length) {
         const contentDiv = document.createElement('div');
         contentDiv.classList.add('browse-cards-block-content');
@@ -95,14 +89,12 @@ export default async function decorate(block) {
           buildCard(cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
-        shimmerCardParent.appendChild(contentDiv);
+        buildCardsShimmer.setParent(contentDiv);
         decorateIcons(contentDiv);
       }
     })
     .catch((err) => {
-      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-        el.classList.add('hide-shimmer');
-      });
+      buildCardsShimmer.hide();
       /* eslint-disable-next-line no-console */
       console.error(err);
     });

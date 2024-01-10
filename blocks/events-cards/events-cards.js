@@ -2,7 +2,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
-import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 
 /**
@@ -57,19 +57,14 @@ export default async function decorate(block) {
     contentType,
   };
 
-  const shimmerCardParent = document.createElement('div');
-  shimmerCardParent.classList.add('browse-card-shimmer');
-  block.appendChild(shimmerCardParent);
+  const buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
 
-  shimmerCardParent.appendChild(buildPlaceholder());
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(parameters);
   browseCardsContent
     .then((data) => {
       // eslint-disable-next-line no-use-before-define
       const filteredLiveEventsData = fetchFilteredCardData(data, solutionsParam);
-      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-        el.classList.add('hide-shimmer');
-      });
+      buildCardsShimmer.hide();
       if (filteredLiveEventsData?.length) {
         for (let i = 0; i < Math.min(noOfResults, filteredLiveEventsData.length); i += 1) {
           const cardData = filteredLiveEventsData[i];
@@ -77,15 +72,12 @@ export default async function decorate(block) {
           buildCard(cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
-
-        shimmerCardParent.appendChild(contentDiv);
+        buildCardsShimmer.setParent(contentDiv);
         decorateIcons(contentDiv);
       }
     })
     .catch((err) => {
-      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-        el.classList.add('hide-shimmer');
-      });
+      buildCardsShimmer.hide();
       // eslint-disable-next-line no-console
       console.error('Events Cards:', err);
     });
