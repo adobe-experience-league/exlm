@@ -19,6 +19,7 @@ export default async function decorate(blockElement) {
   const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase()];
   const tabsLabels = contentTypeListContent.split(',');
   const numberOfResults = 4;
+  let buildCardsShimmer = '';
 
   // Clearing the block's content and applying CSS class
   blockElement.innerHTML = '';
@@ -42,8 +43,7 @@ export default async function decorate(blockElement) {
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content', 'tabbed-cards-block');
 
-  const buildCardsShimmer = new BuildPlaceholder(numberOfResults);
-  buildCardsShimmer.init(blockElement);
+  buildCardsShimmer = new BuildPlaceholder(numberOfResults, blockElement);
 
   // Function to convert a string to title case
   const convertToTitleCaseAndRemove = (str) =>
@@ -119,7 +119,7 @@ export default async function decorate(blockElement) {
         placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkMappingKey)}Link`],
       );
       tabList.appendChild(viewLinkURLElement);
-      buildCardsShimmer.init(blockElement);
+      buildCardsShimmer = new BuildPlaceholder(numberOfResults, blockElement);
       fetchDataAndRenderBlock(tabLabelData, blockElement);
     });
     tabListUlElement.appendChild(tabLabel);
@@ -129,7 +129,7 @@ export default async function decorate(blockElement) {
 
   // Append tab list and Shimmer Card to the main block
   blockElement.appendChild(tabList);
-  buildCardsShimmer.init(blockElement);
+  buildCardsShimmer = new BuildPlaceholder(numberOfResults, blockElement);
 
   // Fetch and render data for the initial content type
   const initialContentType = tabsLabels[0];
