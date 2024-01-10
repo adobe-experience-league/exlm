@@ -40,7 +40,7 @@
 
 .browse-rail ul.topics>li>a::after,
 .browse-rail ul.products>li>a::after,
-.browse-rail ul.subPages>li>a::after {
+.browse-rail ul.subPages>li.hasSubPages>a::after {
     content: url("../../icons/chevron_down.svg");
     position: absolute;
     right: 0;

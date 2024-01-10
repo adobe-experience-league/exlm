@@ -99,9 +99,10 @@ function convertToULList(multiMap) {
       anchor.textContent = value[0].title;
 
       liItem.appendChild(anchor);
-
+    }
+    if (value.length > 1) {
       const subUlList = document.createElement('ul');
-
+      liItem.classList.add('hasSubPages');
       value.slice(1).forEach((item) => {
         const subLiItem = document.createElement('li');
         const subAnchor = document.createElement('a');
@@ -114,7 +115,6 @@ function convertToULList(multiMap) {
 
       liItem.appendChild(subUlList);
     }
-
     ulList.appendChild(liItem);
   });
 
