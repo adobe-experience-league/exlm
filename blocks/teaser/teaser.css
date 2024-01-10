@@ -238,6 +238,7 @@
   .teaser.block > .foreground > .spacer {
     display:block;
     order: 1;
+    width:35%;
   }
 
   /* change the order if text should be on the right */
