@@ -1,8 +1,10 @@
 import ffetch from '../../scripts/ffetch.js';
 import {fetchPlaceholders}  from '../../scripts/lib-franklin.js';
+import { getEDSLink, getLink } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
 
+  // fallback text 
   let browseText = 'Browse';
 
   // get placeholders
@@ -11,41 +13,38 @@ export default async function decorate(block) {
     browseText = placeholders.browse;
   } catch { /* empty */ }
 
-  let path = document.location.pathname;
-  // are we on author
-  const suffix = path.endsWith('.html') ? '.html': '';
-  // cut of suffix if any
-  path = suffix ? path.substring(0,path.indexOf(suffix)): path;
+  // get current page path
+  const currentPath = getEDSLink(document.location.pathname)
+
   // split the path at browse root
   const browseRootName = 'browse';
-  const pathParts = path.split(browseRootName);
-  // the language and instance dependent root path
+  const pathParts = currentPath.split(browseRootName);
+  // prefix language path
   const browseRoot = `${pathParts[0]}${browseRootName}`;
 
   // set the root breadcrumb
-  const rootCrumb = document.createElement("a");
-  rootCrumb.innerText = browseText;
-  rootCrumb.setAttribute('href',`${browseRoot}${suffix}`);
-  block.append(rootCrumb);
+  const rootCrumbElem = document.createElement("a");
+  rootCrumbElem.innerText = browseText;
+  rootCrumbElem.setAttribute('href',getLink(browseRoot));
+  block.append(rootCrumbElem);
 
   // get the browse index
   const index = await ffetch('/browse-index.json').all();
 
   // build the remaining breadcrumbs
   pathParts[1].split('/').reduce((prevSubPath, nextPathElem) => {
-    // create the next sub path
-    const nextSubPath = `${prevSubPath}/${nextPathElem}`;
+    // create the next crumble sub path
+    const nextCrumbSubPath = `${prevSubPath}/${nextPathElem}`;
     // construct full crumb path
-    let url = `${browseRoot}${nextSubPath}`;
+    const fullCrumbPath = `${browseRoot}${nextCrumbSubPath}`;
     // has page been published and indexed ?
-    const indexEntry = index.find((e) => e.path === url);  
+    const indexEntry = index.find((e) => e.path === fullCrumbPath);  
     if (indexEntry) {
       let elem;
-      url += suffix;
       // create crumb element, either 'a' or 'span'
-      if (url !== document.location.pathname) {
+      if (fullCrumbPath !== currentPath) {
         elem = document.createElement('a'); 
-        elem.setAttribute('href', url); 
+        elem.setAttribute('href', getLink(fullCrumbPath)); 
       } else {
         elem = document.createElement('span');
       }
@@ -54,6 +53,6 @@ export default async function decorate(block) {
       block.append(elem);
     } 
     // go to next sub path
-    return nextSubPath;
+    return nextCrumbSubPath;
   });
 }

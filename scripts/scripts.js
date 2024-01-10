@@ -518,3 +518,22 @@ sampleRUM.always.on('convert', (data) => {
 });
 
 loadPage();
+
+
+/**
+ * Helper function that converts an AEM path into an EDS path.
+ */
+export function getEDSLink(aemPath) {
+  return window.hlx.aemRoot ?
+    aemPath.replace(window.hlx.aemRoot,'').replace('.html',''):
+    aemPath;
+}
+
+/**
+ * Helper function that adapts the path to work on EDS and AEM rendering
+ */
+export function getLink(edsPath) {
+  return window.hlx.aemRoot && !edsPath.startsWith(window.hlx.aemRoot) && edsPath.indexOf('.html') === -1 ?
+   `${window.hlx.aemRoot}${edsPath}.html`:
+    edsPath;
+}
