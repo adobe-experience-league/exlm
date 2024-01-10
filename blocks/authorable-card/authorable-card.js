@@ -40,12 +40,12 @@ export default async function decorate(block) {
   contentDiv.classList.add('browse-cards-block-content');
 
   for (let i = 0; i < numberOfCards; i += 1) {
-    if(block.querySelector(`div:nth-child(${i + rowCount})`)) {
+    if (block.querySelector(`div:nth-child(${i + rowCount})`)) {
       links.push(block.querySelector(`div:nth-child(${i + rowCount}) > div`)?.textContent);
       linksContainer.push(block.querySelector(`div:nth-child(${i + rowCount})`));
     }
   }
-  
+
   numberOfCards = linksContainer.length;
 
   let placeholders = {};
