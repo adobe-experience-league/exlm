@@ -46,8 +46,7 @@ export default async function decorate(block) {
     contentType,
   };
 
-  const buildCardsShimmer = new BuildPlaceholder(noOfResults);
-  buildCardsShimmer.init(block);
+  const buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent

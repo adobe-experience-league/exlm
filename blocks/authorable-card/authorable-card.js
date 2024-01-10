@@ -7,7 +7,7 @@ import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.
 
 const numberOfCards = 4;
 const rowCount = 4;
-const buildCardsShimmer = new BuildPlaceholder(numberOfCards);
+let buildCardsShimmer = '';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -72,6 +72,6 @@ export default async function decorate(block) {
 
   block.innerHTML = '';
   block.appendChild(headerDiv);
-  buildCardsShimmer.init(block);
+  buildCardsShimmer = new BuildPlaceholder(numberOfCards, block);
   buildCardsShimmer.setParent(contentDiv);
 }

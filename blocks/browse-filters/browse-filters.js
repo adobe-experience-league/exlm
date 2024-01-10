@@ -30,7 +30,7 @@ const isBrowseProdPage = theme === 'browse-product';
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
-const buildCardsShimmer = new BuildPlaceholder(getBrowseFiltersResultCount());
+let buildCardsShimmer = '';
 
 function enableTagsAsProxy(block) {
   tagsProxy = new Proxy(tags, {
@@ -701,7 +701,7 @@ export default async function decorate(block) {
   constructClearFilterBtn(block);
   appendToForm(block, renderTags());
   appendToForm(block, renderFilterResultsHeader());
-  buildCardsShimmer.init(block.querySelector('.browse-filters-form'));
+  buildCardsShimmer = new BuildPlaceholder(getBrowseFiltersResultCount(), block.querySelector('.browse-filters-form'));
   initiateCoveoHeadlessSearch({
     handleSearchEngineSubscription,
     renderPageNumbers,

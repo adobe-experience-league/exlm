@@ -3,10 +3,12 @@ import { loadCSS } from '../lib-franklin.js';
 loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-placeholder.css`); // load placeholder css dynamically
 
 export default class BuildPlaceholder {
-  constructor(records) {
+  constructor(records, block) {
     this.records = records;
     this.shimmer = document.createElement('div');
     this.shimmer.classList.add('browse-card-shimmer');
+    block.appendChild(this.shimmer);
+    this.shimmer.appendChild(this.content());
   }
 
   content() {
@@ -41,10 +43,5 @@ export default class BuildPlaceholder {
 
   setParent(contentDiv) {
     this.shimmer.appendChild(contentDiv);
-  }
-
-  init(block) {
-    block.appendChild(this.shimmer);
-    this.shimmer.appendChild(this.content());
   }
 }
