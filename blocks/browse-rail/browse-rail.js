@@ -127,6 +127,15 @@ export default async function decorate(block) {
 
   const results = await ffetch('/browse-index.json').all();
   const currentPagePath = window.location.pathname;
+  // Find the parent page for product sub-pages
+  const parentPage = results.find((page) => page.path === getPathUntilLevel(currentPagePath, 3));
+  let parentPageTitle = '';
+  let parentPagePath = '';
+  // Display path and title of the parent page
+  if (parentPage) {
+    parentPageTitle = parentPage.title;
+    parentPagePath = parentPage.path;
+  }
 
   // For Browse All Page
   if (theme === 'browse-all') {
@@ -217,8 +226,7 @@ export default async function decorate(block) {
       block.appendChild(htmlList);
       document.querySelector(
         '.browse-by > li',
-      ).innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="${pagePath}">${parts[3]}</a></li></ul>`;
-      // document.querySelector('.topics > li').innerHTML = `<a href="#">${parts[3]} ${placeholders.topics}</a>`;
+      ).innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="${parentPagePath}">All ${parentPageTitle} Content</a></li></ul>`;
     } else {
       // Product page
       const result = hasDirectLeafNodes(results, currentPagePath);
@@ -249,7 +257,12 @@ export default async function decorate(block) {
         const topicsUL = document.createElement('ul');
         topicsUL.classList.add('topics');
         const topicsLI = document.createElement('li');
-        topicsLI.innerHTML = `<a href="#">${label} ${placeholders.topics}</a>`;
+        // Topics heading for product sub-pages
+        if (parts.length >= 5 && parts[3] === currentPagePath.split('/')[3]) {
+          topicsLI.innerHTML = `<a href="#">${parentPageTitle} ${placeholders.topics}</a>`;
+        } else {
+          topicsLI.innerHTML = `<a href="#">${label} ${placeholders.topics}</a>`;
+        }
         topicsLI.append(ulElement);
         topicsUL.append(topicsLI);
         block.append(topicsUL);
