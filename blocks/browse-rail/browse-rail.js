@@ -3,20 +3,20 @@ import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 
 const placeholders = await fetchPlaceholders();
 
-// Function to check if the element is visible on page.
+// Utility function to check if the element is visible on the page.
 function isVisible(element) {
   const style = getComputedStyle(element);
   return style.display !== 'none' && style.visibility !== 'hidden';
 }
 
-// Function to create dynamic list items
+// Utility function to create dynamic list items
 function createListItem(item) {
   const li = document.createElement('li');
   li.innerHTML = `<a href="${item.path}">${item.title}</a>`;
   return li;
 }
 
-// Function to toggle visibility of items
+// Utility function to toggle visibility of items
 function toggleItemVisibility(itemList, startIndex, show) {
   // eslint-disable-next-line no-plusplus
   for (let i = startIndex; i < itemList.length; i++) {
@@ -24,7 +24,7 @@ function toggleItemVisibility(itemList, startIndex, show) {
   }
 }
 
-// Function to set link visibility
+// Utility function to set link visibility
 function setLinkVisibility(linkId, show) {
   const linkElement = document.getElementById(linkId);
   if (linkElement) {
@@ -60,17 +60,18 @@ function hasDirectLeafNodes(jsonData, currentPage) {
   return directLeafNodes.length > 0;
 }
 
+// Utility Function to get the path until a specific level
 function getPathUntilLevel(originalUrl, levels) {
   const pathSegments = originalUrl.split('/');
   const resultPath = pathSegments.slice(0, levels + 1).join('/');
   return resultPath;
 }
 
-// Function to filter sub-pages under a given path
+// Utility function to filter sub-pages under a given path
 const filterSubPages = (data, basePath) =>
   data.filter((page) => page.path.startsWith(basePath) && page.path !== basePath);
 
-// Function to build a multi-map from the filtered sub-pages
+// Utility function to build a multi-map from the filtered sub-pages
 function convertToMultiMap(jsonData, page) {
   const multiMap = new Map();
 
@@ -87,7 +88,7 @@ function convertToMultiMap(jsonData, page) {
   return multiMap;
 }
 
-// Function to convert multi-map to nested list
+// Utility function to convert multi-map to nested list
 function convertToULList(multiMap) {
   const ulList = document.createElement('ul');
   ulList.classList.add('subPages');
@@ -103,15 +104,18 @@ function convertToULList(multiMap) {
     if (value.length > 1) {
       const subUlList = document.createElement('ul');
       liItem.classList.add('hasSubPages');
-      value.slice(1).forEach((item) => {
-        const subLiItem = document.createElement('li');
-        const subAnchor = document.createElement('a');
-        subAnchor.href = item.path;
-        subAnchor.textContent = item.title;
+      value
+        .slice(1)
+        .sort((a, b) => a.title.localeCompare(b.title))
+        .forEach((item) => {
+          const subLiItem = document.createElement('li');
+          const subAnchor = document.createElement('a');
+          subAnchor.href = item.path;
+          subAnchor.textContent = item.title;
 
-        subLiItem.appendChild(subAnchor);
-        subUlList.appendChild(subLiItem);
-      });
+          subLiItem.appendChild(subAnchor);
+          subUlList.appendChild(subLiItem);
+        });
 
       liItem.appendChild(subUlList);
     }
@@ -121,6 +125,21 @@ function convertToULList(multiMap) {
   return ulList;
 }
 
+// Utility function to sort L1 products in ascending order
+function sortFirstLevelList(containerSelector) {
+  const container = document.querySelector(containerSelector);
+  const liElements = Array.from(container.children);
+
+  liElements.sort((a, b) => {
+    const textA = a.textContent.trim();
+    const textB = b.textContent.trim();
+    return textA.localeCompare(textB);
+  });
+
+  liElements.forEach((li) => container.appendChild(li));
+}
+
+// Main function to decorate the block
 export default async function decorate(block) {
   const theme = getMetadata('theme');
   const label = getMetadata('og:title');
@@ -167,18 +186,18 @@ export default async function decorate(block) {
         return titleA.localeCompare(titleB);
       });
 
-      Object.values(sortedResults).forEach((item) => {
+      sortedResults.forEach((item) => {
         const li = createListItem(item);
         ul.appendChild(li);
       });
 
       productsLI.append(ul);
       productsUL.append(productsLI);
-
       block.append(productsUL);
+
       // Check if there are less than 12 items, and hide the "View More" link accordingly
       if (ul.children.length <= 12) {
-        document.getElementById('viewMoreLink').style.display = 'none';
+        setLinkVisibility('viewMoreLink', false);
       }
 
       toggleItemVisibility(ul.children, 12, false);
@@ -198,7 +217,7 @@ export default async function decorate(block) {
     }
   }
 
-  // For Browse Product Page
+  // For Browse Product Pages
   if (theme !== 'browse-all') {
     // Add "Browse more products" link
     const browseMoreProducts = document.createElement('div');
@@ -224,9 +243,16 @@ export default async function decorate(block) {
       const resultMultiMap = convertToMultiMap(subPages, currentPagePath.split('/')[3]);
       const htmlList = convertToULList(resultMultiMap);
       block.appendChild(htmlList);
+      sortFirstLevelList('.subPages');
       document.querySelector(
         '.browse-by > li',
       ).innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="${parentPagePath}">All ${parentPageTitle} Content</a></li></ul>`;
+
+      // Hightlight the current page title in the left rail
+      const targetElement = document.querySelector(`[href="${currentPagePath}"]`);
+      if (targetElement) {
+        targetElement.classList.add('is-active');
+      }
     } else {
       // Product page
       const result = hasDirectLeafNodes(results, currentPagePath);
@@ -234,7 +260,9 @@ export default async function decorate(block) {
         const subPages = filterSubPages(results, currentPagePath);
         const resultMultiMap = convertToMultiMap(subPages, currentPagePath.split('/')[3]);
         const htmlList = convertToULList(resultMultiMap);
+
         block.appendChild(htmlList);
+        sortFirstLevelList('.subPages');
       }
     }
 
@@ -245,7 +273,6 @@ export default async function decorate(block) {
       // Get all the topic elements inside the container
       const topicElements = browseTopicsContainer.querySelectorAll('.browse-topics.topic');
       if (topicElements.length > 0) {
-        // Loop through each topic element and create a li element for each
         topicElements.forEach((topicElement) => {
           if (isVisible(topicElement)) {
             const liElement = document.createElement('li');
