@@ -207,11 +207,13 @@ export default async function decorate(block) {
 
       // "View More" and "View Less" links
       const viewMoreDiv = document.createElement('div');
-      viewMoreDiv.innerHTML = `<a id="viewMoreLink">${placeholders.viewMore}</a>`;
+      viewMoreDiv.classList.add('left-rail-view-more');
+      viewMoreDiv.innerHTML = `<a id="viewMoreLink"> + ${placeholders.viewMore}</a>`;
       block.append(viewMoreDiv);
 
       const viewLessDiv = document.createElement('div');
-      viewLessDiv.innerHTML = `<a id="viewLessLink" style="display: none;">${placeholders.viewLess}</a>`;
+      viewLessDiv.classList.add('left-rail-view-more');
+      viewLessDiv.innerHTML = `<a id="viewLessLink" style="display: none;"> - ${placeholders.viewLess}</a>`;
       block.append(viewLessDiv);
 
       // Event listeners for "View More" and "View Less" links
