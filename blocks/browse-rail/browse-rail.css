@@ -72,3 +72,7 @@
 .hidden {
     display: none;
 }
+
+.browse-rail .is-active{
+    background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
+}
