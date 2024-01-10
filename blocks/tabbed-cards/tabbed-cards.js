@@ -127,7 +127,7 @@ export default async function decorate(blockElement) {
     tabList.appendChild(tabListUlElement);
   });
 
-  // Append tab list and Shimmer Card to the main block
+  // Append tab list and Shimmer Card after Tab Label
   const shimmerClass = blockElement.querySelector('.browse-card-shimmer');
   blockElement.insertBefore(tabList, shimmerClass);
   buildCardsShimmer.show();
