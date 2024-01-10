@@ -119,7 +119,7 @@ export default async function decorate(blockElement) {
         placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkMappingKey)}Link`],
       );
       tabList.appendChild(viewLinkURLElement);
-      buildCardsShimmer = new BuildPlaceholder(numberOfResults, blockElement);
+      buildCardsShimmer.show();
       fetchDataAndRenderBlock(tabLabelData, blockElement);
     });
     tabListUlElement.appendChild(tabLabel);
@@ -128,8 +128,9 @@ export default async function decorate(blockElement) {
   });
 
   // Append tab list and Shimmer Card to the main block
-  blockElement.appendChild(tabList);
-  buildCardsShimmer = new BuildPlaceholder(numberOfResults, blockElement);
+  const shimmerClass = blockElement.querySelector('.browse-card-shimmer');
+  blockElement.insertBefore(tabList, shimmerClass);
+  buildCardsShimmer.show();
 
   // Fetch and render data for the initial content type
   const initialContentType = tabsLabels[0];
