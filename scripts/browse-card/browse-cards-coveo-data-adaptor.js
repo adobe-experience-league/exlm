@@ -47,7 +47,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     if (paramObj) {
       const product = paramObj.filter((element) => responseObj.includes(element));
       if (product.length) {
-        return product[0] || '';
+        return product[0];
       }
     }
     return responseObj[0] || '';
