@@ -5,7 +5,7 @@ import ArticleDataService from '../../scripts/data-service/article-data-service.
 import mapResultToCardsData from './article-data-adapter.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
-const numberOfCards = 4;
+let numberOfCards = 4;
 const rowCount = 4;
 let buildCardsShimmer = '';
 
@@ -20,10 +20,6 @@ export default async function decorate(block) {
   const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
   const links = [];
   const linksContainer = [];
-  for (let i = 0; i <= numberOfCards; i += 1) {
-    links.push(block.querySelector(`div:nth-child(${i + rowCount}) > div`)?.textContent);
-    linksContainer.push(block.querySelector(`div:nth-child(${i + rowCount})`));
-  }
 
   // Clearing the block's content
   block.classList.add('browse-cards-block');
@@ -43,6 +39,15 @@ export default async function decorate(block) {
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
 
+  for (let i = 0; i < numberOfCards; i += 1) {
+    if(block.querySelector(`div:nth-child(${i + rowCount})`)) {
+      links.push(block.querySelector(`div:nth-child(${i + rowCount}) > div`)?.textContent);
+      linksContainer.push(block.querySelector(`div:nth-child(${i + rowCount})`));
+    }
+  }
+  
+  numberOfCards = linksContainer.length;
+
   let placeholders = {};
   try {
     placeholders = await fetchPlaceholders();
@@ -51,18 +56,21 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
-  links.forEach(async (link, i) => {
+  links.forEach((link, i) => {
     if (link) {
       const articleDataService = new ArticleDataService();
       articleDataService
         .handleArticleDataService(link)
         .then(async (data) => {
-          buildCardsShimmer.hide();
-          linksContainer[i].innerHTML = '';
+          block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+            el.classList.add('hide-shimmer');
+          });
+
           const cardData = await mapResultToCardsData(data, placeholders);
           await buildCard(linksContainer[i], cardData);
           contentDiv.appendChild(linksContainer[i]);
           decorateIcons(block);
+          linksContainer[i].children[0].remove();
         })
         .catch(() => {
           buildCardsShimmer.hide();
@@ -70,8 +78,15 @@ export default async function decorate(block) {
     }
   });
 
-  block.innerHTML = '';
   block.appendChild(headerDiv);
+  headingElement.remove();
+  toolTipElement.remove();
+  linkTextElement.remove();
+  linksContainer.forEach((el) => contentDiv.appendChild(el));
+  const shimmerCardParent = document.createElement('div');
+  shimmerCardParent.classList.add('browse-card-shimmer');
+  block.appendChild(shimmerCardParent);
+
   buildCardsShimmer = new BuildPlaceholder(numberOfCards, block);
   buildCardsShimmer.setParent(contentDiv);
 }
