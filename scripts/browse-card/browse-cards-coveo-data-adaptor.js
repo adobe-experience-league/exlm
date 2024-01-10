@@ -44,11 +44,13 @@ const BrowseCardsCoveoDataAdaptor = (() => {
    * @returns {string} The matched product or the first response if no match is found.
    */
   const matchProduct = (paramObj, responseObj) => {
-    const product = paramObj.filter((element) => responseObj.includes(element));
-    if (product.length) {
-      return product[0];
+    if (paramObj) {
+      const product = paramObj.filter((element) => responseObj.includes(element));
+      if (product.length) {
+        return product[0];
+      }
     }
-    return responseObj[0];
+    return responseObj[0] || '';
   };
 
   /**
