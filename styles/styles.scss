@@ -326,7 +326,8 @@
   --non-spectrum-azure-blue: #378ef0;
   --non-spectrum-silver-mist: #d2d2d2;
   --non-spectrum-link-blue: #378ef0;
-  --non-spectrum-max-width: 1440px;
+  --non-spectrum-max-width: 1280px;
+  --non-spectrum-footer-max-width: 1440px;
 
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
@@ -661,7 +662,7 @@ img {
   }
 
   @include breakpoint(tablet) {
-    padding: 30px 32px 32px;
+    padding: 30px 56px;
   }
 }
 
@@ -681,6 +682,7 @@ main > div.browse-rail {
     /* on pages with rails the max width must be on main */
     max-width: var(--non-spectrum-max-width);
     margin: auto;
+    grid-template-rows: auto auto;
   }
 
   main > div.section {
@@ -694,7 +696,6 @@ main > div.browse-rail {
     width: 224px;
     height: 100%;
     padding: 0 0 0 32px;
-    position: absolute;
   }
 }
 

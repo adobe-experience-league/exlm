@@ -751,7 +751,7 @@ img {
   padding: 30px 16px;
   /* section metadata */
 }
-.section[data-section-status=loading], .section[data-section-status=initialized]{
+.section[data-section-status=loading], .section[data-section-status=initialized] {
   visibility: hidden;
 }
 .section.article-metadata-createdby-container h1 {
@@ -792,6 +792,7 @@ main > div.browse-rail {
     /* on pages with rails the max width must be on main */
     max-width: var(--non-spectrum-max-width);
     margin: auto;
+    grid-template-rows: auto auto;
   }
   main > div.section {
     grid-column: 2;
@@ -803,7 +804,6 @@ main > div.browse-rail {
     width: 224px;
     height: 100%;
     padding: 0 0 0 32px;
-    position: absolute;
   }
 }
 /* three column layout */
