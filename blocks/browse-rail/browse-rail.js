@@ -60,7 +60,7 @@ export default async function decorate(block) {
     const browseByUL = document.createElement('ul');
     browseByUL.classList.add('browse-by');
     const browseByLI = document.createElement('li');
-    browseByLI.innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="#" class="is-active">${placeholders.browseAllContent}</a></li></ul>`;
+    browseByLI.innerHTML = `<a href="javascript:void(0)">${placeholders.browseBy}</a><ul><li><a href="javascript:void(0)" class="is-active">${placeholders.browseAllContent}</a></li></ul>`;
     browseByUL.append(browseByLI);
     block.append(browseByUL);
 
@@ -74,7 +74,7 @@ export default async function decorate(block) {
       const productsUL = document.createElement('ul');
       productsUL.classList.add('products');
       const productsLI = document.createElement('li');
-      productsLI.innerHTML = `<a href="#">${placeholders.products}</a><span class="js-toggle"></span>`;
+      productsLI.innerHTML = `<a href="javascript:void(0)">${placeholders.products}</a><span class="js-toggle"></span>`;
 
       const ul = document.createElement('ul');
       const sortedResults = directChildNodes.sort((a, b) => {
@@ -130,7 +130,7 @@ export default async function decorate(block) {
     browseByUL.classList.add('browse-by');
     const browseByLI = document.createElement('li');
     const browseByLinkText = `${placeholders.all} ${label} ${placeholders.content}`;
-    browseByLI.innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="#" class="is-active">${browseByLinkText}</a></li></ul>`;
+    browseByLI.innerHTML = `<a href="javascript:void(0)">${placeholders.browseBy}</a><ul><li><a href="javascript:void(0)" class="is-active">${browseByLinkText}</a></li></ul>`;
     browseByUL.append(browseByLI);
     block.append(browseByUL);
 
@@ -147,7 +147,7 @@ export default async function decorate(block) {
       const subPagesBrowseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
       document.querySelector(
         '.browse-by > li',
-      ).innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="${parentPagePath}">${subPagesBrowseByLinkText}</a></li></ul>`;
+      ).innerHTML = `<a href="javascript:void(0)">${placeholders.browseBy}</a><ul><li><a href="${parentPagePath}">${subPagesBrowseByLinkText}</a></li></ul>`;
 
       // Hightlight the current page title in the left rail
       const targetElement = document.querySelector(`[href="${currentPagePath}"]`);
@@ -187,9 +187,9 @@ export default async function decorate(block) {
         const topicsLI = document.createElement('li');
         // Topics heading for product sub-pages
         if (parts.length >= 5 && parts[3] === currentPagePath.split('/')[3]) {
-          topicsLI.innerHTML = `<a href="#">${parentPageTitle} ${placeholders.topics}</a><span class="js-toggle"></span>`;
+          topicsLI.innerHTML = `<a href="javascript:void(0)">${parentPageTitle} ${placeholders.topics}</a><span class="js-toggle"></span>`;
         } else {
-          topicsLI.innerHTML = `<a href="#">${label} ${placeholders.topics}</a><span class="js-toggle"></span>`;
+          topicsLI.innerHTML = `<a href="javascript:void(0)">${label} ${placeholders.topics}</a><span class="js-toggle"></span>`;
         }
         topicsLI.append(ulElement);
         topicsUL.append(topicsLI);
