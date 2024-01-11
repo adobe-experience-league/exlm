@@ -199,8 +199,9 @@ export default async function decorate(block) {
       block.append(productsUL);
 
       // Check if there are less than 12 items, and hide the "View More" link accordingly
-      if (ul.children.length <= 12) {
-        setLinkVisibility('viewMoreLink', false);
+      const liElements = ul.getElementsByTagName('li');
+      if (liElements && liElements.length <= 12) {
+        document.getElementById('viewMoreLink').style.display = 'none';
       }
 
       toggleItemVisibility(ul.children, 12, false);
