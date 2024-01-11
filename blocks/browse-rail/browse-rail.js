@@ -117,7 +117,7 @@ function convertToULList(multiMap) {
           subUlList.appendChild(subLiItem);
         });
       const toggleIcon = document.createElement('span');
-      toggleIcon.textContent = 'test';
+      // toggleIcon.textContent = 'test';
       toggleIcon.classList.add('js-toggle');
       liItem.append(toggleIcon);
       liItem.appendChild(subUlList);
@@ -180,7 +180,7 @@ export default async function decorate(block) {
       const productsUL = document.createElement('ul');
       productsUL.classList.add('products');
       const productsLI = document.createElement('li');
-      productsLI.innerHTML = `<a href="#">${placeholders.products}</a><span class="js-toggle">test</span>`;
+      productsLI.innerHTML = `<a href="#">${placeholders.products}</a><span class="js-toggle"></span>`;
 
       const ul = document.createElement('ul');
       const sortedResults = directChildNodes.sort((a, b) => {
@@ -209,12 +209,12 @@ export default async function decorate(block) {
       const viewMoreDiv = document.createElement('div');
       viewMoreDiv.classList.add('left-rail-view-more');
       viewMoreDiv.innerHTML = `<a id="viewMoreLink"> + ${placeholders.viewMore}</a>`;
-      block.append(viewMoreDiv);
+      ul.append(viewMoreDiv);
 
       const viewLessDiv = document.createElement('div');
-      viewLessDiv.classList.add('left-rail-view-more');
+      viewLessDiv.classList.add('left-rail-view-less');
       viewLessDiv.innerHTML = `<a id="viewLessLink" style="display: none;"> - ${placeholders.viewLess}</a>`;
-      block.append(viewLessDiv);
+      ul.append(viewLessDiv);
 
       // Event listeners for "View More" and "View Less" links
       document.getElementById('viewMoreLink').addEventListener('click', handleViewMoreClick);
@@ -291,9 +291,9 @@ export default async function decorate(block) {
         const topicsLI = document.createElement('li');
         // Topics heading for product sub-pages
         if (parts.length >= 5 && parts[3] === currentPagePath.split('/')[3]) {
-          topicsLI.innerHTML = `<a href="#">${parentPageTitle} ${placeholders.topics}</a><span class="js-toggle">test</span>`;
+          topicsLI.innerHTML = `<a href="#">${parentPageTitle} ${placeholders.topics}</a><span class="js-toggle"></span>`;
         } else {
-          topicsLI.innerHTML = `<a href="#">${label} ${placeholders.topics}</a><span class="js-toggle">test</span>`;
+          topicsLI.innerHTML = `<a href="#">${label} ${placeholders.topics}</a><span class="js-toggle"></span>`;
         }
         topicsLI.append(ulElement);
         topicsUL.append(topicsLI);
@@ -306,6 +306,7 @@ export default async function decorate(block) {
   block.querySelector('.js-toggle').classList.add('expanded');
   toggleElements.forEach((toggleElement) => {
     const subMenu = toggleElement.parentElement.querySelector('ul');
+
     toggleElement.addEventListener('click', (event) => {
       event.preventDefault();
       subMenu.style.display = subMenu.style.display === 'block' || subMenu.style.display === '' ? 'none' : 'block';

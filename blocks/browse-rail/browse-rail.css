@@ -89,9 +89,10 @@
 .browse-rail .browse-by >li >ul {
     margin-left: 12px;
 }
-.left-rail-view-more {
-    margin-left: 24px;
-}
-.left-rail-view-more a {
+.browse-rail ul li .left-rail-view-more a,
+.browse-rail ul li .left-rail-view-less a {
     font-size: var(--spectrum-font-size-100);
+    color: var(--non-spectrum-link);
+    cursor: pointer;
+    text-transform: none;
 }
