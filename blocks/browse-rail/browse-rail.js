@@ -63,11 +63,9 @@ export default async function decorate(block) {
   // Find the parent page for product sub-pages
   const parentPage = results.find((page) => page.path === getPathUntilLevel(currentPagePath, 3));
   let parentPageTitle = '';
-  let parentPagePath = '';
   // Display path and title of the parent page
   if (parentPage) {
     parentPageTitle = parentPage.title;
-    parentPagePath = parentPage.path;
   }
 
   let placeholders = {};
