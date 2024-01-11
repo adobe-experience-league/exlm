@@ -62,7 +62,6 @@ export default async function decorate(block) {
       articleDataService
         .handleArticleDataService(link)
         .then(async (data) => {
-
           block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
             el.classList.add('hide-shimmer');
           });
@@ -74,11 +73,9 @@ export default async function decorate(block) {
           linksContainer[i].children[0].remove();
         })
         .catch(() => {
-
           block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
             el.classList.add('hide-shimmer');
           });
-          
         });
     }
   });
