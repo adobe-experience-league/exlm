@@ -1,40 +1,56 @@
 import ffetch from '../../scripts/ffetch.js';
 import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
-import {
-  isVisible,
-  createListItem,
-  toggleItemVisibility,
-  setLinkVisibility,
-  hasDirectLeafNodes,
-  getPathUntilLevel,
-  filterSubPages,
-  convertToMultiMap,
-  convertToULList,
-  sortFirstLevelList,
-} from './browse-rail-utils.js';
+import { filterSubPages, convertToMultiMap, convertToULList, sortFirstLevelList } from './browse-rail-utils.js';
 
-let placeholders = {};
-try {
-  placeholders = await fetchPlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
+// Utility function to toggle visibility of items
+function toggleItemVisibility(itemList, startIndex, show) {
+  // eslint-disable-next-line no-plusplus
+  for (let i = startIndex; i < itemList.length; i++) {
+    itemList[i].classList.toggle('hidden', !show);
+  }
+}
+
+// Utility function to set link visibility
+function setLinkVisibility(linkClass, show) {
+  const linkElement = document.querySelector(linkClass);
+  if (linkElement) {
+    linkElement.style.display = show ? 'block' : 'none';
+  }
+}
+
+// Function to check if current page has sub-pages
+function hasDirectLeafNodes(jsonData, currentPage) {
+  const directLeafNodes = jsonData.filter(
+    (item) =>
+      item.path.startsWith(currentPage) &&
+      item.path !== currentPage &&
+      !item.path.substring(currentPage.length + 1).includes('/'),
+  );
+
+  return directLeafNodes.length > 0;
+}
+
+// Utility Function to get the page path until a specific level
+function getPathUntilLevel(originalUrl, levels) {
+  const pathSegments = originalUrl.split('/');
+  const resultPath = pathSegments.slice(0, levels + 1).join('/');
+  return resultPath;
 }
 
 // Function to handle "View More" click
 function handleViewMoreClick() {
   const itemList = document.querySelectorAll('.products > li > ul > li');
   toggleItemVisibility(itemList, 12, true);
-  setLinkVisibility('viewMoreLink', false);
-  setLinkVisibility('viewLessLink', true);
+  setLinkVisibility('.viewMoreLink', false);
+  setLinkVisibility('.viewLessLink', true);
 }
 
 // Function to handle "View Less" click
 function handleViewLessClick() {
   const itemList = document.querySelectorAll('.products > li > ul > li');
   toggleItemVisibility(itemList, 12, false);
-  setLinkVisibility('viewMoreLink', true);
-  setLinkVisibility('viewLessLink', false);
+  setLinkVisibility('.viewMoreLink', true);
+  setLinkVisibility('.viewLessLink', false);
 }
 
 // Main function to decorate the block
@@ -52,6 +68,14 @@ export default async function decorate(block) {
   if (parentPage) {
     parentPageTitle = parentPage.title;
     parentPagePath = parentPage.path;
+  }
+
+  let placeholders = {};
+  try {
+    placeholders = await fetchPlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
   }
 
   // For Browse All Page
@@ -84,7 +108,8 @@ export default async function decorate(block) {
       });
 
       sortedResults.forEach((item) => {
-        const li = createListItem(item);
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="${item.path}">${item.title}</a>`;
         ul.appendChild(li);
       });
 
@@ -95,7 +120,7 @@ export default async function decorate(block) {
       // Check if there are less than 12 items, and hide the "View More" link accordingly
       const liElements = ul.getElementsByTagName('li');
       if (liElements && liElements.length <= 12) {
-        document.getElementById('viewMoreLink').style.display = 'none';
+        block.querySelector('.viewMoreLink').style.display = 'none';
       }
 
       toggleItemVisibility(ul.children, 12, false);
@@ -103,17 +128,17 @@ export default async function decorate(block) {
       // "View More" and "View Less" links
       const viewMoreDiv = document.createElement('div');
       viewMoreDiv.classList.add('left-rail-view-more');
-      viewMoreDiv.innerHTML = `<a id="viewMoreLink"> + ${placeholders.viewMore}</a>`;
+      viewMoreDiv.innerHTML = `<a class="viewMoreLink"> + ${placeholders.viewMore}</a>`;
       ul.append(viewMoreDiv);
 
       const viewLessDiv = document.createElement('div');
       viewLessDiv.classList.add('left-rail-view-less');
-      viewLessDiv.innerHTML = `<a id="viewLessLink" style="display: none;"> - ${placeholders.viewLess}</a>`;
+      viewLessDiv.innerHTML = `<a class="viewLessLink" style="display: none;"> - ${placeholders.viewLess}</a>`;
       ul.append(viewLessDiv);
 
       // Event listeners for "View More" and "View Less" links
-      document.getElementById('viewMoreLink').addEventListener('click', handleViewMoreClick);
-      document.getElementById('viewLessLink').addEventListener('click', handleViewLessClick);
+      block.querySelector('.viewMoreLink').addEventListener('click', handleViewMoreClick);
+      block.querySelector('.viewLessLink').addEventListener('click', handleViewLessClick);
     }
   }
 
@@ -175,7 +200,8 @@ export default async function decorate(block) {
       const topicElements = browseTopicsContainer.querySelectorAll('.browse-topics.topic');
       if (topicElements.length > 0) {
         topicElements.forEach((topicElement) => {
-          if (isVisible(topicElement)) {
+          const style = getComputedStyle(topicElement);
+          if (style.display !== 'none' && style.visibility !== 'hidden') {
             const liElement = document.createElement('li');
             liElement.innerHTML = `<a href="#">${topicElement.textContent}</a>`;
             ulElement.appendChild(liElement);
