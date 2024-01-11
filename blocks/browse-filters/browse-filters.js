@@ -236,7 +236,7 @@ function handleCheckboxClick(block, el, options) {
       appendTag(block, {
         name,
         label,
-        value
+        value,
       });
 
       if (coveoFacet) {
