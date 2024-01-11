@@ -26,7 +26,7 @@ export default function decorate(block) {
                   const pTag = document.createElement('p');
                   buttonType.parentNode.insertBefore(pTag, buttonType);
                   pTag.appendChild(buttonType);
-                  pTag.classList.add('button-container');
+                  pTag.classList.add('button-container'); 
                   // when button is primary - strong tag gets generated
                   const anchorInsideStrong = pTag.querySelector('strong a');
                   // when button is secondary - em tag gets generated
