@@ -32,12 +32,10 @@ export default function decorate(block) {
           // when button is secondary - em tag gets generated
           const anchorInsideEm = pTag.querySelector('em a');
           if (anchorInsideStrong) {
-            anchorInsideStrong.classList.add('button');
-            anchorInsideStrong.classList.add('primary');
+            anchorInsideStrong.classList.add('button', 'primary');
           }
           if (anchorInsideEm) {
-            anchorInsideEm.classList.add('button');
-            anchorInsideEm.classList.add('secondary');
+            anchorInsideEm.classList.add('button', 'secondary');
           }
         }
       }
