@@ -55,11 +55,11 @@ const BrowseCardsCoveoDataAdaptor = (() => {
 
   /**
    * Maps a result to the BrowseCards data model.
-   * @param {Object} param - The param object.
    * @param {Object} result - The result object.
+   * @param {Object} param - The param object.
    * @returns {Object} The BrowseCards data model.
    */
-  const mapResultToCardsDataModel = (param, result) => {
+  const mapResultToCardsDataModel = (result, param) => {
     const { raw, parentResult, title, excerpt, clickUri, uri } = result || {};
     /* eslint-disable camelcase */
     const { el_contenttype, el_product, el_solution, el_type } = parentResult?.raw || raw || {};
@@ -69,7 +69,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     } else {
       contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
     }
-    let product = Array.isArray(el_product) ? matchProduct(param.product, el_product) : el_product;
+    let product = Array.isArray(el_product) ? matchProduct(param?.product, el_product) : el_product;
     if (!product && el_solution) {
       product = Array.isArray(el_solution) ? el_solution[0] : el_solution;
     }
@@ -98,18 +98,18 @@ const BrowseCardsCoveoDataAdaptor = (() => {
 
   /**
    * Maps an array of results to an array of BrowseCards data models.
-   * @param {Object} param - The param object.
    * @param {Array} data - The array of result objects.
+   * @param {Object} param - The param object.
    * @returns {Promise<Array>} A promise that resolves with an array of BrowseCards data models.
    */
-  const mapResultsToCardsData = async (param, data) => {
+  const mapResultsToCardsData = async (data, param) => {
     try {
       placeholders = await fetchPlaceholders();
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);
     }
-    return data.map((result) => mapResultToCardsDataModel(param, result));
+    return data.map((result) => mapResultToCardsDataModel(result, param));
   };
 
   return {
