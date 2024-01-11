@@ -17,12 +17,13 @@
 }
 
 .browse-rail ul li {
-    justify-content: start;
     box-sizing: border-box;
     width: 100%;
     min-height: var(--spectrum-sidenav-item-height, var(--spectrum-alias-single-line-height));
     padding: var(--spectrum-sidenav-item-padding-y) var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150)) var(--spectrum-sidenav-item-padding-y) var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150));
     margin: 4px 0;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .browse-rail ul li ul {
@@ -36,18 +37,29 @@
     position: relative;
 }
 
-
-.browse-rail ul.topics>li>a::after,
-.browse-rail ul.products>li>a::after,
-.browse-rail ul.subPages>li.hasSubPages>a::after {
-    content: url("../../icons/chevron_down.svg");
+.browse-rail li> span.js-toggle {
+    position: relative;
+    cursor: pointer;
+    flex: 12%;
+}
+.browse-rail li> span.js-toggle:after {
     position: absolute;
-    right: 0;
-    top: 6px;
-    width: 18px;
-    height: 18px;
-    background: no-repeat right center;
-    transition: all .15s ease-in-out;
+    right: 40%;
+    top: 38%;
+    display: flex;
+    width: 6px;
+    height: 6px;
+    border-width: 0 2px 2px 0;
+    border-style: solid;
+    transform-origin: 75% 75%;
+    transform: rotateZ(45deg);
+    transition: transform 0.1s ease;
+    content: "";
+    box-sizing: content-box;
+}
+
+.browse-rail li> span.js-toggle.collapsed:after {
+    transform: rotateZ(-135deg);
 }
 
 .browse-rail ul li ul li a {
@@ -60,14 +72,13 @@
     line-height: 21px;
     min-height: 32px;
     box-sizing: border-box;
-    width: 100%;
     margin: 0;
     border-radius: 4px;
     padding: 5px 0 5px 12px;
     color: var(--spectrum-gray-700);
 }
 
-.hidden {
+.browse-rail ul li.hidden {
     display: none;
 }
 
@@ -81,13 +92,16 @@
     margin-bottom: 24px;
     padding-bottom: 24px;
 }
-.browse-rail >ul >li>a,
-.browse-rail >ul >li >a {
+.browse-rail >ul >li>a {
     font-size: var(--spectrum-font-size-75);
     font-weight: bold;
+    flex: 88%;
 }
 .browse-rail .browse-by >li >ul {
     margin-left: 12px;
+}
+.browse-rail .browse-by li {
+    flex-direction: column;
 }
 .browse-rail ul li .left-rail-view-more a,
 .browse-rail ul li .left-rail-view-less a {
@@ -96,6 +110,6 @@
     cursor: pointer;
     text-transform: none;
 }
-a[href="javascript:void(0)"] {
+.browse-rail a[href="javascript:void(0)"] {
     cursor: default;
 }
