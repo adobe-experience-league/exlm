@@ -647,6 +647,7 @@ async function handleSearchEngineSubscription() {
       filterResultsEl.appendChild(cardDiv);
       buildCardsShimmer.setParent(filterResultsEl);
       document.querySelector('.browse-filters-form').classList.add('is-result');
+      decorateIcons(cardDiv);
     });
   } else {
     buildCardsShimmer.hide();

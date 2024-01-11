@@ -1,3 +1,6 @@
+@import "../../scripts/browse-card/browse-cards-block.css";
+@import "../../scripts/browse-card/browse-card.css";
+
 .browse-filters-title {
   font-weight: bold;
   font-size: 45px;
