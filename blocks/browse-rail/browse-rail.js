@@ -115,12 +115,6 @@ export default async function decorate(block) {
       productsUL.append(productsLI);
       block.append(productsUL);
 
-      // Check if there are less than 12 items, and hide the "View More" link accordingly
-      const liElements = ul.getElementsByTagName('li');
-      if (liElements && liElements.length <= 12) {
-        block.querySelector('.viewMoreLink').style.display = 'none';
-      }
-
       toggleItemVisibility(ul.children, 12, false);
 
       // "View More" and "View Less" links
@@ -133,6 +127,12 @@ export default async function decorate(block) {
       viewLessDiv.classList.add('left-rail-view-less');
       viewLessDiv.innerHTML = `<a class="viewLessLink" style="display: none;"> - ${placeholders.viewLess}</a>`;
       ul.append(viewLessDiv);
+
+      // Check if there are less than 12 items, and hide the "View More" link accordingly
+      const liElements = ul.getElementsByTagName('li');
+      if (liElements && liElements.length <= 12) {
+        block.querySelector('.viewMoreLink').style.display = 'none';
+      }
 
       // Event listeners for "View More" and "View Less" links
       block.querySelector('.viewMoreLink').addEventListener('click', handleViewMoreClick);
