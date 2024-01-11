@@ -144,10 +144,10 @@ export default async function decorate(block) {
       const htmlList = convertToULList(resultMultiMap);
       block.appendChild(htmlList);
       sortFirstLevelList('.subPages');
-      const browseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
+      const subPagesBrowseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
       document.querySelector(
         '.browse-by > li',
-      ).innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="${parentPagePath}">${browseByLinkText}</a></li></ul>`;
+      ).innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="${parentPagePath}">${subPagesBrowseByLinkText}</a></li></ul>`;
 
       // Hightlight the current page title in the left rail
       const targetElement = document.querySelector(`[href="${currentPagePath}"]`);
