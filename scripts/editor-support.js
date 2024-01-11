@@ -2,6 +2,9 @@ import { decorateBlock, decorateButtons, decorateIcons, loadBlock } from './lib-
 
 const connectionPrefix = 'urn:aemconnection:';
 
+// set aem content root
+window.hlx.aemRoot = '/content/exlm/global';
+
 function handleEditorUpdate(event) {
   const {
     detail: { itemids },

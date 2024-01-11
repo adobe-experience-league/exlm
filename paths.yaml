@@ -4,6 +4,7 @@ mappings:
   - /content/exlm/metadata:/metadata.json
   # load fragments as resource from codebus in the editor (sw.js)
   - /content/exlm.resource/fragments/:/fragments/
+  - /content/exlm.resource/browse-index.json:/browse-index.json
 
   - /content/exlm/redirects:/redirects.json
   - /content/exlm/placeholders:/placeholders.json
