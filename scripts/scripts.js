@@ -26,7 +26,7 @@ import {
   setupAnalyticsTrackingWithAlloy,
 } from './analytics/lib-analytics.js';
 
-const LCP_BLOCKS = ['marquee', 'doc-actions']; // add your LCP blocks to the list
+const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
 export const timers = new Map();
 
