@@ -60,8 +60,7 @@ export default async function decorate(block) {
     const browseByUL = document.createElement('ul');
     browseByUL.classList.add('browse-by');
     const browseByLI = document.createElement('li');
-    const browseByLinkText = `${label} content`;
-    browseByLI.innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="#" class="is-active">${browseByLinkText}</a></li></ul>`;
+    browseByLI.innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="#" class="is-active">${placeholders.browseAllContent}</a></li></ul>`;
     browseByUL.append(browseByLI);
     block.append(browseByUL);
 
@@ -130,7 +129,7 @@ export default async function decorate(block) {
     const browseByUL = document.createElement('ul');
     browseByUL.classList.add('browse-by');
     const browseByLI = document.createElement('li');
-    const browseByLinkText = `All ${label} Content`;
+    const browseByLinkText = `${placeholders.all} ${label} ${placeholders.content}`;
     browseByLI.innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="#" class="is-active">${browseByLinkText}</a></li></ul>`;
     browseByUL.append(browseByLI);
     block.append(browseByUL);
@@ -145,9 +144,10 @@ export default async function decorate(block) {
       const htmlList = convertToULList(resultMultiMap);
       block.appendChild(htmlList);
       sortFirstLevelList('.subPages');
+      const browseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
       document.querySelector(
         '.browse-by > li',
-      ).innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="${parentPagePath}">All ${parentPageTitle} Content</a></li></ul>`;
+      ).innerHTML = `<a href="#">${placeholders.browseBy}</a><ul><li><a href="${parentPagePath}">${browseByLinkText}</a></li></ul>`;
 
       // Hightlight the current page title in the left rail
       const targetElement = document.querySelector(`[href="${currentPagePath}"]`);
