@@ -21,11 +21,13 @@
   right: 0;
   bottom: 0;
   margin: 0;
+  z-index: 1;
 }
 .shimmer-placeholder.hide-shimmer {
   height: 0px;
   margin: 0;
   transform: scale(0);
+  z-index: 0;
 }
 .featured-cards .shimmer-placeholder {
   display: grid; 
