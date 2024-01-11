@@ -26,7 +26,7 @@ export default async function decorate(block) {
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
-        <h4>${headingElement?.textContent.trim()}</h4>
+        <h2>${headingElement?.textContent.trim()}</h2>
       </div>
       <div class="browse-card-description-text">
         <p>${descriptionElement?.textContent.trim()}</p>

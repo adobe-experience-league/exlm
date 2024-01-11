@@ -70,6 +70,7 @@
 }
 .browse-cards-block-title h2 {
     margin: 0px;
+    color: var(--text-color);
 }
 .browse-cards-block-view a {
     font-size: 18px;
