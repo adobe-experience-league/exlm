@@ -62,7 +62,10 @@ export default async function decorate(block) {
       articleDataService
         .handleArticleDataService(link)
         .then(async (data) => {
-          buildCardsShimmer.hide();
+
+          block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+            el.classList.add('hide-shimmer');
+          });
 
           const cardData = await mapResultToCardsData(data, placeholders);
           await buildCard(linksContainer[i], cardData);
@@ -71,7 +74,11 @@ export default async function decorate(block) {
           linksContainer[i].children[0].remove();
         })
         .catch(() => {
-          buildCardsShimmer.hide();
+
+          block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+            el.classList.add('hide-shimmer');
+          });
+          
         });
     }
   });
