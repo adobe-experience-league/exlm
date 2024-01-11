@@ -2,7 +2,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
-import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 /**
  * Decorate function to process and log the mapped data.
@@ -46,18 +46,12 @@ export default async function decorate(block) {
     contentType,
   };
 
-  const shimmerCardParent = document.createElement('div');
-  shimmerCardParent.classList.add('browse-card-shimmer');
-  block.appendChild(shimmerCardParent);
-
-  shimmerCardParent.appendChild(buildPlaceholder());
+  const buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent
     .then((data) => {
-      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-        el.classList.add('hide-shimmer');
-      });
+      buildCardsShimmer.hide();
       if (data?.length) {
         for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
           const cardData = data[i];
@@ -65,15 +59,12 @@ export default async function decorate(block) {
           buildCard(cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
-
-        shimmerCardParent.appendChild(contentDiv);
+        buildCardsShimmer.setParent(contentDiv);
         decorateIcons(block);
       }
     })
     .catch((err) => {
-      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-        el.classList.add('hide-shimmer');
-      });
+      buildCardsShimmer.hide();
       /* eslint-disable-next-line no-console */
       console.error(err);
     });
