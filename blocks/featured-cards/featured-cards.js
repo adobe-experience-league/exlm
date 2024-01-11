@@ -140,6 +140,7 @@ export default async function decorate(block) {
 
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
+    buildCardsShimmer.show();
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
     browseCardsContent
       .then((data) => {
