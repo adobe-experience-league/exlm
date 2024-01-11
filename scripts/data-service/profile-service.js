@@ -158,3 +158,22 @@ export async function updateProfile(key, val, replace = false) {
 
   return profileData;
 }
+
+export async function fetchProfileData(url, cType) {
+    try {
+      let data;
+      const response = await fetch(url, {
+        method: 'GET',
+      });
+      if (response.ok && cType === "json") {
+          data = await response.json();
+      } else if (response.ok && cType === "text") {
+          data = await response.text();
+      }
+      return data;
+    } catch (error) {
+      /* eslint-disable no-console */
+      console.error('Error fetching data', error);
+      return null;
+    }
+}

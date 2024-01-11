@@ -137,6 +137,30 @@ function addBrowseRail(main) {
 }
 
 /**
+ * return Dashboard page theme if its Dashboard page.
+ * theme = dashboard,* is set as metadata for /en/dashboard/* paths.
+ */
+export function isDashboardPage() {
+    return getMetadata('theme');
+}
+
+/**
+ * add left/right containers when on a dashboard/* page.
+ */
+function addDashboardSection(main) {
+  const dashboardSection = document.createElement('div');
+  const leftDashboardSection = dashboardSection.cloneNode(true);
+  const rightDashboardSection = dashboardSection.cloneNode(true);
+    dashboardSection.classList.add('dashboard-container');
+    leftDashboardSection.classList.add('dashboard-left');
+    leftDashboardSection.append(buildBlock('dashboard-left', []));
+    rightDashboardSection.classList.add('dashboard-right');
+    rightDashboardSection.append(buildBlock('dashboard-right', []));
+    dashboardSection.append(leftDashboardSection, rightDashboardSection);
+    main.appendChild(dashboardSection);
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -146,6 +170,8 @@ function buildAutoBlocks(main) {
     // if we are on a product browse page
     if (isBrowsePage()) {
       addBrowseRail(main);
+    } else if(isDashboardPage().indexOf("dashboard") !== -1){
+      addDashboardSection(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console

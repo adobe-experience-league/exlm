@@ -8,3 +8,8 @@ export const searchUrl = 'https://experienceleague.adobe.com/search.html';
 export const articleUrl = 'https://experienceleague.adobe.com/api/articles/';
 export const solutionsUrl = 'https://experienceleague.adobe.com/api/solutions?page_size=100';
 export const adlsRedirectUrl = 'https://learning.adobe.com';
+export const interestsUrl = 'https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=en';
+export const industriesUrl = 'https://experienceleague.adobe.com/api/industries?page_size=200&sort=Order&lang=en';
+export const levelsUrl = 'https://experienceleague.adobe.com/api/levels?page_size=200&sort=Order&lang=en';
+export const rolesUrl = 'https://experienceleague.adobe.com/api/roles?page_size=200&sort=Order&lang=en';
+export const preferencesUrl = '/fragments/en/dashboard/preferences.plain.html';
