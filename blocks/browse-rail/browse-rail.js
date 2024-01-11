@@ -1,7 +1,13 @@
 import ffetch from '../../scripts/ffetch.js';
 import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 
-const placeholders = await fetchPlaceholders();
+let placeholders = {};
+try {
+  placeholders = await fetchPlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 // Utility function to check if the element is visible on the page.
 function isVisible(element) {
