@@ -83,7 +83,8 @@
 }
 
 .browse-rail > ul > li >ul a:hover, 
-.browse-rail > ul > li >ul a.is-active{
+.browse-rail > ul > li >ul a.is-active,
+.browse-rail > ul > li a.is-active{
     background-color: var(--spectrum-gray-200);
     border-radius: 4px;
 }
