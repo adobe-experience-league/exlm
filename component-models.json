@@ -1293,8 +1293,83 @@
         "name": "cq:tags",
         "label": "Topics & Features",
         "valueType": "string",
-        "rootPath": "/content/cq:tags/exl-encoded",
+        "rootPath": "/content/cq:tags/exl",
         "description": "Select up to 15 topics."
+      }
+    ]
+  },
+  {
+    "id": "tabbed-cards",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "tooltip",
+        "value": "",
+        "label": "Tooltip",
+        "description": "Sets the tooltip."
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "contentTypes",
+        "label": "Filter by Content Type",
+        "description": "Select the content type(s).",
+        "options": [
+          {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "On-Demand Events",
+            "value": "event"
+          },
+          {
+            "name": "Community Posts",
+            "value": "community"
+          },
+          {
+            "name": "Certification",
+            "value": "certification"
+          }
+        ]
+      },
+      {
+        "component": "radio-group",
+        "name": "sortBy",
+        "value": "most_recent",
+        "label": "Sort by",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Most Recent",
+            "value": "most_recent"
+          },
+          {
+            "name": "Most Popular",
+            "value": "most_popular"
+          }
+        ]
       }
     ]
   }

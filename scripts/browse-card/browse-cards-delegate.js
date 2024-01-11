@@ -95,7 +95,7 @@ const BrowseCardsDelegate = (() => {
       throw new Error('An error occurred');
     }
     if (cardData?.results?.length) {
-      return BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData.results);
+      return BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData.results, param);
     }
     return [];
   };
