@@ -15,4 +15,30 @@ export default function decorate(block) {
       }
     });
   });
+
+  [...block.children].forEach((row) => {
+    [...row.children].forEach((col) => {
+      const buttonType = col.querySelector('strong:first-of-type, em:first-of-type, a:first-of-type');
+      if (buttonType) {
+        const buttonTypeWrapper = buttonType.closest('div');
+        if (buttonTypeWrapper && buttonTypeWrapper.children.length === 1) {
+          // when a column has a single button with a type
+          const pTag = document.createElement('p');
+          buttonType.parentNode.insertBefore(pTag, buttonType);
+          pTag.appendChild(buttonType);
+          pTag.classList.add('button-container');
+          // when button is primary - strong tag gets generated
+          const anchorInsideStrong = pTag.querySelector('strong a');
+          // when button is secondary - em tag gets generated
+          const anchorInsideEm = pTag.querySelector('em a');
+          if (anchorInsideStrong) {
+            anchorInsideStrong.classList.add('button', 'primary');
+          }
+          if (anchorInsideEm) {
+            anchorInsideEm.classList.add('button', 'secondary');
+          }
+        }
+      }
+    });
+  });
 }
