@@ -50,7 +50,7 @@
   border: 1px solid var(--spectrum-gray-200);
 }
 .browse-filters-wrapper .shimmer-placeholder-isloading {
-  min-height: 336px;
+  min-height: 380px;
 }
 .shimmer-placeholder-isloading .shimmer-placeholder-content {
   background: var(--shimmer-content-background);
@@ -79,7 +79,7 @@
 }
 .browse-filters-wrapper .shimmer-placeholder-isloading .shimmer-placeholder-description {
   height: 80px;
-  margin: 0px 0px 10px 0px;
+  margin: 0px 0px 52px 0px;
 }
 .shimmer-placeholder-isloading .shimmer-placeholder-description {
   height: 90px;
