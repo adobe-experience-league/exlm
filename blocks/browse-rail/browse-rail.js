@@ -168,12 +168,12 @@ export default async function decorate(block) {
       block.appendChild(htmlList);
       sortFirstLevelList('.subPages');
       const subPagesBrowseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
-      document.querySelector(
+      block.querySelector(
         '.browse-by > li',
       ).innerHTML = `<a href="javascript:void(0)">${placeholders.browseBy}</a><ul><li><a href="javascript:void(0)">${subPagesBrowseByLinkText}</a></li></ul>`;
 
       // Hightlight the current page title in the left rail
-      const targetElement = document.querySelector(`[href="${currentPagePath}"]`);
+      const targetElement = block.querySelector(`[href="${currentPagePath}"]`);
       if (targetElement) {
         targetElement.classList.add('is-active');
       }
@@ -222,16 +222,17 @@ export default async function decorate(block) {
     }
   }
   // Toggle functionality for products/sub-pages/topics
-  const toggleElements = document.querySelectorAll('.js-toggle');
-  block.querySelector('.js-toggle').classList.add('expanded');
-  toggleElements.forEach((toggleElement) => {
-    const subMenu = toggleElement.parentElement.querySelector('ul');
-
-    toggleElement.addEventListener('click', (event) => {
-      event.preventDefault();
-      subMenu.style.display = subMenu.style.display === 'block' || subMenu.style.display === '' ? 'none' : 'block';
-      toggleElement.classList.toggle('collapsed', subMenu.style.display === 'none');
-      toggleElement.classList.toggle('expanded', subMenu.style.display === 'block');
+  const toggleElements = block.querySelectorAll('.js-toggle');
+  if (toggleElements) {
+    toggleElements.forEach((toggleElement) => {
+      const subMenu = toggleElement.parentElement.querySelector('ul');
+      toggleElement.classList.add('expanded');
+      toggleElement.addEventListener('click', (event) => {
+        event.preventDefault();
+        subMenu.style.display = subMenu.style.display === 'block' || subMenu.style.display === '' ? 'none' : 'block';
+        toggleElement.classList.toggle('collapsed', subMenu.style.display === 'none');
+        toggleElement.classList.toggle('expanded', subMenu.style.display === 'block');
+      });
     });
-  });
+  }
 }
