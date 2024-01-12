@@ -15,6 +15,7 @@
  * @type {string}
  */
 const CUSTOM_SCHEMA_NAMESPACE = '_sitesinternal';
+const alloyConfiguredPromise = new Promise();
 
 /**
  * Returns experiment id and variant running
@@ -116,6 +117,8 @@ async function sendAnalyticsEvent(xdmData) {
     console.warn('alloy not initialized, cannot send analytics event');
     return Promise.resolve();
   }
+
+  await alloyConfiguredPromise;
   // eslint-disable-next-line no-undef
   return alloy('sendEvent', {
     documentUnloading: true,
@@ -136,6 +139,7 @@ export async function analyticsSetConsent(approved) {
     console.warn('alloy not initialized, cannot set consent');
     return Promise.resolve();
   }
+  await alloyConfiguredPromise;
   // eslint-disable-next-line no-undef
   return alloy('setConsent', {
     consent: [
@@ -194,7 +198,7 @@ export async function setupAnalyticsTrackingWithAlloy(document) {
   }
   // eslint-disable-next-line no-undef
   const configurePromise = alloy('configure', getAlloyConfiguration(document));
-
+  alloyConfiguredPromise.resolve(true);
   // Custom logic can be inserted here in order to support early tracking before alloy library
   // loads, for e.g. for page views
   const pageViewPromise = analyticsTrackPageViews(document); // track page view early
