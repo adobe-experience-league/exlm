@@ -16,6 +16,7 @@ import {
   getMetadata,
   loadScript,
 } from './lib-franklin.js';
+import { linkClickModel, pageLoadModel } from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
@@ -414,11 +415,28 @@ async function loadRails() {
   }
 }
 
+function loadAnalyticsEvents() {
+  const linkClicked = document.querySelectorAll('a');
+  linkClicked.forEach((linkElement) => {
+    linkElement.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log(e);
+      if (e.target.tagName === 'A') {
+        linkClickModel(e);
+      }
+    });
+  });
+}
+
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
-
+  await loadScript('https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js', {
+    async: true,
+  });
   loadRails();
+  window.adobeDataLayer.push(pageLoadModel());
+  loadAnalyticsEvents();
   loadDelayed();
   loadPrevNextBtn();
 }

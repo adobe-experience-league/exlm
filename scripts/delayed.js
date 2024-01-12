@@ -1,6 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { sampleRUM, loadScript } from './lib-franklin.js';
-import { pageLoadModel, linkClickModel } from './analytics/lib-analytics.js';
+import { sampleRUM } from './lib-franklin.js';
 // add more delayed functionality here
 
 // Core Web Vitals RUM collection
@@ -31,25 +30,3 @@ function loadPrism(document) {
 }
 
 loadPrism(document);
-
-function loadAnalyticsEvents() {
-  // link tracking
-  const linkClicked = document.querySelectorAll('a');
-  linkClicked.forEach((linkElement) => {
-    linkElement.addEventListener('click', (e) => {
-      e.preventDefault();
-      console.log(e);
-      if (e.target.tagName === 'A') {
-        linkClickModel(e);
-      }
-    });
-  });
-}
-
-await loadScript('https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-4114a6d5a42e-development.min.js', {
-  async: true,
-});
-
-window.adobeDataLayer.push(pageLoadModel());
-
-loadAnalyticsEvents();
