@@ -11,8 +11,8 @@ function toggleItemVisibility(itemList, startIndex, show) {
 }
 
 // Utility function to set link visibility
-function setLinkVisibility(linkClass, show) {
-  const linkElement = document.querySelector(linkClass);
+function setLinkVisibility(block, linkClass, show) {
+  const linkElement = block.querySelector(linkClass);
   if (linkElement) {
     linkElement.style.display = show ? 'block' : 'none';
   }
@@ -38,19 +38,19 @@ function getPathUntilLevel(originalUrl, levels) {
 }
 
 // Function to handle "View More" click
-function handleViewMoreClick() {
-  const itemList = document.querySelectorAll('.products > li > ul > li');
+function handleViewMoreClick(block) {
+  const itemList = block.querySelectorAll('.products > li > ul > li');
   toggleItemVisibility(itemList, 12, true);
-  setLinkVisibility('.viewMoreLink', false);
-  setLinkVisibility('.viewLessLink', true);
+  setLinkVisibility(block, '.viewMoreLink', false);
+  setLinkVisibility(block, '.viewLessLink', true);
 }
 
 // Function to handle "View Less" click
-function handleViewLessClick() {
-  const itemList = document.querySelectorAll('.products > li > ul > li');
+function handleViewLessClick(block) {
+  const itemList = block.querySelectorAll('.products > li > ul > li');
   toggleItemVisibility(itemList, 12, false);
-  setLinkVisibility('.viewMoreLink', true);
-  setLinkVisibility('.viewLessLink', false);
+  setLinkVisibility(block, '.viewMoreLink', true);
+  setLinkVisibility(block, '.viewLessLink', false);
 }
 
 // Main function to decorate the block
@@ -135,8 +135,8 @@ export default async function decorate(block) {
       }
 
       // Event listeners for "View More" and "View Less" links
-      block.querySelector('.viewMoreLink').addEventListener('click', handleViewMoreClick);
-      block.querySelector('.viewLessLink').addEventListener('click', handleViewLessClick);
+      block.querySelector('.viewMoreLink').addEventListener('click', () => handleViewMoreClick(block));
+      block.querySelector('.viewLessLink').addEventListener('click', () => handleViewLessClick(block));
     }
   }
 
