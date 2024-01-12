@@ -1,3 +1,4 @@
+import { getLink } from '../../scripts/scripts.js';
 // Utility function to filter sub-pages under a given path
 export const filterSubPages = (data, basePath) =>
   data.filter((page) => page.path.startsWith(basePath) && page.path !== basePath);
@@ -27,7 +28,7 @@ export function convertToULList(multiMap) {
     const liItem = document.createElement('li');
     const anchor = document.createElement('a');
     if (value.length > 0) {
-      anchor.href = value[0].path;
+      anchor.href = getLink(value[0].path);
       anchor.textContent = value[0].title;
 
       liItem.appendChild(anchor);
@@ -41,7 +42,7 @@ export function convertToULList(multiMap) {
         .forEach((item) => {
           const subLiItem = document.createElement('li');
           const subAnchor = document.createElement('a');
-          subAnchor.href = item.path;
+          subAnchor.href = getLink(item.path);
           subAnchor.textContent = item.title;
 
           subLiItem.appendChild(subAnchor);

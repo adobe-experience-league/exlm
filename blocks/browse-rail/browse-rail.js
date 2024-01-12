@@ -1,6 +1,7 @@
 import ffetch from '../../scripts/ffetch.js';
 import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { filterSubPages, convertToMultiMap, convertToULList, sortFirstLevelList } from './browse-rail-utils.js';
+import { getEDSLink, getLink } from '../../scripts/scripts.js';
 
 // Utility function to toggle visibility of items
 function toggleItemVisibility(itemList, startIndex, show) {
@@ -59,7 +60,12 @@ export default async function decorate(block) {
   const label = getMetadata('og:title');
 
   const results = await ffetch('/browse-index.json').all();
-  const currentPagePath = window.location.pathname;
+  let currentPagePath = getEDSLink(window.location.pathname);
+  // For browse-rail in AEM Author
+  if(currentPagePath.includes('/content')){
+    const index = currentPagePath.indexOf('/global');
+    currentPagePath = currentPagePath.substring(0, index) + currentPagePath.substring(index + '/global'.length);
+  }
   // Find the parent page for product sub-pages
   const parentPage = results.find((page) => page.path === getPathUntilLevel(currentPagePath, 3));
   let parentPageTitle = '';
@@ -107,7 +113,7 @@ export default async function decorate(block) {
 
       sortedResults.forEach((item) => {
         const li = document.createElement('li');
-        li.innerHTML = `<a href="${item.path}">${item.title}</a>`;
+        li.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
         ul.appendChild(li);
       });
 
