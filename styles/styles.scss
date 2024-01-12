@@ -633,8 +633,18 @@ img {
 .section {
   padding: 30px 16px;
 
-  &[data-section-status='loading'],
-  &[data-section-status='initialized'] {
+  &.browse-filters-container[data-section-status='loading'],
+  &.browse-filters-container[data-section-status='initialized'],
+  &.curated-cards-container[data-section-status='loading'],
+  &.curated-cards-container[data-section-status='initialized'],
+  &.events-cards-container[data-section-status='loading'],
+  &.events-cards-container[data-section-status='initialized'],
+  &.adls-cards-container[data-section-status='loading'],
+  &.adls-cards-container[data-section-status='initialized'],
+  &.authorable-card-container[data-section-status='loading'],
+  &.authorable-card-container[data-section-status='initialized'],
+  &.featured-cards-container[data-section-status='loading'],
+  &.featured-cards-container[data-section-status='initialized'] {
     visibility: hidden;
   }
 
@@ -682,7 +692,7 @@ main > div.browse-rail {
     /* on pages with rails the max width must be on main */
     max-width: var(--non-spectrum-max-width);
     margin: auto;
-    grid-template-rows: auto auto;
+    grid-template-rows: auto;
   }
 
   main > div.section {
