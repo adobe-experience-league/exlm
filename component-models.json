@@ -318,7 +318,7 @@
         "valueType": "string",
         "options": [
           {
-            "name": "default",
+            "name": "hyperlink",
             "value": ""
           },
           {
@@ -456,12 +456,116 @@
         "description": "Sets the text url."
       },
       {
-        "component": "text-input",
+        "component": "multiselect",
         "valueType": "string",
-        "name": "contentType",
-        "value": "",
-        "label": "Content type",
-        "description": "Sets the content type."
+        "name": "contentTypes",
+        "label": "Filter by Content Type",
+        "description": "Select the content type(s).",
+        "options": [
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "aem-tag",
+        "name": "cq:tags",
+        "label": "Solution(s) or Feature(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl",
+        "description": "Optional - all are included if no selection is made."
+      },
+      {
+        "component": "multiselect",
+        "name": "roles",
+        "label": "Role(s)",
+        "valueType": "string",
+        "description": "Sets the Role(s).",
+        "options": [
+          {
+            "name": "Admin",
+            "value": "Admin"
+          },
+          {
+            "name": "Developer",
+            "value": "Developer"
+          },
+          {
+            "name": "Leader",
+            "value": "Leader"
+          },
+          {
+            "name": "User",
+            "value": "User"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "name": "experienceLevels",
+        "label": "Experience Level(s)",
+        "valueType": "string",
+        "description": "Sets the Experience Level(s).",
+        "options": [
+          {
+            "name": "Beginner",
+            "value": "Beginner"
+          },
+          {
+            "name": "Intermediate",
+            "value": "Intermediate"
+          },
+          {
+            "name": "Advanced",
+            "value": "Advanced"
+          }
+        ]
+      },
+      {
+        "component": "radio-group",
+        "name": "sortBy",
+        "value": "RELEVANCE",
+        "label": "Sort by",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Relevance",
+            "value": "RELEVANCE"
+          },
+          {
+            "name": "Most recent",
+            "value": "MOST_RECENT"
+          },
+          {
+            "name": "Most popular",
+            "value": "MOST_POPULAR"
+          }
+        ]
       }
     ]
   },
@@ -726,16 +830,16 @@
       {
         "component": "select",
         "name": "classes",
-        "label": "Alignment",
+        "label": "Image Alignment",
         "valueType": "string",
         "options": [
           {
-            "name": "Text left",
-            "value": "left"
+            "name": "Right",
+            "value": "right"
           },
           {
-            "name": "Text right",
-            "value": "right"
+            "name": "Left",
+            "value": "left"
           }
         ]
       },
@@ -828,6 +932,444 @@
         "value": "",
         "label": "Second CTA Link",
         "description": "What link to open when clicking the button."
+      }
+    ]
+  },
+  {
+    "id": "authorable-card",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "tooltip",
+        "value": "",
+        "label": "Tooltip",
+        "description": "Sets the tooltip."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "linkText",
+        "value": "",
+        "label": "Link text",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "description": "Sets the text url."
+      }
+    ]
+  },
+  {
+    "id": "authored-card",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "contentURL",
+        "value": "",
+        "label": "Content URL",
+        "description": "Provide a link to one of the following content types: Course, Tutorial, Documentation, Troubleshooting, On-Demand Event, or Certification"
+      }
+    ]
+  },
+  {
+    "id": "browse-filters",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading for Browse Filters."
+      },
+      {
+        "component": "text-area",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Sets the description for Browse Filters"
+      }
+    ]
+  },
+  {
+    "id": "featured-cards",
+    "fields": [
+      {
+        "component": "text-input",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "valueType": "string",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-area",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "valueType": "string",
+        "description": "Sets the description."
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "contentTypes",
+        "label": "Content type(s)",
+        "description": "Select the content type(s).",
+        "options": [
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "text-input",
+        "name": "linkText",
+        "value": "",
+        "label": "Link Text",
+        "valueType": "string",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text-input",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "valueType": "string",
+        "description": "Sets the text url."
+      }
+    ]
+  },
+  {
+    "id": "events-cards",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "tooltip",
+        "value": "",
+        "label": "Tooltip",
+        "description": "Sets the tooltip."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "linkText",
+        "value": "",
+        "label": "Link text",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "description": "Sets the text url."
+      },
+      {
+        "component": "aem-tag",
+        "name": "cq:tags",
+        "label": "Solution(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/solution",
+        "description": "Optional - all are included if no selection is made."
+      }
+    ]
+  },
+  {
+    "id": "adls-cards",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "tooltip",
+        "value": "",
+        "label": "Tooltip",
+        "description": "Sets the tooltip."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "linkText",
+        "value": "",
+        "label": "Link text",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "description": "Sets the text url."
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "solutions",
+        "label": "Solution(s)",
+        "description": "All are included if no selection is made",
+        "options": [
+          {
+            "name": "Adobe Commerce (Magento)",
+            "value": "Adobe Commerce (Magento)"
+          },
+          {
+            "name": "Adobe Workfront",
+            "value": "Adobe Workfront"
+          },
+          {
+            "name": "Analytics",
+            "value": "Analytics"
+          },
+          {
+            "name": "Audience Manager",
+            "value": "Audience Manager"
+          },
+          {
+            "name": "Campaign Classic",
+            "value": "Campaign Classic"
+          },
+          {
+            "name": "Campaign Standard",
+            "value": "Campaign Standard"
+          },
+          {
+            "name": "Experience Cloud",
+            "value": "Experience Cloud"
+          },
+          {
+            "name": "Experience Manager Assets (DAM)",
+            "value": "Experience Manager Assets (DAM)"
+          },
+          {
+            "name": "Experience Manager Forms",
+            "value": "Experience Manager Forms"
+          },
+          {
+            "name": "Experience Manager Sites (CMS)",
+            "value": "Experience Manager Sites (CMS)"
+          },
+          {
+            "name": "Experience Platform",
+            "value": "Experience Platform"
+          },
+          {
+            "name": "Journey Optimizer",
+            "value": "Journey Optimizer"
+          },
+          {
+            "name": "Marketo Engage",
+            "value": "Marketo Engage"
+          },
+          {
+            "name": "Target",
+            "value": "Target"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "roles",
+        "label": "Role(s)",
+        "description": "All are included if no selection is made",
+        "options": [
+          {
+            "name": "Administrator",
+            "value": "Administrator"
+          },
+          {
+            "name": "Architect",
+            "value": "Architect"
+          },
+          {
+            "name": "Business User",
+            "value": "Business User"
+          },
+          {
+            "name": "Creative",
+            "value": "Creative"
+          },
+          {
+            "name": "Developer",
+            "value": "Developer"
+          }
+        ]
+      },
+      {
+        "component": "radio-group",
+        "name": "sortby",
+        "value": "recommended",
+        "label": "Sort by",
+        "description": "'Sorts baseed on the Options",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Recommended",
+            "value": "recommended"
+          },
+          {
+            "name": "Alphabetical (A-Z)",
+            "value": "ascending"
+          },
+          {
+            "name": "Alphabetical (Z-A)",
+            "value": "descending"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "browse-topics",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "aem-tag",
+        "name": "cq:tags",
+        "label": "Topics & Features",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl",
+        "description": "Select up to 15 topics."
+      }
+    ]
+  },
+  {
+    "id": "tabbed-cards",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "tooltip",
+        "value": "",
+        "label": "Tooltip",
+        "description": "Sets the tooltip."
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "contentTypes",
+        "label": "Filter by Content Type",
+        "description": "Select the content type(s).",
+        "options": [
+          {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "On-Demand Events",
+            "value": "event"
+          },
+          {
+            "name": "Community Posts",
+            "value": "community"
+          },
+          {
+            "name": "Certification",
+            "value": "certification"
+          }
+        ]
+      },
+      {
+        "component": "radio-group",
+        "name": "sortBy",
+        "value": "most_recent",
+        "label": "Sort by",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Most Recent",
+            "value": "most_recent"
+          },
+          {
+            "name": "Most Popular",
+            "value": "most_popular"
+          }
+        ]
       }
     ]
   }

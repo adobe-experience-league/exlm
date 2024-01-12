@@ -2,3 +2,8 @@ helix-importer-ui
 scripts/prism.js
 scripts/prism-grammars/**
 scripts/universal-editor-embedded.js
+scripts/coveo-headless/libs/browser/*
+scripts/analytics/alloy.js
+scripts/analytics/alloy.min.js
+scripts/preact-htm/**
+scripts/feedback/qualtrics/qualtrics-embed.js

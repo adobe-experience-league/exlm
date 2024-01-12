@@ -1,0 +1,83 @@
+@import "../../scripts/browse-card/browse-cards-block.css";
+@import "../../scripts/browse-card/browse-card.css";
+.browse-cards-block-header {
+    display:flex ;
+    justify-content:center;
+    flex-direction: column;
+    align-items: center;
+}
+.browse-cards-block-view {
+    text-align: center;
+}
+.browse-cards-block-content {  
+  display: grid; 
+  grid-template-columns: 1fr; 
+  gap: 32px;
+}
+.browse-cards-block-content >div  {
+  min-height: 400px;
+}
+  .browse-card-dropdown {
+    display:flex ;
+    justify-content:center;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  .solutions-dropdown , .roles-dropdown
+  {
+    width: 100%;
+  }
+
+ .roles-dropdown
+  {
+    margin-bottom: 1em;
+  }
+
+  .browse-card-dropdown > select{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #E6E6E6;
+    border-radius: 4px;
+    padding: 10px;
+    color: var(--spectrum-gray-700);
+}
+
+.browse-card-dropdown > p{
+  font-weight: bold;
+}
+
+  @media only screen and (min-width: 600px) {
+    .browse-card-dropdown {
+        flex-direction: row;
+        gap: 1em;
+    }
+    .browse-card-dropdown > p{
+        margin-bottom: 0;
+    }
+
+    .roles-dropdown
+    {
+      margin-bottom: 0;
+    }
+    .solutions-dropdown , .roles-dropdown
+    {
+      width: auto;
+    }
+    .browse-cards-block-content {  
+        grid-template-columns: 1fr 1fr; 
+      }
+    .browse-cards-block-view {
+        text-align: center;
+    }
+}
+@media only screen and (min-width: 900px) {
+    .browse-cards-block-content {  
+       /* grid-template-columns: 1fr 1fr 1fr 1fr; */
+       display: flex;
+       gap: 32px;
+      }
+    .browse-cards-block-view {
+        margin-top: -72px;
+        text-align: right;
+    }
+}

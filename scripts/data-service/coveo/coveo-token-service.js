@@ -1,7 +1,7 @@
 import csrf from '../../auth/csrf.js';
 import fetchData from '../../request.js';
 import { coveoTokenUrl } from '../../urls.js';
-import { COVEO_TOKEN } from '../../auth/session-keys.js';
+import { COVEO_TOKEN } from '../../session-keys.js';
 import { loadIms } from '../../scripts.js';
 import loadJWT from '../../auth/jwt.js';
 
@@ -51,8 +51,8 @@ async function fetchAndStoreCoveoToken() {
   };
 
   try {
-    const imsResponse = await loadIms();
-    adobeIMS = imsResponse.adobeIMS;
+    await loadIms();
+    adobeIMS = window.adobeIMS;
   } catch {
     /* eslint-disable no-console */
     console.warn('Adobe IMS not available.');
