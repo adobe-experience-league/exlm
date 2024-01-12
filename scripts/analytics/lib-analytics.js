@@ -49,7 +49,7 @@ function getAlloyInitScript() {
 function getDatastreamConfiguration() {
   // EXLM
   return {
-    edgeConfigId: 'a79fa341-435b-4dd8-86e0-a71d4d9ff0e2',
+    edgeConfigId: 'a79fa341-435b-4dd8-86e0-a71d4d9ff0e2:dev',
     orgId: '8F99160E571FC0427F000101@AdobeOrg',
   };
 }
