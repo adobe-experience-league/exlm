@@ -449,7 +449,6 @@ async function loadPage() {
   await setupAnalytics;
   loadPrevNextBtn();
 }
-loadPage();
 
 const cwv = {};
 
@@ -517,6 +516,8 @@ sampleRUM.always.on('convert', (data) => {
   tempConversionEvent = undefined;
   conversionEvent = undefined;
 });
+
+loadPage();
 
 /**
  * Helper function that converts an AEM path into an EDS path.
