@@ -433,6 +433,7 @@ async function loadPage() {
   await loadLazy(document);
   await loadScript('https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js', {
     async: true,
+    defer: true,
   });
   loadRails();
   window.adobeDataLayer.push(pageLoadModel());
