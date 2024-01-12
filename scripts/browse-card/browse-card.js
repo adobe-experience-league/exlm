@@ -109,16 +109,16 @@ const buildCardContent = (card, model) => {
   }
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
-  if (copyLink) {
-    const copyLinkAnchor = createTag('a', { href: copyLink, title: 'copy' }, `<span class="icon icon-copy"></span>`);
-    cardOptions.appendChild(copyLinkAnchor);
-  }
   if (
     contentType !== CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY &&
     contentType !== CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
   ) {
     const bookmarkAnchor = createTag('a', { href: '#', title: 'copy' }, `<span class="icon icon-bookmark"></span>`);
     cardOptions.appendChild(bookmarkAnchor);
+  }
+  if (copyLink) {
+    const copyLinkAnchor = createTag('a', { href: copyLink, title: 'copy' }, `<span class="icon icon-copy"></span>`);
+    cardOptions.appendChild(copyLinkAnchor);
   }
   cardFooter.appendChild(cardOptions);
   buildCardCtaContent({ cardFooter, contentType, viewLink, viewLinkText });

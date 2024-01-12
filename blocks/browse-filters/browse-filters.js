@@ -91,7 +91,7 @@ if (isBrowseProdPage) dropdownOptions.push(expTypeOptions);
 function generateCheckboxItem(item, index, id) {
   return `
       <div class="custom-checkbox">
-          <input type="checkbox" id="option${id}${index + 1}" value="${item.title}">
+          <input type="checkbox" id="option${id}${index + 1}" value="${item.value}" data-label="${item.title}">
           <label for="option${id}${index + 1}">
               <span class="title">${item.title}</span>
               <span class="description">${item.description}</span>
@@ -130,10 +130,10 @@ function renderTags() {
 
   function renderTag(tag) {
     tagEl += `
-      <button class="browse-tags">
+      <button class="browse-tags" value="${tag.value}">
         <span>${tag.name}</span>
         <span>: </span>
-        <span>${tag.value}</span>
+        <span>${tag.label}</span>
         <span class="icon icon-close"></span>
       </button>
     `;
@@ -147,10 +147,10 @@ function renderTags() {
 function appendTag(block, tag) {
   const tagsContainer = block.querySelector('.browse-tags-container');
   const tagEl = htmlToElement(`
-    <button class="browse-tags">
+    <button class="browse-tags" value="${tag.value}">
       <span>${tag.name}</span>
       <span>: </span>
-      <span>${tag.value}</span>
+      <span>${tag.label}</span>
       <span class="icon icon-close"></span>
     </button>
   `);
@@ -165,7 +165,7 @@ function appendTag(block, tag) {
 function removeFromTags(block, value) {
   const tagsContainer = block.querySelector('.browse-tags-container');
   [...tagsContainer.children].forEach((tag) => {
-    if (tag.textContent.includes(value)) {
+    if (tag.value === value) {
       tag.remove();
       const itemToRemove = tagsProxy.findIndex((obj) => obj.value === value);
       if (itemToRemove !== -1) {
@@ -203,7 +203,7 @@ function handleTagsClick(block) {
     const isTag = event.target.closest('.browse-tags');
     if (isTag) {
       const name = isTag.querySelector('span:nth-child(1)').textContent.trim();
-      const value = isTag.querySelector('span:nth-child(3)').textContent.trim();
+      const { value } = isTag;
       const coveoFacetKey = coveoFacetMap[name];
       const coveoFacet = window[coveoFacetKey];
       if (coveoFacet) {
@@ -226,22 +226,20 @@ function handleCheckboxClick(block, el, options) {
   // Function to handle checkbox state changes
   function handleCheckboxChange(event) {
     const checkbox = event.target;
-    const label = checkbox.closest('.custom-checkbox').querySelector('label');
     const name = checkbox.closest('.filter-dropdown').dataset.filterType;
-    const isChecked = checkbox.checked;
+    const label = checkbox?.dataset.label || '';
+    const { checked: isChecked, value } = checkbox;
     const coveoFacetKey = coveoFacetMap[name];
     const coveoFacet = window[coveoFacetKey];
     if (isChecked) {
       options.selected += 1;
       appendTag(block, {
         name,
-        value: checkbox.value,
+        label,
+        value,
       });
 
       if (coveoFacet) {
-        const value = label.querySelector('.title')?.textContent;
-        // eslint-disable-next-line no-console
-        console.log(`Checkbox is checked:`, value);
         coveoFacet.toggleSelect({
           state: 'selected',
           value,
@@ -249,12 +247,9 @@ function handleCheckboxClick(block, el, options) {
       }
     } else {
       options.selected -= 1;
-      removeFromTags(block, checkbox.value);
+      removeFromTags(block, label);
 
       if (coveoFacet) {
-        const value = label.querySelector('.title')?.textContent;
-        // eslint-disable-next-line no-console
-        console.log(`Checkbox is unchecked:`, value);
         coveoFacet.toggleSelect({
           state: 'idle',
           value,
@@ -449,9 +444,12 @@ function handleUriHash() {
       if (filterOptionEl) {
         facetValues.forEach((facetValue) => {
           const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
+          const label = inputEl?.dataset.label || '';
+
           inputEl.checked = true;
           appendTag(browseFiltersSection, {
             name: keyName,
+            label,
             value: facetValue,
           });
         });
@@ -630,6 +628,7 @@ function handleCoveoHeadlessSearch(
 
 async function handleSearchEngineSubscription() {
   const filterResultsEl = document.querySelector('.browse-filters-results');
+  filterResultsEl.style.visibility = 'hidden';
   buildCardsShimmer.show();
   if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
     return;
@@ -638,6 +637,7 @@ async function handleSearchEngineSubscription() {
   const search = window.headlessSearchEngine.state.search;
   const { results } = search;
   if (results.length > 0) {
+    filterResultsEl.style.visibility = 'visible';
     buildCardsShimmer.hide();
     const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
     filterResultsEl.innerHTML = '';
@@ -650,6 +650,7 @@ async function handleSearchEngineSubscription() {
       decorateIcons(cardDiv);
     });
   } else {
+    filterResultsEl.style.visibility = 'visible';
     buildCardsShimmer.hide();
     filterResultsEl.innerHTML = 'No Results';
     document.querySelector('.browse-filters-form').classList.remove('is-result');
