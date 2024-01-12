@@ -15,7 +15,11 @@
  * @type {string}
  */
 const CUSTOM_SCHEMA_NAMESPACE = '_sitesinternal';
-const alloyConfiguredPromise = new Promise();
+
+let alloyConfigurePromiseResolve = null;
+const alloyConfiguredPromise = new Promise((resolve) => {
+  alloyConfigurePromiseResolve = resolve;
+});
 
 /**
  * Returns experiment id and variant running
@@ -198,7 +202,7 @@ export async function setupAnalyticsTrackingWithAlloy(document) {
   }
   // eslint-disable-next-line no-undef
   const configurePromise = alloy('configure', getAlloyConfiguration(document));
-  alloyConfiguredPromise.resolve(true);
+  alloyConfigurePromiseResolve(true);
   // Custom logic can be inserted here in order to support early tracking before alloy library
   // loads, for e.g. for page views
   const pageViewPromise = analyticsTrackPageViews(document); // track page view early
