@@ -221,6 +221,7 @@ button.browse-filters-clear:disabled:hover {
   margin: 0 auto;
   transition: all .5s ease-in-out;
   min-height: 330px;
+  visibility: hidden;
 }
 
 .browse-filters-results-header {
