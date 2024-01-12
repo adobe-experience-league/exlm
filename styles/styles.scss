@@ -692,7 +692,7 @@ main > div.browse-rail {
     /* on pages with rails the max width must be on main */
     max-width: var(--non-spectrum-max-width);
     margin: auto;
-    grid-template-rows: auto;
+    grid-template-rows: auto auto;
   }
 
   main > div.section {
