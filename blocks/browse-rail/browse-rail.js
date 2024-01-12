@@ -62,7 +62,7 @@ export default async function decorate(block) {
   const results = await ffetch('/browse-index.json').all();
   let currentPagePath = getEDSLink(window.location.pathname);
   // For browse-rail in AEM Author
-  if(currentPagePath.includes('/content')){
+  if (currentPagePath.includes('/content')) {
     const index = currentPagePath.indexOf('/global');
     currentPagePath = currentPagePath.substring(0, index) + currentPagePath.substring(index + '/global'.length);
   }
