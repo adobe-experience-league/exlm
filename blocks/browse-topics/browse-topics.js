@@ -39,8 +39,7 @@ function handleTopicSelection(block) {
     if (selectedTopics.length) {
       const [firstTopic] = selectedTopics;
       if (selectedTopics.length === 1) {
-        // eslint-disable-next-line no-useless-escape
-        query = `@el_features=\"${firstTopic}\"`;
+        query = `@el_features=${firstTopic}`;
       } else {
         // eslint-disable-next-line no-useless-escape
         query = `@el_features==(${selectedTopics.map((s) => `\"${s}\"`).join(',')})`;
