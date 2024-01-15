@@ -475,14 +475,14 @@
           }
         },
         {
-          "title": "Tabs",
+          "title": "Tab Group",
           "id": "tabs",
           "plugins": {
             "aem": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "name": "Tabs",
+                  "name": "Tab Group",
                   "model": "tabs",
                   "allowedComponents": "tab",
                   "item1": {
