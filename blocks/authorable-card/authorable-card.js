@@ -73,7 +73,9 @@ export default async function decorate(block) {
           linksContainer[i].children[0].remove();
         })
         .catch(() => {
-          buildCardsShimmer.hide();
+          block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
+            el.classList.add('hide-shimmer');
+          });
         });
     }
   });
@@ -83,9 +85,6 @@ export default async function decorate(block) {
   toolTipElement.remove();
   linkTextElement.remove();
   linksContainer.forEach((el) => contentDiv.appendChild(el));
-  const shimmerCardParent = document.createElement('div');
-  shimmerCardParent.classList.add('browse-card-shimmer');
-  block.appendChild(shimmerCardParent);
 
   buildCardsShimmer = new BuildPlaceholder(numberOfCards, block);
   buildCardsShimmer.setParent(contentDiv);
