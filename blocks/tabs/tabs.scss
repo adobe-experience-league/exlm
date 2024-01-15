@@ -62,3 +62,9 @@
     display: block;
   }
 }
+
+// on non /docs pages font size is 18px
+body:not([class='docs']) .tabs .tab-list button.tab-title,
+body:not([class='docs']) .tabs .tab-content .tabpanel {
+  font-size: var(--exlm-font-size-content);
+}

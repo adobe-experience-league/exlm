@@ -54,3 +54,8 @@
 .tabs .tab-content .tabpanel.active {
   display: block;
 }
+
+body:not([class=docs]) .tabs .tab-list button.tab-title,
+body:not([class=docs]) .tabs .tab-content .tabpanel {
+  font-size: var(--exlm-font-size-content);
+}
