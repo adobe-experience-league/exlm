@@ -11,7 +11,7 @@ function getSelectedTab(block) {
 }
 
 // reactivates the previously active tab on the new edited block
-function setSelectedTab(id,newBlock) {
+function setSelectedTab(id, newBlock) {
   // click the previously slected tab
   newBlock.querySelector(`[data-tab-id="${id}"]`).click();
 }
@@ -49,7 +49,7 @@ function handleEditorUpdate(event) {
             block.remove();
             newBlock.style.display = null;
 
-            if(activeTabId) setSelectedTab(activeTabId,newBlock);
+            if (activeTabId) setSelectedTab(activeTabId, newBlock);
 
             return Promise.resolve();
           }
