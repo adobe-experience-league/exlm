@@ -17,7 +17,6 @@ function setSelectedTab(id,newBlock) {
 }
 
 function handleEditorUpdate(event) {
-  console.log(`editor update`);
   const {
     detail: { itemids },
   } = event;
@@ -26,7 +25,6 @@ function handleEditorUpdate(event) {
       .map((itemId) => document.querySelector(`[itemid="${itemId}"]`))
       .map(async (element) => {
         const block = element.closest('.block');
-        console.log(block);
         const blockItemId = block?.getAttribute('itemid');
         if (block && blockItemId?.startsWith(connectionPrefix)) {
           const path = blockItemId.substring(connectionPrefix.length);
@@ -37,7 +35,6 @@ function handleEditorUpdate(event) {
           const resp = await fetch(`${path}.html${window.location.search}`);
           if (resp.ok) {
             const text = await resp.text();
-            console.log('hello world');
             const newBlock = new DOMParser().parseFromString(text, 'text/html').body.firstElementChild;
             // hide the new block, and insert it after the existing one
             newBlock.style.display = 'none';
@@ -51,9 +48,6 @@ function handleEditorUpdate(event) {
             // remove the old block and show the new one
             block.remove();
             newBlock.style.display = null;
-
-            console.log(`active Tab ID : ${activeTabId}`);
-            console.log(newBlock.querySelector(`[data-tab-id="${activeTabId}"]`));
 
             if(activeTabId) setSelectedTab(activeTabId,newBlock);
 
