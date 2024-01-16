@@ -88,7 +88,7 @@ const buildCardContent = (card, model) => {
   const cardMeta = document.createElement('div');
   cardMeta.classList.add('browse-card-meta-info');
 
-  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
+  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY || contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
     buildTagsContent(cardMeta, tags);
   }
 
