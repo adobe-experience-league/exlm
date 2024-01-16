@@ -17,7 +17,7 @@ const loadScript = (url, callback, type) => {
 };
 
 const getDefaultEmbed = (url) => `<div class="embed-video">
-    <iframe src="${url.href}" style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" allowfullscreen=""
+    <iframe id="video-frame" src="${url.href}" style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" allowfullscreen=""
       scrolling="no" allow="encrypted-media" title="Content from ${url.hostname}" loading="lazy">
     </iframe>
   </div>`;
@@ -29,13 +29,6 @@ const embedTwitter = (url) => {
 };
 
 const loadEmbed = (block, link, autoplay) => {
-  const hostName = link ? new URL(link).hostname : null;
-  if (hostName === 'video.tv.adobe.com') {
-    const preLink = document.createElement('link');
-    preLink.rel = 'prefetch';
-    preLink.href = 'https://images-tv.adobe.com/cdn/mpc/build/v3_270_4/js/v-player.js';
-    document.head.appendChild(preLink);
-  }
   if (block.classList.contains('embed-is-loaded')) {
     return;
   }
@@ -57,6 +50,9 @@ const loadEmbed = (block, link, autoplay) => {
     block.classList = 'block embed';
   }
   block.classList.add('embed-is-loaded');
+  const frame = document.querySelector('#video-frame');
+  const script = frame.contentWindow.document.querySelector('script[src="https://images-tv.adobe.com/cdn/mpc/build/v3_270_4/js/v-player.js"]')
+  script.setAttribute('defer', 'defer');
 };
 
 export default function decorate(block) {
