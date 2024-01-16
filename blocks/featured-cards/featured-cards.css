@@ -1,5 +1,15 @@
 @import "../../scripts/browse-card/browse-cards-block.css";
 @import "../../scripts/browse-card/browse-card.css";
+.featured-cards .browse-card-description-text {
+  text-align: center;
+}
+.featured-cards .browse-cards-block-title {
+  margin-bottom: 16px;
+  text-align: center;
+}
+.featured-cards .browse-card .browse-card-content {
+  min-height: auto;
+}
 .browse-cards-block-header {
     display:flex ;
     justify-content:center;
@@ -13,9 +23,11 @@
   display: grid; 
   grid-template-columns: 1fr; 
   gap: 32px;
+  min-height: 284px;
 }
-.browse-cards-block-content >div  {
-  min-height: 400px;
+.featured-cards .browse-cards-block-content > div  {
+  min-height: 284px;
+  flex: 0 0 320px;
 }
   .browse-card-dropdown {
     display:flex ;
@@ -28,24 +40,20 @@
   {
     width: 100%;
   }
-
  .roles-dropdown
   {
     margin-bottom: 1em;
   }
-
   .browse-card-dropdown > select{
     background: #FFFFFF 0% 0% no-repeat padding-box;
     border: 1px solid #E6E6E6;
     border-radius: 4px;
     padding: 10px;
     color: var(--spectrum-gray-700);
-}
-
+  }
 .browse-card-dropdown > p{
   font-weight: bold;
 }
-
   @media only screen and (min-width: 600px) {
     .browse-card-dropdown {
         flex-direction: row;
@@ -54,7 +62,6 @@
     .browse-card-dropdown > p{
         margin-bottom: 0;
     }
-
     .roles-dropdown
     {
       margin-bottom: 0;
@@ -64,20 +71,37 @@
       width: auto;
     }
     .browse-cards-block-content {  
-        grid-template-columns: 1fr 1fr; 
-      }
-    .browse-cards-block-view {
-        text-align: center;
+      grid-template-columns: 1fr 1fr; 
     }
-}
-@media only screen and (min-width: 900px) {
+    .browse-cards-block-view {
+      text-align: center;
+    }
+    .featured-cards .browse-cards-block-content > div {
+      flex: 0 0 286px;
+    }
+  }
+  @media only screen and (min-width: 900px) {
     .browse-cards-block-content {  
-       /* grid-template-columns: 1fr 1fr 1fr 1fr; */
        display: flex;
        gap: 32px;
-      }
+    }
     .browse-cards-block-view {
         margin-top: -72px;
         text-align: right;
     }
-}
+    .featured-cards .browse-cards-block-title {
+      margin-bottom: 7px;
+    }
+    .featured-cards .browse-cards-block-content {  
+      text-align: center;
+    }
+    .featured-cards .browse-card {
+      text-align: left;
+    }
+    .featured-cards .browse-cards-block-view {
+      margin-top: 0px;
+    }
+    .featured-cards .browse-cards-block-content > div {
+      flex: 0 0 295px;
+    }
+  }
