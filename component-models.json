@@ -994,14 +994,15 @@
         "name": "heading",
         "value": "",
         "label": "Heading",
-        "description": "Sets the heading for Browse Filters."
+        "description": "Sets the heading for topics."
       },
       {
-        "component": "text-area",
+        "component": "aem-tag",
+        "name": "cq:tags",
+        "label": "Topics & Features",
         "valueType": "string",
-        "name": "description",
-        "value": "",
-        "label": "Sets the description for Browse Filters"
+        "rootPath": "/content/cq:tags/exl",
+        "description": "Select up to 15 topics."
       }
     ]
   },
@@ -1274,27 +1275,6 @@
             "value": "descending"
           }
         ]
-      }
-    ]
-  },
-  {
-    "id": "browse-topics",
-    "fields": [
-      {
-        "component": "text-input",
-        "valueType": "string",
-        "name": "heading",
-        "value": "",
-        "label": "Heading",
-        "description": "Sets the heading."
-      },
-      {
-        "component": "aem-tag",
-        "name": "cq:tags",
-        "label": "Topics & Features",
-        "valueType": "string",
-        "rootPath": "/content/cq:tags/exl",
-        "description": "Select up to 15 topics."
       }
     ]
   },
