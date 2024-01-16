@@ -1,4 +1,4 @@
-import { loadCSS } from '../lib-franklin.js';
+import { loadCSS, fetchPlaceholders } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
 
@@ -30,6 +30,16 @@ const buildTagsContent = (cardMeta, tags = []) => {
       cardMeta.appendChild(anchor);
     }
   });
+};
+const placeholders = await fetchPlaceholders();
+
+// Default No Results Content from Placeholder
+export const buildNoResultsContent = (block) => {
+  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
+  const noResultsInfo = htmlToElement(`
+    <div class="browse-card-no-results">${placeholders.noResultsText}</div>
+  `);
+  block.appendChild(noResultsInfo);
 };
 
 const buildEventContent = ({ event, cardContent, card }) => {
