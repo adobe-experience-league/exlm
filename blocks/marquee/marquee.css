@@ -39,7 +39,7 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
 .marquee-text {
   position: relative;
   z-index: 2;
-  padding: 32px 20px;
+  padding: 30px 16px;
   background-color: var(--background-color);
 }
 
@@ -152,9 +152,13 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
 
 
 @media (min-width: 600px) {
-  div.marquee-wrapper {
-    margin-left: calc(-1 * var(--spectrum-spacing-500));
-    margin-right: calc(-1 * var(--spectrum-spacing-500));
+  .section.marquee-container {
+    padding: 0 56px;
+  }
+
+  .section div.marquee-wrapper {
+    margin-left: calc(-1 * var(--space-token-xl));
+    margin-right: calc(-1 * var(--space-token-xl));
   }
 
   .marquee-subject {
@@ -181,8 +185,12 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
     transform: translate(-320px, 70px) scale(3);
   }
 
+  .marquee-foreground {
+    min-height: 420px;
+  }
+
   .marquee-text {
-    padding: var(--space-token-l) var(--space-token-xxl);
+    padding: var(--space-token-m) var(--space-token-xl);
     background-color: var(--background-color);
   }
 
@@ -207,6 +215,7 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
   }
 
   .marquee-foreground {
+    padding: 0 var(--space-token-xl);
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -214,6 +223,7 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
  }
 
   .marquee-text {
+    padding: 0;
     width: 50%;
     max-width: 500px;
     margin: auto 0;

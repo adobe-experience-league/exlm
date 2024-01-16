@@ -3,11 +3,11 @@ import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
 
 const coveoToken = await loadCoveoToken();
 
-function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contextObject }) {
-  // const advancedQuery = module.loadAdvancedSearchQueryActions(searchEngine).updateAdvancedSearchQueries({
-  //   aq: advancedQueryRule || '',
-  // });
-  const context = module.loadContextActions(searchEngine).setContext(contextObject);
+function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contextObject, advancedQueryRule }) {
+  const advancedQuery = module.loadAdvancedSearchQueryActions(searchEngine).registerAdvancedSearchQueries({
+    aq: advancedQueryRule || '',
+  });
+  const context = contextObject ? module.loadContextActions(searchEngine).setContext(contextObject) : null;
   const searchConfiguration = module.loadSearchConfigurationActions(searchEngine).updateSearchConfiguration({
     locale: document.documentElement.lang,
     searchHub,
@@ -59,8 +59,10 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
       'video_url',
     ]);
 
-  // searchEngine.dispatch(advancedQuery);
-  searchEngine.dispatch(context);
+  searchEngine.dispatch(advancedQuery);
+  if (context) {
+    searchEngine.dispatch(context);
+  }
   searchEngine.dispatch(searchConfiguration);
   searchEngine.dispatch(fields);
 }
@@ -84,8 +86,8 @@ export default async function coveoSearchEnginePOC({
           module,
           searchEngine: headlessSearchEngine,
           searchHub: 'Experience League Learning Hub',
-          contextObject: { topic: 'Customers' },
-          advancedQueryRule: null, // '@el_features="Customers"',
+          contextObject: null,
+          advancedQueryRule: '',
         });
 
         const headlessSearchBox = module.buildSearchBox(headlessSearchEngine, {
@@ -128,6 +130,11 @@ export default async function coveoSearchEnginePOC({
         }
 
         const headlessQuerySummary = module.buildQuerySummary(headlessSearchEngine);
+
+        const headlessContext = module.buildContext(headlessSearchEngine);
+        const headlessQueryActionCreators = module.loadAdvancedSearchQueryActions(headlessSearchEngine);
+        const headlessSearchActionCreators = module.loadSearchActions(headlessSearchEngine);
+        const { logSearchboxSubmit } = module.loadSearchAnalyticsActions(headlessSearchEngine);
 
         const urlManager = module.buildUrlManager(headlessSearchEngine, {
           initialState: { fragment: fragment() },
@@ -207,6 +214,10 @@ export default async function coveoSearchEnginePOC({
         window.headlessPager = headlessPager;
         window.headlessResultsPerPage = headlessResultsPerPage;
         window.headlessQuerySummary = headlessQuerySummary;
+        window.headlessContext = headlessContext;
+        window.headlessQueryActionCreators = headlessQueryActionCreators;
+        window.headlessSearchActionCreators = headlessSearchActionCreators;
+        window.logSearchboxSubmit = logSearchboxSubmit;
 
         resolve({
           submitSearchHandler,

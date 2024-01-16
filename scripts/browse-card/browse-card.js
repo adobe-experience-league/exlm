@@ -76,7 +76,6 @@ const buildCardContent = (card, model) => {
   const contentType = type.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
   const cardFooter = card.querySelector('.browse-card-footer');
-  const { matches: isDesktopResolution } = window.matchMedia('(min-width: 900px)');
 
   if (description) {
     const stringContent = description.length > 100 ? `${description.substring(0, 100).trim()}...` : description;
@@ -92,12 +91,8 @@ const buildCardContent = (card, model) => {
   if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
     buildTagsContent(cardMeta, tags);
   }
-  if (isDesktopResolution) {
-    cardContent.appendChild(cardMeta);
-  } else {
-    const titleEl = card.querySelector('.browse-card-title-text');
-    cardContent.insertBefore(cardMeta, titleEl);
-  }
+
+  cardContent.appendChild(cardMeta);
 
   /* User Info for Community Section - Will accomodate once we have KHOROS integration */
   // if (contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
@@ -114,16 +109,16 @@ const buildCardContent = (card, model) => {
   }
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
-  if (copyLink) {
-    const copyLinkAnchor = createTag('a', { href: copyLink, title: 'copy' }, `<span class="icon icon-copy"></span>`);
-    cardOptions.appendChild(copyLinkAnchor);
-  }
   if (
     contentType !== CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY &&
     contentType !== CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
   ) {
     const bookmarkAnchor = createTag('a', { href: '#', title: 'copy' }, `<span class="icon icon-bookmark"></span>`);
     cardOptions.appendChild(bookmarkAnchor);
+  }
+  if (copyLink) {
+    const copyLinkAnchor = createTag('a', { href: copyLink, title: 'copy' }, `<span class="icon icon-copy"></span>`);
+    cardOptions.appendChild(copyLinkAnchor);
   }
   cardFooter.appendChild(cardOptions);
   buildCardCtaContent({ cardFooter, contentType, viewLink, viewLinkText });

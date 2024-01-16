@@ -2,7 +2,6 @@
 
 /* teaser wrapper stretches over complete width */
 .section div.teaser-wrapper {
-  margin-bottom: var(--spectrum-spacing-500);
   max-width: unset;
 
   /* stretches to window edge in mobile view */
@@ -137,11 +136,15 @@
 
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
+
+  .section.teaser-container {
+    padding: 0 56px;
+  }
+
   .section div.teaser-wrapper {
     /* stretches to window edge, cover section padding */
-    margin-left: calc(-1 * var(--spectrum-spacing-500));
-    margin-right: calc(-1 * var(--spectrum-spacing-500));
-    margin-bottom: 40px;
+    margin-left: calc(-1 * var(--space-token-xl));
+    margin-right: calc(-1 * var(--space-token-xl));
   }
 
   /* remove background color , add border */
@@ -156,7 +159,7 @@
   .teaser.block > .foreground {
     position: relative;
     display: flex;
-    padding: 0 var(--spectrum-spacing-500);
+    padding: 0 var(--space-token-xl);
     background-color: unset;
     min-height:420px;
   }
@@ -235,6 +238,7 @@
   .teaser.block > .foreground > .spacer {
     display:block;
     order: 1;
+    width:35%;
   }
 
   /* change the order if text should be on the right */

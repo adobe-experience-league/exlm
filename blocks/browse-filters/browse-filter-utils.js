@@ -1,18 +1,22 @@
 export const roles = [
   {
     title: 'Business User',
+    value: 'User',
     description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
   },
   {
     title: 'Developer',
+    value: 'Developer',
     description: 'Responsible for nothing until there"s an issue.',
   },
   {
     title: 'Administrator',
+    value: 'Admin',
     description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
   },
   {
     title: 'Business Leader',
+    value: 'Leader',
     description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
   },
 ];
@@ -20,30 +24,37 @@ export const roles = [
 export const contentType = [
   {
     title: 'Certification',
+    value: 'Certification',
     description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
   },
   {
     title: 'Community',
+    value: 'Community',
     description: 'Responsible for nothing until there"s an issue.',
   },
   {
     title: 'Courses',
+    value: 'Courses',
     description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
   },
   {
     title: 'Documentation',
+    value: 'Documentation',
     description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
   },
   {
     title: 'On-Demand Events',
+    value: 'On-Demand Events',
     description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
   },
   {
     title: 'Troubleshooting',
+    value: 'Troubleshooting',
     description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
   },
   {
     title: 'Tutorial',
+    value: 'Tutorial',
     description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
   },
 ];
@@ -51,14 +62,17 @@ export const contentType = [
 export const expLevel = [
   {
     title: 'Beginner',
+    value: 'Beginner',
     description: 'I am a beginner',
   },
   {
     title: 'Intermediate',
+    value: 'Intermediate',
     description: 'I am an intermediate',
   },
   {
     title: 'Experienced',
+    value: 'Experienced',
     description: 'I have some experience',
   },
 ];
