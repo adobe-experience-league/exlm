@@ -72,7 +72,7 @@ export default function decorate(block) {
         observer.disconnect();
         setTimeout(() => {
           loadEmbed(block, link);
-        }, 2000);        
+        }, 1000);        
       }
     });
     observer.observe(block);
