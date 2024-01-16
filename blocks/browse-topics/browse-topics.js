@@ -80,15 +80,17 @@ export default async function decorate(block) {
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-topics-block-content');
 
-  allTopicsTags.forEach((topicsButtonTitle) => {
-    const topicName = atob(topicsButtonTitle);
-    const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
-    topicsButtonDiv.dataset.topicname = topicName;
-    // decode tags here using atob
-    topicsButtonDiv.innerHTML = topicName;
-    // click event goes here
-    contentDiv.appendChild(topicsButtonDiv);
-  });
+  allTopicsTags
+    .filter((value) => value !== undefined)
+    .forEach((topicsButtonTitle) => {
+      const topicName = atob(topicsButtonTitle);
+      const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
+      topicsButtonDiv.dataset.topicname = topicName;
+      // decode tags here using atob
+      topicsButtonDiv.innerHTML = topicName;
+      // click event goes here
+      contentDiv.appendChild(topicsButtonDiv);
+    });
 
   contentDiv.addEventListener('click', (e) => {
     if (e.target?.classList?.contains('browse-topics-item')) {

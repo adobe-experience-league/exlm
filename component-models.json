@@ -1352,5 +1352,28 @@
         ]
       }
     ]
+  },
+  {
+    "id": "tabs",
+    "fields": []
+  },
+  {
+    "id": "tab",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "text-area",
+        "valueType": "string",
+        "name": "content",
+        "value": "",
+        "label": "Body"
+      }
+    ]
   }
 ]
