@@ -29,6 +29,13 @@ const embedTwitter = (url) => {
 };
 
 const loadEmbed = (block, link, autoplay) => {
+  const hostName = link ? new URL(link).hostname : null;
+  if (hostName === 'video.tv.adobe.com') {
+    const preLink = document.createElement('link');
+    preLink.rel = 'prefetch';
+    preLink.href = 'https://images-tv.adobe.com/cdn/mpc/build/v3_270_4/js/v-player.js';
+    document.head.appendChild(preLink);
+  }
   if (block.classList.contains('embed-is-loaded')) {
     return;
   }
@@ -56,14 +63,6 @@ export default function decorate(block) {
   const placeholder = block.querySelector('picture');
   const link = block.querySelector('a').href;
   block.textContent = '';
-  const hostName = link ? new URL(link).hostname : null;
-  if (hostName === 'video.tv.adobe.com') {
-    const preLink = document.createElement('link');
-    preLink.rel = 'prefetch';
-    preLink.href = 'https://images-tv.adobe.com/cdn/mpc/build/v3_270_4/js/v-player.js';
-    document.head.appendChild(preLink);
-  }
-
   if (placeholder) {
     const wrapper = document.createElement('div');
     wrapper.className = 'embed-placeholder';
