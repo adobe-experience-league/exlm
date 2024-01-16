@@ -195,40 +195,8 @@ export default async function decorate(block) {
         sortFirstLevelList('.subPages');
       }
     }
-
-    // Topics
-    const browseTopicsContainer = document.querySelector('.browse-topics-container');
-    if (browseTopicsContainer !== null) {
-      const ulElement = document.createElement('ul');
-      // Get all the topic elements inside the container
-      const browseTopicsContent = document.querySelector('.browse-topics-block-content');
-      const topicElements = browseTopicsContent.querySelectorAll('.browse-topics.browse-topics-item');
-      if (topicElements.length > 0) {
-        topicElements.forEach((topicElement) => {
-          const style = getComputedStyle(topicElement);
-          if (style.display !== 'none' && style.visibility !== 'hidden') {
-            const liElement = document.createElement('li');
-            liElement.innerHTML = `<a href="#">${topicElement.textContent}</a>`;
-            ulElement.appendChild(liElement);
-          }
-        });
-
-        const topicsUL = document.createElement('ul');
-        topicsUL.classList.add('topics');
-        const topicsLI = document.createElement('li');
-        // Topics heading for product sub-pages
-        if (parts.length >= 5 && parts[3] === currentPagePath.split('/')[3]) {
-          topicsLI.innerHTML = `<a href="javascript:void(0)">${parentPageTitle} ${placeholders.topics}</a><span class="js-toggle"></span>`;
-        } else {
-          topicsLI.innerHTML = `<a href="javascript:void(0)">${label} ${placeholders.topics}</a><span class="js-toggle"></span>`;
-        }
-        topicsLI.append(ulElement);
-        topicsUL.append(topicsLI);
-        block.append(topicsUL);
-      }
-    }
   }
-  // Toggle functionality for products/sub-pages/topics
+  // Toggle functionality for products/sub-pages
   const toggleElements = block.querySelectorAll('.js-toggle');
   if (toggleElements) {
     toggleElements.forEach((toggleElement) => {

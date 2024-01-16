@@ -19,7 +19,7 @@ export default async function decorate(block) {
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const descriptionElement = block.querySelector('div:nth-child(2) > div');
   const contentType = block.querySelector('div:nth-child(3) > div')?.textContent?.trim()?.toLowerCase();
-  const linkTextElement = block.querySelector('div:nth-child(4) > div > a');
+  const linkTextElement = block.querySelector('div:nth-child(4) > div');
   const noOfResults = 16;
 
   block.innerHTML = '';
@@ -169,7 +169,7 @@ export default async function decorate(block) {
   fetchDataAndRenderBlock(param, contentType, block, contentDiv);
 
   const linkDiv = htmlToElement(`
-    <div class="browse-cards-block-view">${linkTextElement?.outerHTML}</div>
+    <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
   `);
 
   buildCardsShimmer.setParent(contentDiv);
