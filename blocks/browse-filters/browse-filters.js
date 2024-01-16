@@ -57,7 +57,9 @@ function hideSectionsBelowFilter(block, show) {
     const clickedIndex = siblings.indexOf(parent);
     // eslint-disable-next-line no-plusplus
     for (let i = clickedIndex + 1; i < siblings.length; i++) {
-      siblings[i].style.display = show ? 'block' : 'none';
+      if(!siblings[i].classList.contains('browse-rail')){
+        siblings[i].style.display = show ? 'block' : 'none';
+      }
     }
   }
 }
@@ -628,7 +630,9 @@ function handleCoveoHeadlessSearch(
 
 async function handleSearchEngineSubscription() {
   const filterResultsEl = document.querySelector('.browse-filters-results');
-  filterResultsEl.style.visibility = 'hidden';
+  if(filterResultsEl){
+    filterResultsEl.style.visibility = 'hidden';
+  }
   buildCardsShimmer.show();
   if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
     return;
