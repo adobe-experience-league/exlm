@@ -1,17 +1,17 @@
 import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, decorateExternalLinks } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 
 /**
  * Decorate function to process and log the mapped data.
- * @param {HTMLElement} blockElement - The block of data to process.
+ * @param {HTMLElement} block - The block of data to process.
  */
-export default async function decorate(blockElement) {
+export default async function decorate(block) {
   // Extracting elements from the block
-  const blockDataElements = [...blockElement.querySelectorAll(':scope div > div')];
+  const blockDataElements = [...block.querySelectorAll(':scope div > div')];
   const headingElementContent = blockDataElements[0].innerHTML.trim();
   const toolTipElementContent = blockDataElements[1].innerHTML.trim();
   const contentTypeListContent = blockDataElements[2].innerHTML?.trim()?.toLowerCase();
@@ -22,8 +22,8 @@ export default async function decorate(blockElement) {
   let buildCardsShimmer = '';
 
   // Clearing the block's content and applying CSS class
-  blockElement.innerHTML = '';
-  blockElement.classList.add('browse-cards-block');
+  block.innerHTML = '';
+  block.classList.add('browse-cards-block');
 
   // Creating the header div with title and tooltip
   const headerDiv = htmlToElement(`
@@ -37,13 +37,13 @@ export default async function decorate(blockElement) {
     </div> 
   `);
   // Appending header div to the block
-  blockElement.appendChild(headerDiv);
+  block.appendChild(headerDiv);
 
   // Create content div and shimmer card parent
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content', 'tabbed-cards-block');
 
-  buildCardsShimmer = new BuildPlaceholder(numberOfResults, blockElement);
+  buildCardsShimmer = new BuildPlaceholder(numberOfResults, block);
 
   // Function to convert a string to title case
   const convertToTitleCaseAndRemove = (str) =>
@@ -101,12 +101,12 @@ export default async function decorate(blockElement) {
     tabLabel.textContent = placeholders[`${tabLabelData}LabelKey`];
     tabLabel.addEventListener('click', () => {
       // Clear Existing Label
-      const tabLabelsListElements = document.querySelectorAll('.tabbed-cards-label ul li');
+      const tabLabelsListElements = block.querySelectorAll('.tabbed-cards-label ul li');
       tabLabelsListElements.forEach((label) => {
         label.classList.remove('active');
       });
       // Clear existing cards
-      const tabbedContent = blockElement.querySelector('.tabbed-cards-block');
+      const tabbedContent = block.querySelector('.tabbed-cards-block');
       tabLabel.classList.add('active');
       if (tabbedContent) {
         tabbedContent.innerHTML = '';
@@ -120,16 +120,17 @@ export default async function decorate(blockElement) {
       );
       tabList.appendChild(viewLinkURLElement);
       buildCardsShimmer.show();
-      fetchDataAndRenderBlock(tabLabelData, blockElement);
+      fetchDataAndRenderBlock(tabLabelData, block);
     });
     tabListUlElement.appendChild(tabLabel);
     // Append tab label to the tab list
     tabList.appendChild(tabListUlElement);
+    decorateExternalLinks(block);
   });
 
   // Append tab list and Shimmer Card after Tab Label
-  const shimmerClass = blockElement.querySelector('.browse-card-shimmer');
-  blockElement.insertBefore(tabList, shimmerClass);
+  const shimmerClass = block.querySelector('.browse-card-shimmer');
+  block.insertBefore(tabList, shimmerClass);
   buildCardsShimmer.show();
 
   // Fetch and render data for the initial content type
@@ -146,6 +147,7 @@ export default async function decorate(blockElement) {
   tabList.children[0].children[0].classList.add('active');
 
   // Render Block content
-  fetchDataAndRenderBlock(initialContentType, blockElement);
+  fetchDataAndRenderBlock(initialContentType, block);
   decorateIcons(headerDiv);
+  decorateExternalLinks(block);
 }
