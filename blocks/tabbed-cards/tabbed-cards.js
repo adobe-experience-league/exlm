@@ -1,6 +1,6 @@
 import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, decorateExternalLinks } from '../../scripts/scripts.js';
 import buildCard from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
@@ -101,7 +101,7 @@ export default async function decorate(blockElement) {
     tabLabel.textContent = placeholders[`${tabLabelData}LabelKey`];
     tabLabel.addEventListener('click', () => {
       // Clear Existing Label
-      const tabLabelsListElements = document.querySelectorAll('.tabbed-cards-label ul li');
+      const tabLabelsListElements = blockElement.querySelectorAll('.tabbed-cards-label ul li');
       tabLabelsListElements.forEach((label) => {
         label.classList.remove('active');
       });
@@ -125,6 +125,7 @@ export default async function decorate(blockElement) {
     tabListUlElement.appendChild(tabLabel);
     // Append tab label to the tab list
     tabList.appendChild(tabListUlElement);
+    decorateExternalLinks(blockElement);
   });
 
   // Append tab list and Shimmer Card after Tab Label
@@ -148,4 +149,5 @@ export default async function decorate(blockElement) {
   // Render Block content
   fetchDataAndRenderBlock(initialContentType, blockElement);
   decorateIcons(headerDiv);
+  decorateExternalLinks(blockElement);
 }
