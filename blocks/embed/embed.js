@@ -56,6 +56,10 @@ export default function decorate(block) {
   const placeholder = block.querySelector('picture');
   const link = block.querySelector('a').href;
   block.textContent = '';
+  const preLink = document.createElement('link');
+  preLink.rel = 'prefetch';
+  preLink.href = 'https://images-tv.adobe.com/cdn/mpc/build/v3_270_4/js/v-player.js';
+  document.head.appendChild(preLink);
 
   if (placeholder) {
     const wrapper = document.createElement('div');
