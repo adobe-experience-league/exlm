@@ -12,7 +12,7 @@ export default async function decorate(block) {
   // Extracting elements from the block
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
-  const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
+  const linkTextElement = block.querySelector('div:nth-child(3) > div');
   const solutions = block.querySelector('div:nth-child(4) > div').textContent.trim();
   const roles = block.querySelector('div:nth-child(5) > div').textContent.trim();
   const sortBy = block.querySelector('div:nth-child(6) > div').textContent.trim();
@@ -27,11 +27,15 @@ export default async function decorate(block) {
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
           <h2>${headingElement?.textContent.trim()}</h2>
-          <div class="tooltip">
-            <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
-          </div>
+          ${
+            toolTipElement.textContent
+              ? `<div class="tooltip">
+              <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
+            </div>`
+              : ''
+          }
       </div>
-      <div class="browse-cards-block-view">${linkTextElement?.outerHTML}</div>
+      <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
     </div>
   `);
   // Appending header div to the block
