@@ -58,7 +58,9 @@ function hideSectionsBelowFilter(block, show) {
     const clickedIndex = siblings.indexOf(parent);
     // eslint-disable-next-line no-plusplus
     for (let i = clickedIndex + 1; i < siblings.length; i++) {
-      siblings[i].style.display = show ? 'block' : 'none';
+      if (!siblings[i].classList.contains('browse-rail')) {
+        siblings[i].style.display = show ? 'block' : 'none';
+      }
     }
   }
 }
@@ -582,6 +584,7 @@ function handleCoveoHeadlessSearch(
   block,
   { submitSearchHandler, searchInputKeyupHandler, searchInputKeydownHandler, searchInputEventHandler },
 ) {
+  buildCardsShimmer.hide();
   const filterResultsEl = createTag('div', { class: 'browse-filters-results' });
 
   const browseFiltersSection = block.querySelector('.browse-filters-form');
@@ -616,7 +619,6 @@ function handleCoveoHeadlessSearch(
 
 async function handleSearchEngineSubscription() {
   const filterResultsEl = document.querySelector('.browse-filters-results');
-  filterResultsEl.style.visibility = 'hidden';
   buildCardsShimmer.show();
   if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
     return;
@@ -625,7 +627,6 @@ async function handleSearchEngineSubscription() {
   const search = window.headlessSearchEngine.state.search;
   const { results } = search;
   if (results.length > 0) {
-    filterResultsEl.style.visibility = 'visible';
     buildCardsShimmer.hide();
     const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
     filterResultsEl.innerHTML = '';
@@ -638,7 +639,6 @@ async function handleSearchEngineSubscription() {
       decorateIcons(cardDiv);
     });
   } else {
-    filterResultsEl.style.visibility = 'visible';
     buildCardsShimmer.hide();
     filterResultsEl.innerHTML = 'No Results';
     document.querySelector('.browse-filters-form').classList.remove('is-result');
