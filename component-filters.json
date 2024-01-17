@@ -1,0 +1,69 @@
+[
+  {
+    "id": "main",
+    "components": [
+      "section"
+    ]
+  },
+  {
+    "id": "columns",
+    "components": []
+  },
+  {
+    "id": "column",
+    "components": [
+      "text",
+      "image",
+      "button",
+      "title"
+    ]
+  },
+  {
+    "id": "section",
+    "components": [
+      "text",
+      "image",
+      "button",
+      "title",
+      "hero",
+      "cards",
+      "columns"
+    ]
+  },
+  {
+    "id": "cards",
+    "components": [
+      "card"
+    ]
+  },
+  {
+    "id": "icon-block",
+    "components": [
+      "icon-card"
+    ]
+  },
+  {
+    "id": "carousel",
+    "components": [
+      "teaser"
+    ]
+  },
+  {
+    "id": "accordion-group",
+    "components": [
+      "accordion"
+    ]
+  },
+  {
+    "id": "authorable-card",
+    "components": [
+      "authored-card"
+    ]
+  },
+  {
+    "id": "tabs",
+    "components": [
+      "tab"
+    ]
+  }
+]
