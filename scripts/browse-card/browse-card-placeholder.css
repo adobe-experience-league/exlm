@@ -29,6 +29,12 @@
   z-index: 0;
   visibility: hidden
 }
+.browse-filters-wrapper .shimmer-placeholder.hide-shimmer {
+  display: none;
+}
+.browse-filters-wrapper .shimmer-placeholder {
+  position: relative;
+}
 .featured-cards .shimmer-placeholder {
   display: grid; 
   grid-template-columns: 1fr; 

@@ -584,6 +584,7 @@ function handleCoveoHeadlessSearch(
   block,
   { submitSearchHandler, searchInputKeyupHandler, searchInputKeydownHandler, searchInputEventHandler },
 ) {
+  buildCardsShimmer.hide();
   const filterResultsEl = createTag('div', { class: 'browse-filters-results' });
 
   const browseFiltersSection = block.querySelector('.browse-filters-form');
@@ -768,7 +769,7 @@ export default async function decorate(block) {
   appendToForm(block, renderTags());
   appendToForm(block, renderFilterResultsHeader());
   decorateBrowseTopics(block);
-  buildCardsShimmer = new BuildPlaceholder(0, block.querySelector('.browse-filters-form'));
+  buildCardsShimmer = new BuildPlaceholder(4, block.querySelector('.browse-filters-form'));
   initiateCoveoHeadlessSearch({
     handleSearchEngineSubscription,
     renderPageNumbers,
