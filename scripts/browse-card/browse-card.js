@@ -190,11 +190,12 @@ export async function buildCard(element, model) {
   if (product) {
     const tagElement = createTag('div', { class: 'browse-card-tag-text' });
     if (product.length > 1) {
-      tagElement.innerHTML = `<h4>${placeholders.multiSolutionText || 'multisolution'}</h4><div class="tooltip tooltip-top tooltip-grey">
+      tagElement.innerHTML = `<h4>${
+        placeholders.multiSolutionText || 'multisolution'
+      }</h4><div class="tooltip tooltip-top tooltip-grey">
         <span class="icon icon-info"></span><span class="tooltip-text">${product.join(', ')}</span>
       </div>`;
-    }
-    else {
+    } else {
       tagElement.innerHTML = `<h4>${product.join(', ')}</h4>`;
     }
     cardContent.appendChild(tagElement);
