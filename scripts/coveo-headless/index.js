@@ -71,7 +71,7 @@ export const fragment = () => window.location.hash.slice(1);
 
 const hashURL = fragment();
 
-export default async function coveoSearchEnginePOC({
+export default async function initiateCoveoHeadlessSearch({
   handleSearchEngineSubscription,
   renderPageNumbers,
   numberOfResults,
