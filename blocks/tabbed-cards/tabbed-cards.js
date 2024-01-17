@@ -57,7 +57,13 @@ export default async function decorate(block) {
   const convertToTitleCaseAndRemove = (str) =>
     str.replace(/[-\s]/g, '').replace(/\b\w/g, (match) => match.toUpperCase());
 
-  const placeholders = await fetchPlaceholders();
+  let placeholders = {};
+  try {
+    placeholders = await fetchPlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
 
   // Function to fetch data and render block
   const fetchDataAndRenderBlock = (contentType, tabbedBlock) => {

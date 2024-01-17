@@ -31,7 +31,14 @@ const buildTagsContent = (cardMeta, tags = []) => {
     }
   });
 };
-const placeholders = await fetchPlaceholders();
+
+let placeholders = {};
+try {
+  placeholders = await fetchPlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 // Default No Results Content from Placeholder
 export const buildNoResultsContent = (block) => {
