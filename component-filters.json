@@ -27,7 +27,23 @@
       "title",
       "hero",
       "cards",
-      "columns"
+      "columns",
+      "icon-block",
+      "curated-cards",
+      "teaser",
+      "marquee",
+      "carousel",
+      "video-embed",
+      "secondary-search",
+      "accordion-group",
+      "media",
+      "authorable-card",
+      "browse-filters",
+      "featured-cards",
+      "events-cards",
+      "adls-cards",
+      "tabbed-cards",
+      "tabs"
     ]
   },
   {
@@ -43,13 +59,13 @@
     ]
   },
   {
-    "id": "carousel",
+    "id": "teaser",
     "components": [
       "teaser"
     ]
   },
   {
-    "id": "accordion-group",
+    "id": "accordion",
     "components": [
       "accordion"
     ]
@@ -61,7 +77,7 @@
     ]
   },
   {
-    "id": "tabs",
+    "id": "tab",
     "components": [
       "tab"
     ]

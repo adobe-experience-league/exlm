@@ -70,7 +70,6 @@
               "page": {
                 "resourceType": "core/franklin/components/section/v1/section",
                 "template": {
-                  "filter": "section",
                   "name": "Section",
                   "model": "section",
                   "style": "default"
@@ -158,7 +157,6 @@
               "page": {
                 "resourceType": "core/franklin/components/columns/v1/columns",
                 "template": {
-                  "filter": "columns"
                 }
               }
             }
@@ -226,7 +224,7 @@
                 "template": {
                   "name": "Carousel",
                   "model": "carousel",
-                  "filter": "carousel",
+                  "filter": "teaser",
                   "classes": "center",
                   "teaser": {
                     "name": "Teaser",
@@ -281,7 +279,7 @@
                 "template": {
                   "name": "Accordion Group",
                   "model": "accordion-group",
-                  "filter": "accordion-group",
+                  "filter": "accordion",
                   "item": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Accordion",
