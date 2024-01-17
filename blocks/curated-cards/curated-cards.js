@@ -1,7 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
-import buildCard from '../../scripts/browse-card/browse-card.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 /**

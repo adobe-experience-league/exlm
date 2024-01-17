@@ -10,7 +10,7 @@ import {
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
-import buildCard from '../../scripts/browse-card/browse-card.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
 const coveoFacetMap = {

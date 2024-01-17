@@ -151,7 +151,7 @@ const setupCopyAction = (wrapper) => {
   });
 };
 
-export default async function buildCard(element, model) {
+export async function buildCard(element, model) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
   const { thumbnail, product, title, contentType, badgeTitle } = model;
   const type = contentType?.toLowerCase();
