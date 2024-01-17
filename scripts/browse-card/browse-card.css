@@ -277,3 +277,14 @@
     margin: 8px 0;
   }
 }
+.browse-card-no-results {
+  background: var(--spectrum-gray-200);
+  border-radius: 4px;
+  color: var(--non-spectrum-grey);
+  font-size: var(--spectrum-font-size-200);
+  line-height: 21px;
+  letter-spacing: normal;
+  padding: 74px 0;
+  text-align: center;
+  margin-top: 24px;
+}

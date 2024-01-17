@@ -1,4 +1,4 @@
-import { loadCSS } from '../lib-franklin.js';
+import { loadCSS, fetchPlaceholders } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
 
@@ -30,6 +30,23 @@ const buildTagsContent = (cardMeta, tags = []) => {
       cardMeta.appendChild(anchor);
     }
   });
+};
+
+let placeholders = {};
+try {
+  placeholders = await fetchPlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
+// Default No Results Content from Placeholder
+export const buildNoResultsContent = (block) => {
+  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
+  const noResultsInfo = htmlToElement(`
+    <div class="browse-card-no-results">${placeholders.noResultsText}</div>
+  `);
+  block.appendChild(noResultsInfo);
 };
 
 const buildEventContent = ({ event, cardContent, card }) => {
@@ -141,7 +158,7 @@ const setupCopyAction = (wrapper) => {
   });
 };
 
-export default async function buildCard(element, model) {
+export async function buildCard(element, model) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
   const { thumbnail, product, title, contentType, badgeTitle } = model;
   const type = contentType?.toLowerCase();

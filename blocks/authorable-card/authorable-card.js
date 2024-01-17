@@ -1,6 +1,6 @@
 import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import buildCard from '../../scripts/browse-card/browse-card.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import ArticleDataService from '../../scripts/data-service/article-data-service.js';
 import mapResultToCardsData from './article-data-adapter.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
