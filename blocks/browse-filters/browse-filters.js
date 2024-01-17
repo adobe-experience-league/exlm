@@ -58,7 +58,7 @@ function hideSectionsBelowFilter(block, show) {
     const clickedIndex = siblings.indexOf(parent);
     // eslint-disable-next-line no-plusplus
     for (let i = clickedIndex + 1; i < siblings.length; i++) {
-      if(!siblings[i].classList.contains('browse-rail')){
+      if (!siblings[i].classList.contains('browse-rail')) {
         siblings[i].style.display = show ? 'block' : 'none';
       }
     }
@@ -618,7 +618,7 @@ function handleCoveoHeadlessSearch(
 
 async function handleSearchEngineSubscription() {
   const filterResultsEl = document.querySelector('.browse-filters-results');
-  if(filterResultsEl){
+  if (filterResultsEl) {
     filterResultsEl.style.visibility = 'hidden';
   }
   buildCardsShimmer.show();

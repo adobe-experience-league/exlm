@@ -240,37 +240,37 @@ export default async function coveoSearchEnginePOC({
         });
 
         const sortContainer = document.querySelector('.sort-container');
-          sortContainer.appendChild(sortWrapperEl);
+        sortContainer.appendChild(sortWrapperEl);
         const sortDropdown = sortContainer.querySelector('.sort-dropdown-content');
         const sortAnchors = sortDropdown.querySelectorAll('a');
         const sortBtn = sortContainer.querySelector('.sort-drop-btn');
         let criteria = [[]];
-          const isSortValueInHash = hashURL.split('&');
-          // eslint-disable-next-line
-            isSortValueInHash.filter((item) => {
-              if(item.includes('sortCriteria')){
-                const scValue = decodeURIComponent(item.split('=')[1]);
-                // eslint-disable-next-line
-                switch (scValue) {
-                  case 'relevancy':
-                    sortBtn.innerHTML = 'Relevance';
-                    criteria = [['Relevance', module.buildRelevanceSortCriterion()]];
-                    break;
-                  case '@el_view_count descending':
-                    sortBtn.innerHTML = 'Popularity';
-                    criteria = [['Popularity', module.buildFieldSortCriterion('el_view_count', 'descending')]];
-                    break;
-                  case 'date descending':
-                    sortBtn.innerHTML = 'Newest';
-                    criteria = [['Newest', module.buildDateSortCriterion('descending')]];
-                    break;
-                  case 'date ascending':
-                    sortBtn.innerHTML = 'Oldest';
-                    criteria = [['Oldest', module.buildDateSortCriterion('ascending')]];
-                    break;
-                }
-              }
-          });
+        const isSortValueInHash = hashURL.split('&');
+        // eslint-disable-next-line
+        isSortValueInHash.filter((item) => {
+          if (item.includes('sortCriteria')) {
+            const scValue = decodeURIComponent(item.split('=')[1]);
+            // eslint-disable-next-line
+            switch (scValue) {
+              case 'relevancy':
+                sortBtn.innerHTML = 'Relevance';
+                criteria = [['Relevance', module.buildRelevanceSortCriterion()]];
+                break;
+              case '@el_view_count descending':
+                sortBtn.innerHTML = 'Popularity';
+                criteria = [['Popularity', module.buildFieldSortCriterion('el_view_count', 'descending')]];
+                break;
+              case 'date descending':
+                sortBtn.innerHTML = 'Newest';
+                criteria = [['Newest', module.buildDateSortCriterion('descending')]];
+                break;
+              case 'date ascending':
+                sortBtn.innerHTML = 'Oldest';
+                criteria = [['Oldest', module.buildDateSortCriterion('ascending')]];
+                break;
+            }
+          }
+        });
 
         const initialCriterion = criteria[0][1];
 
