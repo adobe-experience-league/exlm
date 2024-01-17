@@ -16,6 +16,7 @@ import {
   getMetadata,
   loadScript,
 } from './lib-franklin.js';
+import { adobeDataLayerTrack, webPageDetails, docs, microsite } from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
@@ -426,6 +427,20 @@ async function loadPage() {
   loadRails();
   loadDelayed();
   loadPrevNextBtn();
+  adobeDataLayerTrack({
+    event: 'page loaded',
+    web: {
+      webPageDetails: await webPageDetails(
+        '',
+        // eslint-disable-next-line no-void
+        void 0,
+        // eslint-disable-next-line no-void
+        void 0,
+        // eslint-disable-next-line no-nested-ternary
+        docs ? 'docs' : microsite ? 'microsite' : 'learn',
+      ),
+    },
+  });
 }
 
 loadPage();
