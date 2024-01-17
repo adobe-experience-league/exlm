@@ -20,7 +20,6 @@ export default function decorate(block) {
 
     heading.replaceWith(h3);
 
-    let anchorDiv = '';
     const linkTextDiv = column.querySelector('div:nth-child(4)');
     const linkWrapper = column.querySelector('div:nth-child(5)');
     const link = linkWrapper.querySelector('a');
@@ -28,7 +27,7 @@ export default function decorate(block) {
     if (link && !isLinkTextDivEmpty) {
       const linkText = linkTextDiv.textContent.trim();
       const linkUrl = link.href;
-      anchorDiv = htmlToElement(`
+      const anchorDiv = htmlToElement(`
       ${linkText && linkUrl ? `<a class='icon-link' href='${linkUrl}'>${linkText}</a>` : ``}`);
       linkWrapper.replaceWith(anchorDiv);
       linkTextDiv.remove();
