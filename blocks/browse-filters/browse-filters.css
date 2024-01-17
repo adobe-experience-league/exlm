@@ -1,6 +1,6 @@
 @import "../../scripts/browse-card/browse-cards-block.css";
 @import "../../scripts/browse-card/browse-card.css";
-@import "../browse-topics/browse-topics.css";
+@import "./browse-topics.css";
 
 .browse-filters-form {
   display: flex;
