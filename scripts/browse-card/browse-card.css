@@ -31,11 +31,17 @@
   line-height: 17px;
   font-weight: var(--font-weight-700);
   letter-spacing: 0.72px;
+  margin: 0;
 }
 .browse-card .browse-card-tag-text {
-  text-transform: uppercase;
+  display: flex;
   margin: 0 0 8px;
+}
+.browse-card .browse-card-tag-text h4 {
+  text-transform: uppercase;
+  margin: 0;
   font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-400);
   line-height: 21px;
   color: var(--spectrum-gray-700);
 }
@@ -130,7 +136,7 @@
   height: 22px;
   width: 22px;
 }
-.browse-card .icon {
+.browse-card .browse-card-footer .icon {
   color: var( --non-spectrum-dim-gray);
   fill: var( --non-spectrum-dim-gray);
   cursor: pointer;

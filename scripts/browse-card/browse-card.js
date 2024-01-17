@@ -96,7 +96,7 @@ const buildCardContent = (card, model) => {
 
   if (description) {
     const stringContent = description.length > 100 ? `${description.substring(0, 100).trim()}...` : description;
-    const descriptionElement = document.createElement('div');
+    const descriptionElement = document.createElement('p');
     descriptionElement.classList.add('browse-card-description-text');
     descriptionElement.innerHTML = stripScriptTags(stringContent);
     cardContent.appendChild(descriptionElement);
@@ -183,18 +183,25 @@ export async function buildCard(element, model) {
     cardFigure.appendChild(img);
   }
 
-  const bannerElement = createTag('p', { class: 'browse-card-banner' });
+  const bannerElement = createTag('h3', { class: 'browse-card-banner' });
   bannerElement.innerText = badgeTitle;
   cardFigure.appendChild(bannerElement);
 
   if (product) {
-    const tagElement = createTag('p', { class: 'browse-card-tag-text' });
-    tagElement.textContent = product;
+    const tagElement = createTag('div', { class: 'browse-card-tag-text' });
+    if (product.length > 1) {
+      tagElement.innerHTML = `<h4>${placeholders.multiSolutionText || 'multisolution'}</h4><div class="tooltip tooltip-top tooltip-grey">
+        <span class="icon icon-info"></span><span class="tooltip-text">${product.join(', ')}</span>
+      </div>`;
+    }
+    else {
+      tagElement.innerHTML = `<h4>${product.join(', ')}</h4>`;
+    }
     cardContent.appendChild(tagElement);
   }
 
   if (title) {
-    const titleElement = createTag('p', { class: 'browse-card-title-text' });
+    const titleElement = createTag('h5', { class: 'browse-card-title-text' });
     titleElement.textContent = title;
     cardContent.appendChild(titleElement);
   }
