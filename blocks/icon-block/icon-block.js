@@ -23,14 +23,16 @@ export default function decorate(block) {
     const linkTextDiv = column.querySelector('div:nth-child(4)');
     const linkWrapper = column.querySelector('div:nth-child(5)');
     const link = linkWrapper.querySelector('a');
-    const isLinkTextDivEmpty = !linkTextDiv.innerText.trim() && !linkTextDiv.textContent.trim();
-    if (link && !isLinkTextDivEmpty) {
+    const linkTextDivHasText = linkTextDiv.innerText.trim() !== '' || linkTextDiv.textContent.trim() !== '';
+    if (link && linkTextDivHasText) {
       const linkText = linkTextDiv.textContent.trim();
       const linkUrl = link.href;
-      const anchorDiv = htmlToElement(`
-      ${linkText && linkUrl ? `<a class='icon-link' href='${linkUrl}'>${linkText}</a>` : ``}`);
-      linkWrapper.replaceWith(anchorDiv);
-      linkTextDiv.remove();
+      if (linkText && linkUrl) {
+        const anchorDiv = htmlToElement(`
+      ${`<a class='icon-link' href='${linkUrl}'>${linkText}</a>`}`);
+        linkWrapper.replaceWith(anchorDiv);
+        linkTextDiv.remove();
+      }
     } else {
       linkWrapper.remove();
       linkTextDiv.remove();
