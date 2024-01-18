@@ -425,10 +425,24 @@ async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadRails();
-  await loadScript('https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js', {
-    async: true,
-    defer: true,
-  });
+  // Create a new web worker
+  const adobeLaunchWorker = new Worker('./scripts/analytics/launch-worker.js');
+
+  // Message handler for the web worker
+  adobeLaunchWorker.onmessage = function (event) {
+    if (event.data === 'adobeLaunchLoaded') {
+      // The Adobe Launch script has been loaded successfully
+      loadScript('https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js', {
+        async: true,
+        defer: true,
+      });
+      // You can now initialize Adobe Launch or perform other actions
+    }
+  };
+
+  // Start the web worker
+  adobeLaunchWorker.postMessage('loadAdobeLaunch');
+
   loadDelayed();
   loadPrevNextBtn();
   adobeDataLayerTrack({
