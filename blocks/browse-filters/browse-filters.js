@@ -636,12 +636,14 @@ async function handleSearchEngineSubscription() {
       filterResultsEl.appendChild(cardDiv);
       buildCardsShimmer.setParent(filterResultsEl);
       document.querySelector('.browse-filters-form').classList.add('is-result');
+      filterResultsEl.classList.remove('no-results');
       decorateIcons(cardDiv);
     });
   } else {
     buildCardsShimmer.hide();
-    filterResultsEl.innerHTML = 'No Results';
+    filterResultsEl.innerHTML = 'We’re sorry, no results found matching the criteria. Try adjusting your search to view more content.';
     document.querySelector('.browse-filters-form').classList.remove('is-result');
+    filterResultsEl.classList.add('no-results');
   }
 }
 
