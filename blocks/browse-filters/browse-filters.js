@@ -377,7 +377,7 @@ function clearSelectedFilters(block) {
   clearAllSelectedTag(block);
   clearSearchQuery(block);
   updateClearFilterStatus(block);
-  window.history.replaceState(null, null, ' ');
+  window.location.hash = '';
 }
 
 function handleClearFilter(block) {
@@ -434,7 +434,6 @@ function handleUriHash() {
   if (!hash) {
     clearAllSelectedTag(browseFiltersSection);
     updateClearFilterStatus(browseFiltersSection);
-    hildeSectionsWithinFilter(browseFiltersSection, false);
     searchInput.value = '';
     return;
   }
@@ -489,7 +488,6 @@ function handleUriHash() {
     searchInput.value = '';
   }
   updateClearFilterStatus(browseFiltersSection);
-  hildeSectionsWithinFilter(browseFiltersSection, true);
   window.headlessSearchEngine.executeFirstSearch();
 }
 
