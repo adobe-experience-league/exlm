@@ -1,12 +1,11 @@
 import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import buildCard from '../../scripts/browse-card/browse-card.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import ArticleDataService from '../../scripts/data-service/article-data-service.js';
 import mapResultToCardsData from './article-data-adapter.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
 let numberOfCards = 4;
-const rowCount = 4;
 let buildCardsShimmer = '';
 
 /**
@@ -17,34 +16,34 @@ export default async function decorate(block) {
   // Extracting elements from the block
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
-  const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
+  const linkTextElement = block.querySelector('div:nth-child(3) > div');
   const links = [];
-  const linksContainer = [];
 
-  // Clearing the block's content
   block.classList.add('browse-cards-block');
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
           <h2>${headingElement?.textContent.trim()}</h2>
-          <div class="tooltip">
-            <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
-          </div>
+          ${
+            toolTipElement.textContent
+              ? `<div class="tooltip">
+              <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
+            </div>`
+              : ''
+          }
       </div>
-      <div>${linkTextElement?.outerHTML}</div>
-    </div>
-  `);
+      ${linkTextElement?.outerHTML}
+      </div>
+      `);
 
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
 
-  for (let i = 0; i < numberOfCards; i += 1) {
-    if (block.querySelector(`div:nth-child(${i + rowCount})`)) {
-      links.push(block.querySelector(`div:nth-child(${i + rowCount}) > div`)?.textContent);
-      linksContainer.push(block.querySelector(`div:nth-child(${i + rowCount})`));
-    }
-  }
+  const linksContainer = Array.from(block.children).slice(-1 * numberOfCards);
+  linksContainer.forEach((link) => {
+    links.push(link.querySelector('div')?.textContent);
+  });
 
   numberOfCards = linksContainer.length;
 
@@ -81,9 +80,11 @@ export default async function decorate(block) {
   });
 
   block.appendChild(headerDiv);
-  headingElement.remove();
-  toolTipElement.remove();
-  linkTextElement.remove();
+  Array.from(block.children).forEach((child) => {
+    if (!child.className) {
+      block.removeChild(child);
+    }
+  });
   linksContainer.forEach((el) => contentDiv.appendChild(el));
 
   buildCardsShimmer = new BuildPlaceholder(numberOfCards, block);

@@ -29,6 +29,12 @@
   z-index: 0;
   visibility: hidden
 }
+.browse-filters-wrapper .shimmer-placeholder.hide-shimmer {
+  display: none;
+}
+.browse-filters-wrapper .shimmer-placeholder {
+  position: relative;
+}
 .featured-cards .shimmer-placeholder {
   display: grid; 
   grid-template-columns: 1fr; 
@@ -49,7 +55,8 @@
   flex: 0 0 264px;
   border: 1px solid var(--spectrum-gray-200);
 }
-.browse-filters-wrapper .shimmer-placeholder-isloading {
+.browse-filters-wrapper .shimmer-placeholder-isloading, 
+.featured-cards .shimmer-placeholder-isloading  {
   min-height: 380px;
 }
 .shimmer-placeholder-isloading .shimmer-placeholder-content {
@@ -77,7 +84,8 @@
 .shimmer-placeholder-isloading .shimmer-placeholder-image {
   height: 190px;
 }
-.browse-filters-wrapper .shimmer-placeholder-isloading .shimmer-placeholder-description {
+.browse-filters-wrapper .shimmer-placeholder-isloading .shimmer-placeholder-description,
+.featured-cards .shimmer-placeholder-isloading .shimmer-placeholder-description {
   height: 80px;
   margin: 0px 0px 52px 0px;
 }
@@ -129,6 +137,9 @@
   .featured-cards .shimmer-placeholder {
     display: flex;
     gap: 32px;
+  }
+  .featured-cards .shimmer-placeholder-isloading {
+    flex: 0 0 295px;
   }
   .browse-filters-wrapper .shimmer-placeholder {
     display: grid;

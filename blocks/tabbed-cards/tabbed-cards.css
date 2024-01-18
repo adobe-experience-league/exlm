@@ -25,6 +25,7 @@
     padding: 0;
     position: relative;
     white-space: pre;
+    font-size: var(--spectrum-font-size-200);
 }
 
 .tabbed-cards-label>ul li.active {

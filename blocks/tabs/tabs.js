@@ -29,8 +29,13 @@ export default function decorate(block) {
 
   const tabNames = [];
   const tabContents = [];
+  // list of Universal Editor instrumented 'tab content' divs
+  const tabInstrumentedDiv = [];
 
   [...block.children].forEach((child) => {
+    // keep the div that has been instrumented for UE
+    tabInstrumentedDiv.push(child);
+
     [...child.children].forEach((el, index) => {
       if (index === 0) {
         tabNames.push(el.textContent.trim());
@@ -70,7 +75,13 @@ export default function decorate(block) {
       'aria-labelledby': `tab-${initCount}-${nameId}`,
     };
 
-    const tabContentDiv = createTag('div', tabContentAttributes);
+    // get the instrumented div
+    const tabContentDiv = tabInstrumentedDiv[i];
+    // add all additional attributes
+    Object.entries(tabContentAttributes).forEach(([key, val]) => {
+      tabContentDiv.setAttribute(key, val);
+    });
+
     // default first tab is active
     if (i === 0) tabContentDiv.classList.add('active');
     tabContentDiv.innerHTML = content;

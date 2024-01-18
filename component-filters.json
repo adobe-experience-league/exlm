@@ -1,0 +1,66 @@
+[
+  {
+    "id": "main",
+    "components": ["section"]
+  },
+  {
+    "id": "columns",
+    "components": []
+  },
+  {
+    "id": "column",
+    "components": ["text", "image", "button", "title"]
+  },
+  {
+    "id": "section",
+    "components": [
+      "text",
+      "image",
+      "button",
+      "title",
+      "hero",
+      "cards",
+      "columns",
+      "icon-block",
+      "curated-cards",
+      "teaser",
+      "marquee",
+      "carousel",
+      "video-embed",
+      "secondary-search",
+      "accordion-group",
+      "media",
+      "authorable-card",
+      "browse-filters",
+      "featured-cards",
+      "events-cards",
+      "adls-cards",
+      "tabbed-cards",
+      "tabs"
+    ]
+  },
+  {
+    "id": "cards",
+    "components": ["card"]
+  },
+  {
+    "id": "icon-block",
+    "components": ["icon-card"]
+  },
+  {
+    "id": "teaser",
+    "components": ["teaser"]
+  },
+  {
+    "id": "accordion",
+    "components": ["accordion"]
+  },
+  {
+    "id": "authorable-card",
+    "components": ["authored-card"]
+  },
+  {
+    "id": "tab",
+    "components": ["tab"]
+  }
+]

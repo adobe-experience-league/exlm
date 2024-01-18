@@ -1,7 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import buildCard from '../../scripts/browse-card/browse-card.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 
@@ -25,7 +25,7 @@ export default async function decorate(block) {
   // Extracting elements from the block
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
-  const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
+  const linkTextElement = block.querySelector('div:nth-child(3) > div');
   const solutions = block.querySelector('div:nth-child(4) > div').textContent.trim();
   const contentType = CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY;
   const noOfResults = 4;
@@ -39,11 +39,15 @@ export default async function decorate(block) {
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
           <h2>${headingElement?.textContent.trim()}</h2>
-          <div class="tooltip">
-            <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
-          </div>
+          ${
+            toolTipElement.textContent
+              ? `<div class="tooltip">
+              <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
+            </div>`
+              : ''
+          }
       </div>
-      <div class="browse-cards-block-view">${linkTextElement?.outerHTML}</div>
+      <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
     </div>
   `);
   // Appending header div to the block

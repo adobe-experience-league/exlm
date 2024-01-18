@@ -1,3 +1,6 @@
+.browse-rail {
+    display: none;
+}
 .browse-rail .browse-more-products a {
     color: var(--non-spectrum-dark-navy-blue);
     margin: 20px 0 24px 0;
@@ -113,4 +116,9 @@
 }
 .browse-rail a[href="javascript:void(0)"] {
     cursor: default;
+}
+@media only screen and (min-width: 900px) {
+    .browse-rail {
+        display: block;
+    }
 }
