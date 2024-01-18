@@ -205,6 +205,10 @@ button.browse-filters-clear:disabled:hover {
   transition: all .5s ease-in-out;
 }
 
+.browse-hide-section {
+  display: none !important;
+}
+
 .browse-filters-results-header {
   display: flex;
   justify-content: space-between;

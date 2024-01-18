@@ -73,15 +73,28 @@ function hideSectionsBelowFilter(block, show) {
   }
 }
 
+function hildeSectionsWithinFilter(block, show) {
+  const siblings = Array.from(block.children);
+
+  // eslint-disable-next-line no-plusplus
+  for (let i = 1; i < siblings.length; i++) {
+    const classOp = show ? 'remove' : 'add';
+    siblings[i].classList?.[classOp]('browse-hide-section');
+  }
+}
+
 function updateClearFilterStatus(block) {
   const searchEl = block.querySelector('.filter-input-search > input[type="search"]');
   const clearFilterBtn = block.querySelector('.browse-filters-clear');
+  const browseFiltersSection = document.querySelector('.browse-filters-form');
   if (tagsProxy.length !== 0 || searchEl.value) {
     clearFilterBtn.disabled = false;
     hideSectionsBelowFilter(block, false);
+    hildeSectionsWithinFilter(browseFiltersSection, true);
   } else {
     clearFilterBtn.disabled = true;
     hideSectionsBelowFilter(block, true);
+    hildeSectionsWithinFilter(browseFiltersSection, false);
   }
 }
 
@@ -364,7 +377,7 @@ function clearSelectedFilters(block) {
   clearAllSelectedTag(block);
   clearSearchQuery(block);
   updateClearFilterStatus(block);
-  window.location.hash = '';
+  window.history.replaceState(null, null, ' ');
 }
 
 function handleClearFilter(block) {
@@ -421,6 +434,7 @@ function handleUriHash() {
   if (!hash) {
     clearAllSelectedTag(browseFiltersSection);
     updateClearFilterStatus(browseFiltersSection);
+    hildeSectionsWithinFilter(browseFiltersSection, false);
     searchInput.value = '';
     return;
   }
@@ -475,6 +489,7 @@ function handleUriHash() {
     searchInput.value = '';
   }
   updateClearFilterStatus(browseFiltersSection);
+  hildeSectionsWithinFilter(browseFiltersSection, true);
   window.headlessSearchEngine.executeFirstSearch();
 }
 

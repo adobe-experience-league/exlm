@@ -34,7 +34,7 @@ export const contentType = [
   },
   {
     title: 'Courses',
-    value: 'Courses',
+    value: 'Course',
     description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
   },
   {
@@ -44,7 +44,7 @@ export const contentType = [
   },
   {
     title: 'On-Demand Events',
-    value: 'On-Demand Events',
+    value: 'Event',
     description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
   },
   {
