@@ -16,7 +16,7 @@ import {
   getMetadata,
   loadScript,
 } from './lib-franklin.js';
-import { adobeDataLayerTrack, webPageDetails, docs, microsite } from './analytics/lib-analytics.js';
+import { pageLoadModel, linkClickModel } from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
@@ -421,6 +421,19 @@ async function loadRails() {
   }
 }
 
+function loadAnalyticsEvents() {
+  const linkClicked = document.querySelectorAll('a');
+  linkClicked.forEach((linkElement) => {
+    linkElement.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log(e);
+      if (e.target.tagName === 'A') {
+        linkClickModel(e);
+      }
+    });
+  });
+}
+
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
@@ -431,20 +444,8 @@ async function loadPage() {
   });
   loadDelayed();
   loadPrevNextBtn();
-  adobeDataLayerTrack({
-    event: 'page loaded',
-    web: {
-      webPageDetails: await webPageDetails(
-        '',
-        // eslint-disable-next-line no-void
-        void 0,
-        // eslint-disable-next-line no-void
-        void 0,
-        // eslint-disable-next-line no-nested-ternary
-        docs ? 'docs' : microsite ? 'microsite' : 'learn',
-      ),
-    },
-  });
+  window.adobeDataLayer.push(pageLoadModel());
+  loadAnalyticsEvents();
 }
 
 loadPage();
