@@ -7,4 +7,3 @@ scripts/analytics/alloy.js
 scripts/analytics/alloy.min.js
 scripts/preact-htm/**
 scripts/feedback/qualtrics/qualtrics-embed.js
-scripts/analytics/launch-worker.js
