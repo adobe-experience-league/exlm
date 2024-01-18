@@ -4,7 +4,7 @@ export function pageLoadModel() {
     web: {
       webPageDetails: {
         URL: window.location.href,
-        cleanURL: 'experienceleague.adobe.com/#home',
+        cleanURL: window.location.href.replace(/^https?:\/\//, ''),
         domain: window.location.host,
         mainSiteSection: '',
         name: document.title,
