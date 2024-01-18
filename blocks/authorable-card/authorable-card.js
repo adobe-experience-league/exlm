@@ -62,7 +62,7 @@ export default async function decorate(block) {
         .handleArticleDataService(link)
         .then(async (data) => {
           block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-            el.classList.add('hide-shimmer');
+            el.remove();
           });
 
           const cardData = await mapResultToCardsData(data, placeholders);
@@ -73,7 +73,7 @@ export default async function decorate(block) {
         })
         .catch(() => {
           block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-            el.classList.add('hide-shimmer');
+            el.remove();
           });
         });
     }
@@ -87,6 +87,6 @@ export default async function decorate(block) {
   });
   linksContainer.forEach((el) => contentDiv.appendChild(el));
 
-  buildCardsShimmer = new BuildPlaceholder(numberOfCards, block);
-  buildCardsShimmer.setParent(contentDiv);
+  buildCardsShimmer = new BuildPlaceholder();
+  buildCardsShimmer.show(block);
 }

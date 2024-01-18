@@ -136,11 +136,11 @@ export default async function decorate(block) {
 
     return filteredResults;
   };
-  const buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
+  const buildCardsShimmer = new BuildPlaceholder();
 
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
-    buildCardsShimmer.show();
+    buildCardsShimmer.show(block);
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
     browseCardsContent
       .then((data) => {
@@ -171,8 +171,6 @@ export default async function decorate(block) {
   const linkDiv = htmlToElement(`
     <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
   `);
-
-  buildCardsShimmer.setParent(contentDiv);
   block.appendChild(linkDiv);
 
   const rolesDropdown = block.querySelector('.roles-dropdown');

@@ -50,7 +50,8 @@ export default async function decorate(block) {
     contentDiv = document.createElement('div');
     contentDiv.classList.add('browse-cards-block-content', 'tabbed-cards-block');
 
-    buildCardsShimmer = new BuildPlaceholder(numberOfResults, block);
+    buildCardsShimmer = new BuildPlaceholder();
+    buildCardsShimmer.show(block);
   }
 
   // Function to convert a string to title case
@@ -87,7 +88,6 @@ export default async function decorate(block) {
             contentDiv.appendChild(cardDiv);
           }
           // Append content div to shimmer card parent and decorate icons
-          buildCardsShimmer.setParent(contentDiv);
           decorateIcons(tabbedBlock);
         } else {
           buildCardsShimmer.hide();
@@ -146,7 +146,7 @@ export default async function decorate(block) {
           placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkMappingKey)}Link`],
         );
         tabList.appendChild(viewLinkURLElement);
-        buildCardsShimmer.show();
+        buildCardsShimmer.show(block);
         fetchDataAndRenderBlock(tabLabelData, block);
       });
       tabListUlElement.appendChild(tabLabel);
@@ -164,7 +164,7 @@ export default async function decorate(block) {
     // Append tab list and Shimmer Card after Tab Label
     const shimmerClass = block.querySelector('.browse-card-shimmer');
     block.insertBefore(tabList, shimmerClass);
-    buildCardsShimmer.show();
+    buildCardsShimmer.show(block);
 
     const viewLinkInitialMappingKey = placeholders[`${initialContentType}LabelKey`];
 
