@@ -649,7 +649,7 @@ async function handleSearchEngineSubscription() {
     });
   } else {
     buildCardsShimmer.hide();
-    filterResultsEl.innerHTML = placeholders.noResultsTextBrowse;
+    filterResultsEl.innerHTML = placeholders.noResultsTextBrowse || 'No Results';
     document.querySelector('.browse-filters-form').classList.remove('is-result');
     filterResultsEl.classList.add('no-results');
   }
