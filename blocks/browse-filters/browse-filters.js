@@ -641,7 +641,8 @@ async function handleSearchEngineSubscription() {
     });
   } else {
     buildCardsShimmer.hide();
-    filterResultsEl.innerHTML = 'We’re sorry, no results found matching the criteria. Try adjusting your search to view more content.';
+    filterResultsEl.innerHTML =
+      'We’re sorry, no results found matching the criteria. Try adjusting your search to view more content.';
     document.querySelector('.browse-filters-form').classList.remove('is-result');
     filterResultsEl.classList.add('no-results');
   }
