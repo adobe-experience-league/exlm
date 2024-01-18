@@ -10,9 +10,13 @@ export function pageLoadModel() {
         name: document.title,
         pageLanguage: window.document.getElementsByTagName('html')[0].getAttribute('lang') || 'en',
         pageName: `xl${window.location.pathname.replace('/', ':').replace('-', ' ')}`,
-        pageType: 'webpage',
+        pageType: document.querySelector('meta[name="type"]')
+          ? document.querySelector('meta[name="type"]').content
+          : 'webpage',
         pageViews: { value: 1 },
-        prevPage: '',
+        prevPage: document.querySelector('meta[name="prev-page"]')
+          ? document.querySelector('meta[name="prev-page"]').content
+          : '',
         userAgent: window.navigator.userAgent,
         previousPageName: '',
         recordid: '',
