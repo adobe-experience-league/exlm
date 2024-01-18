@@ -9,7 +9,7 @@ export function pageLoadModel() {
         mainSiteSection: '',
         name: document.title,
         pageLanguage: window.document.getElementsByTagName('html')[0].getAttribute('lang') || 'en',
-        pageName: `xl${window.location.pathname.replace('/', ':').replace('-', ' ')}`,
+        pageName: `xl${window.location.pathname.replaceAll('/', ':').replaceAll('-', ' ')}`,
         pageType: document.querySelector('meta[name="type"]')
           ? document.querySelector('meta[name="type"]').content
           : 'webpage',
