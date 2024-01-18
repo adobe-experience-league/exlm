@@ -32,7 +32,7 @@ const BrowseCardsDelegate = (() => {
       numberOfValues: facet.currentValues?.length || 2,
       currentValues: facet.currentValues.map((value) => ({
         value,
-        state: (value === 'community' ? 'idle' : 'selected'),
+        state: value === 'community' ? 'idle' : 'selected',
         ...(value === 'community' ? COMMUNITY_SEARCH_FACET : []),
       })),
     }));
