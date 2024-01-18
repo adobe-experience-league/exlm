@@ -404,6 +404,16 @@ button.browse-tags:focus {
   display: flex;
 }
 
+.browse-filters-results.no-results {
+  background-color: var(--spectrum-gray-200);
+  color: var(--non-spectrum-grey);
+  font-size: 16px;
+  min-height: 346px;
+  padding-top: 72px;
+  text-align: center;
+  width: 100%;
+}
+
 .browse-filters-form:not(.is-result) .browse-filters-results {
   grid-template-columns: auto;
   color: var(--spectrum-gray-700);
