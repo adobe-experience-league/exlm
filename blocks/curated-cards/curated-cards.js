@@ -61,8 +61,8 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
   const tooltipElem = block.querySelector('.tooltip-placeholder');
   const tooltipConfig = {
-    content: toolTipElement?.textContent.trim()
-  }
+    content: toolTipElement?.textContent.trim(),
+  };
   createTooltip(block, tooltipElem, tooltipConfig);
 
   await decorateIcons(headerDiv);
