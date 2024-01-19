@@ -10,6 +10,7 @@ export function pageLoadModel() {
         'adobeid_ims_profile/ExperienceLeague_Dev/false/AdobeID,account_cluster.read,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session'
       ],
     );
+    user.userDetails = {};
     user.userDetails.userAccountType = userData.account_type;
     user.userDetails.userAuthenticatedStatus = 'logged in';
     user.userDetails.userID = userData.userId || '';
