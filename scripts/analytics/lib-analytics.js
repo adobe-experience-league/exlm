@@ -70,7 +70,7 @@ export function linkClickModel(e) {
   let linkTarget = '';
   if (e.target.parentElement.className.indexOf('marquee-cta') !== -1 && window.location.pathname === '/') {
     linkTarget = 'banner-homepage';
-  } else if (document.querySelector('.is-active').closest('.browse-rail')) {
+  } else if (e.target.closest('.browse-rail')) {
     linkTarget = 'docs-right-sidebar';
   }
 
