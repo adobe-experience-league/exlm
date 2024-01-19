@@ -310,6 +310,9 @@
   max-width: 155px;
   z-index: 1;
 }
+.browse-card .tooltip .tooltip-text {
+  text-transform: uppercase;
+}
 .browse-cards-block-title .tooltip.tooltip-top .tooltip-text,
 .browse-card .tooltip.tooltip-top .tooltip-text {
   transform: translateX(-45%);
