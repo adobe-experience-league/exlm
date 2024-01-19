@@ -48,9 +48,7 @@ export default async function decorate(block) {
           <h2>${headingElement?.textContent?.trim()}</h2>
           ${
             toolTipElement.textContent
-              ? `<div class="tooltip-placeholder">
-              <span class="icon icon-info"></span><span class="tooltip-text"></span>
-            </div>`
+              ? '<div class="tooltip-placeholder"></div>'
               : ''
           }
       </div>
@@ -59,11 +57,14 @@ export default async function decorate(block) {
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
+
   const tooltipElem = block.querySelector('.tooltip-placeholder');
-  const tooltipConfig = {
-    content: toolTipElement?.textContent.trim(),
-  };
-  createTooltip(block, tooltipElem, tooltipConfig);
+  if (tooltipElem) {
+    const tooltipConfig = {
+      content: toolTipElement.textContent.trim(),
+    };
+    createTooltip(block, tooltipElem, tooltipConfig);
+  }  
 
   await decorateIcons(headerDiv);
 

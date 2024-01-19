@@ -1,6 +1,7 @@
 import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import createTooltip from '../../scripts/browse-card/browse-card-tooltip.js';
 import ArticleDataService from '../../scripts/data-service/article-data-service.js';
 import mapResultToCardsData from './article-data-adapter.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
@@ -27,9 +28,7 @@ export default async function decorate(block) {
           <h2>${headingElement?.textContent.trim()}</h2>
           ${
             toolTipElement.textContent
-              ? `<div class="tooltip">
-              <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
-            </div>`
+              ? '<div class="tooltip-placeholder"></div>'
               : ''
           }
       </div>
@@ -80,6 +79,15 @@ export default async function decorate(block) {
   });
 
   block.appendChild(headerDiv);
+
+  const tooltipElem = block.querySelector('.tooltip-placeholder');
+  if (tooltipElem) {
+    const tooltipConfig = {
+      content: toolTipElement.textContent.trim(),
+    };
+    createTooltip(block, tooltipElem, tooltipConfig);
+  }
+
   Array.from(block.children).forEach((child) => {
     if (!child.className) {
       block.removeChild(child);

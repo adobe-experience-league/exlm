@@ -4,6 +4,8 @@ import { htmlToElement, decorateExternalLinks } from '../../scripts/scripts.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
+import createTooltip from '../../scripts/browse-card/browse-card-tooltip.js';
+
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -33,14 +35,24 @@ export default async function decorate(block) {
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
         <h2>${headingElementContent}</h2>
-        <div class="tooltip">
-          <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElementContent}</span>
-        </div>
+        ${
+          toolTipElementContent.textContent
+            ? '<div class="tooltip-placeholder"></div>'
+            : ''
+        }
       </div>
     </div> 
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
+
+  const tooltipElem = block.querySelector('.tooltip-placeholder');
+  if (tooltipElem) {
+    const tooltipConfig = {
+      content: toolTipElementContent.textContent.trim(),
+    };
+    createTooltip(block, tooltipElem, tooltipConfig);
+  }
 
   // Authored Initial Content type
   const initialContentType = tabsLabels[0];
