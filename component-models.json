@@ -394,7 +394,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "cardLink",
+        "name": "cardLinkUrl",
         "value": "",
         "label": "Link URL",
         "description": "Sets the link URL for Card."
