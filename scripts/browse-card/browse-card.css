@@ -1,5 +1,4 @@
 .browse-card {
-  position: relative;
   background-color: var(--background-color);
   border: 1px solid var(--spectrum-gray-200);
   display: flex;

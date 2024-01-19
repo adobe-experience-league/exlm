@@ -1,5 +1,6 @@
 import { loadCSS, fetchPlaceholders } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
+import createTooltip from './browse-card-tooltip.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
 
 /* User Info for Community Section - Will accomodate once we have KHOROS integration */
@@ -188,17 +189,22 @@ export async function buildCard(element, model) {
   cardFigure.appendChild(bannerElement);
 
   if (product) {
-    const tagElement = createTag('div', { class: 'browse-card-tag-text' });
+    let tagElement;    
     if (product.length > 1) {
-      tagElement.innerHTML = `<h4>${
-        placeholders.multiSolutionText || 'multisolution'
-      }</h4><div class="tooltip tooltip-top tooltip-grey">
-        <span class="icon icon-info"></span><span class="tooltip-text">${product.join(', ')}</span>
-      </div>`;
+      tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${placeholders.multiSolutionText || 'multisolution'}</h4><div class="tooltip-placeholder"></div>`);      
+      cardContent.appendChild(tagElement);
+      const tooltipElem = cardContent.querySelector('.tooltip-placeholder');
+      const tooltipConfig = {
+        position: 'top',
+        color: 'grey',
+        content: product.join(', ')
+      }
+      const container = element.closest('.browse-cards-block-content');
+      createTooltip(container, tooltipElem, tooltipConfig);
     } else {
-      tagElement.innerHTML = `<h4>${product.join(', ')}</h4>`;
-    }
-    cardContent.appendChild(tagElement);
+      tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${product.join(', ')}</h4>`);
+      cardContent.appendChild(tagElement);
+    }    
   }
 
   if (title) {

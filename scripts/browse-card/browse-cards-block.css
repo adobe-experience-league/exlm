@@ -2,7 +2,6 @@
     min-height: 532px;
 }
 .browse-cards-block .tooltip {
-    position: relative;
     margin: 0 0 0 9px;
 }
 .browse-cards-block .browse-card .tooltip {
@@ -22,7 +21,7 @@
     color: var(--spectrum-gray-50);
     display: inline-block;
     font-size: 12px;
-    left: 100%;
+    left: -999px;
     line-height: 15px;
     margin-left: 10px;
     margin-top: -16px;
@@ -30,11 +29,21 @@
     padding: 4px 9px 5px 10px;
     position: absolute;
     text-align: center;
-    top: 50%;
+    top: 0;
     transition: opacity 0.3s;
     visibility: hidden;
     width: max-content;
+    max-width: 155px;
     z-index: 1;
+}
+.browse-cards-block .tooltip.tooltip-top .tooltip-text {
+    transform: translateX(-45%);
+    margin-left: 0;
+    margin-top: 0;
+}
+.browse-cards-block .tooltip .tooltip-text.tooltip-visible{
+    visibility: visible;
+    opacity: 1;
 }
 .browse-cards-block .tooltip .tooltip-text::before {
     border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
@@ -47,15 +56,7 @@
     right: 100%;
     top: 50%;
 }
-.browse-cards-block .tooltip.tooltip-top .tooltip-text {
-    transform: translateX(-45%);
-    margin-left: 0;
-    margin-top: 0;
-    top: unset;
-    left: unset;
-    bottom: 125%;
-    max-width: 155px;
-}
+
 .browse-cards-block .tooltip.tooltip-top .tooltip-text::before {
     margin-top: 0;
     right: unset;
@@ -69,10 +70,6 @@
 }
 .browse-cards-block .tooltip.tooltip-grey .tooltip-text::before {
     border-color: transparent var(--non-spectrum-dim-gray) transparent transparent;
-}
-.browse-cards-block .tooltip:hover .tooltip-text {
-    opacity: 1;
-    visibility: visible;
 }
 .browse-cards-block-content {
     margin-top: 16px;
