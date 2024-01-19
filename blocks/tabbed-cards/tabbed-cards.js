@@ -35,11 +35,7 @@ export default async function decorate(block) {
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
         <h2>${headingElementContent}</h2>
-        ${
-          toolTipElementContent.textContent
-            ? '<div class="tooltip-placeholder"></div>'
-            : ''
-        }
+        ${toolTipElementContent.textContent ? '<div class="tooltip-placeholder"></div>' : ''}
       </div>
     </div> 
   `);

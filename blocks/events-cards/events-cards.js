@@ -40,11 +40,7 @@ export default async function decorate(block) {
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
           <h2>${headingElement?.textContent.trim()}</h2>
-          ${
-            toolTipElement.textContent
-              ? '<div class="tooltip-placeholder"></div>'
-              : ''
-          }
+          ${toolTipElement.textContent ? '<div class="tooltip-placeholder"></div>' : ''}
       </div>
       <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
     </div>
