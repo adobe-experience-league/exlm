@@ -593,7 +593,7 @@ function handleCoveoHeadlessSearch(
   block,
   { submitSearchHandler, searchInputKeyupHandler, searchInputKeydownHandler, searchInputEventHandler },
 ) {
-  buildCardsShimmer.hide();
+  buildCardsShimmer.remove();
   const filterResultsEl = createTag('div', { class: 'browse-filters-results' });
 
   const browseFiltersSection = block.querySelector('.browse-filters-form');
@@ -629,7 +629,7 @@ function handleCoveoHeadlessSearch(
 async function handleSearchEngineSubscription() {
   const filterResultsEl = document.querySelector('.browse-filters-results');
   const browseFilterForm = document.querySelector(CLASS_BROWSE_FILTER_FORM);
-  buildCardsShimmer.show(browseFilterForm);
+  buildCardsShimmer.add(browseFilterForm);
   browseFilterForm.insertBefore(document.querySelector('.shimmer-placeholder'), browseFilterForm.childNodes[3]);
   if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
     return;
@@ -638,7 +638,7 @@ async function handleSearchEngineSubscription() {
   const search = window.headlessSearchEngine.state.search;
   const { results } = search;
   if (results.length > 0) {
-    buildCardsShimmer.hide();
+    buildCardsShimmer.remove();
     const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
     filterResultsEl.innerHTML = '';
     cardsData.forEach((cardData) => {
@@ -650,7 +650,7 @@ async function handleSearchEngineSubscription() {
       decorateIcons(cardDiv);
     });
   } else {
-    buildCardsShimmer.hide();
+    buildCardsShimmer.remove();
     filterResultsEl.innerHTML = placeholders.noResultsTextBrowse || 'No Results';
     document.querySelector('.browse-filters-form').classList.remove('is-result');
     filterResultsEl.classList.add('no-results');

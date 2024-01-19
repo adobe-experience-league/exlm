@@ -18,6 +18,8 @@ const BrowseCardsDelegate = (() => {
    */
   let param = {};
 
+  const COMMUNITY_PARAM_TYPE = 'hierarchical';
+
   /**
    * Constructs Coveo facet structure based on provided facets.
    * @param {Array} facets - An array of facet objects.
@@ -33,7 +35,7 @@ const BrowseCardsDelegate = (() => {
       currentValues: facet.currentValues.map((value) => ({
         value,
         state: value === 'community' ? 'idle' : 'selected',
-        ...(value === 'community' ? COMMUNITY_SEARCH_FACET : []),
+        ...(value === 'community' ? { children: COMMUNITY_SEARCH_FACET } : []),
       })),
     }));
     return facetsArray;
@@ -72,7 +74,7 @@ const BrowseCardsDelegate = (() => {
         ? [
             {
               id: 'el_contenttype',
-              type: param.contentType[0] === 'community' ? 'hierarchical' : 'specific',
+              type: param.contentType[0] === 'community' ? COMMUNITY_PARAM_TYPE : 'specific',
               currentValues: param.contentType,
             },
           ]

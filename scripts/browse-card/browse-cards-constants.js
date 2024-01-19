@@ -51,23 +51,21 @@ export const ROLE_OPTIONS = Object.freeze({
   USER: 'User',
 });
 
-export const COMMUNITY_SEARCH_FACET = Object.freeze({
-  children: [
-    {
-      value: 'Questions',
-      state: 'selected',
-    },
-    {
-      value: 'Discussions',
-      state: 'selected',
-    },
-    {
-      value: 'Ideas',
-      state: 'selected',
-    },
-    {
-      value: 'Blogs',
-      state: 'selected',
-    },
-  ],
-});
+export const COMMUNITY_SEARCH_FACET = Object.freeze([
+  {
+    value: 'Questions',
+    state: 'selected',
+  },
+  {
+    value: 'Discussions',
+    state: 'selected',
+  },
+  {
+    value: 'Ideas',
+    state: 'selected',
+  },
+  {
+    value: 'Blogs',
+    state: 'selected',
+  },
+]);

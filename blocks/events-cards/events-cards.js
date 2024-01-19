@@ -62,14 +62,14 @@ export default async function decorate(block) {
   };
 
   const buildCardsShimmer = new BuildPlaceholder();
-  buildCardsShimmer.show(block);
+  buildCardsShimmer.add(block);
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(parameters);
   browseCardsContent
     .then((data) => {
       // eslint-disable-next-line no-use-before-define
       const filteredLiveEventsData = fetchFilteredCardData(data, solutionsParam);
-      buildCardsShimmer.hide();
+      buildCardsShimmer.remove();
       if (filteredLiveEventsData?.length) {
         for (let i = 0; i < Math.min(noOfResults, filteredLiveEventsData.length); i += 1) {
           const cardData = filteredLiveEventsData[i];
@@ -81,7 +81,7 @@ export default async function decorate(block) {
       }
     })
     .catch((err) => {
-      buildCardsShimmer.hide();
+      buildCardsShimmer.remove();
       // eslint-disable-next-line no-console
       console.error('Events Cards:', err);
     });

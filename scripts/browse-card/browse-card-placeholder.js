@@ -25,11 +25,11 @@ export default class BuildPlaceholder {
     }
   }
 
-  show(block) {
+  add(block) {
     block.append(this.shimmer);
   }
 
-  hide() {
+  remove() {
     this.shimmer.remove();
   }
 }

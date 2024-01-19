@@ -140,13 +140,13 @@ export default async function decorate(block) {
 
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
-    buildCardsShimmer.show(block);
+    buildCardsShimmer.add(block);
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
     browseCardsContent
       .then((data) => {
         /* eslint-disable-next-line */
         data = filterResults(data, contentType);
-        buildCardsShimmer.hide();
+        buildCardsShimmer.remove();
 
         if (data?.length) {
           for (let i = 0; i < Math.min(4, data.length); i += 1) {
@@ -160,7 +160,7 @@ export default async function decorate(block) {
         }
       })
       .catch((err) => {
-        buildCardsShimmer.hide();
+        buildCardsShimmer.remove();
         /* eslint-disable-next-line no-console */
         console.error(err);
       });
