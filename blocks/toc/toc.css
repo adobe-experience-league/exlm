@@ -1,0 +1,120 @@
+.toc {
+    display: none;
+}
+
+.toc ul {
+    list-style: none;
+    margin-left: 0;
+}
+
+.toc p {
+    font-family: var(--body-font-family);
+    font-size: var(--exlm-font-size-content);
+    font-weight: var(--font-weight-400);
+    font-style: normal;
+    line-height: var(--spectrum-line-height-m);
+    color: var(--spectrum-gray-800);
+    margin: 0;
+}
+
+.toc ul li {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: var(--spectrum-sidenav-item-height, var(--spectrum-alias-single-line-height));
+    padding: var(--spectrum-sidenav-item-padding-y) var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150)) var(--spectrum-sidenav-item-padding-y) var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150));
+    margin: 4px 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.toc ul li ul {
+    display: none;
+    margin-left: 12px;
+}
+
+.toc ul li a[href^="#"] {
+    text-transform: uppercase;
+    font-weight: var(--spectrum-extra-bold-font-weight);
+}
+
+.toc ul li a {
+    width: 100%;
+    display: inline-block;
+    position: relative;
+}
+
+.toc li>a.js-toggle {
+    position: relative;
+    cursor: pointer;
+    flex: 12%;
+}
+
+.toc a.js-toggle:after {
+    position: absolute;
+    right: 0%;
+    top: 38%;
+    display: flex;
+    width: 6px;
+    height: 6px;
+    border-width: 0 2px 2px 0;
+    border-style: solid;
+    transform-origin: 75% 75%;
+    transform: rotateZ(45deg);
+    transition: transform 0.1s ease;
+    content: "";
+    box-sizing: content-box;
+}
+
+.toc a.js-toggle.collapsed:after {
+    transform: rotateZ(-135deg);
+}
+
+.toc ul li ul li a {
+    text-transform: none;
+}
+
+.toc ul li a,
+.toc ul li ul li a {
+    font-size: var(--spectrum-font-size-100);
+    line-height: 21px;
+    min-height: 32px;
+    box-sizing: border-box;
+    margin: 0;
+    border-radius: 4px;
+    padding: 5px 0 5px 12px;
+    color: var(--spectrum-gray-700);
+}
+
+.toc ul li.hidden {
+    display: none;
+}
+
+.toc>ul>li>ul a:hover,
+.toc>ul>li>ul a.is-active,
+.toc>ul>li a.is-active {
+    background-color: var(--spectrum-gray-200);
+    border-radius: 4px;
+}
+
+.toc>ul>li>a {
+    font-size: var(--spectrum-font-size-75);
+    font-weight: bold;
+    flex: 88%;
+}
+
+.toc .left-rail-view-more a,
+.toc .left-rail-view-less a {
+    font-size: var(--spectrum-font-size-100);
+    cursor: pointer;
+    text-transform: none;
+}
+
+.toc a[href="javascript:void(0)"] {
+    cursor: default;
+}
+
+@media only screen and (min-width: 900px) {
+    .toc {
+        display: block;
+    }
+}
