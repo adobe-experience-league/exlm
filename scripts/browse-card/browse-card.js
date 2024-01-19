@@ -189,21 +189,25 @@ export async function buildCard(container, element, model) {
   cardFigure.appendChild(bannerElement);
 
   if (product) {
-    let tagElement;    
+    let tagElement;
     if (product.length > 1) {
-      tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${placeholders.multiSolutionText || 'multisolution'}</h4><div class="tooltip-placeholder"></div>`);      
+      tagElement = createTag(
+        'div',
+        { class: 'browse-card-tag-text' },
+        `<h4>${placeholders.multiSolutionText || 'multisolution'}</h4><div class="tooltip-placeholder"></div>`,
+      );
       cardContent.appendChild(tagElement);
       const tooltipElem = cardContent.querySelector('.tooltip-placeholder');
       const tooltipConfig = {
         position: 'top',
         color: 'grey',
-        content: product.join(', ')
-      }
+        content: product.join(', '),
+      };
       createTooltip(container, tooltipElem, tooltipConfig);
     } else {
       tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${product.join(', ')}</h4>`);
       cardContent.appendChild(tagElement);
-    }    
+    }
   }
 
   if (title) {
