@@ -66,7 +66,7 @@ export default async function decorate(block) {
           });
 
           const cardData = await mapResultToCardsData(data, placeholders);
-          await buildCard(linksContainer[i], cardData);
+          await buildCard(contentDiv, linksContainer[i], cardData);
           contentDiv.appendChild(linksContainer[i]);
           decorateIcons(block);
           linksContainer[i].children[0].remove();

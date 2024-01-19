@@ -268,6 +268,88 @@
   height: 12px;
   width: 11px;
 }
+/* Tootip for Browse Card Block Title and Browse Card */
+.browse-cards-block-title .tooltip {
+  margin: 0 0 0 9px;
+}
+.browse-card .tooltip {
+  margin: 2px 0 0 5px;
+  display: inline-flex;
+}
+.browse-cards-block-title .tooltip .icon-info{
+  width: 15px;
+  height: 15px;
+}
+.browse-card .tooltip .icon-info {
+  width: 14px;
+  height: 14px;
+}
+.browse-cards-block-title .tooltip svg,
+.browse-card .tooltip svg {
+  pointer-events: none;
+}
+.browse-cards-block-title .tooltip .tooltip-text,
+.browse-card .tooltip .tooltip-text {
+  background-color: var(--non-spectrum-royal-blue);
+  border-radius: 4px;
+  color: var(--spectrum-gray-50);
+  display: inline-block;
+  font-size: 12px;
+  left: -999px;
+  line-height: 15px;
+  margin-left: 10px;
+  margin-top: -16px;
+  opacity: 0;
+  padding: 4px 9px 5px 10px;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  transition: opacity 0.3s;
+  visibility: hidden;
+  width: max-content;
+  max-width: 155px;
+  z-index: 1;
+}
+.browse-cards-block-title .tooltip.tooltip-top .tooltip-text,
+.browse-card .tooltip.tooltip-top .tooltip-text {
+  transform: translateX(-45%);
+  margin-left: 0;
+  margin-top: 0;
+}
+.browse-cards-block-title .tooltip .tooltip-text.tooltip-visible,
+.browse-card .tooltip .tooltip-text.tooltip-visible {
+  visibility: visible;
+  opacity: 1;
+}
+.browse-cards-block-title .tooltip .tooltip-text::before,
+.browse-card .tooltip .tooltip-text::before {
+  border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
+  border-style: solid;
+  border-width: 4px;
+  content: "";
+  display: inline-block;
+  margin-top: -4px;
+  position: absolute;
+  right: 100%;
+  top: 50%;
+}
+.browse-cards-block-title .tooltip.tooltip-top .tooltip-text::before,
+.browse-card .tooltip.tooltip-top .tooltip-text::before {
+  margin-top: 0;
+  right: unset;
+  top: unset;
+  left: calc(50% - 4px);
+  bottom: -8px;
+  transform: rotate(-90deg);
+}
+.browse-cards-block-title .tooltip.tooltip-grey .tooltip-text,
+.browse-card .tooltip.tooltip-grey .tooltip-text {
+  background-color: var(--non-spectrum-dim-gray);
+}
+.browse-cards-block-title .tooltip.tooltip-grey .tooltip-text::before,
+.browse-card .tooltip.tooltip-grey .tooltip-text::before {
+  border-color: transparent var(--non-spectrum-dim-gray) transparent transparent;
+}
 @media only screen and (min-width: 900px) {
   .browse-card.tutorial-card .browse-card-figure {
     max-height: 199px;

@@ -60,7 +60,7 @@ export default async function decorate(block) {
         for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
           const cardData = data[i];
           const cardDiv = document.createElement('div');
-          buildCard(cardDiv, cardData);
+          buildCard(contentDiv, cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
         buildCardsShimmer.setParent(contentDiv);

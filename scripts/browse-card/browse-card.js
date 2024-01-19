@@ -159,7 +159,7 @@ const setupCopyAction = (wrapper) => {
   });
 };
 
-export async function buildCard(element, model) {
+export async function buildCard(container, element, model) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
   const { thumbnail, product, title, contentType, badgeTitle } = model;
   const type = contentType?.toLowerCase();
@@ -199,7 +199,6 @@ export async function buildCard(element, model) {
         color: 'grey',
         content: product.join(', ')
       }
-      const container = element.closest('.browse-cards-block-content');
       createTooltip(container, tooltipElem, tooltipConfig);
     } else {
       tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${product.join(', ')}</h4>`);
