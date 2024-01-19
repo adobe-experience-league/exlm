@@ -85,12 +85,13 @@ export default async function decorate(block) {
     noOfResults,
   };
 
-  const buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
+  const buildCardsShimmer = new BuildPlaceholder();
+  buildCardsShimmer.add(block);
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent
     .then((data) => {
-      buildCardsShimmer.hide();
+      buildCardsShimmer.remove();
       if (data?.length) {
         const contentDiv = document.createElement('div');
         contentDiv.classList.add('browse-cards-block-content');
@@ -101,12 +102,11 @@ export default async function decorate(block) {
           buildCard(contentDiv, cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
-        buildCardsShimmer.setParent(contentDiv);
         decorateIcons(contentDiv);
       }
     })
     .catch((err) => {
-      buildCardsShimmer.hide();
+      buildCardsShimmer.remove();
       /* eslint-disable-next-line no-console */
       console.error(err);
     });
