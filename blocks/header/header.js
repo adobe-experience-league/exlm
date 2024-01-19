@@ -298,14 +298,14 @@ const searchDecorator = async (searchBlock) => {
   const searchWrapper = htmlToElement(
     `<div class="search-wrapper">
       <div class="search-short">
-        <a href="https://experienceleague.adobe.com/search.html">
+        <a href="https://experienceleague.adobe.com/search.html" aria-label="Search">
           <span class="icon icon-search search-icon"></span>
         </a>
       </div>
       <div class="search-full">
         <div class="search-container">
           <span title="Search" class="icon icon-search"></span>
-          <input autocomplete="off" class="search-input" type="text" title="Insert a query. Press enter to send" role="combobox" placeholder="${
+          <input autocomplete="off" class="search-input" type="text" aria-label="top-nav-combo-search" aria-expanded="false" title="Insert a query. Press enter to send" role="combobox" placeholder="${
             searchPlaceholder.textContent
           }">
           <span title="Clear" class="icon icon-clear search-clear-icon"></span>
@@ -530,6 +530,7 @@ const productGridDecorator = async (productGridBlock) => {
  */
 const adobeLogoDecorator = (adobeLogoBlock) => {
   simplifySingleCellBlock(adobeLogoBlock);
+  adobeLogoBlock.querySelector('a').setAttribute('title', 'logo');
   return adobeLogoBlock;
 };
 

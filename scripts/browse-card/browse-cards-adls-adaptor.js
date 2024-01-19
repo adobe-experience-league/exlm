@@ -1,16 +1,14 @@
 import { fetchPlaceholders } from '../lib-franklin.js';
 import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
+import { adlsRedirectUrl } from '../urls.js';
 
 /**
  * Module that provides functionality for adapting ADLS results to BrowseCards data model
  * @module BrowseCardsADLSAdaptor
  */
 const BrowseCardsADLSAdaptor = (() => {
-  let placeholders;
-
-  // Placeholder for ViewLinkCourse
-  const viewLinkTextPlaceholder = 'viewLinkCourse';
+  let placeholders = {};
   /**
    * Maps a result to the BrowseCards data model.
    * @param {Object} result - The result object.
@@ -27,9 +25,9 @@ const BrowseCardsADLSAdaptor = (() => {
       product: solution,
       title: name || '',
       description: description || '',
-      copyLink: path || '',
-      viewLink: path || '',
-      viewLinkText: placeholders[viewLinkTextPlaceholder],
+      copyLink: adlsRedirectUrl + path || '',
+      viewLink: adlsRedirectUrl + path || '',
+      viewLinkText: placeholders.viewLinkCourse || 'View course',
     };
   };
 
@@ -39,7 +37,12 @@ const BrowseCardsADLSAdaptor = (() => {
    * @returns {Promise<Array>} A promise that resolves with an array of BrowseCards data models.
    */
   const mapResultsToCardsData = async (data) => {
-    placeholders = await fetchPlaceholders();
+    try {
+      placeholders = await fetchPlaceholders();
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching placeholders:', err);
+    }
     return data.map((result) => mapResultToCardsDataModel(result));
   };
 

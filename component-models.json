@@ -318,7 +318,7 @@
         "valueType": "string",
         "options": [
           {
-            "name": "default",
+            "name": "hyperlink",
             "value": ""
           },
           {
@@ -394,7 +394,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "cardLink",
+        "name": "cardLinkUrl",
         "value": "",
         "label": "Link URL",
         "description": "Sets the link URL for Card."
@@ -994,14 +994,15 @@
         "name": "heading",
         "value": "",
         "label": "Heading",
-        "description": "Sets the heading for Browse Filters."
+        "description": "Sets the heading for topics."
       },
       {
-        "component": "text-area",
+        "component": "aem-tag",
+        "name": "cq:tags",
+        "label": "Topics & Features",
         "valueType": "string",
-        "name": "description",
-        "value": "",
-        "label": "Sets the description for Browse Filters"
+        "rootPath": "/content/cq:tags/exl",
+        "description": "Select up to 15 topics."
       }
     ]
   },
@@ -1274,6 +1275,104 @@
             "value": "descending"
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "tabbed-cards",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "tooltip",
+        "value": "",
+        "label": "Tooltip",
+        "description": "Sets the tooltip."
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "contentTypes",
+        "label": "Filter by Content Type",
+        "description": "Select the content type(s).",
+        "options": [
+          {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "On-Demand Events",
+            "value": "event"
+          },
+          {
+            "name": "Community Posts",
+            "value": "community"
+          },
+          {
+            "name": "Certification",
+            "value": "certification"
+          }
+        ]
+      },
+      {
+        "component": "radio-group",
+        "name": "sortBy",
+        "value": "most_recent",
+        "label": "Sort by",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Most Recent",
+            "value": "most_recent"
+          },
+          {
+            "name": "Most Popular",
+            "value": "most_popular"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tabs",
+    "fields": []
+  },
+  {
+    "id": "tab",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "text-area",
+        "valueType": "string",
+        "name": "content",
+        "value": "",
+        "label": "Body"
       }
     ]
   }

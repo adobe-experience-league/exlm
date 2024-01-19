@@ -10,7 +10,7 @@ export const CONTENT_TYPES = Object.freeze({
   },
   EVENT: {
     MAPPING_KEY: 'event',
-    LABEL: 'Event',
+    LABEL: 'On-Demand Event',
   },
   COMMUNITY: {
     MAPPING_KEY: 'community',
@@ -22,7 +22,7 @@ export const CONTENT_TYPES = Object.freeze({
   },
   INSTRUCTOR_LED_TRANING: {
     MAPPING_KEY: 'instructor-led-training',
-    LABEL: 'Instructor Led Training',
+    LABEL: 'Instructor-Led',
   },
   CERTIFICATION: {
     MAPPING_KEY: 'certification',
@@ -42,4 +42,11 @@ export const COVEO_SORT_OPTIONS = Object.freeze({
   RELEVANCE: 'relevancy',
   MOST_RECENT: 'date descending',
   MOST_POPULAR: '@el_view_count descending',
+});
+
+export const ROLE_OPTIONS = Object.freeze({
+  ADMIN: 'Admin',
+  DEVELOPER: 'Developer',
+  LEADER: 'Leader',
+  USER: 'User',
 });

@@ -8,6 +8,10 @@ div.marquee-wrapper {
   margin-right: calc(-1 * var(--space-token-xs));
 }
 
+body[class ^= 'browse-'] .section div.marquee-wrapper {
+  margin-bottom: 40px;
+}
+
 .marquee {
   position: relative;
 }
@@ -35,8 +39,8 @@ div.marquee-wrapper {
 .marquee-text {
   position: relative;
   z-index: 2;
-  padding: 32px 20px;
-
+  padding: 30px 16px;
+  background-color: var(--background-color);
 }
 
 .marquee-eyebrow {
@@ -148,9 +152,13 @@ div.marquee-wrapper {
 
 
 @media (min-width: 600px) {
-  div.marquee-wrapper {
-    margin-left: calc(-1 * var(--spectrum-spacing-500));
-    margin-right: calc(-1 * var(--spectrum-spacing-500));
+  .section.marquee-container {
+    padding: 0 56px;
+  }
+
+  .section div.marquee-wrapper {
+    margin-left: calc(-1 * var(--space-token-xl));
+    margin-right: calc(-1 * var(--space-token-xl));
   }
 
   .marquee-subject {
@@ -161,6 +169,7 @@ div.marquee-wrapper {
   .marquee-subject img {
     position: relative;
     z-index: 2;
+    max-width: 400px;
   }
 
   .marquee-background {
@@ -176,8 +185,13 @@ div.marquee-wrapper {
     transform: translate(-320px, 70px) scale(3);
   }
 
+  .marquee-foreground {
+    min-height: 420px;
+  }
+
   .marquee-text {
-    padding: var(--space-token-l) var(--space-token-xxl);
+    padding: var(--space-token-m) var(--space-token-xl);
+    background-color: var(--background-color);
   }
 
   .marquee-cta {
@@ -201,6 +215,7 @@ div.marquee-wrapper {
   }
 
   .marquee-foreground {
+    padding: 0 var(--space-token-xl);
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -208,9 +223,11 @@ div.marquee-wrapper {
  }
 
   .marquee-text {
+    padding: 0;
     width: 50%;
     max-width: 500px;
     margin: auto 0;
+    background: none ;
   }
 
   .marquee-title {
@@ -307,8 +324,9 @@ div.marquee-wrapper {
   body[class ^= 'browse-'] .marquee-subject {
     min-width: unset;
     min-height: unset;
-    height: 300px;
     width: 400px;
+    transform:scale(1.2);
+    z-index: 1;
   }
 
   body[class ^= 'browse-'] .marquee-subject img {
@@ -322,6 +340,12 @@ div.marquee-wrapper {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
     box-sizing: border-box;
+    background-color: var(--background-color);
+  }
+
+  body[class ^= 'browse-'] .section div.marquee-wrapper .marquee-background svg{
+    min-width: 130%;
+    min-height: 0%;
   }
 }
 

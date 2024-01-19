@@ -15,18 +15,28 @@ import {
   decorateButtons,
   getMetadata,
   loadScript,
-  toClassName,
 } from './lib-franklin.js';
-import {
-  analyticsTrack404,
-  analyticsTrackConversion,
-  analyticsTrackCWV,
-  analyticsTrackError,
-  initAnalyticsTrackingQueue,
-  setupAnalyticsTrackingWithAlloy,
-} from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
+
+export const timers = new Map();
+
+// eslint-disable-next-line
+export function debounce(id = '', fn = () => void 0, ms = 250) {
+  if (id.length > 0) {
+    if (timers.has(id)) {
+      clearTimeout(timers.get(id));
+    }
+
+    timers.set(
+      id,
+      setTimeout(() => {
+        timers.delete(id);
+        fn();
+      }, ms),
+    );
+  }
+}
 
 /**
  * load fonts.css and set a session storage flag
@@ -102,7 +112,7 @@ export function buildSyntheticBlocks(main) {
  * return browse page theme if its browse page otherwise undefined.
  * theme = browse-* is set in bulk metadata for /en/browse paths.
  */
-export function getBrowsePage() {
+export function isBrowsePage() {
   const theme = getMetadata('theme');
   return theme.split(',').find((t) => t.toLowerCase().startsWith('browse-'));
 }
@@ -112,9 +122,16 @@ export function getBrowsePage() {
  */
 function addBrowseRail(main) {
   const leftRailSection = document.createElement('div');
-  leftRailSection.classList.add('browse-rail', getBrowsePage());
+  leftRailSection.classList.add('browse-rail', isBrowsePage());
   leftRailSection.append(buildBlock('browse-rail', []));
   main.append(leftRailSection);
+}
+
+function addBrowseBreadCrumb(main) {
+  // add new section at the top
+  const section = document.createElement('div');
+  main.prepend(section);
+  section.append(buildBlock('browse-breadcrumb', []));
 }
 
 /**
@@ -125,7 +142,8 @@ function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
     // if we are on a product browse page
-    if (getBrowsePage()) {
+    if (isBrowsePage()) {
+      addBrowseBreadCrumb(main);
       addBrowseRail(main);
     }
   } catch (error) {
@@ -193,7 +211,6 @@ async function loadEager(doc) {
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
-    await initAnalyticsTrackingQueue();
     decorateMain(main);
     document.body.classList.add('appear');
     await waitForLCP(LCP_BLOCKS);
@@ -265,16 +282,6 @@ async function loadLazy(doc) {
   loadFonts();
 
   sampleRUM('lazy');
-  sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
-  sampleRUM.observe(main.querySelectorAll('picture > img'));
-
-  const context = {
-    getMetadata,
-    toClassName,
-  };
-  // eslint-disable-next-line import/no-relative-packages
-  const { initConversionTracking } = await import('../plugins/rum-conversion/src/index.js');
-  await initConversionTracking.call(context, document);
 }
 
 /**
@@ -366,6 +373,27 @@ export function loadPrevNextBtn() {
 }
 
 /**
+ * Copies all meta tags to window.EXL_META
+ * These are consumed by Qualtrics to pass additional data along with the feedback survey.
+ */
+function addMetaTagsToWindow() {
+  window.EXL_META = {};
+
+  document.querySelectorAll('meta').forEach((tag) => {
+    if (
+      typeof tag.name === 'string' &&
+      tag.name.length > 0 &&
+      typeof tag.content === 'string' &&
+      tag.content.length > 0
+    ) {
+      window.EXL_META[tag.name] = tag.content;
+    }
+  });
+
+  window.EXL_META.lang = document.documentElement.lang;
+}
+
+/**
  * Loads everything that happens a lot later,
  * without impacting the user experience.
  */
@@ -373,6 +401,9 @@ function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
+  // eslint-disable-next-line import/no-cycle
+  addMetaTagsToWindow();
+  // eslint-disable-next-line import/no-cycle
   if (isDocPage()) window.setTimeout(() => import('./feedback/feedback.js'), 3000);
 }
 
@@ -393,77 +424,24 @@ async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadRails();
-  const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
   loadDelayed();
-  await setupAnalytics;
   loadPrevNextBtn();
 }
 
-const cwv = {};
-
-// Forward the RUM CWV cached measurements to edge using WebSDK before the page unloads
-window.addEventListener('beforeunload', () => {
-  if (!Object.keys(cwv).length) return;
-  analyticsTrackCWV(cwv);
-});
-
-// Callback to RUM CWV checkpoint in order to cache the measurements
-sampleRUM.always.on('cwv', async (data) => {
-  if (!data.cwv) return;
-  Object.assign(cwv, data.cwv);
-});
-
-sampleRUM.always.on('404', analyticsTrack404);
-sampleRUM.always.on('error', analyticsTrackError);
-
-// Declare conversionEvent, bufferTimeoutId and tempConversionEvent,
-// outside the convert function to persist them for buffering between
-// subsequent convert calls
-const CONVERSION_EVENT_TIMEOUT_MS = 100;
-let bufferTimeoutId;
-let conversionEvent;
-let tempConversionEvent;
-sampleRUM.always.on('convert', (data) => {
-  const { element } = data;
-  // eslint-disable-next-line no-undef
-  if (!element || !alloy) {
-    return;
-  }
-
-  if (element.tagName === 'FORM') {
-    conversionEvent = {
-      ...data,
-      event: 'Form Complete',
-    };
-
-    if (
-      conversionEvent.event === 'Form Complete' &&
-      // Check for undefined, since target can contain value 0 as well, which is falsy
-      (data.target === undefined || data.source === undefined)
-    ) {
-      // If a buffer has already been set and tempConversionEvent exists,
-      // merge the two conversionEvent objects to send to alloy
-      if (bufferTimeoutId && tempConversionEvent) {
-        conversionEvent = { ...tempConversionEvent, ...conversionEvent };
-      } else {
-        // Temporarily hold the conversionEvent object until the timeout is complete
-        tempConversionEvent = { ...conversionEvent };
-
-        // If there is partial form conversion data,
-        // set the timeout buffer to wait for additional data
-        bufferTimeoutId = setTimeout(async () => {
-          analyticsTrackConversion({ ...conversionEvent });
-          tempConversionEvent = undefined;
-          conversionEvent = undefined;
-        }, CONVERSION_EVENT_TIMEOUT_MS);
-      }
-    }
-    return;
-  }
-
-  analyticsTrackConversion({ ...data });
-  tempConversionEvent = undefined;
-  conversionEvent = undefined;
-});
-
 loadPage();
+
+/**
+ * Helper function that converts an AEM path into an EDS path.
+ */
+export function getEDSLink(aemPath) {
+  return window.hlx.aemRoot ? aemPath.replace(window.hlx.aemRoot, '').replace('.html', '') : aemPath;
+}
+
+/**
+ * Helper function that adapts the path to work on EDS and AEM rendering
+ */
+export function getLink(edsPath) {
+  return window.hlx.aemRoot && !edsPath.startsWith(window.hlx.aemRoot) && edsPath.indexOf('.html') === -1
+    ? `${window.hlx.aemRoot}${edsPath}.html`
+    : edsPath;
+}

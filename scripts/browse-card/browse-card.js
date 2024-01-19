@@ -1,4 +1,4 @@
-import { loadCSS } from '../lib-franklin.js';
+import { loadCSS, fetchPlaceholders } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
 
@@ -19,23 +19,11 @@ import { CONTENT_TYPES } from './browse-cards-constants.js';
 //         </div>`);
 // };
 
-const getTimeString = (date) => {
-  const hrs = date.getHours();
-  const timePeriod = hrs < 12 ? 'AM' : 'PM';
-  const hours = hrs === 0 ? 12 : hrs % 12;
-  return `${hours}:${date.getMinutes().toString().padStart(2, '0')} ${timePeriod}`;
-};
-
-const generateDateWithTZ = (time) => {
-  const date = new Date(time);
-  return new Date(date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })); // TODO: apply localization once region selection is in place
-};
-
 const buildTagsContent = (cardMeta, tags = []) => {
   tags.forEach((tag) => {
     const { icon: iconName, text } = tag;
     if (text) {
-      const anchor = createTag('a', { class: 'browse-card-meta-anchor' });
+      const anchor = createTag('a', { class: 'browse-card-meta-anchor', title: 'user', href: '#' });
       const span = createTag('span', { class: `icon icon-${iconName}` });
       anchor.textContent = text;
       anchor.appendChild(span);
@@ -44,20 +32,30 @@ const buildTagsContent = (cardMeta, tags = []) => {
   });
 };
 
+let placeholders = {};
+try {
+  placeholders = await fetchPlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
+// Default No Results Content from Placeholder
+export const buildNoResultsContent = (block) => {
+  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
+  const noResultsInfo = htmlToElement(`
+    <div class="browse-card-no-results">${placeholders.noResultsText}</div>
+  `);
+  block.appendChild(noResultsInfo);
+};
+
 const buildEventContent = ({ event, cardContent, card }) => {
-  const { startTime, endTime } = event;
-  const dateInfo = generateDateWithTZ(startTime);
-  const endDateInfo = generateDateWithTZ(endTime);
-
-  const weekday = dateInfo.toLocaleDateString('en-US', { weekday: 'long' });
-  const month = dateInfo.toLocaleDateString('en-US', { month: 'long' });
-
+  const { time } = event;
   const eventInfo = htmlToElement(`
     <div class="browse-card-event-info">
         <span class="icon icon-time"></span>
         <div class="browse-card-event-time">
-            <h6>${weekday}, ${month} ${dateInfo.getDate()}</h6>
-            <h6>${getTimeString(dateInfo)} - ${getTimeString(endDateInfo)} PDT</h6>
+            <h6>${time}</h6>
         </div>
     </div>
   `);
@@ -70,7 +68,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
   let isLeftPlacement = false;
   if (contentType === 'tutorial') {
     icon = 'play-outline';
-    isLeftPlacement = true;
+    isLeftPlacement = false;
   } else if (
     contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY ||
     contentType === CONTENT_TYPES.EVENT.MAPPING_KEY ||
@@ -95,7 +93,6 @@ const buildCardContent = (card, model) => {
   const contentType = type.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
   const cardFooter = card.querySelector('.browse-card-footer');
-  const { matches: isDesktopResolution } = window.matchMedia('(min-width: 900px)');
 
   if (description) {
     const stringContent = description.length > 100 ? `${description.substring(0, 100).trim()}...` : description;
@@ -108,15 +105,11 @@ const buildCardContent = (card, model) => {
   const cardMeta = document.createElement('div');
   cardMeta.classList.add('browse-card-meta-info');
 
-  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
+  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY || contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
     buildTagsContent(cardMeta, tags);
   }
-  if (isDesktopResolution) {
-    cardContent.appendChild(cardMeta);
-  } else {
-    const titleEl = card.querySelector('.browse-card-title-text');
-    cardContent.insertBefore(cardMeta, titleEl);
-  }
+
+  cardContent.appendChild(cardMeta);
 
   /* User Info for Community Section - Will accomodate once we have KHOROS integration */
   // if (contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
@@ -133,13 +126,16 @@ const buildCardContent = (card, model) => {
   }
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
-  if (copyLink) {
-    const copyLinkAnchor = createTag('a', { href: copyLink }, `<span class="icon icon-copy"></span>`);
-    cardOptions.appendChild(copyLinkAnchor);
-  }
-  if (contentType !== CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY) {
-    const bookmarkAnchor = createTag('a', {}, `<span class="icon icon-bookmark"></span>`);
+  if (
+    contentType !== CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY &&
+    contentType !== CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
+  ) {
+    const bookmarkAnchor = createTag('a', { href: '#', title: 'copy' }, `<span class="icon icon-bookmark"></span>`);
     cardOptions.appendChild(bookmarkAnchor);
+  }
+  if (copyLink) {
+    const copyLinkAnchor = createTag('a', { href: copyLink, title: 'copy' }, `<span class="icon icon-copy"></span>`);
+    cardOptions.appendChild(copyLinkAnchor);
   }
   cardFooter.appendChild(cardOptions);
   buildCardCtaContent({ cardFooter, contentType, viewLink, viewLinkText });
@@ -162,7 +158,7 @@ const setupCopyAction = (wrapper) => {
   });
 };
 
-export default async function buildCard(element, model) {
+export async function buildCard(element, model) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
   const { thumbnail, product, title, contentType, badgeTitle } = model;
   const type = contentType?.toLowerCase();
@@ -179,6 +175,11 @@ export default async function buildCard(element, model) {
   if ((type === courseMappingKey || type === tutorialMappingKey) && thumbnail) {
     const img = document.createElement('img');
     img.src = thumbnail;
+    img.loading = 'lazy';
+    img.alt = title;
+    img.width = 254;
+    img.height = 153;
+    cardFigure.classList.add('img-custom-height');
     cardFigure.appendChild(img);
   }
 

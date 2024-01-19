@@ -102,7 +102,7 @@
   .media.block {
     flex-flow: row nowrap;
     align-items: center;
-    gap: var(--spectrum-spacing-500);
+    gap: var(--space-token-xxl);
   }
 
   /* the image */
@@ -136,10 +136,12 @@
 }
 
 /* when enough width set fixed image size */
-@media (min-width: 800px) {
+@media (min-width: 900px) {
   .media.block > .image img {
-    width: 400px;
-    height: 300px;
+    width: 500px;
+    height: 375px;
+    max-width: none;
+    max-height: none;
   }
 }
 

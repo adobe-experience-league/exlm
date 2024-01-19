@@ -279,6 +279,8 @@
   --spectrum-alias-text-color-hover: var(--spectrum-global-color-gray-900);
 
   /* Non-Spectrum custom colors */
+  --non-spectrum-grey-100: #f9f9f9;
+  --non-spectrum-grey-333: #333;
   --non-spectrum-eerie-black: #1e1e1e;
   --non-spectrum-custom-dark: #363636;
   --non-spectrum-dark-charcoal: #323232;
@@ -290,6 +292,7 @@
   --non-spectrum-grey-updated: #6e6e6e;
   --non-spectrum-link: #0265dc;
   --non-spectrum-navy-blue: #1473e6;
+  --non-spectrum-dark-navy-blue: #0265dc;
   --non-spectrum-article-light-gray: #d3d3d3;
   --non-spectrum-article-dark-gray: #505050;
   --non-spectrum-bg: #fafafa;
@@ -307,20 +310,24 @@
   --non-spectrum-neo-blue: #0265dc;
   --non-spectrum-royal-blue: #0d66d0;
   --non-spectrum-light-coral: #73b53a;
+  --non-spectrum-dark-coral: #007c0f;
   --non-spectrum-dim-gray: #747474;
   --non-spectrum-dim-orange: #e2a43e;
-  --non-spectrum-victoria-blue: #46a8f7;
+  --non-spectrum-victoria-blue: #147af3;
   --non-spectrum-lime-green: #12805c;
-  --non-spectrum-royal-crest: #f46700;
-  --non-spectrum-dark-princess-pink: #d83790;
-  --non-spectrum-frost-bite: #962af0;
-  --non-spectrum-cyan-paprika: #004396;
-  --non-spectrum-venetian-green: #00c001;
-  --non-spectrum-bright-cyan: #00a6aa;
+  --non-spectrum-royal-crest: #e46f00;
+  --non-spectrum-dark-princess-pink: #c82269;
+  --non-spectrum-darker-princess-pink: #ad0955;
+  --non-spectrum-frost-bite: #893de7;
+  --non-spectrum-cyan-paprika: #004491;
+  --non-spectrum-venetian-green: #27bb36;
+  --non-spectrum-bright-cyan: #00a19a;
+  --non-spectrum-light-cyan: #20a3a8;
   --non-spectrum-azure-blue: #378ef0;
   --non-spectrum-silver-mist: #d2d2d2;
   --non-spectrum-link-blue: #378ef0;
-  --non-spectrum-max-width: 1440px;
+  --non-spectrum-max-width: 1280px;
+  --non-spectrum-footer-max-width: 1440px;
 
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
@@ -337,6 +344,7 @@
 
   /* Box Shadows */
   --box-shadow-1: 0 0.5em 1em -0.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
+  --box-shadow-2: 0px 8px 16px #0000001a;
 
   /* exlm default fonts definition - Mobile */
   --exlm-font-size-h1: var(--spectrum-heading-size-xl);
@@ -625,6 +633,21 @@ img {
 .section {
   padding: 30px 16px;
 
+  &.browse-filters-container[data-section-status='loading'],
+  &.browse-filters-container[data-section-status='initialized'],
+  &.curated-cards-container[data-section-status='loading'],
+  &.curated-cards-container[data-section-status='initialized'],
+  &.events-cards-container[data-section-status='loading'],
+  &.events-cards-container[data-section-status='initialized'],
+  &.adls-cards-container[data-section-status='loading'],
+  &.adls-cards-container[data-section-status='initialized'],
+  &.authorable-card-container[data-section-status='loading'],
+  &.authorable-card-container[data-section-status='initialized'],
+  &.featured-cards-container[data-section-status='loading'],
+  &.featured-cards-container[data-section-status='initialized'] {
+    visibility: hidden;
+  }
+
   &.article-metadata-createdby-container h1 {
     line-height: var(--spectrum-line-height-xxl);
 
@@ -649,7 +672,40 @@ img {
   }
 
   @include breakpoint(tablet) {
-    padding: 30px 32px 32px;
+    padding: 30px 56px;
+  }
+}
+
+/* the browse rail is hidden by default */
+main > div.browse-rail {
+  display: none;
+}
+
+/* browse rail breakpoint same as main hamburger menu */
+@media (width >=1024px) {
+  body[class^='browse-'] > main {
+    display: grid;
+    grid-template:
+      'browse-rail main'
+      / 256px 1fr;
+
+    /* on pages with rails the max width must be on main */
+    max-width: var(--non-spectrum-max-width);
+    margin: auto;
+    grid-template-rows: auto auto;
+  }
+
+  main > div.section {
+    grid-column: 2;
+  }
+
+  main > div.section.browse-rail {
+    display: initial;
+    grid-column: 1;
+    grid-row: 1 / infinite;
+    width: 224px;
+    height: 100%;
+    padding: 0 0 0 32px;
   }
 }
 

@@ -1,8 +1,8 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import buildCard from '../../scripts/browse-card/browse-card.js';
-import buildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 /**
  * Decorate function to process and log the mapped data.
@@ -12,7 +12,7 @@ export default async function decorate(block) {
   // Extracting elements from the block
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
-  const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
+  const linkTextElement = block.querySelector('div:nth-child(3) > div');
   const solutions = block.querySelector('div:nth-child(4) > div').textContent.trim();
   const roles = block.querySelector('div:nth-child(5) > div').textContent.trim();
   const sortBy = block.querySelector('div:nth-child(6) > div').textContent.trim();
@@ -26,12 +26,16 @@ export default async function decorate(block) {
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
-          <h4>${headingElement?.textContent.trim()}</h4>
-          <div class="tooltip">
-            <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
-          </div>
+          <h2>${headingElement?.textContent.trim()}</h2>
+          ${
+            toolTipElement.textContent
+              ? `<div class="tooltip">
+              <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
+            </div>`
+              : ''
+          }
       </div>
-      <div class="browse-cards-block-view">${linkTextElement?.outerHTML}</div>
+      <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
     </div>
   `);
   // Appending header div to the block
@@ -46,13 +50,12 @@ export default async function decorate(block) {
     contentType,
   };
 
-  block.innerHTML += buildPlaceholder;
+  const buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
+
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent
     .then((data) => {
-      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-        el.remove();
-      });
+      buildCardsShimmer.hide();
       if (data?.length) {
         for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
           const cardData = data[i];
@@ -60,15 +63,12 @@ export default async function decorate(block) {
           buildCard(cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
-
-        block.appendChild(contentDiv);
+        buildCardsShimmer.setParent(contentDiv);
         decorateIcons(block);
       }
     })
     .catch((err) => {
-      block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-        el.remove();
-      });
+      buildCardsShimmer.hide();
       /* eslint-disable-next-line no-console */
       console.error(err);
     });
