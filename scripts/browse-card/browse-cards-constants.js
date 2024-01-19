@@ -50,3 +50,22 @@ export const ROLE_OPTIONS = Object.freeze({
   LEADER: 'Leader',
   USER: 'User',
 });
+
+export const COMMUNITY_SEARCH_FACET = Object.freeze([
+  {
+    value: 'Questions',
+    state: 'selected',
+  },
+  {
+    value: 'Discussions',
+    state: 'selected',
+  },
+  {
+    value: 'Ideas',
+    state: 'selected',
+  },
+  {
+    value: 'Blogs',
+    state: 'selected',
+  },
+]);

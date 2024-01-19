@@ -7,6 +7,8 @@ import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.
 
 let numberOfCards = 4;
 let buildCardsShimmer = '';
+let shimmerElement = '';
+const CLASS_SHIMMER_PLACEHOLDER = '.shimmer-placeholder';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -61,10 +63,8 @@ export default async function decorate(block) {
       articleDataService
         .handleArticleDataService(link)
         .then(async (data) => {
-          block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-            el.classList.add('hide-shimmer');
-          });
-
+          shimmerElement = block.querySelector(CLASS_SHIMMER_PLACEHOLDER);
+          shimmerElement.remove();
           const cardData = await mapResultToCardsData(data, placeholders);
           await buildCard(linksContainer[i], cardData);
           contentDiv.appendChild(linksContainer[i]);
@@ -72,9 +72,9 @@ export default async function decorate(block) {
           linksContainer[i].children[0].remove();
         })
         .catch(() => {
-          block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-            el.classList.add('hide-shimmer');
-          });
+          if (shimmerElement) {
+            shimmerElement.remove();
+          }
         });
     }
   });
@@ -86,7 +86,6 @@ export default async function decorate(block) {
     }
   });
   linksContainer.forEach((el) => contentDiv.appendChild(el));
-
-  buildCardsShimmer = new BuildPlaceholder(numberOfCards, block);
-  buildCardsShimmer.setParent(contentDiv);
+  buildCardsShimmer = new BuildPlaceholder();
+  buildCardsShimmer.add(block);
 }
