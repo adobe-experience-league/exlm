@@ -33,6 +33,12 @@ export function pageLoadModel() {
         domain: window.location.host,
         mainSiteSection: '',
         name: document.title,
+        gitEdit: document.querySelector('meta[name="git-edit"]')
+          ? document.querySelector('meta[name="git-edit"]').content
+          : '',
+        exlId: document.querySelector('meta[name="exl-id"]')
+          ? document.querySelector('meta[name="exl-id"]').content
+          : '',
         pageLanguage: window.document.getElementsByTagName('html')[0].getAttribute('lang') || 'en',
         pageName: `xl${window.location.pathname.replaceAll('/', ':').replaceAll('-', ' ')}`,
         pageType: document.querySelector('meta[name="type"]')
