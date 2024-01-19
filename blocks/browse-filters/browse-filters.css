@@ -205,10 +205,6 @@ button.browse-filters-clear:disabled:hover {
   transition: all .5s ease-in-out;
 }
 
-.browse-hide-section {
-  display: none !important;
-}
-
 .browse-filters-results-header {
   display: flex;
   justify-content: space-between;
@@ -227,6 +223,10 @@ button.browse-filters-clear:disabled:hover {
   justify-content: center;
   align-items: center;
   min-height: 36px;
+}
+
+.browse-hide-section {
+  display: none;
 }
 
 button.browse-tags:hover,
