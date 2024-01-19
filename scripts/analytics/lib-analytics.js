@@ -70,17 +70,17 @@ export function linkClickModel(e) {
   window.adobeDataLayer.push({
     event: 'linkClicked',
     link: {
-      destinationDomain: '<Link HREF Value>',
+      destinationDomain: e.target.href,
       linkLocation: '<Position of link on page>',
-      linkTitle: '<name of the link clicked>',
+      linkTitle: e.target.title || '',
       linkType: '<’other’ || ‘exit’ || ‘download’>',
       solution: '<Adobe Solution link pertains to>',
     },
     web: {
       webInteraction: {
-        URL: '<Link HREF Value>',
+        URL: e.target.href,
         linkClicks: { value: 1 },
-        name: '<name of the link clicked>',
+        name: e.target.innerHTML,
         type: '<’other’ || ‘exit’ || ‘download’>',
       },
     },
