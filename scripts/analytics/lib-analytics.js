@@ -97,7 +97,4 @@ export function linkClickModel(e) {
       },
     },
   });
-  window.setTimeout(() => {
-    window.location.href = e.target.href;
-  }, 1000);
 }
