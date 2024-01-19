@@ -225,6 +225,10 @@ button.browse-filters-clear:disabled:hover {
   min-height: 36px;
 }
 
+.browse-hide-section {
+  display: none;
+}
+
 button.browse-tags:hover,
 button.browse-tags:focus {
   background-color: var(--background-color);
