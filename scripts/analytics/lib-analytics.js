@@ -67,21 +67,33 @@ export function pageLoadModel() {
 export function linkClickModel(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
+  let linkTarget = '';
+  if (e.target.parentElement.className.indexOf('marquee-cta') !== -1 && window.location.pathname === '/') {
+    linkTarget = 'banner-homepage';
+  } else if (document.querySelector('.is-active').closest('.browse-rail')) {
+    linkTarget = 'docs-right-sidebar';
+  }
+
   window.adobeDataLayer.push({
     event: 'linkClicked',
     link: {
       destinationDomain: e.target.href,
-      linkLocation: '<Position of link on page>',
+      linkLocation: linkTarget,
       linkTitle: e.target.title || '',
-      linkType: '<’other’ || ‘exit’ || ‘download’>',
-      solution: '<Adobe Solution link pertains to>',
+      // set to other until we have examples of other types
+      linkType: 'Other',
+      solution:
+        document.querySelector('meta[name="solution"]') !== null
+          ? document.querySelector('meta[name="solution"]').content.split(',')[0].trim()
+          : '',
     },
     web: {
       webInteraction: {
         URL: e.target.href,
         linkClicks: { value: 1 },
         name: e.target.innerHTML,
-        type: '<’other’ || ‘exit’ || ‘download’>',
+        // set to other until we have examples of other types
+        type: 'Other',
       },
     },
   });
