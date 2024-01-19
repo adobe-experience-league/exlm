@@ -74,6 +74,12 @@ export function linkClickModel(e) {
     linkTarget = 'docs-right-sidebar';
   }
 
+  let linkType = 'other';
+
+  if (e.target.href.match(/.(zip|dmg|exe)$/)) {
+    linkType = 'download';
+  }
+
   window.adobeDataLayer.push({
     event: 'linkClicked',
     link: {
@@ -81,7 +87,7 @@ export function linkClickModel(e) {
       linkLocation: linkTarget,
       linkTitle: e.target.title || '',
       // set to other until we have examples of other types
-      linkType: 'Other',
+      linkType,
       solution:
         document.querySelector('meta[name="solution"]') !== null
           ? document.querySelector('meta[name="solution"]').content.split(',')[0].trim()
