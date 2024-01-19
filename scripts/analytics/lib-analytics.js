@@ -1,4 +1,28 @@
 export function pageLoadModel() {
+  const user = {};
+  if (
+    sessionStorage[
+      'adobeid_ims_profile/ExperienceLeague_Dev/false/AdobeID,account_cluster.read,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session'
+    ]
+  ) {
+    const userData = JSON.parse(
+      sessionStorage[
+        'adobeid_ims_profile/ExperienceLeague_Dev/false/AdobeID,account_cluster.read,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session'
+      ],
+    );
+    user.userDetails.userAccountType = userData.account_type;
+    user.userDetails.userAuthenticatedStatus = 'logged in';
+    user.userDetails.userID = userData.userId || '';
+    user.userDetails.userLanguageSetting = userData.preferred_languages || ['en-us'];
+    user.userDetails.learningInterest = userData.interests || [];
+    user.userDetails.role = userData.role || [];
+    user.userDetails.experienceLevel = userData.level || [];
+    user.userDetails.industry = userData.industryInterests || [];
+    user.userDetails.notificationPref = userData.emailOptIn === true;
+    user.userDetails.org = userData.org || '';
+    user.userDetails.orgs = userData.orgs || [];
+  }
+
   return {
     event: 'page loaded',
     web: {
@@ -35,6 +59,7 @@ export function pageLoadModel() {
         type: document.querySelector('meta[name="type"]') ? document.querySelector('meta[name="type"]').content : '',
       },
     },
+    user,
   };
 }
 
