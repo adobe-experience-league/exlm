@@ -123,9 +123,8 @@ export default async function decorate(block) {
         });
       });
     }
-    const currentPagePath = window.location.pathname.replace(/\.html.*$/, '');
-    // Hightlight the current page title in the left rail
-    const targetElement = block.querySelector(`[href="${currentPagePath}"]`);
+    const currentURL = window.location.pathname;
+    const targetElement = block.querySelector(`a[href="${currentURL}.html?lang=en"]`);
     if (targetElement) {
       targetElement.classList.add('is-active');
     }
