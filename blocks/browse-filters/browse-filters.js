@@ -79,16 +79,24 @@ function hildeSectionsWithinFilter(block, show) {
 
   // eslint-disable-next-line no-plusplus
   for (let i = 1; i < siblings.length; i++) {
-    const classOp = show ? 'remove' : 'add';
-    siblings[i].classList?.[classOp]('browse-hide-section');
+    if (!siblings[i].classList.contains('browse-topics')) {
+      const classOp = show ? 'remove' : 'add';
+      siblings[i].classList?.[classOp]('browse-hide-section');
+    }
   }
 }
 
 function updateClearFilterStatus(block) {
   const searchEl = block.querySelector('.filter-input-search > input[type="search"]');
   const clearFilterBtn = block.querySelector('.browse-filters-clear');
+  const selectedTopics = Array.from(block.querySelectorAll('.browse-topics-item-active')).reduce((acc, curr) => {
+    const id = curr.dataset.topicname;
+    acc.push(id);
+    return acc;
+  }, []);
+  const hasActiveTopics = block.querySelector('.browse-topics') !== null && selectedTopics.length > 0;
   const browseFiltersSection = document.querySelector('.browse-filters-form');
-  if (tagsProxy.length !== 0 || searchEl.value) {
+  if (hasActiveTopics || tagsProxy.length !== 0 || searchEl.value) {
     clearFilterBtn.disabled = false;
     hideSectionsBelowFilter(block, false);
     hildeSectionsWithinFilter(browseFiltersSection, true);
@@ -378,7 +386,23 @@ function clearSelectedFilters(block) {
   clearAllSelectedTag(block);
   clearSearchQuery(block);
   updateClearFilterStatus(block);
-  window.location.hash = '';
+  const hash = window.location.hash.substr(1); // Remove the '#' character
+  let params = new URLSearchParams(hash);
+
+  // Get the value of 'aq'
+  const aqValue = params.get('aq');
+
+  // Clear all parameters
+  params = new URLSearchParams();
+
+  // Set only 'aq' with its value if it was present
+  if (aqValue !== null) {
+    params.set('aq', aqValue);
+  }
+
+  // Set the modified hash back to the URL
+  window.location.hash = params.toString();
+  // window.location.hash = '';
 }
 
 function handleClearFilter(block) {
@@ -722,6 +746,7 @@ function decorateBrowseTopics(block) {
 
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-topics-block-content');
+  const browseFiltersSection = document.querySelector('.browse-filters-form');
 
   if (allTopicsTags.length > 0) {
     allTopicsTags
@@ -741,6 +766,7 @@ function decorateBrowseTopics(block) {
         } else {
           e.target.classList.add('browse-topics-item-active');
         }
+        updateClearFilterStatus(browseFiltersSection);
         handleTopicSelection(contentDiv);
       }
     });
