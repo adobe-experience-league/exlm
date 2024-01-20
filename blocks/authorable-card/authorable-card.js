@@ -64,17 +64,16 @@ export default async function decorate(block) {
         .handleArticleDataService(link)
         .then(async (data) => {
           shimmerElement = block.querySelector(CLASS_SHIMMER_PLACEHOLDER);
-          shimmerElement.remove();
+          shimmerElement?.remove();
           const cardData = await mapResultToCardsData(data, placeholders);
           await buildCard(linksContainer[i], cardData);
           contentDiv.appendChild(linksContainer[i]);
           decorateIcons(block);
           linksContainer[i].children[0].remove();
+          block.appendChild(contentDiv);
         })
         .catch(() => {
-          if (shimmerElement) {
-            shimmerElement.remove();
-          }
+          shimmerElement?.remove();
         });
     }
   });

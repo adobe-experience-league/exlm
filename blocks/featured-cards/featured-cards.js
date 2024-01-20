@@ -155,7 +155,6 @@ export default async function decorate(block) {
             buildCard(cardDiv, cardData);
             contentDiv.appendChild(cardDiv);
           }
-
           decorateIcons(block);
         }
       })
@@ -171,6 +170,7 @@ export default async function decorate(block) {
   const linkDiv = htmlToElement(`
     <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
   `);
+  block.appendChild(contentDiv);
   block.appendChild(linkDiv);
 
   const rolesDropdown = block.querySelector('.roles-dropdown');

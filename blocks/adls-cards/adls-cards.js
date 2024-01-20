@@ -65,6 +65,7 @@ export default async function decorate(block) {
           contentDiv.appendChild(cardDiv);
         }
         decorateIcons(block);
+        block.appendChild(contentDiv);
       }
     })
     .catch((err) => {
