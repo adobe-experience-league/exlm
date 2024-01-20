@@ -268,14 +268,25 @@
   height: 12px;
   width: 11px;
 }
+.browse-card-no-results {
+  background: var(--spectrum-gray-200);
+  border-radius: 4px;
+  color: var(--non-spectrum-grey);
+  font-size: var(--spectrum-font-size-200);
+  line-height: 21px;
+  letter-spacing: normal;
+  padding: 74px 0;
+  text-align: center;
+  margin-top: 24px;
+}
 /* Tootip for Browse Card Block Title and Browse Card */
 .browse-cards-block-title .tooltip {
   display: inline;
   margin: 0 0 0 9px;
 }
 .browse-card .tooltip {
-  margin: 2px 0 0 5px;
   display: inline-flex;
+  margin: 2px 0 0 5px;
 }
 .browse-cards-block-title .tooltip .icon-info{
   width: 15px;
@@ -296,6 +307,7 @@
   color: var(--spectrum-gray-50);
   display: inline-block;
   font-size: 12px;
+  font-weight: normal;
   left: -999px;
   line-height: 15px;
   margin-left: 10px;
@@ -313,9 +325,11 @@
 }
 .browse-card .tooltip .tooltip-text {
   text-transform: uppercase;
+  font-size: 11px;
+  line-height: 14.3px;
 }
-.browse-cards-block-title .tooltip.tooltip-top .tooltip-text,
-.browse-card .tooltip.tooltip-top .tooltip-text {
+.browse-cards-block-title .tooltip-top .tooltip-text,
+.browse-card .tooltip-top .tooltip-text {
   transform: translateX(-45%);
   margin-left: 0;
   margin-top: 0;
@@ -337,8 +351,8 @@
   right: 100%;
   top: 50%;
 }
-.browse-cards-block-title .tooltip.tooltip-top .tooltip-text::before,
-.browse-card .tooltip.tooltip-top .tooltip-text::before {
+.browse-cards-block-title .tooltip-top .tooltip-text::before,
+.browse-card .tooltip-top .tooltip-text::before {
   margin-top: 0;
   right: unset;
   top: unset;
@@ -346,14 +360,15 @@
   bottom: -8px;
   transform: rotate(-90deg);
 }
-.browse-cards-block-title .tooltip.tooltip-grey .tooltip-text,
-.browse-card .tooltip.tooltip-grey .tooltip-text {
+.browse-cards-block-title .tooltip-grey .tooltip-text,
+.browse-card .tooltip-grey .tooltip-text {
   background-color: var(--non-spectrum-dim-gray);
 }
-.browse-cards-block-title .tooltip.tooltip-grey .tooltip-text::before,
-.browse-card .tooltip.tooltip-grey .tooltip-text::before {
+.browse-cards-block-title .tooltip-grey .tooltip-text::before,
+.browse-card .tooltip-grey .tooltip-text::before {
   border-color: transparent var(--non-spectrum-dim-gray) transparent transparent;
 }
+
 @media only screen and (min-width: 900px) {
   .browse-card.tutorial-card .browse-card-figure {
     max-height: 199px;
@@ -367,15 +382,4 @@
   .browse-card.course-card .browse-card-meta-info, .browse-card.course-card .browse-card-title-text {
     margin: 8px 0;
   }
-}
-.browse-card-no-results {
-  background: var(--spectrum-gray-200);
-  border-radius: 4px;
-  color: var(--non-spectrum-grey);
-  font-size: var(--spectrum-font-size-200);
-  line-height: 21px;
-  letter-spacing: normal;
-  padding: 74px 0;
-  text-align: center;
-  margin-top: 24px;
 }
