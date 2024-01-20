@@ -667,7 +667,7 @@ async function handleSearchEngineSubscription() {
   const filterResultsEl = document.querySelector('.browse-filters-results');
   const browseFilterForm = document.querySelector(CLASS_BROWSE_FILTER_FORM);
   buildCardsShimmer.add(browseFilterForm);
-  browseFilterForm.insertBefore(document.querySelector('.shimmer-placeholder'), browseFilterForm.childNodes[3]);
+  browseFilterForm.insertBefore(document.querySelector('.shimmer-placeholder'), browseFilterForm.childNodes[document.querySelector('.browse-topics') ?  4 : 3]);
   if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
     return;
   }
