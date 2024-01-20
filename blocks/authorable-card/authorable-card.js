@@ -73,7 +73,7 @@ export default async function decorate(block) {
           block.appendChild(contentDiv);
         })
         .catch(() => {
-            shimmerElement?.remove();
+          shimmerElement?.remove();
         });
     }
   });
