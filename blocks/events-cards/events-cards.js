@@ -77,6 +77,7 @@ export default async function decorate(block) {
           buildCard(cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
+        block.appendChild(contentDiv);
         decorateIcons(contentDiv);
       }
     })

@@ -88,4 +88,5 @@ export default async function decorate(block) {
   linksContainer.forEach((el) => contentDiv.appendChild(el));
   buildCardsShimmer = new BuildPlaceholder();
   buildCardsShimmer.add(block);
+  block.appendChild(contentDiv);
 }
