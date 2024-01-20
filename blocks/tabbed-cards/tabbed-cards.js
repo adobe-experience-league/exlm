@@ -13,8 +13,8 @@ import createTooltip from '../../scripts/browse-card/browse-card-tooltip.js';
 export default async function decorate(block) {
   // Extracting elements from the block
   const blockDataElements = [...block.querySelectorAll(':scope div > div')];
-  const headingElementContent = blockDataElements[0].innerHTML.trim();
-  const toolTipElementContent = blockDataElements[1].innerHTML.trim();
+  const headingElement = blockDataElements[0].innerHTML.trim();
+  const toolTipElement = blockDataElements[1].innerHTML.trim();
   const contentTypeListContent = blockDataElements[2].innerHTML?.trim()?.toLowerCase();
   const sortByContent = blockDataElements[3].innerHTML?.trim()?.toLowerCase();
   const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase()];
@@ -33,11 +33,14 @@ export default async function decorate(block) {
   // Creating the header div with title and tooltip
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
-      <div class="browse-cards-block-title">
-        <h2>${headingElementContent}</h2>
-        ${toolTipElementContent.textContent ? '<div class="tooltip-placeholder"></div>' : ''}
-      </div>
-    </div> 
+    ${headingElement?.textContent?.trim() ? 
+      `<div class="browse-cards-block-title">
+          <h2>
+            ${headingElement.textContent.trim()}${toolTipElement?.textContent?.trim() ? `<div class="tooltip-placeholder"></div>` : ''}
+          </h2>
+      </div>`
+      : ''}
+    </div>
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
@@ -45,7 +48,7 @@ export default async function decorate(block) {
   const tooltipElem = block.querySelector('.tooltip-placeholder');
   if (tooltipElem) {
     const tooltipConfig = {
-      content: toolTipElementContent.textContent.trim(),
+      content: toolTipElement.textContent.trim(),
     };
     createTooltip(block, tooltipElem, tooltipConfig);
   }

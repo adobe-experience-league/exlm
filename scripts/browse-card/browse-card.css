@@ -270,6 +270,7 @@
 }
 /* Tootip for Browse Card Block Title and Browse Card */
 .browse-cards-block-title .tooltip {
+  display: inline;
   margin: 0 0 0 9px;
 }
 .browse-card .tooltip {

@@ -26,13 +26,16 @@ export default async function decorate(block) {
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
-      <div class="browse-cards-block-title">
-          <h2>${headingElement?.textContent.trim()}</h2>
-          ${toolTipElement.textContent ? '<div class="tooltip-placeholder"></div>' : ''}
-      </div>
-      ${linkTextElement?.outerHTML}
-      </div>
-      `);
+    ${headingElement?.textContent?.trim() ? 
+      `<div class="browse-cards-block-title">
+          <h2>
+            ${headingElement.textContent.trim()}${toolTipElement?.textContent?.trim() ? `<div class="tooltip-placeholder"></div>` : ''}
+          </h2>
+      </div>`
+      : ''}
+      <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
+    </div>
+  `);
 
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');

@@ -4,7 +4,7 @@
  * @param {object} config - The config of the tooltip.
  */
 const createTooltip = (container, element, config) => {
-  const { position, color = 'blue', content } = config;
+  const { position = 'right', color = 'blue', content } = config;
 
   /**
    * Handles tooltip-related events (e.g., mouseover, mouseout, click).
@@ -21,14 +21,15 @@ const createTooltip = (container, element, config) => {
           tooltipText.style.top = `${element.offsetTop - container.scrollTop - tooltipText.offsetHeight - topSpacer}px`;
           tooltipText.style.left = `${element.offsetLeft - container.scrollLeft + leftSpacer}px`;
         } else {
-          tooltipText.style.top = `${element.offsetTop + tooltipText.offsetHeight / 2}px`;
+          tooltipText.style.top = `${element.offsetTop + tooltipText.offsetHeight / 2 + 12}px`;
           tooltipText.style.left = `${element.offsetLeft + element.offsetWidth}px`;
         }
       } else if (event.type === 'mouseout' || event.type === 'mouseleave') {
         tooltipText.classList.remove('tooltip-visible');
         tooltipText.style.left = '-999px';
       }
-    } catch (e) {
+    } catch {
+      // eslint-disable-next-line no-console
       console.error('Error on tooltip');
     }
   };

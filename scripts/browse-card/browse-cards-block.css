@@ -91,13 +91,16 @@
     margin: 0;
 }
 .browse-cards-block-title {
-    display: flex;
     margin: 0;
-    align-items: baseline;
 }
 .browse-cards-block-title h2 {
     margin: 0px;
     color: var(--text-color);
+    max-width: 300px;
+    word-break: break-word;
+}
+.browse-cards-block-title .tooltip-placeholder {
+    display: inline-block;
 }
 .browse-cards-block-view a {
     font-size: 18px;
@@ -105,6 +108,9 @@
     margin: 2px 0 0 0;
 }
 @media only screen and (min-width: 600px) {
+    .browse-cards-block-title h2 {
+        max-width: unset;
+    }
     .browse-cards-block-content {
         gap: 25px;
         overflow-x: auto;
