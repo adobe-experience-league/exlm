@@ -86,10 +86,10 @@ export default async function decorate(block) {
     const html = resp;
     const productName = getMetadata('original-solution');
     const themeColor = getMetadata('theme-color');
-    // console.log(themeColor);
 
     // decorate TOC DOM
     block.innerHTML = html;
+    block.parentElement.setAttribute('theme-color',themeColor);
     const ul = document.createElement('ul');
     ul.id = 'product';
     const li = document.createElement('li');
