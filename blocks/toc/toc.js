@@ -90,7 +90,7 @@ export default async function decorate(block) {
     // decorate TOC DOM
     block.innerHTML = html;
     block.parentElement.setAttribute('theme-color', themeColor);
-    block.classList.add(productName);
+    block.classList.add(productName.replace(/\s/g, ''));
     const ul = document.createElement('ul');
     ul.id = 'product';
     const li = document.createElement('li');
