@@ -393,7 +393,7 @@ strong {
   --spectrum-sidenav-item-background-color-hover: ButtonFace;
   --spectrum-alias-highlight-hover: rgb(0 0 0 / 6%);
   --spectrum-sidenav-item-text-color-hover: ButtonText;
-  --spectrum-alias-text-color-hover: var(--spectrum-global-color-gray-900);
+  --spectrum-alias-text-color-hover: rgb(var(--spectrum-global-color-gray-900-rgb));
   /* Non-Spectrum custom colors */
   --non-spectrum-grey-100: #f9f9f9;
   --non-spectrum-grey-333: #333;
@@ -908,6 +908,7 @@ main > div.browse-rail {
 .docs main > div {
   padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500) var(--spectrum-spacing-500);
   box-sizing: border-box;
+  border: 1px solid #EAEAEA;
 }
 .docs main > div.section {
   padding: 30px 2px;

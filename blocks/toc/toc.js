@@ -12,7 +12,7 @@ function toggleItemVisibility(itemList, startIndex, show) {
 function setLinkVisibility(block, linkClass, show) {
   const linkElement = block.querySelector(linkClass);
   if (linkElement) {
-    linkElement.style.display = show ? 'block' : 'none';
+    linkElement.style.display = show ? 'inline-flex' : 'none';
   }
 }
 
@@ -42,13 +42,13 @@ async function viewMoreviewLess(targetUL) {
 
   // "View More" and "View Less" links
   const viewMoreDiv = document.createElement('div');
-  viewMoreDiv.classList.add('left-rail-view-more');
-  viewMoreDiv.innerHTML = `<a class="viewMoreLink"> + ${placeholders.viewMore}</a>`;
+  viewMoreDiv.classList.add('left-rail-view-more', 'view-more');
+  viewMoreDiv.innerHTML = `<a class="viewMoreLink"> ${placeholders.viewMore}</a>`;
   targetUL.append(viewMoreDiv);
 
   const viewLessDiv = document.createElement('div');
-  viewLessDiv.classList.add('left-rail-view-less');
-  viewLessDiv.innerHTML = `<a class="viewLessLink" style="display: none;"> - ${placeholders.viewLess}</a>`;
+  viewLessDiv.classList.add('left-rail-view-less', 'view-more');
+  viewLessDiv.innerHTML = `<a class="viewLessLink" style="display: none;"> ${placeholders.viewLess}</a>`;
   targetUL.append(viewLessDiv);
 
   // Check if there are less than 11 items, and hide the "View More" link accordingly
@@ -90,6 +90,7 @@ export default async function decorate(block) {
     // decorate TOC DOM
     block.innerHTML = html;
     block.parentElement.setAttribute('theme-color', themeColor);
+    block.classList.add(productName);
     const ul = document.createElement('ul');
     ul.id = 'product';
     const li = document.createElement('li');
