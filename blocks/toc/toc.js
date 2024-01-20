@@ -86,7 +86,7 @@ export default async function decorate(block) {
     const html = resp;
     const productName = getMetadata('original-solution');
     const themeColor = getMetadata('theme-color');
-    console.log(themeColor);
+    // console.log(themeColor);
 
     // decorate TOC DOM
     block.innerHTML = html;
