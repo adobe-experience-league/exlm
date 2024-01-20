@@ -89,7 +89,7 @@ export default async function decorate(block) {
 
     // decorate TOC DOM
     block.innerHTML = html;
-    block.parentElement.setAttribute('theme-color',themeColor);
+    block.parentElement.setAttribute('theme-color', themeColor);
     const ul = document.createElement('ul');
     ul.id = 'product';
     const li = document.createElement('li');
@@ -123,6 +123,7 @@ export default async function decorate(block) {
         });
       });
     }
+    // Add is-active class to the highlighted section
     const currentURL = window.location.pathname;
     const targetElement = block.querySelector(`a[href="${currentURL}.html?lang=en"]`);
     if (targetElement) {
