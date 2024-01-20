@@ -26,13 +26,17 @@ export default async function decorate(block) {
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
-    ${headingElement?.textContent?.trim() ? 
-      `<div class="browse-cards-block-title">
+    ${
+      headingElement?.textContent?.trim()
+        ? `<div class="browse-cards-block-title">
           <h2>
-            ${headingElement.textContent.trim()}${toolTipElement?.textContent?.trim() ? `<div class="tooltip-placeholder"></div>` : ''}
+            ${headingElement.textContent.trim()}${
+              toolTipElement?.textContent?.trim() ? `<div class="tooltip-placeholder"></div>` : ''
+            }
           </h2>
       </div>`
-      : ''}
+        : ''
+    }
       <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
     </div>
   `);
@@ -46,6 +50,8 @@ export default async function decorate(block) {
     };
     createTooltip(block, tooltipElem, tooltipConfig);
   }
+
+  await decorateIcons(headerDiv);
 
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
@@ -71,7 +77,7 @@ export default async function decorate(block) {
           buildCard(contentDiv, cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
-        decorateIcons(block);
+        decorateIcons(contentDiv);
       }
     })
     .catch((err) => {

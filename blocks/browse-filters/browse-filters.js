@@ -656,9 +656,8 @@ async function handleSearchEngineSubscription() {
     filterResultsEl.innerHTML = '';
     cardsData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
-      filterResultsEl.appendChild(cardDiv);
       buildCard(filterResultsEl, cardDiv, cardData);
-      buildCardsShimmer.setParent(filterResultsEl);
+      filterResultsEl.appendChild(cardDiv);
       document.querySelector('.browse-filters-form').classList.add('is-result');
       filterResultsEl.classList.remove('no-results');
       decorateIcons(cardDiv);
