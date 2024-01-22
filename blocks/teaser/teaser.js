@@ -1,3 +1,10 @@
+function decorateButton(a) {
+  a.classList.add('button')
+  if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
+  if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
+  return a;
+}
+
 /* eslint-disable no-plusplus */
 export function generateTeaserDOM(props, isChild) {
   // Extract properties, always same order as in model, empty string if not set
@@ -10,8 +17,8 @@ export function generateTeaserDOM(props, isChild) {
   const longDescr = props[count++].innerHTML.trim();
   const shortDescr = props[count++];
   const backgroundColor = props[count++].textContent.trim();
-  const firstCTA = props[count++].firstElementChild;
-  const secondCTA = props[count++].firstElementChild;
+  const firstCTA = props[count++].querySelector('a');
+  const secondCTA = props[count++].querySelector('a');
 
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
@@ -21,12 +28,11 @@ export function generateTeaserDOM(props, isChild) {
         ${eyebrow ? `<div class='eyebrow'>${eyebrow.toUpperCase()}</div>` : ``}
         <div class='title'>${title}</div>
         <div class='long-description'>${longDescr}</div>
-        <div class='short-description'>${
-          shortDescr.textContent.trim() !== '' ? shortDescr.innerHTML.trim() : longDescr
-        }</div>
+        <div class='short-description'>${shortDescr.textContent.trim() !== '' ? shortDescr.innerHTML.trim() : longDescr
+    }</div>
         <div class='cta'>
-          ${firstCTA ? firstCTA.outerHTML : ``}
-          ${secondCTA ? secondCTA.outerHTML : ``}
+          ${firstCTA ? decorateButton(firstCTA).outerHTML : ``}
+          ${secondCTA ? decorateButton(secondCTA).outerHTML : ``}
         </div>
       </div>
       <div class='spacer'>
