@@ -139,15 +139,19 @@
         "label": "Heading Type",
         "options": [
           {
-            "name": "h2",
+            "name": "None",
+            "value": ""
+          },
+          {
+            "name": "H2",
             "value": "h2"
           },
           {
-            "name": "h3",
+            "name": "H3",
             "value": "h3"
           },
           {
-            "name": "h4",
+            "name": "H4",
             "value": "h4"
           }
         ]
