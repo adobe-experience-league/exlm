@@ -19,6 +19,7 @@ const browseCardDataModel = {
   bookmarkLink: '',
   viewLink: '',
   viewLinkText: '',
+  id: '',
 };
 
 export default browseCardDataModel;

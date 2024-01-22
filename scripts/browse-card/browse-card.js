@@ -1,6 +1,15 @@
 import { loadCSS, fetchPlaceholders } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
+import loadJWT from '../auth/jwt.js';
+import { adobeIMS, profile } from '../data-service/profile-service.js';
+import { tooltipTemplate } from '../toast/toast.js';
+import renderBookmark from '../bookmark/bookmark.js';
+import renderCopyLink from '../copy-link/copy-link.js';
+
+loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
+
+const isSignedIn = adobeIMS?.isSignedInUser();
 
 /* User Info for Community Section - Will accomodate once we have KHOROS integration */
 // const generateContributorsMarkup = (contributor) => {
@@ -89,7 +98,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
 const buildCardContent = (card, model) => {
-  const { description, contentType: type, viewLinkText, viewLink, copyLink, tags, event = {} } = model;
+  const { id, description, contentType: type, viewLinkText, viewLink, copyLink, tags, event = {} } = model;
   const contentType = type.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
   const cardFooter = card.querySelector('.browse-card-footer');
@@ -128,32 +137,63 @@ const buildCardContent = (card, model) => {
   cardOptions.classList.add('browse-card-options');
   if (
     contentType !== CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY &&
+    contentType !== CONTENT_TYPES.COMMUNITY.MAPPING_KEY &&
     contentType !== CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
   ) {
-    const bookmarkAnchor = createTag('a', { href: '#', title: 'copy' }, `<span class="icon icon-bookmark"></span>`);
-    cardOptions.appendChild(bookmarkAnchor);
+    // const bookmarkAnchor = createTag('a', { href: '#', title: 'copy' }, `<span class="icon icon-bookmark"></span>`);
+    const unAuthBookmark = document.createElement('div');
+    unAuthBookmark.className = 'bookmark';
+    unAuthBookmark.innerHTML = tooltipTemplate('bookmark-icon', '', `${placeholders.bookmarkUnauthLabel}`);
+
+    const authBookmark = document.createElement('div');
+    authBookmark.className = 'bookmark auth';
+    authBookmark.innerHTML = tooltipTemplate('bookmark-icon', '', `${placeholders.bookmarkAuthLabelSet}`);
+    if (!isSignedIn) {
+      cardOptions.appendChild(authBookmark);
+      if (id) {
+        cardOptions.children[0].setAttribute('data-id', id);
+      }
+    } else {
+      cardOptions.appendChild(unAuthBookmark);
+    }
   }
   if (copyLink) {
-    const copyLinkAnchor = createTag('a', { href: copyLink, title: 'copy' }, `<span class="icon icon-copy"></span>`);
-    cardOptions.appendChild(copyLinkAnchor);
+    // const copyLinkAnchor = createTag('a', { href: copyLink, title: 'copy' }, `<span class="icon icon-copy"></span>`);
+    const copyLinkElem = document.createElement('div');
+    copyLinkElem.className = 'copy-link';
+    copyLinkElem.innerHTML = tooltipTemplate('copy-link-url', '', `${placeholders.toastTiptext}`);
+    cardOptions.appendChild(copyLinkElem);
+    copyLinkElem.setAttribute('data-link', copyLink);
   }
   cardFooter.appendChild(cardOptions);
   buildCardCtaContent({ cardFooter, contentType, viewLink, viewLinkText });
 };
 
-const setupCopyAction = (wrapper) => {
-  Array.from(wrapper.querySelectorAll('.icon.icon-copy')).forEach((svg) => {
-    const anchor = svg.parentElement;
-    if (anchor?.href) {
-      anchor.addEventListener('click', (e) => {
-        e.preventDefault();
-        navigator.clipboard
-          .writeText(anchor.href)
-          .then(() => {})
-          .catch(() => {
-            // noop
-          });
+const setupBookmarkAction = (wrapper) => {
+  loadJWT().then(async () => {
+    profile().then(async (data) => {
+      const bookmarkAuthed = Array.from(
+        wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark.auth'),
+      );
+      bookmarkAuthed.forEach((bookmark) => {
+        const bookmarkAuthedToolTipLabel = bookmarkAuthed.querySelector('.exl-tooltip-label');
+        const bookmarkAuthedToolTipIcon = bookmarkAuthed.querySelector('.icon.bookmark-icon');
+        const bookmarkId = bookmarkAuthed.getAttribute('data-id');
+        renderBookmark(bookmark, bookmarkId);
+        if (data.bookmarks.includes(bookmarkId)) {
+          bookmarkAuthedToolTipIcon.classList.add('authed');
+          bookmarkAuthedToolTipLabel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
+        }
       });
+    });
+  });
+};
+
+const setupCopyAction = (wrapper) => {
+  Array.from(wrapper.querySelectorAll('.copy-link')).forEach((copylink) => {
+    const copylinkvalue = copylink.getAttribute('data-link');
+    if (copylinkvalue) {
+      renderCopyLink(copylink, copylinkvalue, placeholders.toastSet);
     }
   });
 };
@@ -199,6 +239,7 @@ export async function buildCard(element, model) {
     cardContent.appendChild(titleElement);
   }
   buildCardContent(card, model);
+  setupBookmarkAction(card);
   setupCopyAction(card);
   element.appendChild(card);
 }
