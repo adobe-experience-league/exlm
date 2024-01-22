@@ -1,1 +1,4 @@
 @import "../../scripts/browse-card/browse-cards-block.css";
+.browse-card.community-card .icon {
+    cursor: auto;
+}
