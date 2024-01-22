@@ -3,19 +3,15 @@ import { loadCSS } from '../lib-franklin.js';
 loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-placeholder.css`); // load placeholder css dynamically
 
 export default class BuildPlaceholder {
-  constructor(records, block) {
-    this.records = records;
+  constructor() {
     this.shimmer = document.createElement('div');
-    this.shimmer.classList.add('browse-card-shimmer');
-    block.appendChild(this.shimmer);
-    this.shimmer.appendChild(this.content());
+    this.shimmer.className = 'shimmer-placeholder';
+    this.initialise();
   }
 
-  content() {
-    const defaultNumberOfCards = this.records || 4;
-    let shimmerContent = '';
-    for (let i = 0; i < defaultNumberOfCards; i += 1) {
-      shimmerContent += `<div class="shimmer-placeholder-isloading">
+  initialise() {
+    for (let i = 0; i < 4; i += 1) {
+      this.shimmer.innerHTML += `<div class="shimmer-placeholder-isloading">
           <div class="shimmer-placeholder-image"></div>
           <div class="shimmer-placeholder-content">
             <div class="shimmer-placeholder-description"></div>
@@ -27,21 +23,13 @@ export default class BuildPlaceholder {
           </div>
         </div>`;
     }
-    const shimmerParent = document.createElement('div');
-    shimmerParent.classList.add('shimmer-placeholder');
-    shimmerParent.innerHTML = shimmerContent;
-    return shimmerParent;
   }
 
-  show() {
-    this.shimmer.querySelector('.shimmer-placeholder').classList.remove('hide-shimmer');
+  add(block) {
+    block.append(this.shimmer);
   }
 
-  hide() {
-    this.shimmer.querySelector('.shimmer-placeholder').classList.add('hide-shimmer');
-  }
-
-  setParent(contentDiv) {
-    this.shimmer.appendChild(contentDiv);
+  remove() {
+    this.shimmer.remove();
   }
 }

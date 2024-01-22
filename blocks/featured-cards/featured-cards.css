@@ -1,6 +1,6 @@
 @import "../../scripts/browse-card/browse-cards-block.css";
 @import "../../scripts/browse-card/browse-card.css";
-.featured-cards .browse-card-description-text {
+.featured-cards .browse-cards-block-header .browse-card-description-text{
   text-align: center;
 }
 .featured-cards .browse-cards-block-title {

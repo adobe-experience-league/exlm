@@ -225,6 +225,10 @@ button.browse-filters-clear:disabled:hover {
   min-height: 36px;
 }
 
+.browse-hide-section {
+  display: none;
+}
+
 button.browse-tags:hover,
 button.browse-tags:focus {
   background-color: var(--background-color);
@@ -402,6 +406,16 @@ button.browse-tags:focus {
 
 .browse-filters-form.is-result .sort-container {
   display: flex;
+}
+
+.browse-filters-results.no-results {
+  background-color: var(--spectrum-gray-200);
+  color: var(--non-spectrum-grey);
+  font-size: 16px;
+  min-height: 346px;
+  padding-top: 72px;
+  text-align: center;
+  width: 100%;
 }
 
 .browse-filters-form:not(.is-result) .browse-filters-results {
