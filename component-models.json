@@ -132,6 +132,27 @@
         "description": "Sets the main title of the teaser."
       },
       {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "h2",
+            "value": "h2"
+          },
+          {
+            "name": "h3",
+            "value": "h3"
+          },
+          {
+            "name": "h4",
+            "value": "h4"
+          }
+        ]
+      },
+      {
         "component": "text-area",
         "valueType": "string",
         "name": "longDescr",
