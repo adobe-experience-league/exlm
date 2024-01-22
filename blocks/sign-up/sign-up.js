@@ -2,34 +2,39 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { loadIms } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
+  block.style.display = 'none';
 
-    block.style.display = "none"
+  let adobeIMS = { isSignedInUser: () => false };
+  try {
+    await loadIms();
+    adobeIMS = window.adobeIMS;
+  } catch {
+    /* eslint-disable no-console */ console.warn('Adobe IMS not available.');
+  }
+  let isUserSignedIn = adobeIMS?.isSignedInUser();
+  isUserSignedIn = true;
 
-    let adobeIMS = {    isSignedInUser: () => false,  };
-    try {    await loadIms();    adobeIMS = window.adobeIMS;  } catch {    /* eslint-disable no-console */    console.warn('Adobe IMS not available.');  }
-    const isUserSignedIn = adobeIMS?.isSignedInUser();
-    if (!isUserSignedIn) {    
+  if (!isUserSignedIn) {
+    block.style.display = 'block';
+    // Extract properties
+    // always same order as in model, empty string if not set
+    const props = [...block.querySelectorAll(':scope div > div')];
 
-    block.style.display = "block";
-        // Extract properties
-  // always same order as in model, empty string if not set
-  const props = [...block.querySelectorAll(':scope div > div')];
+    const subjectPicture = props[0].innerHTML.trim();
+    const subjectImageDescr = props[1].textContent.trim();
+    const bgColor = props[2].textContent.trim();
+    const eyebrow = props[3].textContent.trim();
+    const title = props[4].textContent.trim();
+    const longDescr = props[5].innerHTML.trim();
+    const firstCTAType = props[6].textContent.trim();
+    const firstCTAText = props[7].textContent.trim();
+    const firstCTALink = props[8].textContent.trim();
+    const secondCTAType = props[9].textContent.trim();
+    const secondCTAText = props[10].textContent.trim();
+    const secondCTALink = props[11].textContent.trim();
 
-  const subjectPicture = props[0].innerHTML.trim();
-  const subjectImageDescr = props[1].textContent.trim();
-  const bgColor = props[2].textContent.trim();
-  const eyebrow = props[3].textContent.trim();
-  const title = props[4].textContent.trim();
-  const longDescr = props[5].innerHTML.trim();
-  const firstCTAType = props[6].textContent.trim();
-  const firstCTAText = props[7].textContent.trim();
-  const firstCTALink = props[8].textContent.trim();
-  const secondCTAType = props[9].textContent.trim();
-  const secondCTAText = props[10].textContent.trim();
-  const secondCTALink = props[11].textContent.trim();
-
-  // Build DOM
-  const signupDOM = document.createRange().createContextualFragment(`
+    // Build DOM
+    const signupDOM = document.createRange().createContextualFragment(`
     <div class='signup-foreground'>
       <div class='signup-text'>
         ${eyebrow ? `<div class='signup-eyebrow'>${eyebrow.toUpperCase()}</div>` : ``}
@@ -61,17 +66,18 @@ export default async function decorate(block) {
     </div>
   `);
 
-  if (subjectPicture && subjectImageDescr) {
-    signupDOM.querySelector('.signup-subject picture img').setAttribute('alt', subjectImageDescr);
-  }
+    if (subjectPicture && subjectImageDescr) {
+      signupDOM.querySelector('.signup-subject picture img').setAttribute('alt', subjectImageDescr);
+    }
 
-  block.textContent = '';
-  if (!subjectPicture) {
-    block.classList.add('no-subject');
-  }
+    block.textContent = '';
+    if (!subjectPicture) {
+      block.classList.add('no-subject');
+    }
 
-  decorateIcons(signupDOM);
-  block.append(signupDOM);
-   } 
+    decorateIcons(signupDOM);
+    block.append(signupDOM);
+  } else {
+    block.parentElement.remove();
+  }
 }
-
