@@ -34,11 +34,6 @@ export function generateTeaserDOM(props, isChild) {
     </div>
   `);
 
-  // set image description
-  if (imageDescr) {
-    teaserDOM.querySelector('.background picture img').setAttribute('alt', imageDescr);
-  }
-
   // set the mobile background color
   if (backgroundColor) {
     teaserDOM.querySelector('.foreground').style.setProperty('--teaser-background-color', `var(${backgroundColor})`);
