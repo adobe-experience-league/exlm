@@ -1,6 +1,6 @@
-import {
-  decorateBlock, decorateButtons, decorateIcons, loadBlock,
-} from './lib-franklin.js';
+import { decorateBlock, decorateButtons, decorateIcons, loadBlock } from './lib-franklin.js';
+
+const connectionPrefix = 'urn:aemconnection:';
 
 // set aem content root
 window.hlx.aemRoot = '/content/exlm/global';
@@ -27,7 +27,7 @@ function handleEditorUpdate(event) {
       const element = document.querySelector(`[data-aue-resource="${resource}"]`);
       const block = element?.closest('.block');
       const blockResource = block?.getAttribute('data-aue-resource');
-      if (block && blockResource?.startsWith('urn:aemconnection:')) {
+      if (block && blockResource?.startsWith(connectionPrefix)) {
         const newBlockDocument = new DOMParser().parseFromString(content, 'text/html');
         const newBlock = newBlockDocument?.querySelector(`[data-aue-resource="${blockResource}"]`);
         if(newBlock) {
