@@ -6,9 +6,8 @@ function decorateButton(a) {
 }
 
 /* eslint-disable no-plusplus */
-export function generateTeaserDOM(props, isChild) {
+export function generateTeaserDOM(props, isChild, classes) {
   // Extract properties, always same order as in model, empty string if not set
-  let classes = null;
   let count = 0;
   const picture = props[count++].innerHTML.trim();
   if (isChild) classes = props[count++].textContent.trim();
@@ -16,7 +15,6 @@ export function generateTeaserDOM(props, isChild) {
   const title = props[count++].textContent.trim();
   const longDescr = props[count++].innerHTML.trim();
   const shortDescr = props[count++];
-  const backgroundColor = props[count++].textContent.trim();
   const firstCTA = props[count++].querySelector('a');
   const secondCTA = props[count++].querySelector('a');
 
@@ -41,8 +39,9 @@ export function generateTeaserDOM(props, isChild) {
   `);
 
   // set the mobile background color
+  const backgroundColor = classes.spit(' ').find(cls => cls.startsWith('bg-'));
   if (backgroundColor) {
-    teaserDOM.querySelector('.foreground').style.setProperty('--teaser-background-color', `var(${backgroundColor})`);
+    teaserDOM.querySelector('.foreground').style.setProperty('--teaser-background-color', `var(--${backgroundColor.substr(3)})`);
   }
 
   // add final teaser DOM and classes if used as child component
@@ -52,7 +51,7 @@ export function generateTeaserDOM(props, isChild) {
 export default function decorate(block) {
   // get the first and only cell from each row
   const props = [...block.children].map((row) => row.firstElementChild);
-  const { teaserDOM } = generateTeaserDOM(props, false);
+  const { teaserDOM } = generateTeaserDOM(props, false, block.className);
   block.textContent = '';
   block.append(teaserDOM);
 }
