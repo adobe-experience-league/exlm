@@ -4,9 +4,8 @@ import ADLSDataService from '../data-service/adls-data-service.js';
 import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
 import BrowseCardsLiveEventsAdaptor from './browse-cards-live-events-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
-import { CONTENT_TYPES } from './browse-cards-constants.js';
+import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET } from './browse-cards-constants.js';
 import { coveoSearchResultsUrl, liveEventsUrl, adlsUrl } from '../urls.js';
-
 /**
  * @module BrowseCardsDelegate
  * @description A module that handles the delegation of fetching card data based on content types.
@@ -33,7 +32,8 @@ const BrowseCardsDelegate = (() => {
       numberOfValues: facet.currentValues?.length || 2,
       currentValues: facet.currentValues.map((value) => ({
         value,
-        state: 'selected',
+        state: value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? 'idle' : 'selected',
+        ...(value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? { children: COMMUNITY_SEARCH_FACET } : []),
       })),
     }));
     return facetsArray;
@@ -68,7 +68,15 @@ const BrowseCardsDelegate = (() => {
    */
   const handleCoveoService = async () => {
     const facets = [
-      ...(param.contentType ? [{ id: 'el_contenttype', type: 'specific', currentValues: param.contentType }] : []),
+      ...(param.contentType
+        ? [
+            {
+              id: 'el_contenttype',
+              type: param.contentType[0] === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? 'hierarchical' : 'specific',
+              currentValues: param.contentType,
+            },
+          ]
+        : []),
       ...(param.product ? [{ id: 'el_product', type: 'specific', currentValues: param.product }] : []),
       ...(param.role ? [{ id: 'el_role', type: 'specific', currentValues: param.role }] : []),
       ...(param.level ? [{ id: 'el_level', type: 'specific', currentValues: param.level }] : []),
