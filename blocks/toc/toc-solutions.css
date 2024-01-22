@@ -1,0 +1,32 @@
+/*--SOLUTION SPECIFIC CSS FOR IMAGE AND COLORS--*/
+.toc.Analytics ul#product li>.product-icon {
+    background: url("../../icons/solutions/Analytics.svg") no-repeat center center;
+}
+.toc.Analytics ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px !important;
+    border-left-color: #864ccc;
+}
+.toc.Analytics ul>li>a[href^="#"].is-collapsed:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: #864ccc;
+}
+
+.toc.ExperienceCloud ul#product li>.product-icon {
+    background: url("../../icons/solutions/ExperienceCloud.svg") no-repeat center center;
+}
+.toc.ExperienceCloud ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px !important;
+    border-left-color: #fa0f00;
+}
+.toc.ExperienceCloud ul>li>a[href^="#"].is-collapsed:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: #fa0f00;
+}
