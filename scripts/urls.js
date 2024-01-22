@@ -8,5 +8,5 @@ export const adlsUrl = 'https://learning.adobe.com/catalog.result.json';
 export const searchUrl = 'https://experienceleague.adobe.com/search.html';
 export const articleUrl = 'https://experienceleague.adobe.com/api/articles/';
 export const solutionsUrl = 'https://experienceleague.adobe.com/api/solutions?page_size=100';
-export const tocsUrl = 'https://experienceleague.adobe.com/api/tocs/';
+export const tocUrl = 'https://experienceleague.adobe.com/api/tocs/';
 export const adlsRedirectUrl = 'https://learning.adobe.com';

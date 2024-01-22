@@ -1,5 +1,5 @@
 import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
-import { tocsUrl } from '../../scripts/urls.js';
+import { tocUrl } from '../../scripts/urls.js';
 import TocDataService from '../../scripts/data-service/tocs-data-service.js';
 
 // Utility function to toggle visibility of items
@@ -66,7 +66,7 @@ async function viewMoreviewLess(targetUL) {
 }
 
 const handleTocsService = async (tocID) => {
-  const tocsService = new TocDataService(tocsUrl);
+  const tocsService = new TocDataService(tocUrl);
   const tocs = await tocsService.fetchDataFromSource(tocID);
 
   if (!tocs) {
