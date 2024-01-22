@@ -1,5 +1,6 @@
 .browse-cards-block {
     min-height: 532px;
+    position: relative;
 }
 .browse-cards-block-content {
     margin-top: 16px;
@@ -23,6 +24,54 @@
 .browse-cards-block-title {
     position: relative;
     margin: 0;
+}
+.browse-cards-block-title .tooltip {
+    display: inline;
+    margin: 0 0 0 9px;
+}
+.browse-cards-block-title .tooltip .icon-info {
+    width: 15px;
+    height: 15px;
+}
+.browse-cards-block-title .tooltip svg {
+    pointer-events: none;
+}
+.browse-cards-block-title .tooltip .tooltip-text {
+    background-color: var(--non-spectrum-royal-blue);
+    border-radius: 4px;
+    color: var(--spectrum-gray-50);
+    display: inline-block;
+    font-size: 12px;
+    font-weight: normal;
+    left: -999px;
+    line-height: 15px;
+    margin-left: 10px;
+    margin-top: -16px;
+    opacity: 0;
+    padding: 4px 9px 5px 10px;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    transition: opacity 0.3s;
+    visibility: hidden;
+    width: max-content;
+    max-width: 155px;
+    z-index: 1;
+}
+.browse-cards-block-title .tooltip .tooltip-text.tooltip-visible {
+    visibility: visible;
+    opacity: 1;
+}
+.browse-cards-block-title .tooltip .tooltip-text::before {
+    border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
+    border-style: solid;
+    border-width: 4px;
+    content: "";
+    display: inline-block;
+    margin-top: -4px;
+    position: absolute;
+    right: 100%;
+    top: 50%;
 }
 .browse-cards-block-title h2 {
     margin: 0px;

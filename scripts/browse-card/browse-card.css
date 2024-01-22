@@ -9,7 +9,6 @@
 .browse-card:hover {
   box-shadow: var(--box-shadow-2);
 }
-
 .browse-card * {
   box-sizing: border-box;
 }
@@ -78,7 +77,7 @@
   overflow: hidden;
   position: relative;
 }
-.browse-card .browse-card-figure.img-custom-height{
+.browse-card .browse-card-figure.img-custom-height {
   min-height: 153px;
 }
 .browse-card .browse-card-figure img {
@@ -136,8 +135,8 @@
   width: 22px;
 }
 .browse-card .browse-card-footer .icon {
-  color: var( --non-spectrum-dim-gray);
-  fill: var( --non-spectrum-dim-gray);
+  color: var(--non-spectrum-dim-gray);
+  fill: var(--non-spectrum-dim-gray);
   cursor: pointer;
   margin-right: 2px;
   height: 24px;
@@ -210,7 +209,8 @@
 .browse-card.course-card .browse-card-content {
   padding: 16px 16px 0;
 }
-.browse-card.course-card .browse-card-meta-info, .browse-card.course-card .browse-card-title-text {
+.browse-card.course-card .browse-card-meta-info,
+.browse-card.course-card .browse-card-title-text {
   margin: 0;
 }
 .browse-card.tutorial-card .browse-card-banner {
@@ -219,17 +219,17 @@
 .browse-card.tutorial-card .browse-card-figure {
   max-height: 140px;
 }
-.browse-card.article-card .browse-card-banner, 
-.browse-card.troubleshooting-card .browse-card-banner, 
-.browse-card.certificate-card .browse-card-banner, 
-.browse-card.certification-card .browse-card-banner, 
+.browse-card.article-card .browse-card-banner,
+.browse-card.troubleshooting-card .browse-card-banner,
+.browse-card.certificate-card .browse-card-banner,
+.browse-card.certification-card .browse-card-banner,
 .browse-card.instructor-led-training-card .browse-card-banner {
   background-color: var(--non-spectrum-lime-green);
 }
-.browse-card.article-card .browse-card-figure, 
-.browse-card.troubleshooting-card .browse-card-figure, 
-.browse-card.certificate-card .browse-card-figure, 
-.browse-card.certification-card .browse-card-figure, 
+.browse-card.article-card .browse-card-figure,
+.browse-card.troubleshooting-card .browse-card-figure,
+.browse-card.certificate-card .browse-card-figure,
+.browse-card.certification-card .browse-card-figure,
 .browse-card.instructor-led-training-card .browse-card-figure {
   min-height: 72px;
 }
@@ -242,7 +242,8 @@
 .browse-card.live-events-card .browse-card-banner {
   background-color: var(--non-spectrum-dark-princess-pink)
 }
-.browse-card.certificate-card .browse-card-banner, .browse-card.certification-card .browse-card-banner {
+.browse-card.certificate-card .browse-card-banner,
+.browse-card.certification-card .browse-card-banner {
   background-color: var(--non-spectrum-frost-bite);
 }
 .browse-card.instructor-led-training-card .browse-card-banner {
@@ -279,43 +280,34 @@
   text-align: center;
   margin-top: 24px;
 }
-/* Tootip for Browse Card Block Title and Browse Card */
-.browse-cards-block-title .tooltip {
-  display: inline;
-  margin: 0 0 0 9px;
-}
+/* Tootip */
 .browse-card .tooltip {
   display: inline-flex;
   margin: 2px 0 0 5px;
-}
-.browse-cards-block-title .tooltip .icon-info{
-  width: 15px;
-  height: 15px;
 }
 .browse-card .tooltip .icon-info {
   width: 14px;
   height: 14px;
 }
-.browse-cards-block-title .tooltip svg,
 .browse-card .tooltip svg {
   pointer-events: none;
 }
-.browse-cards-block-title .tooltip .tooltip-text,
 .browse-card .tooltip .tooltip-text {
   background-color: var(--non-spectrum-royal-blue);
   border-radius: 4px;
   color: var(--spectrum-gray-50);
   display: inline-block;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: normal;
   left: -999px;
-  line-height: 15px;
+  line-height: 14.3px;
   margin-left: 10px;
   margin-top: -16px;
   opacity: 0;
   padding: 4px 9px 5px 10px;
   position: absolute;
   text-align: center;
+  text-transform: uppercase;
   top: 0;
   transition: opacity 0.3s;
   visibility: hidden;
@@ -323,23 +315,15 @@
   max-width: 155px;
   z-index: 1;
 }
-.browse-card .tooltip .tooltip-text {
-  text-transform: uppercase;
-  font-size: 11px;
-  line-height: 14.3px;
-}
-.browse-cards-block-title .tooltip-top .tooltip-text,
 .browse-card .tooltip-top .tooltip-text {
   transform: translateX(-45%);
   margin-left: 0;
   margin-top: 0;
 }
-.browse-cards-block-title .tooltip .tooltip-text.tooltip-visible,
 .browse-card .tooltip .tooltip-text.tooltip-visible {
   visibility: visible;
   opacity: 1;
 }
-.browse-cards-block-title .tooltip .tooltip-text::before,
 .browse-card .tooltip .tooltip-text::before {
   border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
   border-style: solid;
@@ -351,7 +335,6 @@
   right: 100%;
   top: 50%;
 }
-.browse-cards-block-title .tooltip-top .tooltip-text::before,
 .browse-card .tooltip-top .tooltip-text::before {
   margin-top: 0;
   right: unset;
@@ -360,26 +343,22 @@
   bottom: -8px;
   transform: rotate(-90deg);
 }
-.browse-cards-block-title .tooltip-grey .tooltip-text,
 .browse-card .tooltip-grey .tooltip-text {
   background-color: var(--non-spectrum-dim-gray);
 }
-.browse-cards-block-title .tooltip-grey .tooltip-text::before,
 .browse-card .tooltip-grey .tooltip-text::before {
   border-color: transparent var(--non-spectrum-dim-gray) transparent transparent;
 }
-
 @media only screen and (min-width: 900px) {
-  .browse-card.tutorial-card .browse-card-figure {
-    max-height: 199px;
-  }
+  .browse-card.tutorial-card .browse-card-figure,
   .browse-card.course-card .browse-card-figure {
     max-height: 199px;
   }
   .browse-card.course-card .browse-card-content {
     padding: 16px 16px 12px;
   }
-  .browse-card.course-card .browse-card-meta-info, .browse-card.course-card .browse-card-title-text {
+  .browse-card.course-card .browse-card-meta-info,
+  .browse-card.course-card .browse-card-title-text {
     margin: 8px 0;
   }
 }
