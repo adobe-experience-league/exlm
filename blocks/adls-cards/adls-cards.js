@@ -50,12 +50,13 @@ export default async function decorate(block) {
     contentType,
   };
 
-  const buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
+  const buildCardsShimmer = new BuildPlaceholder();
+  buildCardsShimmer.add(block);
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent
     .then((data) => {
-      buildCardsShimmer.hide();
+      buildCardsShimmer.remove();
       if (data?.length) {
         for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
           const cardData = data[i];
@@ -63,12 +64,12 @@ export default async function decorate(block) {
           buildCard(cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
-        buildCardsShimmer.setParent(contentDiv);
         decorateIcons(block);
+        block.appendChild(contentDiv);
       }
     })
     .catch((err) => {
-      buildCardsShimmer.hide();
+      buildCardsShimmer.remove();
       /* eslint-disable-next-line no-console */
       console.error(err);
     });
