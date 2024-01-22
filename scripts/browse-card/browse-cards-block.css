@@ -21,6 +21,7 @@
     margin: 0;
 }
 .browse-cards-block-title {
+    position: relative;
     margin: 0;
 }
 .browse-cards-block-title h2 {
