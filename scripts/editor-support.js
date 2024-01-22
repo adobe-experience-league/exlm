@@ -3,17 +3,17 @@ import {
 } from './lib-franklin.js';
 
 function handleEditorUpdate(event) {
-  const { detail: { updates } } = event;
+  const { detail: { requestData, responseData } } = event;
+  const target = requestData?.target;
+  const updates = responseData?.updates;
   Promise.all(updates
     .map(async (update) => {
-      const { itemid, payload } = update;
-      const element = document.querySelector(`[itemid="${itemid}"]`);
-      const block = element.closest('.block');
-      const blockItemId = block?.getAttribute('itemid');
-      if (block && blockItemId?.startsWith('urn:aemconnection:')) {
-        const htmlContent = payload?.html;
-        const main = new DOMParser().parseFromString(htmlContent, 'text/html');
-        const newBlock = main?.querySelector(`[itemid="${blockItemId}"]`);
+      const { resource } = target;
+      const { content } = update;
+      const block = document.querySelector(`[data-aue-resource="${resource}"]`);
+      if (block && resource?.startsWith('urn:aemconnection:')) {
+        const newBlockDocument = new DOMParser().parseFromString(content, 'text/html');
+        const newBlock = newBlockDocument?.querySelector(`[data-aue-resource="${resource}"]`);
         if(newBlock) {
           newBlock.style.display = 'none';
           block.insertAdjacentElement('afterend', newBlock);
@@ -25,7 +25,7 @@ function handleEditorUpdate(event) {
           await loadBlock(newBlock);
           // remove the old block and show the new one
           block.remove();
-          newBlock.style.display = 'unset';
+          newBlock.style.display = null;
           return Promise.resolve();
         }
       }
@@ -37,4 +37,4 @@ function handleEditorUpdate(event) {
     });
 }
 
-document.addEventListener('editor-update', handleEditorUpdate);
+document.addEventListener('aue:content-patch', handleEditorUpdate);
