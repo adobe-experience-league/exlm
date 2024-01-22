@@ -148,7 +148,7 @@ const buildCardContent = (card, model) => {
     const authBookmark = document.createElement('div');
     authBookmark.className = 'bookmark auth';
     authBookmark.innerHTML = tooltipTemplate('bookmark-icon', '', `${placeholders.bookmarkAuthLabelSet}`);
-    if (!isSignedIn) {
+    if (isSignedIn) {
       cardOptions.appendChild(authBookmark);
       if (id) {
         cardOptions.children[0].setAttribute('data-id', id);
