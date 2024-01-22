@@ -12,7 +12,7 @@ export function generateTeaserDOM(props, isChild, classes) {
   const picture = props[count++].innerHTML.trim();
   if (isChild) classes = props[count++].textContent.trim();
   const eyebrow = props[count++].textContent.trim();
-  const title = props[count++].textContent.trim();
+  const title = props[count++];
   const longDescr = props[count++].innerHTML.trim();
   const shortDescr = props[count++];
   const firstCTA = props[count++].querySelector('a');
@@ -24,7 +24,7 @@ export function generateTeaserDOM(props, isChild, classes) {
     <div class='foreground'>
       <div class='text'>
         ${eyebrow ? `<div class='eyebrow'>${eyebrow.toUpperCase()}</div>` : ``}
-        <div class='title'>${title}</div>
+        <div class='title'>${title.innerHTML}</div>
         <div class='long-description'>${longDescr}</div>
         <div class='short-description'>${shortDescr.textContent.trim() !== '' ? shortDescr.innerHTML.trim() : longDescr
     }</div>
