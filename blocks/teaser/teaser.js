@@ -39,7 +39,7 @@ export function generateTeaserDOM(props, isChild, classes) {
   `);
 
   // set the mobile background color
-  const backgroundColor = classes.spit(' ').find(cls => cls.startsWith('bg-'));
+  const backgroundColor = (classes || '').split(' ').find(cls => cls.startsWith('bg-'));
   if (backgroundColor) {
     teaserDOM.querySelector('.foreground').style.setProperty('--teaser-background-color', `var(--${backgroundColor.substr(3)})`);
   }
