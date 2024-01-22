@@ -19,14 +19,11 @@ import { CONTENT_TYPES } from './browse-cards-constants.js';
 //         </div>`);
 // };
 
-const buildTagsContent = (cardMeta, contentType, tags = []) => {
+const buildTagsContent = (cardMeta, tags = []) => {
   tags.forEach((tag) => {
     const { icon: iconName, text } = tag;
     if (text) {
-      const anchor =
-        contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY
-          ? createTag('div', { class: 'browse-card-meta-anchor' })
-          : createTag('a', { class: 'browse-card-meta-anchor', title: 'user', href: '#' });
+      const anchor = createTag('div', { class: 'browse-card-meta-anchor' });
       const span = createTag('span', { class: `icon icon-${iconName}` });
       anchor.textContent = text;
       anchor.appendChild(span);
@@ -109,7 +106,7 @@ const buildCardContent = (card, model) => {
   cardMeta.classList.add('browse-card-meta-info');
 
   if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY || contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
-    buildTagsContent(cardMeta, contentType, tags);
+    buildTagsContent(cardMeta, tags);
   }
 
   cardContent.appendChild(cardMeta);
