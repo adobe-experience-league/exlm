@@ -135,9 +135,8 @@
   width: 22px;
 }
 .browse-card .browse-card-footer .icon {
-  color: var(--non-spectrum-dim-gray);
-  fill: var(--non-spectrum-dim-gray);
-  cursor: pointer;
+  color: var( --non-spectrum-dim-gray);
+  fill: var( --non-spectrum-dim-gray);
   margin-right: 2px;
   height: 24px;
   width: 24px;
