@@ -17,12 +17,14 @@ function setSelectedTab(id, newBlock) {
 }
 
 function handleEditorUpdate(event) {
-  const { detail: { requestData, responseData } } = event;
-  const target = requestData?.target;
-  const updates = responseData?.updates;
+  const { detail } = event;
+
+  const resource = detail?.requestData?.target?.resource;
+  if (!resource) return;
+
+  const updates = detail?.responseData?.updates;
   Promise.all(updates
     .map(async (update) => {
-      const { resource } = target;
       const { content } = update;
       const element = document.querySelector(`[data-aue-resource="${resource}"]`);
       const block = element?.closest('.block');
