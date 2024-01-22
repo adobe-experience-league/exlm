@@ -1,4 +1,5 @@
-import { debounce, highlight, setLevels, hashFragment } from './utils.js';
+import { debounce } from '../../scripts/scripts.js';
+import { highlight, setLevels, hashFragment } from './utils.js';
 
 function setPadding(arg = '') {
   const num = parseInt(arg.split('')[1], 10);

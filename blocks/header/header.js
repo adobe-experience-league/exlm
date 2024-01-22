@@ -1,6 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { loadIms } from '../../scripts/scripts.js';
 import { signOut } from '../../scripts/auth/auth-operations.js';
+import Search from '../../scripts/search/search.js';
 import { registerResizeHandler } from './header-utils.js';
 
 /**
@@ -51,7 +52,8 @@ const getCell = (block, row, cell) => block.querySelector(`:scope > div:nth-chil
  */
 function htmlToElement(html) {
   const template = document.createElement('template');
-  const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
+  // Never return a text node of whitespace as the result
+  const trimmedHtml = html.trim();
   template.innerHTML = trimmedHtml;
   return template.content.firstElementChild;
 }
@@ -77,6 +79,17 @@ const brandDecorator = (brandBlock) => {
   brandBlock.replaceChildren(brandLink);
   return brandBlock;
 };
+
+window.adobeIMS = window.adobeIMS || {
+  isSignedInUser: () => false,
+};
+try {
+  await loadIms();
+} catch {
+  // eslint-disable-next-line no-console
+  console.warn('Adobe IMS not available.');
+}
+const isSignedIn = window.adobeIMS?.isSignedInUser();
 
 /**
  * adds hambuger button to nav wrapper
@@ -251,13 +264,26 @@ const navDecorator = (navBlock) => {
 
   navBlock.firstChild.id = hamburger.getAttribute('aria-controls');
   navBlock.prepend(hamburger);
+
+  if (isSignedIn) {
+    // New Link under Learn Menu - Authenticated
+    const recCourses = document.createElement('li');
+    recCourses.classList.add('nav-item', 'nav-item-leaf');
+    recCourses.innerHTML = `<a href="https://experienceleague.adobe.com/#dashboard/learning">Recommended courses<span class="nav-item-subtitle">Your expertly curated courses</span></a></li>`;
+    document.querySelectorAll('.nav-item-toggle').forEach((el) => {
+      const elContent = el.innerHTML.toLowerCase();
+      if (elContent === 'content types') {
+        el.nextSibling.querySelector('ul').prepend(recCourses);
+      }
+    });
+  }
 };
 
 /**
  * Decorates the search block
  * @param {HTMLElement} searchBlock
  */
-const searchDecorator = (searchBlock) => {
+const searchDecorator = async (searchBlock) => {
   // save this for later use in mobile nav.
   const searchLink = getCell(searchBlock, 1, 1)?.firstChild;
   decoratorState.searchLinkHtml = searchLink.outerHTML;
@@ -266,29 +292,62 @@ const searchDecorator = (searchBlock) => {
   const searchPlaceholder = getCell(searchBlock, 1, 2)?.firstChild;
   // build search options
   const searchOptions = getCell(searchBlock, 1, 3)?.firstElementChild?.children || [];
+  const options = [...searchOptions].map((option) => option.textContent);
 
-  const options = [...searchOptions]
-    .map((option) => `<span class="search-picker-label">${option.textContent}</span>`)
-    .join('');
-
-  searchBlock.innerHTML = `<div class="search-wrapper">
-    <div class="search-short">
-      <a href="https://experienceleague.adobe.com/search.html">
-        <span class="icon icon-search"></span>
-      </a>
-    </div>
-    <div class="search-full">
-      <span class="icon icon-search"></span>
-      <input autocomplete="off" class="search-input" type="text" role="combobox" placeholder="${searchPlaceholder.textContent}">
-      <button type="button" class="search-picker-button" aria-haspopup="true" aria-controls="search-picker-popover">
-        <span class="search-picker-label">All</span>
-      </button>
-      <div class="search-picker-popover" id="search-picker-popover">
-        ${options}
+  searchBlock.innerHTML = '';
+  const searchWrapper = htmlToElement(
+    `<div class="search-wrapper">
+      <div class="search-short">
+        <a href="https://experienceleague.adobe.com/search.html" aria-label="Search">
+          <span class="icon icon-search search-icon"></span>
+        </a>
       </div>
-    <div>
-  </div>`;
-  decorateIcons(searchBlock);
+      <div class="search-full">
+        <div class="search-container">
+          <span title="Search" class="icon icon-search"></span>
+          <input autocomplete="off" class="search-input" type="text" aria-label="top-nav-combo-search" aria-expanded="false" title="Insert a query. Press enter to send" role="combobox" placeholder="${
+            searchPlaceholder.textContent
+          }">
+          <span title="Clear" class="icon icon-clear search-clear-icon"></span>
+          <div class="search-suggestions-popover">
+            <ul role="listbox">
+            </ul>
+          </div>
+        </div>
+        <button type="button" class="search-picker-button" aria-haspopup="true" aria-controls="search-picker-popover">
+          <span class="search-picker-label" data-filter-value="${options[0].split(':')[1]}">${
+            options[0].split(':')[0] || ''
+          }</span>
+        </button>
+        <div class="search-picker-popover" id="search-picker-popover">
+          <ul role="listbox">
+            ${options
+              .map(
+                (option, index) =>
+                  `<li tabindex="0" role="option" class="search-picker-label" data-filter-value="${
+                    option.split(':')[1]
+                  }">${
+                    index === 0
+                      ? `<span class="icon icon-checkmark"></span> <span data-filter-value="${option.split(':')[1]}">${
+                          option.split(':')[0]
+                        }</span>`
+                      : `<span data-filter-value="${option.split(':')[1]}">${option.split(':')[0]}</span>`
+                  }</li>`,
+              )
+              .join('')}
+          </ul>
+        </div>
+      <div>
+    </div>
+  `,
+  );
+  searchBlock.append(searchWrapper);
+  await decorateIcons(searchBlock);
+
+  const searchItem = new Search({ searchBlock });
+  searchItem.configureAutoComplete({
+    searchOptions: options,
+  });
   return searchBlock;
 };
 
@@ -347,20 +406,9 @@ const languageDecorator = async (languageBlock) => {
  * Decorates the sign-in block
  * @param {HTMLElement} signInBlock
  */
+
 const signInDecorator = async (signInBlock) => {
   simplifySingleCellBlock(signInBlock);
-
-  let adobeIMS = {
-    isSignedInUser: () => false,
-  };
-  try {
-    const ims = await loadIms();
-    adobeIMS = ims.adobeIMS;
-  } catch {
-    // eslint-disable-next-line no-console
-    console.warn('Adobe IMS not available.');
-  }
-  const isSignedIn = adobeIMS?.isSignedInUser();
   if (isSignedIn) {
     signInBlock.classList.add('signed-in');
     signInBlock.replaceChildren(
@@ -406,13 +454,74 @@ const signInDecorator = async (signInBlock) => {
         toggler.parentElement.addEventListener('mouseleave', toggleExpandContent);
       }
     });
+
+    // Hide Signup - Authenticated
+    document.querySelector('.sign-up').style.display = 'none';
   } else {
     signInBlock.classList.remove('signed-in');
     signInBlock.firstChild.addEventListener('click', async () => {
-      adobeIMS.signIn();
+      window.adobeIMS.signIn();
     });
   }
   return signInBlock;
+};
+
+/**
+ * Decorates the product-grid block
+ * @param {HTMLElement} productGrid
+ */
+
+const productGridDecorator = async (productGridBlock) => {
+  simplifySingleCellBlock(productGridBlock);
+  if (isSignedIn) {
+    productGridBlock.classList.add('signed-in');
+    const productDropdown = document.createElement('div');
+    productDropdown.classList.add('product-dropdown');
+    const pTags = productGridBlock.querySelectorAll('p');
+    if (pTags.length > 0) {
+      pTags.forEach((p) => {
+        const anchor = p.querySelector('a');
+        anchor.setAttribute('target', '_blank');
+        const href = anchor.getAttribute('href').split('#');
+        anchor.setAttribute('href', href[0]);
+        productDropdown.innerHTML += p.innerHTML;
+      });
+    }
+    const productToggle = document.createElement('button');
+    productToggle.classList.add('product-toggle');
+    productToggle.setAttribute('aria-controls', 'product-dropdown');
+    productToggle.innerHTML = `<span class="icon-grid"></span>`;
+    productGridBlock.innerHTML = `${productToggle.outerHTML}${productDropdown.outerHTML}`;
+    const gridToggler = document.querySelector('.product-toggle');
+    const toggleExpandGridContent = () => {
+      const isExpanded = gridToggler.getAttribute('aria-expanded') === 'true';
+      gridToggler.setAttribute('aria-expanded', !isExpanded);
+      const productGridMenu = gridToggler.nextElementSibling;
+      const expandedClass = 'product-dropdown-expanded';
+      if (!isExpanded) {
+        productGridMenu.classList.add(expandedClass);
+      } else {
+        productGridMenu.classList.remove(expandedClass);
+      }
+    };
+
+    registerResizeHandler(() => {
+      if (isMobile()) {
+        // if mobile, hide product grid block
+        gridToggler.style.display = 'none';
+      } else {
+        // if desktop, add mouseenter/mouseleave, remove click event
+        gridToggler.parentElement.addEventListener('mouseenter', toggleExpandGridContent);
+        gridToggler.parentElement.addEventListener('mouseleave', toggleExpandGridContent);
+      }
+    });
+  } else {
+    const isProductGrid = document.querySelector('.product-grid');
+    if (isProductGrid) {
+      document.querySelector('nav').removeChild(isProductGrid);
+    }
+  }
+  return productGridBlock;
 };
 
 /**
@@ -421,6 +530,7 @@ const signInDecorator = async (signInBlock) => {
  */
 const adobeLogoDecorator = (adobeLogoBlock) => {
   simplifySingleCellBlock(adobeLogoBlock);
+  adobeLogoBlock.querySelector('a').setAttribute('title', 'logo');
   return adobeLogoBlock;
 };
 
@@ -474,6 +584,7 @@ export default async function decorate(headerBlock) {
     { className: 'search', decorator: searchDecorator },
     { className: 'sign-up', decorator: signUpDecorator },
     { className: 'language-selector', decorator: languageDecorator },
+    { className: 'product-grid', decorator: productGridDecorator },
     { className: 'sign-in', decorator: signInDecorator },
     { className: 'adobe-logo', decorator: adobeLogoDecorator },
     { className: 'nav', decorator: navDecorator },

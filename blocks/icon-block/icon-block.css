@@ -4,6 +4,7 @@
   text-align: center;
   margin: 0 auto;
   gap: 32px;
+  min-height: 208px;
 }
 .icon-block > div {
   max-width: 283px;
@@ -12,7 +13,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  padding-top: 1em;
 }
 .icon-block > div > div img {
   width: 50px;
@@ -55,10 +56,7 @@
   align-items: center;
   margin-top: 0;
 }
-.icon-block .icon-link::after {
-  content: ">";
-  padding-left: 4px;
-}
+
 .icon-block .icon-link.external::after {
   content: "";
 }

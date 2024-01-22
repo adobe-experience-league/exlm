@@ -1,0 +1,58 @@
+/* breadcrumb has its own section */
+.section.browse-breadcrumb-container {
+  padding-top: 24px;
+  padding-bottom: 0; 
+}
+
+/* a flex list of links /spans */
+.browse-breadcrumb.block {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* crumb entries */
+.browse-breadcrumb.block > span,
+.browse-breadcrumb.block > a {
+  color: var(--spectrum-gray-500);
+  display: inline-block;
+  font-size: var(--spectrum-font-size-200);
+  line-height: 24px;
+  margin: 0;
+}
+
+/* links should show underline */
+.browse-breadcrumb.block > a:hover {
+  text-decoration: underline;
+}
+
+/* chevron on the left of crumb entry */
+.browse-breadcrumb.block > span::before,
+.browse-breadcrumb.block > a::before {
+  background-image: url("../../icons/chevron_right.svg");
+  background-size: 16px;
+  bottom: -3px;
+  content: "";
+  display: inline-block;
+  height: 16px;
+  margin-right: 5px;
+  margin-left: 5px;
+  position: relative;
+  width: 16px;
+}
+
+/* current page entry is a span, bold */
+.browse-breadcrumb.block > span {
+  color: var(--spectrum-gray-800);
+  font-weight: var(--font-weight-700);
+}
+
+/* root crumb has no chevron on the left side */
+.browse-breadcrumb.block > a:first-child::before {
+  content: none;
+}
+
+/* the root crumb is never bold */
+.browse-breadcrumb.block > a:first-child {
+  font-weight: var(--font-weight-400);
+}

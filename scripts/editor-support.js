@@ -2,6 +2,20 @@ import {
   decorateBlock, decorateButtons, decorateIcons, loadBlock,
 } from './lib-franklin.js';
 
+// set aem content root
+window.hlx.aemRoot = '/content/exlm/global';
+
+// extracts the title independent active tab of a tabs component
+function getSelectedTab(block) {
+  return block.querySelector('[aria-selected="true"]').getAttribute('data-tab-id');
+}
+
+// reactivates the previously active tab on the new edited block
+function setSelectedTab(id, newBlock) {
+  // click the previously slected tab
+  newBlock.querySelector(`[data-tab-id="${id}"]`).click();
+}
+
 function handleEditorUpdate(event) {
   const { detail: { requestData, responseData } } = event;
   const target = requestData?.target;
@@ -10,11 +24,16 @@ function handleEditorUpdate(event) {
     .map(async (update) => {
       const { resource } = target;
       const { content } = update;
-      const block = document.querySelector(`[data-aue-resource="${resource}"]`);
-      if (block && resource?.startsWith('urn:aemconnection:')) {
+      const element = document.querySelector(`[data-aue-resource="${resource}"]`);
+      const block = element?.closest('.block');
+      const blockResource = block?.getAttribute('data-aue-resource');
+      if (block && blockResource?.startsWith('urn:aemconnection:')) {
         const newBlockDocument = new DOMParser().parseFromString(content, 'text/html');
-        const newBlock = newBlockDocument?.querySelector(`[data-aue-resource="${resource}"]`);
+        const newBlock = newBlockDocument?.querySelector(`[data-aue-resource="${blockResource}"]`);
         if(newBlock) {
+          // keep info about currently selected tab
+          const activeTabId = block.classList.contains('tabs') ? getSelectedTab(block) : null;
+
           newBlock.style.display = 'none';
           block.insertAdjacentElement('afterend', newBlock);
           // decorate buttons and icons
@@ -26,6 +45,9 @@ function handleEditorUpdate(event) {
           // remove the old block and show the new one
           block.remove();
           newBlock.style.display = null;
+
+          if (activeTabId) setSelectedTab(activeTabId, newBlock);
+
           return Promise.resolve();
         }
       }

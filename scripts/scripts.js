@@ -16,21 +16,26 @@ import {
   getMetadata,
   loadScript,
 } from './lib-franklin.js';
+import { pageLoadModel, linkClickModel } from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
-/**
- * Builds hero block and prepends to main in a new section.
- * @param {Element} main The container element
- */
-function buildHeroBlock(main) {
-  const h1 = main.querySelector('h1');
-  const picture = main.querySelector('picture');
-  // eslint-disable-next-line no-bitwise
-  if (h1 && picture && h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING) {
-    const section = document.createElement('div');
-    section.append(buildBlock('hero', { elems: [picture, h1] }));
-    main.prepend(section);
+export const timers = new Map();
+
+// eslint-disable-next-line
+export function debounce(id = '', fn = () => void 0, ms = 250) {
+  if (id.length > 0) {
+    if (timers.has(id)) {
+      clearTimeout(timers.get(id));
+    }
+
+    timers.set(
+      id,
+      setTimeout(() => {
+        timers.delete(id);
+        fn();
+      }, ms),
+    );
   }
 }
 
@@ -105,13 +110,43 @@ export function buildSyntheticBlocks(main) {
 }
 
 /**
+ * return browse page theme if its browse page otherwise undefined.
+ * theme = browse-* is set in bulk metadata for /en/browse paths.
+ */
+export function isBrowsePage() {
+  const theme = getMetadata('theme');
+  return theme.split(',').find((t) => t.toLowerCase().startsWith('browse-'));
+}
+
+/**
+ * add a section for the left rail when on a browse page.
+ */
+function addBrowseRail(main) {
+  const leftRailSection = document.createElement('div');
+  leftRailSection.classList.add('browse-rail', isBrowsePage());
+  leftRailSection.append(buildBlock('browse-rail', []));
+  main.append(leftRailSection);
+}
+
+function addBrowseBreadCrumb(main) {
+  // add new section at the top
+  const section = document.createElement('div');
+  main.prepend(section);
+  section.append(buildBlock('browse-breadcrumb', []));
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
   try {
-    buildHeroBlock(main);
     buildSyntheticBlocks(main);
+    // if we are on a product browse page
+    if (isBrowsePage()) {
+      addBrowseBreadCrumb(main);
+      addBrowseRail(main);
+    }
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -216,14 +251,10 @@ export async function loadIms() {
           'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read',
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
         debug: false,
-        onReady: (args) => {
+        onReady: () => {
           // eslint-disable-next-line no-console
-          console.log('Adobe IMS Ready!', args);
-          resolve({
-            ...args,
-            // eslint-disable-next-line no-undef
-            adobeIMS,
-          });
+          console.log('Adobe IMS Ready!');
+          resolve(); // resolve the promise, consumers can now use window.adobeIMS
           clearTimeout(timeout);
         },
         onError: reject,
@@ -252,8 +283,6 @@ async function loadLazy(doc) {
   loadFonts();
 
   sampleRUM('lazy');
-  sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
-  sampleRUM.observe(main.querySelectorAll('picture > img'));
 }
 
 /**
@@ -345,6 +374,27 @@ export function loadPrevNextBtn() {
 }
 
 /**
+ * Copies all meta tags to window.EXL_META
+ * These are consumed by Qualtrics to pass additional data along with the feedback survey.
+ */
+function addMetaTagsToWindow() {
+  window.EXL_META = {};
+
+  document.querySelectorAll('meta').forEach((tag) => {
+    if (
+      typeof tag.name === 'string' &&
+      tag.name.length > 0 &&
+      typeof tag.content === 'string' &&
+      tag.content.length > 0
+    ) {
+      window.EXL_META[tag.name] = tag.content;
+    }
+  });
+
+  window.EXL_META.lang = document.documentElement.lang;
+}
+
+/**
  * Loads everything that happens a lot later,
  * without impacting the user experience.
  */
@@ -352,6 +402,10 @@ function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
+  // eslint-disable-next-line import/no-cycle
+  addMetaTagsToWindow();
+  // eslint-disable-next-line import/no-cycle
+  if (isDocPage()) window.setTimeout(() => import('./feedback/feedback.js'), 3000);
 }
 
 /**
@@ -367,12 +421,50 @@ async function loadRails() {
   }
 }
 
+function loadAnalyticsEvents() {
+  const linkClicked = document.querySelectorAll('a');
+  linkClicked.forEach((linkElement) => {
+    linkElement.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (e.target.tagName === 'A') {
+        linkClickModel(e);
+      }
+    });
+  });
+}
+
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadRails();
+  const launchPromise = loadScript(
+    'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
+    {
+      async: true,
+    },
+  );
   loadDelayed();
   loadPrevNextBtn();
+  launchPromise.then(() => {
+    window.adobeDataLayer.push(pageLoadModel());
+    loadAnalyticsEvents();
+  });
 }
 
 loadPage();
+
+/**
+ * Helper function that converts an AEM path into an EDS path.
+ */
+export function getEDSLink(aemPath) {
+  return window.hlx.aemRoot ? aemPath.replace(window.hlx.aemRoot, '').replace('.html', '') : aemPath;
+}
+
+/**
+ * Helper function that adapts the path to work on EDS and AEM rendering
+ */
+export function getLink(edsPath) {
+  return window.hlx.aemRoot && !edsPath.startsWith(window.hlx.aemRoot) && edsPath.indexOf('.html') === -1
+    ? `${window.hlx.aemRoot}${edsPath}.html`
+    : edsPath;
+}
