@@ -1,4 +1,6 @@
 import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
+import { tocsUrl } from '../../scripts/urls.js';
+import TocDataService from '../../scripts/data-service/tocs-data-service.js';
 
 // Utility function to toggle visibility of items
 function toggleItemVisibility(itemList, startIndex, show) {
@@ -38,6 +40,7 @@ async function viewMoreviewLess(targetUL) {
     // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
   }
+
   toggleItemVisibility(targetUL.children, 5, false); // Hide items initially
 
   // "View More" and "View Less" links
@@ -48,13 +51,12 @@ async function viewMoreviewLess(targetUL) {
 
   const viewLessDiv = document.createElement('div');
   viewLessDiv.classList.add('left-rail-view-less', 'view-more-less');
-  viewLessDiv.innerHTML = `<span class="viewLessLink" style="display:none"> ${placeholders.viewLess}</span>`;
+  viewLessDiv.innerHTML = `<span class="viewLessLink" style="display: none;"> ${placeholders.viewLess}</span>`;
   targetUL.append(viewLessDiv);
 
   // Check if there are less than 11 items, and hide the "View More" link accordingly
   const liElements = targetUL.children;
   if (liElements && liElements.length <= 5) {
-    // Adjust the condition to 5
     setLinkVisibility(viewMoreDiv, '.viewMoreLink', false);
   }
 
@@ -63,14 +65,15 @@ async function viewMoreviewLess(targetUL) {
   viewLessDiv.addEventListener('click', () => handleViewLessClick(targetUL, viewMoreDiv, viewLessDiv));
 }
 
-// Utility function for http call
-const getHTMLData = async (url) => {
-  const response = await fetch(url);
-  if (response.ok) {
-    const responseData = await response.text();
-    return responseData;
+const handleTocsService = async (tocID) => {
+  const tocsService = new TocDataService(tocsUrl);
+  const tocs = await tocsService.fetchDataFromSource(tocID);
+
+  if (!tocs) {
+    throw new Error('An error occurred');
   }
-  throw new Error(`${url} not found`);
+
+  return tocs;
 };
 
 /**
@@ -79,16 +82,25 @@ const getHTMLData = async (url) => {
  */
 export default async function decorate(block) {
   // fetch toc content
-  const tocPath = block.querySelector('.toc a').href;
-  const tocFragment = `${tocPath}.plain.html`;
-  const resp = await getHTMLData(tocFragment);
-  if (resp) {
-    const html = resp;
-    const productName = getMetadata('original-solution');
+  const tocID = block.querySelector('.toc > div > div').textContent;
+  if (tocID !== '') {
+    const resp = await handleTocsService(tocID);
+    block.innerHTML = '';
+    const div = document.createElement('div');
+    const html = resp ? resp?.HTML : '';
+    let productName = '';
+    const productNames = getMetadata('original-solution');
+    if (productNames.includes(',')) {
+      const productNamesArray = productNames.split(',');
+      productName = productNamesArray[0].trim();
+    } else {
+      productName = productNames;
+    }
     const themeColor = getMetadata('theme-color');
 
     // decorate TOC DOM
-    block.innerHTML = html;
+    div.innerHTML = html;
+    block.append(div);
     block.parentElement.setAttribute('theme-color', themeColor);
     block.classList.add(productName.replace(/\s/g, ''));
     const ul = document.createElement('ul');
@@ -100,21 +112,47 @@ export default async function decorate(block) {
     const parentUL = block.querySelector('.toc > div > ul');
     viewMoreviewLess(parentUL);
 
-    // Toggle functionality for toc
+    const currentURL = window.location.pathname;
+    const regex = /\/(\w{2})\//;
+    const match = currentURL.match(regex);
+    let locale = '';
+
+    if (match && match[1]) {
+      // eslint-disable-next-line prefer-destructuring
+      locale = match[1];
+    }
+
     const anchors = block.querySelectorAll('.toc a');
     anchors.forEach((anchor) => {
+      const pTag = document.createElement('p');
+      anchor.parentNode.replaceChild(pTag, anchor);
+      pTag.appendChild(anchor);
+      const currentHref = anchor.getAttribute('href');
+      const extensionRegex = /\.html\?lang=\w{2}$/;
+      // Remove ".html?lang=en" part from the href
+      const newHref = currentHref.replace(extensionRegex, '');
+
       if (anchor.getAttribute('href').startsWith('#')) {
         anchor.classList.add('js-toggle');
         // View more and view less
         const targetUL = anchor.parentElement.parentElement.querySelector('ul');
         viewMoreviewLess(targetUL);
+      } else {
+        anchor.setAttribute('href', `/${locale}${newHref}`);
       }
     });
 
+    // Add is-active class to the highlighted section
+    const targetElement = block.querySelector(`a[href="${currentURL}"]`);
+    if (targetElement) {
+      targetElement.classList.add('is-active');
+    }
+
+    // Toggle functionality for TOC Block
     const toggleElements = block.querySelectorAll('.js-toggle');
     if (toggleElements) {
       toggleElements.forEach((toggleElement) => {
-        const subMenu = toggleElement.parentElement.parentElement.querySelector('ul');
+        const subMenu = toggleElement.parentElement.querySelector('ul');
         toggleElement.classList.add('collapsed');
         toggleElement.addEventListener('click', (event) => {
           event.preventDefault();
@@ -123,12 +161,6 @@ export default async function decorate(block) {
           toggleElement.classList.toggle('collapsed', subMenu.style.display === 'none');
         });
       });
-    }
-    // Add is-active class to the highlighted section
-    const currentURL = window.location.pathname;
-    const targetElement = block.querySelector(`a[href="${currentURL}.html?lang=en"]`);
-    if (targetElement) {
-      targetElement.classList.add('is-active');
     }
   }
 }
