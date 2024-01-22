@@ -99,7 +99,6 @@ export default async function decorate(block) {
           const cardDiv = document.createElement('div');
           buildCard(cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
-          block.appendChild(contentDiv);
         }
         block.appendChild(contentDiv);
         decorateIcons(block);
