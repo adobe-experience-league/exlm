@@ -218,7 +218,6 @@
 .browse-card .icon {
   color: var( --non-spectrum-dim-gray);
   fill: var( --non-spectrum-dim-gray);
-  cursor: pointer;
   margin-right: 2px;
   height: 24px;
   width: 24px;

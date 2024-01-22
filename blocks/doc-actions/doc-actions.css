@@ -119,9 +119,11 @@
 }
 @media (min-width: 900px) {
   .doc-actions-wrapper {
+    background: var(--spectrum-gray-50);
     display: flex;
     position: sticky;
     top: 0;
+    z-index: 5;
   }
 
   .doc-actions-mobile {
