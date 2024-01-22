@@ -24,7 +24,7 @@
         "label": "Style",
         "valueType": "string",
         "required": true,
-        "maxSize": 2,
+        "maxSize": 3,
         "options": [
           {
             "name": "Theme",
