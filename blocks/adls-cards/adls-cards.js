@@ -77,8 +77,15 @@ export default async function decorate(block) {
           buildCard(contentDiv, cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
-        decorateIcons(block);
         block.appendChild(contentDiv);
+        /* Hide Tooltip while scrolling the cards layout */
+        contentDiv.addEventListener('scroll', () => {
+          const tooltips = contentDiv.querySelectorAll('.tooltip-text');
+          if (tooltips.length) {
+            tooltips.forEach((elem) => elem.classList.remove('tooltip-visible'));
+          }
+        });
+        decorateIcons(block);
       }
     })
     .catch((err) => {

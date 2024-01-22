@@ -200,4 +200,12 @@ export default async function decorate(block) {
     /* eslint-disable-next-line */
     fetchDataAndRenderBlock(param, contentType, block, contentDiv);
   });
+
+  /* Hide Tooltip while scrolling the cards layout */
+  contentDiv.addEventListener('scroll', () => {
+    const tooltips = contentDiv.querySelectorAll('.tooltip-text');
+    if (tooltips.length) {
+      tooltips.forEach((elem) => elem.classList.remove('tooltip-visible'));
+    }
+  });
 }
