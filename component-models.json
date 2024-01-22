@@ -13,7 +13,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "imageAlt",
+        "name": "fileReferenceAlt",
         "value": "",
         "label": "Image Description",
         "description": "A descriptive text of the image will be shown as tooltip."
@@ -181,7 +181,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "cta1Url",
+        "name": "cta1",
         "value": "",
         "label": "First CTA Link",
         "description": "What link to open when clicking the button."
@@ -215,7 +215,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "cta2Url",
+        "name": "cta2",
         "value": "",
         "label": "Second CTA Link",
         "description": "What link to open when clicking the button."
@@ -394,7 +394,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "cardLinkUrl",
+        "name": "cardLink",
         "value": "",
         "label": "Link URL",
         "description": "Sets the link URL for Card."
@@ -587,7 +587,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "imageAlt",
+        "name": "fileReferenceAlt",
         "value": "",
         "label": "Subject Image Description",
         "description": "A descriptive text of the image will be shown as tooltip."
@@ -711,7 +711,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "cta1Url",
+        "name": "cta1",
         "value": "",
         "label": "First CTA Link",
         "description": "What link to open when clicking the button."
@@ -745,7 +745,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "cta2Url",
+        "name": "cta2",
         "value": "",
         "label": "Second CTA Link",
         "description": "What link to open when clicking the button."
@@ -766,7 +766,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "imageAlt",
+        "name": "fileReferenceAlt",
         "value": "",
         "label": "Subject Image Description",
         "description": "A descriptive text of the image will be shown as tooltip."
@@ -890,7 +890,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "cta1Url",
+        "name": "cta1",
         "value": "",
         "label": "First CTA Link",
         "description": "What link to open when clicking the button."
@@ -924,7 +924,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "cta2Url",
+        "name": "cta2",
         "value": "",
         "label": "Second CTA Link",
         "description": "What link to open when clicking the button."
@@ -1001,7 +1001,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "imageAlt",
+        "name": "fileReferenceAlt",
         "value": "",
         "label": "Image Description",
         "description": "A descriptive text of the image."
@@ -1073,7 +1073,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "cta1Url",
+        "name": "cta1",
         "value": "",
         "label": "First CTA Link",
         "description": "What link to open when clicking the button."
@@ -1107,7 +1107,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "cta2Url",
+        "name": "cta2",
         "value": "",
         "label": "Second CTA Link",
         "description": "What link to open when clicking the button."
