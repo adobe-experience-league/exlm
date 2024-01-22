@@ -385,10 +385,18 @@ strong {
   --spectrum-yellow-1300: #362500;
   --spectrum-global-color-gray-900-rgb: 0, 0, 0;
   /* spectrum spacing */
+  --spectrum-spacing-50: 2px;
+  --spectrum-spacing-75: 4px;
+  --spectrum-spacing-100: 8px;
+  --spectrum-spacing-200: 12px;
+  --spectrum-spacing-300: 16px;
   --spectrum-spacing-400: 24px;
   --spectrum-spacing-500: 32px;
   --spectrum-spacing-600: 40px;
   --spectrum-spacing-700: 48px;
+  --spectrum-spacing-800: 64px;
+  --spectrum-spacing-900: 80px;
+  --spectrum-spacing-1000: 96px;
   /* mini toc spectrum vars */
   --spectrum-sidenav-item-background-color-hover: ButtonFace;
   --spectrum-alias-highlight-hover: rgb(0 0 0 / 6%);
@@ -908,7 +916,7 @@ main > div.browse-rail {
 .docs main > div {
   padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500) var(--spectrum-spacing-500);
   box-sizing: border-box;
-  border: 1px solid #EAEAEA;
+  border-right: 1px solid #eaeaea;
 }
 .docs main > div.section {
   padding: 30px 2px;
@@ -925,7 +933,7 @@ main > div.browse-rail {
 }
 .docs main > div:nth-child(2) {
   order: 1;
-  height: 70px;
+  min-height: 70px;
   padding: 32px 10px 10px;
 }
 .docs main > div:nth-child(2) .rail-content {

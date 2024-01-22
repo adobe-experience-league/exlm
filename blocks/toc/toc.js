@@ -42,13 +42,13 @@ async function viewMoreviewLess(targetUL) {
 
   // "View More" and "View Less" links
   const viewMoreDiv = document.createElement('div');
-  viewMoreDiv.classList.add('left-rail-view-more', 'view-more');
-  viewMoreDiv.innerHTML = `<a class="viewMoreLink"> ${placeholders.viewMore}</a>`;
+  viewMoreDiv.classList.add('left-rail-view-more', 'view-more-less');
+  viewMoreDiv.innerHTML = `<span class="viewMoreLink"> ${placeholders.viewMore}</span>`;
   targetUL.append(viewMoreDiv);
 
   const viewLessDiv = document.createElement('div');
-  viewLessDiv.classList.add('left-rail-view-less', 'view-more');
-  viewLessDiv.innerHTML = `<a class="viewLessLink" style="display: none;"> ${placeholders.viewLess}</a>`;
+  viewLessDiv.classList.add('left-rail-view-less', 'view-more-less');
+  viewLessDiv.innerHTML = `<span class="viewLessLink" style="display:none"> ${placeholders.viewLess}</span>`;
   targetUL.append(viewLessDiv);
 
   // Check if there are less than 11 items, and hide the "View More" link accordingly

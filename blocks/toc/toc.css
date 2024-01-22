@@ -6,6 +6,7 @@
 .toc ul {
     list-style: none;
     margin-left: 0;
+    margin-left: var(--spectrum-spacing-200);
 }
 
 .toc p {
@@ -21,9 +22,11 @@
 .toc ul li {
     box-sizing: border-box;
     width: 100%;
-    min-height: var(--spectrum-sidenav-item-height, var(--spectrum-alias-single-line-height));
-    padding: var(--spectrum-sidenav-item-padding-y) var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150)) var(--spectrum-sidenav-item-padding-y) var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150));
-    margin: 4px 0;
+    min-height: 32px;
+    margin: 8px 0;
+}
+.toc ul#product {
+    margin-left: var(--spectrum-spacing-100);
 }
 .toc ul#product>li:first-child {
     align-items: center;
@@ -52,10 +55,6 @@
     font-size: var(--spectrum-font-size-50);
     color: #1e1e1e;
 }
- .toc ul div.view-more:hover {
-    background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
-    color: var(--spectrum-sidenav-item-text-color-hover, var(--spectrum-alias-text-color-hover));
-} 
 .toc ul li a:hover:not(a[href^="#"]) {
     background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
 }
@@ -140,10 +139,10 @@
     font-weight: bold;
     flex: 88%;
 }
-.toc .view-more {
+.toc .view-more-less {
     border-radius: 4px;
 }
-.toc .view-more a {
+.toc .view-more-less span {
     cursor: pointer;
     text-transform: none;
     font-size: 12px;
@@ -154,8 +153,9 @@
     align-items: center;
     justify-content: start;
     margin: 0;
+    min-height: 32px;
 }
-.toc .view-more a:before {
+.toc .view-more-less span:before {
     content: "+";
     color: var(--non-spectrum-dim-gray);
     font-weight: 800;
@@ -165,7 +165,14 @@
     left: 10px;
     top: 0px;
 }
-.toc .left-rail-view-less a:before {
+.toc .view-more-less:hover {
+    background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
+    color: var(--spectrum-alias-text-color-hover);
+} 
+.toc .view-more-less:hover span{
+    color: var(--spectrum-alias-text-color-hover);
+} 
+.toc .left-rail-view-less span:before {
     content: "-";
 }
 .toc a[href="javascript:void(0)"] {
