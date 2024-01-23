@@ -283,10 +283,7 @@
 .browse-card .tooltip {
   display: inline-flex;
   margin: 2px 0 0 5px;
-  position: relative;
 }
-
-
 .browse-card .tooltip .icon-info {
   width: 14px;
   height: 14px;
@@ -322,14 +319,10 @@
   margin-left: 0;
   margin-top: 0;
 }
-.browse-card .tooltip:hover .tooltip-text {
+.browse-card .tooltip .tooltip-text.tooltip-visible {
   visibility: visible;
   opacity: 1;
-  top: 0;
-  left: 50%;
-  transform: translate(-50%, calc(-100% - 10px));
 }
-
 .browse-card .tooltip .tooltip-text::before {
   border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
   border-style: solid;

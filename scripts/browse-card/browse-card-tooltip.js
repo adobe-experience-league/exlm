@@ -7,6 +7,47 @@ const createTooltip = (container, element, config) => {
   const { position = 'right', color = 'blue', content } = config;
 
   /**
+   * Handles tooltip-related events (e.g., mouseover, mouseout, click).
+   * @param {Event} event - The event object.
+   */
+  const handleTooltipEvent = (event) => {
+    try {
+      const tooltipText = element.querySelector('.tooltip-text');
+      const isDesktopLg = window.matchMedia('(min-width: 1200px)').matches;
+      if (event.type === 'mouseover' || event.type === 'mouseenter' || event.type === 'click') {
+        tooltipText.classList.add('tooltip-visible');
+        if (position === 'top') {
+          const topSpacer = 5;
+          const leftSpacer = 4;
+          tooltipText.style.top = `${element.offsetTop - container.scrollTop - tooltipText.offsetHeight - topSpacer}px`;
+          tooltipText.style.left = `${element.offsetLeft - container.scrollLeft + leftSpacer}px`;
+        } else {
+          const topSpacer = isDesktopLg ? 20 : 12;
+          tooltipText.style.top = `${element.offsetTop + tooltipText.offsetHeight / 2 + topSpacer}px`;
+          tooltipText.style.left = `${element.offsetLeft + element.offsetWidth}px`;
+        }
+      } else if (event.type === 'mouseout' || event.type === 'mouseleave') {
+        tooltipText.classList.remove('tooltip-visible');
+        tooltipText.style.left = '-999px';
+      }
+    } catch {
+      // eslint-disable-next-line no-console
+      console.error('Error on tooltip');
+    }
+  };
+
+  /**
+   * Attaches tooltip-related events to the specified HTML element.
+   */
+  const attachTooltipEvents = () => {
+    if (element) {
+      element.addEventListener('mouseenter', handleTooltipEvent);
+      element.addEventListener('mouseleave', handleTooltipEvent);
+      element.addEventListener('click', handleTooltipEvent);
+    }
+  };
+
+  /**
    * Creates HTML content for the tooltip.
    * @returns {string} - The HTML content for the tooltip.
    */
@@ -21,6 +62,7 @@ const createTooltip = (container, element, config) => {
    */
   const init = () => {
     element.innerHTML = createTooltipHTML();
+    attachTooltipEvents();
   };
 
   // Initialize the tooltip when the function is called.

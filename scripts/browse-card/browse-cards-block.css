@@ -58,12 +58,9 @@
     max-width: 155px;
     z-index: 1;
 }
-.browse-cards-block-title .tooltip:hover .tooltip-text {
+.browse-cards-block-title .tooltip .tooltip-text.tooltip-visible {
     visibility: visible;
     opacity: 1;
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, calc(-100% - 10px));
 }
 .browse-cards-block-title .tooltip .tooltip-text::before {
     border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
