@@ -1,27 +1,40 @@
+/* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { loadIms } from '../../scripts/scripts.js';
 
 function decorateButtons(...buttons) {
   return buttons
-    .map((div) => {
-      const a = div.querySelector('a');
-      if (a) {
-        a.classList.add('button');
-        if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
-        if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
-        return a.outerHTML;
+    .map((div, index) => {
+      if (div) {
+        const a = div.querySelector('a');
+        if (a) {
+          a.classList.add('button');
+          if (index === 0) a.classList.add('secondary');
+          if (index === 1) a.classList.add('primary');
+          return a.outerHTML;
+        }
       }
       return '';
     })
     .join('');
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
   const [img, eyebrow, title, longDescr, firstCta, secondCta] = block.querySelectorAll(':scope div > div');
   const subjectPicture = img.querySelector('picture');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? bgColorCls.substr(3) : '--spectrum-gray-700';
+
+  // get signed in status
+  try {
+    await loadIms();
+  } catch {
+    // eslint-disable-next-line no-console
+    console.warn('Adobe IMS not available.');
+  }
+  const isSignedIn = window.adobeIMS?.isSignedInUser();
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
@@ -34,7 +47,7 @@ export default function decorate(block) {
         }
         <div class='marquee-title'>${title.innerHTML}</div>
         <div class='marquee-long-description'>${longDescr.innerHTML}</div>
-        <div class='marquee-cta'>${decorateButtons(firstCta, secondCta)}</div>
+        <div class='marquee-cta'>${decorateButtons(firstCta, !isSignedIn && secondCta)}</div>
       </div>
       ${
         subjectPicture
