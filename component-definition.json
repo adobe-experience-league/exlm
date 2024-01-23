@@ -208,6 +208,7 @@
                   "model": "marquee",
                   "fileReference": "/content/dam/exlm/Community_headshot_single.png",
                   "title": "Marquee Title",
+                  "titleType": "h2",
                   "longDescr": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt"
                 }
               }
