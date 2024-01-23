@@ -449,9 +449,9 @@ async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadRails();
-  setTimeout(() => {
-    loadLauchAndAnalytics();
-  }, 2000);
+  // setTimeout(() => {
+  //   loadLauchAndAnalytics();
+  // }, 2000);
   loadDelayed();
   loadPrevNextBtn();
 }
