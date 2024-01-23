@@ -126,12 +126,12 @@ export default async function decorate(block) {
       // "View More" and "View Less" links
       const viewMoreDiv = document.createElement('div');
       viewMoreDiv.classList.add('left-rail-view-more');
-      viewMoreDiv.innerHTML = `<a class="viewMoreLink"> + ${placeholders.viewMore}</a>`;
+      viewMoreDiv.innerHTML = `<span class="viewMoreLink"> + ${placeholders.viewMore}</span>`;
       ul.append(viewMoreDiv);
 
       const viewLessDiv = document.createElement('div');
       viewLessDiv.classList.add('left-rail-view-less');
-      viewLessDiv.innerHTML = `<a class="viewLessLink" style="display: none;"> - ${placeholders.viewLess}</a>`;
+      viewLessDiv.innerHTML = `<span class="viewLessLink" style="display: none;"> - ${placeholders.viewLess}</span>`;
       ul.append(viewLessDiv);
 
       // Check if there are less than 12 items, and hide the "View More" link accordingly

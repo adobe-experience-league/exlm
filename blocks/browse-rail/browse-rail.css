@@ -107,12 +107,13 @@
 .browse-rail .browse-by li {
     flex-direction: column;
 }
-.browse-rail ul li .left-rail-view-more a,
-.browse-rail ul li .left-rail-view-less a {
+.browse-rail ul li .left-rail-view-more span,
+.browse-rail ul li .left-rail-view-less span {
     font-size: var(--spectrum-font-size-100);
     color: var(--non-spectrum-link);
     cursor: pointer;
     text-transform: none;
+    padding: 5px 0 5px 12px;
 }
 .browse-rail a[href="javascript:void(0)"] {
     cursor: default;
