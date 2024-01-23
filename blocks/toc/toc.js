@@ -1,6 +1,16 @@
 import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { tocUrl } from '../../scripts/urls.js';
 import TocDataService from '../../scripts/data-service/tocs-data-service.js';
+import { htmlToElement } from '../../scripts/scripts.js';
+import getSolutionName from './solutions.js';
+
+const constructSolutionsDropdownEl = htmlToElement(`
+    <div class="toc-dropdown is-hidden-desktop">
+      <button type="button" class="toc-dropdown-button" aria-expanded="false" aria-controls="toc-dropdown-popover">
+        <span class="toc-dropdown-label">Table of contents</span>
+      </button>
+    </div>
+`);
 
 // Utility function to toggle visibility of items
 function toggleItemVisibility(itemList, startIndex, show) {
@@ -81,6 +91,9 @@ const handleTocsService = async (tocID) => {
  * @param {Element} block The toc block element
  */
 export default async function decorate(block) {
+  const contentDiv = document.createElement('div');
+  contentDiv.classList.add('toc-right-rail-content');
+
   // fetch toc content
   const tocID = block.querySelector('.toc > div > div').textContent;
   if (tocID !== '') {
@@ -97,19 +110,38 @@ export default async function decorate(block) {
       productName = productNames;
     }
     const themeColor = getMetadata('theme-color');
-
+    const solutionInfo = getSolutionName(productName);
     // decorate TOC DOM
     div.innerHTML = html;
-    block.append(div);
+
     block.parentElement.setAttribute('theme-color', themeColor);
-    block.classList.add(productName.replace(/\s/g, ''));
+    block.classList.add(solutionInfo.class);
     const ul = document.createElement('ul');
     ul.id = 'product';
     const li = document.createElement('li');
-    li.innerHTML = `<span class="product-icon"></span><h3>${productName}</h3>`;
+    li.innerHTML = `<span class="product-icon"></span><h3>${solutionInfo.name}</h3>`;
     ul.append(li);
-    block.prepend(ul);
-    const parentUL = block.querySelector('.toc > div > ul');
+
+    contentDiv.appendChild(ul);
+    contentDiv.appendChild(div);
+
+    // Toc dropdow, visible only on mobile
+    block.appendChild(constructSolutionsDropdownEl);
+    // click event for TOC dropdown to open solutions
+    const tocMobileButton = block.querySelector('.toc-dropdown-button');
+    tocMobileButton.addEventListener('click', () => {
+      const isExpanded = tocMobileButton.getAttribute('aria-expanded') === 'true';
+      tocMobileButton.setAttribute('aria-expanded', !isExpanded);
+      contentDiv.classList.toggle('toc-wrapper-expanded');
+    });
+    window.addEventListener('resize', () => {
+      if (window.matchMedia('(min-width:900px)').matches && contentDiv.classList.contains('toc-wrapper-expanded')) {
+        contentDiv.classList.remove('toc-wrapper-expanded');
+      }
+    });
+
+    block.appendChild(contentDiv);
+    const parentUL = block.querySelector('.toc > div > div > ul');
     viewMoreviewLess(parentUL);
 
     const currentURL = window.location.pathname;
@@ -143,9 +175,17 @@ export default async function decorate(block) {
     });
 
     // Add is-active class to the highlighted section
-    const targetElement = block.querySelector(`a[href="${currentURL}"]`);
-    if (targetElement) {
-      targetElement.classList.add('is-active');
+    const activeElement = block.querySelector(`a[href="${currentURL}"]`);
+    if (activeElement) {
+      activeElement.classList.add('is-active');
+      const currentItemLi = activeElement.closest('li');
+      const parentList = currentItemLi.closest('ul');
+      if (parentList) {
+        const parentListItem = parentList.closest('li');
+        if (parentListItem) {
+          parentListItem.querySelector('a').classList.add('is-open');
+        }
+      }
     }
 
     // Toggle functionality for TOC Block
