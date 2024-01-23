@@ -11,18 +11,18 @@ export default async function decorate(block) {
     // always same order as in model, empty string if not set
     const props = [...block.querySelectorAll(':scope div > div')];
 
-    const subjectPicture = props[0].innerHTML.trim();
-    const subjectImageDescr = props[1].textContent.trim();
-    const bgColor = props[2].textContent.trim();
-    const eyebrow = props[3].textContent.trim();
-    const title = props[4].textContent.trim();
-    const longDescr = props[5].innerHTML.trim();
-    const firstCTAType = props[6].textContent.trim();
-    const firstCTAText = props[7].textContent.trim();
-    const firstCTALink = props[8].textContent.trim();
-    const secondCTAType = props[9].textContent.trim();
-    const secondCTAText = props[10].textContent.trim();
-    const secondCTALink = props[11].textContent.trim();
+    const subjectPicture = props[0]?.innerHTML.trim();
+    const subjectImageDescr = props[1]?.textContent.trim();
+    const bgColor = props[2]?.textContent.trim();
+    const eyebrow = props[3]?.textContent.trim();
+    const title = props[4]?.textContent.trim();
+    const longDescr = props[5]?.innerHTML.trim();
+    const firstCTAType = props[6]?.textContent.trim();
+    const firstCTAText = props[7]?.textContent.trim();
+    const firstCTALink = props[8]?.textContent.trim();
+    const secondCTAType = props[9]?.textContent.trim();
+    const secondCTAText = props[10]?.textContent.trim();
+    const secondCTALink = props[11]?.textContent.trim();
 
     // Build DOM
     const signupDOM = document.createRange().createContextualFragment(`
