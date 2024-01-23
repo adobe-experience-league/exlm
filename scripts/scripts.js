@@ -16,7 +16,8 @@ import {
   getMetadata,
   loadScript,
 } from './lib-franklin.js';
-import { pageLoadModel, linkClickModel } from './analytics/lib-analytics.js';
+
+const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
@@ -421,14 +422,25 @@ async function loadRails() {
   }
 }
 
-function loadAnalyticsEvents() {
-  const linkClicked = document.querySelectorAll('a');
-  linkClicked.forEach((linkElement) => {
-    linkElement.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (e.target.tagName === 'A') {
-        linkClickModel(e);
-      }
+async function loadLauchAndAnalytics() {
+  const launchPromise = loadScript(
+    'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
+    {
+      async: true,
+    },
+  );
+  // eslint-disable-next-line no-unused-vars
+  Promise.all([launchPromise, libAnalyticsModulePromise]).then(([launch, libAnalyticsModule]) => {
+    const { pageLoadModel, linkClickModel } = libAnalyticsModule;
+    window.adobeDataLayer.push(pageLoadModel());
+    const linkClicked = document.querySelectorAll('a');
+    linkClicked.forEach((linkElement) => {
+      linkElement.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (e.target.tagName === 'A') {
+          linkClickModel(e);
+        }
+      });
     });
   });
 }
@@ -437,18 +449,9 @@ async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadRails();
-  const launchPromise = loadScript(
-    'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
-    {
-      async: true,
-    },
-  );
+  loadLauchAndAnalytics();
   loadDelayed();
   loadPrevNextBtn();
-  launchPromise.then(() => {
-    window.adobeDataLayer.push(pageLoadModel());
-    loadAnalyticsEvents();
-  });
 }
 
 loadPage();
