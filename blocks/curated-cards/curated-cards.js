@@ -94,7 +94,8 @@ export default async function decorate(block) {
           buildCard(cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
-        decorateIcons(contentDiv);
+        block.appendChild(contentDiv);
+        decorateIcons(block);
       }
     })
     .catch((err) => {

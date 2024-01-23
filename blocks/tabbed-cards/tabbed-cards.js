@@ -88,6 +88,7 @@ export default async function decorate(block) {
             contentDiv.appendChild(cardDiv);
           }
           // Append content div to shimmer card parent and decorate icons
+          block.appendChild(contentDiv);
           decorateIcons(tabbedBlock);
         } else {
           buildCardsShimmer.remove();
