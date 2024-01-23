@@ -32,7 +32,7 @@ const buildTagsContent = (cardMeta, tags = []) => {
   tags.forEach((tag) => {
     const { icon: iconName, text } = tag;
     if (text) {
-      const anchor = createTag('div', { class: 'browse-card-meta-anchor' });
+      const anchor = createTag('a', { class: 'browse-card-meta-anchor', title: 'user', href: '#' });
       const span = createTag('span', { class: `icon icon-${iconName}` });
       anchor.textContent = text;
       anchor.appendChild(span);
@@ -176,10 +176,10 @@ const setupBookmarkAction = (wrapper) => {
         wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark.auth'),
       );
       bookmarkAuthed.forEach((bookmark) => {
-        const bookmarkAuthedToolTipLabel = bookmarkAuthed.querySelector('.exl-tooltip-label');
-        const bookmarkAuthedToolTipIcon = bookmarkAuthed.querySelector('.icon.bookmark-icon');
+        const bookmarkAuthedToolTipLabel = bookmark.querySelector('.exl-tooltip-label');
+        const bookmarkAuthedToolTipIcon = bookmark.querySelector('.icon.bookmark-icon');
         const bookmarkId = bookmarkAuthed.getAttribute('data-id');
-        renderBookmark(bookmark, bookmarkId);
+        renderBookmark(bookmarkAuthedToolTipLabel, bookmarkAuthedToolTipIcon, bookmarkId);
         if (data.bookmarks.includes(bookmarkId)) {
           bookmarkAuthedToolTipIcon.classList.add('authed');
           bookmarkAuthedToolTipLabel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;

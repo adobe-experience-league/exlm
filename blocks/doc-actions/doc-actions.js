@@ -56,18 +56,22 @@ export function decorateBookmark(block) {
     }
     const bookmarkAuthedDesktop = document.querySelector('.doc-actions .bookmark.auth');
     const bookmarkAuthedMobile = document.querySelector('.doc-actions-mobile .bookmark.auth');
+    const bookmarkAuthedToolTipLabelD = bookmarkAuthedDesktop.querySelector('.exl-tooltip-label');
+    const bookmarkAuthedToolTipIconD = bookmarkAuthedDesktop.querySelector('.icon.bookmark-icon');
+    const bookmarkAuthedToolTipLabelM = bookmarkAuthedMobile.querySelector('.exl-tooltip-label');
+    const bookmarkAuthedToolTipIconM = bookmarkAuthedMobile.querySelector('.icon.bookmark-icon');
     loadJWT().then(async () => {
       profile().then(async (data) => {
-        const bookmarkAuthedToolTipLabel = block.querySelector('.exl-tooltip-label');
-        const bookmarkAuthedToolTipIcon = block.querySelector('.icon.bookmark-icon');
         if (data.bookmarks.includes(bookmarkId)) {
-          bookmarkAuthedToolTipIcon.classList.add('authed');
-          bookmarkAuthedToolTipLabel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
+          bookmarkAuthedToolTipIconD.classList.add('authed');
+          bookmarkAuthedToolTipLabelD.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
+          bookmarkAuthedToolTipIconM.classList.add('authed');
+          bookmarkAuthedToolTipLabelM.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
         }
       });
 
-      renderBookmark(bookmarkAuthedDesktop, bookmarkId);
-      renderBookmark(bookmarkAuthedMobile, bookmarkId);
+      renderBookmark(bookmarkAuthedToolTipLabelD, bookmarkAuthedToolTipIconD, bookmarkId);
+      renderBookmark(bookmarkAuthedToolTipLabelM, bookmarkAuthedToolTipIconM, bookmarkId);
     });
   } else {
     block.appendChild(unAuthBookmark);
