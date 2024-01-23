@@ -38,10 +38,12 @@ export function pageLoadModel() {
   }
 
   const solution = document.querySelector('meta[name="solution"]')
-    ? document.querySelector('meta[name="solution"]').content
+    ? document.querySelector('meta[name="solution"]').content.toLowerCase()
     : '';
 
-  const type = document.querySelector('meta[name="type"]') ? document.querySelector('meta[name="type"]').content : '';
+  const type = document.querySelector('meta[name="type"]')
+    ? document.querySelector('meta[name="type"]').content.toLowerCase()
+    : '';
 
   const pageName = () => {
     // Validate if subsolution or solutionversion is not empty
