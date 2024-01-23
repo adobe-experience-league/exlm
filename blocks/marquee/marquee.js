@@ -1,4 +1,3 @@
-
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
@@ -18,7 +17,7 @@ export default function decorate(block) {
   const secondCTAText = props[count++].textContent.trim();
   const secondCTALink = props[count++].textContent.trim();
 
-  // get signed in status 
+  // get signed in status
   const isSignedIn = window.adobeIMS?.isSignedInUser();
 
   // Build DOM
@@ -29,9 +28,7 @@ export default function decorate(block) {
         <div class='marquee-title'>${title}</div>
         <div class='marquee-long-description'>${longDescr}</div>
         <div class='marquee-cta'>${
-          firstCTAText && firstCTALink
-            ? `<a class='button secondary' href='${firstCTALink}'>${firstCTAText}</a>`
-            : ``
+          firstCTAText && firstCTALink ? `<a class='button secondary' href='${firstCTALink}'>${firstCTAText}</a>` : ``
         }${
           secondCTAText && secondCTALink && !isSignedIn
             ? `<a class='button primary' href='${secondCTALink}'>${secondCTAText}</a>`
