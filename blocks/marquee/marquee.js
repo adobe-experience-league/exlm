@@ -20,7 +20,6 @@ export default function decorate(block) {
 
   // get signed in status 
   const isSignedIn = window.adobeIMS?.isSignedInUser();
-  console.log(`isSignedIn: ${isSignedIn}`);
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
