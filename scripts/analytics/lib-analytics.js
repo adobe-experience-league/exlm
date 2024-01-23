@@ -108,5 +108,9 @@ export function linkClickModel(e) {
         type: 'Other',
       },
     },
+    asset: {
+      id: '',
+      interactionType: '',
+    },
   });
 }
