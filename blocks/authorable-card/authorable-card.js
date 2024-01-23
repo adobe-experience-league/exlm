@@ -90,15 +90,6 @@ export default async function decorate(block) {
     };
     createTooltip(block, tooltipElem, tooltipConfig);
   }
-
-  /* Hide Tooltip while scrolling the cards layout */
-  contentDiv.addEventListener('scroll', () => {
-    const tooltips = contentDiv.querySelectorAll('.tooltip-text');
-    if (tooltips.length) {
-      tooltips.forEach((elem) => elem.classList.remove('tooltip-visible'));
-    }
-  });
-
   Array.from(block.children).forEach((child) => {
     if (!child.className) {
       block.removeChild(child);
