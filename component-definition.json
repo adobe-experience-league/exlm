@@ -187,9 +187,9 @@
                   "name": "Teaser",
                   "model": "teaser",
                   "fileReference": "/content/dam/default-teaser-banner.png",
-                  "desktopText10": "Teaser Title",
-                  "desktopText10Type": "h3",
-                  "desktopText20": "<p>Teaser Description</p>",
+                  "title": "Teaser Title",
+                  "titleType": "h3",
+                  "longDescr": "<p>Teaser Description</p>",
                   "classes": ["light", "left"]
                 }
               }
@@ -248,9 +248,9 @@
                     "name": "Teaser",
                     "model": "teaser",
                     "fileReference": "/content/dam/default-teaser-banner.png",
-                    "desktopText10": "Teaser Title",
-                    "desktopText10Type": "h3",
-                    "desktopText20": "<p>Teaser Description</p>",
+                    "title": "Teaser Title",
+                    "titleType": "h3",
+                    "longDescr": "<p>Teaser Description</p>",
                     "classes": ["light", "left"]
                   }
                 }

@@ -7,12 +7,19 @@ export function generateTeaserDOM(props, classes) {
     title,
     longDescr,
     shortDescr,
-    ctas,
+    firstCta,
+    secondCta,
   ] = props;
-  const ctaHtml = [...ctas.querySelectorAll('a')]
-    .map((a) => {
-      a.classList.add('button');
-      return a.outerHTML;
+  const ctaHtml = [firstCta, secondCta]
+    .map((div) => {
+      const a = div.querySelector('a');
+      if (a) {
+        a.classList.add('button');
+        if (a.parentElement.tagName === 'EM') a.classList.add('secondary')
+        if (a.parentElement.tagName === 'STRONG') a.classList.add('primary')
+        return a.outerHTML;
+      }
+      return '';
     })
     .join('');
   const hasShortDescr = shortDescr.textContent.trim() !== '';
