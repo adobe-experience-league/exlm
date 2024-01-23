@@ -107,8 +107,8 @@
 .browse-rail .browse-by li {
     flex-direction: column;
 }
-.browse-rail ul li .left-rail-view-more a,
-.browse-rail ul li .left-rail-view-less a {
+.browse-rail ul li .left-rail-view-more span,
+.browse-rail ul li .left-rail-view-less span {
     font-size: var(--spectrum-font-size-100);
     color: var(--non-spectrum-link);
     cursor: pointer;
