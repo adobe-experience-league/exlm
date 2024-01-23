@@ -3,7 +3,7 @@ export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs/') !== -1;
 export const { lang } = document.querySelector('html').lang;
 
-export async function pageLoadModel() {
+export function pageLoadModel() {
   const user = {};
   if (
     sessionStorage[
@@ -43,7 +43,7 @@ export async function pageLoadModel() {
 
   const type = document.querySelector('meta[name="type"]') ? document.querySelector('meta[name="type"]').content : '';
 
-  const pageName = async () => {
+  const pageName = () => {
     // Validate if subsolution or solutionversion is not empty
     const lroot = window.location.pathname.endsWith === '/docs';
     let result = lroot ? ':home' : `:${solution}:${type}:`;
@@ -59,7 +59,7 @@ export async function pageLoadModel() {
     return result.toLowerCase();
   };
 
-  const name = `xl:docs${await pageName()}`;
+  const name = `xl:docs${pageName()}`;
 
   const sections = name.replace(/^xl:docs:/, '').split(':');
 
