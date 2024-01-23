@@ -34,13 +34,7 @@ export function handleTopicSelection(block) {
   if (window.headlessQueryActionCreators) {
     let query = '';
     if (selectedTopics.length) {
-      const [firstTopic] = selectedTopics;
-      if (selectedTopics.length === 1) {
-        query = `@el_features=${firstTopic}`;
-      } else {
-        // eslint-disable-next-line no-useless-escape
-        query = `@el_features==(${selectedTopics.map((s) => `\"${s}\"`).join(',')})`;
-      }
+      query = `(${selectedTopics.map((type) => `@el_features="${type}"`).join(' OR ')})`;
     }
     const advancedQueryAction = window.headlessQueryActionCreators.updateAdvancedSearchQueries({
       aq: query,
