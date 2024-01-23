@@ -400,7 +400,7 @@
 }
 
 .toc.Primetime ul#product li>.product-icon {
-    background: url("../../icons/solutions/Primetime???????.svg") no-repeat center center;
+    background: url("../../icons/solutions/Primetime.svg") no-repeat center center;
 }
 .toc.Primetime ul li a:not(a[href^="#"]).is-active {
     padding-left: 10px;
