@@ -69,6 +69,8 @@ export function pageLoadModel() {
     sections.shift();
   }
 
+  const mainSiteSection = search ? 'search' : '';
+
   return {
     event: 'page loaded',
     web: {
@@ -76,7 +78,7 @@ export function pageLoadModel() {
         URL: window.location.href,
         cleanURL: window.location.href.replace(/^https?:\/\//, ''),
         domain: window.location.host,
-        mainSiteSection: '',
+        mainSiteSection,
         name,
         gitEdit: document.querySelector('meta[name="git-edit"]')
           ? document.querySelector('meta[name="git-edit"]').content
@@ -92,8 +94,6 @@ export function pageLoadModel() {
           ? document.querySelector('meta[name="prev-page"]').content
           : '',
         userAgent: window.navigator.userAgent,
-        previousPageName: '',
-        recordid: '',
         server: window.location.host,
         siteSection: section,
         siteSubSection1: sections[0] || '',
