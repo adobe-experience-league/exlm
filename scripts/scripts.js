@@ -273,7 +273,7 @@ async function loadLazy(doc) {
   const main = doc.querySelector('main');
   await loadBlocks(main);
   loadIms(); // start it early, asyncronously
-
+  loadLauchAndAnalytics();
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
@@ -449,7 +449,7 @@ async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadRails();
-  loadLauchAndAnalytics();
+  
   loadDelayed();
   loadPrevNextBtn();
 }
