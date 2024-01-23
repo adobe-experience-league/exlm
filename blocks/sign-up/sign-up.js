@@ -40,8 +40,8 @@ export default async function decorate(block) {
         <div class='signup-title'>${title}</div>
         <div class='signup-long-description'>${longDescr}</div>
         <div class='signup-cta'>${
-          firstCTAText && firstCTALink
-            ? `<a class='button ${firstCTAType}' href='${firstCTALink}'>${firstCTAText}</a>`
+          firstCTAText
+            ? `<a class='button ${firstCTAType} sign-up-cta-btn' href='${firstCTALink || '#'}'>${firstCTAText}</a>`
             : ``
         }${
           secondCTAText && secondCTALink
@@ -76,6 +76,13 @@ export default async function decorate(block) {
 
     decorateIcons(signupDOM);
     block.append(signupDOM);
+
+    const signUpBtn = block.querySelector(".sign-up-cta-btn")
+
+    signUpBtn.addEventListener("click", async () => {
+      adobeIMS.signIn();
+    })
+
   } else {
     block.parentElement.remove();
   }
