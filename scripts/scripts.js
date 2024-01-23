@@ -271,8 +271,8 @@ export async function loadIms() {
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
-  loadIms(); // start it early, asyncronously
   await loadBlocks(main);
+  loadIms(); // start it early, asyncronously
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
