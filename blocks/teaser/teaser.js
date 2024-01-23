@@ -1,22 +1,14 @@
 /* eslint-disable no-plusplus */
 export function generateTeaserDOM(props, classes) {
   // Extract properties, always same order as in model, empty string if not set
-  const [
-    picture,
-    eyebrow,
-    title,
-    longDescr,
-    shortDescr,
-    firstCta,
-    secondCta,
-  ] = props;
+  const [picture, eyebrow, title, longDescr, shortDescr, firstCta, secondCta] = props;
   const ctaHtml = [firstCta, secondCta]
     .map((div) => {
       const a = div.querySelector('a');
       if (a) {
         a.classList.add('button');
-        if (a.parentElement.tagName === 'EM') a.classList.add('secondary')
-        if (a.parentElement.tagName === 'STRONG') a.classList.add('primary')
+        if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
+        if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
         return a.outerHTML;
       }
       return '';
@@ -41,9 +33,11 @@ export function generateTeaserDOM(props, classes) {
   `);
 
   // set the mobile background color
-  const backgroundColor = [...classes].map((cls) => cls.trim()).find(cls => cls.startsWith('bg-'));
+  const backgroundColor = [...classes].map((cls) => cls.trim()).find((cls) => cls.startsWith('bg-'));
   if (backgroundColor) {
-    teaserDOM.querySelector('.foreground').style.setProperty('--teaser-background-color', `var(--${backgroundColor.substr(3)})`);
+    teaserDOM
+      .querySelector('.foreground')
+      .style.setProperty('--teaser-background-color', `var(--${backgroundColor.substr(3)})`);
   }
 
   // add final teaser DOM and classes if used as child component
