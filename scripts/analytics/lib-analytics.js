@@ -1,4 +1,9 @@
-export function pageLoadModel() {
+export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
+export const search = window.location.pathname === '/search.html';
+export const docs = window.location.pathname.indexOf('/docs/') !== -1;
+export const { lang } = document.querySelector('html').lang;
+
+export async function pageLoadModel() {
   const user = {};
   if (
     sessionStorage[
@@ -23,6 +28,44 @@ export function pageLoadModel() {
     user.userDetails.org = userData.org || '';
     user.userDetails.orgs = userData.orgs || [];
   }
+  let section = 'learn';
+  if (docs) {
+    section = 'docs';
+  } else if (microsite) {
+    section = 'microsite';
+  } else if (search) {
+    section = 'search';
+  }
+
+  const solution = document.querySelector('meta[name="solution"]')
+    ? document.querySelector('meta[name="solution"]').content
+    : '';
+
+  const type = document.querySelector('meta[name="type"]') ? document.querySelector('meta[name="type"]').content : '';
+
+  const pageName = async () => {
+    // Validate if subsolution or solutionversion is not empty
+    const lroot = window.location.pathname.endsWith === '/docs';
+    let result = lroot ? ':home' : `:${solution}:${type}:`;
+
+    if (result.endsWith(':')) {
+      if (lang === 'en') {
+        result += document.querySelector('title').innerText.split('|')[0].trim();
+      } else {
+        // figure out how to get non english pages
+      }
+    }
+
+    return result.toLowerCase();
+  };
+
+  const name = `xl:docs${await pageName()}`;
+
+  const sections = name.replace(/^xl:docs:/, '').split(':');
+
+  if (sections.length > 1) {
+    sections.shift();
+  }
 
   return {
     event: 'page loaded',
@@ -32,7 +75,7 @@ export function pageLoadModel() {
         cleanURL: window.location.href.replace(/^https?:\/\//, ''),
         domain: window.location.host,
         mainSiteSection: '',
-        name: document.title,
+        name,
         gitEdit: document.querySelector('meta[name="git-edit"]')
           ? document.querySelector('meta[name="git-edit"]').content
           : '',
@@ -52,18 +95,16 @@ export function pageLoadModel() {
         previousPageName: '',
         recordid: '',
         server: window.location.host,
-        siteSection: '',
-        siteSubSection1: '',
-        siteSubSection2: '',
-        siteSubSection3: '',
-        siteSubSection4: '',
-        siteSubSection5: '',
-        solution: document.querySelector('meta[name="solution"]')
-          ? document.querySelector('meta[name="solution"]').content
-          : '',
+        siteSection: section,
+        siteSubSection1: sections[0] || '',
+        siteSubSection2: sections[1] || '',
+        siteSubSection3: sections[2] || '',
+        siteSubSection4: sections[3] || '',
+        siteSubSection5: sections[4] || '',
+        solution,
         solutionVersion: '',
         subSolution: '',
-        type: document.querySelector('meta[name="type"]') ? document.querySelector('meta[name="type"]').content : '',
+        type,
       },
     },
     user,
