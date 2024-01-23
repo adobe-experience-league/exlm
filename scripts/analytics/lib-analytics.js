@@ -85,7 +85,7 @@ export function pageLoadModel() {
           ? document.querySelector('meta[name="exl-id"]').content
           : '',
         pageLanguage: lang,
-        pageName: `xl${window.location.pathname.replaceAll('/', ':').replaceAll('-', ' ')}`,
+        pageName: name,
         pageType: document.querySelector('meta[name="type"]')
           ? document.querySelector('meta[name="type"]').content
           : 'webpage',
