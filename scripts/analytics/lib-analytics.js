@@ -86,9 +86,7 @@ export function pageLoadModel() {
           : '',
         pageLanguage: lang,
         pageName: name,
-        pageType: document.querySelector('meta[name="type"]')
-          ? document.querySelector('meta[name="type"]').content
-          : 'webpage',
+        pageType: 'webpage',
         pageViews: { value: 1 },
         prevPage: document.querySelector('meta[name="prev-page"]')
           ? document.querySelector('meta[name="prev-page"]').content
