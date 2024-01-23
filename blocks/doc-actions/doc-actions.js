@@ -4,7 +4,7 @@ import loadJWT from '../../scripts/auth/jwt.js';
 import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
-import renderCopyLink from '../../scripts/copy-link/copy-link.js';
+import attachCopyLink from '../../scripts/copy-link/copy-link.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
 
@@ -95,13 +95,13 @@ function decorateCopyLink(block) {
   const docActionsMobile = document.querySelector('.doc-actions-mobile');
 
   if (docActionsDesktopIconCopy) {
-    renderCopyLink(docActionsDesktopIconCopy, window.location.href, placeholders.toastSet);
+    attachCopyLink(docActionsDesktopIconCopy, window.location.href, placeholders.toastSet);
   }
 
   if (docActionsMobile) {
     docActionsMobile.appendChild(copyLinkDivNode.cloneNode(true));
     const docActionsMobileIconCopy = docActionsMobile.querySelector('.icon.copy-link-url');
-    renderCopyLink(docActionsMobileIconCopy, window.location.href, placeholders.toastSet);
+    attachCopyLink(docActionsMobileIconCopy, window.location.href, placeholders.toastSet);
   }
 }
 

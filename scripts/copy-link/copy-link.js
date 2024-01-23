@@ -1,6 +1,6 @@
 import { sendNotice } from '../toast/toast.js';
 
-const renderCopyLink = (selector, target, info) => {
+const attachCopyLink = (selector, target, info) => {
   if (selector) {
     selector.addEventListener('click', (e) => {
       e.preventDefault();
@@ -10,4 +10,4 @@ const renderCopyLink = (selector, target, info) => {
   }
 };
 
-export default renderCopyLink;
+export default attachCopyLink;

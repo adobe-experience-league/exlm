@@ -5,7 +5,7 @@ import loadJWT from '../auth/jwt.js';
 import { adobeIMS, profile } from '../data-service/profile-service.js';
 import { tooltipTemplate } from '../toast/toast.js';
 import renderBookmark from '../bookmark/bookmark.js';
-import renderCopyLink from '../copy-link/copy-link.js';
+import attachCopyLink from '../copy-link/copy-link.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
 
@@ -193,7 +193,7 @@ const setupCopyAction = (wrapper) => {
   Array.from(wrapper.querySelectorAll('.copy-link')).forEach((copylink) => {
     const copylinkvalue = copylink.getAttribute('data-link');
     if (copylinkvalue) {
-      renderCopyLink(copylink, copylinkvalue, placeholders.toastSet);
+      attachCopyLink(copylink, copylinkvalue, placeholders.toastSet);
     }
   });
 };
