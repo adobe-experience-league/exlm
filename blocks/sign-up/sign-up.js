@@ -11,8 +11,7 @@ export default async function decorate(block) {
   } catch {
     /* eslint-disable no-console */ console.warn('Adobe IMS not available.');
   }
-  let isUserSignedIn = adobeIMS?.isSignedInUser();
-  isUserSignedIn = true;
+  const isUserSignedIn = adobeIMS?.isSignedInUser();
 
   if (!isUserSignedIn) {
     block.style.display = 'block';
