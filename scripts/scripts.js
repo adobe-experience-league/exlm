@@ -426,7 +426,6 @@ function loadAnalyticsEvents() {
   linkClicked.forEach((linkElement) => {
     linkElement.addEventListener('click', (e) => {
       e.preventDefault();
-      console.log(e);
       if (e.target.tagName === 'A') {
         linkClickModel(e);
       }
@@ -438,14 +437,18 @@ async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadRails();
-  await loadScript('https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js', {
-    async: true,
-    defer: true,
-  });
+  const launchPromise = loadScript(
+    'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
+    {
+      async: true,
+    },
+  );
   loadDelayed();
   loadPrevNextBtn();
-  window.adobeDataLayer.push(pageLoadModel());
-  loadAnalyticsEvents();
+  launchPromise.then(() => {
+    window.adobeDataLayer.push(pageLoadModel());
+    loadAnalyticsEvents();
+  });
 }
 
 loadPage();
