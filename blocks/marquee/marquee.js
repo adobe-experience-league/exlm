@@ -16,7 +16,7 @@ export default function decorate(block) {
   const firstCTAText = props[count++].textContent.trim();
   const firstCTALink = props[count++].textContent.trim();
   const secondCTAText = props[count++].textContent.trim();
-  const secondCTALink = props[11].textContent.trim();
+  const secondCTALink = props[count++].textContent.trim();
 
   // get signed in status 
   const isSignedIn = window.adobeIMS?.isSignedInUser();
