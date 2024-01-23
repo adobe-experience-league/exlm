@@ -77,12 +77,11 @@ export default async function decorate(block) {
     decorateIcons(signupDOM);
     block.append(signupDOM);
 
-    const signUpBtn = block.querySelector(".sign-up-cta-btn")
+    const signUpBtn = block.querySelector('.sign-up-cta-btn');
 
-    signUpBtn.addEventListener("click", async () => {
+    signUpBtn.addEventListener('click', async () => {
       adobeIMS.signIn();
-    })
-
+    });
   } else {
     block.parentElement.remove();
   }
