@@ -41,7 +41,7 @@ async function viewMoreviewLess(targetUL) {
     console.error('Error fetching placeholders:', err);
   }
 
-  toggleItemVisibility(targetUL.children, 5, false); // Hide items initially
+  toggleItemVisibility(targetUL.children, 5, false);
 
   // "View More" and "View Less" links
   const viewMoreDiv = document.createElement('div');
@@ -54,7 +54,7 @@ async function viewMoreviewLess(targetUL) {
   viewLessDiv.innerHTML = `<span class="viewLessLink" style="display: none;"> ${placeholders.viewLess}</span>`;
   targetUL.append(viewLessDiv);
 
-  // Check if there are less than 11 items, and hide the "View More" link accordingly
+  // Check if there are less than 5 items, hide the "View More" link accordingly
   const liElements = targetUL.children;
   if (liElements && liElements.length <= 5) {
     setLinkVisibility(viewMoreDiv, '.viewMoreLink', false);
