@@ -79,6 +79,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
 
     return {
       ...browseCardDataModel,
+      id: parentResult?.el_id || el_id || '',
       contentType,
       badgeTitle: CONTENT_TYPES[contentType.toUpperCase()]?.LABEL,
       thumbnail:
@@ -94,7 +95,6 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       copyLink: url,
       viewLink: url,
       viewLinkText: placeholders[`viewLink${convertToTitleCase(contentType)}`] || 'View',
-      id: parentResult?.el_id || el_id || '',
     };
   };
 

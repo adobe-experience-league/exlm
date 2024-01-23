@@ -70,6 +70,9 @@ export default async function decorate(block) {
           contentDiv.appendChild(linksContainer[i]);
           decorateIcons(block);
           linksContainer[i].children[0].remove();
+          if(linksContainer[i].querySelector('.bookmark.auth')){
+            linksContainer[i].querySelector('.bookmark.auth').setAttribute('data-id', cardData.id);
+          }
           block.appendChild(contentDiv);
         })
         .catch(() => {
