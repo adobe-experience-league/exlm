@@ -135,7 +135,7 @@
         "component": "select",
         "valueType": "string",
         "name": "titleType",
-        "value": "",
+        "value": "h3",
         "label": "Heading Type",
         "options": [
           {
@@ -746,7 +746,7 @@
         "component": "select",
         "valueType": "string",
         "name": "titleType",
-        "value": "",
+        "value": "h3",
         "label": "Heading Type",
         "options": [
           {
@@ -1045,6 +1045,35 @@
         "label": "Heading"
       },
       {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
         "component": "text-area",
         "valueType": "string",
         "name": "body",
@@ -1106,7 +1135,7 @@
         "component": "select",
         "valueType": "string",
         "name": "titleType",
-        "value": "",
+        "value": "h3",
         "label": "Heading Type",
         "options": [
           {
