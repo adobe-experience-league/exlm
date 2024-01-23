@@ -118,7 +118,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "eyebrow",
+        "name": "desktopText1",
         "value": "",
         "label": "Eyebrow",
         "description": "Sets the small pre-title above the title."
@@ -126,7 +126,7 @@
       {
         "component": "text-input",
         "valueType": "string",
-        "name": "title",
+        "name": "desktopText10",
         "value": "",
         "label": "Heading",
         "description": "Sets the main title of the teaser."
@@ -134,7 +134,7 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "titleType",
+        "name": "desktopText10Type",
         "value": "",
         "label": "Heading Type",
         "options": [
@@ -159,7 +159,7 @@
       {
         "component": "text-area",
         "valueType": "string",
-        "name": "longDescr",
+        "name": "desktopText20",
         "value": "",
         "label": "Long Description",
         "description": "The description shown in Desktop and Tablet view."
@@ -167,7 +167,7 @@
       {
         "component": "text-area",
         "valueType": "string",
-        "name": "shortDescr",
+        "name": "mobileText20",
         "value": "",
         "label": "Short Description",
         "description": "The description shown in Mobile view. If not set long text is used."
