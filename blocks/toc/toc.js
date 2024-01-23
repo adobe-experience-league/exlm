@@ -152,7 +152,7 @@ export default async function decorate(block) {
     const toggleElements = block.querySelectorAll('.js-toggle');
     if (toggleElements) {
       toggleElements.forEach((toggleElement) => {
-        const subMenu = toggleElement.parentElement.querySelector('ul');
+        const subMenu = toggleElement.parentElement.parentElement.querySelector('ul');
         toggleElement.classList.add('collapsed');
         toggleElement.addEventListener('click', (event) => {
           event.preventDefault();
