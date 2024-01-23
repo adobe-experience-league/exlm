@@ -1,16 +1,8 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { loadIms } from '../../scripts/scripts.js';
+import { adobeIMS } from '../../scripts/data-service/profile-service.js';
 
 export default async function decorate(block) {
   block.style.display = 'none';
-
-  let adobeIMS = { isSignedInUser: () => false };
-  try {
-    await loadIms();
-    adobeIMS = window.adobeIMS;
-  } catch {
-    /* eslint-disable no-console */ console.warn('Adobe IMS not available.');
-  }
   const isUserSignedIn = adobeIMS?.isSignedInUser();
 
   if (!isUserSignedIn) {
