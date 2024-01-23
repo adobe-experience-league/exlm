@@ -426,7 +426,7 @@ async function loadLauchAndAnalytics() {
   const launchPromise = loadScript(
     'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
     {
-      defer: true,
+      async: true,
     },
   );
   // eslint-disable-next-line no-unused-vars
