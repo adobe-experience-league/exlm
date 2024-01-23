@@ -1,7 +1,7 @@
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs/') !== -1;
-export const { lang } = document.querySelector('html').lang;
+export const lang = window.document.getElementsByTagName('html')[0].getAttribute('lang') || 'en';
 
 export function pageLoadModel() {
   const user = {};
@@ -82,7 +82,7 @@ export function pageLoadModel() {
         exlId: document.querySelector('meta[name="exl-id"]')
           ? document.querySelector('meta[name="exl-id"]').content
           : '',
-        pageLanguage: window.document.getElementsByTagName('html')[0].getAttribute('lang') || 'en',
+        pageLanguage: lang,
         pageName: `xl${window.location.pathname.replaceAll('/', ':').replaceAll('-', ' ')}`,
         pageType: document.querySelector('meta[name="type"]')
           ? document.querySelector('meta[name="type"]').content
