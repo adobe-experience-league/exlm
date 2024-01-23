@@ -1,19 +1,21 @@
+function decorateButtons(...buttons) {
+  return buttons.map((div) => {
+    const a = div.querySelector('a');
+    if (a) {
+      a.classList.add('button');
+      if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
+      if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
+      return a.outerHTML;
+    }
+    return '';
+  })
+  .join('');
+}
+
 /* eslint-disable no-plusplus */
 export function generateTeaserDOM(props, classes) {
   // Extract properties, always same order as in model, empty string if not set
   const [picture, eyebrow, title, longDescr, shortDescr, firstCta, secondCta] = props;
-  const ctaHtml = [firstCta, secondCta]
-    .map((div) => {
-      const a = div.querySelector('a');
-      if (a) {
-        a.classList.add('button');
-        if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
-        if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
-        return a.outerHTML;
-      }
-      return '';
-    })
-    .join('');
   const hasShortDescr = shortDescr.textContent.trim() !== '';
 
   // Build DOM
@@ -21,11 +23,11 @@ export function generateTeaserDOM(props, classes) {
     <div class='background'>${picture.innerHTML}</div>
     <div class='foreground'>
       <div class='text'>
-        ${eyebrow ? `<div class='eyebrow'>${eyebrow.textContent.trim()}</div>` : ``}
+        ${eyebrow.textContent.trim() !== '' ? `<div class='eyebrow'>${eyebrow.textContent.trim().toUpperCase()}</div>` : ``}
         <div class='title'>${title.innerHTML}</div>
         <div class='long-description'>${longDescr.innerHTML}</div>
         <div class='short-description'>${hasShortDescr ? shortDescr.innerHTML : longDescr.innerHTML}</div>
-        <div class='cta'>${ctaHtml}</div>
+        <div class='cta'>${decorateButtons(firstCta, secondCta)}</div>
       </div>
       <div class='spacer'>
       </div>
