@@ -8,10 +8,7 @@
 .toc-wrapper-expanded.toc-right-rail-content {
     display: block;
     padding: 10px var(--spectrum-spacing-500) var(--spectrum-spacing-500) var(--spectrum-spacing-500);
-    touch-action: pan-y;
-    left: 0;
     top: 60px;
-    width: 90%;
     max-height: 80vh;
     overflow-y: auto;
     z-index: 1;
@@ -24,6 +21,10 @@
     border-radius: 4px;
     border: 1px solid var(--spectrum-gray-400);
     box-shadow: var(--box-shadow-2);
+    touch-action: pan-y;
+    left: 50%;
+    width: 95%;
+    transform: translate(-50%, 0);
 }
 .toc ul {
     list-style: none;
@@ -174,22 +175,21 @@
     font-size: 12px;
     color: var(--non-spectrum-article-dark-gray);
     position: relative;
-    padding-left: 32px;
+    padding-left: 12px;
     display: inline-flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: start;
     margin: 0;
+    width: 100%;
     min-height: 32px;
 }
 .toc .view-more-less span:before {
     content: "+";
     color: var(--non-spectrum-dim-gray);
     font-weight: 800;
-    position: absolute;
     font-size: 20px;
-    line-height: 23px;
-    left: 10px;
-    top: 0px;
+    padding-right: 6px;
+    border: 2px solid transparent;
 }
 .toc .view-more-less:hover {
     background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
@@ -199,7 +199,7 @@
     color: var(--spectrum-alias-text-color-hover);
 } 
 .toc .left-rail-view-less span:before {
-    content: "-";
+    content: "−";
 }
 .toc a[href="javascript:void(0)"] {
     cursor: default;
