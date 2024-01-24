@@ -16,6 +16,7 @@ function createThumbnailURL(result) {
 
 export default async function mapResultToCardsData(result, placeholders) {
   return {
+    id: result.id,
     contentType: result.contentType,
     type: result.contentType,
     badgeTitle: result.contentType,
