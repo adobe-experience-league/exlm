@@ -49,7 +49,6 @@ export function pageLoadModel() {
           ? document.querySelector('meta[name="prev-page"]').content
           : '',
         userAgent: window.navigator.userAgent,
-        previousPageName: '',
         recordid: '',
         server: window.location.host,
         siteSection: '',
@@ -91,7 +90,7 @@ export function linkClickModel(e) {
     link: {
       destinationDomain: e.target.href,
       linkLocation: linkTarget,
-      linkTitle: e.target.title || '',
+      linkTitle: e.target.innerHTML || '',
       // set to other until we have examples of other types
       linkType,
       solution:
