@@ -2,7 +2,7 @@ import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { tocUrl } from '../../scripts/urls.js';
 import TocDataService from '../../scripts/data-service/tocs-data-service.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import getSolutionName from './solutions.js';
+import getSolutionName from './toc-solutions.js';
 
 const constructSolutionsDropdownEl = htmlToElement(`
     <div class="toc-dropdown is-hidden-desktop">
