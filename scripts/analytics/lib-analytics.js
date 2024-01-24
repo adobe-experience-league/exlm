@@ -113,4 +113,7 @@ export function linkClickModel(e) {
       interactionType: '',
     },
   });
+  window.setTimeout(() => {
+    window.location.href = e.target.href;
+  }, 1000);
 }
