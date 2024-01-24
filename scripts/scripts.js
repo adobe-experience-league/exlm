@@ -351,7 +351,7 @@ export function loadPrevNextBtn() {
   const PREV_PAGE = 'Previous page';
   const NEXT_PAGE = 'Next page';
 
-  if (!prevPageMeta || nextPageMeta) {
+  if (prevPageMeta || nextPageMeta) {
     if (prevPageMetaContent === '' && nextPageMetaContent === '') return;
 
     const docPagination = createTag('div', { class: 'doc-pagination' });
@@ -363,7 +363,7 @@ export function loadPrevNextBtn() {
     };
     const anchorLeft = createTag('a', anchorLeftAttr);
     const spanLeft = createTag('span', '', PREV_PAGE);
-    const titleLeft = createTag('span', { class: 'spectrum-Detail spectrum-Detail--sizeS is-secondary' }, `${prevPageMetaTitle?.getAttribute('content')}`);
+    const titleLeft = createTag('span', { class: 'pagination-btn-title' }, `${prevPageMetaTitle?.getAttribute('content')}`);
 
     anchorLeft.append(spanLeft);
     btnGotoLeft.append(anchorLeft, titleLeft);
@@ -378,7 +378,7 @@ export function loadPrevNextBtn() {
     };
     const anchorRight = createTag('a', anchorRightAttr);
     const spanRight = createTag('span', '', NEXT_PAGE);
-    const titleRight = createTag('span', { class: 'spectrum-Detail spectrum-Detail--sizeS is-secondary' }, `${nextPageMetaTitle?.getAttribute('content')}`);
+    const titleRight = createTag('span', { class: 'pagination-btn-title' }, `${nextPageMetaTitle?.getAttribute('content')}`);
 
     anchorRight.append(spanRight);
     btnGotoRight.append(anchorRight, titleRight);
