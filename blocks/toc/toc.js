@@ -86,6 +86,27 @@ const handleTocsService = async (tocID) => {
   return tocs;
 };
 
+function addClassesToAncestors(element, className) {
+  let currentElement = element;
+
+  while (currentElement) {
+    if (currentElement.tagName === 'LI') {
+      const link = currentElement.querySelector('a');
+      const sublist = currentElement.querySelector('ul');
+
+      if (link) {
+        link.classList.add(className);
+        link.classList.remove('collapsed');
+      }
+
+      if (sublist) {
+        sublist.style.display = 'block';
+      }
+    }
+    currentElement = currentElement.parentElement;
+  }
+}
+
 /**
  * loads and decorates the toc
  * @param {Element} block The toc block element
@@ -179,12 +200,9 @@ export default async function decorate(block) {
     if (activeElement) {
       activeElement.classList.add('is-active');
       const currentItemLi = activeElement.closest('li');
-      const parentList = currentItemLi.closest('ul');
-      if (parentList) {
-        const parentListItem = parentList.closest('li');
-        if (parentListItem) {
-          parentListItem.querySelector('a').classList.add('is-open');
-        }
+
+      if (currentItemLi) {
+        addClassesToAncestors(currentItemLi, 'is-open');
       }
     }
 
