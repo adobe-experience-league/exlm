@@ -436,7 +436,7 @@ async function loadLauchAndAnalytics() {
     const linkClicked = document.querySelectorAll('a');
     linkClicked.forEach((linkElement) => {
       linkElement.addEventListener('click', (e) => {
-        e.preventDefault();
+        e.stopPropagation();
         if (e.target.tagName === 'A') {
           linkClickModel(e);
         }
