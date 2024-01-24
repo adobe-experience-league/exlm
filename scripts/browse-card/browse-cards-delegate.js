@@ -54,9 +54,12 @@ const BrowseCardsDelegate = (() => {
     const productQuery = param.product
       ? `AND (${param.product.map((type) => `@el_product=="${type}"`).join(' OR ')})`
       : '';
+    const versionQuery = param.version
+      ? `AND (${param.version.map((type) => `@el_version=="${type}"`).join(' OR ')})`
+      : '';
     const roleQuery = param.role ? `AND (${param.role.map((type) => `@el_role=="${type}"`).join(' OR ')})` : '';
     const levelQuery = param.level ? `AND (${param.level.map((type) => `@el_level=="${type}"`).join(' OR ')})` : '';
-    const query = `${featureQuery} ${contentTypeQuery} ${productQuery} ${roleQuery} ${levelQuery}`;
+    const query = `${featureQuery} ${contentTypeQuery} ${productQuery} ${versionQuery} ${roleQuery} ${levelQuery}`;
     return { aq: query };
   };
 
@@ -78,13 +81,14 @@ const BrowseCardsDelegate = (() => {
           ]
         : []),
       ...(param.product ? [{ id: 'el_product', type: 'specific', currentValues: param.product }] : []),
+      ...(param.version ? [{ id: 'el_version', type: 'specific', currentValues: param.version }] : []),
       ...(param.role ? [{ id: 'el_role', type: 'specific', currentValues: param.role }] : []),
       ...(param.level ? [{ id: 'el_level', type: 'specific', currentValues: param.level }] : []),
     ];
     const dataSource = {
       url: coveoSearchResultsUrl,
       param: {
-        locale: 'en',
+        locale: document.querySelector('html').lang || 'en',
         searchHub: 'Experience League Learning Hub',
         numberOfResults: param.noOfResults,
         excerptLength: 200,
@@ -103,7 +107,7 @@ const BrowseCardsDelegate = (() => {
       throw new Error('An error occurred');
     }
     if (cardData?.results?.length) {
-      return BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData.results, param);
+      return BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData.results);
     }
     return [];
   };

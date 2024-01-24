@@ -1,0 +1,62 @@
+.exl-toast {
+    align-items: center;
+    background: var(--spectrum-green-900);
+    border-radius: 5px;
+    color: var(--spectrum-gray-50);
+    display: flex;
+    left: 50%;
+    padding: 0 10px;
+    position: fixed;
+    transition: all 200ms ease-in-out;
+    transform: translate(-50%, -50%);
+    top: 10%;
+    bottom: unset;
+    z-index: 15;
+    width: 90%;
+}
+
+.exl-toast-content {
+    border-right: 1px solid rgba(255, 255, 255, 0.25);
+    color: var(--spectrum-gray-50);
+    flex-grow: 1;
+    font-weight: var(--font-weight-400);
+    line-height: 18.2px;
+    padding: 7px 15px 7px 5px;
+    margin: 8px 0;
+    white-space: unset;
+}
+
+.exl-toast .icon-info {
+    background-image: url("../../icons/info-circle.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 18px;
+    cursor: pointer;
+    height: 18px;
+    padding: 5px;
+    width: 18px;
+    vertical-align: middle;
+}
+
+.exl-toast .icon-close {
+    background-image: url("../../icons/icon-close.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 20px;
+    cursor: pointer;
+    height: 20px;
+    padding: 5px;
+    width: 20px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+@media (min-width: 600px) {
+    .exl-toast {
+      width: auto;
+    }
+
+    .exl-toast-content {
+      white-space: pre;
+    }
+}
