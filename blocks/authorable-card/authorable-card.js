@@ -1,6 +1,7 @@
 import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import ArticleDataService from '../../scripts/data-service/article-data-service.js';
 import mapResultToCardsData from './article-data-adapter.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
@@ -21,23 +22,19 @@ export default async function decorate(block) {
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
-          ${headingElement.innerHTML}
-          ${
-            toolTipElement.textContent.trim() !== ''
-              ? `<div class="tooltip">
-              <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement.textContent.trim()}</span>
-            </div>`
-              : ''
-          }
+        ${headingElement.innerHTML}
       </div>
       ${linkTextElement?.outerHTML}
     </div>
   `);
+  headerDiv.querySelector('h1,h2,h3,h4,h5,h6')?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
   block.replaceChildren(headerDiv);
 
   const articleDataService = new ArticleDataService();
   const buildCardsShimmer = new BuildPlaceholder();
   buildCardsShimmer.add(block);
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'browse-cards-block-content';
 
   let placeholders = {};
   try {
@@ -58,7 +55,7 @@ export default async function decorate(block) {
         try {
           const data = await articleDataService.handleArticleDataService(link);
           const cardData = await mapResultToCardsData(data, placeholders);
-          await buildCard(linkContainer, cardData);
+          await buildCard(contentDiv, linkContainer, cardData);
           decorateIcons(linkContainer);
         } catch (err) {
           // eslint-disable-next-line no-console
@@ -71,9 +68,19 @@ export default async function decorate(block) {
 
   cardLoading$.then((cards) => {
     buildCardsShimmer.remove();
-    const contentDiv = document.createElement('div');
-    contentDiv.className = 'browse-cards-block-content';
     contentDiv.append(...cards);
     block.appendChild(contentDiv);
   });
+
+  /* Tooltip - for Title */
+  const tooltipElem = block.querySelector('.tooltip-placeholder');
+  if (tooltipElem) {
+    const tooltipConfig = {
+      content: toolTipElement.textContent.trim(),
+    };
+    createTooltip(block, tooltipElem, tooltipConfig);
+  }
+
+  /* Hide Tooltip while scrolling the cards layout */
+  hideTooltipOnScroll(contentDiv);
 }
