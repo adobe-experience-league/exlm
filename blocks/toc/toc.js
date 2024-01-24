@@ -16,8 +16,8 @@ const constructSolutionsDropdownEl = htmlToElement(`
 function toggleItemVisibility(itemList, startIndex, show) {
   // eslint-disable-next-line no-plusplus
   for (let i = startIndex; i < itemList.length; i++) {
-    if(!itemList[i].classList.contains('view-more-less')){
-    itemList[i].classList.toggle('hidden', !show);
+    if (!itemList[i].classList.contains('view-more-less')) {
+      itemList[i].classList.toggle('hidden', !show);
     }
   }
 }
