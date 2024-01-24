@@ -68,8 +68,8 @@
     margin: 0;
     align-items: baseline;
 }
-.browse-cards-block-title h2 {
-    margin: 0px;
+.browse-cards-block-title :where(h2,.h2) {
+    margin: 0;
     color: var(--text-color);
 }
 .browse-cards-block-view a {

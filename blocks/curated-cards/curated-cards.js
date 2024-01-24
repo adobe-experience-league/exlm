@@ -10,18 +10,16 @@ import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-const
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const headingElement = block.querySelector('div:nth-child(1) > div');
-  const toolTipElement = block.querySelector('div:nth-child(2) > div');
-  const linkTextElement = block.querySelector('div:nth-child(3) > div');
-  const contentType = block.querySelector('div:nth-child(4) > div')?.textContent?.trim()?.toLowerCase();
-  const capabilities = block.querySelector('div:nth-child(5) > div')?.textContent?.trim();
-  const role = block.querySelector('div:nth-child(6) > div')?.textContent?.trim()?.toLowerCase();
-  const level = block.querySelector('div:nth-child(7) > div')?.textContent?.trim()?.toLowerCase();
-  const sortBy = block.querySelector('div:nth-child(8) > div')?.textContent?.trim()?.toLowerCase();
-  const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase()];
+  const [headingElement, toolTipElement, linkElement, ...configs] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
+  const [contentType, capabilities, role, level, sortBy] = configs.map((cell) => cell.textContent.trim());
+
+  const sortCriteria = COVEO_SORT_OPTIONS[sortBy.toUpperCase()];
   const noOfResults = 4;
   const productKey = 'exl:solution/';
   const featureKey = 'exl:feature/';
+
   const extractCapability = (input, prefix) => {
     if (!input) {
       return null;
@@ -37,6 +35,8 @@ export default async function decorate(block) {
     return result.length > 0 ? result : null;
   };
 
+  headingElement.firstElementChild.classList.add('h2');
+
   // Clearing the block's content
   block.innerHTML = '';
   block.classList.add('browse-cards-block');
@@ -44,16 +44,16 @@ export default async function decorate(block) {
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
-          <h2>${headingElement?.textContent?.trim()}</h2>
+          ${headingElement.innerHTML}
           ${
-            toolTipElement.textContent
+            toolTipElement.textContent.trim() !== ''
               ? `<div class="tooltip">
-              <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
+              <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement.textContent.trim()}</span>
             </div>`
               : ''
           }
       </div>
-      <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
+      <div class="browse-cards-block-view">${linkElement.innerHTML}</div>
     </div>
   `);
   // Appending header div to the block
@@ -68,11 +68,11 @@ export default async function decorate(block) {
   }
 
   const param = {
-    contentType: contentType && contentType.split(','),
+    contentType: contentType && contentType.toLowerCase().split(','),
     product: extractCapability(capabilities, productKey),
     feature: extractCapability(capabilities, featureKey),
-    role: role && role.split(','),
-    level: level && level.split(','),
+    role: role && role.toLowerCase().split(','),
+    level: level && level.toLowerCase().split(','),
     sortCriteria,
     noOfResults,
   };
