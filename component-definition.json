@@ -174,7 +174,7 @@
                 "template": {
                   "name": "Curated Cards",
                   "model": "curated-cards",
-                  "headingType": "h3"
+                  "headingType": "h2"
                 }
               }
             }
@@ -365,6 +365,7 @@
                   "filter": "authorable-card",
                   "name": "Authorable Card",
                   "model": "authorable-card",
+                  "headingType": "h2",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Authored Card",

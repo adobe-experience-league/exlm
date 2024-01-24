@@ -5,10 +5,6 @@ import ArticleDataService from '../../scripts/data-service/article-data-service.
 import mapResultToCardsData from './article-data-adapter.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
-let numberOfCards = 4;
-let buildCardsShimmer = '';
-let shimmerElement = '';
-const CLASS_SHIMMER_PLACEHOLDER = '.shimmer-placeholder';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -16,38 +12,31 @@ const CLASS_SHIMMER_PLACEHOLDER = '.shimmer-placeholder';
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const headingElement = block.querySelector('div:nth-child(1) > div');
-  const toolTipElement = block.querySelector('div:nth-child(2) > div');
-  const linkTextElement = block.querySelector('div:nth-child(3) > div');
-  const links = [];
+  const [ headingElement, toolTipElement, linkTextElement, ...linksContainer ] = [...block.children].map((row) => row.firstElementChild);
 
+  headingElement.firstElementChild?.classList.add('h2');
   block.classList.add('browse-cards-block');
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
-          <h2>${headingElement?.textContent.trim()}</h2>
+          ${headingElement.innerHTML}
           ${
-            toolTipElement.textContent
+            toolTipElement.textContent.trim() !== ''
               ? `<div class="tooltip">
-              <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
+              <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement.textContent.trim()}</span>
             </div>`
               : ''
           }
       </div>
       ${linkTextElement?.outerHTML}
-      </div>
-      `);
+    </div>
+  `);
+  block.replaceChildren(headerDiv);
 
-  const contentDiv = document.createElement('div');
-  contentDiv.classList.add('browse-cards-block-content');
-
-  const linksContainer = Array.from(block.children).slice(-1 * numberOfCards);
-  linksContainer.forEach((link) => {
-    links.push(link.querySelector('div')?.textContent);
-  });
-
-  numberOfCards = linksContainer.length;
+  const articleDataService = new ArticleDataService();
+  const buildCardsShimmer = new BuildPlaceholder();
+  buildCardsShimmer.add(block);
 
   let placeholders = {};
   try {
@@ -57,34 +46,31 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
-  links.forEach((link, i) => {
+  const cardLoading$ = Promise.all(linksContainer.map(async (linkContainer) => {
+    const link = linkContainer.textContent.trim();
+    // use the link containers parent as container for the card as it is instruented for authoring
+    // eslint-disable-next-line no-param-reassign
+    linkContainer = linkContainer.parentElement;
+    linkContainer.innerHTML = '';
     if (link) {
-      const articleDataService = new ArticleDataService();
-      articleDataService
-        .handleArticleDataService(link)
-        .then(async (data) => {
-          shimmerElement = block.querySelector(CLASS_SHIMMER_PLACEHOLDER);
-          shimmerElement?.remove();
-          const cardData = await mapResultToCardsData(data, placeholders);
-          await buildCard(linksContainer[i], cardData);
-          contentDiv.appendChild(linksContainer[i]);
-          decorateIcons(block);
-          linksContainer[i].children[0].remove();
-          block.appendChild(contentDiv);
-        })
-        .catch(() => {
-          shimmerElement?.remove();
-        });
+      try {
+        const data = await articleDataService.handleArticleDataService(link);
+        const cardData = await mapResultToCardsData(data, placeholders);
+        await buildCard(linkContainer, cardData);
+        decorateIcons(linkContainer);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error(err);
+      }
     }
-  });
+    return linkContainer;
+  }));
 
-  block.appendChild(headerDiv);
-  Array.from(block.children).forEach((child) => {
-    if (!child.className) {
-      block.removeChild(child);
-    }
+  cardLoading$.then((cards) => {
+    buildCardsShimmer.remove();
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'browse-cards-block-content';
+    contentDiv.append(...cards);
+    block.appendChild(contentDiv);
   });
-  linksContainer.forEach((el) => contentDiv.appendChild(el));
-  buildCardsShimmer = new BuildPlaceholder();
-  buildCardsShimmer.add(block);
 }

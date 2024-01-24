@@ -35,7 +35,7 @@ export default async function decorate(block) {
     return result.length > 0 ? result : null;
   };
 
-  headingElement.firstElementChild.classList.add('h2');
+  headingElement.firstElementChild?.classList.add('h2');
 
   // Clearing the block's content
   block.innerHTML = '';
