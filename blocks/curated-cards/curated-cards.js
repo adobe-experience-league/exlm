@@ -50,7 +50,9 @@ export default async function decorate(block) {
       <div class="browse-cards-block-view">${linkElement.innerHTML}</div>
     </div>
   `);
-  headerDiv.querySelector('h1,h2,h3,h4,h5,h6')?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+  headerDiv
+    .querySelector('h1,h2,h3,h4,h5,h6')
+    ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
   // Appending header div to the block
   block.appendChild(headerDiv);
 

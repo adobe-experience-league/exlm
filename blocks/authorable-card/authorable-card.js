@@ -27,7 +27,9 @@ export default async function decorate(block) {
       ${linkTextElement?.outerHTML}
     </div>
   `);
-  headerDiv.querySelector('h1,h2,h3,h4,h5,h6')?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+  headerDiv
+    .querySelector('h1,h2,h3,h4,h5,h6')
+    ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
   block.replaceChildren(headerDiv);
 
   const articleDataService = new ArticleDataService();
