@@ -88,7 +88,7 @@ const BrowseCardsDelegate = (() => {
     const dataSource = {
       url: coveoSearchResultsUrl,
       param: {
-        locale: 'en',
+        locale: document.querySelector('html').lang || 'en',
         searchHub: 'Experience League Learning Hub',
         numberOfResults: param.noOfResults,
         excerptLength: 200,
@@ -107,7 +107,7 @@ const BrowseCardsDelegate = (() => {
       throw new Error('An error occurred');
     }
     if (cardData?.results?.length) {
-      return BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData.results, param);
+      return BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData.results);
     }
     return [];
   };
