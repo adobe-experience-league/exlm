@@ -37,47 +37,32 @@ const BrowseCardsCoveoDataAdaptor = (() => {
   };
 
   /**
-   * Matches a product based on parameters and response.
-   *
-   * @param {Array} paramObj - An array of parameters to match.
-   * @param {Array} responseObj - An array of possible responses.
-   * @returns {string} The matched product or the first response if no match is found.
-   */
-  const matchProduct = (paramObj, responseObj) => {
-    if (paramObj) {
-      const product = paramObj.filter((element) => responseObj.includes(element));
-      if (product.length) {
-        return product[0];
-      }
-    }
-    return responseObj[0] || '';
-  };
-
-  /**
    * Maps a result to the BrowseCards data model.
    * @param {Object} result - The result object.
    * @param {Object} param - The param object.
    * @returns {Object} The BrowseCards data model.
    */
-  const mapResultToCardsDataModel = (result, param) => {
+  const mapResultToCardsDataModel = (result) => {
     const { raw, parentResult, title, excerpt, clickUri, uri } = result || {};
     /* eslint-disable camelcase */
-    const { el_contenttype, el_product, el_solution, el_type } = parentResult?.raw || raw || {};
+
+    const { el_id, el_contenttype, el_product, el_solution, el_type } = parentResult?.raw || raw || {};
     let contentType;
     if (el_type) {
       contentType = el_type.trim();
     } else {
       contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
     }
-    let product = Array.isArray(el_product) ? matchProduct(param?.product, el_product) : el_product;
+    let product = el_product && (Array.isArray(el_product) ? el_product : el_product.split(/,\s*/));
     if (!product && el_solution) {
-      product = Array.isArray(el_solution) ? el_solution[0] : el_solution;
+      product = el_solution && (Array.isArray(el_solution) ? el_solution : el_solution.split(/,\s*/));
     }
     const tags = createTags(result, contentType.toLowerCase());
     const url = parentResult?.clickableuri || parentResult?.uri || clickUri || uri || '';
 
     return {
       ...browseCardDataModel,
+      id: parentResult?.el_id || el_id || '',
       contentType,
       badgeTitle: CONTENT_TYPES[contentType.toUpperCase()]?.LABEL,
       thumbnail:
@@ -99,17 +84,16 @@ const BrowseCardsCoveoDataAdaptor = (() => {
   /**
    * Maps an array of results to an array of BrowseCards data models.
    * @param {Array} data - The array of result objects.
-   * @param {Object} param - The param object.
    * @returns {Promise<Array>} A promise that resolves with an array of BrowseCards data models.
    */
-  const mapResultsToCardsData = async (data, param) => {
+  const mapResultsToCardsData = async (data) => {
     try {
       placeholders = await fetchPlaceholders();
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);
     }
-    return data.map((result) => mapResultToCardsDataModel(result, param));
+    return data.map((result) => mapResultToCardsDataModel(result));
   };
 
   return {

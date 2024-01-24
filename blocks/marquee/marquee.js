@@ -1,22 +1,31 @@
+/* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { loadIms } from '../../scripts/scripts.js';
 
-export default function decorate(block) {
+export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
   const props = [...block.querySelectorAll(':scope div > div')];
+  let count = 0;
+  const subjectPicture = props[count++].innerHTML.trim();
+  const subjectImageDescr = props[count++].textContent.trim();
+  const bgColor = props[count++].textContent.trim();
+  const eyebrow = props[count++].textContent.trim();
+  const title = props[count++].textContent.trim();
+  const longDescr = props[count++].innerHTML.trim();
+  const firstCTAText = props[count++].textContent.trim();
+  const firstCTALink = props[count++].textContent.trim();
+  const secondCTAText = props[count++].textContent.trim();
+  const secondCTALink = props[count++].textContent.trim();
 
-  const subjectPicture = props[0].innerHTML.trim();
-  const subjectImageDescr = props[1].textContent.trim();
-  const bgColor = props[2].textContent.trim();
-  const eyebrow = props[3].textContent.trim();
-  const title = props[4].textContent.trim();
-  const longDescr = props[5].innerHTML.trim();
-  const firstCTAType = props[6].textContent.trim();
-  const firstCTAText = props[7].textContent.trim();
-  const firstCTALink = props[8].textContent.trim();
-  const secondCTAType = props[9].textContent.trim();
-  const secondCTAText = props[10].textContent.trim();
-  const secondCTALink = props[11].textContent.trim();
+  // get signed in status
+  try {
+    await loadIms();
+  } catch {
+    // eslint-disable-next-line no-console
+    console.warn('Adobe IMS not available.');
+  }
+  const isSignedIn = window.adobeIMS?.isSignedInUser();
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
@@ -26,12 +35,10 @@ export default function decorate(block) {
         <div class='marquee-title'>${title}</div>
         <div class='marquee-long-description'>${longDescr}</div>
         <div class='marquee-cta'>${
-          firstCTAText && firstCTALink
-            ? `<a class='button ${firstCTAType}' href='${firstCTALink}'>${firstCTAText}</a>`
-            : ``
+          firstCTAText && firstCTALink ? `<a class='button secondary' href='${firstCTALink}'>${firstCTAText}</a>` : ``
         }${
-          secondCTAText && secondCTALink
-            ? `<a class='button ${secondCTAType}' href='${secondCTALink}'>${secondCTAText}</a>`
+          secondCTAText && secondCTALink && !isSignedIn
+            ? `<a class='button primary' href='${secondCTALink}'>${secondCTAText}</a>`
             : ``
         }</div>
       </div>

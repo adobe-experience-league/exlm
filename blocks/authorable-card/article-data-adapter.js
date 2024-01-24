@@ -16,11 +16,12 @@ function createThumbnailURL(result) {
 
 export default async function mapResultToCardsData(result, placeholders) {
   return {
+    id: result.id,
     contentType: result.contentType,
     type: result.contentType,
     badgeTitle: result.contentType,
     thumbnail: createThumbnailURL(result),
-    product: result.Solution[0],
+    product: result?.Solution && (Array.isArray(result.Solution) ? result.Solution : result.Solution.split(/,\s*/)),
     title: result.Title,
     description: result.Description,
     tags: result.Tags,

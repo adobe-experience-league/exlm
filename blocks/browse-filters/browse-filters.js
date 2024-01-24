@@ -1,4 +1,4 @@
-import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
+import { decorateIcons, getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { createTag, htmlToElement, debounce } from '../../scripts/scripts.js';
 import {
   roleOptions,
@@ -10,8 +10,9 @@ import {
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
-import buildCard from '../../scripts/browse-card/browse-card.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { formattedTopicsTags, handleTopicSelection } from './browse-topics.js';
 
 const coveoFacetMap = {
   Role: 'headlessRoleFacet',
@@ -24,13 +25,22 @@ const coveoFacetFilterNameMap = {
   el_role: 'Role',
   el_level: 'Experience Level',
 };
+const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
+
+let placeholders = {};
+try {
+  placeholders = await fetchPlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 const theme = getMetadata('theme').trim();
 const isBrowseProdPage = theme === 'browse-product';
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
-let buildCardsShimmer = '';
+const buildCardsShimmer = new BuildPlaceholder();
 
 function enableTagsAsProxy(block) {
   tagsProxy = new Proxy(tags, {
@@ -57,7 +67,21 @@ function hideSectionsBelowFilter(block, show) {
     const clickedIndex = siblings.indexOf(parent);
     // eslint-disable-next-line no-plusplus
     for (let i = clickedIndex + 1; i < siblings.length; i++) {
-      siblings[i].style.display = show ? 'block' : 'none';
+      if (!siblings[i].classList.contains('browse-rail')) {
+        siblings[i].style.display = show ? 'block' : 'none';
+      }
+    }
+  }
+}
+
+function hildeSectionsWithinFilter(block, show) {
+  const siblings = Array.from(block.children);
+
+  // eslint-disable-next-line no-plusplus
+  for (let i = 1; i < siblings.length; i++) {
+    if (!siblings[i].classList.contains('browse-topics')) {
+      const classOp = show ? 'remove' : 'add';
+      siblings[i].classList?.[classOp]('browse-hide-section');
     }
   }
 }
@@ -65,12 +89,21 @@ function hideSectionsBelowFilter(block, show) {
 function updateClearFilterStatus(block) {
   const searchEl = block.querySelector('.filter-input-search > input[type="search"]');
   const clearFilterBtn = block.querySelector('.browse-filters-clear');
-  if (tagsProxy.length !== 0 || searchEl.value) {
+  const selectedTopics = Array.from(block.querySelectorAll('.browse-topics-item-active')).reduce((acc, curr) => {
+    const id = curr.dataset.topicname;
+    acc.push(id);
+    return acc;
+  }, []);
+  const hasActiveTopics = block.querySelector('.browse-topics') !== null && selectedTopics.length > 0;
+  const browseFiltersSection = document.querySelector('.browse-filters-form');
+  if (hasActiveTopics || tagsProxy.length !== 0 || searchEl.value) {
     clearFilterBtn.disabled = false;
     hideSectionsBelowFilter(block, false);
+    hildeSectionsWithinFilter(browseFiltersSection, true);
   } else {
     clearFilterBtn.disabled = true;
     hideSectionsBelowFilter(block, true);
+    hildeSectionsWithinFilter(browseFiltersSection, false);
   }
 }
 
@@ -353,7 +386,23 @@ function clearSelectedFilters(block) {
   clearAllSelectedTag(block);
   clearSearchQuery(block);
   updateClearFilterStatus(block);
-  window.location.hash = '';
+  const hash = window.location.hash.substr(1); // Remove the '#' character
+  let params = new URLSearchParams(hash);
+
+  // Get the value of 'aq'
+  const aqValue = params.get('aq');
+
+  // Clear all parameters
+  params = new URLSearchParams();
+
+  // Set only 'aq' with its value if it was present
+  if (aqValue !== null) {
+    params.set('aq', aqValue);
+  }
+
+  // Set the modified hash back to the URL
+  window.location.hash = params.toString();
+  // window.location.hash = '';
 }
 
 function handleClearFilter(block) {
@@ -400,19 +449,6 @@ function handleDropdownToggle() {
       closeOpenDropdowns();
     }
   });
-}
-
-function decorateBlockTitle(block) {
-  const firstChild = block.querySelector('div:first-child');
-  const firstChildText = firstChild.querySelector('div > div').textContent;
-  const headingEl = createTag('h1', { class: 'browse-filters-title' }, firstChildText);
-
-  const secondChild = block.querySelector('div:nth-child(2)');
-  const secondChildText = secondChild.querySelector('div > div').textContent;
-  const pEl = createTag('p', { class: 'browse-filters-description' }, secondChildText);
-
-  firstChild.parentNode.replaceChild(headingEl, firstChild);
-  secondChild.parentNode.replaceChild(pEl, secondChild);
 }
 
 function handleUriHash() {
@@ -594,6 +630,7 @@ function handleCoveoHeadlessSearch(
   block,
   { submitSearchHandler, searchInputKeyupHandler, searchInputKeydownHandler, searchInputEventHandler },
 ) {
+  buildCardsShimmer.remove();
   const filterResultsEl = createTag('div', { class: 'browse-filters-results' });
 
   const browseFiltersSection = block.querySelector('.browse-filters-form');
@@ -628,8 +665,12 @@ function handleCoveoHeadlessSearch(
 
 async function handleSearchEngineSubscription() {
   const filterResultsEl = document.querySelector('.browse-filters-results');
-  filterResultsEl.style.visibility = 'hidden';
-  buildCardsShimmer.show();
+  const browseFilterForm = document.querySelector(CLASS_BROWSE_FILTER_FORM);
+  buildCardsShimmer.add(browseFilterForm);
+  browseFilterForm.insertBefore(
+    document.querySelector('.shimmer-placeholder'),
+    browseFilterForm.childNodes[document.querySelector('.browse-topics') ? 4 : 3],
+  );
   if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
     return;
   }
@@ -637,23 +678,22 @@ async function handleSearchEngineSubscription() {
   const search = window.headlessSearchEngine.state.search;
   const { results } = search;
   if (results.length > 0) {
-    filterResultsEl.style.visibility = 'visible';
-    buildCardsShimmer.hide();
+    buildCardsShimmer.remove();
     const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
     filterResultsEl.innerHTML = '';
     cardsData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
-      buildCard(cardDiv, cardData);
+      buildCard(filterResultsEl, cardDiv, cardData);
       filterResultsEl.appendChild(cardDiv);
-      buildCardsShimmer.setParent(filterResultsEl);
       document.querySelector('.browse-filters-form').classList.add('is-result');
+      filterResultsEl.classList.remove('no-results');
       decorateIcons(cardDiv);
     });
   } else {
-    filterResultsEl.style.visibility = 'visible';
-    buildCardsShimmer.hide();
-    filterResultsEl.innerHTML = 'No Results';
+    buildCardsShimmer.remove();
+    filterResultsEl.innerHTML = placeholders.noResultsTextBrowse || 'No Results';
     document.querySelector('.browse-filters-form').classList.remove('is-result');
+    filterResultsEl.classList.add('no-results');
   }
 }
 
@@ -690,9 +730,83 @@ function renderSortContainer(block) {
   }
 }
 
+function decorateBrowseTopics(block) {
+  const firstChild = block.querySelector('div:first-child');
+  const secondChild = block.querySelector('div:nth-child(2)');
+  const headingElement = block.querySelector('div:nth-child(1) > div');
+  const topics = block.querySelector('div:nth-child(2) > div').textContent.trim();
+  const allTopicsTags = topics !== '' ? formattedTopicsTags(topics) : '';
+  const div = document.createElement('div');
+  div.classList.add('browse-topics');
+
+  const headerDiv = htmlToElement(`
+    <div class="browse-topics-block-header">
+      <div class="browse-topics-block-title">
+          <h2>${headingElement?.textContent.trim()}</h2>
+      </div>
+    </div>
+  `);
+
+  const contentDiv = document.createElement('div');
+  contentDiv.classList.add('browse-topics-block-content');
+  const browseFiltersSection = document.querySelector('.browse-filters-form');
+
+  if (allTopicsTags.length > 0) {
+    allTopicsTags
+      .filter((value) => value !== undefined)
+      .forEach((topicsButtonTitle) => {
+        const topicName = atob(topicsButtonTitle);
+        const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
+        topicsButtonDiv.dataset.topicname = topicName;
+        topicsButtonDiv.innerHTML = topicName;
+        contentDiv.appendChild(topicsButtonDiv);
+      });
+
+    contentDiv.addEventListener('click', (e) => {
+      if (e.target?.classList?.contains('browse-topics-item')) {
+        if (e.target.classList.contains('browse-topics-item-active')) {
+          e.target.classList.remove('browse-topics-item-active');
+        } else {
+          e.target.classList.add('browse-topics-item-active');
+        }
+        updateClearFilterStatus(browseFiltersSection);
+        handleTopicSelection(contentDiv);
+      }
+    });
+    const decodedHash = decodeURIComponent(window.location.hash);
+    const filtersInfo = decodedHash.split('&').find((s) => s.includes('@el_features'));
+    if (filtersInfo) {
+      let selectedTopics;
+      const [, multipleFeaturesCheck] = filtersInfo.match(/@el_features==\(([^)]+)/) || [];
+      let topicsString = multipleFeaturesCheck;
+      if (!topicsString) {
+        const [, singleFeatureCheck] = filtersInfo.match(/@el_features=("[^"]*")/) || [];
+        topicsString = singleFeatureCheck;
+      }
+      if (topicsString) {
+        selectedTopics = topicsString.split(',').map((s) => s.trim().replace(/"/g, ''));
+      }
+      if (selectedTopics && selectedTopics.length > 0) {
+        selectedTopics.forEach((topic) => {
+          const element = contentDiv.querySelector(`.browse-topics-item[data-topicname="${topic}"]`);
+          element.classList.add('browse-topics-item-active');
+        });
+        handleTopicSelection(contentDiv);
+      }
+    }
+
+    firstChild.parentNode.replaceChild(headerDiv, firstChild);
+    secondChild.parentNode.replaceChild(contentDiv, secondChild);
+    div.append(headerDiv);
+    div.append(contentDiv);
+    /* Append browse topics right above the filters section */
+    const filtersFormEl = document.querySelector('.browse-filters-form');
+    filtersFormEl.insertBefore(div, filtersFormEl.children[4]);
+  }
+}
+
 export default async function decorate(block) {
   enableTagsAsProxy(block);
-  decorateBlockTitle(block);
   appendFormEl(block);
   constructFilterInputContainer(block);
   addLabel(block);
@@ -703,7 +817,7 @@ export default async function decorate(block) {
   constructClearFilterBtn(block);
   appendToForm(block, renderTags());
   appendToForm(block, renderFilterResultsHeader());
-  buildCardsShimmer = new BuildPlaceholder(getBrowseFiltersResultCount(), block.querySelector('.browse-filters-form'));
+  decorateBrowseTopics(block);
   initiateCoveoHeadlessSearch({
     handleSearchEngineSubscription,
     renderPageNumbers,

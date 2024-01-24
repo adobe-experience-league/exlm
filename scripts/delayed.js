@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { sampleRUM } from './lib-franklin.js';
+import { loadCSS, sampleRUM } from './lib-franklin.js';
 // add more delayed functionality here
 
 // Core Web Vitals RUM collection
@@ -28,5 +28,7 @@ function loadPrism(document) {
     // eslint-disable-next-line no-console
     .catch((err) => console.error(err));
 }
+
+loadCSS('/styles/print/print.css');
 
 loadPrism(document);

@@ -1,8 +1,9 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import buildCard from '../../scripts/browse-card/browse-card.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { CONTENT_TYPES, ROLE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import SolutionDataService from '../../scripts/data-service/solutions-data-service.js';
 import { solutionsUrl } from '../../scripts/urls.js';
@@ -136,31 +137,31 @@ export default async function decorate(block) {
 
     return filteredResults;
   };
-  const buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
+  const buildCardsShimmer = new BuildPlaceholder();
 
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
-    buildCardsShimmer.show();
+    buildCardsShimmer.add(block);
+    headerDiv.after(block.querySelector('.shimmer-placeholder'));
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
     browseCardsContent
       .then((data) => {
         /* eslint-disable-next-line */
         data = filterResults(data, contentType);
-        buildCardsShimmer.hide();
+        buildCardsShimmer.remove();
 
         if (data?.length) {
           for (let i = 0; i < Math.min(4, data.length); i += 1) {
             const cardData = data[i];
             const cardDiv = document.createElement('div');
-            buildCard(cardDiv, cardData);
+            buildCard(contentDiv, cardDiv, cardData);
             contentDiv.appendChild(cardDiv);
           }
-
           decorateIcons(block);
         }
       })
       .catch((err) => {
-        buildCardsShimmer.hide();
+        buildCardsShimmer.remove();
         /* eslint-disable-next-line no-console */
         console.error(err);
       });
@@ -171,8 +172,7 @@ export default async function decorate(block) {
   const linkDiv = htmlToElement(`
     <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
   `);
-
-  buildCardsShimmer.setParent(contentDiv);
+  block.appendChild(contentDiv);
   block.appendChild(linkDiv);
 
   const rolesDropdown = block.querySelector('.roles-dropdown');
@@ -202,4 +202,7 @@ export default async function decorate(block) {
     /* eslint-disable-next-line */
     fetchDataAndRenderBlock(param, contentType, block, contentDiv);
   });
+
+  /* Hide Tooltip while scrolling the cards layout */
+  hideTooltipOnScroll(contentDiv);
 }
