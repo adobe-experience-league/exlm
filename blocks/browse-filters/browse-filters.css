@@ -49,12 +49,16 @@
   border-radius: 4px;
   padding: 9px 12px;
   width: 100%;
-  font-size: var(--spectrum-body-size-s);
+  font-size: 16px; /* https://defensivecss.dev/tip/input-zoom-safari/ */
   text-align: left;
   color: var(--spectrum-gray-800);
   line-height: 10px;
   font-weight: normal;
   margin: 0;
+}
+
+.filter-input > input::placeholder {
+  font-size: var(--spectrum-body-size-m);
 }
 
 .filter-input .icon-search {
@@ -203,6 +207,7 @@ button.browse-filters-clear:disabled:hover {
   grid-template-columns: 1fr;
   margin: 0 auto;
   transition: all .5s ease-in-out;
+  position: relative;
 }
 
 .browse-filters-results-header {

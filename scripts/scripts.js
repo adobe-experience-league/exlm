@@ -17,6 +17,8 @@ import {
   loadScript,
 } from './lib-franklin.js';
 
+const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
+
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
 export const timers = new Map();
@@ -269,8 +271,8 @@ export async function loadIms() {
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
-  loadIms(); // start it early, asyncronously
   await loadBlocks(main);
+  loadIms(); // start it early, asyncronously
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
@@ -420,10 +422,34 @@ async function loadRails() {
   }
 }
 
+async function loadLauchAndAnalytics() {
+  const launchPromise = loadScript(
+    'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
+    {
+      async: true,
+    },
+  );
+  // eslint-disable-next-line no-unused-vars
+  Promise.all([launchPromise, libAnalyticsModulePromise]).then(([launch, libAnalyticsModule]) => {
+    const { pageLoadModel, linkClickModel } = libAnalyticsModule;
+    window.adobeDataLayer.push(pageLoadModel());
+    const linkClicked = document.querySelectorAll('a');
+    linkClicked.forEach((linkElement) => {
+      linkElement.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (e.target.tagName === 'A') {
+          linkClickModel(e);
+        }
+      });
+    });
+  });
+}
+
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadRails();
+  loadLauchAndAnalytics();
   loadDelayed();
   loadPrevNextBtn();
 }

@@ -22,7 +22,7 @@ const BrowseCardsADLSAdaptor = (() => {
       ...browseCardDataModel,
       contentType,
       badgeTitle: CONTENT_TYPES.INSTRUCTOR_LED_TRANING.LABEL,
-      product: solution,
+      product: solution && (Array.isArray(solution) ? solution : solution.split(/,\s*/)),
       title: name || '',
       description: description || '',
       copyLink: adlsRedirectUrl + path || '',

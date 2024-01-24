@@ -2,7 +2,7 @@ const browseCardDataModel = {
   contentType: '',
   badgeTitle: '',
   thumbnail: '',
-  product: '',
+  product: [],
   title: '',
   description: '',
   tags: [],

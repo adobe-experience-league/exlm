@@ -16,7 +16,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
   const mapResultToCardsDataModel = (result) => {
     const contentType = CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY;
     const { productFocus, eventTitle, eventDescription, startTime, endTime, time, cta } = result || {};
-    const product = Array.isArray(productFocus) ? productFocus[0] : '';
+    const product = productFocus && (Array.isArray(productFocus) ? productFocus : productFocus.split(/,\s*/));
     const { ctaLabel, ctaLink } = cta || {};
     const eventStartTime = new Date(`${startTime}Z`);
     const eventEndTime = new Date(`${endTime}Z`);
