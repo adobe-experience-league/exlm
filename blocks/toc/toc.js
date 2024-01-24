@@ -4,6 +4,7 @@ import TocDataService from '../../scripts/data-service/tocs-data-service.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import getSolutionName from './toc-solutions.js';
 
+// HTML for Tablet&Mobile view dropdown right-rail
 const constructSolutionsDropdownEl = htmlToElement(`
     <div class="toc-dropdown is-hidden-desktop">
       <button type="button" class="toc-dropdown-button" aria-expanded="false" aria-controls="toc-dropdown-popover">
@@ -12,38 +13,49 @@ const constructSolutionsDropdownEl = htmlToElement(`
     </div>
 `);
 
+// Toggle list items
+function toggleColumn(block) {
+  const toggleElements = block.querySelectorAll('.js-toggle');
+  if (toggleElements) {
+    toggleElements.forEach((toggleElement) => {
+      const subMenu = toggleElement.parentElement.parentElement.querySelector('ul');
+      subMenu.classList.add('is-hidden');
+      toggleElement.classList.add('collapsed');
+      toggleElement.addEventListener('click', (event) => {
+        event.preventDefault();
+        subMenu.classList.toggle('is-hidden');
+        toggleElement.classList.toggle('collapsed');
+      });
+    });
+  }
+}
+
 // Utility function to toggle visibility of items
-function toggleItemVisibility(itemList, startIndex, show) {
-  // eslint-disable-next-line no-plusplus
-  for (let i = startIndex; i < itemList.length; i++) {
-    if (!itemList[i].classList.contains('view-more-less')) {
-      itemList[i].classList.toggle('hidden', !show);
+function toggleItemVisibility(items, showAll, limit) {
+  items.forEach((item, index) => {
+    item.classList.remove('is-hidden', 'is-visible');
+    if (!showAll && index >= limit) {
+      item.classList.add('is-hidden');
+    } else {
+      item.classList.add('is-visible');
     }
-  }
-}
-
-// Utility function to set link visibility
-function setLinkVisibility(linkElement, show) {
-  if (linkElement) {
-    linkElement.style.display = show ? 'inline-flex' : 'none';
-  }
-}
-
-// Function to handle "View More" click
-function handleViewMoreClick(targetUL, viewMoreLI, viewLessLI) {
-  toggleItemVisibility(targetUL.children, 5, true); // Start from index 5 to show more items
-  setLinkVisibility(viewMoreLI, false);
-  setLinkVisibility(viewLessLI, true);
+  });
 }
 
 // Function to handle "View Less" click
-function handleViewLessClick(targetUL, viewMoreLI, viewLessLI) {
-  toggleItemVisibility(targetUL.children, 5, false); // Start from index 5 to hide more items
-  setLinkVisibility(viewMoreLI, true);
-  setLinkVisibility(viewLessLI, false);
+function handleViewMoreClick(ev, items, limit) {
+  ev.preventDefault();
+  if (ev.currentTarget) {
+    const clickElement = ev.currentTarget.querySelector('span');
+    const getViewLinkText = clickElement.classList.contains('plus');
+    clickElement.textContent = getViewLinkText ? 'View less' : 'View more';
+    clickElement.classList.toggle('plus');
+    clickElement.classList.toggle('minus');
+    toggleItemVisibility(items, getViewLinkText, limit);
+  }
 }
 
-async function viewMoreviewLess(targetUL) {
+async function viewMoreviewLess(list, items, limit) {
   let placeholders = {};
   try {
     placeholders = await fetchPlaceholders();
@@ -52,29 +64,73 @@ async function viewMoreviewLess(targetUL) {
     console.error('Error fetching placeholders:', err);
   }
 
-  toggleItemVisibility(targetUL.children, 5, false);
+  let viewMoreLessItem = list.querySelector('.view-more-less');
 
-  // "View More" and "View Less" links
-  const viewMoreLI = document.createElement('li');
-  viewMoreLI.classList.add('left-rail-view-more', 'view-more-less');
-  viewMoreLI.innerHTML = `<span class="viewMoreLink"> ${placeholders.viewMore}</span>`;
-  targetUL.append(viewMoreLI);
+  if (items.length > limit) {
+    if (!viewMoreLessItem) {
+      viewMoreLessItem = document.createElement('li');
+      viewMoreLessItem.classList.add('view-more-less');
+      viewMoreLessItem.innerHTML = `<span class="plus">${placeholders.viewMore}</span>`;
+      viewMoreLessItem.addEventListener('click', (ev) => handleViewMoreClick(ev, items, limit));
+      list.appendChild(viewMoreLessItem);
+    }
 
-  const viewLessLI = document.createElement('li');
-  viewLessLI.classList.add('left-rail-view-less', 'view-more-less');
-  viewLessLI.style.display = 'none';
-  viewLessLI.innerHTML = `<span class="viewLessLink"> ${placeholders.viewLess}</span>`;
-  targetUL.append(viewLessLI);
+    const isAllVisible = Array.from(items).every((item) => item.classList.contains('is-visible'));
 
-  // Check if there are less than 5 items, hide the "View More" link accordingly
-  const liElements = targetUL.children;
-  if (liElements && liElements.length <= 5) {
-    setLinkVisibility(viewMoreLI, false);
+    const viewLinkDiv = viewMoreLessItem.querySelector('span');
+    if (isAllVisible) {
+      viewLinkDiv.textContent = placeholders.viewLess;
+      viewLinkDiv.classList.remove('plus');
+      viewLinkDiv.classList.add('minus');
+    } else {
+      viewLinkDiv.textContent = placeholders.viewMore;
+      viewLinkDiv.classList.remove('minus');
+      viewLinkDiv.classList.add('plus');
+    }
   }
+}
 
-  // Event listeners for "View More" and "View Less" links
-  viewMoreLI.addEventListener('click', () => handleViewMoreClick(targetUL, viewMoreLI, viewLessLI));
-  viewLessLI.addEventListener('click', () => handleViewLessClick(targetUL, viewMoreLI, viewLessLI));
+// Items to show initially and highlight the current page
+function initializeItemsToShow(block, currentURL) {
+  const getTocRootList = block.querySelector('.toc-right-rail-content>div>ul');
+  const currentActiveElement = getTocRootList.querySelector(`a[href="${currentURL}"]`);
+  if (currentActiveElement) {
+    currentActiveElement.classList.add('is-active');
+  }
+  function activateListItem(list) {
+    const items = Array.from(list.children).filter((child) => child.tagName === 'LI');
+    const isItemActiveAfterLimit = items.slice(5).some((li) => li.querySelector('.is-active'));
+
+    toggleItemVisibility(items, isItemActiveAfterLimit, 5);
+
+    if (items.length > 5 || (list === getTocRootList && items.length > 5)) {
+      viewMoreviewLess(list, items, 5);
+    }
+    return isItemActiveAfterLimit;
+  }
+  activateListItem(getTocRootList);
+
+  const nestedLists = Array.from(getTocRootList.querySelectorAll('ul'));
+  nestedLists.forEach((nestedList) => activateListItem(nestedList));
+
+  if (currentActiveElement) {
+    let currentItem = currentActiveElement.closest('li');
+    while (currentItem) {
+      currentItem.querySelector('a').classList.add('is-open', 'is-collapsed');
+      const parentList = currentItem.closest('ul');
+      if (parentList && parentList !== getTocRootList) {
+        const parentListItem = parentList.closest('li');
+        if (parentListItem) {
+          parentListItem.querySelector('a').classList.add('is-collapsed');
+          currentItem = parentListItem;
+        } else {
+          currentItem = null;
+        }
+      } else {
+        currentItem = null;
+      }
+    }
+  }
 }
 
 const handleTocsService = async (tocID) => {
@@ -87,32 +143,6 @@ const handleTocsService = async (tocID) => {
 
   return tocs;
 };
-
-function addClassesToAncestors(element, classNameToAdd, classNameToRemove) {
-  let currentElement = element;
-
-  while (currentElement) {
-    if (currentElement.tagName === 'LI') {
-      const link = currentElement.querySelector('a.js-toggle');
-      const sublist = currentElement.querySelector('ul');
-
-      if (link) {
-        link.classList.add(classNameToAdd);
-        if (classNameToRemove) {
-          // Use setTimeout to remove the class after a short delay
-          setTimeout(() => {
-            link.classList.remove(classNameToRemove);
-          }, 10);
-        }
-      }
-
-      if (sublist) {
-        sublist.style.display = 'block';
-      }
-    }
-    currentElement = currentElement.parentElement;
-  }
-}
 
 /**
  * loads and decorates the toc
@@ -169,8 +199,6 @@ export default async function decorate(block) {
     });
 
     block.appendChild(contentDiv);
-    const parentUL = block.querySelector('.toc > div > div > ul');
-    viewMoreviewLess(parentUL);
 
     const currentURL = window.location.pathname;
     const regex = /\/(\w{2})\//;
@@ -199,34 +227,13 @@ export default async function decorate(block) {
       }
     });
 
-    // Add is-active class to the highlighted section
-    const activeElement = block.querySelector(`a[href="${currentURL}"]`);
-    if (activeElement) {
-      activeElement.classList.add('is-active');
-      const currentItemLi = activeElement.closest('li');
-
-      if (currentItemLi) {
-        addClassesToAncestors(currentItemLi, 'is-open', 'collapsed');
-      }
-    }
-
     // Toggle functionality for TOC Block
-    const toggleElements = block.querySelectorAll('.js-toggle');
-    if (toggleElements) {
-      toggleElements.forEach((toggleElement) => {
-        const subMenu = toggleElement.parentElement.parentElement.querySelector('ul');
-        // View more and view less
-        if (subMenu.children.length >= 5) {
-          viewMoreviewLess(subMenu);
-        }
-
-        toggleElement.classList.add('collapsed');
-        toggleElement.addEventListener('click', (event) => {
-          event.preventDefault();
-          subMenu.style.display = subMenu.style.display === 'none' || subMenu.style.display === '' ? 'block' : 'none';
-          toggleElement.classList.toggle('expanded', subMenu.style.display === 'block');
-          toggleElement.classList.toggle('collapsed', subMenu.style.display === 'none');
-        });
+    toggleColumn(block);
+    initializeItemsToShow(block, currentURL);
+    const ActiveEl = block.querySelectorAll('.js-toggle.is-collapsed.is-open');
+    if (ActiveEl != null) {
+      ActiveEl.forEach((el) => {
+        el.click();
       });
     }
   }
