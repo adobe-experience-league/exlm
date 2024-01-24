@@ -1,5 +1,6 @@
 import { loadCSS, fetchPlaceholders } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
+import { createTooltip } from './browse-card-tooltip.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
 
 /* User Info for Community Section - Will accomodate once we have KHOROS integration */
@@ -96,7 +97,7 @@ const buildCardContent = (card, model) => {
 
   if (description) {
     const stringContent = description.length > 100 ? `${description.substring(0, 100).trim()}...` : description;
-    const descriptionElement = document.createElement('div');
+    const descriptionElement = document.createElement('p');
     descriptionElement.classList.add('browse-card-description-text');
     descriptionElement.innerHTML = stripScriptTags(stringContent);
     cardContent.appendChild(descriptionElement);
@@ -158,7 +159,7 @@ const setupCopyAction = (wrapper) => {
   });
 };
 
-export async function buildCard(element, model) {
+export async function buildCard(container, element, model) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
   const { thumbnail, product, title, contentType, badgeTitle } = model;
   const type = contentType?.toLowerCase();
@@ -183,18 +184,34 @@ export async function buildCard(element, model) {
     cardFigure.appendChild(img);
   }
 
-  const bannerElement = createTag('p', { class: 'browse-card-banner' });
+  const bannerElement = createTag('h3', { class: 'browse-card-banner' });
   bannerElement.innerText = badgeTitle;
   cardFigure.appendChild(bannerElement);
 
   if (product) {
-    const tagElement = createTag('p', { class: 'browse-card-tag-text' });
-    tagElement.textContent = product;
-    cardContent.appendChild(tagElement);
+    let tagElement;
+    if (product.length > 1) {
+      tagElement = createTag(
+        'div',
+        { class: 'browse-card-tag-text' },
+        `<h4>${placeholders.multiSolutionText || 'multisolution'}</h4><div class="tooltip-placeholder"></div>`,
+      );
+      cardContent.appendChild(tagElement);
+      const tooltipElem = cardContent.querySelector('.tooltip-placeholder');
+      const tooltipConfig = {
+        position: 'top',
+        color: 'grey',
+        content: product.join(', ').replace(/\|/g, ' | '),
+      };
+      createTooltip(container, tooltipElem, tooltipConfig);
+    } else {
+      tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${product.join(', ')}</h4>`);
+      cardContent.appendChild(tagElement);
+    }
   }
 
   if (title) {
-    const titleElement = createTag('p', { class: 'browse-card-title-text' });
+    const titleElement = createTag('h5', { class: 'browse-card-title-text' });
     titleElement.textContent = title;
     cardContent.appendChild(titleElement);
   }
