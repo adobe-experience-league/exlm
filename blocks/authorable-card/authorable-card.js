@@ -56,7 +56,6 @@ export default async function decorate(block) {
           const data = await articleDataService.handleArticleDataService(link);
           const cardData = await mapResultToCardsData(data, placeholders);
           await buildCard(contentDiv, linkContainer, cardData);
-          decorateIcons(linkContainer);
         } catch (err) {
           // eslint-disable-next-line no-console
           console.error(err);
@@ -70,6 +69,7 @@ export default async function decorate(block) {
     buildCardsShimmer.remove();
     contentDiv.append(...cards);
     block.appendChild(contentDiv);
+    decorateIcons(contentDiv);
   });
 
   /* Tooltip - for Title */
@@ -83,4 +83,5 @@ export default async function decorate(block) {
 
   /* Hide Tooltip while scrolling the cards layout */
   hideTooltipOnScroll(contentDiv);
+  decorateIcons(block);
 }
