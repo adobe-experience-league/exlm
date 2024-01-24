@@ -2,6 +2,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 /**
@@ -25,21 +26,33 @@ export default async function decorate(block) {
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
-      <div class="browse-cards-block-title">
-          <h2>${headingElement?.textContent.trim()}</h2>
-          ${
-            toolTipElement.textContent
-              ? `<div class="tooltip">
-              <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
-            </div>`
-              : ''
-          }
-      </div>
+    ${
+      headingElement?.textContent?.trim()
+        ? `<div class="browse-cards-block-title">
+          <h2>
+            ${headingElement.textContent.trim()}${
+              toolTipElement?.textContent?.trim() ? `<div class="tooltip-placeholder"></div>` : ''
+            }
+          </h2>
+      </div>`
+        : ''
+    }
       <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
     </div>
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
+
+  const tooltipElem = block.querySelector('.tooltip-placeholder');
+  if (tooltipElem) {
+    const tooltipConfig = {
+      content: toolTipElement.textContent.trim(),
+    };
+    createTooltip(block, tooltipElem, tooltipConfig);
+  }
+
+  await decorateIcons(headerDiv);
+
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
 
@@ -61,11 +74,13 @@ export default async function decorate(block) {
         for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
           const cardData = data[i];
           const cardDiv = document.createElement('div');
-          buildCard(cardDiv, cardData);
+          buildCard(contentDiv, cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
-        decorateIcons(block);
         block.appendChild(contentDiv);
+        /* Hide Tooltip while scrolling the cards layout */
+        hideTooltipOnScroll(contentDiv);
+        decorateIcons(block);
       }
     })
     .catch((err) => {

@@ -1,7 +1,8 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { loadIms } from '../../scripts/scripts.js';
 
-export default function decorate(block) {
+export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
   const props = [...block.querySelectorAll(':scope div > div')];
@@ -18,6 +19,12 @@ export default function decorate(block) {
   const secondCTALink = props[count++].textContent.trim();
 
   // get signed in status
+  try {
+    await loadIms();
+  } catch {
+    // eslint-disable-next-line no-console
+    console.warn('Adobe IMS not available.');
+  }
   const isSignedIn = window.adobeIMS?.isSignedInUser();
 
   // Build DOM

@@ -33,6 +33,12 @@ export function pageLoadModel() {
         domain: window.location.host,
         mainSiteSection: '',
         name: document.title,
+        gitEdit: document.querySelector('meta[name="git-edit"]')
+          ? document.querySelector('meta[name="git-edit"]').content
+          : '',
+        exlId: document.querySelector('meta[name="exl-id"]')
+          ? document.querySelector('meta[name="exl-id"]').content
+          : '',
         pageLanguage: window.document.getElementsByTagName('html')[0].getAttribute('lang') || 'en',
         pageName: `xl${window.location.pathname.replaceAll('/', ':').replaceAll('-', ' ')}`,
         pageType: document.querySelector('meta[name="type"]')
@@ -67,25 +73,44 @@ export function pageLoadModel() {
 export function linkClickModel(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
+  let linkTarget = '';
+  if (e.target.parentElement.className.indexOf('marquee-cta') !== -1 && window.location.pathname === '/') {
+    linkTarget = 'banner-homepage';
+  } else if (e.target.closest('.browse-rail')) {
+    linkTarget = 'docs-right-sidebar';
+  }
+
+  let linkType = 'other';
+
+  if (e.target.href.match(/.(zip|dmg|exe)$/)) {
+    linkType = 'download';
+  }
+
   window.adobeDataLayer.push({
     event: 'linkClicked',
     link: {
-      destinationDomain: '<Link HREF Value>',
-      linkLocation: '<Position of link on page>',
-      linkTitle: '<name of the link clicked>',
-      linkType: '<’other’ || ‘exit’ || ‘download’>',
-      solution: '<Adobe Solution link pertains to>',
+      destinationDomain: e.target.href,
+      linkLocation: linkTarget,
+      linkTitle: e.target.title || '',
+      // set to other until we have examples of other types
+      linkType,
+      solution:
+        document.querySelector('meta[name="solution"]') !== null
+          ? document.querySelector('meta[name="solution"]').content.split(',')[0].trim()
+          : '',
     },
     web: {
       webInteraction: {
-        URL: '<Link HREF Value>',
+        URL: e.target.href,
         linkClicks: { value: 1 },
-        name: '<name of the link clicked>',
-        type: '<’other’ || ‘exit’ || ‘download’>',
+        name: e.target.innerHTML,
+        // set to other until we have examples of other types
+        type: 'Other',
       },
     },
+    asset: {
+      id: '',
+      interactionType: '',
+    },
   });
-  window.setTimeout(() => {
-    window.location.href = e.target.href;
-  }, 1000);
 }

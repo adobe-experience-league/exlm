@@ -4,6 +4,8 @@ import { htmlToElement, decorateExternalLinks } from '../../scripts/scripts.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
+import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
+
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -11,8 +13,8 @@ import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/brow
 export default async function decorate(block) {
   // Extracting elements from the block
   const blockDataElements = [...block.querySelectorAll(':scope div > div')];
-  const headingElementContent = blockDataElements[0].innerHTML.trim();
-  const toolTipElementContent = blockDataElements[1].innerHTML.trim();
+  const headingElement = blockDataElements[0].innerHTML.trim();
+  const toolTipElement = blockDataElements[1].innerHTML.trim();
   const contentTypeListContent = blockDataElements[2].innerHTML?.trim()?.toLowerCase();
   const sortByContent = blockDataElements[3].innerHTML?.trim()?.toLowerCase();
   const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase()];
@@ -31,16 +33,29 @@ export default async function decorate(block) {
   // Creating the header div with title and tooltip
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
-      <div class="browse-cards-block-title">
-        <h2>${headingElementContent}</h2>
-        <div class="tooltip">
-          <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElementContent}</span>
-        </div>
-      </div>
-    </div> 
+    ${
+      headingElement?.textContent?.trim()
+        ? `<div class="browse-cards-block-title">
+          <h2>
+            ${headingElement.textContent.trim()}${
+              toolTipElement?.textContent?.trim() ? `<div class="tooltip-placeholder"></div>` : ''
+            }
+          </h2>
+      </div>`
+        : ''
+    }
+    </div>
   `);
   // Appending header div to the block
   block.appendChild(headerDiv);
+
+  const tooltipElem = block.querySelector('.tooltip-placeholder');
+  if (tooltipElem) {
+    const tooltipConfig = {
+      content: toolTipElement.textContent.trim(),
+    };
+    createTooltip(block, tooltipElem, tooltipConfig);
+  }
 
   // Authored Initial Content type
   const initialContentType = tabsLabels[0];
@@ -84,11 +99,13 @@ export default async function decorate(block) {
           for (let i = 0; i < Math.min(numberOfResults, data.length); i += 1) {
             const cardData = data[i];
             const cardDiv = document.createElement('div');
-            buildCard(cardDiv, cardData);
+            buildCard(contentDiv, cardDiv, cardData);
             contentDiv.appendChild(cardDiv);
           }
           // Append content div to shimmer card parent and decorate icons
           block.appendChild(contentDiv);
+          /* Hide Tooltip while scrolling the cards layout */
+          hideTooltipOnScroll(contentDiv);
           decorateIcons(tabbedBlock);
         } else {
           buildCardsShimmer.remove();

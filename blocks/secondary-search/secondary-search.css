@@ -36,7 +36,7 @@
     padding: 0;
     border-radius: 0;
     position: relative;
-    font-size: var(--spectrum-font-size-100);
+    font-size: var(--spectrum-font-size-200);
 }
 
 .secondary-search input:focus {
