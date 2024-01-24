@@ -86,17 +86,22 @@ const handleTocsService = async (tocID) => {
   return tocs;
 };
 
-function addClassesToAncestors(element, className) {
+function addClassesToAncestors(element, classNameToAdd, classNameToRemove) {
   let currentElement = element;
 
   while (currentElement) {
     if (currentElement.tagName === 'LI') {
-      const link = currentElement.querySelector('a');
+      const link = currentElement.querySelector('a.js-toggle');
       const sublist = currentElement.querySelector('ul');
 
       if (link) {
-        link.classList.add(className);
-        link.classList.remove('collapsed');
+        link.classList.add(classNameToAdd);
+        if (classNameToRemove) {
+          // Use setTimeout to remove the class after a short delay
+          setTimeout(() => {
+            link.classList.remove(classNameToRemove);
+          }, 10);
+        }
       }
 
       if (sublist) {
@@ -187,9 +192,6 @@ export default async function decorate(block) {
 
       if (anchor.getAttribute('href').startsWith('#')) {
         anchor.classList.add('js-toggle');
-        // View more and view less
-        const targetUL = anchor.parentElement.parentElement.querySelector('ul');
-        viewMoreviewLess(targetUL);
       } else {
         anchor.setAttribute('href', `/${locale}${newHref}`);
       }
@@ -202,7 +204,7 @@ export default async function decorate(block) {
       const currentItemLi = activeElement.closest('li');
 
       if (currentItemLi) {
-        addClassesToAncestors(currentItemLi, 'is-open');
+        addClassesToAncestors(currentItemLi, 'is-open', 'collapsed');
       }
     }
 
@@ -211,6 +213,11 @@ export default async function decorate(block) {
     if (toggleElements) {
       toggleElements.forEach((toggleElement) => {
         const subMenu = toggleElement.parentElement.parentElement.querySelector('ul');
+        // View more and view less
+        if (subMenu.children.length >= 5) {
+          viewMoreviewLess(subMenu);
+        }
+
         toggleElement.classList.add('collapsed');
         toggleElement.addEventListener('click', (event) => {
           event.preventDefault();
