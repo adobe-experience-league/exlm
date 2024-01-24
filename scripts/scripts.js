@@ -248,6 +248,7 @@ export async function loadIms() {
       const timeout = setTimeout(() => reject(new Error('IMS timeout')), 5000);
       window.adobeid = {
         client_id: 'ExperienceLeague_Dev',
+        environment: 'stg1',
         scope:
           'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read',
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
