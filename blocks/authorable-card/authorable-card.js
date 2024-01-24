@@ -5,14 +5,15 @@ import ArticleDataService from '../../scripts/data-service/article-data-service.
 import mapResultToCardsData from './article-data-adapter.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
-
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const [ headingElement, toolTipElement, linkTextElement, ...linksContainer ] = [...block.children].map((row) => row.firstElementChild);
+  const [headingElement, toolTipElement, linkTextElement, ...linksContainer] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
 
   headingElement.firstElementChild?.classList.add('h2');
   block.classList.add('browse-cards-block');
@@ -46,25 +47,27 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
-  const cardLoading$ = Promise.all(linksContainer.map(async (linkContainer) => {
-    const link = linkContainer.textContent.trim();
-    // use the link containers parent as container for the card as it is instruented for authoring
-    // eslint-disable-next-line no-param-reassign
-    linkContainer = linkContainer.parentElement;
-    linkContainer.innerHTML = '';
-    if (link) {
-      try {
-        const data = await articleDataService.handleArticleDataService(link);
-        const cardData = await mapResultToCardsData(data, placeholders);
-        await buildCard(linkContainer, cardData);
-        decorateIcons(linkContainer);
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error(err);
+  const cardLoading$ = Promise.all(
+    linksContainer.map(async (linkContainer) => {
+      const link = linkContainer.textContent.trim();
+      // use the link containers parent as container for the card as it is instruented for authoring
+      // eslint-disable-next-line no-param-reassign
+      linkContainer = linkContainer.parentElement;
+      linkContainer.innerHTML = '';
+      if (link) {
+        try {
+          const data = await articleDataService.handleArticleDataService(link);
+          const cardData = await mapResultToCardsData(data, placeholders);
+          await buildCard(linkContainer, cardData);
+          decorateIcons(linkContainer);
+        } catch (err) {
+          // eslint-disable-next-line no-console
+          console.error(err);
+        }
       }
-    }
-    return linkContainer;
-  }));
+      return linkContainer;
+    }),
+  );
 
   cardLoading$.then((cards) => {
     buildCardsShimmer.remove();
