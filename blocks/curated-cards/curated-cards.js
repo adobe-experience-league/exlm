@@ -2,7 +2,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
-import createTooltip from '../../scripts/browse-card/browse-card-tooltip.js';
+import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 /**
@@ -107,12 +107,7 @@ export default async function decorate(block) {
         }
         block.appendChild(contentDiv);
         /* Hide Tooltip while scrolling the cards layout */
-        contentDiv.addEventListener('scroll', () => {
-          const tooltips = contentDiv.querySelectorAll('.tooltip-text');
-          if (tooltips.length) {
-            tooltips.forEach((elem) => elem.classList.remove('tooltip-visible'));
-          }
-        });
+        hideTooltipOnScroll(contentDiv);
         decorateIcons(block);
       }
     })

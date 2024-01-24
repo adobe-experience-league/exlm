@@ -1,6 +1,6 @@
 import { loadCSS, fetchPlaceholders } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
-import createTooltip from './browse-card-tooltip.js';
+import { createTooltip } from './browse-card-tooltip.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
 
 /* User Info for Community Section - Will accomodate once we have KHOROS integration */

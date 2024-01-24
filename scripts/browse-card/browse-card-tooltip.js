@@ -1,9 +1,10 @@
 /**
  * Creates a tooltip and attaches event listeners to show/hide it.
+ * @param {HTMLElement} container - The HTML element serving as the tooltip container.
  * @param {HTMLElement} element - The HTML element to which the tooltip is attached.
- * @param {object} config - The config of the tooltip.
+ * @param {object} config - The configuration of the tooltip.
  */
-const createTooltip = (container, element, config) => {
+export const createTooltip = (container, element, config) => {
   const { position = 'right', color = 'blue', content } = config;
 
   /**
@@ -52,10 +53,10 @@ const createTooltip = (container, element, config) => {
    * @returns {string} - The HTML content for the tooltip.
    */
   const createTooltipHTML = () => `
-      <div class="tooltip tooltip-${position} tooltip-${color}">
-        <span class="icon icon-info"></span><span class="tooltip-text">${content}</span>
-      </div>
-    `;
+    <div class="tooltip tooltip-${position} tooltip-${color}">
+      <span class="icon icon-info"></span><span class="tooltip-text">${content}</span>
+    </div>
+  `;
 
   /**
    * Initializes the TooltipHandler by creating and appending the tooltip element.
@@ -69,4 +70,28 @@ const createTooltip = (container, element, config) => {
   init();
 };
 
-export default createTooltip;
+/**
+ * Hides all tooltips when the container is scrolled.
+ * @param {HTMLElement} container - The HTML element serving as the tooltip container.
+ */
+export const hideTooltipOnScroll = (container) => {
+  /**
+   * Handles the scroll event on the container to hide all the tooltips.
+   */
+  const handleContainerScroll = () => {
+    const tooltips = container.querySelectorAll('.tooltip-text');
+    tooltips.forEach((elem) => {
+      elem.style.left = '-999px';
+      elem.classList.remove('tooltip-visible');
+    });
+  };
+
+  const resizeObserver = new ResizeObserver(() => {
+    if (container.scrollWidth > container.clientWidth) {
+      // Add scroll event listener when the container is scrollable
+      container.addEventListener('scroll', handleContainerScroll);
+    }
+  });
+
+  resizeObserver.observe(container);
+};

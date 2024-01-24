@@ -3,6 +3,7 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { CONTENT_TYPES, ROLE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import SolutionDataService from '../../scripts/data-service/solutions-data-service.js';
 import { solutionsUrl } from '../../scripts/urls.js';
@@ -203,10 +204,5 @@ export default async function decorate(block) {
   });
 
   /* Hide Tooltip while scrolling the cards layout */
-  contentDiv.addEventListener('scroll', () => {
-    const tooltips = contentDiv.querySelectorAll('.tooltip-text');
-    if (tooltips.length) {
-      tooltips.forEach((elem) => elem.classList.remove('tooltip-visible'));
-    }
-  });
+  hideTooltipOnScroll(contentDiv);
 }

@@ -4,7 +4,7 @@ import { htmlToElement, decorateExternalLinks } from '../../scripts/scripts.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
-import createTooltip from '../../scripts/browse-card/browse-card-tooltip.js';
+import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -105,12 +105,7 @@ export default async function decorate(block) {
           // Append content div to shimmer card parent and decorate icons
           block.appendChild(contentDiv);
           /* Hide Tooltip while scrolling the cards layout */
-          contentDiv.addEventListener('scroll', () => {
-            const tooltips = contentDiv.querySelectorAll('.tooltip-text');
-            if (tooltips.length) {
-              tooltips.forEach((elem) => elem.classList.remove('tooltip-visible'));
-            }
-          });
+          hideTooltipOnScroll(contentDiv);
           decorateIcons(tabbedBlock);
         } else {
           buildCardsShimmer.remove();
