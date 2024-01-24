@@ -45,6 +45,15 @@ export function pageLoadModel() {
     ? document.querySelector('meta[name="type"]').content.toLowerCase()
     : '';
 
+  const subSolution =
+    document.querySelector('meta[name="sub-solution"]') !== null
+      ? document.querySelector('meta[name="sub-solution"]').content
+      : '';
+  const solutionVersion =
+    document.querySelector('meta[name="version"]') !== null
+      ? document.querySelector('meta[name="version"]').content
+      : '';
+
   const pageName = () => {
     // Validate if subsolution or solutionversion is not empty
     const lroot = window.location.pathname.endsWith === '/docs';
@@ -102,8 +111,8 @@ export function pageLoadModel() {
         siteSubSection4: sections[3] || '',
         siteSubSection5: sections[4] || '',
         solution,
-        solutionVersion: '',
-        subSolution: '',
+        solutionVersion,
+        subSolution,
         type,
       },
     },
