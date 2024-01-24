@@ -16,30 +16,31 @@ const constructSolutionsDropdownEl = htmlToElement(`
 function toggleItemVisibility(itemList, startIndex, show) {
   // eslint-disable-next-line no-plusplus
   for (let i = startIndex; i < itemList.length; i++) {
+    if(!itemList[i].classList.contains('view-more-less')){
     itemList[i].classList.toggle('hidden', !show);
+    }
   }
 }
 
 // Utility function to set link visibility
-function setLinkVisibility(block, linkClass, show) {
-  const linkElement = block.querySelector(linkClass);
+function setLinkVisibility(linkElement, show) {
   if (linkElement) {
     linkElement.style.display = show ? 'inline-flex' : 'none';
   }
 }
 
 // Function to handle "View More" click
-function handleViewMoreClick(targetUL, viewMoreDiv, viewLessDiv) {
+function handleViewMoreClick(targetUL, viewMoreLI, viewLessLI) {
   toggleItemVisibility(targetUL.children, 5, true); // Start from index 5 to show more items
-  setLinkVisibility(viewMoreDiv, '.viewMoreLink', false);
-  setLinkVisibility(viewLessDiv, '.viewLessLink', true);
+  setLinkVisibility(viewMoreLI, false);
+  setLinkVisibility(viewLessLI, true);
 }
 
 // Function to handle "View Less" click
-function handleViewLessClick(targetUL, viewMoreDiv, viewLessDiv) {
+function handleViewLessClick(targetUL, viewMoreLI, viewLessLI) {
   toggleItemVisibility(targetUL.children, 5, false); // Start from index 5 to hide more items
-  setLinkVisibility(viewMoreDiv, '.viewMoreLink', true);
-  setLinkVisibility(viewLessDiv, '.viewLessLink', false);
+  setLinkVisibility(viewMoreLI, true);
+  setLinkVisibility(viewLessLI, false);
 }
 
 async function viewMoreviewLess(targetUL) {
@@ -54,25 +55,26 @@ async function viewMoreviewLess(targetUL) {
   toggleItemVisibility(targetUL.children, 5, false);
 
   // "View More" and "View Less" links
-  const viewMoreDiv = document.createElement('div');
-  viewMoreDiv.classList.add('left-rail-view-more', 'view-more-less');
-  viewMoreDiv.innerHTML = `<span class="viewMoreLink"> ${placeholders.viewMore}</span>`;
-  targetUL.append(viewMoreDiv);
+  const viewMoreLI = document.createElement('li');
+  viewMoreLI.classList.add('left-rail-view-more', 'view-more-less');
+  viewMoreLI.innerHTML = `<span class="viewMoreLink"> ${placeholders.viewMore}</span>`;
+  targetUL.append(viewMoreLI);
 
-  const viewLessDiv = document.createElement('div');
-  viewLessDiv.classList.add('left-rail-view-less', 'view-more-less');
-  viewLessDiv.innerHTML = `<span class="viewLessLink" style="display: none;"> ${placeholders.viewLess}</span>`;
-  targetUL.append(viewLessDiv);
+  const viewLessLI = document.createElement('li');
+  viewLessLI.classList.add('left-rail-view-less', 'view-more-less');
+  viewLessLI.style.display = 'none';
+  viewLessLI.innerHTML = `<span class="viewLessLink"> ${placeholders.viewLess}</span>`;
+  targetUL.append(viewLessLI);
 
   // Check if there are less than 5 items, hide the "View More" link accordingly
   const liElements = targetUL.children;
   if (liElements && liElements.length <= 5) {
-    setLinkVisibility(viewMoreDiv, '.viewMoreLink', false);
+    setLinkVisibility(viewMoreLI, false);
   }
 
   // Event listeners for "View More" and "View Less" links
-  viewMoreDiv.addEventListener('click', () => handleViewMoreClick(targetUL, viewMoreDiv, viewLessDiv));
-  viewLessDiv.addEventListener('click', () => handleViewLessClick(targetUL, viewMoreDiv, viewLessDiv));
+  viewMoreLI.addEventListener('click', () => handleViewMoreClick(targetUL, viewMoreLI, viewLessLI));
+  viewLessLI.addEventListener('click', () => handleViewLessClick(targetUL, viewMoreLI, viewLessLI));
 }
 
 const handleTocsService = async (tocID) => {
