@@ -16,7 +16,6 @@ export default async function decorate(block) {
   const firstCTAText = props[count++].textContent.trim();
   const firstCTALink = props[count++].textContent.trim();
   const secondCTAText = props[count++].textContent.trim();
-  const secondCTALink = props[count++].textContent.trim();
 
   // get signed in status
   try {
@@ -37,8 +36,8 @@ export default async function decorate(block) {
         <div class='marquee-cta'>${
           firstCTAText && firstCTALink ? `<a class='button secondary' href='${firstCTALink}'>${firstCTAText}</a>` : ``
         }${
-          secondCTAText && secondCTALink && !isSignedIn
-            ? `<a class='button primary' href='${secondCTALink}'>${secondCTAText}</a>`
+          secondCTAText && !isSignedIn
+            ? `<a class='button primary' href='#'>${secondCTAText}</a>`
             : ``
         }</div>
       </div>
