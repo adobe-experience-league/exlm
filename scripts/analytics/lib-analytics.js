@@ -1,3 +1,8 @@
+export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
+export const search = window.location.pathname === '/search.html';
+export const docs = window.location.pathname.indexOf('/docs/') !== -1;
+export const lang = window.document.getElementsByTagName('html')[0].getAttribute('lang') || 'en';
+
 export function pageLoadModel() {
   const user = {};
   if (
@@ -73,16 +78,18 @@ export function linkClickModel(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   let linkLocation = '';
-  if (e.target.closest('.right-rail')) {
-    linkLocation = 'mtoc';
-  } else if (e.target.closest('.left-rail')) {
-    linkLocation = 'toc';
-  } else if (e.target.closest('.header')) {
-    linkLocation = 'header';
-  } else if (e.target.closest('.footer')) {
-    linkLocation = 'footer';
-  } else {
-    linkLocation = 'body';
+  if (docs) {
+    if (e.target.closest('.right-rail')) {
+      linkLocation = 'mtoc';
+    } else if (e.target.closest('.left-rail')) {
+      linkLocation = 'toc';
+    } else if (e.target.closest('.header')) {
+      linkLocation = 'header';
+    } else if (e.target.closest('.footer')) {
+      linkLocation = 'footer';
+    } else if (e.target.closest('main')) {
+      linkLocation = 'body';
+    }
   }
 
   let linkType = 'other';
