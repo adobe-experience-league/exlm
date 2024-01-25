@@ -40,7 +40,7 @@ export function generateTeaserDOM(props, classes) {
   `);
 
   // set the mobile background color
-  const backgroundColor = [...classes].map((cls) => cls.trim()).find((cls) => cls.startsWith('bg-'));
+  const backgroundColor = [...classes].find((cls) => cls.startsWith('bg-'));
   if (backgroundColor) {
     teaserDOM
       .querySelector('.foreground')
