@@ -451,3 +451,24 @@
     margin: 8px 0;
   }
 }
+.skill-bar {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+.skill-bar-container {
+  width: 100%;
+  max-width: 350px;
+  overflow: hidden;
+  background-color: var(--spectrum-gray-200);
+}
+.skill-bar-value {
+  height: 4px;
+  float: left;
+  background: var(--spectrum-blue-900)
+}
+.course-duration {
+  color: var(--spectrum-gray-700);
+  font-size: 12px;
+  font-style: italic;
+  }
