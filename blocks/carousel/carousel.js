@@ -37,7 +37,8 @@ export default function decorate(block) {
     // generate the teaser panel
     const [image, classList, ...rest] = panel.children;
     const classesText = classList.textContent.trim();
-    const classes = classesText ? classesText.split(',') : [];
+    const classes = (classesText ? classesText.split(',') : [])
+      .map((c) => c && c.trim()).filter((c) => !!c);
     const teaserDOM = generateTeaserDOM([image, ...rest], classes);
     panel.textContent = '';
     panel.classList.add('teaser', 'block');
