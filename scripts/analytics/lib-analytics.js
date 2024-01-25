@@ -77,19 +77,17 @@ export function pageLoadModel() {
 export function linkClickModel(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
-  let linkLocation = '';
-  if (docs) {
-    if (e.target.closest('.right-rail')) {
-      linkLocation = 'mtoc';
-    } else if (e.target.closest('.left-rail')) {
-      linkLocation = 'toc';
-    } else if (e.target.closest('.header')) {
-      linkLocation = 'header';
-    } else if (e.target.closest('.footer')) {
-      linkLocation = 'footer';
-    } else if (e.target.closest('main')) {
-      linkLocation = 'body';
-    }
+  let linkLocation = 'unidentified';
+  if (e.target.closest('.rail-right')) {
+    linkLocation = 'mtoc';
+  } else if (e.target.closest('.rail-left')) {
+    linkLocation = 'toc';
+  } else if (e.target.closest('.header')) {
+    linkLocation = 'header';
+  } else if (e.target.closest('.footer')) {
+    linkLocation = 'footer';
+  } else if (e.target.closest('main') && docs) {
+    linkLocation = 'body';
   }
 
   let linkType = 'other';
