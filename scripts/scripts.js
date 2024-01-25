@@ -277,8 +277,32 @@ async function loadLazy(doc) {
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
-  loadHeader(doc.querySelector('header'));
-  loadFooter(doc.querySelector('footer'));
+  const headerPromise = loadHeader(doc.querySelector('header'));
+  const footerPromise = loadFooter(doc.querySelector('footer'));
+
+  const launchPromise = loadScript(
+    'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
+    {
+      async: true,
+    },
+  );
+
+  Promise.all([launchPromise, libAnalyticsModulePromise, headerPromise, footerPromise]).then(
+    // eslint-disable-next-line no-unused-vars
+    ([launch, libAnalyticsModule, headPr, footPr]) => {
+      const { pageLoadModel, linkClickModel } = libAnalyticsModule;
+      window.adobeDataLayer.push(pageLoadModel());
+      const linkClicked = document.querySelectorAll('a');
+      linkClicked.forEach((linkElement) => {
+        linkElement.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (e.target.tagName === 'A') {
+            linkClickModel(e);
+          }
+        });
+      });
+    },
+  );
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
@@ -422,34 +446,10 @@ async function loadRails() {
   }
 }
 
-async function loadLauchAndAnalytics() {
-  const launchPromise = loadScript(
-    'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
-    {
-      async: true,
-    },
-  );
-  // eslint-disable-next-line no-unused-vars
-  Promise.all([launchPromise, libAnalyticsModulePromise]).then(([launch, libAnalyticsModule]) => {
-    const { pageLoadModel, linkClickModel } = libAnalyticsModule;
-    window.adobeDataLayer.push(pageLoadModel());
-    const linkClicked = document.querySelectorAll('a');
-    linkClicked.forEach((linkElement) => {
-      linkElement.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (e.target.tagName === 'A') {
-          linkClickModel(e);
-        }
-      });
-    });
-  });
-}
-
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadRails();
-  loadLauchAndAnalytics();
   loadDelayed();
   loadPrevNextBtn();
 }
