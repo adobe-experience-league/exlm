@@ -27,13 +27,13 @@ export default async function decorate(block) {
   const [headingElement, toolTipElement, linkTextElement, ...configs] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-  
+
   const [solutions] = configs.map((cell) => cell.textContent.trim());
 
   const contentType = CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY;
   const noOfResults = 4;
   const solutionsParam = solutions !== '' ? formattedSolutionTags(solutions) : '';
-  
+
   headingElement.firstElementChild?.classList.add('h2');
 
   // Clearing the block's content
@@ -48,11 +48,11 @@ export default async function decorate(block) {
       <div class="browse-cards-block-view">${linkTextElement.innerHTML}</div>
     </div>
   `);
-  
+
   headerDiv
-  .querySelector('h1,h2,h3,h4,h5,h6')
-  ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
-  
+    .querySelector('h1,h2,h3,h4,h5,h6')
+    ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+
   // Appending header div to the block
   block.appendChild(headerDiv);
 

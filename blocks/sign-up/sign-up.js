@@ -19,7 +19,6 @@ function decorateButtons(...buttons) {
     .join('');
 }
 
-
 export default async function decorate(block) {
   block.style.display = 'none';
 
@@ -45,12 +44,16 @@ export default async function decorate(block) {
     const subjectPicture = img.querySelector('picture');
     const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
     const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
-    
+
     // Build DOM
     const signupDOM = document.createRange().createContextualFragment(`
     <div class='signup-foreground'>
       <div class='signup-text'>
-        ${eyebrow.textContent.trim() !== '' ? `<div class='signup-eyebrow'>${eyebrow.textContent.trim().toUpperCase()}</div>` : ``}
+        ${
+          eyebrow.textContent.trim() !== ''
+            ? `<div class='signup-eyebrow'>${eyebrow.textContent.trim().toUpperCase()}</div>`
+            : ``
+        }
         <div class='signup-title'>${title.innerHTML}</div>
         <div class='signup-long-description'>${longDescr.innerHTML}</div>
         <div class='signup-cta'>${decorateButtons(firstCta, secondCta)}</div>

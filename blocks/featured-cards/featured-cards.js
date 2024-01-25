@@ -17,10 +17,10 @@ const DEFAULT_OPTIONS = Object.freeze({
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
-    // Extracting elements from the block
-    const [headingElement, descriptionElement, confContentType, linkTextElement] = [...block.children].map(
-      (row) => row.firstElementChild,
-    );
+  // Extracting elements from the block
+  const [headingElement, descriptionElement, confContentType, linkTextElement] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
 
   const contentType = confContentType.textContent.trim().toLowerCase();
 
