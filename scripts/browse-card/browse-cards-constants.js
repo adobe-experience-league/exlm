@@ -36,6 +36,18 @@ export const CONTENT_TYPES = Object.freeze({
     MAPPING_KEY: 'documentation',
     LABEL: 'Documentation',
   },
+  IN_PROGRESS: {
+    MAPPING_KEY: 'inprogress-courses',
+    LABEL: 'In Progress courses',
+  },
+  RECOMMENDED: {
+    MAPPING_KEY: 'recommended-courses',
+    LABEL: 'Recommended courses',
+  },
+  PATHS: {
+    MAPPING_KEY: 'paths',
+    LABEL: 'Paths',
+  },
 });
 
 export const COVEO_SORT_OPTIONS = Object.freeze({
