@@ -60,6 +60,7 @@ function handleViewLessClick(block) {
 export default async function decorate(block) {
   const theme = getMetadata('theme');
   const label = getMetadata('og:title');
+  const MAX_VISIBLE_ITEMS = 12;
 
   const results = await ffetch('/browse-index.json').all();
   let currentPagePath = getEDSLink(window.location.pathname);
@@ -126,7 +127,7 @@ export default async function decorate(block) {
       toggleItemVisibility(ul.children, 12, false);
 
       // "View More" and "View Less" links
-      if (ul.children.length > 12) {
+      if (ul.children.length > MAX_VISIBLE_ITEMS) {
         const viewMoreLI = document.createElement('li');
         viewMoreLI.classList.add('left-rail-view-more', 'view-more-less');
         viewMoreLI.innerHTML = `<span class="viewMoreLink"> + ${placeholders.viewMore}</span>`;
