@@ -88,7 +88,7 @@ export default async function decorate(block) {
     const browseByUL = document.createElement('ul');
     browseByUL.classList.add('browse-by');
     const browseByLI = document.createElement('li');
-    browseByLI.innerHTML = `<a href="javascript:void(0)">${placeholders.browseBy}</a><ul><li><a href="javascript:void(0)" class="is-active">${placeholders.browseAllContent}</a></li></ul>`;
+    browseByLI.innerHTML = `<span>${placeholders.browseBy}</span><ul><li><span class="is-active">${placeholders.browseAllContent}</span></li></ul>`;
     browseByUL.append(browseByLI);
     block.append(browseByUL);
 
@@ -102,7 +102,7 @@ export default async function decorate(block) {
       const productsUL = document.createElement('ul');
       productsUL.classList.add('products');
       const productsLI = document.createElement('li');
-      productsLI.innerHTML = `<a href="javascript:void(0)">${placeholders.products}</a><span class="js-toggle"></span>`;
+      productsLI.innerHTML = `<span>${placeholders.products}</span><span class="js-toggle"></span>`;
 
       const ul = document.createElement('ul');
       const sortedResults = directChildNodes.sort((a, b) => {
@@ -159,7 +159,7 @@ export default async function decorate(block) {
     browseByUL.classList.add('browse-by');
     const browseByLI = document.createElement('li');
     const browseByLinkText = `${placeholders.all} ${label} ${placeholders.content}`;
-    browseByLI.innerHTML = `<a href="javascript:void(0)">${placeholders.browseBy}</a><ul><li><a href="javascript:void(0)" class="is-active">${browseByLinkText}</a></li></ul>`;
+    browseByLI.innerHTML = `<span>${placeholders.browseBy}</span><ul><li><span class="is-active">${browseByLinkText}</span></li></ul>`;
     browseByUL.append(browseByLI);
     block.append(browseByUL);
 
@@ -176,7 +176,7 @@ export default async function decorate(block) {
       const subPagesBrowseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
       block.querySelector(
         '.browse-by > li',
-      ).innerHTML = `<a href="javascript:void(0)">${placeholders.browseBy}</a><ul><li><a href="javascript:void(0)">${subPagesBrowseByLinkText}</a></li></ul>`;
+      ).innerHTML = `<span>${placeholders.browseBy}</span><ul><li><span>${subPagesBrowseByLinkText}</span></li></ul>`;
 
       // Hightlight the current page title in the left rail
       const targetElement = block.querySelector(`[href="${currentPagePath}"]`);
