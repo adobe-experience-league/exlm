@@ -156,7 +156,7 @@
   line-height: 28px;
 }
 .browse-card .browse-card-footer .browse-card-options .bookmark-icon, 
-.browse-card .browse-card-footer .browse-card-options .copy-link-url{
+.browse-card .browse-card-footer .browse-card-options .copy-icon{
   background-size: 20px 20px;
   background-repeat: no-repeat;
   color: var(--spectrum-gray-800);
@@ -195,16 +195,16 @@
 .browse-card .browse-card-footer .browse-card-options .bookmark.auth[data-id='none'] {
   display: none;
 }
-.browse-card .browse-card-footer .browse-card-options .copy-link .copy-link-url {
+.browse-card .browse-card-footer .browse-card-options .copy-link .copy-icon {
   background-image: url("../../icons/copy.svg");
   background-position: center 0;
   transition: all 200ms ease-in-out;
 }
-.browse-card .browse-card-footer .browse-card-options .copy-link .copy-link-url:hover {
+.browse-card .browse-card-footer .browse-card-options .copy-link .copy-icon:hover {
   background-color: var(--spectrum-gray-200);
   border-radius: 4px;
 }
-.browse-card .browse-card-footer .browse-card-options .copy-link .copy-link-url:hover + .exl-tooltip-label {
+.browse-card .browse-card-footer .browse-card-options .copy-link .copy-icon:hover + .exl-tooltip-label {
   visibility: visible;
 }
 .browse-card .browse-card-footer .browse-card-cta-element {

@@ -85,13 +85,13 @@ function decorateCopyLink(block) {
   const copyLinkDivNode = document.createElement('div');
   copyLinkDivNode.className = 'copy-link';
   copyLinkDivNode.innerHTML = tooltipTemplate(
-    'copy-link-url',
+    'copy-icon',
     `${placeholders.toastLabel}`,
     `${placeholders.toastTiptext}`,
   );
 
   block.appendChild(copyLinkDivNode);
-  const docActionsDesktopIconCopy = document.querySelector('.doc-actions .copy-link-url');
+  const docActionsDesktopIconCopy = document.querySelector('.doc-actions .copy-icon');
   const docActionsMobile = document.querySelector('.doc-actions-mobile');
 
   if (docActionsDesktopIconCopy) {
@@ -100,7 +100,7 @@ function decorateCopyLink(block) {
 
   if (docActionsMobile) {
     docActionsMobile.appendChild(copyLinkDivNode.cloneNode(true));
-    const docActionsMobileIconCopy = docActionsMobile.querySelector('.copy-link-url');
+    const docActionsMobileIconCopy = docActionsMobile.querySelector('.copy-icon');
     attachCopyLink(docActionsMobileIconCopy, window.location.href, placeholders.toastSet);
   }
 }

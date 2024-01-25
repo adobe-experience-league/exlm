@@ -48,9 +48,9 @@
   line-height: 28px;
 }
 .doc-actions .bookmark-icon,
-.doc-actions .copy-link-url,
+.doc-actions .copy-icon,
 .doc-actions-mobile .bookmark-icon,
-.doc-actions-mobile .copy-link-url {
+.doc-actions-mobile .copy-icon {
   background-size: 20px 20px;
   background-repeat: no-repeat;
   color: var(--spectrum-gray-800);
@@ -95,20 +95,20 @@
   background-color: var(--spectrum-gray-200);
   border-radius: 4px;
 }
-.doc-actions .copy-link .copy-link-url,
-.doc-actions-mobile .copy-link .copy-link-url {
+.doc-actions .copy-link .copy-icon,
+.doc-actions-mobile .copy-link .copy-icon {
   background-image: url("../../icons/copy-link.svg");
   background-position: center 2px;
   margin-right: 5px;
   transition: all 200ms ease-in-out;
 }
-.doc-actions .copy-link .copy-link-url:hover,
-.doc-actions-mobile .copy-link .copy-link-url:hover {
+.doc-actions .copy-link .copy-icon:hover,
+.doc-actions-mobile .copy-link .copy-icon:hover {
   background-color: var(--spectrum-gray-200);
   border-radius: 4px;
 }
-.doc-actions .copy-link .copy-link-url:hover + .exl-tooltip-label,
-.doc-actions-mobile .copy-link .copy-link-url:hover + .exl-tooltip-label {
+.doc-actions .copy-link .copy-icon:hover + .exl-tooltip-label,
+.doc-actions-mobile .copy-link .copy-icon:hover + .exl-tooltip-label {
   visibility: visible;
 }
 
