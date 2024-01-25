@@ -153,7 +153,7 @@ const buildCardContent = (card, model) => {
       cardOptions.appendChild(authBookmark);
       if (id) {
         cardOptions.children[0].setAttribute('data-id', id);
-      } else{
+      } else {
         cardOptions.children[0].setAttribute('data-id', 'none');
       }
     } else {

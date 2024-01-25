@@ -52,7 +52,7 @@ export async function profileAttributes() {
 
 // eslint-disable-next-line
 async function profileMerge(arg) {
-  if(isSignedIn){
+  if (isSignedIn) {
     const tmp = await adobeIMS?.getProfile();
 
     // eslint-disable-next-line
@@ -64,7 +64,7 @@ export async function profile(reuse = false, explicit = false) {
   let result = null;
 
   if (reuse === false) {
-    if(isSignedIn){
+    if (isSignedIn) {
       const data = await adobeIMS?.getProfile();
 
       if (data !== null) {
