@@ -71,17 +71,15 @@
       gap: 1em;
   }
 
-  .featured-cards .browse-card-dropdown > p{
+  .featured-cards .browse-card-dropdown > p {
       margin-bottom: 0;
   }
 
-  .featured-cards .roles-dropdown
-  {
+  .featured-cards .roles-dropdown {
     margin-bottom: 0;
   }
 
-  .featured-cards .solutions-dropdown , .featured-cards .roles-dropdown
-  {
+  .featured-cards .solutions-dropdown , .featured-cards .roles-dropdown {
     width: auto;
   }
 
