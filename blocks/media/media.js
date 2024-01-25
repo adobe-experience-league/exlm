@@ -17,13 +17,14 @@ function decorateButtons(...buttons) {
 export default function decorate(block) {
   // get the first and only cell from each row
   // Extract properties, always same order as in model, empty string if not set
-  const [picture, eyebrow, title, description, firstCta, secondCta] = [...block.children].map(
+  const [pictureContainer, eyebrow, title, description, firstCta, secondCta] = [...block.children].map(
     (row) => row.firstElementChild,
   );
+  const picture = pictureContainer.querySelector('picture');
 
   // Build DOM
   const mediaDOM = document.createRange().createContextualFragment(`
-    <div class='image'>${picture.innerHTML}</div>
+    <div class='image'>${picture ? picture.outerHTML : ''}</div>
     <div class='text'>
       ${
         eyebrow.textContent.trim() !== ''
