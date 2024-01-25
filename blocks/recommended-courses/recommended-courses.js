@@ -179,13 +179,12 @@ export default function decorate(block) {
       for (let i = 0; i < Math.min(noOfResult, cardData.length); i += 1) {
         const cardsData = cardData[i];
         const cardsDiv = document.createElement('div');
-        buildCard(cardsDiv, cardsData);
+        buildCard(contentDiv, cardsDiv, cardsData);
         contentDiv.appendChild(cardsDiv);
       }
-      buildCardShimmer.setParent(contentDiv);
       decorateIcons(contentDiv);
     } else {
-      buildCardShimmer.hide();
+      buildCardShimmer.remove();
       buildNoResultsContent(block);
     }
   };
@@ -203,6 +202,7 @@ export default function decorate(block) {
     contentDiv.classList.add('browse-cards-block-content');
 
     buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
+    buildCardsShimmer.add(block);
 
     // Fetching user profile data
     profile().then(async (data) => {
@@ -230,13 +230,13 @@ export default function decorate(block) {
 
         cardModifiedData
           .then((cardData) => {
-            buildCardsShimmer.hide();
+            buildCardsShimmer.remove();
             displayCards(contentDiv, cardData, noOfResults, buildCardsShimmer);
             block.appendChild(contentDiv);
           })
           .catch((err) => {
             // Hide shimmer placeholders on error
-            buildCardsShimmer.hide();
+            buildCardsShimmer.remove();
             buildNoResultsContent(block);
             // eslint-disable-next-line no-console
             console.error('Recommended Cards:', err);
