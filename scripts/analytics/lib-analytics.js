@@ -72,17 +72,17 @@ export function pageLoadModel() {
 export function linkClickModel(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
-  let linkTarget = '';
+  let linkLocation = '';
   if (e.target.closest('.right-rail')) {
-    linkTarget = 'mtoc';
+    linkLocation = 'mtoc';
   } else if (e.target.closest('.left-rail')) {
-    linkTarget = 'toc';
+    linkLocation = 'toc';
   } else if (e.target.closest('.header')) {
-    linkTarget = 'header';
+    linkLocation = 'header';
   } else if (e.target.closest('.footer')) {
-    linkTarget = 'footer';
+    linkLocation = 'footer';
   } else {
-    linkTarget = 'body';
+    linkLocation = 'body';
   }
 
   let linkType = 'other';
@@ -95,7 +95,7 @@ export function linkClickModel(e) {
     event: 'linkClicked',
     link: {
       destinationDomain: e.target.href,
-      linkLocation: linkTarget,
+      linkLocation,
       linkTitle: e.target.innerHTML || '',
       // set to other until we have examples of other types
       linkType,
