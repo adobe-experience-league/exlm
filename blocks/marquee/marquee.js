@@ -25,7 +25,7 @@ export default async function decorate(block) {
   const [img, eyebrow, title, longDescr, firstCta, secondCta] = block.querySelectorAll(':scope div > div');
   const subjectPicture = img.querySelector('picture');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
-  const bgColor = bgColorCls ? bgColorCls.substr(3) : '--spectrum-gray-700';
+  const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
 
   // get signed in status
   try {
