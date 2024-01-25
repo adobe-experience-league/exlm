@@ -35,11 +35,7 @@ export default async function decorate(block) {
         <div class='marquee-long-description'>${longDescr}</div>
         <div class='marquee-cta'>${
           firstCTAText && firstCTALink ? `<a class='button secondary' href='${firstCTALink}'>${firstCTAText}</a>` : ``
-        }${
-          secondCTAText && !isSignedIn
-            ? `<a class='button primary signin' href='#'>${secondCTAText}</a>`
-            : ``
-        }</div>
+        }${secondCTAText && !isSignedIn ? `<a class='button primary signin' href='#'>${secondCTAText}</a>` : ``}</div>
       </div>
       ${
         subjectPicture
@@ -58,7 +54,7 @@ export default async function decorate(block) {
   `);
 
   // add sign in event handler for second cta if set
-  if (secondCTAText && !isSignedIn ) {
+  if (secondCTAText && !isSignedIn) {
     marqueeDOM.querySelector('.signin').addEventListener('click', async () => {
       window.adobeIMS.signIn();
     });
