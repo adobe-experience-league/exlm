@@ -128,15 +128,15 @@ const buildInProgressBarContent = ({ inProgressStatus, cardFigure, card }) => {
   if (inProgressStatus !== null && inProgressStatus !== '') {
     const perValue = inProgressStatus;
     const progressBarDiv = htmlToElement(`
-    <div class="skillBar">
-      <div class="skillBarContainer">
-      <div class="skillBarValue"></div>
+    <div class="skill-bar">
+      <div class="skill-bar-container">
+      <div class="skill-bar-value"></div>
       </div>
     </div>
   `);
     cardFigure.appendChild(progressBarDiv);
-    // Set the width of .skillBarValue based on the value
-    card.querySelector('.skillBarValue').style.width = `${perValue}%`;
+    // Set the width of skill-bar-value based on the value
+    card.querySelector('.skill-bar-value').style.width = `${perValue}%`;
   }
 };
 

@@ -446,38 +446,24 @@
     margin: 8px 0;
   }
 }
-.skillBar {
+.skill-bar {
   width: 100%;
   position: absolute;
-  /* z-index: 1; */
   bottom: 0;
-  /* margin-bottom:26px; */
-  /* margin-bottom: 1.66em; */
-  h4 {
-    font-size:21px;
-  font-size: 1.33em;
-  text-transform: none;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: bold;
-  margin-bottom:7px;
-  margin-bottom: .33em;
-  }
 }
-.skillBarContainer {
+.skill-bar-container {
   width: 100%;
   max-width: 350px;
-  /* height:26px; */
-  /* height: 1.66em; */
-  background: #e6eae3;
-  background: rgb(8,102,220);
-  background: rgba(8,102,220,.2);
   overflow: hidden;
-  /* border-radius:5px; */
+  background-color: var(--spectrum-gray-200);
 }
-.skillBarValue {
+.skill-bar-value {
   height: 4px;
   float: left;
-  background:#0866dc;
-  background: rgb(8,102,220);
-  background: rgba(8,102,220,.75);
+  background: var(--spectrum-blue-900)
 }
+.course-duration {
+  color: var(--spectrum-gray-700);
+  font-size: 12px;
+  font-style: italic;
+  }
