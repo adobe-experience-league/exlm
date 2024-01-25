@@ -203,7 +203,7 @@ const buildCardContent = (card, model) => {
   if (
     contentType === CONTENT_TYPES.COURSE.MAPPING_KEY ||
     contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ||
-    contentType === CONTENT_TYPES.RECOMMENDED.MAPPING_KEY
+    contentType === RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY
   ) {
     buildTagsContent(cardMeta, tags);
   }
