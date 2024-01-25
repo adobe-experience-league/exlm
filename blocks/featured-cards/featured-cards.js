@@ -110,7 +110,7 @@ export default async function decorate(block) {
 
     const contentTypes = contentTypesToFilter.split(',').map((type) => {
       const trimmedType = type.trim().toUpperCase();
-      return CONTENT_TYPES[trimmedType].LABEL;
+      return CONTENT_TYPES[trimmedType]?.LABEL;
     });
 
     for (let i = 0; i < Math.min(4, data.length); i += 1) {
