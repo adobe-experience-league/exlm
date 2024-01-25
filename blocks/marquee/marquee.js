@@ -37,7 +37,7 @@ export default async function decorate(block) {
           firstCTAText && firstCTALink ? `<a class='button secondary' href='${firstCTALink}'>${firstCTAText}</a>` : ``
         }${
           secondCTAText && !isSignedIn
-            ? `<a class='button primary' href='#'>${secondCTAText}</a>`
+            ? `<a class='button primary signin' href='#'>${secondCTAText}</a>`
             : ``
         }</div>
       </div>
@@ -56,6 +56,13 @@ export default async function decorate(block) {
       })" d="M752.813-1495s115.146 210.072 471.053 309.516 291.355 261.7 291.355 261.7h150.039V-1495Z" data-name="Path 1" transform="translate(-103.26 1495)"></path></svg>
     </div>
   `);
+
+  // add sign in event handler for second cta if set
+  if (secondCTAText && !isSignedIn ) {
+    marqueeDOM.querySelector('.signin').addEventListener('click', async () => {
+      window.adobeIMS.signIn();
+    });
+  }
 
   if (subjectPicture && subjectImageDescr) {
     marqueeDOM.querySelector('.marquee-subject picture img').setAttribute('alt', subjectImageDescr);
