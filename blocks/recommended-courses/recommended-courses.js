@@ -7,6 +7,7 @@ import BrowseCardsPathsAdaptor from '../../scripts/browse-card/browse-cards-path
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 
 // Checking if the user is signed in
 const isSignedIn = adobeIMS?.isSignedInUser();
@@ -15,12 +16,11 @@ const isSignedIn = adobeIMS?.isSignedInUser();
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
  */
-export default function decorate(block) {
+export default async function decorate(block) {
   // Extracting elements from the block
-  const getElement = (selector) => block.querySelector(selector)?.textContent.trim();
-  const headingElement = getElement('div:nth-child(1) > div');
-  const toolTipElement = getElement('div:nth-child(2) > div');
-  const linkTextElement = getElement('div:nth-child(3) > div > a');
+  const headingElement = block.querySelector('div:nth-child(1) > div');
+  const toolTipElement = block.querySelector('div:nth-child(2) > div');
+  const linkTextElement = block.querySelector('div:nth-child(3) > div');
   const contentType = CONTENT_TYPES.PATHS.MAPPING_KEY;
   let buildCardsShimmer = '';
   const noOfResults = 4;
@@ -28,25 +28,6 @@ export default function decorate(block) {
   // Clearing the block's content and adding CSS class
   block.innerHTML = '';
   block.classList.add('browse-cards-block');
-
-  // Creating the header div with title, tooltip, and view link
-  const createHeaderDiv = () => {
-    const title = headingElement;
-    const tooltip = toolTipElement;
-    const viewLink = linkTextElement;
-
-    return htmlToElement(`
-      <div class="browse-cards-block-header">
-        <div class="browse-cards-block-title">
-          <h2>${title}</h2>
-          <div class="tooltip">
-            <span class="icon icon-info"></span><span class="tooltip-text">${tooltip}</span>
-          </div>
-        </div>
-        <div class="browse-cards-block-view">${viewLink}</div>
-      </div>
-    `);
-  };
 
   /**
    * Extracts progress data from the user profile.
@@ -182,7 +163,6 @@ export default function decorate(block) {
         buildCard(contentDiv, cardsDiv, cardsData);
         contentDiv.appendChild(cardsDiv);
       }
-      decorateIcons(contentDiv);
     } else {
       buildCardShimmer.remove();
       buildNoResultsContent(block);
@@ -194,8 +174,34 @@ export default function decorate(block) {
 
   // Checking if the user is signed in before proceeding
   if (isSignedIn) {
+    const headerDiv = htmlToElement(`
+    <div class="browse-cards-block-header">
+    ${
+      headingElement?.textContent?.trim()
+        ? `<div class="browse-cards-block-title">
+          <h2>
+            ${headingElement.textContent.trim()}${
+              toolTipElement?.textContent?.trim() ? `<div class="tooltip-placeholder"></div>` : ''
+            }
+          </h2>
+      </div>`
+        : ''
+    }
+      <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
+    </div>
+  `);
     // Appending header div to the block
-    block.appendChild(createHeaderDiv());
+    block.appendChild(headerDiv);
+
+    const tooltipElem = block.querySelector('.tooltip-placeholder');
+    if (tooltipElem) {
+      const tooltipConfig = {
+        content: toolTipElement.textContent.trim(),
+      };
+      createTooltip(block, tooltipElem, tooltipConfig);
+    }
+
+    await decorateIcons(headerDiv);
 
     // Creating content div for card display
     const contentDiv = document.createElement('div');
@@ -233,6 +239,9 @@ export default function decorate(block) {
             buildCardsShimmer.remove();
             displayCards(contentDiv, cardData, noOfResults, buildCardsShimmer);
             block.appendChild(contentDiv);
+            /* Hide Tooltip while scrolling the cards layout */
+            hideTooltipOnScroll(contentDiv);
+            decorateIcons(block);
           })
           .catch((err) => {
             // Hide shimmer placeholders on error
