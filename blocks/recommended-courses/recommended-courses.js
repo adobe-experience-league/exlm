@@ -122,27 +122,26 @@ export default async function decorate(block) {
    */
   const recommendedBlockData = (inProgressArray, recommendedArray) => {
     const displayData = [];
-
-    if (inProgressArray.length === 4) {
+    const inProgressLength = inProgressArray.length;
+    /**
+     * Conditions for populating the cards dynamically based on the length of inProgress and recommended data elements.
+     * At most, there can only be 2 cards of each type if there is a mix of content; otherwise, a combination is displayed.
+     * Always, inProgress elements are shown first.
+     */
+    if (inProgressLength === 4 || inProgressLength === 3) {
       if (recommendedArray.length === 1) {
         displayData.push(...inProgressArray.slice(0, 3), ...recommendedArray.slice(0, 1));
       } else if (recommendedArray.length > 1) {
         displayData.push(...inProgressArray.slice(0, 2), ...recommendedArray.slice(0, 2));
       } else {
-        displayData.push(...inProgressArray.slice(0, 4));
+        displayData.push(...inProgressArray.slice(0, inProgressLength));
       }
-    } else if (inProgressArray.length === 3) {
-      if (recommendedArray.length === 1) {
-        displayData.push(...inProgressArray.slice(0, 3), ...recommendedArray.slice(0, 1));
-      } else if (recommendedArray.length > 1) {
-        displayData.push(...inProgressArray.slice(0, 2), ...recommendedArray.slice(0, 2));
-      } else {
-        displayData.push(...inProgressArray.slice(0, 3));
-      }
-    } else if (inProgressArray.length === 2) {
+    } else if (inProgressLength === 2) {
       displayData.push(...inProgressArray, ...recommendedArray.slice(0, Math.min(2, recommendedArray.length)));
-    } else if (inProgressArray.length === 1) {
+    } else if (inProgressLength === 1) {
       displayData.push(...inProgressArray.slice(0, 1), ...recommendedArray.slice(0, 3));
+    } else if (recommendedArray === 0) {
+      displayData.push(...inProgressArray.slice(0, 4));
     } else {
       displayData.push(...recommendedArray.slice(0, 4));
     }

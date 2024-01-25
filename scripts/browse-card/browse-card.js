@@ -125,7 +125,7 @@ const buildEventContent = ({ event, cardContent, card }) => {
 };
 
 const buildInProgressBarContent = ({ inProgressStatus, cardFigure, card }) => {
-  if (inProgressStatus !== null && inProgressStatus !== '') {
+  if (inProgressStatus) {
     const perValue = inProgressStatus;
     const progressBarDiv = htmlToElement(`
     <div class="skill-bar">
@@ -209,7 +209,7 @@ const buildCardContent = (card, model) => {
   }
 
   if (contentType === CONTENT_TYPES.IN_PROGRESS.MAPPING_KEY) {
-    if (inProgressStatus !== null && inProgressStatus !== '' && inProgressText !== null && inProgressText !== '') {
+    if (inProgressStatus && inProgressText) {
       buildCourseDurationContent({ inProgressStatus, inProgressText, cardContent });
     }
   }
