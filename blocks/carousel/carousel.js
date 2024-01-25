@@ -38,7 +38,11 @@ export default function decorate(block) {
     const { teaserDOM, classes } = generateTeaserDOM(panel.children, true);
     panel.textContent = '';
     panel.classList.add('teaser', 'block');
-    classes.split(' ').map((c) => panel.classList.add(c));
+    classes
+      .split(' ')
+      .map((c) => c?.trim())
+      .filter((c) => !!c)
+      .map((c) => panel.classList.add(c));
     panel.dataset.panel = `panel_${i}`;
     panel.append(teaserDOM);
     panelContainer.append(panel);
