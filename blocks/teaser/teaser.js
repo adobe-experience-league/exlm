@@ -10,13 +10,13 @@ export function generateTeaserDOM(props, isChild) {
   const title = props[count++].textContent.trim();
   const longDescr = props[count++].innerHTML.trim();
   const shortDescr = props[count++];
-  const backgroundColor = props[count++].textContent.trim();
-  const firstCTAType = props[count++].textContent.trim();
-  const firstCTAText = props[count++].textContent.trim();
-  const firstCTALink = props[count++].textContent.trim();
-  const secondCTAType = props[count++].textContent.trim();
-  const secondCTAText = props[count++].textContent.trim();
-  const secondCTALink = props[count++].textContent.trim();
+  const backgroundColor = props[count++]?.textContent.trim();
+  const firstCTAType = props[count++]?.textContent.trim();
+  const firstCTAText = props[count++]?.textContent.trim();
+  const firstCTALink = props[count++]?.textContent.trim();
+  const secondCTAType = props[count++]?.textContent.trim();
+  const secondCTAText = props[count++]?.textContent.trim();
+  const secondCTALink = props[count++]?.textContent.trim();
 
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`

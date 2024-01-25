@@ -267,16 +267,24 @@
   --spectrum-global-color-gray-900-rgb: 0, 0, 0;
 
   /* spectrum spacing */
+  --spectrum-spacing-50: 2px;
+  --spectrum-spacing-75: 4px;
+  --spectrum-spacing-100: 8px;
+  --spectrum-spacing-200: 12px;
+  --spectrum-spacing-300: 16px;
   --spectrum-spacing-400: 24px;
   --spectrum-spacing-500: 32px;
   --spectrum-spacing-600: 40px;
   --spectrum-spacing-700: 48px;
+  --spectrum-spacing-800: 64px;
+  --spectrum-spacing-900: 80px;
+  --spectrum-spacing-1000: 96px;
 
   /* mini toc spectrum vars */
   --spectrum-sidenav-item-background-color-hover: ButtonFace;
   --spectrum-alias-highlight-hover: rgb(0 0 0 / 6%);
   --spectrum-sidenav-item-text-color-hover: ButtonText;
-  --spectrum-alias-text-color-hover: var(--spectrum-global-color-gray-900);
+  --spectrum-alias-text-color-hover: rgb(var(--spectrum-global-color-gray-900-rgb));
 
   /* Non-Spectrum custom colors */
   --non-spectrum-grey-100: #f9f9f9;
@@ -361,6 +369,24 @@
   --exlm-line-height-h5: 20.8px;
   --exlm-line-height-h6: 20.8px;
   --exlm-line-height-content: var(--spectrum-line-height-l);
+
+  /* exlm defaultsolution colors */
+  --exlm-toc-solution-1: #864ccc;
+  --exlm-toc-solution-2: #fa0f00;
+  --exlm-toc-solution-3: #5c5ce0;
+  --exlm-toc-solution-4: #505050;
+  --exlm-toc-solution-5: #7cc33f;
+  --exlm-toc-solution-6: #d73320;
+  --exlm-toc-solution-7: #3da74e;
+  --exlm-toc-solution-8: #3da74e;
+  --exlm-toc-solution-9: #b130bd;
+  --exlm-toc-solution-10: #ff1828;
+  --exlm-toc-solution-11: #16878c;
+  --exlm-toc-solution-12: #16868b;
+  --exlm-toc-solution-13: #6e6e6e;
+  --exlm-toc-solution-14: #3da64e;
+  --exlm-toc-solution-15: #584ccc;
+  --exlm-toc-solution-16: #000b1d;
 }
 
 @include breakpoint('desktop-lg') {
@@ -816,10 +842,14 @@ main > div.browse-rail {
 
     > div:nth-child(2) {
       order: 1;
-      height: 70px; // predefined height to help with CLS
+      min-height: 70px; // predefined height to help with CLS
       padding: 32px 10px 10px; // predefined padding to help with CLS
       .rail-content {
         display: none; // display none on ddesktop to hep with CLS
+      }
+
+      &.toc-container .rail-content {
+        display: block;
       }
     }
 
@@ -878,6 +908,14 @@ main > div.browse-rail {
         &.mini-toc-container {
           display: flex;
         }
+      }
+
+      > div {
+        border-right: 1px solid #eaeaea;
+      }
+
+      .toc {
+        visibility: hidden;
       }
     }
   }
