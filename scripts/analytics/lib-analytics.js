@@ -73,10 +73,16 @@ export function linkClickModel(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   let linkTarget = '';
-  if (e.target.parentElement.className.indexOf('marquee-cta') !== -1 && window.location.pathname === '/') {
-    linkTarget = 'banner-homepage';
-  } else if (e.target.closest('.browse-rail')) {
-    linkTarget = 'docs-right-sidebar';
+  if (e.target.closest('.right-rail')) {
+    linkTarget = 'mtoc';
+  } else if (e.target.closest('.left-rail')) {
+    linkTarget = 'toc';
+  } else if (e.target.closest('.header')) {
+    linkTarget = 'header';
+  } else if (e.target.closest('.footer')) {
+    linkTarget = 'footer';
+  } else {
+    linkTarget = 'body';
   }
 
   let linkType = 'other';
