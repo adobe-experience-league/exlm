@@ -57,9 +57,9 @@ export function decorateBookmark(block) {
     const bookmarkAuthedDesktop = document.querySelector('.doc-actions .bookmark.auth');
     const bookmarkAuthedMobile = document.querySelector('.doc-actions-mobile .bookmark.auth');
     const bookmarkAuthedToolTipLabelD = bookmarkAuthedDesktop.querySelector('.exl-tooltip-label');
-    const bookmarkAuthedToolTipIconD = bookmarkAuthedDesktop.querySelector('.icon.bookmark-icon');
+    const bookmarkAuthedToolTipIconD = bookmarkAuthedDesktop.querySelector('.bookmark-icon');
     const bookmarkAuthedToolTipLabelM = bookmarkAuthedMobile.querySelector('.exl-tooltip-label');
-    const bookmarkAuthedToolTipIconM = bookmarkAuthedMobile.querySelector('.icon.bookmark-icon');
+    const bookmarkAuthedToolTipIconM = bookmarkAuthedMobile.querySelector('.bookmark-icon');
     loadJWT().then(async () => {
       profile().then(async (data) => {
         if (data.bookmarks.includes(bookmarkId)) {
@@ -91,7 +91,7 @@ function decorateCopyLink(block) {
   );
 
   block.appendChild(copyLinkDivNode);
-  const docActionsDesktopIconCopy = document.querySelector('.doc-actions .icon.copy-link-url');
+  const docActionsDesktopIconCopy = document.querySelector('.doc-actions .copy-link-url');
   const docActionsMobile = document.querySelector('.doc-actions-mobile');
 
   if (docActionsDesktopIconCopy) {
@@ -100,7 +100,7 @@ function decorateCopyLink(block) {
 
   if (docActionsMobile) {
     docActionsMobile.appendChild(copyLinkDivNode.cloneNode(true));
-    const docActionsMobileIconCopy = docActionsMobile.querySelector('.icon.copy-link-url');
+    const docActionsMobileIconCopy = docActionsMobile.querySelector('.copy-link-url');
     attachCopyLink(docActionsMobileIconCopy, window.location.href, placeholders.toastSet);
   }
 }
