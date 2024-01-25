@@ -1,4 +1,4 @@
-import { JWT, PATHS } from '../session-keys.js';
+import { JWT } from '../session-keys.js';
 import loadJWT from '../auth/jwt.js';
 /**
  * PathsDataService class for fetching data from a  Path Service API.
@@ -19,9 +19,6 @@ export default class PathsDataService {
    */
   async fetchDataFromSource() {
     try {
-      if (PATHS in sessionStorage) {
-        return JSON.parse(sessionStorage[PATHS]);
-      }
       let auth = '';
       if (JWT in sessionStorage) {
         auth = sessionStorage[JWT];
@@ -41,8 +38,7 @@ export default class PathsDataService {
       // sessionStorage.setItem(PATHS, JSON.stringify(data));
       return data;
     } catch (error) {
-      /* eslint-disable no-console */
-      sessionStorage.removeItem(PATHS);
+      // eslint-disable-next-line no-console
       console.error('Error fetching data', error);
       return null;
     }

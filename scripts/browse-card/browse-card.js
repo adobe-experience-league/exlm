@@ -1,7 +1,7 @@
 import { loadCSS, fetchPlaceholders } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
 import { createTooltip } from './browse-card-tooltip.js';
-import { CONTENT_TYPES } from './browse-cards-constants.js';
+import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import loadJWT from '../auth/jwt.js';
 import { adobeIMS, profile } from '../data-service/profile-service.js';
 import { tooltipTemplate } from '../toast/toast.js';
@@ -208,7 +208,7 @@ const buildCardContent = (card, model) => {
     buildTagsContent(cardMeta, tags);
   }
 
-  if (contentType === CONTENT_TYPES.IN_PROGRESS.MAPPING_KEY) {
+  if (contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {
     if (inProgressStatus && inProgressText) {
       buildCourseDurationContent({ inProgressStatus, inProgressText, cardContent });
     }
@@ -300,8 +300,8 @@ export async function buildCard(container, element, model) {
   const type = contentType?.toLowerCase();
   const courseMappingKey = CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase();
   const tutorialMappingKey = CONTENT_TYPES.TUTORIAL.MAPPING_KEY.toLowerCase();
-  const inProgressMappingKey = CONTENT_TYPES.IN_PROGRESS.MAPPING_KEY.toLowerCase();
-  const recommededMappingKey = CONTENT_TYPES.RECOMMENDED.MAPPING_KEY.toLowerCase();
+  const inProgressMappingKey = RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY.toLowerCase();
+  const recommededMappingKey = RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY.toLowerCase();
   const card = createTag(
     'div',
     { class: `browse-card ${type}-card` },
@@ -331,7 +331,7 @@ export async function buildCard(container, element, model) {
   bannerElement.innerText = badgeTitle;
   cardFigure.appendChild(bannerElement);
 
-  if (contentType === CONTENT_TYPES.IN_PROGRESS.MAPPING_KEY) {
+  if (contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {
     buildInProgressBarContent({ inProgressStatus, cardFigure, card });
   }
 

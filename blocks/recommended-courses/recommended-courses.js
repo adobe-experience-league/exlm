@@ -1,5 +1,5 @@
 // Importing constants and modules
-import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
+import { RECOMMENDED_COURSES_CONSTANTS } from '../../scripts/browse-card/browse-cards-constants.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
 import { htmlToElement } from '../../scripts/scripts.js';
@@ -21,7 +21,7 @@ export default async function decorate(block) {
   const headingElement = block.querySelector('div:nth-child(1) > div');
   const toolTipElement = block.querySelector('div:nth-child(2) > div');
   const linkTextElement = block.querySelector('div:nth-child(3) > div');
-  const contentType = CONTENT_TYPES.PATHS.MAPPING_KEY;
+  const contentType = RECOMMENDED_COURSES_CONSTANTS.PATHS.MAPPING_KEY;
   let buildCardsShimmer = '';
   const noOfResults = 4;
 
@@ -75,7 +75,7 @@ export default async function decorate(block) {
 
       if (course && !course.Archived && course['Path Title'] && inProgressValue > 0) {
         course.inProgressValue = inProgressValue;
-        course.contentType = CONTENT_TYPES.IN_PROGRESS.MAPPING_KEY;
+        course.contentType = RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY;
 
         inProgressCoursesData.push(course);
       }
@@ -105,7 +105,7 @@ export default async function decorate(block) {
         course['Path Title'] &&
         course.Solution?.some((value) => recommendedData.includes(value))
       ) {
-        course.contentType = CONTENT_TYPES.RECOMMENDED.MAPPING_KEY;
+        course.contentType = RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY;
         recommendedCoursesData.push(course);
         totalRecommendedCount += 1;
       }

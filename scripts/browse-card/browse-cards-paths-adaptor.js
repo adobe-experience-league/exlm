@@ -1,6 +1,6 @@
 import { fetchPlaceholders } from '../lib-franklin.js';
 import browseCardDataModel from '../data-model/browse-cards-model.js';
-import { CONTENT_TYPES } from './browse-cards-constants.js';
+import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { exlmCDNUrl } from '../urls.js';
 /**
  * Module that provides functionality for adapting Paths results to BrowseCards data model
@@ -26,7 +26,7 @@ const BrowseCardsPathsAdaptor = (() => {
   const createViewLinkText = (contentType) => {
     // Use conditional (ternary) operator for a more concise code
     const linkText =
-      contentType === CONTENT_TYPES.IN_PROGRESS.MAPPING_KEY
+      contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY
         ? placeholders.viewLinkContinueCourse || 'Continue Course'
         : placeholders.viewLinkCourse || 'View Course';
 

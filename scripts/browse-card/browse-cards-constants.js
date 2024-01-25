@@ -36,18 +36,6 @@ export const CONTENT_TYPES = Object.freeze({
     MAPPING_KEY: 'documentation',
     LABEL: 'Documentation',
   },
-  IN_PROGRESS: {
-    MAPPING_KEY: 'inprogress-courses',
-    LABEL: 'In Progress courses',
-  },
-  RECOMMENDED: {
-    MAPPING_KEY: 'recommended-courses',
-    LABEL: 'Recommended courses',
-  },
-  PATHS: {
-    MAPPING_KEY: 'paths',
-    LABEL: 'Paths',
-  },
 });
 
 export const COVEO_SORT_OPTIONS = Object.freeze({
@@ -81,3 +69,18 @@ export const COMMUNITY_SEARCH_FACET = Object.freeze([
     state: 'selected',
   },
 ]);
+
+export const RECOMMENDED_COURSES_CONSTANTS = Object.freeze({
+  IN_PROGRESS: {
+    MAPPING_KEY: 'inprogress-courses',
+    LABEL: 'In Progress courses',
+  },
+  RECOMMENDED: {
+    MAPPING_KEY: 'recommended-courses',
+    LABEL: 'Recommended courses',
+  },
+  PATHS: {
+    MAPPING_KEY: 'paths',
+    LABEL: 'Paths',
+  },
+});

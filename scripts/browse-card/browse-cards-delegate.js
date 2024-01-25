@@ -4,7 +4,7 @@ import ADLSDataService from '../data-service/adls-data-service.js';
 import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
 import BrowseCardsLiveEventsAdaptor from './browse-cards-live-events-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
-import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET } from './browse-cards-constants.js';
+import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { coveoSearchResultsUrl, liveEventsUrl, adlsUrl, pathsUrl } from '../urls.js';
 import PathsDataService from '../data-service/paths-data-service.js';
 /**
@@ -218,7 +218,7 @@ const BrowseCardsDelegate = (() => {
     const contentTypesServices = {
       [CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY]: handleLiveEventsService,
       [CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY]: handleADLSService,
-      [CONTENT_TYPES.PATHS.MAPPING_KEY]: handlePathsService,
+      [RECOMMENDED_COURSES_CONSTANTS.PATHS.MAPPING_KEY]: handlePathsService,
     };
 
     // If the content type is an array, use the handleCoveoService (Works only with Coveo related content types)
