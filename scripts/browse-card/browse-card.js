@@ -180,7 +180,7 @@ const setupBookmarkAction = (wrapper) => {
       );
       bookmarkAuthed.forEach((bookmark) => {
         const bookmarkAuthedToolTipLabel = bookmark.querySelector('.exl-tooltip-label');
-        const bookmarkAuthedToolTipIcon = bookmark.querySelector('.icon.bookmark-icon');
+        const bookmarkAuthedToolTipIcon = bookmark.querySelector('.bookmark-icon');
         const bookmarkId = bookmark.getAttribute('data-id');
         renderBookmark(bookmarkAuthedToolTipLabel, bookmarkAuthedToolTipIcon, bookmarkId);
         if (data.bookmarks.includes(bookmarkId)) {
