@@ -1008,4 +1008,7 @@ main > div.browse-rail {
   .docs main > div {
     border-right: 1px solid #eaeaea;
   }
+  .docs main .toc {
+    visibility: hidden;
+  }
 }

@@ -1,14 +1,22 @@
 import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { tocUrl } from '../../scripts/urls.js';
-import TocDataService from '../../scripts/data-service/tocs-data-service.js';
+import TocDataService from '../../scripts/data-service/toc-data-service.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import getSolutionName from './toc-solutions.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchPlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 // HTML for Tablet&Mobile view dropdown right-rail
 const constructSolutionsDropdownEl = htmlToElement(`
     <div class="toc-dropdown is-hidden-desktop">
       <button type="button" class="toc-dropdown-button" aria-expanded="false" aria-controls="toc-dropdown-popover">
-        <span class="toc-dropdown-label">Table of contents</span>
+        <span class="toc-dropdown-label">${placeholders.tableOfContents}</span>
       </button>
     </div>
 `);
@@ -48,7 +56,7 @@ function handleViewMoreClick(ev, items, limit) {
   if (ev.currentTarget) {
     const clickElement = ev.currentTarget.querySelector('span');
     const getViewLinkText = clickElement.classList.contains('plus');
-    clickElement.textContent = getViewLinkText ? 'View less' : 'View more';
+    clickElement.textContent = getViewLinkText ? placeholders?.viewLess : placeholders?.viewMore;
     clickElement.classList.toggle('plus');
     clickElement.classList.toggle('minus');
     toggleItemVisibility(items, getViewLinkText, limit);
@@ -56,14 +64,6 @@ function handleViewMoreClick(ev, items, limit) {
 }
 
 async function viewMoreviewLess(list, items, limit) {
-  let placeholders = {};
-  try {
-    placeholders = await fetchPlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
-  }
-
   let viewMoreLessItem = list.querySelector('.view-more-less');
 
   if (items.length > limit) {
@@ -79,11 +79,11 @@ async function viewMoreviewLess(list, items, limit) {
 
     const viewLinkDiv = viewMoreLessItem.querySelector('span');
     if (isAllVisible) {
-      viewLinkDiv.textContent = placeholders.viewLess;
+      viewLinkDiv.textContent = placeholders?.viewLess;
       viewLinkDiv.classList.remove('plus');
       viewLinkDiv.classList.add('minus');
     } else {
-      viewLinkDiv.textContent = placeholders.viewMore;
+      viewLinkDiv.textContent = placeholders?.viewMore;
       viewLinkDiv.classList.remove('minus');
       viewLinkDiv.classList.add('plus');
     }
@@ -157,13 +157,14 @@ export default async function decorate(block) {
   if (tocID !== '') {
     const resp = await handleTocsService(tocID);
     block.innerHTML = '';
+    block.style.visibility = 'visible';
     const div = document.createElement('div');
     const html = resp ? resp?.HTML : '';
     let productName = '';
     const productNames = getMetadata('original-solution');
+
     if (productNames.includes(',')) {
-      const productNamesArray = productNames.split(',');
-      productName = productNamesArray[0].trim();
+      productName = productNames.split(',')[0].trim();
     } else {
       productName = productNames;
     }
@@ -201,24 +202,23 @@ export default async function decorate(block) {
     block.appendChild(contentDiv);
 
     const currentURL = window.location.pathname;
-    const regex = /\/(\w{2})\//;
-    const match = currentURL.match(regex);
-    let locale = '';
-
-    if (match && match[1]) {
-      // eslint-disable-next-line prefer-destructuring
-      locale = match[1];
-    }
+    const locale = currentURL.split('/')[1];
 
     const anchors = block.querySelectorAll('.toc a');
     anchors.forEach((anchor) => {
       const pTag = document.createElement('p');
       anchor.parentNode.replaceChild(pTag, anchor);
       pTag.appendChild(anchor);
-      const currentHref = anchor.getAttribute('href');
-      const extensionRegex = /\.html\?lang=\w{2}$/;
+
       // Remove ".html?lang=en" part from the href
-      const newHref = currentHref.replace(extensionRegex, '');
+      const currentHref = anchor.getAttribute('href');
+      const linkExtension = currentHref.lastIndexOf('.');
+      let newHref;
+      if (linkExtension !== -1) {
+        newHref = currentHref.substring(0, linkExtension);
+      } else {
+        newHref = currentHref;
+      }
 
       if (anchor.getAttribute('href').startsWith('#')) {
         anchor.classList.add('js-toggle');
