@@ -140,10 +140,8 @@ export default async function decorate(block) {
       displayData.push(...inProgressArray, ...recommendedArray.slice(0, Math.min(2, recommendedArray.length)));
     } else if (inProgressLength === 1) {
       displayData.push(...inProgressArray.slice(0, 1), ...recommendedArray.slice(0, 3));
-    } else if (recommendedArray === 0) {
-      displayData.push(...inProgressArray.slice(0, 4));
     } else {
-      displayData.push(...recommendedArray.slice(0, 4));
+      displayData.push(...(inProgressArray.length === 0 ? recommendedArray.slice(0, 4) : inProgressArray.slice(0, 4)));
     }
 
     return displayData;
