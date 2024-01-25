@@ -153,6 +153,8 @@ const buildCardContent = (card, model) => {
       cardOptions.appendChild(authBookmark);
       if (id) {
         cardOptions.children[0].setAttribute('data-id', id);
+      } else {
+        cardOptions.children[0].setAttribute('data-id', 'none');
       }
     } else {
       cardOptions.appendChild(unAuthBookmark);
@@ -162,7 +164,7 @@ const buildCardContent = (card, model) => {
     // const copyLinkAnchor = createTag('a', { href: copyLink, title: 'copy' }, `<span class="icon icon-copy"></span>`);
     const copyLinkElem = document.createElement('div');
     copyLinkElem.className = 'copy-link';
-    copyLinkElem.innerHTML = tooltipTemplate('copy-link-url', '', `${placeholders.toastTiptext}`);
+    copyLinkElem.innerHTML = tooltipTemplate('copy-icon', '', `${placeholders.toastTiptext}`);
     cardOptions.appendChild(copyLinkElem);
     copyLinkElem.setAttribute('data-link', copyLink);
   }
