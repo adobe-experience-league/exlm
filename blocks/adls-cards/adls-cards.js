@@ -33,8 +33,8 @@ export default async function decorate(block) {
   `);
 
   headerDiv
-  .querySelector('h1,h2,h3,h4,h5,h6')
-  ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+    .querySelector('h1,h2,h3,h4,h5,h6')
+    ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
 
   // Appending header div to the block
   block.appendChild(headerDiv);

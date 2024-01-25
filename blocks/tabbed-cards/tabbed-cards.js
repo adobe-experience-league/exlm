@@ -12,9 +12,7 @@ import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/br
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const [headingElement, toolTipElement, ...configs] = [...block.children].map(
-    (row) => row.firstElementChild,
-  );
+  const [headingElement, toolTipElement, ...configs] = [...block.children].map((row) => row.firstElementChild);
   const [contentTypeListContent, sortByContent] = configs.map((cell) => cell.textContent.trim().toLowerCase());
 
   const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase()];
@@ -40,8 +38,8 @@ export default async function decorate(block) {
   `);
 
   headerDiv
-  .querySelector('h1,h2,h3,h4,h5,h6')
-  ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+    .querySelector('h1,h2,h3,h4,h5,h6')
+    ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
 
   // Appending header div to the block
   block.appendChild(headerDiv);
@@ -186,7 +184,7 @@ export default async function decorate(block) {
     const viewLinkInitialMappingKey = placeholders[`${initialContentType}LabelKey`];
 
     console.log(viewLinkInitialMappingKey);
-    
+
     // Update view link for initial content type
     viewLinkURLElement.innerHTML = placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkInitialMappingKey)}`];
     viewLinkURLElement.setAttribute(

@@ -23,7 +23,7 @@ function getSignInButton(signInText) {
   const secondCta = document.createElement('div');
   const link = document.createElement('a');
   link.classList.add('signin');
-  link.setAttribute('href', '#')
+  link.setAttribute('href', '#');
   link.setAttribute('title', signInText);
   link.textContent = signInText;
   secondCta.append(link);
@@ -49,7 +49,7 @@ export default async function decorate(block) {
   const isSignedIn = window.adobeIMS?.isSignedInUser();
 
   // build sign in button if not in yet and button text is set
-  const secondCta = signInText && !isSignedIn ? getSignInButton(signInText):null;
+  const secondCta = signInText && !isSignedIn ? getSignInButton(signInText) : null;
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
