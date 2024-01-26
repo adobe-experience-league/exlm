@@ -697,8 +697,8 @@ async function handleSearchEngineSubscription() {
       decorateIcons(filterResultsEl);
       browseFilterForm.classList.add('is-result');
       filterResultsEl.classList.remove('no-results');
-    } catch {
-      // no-op
+    } catch (err) {
+      console.log('*** failed to create card because of the error:', err);
     }
   } else {
     buildCardsShimmer.remove();
