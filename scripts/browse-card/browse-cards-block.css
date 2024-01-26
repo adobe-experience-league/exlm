@@ -73,8 +73,8 @@
     right: 100%;
     top: 50%;
 }
-.browse-cards-block-title h2 {
-    margin: 0px;
+.browse-cards-block-title :where(h2,.h2) {
+    margin: 0;
     color: var(--text-color);
     max-width: 300px;
     word-break: break-word;

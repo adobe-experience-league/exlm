@@ -17,20 +17,25 @@ const DEFAULT_OPTIONS = Object.freeze({
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
-  const headingElement = block.querySelector('div:nth-child(1) > div');
-  const descriptionElement = block.querySelector('div:nth-child(2) > div');
-  const contentType = block.querySelector('div:nth-child(3) > div')?.textContent?.trim()?.toLowerCase();
-  const linkTextElement = block.querySelector('div:nth-child(4) > div');
+  // Extracting elements from the block
+  const [headingElement, descriptionElement, confContentType, linkTextElement] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
+
+  const contentType = confContentType.textContent.trim().toLowerCase();
+
   const noOfResults = 16;
+
+  headingElement.firstElementChild?.classList.add('h2');
 
   block.innerHTML = '';
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
-        <h2>${headingElement?.textContent.trim()}</h2>
+        ${headingElement.innerHTML}
       </div>
       <div class="browse-card-description-text">
-        <p>${descriptionElement?.textContent.trim()}</p>
+        ${descriptionElement.innerHTML}
       </div>
       <div class="browse-card-dropdown">
         <p>Tell us about yourself</p>
@@ -170,7 +175,7 @@ export default async function decorate(block) {
   fetchDataAndRenderBlock(param, contentType, block, contentDiv);
 
   const linkDiv = htmlToElement(`
-    <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
+    <div class="browse-cards-block-view">${linkTextElement.innerHTML}</div>
   `);
   block.appendChild(contentDiv);
   block.appendChild(linkDiv);

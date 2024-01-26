@@ -18,9 +18,7 @@ const isSignedIn = adobeIMS?.isSignedInUser();
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const headingElement = block.querySelector('div:nth-child(1) > div');
-  const toolTipElement = block.querySelector('div:nth-child(2) > div');
-  const linkTextElement = block.querySelector('div:nth-child(3) > div');
+  const [headingElement, toolTipElement, linkTextElement] = [...block.children].map((row) => row.firstElementChild);
   const contentType = RECOMMENDED_COURSES_CONSTANTS.PATHS.MAPPING_KEY;
   let buildCardsShimmer = '';
   const noOfResults = 4;
@@ -171,20 +169,18 @@ export default async function decorate(block) {
 
   // Checking if the user is signed in before proceeding
   if (isSignedIn) {
+    if (headingElement.firstElementChild) {
+      if (toolTipElement.textContent.trim()) {
+        headingElement.firstElementChild.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+      }
+      headingElement.firstElementChild.classList.add('h2');
+    }
     const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
     ${
-      headingElement?.textContent?.trim()
-        ? `<div class="browse-cards-block-title">
-          <h2>
-            ${headingElement.textContent.trim()}${
-              toolTipElement?.textContent?.trim() ? `<div class="tooltip-placeholder"></div>` : ''
-            }
-          </h2>
-      </div>`
-        : ''
+      headingElement.textContent.trim() ? `<div class="browse-cards-block-title">${headingElement.innerHTML}</div>` : ''
     }
-      <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
+      <div class="browse-cards-block-view">${linkTextElement.innerHTML}</div>
     </div>
   `);
     // Appending header div to the block

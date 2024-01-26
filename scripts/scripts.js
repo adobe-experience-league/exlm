@@ -162,9 +162,10 @@ function buildAutoBlocks(main) {
 export function decorateExternalLinks(main) {
   main.querySelectorAll('a').forEach((a) => {
     const href = a.getAttribute('href');
+    if (!href) return;
     if (href.includes('#_blank')) {
       a.setAttribute('target', '_blank');
-    } else if (href && !href.startsWith('#')) {
+    } else if (!href.startsWith('#')) {
       if (a.hostname !== window.location.hostname) {
         a.setAttribute('target', '_blank');
       }

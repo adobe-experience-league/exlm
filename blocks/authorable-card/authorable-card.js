@@ -6,50 +6,37 @@ import ArticleDataService from '../../scripts/data-service/article-data-service.
 import mapResultToCardsData from './article-data-adapter.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
-let numberOfCards = 4;
-let buildCardsShimmer = '';
-let shimmerElement = '';
-const CLASS_SHIMMER_PLACEHOLDER = '.shimmer-placeholder';
-
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const headingElement = block.querySelector('div:nth-child(1) > div');
-  const toolTipElement = block.querySelector('div:nth-child(2) > div');
-  const linkTextElement = block.querySelector('div:nth-child(3) > div');
-  const links = [];
+  const [headingElement, toolTipElement, linkTextElement, ...linksContainer] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
 
+  headingElement.firstElementChild?.classList.add('h2');
   block.classList.add('browse-cards-block');
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
-    ${
-      headingElement?.textContent?.trim()
-        ? `<div class="browse-cards-block-title">
-          <h2>
-            ${headingElement.textContent.trim()}${
-              toolTipElement?.textContent?.trim() ? `<div class="tooltip-placeholder"></div>` : ''
-            }
-          </h2>
-      </div>`
-        : ''
-    }
-      <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
+      <div class="browse-cards-block-title">
+        ${headingElement.innerHTML}
+      </div>
+      ${linkTextElement?.outerHTML}
     </div>
   `);
+  headerDiv
+    .querySelector('h1,h2,h3,h4,h5,h6')
+    ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+  block.replaceChildren(headerDiv);
 
+  const articleDataService = new ArticleDataService();
+  const buildCardsShimmer = new BuildPlaceholder();
+  buildCardsShimmer.add(block);
   const contentDiv = document.createElement('div');
-  contentDiv.classList.add('browse-cards-block-content');
-
-  const linksContainer = Array.from(block.children).slice(-1 * numberOfCards);
-  linksContainer.forEach((link) => {
-    links.push(link.querySelector('div')?.textContent);
-  });
-
-  numberOfCards = linksContainer.length;
+  contentDiv.className = 'browse-cards-block-content';
 
   let placeholders = {};
   try {
@@ -59,31 +46,33 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
-  links.forEach((link, i) => {
-    if (link) {
-      const articleDataService = new ArticleDataService();
-      articleDataService
-        .handleArticleDataService(link)
-        .then(async (data) => {
-          shimmerElement = block.querySelector(CLASS_SHIMMER_PLACEHOLDER);
-          shimmerElement?.remove();
+  const cardLoading$ = Promise.all(
+    linksContainer.map(async (linkContainer) => {
+      const link = linkContainer.textContent.trim();
+      // use the link containers parent as container for the card as it is instruented for authoring
+      // eslint-disable-next-line no-param-reassign
+      linkContainer = linkContainer.parentElement;
+      linkContainer.innerHTML = '';
+      if (link) {
+        try {
+          const data = await articleDataService.handleArticleDataService(link);
           const cardData = await mapResultToCardsData(data, placeholders);
-          await buildCard(contentDiv, linksContainer[i], cardData);
-          contentDiv.appendChild(linksContainer[i]);
-          decorateIcons(block);
-          linksContainer[i].children[0].remove();
-          if (linksContainer[i].querySelector('.bookmark.auth')) {
-            linksContainer[i].querySelector('.bookmark.auth').setAttribute('data-id', cardData.id);
-          }
-          block.appendChild(contentDiv);
-        })
-        .catch(() => {
-          shimmerElement?.remove();
-        });
-    }
-  });
+          await buildCard(contentDiv, linkContainer, cardData);
+        } catch (err) {
+          // eslint-disable-next-line no-console
+          console.error(err);
+        }
+      }
+      return linkContainer;
+    }),
+  );
 
-  block.appendChild(headerDiv);
+  cardLoading$.then((cards) => {
+    buildCardsShimmer.remove();
+    contentDiv.append(...cards);
+    block.appendChild(contentDiv);
+    decorateIcons(contentDiv);
+  });
 
   /* Tooltip - for Title */
   const tooltipElem = block.querySelector('.tooltip-placeholder');
@@ -96,13 +85,5 @@ export default async function decorate(block) {
 
   /* Hide Tooltip while scrolling the cards layout */
   hideTooltipOnScroll(contentDiv);
-
-  Array.from(block.children).forEach((child) => {
-    if (!child.className) {
-      block.removeChild(child);
-    }
-  });
-  linksContainer.forEach((el) => contentDiv.appendChild(el));
-  buildCardsShimmer = new BuildPlaceholder();
-  buildCardsShimmer.add(block);
+  decorateIcons(block);
 }
