@@ -1347,7 +1347,7 @@
         "component": "select",
         "valueType": "string",
         "name": "headingType",
-        "value": "h3",
+        "value": "h2",
         "label": "Heading Type",
         "options": [
           {
