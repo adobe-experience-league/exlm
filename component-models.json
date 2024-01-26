@@ -414,7 +414,7 @@
         "component": "select",
         "valueType": "string",
         "name": "cardHeadingType",
-        "value": "",
+        "value": "h3",
         "label": "Heading Type",
         "options": [
           {

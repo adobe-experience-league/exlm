@@ -15,6 +15,7 @@
     text-align: center;
     margin: 0 0 24px;
     color: var(--spectrum-gray-900);
+    font-size: var(--exlm-font-size-h2);
 }
 
 .secondary-search form {
