@@ -1,7 +1,8 @@
 .doc-actions,
 .doc-actions-mobile {
   align-items: center;
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
   font-size: var(--spectrum-font-size-75);
   margin: 10px;
 }
@@ -72,8 +73,8 @@
   background-position: center 3px;
   cursor: inherit;
 }
-.doc-actions .bookmark .bookmark-icon:hover + .exl-tooltip-label,
-.doc-actions-mobile .bookmark .bookmark-icon:hover + .exl-tooltip-label {
+.doc-actions .bookmark .bookmark-icon:hover+.exl-tooltip-label,
+.doc-actions-mobile .bookmark .bookmark-icon:hover+.exl-tooltip-label {
   visibility: visible;
 }
 .doc-actions .bookmark.auth .bookmark-icon,
@@ -86,8 +87,8 @@
   background-position: center 3px;
   cursor: pointer;
 }
-.doc-actions .bookmark.auth .bookmark-icon.authed:hover + .exl-tooltip-label,
-.doc-actions-mobile .bookmark.auth .bookmark-icon.authed:hover + .exl-tooltip-label {
+.doc-actions .bookmark.auth .bookmark-icon.authed:hover+.exl-tooltip-label,
+.doc-actions-mobile .bookmark.auth .bookmark-icon.authed:hover+.exl-tooltip-label {
   visibility: visible;
 }
 .doc-actions .bookmark.auth .bookmark-icon:hover,
@@ -107,9 +108,51 @@
   background-color: var(--spectrum-gray-200);
   border-radius: 4px;
 }
-.doc-actions .copy-link .copy-icon:hover + .exl-tooltip-label,
-.doc-actions-mobile .copy-link .copy-icon:hover + .exl-tooltip-label {
+.doc-actions .copy-link .copy-icon:hover+.exl-tooltip-label,
+.doc-actions-mobile .copy-link .copy-icon:hover+.exl-tooltip-label {
   visibility: visible;
+}
+
+.doc-actions .doc-mt-toggle {
+  flex-basis: 100%;
+}
+
+.doc-actions .doc-mt-toggle input[type="checkbox"] {
+  appearance: none;
+  width: 2rem;
+  background: var(--spectrum-blue-900);
+  border-radius: 3rem;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: all .2s ease-in-out;
+  padding: 0;
+  height: 1rem;
+  border: 0;
+}
+
+.doc-actions .doc-mt-toggle input[type="checkbox"]:checked {
+  background: var(--spectrum-gray-300);
+}
+
+.doc-actions .doc-mt-toggle input[type="checkbox"]::after {
+  position: absolute;
+  content: "";
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  outline: 2px solid var(--spectrum-blue-900);
+  outline-offset: -1px;
+  background: #fff;
+  transform: scale(0.7);
+  left: 0;
+  transition: all .2s ease-in-out;
+}
+
+.doc-actions .doc-mt-toggle input[type="checkbox"]:checked::after {
+  left: calc(100% - 0.95rem);
+  border: 0;
+  outline: 2px solid var(--spectrum-gray-600);
 }
 
 .doc-actions-wrapper {
