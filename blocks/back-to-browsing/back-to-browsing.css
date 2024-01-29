@@ -1,0 +1,7 @@
+.back-to-browse { 
+  display: none;
+}
+
+.back-to-browse.show {
+  display: block;
+}
