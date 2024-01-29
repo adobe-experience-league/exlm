@@ -20,6 +20,8 @@ const browseCardDataModel = {
   bookmarkLink: '',
   viewLink: '',
   viewLinkText: '',
+  inProgressText: '',
+  inProgressStatus: '',
 };
 
 export default browseCardDataModel;

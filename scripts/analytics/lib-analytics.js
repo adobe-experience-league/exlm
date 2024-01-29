@@ -1,3 +1,8 @@
+export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
+export const search = window.location.pathname === '/search.html';
+export const docs = window.location.pathname.indexOf('/docs/') !== -1;
+export const lang = window.document.getElementsByTagName('html')[0].getAttribute('lang') || 'en';
+
 export function pageLoadModel() {
   const user = {};
   if (
@@ -49,7 +54,6 @@ export function pageLoadModel() {
           ? document.querySelector('meta[name="prev-page"]').content
           : '',
         userAgent: window.navigator.userAgent,
-        previousPageName: '',
         recordid: '',
         server: window.location.host,
         siteSection: '',
@@ -73,11 +77,17 @@ export function pageLoadModel() {
 export function linkClickModel(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
-  let linkTarget = '';
-  if (e.target.parentElement.className.indexOf('marquee-cta') !== -1 && window.location.pathname === '/') {
-    linkTarget = 'banner-homepage';
-  } else if (e.target.closest('.browse-rail')) {
-    linkTarget = 'docs-right-sidebar';
+  let linkLocation = 'unidentified';
+  if (e.target.closest('.rail-right')) {
+    linkLocation = 'mtoc';
+  } else if (e.target.closest('.rail-left')) {
+    linkLocation = 'toc';
+  } else if (e.target.closest('.header')) {
+    linkLocation = 'header';
+  } else if (e.target.closest('.footer')) {
+    linkLocation = 'footer';
+  } else if (e.target.closest('main') && docs) {
+    linkLocation = 'body';
   }
 
   let linkType = 'other';
@@ -90,8 +100,8 @@ export function linkClickModel(e) {
     event: 'linkClicked',
     link: {
       destinationDomain: e.target.href,
-      linkLocation: linkTarget,
-      linkTitle: e.target.title || '',
+      linkLocation,
+      linkTitle: e.target.innerHTML || '',
       // set to other until we have examples of other types
       linkType,
       solution:

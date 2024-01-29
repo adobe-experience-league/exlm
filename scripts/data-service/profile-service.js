@@ -23,6 +23,8 @@ try {
   console.warn('Adobe IMS not available.');
 }
 
+const isSignedIn = adobeIMS?.isSignedInUser();
+
 // eslint-disable-next-line
 let profileData = null,
   meta = {};
@@ -48,42 +50,47 @@ export async function profileAttributes() {
   return JSON.parse(sessionStorage.getItem(ProfileAttributes) || '{}');
 }
 
+// eslint-disable-next-line
 async function profileMerge(arg) {
-  const tmp = await adobeIMS?.getProfile();
+  if (isSignedIn) {
+    const tmp = await adobeIMS?.getProfile();
 
-  // eslint-disable-next-line
-  return Object.assign({}, tmp, arg, { avatarUrl: adobeIMS.avatarUrl(tmp.userId) });
+    // eslint-disable-next-line
+    return Object.assign({}, tmp, arg, { avatarUrl: adobeIMS.avatarUrl(tmp.userId) });
+  }
 }
 
 export async function profile(reuse = false, explicit = false) {
   let result = null;
 
   if (reuse === false) {
-    const data = await adobeIMS?.getProfile();
+    if (isSignedIn) {
+      const data = await adobeIMS?.getProfile();
 
-    if (data !== null) {
-      if (profileData === null || explicit) {
-        const res = await request(profileUrl, {
-          credentials: 'include',
-          headers: {
-            authorization: await loadJWT(),
-            accept: 'application/json',
-          },
-        });
+      if (data !== null) {
+        if (profileData === null || explicit) {
+          const res = await request(profileUrl, {
+            credentials: 'include',
+            headers: {
+              authorization: await loadJWT(),
+              accept: 'application/json',
+            },
+          });
 
-        if (res.ok && res.status === 200) {
-          const arg = await res.json();
+          if (res.ok && res.status === 200) {
+            const arg = await res.json();
 
-          result = await profileMerge(arg.data);
-          profileData = clone(result);
+            result = await profileMerge(arg.data);
+            profileData = clone(result);
+          } else {
+            signOut();
+          }
         } else {
-          signOut();
+          result = clone(profileData);
         }
       } else {
-        result = clone(profileData);
+        signOut();
       }
-    } else {
-      signOut();
     }
   } else {
     result = clone(profileData);

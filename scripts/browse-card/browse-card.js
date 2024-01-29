@@ -1,7 +1,7 @@
 import { loadCSS, fetchPlaceholders } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
 import { createTooltip } from './browse-card-tooltip.js';
-import { CONTENT_TYPES } from './browse-cards-constants.js';
+import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import loadJWT from '../auth/jwt.js';
 import { adobeIMS, profile } from '../data-service/profile-service.js';
 import { tooltipTemplate } from '../toast/toast.js';
@@ -28,6 +28,57 @@ const isSignedIn = adobeIMS?.isSignedInUser();
 //             </div>
 //         </div>`);
 // };
+
+// Function to parse a duration string and convert it to total hours
+const parseTotalDuration = (durationStr) => {
+  // Regular expressions to match hours and minutes in the input string
+  const hoursRegex = /(\d+)\s*hour?/;
+  const minutesRegex = /(\d+)\s*minute?/;
+
+  // Match the input string against the hours and minutes regex
+  const hoursMatch = durationStr.match(hoursRegex);
+  const minutesMatch = durationStr.match(minutesRegex);
+
+  // Extract hours and minutes from the matches or default to 0 if not found
+  const hours = hoursMatch ? parseInt(hoursMatch[1], 10) : 0;
+  const minutes = minutesMatch ? parseInt(minutesMatch[1], 10) : 0;
+
+  // Calculate and return the total duration in hours
+  return hours + minutes / 60;
+};
+
+// Function to calculate remaining time based on total duration and percentage complete
+const calculateRemainingTime = (totalTimeDuration, percentageComplete) => {
+  // Parse the total duration using the parseTotalDuration function
+  const totalDuration = parseTotalDuration(totalTimeDuration);
+
+  // Calculate remaining seconds based on total duration and percentage complete
+  const remainingSeconds = ((100 - percentageComplete) / 100) * totalDuration * 3600;
+
+  // Calculate remaining time in hours and minutes
+  const remainingHours = Math.floor(remainingSeconds / 3600);
+  const remainingMinutes = Math.floor((remainingSeconds % 3600) / 60);
+
+  // Return an object containing the remaining hours and minutes
+  return { hours: remainingHours, minutes: remainingMinutes };
+};
+
+const formatRemainingTime = (remainingTime) => {
+  // Check if there are no remaining minutes
+  if (remainingTime.minutes === 0) {
+    // Format and return hours-only string
+    return `${remainingTime.hours} hours`;
+  }
+
+  // Check if there are no remaining hours
+  if (remainingTime.hours === 0) {
+    // Format and return minutes-only string
+    return `${remainingTime.minutes} minutes`;
+  }
+
+  // If there are both remaining hours and minutes
+  return `${remainingTime.hours} hours and ${remainingTime.minutes} minutes`;
+};
 
 const buildTagsContent = (cardMeta, tags = []) => {
   tags.forEach((tag) => {
@@ -73,6 +124,29 @@ const buildEventContent = ({ event, cardContent, card }) => {
   cardContent.insertBefore(eventInfo, title.nextElementSibling);
 };
 
+const buildInProgressBarContent = ({ inProgressStatus, cardFigure, card }) => {
+  if (inProgressStatus) {
+    const perValue = inProgressStatus;
+    const progressBarDiv = htmlToElement(`
+    <div class="skill-bar">
+      <div class="skill-bar-container">
+      <div class="skill-bar-value"></div>
+      </div>
+    </div>
+  `);
+    cardFigure.appendChild(progressBarDiv);
+    // Set the width of skill-bar-value based on the value
+    card.querySelector('.skill-bar-value').style.width = `${perValue}%`;
+  }
+};
+
+const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardContent }) => {
+  const titleElement = createTag('p', { class: 'course-duration' });
+  const remainingTime = calculateRemainingTime(inProgressText, inProgressStatus);
+  titleElement.textContent = `You have ${formatRemainingTime(remainingTime)} left in this course`;
+  cardContent.appendChild(titleElement);
+};
+
 const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }) => {
   let icon = null;
   let isLeftPlacement = false;
@@ -99,7 +173,18 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
 const buildCardContent = (card, model) => {
-  const { id, description, contentType: type, viewLinkText, viewLink, copyLink, tags, event = {} } = model;
+  const {
+    id,
+    description,
+    contentType: type,
+    viewLinkText,
+    viewLink,
+    copyLink,
+    tags,
+    event,
+    inProgressText,
+    inProgressStatus = {},
+  } = model;
   const contentType = type.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
   const cardFooter = card.querySelector('.browse-card-footer');
@@ -115,8 +200,18 @@ const buildCardContent = (card, model) => {
   const cardMeta = document.createElement('div');
   cardMeta.classList.add('browse-card-meta-info');
 
-  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY || contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
+  if (
+    contentType === CONTENT_TYPES.COURSE.MAPPING_KEY ||
+    contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ||
+    contentType === RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY
+  ) {
     buildTagsContent(cardMeta, tags);
+  }
+
+  if (contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {
+    if (inProgressStatus && inProgressText) {
+      buildCourseDurationContent({ inProgressStatus, inProgressText, cardContent });
+    }
   }
 
   cardContent.appendChild(cardMeta);
@@ -141,7 +236,6 @@ const buildCardContent = (card, model) => {
     contentType !== CONTENT_TYPES.COMMUNITY.MAPPING_KEY &&
     contentType !== CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
   ) {
-    // const bookmarkAnchor = createTag('a', { href: '#', title: 'copy' }, `<span class="icon icon-bookmark"></span>`);
     const unAuthBookmark = document.createElement('div');
     unAuthBookmark.className = 'bookmark';
     unAuthBookmark.innerHTML = tooltipTemplate('bookmark-icon', '', `${placeholders.bookmarkUnauthLabel}`);
@@ -153,18 +247,22 @@ const buildCardContent = (card, model) => {
       cardOptions.appendChild(authBookmark);
       if (id) {
         cardOptions.children[0].setAttribute('data-id', id);
+      } else {
+        cardOptions.children[0].setAttribute('data-id', 'none');
       }
     } else {
       cardOptions.appendChild(unAuthBookmark);
     }
   }
   if (copyLink) {
-    // const copyLinkAnchor = createTag('a', { href: copyLink, title: 'copy' }, `<span class="icon icon-copy"></span>`);
     const copyLinkElem = document.createElement('div');
     copyLinkElem.className = 'copy-link';
-    copyLinkElem.innerHTML = tooltipTemplate('copy-link-url', '', `${placeholders.toastTiptext}`);
+    copyLinkElem.innerHTML = tooltipTemplate('copy-icon', '', `${placeholders.toastTiptext}`);
     cardOptions.appendChild(copyLinkElem);
     copyLinkElem.setAttribute('data-link', copyLink);
+    if (isSignedIn && id) {
+      copyLinkElem.setAttribute('data-id', id);
+    }
   }
   cardFooter.appendChild(cardOptions);
   buildCardCtaContent({ cardFooter, contentType, viewLink, viewLinkText });
@@ -178,7 +276,7 @@ const setupBookmarkAction = (wrapper) => {
       );
       bookmarkAuthed.forEach((bookmark) => {
         const bookmarkAuthedToolTipLabel = bookmark.querySelector('.exl-tooltip-label');
-        const bookmarkAuthedToolTipIcon = bookmark.querySelector('.icon.bookmark-icon');
+        const bookmarkAuthedToolTipIcon = bookmark.querySelector('.bookmark-icon');
         const bookmarkId = bookmark.getAttribute('data-id');
         renderBookmark(bookmarkAuthedToolTipLabel, bookmarkAuthedToolTipIcon, bookmarkId);
         if (data.bookmarks.includes(bookmarkId)) {
@@ -201,10 +299,12 @@ const setupCopyAction = (wrapper) => {
 
 export async function buildCard(container, element, model) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
-  const { thumbnail, product, title, contentType, badgeTitle } = model;
+  const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus } = model;
   const type = contentType?.toLowerCase();
   const courseMappingKey = CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase();
   const tutorialMappingKey = CONTENT_TYPES.TUTORIAL.MAPPING_KEY.toLowerCase();
+  const inProgressMappingKey = RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY.toLowerCase();
+  const recommededMappingKey = RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY.toLowerCase();
   const card = createTag(
     'div',
     { class: `browse-card ${type}-card` },
@@ -213,7 +313,13 @@ export async function buildCard(container, element, model) {
   const cardFigure = card.querySelector('.browse-card-figure');
   const cardContent = card.querySelector('.browse-card-content');
 
-  if ((type === courseMappingKey || type === tutorialMappingKey) && thumbnail) {
+  if (
+    (type === courseMappingKey ||
+      type === tutorialMappingKey ||
+      type === inProgressMappingKey ||
+      type === recommededMappingKey) &&
+    thumbnail
+  ) {
     const img = document.createElement('img');
     img.src = thumbnail;
     img.loading = 'lazy';
@@ -227,6 +333,10 @@ export async function buildCard(container, element, model) {
   const bannerElement = createTag('h3', { class: 'browse-card-banner' });
   bannerElement.innerText = badgeTitle;
   cardFigure.appendChild(bannerElement);
+
+  if (contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {
+    buildInProgressBarContent({ inProgressStatus, cardFigure, card });
+  }
 
   if (product) {
     let tagElement;

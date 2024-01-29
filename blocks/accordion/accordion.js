@@ -4,8 +4,10 @@ export function generateAccordionDOM(block) {
   const summary = document.createElement('summary');
   details.append(summary);
   Array.from(block.children).forEach((element, i) => {
-    if (i === 0) summary.append(block.children[0].textContent.trim());
-    else {
+    if (i === 0) {
+      const heading = element.querySelector('h2,h3,h4,h5,h6');
+      summary.append(heading || element.textContent.trim());
+    } else {
       details.append(element);
     }
   });

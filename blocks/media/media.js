@@ -1,45 +1,41 @@
+function decorateButtons(...buttons) {
+  return buttons
+    .map((div) => {
+      const a = div.querySelector('a');
+      if (a) {
+        a.classList.add('button');
+        if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
+        if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
+        return a.outerHTML;
+      }
+      return '';
+    })
+    .join('');
+}
+
 /* eslint-disable no-plusplus */
 export default function decorate(block) {
   // get the first and only cell from each row
-  const props = [...block.children].map((row) => row.firstElementChild);
-
   // Extract properties, always same order as in model, empty string if not set
-  let count = 0;
-  const picture = props[count++].innerHTML.trim();
-  const imageDescr = props[count++].textContent.trim();
-  const eyebrow = props[count++].textContent.trim();
-  const title = props[count++].textContent.trim();
-  const description = props[count++].innerHTML.trim();
-  const firstCTAType = props[count++].textContent.trim();
-  const firstCTAText = props[count++].textContent.trim();
-  const firstCTALink = props[count++].textContent.trim();
-  const secondCTAType = props[count++].textContent.trim();
-  const secondCTAText = props[count++].textContent.trim();
-  const secondCTALink = props[count++].textContent.trim();
+  const [pictureContainer, eyebrow, title, description, firstCta, secondCta] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
+  const picture = pictureContainer.querySelector('picture');
 
   // Build DOM
   const mediaDOM = document.createRange().createContextualFragment(`
-    <div class='image'>${picture}</div>
+    <div class='image'>${picture ? picture.outerHTML : ''}</div>
     <div class='text'>
-      ${eyebrow ? `<div class='eyebrow'>${eyebrow.toUpperCase()}</div>` : ``}
-      <div class='title'>${title}</div>
-      <div class='description'>${description}</div>
-      <div class='cta'>${
-        firstCTAText && firstCTALink
-          ? `<a class='button ${firstCTAType}' href='${firstCTALink}'>${firstCTAText}</a>`
+      ${
+        eyebrow.textContent.trim() !== ''
+          ? `<div class='eyebrow'>${eyebrow.textContent.trim().toUpperCase()}</div>`
           : ``
-      }${
-        secondCTAText && secondCTALink
-          ? `<a class='button ${secondCTAType}' href='${secondCTALink}'>${secondCTAText}</a>`
-          : ``
-      }</div>
+      }
+      <div class='title'>${title.innerHTML}</div>
+      <div class='description'>${description.innerHTML}</div>
+      <div class='cta'>${decorateButtons(firstCta, secondCta)}</div>
     </div>
   `);
-
-  // set image description
-  if (imageDescr) {
-    mediaDOM.querySelector('.image picture img').setAttribute('alt', imageDescr);
-  }
 
   // attach DOM
   block.textContent = '';

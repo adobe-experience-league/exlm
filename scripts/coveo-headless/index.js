@@ -233,6 +233,7 @@ export default async function initiateCoveoHeadlessSearch({
 
         sortingOptions.forEach((option) => {
           const aElement = document.createElement('a');
+          aElement.setAttribute('href', '/');
           aElement.setAttribute('data-sort-criteria', option.sortCriteria);
           aElement.setAttribute('data-sort-caption', option.label);
           aElement.innerHTML = option.label;
@@ -286,7 +287,8 @@ export default async function initiateCoveoHeadlessSearch({
               anchor.classList.add('selected');
             }
 
-            anchor.addEventListener('click', () => {
+            anchor.addEventListener('click', (e) => {
+              e.preventDefault();
               sortAnchors.forEach((anch) => {
                 anch.classList.remove('selected');
               });

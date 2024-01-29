@@ -43,6 +43,9 @@
   .docs .rail.closed .rail-content {
     display: none;
   }
+  .docs .rail.closed .rail-content .toc {
+    visibility: hidden !important;
+  }
   .docs .rail.closed.rail-right .rail-toggle {
     left: unset;
     right: 0;

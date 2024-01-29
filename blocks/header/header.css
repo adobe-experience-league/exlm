@@ -646,13 +646,15 @@ header {
     align-items: center;
     line-height: 1;
     margin: 0;
+    padding: 15px 12px;
   }
 }
 @container headersection (max-width: 1024px) {
   .header .search {
     position: absolute;
-    right: 80px;
-    top: 20px;
+    right: 90px;
+    top: 6px;
+    padding: 0 2px;
   }
 }
 .header .search-short {
