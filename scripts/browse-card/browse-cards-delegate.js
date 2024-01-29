@@ -4,8 +4,9 @@ import ADLSDataService from '../data-service/adls-data-service.js';
 import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
 import BrowseCardsLiveEventsAdaptor from './browse-cards-live-events-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
-import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET } from './browse-cards-constants.js';
-import { coveoSearchResultsUrl, liveEventsUrl, adlsUrl } from '../urls.js';
+import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
+import { coveoSearchResultsUrl, liveEventsUrl, adlsUrl, pathsUrl } from '../urls.js';
+import PathsDataService from '../data-service/paths-data-service.js';
 /**
  * @module BrowseCardsDelegate
  * @description A module that handles the delegation of fetching card data based on content types.
@@ -173,6 +174,41 @@ const BrowseCardsDelegate = (() => {
   };
 
   /**
+   * Constructs search parameters for Paths data service.
+   * @returns {URLSearchParams} Constructed URLSearchParams object.
+   * @private
+   */
+  const constructPathsSearchParams = () => {
+    const urlSearchParams = new URLSearchParams();
+    urlSearchParams.append('page_size', '200');
+    urlSearchParams.append('sort', 'Order,Solution,ID');
+    urlSearchParams.append('lang', 'en');
+    return urlSearchParams;
+  };
+
+  /**
+   * Handles Paths data service to fetch card data.
+   * @returns {Array} Array of card data.
+   * @throws {Error} Throws an error if an issue occurs during data fetching.
+   * @private
+   */
+  const handlePathsService = async () => {
+    const dataSource = {
+      url: pathsUrl,
+      param: constructPathsSearchParams(),
+    };
+    const pathsService = new PathsDataService(dataSource);
+    const cardData = await pathsService.fetchDataFromSource();
+    if (!cardData) {
+      throw new Error('An error occurred');
+    }
+    if (cardData.data) {
+      return cardData.data;
+    }
+    return [];
+  };
+
+  /**
    * Retrieves the appropriate service function based on the content type.
    * @param {string} contentType - The content type for which the service is needed.
    * @returns {Function} The corresponding service function for the content type.
@@ -182,6 +218,7 @@ const BrowseCardsDelegate = (() => {
     const contentTypesServices = {
       [CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY]: handleLiveEventsService,
       [CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY]: handleADLSService,
+      [RECOMMENDED_COURSES_CONSTANTS.PATHS.MAPPING_KEY]: handlePathsService,
     };
 
     // If the content type is an array, use the handleCoveoService (Works only with Coveo related content types)

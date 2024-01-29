@@ -155,23 +155,25 @@
   font-weight: var(--font-weight-400);
   line-height: 28px;
 }
-.browse-card .browse-card-footer .browse-card-options .icon {
+.browse-card .browse-card-footer .browse-card-options .bookmark-icon, 
+.browse-card .browse-card-footer .browse-card-options .copy-icon{
   background-size: 20px 20px;
   background-repeat: no-repeat;
   color: var(--spectrum-gray-800);
   cursor: pointer;
+  display: inline-block;
   height: 20px;
   padding: 5px 2px 5px 5px;
   transition: all 200ms ease-in-out;
   vertical-align: middle;
   width: 20px;
 }
-.browse-card .browse-card-footer .browse-card-options .bookmark .icon.bookmark-icon {
+.browse-card .browse-card-footer .browse-card-options .bookmark .bookmark-icon {
   background-image: url("../../icons/bookmark.svg");
   background-position: center 0;
   cursor: inherit;
 }
-.browse-card .browse-card-footer .browse-card-options .bookmark .icon.bookmark-icon:hover + .exl-tooltip-label {
+.browse-card .browse-card-footer .browse-card-options .bookmark .bookmark-icon:hover + .exl-tooltip-label {
   visibility: visible;
 }
 .browse-card .browse-card-footer .browse-card-options .bookmark.auth .bookmark-icon {
@@ -190,16 +192,19 @@
   background-color: var(--spectrum-gray-200);
   border-radius: 4px;
 }
-.browse-card .browse-card-footer .browse-card-options .copy-link .icon.copy-link-url {
+.browse-card .browse-card-footer .browse-card-options .bookmark.auth[data-id='none'] {
+  display: none;
+}
+.browse-card .browse-card-footer .browse-card-options .copy-link .copy-icon {
   background-image: url("../../icons/copy.svg");
   background-position: center 0;
   transition: all 200ms ease-in-out;
 }
-.browse-card .browse-card-footer .browse-card-options .copy-link .icon.copy-link-url:hover {
+.browse-card .browse-card-footer .browse-card-options .copy-link .copy-icon:hover {
   background-color: var(--spectrum-gray-200);
   border-radius: 4px;
 }
-.browse-card .browse-card-footer .browse-card-options .copy-link .icon.copy-link-url:hover + .exl-tooltip-label {
+.browse-card .browse-card-footer .browse-card-options .copy-link .copy-icon:hover + .exl-tooltip-label {
   visibility: visible;
 }
 .browse-card .browse-card-footer .browse-card-cta-element {
@@ -446,3 +451,24 @@
     margin: 8px 0;
   }
 }
+.skill-bar {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+.skill-bar-container {
+  width: 100%;
+  max-width: 350px;
+  overflow: hidden;
+  background-color: var(--spectrum-gray-200);
+}
+.skill-bar-value {
+  height: 4px;
+  float: left;
+  background: var(--spectrum-blue-900)
+}
+.course-duration {
+  color: var(--spectrum-gray-700);
+  font-size: 12px;
+  font-style: italic;
+  }
