@@ -47,12 +47,15 @@
   font-weight: var(--font-weight-400);
   line-height: 28px;
 }
-.doc-actions .icon,
-.doc-actions-mobile .icon {
+.doc-actions .bookmark-icon,
+.doc-actions .copy-icon,
+.doc-actions-mobile .bookmark-icon,
+.doc-actions-mobile .copy-icon {
   background-size: 20px 20px;
   background-repeat: no-repeat;
   color: var(--spectrum-gray-800);
   cursor: pointer;
+  display: inline-block;
   height: 20px;
   padding: 5px 2px 5px 5px;
   transition: all 200ms ease-in-out;
@@ -63,14 +66,14 @@
 .doc-actions-mobile .bookmark {
   margin-right: 10px;
 }
-.doc-actions .bookmark .icon.bookmark-icon,
-.doc-actions-mobile .bookmark .icon.bookmark-icon {
+.doc-actions .bookmark .bookmark-icon,
+.doc-actions-mobile .bookmark .bookmark-icon {
   background-image: url("../../icons/bookmark-outline.svg");
   background-position: center 3px;
   cursor: inherit;
 }
-.doc-actions .bookmark .icon.bookmark-icon:hover + .exl-tooltip-label,
-.doc-actions-mobile .bookmark .icon.bookmark-icon:hover + .exl-tooltip-label {
+.doc-actions .bookmark .bookmark-icon:hover + .exl-tooltip-label,
+.doc-actions-mobile .bookmark .bookmark-icon:hover + .exl-tooltip-label {
   visibility: visible;
 }
 .doc-actions .bookmark.auth .bookmark-icon,
@@ -92,20 +95,20 @@
   background-color: var(--spectrum-gray-200);
   border-radius: 4px;
 }
-.doc-actions .copy-link .icon.copy-link-url,
-.doc-actions-mobile .copy-link .icon.copy-link-url {
+.doc-actions .copy-link .copy-icon,
+.doc-actions-mobile .copy-link .copy-icon {
   background-image: url("../../icons/copy-link.svg");
   background-position: center 2px;
   margin-right: 5px;
   transition: all 200ms ease-in-out;
 }
-.doc-actions .copy-link .icon.copy-link-url:hover,
-.doc-actions-mobile .copy-link .icon.copy-link-url:hover {
+.doc-actions .copy-link .copy-icon:hover,
+.doc-actions-mobile .copy-link .copy-icon:hover {
   background-color: var(--spectrum-gray-200);
   border-radius: 4px;
 }
-.doc-actions .copy-link .icon.copy-link-url:hover + .exl-tooltip-label,
-.doc-actions-mobile .copy-link .icon.copy-link-url:hover + .exl-tooltip-label {
+.doc-actions .copy-link .copy-icon:hover + .exl-tooltip-label,
+.doc-actions-mobile .copy-link .copy-icon:hover + .exl-tooltip-label {
   visibility: visible;
 }
 

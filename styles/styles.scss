@@ -851,6 +851,10 @@ main > div.browse-rail {
       &.toc-container .rail-content {
         display: block;
       }
+
+      .toc {
+        visibility: hidden;
+      }
     }
 
     > div:last-child {
@@ -912,10 +916,6 @@ main > div.browse-rail {
 
       > div {
         border-right: 1px solid #eaeaea;
-      }
-
-      .toc {
-        visibility: hidden;
       }
     }
   }

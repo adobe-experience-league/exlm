@@ -12,11 +12,9 @@ import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/br
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const blockDataElements = [...block.querySelectorAll(':scope div > div')];
-  const headingElement = blockDataElements[0].innerHTML.trim();
-  const toolTipElement = blockDataElements[1].innerHTML.trim();
-  const contentTypeListContent = blockDataElements[2].innerHTML?.trim()?.toLowerCase();
-  const sortByContent = blockDataElements[3].innerHTML?.trim()?.toLowerCase();
+  const [headingElement, toolTipElement, ...configs] = [...block.children].map((row) => row.firstElementChild);
+  const [contentTypeListContent, sortByContent] = configs.map((cell) => cell.textContent.trim().toLowerCase());
+
   const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase()];
   const tabsLabels = contentTypeListContent.split(',');
   const numberOfResults = 4;
@@ -33,19 +31,16 @@ export default async function decorate(block) {
   // Creating the header div with title and tooltip
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
-    ${
-      headingElement?.textContent?.trim()
-        ? `<div class="browse-cards-block-title">
-          <h2>
-            ${headingElement.textContent.trim()}${
-              toolTipElement?.textContent?.trim() ? `<div class="tooltip-placeholder"></div>` : ''
-            }
-          </h2>
-      </div>`
-        : ''
-    }
+      <div class="browse-cards-block-title">
+        ${headingElement.innerHTML}
+      </div>
     </div>
   `);
+
+  headerDiv
+    .querySelector('h1,h2,h3,h4,h5,h6')
+    ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+
   // Appending header div to the block
   block.appendChild(headerDiv);
 
@@ -184,7 +179,11 @@ export default async function decorate(block) {
     block.insertBefore(tabList, shimmerClass);
     buildCardsShimmer.add(block);
 
+    console.log(initialContentType);
+
     const viewLinkInitialMappingKey = placeholders[`${initialContentType}LabelKey`];
+
+    console.log(viewLinkInitialMappingKey);
 
     // Update view link for initial content type
     viewLinkURLElement.innerHTML = placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkInitialMappingKey)}`];

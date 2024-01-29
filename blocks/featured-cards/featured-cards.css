@@ -1,107 +1,122 @@
 @import "../../scripts/browse-card/browse-cards-block.css";
 @import "../../scripts/browse-card/browse-card.css";
+
 .featured-cards .browse-cards-block-header .browse-card-description-text{
   text-align: center;
 }
+
 .featured-cards .browse-cards-block-title {
   margin-bottom: 16px;
   text-align: center;
 }
+
 .featured-cards .browse-card .browse-card-content {
   min-height: auto;
 }
-.browse-cards-block-header {
+
+.featured-cards .browse-cards-block-header {
     display:flex ;
     justify-content:center;
     flex-direction: column;
     align-items: center;
 }
-.browse-cards-block-view {
+
+.featured-cards .browse-cards-block-view {
     text-align: center;
 }
-.browse-cards-block-content {  
+
+.featured-cards .browse-cards-block-content {  
   display: grid; 
   grid-template-columns: 1fr; 
   gap: 32px;
   min-height: 284px;
 }
+
 .featured-cards .browse-cards-block-content > div  {
   min-height: 284px;
   flex: 0 0 320px;
 }
-  .browse-card-dropdown {
-    display:flex ;
-    justify-content:center;
-    flex-direction: column;
-    align-items: center;
+
+.featured-cards .browse-card-dropdown {
+  display:flex ;
+  justify-content:center;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+  
+.featured-cards .solutions-dropdown , .roles-dropdown {
     width: 100%;
-  }
-  .solutions-dropdown , .roles-dropdown
-  {
-    width: 100%;
-  }
- .roles-dropdown
-  {
-    margin-bottom: 1em;
-  }
-  .browse-card-dropdown > select{
-    background: #FFFFFF 0% 0% no-repeat padding-box;
-    border: 1px solid #E6E6E6;
-    border-radius: 4px;
-    padding: 10px;
-    color: var(--spectrum-gray-700);
-  }
-.browse-card-dropdown > p{
+}
+
+.featured-cards .roles-dropdown {
+  margin-bottom: 1em;
+}
+
+.featured-cards .browse-card-dropdown > select{
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  border: 1px solid #E6E6E6;
+  border-radius: 4px;
+  padding: 10px;
+  color: var(--spectrum-gray-700);
+}
+
+.featured-cards .browse-card-dropdown > p{
   font-weight: bold;
 }
-  @media only screen and (min-width: 600px) {
-    .browse-card-dropdown {
-        flex-direction: row;
-        gap: 1em;
-    }
-    .browse-card-dropdown > p{
-        margin-bottom: 0;
-    }
-    .roles-dropdown
-    {
+
+@media only screen and (min-width: 600px) {
+  .featured-cards .browse-card-dropdown {
+      flex-direction: row;
+      gap: 1em;
+  }
+
+  .featured-cards .browse-card-dropdown > p {
       margin-bottom: 0;
-    }
-    .solutions-dropdown , .roles-dropdown
-    {
-      width: auto;
-    }
-    .browse-cards-block-content {  
-      grid-template-columns: 1fr 1fr; 
-    }
-    .browse-cards-block-view {
-      text-align: center;
-    }
-    .featured-cards .browse-cards-block-content > div {
-      flex: 0 0 286px;
-    }
   }
-  @media only screen and (min-width: 900px) {
-    .browse-cards-block-content {  
-       display: flex;
-       gap: 32px;
-    }
-    .browse-cards-block-view {
-        margin-top: -72px;
-        text-align: right;
-    }
-    .featured-cards .browse-cards-block-title {
-      margin-bottom: 7px;
-    }
-    .featured-cards .browse-cards-block-content {  
-      text-align: center;
-    }
-    .featured-cards .browse-card {
-      text-align: left;
-    }
-    .featured-cards .browse-cards-block-view {
-      margin-top: 0px;
-    }
-    .featured-cards .browse-cards-block-content > div {
-      flex: 0 0 295px;
-    }
+
+  .featured-cards .roles-dropdown {
+    margin-bottom: 0;
   }
+
+  .featured-cards .solutions-dropdown , .featured-cards .roles-dropdown {
+    width: auto;
+  }
+
+  .featured-cards .browse-cards-block-content {  
+    grid-template-columns: 1fr 1fr; 
+  }
+
+  .featured-cards .browse-cards-block-view {
+    text-align: center;
+  }
+
+  .featured-cards .featured-cards .browse-cards-block-content > div {
+    flex: 0 0 286px;
+  }
+}
+
+@media only screen and (min-width: 900px) {
+  .featured-cards .browse-cards-block-content {  
+    display: flex;
+    gap: 32px;
+    text-align: center;
+  }
+
+  .featured-cards .browse-cards-block-view {
+      margin-top: -72px;
+      text-align: right;
+  }
+
+  .featured-cards .browse-cards-block-title {
+    margin-bottom: 7px;
+  }
+
+  .featured-cards .browse-card {
+    text-align: left;
+  }
+
+  .featured-cards .browse-cards-block-content > div {
+    flex: 0 0 295px;
+  }
+}

@@ -9,12 +9,18 @@ function redirectTo(inputElement, event) {
 }
 
 export default function decorate(block) {
-  const heading = block.children[0].textContent.trim();
-  const placeholder = block.children[1].textContent.trim();
+  const [heading, placeholder] = [...block.children].map((row) => row.firstElementChild);
+
+  if (heading.firstElementChild) {
+    const label = document.createElement('label');
+    label.setAttribute('for', 'secondary-search');
+    label.append(...heading.firstElementChild.childNodes);
+    heading.firstElementChild.replaceChildren(label);
+  }
 
   const search = `
   <div>
-    <h2><label for="secondary-search">${heading}</label></h2>
+    ${heading.innerHTML}
     <form role="search">
       <button title="Search Icon" type="submit"><span class="icon icon-search"></button>
       <input
@@ -23,7 +29,7 @@ export default function decorate(block) {
       role="searchbox"
       id="secondary-search"
       value=""
-      placeholder="${placeholder}" 
+      placeholder="${placeholder.textContent.trim()}" 
       />
     </form>
   </div>`;

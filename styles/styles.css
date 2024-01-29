@@ -958,6 +958,9 @@ main > div.browse-rail {
 .docs main > div:nth-child(2).toc-container .rail-content {
   display: block;
 }
+.docs main > div:nth-child(2) .toc {
+  visibility: hidden;
+}
 .docs main > div:last-child {
   order: 3;
   padding: 32px 10px 0 0;
@@ -1007,8 +1010,5 @@ main > div.browse-rail {
   }
   .docs main > div {
     border-right: 1px solid #eaeaea;
-  }
-  .docs main .toc {
-    visibility: hidden;
   }
 }
