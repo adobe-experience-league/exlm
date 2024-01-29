@@ -1,5 +1,5 @@
 import { sendNotice } from '../toast/toast.js';
-import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
+import { assetInteractionModel } from '../analytics/lib-analytics.js';
 
 const attachCopyLink = (selector, target, info) => {
   if (selector) {

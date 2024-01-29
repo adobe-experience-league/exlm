@@ -1,7 +1,7 @@
 import { fetchPlaceholders } from '../lib-franklin.js';
 import { updateProfile } from '../data-service/profile-service.js';
 import { sendNotice } from '../toast/toast.js';
-import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
+import { assetInteractionModel } from '../analytics/lib-analytics.js';
 
 let placeholders = {};
 try {
