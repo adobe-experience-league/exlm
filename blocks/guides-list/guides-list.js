@@ -4,7 +4,7 @@ export default async function decorate(block) {
   if (!wrapperEl) {
     return;
   }
-  wrapperEl.classList.add('guide-list-wrap');
+  wrapperEl.classList.add('guide-list-box');
   containerEl.classList.add('guide-list-container');
   const guideHeader = document.querySelector('h2#guides');
   if (guideHeader) {

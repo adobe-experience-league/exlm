@@ -4,13 +4,13 @@ export default async function decorate(block) {
   if (!wrapperEl) {
     return;
   }
-  wrapperEl.classList.add('tutorial-tiles-wrap');
+  wrapperEl.classList.add('tutorial-tiles-box');
   containerEl.classList.add('tutorial-tiles-container');
   const tutorialHeader = document.querySelector('h2#tutorials');
   if (tutorialHeader) {
     tutorialHeader.classList.add('tutorial-tiles-header');
     if (tutorialHeader.parentElement) {
-      tutorialHeader.parentElement.classList.add('tutorial-tiles-header-wrap');
+      tutorialHeader.parentElement.classList.add('tutorial-tiles-header-box');
     }
   }
   Array.from(containerEl.querySelectorAll('li')).forEach((li) => {

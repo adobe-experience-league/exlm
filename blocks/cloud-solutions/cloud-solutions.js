@@ -2,7 +2,6 @@ import { createTag } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   const wrapperEl = block.querySelector('h2').parentElement;
-  wrapperEl.classList.add('cloud-solutions-wrapper');
   while (wrapperEl.querySelector(':scope > h3') !== null) {
     const header = wrapperEl.querySelector(':scope > h3');
     const contents = wrapperEl.querySelector(':scope > ul');
