@@ -104,7 +104,7 @@
   left: 50%;
 }
 @media only screen and (min-width: 600px) {
-    .browse-cards-block-title h2 {
+    .browse-cards-block-title :where(h2,.h2) {
         max-width: unset;
     }
     .browse-cards-block-content {
