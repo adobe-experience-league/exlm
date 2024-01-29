@@ -1,4 +1,4 @@
-.cloud-solutions-list-wrapper {
+.cloud-solutions-list-item {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -19,7 +19,7 @@
     border-bottom: 3px solid var(--non-spectrum-grey);
 }
 
-.cloud-solutions-list-wrapper h3 {
+.cloud-solutions-list-item h3 {
     font-size: var(--spectrum-font-size-100);
     margin: 40px 0 10px;
 }
@@ -59,7 +59,7 @@
         margin-bottom: 28px;
     }
 
-    .cloud-solutions-list-wrapper {
+    .cloud-solutions-list-item {
         gap: 4px;
     }
 }
@@ -69,7 +69,7 @@
         width: 30%;
     }
 
-    .cloud-solutions-list-wrapper {
+    .cloud-solutions-list-item {
         gap: 8px;
     }
 }
