@@ -133,9 +133,9 @@ function initializeItemsToShow(block, currentURL) {
   }
 }
 
-const handleTocsService = async (tocID) => {
+const handleTocService = async (tocID, lang) => {
   const tocsService = new TocDataService(tocUrl);
-  const tocs = await tocsService.fetchDataFromSource(tocID);
+  const tocs = await tocsService.fetchDataFromSource(tocID, lang);
 
   if (!tocs) {
     throw new Error('An error occurred');
@@ -153,9 +153,11 @@ export default async function decorate(block) {
   contentDiv.classList.add('toc-right-rail-content');
 
   // fetch toc content
+  const currentURL = window.location.pathname;
+  const lang = currentURL.split('/')[1];
   const tocID = block.querySelector('.toc > div > div').textContent;
   if (tocID !== '') {
-    const resp = await handleTocsService(tocID);
+    const resp = await handleTocService(tocID, lang);
     block.innerHTML = '';
     block.style.visibility = 'visible';
     const div = document.createElement('div');
@@ -201,9 +203,6 @@ export default async function decorate(block) {
 
     block.appendChild(contentDiv);
 
-    const currentURL = window.location.pathname;
-    const locale = currentURL.split('/')[1];
-
     const anchors = block.querySelectorAll('.toc a');
     anchors.forEach((anchor) => {
       const pTag = document.createElement('p');
@@ -223,7 +222,7 @@ export default async function decorate(block) {
       if (anchor.getAttribute('href').startsWith('#')) {
         anchor.classList.add('js-toggle');
       } else {
-        anchor.setAttribute('href', `/${locale}${newHref}`);
+        anchor.setAttribute('href', `/${lang}${newHref}`);
       }
     });
 
