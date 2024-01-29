@@ -136,12 +136,12 @@ export function assetInteractionModel(id, type) {
       linkLocation: '',
       linkTitle: '',
       linkType: '',
-      solution: ''
+      solution: '',
     },
     event: 'assetInteraction',
     asset: {
       id: assetId,
-      interactionType: type
-    }
+      interactionType: type,
+    },
   });
 }
