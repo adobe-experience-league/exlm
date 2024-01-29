@@ -16,12 +16,12 @@ export default class TocDataService {
    *
    * @returns {Promise<Array>} A promise that resolves with an array of data results.
    */
-  async fetchDataFromSource(tocID) {
+  async fetchDataFromSource(tocID, lang) {
     try {
       if (`${TOC}_${tocID}` in sessionStorage) {
         return JSON.parse(sessionStorage[`${TOC}_${tocID}`]);
       }
-      const response = await fetch(`${this.url}${tocID}`, {
+      const response = await fetch(`${this.url}${tocID}?lang=${lang}`, {
         method: 'GET',
       });
 
