@@ -179,11 +179,7 @@ export default async function decorate(block) {
     block.insertBefore(tabList, shimmerClass);
     buildCardsShimmer.add(block);
 
-    console.log(initialContentType);
-
     const viewLinkInitialMappingKey = placeholders[`${initialContentType}LabelKey`];
-
-    console.log(viewLinkInitialMappingKey);
 
     // Update view link for initial content type
     viewLinkURLElement.innerHTML = placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkInitialMappingKey)}`];

@@ -3,6 +3,7 @@ import { loadIms } from '../../scripts/scripts.js';
 import { signOut } from '../../scripts/auth/auth-operations.js';
 import Search from '../../scripts/search/search.js';
 import { registerResizeHandler } from './header-utils.js';
+import { fetchCommunityProfileData } from '../../scripts/data-service/khoros-data-service.js';
 
 /**
  * @param {HTMLElement} block
@@ -418,18 +419,16 @@ const signInDecorator = async (signInBlock) => {
             <span class="icon icon-profile"></span>
           </button>
           <div class="profile-menu" id="profile-menu">
-            <a href="#dashboard/profile">Profile</a>
-            <a href="#dashboard/awards">Achievements</a>
-            <a href="#dashboard/bookmarks">Bookmarks</a>
-            <a data-id="sign-out">Sign Out</a>
           </div>
         </div>`,
       ),
     );
     const toggler = signInBlock.querySelector('.profile-toggle');
-    signInBlock.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
-      signOut();
-    });
+    if(signInBlock.querySelector('[data-id="sign-out"]')){
+      signInBlock.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
+        signOut();
+      });
+    }
     const toggleExpandContent = () => {
       const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
       toggler.setAttribute('aria-expanded', !isExpanded);
@@ -457,6 +456,8 @@ const signInDecorator = async (signInBlock) => {
 
     // Hide Signup - Authenticated
     document.querySelector('.sign-up').style.display = 'none';
+
+
   } else {
     signInBlock.classList.remove('signed-in');
     signInBlock.firstChild.addEventListener('click', async () => {
@@ -525,6 +526,45 @@ const productGridDecorator = async (productGridBlock) => {
 };
 
 /**
+ * Decorates the profile-menu block
+ * @param {HTMLElement} profileMenu
+ */
+
+const profileMenuDecorator = async (profileMenuBlock) => {
+
+  if (isSignedIn) {
+    simplifySingleCellBlock(profileMenuBlock);
+    profileMenuBlock.querySelectorAll("p").forEach((ptag) => {
+      if (ptag) {
+        ptag.outerHTML = ptag.querySelector("a").outerHTML;
+      }
+    });
+    const profileMenuWrapper = document.querySelector(".profile-menu");
+    const communityHeading = document.createElement('h2');
+      communityHeading.textContent = 'Community';
+    if(profileMenuWrapper){
+      profileMenuWrapper.innerHTML = `<h2>Learning</h2>${profileMenuBlock.innerHTML}`;
+      profileMenuWrapper.insertBefore(communityHeading, profileMenuWrapper.lastElementChild);
+    }
+
+    // const adobeIMSAccessToken = await adobeIMS?.getAccessToken().token;
+    const fcpd = await fetchCommunityProfileData('124');
+
+    fcpd.data.menu.forEach((item) => {
+      const communityProfile = document.createElement('a');
+      communityProfile.href = item.url;
+      communityProfile.textContent = item.title;
+      profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
+    });
+  } else {
+    const isProfileMenu = document.querySelector('.profile-menu');
+    if (isProfileMenu) {
+      document.querySelector('nav').removeChild(isProfileMenu);
+    }
+  }
+};
+
+/**
  * Decorates the adobe-logo block
  * @param {HTMLElement} adobeLogoBlock
  */
@@ -586,6 +626,7 @@ export default async function decorate(headerBlock) {
     { className: 'language-selector', decorator: languageDecorator },
     { className: 'product-grid', decorator: productGridDecorator },
     { className: 'sign-in', decorator: signInDecorator },
+    { className: 'profile-menu', decorator: profileMenuDecorator },
     { className: 'adobe-logo', decorator: adobeLogoDecorator },
     { className: 'nav', decorator: navDecorator },
   ];
