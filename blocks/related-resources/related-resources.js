@@ -1,4 +1,4 @@
-export default async function decorate(block) {;
+export default async function decorate(block) {
   const containerEl = block.querySelector('ul');
   const wrapperEl = containerEl?.parentElement;
   if (!wrapperEl) {
