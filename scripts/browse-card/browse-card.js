@@ -163,7 +163,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
   const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
   const ctaText = viewLinkText || '';
   const anchorLink = htmlToElement(`
-        <a class="browse-card-cta-element" target="_blank" href="${viewLink}">
+        <a class="browse-card-cta-element" href="${viewLink}">
             ${isLeftPlacement ? `${iconMarkup} ${ctaText}` : `${ctaText} ${iconMarkup}`}
         </a>
     `);
