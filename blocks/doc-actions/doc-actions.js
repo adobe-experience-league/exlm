@@ -5,7 +5,7 @@ import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
 import attachCopyLink from '../../scripts/copy-link/copy-link.js';
-import decorateMiniTOC from '../../blocks/mini-toc/mini-toc.js';
+import decorateMiniTOC from '../mini-toc/mini-toc.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
 
@@ -120,7 +120,7 @@ function decorateCopyLink(block) {
 }
 
 async function getTranslatedDocContent() {
-  const docPath = window.location.pathname.replace(new RegExp('/[a-zA-Z]{2}/'), '/en/');
+  const docPath = window.location.pathname.replace(new RegExp(/\/[a-zA-Z]{2}\//), '/en/');
   const docResponse = await fetch(`${docPath}.plain.html`);
   const translatedDoc = await docResponse.text();
   const docElement = htmlToElement(`<div>${translatedDoc}</div>`);
