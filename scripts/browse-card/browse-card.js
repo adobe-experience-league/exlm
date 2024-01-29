@@ -236,7 +236,6 @@ const buildCardContent = (card, model) => {
     contentType !== CONTENT_TYPES.COMMUNITY.MAPPING_KEY &&
     contentType !== CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
   ) {
-    // const bookmarkAnchor = createTag('a', { href: '#', title: 'copy' }, `<span class="icon icon-bookmark"></span>`);
     const unAuthBookmark = document.createElement('div');
     unAuthBookmark.className = 'bookmark';
     unAuthBookmark.innerHTML = tooltipTemplate('bookmark-icon', '', `${placeholders.bookmarkUnauthLabel}`);
@@ -256,12 +255,14 @@ const buildCardContent = (card, model) => {
     }
   }
   if (copyLink) {
-    // const copyLinkAnchor = createTag('a', { href: copyLink, title: 'copy' }, `<span class="icon icon-copy"></span>`);
     const copyLinkElem = document.createElement('div');
     copyLinkElem.className = 'copy-link';
     copyLinkElem.innerHTML = tooltipTemplate('copy-icon', '', `${placeholders.toastTiptext}`);
     cardOptions.appendChild(copyLinkElem);
     copyLinkElem.setAttribute('data-link', copyLink);
+    if (isSignedIn && id) {
+      copyLinkElem.setAttribute('data-id', id);
+    }
   }
   cardFooter.appendChild(cardOptions);
   buildCardCtaContent({ cardFooter, contentType, viewLink, viewLinkText });
