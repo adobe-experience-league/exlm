@@ -424,7 +424,7 @@ const signInDecorator = async (signInBlock) => {
       ),
     );
     const toggler = signInBlock.querySelector('.profile-toggle');
-    if(signInBlock.querySelector('[data-id="sign-out"]')){
+    if (signInBlock.querySelector('[data-id="sign-out"]')) {
       signInBlock.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
         signOut();
       });
@@ -456,8 +456,6 @@ const signInDecorator = async (signInBlock) => {
 
     // Hide Signup - Authenticated
     document.querySelector('.sign-up').style.display = 'none';
-
-
   } else {
     signInBlock.classList.remove('signed-in');
     signInBlock.firstChild.addEventListener('click', async () => {
@@ -531,18 +529,17 @@ const productGridDecorator = async (productGridBlock) => {
  */
 
 const profileMenuDecorator = async (profileMenuBlock) => {
-
   if (isSignedIn) {
     simplifySingleCellBlock(profileMenuBlock);
-    profileMenuBlock.querySelectorAll("p").forEach((ptag) => {
+    profileMenuBlock.querySelectorAll('p').forEach((ptag) => {
       if (ptag) {
-        ptag.outerHTML = ptag.querySelector("a").outerHTML;
+        ptag.outerHTML = ptag.querySelector('a').outerHTML;
       }
     });
-    const profileMenuWrapper = document.querySelector(".profile-menu");
+    const profileMenuWrapper = document.querySelector('.profile-menu');
     const communityHeading = document.createElement('h2');
-      communityHeading.textContent = 'Community';
-    if(profileMenuWrapper){
+    communityHeading.textContent = 'Community';
+    if (profileMenuWrapper) {
       profileMenuWrapper.innerHTML = `<h2>Learning</h2>${profileMenuBlock.innerHTML}`;
       profileMenuWrapper.insertBefore(communityHeading, profileMenuWrapper.lastElementChild);
     }
