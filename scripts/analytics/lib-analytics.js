@@ -99,9 +99,7 @@ export function pageLoadModel() {
         pageName: name,
         pageType: 'webpage',
         pageViews: { value: 1 },
-        prevPage: document.querySelector('meta[name="prev-page"]')
-          ? document.querySelector('meta[name="prev-page"]').content
-          : '',
+        prevPage: localStorage.getItem('prevPage') || '',
         userAgent: window.navigator.userAgent,
         server: window.location.host,
         siteSection: section,
