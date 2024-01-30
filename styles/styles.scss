@@ -931,7 +931,7 @@ main > div.browse-rail {
     }
 
     @include breakpoint(desktop) {
-      padding: 34px 28px 48px 70px;
+      padding: 42px 0 48px 70px;
       margin: 0 4rem;
     }
   }
@@ -942,6 +942,7 @@ main > div.browse-rail {
     .default-content-wrapper h1 {
       font-size: 44px; /* This font is not avaliable in spectrum so we are hardcoding it */
       line-height: var(--spectrum-line-height-xxxl);
+      margin-top: 0;
     }
 
     .section > div.default-content-wrapper {
@@ -952,12 +953,17 @@ main > div.browse-rail {
       margin-left: 0;
     }
 
+    & > div:first-child {
+      border: none;
+    }
+
     @include breakpoint(desktop) {
       padding: 0;
 
       & > div:first-child {
         margin: 0 56px;
         padding: 54px 47px 50px 60px;
+        border: none;
       }
     }
   }
