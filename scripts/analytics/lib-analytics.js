@@ -103,6 +103,7 @@ export function pageLoadModel() {
           ? document.querySelector('meta[name="prev-page"]').content
           : '',
         userAgent: window.navigator.userAgent,
+        recordid: '',
         server: window.location.host,
         siteSection: section,
         siteSubSection1: sections[0] || '',
