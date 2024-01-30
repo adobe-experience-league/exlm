@@ -472,3 +472,23 @@ export function getLink(edsPath) {
     ? `${window.hlx.aemRoot}${edsPath}.html`
     : edsPath;
 }
+
+export const removeExtension = (pathStr) => {
+  const parts = pathStr.split('.');
+  if (parts.length === 1) return parts[0];
+  return parts.slice(0, -1).join('.');
+};
+
+export function rewriteDocsPath(docsPath) {
+  const PROD_BASE = 'https://experienceleague.adobe.com';
+  const url = new URL(docsPath, PROD_BASE);
+  if (!url.pathname.startsWith('/docs')) {
+    return docsPath; // not a docs path, return as is
+  }
+  const lang = url.searchParams.get('lang') || 'en'; // en is default
+  url.searchParams.delete('lang');
+  let pathname = `${lang.toLowerCase()}${url.pathname}`;
+  pathname = removeExtension(pathname); // new URLs are extensionless
+  url.pathname = pathname;
+  return url.toString().replace(PROD_BASE, ''); // always remove PROD_BASE if exists
+}
