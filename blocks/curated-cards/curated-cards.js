@@ -23,6 +23,7 @@ export default async function decorate(block) {
   const product = [];
   const version = [];
   const feature = [];
+  headingElement.firstElementChild?.classList.add('h2');
 
   const extractCapability = () => {
     const items = capabilities.split(',');
@@ -37,7 +38,7 @@ export default async function decorate(block) {
       }
     });
   };
-
+  
   extractCapability();
 
   // Clearing the block's content
@@ -76,12 +77,12 @@ export default async function decorate(block) {
   }
 
   const param = {
-    contentType: contentType && contentType.split(','),
+    contentType: contentType && contentType.toLowerCase().split(','),
     product: product.length ? [...new Set(product)] : null,
     feature: feature.length ? [...new Set(feature)] : null,
     version: version.length ? [...new Set(version)] : null,
-    role: role && role.split(','),
-    level: level && level.split(','),
+    role: role && role.toLowerCase().split(','),
+    level: level && level.toLowerCase().split(','),
     sortCriteria,
     noOfResults,
   };
