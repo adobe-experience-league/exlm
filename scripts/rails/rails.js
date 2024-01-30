@@ -36,6 +36,10 @@ export default async function decorateRails() {
   const leftRail = main?.children[1];
   const rightRail = main?.children[2];
   // ensure this is the docs theme
-  await decorateRail(leftRail, 'left');
-  await decorateRail(rightRail, 'right');
+  if (leftRail) {
+    await decorateRail(leftRail, 'left');
+  }
+  if (rightRail) {
+    await decorateRail(rightRail, 'right');
+  }
 }

@@ -178,7 +178,6 @@ export default async function decorate(block) {
     const shimmerClass = block.querySelector('.browse-card-shimmer');
     block.insertBefore(tabList, shimmerClass);
     buildCardsShimmer.add(block);
-
     const viewLinkInitialMappingKey = placeholders[`${initialContentType}LabelKey`];
 
     // Update view link for initial content type
