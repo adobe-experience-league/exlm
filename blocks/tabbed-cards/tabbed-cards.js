@@ -178,11 +178,11 @@ export default async function decorate(block) {
     const shimmerClass = block.querySelector('.browse-card-shimmer');
     block.insertBefore(tabList, shimmerClass);
     buildCardsShimmer.add(block);
-
+    // eslint-disable-next-line no-console
     console.log(initialContentType);
 
     const viewLinkInitialMappingKey = placeholders[`${initialContentType}LabelKey`];
-
+    // eslint-disable-next-line no-console
     console.log(viewLinkInitialMappingKey);
 
     // Update view link for initial content type
