@@ -31,8 +31,14 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       /* TODO: Will enable once we have the API changes ready from ExL */
       // tags.push({ icon: 'book', text: `0 ${placeholders.lesson}` });
     } else {
-      tags.push({ icon: result?.raw?.el_view_status ? 'view' : '', text: result?.raw?.el_view_status || '' });
-      tags.push({ icon: result?.raw?.el_reply_status ? 'reply' : '', text: result?.raw?.el_reply_status || '' });
+      tags.push({
+        icon: result?.parentResult?.raw?.el_view_status || result?.raw?.el_view_status ? 'view' : '',
+        text: result?.parentResult?.raw?.el_view_status || result?.raw?.el_view_status || '',
+      });
+      tags.push({
+        icon: result?.parentResult?.raw?.el_reply_status || result?.raw?.el_reply_status ? 'reply' : '',
+        text: result?.parentResult?.raw?.el_reply_status || result?.raw?.el_reply_status || '',
+      });
     }
     return tags;
   };
