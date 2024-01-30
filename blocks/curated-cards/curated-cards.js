@@ -38,7 +38,7 @@ export default async function decorate(block) {
       }
     });
   };
-  
+
   extractCapability();
 
   // Clearing the block's content
