@@ -518,14 +518,15 @@ const productGridDecorator = async (productGridBlock) => {
   return productGridBlock;
 };
 
-const getCommunityProfile = () => new Promise((resolve, reject) => {
+const getCommunityProfile = () =>
+  new Promise((resolve, reject) => {
     const data = fetchCommunityProfileData();
-    if(data){
+    if (data) {
       resolve(data);
-    } else{
+    } else {
       reject(new Error('Error fetching data!!'));
     }
-});
+  });
 
 /**
  * Decorates the profile-menu block
