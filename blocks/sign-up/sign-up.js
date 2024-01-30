@@ -20,14 +20,14 @@ function decorateButtons(...buttons) {
 }
 
 function getSignInButton(signInText) {
-  const secondCta = document.createElement('div');
+  const firstCta = document.createElement('div');
   const link = document.createElement('a');
-  link.classList.add('signin');
+  link.classList.add('sign-up-cta-btn');
   link.setAttribute('href', '#');
   link.setAttribute('title', signInText);
   link.textContent = signInText;
-  secondCta.append(link);
-  return secondCta;
+  firstCta.append(link);
+  return firstCta;
 }
 
 export default async function decorate(block) {
