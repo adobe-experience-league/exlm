@@ -1,6 +1,7 @@
 import { fetchPlaceholders } from '../lib-franklin.js';
 import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
+import { rewriteDocsPath } from '../scripts.js';
 
 /**
  * Module that provides functionality for adapting Coveo search results to BrowseCards data model.
@@ -58,7 +59,8 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       product = el_solution && (Array.isArray(el_solution) ? el_solution : el_solution.split(/,\s*/));
     }
     const tags = createTags(result, contentType.toLowerCase());
-    const url = parentResult?.clickableuri || parentResult?.uri || clickUri || uri || '';
+    let url = parentResult?.clickableuri || parentResult?.uri || clickUri || uri || '';
+    url = rewriteDocsPath(url, true);
 
     return {
       ...browseCardDataModel,

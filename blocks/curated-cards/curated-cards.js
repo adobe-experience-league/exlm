@@ -18,25 +18,28 @@ export default async function decorate(block) {
 
   const sortCriteria = COVEO_SORT_OPTIONS[sortBy.toUpperCase()];
   const noOfResults = 4;
-  const productKey = 'exl:solution/';
-  const featureKey = 'exl:feature/';
+  const productKey = 'exl:solution';
+  const featureKey = 'exl:feature';
+  const product = [];
+  const version = [];
+  const feature = [];
+  headingElement.firstElementChild?.classList.add('h2');
 
-  const extractCapability = (input, prefix) => {
-    if (!input) {
-      return null;
-    }
-    const items = input.split(',').map((item) => item.trim());
-    const result = [];
-    for (let i = 0; i < items.length; i += 1) {
-      const item = items[i];
-      if (item.startsWith(prefix)) {
-        result.push(atob(item.substring(prefix.length)));
+  const extractCapability = () => {
+    const items = capabilities.split(',');
+
+    items.forEach((item) => {
+      const [type, productBase64, versionBase64] = item.split('/');
+      if (type === productKey) {
+        if (productBase64) product.push(atob(productBase64));
+        if (versionBase64) version.push(atob(versionBase64));
+      } else if (type === featureKey) {
+        if (productBase64) feature.push(atob(productBase64));
       }
-    }
-    return result;
+    });
   };
 
-  headingElement.firstElementChild?.classList.add('h2');
+  extractCapability();
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -75,8 +78,9 @@ export default async function decorate(block) {
 
   const param = {
     contentType: contentType && contentType.toLowerCase().split(','),
-    product: extractCapability(capabilities, productKey),
-    feature: extractCapability(capabilities, featureKey),
+    product: product.length ? [...new Set(product)] : null,
+    feature: feature.length ? [...new Set(feature)] : null,
+    version: version.length ? [...new Set(version)] : null,
     role: role && role.toLowerCase().split(','),
     level: level && level.toLowerCase().split(','),
     sortCriteria,
