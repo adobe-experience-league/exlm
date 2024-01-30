@@ -51,12 +51,14 @@ export default async function decorate(block) {
     block.style.display = 'block';
     // Extract properties
     // always same order as in model, empty string if not set
-    const [img, eyebrow, title, longDescr, firstCtatext, secondCta] = block.querySelectorAll(':scope div > div');
+    const [img, eyebrow, title, longDescr, firstCtaText, secondCta] = block.querySelectorAll(':scope div > div');
     const subjectPicture = img.querySelector('picture');
     const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
     const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
+    const signInText = firstCtaText.textContent.trim();
 
-    const firstCta = getSignInButton(firstCtatext.textContent?.trim());
+    // build sign in button if not in yet and button text is set
+    const firstCta = signInText && !isUserSignedIn ? getSignInButton(signInText) : null;
 
     // Build DOM
     const signupDOM = document.createRange().createContextualFragment(`
