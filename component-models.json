@@ -985,24 +985,6 @@
         "description": "The description shown in Desktop and Tablet view."
       },
       {
-        "component": "select",
-        "name": "cta1Type",
-        "value": "primary",
-        "label": "First CTA Type",
-        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          }
-        ]
-      },
-      {
         "component": "text-input",
         "valueType": "string",
         "name": "cta1Text",
