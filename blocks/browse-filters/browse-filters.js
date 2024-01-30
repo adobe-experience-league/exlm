@@ -698,6 +698,7 @@ async function handleSearchEngineSubscription() {
       browseFilterForm.classList.add('is-result');
       filterResultsEl.classList.remove('no-results');
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log('*** failed to create card because of the error:', err);
     }
   } else {

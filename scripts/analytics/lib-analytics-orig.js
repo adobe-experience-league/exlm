@@ -312,7 +312,7 @@ o.once('auth', (data = null) => {
 });
 */
 
-(async function () {
+(async function iife() {
   const ckeys = await caches.keys();
   const version = parseInt(
     (
