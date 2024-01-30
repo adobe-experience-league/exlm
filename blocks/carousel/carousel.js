@@ -35,10 +35,13 @@ export default function decorate(block) {
   // loop through all teaser blocks
   [...panels].forEach((panel, i) => {
     // generate the teaser panel
-    const { teaserDOM, classes } = generateTeaserDOM(panel.children, true);
+    const [image, classList, ...rest] = panel.children;
+    const classesText = classList.textContent.trim();
+    const classes = (classesText ? classesText.split(',') : []).map((c) => c && c.trim()).filter((c) => !!c);
+    const teaserDOM = generateTeaserDOM([image, ...rest], classes);
     panel.textContent = '';
     panel.classList.add('teaser', 'block');
-    classes.split(' ').map((c) => panel.classList.add(c));
+    classes.forEach((c) => panel.classList.add(c.trim()));
     panel.dataset.panel = `panel_${i}`;
     panel.append(teaserDOM);
     panelContainer.append(panel);

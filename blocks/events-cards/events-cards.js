@@ -24,13 +24,17 @@ function formattedSolutionTags(inputString) {
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const headingElement = block.querySelector('div:nth-child(1) > div');
-  const toolTipElement = block.querySelector('div:nth-child(2) > div');
-  const linkTextElement = block.querySelector('div:nth-child(3) > div');
-  const solutions = block.querySelector('div:nth-child(4) > div').textContent.trim();
+  const [headingElement, toolTipElement, linkTextElement, ...configs] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
+
+  const [solutions] = configs.map((cell) => cell.textContent.trim());
+
   const contentType = CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY;
   const noOfResults = 4;
   const solutionsParam = solutions !== '' ? formattedSolutionTags(solutions) : '';
+
+  headingElement.firstElementChild?.classList.add('h2');
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -38,20 +42,17 @@ export default async function decorate(block) {
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
-    ${
-      headingElement?.textContent?.trim()
-        ? `<div class="browse-cards-block-title">
-          <h2>
-            ${headingElement.textContent.trim()}${
-              toolTipElement?.textContent?.trim() ? `<div class="tooltip-placeholder"></div>` : ''
-            }
-          </h2>
-      </div>`
-        : ''
-    }
-      <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
+      <div class="browse-cards-block-title">
+          ${headingElement.innerHTML}
+      </div>
+      <div class="browse-cards-block-view">${linkTextElement.innerHTML}</div>
     </div>
   `);
+
+  headerDiv
+    .querySelector('h1,h2,h3,h4,h5,h6')
+    ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+
   // Appending header div to the block
   block.appendChild(headerDiv);
 

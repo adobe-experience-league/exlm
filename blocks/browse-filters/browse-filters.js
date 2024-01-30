@@ -443,6 +443,9 @@ function handleDropdownToggle() {
     if (openDropdowns && !isCurrentDropDownOpen) closeOpenDropdowns();
 
     if (dropdownEl && !isCurrentDropDownOpen) {
+      if (document.activeElement?.className?.includes('search-input')) {
+        return;
+      }
       dropdownEl.querySelector('.filter-dropdown-content').style.display = 'block';
       dropdownEl.classList.add('open');
     } else {
@@ -452,10 +455,14 @@ function handleDropdownToggle() {
 }
 
 function handleUriHash() {
-  const hash = fragment();
   const browseFiltersSection = document.querySelector('.browse-filters-form');
+  if (!browseFiltersSection) {
+    return;
+  }
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchInput = filterInputSection.querySelector('input');
+  uncheckAllFiltersFromDropdown(browseFiltersSection);
+  const hash = fragment();
   if (!hash) {
     clearAllSelectedTag(browseFiltersSection);
     updateClearFilterStatus(browseFiltersSection);
@@ -526,7 +533,7 @@ function constructFilterPagination(block) {
   const filtersPaginationEl = htmlToElement(`
     <div class="browse-filters-pagination">
       <button class="nav-arrow" aria-label="previous page"></button>
-      <input type="text" aria-label="Enter page number" value=${currentPageNumber}>
+      <input type="text" class="browse-filters-pg-search-input" aria-label="Enter page number" value=${currentPageNumber}>
       <span class="browse-filters-pagination-text">${getFiltersPaginationText(pgCount)}</span>
       <button class="nav-arrow right-nav-arrow" aria-label="next page"></button>
     </div>`);
@@ -664,8 +671,8 @@ function handleCoveoHeadlessSearch(
 }
 
 async function handleSearchEngineSubscription() {
-  const filterResultsEl = document.querySelector('.browse-filters-results');
   const browseFilterForm = document.querySelector(CLASS_BROWSE_FILTER_FORM);
+  const filterResultsEl = browseFilterForm?.querySelector('.browse-filters-results');
   buildCardsShimmer.add(browseFilterForm);
   browseFilterForm.insertBefore(
     document.querySelector('.shimmer-placeholder'),
@@ -678,21 +685,25 @@ async function handleSearchEngineSubscription() {
   const search = window.headlessSearchEngine.state.search;
   const { results } = search;
   if (results.length > 0) {
-    buildCardsShimmer.remove();
-    const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
-    filterResultsEl.innerHTML = '';
-    cardsData.forEach((cardData) => {
-      const cardDiv = document.createElement('div');
-      buildCard(filterResultsEl, cardDiv, cardData);
-      filterResultsEl.appendChild(cardDiv);
-      document.querySelector('.browse-filters-form').classList.add('is-result');
+    try {
+      buildCardsShimmer.remove();
+      const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
+      filterResultsEl.innerHTML = '';
+      cardsData.forEach((cardData) => {
+        const cardDiv = document.createElement('div');
+        buildCard(filterResultsEl, cardDiv, cardData);
+        filterResultsEl.appendChild(cardDiv);
+      });
+      decorateIcons(filterResultsEl);
+      browseFilterForm.classList.add('is-result');
       filterResultsEl.classList.remove('no-results');
-      decorateIcons(cardDiv);
-    });
+    } catch (err) {
+      console.log('*** failed to create card because of the error:', err);
+    }
   } else {
     buildCardsShimmer.remove();
     filterResultsEl.innerHTML = placeholders.noResultsTextBrowse || 'No Results';
-    document.querySelector('.browse-filters-form').classList.remove('is-result');
+    browseFilterForm.classList.remove('is-result');
     filterResultsEl.classList.add('no-results');
   }
 }

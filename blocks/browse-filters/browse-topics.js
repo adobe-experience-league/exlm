@@ -43,6 +43,9 @@ export function handleTopicSelection(block) {
     if (window.headlessSearchActionCreators) {
       const searchAction = window.headlessSearchActionCreators.executeSearch(window.logSearchboxSubmit());
       window.headlessSearchEngine.dispatch(searchAction);
+      if (window.headlessPager) {
+        window.headlessPager.selectPage(1);
+      }
     }
   }
 }

@@ -1,0 +1,544 @@
+/*--SOLUTION SPECIFIC CSS FOR IMAGE AND COLORS--*/
+.toc.DataAnalytics ul#product li>.product-icon {
+    background: url("../../icons/solutions/Analytics.svg") no-repeat center center;
+}
+.toc.DataAnalytics ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-1);
+}
+.toc.DataAnalytics ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-1);
+}
+
+.toc.CircleExpCloud ul#product li>.product-icon {
+    background: url("../../icons/solutions/ExperienceCloud.svg") no-repeat center center;
+}
+.toc.CircleExpCloud ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-2);
+}
+.toc.CircleExpCloud ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-2);
+}
+
+.toc.AdminConsole ul#product li>.product-icon {
+    background: url("../../icons/solutions/AdminConsole.svg") no-repeat center center;
+}
+.toc.AdminConsole ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-3);
+}
+.toc.AdminConsole ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-3);
+}
+
+.toc.AppDevelopment ul#product li>.product-icon {
+    background: url("../../icons/solutions/AppDevelopment.svg") no-repeat center center;
+}
+.toc.AppDevelopment ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-4);
+}
+.toc.AppDevelopment ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-4);
+}
+
+.toc.Asset ul#product li>.product-icon {
+    background: url("../../icons/solutions/Asset.svg") no-repeat center center;
+}
+.toc.Asset ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-5);
+}
+.toc.Asset ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-5);
+}
+
+.toc.BoxSearch ul#product li>.product-icon {
+    background: url("../../icons/solutions/BoxSearch.svg") no-repeat center center;
+}
+.toc.BoxSearch ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-3);
+}
+.toc.BoxSearch ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-3);
+}
+
+.toc.CircleAdvertisingCloud ul#product li>.product-icon {
+    background: url("../../icons/solutions/CircleAdvertisingCloud.svg") no-repeat center center;
+}
+.toc.CircleAdvertisingCloud ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-2);
+}
+.toc.CircleAdvertisingCloud ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-2);
+}
+
+.toc.acrobat-dc ul#product li>.product-icon {
+    background: url("../../icons/solutions/acrobat-dc.svg") no-repeat center center;
+}
+.toc.acrobat-dc ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-2);
+}
+.toc.acrobat-dc ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-2);
+}
+
+.toc.adobe-sign ul#product li>.product-icon {
+    background: url("../../icons/solutions/adobe-sign.svg") no-repeat center center;
+}
+.toc.adobe-sign ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-15);
+}
+.toc.adobe-sign ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-15);
+}
+
+.toc.CircleExperiencePlatform ul#product li>.product-icon {
+    background: url("../../icons/solutions/CircleExperiencePlatform.svg") no-repeat center center;
+}
+.toc.CircleExperiencePlatform ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-16);
+}
+.toc.CircleExperiencePlatform ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-16);
+}
+
+.toc.Commerce ul#product li>.product-icon {
+    background: url("../../icons/solutions/Commerce.svg") no-repeat center center;
+}
+.toc.Commerce ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-14);
+}
+.toc.Commerce ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-14);
+}
+
+.toc.ContentProfile ul#product li>.product-icon {
+    background: url("../../icons/solutions/ContentProfile.svg") no-repeat center center;
+}
+.toc.ContentProfile ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-8);
+}
+.toc.ContentProfile ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-8);
+}
+
+.toc.DocumentCloud ul#product li>.product-icon {
+    background: url("../../icons/solutions/DocumentCloud.svg") no-repeat center center;
+}
+.toc.DocumentCloud ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-2);
+}
+.toc.DocumentCloud ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-2);
+}
+
+.toc.DynamicChat ul#product li>.product-icon {
+    background: url("../../icons/solutions/DynamicChat.svg") no-repeat center center;
+}
+.toc.DynamicChat ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-8);
+}
+.toc.DynamicChat ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-8);
+}
+
+.toc.Efficient ul#product li>.product-icon {
+    background: url("../../icons/solutions/Efficient.svg") no-repeat center center;
+}
+.toc.Efficient ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-13);
+}
+.toc.Efficient ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-13);
+}
+
+.toc.EmailGear ul#product li>.product-icon {
+    background: url("../../icons/solutions/EmailGear.svg") no-repeat center center;
+}
+.toc.EmailGear ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-3);
+}
+.toc.EmailGear ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-3);
+}
+
+.toc.EmailSend ul#product li>.product-icon {
+    background: url("../../icons/solutions/EmailSend.svg") no-repeat center center;
+}
+.toc.EmailSend ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-8);
+}
+.toc.EmailSend ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-8);
+}
+
+.toc.ExperienceManager ul#product li>.product-icon {
+    background: url("../../icons/solutions/ExperienceManager.svg") no-repeat center center;
+}
+.toc.ExperienceManager ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-5);
+}
+.toc.ExperienceManager ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-5);
+}
+
+.toc.Fusion ul#product li>.product-icon {
+    background: url("../../icons/solutions/Fusion.svg") no-repeat center center;
+}
+.toc.Fusion ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-12);
+}
+.toc.Fusion ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-12);
+}
+
+.toc.Gauge ul#product li>.product-icon {
+    background: url("../../icons/solutions/Gauge.svg") no-repeat center center;
+}
+.toc.Gauge ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-3);
+}
+.toc.Gauge ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-3);
+}
+
+.toc.GraphBarMoney ul#product li>.product-icon {
+    background: url("../../icons/solutions/GraphBarMoney.svg") no-repeat center center;
+}
+.toc.GraphBarMoney ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-1);
+}
+.toc.GraphBarMoney ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-1);
+}
+
+.toc.JourneyOrchestration ul#product li>.product-icon {
+    background: url("../../icons/solutions/JourneyOrchestration.svg") no-repeat center center;
+}
+.toc.JourneyOrchestration ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-8);
+}
+.toc.JourneyOrchestration ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-8);
+}
+
+.toc.Launch ul#product li>.product-icon {
+    background: url("../../icons/solutions/Launch.svg") no-repeat center center;
+}
+.toc.Launch ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-11);
+}
+.toc.Launch ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-11);
+}
+
+.toc.LocationService ul#product li>.product-icon {
+    background: url("../../icons/solutions/LocationService.svg") no-repeat center center;
+}
+.toc.LocationService ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-11);
+}
+.toc.LocationService ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-11);
+}
+
+.toc.MarketoEngage ul#product li>.product-icon {
+    background: url("../../icons/solutions/MarketoEngage.svg") no-repeat center center;
+}
+.toc.MarketoEngage ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-8);
+}
+.toc.MarketoEngage ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-8);
+}
+
+.toc.Primetime ul#product li>.product-icon {
+    background: url("../../icons/solutions/Primetime.svg") no-repeat center center;
+}
+.toc.Primetime ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-10);
+}
+.toc.Primetime ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-10);
+}
+
+.toc.PrimeTimeFunctional ul#product li>.product-icon {
+    background: url("../../icons/solutions/PrimeTimeFunctional.svg") no-repeat center center;
+}
+.toc.PrimeTimeFunctional ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-9);
+}
+.toc.PrimeTimeFunctional ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-9);
+}
+
+.toc.Privacy ul#product li>.product-icon {
+    background: url("../../icons/solutions/Privacy.svg") no-repeat center center;
+}
+.toc.Privacy ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-3);
+}
+.toc.Privacy ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-3);
+}
+
+.toc.ReportMapping ul#product li>.product-icon {
+    background: url("../../icons/solutions/ReportMapping.svg") no-repeat center center;
+}
+.toc.ReportMapping ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-3);
+}
+.toc.ReportMapping ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-3);
+}
+
+.toc.target ul#product li>.product-icon {
+    background: url("../../icons/solutions/target.svg") no-repeat center center;
+}
+.toc.target ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-8);
+}
+.toc.target ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-8);
+}
+
+.toc.UserAdmin ul#product li>.product-icon {
+    background: url("../../icons/solutions/UserAdmin.svg") no-repeat center center;
+}
+.toc.UserAdmin ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-8);
+}
+.toc.UserAdmin ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-8);
+}
+
+.toc.UserAnalytics ul#product li>.product-icon {
+    background: url("../../icons/solutions/UserAnalytics.svg") no-repeat center center;
+}
+.toc.UserAnalytics ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-1);
+}
+.toc.UserAnalytics ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-1);
+}
+
+.toc.UserHighlight ul#product li>.product-icon {
+    background: url("../../icons/solutions/UserHighlight.svg") no-repeat center center;
+}
+.toc.UserHighlight ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-7);
+}
+.toc.UserHighlight ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-7);
+}
+
+.toc.WorkfrontCircle ul#product li>.product-icon {
+    background: url("../../icons/solutions/WorkfrontCircle.svg") no-repeat center center;
+}
+.toc.WorkfrontCircle ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-6);
+}
+.toc.WorkfrontCircle ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-6);
+}

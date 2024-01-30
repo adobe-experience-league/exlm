@@ -59,6 +59,12 @@
     line-height: var(--spectrum-line-height-xxxl);
     margin-bottom: var(--space-token-xs);
   }
+
+  .signup-title :where(h1,h2,h3,h4,h5,h6) {
+    margin: 0;
+    font: inherit;
+    color: inherit;
+  }
   
   .signup-short-description,
   .signup-short-description * {
