@@ -132,8 +132,12 @@ export default async function decorate(block) {
         ul.append(viewLessLI);
 
         // Event listeners for "View More" and "View Less" links
-        block.querySelector('.viewMoreLink').addEventListener('click', () => handleViewMoreClick(block, numFeaturedProducts));
-        block.querySelector('.viewLessLink').addEventListener('click', () => handleViewLessClick(block, numFeaturedProducts));
+        block
+          .querySelector('.viewMoreLink')
+          .addEventListener('click', () => handleViewMoreClick(block, numFeaturedProducts));
+        block
+          .querySelector('.viewLessLink')
+          .addEventListener('click', () => handleViewLessClick(block, numFeaturedProducts));
       }
     }
   }
