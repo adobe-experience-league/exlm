@@ -534,7 +534,7 @@ export async function getProducts() {
 
   // sort the rest of published products alphabetically
   publishedProducts.sort((productA, productB) => productA.path.localeCompare(productB.path));
-  // append  remainin gpublished products to final list
+  // append remaining published products to final list
   finalProducts.push(...publishedProducts);
   return finalProducts;
 }
