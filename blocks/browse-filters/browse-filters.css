@@ -207,6 +207,7 @@ button.browse-filters-clear:disabled:hover {
   grid-template-columns: 1fr;
   margin: 0 auto;
   transition: all .5s ease-in-out;
+  position: relative;
 }
 
 .browse-filters-results-header {
@@ -220,6 +221,7 @@ button.browse-filters-clear:disabled:hover {
   font-style: italic;
   color: var(--spectrum-gray-700);
   line-height: 18px;
+  display: none;
 }
 
 .browse-filters-pagination {
@@ -410,6 +412,10 @@ button.browse-tags:focus {
 
 .browse-filters-form.is-result .sort-container {
   display: flex;
+}
+
+.browse-filters-form.is-result .browse-filters-results-count {
+  display: block;
 }
 
 .browse-filters-results.no-results {

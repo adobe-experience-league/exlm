@@ -1,48 +1,6 @@
 .browse-cards-block {
     min-height: 532px;
-}
-.browse-cards-block .tooltip {
     position: relative;
-    margin: 0px 0 0 9px;
-}
-.browse-cards-block .tooltip .icon-info {
-    width: 15px;
-    height: 15px;
-}
-.browse-cards-block .tooltip .tooltip-text {
-    background-color: var(--non-spectrum-royal-blue);
-    border-radius: 4px;
-    color: var(--spectrum-gray-50);
-    display: inline-block;
-    font-size: 12px;
-    left: 100%;
-    line-height: 15px;
-    margin-left: 10px;
-    margin-top: -16px;
-    opacity: 0;
-    padding: 4px 9px 5px 10px;
-    position: absolute;
-    text-align: center;
-    top: 50%;
-    transition: opacity 0.3s;
-    visibility: hidden;
-    width: max-content;
-    z-index: 1;
-}
-.browse-cards-block .tooltip .tooltip-text::before {
-    border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
-    border-style: solid;
-    border-width: 5px;
-    content: "";
-    display: inline-block;
-    margin-top: -4px;
-    position: absolute;
-    right: 100%;
-    top: 50%;
-}
-.browse-cards-block .tooltip:hover .tooltip-text {
-    opacity: 1;
-    visibility: visible;
 }
 .browse-cards-block-content {
     margin-top: 16px;
@@ -64,20 +22,91 @@
     margin: 0;
 }
 .browse-cards-block-title {
-    display: flex;
+    position: relative;
     margin: 0;
-    align-items: baseline;
 }
-.browse-cards-block-title h2 {
-    margin: 0px;
+.browse-cards-block-title .tooltip {
+    display: inline;
+    margin: 0 0 0 9px;
+}
+.browse-cards-block-title .tooltip .icon-info {
+    width: 15px;
+    height: 15px;
+}
+.browse-cards-block-title .tooltip svg {
+    pointer-events: none;
+}
+.browse-cards-block-title .tooltip .tooltip-text {
+    background-color: var(--non-spectrum-royal-blue);
+    border-radius: 4px;
+    color: var(--spectrum-gray-50);
+    display: inline-block;
+    font-size: 12px;
+    font-weight: normal;
+    left: -999px;
+    line-height: 15px;
+    margin-left: 10px;
+    margin-top: -16px;
+    opacity: 0;
+    padding: 4px 9px 5px 10px;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    transition: opacity 0.3s;
+    visibility: hidden;
+    width: max-content;
+    max-width: 155px;
+    z-index: 1;
+}
+.browse-cards-block-title .tooltip .tooltip-text.tooltip-visible {
+    visibility: visible;
+    opacity: 1;
+}
+.browse-cards-block-title .tooltip .tooltip-text::before {
+    border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
+    border-style: solid;
+    border-width: 4px;
+    content: "";
+    display: inline-block;
+    margin-top: -4px;
+    position: absolute;
+    right: 100%;
+    top: 50%;
+}
+.browse-cards-block-title :where(h2,.h2) {
+    margin: 0;
     color: var(--text-color);
+    max-width: 300px;
+    word-break: break-word;
+}
+.browse-cards-block-title .tooltip-placeholder {
+    display: inline-block;
 }
 .browse-cards-block-view a {
     font-size: 18px;
     line-height: 17px;
     margin: 2px 0 0 0;
 }
+.browse-cards-block-content > div:first-child .browse-card .bookmark .exl-tooltip-label,
+.browse-cards-block-content > div:first-child .browse-card .copy-link .exl-tooltip-label {
+  left: 100%;
+  transform: translateX(-20%);
+}
+.browse-cards-block-content > div:first-child .browse-card .bookmark .exl-tooltip-label::after,
+.browse-cards-block-content > div:first-child .browse-card .copy-link .exl-tooltip-label::after {
+  left: 10%;
+}
+.browse-cards-block-content > div:first-child .browse-card .bookmark + .copy-link .exl-tooltip-label {
+  left: 50%;
+  transform: translateX(-50%);
+}
+.browse-cards-block-content > div:first-child .browse-card .bookmark + .copy-link .exl-tooltip-label::after {
+  left: 50%;
+}
 @media only screen and (min-width: 600px) {
+    .browse-cards-block-title :where(h2,.h2) {
+        max-width: unset;
+    }
     .browse-cards-block-content {
         gap: 25px;
         overflow-x: auto;

@@ -3,6 +3,7 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { CONTENT_TYPES, ROLE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import SolutionDataService from '../../scripts/data-service/solutions-data-service.js';
 import { solutionsUrl } from '../../scripts/urls.js';
@@ -16,20 +17,25 @@ const DEFAULT_OPTIONS = Object.freeze({
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
-  const headingElement = block.querySelector('div:nth-child(1) > div');
-  const descriptionElement = block.querySelector('div:nth-child(2) > div');
-  const contentType = block.querySelector('div:nth-child(3) > div')?.textContent?.trim()?.toLowerCase();
-  const linkTextElement = block.querySelector('div:nth-child(4) > div');
+  // Extracting elements from the block
+  const [headingElement, descriptionElement, confContentType, linkTextElement] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
+
+  const contentType = confContentType.textContent.trim().toLowerCase();
+
   const noOfResults = 16;
+
+  headingElement.firstElementChild?.classList.add('h2');
 
   block.innerHTML = '';
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
-        <h2>${headingElement?.textContent.trim()}</h2>
+        ${headingElement.innerHTML}
       </div>
       <div class="browse-card-description-text">
-        <p>${descriptionElement?.textContent.trim()}</p>
+        ${descriptionElement.innerHTML}
       </div>
       <div class="browse-card-dropdown">
         <p>Tell us about yourself</p>
@@ -109,7 +115,7 @@ export default async function decorate(block) {
 
     const contentTypes = contentTypesToFilter.split(',').map((type) => {
       const trimmedType = type.trim().toUpperCase();
-      return CONTENT_TYPES[trimmedType].LABEL;
+      return CONTENT_TYPES[trimmedType]?.LABEL;
     });
 
     for (let i = 0; i < Math.min(4, data.length); i += 1) {
@@ -153,7 +159,7 @@ export default async function decorate(block) {
           for (let i = 0; i < Math.min(4, data.length); i += 1) {
             const cardData = data[i];
             const cardDiv = document.createElement('div');
-            buildCard(cardDiv, cardData);
+            buildCard(contentDiv, cardDiv, cardData);
             contentDiv.appendChild(cardDiv);
           }
           decorateIcons(block);
@@ -169,7 +175,7 @@ export default async function decorate(block) {
   fetchDataAndRenderBlock(param, contentType, block, contentDiv);
 
   const linkDiv = htmlToElement(`
-    <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
+    <div class="browse-cards-block-view">${linkTextElement.innerHTML}</div>
   `);
   block.appendChild(contentDiv);
   block.appendChild(linkDiv);
@@ -201,4 +207,7 @@ export default async function decorate(block) {
     /* eslint-disable-next-line */
     fetchDataAndRenderBlock(param, contentType, block, contentDiv);
   });
+
+  /* Hide Tooltip while scrolling the cards layout */
+  hideTooltipOnScroll(contentDiv);
 }
