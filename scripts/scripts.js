@@ -495,10 +495,10 @@ export function rewriteDocsPath(docsPath) {
 }
 
 /**
- * Helper function thats lists
- * - all products below <lang>/browse/<product-page>
- * - To get listed that have to be published
- * - Products pages listed in <lang>/browse/top-products are put at the the top
+ * Helper function thats returns a list of all products
+ * - below <lang>/browse/<product-page>
+ * - To get added, the product page must be published
+ * - Product pages listed in <lang>/browse/top-products are put at the the top
  *   in the order they appear in top-products
  */
 export async function getProducts() {
@@ -516,15 +516,15 @@ export async function getProducts() {
   const publishedProducts = publishedPages.filter(
     (page) => page.path.startsWith(`/${lang}/browse`) && page.path.split('/').length === 4,
   );
-  // start final list by adding all published top products in order
+  // add all published top products to final list
   const finalProducts = topProducts.filter((topProduct) => {
     // check if top product is in published list
     const found = publishedProducts.find((elem) => elem.path === topProduct.path);
     if (found) {
       // keep original title if no nav title is set
-      if (!topProduct.title) {
-        topProduct.title = found.title;
-      }
+      if (!topProduct.title) topProduct.title = found.title;
+      // set marker for featured product
+      topProduct.featured = true;
       // remove it from publishedProducts list
       publishedProducts.splice(publishedProducts.indexOf(found), 1);
       return true;
@@ -534,7 +534,7 @@ export async function getProducts() {
 
   // sort the rest of published products alphabetically
   publishedProducts.sort((productA, productB) => productA.path.localeCompare(productB.path));
-  // append alpha sorted published products to published top products to get final list
+  // append  remainin gpublished products to final list
   finalProducts.push(...publishedProducts);
   return finalProducts;
 }

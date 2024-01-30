@@ -41,17 +41,17 @@ function getPathUntilLevel(originalUrl, levels) {
 }
 
 // Function to handle "View More" click
-function handleViewMoreClick(block) {
+function handleViewMoreClick(block, numFeaturedProducts) {
   const itemList = block.querySelectorAll('.products > li > ul > li');
-  toggleItemVisibility(itemList, 12, true);
+  toggleItemVisibility(itemList, numFeaturedProducts, true);
   setLinkVisibility(block, '.viewMoreLink', false);
   setLinkVisibility(block, '.viewLessLink', true);
 }
 
 // Function to handle "View Less" click
-function handleViewLessClick(block) {
+function handleViewLessClick(block, numFeaturedProducts) {
   const itemList = block.querySelectorAll('.products > li > ul > li');
-  toggleItemVisibility(itemList, 12, false);
+  toggleItemVisibility(itemList, numFeaturedProducts, false);
   setLinkVisibility(block, '.viewMoreLink', true);
   setLinkVisibility(block, '.viewLessLink', false);
 }
@@ -60,7 +60,6 @@ function handleViewLessClick(block) {
 export default async function decorate(block) {
   const theme = getMetadata('theme');
   const label = getMetadata('og:title');
-  const MAX_VISIBLE_ITEMS = 12;
 
   const results = await ffetch('/browse-index.json').all();
   let currentPagePath = getEDSLink(window.location.pathname);
@@ -116,10 +115,12 @@ export default async function decorate(block) {
       productsUL.append(productsLI);
       block.append(productsUL);
 
-      toggleItemVisibility(ul.children, 12, false);
+      // get number of featured products
+      const numFeaturedProducts = productList.filter((elem) => elem.featured).length;
+      toggleItemVisibility(ul.children, numFeaturedProducts, false);
 
       // "View More" and "View Less" links
-      if (ul.children.length > MAX_VISIBLE_ITEMS) {
+      if (ul.children.length > numFeaturedProducts) {
         const viewMoreLI = document.createElement('li');
         viewMoreLI.classList.add('left-rail-view-more', 'view-more-less');
         viewMoreLI.innerHTML = `<span class="viewMoreLink"> + ${placeholders.viewMore}</span>`;
@@ -131,8 +132,8 @@ export default async function decorate(block) {
         ul.append(viewLessLI);
 
         // Event listeners for "View More" and "View Less" links
-        block.querySelector('.viewMoreLink').addEventListener('click', () => handleViewMoreClick(block));
-        block.querySelector('.viewLessLink').addEventListener('click', () => handleViewLessClick(block));
+        block.querySelector('.viewMoreLink').addEventListener('click', () => handleViewMoreClick(block, numFeaturedProducts));
+        block.querySelector('.viewLessLink').addEventListener('click', () => handleViewLessClick(block, numFeaturedProducts));
       }
     }
   }
