@@ -33,19 +33,14 @@ function getSignInButton(signInText) {
 export default async function decorate(block) {
   block.style.display = 'none';
 
-  let adobeIMS = {
-    isSignedInUser: () => false,
-  };
-
   try {
     await loadIms();
-    adobeIMS = window.adobeIMS;
   } catch {
     // eslint-disable-next-line no-console
     console.warn('Adobe IMS not available.');
   }
 
-  const isUserSignedIn = adobeIMS?.isSignedInUser();
+  const isUserSignedIn = window.adobeIMS?.isSignedInUser();
 
   if (!isUserSignedIn) {
     block.style.display = 'block';
@@ -55,10 +50,10 @@ export default async function decorate(block) {
     const subjectPicture = img.querySelector('picture');
     const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
     const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
-    const signInText = firstCtaText.textContent.trim();
+    const signInText = firstCtaText.textContent?.trim();
 
     // build sign in button if not in yet and button text is set
-    const firstCta = signInText && !isUserSignedIn ? getSignInButton(signInText) : null;
+    const firstCta = signInText ? getSignInButton(signInText) : null;
 
     // Build DOM
     const signupDOM = document.createRange().createContextualFragment(`
