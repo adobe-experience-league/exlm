@@ -1011,14 +1011,6 @@
         "description": "Text to be shown inside button."
       },
       {
-        "component": "text-input",
-        "valueType": "string",
-        "name": "cta1",
-        "value": "",
-        "label": "First CTA Link",
-        "description": "What link to open when clicking the button."
-      },
-      {
         "component": "select",
         "name": "cta2Type",
         "value": "primary",

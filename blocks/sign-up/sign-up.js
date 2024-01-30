@@ -19,6 +19,17 @@ function decorateButtons(...buttons) {
     .join('');
 }
 
+function getSignInButton(signInText) {
+  const secondCta = document.createElement('div');
+  const link = document.createElement('a');
+  link.classList.add('signin');
+  link.setAttribute('href', '#');
+  link.setAttribute('title', signInText);
+  link.textContent = signInText;
+  secondCta.append(link);
+  return secondCta;
+}
+
 export default async function decorate(block) {
   block.style.display = 'none';
 
@@ -40,10 +51,12 @@ export default async function decorate(block) {
     block.style.display = 'block';
     // Extract properties
     // always same order as in model, empty string if not set
-    const [img, eyebrow, title, longDescr, firstCta, secondCta] = block.querySelectorAll(':scope div > div');
+    const [img, eyebrow, title, longDescr, firstCtatext, secondCta] = block.querySelectorAll(':scope div > div');
     const subjectPicture = img.querySelector('picture');
     const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
     const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
+
+    const firstCta = getSignInButton(firstCtatext.textContent?.trim());
 
     // Build DOM
     const signupDOM = document.createRange().createContextualFragment(`
@@ -82,7 +95,7 @@ export default async function decorate(block) {
 
     if (signUpBtn) {
       signUpBtn.addEventListener('click', async () => {
-        adobeIMS.signIn();
+        window.adobeIMS.signIn();
       });
     }
   } else {
