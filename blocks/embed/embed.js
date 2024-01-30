@@ -17,7 +17,7 @@ const loadScript = (url, callback, type) => {
 };
 
 const getDefaultEmbed = (url) => `<div class="embed-video">
-    <iframe id="video-frame" src="${url.href}" style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" allowfullscreen=""
+    <iframe src="${url.href}" style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" allowfullscreen=""
       scrolling="no" allow="encrypted-media" title="Content from ${url.hostname}" loading="lazy">
     </iframe>
   </div>`;
@@ -50,15 +50,13 @@ const loadEmbed = (block, link, autoplay) => {
     block.classList = 'block embed';
   }
   block.classList.add('embed-is-loaded');
-  const frame = document.querySelector('#video-frame');
-  const script = frame.contentWindow.document.querySelector('script[src="https://images-tv.adobe.com/cdn/mpc/build/v3_270_4/js/v-player.js"]')
-  script.setAttribute('defer', 'defer');
 };
 
 export default function decorate(block) {
   const placeholder = block.querySelector('picture');
   const link = block.querySelector('a').href;
   block.textContent = '';
+
   if (placeholder) {
     const wrapper = document.createElement('div');
     wrapper.className = 'embed-placeholder';
@@ -72,7 +70,7 @@ export default function decorate(block) {
     const observer = new IntersectionObserver((entries) => {
       if (entries.some((e) => e.isIntersecting)) {
         observer.disconnect();
-        loadEmbed(block, link);      
+        loadEmbed(block, link);
       }
     });
     observer.observe(block);
