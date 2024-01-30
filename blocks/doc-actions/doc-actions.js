@@ -120,7 +120,7 @@ function decorateCopyLink(block) {
 }
 
 async function getTranslatedDocContent() {
-  const docPath = `/en/${window.location.pathname.replace(/^(?:[^\/]*\/){2}\s*/, '')}`;
+  const docPath = `/en/${window.location.pathname.replace(/^(?:[^/]*\/){2}\s*/, '')}`;
   const docResponse = await fetch(`${docPath}.plain.html`);
   const translatedDoc = await docResponse.text();
   const docElement = htmlToElement(`<div>${translatedDoc}</div>`);
