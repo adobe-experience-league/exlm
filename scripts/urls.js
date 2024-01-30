@@ -12,4 +12,4 @@ export const tocUrl = 'https://experienceleague.adobe.com/api/tocs/';
 export const adlsRedirectUrl = 'https://learning.adobe.com';
 export const pathsUrl = `https://experienceleague.adobe.com/api/paths`;
 export const exlmCDNUrl = 'https://cdn.experienceleague.adobe.com';
-export const communityProfileUrl = 'https://run.mocky.io/v3/58a07a75-9991-4a79-8244-0c1d83bf8d37';
+export const communityProfileUrl = 'https://run.mocky.io/v3/6899dc91-2678-41b1-863c-04ade68610cc'; // replace with Khoros public endpoint
