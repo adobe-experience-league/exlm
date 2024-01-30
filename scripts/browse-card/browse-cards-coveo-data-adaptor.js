@@ -59,7 +59,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       product = el_solution && (Array.isArray(el_solution) ? el_solution : el_solution.split(/,\s*/));
     }
     const tags = createTags(result, contentType.toLowerCase());
-    let url = parentResult?.clickableuri || parentResult?.uri || clickUri || uri || '';
+    let url = parentResult?.clickUri || parentResult?.uri || clickUri || uri || '';
     url = rewriteDocsPath(url, true);
 
     return {
