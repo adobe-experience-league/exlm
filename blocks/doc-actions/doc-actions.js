@@ -144,17 +144,26 @@ async function toggleContent(isChecked, docContainer) {
 }
 
 function decorateLanguageToggle(block) {
-  const languageToggleElement = createTag('div', { class: 'doc-mt-toggle' }, '<input type="checkbox">');
-  addToDocActions(languageToggleElement, block);
-  const desktopAndMobileLangToggles = document.querySelectorAll('.doc-mt-toggle input');
-  const docContainer = document.querySelector('main > div:first-child');
+  if (
+    document.querySelector('meta[name="ht-degree"]') &&
+    ((document.querySelector('meta[name="ht-degree"]') || {}).content || '').trim() !== '100%'
+  ) {
+    const languageToggleElement = createTag(
+      'div',
+      { class: 'doc-mt-toggle' },
+      `<span>${placeholders.automaticTranslation}</span><input type="checkbox">`,
+    );
+    addToDocActions(languageToggleElement, block);
+    const desktopAndMobileLangToggles = document.querySelectorAll('.doc-mt-toggle input');
+    const docContainer = document.querySelector('main > div:first-child');
 
-  [...desktopAndMobileLangToggles].forEach((langToggle) => {
-    langToggle.addEventListener('change', async (e) => {
-      const { checked } = e.target;
-      await toggleContent(checked, docContainer);
+    [...desktopAndMobileLangToggles].forEach((langToggle) => {
+      langToggle.addEventListener('change', async (e) => {
+        const { checked } = e.target;
+        await toggleContent(checked, docContainer);
+      });
     });
-  });
+  }
 }
 
 export default async function decorateDocActions(block) {

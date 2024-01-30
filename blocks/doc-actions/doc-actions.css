@@ -115,6 +115,7 @@
 
 .doc-actions .doc-mt-toggle {
   flex-basis: 100%;
+  display: flex;
 }
 
 .doc-actions .doc-mt-toggle input[type="checkbox"] {
