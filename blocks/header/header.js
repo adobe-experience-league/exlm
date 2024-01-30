@@ -518,6 +518,15 @@ const productGridDecorator = async (productGridBlock) => {
   return productGridBlock;
 };
 
+const getCommunityProfile = () => new Promise((resolve, reject) => {
+    const data = fetchCommunityProfileData();
+    if(data){
+      resolve(data);
+    } else{
+      reject(new Error('Error fetching data!!'));
+    }
+});
+
 /**
  * Decorates the profile-menu block
  * @param {HTMLElement} profileMenu
@@ -539,16 +548,23 @@ const profileMenuDecorator = async (profileMenuBlock) => {
       profileMenuWrapper.lastElementChild.setAttribute('data-id', 'sign-out');
       profileMenuWrapper.insertBefore(communityHeading, profileMenuWrapper.lastElementChild);
     }
-
-    // const adobeIMSAccessToken = await adobeIMS?.getAccessToken().token;
-    const fcpd = await fetchCommunityProfileData('124'); // replace with adobeIMSAccessToken
-
-    fcpd.data.menu.forEach((item) => {
-      const communityProfile = document.createElement('a');
-      communityProfile.href = item.url;
-      communityProfile.textContent = item.title;
-      profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
-    });
+    getCommunityProfile()
+      .then((res) => {
+        if (res) {
+          res.data.menu.forEach((item) => {
+            if (item.title && item.url) {
+              const communityProfile = document.createElement('a');
+              communityProfile.href = item.url;
+              communityProfile.textContent = item.title;
+              profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        /* eslint-disable-next-line no-console */
+        console.error(err);
+      });
 
     if (profileMenuWrapper.querySelector('[data-id="sign-out"]')) {
       profileMenuWrapper.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {

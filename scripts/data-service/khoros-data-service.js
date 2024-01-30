@@ -1,12 +1,12 @@
 import { communityProfileUrl } from '../urls.js';
 
 // eslint-disable-next-line
-export async function fetchCommunityProfileData(imsToken) {
+export async function fetchCommunityProfileData() {
   try {
     const response = await fetch(communityProfileUrl, {
       method: 'GET',
       headers: {
-        'x-ims-token': imsToken,
+        'x-ims-token': '124', // replace with await window.adobeIMS?.getAccessToken().token
       },
     });
 

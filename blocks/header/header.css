@@ -943,7 +943,6 @@ header {
 .header .profile-menu,
 .header .product-dropdown,
 .header .product-dropdown a span {
-  /* stylelint-disable-next-line */
   display: none;
 }
 .header .profile-menu h2{
