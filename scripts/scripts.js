@@ -503,8 +503,7 @@ export function rewriteDocsPath(docsPath) {
  */
 export async function getProducts() {
   // get the language from url
-  const currentPath = getEDSLink(document.location.pathname);
-  const pathParts = currentPath.split('/');
+  const pathParts = getEDSLink(document.location.pathname).split('/');
   const lang = locales.has(pathParts[1]) ? pathParts[1] : 'en';
 
   // load the <lang>/top_product list
