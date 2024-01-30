@@ -5,7 +5,7 @@ export default async function decorate(block) {
   while (wrapperEl.querySelector(':scope > h3') !== null) {
     const header = wrapperEl.querySelector(':scope > h3');
     const contents = wrapperEl.querySelector(':scope > ul');
-    const container = createTag('div', { class: 'cloud-solutions-list-container' });
+    const container = createTag('div', { class: 'cloud-solutions-list' });
     container.appendChild(header);
     container.appendChild(contents);
     const target = wrapperEl.querySelector(':scope > ul')?.previousElementSibling;
@@ -18,15 +18,15 @@ export default async function decorate(block) {
 
   const header = wrapperEl.querySelector(':scope > h2');
   const contents = [header.nextElementSibling];
-  while (contents[contents.length - 1]?.nextElementSibling?.classList?.contains('cloud-solutions-list-container')) {
+  while (contents[contents.length - 1]?.nextElementSibling?.classList?.contains('cloud-solutions-list')) {
     contents.push(contents[contents.length - 1]?.nextElementSibling);
   }
-  const container = createTag('div', { class: 'cloud-solutions-list' });
-  const listWrapper = createTag('div', { class: 'cloud-solutions-list-item' });
+  const container = createTag('div', { class: 'cloud-solutions-container' });
+  const contentWrapper = createTag('div', { class: 'cloud-solutions-content' });
   container.appendChild(header);
   contents.forEach((content) => {
-    listWrapper.appendChild(content);
+    contentWrapper.appendChild(content);
   });
-  container.appendChild(listWrapper);
+  container.appendChild(contentWrapper);
   wrapperEl.appendChild(container);
 }

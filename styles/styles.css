@@ -163,7 +163,6 @@ strong {
   --spectrum-font-size-800: 32px;
   --spectrum-font-size-900: 36px;
   --spectrum-font-size-1000: 40px;
-  --spectrum-font-size-1050: 44px;
   --spectrum-font-size-1100: 45px;
   --spectrum-font-size-1200: 50px;
   --spectrum-font-size-1300: 60px;
@@ -931,17 +930,6 @@ main > div.browse-rail {
   box-sizing: border-box;
   max-width: 1700px;
 }
-
-.docs.docs-landing main {
-  margin: 0 12px;
-  padding-top: 24px;
-  width: auto;
-}
-
-.docs.docs-solution-landing main {
-  padding: 0 58px;
-}
-
 .docs main > div {
   padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500) var(--spectrum-spacing-500);
   box-sizing: border-box;
@@ -977,16 +965,6 @@ main > div.browse-rail {
   order: 3;
   padding: 32px 10px 0 0;
 }
-
-.docs.docs-solution-landing main .default-content-wrapper h1 {
-  font-size: var(--spectrum-font-size-1050);
-  line-height: var(--spectrum-line-height-xxxl);
-}
-
-.docs.docs-solution-landing .section > div.default-content-wrapper {
-  max-width: 100%;
-}
-
 @media (min-width: 600px) {
   .docs main > .div:nth-child(1) {
     position: relative;
@@ -998,11 +976,6 @@ main > div.browse-rail {
   }
   .docs main > div:last-child {
     padding: 32px 10px 10px 0;
-  }
-
-  .docs.docs-landing main {
-    padding: 28px 68px 48px 80px;
-    margin: 0 4rem;
   }
 }
 @media (min-width: 900px) {
@@ -1032,6 +1005,38 @@ main > div.browse-rail {
     gap: 8px;
     padding: 46px 10px 10px 0;
   }
+  .docs main > div:last-child.mini-toc-container {
+    display: flex;
+  }
+  .docs main > div {
+    border-right: 1px solid #eaeaea;
+  }
+}
+.docs.docs-landing main {
+  margin: 0 12px;
+  padding-top: 24px;
+  width: auto;
+}
+.docs.docs-solution-landing main {
+  padding: 0 58px;
+}
+.docs.docs-solution-landing main .default-content-wrapper h1 {
+  font-size: 44px; /* This font is not avaliable in spectrum so we are hardcoding it */
+  line-height: var(--spectrum-line-height-xxxl);
+}
+.docs.docs-solution-landing main .section > div.default-content-wrapper {
+  max-width: 100%;
+}
+.docs.docs-solution-landing main .section > div.breadcrumbs-wrapper {
+  margin-left: 0;
+}
+@media (min-width: 600px) {
+  .docs.docs-landing main {
+    padding: 28px 68px 48px 80px;
+    margin: 0 4rem;
+  }
+}
+@media (min-width: 900px) {
   .docs.docs-landing main {
     padding: 34px 28px 48px 70px;
     margin: 0 4rem;
@@ -1042,11 +1047,5 @@ main > div.browse-rail {
   .docs.docs-solution-landing main > div:first-child {
     margin: 0 56px;
     padding: 54px 47px 50px 60px;
-  }
-  .docs main > div:last-child.mini-toc-container {
-    display: flex;
-  }
-  .docs main > div {
-    border-right: 1px solid #eaeaea;
   }
 }
