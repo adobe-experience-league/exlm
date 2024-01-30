@@ -9,5 +9,6 @@ mappings:
   # force load some paths as resource from codebus in the editor (sw.js)
   - /content/exlm.resource/fragments/:/fragments/
   - /content/exlm.resource/docs/:/docs/
+  - /content/exlm.resource/browse-index.json:/browse-index.json
 includes:
   - /content/exlm/
