@@ -16,6 +16,7 @@ import {
   getMetadata,
   loadScript,
 } from './lib-franklin.js';
+import ffetch from './ffetch.js';
 
 const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
 
@@ -471,4 +472,49 @@ export function getLink(edsPath) {
   return window.hlx.aemRoot && !edsPath.startsWith(window.hlx.aemRoot) && edsPath.indexOf('.html') === -1
     ? `${window.hlx.aemRoot}${edsPath}.html`
     : edsPath;
+}
+
+/**
+ * Helper function thats lists
+ * - all products below <lang>/browse/<product-page>
+ * - To get listed that have to be published 
+ * - Products pages listed in <lang>/browse/top-products are put at the the top
+ *   in the order they appear in top-products
+ */
+export async function getProducts() {
+
+  // get the language from url
+  const currentPath = getEDSLink(document.location.pathname);
+  const pathParts = currentPath.split('/');
+  const lang = locales.has(pathParts[1]) ? pathParts[1] : 'en';
+
+  // load the <lang>/top_product list
+  const topProducts = await ffetch(`/${lang}/top-products.json`).all();
+  // load list of published product pages (all languages)
+  const publishedPages = await ffetch('/browse-index.json').all();
+
+  // keep only published product pages in current language
+  const publishedProducts = publishedPages
+    .filter((page) => page.path.startsWith(`/${lang}/browse`) && page.path.split('/').length === 4);
+  // start final list by adding all published top products in order
+  const finalProducts = topProducts.filter((topProduct) => {
+    // check if top product is in published list
+    const found = publishedProducts.find((elem) => elem.path === topProduct.path);
+    if (found) {
+      // keep original title if no nav title is set
+      if (!topProduct.title) {
+        topProduct.title = found.title;
+      }
+      // remove it from publishedProducts list
+      publishedProducts.splice(publishedProducts.indexOf(found),1)
+      return true;
+    }
+    return false;
+  })
+
+  // sort the rest of published products alphabetically
+  publishedProducts.sort((productA, productB) => productA.path.localeCompare(productB.path));
+  // append alpha sorted published products to published top products to get final list
+  finalProducts.push(...publishedProducts);
+  return finalProducts;
 }

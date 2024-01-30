@@ -1,7 +1,7 @@
 import ffetch from '../../scripts/ffetch.js';
 import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { filterSubPages, convertToMultiMap, convertToULList, sortFirstLevelList } from './browse-rail-utils.js';
-import { getEDSLink, getLink } from '../../scripts/scripts.js';
+import { getEDSLink, getLink, getProducts } from '../../scripts/scripts.js';
 
 // Utility function to toggle visibility of items
 function toggleItemVisibility(itemList, startIndex, show) {
@@ -96,25 +96,17 @@ export default async function decorate(block) {
     block.append(browseByUL);
 
     // Products
-    const directChildNodes = results.filter((item) => {
-      const pathParts = item.path.split('/');
-      return pathParts.length === 4 && pathParts[2] === currentPagePath.split('/')[2];
-    });
+    const productList = await getProducts();
 
-    if (directChildNodes.length > 0) {
+    if (productList.length > 0) {
       const productsUL = document.createElement('ul');
       productsUL.classList.add('products');
       const productsLI = document.createElement('li');
       productsLI.innerHTML = `<span>${placeholders.products}</span><span class="js-toggle"></span>`;
 
       const ul = document.createElement('ul');
-      const sortedResults = directChildNodes.sort((a, b) => {
-        const titleA = a.title.toLowerCase();
-        const titleB = b.title.toLowerCase();
-        return titleA.localeCompare(titleB);
-      });
 
-      sortedResults.forEach((item) => {
+      productList.forEach((item) => {
         const li = document.createElement('li');
         li.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
         ul.appendChild(li);
