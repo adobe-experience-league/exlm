@@ -497,12 +497,11 @@ export function rewriteDocsPath(docsPath) {
 /**
  * Helper function thats lists
  * - all products below <lang>/browse/<product-page>
- * - To get listed that have to be published 
+ * - To get listed that have to be published
  * - Products pages listed in <lang>/browse/top-products are put at the the top
  *   in the order they appear in top-products
  */
 export async function getProducts() {
-
   // get the language from url
   const currentPath = getEDSLink(document.location.pathname);
   const pathParts = currentPath.split('/');
@@ -514,8 +513,9 @@ export async function getProducts() {
   const publishedPages = await ffetch('/browse-index.json').all();
 
   // keep only published product pages in current language
-  const publishedProducts = publishedPages
-    .filter((page) => page.path.startsWith(`/${lang}/browse`) && page.path.split('/').length === 4);
+  const publishedProducts = publishedPages.filter(
+    (page) => page.path.startsWith(`/${lang}/browse`) && page.path.split('/').length === 4,
+  );
   // start final list by adding all published top products in order
   const finalProducts = topProducts.filter((topProduct) => {
     // check if top product is in published list
@@ -526,11 +526,11 @@ export async function getProducts() {
         topProduct.title = found.title;
       }
       // remove it from publishedProducts list
-      publishedProducts.splice(publishedProducts.indexOf(found),1)
+      publishedProducts.splice(publishedProducts.indexOf(found), 1);
       return true;
     }
     return false;
-  })
+  });
 
   // sort the rest of published products alphabetically
   publishedProducts.sort((productA, productB) => productA.path.localeCompare(productB.path));
