@@ -138,7 +138,7 @@ export function linkClickModel(e) {
 
   let linkType = 'other';
 
-  if (e.target.href.match(/.(pdf|zip|dmg|exe)$/)) {
+  if (!viewMoreLess && e.target.href.match(/.(pdf|zip|dmg|exe)$/)) {
     linkType = 'download';
   } else if (viewMoreLess) {
     linkType = 'view more/less';
