@@ -17,6 +17,8 @@ import {
   loadScript,
 } from './lib-franklin.js';
 import ffetch from './ffetch.js';
+// eslint-disable-next-line import/no-cycle
+import { getCurrentLanguage } from './language.js';
 
 const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
 
@@ -504,10 +506,8 @@ export function rewriteDocsPath(docsPath) {
  *   in the order they appear in top-products
  */
 export async function getProducts() {
-  // get the language from url
-  const pathParts = getEDSLink(document.location.pathname).split('/');
-  // if valid language otherwise fallback to en
-  const lang = locales.has(pathParts[1]) ? pathParts[1] : 'en';
+  // get language
+  const lang = getCurrentLanguage();
 
   // load the <lang>/top_product list
   const topProducts = await ffetch(`/${lang}/top-products.json`).all();
