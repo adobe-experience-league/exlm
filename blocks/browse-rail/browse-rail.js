@@ -61,7 +61,8 @@ export default async function decorate(block) {
   const theme = getMetadata('theme');
   const label = getMetadata('og:title');
 
-  const results = await ffetch('/browse-index.json').all();
+  // TODO - update with language
+  const results = await ffetch('/en/browse-index.json').all();
   let currentPagePath = getEDSLink(window.location.pathname);
   // For browse-rail in AEM Author
   if (currentPagePath.includes('/content')) {

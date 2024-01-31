@@ -170,8 +170,13 @@ export default async function decorate(block) {
   // Checking if the user is signed in before proceeding
   if (isSignedIn) {
     if (headingElement.firstElementChild) {
-      if (toolTipElement.textContent.trim()) {
+      if (toolTipElement?.textContent?.trim()) {
         headingElement.firstElementChild.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+        const tooltipElem = headingElement.querySelector('.tooltip-placeholder');
+        const tooltipConfig = {
+          content: toolTipElement.textContent.trim(),
+        };
+        createTooltip(block, tooltipElem, tooltipConfig);
       }
       headingElement.firstElementChild.classList.add('h2');
     }
@@ -185,14 +190,6 @@ export default async function decorate(block) {
   `);
     // Appending header div to the block
     block.appendChild(headerDiv);
-
-    const tooltipElem = block.querySelector('.tooltip-placeholder');
-    if (tooltipElem) {
-      const tooltipConfig = {
-        content: toolTipElement.textContent.trim(),
-      };
-      createTooltip(block, tooltipElem, tooltipConfig);
-    }
 
     await decorateIcons(headerDiv);
 

@@ -1,6 +1,7 @@
 import { fetchPlaceholders } from '../lib-franklin.js';
 import { updateProfile } from '../data-service/profile-service.js';
 import { sendNotice } from '../toast/toast.js';
+import { assetInteractionModel } from '../analytics/lib-analytics.js';
 
 let placeholders = {};
 try {
@@ -30,6 +31,7 @@ const renderBookmark = (labelSel, iconSel, id) => {
       setTimeout(() => {
         iconSel.style.pointerEvents = 'auto';
       }, 3000);
+      assetInteractionModel(id, 'Bookmark');
     });
   }
 };
