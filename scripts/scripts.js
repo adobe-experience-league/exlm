@@ -507,7 +507,6 @@ export async function getProducts() {
   // if valid language otherwise fallback to en
   const lang = locales.has(pathParts[1]) ? pathParts[1] : 'en';
 
-  console.log(lang);
   // load the <lang>/top_product list
   const topProducts = await ffetch(`/${lang}/top-products.json`).all();
   // get all indexed pages below <lang>/browse
