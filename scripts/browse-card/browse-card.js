@@ -260,7 +260,7 @@ const buildCardContent = (card, model) => {
     copyLinkElem.innerHTML = tooltipTemplate('copy-icon', '', `${placeholders.toastTiptext}`);
     cardOptions.appendChild(copyLinkElem);
     copyLinkElem.setAttribute('data-link', copyLink);
-    if (isSignedIn && id) {
+    if (id) {
       copyLinkElem.setAttribute('data-id', id);
     }
   }
