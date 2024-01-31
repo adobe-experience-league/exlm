@@ -4,7 +4,8 @@ import { signOut } from '../../scripts/auth/auth-operations.js';
 import Search from '../../scripts/search/search.js';
 import { registerResizeHandler } from './header-utils.js';
 import { fetchCommunityProfileData } from '../../scripts/data-service/khoros-data-service.js';
-import { buildLanguagePopover, getLanguagePath, loadLanguageFragment } from '../../scripts/language.js';
+
+const languageModule = import('../../scripts/language.js');
 
 /**
  * @param {HTMLElement} block
@@ -56,7 +57,7 @@ const fetchFragment = async (rePath, lang = 'en') => {
 const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
 const headerFragment = fetchFragment('header/header');
-loadLanguageFragment(); // pre-fetch language fragment
+languageModule.then(({ loadLanguageFragment }) => loadLanguageFragment());
 const decoratorState = {};
 
 /**
@@ -108,10 +109,11 @@ const hamburgerButton = (navWrapper) => {
  * Builds nav items from the provided basic list
  * @param {HTMLUListElement} ul
  */
-const buildNavItems = (ul, level = 0) => {
+const buildNavItems = async (ul, level = 0) => {
   if (level === 0) {
     // add search link (visible on mobile only)
     ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
+    const { getLanguagePath } = await languageModule;
     // add language select (visible on mobile only)
     ul.appendChild(
       htmlToElement(
@@ -361,9 +363,12 @@ const languageDecorator = async (languageBlock) => {
   decoratorState.languageTitle = title;
 
   const prependLanguagePopover = async (parent) => {
-    const { popover, languages } = await buildLanguagePopover();
-    decoratorState.languages = languages;
-    parent.append(popover);
+    await languageModule.then(({ buildLanguagePopover }) => {
+      buildLanguagePopover().then(({ popover, languages }) => {
+        decoratorState.languages = languages;
+        parent.append(popover);
+      });
+    });
   };
 
   const languageHtml = `
