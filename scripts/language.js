@@ -12,7 +12,7 @@ export const loadLanguageFragment = async () => {
           resolve(text);
         });
     });
-  loadCSS('/styles/language.css');
+  loadCSS(`${window.hlx.codeBasePath}/styles/language.css`);
   return languagePromise;
 };
 
