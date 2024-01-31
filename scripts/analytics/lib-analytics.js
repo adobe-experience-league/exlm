@@ -126,6 +126,7 @@ export function pageLoadModel() {
       },
     },
     user,
+    userGUID: user.userDetails.userID,
   };
 }
 
