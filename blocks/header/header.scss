@@ -882,60 +882,6 @@ header {
     }
   }
 
-  // language selector
-  .language-selector {
-    grid-area: language;
-    display: var(--language-selector-display);
-    align-items: center;
-    padding: 0;
-    position: relative;
-
-    .icon {
-      height: 18px;
-      width: 18px;
-    }
-
-    .language-selector-button {
-      @include button-reset;
-
-      padding: 15px;
-      position: relative;
-      top: 2px;
-    }
-
-    .language-selector-popover {
-      background: var(--non-spectrum-bg);
-      box-shadow: 0 8px 8px rgba(10 10 10 / 10%);
-      display: none;
-      left: 50%;
-      width: 120px;
-      position: absolute;
-      transform: translate(-50%, 0);
-      top: 64px;
-      z-index: 10;
-
-      .language-selector-label {
-        cursor: pointer;
-        display: block;
-        font-size: var(--spectrum-font-size-100);
-        padding: 5px 15px;
-        margin: 0;
-
-        &:hover {
-          background: var(--non-spectrum-hover-bg);
-        }
-      }
-    }
-
-    &:hover {
-      background: var(--non-spectrum-bg);
-
-      & .language-selector-popover {
-        display: block;
-      }
-    }
-  }
-
   // adobe logo
   .adobe-logo {
     grid-area: adobe-logo;
