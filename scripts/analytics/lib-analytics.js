@@ -137,16 +137,12 @@ export function linkClickModel(e) {
   }
 
   let linkType = 'other';
-
+  let name = e.target.innerHTML;
+  let destinationDomain = e.target.href;
   if (!viewMoreLess && e.target.href.match(/.(pdf|zip|dmg|exe)$/)) {
     linkType = 'download';
   } else if (viewMoreLess) {
     linkType = 'view more/less';
-  }
-
-  let name = e.target.innerHTML;
-  let destinationDomain = e.target.href;
-  if (e.target.tagName === 'SPAN' && viewMoreLess) {
     destinationDomain = document.querySelector('.js-toggle.is-collapsed.is-open').innerHTML;
     name = 'ExperienceEventType:web.webInteraction.linkClicks';
   }
