@@ -151,7 +151,7 @@ function decorateLanguageToggle(block) {
     const languageToggleElement = createTag(
       'div',
       { class: 'doc-mt-toggle' },
-      `<span>${placeholders.automaticTranslation}</span><input type="checkbox">`,
+      `<span>${placeholders.automaticTranslation}</span><input type="checkbox"><a href="${placeholders.automaticTranslationLink}" target="_blank"><span class="icon-info"></span></a>`,
     );
     addToDocActions(languageToggleElement, block);
     const desktopAndMobileLangToggles = document.querySelectorAll('.doc-mt-toggle input');
