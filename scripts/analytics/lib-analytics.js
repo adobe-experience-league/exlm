@@ -33,7 +33,8 @@ export function pageLoadModel() {
   const user = {};
   user.userDetails = {};
   user.userDetails.userAccountType = '';
-  user.userDetails.userAuthenticatedStatus = '';
+  user.userDetails.userAuthenticatedStatus = 'unauthenticated';
+  user.userDetails.userAuthenticatedSystem = 'ims';
   user.userDetails.userID = '';
   user.userDetails.userLanguageSetting = [];
   user.userDetails.learningInterest = [];
