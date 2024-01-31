@@ -1,6 +1,10 @@
 import { loadCSS } from './lib-franklin.js';
 import { htmlToElement } from './scripts.js';
 
+/**
+ * Proccess current pathname and return details for use in language switching
+ * Considers pathnames like /en/path/to/content and /content/exl/global/en/path/to/content.html for both EDS and AEM
+ */
 export const getPathDetails = () => {
   const { pathname } = window.location;
   const extParts = pathname.split('.');
@@ -8,6 +12,8 @@ export const getPathDetails = () => {
   const isContentPath = pathname.startsWith('/content');
   const parts = pathname.split('/');
   const safeLangGet = (index) => (parts.length > index ? parts[index] : 'en');
+  // 4 is the index of the language in the path for AEM content paths like  /content/exl/global/en/path/to/content.html
+  // 1 is the index of the language in the path for EDS paths like /en/path/to/content
   let lang = isContentPath ? safeLangGet(4) : safeLangGet(1);
   // remove suffix from lang if any
   if (lang.indexOf('.') > -1) {
@@ -27,6 +33,9 @@ export const getPathDetails = () => {
 
 const pathDetails = getPathDetails();
 
+/**
+ * loads the one and only language fragment.
+ */
 export const loadLanguageFragment = async () => {
   window.languagePromise =
     window.languagePromise ||
@@ -46,6 +55,9 @@ export const getLanguagePath = (language) => {
   return `${prefix}/${language}${suffix}`;
 };
 
+/**
+ * changes current url to the new language url
+ */
 const switchLanguage = (language) => {
   const { lang } = pathDetails;
   if (lang !== language) {
@@ -53,6 +65,9 @@ const switchLanguage = (language) => {
   }
 };
 
+/**
+ * Decoration for language popover - shared between header and footer
+ */
 export const buildLanguagePopover = async (position) => {
   const popoverId = 'language-picker-popover';
   const popoverClass =
