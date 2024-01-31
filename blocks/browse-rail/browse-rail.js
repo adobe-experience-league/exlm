@@ -2,6 +2,7 @@ import ffetch from '../../scripts/ffetch.js';
 import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { filterSubPages, convertToMultiMap, convertToULList, sortFirstLevelList } from './browse-rail-utils.js';
 import { getEDSLink, getLink, getProducts } from '../../scripts/scripts.js';
+import { getCurrentLanguage } from '../../scripts/language.js';
 
 // Utility function to toggle visibility of items
 function toggleItemVisibility(itemList, startIndex, show) {
@@ -61,14 +62,9 @@ export default async function decorate(block) {
   const theme = getMetadata('theme');
   const label = getMetadata('og:title');
 
-  // TODO - update with language
-  const results = await ffetch('/en/browse-index.json').all();
-  let currentPagePath = getEDSLink(window.location.pathname);
-  // For browse-rail in AEM Author
-  if (currentPagePath.includes('/content')) {
-    const index = currentPagePath.indexOf('/global');
-    currentPagePath = currentPagePath.substring(0, index) + currentPagePath.substring(index + '/global'.length);
-  }
+  const results = await ffetch(`/${getCurrentLanguage()}/browse-index.json`).all();
+  const currentPagePath = getEDSLink(window.location.pathname);
+  
   // Find the parent page for product sub-pages
   const parentPage = results.find((page) => page.path === getPathUntilLevel(currentPagePath, 3));
   let parentPageTitle = '';
