@@ -504,14 +504,15 @@ export function rewriteDocsPath(docsPath) {
 export async function getProducts() {
   // get the language from url
   const pathParts = getEDSLink(document.location.pathname).split('/');
+  // if valid language otherwise fallback to en
   const lang = locales.has(pathParts[1]) ? pathParts[1] : 'en';
 
   // load the <lang>/top_product list
   const topProducts = await ffetch(`/${lang}/top-products.json`).all();
-  // load list of published product pages (all languages)
-  const publishedPages = await ffetch('/browse-index.json').all();
+  // get all indexed pages below <lang>/browse
+  const publishedPages = await ffetch(`${lang}/browse-index.json`).all();
 
-  // keep only published product pages in current language
+  // keep only published product pages (<lang>/browse/<product-page>)
   const publishedProducts = publishedPages.filter(
     (page) => page.path.startsWith(`/${lang}/browse`) && page.path.split('/').length === 4,
   );
