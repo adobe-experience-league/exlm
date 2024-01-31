@@ -1,11 +1,34 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
-import { signOut } from '../../scripts/auth/auth-operations.js';
 import Search from '../../scripts/search/search.js';
-import { registerResizeHandler } from './header-utils.js';
-import { fetchCommunityProfileData } from '../../scripts/data-service/khoros-data-service.js';
 
+const authOperationsModule = import('../../scripts/auth/auth-operations.js');
 const languageModule = import('../../scripts/language.js');
+const headerUtilsModule = import('./header-utils.js');
+
+// register resize handler once the util is available
+const asyncResizeHandler = async (handler) => {
+  const { registerResizeHandler } = await headerUtilsModule;
+  registerResizeHandler(handler);
+};
+
+async function fetchCommunityProfileData() {
+  try {
+    const response = await fetch('https://run.mocky.io/v3/0de19fdc-ae5e-4f65-978c-d3489279b2f7', {
+      method: 'GET',
+      headers: {
+        'x-ims-token': '124', // TODO: replace with await window.adobeIMS?.getAccessToken().token
+      },
+    });
+
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (err) {
+    // no need to throw errors
+  }
+  return null;
+}
 
 /**
  * @param {HTMLElement} block
@@ -205,7 +228,7 @@ const buildNavItems = async (ul, level = 0) => {
         }
       };
       // listen for page resize, update events accordingly
-      registerResizeHandler(() => {
+      asyncResizeHandler(() => {
         if (isMobile()) {
           // if mobile, add click event, remove mouseenter/mouseleave
           toggler.addEventListener('click', toggleExpandContent);
@@ -414,7 +437,7 @@ const signInDecorator = async (signInBlock) => {
         profileMenu.classList.remove(expandedClass);
       }
     };
-    registerResizeHandler(() => {
+    asyncResizeHandler(() => {
       if (isMobile()) {
         // if mobile, add click event, remove mouseenter/mouseleave
         toggler.addEventListener('click', toggleExpandContent);
@@ -478,7 +501,7 @@ const productGridDecorator = async (productGridBlock) => {
       }
     };
 
-    registerResizeHandler(() => {
+    asyncResizeHandler(() => {
       if (isMobile()) {
         // if mobile, hide product grid block
         gridToggler.style.display = 'none';
@@ -548,6 +571,7 @@ const profileMenuDecorator = async (profileMenuBlock) => {
 
     if (profileMenuWrapper.querySelector('[data-id="sign-out"]')) {
       profileMenuWrapper.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
+        const { signOut } = await authOperationsModule;
         signOut();
       });
     }
