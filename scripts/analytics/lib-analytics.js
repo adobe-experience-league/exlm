@@ -68,7 +68,8 @@ export function pageLoadModel() {
   const pageName = () => {
     // Validate if subsolution or solutionversion is not empty
     const lroot = window.location.pathname.endsWith === '/docs';
-    let result = lroot ? ':home' : `:${solution}:${type}:`;
+    // eslint-disable-next-line prefer-template
+    let result = lroot ? ':home' : `:${solution ? solution + ':' : ''}${type ? type + ':' : ''}`;
 
     if (result.endsWith(':')) {
       if (lang === 'en') {
@@ -81,9 +82,9 @@ export function pageLoadModel() {
     return result.toLowerCase();
   };
 
-  const name = `xl:docs${pageName()}`;
+  const name = `xl:${docs ? 'docs' : 'learn'}${pageName()}`;
 
-  const sections = name.replace(/^xl:docs:/, '').split(':');
+  const sections = name.replace(/^xl:(docs|learn):/, '').split(':');
 
   if (sections.length > 1) {
     sections.shift();
