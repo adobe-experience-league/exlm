@@ -4,6 +4,7 @@ import { signOut } from '../../scripts/auth/auth-operations.js';
 import Search from '../../scripts/search/search.js';
 import { registerResizeHandler } from './header-utils.js';
 import { fetchCommunityProfileData } from '../../scripts/data-service/khoros-data-service.js';
+import { getCurrentLanguage, loadLanguageFragment, switchLanguage } from '../../scripts/language.js';
 
 /**
  * @param {HTMLElement} block
@@ -67,7 +68,7 @@ const fetchFragment = async (rePath, lang = 'en') => {
 const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
 const headerFragment = fetchFragment('header/header');
-const languageFragment = fetchFragment('languages/languages');
+const languageFragment = loadLanguageFragment();
 const decoratorState = {};
 
 /**
@@ -377,19 +378,32 @@ const languageDecorator = async (languageBlock) => {
     const languageOptions = languagesEl?.children || [];
     const languages = [...languageOptions].map((option) => ({
       title: option.textContent,
-      lang: option?.firstElementChild?.href,
+      lang: option?.firstElementChild?.getAttribute('href'),
     }));
 
     decoratorState.languages = languages;
-
+    const currentLang = getCurrentLanguage();
     const options = languages
-      .map((option) => `<span class="language-selector-label" data-value="${option.lang}">${option.title}</span>`)
+      .map((option) => {
+        const lang = option.lang?.toLowerCase();
+        const selected = currentLang === lang ? 'selected' : '';
+        return `<span class="language-selector-label" data-value="${lang}" ${selected}>${option.title}</span>`;
+      })
       .join('');
     const popover = htmlToElement(`
       <div class="language-selector-popover" id="${popoverId}">
         ${options}
       </div>`);
     parent.append(popover);
+
+    popover.addEventListener('click', (e) => {
+      const { target } = e;
+      if (target.classList.contains('language-selector-label')) {
+        target.setAttribute('selected', 'true');
+        const lang = target.getAttribute('data-value');
+        switchLanguage(lang);
+      }
+    });
   };
 
   const languageHtml = `

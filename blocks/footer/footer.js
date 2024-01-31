@@ -1,3 +1,4 @@
+import { loadLanguageFragment } from '../../scripts/language.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 const CONFIG = {
@@ -87,8 +88,7 @@ async function decorateSocial(footer) {
   const groupDiv = document.createElement('div');
   groupDiv.classList.add('footer-lang-social');
   // fetch language content
-  const languagePath = `${CONFIG.basePath}${CONFIG.languagePath}`;
-  const html = await getHTMLData(languagePath);
+  const html = await loadLanguageFragment();
   if (html) {
     const frag = document.createElement('div');
     frag.innerHTML = html;

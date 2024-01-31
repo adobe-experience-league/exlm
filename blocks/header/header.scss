@@ -924,6 +924,14 @@ header {
         &:hover {
           background: var(--non-spectrum-hover-bg);
         }
+
+        &[selected] {
+          background: url(/icons/checkmark.svg);
+          background-size: 10px;
+          background-repeat: no-repeat;
+          background-position-y: center;
+          background-position-x: 95%;
+        }
       }
     }
 
