@@ -1,6 +1,6 @@
 import { loadCSS } from './lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
-import { htmlToElement } from './scripts.js';
+import { getEDSLink, htmlToElement } from './scripts.js';
 
 let languagePromise = null;
 export const loadLanguageFragment = async () => {
@@ -19,7 +19,7 @@ export const loadLanguageFragment = async () => {
 
 export const getCurrentLanguage = () => {
   // first part of url is the language
-  const url = window.location.pathname;
+  const url = getEDSLink(window.location.pathname);
   const parts = url.split('/');
   return parts.length > 0 ? url.split('/')[1] : 'en';
 };
