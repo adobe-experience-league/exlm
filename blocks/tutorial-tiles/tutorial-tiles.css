@@ -35,6 +35,7 @@
 
 .tutorial-tiles-box .tutorial-tiles-container li:last-of-type {
     border: none;
+    width: 100%;
 }
 
 .tutorial-tiles-box .tutorial-tiles-container .tutorial-tiles-heading {
