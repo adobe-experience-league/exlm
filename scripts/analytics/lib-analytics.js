@@ -153,7 +153,6 @@ export function linkClickModel(e) {
       destinationDomain,
       linkLocation,
       linkTitle: e.target.innerHTML || '',
-      // set to other until we have examples of other types
       linkType,
       solution:
         document.querySelector('meta[name="solution"]') !== null
