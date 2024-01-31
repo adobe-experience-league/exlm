@@ -164,6 +164,20 @@
   display: flex;
   margin: 30px 0 0 -8px;
 }
+
+.doc-actions .doc-mt-toggle {
+  gap: 5px;
+}
+
+.doc-actions .doc-mt-toggle a {
+  margin: 0;
+}
+
+.doc-actions .doc-mt-toggle a .icon-info {
+  width: 16px;
+  height: 18px;
+}
+
 @media (min-width: 900px) {
   .doc-actions-wrapper {
     background: var(--spectrum-gray-50);
