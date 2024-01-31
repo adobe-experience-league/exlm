@@ -1,4 +1,4 @@
-import { loadCSS, fetchPlaceholders, loadBlocks } from '../../scripts/lib-franklin.js';
+import { loadCSS, fetchPlaceholders, loadBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
 import { createTag, isDocPage, htmlToElement, decorateMain } from '../../scripts/scripts.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
@@ -143,7 +143,7 @@ async function toggleContent(isChecked, docContainer) {
   }
 }
 
-function decorateLanguageToggle(block) {
+async function decorateLanguageToggle(block) {
   if (
     document.querySelector('meta[name="ht-degree"]') &&
     ((document.querySelector('meta[name="ht-degree"]') || {}).content || '').trim() !== '100%'
@@ -151,9 +151,10 @@ function decorateLanguageToggle(block) {
     const languageToggleElement = createTag(
       'div',
       { class: 'doc-mt-toggle' },
-      `<span>${placeholders.automaticTranslation}</span><input type="checkbox"><a href="${placeholders.automaticTranslationLink}" target="_blank"><span class="icon-info"></span></a>`,
+      `<span>${placeholders.automaticTranslation}</span><input type="checkbox"><a href="${placeholders.automaticTranslationLink}" target="_blank"><span class="icon icon-info"></span></a>`,
     );
     addToDocActions(languageToggleElement, block);
+    await decorateIcons(block);
     const desktopAndMobileLangToggles = document.querySelectorAll('.doc-mt-toggle input');
     const docContainer = document.querySelector('main > div:first-child');
 
