@@ -2,6 +2,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 /**
@@ -10,32 +11,35 @@ import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-const
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const headingElement = block.querySelector('div:nth-child(1) > div');
-  const toolTipElement = block.querySelector('div:nth-child(2) > div');
-  const linkTextElement = block.querySelector('div:nth-child(3) > div');
-  const contentType = block.querySelector('div:nth-child(4) > div')?.textContent?.trim()?.toLowerCase();
-  const capabilities = block.querySelector('div:nth-child(5) > div')?.textContent?.trim();
-  const role = block.querySelector('div:nth-child(6) > div')?.textContent?.trim()?.toLowerCase();
-  const level = block.querySelector('div:nth-child(7) > div')?.textContent?.trim()?.toLowerCase();
-  const sortBy = block.querySelector('div:nth-child(8) > div')?.textContent?.trim()?.toLowerCase();
-  const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase()];
+  const [headingElement, toolTipElement, linkElement, ...configs] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
+  const [contentType, capabilities, role, level, sortBy] = configs.map((cell) => cell.textContent.trim());
+
+  const sortCriteria = COVEO_SORT_OPTIONS[sortBy.toUpperCase()];
   const noOfResults = 4;
-  const productKey = 'exl:solution/';
-  const featureKey = 'exl:feature/';
-  const extractCapability = (input, prefix) => {
-    if (!input) {
-      return null;
-    }
-    const items = input.split(',').map((item) => item.trim());
-    const result = [];
-    for (let i = 0; i < items.length; i += 1) {
-      const item = items[i];
-      if (item.startsWith(prefix)) {
-        result.push(atob(item.substring(prefix.length)));
+  const productKey = 'exl:solution';
+  const featureKey = 'exl:feature';
+  const product = [];
+  const version = [];
+  const feature = [];
+  headingElement.firstElementChild?.classList.add('h2');
+
+  const extractCapability = () => {
+    const items = capabilities.split(',');
+
+    items.forEach((item) => {
+      const [type, productBase64, versionBase64] = item.split('/');
+      if (type === productKey) {
+        if (productBase64) product.push(atob(productBase64));
+        if (versionBase64) version.push(atob(versionBase64));
+      } else if (type === featureKey) {
+        if (productBase64) feature.push(atob(productBase64));
       }
-    }
-    return result.length > 0 ? result : null;
+    });
   };
+
+  extractCapability();
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -44,20 +48,26 @@ export default async function decorate(block) {
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
-          <h2>${headingElement?.textContent?.trim()}</h2>
-          ${
-            toolTipElement.textContent
-              ? `<div class="tooltip">
-              <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
-            </div>`
-              : ''
-          }
+        ${headingElement.innerHTML}
       </div>
-      <div class="browse-cards-block-view">${linkTextElement?.innerHTML}</div>
+      <div class="browse-cards-block-view">${linkElement.innerHTML}</div>
     </div>
   `);
+
+  if (toolTipElement?.textContent?.trim()) {
+    headerDiv
+      .querySelector('h1,h2,h3,h4,h5,h6')
+      ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+    const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
+    const tooltipConfig = {
+      content: toolTipElement.textContent.trim(),
+    };
+    createTooltip(block, tooltipElem, tooltipConfig);
+  }
+
   // Appending header div to the block
   block.appendChild(headerDiv);
+
   await decorateIcons(headerDiv);
 
   try {
@@ -68,21 +78,23 @@ export default async function decorate(block) {
   }
 
   const param = {
-    contentType: contentType && contentType.split(','),
-    product: extractCapability(capabilities, productKey),
-    feature: extractCapability(capabilities, featureKey),
-    role: role && role.split(','),
-    level: level && level.split(','),
+    contentType: contentType && contentType.toLowerCase().split(','),
+    product: product.length ? [...new Set(product)] : null,
+    feature: feature.length ? [...new Set(feature)] : null,
+    version: version.length ? [...new Set(version)] : null,
+    role: role && role.toLowerCase().split(','),
+    level: level && level.toLowerCase().split(','),
     sortCriteria,
     noOfResults,
   };
 
-  const buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
+  const buildCardsShimmer = new BuildPlaceholder();
+  buildCardsShimmer.add(block);
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent
     .then((data) => {
-      buildCardsShimmer.hide();
+      buildCardsShimmer.remove();
       if (data?.length) {
         const contentDiv = document.createElement('div');
         contentDiv.classList.add('browse-cards-block-content');
@@ -90,15 +102,17 @@ export default async function decorate(block) {
         for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
           const cardData = data[i];
           const cardDiv = document.createElement('div');
-          buildCard(cardDiv, cardData);
+          buildCard(contentDiv, cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
-        buildCardsShimmer.setParent(contentDiv);
-        decorateIcons(contentDiv);
+        block.appendChild(contentDiv);
+        /* Hide Tooltip while scrolling the cards layout */
+        hideTooltipOnScroll(contentDiv);
+        decorateIcons(block);
       }
     })
     .catch((err) => {
-      buildCardsShimmer.hide();
+      buildCardsShimmer.remove();
       /* eslint-disable-next-line no-console */
       console.error(err);
     });

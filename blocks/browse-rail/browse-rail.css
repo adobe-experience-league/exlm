@@ -33,7 +33,8 @@
     margin-left: 12px;
 }
 
-.browse-rail ul li a {
+.browse-rail ul li a,
+.browse-rail ul li span {
     text-transform: uppercase;
     width: 100%;
     display: inline-block;
@@ -65,12 +66,15 @@
     transform: rotateZ(-135deg);
 }
 
-.browse-rail ul li ul li a {
+.browse-rail ul li ul li a,
+.browse-rail ul li ul li span {
     text-transform: none;
 }
 
 .browse-rail ul li a,
-.browse-rail ul li ul li a {
+.browse-rail ul li span,
+.browse-rail ul li ul li a,
+.browse-rail ul li ul li span {
     font-size: var(--spectrum-font-size-100);
     line-height: 21px;
     min-height: 32px;
@@ -86,8 +90,8 @@
 }
 
 .browse-rail > ul > li >ul a:hover, 
-.browse-rail > ul > li >ul a.is-active,
-.browse-rail > ul > li a.is-active{
+.browse-rail > ul > li >ul .is-active,
+.browse-rail > ul > li .is-active {
     background-color: var(--spectrum-gray-200);
     border-radius: 4px;
 }
@@ -96,7 +100,8 @@
     margin-bottom: 24px;
     padding-bottom: 24px;
 }
-.browse-rail >ul >li>a {
+.browse-rail >ul >li>a,
+.browse-rail >ul >li>span {
     font-size: var(--spectrum-font-size-75);
     font-weight: bold;
     flex: 88%;
@@ -107,15 +112,13 @@
 .browse-rail .browse-by li {
     flex-direction: column;
 }
-.browse-rail ul li .left-rail-view-more a,
-.browse-rail ul li .left-rail-view-less a {
+.browse-rail ul li .left-rail-view-more span,
+.browse-rail ul li .left-rail-view-less span {
     font-size: var(--spectrum-font-size-100);
     color: var(--non-spectrum-link);
     cursor: pointer;
     text-transform: none;
-}
-.browse-rail a[href="javascript:void(0)"] {
-    cursor: default;
+    padding: 5px 0 5px 12px;
 }
 @media only screen and (min-width: 900px) {
     .browse-rail {

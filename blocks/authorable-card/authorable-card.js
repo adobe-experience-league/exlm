@@ -1,12 +1,10 @@
 import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import ArticleDataService from '../../scripts/data-service/article-data-service.js';
 import mapResultToCardsData from './article-data-adapter.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
-
-let numberOfCards = 4;
-let buildCardsShimmer = '';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -14,38 +12,40 @@ let buildCardsShimmer = '';
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const headingElement = block.querySelector('div:nth-child(1) > div');
-  const toolTipElement = block.querySelector('div:nth-child(2) > div');
-  const linkTextElement = block.querySelector('div:nth-child(3) > div');
-  const links = [];
+  const [headingElement, toolTipElement, linkTextElement, ...linksContainer] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
 
+  headingElement.firstElementChild?.classList.add('h2');
   block.classList.add('browse-cards-block');
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
-          <h2>${headingElement?.textContent.trim()}</h2>
-          ${
-            toolTipElement.textContent
-              ? `<div class="tooltip">
-              <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
-            </div>`
-              : ''
-          }
+        ${headingElement.innerHTML}
       </div>
       ${linkTextElement?.outerHTML}
-      </div>
-      `);
+    </div>
+  `);
 
+  if (toolTipElement?.textContent?.trim()) {
+    headerDiv
+      .querySelector('h1,h2,h3,h4,h5,h6')
+      ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+    const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
+    const tooltipConfig = {
+      content: toolTipElement.textContent.trim(),
+    };
+    createTooltip(block, tooltipElem, tooltipConfig);
+  }
+
+  block.replaceChildren(headerDiv);
+
+  const articleDataService = new ArticleDataService();
+  const buildCardsShimmer = new BuildPlaceholder();
+  buildCardsShimmer.add(block);
   const contentDiv = document.createElement('div');
-  contentDiv.classList.add('browse-cards-block-content');
-
-  const linksContainer = Array.from(block.children).slice(-1 * numberOfCards);
-  linksContainer.forEach((link) => {
-    links.push(link.querySelector('div')?.textContent);
-  });
-
-  numberOfCards = linksContainer.length;
+  contentDiv.className = 'browse-cards-block-content';
 
   let placeholders = {};
   try {
@@ -55,38 +55,35 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
-  links.forEach((link, i) => {
-    if (link) {
-      const articleDataService = new ArticleDataService();
-      articleDataService
-        .handleArticleDataService(link)
-        .then(async (data) => {
-          block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-            el.classList.add('hide-shimmer');
-          });
-
+  const cardLoading$ = Promise.all(
+    linksContainer.map(async (linkContainer) => {
+      const link = linkContainer.textContent.trim();
+      // use the link containers parent as container for the card as it is instruented for authoring
+      // eslint-disable-next-line no-param-reassign
+      linkContainer = linkContainer.parentElement;
+      linkContainer.innerHTML = '';
+      if (link) {
+        try {
+          const data = await articleDataService.handleArticleDataService(link);
           const cardData = await mapResultToCardsData(data, placeholders);
-          await buildCard(linksContainer[i], cardData);
-          contentDiv.appendChild(linksContainer[i]);
-          decorateIcons(block);
-          linksContainer[i].children[0].remove();
-        })
-        .catch(() => {
-          block.querySelectorAll('.shimmer-placeholder').forEach((el) => {
-            el.classList.add('hide-shimmer');
-          });
-        });
-    }
+          await buildCard(contentDiv, linkContainer, cardData);
+        } catch (err) {
+          // eslint-disable-next-line no-console
+          console.error(err);
+        }
+      }
+      return linkContainer;
+    }),
+  );
+
+  cardLoading$.then((cards) => {
+    buildCardsShimmer.remove();
+    contentDiv.append(...cards);
+    block.appendChild(contentDiv);
+    decorateIcons(contentDiv);
   });
 
-  block.appendChild(headerDiv);
-  Array.from(block.children).forEach((child) => {
-    if (!child.className) {
-      block.removeChild(child);
-    }
-  });
-  linksContainer.forEach((el) => contentDiv.appendChild(el));
-
-  buildCardsShimmer = new BuildPlaceholder(numberOfCards, block);
-  buildCardsShimmer.setParent(contentDiv);
+  /* Hide Tooltip while scrolling the cards layout */
+  hideTooltipOnScroll(contentDiv);
+  decorateIcons(block);
 }

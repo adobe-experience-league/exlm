@@ -17,6 +17,8 @@ import {
   loadScript,
 } from './lib-franklin.js';
 
+const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
+
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
 export const timers = new Map();
@@ -160,9 +162,10 @@ function buildAutoBlocks(main) {
 export function decorateExternalLinks(main) {
   main.querySelectorAll('a').forEach((a) => {
     const href = a.getAttribute('href');
+    if (!href) return;
     if (href.includes('#_blank')) {
       a.setAttribute('target', '_blank');
-    } else if (href && !href.startsWith('#')) {
+    } else if (!href.startsWith('#')) {
       if (a.hostname !== window.location.hostname) {
         a.setAttribute('target', '_blank');
       }
@@ -269,14 +272,40 @@ export async function loadIms() {
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
-  loadIms(); // start it early, asyncronously
   await loadBlocks(main);
+  loadIms(); // start it early, asyncronously
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
-  loadHeader(doc.querySelector('header'));
-  loadFooter(doc.querySelector('footer'));
+  const headerPromise = loadHeader(doc.querySelector('header'));
+  const footerPromise = loadFooter(doc.querySelector('footer'));
+
+  localStorage.setItem('prevPage', doc.title);
+
+  const launchPromise = loadScript(
+    'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
+    {
+      async: true,
+    },
+  );
+
+  Promise.all([launchPromise, libAnalyticsModulePromise, headerPromise, footerPromise]).then(
+    // eslint-disable-next-line no-unused-vars
+    ([launch, libAnalyticsModule, headPr, footPr]) => {
+      const { pageLoadModel, linkClickModel } = libAnalyticsModule;
+      window.adobeDataLayer.push(pageLoadModel());
+      const linkClicked = document.querySelectorAll('a');
+      linkClicked.forEach((linkElement) => {
+        linkElement.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (e.target.tagName === 'A') {
+            linkClickModel(e);
+          }
+        });
+      });
+    },
+  );
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
@@ -444,4 +473,24 @@ export function getLink(edsPath) {
   return window.hlx.aemRoot && !edsPath.startsWith(window.hlx.aemRoot) && edsPath.indexOf('.html') === -1
     ? `${window.hlx.aemRoot}${edsPath}.html`
     : edsPath;
+}
+
+export const removeExtension = (pathStr) => {
+  const parts = pathStr.split('.');
+  if (parts.length === 1) return parts[0];
+  return parts.slice(0, -1).join('.');
+};
+
+export function rewriteDocsPath(docsPath) {
+  const PROD_BASE = 'https://experienceleague.adobe.com';
+  const url = new URL(docsPath, PROD_BASE);
+  if (!url.pathname.startsWith('/docs')) {
+    return docsPath; // not a docs path, return as is
+  }
+  const lang = url.searchParams.get('lang') || 'en'; // en is default
+  url.searchParams.delete('lang');
+  let pathname = `${lang.toLowerCase()}${url.pathname}`;
+  pathname = removeExtension(pathname); // new URLs are extensionless
+  url.pathname = pathname;
+  return url.toString().replace(PROD_BASE, ''); // always remove PROD_BASE if exists
 }

@@ -26,6 +26,7 @@
       "teaser",
       "marquee",
       "carousel",
+      "sign-up",
       "video-embed",
       "secondary-search",
       "accordion-group",
@@ -36,7 +37,8 @@
       "events-cards",
       "adls-cards",
       "tabbed-cards",
-      "tabs"
+      "tabs",
+      "recommended-courses"
     ]
   },
   {

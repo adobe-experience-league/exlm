@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42">
+  <defs>
+    <style>
+      .purple500 {
+        fill: #864ccc;
+      }
+
+      .cls-1 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <g id="_42px_Circle" data-name="42px@Circle">
+    <circle id="Ellipse_10213-5" data-name="Ellipse 10213-5" class="purple500" cx="21" cy="21" r="21"/>
+  </g>
+  <g id="_24px_Icons" data-name="24px@Icons">
+    <path class="cls-1" d="M15,13a1,1,0,0,0-1-1H12a1,1,0,0,0-1,1V27h4Z"/>
+    <path class="cls-1" d="M20,19a1,1,0,0,0-1-1H17a1,1,0,0,0-1,1v8h2V21.5a.5.5,0,0,1,.5-.5H20Z"/>
+    <path class="cls-1" d="M25,11a1,1,0,0,0-1-1H22a1,1,0,0,0-1,1V21h4Z"/>
+    <path class="cls-1" d="M30,14a1,1,0,0,0-1-1H27a1,1,0,0,0-1,1v7h4Z"/>
+    <path class="cls-1" d="M10,28.5v1a.50007.50007,0,0,0,.5.5H18V28H10.5A.50007.50007,0,0,0,10,28.5Z"/>
+    <path class="cls-1" d="M33.25,22H19.75a.75113.75113,0,0,0-.75.75v8.5a.75113.75113,0,0,0,.75.75h13.5a.75113.75113,0,0,0,.75-.75v-8.5A.75113.75113,0,0,0,33.25,22ZM33,28.5A2.5,2.5,0,0,0,30.5,31h-8A2.5,2.5,0,0,0,20,28.5v-3A2.5,2.5,0,0,0,22.5,23h8A2.50012,2.50012,0,0,0,33,25.5Z"/>
+    <circle class="cls-1" cx="26.5" cy="27" r="2"/>
+  </g>
+</svg>
