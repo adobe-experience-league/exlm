@@ -1,4 +1,4 @@
-import { loadLanguageFragment } from '../../scripts/language.js';
+import { buildLanguagePopover } from '../../scripts/language.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 const CONFIG = {
@@ -64,47 +64,21 @@ function extractDomain(domain) {
   return match?.[1] || '';
 }
 
-function hideLangSelectionDropdown(e) {
-  const langDropdown = document.querySelector('.footer .dropdown-menu.dropdown-menu-active');
-  if (langDropdown && (!e.target || (e.target && !langDropdown.contains(e.target)))) {
-    langDropdown.classList.remove('dropdown-menu-active');
-    document.removeEventListener('click', hideLangSelectionDropdown);
-  }
-}
-
-function showLangSelectionDropdown(e) {
-  const langDropdownBase = document.querySelector('.footer .language-nav');
-  const langDropdown = langDropdownBase?.querySelector('.dropdown-menu');
-  if (langDropdown) {
-    e.stopPropagation();
-    langDropdown.classList.add('dropdown-menu-active');
-    document.addEventListener('click', hideLangSelectionDropdown);
-  }
-}
-
 async function decorateSocial(footer) {
   const languageSelector = footer.querySelector('.language-selector');
   const social = footer.querySelector('.social');
   const groupDiv = document.createElement('div');
   groupDiv.classList.add('footer-lang-social');
-  // fetch language content
-  const html = await loadLanguageFragment();
-  if (html) {
-    const frag = document.createElement('div');
-    frag.innerHTML = html;
-    const languageNav = frag.querySelector('.language-nav');
-    const dropdownMenu = languageNav.firstElementChild;
-    const dropdownMenuContent = dropdownMenu.firstElementChild;
-    dropdownMenu.classList.add('dropdown-menu');
-    dropdownMenuContent.classList.add('dropdown-content');
-    const langSelectorButton = languageSelector.firstElementChild;
-    langSelectorButton.classList.add('language-selector-button');
-    const icon = document.createElement('span');
-    icon.classList.add('icon', 'icon-globegrid');
-    langSelectorButton.appendChild(icon);
-    languageSelector.appendChild(languageNav);
-    langSelectorButton.addEventListener('click', showLangSelectionDropdown);
-  }
+  // build language popover
+
+  const { popover } = await buildLanguagePopover('top');
+  const langSelectorButton = languageSelector.firstElementChild;
+  langSelectorButton.classList.add('language-selector-button');
+  const icon = document.createElement('span');
+  icon.classList.add('icon', 'icon-globegrid');
+  langSelectorButton.appendChild(icon);
+  languageSelector.appendChild(popover);
+
   groupDiv.appendChild(languageSelector);
   groupDiv.appendChild(social);
   const elem = footer.children[0];

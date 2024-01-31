@@ -1,10 +1,10 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { loadIms } from '../../scripts/scripts.js';
+import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 import { signOut } from '../../scripts/auth/auth-operations.js';
 import Search from '../../scripts/search/search.js';
 import { registerResizeHandler } from './header-utils.js';
 import { fetchCommunityProfileData } from '../../scripts/data-service/khoros-data-service.js';
-import { getCurrentLanguage, loadLanguageFragment, switchLanguage } from '../../scripts/language.js';
+import { buildLanguagePopover, getLanguagePath, loadLanguageFragment } from '../../scripts/language.js';
 
 /**
  * @param {HTMLElement} block
@@ -47,18 +47,6 @@ const randomId = (length = 6) =>
  */
 const getCell = (block, row, cell) => block.querySelector(`:scope > div:nth-child(${row}) > div:nth-child(${cell})`);
 
-/**
- * creates an element from html string
- * @param {string} html
- * @returns {HTMLElement}
- */
-function htmlToElement(html) {
-  const template = document.createElement('template');
-  // Never return a text node of whitespace as the result
-  const trimmedHtml = html.trim();
-  template.innerHTML = trimmedHtml;
-  return template.content.firstElementChild;
-}
 // fetch fragment html
 const fetchFragment = async (rePath, lang = 'en') => {
   const response = await fetch(`/fragments/${lang}/${rePath}.plain.html`);
@@ -68,7 +56,7 @@ const fetchFragment = async (rePath, lang = 'en') => {
 const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
 const headerFragment = fetchFragment('header/header');
-const languageFragment = loadLanguageFragment();
+loadLanguageFragment(); // pre-fetch language fragment
 const decoratorState = {};
 
 /**
@@ -130,7 +118,9 @@ const buildNavItems = (ul, level = 0) => {
         `<li class="nav-item-mobile">
           <p>${decoratorState.languageTitle}</p>
           <ul>
-            ${decoratorState.languages.map((l) => `<li><a href="${l.lang}">${l.title}</a></li>`).join('')}
+            ${decoratorState.languages
+              .map((l) => `<li><a href="${getLanguagePath(l.lang)}">${l.title}</a></li>`)
+              .join('')}
           </ul>
         </li>`,
       ),
@@ -370,40 +360,10 @@ const languageDecorator = async (languageBlock) => {
   const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
   decoratorState.languageTitle = title;
 
-  const popoverId = 'language-picker-popover';
   const prependLanguagePopover = async (parent) => {
-    let languagesEl = htmlToElement(await languageFragment);
-    languagesEl = languagesEl.querySelector('ul');
-
-    const languageOptions = languagesEl?.children || [];
-    const languages = [...languageOptions].map((option) => ({
-      title: option.textContent,
-      lang: option?.firstElementChild?.getAttribute('href'),
-    }));
-
+    const { popover, languages } = await buildLanguagePopover();
     decoratorState.languages = languages;
-    const currentLang = getCurrentLanguage();
-    const options = languages
-      .map((option) => {
-        const lang = option.lang?.toLowerCase();
-        const selected = currentLang === lang ? 'selected' : '';
-        return `<span class="language-selector-label" data-value="${lang}" ${selected}>${option.title}</span>`;
-      })
-      .join('');
-    const popover = htmlToElement(`
-      <div class="language-selector-popover" id="${popoverId}">
-        ${options}
-      </div>`);
     parent.append(popover);
-
-    popover.addEventListener('click', (e) => {
-      const { target } = e;
-      if (target.classList.contains('language-selector-label')) {
-        target.setAttribute('selected', 'true');
-        const lang = target.getAttribute('data-value');
-        switchLanguage(lang);
-      }
-    });
   };
 
   const languageHtml = `
