@@ -281,8 +281,6 @@ async function loadLazy(doc) {
   const headerPromise = loadHeader(doc.querySelector('header'));
   const footerPromise = loadFooter(doc.querySelector('footer'));
 
-  localStorage.setItem('prevPage', doc.title);
-
   const launchPromise = loadScript(
     'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
     {
@@ -293,8 +291,9 @@ async function loadLazy(doc) {
   Promise.all([launchPromise, libAnalyticsModulePromise, headerPromise, footerPromise]).then(
     // eslint-disable-next-line no-unused-vars
     ([launch, libAnalyticsModule, headPr, footPr]) => {
-      const { pageLoadModel, linkClickModel } = libAnalyticsModule;
+      const { pageLoadModel, linkClickModel, pageName } = libAnalyticsModule;
       window.adobeDataLayer.push(pageLoadModel());
+      localStorage.setItem('prevPage', pageName());
       const linkClicked = document.querySelectorAll('a');
       linkClicked.forEach((linkElement) => {
         linkElement.addEventListener('click', (e) => {

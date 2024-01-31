@@ -2,6 +2,32 @@ export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.
 export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs/') !== -1;
 export const lang = window.document.getElementsByTagName('html')[0].getAttribute('lang') || 'en';
+export const solution = document.querySelector('meta[name="solution"]')
+  ? document.querySelector('meta[name="solution"]').content.toLowerCase()
+  : '';
+
+export const type = document.querySelector('meta[name="type"]')
+  ? document.querySelector('meta[name="type"]').content.toLowerCase()
+  : '';
+
+export const pageName = () => {
+  // Validate if subsolution or solutionversion is not empty
+  const lroot = window.location.pathname.endsWith === '/docs';
+  // eslint-disable-next-line prefer-template
+  let result = lroot ? ':home' : `:${solution ? solution + ':' : ''}${type ? type + ':' : ''}`;
+
+  if (result.endsWith(':')) {
+    if (lang === 'en') {
+      result += document.querySelector('title').innerText.split('|')[0].trim();
+    } else {
+      // figure out how to get non english pages
+    }
+  }
+
+  const responseStr = `xl:${docs ? 'docs' : 'learn'}${result}`;
+
+  return responseStr.toLowerCase();
+};
 
 export function pageLoadModel() {
   const user = {};
@@ -48,14 +74,6 @@ export function pageLoadModel() {
     section = 'search';
   }
 
-  const solution = document.querySelector('meta[name="solution"]')
-    ? document.querySelector('meta[name="solution"]').content.toLowerCase()
-    : '';
-
-  const type = document.querySelector('meta[name="type"]')
-    ? document.querySelector('meta[name="type"]').content.toLowerCase()
-    : '';
-
   const subSolution =
     document.querySelector('meta[name="sub-solution"]') !== null
       ? document.querySelector('meta[name="sub-solution"]').content
@@ -65,24 +83,7 @@ export function pageLoadModel() {
       ? document.querySelector('meta[name="version"]').content
       : '';
 
-  const pageName = () => {
-    // Validate if subsolution or solutionversion is not empty
-    const lroot = window.location.pathname.endsWith === '/docs';
-    // eslint-disable-next-line prefer-template
-    let result = lroot ? ':home' : `:${solution ? solution + ':' : ''}${type ? type + ':' : ''}`;
-
-    if (result.endsWith(':')) {
-      if (lang === 'en') {
-        result += document.querySelector('title').innerText.split('|')[0].trim();
-      } else {
-        // figure out how to get non english pages
-      }
-    }
-
-    return result.toLowerCase();
-  };
-
-  const name = `xl:${docs ? 'docs' : 'learn'}${pageName()}`;
+  const name = pageName();
 
   const sections = name.replace(/^xl:(docs|learn):/, '').split(':');
 
@@ -182,7 +183,7 @@ export function linkClickModel(e) {
   });
 }
 
-export function assetInteractionModel(id, type) {
+export function assetInteractionModel(id, assetInteractionType) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   // assetId is set to the current docs page articleId if id param value is null
@@ -198,7 +199,7 @@ export function assetInteractionModel(id, type) {
     event: 'assetInteraction',
     asset: {
       id: assetId,
-      interactionType: type,
+      interactionType: assetInteractionType,
     },
   });
 }
