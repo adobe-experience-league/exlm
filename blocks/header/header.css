@@ -913,11 +913,12 @@ header {
   text-align: left;
   width: 100%;
 }
-.header .signed-in .profile a:last-child {
+.header .signed-in .profile a[data-id='sign-out'] {
   border-top: 0 none;
   color: var(--spectrum-blue-900);
   font-weight: var(--font-weight-400);
-  margin-top: 10px;
+  padding: 10px 0 8px 0;
+  margin: 10px 0 0 0;
 }
 @media (min-width: 1024px) {
   .header .signed-in .profile {
@@ -985,11 +986,10 @@ header {
     border-top: 0;
     border-radius: 0;
     margin: 0 0 0 20px;
-    padding: 0;
+    padding: 9px 0;
   }
-  .header .signed-in .profile a:last-child {
+  .header .signed-in .profile a[data-id='sign-out'] {
     color: var(--spectrum-blue-900);
-    margin-top: 20px;
   }
   .header .profile-menu.profile-menu-expanded {
     background: var(--spectrum-gray-100);
