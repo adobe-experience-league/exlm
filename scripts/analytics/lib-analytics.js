@@ -121,6 +121,8 @@ export function pageLoadModel() {
 export function linkClickModel(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
+  const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
+
   let linkLocation = 'unidentified';
   if (e.target.closest('.rail-right')) {
     linkLocation = 'mtoc';
@@ -138,12 +140,21 @@ export function linkClickModel(e) {
 
   if (e.target.href.match(/.(pdf|zip|dmg|exe)$/)) {
     linkType = 'download';
+  } else if (viewMoreLess) {
+    linkType = 'view more/less';
+  }
+
+  let name = e.target.innerHTML;
+  let destinationDomain = e.target.href;
+  if (e.target.tagName === 'SPAN' && viewMoreLess) {
+    destinationDomain = document.querySelector('.js-toggle.is-collapsed.is-open').innerHTML;
+    name = 'ExperienceEventType:web.webInteraction.linkClicks';
   }
 
   window.adobeDataLayer.push({
     event: 'linkClicked',
     link: {
-      destinationDomain: e.target.href,
+      destinationDomain,
       linkLocation,
       linkTitle: e.target.innerHTML || '',
       // set to other until we have examples of other types
@@ -157,7 +168,7 @@ export function linkClickModel(e) {
       webInteraction: {
         URL: e.target.href,
         linkClicks: { value: 1 },
-        name: e.target.innerHTML,
+        name,
         // set to other until we have examples of other types
         type: 'Other',
       },
