@@ -19,31 +19,41 @@ function decorateButtons(...buttons) {
     .join('');
 }
 
+function getSignInButton(signInText) {
+  const firstCta = document.createElement('div');
+  const link = document.createElement('a');
+  link.classList.add('sign-up-cta-btn');
+  link.setAttribute('href', '#');
+  link.setAttribute('title', signInText);
+  link.textContent = signInText;
+  firstCta.append(link);
+  return firstCta;
+}
+
 export default async function decorate(block) {
   block.style.display = 'none';
 
-  let adobeIMS = {
-    isSignedInUser: () => false,
-  };
-
   try {
     await loadIms();
-    adobeIMS = window.adobeIMS;
   } catch {
     // eslint-disable-next-line no-console
     console.warn('Adobe IMS not available.');
   }
 
-  const isUserSignedIn = adobeIMS?.isSignedInUser();
+  const isUserSignedIn = window.adobeIMS?.isSignedInUser();
 
   if (!isUserSignedIn) {
     block.style.display = 'block';
     // Extract properties
     // always same order as in model, empty string if not set
-    const [img, eyebrow, title, longDescr, firstCta, secondCta] = block.querySelectorAll(':scope div > div');
+    const [img, eyebrow, title, longDescr, firstCtaText, secondCta] = block.querySelectorAll(':scope div > div');
     const subjectPicture = img.querySelector('picture');
     const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
     const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
+    const signInText = firstCtaText.textContent?.trim();
+
+    // build sign in button if not in yet and button text is set
+    const firstCta = signInText ? getSignInButton(signInText) : null;
 
     // Build DOM
     const signupDOM = document.createRange().createContextualFragment(`
@@ -82,7 +92,7 @@ export default async function decorate(block) {
 
     if (signUpBtn) {
       signUpBtn.addEventListener('click', async () => {
-        adobeIMS.signIn();
+        window.adobeIMS.signIn();
       });
     }
   } else {
