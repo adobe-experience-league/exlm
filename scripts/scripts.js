@@ -297,7 +297,7 @@ async function loadLazy(doc) {
       window.adobeDataLayer.push(pageLoadModel());
       const linkClicked = document.querySelectorAll('a,.view-more-less span');
       linkClicked.forEach((linkElement) => {
-        linkElement.addEventListener('click', (e) => {          
+        linkElement.addEventListener('click', (e) => {
           if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
             linkClickModel(e);
           }
