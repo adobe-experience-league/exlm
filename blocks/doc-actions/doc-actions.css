@@ -176,6 +176,7 @@
 .doc-actions .doc-mt-toggle a .icon-info {
   width: 16px;
   height: 16px;
+  pointer-events: none;
 }
 
 @media (min-width: 900px) {
