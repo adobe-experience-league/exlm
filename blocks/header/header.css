@@ -857,13 +857,6 @@ header {
   font-weight: initial;
   color: var(--color-black);
 }
-.header .signed-in .profile a[data-id='sign-out'] {
-  border-top: 0 none;
-  color: var(--spectrum-blue-900);
-  font-weight: var(--font-weight-400);
-  padding: 10px 0 8px 0;
-  margin: 10px 0 0 0;
-}
 @media (min-width: 1024px) {
   .header .signed-in .profile {
     position: relative;
@@ -911,20 +904,7 @@ header {
   box-shadow: 0 8px 16px rgba(10, 10, 10, 0.1);
 }
 @media (min-width: 1024px) {
-  .header .signed-in .profile a {
-    border-top: 0;
-    border-radius: 0;
-    margin: 0 0 0 20px;
-    padding: 9px 0;
-  }
-  .header .signed-in .profile a[data-id='sign-out'] {
-    color: var(--spectrum-blue-900);
-  }
-  .header .profile-menu.profile-menu-expanded {
-    background: var(--spectrum-gray-100);
-    right: 0;
-    width: 200px;
-  }
+  .header .profile-menu.profile-menu-expanded,
   .header .product-dropdown.product-dropdown-expanded {
     width: fit-content;
   }
