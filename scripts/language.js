@@ -1,10 +1,35 @@
 import { loadCSS } from './lib-franklin.js';
 import { htmlToElement } from './scripts.js';
 
-let languagePromise = null;
+export const getPathDetails = () => {
+  const { pathname } = window.location;
+  const extParts = pathname.split('.');
+  const ext = extParts.length > 1 ? extParts[extParts.length - 1] : '';
+  const isContentPath = pathname.startsWith('/content');
+  const parts = pathname.split('/');
+  const safeLangGet = (index) => (parts.length > index ? parts[index] : 'en');
+  let lang = isContentPath ? safeLangGet(4) : safeLangGet(1);
+  // remove suffix from lang if any
+  if (lang.indexOf('.') > -1) {
+    lang = lang.substring(0, lang.indexOf('.'));
+  }
+  // substring before lang
+  const prefix = pathname.substring(0, pathname.indexOf(`/${lang}`)) || '';
+  const suffix = pathname.substring(pathname.indexOf(`/${lang}`) + lang.length + 1) || '';
+  return {
+    ext,
+    prefix,
+    suffix,
+    lang,
+    isContentPath,
+  };
+};
+
+const pathDetails = getPathDetails();
+
 export const loadLanguageFragment = async () => {
-  languagePromise =
-    languagePromise ||
+  window.languagePromise =
+    window.languagePromise ||
     new Promise((resolve) => {
       fetch(`/fragments/en/languages/languages.plain.html`)
         .then((response) => response.text())
@@ -13,37 +38,17 @@ export const loadLanguageFragment = async () => {
         });
     });
   loadCSS(`${window.hlx.codeBasePath}/styles/language.css`);
-  return languagePromise;
-};
-
-export const getCurrentLanguage = () => {
-  // first part of url is the language
-  const url = window.location.pathname;
-  const parts = url.split('/');
-  return parts.length > 0 ? url.split('/')[1] : 'en';
-};
-
-export const isIndex = () => {
-  const url = window.location.pathname;
-  return url === '/';
+  return window.languagePromise;
 };
 
 export const getLanguagePath = (language) => {
-  if (isIndex()) {
-    return `/${language}`;
-  }
-  return window.location.pathname.replace(getCurrentLanguage(), language);
+  const { prefix, suffix } = pathDetails;
+  return `${prefix}/${language}${suffix}`;
 };
 
-export const switchLanguage = async (language) => {
-  const currentLanguage = getCurrentLanguage();
-  if (currentLanguage === language) {
-    return;
-  }
-
-  if (isIndex()) {
-    window.location.pathname = `/${language}`;
-  } else {
+const switchLanguage = (language) => {
+  const { lang } = pathDetails;
+  if (lang !== language) {
     window.location.pathname = getLanguagePath(language);
   }
 };
@@ -61,7 +66,7 @@ export const buildLanguagePopover = async (position) => {
     lang: option?.firstElementChild?.getAttribute('href'),
   }));
 
-  const currentLang = getCurrentLanguage();
+  const { lang: currentLang } = getPathDetails();
   const options = languages
     .map((option) => {
       const lang = option.lang?.toLowerCase();
