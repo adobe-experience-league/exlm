@@ -1,5 +1,6 @@
-import { buildLanguagePopover } from '../../scripts/language.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+
+const languageModule = import('../../scripts/language.js');
 
 const CONFIG = {
   basePath: '/fragments/en',
@@ -70,8 +71,9 @@ async function decorateSocial(footer) {
   const groupDiv = document.createElement('div');
   groupDiv.classList.add('footer-lang-social');
   // build language popover
-
+  const { buildLanguagePopover } = await languageModule;
   const { popover } = await buildLanguagePopover('top');
+
   const langSelectorButton = languageSelector.firstElementChild;
   langSelectorButton.classList.add('language-selector-button');
   const icon = document.createElement('span');
