@@ -729,7 +729,7 @@ main > div.browse-rail {
   main > div.section.browse-rail {
     display: initial;
     grid-column: 1;
-    grid-row: 1 / infinite;
+    grid-row: 1 / 100;
     width: 224px;
     height: 100%;
     padding: 0 0 0 32px;
