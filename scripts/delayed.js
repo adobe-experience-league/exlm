@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { loadCSS, sampleRUM } from './lib-franklin.js';
+import { loadCSS, loadScript, sampleRUM } from './lib-franklin.js';
 // add more delayed functionality here
 
 // Core Web Vitals RUM collection
