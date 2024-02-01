@@ -459,7 +459,10 @@ async function loadPage() {
   loadPrevNextBtn();
 }
 
-loadPage();
+// load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
+if (!window.hlx.DO_NOT_LOAD_PAGE) {
+  loadPage();
+}
 
 /**
  * Helper function that converts an AEM path into an EDS path.
