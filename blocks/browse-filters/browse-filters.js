@@ -7,6 +7,7 @@ import {
   getObjectByName,
   getFiltersPaginationText,
   getBrowseFiltersResultCount,
+  getSelectedTopics,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -514,6 +515,17 @@ function handleUriHash() {
       } else {
         searchInput.value = '';
       }
+    } else if (facetKey === 'aq' && filterInfo) {
+      const selectedTopics = getSelectedTopics(filterInfo);
+      const contentDiv = document.querySelector('.browse-topics');
+      const buttons = contentDiv.querySelectorAll('button');
+      Array.from(buttons).forEach((button) => {
+        if (selectedTopics.includes(button.dataset.topicname)) {
+          button.classList.add('browse-topics-item-active');
+        } else {
+          button.classList.remove('browse-topics-item-active');
+        }
+      });
     }
   });
   if (!containsSearchQuery) {
@@ -787,17 +799,9 @@ function decorateBrowseTopics(block) {
     });
     const decodedHash = decodeURIComponent(window.location.hash);
     const filtersInfo = decodedHash.split('&').find((s) => s.includes('@el_features'));
+
     if (filtersInfo) {
-      let selectedTopics;
-      const [, multipleFeaturesCheck] = filtersInfo.match(/@el_features==\(([^)]+)/) || [];
-      let topicsString = multipleFeaturesCheck;
-      if (!topicsString) {
-        const [, singleFeatureCheck] = filtersInfo.match(/@el_features=("[^"]*")/) || [];
-        topicsString = singleFeatureCheck;
-      }
-      if (topicsString) {
-        selectedTopics = topicsString.split(',').map((s) => s.trim().replace(/"/g, ''));
-      }
+      const selectedTopics = getSelectedTopics(filtersInfo);
       if (selectedTopics && selectedTopics.length > 0) {
         selectedTopics.forEach((topic) => {
           const element = contentDiv.querySelector(`.browse-topics-item[data-topicname="${topic}"]`);
