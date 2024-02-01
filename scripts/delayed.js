@@ -29,6 +29,6 @@ function loadPrism(document) {
     .catch((err) => console.error(err));
 }
 
-loadCSS('/styles/print/print.css');
+loadCSS(`${window.hlx.codeBasePath}/styles/print/print.css`);
 
 loadPrism(document);

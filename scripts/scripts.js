@@ -18,7 +18,7 @@ import {
 } from './lib-franklin.js';
 import ffetch from './ffetch.js';
 // eslint-disable-next-line import/no-cycle
-import { getCurrentLanguage } from './language.js';
+import { getPathDetails } from './language.js';
 
 const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
 
@@ -182,13 +182,15 @@ export function decorateExternalLinks(main) {
 /**
  * Check if current page is a MD Docs Page.
  * theme = docs is set in bulk metadata for docs paths.
+ * @param {string} type The type of doc page - example: docs-solution-landing,
+ *                      docs-landing, docs (optional, default value is docs)
  */
-export function isDocPage() {
+export function isDocPage(type = 'docs') {
   const theme = getMetadata('theme');
   return theme
     .split(',')
-    .map((t) => t.toLowerCase())
-    .includes('docs');
+    .map((t) => t.toLowerCase().trim())
+    .includes(type);
 }
 
 /**
@@ -460,7 +462,10 @@ async function loadPage() {
   loadPrevNextBtn();
 }
 
-loadPage();
+// load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
+if (!window.hlx.DO_NOT_LOAD_PAGE) {
+  loadPage();
+}
 
 /**
  * Helper function that converts an AEM path into an EDS path.
@@ -507,7 +512,7 @@ export function rewriteDocsPath(docsPath) {
  */
 export async function getProducts() {
   // get language
-  const lang = getCurrentLanguage();
+  const {lang}= getPathDetails();
 
   // load the <lang>/top_product list
   const topProducts = await ffetch(`/${lang}/top-products.json`).all();

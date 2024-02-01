@@ -139,6 +139,7 @@ strong {
   --text-color: #000;
   --footer-background-color: #fafafa;
   --footer-border-color: #e1e1e1;
+  --box-back-drop-shadow: rgba(0 0 0 / 15%);
   /* Placeholder */
   --shimmer-image-slide-start: #ececec;
   --shimmer-image-slide-mid: #ddd;
@@ -489,7 +490,7 @@ strong {
   --exlm-toc-solution-5: #7cc33f;
   --exlm-toc-solution-6: #d73320;
   --exlm-toc-solution-7: #3da74e;
-  --exlm-toc-solution-8: #3da74e;
+  --exlm-toc-solution-8: #d83790;
   --exlm-toc-solution-9: #b130bd;
   --exlm-toc-solution-10: #ff1828;
   --exlm-toc-solution-11: #16878c;

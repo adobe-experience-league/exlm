@@ -33,6 +33,11 @@
     box-sizing: border-box;
 }
 
+.tutorial-tiles-box .tutorial-tiles-container li:last-of-type {
+    border: none;
+    width: 100%;
+}
+
 .tutorial-tiles-box .tutorial-tiles-container .tutorial-tiles-heading {
     color: var(--non-spectrum-grey);
     font-size: var(--spectrum-font-size-100);
