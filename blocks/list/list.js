@@ -1,10 +1,10 @@
 import { isDocPage } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
-  if (!isDocPage()) {
+  if (!isDocPage('docs-solution-landing')) {
     return;
   }
-  // execute only for doc pages.
+  // execute only for solution doc pages.
   const containerEl = block.querySelector('ul');
   const wrapperEl = containerEl?.parentElement;
   if (!wrapperEl) {

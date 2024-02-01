@@ -1,24 +1,24 @@
-.docs .list-header-box {
+.docs-solution-landing .list-header-box {
     width: 100%;
 }
 
-.docs .list-header {
+.docs-solution-landing .list-header {
     font-size: 24px;
     border-bottom: 3px solid var(--non-spectrum-grey);
     margin-bottom: 8px;
 }
 
-.docs .list-container {
+.docs-solution-landing .list-container {
     display: flex;
     flex-direction: column;
 }
 
-.docs .list-wrapper, .docs .list-container {
+.docs-solution-landing .list-wrapper, .docs-solution-landing .list-container {
     margin: 0;
     width: 100%;
 }
 
-.docs .list-box .list-container li {
+.docs-solution-landing .list-box .list-container li {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -26,10 +26,10 @@
     color: var(--spectrum-gray-800);
 }
 
-.docs .list-box .list-container a {
+.docs-solution-landing .list-box .list-container a {
     color: var(--non-spectrum-link-blue);
 }
 
-.docs .list-box .list-container a:hover {
+.docs-solution-landing .list-box .list-container a:hover {
     color: var(--non-spectrum-custom-dark);
 }
