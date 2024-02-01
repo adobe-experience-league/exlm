@@ -28,37 +28,29 @@ function handleEditorUpdate(event) {
   if (!block || !blockResource?.startsWith(connectionPrefix)) return;
 
   const updates = detail?.responseData?.updates;
-  Promise.all(updates
-    .map(async (update) => {
-      const { content } = update;
-      const newBlockDocument = new DOMParser().parseFromString(content, 'text/html');
-      const newBlock = newBlockDocument?.querySelector(`[data-aue-resource="${blockResource}"]`);
-      if(newBlock) {
-        // keep info about currently selected tab
-        const activeTabId = block.classList.contains('tabs') ? getSelectedTab(block) : null;
+  if (updates.length > 0) {
+    const { content } = updates[0];
+    const newBlockDocument = new DOMParser().parseFromString(content, 'text/html');
+    const newBlock = newBlockDocument?.querySelector(`[data-aue-resource="${blockResource}"]`);
+    if (newBlock) {
+      // keep info about currently selected tab
+      const activeTabId = block.classList.contains('tabs') ? getSelectedTab(block) : null;
 
-        newBlock.style.display = 'none';
-        block.insertAdjacentElement('afterend', newBlock);
-        // decorate buttons and icons
-        decorateButtons(newBlock);
-        decorateIcons(newBlock);
-        // decorate and load the block
-        decorateBlock(newBlock);
-        await loadBlock(newBlock);
-        // remove the old block and show the new one
-        block.remove();
-        newBlock.style.display = null;
+      newBlock.style.display = 'none';
+      block.insertAdjacentElement('afterend', newBlock);
+      // decorate buttons and icons
+      decorateButtons(newBlock);
+      decorateIcons(newBlock);
+      // decorate and load the block
+      decorateBlock(newBlock);
+      loadBlock(newBlock);
+      // remove the old block and show the new one
+      block.remove();
+      newBlock.style.display = null;
 
-        if (activeTabId) setSelectedTab(activeTabId, newBlock);
-
-        return Promise.resolve();
-      }
-      return Promise.reject();
-    }))
-    .catch(() => {
-      // fallback to a full reload if any item could not be reloaded
-      window.location.reload();
-    });
+      if (activeTabId) setSelectedTab(activeTabId, newBlock);
+    }
+  }
 }
 
-document.addEventListener('aue:content-patch', handleEditorUpdate);
+document.querySelector('main')?.addEventListener('aue:content-patch', handleEditorUpdate);
