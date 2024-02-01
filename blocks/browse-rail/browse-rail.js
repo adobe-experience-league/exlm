@@ -2,7 +2,7 @@ import ffetch from '../../scripts/ffetch.js';
 import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { filterSubPages, convertToMultiMap, convertToULList, sortFirstLevelList } from './browse-rail-utils.js';
 import { getEDSLink, getLink, getProducts } from '../../scripts/scripts.js';
-import { getCurrentLanguage } from '../../scripts/language.js';
+import { getPathDetails } from '../../scripts/language.js';
 
 // Utility function to toggle visibility of items
 function toggleItemVisibility(itemList, startIndex, show) {
@@ -62,7 +62,7 @@ export default async function decorate(block) {
   const theme = getMetadata('theme');
   const label = getMetadata('og:title');
 
-  const results = await ffetch(`/${getCurrentLanguage()}/browse-index.json`).all();
+  const results = await ffetch(`/${getPathDetails().path}/browse-index.json`).all();
   const currentPagePath = getEDSLink(window.location.pathname);
   
   // Find the parent page for product sub-pages
