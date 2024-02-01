@@ -513,7 +513,7 @@ export function rewriteDocsPath(docsPath) {
  */
 export async function getProducts() {
   // get language
-  const {lang}= getPathDetails();
+  const { lang } = getPathDetails();
 
   // load the <lang>/top_product list
   const topProducts = await ffetch(`/${lang}/top-products.json`).all();

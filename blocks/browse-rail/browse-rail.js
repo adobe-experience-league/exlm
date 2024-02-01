@@ -64,7 +64,7 @@ export default async function decorate(block) {
 
   const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
   const currentPagePath = getEDSLink(window.location.pathname);
-  
+
   // Find the parent page for product sub-pages
   const parentPage = results.find((page) => page.path === getPathUntilLevel(currentPagePath, 3));
   let parentPageTitle = '';
