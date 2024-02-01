@@ -31,7 +31,7 @@ export default async function decorate(block) {
   block.append(rootCrumbElem);
 
   // get the browse index
-  const index = await ffetch(`/${getPathDetails().path}/browse-index.json`).all();
+  const index = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
 
   // build the remaining breadcrumbs
   pathParts[1].split('/').reduce((prevSubPath, nextPathElem) => {
