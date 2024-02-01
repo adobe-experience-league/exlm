@@ -519,29 +519,28 @@ export async function getProducts() {
   // get all indexed pages below <lang>/browse
   const publishedPages = await ffetch(`/${lang}/browse-index.json`).all();
 
-  // keep only published product pages (<lang>/browse/<product-page>)
-  const publishedProducts = publishedPages.filter(
-    (page) => page.path.startsWith(`/${lang}/browse`) && page.path.split('/').length === 4,
-  );
   // add all published top products to final list
   const finalProducts = topProducts.filter((topProduct) => {
     // check if top product is in published list
-    const found = publishedProducts.find((elem) => elem.path === topProduct.path);
+    const found = publishedPages.find((elem) => elem.path === topProduct.path);
     if (found) {
       // keep original title if no nav title is set
       if (!topProduct.title) topProduct.title = found.title;
       // set marker for featured product
       topProduct.featured = true;
       // remove it from publishedProducts list
-      publishedProducts.splice(publishedProducts.indexOf(found), 1);
+      publishedPages.splice(publishedPages.indexOf(found), 1);
       return true;
     }
     return false;
   });
 
-  // sort the rest of published products alphabetically
-  publishedProducts.sort((productA, productB) => productA.path.localeCompare(productB.path));
+  // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
+  const publishedMainProducts = publishedPages
+    .filter((page) => page.path.split('/').length === 4)
+    // sort alphabetically
+    .sort((productA, productB) => productA.path.localeCompare(productB.path));
   // append remaining published products to final list
-  finalProducts.push(...publishedProducts);
+  finalProducts.push(...publishedMainProducts);
   return finalProducts;
 }
