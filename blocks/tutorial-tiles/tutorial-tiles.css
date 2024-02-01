@@ -6,7 +6,7 @@
 
 .tutorial-tiles-header {
     border-bottom: 3px solid var(--non-spectrum-grey);
-    margin-bottom: 0;
+    margin-bottom: 8px;
 }
 
 .tutorial-tiles-header-box {
@@ -31,6 +31,11 @@
     border: 1px solid var(--non-spectrurm-whisper-gray);
     padding: 10.5px;
     box-sizing: border-box;
+}
+
+.tutorial-tiles-box .tutorial-tiles-container li:last-of-type {
+    border: none;
+    width: 100%;
 }
 
 .tutorial-tiles-box .tutorial-tiles-container .tutorial-tiles-heading {

@@ -179,13 +179,15 @@ export function decorateExternalLinks(main) {
 /**
  * Check if current page is a MD Docs Page.
  * theme = docs is set in bulk metadata for docs paths.
+ * @param {string} type The type of doc page - example: docs-solution-landing,
+ *                      docs-landing, docs (optional, default value is docs)
  */
-export function isDocPage() {
+export function isDocPage(type = 'docs') {
   const theme = getMetadata('theme');
   return theme
     .split(',')
-    .map((t) => t.toLowerCase())
-    .includes('docs');
+    .map((t) => t.toLowerCase().trim())
+    .includes(type);
 }
 
 /**
@@ -280,6 +282,8 @@ async function loadLazy(doc) {
   if (hash && element) element.scrollIntoView();
   const headerPromise = loadHeader(doc.querySelector('header'));
   const footerPromise = loadFooter(doc.querySelector('footer'));
+
+  localStorage.setItem('prevPage', doc.title);
 
   const launchPromise = loadScript(
     'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
