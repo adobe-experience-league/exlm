@@ -509,6 +509,7 @@ export function rewriteDocsPath(docsPath) {
  * - To get added, the product page must be published
  * - Product pages listed in <lang>/browse/top-products are put at the the top
  *   in the order they appear in top-products
+ * - the top product list can point to sub product pages
  */
 export async function getProducts() {
   // get language
