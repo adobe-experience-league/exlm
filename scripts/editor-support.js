@@ -69,13 +69,7 @@ document.addEventListener('editor-update', handleEditorUpdate);
 // this should work reliably as the script executes while the main script waits for the lcp content.
 // so we can wait for the last section to be initialized before we merge grouped text components
 // here into a single wrapper.
-const aueDataAttrs = [
-  'aueBehavior',
-  'aueProp',
-  'aueResource',
-  'aueType',
-  'aueFilter',
-];
+const aueDataAttrs = ['aueBehavior', 'aueProp', 'aueResource', 'aueType', 'aueFilter'];
 
 function removeInstrumentation(on) {
   aueDataAttrs.forEach((attr) => delete on.dataset[attr]);
@@ -124,7 +118,4 @@ new MutationObserver((mutations, observe) => {
       return;
     }
   }
-}).observe(
-  document.querySelector('main > div:last-child'),
-  { attributeFilter: ['data-section-status'] },
-);
+}).observe(document.querySelector('main > div:last-child'), { attributeFilter: ['data-section-status'] });
