@@ -94,7 +94,7 @@ new MutationObserver((mutations, observe) => {
     const { sectionStatus } = target.dataset;
     if (sectionStatus) {
       // any of initialized, loading or loaded
-      const editables = [...document.querySelectorAll('[data-aue-type="richtext"]')];
+      const editables = [...document.querySelectorAll('[data-aue-type="richtext"]:not(div)')];
       while (editables.length) {
         const editable = editables.shift();
         // group rich texts
