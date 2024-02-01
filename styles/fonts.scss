@@ -44,6 +44,14 @@
 
 @font-face {
   font-family: adobe-clean;
+  src: url('../fonts/adobe-clean-800.woff2') format('woff2');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: adobe-clean;
   src: url('../fonts/adobe-clean-900.woff2') format('woff2');
   font-display: swap;
   font-style: normal;

@@ -62,7 +62,8 @@ export default async function decorate(block) {
   const label = getMetadata('og:title');
   const MAX_VISIBLE_ITEMS = 12;
 
-  const results = await ffetch('/browse-index.json').all();
+  // TODO - update with language
+  const results = await ffetch('/en/browse-index.json').all();
   let currentPagePath = getEDSLink(window.location.pathname);
   // For browse-rail in AEM Author
   if (currentPagePath.includes('/content')) {

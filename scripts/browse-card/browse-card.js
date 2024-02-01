@@ -84,7 +84,7 @@ const buildTagsContent = (cardMeta, tags = []) => {
   tags.forEach((tag) => {
     const { icon: iconName, text } = tag;
     if (text) {
-      const anchor = createTag('a', { class: 'browse-card-meta-anchor', title: 'user', href: '#' });
+      const anchor = createTag('div', { class: 'browse-card-meta-anchor' });
       const span = createTag('span', { class: `icon icon-${iconName}` });
       anchor.textContent = text;
       anchor.appendChild(span);
@@ -260,7 +260,7 @@ const buildCardContent = (card, model) => {
     copyLinkElem.innerHTML = tooltipTemplate('copy-icon', '', `${placeholders.toastTiptext}`);
     cardOptions.appendChild(copyLinkElem);
     copyLinkElem.setAttribute('data-link', copyLink);
-    if (isSignedIn && id) {
+    if (id) {
       copyLinkElem.setAttribute('data-id', id);
     }
   }
@@ -300,11 +300,20 @@ const setupCopyAction = (wrapper) => {
 export async function buildCard(container, element, model) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus } = model;
-  const type = contentType?.toLowerCase();
+  let type = contentType?.toLowerCase();
   const courseMappingKey = CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase();
   const tutorialMappingKey = CONTENT_TYPES.TUTORIAL.MAPPING_KEY.toLowerCase();
   const inProgressMappingKey = RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY.toLowerCase();
   const recommededMappingKey = RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY.toLowerCase();
+  if (contentType === inProgressMappingKey || contentType === recommededMappingKey) {
+    const mappingKey = Object.keys(CONTENT_TYPES).find(
+      (key) => CONTENT_TYPES[key].LABEL.toUpperCase() === badgeTitle.toUpperCase(),
+    );
+
+    if (mappingKey) {
+      type = mappingKey.toLowerCase();
+    }
+  }
   const card = createTag(
     'div',
     { class: `browse-card ${type}-card` },

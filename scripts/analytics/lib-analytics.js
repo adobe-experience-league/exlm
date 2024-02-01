@@ -28,6 +28,57 @@ export function pageLoadModel() {
     user.userDetails.org = userData.org || '';
     user.userDetails.orgs = userData.orgs || [];
   }
+  let section = 'learn';
+  if (docs) {
+    section = 'docs';
+  } else if (microsite) {
+    section = 'microsite';
+  } else if (search) {
+    section = 'search';
+  }
+
+  const solution = document.querySelector('meta[name="solution"]')
+    ? document.querySelector('meta[name="solution"]').content.toLowerCase()
+    : '';
+
+  const type = document.querySelector('meta[name="type"]')
+    ? document.querySelector('meta[name="type"]').content.toLowerCase()
+    : '';
+
+  const subSolution =
+    document.querySelector('meta[name="sub-solution"]') !== null
+      ? document.querySelector('meta[name="sub-solution"]').content
+      : '';
+  const solutionVersion =
+    document.querySelector('meta[name="version"]') !== null
+      ? document.querySelector('meta[name="version"]').content
+      : '';
+
+  const pageName = () => {
+    // Validate if subsolution or solutionversion is not empty
+    const lroot = window.location.pathname.endsWith === '/docs';
+    let result = lroot ? ':home' : `:${solution}:${type}:`;
+
+    if (result.endsWith(':')) {
+      if (lang === 'en') {
+        result += document.querySelector('title').innerText.split('|')[0].trim();
+      } else {
+        // figure out how to get non english pages
+      }
+    }
+
+    return result.toLowerCase();
+  };
+
+  const name = `xl:docs${pageName()}`;
+
+  const sections = name.replace(/^xl:docs:/, '').split(':');
+
+  if (sections.length > 1) {
+    sections.shift();
+  }
+
+  const mainSiteSection = search ? 'search' : '';
 
   return {
     event: 'page loaded',
@@ -36,38 +87,31 @@ export function pageLoadModel() {
         URL: window.location.href,
         cleanURL: window.location.href.replace(/^https?:\/\//, ''),
         domain: window.location.host,
-        mainSiteSection: '',
-        name: document.title,
+        mainSiteSection,
+        name,
         gitEdit: document.querySelector('meta[name="git-edit"]')
           ? document.querySelector('meta[name="git-edit"]').content
           : '',
         exlId: document.querySelector('meta[name="exl-id"]')
           ? document.querySelector('meta[name="exl-id"]').content
           : '',
-        pageLanguage: window.document.getElementsByTagName('html')[0].getAttribute('lang') || 'en',
-        pageName: `xl${window.location.pathname.replaceAll('/', ':').replaceAll('-', ' ')}`,
-        pageType: document.querySelector('meta[name="type"]')
-          ? document.querySelector('meta[name="type"]').content
-          : 'webpage',
+        pageLanguage: lang,
+        pageName: name,
+        pageType: 'webpage',
         pageViews: { value: 1 },
-        prevPage: document.querySelector('meta[name="prev-page"]')
-          ? document.querySelector('meta[name="prev-page"]').content
-          : '',
+        prevPage: localStorage.getItem('prevPage') || '',
         userAgent: window.navigator.userAgent,
-        recordid: '',
         server: window.location.host,
-        siteSection: '',
-        siteSubSection1: '',
-        siteSubSection2: '',
-        siteSubSection3: '',
-        siteSubSection4: '',
-        siteSubSection5: '',
-        solution: document.querySelector('meta[name="solution"]')
-          ? document.querySelector('meta[name="solution"]').content
-          : '',
-        solutionVersion: '',
-        subSolution: '',
-        type: document.querySelector('meta[name="type"]') ? document.querySelector('meta[name="type"]').content : '',
+        siteSection: section,
+        siteSubSection1: sections[0] || '',
+        siteSubSection2: sections[1] || '',
+        siteSubSection3: sections[2] || '',
+        siteSubSection4: sections[3] || '',
+        siteSubSection5: sections[4] || '',
+        solution,
+        solutionVersion,
+        subSolution,
+        type,
       },
     },
     user,
@@ -92,7 +136,7 @@ export function linkClickModel(e) {
 
   let linkType = 'other';
 
-  if (e.target.href.match(/.(zip|dmg|exe)$/)) {
+  if (e.target.href.match(/.(pdf|zip|dmg|exe)$/)) {
     linkType = 'download';
   }
 
@@ -121,6 +165,27 @@ export function linkClickModel(e) {
     asset: {
       id: '',
       interactionType: '',
+    },
+  });
+}
+
+export function assetInteractionModel(id, type) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  // assetId is set to the current docs page articleId if id param value is null
+  const assetId = id || ((document.querySelector('meta[name="id"]') || {}).content || '').trim();
+  window.adobeDataLayer.push({
+    link: {
+      destinationDomain: '',
+      linkLocation: '',
+      linkTitle: '',
+      linkType: '',
+      solution: '',
+    },
+    event: 'assetInteraction',
+    asset: {
+      id: assetId,
+      interactionType: type,
     },
   });
 }

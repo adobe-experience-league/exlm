@@ -54,6 +54,6 @@ Promise.all([launchPromise, libAnalyticsModulePromise]).then(
   },
 );
 
-loadCSS('/styles/print/print.css');
+loadCSS(`${window.hlx.codeBasePath}/styles/print/print.css`);
 
 loadPrism(document);

@@ -2,6 +2,7 @@ import { decorateIcons, getMetadata, loadCSS, fetchPlaceholders } from '../lib-f
 import { createTag, htmlToElement } from '../scripts.js'; // eslint-disable-line import/no-cycle
 import { QUALTRICS_LOADED_EVENT_NAME } from './qualtrics/constants.js';
 import { embedQualtricsSurveyIntercept } from './qualtrics/qualtrics-embed.js';
+import { assetInteractionModel } from '../analytics/lib-analytics.js';
 
 // fetch fragment html
 const fetchFragment = async (rePath, lang = 'en') => {
@@ -354,6 +355,7 @@ function handleFeedbackIcons(el) {
         showQualtricsLoadingError(el);
         toggleFeedbackBar(el, false);
       }
+      assetInteractionModel(null, icon.ariaLabel[0].toUpperCase() + icon.ariaLabel.slice(1));
     });
   });
 }

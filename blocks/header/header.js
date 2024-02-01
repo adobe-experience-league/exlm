@@ -1,8 +1,11 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { loadIms } from '../../scripts/scripts.js';
+import { htmlToElement, loadIms } from '../../scripts/scripts.js';
 import { signOut } from '../../scripts/auth/auth-operations.js';
 import Search from '../../scripts/search/search.js';
 import { registerResizeHandler } from './header-utils.js';
+import { fetchCommunityProfileData } from '../../scripts/data-service/khoros-data-service.js';
+
+const languageModule = import('../../scripts/language.js');
 
 /**
  * @param {HTMLElement} block
@@ -45,18 +48,6 @@ const randomId = (length = 6) =>
  */
 const getCell = (block, row, cell) => block.querySelector(`:scope > div:nth-child(${row}) > div:nth-child(${cell})`);
 
-/**
- * creates an element from html string
- * @param {string} html
- * @returns {HTMLElement}
- */
-function htmlToElement(html) {
-  const template = document.createElement('template');
-  // Never return a text node of whitespace as the result
-  const trimmedHtml = html.trim();
-  template.innerHTML = trimmedHtml;
-  return template.content.firstElementChild;
-}
 // fetch fragment html
 const fetchFragment = async (rePath, lang = 'en') => {
   const response = await fetch(`/fragments/${lang}/${rePath}.plain.html`);
@@ -66,7 +57,7 @@ const fetchFragment = async (rePath, lang = 'en') => {
 const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
 const headerFragment = fetchFragment('header/header');
-const languageFragment = fetchFragment('languages/languages');
+languageModule.then(({ loadLanguageFragment }) => loadLanguageFragment());
 const decoratorState = {};
 
 /**
@@ -118,17 +109,20 @@ const hamburgerButton = (navWrapper) => {
  * Builds nav items from the provided basic list
  * @param {HTMLUListElement} ul
  */
-const buildNavItems = (ul, level = 0) => {
+const buildNavItems = async (ul, level = 0) => {
   if (level === 0) {
     // add search link (visible on mobile only)
     ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
+    const { getLanguagePath } = await languageModule;
     // add language select (visible on mobile only)
     ul.appendChild(
       htmlToElement(
         `<li class="nav-item-mobile">
           <p>${decoratorState.languageTitle}</p>
           <ul>
-            ${decoratorState.languages.map((l) => `<li><a href="${l.lang}">${l.title}</a></li>`).join('')}
+            ${decoratorState.languages
+              .map((l) => `<li><a href="${getLanguagePath(l.lang)}">${l.title}</a></li>`)
+              .join('')}
           </ul>
         </li>`,
       ),
@@ -368,27 +362,13 @@ const languageDecorator = async (languageBlock) => {
   const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
   decoratorState.languageTitle = title;
 
-  const popoverId = 'language-picker-popover';
   const prependLanguagePopover = async (parent) => {
-    let languagesEl = htmlToElement(await languageFragment);
-    languagesEl = languagesEl.querySelector('ul');
-
-    const languageOptions = languagesEl?.children || [];
-    const languages = [...languageOptions].map((option) => ({
-      title: option.textContent,
-      lang: option?.firstElementChild?.href,
-    }));
-
-    decoratorState.languages = languages;
-
-    const options = languages
-      .map((option) => `<span class="language-selector-label" data-value="${option.lang}">${option.title}</span>`)
-      .join('');
-    const popover = htmlToElement(`
-      <div class="language-selector-popover" id="${popoverId}">
-        ${options}
-      </div>`);
-    parent.append(popover);
+    await languageModule.then(({ buildLanguagePopover }) => {
+      buildLanguagePopover().then(({ popover, languages }) => {
+        decoratorState.languages = languages;
+        parent.append(popover);
+      });
+    });
   };
 
   const languageHtml = `
@@ -418,18 +398,11 @@ const signInDecorator = async (signInBlock) => {
             <span class="icon icon-profile"></span>
           </button>
           <div class="profile-menu" id="profile-menu">
-            <a href="#dashboard/profile">Profile</a>
-            <a href="#dashboard/awards">Achievements</a>
-            <a href="#dashboard/bookmarks">Bookmarks</a>
-            <a data-id="sign-out">Sign Out</a>
           </div>
         </div>`,
       ),
     );
     const toggler = signInBlock.querySelector('.profile-toggle');
-    signInBlock.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
-      signOut();
-    });
     const toggleExpandContent = () => {
       const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
       toggler.setAttribute('aria-expanded', !isExpanded);
@@ -524,6 +497,68 @@ const productGridDecorator = async (productGridBlock) => {
   return productGridBlock;
 };
 
+const getCommunityProfile = () =>
+  new Promise((resolve, reject) => {
+    const data = fetchCommunityProfileData();
+    if (data) {
+      resolve(data);
+    } else {
+      reject(new Error('Error fetching data!!'));
+    }
+  });
+
+/**
+ * Decorates the profile-menu block
+ * @param {HTMLElement} profileMenu
+ */
+
+const profileMenuDecorator = async (profileMenuBlock) => {
+  if (isSignedIn) {
+    simplifySingleCellBlock(profileMenuBlock);
+    profileMenuBlock.querySelectorAll('p').forEach((ptag) => {
+      if (ptag) {
+        ptag.outerHTML = ptag.querySelector('a').outerHTML;
+      }
+    });
+    const profileMenuWrapper = document.querySelector('.profile-menu');
+    const communityHeading = document.createElement('h2');
+    communityHeading.textContent = 'Community';
+    if (profileMenuWrapper) {
+      profileMenuWrapper.innerHTML = `<h2>Learning</h2>${profileMenuBlock.innerHTML}`;
+      profileMenuWrapper.lastElementChild.setAttribute('data-id', 'sign-out');
+      profileMenuWrapper.insertBefore(communityHeading, profileMenuWrapper.lastElementChild);
+    }
+    getCommunityProfile()
+      .then((res) => {
+        if (res) {
+          res.data.menu.forEach((item) => {
+            if (item.title && item.url) {
+              const communityProfile = document.createElement('a');
+              communityProfile.href = item.url;
+              communityProfile.textContent = item.title;
+              profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        /* eslint-disable-next-line no-console */
+        console.error(err);
+      });
+
+    if (profileMenuWrapper.querySelector('[data-id="sign-out"]')) {
+      profileMenuWrapper.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
+        signOut();
+      });
+    }
+  } else {
+    const isProfileMenu = document.querySelector('.profile-menu');
+    if (isProfileMenu) {
+      document.querySelector('nav').removeChild(isProfileMenu);
+    }
+  }
+};
+
 /**
  * Decorates the adobe-logo block
  * @param {HTMLElement} adobeLogoBlock
@@ -586,6 +621,7 @@ export default async function decorate(headerBlock) {
     { className: 'language-selector', decorator: languageDecorator },
     { className: 'product-grid', decorator: productGridDecorator },
     { className: 'sign-in', decorator: signInDecorator },
+    { className: 'profile-menu', decorator: profileMenuDecorator },
     { className: 'adobe-logo', decorator: adobeLogoDecorator },
     { className: 'nav', decorator: navDecorator },
   ];

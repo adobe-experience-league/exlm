@@ -1,0 +1,68 @@
+.language-selector {
+  grid-area: language;
+  display: var(--language-selector-display);
+  align-items: center;
+  padding: 0;
+  position: relative;
+}
+.language-selector .icon {
+  height: 18px;
+  width: 18px;
+}
+.language-selector-button {
+  border-radius: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-align: left;
+  background: none;
+  background-color: transparent !important;
+  font-weight: initial;
+  padding: 15px;
+  position: relative;
+  top: 2px;
+}
+.footer .language-selector-button {
+  padding: 0px;
+}
+
+.language-selector-popover {
+  background: var(--non-spectrum-bg);
+  box-shadow: 0 8px 8px rgba(10, 10, 10, 0.1);
+  display: none;
+  left: 50%;
+  width: 120px;
+  position: absolute;
+  transform: translate(-50%, 0);
+  top: 64px;
+  z-index: 10;
+}
+
+.language-selector-popover--top {
+  top: unset;
+  bottom: 100%;
+}
+
+.language-selector-label {
+  cursor: pointer;
+  display: block;
+  font-size: var(--spectrum-font-size-100);
+  padding: 5px 15px;
+  margin: 0;
+}
+.language-selector-label:hover {
+  background: var(--non-spectrum-hover-bg);
+}
+.language-selector-label[selected] {
+  background: url(/icons/checkmark.svg);
+  background-size: 10px;
+  background-repeat: no-repeat;
+  background-position-y: center;
+  background-position-x: 95%;
+}
+.language-selector:hover {
+  background: var(--non-spectrum-bg) !important;
+}
+.language-selector:hover .language-selector-popover {
+  display: block;
+}

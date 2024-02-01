@@ -1,10 +1,10 @@
 version: 1
 
 indices:
-  site:
+  site-en: &base-site
     include:
-      - '/**'
-    target: /query-index.json
+      - '/en/**'
+    target: /en/query-index.json
     properties:
       title:
         select: head > meta[property="og:title"]
@@ -13,7 +13,7 @@ indices:
       image:
         select: head > meta[property="og:image"]
         value: |
-          match(attribute(el, 'content'), 'https:\/\/[^/]+(\/.*)')
+          match(attribute(el, 'content'), 'https://[^/]+(/.*)')
       theme:
         select: head > meta[name="theme"]
         value: |
@@ -22,10 +22,77 @@ indices:
         select: none
         value: |
           parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
-  browse:
+
+  site-fr:
+    <<: *base-site
+    include:
+      - '/fr/**'
+    target: /fr/query-index.json
+
+  site-de:
+    <<: *base-site
+    include:
+      - '/de/**'
+    target: /de/query-index.json
+
+  site-es:
+    <<: *base-site
+    include:
+      - '/es/**'
+    target: /es/query-index.json
+
+  site-it:
+    <<: *base-site
+    include:
+      - '/it/**'
+    target: /it/query-index.json
+
+  site-nl:
+    <<: *base-site
+    include:
+      - '/nl/**'
+    target: /nl/query-index.json
+
+  site-pt-br:
+    <<: *base-site
+    include:
+      - '/pt-br/**'
+    target: /pt-br/query-index.json
+
+  site-ko:
+    <<: *base-site
+    include:
+      - '/ko/**'
+    target: /ko/query-index.json
+
+  site-ja:
+    <<: *base-site
+    include:
+      - '/ja/**'
+    target: /ja/query-index.json
+
+  site-sv:
+    <<: *base-site
+    include:
+      - '/sv/**'
+    target: /sv/query-index.json
+
+  site-zh-hans:
+    <<: *base-site
+    include:
+      - '/zh-hans/**'
+    target: /zh-hans/query-index.json
+
+  site-zh-hant:
+    <<: *base-site
+    include:
+      - '/zh-hant/**'
+    target: /zh-hant/query-index.json
+
+  browse-en: &base-browse
     include:
       - /en/browse/**
-    target: /browse-index.json
+    target: /en/browse-index.json
     properties:
       title:
         select: head > meta[property="og:title"]
@@ -39,3 +106,69 @@ indices:
         select: none
         value: |
           parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+
+  browse-fr:
+    <<: *base-browse
+    include:
+      - /fr/browse/**
+    target: /fr/browse-index.json
+
+  browse-de:
+    <<: *base-browse
+    include:
+      - /de/browse/**
+    target: /de/browse-index.json
+
+  browse-es:
+    <<: *base-browse
+    include:
+      - /es/browse/**
+    target: /es/browse-index.json
+
+  browse-it:
+    <<: *base-browse
+    include:
+      - /it/browse/**
+    target: /it/browse-index.json
+
+  browse-nl:
+    <<: *base-browse
+    include:
+      - /nl/browse/**
+    target: /nl/browse-index.json
+
+  browse-pt-br:
+    <<: *base-browse
+    include:
+      - /pt-br/browse/**
+    target: /pt-br/browse-index.json
+
+  browse-ko:
+    <<: *base-browse
+    include:
+      - /ko/browse/**
+    target: /ko/browse-index.json
+
+  browse-ja:
+    <<: *base-browse
+    include:
+      - /ja/browse/**
+    target: /ja/browse-index.json
+
+  browse-sv:
+    <<: *base-browse
+    include:
+      - /sv/browse/**
+    target: /sv/browse-index.json
+
+  browse-zh-hans:
+    <<: *base-browse
+    include:
+      - /zh-hans/browse/**
+    target: /zh-hans/browse-index.json
+
+  browse-zh-hant:
+    <<: *base-browse
+    include:
+      - /zh-hant/browse/**
+    target: /zh-hant/browse-index.json

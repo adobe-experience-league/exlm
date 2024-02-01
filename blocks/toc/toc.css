@@ -25,13 +25,16 @@
     left: 50%;
     width: 95%;
     transform: translate(-50%, 0);
+    filter: drop-shadow(var(--box-back-drop-shadow) 0px 1px 4px);
 }
 .toc ul {
     list-style: none;
     margin-left: 0;
     margin-left: var(--spectrum-spacing-200);
 }
-
+.toc ul>li ul {
+    margin-top: 0;
+}
 .toc p {
     font-family: var(--body-font-family);
     font-size: var(--exlm-font-size-content);
