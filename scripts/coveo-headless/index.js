@@ -1,8 +1,6 @@
 import buildHeadlessSearchEngine from './engine.js';
 import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
 
-const coveoToken = await loadCoveoToken();
-
 function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contextObject, advancedQueryRule }) {
   const advancedQuery = module.loadAdvancedSearchQueryActions(searchEngine).registerAdvancedSearchQueries({
     aq: advancedQueryRule || '',
@@ -80,7 +78,8 @@ export default async function initiateCoveoHeadlessSearch({
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
     import('./libs/browser/headless.esm.js')
-      .then((module) => {
+      .then(async(module) => {
+        const coveoToken = await loadCoveoToken();
         const headlessSearchEngine = buildHeadlessSearchEngine(module, coveoToken);
         const statusControllers = module.buildSearchStatus(headlessSearchEngine);
 
