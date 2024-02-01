@@ -989,26 +989,8 @@
         "valueType": "string",
         "name": "cta1Text",
         "value": "",
-        "label": "First CTA Text",
+        "label": "Sign in CTA text",
         "description": "Text to be shown inside button."
-      },
-      {
-        "component": "select",
-        "name": "cta2Type",
-        "value": "primary",
-        "label": "Second CTA Type",
-        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          }
-        ]
       },
       {
         "component": "text-input",
