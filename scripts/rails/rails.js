@@ -17,13 +17,13 @@ async function decorateRail(railSection, position) {
   railToggler.style.background = 'none'; // override default button styles
   railToggler.classList.add('rail-toggle');
   railToggler.innerHTML = '<span class="icon icon-rail"></span>';
+  railSection.classList.add('rail');
+  railSection.classList.add(`rail-${position}`);
   railSection.prepend(railToggler);
   await decorateIcons(railToggler);
   railToggler.addEventListener('click', () => {
     railSection.classList.toggle('closed');
   });
-  railSection.classList.add('rail');
-  railSection.classList.add(`rail-${position}`);
 }
 
 /**
