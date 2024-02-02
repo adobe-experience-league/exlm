@@ -826,7 +826,7 @@ main > div.browse-rail {
   main > div.section.browse-rail {
     display: initial;
     grid-column: 1;
-    grid-row: 1 / 100;
+    grid-row: 1/100;
     width: 224px;
     height: 100%;
     padding: 0 0 0 32px;
@@ -848,6 +848,7 @@ main > div.browse-rail {
   --exlm-line-height-h5: 23.4px;
   --exlm-line-height-h6: 23.4px;
   --exlm-line-height-content: 25.6px;
+  /**home-tutorials Solution Landing page */
 }
 @media (min-width: 900px) {
   .docs {
@@ -1018,24 +1019,6 @@ main > div.browse-rail {
   padding-top: 24px;
   width: auto;
 }
-.docs.docs-solution-landing main {
-  padding: 0 58px;
-}
-.docs.docs-solution-landing main .default-content-wrapper h1 {
-  font-size: 44px; /* This font is not avaliable in spectrum so we are hardcoding it */
-  line-height: var(--spectrum-line-height-xxxl);
-  margin-top: 0;
-}
-.docs.docs-solution-landing main .section > div.default-content-wrapper {
-  max-width: 100%;
-}
-.docs.docs-solution-landing main .section > div.breadcrumbs-wrapper {
-  margin-left: 0;
-}
-.docs.docs-solution-landing main > div:first-child {
-  border: none;
-  gap: 0;
-}
 @media (min-width: 600px) {
   .docs.docs-landing main {
     padding: 28px 68px 48px 80px;
@@ -1047,11 +1030,98 @@ main > div.browse-rail {
     padding: 42px 0 48px 70px;
     margin: 0 4rem;
   }
+}
+.docs.docs-solution-landing main {
+  padding: 0 58px;
+}
+.docs.docs-solution-landing main .default-content-wrapper {
+  margin: 0;
+  width: 100%;
+}
+.docs.docs-solution-landing main .default-content-wrapper h1 {
+  font-size: 44px; /* This font is not avaliable in spectrum so we are hardcoding it */
+  line-height: var(--spectrum-line-height-xxxl);
+  margin-top: 0;
+}
+.docs.docs-solution-landing main .default-content-wrapper h2 {
+  font-size: 24px;
+  border-bottom: 3px solid var(--non-spectrum-grey);
+  margin-bottom: 8px;
+}
+.docs.docs-solution-landing main .default-content-wrapper h3 {
+  font-size: 14px;
+  margin-top: 40px;
+  margin-bottom: 16px;
+}
+.docs.docs-solution-landing main .default-content-wrapper ul {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  width: 100%;
+}
+.docs.docs-solution-landing main .default-content-wrapper ul li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: var(--spectrum-font-size-200);
+  color: var(--spectrum-gray-800);
+}
+.docs.docs-solution-landing main .default-content-wrapper ul li a {
+  color: var(--non-spectrum-link-blue);
+}
+.docs.docs-solution-landing main .default-content-wrapper ul li a:hover {
+  color: var(--non-spectrum-custom-dark);
+}
+.docs.docs-solution-landing main .section > div.default-content-wrapper {
+  max-width: 100%;
+}
+.docs.docs-solution-landing main .section > div.breadcrumbs-wrapper {
+  margin-left: 0;
+}
+.docs.docs-solution-landing main > div:first-child {
+  border: none;
+}
+@media (min-width: 900px) {
   .docs.docs-solution-landing main {
     padding: 0;
   }
   .docs.docs-solution-landing main > div:first-child {
     margin: 0 56px;
     padding: 54px 47px 50px 60px;
+    border: none;
+  }
+}
+.docs.docs-tutorial .default-content-wrapper h2 {
+  font-size: 24px;
+  border-bottom: 3px solid var(--non-spectrum-grey);
+  margin-bottom: 12px;
+}
+.docs.docs-tutorial .default-content-wrapper ul {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: inherit;
+}
+.docs.docs-tutorial .default-content-wrapper ul li {
+  list-style: none;
+  width: 100%;
+  margin: 0 14px 7px 0;
+}
+.docs.docs-tutorial .default-content-wrapper ul li a {
+  line-height: 24px;
+  font-weight: var(--font-weight-700);
+  color: var(--non-spectrum-link-blue);
+}
+@media (min-width: 600px) {
+  .docs.docs-tutorial .default-content-wrapper ul li {
+    width: 50%;
+  }
+}
+@media (min-width: 900px) {
+  .docs.docs-tutorial .default-content-wrapper h2 {
+    font-size: var(--spectrum-font-size-700);
+  }
+  .docs.docs-tutorial .default-content-wrapper ul li {
+    width: calc(33.33% - 16px);
   }
 }

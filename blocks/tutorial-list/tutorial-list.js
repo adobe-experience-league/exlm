@@ -4,13 +4,13 @@ export default async function decorate(block) {
   if (!wrapperEl) {
     return;
   }
-  wrapperEl.classList.add('tutorial-tiles-box');
-  containerEl.classList.add('tutorial-tiles-container');
+  wrapperEl.classList.add('tutorial-list-box');
+  containerEl.classList.add('tutorial-list-container');
   const tutorialHeader = document.querySelector('h2#tutorials');
   if (tutorialHeader) {
-    tutorialHeader.classList.add('tutorial-tiles-header');
+    tutorialHeader.classList.add('tutorial-list-header');
     if (tutorialHeader.parentElement) {
-      tutorialHeader.parentElement.classList.add('tutorial-tiles-header-box');
+      tutorialHeader.parentElement.classList.add('tutorial-list-header-box');
     }
   }
   const listElements = containerEl.querySelectorAll('li');
@@ -25,8 +25,8 @@ export default async function decorate(block) {
       li.innerHTML = `<a href="${link}">See All Tutorials</a>`;
     } else {
       li.innerHTML = `
-        <p class="tutorial-tiles-heading">${title}</p>
-        <p class="tutorial-tiles-description">${description}</p>
+        <p class="tutorial-list-heading">${title}</p>
+        <p class="tutorial-list-description">${description}</p>
         <a href="${link}">View</a>
       `;
     }
