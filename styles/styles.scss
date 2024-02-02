@@ -1035,13 +1035,13 @@ main > div.browse-rail {
       color: var(--non-spectrum-link-blue);
     }
 
-    @media (min-width: 600px) {
+    @include breakpoint(tablet) {
       .default-content-wrapper ul li {
         width: 50%;
       }
     }
 
-    @media (min-width: 900px) {
+    @include breakpoint(desktop) {
       .default-content-wrapper h2 {
         font-size: var(--spectrum-font-size-700);
       }
