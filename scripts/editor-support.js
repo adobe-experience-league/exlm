@@ -25,7 +25,7 @@ function restoreState(newBlock, state) {
   }
 }
 
-function handleEditorUpdate(event) {
+async function handleEditorUpdate(event) {
   const { detail } = event;
 
   const resource = detail?.requestData?.target?.resource;
@@ -52,7 +52,7 @@ function handleEditorUpdate(event) {
       decorateIcons(newBlock);
       // decorate and load the block
       decorateBlock(newBlock);
-      loadBlock(newBlock);
+      await loadBlock(newBlock);
       // remove the old block and show the new one
       block.remove();
       newBlock.style.display = null;
