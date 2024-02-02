@@ -300,11 +300,10 @@ async function loadLazy(doc) {
     ([launch, libAnalyticsModule, headPr, footPr]) => {
       const { pageLoadModel, linkClickModel } = libAnalyticsModule;
       window.adobeDataLayer.push(pageLoadModel());
-      const linkClicked = document.querySelectorAll('a');
+      const linkClicked = document.querySelectorAll('a,.view-more-less span');
       linkClicked.forEach((linkElement) => {
         linkElement.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (e.target.tagName === 'A') {
+          if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
             linkClickModel(e);
           }
         });
