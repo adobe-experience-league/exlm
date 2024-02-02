@@ -32,10 +32,16 @@ async function decorateRail(railSection, position) {
  */
 export default async function decorateRails() {
   const main = document.querySelector('main');
-  // Get all child div elements
-  const leftRail = main?.children[1];
-  const rightRail = main?.children[2];
-  // ensure this is the docs theme
+  let leftRail;
+  let rightRail;
+  if (main?.children?.length < 3) {
+    rightRail = main?.children[1];
+  } else {
+    // Get all child div elements
+    leftRail = main?.children[1];
+    rightRail = main?.children[2];
+  }
+
   if (leftRail) {
     await decorateRail(leftRail, 'left');
   }

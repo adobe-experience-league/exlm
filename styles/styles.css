@@ -490,7 +490,7 @@ strong {
   --exlm-toc-solution-5: #7cc33f;
   --exlm-toc-solution-6: #d73320;
   --exlm-toc-solution-7: #3da74e;
-  --exlm-toc-solution-8: #3da74e;
+  --exlm-toc-solution-8: #d83790;
   --exlm-toc-solution-9: #b130bd;
   --exlm-toc-solution-10: #ff1828;
   --exlm-toc-solution-11: #16878c;
@@ -826,7 +826,7 @@ main > div.browse-rail {
   main > div.section.browse-rail {
     display: initial;
     grid-column: 1;
-    grid-row: 1/infinite;
+    grid-row: 1 / 100;
     width: 224px;
     height: 100%;
     padding: 0 0 0 32px;
