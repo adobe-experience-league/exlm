@@ -21,7 +21,7 @@ function restoreState(newBlock, state) {
     newBlock.querySelector(`[data-tab-id="${state.activeTabId}"]`).click();
   }
   if (state.scrollLeft) {
-    newBlock.querySelector('.panel-container').scrollLeft = state.scrollLeft;
+    newBlock.querySelector('.panel-container').scrollTo({left: state.scrollLeft, behavior: "instant"});
   }
 }
 
