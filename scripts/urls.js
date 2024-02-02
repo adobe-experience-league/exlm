@@ -12,4 +12,5 @@ export const tocUrl = 'https://experienceleague.adobe.com/api/tocs/';
 export const adlsRedirectUrl = 'https://learning.adobe.com';
 export const pathsUrl = `https://experienceleague.adobe.com/api/paths`;
 export const exlmCDNUrl = 'https://cdn.experienceleague.adobe.com';
-export const communityProfileUrl = 'https://run.mocky.io/v3/0de19fdc-ae5e-4f65-978c-d3489279b2f7'; // TODO: replace with Khoros public endpoint
+export const communityProfileUrl =
+  'https://51837-exlmconverter-dev.adobeioruntime.net/api/v1/web/main/khoros/plugins/custom/adobe/adobedx/profile-menu-list';
