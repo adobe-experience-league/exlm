@@ -848,7 +848,6 @@ main > div.browse-rail {
   --exlm-line-height-h5: 23.4px;
   --exlm-line-height-h6: 23.4px;
   --exlm-line-height-content: 25.6px;
-  /**home-tutorials Solution Landing page */
 }
 @media (min-width: 900px) {
   .docs {
