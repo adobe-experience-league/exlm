@@ -11,6 +11,7 @@
   --text-color: #000;
   --footer-background-color: #fafafa;
   --footer-border-color: #e1e1e1;
+  --box-back-drop-shadow: rgba(0 0 0 / 15%);
 
   /* Placeholder */
   --shimmer-image-slide-start: #ececec;
@@ -378,7 +379,7 @@
   --exlm-toc-solution-5: #7cc33f;
   --exlm-toc-solution-6: #d73320;
   --exlm-toc-solution-7: #3da74e;
-  --exlm-toc-solution-8: #3da74e;
+  --exlm-toc-solution-8: #d83790;
   --exlm-toc-solution-9: #b130bd;
   --exlm-toc-solution-10: #ff1828;
   --exlm-toc-solution-11: #16878c;
@@ -728,7 +729,7 @@ main > div.browse-rail {
   main > div.section.browse-rail {
     display: initial;
     grid-column: 1;
-    grid-row: 1 / infinite;
+    grid-row: 1 / 100;
     width: 224px;
     height: 100%;
     padding: 0 0 0 32px;
@@ -916,6 +917,54 @@ main > div.browse-rail {
 
       > div {
         border-right: 1px solid #eaeaea;
+      }
+    }
+  }
+
+  &.docs-landing main {
+    margin: 0 12px;
+    padding-top: 24px;
+    width: auto;
+
+    @include breakpoint(tablet) {
+      padding: 28px 68px 48px 80px;
+      margin: 0 4rem;
+    }
+
+    @include breakpoint(desktop) {
+      padding: 42px 0 48px 70px;
+      margin: 0 4rem;
+    }
+  }
+
+  &.docs-solution-landing main {
+    padding: 0 58px;
+
+    .default-content-wrapper h1 {
+      font-size: 44px; /* This font is not avaliable in spectrum so we are hardcoding it */
+      line-height: var(--spectrum-line-height-xxxl);
+      margin-top: 0;
+    }
+
+    .section > div.default-content-wrapper {
+      max-width: 100%;
+    }
+
+    .section > div.breadcrumbs-wrapper {
+      margin-left: 0;
+    }
+
+    & > div:first-child {
+      border: none;
+    }
+
+    @include breakpoint(desktop) {
+      padding: 0;
+
+      & > div:first-child {
+        margin: 0 56px;
+        padding: 54px 47px 50px 60px;
+        border: none;
       }
     }
   }

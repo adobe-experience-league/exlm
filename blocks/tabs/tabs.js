@@ -40,7 +40,7 @@ export default function decorate(block) {
       if (index === 0) {
         tabNames.push(el.textContent.trim());
       } else {
-        tabContents.push(el.innerHTML);
+        tabContents.push(el.childNodes);
       }
     });
   });
@@ -84,7 +84,7 @@ export default function decorate(block) {
 
     // default first tab is active
     if (i === 0) tabContentDiv.classList.add('active');
-    tabContentDiv.innerHTML = content;
+    tabContentDiv.replaceChildren(...Array.from(content));
     tabContent.appendChild(tabContentDiv);
   });
 

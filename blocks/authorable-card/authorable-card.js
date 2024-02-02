@@ -27,9 +27,18 @@ export default async function decorate(block) {
       ${linkTextElement?.outerHTML}
     </div>
   `);
-  headerDiv
-    .querySelector('h1,h2,h3,h4,h5,h6')
-    ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+
+  if (toolTipElement?.textContent?.trim()) {
+    headerDiv
+      .querySelector('h1,h2,h3,h4,h5,h6')
+      ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+    const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
+    const tooltipConfig = {
+      content: toolTipElement.textContent.trim(),
+    };
+    createTooltip(block, tooltipElem, tooltipConfig);
+  }
+
   block.replaceChildren(headerDiv);
 
   const articleDataService = new ArticleDataService();
@@ -73,15 +82,6 @@ export default async function decorate(block) {
     block.appendChild(contentDiv);
     decorateIcons(contentDiv);
   });
-
-  /* Tooltip - for Title */
-  const tooltipElem = block.querySelector('.tooltip-placeholder');
-  if (tooltipElem) {
-    const tooltipConfig = {
-      content: toolTipElement.textContent.trim(),
-    };
-    createTooltip(block, tooltipElem, tooltipConfig);
-  }
 
   /* Hide Tooltip while scrolling the cards layout */
   hideTooltipOnScroll(contentDiv);

@@ -1,3 +1,5 @@
+import { rewriteDocsPath } from '../../scripts/scripts.js';
+
 function createThumbnailURL(result) {
   let thumbnail = '';
   if (result.contentType === 'Course') {
@@ -27,7 +29,7 @@ export default async function mapResultToCardsData(result, placeholders) {
     tags: result.Tags,
     copyLink: result.URL,
     bookmarkLink: '',
-    viewLink: result.URL,
+    viewLink: rewriteDocsPath(result.URL),
     viewLinkText: placeholders[`viewLink${result?.contentType}`]
       ? placeholders[`viewLink${result?.contentType}`]
       : `View ${result?.contentType}`,

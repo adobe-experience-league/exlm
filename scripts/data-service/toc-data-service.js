@@ -16,20 +16,20 @@ export default class TocDataService {
    *
    * @returns {Promise<Array>} A promise that resolves with an array of data results.
    */
-  async fetchDataFromSource(tocID) {
+  async fetchDataFromSource(tocID, lang) {
     try {
-      if (`${TOC}_${tocID}` in sessionStorage) {
-        return JSON.parse(sessionStorage[`${TOC}_${tocID}`]);
+      if (`${TOC}_${tocID}_${lang}` in sessionStorage) {
+        return JSON.parse(sessionStorage[`${TOC}_${tocID}_${lang}`]);
       }
-      const response = await fetch(`${this.url}${tocID}`, {
+      const response = await fetch(`${this.url}${tocID}?lang=${lang}`, {
         method: 'GET',
       });
 
       const data = await response.json();
-      sessionStorage.setItem(`${TOC}_${tocID}`, JSON.stringify(data.data));
+      sessionStorage.setItem(`${TOC}_${tocID}_${lang}`, JSON.stringify(data.data));
       return data.data;
     } catch (error) {
-      sessionStorage.removeItem(`${TOC}_${tocID}`);
+      sessionStorage.removeItem(`${TOC}_${tocID}_${lang}`);
       /* eslint-disable no-console */
       console.error('Error fetching data', error);
       return null;

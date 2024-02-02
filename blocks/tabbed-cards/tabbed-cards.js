@@ -37,20 +37,19 @@ export default async function decorate(block) {
     </div>
   `);
 
-  headerDiv
-    .querySelector('h1,h2,h3,h4,h5,h6')
-    ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
-
-  // Appending header div to the block
-  block.appendChild(headerDiv);
-
-  const tooltipElem = block.querySelector('.tooltip-placeholder');
-  if (tooltipElem) {
+  if (toolTipElement?.textContent?.trim()) {
+    headerDiv
+      .querySelector('h1,h2,h3,h4,h5,h6')
+      ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+    const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
     const tooltipConfig = {
       content: toolTipElement.textContent.trim(),
     };
     createTooltip(block, tooltipElem, tooltipConfig);
   }
+
+  // Appending header div to the block
+  block.appendChild(headerDiv);
 
   // Authored Initial Content type
   const initialContentType = tabsLabels[0];
@@ -178,12 +177,7 @@ export default async function decorate(block) {
     const shimmerClass = block.querySelector('.browse-card-shimmer');
     block.insertBefore(tabList, shimmerClass);
     buildCardsShimmer.add(block);
-
-    console.log(initialContentType);
-
     const viewLinkInitialMappingKey = placeholders[`${initialContentType}LabelKey`];
-
-    console.log(viewLinkInitialMappingKey);
 
     // Update view link for initial content type
     viewLinkURLElement.innerHTML = placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkInitialMappingKey)}`];

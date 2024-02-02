@@ -139,6 +139,7 @@ strong {
   --text-color: #000;
   --footer-background-color: #fafafa;
   --footer-border-color: #e1e1e1;
+  --box-back-drop-shadow: rgba(0 0 0 / 15%);
   /* Placeholder */
   --shimmer-image-slide-start: #ececec;
   --shimmer-image-slide-mid: #ddd;
@@ -489,7 +490,7 @@ strong {
   --exlm-toc-solution-5: #7cc33f;
   --exlm-toc-solution-6: #d73320;
   --exlm-toc-solution-7: #3da74e;
-  --exlm-toc-solution-8: #3da74e;
+  --exlm-toc-solution-8: #d83790;
   --exlm-toc-solution-9: #b130bd;
   --exlm-toc-solution-10: #ff1828;
   --exlm-toc-solution-11: #16878c;
@@ -825,7 +826,7 @@ main > div.browse-rail {
   main > div.section.browse-rail {
     display: initial;
     grid-column: 1;
-    grid-row: 1/infinite;
+    grid-row: 1 / 100;
     width: 224px;
     height: 100%;
     padding: 0 0 0 32px;
@@ -1010,5 +1011,47 @@ main > div.browse-rail {
   }
   .docs main > div {
     border-right: 1px solid #eaeaea;
+  }
+}
+.docs.docs-landing main {
+  margin: 0 12px;
+  padding-top: 24px;
+  width: auto;
+}
+.docs.docs-solution-landing main {
+  padding: 0 58px;
+}
+.docs.docs-solution-landing main .default-content-wrapper h1 {
+  font-size: 44px; /* This font is not avaliable in spectrum so we are hardcoding it */
+  line-height: var(--spectrum-line-height-xxxl);
+  margin-top: 0;
+}
+.docs.docs-solution-landing main .section > div.default-content-wrapper {
+  max-width: 100%;
+}
+.docs.docs-solution-landing main .section > div.breadcrumbs-wrapper {
+  margin-left: 0;
+}
+.docs.docs-solution-landing main > div:first-child {
+  border: none;
+  gap: 0;
+}
+@media (min-width: 600px) {
+  .docs.docs-landing main {
+    padding: 28px 68px 48px 80px;
+    margin: 0 4rem;
+  }
+}
+@media (min-width: 900px) {
+  .docs.docs-landing main {
+    padding: 42px 0 48px 70px;
+    margin: 0 4rem;
+  }
+  .docs.docs-solution-landing main {
+    padding: 0;
+  }
+  .docs.docs-solution-landing main > div:first-child {
+    margin: 0 56px;
+    padding: 54px 47px 50px 60px;
   }
 }

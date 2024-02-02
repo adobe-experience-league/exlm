@@ -7,6 +7,7 @@ import {
   getObjectByName,
   getFiltersPaginationText,
   getBrowseFiltersResultCount,
+  getSelectedTopics,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -443,6 +444,9 @@ function handleDropdownToggle() {
     if (openDropdowns && !isCurrentDropDownOpen) closeOpenDropdowns();
 
     if (dropdownEl && !isCurrentDropDownOpen) {
+      if (document.activeElement?.className?.includes('search-input')) {
+        return;
+      }
       dropdownEl.querySelector('.filter-dropdown-content').style.display = 'block';
       dropdownEl.classList.add('open');
     } else {
@@ -452,10 +456,14 @@ function handleDropdownToggle() {
 }
 
 function handleUriHash() {
-  const hash = fragment();
   const browseFiltersSection = document.querySelector('.browse-filters-form');
+  if (!browseFiltersSection) {
+    return;
+  }
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchInput = filterInputSection.querySelector('input');
+  uncheckAllFiltersFromDropdown(browseFiltersSection);
+  const hash = fragment();
   if (!hash) {
     clearAllSelectedTag(browseFiltersSection);
     updateClearFilterStatus(browseFiltersSection);
@@ -507,6 +515,17 @@ function handleUriHash() {
       } else {
         searchInput.value = '';
       }
+    } else if (facetKey === 'aq' && filterInfo) {
+      const selectedTopics = getSelectedTopics(filterInfo);
+      const contentDiv = document.querySelector('.browse-topics');
+      const buttons = contentDiv.querySelectorAll('button');
+      Array.from(buttons).forEach((button) => {
+        if (selectedTopics.includes(button.dataset.topicname)) {
+          button.classList.add('browse-topics-item-active');
+        } else {
+          button.classList.remove('browse-topics-item-active');
+        }
+      });
     }
   });
   if (!containsSearchQuery) {
@@ -526,7 +545,7 @@ function constructFilterPagination(block) {
   const filtersPaginationEl = htmlToElement(`
     <div class="browse-filters-pagination">
       <button class="nav-arrow" aria-label="previous page"></button>
-      <input type="text" aria-label="Enter page number" value=${currentPageNumber}>
+      <input type="text" class="browse-filters-pg-search-input" aria-label="Enter page number" value=${currentPageNumber}>
       <span class="browse-filters-pagination-text">${getFiltersPaginationText(pgCount)}</span>
       <button class="nav-arrow right-nav-arrow" aria-label="next page"></button>
     </div>`);
@@ -664,8 +683,8 @@ function handleCoveoHeadlessSearch(
 }
 
 async function handleSearchEngineSubscription() {
-  const filterResultsEl = document.querySelector('.browse-filters-results');
   const browseFilterForm = document.querySelector(CLASS_BROWSE_FILTER_FORM);
+  const filterResultsEl = browseFilterForm?.querySelector('.browse-filters-results');
   buildCardsShimmer.add(browseFilterForm);
   browseFilterForm.insertBefore(
     document.querySelector('.shimmer-placeholder'),
@@ -678,21 +697,26 @@ async function handleSearchEngineSubscription() {
   const search = window.headlessSearchEngine.state.search;
   const { results } = search;
   if (results.length > 0) {
-    buildCardsShimmer.remove();
-    const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
-    filterResultsEl.innerHTML = '';
-    cardsData.forEach((cardData) => {
-      const cardDiv = document.createElement('div');
-      buildCard(filterResultsEl, cardDiv, cardData);
-      filterResultsEl.appendChild(cardDiv);
-      document.querySelector('.browse-filters-form').classList.add('is-result');
+    try {
+      buildCardsShimmer.remove();
+      const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
+      filterResultsEl.innerHTML = '';
+      cardsData.forEach((cardData) => {
+        const cardDiv = document.createElement('div');
+        buildCard(filterResultsEl, cardDiv, cardData);
+        filterResultsEl.appendChild(cardDiv);
+      });
+      decorateIcons(filterResultsEl);
+      browseFilterForm.classList.add('is-result');
       filterResultsEl.classList.remove('no-results');
-      decorateIcons(cardDiv);
-    });
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log('*** failed to create card because of the error:', err);
+    }
   } else {
     buildCardsShimmer.remove();
     filterResultsEl.innerHTML = placeholders.noResultsTextBrowse || 'No Results';
-    document.querySelector('.browse-filters-form').classList.remove('is-result');
+    browseFilterForm.classList.remove('is-result');
     filterResultsEl.classList.add('no-results');
   }
 }
@@ -775,17 +799,9 @@ function decorateBrowseTopics(block) {
     });
     const decodedHash = decodeURIComponent(window.location.hash);
     const filtersInfo = decodedHash.split('&').find((s) => s.includes('@el_features'));
+
     if (filtersInfo) {
-      let selectedTopics;
-      const [, multipleFeaturesCheck] = filtersInfo.match(/@el_features==\(([^)]+)/) || [];
-      let topicsString = multipleFeaturesCheck;
-      if (!topicsString) {
-        const [, singleFeatureCheck] = filtersInfo.match(/@el_features=("[^"]*")/) || [];
-        topicsString = singleFeatureCheck;
-      }
-      if (topicsString) {
-        selectedTopics = topicsString.split(',').map((s) => s.trim().replace(/"/g, ''));
-      }
+      const selectedTopics = getSelectedTopics(filtersInfo);
       if (selectedTopics && selectedTopics.length > 0) {
         selectedTopics.forEach((topic) => {
           const element = contentDiv.querySelector(`.browse-topics-item[data-topicname="${topic}"]`);

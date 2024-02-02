@@ -1,6 +1,7 @@
 import { fetchPlaceholders } from '../lib-franklin.js';
 import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
+import { rewriteDocsPath } from '../scripts.js';
 
 /**
  * Module that provides functionality for adapting Coveo search results to BrowseCards data model.
@@ -30,8 +31,14 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       /* TODO: Will enable once we have the API changes ready from ExL */
       // tags.push({ icon: 'book', text: `0 ${placeholders.lesson}` });
     } else {
-      tags.push({ icon: result?.raw?.el_view_status ? 'view' : '', text: result?.raw?.el_view_status || '' });
-      tags.push({ icon: result?.raw?.el_reply_status ? 'reply' : '', text: result?.raw?.el_reply_status || '' });
+      tags.push({
+        icon: result?.parentResult?.raw?.el_view_status || result?.raw?.el_view_status ? 'view' : '',
+        text: result?.parentResult?.raw?.el_view_status || result?.raw?.el_view_status || '',
+      });
+      tags.push({
+        icon: result?.parentResult?.raw?.el_reply_status || result?.raw?.el_reply_status ? 'reply' : '',
+        text: result?.parentResult?.raw?.el_reply_status || result?.raw?.el_reply_status || '',
+      });
     }
     return tags;
   };
@@ -58,7 +65,8 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       product = el_solution && (Array.isArray(el_solution) ? el_solution : el_solution.split(/,\s*/));
     }
     const tags = createTags(result, contentType.toLowerCase());
-    const url = parentResult?.clickableuri || parentResult?.uri || clickUri || uri || '';
+    let url = parentResult?.clickUri || parentResult?.uri || clickUri || uri || '';
+    url = rewriteDocsPath(url, true);
 
     return {
       ...browseCardDataModel,

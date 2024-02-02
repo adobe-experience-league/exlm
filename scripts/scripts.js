@@ -16,6 +16,9 @@ import {
   getMetadata,
   loadScript,
 } from './lib-franklin.js';
+import ffetch from './ffetch.js';
+// eslint-disable-next-line import/no-cycle
+import { getPathDetails } from './language.js';
 
 const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
 
@@ -179,13 +182,15 @@ export function decorateExternalLinks(main) {
 /**
  * Check if current page is a MD Docs Page.
  * theme = docs is set in bulk metadata for docs paths.
+ * @param {string} type The type of doc page - example: docs-solution-landing,
+ *                      docs-landing, docs (optional, default value is docs)
  */
-export function isDocPage() {
+export function isDocPage(type = 'docs') {
   const theme = getMetadata('theme');
   return theme
     .split(',')
-    .map((t) => t.toLowerCase())
-    .includes('docs');
+    .map((t) => t.toLowerCase().trim())
+    .includes(type);
 }
 
 /**
@@ -280,6 +285,8 @@ async function loadLazy(doc) {
   if (hash && element) element.scrollIntoView();
   const headerPromise = loadHeader(doc.querySelector('header'));
   const footerPromise = loadFooter(doc.querySelector('footer'));
+
+  localStorage.setItem('prevPage', doc.title);
 
   const launchPromise = loadScript(
     'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
@@ -455,7 +462,10 @@ async function loadPage() {
   loadPrevNextBtn();
 }
 
-loadPage();
+// load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
+if (!window.hlx.DO_NOT_LOAD_PAGE) {
+  loadPage();
+}
 
 /**
  * Helper function that converts an AEM path into an EDS path.
@@ -471,4 +481,67 @@ export function getLink(edsPath) {
   return window.hlx.aemRoot && !edsPath.startsWith(window.hlx.aemRoot) && edsPath.indexOf('.html') === -1
     ? `${window.hlx.aemRoot}${edsPath}.html`
     : edsPath;
+}
+
+export const removeExtension = (pathStr) => {
+  const parts = pathStr.split('.');
+  if (parts.length === 1) return parts[0];
+  return parts.slice(0, -1).join('.');
+};
+
+export function rewriteDocsPath(docsPath) {
+  const PROD_BASE = 'https://experienceleague.adobe.com';
+  const url = new URL(docsPath, PROD_BASE);
+  if (!url.pathname.startsWith('/docs')) {
+    return docsPath; // not a docs path, return as is
+  }
+  const lang = url.searchParams.get('lang') || 'en'; // en is default
+  url.searchParams.delete('lang');
+  let pathname = `${lang.toLowerCase()}${url.pathname}`;
+  pathname = removeExtension(pathname); // new URLs are extensionless
+  url.pathname = pathname;
+  return url.toString().replace(PROD_BASE, ''); // always remove PROD_BASE if exists
+}
+
+/**
+ * Helper function thats returns a list of all products
+ * - below <lang>/browse/<product-page>
+ * - To get added, the product page must be published
+ * - Product pages listed in <lang>/browse/top-products are put at the the top
+ *   in the order they appear in top-products
+ * - the top product list can point to sub product pages
+ */
+export async function getProducts() {
+  // get language
+  const { lang } = getPathDetails();
+
+  // load the <lang>/top_product list
+  const topProducts = await ffetch(`/${lang}/top-products.json`).all();
+  // get all indexed pages below <lang>/browse
+  const publishedPages = await ffetch(`/${lang}/browse-index.json`).all();
+
+  // add all published top products to final list
+  const finalProducts = topProducts.filter((topProduct) => {
+    // check if top product is in published list
+    const found = publishedPages.find((elem) => elem.path === topProduct.path);
+    if (found) {
+      // keep original title if no nav title is set
+      if (!topProduct.title) topProduct.title = found.title;
+      // set marker for featured product
+      topProduct.featured = true;
+      // remove it from publishedProducts list
+      publishedPages.splice(publishedPages.indexOf(found), 1);
+      return true;
+    }
+    return false;
+  });
+
+  // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
+  const publishedMainProducts = publishedPages
+    .filter((page) => page.path.split('/').length === 4)
+    // sort alphabetically
+    .sort((productA, productB) => productA.path.localeCompare(productB.path));
+  // append remaining published products to final list
+  finalProducts.push(...publishedMainProducts);
+  return finalProducts;
 }
