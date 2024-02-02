@@ -1,8 +1,9 @@
 import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 import { tocUrl } from '../../scripts/urls.js';
 import TocDataService from '../../scripts/data-service/toc-data-service.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, rewriteDocsPath } from '../../scripts/scripts.js';
 import getSolutionName from './toc-solutions.js';
+import { getPathDetails } from '../../scripts/language.js';
 
 let placeholders = {};
 try {
@@ -154,7 +155,15 @@ export default async function decorate(block) {
 
   // fetch toc content
   const currentURL = window.location.pathname;
-  const lang = currentURL.split('/')[1];
+  let lang = `${getPathDetails().lang}`;
+  // lang is case sensitive for TOC API
+  if (lang === 'pt-br') {
+    lang = 'pt-BR';
+  } else if (lang === 'zh-hant') {
+    lang = 'zh-Hant';
+  } else if (lang === 'zh-hans') {
+    lang = 'zh-Hans';
+  }
   const tocID = block.querySelector('.toc > div > div').textContent;
   if (tocID !== '') {
     const resp = await handleTocService(tocID, lang);
@@ -209,20 +218,13 @@ export default async function decorate(block) {
       anchor.parentNode.replaceChild(pTag, anchor);
       pTag.appendChild(anchor);
 
-      // Remove ".html?lang=en" part from the href
-      const currentHref = anchor.getAttribute('href');
-      const linkExtension = currentHref.lastIndexOf('.');
-      let newHref;
-      if (linkExtension !== -1) {
-        newHref = currentHref.substring(0, linkExtension);
-      } else {
-        newHref = currentHref;
-      }
-
-      if (anchor.getAttribute('href').startsWith('#')) {
+      const anchorHref = anchor.getAttribute('href');
+      if (anchorHref.startsWith('#')) {
         anchor.classList.add('js-toggle');
       } else {
-        anchor.setAttribute('href', `/${lang}${newHref}`);
+        // Rewrite docs path to fix language path
+        const rewritePath = rewriteDocsPath(anchorHref);
+        anchor.setAttribute('href', rewritePath);
       }
     });
 
