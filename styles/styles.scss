@@ -816,7 +816,8 @@ main > div.browse-rail {
 
   main {
     width: 100%;
-    display: grid;
+    display: flex;
+    flex-direction: column;
     margin: 0 auto;
     padding: 0 46px;
     box-sizing: border-box;
@@ -824,20 +825,21 @@ main > div.browse-rail {
 
     @include breakpoint(desktop) {
       padding: 0;
-      grid-template-columns: 1fr 3fr 1fr;
-      grid-template-rows: max-content;
+      flex-direction: row;
     }
 
     > div.section {
+      order: 2;
       padding: 30px 2px;
       box-sizing: border-box;
+      width: 100%;
 
       @include breakpoint(tablet) {
         padding: 30px 32px 32px;
       }
 
       &.toc-container {
-        grid-row: 1;
+        order: 1;
         min-height: 70px; // predefined height to help with CLS
         padding: 32px 10px 10px; // predefined padding to help with CLS
 
@@ -851,6 +853,7 @@ main > div.browse-rail {
       }
 
       &.mini-toc-container {
+        order: 3;
         padding: 32px 10px 0 0;
       }
 
@@ -864,19 +867,18 @@ main > div.browse-rail {
         border-right: 1px solid #eaeaea;
 
         &:not(.toc-container, .mini-toc-container) {
+          flex: 1 1 0;
           overflow: auto;
           padding: 54px 37px 50px 50px;
         }
 
         &.toc-container {
-          grid-column: 1;
-          grid-row: 1 / 999;
+          width: 20%;
           padding: 46px 10px 10px;
         }
 
         &.mini-toc-container {
-          grid-column: 3;
-          grid-row: 1 / 999;
+          width: 20%;
           position: relative;
           display: flex;
           gap: 8px;

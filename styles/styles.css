@@ -924,7 +924,8 @@ main > div.browse-rail {
 }
 .docs main {
   width: 100%;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   margin: 0 auto;
   padding: 0 46px;
   box-sizing: border-box;
@@ -933,13 +934,14 @@ main > div.browse-rail {
 @media (min-width: 900px) {
   .docs main {
     padding: 0;
-    grid-template-columns: 1fr 3fr 1fr;
-    grid-template-rows: max-content;
+    flex-direction: row;
   }
 }
 .docs main > div.section {
+  order: 2;
   padding: 30px 2px;
   box-sizing: border-box;
+  width: 100%;
 }
 @media (min-width: 600px) {
   .docs main > div.section {
@@ -947,7 +949,7 @@ main > div.browse-rail {
   }
 }
 .docs main > div.section.toc-container {
-  grid-row: 1;
+  order: 1;
   min-height: 70px;
   padding: 32px 10px 10px;
 }
@@ -958,6 +960,7 @@ main > div.browse-rail {
   visibility: hidden;
 }
 .docs main > div.section.mini-toc-container {
+  order: 3;
   padding: 32px 10px 0 0;
 }
 @media (min-width: 600px) {
@@ -970,17 +973,16 @@ main > div.browse-rail {
     border-right: 1px solid #eaeaea;
   }
   .docs main > div.section:not(.toc-container, .mini-toc-container) {
+    flex: 1 1 0;
     overflow: auto;
     padding: 54px 37px 50px 50px;
   }
   .docs main > div.section.toc-container {
-    grid-column: 1;
-    grid-row: 1/999;
+    width: 20%;
     padding: 46px 10px 10px;
   }
   .docs main > div.section.mini-toc-container {
-    grid-column: 3;
-    grid-row: 1/999;
+    width: 20%;
     position: relative;
     display: flex;
     gap: 8px;
