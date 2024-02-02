@@ -13,6 +13,7 @@ function getState(block) {
     const container = block.querySelector('.panel-container');
     state.scrollLeft = container.scrollLeft;
   }
+  return state;
 }
 
 function restoreState(newBlock, state) {
@@ -31,7 +32,7 @@ function handleEditorUpdate(event) {
   if (!resource) return;
 
   const element = document.querySelector(`[data-aue-resource="${resource}"]`);
-  const block = element?.closest('.block');
+  const block = element?.parentElement?.closest('.block') || element?.closest('.block');
   const blockResource = block?.getAttribute('data-aue-resource');
   if (!block || !blockResource?.startsWith(connectionPrefix)) return;
 
