@@ -31,6 +31,8 @@ function loadPrism(document) {
 }
 
 async function loadAdobeLaunch() {
+  await loadScript('https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js');
+  window.adobeDataLayer = window.adobeDataLayer || [];
   window.adobeDataLayer.push(pageLoadModel());
   const linkClicked = document.querySelectorAll('a');
   linkClicked.forEach((linkElement) => {
@@ -40,8 +42,7 @@ async function loadAdobeLaunch() {
         linkClickModel(e);
       }
     });
-  });
-  await loadScript('https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js');
+  });  
 }
 
 await loadAdobeLaunch();
