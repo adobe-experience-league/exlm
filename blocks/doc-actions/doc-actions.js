@@ -1,5 +1,5 @@
 import { loadCSS, fetchPlaceholders, loadBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
-import { createTag, isDocPage, htmlToElement, decorateMain } from '../../scripts/scripts.js';
+import { createTag, isDocPage, htmlToElement } from '../../scripts/scripts.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
@@ -23,13 +23,17 @@ try {
  * @param {HTMLElement} element
  * @param {HTMLElement} block
  */
-const addToDocActions = (element, block) => {
+const addToDocActions = async (element, block) => {
   const mobileActionsBlock = document.querySelector('.doc-actions-mobile');
-  block.appendChild(element);
+  if (document.querySelector('.doc-actions-mobile') !== 'undefined') {
+    block.appendChild(element);
+  }
 
   if (mobileActionsBlock) {
     mobileActionsBlock.appendChild(element.cloneNode(true));
+    await decorateIcons(mobileActionsBlock);
   }
+  await decorateIcons(element);
 };
 
 function decorateBookmarkMobileBlock() {
@@ -124,7 +128,6 @@ async function getTranslatedDocContent() {
   const docResponse = await fetch(`${docPath}.plain.html`);
   const translatedDoc = await docResponse.text();
   const docElement = htmlToElement(`<div>${translatedDoc}</div>`);
-  decorateMain(docElement);
   await loadBlocks(docElement);
   return docElement.querySelector(':scope > div:first-child');
 }
@@ -136,7 +139,6 @@ async function toggleContent(isChecked, docContainer) {
 
   if (isChecked) {
     docContainer.replaceWith(translatedDocElement);
-    decorateMiniTOC();
   } else {
     const dc = document.querySelector('main > div:first-child');
     dc.replaceWith(docContainer);
