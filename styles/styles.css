@@ -1079,6 +1079,7 @@ main > div.browse-rail {
 }
 .docs.docs-solution-landing main > div:first-child {
   border: none;
+  gap: 0;
 }
 @media (min-width: 900px) {
   .docs.docs-solution-landing main {

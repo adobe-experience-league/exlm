@@ -996,6 +996,7 @@ main > div.browse-rail {
 
     & > div:first-child {
       border: none;
+      gap: 0;
     }
 
     @include breakpoint(desktop) {
