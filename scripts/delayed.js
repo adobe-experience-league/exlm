@@ -1,10 +1,10 @@
 // eslint-disable-next-line import/no-cycle
 import { loadCSS, loadScript, sampleRUM } from './lib-franklin.js';
 // add more delayed functionality here
+import {pageLoadModel, linkClickModel} from './analytics/lib-analytics.js';
 
 // Core Web Vitals RUM collection
 sampleRUM('cwv');
-// const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
 
 /**
  * Loads prism for syntax highlighting
@@ -30,29 +30,21 @@ function loadPrism(document) {
     .catch((err) => console.error(err));
 }
 
-// const launchPromise = loadScript(
-//   'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
-//   {
-//     async: true,
-//   },
-// );
+async function loadAdobeLaunch() {
+  window.adobeDataLayer.push(pageLoadModel());
+  const linkClicked = document.querySelectorAll('a');
+  linkClicked.forEach((linkElement) => {
+    linkElement.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (e.target.tagName === 'A') {
+        linkClickModel(e);
+      }
+    });
+  });
+  await loadScript('https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js');
+}
 
-// Promise.all([launchPromise, libAnalyticsModulePromise]).then(
-//   // eslint-disable-next-line no-unused-vars
-//   ([launch, libAnalyticsModule]) => {
-//     const { pageLoadModel, linkClickModel } = libAnalyticsModule;
-//     window.adobeDataLayer.push(pageLoadModel());
-//     const linkClicked = document.querySelectorAll('a');
-//     linkClicked.forEach((linkElement) => {
-//       linkElement.addEventListener('click', (e) => {
-//         e.stopPropagation();
-//         if (e.target.tagName === 'A') {
-//           linkClickModel(e);
-//         }
-//       });
-//     });
-//   },
-// );
+await loadAdobeLaunch();
 
 loadCSS(`${window.hlx.codeBasePath}/styles/print/print.css`);
 
