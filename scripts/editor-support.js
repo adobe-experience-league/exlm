@@ -5,15 +5,23 @@ const connectionPrefix = 'urn:aemconnection:';
 // set aem content root
 window.hlx.aemRoot = '/content/exlm/global';
 
-// extracts the title independent active tab of a tabs component
-function getSelectedTab(block) {
-  return block.querySelector('[aria-selected="true"]').getAttribute('data-tab-id');
+// extract the visual state so we can restore it after applying updates
+function getState(block) {
+  const state = {};
+  if (block.matches('.tabs')) state.activeTabId = block.querySelector('[aria-selected="true"]').dataset.tabId;
+  if (block.matches('.carousel')) {
+    const container = block.querySelector('.panel-container');
+    state.scrollLeft = container.scrollLeft;
+  }
 }
 
-// reactivates the previously active tab on the new edited block
-function setSelectedTab(id, newBlock) {
-  // click the previously slected tab
-  newBlock.querySelector(`[data-tab-id="${id}"]`).click();
+function restoreState(newBlock, state) {
+  if (state.activeTabId) {
+    newBlock.querySelector(`[data-tab-id="${state.activeTabId}"]`).click();
+  }
+  if (state.scrollLeft) {
+    newBlock.querySelector('.panel-container').scrollLeft = state.scrollLeft;
+  }
 }
 
 function handleEditorUpdate(event) {
@@ -28,7 +36,7 @@ function handleEditorUpdate(event) {
   if (!block || !blockResource?.startsWith(connectionPrefix)) return;
 
   // keep info about currently selected tab
-  const activeTabId = block.classList.contains('tabs') ? getSelectedTab(block) : null;
+  const uiState = getState(block);
 
   const updates = detail?.responseData?.updates;
   if (updates.length > 0) {
@@ -48,7 +56,7 @@ function handleEditorUpdate(event) {
       block.remove();
       newBlock.style.display = null;
 
-      if (activeTabId) setSelectedTab(activeTabId, newBlock);
+      restoreState(newBlock, uiState);
     }
   }
 }
