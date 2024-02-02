@@ -325,9 +325,9 @@ export function loadPrevNextBtn() {
   if (!mainDoc) return;
 
   const prevPageMeta = document.querySelector('meta[name="prev-page"]');
-  const prevPageMetaTitle = document.querySelector('meta[name="prev-page-title"]')?.getAttribute('content');
+  const prevPageMetaTitle = document.querySelector('meta[name="prev-page-title"]')?.getAttribute('content') || '';
   const nextPageMeta = document.querySelector('meta[name="next-page"]');
-  const nextPageMetaTitle = document.querySelector('meta[name="next-page-title"]')?.getAttribute('content');
+  const nextPageMetaTitle = document.querySelector('meta[name="next-page-title"]')?.getAttribute('content') || '';
   const prevPageMetaContent = prevPageMeta?.getAttribute('content').trim().split('.html')[0];
   const nextPageMetaContent = nextPageMeta?.getAttribute('content').trim().split('.html')[0];
   const PREV_PAGE = 'Previous page';

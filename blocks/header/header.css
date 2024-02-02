@@ -52,7 +52,6 @@ header {
 }
 
 .header-wrapper {
-  /* header is always white */
   background-color: var(--color-white);
 }
 

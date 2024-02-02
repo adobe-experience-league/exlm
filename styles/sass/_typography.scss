@@ -96,10 +96,6 @@ a {
   );
 }
 
-.is-secondary {
-  @include text-styles($color: var(--non-spectrum-grey-400));
-}
-
 a:hover {
   color: var(--non-spectrum-custom-dark);
 }
