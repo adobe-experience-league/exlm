@@ -5,64 +5,64 @@ const connectionPrefix = 'urn:aemconnection:';
 // set aem content root
 window.hlx.aemRoot = '/content/exlm/global';
 
-// extracts the title independent active tab of a tabs component
-function getSelectedTab(block) {
-  return block.querySelector('[aria-selected="true"]').getAttribute('data-tab-id');
+// extract the visual state so we can restore it after applying updates
+function getState(block) {
+  const state = {};
+  if (block.matches('.tabs')) state.activeTabId = block.querySelector('[aria-selected="true"]').dataset.tabId;
+  if (block.matches('.carousel')) {
+    const container = block.querySelector('.panel-container');
+    state.scrollLeft = container.scrollLeft;
+  }
+  return state;
 }
 
-// reactivates the previously active tab on the new edited block
-function setSelectedTab(id, newBlock) {
-  // click the previously slected tab
-  newBlock.querySelector(`[data-tab-id="${id}"]`).click();
+function restoreState(newBlock, state) {
+  if (state.activeTabId) {
+    newBlock.querySelector(`[data-tab-id="${state.activeTabId}"]`).click();
+  }
+  if (state.scrollLeft) {
+    newBlock.querySelector('.panel-container').scrollTo({ left: state.scrollLeft, behavior: 'instant' });
+  }
 }
 
-function handleEditorUpdate(event) {
-  const {
-    detail: { itemids },
-  } = event;
-  Promise.all(
-    itemids
-      .map((itemId) => document.querySelector(`[itemid="${itemId}"]`))
-      .map(async (element) => {
-        const block = element.closest('.block');
-        const blockItemId = block?.getAttribute('itemid');
-        if (block && blockItemId?.startsWith(connectionPrefix)) {
-          const path = blockItemId.substring(connectionPrefix.length);
+async function handleEditorUpdate(event) {
+  const { detail } = event;
 
-          // keep info about currently selected tab
-          const activeTabId = block.classList.contains('tabs') ? getSelectedTab(block) : null;
+  const resource = detail?.requestData?.target?.resource;
+  if (!resource) return;
 
-          const resp = await fetch(`${path}.html${window.location.search}`);
-          if (resp.ok) {
-            const text = await resp.text();
-            const newBlock = new DOMParser().parseFromString(text, 'text/html').body.firstElementChild;
-            // hide the new block, and insert it after the existing one
-            newBlock.style.display = 'none';
-            block.insertAdjacentElement('afterend', newBlock);
-            // decorate buttons and icons
-            decorateButtons(newBlock);
-            decorateIcons(newBlock);
-            // decorate and load the block
-            decorateBlock(newBlock);
-            await loadBlock(newBlock);
-            // remove the old block and show the new one
-            block.remove();
-            newBlock.style.display = null;
+  const element = document.querySelector(`[data-aue-resource="${resource}"]`);
+  const block = element?.parentElement?.closest('.block') || element?.closest('.block');
+  const blockResource = block?.getAttribute('data-aue-resource');
+  if (!block || !blockResource?.startsWith(connectionPrefix)) return;
 
-            if (activeTabId) setSelectedTab(activeTabId, newBlock);
+  // keep info about currently selected tab
+  const uiState = getState(block);
 
-            return Promise.resolve();
-          }
-        }
-        return Promise.reject();
-      }),
-  ).catch(() => {
-    // fallback to a full reload if any item could not be reloaded
-    window.location.reload();
-  });
+  const updates = detail?.responseData?.updates;
+  if (updates.length > 0) {
+    const { content } = updates[0];
+    const newBlockDocument = new DOMParser().parseFromString(content, 'text/html');
+    const newBlock = newBlockDocument?.querySelector(`[data-aue-resource="${blockResource}"]`);
+    if (newBlock) {
+      newBlock.style.display = 'none';
+      block.insertAdjacentElement('afterend', newBlock);
+      // decorate buttons and icons
+      decorateButtons(newBlock);
+      decorateIcons(newBlock);
+      // decorate and load the block
+      decorateBlock(newBlock);
+      await loadBlock(newBlock);
+      // remove the old block and show the new one
+      block.remove();
+      newBlock.style.display = null;
+
+      restoreState(newBlock, uiState);
+    }
+  }
 }
 
-document.addEventListener('editor-update', handleEditorUpdate);
+document.querySelector('main')?.addEventListener('aue:content-patch', handleEditorUpdate);
 
 // group editable texts in single wrappers if applicable
 //

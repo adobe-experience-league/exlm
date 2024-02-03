@@ -931,86 +931,62 @@ main > div.browse-rail {
   box-sizing: border-box;
   max-width: 1700px;
 }
-.docs main > div {
-  padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500) var(--spectrum-spacing-500);
-  box-sizing: border-box;
+@media (min-width: 900px) {
+  .docs main {
+    padding: 0;
+    flex-direction: row;
+  }
 }
 .docs main > div.section {
+  order: 2;
   padding: 30px 2px;
+  box-sizing: border-box;
+  width: 100%;
 }
 @media (min-width: 600px) {
   .docs main > div.section {
     padding: 30px 32px 32px;
   }
 }
-.docs main > div:first-child {
-  order: 2;
-  width: 100%;
-  box-sizing: border-box;
-}
-.docs main > div:nth-child(2) {
+.docs main > div.section.toc-container {
   order: 1;
   min-height: 70px;
   padding: 32px 10px 10px;
 }
-.docs main > div:nth-child(2) .rail-content {
-  display: none;
-}
-.docs main > div:nth-child(2).toc-container .rail-content {
+.docs main > div.section.toc-container .rail-content {
   display: block;
 }
-.docs main > div:nth-child(2) .toc {
+.docs main > div.section.toc-container .toc {
   visibility: hidden;
 }
-.docs main > div:last-child {
+.docs main > div.section.mini-toc-container {
   order: 3;
   padding: 32px 10px 0 0;
 }
 @media (min-width: 600px) {
-  .docs main > .div:nth-child(1) {
-    position: relative;
-    padding: 0;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .docs main > div:last-child {
+  .docs main > div.section.mini-toc-container {
     padding: 32px 10px 10px 0;
   }
 }
 @media (min-width: 900px) {
-  .docs main {
-    flex-direction: row;
-    padding: 0;
+  .docs main > div.section {
+    border-right: 1px solid #eaeaea;
   }
-  .docs main > div:first-child {
-    order: 2;
-    overflow: auto;
+  .docs main > div.section:not(.toc-container, .mini-toc-container) {
     flex: 1 1 0;
+    overflow: auto;
     padding: 54px 37px 50px 50px;
   }
-  .docs main > div:nth-child(2) {
-    order: 1;
+  .docs main > div.section.toc-container {
     width: 20%;
     padding: 46px 10px 10px;
   }
-  .docs main > div:nth-child(2) .rail-content {
-    display: block;
-  }
-  .docs main > div:last-child {
-    order: 3;
+  .docs main > div.section.mini-toc-container {
     width: 20%;
     position: relative;
-    display: block;
+    display: flex;
     gap: 8px;
     padding: 46px 10px 10px 0;
-  }
-  .docs main > div:last-child.mini-toc-container {
-    display: flex;
-  }
-  .docs main > div {
-    border-right: 1px solid #eaeaea;
   }
 }
 .docs.docs-landing main {
@@ -1033,43 +1009,11 @@ main > div.browse-rail {
 .docs.docs-solution-landing main {
   padding: 0 58px;
 }
-.docs.docs-solution-landing main .default-content-wrapper {
-  margin: 0;
-  width: 100%;
-}
 .docs.docs-solution-landing main .default-content-wrapper h1 {
-  font-size: 44px; /* This font is not avaliable in spectrum so we are hardcoding it */
+  font-size: 44px;
+  /* This font is not avaliable in spectrum so we are hardcoding it */
   line-height: var(--spectrum-line-height-xxxl);
   margin-top: 0;
-}
-.docs.docs-solution-landing main .default-content-wrapper h2 {
-  font-size: 24px;
-  border-bottom: 3px solid var(--non-spectrum-grey);
-  margin-bottom: 8px;
-}
-.docs.docs-solution-landing main .default-content-wrapper h3 {
-  font-size: 14px;
-  margin-top: 40px;
-  margin-bottom: 16px;
-}
-.docs.docs-solution-landing main .default-content-wrapper ul {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  width: 100%;
-}
-.docs.docs-solution-landing main .default-content-wrapper ul li {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  font-size: var(--spectrum-font-size-200);
-  color: var(--spectrum-gray-800);
-}
-.docs.docs-solution-landing main .default-content-wrapper ul li a {
-  color: var(--non-spectrum-link-blue);
-}
-.docs.docs-solution-landing main .default-content-wrapper ul li a:hover {
-  color: var(--non-spectrum-custom-dark);
 }
 .docs.docs-solution-landing main .section > div.default-content-wrapper {
   max-width: 100%;
@@ -1079,7 +1023,6 @@ main > div.browse-rail {
 }
 .docs.docs-solution-landing main > div:first-child {
   border: none;
-  gap: 0;
 }
 @media (min-width: 900px) {
   .docs.docs-solution-landing main {
@@ -1089,39 +1032,5 @@ main > div.browse-rail {
     margin: 0 56px;
     padding: 54px 47px 50px 60px;
     border: none;
-  }
-}
-.docs.docs-tutorial .default-content-wrapper h2 {
-  font-size: 24px;
-  border-bottom: 3px solid var(--non-spectrum-grey);
-  margin-bottom: 12px;
-}
-.docs.docs-tutorial .default-content-wrapper ul {
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: inherit;
-}
-.docs.docs-tutorial .default-content-wrapper ul li {
-  list-style: none;
-  width: 100%;
-  margin: 0 14px 7px 0;
-}
-.docs.docs-tutorial .default-content-wrapper ul li a {
-  line-height: 24px;
-  font-weight: var(--font-weight-700);
-  color: var(--non-spectrum-link-blue);
-}
-@media (min-width: 600px) {
-  .docs.docs-tutorial .default-content-wrapper ul li {
-    width: 50%;
-  }
-}
-@media (min-width: 900px) {
-  .docs.docs-tutorial .default-content-wrapper h2 {
-    font-size: var(--spectrum-font-size-700);
-  }
-  .docs.docs-tutorial .default-content-wrapper ul li {
-    width: calc(33.33% - 16px);
   }
 }

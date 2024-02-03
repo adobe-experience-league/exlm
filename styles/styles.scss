@@ -486,6 +486,7 @@ ol {
     }
   }
 }
+
 /* stylelint-disable no-descending-specificity */
 ol,
 ul {
@@ -822,101 +823,67 @@ main > div.browse-rail {
     box-sizing: border-box;
     max-width: 1700px;
 
-    > div {
-      padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500) var(--spectrum-spacing-500);
-      box-sizing: border-box;
-
-      &.section {
-        padding: 30px 2px;
-
-        @include breakpoint(tablet) {
-          padding: 30px 32px 32px;
-        }
-      }
-    }
-
-    > div:first-child {
-      order: 2;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    > div:nth-child(2) {
-      order: 1;
-      min-height: 70px; // predefined height to help with CLS
-      padding: 32px 10px 10px; // predefined padding to help with CLS
-      .rail-content {
-        display: none; // display none on ddesktop to hep with CLS
-      }
-
-      &.toc-container .rail-content {
-        display: block;
-      }
-
-      .toc {
-        visibility: hidden;
-      }
-    }
-
-    > div:last-child {
-      order: 3;
-      padding: 32px 10px 0 0;
-    }
-
-    @include breakpoint(tablet) {
-      > .div:nth-child(1) {
-        position: relative;
-        padding: 0;
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      > div:last-child {
-        padding: 32px 10px 10px 0;
-      }
-    }
-
     @include breakpoint(desktop) {
-      flex-direction: row;
       padding: 0;
+      flex-direction: row;
+    }
 
-      // doc
-      > div:first-child {
-        order: 2;
-        overflow: auto;
-        flex: 1 1 0;
-        padding: 54px 37px 50px 50px;
+    > div.section {
+      order: 2;
+      padding: 30px 2px;
+      box-sizing: border-box;
+      width: 100%;
+
+      @include breakpoint(tablet) {
+        padding: 30px 32px 32px;
       }
 
-      // toc
-      > div:nth-child(2) {
+      &.toc-container {
         order: 1;
-        width: 20%;
-        padding: 46px 10px 10px;
+        min-height: 70px; // predefined height to help with CLS
+        padding: 32px 10px 10px; // predefined padding to help with CLS
 
         .rail-content {
           display: block;
         }
-      }
 
-      // mini toc
-      > div:last-child {
-        order: 3;
-        width: 20%;
-        position: relative;
-        display: block;
-        gap: 8px;
-        padding: 46px 10px 10px 0;
-
-        &.mini-toc-container {
-          display: flex;
+        .toc {
+          visibility: hidden;
         }
       }
 
-      > div {
+      &.mini-toc-container {
+        order: 3;
+        padding: 32px 10px 0 0;
+      }
+
+      @include breakpoint(tablet) {
+        &.mini-toc-container {
+          padding: 32px 10px 10px 0;
+        }
+      }
+
+      @include breakpoint(desktop) {
         border-right: 1px solid #eaeaea;
+
+        &:not(.toc-container, .mini-toc-container) {
+          flex: 1 1 0;
+          overflow: auto;
+          padding: 54px 37px 50px 50px;
+        }
+
+        &.toc-container {
+          width: 20%;
+          padding: 46px 10px 10px;
+        }
+
+        &.mini-toc-container {
+          width: 20%;
+          position: relative;
+          display: flex;
+          gap: 8px;
+          padding: 46px 10px 10px 0;
+        }
       }
     }
   }
@@ -946,7 +913,9 @@ main > div.browse-rail {
     }
 
     .default-content-wrapper h1 {
-      font-size: 44px; /* This font is not avaliable in spectrum so we are hardcoding it */
+      font-size: 44px;
+
+      /* This font is not avaliable in spectrum so we are hardcoding it */
       line-height: var(--spectrum-line-height-xxxl);
       margin-top: 0;
     }
