@@ -62,8 +62,7 @@ export default async function decorate(block) {
   const theme = getMetadata('theme');
   const label = getMetadata('og:title');
 
-  const { lang } = await getPathDetails();
-  const results = await ffetch(`/${lang}/browse-index.json`).all();
+  const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
   const currentPagePath = getEDSLink(window.location.pathname);
 
   // Find the parent page for product sub-pages

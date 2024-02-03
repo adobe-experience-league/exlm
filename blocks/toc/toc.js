@@ -4,6 +4,7 @@ import TocDataService from '../../scripts/data-service/toc-data-service.js';
 import { htmlToElement, rewriteDocsPath } from '../../scripts/scripts.js';
 import getSolutionName from './toc-solutions.js';
 import { getPathDetails } from '../../scripts/language.js';
+import ffetch from '../../scripts/ffetch.js';
 
 let placeholders = {};
 try {
@@ -153,9 +154,12 @@ export default async function decorate(block) {
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('toc-right-rail-content');
 
-  // fetch toc content
+  // Fetch TOC data
   const currentURL = window.location.pathname;
-  const { langCode } = await getPathDetails();
+  const lang = `${getPathDetails().lang}`;
+  const langMap = await ffetch(`/languages.json`).all();
+  const langObj = langMap.find((item) => item.key === lang);
+  const langCode = langObj ? langObj.value : lang;
   const tocID = block.querySelector('.toc > div > div').textContent;
   if (tocID !== '') {
     const resp = await handleTocService(tocID, langCode);

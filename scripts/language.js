@@ -1,13 +1,12 @@
 import { loadCSS } from './lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 import { htmlToElement } from './scripts.js';
-import ffetch from './ffetch.js';
 
 /**
  * Proccess current pathname and return details for use in language switching
  * Considers pathnames like /en/path/to/content and /content/exl/global/en/path/to/content.html for both EDS and AEM
  */
-export const getPathDetails = async () => {
+export const getPathDetails = () => {
   const { pathname } = window.location;
   const extParts = pathname.split('.');
   const ext = extParts.length > 1 ? extParts[extParts.length - 1] : '';
@@ -24,20 +23,16 @@ export const getPathDetails = async () => {
   // substring before lang
   const prefix = pathname.substring(0, pathname.indexOf(`/${lang}`)) || '';
   const suffix = pathname.substring(pathname.indexOf(`/${lang}`) + lang.length + 1) || '';
-  const langMap = await ffetch(`/languages.json`).all();
-  const langObj = langMap.find((item) => item.key === lang);
-  const langCode = langObj ? langObj.value : lang;
   return {
     ext,
     prefix,
     suffix,
     lang,
-    langCode,
     isContentPath,
   };
 };
 
-const pathDetails = await getPathDetails();
+const pathDetails = getPathDetails();
 
 /**
  * loads the one and only language fragment.
@@ -87,7 +82,7 @@ export const buildLanguagePopover = async (position) => {
     lang: option?.firstElementChild?.getAttribute('href'),
   }));
 
-  const { lang: currentLang } = await getPathDetails();
+  const { lang: currentLang } = getPathDetails();
   const options = languages
     .map((option) => {
       const lang = option.lang?.toLowerCase();
