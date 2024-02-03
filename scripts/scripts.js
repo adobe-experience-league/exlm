@@ -544,3 +544,11 @@ export async function getProducts() {
   finalProducts.push(...publishedMainProducts);
   return finalProducts;
 }
+
+export async function getLanguageCode() {
+  const { lang } = getPathDetails();
+  const langMap = await ffetch(`/languages.json`).all();
+  const langObj = langMap.find((item) => item.key === lang);
+  const langCode = langObj ? langObj.value : lang;
+  return langCode;
+}
