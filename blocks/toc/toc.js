@@ -155,18 +155,10 @@ export default async function decorate(block) {
 
   // fetch toc content
   const currentURL = window.location.pathname;
-  let lang = `${getPathDetails().lang}`;
-  // lang is case sensitive for TOC API
-  if (lang === 'pt-br') {
-    lang = 'pt-BR';
-  } else if (lang === 'zh-hant') {
-    lang = 'zh-Hant';
-  } else if (lang === 'zh-hans') {
-    lang = 'zh-Hans';
-  }
+  const { langCode } = await getPathDetails();
   const tocID = block.querySelector('.toc > div > div').textContent;
   if (tocID !== '') {
-    const resp = await handleTocService(tocID, lang);
+    const resp = await handleTocService(tocID, langCode);
     block.innerHTML = '';
     block.style.visibility = 'visible';
     const div = document.createElement('div');
