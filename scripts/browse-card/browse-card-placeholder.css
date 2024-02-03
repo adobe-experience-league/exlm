@@ -17,6 +17,7 @@
   min-height: 400px;
   margin: 0;
   z-index: 1;
+  margin-top: 16px;
 }
 .shimmer-placeholder.hide-shimmer {
   height: 0px;
@@ -42,6 +43,7 @@
   grid-template-columns: 1fr;
   overflow: unset;
   height: fit-content;
+  margin-top: 0;
 }
 .shimmer-placeholder-isloading {
   width: 100%;
@@ -117,10 +119,14 @@
     gap: 25px;
     overflow-x: auto;
     overflow-y: hidden;
+    margin-top: 16px;
   }
   .featured-cards .shimmer-placeholder, 
   .browse-filters-wrapper .shimmer-placeholder {  
     grid-template-columns: 1fr 1fr;
+  }
+  .browse-filters-wrapper .shimmer-placeholder {
+    margin-top: 0;
   }
   .shimmer-placeholder-isloading {
     flex: 0 0 286px; 
@@ -129,6 +135,7 @@
 @media only screen and (min-width: 900px) {
   .shimmer-placeholder{
     gap: 32px;
+    margin-top: 24px;
   }
   .featured-cards .shimmer-placeholder {
     display: flex;
@@ -140,6 +147,7 @@
   .browse-filters-wrapper .shimmer-placeholder {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    margin-top: 0;
   }
   .shimmer-placeholder-isloading {
     flex: 0 0 256px;

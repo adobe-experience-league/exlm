@@ -84,7 +84,7 @@ const buildTagsContent = (cardMeta, tags = []) => {
   tags.forEach((tag) => {
     const { icon: iconName, text } = tag;
     if (text) {
-      const anchor = createTag('a', { class: 'browse-card-meta-anchor', title: 'user', href: '#' });
+      const anchor = createTag('div', { class: 'browse-card-meta-anchor' });
       const span = createTag('span', { class: `icon icon-${iconName}` });
       anchor.textContent = text;
       anchor.appendChild(span);
@@ -260,7 +260,7 @@ const buildCardContent = (card, model) => {
     copyLinkElem.innerHTML = tooltipTemplate('copy-icon', '', `${placeholders.toastTiptext}`);
     cardOptions.appendChild(copyLinkElem);
     copyLinkElem.setAttribute('data-link', copyLink);
-    if (isSignedIn && id) {
+    if (id) {
       copyLinkElem.setAttribute('data-id', id);
     }
   }

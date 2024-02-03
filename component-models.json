@@ -985,56 +985,12 @@
         "description": "The description shown in Desktop and Tablet view."
       },
       {
-        "component": "select",
-        "name": "cta1Type",
-        "value": "primary",
-        "label": "First CTA Type",
-        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          }
-        ]
-      },
-      {
         "component": "text-input",
         "valueType": "string",
         "name": "cta1Text",
         "value": "",
-        "label": "First CTA Text",
+        "label": "Sign in CTA text",
         "description": "Text to be shown inside button."
-      },
-      {
-        "component": "text-input",
-        "valueType": "string",
-        "name": "cta1",
-        "value": "",
-        "label": "First CTA Link",
-        "description": "What link to open when clicking the button."
-      },
-      {
-        "component": "select",
-        "name": "cta2Type",
-        "value": "primary",
-        "label": "Second CTA Type",
-        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          }
-        ]
       },
       {
         "component": "text-input",

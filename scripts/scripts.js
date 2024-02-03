@@ -16,6 +16,9 @@ import {
   getMetadata,
   loadScript,
 } from './lib-franklin.js';
+import ffetch from './ffetch.js';
+// eslint-disable-next-line import/no-cycle
+import { getPathDetails } from './language.js';
 
 const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
 
@@ -179,13 +182,15 @@ export function decorateExternalLinks(main) {
 /**
  * Check if current page is a MD Docs Page.
  * theme = docs is set in bulk metadata for docs paths.
+ * @param {string} type The type of doc page - example: docs-solution-landing,
+ *                      docs-landing, docs (optional, default value is docs)
  */
-export function isDocPage() {
+export function isDocPage(type = 'docs') {
   const theme = getMetadata('theme');
   return theme
     .split(',')
-    .map((t) => t.toLowerCase())
-    .includes('docs');
+    .map((t) => t.toLowerCase().trim())
+    .includes(type);
 }
 
 /**
@@ -295,11 +300,10 @@ async function loadLazy(doc) {
     ([launch, libAnalyticsModule, headPr, footPr]) => {
       const { pageLoadModel, linkClickModel } = libAnalyticsModule;
       window.adobeDataLayer.push(pageLoadModel());
-      const linkClicked = document.querySelectorAll('a');
+      const linkClicked = document.querySelectorAll('a,.view-more-less span');
       linkClicked.forEach((linkElement) => {
         linkElement.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (e.target.tagName === 'A') {
+          if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
             linkClickModel(e);
           }
         });
@@ -457,7 +461,10 @@ async function loadPage() {
   loadPrevNextBtn();
 }
 
-loadPage();
+// load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
+if (!window.hlx.DO_NOT_LOAD_PAGE) {
+  loadPage();
+}
 
 /**
  * Helper function that converts an AEM path into an EDS path.
@@ -493,4 +500,47 @@ export function rewriteDocsPath(docsPath) {
   pathname = removeExtension(pathname); // new URLs are extensionless
   url.pathname = pathname;
   return url.toString().replace(PROD_BASE, ''); // always remove PROD_BASE if exists
+}
+
+/**
+ * Helper function thats returns a list of all products
+ * - below <lang>/browse/<product-page>
+ * - To get added, the product page must be published
+ * - Product pages listed in <lang>/browse/top-products are put at the the top
+ *   in the order they appear in top-products
+ * - the top product list can point to sub product pages
+ */
+export async function getProducts() {
+  // get language
+  const { lang } = getPathDetails();
+
+  // load the <lang>/top_product list
+  const topProducts = await ffetch(`/${lang}/top-products.json`).all();
+  // get all indexed pages below <lang>/browse
+  const publishedPages = await ffetch(`/${lang}/browse-index.json`).all();
+
+  // add all published top products to final list
+  const finalProducts = topProducts.filter((topProduct) => {
+    // check if top product is in published list
+    const found = publishedPages.find((elem) => elem.path === topProduct.path);
+    if (found) {
+      // keep original title if no nav title is set
+      if (!topProduct.title) topProduct.title = found.title;
+      // set marker for featured product
+      topProduct.featured = true;
+      // remove it from publishedProducts list
+      publishedPages.splice(publishedPages.indexOf(found), 1);
+      return true;
+    }
+    return false;
+  });
+
+  // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
+  const publishedMainProducts = publishedPages
+    .filter((page) => page.path.split('/').length === 4)
+    // sort alphabetically
+    .sort((productA, productB) => productA.path.localeCompare(productB.path));
+  // append remaining published products to final list
+  finalProducts.push(...publishedMainProducts);
+  return finalProducts;
 }

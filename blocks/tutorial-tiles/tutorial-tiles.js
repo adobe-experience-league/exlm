@@ -13,16 +13,22 @@ export default async function decorate(block) {
       tutorialHeader.parentElement.classList.add('tutorial-tiles-header-box');
     }
   }
-  Array.from(containerEl.querySelectorAll('li')).forEach((li) => {
+  const listElements = containerEl.querySelectorAll('li');
+  const lastIndex = listElements.length - 1;
+  Array.from(listElements).forEach((li, index) => {
     const anchor = li.querySelector('a');
     const link = anchor.href;
     const title = anchor.textContent;
     li.removeChild(anchor);
     const description = li.textContent;
-    li.innerHTML = `
-            <p class="tutorial-tiles-heading">${title}</p>
-            <p class="tutorial-tiles-description">${description}</p>
-            <a href="${link}">View</a>
-        `;
+    if (index === lastIndex) {
+      li.innerHTML = `<a href="${link}">See All Tutorials</a>`;
+    } else {
+      li.innerHTML = `
+        <p class="tutorial-tiles-heading">${title}</p>
+        <p class="tutorial-tiles-description">${description}</p>
+        <a href="${link}">View</a>
+      `;
+    }
   });
 }

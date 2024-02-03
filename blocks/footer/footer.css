@@ -11,8 +11,9 @@
 }
 
 .footer {
+  --language-selector-display: block;
   margin: 0 auto;
-  max-width: var(--non-spectrum-footer-max-width);
+  max-width: var(--non-spectrum-max-width);
   padding: 0;
 }
 @media (min-width: 900px) {

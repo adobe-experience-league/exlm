@@ -25,13 +25,16 @@
     left: 50%;
     width: 95%;
     transform: translate(-50%, 0);
+    filter: drop-shadow(var(--box-back-drop-shadow) 0px 1px 4px);
 }
 .toc ul {
     list-style: none;
     margin-left: 0;
     margin-left: var(--spectrum-spacing-200);
 }
-
+.toc ul>li ul {
+    margin-top: 0;
+}
 .toc p {
     font-family: var(--body-font-family);
     font-size: var(--exlm-font-size-content);
@@ -118,19 +121,15 @@
     right: 0%;
     top: auto;
     display: flex;
-    width: 6px;
-    height: 6px;
-    border-width: 0 2px 2px 0;
-    border-style: solid;
-    transform-origin: 75% 75%;
-    transform: rotateZ(-135deg);
-    transition: transform 0.1s ease;
+    width: 18px;
+    height: 18px;
     content: "";
     box-sizing: content-box;
+    background: rgba(0,0,0,0) url(/icons/chevron_down.svg) no-repeat right center;
 }
 
 .toc a.js-toggle.collapsed:after {
-    transform: rotateZ(45deg);
+    transform: rotate(180deg);
 }
 
 .toc ul li ul li a {
@@ -204,6 +203,7 @@
 } 
 .toc .view-more-less span.minus:before  {
     content: "−";
+    font-weight: 700;
 }
 .toc a[href="javascript:void(0)"] {
     cursor: default;

@@ -1,0 +1,35 @@
+.docs-solution-landing .list-header-box {
+    width: 100%;
+}
+
+.docs-solution-landing .list-header {
+    font-size: 24px;
+    border-bottom: 3px solid var(--non-spectrum-grey);
+    margin-bottom: 8px;
+}
+
+.docs-solution-landing .list-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.docs-solution-landing .list-wrapper, .docs-solution-landing .list-container {
+    margin: 0;
+    width: 100%;
+}
+
+.docs-solution-landing .list-box .list-container li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size:  var(--spectrum-font-size-200);
+    color: var(--spectrum-gray-800);
+}
+
+.docs-solution-landing .list-box .list-container a {
+    color: var(--non-spectrum-link-blue);
+}
+
+.docs-solution-landing .list-box .list-container a:hover {
+    color: var(--non-spectrum-custom-dark);
+}
