@@ -15,10 +15,11 @@ import {
   decorateButtons,
   getMetadata,
   loadScript,
+  fetchPlaceholders,
 } from './lib-franklin.js';
-import ffetch from './ffetch.js';
 // eslint-disable-next-line import/no-cycle
-import { getPathDetails } from './language.js';
+
+const ffetchModulePromise = import('./ffetch.js');
 
 const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
 
@@ -503,6 +504,37 @@ export function rewriteDocsPath(docsPath) {
 }
 
 /**
+ * Proccess current pathname and return details for use in language switching
+ * Considers pathnames like /en/path/to/content and /content/exl/global/en/path/to/content.html for both EDS and AEM
+ */
+export function getPathDetails() {
+  const { pathname } = window.location;
+  const extParts = pathname.split('.');
+  const ext = extParts.length > 1 ? extParts[extParts.length - 1] : '';
+  const isContentPath = pathname.startsWith('/content');
+  const parts = pathname.split('/');
+  const safeLangGet = (index) => (parts.length > index ? parts[index] : 'en');
+  // 4 is the index of the language in the path for AEM content paths like  /content/exl/global/en/path/to/content.html
+  // 1 is the index of the language in the path for EDS paths like /en/path/to/content
+  let lang = isContentPath ? safeLangGet(4) : safeLangGet(1);
+  // remove suffix from lang if any
+  if (lang.indexOf('.') > -1) {
+    lang = lang.substring(0, lang.indexOf('.'));
+  }
+  if (!lang) lang = 'en'; // default to en
+  // substring before lang
+  const prefix = pathname.substring(0, pathname.indexOf(`/${lang}`)) || '';
+  const suffix = pathname.substring(pathname.indexOf(`/${lang}`) + lang.length + 1) || '';
+  return {
+    ext,
+    prefix,
+    suffix,
+    lang,
+    isContentPath,
+  };
+}
+
+/**
  * Helper function thats returns a list of all products
  * - below <lang>/browse/<product-page>
  * - To get added, the product page must be published
@@ -513,7 +545,7 @@ export function rewriteDocsPath(docsPath) {
 export async function getProducts() {
   // get language
   const { lang } = getPathDetails();
-
+  const ffetch = (await ffetchModulePromise).default;
   // load the <lang>/top_product list
   const topProducts = await ffetch(`/${lang}/top-products.json`).all();
   // get all indexed pages below <lang>/browse
@@ -545,8 +577,14 @@ export async function getProducts() {
   return finalProducts;
 }
 
+export async function fetchLanguagePlaceholders() {
+  const { lang } = getPathDetails();
+  return fetchPlaceholders(`/${lang}`);
+}
+
 export async function getLanguageCode() {
   const { lang } = getPathDetails();
+  const ffetch = (await ffetchModulePromise).default;
   const langMap = await ffetch(`/languages.json`).all();
   const langObj = langMap.find((item) => item.key === lang);
   const langCode = langObj ? langObj.value : lang;
