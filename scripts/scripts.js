@@ -581,3 +581,12 @@ export async function fetchLanguagePlaceholders() {
   const { lang } = getPathDetails();
   return fetchPlaceholders(`/${lang}`);
 }
+
+export async function getLanguageCode() {
+  const { lang } = getPathDetails();
+  const ffetch = (await ffetchModulePromise).default;
+  const langMap = await ffetch(`/languages.json`).all();
+  const langObj = langMap.find((item) => item.key === lang);
+  const langCode = langObj ? langObj.value : lang;
+  return langCode;
+}
