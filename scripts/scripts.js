@@ -585,12 +585,13 @@ export async function fetchLanguagePlaceholders() {
     // Try fetching placeholders with the specified language
     placeholdersData = await fetchPlaceholders(`/${lang}`);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Error fetching placeholders for lang: ${lang}`, error);
     // Retry without specifying a language (using the default language)
     try {
       placeholdersData = await fetchPlaceholders('/en');
     } catch (err) {
-      // Log the retry error for debugging
+      // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);
     }
   }
