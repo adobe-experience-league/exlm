@@ -1,7 +1,7 @@
 import { getMetadata } from '../../scripts/lib-franklin.js';
 import { tocUrl } from '../../scripts/urls.js';
 import TocDataService from '../../scripts/data-service/toc-data-service.js';
-import { htmlToElement, rewriteDocsPath, getLanguageCode, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, rewriteDocsPath, getLanguageCode } from '../../scripts/scripts.js';
 import getSolutionName from './toc-solutions.js';
 
 let placeholders = {};
