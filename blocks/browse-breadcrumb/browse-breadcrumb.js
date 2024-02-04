@@ -1,7 +1,5 @@
 import ffetch from '../../scripts/ffetch.js';
-import { getPathDetails } from '../../scripts/language.js';
-import { fetchPlaceholders } from '../../scripts/lib-franklin.js';
-import { getEDSLink, getLink } from '../../scripts/scripts.js';
+import { getEDSLink, getLink, getPathDetails, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   // fallback text
@@ -9,7 +7,7 @@ export default async function decorate(block) {
 
   // get placeholders
   try {
-    const placeholders = await fetchPlaceholders();
+    const placeholders = await fetchLanguagePlaceholders();
     browseText = placeholders.browse;
   } catch {
     /* empty */

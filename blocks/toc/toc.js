@@ -1,12 +1,12 @@
-import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
+import { getMetadata } from '../../scripts/lib-franklin.js';
 import { tocUrl } from '../../scripts/urls.js';
 import TocDataService from '../../scripts/data-service/toc-data-service.js';
-import { htmlToElement, rewriteDocsPath, getLanguageCode } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, rewriteDocsPath, getLanguageCode } from '../../scripts/scripts.js';
 import getSolutionName from './toc-solutions.js';
 
 let placeholders = {};
 try {
-  placeholders = await fetchPlaceholders();
+  placeholders = await fetchLanguagePlaceholders();
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);

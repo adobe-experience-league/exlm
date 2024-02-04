@@ -1,5 +1,5 @@
-import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import ArticleDataService from '../../scripts/data-service/article-data-service.js';
@@ -49,7 +49,7 @@ export default async function decorate(block) {
 
   let placeholders = {};
   try {
-    placeholders = await fetchPlaceholders();
+    placeholders = await fetchLanguagePlaceholders();
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
