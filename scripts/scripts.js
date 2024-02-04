@@ -15,6 +15,7 @@ import {
   decorateButtons,
   getMetadata,
   loadScript,
+  fetchPlaceholders,
 } from './lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 
@@ -520,6 +521,7 @@ export function getPathDetails() {
   if (lang.indexOf('.') > -1) {
     lang = lang.substring(0, lang.indexOf('.'));
   }
+  if (!lang) lang = 'en'; // default to en
   // substring before lang
   const prefix = pathname.substring(0, pathname.indexOf(`/${lang}`)) || '';
   const suffix = pathname.substring(pathname.indexOf(`/${lang}`) + lang.length + 1) || '';
@@ -573,4 +575,10 @@ export async function getProducts() {
   // append remaining published products to final list
   finalProducts.push(...publishedMainProducts);
   return finalProducts;
+}
+
+export async function fetchLanguagePlaceholders() {
+  const { lang } = getPathDetails();
+  console.log('fetchLanguagePlaceholders', { lang });
+  return fetchPlaceholders(`/${lang}`);
 }
