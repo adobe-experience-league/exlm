@@ -579,6 +579,5 @@ export async function getProducts() {
 
 export async function fetchLanguagePlaceholders() {
   const { lang } = getPathDetails();
-  console.log('fetchLanguagePlaceholders', { lang });
   return fetchPlaceholders(`/${lang}`);
 }
