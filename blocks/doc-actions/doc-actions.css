@@ -113,12 +113,17 @@
   visibility: visible;
 }
 
-.doc-actions .doc-mt-toggle {
+.doc-mt-toggle {
   flex-basis: 100%;
-  display: flex;
+  gap: 5px;
 }
 
-.doc-actions .doc-mt-toggle input[type="checkbox"] {
+.doc-mt-toggle .doc-mt-checkbox {
+  display: flex;
+  margin-left: 10px;
+}
+
+.doc-mt-toggle .doc-mt-checkbox input[type="checkbox"] {
   appearance: none;
   width: 2rem;
   background: var(--spectrum-blue-900);
@@ -128,15 +133,16 @@
   outline: none;
   transition: all .2s ease-in-out;
   padding: 0;
+  margin-left: 10px;
   height: 1rem;
   border: 0;
 }
 
-.doc-actions .doc-mt-toggle input[type="checkbox"]:checked {
+.doc-mt-toggle .doc-mt-checkbox input[type="checkbox"]:checked {
   background: var(--spectrum-gray-300);
 }
 
-.doc-actions .doc-mt-toggle input[type="checkbox"]::after {
+.doc-mt-toggle .doc-mt-checkbox input[type="checkbox"]::after {
   position: absolute;
   content: "";
   width: 1rem;
@@ -150,7 +156,7 @@
   transition: all .2s ease-in-out;
 }
 
-.doc-actions .doc-mt-toggle input[type="checkbox"]:checked::after {
+.doc-mt-toggle .doc-mt-checkbox input[type="checkbox"]:checked::after {
   left: calc(100% - 0.95rem);
   border: 0;
   outline: 2px solid var(--spectrum-gray-600);
@@ -165,18 +171,43 @@
   margin: 30px 0 0 -8px;
 }
 
-.doc-actions .doc-mt-toggle {
-  gap: 5px;
+.doc-mt-toggle .doc-mt-checkbox a {
+  margin: 0 0 0 10px;
 }
 
-.doc-actions .doc-mt-toggle a {
-  margin: 0;
-}
-
-.doc-actions .doc-mt-toggle a .icon-info {
+.doc-mt-toggle .doc-mt-checkbox a .icon-info {
   width: 16px;
   height: 16px;
   pointer-events: none;
+}
+
+.doc-mt-toggle .doc-mt-feedback {
+  display: block;
+  margin: 0 0 20px 10px;
+}
+
+.doc-mt-feedback .prompt {
+  font-weight: var(--font-weight-700);
+}
+
+.doc-mt-toggle .doc-mt-feedback-radio {
+  display: flex;
+  gap: 10px;
+}
+
+.doc-mt-feedback-radio label.radio {
+  align-items: flex-start;
+  display: flex;
+}
+
+.doc-mt-feedback-radio input {
+  margin: 3px 5px 0 0;
+}
+
+.doc-mt-toggle .doc-mt-feedback input {
+  cursor: pointer;
+  width: auto;
+  margin-right: 10px;
 }
 
 @media (min-width: 900px) {

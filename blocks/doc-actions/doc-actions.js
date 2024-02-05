@@ -152,11 +152,21 @@ async function decorateLanguageToggle(block) {
     const languageToggleElement = createTag(
       'div',
       { class: 'doc-mt-toggle' },
-      `<span>${placeholders.automaticTranslation}</span><input type="checkbox"><a href="${placeholders.automaticTranslationLink}" target="_blank"><span class="icon icon-info"></span></a>`,
+      `<div class="doc-mt-checkbox">
+      <span>${placeholders.automaticTranslation}</span>
+      <input type="checkbox"><a href="${placeholders.automaticTranslationLink}" target="_blank"><span class="icon icon-info"></span></a>
+      </div>
+      <div class="doc-mt-feedback">
+        <span class="prompt">${placeholders.automaticTranslationFeedback}</span>
+        <div class="doc-mt-feedback-radio">
+          <label class="radio"><input type="radio" name="helpful-translation" value="yes">${placeholders.automaticTranslationFeedbackYes}</label>
+          <label class="radio"><input type="radio" name="helpful-translation" value="no">${placeholders.automaticTranslationFeedbackNo}</label>
+        </div>
+      </div>`,
     );
     addToDocActions(languageToggleElement, block);
     await decorateIcons(block);
-    const desktopAndMobileLangToggles = document.querySelectorAll('.doc-mt-toggle input');
+    const desktopAndMobileLangToggles = document.querySelectorAll('.doc-mt-toggle .doc-mt-checkbox input[type="checkbox"]');
     const docContainer = document.querySelector('main > div:first-child');
 
     [...desktopAndMobileLangToggles].forEach((langToggle) => {
