@@ -1133,4 +1133,12 @@ body[class^=browse-] main {
   body[class^=browse-] main {
     background-position: -56px 0;
   }
+  body.browse-all main,
+  body.browse-product main {
+    max-width: 1440px;
+  }
+  body.browse-all main > div.section,
+  body.browse-product main > div.section {
+    padding: 30px 32px;
+  }
 }
