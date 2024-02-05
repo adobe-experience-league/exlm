@@ -352,7 +352,15 @@ export function htmlToElement(html) {
   return template.content.firstElementChild;
 }
 
-export function loadPrevNextBtn() {
+export async function loadPrevNextBtn() {
+  let placeholders = {};
+  try {
+    // eslint-disable-next-line no-use-before-define
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
   const mainDoc = document.querySelector('main > div:nth-child(1)');
   if (!mainDoc) return;
 
@@ -360,8 +368,8 @@ export function loadPrevNextBtn() {
   const nextPageMeta = document.querySelector('meta[name="next-page"]');
   const prevPageMetaContent = prevPageMeta?.getAttribute('content').trim().split('.html')[0];
   const nextPageMetaContent = nextPageMeta?.getAttribute('content').trim().split('.html')[0];
-  const PREV_PAGE = 'Previous page';
-  const NEXT_PAGE = 'Next page';
+  const PREV_PAGE = placeholders?.previousPage;
+  const NEXT_PAGE = placeholders?.nextPage;
 
   if (prevPageMeta || nextPageMeta) {
     if (prevPageMetaContent === '' && nextPageMetaContent === '') return;
@@ -459,7 +467,7 @@ async function loadPage() {
   await loadLazy(document);
   loadRails();
   loadDelayed();
-  loadPrevNextBtn();
+  await loadPrevNextBtn();
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
