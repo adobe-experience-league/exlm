@@ -166,7 +166,9 @@ async function decorateLanguageToggle(block) {
     );
     addToDocActions(languageToggleElement, block);
     await decorateIcons(block);
-    const desktopAndMobileLangToggles = document.querySelectorAll('.doc-mt-toggle .doc-mt-checkbox input[type="checkbox"]');
+    const desktopAndMobileLangToggles = document.querySelectorAll(
+      '.doc-mt-toggle .doc-mt-checkbox input[type="checkbox"]',
+    );
     const docContainer = document.querySelector('main > div:first-child');
 
     [...desktopAndMobileLangToggles].forEach((langToggle) => {
