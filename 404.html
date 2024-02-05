@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Page not found</title>
+    <title>Page not found | Experience League | Adobe</title>
     <script type="text/javascript">
       window.isErrorPage = true;
       window.errorCode = '404';
@@ -13,18 +13,6 @@
       import { sampleRUM } from '/scripts/lib-franklin.js';
 
       window.addEventListener('load', () => {
-        if (document.referrer) {
-          const { origin, pathname } = new URL(document.referrer);
-          if (origin === window.location.origin) {
-            const backBtn = document.createElement('a');
-            backBtn.classList.add('button', 'error-button-back');
-            backBtn.href = pathname;
-            backBtn.textContent = 'Go back';
-            backBtn.title = 'Go back';
-            const btnContainer = document.querySelector('.button-container');
-            btnContainer.append(backBtn);
-          }
-        }
         sampleRUM('404', {
           source: document.referrer,
           target: window.location.href,
@@ -33,18 +21,58 @@
     </script>
     <link rel="stylesheet" href="/styles/styles.css" />
     <style>
-      main.error {
-        min-height: calc(100vh - var(--nav-height));
+      main.error .section {
         display: flex;
-        align-items: center;
+        flex-direction: column;
+        padding: 0 !important;
       }
 
-      main.error .error-number {
+      main.error .section > div {
+        margin: 0;
+        max-width: unset;
         width: 100%;
       }
 
-      main.error .error-number text {
-        font-family: var(--fixed-font-family);
+      main.error .section > div > div {
+        display: grid;
+        gap: 0.75rem;
+        grid-auto-rows: 1fr;
+        grid-auto-columns: 1fr;
+        grid-template-columns: 1fr;
+      }
+
+      main.error .section > div > div > div:first-child {
+        order: 2;
+        margin-left: 8.33333337%;
+        padding: 0.75rem;
+      }
+
+      main.error .section > div > div > div {
+        position: relative;
+      }
+
+      @media (min-width: 600px) {
+        main.error .section > div > div {
+          grid-template-columns: 1fr 1fr;
+        }
+        main.error .section > div > div > div:first-child {
+          order: -1;
+        }
+      }
+
+      main.error .error-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+      }
+
+      ul {
+        list-style: none !important;
+      }
+      ul li {
+        margin: 0;
+        margin-bottom: 0.5rem !important;
       }
     </style>
     <link rel="stylesheet" href="/styles/lazy-styles.css" />
@@ -54,13 +82,24 @@
     <header></header>
     <main class="error">
       <div class="section">
-        <svg viewBox="1 0 38 18" class="error-number">
-          <text x="0" y="17">404</text>
-        </svg>
-        <h2 class="error-message">Page Not Found</h2>
-        <p class="button-container">
-          <a href="/" class="button secondary error-button-home">Go home</a>
-        </p>
+        <div>
+          <div>
+            <p>Oops!</p>
+            <h1>This page isn't found.</h1>
+            <p>Let us help you get back on the path.</p>
+
+            <h4>Most popular sections</h4>
+            <ul class="list-no-style">
+              <li><a href="/" title="Experience League homepage">Experience League homepage</a></li>
+              <li><a href="/docs">Documentation</a></li>
+              <li><a href="/home.html?lang=en#courses">Courses</a></li>
+              <li><a href="//www.adobe.com/go/expl-community?profile.language=en">Community</a></li>
+            </ul>
+          </div>
+          <div>
+            <img class="error-image" src="https://experienceleague.adobe.com/assets/img/errors/404.png" alt="404" />
+          </div>
+        </div>
       </div>
     </main>
     <footer></footer>
