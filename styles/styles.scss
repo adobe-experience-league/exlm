@@ -11,6 +11,7 @@
   --text-color: #000;
   --footer-background-color: #fafafa;
   --footer-border-color: #e1e1e1;
+  --box-back-drop-shadow: rgba(0 0 0 / 15%);
 
   /* Placeholder */
   --shimmer-image-slide-start: #ececec;
@@ -267,16 +268,24 @@
   --spectrum-global-color-gray-900-rgb: 0, 0, 0;
 
   /* spectrum spacing */
+  --spectrum-spacing-50: 2px;
+  --spectrum-spacing-75: 4px;
+  --spectrum-spacing-100: 8px;
+  --spectrum-spacing-200: 12px;
+  --spectrum-spacing-300: 16px;
   --spectrum-spacing-400: 24px;
   --spectrum-spacing-500: 32px;
   --spectrum-spacing-600: 40px;
   --spectrum-spacing-700: 48px;
+  --spectrum-spacing-800: 64px;
+  --spectrum-spacing-900: 80px;
+  --spectrum-spacing-1000: 96px;
 
   /* mini toc spectrum vars */
   --spectrum-sidenav-item-background-color-hover: ButtonFace;
   --spectrum-alias-highlight-hover: rgb(0 0 0 / 6%);
   --spectrum-sidenav-item-text-color-hover: ButtonText;
-  --spectrum-alias-text-color-hover: var(--spectrum-global-color-gray-900);
+  --spectrum-alias-text-color-hover: rgb(var(--spectrum-global-color-gray-900-rgb));
 
   /* Non-Spectrum custom colors */
   --non-spectrum-grey-100: #f9f9f9;
@@ -326,7 +335,8 @@
   --non-spectrum-azure-blue: #378ef0;
   --non-spectrum-silver-mist: #d2d2d2;
   --non-spectrum-link-blue: #378ef0;
-  --non-spectrum-max-width: 1440px;
+  --non-spectrum-max-width: 1280px;
+  --non-spectrum-footer-max-width: 1440px;
 
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
@@ -360,6 +370,24 @@
   --exlm-line-height-h5: 20.8px;
   --exlm-line-height-h6: 20.8px;
   --exlm-line-height-content: var(--spectrum-line-height-l);
+
+  /* exlm defaultsolution colors */
+  --exlm-toc-solution-1: #864ccc;
+  --exlm-toc-solution-2: #fa0f00;
+  --exlm-toc-solution-3: #5c5ce0;
+  --exlm-toc-solution-4: #505050;
+  --exlm-toc-solution-5: #7cc33f;
+  --exlm-toc-solution-6: #d73320;
+  --exlm-toc-solution-7: #3da74e;
+  --exlm-toc-solution-8: #d83790;
+  --exlm-toc-solution-9: #b130bd;
+  --exlm-toc-solution-10: #ff1828;
+  --exlm-toc-solution-11: #16878c;
+  --exlm-toc-solution-12: #16868b;
+  --exlm-toc-solution-13: #6e6e6e;
+  --exlm-toc-solution-14: #3da64e;
+  --exlm-toc-solution-15: #584ccc;
+  --exlm-toc-solution-16: #000b1d;
 }
 
 @include breakpoint('desktop-lg') {
@@ -458,6 +486,7 @@ ol {
     }
   }
 }
+
 /* stylelint-disable no-descending-specificity */
 ol,
 ul {
@@ -632,8 +661,18 @@ img {
 .section {
   padding: 30px 16px;
 
-  &[data-section-status='loading'],
-  &[data-section-status='initialized'] {
+  &.browse-filters-container[data-section-status='loading'],
+  &.browse-filters-container[data-section-status='initialized'],
+  &.curated-cards-container[data-section-status='loading'],
+  &.curated-cards-container[data-section-status='initialized'],
+  &.events-cards-container[data-section-status='loading'],
+  &.events-cards-container[data-section-status='initialized'],
+  &.adls-cards-container[data-section-status='loading'],
+  &.adls-cards-container[data-section-status='initialized'],
+  &.authorable-card-container[data-section-status='loading'],
+  &.authorable-card-container[data-section-status='initialized'],
+  &.featured-cards-container[data-section-status='loading'],
+  &.featured-cards-container[data-section-status='initialized'] {
     visibility: hidden;
   }
 
@@ -661,7 +700,7 @@ img {
   }
 
   @include breakpoint(tablet) {
-    padding: 30px 32px 32px;
+    padding: 30px 56px;
   }
 }
 
@@ -681,6 +720,7 @@ main > div.browse-rail {
     /* on pages with rails the max width must be on main */
     max-width: var(--non-spectrum-max-width);
     margin: auto;
+    grid-template-rows: auto auto;
   }
 
   main > div.section {
@@ -690,7 +730,7 @@ main > div.browse-rail {
   main > div.section.browse-rail {
     display: initial;
     grid-column: 1;
-    grid-row: 1 / infinite;
+    grid-row: 1 / 100;
     width: 224px;
     height: 100%;
     padding: 0 0 0 32px;
@@ -783,89 +823,117 @@ main > div.browse-rail {
     box-sizing: border-box;
     max-width: 1700px;
 
-    > div {
-      padding: 30px var(--spectrum-spacing-500) var(--spectrum-spacing-500) var(--spectrum-spacing-500);
-      box-sizing: border-box;
-
-      &.section {
-        padding: 30px 2px;
-
-        @include breakpoint(tablet) {
-          padding: 30px 32px 32px;
-        }
-      }
-    }
-
-    > div:first-child {
-      order: 2;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    > div:nth-child(2) {
-      order: 1;
-      height: 70px; // predefined height to help with CLS
-      padding: 32px 10px 10px; // predefined padding to help with CLS
-      .rail-content {
-        display: none; // display none on ddesktop to hep with CLS
-      }
-    }
-
-    > div:last-child {
-      order: 3;
-      padding: 32px 10px 0 0;
-    }
-
-    @include breakpoint(tablet) {
-      > .div:nth-child(1) {
-        position: relative;
-        padding: 0;
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      > div:last-child {
-        padding: 32px 10px 10px 0;
-      }
-    }
-
     @include breakpoint(desktop) {
-      flex-direction: row;
       padding: 0;
+      flex-direction: row;
+    }
 
-      // doc
-      > div:first-child {
-        order: 2;
-        overflow: auto;
-        flex: 1 1 0;
-        padding: 54px 37px 50px 50px;
+    > div.section {
+      order: 2;
+      padding: 30px 2px;
+      box-sizing: border-box;
+      width: 100%;
+
+      @include breakpoint(tablet) {
+        padding: 30px 32px 32px;
       }
 
-      // toc
-      > div:nth-child(2) {
+      &.toc-container {
         order: 1;
-        width: 20%;
-        padding: 46px 10px 10px;
+        min-height: 70px; // predefined height to help with CLS
+        padding: 32px 10px 10px; // predefined padding to help with CLS
 
         .rail-content {
           display: block;
         }
+
+        .toc {
+          visibility: hidden;
+        }
       }
 
-      // mini toc
-      > div:last-child {
+      &.mini-toc-container {
         order: 3;
-        width: 20%;
-        position: relative;
-        display: block;
-        gap: 8px;
-        padding: 46px 10px 10px 0;
+        padding: 32px 10px 0 0;
+      }
+
+      @include breakpoint(tablet) {
+        &.mini-toc-container {
+          padding: 32px 10px 10px 0;
+        }
+      }
+
+      @include breakpoint(desktop) {
+        border-right: 1px solid #eaeaea;
+
+        &:not(.toc-container, .mini-toc-container) {
+          flex: 1 1 0;
+          overflow: auto;
+          padding: 54px 37px 50px 50px;
+        }
+
+        &.toc-container {
+          width: 20%;
+          padding: 46px 10px 10px;
+        }
 
         &.mini-toc-container {
+          width: 20%;
+          position: relative;
           display: flex;
+          gap: 8px;
+          padding: 46px 10px 10px 0;
         }
+      }
+    }
+  }
+
+  &.docs-landing main {
+    margin: 0 12px;
+    padding-top: 24px;
+    width: auto;
+
+    @include breakpoint(tablet) {
+      padding: 28px 68px 48px 80px;
+      margin: 0 4rem;
+    }
+
+    @include breakpoint(desktop) {
+      padding: 42px 0 48px 70px;
+      margin: 0 4rem;
+    }
+  }
+
+  &.docs-solution-landing main {
+    padding: 0 58px;
+
+    .default-content-wrapper h1 {
+      font-size: 44px;
+
+      /* This font is not avaliable in spectrum so we are hardcoding it */
+      line-height: var(--spectrum-line-height-xxxl);
+      margin-top: 0;
+    }
+
+    .section > div.default-content-wrapper {
+      max-width: 100%;
+    }
+
+    .section > div.breadcrumbs-wrapper {
+      margin-left: 0;
+    }
+
+    & > div:first-child {
+      border: none;
+    }
+
+    @include breakpoint(desktop) {
+      padding: 0;
+
+      & > div:first-child {
+        margin: 0 56px;
+        padding: 54px 47px 50px 60px;
+        border: none;
       }
     }
   }

@@ -1,7 +1,8 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import buildCard from '../../scripts/browse-card/browse-card.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 
@@ -23,13 +24,17 @@ function formattedSolutionTags(inputString) {
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const headingElement = block.querySelector('div:nth-child(1) > div');
-  const toolTipElement = block.querySelector('div:nth-child(2) > div');
-  const linkTextElement = block.querySelector('div:nth-child(3) > div > a');
-  const solutions = block.querySelector('div:nth-child(4) > div').textContent.trim();
+  const [headingElement, toolTipElement, linkTextElement, ...configs] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
+
+  const [solutions] = configs.map((cell) => cell.textContent.trim());
+
   const contentType = CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY;
   const noOfResults = 4;
   const solutionsParam = solutions !== '' ? formattedSolutionTags(solutions) : '';
+
+  headingElement.firstElementChild?.classList.add('h2');
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -38,16 +43,26 @@ export default async function decorate(block) {
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
-          <h2>${headingElement?.textContent.trim()}</h2>
-          <div class="tooltip">
-            <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement?.textContent.trim()}</span>
-          </div>
+          ${headingElement.innerHTML}
       </div>
-      <div class="browse-cards-block-view">${linkTextElement?.outerHTML}</div>
+      <div class="browse-cards-block-view">${linkTextElement.innerHTML}</div>
     </div>
   `);
+
+  if (toolTipElement?.textContent?.trim()) {
+    headerDiv
+      .querySelector('h1,h2,h3,h4,h5,h6')
+      ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+    const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
+    const tooltipConfig = {
+      content: toolTipElement.textContent.trim(),
+    };
+    createTooltip(block, tooltipElem, tooltipConfig);
+  }
+
   // Appending header div to the block
   block.appendChild(headerDiv);
+
   await decorateIcons(headerDiv);
 
   const contentDiv = document.createElement('div');
@@ -57,27 +72,30 @@ export default async function decorate(block) {
     contentType,
   };
 
-  const buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
+  const buildCardsShimmer = new BuildPlaceholder();
+  buildCardsShimmer.add(block);
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(parameters);
   browseCardsContent
     .then((data) => {
       // eslint-disable-next-line no-use-before-define
       const filteredLiveEventsData = fetchFilteredCardData(data, solutionsParam);
-      buildCardsShimmer.hide();
+      buildCardsShimmer.remove();
       if (filteredLiveEventsData?.length) {
         for (let i = 0; i < Math.min(noOfResults, filteredLiveEventsData.length); i += 1) {
           const cardData = filteredLiveEventsData[i];
           const cardDiv = document.createElement('div');
-          buildCard(cardDiv, cardData);
+          buildCard(contentDiv, cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         }
-        buildCardsShimmer.setParent(contentDiv);
+        block.appendChild(contentDiv);
+        /* Hide Tooltip while scrolling the cards layout */
+        hideTooltipOnScroll(contentDiv);
         decorateIcons(contentDiv);
       }
     })
     .catch((err) => {
-      buildCardsShimmer.hide();
+      buildCardsShimmer.remove();
       // eslint-disable-next-line no-console
       console.error('Events Cards:', err);
     });

@@ -109,12 +109,13 @@ export function sampleRUM(checkpoint, data = {}) {
  * Loads a CSS file.
  * @param {string} href URL to the CSS file
  */
-export async function loadCSS(href) {
+export async function loadCSS(href, media) {
   return new Promise((resolve, reject) => {
     if (!document.querySelector(`head > link[href="${href}"]`)) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = href;
+      if (media) link.media = media;
       link.onload = resolve;
       link.onerror = reject;
       document.head.append(link);
@@ -722,6 +723,7 @@ export function setup() {
   window.hlx = window.hlx || {};
   window.hlx.RUM_MASK_URL = 'full';
   window.hlx.codeBasePath = '';
+  window.hlx.aemRoot = '';
   window.hlx.lighthouse = new URLSearchParams(window.location.search).get('lighthouse') === 'on';
   window.hlx.patchBlockConfig = [];
 

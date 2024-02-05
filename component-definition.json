@@ -8,7 +8,7 @@
           "title": "Text",
           "id": "text",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/text/v1/text",
                 "template": {
@@ -22,7 +22,7 @@
           "title": "Title",
           "id": "title",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/title/v1/title",
                 "template": {}
@@ -34,7 +34,7 @@
           "title": "Image",
           "id": "image",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/image/v1/image",
                 "template": {
@@ -48,7 +48,7 @@
           "title": "Button",
           "id": "button",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/button/v1/button",
                 "template": {}
@@ -66,7 +66,7 @@
           "title": "Section",
           "id": "section",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/section/v1/section",
                 "template": {
@@ -88,11 +88,11 @@
           "title": "Icon Block",
           "id": "icon-block",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "allowedComponents": "icon-block",
+                  "filter": "icon-block",
                   "name": "Icon Block",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -100,6 +100,7 @@
                     "model": "icon-card",
                     "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                     "cardHeading": "Default Heading",
+                    "cardHeadingType": "h3",
                     "cardDescription": "Default description",
                     "cardLinkText": "Default Link Text",
                     "cardLink": "/content/exlm/global/en"
@@ -110,6 +111,7 @@
                     "model": "icon-card",
                     "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                     "cardHeading": "Default Heading",
+                    "cardHeadingType": "h3",
                     "cardDescription": "Default description",
                     "cardLinkText": "Default Link Text",
                     "cardLink": "/content/exlm/global/en"
@@ -120,6 +122,7 @@
                     "model": "icon-card",
                     "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                     "cardHeading": "Default Heading",
+                    "cardHeadingType": "h3",
                     "cardDescription": "Default description",
                     "cardLinkText": "Default Link Text",
                     "cardLink": "/content/exlm/global/en"
@@ -133,12 +136,16 @@
           "title": "Icon Card",
           "id": "icon-card",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
                   "name": "Icon Card",
                   "model": "icon-card",
+                  "cardHeading": "Default Heading",
+                  "cardDescription": "Default description",
+                  "cardLinkText": "Default Link Text",
+                  "cardLinkUrl": "/content/exlm/global/en",
                   "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg"
                 }
               }
@@ -149,12 +156,10 @@
           "title": "Columns",
           "id": "columns",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/columns/v1/columns",
-                "template": {
-                  "allowedComponents": ["group:default"]
-                }
+                "template": {}
               }
             }
           }
@@ -163,12 +168,13 @@
           "title": "Curated Cards",
           "id": "curated-cards",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Curated Cards",
-                  "model": "curated-cards"
+                  "model": "curated-cards",
+                  "headingType": "h2"
                 }
               }
             }
@@ -178,7 +184,7 @@
           "title": "Teaser",
           "id": "teaser",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
@@ -186,6 +192,7 @@
                   "model": "teaser",
                   "fileReference": "/content/dam/default-teaser-banner.png",
                   "title": "Teaser Title",
+                  "titleType": "h3",
                   "longDescr": "<p>Teaser Description</p>",
                   "classes": ["light", "left"]
                 }
@@ -197,7 +204,7 @@
           "title": "Marquee",
           "id": "marquee",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
@@ -205,6 +212,26 @@
                   "model": "marquee",
                   "fileReference": "/content/dam/exlm/Community_headshot_single.png",
                   "title": "Marquee Title",
+                  "titleType": "h2",
+                  "longDescr": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Sign up",
+          "id": "sign-up",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Sign up",
+                  "model": "sign-up",
+                  "fileReference": "/content/dam/exlm/Community_headshot_single.png",
+                  "title": "Sign up Title",
+                  "titleType": "h3",
                   "longDescr": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt"
                 }
               }
@@ -215,19 +242,20 @@
           "title": "Carousel",
           "id": "carousel",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Carousel",
                   "model": "carousel",
-                  "allowedComponents": "teaser",
+                  "filter": "teaser",
                   "classes": "center",
                   "teaser": {
                     "name": "Teaser",
                     "model": "teaser",
                     "fileReference": "/content/dam/default-teaser-banner.png",
                     "title": "Teaser Title",
+                    "titleType": "h3",
                     "longDescr": "<p>Teaser Description</p>",
                     "classes": ["light", "left"]
                   }
@@ -240,7 +268,7 @@
           "title": "Video Embed",
           "id": "video-embed",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
@@ -255,12 +283,13 @@
           "title": "Secondary Search",
           "id": "secondary-search",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Secondary Search",
-                  "model": "secondary-search"
+                  "model": "secondary-search",
+                  "headingType": "h2"
                 }
               }
             }
@@ -270,18 +299,19 @@
           "title": "Accordion Group",
           "id": "accordion-group",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Accordion Group",
                   "model": "accordion-group",
-                  "allowedComponents": "accordion",
+                  "filter": "accordion",
                   "item": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Accordion",
                     "model": "accordion",
                     "heading": "Lorem ipsum",
+                    "headingType": "h3",
                     "body": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
                   }
                 }
@@ -293,7 +323,7 @@
           "title": "Accordion",
           "id": "accordion",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
@@ -310,7 +340,7 @@
           "title": "Media",
           "id": "media",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
@@ -318,6 +348,7 @@
                   "model": "media",
                   "fileReference": "/content/dam/exlm/Community_headshot_single.png",
                   "title": "Lorem ipsum",
+                  "titleType": "h3",
                   "description": "<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</p>",
                   "classes": "left"
                 }
@@ -329,13 +360,14 @@
           "title": "Authorable Card",
           "id": "authorable-card",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "allowedComponents": "authorable-card",
+                  "filter": "authorable-card",
                   "name": "Authorable Card",
                   "model": "authorable-card",
+                  "headingType": "h2",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Authored Card",
@@ -365,7 +397,7 @@
           "title": "Authored Card",
           "id": "authored-card",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
@@ -380,7 +412,7 @@
           "title": "Browse Filters",
           "id": "browse-filters",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
@@ -395,13 +427,14 @@
           "title": "Featured Cards",
           "id": "featured-cards",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Featured Cards",
                   "model": "featured-cards",
                   "heading": "Heading text",
+                  "headingType": "h2",
                   "description": "Lorem ipsum dolor sit amet",
                   "linkText": "Browse more learning content >",
                   "link": "/content/exlm/global/en"
@@ -414,12 +447,13 @@
           "title": "Events Cards",
           "id": "events-cards",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Events Cards",
-                  "model": "events-cards"
+                  "model": "events-cards",
+                  "headingType": "h2"
                 }
               }
             }
@@ -429,27 +463,85 @@
           "title": "ADLS Cards",
           "id": "adls-cards",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "ADLS Cards",
-                  "model": "adls-cards"
+                  "model": "adls-cards",
+                  "headingType": "h2"
                 }
               }
             }
           }
         },
         {
-          "title": "Browse Topics",
-          "id": "browse-topics",
+          "title": "Tabbed Cards",
+          "id": "tabbed-cards",
           "plugins": {
-            "aem": {
+            "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "name": "Browse Topics",
-                  "model": "browse-topics"
+                  "name": "Tabbed Cards",
+                  "model": "tabbed-cards",
+                  "headingType": "h2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Tabs",
+          "id": "tabs",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Tabs",
+                  "model": "tabs",
+                  "filter": "tab",
+                  "item1": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Tab",
+                    "model": "tab",
+                    "title": "Tab",
+                    "content": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Tab",
+          "id": "tab",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Tab",
+                  "model": "tab",
+                  "title": "Tab",
+                  "content": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Recommended Courses",
+          "id": "recommended-courses",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Recommended Courses",
+                  "model": "recommended-courses",
+                  "headingType": "h2"
                 }
               }
             }

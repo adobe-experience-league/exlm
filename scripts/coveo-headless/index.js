@@ -3,11 +3,11 @@ import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
 
 const coveoToken = await loadCoveoToken();
 
-function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contextObject }) {
-  // const advancedQuery = module.loadAdvancedSearchQueryActions(searchEngine).updateAdvancedSearchQueries({
-  //   aq: advancedQueryRule || '',
-  // });
-  const context = module.loadContextActions(searchEngine).setContext(contextObject);
+function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contextObject, advancedQueryRule }) {
+  const advancedQuery = module.loadAdvancedSearchQueryActions(searchEngine).registerAdvancedSearchQueries({
+    aq: advancedQueryRule || '',
+  });
+  const context = contextObject ? module.loadContextActions(searchEngine).setContext(contextObject) : null;
   const searchConfiguration = module.loadSearchConfigurationActions(searchEngine).updateSearchConfiguration({
     locale: document.documentElement.lang,
     searchHub,
@@ -59,15 +59,19 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
       'video_url',
     ]);
 
-  // searchEngine.dispatch(advancedQuery);
-  searchEngine.dispatch(context);
+  searchEngine.dispatch(advancedQuery);
+  if (context) {
+    searchEngine.dispatch(context);
+  }
   searchEngine.dispatch(searchConfiguration);
   searchEngine.dispatch(fields);
 }
 
 export const fragment = () => window.location.hash.slice(1);
 
-export default async function coveoSearchEnginePOC({
+const hashURL = fragment();
+
+export default async function initiateCoveoHeadlessSearch({
   handleSearchEngineSubscription,
   renderPageNumbers,
   numberOfResults,
@@ -84,8 +88,8 @@ export default async function coveoSearchEnginePOC({
           module,
           searchEngine: headlessSearchEngine,
           searchHub: 'Experience League Learning Hub',
-          contextObject: { topic: 'Customers' },
-          advancedQueryRule: null, // '@el_features="Customers"',
+          contextObject: null,
+          advancedQueryRule: '',
         });
 
         const headlessSearchBox = module.buildSearchBox(headlessSearchEngine, {
@@ -128,6 +132,11 @@ export default async function coveoSearchEnginePOC({
         }
 
         const headlessQuerySummary = module.buildQuerySummary(headlessSearchEngine);
+
+        const headlessContext = module.buildContext(headlessSearchEngine);
+        const headlessQueryActionCreators = module.loadAdvancedSearchQueryActions(headlessSearchEngine);
+        const headlessSearchActionCreators = module.loadSearchActions(headlessSearchEngine);
+        const { logSearchboxSubmit } = module.loadSearchAnalyticsActions(headlessSearchEngine);
 
         const urlManager = module.buildUrlManager(headlessSearchEngine, {
           initialState: { fragment: fragment() },
@@ -207,22 +216,10 @@ export default async function coveoSearchEnginePOC({
         window.headlessPager = headlessPager;
         window.headlessResultsPerPage = headlessResultsPerPage;
         window.headlessQuerySummary = headlessQuerySummary;
-
-        resolve({
-          submitSearchHandler,
-          searchInputKeydownHandler,
-          searchInputKeyupHandler,
-          clearSearchHandler,
-          searchInputEventHandler,
-        });
-
-        const criteria = [['Relevance', module.buildRelevanceSortCriterion()]];
-
-        const initialCriterion = criteria[0][1];
-
-        const headlessBuildSort = module.buildSort(headlessSearchEngine, {
-          initialState: { criterion: initialCriterion },
-        });
+        window.headlessContext = headlessContext;
+        window.headlessQueryActionCreators = headlessQueryActionCreators;
+        window.headlessSearchActionCreators = headlessSearchActionCreators;
+        window.logSearchboxSubmit = logSearchboxSubmit;
 
         const sortWrapperEl = document.createElement('div');
         sortWrapperEl.classList.add('sort-dropdown-content');
@@ -236,18 +233,51 @@ export default async function coveoSearchEnginePOC({
 
         sortingOptions.forEach((option) => {
           const aElement = document.createElement('a');
+          aElement.setAttribute('href', '/');
           aElement.setAttribute('data-sort-criteria', option.sortCriteria);
           aElement.setAttribute('data-sort-caption', option.label);
           aElement.innerHTML = option.label;
           sortWrapperEl.appendChild(aElement);
         });
+
         const sortContainer = document.querySelector('.sort-container');
         sortContainer.appendChild(sortWrapperEl);
         const sortDropdown = sortContainer.querySelector('.sort-dropdown-content');
         const sortAnchors = sortDropdown.querySelectorAll('a');
         const sortBtn = sortContainer.querySelector('.sort-drop-btn');
+        let criteria = [[]];
+        const isSortValueInHash = hashURL.split('&');
+        // eslint-disable-next-line
+        isSortValueInHash.filter((item) => {
+          if (item.includes('sortCriteria')) {
+            const scValue = decodeURIComponent(item.split('=')[1]);
+            // eslint-disable-next-line
+            switch (scValue) {
+              case 'relevancy':
+                sortBtn.innerHTML = 'Relevance';
+                criteria = [['Relevance', module.buildRelevanceSortCriterion()]];
+                break;
+              case '@el_view_count descending':
+                sortBtn.innerHTML = 'Popularity';
+                criteria = [['Popularity', module.buildFieldSortCriterion('el_view_count', 'descending')]];
+                break;
+              case 'date descending':
+                sortBtn.innerHTML = 'Newest';
+                criteria = [['Newest', module.buildDateSortCriterion('descending')]];
+                break;
+              case 'date ascending':
+                sortBtn.innerHTML = 'Oldest';
+                criteria = [['Oldest', module.buildDateSortCriterion('ascending')]];
+                break;
+            }
+          }
+        });
 
-        headlessBuildSort.sortBy(module.buildRelevanceSortCriterion());
+        const initialCriterion = criteria[0][1];
+
+        const headlessBuildSort = module.buildSort(headlessSearchEngine, {
+          initialState: { criterion: initialCriterion },
+        });
 
         if (sortAnchors.length > 0) {
           sortAnchors.forEach((anchor) => {
@@ -257,7 +287,8 @@ export default async function coveoSearchEnginePOC({
               anchor.classList.add('selected');
             }
 
-            anchor.addEventListener('click', () => {
+            anchor.addEventListener('click', (e) => {
+              e.preventDefault();
               sortAnchors.forEach((anch) => {
                 anch.classList.remove('selected');
               });
@@ -265,6 +296,7 @@ export default async function coveoSearchEnginePOC({
               sortDropdown.classList.remove('show');
               sortBtn.innerHTML = anchorCaption;
 
+              // eslint-disable-next-line
               switch (anchor.innerHTML) {
                 case 'Relevance':
                   headlessBuildSort.sortBy(module.buildRelevanceSortCriterion());
@@ -278,12 +310,18 @@ export default async function coveoSearchEnginePOC({
                 case 'Oldest':
                   headlessBuildSort.sortBy(module.buildDateSortCriterion('ascending'));
                   break;
-                default:
-                  headlessBuildSort.sortBy(module.buildRelevanceSortCriterion());
               }
             });
           });
         }
+
+        resolve({
+          submitSearchHandler,
+          searchInputKeydownHandler,
+          searchInputKeyupHandler,
+          clearSearchHandler,
+          searchInputEventHandler,
+        });
       })
       .catch((e) => {
         // eslint-disable-next-line

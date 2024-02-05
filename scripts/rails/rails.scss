@@ -1,6 +1,6 @@
 @import '../../styles/sass/breakpoints';
 
-.docs {
+.docs main .section.rail {
   --rail-toggler-y: 15px;
   --rail-toggler-x: 20px;
 
@@ -10,65 +10,67 @@
 
   @include breakpoint(desktop) {
     // rail
-    .rail {
-      position: relative;
-      box-sizing: border-box;
-      padding: 46px 0.75rem 0.75rem;
+    position: relative;
+    box-sizing: border-box;
+    padding: 46px 0.75rem 0.75rem;
+
+    .rail-content {
+      margin: 0;
+      padding-top: 8px;
+    }
+
+    .rail-toggle {
+      background: none;
+      display: block;
+      position: absolute;
+      cursor: pointer;
+      top: var(--rail-toggler-y);
+      bottom: unset;
+      margin: 0;
+      padding: 0 12px;
+
+      .icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    &.rail-right {
+      .rail-toggle {
+        left: 0;
+        transform: scaleX(-1);
+      }
+    }
+
+    &.rail-left {
+      .rail-toggle {
+        right: 0;
+      }
+    }
+
+    // closed state
+    &.closed {
+      width: 0;
+      padding: 0 !important;
 
       .rail-content {
-        margin: 0;
-        padding-top: 8px;
-      }
+        display: none;
 
-      .rail-toggle {
-        background: none;
-        display: block;
-        position: absolute;
-        cursor: pointer;
-        top: var(--rail-toggler-y);
-        bottom: unset;
-        margin: 0;
-        padding: 0 12px;
-
-        .icon {
-          width: 16px;
-          height: 16px;
+        .toc {
+          visibility: hidden !important;
         }
       }
 
-      &.rail-right {
-        .rail-toggle {
-          left: 0;
-          transform: scaleX(-1);
-        }
+      &.rail-right .rail-toggle {
+        left: unset;
+        right: 0;
+        transform: scaleX(1);
       }
 
-      &.rail-left {
-        .rail-toggle {
-          right: 0;
-        }
-      }
-
-      // closed state
-      &.closed {
-        width: 0;
-        padding: 0 !important;
-
-        .rail-content {
-          display: none;
-        }
-
-        &.rail-right .rail-toggle {
-          left: unset;
-          right: 0;
-          transform: scaleX(1);
-        }
-
-        &.rail-left .rail-toggle {
-          right: unset;
-          left: 0;
-          transform: rotate(180deg);
-        }
+      &.rail-left .rail-toggle {
+        right: unset;
+        left: 0;
+        transform: rotate(180deg);
       }
     }
   }

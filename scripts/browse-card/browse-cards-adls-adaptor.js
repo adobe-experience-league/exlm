@@ -1,7 +1,7 @@
-import { fetchPlaceholders } from '../lib-franklin.js';
 import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
 import { adlsRedirectUrl } from '../urls.js';
+import { fetchLanguagePlaceholders } from '../scripts.js';
 
 /**
  * Module that provides functionality for adapting ADLS results to BrowseCards data model
@@ -22,7 +22,7 @@ const BrowseCardsADLSAdaptor = (() => {
       ...browseCardDataModel,
       contentType,
       badgeTitle: CONTENT_TYPES.INSTRUCTOR_LED_TRANING.LABEL,
-      product: solution,
+      product: solution && (Array.isArray(solution) ? solution : solution.split(/,\s*/)),
       title: name || '',
       description: description || '',
       copyLink: adlsRedirectUrl + path || '',
@@ -38,7 +38,7 @@ const BrowseCardsADLSAdaptor = (() => {
    */
   const mapResultsToCardsData = async (data) => {
     try {
-      placeholders = await fetchPlaceholders();
+      placeholders = await fetchLanguagePlaceholders();
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);

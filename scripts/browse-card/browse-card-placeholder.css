@@ -15,22 +15,27 @@
   overflow-x: auto;
   overflow-y: hidden;
   min-height: 400px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   margin: 0;
+  z-index: 1;
+  margin-top: 16px;
 }
 .shimmer-placeholder.hide-shimmer {
   height: 0px;
   margin: 0;
-  transform: scale(0);
+  z-index: 0;
+  visibility: hidden
+}
+.browse-filters-wrapper .shimmer-placeholder.hide-shimmer {
+  display: none;
+}
+.browse-filters-wrapper .shimmer-placeholder {
+  position: relative;
 }
 .featured-cards .shimmer-placeholder {
   display: grid; 
   grid-template-columns: 1fr; 
   gap: 32px;
+  margin-top: 24px;
 }
 .browse-filters-wrapper .shimmer-placeholder{
   gap: 8px;
@@ -38,6 +43,7 @@
   grid-template-columns: 1fr;
   overflow: unset;
   height: fit-content;
+  margin-top: 0;
 }
 .shimmer-placeholder-isloading {
   width: 100%;
@@ -47,8 +53,9 @@
   flex: 0 0 264px;
   border: 1px solid var(--spectrum-gray-200);
 }
-.browse-filters-wrapper .shimmer-placeholder-isloading {
-  min-height: 336px;
+.browse-filters-wrapper .shimmer-placeholder-isloading, 
+.featured-cards .shimmer-placeholder-isloading  {
+  min-height: 380px;
 }
 .shimmer-placeholder-isloading .shimmer-placeholder-content {
   background: var(--shimmer-content-background);
@@ -75,9 +82,10 @@
 .shimmer-placeholder-isloading .shimmer-placeholder-image {
   height: 190px;
 }
-.browse-filters-wrapper .shimmer-placeholder-isloading .shimmer-placeholder-description {
+.browse-filters-wrapper .shimmer-placeholder-isloading .shimmer-placeholder-description,
+.featured-cards .shimmer-placeholder-isloading .shimmer-placeholder-description {
   height: 80px;
-  margin: 0px 0px 10px 0px;
+  margin: 0px 0px 52px 0px;
 }
 .shimmer-placeholder-isloading .shimmer-placeholder-description {
   height: 90px;
@@ -111,10 +119,14 @@
     gap: 25px;
     overflow-x: auto;
     overflow-y: hidden;
+    margin-top: 16px;
   }
   .featured-cards .shimmer-placeholder, 
   .browse-filters-wrapper .shimmer-placeholder {  
     grid-template-columns: 1fr 1fr;
+  }
+  .browse-filters-wrapper .shimmer-placeholder {
+    margin-top: 0;
   }
   .shimmer-placeholder-isloading {
     flex: 0 0 286px; 
@@ -123,14 +135,19 @@
 @media only screen and (min-width: 900px) {
   .shimmer-placeholder{
     gap: 32px;
+    margin-top: 24px;
   }
   .featured-cards .shimmer-placeholder {
     display: flex;
     gap: 32px;
   }
+  .featured-cards .shimmer-placeholder-isloading {
+    flex: 0 0 295px;
+  }
   .browse-filters-wrapper .shimmer-placeholder {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    margin-top: 0;
   }
   .shimmer-placeholder-isloading {
     flex: 0 0 256px;

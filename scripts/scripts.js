@@ -15,16 +15,13 @@ import {
   decorateButtons,
   getMetadata,
   loadScript,
-  toClassName,
+  fetchPlaceholders,
 } from './lib-franklin.js';
-import {
-  analyticsTrack404,
-  analyticsTrackConversion,
-  analyticsTrackCWV,
-  analyticsTrackError,
-  initAnalyticsTrackingQueue,
-  setupAnalyticsTrackingWithAlloy,
-} from './analytics/lib-analytics.js';
+// eslint-disable-next-line import/no-cycle
+
+const ffetchModulePromise = import('./ffetch.js');
+
+const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
@@ -136,6 +133,13 @@ function addBrowseRail(main) {
   main.append(leftRailSection);
 }
 
+function addBrowseBreadCrumb(main) {
+  // add new section at the top
+  const section = document.createElement('div');
+  main.prepend(section);
+  section.append(buildBlock('browse-breadcrumb', []));
+}
+
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
@@ -145,6 +149,7 @@ function buildAutoBlocks(main) {
     buildSyntheticBlocks(main);
     // if we are on a product browse page
     if (isBrowsePage()) {
+      addBrowseBreadCrumb(main);
       addBrowseRail(main);
     }
   } catch (error) {
@@ -161,9 +166,10 @@ function buildAutoBlocks(main) {
 export function decorateExternalLinks(main) {
   main.querySelectorAll('a').forEach((a) => {
     const href = a.getAttribute('href');
+    if (!href) return;
     if (href.includes('#_blank')) {
       a.setAttribute('target', '_blank');
-    } else if (href && !href.startsWith('#')) {
+    } else if (!href.startsWith('#')) {
       if (a.hostname !== window.location.hostname) {
         a.setAttribute('target', '_blank');
       }
@@ -177,13 +183,15 @@ export function decorateExternalLinks(main) {
 /**
  * Check if current page is a MD Docs Page.
  * theme = docs is set in bulk metadata for docs paths.
+ * @param {string} type The type of doc page - example: docs-solution-landing,
+ *                      docs-landing, docs (optional, default value is docs)
  */
-export function isDocPage() {
+export function isDocPage(type = 'docs') {
   const theme = getMetadata('theme');
   return theme
     .split(',')
-    .map((t) => t.toLowerCase())
-    .includes('docs');
+    .map((t) => t.toLowerCase().trim())
+    .includes(type);
 }
 
 /**
@@ -212,7 +220,6 @@ async function loadEager(doc) {
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
-    await initAnalyticsTrackingQueue();
     decorateMain(main);
     document.body.classList.add('appear');
     await waitForLCP(LCP_BLOCKS);
@@ -271,29 +278,44 @@ export async function loadIms() {
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
-  loadIms(); // start it early, asyncronously
   await loadBlocks(main);
+  loadIms(); // start it early, asyncronously
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
-  loadHeader(doc.querySelector('header'));
-  loadFooter(doc.querySelector('footer'));
+  const headerPromise = loadHeader(doc.querySelector('header'));
+  const footerPromise = loadFooter(doc.querySelector('footer'));
+
+  localStorage.setItem('prevPage', doc.title);
+
+  const launchPromise = loadScript(
+    'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
+    {
+      async: true,
+    },
+  );
+
+  Promise.all([launchPromise, libAnalyticsModulePromise, headerPromise, footerPromise]).then(
+    // eslint-disable-next-line no-unused-vars
+    ([launch, libAnalyticsModule, headPr, footPr]) => {
+      const { pageLoadModel, linkClickModel } = libAnalyticsModule;
+      window.adobeDataLayer.push(pageLoadModel());
+      const linkClicked = document.querySelectorAll('a,.view-more-less span');
+      linkClicked.forEach((linkElement) => {
+        linkElement.addEventListener('click', (e) => {
+          if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
+            linkClickModel(e);
+          }
+        });
+      });
+    },
+  );
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 
   sampleRUM('lazy');
-  sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
-  sampleRUM.observe(main.querySelectorAll('picture > img'));
-
-  const context = {
-    getMetadata,
-    toClassName,
-  };
-  // eslint-disable-next-line import/no-relative-packages
-  const { initConversionTracking } = await import('../plugins/rum-conversion/src/index.js');
-  await initConversionTracking.call(context, document);
 }
 
 /**
@@ -436,77 +458,151 @@ async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadRails();
-  const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
   loadDelayed();
-  await setupAnalytics;
   loadPrevNextBtn();
 }
 
-const cwv = {};
+// load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
+if (!window.hlx.DO_NOT_LOAD_PAGE) {
+  loadPage();
+}
 
-// Forward the RUM CWV cached measurements to edge using WebSDK before the page unloads
-window.addEventListener('beforeunload', () => {
-  if (!Object.keys(cwv).length) return;
-  analyticsTrackCWV(cwv);
-});
+/**
+ * Helper function that converts an AEM path into an EDS path.
+ */
+export function getEDSLink(aemPath) {
+  return window.hlx.aemRoot ? aemPath.replace(window.hlx.aemRoot, '').replace('.html', '') : aemPath;
+}
 
-// Callback to RUM CWV checkpoint in order to cache the measurements
-sampleRUM.always.on('cwv', async (data) => {
-  if (!data.cwv) return;
-  Object.assign(cwv, data.cwv);
-});
+/**
+ * Helper function that adapts the path to work on EDS and AEM rendering
+ */
+export function getLink(edsPath) {
+  return window.hlx.aemRoot && !edsPath.startsWith(window.hlx.aemRoot) && edsPath.indexOf('.html') === -1
+    ? `${window.hlx.aemRoot}${edsPath}.html`
+    : edsPath;
+}
 
-sampleRUM.always.on('404', analyticsTrack404);
-sampleRUM.always.on('error', analyticsTrackError);
+export const removeExtension = (pathStr) => {
+  const parts = pathStr.split('.');
+  if (parts.length === 1) return parts[0];
+  return parts.slice(0, -1).join('.');
+};
 
-// Declare conversionEvent, bufferTimeoutId and tempConversionEvent,
-// outside the convert function to persist them for buffering between
-// subsequent convert calls
-const CONVERSION_EVENT_TIMEOUT_MS = 100;
-let bufferTimeoutId;
-let conversionEvent;
-let tempConversionEvent;
-sampleRUM.always.on('convert', (data) => {
-  const { element } = data;
-  // eslint-disable-next-line no-undef
-  if (!element || !alloy) {
-    return;
+export function rewriteDocsPath(docsPath) {
+  const PROD_BASE = 'https://experienceleague.adobe.com';
+  const url = new URL(docsPath, PROD_BASE);
+  if (!url.pathname.startsWith('/docs')) {
+    return docsPath; // not a docs path, return as is
   }
+  const lang = url.searchParams.get('lang') || 'en'; // en is default
+  url.searchParams.delete('lang');
+  let pathname = `${lang.toLowerCase()}${url.pathname}`;
+  pathname = removeExtension(pathname); // new URLs are extensionless
+  url.pathname = pathname;
+  return url.toString().replace(PROD_BASE, ''); // always remove PROD_BASE if exists
+}
 
-  if (element.tagName === 'FORM') {
-    conversionEvent = {
-      ...data,
-      event: 'Form Complete',
-    };
+/**
+ * Proccess current pathname and return details for use in language switching
+ * Considers pathnames like /en/path/to/content and /content/exl/global/en/path/to/content.html for both EDS and AEM
+ */
+export function getPathDetails() {
+  const { pathname } = window.location;
+  const extParts = pathname.split('.');
+  const ext = extParts.length > 1 ? extParts[extParts.length - 1] : '';
+  const isContentPath = pathname.startsWith('/content');
+  const parts = pathname.split('/');
+  const safeLangGet = (index) => (parts.length > index ? parts[index] : 'en');
+  // 4 is the index of the language in the path for AEM content paths like  /content/exl/global/en/path/to/content.html
+  // 1 is the index of the language in the path for EDS paths like /en/path/to/content
+  let lang = isContentPath ? safeLangGet(4) : safeLangGet(1);
+  // remove suffix from lang if any
+  if (lang.indexOf('.') > -1) {
+    lang = lang.substring(0, lang.indexOf('.'));
+  }
+  if (!lang) lang = 'en'; // default to en
+  // substring before lang
+  const prefix = pathname.substring(0, pathname.indexOf(`/${lang}`)) || '';
+  const suffix = pathname.substring(pathname.indexOf(`/${lang}`) + lang.length + 1) || '';
+  return {
+    ext,
+    prefix,
+    suffix,
+    lang,
+    isContentPath,
+  };
+}
 
-    if (
-      conversionEvent.event === 'Form Complete' &&
-      // Check for undefined, since target can contain value 0 as well, which is falsy
-      (data.target === undefined || data.source === undefined)
-    ) {
-      // If a buffer has already been set and tempConversionEvent exists,
-      // merge the two conversionEvent objects to send to alloy
-      if (bufferTimeoutId && tempConversionEvent) {
-        conversionEvent = { ...tempConversionEvent, ...conversionEvent };
-      } else {
-        // Temporarily hold the conversionEvent object until the timeout is complete
-        tempConversionEvent = { ...conversionEvent };
+/**
+ * Helper function thats returns a list of all products
+ * - below <lang>/browse/<product-page>
+ * - To get added, the product page must be published
+ * - Product pages listed in <lang>/browse/top-products are put at the the top
+ *   in the order they appear in top-products
+ * - the top product list can point to sub product pages
+ */
+export async function getProducts() {
+  // get language
+  const { lang } = getPathDetails();
+  const ffetch = (await ffetchModulePromise).default;
+  // load the <lang>/top_product list
+  const topProducts = await ffetch(`/${lang}/top-products.json`).all();
+  // get all indexed pages below <lang>/browse
+  const publishedPages = await ffetch(`/${lang}/browse-index.json`).all();
 
-        // If there is partial form conversion data,
-        // set the timeout buffer to wait for additional data
-        bufferTimeoutId = setTimeout(async () => {
-          analyticsTrackConversion({ ...conversionEvent });
-          tempConversionEvent = undefined;
-          conversionEvent = undefined;
-        }, CONVERSION_EVENT_TIMEOUT_MS);
-      }
+  // add all published top products to final list
+  const finalProducts = topProducts.filter((topProduct) => {
+    // check if top product is in published list
+    const found = publishedPages.find((elem) => elem.path === topProduct.path);
+    if (found) {
+      // keep original title if no nav title is set
+      if (!topProduct.title) topProduct.title = found.title;
+      // set marker for featured product
+      topProduct.featured = true;
+      // remove it from publishedProducts list
+      publishedPages.splice(publishedPages.indexOf(found), 1);
+      return true;
     }
-    return;
+    return false;
+  });
+
+  // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
+  const publishedMainProducts = publishedPages
+    .filter((page) => page.path.split('/').length === 4)
+    // sort alphabetically
+    .sort((productA, productB) => productA.path.localeCompare(productB.path));
+  // append remaining published products to final list
+  finalProducts.push(...publishedMainProducts);
+  return finalProducts;
+}
+
+export async function fetchLanguagePlaceholders() {
+  const { lang } = getPathDetails();
+  let placeholdersData = '';
+
+  try {
+    // Try fetching placeholders with the specified language
+    placeholdersData = await fetchPlaceholders(`/${lang}`);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(`Error fetching placeholders for lang: ${lang}`, error);
+    // Retry without specifying a language (using the default language)
+    try {
+      placeholdersData = await fetchPlaceholders('/en');
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching placeholders:', err);
+    }
   }
+  return placeholdersData;
+}
 
-  analyticsTrackConversion({ ...data });
-  tempConversionEvent = undefined;
-  conversionEvent = undefined;
-});
-
-loadPage();
+export async function getLanguageCode() {
+  const { lang } = getPathDetails();
+  const ffetch = (await ffetchModulePromise).default;
+  const langMap = await ffetch(`/languages.json`).all();
+  const langObj = langMap.find((item) => item.key === lang);
+  const langCode = langObj ? langObj.value : lang;
+  return langCode;
+}

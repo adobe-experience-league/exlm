@@ -1,41 +1,29 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { createTag, decorateExternalLinks } from '../../scripts/scripts.js';
+import { decorateExternalLinks } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  const columns = block.querySelectorAll('.icon-block > div');
+  [...block.children].forEach((column) => {
+    const [, headingWrapper, descriptionWrapper, linkWrapper] = column.children;
 
-  [...columns].forEach((column) => {
-    const heading = column.querySelector('div:nth-child(2)');
-    const description = column.querySelector('div:nth-child(3)');
+    descriptionWrapper.classList.add('icon-description');
 
-    description.classList.add('icon-description');
+    const heading = headingWrapper.firstElementChild;
+    if (heading) {
+      heading.classList.add('icon-heading');
+      heading.remove();
+      headingWrapper.replaceWith(heading);
+    } else {
+      headingWrapper.remove();
+    }
 
-    const h3 = createTag(
-      'h3',
-      {
-        class: 'icon-heading',
-      },
-      heading.innerHTML.trim(),
-    );
-
-    heading.replaceWith(h3);
-
-    const linkWrapper = column.querySelector('div:nth-child(4)');
     const link = linkWrapper.querySelector('a');
-    if (!link) return;
-    const linkText = link.innerHTML.trim();
-    const linkUrl = link.href;
-
-    const a = createTag(
-      'a',
-      {
-        href: linkUrl,
-        class: 'icon-link',
-      },
-      linkText,
-    );
-
-    linkWrapper.replaceWith(a);
+    if (link) {
+      link.classList.add('icon-link');
+      link.remove();
+      linkWrapper.replaceWith(link);
+    } else {
+      linkWrapper.remove();
+    }
   });
 
   decorateExternalLinks(block);
