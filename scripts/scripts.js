@@ -195,6 +195,24 @@ export function isDocPage(type = 'docs') {
 }
 
 /**
+ * set attributes needed for the docs pages grid to work properly
+ * @param {Element} main the main element
+ */
+function setGridRows(main) {
+  const gridRows = main.querySelectorAll('.section:not(.toc-container, .mini-toc-container)');
+  gridRows.forEach((row, i) => {
+    if (i === 0) {
+      row.classList.add('content-row-first');
+    }
+    if (i === gridRows.length - 1) {
+      row.classList.add('content-row-last');
+    }
+  });
+  
+  main.style.setProperty('--grid-rows', gridRows.length);
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -209,6 +227,7 @@ export function decorateMain(main) {
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  setGridRows(main);
 }
 
 /**
@@ -353,7 +372,7 @@ export function htmlToElement(html) {
 }
 
 export function loadPrevNextBtn() {
-  const mainDoc = document.querySelector('main > div:nth-child(1)');
+  const mainDoc = document.querySelector('main > div.content-row-last');
   if (!mainDoc) return;
 
   const prevPageMeta = document.querySelector('meta[name="prev-page"]');

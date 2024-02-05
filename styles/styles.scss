@@ -816,20 +816,31 @@ main > div.browse-rail {
 
   main {
     width: 100%;
-    display: flex;
-    flex-direction: column;
+    display: grid;
     margin: 0 auto;
     padding: 0 46px;
     box-sizing: border-box;
     max-width: 1700px;
 
     @include breakpoint(desktop) {
+      grid-template-columns: 1fr 3fr 1fr;
+      grid-template-rows: repeat(var(--grid-rows), max-content);
       padding: 0;
-      flex-direction: row;
+
+      &.rail-left-closed {
+        grid-template-columns: 0 4fr 1fr;
+      }
+
+      &.rail-right-closed {
+        grid-template-columns: 1fr 4fr 0;
+      }
+
+      &.rail-left-closed.rail-right-closed {
+        grid-template-columns: 0 5fr 0;
+      }
     }
 
     > div.section {
-      order: 2;
       padding: 30px 2px;
       box-sizing: border-box;
       width: 100%;
@@ -839,7 +850,7 @@ main > div.browse-rail {
       }
 
       &.toc-container {
-        order: 1;
+        grid-row: 1 / 1;
         min-height: 70px; // predefined height to help with CLS
         padding: 32px 10px 10px; // predefined padding to help with CLS
 
@@ -853,7 +864,6 @@ main > div.browse-rail {
       }
 
       &.mini-toc-container {
-        order: 3;
         padding: 32px 10px 0 0;
       }
 
@@ -867,18 +877,29 @@ main > div.browse-rail {
         border-right: 1px solid #eaeaea;
 
         &:not(.toc-container, .mini-toc-container) {
-          flex: 1 1 0;
           overflow: auto;
-          padding: 54px 37px 50px 50px;
+          padding-block: 0;
+          padding-inline: 37px 50px;
+          grid-column: 2;
+        }
+
+        &:not(.toc-container, .mini-toc-container).content-row-first {
+          padding-block-start: 54px;
+        }
+
+        &:not(.toc-container, .mini-toc-container).content-row-last {
+          padding-block-end: 50px;
         }
 
         &.toc-container {
-          width: 20%;
+          grid-column: 1 / 1;
+          grid-row: 1 / -1;
           padding: 46px 10px 10px;
         }
 
         &.mini-toc-container {
-          width: 20%;
+          grid-column: 3 / 3;
+          grid-row: 1 / -1;
           position: relative;
           display: flex;
           gap: 8px;

@@ -23,6 +23,10 @@ async function decorateRail(railSection, position) {
   await decorateIcons(railToggler);
   railToggler.addEventListener('click', () => {
     railSection.classList.toggle('closed');
+    const main = railSection.parentElement;
+    if (main) {
+      main.classList.toggle(`rail-${position}-closed`);
+    }
   });
 }
 
