@@ -1,5 +1,5 @@
-import { fetchPlaceholders } from '../lib-franklin.js';
 import browseCardDataModel from '../data-model/browse-cards-model.js';
+import { fetchLanguagePlaceholders } from '../scripts.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
 
 /**
@@ -47,7 +47,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
    */
   const mapResultsToCardsData = async (data) => {
     try {
-      placeholders = await fetchPlaceholders();
+      placeholders = await fetchLanguagePlaceholders();
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);
