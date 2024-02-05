@@ -117,3 +117,18 @@ export const getBrowseFiltersResultCount = () => {
   }
   return resultCount;
 };
+
+export const getSelectedTopics = (filterInfo) => {
+  if (!filterInfo) {
+    return [];
+  }
+  const featuresCheck = filterInfo.match(/@el_features=("[^"]*")/g) || [];
+  const selectedTopics = featuresCheck.reduce((acc, curr) => {
+    const [, featureName] = curr.split('=');
+    if (featureName) {
+      acc.push(featureName.trim().replace(/"/g, ''));
+    }
+    return acc;
+  }, []);
+  return selectedTopics;
+};

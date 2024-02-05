@@ -1,5 +1,5 @@
-import { loadCSS, fetchPlaceholders } from '../../scripts/lib-franklin.js';
-import { isDocPage } from '../../scripts/scripts.js';
+import { loadCSS } from '../../scripts/lib-franklin.js';
+import { isDocPage, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
@@ -10,7 +10,7 @@ loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
 
 let placeholders = {};
 try {
-  placeholders = await fetchPlaceholders();
+  placeholders = await fetchLanguagePlaceholders();
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);

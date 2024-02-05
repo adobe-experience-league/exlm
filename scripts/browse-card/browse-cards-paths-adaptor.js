@@ -1,7 +1,7 @@
-import { fetchPlaceholders } from '../lib-franklin.js';
 import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { exlmCDNUrl } from '../urls.js';
+import { fetchLanguagePlaceholders } from '../scripts.js';
 /**
  * Module that provides functionality for adapting Paths results to BrowseCards data model
  * @module BrowseCardsPathsAdaptor
@@ -77,7 +77,7 @@ const BrowseCardsPathsAdaptor = (() => {
    */
   const mapResultsToCardsData = async (data) => {
     try {
-      placeholders = await fetchPlaceholders();
+      placeholders = await fetchLanguagePlaceholders();
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);

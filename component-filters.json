@@ -42,6 +42,20 @@
     ]
   },
   {
+    "id": "text",
+    "rte": {
+      "format": ["bold", "italic"],
+      "alignment": [],
+      "indentation": [],
+      "sr_script": ["superscript", "subscript"],
+      "list": ["bullist", "numlist"],
+      "insert": ["link"],
+      "advanced": [],
+      "extensions": [],
+      "editor": ["removeformat"]
+    }
+  },
+  {
     "id": "cards",
     "components": ["card"]
   },

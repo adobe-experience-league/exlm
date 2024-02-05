@@ -6,7 +6,7 @@ export async function fetchCommunityProfileData() {
     const response = await fetch(communityProfileUrl, {
       method: 'GET',
       headers: {
-        'x-ims-token': '124', // TODO: replace with await window.adobeIMS?.getAccessToken().token
+        'x-ims-token': await window.adobeIMS?.getAccessToken().token,
       },
     });
 

@@ -1,12 +1,12 @@
-import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
+import { getMetadata } from '../../scripts/lib-franklin.js';
 import { tocUrl } from '../../scripts/urls.js';
 import TocDataService from '../../scripts/data-service/toc-data-service.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, rewriteDocsPath, getLanguageCode } from '../../scripts/scripts.js';
 import getSolutionName from './toc-solutions.js';
 
 let placeholders = {};
 try {
-  placeholders = await fetchPlaceholders();
+  placeholders = await fetchLanguagePlaceholders();
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
@@ -152,12 +152,12 @@ export default async function decorate(block) {
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('toc-right-rail-content');
 
-  // fetch toc content
+  // Fetch TOC data
   const currentURL = window.location.pathname;
-  const lang = currentURL.split('/')[1];
+  const langCode = await getLanguageCode();
   const tocID = block.querySelector('.toc > div > div').textContent;
   if (tocID !== '') {
-    const resp = await handleTocService(tocID, lang);
+    const resp = await handleTocService(tocID, langCode);
     block.innerHTML = '';
     block.style.visibility = 'visible';
     const div = document.createElement('div');
@@ -209,20 +209,13 @@ export default async function decorate(block) {
       anchor.parentNode.replaceChild(pTag, anchor);
       pTag.appendChild(anchor);
 
-      // Remove ".html?lang=en" part from the href
-      const currentHref = anchor.getAttribute('href');
-      const linkExtension = currentHref.lastIndexOf('.');
-      let newHref;
-      if (linkExtension !== -1) {
-        newHref = currentHref.substring(0, linkExtension);
-      } else {
-        newHref = currentHref;
-      }
-
-      if (anchor.getAttribute('href').startsWith('#')) {
+      const anchorHref = anchor.getAttribute('href');
+      if (anchorHref.startsWith('#')) {
         anchor.classList.add('js-toggle');
       } else {
-        anchor.setAttribute('href', `/${lang}${newHref}`);
+        // Rewrite docs path to fix language path
+        const rewritePath = rewriteDocsPath(anchorHref);
+        anchor.setAttribute('href', rewritePath);
       }
     });
 

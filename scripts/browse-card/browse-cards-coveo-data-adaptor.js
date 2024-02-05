@@ -1,7 +1,6 @@
-import { fetchPlaceholders } from '../lib-franklin.js';
 import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
-import { rewriteDocsPath } from '../scripts.js';
+import { rewriteDocsPath, fetchLanguagePlaceholders } from '../scripts.js';
 
 /**
  * Module that provides functionality for adapting Coveo search results to BrowseCards data model.
@@ -96,7 +95,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
    */
   const mapResultsToCardsData = async (data) => {
     try {
-      placeholders = await fetchPlaceholders();
+      placeholders = await fetchLanguagePlaceholders();
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);

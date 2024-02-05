@@ -1,0 +1,40 @@
+.tutorials-list-header {
+    font-size: 24px;
+    border-bottom: 3px solid var(--non-spectrum-grey);
+    margin-bottom: 12px;
+}
+
+
+.tutorials-list .tutorials-list-container {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.tutorials-list .tutorials-list-container li {
+    list-style: none;
+    width: 100%;
+    margin: 0 14px 7px 0;
+}
+
+.tutorials-list .tutorials-list-container li a {
+    line-height: 24px;
+    font-weight: var(--font-weight-700);
+    color: var(--non-spectrum-link-blue);
+}
+
+@media (min-width: 600px) {
+    .tutorials-list .tutorials-list-container li {
+        width: 50%;
+    }
+}
+
+@media (min-width: 900px) {
+    .tutorials-list-header {
+        font-size: var(--spectrum-font-size-700);
+    }
+
+    .tutorials-list .tutorials-list-container li {
+        width: calc(33.33% - 16px);
+    }
+}

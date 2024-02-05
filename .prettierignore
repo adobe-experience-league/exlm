@@ -10,3 +10,4 @@ plugins/rum-conversion/**
 scripts/analytics/alloy.min.js
 scripts/feedback/qualtrics/qualtrics-embed.js
 scripts/ffetch.js
+sitemap-index.xml

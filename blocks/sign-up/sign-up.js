@@ -9,6 +9,7 @@ function decorateButtons(...buttons) {
         if (a) {
           a.classList.add('button');
           if (index === 0) a.classList.add('sign-up-cta-btn');
+          if (index === 1) a.classList.add('secondary');
           if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
           if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
           return a.outerHTML;

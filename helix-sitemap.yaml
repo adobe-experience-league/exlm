@@ -1,63 +1,64 @@
 sitemaps:
   example:
+    origin: https://experienceleague.adobe.com
     default: en
     languages:
       en:
         source: /en/query-index.json
-        destination: /sitemap-en.xml
+        destination: /en/sitemap.xml
         hreflang: en
       fr:
         source: /fr/query-index.json
-        destination: /sitemap-fr.xml
+        destination: /fr/sitemap.xml
         hreflang: fr
         alternate: /fr/{path}
       de:
         source: /de/query-index.json
-        destination: /sitemap-de.xml
+        destination: /de/sitemap.xml
         hreflang: de
         alternate: /de/{path}
       es:
         source: /es/query-index.json
-        destination: /sitemap-es.xml
+        destination: /es/sitemap.xml
         hreflang: es
         alternate: /es/{path}
       it:
         source: /it/query-index.json
-        destination: /sitemap-it.xml
+        destination: /it/sitemap.xml
         hreflang: it
         alternate: /it/{path}
       nl:
         source: /nl/query-index.json
-        destination: /sitemap-nl.xml
+        destination: /nl/sitemap.xml
         hreflang: nl
         alternate: /nl/{path}
       pt-br:
         source: /pt-br/query-index.json
-        destination: /sitemap-pt-br.xml
+        destination: /pt-br/sitemap.xml
         hreflang: pt-br
         alternate: /pt-br/{path}
       ko:
         source: /ko/query-index.json
-        destination: /sitemap-ko.xml
+        destination: /ko/sitemap.xml
         hreflang: ko
         alternate: /ko/{path}
       ja:
         source: /ja/query-index.json
-        destination: /sitemap-ja.xml
+        destination: /ja/sitemap.xml
         hreflang: ja
         alternate: /ja/{path}
       sv:
         source: /sv/query-index.json
-        destination: /sitemap-sv.xml
+        destination: /sv/sitemap.xml
         hreflang: sv
         alternate: /sv/{path}
       zh-hans:
         source: /zh-hans/query-index.json
-        destination: /sitemap-zh-hans.xml
+        destination: /zh-hans/sitemap.xml
         hreflang: zh-hans
         alternate: /zh-hans/{path}
       zh-hant:
         source: /zh-hant/query-index.json
-        destination: /sitemap-zh-hant.xml
+        destination: /zh-hant/sitemap.xml
         hreflang: zh-hant
         alternate: /zh-hant/{path}

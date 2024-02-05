@@ -1,11 +1,11 @@
-import { fetchPlaceholders } from '../lib-franklin.js';
 import { updateProfile } from '../data-service/profile-service.js';
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
+import { fetchLanguagePlaceholders } from '../scripts.js';
 
 let placeholders = {};
 try {
-  placeholders = await fetchPlaceholders();
+  placeholders = await fetchLanguagePlaceholders();
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);

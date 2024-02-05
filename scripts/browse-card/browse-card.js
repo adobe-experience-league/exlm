@@ -1,5 +1,5 @@
-import { loadCSS, fetchPlaceholders } from '../lib-franklin.js';
-import { createTag, htmlToElement } from '../scripts.js';
+import { loadCSS } from '../lib-franklin.js';
+import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import { createTooltip } from './browse-card-tooltip.js';
 import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import loadJWT from '../auth/jwt.js';
@@ -95,7 +95,7 @@ const buildTagsContent = (cardMeta, tags = []) => {
 
 let placeholders = {};
 try {
-  placeholders = await fetchPlaceholders();
+  placeholders = await fetchLanguagePlaceholders();
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);

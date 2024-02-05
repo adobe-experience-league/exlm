@@ -1,7 +1,7 @@
 import ffetch from '../../scripts/ffetch.js';
-import { getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
+import { getMetadata } from '../../scripts/lib-franklin.js';
 import { filterSubPages, convertToMultiMap, convertToULList, sortFirstLevelList } from './browse-rail-utils.js';
-import { getEDSLink, getLink } from '../../scripts/scripts.js';
+import { getEDSLink, getLink, getProducts, getPathDetails, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 // Utility function to toggle visibility of items
 function toggleItemVisibility(itemList, startIndex, show) {
@@ -41,17 +41,17 @@ function getPathUntilLevel(originalUrl, levels) {
 }
 
 // Function to handle "View More" click
-function handleViewMoreClick(block) {
+function handleViewMoreClick(block, numFeaturedProducts) {
   const itemList = block.querySelectorAll('.products > li > ul > li');
-  toggleItemVisibility(itemList, 12, true);
+  toggleItemVisibility(itemList, numFeaturedProducts, true);
   setLinkVisibility(block, '.viewMoreLink', false);
   setLinkVisibility(block, '.viewLessLink', true);
 }
 
 // Function to handle "View Less" click
-function handleViewLessClick(block) {
+function handleViewLessClick(block, numFeaturedProducts) {
   const itemList = block.querySelectorAll('.products > li > ul > li');
-  toggleItemVisibility(itemList, 12, false);
+  toggleItemVisibility(itemList, numFeaturedProducts, false);
   setLinkVisibility(block, '.viewMoreLink', true);
   setLinkVisibility(block, '.viewLessLink', false);
 }
@@ -60,16 +60,10 @@ function handleViewLessClick(block) {
 export default async function decorate(block) {
   const theme = getMetadata('theme');
   const label = getMetadata('og:title');
-  const MAX_VISIBLE_ITEMS = 12;
 
-  // TODO - update with language
-  const results = await ffetch('/en/browse-index.json').all();
-  let currentPagePath = getEDSLink(window.location.pathname);
-  // For browse-rail in AEM Author
-  if (currentPagePath.includes('/content')) {
-    const index = currentPagePath.indexOf('/global');
-    currentPagePath = currentPagePath.substring(0, index) + currentPagePath.substring(index + '/global'.length);
-  }
+  const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
+  const currentPagePath = getEDSLink(window.location.pathname);
+
   // Find the parent page for product sub-pages
   const parentPage = results.find((page) => page.path === getPathUntilLevel(currentPagePath, 3));
   let parentPageTitle = '';
@@ -80,7 +74,7 @@ export default async function decorate(block) {
 
   let placeholders = {};
   try {
-    placeholders = await fetchPlaceholders();
+    placeholders = await fetchLanguagePlaceholders();
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
@@ -97,25 +91,17 @@ export default async function decorate(block) {
     block.append(browseByUL);
 
     // Products
-    const directChildNodes = results.filter((item) => {
-      const pathParts = item.path.split('/');
-      return pathParts.length === 4 && pathParts[2] === currentPagePath.split('/')[2];
-    });
+    const productList = await getProducts();
 
-    if (directChildNodes.length > 0) {
+    if (productList.length > 0) {
       const productsUL = document.createElement('ul');
       productsUL.classList.add('products');
       const productsLI = document.createElement('li');
       productsLI.innerHTML = `<span>${placeholders.products}</span><span class="js-toggle"></span>`;
 
       const ul = document.createElement('ul');
-      const sortedResults = directChildNodes.sort((a, b) => {
-        const titleA = a.title.toLowerCase();
-        const titleB = b.title.toLowerCase();
-        return titleA.localeCompare(titleB);
-      });
 
-      sortedResults.forEach((item) => {
+      productList.forEach((item) => {
         const li = document.createElement('li');
         li.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
         ul.appendChild(li);
@@ -125,10 +111,12 @@ export default async function decorate(block) {
       productsUL.append(productsLI);
       block.append(productsUL);
 
-      toggleItemVisibility(ul.children, 12, false);
+      // get number of featured products
+      const numFeaturedProducts = productList.filter((elem) => elem.featured).length;
+      toggleItemVisibility(ul.children, numFeaturedProducts, false);
 
       // "View More" and "View Less" links
-      if (ul.children.length > MAX_VISIBLE_ITEMS) {
+      if (ul.children.length > numFeaturedProducts) {
         const viewMoreLI = document.createElement('li');
         viewMoreLI.classList.add('left-rail-view-more', 'view-more-less');
         viewMoreLI.innerHTML = `<span class="viewMoreLink"> + ${placeholders.viewMore}</span>`;
@@ -140,8 +128,12 @@ export default async function decorate(block) {
         ul.append(viewLessLI);
 
         // Event listeners for "View More" and "View Less" links
-        block.querySelector('.viewMoreLink').addEventListener('click', () => handleViewMoreClick(block));
-        block.querySelector('.viewLessLink').addEventListener('click', () => handleViewLessClick(block));
+        block
+          .querySelector('.viewMoreLink')
+          .addEventListener('click', () => handleViewMoreClick(block, numFeaturedProducts));
+        block
+          .querySelector('.viewLessLink')
+          .addEventListener('click', () => handleViewLessClick(block, numFeaturedProducts));
       }
     }
   }
