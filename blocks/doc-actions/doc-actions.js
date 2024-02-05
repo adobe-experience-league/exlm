@@ -1,4 +1,4 @@
-import { loadCSS, loadBlocks, decorateIcons, decorateBlocks } from '../../scripts/lib-franklin.js';
+import { loadCSS, loadBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
 import { createTag, fetchLanguagePlaceholders, isDocPage, htmlToElement, decorateMain } from '../../scripts/scripts.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
