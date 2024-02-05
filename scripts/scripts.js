@@ -175,7 +175,7 @@ function buildShadeBoxes(main) {
       row.push({ elems });
     });
     sbContent.push(row);
-    const sb = buildBlock('shade-box', sbContent)
+    const sb = buildBlock('shade-box', sbContent);
     const sbWrapper = document.createElement('div');
     sbWrapper.append(sb);
     section.append(sbWrapper);
@@ -242,7 +242,7 @@ function setGridRows(main) {
       row.classList.add('content-row-last');
     }
   });
-  
+
   main.style.setProperty('--grid-rows', gridRows.length);
 }
 
