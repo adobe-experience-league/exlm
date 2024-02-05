@@ -1,5 +1,5 @@
-import { decorateIcons, getMetadata, loadCSS, fetchPlaceholders } from '../lib-franklin.js';
-import { createTag, htmlToElement } from '../scripts.js'; // eslint-disable-line import/no-cycle
+import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
+import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js'; // eslint-disable-line import/no-cycle
 import { QUALTRICS_LOADED_EVENT_NAME } from './qualtrics/constants.js';
 import { embedQualtricsSurveyIntercept } from './qualtrics/qualtrics-embed.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
@@ -399,7 +399,7 @@ function handleFeedbackSubmit(el) {
 }
 
 export default async function loadFeedbackUi() {
-  const placeholders = await fetchPlaceholders();
+  const placeholders = await fetchLanguagePlaceholders();
 
   if (!showFeedbackBar()) return;
 
