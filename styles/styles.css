@@ -1025,7 +1025,7 @@ main > div.browse-rail {
   margin-bottom: 8px;
 }
 .docs.docs-solution-landing main .default-content-wrapper h3 {
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-100);
   margin-top: 40px;
   margin-bottom: 16px;
 }
