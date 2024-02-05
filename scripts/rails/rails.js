@@ -17,13 +17,13 @@ async function decorateRail(railSection, position) {
   railToggler.style.background = 'none'; // override default button styles
   railToggler.classList.add('rail-toggle');
   railToggler.innerHTML = '<span class="icon icon-rail"></span>';
+  railSection.classList.add('rail');
+  railSection.classList.add(`rail-${position}`);
   railSection.prepend(railToggler);
   await decorateIcons(railToggler);
   railToggler.addEventListener('click', () => {
     railSection.classList.toggle('closed');
   });
-  railSection.classList.add('rail');
-  railSection.classList.add(`rail-${position}`);
 }
 
 /**
@@ -31,16 +31,8 @@ async function decorateRail(railSection, position) {
  * @param {Document} document The container element
  */
 export default async function decorateRails() {
-  const main = document.querySelector('main');
-  let leftRail;
-  let rightRail;
-  if (main?.children?.length < 3) {
-    rightRail = main?.children[1];
-  } else {
-    // Get all child div elements
-    leftRail = main?.children[1];
-    rightRail = main?.children[2];
-  }
+  const leftRail = document.querySelector('main .toc-container');
+  const rightRail = document.querySelector('main .mini-toc-container');
 
   if (leftRail) {
     await decorateRail(leftRail, 'left');

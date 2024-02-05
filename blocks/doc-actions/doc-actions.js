@@ -1,5 +1,5 @@
-import { loadCSS, fetchPlaceholders, loadBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
-import { createTag, isDocPage, htmlToElement } from '../../scripts/scripts.js';
+import { loadCSS, loadBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
+import { createTag, fetchLanguagePlaceholders, isDocPage, htmlToElement } from '../../scripts/scripts.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
@@ -11,7 +11,7 @@ loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
 let translatedDocElement = null;
 let placeholders = {};
 try {
-  placeholders = await fetchPlaceholders();
+  placeholders = await fetchLanguagePlaceholders();
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);

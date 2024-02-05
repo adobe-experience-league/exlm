@@ -1,5 +1,5 @@
-import { decorateIcons, getMetadata, fetchPlaceholders } from '../../scripts/lib-franklin.js';
-import { createTag, htmlToElement, debounce } from '../../scripts/scripts.js';
+import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
+import { createTag, htmlToElement, debounce, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import {
   roleOptions,
   contentTypeOptions,
@@ -30,7 +30,7 @@ const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
 
 let placeholders = {};
 try {
-  placeholders = await fetchPlaceholders();
+  placeholders = await fetchLanguagePlaceholders();
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
