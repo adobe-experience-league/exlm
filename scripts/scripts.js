@@ -159,6 +159,40 @@ function buildAutoBlocks(main) {
 }
 
 /**
+ * create shadeboxes out of sections with shade-box style
+ * @param {Element} main the main container
+ */
+function buildShadeBoxes(main) {
+  main.querySelectorAll('.section.shade-box').forEach((section) => {
+    const sbContent = [];
+    const row = [];
+    [...section.children].forEach((wrapper) => {
+      const elems = [];
+      [...wrapper.children].forEach((child) => {
+        elems.push(child);
+      });
+      wrapper.remove();
+      row.push({ elems });
+    });
+    sbContent.push(row);
+    const sb = buildBlock('shade-box', sbContent)
+    const sbWrapper = document.createElement('div');
+    sbWrapper.append(sb);
+    section.append(sbWrapper);
+    decorateBlock(sb);
+    section.classList.remove('shade-box');
+  });
+}
+
+/**
+ * Builds synthetic blocks in that rely on section metadata
+ * @param {Element} main The container element
+ */
+function buildSectionBasedAutoBlocks(main) {
+  buildShadeBoxes(main);
+}
+
+/**
  * Decorates links within the specified container element by setting their "target" attribute to "_blank" if they contain "#_target" in the URL.
  *
  * @param {HTMLElement} main - The main container element to search for and decorate links.
@@ -227,6 +261,7 @@ export function decorateMain(main) {
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  buildSectionBasedAutoBlocks(main);
   setGridRows(main);
 }
 
