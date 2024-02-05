@@ -1,5 +1,5 @@
-import { loadCSS, loadBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
-import { createTag, fetchLanguagePlaceholders, isDocPage, htmlToElement } from '../../scripts/scripts.js';
+import { loadCSS, loadBlocks, decorateIcons, decorateBlocks } from '../../scripts/lib-franklin.js';
+import { createTag, fetchLanguagePlaceholders, isDocPage, htmlToElement, decorateMain } from '../../scripts/scripts.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
@@ -127,6 +127,7 @@ async function getTranslatedDocContent() {
   const docResponse = await fetch(`${docPath}.plain.html`);
   const translatedDoc = await docResponse.text();
   const docElement = htmlToElement(`<div>${translatedDoc}</div>`);
+  decorateMain(docElement);
   await loadBlocks(docElement);
   return docElement.querySelector(':scope > div:first-child');
 }
