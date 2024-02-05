@@ -754,6 +754,21 @@ main > div.browse-rail {
   --exlm-line-height-h6: 23.4px;
   --exlm-line-height-content: 25.6px;
 
+  @include breakpoint('desktop') {
+    --exlm-font-size-h1: 44px;
+    --exlm-font-size-h2: var(--spectrum-heading-size-l);
+    --exlm-font-size-h3: var(--spectrum-heading-size-m);
+    --exlm-font-size-h4: var(--spectrum-heading-size-s);
+    --exlm-font-size-h5: var(--spectrum-heading-size-xs);
+    --exlm-font-size-h6: var(--spectrum-heading-size-xxs);
+    --exlm-line-height-h1: var(--spectrum-line-height-xxxl);
+    --exlm-line-height-h2: var(--spectrum-line-height-xxl);
+    --exlm-line-height-h3: var(--spectrum-line-height-xl);
+    --exlm-line-height-h4: 23.4px;
+    --exlm-line-height-h5: 20.8px;
+    --exlm-line-height-h6: 18.2px;
+  }
+
   h1,
   h2,
   h3,
@@ -1008,19 +1023,6 @@ main > div.browse-rail {
 
 @include breakpoint('desktop') {
   .docs {
-    --exlm-font-size-h1: 44px;
-    --exlm-font-size-h2: var(--spectrum-heading-size-l);
-    --exlm-font-size-h3: var(--spectrum-heading-size-m);
-    --exlm-font-size-h4: var(--spectrum-heading-size-s);
-    --exlm-font-size-h5: var(--spectrum-heading-size-xs);
-    --exlm-font-size-h6: var(--spectrum-heading-size-xxs);
-    --exlm-line-height-h1: var(--spectrum-line-height-xxxl);
-    --exlm-line-height-h2: var(--spectrum-line-height-xxl);
-    --exlm-line-height-h3: var(--spectrum-line-height-xl);
-    --exlm-line-height-h4: 23.4px;
-    --exlm-line-height-h5: 20.8px;
-    --exlm-line-height-h6: 18.2px;
-
     &.docs-solution-landing.docs-tutorial {
       .default-content-wrapper {
         h2 {
