@@ -1,22 +1,13 @@
 import { articleUrl } from '../urls.js';
 
-/**
- * ArticleDataService class for fetching data from a Article API.
- */
-export default class ArticleDataService {
-  constructor() {
-    this.id = '';
-    this.pageContent = '';
-  }
-
   /**
    * Fetch Article data fromcontentTypeD
    * @param {string} id - ID of the content source
    * @returns {Promise<object>} - Promise that resolves to the data results
    */
-  async fetchArticleByID() {
+  async function fetchArticleByID(id) {
     try {
-      const response = await fetch(articleUrl + this.id);
+      const response = await fetch(articleUrl + id);
       const json = await response.json();
       return json.data;
     } catch (error) {
@@ -31,8 +22,8 @@ export default class ArticleDataService {
    * @param {string} pageContent - content of the page in string
    * @returns {string} - Id of the page
    */
-  extractIdFromPage() {
-    return this.pageContent.match(/<meta name="id" content="(.*)">/)[1];
+  function extractIdFromPage(pageContent) {
+    return pageContent.match(/<meta name="id" content="(.*)">/)[1];
   }
 
   /**
@@ -40,8 +31,9 @@ export default class ArticleDataService {
    * @param {string} pageContent - content of the page in string
    * @returns {string} - contentType of the page
    */
-  extractContentTypeFromPage() {
-    return this.pageContent.match(/<meta name="coveo-content-type" content="(.*)">/)[1];
+  function extractContentTypeFromPage(pageContent) {
+    // return this.pageContent.match(/<meta name="coveo-content-type" content="(.*)">/)[1];
+    return pageContent.match(/<meta name="coveo-content-type" content="(.*)">/)[1];
   }
 
   /**
@@ -49,13 +41,16 @@ export default class ArticleDataService {
    * @param {string} url - Url of the page to fetch the article data from
    * @returns {Promise<object>} - Promise the resolves to the data results
    */
-  async fetchArticleByURL(url) {
+
+
+  async function fetchArticleByURL(url) {
     try {
       const response = await fetch(url);
-      this.pageContent = await response.text();
-      this.id = this.extractIdFromPage();
-      const data = await this.fetchArticleByID();
-      data.contentType = this.extractContentTypeFromPage();
+      const pageContent = await response.text();
+      const id = extractIdFromPage(pageContent);
+      const data = await fetchArticleByID(id);
+      data.id = id;
+      data.contentType = extractContentTypeFromPage(pageContent);
       return data;
     } catch (error) {
       /* eslint-disable no-console */
@@ -64,8 +59,7 @@ export default class ArticleDataService {
     }
   }
 
-  handleArticleDataService = async (url) => {
-    const cardData = await this.fetchArticleByURL(url);
+  export default async function handleArticleDataService(url) {
+    const cardData = await fetchArticleByURL(url);
     return cardData;
   };
-}
