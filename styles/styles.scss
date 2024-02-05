@@ -824,7 +824,7 @@ main > div.browse-rail {
 
     @include breakpoint(desktop) {
       grid-template-columns: 1fr 3fr 1fr;
-      grid-template-rows: repeat(var(--grid-rows), max-content);
+      grid-template-rows: repeat(var(--content-sections-count), max-content);
       padding: 0;
 
       &.rail-left-closed {
@@ -883,11 +883,11 @@ main > div.browse-rail {
           grid-column: 2;
         }
 
-        &:not(.toc-container, .mini-toc-container).content-row-first {
+        &:not(.toc-container, .mini-toc-container).content-section-first {
           padding-block-start: 54px;
         }
 
-        &:not(.toc-container, .mini-toc-container).content-row-last {
+        &:not(.toc-container, .mini-toc-container).content-section-last {
           padding-block-end: 50px;
         }
 

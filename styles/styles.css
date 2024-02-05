@@ -933,7 +933,7 @@ main > div.browse-rail {
 @media (min-width: 900px) {
   .docs main {
     grid-template-columns: 1fr 3fr 1fr;
-    grid-template-rows: repeat(var(--grid-rows), max-content);
+    grid-template-rows: repeat(var(--content-sections-count), max-content);
     padding: 0;
   }
   .docs main.rail-left-closed {
@@ -985,10 +985,10 @@ main > div.browse-rail {
     padding-inline: 37px 50px;
     grid-column: 2;
   }
-  .docs main > div.section:not(.toc-container, .mini-toc-container).content-row-first {
+  .docs main > div.section:not(.toc-container, .mini-toc-container).content-section-first {
     padding-block-start: 54px;
   }
-  .docs main > div.section:not(.toc-container, .mini-toc-container).content-row-last {
+  .docs main > div.section:not(.toc-container, .mini-toc-container).content-section-last {
     padding-block-end: 50px;
   }
   .docs main > div.section.toc-container {

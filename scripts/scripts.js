@@ -232,18 +232,18 @@ export function isDocPage(type = 'docs') {
  * set attributes needed for the docs pages grid to work properly
  * @param {Element} main the main element
  */
-function setGridRows(main) {
-  const gridRows = main.querySelectorAll('.section:not(.toc-container, .mini-toc-container)');
-  gridRows.forEach((row, i) => {
+function decorateContentSections(main) {
+  const contentSections = main.querySelectorAll('.section:not(.toc-container, .mini-toc-container)');
+  contentSections.forEach((row, i) => {
     if (i === 0) {
-      row.classList.add('content-row-first');
+      row.classList.add('content-section-first');
     }
-    if (i === gridRows.length - 1) {
-      row.classList.add('content-row-last');
+    if (i === contentSections.length - 1) {
+      row.classList.add('content-section-last');
     }
   });
 
-  main.style.setProperty('--grid-rows', gridRows.length);
+  main.style.setProperty('--content-sections-count', contentSections.length);
 }
 
 /**
@@ -262,7 +262,7 @@ export function decorateMain(main) {
   decorateSections(main);
   decorateBlocks(main);
   buildSectionBasedAutoBlocks(main);
-  setGridRows(main);
+  decorateContentSections(main);
 }
 
 /**
@@ -407,7 +407,7 @@ export function htmlToElement(html) {
 }
 
 export function loadPrevNextBtn() {
-  const mainDoc = document.querySelector('main > div.content-row-last');
+  const mainDoc = document.querySelector('main > div.content-section-last');
   if (!mainDoc) return;
 
   const prevPageMeta = document.querySelector('meta[name="prev-page"]');
