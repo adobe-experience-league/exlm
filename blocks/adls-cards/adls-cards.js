@@ -4,6 +4,7 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -14,7 +15,8 @@ export default async function decorate(block) {
   const [headingElement, toolTipElement, linkTextElement, ...configs] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-  const [solutions, roles, sortBy, contentType] = configs.map((cell) => cell.textContent.trim());
+  const [solutions, roles, sortBy] = configs.map((cell) => cell.textContent.trim());
+  const contentType = CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY;
   const noOfResults = 4;
 
   headingElement.firstElementChild?.classList.add('h2');
