@@ -107,18 +107,17 @@ function decorateCopyLink(block) {
   );
 
   block.appendChild(copyLinkDivNode);
-
-  const docActionsMobile = document.querySelector('.doc-actions-mobile');
-  if (docActionsMobile) {
-    docActionsMobile.appendChild(copyLinkDivNode.cloneNode(true));
-    // below 2 lines are unique to this method so cannot use addToDocActions()
-    const docActionsMobileIconCopy = docActionsMobile.querySelector('.copy-icon');
-    attachCopyLink(docActionsMobileIconCopy, window.location.href, placeholders.toastSet);
-  }
-
   const docActionsDesktopIconCopy = document.querySelector('.doc-actions .copy-icon');
+  const docActionsMobile = document.querySelector('.doc-actions-mobile');
+
   if (docActionsDesktopIconCopy) {
     attachCopyLink(docActionsDesktopIconCopy, window.location.href, placeholders.toastSet);
+  }
+
+  if (docActionsMobile) {
+    docActionsMobile.appendChild(copyLinkDivNode.cloneNode(true));
+    const docActionsMobileIconCopy = docActionsMobile.querySelector('.copy-icon');
+    attachCopyLink(docActionsMobileIconCopy, window.location.href, placeholders.toastSet);
   }
 }
 
