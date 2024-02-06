@@ -469,7 +469,8 @@
                 "template": {
                   "name": "ADLS Cards",
                   "model": "adls-cards",
-                  "headingType": "h2"
+                  "headingType": "h2",
+                  "sortby": "recommended"
                 }
               }
             }
