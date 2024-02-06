@@ -29,9 +29,11 @@ export default async function decorate(block) {
   );
 
   const [solutions] = configs.map((cell) => cell.textContent.trim());
+
   const contentType = CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY;
   const noOfResults = 4;
   const solutionsParam = solutions !== '' ? formattedSolutionTags(solutions) : '';
+  
   headingElement.firstElementChild?.classList.add('h2');
 
   // Clearing the block's content
