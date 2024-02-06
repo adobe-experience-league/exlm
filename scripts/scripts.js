@@ -18,10 +18,7 @@ import {
   fetchPlaceholders,
 } from './lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
-
-const ffetchModulePromise = import('./ffetch.js');
-
-const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
+import ffetch from './ffetch.js';
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
@@ -279,41 +276,44 @@ export async function loadIms() {
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
   await loadBlocks(main);
-  loadIms(); // start it early, asyncronously
+  const lazyPromises = [];
+  lazyPromises.push(loadIms()); // start it early, asyncronously
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
-  const headerPromise = loadHeader(doc.querySelector('header'));
-  const footerPromise = loadFooter(doc.querySelector('footer'));
+  lazyPromises.push(loadHeader(doc.querySelector('header')));
+  lazyPromises.push(loadFooter(doc.querySelector('footer')));
 
   localStorage.setItem('prevPage', doc.title);
 
-  const launchPromise = loadScript(
-    'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
-    {
-      async: true,
-    },
-  );
-
-  Promise.all([launchPromise, libAnalyticsModulePromise, headerPromise, footerPromise]).then(
-    // eslint-disable-next-line no-unused-vars
-    ([launch, libAnalyticsModule, headPr, footPr]) => {
-      const { pageLoadModel, linkClickModel } = libAnalyticsModule;
-      window.adobeDataLayer.push(pageLoadModel());
-      const linkClicked = document.querySelectorAll('a,.view-more-less span');
-      linkClicked.forEach((linkElement) => {
-        linkElement.addEventListener('click', (e) => {
-          if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
-            linkClickModel(e);
-          }
+  const analyticsPromise = new Promise((resolve) => {
+    (async () => {
+      try {
+        const libAnalytics = await import('./analytics/lib-analytics.js');
+        await loadScript('https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js');
+        const { pageLoadModel, linkClickModel } = libAnalytics;
+        window.adobeDataLayer.push(pageLoadModel());
+        const linkClicked = document.querySelectorAll('a,.view-more-less span');
+        linkClicked.forEach((linkElement) => {
+          linkElement.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
+              linkClickModel(e);
+            }
+          });
         });
-      });
-    },
-  );
+      } catch (error) {
+        // no op
+      }
+      resolve();
+    })();
+  });
+  lazyPromises.push(analyticsPromise);
 
-  loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
-  loadFonts();
+  lazyPromises.push(loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`));
+  lazyPromises.push(loadFonts());
+
+  await Promise.all(lazyPromises);
 
   sampleRUM('lazy');
 }
@@ -545,7 +545,6 @@ export function getPathDetails() {
 export async function getProducts() {
   // get language
   const { lang } = getPathDetails();
-  const ffetch = (await ffetchModulePromise).default;
   // load the <lang>/top_product list
   const topProducts = await ffetch(`/${lang}/top-products.json`).all();
   // get all indexed pages below <lang>/browse
@@ -600,7 +599,6 @@ export async function fetchLanguagePlaceholders() {
 
 export async function getLanguageCode() {
   const { lang } = getPathDetails();
-  const ffetch = (await ffetchModulePromise).default;
   const langMap = await ffetch(`/languages.json`).all();
   const langObj = langMap.find((item) => item.key === lang);
   const langCode = langObj ? langObj.value : lang;
