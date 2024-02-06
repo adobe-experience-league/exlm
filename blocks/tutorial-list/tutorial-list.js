@@ -1,4 +1,13 @@
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+
 export default async function decorate(block) {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
   const containerEl = block.querySelector('ul');
   const wrapperEl = containerEl?.parentElement;
   if (!wrapperEl) {
@@ -22,7 +31,7 @@ export default async function decorate(block) {
     li.removeChild(anchor);
     const description = li.textContent;
     if (index === lastIndex) {
-      li.innerHTML = `<a href="${link}">See All Tutorials</a>`;
+      li.innerHTML = `<a href="${link}">${placeholders?.seeAllTutorials}</a>`;
     } else {
       li.innerHTML = `
         <p class="tutorial-list-heading">${title}</p>
