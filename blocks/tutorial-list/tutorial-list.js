@@ -36,7 +36,7 @@ export default async function decorate(block) {
       li.innerHTML = `
         <p class="tutorial-list-heading">${title}</p>
         <p class="tutorial-list-description">${description}</p>
-        <a href="${link}">View</a>
+        <a href="${link}">${placeholders?.view}</a>
       `;
     }
   });
