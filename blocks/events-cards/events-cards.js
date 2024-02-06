@@ -33,7 +33,7 @@ export default async function decorate(block) {
   const contentType = CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY;
   const noOfResults = 4;
   const solutionsParam = solutions !== '' ? formattedSolutionTags(solutions) : '';
-  
+
   headingElement.firstElementChild?.classList.add('h2');
 
   // Clearing the block's content
