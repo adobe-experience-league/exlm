@@ -22,7 +22,7 @@ export default async function decorate(block) {
     (row) => row.firstElementChild,
   );
 
-  const sortCriteria = sortBy ? COVEO_SORT_OPTIONS[sortBy.toUpperCase()] : COVEO_SORT_OPTIONS.RELEVANCE;
+  const sortCriteria = COVEO_SORT_OPTIONS[sortBy];
   const noOfResults = 16;
 
   headingElement.firstElementChild?.classList.add('h2');
