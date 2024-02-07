@@ -159,6 +159,40 @@ function buildAutoBlocks(main) {
 }
 
 /**
+ * create shadeboxes out of sections with shade-box style
+ * @param {Element} main the main container
+ */
+function buildShadeBoxes(main) {
+  main.querySelectorAll('.section.shade-box').forEach((section) => {
+    const sbContent = [];
+    const row = [];
+    [...section.children].forEach((wrapper) => {
+      const elems = [];
+      [...wrapper.children].forEach((child) => {
+        elems.push(child);
+      });
+      wrapper.remove();
+      row.push({ elems });
+    });
+    sbContent.push(row);
+    const sb = buildBlock('shade-box', sbContent);
+    const sbWrapper = document.createElement('div');
+    sbWrapper.append(sb);
+    section.append(sbWrapper);
+    decorateBlock(sb);
+    section.classList.remove('shade-box');
+  });
+}
+
+/**
+ * Builds synthetic blocks in that rely on section metadata
+ * @param {Element} main The container element
+ */
+function buildSectionBasedAutoBlocks(main) {
+  buildShadeBoxes(main);
+}
+
+/**
  * Decorates links within the specified container element by setting their "target" attribute to "_blank" if they contain "#_target" in the URL.
  *
  * @param {HTMLElement} main - The main container element to search for and decorate links.
@@ -195,6 +229,24 @@ export function isDocPage(type = 'docs') {
 }
 
 /**
+ * set attributes needed for the docs pages grid to work properly
+ * @param {Element} main the main element
+ */
+function decorateContentSections(main) {
+  const contentSections = main.querySelectorAll('.section:not(.toc-container, .mini-toc-container)');
+  contentSections.forEach((row, i) => {
+    if (i === 0) {
+      row.classList.add('content-section-first');
+    }
+    if (i === contentSections.length - 1) {
+      row.classList.add('content-section-last');
+    }
+  });
+
+  main.style.setProperty('--content-sections-count', contentSections.length);
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -209,6 +261,8 @@ export function decorateMain(main) {
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  buildSectionBasedAutoBlocks(main);
+  decorateContentSections(main);
 }
 
 /**
@@ -361,7 +415,7 @@ export async function loadPrevNextBtn() {
     // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
   }
-  const mainDoc = document.querySelector('main > div:nth-child(1)');
+  const mainDoc = document.querySelector('main > div.content-section-last');
   if (!mainDoc) return;
 
   const prevPageMeta = document.querySelector('meta[name="prev-page"]');
