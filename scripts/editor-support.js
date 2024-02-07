@@ -25,6 +25,9 @@ function restoreState(newBlock, state) {
   }
 }
 
+/**
+ * Event listener for aue:content-patch, edit of a component
+ */
 async function handleEditorUpdate(event) {
   const { detail } = event;
 
@@ -37,7 +40,7 @@ async function handleEditorUpdate(event) {
   if (!block || !blockResource?.startsWith(connectionPrefix)) return;
 
   // keep info about currently selected tab
-  const uiState = getState(block);
+  const uiState = getState(block); 
 
   const updates = detail?.responseData?.updates;
   if (updates.length > 0) {
@@ -56,13 +59,67 @@ async function handleEditorUpdate(event) {
       // remove the old block and show the new one
       block.remove();
       newBlock.style.display = null;
-
+    
       restoreState(newBlock, uiState);
     }
   }
 }
 
 document.querySelector('main')?.addEventListener('aue:content-patch', handleEditorUpdate);
+
+function handleSelectTabItem(tabItem) {
+  // get the corresponding tabs button
+  const buttonId = tabItem.getAttribute('aria-labelledby');
+  const button = tabItem.closest('.tabs.block').querySelector(`button[id="${buttonId}"]`);
+  // click it
+  button.click();
+}
+
+/**
+ * Event listener for aue:ui-select, selection of a component
+ */
+function handleEditorSelect(event) {
+  // we are only interested in the target
+  if (!event.detail.selected) {
+    return;
+  }
+
+  // if a tab panel was selected
+  if (event.target.closest('.tabpanel')) {
+    handleSelectTabItem(event.target.closest('.tabpanel'));
+  }
+}
+
+document.querySelector('main')?.addEventListener('aue:ui-select', handleEditorSelect);
+
+async function handleMoveTabItem(detail) {
+  // get tab button ids to get reordered
+  const buttonMovedId = document.querySelector(`[data-aue-resource="${detail?.from?.component?.resource}"]`)?.getAttribute('aria-labelledby');
+  const ButtonAfterId = document.querySelector(`[data-aue-resource="${detail?.to?.before?.resource}"]`)?.getAttribute('aria-labelledby');
+  if (buttonMovedId && ButtonAfterId) {
+    // get the tabs block
+    const block = document.querySelector(`[data-aue-resource="${detail?.from?.container?.resource}"]`);
+    // get the 2 buttons
+    const moveButton = block.querySelector(`button[id="${buttonMovedId}"]`);
+    const afterButton = block.querySelector(`button[id="${ButtonAfterId}"]`)
+    // do the reordering
+    afterButton.before(moveButton);
+    // fix data-tab-ids so that content-patch state store/restore works correctly
+    block.querySelectorAll('button[role="tab"]').forEach((elem,i) => {elem.dataset.tabId = i})
+  }
+}
+
+/**
+ * Event listener for aue:content-move,  moving a component 
+ */
+function handleEditorMove(event) {
+    // if a tab panel was selected
+    if (event.target.closest('.tabpanel')) {
+      handleMoveTabItem(event.detail);
+    }
+}
+
+document.querySelector('main')?.addEventListener('aue:content-move', handleEditorMove);
 
 // group editable texts in single wrappers if applicable
 //
