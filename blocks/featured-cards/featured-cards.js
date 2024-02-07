@@ -50,7 +50,7 @@ export default async function decorate(block) {
   contentDiv.classList.add('browse-cards-block-content');
 
   const param = {
-    contentType: contentType && contentType.toLowerCase().split(','),
+    contentType: contentType && contentType.split(','),
     role: [],
     product: [],
     q: keyword,
