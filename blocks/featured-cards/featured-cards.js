@@ -18,11 +18,9 @@ const DEFAULT_OPTIONS = Object.freeze({
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const [headingElement, descriptionElement, confContentType, linkTextElement, ...configs] = [...block.children].map(
-    (row) => row.firstElementChild,
-  );
-  const [keyword, sortBy] = configs.map((cell) => cell.textContent.trim());
-  const contentType = confContentType.textContent.trim().toLowerCase();
+  const [headingElement, descriptionElement, ...configs] = [...block.children].map((row) => row.firstElementChild);
+  const [contentType, linkTextElement, keyword, sortBy] = configs.map((cell) => cell.textContent.trim());
+
   const sortCriteria = COVEO_SORT_OPTIONS[sortBy.toUpperCase()];
 
   const noOfResults = 16;
