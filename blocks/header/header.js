@@ -305,7 +305,7 @@ const buildNavItems = async (ul, level = 0) => {
     // add search link (visible on mobile only)
     ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
 
-    const addMobileLangSelector = async function () {
+    const addMobileLangSelector = async () => {
       const { getLanguagePath } = await languageModule;
       const languages = await decoratorState.languages.promise;
       // add language select (visible on mobile only)
