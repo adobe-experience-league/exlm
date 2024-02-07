@@ -134,7 +134,6 @@ const fetchFragment = async (rePath, lang = 'en') => {
 const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
 const headerFragment = fetchFragment('header/header');
-languageModule.then(({ loadLanguageFragment }) => loadLanguageFragment());
 const decoratorState = {
   languages: new Deferred(),
 };
