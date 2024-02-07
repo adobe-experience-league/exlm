@@ -269,22 +269,24 @@ const buildCardContent = (card, model) => {
 };
 
 const setupBookmarkAction = (wrapper) => {
-  loadJWT().then(async () => {
-    profile().then(async (data) => {
-      const bookmarkAuthed = Array.from(
-        wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark.auth'),
-      );
-      bookmarkAuthed.forEach((bookmark) => {
-        const bookmarkAuthedToolTipLabel = bookmark.querySelector('.exl-tooltip-label');
-        const bookmarkAuthedToolTipIcon = bookmark.querySelector('.bookmark-icon');
-        const bookmarkId = bookmark.getAttribute('data-id');
-        renderBookmark(bookmarkAuthedToolTipLabel, bookmarkAuthedToolTipIcon, bookmarkId);
-        if (data.bookmarks.includes(bookmarkId)) {
-          bookmarkAuthedToolTipIcon.classList.add('authed');
-          bookmarkAuthedToolTipLabel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
-        }
-      });
+  let data;
+  loadJWT().then(async (  ) => {
+    profile().then(async (profileData) => {
+      data = profileData;
     });
+  })
+  const bookmarkAuthed = Array.from(
+    wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark'),
+  );
+  bookmarkAuthed.forEach((bookmark) => {
+    const bookmarkAuthedToolTipLabel = bookmark.querySelector('.exl-tooltip-label');
+    const bookmarkAuthedToolTipIcon = bookmark.querySelector('.bookmark-icon');
+    const bookmarkId = bookmark.getAttribute('data-id');
+    renderBookmark(bookmarkAuthedToolTipLabel, bookmarkAuthedToolTipIcon, bookmarkId);
+    if (data?.bookmarks.includes(bookmarkId)) {
+      bookmarkAuthedToolTipIcon.classList.add('authed');
+      bookmarkAuthedToolTipLabel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
+    }
   });
 };
 
@@ -377,5 +379,9 @@ export async function buildCard(container, element, model) {
   buildCardContent(card, model);
   setupBookmarkAction(card);
   setupCopyAction(card);
-  element.appendChild(card);
+  const cardContainer = document.createElement("a")
+  cardContainer.setAttribute("href", model?.viewLink)
+  cardContainer.appendChild(card);
+  element.appendChild(cardContainer);	
+  // element.appendChild(card);
 }
