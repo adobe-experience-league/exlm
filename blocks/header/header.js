@@ -1,11 +1,79 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
-import { signOut } from '../../scripts/auth/auth-operations.js';
-import Search from '../../scripts/search/search.js';
-import { registerResizeHandler } from './header-utils.js';
-import { fetchCommunityProfileData } from '../../scripts/data-service/khoros-data-service.js';
 
 const languageModule = import('../../scripts/language.js');
+const authOperationsModule = import('../../scripts/auth/auth-operations.js');
+const searchModule = import('../../scripts/search/search.js');
+
+/**
+ * debounce fn execution
+ * @param {number} ms
+ * @param {Function} fn
+ * @returns {Function} debounced function
+ */
+export const debounce = (ms, fn) => {
+  let timer;
+  // eslint-disable-next-line func-names
+  return function (...args) {
+    clearTimeout(timer);
+    args.unshift(this);
+    timer = setTimeout(fn(args), ms);
+  };
+};
+
+/**
+ * Register page resize handler
+ * @param {ResizeObserverCallback} handler
+ * @returns {void} nothing
+ */
+function registerResizeHandler(callback) {
+  window.customResizeHandlers = window.customResizeHandlers || [];
+  // register resize observer only once.
+  if (!window.pageResizeObserver) {
+    const pageResizeObserver = new ResizeObserver(
+      debounce(100, (entries, observer) => {
+        window.customResizeHandlers.forEach((handler) => {
+          try {
+            handler(entries, observer);
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error(e);
+          }
+        });
+      }),
+    );
+    // observe immediately
+    pageResizeObserver.observe(document.querySelector('header'), {
+      box: 'border-box',
+    });
+    window.pageResizeObserver = pageResizeObserver;
+  }
+  // push handler
+  window.customResizeHandlers.push(callback);
+}
+
+const communityProfileUrl =
+  'https://51837-exlmconverter-dev.adobeioruntime.net/api/v1/web/main/khoros/plugins/custom/adobe/adobedx/profile-menu-list';
+
+// eslint-disable-next-line
+async function fetchCommunityProfileData() {
+  try {
+    const response = await fetch(communityProfileUrl, {
+      method: 'GET',
+      headers: {
+        'x-ims-token': await window.adobeIMS?.getAccessToken().token,
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    }
+  } catch (err) {
+    // eslint-disable-next-line
+    console.log('Error fetching data!!', err);
+  }
+}
 
 /**
  * @param {HTMLElement} block
@@ -337,7 +405,7 @@ const searchDecorator = async (searchBlock) => {
   );
   searchBlock.append(searchWrapper);
   await decorateIcons(searchBlock);
-
+  const Search = (await searchModule).default;
   const searchItem = new Search({ searchBlock });
   searchItem.configureAutoComplete({
     searchOptions: options,
@@ -548,6 +616,7 @@ const profileMenuDecorator = async (profileMenuBlock) => {
 
     if (profileMenuWrapper.querySelector('[data-id="sign-out"]')) {
       profileMenuWrapper.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
+        const { signOut } = await authOperationsModule;
         signOut();
       });
     }
