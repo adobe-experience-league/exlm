@@ -1,5 +1,5 @@
-import { loadCSS } from '../../scripts/lib-franklin.js';
-import { isDocPage, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { loadCSS, loadBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
+import { createTag, fetchLanguagePlaceholders, isDocPage, htmlToElement, decorateMain } from '../../scripts/scripts.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
@@ -8,6 +8,7 @@ import attachCopyLink from '../../scripts/copy-link/copy-link.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
 
+let translatedDocElement = null;
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -16,9 +17,27 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
+/**
+ * Appends the element provided to the doc actions block on mobile and desktop.
+ * @param {HTMLElement} element
+ * @param {HTMLElement} block
+ */
+const addToDocActions = async (element, block) => {
+  const mobileActionsBlock = document.querySelector('.doc-actions-mobile');
+  if (document.querySelector('.doc-actions-mobile') !== 'undefined') {
+    block.appendChild(element);
+  }
+
+  if (mobileActionsBlock) {
+    mobileActionsBlock.appendChild(element.cloneNode(true));
+    await decorateIcons(mobileActionsBlock);
+  }
+  await decorateIcons(element);
+};
+
 function decorateBookmarkMobileBlock() {
   const docActionsMobile = document.createElement('div');
-  docActionsMobile.classList.add('doc-actions-mobile');
+  docActionsMobile.classList.add('doc-actions-mobile', 'doc-actions');
 
   const createdByEl = document.querySelector('.article-metadata-createdby-wrapper');
   const articleMetaDataEl = document.querySelector('.article-metadata-wrapper');
@@ -74,10 +93,7 @@ export function decorateBookmark(block) {
       renderBookmark(bookmarkAuthedToolTipLabelM, bookmarkAuthedToolTipIconM, bookmarkId);
     });
   } else {
-    block.appendChild(unAuthBookmark);
-    if (document.querySelector('.doc-actions-mobile')) {
-      document.querySelector('.doc-actions-mobile').appendChild(unAuthBookmark.cloneNode(true));
-    }
+    addToDocActions(unAuthBookmark, block);
   }
 }
 
@@ -105,9 +121,69 @@ function decorateCopyLink(block) {
   }
 }
 
+async function getTranslatedDocContent() {
+  const docPath = `/en/${window.location.pathname.replace(/^(?:[^/]*\/){2}\s*/, '')}`;
+  const docResponse = await fetch(`${docPath}.plain.html`);
+  const translatedDoc = await docResponse.text();
+  const docElement = htmlToElement(`<div>${translatedDoc}</div>`);
+  decorateMain(docElement);
+  await loadBlocks(docElement);
+  return docElement.querySelector(':scope > div:first-child');
+}
+
+async function toggleContent(isChecked, docContainer) {
+  if (isChecked && !translatedDocElement) {
+    translatedDocElement = await getTranslatedDocContent();
+  }
+
+  if (isChecked) {
+    docContainer.replaceWith(translatedDocElement);
+  } else {
+    const dc = document.querySelector('main > div:first-child');
+    dc.replaceWith(docContainer);
+  }
+}
+
+async function decorateLanguageToggle(block) {
+  if (
+    document.querySelector('meta[name="ht-degree"]') &&
+    ((document.querySelector('meta[name="ht-degree"]') || {}).content || '').trim() !== '100%'
+  ) {
+    const languageToggleElement = createTag(
+      'div',
+      { class: 'doc-mt-toggle' },
+      `<div class="doc-mt-checkbox">
+      <span>${placeholders.automaticTranslation}</span>
+      <input type="checkbox"><a href="${placeholders.automaticTranslationLink}" target="_blank"><span class="icon icon-info"></span></a>
+      </div>
+      <div class="doc-mt-feedback">
+        <span class="prompt">${placeholders.automaticTranslationFeedback}</span>
+        <div class="doc-mt-feedback-radio">
+          <label class="radio"><input type="radio" name="helpful-translation" value="yes">${placeholders.automaticTranslationFeedbackYes}</label>
+          <label class="radio"><input type="radio" name="helpful-translation" value="no">${placeholders.automaticTranslationFeedbackNo}</label>
+        </div>
+      </div>`,
+    );
+    addToDocActions(languageToggleElement, block);
+    await decorateIcons(block);
+    const desktopAndMobileLangToggles = document.querySelectorAll(
+      '.doc-mt-toggle .doc-mt-checkbox input[type="checkbox"]',
+    );
+    const docContainer = document.querySelector('main > div:first-child');
+
+    [...desktopAndMobileLangToggles].forEach((langToggle) => {
+      langToggle.addEventListener('change', async (e) => {
+        const { checked } = e.target;
+        await toggleContent(checked, docContainer);
+      });
+    });
+  }
+}
+
 export default async function decorateDocActions(block) {
   if (isDocPage) {
     decorateBookmarkMobileBlock();
+    decorateLanguageToggle(block);
     decorateBookmark(block);
     decorateCopyLink(block);
   }

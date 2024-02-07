@@ -155,7 +155,14 @@ export default async function decorate(block) {
           .filter((card) => card.event.time)
           .sort((card1, card2) => convertTimeString(card1.event.time) - convertTimeString(card2.event.time));
       }
-      const solutionParam = solutionsList.map((parameter) => atob(parameter));
+
+      const solutionParam = solutionsList.map((parameter) => {
+        // In case of sub-solutions. E.g. exl:solution/campaign/standard
+        const parts = parameter.split('/');
+        const decodedParts = parts.map((part) => atob(part));
+        return decodedParts.join(' ');
+      });
+
       const filteredData = eventData.data.filter((event) => {
         const productArray = Array.isArray(event.product) ? event.product : [event.product];
         const productKey = productArray.map((item) => item);

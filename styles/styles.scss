@@ -928,12 +928,52 @@ main > div.browse-rail {
   &.docs-solution-landing main {
     padding: 0 58px;
 
-    .default-content-wrapper h1 {
-      font-size: 44px;
+    .default-content-wrapper {
+      margin: 0;
+      width: 100%;
 
-      /* This font is not avaliable in spectrum so we are hardcoding it */
-      line-height: var(--spectrum-line-height-xxxl);
-      margin-top: 0;
+      h1 {
+        font-size: 44px;
+
+        /* This font is not avaliable in spectrum so we are hardcoding it */
+        line-height: var(--spectrum-line-height-xxxl);
+        margin-top: 0;
+      }
+
+      h2 {
+        font-size: 24px;
+        border-bottom: 3px solid var(--non-spectrum-grey);
+        margin-bottom: 8px;
+      }
+
+      h3 {
+        font-size: var(--spectrum-font-size-100);
+        margin-top: 40px;
+        margin-bottom: 16px;
+      }
+
+      ul {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        width: 100%;
+      }
+
+      ul li {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: var(--spectrum-font-size-200);
+        color: var(--spectrum-gray-800);
+      }
+
+      ul li a {
+        color: var(--non-spectrum-link-blue);
+      }
+
+      ul li a:hover {
+        color: var(--non-spectrum-custom-dark);
+      }
     }
 
     .section > div.default-content-wrapper {
@@ -946,6 +986,7 @@ main > div.browse-rail {
 
     & > div:first-child {
       border: none;
+      gap: 0;
     }
 
     @include breakpoint(desktop) {
@@ -955,6 +996,63 @@ main > div.browse-rail {
         margin: 0 56px;
         padding: 54px 47px 50px 60px;
         border: none;
+      }
+    }
+  }
+
+  &.docs-solution-landing.docs-tutorial {
+    .default-content-wrapper {
+      h2 {
+        font-size: 24px;
+        border-bottom: 3px solid var(--non-spectrum-grey);
+        margin-bottom: 12px;
+      }
+
+      ul {
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: inherit;
+      }
+
+      ul li {
+        list-style: none;
+        width: 100%;
+        margin: 0 14px 7px 0;
+      }
+
+      ul li a {
+        line-height: 24px;
+        font-weight: var(--font-weight-700);
+        color: var(--non-spectrum-link-blue);
+      }
+    }
+  }
+}
+
+@include breakpoint('tablet') {
+  .docs {
+    &.docs-solution-landing.docs-tutorial {
+      .default-content-wrapper {
+        ul li {
+          width: 50%;
+        }
+      }
+    }
+  }
+}
+
+@include breakpoint('desktop') {
+  .docs {
+    &.docs-solution-landing.docs-tutorial {
+      .default-content-wrapper {
+        h2 {
+          font-size: var(--spectrum-font-size-700);
+        }
+
+        ul li {
+          width: calc(33.33% - 16px);
+        }
       }
     }
   }
