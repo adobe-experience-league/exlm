@@ -1503,7 +1503,7 @@
         "value": "",
         "label": "Keyword",
         "valueType": "string",
-        "description": "Keyoword or filtering the featured card"
+        "description": "Keyword for filtering the featured card data"
       },
       {
         "component": "radio-group",
