@@ -715,6 +715,6 @@ export default async function decorate(headerBlock) {
   decorateNewTabLinks(headerBlock);
 
   // do this at the end, always.
-  await decorateIcons(headerBlock);
+  decorateIcons(headerBlock);
   headerBlock.style.display = '';
 }

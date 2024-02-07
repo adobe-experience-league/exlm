@@ -1,13 +1,12 @@
-import { loadCSS } from './lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
+import { loadCSS } from './lib-franklin.js';
 import { htmlToElement, getPathDetails } from './scripts.js';
 
 const pathDetails = getPathDetails();
-
 /**
  * loads the one and only language fragment.
  */
-export const loadLanguageFragment = async () => {
+const loadLanguageFragment = async () => {
   window.languagePromise =
     window.languagePromise ||
     new Promise((resolve) => {
@@ -17,7 +16,6 @@ export const loadLanguageFragment = async () => {
           resolve(text);
         });
     });
-  loadCSS(`${window.hlx.codeBasePath}/styles/language.css`);
   return window.languagePromise;
 };
 
@@ -40,12 +38,12 @@ const switchLanguage = (language) => {
  * Decoration for language popover - shared between header and footer
  */
 export const buildLanguagePopover = async (position) => {
+  loadCSS(`${window.hlx.codeBasePath}/styles/language.css`);
   const popoverId = 'language-picker-popover';
   const popoverClass =
     position === 'top' ? 'language-selector-popover language-selector-popover--top' : 'language-selector-popover';
   let languagesEl = htmlToElement(await loadLanguageFragment());
   languagesEl = languagesEl.querySelector('ul');
-
   const languageOptions = languagesEl?.children || [];
   const languages = [...languageOptions].map((option) => ({
     title: option.textContent,
@@ -61,7 +59,7 @@ export const buildLanguagePopover = async (position) => {
     })
     .join('');
   const popover = htmlToElement(`
-    <div class="${popoverClass}" id="${popoverId}">
+    <div class="${popoverClass}" id="${popoverId}" style="display:none">
       ${options}
     </div>`);
 
@@ -73,7 +71,6 @@ export const buildLanguagePopover = async (position) => {
       switchLanguage(lang);
     }
   });
-
   return {
     popover,
     languages,
