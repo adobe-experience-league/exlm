@@ -810,28 +810,16 @@ main > div.browse-rail {
   display: none;
 }
 
-/* browse rail breakpoint same as main hamburger menu */
-@media (width >= 1024px) {
-  body[class^=browse-] > main {
-    display: grid;
-    grid-template: "browse-rail main"/256px 1fr;
-    /* on pages with rails the max width must be on main */
-    max-width: var(--non-spectrum-max-width);
-    margin: auto;
-    grid-template-rows: auto auto;
-  }
-  main > div.section {
-    grid-column: 2;
-  }
-  main > div.section.browse-rail {
-    display: initial;
-    grid-column: 1;
-    grid-row: 1/100;
-    width: 224px;
-    height: 100%;
-    padding: 0 0 0 32px;
-  }
+body[class^=browse-] img.doc-background-image {
+  position: absolute;
+  display: none;
+  right: 0;
 }
+
+body[class^=browse-] img.doc-background-image-visible {
+  display: block;
+}
+
 /* three column layout */
 .docs {
   --exlm-font-size-h1: var(--spectrum-heading-size-l);
@@ -1117,5 +1105,36 @@ main > div.browse-rail {
   }
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
     width: calc(33.33% - 16px);
+  }
+}
+/* browse rail breakpoint same as main hamburger menu (>= 1024px) */
+@media (min-width: 1024px) {
+  body[class^=browse-] > main {
+    display: grid;
+    grid-template: "browse-rail main"/256px 1fr;
+    /* on pages with rails the max width must be on main */
+    max-width: var(--non-spectrum-max-width);
+    margin: auto;
+    grid-template-rows: auto auto;
+  }
+  main > div.section {
+    grid-column: 2;
+  }
+  main > div.section.browse-rail {
+    display: initial;
+    grid-column: 1;
+    grid-row: 1/100;
+    width: 224px;
+    height: 100%;
+    padding: 0 0 0 32px;
+  }
+}
+@media (width >= 1440px) {
+  body[class^=browse-] main {
+    position: relative;
+  }
+  body[class^=browse-] img.doc-background-image {
+    right: 56px;
+    max-width: var(--non-spectrum-max-width);
   }
 }

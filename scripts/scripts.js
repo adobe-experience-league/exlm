@@ -263,6 +263,10 @@ export function decorateMain(main) {
   decorateBlocks(main);
   buildSectionBasedAutoBlocks(main);
   decorateContentSections(main);
+  if (isBrowsePage()) {
+    // eslint-disable-next-line no-use-before-define
+    buildBackgroundImg(main);
+  }
 }
 
 /**
@@ -466,6 +470,25 @@ export async function loadPrevNextBtn() {
     docPagination.append(btnGotoLeft, btnGotoRight);
     mainDoc.append(docPagination);
   }
+}
+
+function buildBackgroundImg(main) {
+  const baseElement = main.firstElementChild;
+  const iconName = window.matchMedia('(min-width: 600px)').matches ? 'BrowseDecoration' : 'BrowseDecorationMobile';
+  const image = createTag('img', { class: 'doc-background-image', src: `/icons/solutions/${iconName}.svg` });
+  window.addEventListener('resize', () => {
+    debounce(
+      'win-resize-doc-bg-img',
+      () => {
+        const icon = window.matchMedia('(min-width: 600px)').matches ? 'BrowseDecoration' : 'BrowseDecorationMobile';
+        if (!image.src.match(new RegExp(`${icon}.svg`))) {
+          image.src = `/icons/solutions/${icon}.svg`;
+        }
+      },
+      50,
+    );
+  });
+  main.insertBefore(image, baseElement);
 }
 
 /**
