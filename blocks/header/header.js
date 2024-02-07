@@ -5,6 +5,15 @@ const languageModule = import('../../scripts/language.js');
 const authOperationsModule = import('../../scripts/auth/auth-operations.js');
 const searchModule = import('../../scripts/search/search.js');
 
+class Deferred {
+  constructor() {
+    this.promise = new Promise((resolve, reject) => {
+      this.reject = reject;
+      this.resolve = resolve;
+    });
+  }
+}
+
 /**
  * debounce fn execution
  * @param {number} ms
@@ -126,7 +135,9 @@ const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
 const headerFragment = fetchFragment('header/header');
 languageModule.then(({ loadLanguageFragment }) => loadLanguageFragment());
-const decoratorState = {};
+const decoratorState = {
+  languages: new Deferred(),
+};
 
 /**
  * Decorates the brand block
@@ -178,25 +189,7 @@ const hamburgerButton = (navWrapper) => {
  * @param {HTMLUListElement} ul
  */
 const buildNavItems = async (ul, level = 0) => {
-  if (level === 0) {
-    // add search link (visible on mobile only)
-    ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
-    const { getLanguagePath } = await languageModule;
-    // add language select (visible on mobile only)
-    ul.appendChild(
-      htmlToElement(
-        `<li class="nav-item-mobile">
-          <p>${decoratorState.languageTitle}</p>
-          <ul>
-            ${decoratorState.languages
-              .map((l) => `<li><a href="${getLanguagePath(l.lang)}">${l.title}</a></li>`)
-              .join('')}
-          </ul>
-        </li>`,
-      ),
-    );
-  }
-  [...ul.children].forEach((navItem) => {
+  const decorateNavItem = async (navItem) => {
     const navItemClasses = ['nav-item'];
     if (level === 0) navItemClasses.push('nav-item-root');
     navItem.classList.add(...navItemClasses);
@@ -306,14 +299,39 @@ const buildNavItems = async (ul, level = 0) => {
         secondEl.remove();
       }
     }
-  });
+  };
+
+  if (level === 0) {
+    // add search link (visible on mobile only)
+    ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
+
+    const addMobileLangSelector = async function () {
+      const { getLanguagePath } = await languageModule;
+      const languages = await decoratorState.languages.promise;
+      // add language select (visible on mobile only)
+      const navItem = ul.appendChild(
+        htmlToElement(
+          `<li class="nav-item-mobile">
+            <p>${decoratorState.languageTitle}</p>
+            <ul>
+              ${languages.map((l) => `<li><a href="${getLanguagePath(l.lang)}">${l.title}</a></li>`).join('')}
+            </ul>
+          </li>`,
+        ),
+      );
+      decorateNavItem(navItem);
+    };
+    await addMobileLangSelector();
+  }
+
+  [...ul.children].forEach(decorateNavItem);
 };
 
 /**
  * Decorates the nav block
  * @param {HTMLElement} navBlock
  */
-const navDecorator = (navBlock) => {
+const navDecorator = async (navBlock) => {
   simplifySingleCellBlock(navBlock);
   const navWrapper = htmlToElement('<div class="nav-wrapper"></div>');
   const hamburger = hamburgerButton(navWrapper);
@@ -322,7 +340,7 @@ const navDecorator = (navBlock) => {
 
   // build navItems
   const ul = navWrapper.querySelector(':scope > ul');
-  buildNavItems(ul);
+  await buildNavItems(ul);
 
   navBlock.firstChild.id = hamburger.getAttribute('aria-controls');
   navBlock.prepend(hamburger);
@@ -405,11 +423,16 @@ const searchDecorator = async (searchBlock) => {
   );
   searchBlock.append(searchWrapper);
   await decorateIcons(searchBlock);
-  const Search = (await searchModule).default;
-  const searchItem = new Search({ searchBlock });
-  searchItem.configureAutoComplete({
-    searchOptions: options,
-  });
+
+  const prepareSearch = async () => {
+    const Search = (await searchModule).default;
+    const searchItem = new Search({ searchBlock });
+    searchItem.configureAutoComplete({
+      searchOptions: options,
+    });
+  };
+  prepareSearch();
+
   return searchBlock;
 };
 
@@ -429,11 +452,12 @@ const signUpDecorator = (signUpBlock) => {
 const languageDecorator = async (languageBlock) => {
   const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
   decoratorState.languageTitle = title;
+  decoratorState.languages = new Deferred();
 
   const prependLanguagePopover = async (parent) => {
     await languageModule.then(({ buildLanguagePopover }) => {
       buildLanguagePopover().then(({ popover, languages }) => {
-        decoratorState.languages = languages;
+        decoratorState.languages.resolve(languages);
         parent.append(popover);
       });
     });
@@ -446,7 +470,7 @@ const languageDecorator = async (languageBlock) => {
     `;
   languageBlock.innerHTML = languageHtml;
   decorateIcons(languageBlock);
-  await prependLanguagePopover(languageBlock);
+  prependLanguagePopover(languageBlock);
   return languageBlock;
 };
 
@@ -565,16 +589,6 @@ const productGridDecorator = async (productGridBlock) => {
   return productGridBlock;
 };
 
-const getCommunityProfile = () =>
-  new Promise((resolve, reject) => {
-    const data = fetchCommunityProfileData();
-    if (data) {
-      resolve(data);
-    } else {
-      reject(new Error('Error fetching data!!'));
-    }
-  });
-
 /**
  * Decorates the profile-menu block
  * @param {HTMLElement} profileMenu
@@ -596,7 +610,7 @@ const profileMenuDecorator = async (profileMenuBlock) => {
       profileMenuWrapper.lastElementChild.setAttribute('data-id', 'sign-out');
       profileMenuWrapper.insertBefore(communityHeading, profileMenuWrapper.lastElementChild);
     }
-    getCommunityProfile()
+    fetchCommunityProfileData()
       .then((res) => {
         if (res) {
           res.data.menu.forEach((item) => {
@@ -682,35 +696,25 @@ export default async function decorate(headerBlock) {
   nav.role = 'navigation';
   nav.ariaLabel = 'Main navigation';
 
-  // order matters.
-  const decorators = [
-    { className: 'brand', decorator: brandDecorator },
-    { className: 'search', decorator: searchDecorator },
-    { className: 'sign-up', decorator: signUpDecorator },
-    { className: 'language-selector', decorator: languageDecorator },
-    { className: 'product-grid', decorator: productGridDecorator },
-    { className: 'sign-in', decorator: signInDecorator },
-    { className: 'profile-menu', decorator: profileMenuDecorator },
-    { className: 'adobe-logo', decorator: adobeLogoDecorator },
-    { className: 'nav', decorator: navDecorator },
-  ];
-
-  for (let i = 0; i < decorators.length; i += 1) {
-    const { className, decorator } = decorators[i];
+  const decorateHeaderBlock = async (className, decorator) => {
     const block = nav.querySelector(`:scope > .${className}`);
-    if (block) {
-      // eslint-disable-next-line no-await-in-loop
-      await decorator(block);
-    } else {
-      // eslint-disable-next-line no-console
-      console.warn(`No header block found for class: ${className}`);
-    }
-  }
+    await decorator(block);
+  };
+
+  decorateHeaderBlock('brand', brandDecorator);
+  decorateHeaderBlock('search', searchDecorator);
+  decorateHeaderBlock('sign-up', signUpDecorator);
+  decorateHeaderBlock('language-selector', languageDecorator);
+  decorateHeaderBlock('product-grid', productGridDecorator);
+  decorateHeaderBlock('sign-in', signInDecorator);
+  decorateHeaderBlock('profile-menu', profileMenuDecorator);
+  decorateHeaderBlock('adobe-logo', adobeLogoDecorator);
+  await decorateHeaderBlock('nav', navDecorator);
 
   decorateLinks(headerBlock);
   decorateNewTabLinks(headerBlock);
 
   // do this at the end, always.
-  decorateIcons(headerBlock);
+  await decorateIcons(headerBlock);
   headerBlock.style.display = '';
 }
