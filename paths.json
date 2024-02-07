@@ -47,7 +47,5 @@
     "/content/exlm.resource/zh-hans/query-index.json:/zh-hans/query-index.json",
     "/content/exlm.resource/zh-hant/query-index.json:/zh-hant/query-index.json"
   ],
-  "includes": [
-    "/content/exlm/"
-  ]
+  "includes": ["/content/exlm/"]
 }
