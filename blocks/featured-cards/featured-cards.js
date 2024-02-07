@@ -21,8 +21,7 @@ export default async function decorate(block) {
   const [headingElement, descriptionElement, ...configs] = [...block.children].map((row) => row.firstElementChild);
   const [contentType, linkTextElement, keyword, sortBy] = configs.map((cell) => cell.textContent.trim());
 
-  const sortCriteria = COVEO_SORT_OPTIONS[sortBy.toUpperCase()];
-
+  const sortCriteria = sortBy ? COVEO_SORT_OPTIONS[sortBy.toUpperCase()] : COVEO_SORT_OPTIONS.RELEVANCE;
   const noOfResults = 16;
 
   headingElement.firstElementChild?.classList.add('h2');
