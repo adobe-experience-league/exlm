@@ -57,6 +57,10 @@
   margin: 0;
 }
 
+.filter-input>button {
+  padding-right: 24px;
+}
+
 .filter-input > input::placeholder {
   font-size: var(--spectrum-body-size-m);
 }
