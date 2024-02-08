@@ -559,6 +559,7 @@ export function rewriteDocsPath(docsPath) {
   if (!url.pathname.startsWith('/docs')) {
     return docsPath; // not a docs path, return as is
   }
+  // eslint-disable-next-line no-use-before-define
   const { lang } = getPathDetails();
   const language = url.searchParams.get('lang') || lang;
   url.searchParams.delete('lang');
