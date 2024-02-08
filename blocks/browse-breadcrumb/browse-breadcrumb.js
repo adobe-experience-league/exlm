@@ -1,6 +1,5 @@
 import ffetch from '../../scripts/ffetch.js';
-import { fetchPlaceholders } from '../../scripts/lib-franklin.js';
-import { getEDSLink, getLink } from '../../scripts/scripts.js';
+import { getEDSLink, getLink, getPathDetails, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   // fallback text
@@ -8,7 +7,7 @@ export default async function decorate(block) {
 
   // get placeholders
   try {
-    const placeholders = await fetchPlaceholders();
+    const placeholders = await fetchLanguagePlaceholders();
     browseText = placeholders.browse;
   } catch {
     /* empty */
@@ -30,8 +29,7 @@ export default async function decorate(block) {
   block.append(rootCrumbElem);
 
   // get the browse index
-  // TODO - update with language
-  const index = await ffetch('/en/browse-index.json').all();
+  const index = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
 
   // build the remaining breadcrumbs
   pathParts[1].split('/').reduce((prevSubPath, nextPathElem) => {

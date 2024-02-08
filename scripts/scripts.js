@@ -15,7 +15,11 @@ import {
   decorateButtons,
   getMetadata,
   loadScript,
+  fetchPlaceholders,
 } from './lib-franklin.js';
+// eslint-disable-next-line import/no-cycle
+
+const ffetchModulePromise = import('./ffetch.js');
 
 const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
 
@@ -155,6 +159,40 @@ function buildAutoBlocks(main) {
 }
 
 /**
+ * create shadeboxes out of sections with shade-box style
+ * @param {Element} main the main container
+ */
+function buildShadeBoxes(main) {
+  main.querySelectorAll('.section.shade-box').forEach((section) => {
+    const sbContent = [];
+    const row = [];
+    [...section.children].forEach((wrapper) => {
+      const elems = [];
+      [...wrapper.children].forEach((child) => {
+        elems.push(child);
+      });
+      wrapper.remove();
+      row.push({ elems });
+    });
+    sbContent.push(row);
+    const sb = buildBlock('shade-box', sbContent);
+    const sbWrapper = document.createElement('div');
+    sbWrapper.append(sb);
+    section.append(sbWrapper);
+    decorateBlock(sb);
+    section.classList.remove('shade-box');
+  });
+}
+
+/**
+ * Builds synthetic blocks in that rely on section metadata
+ * @param {Element} main The container element
+ */
+function buildSectionBasedAutoBlocks(main) {
+  buildShadeBoxes(main);
+}
+
+/**
  * Decorates links within the specified container element by setting their "target" attribute to "_blank" if they contain "#_target" in the URL.
  *
  * @param {HTMLElement} main - The main container element to search for and decorate links.
@@ -179,13 +217,33 @@ export function decorateExternalLinks(main) {
 /**
  * Check if current page is a MD Docs Page.
  * theme = docs is set in bulk metadata for docs paths.
+ * @param {string} type The type of doc page - example: docs-solution-landing,
+ *                      docs-landing, docs (optional, default value is docs)
  */
-export function isDocPage() {
+export function isDocPage(type = 'docs') {
   const theme = getMetadata('theme');
   return theme
     .split(',')
-    .map((t) => t.toLowerCase())
-    .includes('docs');
+    .map((t) => t.toLowerCase().trim())
+    .includes(type);
+}
+
+/**
+ * set attributes needed for the docs pages grid to work properly
+ * @param {Element} main the main element
+ */
+function decorateContentSections(main) {
+  const contentSections = main.querySelectorAll('.section:not(.toc-container, .mini-toc-container)');
+  contentSections.forEach((row, i) => {
+    if (i === 0) {
+      row.classList.add('content-section-first');
+    }
+    if (i === contentSections.length - 1) {
+      row.classList.add('content-section-last');
+    }
+  });
+
+  main.style.setProperty('--content-sections-count', contentSections.length);
 }
 
 /**
@@ -203,6 +261,8 @@ export function decorateMain(main) {
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  buildSectionBasedAutoBlocks(main);
+  decorateContentSections(main);
 }
 
 /**
@@ -294,11 +354,10 @@ async function loadLazy(doc) {
       const { pageLoadModel, linkClickModel, pageName } = libAnalyticsModule;
       window.adobeDataLayer.push(pageLoadModel());
       localStorage.setItem('prevPage', pageName());
-      const linkClicked = document.querySelectorAll('a');
+      const linkClicked = document.querySelectorAll('a,.view-more-less span');
       linkClicked.forEach((linkElement) => {
         linkElement.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (e.target.tagName === 'A') {
+          if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
             linkClickModel(e);
           }
         });
@@ -346,16 +405,24 @@ export function htmlToElement(html) {
   return template.content.firstElementChild;
 }
 
-export function loadPrevNextBtn() {
-  const mainDoc = document.querySelector('main > div:nth-child(1)');
+export async function loadPrevNextBtn() {
+  let placeholders = {};
+  try {
+    // eslint-disable-next-line no-use-before-define
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+  const mainDoc = document.querySelector('main > div.content-section-last');
   if (!mainDoc) return;
 
   const prevPageMeta = document.querySelector('meta[name="prev-page"]');
   const nextPageMeta = document.querySelector('meta[name="next-page"]');
   const prevPageMetaContent = prevPageMeta?.getAttribute('content').trim().split('.html')[0];
   const nextPageMetaContent = nextPageMeta?.getAttribute('content').trim().split('.html')[0];
-  const PREV_PAGE = 'Previous page';
-  const NEXT_PAGE = 'Next page';
+  const PREV_PAGE = placeholders?.previousPage;
+  const NEXT_PAGE = placeholders?.nextPage;
 
   if (prevPageMeta || nextPageMeta) {
     if (prevPageMetaContent === '' && nextPageMetaContent === '') return;
@@ -453,10 +520,13 @@ async function loadPage() {
   await loadLazy(document);
   loadRails();
   loadDelayed();
-  loadPrevNextBtn();
+  await loadPrevNextBtn();
 }
 
-loadPage();
+// load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
+if (!window.hlx.DO_NOT_LOAD_PAGE) {
+  loadPage();
+}
 
 /**
  * Helper function that converts an AEM path into an EDS path.
@@ -492,4 +562,108 @@ export function rewriteDocsPath(docsPath) {
   pathname = removeExtension(pathname); // new URLs are extensionless
   url.pathname = pathname;
   return url.toString().replace(PROD_BASE, ''); // always remove PROD_BASE if exists
+}
+
+/**
+ * Proccess current pathname and return details for use in language switching
+ * Considers pathnames like /en/path/to/content and /content/exl/global/en/path/to/content.html for both EDS and AEM
+ */
+export function getPathDetails() {
+  const { pathname } = window.location;
+  const extParts = pathname.split('.');
+  const ext = extParts.length > 1 ? extParts[extParts.length - 1] : '';
+  const isContentPath = pathname.startsWith('/content');
+  const parts = pathname.split('/');
+  const safeLangGet = (index) => (parts.length > index ? parts[index] : 'en');
+  // 4 is the index of the language in the path for AEM content paths like  /content/exl/global/en/path/to/content.html
+  // 1 is the index of the language in the path for EDS paths like /en/path/to/content
+  let lang = isContentPath ? safeLangGet(4) : safeLangGet(1);
+  // remove suffix from lang if any
+  if (lang.indexOf('.') > -1) {
+    lang = lang.substring(0, lang.indexOf('.'));
+  }
+  if (!lang) lang = 'en'; // default to en
+  // substring before lang
+  const prefix = pathname.substring(0, pathname.indexOf(`/${lang}`)) || '';
+  const suffix = pathname.substring(pathname.indexOf(`/${lang}`) + lang.length + 1) || '';
+  return {
+    ext,
+    prefix,
+    suffix,
+    lang,
+    isContentPath,
+  };
+}
+
+/**
+ * Helper function thats returns a list of all products
+ * - below <lang>/browse/<product-page>
+ * - To get added, the product page must be published
+ * - Product pages listed in <lang>/browse/top-products are put at the the top
+ *   in the order they appear in top-products
+ * - the top product list can point to sub product pages
+ */
+export async function getProducts() {
+  // get language
+  const { lang } = getPathDetails();
+  const ffetch = (await ffetchModulePromise).default;
+  // load the <lang>/top_product list
+  const topProducts = await ffetch(`/${lang}/top-products.json`).all();
+  // get all indexed pages below <lang>/browse
+  const publishedPages = await ffetch(`/${lang}/browse-index.json`).all();
+
+  // add all published top products to final list
+  const finalProducts = topProducts.filter((topProduct) => {
+    // check if top product is in published list
+    const found = publishedPages.find((elem) => elem.path === topProduct.path);
+    if (found) {
+      // keep original title if no nav title is set
+      if (!topProduct.title) topProduct.title = found.title;
+      // set marker for featured product
+      topProduct.featured = true;
+      // remove it from publishedProducts list
+      publishedPages.splice(publishedPages.indexOf(found), 1);
+      return true;
+    }
+    return false;
+  });
+
+  // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
+  const publishedMainProducts = publishedPages
+    .filter((page) => page.path.split('/').length === 4)
+    // sort alphabetically
+    .sort((productA, productB) => productA.path.localeCompare(productB.path));
+  // append remaining published products to final list
+  finalProducts.push(...publishedMainProducts);
+  return finalProducts;
+}
+
+export async function fetchLanguagePlaceholders() {
+  const { lang } = getPathDetails();
+  let placeholdersData = '';
+
+  try {
+    // Try fetching placeholders with the specified language
+    placeholdersData = await fetchPlaceholders(`/${lang}`);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(`Error fetching placeholders for lang: ${lang}`, error);
+    // Retry without specifying a language (using the default language)
+    try {
+      placeholdersData = await fetchPlaceholders('/en');
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching placeholders:', err);
+    }
+  }
+  return placeholdersData;
+}
+
+export async function getLanguageCode() {
+  const { lang } = getPathDetails();
+  const ffetch = (await ffetchModulePromise).default;
+  const langMap = await ffetch(`/languages.json`).all();
+  const langObj = langMap.find((item) => item.key === lang);
+  const langCode = langObj ? langObj.value : lang;
+  return langCode;
 }

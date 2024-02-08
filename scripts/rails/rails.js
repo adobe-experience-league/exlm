@@ -17,13 +17,17 @@ async function decorateRail(railSection, position) {
   railToggler.style.background = 'none'; // override default button styles
   railToggler.classList.add('rail-toggle');
   railToggler.innerHTML = '<span class="icon icon-rail"></span>';
+  railSection.classList.add('rail');
+  railSection.classList.add(`rail-${position}`);
   railSection.prepend(railToggler);
   await decorateIcons(railToggler);
   railToggler.addEventListener('click', () => {
     railSection.classList.toggle('closed');
+    const main = railSection.parentElement;
+    if (main) {
+      main.classList.toggle(`rail-${position}-closed`);
+    }
   });
-  railSection.classList.add('rail');
-  railSection.classList.add(`rail-${position}`);
 }
 
 /**
@@ -32,14 +36,18 @@ async function decorateRail(railSection, position) {
  */
 export default async function decorateRails() {
   const main = document.querySelector('main');
-  // Get all child div elements
-  const leftRail = main?.children[1];
-  const rightRail = main?.children[2];
-  // ensure this is the docs theme
+  const leftRail = document.querySelector('main .toc-container');
+  const rightRail = document.querySelector('main .mini-toc-container');
+
   if (leftRail) {
     await decorateRail(leftRail, 'left');
+  } else {
+    main.classList.add('rail-left-closed');
   }
+
   if (rightRail) {
     await decorateRail(rightRail, 'right');
+  } else {
+    main.classList.add('rail-right-closed');
   }
 }

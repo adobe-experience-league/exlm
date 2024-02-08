@@ -989,26 +989,8 @@
         "valueType": "string",
         "name": "cta1Text",
         "value": "",
-        "label": "First CTA Text",
+        "label": "Sign in CTA text",
         "description": "Text to be shown inside button."
-      },
-      {
-        "component": "select",
-        "name": "cta2Type",
-        "value": "primary",
-        "label": "Second CTA Type",
-        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          }
-        ]
       },
       {
         "component": "text-input",
@@ -1514,6 +1496,35 @@
         "label": "Link URL",
         "valueType": "string",
         "description": "Sets the text url."
+      },
+      {
+        "component": "text-input",
+        "name": "keyword",
+        "value": "",
+        "label": "Keyword",
+        "valueType": "string",
+        "description": "Keyword for filtering the featured card data"
+      },
+      {
+        "component": "radio-group",
+        "name": "sortBy",
+        "value": "RELEVANCE",
+        "label": "Sort by",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Relevance",
+            "value": "RELEVANCE"
+          },
+          {
+            "name": "Most recent",
+            "value": "MOST_RECENT"
+          },
+          {
+            "name": "Most popular",
+            "value": "MOST_POPULAR"
+          }
+        ]
       }
     ]
   },

@@ -1,8 +1,8 @@
-import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import ArticleDataService from '../../scripts/data-service/article-data-service.js';
+import handleArticleDataService from '../../scripts/data-service/article-data-service.js';
 import mapResultToCardsData from './article-data-adapter.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
@@ -31,7 +31,7 @@ export default async function decorate(block) {
   if (toolTipElement?.textContent?.trim()) {
     headerDiv
       .querySelector('h1,h2,h3,h4,h5,h6')
-      ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+      ?.insertAdjacentHTML('afterend', '<div class="tooltip-placeholder"></div>');
     const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
     const tooltipConfig = {
       content: toolTipElement.textContent.trim(),
@@ -41,7 +41,6 @@ export default async function decorate(block) {
 
   block.replaceChildren(headerDiv);
 
-  const articleDataService = new ArticleDataService();
   const buildCardsShimmer = new BuildPlaceholder();
   buildCardsShimmer.add(block);
   const contentDiv = document.createElement('div');
@@ -49,7 +48,7 @@ export default async function decorate(block) {
 
   let placeholders = {};
   try {
-    placeholders = await fetchPlaceholders();
+    placeholders = await fetchLanguagePlaceholders();
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
@@ -64,7 +63,7 @@ export default async function decorate(block) {
       linkContainer.innerHTML = '';
       if (link) {
         try {
-          const data = await articleDataService.handleArticleDataService(link);
+          const data = await handleArticleDataService(link);
           const cardData = await mapResultToCardsData(data, placeholders);
           await buildCard(contentDiv, linkContainer, cardData);
         } catch (err) {

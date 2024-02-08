@@ -171,7 +171,7 @@ export default async function decorate(block) {
   if (isSignedIn) {
     if (headingElement.firstElementChild) {
       if (toolTipElement?.textContent?.trim()) {
-        headingElement.firstElementChild.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+        headingElement.firstElementChild.insertAdjacentHTML('afterend', '<div class="tooltip-placeholder"></div>');
         const tooltipElem = headingElement.querySelector('.tooltip-placeholder');
         const tooltipConfig = {
           content: toolTipElement.textContent.trim(),

@@ -1,10 +1,14 @@
+// eslint-disable-next-line import/no-cycle
 import { loadCSS } from './lib-franklin.js';
-import { htmlToElement } from './scripts.js';
+import { htmlToElement, getPathDetails } from './scripts.js';
 
-let languagePromise = null;
-export const loadLanguageFragment = async () => {
-  languagePromise =
-    languagePromise ||
+const pathDetails = getPathDetails();
+/**
+ * loads the one and only language fragment.
+ */
+const loadLanguageFragment = async () => {
+  window.languagePromise =
+    window.languagePromise ||
     new Promise((resolve) => {
       fetch(`/fragments/en/languages/languages.plain.html`)
         .then((response) => response.text())
@@ -12,56 +16,41 @@ export const loadLanguageFragment = async () => {
           resolve(text);
         });
     });
-  loadCSS('/styles/language.css');
-  return languagePromise;
-};
-
-export const getCurrentLanguage = () => {
-  // first part of url is the language
-  const url = window.location.pathname;
-  const parts = url.split('/');
-  return parts.length > 0 ? url.split('/')[1] : 'en';
-};
-
-export const isIndex = () => {
-  const url = window.location.pathname;
-  return url === '/';
+  return window.languagePromise;
 };
 
 export const getLanguagePath = (language) => {
-  if (isIndex()) {
-    return `/${language}`;
-  }
-  return window.location.pathname.replace(getCurrentLanguage(), language);
+  const { prefix, suffix } = pathDetails;
+  return `${prefix}/${language}${suffix}`;
 };
 
-export const switchLanguage = async (language) => {
-  const currentLanguage = getCurrentLanguage();
-  if (currentLanguage === language) {
-    return;
-  }
-
-  if (isIndex()) {
-    window.location.pathname = `/${language}`;
-  } else {
+/**
+ * changes current url to the new language url
+ */
+const switchLanguage = (language) => {
+  const { lang } = pathDetails;
+  if (lang !== language) {
     window.location.pathname = getLanguagePath(language);
   }
 };
 
+/**
+ * Decoration for language popover - shared between header and footer
+ */
 export const buildLanguagePopover = async (position) => {
+  loadCSS(`${window.hlx.codeBasePath}/styles/language.css`);
   const popoverId = 'language-picker-popover';
   const popoverClass =
     position === 'top' ? 'language-selector-popover language-selector-popover--top' : 'language-selector-popover';
   let languagesEl = htmlToElement(await loadLanguageFragment());
   languagesEl = languagesEl.querySelector('ul');
-
   const languageOptions = languagesEl?.children || [];
   const languages = [...languageOptions].map((option) => ({
     title: option.textContent,
     lang: option?.firstElementChild?.getAttribute('href'),
   }));
 
-  const currentLang = getCurrentLanguage();
+  const { lang: currentLang } = getPathDetails();
   const options = languages
     .map((option) => {
       const lang = option.lang?.toLowerCase();
@@ -70,7 +59,7 @@ export const buildLanguagePopover = async (position) => {
     })
     .join('');
   const popover = htmlToElement(`
-    <div class="${popoverClass}" id="${popoverId}">
+    <div class="${popoverClass}" id="${popoverId}" style="display:none">
       ${options}
     </div>`);
 
@@ -82,7 +71,6 @@ export const buildLanguagePopover = async (position) => {
       switchLanguage(lang);
     }
   });
-
   return {
     popover,
     languages,
