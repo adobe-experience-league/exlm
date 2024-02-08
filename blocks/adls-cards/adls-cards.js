@@ -37,7 +37,7 @@ export default async function decorate(block) {
   if (toolTipElement?.textContent?.trim()) {
     headerDiv
       .querySelector('h1,h2,h3,h4,h5,h6')
-      ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+      ?.insertAdjacentHTML('afterend', '<div class="tooltip-placeholder"></div>');
     const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
     const tooltipConfig = {
       content: toolTipElement.textContent.trim(),
