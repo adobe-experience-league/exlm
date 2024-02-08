@@ -18,9 +18,11 @@ const DEFAULT_OPTIONS = Object.freeze({
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const [headingElement, descriptionElement, ...configs] = [...block.children].map((row) => row.firstElementChild);
-  const [contentType, linkTextElement, keyword, sortBy] = configs.map((cell) => cell.textContent.trim());
-
+  const [headingElement, descriptionElement, confContentType, linkTextElement, keyword, ...configs] = [
+    ...block.children,
+  ].map((row) => row.firstElementChild);
+  const [sortBy] = configs.map((cell) => cell.textContent.trim());
+  const contentType = confContentType.textContent.trim().toLowerCase();
   const sortCriteria = COVEO_SORT_OPTIONS[sortBy];
   const noOfResults = 16;
 
@@ -49,7 +51,7 @@ export default async function decorate(block) {
   contentDiv.classList.add('browse-cards-block-content');
 
   const param = {
-    contentType: contentType && contentType.toLowerCase().split(','),
+    contentType: contentType && contentType.split(','),
     role: [],
     product: [],
     q: keyword,
