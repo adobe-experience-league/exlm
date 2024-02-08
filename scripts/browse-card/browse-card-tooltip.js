@@ -24,7 +24,11 @@ export const createTooltip = (container, element, config) => {
           tooltipText.style.left = `${element.offsetLeft - container.scrollLeft + leftSpacer}px`;
         } else {
           const topSpacer = isDesktopLg ? 20 : 12;
-          tooltipText.style.top = `${element.offsetTop + tooltipText.offsetHeight / 2 + topSpacer}px`;
+          if (tooltipText.offsetHeight / 2 > topSpacer) {
+            tooltipText.style.top = `${element.offsetTop + tooltipText.offsetHeight / 2 - topSpacer}px`;
+          } else {
+            tooltipText.style.top = `${element.offsetTop + tooltipText.offsetHeight / 2 + topSpacer}px`;
+          }
           tooltipText.style.left = `${element.offsetLeft + element.offsetWidth}px`;
         }
       } else if (event.type === 'mouseout' || event.type === 'mouseleave') {
