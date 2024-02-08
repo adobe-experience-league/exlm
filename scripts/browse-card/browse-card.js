@@ -270,14 +270,12 @@ const buildCardContent = (card, model) => {
 
 const setupBookmarkAction = (wrapper) => {
   let data;
-  loadJWT().then(async (  ) => {
+  loadJWT().then(async () => {
     profile().then(async (profileData) => {
       data = profileData;
     });
-  })
-  const bookmarkAuthed = Array.from(
-    wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark'),
-  );
+  });
+  const bookmarkAuthed = Array.from(wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark'));
   bookmarkAuthed.forEach((bookmark) => {
     const bookmarkAuthedToolTipLabel = bookmark.querySelector('.exl-tooltip-label');
     const bookmarkAuthedToolTipIcon = bookmark.querySelector('.bookmark-icon');
@@ -379,9 +377,20 @@ export async function buildCard(container, element, model) {
   buildCardContent(card, model);
   setupBookmarkAction(card);
   setupCopyAction(card);
-  const cardContainer = document.createElement("a")
-  cardContainer.setAttribute("href", model?.viewLink)
-  cardContainer.appendChild(card);
-  element.appendChild(cardContainer);	
-  // element.appendChild(card);
+  if (model.viewLink) {
+    const cardContainer = document.createElement('a');
+    cardContainer.setAttribute('href', model.viewLink);
+    if (
+      contentType.toLowerCase() === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ||
+      contentType.toLowerCase() === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY ||
+      contentType.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY ||
+      contentType.toLowerCase() === CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
+    ) {
+      cardContainer.setAttribute('target', '_blank');
+    }
+    cardContainer.appendChild(card);
+    element.appendChild(cardContainer);
+  } else {
+    element.appendChild(card);
+  }
 }

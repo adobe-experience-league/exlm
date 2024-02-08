@@ -13,9 +13,9 @@ try {
 
 const renderBookmark = (labelSel, iconSel, id) => {
   iconSel.addEventListener('click', async (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  if (id) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (id) {
       if (iconSel.classList.contains('authed')) {
         await updateProfile('bookmarks', id);
         labelSel.innerHTML = `${placeholders.bookmarkAuthLabelSet}`;
@@ -34,8 +34,8 @@ const renderBookmark = (labelSel, iconSel, id) => {
         iconSel.style.pointerEvents = 'auto';
       }, 3000);
       assetInteractionModel(id, 'Bookmark');
-    };
+    }
   });
-}
+};
 
 export default renderBookmark;
