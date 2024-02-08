@@ -821,13 +821,6 @@ function decorateBrowseTopics(block) {
   }
 }
 
-function showBackgroundImg() {
-  const img = document.querySelector('.doc-background-image');
-  if (img) {
-    img.classList.add('doc-background-image-visible');
-  }
-}
-
 export default async function decorate(block) {
   enableTagsAsProxy(block);
   appendFormEl(block);
@@ -836,7 +829,6 @@ export default async function decorate(block) {
   dropdownOptions.forEach((options, index) => {
     constructMultiSelectDropdown(block, options, index + 1);
   });
-  showBackgroundImg();
   constructKeywordSearchEl(block);
   constructClearFilterBtn(block);
   appendToForm(block, renderTags());

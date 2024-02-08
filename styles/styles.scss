@@ -709,14 +709,10 @@ main > div.browse-rail {
   display: none;
 }
 
-body[class^='browse-'] img.doc-background-image {
-  position: absolute;
-  display: none;
-  right: 0;
-}
-
-body[class^='browse-'] img.doc-background-image-visible {
-  display: block;
+body[class^='browse-'] main.doc-background-image {
+  background-image: url('/icons/solutions/BrowseDecorationMobile.svg');
+  background-repeat: no-repeat;
+  background-position: top right;
 }
 
 /* three column layout */
@@ -1022,6 +1018,11 @@ body[class^='browse-'] img.doc-background-image-visible {
       }
     }
   }
+
+  body[class^='browse-'] main.doc-background-image {
+    background-image: url('/icons/solutions/BrowseDecoration.svg');
+    background-size: contain;
+  }
 }
 
 @include breakpoint('desktop') {
@@ -1072,13 +1073,8 @@ body[class^='browse-'] img.doc-background-image-visible {
 
 @media (width >= 1440px) {
   body[class^='browse-'] {
-    & main {
-      position: relative;
-    }
-
-    & img.doc-background-image {
-      right: 56px;
-      max-width: var(--non-spectrum-max-width);
+    & main.doc-background-image {
+      background-position: -56px 0;
     }
   }
 }

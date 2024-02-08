@@ -810,14 +810,10 @@ main > div.browse-rail {
   display: none;
 }
 
-body[class^=browse-] img.doc-background-image {
-  position: absolute;
-  display: none;
-  right: 0;
-}
-
-body[class^=browse-] img.doc-background-image-visible {
-  display: block;
+body[class^=browse-] main.doc-background-image {
+  background-image: url("/icons/solutions/BrowseDecorationMobile.svg");
+  background-repeat: no-repeat;
+  background-position: top right;
 }
 
 /* three column layout */
@@ -1098,6 +1094,10 @@ body[class^=browse-] img.doc-background-image-visible {
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
     width: 50%;
   }
+  body[class^=browse-] main.doc-background-image {
+    background-image: url("/icons/solutions/BrowseDecoration.svg");
+    background-size: contain;
+  }
 }
 @media (min-width: 900px) {
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper h2 {
@@ -1130,11 +1130,7 @@ body[class^=browse-] img.doc-background-image-visible {
   }
 }
 @media (width >= 1440px) {
-  body[class^=browse-] main {
-    position: relative;
-  }
-  body[class^=browse-] img.doc-background-image {
-    right: 56px;
-    max-width: var(--non-spectrum-max-width);
+  body[class^=browse-] main.doc-background-image {
+    background-position: -56px 0;
   }
 }
