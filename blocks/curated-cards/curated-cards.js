@@ -31,7 +31,7 @@ export default async function decorate(block) {
     items.forEach((item) => {
       const [type, productBase64, subsetBase64] = item.split('/');
       if (productBase64) product.push(atob(productBase64));
-      if (type === productKey) {        
+      if (type === productKey) {
         if (subsetBase64) version.push(atob(subsetBase64));
       } else if (type === featureKey) {
         if (subsetBase64) feature.push(atob(subsetBase64));
