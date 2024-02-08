@@ -129,7 +129,10 @@ export function pageLoadModel() {
       },
     },
     user,
-    userGUID: user.userDetails.userID,
+    userGUID: document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('userGUID='))
+      ?.split('=')[1],
   };
 }
 
