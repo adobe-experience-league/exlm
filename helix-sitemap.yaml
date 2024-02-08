@@ -6,6 +6,7 @@ sitemaps:
       en:
         source: /en/query-index.json
         destination: /en/sitemap.xml
+        alternate: /en/{path}
         hreflang: en
       fr:
         source: /fr/query-index.json
