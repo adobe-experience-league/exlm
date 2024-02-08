@@ -709,7 +709,7 @@ main > div.browse-rail {
   display: none;
 }
 
-body[class^='browse-'] main.doc-background-image {
+body[class^='browse-'] main {
   background-image: url('/icons/solutions/BrowseDecorationMobile.svg');
   background-repeat: no-repeat;
   background-position: top right;
@@ -1019,7 +1019,7 @@ body[class^='browse-'] main.doc-background-image {
     }
   }
 
-  body[class^='browse-'] main.doc-background-image {
+  body[class^='browse-'] main {
     background-image: url('/icons/solutions/BrowseDecoration.svg');
     background-size: contain;
   }
@@ -1073,7 +1073,7 @@ body[class^='browse-'] main.doc-background-image {
 
 @media (width >= 1440px) {
   body[class^='browse-'] {
-    & main.doc-background-image {
+    & main {
       background-position: -56px 0;
     }
   }

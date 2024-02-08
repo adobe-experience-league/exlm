@@ -263,9 +263,6 @@ export function decorateMain(main) {
   decorateBlocks(main);
   buildSectionBasedAutoBlocks(main);
   decorateContentSections(main);
-  if (isBrowsePage()) {
-    main.classList.add('doc-background-image');
-  }
 }
 
 /**
