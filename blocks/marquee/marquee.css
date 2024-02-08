@@ -226,7 +226,11 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
     flex-direction: row;
     justify-content: center;
     width: 100%;
- }
+  }
+
+  body[class ^= 'browse-'] .marquee-foreground {
+    min-height: 260px;
+  }
 
   .marquee-text {
     padding: 0;
@@ -312,6 +316,7 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
 
   body[class ^= 'browse-'] .section div.marquee-wrapper .marquee-foreground {
     gap: 40px;
+    padding: 0;
   }
 
   /* text block */
@@ -322,7 +327,6 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
     margin: 0;
     padding: 20px 0 23px 36px;
     flex-grow: 1;
-    width: 50%;
     max-width: unset;
   }
 
@@ -330,8 +334,8 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
   body[class ^= 'browse-'] .marquee-subject {
     min-width: unset;
     min-height: unset;
-    width: 400px;
-    transform:scale(1.2);
+    width: 300px;
+    transform:scale(1.4);
     z-index: 1;
   }
 

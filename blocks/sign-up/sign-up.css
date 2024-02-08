@@ -227,6 +227,11 @@
       justify-content: center;
       width: 100%;
    }
+
+   
+  body[class ^= 'browse-'] .signup-foreground {
+    min-height: 260px;
+  }
   
     .signup-text {
       padding: 0;
@@ -312,6 +317,7 @@
   
     body[class ^= 'browse-'] .section div.sign-up-wrapper .signup-foreground {
       gap: 40px;
+      padding: 0;
     }
   
     /* text block */
@@ -322,7 +328,6 @@
       margin: 0;
       padding: 20px 0 23px 36px;
       flex-grow: 1;
-      width: 50%;
       max-width: unset;
     }
   
@@ -330,8 +335,8 @@
     body[class ^= 'browse-'] .signup-subject {
       min-width: unset;
       min-height: unset;
-      width: 400px;
-      transform:scale(1.2);
+      width: 300px;
+      transform:scale(1.4);
       z-index: 1;
     }
   
