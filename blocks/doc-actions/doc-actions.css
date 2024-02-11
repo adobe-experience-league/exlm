@@ -139,7 +139,7 @@
 }
 
 .doc-mt-toggle .doc-mt-checkbox input[type="checkbox"]:checked {
-  background: var(--spectrum-gray-300);
+  background: var(--spectrum-gray-700);
 }
 
 .doc-mt-toggle .doc-mt-checkbox input[type="checkbox"]::after {
