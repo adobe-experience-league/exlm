@@ -1,17 +1,18 @@
 import { adobeIMS, profile } from "../data-service/profile-service";
+import { getLangCode } from "../lang-map";
+import { getPathDetails } from "../scripts";
 import { ProfileAttributes } from "../session-keys";
 
 function identify (data) {
-
-  const data = sessionStorage.getItem(ProfileAttributes); 
-    id = data.userId?.toLowerCase() || '',
+  const id = data.userId?.toLowerCase() || '',
     org = data.org?.toLowerCase() || '';
+  const {lang} = getPathDetails();
 
   aptrinsic('identify',
     {
       'id': id,
       'globalId': id,
-      'language': '', // TODO: Need five character lang code xx-XX
+      'language': getLangCode(lang),
       'preferredLanguages': (data.preferred_languages || []).join(', '),
       'entitlements': (data.entitlements || []).join(', '),
       'interests': (data.interests || []).join(', '),
