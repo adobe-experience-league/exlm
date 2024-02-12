@@ -1095,3 +1095,25 @@ header {
     }
   }
 }
+
+@include breakpoint('desktop') {
+  .header {
+    & .nav-item-toggle:not(.nav-item-toggle-root) {
+      padding: 24px 32px 12px;
+    }
+
+    & .nav-item-content .nav-item-content {
+      padding: 0 8px;
+    }
+
+    & .nav-item {
+      & .nav-item {
+        margin-top: 0;
+
+        a {
+          padding: 5px var(--nav-item-padding-x);
+        }
+      }
+    }
+  }
+}
