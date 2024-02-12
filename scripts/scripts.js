@@ -432,7 +432,8 @@ export async function loadPrevNextBtn() {
     const btnGotoLeft = createTag('div', { class: 'btn-goto is-left-desktop' });
 
     const anchorLeftAttr = {
-      href: `${prevPageMetaContent}`,
+      // eslint-disable-next-line no-use-before-define
+      href: `${rewriteDocsPath(prevPageMetaContent)}`,
       class: 'pagination-btn',
     };
     const anchorLeft = createTag('a', anchorLeftAttr);
@@ -446,7 +447,8 @@ export async function loadPrevNextBtn() {
     });
 
     const anchorRightAttr = {
-      href: `${nextPageMetaContent}`,
+      // eslint-disable-next-line no-use-before-define
+      href: `${rewriteDocsPath(nextPageMetaContent)}`,
       class: 'pagination-btn',
     };
     const anchorRight = createTag('a', anchorRightAttr);
@@ -557,9 +559,11 @@ export function rewriteDocsPath(docsPath) {
   if (!url.pathname.startsWith('/docs')) {
     return docsPath; // not a docs path, return as is
   }
-  const lang = url.searchParams.get('lang') || 'en'; // en is default
+  // eslint-disable-next-line no-use-before-define
+  const { lang } = getPathDetails();
+  const language = url.searchParams.get('lang') || lang;
   url.searchParams.delete('lang');
-  let pathname = `${lang.toLowerCase()}${url.pathname}`;
+  let pathname = `${language.toLowerCase()}${url.pathname}`;
   pathname = removeExtension(pathname); // new URLs are extensionless
   url.pathname = pathname;
   return url.toString().replace(PROD_BASE, ''); // always remove PROD_BASE if exists
