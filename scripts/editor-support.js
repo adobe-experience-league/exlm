@@ -31,7 +31,7 @@ function restoreState(newBlock, state) {
 async function handleEditorUpdate(event) {
   const { detail } = event;
 
-  const resource = detail?.request?.target?.resource;
+  const resource = detail?.requestData?.target?.resource;
   if (!resource) return;
 
   const element = document.querySelector(`[data-aue-resource="${resource}"]`);
@@ -42,7 +42,7 @@ async function handleEditorUpdate(event) {
   // keep info about currently selected tab
   const uiState = getState(block);
 
-  const updates = detail?.response?.updates;
+  const updates = detail?.responseData?.updates;
   if (updates.length > 0) {
     const { content } = updates[0];
     const newBlockDocument = new DOMParser().parseFromString(content, 'text/html');
