@@ -9,7 +9,7 @@ function identify(data) {
   const org = data.org?.toLowerCase() || '';
   const { lang } = getPathDetails();
 
-  // eslint-disable-next-line import/no-cycle
+  // eslint-disable-next-line
   aptrinsic(
     'identify',
     {
