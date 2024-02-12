@@ -57,7 +57,7 @@ export default async function decorate(block) {
   const cardLoading$ = Promise.all(
     linksContainer.map(async (linkContainer) => {
       let link = linkContainer.textContent.trim();
-      link = link.startsWith("/") ? window.hlx.codeBasePath + link : link;
+      link = link.startsWith('/') ? window.hlx.codeBasePath + link : link;
       // use the link containers parent as container for the card as it is instruented for authoring
       // eslint-disable-next-line no-param-reassign
       linkContainer = linkContainer.parentElement;
