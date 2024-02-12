@@ -37,7 +37,7 @@ const addToDocActions = async (element, block) => {
 
 function decorateBookmarkMobileBlock() {
   const docActionsMobile = document.createElement('div');
-  docActionsMobile.classList.add('doc-actions-mobile', 'doc-actions');
+  docActionsMobile.classList.add('doc-actions-mobile');
 
   const createdByEl = document.querySelector('.article-metadata-createdby-wrapper');
   const articleMetaDataEl = document.querySelector('.article-metadata-wrapper');
@@ -93,7 +93,10 @@ export function decorateBookmark(block) {
       renderBookmark(bookmarkAuthedToolTipLabelM, bookmarkAuthedToolTipIconM, bookmarkId);
     });
   } else {
-    addToDocActions(unAuthBookmark, block);
+    block.appendChild(unAuthBookmark);
+    if (document.querySelector('.doc-actions-mobile')) {
+      document.querySelector('.doc-actions-mobile').appendChild(unAuthBookmark.cloneNode(true));
+    }
   }
 }
 
