@@ -794,6 +794,15 @@ img {
 .section.highlight {
   background-color: var(--highlight-background-color);
 }
+.section.highlight.icon-block-container {
+  padding: 32px 36px 48px;
+}
+.section.highlight.icon-block-container > div > h3 {
+  font-size: 28px;
+  line-height: 42px;
+  text-align: center;
+  margin: 0 0 36px;
+}
 .section > div {
   /* limit block wrappers max width */
   max-width: var(--non-spectrum-max-width);
@@ -804,34 +813,21 @@ img {
     padding: 30px 56px;
   }
 }
+.section.curated-cards-container, .section.events-cards-container {
+  padding-bottom: 0;
+}
 
 /* the browse rail is hidden by default */
 main > div.browse-rail {
   display: none;
 }
 
-/* browse rail breakpoint same as main hamburger menu */
-@media (width >= 1024px) {
-  body[class^=browse-] > main {
-    display: grid;
-    grid-template: "browse-rail main"/256px 1fr;
-    /* on pages with rails the max width must be on main */
-    max-width: var(--non-spectrum-max-width);
-    margin: auto;
-    grid-template-rows: auto auto;
-  }
-  main > div.section {
-    grid-column: 2;
-  }
-  main > div.section.browse-rail {
-    display: initial;
-    grid-column: 1;
-    grid-row: 1/100;
-    width: 224px;
-    height: 100%;
-    padding: 0 0 0 32px;
-  }
+body[class^=browse-] main {
+  background-image: url("/icons/solutions/BrowseDecorationMobile.svg");
+  background-repeat: no-repeat;
+  background-position: top right;
 }
+
 /* three column layout */
 .docs {
   --exlm-font-size-h1: var(--spectrum-heading-size-l);
@@ -1107,8 +1103,18 @@ main > div.browse-rail {
 }
 
 @media (min-width: 600px) {
+  .section.highlight.icon-block-container {
+    padding: 80px 86px;
+  }
+  .section.highlight.icon-block-container > div > h3 {
+    text-align: left;
+  }
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
     width: 50%;
+  }
+  body[class^=browse-] main {
+    background-image: url("/icons/solutions/BrowseDecoration.svg");
+    background-size: contain;
   }
 }
 @media (min-width: 900px) {
@@ -1117,5 +1123,40 @@ main > div.browse-rail {
   }
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
     width: calc(33.33% - 16px);
+  }
+}
+/* browse rail breakpoint same as main hamburger menu (>= 1024px) */
+@media (min-width: 1024px) {
+  body[class^=browse-] > main {
+    display: grid;
+    grid-template: "browse-rail main"/256px 1fr;
+    /* on pages with rails the max width must be on main */
+    max-width: var(--non-spectrum-max-width);
+    margin: auto;
+    grid-template-rows: auto auto;
+  }
+  main > div.section {
+    grid-column: 2;
+  }
+  main > div.section.browse-rail {
+    display: initial;
+    grid-column: 1;
+    grid-row: 1/100;
+    width: 224px;
+    height: 100%;
+    padding: 0 0 0 32px;
+  }
+}
+@media (width >= 1440px) {
+  body[class^=browse-] main {
+    background-position: -56px 0;
+  }
+  body.browse-all main,
+  body.browse-product main {
+    max-width: 1440px;
+  }
+  body.browse-all main > div.section,
+  body.browse-product main > div.section {
+    padding: 30px 32px;
   }
 }

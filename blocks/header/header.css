@@ -56,6 +56,32 @@ header {
   background-color: var(--color-white);
 }
 
+.language-selector {
+  grid-area: language;
+  display: var(--language-selector-display);
+  align-items: center;
+  padding: 0;
+  position: relative;
+}
+
+.language-selector .icon {
+  height: 18px;
+  width: 18px;
+}
+
+.language-selector-button {
+  border-radius: 0;
+  margin: 0;
+  border: 0;
+  text-align: left;
+  background: none;
+  background-color: transparent !important;
+  font-weight: initial;
+  padding: 15px;
+  position: relative;
+  top: 2px;
+}
+
 .header {
   padding-right: var(--header-padding-x);
   height: 100%;
@@ -1007,4 +1033,19 @@ header {
 .header .search-picker-popover .search-picker-label .icon path,
 .header .search-suggestions-popover .search-picker-label .icon path {
   fill: var(--non-spectrum-azure-blue);
+}
+
+@media (min-width: 900px) {
+  .header .nav-item-toggle:not(.nav-item-toggle-root) {
+    padding: 24px 32px 12px;
+  }
+  .header .nav-item-content .nav-item-content {
+    padding: 0 8px;
+  }
+  .header .nav-item .nav-item {
+    margin-top: 0;
+  }
+  .header .nav-item .nav-item a {
+    padding: 5px var(--nav-item-padding-x);
+  }
 }
