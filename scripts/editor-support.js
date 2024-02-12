@@ -78,7 +78,11 @@ function handleSelectTabItem(tabItem) {
 
 // switch to the selected carousel slide
 function handleSelectCarouselItem(carouselItem) {
-  carouselItem.parentElement.scrollTo({ top: 0, left: carouselItem.offsetLeft - carouselItem.parentNode.offsetLeft, behavior: 'instant' });
+  carouselItem.parentElement.scrollTo({
+    top: 0,
+    left: carouselItem.offsetLeft - carouselItem.parentNode.offsetLeft,
+    behavior: 'instant',
+  });
 }
 
 /**
@@ -95,9 +99,9 @@ function handleEditorSelect(event) {
     handleSelectTabItem(event.target.closest('.tabpanel'));
   }
 
-  // if a teaser in a coursel was selected
-  if (event.target.closest('.panel-container')){
-    handleSelectCarouselItem(event.target)
+  // if a teaser in a carousel was selected
+  if (event.target.closest('.panel-container')) {
+    handleSelectCarouselItem(event.target);
   }
 }
 
@@ -106,53 +110,59 @@ document.querySelector('main')?.addEventListener('aue:ui-select', handleEditorSe
 // handle reording of tabs
 function handleMoveTabItem(detail) {
   // get tab button ids to get reordered
-  const buttonMovedId = document.querySelector(`[data-aue-resource="${detail?.from?.component?.resource}"]`)?.getAttribute('aria-labelledby');
-  const buttonAfterId = document.querySelector(`[data-aue-resource="${detail?.to?.before?.resource}"]`)?.getAttribute('aria-labelledby');
+  const buttonMovedId = document
+    .querySelector(`[data-aue-resource="${detail?.from?.component?.resource}"]`)
+    ?.getAttribute('aria-labelledby');
+  const buttonAfterId = document
+    .querySelector(`[data-aue-resource="${detail?.to?.before?.resource}"]`)
+    ?.getAttribute('aria-labelledby');
   if (buttonMovedId && buttonAfterId) {
     // get the tabs block
     const block = document.querySelector(`[data-aue-resource="${detail?.from?.container?.resource}"]`);
     // get the 2 buttons
     const moveButton = block.querySelector(`button[id="${buttonMovedId}"]`);
-    const afterButton = block.querySelector(`button[id="${buttonAfterId}"]`)
+    const afterButton = block.querySelector(`button[id="${buttonAfterId}"]`);
     // do the reordering
     afterButton.before(moveButton);
     // fix data-tab-ids so that content-patch state store/restore works correctly
-    block.querySelectorAll('button[role="tab"]').forEach((elem,i) => {elem.dataset.tabId = i})
+    block.querySelectorAll('button[role="tab"]').forEach((elem, i) => {
+      elem.dataset.tabId = i;
+    });
   }
 }
-
 
 // handle reordering of carousel slides
 function handlerMoveSlide(detail) {
   // get the slide ids
-  const slideMovedId = document.querySelector(`[data-aue-resource="${detail?.from?.component?.resource}"]`)?.dataset.panel;
+  const slideMovedId = document.querySelector(`[data-aue-resource="${detail?.from?.component?.resource}"]`)?.dataset
+    .panel;
   const slideAfterId = document.querySelector(`[data-aue-resource="${detail?.to?.before?.resource}"]`)?.dataset.panel;
   if (slideMovedId && slideAfterId) {
     // get the carousel buttons block
-    const block = document.querySelector(`[data-aue-resource="${detail?.from?.container?.resource}"] .button-container`);
+    const block = document.querySelector(
+      `[data-aue-resource="${detail?.from?.container?.resource}"] .button-container`,
+    );
     // get the 2 buttons
     const moveButton = block.querySelector(`button[data-panel="${slideMovedId}"]`);
-    const afterButton = block.querySelector(`button[data-panel="${slideAfterId}"]`)
+    const afterButton = block.querySelector(`button[data-panel="${slideAfterId}"]`);
     // do the reordering
     afterButton.before(moveButton);
   }
 }
 
 /**
- * Event listener for aue:content-move,  moving a component 
+ * Event listener for aue:content-move,  moving a component
  */
 function handleEditorMove(event) {
-
-    // if a tab panel was moved
-    if (event.target.closest('.tabpanel')) {
-      handleMoveTabItem(event.detail);
-    }
-
-    // if a carousel slide was moved
-  if (event.target.closest('.panel-container')){
-    handlerMoveSlide(event.detail);
+  // if a tab panel was moved
+  if (event.target.closest('.tabpanel')) {
+    handleMoveTabItem(event.detail);
   }
 
+  // if a carousel slide was moved
+  if (event.target.closest('.panel-container')) {
+    handlerMoveSlide(event.detail);
+  }
 }
 
 document.querySelector('main')?.addEventListener('aue:content-move', handleEditorMove);
