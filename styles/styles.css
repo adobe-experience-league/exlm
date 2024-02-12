@@ -794,6 +794,15 @@ img {
 .section.highlight {
   background-color: var(--highlight-background-color);
 }
+.section.highlight.icon-block-container {
+  padding: 32px 36px 48px;
+}
+.section.highlight.icon-block-container > div > h3 {
+  font-size: 28px;
+  line-height: 42px;
+  text-align: center;
+  margin: 0 0 36px;
+}
 .section > div {
   /* limit block wrappers max width */
   max-width: var(--non-spectrum-max-width);
@@ -803,6 +812,9 @@ img {
   .section {
     padding: 30px 56px;
   }
+}
+.section.curated-cards-container, .section.events-cards-container {
+  padding-bottom: 0;
 }
 
 /* the browse rail is hidden by default */
@@ -1091,6 +1103,12 @@ body[class^=browse-] main {
 }
 
 @media (min-width: 600px) {
+  .section.highlight.icon-block-container {
+    padding: 80px 86px;
+  }
+  .section.highlight.icon-block-container > div > h3 {
+    text-align: left;
+  }
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
     width: 50%;
   }
