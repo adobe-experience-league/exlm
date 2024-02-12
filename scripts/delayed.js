@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-cycle
 import { loadCSS, sampleRUM } from './lib-franklin.js';
-import { load as loadGainsight } from './gainsight/gainsight.js';
+// eslint-disable-next-line import/no-cycle
+import loadGainsight from './gainsight/gainsight.js';
 // add more delayed functionality here
 
 // Core Web Vitals RUM collection
