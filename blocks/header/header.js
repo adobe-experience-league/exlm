@@ -1,5 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { htmlToElement, loadIms } from '../../scripts/scripts.js';
+import { htmlToElement, loadIms, getPathDetails } from '../../scripts/scripts.js';
 
 const languageModule = import('../../scripts/language.js');
 const authOperationsModule = import('../../scripts/auth/auth-operations.js');
@@ -133,7 +133,8 @@ const fetchFragment = async (rePath, lang = 'en') => {
 // Mobile Only (Until 1024px)
 const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
-const headerFragment = fetchFragment('header/header');
+const { lang } = getPathDetails();
+const headerFragment = fetchFragment('header/header', lang);
 const decoratorState = {
   languages: new Deferred(),
 };

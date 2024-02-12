@@ -1,5 +1,5 @@
 import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js'; // eslint-disable-line import/no-cycle
+import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js'; // eslint-disable-line import/no-cycle
 import { QUALTRICS_LOADED_EVENT_NAME } from './qualtrics/constants.js';
 import { embedQualtricsSurveyIntercept } from './qualtrics/qualtrics-embed.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
@@ -10,7 +10,8 @@ const fetchFragment = async (rePath, lang = 'en') => {
   return response.text();
 };
 
-const feedbackFragment = fetchFragment('feedback-bar/feedback-bar');
+const { lang } = getPathDetails();
+const feedbackFragment = fetchFragment('feedback-bar/feedback-bar', lang);
 
 function decorateFirstQuestion(firstQuestion) {
   const newDiv = createTag('div', { class: 'like-btns' });
