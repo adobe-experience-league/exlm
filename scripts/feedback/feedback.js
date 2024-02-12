@@ -228,7 +228,10 @@ function decorateFeedback(el) {
   decorateExpandedCtrl(expandedCtrlEl);
   const closeBtnEl = decorateCloseBtnEl();
 
-  closeBtnEl.addEventListener('click', () => hideFeedbackBar());
+  closeBtnEl.addEventListener('click', () => {
+    assetInteractionModel(null, 'Feedback Dismissed');
+    hideFeedbackBar();
+  });
 
   leftEl.append(qualtricsElContainer, firstEl, secondEl);
   rightEl.append(openedCtrlEl, headerTxtMobileEl, expandedCtrlEl);
@@ -245,8 +248,13 @@ function handleFeedbackToggle(el) {
     chevron.addEventListener('click', () => {
       const isExpanded = el.getAttribute('aria-expanded') === 'true';
 
-      if (isExpanded) toggleFeedbackBar(el, false);
-      else toggleFeedbackBar(el, true);
+      if (isExpanded) {
+        toggleFeedbackBar(el, false);
+        assetInteractionModel(null, 'Feedback Collapsed');
+      } else {
+        toggleFeedbackBar(el, true);
+        assetInteractionModel(null, 'Feedback Expanded');
+      }
     });
   });
 }
@@ -279,8 +287,14 @@ function handleGithubBtns(el) {
   const reportBtn = el.querySelector('.git-buttons > button:nth-child(1)');
   const suggestBtn = el.querySelector('.git-buttons > button:nth-child(2)');
 
-  suggestBtn.addEventListener('click', goToEditPage);
-  reportBtn.addEventListener('click', goToReportIssuePage);
+  suggestBtn.addEventListener('click', () => {
+    assetInteractionModel(null, 'Suggest Edit');
+    goToEditPage();
+  });
+  reportBtn.addEventListener('click', () => {
+    assetInteractionModel(null, 'File Bug');
+    goToReportIssuePage();
+  });
 }
 
 function handleIntersection(entries) {
@@ -307,7 +321,10 @@ function handleFeedbackBarVisibilityOnScroll() {
 }
 
 function handleClosingFeedbackBar(el) {
-  el.querySelector('.cta .dismiss').addEventListener('click', () => hideFeedbackBar());
+  el.querySelector('.cta .dismiss').addEventListener('click', () => {
+    assetInteractionModel(null, 'Feedback Dismissed');
+    hideFeedbackBar();
+  });
 }
 
 function showFeedbackBar() {
@@ -371,6 +388,7 @@ function handleFeedbackSubmit(el) {
   });
 
   submitButton.addEventListener('click', () => {
+    assetInteractionModel(null, 'Feedback Submitted');
     const qualtricsSubmitButton = el.querySelector('.QSI__EmbeddedFeedbackContainer_TextButton');
     const qualtricsTextArea = el.querySelector('.QSI__EmbeddedFeedbackContainer_OpenText');
 
