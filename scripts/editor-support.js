@@ -67,12 +67,18 @@ async function handleEditorUpdate(event) {
 
 document.querySelector('main')?.addEventListener('aue:content-patch', handleEditorUpdate);
 
+// switch to the selected tab
 function handleSelectTabItem(tabItem) {
   // get the corresponding tabs button
   const buttonId = tabItem.getAttribute('aria-labelledby');
   const button = tabItem.closest('.tabs.block').querySelector(`button[id="${buttonId}"]`);
   // click it
   button.click();
+}
+
+// switch to the selected carousel slide
+function handleSelectCarouselItem(carouselItem) {
+  carouselItem.parentElement.scrollTo({ top: 0, left: carouselItem.offsetLeft - carouselItem.parentNode.offsetLeft, behavior: 'instant' });
 }
 
 /**
@@ -88,11 +94,17 @@ function handleEditorSelect(event) {
   if (event.target.closest('.tabpanel')) {
     handleSelectTabItem(event.target.closest('.tabpanel'));
   }
+
+  // if a teaser in a coursel was selected
+  if (event.target.closest('.panel-container')){
+    handleSelectCarouselItem(event.target)
+  }
 }
 
 document.querySelector('main')?.addEventListener('aue:ui-select', handleEditorSelect);
 
-async function handleMoveTabItem(detail) {
+// handle reording of tabs
+function handleMoveTabItem(detail) {
   // get tab button ids to get reordered
   const buttonMovedId = document.querySelector(`[data-aue-resource="${detail?.from?.component?.resource}"]`)?.getAttribute('aria-labelledby');
   const ButtonAfterId = document.querySelector(`[data-aue-resource="${detail?.to?.before?.resource}"]`)?.getAttribute('aria-labelledby');
@@ -109,14 +121,38 @@ async function handleMoveTabItem(detail) {
   }
 }
 
+
+// handle reordering of carousel slides
+function handlerMoveSlide(detail) {
+  // get the slide ids
+  const slideMovedId = document.querySelector(`[data-aue-resource="${detail?.from?.component?.resource}"]`)?.dataset.panel;
+  const slideAfterId = document.querySelector(`[data-aue-resource="${detail?.to?.before?.resource}"]`)?.dataset.panel;
+  if (slideMovedId && slideAfterId) {
+    // get the carousel buttons block
+    const block = document.querySelector(`[data-aue-resource="${detail?.from?.container?.resource}"] .button-container`);
+    // get the 2 buttons
+    const moveButton = block.querySelector(`button[data-panel="${slideMovedId}"]`);
+    const afterButton = block.querySelector(`button[data-panel="${slideAfterId}"]`)
+    // do the reordering
+    afterButton.before(moveButton);
+  }
+}
+
 /**
  * Event listener for aue:content-move,  moving a component 
  */
 function handleEditorMove(event) {
-    // if a tab panel was selected
+
+    // if a tab panel was moved
     if (event.target.closest('.tabpanel')) {
       handleMoveTabItem(event.detail);
     }
+
+    // if a carousel slide was moved
+  if (event.target.closest('.panel-container')){
+    handlerMoveSlide(event.detail);
+  }
+
 }
 
 document.querySelector('main')?.addEventListener('aue:content-move', handleEditorMove);
