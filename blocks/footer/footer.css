@@ -133,6 +133,9 @@
 .footer-item-active ul {
   display: block;
 }
+.footer .language-selector-button {
+  padding: 0;
+}
 .footer-lang-social {
   display: flex;
   flex-direction: column;
@@ -377,7 +380,4 @@
 }
 .footer-last-row .footer-adchoice-wrapper:hover span.icon path {
   fill: var(--non-spectrum-navy-blue);
-}
-.footer .language-selector-button {
-  padding: 0px;
 }
