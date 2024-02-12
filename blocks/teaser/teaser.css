@@ -136,7 +136,6 @@
 
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
-
   .section.teaser-container {
     padding: 0 56px;
   }
@@ -170,7 +169,7 @@
 
   /* limit width of text part and set order */
   .teaser.block > .foreground > .text {
-    width:65%;
+    width:40%;
     order: 0;
     padding: var(--spectrum-spacing-500) 0;
   }
@@ -244,7 +243,7 @@
   .teaser.block > .foreground > .spacer {
     display:block;
     order: 1;
-    width:35%;
+    flex-grow:2;
   }
 
   /* change the order if text should be on the right */
@@ -269,15 +268,37 @@
     background-color: unset;
   }
 
-  /* the image */
+  /* the image, shifted left or right so background subject 
+     does not overlap with text */
   .teaser.block > .background img {
     display:block;
     height:100%;
     width: 100%;
+    object-position: 60%;
+  }
+
+  .teaser.block.right > .background img {
+    display:block;
+    height:100%;
+    width: 100%;
+    object-position: 40%;
+  }
+
+  /* teaser on browse pages has different width for text */
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text {
+    width:50%;
+  }
+
+  /* teaser on browse has smaller height no background shift required */
+  body[class ^= 'browse-'] .teaser.block > .background img {
     object-position: right;
   }
 
-    /* it gets a border */
+  body[class ^= 'browse-'] .teaser.block.right > .background img {
+    object-position: left;
+  }
+
+  /* it gets a border */
   body[class ^= 'browse-'] .section div.teaser-wrapper .background img {
     border-radius: 4px;
   }
@@ -306,15 +327,26 @@
     line-height: 16px;
     padding: 4px 14px 6px;
   }
-
-  body[class ^= 'browse-'] .teaser.block > .foreground > .text {
-    width:55%;
-  }
 }
-  
-/* when shown on a page with a rail */
+
 @media (min-width: 1024px) {
-  /* no longer goes from end to end */
+  /* the background image, start align right */
+  .teaser.block > .background img {
+    object-position: right;
+  }
+
+  /* the background image, start align left */
+  .teaser.block.right > .background img {
+    object-position: left;
+  }
+  
+  /* teaser on browse pages has different width for text */
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text {
+    width:65%;
+  }
+
+  /* when shown on a page with a rail 
+   no longer goes from end to end */
   body[class ^= 'browse-'] .section div.teaser-wrapper {
     margin-left: unset;
     margin-right: unset;
@@ -323,13 +355,10 @@
   body[class ^= 'browse-'] .section div.teaser-wrapper .foreground {
     padding: 0 var(--space-token-l);
   }
-
-  body[class ^= 'browse-'] .teaser.block > .foreground > .text {
-    width:65%;
-  }
 }
 
 @media (min-width: 1200px) {
+  /* when shown on a page with a rail */
   /* the eybrow title */
   body:not([class ^= 'browse-']) .teaser.block > .foreground > .text > .eyebrow {
     font-size: var(--spectrum-font-size-100);

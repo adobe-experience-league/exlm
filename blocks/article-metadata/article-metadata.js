@@ -1,4 +1,13 @@
-export default function decorate(block) {
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+
+export default async function decorate(block) {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
   const lastUpdateElement = block.querySelector('.article-metadata-wrapper > div > div > div');
   const lastUpdateText = lastUpdateElement.textContent.trim();
   const datePattern = /Last update: (.+)/;
@@ -9,5 +18,5 @@ export default function decorate(block) {
   const formatOptions = { month: 'long', day: 'numeric', year: 'numeric' };
   // FIXME: Revisit this implementation and add support for multiple locales
   const formattedDate = date.toLocaleDateString('en-US', formatOptions);
-  lastUpdateElement.innerHTML = `Last update: ${formattedDate}`;
+  lastUpdateElement.innerHTML = `${placeholders?.lastUpdate} ${formattedDate}`;
 }

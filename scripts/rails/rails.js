@@ -23,6 +23,10 @@ async function decorateRail(railSection, position) {
   await decorateIcons(railToggler);
   railToggler.addEventListener('click', () => {
     railSection.classList.toggle('closed');
+    const main = railSection.parentElement;
+    if (main) {
+      main.classList.toggle(`rail-${position}-closed`);
+    }
   });
 }
 
@@ -31,13 +35,19 @@ async function decorateRail(railSection, position) {
  * @param {Document} document The container element
  */
 export default async function decorateRails() {
+  const main = document.querySelector('main');
   const leftRail = document.querySelector('main .toc-container');
   const rightRail = document.querySelector('main .mini-toc-container');
 
   if (leftRail) {
     await decorateRail(leftRail, 'left');
+  } else {
+    main.classList.add('rail-left-closed');
   }
+
   if (rightRail) {
     await decorateRail(rightRail, 'right');
+  } else {
+    main.classList.add('rail-right-closed');
   }
 }
