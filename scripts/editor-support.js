@@ -40,7 +40,7 @@ async function handleEditorUpdate(event) {
   if (!block || !blockResource?.startsWith(connectionPrefix)) return;
 
   // keep info about currently selected tab
-  const uiState = getState(block); 
+  const uiState = getState(block);
 
   const updates = detail?.responseData?.updates;
   if (updates.length > 0) {
@@ -59,7 +59,7 @@ async function handleEditorUpdate(event) {
       // remove the old block and show the new one
       block.remove();
       newBlock.style.display = null;
-    
+  
       restoreState(newBlock, uiState);
     }
   }
@@ -107,13 +107,13 @@ document.querySelector('main')?.addEventListener('aue:ui-select', handleEditorSe
 function handleMoveTabItem(detail) {
   // get tab button ids to get reordered
   const buttonMovedId = document.querySelector(`[data-aue-resource="${detail?.from?.component?.resource}"]`)?.getAttribute('aria-labelledby');
-  const ButtonAfterId = document.querySelector(`[data-aue-resource="${detail?.to?.before?.resource}"]`)?.getAttribute('aria-labelledby');
-  if (buttonMovedId && ButtonAfterId) {
+  const buttonAfterId = document.querySelector(`[data-aue-resource="${detail?.to?.before?.resource}"]`)?.getAttribute('aria-labelledby');
+  if (buttonMovedId && buttonAfterId) {
     // get the tabs block
     const block = document.querySelector(`[data-aue-resource="${detail?.from?.container?.resource}"]`);
     // get the 2 buttons
     const moveButton = block.querySelector(`button[id="${buttonMovedId}"]`);
-    const afterButton = block.querySelector(`button[id="${ButtonAfterId}"]`)
+    const afterButton = block.querySelector(`button[id="${buttonAfterId}"]`)
     // do the reordering
     afterButton.before(moveButton);
     // fix data-tab-ids so that content-patch state store/restore works correctly
