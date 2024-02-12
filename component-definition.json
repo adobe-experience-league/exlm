@@ -437,7 +437,8 @@
                   "headingType": "h2",
                   "description": "Lorem ipsum dolor sit amet",
                   "linkText": "Browse more learning content >",
-                  "link": "/content/exlm/global/en"
+                  "link": "/content/exlm/global/en",
+                  "sortBy": "RELEVANCE"
                 }
               }
             }
@@ -469,7 +470,8 @@
                 "template": {
                   "name": "ADLS Cards",
                   "model": "adls-cards",
-                  "headingType": "h2"
+                  "headingType": "h2",
+                  "sortby": "recommended"
                 }
               }
             }
