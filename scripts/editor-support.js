@@ -59,7 +59,7 @@ async function handleEditorUpdate(event) {
       // remove the old block and show the new one
       block.remove();
       newBlock.style.display = null;
-  
+
       restoreState(newBlock, uiState);
     }
   }
