@@ -1,4 +1,14 @@
 .badge-wrapper {
+  &.same-p-tag {
+    display: inline-block;
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+
+  .same-p-tag {
+    margin-right: 5px;
+  }
+
   .badge {
     background-color: var(--spectrum-blue-900);
     border: 1px solid transparent;

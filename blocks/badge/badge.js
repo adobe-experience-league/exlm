@@ -26,6 +26,12 @@ export default function decorate(block) {
         }
       } else {
         wrapper.innerHTML = `<div class="${classes}" ${titleAttribute}>${firstDivContent}</div>`;
+        const pWrappedElements = wrapper.querySelectorAll('.same-p-tag');
+        pWrappedElements.forEach((element) => {
+          if (element.parentNode && element.parentNode.classList.contains('badge-wrapper')) {
+            element.parentNode.classList.add('same-p-tag');
+          }
+        });
       }
     }
   } catch (error) {
