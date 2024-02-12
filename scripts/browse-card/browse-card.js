@@ -276,10 +276,8 @@ const buildCardContent = (card, model) => {
 };
 
 const setupBookmarkAction = (wrapper) => {
-  let data;
   loadJWT().then(async () => {
-    profile().then(async (profileData) => {
-      data = profileData;
+    profile().then(async (data) => {
       const bookmarkAuthed = Array.from(wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark'));
       bookmarkAuthed.forEach((bookmark) => {
         const bookmarkAuthedToolTipLabel = bookmark.querySelector('.exl-tooltip-label');
