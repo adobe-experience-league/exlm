@@ -4,7 +4,7 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import { CONTENT_TYPES, ROLE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
+import { CONTENT_TYPES, ROLE_OPTIONS, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import SolutionDataService from '../../scripts/data-service/solutions-data-service.js';
 import { solutionsUrl } from '../../scripts/urls.js';
 
@@ -18,12 +18,12 @@ const DEFAULT_OPTIONS = Object.freeze({
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const [headingElement, descriptionElement, confContentType, linkTextElement] = [...block.children].map(
+  const [headingElement, descriptionElement, confContentType, linkTextElement, ...configs] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-
+  const [keyword, sortBy] = configs.map((cell) => cell.textContent.trim());
   const contentType = confContentType.textContent.trim().toLowerCase();
-
+  const sortCriteria = COVEO_SORT_OPTIONS[sortBy];
   const noOfResults = 16;
 
   headingElement.firstElementChild?.classList.add('h2');
@@ -54,6 +54,8 @@ export default async function decorate(block) {
     contentType: contentType && contentType.split(','),
     role: [],
     product: [],
+    q: keyword,
+    sortCriteria,
     noOfResults,
   };
 

@@ -4,6 +4,7 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -14,7 +15,8 @@ export default async function decorate(block) {
   const [headingElement, toolTipElement, linkTextElement, ...configs] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-  const [solutions, roles, sortBy, contentType] = configs.map((cell) => cell.textContent.trim());
+  const [solutions, roles, sortBy] = configs.map((cell) => cell.textContent.trim());
+  const contentType = CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY;
   const noOfResults = 4;
 
   headingElement.firstElementChild?.classList.add('h2');
@@ -35,7 +37,7 @@ export default async function decorate(block) {
   if (toolTipElement?.textContent?.trim()) {
     headerDiv
       .querySelector('h1,h2,h3,h4,h5,h6')
-      ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+      ?.insertAdjacentHTML('afterend', '<div class="tooltip-placeholder"></div>');
     const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
     const tooltipConfig = {
       content: toolTipElement.textContent.trim(),

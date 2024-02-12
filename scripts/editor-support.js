@@ -66,56 +66,47 @@ document.querySelector('main')?.addEventListener('aue:content-patch', handleEdit
 
 // group editable texts in single wrappers if applicable
 //
-// this should work reliably as the script executes while the main script waits for the lcp content.
-// so we can wait for the last section to be initialized before we merge grouped text components
-// here into a single wrapper.
-const aueDataAttrs = ['aueBehavior', 'aueProp', 'aueResource', 'aueType', 'aueFilter'];
+// this should work reliably as the script executes after the scripts.js and hence all sections
+// should be decorated already.
+(function mergeRichtexts() {
+  const aueDataAttrs = ['aueBehavior', 'aueProp', 'aueResource', 'aueType', 'aueFilter'];
 
-function removeInstrumentation(on) {
-  aueDataAttrs.forEach((attr) => delete on.dataset[attr]);
-}
+  function removeInstrumentation(on) {
+    aueDataAttrs.forEach((attr) => delete on.dataset[attr]);
+  }
 
-function moveInstrumentation(from, to) {
-  aueDataAttrs.forEach((attr) => {
-    to.dataset[attr] = from.dataset[attr];
-  });
-  removeInstrumentation(from);
-}
+  function moveInstrumentation(from, to) {
+    aueDataAttrs.forEach((attr) => {
+      to.dataset[attr] = from.dataset[attr];
+    });
+    removeInstrumentation(from);
+  }
 
-new MutationObserver((mutations, observe) => {
-  for (let i = 0; i < mutations.length; i += 1) {
-    const { target } = mutations[i];
-    const { sectionStatus } = target.dataset;
-    if (sectionStatus) {
-      // any of initialized, loading or loaded
-      const editables = [...document.querySelectorAll('[data-aue-type="richtext"]:not(div)')];
-      while (editables.length) {
-        const editable = editables.shift();
-        // group rich texts
-        // eslint-disable-next-line object-curly-newline
-        const { aueProp, aueResource } = editable.dataset;
-        const container = document.createElement('div');
-        moveInstrumentation(editable, container);
-        editable.replaceWith(container);
-        container.append(editable);
-        while (editables.length) {
-          const nextEditable = editables.shift();
-          // TODO: check if nextEditable is a consecutive sibling of the current editable.
-          // should never happane, as AEM renders the paragraphs of a single text component
-          // conescutively anyway. however there may be some inference with auto blocking
-          // eventually.
-          const { aueProp: nextAueProp, aueResource: nextAueResource } = nextEditable.dataset;
-          if (aueProp === nextAueProp && nextAueResource === aueResource) {
-            removeInstrumentation(nextEditable);
-            container.append(nextEditable);
-          } else {
-            editables.unshift(nextEditable);
-            break;
-          }
-        }
+  // any of initialized, loading or loaded
+  const editables = [...document.querySelectorAll('[data-aue-type="richtext"]:not(div)')];
+  while (editables.length) {
+    const editable = editables.shift();
+    // group rich texts
+    // eslint-disable-next-line object-curly-newline
+    const { aueProp, aueResource } = editable.dataset;
+    const container = document.createElement('div');
+    moveInstrumentation(editable, container);
+    editable.replaceWith(container);
+    container.append(editable);
+    while (editables.length) {
+      const nextEditable = editables.shift();
+      // TODO: check if nextEditable is a consecutive sibling of the current editable.
+      // should never happane, as AEM renders the paragraphs of a single text component
+      // conescutively anyway. however there may be some inference with auto blocking
+      // eventually.
+      const { aueProp: nextAueProp, aueResource: nextAueResource } = nextEditable.dataset;
+      if (aueProp === nextAueProp && nextAueResource === aueResource) {
+        removeInstrumentation(nextEditable);
+        container.append(nextEditable);
+      } else {
+        editables.unshift(nextEditable);
+        break;
       }
-      observe.disconnect();
-      return;
     }
   }
-}).observe(document.querySelector('main > div:last-child'), { attributeFilter: ['data-section-status'] });
+})();
