@@ -784,7 +784,8 @@ function decorateBrowseTopics(block) {
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
-        const topicName = topicsButtonTitle.split('/').pop();
+        const parts = topicsButtonTitle.split('/');
+        const topicName = parts[parts.length - 1];
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicName;
         topicsButtonDiv.innerHTML = topicName;
