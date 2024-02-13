@@ -1384,6 +1384,14 @@
       },
       {
         "component": "aem-tag",
+        "name": "solutions",
+        "label": "Solution(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/solution",
+        "description": "Optional - all are included if no selection is made."
+      },
+      {
+        "component": "aem-tag",
         "name": "cq:tags",
         "label": "Topics & Features",
         "valueType": "string",

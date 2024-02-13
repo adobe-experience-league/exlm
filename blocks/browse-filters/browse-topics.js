@@ -1,9 +1,9 @@
 /**
- * formattedTopicsTags returns the array of base64 encoded tags after extracting from the tags selected in dialog
+ * formattedTags returns the array of base64 encoded tags after extracting from the tags selected in dialog
  * @param {string} inputString - The topics tag. E.g. exl:topic/QXBwIEJ1aWxkZXI=
  * @returns the topic tag. E.g. QXBwIEJ1aWxkZXI=
  */
-export function formattedTopicsTags(inputString) {
+export function formattedTags(inputString) {
   const splitArray = inputString.split(',');
   // eslint-disable-next-line array-callback-return, consistent-return
   const base64EncodedTagsArray = splitArray.map((item) => {

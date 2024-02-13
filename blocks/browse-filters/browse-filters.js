@@ -13,7 +13,7 @@ import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headl
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
-import { formattedTopicsTags, handleTopicSelection } from './browse-topics.js';
+import { formattedTags, handleTopicSelection } from './browse-topics.js';
 
 const coveoFacetMap = {
   Role: 'headlessRoleFacet',
@@ -757,9 +757,20 @@ function renderSortContainer(block) {
 function decorateBrowseTopics(block) {
   const firstChild = block.querySelector('div:first-child');
   const secondChild = block.querySelector('div:nth-child(2)');
+  const thirdChild = block.querySelector('div:nth-child(3)');
   const headingElement = block.querySelector('div:nth-child(1) > div');
-  const topics = block.querySelector('div:nth-child(2) > div').textContent.trim();
-  const allTopicsTags = topics !== '' ? formattedTopicsTags(topics) : '';
+  const solutions = block.querySelector('div:nth-child(2) > div').textContent.trim();
+  const topics = block.querySelector('div:nth-child(3) > div').textContent.trim();
+  const allSolutionsTags = solutions !== '' ? formattedTags(solutions) : '';
+  const allTopicsTags = topics !== '' ? formattedTags(topics) : '';
+  let solution;
+  if (allSolutionsTags.length > 0) {
+    allSolutionsTags
+      .filter((value) => value !== undefined)
+      .forEach((solutionsTag) => {
+        solution = atob(solutionsTag);
+      });
+  }
   const div = document.createElement('div');
   div.classList.add('browse-topics');
 
@@ -770,7 +781,7 @@ function decorateBrowseTopics(block) {
       </div>
     </div>
   `);
-
+  const solutionsDiv = document.createElement('div');
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-topics-block-content');
   const browseFiltersSection = document.querySelector('.browse-filters-form');
@@ -812,12 +823,16 @@ function decorateBrowseTopics(block) {
     }
 
     firstChild.parentNode.replaceChild(headerDiv, firstChild);
-    secondChild.parentNode.replaceChild(contentDiv, secondChild);
+    secondChild.parentNode.replaceChild(solutionsDiv, secondChild);
+    thirdChild.parentNode.replaceChild(contentDiv, thirdChild);
     div.append(headerDiv);
     div.append(contentDiv);
     /* Append browse topics right above the filters section */
     const filtersFormEl = document.querySelector('.browse-filters-form');
     filtersFormEl.insertBefore(div, filtersFormEl.children[4]);
+  } else {
+    firstChild.innerHTML = '';
+    secondChild.innerHTML = '';
   }
 }
 
