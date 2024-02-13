@@ -1,11 +1,88 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
-import { signOut } from '../../scripts/auth/auth-operations.js';
-import Search from '../../scripts/search/search.js';
-import { registerResizeHandler } from './header-utils.js';
-import { fetchCommunityProfileData } from '../../scripts/data-service/khoros-data-service.js';
 
 const languageModule = import('../../scripts/language.js');
+const authOperationsModule = import('../../scripts/auth/auth-operations.js');
+const searchModule = import('../../scripts/search/search.js');
+
+class Deferred {
+  constructor() {
+    this.promise = new Promise((resolve, reject) => {
+      this.reject = reject;
+      this.resolve = resolve;
+    });
+  }
+}
+
+/**
+ * debounce fn execution
+ * @param {number} ms
+ * @param {Function} fn
+ * @returns {Function} debounced function
+ */
+export const debounce = (ms, fn) => {
+  let timer;
+  // eslint-disable-next-line func-names
+  return function (...args) {
+    clearTimeout(timer);
+    args.unshift(this);
+    timer = setTimeout(fn(args), ms);
+  };
+};
+
+/**
+ * Register page resize handler
+ * @param {ResizeObserverCallback} handler
+ * @returns {void} nothing
+ */
+function registerResizeHandler(callback) {
+  window.customResizeHandlers = window.customResizeHandlers || [];
+  // register resize observer only once.
+  if (!window.pageResizeObserver) {
+    const pageResizeObserver = new ResizeObserver(
+      debounce(100, (entries, observer) => {
+        window.customResizeHandlers.forEach((handler) => {
+          try {
+            handler(entries, observer);
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error(e);
+          }
+        });
+      }),
+    );
+    // observe immediately
+    pageResizeObserver.observe(document.querySelector('header'), {
+      box: 'border-box',
+    });
+    window.pageResizeObserver = pageResizeObserver;
+  }
+  // push handler
+  window.customResizeHandlers.push(callback);
+}
+
+const communityProfileUrl =
+  'https://51837-exlmconverter-dev.adobeioruntime.net/api/v1/web/main/khoros/plugins/custom/adobe/adobedx/profile-menu-list';
+
+// eslint-disable-next-line
+async function fetchCommunityProfileData() {
+  try {
+    const response = await fetch(communityProfileUrl, {
+      method: 'GET',
+      headers: {
+        'x-ims-token': await window.adobeIMS?.getAccessToken().token,
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    }
+  } catch (err) {
+    // eslint-disable-next-line
+    console.log('Error fetching data!!', err);
+  }
+}
 
 /**
  * @param {HTMLElement} block
@@ -57,8 +134,9 @@ const fetchFragment = async (rePath, lang = 'en') => {
 const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
 const headerFragment = fetchFragment('header/header');
-languageModule.then(({ loadLanguageFragment }) => loadLanguageFragment());
-const decoratorState = {};
+const decoratorState = {
+  languages: new Deferred(),
+};
 
 /**
  * Decorates the brand block
@@ -110,25 +188,7 @@ const hamburgerButton = (navWrapper) => {
  * @param {HTMLUListElement} ul
  */
 const buildNavItems = async (ul, level = 0) => {
-  if (level === 0) {
-    // add search link (visible on mobile only)
-    ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
-    const { getLanguagePath } = await languageModule;
-    // add language select (visible on mobile only)
-    ul.appendChild(
-      htmlToElement(
-        `<li class="nav-item-mobile">
-          <p>${decoratorState.languageTitle}</p>
-          <ul>
-            ${decoratorState.languages
-              .map((l) => `<li><a href="${getLanguagePath(l.lang)}">${l.title}</a></li>`)
-              .join('')}
-          </ul>
-        </li>`,
-      ),
-    );
-  }
-  [...ul.children].forEach((navItem) => {
+  const decorateNavItem = async (navItem) => {
     const navItemClasses = ['nav-item'];
     if (level === 0) navItemClasses.push('nav-item-root');
     navItem.classList.add(...navItemClasses);
@@ -238,14 +298,39 @@ const buildNavItems = async (ul, level = 0) => {
         secondEl.remove();
       }
     }
-  });
+  };
+
+  if (level === 0) {
+    // add search link (visible on mobile only)
+    ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
+
+    const addMobileLangSelector = async () => {
+      const { getLanguagePath } = await languageModule;
+      const languages = await decoratorState.languages.promise;
+      // add language select (visible on mobile only)
+      const navItem = ul.appendChild(
+        htmlToElement(
+          `<li class="nav-item-mobile">
+            <p>${decoratorState.languageTitle}</p>
+            <ul>
+              ${languages.map((l) => `<li><a href="${getLanguagePath(l.lang)}">${l.title}</a></li>`).join('')}
+            </ul>
+          </li>`,
+        ),
+      );
+      decorateNavItem(navItem);
+    };
+    await addMobileLangSelector();
+  }
+
+  [...ul.children].forEach(decorateNavItem);
 };
 
 /**
  * Decorates the nav block
  * @param {HTMLElement} navBlock
  */
-const navDecorator = (navBlock) => {
+const navDecorator = async (navBlock) => {
   simplifySingleCellBlock(navBlock);
   const navWrapper = htmlToElement('<div class="nav-wrapper"></div>');
   const hamburger = hamburgerButton(navWrapper);
@@ -254,7 +339,7 @@ const navDecorator = (navBlock) => {
 
   // build navItems
   const ul = navWrapper.querySelector(':scope > ul');
-  buildNavItems(ul);
+  await buildNavItems(ul);
 
   navBlock.firstChild.id = hamburger.getAttribute('aria-controls');
   navBlock.prepend(hamburger);
@@ -338,10 +423,15 @@ const searchDecorator = async (searchBlock) => {
   searchBlock.append(searchWrapper);
   await decorateIcons(searchBlock);
 
-  const searchItem = new Search({ searchBlock });
-  searchItem.configureAutoComplete({
-    searchOptions: options,
-  });
+  const prepareSearch = async () => {
+    const Search = (await searchModule).default;
+    const searchItem = new Search({ searchBlock });
+    searchItem.configureAutoComplete({
+      searchOptions: options,
+    });
+  };
+  prepareSearch();
+
   return searchBlock;
 };
 
@@ -361,11 +451,12 @@ const signUpDecorator = (signUpBlock) => {
 const languageDecorator = async (languageBlock) => {
   const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
   decoratorState.languageTitle = title;
+  decoratorState.languages = new Deferred();
 
   const prependLanguagePopover = async (parent) => {
     await languageModule.then(({ buildLanguagePopover }) => {
       buildLanguagePopover().then(({ popover, languages }) => {
-        decoratorState.languages = languages;
+        decoratorState.languages.resolve(languages);
         parent.append(popover);
       });
     });
@@ -378,7 +469,7 @@ const languageDecorator = async (languageBlock) => {
     `;
   languageBlock.innerHTML = languageHtml;
   decorateIcons(languageBlock);
-  await prependLanguagePopover(languageBlock);
+  prependLanguagePopover(languageBlock);
   return languageBlock;
 };
 
@@ -497,16 +588,6 @@ const productGridDecorator = async (productGridBlock) => {
   return productGridBlock;
 };
 
-const getCommunityProfile = () =>
-  new Promise((resolve, reject) => {
-    const data = fetchCommunityProfileData();
-    if (data) {
-      resolve(data);
-    } else {
-      reject(new Error('Error fetching data!!'));
-    }
-  });
-
 /**
  * Decorates the profile-menu block
  * @param {HTMLElement} profileMenu
@@ -528,7 +609,7 @@ const profileMenuDecorator = async (profileMenuBlock) => {
       profileMenuWrapper.lastElementChild.setAttribute('data-id', 'sign-out');
       profileMenuWrapper.insertBefore(communityHeading, profileMenuWrapper.lastElementChild);
     }
-    getCommunityProfile()
+    fetchCommunityProfileData()
       .then((res) => {
         if (res) {
           res.data.menu.forEach((item) => {
@@ -548,6 +629,7 @@ const profileMenuDecorator = async (profileMenuBlock) => {
 
     if (profileMenuWrapper.querySelector('[data-id="sign-out"]')) {
       profileMenuWrapper.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
+        const { signOut } = await authOperationsModule;
         signOut();
       });
     }
@@ -613,30 +695,20 @@ export default async function decorate(headerBlock) {
   nav.role = 'navigation';
   nav.ariaLabel = 'Main navigation';
 
-  // order matters.
-  const decorators = [
-    { className: 'brand', decorator: brandDecorator },
-    { className: 'search', decorator: searchDecorator },
-    { className: 'sign-up', decorator: signUpDecorator },
-    { className: 'language-selector', decorator: languageDecorator },
-    { className: 'product-grid', decorator: productGridDecorator },
-    { className: 'sign-in', decorator: signInDecorator },
-    { className: 'profile-menu', decorator: profileMenuDecorator },
-    { className: 'adobe-logo', decorator: adobeLogoDecorator },
-    { className: 'nav', decorator: navDecorator },
-  ];
-
-  for (let i = 0; i < decorators.length; i += 1) {
-    const { className, decorator } = decorators[i];
+  const decorateHeaderBlock = async (className, decorator) => {
     const block = nav.querySelector(`:scope > .${className}`);
-    if (block) {
-      // eslint-disable-next-line no-await-in-loop
-      await decorator(block);
-    } else {
-      // eslint-disable-next-line no-console
-      console.warn(`No header block found for class: ${className}`);
-    }
-  }
+    await decorator(block);
+  };
+
+  decorateHeaderBlock('brand', brandDecorator);
+  decorateHeaderBlock('search', searchDecorator);
+  decorateHeaderBlock('sign-up', signUpDecorator);
+  decorateHeaderBlock('language-selector', languageDecorator);
+  decorateHeaderBlock('product-grid', productGridDecorator);
+  decorateHeaderBlock('sign-in', signInDecorator);
+  decorateHeaderBlock('profile-menu', profileMenuDecorator);
+  decorateHeaderBlock('adobe-logo', adobeLogoDecorator);
+  await decorateHeaderBlock('nav', navDecorator);
 
   decorateLinks(headerBlock);
   decorateNewTabLinks(headerBlock);

@@ -24,6 +24,7 @@
 .browse-cards-block-title {
     position: relative;
     margin: 0;
+    max-width: 300px;
 }
 .browse-cards-block-title .tooltip {
     display: inline;
@@ -50,7 +51,6 @@
     opacity: 0;
     padding: 4px 9px 5px 10px;
     position: absolute;
-    text-align: center;
     top: 0;
     transition: opacity 0.3s;
     visibility: hidden;
@@ -74,9 +74,9 @@
     top: 50%;
 }
 .browse-cards-block-title :where(h2,.h2) {
+    display: inline;
     margin: 0;
     color: var(--text-color);
-    max-width: 300px;
     word-break: break-word;
 }
 .browse-cards-block-title .tooltip-placeholder {
@@ -104,7 +104,7 @@
   left: 50%;
 }
 @media only screen and (min-width: 600px) {
-    .browse-cards-block-title :where(h2,.h2) {
+    .browse-cards-block-title {
         max-width: unset;
     }
     .browse-cards-block-content {

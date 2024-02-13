@@ -133,6 +133,9 @@
 .footer-item-active ul {
   display: block;
 }
+.footer .language-selector-button {
+  padding: 0;
+}
 .footer-lang-social {
   display: flex;
   flex-direction: column;

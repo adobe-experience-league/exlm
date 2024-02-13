@@ -1496,6 +1496,35 @@
         "label": "Link URL",
         "valueType": "string",
         "description": "Sets the text url."
+      },
+      {
+        "component": "text-input",
+        "name": "keyword",
+        "value": "",
+        "label": "Keyword",
+        "valueType": "string",
+        "description": "Keyword for filtering the featured card data"
+      },
+      {
+        "component": "radio-group",
+        "name": "sortBy",
+        "value": "RELEVANCE",
+        "label": "Sort by",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Relevance",
+            "value": "RELEVANCE"
+          },
+          {
+            "name": "Most recent",
+            "value": "MOST_RECENT"
+          },
+          {
+            "name": "Most popular",
+            "value": "MOST_POPULAR"
+          }
+        ]
       }
     ]
   },

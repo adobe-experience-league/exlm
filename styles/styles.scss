@@ -691,6 +691,17 @@ img {
   /* section metadata */
   &.highlight {
     background-color: var(--highlight-background-color);
+
+    &.icon-block-container {
+      padding: 32px 36px 48px;
+
+      & > div > h3 {
+        font-size: 28px;
+        line-height: 42px;
+        text-align: center;
+        margin: 0 0 36px;
+      }
+    }
   }
 
   > div {
@@ -702,6 +713,11 @@ img {
   @include breakpoint(tablet) {
     padding: 30px 56px;
   }
+
+  &.curated-cards-container,
+  &.events-cards-container {
+    padding-bottom: 0;
+  }
 }
 
 /* the browse rail is hidden by default */
@@ -709,32 +725,10 @@ main > div.browse-rail {
   display: none;
 }
 
-/* browse rail breakpoint same as main hamburger menu */
-@media (width >=1024px) {
-  body[class^='browse-'] > main {
-    display: grid;
-    grid-template:
-      'browse-rail main'
-      / 256px 1fr;
-
-    /* on pages with rails the max width must be on main */
-    max-width: var(--non-spectrum-max-width);
-    margin: auto;
-    grid-template-rows: auto auto;
-  }
-
-  main > div.section {
-    grid-column: 2;
-  }
-
-  main > div.section.browse-rail {
-    display: initial;
-    grid-column: 1;
-    grid-row: 1 / 100;
-    width: 224px;
-    height: 100%;
-    padding: 0 0 0 32px;
-  }
+body[class^='browse-'] main {
+  background-image: url('/icons/solutions/BrowseDecorationMobile.svg');
+  background-repeat: no-repeat;
+  background-position: top right;
 }
 
 /* three column layout */
@@ -1031,6 +1025,18 @@ main > div.browse-rail {
 }
 
 @include breakpoint('tablet') {
+  .section {
+    &.highlight {
+      &.icon-block-container {
+        padding: 80px 86px;
+
+        & > div > h3 {
+          text-align: left;
+        }
+      }
+    }
+  }
+
   .docs {
     &.docs-solution-landing.docs-tutorial {
       .default-content-wrapper {
@@ -1039,6 +1045,11 @@ main > div.browse-rail {
         }
       }
     }
+  }
+
+  body[class^='browse-'] main {
+    background-image: url('/icons/solutions/BrowseDecoration.svg');
+    background-size: contain;
   }
 }
 
@@ -1054,6 +1065,55 @@ main > div.browse-rail {
           width: calc(33.33% - 16px);
         }
       }
+    }
+  }
+}
+
+/* browse rail breakpoint same as main hamburger menu (>= 1024px) */
+@include breakpoint('custom') {
+  body[class^='browse-'] {
+    & > main {
+      display: grid;
+      grid-template:
+        'browse-rail main'
+        / 256px 1fr;
+
+      /* on pages with rails the max width must be on main */
+      max-width: var(--non-spectrum-max-width);
+      margin: auto;
+      grid-template-rows: auto auto;
+    }
+  }
+
+  main > div.section {
+    grid-column: 2;
+  }
+
+  main > div.section.browse-rail {
+    display: initial;
+    grid-column: 1;
+    grid-row: 1 / 100;
+    width: 224px;
+    height: 100%;
+    padding: 0 0 0 32px;
+  }
+}
+
+@media (width >= 1440px) {
+  body[class^='browse-'] {
+    & main {
+      background-position: -56px 0;
+    }
+  }
+
+  body.browse-all,
+  body.browse-product {
+    & main {
+      max-width: 1440px;
+    }
+
+    & main > div.section {
+      padding: 30px 32px;
     }
   }
 }

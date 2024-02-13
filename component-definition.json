@@ -437,7 +437,8 @@
                   "headingType": "h2",
                   "description": "Lorem ipsum dolor sit amet",
                   "linkText": "Browse more learning content >",
-                  "link": "/content/exlm/global/en"
+                  "link": "/content/exlm/global/en",
+                  "sortBy": "RELEVANCE"
                 }
               }
             }
