@@ -771,6 +771,8 @@ function decorateBrowseTopics(block) {
         solution = atob(solutionsTag);
       });
   }
+  // eslint-disable-next-line no-console
+  console.log(solution);
   const div = document.createElement('div');
   div.classList.add('browse-topics');
 
