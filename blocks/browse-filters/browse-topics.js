@@ -4,16 +4,30 @@
  * @returns the topic tag. E.g. QXBwIEJ1aWxkZXI=
  */
 export function formattedTags(inputString) {
-  const splitArray = inputString.split(',');
-  // eslint-disable-next-line array-callback-return, consistent-return
-  const base64EncodedTagsArray = splitArray.map((item) => {
-    const lastIndex = item.lastIndexOf('/');
-    if (lastIndex !== -1) {
-      const actualTagBase64Encoded = item.substring(lastIndex + 1);
-      return actualTagBase64Encoded;
+  const resultArray = [];
+  const items = inputString.split(',');
+
+  items.forEach((item) => {
+    let base64EncodedTagsArray;
+    let product;
+    let version;
+
+    const [type, productBase64, versionBase64] = item.split('/');
+    if (productBase64 !== undefined) {
+      product = atob(productBase64);
+    }
+    if (versionBase64 !== undefined) {
+      version = atob(versionBase64);
+    }
+
+    // Check if product and version are not undefined before appending to base64EncodedTagsArray
+    if (product !== undefined || version !== undefined) {
+      base64EncodedTagsArray = `${type}${product ? `/${product}` : ''}${version ? `/${version}` : ''}`;
+      resultArray.push(base64EncodedTagsArray);
     }
   });
-  return base64EncodedTagsArray;
+  
+  return resultArray;
 }
 
 export function handleTopicSelection(block) {

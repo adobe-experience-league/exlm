@@ -763,16 +763,7 @@ function decorateBrowseTopics(block) {
   const topics = block.querySelector('div:nth-child(3) > div').textContent.trim();
   const allSolutionsTags = solutions !== '' ? formattedTags(solutions) : '';
   const allTopicsTags = topics !== '' ? formattedTags(topics) : '';
-  let solution;
-  if (allSolutionsTags.length > 0) {
-    allSolutionsTags
-      .filter((value) => value !== undefined)
-      .forEach((solutionsTag) => {
-        solution = atob(solutionsTag);
-      });
-  }
-  // eslint-disable-next-line no-console
-  console.log(solution);
+
   const div = document.createElement('div');
   div.classList.add('browse-topics');
 
@@ -792,7 +783,7 @@ function decorateBrowseTopics(block) {
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
-        const topicName = atob(topicsButtonTitle);
+        const topicName = topicsButtonTitle.split('/').pop();
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicName;
         topicsButtonDiv.innerHTML = topicName;
