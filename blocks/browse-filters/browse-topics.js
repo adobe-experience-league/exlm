@@ -26,7 +26,7 @@ export function formattedTags(inputString) {
       resultArray.push(base64EncodedTagsArray);
     }
   });
-  
+
   return resultArray;
 }
 
