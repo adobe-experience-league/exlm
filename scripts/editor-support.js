@@ -69,6 +69,8 @@ async function handleEditorUpdate(event) {
     }
     // if its default content
   } else if (element) {
+    // temporary workaroun 
+    if (element.dataset.aueType === "richtext") return;
     // parent container is section
     const updatedSection = new DOMParser().parseFromString(content, 'text/html');
     // get updated element
