@@ -29,22 +29,27 @@ function restoreState(newBlock, state) {
  * Event listener for aue:content-patch, edit of a component
  */
 async function handleEditorUpdate(event) {
+  // get event infos
   const { detail } = event;
-
   const resource = detail?.requestData?.target?.resource;
   if (!resource) return;
-
-  const element = document.querySelector(`[data-aue-resource="${resource}"]`);
-  const block = element?.parentElement?.closest('.block') || element?.closest('.block');
-  const blockResource = block?.getAttribute('data-aue-resource');
-  if (!block || !blockResource?.startsWith(connectionPrefix)) return;
-
-  // keep info about currently selected tab
-  const uiState = getState(block);
-
   const updates = detail?.responseData?.updates;
-  if (updates.length > 0) {
-    const { content } = updates[0];
+  if (updates.length === 0) return;
+  const { content } = updates[0];
+  // get element to update
+  const element = document.querySelector(`[data-aue-resource="${resource}"]`);
+  // try getting sourrounding block
+  const block = element?.parentElement?.closest('.block') || element?.closest('.block');
+
+  // if its an update to an block
+  if (block) {
+    // get the block resource
+    const blockResource = block?.getAttribute('data-aue-resource');
+    if (!blockResource?.startsWith(connectionPrefix)) return;
+
+    // keep any client side state for blocks (select tabs, carousel panels etc.)
+    const uiState = getState(block);
+    // parent container is a block
     const newBlockDocument = new DOMParser().parseFromString(content, 'text/html');
     const newBlock = newBlockDocument?.querySelector(`[data-aue-resource="${blockResource}"]`);
     if (newBlock) {
@@ -61,6 +66,23 @@ async function handleEditorUpdate(event) {
       newBlock.style.display = null;
 
       restoreState(newBlock, uiState);
+    }
+  }
+  // if its default content
+  if (element && !block) {
+    // parent container is section
+    const updatedSection = new DOMParser().parseFromString(content, 'text/html');
+    // get updated element
+    const newElement = updatedSection?.querySelector(`[data-aue-resource="${resource}"]`);
+    if (newElement) {
+      newElement.style.display = 'none';
+      element.insertAdjacentElement('afterend', newElement);
+      // decorate buttons and icons
+      decorateButtons(newElement);
+      decorateIcons(newElement);
+      // remove the old element and show the new one
+      element.remove();
+      newElement.style.display = null;
     }
   }
 }
