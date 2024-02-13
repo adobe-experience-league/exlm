@@ -67,9 +67,8 @@ async function handleEditorUpdate(event) {
 
       restoreState(newBlock, uiState);
     }
-  }
-  // if its default content
-  if (element && !block) {
+    // if its default content
+  } else if (element) {
     // parent container is section
     const updatedSection = new DOMParser().parseFromString(content, 'text/html');
     // get updated element
