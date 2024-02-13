@@ -280,16 +280,19 @@ const setupBookmarkAction = (wrapper) => {
     profile().then(async (data) => {
       const bookmarkAuthed = Array.from(wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark'));
       bookmarkAuthed.forEach((bookmark) => {
-        const bookmarkAuthedToolTipLabel = bookmark.querySelector('.exl-tooltip-label');
-        const bookmarkAuthedToolTipIcon = bookmark.querySelector('.bookmark-icon');
-        const bookmarkId = bookmark.getAttribute('data-id');
-        renderBookmark(bookmarkAuthedToolTipLabel, bookmarkAuthedToolTipIcon, bookmarkId);
-        if (data?.bookmarks.includes(bookmarkId)) {
-          bookmarkAuthedToolTipIcon.classList.add('authed');
-          bookmarkAuthedToolTipLabel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
+        if (data?.bookmarks.includes(bookmark.getAttribute('data-id'))) {
+          bookmark.querySelector('.bookmark-icon').classList.add('authed');
+          bookmark.querySelector('.exl-tooltip-label').innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
         }
       });
     });
+  });
+
+  Array.from(wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark')).forEach((bookmark) => {
+    const bookmarkAuthedToolTipLabel = bookmark.querySelector('.exl-tooltip-label');
+    const bookmarkAuthedToolTipIcon = bookmark.querySelector('.bookmark-icon');
+    const bookmarkId = bookmark.getAttribute('data-id');
+    renderBookmark(bookmarkAuthedToolTipLabel, bookmarkAuthedToolTipIcon, bookmarkId);
   });
 };
 
