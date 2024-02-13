@@ -763,7 +763,8 @@ function decorateBrowseTopics(block) {
   const topics = block.querySelector('div:nth-child(3) > div').textContent.trim();
   const allSolutionsTags = solutions !== '' ? formattedTags(solutions) : '';
   const allTopicsTags = topics !== '' ? formattedTags(topics) : '';
-
+  // eslint-disable-next-line no-console
+  console.log(allSolutionsTags);
   const div = document.createElement('div');
   div.classList.add('browse-topics');
 
