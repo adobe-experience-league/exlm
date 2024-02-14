@@ -1,5 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { htmlToElement, loadIms } from '../../scripts/scripts.js';
+import { khorosProxyProfileAPI } from '../../scripts/urls.js';
 
 const languageModule = import('../../scripts/language.js');
 const authOperationsModule = import('../../scripts/auth/auth-operations.js');
@@ -61,13 +62,10 @@ function registerResizeHandler(callback) {
   window.customResizeHandlers.push(callback);
 }
 
-const communityProfileUrl =
-  'https://51837-exlmconverter-dev.adobeioruntime.net/api/v1/web/main/khoros/plugins/custom/adobe/adobedx/profile-menu-list';
-
 // eslint-disable-next-line
 async function fetchCommunityProfileData() {
   try {
-    const response = await fetch(communityProfileUrl, {
+    const response = await fetch(khorosProxyProfileAPI, {
       method: 'GET',
       headers: {
         'x-ims-token': await window.adobeIMS?.getAccessToken().token,
