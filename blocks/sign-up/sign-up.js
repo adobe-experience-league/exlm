@@ -85,6 +85,7 @@ export default async function decorate(block) {
     });
   }
   
+  // check if user is signed in
   try {
     await loadIms();
   } catch {
@@ -96,20 +97,17 @@ export default async function decorate(block) {
 
   // if not signed in or in UE edit mode
   if(!isUserSignedIn || document.documentElement.classList.contains('adobe-ue-edit')) {
+    // show the block
     block.style.display = 'block';
   }
 
-  // temporary workaround until preview and edit events become available
-  // show/hide sign-up block depending on editor or preview mode
+  // show/hide sign-up block when switching betweeen UE Edit mode and preview
   (new MutationObserver((e) => {
-    console.log('mutation observer called!')
     e.forEach((change) => {
       if(change.target.classList.contains('adobe-ue-edit')) {
-        console.log('mutation observer: we are in edit mode!')
         block.style.display = 'block';
       } else {
         block.style.display = isUserSignedIn ? 'none': 'block';
-        console.log(`mutation observer: not edit mode: ${block.style.display}` )
       }
     });
   })).observe(document.documentElement, {attributeFilter: ['class']})
