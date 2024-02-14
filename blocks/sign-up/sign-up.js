@@ -100,15 +100,4 @@ export default async function decorate(block) {
     // show the block
     block.style.display = 'block';
   }
-
-  // show/hide sign-up block when switching betweeen UE Edit mode and preview
-  (new MutationObserver((e) => {
-    e.forEach((change) => {
-      if(change.target.classList.contains('adobe-ue-edit')) {
-        block.style.display = 'block';
-      } else {
-        block.style.display = isUserSignedIn ? 'none': 'block';
-      }
-    });
-  })).observe(document.documentElement, {attributeFilter: ['class']})
 }
