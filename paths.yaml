@@ -11,6 +11,10 @@ mappings:
   - /content/exlm.resource/fragments/:/fragments/
   - /content/exlm.resource/docs/:/docs/
 
+  # intercepts
+  - /content/exlm/global/en/intercepts:/intercepts.json
+  - /content/exlm/global/en/intercepts:/en/intercepts.json
+
   # placeholders
   - /content/exlm/global/en/placeholders:/en/placeholders.json
   - /content/exlm/global/fr/placeholders:/fr/placeholders.json
