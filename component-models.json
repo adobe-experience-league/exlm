@@ -1375,28 +1375,28 @@
     "id": "browse-filters",
     "fields": [
       {
+        "component": "aem-tag",
+        "name": "solutions",
+        "label": "Results solution filter",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/solution",
+        "description": "Optional - filter results to specific solution(s)."
+      },
+      {
         "component": "text-input",
         "valueType": "string",
         "name": "heading",
         "value": "",
-        "label": "Heading",
-        "description": "Sets the heading for topics."
-      },
-      {
-        "component": "aem-tag",
-        "name": "solutions",
-        "label": "Solution(s)",
-        "valueType": "string",
-        "rootPath": "/content/cq:tags/exl/solution",
-        "description": "Optional - all are included if no selection is made."
+        "label": "Topics heading",
+        "description": "Sets the headings for topics."
       },
       {
         "component": "aem-tag",
         "name": "cq:tags",
-        "label": "Topics & Features",
+        "label": "Topics buttons",
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl",
-        "description": "Select up to 15 topics."
+        "description": "Select up to 15 topics or features."
       }
     ]
   },

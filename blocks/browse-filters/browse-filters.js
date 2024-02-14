@@ -758,8 +758,8 @@ function decorateBrowseTopics(block) {
   const firstChild = block.querySelector('div:first-child');
   const secondChild = block.querySelector('div:nth-child(2)');
   const thirdChild = block.querySelector('div:nth-child(3)');
-  const headingElement = block.querySelector('div:nth-child(1) > div');
-  const solutions = block.querySelector('div:nth-child(2) > div').textContent.trim();
+  const solutions = block.querySelector('div:nth-child(1) > div').textContent.trim();
+  const headingElement = block.querySelector('div:nth-child(2) > div');
   const topics = block.querySelector('div:nth-child(3) > div').textContent.trim();
   const allSolutionsTags = solutions !== '' ? formattedTags(solutions) : '';
   const allTopicsTags = topics !== '' ? formattedTags(topics) : '';
@@ -817,8 +817,8 @@ function decorateBrowseTopics(block) {
       }
     }
 
-    firstChild.parentNode.replaceChild(headerDiv, firstChild);
-    secondChild.parentNode.replaceChild(solutionsDiv, secondChild);
+    firstChild.parentNode.replaceChild(solutionsDiv, firstChild);
+    secondChild.parentNode.replaceChild(headerDiv, secondChild);
     thirdChild.parentNode.replaceChild(contentDiv, thirdChild);
     div.append(headerDiv);
     div.append(contentDiv);
