@@ -99,7 +99,7 @@ header {
 }
 .header > nav {
   display: grid;
-  grid-template-areas: "nav brand product-grid sign-in";
+  grid-template-areas: "nav adobe-logo brand product-grid sign-in";
   justify-content: space-between;
   height: 100%;
 }
@@ -143,7 +143,8 @@ header {
   color: var(--spectrum-gray-50);
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-600);
-  padding: 5px 16px;
+  padding: 5px 16px;  
+  margin: 16px 0;
   white-space: nowrap;
   line-height: unset;
 }
@@ -160,7 +161,8 @@ header {
   color: var(--spectrum-gray-50);
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-600);
-  padding: 5px 16px;
+  padding: 5px 16px;  
+  margin: 16px 0;
   white-space: nowrap;
   line-height: unset;
 }
@@ -679,7 +681,7 @@ header {
   .header .search {
     position: absolute;
     right: 80px;
-    top: 20px;
+    top: 23px;
   }
 }
 .header .search-short {
