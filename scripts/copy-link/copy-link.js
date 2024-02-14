@@ -2,11 +2,11 @@ import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 
 const attachCopyLink = (selector, target, info) => {
-  if (!selector) return;
+  if (!selector && !target) return;
   selector.addEventListener('click', (e) => {
     e.preventDefault();
     try {
-      const link = target.startsWith('/') ? `${window.hlx.codeBasePath}${target}` : target;
+      const link = target.startsWith('/') ? `${window.location.origin}${target}` : target;
       navigator.clipboard.writeText(link);
       sendNotice(info);
       assetInteractionModel(e.currentTarget.dataset.id, 'Copy');
