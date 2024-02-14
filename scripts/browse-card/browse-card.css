@@ -53,6 +53,7 @@
   display: flex;
   gap: 4px;
   margin: 8px 0;
+  line-height: 0;
 }
 .browse-card .browse-card-event-time {
   display: flex;
@@ -369,9 +370,13 @@
   text-align: center;
   margin-top: 24px;
 }
-/* Tootip */
+/* Tooltip */
+.browse-card .tooltip-placeholder {
+  align-self: center;
+  line-height: 0;
+}
 .browse-card .tooltip {
-  display: inline-flex;
+  display: inline;
   margin: 2px 0 0 5px;
 }
 .browse-card .tooltip .icon-info {
