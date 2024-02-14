@@ -84,7 +84,7 @@ export default async function decorate(block) {
       window.adobeIMS.signIn();
     });
   }
-  
+
   // check if user is signed in
   try {
     await loadIms();
@@ -96,7 +96,7 @@ export default async function decorate(block) {
   const isUserSignedIn = window.adobeIMS?.isSignedInUser();
 
   // if not signed in or in UE edit mode
-  if(!isUserSignedIn || document.documentElement.classList.contains('adobe-ue-edit')) {
+  if (!isUserSignedIn || document.documentElement.classList.contains('adobe-ue-edit')) {
     // show the block
     block.style.display = 'block';
   }
