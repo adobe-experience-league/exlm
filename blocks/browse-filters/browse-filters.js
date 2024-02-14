@@ -759,7 +759,7 @@ function decorateBrowseTopics(block) {
 
   const [firstChild, secondChild, thirdChild] = configs.map((cell) => cell);
   const [solutions, headingElement, topics] = configs.map((cell) => (cell ? cell.textContent.trim() : ''));
-
+  // eslint-disable-next-line no-unused-vars
   const allSolutionsTags = solutions !== '' ? formattedTags(solutions) : '';
   const allTopicsTags = topics !== '' ? formattedTags(topics) : '';
 
