@@ -97,7 +97,5 @@ export default async function decorate(block) {
         window.adobeIMS.signIn();
       });
     }
-  } else {
-    block.parentElement.remove();
-  }
+  } 
 }
