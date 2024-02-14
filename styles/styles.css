@@ -1134,7 +1134,7 @@ body[class^=browse-] main {
   body[class^=browse-] .browse-cards-block {
     min-height: auto;
   }
-  body[class^=browse-] .section.curated-cards-container, body[class^=browse-] .section.events-cards-container, body[class^=browse-] .section.adls-cards-container {
+  body[class^=browse-] .section.curated-cards-container, body[class^=browse-] .section.events-cards-container, body[class^=browse-] .section.teaser-container, body[class^=browse-] .section.adls-cards-container {
     padding-top: 40px;
     padding-bottom: 40px;
   }
