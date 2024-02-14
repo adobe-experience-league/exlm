@@ -755,26 +755,27 @@ function renderSortContainer(block) {
 }
 
 function decorateBrowseTopics(block) {
-  const firstChild = block.querySelector('div:first-child');
-  const secondChild = block.querySelector('div:nth-child(2)');
-  const thirdChild = block.querySelector('div:nth-child(3)');
-  const solutions = block.querySelector('div:nth-child(1) > div').textContent.trim();
-  const headingElement = block.querySelector('div:nth-child(2) > div');
-  const topics = block.querySelector('div:nth-child(3) > div').textContent.trim();
+  const [...configs] = [...block.children].map((row) => row.firstElementChild);
+
+  const [firstChild, secondChild, thirdChild] = configs.map((cell) => cell);
+  const [solutions, headingElement, topics] = configs.map((cell) => (cell ? cell.textContent.trim() : ''));
+
   const allSolutionsTags = solutions !== '' ? formattedTags(solutions) : '';
   const allTopicsTags = topics !== '' ? formattedTags(topics) : '';
   // eslint-disable-next-line no-console
   console.log(allSolutionsTags);
+
   const div = document.createElement('div');
   div.classList.add('browse-topics');
 
   const headerDiv = htmlToElement(`
     <div class="browse-topics-block-header">
       <div class="browse-topics-block-title">
-          <h2>${headingElement?.textContent.trim()}</h2>
+          <h2>${headingElement}</h2>
       </div>
     </div>
   `);
+
   const solutionsDiv = document.createElement('div');
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-topics-block-content');
