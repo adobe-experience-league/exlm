@@ -12,8 +12,7 @@ mappings:
   - /content/exlm.resource/docs/:/docs/
 
   # intercepts
-  - /content/exlm/global/en/intercepts:/intercepts.json
-  - /content/exlm/global/en/intercepts:/en/intercepts.json
+  - /content/exlm/global/en/qualtricsintercept:/en/qualtricsintercept.json
 
   # placeholders
   - /content/exlm/global/en/placeholders:/en/placeholders.json
