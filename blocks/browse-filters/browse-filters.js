@@ -762,8 +762,6 @@ function decorateBrowseTopics(block) {
 
   const allSolutionsTags = solutions !== '' ? formattedTags(solutions) : '';
   const allTopicsTags = topics !== '' ? formattedTags(topics) : '';
-  // eslint-disable-next-line no-console
-  console.log(allSolutionsTags);
 
   const div = document.createElement('div');
   div.classList.add('browse-topics');
