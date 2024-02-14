@@ -17,7 +17,8 @@
     "up": "npm run sass:watch & aem up",
     "prepare": "husky install",
     "preview": "node preview.js",
-    "quality": "npm run format:check && npm run lint"
+    "validate:paths": "node validate-paths.js",
+    "quality": "npm run format:check && npm run lint && npm run validate:paths"
   },
   "repository": {
     "type": "git",
@@ -44,6 +45,7 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "2.27.5",
     "husky": "^8.0.3",
+    "js-yaml": "^4.1.0",
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.3",
     "sass": "^1.68.0",

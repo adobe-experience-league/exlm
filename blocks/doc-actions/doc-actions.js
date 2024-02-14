@@ -5,6 +5,7 @@ import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
 import attachCopyLink from '../../scripts/copy-link/copy-link.js';
+import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
 
@@ -178,6 +179,15 @@ async function decorateLanguageToggle(block) {
       langToggle.addEventListener('change', async (e) => {
         const { checked } = e.target;
         await toggleContent(checked, docContainer);
+      });
+    });
+
+    const desktopAndMobileRadioFeedback = document.querySelectorAll(
+      '.doc-mt-toggle .doc-mt-feedback input[type="radio"]',
+    );
+    [...desktopAndMobileRadioFeedback].forEach((radio) => {
+      radio.addEventListener('click', async () => {
+        assetInteractionModel(null, 'Radio Select');
       });
     });
   }

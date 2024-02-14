@@ -1124,6 +1124,20 @@ body[class^=browse-] main {
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
     width: calc(33.33% - 16px);
   }
+  body[class^=browse-] .browse-cards-block-content {
+    margin-bottom: 0;
+  }
+  body[class^=browse-] .browse-filters-container {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  body[class^=browse-] .browse-cards-block {
+    min-height: auto;
+  }
+  body[class^=browse-] .section.curated-cards-container, body[class^=browse-] .section.events-cards-container, body[class^=browse-] .section.teaser-container, body[class^=browse-] .section.adls-cards-container {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
 }
 /* browse rail breakpoint same as main hamburger menu (>= 1024px) */
 @media (min-width: 1024px) {
@@ -1149,7 +1163,7 @@ body[class^=browse-] main {
 }
 @media (width >= 1440px) {
   body[class^=browse-] main {
-    background-position: -56px 0;
+    background-position: -36px 0;
   }
   body.browse-all main,
   body.browse-product main {

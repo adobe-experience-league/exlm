@@ -29,12 +29,12 @@ export default async function decorate(block) {
     const items = capabilities.split(',');
 
     items.forEach((item) => {
-      const [type, productBase64, versionBase64] = item.split('/');
+      const [type, productBase64, subsetBase64] = item.split('/');
+      if (productBase64) product.push(atob(productBase64));
       if (type === productKey) {
-        if (productBase64) product.push(atob(productBase64));
-        if (versionBase64) version.push(atob(versionBase64));
+        if (subsetBase64) version.push(atob(subsetBase64));
       } else if (type === featureKey) {
-        if (productBase64) feature.push(atob(productBase64));
+        if (subsetBase64) feature.push(atob(subsetBase64));
       }
     });
   };
