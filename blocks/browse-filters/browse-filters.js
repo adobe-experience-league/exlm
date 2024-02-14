@@ -349,10 +349,6 @@ function onInputSearch(block) {
       console.log('add search logic here');
     }
   });
-
-  searchEl.addEventListener('input', () => {
-    updateClearFilterStatus(block);
-  });
 }
 
 function uncheckAllFiltersFromDropdown(block) {
@@ -642,7 +638,16 @@ function renderSearchQuerySummary() {
   }
   const numberFormat = new Intl.NumberFormat('en-US');
   const resultsCount = window.headlessQuerySummary.state.total;
-  queryEl.textContent = !resultsCount ? '' : `Showing ${numberFormat.format(resultsCount)} assets`;
+  let assetString;
+  if (!resultsCount) {
+    assetString = '';
+  } else if (resultsCount === 1) {
+    assetString = placeholders.showAsset || 'Showing 1 asset';
+  } else {
+    const formattedCount = numberFormat.format(resultsCount);
+    assetString = placeholders.showAssets?.replace('{x}', formattedCount) || `Showing ${formattedCount} assets`;
+  }
+  queryEl.textContent = assetString;
 }
 
 function handleCoveoHeadlessSearch(
