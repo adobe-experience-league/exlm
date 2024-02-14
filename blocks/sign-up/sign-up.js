@@ -42,8 +42,9 @@ export default async function decorate(block) {
   }
 
   const isUserSignedIn = window.adobeIMS?.isSignedInUser();
+  const isInUEEditMode = document.documentElement.classList.contains("adobe-ue-edit");
 
-  if (!isUserSignedIn) {
+  if (!isUserSignedIn || isInUEEditMode) {
     block.style.display = 'block';
     // Extract properties
     // always same order as in model, empty string if not set
