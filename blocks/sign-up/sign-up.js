@@ -92,16 +92,24 @@ export default async function decorate(block) {
     console.warn('Adobe IMS not available.');
   }
 
+  const isUserSignedIn = window.adobeIMS?.isSignedInUser();
+
+  // if not signed in or in UE edit mode
+  if(!isUserSignedIn || document.documentElement.classList.contains('adobe-ue-edit')) {
+    block.style.display = 'block';
+  }
+
   // temporary workaround until preview and edit events become available
-  // show hide sign up block depending on editor or preview mode
+  // show/hide sign-up block depending on editor or preview mode
   (new MutationObserver((e) => {
+    console.log('mutation observer called!')
     e.forEach((change) => {
-      const isUserSignedIn = window.adobeIMS?.isSignedInUser();
-      const isInUEEditMode = change.target.classList.contains('adobe-ue-edit');
-      if(!isUserSignedIn || isInUEEditMode) {
+      if(change.target.classList.contains('adobe-ue-edit')) {
+        console.log('mutation observer: we are in edit mode!')
         block.style.display = 'block';
       } else {
-        block.style.display = 'none';
+        block.style.display = isUserSignedIn ? 'none': 'block';
+        console.log(`mutation observer: not edit mode: ${block.style.display}` )
       }
     });
   })).observe(document.documentElement, {attributeFilter: ['class']})
