@@ -35,7 +35,7 @@
   transform: translateY(-50%);
   width: 13px;
   height: 13px;
-  color: var(--non-spectrum-dim-gray);
+  color: var(--spectrum-gray-700);
   line-height: 13px;
 }
 
@@ -51,7 +51,7 @@
   width: 100%;
   font-size: 16px; /* https://defensivecss.dev/tip/input-zoom-safari/ */
   text-align: left;
-  color: var(--spectrum-gray-800);
+  color: var(--spectrum-gray-700);
   line-height: 10px;
   font-weight: normal;
   margin: 0;
@@ -62,6 +62,8 @@
 }
 
 .filter-input > input::placeholder {
+  font-family: var(--body-font-family);
+  color: var(--spectrum-gray-700);
   font-size: var(--spectrum-body-size-m);
 }
 
@@ -71,9 +73,13 @@
   top: 50%;
   transform: translateY(-50%);
   left: 9px;
-  width: 15px;
-  height: 15px;
+  width: 18px;
+  height: 18px;
   line-height: 15px;
+}
+
+.filter-input .icon-search svg {
+  fill: var(--spectrum-gray-700)
 }
 
 .filter-input-search {
@@ -82,7 +88,7 @@
 }
 
 .filter-input-search>input {
-  padding-left: 35px;
+  padding-left: 32px;
   max-width: 100%;
 }
 
@@ -174,7 +180,7 @@ button.browse-filters-clear {
 }
 
 button.browse-filters-clear:disabled {
-  color: var(--non-spectrum-article-dark-gray);
+  color: var(--spectrum-gray-500);
   cursor: not-allowed;
 }
 
