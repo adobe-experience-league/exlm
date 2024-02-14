@@ -9,6 +9,7 @@
     "/content/exlm/configuration.json:/.helix/config.json",
     "/content/exlm.resource/fragments/:/fragments/",
     "/content/exlm.resource/docs/:/docs/",
+    "/content/exlm/global/en/intercepts:/en/intercepts.json",
     "/content/exlm/global/en/placeholders:/en/placeholders.json",
     "/content/exlm/global/fr/placeholders:/fr/placeholders.json",
     "/content/exlm/global/de/placeholders:/de/placeholders.json",
