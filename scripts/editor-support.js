@@ -187,3 +187,18 @@ function handleEditorMove(event) {
 }
 
 document.querySelector('main')?.addEventListener('aue:content-move', handleEditorMove);
+
+// temporary workaround until preview and edit events become available
+// show hide sign up block depending on editor or preview mode
+const signUpBlock = document.querySelector('.block.sign-up');
+if (signUpBlock) {
+  (new MutationObserver((e) => {
+    e.forEach((change) => {
+      if (change.type === 'attributes') {
+        if(change.target.classList.contains('adobe-ue-edit')) {
+          signUpBlock.style.display = 'block';
+        }
+      }
+    });
+  })).observe(document.documentElement, {attributes: true})
+}

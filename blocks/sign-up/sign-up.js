@@ -42,7 +42,7 @@ export default async function decorate(block) {
   }
 
   const isUserSignedIn = window.adobeIMS?.isSignedInUser();
-  const isInUEEditMode = document.documentElement.classList.contains("adobe-ue-edit");
+  const isInUEEditMode = document.documentElement.classList.contains('adobe-ue-edit');
 
   if (!isUserSignedIn || isInUEEditMode) {
     block.style.display = 'block';
@@ -97,5 +97,5 @@ export default async function decorate(block) {
         window.adobeIMS.signIn();
       });
     }
-  } 
+  }
 }
