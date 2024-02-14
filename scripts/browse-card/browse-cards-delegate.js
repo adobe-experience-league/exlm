@@ -98,6 +98,7 @@ const BrowseCardsDelegate = (() => {
         filterField: '@foldingcollection',
         parentField: '@foldingchild',
         childField: '@foldingparent',
+        ...(param.q ? { q: param.q } : ''),
         ...(param.feature ? constructCoveoAdvancedQuery() : ''),
         ...(!param.feature ? { facets: constructCoveoFacet(facets) } : ''),
       },

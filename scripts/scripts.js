@@ -289,6 +289,8 @@ async function loadEager(doc) {
   }
 }
 
+export const isProductionDomain = () => window.location.hostname === 'experienceleague.adobe.com';
+
 export const locales = new Map([
   ['de', 'de_DE'],
   ['en', 'en_US'],
@@ -308,7 +310,7 @@ export async function loadIms() {
     new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error('IMS timeout')), 5000);
       window.adobeid = {
-        client_id: 'ExperienceLeague_Dev',
+        client_id: isProductionDomain() ? 'ExperienceLeague' : 'ExperienceLeague_Dev',
         scope:
           'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read',
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
@@ -432,7 +434,8 @@ export async function loadPrevNextBtn() {
     const btnGotoLeft = createTag('div', { class: 'btn-goto is-left-desktop' });
 
     const anchorLeftAttr = {
-      href: `${prevPageMetaContent}`,
+      // eslint-disable-next-line no-use-before-define
+      href: `${rewriteDocsPath(prevPageMetaContent)}`,
       class: 'pagination-btn',
     };
     const anchorLeft = createTag('a', anchorLeftAttr);
@@ -446,7 +449,8 @@ export async function loadPrevNextBtn() {
     });
 
     const anchorRightAttr = {
-      href: `${nextPageMetaContent}`,
+      // eslint-disable-next-line no-use-before-define
+      href: `${rewriteDocsPath(nextPageMetaContent)}`,
       class: 'pagination-btn',
     };
     const anchorRight = createTag('a', anchorRightAttr);
@@ -557,9 +561,11 @@ export function rewriteDocsPath(docsPath) {
   if (!url.pathname.startsWith('/docs')) {
     return docsPath; // not a docs path, return as is
   }
-  const lang = url.searchParams.get('lang') || 'en'; // en is default
+  // eslint-disable-next-line no-use-before-define
+  const { lang } = getPathDetails();
+  const language = url.searchParams.get('lang') || lang;
   url.searchParams.delete('lang');
-  let pathname = `${lang.toLowerCase()}${url.pathname}`;
+  let pathname = `${language.toLowerCase()}${url.pathname}`;
   pathname = removeExtension(pathname); // new URLs are extensionless
   url.pathname = pathname;
   return url.toString().replace(PROD_BASE, ''); // always remove PROD_BASE if exists

@@ -31,7 +31,7 @@ export default async function decorate(block) {
   if (toolTipElement?.textContent?.trim()) {
     headerDiv
       .querySelector('h1,h2,h3,h4,h5,h6')
-      ?.insertAdjacentHTML('beforeend', '<div class="tooltip-placeholder"></div>');
+      ?.insertAdjacentHTML('afterend', '<div class="tooltip-placeholder"></div>');
     const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
     const tooltipConfig = {
       content: toolTipElement.textContent.trim(),
@@ -56,7 +56,8 @@ export default async function decorate(block) {
 
   const cardLoading$ = Promise.all(
     linksContainer.map(async (linkContainer) => {
-      const link = linkContainer.textContent.trim();
+      let link = linkContainer.textContent?.trim();
+      link = link.startsWith('/') ? `${window.hlx.codeBasePath}${link}` : link;
       // use the link containers parent as container for the card as it is instruented for authoring
       // eslint-disable-next-line no-param-reassign
       linkContainer = linkContainer.parentElement;

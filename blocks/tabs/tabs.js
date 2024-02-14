@@ -46,14 +46,13 @@ export default function decorate(block) {
   });
 
   tabNames.forEach((name, i) => {
-    const nameId = name.toLowerCase().split(' ').join('-');
     const tabBtnAttributes = {
       role: 'tab',
       class: 'tab-title',
-      id: `tab-${initCount}-${nameId}`,
+      id: `tab-${initCount}-${i}`,
       tabindex: i > 0 ? '0' : '-1',
       'aria-selected': i === 0 ? 'true' : 'false',
-      'aria-controls': `tab-panel-${initCount}-${nameId}`,
+      'aria-controls': `tab-panel-${initCount}-${i}`,
       'aria-label': name,
       'data-tab-id': i,
     };
@@ -64,15 +63,12 @@ export default function decorate(block) {
   });
 
   tabContents.forEach((content, i) => {
-    const name = tabNames[i];
-    const nameId = name.toLowerCase().split(' ').join('-');
-
     const tabContentAttributes = {
-      id: `tab-panel-${initCount}-${nameId}`,
+      id: `tab-panel-${initCount}-${i}`,
       role: 'tabpanel',
       class: 'tabpanel',
       tabindex: '0',
-      'aria-labelledby': `tab-${initCount}-${nameId}`,
+      'aria-labelledby': `tab-${initCount}-${i}`,
     };
 
     // get the instrumented div

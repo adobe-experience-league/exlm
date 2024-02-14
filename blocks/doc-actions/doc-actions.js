@@ -5,6 +5,7 @@ import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
 import attachCopyLink from '../../scripts/copy-link/copy-link.js';
+import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
 
@@ -37,7 +38,7 @@ const addToDocActions = async (element, block) => {
 
 function decorateBookmarkMobileBlock() {
   const docActionsMobile = document.createElement('div');
-  docActionsMobile.classList.add('doc-actions-mobile', 'doc-actions');
+  docActionsMobile.classList.add('doc-actions-mobile');
 
   const createdByEl = document.querySelector('.article-metadata-createdby-wrapper');
   const articleMetaDataEl = document.querySelector('.article-metadata-wrapper');
@@ -93,7 +94,10 @@ export function decorateBookmark(block) {
       renderBookmark(bookmarkAuthedToolTipLabelM, bookmarkAuthedToolTipIconM, bookmarkId);
     });
   } else {
-    addToDocActions(unAuthBookmark, block);
+    block.appendChild(unAuthBookmark);
+    if (document.querySelector('.doc-actions-mobile')) {
+      document.querySelector('.doc-actions-mobile').appendChild(unAuthBookmark.cloneNode(true));
+    }
   }
 }
 
@@ -175,6 +179,15 @@ async function decorateLanguageToggle(block) {
       langToggle.addEventListener('change', async (e) => {
         const { checked } = e.target;
         await toggleContent(checked, docContainer);
+      });
+    });
+
+    const desktopAndMobileRadioFeedback = document.querySelectorAll(
+      '.doc-mt-toggle .doc-mt-feedback input[type="radio"]',
+    );
+    [...desktopAndMobileRadioFeedback].forEach((radio) => {
+      radio.addEventListener('click', async () => {
+        assetInteractionModel(null, 'Radio Select');
       });
     });
   }
