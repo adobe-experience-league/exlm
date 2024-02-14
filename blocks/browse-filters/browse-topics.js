@@ -13,20 +13,19 @@ export function formattedTags(inputString) {
     let version;
 
     const [type, productBase64, versionBase64] = item.split('/');
-    if (productBase64 !== undefined) {
+    if (productBase64) {
       product = atob(productBase64);
     }
-    if (versionBase64 !== undefined) {
+    if (versionBase64) {
       version = atob(versionBase64);
     }
 
     // Check if product and version are not undefined before appending to base64EncodedTagsArray
-    if (product !== undefined || version !== undefined) {
+    if (product || version) {
       base64EncodedTagsArray = `${type}${product ? `/${product}` : ''}${version ? `/${version}` : ''}`;
       resultArray.push(base64EncodedTagsArray);
     }
   });
-
   return resultArray;
 }
 
