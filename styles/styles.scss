@@ -1067,6 +1067,28 @@ body[class^='browse-'] main {
       }
     }
   }
+
+  body[class^='browse-'] {
+    & .browse-cards-block-content {
+      margin-bottom: 0;
+    }
+
+    & .browse-filters-container {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    & .browse-cards-block {
+      min-height: auto;
+    }
+
+    & .section.curated-cards-container,
+    & .section.events-cards-container,
+    & .section.adls-cards-container {
+      padding-top: 40px;
+      padding-bottom: 40px;
+    }
+  }
 }
 
 /* browse rail breakpoint same as main hamburger menu (>= 1024px) */
@@ -1102,7 +1124,7 @@ body[class^='browse-'] main {
 @media (width >= 1440px) {
   body[class^='browse-'] {
     & main {
-      background-position: -56px 0;
+      background-position: -36px 0;
     }
   }
 
