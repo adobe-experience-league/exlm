@@ -19,7 +19,9 @@ export const pageName = (language) => {
     if (language === 'en') {
       result += document.querySelector('title').innerText.split('|')[0].trim();
     } else {
-      // figure out how to get non english pages
+      result += document.querySelector('meta[name="english-title"]')
+        ? document.querySelector('meta[name="english-title"]').innerText.split('|')[0].trim()
+        : '';
     }
   }
 
