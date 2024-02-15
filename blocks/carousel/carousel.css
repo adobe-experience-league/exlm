@@ -70,3 +70,10 @@
     margin-right: calc(-1 * var(--space-token-xl));
   }
 }
+
+@media (min-width: 600px) {
+  .section.carousel-container {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
