@@ -19,19 +19,18 @@ try {
 }
 
 function decorateBookmarkMobileBlock() {
-  if(!document.querySelector('.doc-actions-mobile')) {
-  
-  const docActionsMobile = document.createElement('div');
-  docActionsMobile.classList.add('doc-actions-mobile');
+  if (!document.querySelector('.doc-actions-mobile')) {
+    const docActionsMobile = document.createElement('div');
+    docActionsMobile.classList.add('doc-actions-mobile');
 
-  const createdByEl = document.querySelector('.article-metadata-createdby-wrapper');
-  const articleMetaDataEl = document.querySelector('.article-metadata-wrapper');
-  if (articleMetaDataEl.nextSibling === createdByEl) {
-    createdByEl.appendChild(docActionsMobile);
-  } else if (articleMetaDataEl) {
-    articleMetaDataEl.appendChild(docActionsMobile);
+    const createdByEl = document.querySelector('.article-metadata-createdby-wrapper');
+    const articleMetaDataEl = document.querySelector('.article-metadata-wrapper');
+    if (articleMetaDataEl.nextSibling === createdByEl) {
+      createdByEl.appendChild(docActionsMobile);
+    } else if (articleMetaDataEl) {
+      articleMetaDataEl.appendChild(docActionsMobile);
+    }
   }
-}
 }
 
 const isSignedIn = adobeIMS?.isSignedInUser();
@@ -125,7 +124,7 @@ async function toggleContent(isChecked, docContainer) {
     translatedDocElement = await getTranslatedDocContent();
   }
   if (isChecked) {
-    const docActionsMobile = docContainer.querySelector('.doc-actions-mobile');	
+    const docActionsMobile = docContainer.querySelector('.doc-actions-mobile');
     if (docActionsMobile) {
       const createdByEl = translatedDocElement.querySelector('.article-metadata-createdby-wrapper');
       const articleMetaDataEl = translatedDocElement.querySelector('.article-metadata-wrapper');
@@ -138,7 +137,7 @@ async function toggleContent(isChecked, docContainer) {
     docContainer.replaceWith(translatedDocElement);
   } else {
     const dc = document.querySelector('main > div:first-child');
-    const docActionsMobile = translatedDocElement.querySelector('.doc-actions-mobile');	
+    const docActionsMobile = translatedDocElement.querySelector('.doc-actions-mobile');
     if (docActionsMobile) {
       const createdByEl = docContainer.querySelector('.article-metadata-createdby-wrapper');
       const articleMetaDataEl = docContainer.querySelector('.article-metadata-wrapper');
