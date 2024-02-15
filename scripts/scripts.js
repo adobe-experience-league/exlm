@@ -379,37 +379,6 @@ export async function loadIms() {
 }
 
 /**
- * Proccess current pathname and return details for use in language switching
- * Considers pathnames like /en/path/to/content and /content/exl/global/en/path/to/content.html for both EDS and AEM
- */
-export function getPathDetails() {
-  const { pathname } = window.location;
-  const extParts = pathname.split('.');
-  const ext = extParts.length > 1 ? extParts[extParts.length - 1] : '';
-  const isContentPath = pathname.startsWith('/content');
-  const parts = pathname.split('/');
-  const safeLangGet = (index) => (parts.length > index ? parts[index] : 'en');
-  // 4 is the index of the language in the path for AEM content paths like  /content/exl/global/en/path/to/content.html
-  // 1 is the index of the language in the path for EDS paths like /en/path/to/content
-  let lang = isContentPath ? safeLangGet(4) : safeLangGet(1);
-  // remove suffix from lang if any
-  if (lang.indexOf('.') > -1) {
-    lang = lang.substring(0, lang.indexOf('.'));
-  }
-  if (!lang) lang = 'en'; // default to en
-  // substring before lang
-  const prefix = pathname.substring(0, pathname.indexOf(`/${lang}`)) || '';
-  const suffix = pathname.substring(pathname.indexOf(`/${lang}`) + lang.length + 1) || '';
-  return {
-    ext,
-    prefix,
-    suffix,
-    lang,
-    isContentPath,
-  };
-}
-
-/**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
  */
