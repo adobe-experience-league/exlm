@@ -1,8 +1,23 @@
 // eslint-disable-next-line import/no-cycle
 import { adobeIMS, profile } from '../data-service/profile-service.js';
-import getLangCode from '../lang-map.js';
+import { loadScript } from '../lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 import { getPathDetails } from '../scripts.js';
+
+// lang code mappings specific to gainsight.
+const langMap = {
+  en: 'en-US',
+  de: 'de-DE',
+  es: 'es-ES',
+  fr: 'fr-FR',
+  it: 'it-IT',
+  ja: 'ja-JP',
+  ko: 'ko-KR',
+  nl: 'nl-NL',
+  sv: 'sv-SE',
+  'zh-Hans': 'zh-CN',
+  'zh-Hant': 'zh-TW',
+};
 
 function identify(data) {
   const id = data.userId?.toLowerCase() || '';
@@ -15,7 +30,7 @@ function identify(data) {
     {
       id,
       globalId: id,
-      language: getLangCode(lang),
+      language: langMap[lang] || lang,
       preferredLanguages: (data.preferred_languages || []).join(', '),
       entitlements: (data.entitlements || []).join(', '),
       interests: (data.interests || []).join(', '),
@@ -32,29 +47,25 @@ function identify(data) {
   );
 }
 
-export default async function load() {
-  if (adobeIMS?.isSignedInUser()) {
-    const data = await profile(true);
+// an identical version of what gainsight admin gives, unminified, more readable and modern APIs
+// see: README.md
+async function loadGinsightScript(tagId, co) {
+  window.aptrinsic =
+    window.aptrinsic ||
+    function aptrinsic(...args) {
+      (window.aptrinsic.q = window.aptrinsic.q || []).push(args);
+    };
+  window.aptrinsic.p = tagId;
+  window.aptrinsic.c = co; // admin script adds this, but it is not used, not sure what it is for
+  return loadScript(`https://web-sdk.aptrinsic.com/api/aptrinsic.js?a=${tagId}`, { async: true });
+}
 
-    /* eslint-disable */
-    (function (n, t, a, e, co) {
-      var i = 'aptrinsic';
-      n[i] =
-        n[i] ||
-        function () {
-          (n[i].q = n[i].q || []).push(arguments);
-        };
-      n[i].p = e;
-      n[i].c = co;
-      var r = t.createElement('script');
-      r.async = !0;
-      r.onload = () => {
-        identify(data);
-      };
-      r.src = a + '?a=' + e;
-      var c = t.getElementsByTagName('script')[0];
-      c.parentNode.insertBefore(r, c);
-    })(window, document, 'https://web-sdk.aptrinsic.com/api/aptrinsic.js', 'AP-PCBATQJJQHRG-2');
-    /* eslint-enable */
+export default async function loadGainsight() {
+  if (adobeIMS?.isSignedInUser()) {
+    const profilePromise = profile(true);
+    const loadGainsightPromise = loadGinsightScript('AP-PCBATQJJQHRG-2');
+    Promise.all([profilePromise, loadGainsightPromise]).then(([profileData]) => {
+      identify(profileData);
+    });
   }
 }
