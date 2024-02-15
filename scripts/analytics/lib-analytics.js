@@ -1,7 +1,6 @@
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
-export const lang = window.document.getElementsByTagName('html')[0].getAttribute('lang') || 'en';
 export const solution = document.querySelector('meta[name="solution"]')
   ? document.querySelector('meta[name="solution"]').content.toLowerCase()
   : '';
@@ -10,14 +9,14 @@ export const type = document.querySelector('meta[name="type"]')
   ? document.querySelector('meta[name="type"]').content.toLowerCase()
   : '';
 
-export const pageName = () => {
+export const pageName = (language) => {
   // Validate if subsolution or solutionversion is not empty
   const lroot = window.location.pathname.endsWith('docs');
   // eslint-disable-next-line prefer-template
   let result = lroot ? ':home' : `:${solution ? solution + ':' : ''}${type ? type + ':' : ''}`;
 
   if (result.endsWith(':')) {
-    if (lang === 'en') {
+    if (language === 'en') {
       result += document.querySelector('title').innerText.split('|')[0].trim();
     } else {
       // figure out how to get non english pages
@@ -29,7 +28,7 @@ export const pageName = () => {
   return responseStr.toLowerCase();
 };
 
-export function pageLoadModel() {
+export function pageLoadModel(language) {
   const user = {};
   user.userDetails = {};
   user.userDetails.userAccountType = '';
@@ -109,7 +108,7 @@ export function pageLoadModel() {
         exlId: document.querySelector('meta[name="exl-id"]')
           ? document.querySelector('meta[name="exl-id"]').content
           : '',
-        pageLanguage: lang,
+        pageLanguage: language,
         pageName: name,
         pageType: 'webpage',
         pageViews: { value: 1 },
