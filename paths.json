@@ -51,7 +51,6 @@
     "/content/exlm.resource/sv/query-index.json:/sv/query-index.json",
     "/content/exlm.resource/zh-CN/query-index.json:/zh-hans/query-index.json",
     "/content/exlm.resource/zh-TW/query-index.json:/zh-hant/query-index.json"
-    
   ],
   "includes": ["/content/exlm/"]
 }
