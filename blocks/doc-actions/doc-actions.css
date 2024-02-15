@@ -161,10 +161,6 @@
   border: 0;
   outline: 2px solid var(--spectrum-gray-600);
 }
-/* 
-.doc-actions-wrapper {
-  display: none;
-} */
 
 .doc-actions-mobile {
   display: flex;
