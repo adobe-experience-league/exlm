@@ -339,7 +339,7 @@ async function loadEager(doc) {
   }
 }
 
-export const isProductionDomain = () => window.location.hostname === 'experienceleague.adobe.com';
+export const isHelixDomain = () => ['hlx.page', 'hlx.live'].some((sfx) => window.location.hostname.endsWith(sfx));
 
 export const locales = new Map([
   ['de', 'de_DE'],
@@ -360,7 +360,7 @@ export async function loadIms() {
     new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error('IMS timeout')), 5000);
       window.adobeid = {
-        client_id: isProductionDomain() ? 'ExperienceLeague' : 'ExperienceLeague_Dev',
+        client_id: isHelixDomain() ? 'ExperienceLeague_Dev' : 'ExperienceLeague',
         scope:
           'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read',
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
