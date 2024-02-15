@@ -75,10 +75,12 @@
 
 .featured-cards .browse-card-dropdown > select{
   background: #FFFFFF 0% 0% no-repeat padding-box;
-  border: 1px solid #E6E6E6;
+  outline: 1px solid #E6E6E6;
   border-radius: 4px;
-  padding: 10px;
-  color: #464646;
+  padding: 5px 8px;
+  color: var(--spectrum-gray-700);
+  border: 0;
+  border-right: 5px solid transparent;
 }
 
 .featured-cards .browse-card-dropdown > p{
@@ -128,7 +130,7 @@
 
 @media only screen and (min-width: 900px) {
   .section.featured-cards-container {
-    padding-bottom: 10px;
+    padding-bottom: 40px;
   }
 
   .featured-cards .browse-cards-block-content {  
@@ -139,7 +141,7 @@
   }
 
   .featured-cards .browse-cards-block-view {
-      margin-top: -72px;
+      margin-top: -68px;
       text-align: right;
   }
 

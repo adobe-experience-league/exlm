@@ -1,4 +1,5 @@
 import { decorateBlock, decorateButtons, decorateIcons, loadBlock } from './lib-franklin.js';
+import { loadIms } from './scripts.js';
 
 const connectionPrefix = 'urn:aemconnection:';
 
@@ -29,22 +30,27 @@ function restoreState(newBlock, state) {
  * Event listener for aue:content-patch, edit of a component
  */
 async function handleEditorUpdate(event) {
+  // get event infos
   const { detail } = event;
-
   const resource = detail?.requestData?.target?.resource;
   if (!resource) return;
-
-  const element = document.querySelector(`[data-aue-resource="${resource}"]`);
-  const block = element?.parentElement?.closest('.block') || element?.closest('.block');
-  const blockResource = block?.getAttribute('data-aue-resource');
-  if (!block || !blockResource?.startsWith(connectionPrefix)) return;
-
-  // keep info about currently selected tab
-  const uiState = getState(block);
-
   const updates = detail?.responseData?.updates;
-  if (updates.length > 0) {
-    const { content } = updates[0];
+  if (updates.length === 0) return;
+  const { content } = updates[0];
+  // get element to update
+  const element = document.querySelector(`[data-aue-resource="${resource}"]`);
+  // try getting sourrounding block
+  const block = element?.parentElement?.closest('.block') || element?.closest('.block');
+
+  // if its an update to an block
+  if (block) {
+    // get the block resource
+    const blockResource = block?.getAttribute('data-aue-resource');
+    if (!blockResource?.startsWith(connectionPrefix)) return;
+
+    // keep any client side state for blocks (select tabs, carousel panels etc.)
+    const uiState = getState(block);
+    // parent container is a block
     const newBlockDocument = new DOMParser().parseFromString(content, 'text/html');
     const newBlock = newBlockDocument?.querySelector(`[data-aue-resource="${blockResource}"]`);
     if (newBlock) {
@@ -61,6 +67,22 @@ async function handleEditorUpdate(event) {
       newBlock.style.display = null;
 
       restoreState(newBlock, uiState);
+    }
+    // if its default content
+  } else if (element) {
+    // parent container is section
+    const updatedSection = new DOMParser().parseFromString(content, 'text/html');
+    // get updated element
+    const newElement = updatedSection?.querySelector(`[data-aue-resource="${resource}"]`);
+    if (newElement) {
+      newElement.style.display = 'none';
+      element.insertAdjacentElement('afterend', newElement);
+      // decorate buttons and icons
+      decorateButtons(newElement);
+      decorateIcons(newElement);
+      // remove the old element and show the new one
+      element.remove();
+      newElement.style.display = null;
     }
   }
 }
@@ -167,49 +189,25 @@ function handleEditorMove(event) {
 
 document.querySelector('main')?.addEventListener('aue:content-move', handleEditorMove);
 
-// group editable texts in single wrappers if applicable
-//
-// this should work reliably as the script executes after the scripts.js and hence all sections
-// should be decorated already.
-(function mergeRichtexts() {
-  const aueDataAttrs = ['aueBehavior', 'aueProp', 'aueResource', 'aueType', 'aueFilter'];
-
-  function removeInstrumentation(on) {
-    aueDataAttrs.forEach((attr) => delete on.dataset[attr]);
+// temporary workaround until aue:ui-edit and aue:ui-preview events become available
+// show/hide sign-up block when switching betweeen UE Edit mode and preview
+const signUpBlock = document.querySelector('.block.sign-up');
+if (signUpBlock) {
+  // check if user is signed in
+  try {
+    await loadIms();
+  } catch {
+    // eslint-disable-next-line no-console
+    console.warn('Adobe IMS not available.');
   }
 
-  function moveInstrumentation(from, to) {
-    aueDataAttrs.forEach((attr) => {
-      to.dataset[attr] = from.dataset[attr];
-    });
-    removeInstrumentation(from);
-  }
-
-  // any of initialized, loading or loaded
-  const editables = [...document.querySelectorAll('[data-aue-type="richtext"]:not(div)')];
-  while (editables.length) {
-    const editable = editables.shift();
-    // group rich texts
-    // eslint-disable-next-line object-curly-newline
-    const { aueProp, aueResource } = editable.dataset;
-    const container = document.createElement('div');
-    moveInstrumentation(editable, container);
-    editable.replaceWith(container);
-    container.append(editable);
-    while (editables.length) {
-      const nextEditable = editables.shift();
-      // TODO: check if nextEditable is a consecutive sibling of the current editable.
-      // should never happane, as AEM renders the paragraphs of a single text component
-      // conescutively anyway. however there may be some inference with auto blocking
-      // eventually.
-      const { aueProp: nextAueProp, aueResource: nextAueResource } = nextEditable.dataset;
-      if (aueProp === nextAueProp && nextAueResource === aueResource) {
-        removeInstrumentation(nextEditable);
-        container.append(nextEditable);
+  new MutationObserver((e) => {
+    e.forEach((change) => {
+      if (change.target.classList.contains('adobe-ue-edit')) {
+        signUpBlock.style.display = 'block';
       } else {
-        editables.unshift(nextEditable);
-        break;
+        signUpBlock.style.display = window.adobeIMS?.isSignedInUser() ? 'none' : 'block';
       }
-    }
-  }
-})();
+    });
+  }).observe(document.documentElement, { attributeFilter: ['class'] });
+}
