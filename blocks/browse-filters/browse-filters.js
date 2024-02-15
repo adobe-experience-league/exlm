@@ -13,7 +13,7 @@ import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headl
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
-import { formattedTopicsTags, handleTopicSelection } from './browse-topics.js';
+import { formattedTags, handleTopicSelection } from './browse-topics.js';
 
 const coveoFacetMap = {
   Role: 'headlessRoleFacet',
@@ -349,10 +349,6 @@ function onInputSearch(block) {
       console.log('add search logic here');
     }
   });
-
-  searchEl.addEventListener('input', () => {
-    updateClearFilterStatus(block);
-  });
 }
 
 function uncheckAllFiltersFromDropdown(block) {
@@ -642,7 +638,16 @@ function renderSearchQuerySummary() {
   }
   const numberFormat = new Intl.NumberFormat('en-US');
   const resultsCount = window.headlessQuerySummary.state.total;
-  queryEl.textContent = !resultsCount ? '' : `Showing ${numberFormat.format(resultsCount)} assets`;
+  let assetString;
+  if (!resultsCount) {
+    assetString = '';
+  } else if (resultsCount === 1) {
+    assetString = placeholders.showAsset || 'Showing 1 asset';
+  } else {
+    const formattedCount = numberFormat.format(resultsCount);
+    assetString = placeholders.showAssets?.replace('{x}', formattedCount) || `Showing ${formattedCount} assets`;
+  }
+  queryEl.textContent = assetString;
 }
 
 function handleCoveoHeadlessSearch(
@@ -755,22 +760,26 @@ function renderSortContainer(block) {
 }
 
 function decorateBrowseTopics(block) {
-  const firstChild = block.querySelector('div:first-child');
-  const secondChild = block.querySelector('div:nth-child(2)');
-  const headingElement = block.querySelector('div:nth-child(1) > div');
-  const topics = block.querySelector('div:nth-child(2) > div').textContent.trim();
-  const allTopicsTags = topics !== '' ? formattedTopicsTags(topics) : '';
+  const [...configs] = [...block.children].map((row) => row.firstElementChild);
+
+  const [firstChild, secondChild, thirdChild] = configs.map((cell) => cell);
+  const [solutions, headingElement, topics] = configs.map((cell) => (cell ? cell.textContent.trim() : ''));
+  // eslint-disable-next-line no-unused-vars
+  const allSolutionsTags = solutions !== '' ? formattedTags(solutions) : '';
+  const allTopicsTags = topics !== '' ? formattedTags(topics) : '';
+
   const div = document.createElement('div');
   div.classList.add('browse-topics');
 
   const headerDiv = htmlToElement(`
     <div class="browse-topics-block-header">
       <div class="browse-topics-block-title">
-          <h2>${headingElement?.textContent.trim()}</h2>
+          <h2>${headingElement}</h2>
       </div>
     </div>
   `);
 
+  const solutionsDiv = document.createElement('div');
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-topics-block-content');
   const browseFiltersSection = document.querySelector('.browse-filters-form');
@@ -779,7 +788,8 @@ function decorateBrowseTopics(block) {
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
-        const topicName = atob(topicsButtonTitle);
+        const parts = topicsButtonTitle.split('/');
+        const topicName = parts[parts.length - 1];
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicName;
         topicsButtonDiv.innerHTML = topicName;
@@ -811,13 +821,17 @@ function decorateBrowseTopics(block) {
       }
     }
 
-    firstChild.parentNode.replaceChild(headerDiv, firstChild);
-    secondChild.parentNode.replaceChild(contentDiv, secondChild);
+    firstChild.parentNode.replaceChild(solutionsDiv, firstChild);
+    secondChild.parentNode.replaceChild(headerDiv, secondChild);
+    thirdChild.parentNode.replaceChild(contentDiv, thirdChild);
     div.append(headerDiv);
     div.append(contentDiv);
     /* Append browse topics right above the filters section */
     const filtersFormEl = document.querySelector('.browse-filters-form');
     filtersFormEl.insertBefore(div, filtersFormEl.children[4]);
+  } else {
+    firstChild.innerHTML = '';
+    secondChild.innerHTML = '';
   }
 }
 

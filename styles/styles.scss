@@ -691,6 +691,17 @@ img {
   /* section metadata */
   &.highlight {
     background-color: var(--highlight-background-color);
+
+    &.icon-block-container {
+      padding: 32px 36px 48px;
+
+      & > div > h3 {
+        font-size: 28px;
+        line-height: 42px;
+        text-align: center;
+        margin: 0 0 36px;
+      }
+    }
   }
 
   > div {
@@ -701,6 +712,11 @@ img {
 
   @include breakpoint(tablet) {
     padding: 30px 56px;
+  }
+
+  &.curated-cards-container,
+  &.events-cards-container {
+    padding-bottom: 0;
   }
 }
 
@@ -1009,6 +1025,18 @@ body[class^='browse-'] main {
 }
 
 @include breakpoint('tablet') {
+  .section {
+    &.highlight {
+      &.icon-block-container {
+        padding: 80px 86px;
+
+        & > div > h3 {
+          text-align: left;
+        }
+      }
+    }
+  }
+
   .docs {
     &.docs-solution-landing.docs-tutorial {
       .default-content-wrapper {
@@ -1037,6 +1065,29 @@ body[class^='browse-'] main {
           width: calc(33.33% - 16px);
         }
       }
+    }
+  }
+
+  body[class^='browse-'] {
+    & .browse-cards-block-content {
+      margin-bottom: 0;
+    }
+
+    & .browse-filters-container {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    & .browse-cards-block {
+      min-height: auto;
+    }
+
+    & .section.curated-cards-container,
+    & .section.events-cards-container,
+    & .section.teaser-container,
+    & .section.adls-cards-container {
+      padding-top: 40px;
+      padding-bottom: 40px;
     }
   }
 }
@@ -1074,7 +1125,18 @@ body[class^='browse-'] main {
 @media (width >= 1440px) {
   body[class^='browse-'] {
     & main {
-      background-position: -56px 0;
+      background-position: -36px 0;
+    }
+  }
+
+  body.browse-all,
+  body.browse-product {
+    & main {
+      max-width: 1440px;
+    }
+
+    & main > div.section {
+      padding: 30px 32px;
     }
   }
 }

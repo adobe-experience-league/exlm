@@ -18,7 +18,7 @@ export const createTooltip = (container, element, config) => {
         tooltipText.classList.add('tooltip-visible');
         if (position === 'top') {
           const topSpacer = 5;
-          const leftSpacer = 4;
+          const leftSpacer = 5;
           tooltipText.style.top = `${element.offsetTop - container.scrollTop - tooltipText.offsetHeight - topSpacer}px`;
           tooltipText.style.left = `${element.offsetLeft - container.scrollLeft + leftSpacer}px`;
         } else {
