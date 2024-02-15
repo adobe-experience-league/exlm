@@ -178,7 +178,7 @@ export function linkClickModel(e) {
     linkType = 'download';
   } else if (viewMoreLess) {
     linkType = 'view more/less';
-    destinationDomain = document.querySelector('.js-toggle.is-collapsed.is-open').innerHTML;
+    destinationDomain = e.target.closest('ul').parentNode.querySelector('p').innerText;
     name = 'ExperienceEventType:web.webInteraction.linkClicks';
   }
 
@@ -198,6 +198,7 @@ export function linkClickModel(e) {
       webInteraction: {
         URL: e.target.href,
         linkClicks: { value: 1 },
+        pageViews: { value: 0 },
         name,
         // set to other until we have examples of other types
         type: 'Other',
