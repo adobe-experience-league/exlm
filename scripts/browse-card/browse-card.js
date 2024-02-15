@@ -350,7 +350,7 @@ export async function buildCard(container, element, model) {
       if (cardImg.complete && cardImg.naturalWidth === 0) {
         cardImg.classList.add('hide-thumbnail');
       }
-    }, 200);
+    }, 500);
   }
 
   const bannerElement = createTag('h3', { class: 'browse-card-banner' });
