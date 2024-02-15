@@ -345,6 +345,12 @@ export async function buildCard(container, element, model) {
     img.height = 153;
     cardFigure.classList.add('img-custom-height');
     cardFigure.appendChild(img);
+    const cardImg = cardFigure.querySelector('img');
+    setTimeout(() => {
+      if (cardImg.complete && cardImg.naturalWidth === 0) {
+        cardImg.classList.add('hide-thumbnail');
+      }
+    }, 200);
   }
 
   const bannerElement = createTag('h3', { class: 'browse-card-banner' });

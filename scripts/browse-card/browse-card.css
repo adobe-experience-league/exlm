@@ -87,6 +87,9 @@
   object-fit: cover;
   border-bottom: 1px solid var(--spectrum-gray-200);
 }
+.browse-card .browse-card-figure img.hide-thumbnail {
+  display: none;
+}
 .browse-card .browse-card-content {
   padding: 16px 16px 12px 15px;
   min-height: 190px;
