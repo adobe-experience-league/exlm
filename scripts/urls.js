@@ -1,5 +1,4 @@
 const lang = document.querySelector('html').lang || 'en';
-const env = window.location.hostname === 'experienceleague.adobe.com' ? 'production' : 'dev';
 export const profileUrl = `https://experienceleague.adobe.com/api/profile?lang=${lang}`;
 export const JWTTokenUrl = `https://experienceleague.adobe.com/api/token?lang=${lang}`;
 export const coveoTokenUrl = `https://experienceleague.adobe.com/api/coveo-token?lang=${lang}`;
@@ -13,4 +12,6 @@ export const tocUrl = 'https://experienceleague.adobe.com/api/tocs/';
 export const adlsRedirectUrl = 'https://learning.adobe.com';
 export const pathsUrl = `https://experienceleague.adobe.com/api/paths`;
 export const exlmCDNUrl = 'https://cdn.experienceleague.adobe.com';
-export const khorosProxyProfileAPI = `https://51837-exlmconverter-${env}.adobeioruntime.net/api/v1/web/main/khoros/plugins/custom/adobe/adobedx/profile-menu-list?lang=${lang}`;
+// Khoros Proxy URL (Determine the environment based on the host name)
+const environment = window.location.hostname === 'experienceleague.adobe.com' ? '' : '-dev';
+export const khorosProxyProfileAPI = `https://51837-exlmconverter${environment}.adobeioruntime.net/api/v1/web/main/khoros/plugins/custom/adobe/adobedx/profile-menu-list?lang=${lang}`;
