@@ -83,6 +83,19 @@ export function pageLoadModel(language) {
       ? document.querySelector('meta[name="version"]').content
       : '';
 
+  const role =
+    document.querySelector('meta[name="role"]') !== null ? document.querySelector('meta[name="role"]').content : '';
+
+  const docType =
+    document.querySelector('meta[name="doc-type"]') !== null
+      ? document.querySelector('meta[name="doc-type"]').content
+      : '';
+
+  const duration =
+    document.querySelector('meta[name="duration"]') !== null
+      ? document.querySelector('meta[name="duration"]').content
+      : '';
+
   const name = pageName();
 
   const sections = name.replace(/^xl:(docs|learn):/, '').split(':');
@@ -100,6 +113,9 @@ export function pageLoadModel(language) {
         URL: window.location.href,
         cleanURL: window.location.href.replace(/^https?:\/\//, ''),
         domain: window.location.host,
+        docrole: role,
+        doctype: docType,
+        docduration: duration,
         mainSiteSection,
         name,
         gitEdit: document.querySelector('meta[name="git-edit"]')

@@ -596,8 +596,6 @@ export function rewriteDocsPath(docsPath) {
   return url.toString().replace(PROD_BASE, ''); // always remove PROD_BASE if exists
 }
 
-
-
 /**
  * Helper function thats returns a list of all products
  * - below <lang>/browse/<product-page>
