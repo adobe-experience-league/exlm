@@ -19,6 +19,7 @@
   margin: auto;
   align-items: stretch;
   -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .carousel.block > .panel-container::-webkit-scrollbar {
