@@ -372,7 +372,7 @@ function handleFeedbackIcons(el) {
         showQualtricsLoadingError(el);
         toggleFeedbackBar(el, false);
       }
-      assetInteractionModel(null, `Feedback ${icon.ariaLabel}`);
+      assetInteractionModel(null, `feedback ${icon.ariaLabel}`);
     });
   });
 }
