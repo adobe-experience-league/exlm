@@ -96,7 +96,7 @@ export function pageLoadModel(language) {
       ? document.querySelector('meta[name="duration"]').content
       : '';
 
-  const name = pageName();
+  const name = pageName(language);
 
   const sections = name.replace(/^xl:(docs|learn):/, '').split(':');
 
