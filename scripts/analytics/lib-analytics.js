@@ -198,10 +198,12 @@ export function linkClickModel(e) {
       webInteraction: {
         URL: e.target.href,
         linkClicks: { value: 1 },
-        pageViews: { value: 0 },
         name,
         // set to other until we have examples of other types
         type: 'Other',
+      },
+      webPageDetails: {
+        pageViews: { value: 0 },
       },
     },
     asset: {
