@@ -278,6 +278,23 @@ function decorateContentSections(main) {
 }
 
 /**
+ * see: https://github.com/adobe-experience-league/exlm-converter/pull/187
+ * @param {HTMLElement} main
+ */
+export function decorateAnchors(main) {
+  const anchorPrefix = 'icon-anchor-';
+  const anchorIcons = [...main.querySelectorAll(`span.icon[class*="${anchorPrefix}"]`)];
+  anchorIcons.forEach((icon) => {
+    const slugClass = icon.className.split(' ').find((c) => c.startsWith(anchorPrefix));
+    const slug = slugClass.substring(anchorPrefix.length);
+    if (slug) {
+      icon.parentElement.id = slug;
+      icon.remove();
+    }
+  });
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -287,6 +304,7 @@ export function decorateMain(main) {
   if (!isDocPage()) {
     decorateButtons(main);
   }
+  decorateAnchors(main); // must be run before decorateIcons
   decorateIcons(main);
   decorateExternalLinks(main);
   buildAutoBlocks(main);

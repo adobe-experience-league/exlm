@@ -1,4 +1,5 @@
 import { decorateBlock, decorateButtons, decorateIcons, loadBlock } from './lib-franklin.js';
+import { loadIms } from './scripts.js';
 
 const connectionPrefix = 'urn:aemconnection:';
 
@@ -187,3 +188,26 @@ function handleEditorMove(event) {
 }
 
 document.querySelector('main')?.addEventListener('aue:content-move', handleEditorMove);
+
+// temporary workaround until aue:ui-edit and aue:ui-preview events become available
+// show/hide sign-up block when switching betweeen UE Edit mode and preview
+const signUpBlock = document.querySelector('.block.sign-up');
+if (signUpBlock) {
+  // check if user is signed in
+  try {
+    await loadIms();
+  } catch {
+    // eslint-disable-next-line no-console
+    console.warn('Adobe IMS not available.');
+  }
+
+  new MutationObserver((e) => {
+    e.forEach((change) => {
+      if (change.target.classList.contains('adobe-ue-edit')) {
+        signUpBlock.style.display = 'block';
+      } else {
+        signUpBlock.style.display = window.adobeIMS?.isSignedInUser() ? 'none' : 'block';
+      }
+    });
+  }).observe(document.documentElement, { attributeFilter: ['class'] });
+}
