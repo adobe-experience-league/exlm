@@ -833,6 +833,9 @@ function decorateBrowseTopics(block) {
     firstChild.innerHTML = '';
     secondChild.innerHTML = '';
   }
+
+  const main = document.querySelector('main');
+  main.classList.add('browse-background-img');
 }
 
 export default async function decorate(block) {
