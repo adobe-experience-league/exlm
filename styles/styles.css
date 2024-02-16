@@ -822,13 +822,10 @@ main > div.browse-rail {
   display: none;
 }
 
-body[class^=browse-] main {
-  background-image: none;
-  background-repeat: no-repeat;
-  background-position: top right;
-}
 body[class^=browse-] main.browse-background-img {
   background-image: url("/icons/solutions/BrowseDecorationMobile.svg");
+  background-repeat: no-repeat;
+  background-position: top right;
 }
 
 /* three column layout */
@@ -1115,12 +1112,9 @@ body[class^=browse-] main.browse-background-img {
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
     width: 50%;
   }
-  body[class^=browse-] main {
-    background-image: none;
-    background-size: contain;
-  }
   body[class^=browse-] main.browse-background-img {
     background-image: url("/icons/solutions/BrowseDecoration.svg");
+    background-size: contain;
   }
 }
 @media (min-width: 900px) {

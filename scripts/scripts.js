@@ -580,11 +580,19 @@ async function loadRails() {
   }
 }
 
+function showBrowseBackgroundGraphic() {
+  if (isBrowsePage()) {
+    const main = document.querySelector('main');
+    main.classList.add('browse-background-img');
+  }
+}
+
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadRails();
   loadDelayed();
+  showBrowseBackgroundGraphic();
   await loadPrevNextBtn();
 }
 

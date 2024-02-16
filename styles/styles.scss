@@ -725,14 +725,10 @@ main > div.browse-rail {
   display: none;
 }
 
-body[class^='browse-'] main {
-  background-image: none;
+body[class^='browse-'] main.browse-background-img {
+  background-image: url('/icons/solutions/BrowseDecorationMobile.svg');
   background-repeat: no-repeat;
   background-position: top right;
-
-  &.browse-background-img {
-    background-image: url('/icons/solutions/BrowseDecorationMobile.svg');
-  }
 }
 
 /* three column layout */
@@ -1051,13 +1047,9 @@ body[class^='browse-'] main {
     }
   }
 
-  body[class^='browse-'] main {
-    background-image: none;
+  body[class^='browse-'] main.browse-background-img {
+    background-image: url('/icons/solutions/BrowseDecoration.svg');
     background-size: contain;
-
-    &.browse-background-img {
-      background-image: url('/icons/solutions/BrowseDecoration.svg');
-    }
   }
 }
 
