@@ -55,7 +55,7 @@ export function decorateBookmark(block) {
 
   if (isSignedIn) {
     block.appendChild(authBookmark);
-    if (document.querySelector('.doc-actions-mobile')) {
+    if (document.querySelector('.doc-actions-mobile') && !document.querySelector('.doc-actions-mobile .bookmark')) {
       document.querySelector('.doc-actions-mobile').appendChild(authBookmark.cloneNode(true));
     }
     const bookmarkAuthedDesktop = document.querySelector('.doc-actions .bookmark.auth');
@@ -73,7 +73,6 @@ export function decorateBookmark(block) {
           bookmarkAuthedToolTipLabelM.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
         }
       });
-
       renderBookmark(bookmarkAuthedToolTipLabelD, bookmarkAuthedToolTipIconD, bookmarkId);
       renderBookmark(bookmarkAuthedToolTipLabelM, bookmarkAuthedToolTipIconM, bookmarkId);
     });
