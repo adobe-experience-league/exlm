@@ -4,7 +4,7 @@ export const JWTTokenUrl = `https://experienceleague.adobe.com/api/token?lang=${
 export const coveoTokenUrl = `https://experienceleague.adobe.com/api/coveo-token?lang=${lang}`;
 export const coveoSearchResultsUrl = 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2';
 export const liveEventsUrl = 'https://cdn.experienceleague.adobe.com/thumb/upcoming-events.json';
-export const adlsUrl = 'https://learning.adobe.com/catalog.result.json';
+export const adlsUrl = 'https://learning.stage.adobe.com/catalog.result.json';
 export const searchUrl = 'https://experienceleague.adobe.com/search.html';
 export const articleUrl = 'https://experienceleague.adobe.com/api/articles/';
 export const solutionsUrl = 'https://experienceleague.adobe.com/api/solutions?page_size=100';
