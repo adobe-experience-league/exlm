@@ -156,7 +156,7 @@ export default async function decorate(block) {
   const currentURL = window.location.pathname;
   const langCode = await getLanguageCode();
   const tocID = block.querySelector('.toc > div > div').textContent;
-  if (tocID !== '') {
+  if (tocID !== '' && !document.querySelector('.toc-dropdown')) {
     const resp = await handleTocService(tocID, langCode);
     block.innerHTML = '';
     block.style.visibility = 'visible';
