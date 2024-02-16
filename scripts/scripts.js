@@ -266,7 +266,7 @@ export function isDocPage(type = 'docs') {
  */
 export const isDocArticlePage = (type = 'docs') => {
   const theme = getMetadata('theme');
-  return theme.toLowerCase().trim() === type;
+  return theme?.toLowerCase().trim() === type;
 };
 
 /**
