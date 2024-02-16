@@ -11,7 +11,7 @@ const fetchFragment = async (rePath, lang = 'en') => {
 };
 
 const { lang } = getPathDetails();
-const feedbackFragment = fetchFragment('feedback-bar/feedback-bar', lang);
+const feedbackFragment = await fetchFragment('feedback-bar/feedback-bar', lang);
 
 function decorateFirstQuestion(firstQuestion) {
   const newDiv = createTag('div', { class: 'like-btns' });

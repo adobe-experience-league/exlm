@@ -168,7 +168,7 @@ function handleSocialIconStyles(footer) {
 export default async function decorate(block) {
   // fetch footer content
   const { lang } = getPathDetails();
-  const footerFragment = fetchFragment('footer/footer', lang);
+  const footerFragment = await fetchFragment('footer/footer', lang);
 
   if (footerFragment) {
     // decorate footer DOM
