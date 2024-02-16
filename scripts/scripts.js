@@ -23,6 +23,8 @@ const ffetchModulePromise = import('./ffetch.js');
 
 const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
 
+const interceptModulePromise = import('./intercepts/intercepts.js');
+
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
 export const timers = new Map();
@@ -352,9 +354,11 @@ async function loadLazy(doc) {
     },
   );
 
-  Promise.all([launchPromise, libAnalyticsModulePromise, headerPromise, footerPromise]).then(
+  Promise.all([launchPromise, libAnalyticsModulePromise, interceptModulePromise, headerPromise, footerPromise]).then(
     // eslint-disable-next-line no-unused-vars
-    ([launch, libAnalyticsModule, headPr, footPr]) => {
+    ([launch, libAnalyticsModule, interceptModule, headPr, footPr]) => {
+      const { interceptpoc } = interceptModule;
+      interceptpoc();
       const { pageLoadModel, linkClickModel } = libAnalyticsModule;
       window.adobeDataLayer.push(pageLoadModel());
       const linkClicked = document.querySelectorAll('a,.view-more-less span');
