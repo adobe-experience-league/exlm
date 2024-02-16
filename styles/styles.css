@@ -822,7 +822,7 @@ main > div.browse-rail {
   display: none;
 }
 
-body[class^=browse-] main {
+body[class^=browse-] main.browse-background-img {
   background-image: url("/icons/solutions/BrowseDecorationMobile.svg");
   background-repeat: no-repeat;
   background-position: top right;
@@ -1115,7 +1115,7 @@ body[class^=browse-] main {
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
     width: 50%;
   }
-  body[class^=browse-] main {
+  body[class^=browse-] main.browse-background-img {
     background-image: url("/icons/solutions/BrowseDecoration.svg");
     background-size: contain;
   }
