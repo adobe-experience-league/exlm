@@ -36,15 +36,16 @@ export const debounce = (ms, fn) => {
  * @param {ResizeObserverCallback} handler
  * @returns {void} nothing
  */
-function registerResizeHandler(callback) {
+function registerHeaderResizeHandler(callback) {
   window.customResizeHandlers = window.customResizeHandlers || [];
+  const header = document.querySelector('header');
   // register resize observer only once.
   if (!window.pageResizeObserver) {
     const pageResizeObserver = new ResizeObserver(
-      debounce(100, (entries, observer) => {
+      debounce(100, () => {
         window.customResizeHandlers.forEach((handler) => {
           try {
-            handler(entries, observer);
+            handler();
           } catch (e) {
             // eslint-disable-next-line no-console
             console.error(e);
@@ -53,13 +54,15 @@ function registerResizeHandler(callback) {
       }),
     );
     // observe immediately
-    pageResizeObserver.observe(document.querySelector('header'), {
+    pageResizeObserver.observe(header, {
       box: 'border-box',
     });
     window.pageResizeObserver = pageResizeObserver;
   }
   // push handler
   window.customResizeHandlers.push(callback);
+  // ensure handler runs at-least once
+  callback();
 }
 
 // eslint-disable-next-line
@@ -263,7 +266,7 @@ const buildNavItems = async (ul, level = 0) => {
         }
       };
       // listen for page resize, update events accordingly
-      registerResizeHandler(() => {
+      registerHeaderResizeHandler(() => {
         if (isMobile()) {
           // if mobile, add click event, remove mouseenter/mouseleave
           toggler.addEventListener('click', toggleExpandContent);
@@ -503,7 +506,7 @@ const signInDecorator = async (signInBlock) => {
         profileMenu.classList.remove(expandedClass);
       }
     };
-    registerResizeHandler(() => {
+    registerHeaderResizeHandler(() => {
       if (isMobile()) {
         // if mobile, add click event, remove mouseenter/mouseleave
         toggler.addEventListener('click', toggleExpandContent);
@@ -567,7 +570,7 @@ const productGridDecorator = async (productGridBlock) => {
       }
     };
 
-    registerResizeHandler(() => {
+    registerHeaderResizeHandler(() => {
       if (isMobile()) {
         // if mobile, hide product grid block
         gridToggler.style.display = 'none';
