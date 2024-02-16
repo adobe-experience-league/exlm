@@ -29,6 +29,18 @@ export function formattedTags(inputString) {
   return resultArray;
 }
 
+export const generateQuery = (topic) => {
+  const [type, product, version] = topic.split('/');
+  if (!product) {
+    return `@el_features="${type}"`;
+  }
+  if (!version) {
+    return `@el_product="${product}`;
+  }
+  const isSolutionType = type.toLowerCase().includes('solution');
+  return `(@el_product="${product}" AND @el_${isSolutionType ? 'solution' : 'features'}="${version}")`;
+};
+
 export function handleTopicSelection(block) {
   const wrapper = block || document;
   const selectedTopics = Array.from(wrapper.querySelectorAll('.browse-topics-item-active')).reduce((acc, curr) => {
@@ -37,17 +49,11 @@ export function handleTopicSelection(block) {
     return acc;
   }, []);
 
-  if (window.headlessContext) {
-    if (selectedTopics.length) {
-      window.headlessContext.set({ topic: selectedTopics });
-    } else {
-      window.headlessContext.remove('topic');
-    }
-  }
   if (window.headlessQueryActionCreators) {
     let query = '';
     if (selectedTopics.length) {
-      query = `(${selectedTopics.map((type) => `@el_features="${type}"`).join(' OR ')})`;
+      const queryContents = `${selectedTopics.map((topic) => generateQuery(topic)).join(' OR ')}`;
+      query = selectedTopics.length > 1 ? `(${queryContents})` : queryContents;
     }
     const advancedQueryAction = window.headlessQueryActionCreators.updateAdvancedSearchQueries({
       aq: query,

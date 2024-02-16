@@ -122,7 +122,7 @@ export const getSelectedTopics = (filterInfo) => {
   if (!filterInfo) {
     return [];
   }
-  const featuresCheck = filterInfo.match(/@el_features=("[^"]*")/g) || [];
+  const featuresCheck = filterInfo.match(/@el_product=("[^"]*")/g) ?? filterInfo.match(/@el_features=("[^"]*")/g) ?? [];
   const selectedTopics = featuresCheck.reduce((acc, curr) => {
     const [, featureName] = curr.split('=');
     if (featureName) {
