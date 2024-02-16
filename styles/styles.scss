@@ -870,6 +870,11 @@ body[class^='browse-'] main {
       @include breakpoint(desktop) {
         border-right: 1px solid #eaeaea;
 
+        &:not(.rail),
+        &.rail-right {
+          border-right: none;
+        }
+
         &:not(.toc-container, .mini-toc-container) {
           overflow: auto;
           padding-block: 0;
@@ -1064,6 +1069,18 @@ body[class^='browse-'] main {
         ul li {
           width: calc(33.33% - 16px);
         }
+      }
+    }
+
+    & main.rail-left-closed.rail-right-closed {
+      .section.content-section-first.content-section-last {
+        padding-right: 0;
+        margin-right: 0;
+        max-width: calc(100vw - 100px);
+      }
+
+      .default-content-wrapper p {
+        max-width: 95%;
       }
     }
   }

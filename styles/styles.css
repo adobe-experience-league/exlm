@@ -975,6 +975,9 @@ body[class^=browse-] main {
   .docs main > div.section {
     border-right: 1px solid #eaeaea;
   }
+  .docs main > div.section:not(.rail), .docs main > div.section.rail-right {
+    border-right: none;
+  }
   .docs main > div.section:not(.toc-container, .mini-toc-container) {
     overflow: auto;
     padding-block: 0;
@@ -1123,6 +1126,14 @@ body[class^=browse-] main {
   }
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
     width: calc(33.33% - 16px);
+  }
+  .docs main.rail-left-closed.rail-right-closed .section.content-section-first.content-section-last {
+    padding-right: 0;
+    margin-right: 0;
+    max-width: calc(100vw - 100px);
+  }
+  .docs main.rail-left-closed.rail-right-closed .default-content-wrapper p {
+    max-width: 95%;
   }
   body[class^=browse-] .browse-cards-block-content {
     margin-bottom: 0;
