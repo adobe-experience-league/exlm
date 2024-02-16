@@ -542,3 +542,18 @@
     margin-right: 3px;
     color: var(--exlm-toc-solution-6);
 }
+.toc.CircleExperienceCloud ul#product li>.product-icon {
+    background: url("../../icons/solutions/CircleExperienceCloud.svg") no-repeat center center;
+}
+.toc.CircleExperienceCloud ul li a:not(a[href^="#"]).is-active {
+    padding-left: 10px;
+    border-left-color: var(--exlm-toc-solution-2);
+}
+.toc.CircleExperienceCloud ul>li>p>a[href^="#"].js-toggle.is-open:before {
+    content: "•";
+    font-size: 20px;
+    opacity: 1;
+    padding-bottom: 3px;
+    margin-right: 3px;
+    color: var(--exlm-toc-solution-2);
+}
