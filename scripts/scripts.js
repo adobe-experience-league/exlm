@@ -57,6 +57,37 @@ async function loadFonts() {
 }
 
 /**
+ * Process current pathname and return details for use in language switching
+ * Considers pathnames like /en/path/to/content and /content/exl/global/en/path/to/content.html for both EDS and AEM
+ */
+export function getPathDetails() {
+  const { pathname } = window.location;
+  const extParts = pathname.split('.');
+  const ext = extParts.length > 1 ? extParts[extParts.length - 1] : '';
+  const isContentPath = pathname.startsWith('/content');
+  const parts = pathname.split('/');
+  const safeLangGet = (index) => (parts.length > index ? parts[index] : 'en');
+  // 4 is the index of the language in the path for AEM content paths like  /content/exl/global/en/path/to/content.html
+  // 1 is the index of the language in the path for EDS paths like /en/path/to/content
+  let lang = isContentPath ? safeLangGet(4) : safeLangGet(1);
+  // remove suffix from lang if any
+  if (lang.indexOf('.') > -1) {
+    lang = lang.substring(0, lang.indexOf('.'));
+  }
+  if (!lang) lang = 'en'; // default to en
+  // substring before lang
+  const prefix = pathname.substring(0, pathname.indexOf(`/${lang}`)) || '';
+  const suffix = pathname.substring(pathname.indexOf(`/${lang}`) + lang.length + 1) || '';
+  return {
+    ext,
+    prefix,
+    suffix,
+    lang,
+    isContentPath,
+  };
+}
+
+/**
  * Convert Table to block HTMl
  * @param {HTMLTableElement} table
  */
@@ -229,6 +260,16 @@ export function isDocPage(type = 'docs') {
 }
 
 /**
+ * Check if current page is a MD Docs Article Page.
+ * theme = docs is set in bulk metadata for docs paths.
+ * @param {string} type The type of doc page - docs (optional, default value is docs)
+ */
+export const isDocArticlePage = (type = 'docs') => {
+  const theme = getMetadata('theme');
+  return theme?.toLowerCase().trim() === type;
+};
+
+/**
  * set attributes needed for the docs pages grid to work properly
  * @param {Element} main the main element
  */
@@ -247,6 +288,23 @@ function decorateContentSections(main) {
 }
 
 /**
+ * see: https://github.com/adobe-experience-league/exlm-converter/pull/187
+ * @param {HTMLElement} main
+ */
+export function decorateAnchors(main) {
+  const anchorPrefix = 'icon-anchor-';
+  const anchorIcons = [...main.querySelectorAll(`span.icon[class*="${anchorPrefix}"]`)];
+  anchorIcons.forEach((icon) => {
+    const slugClass = icon.className.split(' ').find((c) => c.startsWith(anchorPrefix));
+    const slug = slugClass.substring(anchorPrefix.length);
+    if (slug) {
+      icon.parentElement.id = slug;
+      icon.remove();
+    }
+  });
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -256,6 +314,7 @@ export function decorateMain(main) {
   if (!isDocPage()) {
     decorateButtons(main);
   }
+  decorateAnchors(main); // must be run before decorateIcons
   decorateIcons(main);
   decorateExternalLinks(main);
   buildAutoBlocks(main);
@@ -270,7 +329,8 @@ export function decorateMain(main) {
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
-  document.documentElement.lang = 'en';
+  const { lang } = getPathDetails();
+  document.documentElement.lang = lang || 'en';
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
@@ -289,7 +349,7 @@ async function loadEager(doc) {
   }
 }
 
-export const isProductionDomain = () => window.location.hostname === 'experienceleague.adobe.com';
+export const isHelixDomain = () => ['hlx.page', 'hlx.live'].some((sfx) => window.location.hostname.endsWith(sfx));
 
 export const locales = new Map([
   ['de', 'de_DE'],
@@ -310,7 +370,7 @@ export async function loadIms() {
     new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error('IMS timeout')), 5000);
       window.adobeid = {
-        client_id: isProductionDomain() ? 'ExperienceLeague' : 'ExperienceLeague_Dev',
+        client_id: isHelixDomain() ? 'ExperienceLeague_Dev' : 'ExperienceLeague',
         scope:
           'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read',
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
@@ -504,7 +564,7 @@ function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   addMetaTagsToWindow();
   // eslint-disable-next-line import/no-cycle
-  if (isDocPage()) window.setTimeout(() => import('./feedback/feedback.js'), 3000);
+  if (isDocArticlePage()) window.setTimeout(() => import('./feedback/feedback.js'), 3000);
 }
 
 /**
@@ -520,11 +580,19 @@ async function loadRails() {
   }
 }
 
+function showBrowseBackgroundGraphic() {
+  if (isBrowsePage()) {
+    const main = document.querySelector('main');
+    main.classList.add('browse-background-img');
+  }
+}
+
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadRails();
   loadDelayed();
+  showBrowseBackgroundGraphic();
   await loadPrevNextBtn();
 }
 
@@ -569,37 +637,6 @@ export function rewriteDocsPath(docsPath) {
   pathname = removeExtension(pathname); // new URLs are extensionless
   url.pathname = pathname;
   return url.toString().replace(PROD_BASE, ''); // always remove PROD_BASE if exists
-}
-
-/**
- * Proccess current pathname and return details for use in language switching
- * Considers pathnames like /en/path/to/content and /content/exl/global/en/path/to/content.html for both EDS and AEM
- */
-export function getPathDetails() {
-  const { pathname } = window.location;
-  const extParts = pathname.split('.');
-  const ext = extParts.length > 1 ? extParts[extParts.length - 1] : '';
-  const isContentPath = pathname.startsWith('/content');
-  const parts = pathname.split('/');
-  const safeLangGet = (index) => (parts.length > index ? parts[index] : 'en');
-  // 4 is the index of the language in the path for AEM content paths like  /content/exl/global/en/path/to/content.html
-  // 1 is the index of the language in the path for EDS paths like /en/path/to/content
-  let lang = isContentPath ? safeLangGet(4) : safeLangGet(1);
-  // remove suffix from lang if any
-  if (lang.indexOf('.') > -1) {
-    lang = lang.substring(0, lang.indexOf('.'));
-  }
-  if (!lang) lang = 'en'; // default to en
-  // substring before lang
-  const prefix = pathname.substring(0, pathname.indexOf(`/${lang}`)) || '';
-  const suffix = pathname.substring(pathname.indexOf(`/${lang}`) + lang.length + 1) || '';
-  return {
-    ext,
-    prefix,
-    suffix,
-    lang,
-    isContentPath,
-  };
 }
 
 /**
