@@ -166,7 +166,7 @@ const isSignedIn = window.adobeIMS?.isSignedInUser();
  * @param {HTMLElement} navWrapper
  * @returns {HTMLButtonElement}
  */
-const hamburgerButton = (navWrapper) => {
+const hamburgerButton = (navWrapper, navOverlay) => {
   const navWrapperId = 'nav-wrapper';
   const button = htmlToElement(`
     <button 
@@ -180,6 +180,7 @@ const hamburgerButton = (navWrapper) => {
     const isExpanded = button.getAttribute('aria-expanded') === 'true';
     button.setAttribute('aria-expanded', !isExpanded);
     navWrapper.classList.toggle('nav-wrapper-expanded');
+    navOverlay.classList.toggle('hidden');
   });
   return button;
 };
@@ -333,8 +334,14 @@ const buildNavItems = async (ul, level = 0) => {
  */
 const navDecorator = async (navBlock) => {
   simplifySingleCellBlock(navBlock);
+
+  const navOverlay = document.createElement('div');
+  navOverlay.classList.add('nav-overlay', 'hidden');
+  document.body.appendChild(navOverlay);
+
   const navWrapper = htmlToElement('<div class="nav-wrapper"></div>');
-  const hamburger = hamburgerButton(navWrapper);
+  const hamburger = hamburgerButton(navWrapper, navOverlay);
+
   navWrapper.replaceChildren(hamburger, ...navBlock.children);
   navBlock.replaceChildren(navWrapper);
 

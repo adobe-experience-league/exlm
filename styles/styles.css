@@ -828,6 +828,20 @@ body[class^=browse-] main {
   background-position: top right;
 }
 
+.nav-overlay {
+  background: #00000080 0% 0% no-repeat padding-box;
+  width: 100vh;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 3;
+}
+
+.nav-overlay.hidden {
+  display: none;
+}
+
 /* three column layout */
 .docs {
   --exlm-font-size-h1: var(--spectrum-heading-size-l);
