@@ -284,7 +284,6 @@ header {
     z-index: 10;
     left: 0;
     right: 0;
-    overflow-y: auto;
 
     @include breakpoint(custom) {
       position: initial;

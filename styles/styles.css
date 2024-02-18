@@ -829,7 +829,7 @@ body[class^=browse-] main {
 }
 
 .nav-overlay {
-  background: #00000080 0% 0% no-repeat padding-box;
+  background: rgba(0, 0, 0, 0.5019607843) 0% 0% no-repeat padding-box;
   width: 100vh;
   height: 100vh;
   position: fixed;

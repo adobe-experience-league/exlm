@@ -181,6 +181,7 @@ const hamburgerButton = (navWrapper, navOverlay) => {
     button.setAttribute('aria-expanded', !isExpanded);
     navWrapper.classList.toggle('nav-wrapper-expanded');
     navOverlay.classList.toggle('hidden');
+    document.body.style.overflow = isExpanded ? null : 'hidden';
   });
   return button;
 };
