@@ -54,11 +54,12 @@ export function decorateBookmark(block) {
   );
 
   const docActionsMobileBookmark = document.querySelector('.doc-actions-mobile .bookmark');
+  const docActionsMobileContainer = document.querySelector('.doc-actions-mobile');
 
   if (isSignedIn) {
     block.appendChild(authBookmark);
-    if (document.querySelector('.doc-actions-mobile') && !docActionsMobileBookmark) {
-      document.querySelector('.doc-actions-mobile').appendChild(authBookmark.cloneNode(true));
+    if (docActionsMobileContainer && !docActionsMobileBookmark) {
+      docActionsMobileContainer.appendChild(authBookmark.cloneNode(true));
     }
     const bookmarkAuthedDesktop = document.querySelector('.doc-actions .bookmark.auth');
     const bookmarkAuthedMobile = document.querySelector('.doc-actions-mobile .bookmark.auth');
@@ -81,8 +82,8 @@ export function decorateBookmark(block) {
     });
   } else {
     block.appendChild(unAuthBookmark);
-    if (document.querySelector('.doc-actions-mobile') && !docActionsMobileBookmark) {
-      document.querySelector('.doc-actions-mobile').appendChild(unAuthBookmark.cloneNode(true));
+    if (docActionsMobileContainer && !docActionsMobileBookmark) {
+      docActionsMobileContainer.appendChild(unAuthBookmark.cloneNode(true));
     }
   }
 }
