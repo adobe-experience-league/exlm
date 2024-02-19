@@ -442,7 +442,13 @@ const searchDecorator = async (searchBlock) => {
  */
 const signUpDecorator = (signUpBlock) => {
   simplifySingleCellBlock(signUpBlock);
-  return signUpBlock;
+  if (isSignedIn) {
+    signUpBlock.style.display = 'none';
+  } else {
+    signUpBlock.firstChild.addEventListener('click', async () => {
+      window.adobeIMS.signUp();
+    });
+  }
 };
 
 /**
@@ -519,9 +525,6 @@ const signInDecorator = async (signInBlock) => {
         toggler.parentElement.addEventListener('mouseleave', toggleExpandContent);
       }
     });
-
-    // Hide Signup - Authenticated
-    document.querySelector('.sign-up').style.display = 'none';
   } else {
     signInBlock.classList.remove('signed-in');
     signInBlock.firstChild.addEventListener('click', async () => {
