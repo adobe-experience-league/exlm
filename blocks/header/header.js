@@ -162,6 +162,25 @@ try {
 const isSignedIn = window.adobeIMS?.isSignedInUser();
 
 /**
+ * Function to toggle the navigation menu.
+ *
+ * @param {Element} button - The button element used to toggle the navigation menu
+ * @param {Element} navWrapper - The wrapper element for the navigation menu
+ * @param {Element} navOverlay - The overlay element for the navigation menu
+ */
+function toggleNav(button, navWrapper, navOverlay) {
+  const isExpanded = button.getAttribute('aria-expanded') === 'true';
+  button.setAttribute('aria-expanded', !isExpanded);
+  navWrapper.classList.toggle('nav-wrapper-expanded');
+  navOverlay.classList.toggle('hidden');
+  if(!isExpanded) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.removeAttribute("style");
+  }
+}
+
+/**
  * adds hambuger button to nav wrapper
  * @param {HTMLElement} navWrapper
  * @returns {HTMLButtonElement}
@@ -176,15 +195,19 @@ const hamburgerButton = (navWrapper, navOverlay) => {
       aria-haspopup="true"
       aria-controls="${navWrapperId}"></button>`);
   navWrapper.id = navWrapperId;
+
   button.addEventListener('click', () => {
-    const isExpanded = button.getAttribute('aria-expanded') === 'true';
-    button.setAttribute('aria-expanded', !isExpanded);
-    navWrapper.classList.toggle('nav-wrapper-expanded');
-    navOverlay.classList.toggle('hidden');
-    document.body.style.overflow = isExpanded ? null : 'hidden';
+    toggleNav(button, navWrapper, navOverlay);
   });
+
+  registerHeaderResizeHandler(() => {
+    if (!isMobile() && button.getAttribute('aria-expanded') === 'true') {
+      toggleNav(button, navWrapper, navOverlay) 
+    }
+  })
+
   return button;
-};
+}
 
 /**
  * Builds nav items from the provided basic list
@@ -276,6 +299,7 @@ const buildNavItems = async (ul, level = 0) => {
           toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
         } else {
           // if desktop, add mouseenter/mouseleave, remove click event
+          
           toggler.removeEventListener('click', toggleExpandContent);
           if (level === 0) {
             toggler.parentElement.addEventListener('mouseenter', toggleExpandContent);

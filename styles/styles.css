@@ -830,12 +830,19 @@ body[class^=browse-] main {
 
 .nav-overlay {
   background: rgba(0, 0, 0, 0.5019607843) 0% 0% no-repeat padding-box;
-  width: 100vh;
-  height: 100vh;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 3;
+}
+@media (min-width: 1024px) {
+  .nav-overlay {
+    display: none;
+  }
 }
 
 .nav-overlay.hidden {
@@ -986,9 +993,6 @@ body[class^=browse-] main {
   }
 }
 @media (min-width: 900px) {
-  .docs main > div.section {
-    border-right: 1px solid #eaeaea;
-  }
   .docs main > div.section:not(.toc-container, .mini-toc-container) {
     overflow: auto;
     padding-block: 0;
@@ -1002,6 +1006,7 @@ body[class^=browse-] main {
     padding-block-end: 50px;
   }
   .docs main > div.section.toc-container {
+    border-right: 1px solid #eaeaea;
     grid-column: 1/1;
     grid-row: 1/-1;
     padding: 46px 10px 10px;
