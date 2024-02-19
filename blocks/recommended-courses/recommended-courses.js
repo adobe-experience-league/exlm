@@ -18,7 +18,7 @@ const isSignedIn = adobeIMS?.isSignedInUser();
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const [headingElement, toolTipElement, linkTextElement] = [...block.children].map((row) => row.firstElementChild);
+  const [headingElement, toolTipElement, linkElement] = [...block.children].map((row) => row.firstElementChild);
   const contentType = RECOMMENDED_COURSES_CONSTANTS.PATHS.MAPPING_KEY;
   let buildCardsShimmer = '';
   const noOfResults = 4;
@@ -169,25 +169,28 @@ export default async function decorate(block) {
 
   // Checking if the user is signed in before proceeding
   if (isSignedIn) {
-    if (headingElement.firstElementChild) {
-      if (toolTipElement?.textContent?.trim()) {
-        headingElement.firstElementChild.insertAdjacentHTML('afterend', '<div class="tooltip-placeholder"></div>');
-        const tooltipElem = headingElement.querySelector('.tooltip-placeholder');
-        const tooltipConfig = {
-          content: toolTipElement.textContent.trim(),
-        };
-        createTooltip(block, tooltipElem, tooltipConfig);
-      }
-      headingElement.firstElementChild.classList.add('h2');
-    }
+    headingElement.firstElementChild.classList.add('h2');
+
     const headerDiv = htmlToElement(`
-    <div class="browse-cards-block-header">
-    ${
-      headingElement.textContent.trim() ? `<div class="browse-cards-block-title">${headingElement.innerHTML}</div>` : ''
+      <div class="browse-cards-block-header">
+        <div class="browse-cards-block-title">
+          ${headingElement.innerHTML}
+        </div>
+        <div class="browse-cards-block-view">${linkElement.innerHTML}</div>
+      </div>
+      `);
+
+    if (toolTipElement?.textContent?.trim()) {
+      headerDiv
+        .querySelector('h1,h2,h3,h4,h5,h6')
+        ?.insertAdjacentHTML('afterend', '<div class="tooltip-placeholder"></div>');
+      const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
+      const tooltipConfig = {
+        content: toolTipElement.textContent.trim(),
+      };
+      createTooltip(block, tooltipElem, tooltipConfig);
     }
-      <div class="browse-cards-block-view">${linkTextElement.innerHTML}</div>
-    </div>
-  `);
+
     // Appending header div to the block
     block.appendChild(headerDiv);
 

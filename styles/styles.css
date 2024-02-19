@@ -828,20 +828,8 @@ body[class^=browse-] main.browse-background-img {
   background-position: top right;
 }
 
-.nav-overlay {
-  background: rgba(0, 0, 0, 0.5019607843) 0% 0% no-repeat padding-box;
-  inset: 0;
-  position: fixed;
-  z-index: 3;
-}
-@media (min-width: 1024px) {
-  .nav-overlay {
-    display: none;
-  }
-}
-
-.nav-overlay.hidden {
-  display: none;
+body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, body[class^=browse-] .browse-filters-full-container .browse-filters-one-pg-result {
+  margin-bottom: 40px;
 }
 
 /* three column layout */
@@ -1135,6 +1123,9 @@ body[class^=browse-] main.browse-background-img {
     background-image: url("/icons/solutions/BrowseDecoration.svg");
     background-size: contain;
   }
+  body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, body[class^=browse-] .browse-filters-full-container .browse-filters-one-pg-result {
+    margin-bottom: 58px;
+  }
 }
 @media (min-width: 900px) {
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper h2 {
@@ -1164,6 +1155,9 @@ body[class^=browse-] main.browse-background-img {
   body[class^=browse-] .section.curated-cards-container, body[class^=browse-] .section.events-cards-container, body[class^=browse-] .section.teaser-container, body[class^=browse-] .section.adls-cards-container {
     padding-top: 40px;
     padding-bottom: 40px;
+  }
+  body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, body[class^=browse-] .browse-filters-full-container .browse-filters-one-pg-result {
+    margin-bottom: 82px;
   }
   body[class^=browse-] .browse-filters-form .browse-hide-section + .browse-topics {
     margin-bottom: 8px;

@@ -443,6 +443,11 @@ button.browse-tags:focus {
   color: var(--spectrum-gray-700);
 }
 
+.filter-input-search input::-webkit-search-decoration,
+.filter-input-search input::-webkit-search-results-decoration {
+  display: none;
+}
+
 @media (min-width: 600px) {
   .browse-filters-input-container {
     display: grid;
