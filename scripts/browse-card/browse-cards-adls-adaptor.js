@@ -4,7 +4,7 @@ import { adlsUrl } from '../urls.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
 
 /* Fetch the Domain Name and Protocol from ADLS End Point */
-const extracADLStProtocolAndDomain = (url) => {
+const extractDomain = (url) => {
   const urlObject = new URL(url);
   const protocolAndDomain = urlObject.origin;
   return protocolAndDomain;
@@ -24,7 +24,7 @@ const BrowseCardsADLSAdaptor = (() => {
   const mapResultToCardsDataModel = (result) => {
     const contentType = CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY;
     const { solution, name, description, path } = result || {};
-    const adlsDomain = extracADLStProtocolAndDomain(adlsUrl);
+    const adlsDomain = extractDomain(adlsUrl);
 
     return {
       ...browseCardDataModel,
@@ -33,8 +33,8 @@ const BrowseCardsADLSAdaptor = (() => {
       product: solution && (Array.isArray(solution) ? solution : solution.split(/,\s*/)),
       title: name || '',
       description: description || '',
-      copyLink: adlsDomain + path || '',
-      viewLink: adlsDomain + path || '',
+      copyLink: `${adlsDomain}${path}` || '',
+      viewLink: `${adlsDomain}${path}` || '',
       viewLinkText: placeholders.viewLinkCourse || 'View course',
     };
   };
