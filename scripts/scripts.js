@@ -260,6 +260,16 @@ export function isDocPage(type = 'docs') {
 }
 
 /**
+ * Check if current page is a MD Docs Article Page.
+ * theme = docs is set in bulk metadata for docs paths.
+ * @param {string} type The type of doc page - docs (optional, default value is docs)
+ */
+export const isDocArticlePage = (type = 'docs') => {
+  const theme = getMetadata('theme');
+  return theme?.toLowerCase().trim() === type;
+};
+
+/**
  * set attributes needed for the docs pages grid to work properly
  * @param {Element} main the main element
  */
@@ -554,7 +564,7 @@ function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   addMetaTagsToWindow();
   // eslint-disable-next-line import/no-cycle
-  if (isDocPage()) window.setTimeout(() => import('./feedback/feedback.js'), 3000);
+  if (isDocArticlePage()) window.setTimeout(() => import('./feedback/feedback.js'), 3000);
 }
 
 /**
@@ -570,11 +580,19 @@ async function loadRails() {
   }
 }
 
+function showBrowseBackgroundGraphic() {
+  if (isBrowsePage()) {
+    const main = document.querySelector('main');
+    main.classList.add('browse-background-img');
+  }
+}
+
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadRails();
   loadDelayed();
+  showBrowseBackgroundGraphic();
   await loadPrevNextBtn();
 }
 

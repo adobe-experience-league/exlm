@@ -516,7 +516,8 @@ function handleUriHash() {
       const contentDiv = document.querySelector('.browse-topics');
       const buttons = contentDiv.querySelectorAll('button');
       Array.from(buttons).forEach((button) => {
-        if (selectedTopics.includes(button.dataset.topicname)) {
+        const matchFound = selectedTopics.find((topic) => button.dataset.topicname?.includes(topic));
+        if (matchFound) {
           button.classList.add('browse-topics-item-active');
         } else {
           button.classList.remove('browse-topics-item-active');
@@ -791,7 +792,7 @@ function decorateBrowseTopics(block) {
         const parts = topicsButtonTitle.split('/');
         const topicName = parts[parts.length - 1];
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
-        topicsButtonDiv.dataset.topicname = topicName;
+        topicsButtonDiv.dataset.topicname = topicsButtonTitle;
         topicsButtonDiv.innerHTML = topicName;
         contentDiv.appendChild(topicsButtonDiv);
       });
@@ -814,7 +815,7 @@ function decorateBrowseTopics(block) {
       const selectedTopics = getSelectedTopics(filtersInfo);
       if (selectedTopics && selectedTopics.length > 0) {
         selectedTopics.forEach((topic) => {
-          const element = contentDiv.querySelector(`.browse-topics-item[data-topicname="${topic}"]`);
+          const element = contentDiv.querySelector(`.browse-topics-item[data-topicname*="${topic}"]`);
           element.classList.add('browse-topics-item-active');
         });
         handleTopicSelection(contentDiv);
