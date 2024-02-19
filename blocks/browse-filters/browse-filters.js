@@ -284,7 +284,7 @@ function handleCheckboxClick(block, el, options) {
       }
     } else {
       options.selected -= 1;
-      removeFromTags(block, label);
+      removeFromTags(block, value);
 
       if (coveoFacet) {
         coveoFacet.toggleSelect({
