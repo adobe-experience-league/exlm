@@ -96,14 +96,17 @@ function updateClearFilterStatus(block) {
     return acc;
   }, []);
   const hasActiveTopics = block.querySelector('.browse-topics') !== null && selectedTopics.length > 0;
-  const browseFiltersSection = document.querySelector('.browse-filters-form');
+  const browseFiltersContainer = document.querySelector('.browse-filters-container');
+  const browseFiltersSection = browseFiltersContainer.querySelector('.browse-filters-form');
   if (hasActiveTopics || tagsProxy.length !== 0 || searchEl.value) {
     clearFilterBtn.disabled = false;
     hideSectionsBelowFilter(block, false);
+    browseFiltersContainer.classList.add('browse-filters-full-container');
     hildeSectionsWithinFilter(browseFiltersSection, true);
   } else {
     clearFilterBtn.disabled = true;
     hideSectionsBelowFilter(block, true);
+    browseFiltersContainer.classList.remove('browse-filters-full-container');
     hildeSectionsWithinFilter(browseFiltersSection, false);
   }
 }
@@ -281,7 +284,7 @@ function handleCheckboxClick(block, el, options) {
       }
     } else {
       options.selected -= 1;
-      removeFromTags(block, label);
+      removeFromTags(block, value);
 
       if (coveoFacet) {
         coveoFacet.toggleSelect({
@@ -597,11 +600,12 @@ function constructFilterPagination(block) {
 }
 
 function renderPageNumbers() {
-  const filtersPaginationEl = document.querySelector('.browse-filters-pagination');
+  const browseFiltersBlock = document.querySelector('.browse-filters');
+  const filtersPaginationEl = browseFiltersBlock?.querySelector('.browse-filters-pagination');
   if (!filtersPaginationEl || !window.headlessPager) {
     return;
   }
-
+  const browseResults = browseFiltersBlock.querySelector('.browse-filters-results');
   const currentPageNumber = window.headlessPager?.state?.currentPage || 1;
   const pgCount = window.headlessPager?.state?.maxPage || 1;
   const paginationTextEl = filtersPaginationEl.querySelector('.browse-filters-pagination-text');
@@ -627,8 +631,10 @@ function renderPageNumbers() {
   }
   if (pgCount === 1) {
     filtersPaginationEl.classList.add('browse-filters-pagination-hidden');
+    browseResults.classList.add('browse-filters-one-pg-result');
   } else {
     filtersPaginationEl.classList.remove('browse-filters-pagination-hidden');
+    browseResults.classList.remove('browse-filters-one-pg-result');
   }
 }
 
