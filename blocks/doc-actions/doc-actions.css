@@ -162,10 +162,6 @@
   outline: 2px solid var(--spectrum-gray-600);
 }
 
-.doc-actions-wrapper {
-  display: none;
-}
-
 .doc-actions-mobile {
   display: flex;
   margin: 30px 0 0 -8px;
@@ -210,6 +206,10 @@
   margin-right: 10px;
 }
 
+.doc-actions .bookmark, .doc-actions .copy-link {
+  display: none;
+}
+
 @media (min-width: 900px) {
   .doc-actions-wrapper {
     background: var(--spectrum-gray-50);
@@ -219,6 +219,10 @@
     z-index: 5;
   }
 
+  .doc-actions .bookmark, .doc-actions .copy-link {
+    display: block;
+  }  
+  
   .doc-actions-mobile {
     display: none;
   }
