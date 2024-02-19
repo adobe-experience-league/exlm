@@ -173,10 +173,10 @@ function toggleNav(button, navWrapper, navOverlay) {
   button.setAttribute('aria-expanded', !isExpanded);
   navWrapper.classList.toggle('nav-wrapper-expanded');
   navOverlay.classList.toggle('hidden');
-  if(!isExpanded) {
-    document.body.style.overflow = "hidden";
+  if (!isExpanded) {
+    document.body.style.overflow = 'hidden';
   } else {
-    document.body.removeAttribute("style");
+    document.body.removeAttribute('style');
   }
 }
 
@@ -202,12 +202,12 @@ const hamburgerButton = (navWrapper, navOverlay) => {
 
   registerHeaderResizeHandler(() => {
     if (!isMobile() && button.getAttribute('aria-expanded') === 'true') {
-      toggleNav(button, navWrapper, navOverlay) 
+      toggleNav(button, navWrapper, navOverlay);
     }
-  })
+  });
 
   return button;
-}
+};
 
 /**
  * Builds nav items from the provided basic list
@@ -299,7 +299,7 @@ const buildNavItems = async (ul, level = 0) => {
           toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
         } else {
           // if desktop, add mouseenter/mouseleave, remove click event
-          
+
           toggler.removeEventListener('click', toggleExpandContent);
           if (level === 0) {
             toggler.parentElement.addEventListener('mouseenter', toggleExpandContent);
