@@ -830,13 +830,8 @@ body[class^=browse-] main.browse-background-img {
 
 .nav-overlay {
   background: rgba(0, 0, 0, 0.5019607843) 0% 0% no-repeat padding-box;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   position: fixed;
-  top: 0;
-  left: 0;
   z-index: 3;
 }
 @media (min-width: 1024px) {
@@ -1012,7 +1007,6 @@ body[class^=browse-] main.browse-background-img {
     padding-block-end: 50px;
   }
   .docs main > div.section.toc-container {
-    border-right: 1px solid #eaeaea;
     grid-column: 1/1;
     grid-row: 1/-1;
     padding: 46px 10px 10px;
