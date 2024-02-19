@@ -1,81 +1,144 @@
-export const roles = [
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
+/**
+ * Array containing roles with associated metadata.
+ * Each role object includes a id, value, title and description.
+ * The title and description are fetched from language placeholders or falls back to a default description.
+ */
+const roles = [
   {
-    title: 'Business User',
+    id: 'User',
     value: 'User',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
+    title: 'Business User',
+    description:
+      'Responsible for utilizing Adobe solutions to achieve daily job functions, complete tasks, and achieve business objectives.',
   },
   {
-    title: 'Developer',
+    id: 'Developer',
     value: 'Developer',
-    description: 'Responsible for nothing until there"s an issue.',
+    title: 'Developer',
+    description:
+      "Responsible for engineering Adobe solutions' implementation, integration, data-modeling, data engineering, and other technical skills.",
   },
   {
-    title: 'Administrator',
+    id: 'Admin',
     value: 'Admin',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
+    title: 'Administrator',
+    description:
+      'Responsible for the technical operations, configuration, permissions, management, and support needs of Adobe solutions.',
   },
   {
-    title: 'Business Leader',
+    id: 'Leader',
     value: 'Leader',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
+    title: 'Business Leader',
+    description: 'Responsible for owning the digital strategy and accelerating value through Adobe solutions.',
   },
-];
+].map((role) => ({
+  ...role,
+  ...(placeholders[`filterRole${role.id}Title`] && { title: placeholders[`filterRole${role.id}Title`] }),
+  ...(placeholders[`filterRole${role.id}Description`] && {
+    description: placeholders[`filterRole${role.id}Description`],
+  }),
+}));
 
-export const contentType = [
+/**
+ * Array containing contentType with associated metadata.
+ * Each contentType object includes a id, value, title and description.
+ * The title and description are fetched from language placeholders or falls back to a default description.
+ */
+const contentType = [
   {
-    title: 'Certification',
+    id: 'Certification',
     value: 'Certification',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
+    title: 'Certification',
+    description: 'Credentials that recognize an individual’s skill and competency in an Adobe solution.',
   },
   {
-    title: 'Community',
+    id: 'Community',
     value: 'Community',
-    description: 'Responsible for nothing until there"s an issue.',
+    title: 'Community',
+    description: 'Questions, answers, ideas, and expertise shared from Adobe customers and experts growing together.',
   },
   {
-    title: 'Courses',
+    id: 'Course',
     value: 'Course',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
+    title: 'Courses',
+    description: 'Expertly curated collections designed to help you gain skills and advance your knowledge.',
   },
   {
-    title: 'Documentation',
+    id: 'Documentation',
     value: 'Documentation',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
+    title: 'Documentation',
+    description:
+      'Developer guides, technical articles, and release notes created for implementation and management of Adobe solutions.',
   },
   {
-    title: 'On-Demand Events',
+    id: 'Event',
     value: 'Event',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
+    title: 'On-Demand Events',
+    description: 'Recordings of learning and skill enablement events. Watch and learn from Adobe experts and peers.',
   },
   {
-    title: 'Troubleshooting',
+    id: 'Troubleshooting',
     value: 'Troubleshooting',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
+    title: 'Troubleshooting',
+    description: 'Answers to common Adobe solution questions with detailed guidance.',
   },
   {
-    title: 'Tutorial',
+    id: 'Tutorial',
     value: 'Tutorial',
-    description: 'Responsible for utilizing Adobe solutions to achieve daily job functions and tasks.',
+    title: 'Tutorial',
+    description:
+      'Brief instructional material with step-by-step instructions to learn a specific skill or accomplish a specific task.',
   },
-];
+].map((role) => ({
+  ...role,
+  ...(placeholders[`filterContentType${role.id}Title`] && { title: placeholders[`filterContentType${role.id}Title`] }),
+  ...(placeholders[`filterContentType${role.id}Description`] && {
+    description: placeholders[`filterContentType${role.id}Description`],
+  }),
+}));
 
-export const expLevel = [
+/**
+ * Array containing expLevel (Experience Level) with associated metadata.
+ * Each contentType object includes a id, value, title and description.
+ * The title and description are fetched from language placeholders or falls back to a default description.
+ */
+const expLevel = [
   {
-    title: 'Beginner',
+    id: 'Beginner',
     value: 'Beginner',
-    description: 'I am a beginner',
+    title: 'Beginner',
+    description: 'Minimal experience and foundational understanding of a subject.',
   },
   {
-    title: 'Intermediate',
+    id: 'Intermediate',
     value: 'Intermediate',
-    description: 'I am an intermediate',
+    title: 'Intermediate',
+    description: 'Moderate level of expertise, with some understanding of core concepts and skills.',
   },
   {
-    title: 'Experienced',
+    id: 'Experienced',
     value: 'Experienced',
-    description: 'I have some experience',
+    title: 'Experienced',
+    description:
+      'High degree of proficiency with an advanced understanding of concepts and skill. Regularly manages complex tasks and objectives.',
   },
-];
+].map((role) => ({
+  ...role,
+  ...(placeholders[`filterExpLevel${role.id}Title`] && { title: placeholders[`filterExpLevel${role.id}Title`] }),
+  ...(placeholders[`filterExpLevel${role.id}Description`] && {
+    description: placeholders[`filterExpLevel${role.id}Description`],
+  }),
+}));
 
 export const roleOptions = {
   name: 'Role',
