@@ -163,10 +163,17 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }
   const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
   const ctaText = viewLinkText || '';
   const anchorLink = htmlToElement(`
-        <a class="browse-card-cta-element" target="_blank" href="${viewLink}">
+        <a class="browse-card-cta-element" href="${viewLink}">
             ${isLeftPlacement ? `${iconMarkup} ${ctaText}` : `${ctaText} ${iconMarkup}`}
         </a>
     `);
+  if (
+    contentType.toLowerCase() === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY ||
+    contentType.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY ||
+    contentType.toLowerCase() === CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
+  ) {
+    anchorLink.setAttribute('target', '_blank');
+  }
   cardFooter.appendChild(anchorLink);
 };
 
@@ -271,20 +278,21 @@ const buildCardContent = (card, model) => {
 const setupBookmarkAction = (wrapper) => {
   loadJWT().then(async () => {
     profile().then(async (data) => {
-      const bookmarkAuthed = Array.from(
-        wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark.auth'),
-      );
+      const bookmarkAuthed = Array.from(wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark'));
       bookmarkAuthed.forEach((bookmark) => {
-        const bookmarkAuthedToolTipLabel = bookmark.querySelector('.exl-tooltip-label');
-        const bookmarkAuthedToolTipIcon = bookmark.querySelector('.bookmark-icon');
-        const bookmarkId = bookmark.getAttribute('data-id');
-        renderBookmark(bookmarkAuthedToolTipLabel, bookmarkAuthedToolTipIcon, bookmarkId);
-        if (data.bookmarks.includes(bookmarkId)) {
-          bookmarkAuthedToolTipIcon.classList.add('authed');
-          bookmarkAuthedToolTipLabel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
+        if (data?.bookmarks.includes(bookmark.getAttribute('data-id'))) {
+          bookmark.querySelector('.bookmark-icon').classList.add('authed');
+          bookmark.querySelector('.exl-tooltip-label').innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
         }
       });
     });
+  });
+
+  Array.from(wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark')).forEach((bookmark) => {
+    const bookmarkAuthedToolTipLabel = bookmark.querySelector('.exl-tooltip-label');
+    const bookmarkAuthedToolTipIcon = bookmark.querySelector('.bookmark-icon');
+    const bookmarkId = bookmark.getAttribute('data-id');
+    renderBookmark(bookmarkAuthedToolTipLabel, bookmarkAuthedToolTipIcon, bookmarkId);
   });
 };
 
@@ -335,8 +343,13 @@ export async function buildCard(container, element, model) {
     img.alt = title;
     img.width = 254;
     img.height = 153;
-    cardFigure.classList.add('img-custom-height');
     cardFigure.appendChild(img);
+    img.addEventListener('error', () => {
+      img.style.display = 'none';
+    });
+    img.addEventListener('load', () => {
+      cardFigure.classList.add('img-custom-height');
+    });
   }
 
   const bannerElement = createTag('h3', { class: 'browse-card-banner' });
@@ -377,5 +390,19 @@ export async function buildCard(container, element, model) {
   buildCardContent(card, model);
   setupBookmarkAction(card);
   setupCopyAction(card);
-  element.appendChild(card);
+  if (model.viewLink) {
+    const cardContainer = document.createElement('a');
+    cardContainer.setAttribute('href', model.viewLink);
+    if (
+      contentType.toLowerCase() === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY ||
+      contentType.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY ||
+      contentType.toLowerCase() === CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
+    ) {
+      cardContainer.setAttribute('target', '_blank');
+    }
+    cardContainer.appendChild(card);
+    element.appendChild(cardContainer);
+  } else {
+    element.appendChild(card);
+  }
 }

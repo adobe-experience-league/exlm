@@ -691,6 +691,17 @@ img {
   /* section metadata */
   &.highlight {
     background-color: var(--highlight-background-color);
+
+    &.icon-block-container {
+      padding: 32px 36px 48px;
+
+      & > div > h3 {
+        font-size: 28px;
+        line-height: 42px;
+        text-align: center;
+        margin: 0 0 36px;
+      }
+    }
   }
 
   > div {
@@ -702,6 +713,11 @@ img {
   @include breakpoint(tablet) {
     padding: 30px 56px;
   }
+
+  &.curated-cards-container,
+  &.events-cards-container {
+    padding-bottom: 0;
+  }
 }
 
 /* the browse rail is hidden by default */
@@ -709,10 +725,17 @@ main > div.browse-rail {
   display: none;
 }
 
-body[class^='browse-'] main {
+body[class^='browse-'] main.browse-background-img {
   background-image: url('/icons/solutions/BrowseDecorationMobile.svg');
   background-repeat: no-repeat;
   background-position: top right;
+}
+
+body[class^='browse-'] .browse-filters-full-container {
+  & .browse-filters-pagination,
+  & .browse-filters-one-pg-result {
+    margin-bottom: 40px;
+  }
 }
 
 /* three column layout */
@@ -853,6 +876,11 @@ body[class^='browse-'] main {
 
       @include breakpoint(desktop) {
         border-right: 1px solid #eaeaea;
+
+        &:not(.rail),
+        &.rail-right {
+          border-right: none;
+        }
 
         &:not(.toc-container, .mini-toc-container) {
           overflow: auto;
@@ -1009,6 +1037,18 @@ body[class^='browse-'] main {
 }
 
 @include breakpoint('tablet') {
+  .section {
+    &.highlight {
+      &.icon-block-container {
+        padding: 80px 86px;
+
+        & > div > h3 {
+          text-align: left;
+        }
+      }
+    }
+  }
+
   .docs {
     &.docs-solution-landing.docs-tutorial {
       .default-content-wrapper {
@@ -1019,9 +1059,16 @@ body[class^='browse-'] main {
     }
   }
 
-  body[class^='browse-'] main {
-    background-image: url('/icons/solutions/BrowseDecoration.svg');
-    background-size: contain;
+  body[class^='browse-'] {
+    & main.browse-background-img {
+      background-image: url('/icons/solutions/BrowseDecoration.svg');
+      background-size: contain;
+    }
+
+    & .browse-filters-full-container .browse-filters-pagination,
+    & .browse-filters-full-container .browse-filters-one-pg-result {
+      margin-bottom: 58px;
+    }
   }
 }
 
@@ -1037,6 +1084,50 @@ body[class^='browse-'] main {
           width: calc(33.33% - 16px);
         }
       }
+    }
+
+    & main.rail-left-closed.rail-right-closed {
+      .section.content-section-first.content-section-last {
+        padding-right: 0;
+        margin-right: 0;
+        max-width: calc(100vw - 100px);
+      }
+
+      .default-content-wrapper p {
+        max-width: 95%;
+      }
+    }
+  }
+
+  body[class^='browse-'] {
+    & .browse-cards-block-content {
+      margin-bottom: 0;
+    }
+
+    & .browse-filters-container {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    & .browse-cards-block {
+      min-height: auto;
+    }
+
+    & .section.curated-cards-container,
+    & .section.events-cards-container,
+    & .section.teaser-container,
+    & .section.adls-cards-container {
+      padding-top: 40px;
+      padding-bottom: 40px;
+    }
+
+    & .browse-filters-full-container .browse-filters-pagination,
+    & .browse-filters-full-container .browse-filters-one-pg-result {
+      margin-bottom: 82px;
+    }
+
+    & .browse-filters-form .browse-hide-section + .browse-topics {
+      margin-bottom: 8px;
     }
   }
 }
@@ -1074,7 +1165,7 @@ body[class^='browse-'] main {
 @media (width >= 1440px) {
   body[class^='browse-'] {
     & main {
-      background-position: -56px 0;
+      background-position: -36px 0;
     }
   }
 
@@ -1086,6 +1177,21 @@ body[class^='browse-'] main {
 
     & main > div.section {
       padding: 30px 32px;
+    }
+
+    & main > div.section.browse-breadcrumb-container {
+      padding-top: 24px;
+      padding-bottom: 0;
+    }
+
+    & main > div.section.sign-up-container {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    & .section.browse-filters-container {
+      padding-top: 0;
+      padding-bottom: 0;
     }
   }
 }

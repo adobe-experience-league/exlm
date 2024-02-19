@@ -56,6 +56,32 @@ header {
   background-color: var(--color-white);
 }
 
+.language-selector {
+  grid-area: language;
+  display: var(--language-selector-display);
+  align-items: center;
+  padding: 0;
+  position: relative;
+}
+
+.language-selector .icon {
+  height: 18px;
+  width: 18px;
+}
+
+.language-selector-button {
+  border-radius: 0;
+  margin: 0;
+  border: 0;
+  text-align: left;
+  background: none;
+  background-color: transparent !important;
+  font-weight: initial;
+  padding: 15px;
+  position: relative;
+  top: 2px;
+}
+
 .header {
   padding-right: var(--header-padding-x);
   height: 100%;
@@ -73,7 +99,7 @@ header {
 }
 .header > nav {
   display: grid;
-  grid-template-areas: "nav brand product-grid sign-in";
+  grid-template-areas: "nav adobe-logo brand product-grid sign-in";
   justify-content: space-between;
   height: 100%;
 }
@@ -117,7 +143,8 @@ header {
   color: var(--spectrum-gray-50);
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-600);
-  padding: 5px 16px;
+  padding: 5px 16px;  
+  margin: 16px 0;
   white-space: nowrap;
   line-height: unset;
 }
@@ -134,7 +161,8 @@ header {
   color: var(--spectrum-gray-50);
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-600);
-  padding: 5px 16px;
+  padding: 5px 16px;  
+  margin: 16px 0;
   white-space: nowrap;
   line-height: unset;
 }
@@ -653,7 +681,7 @@ header {
   .header .search {
     position: absolute;
     right: 80px;
-    top: 20px;
+    top: 23px;
   }
 }
 .header .search-short {
@@ -1009,29 +1037,17 @@ header {
   fill: var(--non-spectrum-azure-blue);
 }
 
-.language-selector {
-  grid-area: language;
-  display: var(--language-selector-display);
-  align-items: center;
-  padding: 0;
-  position: relative;
-}
-
-.language-selector .icon {
-  height: 18px;
-  width: 18px;
-}
-
-.language-selector-button {
-  border-radius: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  text-align: left;
-  background: none;
-  background-color: transparent !important;
-  font-weight: initial;
-  padding: 15px;
-  position: relative;
-  top: 2px;
+@media (min-width: 900px) {
+  .header .nav-item-toggle:not(.nav-item-toggle-root) {
+    padding: 24px 32px 12px;
+  }
+  .header .nav-item-content .nav-item-content {
+    padding: 0 8px;
+  }
+  .header .nav-item .nav-item {
+    margin-top: 0;
+  }
+  .header .nav-item .nav-item a {
+    padding: 5px var(--nav-item-padding-x);
+  }
 }

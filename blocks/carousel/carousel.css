@@ -19,6 +19,7 @@
   margin: auto;
   align-items: stretch;
   -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .carousel.block > .panel-container::-webkit-scrollbar {
@@ -68,5 +69,12 @@
     /* stretches to window edge, cover section padding */
     margin-left: calc(-1 * var(--space-token-xl));
     margin-right: calc(-1 * var(--space-token-xl));
+  }
+}
+
+@media (min-width: 600px) {
+  .section.carousel-container {
+    padding-top: 0;
+    padding-bottom: 0;
   }
 }

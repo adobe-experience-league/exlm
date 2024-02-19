@@ -1,20 +1,45 @@
 /**
- * formattedTopicsTags returns the array of base64 encoded tags after extracting from the tags selected in dialog
+ * formattedTags returns the array of base64 encoded tags after extracting from the tags selected in dialog
  * @param {string} inputString - The topics tag. E.g. exl:topic/QXBwIEJ1aWxkZXI=
  * @returns the topic tag. E.g. QXBwIEJ1aWxkZXI=
  */
-export function formattedTopicsTags(inputString) {
-  const splitArray = inputString.split(',');
-  // eslint-disable-next-line array-callback-return, consistent-return
-  const base64EncodedTagsArray = splitArray.map((item) => {
-    const lastIndex = item.lastIndexOf('/');
-    if (lastIndex !== -1) {
-      const actualTagBase64Encoded = item.substring(lastIndex + 1);
-      return actualTagBase64Encoded;
+export function formattedTags(inputString) {
+  const resultArray = [];
+  const items = inputString.split(',');
+
+  items.forEach((item) => {
+    let base64EncodedTagsArray;
+    let product;
+    let version;
+
+    const [type, productBase64, versionBase64] = item.split('/');
+    if (productBase64) {
+      product = atob(productBase64);
+    }
+    if (versionBase64) {
+      version = atob(versionBase64);
+    }
+
+    // Check if product and version are not undefined before appending to base64EncodedTagsArray
+    if (product || version) {
+      base64EncodedTagsArray = `${type}${product ? `/${product}` : ''}${version ? `/${version}` : ''}`;
+      resultArray.push(base64EncodedTagsArray);
     }
   });
-  return base64EncodedTagsArray;
+  return resultArray;
 }
+
+export const generateQuery = (topic) => {
+  const [type, product, version] = topic.split('/');
+  if (!product) {
+    return `@el_features="${type}"`;
+  }
+  if (!version) {
+    return `@el_product="${product}`;
+  }
+  const isSolutionType = type.toLowerCase().includes('solution');
+  return `(@el_product="${product}" AND @el_${isSolutionType ? 'solution' : 'features'}="${version}")`;
+};
 
 export function handleTopicSelection(block) {
   const wrapper = block || document;
@@ -24,17 +49,11 @@ export function handleTopicSelection(block) {
     return acc;
   }, []);
 
-  if (window.headlessContext) {
-    if (selectedTopics.length) {
-      window.headlessContext.set({ topic: selectedTopics });
-    } else {
-      window.headlessContext.remove('topic');
-    }
-  }
   if (window.headlessQueryActionCreators) {
     let query = '';
     if (selectedTopics.length) {
-      query = `(${selectedTopics.map((type) => `@el_features="${type}"`).join(' OR ')})`;
+      const queryContents = `${selectedTopics.map((topic) => generateQuery(topic)).join(' OR ')}`;
+      query = selectedTopics.length > 1 ? `(${queryContents})` : queryContents;
     }
     const advancedQueryAction = window.headlessQueryActionCreators.updateAdvancedSearchQueries({
       aq: query,
