@@ -52,9 +52,9 @@ export function decorateBookmark(block) {
     `${placeholders.bookmarkAuthTiptext}`,
     `${placeholders.bookmarkAuthLabelSet}`,
   );
-  
+
   const docActionsMobileBookmark = document.querySelector('.doc-actions-mobile .bookmark');
-  
+
   if (isSignedIn) {
     block.appendChild(authBookmark);
     if (document.querySelector('.doc-actions-mobile') && !docActionsMobileBookmark) {
