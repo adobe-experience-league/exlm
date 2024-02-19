@@ -101,12 +101,12 @@ function updateClearFilterStatus(block) {
   if (hasActiveTopics || tagsProxy.length !== 0 || searchEl.value) {
     clearFilterBtn.disabled = false;
     hideSectionsBelowFilter(block, false);
-    browseFiltersContainer.classList.add('browse-filters-fullcontainer');
+    browseFiltersContainer.classList.add('browse-filters-full-container');
     hildeSectionsWithinFilter(browseFiltersSection, true);
   } else {
     clearFilterBtn.disabled = true;
     hideSectionsBelowFilter(block, true);
-    browseFiltersContainer.classList.remove('browse-filters-fullcontainer');
+    browseFiltersContainer.classList.remove('browse-filters-full-container');
     hildeSectionsWithinFilter(browseFiltersSection, false);
   }
 }
