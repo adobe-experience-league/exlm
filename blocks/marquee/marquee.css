@@ -94,6 +94,10 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
   align-items: center;
 }
 
+.marquee-cta:empty {
+  margin-top: 0;
+}
+
 .marquee-cta > a.button {
   font-size: 19px;
   margin: 0;
@@ -296,7 +300,7 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
   /* title */
   body[class ^= 'browse-'] .marquee-title {
     font-size: var( --spectrum-font-size-900);
-    line-height: 54px;
+    line-height: 36px;
     margin-bottom: 0 /* var(--space-token-xxs)*/;
 
   }
@@ -315,8 +319,8 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
   }
 
   body[class ^= 'browse-'] .section div.marquee-wrapper .marquee-foreground {
-    gap: 40px;
     padding: 0;
+    justify-content:space-between;
   }
 
   /* text block */
@@ -327,22 +331,23 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
     margin: 0;
     padding: 20px 0 23px 36px;
     flex-grow: 1;
-    max-width: unset;
+    max-width: 500px;
   }
 
   /* subject image */
   body[class ^= 'browse-'] .marquee-subject {
     min-width: unset;
     min-height: unset;
-    width: 300px;
-    transform:scale(1.4);
+    width: 320px;
     z-index: 1;
+    margin: unset;
   }
 
   body[class ^= 'browse-'] .marquee-subject img {
     display: block;
     min-width: unset;
     padding: 0;
+    height:260px;
   }
 
   body[class ^= 'browse-'] .section div.marquee-wrapper .marquee-background {
