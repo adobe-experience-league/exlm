@@ -529,6 +529,22 @@ const signInDecorator = async (signInBlock) => {
       ),
     );
     const toggler = signInBlock.querySelector('.profile-toggle');
+    const toggleExpandContentMobile = (navOverlay) => {
+      const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
+      toggler.setAttribute('aria-expanded', !isExpanded);
+      const profileMenu = toggler.nextElementSibling;
+      const expandedClass = 'profile-menu-expanded';
+      if (!isExpanded) {
+        profileMenu.classList.add(expandedClass);
+        navOverlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      } else {
+        profileMenu.classList.remove(expandedClass);
+        navOverlay.classList.add('hidden');
+        document.body.removeAttribute('style');
+      }
+    };
+
     const toggleExpandContent = () => {
       const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
       toggler.setAttribute('aria-expanded', !isExpanded);
@@ -540,15 +556,18 @@ const signInDecorator = async (signInBlock) => {
         profileMenu.classList.remove(expandedClass);
       }
     };
+
     registerHeaderResizeHandler(() => {
+      const navOverlay = document.querySelector('.nav-overlay');
       if (isMobile()) {
         // if mobile, add click event, remove mouseenter/mouseleave
-        toggler.addEventListener('click', toggleExpandContent);
+        toggler.addEventListener('click', toggleExpandContentMobile(navOverlay));
         toggler.parentElement.removeEventListener('mouseenter', toggleExpandContent);
         toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
       } else {
+        navOverlay.classList.add('hidden');
         // if desktop, add mouseenter/mouseleave, remove click event
-        toggler.removeEventListener('click', toggleExpandContent);
+        toggler.removeEventListener('click', toggleExpandContentMobile(navOverlay));
         toggler.parentElement.addEventListener('mouseenter', toggleExpandContent);
         toggler.parentElement.addEventListener('mouseleave', toggleExpandContent);
       }
