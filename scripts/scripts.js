@@ -64,7 +64,7 @@ function oneTrust() {
   window.fedsConfig.privacy = window.fedsConfig.privacy || {};
   window.fedsConfig.privacy.otDomainId =
     `7a5eb705-95ed-4cc4-a11d-0cc5760e93db${window.location.host.split('.').length === 3 ? '' : '-test'}`;
-  window.fedsConfig.privacy.footerLinkSelector = '#footer .onetrust';
+  window.fedsConfig.privacy.footerLinkSelector = '.footer [href="#onetrust"]';
 }
 
 /**
