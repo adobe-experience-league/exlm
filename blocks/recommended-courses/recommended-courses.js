@@ -245,8 +245,11 @@ export default async function decorate(block) {
           });
       });
     });
-  } else if (document.documentElement.classList.contains('adobe-ue-edit')) {
-    console.log('Author or Preview');
+  } else if (
+    document.documentElement.classList.contains('adobe-ue-edit') ||
+    document.documentElement.classList.contains('adobe-ue-preview')
+  ) {
+    console.log('Author or Preview url');
     buildNoResultsContent(block);
   } else {
     console.log('Not Signed in');
