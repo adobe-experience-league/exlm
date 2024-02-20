@@ -436,6 +436,7 @@ button.browse-tags:focus {
   padding-top: 72px;
   text-align: center;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .browse-filters-form:not(.is-result) .browse-filters-results {
