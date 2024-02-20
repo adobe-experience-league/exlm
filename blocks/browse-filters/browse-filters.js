@@ -540,6 +540,9 @@ function handleUriHash() {
   if (!containsSearchQuery) {
     searchInput.value = '';
   }
+  if (filtersInfo.length && window.headlessBaseSolutionQuery) {
+    handleTopicSelection();
+  }
   updateClearFilterStatus(browseFiltersSection);
   window.headlessSearchEngine.executeFirstSearch();
 }
