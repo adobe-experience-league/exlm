@@ -738,6 +738,21 @@ body[class^='browse-'] .browse-filters-full-container {
   }
 }
 
+.nav-overlay {
+  background: #00000080 0% 0% no-repeat padding-box;
+  inset: 0;
+  position: fixed;
+  z-index: 3;
+
+  @include breakpoint('custom') {
+    display: none;
+  }
+}
+
+.nav-overlay.hidden {
+  display: none;
+}
+
 /* three column layout */
 .docs {
   --exlm-font-size-h1: var(--spectrum-heading-size-l);

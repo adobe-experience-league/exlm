@@ -832,6 +832,22 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   margin-bottom: 40px;
 }
 
+.nav-overlay {
+  background: rgba(0, 0, 0, 0.5019607843) 0% 0% no-repeat padding-box;
+  inset: 0;
+  position: fixed;
+  z-index: 3;
+}
+@media (min-width: 1024px) {
+  .nav-overlay {
+    display: none;
+  }
+}
+
+.nav-overlay.hidden {
+  display: none;
+}
+
 /* three column layout */
 .docs {
   --exlm-font-size-h1: var(--spectrum-heading-size-l);
