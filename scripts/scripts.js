@@ -62,8 +62,9 @@ async function loadFonts() {
 function oneTrust() {
   window.fedsConfig = window.fedsConfig || {};
   window.fedsConfig.privacy = window.fedsConfig.privacy || {};
-  window.fedsConfig.privacy.otDomainId =
-    `7a5eb705-95ed-4cc4-a11d-0cc5760e93db${window.location.host.split('.').length === 3 ? '' : '-test'}`;
+  window.fedsConfig.privacy.otDomainId = `7a5eb705-95ed-4cc4-a11d-0cc5760e93db${
+    window.location.host.split('.').length === 3 ? '' : '-test'
+  }`;
   window.fedsConfig.privacy.footerLinkSelector = '.footer [href="#onetrust"]';
 }
 
@@ -436,7 +437,7 @@ async function loadLazy(doc) {
       document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
         e.preventDefault();
         window.adobePrivacy.showConsentPopup();
-      })
+      });
       window.adobeDataLayer.push(pageLoadModel());
       const linkClicked = document.querySelectorAll('a,.view-more-less span');
       linkClicked.forEach((linkElement) => {
