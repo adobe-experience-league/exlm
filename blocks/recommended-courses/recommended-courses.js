@@ -167,35 +167,35 @@ export default async function decorate(block) {
   // Parameters for fetching card data
   const parameters = { contentType };
 
+  headingElement.firstElementChild.classList.add('h2');
+
+  const headerDiv = htmlToElement(`
+    <div class="browse-cards-block-header">
+      <div class="browse-cards-block-title">
+        ${headingElement.innerHTML}
+      </div>
+      <div class="browse-cards-block-view">${linkElement.innerHTML}</div>
+    </div>
+    `);
+
+  if (toolTipElement?.textContent?.trim()) {
+    headerDiv
+      .querySelector('h1,h2,h3,h4,h5,h6')
+      ?.insertAdjacentHTML('afterend', '<div class="tooltip-placeholder"></div>');
+    const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
+    const tooltipConfig = {
+      content: toolTipElement.textContent.trim(),
+    };
+    createTooltip(block, tooltipElem, tooltipConfig);
+  }
+
+  // Appending header div to the block
+  block.appendChild(headerDiv);
+
+  await decorateIcons(headerDiv);
+
   // Checking if the user is signed in before proceeding
   if (isSignedIn) {
-    headingElement.firstElementChild.classList.add('h2');
-
-    const headerDiv = htmlToElement(`
-      <div class="browse-cards-block-header">
-        <div class="browse-cards-block-title">
-          ${headingElement.innerHTML}
-        </div>
-        <div class="browse-cards-block-view">${linkElement.innerHTML}</div>
-      </div>
-      `);
-
-    if (toolTipElement?.textContent?.trim()) {
-      headerDiv
-        .querySelector('h1,h2,h3,h4,h5,h6')
-        ?.insertAdjacentHTML('afterend', '<div class="tooltip-placeholder"></div>');
-      const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
-      const tooltipConfig = {
-        content: toolTipElement.textContent.trim(),
-      };
-      createTooltip(block, tooltipElem, tooltipConfig);
-    }
-
-    // Appending header div to the block
-    block.appendChild(headerDiv);
-
-    await decorateIcons(headerDiv);
-
     // Creating content div for card display
     const contentDiv = document.createElement('div');
     contentDiv.classList.add('browse-cards-block-content');
@@ -245,5 +245,11 @@ export default async function decorate(block) {
           });
       });
     });
+  } else if (document.documentElement.classList.contains('adobe-ue-edit')) {
+    console.log('Author or Preview');
+    buildNoResultsContent(block);
+  } else {
+    console.log('Not Signed in');
+    block.style.display = 'None';
   }
 }
