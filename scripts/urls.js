@@ -9,7 +9,6 @@ export const searchUrl = 'https://experienceleague.adobe.com/search.html';
 export const articleUrl = 'https://experienceleague.adobe.com/api/articles/';
 export const solutionsUrl = 'https://experienceleague.adobe.com/api/solutions?page_size=100';
 export const tocUrl = 'https://experienceleague.adobe.com/api/tocs/';
-export const adlsRedirectUrl = 'https://learning.adobe.com';
 export const pathsUrl = `https://experienceleague.adobe.com/api/paths`;
 export const exlmCDNUrl = 'https://cdn.experienceleague.adobe.com';
 // Khoros Proxy URL (Determine the environment based on the host name)

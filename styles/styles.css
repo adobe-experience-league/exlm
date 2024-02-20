@@ -822,10 +822,14 @@ main > div.browse-rail {
   display: none;
 }
 
-body[class^=browse-] main {
+body[class^=browse-] main.browse-background-img {
   background-image: url("/icons/solutions/BrowseDecorationMobile.svg");
   background-repeat: no-repeat;
   background-position: top right;
+}
+
+body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, body[class^=browse-] .browse-filters-full-container .browse-filters-one-pg-result {
+  margin-bottom: 40px;
 }
 
 /* three column layout */
@@ -975,6 +979,9 @@ body[class^=browse-] main {
   .docs main > div.section {
     border-right: 1px solid #eaeaea;
   }
+  .docs main > div.section:not(.rail), .docs main > div.section.rail-right {
+    border-right: none;
+  }
   .docs main > div.section:not(.toc-container, .mini-toc-container) {
     overflow: auto;
     padding-block: 0;
@@ -1112,9 +1119,12 @@ body[class^=browse-] main {
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
     width: 50%;
   }
-  body[class^=browse-] main {
+  body[class^=browse-] main.browse-background-img {
     background-image: url("/icons/solutions/BrowseDecoration.svg");
     background-size: contain;
+  }
+  body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, body[class^=browse-] .browse-filters-full-container .browse-filters-one-pg-result {
+    margin-bottom: 58px;
   }
 }
 @media (min-width: 900px) {
@@ -1123,6 +1133,14 @@ body[class^=browse-] main {
   }
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
     width: calc(33.33% - 16px);
+  }
+  .docs main.rail-left-closed.rail-right-closed .section.content-section-first.content-section-last {
+    padding-right: 0;
+    margin-right: 0;
+    max-width: calc(100vw - 100px);
+  }
+  .docs main.rail-left-closed.rail-right-closed .default-content-wrapper p {
+    max-width: 95%;
   }
   body[class^=browse-] .browse-cards-block-content {
     margin-bottom: 0;
@@ -1137,6 +1155,9 @@ body[class^=browse-] main {
   body[class^=browse-] .section.curated-cards-container, body[class^=browse-] .section.events-cards-container, body[class^=browse-] .section.teaser-container, body[class^=browse-] .section.adls-cards-container {
     padding-top: 40px;
     padding-bottom: 40px;
+  }
+  body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, body[class^=browse-] .browse-filters-full-container .browse-filters-one-pg-result {
+    margin-bottom: 82px;
   }
   body[class^=browse-] .browse-filters-form .browse-hide-section + .browse-topics {
     margin-bottom: 8px;
