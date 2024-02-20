@@ -131,6 +131,7 @@ export default async function decorate(block) {
           filteredResults.push(...resultsForType.slice(i, i + resultsToAdd));
           filteredResults.push(...resultsForType.slice(i, i + 2 - resultsToAdd));
         } else {
+          /* eslint-disable-next-line */
           contentTypes.forEach((type) => {
             const resultsToAdd = Math.min(2, (resultsByContentType[type] || []).length);
             if (resultsByContentType[type]) {
