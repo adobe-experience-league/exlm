@@ -433,6 +433,10 @@ async function loadLazy(doc) {
     ([launch, libAnalyticsModule, headPr, footPr, oneTrustPr]) => {
       const { pageLoadModel, linkClickModel } = libAnalyticsModule;
       oneTrust();
+      document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
+        e.preventDefault();
+        window.adobePrivacy.showConsentPopup();
+      })
       window.adobeDataLayer.push(pageLoadModel());
       const linkClicked = document.querySelectorAll('a,.view-more-less span');
       linkClicked.forEach((linkElement) => {
