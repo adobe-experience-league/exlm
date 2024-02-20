@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, toPascalCase } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
@@ -133,7 +133,7 @@ export default async function decorate(block) {
       .split(',')
       .map((type) => {
         const trimmedType = type.trim().toUpperCase();
-        return CONTENT_TYPES[trimmedType]?.LABEL;
+        return toPascalCase(CONTENT_TYPES[trimmedType]?.MAPPING_KEY);
       })
       .filter(Boolean);
 
