@@ -18,34 +18,18 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-/**
- * Appends the element provided to the doc actions block on mobile and desktop.
- * @param {HTMLElement} element
- * @param {HTMLElement} block
- */
-const addToDocActions = async (element, block) => {
-  const mobileActionsBlock = document.querySelector('.doc-actions-mobile');
-  if (document.querySelector('.doc-actions-mobile') !== 'undefined') {
-    block.appendChild(element);
-  }
-
-  if (mobileActionsBlock) {
-    mobileActionsBlock.appendChild(element.cloneNode(true));
-    await decorateIcons(mobileActionsBlock);
-  }
-  await decorateIcons(element);
-};
-
 function decorateBookmarkMobileBlock() {
-  const docActionsMobile = document.createElement('div');
-  docActionsMobile.classList.add('doc-actions-mobile');
+  if (!document.querySelector('.doc-actions-mobile')) {
+    const docActionsMobile = document.createElement('div');
+    docActionsMobile.classList.add('doc-actions-mobile');
 
-  const createdByEl = document.querySelector('.article-metadata-createdby-wrapper');
-  const articleMetaDataEl = document.querySelector('.article-metadata-wrapper');
-  if (articleMetaDataEl.nextSibling === createdByEl) {
-    createdByEl.appendChild(docActionsMobile);
-  } else if (articleMetaDataEl) {
-    articleMetaDataEl.appendChild(docActionsMobile);
+    const createdByEl = document.querySelector('.article-metadata-createdby-wrapper');
+    const articleMetaDataEl = document.querySelector('.article-metadata-wrapper');
+    if (articleMetaDataEl.nextSibling === createdByEl) {
+      createdByEl.appendChild(docActionsMobile);
+    } else if (articleMetaDataEl) {
+      articleMetaDataEl.appendChild(docActionsMobile);
+    }
   }
 }
 
@@ -69,10 +53,13 @@ export function decorateBookmark(block) {
     `${placeholders.bookmarkAuthLabelSet}`,
   );
 
+  const docActionsMobileBookmark = document.querySelector('.doc-actions-mobile .bookmark');
+  const docActionsMobileContainer = document.querySelector('.doc-actions-mobile');
+
   if (isSignedIn) {
     block.appendChild(authBookmark);
-    if (document.querySelector('.doc-actions-mobile')) {
-      document.querySelector('.doc-actions-mobile').appendChild(authBookmark.cloneNode(true));
+    if (docActionsMobileContainer && !docActionsMobileBookmark) {
+      docActionsMobileContainer.appendChild(authBookmark.cloneNode(true));
     }
     const bookmarkAuthedDesktop = document.querySelector('.doc-actions .bookmark.auth');
     const bookmarkAuthedMobile = document.querySelector('.doc-actions-mobile .bookmark.auth');
@@ -95,8 +82,8 @@ export function decorateBookmark(block) {
     });
   } else {
     block.appendChild(unAuthBookmark);
-    if (document.querySelector('.doc-actions-mobile')) {
-      document.querySelector('.doc-actions-mobile').appendChild(unAuthBookmark.cloneNode(true));
+    if (docActionsMobileContainer && !docActionsMobileBookmark) {
+      docActionsMobileContainer.appendChild(unAuthBookmark.cloneNode(true));
     }
   }
 }
@@ -118,7 +105,7 @@ function decorateCopyLink(block) {
     attachCopyLink(docActionsDesktopIconCopy, window.location.href, placeholders.toastSet);
   }
 
-  if (docActionsMobile) {
+  if (docActionsMobile && !docActionsMobile.querySelector('.copy-icon')) {
     docActionsMobile.appendChild(copyLinkDivNode.cloneNode(true));
     const docActionsMobileIconCopy = docActionsMobile.querySelector('.copy-icon');
     attachCopyLink(docActionsMobileIconCopy, window.location.href, placeholders.toastSet);
@@ -139,11 +126,30 @@ async function toggleContent(isChecked, docContainer) {
   if (isChecked && !translatedDocElement) {
     translatedDocElement = await getTranslatedDocContent();
   }
-
   if (isChecked) {
+    const docActionsMobile = docContainer.querySelector('.doc-actions-mobile');
+    if (docActionsMobile) {
+      const createdByEl = translatedDocElement.querySelector('.article-metadata-createdby-wrapper');
+      const articleMetaDataEl = translatedDocElement.querySelector('.article-metadata-wrapper');
+      if (articleMetaDataEl.nextSibling === createdByEl) {
+        createdByEl.appendChild(docActionsMobile);
+      } else if (articleMetaDataEl) {
+        articleMetaDataEl.appendChild(docActionsMobile);
+      }
+    }
     docContainer.replaceWith(translatedDocElement);
   } else {
     const dc = document.querySelector('main > div:first-child');
+    const docActionsMobile = translatedDocElement.querySelector('.doc-actions-mobile');
+    if (docActionsMobile) {
+      const createdByEl = docContainer.querySelector('.article-metadata-createdby-wrapper');
+      const articleMetaDataEl = docContainer.querySelector('.article-metadata-wrapper');
+      if (articleMetaDataEl.nextSibling === createdByEl) {
+        createdByEl.appendChild(docActionsMobile);
+      } else if (articleMetaDataEl) {
+        articleMetaDataEl.appendChild(docActionsMobile);
+      }
+    }
     dc.replaceWith(docContainer);
   }
 }
@@ -168,7 +174,8 @@ async function decorateLanguageToggle(block) {
         </div>
       </div>`,
     );
-    addToDocActions(languageToggleElement, block);
+    // addToDocActions(languageToggleElement, block);
+    block.appendChild(languageToggleElement);
     await decorateIcons(block);
     const desktopAndMobileLangToggles = document.querySelectorAll(
       '.doc-mt-toggle .doc-mt-checkbox input[type="checkbox"]',

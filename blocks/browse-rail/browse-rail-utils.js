@@ -24,36 +24,46 @@ export function convertToMultiMap(jsonData, page) {
 export function convertToULList(multiMap) {
   const ulList = document.createElement('ul');
   ulList.classList.add('subPages');
-  multiMap.forEach((value) => {
+
+  multiMap.forEach((value, key) => {
     const liItem = document.createElement('li');
-    const anchor = document.createElement('a');
-    if (value.length > 0) {
+    let firstAnchorAdded = false;
+    const subUlList = document.createElement('ul');
+
+    value.forEach((item) => {
+      const anchor = document.createElement('a');
+      anchor.href = getLink(item.path);
+      anchor.textContent = item.title;
+
+      if (key === item.path.substring(item.path.lastIndexOf('/') + 1)) {
+        // If key matches, add as the first anchor
+        liItem.appendChild(anchor);
+        firstAnchorAdded = true;
+      } else {
+        // Otherwise, add to subUlList
+        const subLiItem = document.createElement('li');
+        subLiItem.appendChild(anchor);
+        subUlList.appendChild(subLiItem);
+      }
+    });
+
+    if (!firstAnchorAdded && value.length > 0) {
+      // If key didn't match any path, add the first item as anchor
+      const anchor = document.createElement('a');
       anchor.href = getLink(value[0].path);
       anchor.textContent = value[0].title;
-
       liItem.appendChild(anchor);
     }
-    if (value.length > 1) {
-      const subUlList = document.createElement('ul');
-      liItem.classList.add('hasSubPages');
-      value
-        .slice(1)
-        .sort((a, b) => a.title.localeCompare(b.title))
-        .forEach((item) => {
-          const subLiItem = document.createElement('li');
-          const subAnchor = document.createElement('a');
-          subAnchor.href = getLink(item.path);
-          subAnchor.textContent = item.title;
 
-          subLiItem.appendChild(subAnchor);
-          subUlList.appendChild(subLiItem);
-        });
+    if (subUlList.childElementCount > 0) {
+      // If there are items in subUlList, add it with a toggle icon
+      liItem.classList.add('hasSubPages');
       const toggleIcon = document.createElement('span');
-      // toggleIcon.textContent = 'test';
       toggleIcon.classList.add('js-toggle');
-      liItem.append(toggleIcon);
+      liItem.appendChild(toggleIcon);
       liItem.appendChild(subUlList);
     }
+
     ulList.appendChild(liItem);
   });
 

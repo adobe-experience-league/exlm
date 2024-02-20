@@ -94,6 +94,10 @@
     align-items: center;
   }
   
+  .signup-cta:empty{
+    margin-top: 0;
+  }
+
   .signup-cta > a.button {
     font-size: 19px;
     margin: 0;
@@ -227,6 +231,11 @@
       justify-content: center;
       width: 100%;
    }
+
+   
+  body[class ^= 'browse-'] .signup-foreground {
+    min-height: 260px;
+  }
   
     .signup-text {
       padding: 0;
@@ -292,7 +301,7 @@
     /* title */
     body[class ^= 'browse-'] .signup-title {
       font-size: var( --spectrum-font-size-900);
-      line-height: 54px;
+      line-height: 36px;
       margin-bottom: 0 /* var(--space-token-xxs)*/;
   
     }
@@ -311,7 +320,8 @@
     }
   
     body[class ^= 'browse-'] .section div.sign-up-wrapper .signup-foreground {
-      gap: 40px;
+      padding: 0;
+      justify-content:space-between;
     }
   
     /* text block */
@@ -322,23 +332,23 @@
       margin: 0;
       padding: 20px 0 23px 36px;
       flex-grow: 1;
-      width: 50%;
-      max-width: unset;
+      max-width: 500px;
     }
   
     /* subject image */
     body[class ^= 'browse-'] .signup-subject {
       min-width: unset;
       min-height: unset;
-      width: 400px;
-      transform:scale(1.2);
+      width: 320px;
       z-index: 1;
+      margin: unset;
     }
   
     body[class ^= 'browse-'] .signup-subject img {
       display: block;
       min-width: unset;
       padding: 0;
+      height:260px;
     }
   
     body[class ^= 'browse-'] .section div.sign-up-wrapper .signup-background {
