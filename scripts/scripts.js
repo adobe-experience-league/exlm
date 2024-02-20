@@ -57,6 +57,17 @@ async function loadFonts() {
 }
 
 /**
+ * one trust configuration setup
+ */
+function oneTrust() {
+  window.fedsConfig = window.fedsConfig || {};
+  window.fedsConfig.privacy = window.fedsConfig.privacy || {};
+  window.fedsConfig.privacy.otDomainId =
+    `7a5eb705-95ed-4cc4-a11d-0cc5760e93db${window.location.host.split('.').length === 3 ? '' : '-test'}`;
+  window.fedsConfig.privacy.footerLinkSelector = '#footer .onetrust';
+}
+
+/**
  * Process current pathname and return details for use in language switching
  * Considers pathnames like /en/path/to/content and /content/exl/global/en/path/to/content.html for both EDS and AEM
  */
@@ -405,6 +416,11 @@ async function loadLazy(doc) {
 
   localStorage.setItem('prevPage', doc.title);
 
+  const oneTrustPromise = loadScript(`/scripts/analytics/privacy-standalone.js`, {
+    async: true,
+    defer: true,
+  });
+
   const launchPromise = loadScript(
     'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
     {
@@ -412,10 +428,11 @@ async function loadLazy(doc) {
     },
   );
 
-  Promise.all([launchPromise, libAnalyticsModulePromise, headerPromise, footerPromise]).then(
+  Promise.all([launchPromise, libAnalyticsModulePromise, headerPromise, footerPromise, oneTrustPromise]).then(
     // eslint-disable-next-line no-unused-vars
-    ([launch, libAnalyticsModule, headPr, footPr]) => {
+    ([launch, libAnalyticsModule, headPr, footPr, oneTrustPr]) => {
       const { pageLoadModel, linkClickModel } = libAnalyticsModule;
+      oneTrust();
       window.adobeDataLayer.push(pageLoadModel());
       const linkClicked = document.querySelectorAll('a,.view-more-less span');
       linkClicked.forEach((linkElement) => {
