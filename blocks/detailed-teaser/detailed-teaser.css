@@ -171,7 +171,6 @@
 .detailed-teaser.block > .foreground > .spacer {
   display:block;
   order: 1;
-  flex-grow:2;
   padding: 0 var(--space-token-xs) var(--spectrum-spacing-400) var(--space-token-xs);
 }
 
@@ -224,59 +223,32 @@ border-radius: 30px;
     padding-left: 0;
     padding-right: 0;
   }
-    
-  /* teaser on browse pages has different width for text */
-  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text {
-    width:50%;
-  }
-
-  
-  /* teaser on browse has smaller height no background shift required */
-  body[class ^= 'browse-'] .detailed-teaser.block > .background img {
-    object-position: right;
-  }
-
-  body[class ^= 'browse-'] .detailed-teaser.block.right > .background img {
-    object-position: left;
-  }
-
+      
   /* it gets a border */
   body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .background img {
     border-radius: 4px;
   }
-  
+
   body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .foreground {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
     min-height:240px;
     padding: 0 var(--space-token-xxl);
   }
-
-  /* the main title, hidden in mobile */
-  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text > .title {
-    font-size: var(--spectrum-font-size-600);
-    line-height: 37.5px;
-  }
-
-  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text > .description,
-  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text > .description * {
-    font-size: var(--spectrum-body-size-s);
-    line-height: 18.2px;
-}
-
-  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text > .cta > a.button {
-    font-size: 13px;
-    line-height: 16px;
-    padding: 4px 14px 6px;
-  }
 }
 
 @media (min-width: 1024px) {
+  .detailed-teaser.block {
+    flex-direction: row;
+  }
+
   /* switch to left right */
   .detailed-teaser.block .foreground {
     flex-direction: row;
     gap: 40px;
-    justify-content: space-between;
+    justify-content: space-between; 
+    max-width: var(--non-spectrum-max-width);
+    width:100%;
   }
 
     /* the cta buttons */
@@ -297,7 +269,6 @@ border-radius: 30px;
   /* teaser on browse pages has different width for text */
   body .detailed-teaser.block > .foreground > .text {
     min-width:550px;
-    flex-grow: 2;
   }
 
   /* the subject image /spacer */
@@ -305,15 +276,14 @@ border-radius: 30px;
     display: flex;
     align-items: center;
     padding: var(--spectrum-spacing-500) 0;
-    overflow: hidden;
   }
   
   .detailed-teaser.block > .foreground > .spacer img {
     border-radius: 30px;
     padding: 0;
     object-fit:cover;
-    max-height: 300px;
     min-height: 260px;
+    max-height: 290px;
     object-position: center;
   }
 
