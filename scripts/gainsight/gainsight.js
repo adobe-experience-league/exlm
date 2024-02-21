@@ -14,9 +14,10 @@ const langMap = {
   ja: 'ja-JP',
   ko: 'ko-KR',
   nl: 'nl-NL',
+  'pt-br': 'pt-BR',
   sv: 'sv-SE',
-  'zh-Hans': 'zh-CN',
-  'zh-Hant': 'zh-TW',
+  'zh-hans': 'zh-CN',
+  'zh-hant': 'zh-TW',
 };
 
 function identify(data) {
