@@ -811,16 +811,7 @@ function decorateBrowseTopics(block) {
 
   if (allTopicsTags.length > 0) {
     allTopicsTags
-      .filter((value) => {
-        if (!value) {
-          return false;
-        }
-        if (!supportedProducts.length) {
-          return true;
-        }
-        const [, topicProduct] = value.split('/');
-        return topicProduct ? supportedProducts.includes(topicProduct.toLowerCase()) : true;
-      })
+      .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
         const parts = topicsButtonTitle.split('/');
         const topicName = parts[parts.length - 1];
