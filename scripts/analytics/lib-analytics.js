@@ -51,17 +51,19 @@ export async function pageLoadModel(language) {
 
   try {
     const userData = await profile();
-    user.userDetails.userAccountType = userData.account_type;
-    user.userDetails.userAuthenticatedStatus = 'logged in';
-    user.userDetails.userID = userData.userId || '';
-    user.userDetails.userLanguageSetting = userData.preferred_languages || ['en-us'];
-    user.userDetails.learningInterest = userData.interests || [];
-    user.userDetails.role = userData.role || [];
-    user.userDetails.experienceLevel = userData.level || [];
-    user.userDetails.industry = userData.industryInterests || [];
-    user.userDetails.notificationPref = userData.emailOptIn === true;
-    user.userDetails.org = userData.org || '';
-    user.userDetails.orgs = userData.orgs || [];
+    if (userData) {
+      user.userDetails.userAccountType = userData.account_type;
+      user.userDetails.userAuthenticatedStatus = 'logged in';
+      user.userDetails.userID = userData.userId || '';
+      user.userDetails.userLanguageSetting = userData.preferred_languages || ['en-us'];
+      user.userDetails.learningInterest = userData.interests || [];
+      user.userDetails.role = userData.role || [];
+      user.userDetails.experienceLevel = userData.level || [];
+      user.userDetails.industry = userData.industryInterests || [];
+      user.userDetails.notificationPref = userData.emailOptIn === true;
+      user.userDetails.org = userData.org || '';
+      user.userDetails.orgs = userData.orgs || [];
+    }
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('Error getting user profile:', e);
