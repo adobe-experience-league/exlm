@@ -17,8 +17,8 @@ try {
 }
 
 const DEFAULT_OPTIONS = Object.freeze({
-  ROLE: placeholders?.roleLabel || 'Role',
-  SOLUTION: placeholders?.productLabel || 'Product',
+  ROLE: 'Role',
+  SOLUTION: 'Product',
 });
 
 /**
