@@ -667,7 +667,7 @@ header {
     display: var(--search-display);
     justify-content: flex-end;
     align-items: center;
-    padding: var(--nav-root-item-padding-x);
+    padding-right: 15px;
     container-type: inline-size;
     container-name: searchs;
     z-index: 1;
