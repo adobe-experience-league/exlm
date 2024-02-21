@@ -12,80 +12,125 @@
 .detailed-teaser.block {
   width: 100%;
   height:100%;
+  position: relative;
+  overflow-x: hidden;
+  display:flex;
+  flex-direction: column;
 }
 
-/* the foreground contains text and spacer */
+/* the background image container */
+.detailed-teaser.block > .background {
+  display:block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+/* the background image */
+  .detailed-teaser.block > .background img {
+  display:block;  
+  object-fit: cover;
+  object-position:center;
+  height: 100%;
+  width: 100%;
+}
+
+/* the foreground contains texts and subject image */
 .detailed-teaser.block > .foreground {
+  display: flex;
+  flex-direction: column;
+  position:relative;
   max-width: var(--non-spectrum-max-width);
   margin: auto;
 }
 
-/* the text block (eyebrow, title , descr , ctr) */
+/* the text block (eyebrow content, title , descr , cta) */
 .detailed-teaser.block > .foreground > .text {
+  order: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: var(--spectrum-spacing-400) var(--space-token-xs);
+  max-width: 550px;
 }
 
-/* the eybrow title, hidden in mobile */
+/* change the order if text should be at the bottom */
+.detailed-teaser.block.right > .foreground > .text {
+  order: 1;
+}
+
+/* eyebrow content */
 .detailed-teaser.block > .foreground > .text > .eyebrow {
-  display:none;
-  font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-75);
-  font-weight: var(--font-weight-700);
-  color: var(--spectrum-gray-700);
-  margin-bottom: var(--space-token-xs);
+  margin-bottom: 26px;
 }
 
-/* the main title, hidden in mobile */
-.detailed-teaser.block > .foreground > .text > .title {
+.detailed-teaser.block > .foreground > .text > .eyebrow:empty {
   display: none;
-  font-family: var(--body-font-family);
-  font-size: var(--spectrum-heading-size-l);
+}
+
+/* the optional logo image in eyebrow content */
+.detailed-teaser.block > .foreground > .text > .eyebrow > .logo {
+  margin: 0;
+}
+
+.detailed-teaser.block > .foreground > .text > .eyebrow > .logo img {
+  height:32px;
+}
+
+/* the eyebrow titles */
+.detailed-teaser.block > .foreground > .text > .eyebrow > .title  {
+  font-size: var(--spectrum-font-size-300);
   font-weight: var(--font-weight-700);
-  line-height: var(--spectrum-line-height-xxl);
-  margin-bottom: var(--space-token-xxs);
+  color: var(--non-spectrum-grey);
+  margin: 0;
+}
+
+.detailed-teaser.block > .foreground > .text > .eyebrow > .subtitle  {
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-700);
+  color: #8C8C8C;
+  margin: 0;
+}
+
+/* the main title */
+/* stylelint-disable-next-line no-descending-specificity */
+.detailed-teaser.block > .foreground > .text > .title {
+  font-size: 24px;
+  font-weight: var(--font-weight-700);
+  line-height: 27px;
+  color: var(--non-spectrum-custom-dark);
 }
 
 .detailed-teaser.block.dark > .foreground > .text > .title {
   color: var(--background-color);
 }
 
-/* the short description */
-.detailed-teaser.block > .foreground > .text > .short-description,
-.detailed-teaser.block > .foreground > .text > .short-description * {
-  font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-300);
-  font-weight: var(--font-weight-700);
-  line-height: var(--spectrum-line-height-l);
-  color: var(--background-color);
+.detailed-teaser.block > .foreground > .text > .title :where(h1,h2,h3,h4,h5,h6) {
   margin: 0;
+  color: inherit;
+  font: inherit;
 }
 
-/* long description , hidden in mobile */
-.detailed-teaser.block > .foreground > .text > .long-description {
-  display: none;
-}
-
-.detailed-teaser.block > .foreground > .text > .long-description,
-.detailed-teaser.block > .foreground > .text > .long-description * {
-  font-family: var(--body-font-family);
-  font-size: var(--spectrum-body-size-l);
-  line-height: var(--spectrum-line-height-l);
-  margin: 0;
-}
-
-.detailed-teaser.block.dark > .foreground > .text > .long-description,
-.detailed-teaser.block.dark > .foreground > .text > .long-description * {
-  color: var(--background-color);
+/* description */
+.detailed-teaser.block > .foreground > .text > .description,
+.detailed-teaser.block > .foreground > .text > .description * {
+  font-size: 22px;
+  color: var(--non-spectrum-custom-dark);
+  line-height: 30px;
+  margin-top: 10px;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* the list of CTA's */
 .detailed-teaser.block > .foreground > .text > .cta {
   display: flex;
   gap: var(--spectrum-spacing-400);
-  margin-top: var(--spectrum-spacing-400);
+  margin-top: 20px;
   padding: 0;
   width:min-content;
 }
@@ -94,50 +139,62 @@
   display: none;
 }
 
-/* the cta buttons in mobile view */
+/* the cta buttons */
 .detailed-teaser.block > .foreground > .text > .cta > a.button {
-  background-color: var(--background-color);
-  border: 2px solid transparent;
-  color:var(--teaser-background-color);
   margin: 0;
-  font-family: var(--body-font-family);
   font-size: 15px;
   font-weight: var(--font-weight-700);
   line-height: 15px;
   padding: 5px 14px 6px;
 }
 
+ /* behavior for primary and secondary */
 .detailed-teaser.block > .foreground > .text > .cta > a.button.secondary {
   background-color: unset;
-  border: 2px solid var(--background-color);
-  color:var(--background-color);
+  border: 2px solid currentcolor;
+  color: currentcolor;
 }
 
-/* spacer div */
+.detailed-teaser.block.dark > .foreground > .text > .cta > a.button {
+  background-color: var(--background-color);
+  border: 2px solid transparent;
+  color: currentcolor;
+}
+
+.detailed-teaser.block.dark > .foreground > .text > .cta > a.button.secondary {
+  background-color: unset;
+  border: 2px solid currentcolor;
+  color: var(--background-color);
+}
+
+/* spacer/subject image */
 .detailed-teaser.block > .foreground > .spacer {
+  display:block;
+  order: 1;
+  flex-grow:2;
+  padding: 0 var(--space-token-xs) var(--spectrum-spacing-400) var(--space-token-xs);
+}
+
+/* change the order if text should be on the right */
+.detailed-teaser.block.right > .foreground > .spacer {
+  order: 0;
+  padding-bottom: 0;
+  padding-top: var(--spectrum-spacing-400);
+}
+
+.detailed-teaser.block > .foreground > .spacer:empty {
   display:none;
 }
 
-/* The background color for mobile view */
-.detailed-teaser.block > .foreground , 
-.detailed-teaser.block.dark > .foreground {
-  --teaser-background-color :  var(--spectrum-red-700); 
-
-  background-color: var(--teaser-background-color);
-}
-
-/* the background image , hidden in mobile */
-.detailed-teaser.block > .background img {
-  display:none;
-  width: auto;
-  height: max-content;
-  object-fit: cover;
+/* stylelint-disable-next-line no-descending-specificity */
+.detailed-teaser.block > .foreground > .spacer img {
+border-radius: 30px;
 }
 
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
   .section.detailed-teaser-container {
-    padding: 0 56px;
+    padding: 0 var(--space-token-xl);
   }
 
   .section div.detailed-teaser-wrapper {
@@ -146,149 +203,34 @@
     margin-right: calc(-1 * var(--space-token-xl));
   }
 
-  /* remove background color , add border */
-  .detailed-teaser.block,
-  .detailed-teaser.block.dark {
-    position: relative;
-    padding: 0;
-    overflow: hidden;
-  }
-
   /* foreground container, flex (text + spacer), always on top */
   .detailed-teaser.block > .foreground {
-    position: relative;
-    display: flex;
     padding: 0 var(--space-token-xl);
-    background-color: unset;
-    min-height:420px;
-  }
-
-  .detailed-teaser.block.dark > .foreground {
-    background-color: unset;
+    min-height:320px;
   }
 
   /* limit width of text part and set order */
   .detailed-teaser.block > .foreground > .text {
-    width:40%;
-    order: 0;
     padding: var(--spectrum-spacing-500) 0;
   }
 
-  /* change the order if text should be on the right */
-  .detailed-teaser.block.right > .foreground > .text {
-    order: 1;
-  }
-
-  /* turn on the eybrow */
-  .detailed-teaser.block > .foreground > .text > .eyebrow {
-    display: block;
-  }
-
-  /* turn on the title */
   .detailed-teaser.block > .foreground > .text > .title {
-    display: block;
+    font-size: 32px;
+    font-weight: 800;
   }
 
-  .detailed-teaser.block > .foreground > .text > .title :where(h1,h2,h3,h4,h5,h6) {
-    margin: 0;
-    color: inherit;
-    font: inherit;
-  }
-
-  .detailed-teaser.block.dark > .foreground > .text > .eyebrow {
-    color: var(--background-color);
-  }
-  
-  /* turn of short description */
-  .detailed-teaser.block > .foreground > .text > .short-description {
-    display: none;
-  }
-
-  /* turn on long description */
-  .detailed-teaser.block > .foreground > .text > .long-description {
-    /* display: block; */
-    display: -webkit-box;
-    -webkit-line-clamp: 5;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* revert to normal button behavior for primary and secondary */
-  .detailed-teaser.block > .foreground > .text > .cta > a.button {
-    background-color: var(--link-color);
-    border: 2px solid transparent;
-    color: var(--background-color);
-  }
-
-  .detailed-teaser.block > .foreground > .text > .cta > a.button.secondary {
-    background-color: unset;
-    border: 2px solid currentcolor;
-    color: currentcolor;
-  }
-
-  .detailed-teaser.block.dark > .foreground > .text > .cta > a.button {
-    background-color: var(--background-color);
-    border: 2px solid transparent;
-    color: currentcolor;
-  }
-
-  .detailed-teaser.block.dark > .foreground > .text > .cta > a.button.secondary {
-    background-color: unset;
-    border: 2px solid currentcolor;
-    color: var(--background-color);
-  }
-
-  /* spacer */
+  /* spacer/subject image */
   .detailed-teaser.block > .foreground > .spacer {
-    display:block;
-    order: 1;
-    flex-grow:2;
+    padding-left: 0;
+    padding-right: 0;
   }
-
-  /* change the order if text should be on the right */
-  .detailed-teaser.block.right > .foreground > .spacer {
-    order: 0;
-  }
-
-  /* the background image container */
-  .detailed-teaser.block > .background {
-    display:block;
-    position: absolute;
-    width:100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-  }
-
-  
-  /* reomve background color to avoid flicker on load */
-  .detailed-teaser.block > .background , 
-  .detailed-teaser.block.dark > .background {
-    background-color: unset;
-  }
-
-  /* the image, shifted left or right so background subject 
-     does not overlap with text */
-  .detailed-teaser.block > .background img {
-    display:block;
-    height:100%;
-    width: 100%;
-    object-position: 60%;
-  }
-
-  .detailed-teaser.block.right > .background img {
-    display:block;
-    height:100%;
-    width: 100%;
-    object-position: 40%;
-  }
-
+    
   /* teaser on browse pages has different width for text */
   body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text {
     width:50%;
   }
 
+  
   /* teaser on browse has smaller height no background shift required */
   body[class ^= 'browse-'] .detailed-teaser.block > .background img {
     object-position: right;
@@ -316,8 +258,8 @@
     line-height: 37.5px;
   }
 
-  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text > .long-description,
-  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text > .long-description * {
+  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text > .description,
+  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text > .description * {
     font-size: var(--spectrum-body-size-s);
     line-height: 18.2px;
 }
@@ -330,6 +272,18 @@
 }
 
 @media (min-width: 1024px) {
+  /* switch to left right */
+  .detailed-teaser.block .foreground {
+    flex-direction: row;
+    gap: 40px;
+    justify-content: space-between;
+  }
+
+    /* the cta buttons */
+  .detailed-teaser.block > .foreground > .text > .cta > a.button {
+    line-height: unset;
+  }
+
   /* the background image, start align right */
   .detailed-teaser.block > .background img {
     object-position: right;
@@ -341,8 +295,26 @@
   }
   
   /* teaser on browse pages has different width for text */
-  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text {
-    width:65%;
+  body .detailed-teaser.block > .foreground > .text {
+    min-width:550px;
+    flex-grow: 2;
+  }
+
+  /* the subject image /spacer */
+  .detailed-teaser.block > .foreground > .spacer {
+    display: flex;
+    align-items: center;
+    padding: var(--spectrum-spacing-500) 0;
+    overflow: hidden;
+  }
+  
+  .detailed-teaser.block > .foreground > .spacer img {
+    border-radius: 30px;
+    padding: 0;
+    object-fit:cover;
+    max-height: 300px;
+    min-height: 260px;
+    object-position: center;
   }
 
   /* when shown on a page with a rail 
@@ -354,23 +326,5 @@
 
   body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .foreground {
     padding: 0 var(--space-token-l);
-  }
-}
-
-@media (min-width: 1200px) {
-  /* when shown on a page with a rail */
-  /* the eybrow title */
-  body:not([class ^= 'browse-']) .detailed-teaser.block > .foreground > .text > .eyebrow {
-    font-size: var(--spectrum-font-size-100);
-  }
-
-  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .foreground {
-    padding: 0 var(--spectrum-spacing-600);
-  }
-
-  /* the main title, hidden in mobile */
-  body:not([class ^= 'browse-']) .detailed-teaser.block > .foreground > .text > .title {
-    font-size: var(--spectrum-heading-size-xl);
-    line-height: 46.8px;
   }
 }

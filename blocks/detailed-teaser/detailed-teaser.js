@@ -6,14 +6,38 @@ export function generateDetailedTeaserDOM(props, classes) {
   const [backImage, eyebrowContent, title, description, subjectImage, firstCta, secondCta] = props;
   const backPicture = backImage.querySelector('picture');
   const subjectPicture = subjectImage.querySelector('picture');
+
+  // add classes for the different eyebrow elements
+  if (eyebrowContent) {
+    eyebrowContent.classList.add('eyebrow');
+    [...eyebrowContent.children].forEach((p,i) => {
+      // eslint-disable-next-line default-case
+      switch (i) {
+        case 0:
+          // if first p has an image , otherwise its eyebrow title
+          p.classList.add(p.firstElementChild && p.firstElementChild.tagName === 'PICTURE' ? 'logo':'title');
+          break;
+        case 1:
+          // if eybrow title is already set it eyebrow subtitle, otherwise its eyebrow title
+          p.classList.add(p.previousElementSibling.classList.contains('eyebrow-title') ? 'subtitle': 'title');
+          break;
+        case 2:
+          // third p is always sub title if existing
+          p.classList.add('subtitle');
+          break;
+      }
+    })
+  }
+  
+
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
     <div class='background'>${backPicture ? backPicture.outerHTML : ''}</div>
     <div class='foreground'>
       <div class='text'>
-        ${eyebrowContent.innerHTML}
+        ${eyebrowContent.outerHTML}
         <div class='title'>${title.innerHTML}</div>
-        <div class='long-description'>${description.innerHTML}</div>
+        <div class='description'>${description.innerHTML}</div>
         <div class='cta'>${decorateButtons(firstCta, secondCta)}</div>
       </div>
       <div class='spacer'>

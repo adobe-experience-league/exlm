@@ -38,6 +38,9 @@
 .carousel.block > .panel-container > .teaser.block > .foreground {
   height: 100%;
   display: flex;
+}
+
+.carousel.block > .panel-container > .teaser.block > .foreground {
   align-items: center;
 }
 
