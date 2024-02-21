@@ -169,13 +169,18 @@ const isSignedIn = window.adobeIMS?.isSignedInUser();
  * @param {Element} navOverlay - The overlay element for the navigation menu
  */
 function toggleNav(button, navWrapper, navOverlay) {
+  const profileButton = document.querySelector('.profile-toggle');
+  if (profileButton && profileButton.getAttribute('aria-expanded') === 'true') {
+    profileButton.click();
+  }
   const isExpanded = button.getAttribute('aria-expanded') === 'true';
   button.setAttribute('aria-expanded', !isExpanded);
   navWrapper.classList.toggle('nav-wrapper-expanded');
-  navOverlay.classList.toggle('hidden');
   if (!isExpanded) {
+    navOverlay.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
   } else {
+    navOverlay.classList.add('hidden');
     document.body.removeAttribute('style');
   }
 }
@@ -360,9 +365,7 @@ const buildNavItems = async (ul, level = 0) => {
 const navDecorator = async (navBlock) => {
   simplifySingleCellBlock(navBlock);
 
-  const navOverlay = document.createElement('div');
-  navOverlay.classList.add('nav-overlay', 'hidden');
-  document.body.appendChild(navOverlay);
+  const navOverlay = document.querySelector('.nav-overlay');
 
   const navWrapper = htmlToElement('<div class="nav-wrapper"></div>');
   const hamburger = hamburgerButton(navWrapper, navOverlay);
@@ -528,8 +531,14 @@ const signInDecorator = async (signInBlock) => {
         </div>`,
       ),
     );
+
     const toggler = signInBlock.querySelector('.profile-toggle');
-    const toggleExpandContentMobile = (navOverlay) => {
+    const navOverlay = document.querySelector('.nav-overlay');
+    const toggleExpandContentMobile = () => {
+      const navButton = document.querySelector('.nav-hamburger');
+      if (navButton.getAttribute('aria-expanded') === 'true') {
+        navButton.click();
+      }
       const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
       toggler.setAttribute('aria-expanded', !isExpanded);
       const profileMenu = toggler.nextElementSibling;
@@ -558,16 +567,16 @@ const signInDecorator = async (signInBlock) => {
     };
 
     registerHeaderResizeHandler(() => {
-      const navOverlay = document.querySelector('.nav-overlay');
       if (isMobile()) {
         // if mobile, add click event, remove mouseenter/mouseleave
-        toggler.addEventListener('click', toggleExpandContentMobile(navOverlay));
+        toggler.addEventListener('click', toggleExpandContentMobile);
         toggler.parentElement.removeEventListener('mouseenter', toggleExpandContent);
         toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
       } else {
         navOverlay.classList.add('hidden');
+        document.body.removeAttribute('style');
         // if desktop, add mouseenter/mouseleave, remove click event
-        toggler.removeEventListener('click', toggleExpandContentMobile(navOverlay));
+        toggler.removeEventListener('click', toggleExpandContentMobile);
         toggler.parentElement.addEventListener('mouseenter', toggleExpandContent);
         toggler.parentElement.addEventListener('mouseleave', toggleExpandContent);
       }
@@ -751,6 +760,10 @@ export default async function decorate(headerBlock) {
   const nav = headerBlock.querySelector('nav');
   nav.role = 'navigation';
   nav.ariaLabel = 'Main navigation';
+
+  const navOverlay = document.createElement('div');
+  navOverlay.classList.add('nav-overlay', 'hidden');
+  document.body.appendChild(navOverlay);
 
   const decorateHeaderBlock = async (className, decorator) => {
     const block = nav.querySelector(`:scope > .${className}`);
