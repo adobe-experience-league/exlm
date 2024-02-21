@@ -32,14 +32,35 @@ export function formattedTags(inputString) {
 export const generateQuery = (topic) => {
   const [type, product, version] = topic.split('/');
   if (!product) {
-    return `@el_features="${type}"`;
+    return { query: `@el_features="${type}"`, product: type };
   }
   if (!version) {
-    return `@el_product="${product}`;
+    return { query: `@el_product="${product}"`, product };
   }
   const isSolutionType = type.toLowerCase().includes('solution');
-  return `(@el_product="${product}" AND @el_${isSolutionType ? 'solution' : 'features'}="${version}")`;
+  const query = `(@el_product="${product}" AND @el_${isSolutionType ? 'version' : 'features'}="${version}")`;
+  return {
+    query,
+    product,
+  };
 };
+
+export function dispatchCoveoAdvancedQuery(query, fireSelection = true) {
+  if (!window.headlessQueryActionCreators) {
+    return;
+  }
+  const advancedQueryAction = window.headlessQueryActionCreators.updateAdvancedSearchQueries({
+    aq: query,
+  });
+  window.headlessSearchEngine.dispatch(advancedQueryAction);
+  if (window.headlessSearchActionCreators && fireSelection) {
+    const searchAction = window.headlessSearchActionCreators.executeSearch(window.logSearchboxSubmit());
+    if (window.headlessPager) {
+      window.headlessPager.selectPage(1);
+    }
+    window.headlessSearchEngine.dispatch(searchAction);
+  }
+}
 
 export function handleTopicSelection(block) {
   const wrapper = block || document;
@@ -50,21 +71,21 @@ export function handleTopicSelection(block) {
   }, []);
 
   if (window.headlessQueryActionCreators) {
-    let query = '';
+    let query = window.headlessBaseSolutionQuery || '';
     if (selectedTopics.length) {
-      const queryContents = `${selectedTopics.map((topic) => generateQuery(topic)).join(' OR ')}`;
-      query = selectedTopics.length > 1 ? `(${queryContents})` : queryContents;
-    }
-    const advancedQueryAction = window.headlessQueryActionCreators.updateAdvancedSearchQueries({
-      aq: query,
-    });
-    window.headlessSearchEngine.dispatch(advancedQueryAction);
-    if (window.headlessSearchActionCreators) {
-      const searchAction = window.headlessSearchActionCreators.executeSearch(window.logSearchboxSubmit());
-      if (window.headlessPager) {
-        window.headlessPager.selectPage(1);
+      const topicQueryItems = `${selectedTopics
+        .map((topic) => {
+          const { query: advancedQuery } = generateQuery(topic);
+          return advancedQuery;
+        })
+        .join(' OR ')}`;
+      const topicsQuery = selectedTopics.length > 1 ? `(${topicQueryItems})` : topicQueryItems;
+      if (window.headlessBaseSolutionQuery) {
+        query = `((${window.headlessBaseSolutionQuery}) AND (${topicsQuery}))`;
+      } else {
+        query = topicsQuery;
       }
-      window.headlessSearchEngine.dispatch(searchAction);
     }
+    dispatchCoveoAdvancedQuery(query);
   }
 }

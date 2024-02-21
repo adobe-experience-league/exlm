@@ -399,11 +399,10 @@ async function loadLazy(doc) {
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
+  const { lang } = getPathDetails();
   if (hash && element) element.scrollIntoView();
   const headerPromise = loadHeader(doc.querySelector('header'));
   const footerPromise = loadFooter(doc.querySelector('footer'));
-
-  localStorage.setItem('prevPage', doc.title);
 
   const launchPromise = loadScript(
     'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
@@ -415,8 +414,9 @@ async function loadLazy(doc) {
   Promise.all([launchPromise, libAnalyticsModulePromise, headerPromise, footerPromise]).then(
     // eslint-disable-next-line no-unused-vars
     ([launch, libAnalyticsModule, headPr, footPr]) => {
-      const { pageLoadModel, linkClickModel } = libAnalyticsModule;
-      window.adobeDataLayer.push(pageLoadModel());
+      const { pageLoadModel, linkClickModel, pageName } = libAnalyticsModule;
+      window.adobeDataLayer.push(pageLoadModel(lang));
+      localStorage.setItem('prevPage', pageName(lang));
       const linkClicked = document.querySelectorAll('a,.view-more-less span');
       linkClicked.forEach((linkElement) => {
         linkElement.addEventListener('click', (e) => {
@@ -622,6 +622,9 @@ export const removeExtension = (pathStr) => {
   if (parts.length === 1) return parts[0];
   return parts.slice(0, -1).join('.');
 };
+
+// Convert the given String to Pascal Case
+export const toPascalCase = (name) => `${(name || '').charAt(0).toUpperCase()}${name.slice(1)}`;
 
 export function rewriteDocsPath(docsPath) {
   const PROD_BASE = 'https://experienceleague.adobe.com';

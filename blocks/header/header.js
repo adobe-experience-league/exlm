@@ -162,11 +162,35 @@ try {
 const isSignedIn = window.adobeIMS?.isSignedInUser();
 
 /**
+ * Function to toggle the navigation menu.
+ *
+ * @param {Element} button - The button element used to toggle the navigation menu
+ * @param {Element} navWrapper - The wrapper element for the navigation menu
+ * @param {Element} navOverlay - The overlay element for the navigation menu
+ */
+function toggleNav(button, navWrapper, navOverlay) {
+  const profileButton = document.querySelector('.profile-toggle');
+  if (profileButton && profileButton.getAttribute('aria-expanded') === 'true') {
+    profileButton.click();
+  }
+  const isExpanded = button.getAttribute('aria-expanded') === 'true';
+  button.setAttribute('aria-expanded', !isExpanded);
+  navWrapper.classList.toggle('nav-wrapper-expanded');
+  if (!isExpanded) {
+    navOverlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  } else {
+    navOverlay.classList.add('hidden');
+    document.body.removeAttribute('style');
+  }
+}
+
+/**
  * adds hambuger button to nav wrapper
  * @param {HTMLElement} navWrapper
  * @returns {HTMLButtonElement}
  */
-const hamburgerButton = (navWrapper) => {
+const hamburgerButton = (navWrapper, navOverlay) => {
   const navWrapperId = 'nav-wrapper';
   const button = htmlToElement(`
     <button 
@@ -176,11 +200,17 @@ const hamburgerButton = (navWrapper) => {
       aria-haspopup="true"
       aria-controls="${navWrapperId}"></button>`);
   navWrapper.id = navWrapperId;
+
   button.addEventListener('click', () => {
-    const isExpanded = button.getAttribute('aria-expanded') === 'true';
-    button.setAttribute('aria-expanded', !isExpanded);
-    navWrapper.classList.toggle('nav-wrapper-expanded');
+    toggleNav(button, navWrapper, navOverlay);
   });
+
+  registerHeaderResizeHandler(() => {
+    if (!isMobile() && button.getAttribute('aria-expanded') === 'true') {
+      toggleNav(button, navWrapper, navOverlay);
+    }
+  });
+
   return button;
 };
 
@@ -274,6 +304,7 @@ const buildNavItems = async (ul, level = 0) => {
           toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
         } else {
           // if desktop, add mouseenter/mouseleave, remove click event
+
           toggler.removeEventListener('click', toggleExpandContent);
           if (level === 0) {
             toggler.parentElement.addEventListener('mouseenter', toggleExpandContent);
@@ -333,8 +364,12 @@ const buildNavItems = async (ul, level = 0) => {
  */
 const navDecorator = async (navBlock) => {
   simplifySingleCellBlock(navBlock);
+
+  const navOverlay = document.querySelector('.nav-overlay');
+
   const navWrapper = htmlToElement('<div class="nav-wrapper"></div>');
-  const hamburger = hamburgerButton(navWrapper);
+  const hamburger = hamburgerButton(navWrapper, navOverlay);
+
   navWrapper.replaceChildren(hamburger, ...navBlock.children);
   navBlock.replaceChildren(navWrapper);
 
@@ -496,7 +531,29 @@ const signInDecorator = async (signInBlock) => {
         </div>`,
       ),
     );
+
     const toggler = signInBlock.querySelector('.profile-toggle');
+    const navOverlay = document.querySelector('.nav-overlay');
+    const toggleExpandContentMobile = () => {
+      const navButton = document.querySelector('.nav-hamburger');
+      if (navButton.getAttribute('aria-expanded') === 'true') {
+        navButton.click();
+      }
+      const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
+      toggler.setAttribute('aria-expanded', !isExpanded);
+      const profileMenu = toggler.nextElementSibling;
+      const expandedClass = 'profile-menu-expanded';
+      if (!isExpanded) {
+        profileMenu.classList.add(expandedClass);
+        navOverlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      } else {
+        profileMenu.classList.remove(expandedClass);
+        navOverlay.classList.add('hidden');
+        document.body.removeAttribute('style');
+      }
+    };
+
     const toggleExpandContent = () => {
       const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
       toggler.setAttribute('aria-expanded', !isExpanded);
@@ -508,15 +565,18 @@ const signInDecorator = async (signInBlock) => {
         profileMenu.classList.remove(expandedClass);
       }
     };
+
     registerHeaderResizeHandler(() => {
       if (isMobile()) {
         // if mobile, add click event, remove mouseenter/mouseleave
-        toggler.addEventListener('click', toggleExpandContent);
+        toggler.addEventListener('click', toggleExpandContentMobile);
         toggler.parentElement.removeEventListener('mouseenter', toggleExpandContent);
         toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
       } else {
+        navOverlay.classList.add('hidden');
+        document.body.removeAttribute('style');
         // if desktop, add mouseenter/mouseleave, remove click event
-        toggler.removeEventListener('click', toggleExpandContent);
+        toggler.removeEventListener('click', toggleExpandContentMobile);
         toggler.parentElement.addEventListener('mouseenter', toggleExpandContent);
         toggler.parentElement.addEventListener('mouseleave', toggleExpandContent);
       }
@@ -700,6 +760,10 @@ export default async function decorate(headerBlock) {
   const nav = headerBlock.querySelector('nav');
   nav.role = 'navigation';
   nav.ariaLabel = 'Main navigation';
+
+  const navOverlay = document.createElement('div');
+  navOverlay.classList.add('nav-overlay', 'hidden');
+  document.body.appendChild(navOverlay);
 
   const decorateHeaderBlock = async (className, decorator) => {
     const block = nav.querySelector(`:scope > .${className}`);
