@@ -1,5 +1,5 @@
 import { loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, fetchLanguagePlaceholders, convertDocsPathToProdBase } from '../scripts.js';
+import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import { createTooltip } from './browse-card-tooltip.js';
 import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import loadJWT from '../auth/jwt.js';
@@ -385,6 +385,7 @@ export async function buildCard(container, element, model) {
   setupCopyAction(card);
   if (model.viewLink) {
     const cardContainer = document.createElement('a');
+    cardContainer.setAttribute('href', model.viewLink);
     if (
       [
         CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY,
@@ -394,8 +395,6 @@ export async function buildCard(container, element, model) {
     ) {
       cardContainer.setAttribute('target', '_blank');
     }
-    const isCourse = contentType.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY;
-    cardContainer.setAttribute('href', isCourse ? convertDocsPathToProdBase(model.viewLink) : model.viewLink);
     cardContainer.appendChild(card);
     element.appendChild(cardContainer);
   } else {
