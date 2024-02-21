@@ -155,9 +155,11 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText }) => {
       icon = 'play-outline';
       isLeftPlacement = false;
     } else if (
-      contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY ||
-      contentType === CONTENT_TYPES.EVENT.MAPPING_KEY ||
-      contentType === CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
+      [
+        CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY,
+        CONTENT_TYPES.EVENT.MAPPING_KEY,
+        CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY,
+      ].includes(contentType.toLowerCase())
     ) {
       icon = 'new-tab';
     }
