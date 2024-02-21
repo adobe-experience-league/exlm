@@ -1683,12 +1683,16 @@
         "description": "All are included if no selection is made",
         "options": [
           {
-            "name": "Adobe Commerce (Magento)",
-            "value": "Adobe Commerce (Magento)"
+            "name": "AEM Assets",
+            "value": "AEM Assets"
           },
           {
-            "name": "Adobe Workfront",
-            "value": "Adobe Workfront"
+            "name": "AEM Forms",
+            "value": "AEM Forms"
+          },
+          {
+            "name": "AEM Sites",
+            "value": "AEM Sites"
           },
           {
             "name": "Analytics",
@@ -1707,20 +1711,20 @@
             "value": "Campaign Standard"
           },
           {
-            "name": "Experience Cloud",
-            "value": "Experience Cloud"
+            "name": "Commerce",
+            "value": "Commerce"
           },
           {
-            "name": "Experience Manager Assets (DAM)",
-            "value": "Experience Manager Assets (DAM)"
+            "name": "Content Supply Chain",
+            "value": "Content Supply Chain"
           },
           {
-            "name": "Experience Manager Forms",
-            "value": "Experience Manager Forms"
+            "name": "Customer Journey Analytics",
+            "value": "Customer Journey Analytics"
           },
           {
-            "name": "Experience Manager Sites (CMS)",
-            "value": "Experience Manager Sites (CMS)"
+            "name": "Experience Cloud Integrations",
+            "value": "Experience Cloud Integrations"
           },
           {
             "name": "Experience Platform",
@@ -1735,8 +1739,16 @@
             "value": "Marketo Engage"
           },
           {
+            "name": "Real-Time CDP",
+            "value": "Real-Time CDP"
+          },
+          {
             "name": "Target",
             "value": "Target"
+          },
+          {
+            "name": "Workfront",
+            "value": "Workfront"
           }
         ]
       },

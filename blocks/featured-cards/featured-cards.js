@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, toPascalCase } from '../../scripts/scripts.js';
+import { htmlToElement, toPascalCase, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
@@ -8,10 +8,19 @@ import { CONTENT_TYPES, ROLE_OPTIONS, COVEO_SORT_OPTIONS } from '../../scripts/b
 import SolutionDataService from '../../scripts/data-service/solutions-data-service.js';
 import { solutionsUrl } from '../../scripts/urls.js';
 
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
 const DEFAULT_OPTIONS = Object.freeze({
   ROLE: 'Role',
   SOLUTION: 'Product',
 });
+
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -38,7 +47,7 @@ export default async function decorate(block) {
         ${descriptionElement.innerHTML}
       </div>
       <div class="browse-card-dropdown">
-        <p>Tell us about yourself</p>
+        <p>${placeholders?.featuredCardDescription || 'Tell us about yourself'}</p>
         <select class="roles-dropdown"></select>
         <select class="solutions-dropdown"></select>
       </div>
