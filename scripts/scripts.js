@@ -422,9 +422,14 @@ async function loadLazy(doc) {
     // eslint-disable-next-line no-unused-vars
     ([launch, libAnalyticsModule, headPr, footPr]) => {
       const { pageLoadModel, linkClickModel, pageName } = libAnalyticsModule;
-      pageLoadModel(lang).then((data) => {
-        window.adobeDataLayer.push(data);
-      });
+      pageLoadModel(lang)
+        .then((data) => {
+          window.adobeDataLayer.push(data);
+        })
+        .catch((e) => {
+          // eslint-disable-next-line no-console
+          console.error('Error getting pageLoadModel:', e);
+        });
       localStorage.setItem('prevPage', pageName(lang));
       const linkClicked = document.querySelectorAll('a,.view-more-less span');
       linkClicked.forEach((linkElement) => {
