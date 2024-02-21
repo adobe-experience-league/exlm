@@ -65,7 +65,9 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     }
     const tags = createTags(result, contentType.toLowerCase());
     let url = parentResult?.clickUri || parentResult?.uri || clickUri || uri || '';
-    url = rewriteDocsPath(url, true);
+    if (contentType.toLowerCase() !== CONTENT_TYPES.COURSE.MAPPING_KEY) {
+      url = rewriteDocsPath(url, true);
+    }
 
     return {
       ...browseCardDataModel,

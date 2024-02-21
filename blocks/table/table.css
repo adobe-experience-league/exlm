@@ -235,6 +235,9 @@
   background-color: var(--non-spectrum-bg);
 }
 
+.table.html-authored.no-header table {
+  margin-top: 0;
+}
 .table.html-authored.no-header table tbody tr:nth-child(odd) {
   background-color: unset;
 }

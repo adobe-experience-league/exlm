@@ -163,11 +163,35 @@ try {
 const isSignedIn = window.adobeIMS?.isSignedInUser();
 
 /**
+ * Function to toggle the navigation menu.
+ *
+ * @param {Element} button - The button element used to toggle the navigation menu
+ * @param {Element} navWrapper - The wrapper element for the navigation menu
+ * @param {Element} navOverlay - The overlay element for the navigation menu
+ */
+function toggleNav(button, navWrapper, navOverlay) {
+  const profileButton = document.querySelector('.profile-toggle');
+  if (profileButton && profileButton.getAttribute('aria-expanded') === 'true') {
+    profileButton.click();
+  }
+  const isExpanded = button.getAttribute('aria-expanded') === 'true';
+  button.setAttribute('aria-expanded', !isExpanded);
+  navWrapper.classList.toggle('nav-wrapper-expanded');
+  if (!isExpanded) {
+    navOverlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  } else {
+    navOverlay.classList.add('hidden');
+    document.body.removeAttribute('style');
+  }
+}
+
+/**
  * adds hambuger button to nav wrapper
  * @param {HTMLElement} navWrapper
  * @returns {HTMLButtonElement}
  */
-const hamburgerButton = (navWrapper) => {
+const hamburgerButton = (navWrapper, navOverlay) => {
   const navWrapperId = 'nav-wrapper';
   const button = htmlToElement(`
     <button 
@@ -177,11 +201,17 @@ const hamburgerButton = (navWrapper) => {
       aria-haspopup="true"
       aria-controls="${navWrapperId}"></button>`);
   navWrapper.id = navWrapperId;
+
   button.addEventListener('click', () => {
-    const isExpanded = button.getAttribute('aria-expanded') === 'true';
-    button.setAttribute('aria-expanded', !isExpanded);
-    navWrapper.classList.toggle('nav-wrapper-expanded');
+    toggleNav(button, navWrapper, navOverlay);
   });
+
+  registerHeaderResizeHandler(() => {
+    if (!isMobile() && button.getAttribute('aria-expanded') === 'true') {
+      toggleNav(button, navWrapper, navOverlay);
+    }
+  });
+
   return button;
 };
 
@@ -275,6 +305,7 @@ const buildNavItems = async (ul, level = 0) => {
           toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
         } else {
           // if desktop, add mouseenter/mouseleave, remove click event
+
           toggler.removeEventListener('click', toggleExpandContent);
           if (level === 0) {
             toggler.parentElement.addEventListener('mouseenter', toggleExpandContent);
@@ -334,8 +365,12 @@ const buildNavItems = async (ul, level = 0) => {
  */
 const navDecorator = async (navBlock) => {
   simplifySingleCellBlock(navBlock);
+
+  const navOverlay = document.querySelector('.nav-overlay');
+
   const navWrapper = htmlToElement('<div class="nav-wrapper"></div>');
-  const hamburger = hamburgerButton(navWrapper);
+  const hamburger = hamburgerButton(navWrapper, navOverlay);
+
   navWrapper.replaceChildren(hamburger, ...navBlock.children);
   navBlock.replaceChildren(navWrapper);
 
@@ -346,15 +381,11 @@ const navDecorator = async (navBlock) => {
   navBlock.firstChild.id = hamburger.getAttribute('aria-controls');
   navBlock.prepend(hamburger);
 
-  if (isSignedIn) {
-    // New Link under Learn Menu - Authenticated
-    const recCourses = document.createElement('li');
-    recCourses.classList.add('nav-item', 'nav-item-leaf');
-    recCourses.innerHTML = `<a href="https://experienceleague.adobe.com/#dashboard/learning">Recommended courses<span class="nav-item-subtitle">Your expertly curated courses</span></a></li>`;
-    document.querySelectorAll('.nav-item-toggle').forEach((el) => {
-      const elContent = el.innerHTML.toLowerCase();
-      if (elContent === 'content types') {
-        el.nextSibling.querySelector('ul').prepend(recCourses);
+  if (!isSignedIn) {
+    // hide auth-only nav items - see decorateLinks method for details
+    [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
+      if (navItemEl.querySelector(':scope > a[auth-only]')) {
+        navItemEl.style.display = 'none';
       }
     });
   }
@@ -443,7 +474,13 @@ const searchDecorator = async (searchBlock) => {
  */
 const signUpDecorator = (signUpBlock) => {
   simplifySingleCellBlock(signUpBlock);
-  return signUpBlock;
+  if (isSignedIn) {
+    signUpBlock.style.display = 'none';
+  } else {
+    signUpBlock.firstChild.addEventListener('click', async () => {
+      window.adobeIMS.signUp();
+    });
+  }
 };
 
 /**
@@ -495,7 +532,29 @@ const signInDecorator = async (signInBlock) => {
         </div>`,
       ),
     );
+
     const toggler = signInBlock.querySelector('.profile-toggle');
+    const navOverlay = document.querySelector('.nav-overlay');
+    const toggleExpandContentMobile = () => {
+      const navButton = document.querySelector('.nav-hamburger');
+      if (navButton.getAttribute('aria-expanded') === 'true') {
+        navButton.click();
+      }
+      const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
+      toggler.setAttribute('aria-expanded', !isExpanded);
+      const profileMenu = toggler.nextElementSibling;
+      const expandedClass = 'profile-menu-expanded';
+      if (!isExpanded) {
+        profileMenu.classList.add(expandedClass);
+        navOverlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      } else {
+        profileMenu.classList.remove(expandedClass);
+        navOverlay.classList.add('hidden');
+        document.body.removeAttribute('style');
+      }
+    };
+
     const toggleExpandContent = () => {
       const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
       toggler.setAttribute('aria-expanded', !isExpanded);
@@ -507,22 +566,22 @@ const signInDecorator = async (signInBlock) => {
         profileMenu.classList.remove(expandedClass);
       }
     };
+
     registerHeaderResizeHandler(() => {
       if (isMobile()) {
         // if mobile, add click event, remove mouseenter/mouseleave
-        toggler.addEventListener('click', toggleExpandContent);
+        toggler.addEventListener('click', toggleExpandContentMobile);
         toggler.parentElement.removeEventListener('mouseenter', toggleExpandContent);
         toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
       } else {
+        navOverlay.classList.add('hidden');
+        document.body.removeAttribute('style');
         // if desktop, add mouseenter/mouseleave, remove click event
-        toggler.removeEventListener('click', toggleExpandContent);
+        toggler.removeEventListener('click', toggleExpandContentMobile);
         toggler.parentElement.addEventListener('mouseenter', toggleExpandContent);
         toggler.parentElement.addEventListener('mouseleave', toggleExpandContent);
       }
     });
-
-    // Hide Signup - Authenticated
-    document.querySelector('.sign-up').style.display = 'none';
   } else {
     signInBlock.classList.remove('signed-in');
     signInBlock.firstChild.addEventListener('click', async () => {
@@ -664,7 +723,12 @@ const decorateNewTabLinks = (block) => {
   });
 };
 
-/** @param {HTMLElement} block  */
+/**
+ * Links that have urls with JSON the hash, the JSON will be translated to attributes
+ * eg <a href="https://example.com#{"target":"_blank", "auth-only": "true"}">link</a>
+ * will be translated to <a href="https://example.com" target="_blank" auth-only="true">link</a>
+ * @param {HTMLElement} block
+ */
 const decorateLinks = (block) => {
   const links = block.querySelectorAll('a');
   links.forEach((link) => {
@@ -672,11 +736,12 @@ const decorateLinks = (block) => {
     const firstCurlyIndex = decodedHref.indexOf('{');
     const lastCurlyIndex = decodedHref.lastIndexOf('}');
     if (firstCurlyIndex > -1 && lastCurlyIndex > -1) {
-      // get string between curly braces including curly braces
-      const options = decodedHref.substring(firstCurlyIndex, lastCurlyIndex + 1);
-      Object.entries(JSON.parse(options)).forEach(([key, value]) => {
+      // everything between curly braces is treated as JSON string.
+      const optionsJsonStr = decodedHref.substring(firstCurlyIndex, lastCurlyIndex + 1);
+      Object.entries(JSON.parse(optionsJsonStr)).forEach(([key, value]) => {
         link.setAttribute(key.trim(), value);
       });
+      // remove the JSON string from the hash, if JSON string is the only thing in the hash, remove the hash as well.
       const endIndex = decodedHref.charAt(firstCurlyIndex - 1) === '#' ? firstCurlyIndex - 1 : firstCurlyIndex;
       link.href = decodedHref.substring(0, endIndex);
     }
@@ -697,10 +762,17 @@ export default async function decorate(headerBlock) {
   nav.role = 'navigation';
   nav.ariaLabel = 'Main navigation';
 
+  const navOverlay = document.createElement('div');
+  navOverlay.classList.add('nav-overlay', 'hidden');
+  document.body.appendChild(navOverlay);
+
   const decorateHeaderBlock = async (className, decorator) => {
     const block = nav.querySelector(`:scope > .${className}`);
     await decorator(block);
   };
+
+  // Do this first to ensure all links are decorated correctly before they are used.
+  decorateLinks(headerBlock);
 
   decorateHeaderBlock('brand', brandDecorator);
   decorateHeaderBlock('search', searchDecorator);
@@ -712,7 +784,6 @@ export default async function decorate(headerBlock) {
   decorateHeaderBlock('adobe-logo', adobeLogoDecorator);
   await decorateHeaderBlock('nav', navDecorator);
 
-  decorateLinks(headerBlock);
   decorateNewTabLinks(headerBlock);
 
   // do this at the end, always.
