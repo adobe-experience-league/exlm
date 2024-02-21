@@ -404,12 +404,18 @@ async function loadLazy(doc) {
   const headerPromise = loadHeader(doc.querySelector('header'));
   const footerPromise = loadFooter(doc.querySelector('footer'));
 
-  const launchPromise = loadScript(
-    'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
-    {
-      async: true,
-    },
-  );
+  let launchScriptSrc = '';
+  if (window.location.host === 'eds-stage.experienceleague.adobe.com') {
+    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
+  } else if (window.location.host === 'experienceleague.adobe.com') {
+    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
+  } else {
+    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js';
+  }
+
+  const launchPromise = loadScript(launchScriptSrc, {
+    async: true,
+  });
 
   Promise.all([launchPromise, libAnalyticsModulePromise, headerPromise, footerPromise]).then(
     // eslint-disable-next-line no-unused-vars
