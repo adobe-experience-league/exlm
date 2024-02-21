@@ -639,6 +639,25 @@ export function rewriteDocsPath(docsPath) {
   return url.toString().replace(PROD_BASE, ''); // always remove PROD_BASE if exists
 }
 
+export function convertDocsPathToProdBase(path) {
+  const PROD_BASE = 'https://experienceleague.adobe.com';
+  if (!path.startsWith('/') && !path.includes('/docs')) {
+    return path;
+  }
+  const urlParts = path.split('/');
+  let lang;
+  if (urlParts.length > 1 && !path.startsWith('/docs')) {
+    [, lang] = urlParts;
+    urlParts.splice(0, 2);
+  }
+  const url = new URL(`${urlParts.join('/')}`, PROD_BASE);
+  url.pathname = `${url.pathname}.html`;
+  if (lang) {
+    url.searchParams.append('lang', lang);
+  }
+  return url.href;
+}
+
 /**
  * Helper function thats returns a list of all products
  * - below <lang>/browse/<product-page>
