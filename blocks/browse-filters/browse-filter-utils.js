@@ -185,8 +185,9 @@ export const getSelectedTopics = (filterInfo) => {
   if (!filterInfo) {
     return [];
   }
-  const featuresCheck = filterInfo.match(/@el_product=("[^"]*")/g) ?? filterInfo.match(/@el_features=("[^"]*")/g) ?? [];
-  const selectedTopics = featuresCheck.reduce((acc, curr) => {
+  const solutionsCheck = filterInfo.match(/@el_solution=("[^"]*")/g) ?? [];
+  const featuresCheck = filterInfo.match(/@el_features=("[^"]*")/g) ?? [];
+  const selectedTopics = featuresCheck.concat(solutionsCheck).reduce((acc, curr) => {
     const [, featureName] = curr.split('=');
     if (featureName) {
       acc.push(featureName.trim().replace(/"/g, ''));
@@ -194,4 +195,35 @@ export const getSelectedTopics = (filterInfo) => {
     return acc;
   }, []);
   return selectedTopics;
+};
+
+export const getParsedSolutionsQuery = (solutionTags) => {
+  const solutionInfo = solutionTags.map((tag) => {
+    const [, product, version] = tag.split('/');
+    return { product, version };
+  });
+
+  const isSubSolution = (parent, child) => child.product.includes(parent.product) && parent.product !== child.product;
+
+  const filteredSolutions = solutionInfo.filter((solution) => {
+    const hasChild = solutionInfo.some((sol) => isSubSolution(solution, sol));
+    return !hasChild;
+  });
+
+  const parsedSolutionsInfo = filteredSolutions.map((solution) => {
+    if (!solution.version) {
+      const parentSolution = solutionInfo.find((sol) => isSubSolution(sol, solution));
+      solution.version = parentSolution?.version;
+    }
+    return solution;
+  });
+
+  const query = parsedSolutionsInfo
+    .map(({ product, version }) => `(@el_product="${product}"${version ? ` AND @el_version="${version}"` : ''})`)
+    .join(' OR ');
+
+  return {
+    query: parsedSolutionsInfo.length > 1 ? `(${query})` : query,
+    products: solutionInfo.map(({ product }) => product.toLowerCase()),
+  };
 };
