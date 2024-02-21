@@ -279,6 +279,8 @@
 
 .table.html-authored.no-header {
   table {
+    margin-top: 0;
+
     tbody {
       tr:nth-child(odd) {
         background-color: unset;
