@@ -244,7 +244,7 @@ border-radius: 30px;
   body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .background img {
     border-radius: 4px;
   }
-
+  
   body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .foreground {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;

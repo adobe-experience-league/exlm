@@ -29,7 +29,6 @@ export function generateDetailedTeaserDOM(props, classes) {
     })
   }
   
-
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
     <div class='background'>${backPicture ? backPicture.outerHTML : ''}</div>
