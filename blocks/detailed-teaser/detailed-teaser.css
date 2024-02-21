@@ -15,7 +15,7 @@
   position: relative;
   overflow-x: hidden;
   display:flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 /* the background image container */
@@ -213,6 +213,11 @@ border-radius: 30px;
     padding: var(--spectrum-spacing-500) 0;
   }
 
+  /* teaser on browse pages has different width for text */
+  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text {
+    min-width:unset;
+  }
+
   .detailed-teaser.block > .foreground > .text > .title {
     font-size: 32px;
     font-weight: 800;
@@ -223,10 +228,14 @@ border-radius: 30px;
     padding-left: 0;
     padding-right: 0;
   }
-      
+   
   /* it gets a border */
   body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .background img {
     border-radius: 4px;
+  }
+
+  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .spacer  img{
+    object-position: left;
   }
 
   body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .foreground {
@@ -238,10 +247,6 @@ border-radius: 30px;
 }
 
 @media (min-width: 1024px) {
-  .detailed-teaser.block {
-    flex-direction: row;
-  }
-
   /* switch to left right */
   .detailed-teaser.block .foreground {
     flex-direction: row;
@@ -255,19 +260,9 @@ border-radius: 30px;
   .detailed-teaser.block > .foreground > .text > .cta > a.button {
     line-height: unset;
   }
-
-  /* the background image, start align right */
-  .detailed-teaser.block > .background img {
-    object-position: right;
-  }
-
-  /* the background image, start align left */
-  .detailed-teaser.block.right > .background img {
-    object-position: left;
-  }
   
   /* teaser on browse pages has different width for text */
-  body .detailed-teaser.block > .foreground > .text {
+  .detailed-teaser.block > .foreground > .text {
     min-width:550px;
   }
 
