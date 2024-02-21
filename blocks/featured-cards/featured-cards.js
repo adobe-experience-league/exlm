@@ -1,17 +1,159 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, toPascalCase } from '../../scripts/scripts.js';
+import { htmlToElement, toPascalCase, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import { CONTENT_TYPES, ROLE_OPTIONS, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
+import { CONTENT_TYPES, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import SolutionDataService from '../../scripts/data-service/solutions-data-service.js';
 import { solutionsUrl } from '../../scripts/urls.js';
+
+import { roleOptions } from '../browse-filters/browse-filter-utils.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 const DEFAULT_OPTIONS = Object.freeze({
   ROLE: 'Role',
   SOLUTION: 'Product',
 });
+
+const handleSolutionsService = async (solutionDropdown) => {
+  const solutionsService = new SolutionDataService(solutionsUrl);
+  const solutions = await solutionsService.fetchDataFromSource();
+
+  if (!solutions) {
+    throw new Error('An error occurred');
+  }
+
+  if (solutions?.length) {
+    solutions.forEach((item, index) => {
+      const id = 2;
+      const dropdownitem = htmlToElement(
+        ` <div class="custom-checkbox">
+            <input type="checkbox" id="option${id}${index + 1}" value="${item}" data-label="${item}">
+            <label for="option${id}${index + 1}">
+                <span class="title">${item}</span>
+                <span class="icon icon-checked"></span>
+            </label>
+          </div>`,
+      );
+      solutionDropdown.appendChild(dropdownitem);
+    });
+  }
+  await decorateIcons(solutionDropdown);
+};
+
+function createFormElements(formEl) {
+  formEl.addEventListener('submit', (event) => event.preventDefault());
+
+  const roleDropdown = formEl.querySelector('.roles-dropdown');
+  const roleDropdownButton = formEl.querySelector('.roles-dropdown > button');
+  const roleDropdownContent = formEl.querySelector('.roles-dropdown > .filter-dropdown-content');
+
+  roleOptions.items.forEach((item, index) => {
+    const id = 1;
+    const dropdownitem = htmlToElement(
+      ` <div class="custom-checkbox">
+          <input type="checkbox" id="option${id}${index + 1}" value="${item.value}" data-label="${item.title}">
+          <label for="option${id}${index + 1}">
+            <span class="title">${item.title}</span>
+            <span class="description">${item.description}</span>
+            <span class="icon icon-checked"></span>
+          </label>
+        </div>`,
+    );
+    roleDropdownContent.appendChild(dropdownitem);
+  });
+
+  const solutionDropdown = formEl.querySelector('.solutions-dropdown');
+  const solutionDropdownButton = formEl.querySelector('.solutions-dropdown > button');
+  const solutionDropdownContent = formEl.querySelector('.solutions-dropdown > .filter-dropdown-content');
+  handleSolutionsService(solutionDropdownContent);
+
+  const toggleRolesDropdown = () => {
+    if (solutionDropdown.classList.contains('open')) {
+      solutionDropdown.classList.remove('open');
+      solutionDropdownContent.style.display = 'none';
+    }
+
+    if (roleDropdown.classList.contains('open')) {
+      roleDropdown.classList.remove('open');
+      roleDropdownContent.style.display = 'none';
+    } else {
+      roleDropdown.classList.add('open');
+      roleDropdownContent.style.display = 'block';
+    }
+  };
+
+  const toggleSolutionDropdown = () => {
+    if (roleDropdown.classList.contains('open')) {
+      roleDropdown.classList.remove('open');
+      roleDropdownContent.style.display = 'none';
+    }
+
+    if (solutionDropdown.classList.contains('open')) {
+      solutionDropdown.classList.remove('open');
+      solutionDropdownContent.style.display = 'none';
+    } else {
+      solutionDropdown.classList.add('open');
+      solutionDropdownContent.style.display = 'block';
+    }
+  };
+
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('.roles-dropdown') && !event.target.closest('.solutions-dropdown')) {
+      roleDropdown.classList.remove('open');
+      roleDropdownContent.style.display = 'none';
+      solutionDropdown.classList.remove('open');
+      solutionDropdownContent.style.display = 'none';
+    }
+
+    if (event.target.closest('.roles-dropdown > button')) {
+      toggleRolesDropdown();
+    }
+    if (event.target.closest('.solutions-dropdown > button')) {
+      toggleSolutionDropdown();
+    }
+
+    if (event.target.closest('.custom-checkbox') && event.target.closest('.roles-dropdown')) {
+      if (event.target.value) {
+        roleDropdown.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach((checkbox) => {
+          if (event.target.value !== checkbox.value) checkbox.checked = false;
+        });
+        if (event.target.value === roleDropdown.dataset.selected) {
+          roleDropdown.dataset.selected = DEFAULT_OPTIONS.ROLE;
+          roleDropdownButton.children[0].textContent = DEFAULT_OPTIONS.ROLE;
+        } else {
+          roleDropdown.dataset.selected = event.target.value;
+          roleDropdownButton.children[0].textContent = event.target.dataset.label;
+        }
+        toggleRolesDropdown();
+      }
+    }
+
+    if (event.target.closest('.custom-checkbox') && event.target.closest('.solutions-dropdown')) {
+      if (event.target.value) {
+        solutionDropdown.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach((checkbox) => {
+          if (event.target.value !== checkbox.value) checkbox.checked = false;
+        });
+        if (event.target.value === solutionDropdown.dataset.selected) {
+          solutionDropdown.dataset.selected = DEFAULT_OPTIONS.SOLUTION;
+        } else {
+          solutionDropdown.dataset.selected = event.target.value;
+        }
+        solutionDropdownButton.children[0].textContent = solutionDropdown.dataset.selected;
+        toggleSolutionDropdown();
+      }
+    }
+  });
+}
+
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -37,16 +179,30 @@ export default async function decorate(block) {
       <div class="browse-card-description-text">
         ${descriptionElement.innerHTML}
       </div>
-      <div class="browse-card-dropdown">
-        <p>Tell us about yourself</p>
-        <select class="roles-dropdown"></select>
-        <select class="solutions-dropdown"></select>
-      </div>
+      <form class="browse-card-dropdown">
+        <label>${placeholders?.featuredCardDescription || 'Tell us about yourself'}</label>
+        <div class="roles-dropdown" data-filter-type="role">
+          	<button>
+          		<span>${DEFAULT_OPTIONS.ROLE}</span>
+          		<span class="icon icon-chevron"></span>
+          	</button>
+            <div class="filter-dropdown-content"></div>
+        </div>
+        <div class="solutions-dropdown" data-filter-type="product">
+            <button>
+              <span>${DEFAULT_OPTIONS.SOLUTION}</span>
+              <span class="icon icon-chevron"></span>
+            </button>
+            <div class="filter-dropdown-content"></div>
+        </div>
+      </form>
     </div>
   `);
 
   block.appendChild(headerDiv);
+  createFormElements(headerDiv.querySelector('.browse-card-dropdown'));
   await decorateIcons(headerDiv);
+
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
 
@@ -58,45 +214,6 @@ export default async function decorate(block) {
     sortCriteria,
     noOfResults,
   };
-
-  const rolesDropdownData = block.querySelector('.roles-dropdown');
-  const defaultRolesOption = document.createElement('option');
-  defaultRolesOption.text = DEFAULT_OPTIONS.ROLE;
-  rolesDropdownData.add(defaultRolesOption);
-
-  Object.keys(ROLE_OPTIONS).forEach((roleData) => {
-    if (Object.prototype.hasOwnProperty.call(ROLE_OPTIONS, roleData)) {
-      const option = document.createElement('option');
-      option.text = ROLE_OPTIONS[roleData];
-      rolesDropdownData.add(option);
-    }
-  });
-
-  const handleSolutionsService = async () => {
-    const solutionsService = new SolutionDataService(solutionsUrl);
-    const solutions = await solutionsService.fetchDataFromSource();
-
-    if (!solutions) {
-      throw new Error('An error occurred');
-    }
-
-    if (solutions?.length) {
-      const solutionsDropdownData = block.querySelector('.solutions-dropdown');
-      const defaultSolutionOption = document.createElement('option');
-      defaultSolutionOption.text = DEFAULT_OPTIONS.SOLUTION;
-      solutionsDropdownData.add(defaultSolutionOption);
-
-      solutions.forEach((optionText) => {
-        const option = document.createElement('option');
-        option.text = optionText;
-        solutionsDropdownData.add(option);
-      });
-    }
-
-    return [];
-  };
-
-  handleSolutionsService();
 
   // Function to filter and organize results based on content types
   const filterResults = (data, contentTypesToFilter) => {
@@ -167,10 +284,9 @@ export default async function decorate(block) {
     return filteredResult;
   };
 
-  const buildCardsShimmer = new BuildPlaceholder();
-
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
+    const buildCardsShimmer = new BuildPlaceholder();
     buildCardsShimmer.add(block);
     headerDiv.after(block.querySelector('.shimmer-placeholder'));
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
@@ -208,7 +324,7 @@ export default async function decorate(block) {
   const rolesDropdown = block.querySelector('.roles-dropdown');
 
   rolesDropdown.addEventListener('change', function handleDropdownChange() {
-    const roleValue = this.value === DEFAULT_OPTIONS.ROLE ? [] : [this.value];
+    const roleValue = this.dataset.selected === DEFAULT_OPTIONS.ROLE ? [] : [this.dataset.selected];
     param.role = roleValue;
 
     [...contentDiv.children].forEach((cards) => {
@@ -222,7 +338,7 @@ export default async function decorate(block) {
   const solutionsDropdown = block.querySelector('.solutions-dropdown');
 
   solutionsDropdown.addEventListener('change', function handleSolutionDropdownChange() {
-    const solutionValue = this.value === DEFAULT_OPTIONS.SOLUTION ? [] : [this.value];
+    const solutionValue = this.dataset.selected === DEFAULT_OPTIONS.SOLUTION ? [] : [this.dataset.selected];
     param.product = solutionValue;
 
     [...contentDiv.children].forEach((cards) => {
