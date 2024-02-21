@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/no-cycle
+import { profile } from '../data-service/profile-service.js';
+
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
@@ -30,7 +33,7 @@ export const pageName = (language) => {
   return responseStr.toLowerCase();
 };
 
-export function pageLoadModel(language) {
+export async function pageLoadModel(language) {
   const user = {};
   user.userDetails = {};
   user.userDetails.userAccountType = '';
@@ -45,28 +48,27 @@ export function pageLoadModel(language) {
   user.userDetails.notificationPref = false;
   user.userDetails.org = '';
   user.userDetails.orgs = [];
-  if (
-    sessionStorage[
-      'adobeid_ims_profile/ExperienceLeague/false/AdobeID,account_cluster.read,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session'
-    ]
-  ) {
-    const userData = JSON.parse(
-      sessionStorage[
-        'adobeid_ims_profile/ExperienceLeague/false/AdobeID,account_cluster.read,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session'
-      ],
-    );
-    user.userDetails.userAccountType = userData.account_type;
-    user.userDetails.userAuthenticatedStatus = 'logged in';
-    user.userDetails.userID = userData.userId || '';
-    user.userDetails.userLanguageSetting = userData.preferred_languages || ['en-us'];
-    user.userDetails.learningInterest = userData.interests || [];
-    user.userDetails.role = userData.role || [];
-    user.userDetails.experienceLevel = userData.level || [];
-    user.userDetails.industry = userData.industryInterests || [];
-    user.userDetails.notificationPref = userData.emailOptIn === true;
-    user.userDetails.org = userData.org || '';
-    user.userDetails.orgs = userData.orgs || [];
+
+  try {
+    const userData = await profile();
+    if (userData) {
+      user.userDetails.userAccountType = userData.account_type;
+      user.userDetails.userAuthenticatedStatus = 'logged in';
+      user.userDetails.userID = userData.userId || '';
+      user.userDetails.userLanguageSetting = userData.preferred_languages || ['en-us'];
+      user.userDetails.learningInterest = userData.interests || [];
+      user.userDetails.role = userData.role || [];
+      user.userDetails.experienceLevel = userData.level || [];
+      user.userDetails.industry = userData.industryInterests || [];
+      user.userDetails.notificationPref = userData.emailOptIn === true;
+      user.userDetails.org = userData.org || '';
+      user.userDetails.orgs = userData.orgs || [];
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error getting user profile:', e);
   }
+
   let section = 'learn';
   if (docs) {
     section = 'docs';

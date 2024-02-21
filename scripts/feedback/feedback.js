@@ -372,7 +372,7 @@ function handleFeedbackIcons(el) {
         showQualtricsLoadingError(el);
         toggleFeedbackBar(el, false);
       }
-      assetInteractionModel(null, icon.ariaLabel[0].toUpperCase() + icon.ariaLabel.slice(1));
+      assetInteractionModel(null, `feedback ${icon.ariaLabel}`);
     });
   });
 }
@@ -388,7 +388,7 @@ function handleFeedbackSubmit(el) {
   });
 
   submitButton.addEventListener('click', () => {
-    assetInteractionModel(null, 'Feedback Submitted');
+    assetInteractionModel(null, 'Finished');
     const qualtricsSubmitButton = el.querySelector('.QSI__EmbeddedFeedbackContainer_TextButton');
     const qualtricsTextArea = el.querySelector('.QSI__EmbeddedFeedbackContainer_OpenText');
 
