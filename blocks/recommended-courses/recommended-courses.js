@@ -249,10 +249,8 @@ export default async function decorate(block) {
     document.documentElement.classList.contains('adobe-ue-edit') ||
     document.documentElement.classList.contains('adobe-ue-preview')
   ) {
-    console.log('Author or Preview url');
     buildNoResultsContent(block);
   } else {
-    console.log('Not Signed in');
     block.style.display = 'None';
   }
 }
