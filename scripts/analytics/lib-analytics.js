@@ -47,12 +47,12 @@ export function pageLoadModel(language) {
   user.userDetails.orgs = [];
   if (
     sessionStorage[
-      'adobeid_ims_profile/ExperienceLeague_Dev/false/AdobeID,account_cluster.read,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session'
+      'adobeid_ims_profile/ExperienceLeague/false/AdobeID,account_cluster.read,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session'
     ]
   ) {
     const userData = JSON.parse(
       sessionStorage[
-        'adobeid_ims_profile/ExperienceLeague_Dev/false/AdobeID,account_cluster.read,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session'
+        'adobeid_ims_profile/ExperienceLeague/false/AdobeID,account_cluster.read,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session'
       ],
     );
     user.userDetails.userAccountType = userData.account_type;
