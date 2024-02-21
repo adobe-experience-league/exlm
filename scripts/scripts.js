@@ -21,6 +21,7 @@ import {
 
 const ffetchModulePromise = import('./ffetch.js');
 
+// eslint-disable-next-line import/no-cycle
 const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
@@ -421,7 +422,9 @@ async function loadLazy(doc) {
     // eslint-disable-next-line no-unused-vars
     ([launch, libAnalyticsModule, headPr, footPr]) => {
       const { pageLoadModel, linkClickModel, pageName } = libAnalyticsModule;
-      window.adobeDataLayer.push(pageLoadModel(lang));
+      pageLoadModel(lang).then((data) => {
+        window.adobeDataLayer.push(data);
+      });
       localStorage.setItem('prevPage', pageName(lang));
       const linkClicked = document.querySelectorAll('a,.view-more-less span');
       linkClicked.forEach((linkElement) => {
