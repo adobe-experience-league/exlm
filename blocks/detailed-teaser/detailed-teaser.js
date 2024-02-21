@@ -1,4 +1,4 @@
-import { decorateButtons } from "../teaser/teaser.js";
+import { decorateButtons } from '../teaser/teaser.js';
 
 // eslint-disable-next-line no-unused-vars
 export function generateDetailedTeaserDOM(props, classes) {
@@ -10,25 +10,25 @@ export function generateDetailedTeaserDOM(props, classes) {
   // add classes for the different eyebrow elements
   if (eyebrowContent) {
     eyebrowContent.classList.add('eyebrow');
-    [...eyebrowContent.children].forEach((p,i) => {
+    [...eyebrowContent.children].forEach((p, i) => {
       // eslint-disable-next-line default-case
       switch (i) {
         case 0:
           // if first p has an image , otherwise its eyebrow title
-          p.classList.add(p.firstElementChild && p.firstElementChild.tagName === 'PICTURE' ? 'logo':'title');
+          p.classList.add(p.firstElementChild && p.firstElementChild.tagName === 'PICTURE' ? 'logo' : 'title');
           break;
         case 1:
           // if eybrow title is already set it eyebrow subtitle, otherwise its eyebrow title
-          p.classList.add(p.previousElementSibling.classList.contains('eyebrow-title') ? 'subtitle': 'title');
+          p.classList.add(p.previousElementSibling.classList.contains('eyebrow-title') ? 'subtitle' : 'title');
           break;
         case 2:
           // third p is always sub title if existing
           p.classList.add('subtitle');
           break;
       }
-    })
+    });
   }
-  
+
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
     <div class='background'>${backPicture ? backPicture.outerHTML : ''}</div>
