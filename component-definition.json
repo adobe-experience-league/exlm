@@ -218,7 +218,7 @@
                   "titleType": "h3",
                   "description": "Description",
                   "subject": "/content/dam/summit-subject.png",
-                  "classes": ["detailed-teaser","light", "left"]
+                  "classes": ["light", "left"]
                 }
               }
             }
