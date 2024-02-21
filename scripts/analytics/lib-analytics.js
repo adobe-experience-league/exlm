@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { loadIms } from '../scripts.js';
+import { profile } from '../data-service/profile-service.js';
 
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html';
@@ -49,31 +49,22 @@ export async function pageLoadModel(language) {
   user.userDetails.org = '';
   user.userDetails.orgs = [];
 
-  // TODO: this code here means that the page load model waits untill IMS is loaded. seee commented alternative below
   try {
-    await loadIms(); // ensure IMS is loaded before using adobeIMS APIs
+    const userData = await profile();
+    user.userDetails.userAccountType = userData.account_type;
+    user.userDetails.userAuthenticatedStatus = 'logged in';
+    user.userDetails.userID = userData.userId || '';
+    user.userDetails.userLanguageSetting = userData.preferred_languages || ['en-us'];
+    user.userDetails.learningInterest = userData.interests || [];
+    user.userDetails.role = userData.role || [];
+    user.userDetails.experienceLevel = userData.level || [];
+    user.userDetails.industry = userData.industryInterests || [];
+    user.userDetails.notificationPref = userData.emailOptIn === true;
+    user.userDetails.org = userData.org || '';
+    user.userDetails.orgs = userData.orgs || [];
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.error('Error loading IMS:', e);
-  }
-  if (window.adobeIMS?.isSignedInUser()) {
-    try {
-      const userData = await window.adobeIMS.getProfile();
-      user.userDetails.userAccountType = userData.account_type;
-      user.userDetails.userAuthenticatedStatus = 'logged in';
-      user.userDetails.userID = userData.userId || '';
-      user.userDetails.userLanguageSetting = userData.preferred_languages || ['en-us'];
-      user.userDetails.learningInterest = userData.interests || [];
-      user.userDetails.role = userData.role || [];
-      user.userDetails.experienceLevel = userData.level || [];
-      user.userDetails.industry = userData.industryInterests || [];
-      user.userDetails.notificationPref = userData.emailOptIn === true;
-      user.userDetails.org = userData.org || '';
-      user.userDetails.orgs = userData.orgs || [];
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('Error getting user profile:', e);
-    }
+    console.error('Error getting user profile:', e);
   }
 
   let section = 'learn';
