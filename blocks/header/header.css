@@ -271,6 +271,8 @@ header {
   z-index: 10;
   left: 0;
   right: 0;
+  max-height: 100vh;
+  overflow-y: auto;
 }
 @media (min-width: 1024px) {
   .header .nav-wrapper-expanded {

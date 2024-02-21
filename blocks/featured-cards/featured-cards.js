@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, toPascalCase } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
@@ -98,52 +98,75 @@ export default async function decorate(block) {
 
   handleSolutionsService();
 
+  // Function to filter and organize results based on content types
   const filterResults = (data, contentTypesToFilter) => {
-    const filteredResults = [];
+    // Array to store the filtered results
+    const filteredResultsSet = new Set();
+    // Object to track results based on content types
     const resultsByContentType = {};
 
     for (let i = 0; i < data.length; i += 1) {
       const item = data[i];
+      // Extract content types from the item
       const contentTypesArray = item.contentType.split(',');
 
-      for (let j = 0; j < contentTypesArray.length; j += 1) {
-        const type = contentTypesArray[j].trim();
-        if (!resultsByContentType[type]) {
-          resultsByContentType[type] = [];
+      // Check if the item has already been added for any other content type
+      const isItemAdded = contentTypesArray.some(() =>
+        Object.values(resultsByContentType)
+          .flat()
+          .some((existingItem) => existingItem === item),
+      );
+      // If the item hasn't been added, add it to the resultsByContentType object
+      if (!isItemAdded) {
+        for (let j = 0; j < contentTypesArray.length; j += 1) {
+          const type = contentTypesArray[j].trim();
+          if (!resultsByContentType[type]) {
+            resultsByContentType[type] = [];
+          }
+          resultsByContentType[type].push(item);
         }
-        resultsByContentType[type].push(item);
       }
     }
 
-    const contentTypes = contentTypesToFilter.split(',').map((type) => {
-      const trimmedType = type.trim().toUpperCase();
-      return CONTENT_TYPES[trimmedType]?.LABEL;
-    });
+    // Extract and normalize content types from the input string
+    const contentTypes = contentTypesToFilter
+      .split(',')
+      .map((type) => {
+        const trimmedType = type.trim().toUpperCase();
+        return toPascalCase(CONTENT_TYPES[trimmedType]?.MAPPING_KEY);
+      })
+      .filter(Boolean);
 
     for (let i = 0; i < Math.min(4, data.length); i += 1) {
-      contentTypes.forEach((contentTypeValue) => {
-        const resultsForType = resultsByContentType[contentTypeValue] || [];
-
-        if (contentTypes.length === 1) {
-          filteredResults.push(...resultsForType.slice(i, i + 1));
-        } else if (contentTypes.length === 2) {
-          const resultsToAdd = Math.min(2, resultsForType.length);
-          filteredResults.push(...resultsForType.slice(i, i + resultsToAdd));
-          filteredResults.push(...resultsForType.slice(i, i + 2 - resultsToAdd));
-        } else {
+      if (contentTypes.length === 1) {
+        // If there is only one content type, add the corresponding results to filteredResults
+        filteredResultsSet.add(...(resultsByContentType[contentTypes[0]] || []).slice(i, i + 1));
+      } else {
+        // If there are more than 1 content types, distribute the results between them
+        let addedResults = 0;
+        // Add the results to filteredResultsSet in Round Robin Format to ensure result set is distributed
+        for (let j = 0; j < Math.min(4, data.length) && addedResults <= 4; j += 1) {
+          /* eslint-disable-next-line */
           contentTypes.forEach((type) => {
-            const resultsToAdd = Math.min(2, (resultsByContentType[type] || []).length);
-            if (resultsByContentType[type]) {
-              const resultsSlice = resultsByContentType[type].slice(i, i + resultsToAdd);
-              filteredResults.push(...resultsSlice);
+            const resultsForType = resultsByContentType[type] || [];
+            const result = resultsForType[addedResults % resultsForType.length];
+            if (result) {
+              filteredResultsSet.add(result);
+              addedResults += 1;
             }
           });
         }
-      });
+      }
     }
 
-    return filteredResults;
+    // Only keep the first 4 elements (if they exist)
+    const results = Array.from(filteredResultsSet);
+    const filteredResult = results.slice(0, 4);
+    // Sort the Filtered Results array by content type
+    filteredResult.sort((a, b) => a.contentType.localeCompare(b.contentType));
+    return filteredResult;
   };
+
   const buildCardsShimmer = new BuildPlaceholder();
 
   /* eslint-disable-next-line */
