@@ -103,10 +103,6 @@
   color: var(--non-spectrum-custom-dark);
 }
 
-.detailed-teaser.block.dark > .foreground > .text > .title {
-  color: var(--background-color);
-}
-
 .detailed-teaser.block > .foreground > .text > .title :where(h1,h2,h3,h4,h5,h6) {
   margin: 0;
   color: inherit;
@@ -125,6 +121,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.detailed-teaser.block.dark > .foreground > .text > .title,
+.detailed-teaser.block.dark > .foreground > .text > .eyebrow > .title,
+.detailed-teaser.block.dark > .foreground > .text > .description,
+.detailed-teaser.block.dark > .foreground > .text > .description * {
+  color: var(--background-color);
+}
+
 
 /* the list of CTA's */
 .detailed-teaser.block > .foreground > .text > .cta {
