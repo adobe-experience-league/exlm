@@ -16,6 +16,7 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
     .loadFieldActions(searchEngine)
     .registerFieldsToInclude([
       'el_solution',
+      'el_id',
       'el_type',
       'el_contenttype',
       'type',
