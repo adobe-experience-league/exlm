@@ -24,6 +24,7 @@
       "icon-block",
       "curated-cards",
       "teaser",
+      "detailed-teaser",
       "marquee",
       "carousel",
       "sign-up",
@@ -65,7 +66,7 @@
   },
   {
     "id": "teaser",
-    "components": ["teaser"]
+    "components": ["teaser", "detailed-teaser"]
   },
   {
     "id": "accordion",

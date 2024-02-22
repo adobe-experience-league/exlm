@@ -8,12 +8,13 @@ import {
   getFiltersPaginationText,
   getBrowseFiltersResultCount,
   getSelectedTopics,
+  getParsedSolutionsQuery,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
-import { formattedTags, handleTopicSelection } from './browse-topics.js';
+import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery } from './browse-topics.js';
 
 const coveoFacetMap = {
   Role: 'headlessRoleFacet',
@@ -22,7 +23,7 @@ const coveoFacetMap = {
 };
 
 const coveoFacetFilterNameMap = {
-  el_type: 'Content Type',
+  el_contenttype: 'Content Type',
   el_role: 'Role',
   el_level: 'Experience Level',
 };
@@ -98,15 +99,23 @@ function updateClearFilterStatus(block) {
   const hasActiveTopics = block.querySelector('.browse-topics') !== null && selectedTopics.length > 0;
   const browseFiltersContainer = document.querySelector('.browse-filters-container');
   const browseFiltersSection = browseFiltersContainer.querySelector('.browse-filters-form');
+  const selectionContainer = browseFiltersSection.querySelector('.browse-filters-input-container');
+  const containsSelection = selectionContainer.classList.contains('browse-filters-input-selected');
   if (hasActiveTopics || tagsProxy.length !== 0 || searchEl.value) {
     clearFilterBtn.disabled = false;
     hideSectionsBelowFilter(block, false);
     browseFiltersContainer.classList.add('browse-filters-full-container');
+    selectionContainer.classList.add('browse-filters-input-selected');
+    if (!containsSelection && window.headlessBaseSolutionQuery) {
+      dispatchCoveoAdvancedQuery(window.headlessBaseSolutionQuery, false);
+    }
     hildeSectionsWithinFilter(browseFiltersSection, true);
   } else {
     clearFilterBtn.disabled = true;
     hideSectionsBelowFilter(block, true);
     browseFiltersContainer.classList.remove('browse-filters-full-container');
+    selectionContainer.classList.remove('browse-filters-input-selected');
+    dispatchCoveoAdvancedQuery('', true);
     hildeSectionsWithinFilter(browseFiltersSection, false);
   }
 }
@@ -531,6 +540,9 @@ function handleUriHash() {
   if (!containsSearchQuery) {
     searchInput.value = '';
   }
+  if (filtersInfo.length && window.headlessBaseSolutionQuery) {
+    handleTopicSelection();
+  }
   updateClearFilterStatus(browseFiltersSection);
   window.headlessSearchEngine.executeFirstSearch();
 }
@@ -774,6 +786,12 @@ function decorateBrowseTopics(block) {
   // eslint-disable-next-line no-unused-vars
   const allSolutionsTags = solutions !== '' ? formattedTags(solutions) : '';
   const allTopicsTags = topics !== '' ? formattedTags(topics) : '';
+  const supportedProducts = [];
+  if (allSolutionsTags.length) {
+    const { query: additionalQuery, products } = getParsedSolutionsQuery(allSolutionsTags);
+    products.forEach((p) => supportedProducts.push(p));
+    window.headlessBaseSolutionQuery = additionalQuery;
+  }
 
   const div = document.createElement('div');
   div.classList.add('browse-topics');
@@ -810,8 +828,8 @@ function decorateBrowseTopics(block) {
         } else {
           e.target.classList.add('browse-topics-item-active');
         }
-        updateClearFilterStatus(browseFiltersSection);
         handleTopicSelection(contentDiv);
+        updateClearFilterStatus(browseFiltersSection);
       }
     });
     const decodedHash = decodeURIComponent(window.location.hash);
@@ -822,7 +840,9 @@ function decorateBrowseTopics(block) {
       if (selectedTopics && selectedTopics.length > 0) {
         selectedTopics.forEach((topic) => {
           const element = contentDiv.querySelector(`.browse-topics-item[data-topicname*="${topic}"]`);
-          element.classList.add('browse-topics-item-active');
+          if (element) {
+            element.classList.add('browse-topics-item-active');
+          }
         });
         handleTopicSelection(contentDiv);
       }

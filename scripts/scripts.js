@@ -21,6 +21,7 @@ import {
 
 const ffetchModulePromise = import('./ffetch.js');
 
+// eslint-disable-next-line import/no-cycle
 const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
 
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
@@ -411,34 +412,47 @@ async function loadLazy(doc) {
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
+  const { lang } = getPathDetails();
   if (hash && element) element.scrollIntoView();
   const headerPromise = loadHeader(doc.querySelector('header'));
   const footerPromise = loadFooter(doc.querySelector('footer'));
 
-  localStorage.setItem('prevPage', doc.title);
+  let launchScriptSrc = '';
+  if (window.location.host === 'eds-stage.experienceleague.adobe.com') {
+    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
+  } else if (window.location.host === 'experienceleague.adobe.com') {
+    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
+  } else {
+    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js';
+  }
 
   const oneTrustPromise = loadScript(`/scripts/analytics/privacy-standalone.js`, {
     async: true,
     defer: true,
   });
 
-  const launchPromise = loadScript(
-    'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js',
-    {
-      async: true,
-    },
-  );
+  const launchPromise = loadScript(launchScriptSrc, {
+    async: true,
+  });
 
   Promise.all([launchPromise, libAnalyticsModulePromise, headerPromise, footerPromise, oneTrustPromise]).then(
     // eslint-disable-next-line no-unused-vars
-    ([launch, libAnalyticsModule, headPr, footPr, oneTrustPr]) => {
-      const { pageLoadModel, linkClickModel } = libAnalyticsModule;
-      oneTrust();
-      document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
-        e.preventDefault();
-        window.adobePrivacy.showConsentPopup();
-      });
-      window.adobeDataLayer.push(pageLoadModel());
+    ([launch, libAnalyticsModule, headPr, footPr]) => {
+      const { pageLoadModel, linkClickModel, pageName } = libAnalyticsModule;
+        oneTrust();
+        document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.adobePrivacy.showConsentPopup();
+        });
+      pageLoadModel(lang)
+        .then((data) => {
+          window.adobeDataLayer.push(data);
+        })
+        .catch((e) => {
+          // eslint-disable-next-line no-console
+          console.error('Error getting pageLoadModel:', e);
+        });
+      localStorage.setItem('prevPage', pageName(lang));
       const linkClicked = document.querySelectorAll('a,.view-more-less span');
       linkClicked.forEach((linkElement) => {
         linkElement.addEventListener('click', (e) => {

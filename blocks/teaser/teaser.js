@@ -1,4 +1,4 @@
-function decorateButtons(...buttons) {
+export function decorateButtons(...buttons) {
   return buttons
     .map((div) => {
       const a = div.querySelector('a');
@@ -13,13 +13,11 @@ function decorateButtons(...buttons) {
     .join('');
 }
 
-/* eslint-disable no-plusplus */
 export function generateTeaserDOM(props, classes) {
   // Extract properties, always same order as in model, empty string if not set
   const [pictureContainer, eyebrow, title, longDescr, shortDescr, firstCta, secondCta] = props;
   const picture = pictureContainer.querySelector('picture');
   const hasShortDescr = shortDescr.textContent.trim() !== '';
-
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
     <div class='background'>${picture ? picture.outerHTML : ''}</div>
