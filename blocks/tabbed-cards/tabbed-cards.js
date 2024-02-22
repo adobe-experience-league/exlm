@@ -5,6 +5,25 @@ import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
+import {
+  tabbedCardViewAllTroubleshootingLink,
+  tabbedCardViewAllCoursesLink,
+  tabbedCardViewAllTutorialsLink,
+  tabbedCardViewAllDocumentationLink,
+  tabbedCardViewAllCommunityLink,
+  tabbedCardViewAllCertificationLink,
+  tabbedCardViewAllOnDemandEventsLink,
+} from '../../scripts/urls.js';
+
+const urlMap = {
+  Troubleshooting: tabbedCardViewAllTroubleshootingLink,
+  Courses: tabbedCardViewAllCoursesLink,
+  Tutorials: tabbedCardViewAllTutorialsLink,
+  Documentation: tabbedCardViewAllDocumentationLink,
+  Community: tabbedCardViewAllCommunityLink,
+  Certification: tabbedCardViewAllCertificationLink,
+  OnDemandEvents: tabbedCardViewAllOnDemandEventsLink,
+};
 
 /**
  * Decorate function to process and log the mapped data.
@@ -153,10 +172,7 @@ export default async function decorate(block) {
         // Update view link and fetch/render data for the selected tab
         const viewLinkMappingKey = placeholders[`${tabLabelData}LabelKey`];
         viewLinkURLElement.innerHTML = placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkMappingKey)}`];
-        viewLinkURLElement.setAttribute(
-          'href',
-          placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkMappingKey)}Link`],
-        );
+        viewLinkURLElement.setAttribute('href', urlMap[`${convertToTitleCaseAndRemove(viewLinkMappingKey)}`]);
         tabList.appendChild(viewLinkURLElement);
         buildCardsShimmer.add(block);
         fetchDataAndRenderBlock(tabLabelData, block);
@@ -181,10 +197,7 @@ export default async function decorate(block) {
 
     // Update view link for initial content type
     viewLinkURLElement.innerHTML = placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkInitialMappingKey)}`];
-    viewLinkURLElement.setAttribute(
-      'href',
-      placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkInitialMappingKey)}Link`],
-    );
+    viewLinkURLElement.setAttribute('href', urlMap[`${convertToTitleCaseAndRemove(viewLinkInitialMappingKey)}`]);
     tabList.appendChild(viewLinkURLElement);
     tabList.children[0].children[0].classList.add('active');
 
