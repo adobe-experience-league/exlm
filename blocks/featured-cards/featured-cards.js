@@ -178,24 +178,13 @@ export default async function decorate(block) {
 
   const buildCardsShimmer = new BuildPlaceholder();
 
-  /* Toggles Specific Class based on toogleValue */
-  const toggleElementClass = (element, className, toggleValue) => {
-    if (element) {
-      if (toggleValue) {
-        element.classList.add(className);
-      } else {
-        element.classList.remove(className);
-      }
+  /* Toogle Card Content and View Info Display for Featured Card Block */
+  const toggleCardInfo = (show) => {
+    if (show) {
+      block.classList.add('featured-card-hidden-features');
+    } else {
+      block.classList.remove('featured-card-hidden-features');
     }
-  };
-
-  /* Toogle Card Info for Block */
-  const toggleCardInfo = (toggleValue) => {
-    const existingViewInfo = block.querySelector('.browse-cards-block-view');
-    const existingContentInfo = block.querySelector('.browse-cards-block-content');
-
-    toggleElementClass(existingViewInfo, 'browse-card-no-result-display', toggleValue);
-    toggleElementClass(existingContentInfo, 'browse-card-no-result-display', toggleValue);
   };
 
   /* eslint-disable-next-line */

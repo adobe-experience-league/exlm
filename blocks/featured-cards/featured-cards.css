@@ -1,6 +1,11 @@
 @import "../../scripts/browse-card/browse-cards-block.css";
 @import "../../scripts/browse-card/browse-card.css";
 
+.featured-cards.featured-card-hidden-features .browse-cards-block-view ,.featured-cards.featured-card-hidden-features .browse-cards-block-content 
+  {
+  display: none;
+  }
+
 .section.featured-cards-container {
   padding-bottom: 0;
 }
