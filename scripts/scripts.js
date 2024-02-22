@@ -439,11 +439,11 @@ async function loadLazy(doc) {
     // eslint-disable-next-line no-unused-vars
     ([launch, libAnalyticsModule, headPr, footPr]) => {
       const { pageLoadModel, linkClickModel, pageName } = libAnalyticsModule;
-        oneTrust();
-        document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
-            e.preventDefault();
-            window.adobePrivacy.showConsentPopup();
-        });
+      oneTrust();
+      document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
+        e.preventDefault();
+        window.adobePrivacy.showConsentPopup();
+      });
       pageLoadModel(lang)
         .then((data) => {
           window.adobeDataLayer.push(data);
