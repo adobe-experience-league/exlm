@@ -3,9 +3,8 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { htmlToElement, decorateExternalLinks, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
-import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import { buildNoResultsContent } from '../../scripts/browse-card/browse-card-no-results.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -104,13 +103,13 @@ export default async function decorate(block) {
           decorateIcons(tabbedBlock);
         } else {
           buildCardsShimmer.remove();
-          buildNoResultsContent(block);
+          buildNoResultsContent(block, true);
         }
       })
       .catch((err) => {
         // Hide shimmer placeholders on error
         buildCardsShimmer.remove();
-        buildNoResultsContent(block);
+        buildNoResultsContent(block, true);
         /* eslint-disable-next-line no-console */
         console.error(err);
       });
@@ -193,6 +192,6 @@ export default async function decorate(block) {
     decorateIcons(headerDiv);
     decorateExternalLinks(block);
   } else {
-    buildNoResultsContent(block);
+    buildNoResultsContent(block, true);
   }
 }

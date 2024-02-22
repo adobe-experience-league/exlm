@@ -4,11 +4,10 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import BrowseCardsPathsAdaptor from '../../scripts/browse-card/browse-cards-paths-adaptor.js';
-import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import { buildNoResultsContent } from '../../scripts/browse-card/browse-card-no-results.js';
 
 // Checking if the user is signed in
 const isSignedIn = adobeIMS?.isSignedInUser();
@@ -161,7 +160,7 @@ export default async function decorate(block) {
       }
     } else {
       buildCardShimmer.remove();
-      buildNoResultsContent(block);
+      buildNoResultsContent(block, true);
     }
   };
 
@@ -240,7 +239,7 @@ export default async function decorate(block) {
           .catch((err) => {
             // Hide shimmer placeholders on error
             buildCardsShimmer.remove();
-            buildNoResultsContent(block);
+            buildNoResultsContent(block, true);
             // eslint-disable-next-line no-console
             console.error('Recommended Cards:', err);
           });
@@ -250,7 +249,7 @@ export default async function decorate(block) {
     document.documentElement.classList.contains('adobe-ue-edit') ||
     document.documentElement.classList.contains('adobe-ue-preview')
   ) {
-    buildNoResultsContent(block);
+    buildNoResultsContent(block, true);
   } else {
     block.style.display = 'None';
   }
