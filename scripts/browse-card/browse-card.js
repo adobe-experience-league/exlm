@@ -8,8 +8,8 @@ import { tooltipTemplate } from '../toast/toast.js';
 import renderBookmark from '../bookmark/bookmark.js';
 import attachCopyLink from '../copy-link/copy-link.js';
 
-loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
 loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
+loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
 
 const isSignedIn = adobeIMS?.isSignedInUser();
 
