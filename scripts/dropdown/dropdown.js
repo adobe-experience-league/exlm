@@ -2,7 +2,7 @@ import { loadCSS } from '../lib-franklin.js';
 import { htmlToElement } from '../scripts.js';
 
 export default class Dropdown {
-      /**
+  /**
    * Constructor for initializing dropdown using parent form element, default values, options arrays, and id.
    *
    * @param {HTMLFormElement} parentFormElement - Parent form element
@@ -35,7 +35,7 @@ export default class Dropdown {
     });
   }
 
-    /**
+  /**
    * Handle click events and perform specific actions based on the event target.
    */
   handleClickEvents() {
@@ -86,7 +86,7 @@ export default class Dropdown {
     }
   }
 
-    /**
+  /**
    * Initialize form elements.
    */
   initFormElements() {
