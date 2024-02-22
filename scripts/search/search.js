@@ -1,19 +1,10 @@
-import { htmlToElement, loadIms } from '../scripts.js';
+import { htmlToElement, loadIms, getLanguageCode } from '../scripts.js';
 import SearchDelegate from './search-delegate.js';
 import { searchUrl } from '../urls.js';
 
-// Extracts the language code from the provided URL string
-const extractLanguageCodeFromURL = (urlString) => {
-  const url = new URL(urlString);
-  const pathParts = url.pathname.split('/');
-  const globalIndex = pathParts.indexOf('global');
-  const languageCode = globalIndex !== -1 && globalIndex + 1 < pathParts.length ? pathParts[globalIndex + 1] : 'en';
-  return languageCode;
-};
-
 // Redirects to the search page based on the provided search input and filters
-export const redirectToSearchPage = (searchInput, filters = '') => {
-  const languageCode = extractLanguageCodeFromURL(window.location.href);
+export const redirectToSearchPage = async (searchInput, filters = '') => {
+  const languageCode = await getLanguageCode();
   const baseTargetUrl = searchUrl;
   let targetUrlWithLanguage = `${baseTargetUrl}?lang=${languageCode}`;
 
@@ -56,7 +47,7 @@ export default class Search {
     }
   }
 
-  configureAutoComplete({ searchOptions }) {
+  async configureAutoComplete({ searchOptions }) {
     this.searchOptions = searchOptions || [];
     const [firstOption = ''] = this.searchOptions;
     this.selectedSearchOption = firstOption;
@@ -76,10 +67,10 @@ export default class Search {
     this.searchSuggestionsKeydown = this.onSearchSuggestionsKeydown.bind(this);
     this.searchSuggestionsClick = this.onSearchSuggestionsClick.bind(this);
     this.handleSearchInputClick = this.onSearchInputClick.bind(this);
-    this.handleSearchInputKeyup = this.onSearchInputKeup.bind(this);
+    this.handleSearchInputKeyup = this.onSearchInputKeyup.bind(this);
     this.searchKeydown = this.onSearchInputKeydown.bind(this);
     this.hideSearchSuggestions = this.onHideSearchSuggestions.bind(this);
-    this.selectSearchSuggestion = this.handleSearchSuggestion.bind(this);
+    this.selectSearchSuggestion = await this.handleSearchSuggestion.bind(this);
     this.savedDefaultSuggestions = null;
     this.setupAutoCompleteEvents();
     this.callbackFn = this.fetchInitialSuggestions;
@@ -91,10 +82,10 @@ export default class Search {
     if (searchContainer) {
       const iconSearchElement = searchContainer.querySelector('.icon-search');
       if (iconSearchElement) {
-        iconSearchElement.addEventListener('click', () => {
+        iconSearchElement.addEventListener('click', async () => {
           const searchInputValue = this.searchInput.value.trim();
           const { filterValue } = this.searchPickerLabelEl.dataset;
-          redirectToSearchPage(searchInputValue, filterValue);
+          await redirectToSearchPage(searchInputValue, filterValue);
         });
       }
     }
@@ -137,7 +128,7 @@ export default class Search {
       this.searchInput.addEventListener('blur', () => {
         this.searchInput.removeEventListener('keydown', this.searchKeydown);
       });
-      this.searchInput.addEventListener('keydown', (e) => this.handleEnterKey(e));
+      this.searchInput.addEventListener('keydown', async (e) => this.handleEnterKey(e));
     }
 
     if (this.clearSearchIcon) {
@@ -153,20 +144,20 @@ export default class Search {
     // Redirects the Search Icon to Required Search Page with Params
     const searchIcon = this.searchBlock.querySelector('.search-icon');
     if (searchIcon) {
-      searchIcon.addEventListener('click', () => {
+      searchIcon.addEventListener('click', async () => {
         const searchInputValue = this.searchInput.value.trim();
         const { filterValue } = this.searchPickerLabelEl.dataset;
-        redirectToSearchPage(searchInputValue, filterValue);
+        await redirectToSearchPage(searchInputValue, filterValue);
       });
     }
   }
 
   // Redirects to Required Search Page with Params on Click on Enter Key
-  handleEnterKey(e) {
+  async handleEnterKey(e) {
     if (e.key === 'Enter') {
       const searchInputValue = this.searchInput.value.trim();
       const { filterValue } = this.searchPickerLabelEl.dataset;
-      redirectToSearchPage(searchInputValue, filterValue);
+      await redirectToSearchPage(searchInputValue, filterValue);
     }
   }
 
@@ -261,7 +252,7 @@ export default class Search {
     }
   }
 
-  async onSearchInputKeup(e) {
+  async onSearchInputKeyup(e) {
     const searchText = e.target.value;
     const textIsEmptied = this.searchQuery.length && searchText.length === 0;
     this.searchQuery = e.target.value;
@@ -315,14 +306,14 @@ export default class Search {
   }
 
   // Redirects to Suggestions to quired Search Page with Params
-  handleSearchSuggestion(e) {
+  async handleSearchSuggestion(e) {
     const suggestion = e.target?.textContent || '';
     this.searchInput.value = suggestion;
     if (this.searchInput.value) {
       this.clearSearchIcon.classList.add('search-icon-show');
     }
     this.hideSearchSuggestions(e, true);
-    redirectToSearchPage(suggestion, this.searchPickerLabelEl.dataset.filterValue);
+    await redirectToSearchPage(suggestion, this.searchPickerLabelEl.dataset.filterValue);
   }
 
   setSelectedSearchOption(option, filterValue) {
