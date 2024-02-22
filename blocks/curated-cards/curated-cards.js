@@ -61,7 +61,7 @@ export default async function decorate(block) {
   }
 
   /**
-   * Removes duplicate items from an array of products.
+   * Removes duplicate items from an array of products/solutions (with sub-solutions)
    * @returns {Array} - Array of unique products.
    */
   const removeProductDuplicates = () => {
