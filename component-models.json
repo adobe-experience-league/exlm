@@ -251,6 +251,218 @@
     ]
   },
   {
+    "id": "detailed-teaser",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Background Image",
+        "multi": false
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Style",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 2,
+        "options": [
+          {
+            "name": "Theme",
+            "children": [
+              {
+                "name": "Light",
+                "value": "light"
+              },
+              {
+                "name": "Dark",
+                "value": "dark"
+              }
+            ]
+          },
+          {
+            "name": "Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "left"
+              },
+              {
+                "name": "Right",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "eyebrow_logo",
+        "label": "Logo Image",
+        "description": "Optional Logo above eyebrow.",
+        "multi": false
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "eyebrow_logoAlt",
+        "value": "",
+        "label": "Logo Image alt text",
+        "description": "A descriptive text of the logo image."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "eyebrow_title",
+        "value": "",
+        "label": "Eyebrow Main Title",
+        "description": "Sets the small Eyebrow above the title."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "eyebrow_subtitle",
+        "value": "",
+        "label": "Eybrow Sub Title",
+        "description": "Second, smaller eyebrow line."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the main title of the teaser."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "text-area",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Teaser Text"
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "subject",
+        "label": "Subject Image",
+        "description": "Optional Subject Image.",
+        "multi": false
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "subjectAlt",
+        "value": "",
+        "label": "Subject Alt Text",
+        "description": "A descriptive text of the subject image."
+      },
+      {
+        "component": "select",
+        "name": "cta1Type",
+        "value": "primary",
+        "label": "First CTA Type",
+        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cta1Text",
+        "value": "",
+        "label": "First CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cta1",
+        "value": "",
+        "label": "First CTA Link",
+        "description": "What link to open when clicking the button."
+      },
+      {
+        "component": "select",
+        "name": "cta2Type",
+        "value": "primary",
+        "label": "Second CTA Type",
+        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cta2Text",
+        "value": "",
+        "label": "Second CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "cta2",
+        "value": "",
+        "label": "Second CTA Link",
+        "description": "What link to open when clicking the button."
+      }
+    ]
+  },
+  {
     "id": "title",
     "fields": [
       {
@@ -1683,12 +1895,16 @@
         "description": "All are included if no selection is made",
         "options": [
           {
-            "name": "Adobe Commerce (Magento)",
-            "value": "Adobe Commerce (Magento)"
+            "name": "AEM Assets",
+            "value": "AEM Assets"
           },
           {
-            "name": "Adobe Workfront",
-            "value": "Adobe Workfront"
+            "name": "AEM Forms",
+            "value": "AEM Forms"
+          },
+          {
+            "name": "AEM Sites",
+            "value": "AEM Sites"
           },
           {
             "name": "Analytics",
@@ -1707,20 +1923,20 @@
             "value": "Campaign Standard"
           },
           {
-            "name": "Experience Cloud",
-            "value": "Experience Cloud"
+            "name": "Commerce",
+            "value": "Commerce"
           },
           {
-            "name": "Experience Manager Assets (DAM)",
-            "value": "Experience Manager Assets (DAM)"
+            "name": "Content Supply Chain",
+            "value": "Content Supply Chain"
           },
           {
-            "name": "Experience Manager Forms",
-            "value": "Experience Manager Forms"
+            "name": "Customer Journey Analytics",
+            "value": "Customer Journey Analytics"
           },
           {
-            "name": "Experience Manager Sites (CMS)",
-            "value": "Experience Manager Sites (CMS)"
+            "name": "Experience Cloud Integrations",
+            "value": "Experience Cloud Integrations"
           },
           {
             "name": "Experience Platform",
@@ -1735,8 +1951,16 @@
             "value": "Marketo Engage"
           },
           {
+            "name": "Real-Time CDP",
+            "value": "Real-Time CDP"
+          },
+          {
             "name": "Target",
             "value": "Target"
+          },
+          {
+            "name": "Workfront",
+            "value": "Workfront"
           }
         ]
       },

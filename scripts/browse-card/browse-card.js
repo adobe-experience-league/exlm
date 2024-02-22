@@ -147,34 +147,30 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
   cardContent.appendChild(titleElement);
 };
 
-const buildCardCtaContent = ({ cardFooter, contentType, viewLink, viewLinkText }) => {
-  let icon = null;
-  let isLeftPlacement = false;
-  if (contentType === 'tutorial') {
-    icon = 'play-outline';
-    isLeftPlacement = false;
-  } else if (
-    contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY ||
-    contentType === CONTENT_TYPES.EVENT.MAPPING_KEY ||
-    contentType === CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
-  ) {
-    icon = 'new-tab';
+const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText }) => {
+  if (viewLinkText) {
+    let icon = null;
+    let isLeftPlacement = false;
+    if (contentType.toLowerCase() === CONTENT_TYPES.TUTORIAL.MAPPING_KEY) {
+      icon = 'play-outline';
+      isLeftPlacement = false;
+    } else if (
+      [
+        CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY,
+        CONTENT_TYPES.EVENT.MAPPING_KEY,
+        CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY,
+      ].includes(contentType.toLowerCase())
+    ) {
+      icon = 'new-tab';
+    }
+    const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
+    const linkText = htmlToElement(`
+          <div class="browse-card-cta-element">
+              ${isLeftPlacement ? `${iconMarkup} ${viewLinkText}` : `${viewLinkText} ${iconMarkup}`}
+          </div>
+      `);
+    cardFooter.appendChild(linkText);
   }
-  const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
-  const ctaText = viewLinkText || '';
-  const anchorLink = htmlToElement(`
-        <a class="browse-card-cta-element" href="${viewLink}">
-            ${isLeftPlacement ? `${iconMarkup} ${ctaText}` : `${ctaText} ${iconMarkup}`}
-        </a>
-    `);
-  if (
-    contentType.toLowerCase() === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY ||
-    contentType.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY ||
-    contentType.toLowerCase() === CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
-  ) {
-    anchorLink.setAttribute('target', '_blank');
-  }
-  cardFooter.appendChild(anchorLink);
 };
 
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
@@ -185,7 +181,6 @@ const buildCardContent = (card, model) => {
     description,
     contentType: type,
     viewLinkText,
-    viewLink,
     copyLink,
     tags,
     event,
@@ -272,7 +267,7 @@ const buildCardContent = (card, model) => {
     }
   }
   cardFooter.appendChild(cardOptions);
-  buildCardCtaContent({ cardFooter, contentType, viewLink, viewLinkText });
+  buildCardCtaContent({ cardFooter, contentType, viewLinkText });
 };
 
 const setupBookmarkAction = (wrapper) => {
@@ -394,9 +389,11 @@ export async function buildCard(container, element, model) {
     const cardContainer = document.createElement('a');
     cardContainer.setAttribute('href', model.viewLink);
     if (
-      contentType.toLowerCase() === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY ||
-      contentType.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY ||
-      contentType.toLowerCase() === CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
+      [
+        CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY,
+        CONTENT_TYPES.EVENT.MAPPING_KEY,
+        CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY,
+      ].includes(contentType.toLowerCase())
     ) {
       cardContainer.setAttribute('target', '_blank');
     }
