@@ -8,9 +8,19 @@ import { tooltipTemplate } from '../toast/toast.js';
 import renderBookmark from '../bookmark/bookmark.js';
 import attachCopyLink from '../copy-link/copy-link.js';
 
+loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
 loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
 
 const isSignedIn = adobeIMS?.isSignedInUser();
+
+/* Fetch data from the Placeholder.json */
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 /* User Info for Community Section - Will accomodate once we have KHOROS integration */
 // const generateContributorsMarkup = (contributor) => {
@@ -93,21 +103,19 @@ const buildTagsContent = (cardMeta, tags = []) => {
   });
 };
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
-
-// Default No Results Content from Placeholder
-export const buildNoResultsContent = (block) => {
-  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
-  const noResultsInfo = htmlToElement(`
+/* Default No Results Content from Placeholder */
+export const buildNoResultsContent = (block, show) => {
+  if (show) {
+    const noResultsInfo = htmlToElement(`
     <div class="browse-card-no-results">${placeholders.noResultsText}</div>
   `);
-  block.appendChild(noResultsInfo);
+    block.appendChild(noResultsInfo);
+  } else {
+    const existingNoResultsInfo = block.querySelector('.browse-card-no-results');
+    if (existingNoResultsInfo) {
+      block.removeChild(existingNoResultsInfo);
+    }
+  }
 };
 
 const buildEventContent = ({ event, cardContent, card }) => {
@@ -301,7 +309,6 @@ const setupCopyAction = (wrapper) => {
 };
 
 export async function buildCard(container, element, model) {
-  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus } = model;
   let type = contentType?.toLowerCase();
   const courseMappingKey = CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase();

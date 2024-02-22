@@ -103,13 +103,13 @@ export default async function decorate(block) {
           decorateIcons(tabbedBlock);
         } else {
           buildCardsShimmer.remove();
-          buildNoResultsContent(block);
+          buildNoResultsContent(block, true);
         }
       })
       .catch((err) => {
         // Hide shimmer placeholders on error
         buildCardsShimmer.remove();
-        buildNoResultsContent(block);
+        buildNoResultsContent(block, true);
         /* eslint-disable-next-line no-console */
         console.error(err);
       });
@@ -192,6 +192,6 @@ export default async function decorate(block) {
     decorateIcons(headerDiv);
     decorateExternalLinks(block);
   } else {
-    buildNoResultsContent(block);
+    buildNoResultsContent(block, true);
   }
 }
