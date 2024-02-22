@@ -1,7 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, toPascalCase, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { CONTENT_TYPES, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
@@ -172,11 +172,26 @@ export default async function decorate(block) {
     return filteredResult;
   };
 
+
+  /* Toogle Card Content and View Info Display for Featured Card Block */
+  const toggleCardInfo = (show) => {
+    if (show) {
+      block.classList.add('featured-card-hidden-features');
+    } else {
+      block.classList.remove('featured-card-hidden-features');
+    }
+  };
+
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
     const buildCardsShimmer = new BuildPlaceholder();
     buildCardsShimmer.add(block);
     headerDiv.after(block.querySelector('.shimmer-placeholder'));
+
+    /* Remove No Results Content and Show Card Content Info if they were hidden earlier */
+    buildNoResultsContent(block, false);
+    toggleCardInfo(false);
+
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
     browseCardsContent
       .then((data) => {
@@ -192,10 +207,19 @@ export default async function decorate(block) {
             contentDiv.appendChild(cardDiv);
           }
           decorateIcons(block);
+        } else {
+          /* Add No Results Content and Remove Card Content View Info and Shimmer */
+          buildCardsShimmer.remove();
+          buildNoResultsContent(block, true);
+          toggleCardInfo(true);
         }
       })
       .catch((err) => {
+        // Hide shimmer placeholders on error
         buildCardsShimmer.remove();
+        /* Add No Results Content and Remove Card Content View Info and Shimmer */
+        buildNoResultsContent(block, true);
+        toggleCardInfo(true);
         /* eslint-disable-next-line no-console */
         console.error(err);
       });

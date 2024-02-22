@@ -218,6 +218,7 @@ button.browse-filters-clear:disabled:hover {
   margin: 0 auto;
   transition: all .5s ease-in-out;
   position: relative;
+  width: 100%;
 }
 
 .browse-filters-results-header {

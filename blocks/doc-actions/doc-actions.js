@@ -1,6 +1,7 @@
 import { loadCSS, loadBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
 import { createTag, fetchLanguagePlaceholders, isDocPage, htmlToElement, decorateMain } from '../../scripts/scripts.js';
 import loadJWT from '../../scripts/auth/jwt.js';
+import { automaticTranslationLink } from '../../scripts/urls.js';
 import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
@@ -164,7 +165,7 @@ async function decorateLanguageToggle(block) {
       { class: 'doc-mt-toggle' },
       `<div class="doc-mt-checkbox">
       <span>${placeholders.automaticTranslation}</span>
-      <input type="checkbox"><a href="${placeholders.automaticTranslationLink}" target="_blank"><span class="icon icon-info"></span></a>
+      <input type="checkbox"><a href="${automaticTranslationLink}" target="_blank"><span class="icon icon-info"></span></a>
       </div>
       <div class="doc-mt-feedback">
         <span class="prompt">${placeholders.automaticTranslationFeedback}</span>

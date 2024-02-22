@@ -160,7 +160,7 @@ export default async function decorate(block) {
       }
     } else {
       buildCardShimmer.remove();
-      buildNoResultsContent(block);
+      buildNoResultsContent(block, true);
     }
   };
 
@@ -239,7 +239,7 @@ export default async function decorate(block) {
           .catch((err) => {
             // Hide shimmer placeholders on error
             buildCardsShimmer.remove();
-            buildNoResultsContent(block);
+            buildNoResultsContent(block, true);
             // eslint-disable-next-line no-console
             console.error('Recommended Cards:', err);
           });
@@ -249,7 +249,7 @@ export default async function decorate(block) {
     document.documentElement.classList.contains('adobe-ue-edit') ||
     document.documentElement.classList.contains('adobe-ue-preview')
   ) {
-    buildNoResultsContent(block);
+    buildNoResultsContent(block, true);
   } else {
     block.style.display = 'None';
   }
