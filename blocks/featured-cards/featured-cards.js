@@ -172,7 +172,6 @@ export default async function decorate(block) {
     return filteredResult;
   };
 
-
   /* Toogle Card Content and View Info Display for Featured Card Block */
   const toggleCardInfo = (show) => {
     if (show) {
