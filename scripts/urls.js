@@ -26,4 +26,3 @@ export const tabbedCardViewAllDocumentationLink = `/${lang}/docs`;
 export const tabbedCardViewAllCommunityLink = 'https://experienceleaguecommunities.adobe.com';
 export const tabbedCardViewAllCertificationLink = `/${lang}/docs/certification/program/overview`;
 export const tabbedCardViewAllOnDemandEventsLink = `/events/?lang=${lang}#ondemandevents`;
-
