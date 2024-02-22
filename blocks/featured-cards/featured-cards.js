@@ -209,7 +209,7 @@ export default async function decorate(block) {
   block.appendChild(contentDiv);
   block.appendChild(linkDiv);
 
-  const rolesDropdown = block.querySelector('.Role-dropdown');
+  const rolesDropdown = block.querySelector('.role-dropdown');
 
   rolesDropdown.addEventListener('change', function handleDropdownChange() {
     const roleValue = this.dataset.selected === DEFAULT_OPTIONS.ROLE ? [] : [this.dataset.selected];
@@ -223,7 +223,7 @@ export default async function decorate(block) {
     fetchDataAndRenderBlock(param, contentType, block, contentDiv);
   });
 
-  const solutionsDropdown = block.querySelector('.Product-dropdown');
+  const solutionsDropdown = block.querySelector('.product-dropdown');
 
   solutionsDropdown.addEventListener('change', function handleSolutionDropdownChange() {
     const solutionValue = this.dataset.selected === DEFAULT_OPTIONS.SOLUTION ? [] : [this.dataset.selected];
