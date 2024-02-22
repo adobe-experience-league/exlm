@@ -1,7 +1,13 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, toPascalCase, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import {
+  buildCard,
+  buildNoResultsContent,
+  ShowCardContentInfo,
+  ShowCardViewInfo,
+  hideNoResultInfo,
+} from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { CONTENT_TYPES, ROLE_OPTIONS, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
@@ -182,6 +188,12 @@ export default async function decorate(block) {
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
     buildCardsShimmer.add(block);
     headerDiv.after(block.querySelector('.shimmer-placeholder'));
+
+    /* Hide No Results Content and Show Card Content Info if they Exist */
+    hideNoResultInfo(block);
+    ShowCardContentInfo(block);
+    ShowCardViewInfo(block);
+
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
     browseCardsContent
       .then((data) => {
@@ -197,10 +209,15 @@ export default async function decorate(block) {
             contentDiv.appendChild(cardDiv);
           }
           decorateIcons(block);
+        } else {
+          buildCardsShimmer.remove();
+          buildNoResultsContent(block);
         }
       })
       .catch((err) => {
+        // Hide shimmer placeholders on error
         buildCardsShimmer.remove();
+        buildNoResultsContent(block);
         /* eslint-disable-next-line no-console */
         console.error(err);
       });
