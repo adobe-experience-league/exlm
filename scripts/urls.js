@@ -20,7 +20,7 @@ export const browseMoreProductsLink = `/${lang}/browse`;
 export const automaticTranslationLink = `/${lang}/docs/contributor/contributor-guide/localization/machine-translation`;
 // Tabbed cards
 export const tabbedCardViewAllTroubleshootingLink = `/${lang}/docs`;
-export const tabbedCardViewAllCoursesLink = `/?lang=${lang}#courses`;
+export const tabbedCardViewAllCoursesLink = `https://experienceleague.adobe.com/?lang=${lang}#courses`;
 export const tabbedCardViewAllTutorialsLink = `/${lang}/docs/home-tutorials`;
 export const tabbedCardViewAllDocumentationLink = `/${lang}/docs`;
 export const tabbedCardViewAllCommunityLink = 'https://experienceleaguecommunities.adobe.com';
