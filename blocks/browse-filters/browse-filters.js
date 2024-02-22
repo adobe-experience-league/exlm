@@ -23,7 +23,7 @@ const coveoFacetMap = {
 };
 
 const coveoFacetFilterNameMap = {
-  el_type: 'Content Type',
+  el_contenttype: 'Content Type',
   el_role: 'Role',
   el_level: 'Experience Level',
 };

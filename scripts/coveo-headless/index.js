@@ -101,7 +101,7 @@ export default async function initiateCoveoHeadlessSearch({
 
         const headlessTypeFacet = module.buildFacet(headlessSearchEngine, {
           options: {
-            field: 'el_type',
+            field: 'el_contenttype',
           },
           numberOfValues: 8,
         });
