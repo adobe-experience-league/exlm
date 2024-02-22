@@ -1,6 +1,8 @@
 import { loadCSS } from '../lib-franklin.js';
 import { htmlToElement } from '../scripts.js';
 
+loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
+
 export default class Dropdown {
   /**
    * Constructor for initializing dropdown using parent form element, default values, options arrays, and id.
@@ -17,9 +19,6 @@ export default class Dropdown {
     this.id = id;
 
     this.dropdowns = [];
-
-    loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
-
     this.initFormElements();
     this.handleClickEvents();
   }
@@ -42,7 +41,7 @@ export default class Dropdown {
     if (document.getElementsByClassName(this.parentFormElement.classList[0]).length === 1) {
       document.addEventListener('click', (event) => {
         if (!event.target.closest('.custom-filter-dropdown')) {
-          this.closeAllDropdowns();
+          this.constructor.closeAllDropdowns();
         }
 
         if (event.target.closest('.custom-filter-dropdown > button')) {
@@ -53,7 +52,7 @@ export default class Dropdown {
             dropdown.classList.remove('open');
             button.nextElementSibling.style.display = 'none';
           } else {
-            this.closeAllDropdowns();
+            this.constructor.closeAllDropdowns();
             dropdown.classList.add('open');
             button.nextElementSibling.style.display = 'block';
           }
