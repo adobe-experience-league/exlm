@@ -101,55 +101,12 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-// Hide Card View Info for Block
-export const hideCardViewInfo = (block) => {
-  const existingViewInfo = block.querySelector('.browse-cards-block-view');
-  if (existingViewInfo) {
-    existingViewInfo.style.display = 'None';
-  }
-};
-
-// Hide Card Content Info for Block
-export const hideCardContentInfo = (block) => {
-  const existingContentInfo = block.querySelector('.browse-cards-block-content');
-  if (existingContentInfo) {
-    existingContentInfo.style.display = 'None';
-  }
-};
-
-// Show Card View Info for Block
-export const ShowCardViewInfo = (block) => {
-  const existingViewInfo = block.querySelector('.browse-cards-block-view');
-  if (existingViewInfo) {
-    existingViewInfo.style.display = '';
-  }
-};
-
-// Show Card Content Info for Block
-export const ShowCardContentInfo = (block) => {
-  const existingContentInfo = block.querySelector('.browse-cards-block-content');
-  if (existingContentInfo) {
-    existingContentInfo.style.display = '';
-  }
-};
-
-// Hide  No Results Content Info for Block
-export const hideNoResultInfo = (block) => {
-  const existingNoResultsInfo = block.querySelector('.browse-card-no-results');
-  if (existingNoResultsInfo) {
-    block.removeChild(existingNoResultsInfo);
-  }
-};
-
 // Default No Results Content from Placeholder
 export const buildNoResultsContent = (block) => {
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`); // load css dynamically
   const noResultsInfo = htmlToElement(`
     <div class="browse-card-no-results">${placeholders.noResultsText}</div>
   `);
-  /* Hide Card Content and View Info if they exist */
-  hideCardContentInfo(block);
-  hideCardViewInfo(block);
   block.appendChild(noResultsInfo);
 };
 

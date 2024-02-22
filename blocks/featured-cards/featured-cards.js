@@ -1,18 +1,13 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, toPascalCase, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import {
-  buildCard,
-  buildNoResultsContent,
-  ShowCardContentInfo,
-  ShowCardViewInfo,
-  hideNoResultInfo,
-} from '../../scripts/browse-card/browse-card.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { CONTENT_TYPES, ROLE_OPTIONS, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import SolutionDataService from '../../scripts/data-service/solutions-data-service.js';
 import { solutionsUrl } from '../../scripts/urls.js';
+import { buildNoResultsContent, removeNoResultInfo } from '../../scripts/browse-card/browse-card-no-results.js';
 
 let placeholders = {};
 try {
@@ -184,15 +179,35 @@ export default async function decorate(block) {
 
   const buildCardsShimmer = new BuildPlaceholder();
 
+  /* Toggles Specific Class based on toogleValue */
+  const toggleClass = (element, className, toggleValue) => {
+    if (element) {
+      if (toggleValue) {
+        element.classList.add(className);
+      } else {
+        element.classList.remove(className);
+      }
+    }
+  };
+
+  /* Toogle Card Info for Block */
+  /* eslint-disable-next-line */
+  const toggleCardInfo = (block, toggleValue) => {
+    const existingViewInfo = block.querySelector('.browse-cards-block-view');
+    const existingContentInfo = block.querySelector('.browse-cards-block-content');
+
+    toggleClass(existingViewInfo, 'browse-card-no-result-display', toggleValue);
+    toggleClass(existingContentInfo, 'browse-card-no-result-display', toggleValue);
+  };
+
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
     buildCardsShimmer.add(block);
     headerDiv.after(block.querySelector('.shimmer-placeholder'));
 
-    /* Hide No Results Content and Show Card Content Info if they Exist */
-    hideNoResultInfo(block);
-    ShowCardContentInfo(block);
-    ShowCardViewInfo(block);
+    /* Remove No Results Content and Show Card Content Info if they were hidden earlier */
+    removeNoResultInfo(block);
+    toggleCardInfo(block, false);
 
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
     browseCardsContent
@@ -210,14 +225,18 @@ export default async function decorate(block) {
           }
           decorateIcons(block);
         } else {
+          /* Add No Results Content and Remove Card Content View Info and Shimmer */
           buildCardsShimmer.remove();
           buildNoResultsContent(block);
+          toggleCardInfo(block, true);
         }
       })
       .catch((err) => {
         // Hide shimmer placeholders on error
         buildCardsShimmer.remove();
+        /* Add No Results Content and Remove Card Content View Info and Shimmer */
         buildNoResultsContent(block);
+        toggleCardInfo(block, true);
         /* eslint-disable-next-line no-console */
         console.error(err);
       });
