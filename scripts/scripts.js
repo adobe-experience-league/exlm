@@ -305,11 +305,9 @@ function decorateContentSections(main) {
  * @param {HTMLElement} main
  */
 export function decorateAnchors(main) {
-  const anchorPrefix = 'icon-anchor-';
-  const anchorIcons = [...main.querySelectorAll(`span.icon[class*="${anchorPrefix}"]`)];
+  const anchorIcons = [...main.querySelectorAll(`.icon-headding-anchor`)];
   anchorIcons.forEach((icon) => {
-    const slugClass = icon.className.split(' ').find((c) => c.startsWith(anchorPrefix));
-    const slug = slugClass.substring(anchorPrefix.length);
+    const slug = icon.nextSibling.textContent;
     if (slug) {
       icon.parentElement.id = slug;
       icon.remove();
