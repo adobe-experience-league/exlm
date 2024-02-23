@@ -1,5 +1,6 @@
 import ffetch from '../../scripts/ffetch.js';
 import { getMetadata } from '../../scripts/lib-franklin.js';
+import { browseMoreProductsLink } from '../../scripts/urls.js';
 import { filterSubPages, convertToMultiMap, convertToULList, sortFirstLevelList } from './browse-rail-utils.js';
 import { getEDSLink, getLink, getProducts, getPathDetails, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
@@ -146,7 +147,7 @@ export default async function decorate(block) {
     // Add "Browse more products" link
     const browseMoreProducts = document.createElement('div');
     browseMoreProducts.classList.add('browse-more-products');
-    browseMoreProducts.innerHTML = `<a href="${placeholders.browseMoreProductsLink}">${placeholders.browseMoreProducts}</a>`;
+    browseMoreProducts.innerHTML = `<a href="${browseMoreProductsLink}">${placeholders.browseMoreProducts}</a>`;
     block.append(browseMoreProducts);
 
     // Browse By
@@ -171,7 +172,7 @@ export default async function decorate(block) {
       const subPagesBrowseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
       block.querySelector(
         '.browse-by > li',
-      ).innerHTML = `<span>${placeholders.browseBy}</span><ul><li><span>${subPagesBrowseByLinkText}</span></li></ul>`;
+      ).innerHTML = `<span>${placeholders.browseBy}</span><ul><li><a href="${pagePath}">${subPagesBrowseByLinkText}</a></li></ul>`;
 
       // Hightlight the current page title in the left rail
       const targetElement = block.querySelector(`[href="${currentPagePath}"]`);

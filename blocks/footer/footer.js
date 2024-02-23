@@ -1,21 +1,12 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { getPathDetails } from '../../scripts/scripts.js';
 
 const languageModule = import('../../scripts/language.js');
 
-const CONFIG = {
-  basePath: '/fragments/en',
-  footerPath: '/footer/footer.plain.html',
-  languagePath: '/languages/languages.plain.html',
-};
-
-// Utility function for http call
-const getHTMLData = async (url) => {
-  const response = await fetch(url);
-  if (response.ok) {
-    const responseData = response.text();
-    return responseData;
-  }
-  throw new Error(`${url} not found`);
+// fetch fragment html
+const fetchFragment = async (rePath, lang = 'en') => {
+  const response = await fetch(`/fragments/${lang}/${rePath}.plain.html`);
+  return response.text();
 };
 
 function decorateMenu(footer) {
@@ -176,15 +167,13 @@ function handleSocialIconStyles(footer) {
  */
 export default async function decorate(block) {
   // fetch footer content
-  const footerPath = `${CONFIG.basePath}${CONFIG.footerPath}`;
-  const resp = await getHTMLData(footerPath);
+  const { lang } = getPathDetails();
+  const footerFragment = await fetchFragment('footer/footer', lang);
 
-  if (resp) {
-    const html = resp;
-
+  if (footerFragment) {
     // decorate footer DOM
     const footer = document.createElement('div');
-    footer.innerHTML = html;
+    footer.innerHTML = footerFragment;
     decorateMenu(footer);
     await decorateSocial(footer);
     decorateBreadcrumb(footer);
