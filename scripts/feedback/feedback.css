@@ -71,7 +71,6 @@
 .feedback-ui .like-btns {
   display: inline-block;
   flex: auto;
-  margin-left: 20px;
 }
 
 .feedback-ui .like-btns button {

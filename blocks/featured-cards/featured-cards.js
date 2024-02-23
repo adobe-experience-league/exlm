@@ -1,12 +1,14 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, toPascalCase, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import { CONTENT_TYPES, ROLE_OPTIONS, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
-import SolutionDataService from '../../scripts/data-service/solutions-data-service.js';
-import { solutionsUrl } from '../../scripts/urls.js';
+import { CONTENT_TYPES, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
+import { roleOptions } from '../browse-filters/browse-filter-utils.js';
+import Dropdown from '../../scripts/dropdown/dropdown.js';
+// eslint-disable-next-line import/no-cycle
+const ffetchModulePromise = import('../../scripts/ffetch.js');
 
 let placeholders = {};
 try {
@@ -18,8 +20,32 @@ try {
 
 const DEFAULT_OPTIONS = Object.freeze({
   ROLE: 'Role',
-  SOLUTION: 'Product',
+  PRODUCT: 'Product',
 });
+
+// Helper function thats returns a list of all Featured Card Products //
+async function getFeaturedCardSolutions() {
+  const ffetch = (await ffetchModulePromise).default;
+  // Load the Featured Card Solution list
+  const solutionList = await ffetch(`/featured-card-products.json`).all();
+  // Gets Values from Column Solution in Featured Card Solution list
+  const solutionValues = solutionList.map((solution) => solution.Solution);
+  return solutionValues;
+}
+
+const handleSolutionsService = async () => {
+  const solutions = await getFeaturedCardSolutions();
+
+  if (!solutions) {
+    throw new Error('An error occurred');
+  }
+
+  if (solutions?.length) {
+    return solutions;
+  }
+
+  return [];
+};
 
 /**
  * Decorate function to process and log the mapped data.
@@ -46,16 +72,35 @@ export default async function decorate(block) {
       <div class="browse-card-description-text">
         ${descriptionElement.innerHTML}
       </div>
-      <div class="browse-card-dropdown">
-        <p>${placeholders?.featuredCardDescription || 'Tell us about yourself'}</p>
-        <select class="roles-dropdown"></select>
-        <select class="solutions-dropdown"></select>
-      </div>
+      <form class="browse-card-dropdown">
+        <label>${placeholders?.featuredCardDescription || 'Tell us about yourself'}</label>
+      </form>
     </div>
   `);
 
   block.appendChild(headerDiv);
+
+  const solutions = await handleSolutionsService();
+  const solutionsList = [];
+  solutions.forEach((solution) => {
+    solutionsList.push({
+      title: solution,
+    });
+  });
+
+  const roleDropdown = new Dropdown(
+    block.querySelector('.browse-card-dropdown'),
+    DEFAULT_OPTIONS.ROLE,
+    roleOptions.items,
+  );
+  const productDropdown = new Dropdown(
+    block.querySelector('.browse-card-dropdown'),
+    DEFAULT_OPTIONS.PRODUCT,
+    solutionsList,
+  );
+
   await decorateIcons(headerDiv);
+
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
 
@@ -67,45 +112,6 @@ export default async function decorate(block) {
     sortCriteria,
     noOfResults,
   };
-
-  const rolesDropdownData = block.querySelector('.roles-dropdown');
-  const defaultRolesOption = document.createElement('option');
-  defaultRolesOption.text = DEFAULT_OPTIONS.ROLE;
-  rolesDropdownData.add(defaultRolesOption);
-
-  Object.keys(ROLE_OPTIONS).forEach((roleData) => {
-    if (Object.prototype.hasOwnProperty.call(ROLE_OPTIONS, roleData)) {
-      const option = document.createElement('option');
-      option.text = ROLE_OPTIONS[roleData];
-      rolesDropdownData.add(option);
-    }
-  });
-
-  const handleSolutionsService = async () => {
-    const solutionsService = new SolutionDataService(solutionsUrl);
-    const solutions = await solutionsService.fetchDataFromSource();
-
-    if (!solutions) {
-      throw new Error('An error occurred');
-    }
-
-    if (solutions?.length) {
-      const solutionsDropdownData = block.querySelector('.solutions-dropdown');
-      const defaultSolutionOption = document.createElement('option');
-      defaultSolutionOption.text = DEFAULT_OPTIONS.SOLUTION;
-      solutionsDropdownData.add(defaultSolutionOption);
-
-      solutions.forEach((optionText) => {
-        const option = document.createElement('option');
-        option.text = optionText;
-        solutionsDropdownData.add(option);
-      });
-    }
-
-    return [];
-  };
-
-  handleSolutionsService();
 
   // Function to filter and organize results based on content types
   const filterResults = (data, contentTypesToFilter) => {
@@ -176,12 +182,25 @@ export default async function decorate(block) {
     return filteredResult;
   };
 
-  const buildCardsShimmer = new BuildPlaceholder();
+  /* Toggle Card Content and View Info Display for Featured Card Block */
+  const toggleCardInfo = (show) => {
+    if (show) {
+      block.classList.add('featured-card-hidden-features');
+    } else {
+      block.classList.remove('featured-card-hidden-features');
+    }
+  };
 
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
+    const buildCardsShimmer = new BuildPlaceholder();
     buildCardsShimmer.add(block);
     headerDiv.after(block.querySelector('.shimmer-placeholder'));
+
+    /* Remove No Results Content and Show Card Content Info if they were hidden earlier */
+    buildNoResultsContent(block, false);
+    toggleCardInfo(false);
+
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
     browseCardsContent
       .then((data) => {
@@ -197,10 +216,19 @@ export default async function decorate(block) {
             contentDiv.appendChild(cardDiv);
           }
           decorateIcons(block);
+        } else {
+          /* Add No Results Content and Remove Card Content View Info and Shimmer */
+          buildCardsShimmer.remove();
+          buildNoResultsContent(block, true);
+          toggleCardInfo(true);
         }
       })
       .catch((err) => {
+        // Hide shimmer placeholders on error
         buildCardsShimmer.remove();
+        /* Add No Results Content and Remove Card Content View Info and Shimmer */
+        buildNoResultsContent(block, true);
+        toggleCardInfo(true);
         /* eslint-disable-next-line no-console */
         console.error(err);
       });
@@ -214,32 +242,25 @@ export default async function decorate(block) {
   block.appendChild(contentDiv);
   block.appendChild(linkDiv);
 
-  const rolesDropdown = block.querySelector('.roles-dropdown');
-
-  rolesDropdown.addEventListener('change', function handleDropdownChange() {
-    const roleValue = this.value === DEFAULT_OPTIONS.ROLE ? [] : [this.value];
-    param.role = roleValue;
-
+  function fetchNewCards() {
     [...contentDiv.children].forEach((cards) => {
       cards.remove();
     });
 
     /* eslint-disable-next-line */
     fetchDataAndRenderBlock(param, contentType, block, contentDiv);
+  }
+
+  roleDropdown.handleOnChange((value) => {
+    const roleValue = value === DEFAULT_OPTIONS.ROLE ? [] : [value];
+    param.role = roleValue;
+    fetchNewCards();
   });
 
-  const solutionsDropdown = block.querySelector('.solutions-dropdown');
-
-  solutionsDropdown.addEventListener('change', function handleSolutionDropdownChange() {
-    const solutionValue = this.value === DEFAULT_OPTIONS.SOLUTION ? [] : [this.value];
-    param.product = solutionValue;
-
-    [...contentDiv.children].forEach((cards) => {
-      cards.remove();
-    });
-
-    /* eslint-disable-next-line */
-    fetchDataAndRenderBlock(param, contentType, block, contentDiv);
+  productDropdown.handleOnChange((value) => {
+    const productValue = value === DEFAULT_OPTIONS.PRODUCT ? [] : [value];
+    param.product = productValue;
+    fetchNewCards();
   });
 
   /* Hide Tooltip while scrolling the cards layout */

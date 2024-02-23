@@ -30,6 +30,7 @@
 }
 
 .browse-rail ul li ul {
+    width: 100%;
     margin-left: 12px;
 }
 

@@ -81,7 +81,7 @@ export default async function decorate(block) {
   }
 
   classNames.forEach((className) => {
-    if (className.includes('w-')) {
+    if (className.includes('w-') && !classNames.includes('modal-image')) {
       const [width] = className.match(/\d+/g);
       if (width) {
         img.style.width = `${width}px`;
