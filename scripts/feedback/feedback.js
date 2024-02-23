@@ -14,7 +14,10 @@ const fetchFragment = async (rePath, lang = 'en') => {
 const { lang } = getPathDetails();
 const feedbackFragment = await fetchFragment('feedback-bar/feedback-bar', lang);
 
-export const feedbackDomReady = new Promise(() => {});
+let feedbackDomReadyResolve;
+export const feedbackDomReady = new Promise((resolve) => {
+  feedbackDomReadyResolve = resolve;
+});
 
 function decorateFirstQuestion(firstQuestion) {
   const newDiv = createTag('div', { class: 'like-btns' });
@@ -436,7 +439,7 @@ async function loadFeedbackUi() {
   handleClosingFeedbackBar(fb);
   handleGithubBtns(fb);
   handleFeedbackBarVisibilityOnScroll();
-  feedbackDomReady.resolve(fb);
+  feedbackDomReadyResolve(fb);
 }
 
 function interceptLoaded(el) {
