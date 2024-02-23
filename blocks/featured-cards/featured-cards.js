@@ -1,13 +1,15 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, toPascalCase, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import {
+  htmlToElement,
+  toPascalCase,
+  fetchLanguagePlaceholders,
+  getFeaturedCardSolutions,
+} from '../../scripts/scripts.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { CONTENT_TYPES, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
-import SolutionDataService from '../../scripts/data-service/solutions-data-service.js';
-import { solutionsUrl } from '../../scripts/urls.js';
-
 import { roleOptions } from '../browse-filters/browse-filter-utils.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 
@@ -25,8 +27,7 @@ const DEFAULT_OPTIONS = Object.freeze({
 });
 
 const handleSolutionsService = async () => {
-  const solutionsService = new SolutionDataService(solutionsUrl);
-  const solutions = await solutionsService.fetchDataFromSource();
+  const solutions = await getFeaturedCardSolutions();
 
   if (!solutions) {
     throw new Error('An error occurred');
