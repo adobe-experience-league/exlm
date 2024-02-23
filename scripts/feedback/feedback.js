@@ -5,25 +5,6 @@ import { assetInteractionModel } from '../analytics/lib-analytics.js';
 const RETRY_LIMIT = 5;
 const RETRY_DELAY = 1000;
 
-/**
- * Qualtrics feedback survey requires metadata applied to a window variable for eventing
- */
-function applyMetadataToWindow() {
-  document.querySelectorAll('meta').forEach((tag) => {
-    if (
-      typeof tag.name === 'string' &&
-      tag.name.length > 0 &&
-      typeof tag.content === 'string' &&
-      tag.content.length > 0
-    ) {
-      window.EXL_META[tag.name] = tag.content;
-    }
-  });
-
-  const { lang } = getPathDetails();
-  window.EXL_META.lang = lang;
-}
-
 // fetch fragment html
 const fetchFragment = async (rePath, lang = 'en') => {
   const response = await fetch(`/fragments/${lang}/${rePath}.plain.html`);
@@ -459,7 +440,6 @@ export default async function loadFeedbackUi() {
   const interval = setInterval(checkFeedbackInitLoaded, RETRY_DELAY);
 
   function interceptLoaded() {
-    applyMetadataToWindow();
     handleFeedbackIcons(fb);
     handleFeedbackSubmit(fb);
   }
