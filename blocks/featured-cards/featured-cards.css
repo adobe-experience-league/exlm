@@ -46,11 +46,6 @@
   color: var(--spectrum-gray-800);
 }
 
-.featured-cards .browse-card-dropdown select {
-  font-family: var(--body-font-family);
-  font-size: 14px;
-}
-
 .featured-cards .browse-cards-block-content > div  {
   min-height: 284px;
   flex: 0 0 320px;
@@ -63,52 +58,22 @@
   align-items: center;
   width: 100%;
   margin-bottom: 8px;
+  gap: 16px;
 }
-  
-.featured-cards .solutions-dropdown , .roles-dropdown {
-    width: 100%;
-}
-
-.featured-cards .roles-dropdown {
-  margin-bottom: 1em;
-}
-
-.featured-cards .browse-card-dropdown > select{
-  background: #FFFFFF 0% 0% no-repeat padding-box;
-  outline: 1px solid #E6E6E6;
-  border-radius: 4px;
-  padding: 5px 8px;
-  color: var(--spectrum-gray-700);
-  border: 0;
-  border-right: 5px solid transparent;
-}
-
-.featured-cards .browse-card-dropdown > p{
+.featured-cards .browse-card-dropdown > label {
+  font-size: var(--spectrum-body-size-l);
   font-weight: 700;
   color: #363636;
 }
 
+.featured-cards.featured-card-hidden-features .browse-cards-block-view,
+.featured-cards.featured-card-hidden-features .browse-cards-block-content {
+  display: none;
+}
+
 @media only screen and (min-width: 600px) {
   .section.featured-cards-container {
-    padding-bottom: 4px;
-  }
-
-  .featured-cards .browse-card-dropdown {
-      flex-direction: row;
-      gap: 1em;
-      margin-bottom: 20px;
-  }
-
-  .featured-cards .browse-card-dropdown > p {
-      margin-bottom: 0;
-  }
-
-  .featured-cards .roles-dropdown {
-    margin-bottom: 0;
-  }
-
-  .featured-cards .solutions-dropdown , .featured-cards .roles-dropdown {
-    width: auto;
+    padding-bottom: 30px;
   }
 
   .featured-cards .browse-cards-block-content {  
@@ -125,6 +90,14 @@
 
   .featured-cards .browse-cards-block-header .browse-card-description-text{
     margin-bottom: 36px;
+  }
+  
+  .featured-cards .browse-card-dropdown {
+    flex-direction: row;
+  }
+
+  .featured-cards .custom-filter-dropdown {
+    max-width: 200px;
   }
 }
 
@@ -161,17 +134,12 @@
     flex: 0 0 295px;
   }
 
-  .featured-cards .browse-card-dropdown > p {
-    color: var(--spectrum-gray-800);
-    font-size: 14px;
-    line-height: 18.2px;
+  .featured-cards .custom-filter-dropdown {
+    max-width: 300px;
   }
 
   .featured-cards .browse-cards-block-header .browse-card-description-text{
     margin-bottom: 16px;
   }
-
-  .featured-cards .browse-card-dropdown > select{
-    color: var(--spectrum-gray-800);
-  }
 }
+

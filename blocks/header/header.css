@@ -99,7 +99,7 @@ header {
 }
 .header > nav {
   display: grid;
-  grid-template-areas: "nav adobe-logo brand product-grid sign-in";
+  grid-template-areas: "nav adobe-logo brand product-grid search sign-in";
   justify-content: space-between;
   height: 100%;
 }
@@ -646,7 +646,7 @@ header {
   display: var(--search-display);
   justify-content: flex-end;
   align-items: center;
-  padding: var(--nav-root-item-padding-x);
+  padding-right: 15px;
   container-type: inline-size;
   container-name: searchs;
   z-index: 1;
@@ -681,9 +681,7 @@ header {
 }
 @container headersection (max-width: 1024px) {
   .header .search {
-    position: absolute;
-    right: 80px;
-    top: 23px;
+    padding-right: 0;
   }
 }
 .header .search-short {
