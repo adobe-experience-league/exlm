@@ -439,7 +439,7 @@ async function loadFeedbackUi() {
   handleClosingFeedbackBar(fb);
   handleGithubBtns(fb);
   handleFeedbackBarVisibilityOnScroll();
-  feedbackDomReadyResolve(fb);
+  feedbackDomReadyResolve();
 }
 
 function interceptLoaded(el) {
@@ -451,8 +451,10 @@ let retryCount = 0;
 // eslint-disable-next-line
 let interval;
 
-export function checkInterceptLoaded(el) {
-  if (document.querySelector('dx-docs-feedback .qualtrics-feedback .QSI__EmbeddedFeedbackContainer_Thumbs')) {
+export function checkInterceptLoaded() {
+  const el = document.querySelector('dx-docs-feedback .qualtrics-feedback');
+
+  if (el.querySelector(' .QSI__EmbeddedFeedbackContainer_Thumbs')) {
     clearInterval(interval);
     interceptLoaded(el);
   } else if (retryCount < RETRY_LIMIT) {
