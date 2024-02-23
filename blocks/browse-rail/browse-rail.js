@@ -155,7 +155,7 @@ export default async function decorate(block) {
     browseByUL.classList.add('browse-by');
     const browseByLI = document.createElement('li');
     const browseByLinkText = `${placeholders.all} ${label} ${placeholders.content}`;
-    browseByLI.innerHTML = `<span>${placeholders.browseBy}</span><ul><li><span class="is-active">${browseByLinkText}</span></li></ul>`;
+    browseByLI.innerHTML = `<span>${placeholders.browseBy}</span><ul><li><a href="${currentPagePath}" class="is-active">${browseByLinkText}</a></li></ul>`;
     browseByUL.append(browseByLI);
     block.append(browseByUL);
 
@@ -172,7 +172,7 @@ export default async function decorate(block) {
       const subPagesBrowseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
       block.querySelector(
         '.browse-by > li',
-      ).innerHTML = `<span>${placeholders.browseBy}</span><ul><li><span>${subPagesBrowseByLinkText}</span></li></ul>`;
+      ).innerHTML = `<span>${placeholders.browseBy}</span><ul><li><a href="${pagePath}">${subPagesBrowseByLinkText}</a></li></ul>`;
 
       // Hightlight the current page title in the left rail
       const targetElement = block.querySelector(`[href="${currentPagePath}"]`);
