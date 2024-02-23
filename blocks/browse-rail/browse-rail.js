@@ -170,9 +170,8 @@ export default async function decorate(block) {
       block.appendChild(htmlList);
       sortFirstLevelList('.subPages');
       const subPagesBrowseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
-      block.querySelector(
-        '.browse-by > li',
-      ).innerHTML = `<span>${placeholders.browseBy}</span><ul><li><a href="${pagePath}">${subPagesBrowseByLinkText}</a></li></ul>`;
+      block.querySelector('.browse-by > li').innerHTML =
+        `<span>${placeholders.browseBy}</span><ul><li><a href="${pagePath}">${subPagesBrowseByLinkText}</a></li></ul>`;
 
       // Hightlight the current page title in the left rail
       const targetElement = block.querySelector(`[href="${currentPagePath}"]`);
