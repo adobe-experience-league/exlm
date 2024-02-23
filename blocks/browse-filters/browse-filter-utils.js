@@ -1,4 +1,9 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { COMMUNITY_SEARCH_FACET } from '../../scripts/browse-card/browse-cards-constants.js';
+
+const SUB_FACET_MAP = {
+  Community: COMMUNITY_SEARCH_FACET,
+};
 
 let placeholders = {};
 try {
@@ -226,4 +231,32 @@ export const getParsedSolutionsQuery = (solutionTags) => {
     query: parsedSolutionsInfo.length > 1 ? `(${query})` : query,
     products: solutionInfo.map(({ product }) => product.toLowerCase()),
   };
+};
+
+export const getCoveoFacets = (type, value) => {
+  const subFacets = SUB_FACET_MAP[type];
+  if (!subFacets) {
+    return [
+      {
+        state: value ? 'selected' : 'idle',
+        value: type,
+      },
+    ];
+  }
+  return subFacets.reduce(
+    (acc, curr) => {
+      const { value: facetValue, state } = curr;
+      acc.push({
+        state: facetValue ? state : 'idle',
+        value: `${type}|${value}`,
+      });
+      return acc;
+    },
+    [
+      {
+        state: 'idle',
+        value: type,
+      },
+    ],
+  );
 };
