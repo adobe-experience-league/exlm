@@ -672,7 +672,8 @@ export async function waitForLCP(lcpBlocks) {
   document.body.style.display = null;
   const lcpCandidate = document.querySelector('main img');
   await new Promise((resolve) => {
-    if (lcpCandidate && lcpCandidate.src === 'about:error') resolve(); // error loading image
+    if (lcpCandidate && lcpCandidate.src === 'about:error')
+      resolve(); // error loading image
     else if (lcpCandidate && !lcpCandidate.complete) {
       lcpCandidate.setAttribute('loading', 'eager');
       lcpCandidate.addEventListener('load', resolve);

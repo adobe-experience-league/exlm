@@ -1,8 +1,28 @@
 import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js'; // eslint-disable-line import/no-cycle
-import { QUALTRICS_LOADED_EVENT_NAME } from './qualtrics/constants.js';
-import { embedQualtricsSurveyIntercept } from './qualtrics/qualtrics-embed.js';
+import { createTag, getPathDetails, htmlToElement } from '../scripts.js'; // eslint-disable-line import/no-cycle
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
+
+const RETRY_LIMIT = 5;
+const RETRY_DELAY = 500;
+
+/**
+ * Qualtrics feedback survey requires metadata applied to a window variable for eventing
+ */
+function applyMetadataToWindow() {
+  document.querySelectorAll('meta').forEach((tag) => {
+    if (
+      typeof tag.name === 'string' &&
+      tag.name.length > 0 &&
+      typeof tag.content === 'string' &&
+      tag.content.length > 0
+    ) {
+      window.EXL_META[tag.name] = tag.content;
+    }
+  });
+
+  const { lang } = getPathDetails();
+  window.EXL_META.lang = lang;
+}
 
 // fetch fragment html
 const fetchFragment = async (rePath, lang = 'en') => {
@@ -417,8 +437,6 @@ function handleFeedbackSubmit(el) {
 }
 
 export default async function loadFeedbackUi() {
-  const placeholders = await fetchLanguagePlaceholders();
-
   if (!showFeedbackBar()) return;
 
   loadCSS(`${window.hlx.codeBasePath}/scripts/feedback/feedback.css`);
@@ -435,25 +453,28 @@ export default async function loadFeedbackUi() {
   handleGithubBtns(fb);
   handleFeedbackBarVisibilityOnScroll();
 
-  try {
-    embedQualtricsSurveyIntercept(placeholders.feedbackSurveyId);
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error("Couldn't embed Qualtrics survey intercept.", err);
-    showQualtricsLoadingError(fb);
-    toggleFeedbackBar(fb, false);
-  }
+  let retryCount = 0;
+  // eslint-disable-next-line
+  const interval = setInterval(checkFeedbackInitLoaded, RETRY_DELAY);
 
   function interceptLoaded() {
-    // wait for Qualtrics to load
-    // eslint-disable-next-line no-undef
-    if (QSI.API) {
-      handleFeedbackIcons(fb);
-      handleFeedbackSubmit(fb);
-    }
+    applyMetadataToWindow();
+    handleFeedbackIcons(fb);
+    handleFeedbackSubmit(fb);
   }
 
-  window.addEventListener(QUALTRICS_LOADED_EVENT_NAME, interceptLoaded, false);
+  function checkFeedbackInitLoaded() {
+    if (document.querySelector('dx-docs-feedback .qualtrics-feedback .QSI__EmbeddedFeedbackContainer_Thumbs')) {
+      clearInterval(interval);
+      interceptLoaded();
+    } else if (retryCount < RETRY_LIMIT) {
+      retryCount += 1;
+    } else {
+      clearInterval(interval);
+      // eslint-disable-next-line no-console
+      console.error("Couldn't embed Qualtrics survey intercept.");
+      showQualtricsLoadingError(fb);
+      toggleFeedbackBar(fb, false);
+    }
+  }
 }
-
-loadFeedbackUi();
