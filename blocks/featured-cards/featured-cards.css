@@ -73,7 +73,7 @@
 
 @media only screen and (min-width: 600px) {
   .section.featured-cards-container {
-    padding-bottom: 4px;
+    padding-bottom: 30px;
   }
 
   .featured-cards .browse-cards-block-content {  

@@ -21,7 +21,7 @@ try {
 
 const DEFAULT_OPTIONS = Object.freeze({
   ROLE: 'Role',
-  SOLUTION: 'Product',
+  PRODUCT: 'Product',
 });
 
 const handleSolutionsService = async () => {
@@ -80,15 +80,17 @@ export default async function decorate(block) {
     });
   });
 
-  const id = document.querySelectorAll('.browse-card-dropdown').length;
-
-  /* eslint-disable no-new */
-  new Dropdown(
+  const roleDropdown = new Dropdown(
     block.querySelector('.browse-card-dropdown'),
-    [DEFAULT_OPTIONS.ROLE, DEFAULT_OPTIONS.SOLUTION],
-    [roleOptions.items, solutionsList],
-    id,
+    DEFAULT_OPTIONS.ROLE,
+    roleOptions.items,
   );
+  const productDropdown = new Dropdown(
+    block.querySelector('.browse-card-dropdown'),
+    DEFAULT_OPTIONS.PRODUCT,
+    solutionsList,
+  );
+
   await decorateIcons(headerDiv);
 
   const contentDiv = document.createElement('div');
@@ -232,32 +234,25 @@ export default async function decorate(block) {
   block.appendChild(contentDiv);
   block.appendChild(linkDiv);
 
-  const rolesDropdown = block.querySelector('.role-dropdown');
-
-  rolesDropdown.addEventListener('change', function handleDropdownChange() {
-    const roleValue = this.dataset.selected === DEFAULT_OPTIONS.ROLE ? [] : [this.dataset.selected];
-    param.role = roleValue;
-
+  function fetchNewCards() {
     [...contentDiv.children].forEach((cards) => {
       cards.remove();
     });
 
     /* eslint-disable-next-line */
     fetchDataAndRenderBlock(param, contentType, block, contentDiv);
+  }
+
+  roleDropdown.handleOnChange((value) => {
+    const roleValue = value === DEFAULT_OPTIONS.ROLE ? [] : [value];
+    param.role = roleValue;
+    fetchNewCards();
   });
 
-  const solutionsDropdown = block.querySelector('.product-dropdown');
-
-  solutionsDropdown.addEventListener('change', function handleSolutionDropdownChange() {
-    const solutionValue = this.dataset.selected === DEFAULT_OPTIONS.SOLUTION ? [] : [this.dataset.selected];
-    param.product = solutionValue;
-
-    [...contentDiv.children].forEach((cards) => {
-      cards.remove();
-    });
-
-    /* eslint-disable-next-line */
-    fetchDataAndRenderBlock(param, contentType, block, contentDiv);
+  productDropdown.handleOnChange((value) => {
+    const productValue = value === DEFAULT_OPTIONS.PRODUCT ? [] : [value];
+    param.product = productValue;
+    fetchNewCards();
   });
 
   /* Hide Tooltip while scrolling the cards layout */

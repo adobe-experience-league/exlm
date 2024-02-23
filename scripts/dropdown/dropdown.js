@@ -12,15 +12,25 @@ export default class Dropdown {
    * @param {Array} optionsArrays -  Array of options list
    * @param {Number} id - Unique dropdown id
    */
-  constructor(parentFormElement, defaultValues, optionsArrays, id) {
+  constructor(parentFormElement, defaultValue, optionsArray) {
     this.parentFormElement = parentFormElement;
-    this.defaultValues = defaultValues;
-    this.optionsArrays = optionsArrays;
-    this.id = id;
-
-    this.dropdowns = [];
+    this.defaultValue = defaultValue;
+    this.optionsArray = optionsArray;
+    this.id = document.querySelectorAll('.custom-filter-dropdown').length;
     this.initFormElements();
     this.handleClickEvents();
+  }
+
+  /**
+   * handleOnChange - A function that sets up an event listener for the change event on a dropdown element and calls the provided callback with the selected data.
+   *
+   * @param {function} callback - The callback function to be called with the selected data from the dropdown.
+   * @return {void}
+   */
+  handleOnChange(callback) {
+    this.dropdown.addEventListener('change', () => {
+      callback(this.dropdown.dataset.selected);
+    });
   }
 
   /**
@@ -38,7 +48,7 @@ export default class Dropdown {
    * Handle click events and perform specific actions based on the event target.
    */
   handleClickEvents() {
-    if (document.getElementsByClassName(this.parentFormElement.classList[0]).length === 1) {
+    if (this.id === 0) {
       document.addEventListener('click', (event) => {
         if (!event.target.closest('.custom-filter-dropdown')) {
           this.constructor.closeAllDropdowns();
@@ -91,42 +101,40 @@ export default class Dropdown {
   initFormElements() {
     this.parentFormElement.addEventListener('submit', (event) => event.preventDefault());
 
-    this.optionsArrays.forEach((options, index) => {
-      const defaultValue = this.defaultValues[index];
-      const dropdown = document.createElement('div');
-      dropdown.classList.add(`${defaultValue.toLowerCase()}-dropdown`, 'custom-filter-dropdown');
-      dropdown.dataset.filterType = defaultValue;
+    const dropdown = document.createElement('div');
+    dropdown.classList.add(`${this.defaultValue.toLowerCase()}-dropdown`, 'custom-filter-dropdown');
+    dropdown.dataset.filterType = this.defaultValue;
 
-      dropdown.appendChild(
-        htmlToElement(`
-                    <button>
-          		        <span>${defaultValue}</span>
-          		        <span class="icon icon-chevron"></span>
-          	        </button>
-                    `),
-      );
+    this.dropdown = dropdown;
 
-      const dropdownContent = document.createElement('div');
-      dropdownContent.classList.add('filter-dropdown-content');
-      dropdown.appendChild(dropdownContent);
+    dropdown.appendChild(
+      htmlToElement(`
+                <button>
+          		    <span>${this.defaultValue}</span>
+          		    <span class="icon icon-chevron"></span>
+          	    </button>
+              `),
+    );
 
-      options.forEach((item, itemIndex) => {
-        const dropdownitem = htmlToElement(
-          ` <div class="custom-checkbox">
-                    <input type="checkbox" id="option-${this.id}-${index + 1}-${itemIndex + 1}" value="${
+    const dropdownContent = document.createElement('div');
+    dropdownContent.classList.add('filter-dropdown-content');
+    dropdown.appendChild(dropdownContent);
+
+    this.optionsArray.forEach((item, itemIndex) => {
+      const dropdownitem = htmlToElement(
+        ` <div class="custom-checkbox">
+                    <input type="checkbox" id="option-${this.id}-${itemIndex + 1}" value="${
                       item.value || item.title
                     }" data-label="${item.title}">
-                    <label for="option-${this.id}-${index + 1}-${itemIndex + 1}">
+                    <label for="option-${this.id}-${itemIndex + 1}">
                         <span class="title">${item.title}</span>
                         ${item.description ? `<span class="description">${item.description}</span>` : ''}
                         <span class="icon icon-checked"></span>
                     </label>
                     </div>`,
-        );
-        dropdownContent.appendChild(dropdownitem);
-      });
-      this.dropdowns.push(dropdown);
-      this.parentFormElement.appendChild(dropdown);
+      );
+      dropdownContent.appendChild(dropdownitem);
     });
+    this.parentFormElement.appendChild(dropdown);
   }
 }
