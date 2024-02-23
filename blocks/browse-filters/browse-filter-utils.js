@@ -247,8 +247,8 @@ export const getCoveoFacets = (type, value) => {
     (acc, curr) => {
       const { value: facetValue, state } = curr;
       acc.push({
-        state: facetValue ? state : 'idle',
-        value: `${type}|${value}`,
+        state: value ? state : 'idle',
+        value: `${type}|${facetValue}`,
       });
       return acc;
     },
