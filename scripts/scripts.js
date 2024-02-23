@@ -307,10 +307,12 @@ function decorateContentSections(main) {
 export function decorateAnchors(main) {
   const anchorIcons = [...main.querySelectorAll(`.icon-headding-anchor`)];
   anchorIcons.forEach((icon) => {
-    const slug = icon.nextSibling.textContent;
+    const slugNode = icon.nextSibling;
+    const slug = slugNode.textContent;
     if (slug) {
       icon.parentElement.id = slug;
       icon.remove();
+      slugNode.remove();
     }
   });
 }
