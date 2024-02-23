@@ -3,7 +3,7 @@ import { createTag, getPathDetails, htmlToElement } from '../scripts.js'; // esl
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 
 const RETRY_LIMIT = 5;
-const RETRY_DELAY = 500;
+const RETRY_DELAY = 1000;
 
 /**
  * Qualtrics feedback survey requires metadata applied to a window variable for eventing
