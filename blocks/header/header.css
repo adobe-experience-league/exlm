@@ -681,8 +681,6 @@ header {
 }
 @container headersection (max-width: 1024px) {
   .header .search {
-    right: 80px;
-    top: 23px;
     padding-right: 0;
   }
 }
