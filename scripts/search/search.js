@@ -1,19 +1,12 @@
-import { htmlToElement, loadIms } from '../scripts.js';
+import { htmlToElement, loadIms, getLanguageCode } from '../scripts.js';
 import SearchDelegate from './search-delegate.js';
 import { searchUrl } from '../urls.js';
 
-// Extracts the language code from the provided URL string
-const extractLanguageCodeFromURL = (urlString) => {
-  const url = new URL(urlString);
-  const pathParts = url.pathname.split('/');
-  const globalIndex = pathParts.indexOf('global');
-  const languageCode = globalIndex !== -1 && globalIndex + 1 < pathParts.length ? pathParts[globalIndex + 1] : 'en';
-  return languageCode;
-};
+// Get language code from URL
+const languageCode = await getLanguageCode();
 
 // Redirects to the search page based on the provided search input and filters
 export const redirectToSearchPage = (searchInput, filters = '') => {
-  const languageCode = extractLanguageCodeFromURL(window.location.href);
   const baseTargetUrl = searchUrl;
   let targetUrlWithLanguage = `${baseTargetUrl}?lang=${languageCode}`;
 
@@ -76,7 +69,7 @@ export default class Search {
     this.searchSuggestionsKeydown = this.onSearchSuggestionsKeydown.bind(this);
     this.searchSuggestionsClick = this.onSearchSuggestionsClick.bind(this);
     this.handleSearchInputClick = this.onSearchInputClick.bind(this);
-    this.handleSearchInputKeyup = this.onSearchInputKeup.bind(this);
+    this.handleSearchInputKeyup = this.onSearchInputKeyup.bind(this);
     this.searchKeydown = this.onSearchInputKeydown.bind(this);
     this.hideSearchSuggestions = this.onHideSearchSuggestions.bind(this);
     this.selectSearchSuggestion = this.handleSearchSuggestion.bind(this);
@@ -261,7 +254,7 @@ export default class Search {
     }
   }
 
-  async onSearchInputKeup(e) {
+  async onSearchInputKeyup(e) {
     const searchText = e.target.value;
     const textIsEmptied = this.searchQuery.length && searchText.length === 0;
     this.searchQuery = e.target.value;
