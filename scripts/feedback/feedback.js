@@ -3,7 +3,7 @@ import { createTag, getPathDetails, htmlToElement } from '../scripts.js'; // esl
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 
 const RETRY_LIMIT = 5;
-const RETRY_DELAY = 1000;
+const RETRY_DELAY = 500;
 
 // fetch fragment html
 const fetchFragment = async (rePath, lang = 'en') => {
@@ -13,6 +13,8 @@ const fetchFragment = async (rePath, lang = 'en') => {
 
 const { lang } = getPathDetails();
 const feedbackFragment = await fetchFragment('feedback-bar/feedback-bar', lang);
+
+export const feedbackDomReady = new Promise();
 
 function decorateFirstQuestion(firstQuestion) {
   const newDiv = createTag('div', { class: 'like-btns' });
@@ -418,7 +420,7 @@ function handleFeedbackSubmit(el) {
   });
 }
 
-export default async function loadFeedbackUi() {
+async function loadFeedbackUi() {
   if (!showFeedbackBar()) return;
 
   loadCSS(`${window.hlx.codeBasePath}/scripts/feedback/feedback.css`);
@@ -434,28 +436,35 @@ export default async function loadFeedbackUi() {
   handleClosingFeedbackBar(fb);
   handleGithubBtns(fb);
   handleFeedbackBarVisibilityOnScroll();
+  feedbackDomReady.resolve(fb);
+}
 
-  let retryCount = 0;
-  // eslint-disable-next-line
-  const interval = setInterval(checkFeedbackInitLoaded, RETRY_DELAY);
+function interceptLoaded(el) {
+  handleFeedbackIcons(el);
+  handleFeedbackSubmit(el);
+}
 
-  function interceptLoaded() {
-    handleFeedbackIcons(fb);
-    handleFeedbackSubmit(fb);
-  }
+let retryCount = 0;
+// eslint-disable-next-line
+let interval;
 
-  function checkFeedbackInitLoaded() {
-    if (document.querySelector('dx-docs-feedback .qualtrics-feedback .QSI__EmbeddedFeedbackContainer_Thumbs')) {
-      clearInterval(interval);
-      interceptLoaded();
-    } else if (retryCount < RETRY_LIMIT) {
-      retryCount += 1;
-    } else {
-      clearInterval(interval);
-      // eslint-disable-next-line no-console
-      console.error("Couldn't embed Qualtrics survey intercept.");
-      showQualtricsLoadingError(fb);
-      toggleFeedbackBar(fb, false);
+export function checkInterceptLoaded(el) {
+  if (document.querySelector('dx-docs-feedback .qualtrics-feedback .QSI__EmbeddedFeedbackContainer_Thumbs')) {
+    clearInterval(interval);
+    interceptLoaded(el);
+  } else if (retryCount < RETRY_LIMIT) {
+    retryCount += 1;
+
+    if (!interval) {
+      interval = setInterval(checkInterceptLoaded, RETRY_DELAY);
     }
+  } else {
+    clearInterval(interval);
+    // eslint-disable-next-line no-console
+    console.error("Couldn't embed Qualtrics survey intercept.");
+    showQualtricsLoadingError(el);
+    toggleFeedbackBar(el, false);
   }
 }
+
+loadFeedbackUi();
