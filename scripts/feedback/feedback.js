@@ -452,7 +452,7 @@ let retryCount = 0;
 let interval;
 
 export function checkInterceptLoaded() {
-  const el = document.querySelector('dx-docs-feedback .qualtrics-feedback');
+  const el = document.querySelector('.feedback-ui');
 
   if (el.querySelector(' .QSI__EmbeddedFeedbackContainer_Thumbs')) {
     clearInterval(interval);
