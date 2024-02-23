@@ -5,11 +5,10 @@ import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/brow
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { CONTENT_TYPES, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
-import SolutionDataService from '../../scripts/data-service/solutions-data-service.js';
-import { solutionsUrl } from '../../scripts/urls.js';
-
 import { roleOptions } from '../browse-filters/browse-filter-utils.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
+// eslint-disable-next-line import/no-cycle
+const ffetchModulePromise = import('../../scripts/ffetch.js');
 
 let placeholders = {};
 try {
@@ -24,9 +23,18 @@ const DEFAULT_OPTIONS = Object.freeze({
   PRODUCT: 'Product',
 });
 
+// Helper function thats returns a list of all Featured Card Products //
+async function getFeaturedCardSolutions() {
+  const ffetch = (await ffetchModulePromise).default;
+  // Load the Featured Card Solution list
+  const solutionList = await ffetch(`/featured-card-products.json`).all();
+  // Gets Values from Column Solution in Featured Card Solution list
+  const solutionValues = solutionList.map((solution) => solution.Solution);
+  return solutionValues;
+}
+
 const handleSolutionsService = async () => {
-  const solutionsService = new SolutionDataService(solutionsUrl);
-  const solutions = await solutionsService.fetchDataFromSource();
+  const solutions = await getFeaturedCardSolutions();
 
   if (!solutions) {
     throw new Error('An error occurred');
@@ -174,7 +182,7 @@ export default async function decorate(block) {
     return filteredResult;
   };
 
-  /* Toogle Card Content and View Info Display for Featured Card Block */
+  /* Toggle Card Content and View Info Display for Featured Card Block */
   const toggleCardInfo = (show) => {
     if (show) {
       block.classList.add('featured-card-hidden-features');
