@@ -5,7 +5,7 @@ export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.
 export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
 export const solution = document.querySelector('meta[name="solution"]')
-  ? document.querySelector('meta[name="solution"]').content.toLowerCase()
+  ? document.querySelector('meta[name="solution"]').content.split(',')[0].toLowerCase()
   : '';
 
 export const type = document.querySelector('meta[name="type"]')
