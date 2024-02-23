@@ -301,18 +301,18 @@ function decorateContentSections(main) {
 }
 
 /**
- * see: https://github.com/adobe-experience-league/exlm-converter/pull/187
+ * see: https://github.com/adobe-experience-league/exlm-converter/pull/208
  * @param {HTMLElement} main
  */
 export function decorateAnchors(main) {
-  const anchorPrefix = 'icon-anchor-';
-  const anchorIcons = [...main.querySelectorAll(`span.icon[class*="${anchorPrefix}"]`)];
+  const anchorIcons = [...main.querySelectorAll(`.icon-headding-anchor`)];
   anchorIcons.forEach((icon) => {
-    const slugClass = icon.className.split(' ').find((c) => c.startsWith(anchorPrefix));
-    const slug = slugClass.substring(anchorPrefix.length);
+    const slugNode = icon.nextSibling;
+    const slug = slugNode.textContent;
     if (slug) {
       icon.parentElement.id = slug;
       icon.remove();
+      slugNode.remove();
     }
   });
 }
