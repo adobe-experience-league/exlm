@@ -301,7 +301,7 @@ function decorateContentSections(main) {
 }
 
 /**
- * see: https://github.com/adobe-experience-league/exlm-converter/pull/187
+ * see: https://github.com/adobe-experience-league/exlm-converter/pull/208
  * @param {HTMLElement} main
  */
 export function decorateAnchors(main) {
