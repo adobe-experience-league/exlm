@@ -1,4 +1,5 @@
 const lang = document.querySelector('html').lang || 'en';
+export const environmentOrigin = window.location.origin;
 export const profileUrl = `https://experienceleague.adobe.com/api/profile?lang=${lang}`;
 export const JWTTokenUrl = `https://experienceleague.adobe.com/api/token?lang=${lang}`;
 export const coveoTokenUrl = `https://experienceleague.adobe.com/api/coveo-token?lang=${lang}`;
@@ -26,3 +27,5 @@ export const tabbedCardViewAllDocumentationLink = `/${lang}/docs`;
 export const tabbedCardViewAllCommunityLink = 'https://experienceleaguecommunities.adobe.com';
 export const tabbedCardViewAllCertificationLink = `/${lang}/docs/certification/program/overview`;
 export const tabbedCardViewAllOnDemandEventsLink = `/events?lang=${lang}#ondemandevents`;
+// Recommended Courses
+export const recommendedCoursesUrl = `${environmentOrigin}/home?lang=${lang}#dashboard/learning`;

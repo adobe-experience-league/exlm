@@ -563,6 +563,19 @@ hr {
   border-bottom: 1px solid var(--overlay-background-color);
 }
 
+em:has(> u),
+em > u {
+  text-decoration: none;
+  font-style: normal;
+  background-color: rgba(255, 255, 0, 0.2);
+  display: inline-block;
+}
+
+em > a > u {
+  background-color: rgba(255, 255, 0, 0.2);
+  display: inline-block;
+}
+
 ul {
   margin-left: 28px;
   list-style-type: disc;

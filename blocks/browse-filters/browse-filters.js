@@ -9,6 +9,7 @@ import {
   getBrowseFiltersResultCount,
   getSelectedTopics,
   getParsedSolutionsQuery,
+  getCoveoFacets,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -253,9 +254,12 @@ function handleTagsClick(block) {
       const coveoFacetKey = coveoFacetMap[name];
       const coveoFacet = window[coveoFacetKey];
       if (coveoFacet) {
-        coveoFacet.toggleSelect({
-          state: 'idle',
-          value,
+        const facets = getCoveoFacets(value, false);
+        facets.forEach(({ state, value: facetValue }) => {
+          coveoFacet.toggleSelect({
+            state,
+            value: facetValue,
+          });
         });
       }
       removeFromTags(block, value);
@@ -286,9 +290,12 @@ function handleCheckboxClick(block, el, options) {
       });
 
       if (coveoFacet) {
-        coveoFacet.toggleSelect({
-          state: 'selected',
-          value,
+        const facets = getCoveoFacets(value, true);
+        facets.forEach(({ state, value: facetValue }) => {
+          coveoFacet.toggleSelect({
+            state,
+            value: facetValue,
+          });
         });
       }
     } else {
@@ -296,9 +303,12 @@ function handleCheckboxClick(block, el, options) {
       removeFromTags(block, value);
 
       if (coveoFacet) {
-        coveoFacet.toggleSelect({
-          state: 'idle',
-          value,
+        const facets = getCoveoFacets(value, false);
+        facets.forEach(({ state, value: facetValue }) => {
+          coveoFacet.toggleSelect({
+            state,
+            value: facetValue,
+          });
         });
       }
     }
@@ -494,20 +504,22 @@ function handleUriHash() {
     if (keyName) {
       const filterOptionEl = browseFiltersSection.querySelector(`.filter-dropdown[data-filter-type="${keyName}"]`);
       if (filterOptionEl) {
-        facetValues.forEach((facetValue) => {
+        facetValues.forEach((facetValueString) => {
+          const [facetValue] = facetValueString.split('|');
           const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
-          const label = inputEl?.dataset.label || '';
-
-          inputEl.checked = true;
-          appendTag(browseFiltersSection, {
-            name: keyName,
-            label,
-            value: facetValue,
-          });
+          if (!inputEl.checked) {
+            const label = inputEl?.dataset.label || '';
+            inputEl.checked = true;
+            appendTag(browseFiltersSection, {
+              name: keyName,
+              label,
+              value: facetValue,
+            });
+          }
         });
         const ddObject = getObjectByName(dropdownOptions, keyName);
         const btnEl = filterOptionEl.querySelector(':scope > button');
-        const selectedCount = facetValues.length;
+        const selectedCount = facetValues.filter((facet) => !facet.includes('|')).length;
         ddObject.selected = selectedCount;
         if (selectedCount === 0) {
           btnEl.firstChild.textContent = keyName;

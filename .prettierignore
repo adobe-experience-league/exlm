@@ -7,7 +7,7 @@ scripts/universal-editor-embedded.js
 scripts/coveo-headless/libs/browser/*
 scripts/preact-htm/**.js
 plugins/rum-conversion/**
-scripts/analytics/alloy.min.js
+scripts/analytics/privacy-standalone.js
 scripts/feedback/qualtrics/qualtrics-embed.js
 scripts/ffetch.js
 sitemap-index.xml
