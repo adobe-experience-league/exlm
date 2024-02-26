@@ -94,6 +94,10 @@
   margin: 0;
 }
 
+.detailed-teaser.block.dark > .foreground > .text > .eyebrow > .subtitle  {
+  color: #ccc;
+}
+
 /* the main title */
 /* stylelint-disable-next-line no-descending-specificity */
 .detailed-teaser.block > .foreground > .text > .title {
