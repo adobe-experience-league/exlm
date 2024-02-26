@@ -2,6 +2,16 @@ import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { exlmCDNUrl, recommendedCoursesUrl } from '../urls.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
+
+/* Update Recommended Courses URL with Course ID */
+const embedCourseID = (url, coursesID) => {
+  const recommendedCourseUrl = new URL(url);
+  const searchParam = new URLSearchParams(recommendedCourseUrl.search);
+  searchParam.set('recommended', coursesID);
+  recommendedCourseUrl.search = searchParam.toString();
+  return recommendedCourseUrl.href;
+};
+
 /**
  * Module that provides functionality for adapting Paths results to BrowseCards data model
  * @module BrowseCardsPathsAdaptor
@@ -24,24 +34,19 @@ const BrowseCardsPathsAdaptor = (() => {
 
   // Function to create view link text based on content type
   const createViewLinkText = (contentType) => {
-    // Redirect to Overview Page if Recommended Course else to Dashboard Page with
     const linkText =
       contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY
         ? placeholders.viewLinkContinueCourse || 'Continue Course'
         : placeholders.viewLinkCourse || 'View Course';
-
-    // Return the generated link text
     return linkText;
   };
 
   // Function to create link URL text based on content type
   const createLinkURL = (contentType, courseID, courseURL) => {
-    // Use conditional (ternary) operator for a more concise code
     const linkURL =
       contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY
-        ? recommendedCoursesUrl.replace('courseId', courseID)
+        ? embedCourseID(recommendedCoursesUrl, courseID)
         : courseURL;
-    // Return the URL based on Content Type
     return linkURL;
   };
 
