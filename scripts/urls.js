@@ -11,7 +11,7 @@ export const solutionsUrl = 'https://experienceleague.adobe.com/api/solutions?pa
 export const tocUrl = 'https://experienceleague.adobe.com/api/tocs/';
 export const pathsUrl = `https://experienceleague.adobe.com/api/paths`;
 export const exlmCDNUrl = 'https://cdn.experienceleague.adobe.com';
-export const recommendedCoursesUrl = `/home?lang=${lang}#dashboard/learning`;
+export const recommendedCoursesUrl = `https://experienceleague.adobe.com/?lang=${lang}#dashboard/learning`;
 // Khoros Proxy URL (Determine the environment based on the host name)
 const environment = window.location.hostname === 'experienceleague.adobe.com' ? '' : '-dev';
 export const khorosProxyProfileAPI = `https://51837-exlmconverter${environment}.adobeioruntime.net/api/v1/web/main/khoros/plugins/custom/adobe/adobedx/profile-menu-list?lang=${lang}`;
