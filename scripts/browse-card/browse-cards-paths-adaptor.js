@@ -2,16 +2,6 @@ import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { exlmCDNUrl, recommendedCoursesUrl } from '../urls.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
-
-/* Update Recommended Courses URL with Course ID */
-const embedCourseID = (url, coursesID) => {
-  const recommendedCourseUrl = new URL(url);
-  const searchParam = new URLSearchParams(recommendedCourseUrl.search);
-  searchParam.set('recommended', coursesID);
-  recommendedCourseUrl.search = searchParam.toString();
-  return recommendedCourseUrl.href;
-};
-
 /**
  * Module that provides functionality for adapting Paths results to BrowseCards data model
  * @module BrowseCardsPathsAdaptor
@@ -43,10 +33,16 @@ const BrowseCardsPathsAdaptor = (() => {
 
   // Function to create link URL text based on content type
   const createLinkURL = (contentType, courseID, courseURL) => {
-    const linkURL =
-      contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY
-        ? embedCourseID(recommendedCoursesUrl, courseID)
-        : courseURL;
+    let linkURL = courseURL;
+    if (contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {
+      const courseUrl = new URL(recommendedCoursesUrl);
+      if (courseID) {
+        const searchParam = new URLSearchParams(courseUrl.search);
+        searchParam.set('recommended', courseID);
+        courseUrl.search = searchParam.toString();
+      }
+      linkURL = courseUrl.href;
+    }
     return linkURL;
   };
 
