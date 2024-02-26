@@ -1,3 +1,5 @@
+import { isDocPage } from '../../scripts/scripts.js';
+
 export function setLevels(val = 2) {
   const selectors = [];
 
@@ -7,6 +9,10 @@ export function setLevels(val = 2) {
   }
 
   for (let i = val; i >= 1; i -= 1) {
+    if (isDocPage('docs-solution-landing') && i + 1 >= 3) {
+      // eslint-disable-next-line no-continue
+      continue; // Skip levels h3, h4, h5, h6 on docs-solution-landing pages
+    }
     selectors.push(`h${i + 1}:not(#lists-documentation)`);
   }
 
