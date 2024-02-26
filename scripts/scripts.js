@@ -178,10 +178,12 @@ function addBrowseRail(main) {
 }
 
 function addBrowseBreadCrumb(main) {
-  // add new section at the top
-  const section = document.createElement('div');
-  main.prepend(section);
-  section.append(buildBlock('browse-breadcrumb', []));
+  if (!main.querySelector('.browse-breadcrumb.block')){
+    // add new section at the top
+    const section = document.createElement('div');
+    main.prepend(section);
+    section.append(buildBlock('browse-breadcrumb', []));
+  }
 }
 
 /**
