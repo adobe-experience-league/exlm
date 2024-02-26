@@ -286,7 +286,7 @@
 
   /* teaser on browse pages has different width for text */
   body[class ^= 'browse-'] .teaser.block > .foreground > .text {
-    width:50%;
+    width:55%;
   }
 
   /* teaser on browse has smaller height no background shift required */
@@ -307,7 +307,7 @@
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
     min-height:240px;
-    padding: 0 var(--space-token-xxl);
+    padding: 0 var(--space-token-xl);
   }
 
   /* the main title, hidden in mobile */
@@ -329,6 +329,13 @@
   }
 }
 
+@media (min-width: 786px) {
+  /* teaser on browse pages has different width for text */
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text {
+    width:60%;
+  }
+}
+
 @media (min-width: 1024px) {
   /* the background image, start align right */
   .teaser.block > .background img {
@@ -342,7 +349,7 @@
   
   /* teaser on browse pages has different width for text */
   body[class ^= 'browse-'] .teaser.block > .foreground > .text {
-    width:65%;
+    width:50%;
   }
 
   /* when shown on a page with a rail 
@@ -358,8 +365,7 @@
 }
 
 @media (min-width: 1200px) {
-  /* when shown on a page with a rail */
-  /* the eybrow title */
+  /* when shown on a page with a rail he eybrow title */
   body:not([class ^= 'browse-']) .teaser.block > .foreground > .text > .eyebrow {
     font-size: var(--spectrum-font-size-100);
   }
@@ -368,9 +374,22 @@
     padding: 0 var(--spectrum-spacing-600);
   }
 
-  /* the main title, hidden in mobile */
+  /* teaser on browse pages has different width for text */
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text {
+    width:60%;
+  }
+
+  /* the main title */
   body:not([class ^= 'browse-']) .teaser.block > .foreground > .text > .title {
     font-size: var(--spectrum-heading-size-xl);
     line-height: 46.8px;
   }
 }
+
+@media (min-width: 1440px) {
+    /* teaser on browse pages has different width for text */
+    body[class ^= 'browse-'] .teaser.block > .foreground > .text {
+      width:70%;
+    }
+  }
+  
