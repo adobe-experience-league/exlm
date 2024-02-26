@@ -18,8 +18,12 @@ function decorateCard(card) {
   if (content.children.length === 4) {
     [time, headding, text, button] = content.children;
   }
+  if (time) {
+    time.classList.add('docs-cards-time');
+    content.removeChild(time);
+    headding.appendChild(time);
+  }
 
-  time?.classList.add('docs-cards-time');
   headding?.classList.add('docs-cards-heading');
   text?.classList.add('docs-cards-text');
   button?.classList.add('docs-cards-button');
