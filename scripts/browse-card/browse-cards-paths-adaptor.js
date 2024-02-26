@@ -24,7 +24,7 @@ const BrowseCardsPathsAdaptor = (() => {
 
   // Function to create view link text based on content type
   const createViewLinkText = (contentType) => {
-    // Redirect to Overview Page if Recommended Course else to Dashboard Page with 
+    // Redirect to Overview Page if Recommended Course else to Dashboard Page with
     const linkText =
       contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY
         ? placeholders.viewLinkContinueCourse || 'Continue Course'
