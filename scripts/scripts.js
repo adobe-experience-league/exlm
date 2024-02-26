@@ -453,7 +453,7 @@ async function loadLazy(doc) {
           console.error('Error getting pageLoadModel:', e);
         });
       localStorage.setItem('prevPage', pageName(lang));
-      const linkClicked = document.querySelectorAll('a,.view-more-less span');
+      const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
       linkClicked.forEach((linkElement) => {
         linkElement.addEventListener('click', (e) => {
           if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
