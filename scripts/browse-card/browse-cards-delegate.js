@@ -142,6 +142,8 @@ const BrowseCardsDelegate = (() => {
     urlSearchParams.append('trainingMethod', 'Live Instructor Courses');
     urlSearchParams.append('pageIndex', '1');
     urlSearchParams.append('learningType', 'catalog');
+    // Need to Revist post Localization for Japanese
+    urlSearchParams.append('language', 'English');
     if (param.solutions) {
       urlSearchParams.append('products', param.solutions);
     }
