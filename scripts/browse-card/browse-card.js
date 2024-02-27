@@ -164,9 +164,9 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText }) => {
       isLeftPlacement = false;
     } else if (
       [
-        CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY,
+        CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
         CONTENT_TYPES.EVENT.MAPPING_KEY,
-        CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY,
+        CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
       ].includes(contentType.toLowerCase())
     ) {
       icon = 'new-tab';
@@ -236,15 +236,15 @@ const buildCardContent = (card, model) => {
   //   cardContent.insertBefore(contributorInfo, cardMeta);
   // }
 
-  if (contentType === CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY) {
+  if (contentType === CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY) {
     buildEventContent({ event, cardContent, card });
   }
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
   if (
-    contentType !== CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY &&
+    contentType !== CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY &&
     contentType !== CONTENT_TYPES.COMMUNITY.MAPPING_KEY &&
-    contentType !== CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY
+    contentType !== CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY
   ) {
     const unAuthBookmark = document.createElement('div');
     unAuthBookmark.className = 'bookmark';
@@ -397,9 +397,9 @@ export async function buildCard(container, element, model) {
     cardContainer.setAttribute('href', model.viewLink);
     if (
       [
-        CONTENT_TYPES.LIVE_EVENTS.MAPPING_KEY,
+        CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
         CONTENT_TYPES.EVENT.MAPPING_KEY,
-        CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY,
+        CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
       ].includes(contentType.toLowerCase())
     ) {
       cardContainer.setAttribute('target', '_blank');

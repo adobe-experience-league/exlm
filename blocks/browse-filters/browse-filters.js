@@ -350,7 +350,7 @@ function appendFormEl(block) {
 }
 
 function addLabel(block) {
-  const labelEl = createTag('label', { class: 'browse-filters-label' }, 'Filters');
+  const labelEl = createTag('label', { class: 'browse-filters-label' }, placeholders.filterLabel);
   appendToFormInputContainer(block, labelEl);
 }
 
@@ -358,7 +358,7 @@ function constructKeywordSearchEl(block) {
   const searchEl = htmlToElement(`
     <div class="filter-input filter-input-search">
       <span class="icon icon-search"></span>
-      <input type="search" placeholder="Keyword search">
+      <input type="search" placeholder="${placeholders.filterKeywordSearch}">
     </div>
   `);
   appendToFormInputContainer(block, searchEl);
@@ -436,7 +436,7 @@ function handleClearFilter(block) {
 
 function constructClearFilterBtn(block) {
   const clearBtn = htmlToElement(`
-    <button class="browse-filters-clear" disabled>Clear filters</button>
+    <button class="browse-filters-clear" disabled>${placeholders.filterClearLabel}Clear filters</button>
   `);
   appendToFormInputContainer(block, clearBtn);
 }

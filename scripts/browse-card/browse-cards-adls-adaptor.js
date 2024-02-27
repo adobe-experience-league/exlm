@@ -22,20 +22,20 @@ const BrowseCardsADLSAdaptor = (() => {
    * @returns {Object} The BrowseCards data model.
    */
   const mapResultToCardsDataModel = (result) => {
-    const contentType = CONTENT_TYPES.INSTRUCTOR_LED_TRANING.MAPPING_KEY;
+    const contentType = CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY;
     const { solution, name, description, path } = result || {};
     const adlsDomain = extractDomain(adlsUrl);
 
     return {
       ...browseCardDataModel,
       contentType,
-      badgeTitle: CONTENT_TYPES.INSTRUCTOR_LED_TRANING.LABEL,
+      badgeTitle: CONTENT_TYPES.INSTRUCTOR_LED.LABEL,
       product: solution && (Array.isArray(solution) ? solution : solution.split(/,\s*/)),
       title: name || '',
       description: description || '',
       copyLink: `${adlsDomain}${path}` || '',
       viewLink: `${adlsDomain}${path}` || '',
-      viewLinkText: placeholders.viewLinkCourse || 'View course',
+      viewLinkText: placeholders.instructorLedViewLabel || 'View course',
     };
   };
 

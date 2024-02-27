@@ -26,8 +26,8 @@ const BrowseCardsPathsAdaptor = (() => {
   const createViewLinkText = (contentType) => {
     const linkText =
       contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY
-        ? placeholders.viewLinkContinueCourse || 'Continue Course'
-        : placeholders.viewLinkCourse || 'View Course';
+        ? placeholders.browseCardCourseContinueLabel || 'Continue Course'
+        : placeholders.browseCardCourseViewLabel || 'View Course';
     return linkText;
   };
 
