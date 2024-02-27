@@ -677,11 +677,11 @@ const isIgnoredDocsPath = (path) =>
   ['/docs/courses/', '/docs/assets/'].some((ignoredPath) => path.startsWith(ignoredPath));
 
 export function rewriteDocsPath(docsPath) {
-  const PROD_BASE = 'https://experienceleague.adobe.com';
-  const url = new URL(docsPath, PROD_BASE);
-  if (!url.startsWith('/docs') || isAssetPath(url) || isIgnoredDocsPath(url)) {
+  if (!docsPath.startsWith('/docs') || isAssetPath(docsPath) || isIgnoredDocsPath(docsPath)) {
     return docsPath; // not a docs path or might be an asset path or ignored path.
   }
+  const PROD_BASE = 'https://experienceleague.adobe.com';
+  const url = new URL(docsPath, PROD_BASE);
   // eslint-disable-next-line no-use-before-define
   const { lang } = getPathDetails();
   const language = url.searchParams.get('lang') || lang;
