@@ -178,7 +178,7 @@ function addBrowseRail(main) {
 }
 
 function addBrowseBreadCrumb(main) {
-  if (!main.querySelector('.browse-breadcrumb.block')){
+  if (!main.querySelector('.browse-breadcrumb.block')) {
     // add new section at the top
     const section = document.createElement('div');
     main.prepend(section);
@@ -664,11 +664,23 @@ export const removeExtension = (pathStr) => {
 // Convert the given String to Pascal Case
 export const toPascalCase = (name) => `${(name || '').charAt(0).toUpperCase()}${name.slice(1)}`;
 
+export function isAssetPath(docsPath) {
+  // A docs asset is any path that has an extension, but that extension is not .html or .md
+  const match = docsPath.match(/\.([a-zA-Z0-9]+)(\?.*)?$/);
+  if (match && match[1] && match[1].toLowerCase() !== 'html' && match[1].toLowerCase() !== 'md') {
+    return true;
+  }
+  return false;
+}
+
+const isIgnoredDocsPath = (path) =>
+  ['/docs/courses/', '/docs/assets/'].some((ignoredPath) => path.startsWith(ignoredPath));
+
 export function rewriteDocsPath(docsPath) {
   const PROD_BASE = 'https://experienceleague.adobe.com';
   const url = new URL(docsPath, PROD_BASE);
-  if (!url.pathname.startsWith('/docs')) {
-    return docsPath; // not a docs path, return as is
+  if (!url.startsWith('/docs') || isAssetPath(url) || isIgnoredDocsPath(url)) {
+    return docsPath; // not a docs path or might be an asset path or ignored path.
   }
   // eslint-disable-next-line no-use-before-define
   const { lang } = getPathDetails();
