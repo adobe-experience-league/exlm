@@ -72,7 +72,8 @@ function hideSectionsBelowFilter(block, show) {
     // eslint-disable-next-line no-plusplus
     for (let i = clickedIndex + 1; i < siblings.length; i++) {
       if (!siblings[i].classList.contains('browse-rail')) {
-        siblings[i].style.display = show ? 'block' : 'none';
+        const classOp = show ? 'remove' : 'add';
+        siblings[i].classList?.[classOp]('browse-hide-section');
       }
     }
   }
