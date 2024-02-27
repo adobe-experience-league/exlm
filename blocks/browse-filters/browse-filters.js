@@ -16,6 +16,7 @@ import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery } from './browse-topics.js';
+import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
 
 const coveoFacetMap = {
   Role: 'headlessRoleFacet',
@@ -802,7 +803,7 @@ function decorateBrowseTopics(block) {
   if (allSolutionsTags.length) {
     const { query: additionalQuery, products } = getParsedSolutionsQuery(allSolutionsTags);
     products.forEach((p) => supportedProducts.push(p));
-    window.headlessBaseSolutionQuery = additionalQuery;
+    window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
   }
 
   const div = document.createElement('div');
@@ -875,6 +876,7 @@ function decorateBrowseTopics(block) {
 }
 
 export default async function decorate(block) {
+  window.headlessBaseSolutionQuery = BASE_COVEO_ADVANCED_QUERY;
   enableTagsAsProxy(block);
   appendFormEl(block);
   constructFilterInputContainer(block);

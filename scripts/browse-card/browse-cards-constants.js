@@ -84,3 +84,5 @@ export const RECOMMENDED_COURSES_CONSTANTS = Object.freeze({
     LABEL: 'Paths',
   },
 });
+
+export const BASE_COVEO_ADVANCED_QUERY = '(@el_contenttype NOT "Community|User")';
