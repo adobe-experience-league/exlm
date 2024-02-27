@@ -36,5 +36,8 @@ function decorateCard(card) {
  * @param {HTMLDivElement} block
  */
 export default function decorate(block) {
+  if (block.children.length < 3) {
+    block.classList.add('docs-cards-two-card-layout');
+  }
   [...block.children].forEach(decorateCard);
 }
