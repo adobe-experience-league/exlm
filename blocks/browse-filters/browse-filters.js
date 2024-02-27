@@ -520,7 +520,13 @@ function handleUriHash() {
         });
         const ddObject = getObjectByName(dropdownOptions, keyName);
         const btnEl = filterOptionEl.querySelector(':scope > button');
-        const selectedCount = facetValues.filter((facet) => !facet.includes('|')).length;
+        const selectedCount = facetValues.reduce((acc, curr) => {
+          const [key] = curr.split('|');
+          if (!acc.includes(key)) {
+            acc.push(key);
+          }
+          return acc;
+        }, []).length;
         ddObject.selected = selectedCount;
         if (selectedCount === 0) {
           btnEl.firstChild.textContent = keyName;
