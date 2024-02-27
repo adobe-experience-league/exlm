@@ -906,6 +906,7 @@ header {
   line-height: 17px;
   padding: 10px 0 8px 10px;
   width: 100%;
+  text-wrap: wrap;
 }
 .header .signed-in .profile a[data-id=sign-out] {
   border-top: 0 none;
@@ -925,6 +926,7 @@ header {
     border-radius: 0;
     margin: 0 0 0 20px;
     padding: 9px 0;
+    max-width: 150px;
   }
 }
 @media (min-width: 1024px) {

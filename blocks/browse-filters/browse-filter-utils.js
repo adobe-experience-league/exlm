@@ -243,20 +243,12 @@ export const getCoveoFacets = (type, value) => {
       },
     ];
   }
-  return subFacets.reduce(
-    (acc, curr) => {
-      const { value: facetValue, state } = curr;
-      acc.push({
-        state: value ? state : 'idle',
-        value: `${type}|${facetValue}`,
-      });
-      return acc;
-    },
-    [
-      {
-        state: 'idle',
-        value: type,
-      },
-    ],
-  );
+  return subFacets.reduce((acc, curr) => {
+    const { value: facetValue, state } = curr;
+    acc.push({
+      state: value ? state : 'idle',
+      value: `${type}|${facetValue}`,
+    });
+    return acc;
+  }, []);
 };
