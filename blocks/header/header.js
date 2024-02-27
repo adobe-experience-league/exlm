@@ -65,10 +65,26 @@ function registerHeaderResizeHandler(callback) {
   callback();
 }
 
+const communityLocalesMap = new Map([
+  ['de', 'de'],
+  ['en', 'en'],
+  ['ja', 'ja'],
+  ['fr', 'fr'],
+  ['es', 'es'],
+  ['pt-br', 'pt'],
+  ['ko', 'ko'],
+  ['sv', 'en'],
+  ['nl', 'en'],
+  ['it', 'en'],
+  ['zh-hans', 'en'],
+  ['zh-hant', 'en'],
+]);
+
 // eslint-disable-next-line
 async function fetchCommunityProfileData() {
+  const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
   try {
-    const response = await fetch(khorosProxyProfileAPI, {
+    const response = await fetch(`${khorosProxyProfileAPI}?lang=${locale}`, {
       method: 'GET',
       headers: {
         'x-ims-token': await window.adobeIMS?.getAccessToken().token,
