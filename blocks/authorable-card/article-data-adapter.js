@@ -1,18 +1,21 @@
 import { rewriteDocsPath } from '../../scripts/scripts.js';
 
 function createThumbnailURL(result) {
-  let thumbnail = '';
   if (result.contentType === 'Course') {
-    [, thumbnail] = result['Full Meta'].match(/course-thumbnail: (.*)/);
+    const thumbnail = result['Full Meta']?.split('\ncourse-thumbnail: ')[1]?.split('\n')[0];
     return thumbnail ? `https://cdn.experienceleague.adobe.com/thumb/${thumbnail.split('thumb/')[1]}` : '';
   }
 
   if (result.contentType === 'Tutorial') {
-    const videoUrl = result['Full Body'].match(/embedded-video src\s*=\s*['"]?([^'"]*)['"]?/);
-    result.videoId = videoUrl ? videoUrl[1].match(/\/v\/([^/]*)[/,?,#]/)[1] : null;
-    thumbnail = result.videoId ? `https://video.tv.adobe.com/v/${result.videoId}?format=jpeg` : '';
+    const videoUrl = result['Full Body']
+      ?.split('embedded-video src=')[1]
+      ?.split(' ')[0]
+      .replaceAll('"', '')
+      .replaceAll("'", '');
+    const videoId = videoUrl?.split('/v/')[1]?.split('#')[0].split('?')[0].split('/')[0];
+    return videoId ? `https://video.tv.adobe.com/v/${videoId}?format=jpeg` : '';
   }
-  return thumbnail;
+  return '';
 }
 
 export default async function mapResultToCardsData(result, placeholders) {
