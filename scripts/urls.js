@@ -1,4 +1,4 @@
-const lang = document.querySelector('html').lang || 'en';
+export const lang = document.querySelector('html').lang || 'en';
 export const environmentOrigin = window.location.origin;
 export const profileUrl = `https://experienceleague.adobe.com/api/profile?lang=${lang}`;
 export const JWTTokenUrl = `https://experienceleague.adobe.com/api/token?lang=${lang}`;

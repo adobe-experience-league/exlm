@@ -5,7 +5,7 @@ import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
 import BrowseCardsLiveEventsAdaptor from './browse-cards-live-events-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
 import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
-import { coveoSearchResultsUrl, liveEventsUrl, adlsUrl, pathsUrl } from '../urls.js';
+import { coveoSearchResultsUrl, liveEventsUrl, adlsUrl, pathsUrl, lang } from '../urls.js';
 import PathsDataService from '../data-service/paths-data-service.js';
 /**
  * @module BrowseCardsDelegate
@@ -138,12 +138,12 @@ const BrowseCardsDelegate = (() => {
    * @private
    */
   const constructADLSSearchParams = () => {
+    const languageParamValue = lang === 'ja' ? 'Japanese' : 'English';
     const urlSearchParams = new URLSearchParams();
     urlSearchParams.append('trainingMethod', 'Live Instructor Courses');
     urlSearchParams.append('pageIndex', '1');
     urlSearchParams.append('learningType', 'catalog');
-    // Need to Revist post Localization for Japanese
-    urlSearchParams.append('language', 'English');
+    urlSearchParams.append('language', languageParamValue);
     if (param.solutions) {
       urlSearchParams.append('products', param.solutions);
     }
