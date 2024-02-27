@@ -5,8 +5,9 @@ import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
 import BrowseCardsLiveEventsAdaptor from './browse-cards-live-events-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
 import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
-import { coveoSearchResultsUrl, liveEventsUrl, adlsUrl, pathsUrl, lang } from '../urls.js';
+import { coveoSearchResultsUrl, liveEventsUrl, adlsUrl, pathsUrl } from '../urls.js';
 import PathsDataService from '../data-service/paths-data-service.js';
+import { getPathDetails } from '../scripts.js';
 /**
  * @module BrowseCardsDelegate
  * @description A module that handles the delegation of fetching card data based on content types.
@@ -138,6 +139,7 @@ const BrowseCardsDelegate = (() => {
    * @private
    */
   const constructADLSSearchParams = () => {
+    const { lang } = getPathDetails();
     const languageParamValue = lang === 'ja' ? 'Japanese' : 'English';
     const urlSearchParams = new URLSearchParams();
     urlSearchParams.append('trainingMethod', 'Live Instructor Courses');
