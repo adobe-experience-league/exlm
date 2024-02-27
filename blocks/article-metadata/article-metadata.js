@@ -1,4 +1,4 @@
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   let placeholders = {};
@@ -16,7 +16,7 @@ export default async function decorate(block) {
   const lastUpdateISO = new Date(lastUpdateDate).toISOString();
   const date = new Date(lastUpdateISO);
   const formatOptions = { month: 'long', day: 'numeric', year: 'numeric' };
-  // FIXME: Revisit this implementation and add support for multiple locales
-  const formattedDate = date.toLocaleDateString('en-US', formatOptions);
+  const { lang } = getPathDetails();
+  const formattedDate = date.toLocaleDateString(lang, formatOptions);
   lastUpdateElement.innerHTML = `${placeholders?.lastUpdate} ${formattedDate}`;
 }
