@@ -667,7 +667,7 @@ export const toPascalCase = (name) => `${(name || '').charAt(0).toUpperCase()}${
 export function rewriteDocsPath(docsPath) {
   const PROD_BASE = 'https://experienceleague.adobe.com';
   const url = new URL(docsPath, PROD_BASE);
-  if (!url.pathname.startsWith('/docs')) {
+  if (!url.pathname.startsWith('/docs') || url.pathname.startsWith('/docs/courses/')) {
     return docsPath; // not a docs path, return as is
   }
   // eslint-disable-next-line no-use-before-define
