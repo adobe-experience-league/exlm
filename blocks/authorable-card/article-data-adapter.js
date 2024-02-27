@@ -8,13 +8,13 @@ function createThumbnailURL(result) {
   }
 
   if (result.contentType === 'Tutorial') {
-    const urlString = result['Full Body']
-      ?.split('embedded-video src=')[1]
-      ?.split(' ')[0]
-      .replaceAll('"', '')
-      .replaceAll("'", '');
+    const parser = new DOMParser();
+    const urlString = parser
+      .parseFromString(result['Full Body'], 'text/html')
+      ?.querySelector('iframe')
+      ?.getAttribute('src');
     const videoUrl = urlString ? new URL(urlString) : null;
-    const videoId = videoUrl.pathname?.split('/v/')[1]?.split('/')[0];
+    const videoId = videoUrl?.pathname?.split('/v/')[1]?.split('/')[0];
     return videoId ? `https://video.tv.adobe.com/v/${videoId}?format=jpeg` : '';
   }
   return '';
