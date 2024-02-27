@@ -33,6 +33,7 @@
     position: absolute;
     right: 0;
     top: 0;
+    border-radius: 4px 4px 0 0;
 }
 
 .docs-cards-content {
@@ -69,6 +70,14 @@
 @media (min-width: 600px) {
     .docs-cards {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .docs-cards.docs-cards-two-card-layout {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .docs-cards.docs-cards-two-card-layout .docs-cards-card {
+        padding: 16px;
     }
 }
 
