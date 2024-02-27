@@ -436,7 +436,7 @@ function handleClearFilter(block) {
 
 function constructClearFilterBtn(block) {
   const clearBtn = htmlToElement(`
-    <button class="browse-filters-clear" disabled>${placeholders.filterClearLabel}Clear filters</button>
+    <button class="browse-filters-clear" disabled>${placeholders.filterClearLabel}</button>
   `);
   appendToFormInputContainer(block, clearBtn);
 }
@@ -769,7 +769,7 @@ function renderSortContainer(block) {
   const wrapper = block.querySelector('.browse-filters-form .browse-filters-results-header');
   const sortContainer = document.createElement('div');
   sortContainer.classList.add('sort-container');
-  sortContainer.innerHTML = `<span>Sort</span>
+  sortContainer.innerHTML = `<span>${placeholders.filterSortLabel}</span>
                   <button class="sort-drop-btn">Relevance</button>`;
 
   wrapper.appendChild(sortContainer);

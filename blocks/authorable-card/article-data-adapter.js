@@ -36,8 +36,8 @@ export default async function mapResultToCardsData(result, placeholders) {
     copyLink: result.URL,
     bookmarkLink: '',
     viewLink: rewriteDocsPath(result.URL),
-    viewLinkText: placeholders[`browseCard${convertToTitleCase(result?.contentType)}viewLabel`]
-      ? placeholders[`browseCard${convertToTitleCase(result?.contentType)}viewLabel`]
+    viewLinkText: placeholders[`browseCard${convertToTitleCase(result?.contentType)}ViewLabel`]
+      ? placeholders[`browseCard${convertToTitleCase(result?.contentType)}ViewLabel`]
       : `View ${result?.contentType}`,
   };
 }
