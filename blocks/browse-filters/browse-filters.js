@@ -16,6 +16,7 @@ import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery } from './browse-topics.js';
+import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
 
 const coveoFacetMap = {
   Role: 'headlessRoleFacet',
@@ -71,7 +72,8 @@ function hideSectionsBelowFilter(block, show) {
     // eslint-disable-next-line no-plusplus
     for (let i = clickedIndex + 1; i < siblings.length; i++) {
       if (!siblings[i].classList.contains('browse-rail')) {
-        siblings[i].style.display = show ? 'block' : 'none';
+        const classOp = show ? 'remove' : 'add';
+        siblings[i].classList?.[classOp]('browse-hide-section');
       }
     }
   }
@@ -519,7 +521,13 @@ function handleUriHash() {
         });
         const ddObject = getObjectByName(dropdownOptions, keyName);
         const btnEl = filterOptionEl.querySelector(':scope > button');
-        const selectedCount = facetValues.filter((facet) => !facet.includes('|')).length;
+        const selectedCount = facetValues.reduce((acc, curr) => {
+          const [key] = curr.split('|');
+          if (!acc.includes(key)) {
+            acc.push(key);
+          }
+          return acc;
+        }, []).length;
         ddObject.selected = selectedCount;
         if (selectedCount === 0) {
           btnEl.firstChild.textContent = keyName;
@@ -802,7 +810,7 @@ function decorateBrowseTopics(block) {
   if (allSolutionsTags.length) {
     const { query: additionalQuery, products } = getParsedSolutionsQuery(allSolutionsTags);
     products.forEach((p) => supportedProducts.push(p));
-    window.headlessBaseSolutionQuery = additionalQuery;
+    window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
   }
 
   const div = document.createElement('div');
@@ -875,6 +883,7 @@ function decorateBrowseTopics(block) {
 }
 
 export default async function decorate(block) {
+  window.headlessBaseSolutionQuery = BASE_COVEO_ADVANCED_QUERY;
   enableTagsAsProxy(block);
   appendFormEl(block);
   constructFilterInputContainer(block);
