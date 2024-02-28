@@ -2,14 +2,48 @@ import ffetch from '../../scripts/ffetch.js';
 import { getMetadata } from '../../scripts/lib-franklin.js';
 import { browseMoreProductsLink } from '../../scripts/urls.js';
 import { filterSubPages, convertToMultiMap, convertToULList, sortFirstLevelList } from './browse-rail-utils.js';
-import { getEDSLink, getLink, getProducts, getPathDetails, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { getEDSLink, getLink, getPathDetails, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
+/**
+ * Helper function thats returns a list of all products
+ * - below <lang>/browse/<product-page>
+ * - To get added, the product page must be published
+ * - Product pages listed in <lang>/browse/top-products are put at the the top
+ *   in the order they appear in top-products
+ * - the top product list can point to sub product pages
+ */
+export async function getProducts() {
+  // get language
+  const { lang } = getPathDetails();
+  // load the <lang>/top_product list
+  const topProducts = await ffetch(`/${lang}/top-products.json`).all();
+  // get all indexed pages below <lang>/browse
+  const publishedPages = await ffetch(`/${lang}/browse-index.json`).all();
+
+  // add all published top products to final list
+  const finalProducts = topProducts.filter((topProduct) => {
+    // check if top product is in published list
+    const found = publishedPages.find((elem) => elem.path === topProduct.path);
+    if (found) {
+      // keep original title if no nav title is set
+      if (!topProduct.title) topProduct.title = found.title;
+      // set marker for featured product
+      topProduct.featured = true;
+      // remove it from publishedProducts list
+      publishedPages.splice(publishedPages.indexOf(found), 1);
+      return true;
+    }
+    return false;
+  });
+
+  // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
+  const publishedMainProducts = publishedPages
+    .filter((page) => page.path.split('/').length === 4)
+    // sort alphabetically
+    .sort((productA, productB) => productA.path.localeCompare(productB.path));
+  // append remaining published products to final list
+  finalProducts.push(...publishedMainProducts);
+  return finalProducts;
 }
 
 // Utility function to toggle visibility of items
@@ -65,7 +99,7 @@ function handleViewLessClick(block, numFeaturedProducts) {
   setLinkVisibility(block, '.viewLessLink', false);
 }
 
-async function displayAllProducts(block) {
+async function displayAllProducts(block, placeholders) {
   const productList = await getProducts();
 
   if (productList.length > 0) {
@@ -117,7 +151,7 @@ async function displayAllProducts(block) {
 export default async function decorate(block) {
   const theme = getMetadata('theme');
   const label = getMetadata('og:title');
-
+  const placeholders = await fetchLanguagePlaceholders();
   const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
   const currentPagePath = getEDSLink(window.location.pathname);
 
@@ -139,7 +173,7 @@ export default async function decorate(block) {
     browseByUL.append(browseByLI);
     block.append(browseByUL);
     // Show All Products
-    await displayAllProducts(block);
+    await displayAllProducts(block, placeholders);
   }
 
   // For Browse Product Pages

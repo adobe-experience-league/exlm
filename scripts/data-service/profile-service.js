@@ -35,8 +35,12 @@ export async function profileAttributes() {
 }
 
 export async function isSignedInUser() {
-  await loadIms();
-  return window?.adobeIMS?.isSignedInUser() || false;
+  try {
+    await loadIms();
+    return window?.adobeIMS?.isSignedInUser() || false;
+  } catch (err) {
+    return false;
+  }
 }
 
 // eslint-disable-next-line
