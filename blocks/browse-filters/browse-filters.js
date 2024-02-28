@@ -770,7 +770,7 @@ function renderSortContainer(block) {
   const sortContainer = document.createElement('div');
   sortContainer.classList.add('sort-container');
   sortContainer.innerHTML = `<span>${placeholders.filterSortLabel}</span>
-                  <button class="sort-drop-btn">Relevance</button>`;
+                  <button class="sort-drop-btn">${placeholders.filterSortRelevanceLabel}</button>`;
 
   wrapper.appendChild(sortContainer);
 
