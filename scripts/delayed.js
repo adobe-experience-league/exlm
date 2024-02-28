@@ -34,6 +34,7 @@ function oneTrust() {
 }
 
 oneTrust();
+window.adobeDataLayer = [];
 const { lang } = getPathDetails();
 document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
   e.preventDefault();
