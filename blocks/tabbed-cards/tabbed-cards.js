@@ -6,23 +6,23 @@ import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-const
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import {
-  tabbedCardViewAllTroubleshootingLink,
   tabbedCardViewAllCoursesLink,
   tabbedCardViewAllTutorialsLink,
   tabbedCardViewAllDocumentationLink,
+  tabbedCardViewAllTroubleshootingLink,
+  tabbedCardViewAllOnDemandEventsLink,
   tabbedCardViewAllCommunityLink,
   tabbedCardViewAllCertificationLink,
-  tabbedCardViewAllOnDemandEventsLink,
 } from '../../scripts/urls.js';
 
 const urlMap = {
-  Troubleshooting: tabbedCardViewAllTroubleshootingLink,
-  Courses: tabbedCardViewAllCoursesLink,
-  Tutorials: tabbedCardViewAllTutorialsLink,
-  Documentation: tabbedCardViewAllDocumentationLink,
-  Community: tabbedCardViewAllCommunityLink,
-  Certification: tabbedCardViewAllCertificationLink,
-  OnDemandEvents: tabbedCardViewAllOnDemandEventsLink,
+  course: tabbedCardViewAllCoursesLink,
+  tutorial: tabbedCardViewAllTutorialsLink,
+  documentation: tabbedCardViewAllDocumentationLink,
+  troubleshooting: tabbedCardViewAllTroubleshootingLink,
+  event: tabbedCardViewAllOnDemandEventsLink,
+  community: tabbedCardViewAllCommunityLink,
+  certification: tabbedCardViewAllCertificationLink,
 };
 
 /**
@@ -32,10 +32,10 @@ const urlMap = {
 export default async function decorate(block) {
   // Extracting elements from the block
   const [headingElement, toolTipElement, ...configs] = [...block.children].map((row) => row.firstElementChild);
-  const [contentTypeListContent, sortByContent] = configs.map((cell) => cell.textContent.trim().toLowerCase());
+  const [contentTypeText, sortByContent] = configs.map((cell) => cell.textContent.trim().toLowerCase());
 
   const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase()];
-  const tabsLabels = contentTypeListContent.split(',');
+  const contentTypeList = contentTypeText.split(',');
   const numberOfResults = 4;
   let buildCardsShimmer = '';
   let contentDiv = '';
@@ -71,7 +71,7 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   // Authored Initial Content type
-  const initialContentType = tabsLabels[0];
+  const initialContentType = contentTypeList[0].toLowerCase();
 
   if (initialContentType !== null && initialContentType !== '') {
     // Create content div and shimmer card parent
@@ -147,10 +147,12 @@ export default async function decorate(block) {
     tabList = document.createElement('div');
     tabList.classList.add('tabbed-cards-label');
     const tabListUlElement = document.createElement('ul');
-    tabsLabels.forEach((tabLabelData) => {
-      // Create individual tab labels and attach click event listener
+    contentTypeList.forEach((contentType) => {
+      const contentTypeLowerCase = contentType.toLowerCase();
+      const contentTypeTitleCase = convertToTitleCaseAndRemove(contentType);
       const tabLabel = document.createElement('li');
-      tabLabel.textContent = placeholders[`${tabLabelData}LabelKey`];
+      tabLabel.textContent = placeholders[`tabbedCard${contentTypeTitleCase}TabLabel`];
+      // Create individual tab labels and attach click event listener
       tabLabel.addEventListener('click', () => {
         // Clear Existing Label
         const tabLabelsListElements = block.querySelectorAll('.tabbed-cards-label ul li');
@@ -170,12 +172,11 @@ export default async function decorate(block) {
           noResultsContent.remove();
         }
         // Update view link and fetch/render data for the selected tab
-        const viewLinkMappingKey = placeholders[`${tabLabelData}LabelKey`];
-        viewLinkURLElement.innerHTML = placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkMappingKey)}`];
-        viewLinkURLElement.setAttribute('href', urlMap[`${convertToTitleCaseAndRemove(viewLinkMappingKey)}`]);
+        viewLinkURLElement.innerHTML = placeholders[`tabbedCard${contentTypeTitleCase}ViewAllLabel`] || 'View All';
+        viewLinkURLElement.setAttribute('href', urlMap[contentTypeLowerCase]);
         tabList.appendChild(viewLinkURLElement);
         buildCardsShimmer.add(block);
-        fetchDataAndRenderBlock(tabLabelData, block);
+        fetchDataAndRenderBlock(contentTypeLowerCase, block);
       });
       tabListUlElement.appendChild(tabLabel);
       // Append tab label to the tab list
@@ -193,11 +194,11 @@ export default async function decorate(block) {
     const shimmerClass = block.querySelector('.browse-card-shimmer');
     block.insertBefore(tabList, shimmerClass);
     buildCardsShimmer.add(block);
-    const viewLinkInitialMappingKey = placeholders[`${initialContentType}LabelKey`];
 
     // Update view link for initial content type
-    viewLinkURLElement.innerHTML = placeholders[`viewAll${convertToTitleCaseAndRemove(viewLinkInitialMappingKey)}`];
-    viewLinkURLElement.setAttribute('href', urlMap[`${convertToTitleCaseAndRemove(viewLinkInitialMappingKey)}`]);
+    viewLinkURLElement.innerHTML =
+      placeholders[`tabbedCard${convertToTitleCaseAndRemove(initialContentType)}ViewAllLabel`] || 'View All';
+    viewLinkURLElement.setAttribute('href', urlMap[initialContentType]);
     tabList.appendChild(viewLinkURLElement);
     tabList.children[0].children[0].classList.add('active');
 

@@ -1,5 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { htmlToElement, loadIms, getPathDetails } from '../../scripts/scripts.js';
+import { htmlToElement, loadIms, getPathDetails, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { khorosProxyProfileAPI } from '../../scripts/urls.js';
 
 const languageModule = import('../../scripts/language.js');
@@ -30,6 +30,14 @@ export const debounce = (ms, fn) => {
     timer = setTimeout(fn(args), ms);
   };
 };
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 /**
  * Register page resize handler
@@ -65,10 +73,26 @@ function registerHeaderResizeHandler(callback) {
   callback();
 }
 
+const communityLocalesMap = new Map([
+  ['de', 'de'],
+  ['en', 'en'],
+  ['ja', 'ja'],
+  ['fr', 'fr'],
+  ['es', 'es'],
+  ['pt-br', 'pt'],
+  ['ko', 'ko'],
+  ['sv', 'en'],
+  ['nl', 'en'],
+  ['it', 'en'],
+  ['zh-hans', 'en'],
+  ['zh-hant', 'en'],
+]);
+
 // eslint-disable-next-line
 async function fetchCommunityProfileData() {
+  const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
   try {
-    const response = await fetch(khorosProxyProfileAPI, {
+    const response = await fetch(`${khorosProxyProfileAPI}?lang=${locale}`, {
       method: 'GET',
       headers: {
         'x-ims-token': await window.adobeIMS?.getAccessToken().token,
@@ -461,6 +485,7 @@ const searchDecorator = async (searchBlock) => {
     const searchItem = new Search({ searchBlock });
     searchItem.configureAutoComplete({
       searchOptions: options,
+      initialSearchSuggestions: false,
     });
   };
   prepareSearch();
@@ -664,9 +689,11 @@ const profileMenuDecorator = async (profileMenuBlock) => {
     });
     const profileMenuWrapper = document.querySelector('.profile-menu');
     const communityHeading = document.createElement('h2');
-    communityHeading.textContent = 'Community';
+    communityHeading.textContent = placeholders?.headerCommunityLabel || 'Community';
     if (profileMenuWrapper) {
-      profileMenuWrapper.innerHTML = `<h2>Learning</h2>${profileMenuBlock.innerHTML}`;
+      profileMenuWrapper.innerHTML = `<h2>${placeholders?.headerLearningLabel || 'Learning'}</h2>${
+        profileMenuBlock.innerHTML
+      }`;
       profileMenuWrapper.lastElementChild.setAttribute('data-id', 'sign-out');
       profileMenuWrapper.insertBefore(communityHeading, profileMenuWrapper.lastElementChild);
     }

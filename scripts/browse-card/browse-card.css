@@ -329,8 +329,8 @@
 .browse-card.event-card .browse-card-banner {
   background-color: var(--non-spectrum-darker-princess-pink);
 }
-.browse-card.live-events-card .browse-card-banner {
-  background-color: var(--non-spectrum-dark-princess-pink)
+.browse-card.live-event-card .browse-card-banner {
+  background-color: var(--non-spectrum-dark-princess-pink);
 }
 .browse-card.certificate-card .browse-card-banner,
 .browse-card.certification-card .browse-card-banner {

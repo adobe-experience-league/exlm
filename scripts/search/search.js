@@ -49,7 +49,7 @@ export default class Search {
     }
   }
 
-  configureAutoComplete({ searchOptions }) {
+  configureAutoComplete({ searchOptions, initialSearchSuggestions = true }) {
     this.searchOptions = searchOptions || [];
     const [firstOption = ''] = this.searchOptions;
     this.selectedSearchOption = firstOption;
@@ -75,7 +75,7 @@ export default class Search {
     this.selectSearchSuggestion = this.handleSearchSuggestion.bind(this);
     this.savedDefaultSuggestions = null;
     this.setupAutoCompleteEvents();
-    this.callbackFn = this.fetchInitialSuggestions;
+    this.callbackFn = initialSearchSuggestions ? this.fetchInitialSuggestions : null;
   }
 
   setupAutoCompleteEvents() {
