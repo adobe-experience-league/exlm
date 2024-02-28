@@ -3,15 +3,13 @@ import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.
 import { createTooltip } from './browse-card-tooltip.js';
 import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import loadJWT from '../auth/jwt.js';
-import { adobeIMS, profile } from '../data-service/profile-service.js';
+import { isSignedInUser, profile } from '../data-service/profile-service.js';
 import { tooltipTemplate } from '../toast/toast.js';
 import renderBookmark from '../bookmark/bookmark.js';
 import attachCopyLink from '../copy-link/copy-link.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
 loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
-
-const isSignedIn = adobeIMS?.isSignedInUser();
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -183,7 +181,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText }) => {
 
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
-const buildCardContent = (card, model) => {
+const buildCardContent = async (card, model) => {
   const {
     id,
     description,
@@ -253,6 +251,7 @@ const buildCardContent = (card, model) => {
     const authBookmark = document.createElement('div');
     authBookmark.className = 'bookmark auth';
     authBookmark.innerHTML = tooltipTemplate('bookmark-icon', '', `${placeholders.bookmarkAuthLabelSet}`);
+    const isSignedIn = await isSignedInUser();
     if (isSignedIn) {
       cardOptions.appendChild(authBookmark);
       if (id) {
@@ -389,7 +388,7 @@ export async function buildCard(container, element, model) {
     titleElement.textContent = title;
     cardContent.appendChild(titleElement);
   }
-  buildCardContent(card, model);
+  await buildCardContent(card, model);
   setupBookmarkAction(card);
   setupCopyAction(card);
   if (model.viewLink) {
