@@ -724,23 +724,21 @@ export async function getProducts() {
 
 export async function fetchLanguagePlaceholders() {
   const { lang } = getPathDetails();
-  let placeholdersData = '';
-
   try {
     // Try fetching placeholders with the specified language
-    placeholdersData = await fetchPlaceholders(`/${lang}`);
+    return await fetchPlaceholders(`/${lang}`);
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(`Error fetching placeholders for lang: ${lang}`, error);
+    console.error(`Error fetching placeholders for lang: ${lang}. Will try to get en placeholders`, error);
     // Retry without specifying a language (using the default language)
     try {
-      placeholdersData = await fetchPlaceholders('/en');
+      return await fetchPlaceholders('/en');
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);
     }
   }
-  return placeholdersData;
+  return {}; // default to empty object
 }
 
 export async function getLanguageCode() {
