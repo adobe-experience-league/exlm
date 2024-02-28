@@ -9,7 +9,8 @@ export default function decorate(block) {
   const firstCell = firstRow?.firstElementChild;
   const secondCell = firstRow?.children?.length >= 1 ? firstRow?.children[1] : null;
   const wrapperId = firstCell.textContent;
-  const childIds = Array.from(secondCell?.children)?.map((child) => child.textContent) || [];
+
+  const childIds = secondCell?.children ? Array.from(secondCell?.children)?.map((child) => child.textContent) : [];
 
   const replacement = htmlToElement(`
     <div id="${wrapperId}">
