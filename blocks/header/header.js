@@ -1,10 +1,13 @@
+import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { htmlToElement, loadIms, getPathDetails, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { khorosProxyProfileAPI } from '../../scripts/urls.js';
+import { htmlToElement, getPathDetails, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 const languageModule = import('../../scripts/language.js');
 const authOperationsModule = import('../../scripts/auth/auth-operations.js');
 const searchModule = import('../../scripts/search/search.js');
+// Khoros Proxy URL (Determine the environment based on the host name)
+const environment = window.location.hostname === 'experienceleague.adobe.com' ? '' : '-dev';
+export const khorosProxyProfileAPI = `https://51837-exlmconverter${environment}.adobeioruntime.net/api/v1/web/main/khoros/plugins/custom/adobe/adobedx/profile-menu-list`;
 
 class Deferred {
   constructor() {
@@ -174,17 +177,6 @@ const brandDecorator = (brandBlock) => {
   brandBlock.replaceChildren(brandLink);
   return brandBlock;
 };
-
-window.adobeIMS = window.adobeIMS || {
-  isSignedInUser: () => false,
-};
-try {
-  await loadIms();
-} catch {
-  // eslint-disable-next-line no-console
-  console.warn('Adobe IMS not available.');
-}
-const isSignedIn = window.adobeIMS?.isSignedInUser();
 
 /**
  * Function to toggle the navigation menu.
@@ -404,7 +396,7 @@ const navDecorator = async (navBlock) => {
 
   navBlock.firstChild.id = hamburger.getAttribute('aria-controls');
   navBlock.prepend(hamburger);
-
+  const isSignedIn = await isSignedInUser();
   if (!isSignedIn) {
     // hide auth-only nav items - see decorateLinks method for details
     [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
@@ -497,8 +489,9 @@ const searchDecorator = async (searchBlock) => {
  * Decorates the sign-up block
  * @param {HTMLElement} signUpBlock
  */
-const signUpDecorator = (signUpBlock) => {
+const signUpDecorator = async (signUpBlock) => {
   simplifySingleCellBlock(signUpBlock);
+  const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
     signUpBlock.style.display = 'none';
   } else {
@@ -544,6 +537,7 @@ const languageDecorator = async (languageBlock) => {
 
 const signInDecorator = async (signInBlock) => {
   simplifySingleCellBlock(signInBlock);
+  const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
     signInBlock.classList.add('signed-in');
     signInBlock.replaceChildren(
@@ -623,6 +617,7 @@ const signInDecorator = async (signInBlock) => {
 
 const productGridDecorator = async (productGridBlock) => {
   simplifySingleCellBlock(productGridBlock);
+  const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
     productGridBlock.classList.add('signed-in');
     const productDropdown = document.createElement('div');
@@ -680,6 +675,7 @@ const productGridDecorator = async (productGridBlock) => {
  */
 
 const profileMenuDecorator = async (profileMenuBlock) => {
+  const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
     simplifySingleCellBlock(profileMenuBlock);
     profileMenuBlock.querySelectorAll('p').forEach((ptag) => {
