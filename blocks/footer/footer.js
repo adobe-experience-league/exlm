@@ -99,7 +99,7 @@ function decorateBreadcrumb(footer) {
     breadCrumb.parentElement.classList.add('footer-container');
   }
   const para = breadCrumb.querySelector('p');
-  if (para) {
+  if (para && para.parentElement) {
     para.parentElement.classList.add('footer-breadcrumb-item-wrapper');
   }
   Array.from(breadCrumb.querySelectorAll('a')).forEach((a) => {
