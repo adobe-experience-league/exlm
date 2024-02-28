@@ -1,5 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { htmlToElement, loadIms, getPathDetails } from '../../scripts/scripts.js';
+import { htmlToElement, loadIms, getPathDetails, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { khorosProxyProfileAPI } from '../../scripts/urls.js';
 
 const languageModule = import('../../scripts/language.js');
@@ -30,6 +30,14 @@ export const debounce = (ms, fn) => {
     timer = setTimeout(fn(args), ms);
   };
 };
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 /**
  * Register page resize handler
@@ -681,9 +689,11 @@ const profileMenuDecorator = async (profileMenuBlock) => {
     });
     const profileMenuWrapper = document.querySelector('.profile-menu');
     const communityHeading = document.createElement('h2');
-    communityHeading.textContent = 'Community';
+    communityHeading.textContent = placeholders?.headerCommunityLabel || 'Community';
     if (profileMenuWrapper) {
-      profileMenuWrapper.innerHTML = `<h2>Learning</h2>${profileMenuBlock.innerHTML}`;
+      profileMenuWrapper.innerHTML = `<h2>${placeholders?.headerLearningLabel || 'Learning'}</h2>${
+        profileMenuBlock.innerHTML
+      }`;
       profileMenuWrapper.lastElementChild.setAttribute('data-id', 'sign-out');
       profileMenuWrapper.insertBefore(communityHeading, profileMenuWrapper.lastElementChild);
     }

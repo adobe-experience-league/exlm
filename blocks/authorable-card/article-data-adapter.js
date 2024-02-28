@@ -1,6 +1,13 @@
 import { rewriteDocsPath } from '../../scripts/scripts.js';
 import { exlmCDNUrl } from '../../scripts/urls.js';
 
+/**
+ * Converts a string to title case.
+ * @param {string} str - The input string.
+ * @returns {string} The string in title case.
+ */
+const convertToTitleCase = (str) => (str ? str.replace(/\b\w/g, (match) => match.toUpperCase()) : '');
+
 function createThumbnailURL(result) {
   if (result.contentType === 'Course') {
     const thumbnail = result['Full Meta']?.split('\ncourse-thumbnail: ')[1]?.split('\n')[0];
@@ -34,8 +41,8 @@ export default async function mapResultToCardsData(result, placeholders) {
     copyLink: result.URL,
     bookmarkLink: '',
     viewLink: rewriteDocsPath(result.URL),
-    viewLinkText: placeholders[`viewLink${result?.contentType}`]
-      ? placeholders[`viewLink${result?.contentType}`]
+    viewLinkText: placeholders[`browseCard${convertToTitleCase(result?.contentType)}ViewLabel`]
+      ? placeholders[`browseCard${convertToTitleCase(result?.contentType)}ViewLabel`]
       : `View ${result?.contentType}`,
   };
 }
