@@ -378,10 +378,9 @@ export const locales = new Map([
   ['zh-Hans', 'zh_HANS'],
 ]);
 
-let imsLoaded;
 export async function loadIms() {
-  imsLoaded =
-    imsLoaded ||
+  window.imsLoaded =
+    window.imsLoaded ||
     new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error('IMS timeout')), 5000);
       window.adobeid = {
@@ -400,7 +399,7 @@ export async function loadIms() {
       };
       loadScript('https://auth.services.adobe.com/imslib/imslib.min.js');
     });
-  return imsLoaded;
+  return window.imsLoaded;
 }
 
 /**
