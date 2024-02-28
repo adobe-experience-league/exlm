@@ -1,44 +1,54 @@
-import { createTag } from '../../scripts/scripts.js';
+import { htmlToElement } from '../../scripts/scripts.js';
 
-function imgZoomable(modalImage) {
+const IMAGE_MODAL_CLASS = 'img-modal';
+const IMAGE_MODAL_SELECTOR = `.${IMAGE_MODAL_CLASS}`;
+
+function imgZoomable(clickTargetEl, modalContentHtml) {
   function openModal(el) {
     el.classList.add('is-active');
+    // prevent page scroll through modal
+    document.body.style.overflow = 'hidden';
   }
 
   function closeModal(el) {
     el.classList.remove('is-active');
+    // reset body overflow
+    document.body.style.overflow = '';
     el.remove();
   }
 
   function closeAllModals() {
-    (document?.querySelectorAll('.img-modal') || []).forEach((modal) => {
+    (document?.querySelectorAll(IMAGE_MODAL_SELECTOR) || []).forEach((modal) => {
       closeModal(modal);
     });
   }
 
   function insertModalTemplate() {
-    if (!document.querySelector('.img-modal')) {
-      const modalTemplate = createTag(
-        'div',
-        { class: 'img-modal' },
-        `<div class="img-modal-background"></div><div class="img-modal-content"><div class="img-container"></div><span class="img-modal-close" aria-label="close"></span></div>`,
-      );
+    if (!document.querySelector(IMAGE_MODAL_SELECTOR)) {
+      const modalTemplate = htmlToElement(`
+        <div class="${IMAGE_MODAL_CLASS}">
+          <div class="img-modal-background"></div>
+          <div class="img-modal-content">
+            <div class="img-container">
+            </div><span class="img-modal-close" aria-label="close"></span>
+          </div>
+        </div>
+      `);
       document.body.prepend(modalTemplate);
     }
   }
 
-  modalImage.addEventListener('click', () => {
+  clickTargetEl.addEventListener('click', () => {
     insertModalTemplate();
-    const modalContent = modalImage.outerHTML;
-    const target = document?.querySelector('.img-modal');
+    const target = document?.querySelector(IMAGE_MODAL_SELECTOR);
     const targetContent = target.querySelector('.img-container');
-    targetContent.innerHTML = modalContent;
+    targetContent.innerHTML = modalContentHtml;
     openModal(target);
 
     const modalActions = document.querySelectorAll('.img-modal-background, .img-modal-close');
     if (modalActions.length > 0) {
       modalActions.forEach((close) => {
-        const closestModal = close.closest('.img-modal');
+        const closestModal = close.closest(IMAGE_MODAL_SELECTOR);
         close.addEventListener('click', () => {
           closeModal(closestModal);
         });
@@ -80,15 +90,18 @@ export default async function decorate(block) {
     img = block.querySelector('img');
   }
 
+  // needed here to insert as is to modal in case of zoomable image
+  const blockHTML = block.innerHTML;
+
   classNames.forEach((className) => {
-    if (className.includes('w-') && !classNames.includes('modal-image')) {
+    if (className.includes('w-')) {
       const [width] = className.match(/\d+/g);
       if (width) {
         img.style.width = `${width}px`;
       }
     } else if (className === 'modal-image') {
       block.classList.add(className);
-      imgZoomable(block);
+      imgZoomable(block, blockHTML);
     } else if (className.includes('align')) {
       block.classList.add(className);
     }
