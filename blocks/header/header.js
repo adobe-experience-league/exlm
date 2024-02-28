@@ -485,7 +485,7 @@ const searchDecorator = async (searchBlock) => {
     const searchItem = new Search({ searchBlock });
     searchItem.configureAutoComplete({
       searchOptions: options,
-      initialSearchSuggestions: false,
+      showSearchSuggestions: false,
     });
   };
   prepareSearch();
