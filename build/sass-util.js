@@ -48,7 +48,7 @@ export const compileDirectoriesInPlace = async (directories, ignoredFiles = []) 
   let promises = [];
   directories.forEach(async (directory) => {
     try {
-      const batchPromises = compileDirectoryInPlace(directory, ignoredFiles);
+      const batchPromises = await compileDirectoryInPlace(directory, ignoredFiles);
       promises = [...promises, ...batchPromises];
     } catch (error) {
       console.error(error);
