@@ -192,12 +192,13 @@ async function decorateLanguageToggle(block, placeholders) {
 }
 
 export default async function decorate(block) {
-  loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
-  const placeholders = await fetchLanguagePlaceholders();
   if (isDocPage) {
-    decorateBookmarkMobileBlock(block, placeholders);
-    decorateLanguageToggle(block, placeholders);
-    decorateBookmark(block, placeholders);
-    decorateCopyLink(block, placeholders);
+    loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
+    fetchLanguagePlaceholders().then((placeholders) => {
+      decorateBookmarkMobileBlock(block, placeholders);
+      decorateLanguageToggle(block, placeholders);
+      decorateBookmark(block, placeholders);
+      decorateCopyLink(block, placeholders);
+    });
   }
 }
