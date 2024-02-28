@@ -1,18 +1,23 @@
 import { rewriteDocsPath } from '../../scripts/scripts.js';
+import { exlmCDNUrl } from '../../scripts/urls.js';
 
 function createThumbnailURL(result) {
-  let thumbnail = '';
   if (result.contentType === 'Course') {
-    [, thumbnail] = result['Full Meta'].match(/course-thumbnail: (.*)/);
-    return thumbnail ? `https://cdn.experienceleague.adobe.com/thumb/${thumbnail.split('thumb/')[1]}` : '';
+    const thumbnail = result['Full Meta']?.split('\ncourse-thumbnail: ')[1]?.split('\n')[0];
+    return thumbnail ? `${exlmCDNUrl}/thumb/${thumbnail.split('thumb/')[1]}` : '';
   }
 
   if (result.contentType === 'Tutorial') {
-    const videoUrl = result['Full Body'].match(/embedded-video src\s*=\s*['"]?([^'"]*)['"]?/);
-    result.videoId = videoUrl ? videoUrl[1].match(/\/v\/([^/]*)/)[1] : null;
-    thumbnail = result.videoId ? `https://video.tv.adobe.com/v/${result.videoId}?format=jpeg` : '';
+    const parser = new DOMParser();
+    const urlString = parser
+      .parseFromString(result['Full Body'], 'text/html')
+      ?.querySelector('iframe')
+      ?.getAttribute('src');
+    const videoUrl = urlString ? new URL(urlString) : null;
+    const videoId = videoUrl?.pathname?.split('/v/')[1]?.split('/')[0];
+    return videoId ? `https://video.tv.adobe.com/v/${videoId}?format=jpeg` : '';
   }
-  return thumbnail;
+  return '';
 }
 
 export default async function mapResultToCardsData(result, placeholders) {
