@@ -421,6 +421,14 @@ function handleFeedbackSubmit(el) {
   });
 }
 
+export function feedbackError() {
+  const fb = document.querySelector(FEEDBACK_CONTAINER_SELECTOR);
+  // eslint-disable-next-line no-console
+  console.error("Couldn't embed Qualtrics survey intercept.");
+  showQualtricsLoadingError(fb);
+  toggleFeedbackBar(fb, false);
+}
+
 let checkInterval;
 let retryCount = 0;
 
@@ -438,11 +446,7 @@ function checkInterceptLoaded() {
       checkInterval = setInterval(checkInterceptLoaded, RETRY_DELAY);
     }
   } else {
-    clearInterval(checkInterval);
-    // eslint-disable-next-line no-console
-    console.error("Couldn't embed Qualtrics survey intercept.");
-    showQualtricsLoadingError(fb);
-    toggleFeedbackBar(fb, false);
+    feedbackError();
   }
 }
 
@@ -464,14 +468,6 @@ export default async function loadFeedbackUi() {
   handleFeedbackBarVisibilityOnScroll();
 
   window.addEventListener(QUALTRICS_LOADED_EVENT_NAME, checkInterceptLoaded, false);
-}
-
-export function feedbackError() {
-  const fb = document.querySelector(FEEDBACK_CONTAINER_SELECTOR);
-  // eslint-disable-next-line no-console
-  console.error("Couldn't embed Qualtrics survey intercept.");
-  showQualtricsLoadingError(fb);
-  toggleFeedbackBar(fb, false);
 }
 
 loadFeedbackUi();
