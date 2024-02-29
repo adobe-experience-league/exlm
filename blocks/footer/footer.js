@@ -1,5 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { getPathDetails } from '../../scripts/scripts.js';
+import { getPathDetails, decorateLinks } from '../../scripts/scripts.js';
+import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
 
 const languageModule = import('../../scripts/language.js');
 
@@ -9,10 +10,11 @@ const fetchFragment = async (rePath, lang = 'en') => {
   return response.text();
 };
 
-function decorateMenu(footer) {
+function decorateMenu(footer, isSignedIn) {
   const childElements = footer.querySelectorAll('.footer-item');
   const groupDiv = document.createElement('div');
   groupDiv.classList.add('footer-menu');
+  decorateLinks(footer);
   childElements.forEach((child) => {
     const h2Elements = Array.from(child.querySelectorAll('h2'));
     const ulElements = Array.from(child.querySelectorAll('ul'));
@@ -22,7 +24,19 @@ function decorateMenu(footer) {
         const divPair = document.createElement('div');
         divPair.setAttribute('class', 'footer-item-list');
         divPair.appendChild(h2Element);
-        divPair.appendChild(ulElements[index]);
+        const ulElement = ulElements[index];
+        const anchorLinks = Array.from(ulElement.querySelectorAll('a') ?? []);
+        const containsAuthOnlyLink = !!anchorLinks.find((a) => a.getAttribute('auth-only'));
+        if (containsAuthOnlyLink) {
+          anchorLinks.forEach((a) => {
+            const show =
+              (isSignedIn && a.getAttribute('auth-only') === 'true') ||
+              (!isSignedIn && a.getAttribute('auth-only') !== 'true');
+            const classOp = show ? 'remove' : 'add';
+            a.classList[classOp]('footer-link-hidden');
+          });
+        }
+        divPair.appendChild(ulElement);
         divWrapper.appendChild(divPair);
       });
     }
@@ -168,6 +182,7 @@ function handleSocialIconStyles(footer) {
  * @param {Element} block The footer block element
  */
 export default async function decorate(block) {
+  const isSignedInPromise = isSignedInUser();
   // fetch footer content
   const { lang } = getPathDetails();
   const footerFragment = await fetchFragment('footer/footer', lang);
@@ -176,9 +191,10 @@ export default async function decorate(block) {
     // decorate footer DOM
     const footer = document.createElement('div');
     footer.innerHTML = footerFragment;
-    decorateMenu(footer);
     await decorateSocial(footer);
     decorateBreadcrumb(footer);
+    const isSignedIn = await isSignedInPromise;
+    decorateMenu(footer, isSignedIn);
     block.append(footer);
     decorateCopyrightsMenu();
     await decorateIcons(footer);

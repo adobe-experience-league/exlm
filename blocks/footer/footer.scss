@@ -111,6 +111,10 @@
       line-height: 1.6875rem;
       margin: 0;
     }
+
+    & .footer-link-hidden {
+      display: none;
+    }
   }
 
   &-item-active {
