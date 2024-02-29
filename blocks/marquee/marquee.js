@@ -25,7 +25,6 @@ function getSignInButton(signInText) {
   link.setAttribute('href', '#');
   link.setAttribute('title', signInText);
   link.textContent = signInText;
-  link.addEventListener('click', () => window.adobeIMS.signIn());
   secondCta.append(link);
   return secondCta;
 }
@@ -79,6 +78,7 @@ export default async function decorate(block) {
     .then((isSignedInUser) => {
       if (!isSignedInUser) {
         block.classList.add('unauthenticated');
+        block.querySelector('.signin').addEventListener('click', () => window.adobeIMS.signIn());
       }
     });
 
