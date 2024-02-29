@@ -15,6 +15,7 @@ mappings:
   - /content/exlm/featured-card-products:/featured-card-products.json
   - /content/exlm/global/en/top-products:/en/top-products.json
   - /content/exlm/configuration:/.helix/config.json
+  - /content/exlm/headers:/.helix/headers.json
   # force load some paths as resource from codebus in the editor (sw.js)
   - /content/exlm.resource/fragments/:/fragments/
   - /content/exlm.resource/docs/:/docs/

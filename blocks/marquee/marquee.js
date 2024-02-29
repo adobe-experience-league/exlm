@@ -1,6 +1,6 @@
 /* eslint-disable no-plusplus */
+import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { loadIms } from '../../scripts/scripts.js';
 
 function decorateButtons(...buttons) {
   return buttons
@@ -39,14 +39,7 @@ export default async function decorate(block) {
   const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
   const signInText = confSignInText.textContent.trim();
 
-  // get signed in status
-  try {
-    await loadIms();
-  } catch {
-    // eslint-disable-next-line no-console
-    console.warn('Adobe IMS not available.');
-  }
-  const isSignedIn = window.adobeIMS?.isSignedInUser();
+  const isSignedIn = await isSignedInUser();
 
   // build sign in button if not in yet and button text is set
   const secondCta = signInText && !isSignedIn ? getSignInButton(signInText) : null;

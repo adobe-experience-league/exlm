@@ -49,8 +49,9 @@ export default class Search {
     }
   }
 
-  configureAutoComplete({ searchOptions }) {
+  configureAutoComplete({ searchOptions, showSearchSuggestions = true }) {
     this.searchOptions = searchOptions || [];
+    this.showSearchSuggestions = showSearchSuggestions;
     const [firstOption = ''] = this.searchOptions;
     this.selectedSearchOption = firstOption;
     this.canHideSearchOptions = false;
@@ -75,7 +76,7 @@ export default class Search {
     this.selectSearchSuggestion = this.handleSearchSuggestion.bind(this);
     this.savedDefaultSuggestions = null;
     this.setupAutoCompleteEvents();
-    this.callbackFn = this.fetchInitialSuggestions;
+    this.callbackFn = this.showSearchSuggestions ? this.fetchInitialSuggestions : null;
   }
 
   setupAutoCompleteEvents() {
@@ -267,8 +268,11 @@ export default class Search {
       }
       return;
     }
-
     this.clearSearchIcon.classList.add('search-icon-show');
+
+    if (!this.showSearchSuggestions) {
+      return;
+    }
     const suggestions = await this.fetchSearchSuggestions(this.searchQuery);
     const { completions = [] } = suggestions;
     if (completions.length > 0) {

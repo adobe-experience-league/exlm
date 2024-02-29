@@ -2,8 +2,8 @@ import csrf from '../../auth/csrf.js';
 import fetchData from '../../request.js';
 import { coveoTokenUrl } from '../../urls.js';
 import { COVEO_TOKEN } from '../../session-keys.js';
-import { loadIms } from '../../scripts.js';
 import loadJWT from '../../auth/jwt.js';
+import { isSignedInUser } from '../profile-service.js';
 
 const timers = new Map();
 
@@ -46,22 +46,11 @@ async function retrieveCoveoToken(email = '', token = '') {
 
 async function fetchAndStoreCoveoToken() {
   let userEmail = `exl-anonymous-${Math.floor(Math.random() * 1e6)}@experienceleague.local`;
-  let adobeIMS = {
-    isSignedInUser: () => false,
-  };
 
-  try {
-    await loadIms();
-    adobeIMS = window.adobeIMS;
-  } catch {
-    /* eslint-disable no-console */
-    console.warn('Adobe IMS not available.');
-  }
+  const signedIn = await isSignedInUser();
 
-  const isUserSignedIn = adobeIMS?.isSignedInUser();
-
-  if (isUserSignedIn) {
-    const userProfile = await adobeIMS.getProfile();
+  if (signedIn) {
+    const userProfile = await window?.adobeIMS?.getProfile();
     userEmail = userProfile.email;
   }
 
@@ -131,8 +120,8 @@ export default async function loadCoveoToken() {
     coveoResponseToken ||
     // eslint-disable-next-line no-async-promise-executor
     new Promise(async (resolve) => {
-      const isSignedInUser = window.adobeIMS && window.adobeIMS?.isSignedInUser();
-      if (isSignedInUser) {
+      const signedIn = await isSignedInUser();
+      if (signedIn) {
         loadJWT().then(async () => {
           if (sessionStorage[COVEO_TOKEN]) {
             resolve(sessionStorage.getItem(COVEO_TOKEN));
