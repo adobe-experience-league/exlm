@@ -7,28 +7,13 @@ import { JWTTokenUrl, profileUrl } from '../urls.js';
 import { Profile, ProfileAttributes } from '../session-keys.js';
 import { request } from '../request.js';
 
+window.exl = window.exl || {};
+window.exl.profileData = window.exl.profileData || null;
+window.exl.meta = window.exl.meta || {};
+
 export const override = /^(recommended|votes)$/;
 
 const clone = (arg = {}, transferables = []) => structuredClone(arg, transferables);
-
-// eslint-disable-next-line
-export let adobeIMS = {
-  isSignedInUser: () => false,
-};
-
-try {
-  await loadIms();
-  adobeIMS = window.adobeIMS;
-} catch {
-  // eslint-disable-next-line no-console
-  console.warn('Adobe IMS not available.');
-}
-
-const isSignedIn = adobeIMS?.isSignedInUser();
-
-// eslint-disable-next-line
-let profileData = null,
-  meta = {};
 
 export async function profileAttributes() {
   if (ProfileAttributes in sessionStorage === false) {
@@ -51,10 +36,20 @@ export async function profileAttributes() {
   return JSON.parse(sessionStorage.getItem(ProfileAttributes) || '{}');
 }
 
+export async function isSignedInUser() {
+  try {
+    await loadIms();
+    return window?.adobeIMS?.isSignedInUser() || false;
+  } catch (err) {
+    return false;
+  }
+}
+
 // eslint-disable-next-line
 async function profileMerge(arg) {
+  const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
-    const tmp = await adobeIMS?.getProfile();
+    const tmp = await window.adobeIMS?.getProfile();
 
     // eslint-disable-next-line
     return Object.assign({}, tmp, arg, { avatarUrl: adobeIMS.avatarUrl(tmp.userId) });
@@ -65,11 +60,12 @@ export async function profile(reuse = false, explicit = false) {
   let result = null;
 
   if (reuse === false) {
+    const isSignedIn = await isSignedInUser();
     if (isSignedIn) {
-      const data = await adobeIMS?.getProfile();
+      const data = await window.adobeIMS?.getProfile();
 
       if (data !== null) {
-        if (profileData === null || explicit) {
+        if (window.exl.profileData === null || explicit) {
           const res = await request(profileUrl, {
             credentials: 'include',
             headers: {
@@ -82,24 +78,24 @@ export async function profile(reuse = false, explicit = false) {
             const arg = await res.json();
 
             result = await profileMerge(arg.data);
-            profileData = clone(result);
+            window.exl.profileData = clone(result);
           } else {
             signOut();
           }
         } else {
-          result = clone(profileData);
+          result = clone(window.exl.profileData);
         }
       } else {
         signOut();
       }
     }
   } else {
-    result = clone(profileData);
+    result = clone(window.exl.profileData);
   }
 
   if (result !== null) {
-    if (!meta || Object.keys(meta).length === 0) {
-      meta = await profileAttributes();
+    if (!window.exl.meta || Object.keys(window.exl.meta).length === 0) {
+      window.exl.meta = await profileAttributes();
     }
 
     sessionStorage.setItem(Profile, JSON.stringify(result));
@@ -111,13 +107,13 @@ export async function profile(reuse = false, explicit = false) {
 export async function updateProfile(key, val, replace = false) {
   const data = await profile(false, true);
 
-  if (!meta || Object.keys(meta).length === 0) {
-    meta = await profileAttributes();
+  if (!window.exl.meta || Object.keys(window.exl.meta).length === 0) {
+    window.exl.meta = await profileAttributes();
   }
 
   // TODO - explore meta.write - writes does not seem to be an object anywhere
   Object.keys(data).forEach((i) => {
-    if (meta.write.includes(i) === false) {
+    if (window.exl.meta.write.includes(i) === false) {
       delete data[i];
     }
   });
@@ -125,7 +121,7 @@ export async function updateProfile(key, val, replace = false) {
   // eslint-disable-next-line
   if (override.test(key) || replace === true) {
     data[key] = val;
-  } else if (meta.types[key] === 'array') {
+  } else if (window.exl.meta.types[key] === 'array') {
     // eslint-disable-next-line
     if (data[key] === void 0 || replace === true) {
       data[key] = [val];
@@ -159,10 +155,10 @@ export async function updateProfile(key, val, replace = false) {
   if (res.ok && res.status < 400) {
     const arg = await res.json();
 
-    profileData = await profileMerge(arg.data);
+    window.exl.profileData = await profileMerge(arg.data);
     await profile(true);
-    sessionStorage.setItem(Profile, JSON.stringify(profileData));
+    sessionStorage.setItem(Profile, JSON.stringify(window.exl.profileData));
   }
 
-  return profileData;
+  return window.exl.profileData;
 }

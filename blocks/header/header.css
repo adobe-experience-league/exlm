@@ -749,7 +749,7 @@ header {
   font-size: var(--spectrum-font-size-75);
   letter-spacing: 0.14px;
   color: var(--spectrum-gray-600);
-  opacity: 0.5;
+  opacity: 0.8;
   font-weight: 100;
 }
 .header .search-picker-button {
