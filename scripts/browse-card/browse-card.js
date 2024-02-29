@@ -1,4 +1,4 @@
-import { loadCSS } from '../lib-franklin.js';
+import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import { createTooltip } from './browse-card-tooltip.js';
 import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
@@ -408,4 +408,5 @@ export async function buildCard(container, element, model) {
   } else {
     element.appendChild(card);
   }
+  decorateIcons(element);
 }
