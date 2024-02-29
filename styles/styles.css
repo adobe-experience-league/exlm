@@ -564,23 +564,15 @@ hr {
 }
 
 em:has(> u) {
+  text-decoration: none;
   font-style: normal;
   background-color: rgb(255 255 0 / 20%);
   display: inline-block;
 }
 
-em:has(> u),
-em > u {
+em > u, em > a > u {
   text-decoration: none;
-}
-
-em:has(> u),
-em > u::before {
-  content: " ";
-}
-
-em > a > u {
-  text-decoration: none;
+  font-style: normal;
 }
 
 ul {
