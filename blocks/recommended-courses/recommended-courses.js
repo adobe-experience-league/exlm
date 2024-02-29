@@ -1,16 +1,13 @@
 // Importing constants and modules
 import { RECOMMENDED_COURSES_CONSTANTS } from '../../scripts/browse-card/browse-cards-constants.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
+import { isSignedInUser, profile } from '../../scripts/data-service/profile-service.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import BrowseCardsPathsAdaptor from '../../scripts/browse-card/browse-cards-paths-adaptor.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-
-// Checking if the user is signed in
-const isSignedIn = adobeIMS?.isSignedInUser();
 
 /**
  * Decorate function to process and log the mapped data.
@@ -195,6 +192,7 @@ export default async function decorate(block) {
   await decorateIcons(headerDiv);
 
   // Checking if the user is signed in before proceeding
+  const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
     // Creating content div for card display
     const contentDiv = document.createElement('div');

@@ -99,7 +99,9 @@ function decorateBreadcrumb(footer) {
     breadCrumb.parentElement.classList.add('footer-container');
   }
   const para = breadCrumb.querySelector('p');
-  para.parentElement.classList.add('footer-breadcrumb-item-wrapper');
+  if (para && para.parentElement) {
+    para.parentElement.classList.add('footer-breadcrumb-item-wrapper');
+  }
   Array.from(breadCrumb.querySelectorAll('a')).forEach((a) => {
     if (a.title?.toLowerCase() === 'home') {
       a.innerHTML = `<span class="icon icon-home"></span>`;

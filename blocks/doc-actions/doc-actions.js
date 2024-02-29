@@ -1,23 +1,13 @@
 import { loadCSS, loadBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
-import { createTag, fetchLanguagePlaceholders, isDocPage, htmlToElement, decorateMain } from '../../scripts/scripts.js';
+import { createTag, isDocPage, htmlToElement, decorateMain, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import { automaticTranslationLink } from '../../scripts/urls.js';
-import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
+// import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
 import attachCopyLink from '../../scripts/copy-link/copy-link.js';
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
-
-loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
-
-let translatedDocElement = null;
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
+import { isSignedInUser, profile } from '../../scripts/data-service/profile-service.js';
 
 function decorateBookmarkMobileBlock() {
   if (!document.querySelector('.doc-actions-mobile')) {
@@ -34,9 +24,7 @@ function decorateBookmarkMobileBlock() {
   }
 }
 
-const isSignedIn = adobeIMS?.isSignedInUser();
-
-export function decorateBookmark(block) {
+export async function decorateBookmark(block, placeholders) {
   const bookmarkId = ((document.querySelector('meta[name="id"]') || {}).content || '').trim();
   const unAuthBookmark = document.createElement('div');
   unAuthBookmark.className = 'bookmark';
@@ -56,7 +44,7 @@ export function decorateBookmark(block) {
 
   const docActionsMobileBookmark = document.querySelector('.doc-actions-mobile .bookmark');
   const docActionsMobileContainer = document.querySelector('.doc-actions-mobile');
-
+  const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
     block.appendChild(authBookmark);
     if (docActionsMobileContainer && !docActionsMobileBookmark) {
@@ -89,7 +77,7 @@ export function decorateBookmark(block) {
   }
 }
 
-function decorateCopyLink(block) {
+async function decorateCopyLink(block, placeholders) {
   const copyLinkDivNode = document.createElement('div');
   copyLinkDivNode.className = 'copy-link';
   copyLinkDivNode.innerHTML = tooltipTemplate(
@@ -124,24 +112,26 @@ async function getTranslatedDocContent() {
 }
 
 async function toggleContent(isChecked, docContainer) {
-  if (isChecked && !translatedDocElement) {
-    translatedDocElement = await getTranslatedDocContent();
+  window.exl = window.exl || {};
+
+  if (isChecked && !window.exl.translatedDocElement) {
+    window.exl.translatedDocElement = await getTranslatedDocContent();
   }
   if (isChecked) {
     const docActionsMobile = docContainer.querySelector('.doc-actions-mobile');
     if (docActionsMobile) {
-      const createdByEl = translatedDocElement.querySelector('.article-metadata-createdby-wrapper');
-      const articleMetaDataEl = translatedDocElement.querySelector('.article-metadata-wrapper');
+      const createdByEl = window.exl.translatedDocElement.querySelector('.article-metadata-createdby-wrapper');
+      const articleMetaDataEl = window.exl.translatedDocElement.querySelector('.article-metadata-wrapper');
       if (articleMetaDataEl.nextSibling === createdByEl) {
         createdByEl.appendChild(docActionsMobile);
       } else if (articleMetaDataEl) {
         articleMetaDataEl.appendChild(docActionsMobile);
       }
     }
-    docContainer.replaceWith(translatedDocElement);
+    docContainer.replaceWith(window.exl.translatedDocElement);
   } else {
     const dc = document.querySelector('main > div:first-child');
-    const docActionsMobile = translatedDocElement.querySelector('.doc-actions-mobile');
+    const docActionsMobile = window.exl.translatedDocElement.querySelector('.doc-actions-mobile');
     if (docActionsMobile) {
       const createdByEl = docContainer.querySelector('.article-metadata-createdby-wrapper');
       const articleMetaDataEl = docContainer.querySelector('.article-metadata-wrapper');
@@ -155,7 +145,7 @@ async function toggleContent(isChecked, docContainer) {
   }
 }
 
-async function decorateLanguageToggle(block) {
+async function decorateLanguageToggle(block, placeholders) {
   if (
     document.querySelector('meta[name="ht-degree"]') &&
     ((document.querySelector('meta[name="ht-degree"]') || {}).content || '').trim() !== '100%'
@@ -201,11 +191,14 @@ async function decorateLanguageToggle(block) {
   }
 }
 
-export default async function decorateDocActions(block) {
+export default async function decorate(block) {
   if (isDocPage) {
-    decorateBookmarkMobileBlock();
-    decorateLanguageToggle(block);
-    decorateBookmark(block);
-    decorateCopyLink(block);
+    loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
+    fetchLanguagePlaceholders().then((placeholders) => {
+      decorateBookmarkMobileBlock(block, placeholders);
+      decorateLanguageToggle(block, placeholders);
+      decorateBookmark(block, placeholders);
+      decorateCopyLink(block, placeholders);
+    });
   }
 }
