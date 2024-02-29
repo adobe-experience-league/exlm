@@ -215,7 +215,6 @@ export default async function decorate(block) {
             buildCard(contentDiv, cardDiv, cardData);
             contentDiv.appendChild(cardDiv);
           }
-          decorateIcons(block);
         } else {
           /* Add No Results Content and Remove Card Content View Info and Shimmer */
           buildCardsShimmer.remove();
