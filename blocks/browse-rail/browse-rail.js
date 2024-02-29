@@ -225,7 +225,7 @@ export default async function decorate(block) {
         sortFirstLevelList('.subPages');
       } else {
         // In case of no sub-pages, show all products
-        await displayAllProducts(block);
+        await displayAllProducts(block, placeholders);
       }
     }
   }
