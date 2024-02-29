@@ -1137,6 +1137,75 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   font-weight: var(--font-weight-700);
   color: var(--non-spectrum-link-blue);
 }
+.docs table:not(.code, .table) {
+  display: block;
+  margin: 2rem 0;
+  font-size: var(--spectrum-body-size-m);
+  line-height: var(--exlm-line-height-content);
+  color: var(--non-spectrum-custom-dark);
+  border-collapse: collapse;
+}
+.docs table:not(.code, .table) thead,
+.docs table:not(.code, .table) tbody,
+.docs table:not(.code, .table) th,
+.docs table:not(.code, .table) td,
+.docs table:not(.code, .table) tr {
+  display: block;
+}
+.docs table:not(.code, .table) table,
+.docs table:not(.code, .table) thead,
+.docs table:not(.code, .table) tbody {
+  width: 100%;
+}
+.docs table:not(.code, .table) tr {
+  margin-bottom: 16px;
+}
+.docs table:not(.code, .table) td {
+  border: none;
+  border-bottom: 1px solid #eee;
+  position: relative;
+  white-space: normal;
+  text-align: start;
+  padding: 0.5em 0.75em;
+}
+.docs table:not(.code, .table) img {
+  max-width: 100%;
+  width: auto;
+}
+.docs table:not(.code, .table) a {
+  color: var(--non-spectrum-link-blue);
+}
+.docs table:not(.code, .table) a:hover {
+  color: var(--non-spectrum-custom-dark);
+}
+.docs table:not(.code, .table) a strong {
+  color: currentcolor;
+}
+@media (min-width: 600px) {
+  .docs table:not(.code, .table) {
+    display: table;
+    border-spacing: 0;
+  }
+  .docs table:not(.code, .table) thead {
+    display: table-header-group;
+  }
+  .docs table:not(.code, .table) tbody {
+    display: table-row-group;
+  }
+  .docs table:not(.code, .table) tr {
+    display: table-row;
+    margin: 0;
+    vertical-align: middle;
+  }
+  .docs table:not(.code, .table) th,
+  .docs table:not(.code, .table) td {
+    width: auto;
+    display: table-cell;
+    border: 1px solid #dbdbdb;
+    border-width: 1px;
+    vertical-align: top;
+  }
+}
 
 @media (min-width: 600px) {
   .section.highlight.icon-block-container {

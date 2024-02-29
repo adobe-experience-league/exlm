@@ -1062,6 +1062,87 @@ body[class^='browse-'] .browse-filters-full-container {
       }
     }
   }
+
+  table:not(.code, .table) {
+    display: block;
+    margin: 2rem 0;
+    font-size: var(--spectrum-body-size-m);
+    line-height: var(--exlm-line-height-content);
+    color: var(--non-spectrum-custom-dark);
+    border-collapse: collapse;
+
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+      display: block;
+    }
+
+    table,
+    thead,
+    tbody {
+      width: 100%;
+    }
+
+    tr {
+      margin-bottom: 16px;
+    }
+
+    td {
+      border: none;
+      border-bottom: 1px solid #eee;
+      position: relative;
+      white-space: normal;
+      text-align: start;
+      padding: 0.5em 0.75em;
+    }
+
+    img {
+      max-width: 100%;
+      width: auto;
+    }
+
+    a {
+      color: var(--non-spectrum-link-blue);
+
+      &:hover {
+        color: var(--non-spectrum-custom-dark);
+      }
+
+      strong {
+        color: currentcolor;
+      }
+    }
+
+    @include breakpoint(tablet) {
+      display: table;
+      border-spacing: 0;
+
+      thead {
+        display: table-header-group;
+      }
+
+      tbody {
+        display: table-row-group;
+      }
+
+      tr {
+        display: table-row;
+        margin: 0;
+        vertical-align: middle;
+      }
+
+      th,
+      td {
+        width: auto;
+        display: table-cell;
+        border: 1px solid #dbdbdb;
+        border-width: 1px;
+        vertical-align: top;
+      }
+    }
+  }
 }
 
 @include breakpoint('tablet') {
