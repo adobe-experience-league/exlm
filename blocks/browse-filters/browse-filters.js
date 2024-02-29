@@ -759,7 +759,13 @@ async function handleSearchEngineSubscription() {
     }
   } else {
     buildCardsShimmer.remove();
-    filterResultsEl.innerHTML = placeholders.noResultsTextBrowse || 'No Results';
+    const communityOptionIsSelected = browseFilterForm.querySelector(`input[value="Community"]`)?.checked === true;
+    let noResultsText = placeholders.noResultsTextBrowse || 'No Results';
+    if (communityOptionIsSelected && dropdownOptions.find((opt) => opt.name === 'Role' && opt.selected > 0)) {
+      noResultsText =
+        placeholders.rolesWithCommunitySelectionWarning ?? 'To view Community posts, please remove all Role selections';
+    }
+    filterResultsEl.innerHTML = noResultsText;
     browseFilterForm.classList.remove('is-result');
     filterResultsEl.classList.add('no-results');
   }
