@@ -566,7 +566,7 @@ hr {
 em:has(> u) {
   text-decoration: none;
   font-style: normal;
-  background-color: rgb(255 255 0 / 20%);
+  background-color: rgba(255, 255, 0, 0.2);
   display: inline-block;
 }
 
