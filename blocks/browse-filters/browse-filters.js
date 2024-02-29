@@ -750,7 +750,6 @@ async function handleSearchEngineSubscription() {
         buildCard(filterResultsEl, cardDiv, cardData);
         filterResultsEl.appendChild(cardDiv);
       });
-      decorateIcons(filterResultsEl);
       browseFilterForm.classList.add('is-result');
       filterResultsEl.classList.remove('no-results');
     } catch (err) {

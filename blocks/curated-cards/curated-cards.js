@@ -130,7 +130,6 @@ export default async function decorate(block) {
         block.appendChild(contentDiv);
         /* Hide Tooltip while scrolling the cards layout */
         hideTooltipOnScroll(contentDiv);
-        decorateIcons(block);
       }
     })
     .catch((err) => {
