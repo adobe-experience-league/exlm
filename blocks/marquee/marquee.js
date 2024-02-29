@@ -72,7 +72,7 @@ export default async function decorate(block) {
   // add sign in event handler for sign in if set
   if (signInText && !isSignedIn) {
     marqueeDOM.querySelector('.signin').addEventListener('click', async () => {
-      window.adobeIMS.signIn();
+      window.adobeIMS.signUp();
     });
   }
 
