@@ -82,6 +82,7 @@ async function applyChanges(event) {
         decorateButtons(newBlock);
         decorateIcons(newBlock);
         decorateBlock(newBlock);
+        decorateRichtext(newBlock);
         await loadBlock(newBlock);
         block.remove();
         newBlock.style.display = null;
