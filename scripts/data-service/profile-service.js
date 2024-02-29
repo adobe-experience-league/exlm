@@ -8,8 +8,8 @@ import { Profile, ProfileAttributes } from '../session-keys.js';
 import { request } from '../request.js';
 
 window.exl = window.exl || {};
-window.exl.profileData = null;
-window.exl.meta = {};
+window.exl.profileData = window.exl.profileData || null;
+window.exl.meta = window.exl.meta || {};
 
 export const override = /^(recommended|votes)$/;
 
