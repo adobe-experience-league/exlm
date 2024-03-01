@@ -486,22 +486,6 @@ const searchDecorator = async (searchBlock) => {
 };
 
 /**
- * Decorates the sign-up block
- * @param {HTMLElement} signUpBlock
- */
-const signUpDecorator = async (signUpBlock) => {
-  simplifySingleCellBlock(signUpBlock);
-  const isSignedIn = await isSignedInUser();
-  if (isSignedIn) {
-    signUpBlock.style.display = 'none';
-  } else {
-    signUpBlock.firstChild.addEventListener('click', async () => {
-      window.adobeIMS.signUp();
-    });
-  }
-};
-
-/**
  * Decorates the language-selector block
  * @param {HTMLElement} languageBlock
  */
@@ -793,7 +777,6 @@ export default async function decorate(headerBlock) {
 
   decorateHeaderBlock('brand', brandDecorator);
   decorateHeaderBlock('search', searchDecorator);
-  decorateHeaderBlock('sign-up', signUpDecorator);
   decorateHeaderBlock('language-selector', languageDecorator);
   decorateHeaderBlock('product-grid', productGridDecorator);
   decorateHeaderBlock('sign-in', signInDecorator);
