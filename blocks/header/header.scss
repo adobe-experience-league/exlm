@@ -140,7 +140,7 @@ header {
     @include breakpoint(custom) {
       width: 100%;
       justify-content: initial;
-      grid-template-areas: 'adobe-logo brand nav sign-in search language product-grid';
+      grid-template-areas: 'adobe-logo brand nav sign-in search language product-grid signed-in';
       grid-template-columns: min-content min-content max-content min-content auto max-content max-content max-content;
     }
   }
@@ -923,6 +923,8 @@ header {
   }
 
   .signed-in {
+    grid-area: signed-in;
+
     .profile {
       position: initial;
       display: flex;
@@ -1058,7 +1060,7 @@ header {
   .product-toggle {
     display: none;
 
-    @include breakpoint(desktop) {
+    @include breakpoint(custom) {
       display: block;
     }
   }
