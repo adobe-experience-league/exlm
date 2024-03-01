@@ -71,6 +71,7 @@
 .feedback-ui .like-btns {
   display: inline-block;
   flex: auto;
+  margin-left: 1em;
 }
 
 .feedback-ui .like-btns button {
@@ -359,7 +360,6 @@
 /* Just following https://experienceleague.adobe.com/docs/analytics/analyze/home.html */
 @media (min-width: 1024px) {
   .feedback-ui .left {
-    padding-left: 60px;
     padding-top: 9px;
   }
 
@@ -374,6 +374,11 @@
   .feedback-ui .right .icon-chevron {
     display: inline-block;
     position: absolute;
+    right: 4px;
+  }
+
+  .feedback-ui .right[aria-hidden='false'] .icon-chevron {
+    right: -3px;
   }
 }
 
