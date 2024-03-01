@@ -146,18 +146,21 @@ const expLevel = [
 }));
 
 export const roleOptions = {
+  id: 'el_role',
   name: placeholders.filterRoleLabel || 'Role',
   items: roles,
   selected: 0,
 };
 
 export const contentTypeOptions = {
+  id: 'el_contenttype',
   name: placeholders.filterContentTypeLabel || 'Content Type',
   items: contentType,
   selected: 0,
 };
 
 export const expTypeOptions = {
+  id: 'el_level',
   name: placeholders.filterExperienceLevelLabel || 'Experience Level',
   items: expLevel,
   selected: 0,
@@ -172,6 +175,10 @@ const FILTER_RESULTS_COUNT = {
 // Function to get an object by name
 export function getObjectByName(obj, name) {
   return obj.find((option) => option.name === name);
+}
+
+export function getObjectById(obj, ID) {
+  return obj.find((option) => option.id === ID);
 }
 
 export const getFiltersPaginationText = (pgCount) => `of ${pgCount} page${pgCount > 1 ? 's' : ''}`;

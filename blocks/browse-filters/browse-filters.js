@@ -10,6 +10,7 @@ import {
   getSelectedTopics,
   getParsedSolutionsQuery,
   getCoveoFacets,
+  getObjectById,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -19,16 +20,11 @@ import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery } from 
 import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
 
 const coveoFacetMap = {
-  Role: 'headlessRoleFacet',
-  'Content Type': 'headlessTypeFacet',
-  'Experience Level': 'headlessExperienceFacet',
+  el_role: 'headlessRoleFacet',
+  el_contenttype: 'headlessTypeFacet',
+  el_level: 'headlessExperienceFacet',
 };
 
-const coveoFacetFilterNameMap = {
-  el_contenttype: 'Content Type',
-  el_role: 'Role',
-  el_level: 'Experience Level',
-};
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
 
 let placeholders = {};
@@ -152,7 +148,7 @@ function generateCheckboxItem(item, index, id) {
 
 const constructDropdownEl = (options, id) =>
   htmlToElement(`
-    <div class="filter-dropdown filter-input" data-filter-type="${options.name}">
+    <div class="filter-dropdown filter-input" data-filter-type="${options.id}">
       <button>
         ${options.name}
         <span class="icon icon-chevron"></span>
@@ -225,10 +221,11 @@ function removeFromTags(block, value) {
 }
 
 function updateCountAndCheckedState(block, name, value) {
-  const tagRole = block.querySelector(`.filter-dropdown[data-filter-type="${name}"]`);
+  const ddObject = getObjectByName(dropdownOptions, name);
+  const tagRole = block.querySelector(`.filter-dropdown[data-filter-type="${ddObject.id}"]`);
   const btnEl = tagRole.querySelector(':scope > button');
   const ddOptions = [...tagRole.querySelector('.filter-dropdown-content').children];
-  const ddObject = getObjectByName(dropdownOptions, name);
+
   ddObject.selected = 0;
 
   function syncCheckedState(option) {
@@ -252,8 +249,9 @@ function handleTagsClick(block) {
     const isTag = event.target.closest('.browse-tags');
     if (isTag) {
       const name = isTag.querySelector('span:nth-child(1)').textContent.trim();
+      const dropDownObj = getObjectByName(dropdownOptions, name);
       const { value } = isTag;
-      const coveoFacetKey = coveoFacetMap[name];
+      const coveoFacetKey = coveoFacetMap[dropDownObj.id];
       const coveoFacet = window[coveoFacetKey];
       if (coveoFacet) {
         const facets = getCoveoFacets(value, false);
@@ -278,10 +276,12 @@ function handleCheckboxClick(block, el, options) {
   // Function to handle checkbox state changes
   function handleCheckboxChange(event) {
     const checkbox = event.target;
-    const name = checkbox.closest('.filter-dropdown').dataset.filterType;
+    const { filterType } = checkbox.closest('.filter-dropdown').dataset;
     const label = checkbox?.dataset.label || '';
     const { checked: isChecked, value } = checkbox;
-    const coveoFacetKey = coveoFacetMap[name];
+    const dropDownObj = getObjectById(dropdownOptions, filterType);
+    const { name } = dropDownObj;
+    const coveoFacetKey = coveoFacetMap[dropDownObj.id];
     const coveoFacet = window[coveoFacetKey];
     if (isChecked) {
       options.selected += 1;
@@ -379,10 +379,10 @@ function uncheckAllFiltersFromDropdown(block) {
   const dropdownFilters = block.querySelectorAll('.filter-dropdown');
   dropdownFilters.forEach((dropdownEl) => {
     const { filterType } = dropdownEl.dataset;
-    const dropdownObj = getObjectByName(dropdownOptions, filterType);
+    const dropdownObj = getObjectById(dropdownOptions, filterType);
 
     dropdownObj.selected = 0;
-    dropdownEl.querySelector(':scope > button').firstChild.textContent = filterType;
+    dropdownEl.querySelector(':scope > button').firstChild.textContent = dropdownObj.name;
 
     const dOptions = dropdownEl.querySelectorAll('.filter-dropdown-content > .custom-checkbox');
     dOptions.forEach((option) => {
@@ -498,14 +498,14 @@ function handleUriHash() {
 
   filtersInfo.forEach((filterInfo) => {
     const [facetKeys, facetValueInfo] = filterInfo.split('=');
-    const facetKey = facetKeys.replace('f-', '');
     const facetValues = facetValueInfo.split(',');
-    // console.log('facetKey', facetKey);
-    // console.log('facetValues', facetValues);
-    const keyName = coveoFacetFilterNameMap[facetKey];
+    const keyName = facetKeys.replace('f-', '');
+
     if (keyName) {
       const filterOptionEl = browseFiltersSection.querySelector(`.filter-dropdown[data-filter-type="${keyName}"]`);
       if (filterOptionEl) {
+        const ddObject = getObjectById(dropdownOptions, keyName);
+        const { name } = ddObject;
         facetValues.forEach((facetValueString) => {
           const [facetValue] = facetValueString.split('|');
           const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
@@ -513,13 +513,12 @@ function handleUriHash() {
             const label = inputEl?.dataset.label || '';
             inputEl.checked = true;
             appendTag(browseFiltersSection, {
-              name: keyName,
+              name,
               label,
               value: facetValue,
             });
           }
         });
-        const ddObject = getObjectByName(dropdownOptions, keyName);
         const btnEl = filterOptionEl.querySelector(':scope > button');
         const selectedCount = facetValues.reduce((acc, curr) => {
           const [key] = curr.split('|');
@@ -530,12 +529,12 @@ function handleUriHash() {
         }, []).length;
         ddObject.selected = selectedCount;
         if (selectedCount === 0) {
-          btnEl.firstChild.textContent = keyName;
+          btnEl.firstChild.textContent = name;
         } else {
-          btnEl.firstChild.textContent = `${keyName} (${selectedCount})`;
+          btnEl.firstChild.textContent = `${name} (${selectedCount})`;
         }
       }
-    } else if (facetKey === 'q') {
+    } else if (keyName === 'q') {
       containsSearchQuery = true;
       const [searchValue] = facetValues;
       if (searchValue) {
@@ -543,7 +542,7 @@ function handleUriHash() {
       } else {
         searchInput.value = '';
       }
-    } else if (facetKey === 'aq' && filterInfo) {
+    } else if (keyName === 'aq' && filterInfo) {
       const selectedTopics = getSelectedTopics(filterInfo);
       const contentDiv = document.querySelector('.browse-topics');
       const buttons = contentDiv.querySelectorAll('button');
@@ -758,7 +757,13 @@ async function handleSearchEngineSubscription() {
     }
   } else {
     buildCardsShimmer.remove();
-    filterResultsEl.innerHTML = placeholders.noResultsTextBrowse || 'No Results';
+    const communityOptionIsSelected = browseFilterForm.querySelector(`input[value="Community"]`)?.checked === true;
+    let noResultsText = placeholders.noResultsTextBrowse || 'No Results';
+    if (communityOptionIsSelected && !!dropdownOptions.find((opt) => opt.id === 'Role' && opt.selected > 0)) {
+      noResultsText =
+        placeholders.rolesWithCommunitySelectionWarning ?? 'To view Community posts, please remove all Role selections';
+    }
+    filterResultsEl.innerHTML = noResultsText;
     browseFilterForm.classList.remove('is-result');
     filterResultsEl.classList.add('no-results');
   }
