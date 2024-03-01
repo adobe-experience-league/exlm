@@ -467,6 +467,10 @@ em > a > u {
   font-style: normal;
 }
 
+em > u::before {
+  content: ' ';
+}
+
 ul {
   margin-left: 28px;
   list-style-type: disc;
