@@ -208,9 +208,9 @@ export default async function decorate(block) {
     decorateBreadcrumb(footer);
     decorateMenu(footer);
     block.append(footer);
-    decorateCopyrightsMenu();
     await decorateIcons(footer);
     handleSocialIconStyles(footer);
     handleLoginFunctionality(footer);
+    decorateCopyrightsMenu();
   }
 }
