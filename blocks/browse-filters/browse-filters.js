@@ -759,7 +759,7 @@ async function handleSearchEngineSubscription() {
     buildCardsShimmer.remove();
     const communityOptionIsSelected = browseFilterForm.querySelector(`input[value="Community"]`)?.checked === true;
     let noResultsText = placeholders.noResultsTextBrowse || 'No Results';
-    if (communityOptionIsSelected && !!dropdownOptions.find((opt) => opt.id === 'Role' && opt.selected > 0)) {
+    if (communityOptionIsSelected && !!dropdownOptions.find((opt) => opt.id === 'el_role' && opt.selected > 0)) {
       noResultsText =
         placeholders.rolesWithCommunitySelectionWarning ?? 'To view Community posts, please remove all Role selections';
     }
