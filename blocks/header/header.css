@@ -166,9 +166,6 @@ header {
   white-space: nowrap;
   line-height: unset;
 }
-.header .signed-in {
-  grid-area: signed-in;
-}
 .header .product-grid.signed-in {
   grid-area: product-grid;
   display: var(--sign-in-display);
@@ -860,6 +857,9 @@ header {
   height: 24px;
   width: 24px;
 }
+.header .signed-in {
+  grid-area: signed-in;
+}
 .header .signed-in .profile {
   position: initial;
   display: flex;
@@ -999,7 +999,7 @@ header {
 .header .product-toggle {
   display: none;
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .header .product-toggle {
     display: block;
   }

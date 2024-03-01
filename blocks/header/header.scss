@@ -1060,7 +1060,7 @@ header {
   .product-toggle {
     display: none;
 
-    @include breakpoint(desktop) {
+    @include breakpoint(custom) {
       display: block;
     }
   }
