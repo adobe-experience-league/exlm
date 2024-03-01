@@ -10,10 +10,8 @@ import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js'
 import { isSignedInUser, profile } from '../../scripts/data-service/profile-service.js';
 
 function decorateBookmarkMobileBlock() {
-  if (!document.querySelector('.doc-actions-mobile')) {
-    const docActionsMobile = document.createElement('div');
-    docActionsMobile.classList.add('doc-actions-mobile');
-
+  const docActionsMobile = document.querySelector('.doc-actions-mobile'); // should always be present if article-metadata is present
+  if (docActionsMobile) {
     const createdByEl = document.querySelector('.article-metadata-createdby-wrapper');
     const articleMetaDataEl = document.querySelector('.article-metadata-wrapper');
     if (articleMetaDataEl.nextSibling === createdByEl) {
@@ -41,9 +39,8 @@ export async function decorateBookmark(block, placeholders) {
     `${placeholders.bookmarkAuthTiptext}`,
     `${placeholders.bookmarkAuthLabelSet}`,
   );
-
-  const docActionsMobileBookmark = document.querySelector('.doc-actions-mobile .bookmark');
   const docActionsMobileContainer = document.querySelector('.doc-actions-mobile');
+  const docActionsMobileBookmark = docActionsMobileContainer.querySelector('.bookmark');
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
     block.appendChild(authBookmark);
