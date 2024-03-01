@@ -28,10 +28,14 @@ function decorateMenu(footer, isSignedIn) {
         const anchorLinks = Array.from(ulElement.querySelectorAll('a') ?? []);
         const containsAuthOnlyLink = !!anchorLinks.find((a) => a.getAttribute('auth-only'));
         if (containsAuthOnlyLink) {
+          const loginLink = anchorLinks.find((a) => a.getAttribute('auth-only') !== 'true');
+          if (loginLink) {
+            loginLink.href = '#';
+            loginLink.classList.add('footer-login-link');
+          }
           anchorLinks.forEach((a) => {
-            const show =
-              (isSignedIn && a.getAttribute('auth-only') === 'true') ||
-              (!isSignedIn && a.getAttribute('auth-only') !== 'true');
+            const authOnlyAttribute = a.getAttribute('auth-only');
+            const show = (isSignedIn && authOnlyAttribute === 'true') || (!isSignedIn && authOnlyAttribute !== 'true');
             const classOp = show ? 'remove' : 'add';
             a.classList[classOp]('footer-link-hidden');
           });
@@ -177,6 +181,13 @@ function handleSocialIconStyles(footer) {
   });
 }
 
+function handleLoginFunctionality(footer) {
+  const loginLink = footer.querySelector('.footer-login-link');
+  loginLink.addEventListener('click', () => {
+    window.adobeIMS.signIn();
+  });
+}
+
 /**
  * loads and decorates the footer
  * @param {Element} block The footer block element
@@ -199,5 +210,6 @@ export default async function decorate(block) {
     decorateCopyrightsMenu();
     await decorateIcons(footer);
     handleSocialIconStyles(footer);
+    handleLoginFunctionality(footer);
   }
 }
