@@ -35,9 +35,11 @@ function decorateMenu(footer, isSignedIn) {
           }
           anchorLinks.forEach((a) => {
             const authOnlyAttribute = a.getAttribute('auth-only');
-            const show = (isSignedIn && authOnlyAttribute === 'true') || (!isSignedIn && authOnlyAttribute !== 'true');
-            const classOp = show ? 'remove' : 'add';
-            a.classList[classOp]('footer-link-hidden');
+            const isSignedInAndUnAuthenticatedLink = isSignedIn && authOnlyAttribute !== 'true';
+            const isNotSignedInAndAuthenticatedLink = !isSignedIn && authOnlyAttribute === 'true';
+            if (isSignedInAndUnAuthenticatedLink || isNotSignedInAndAuthenticatedLink) {
+              a.classList.add('footer-link-hidden');
+            }
           });
         }
         divPair.appendChild(ulElement);
