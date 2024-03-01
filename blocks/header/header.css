@@ -107,7 +107,7 @@ header {
   .header > nav {
     width: 100%;
     justify-content: initial;
-    grid-template-areas: "adobe-logo brand nav sign-in search language product-grid";
+    grid-template-areas: "adobe-logo brand nav sign-in search language product-grid signed-in";
     grid-template-columns: min-content min-content max-content min-content auto max-content max-content max-content;
   }
 }
@@ -857,6 +857,9 @@ header {
   height: 24px;
   width: 24px;
 }
+.header .signed-in {
+  grid-area: signed-in;
+}
 .header .signed-in .profile {
   position: initial;
   display: flex;
@@ -996,7 +999,7 @@ header {
 .header .product-toggle {
   display: none;
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .header .product-toggle {
     display: block;
   }
