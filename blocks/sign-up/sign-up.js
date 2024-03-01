@@ -81,7 +81,7 @@ export default async function decorate(block) {
 
   if (signUpBtn) {
     signUpBtn.addEventListener('click', async () => {
-      window.adobeIMS.signIn();
+      window.adobeIMS.signUp();
     });
   }
 
