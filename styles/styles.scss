@@ -869,18 +869,20 @@ body[class^='browse-'] .browse-filters-full-container {
       }
     }
 
-    > div.section {
+    > div {
       padding: 30px 2px;
       box-sizing: border-box;
       width: 100%;
+      display: block !important; // ensure the section is always visible.
 
       @include breakpoint(tablet) {
         padding: 30px 32px 32px;
       }
 
-      &.toc-container {
+      // TOC is ALWAYS in the section before last
+      &:nth-last-child(2) {
         grid-row: 1 / 1;
-        min-height: 70px; // predefined height to help with CLS
+        min-height: 90px; // predefined height to help with CLS
         padding: 32px 10px 10px; // predefined padding to help with CLS
 
         .rail-content {

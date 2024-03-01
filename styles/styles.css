@@ -975,60 +975,61 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
     grid-template-columns: 0 5fr 0;
   }
 }
-.docs main > div.section {
+.docs main > div {
   padding: 30px 2px;
   box-sizing: border-box;
   width: 100%;
+  display: block !important;
 }
 @media (min-width: 600px) {
-  .docs main > div.section {
+  .docs main > div {
     padding: 30px 32px 32px;
   }
 }
-.docs main > div.section.toc-container {
+.docs main > div:nth-last-child(2) {
   grid-row: 1/1;
-  min-height: 70px;
+  min-height: 90px;
   padding: 32px 10px 10px;
 }
-.docs main > div.section.toc-container .rail-content {
+.docs main > div:nth-last-child(2) .rail-content {
   display: block;
 }
-.docs main > div.section.toc-container .toc {
+.docs main > div:nth-last-child(2) .toc {
   visibility: hidden;
 }
-.docs main > div.section.mini-toc-container {
+.docs main > div.mini-toc-container {
   padding: 32px 10px 0 0;
 }
 @media (min-width: 600px) {
-  .docs main > div.section.mini-toc-container {
+  .docs main > div.mini-toc-container {
     padding: 32px 10px 10px 0;
   }
 }
 @media (min-width: 900px) {
-  .docs main > div.section {
+  .docs main > div {
     border-right: 1px solid #eaeaea;
   }
-  .docs main > div.section:not(.rail), .docs main > div.section.rail-right {
+  .docs main > div:not(.rail), .docs main > div.rail-right {
     border-right: none;
   }
-  .docs main > div.section:not(.toc-container, .mini-toc-container) {
+  .docs main > div:not(.toc-container, .mini-toc-container) {
     overflow: auto;
     padding-block: 0;
     padding-inline: 37px 50px;
     grid-column: 2;
   }
-  .docs main > div.section:not(.toc-container, .mini-toc-container).content-section-first {
+  .docs main > div:not(.toc-container, .mini-toc-container).content-section-first {
     padding-block-start: 54px;
   }
-  .docs main > div.section:not(.toc-container, .mini-toc-container).content-section-last {
+  .docs main > div:not(.toc-container, .mini-toc-container).content-section-last {
     padding-block-end: 50px;
   }
-  .docs main > div.section.toc-container {
+  .docs main > div.toc-container {
     grid-column: 1/1;
     grid-row: 1/-1;
     padding: 46px 10px 10px;
   }
-  .docs main > div.section.mini-toc-container {
+  .docs main > div.mini-toc-container {
     grid-column: 3/3;
     grid-row: 1/-1;
     position: relative;
