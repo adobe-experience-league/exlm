@@ -1,5 +1,4 @@
 /* eslint-disable no-plusplus */
-import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 function decorateButtons(...buttons) {
@@ -39,10 +38,8 @@ export default async function decorate(block) {
   const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
   const signInText = confSignInText.textContent.trim();
 
-  const isSignedIn = await isSignedInUser();
-
   // build sign in button if not in yet and button text is set
-  const secondCta = signInText && !isSignedIn ? getSignInButton(signInText) : null;
+  const secondCta = signInText && getSignInButton(signInText);
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
@@ -68,18 +65,22 @@ export default async function decorate(block) {
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1562 571.212"><path fill="#fff" d="M0 1.212h1562v570H0z" data-name="Rectangle 1"></path><path class="bg" fill="var(${bgColor})" d="M752.813-1495s115.146 210.072 471.053 309.516 291.355 261.7 291.355 261.7h150.039V-1495Z" data-name="Path 1" transform="translate(-103.26 1495)"></path></svg>
     </div>
   `);
-
-  // add sign in event handler for sign in if set
-  if (signInText && !isSignedIn) {
-    marqueeDOM.querySelector('.signin').addEventListener('click', async () => {
-      window.adobeIMS.signUp();
-    });
-  }
-
+  
   block.textContent = '';
+
   if (!subjectPicture) {
     block.classList.add('no-subject');
   }
+
+  // fetch user auth to toggle hide signin button
+  import('../../scripts/data-service/profile-service.js')
+    .then((module) => module.isSignedInUser())
+    .then((isSignedInUser) => {
+      if (!isSignedInUser) {
+        block.classList.add('unauthenticated');
+        block.querySelector('.signin').addEventListener('click', () => window.adobeIMS.signUp());
+      }
+    });
 
   decorateIcons(marqueeDOM);
   block.append(marqueeDOM);

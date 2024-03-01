@@ -402,22 +402,7 @@ export async function loadIms() {
   return window.imsLoaded;
 }
 
-/**
- * Loads everything that doesn't need to be delayed.
- * @param {Element} doc The container element
- */
-async function loadLazy(doc) {
-  const main = doc.querySelector('main');
-  await loadBlocks(main);
-  loadIms(); // start it early, asyncronously
-
-  const { hash } = window.location;
-  const element = hash ? doc.getElementById(hash.substring(1)) : false;
-  const { lang } = getPathDetails();
-  if (hash && element) element.scrollIntoView();
-  const headerPromise = loadHeader(doc.querySelector('header'));
-  const footerPromise = loadFooter(doc.querySelector('footer'));
-
+const loadMartech = async (headerPromise, footerPromise) => {
   let launchScriptSrc = '';
   if (window.location.host === 'eds-stage.experienceleague.adobe.com') {
     launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
@@ -439,6 +424,7 @@ async function loadLazy(doc) {
   Promise.all([launchPromise, libAnalyticsModulePromise, headerPromise, footerPromise, oneTrustPromise]).then(
     // eslint-disable-next-line no-unused-vars
     ([launch, libAnalyticsModule, headPr, footPr]) => {
+      const { lang } = getPathDetails();
       const { pageLoadModel, linkClickModel, pageName } = libAnalyticsModule;
       oneTrust();
       document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
@@ -464,10 +450,26 @@ async function loadLazy(doc) {
       });
     },
   );
+};
 
+/**
+ * Loads everything that doesn't need to be delayed.
+ * @param {Element} doc The container element
+ */
+async function loadLazy(doc) {
+  const main = doc.querySelector('main');
+  await loadBlocks(main);
+  loadIms(); // start it early, asyncronously
+
+  const { hash } = window.location;
+  const element = hash ? doc.getElementById(hash.substring(1)) : false;
+  if (hash && element) element.scrollIntoView();
+  const headerPromise = loadHeader(doc.querySelector('header'));
+  const footerPromise = loadFooter(doc.querySelector('footer'));
+  // disable martech if martech=off is in the query string, this is used for testing ONLY
+  if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
-
   sampleRUM('lazy');
 }
 
