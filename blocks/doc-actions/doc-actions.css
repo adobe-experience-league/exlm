@@ -222,8 +222,4 @@
   .doc-actions .bookmark, .doc-actions .copy-link {
     display: block;
   }  
-  
-  .doc-actions-mobile {
-    display: none;
-  }
 }

@@ -1145,6 +1145,18 @@ body[class^='browse-'] .browse-filters-full-container {
       }
     }
   }
+
+  .doc-actions-mobile {
+    display: flex;
+    margin: 30px 0 0 -8px;
+    min-height: 30px;
+  }
+
+  @media (width >= 900px) {
+    .doc-actions-mobile {
+      display: none;
+    }
+  }
 }
 
 @include breakpoint('tablet') {
