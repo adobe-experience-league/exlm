@@ -622,14 +622,11 @@ const productGridDecorator = async (productGridBlock) => {
     productGridBlock.classList.add('signed-in');
     const productDropdown = document.createElement('div');
     productDropdown.classList.add('product-dropdown');
-    const pTags = productGridBlock.querySelectorAll('p');
-    if (pTags.length > 0) {
-      pTags.forEach((p) => {
-        const anchor = p.querySelector('a');
-        anchor.setAttribute('target', '_blank');
-        const href = anchor.getAttribute('href').split('#');
-        anchor.setAttribute('href', href[0]);
-        productDropdown.innerHTML += p.innerHTML;
+    const aTags = productGridBlock.querySelectorAll('a');
+    if (aTags.length > 0) {
+      aTags.forEach((a) => {
+        a.setAttribute('target', '_blank');
+        productDropdown.append(a);
       });
     }
     const productToggle = document.createElement('button');
