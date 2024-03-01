@@ -146,21 +146,21 @@ const expLevel = [
 }));
 
 export const roleOptions = {
-  id: 'Role',
+  id: 'el_role',
   name: placeholders.filterRoleLabel || 'Role',
   items: roles,
   selected: 0,
 };
 
 export const contentTypeOptions = {
-  id: 'Content Type',
+  id: 'el_contenttype',
   name: placeholders.filterContentTypeLabel || 'Content Type',
   items: contentType,
   selected: 0,
 };
 
 export const expTypeOptions = {
-  id: 'Experience Level',
+  id: 'el_level',
   name: placeholders.filterExperienceLevelLabel || 'Experience Level',
   items: expLevel,
   selected: 0,

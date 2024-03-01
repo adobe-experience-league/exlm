@@ -20,16 +20,11 @@ import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery } from 
 import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
 
 const coveoFacetMap = {
-  Role: 'headlessRoleFacet',
-  'Content Type': 'headlessTypeFacet',
-  'Experience Level': 'headlessExperienceFacet',
+  el_role: 'headlessRoleFacet',
+  el_contenttype: 'headlessTypeFacet',
+  el_level: 'headlessExperienceFacet',
 };
 
-const coveoFacetFilterNameMap = {
-  el_contenttype: 'Content Type',
-  el_role: 'Role',
-  el_level: 'Experience Level',
-};
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
 
 let placeholders = {};
@@ -256,7 +251,7 @@ function handleTagsClick(block) {
       const name = isTag.querySelector('span:nth-child(1)').textContent.trim();
       const dropDownObj = getObjectByName(dropdownOptions, name);
       const { value } = isTag;
-      const coveoFacetKey = coveoFacetMap?.[dropDownObj.id];
+      const coveoFacetKey = coveoFacetMap[dropDownObj.id];
       const coveoFacet = window[coveoFacetKey];
       if (coveoFacet) {
         const facets = getCoveoFacets(value, false);
@@ -286,7 +281,7 @@ function handleCheckboxClick(block, el, options) {
     const { checked: isChecked, value } = checkbox;
     const dropDownObj = getObjectById(dropdownOptions, filterType);
     const { name } = dropDownObj;
-    const coveoFacetKey = coveoFacetMap?.[dropDownObj.id];
+    const coveoFacetKey = coveoFacetMap[dropDownObj.id];
     const coveoFacet = window[coveoFacetKey];
     if (isChecked) {
       options.selected += 1;
@@ -505,9 +500,8 @@ function handleUriHash() {
     const [facetKeys, facetValueInfo] = filterInfo.split('=');
     const facetKey = facetKeys.replace('f-', '');
     const facetValues = facetValueInfo.split(',');
-    // console.log('facetKey', facetKey);
-    // console.log('facetValues', facetValues);
-    const keyName = coveoFacetFilterNameMap[facetKey];
+    const keyName = facetKeys.replace('f-', '');
+
     if (keyName) {
       const filterOptionEl = browseFiltersSection.querySelector(`.filter-dropdown[data-filter-type="${keyName}"]`);
       if (filterOptionEl) {
