@@ -498,7 +498,6 @@ function handleUriHash() {
 
   filtersInfo.forEach((filterInfo) => {
     const [facetKeys, facetValueInfo] = filterInfo.split('=');
-    const facetKey = facetKeys.replace('f-', '');
     const facetValues = facetValueInfo.split(',');
     const keyName = facetKeys.replace('f-', '');
 
@@ -535,7 +534,7 @@ function handleUriHash() {
           btnEl.firstChild.textContent = `${name} (${selectedCount})`;
         }
       }
-    } else if (facetKey === 'q') {
+    } else if (keyName === 'q') {
       containsSearchQuery = true;
       const [searchValue] = facetValues;
       if (searchValue) {
@@ -543,7 +542,7 @@ function handleUriHash() {
       } else {
         searchInput.value = '';
       }
-    } else if (facetKey === 'aq' && filterInfo) {
+    } else if (keyName === 'aq' && filterInfo) {
       const selectedTopics = getSelectedTopics(filterInfo);
       const contentDiv = document.querySelector('.browse-topics');
       const buttons = contentDiv.querySelectorAll('button');
