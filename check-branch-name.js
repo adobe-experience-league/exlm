@@ -15,7 +15,7 @@ const [origin, branch] = await Promise.all([
     run('git remote get-url origin'),
     run('git rev-parse --abbrev-ref HEAD')
 ]);
-const match = origin.match(/\/([^/]+)\/([^./]+?)\.git$/);
+const match = origin.match(/([^:/]+)\/([^./]+?)\.git$/);
 
 if (!match) {
     console.log(`not a github repo: ${origin}`);
