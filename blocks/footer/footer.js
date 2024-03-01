@@ -10,7 +10,8 @@ const fetchFragment = async (rePath, lang = 'en') => {
   return response.text();
 };
 
-function decorateMenu(footer, isSignedIn) {
+async function decorateMenu(footer) {
+  const isSignedIn = await isSignedInUser();
   const childElements = footer.querySelectorAll('.footer-item');
   const groupDiv = document.createElement('div');
   groupDiv.classList.add('footer-menu');
@@ -195,7 +196,6 @@ function handleLoginFunctionality(footer) {
  * @param {Element} block The footer block element
  */
 export default async function decorate(block) {
-  const isSignedInPromise = isSignedInUser();
   // fetch footer content
   const { lang } = getPathDetails();
   const footerFragment = await fetchFragment('footer/footer', lang);
@@ -206,8 +206,7 @@ export default async function decorate(block) {
     footer.innerHTML = footerFragment;
     await decorateSocial(footer);
     decorateBreadcrumb(footer);
-    const isSignedIn = await isSignedInPromise;
-    decorateMenu(footer, isSignedIn);
+    decorateMenu(footer);
     block.append(footer);
     decorateCopyrightsMenu();
     await decorateIcons(footer);
