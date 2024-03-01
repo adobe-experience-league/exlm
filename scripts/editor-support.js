@@ -7,7 +7,6 @@ import {
   loadBlock,
   loadBlocks,
 } from './lib-franklin.js';
-// eslint-disable-next-line import/no-unresolved
 import { decorateRichtext } from './editor-support-rte.js';
 import { decorateMain, loadIms } from './scripts.js';
 
