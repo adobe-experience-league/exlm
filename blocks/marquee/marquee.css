@@ -127,6 +127,14 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
   color: var(--spectrum-gray-700);
 }
 
+.marquee-cta > .signin {
+  visibility: hidden;
+}
+
+.unauthenticated .marquee-cta > .signin {
+  visibility: unset;
+}
+
 .marquee-background {
   position: absolute;
   top: 0;
@@ -363,4 +371,3 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
     min-height: 0%;
   }
 }
-

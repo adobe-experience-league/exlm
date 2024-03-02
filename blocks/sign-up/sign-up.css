@@ -302,7 +302,7 @@
     body[class ^= 'browse-'] .signup-title {
       font-size: var( --spectrum-font-size-900);
       line-height: 36px;
-      margin-bottom: 0 /* var(--space-token-xxs)*/;
+      margin-bottom: var(--space-token-xxs);
   
     }
   

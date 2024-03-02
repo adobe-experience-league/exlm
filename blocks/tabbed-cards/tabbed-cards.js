@@ -95,7 +95,7 @@ export default async function decorate(block) {
   }
 
   // Function to fetch data and render block
-  const fetchDataAndRenderBlock = (contentType, tabbedBlock) => {
+  const fetchDataAndRenderBlock = (contentType) => {
     const params = {
       contentType: contentType && contentType.split(','),
       sortCriteria,
@@ -119,7 +119,6 @@ export default async function decorate(block) {
           block.appendChild(contentDiv);
           /* Hide Tooltip while scrolling the cards layout */
           hideTooltipOnScroll(contentDiv);
-          decorateIcons(tabbedBlock);
         } else {
           buildCardsShimmer.remove();
           buildNoResultsContent(block, true);
@@ -176,7 +175,7 @@ export default async function decorate(block) {
         viewLinkURLElement.setAttribute('href', urlMap[contentTypeLowerCase]);
         tabList.appendChild(viewLinkURLElement);
         buildCardsShimmer.add(block);
-        fetchDataAndRenderBlock(contentTypeLowerCase, block);
+        fetchDataAndRenderBlock(contentTypeLowerCase);
       });
       tabListUlElement.appendChild(tabLabel);
       // Append tab label to the tab list
@@ -202,7 +201,7 @@ export default async function decorate(block) {
     tabList.appendChild(viewLinkURLElement);
     tabList.children[0].children[0].classList.add('active');
 
-    fetchDataAndRenderBlock(initialContentType, block);
+    fetchDataAndRenderBlock(initialContentType);
     decorateIcons(headerDiv);
     decorateExternalLinks(block);
   } else {

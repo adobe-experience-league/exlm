@@ -109,6 +109,9 @@
   line-height: 1.6875rem;
   margin: 0;
 }
+.footer-item .footer-link-hidden {
+  display: none;
+}
 .footer-item-active {
   position: relative;
 }

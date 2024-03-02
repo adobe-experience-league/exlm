@@ -1,6 +1,11 @@
 import { fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
+  // create actions div, which is always present after this block.
+  const actionsDiv = document.createElement('div');
+  actionsDiv.classList.add('doc-actions-mobile');
+  block.parentNode.insertBefore(actionsDiv, block.nextSibling);
+
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();

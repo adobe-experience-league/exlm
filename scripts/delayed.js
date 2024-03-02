@@ -35,5 +35,9 @@ function loadPrism(document) {
 loadCSS(`${window.hlx.codeBasePath}/styles/print/print.css`);
 
 loadPrism(document);
-loadGainsight();
-loadQualtrics();
+
+// disable martech if martech=off is in the query string, this is used for testing ONLY
+if (window.location.search?.indexOf('martech=off') === -1) {
+  loadGainsight();
+  loadQualtrics();
+}

@@ -133,14 +133,14 @@ header {
 
   > nav {
     display: grid;
-    grid-template-areas: 'nav brand product-grid search sign-in';
+    grid-template-areas: 'nav adobe-logo brand product-grid search sign-in';
     justify-content: space-between;
     height: 100%;
 
     @include breakpoint(custom) {
       width: 100%;
       justify-content: initial;
-      grid-template-areas: 'adobe-logo brand nav sign-up search language product-grid sign-in';
+      grid-template-areas: 'adobe-logo brand nav sign-in search language product-grid signed-in';
       grid-template-columns: min-content min-content max-content min-content auto max-content max-content max-content;
     }
   }
@@ -175,6 +175,8 @@ header {
     }
 
     a {
+      margin: 16px 0;
+
       @include button;
     }
   }
@@ -188,15 +190,9 @@ header {
 
     a {
       color: var(--nav-item-text-color);
+      margin: 16px 0;
 
       @include button;
-
-      @include breakpoint(custom) {
-        @include button-reset;
-
-        color: var(--nav-item-text-color);
-        padding: var(--nav-root-item-padding-x);
-      }
     }
   }
 
@@ -239,7 +235,7 @@ header {
     width: 100%;
 
     @include breakpoint(tablet) {
-      min-height: calc(100vh - var(--nav-height));
+      height: calc(100vh - var(--nav-height));
       max-width: 360px;
     }
 
@@ -284,6 +280,8 @@ header {
     z-index: 10;
     left: 0;
     right: 0;
+    max-height: calc(100vh - var(--nav-height));
+    overflow-y: auto;
 
     @include breakpoint(custom) {
       position: initial;
@@ -925,6 +923,8 @@ header {
   }
 
   .signed-in {
+    grid-area: signed-in;
+
     .profile {
       position: initial;
       display: flex;
@@ -958,6 +958,7 @@ header {
         line-height: 17px;
         padding: 10px 0 8px 10px;
         width: 100%;
+        text-wrap: wrap;
 
         &[data-id='sign-out'] {
           border-top: 0 none;
@@ -976,6 +977,7 @@ header {
           border-radius: 0;
           margin: 0 0 0 20px;
           padding: 9px 0;
+          max-width: 150px;
         }
       }
 
@@ -1021,12 +1023,24 @@ header {
     align-items: flex-start;
     right: 0;
     width: 100%;
+    max-height: calc(100vh - var(--nav-height));
     box-sizing: border-box;
     top: 100%;
     background-color: var(--color-white);
     z-index: 20000;
     padding: 1.5em;
     box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    @include breakpoint(tablet) {
+      width: 360px;
+      height: calc(100vh - var(--nav-height));
+    }
+
+    @include breakpoint(custom) {
+      height: auto;
+    }
   }
 
   .profile-menu.profile-menu-expanded {
@@ -1046,7 +1060,7 @@ header {
   .product-toggle {
     display: none;
 
-    @include breakpoint(desktop) {
+    @include breakpoint(custom) {
       display: block;
     }
   }

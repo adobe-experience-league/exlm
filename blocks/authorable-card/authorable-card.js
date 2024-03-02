@@ -80,7 +80,6 @@ export default async function decorate(block) {
     buildCardsShimmer.remove();
     contentDiv.append(...cards);
     block.appendChild(contentDiv);
-    decorateIcons(contentDiv);
   });
 
   /* Hide Tooltip while scrolling the cards layout */
