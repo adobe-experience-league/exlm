@@ -320,10 +320,6 @@ function handleCheckboxClick(block, el, options) {
         });
       }
     }
-    /* We are calling the handleTopicSelection again after setting the facets. This will ensure that the
-      correct AdvancedQuery (aq) is populated at coveo level for subsequent requests. This was added because
-      the facet selection was overriding the value of advancedQuery at coveo level.
-    */
     handleTopicSelection();
     if (options.selected !== 0) btnEl.firstChild.textContent = `${options.name} (${options.selected})`;
     if (options.selected === 0) btnEl.firstChild.textContent = `${options.name}`;
