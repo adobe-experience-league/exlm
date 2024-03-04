@@ -12,24 +12,27 @@ export function decorateRichtext(container = document) {
 
   let element;
   // eslint-disable-next-line no-cond-assign
-  while (element = container.querySelector('[data-richtext-resource]')) {
+  while ((element = container.querySelector('[data-richtext-resource]'))) {
     const { richtextResource, richtextProp, richtextFilter } = element.dataset;
     deleteInstrumentation(element);
     const siblings = [];
     let sibling = element;
     // eslint-disable-next-line no-cond-assign
-    while (sibling = sibling.nextElementSibling) {
-      if (sibling.dataset.richtextResource === richtextResource
-        && sibling.dataset.richtextProp === richtextProp) {
+    while ((sibling = sibling.nextElementSibling)) {
+      if (sibling.dataset.richtextResource === richtextResource && sibling.dataset.richtextProp === richtextProp) {
         deleteInstrumentation(sibling);
         siblings.push(sibling);
       } else break;
     }
-    const orphanElements = document.querySelectorAll(`[data-richtext-id="${richtextResource}"][data-richtext-prop="${richtextProp}"]`);
+    const orphanElements = document.querySelectorAll(
+      `[data-richtext-id="${richtextResource}"][data-richtext-prop="${richtextProp}"]`,
+    );
     if (orphanElements.length) {
       // eslint-disable-next-line no-console
-      console.warn('Found orphan elements of a richtext, that were not consecutive siblings of '
-        + 'the first paragraph.', orphanElements);
+      console.warn(
+        'Found orphan elements of a richtext, that were not consecutive siblings of the first paragraph.',
+        orphanElements,
+      );
       orphanElements.forEach((el) => deleteInstrumentation(el));
     } else {
       const group = document.createElement('div');
