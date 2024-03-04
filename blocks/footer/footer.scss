@@ -337,7 +337,7 @@
         color: var(--non-spectrum-charcoal-gray);
         font-size: 0.75rem;
 
-        &::after {
+        &:not(:last-child)::after {
           content: '›';
           padding: 0 8px;
           position: relative;
