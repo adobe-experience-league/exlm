@@ -31,7 +31,7 @@ async function decorateMenu(footer) {
         if (containsAuthOnlyLink) {
           const loginLink = anchorLinks.find((a) => a.getAttribute('auth-only') !== 'true');
           if (loginLink) {
-            loginLink.href = '#';
+            loginLink.href = '';
             loginLink.classList.add('footer-login-link');
           }
           anchorLinks.forEach((a) => {
@@ -185,7 +185,8 @@ function handleSocialIconStyles(footer) {
 
 function handleLoginFunctionality(footer) {
   const loginLink = footer.querySelector('.footer-login-link');
-  loginLink.addEventListener('click', () => {
+  loginLink.addEventListener('click', (e) => {
+    e.preventDefault();
     window.adobeIMS.signIn();
   });
 }
@@ -205,7 +206,7 @@ export default async function decorate(block) {
     footer.innerHTML = footerFragment;
     await decorateSocial(footer);
     decorateBreadcrumb(footer);
-    decorateMenu(footer);
+    await decorateMenu(footer);
     block.append(footer);
     await decorateIcons(footer);
     handleSocialIconStyles(footer);
