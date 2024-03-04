@@ -207,7 +207,7 @@ export default async function decorate(block) {
     footer.innerHTML = footerFragment;
     await decorateSocial(footer);
     decorateBreadcrumb(footer);
-    decorateMenu(footer);
+    await decorateMenu(footer);
     block.append(footer);
     await decorateIcons(footer);
     handleSocialIconStyles(footer);
