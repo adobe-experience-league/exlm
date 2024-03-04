@@ -186,7 +186,8 @@ function handleSocialIconStyles(footer) {
 
 function handleLoginFunctionality(footer) {
   const loginLink = footer.querySelector('.footer-login-link');
-  loginLink.addEventListener('click', () => {
+  loginLink.addEventListener('click', (e) => {
+    e.preventDefault();
     window.adobeIMS.signIn();
   });
 }
