@@ -438,6 +438,7 @@ const loadMartech = async (headerPromise, footerPromise) => {
   } else {
     launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js';
   }
+  oneTrust();
 
   const oneTrustPromise = loadScript(`${window.hlx.codeBasePath}/scripts/analytics/privacy-standalone.js`, {
     async: true,
@@ -453,7 +454,6 @@ const loadMartech = async (headerPromise, footerPromise) => {
     ([launch, libAnalyticsModule, headPr, footPr]) => {
       const { lang } = getPathDetails();
       const { pageLoadModel, linkClickModel, pageName } = libAnalyticsModule;
-      oneTrust();
       document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
         e.preventDefault();
         window.adobePrivacy.showConsentPopup();
