@@ -31,7 +31,7 @@ async function decorateMenu(footer) {
         if (containsAuthOnlyLink) {
           const loginLink = anchorLinks.find((a) => a.getAttribute('auth-only') !== 'true');
           if (loginLink) {
-            loginLink.href = '';
+            loginLink.href = '#';
             loginLink.classList.add('footer-login-link');
           }
           anchorLinks.forEach((a) => {
@@ -123,11 +123,10 @@ function decorateBreadcrumb(footer) {
   if (para && para.parentElement) {
     para.parentElement.classList.add('footer-breadcrumb-item-wrapper');
   }
-  Array.from(breadCrumb.querySelectorAll('a')).forEach((a) => {
-    if (a.title?.toLowerCase() === 'home') {
-      a.innerHTML = `<span class="icon icon-home"></span>`;
-    }
-  });
+  const firstBreadcrumbAnchor = breadCrumb.querySelector('a');
+  if (firstBreadcrumbAnchor) {
+    firstBreadcrumbAnchor.innerHTML = `<span class="icon icon-home"></span>`;
+  }
 }
 
 function decorateCopyrightsMenu() {
@@ -186,8 +185,7 @@ function handleSocialIconStyles(footer) {
 
 function handleLoginFunctionality(footer) {
   const loginLink = footer.querySelector('.footer-login-link');
-  loginLink.addEventListener('click', (e) => {
-    e.preventDefault();
+  loginLink.addEventListener('click', () => {
     window.adobeIMS.signIn();
   });
 }
@@ -207,7 +205,7 @@ export default async function decorate(block) {
     footer.innerHTML = footerFragment;
     await decorateSocial(footer);
     decorateBreadcrumb(footer);
-    await decorateMenu(footer);
+    decorateMenu(footer);
     block.append(footer);
     await decorateIcons(footer);
     handleSocialIconStyles(footer);
