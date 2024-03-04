@@ -31,7 +31,7 @@ async function decorateMenu(footer) {
         if (containsAuthOnlyLink) {
           const loginLink = anchorLinks.find((a) => a.getAttribute('auth-only') !== 'true');
           if (loginLink) {
-            loginLink.href = '#';
+            loginLink.href = '';
             loginLink.classList.add('footer-login-link');
           }
           anchorLinks.forEach((a) => {
