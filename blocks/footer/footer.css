@@ -304,6 +304,9 @@
     top: -1px;
     color: var(--non-spectrum-charcoal-gray);
   }
+  .footer-breadcrumb a:last-of-type::after {
+    display: none;
+  }
   .footer-breadcrumb p:last-child a::after {
     display: none;
   }
