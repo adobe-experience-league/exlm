@@ -439,7 +439,7 @@ const loadMartech = async (headerPromise, footerPromise) => {
     launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js';
   }
 
-  const oneTrustPromise = loadScript(`/scripts/analytics/privacy-standalone.js`, {
+  const oneTrustPromise = loadScript(`${window.hlx.codeBasePath}/scripts/analytics/privacy-standalone.js`, {
     async: true,
     defer: true,
   });
