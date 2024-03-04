@@ -123,11 +123,10 @@ function decorateBreadcrumb(footer) {
   if (para && para.parentElement) {
     para.parentElement.classList.add('footer-breadcrumb-item-wrapper');
   }
-  Array.from(breadCrumb.querySelectorAll('a')).forEach((a) => {
-    if (a.title?.toLowerCase() === 'home') {
-      a.innerHTML = `<span class="icon icon-home"></span>`;
-    }
-  });
+  const firstBreadcrumbAnchor = breadCrumb.querySelector('a');
+  if (firstBreadcrumbAnchor) {
+    firstBreadcrumbAnchor.innerHTML = `<span class="icon icon-home"></span>`;
+  }
 }
 
 function decorateCopyrightsMenu() {
