@@ -501,7 +501,7 @@ function handleUriHash() {
     const facetValues = facetValueInfo.split(',');
     const keyName = facetKeys.replace('f-', '');
 
-    if (keyName) {
+    if (Object.keys(coveoFacetMap).includes(keyName)) {
       const filterOptionEl = browseFiltersSection.querySelector(`.filter-dropdown[data-filter-type="${keyName}"]`);
       if (filterOptionEl) {
         const ddObject = getObjectById(dropdownOptions, keyName);
