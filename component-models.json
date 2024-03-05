@@ -800,7 +800,7 @@
       },
       {
         "component": "aem-tag",
-        "name": "cq:tags",
+        "name": "tags",
         "label": "Solution(s) or Feature(s)",
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl",
@@ -1597,7 +1597,7 @@
       },
       {
         "component": "aem-tag",
-        "name": "cq:tags",
+        "name": "tags",
         "label": "Topics buttons",
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl",
@@ -1811,7 +1811,7 @@
       },
       {
         "component": "aem-tag",
-        "name": "cq:tags",
+        "name": "tags",
         "label": "Solution(s)",
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl/solution",
