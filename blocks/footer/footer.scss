@@ -344,6 +344,10 @@
           top: -1px;
           color: var(--non-spectrum-charcoal-gray);
         }
+
+        &:last-of-type::after {
+          display: none;
+        }
       }
 
       p:last-child a::after {

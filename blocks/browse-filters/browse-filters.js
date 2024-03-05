@@ -320,6 +320,7 @@ function handleCheckboxClick(block, el, options) {
         });
       }
     }
+    handleTopicSelection();
     if (options.selected !== 0) btnEl.firstChild.textContent = `${options.name} (${options.selected})`;
     if (options.selected === 0) btnEl.firstChild.textContent = `${options.name}`;
   }
