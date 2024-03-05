@@ -1,5 +1,11 @@
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
-import { createTag, htmlToElement, debounce, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import {
+  createTag,
+  htmlToElement,
+  debounce,
+  getPathDetails,
+  fetchLanguagePlaceholders,
+} from '../../scripts/scripts.js';
 import {
   roleOptions,
   contentTypeOptions,
@@ -314,6 +320,7 @@ function handleCheckboxClick(block, el, options) {
         });
       }
     }
+    handleTopicSelection();
     if (options.selected !== 0) btnEl.firstChild.textContent = `${options.name} (${options.selected})`;
     if (options.selected === 0) btnEl.firstChild.textContent = `${options.name}`;
   }
@@ -501,7 +508,7 @@ function handleUriHash() {
     const facetValues = facetValueInfo.split(',');
     const keyName = facetKeys.replace('f-', '');
 
-    if (keyName) {
+    if (Object.keys(coveoFacetMap).includes(keyName)) {
       const filterOptionEl = browseFiltersSection.querySelector(`.filter-dropdown[data-filter-type="${keyName}"]`);
       if (filterOptionEl) {
         const ddObject = getObjectById(dropdownOptions, keyName);
@@ -759,9 +766,15 @@ async function handleSearchEngineSubscription() {
     buildCardsShimmer.remove();
     const communityOptionIsSelected = browseFilterForm.querySelector(`input[value="Community"]`)?.checked === true;
     let noResultsText = placeholders.noResultsTextBrowse || 'No Results';
-    if (communityOptionIsSelected && !!dropdownOptions.find((opt) => opt.id === 'el_role' && opt.selected > 0)) {
-      noResultsText =
-        placeholders.rolesWithCommunitySelectionWarning ?? 'To view Community posts, please remove all Role selections';
+    if (
+      communityOptionIsSelected &&
+      !!dropdownOptions.find((opt) => (opt.id === 'el_role' || opt.id === 'el_level') && opt.selected > 0)
+    ) {
+      const containsExperienceLevel = !!dropdownOptions.find((opt) => opt.id === 'el_level');
+      const textKey = containsExperienceLevel
+        ? 'rolesAndExpWithCommunitySelectionWarning'
+        : 'rolesWithCommunitySelectionWarning';
+      noResultsText = placeholders[textKey] ?? 'To view Community posts, please remove all Role selections';
     }
     filterResultsEl.innerHTML = noResultsText;
     browseFilterForm.classList.remove('is-result');
@@ -803,13 +816,15 @@ function renderSortContainer(block) {
 }
 
 function decorateBrowseTopics(block) {
+  const { lang } = getPathDetails();
   const [...configs] = [...block.children].map((row) => row.firstElementChild);
 
-  const [firstChild, secondChild, thirdChild] = configs.map((cell) => cell);
-  const [solutions, headingElement, topics] = configs.map((cell) => (cell ? cell.textContent.trim() : ''));
+  const [solutionsElement, headingElement, topicsElement] = configs.map((cell) => cell);
+  const [solutionsContent, headingContent, topicsContent] = configs.map((cell) => cell?.textContent?.trim() ?? '');
+
   // eslint-disable-next-line no-unused-vars
-  const allSolutionsTags = solutions !== '' ? formattedTags(solutions) : '';
-  const allTopicsTags = topics !== '' ? formattedTags(topics) : '';
+  const allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
+  const allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
   const supportedProducts = [];
   if (allSolutionsTags.length) {
     const { query: additionalQuery, products } = getParsedSolutionsQuery(allSolutionsTags);
@@ -823,17 +838,16 @@ function decorateBrowseTopics(block) {
   const headerDiv = htmlToElement(`
     <div class="browse-topics-block-header">
       <div class="browse-topics-block-title">
-          <h2>${headingElement}</h2>
+          <h2>${headingContent}</h2>
       </div>
     </div>
   `);
 
-  const solutionsDiv = document.createElement('div');
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-topics-block-content');
   const browseFiltersSection = document.querySelector('.browse-filters-form');
 
-  if (allTopicsTags.length > 0) {
+  if (allTopicsTags.length > 0 && lang === 'en') {
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
@@ -871,19 +885,15 @@ function decorateBrowseTopics(block) {
         handleTopicSelection(contentDiv);
       }
     }
-
-    firstChild.parentNode.replaceChild(solutionsDiv, firstChild);
-    secondChild.parentNode.replaceChild(headerDiv, secondChild);
-    thirdChild.parentNode.replaceChild(contentDiv, thirdChild);
     div.append(headerDiv);
     div.append(contentDiv);
     /* Append browse topics right above the filters section */
     const filtersFormEl = document.querySelector('.browse-filters-form');
     filtersFormEl.insertBefore(div, filtersFormEl.children[4]);
-  } else {
-    firstChild.innerHTML = '';
-    secondChild.innerHTML = '';
   }
+  (solutionsElement.parentNode || solutionsElement).remove();
+  (headingElement.parentNode || headingElement).remove();
+  (topicsElement.parentNode || topicsElement).remove();
 }
 
 export default async function decorate(block) {

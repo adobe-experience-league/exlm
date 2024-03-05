@@ -297,12 +297,15 @@
     color: var(--non-spectrum-charcoal-gray);
     font-size: 0.75rem;
   }
-  .footer-breadcrumb a::after {
+  .footer-breadcrumb a:not(:last-child)::after {
     content: "›";
     padding: 0 8px;
     position: relative;
     top: -1px;
     color: var(--non-spectrum-charcoal-gray);
+  }
+  .footer-breadcrumb a:last-of-type::after {
+    display: none;
   }
   .footer-breadcrumb p:last-child a::after {
     display: none;
