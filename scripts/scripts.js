@@ -534,6 +534,12 @@ export function htmlToElement(html) {
   return template.content.firstElementChild;
 }
 
+export function decodeHTMLEntities(text) {
+  const textArea = document.createElement('textarea');
+  textArea.innerHTML = text;
+  return textArea.value;
+}
+
 /**
  * Copies all meta tags to window.EXL_META
  * These are consumed by Qualtrics to pass additional data along with the feedback survey.

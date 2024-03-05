@@ -1,3 +1,5 @@
+import { decodeHTMLEntities, htmlToElement } from '../../scripts/scripts.js';
+
 export function decorateButtons(...buttons) {
   return buttons
     .map((div) => {
@@ -19,21 +21,22 @@ export function generateTeaserDOM(props, classes) {
   const picture = pictureContainer.querySelector('picture');
   const hasShortDescr = shortDescr.textContent.trim() !== '';
   // Build DOM
-  const teaserDOM = document.createRange().createContextualFragment(`
-    <div class='background'>${picture ? picture.outerHTML : ''}</div>
-    <div class='foreground'>
-      <div class='text'>
-        ${
-          eyebrow.textContent.trim() !== ''
-            ? `<div class='eyebrow'>${eyebrow.textContent.trim().toUpperCase()}</div>`
-            : ``
-        }
-        <div class='title'>${title.innerHTML}</div>
-        <div class='long-description'>${longDescr.innerHTML}</div>
-        <div class='short-description'>${hasShortDescr ? shortDescr.innerHTML : longDescr.innerHTML}</div>
-        <div class='cta'>${decorateButtons(firstCta, secondCta)}</div>
-      </div>
-      <div class='spacer'>
+  const teaserDOM = htmlToElement(`<div>
+      <div class='background'>${picture ? picture.outerHTML : ''}</div>
+      <div class='foreground'>
+        <div class='text'>
+          ${
+            eyebrow.textContent.trim() !== ''
+              ? `<div class='eyebrow'>${eyebrow.textContent.trim().toUpperCase()}</div>`
+              : ``
+          }
+          <div class='title'>${title.innerHTML}</div>
+          <div class='long-description'>${longDescr.innerHTML}</div>
+          <div class='short-description'>${hasShortDescr ? shortDescr.innerHTML : longDescr.innerHTML}</div>
+          <div class='cta'>${decorateButtons(firstCta, secondCta)}</div>
+        </div>
+        <div class='spacer'>
+        </div>
       </div>
     </div>
   `);
@@ -50,10 +53,14 @@ export function generateTeaserDOM(props, classes) {
   return teaserDOM;
 }
 
+/**
+ * @param {HTMLDivElement} block
+ */
 export default function decorate(block) {
+  block.innerHTML = decodeHTMLEntities(block.innerHTML);
   // get the first and only cell from each row
   const props = [...block.children].map((row) => row.firstElementChild);
   const teaserDOM = generateTeaserDOM(props, block.classList);
   block.textContent = '';
-  block.append(teaserDOM);
+  block.append(...teaserDOM.children);
 }

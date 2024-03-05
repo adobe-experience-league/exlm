@@ -1,5 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, decodeHTMLEntities } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import handleArticleDataService from '../../scripts/data-service/article-data-service.js';
@@ -11,6 +11,7 @@ import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
+  block.innerHTML = decodeHTMLEntities(block.innerHTML);
   // Extracting elements from the block
   const [headingElement, toolTipElement, linkTextElement, ...linksContainer] = [...block.children].map(
     (row) => row.firstElementChild,
