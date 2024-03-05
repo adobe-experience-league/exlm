@@ -1,5 +1,11 @@
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
-import { createTag, htmlToElement, debounce, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import {
+  createTag,
+  htmlToElement,
+  debounce,
+  getPathDetails,
+  fetchLanguagePlaceholders,
+} from '../../scripts/scripts.js';
 import {
   roleOptions,
   contentTypeOptions,
@@ -10,6 +16,7 @@ import {
   getSelectedTopics,
   getParsedSolutionsQuery,
   getCoveoFacets,
+  getObjectById,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -19,16 +26,11 @@ import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery } from 
 import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
 
 const coveoFacetMap = {
-  Role: 'headlessRoleFacet',
-  'Content Type': 'headlessTypeFacet',
-  'Experience Level': 'headlessExperienceFacet',
+  el_role: 'headlessRoleFacet',
+  el_contenttype: 'headlessTypeFacet',
+  el_level: 'headlessExperienceFacet',
 };
 
-const coveoFacetFilterNameMap = {
-  el_contenttype: 'Content Type',
-  el_role: 'Role',
-  el_level: 'Experience Level',
-};
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
 
 let placeholders = {};
@@ -152,7 +154,7 @@ function generateCheckboxItem(item, index, id) {
 
 const constructDropdownEl = (options, id) =>
   htmlToElement(`
-    <div class="filter-dropdown filter-input" data-filter-type="${options.name}">
+    <div class="filter-dropdown filter-input" data-filter-type="${options.id}">
       <button>
         ${options.name}
         <span class="icon icon-chevron"></span>
@@ -225,10 +227,11 @@ function removeFromTags(block, value) {
 }
 
 function updateCountAndCheckedState(block, name, value) {
-  const tagRole = block.querySelector(`.filter-dropdown[data-filter-type="${name}"]`);
+  const ddObject = getObjectByName(dropdownOptions, name);
+  const tagRole = block.querySelector(`.filter-dropdown[data-filter-type="${ddObject.id}"]`);
   const btnEl = tagRole.querySelector(':scope > button');
   const ddOptions = [...tagRole.querySelector('.filter-dropdown-content').children];
-  const ddObject = getObjectByName(dropdownOptions, name);
+
   ddObject.selected = 0;
 
   function syncCheckedState(option) {
@@ -252,8 +255,9 @@ function handleTagsClick(block) {
     const isTag = event.target.closest('.browse-tags');
     if (isTag) {
       const name = isTag.querySelector('span:nth-child(1)').textContent.trim();
+      const dropDownObj = getObjectByName(dropdownOptions, name);
       const { value } = isTag;
-      const coveoFacetKey = coveoFacetMap[name];
+      const coveoFacetKey = coveoFacetMap[dropDownObj.id];
       const coveoFacet = window[coveoFacetKey];
       if (coveoFacet) {
         const facets = getCoveoFacets(value, false);
@@ -278,10 +282,12 @@ function handleCheckboxClick(block, el, options) {
   // Function to handle checkbox state changes
   function handleCheckboxChange(event) {
     const checkbox = event.target;
-    const name = checkbox.closest('.filter-dropdown').dataset.filterType;
+    const { filterType } = checkbox.closest('.filter-dropdown').dataset;
     const label = checkbox?.dataset.label || '';
     const { checked: isChecked, value } = checkbox;
-    const coveoFacetKey = coveoFacetMap[name];
+    const dropDownObj = getObjectById(dropdownOptions, filterType);
+    const { name } = dropDownObj;
+    const coveoFacetKey = coveoFacetMap[dropDownObj.id];
     const coveoFacet = window[coveoFacetKey];
     if (isChecked) {
       options.selected += 1;
@@ -379,10 +385,10 @@ function uncheckAllFiltersFromDropdown(block) {
   const dropdownFilters = block.querySelectorAll('.filter-dropdown');
   dropdownFilters.forEach((dropdownEl) => {
     const { filterType } = dropdownEl.dataset;
-    const dropdownObj = getObjectByName(dropdownOptions, filterType);
+    const dropdownObj = getObjectById(dropdownOptions, filterType);
 
     dropdownObj.selected = 0;
-    dropdownEl.querySelector(':scope > button').firstChild.textContent = filterType;
+    dropdownEl.querySelector(':scope > button').firstChild.textContent = dropdownObj.name;
 
     const dOptions = dropdownEl.querySelectorAll('.filter-dropdown-content > .custom-checkbox');
     dOptions.forEach((option) => {
@@ -498,14 +504,14 @@ function handleUriHash() {
 
   filtersInfo.forEach((filterInfo) => {
     const [facetKeys, facetValueInfo] = filterInfo.split('=');
-    const facetKey = facetKeys.replace('f-', '');
     const facetValues = facetValueInfo.split(',');
-    // console.log('facetKey', facetKey);
-    // console.log('facetValues', facetValues);
-    const keyName = coveoFacetFilterNameMap[facetKey];
-    if (keyName) {
+    const keyName = facetKeys.replace('f-', '');
+
+    if (Object.keys(coveoFacetMap).includes(keyName)) {
       const filterOptionEl = browseFiltersSection.querySelector(`.filter-dropdown[data-filter-type="${keyName}"]`);
       if (filterOptionEl) {
+        const ddObject = getObjectById(dropdownOptions, keyName);
+        const { name } = ddObject;
         facetValues.forEach((facetValueString) => {
           const [facetValue] = facetValueString.split('|');
           const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
@@ -513,13 +519,12 @@ function handleUriHash() {
             const label = inputEl?.dataset.label || '';
             inputEl.checked = true;
             appendTag(browseFiltersSection, {
-              name: keyName,
+              name,
               label,
               value: facetValue,
             });
           }
         });
-        const ddObject = getObjectByName(dropdownOptions, keyName);
         const btnEl = filterOptionEl.querySelector(':scope > button');
         const selectedCount = facetValues.reduce((acc, curr) => {
           const [key] = curr.split('|');
@@ -530,12 +535,12 @@ function handleUriHash() {
         }, []).length;
         ddObject.selected = selectedCount;
         if (selectedCount === 0) {
-          btnEl.firstChild.textContent = keyName;
+          btnEl.firstChild.textContent = name;
         } else {
-          btnEl.firstChild.textContent = `${keyName} (${selectedCount})`;
+          btnEl.firstChild.textContent = `${name} (${selectedCount})`;
         }
       }
-    } else if (facetKey === 'q') {
+    } else if (keyName === 'q') {
       containsSearchQuery = true;
       const [searchValue] = facetValues;
       if (searchValue) {
@@ -543,7 +548,7 @@ function handleUriHash() {
       } else {
         searchInput.value = '';
       }
-    } else if (facetKey === 'aq' && filterInfo) {
+    } else if (keyName === 'aq' && filterInfo) {
       const selectedTopics = getSelectedTopics(filterInfo);
       const contentDiv = document.querySelector('.browse-topics');
       const buttons = contentDiv.querySelectorAll('button');
@@ -758,7 +763,19 @@ async function handleSearchEngineSubscription() {
     }
   } else {
     buildCardsShimmer.remove();
-    filterResultsEl.innerHTML = placeholders.noResultsTextBrowse || 'No Results';
+    const communityOptionIsSelected = browseFilterForm.querySelector(`input[value="Community"]`)?.checked === true;
+    let noResultsText = placeholders.noResultsTextBrowse || 'No Results';
+    if (
+      communityOptionIsSelected &&
+      !!dropdownOptions.find((opt) => (opt.id === 'el_role' || opt.id === 'el_level') && opt.selected > 0)
+    ) {
+      const containsExperienceLevel = !!dropdownOptions.find((opt) => opt.id === 'el_level');
+      const textKey = containsExperienceLevel
+        ? 'rolesAndExpWithCommunitySelectionWarning'
+        : 'rolesWithCommunitySelectionWarning';
+      noResultsText = placeholders[textKey] ?? 'To view Community posts, please remove all Role selections';
+    }
+    filterResultsEl.innerHTML = noResultsText;
     browseFilterForm.classList.remove('is-result');
     filterResultsEl.classList.add('no-results');
   }
@@ -798,13 +815,15 @@ function renderSortContainer(block) {
 }
 
 function decorateBrowseTopics(block) {
+  const { lang } = getPathDetails();
   const [...configs] = [...block.children].map((row) => row.firstElementChild);
 
-  const [firstChild, secondChild, thirdChild] = configs.map((cell) => cell);
-  const [solutions, headingElement, topics] = configs.map((cell) => (cell ? cell.textContent.trim() : ''));
+  const [solutionsElement, headingElement, topicsElement] = configs.map((cell) => cell);
+  const [solutionsContent, headingContent, topicsContent] = configs.map((cell) => cell?.textContent?.trim() ?? '');
+
   // eslint-disable-next-line no-unused-vars
-  const allSolutionsTags = solutions !== '' ? formattedTags(solutions) : '';
-  const allTopicsTags = topics !== '' ? formattedTags(topics) : '';
+  const allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
+  const allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
   const supportedProducts = [];
   if (allSolutionsTags.length) {
     const { query: additionalQuery, products } = getParsedSolutionsQuery(allSolutionsTags);
@@ -818,17 +837,16 @@ function decorateBrowseTopics(block) {
   const headerDiv = htmlToElement(`
     <div class="browse-topics-block-header">
       <div class="browse-topics-block-title">
-          <h2>${headingElement}</h2>
+          <h2>${headingContent}</h2>
       </div>
     </div>
   `);
 
-  const solutionsDiv = document.createElement('div');
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-topics-block-content');
   const browseFiltersSection = document.querySelector('.browse-filters-form');
 
-  if (allTopicsTags.length > 0) {
+  if (allTopicsTags.length > 0 && lang === 'en') {
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
@@ -866,19 +884,15 @@ function decorateBrowseTopics(block) {
         handleTopicSelection(contentDiv);
       }
     }
-
-    firstChild.parentNode.replaceChild(solutionsDiv, firstChild);
-    secondChild.parentNode.replaceChild(headerDiv, secondChild);
-    thirdChild.parentNode.replaceChild(contentDiv, thirdChild);
     div.append(headerDiv);
     div.append(contentDiv);
     /* Append browse topics right above the filters section */
     const filtersFormEl = document.querySelector('.browse-filters-form');
     filtersFormEl.insertBefore(div, filtersFormEl.children[4]);
-  } else {
-    firstChild.innerHTML = '';
-    secondChild.innerHTML = '';
   }
+  (solutionsElement.parentNode || solutionsElement).remove();
+  (headingElement.parentNode || headingElement).remove();
+  (topicsElement.parentNode || topicsElement).remove();
 }
 
 export default async function decorate(block) {

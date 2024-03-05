@@ -1,6 +1,6 @@
 import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { htmlToElement, getPathDetails, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { htmlToElement, getPathDetails, fetchLanguagePlaceholders, decorateLinks } from '../../scripts/scripts.js';
 
 const languageModule = import('../../scripts/language.js');
 const authOperationsModule = import('../../scripts/auth/auth-operations.js');
@@ -486,22 +486,6 @@ const searchDecorator = async (searchBlock) => {
 };
 
 /**
- * Decorates the sign-up block
- * @param {HTMLElement} signUpBlock
- */
-const signUpDecorator = async (signUpBlock) => {
-  simplifySingleCellBlock(signUpBlock);
-  const isSignedIn = await isSignedInUser();
-  if (isSignedIn) {
-    signUpBlock.style.display = 'none';
-  } else {
-    signUpBlock.firstChild.addEventListener('click', async () => {
-      window.adobeIMS.signUp();
-    });
-  }
-};
-
-/**
  * Decorates the language-selector block
  * @param {HTMLElement} languageBlock
  */
@@ -622,14 +606,11 @@ const productGridDecorator = async (productGridBlock) => {
     productGridBlock.classList.add('signed-in');
     const productDropdown = document.createElement('div');
     productDropdown.classList.add('product-dropdown');
-    const pTags = productGridBlock.querySelectorAll('p');
-    if (pTags.length > 0) {
-      pTags.forEach((p) => {
-        const anchor = p.querySelector('a');
-        anchor.setAttribute('target', '_blank');
-        const href = anchor.getAttribute('href').split('#');
-        anchor.setAttribute('href', href[0]);
-        productDropdown.innerHTML += p.innerHTML;
+    const aTags = productGridBlock.querySelectorAll('a');
+    if (aTags.length > 0) {
+      aTags.forEach((a) => {
+        a.setAttribute('target', '_blank');
+        productDropdown.append(a);
       });
     }
     const productToggle = document.createElement('button');
@@ -651,10 +632,7 @@ const productGridDecorator = async (productGridBlock) => {
     };
 
     registerHeaderResizeHandler(() => {
-      if (isMobile()) {
-        // if mobile, hide product grid block
-        gridToggler.style.display = 'none';
-      } else {
+      if (!isMobile()) {
         // if desktop, add mouseenter/mouseleave, remove click event
         gridToggler.parentElement.addEventListener('mouseenter', toggleExpandGridContent);
         gridToggler.parentElement.addEventListener('mouseleave', toggleExpandGridContent);
@@ -747,30 +725,6 @@ const decorateNewTabLinks = (block) => {
 };
 
 /**
- * Links that have urls with JSON the hash, the JSON will be translated to attributes
- * eg <a href="https://example.com#{"target":"_blank", "auth-only": "true"}">link</a>
- * will be translated to <a href="https://example.com" target="_blank" auth-only="true">link</a>
- * @param {HTMLElement} block
- */
-const decorateLinks = (block) => {
-  const links = block.querySelectorAll('a');
-  links.forEach((link) => {
-    const decodedHref = decodeURIComponent(link.getAttribute('href'));
-    const firstCurlyIndex = decodedHref.indexOf('{');
-    const lastCurlyIndex = decodedHref.lastIndexOf('}');
-    if (firstCurlyIndex > -1 && lastCurlyIndex > -1) {
-      // everything between curly braces is treated as JSON string.
-      const optionsJsonStr = decodedHref.substring(firstCurlyIndex, lastCurlyIndex + 1);
-      Object.entries(JSON.parse(optionsJsonStr)).forEach(([key, value]) => {
-        link.setAttribute(key.trim(), value);
-      });
-      // remove the JSON string from the hash, if JSON string is the only thing in the hash, remove the hash as well.
-      const endIndex = decodedHref.charAt(firstCurlyIndex - 1) === '#' ? firstCurlyIndex - 1 : firstCurlyIndex;
-      link.href = decodedHref.substring(0, endIndex);
-    }
-  });
-};
-/**
  * Main header decorator, calls all the other decorators
  * @param {HTMLElement} headerBlock
  */
@@ -799,7 +753,6 @@ export default async function decorate(headerBlock) {
 
   decorateHeaderBlock('brand', brandDecorator);
   decorateHeaderBlock('search', searchDecorator);
-  decorateHeaderBlock('sign-up', signUpDecorator);
   decorateHeaderBlock('language-selector', languageDecorator);
   decorateHeaderBlock('product-grid', productGridDecorator);
   decorateHeaderBlock('sign-in', signInDecorator);

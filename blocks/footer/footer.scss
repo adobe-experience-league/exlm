@@ -111,6 +111,10 @@
       line-height: 1.6875rem;
       margin: 0;
     }
+
+    & .footer-link-hidden {
+      display: none;
+    }
   }
 
   &-item-active {
@@ -333,7 +337,7 @@
         color: var(--non-spectrum-charcoal-gray);
         font-size: 0.75rem;
 
-        &::after {
+        &:not(:last-child)::after {
           content: '›';
           padding: 0 8px;
           position: relative;

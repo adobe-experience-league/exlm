@@ -261,6 +261,33 @@ export function decorateExternalLinks(main) {
 }
 
 /**
+ * Links that have urls with JSON the hash, the JSON will be translated to attributes
+ * eg <a href="https://example.com#{"target":"_blank", "auth-only": "true"}">link</a>
+ * will be translated to <a href="https://example.com" target="_blank" auth-only="true">link</a>
+ * @param {HTMLElement} block
+ */
+export const decorateLinks = (block) => {
+  const links = block.querySelectorAll('a');
+  links.forEach((link) => {
+    const decodedHref = decodeURIComponent(link.getAttribute('href'));
+    const firstCurlyIndex = decodedHref.indexOf('{');
+    const lastCurlyIndex = decodedHref.lastIndexOf('}');
+    if (firstCurlyIndex > -1 && lastCurlyIndex > -1) {
+      // everything between curly braces is treated as JSON string.
+      const optionsJsonStr = decodedHref.substring(firstCurlyIndex, lastCurlyIndex + 1);
+      const fixedJsonString = optionsJsonStr.replace(/'/g, '"'); // JSON.parse function expects JSON strings to be formatted with double quotes
+      const parsedJSON = JSON.parse(fixedJsonString);
+      Object.entries(parsedJSON).forEach(([key, value]) => {
+        link.setAttribute(key.trim(), value);
+      });
+      // remove the JSON string from the hash, if JSON string is the only thing in the hash, remove the hash as well.
+      const endIndex = decodedHref.charAt(firstCurlyIndex - 1) === '#' ? firstCurlyIndex - 1 : firstCurlyIndex;
+      link.href = decodedHref.substring(0, endIndex);
+    }
+  });
+};
+
+/**
  * Check if current page is a MD Docs Page.
  * theme = docs is set in bulk metadata for docs paths.
  * @param {string} type The type of doc page - example: docs-solution-landing,
@@ -402,22 +429,7 @@ export async function loadIms() {
   return window.imsLoaded;
 }
 
-/**
- * Loads everything that doesn't need to be delayed.
- * @param {Element} doc The container element
- */
-async function loadLazy(doc) {
-  const main = doc.querySelector('main');
-  await loadBlocks(main);
-  loadIms(); // start it early, asyncronously
-
-  const { hash } = window.location;
-  const element = hash ? doc.getElementById(hash.substring(1)) : false;
-  const { lang } = getPathDetails();
-  if (hash && element) element.scrollIntoView();
-  const headerPromise = loadHeader(doc.querySelector('header'));
-  const footerPromise = loadFooter(doc.querySelector('footer'));
-
+const loadMartech = async (headerPromise, footerPromise) => {
   let launchScriptSrc = '';
   if (window.location.host === 'eds-stage.experienceleague.adobe.com') {
     launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
@@ -427,7 +439,7 @@ async function loadLazy(doc) {
     launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js';
   }
 
-  const oneTrustPromise = loadScript(`/scripts/analytics/privacy-standalone.js`, {
+  const oneTrustPromise = loadScript(`${window.hlx.codeBasePath}/scripts/analytics/privacy-standalone.js`, {
     async: true,
     defer: true,
   });
@@ -439,6 +451,7 @@ async function loadLazy(doc) {
   Promise.all([launchPromise, libAnalyticsModulePromise, headerPromise, footerPromise, oneTrustPromise]).then(
     // eslint-disable-next-line no-unused-vars
     ([launch, libAnalyticsModule, headPr, footPr]) => {
+      const { lang } = getPathDetails();
       const { pageLoadModel, linkClickModel, pageName } = libAnalyticsModule;
       oneTrust();
       document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
@@ -464,10 +477,26 @@ async function loadLazy(doc) {
       });
     },
   );
+};
 
+/**
+ * Loads everything that doesn't need to be delayed.
+ * @param {Element} doc The container element
+ */
+async function loadLazy(doc) {
+  const main = doc.querySelector('main');
+  await loadBlocks(main);
+  loadIms(); // start it early, asyncronously
+
+  const { hash } = window.location;
+  const element = hash ? doc.getElementById(hash.substring(1)) : false;
+  if (hash && element) element.scrollIntoView();
+  const headerPromise = loadHeader(doc.querySelector('header'));
+  const footerPromise = loadFooter(doc.querySelector('footer'));
+  // disable martech if martech=off is in the query string, this is used for testing ONLY
+  if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
-
   sampleRUM('lazy');
 }
 

@@ -1,5 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { getPathDetails } from '../../scripts/scripts.js';
+import { getPathDetails, decorateLinks } from '../../scripts/scripts.js';
+import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
 
 const languageModule = import('../../scripts/language.js');
 
@@ -9,10 +10,12 @@ const fetchFragment = async (rePath, lang = 'en') => {
   return response.text();
 };
 
-function decorateMenu(footer) {
+async function decorateMenu(footer) {
+  const isSignedIn = await isSignedInUser();
   const childElements = footer.querySelectorAll('.footer-item');
   const groupDiv = document.createElement('div');
   groupDiv.classList.add('footer-menu');
+  decorateLinks(footer);
   childElements.forEach((child) => {
     const h2Elements = Array.from(child.querySelectorAll('h2'));
     const ulElements = Array.from(child.querySelectorAll('ul'));
@@ -22,7 +25,25 @@ function decorateMenu(footer) {
         const divPair = document.createElement('div');
         divPair.setAttribute('class', 'footer-item-list');
         divPair.appendChild(h2Element);
-        divPair.appendChild(ulElements[index]);
+        const ulElement = ulElements[index];
+        const anchorLinks = Array.from(ulElement.querySelectorAll('a') ?? []);
+        const containsAuthOnlyLink = !!anchorLinks.find((a) => a.getAttribute('auth-only'));
+        if (containsAuthOnlyLink) {
+          const loginLink = anchorLinks.find((a) => a.getAttribute('auth-only') !== 'true');
+          if (loginLink) {
+            loginLink.href = '';
+            loginLink.classList.add('footer-login-link');
+          }
+          anchorLinks.forEach((a) => {
+            const authOnlyAttribute = a.getAttribute('auth-only');
+            const isSignedInAndUnAuthenticatedLink = isSignedIn && authOnlyAttribute !== 'true';
+            const isNotSignedInAndAuthenticatedLink = !isSignedIn && authOnlyAttribute === 'true';
+            if (isSignedInAndUnAuthenticatedLink || isNotSignedInAndAuthenticatedLink) {
+              a.classList.add('footer-link-hidden');
+            }
+          });
+        }
+        divPair.appendChild(ulElement);
         divWrapper.appendChild(divPair);
       });
     }
@@ -102,11 +123,10 @@ function decorateBreadcrumb(footer) {
   if (para && para.parentElement) {
     para.parentElement.classList.add('footer-breadcrumb-item-wrapper');
   }
-  Array.from(breadCrumb.querySelectorAll('a')).forEach((a) => {
-    if (a.title?.toLowerCase() === 'home') {
-      a.innerHTML = `<span class="icon icon-home"></span>`;
-    }
-  });
+  const firstBreadcrumbAnchor = breadCrumb.querySelector('a');
+  if (firstBreadcrumbAnchor) {
+    firstBreadcrumbAnchor.innerHTML = `<span class="icon icon-home"></span>`;
+  }
 }
 
 function decorateCopyrightsMenu() {
@@ -163,6 +183,14 @@ function handleSocialIconStyles(footer) {
   });
 }
 
+function handleLoginFunctionality(footer) {
+  const loginLink = footer.querySelector('.footer-login-link');
+  loginLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.adobeIMS.signIn();
+  });
+}
+
 /**
  * loads and decorates the footer
  * @param {Element} block The footer block element
@@ -176,12 +204,13 @@ export default async function decorate(block) {
     // decorate footer DOM
     const footer = document.createElement('div');
     footer.innerHTML = footerFragment;
-    decorateMenu(footer);
     await decorateSocial(footer);
     decorateBreadcrumb(footer);
+    await decorateMenu(footer);
     block.append(footer);
-    decorateCopyrightsMenu();
     await decorateIcons(footer);
     handleSocialIconStyles(footer);
+    handleLoginFunctionality(footer);
+    decorateCopyrightsMenu();
   }
 }

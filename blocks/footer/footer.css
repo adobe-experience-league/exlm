@@ -109,6 +109,9 @@
   line-height: 1.6875rem;
   margin: 0;
 }
+.footer-item .footer-link-hidden {
+  display: none;
+}
 .footer-item-active {
   position: relative;
 }
@@ -294,7 +297,7 @@
     color: var(--non-spectrum-charcoal-gray);
     font-size: 0.75rem;
   }
-  .footer-breadcrumb a::after {
+  .footer-breadcrumb a:not(:last-child)::after {
     content: "›";
     padding: 0 8px;
     position: relative;
