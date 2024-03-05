@@ -337,7 +337,7 @@ export function decorateAnchors(main) {
   const anchorIcons = [...main.querySelectorAll(`.icon-headding-anchor`)];
   anchorIcons.forEach((icon) => {
     const slugNode = icon.nextSibling;
-    const slug = slugNode.textContent;
+    const slug = slugNode?.textContent?.trim();
     if (slug) {
       icon.parentElement.id = slug;
       icon.remove();
