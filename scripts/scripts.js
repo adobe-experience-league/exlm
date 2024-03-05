@@ -440,7 +440,7 @@ const loadMartech = async (headerPromise, footerPromise) => {
   }
   oneTrust();
 
-  const oneTrustPromise = loadScript(`${window.hlx.codeBasePath}/scripts/analytics/privacy-standalone.js`, {
+  const oneTrustPromise = loadScript('/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js', {
     async: true,
     defer: true,
   });
