@@ -109,9 +109,13 @@ async function displayAllProducts(block, placeholders) {
     productsLI.innerHTML = `<span>${placeholders.products}</span><span class="js-toggle"></span>`;
 
     const ul = document.createElement('ul');
-
+    let otherProductFirstItem = false;
     productList.forEach((item) => {
       const li = document.createElement('li');
+      if (!item.featured && !otherProductFirstItem) {
+        li.classList.add('other-product-first-item');
+        otherProductFirstItem = true;
+      }
       li.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
       ul.appendChild(li);
     });

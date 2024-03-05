@@ -81,7 +81,7 @@ export function handleTopicSelection(block) {
         .join(' OR ')}`;
       const topicsQuery = selectedTopics.length > 1 ? `(${topicQueryItems})` : topicQueryItems;
       if (window.headlessBaseSolutionQuery) {
-        query = `((${window.headlessBaseSolutionQuery}) AND (${topicsQuery}))`;
+        query = `(${window.headlessBaseSolutionQuery} AND ${topicsQuery})`;
       } else {
         query = topicsQuery;
       }
