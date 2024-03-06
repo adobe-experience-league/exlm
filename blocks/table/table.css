@@ -240,3 +240,10 @@
 .table.html-authored.no-header table tbody tr:nth-child(even) {
   background-color: var(--non-spectrum-bg);
 }
+
+.table tfoot {
+  margin-top: 1em;
+  ul {
+    list-style: disc;
+  }
+}
