@@ -227,10 +227,9 @@ export default async function decorate(block) {
               displayCards(contentDiv, cardData, noOfResults);
               block.appendChild(contentDiv);
             } else {
-              buildCardShimmer.remove();
               buildNoResultsContent(block, true);
             }
-            /* Hide Tooltip while scrolling the cards layout */
+            /* Hide Tooltip while scrolling the cards  layout */
             hideTooltipOnScroll(contentDiv);
           })
           .catch((err) => {
