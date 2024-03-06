@@ -248,6 +248,6 @@ export default async function decorate(block) {
   ) {
     buildNoResultsContent(block, true);
   } else {
-    block.style.display = 'None';
+    block.parentElement.style.display = 'None';
   }
 }
