@@ -11,7 +11,7 @@
         "multi": false
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "fileReferenceAlt",
         "value": "",
@@ -116,7 +116,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "eyebrow",
         "value": "",
@@ -124,7 +124,7 @@
         "description": "Sets the small pre-title above the title."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "title",
         "value": "",
@@ -165,7 +165,7 @@
         ]
       },
       {
-        "component": "text-area",
+        "component": "richtext",
         "valueType": "string",
         "name": "longDescr",
         "value": "",
@@ -173,7 +173,7 @@
         "description": "The description shown in Desktop and Tablet view."
       },
       {
-        "component": "text-area",
+        "component": "richtext",
         "valueType": "string",
         "name": "shortDescr",
         "value": "",
@@ -199,7 +199,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta1Text",
         "value": "",
@@ -207,7 +207,7 @@
         "description": "Text to be shown inside button."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta1",
         "value": "",
@@ -233,7 +233,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta2Text",
         "value": "",
@@ -241,7 +241,7 @@
         "description": "Text to be shown inside button."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta2",
         "value": "",
@@ -305,7 +305,7 @@
         "multi": false
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "eyebrow_logoAlt",
         "value": "",
@@ -313,7 +313,7 @@
         "description": "A descriptive text of the logo image."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "eyebrow_title",
         "value": "",
@@ -321,7 +321,7 @@
         "description": "Sets the small Eyebrow above the title."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "eyebrow_subtitle",
         "value": "",
@@ -329,7 +329,7 @@
         "description": "Second, smaller eyebrow line."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "title",
         "value": "",
@@ -370,7 +370,7 @@
         ]
       },
       {
-        "component": "text-area",
+        "component": "richtext",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -385,7 +385,7 @@
         "multi": false
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "subjectAlt",
         "value": "",
@@ -411,7 +411,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta1Text",
         "value": "",
@@ -419,7 +419,7 @@
         "description": "Text to be shown inside button."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta1",
         "value": "",
@@ -445,7 +445,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta2Text",
         "value": "",
@@ -453,7 +453,7 @@
         "description": "Text to be shown inside button."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta2",
         "value": "",
@@ -466,7 +466,7 @@
     "id": "title",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "jcr:title",
         "value": "",
@@ -518,7 +518,7 @@
         "multi": false
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "alt",
         "value": "Default alt",
@@ -530,14 +530,14 @@
     "id": "button",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "href",
         "value": "",
         "label": "Link"
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "text",
         "value": "",
@@ -601,14 +601,14 @@
         "multi": false
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cardIconAlt",
         "label": "Icon Description",
         "description": "Sets the Card icon's alternative text"
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cardHeading",
         "value": "",
@@ -649,7 +649,7 @@
         ]
       },
       {
-        "component": "text-area",
+        "component": "richtext",
         "valueType": "string",
         "name": "cardDescription",
         "value": "",
@@ -657,7 +657,7 @@
         "description": "Sets the description for Card."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cardLinkText",
         "value": "",
@@ -665,7 +665,7 @@
         "description": "Sets the link text for Card."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cardLink",
         "value": "",
@@ -678,14 +678,14 @@
     "id": "columns",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "number",
         "name": "columns",
         "value": "",
         "label": "Columns"
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "number",
         "name": "rows",
         "value": "",
@@ -697,7 +697,7 @@
     "id": "curated-cards",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "heading",
         "value": "",
@@ -738,7 +738,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "tooltip",
         "value": "",
@@ -746,7 +746,7 @@
         "description": "Sets the tooltip."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "linkText",
         "value": "",
@@ -754,7 +754,7 @@
         "description": "Sets the text for link."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "link",
         "value": "",
@@ -891,7 +891,7 @@
         "multi": false
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "fileReferenceAlt",
         "value": "",
@@ -965,7 +965,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "eyebrow",
         "value": "",
@@ -973,7 +973,7 @@
         "description": "Sets the small pre-title above the title."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "title",
         "value": "",
@@ -1014,7 +1014,7 @@
         ]
       },
       {
-        "component": "text-area",
+        "component": "richtext",
         "valueType": "string",
         "name": "longDescr",
         "value": "",
@@ -1022,7 +1022,7 @@
         "description": "The description shown in Desktop and Tablet view."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta1Text",
         "value": "",
@@ -1030,7 +1030,7 @@
         "description": "Text to be shown inside button."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta1",
         "value": "",
@@ -1038,7 +1038,7 @@
         "description": "What link to open when clicking the button."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta2Text",
         "value": "",
@@ -1059,7 +1059,7 @@
         "multi": false
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "fileReferenceAlt",
         "value": "",
@@ -1133,7 +1133,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "eyebrow",
         "value": "",
@@ -1141,7 +1141,7 @@
         "description": "Sets the small pre-title above the title."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "title",
         "value": "",
@@ -1182,7 +1182,7 @@
         ]
       },
       {
-        "component": "text-area",
+        "component": "richtext",
         "valueType": "string",
         "name": "longDescr",
         "value": "",
@@ -1190,7 +1190,7 @@
         "description": "The description shown in Desktop and Tablet view."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta1Text",
         "value": "",
@@ -1198,7 +1198,7 @@
         "description": "Text to be shown inside button."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta2Text",
         "value": "",
@@ -1206,7 +1206,7 @@
         "description": "Text to be shown inside button."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta2",
         "value": "",
@@ -1219,7 +1219,7 @@
     "id": "video-embed",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "videoUrl",
         "value": "",
@@ -1232,7 +1232,7 @@
     "id": "secondary-search",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "heading",
         "value": "",
@@ -1273,7 +1273,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "searchBar",
         "value": "",
@@ -1290,7 +1290,7 @@
     "id": "accordion",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "heading",
         "value": "",
@@ -1326,7 +1326,7 @@
         ]
       },
       {
-        "component": "text-area",
+        "component": "richtext",
         "valueType": "string",
         "name": "body",
         "value": "",
@@ -1345,7 +1345,7 @@
         "description": "The media image"
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "fileReferenceAlt",
         "value": "",
@@ -1369,7 +1369,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "eyebrow",
         "value": "",
@@ -1377,7 +1377,7 @@
         "description": "Sets the small pre-title above the title."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "title",
         "value": "",
@@ -1417,7 +1417,7 @@
         ]
       },
       {
-        "component": "text-area",
+        "component": "richtext",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -1442,7 +1442,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta1Text",
         "value": "",
@@ -1450,7 +1450,7 @@
         "description": "Text to be shown inside button."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta1",
         "value": "",
@@ -1476,7 +1476,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta2Text",
         "value": "",
@@ -1484,7 +1484,7 @@
         "description": "Text to be shown inside button."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "cta2",
         "value": "",
@@ -1497,7 +1497,7 @@
     "id": "authorable-card",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "heading",
         "value": "",
@@ -1538,7 +1538,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "tooltip",
         "value": "",
@@ -1546,7 +1546,7 @@
         "description": "Sets the tooltip."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "linkText",
         "value": "",
@@ -1554,7 +1554,7 @@
         "description": "Sets the text for link."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "link",
         "value": "",
@@ -1567,7 +1567,7 @@
     "id": "authored-card",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "contentURL",
         "value": "",
@@ -1588,7 +1588,7 @@
         "description": "Optional - filter results to specific solution(s)."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "heading",
         "value": "",
@@ -1609,7 +1609,7 @@
     "id": "featured-cards",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "name": "heading",
         "value": "",
         "label": "Heading",
@@ -1650,7 +1650,7 @@
         ]
       },
       {
-        "component": "text-area",
+        "component": "richtext",
         "name": "description",
         "value": "",
         "label": "Description",
@@ -1695,7 +1695,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "name": "linkText",
         "value": "",
         "label": "Link Text",
@@ -1703,7 +1703,7 @@
         "description": "Sets the text for link."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "name": "link",
         "value": "",
         "label": "Link URL",
@@ -1711,7 +1711,7 @@
         "description": "Sets the text url."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "name": "keyword",
         "value": "",
         "label": "Keyword",
@@ -1745,7 +1745,7 @@
     "id": "events-cards",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "heading",
         "value": "",
@@ -1786,7 +1786,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "tooltip",
         "value": "",
@@ -1794,7 +1794,7 @@
         "description": "Sets the tooltip."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "linkText",
         "value": "",
@@ -1802,7 +1802,7 @@
         "description": "Sets the text for link."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "link",
         "value": "",
@@ -1823,7 +1823,7 @@
     "id": "adls-cards",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "heading",
         "value": "",
@@ -1864,7 +1864,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "tooltip",
         "value": "",
@@ -1872,7 +1872,7 @@
         "description": "Sets the tooltip."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "linkText",
         "value": "",
@@ -1880,7 +1880,7 @@
         "description": "Sets the text for link."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "link",
         "value": "",
@@ -2021,7 +2021,7 @@
     "id": "tabbed-cards",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "heading",
         "value": "",
@@ -2062,7 +2062,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "tooltip",
         "value": "",
@@ -2133,14 +2133,14 @@
     "id": "tab",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "title",
         "value": "",
         "label": "Heading"
       },
       {
-        "component": "text-area",
+        "component": "richtext",
         "valueType": "string",
         "name": "content",
         "value": "",
@@ -2152,7 +2152,7 @@
     "id": "recommended-courses",
     "fields": [
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "heading",
         "value": "",
@@ -2193,7 +2193,7 @@
         ]
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "tooltip",
         "value": "",
@@ -2201,7 +2201,7 @@
         "description": "Sets the tooltip."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "linkText",
         "value": "",
@@ -2209,7 +2209,7 @@
         "description": "Sets the text for link."
       },
       {
-        "component": "text-input",
+        "component": "text",
         "valueType": "string",
         "name": "link",
         "value": "",
