@@ -77,6 +77,15 @@
     position: static;
   }
 }
+.table table tfoot {
+  margin-top: 1em;
+}
+.table table tfoot div {
+  width: 100%;
+}
+.table table tfoot ul {
+  list-style: disc;
+}
 .table table tbody {
   vertical-align: middle;
   border-color: inherit;
@@ -234,16 +243,10 @@
 .table.html-authored table tbody tr:nth-child(odd) {
   background-color: var(--non-spectrum-bg);
 }
+
 .table.html-authored.no-header table tbody tr:nth-child(odd) {
   background-color: unset;
 }
 .table.html-authored.no-header table tbody tr:nth-child(even) {
   background-color: var(--non-spectrum-bg);
-}
-
-.table tfoot {
-  margin-top: 1em;
-  ul {
-    list-style: disc;
-  }
 }
