@@ -1412,8 +1412,8 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   body.browse-product main {
     max-width: 1440px;
   }
-  body.browse-all main > div.section,
-  body.browse-product main > div.section {
+  body.browse-all main > div.section:not(.browse-rail),
+  body.browse-product main > div.section:not(.browse-rail) {
     padding: 30px 32px;
   }
   body.browse-all main > div.section.browse-breadcrumb-container,

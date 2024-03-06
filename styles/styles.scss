@@ -1424,7 +1424,7 @@ body[class^='browse-'] .browse-filters-full-container {
       max-width: 1440px;
     }
 
-    & main > div.section {
+    & main > div.section:not(.browse-rail) {
       padding: 30px 32px;
     }
 
