@@ -403,6 +403,9 @@ export const locales = new Map([
   ['ko', 'ko_KO'],
   ['pt-BR', 'pt_BR'],
   ['zh-Hans', 'zh_HANS'],
+  ['zh-Hant', 'zh_HANT'],
+  ['nl', 'nl_NL'],
+  ['sv', 'sv_SE'],
 ]);
 
 export async function loadIms() {
