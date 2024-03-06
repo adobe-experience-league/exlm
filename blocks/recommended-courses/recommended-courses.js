@@ -250,7 +250,7 @@ export default async function decorate(block) {
   } else {
     console.log(block.parentElement.parentElement.innerHTML);
     block.parentElement.parentElement.style.display = 'None';
-    block.parentElement.parentElement.addAttribute('testattribute', 'a');
+    console.log('After Adding');
     console.log(block.parentElement.parentElement.innerHTML);
   }
 }
