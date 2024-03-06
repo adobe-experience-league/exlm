@@ -249,6 +249,6 @@ export default async function decorate(block) {
     buildNoResultsContent(block, true);
   } else {
     block.parentElement.parentElement.style.display = 'None';
-    block.parentElement.parentElement.addAttribute("testattribute", "a");
+    block.parentElement.parentElement.addAttribute('testattribute', 'a');
   }
 }
