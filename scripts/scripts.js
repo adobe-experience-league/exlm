@@ -403,6 +403,9 @@ export const locales = new Map([
   ['ko', 'ko_KO'],
   ['pt-BR', 'pt_BR'],
   ['zh-Hans', 'zh_HANS'],
+  ['zh-Hant', 'zh_HANT'],
+  ['nl', 'nl_NL'],
+  ['sv', 'sv_SE'],
 ]);
 
 export async function loadIms() {
@@ -440,7 +443,7 @@ const loadMartech = async (headerPromise, footerPromise) => {
   }
   oneTrust();
 
-  const oneTrustPromise = loadScript(`${window.hlx.codeBasePath}/scripts/analytics/privacy-standalone.js`, {
+  const oneTrustPromise = loadScript('/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js', {
     async: true,
     defer: true,
   });
