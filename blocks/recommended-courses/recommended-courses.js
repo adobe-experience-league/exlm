@@ -147,7 +147,7 @@ export default async function decorate(block) {
    * @param {HTMLElement} contentDiv - The content div to display cards.
    * @param {Array} cardData - The array of card data to display.
    */
-  const displayCards = (contentDiv, cardData, noOfResult, buildCardShimmer) => {
+  const displayCards = (contentDiv, cardData, noOfResult) => {
     if (cardData && cardData.length > 0) {
       for (let i = 0; i < Math.min(noOfResult, cardData.length); i += 1) {
         const cardsData = cardData[i];
@@ -155,9 +155,6 @@ export default async function decorate(block) {
         buildCard(contentDiv, cardsDiv, cardsData);
         contentDiv.appendChild(cardsDiv);
       }
-    } else {
-      buildCardShimmer.remove();
-      buildNoResultsContent(block, true);
     }
   };
 
@@ -228,10 +225,15 @@ export default async function decorate(block) {
         cardModifiedData
           .then((cardData) => {
             buildCardsShimmer.remove();
-            displayCards(contentDiv, cardData, noOfResults, buildCardsShimmer);
-            block.appendChild(contentDiv);
-            /* Hide Tooltip while scrolling the cards layout */
-            hideTooltipOnScroll(contentDiv);
+            if (cardData && cardData.length > 0) {
+              displayCards(contentDiv, cardData, noOfResults, buildCardsShimmer);
+              block.appendChild(contentDiv);
+              /* Hide Tooltip while scrolling the cards layout */
+              hideTooltipOnScroll(contentDiv);
+            } else {
+              buildCardShimmer.remove();
+              buildNoResultsContent(block, true);
+            }
           })
           .catch((err) => {
             // Hide shimmer placeholders on error
@@ -248,9 +250,6 @@ export default async function decorate(block) {
   ) {
     buildNoResultsContent(block, true);
   } else {
-    console.log(block.parentElement.parentElement.innerHTML);
-    block.parentElement.parentElement.style.display = 'None';
-    console.log('After Adding');
-    console.log(block.parentElement.parentElement.innerHTML);
+    block.style.display = 'None';
   }
 }
