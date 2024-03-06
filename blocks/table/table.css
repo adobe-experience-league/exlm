@@ -80,6 +80,9 @@
 .table table tfoot {
   margin-top: 1em;
 }
+.table table tfoot td {
+  border: none;
+}
 .table table tfoot div {
   width: 100%;
 }

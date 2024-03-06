@@ -5,6 +5,14 @@ function buildCell(rowIndex, classNames) {
   return cell;
 }
 
+// function removeEmptyChildren(cell) {
+//   Array.from(cell.children).forEach((child) => {
+//     if (child.textContent === '') {
+//       child.remove();
+//     }
+//   });
+// }
+
 function removeLastNChildren(elem, n) {
   const { children } = elem;
   const len = children.length;
@@ -28,6 +36,16 @@ export default async function decorate(block) {
     const tfoot = document.createElement('tfoot');
     table.append(tfoot);
     tfoot.append(block.querySelector('.table > div:last-child'));
+    [...tfoot.children].forEach((trDiv) => {
+      const tr = document.createElement('tr');
+      [...trDiv.children].forEach((tdDiv) => {
+        const td = document.createElement('td');
+        td.append(...tdDiv.childNodes);
+        tr.append(td);
+      });
+      tfoot.append(tr);
+      trDiv.remove();
+    });
   }
 
   const headings = [];
@@ -52,6 +70,7 @@ export default async function decorate(block) {
     table.querySelectorAll('tr').forEach((cell, i) => {
       if (data[0] === String(i) && data[1] === 'row') {
         removeLastNChildren(cell, cell.children.length - data[2]);
+        // removeEmptyChildren(cell);
       }
     });
 
@@ -82,6 +101,26 @@ export default async function decorate(block) {
     });
   });
 
+  const paragraphs = table.querySelectorAll('p');
+
+  // Loop through each <p> element
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < paragraphs.length - 1; i++) {
+    const currentParagraph = paragraphs[i];
+    const nextParagraph = paragraphs[i + 1];
+    if (nextParagraph.previousElementSibling === currentParagraph) {
+      // Check if the next <p> tag has just one character
+      if (nextParagraph.textContent.trim().length === 1) {
+        // Merge the contents of the next <p> tag into the current <p> tag
+        currentParagraph.innerHTML += nextParagraph.innerHTML;
+
+        // Remove the next <p> tag from the DOM
+        nextParagraph.parentNode.removeChild(nextParagraph);
+      }
+    }
+  }
+
   block.innerHTML = '';
+
   block.append(table);
 }

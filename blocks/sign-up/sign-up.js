@@ -32,7 +32,7 @@ function getSignInButton(signInText) {
 }
 
 export default async function decorate(block) {
-  block.parentElement.style.display = 'none';
+  block.style.display = 'none';
   // Extract properties
   // always same order as in model, empty string if not set
   const [img, eyebrow, title, longDescr, firstCtaText, secondCta] = block.querySelectorAll(':scope div > div');
@@ -90,6 +90,6 @@ export default async function decorate(block) {
   // if not signed in or in UE edit mode
   if (!isUserSignedIn || document.documentElement.classList.contains('adobe-ue-edit')) {
     // show the block
-    block.parentElement.style.display = 'block';
+    block.style.display = 'block';
   }
 }
