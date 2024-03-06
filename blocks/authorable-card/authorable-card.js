@@ -51,13 +51,12 @@ const domParser = new DOMParser();
  * @returns
  */
 const getCardData = async (articlePath, placeholders) => {
-  let articleURL = new URL(articlePath, window.location.origin);
-  if (articleURL.pathname.startsWith('/docs/courses')) {
-    articleURL = new URL(articlePath, 'https://experienceleague.adobe.com');
-  }
   let response = '';
   try {
-    response = await fetch(articleURL.toString());
+    response = await fetch(articlePath.toString());
+    if (!response.ok) {
+      return undefined;
+    }
   } catch (err) {
     return undefined;
   }
@@ -80,7 +79,7 @@ const getCardData = async (articlePath, placeholders) => {
     type,
     contentType: type,
     badgeTitle: type,
-    thumbnail: createThumbnailURL(doc, type),
+    thumbnail: createThumbnailURL(doc, type) || '',
     product: solutions,
     tags: [],
     copyLink: fullURL,
