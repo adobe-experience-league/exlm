@@ -6,13 +6,20 @@ import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.
 
 export const exlmCDNUrl = 'https://cdn.experienceleague.adobe.com';
 
-function getMetaContent(doc, name) {
-  return doc.querySelector(`meta[name="${name}"]`)?.content || '';
+/**
+ * Retrieves the content of metadata tags.
+ * @param {string} name The metadata name (or property)
+ * @returns {string} The metadata value(s)
+ */
+export function getMetadata(name, doc = document) {
+  const attr = name && name.includes(':') ? 'property' : 'name';
+  const meta = [...doc.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((m) => m.content).join(', ');
+  return meta || '';
 }
 
 function createThumbnailURL(doc, contentType) {
   if (contentType === 'Course') {
-    const courseThumbnail = getMetaContent('course-thumbnail');
+    const courseThumbnail = getMetadata('course-thumbnail', doc);
     return courseThumbnail ? `${exlmCDNUrl}/thumb/${courseThumbnail.split('thumb/')[1]}` : '';
   }
 
@@ -49,33 +56,19 @@ const getCardData = async (articlePath, placeholders) => {
   try {
     response = await fetch(articleURL.toString());
   } catch (err) {
-    return {
-      id: '',
-      title: '',
-      description: '',
-      contentType: '',
-      type: '',
-      badgeTitle: '',
-      thumbnail: '',
-      product: [],
-      tags: [],
-      copyLink: '',
-      bookmarkLink: '',
-      viewLink: '',
-      viewLinkText: '',
-    };
+    return undefined;
   }
   const html = await response.text();
   const doc = domParser.parseFromString(html, 'text/html');
   const fullURL = new URL(articlePath, window.location.origin).href;
-  const coveoContentType = getMetaContent(doc, 'coveo-content-type');
-  const solutions = getMetaContent(doc, 'solutions')
+  const coveoContentType = getMetadata('coveo-content-type', doc);
+  const solutions = getMetadata('solutions', doc)
     .split(',')
     .map((s) => s.trim());
   return {
-    id: getMetaContent(doc, 'id'),
+    id: getMetadata('id', doc),
     title: doc.querySelector('title').textContent.split('|')[0].trim(),
-    description: getMetaContent(doc, 'description'),
+    description: getMetadata('description', doc),
     contentType: coveoContentType,
     type: coveoContentType,
     badgeTitle: coveoContentType,
