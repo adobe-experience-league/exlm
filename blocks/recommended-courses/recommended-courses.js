@@ -248,7 +248,9 @@ export default async function decorate(block) {
   ) {
     buildNoResultsContent(block, true);
   } else {
+    console.log(block.parentElement.parentElement.innerHTML);
     block.parentElement.parentElement.style.display = 'None';
     block.parentElement.parentElement.addAttribute('testattribute', 'a');
+    console.log(block.parentElement.parentElement.innerHTML);
   }
 }
