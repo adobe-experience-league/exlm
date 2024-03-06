@@ -226,7 +226,7 @@ export default async function decorate(block) {
           .then((cardData) => {
             buildCardsShimmer.remove();
             if (cardData && cardData.length > 0) {
-              displayCards(contentDiv, cardData, noOfResults, buildCardsShimmer);
+              displayCards(contentDiv, cardData, noOfResults);
               block.appendChild(contentDiv);
               /* Hide Tooltip while scrolling the cards layout */
               hideTooltipOnScroll(contentDiv);
