@@ -53,7 +53,8 @@ export function dispatchCoveoAdvancedQuery(query, fireSelection = true) {
     aq: query,
   });
   window.headlessSearchEngine.dispatch(advancedQueryAction);
-  if (window.headlessSearchActionCreators && fireSelection) {
+  const isQueryDispatchable = !!query || window.headlessStatusControllers?.state?.firstSearchExecuted;
+  if (window.headlessSearchActionCreators && fireSelection && isQueryDispatchable) {
     const searchAction = window.headlessSearchActionCreators.executeSearch(window.logSearchboxSubmit());
     if (window.headlessPager) {
       window.headlessPager.selectPage(1);

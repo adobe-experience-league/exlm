@@ -320,7 +320,10 @@ function handleCheckboxClick(block, el, options) {
         });
       }
     }
-    handleTopicSelection();
+    const optionsAreSelected = !!dropdownOptions.find((opt) => opt.selected > 0);
+    if (optionsAreSelected) {
+      handleTopicSelection();
+    }
     if (options.selected !== 0) btnEl.firstChild.textContent = `${options.name} (${options.selected})`;
     if (options.selected === 0) btnEl.firstChild.textContent = `${options.name}`;
   }
