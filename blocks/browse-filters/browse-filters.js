@@ -385,6 +385,12 @@ function onInputSearch(block) {
   });
 }
 
+function removeTopicSelections(block) {
+  Array.from(block.querySelectorAll('.browse-topics-item-active')).forEach((element) => {
+    element.classList.remove('browse-topics-item-active');
+  });
+}
+
 function uncheckAllFiltersFromDropdown(block) {
   const dropdownFilters = block.querySelectorAll('.filter-dropdown');
   dropdownFilters.forEach((dropdownEl) => {
@@ -413,10 +419,12 @@ function clearSearchQuery(block) {
 }
 
 function clearSelectedFilters(block) {
+  removeTopicSelections(block);
   uncheckAllFiltersFromDropdown(block);
   clearAllSelectedTag(block);
   clearSearchQuery(block);
   updateClearFilterStatus(block);
+
   const hash = window.location.hash.substr(1); // Remove the '#' character
   let params = new URLSearchParams(hash);
 
