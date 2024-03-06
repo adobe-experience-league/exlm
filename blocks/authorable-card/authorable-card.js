@@ -64,7 +64,12 @@ const getCardData = async (articlePath, placeholders) => {
   const html = await response.text();
   const doc = domParser.parseFromString(html, 'text/html');
   const fullURL = new URL(articlePath, window.location.origin).href;
-  const coveoContentType = getMetadata('coveo-content-type', doc);
+
+  let type = getMetadata('coveo-content-type', doc);
+  if (!type) {
+    type = getMetadata('type', doc);
+  }
+
   const solutions = getMetadata('solutions', doc)
     .split(',')
     .map((s) => s.trim());
@@ -72,18 +77,18 @@ const getCardData = async (articlePath, placeholders) => {
     id: getMetadata('id', doc),
     title: doc.querySelector('title').textContent.split('|')[0].trim(),
     description: getMetadata('description', doc),
-    contentType: coveoContentType,
-    type: coveoContentType,
-    badgeTitle: coveoContentType,
-    thumbnail: createThumbnailURL(doc, coveoContentType),
+    type,
+    contentType: type,
+    badgeTitle: type,
+    thumbnail: createThumbnailURL(doc, type),
     product: solutions,
     tags: [],
     copyLink: fullURL,
     bookmarkLink: '',
     viewLink: fullURL,
-    viewLinkText: placeholders[`browseCard${convertToTitleCase(coveoContentType)}ViewLabel`]
-      ? placeholders[`browseCard${convertToTitleCase(coveoContentType)}ViewLabel`]
-      : `View ${coveoContentType}`,
+    viewLinkText: placeholders[`browseCard${convertToTitleCase(type)}ViewLabel`]
+      ? placeholders[`browseCard${convertToTitleCase(type)}ViewLabel`]
+      : `View ${type}`,
   };
 };
 
