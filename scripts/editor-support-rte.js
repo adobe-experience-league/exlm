@@ -14,12 +14,7 @@ export function decorateRichtext(container = document) {
   let element;
   // eslint-disable-next-line no-cond-assign
   while ((element = container.querySelector('[data-richtext-resource]:not(div)'))) {
-    const { 
-      richtextResource,
-      richtextProp,
-      richtextFilter,
-      richtextLabel,
-    } = element.dataset;
+    const { richtextResource, richtextProp, richtextFilter, richtextLabel } = element.dataset;
     deleteInstrumentation(element);
     const siblings = [];
     let sibling = element;
