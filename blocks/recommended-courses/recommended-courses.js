@@ -148,13 +148,11 @@ export default async function decorate(block) {
    * @param {Array} cardData - The array of card data to display.
    */
   const displayCards = (contentDiv, cardData, noOfResult) => {
-    if (cardData && cardData.length > 0) {
-      for (let i = 0; i < Math.min(noOfResult, cardData.length); i += 1) {
-        const cardsData = cardData[i];
-        const cardsDiv = document.createElement('div');
-        buildCard(contentDiv, cardsDiv, cardsData);
-        contentDiv.appendChild(cardsDiv);
-      }
+    for (let i = 0; i < Math.min(noOfResult, cardData.length); i += 1) {
+      const cardsData = cardData[i];
+      const cardsDiv = document.createElement('div');
+      buildCard(contentDiv, cardsDiv, cardsData);
+      contentDiv.appendChild(cardsDiv);
     }
   };
 
@@ -228,12 +226,12 @@ export default async function decorate(block) {
             if (cardData && cardData.length > 0) {
               displayCards(contentDiv, cardData, noOfResults);
               block.appendChild(contentDiv);
-              /* Hide Tooltip while scrolling the cards layout */
-              hideTooltipOnScroll(contentDiv);
             } else {
               buildCardShimmer.remove();
               buildNoResultsContent(block, true);
             }
+            /* Hide Tooltip while scrolling the cards layout */
+            hideTooltipOnScroll(contentDiv);
           })
           .catch((err) => {
             // Hide shimmer placeholders on error
