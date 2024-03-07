@@ -446,6 +446,7 @@ function checkInterceptLoaded() {
       checkInterval = setInterval(checkInterceptLoaded, RETRY_DELAY);
     }
   } else {
+    clearInterval(checkInterval);
     feedbackError();
   }
 }
