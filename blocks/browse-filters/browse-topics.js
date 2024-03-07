@@ -45,7 +45,7 @@ export const generateQuery = (topic) => {
   };
 };
 
-export function dispatchCoveoAdvancedQuery(query, fireSelection = true) {
+export function dispatchCoveoAdvancedQuery({ query, fireSelection = true, resetPage = true }) {
   if (!window.headlessQueryActionCreators) {
     return;
   }
@@ -53,16 +53,17 @@ export function dispatchCoveoAdvancedQuery(query, fireSelection = true) {
     aq: query,
   });
   window.headlessSearchEngine.dispatch(advancedQueryAction);
-  if (window.headlessSearchActionCreators && fireSelection) {
+  const isQueryDispatchable = !!query || window.headlessStatusControllers?.state?.firstSearchExecuted;
+  if (window.headlessSearchActionCreators && fireSelection && isQueryDispatchable) {
     const searchAction = window.headlessSearchActionCreators.executeSearch(window.logSearchboxSubmit());
-    if (window.headlessPager) {
+    if (window.headlessPager && resetPage) {
       window.headlessPager.selectPage(1);
     }
     window.headlessSearchEngine.dispatch(searchAction);
   }
 }
 
-export function handleTopicSelection(block) {
+export function handleTopicSelection(block, fireSelection, resetPage) {
   const wrapper = block || document;
   const selectedTopics = Array.from(wrapper.querySelectorAll('.browse-topics-item-active')).reduce((acc, curr) => {
     const id = curr.dataset.topicname;
@@ -86,6 +87,6 @@ export function handleTopicSelection(block) {
         query = topicsQuery;
       }
     }
-    dispatchCoveoAdvancedQuery(query);
+    dispatchCoveoAdvancedQuery({ query, fireSelection, resetPage });
   }
 }
