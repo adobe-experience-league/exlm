@@ -570,7 +570,8 @@ em:has(> u) {
   display: inline-block;
 }
 
-em > u, em > a > u {
+em > u,
+em > a > u {
   text-decoration: none;
   font-style: normal;
 }
@@ -1137,7 +1138,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   font-weight: var(--font-weight-700);
   color: var(--non-spectrum-link-blue);
 }
-.docs table:not(.code, .table) {
+.docs table:not(.code table, .table table) {
   display: block;
   margin: 2rem 0;
   font-size: var(--spectrum-body-size-m);
@@ -1145,22 +1146,22 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   color: var(--non-spectrum-custom-dark);
   border-collapse: collapse;
 }
-.docs table:not(.code, .table) thead,
-.docs table:not(.code, .table) tbody,
-.docs table:not(.code, .table) th,
-.docs table:not(.code, .table) td,
-.docs table:not(.code, .table) tr {
+.docs table:not(.code table, .table table) thead,
+.docs table:not(.code table, .table table) tbody,
+.docs table:not(.code table, .table table) th,
+.docs table:not(.code table, .table table) td,
+.docs table:not(.code table, .table table) tr {
   display: block;
 }
-.docs table:not(.code, .table) table,
-.docs table:not(.code, .table) thead,
-.docs table:not(.code, .table) tbody {
+.docs table:not(.code table, .table table) table,
+.docs table:not(.code table, .table table) thead,
+.docs table:not(.code table, .table table) tbody {
   width: 100%;
 }
-.docs table:not(.code, .table) tr {
+.docs table:not(.code table, .table table) tr {
   margin-bottom: 16px;
 }
-.docs table:not(.code, .table) td {
+.docs table:not(.code table, .table table) td {
   border: none;
   border-bottom: 1px solid #eee;
   position: relative;
@@ -1168,37 +1169,37 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   text-align: start;
   padding: 0.5em 0.75em;
 }
-.docs table:not(.code, .table) img {
+.docs table:not(.code table, .table table) img {
   max-width: 100%;
   width: auto;
 }
-.docs table:not(.code, .table) a {
+.docs table:not(.code table, .table table) a {
   color: var(--non-spectrum-link-blue);
 }
-.docs table:not(.code, .table) a:hover {
+.docs table:not(.code table, .table table) a:hover {
   color: var(--non-spectrum-custom-dark);
 }
-.docs table:not(.code, .table) a strong {
+.docs table:not(.code table, .table table) a strong {
   color: currentcolor;
 }
 @media (min-width: 600px) {
-  .docs table:not(.code, .table) {
+  .docs table:not(.code table, .table table) {
     display: table;
     border-spacing: 0;
   }
-  .docs table:not(.code, .table) thead {
+  .docs table:not(.code table, .table table) thead {
     display: table-header-group;
   }
-  .docs table:not(.code, .table) tbody {
+  .docs table:not(.code table, .table table) tbody {
     display: table-row-group;
   }
-  .docs table:not(.code, .table) tr {
+  .docs table:not(.code table, .table table) tr {
     display: table-row;
     margin: 0;
     vertical-align: middle;
   }
-  .docs table:not(.code, .table) th,
-  .docs table:not(.code, .table) td {
+  .docs table:not(.code table, .table table) th,
+  .docs table:not(.code table, .table table) td {
     width: auto;
     display: table-cell;
     border: 1px solid #dbdbdb;

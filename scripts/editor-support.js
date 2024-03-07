@@ -81,6 +81,7 @@ async function applyChanges(event) {
         decorateButtons(newBlock);
         decorateIcons(newBlock);
         decorateBlock(newBlock);
+        decorateRichtext(newBlock);
         await loadBlock(newBlock);
         block.remove();
         newBlock.style.display = null;
@@ -100,9 +101,9 @@ async function applyChanges(event) {
           element.insertAdjacentElement('afterend', newSection);
           decorateButtons(newSection);
           decorateIcons(newSection);
-          decorateRichtext(newSection);
           decorateSections(parentElement);
           decorateBlocks(parentElement);
+          decorateRichtext(newSection);
           await loadBlocks(parentElement);
           element.remove();
           newSection.style.display = null;

@@ -937,7 +937,7 @@ body[class^='browse-'] .browse-filters-full-container {
           grid-column: 3 / 3;
           grid-row: 1 / -1;
           position: relative;
-          display: flex;
+          display: flex !important;
           gap: 8px;
           padding: 46px 10px 10px 0;
         }
@@ -1065,7 +1065,7 @@ body[class^='browse-'] .browse-filters-full-container {
     }
   }
 
-  table:not(.code, .table) {
+  table:not(.code table, .table table) {
     display: block;
     margin: 2rem 0;
     font-size: var(--spectrum-body-size-m);
