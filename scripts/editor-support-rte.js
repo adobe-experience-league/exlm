@@ -8,12 +8,13 @@ export function decorateRichtext(container = document) {
     delete element.dataset.richtextResource;
     delete element.dataset.richtextProp;
     delete element.dataset.richtextFilter;
+    delete element.dataset.richtextLabel;
   }
 
   let element;
   // eslint-disable-next-line no-cond-assign
-  while ((element = container.querySelector('[data-richtext-resource]'))) {
-    const { richtextResource, richtextProp, richtextFilter } = element.dataset;
+  while ((element = container.querySelector('[data-richtext-resource]:not(div)'))) {
+    const { richtextResource, richtextProp, richtextFilter, richtextLabel } = element.dataset;
     deleteInstrumentation(element);
     const siblings = [];
     let sibling = element;
@@ -36,8 +37,9 @@ export function decorateRichtext(container = document) {
       orphanElements.forEach((el) => deleteInstrumentation(el));
     } else {
       const group = document.createElement('div');
-      group.dataset.aueResource = richtextResource;
-      group.dataset.aueProp = richtextProp;
+      if (richtextResource) group.dataset.aueResource = richtextResource;
+      if (richtextProp) group.dataset.aueProp = richtextProp;
+      if (richtextLabel) group.dataset.aueLabel = richtextLabel;
       if (richtextFilter) group.dataset.aueFilter = richtextFilter;
       group.dataset.aueBehavior = 'component';
       group.dataset.aueType = 'richtext';
