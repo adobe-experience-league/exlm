@@ -1,9 +1,9 @@
-import { fetchLanguagePlaceholders } from "../../scripts/scripts";
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   if (document.referrer.search('/browse') >= 0) {
-    const anchorTag =  block.querySelector('a');
-    let text = 'Back to browsing';
+    const anchorTag = block.querySelector('a');
+    const text = 'Back to browsing';
 
     try {
       const placeholders = await fetchLanguagePlaceholders();
@@ -14,9 +14,10 @@ export default async function decorate(block) {
 
     anchorTag.addEventListener('click', (e) => {
       e.preventDefault();
+      // eslint-disable-next-line no-restricted-globals
       history.back();
     });
 
-    anchorTag.classList.add('show');
+    block.classList.add('show');
   }
 }

@@ -1,7 +1,14 @@
-.back-to-browse { 
+.back-to-browsing { 
   display: none;
+  a { 
+    font-size: 14px;
+    font-style: italic;
+    color: var(--spectrum-gray-800);
+    text-decoration: none;
+  }
 }
 
-.back-to-browse.show {
+.back-to-browsing.show {
   display: block;
+  padding-bottom: 15px;
 }
