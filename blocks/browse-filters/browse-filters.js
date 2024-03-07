@@ -112,7 +112,7 @@ function updateClearFilterStatus(block) {
     browseFiltersContainer.classList.add('browse-filters-full-container');
     selectionContainer.classList.add('browse-filters-input-selected');
     if (!containsSelection && window.headlessBaseSolutionQuery) {
-      dispatchCoveoAdvancedQuery(window.headlessBaseSolutionQuery, false);
+      dispatchCoveoAdvancedQuery({ query: window.headlessBaseSolutionQuery, fireSelection: false });
     }
     hildeSectionsWithinFilter(browseFiltersSection, true);
   } else {
@@ -120,7 +120,7 @@ function updateClearFilterStatus(block) {
     hideSectionsBelowFilter(block, true);
     browseFiltersContainer.classList.remove('browse-filters-full-container');
     selectionContainer.classList.remove('browse-filters-input-selected');
-    dispatchCoveoAdvancedQuery('', true);
+    dispatchCoveoAdvancedQuery({ query: '', fireSelection: true });
     hildeSectionsWithinFilter(browseFiltersSection, false);
   }
 }
@@ -609,6 +609,7 @@ function constructFilterPagination(block) {
           return;
         }
         window.headlessPager.selectPage(newPageNumber);
+        handleTopicSelection(undefined, true, false);
       }
     });
   });
