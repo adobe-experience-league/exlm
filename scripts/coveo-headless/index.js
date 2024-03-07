@@ -11,6 +11,13 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
+const locales = new Map([
+  ['es', 'es-ES'],
+  ['pt-br', 'pt-BR'],
+  ['zh-hans', 'zh-CN'],
+  ['zh-hant', 'zh-TW'],
+]);
+
 const coveoToken = await loadCoveoToken();
 
 function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contextObject, advancedQueryRule }) {
@@ -19,7 +26,7 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
   });
   const context = contextObject ? module.loadContextActions(searchEngine).setContext(contextObject) : null;
   const searchConfiguration = module.loadSearchConfigurationActions(searchEngine).updateSearchConfiguration({
-    locale: document.documentElement.lang,
+    locale: locales.get(document.querySelector('html').lang) || document.querySelector('html').lang || 'en',
     searchHub,
   });
   const fields = module
