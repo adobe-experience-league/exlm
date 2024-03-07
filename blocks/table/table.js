@@ -23,6 +23,23 @@ export default async function decorate(block) {
   const thead = document.createElement('thead');
   if (block.classList.contains('no-header')) table.append(tbody);
   else table.append(thead, tbody);
+
+  if (block.classList.contains('with-tfoot')) {
+    const tfoot = document.createElement('tfoot');
+    table.append(tfoot);
+    tfoot.append(block.querySelector('.table > div:last-child'));
+    [...tfoot.children].forEach((trDiv) => {
+      const tr = document.createElement('tr');
+      [...trDiv.children].forEach((tdDiv) => {
+        const td = document.createElement('td');
+        td.append(...tdDiv.childNodes);
+        tr.append(td);
+      });
+      tfoot.append(tr);
+      trDiv.remove();
+    });
+  }
+
   const headings = [];
   [...block.children].forEach((child, i) => {
     const row = document.createElement('tr');

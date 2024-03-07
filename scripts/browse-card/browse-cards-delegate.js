@@ -72,6 +72,12 @@ const BrowseCardsDelegate = (() => {
    * @private
    */
   const handleCoveoService = async () => {
+    const locales = new Map([
+      ['es', 'es-ES'],
+      ['pt-br', 'pt-BR'],
+      ['zh-hans', 'zh-CN'],
+      ['zh-hant', 'zh-TW'],
+    ]);
     const facets = [
       ...(param.contentType
         ? [
@@ -90,7 +96,7 @@ const BrowseCardsDelegate = (() => {
     const dataSource = {
       url: coveoSearchResultsUrl,
       param: {
-        locale: document.querySelector('html').lang || 'en',
+        locale: locales.get(document.querySelector('html').lang) || document.querySelector('html').lang || 'en',
         searchHub: 'Experience League Learning Hub',
         numberOfResults: param.noOfResults,
         excerptLength: 200,

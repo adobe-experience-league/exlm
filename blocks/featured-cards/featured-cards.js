@@ -23,6 +23,9 @@ const DEFAULT_OPTIONS = Object.freeze({
   PRODUCT: 'Product',
 });
 
+const defaultRoleLabel = placeholders?.featuredCardRoleLabel || DEFAULT_OPTIONS.ROLE;
+const defaultProductLabel = placeholders?.featuredCardProductLabel || DEFAULT_OPTIONS.PRODUCT;
+
 // Helper function thats returns a list of all Featured Card Products //
 async function getFeaturedCardSolutions() {
   const ffetch = (await ffetchModulePromise).default;
@@ -88,14 +91,10 @@ export default async function decorate(block) {
     });
   });
 
-  const roleDropdown = new Dropdown(
-    block.querySelector('.browse-card-dropdown'),
-    DEFAULT_OPTIONS.ROLE,
-    roleOptions.items,
-  );
+  const roleDropdown = new Dropdown(block.querySelector('.browse-card-dropdown'), defaultRoleLabel, roleOptions.items);
   const productDropdown = new Dropdown(
     block.querySelector('.browse-card-dropdown'),
-    DEFAULT_OPTIONS.PRODUCT,
+    defaultProductLabel,
     solutionsList,
   );
 
@@ -251,13 +250,13 @@ export default async function decorate(block) {
   }
 
   roleDropdown.handleOnChange((value) => {
-    const roleValue = value === DEFAULT_OPTIONS.ROLE ? [] : [value];
+    const roleValue = value === defaultRoleLabel ? [] : [value];
     param.role = roleValue;
     fetchNewCards();
   });
 
   productDropdown.handleOnChange((value) => {
-    const productValue = value === DEFAULT_OPTIONS.PRODUCT ? [] : [value];
+    const productValue = value === defaultProductLabel ? [] : [value];
     param.product = productValue;
     fetchNewCards();
   });
