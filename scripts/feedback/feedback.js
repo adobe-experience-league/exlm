@@ -1,8 +1,12 @@
 import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js'; // eslint-disable-line import/no-cycle
-import { QUALTRICS_LOADED_EVENT_NAME } from './qualtrics/constants.js';
-import { embedQualtricsSurveyIntercept } from './qualtrics/qualtrics-embed.js';
+import { createTag, htmlToElement, getPathDetails } from '../scripts.js'; // eslint-disable-line import/no-cycle
+import { QUALTRICS_LOADED_EVENT_NAME } from '../qualtrics.js'; // eslint-disable-line import/no-cycle
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
+
+const RETRY_LIMIT = 5;
+const RETRY_DELAY = 500;
+
+const FEEDBACK_CONTAINER_SELECTOR = '.feedback-ui';
 
 // fetch fragment html
 const fetchFragment = async (rePath, lang = 'en') => {
@@ -188,7 +192,7 @@ function decorateOpenedCtrl(openedControl) {
 }
 
 function hideFeedbackBar(state = true) {
-  document.querySelector('.feedback-ui').setAttribute('aria-hidden', state);
+  document.querySelector(FEEDBACK_CONTAINER_SELECTOR).setAttribute('aria-hidden', state);
 }
 
 function toggleFeedbackBar(el, show = false) {
@@ -299,7 +303,7 @@ function handleGithubBtns(el) {
 }
 
 function handleIntersection(entries) {
-  const fb = document.querySelector('.feedback-ui');
+  const fb = document.querySelector(FEEDBACK_CONTAINER_SELECTOR);
 
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
@@ -417,9 +421,37 @@ function handleFeedbackSubmit(el) {
   });
 }
 
-export default async function loadFeedbackUi() {
-  const placeholders = await fetchLanguagePlaceholders();
+export function feedbackError() {
+  const fb = document.querySelector(FEEDBACK_CONTAINER_SELECTOR);
+  // eslint-disable-next-line no-console
+  console.error("Couldn't embed Qualtrics survey intercept.");
+  showQualtricsLoadingError(fb);
+  toggleFeedbackBar(fb, false);
+}
 
+let checkInterval;
+let retryCount = 0;
+
+function checkInterceptLoaded() {
+  const fb = document.querySelector(FEEDBACK_CONTAINER_SELECTOR);
+
+  if (fb.querySelector(' .QSI__EmbeddedFeedbackContainer_Thumbs')) {
+    clearInterval(checkInterval);
+    handleFeedbackIcons(fb);
+    handleFeedbackSubmit(fb);
+  } else if (retryCount < RETRY_LIMIT) {
+    retryCount += 1;
+
+    if (!checkInterval) {
+      checkInterval = setInterval(checkInterceptLoaded, RETRY_DELAY);
+    }
+  } else {
+    clearInterval(checkInterval);
+    feedbackError();
+  }
+}
+
+export default async function loadFeedbackUi() {
   if (!showFeedbackBar()) return;
 
   loadCSS(`${window.hlx.codeBasePath}/scripts/feedback/feedback.css`);
@@ -436,25 +468,7 @@ export default async function loadFeedbackUi() {
   handleGithubBtns(fb);
   handleFeedbackBarVisibilityOnScroll();
 
-  try {
-    embedQualtricsSurveyIntercept(placeholders.feedbackSurveyId);
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error("Couldn't embed Qualtrics survey intercept.", err);
-    showQualtricsLoadingError(fb);
-    toggleFeedbackBar(fb, false);
-  }
-
-  function interceptLoaded() {
-    // wait for Qualtrics to load
-    // eslint-disable-next-line no-undef
-    if (QSI.API) {
-      handleFeedbackIcons(fb);
-      handleFeedbackSubmit(fb);
-    }
-  }
-
-  window.addEventListener(QUALTRICS_LOADED_EVENT_NAME, interceptLoaded, false);
+  window.addEventListener(QUALTRICS_LOADED_EVENT_NAME, checkInterceptLoaded, false);
 }
 
 loadFeedbackUi();
