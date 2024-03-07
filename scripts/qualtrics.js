@@ -1,3 +1,7 @@
+import { feedbackError } from './feedback/feedback.js'; // eslint-disable-line import/no-cycle
+
+export const QUALTRICS_LOADED_EVENT_NAME = 'qsi_js_loaded';
+
 export default async function loadQualtrics() {
   fetch('/qualtrics.json')
     .then((resp) => {
@@ -34,5 +38,6 @@ export default async function loadQualtrics() {
     .catch((error) => {
       // eslint-disable-next-line no-console
       console.log(error);
+      feedbackError();
     });
 }
