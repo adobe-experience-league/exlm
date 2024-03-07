@@ -106,22 +106,29 @@ function updateClearFilterStatus(block) {
   const browseFiltersSection = browseFiltersContainer.querySelector('.browse-filters-form');
   const selectionContainer = browseFiltersSection.querySelector('.browse-filters-input-container');
   const containsSelection = selectionContainer.classList.contains('browse-filters-input-selected');
+  const coveoQueryConfig = { query: '', fireSelection: true };
+  let dispatchCoveoQuery = false;
   if (hasActiveTopics || tagsProxy.length !== 0 || searchEl.value) {
     clearFilterBtn.disabled = false;
     hideSectionsBelowFilter(block, false);
     browseFiltersContainer.classList.add('browse-filters-full-container');
     selectionContainer.classList.add('browse-filters-input-selected');
     if (!containsSelection && window.headlessBaseSolutionQuery) {
-      dispatchCoveoAdvancedQuery({ query: window.headlessBaseSolutionQuery, fireSelection: false });
+      coveoQueryConfig.query = window.headlessBaseSolutionQuery;
+      coveoQueryConfig.fireSelection = false;
+      dispatchCoveoQuery = true;
     }
     hildeSectionsWithinFilter(browseFiltersSection, true);
   } else {
+    dispatchCoveoQuery = true;
     clearFilterBtn.disabled = true;
     hideSectionsBelowFilter(block, true);
     browseFiltersContainer.classList.remove('browse-filters-full-container');
     selectionContainer.classList.remove('browse-filters-input-selected');
-    dispatchCoveoAdvancedQuery({ query: '', fireSelection: true });
     hildeSectionsWithinFilter(browseFiltersSection, false);
+  }
+  if (dispatchCoveoQuery) {
+    dispatchCoveoAdvancedQuery(coveoQueryConfig);
   }
 }
 
@@ -386,9 +393,9 @@ function onInputSearch(block) {
 }
 
 function removeTopicSelections(block) {
-  Array.from(block.querySelectorAll('.browse-topics-item-active')).forEach((element) => {
-    element.classList.remove('browse-topics-item-active');
-  });
+  block
+    .querySelectorAll('.browse-topics-item-active')
+    .forEach((element) => element.classList.remove('browse-topics-item-active'));
 }
 
 function uncheckAllFiltersFromDropdown(block) {
@@ -609,7 +616,9 @@ function constructFilterPagination(block) {
           return;
         }
         window.headlessPager.selectPage(newPageNumber);
-        handleTopicSelection(undefined, true, false);
+        const fireSelection = true;
+        const resetPageIndex = false;
+        handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex);
       }
     });
   });
