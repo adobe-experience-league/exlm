@@ -4,7 +4,7 @@ import { htmlToElement, fetchLanguagePlaceholders, rewriteDocsPath, getLanguageC
 import getSolutionName from './toc-solutions.js';
 
 const tocUrl = window.location.hostname.includes('experienceleague.adobe.com')
-  ? '/action/tocs/'
+  ? '/api/action/tocs/'
   : 'https://51837-exlmconverter-dev.adobeioruntime.net/api/v1/web/main/tocs/';
 
 let placeholders = {};
