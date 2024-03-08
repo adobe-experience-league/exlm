@@ -1,8 +1,11 @@
 import { getMetadata } from '../../scripts/lib-franklin.js';
-import { tocUrl } from '../../scripts/urls.js';
 import TocDataService from '../../scripts/data-service/toc-data-service.js';
 import { htmlToElement, fetchLanguagePlaceholders, rewriteDocsPath, getLanguageCode } from '../../scripts/scripts.js';
 import getSolutionName from './toc-solutions.js';
+
+const tocUrl = window.location.hostname.includes('experienceleague.adobe.com')
+  ? '/action/tocs/'
+  : 'https://51837-exlmconverter-dev.adobeioruntime.net/api/v1/web/main/tocs/';
 
 let placeholders = {};
 try {
