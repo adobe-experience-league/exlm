@@ -132,6 +132,12 @@ async function splitLaunch(st, files) {
           aggNames = [];
         }
       }
+      if (aggNames.length) {
+        const fileName = makeFileName(`modules-${moduleCnt}`);
+        const importDecl = makeImportDeclartion(aggNames, fileName);
+        files[fileName] = fileContent;
+        program.body.unshift(importDecl);
+      }
       content = doGenerate(program);
     } else {
       content = doGenerate(makeExportDeclration(name, st));
