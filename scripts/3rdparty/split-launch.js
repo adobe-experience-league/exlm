@@ -121,7 +121,7 @@ async function splitLaunch(st, files) {
         prop.value = { type: 'Identifier', name: varName };
         const str = doGenerate(exportDecl);
         fileContent += str + '\n';
-        if (fileContent.length > 10000) {
+        if (fileContent.length > 5000) {
           // write chunk
           const fileName = makeFileName(`modules-${moduleCnt}`);
           const importDecl = makeImportDeclartion(aggNames, fileName);
