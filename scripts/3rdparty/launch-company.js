@@ -1,1 +1,0 @@
-export const company={orgId:'8F99160E571FC0427F000101@AdobeOrg',dynamicCdnEnabled:!1};
