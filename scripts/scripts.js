@@ -429,12 +429,15 @@ export async function loadIms() {
 
 const loadMartech = async (headerPromise, footerPromise) => {
   let launchScriptSrc = '';
+  const launchScriptOpts = { async: true };
   if (window.location.host === 'eds-stage.experienceleague.adobe.com') {
     launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
   } else if (window.location.host === 'experienceleague.adobe.com') {
     launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
   } else {
-    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js';
+    // launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js';
+    launchScriptSrc = `${window.hlx.codeBasePath}/scripts/3rdparty/launch.js`;
+    launchScriptOpts.type = 'module';
   }
   oneTrust();
 
@@ -443,9 +446,7 @@ const loadMartech = async (headerPromise, footerPromise) => {
     defer: true,
   });
 
-  const launchPromise = loadScript(launchScriptSrc, {
-    async: true,
-  });
+  const launchPromise = loadScript(launchScriptSrc, launchScriptOpts);
 
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
