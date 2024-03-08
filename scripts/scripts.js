@@ -446,7 +446,7 @@ const loadMartech = async (headerPromise, footerPromise) => {
   const launchPromise = loadScript(launchScriptSrc, {
     async: true,
   });
-  
+
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
 
