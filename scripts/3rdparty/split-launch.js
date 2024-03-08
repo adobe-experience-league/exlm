@@ -75,7 +75,7 @@ function makeExportDeclration(name, objectExpr) {
   // add imports
   st.body.unshift(...Object.keys(containerProps).map((name) => makeImportDeclartion(name)));
 
-  files['launch.js'] = generate(st, { format: FORMAT_MINIFY });
+  files['./launch.js'] = generate(st, { format: FORMAT_MINIFY });
 
   // write the container properties
   Object.entries(containerProps).forEach(([name, st]) => {
