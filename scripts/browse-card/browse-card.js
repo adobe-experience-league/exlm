@@ -153,7 +153,7 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
   if (lang === 'en') {
     const remainingTime = calculateRemainingTime(inProgressText, inProgressStatus);
     const timeleftLabel = placeholders?.recommendedCoursesTimeLeftLabel || 'You have ${TIME_LEFT} left in this course';
-    titleElement.textContent = timeleftLabel.replace(`${TIME_LEFT}`, formatRemainingTime(remainingTime));
+    titleElement.textContent = timeleftLabel.replace('$[TIME_LEFT]', formatRemainingTime(remainingTime));
   } else {
     const totalDurationTime = placeholders?.recommendedCoursesTotalDurationLabel || 'Total Duration';
     titleElement.textContent = `${totalDurationTime} ${inProgressText}`;
