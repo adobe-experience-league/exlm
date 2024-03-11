@@ -4,7 +4,7 @@ import { getEDSLink, getLink, getPathDetails, fetchLanguagePlaceholders } from '
 export default async function decorate(block) {
   // to avoid dublication when editing
   block.textContent = '';
-  
+
   // fallback text
   let browseText = 'Browse';
 
