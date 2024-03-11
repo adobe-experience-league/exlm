@@ -168,6 +168,40 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
   object-position: center;
 }
 
+.marquee .modal {
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(10, 10, 10, .86);
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.marquee .modal .icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.marquee .modal div {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marquee .modal iframe {
+  aspect-ratio: 16 / 9;
+  min-width: 50%;
+  max-height: 50vh;
+}
 
 @media (min-width: 600px) {
   .section.marquee-container {
