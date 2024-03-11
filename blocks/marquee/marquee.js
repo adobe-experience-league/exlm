@@ -31,8 +31,9 @@ function getSignInButton(signInText) {
 
 export default async function decorate(block) {
   // Extract properties
-  // always same order as in model, empty string if not set  
-  const [img, eyebrow, title, longDescr, firstCta, firstCtaType, confSignInText] = block.querySelectorAll(':scope div > div');
+  // always same order as in model, empty string if not set
+  const [img, eyebrow, title, longDescr, firstCta, firstCtaType, confSignInText] =
+    block.querySelectorAll(':scope div > div');
 
   const subjectPicture = img.querySelector('picture');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
@@ -72,38 +73,38 @@ export default async function decorate(block) {
     block.classList.add('no-subject');
   }
 
-  if(firstCtaType === "video") {
-    const firstCtaButton = marqueeDOM.querySelector(".marquee-cta > a:first-child");
-    const videoLink = firstCtaButton.getAttribute("href")
+  if (firstCtaType === 'video') {
+    const firstCtaButton = marqueeDOM.querySelector('.marquee-cta > a:first-child');
+    const videoLink = firstCtaButton.getAttribute('href');
 
-    firstCtaButton.setAttribute("href", "#")
-    firstCtaButton.removeAttribute("target") 
-    const playIcon = document.createElement("span")
-    playIcon.classList.add("icon", "icon-play")
-    firstCtaButton.prepend(playIcon)
-    const modal = document.createElement("div")
-    modal.classList.add("modal")
-    const closeIcon = document.createElement("span")
-    closeIcon.classList.add("icon", "icon-close")
-    modal.appendChild(closeIcon)
-    modal.style.display = "none";
-    block.append(modal)
+    firstCtaButton.setAttribute('href', '#');
+    firstCtaButton.removeAttribute('target');
+    const playIcon = document.createElement('span');
+    playIcon.classList.add('icon', 'icon-play');
+    firstCtaButton.prepend(playIcon);
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    const closeIcon = document.createElement('span');
+    closeIcon.classList.add('icon', 'icon-close');
+    modal.appendChild(closeIcon);
+    modal.style.display = 'none';
+    block.append(modal);
 
-    firstCtaButton.addEventListener("click", ()=>{
-      modal.style.display = "flex";
-      if(!modal.querySelector("iframe")){
-        const iframeContainer = document.createElement("div")
-        iframeContainer.classList.add("iframe-container")
-        iframeContainer.innerHTML = `<iframe src=${videoLink} frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe>`
-        modal.append(iframeContainer)
+    firstCtaButton.addEventListener('click', () => {
+      modal.style.display = 'flex';
+      if (!modal.querySelector('iframe')) {
+        const iframeContainer = document.createElement('div');
+        iframeContainer.classList.add('iframe-container');
+        iframeContainer.innerHTML = `<iframe src=${videoLink} frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe>`;
+        modal.append(iframeContainer);
       }
-      decorateIcons(modal)
-    })
+      decorateIcons(modal);
+    });
 
-    modal.addEventListener("click", ()=>{
-      modal.style.display = "none";
-      modal.querySelector(".iframe-container").remove()
-    })
+    modal.addEventListener('click', () => {
+      modal.style.display = 'none';
+      modal.querySelector('.iframe-container').remove();
+    });
   }
 
   // fetch user auth to toggle hide signin button

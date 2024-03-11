@@ -1046,8 +1046,8 @@
         "valueType": "string",
         "options": [
           {
-          "name": "Link",
-          "value": "link"
+            "name": "Link",
+            "value": "link"
           },
           {
             "name": "Video",
