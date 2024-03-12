@@ -857,9 +857,6 @@ header {
   height: 24px;
   width: 24px;
 }
-.header .signed-in {
-  grid-area: signed-in;
-}
 .header .signed-in .profile {
   position: initial;
   display: flex;
@@ -922,6 +919,11 @@ header {
 @media (min-width: 1024px) {
   .header .signed-in .profile {
     position: relative;
+  }
+}
+@media (min-width: 1024px) {
+  .header .signed-in {
+    grid-area: signed-in;
   }
 }
 .header .profile-toggle,

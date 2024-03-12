@@ -1,6 +1,3 @@
-// eslint-disable-next-line import/no-cycle
-import { profile } from '../data-service/profile-service.js';
-
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
@@ -50,6 +47,8 @@ export async function pageLoadModel(language) {
   user.userDetails.orgs = [];
 
   try {
+    // eslint-disable-next-line import/no-cycle
+    const { profile } = await import('../data-service/profile-service.js');
     const userData = await profile();
     if (userData) {
       user.userDetails.userAccountType = userData.account_type;

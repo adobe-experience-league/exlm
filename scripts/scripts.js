@@ -19,11 +19,6 @@ import {
 } from './lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 
-const ffetchModulePromise = import('./ffetch.js');
-
-// eslint-disable-next-line import/no-cycle
-const libAnalyticsModulePromise = import('./analytics/lib-analytics.js');
-
 const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
 export const timers = new Map();
@@ -452,7 +447,10 @@ const loadMartech = async (headerPromise, footerPromise) => {
     async: true,
   });
 
-  Promise.all([launchPromise, libAnalyticsModulePromise, headerPromise, footerPromise, oneTrustPromise]).then(
+  // eslint-disable-next-line import/no-cycle
+  const libAnalyticsPromise = import('./analytics/lib-analytics.js');
+
+  Promise.all([launchPromise, libAnalyticsPromise, headerPromise, footerPromise, oneTrustPromise]).then(
     // eslint-disable-next-line no-unused-vars
     ([launch, libAnalyticsModule, headPr, footPr]) => {
       const { lang } = getPathDetails();
@@ -654,7 +652,7 @@ export async function fetchLanguagePlaceholders() {
 
 export async function getLanguageCode() {
   const { lang } = getPathDetails();
-  const ffetch = (await ffetchModulePromise).default;
+  const { default: ffetch } = await import('./ffetch.js');
   const langMap = await ffetch(`/languages.json`).all();
   const langObj = langMap.find((item) => item.key === lang);
   const langCode = langObj ? langObj.value : lang;
