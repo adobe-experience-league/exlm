@@ -923,8 +923,6 @@ header {
   }
 
   .signed-in {
-    grid-area: signed-in;
-
     .profile {
       position: initial;
       display: flex;
@@ -984,6 +982,10 @@ header {
       @include breakpoint(custom) {
         position: relative;
       }
+    }
+
+    @include breakpoint(custom) {
+      grid-area: signed-in;
     }
   }
 
