@@ -1,28 +1,29 @@
+import { getMetadata } from '../lib-franklin.js';
 import { htmlToElement, loadIms, getLanguageCode } from '../scripts.js';
 import SearchDelegate from './search-delegate.js';
 import { searchUrl } from '../urls.js';
 
 // Get language code from URL
 const languageCode = await getLanguageCode();
+// Get solution from metadata
+const solution = getMetadata('solution')?.split(',')[0].trim();
 
 // Redirects to the search page based on the provided search input and filters
 export const redirectToSearchPage = (searchInput, filters = '') => {
   const baseTargetUrl = searchUrl;
   let targetUrlWithLanguage = `${baseTargetUrl}?lang=${languageCode}`;
-
+  const filterValue = filters && filters.toLowerCase() === 'all' ? '' : filters;
   if (searchInput) {
     const trimmedSearchInput = encodeURIComponent(searchInput.trim());
-    const filterValue = filters && filters.toLowerCase() === 'all' ? '' : filters;
-
-    if (trimmedSearchInput === '') {
-      targetUrlWithLanguage += `&f:@el_contenttype=${encodeURIComponent(filterValue ? `[${filterValue}]` : '[]')}`;
-    } else {
-      targetUrlWithLanguage += `#q=${trimmedSearchInput}`;
-
-      if (filterValue) {
-        targetUrlWithLanguage += `&f:@el_contenttype=${encodeURIComponent(`[${filterValue}]`)}`;
-      }
-    }
+    targetUrlWithLanguage += `#q=${trimmedSearchInput}`;
+  } else {
+    targetUrlWithLanguage += '#sort=relevancy';
+  }
+  if (filterValue) {
+    targetUrlWithLanguage += `&f:@el_contenttype=${encodeURIComponent(`[${filterValue}]`)}`;
+  }
+  if (solution) {
+    targetUrlWithLanguage += `&f:el_product=${encodeURIComponent(`[${solution}]`)}`;
   }
 
   window.location.href = targetUrlWithLanguage;
