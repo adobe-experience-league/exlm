@@ -342,6 +342,20 @@ export function decorateAnchors(main) {
 }
 
 /**
+ * Transform list blocks into default content
+ * @param {Element} main the main element
+ */
+function decorateLists(main) {
+  main.querySelectorAll('.list').forEach((listBlock) => {
+    const listEl = listBlock.querySelector('ul, ol');
+    if (listEl) {
+      listBlock.before(listEl);
+      listBlock.remove();
+    }
+  });
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -355,6 +369,7 @@ export function decorateMain(main) {
   decorateIcons(main);
   decorateExternalLinks(main);
   buildAutoBlocks(main);
+  decorateLists(main);
   decorateSections(main);
   decorateBlocks(main);
   buildSectionBasedAutoBlocks(main);
