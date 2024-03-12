@@ -43,6 +43,30 @@ const BrowseCardsCoveoDataAdaptor = (() => {
   };
 
   /**
+   * Removes duplicate items from an array of products/solutions (with sub-solutions)
+   * @param {Array} products - Array of products to remove duplicates from.
+   * @returns {Array} - Array of unique products.
+   */
+  const removeProductDuplicates = (products) => {
+    const filteredProducts = [];
+    for (let outerIndex = 0; outerIndex < products.length; outerIndex += 1) {
+      const currentItem = products[outerIndex];
+      let isDuplicate = false;
+      for (let innerIndex = 0; innerIndex < products.length; innerIndex += 1) {
+        if (outerIndex !== innerIndex && products[innerIndex].startsWith(currentItem)) {
+          isDuplicate = true;
+          break;
+        }
+      }
+      if (!isDuplicate) {
+        const product = products[outerIndex].replace(/\|/g, ' ');
+        filteredProducts.push(product);
+      }
+    }
+    return filteredProducts;
+  };
+
+  /**
    * Maps a result to the BrowseCards data model.
    * @param {Object} result - The result object.
    * @param {Object} param - The param object.
@@ -59,9 +83,11 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     } else {
       contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
     }
-    let product = el_product && (Array.isArray(el_product) ? el_product : el_product.split(/,\s*/));
-    if (!product && el_solution) {
-      product = el_solution && (Array.isArray(el_solution) ? el_solution : el_solution.split(/,\s*/));
+    let products;
+    if (el_solution) {
+      products = Array.isArray(el_solution) ? el_solution : el_solution.split(/,\s*/);
+    } else if (el_product) {
+      products = Array.isArray(el_product) ? el_product : el_product.split(/,\s*/);
     }
     const tags = createTags(result, contentType.toLowerCase());
     let url = parentResult?.clickUri || parentResult?.uri || clickUri || uri || '';
@@ -79,7 +105,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
             ? raw.video_url.replace(/\?.*/, '?format=jpeg')
             : `${raw.video_url}?format=jpeg`)) ||
         '',
-      product,
+      product: products && removeProductDuplicates(products),
       title: parentResult?.title || title || '',
       description: parentResult?.excerpt || excerpt || '',
       tags,
