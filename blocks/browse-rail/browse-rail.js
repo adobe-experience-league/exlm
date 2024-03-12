@@ -153,6 +153,9 @@ async function displayAllProducts(block, placeholders) {
 
 // Main function to decorate the block
 export default async function decorate(block) {
+  // to avoid dublication when editing
+  block.textContent = '';
+
   const theme = getMetadata('theme');
   const label = getMetadata('og:title');
   const placeholders = await fetchLanguagePlaceholders();
