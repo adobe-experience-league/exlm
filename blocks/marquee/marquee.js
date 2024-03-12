@@ -32,7 +32,7 @@ function getSignInButton(signInText) {
 export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
-  const [img, eyebrow, title, longDescr, firstCta, firstCtaType, confSignInText] =
+  const [img, eyebrow, title, longDescr, firstCta, linkType, confSignInText] =
     block.querySelectorAll(':scope div > div');
 
   const subjectPicture = img.querySelector('picture');
@@ -73,7 +73,7 @@ export default async function decorate(block) {
     block.classList.add('no-subject');
   }
 
-  if (firstCtaType === 'video') {
+  if (linkType.textContent.trim() === 'video') {
     const firstCtaButton = marqueeDOM.querySelector('.marquee-cta > a:first-child');
     const videoLink = firstCtaButton.getAttribute('href');
 
