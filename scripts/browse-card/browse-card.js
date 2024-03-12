@@ -382,7 +382,7 @@ export async function buildCard(container, element, model) {
       const tooltipConfig = {
         position: 'top',
         color: 'grey',
-        content: product.join(', ').replace(/\|/g, ' | '),
+        content: product.join(', '),
       };
       createTooltip(container, tooltipElem, tooltipConfig);
     } else {
