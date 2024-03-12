@@ -32,7 +32,9 @@ function getSignInButton(signInText) {
 export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
-  const [img, eyebrow, title, longDescr, firstCta, confSignInText] = block.querySelectorAll(':scope div > div');
+  const [img, eyebrow, title, longDescr, firstCta, firstCtaType, confSignInText] =
+    block.querySelectorAll(':scope div > div');
+
   const subjectPicture = img.querySelector('picture');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
@@ -63,13 +65,46 @@ export default async function decorate(block) {
     </div>
     <div class='marquee-background'>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1562 571.212"><path fill="#fff" d="M0 1.212h1562v570H0z" data-name="Rectangle 1"></path><path class="bg" fill="var(${bgColor})" d="M752.813-1495s115.146 210.072 471.053 309.516 291.355 261.7 291.355 261.7h150.039V-1495Z" data-name="Path 1" transform="translate(-103.26 1495)"></path></svg>
-    </div>
-  `);
+    </div> `);
 
   block.textContent = '';
 
   if (!subjectPicture) {
     block.classList.add('no-subject');
+  }
+
+  if (firstCtaType === 'video') {
+    const firstCtaButton = marqueeDOM.querySelector('.marquee-cta > a:first-child');
+    const videoLink = firstCtaButton.getAttribute('href');
+
+    firstCtaButton.setAttribute('href', '#');
+    firstCtaButton.removeAttribute('target');
+    const playIcon = document.createElement('span');
+    playIcon.classList.add('icon', 'icon-play');
+    firstCtaButton.prepend(playIcon);
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    const closeIcon = document.createElement('span');
+    closeIcon.classList.add('icon', 'icon-close');
+    modal.appendChild(closeIcon);
+    modal.style.display = 'none';
+    block.append(modal);
+
+    firstCtaButton.addEventListener('click', () => {
+      modal.style.display = 'flex';
+      if (!modal.querySelector('iframe')) {
+        const iframeContainer = document.createElement('div');
+        iframeContainer.classList.add('iframe-container');
+        iframeContainer.innerHTML = `<iframe src=${videoLink} frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe>`;
+        modal.append(iframeContainer);
+      }
+      decorateIcons(modal);
+    });
+
+    modal.addEventListener('click', () => {
+      modal.style.display = 'none';
+      modal.querySelector('.iframe-container').remove();
+    });
   }
 
   // fetch user auth to toggle hide signin button

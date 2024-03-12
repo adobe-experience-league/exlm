@@ -1038,6 +1038,24 @@
         "description": "What link to open when clicking the button."
       },
       {
+        "component": "select",
+        "name": "cta1Type",
+        "value": "link",
+        "label": "First CTA Type",
+        "description": "Link will render a normal Anchor button, video will render a video button that opens the video player when clicked.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Link",
+            "value": "link"
+          },
+          {
+            "name": "Video",
+            "value": "video"
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "cta2Text",
