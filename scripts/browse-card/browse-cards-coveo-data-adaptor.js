@@ -59,7 +59,8 @@ const BrowseCardsCoveoDataAdaptor = (() => {
         }
       }
       if (!isDuplicate) {
-        filteredProducts.push(products[outerIndex]);
+        const product = products[outerIndex].replace(/\|/g, ' ');
+        filteredProducts.push(product);
       }
     }
     return filteredProducts;
@@ -75,14 +76,19 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     const { raw, parentResult, title, excerpt, clickUri, uri } = result || {};
     /* eslint-disable camelcase */
 
-    const { el_id, el_contenttype, el_solution, el_type } = parentResult?.raw || raw || {};
+    const { el_id, el_contenttype, el_product, el_solution, el_type } = parentResult?.raw || raw || {};
     let contentType;
     if (el_type) {
       contentType = el_type.trim();
     } else {
       contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
     }
-    const products = el_solution && (Array.isArray(el_solution) ? el_solution : el_solution.split(/,\s*/));
+    let products;
+    if (el_solution) {
+      products = Array.isArray(el_solution) ? el_solution : el_solution.split(/,\s*/);
+    } else if (el_product) {
+      products = Array.isArray(el_product) ? el_product : el_product.split(/,\s*/);
+    }
     const tags = createTags(result, contentType.toLowerCase());
     let url = parentResult?.clickUri || parentResult?.uri || clickUri || uri || '';
     url = rewriteDocsPath(url);
