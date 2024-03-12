@@ -169,11 +169,9 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText }) => {
       icon = 'play-outline';
       isLeftPlacement = false;
     } else if (
-      [
-        CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
-        CONTENT_TYPES.EVENT.MAPPING_KEY,
-        CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
-      ].includes(contentType.toLowerCase())
+      [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
+        contentType.toLowerCase(),
+      )
     ) {
       icon = 'new-tab';
     }
@@ -403,11 +401,9 @@ export async function buildCard(container, element, model) {
     const cardContainer = document.createElement('a');
     cardContainer.setAttribute('href', model.viewLink);
     if (
-      [
-        CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
-        CONTENT_TYPES.EVENT.MAPPING_KEY,
-        CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
-      ].includes(contentType.toLowerCase())
+      [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
+        contentType.toLowerCase(),
+      )
     ) {
       cardContainer.setAttribute('target', '_blank');
     }
