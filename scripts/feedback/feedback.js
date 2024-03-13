@@ -1,5 +1,5 @@
 import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, getPathDetails } from '../scripts.js'; // eslint-disable-line import/no-cycle
+import { createTag, htmlToElement, getPathDetails, isDocArticlePage } from '../scripts.js'; // eslint-disable-line import/no-cycle
 import { QUALTRICS_LOADED_EVENT_NAME } from '../qualtrics.js'; // eslint-disable-line import/no-cycle
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 
@@ -471,4 +471,4 @@ export default async function loadFeedbackUi() {
   window.addEventListener(QUALTRICS_LOADED_EVENT_NAME, checkInterceptLoaded, false);
 }
 
-loadFeedbackUi();
+if (isDocArticlePage()) loadFeedbackUi();
