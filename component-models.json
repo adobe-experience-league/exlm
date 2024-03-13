@@ -2140,6 +2140,30 @@
             "value": "most_popular"
           }
         ]
+      },
+      {
+        "component": "multiselect",
+        "name": "sortByDate",
+        "label": "Sort by Date",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Within one month",
+            "value": "within_one_month"
+          },
+          {
+            "name": "Within six months",
+            "value": "within_six_months"
+          },
+          {
+            "name": "Within one year",
+            "value": "within_one_year"
+          },
+          {
+            "name": "More than one year ago",
+            "value": "more_than_one_year_ago"
+          }
+        ]
       }
     ]
   },
