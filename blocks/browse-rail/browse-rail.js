@@ -15,8 +15,8 @@ import { getEDSLink, getLink, getPathDetails, fetchLanguagePlaceholders } from '
 export async function getProducts() {
   // get language
   const { lang } = getPathDetails();
-  // load the <lang>/product list
-  const Products = await ffetch(`/${lang}/products.json`).all();
+  // load the <lang>/top-product list
+  const Products = await ffetch(`/${lang}/top-products.json`).all();
   // get all indexed pages below <lang>/browse
   const publishedPages = await ffetch(`/${lang}/browse-index.json`).all();
   let featured = true;
@@ -42,6 +42,17 @@ export async function getProducts() {
     }
     return false;
   });
+
+  // if no separator was found , add the remaining products alphabetically
+  if (featured) {
+    // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
+    const publishedMainProducts = publishedPages
+    .filter((page) => page.path.split('/').length === 4)
+    // sort alphabetically
+    .sort((productA, productB) => productA.path.localeCompare(productB.path));
+    // append remaining published products to final list
+    finalProducts.push(...publishedMainProducts);
+  }
 
   return finalProducts;
 }
