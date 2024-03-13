@@ -92,7 +92,7 @@ export default async function decorate(block) {
 
     firstCtaButton.addEventListener('click', () => {
       modal.style.display = 'flex';
-      document.body.style.overflow = "hidden"
+      document.body.style.overflow = 'hidden';
       if (!modal.querySelector('iframe')) {
         const iframeContainer = document.createElement('div');
         iframeContainer.classList.add('iframe-container');
@@ -104,7 +104,7 @@ export default async function decorate(block) {
 
     modal.addEventListener('click', () => {
       modal.style.display = 'none';
-      document.body.removeAttribute("style")
+      document.body.removeAttribute('style');
       modal.querySelector('.iframe-container').remove();
     });
   }
