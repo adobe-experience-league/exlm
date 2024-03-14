@@ -667,7 +667,23 @@ async function loadDefaultModule(jsPath) {
   }
 }
 
+/**
+ * THIS IS TEMPORARY FOR SUMMIT
+ */
+function handleHomePageHashes() {
+  // home page AND #feedback hash
+  if (window.location.pathname === '/' && window.location.hash === '#feedback') {
+    // redirect user to /home#feedback
+    window.location.href = '/home#feedback';
+    return true;
+  }
+  return false;
+}
+
 async function loadPage() {
+  // THIS IS TEMPORARY FOR SUMMIT
+  if (handleHomePageHashes()) return;
+  // END OF TEMPORARY FOR SUMMIT
   await loadEager(document);
   await loadLazy(document);
   loadRails();
