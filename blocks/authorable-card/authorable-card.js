@@ -79,7 +79,7 @@ const getCardData = async (articlePath, placeholders) => {
     description: getMetadata('description', doc),
     type,
     contentType: type,
-    badgeTitle: CONTENT_TYPES[type.toUpperCase()]?.LABEL,
+    badgeTitle: type ? CONTENT_TYPES[type.toUpperCase()]?.LABEL : '',
     thumbnail: createThumbnailURL(doc, type) || '',
     product: solutions,
     tags: [],
