@@ -1,4 +1,4 @@
-import { feedbackError, QUALTRICS_LOADED_EVENT_NAME } from './feedback/feedback.js'; // eslint-disable-line import/no-cycle
+import { feedbackError } from './feedback/feedback.js'; // eslint-disable-line import/no-cycle
 
 export default async function loadQualtrics() {
   fetch('/qualtrics.json')
