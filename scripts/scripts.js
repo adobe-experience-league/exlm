@@ -566,8 +566,6 @@ function loadDelayed() {
   // load anything that can be postponed to the latest here
   // eslint-disable-next-line import/no-cycle
   addMetaTagsToWindow();
-  // eslint-disable-next-line import/no-cycle
-  if (isDocArticlePage()) window.setTimeout(() => import('./feedback/feedback.js'), 3000);
 }
 
 /**
