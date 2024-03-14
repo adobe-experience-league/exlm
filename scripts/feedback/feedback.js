@@ -1,7 +1,8 @@
 import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, getPathDetails, isDocArticlePage } from '../scripts.js'; // eslint-disable-line import/no-cycle
-import { QUALTRICS_LOADED_EVENT_NAME } from '../qualtrics.js'; // eslint-disable-line import/no-cycle
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
+
+export const QUALTRICS_LOADED_EVENT_NAME = 'qsi_js_loaded';
 
 const RETRY_LIMIT = 5;
 const RETRY_DELAY = 500;
