@@ -147,10 +147,7 @@ export async function pageLoadModel(language) {
       },
     },
     user,
-    userGUID: document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('userGUID='))
-      ?.split('=')[1],
+    userGUID: user.userDetails.userID,
   };
 }
 
