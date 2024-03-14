@@ -1,6 +1,5 @@
 import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, getPathDetails, isDocArticlePage } from '../scripts.js'; // eslint-disable-line import/no-cycle
-import { QUALTRICS_LOADED_EVENT_NAME } from '../qualtrics.js'; // eslint-disable-line import/no-cycle
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 
 const RETRY_LIMIT = 5;
@@ -468,7 +467,7 @@ export default async function loadFeedbackUi() {
   handleGithubBtns(fb);
   handleFeedbackBarVisibilityOnScroll();
 
-  window.addEventListener(QUALTRICS_LOADED_EVENT_NAME, checkInterceptLoaded, false);
+  window.addEventListener('qsi_js_loaded', checkInterceptLoaded, false);
 }
 
 if (isDocArticlePage()) loadFeedbackUi();
