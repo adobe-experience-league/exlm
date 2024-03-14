@@ -674,10 +674,12 @@ async function loadDefaultModule(jsPath) {
  */
 function handleHomePageHashes() {
   // home page AND #feedback hash
-  if (window.location.pathname === '/' && window.location.hash === '#feedback') {
-    // redirect user to /home#feedback
-    window.location.href = '/home#feedback';
-    return true;
+  const { pathname, search = '', hash = '' } = window.location;
+  if (pathname === '/') {
+    if (hash === '#feedback' || hash === '#dashboard/profile') {
+      window.location.href = `/home${search}${hash}`;
+      return true;
+    }
   }
   return false;
 }
