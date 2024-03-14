@@ -48,7 +48,7 @@ export default async function decorate(block) {
     [...child.children].forEach((col, j) => {
       const cell = buildCell(i, block.classList);
       if (!block.classList.contains('html-authored')) {
-        if (cell.tagName === 'TH') headings.push(col.innerHTML);
+        if (cell.tagName === 'TH') headings.push(col.textContent);
         if (cell.tagName === 'TD') cell.setAttribute('data-title', headings[j]);
       }
       cell.append(...col.childNodes);
