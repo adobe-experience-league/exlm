@@ -566,8 +566,6 @@ function loadDelayed() {
   // load anything that can be postponed to the latest here
   // eslint-disable-next-line import/no-cycle
   addMetaTagsToWindow();
-  // eslint-disable-next-line import/no-cycle
-  if (isDocArticlePage()) window.setTimeout(() => import('./feedback/feedback.js'), 3000);
 }
 
 /**
@@ -669,7 +667,25 @@ async function loadDefaultModule(jsPath) {
   }
 }
 
+/**
+ * THIS IS TEMPORARY FOR SUMMIT
+ */
+function handleHomePageHashes() {
+  // home page AND #feedback hash
+  const { pathname, search = '', hash = '' } = window.location;
+  if (pathname === '/') {
+    if (hash === '#feedback' || hash === '#dashboard/profile') {
+      window.location.href = `/home${search}${hash}`;
+      return true;
+    }
+  }
+  return false;
+}
+
 async function loadPage() {
+  // THIS IS TEMPORARY FOR SUMMIT.
+  if (handleHomePageHashes()) return;
+  // END OF TEMPORARY FOR SUMMIT.
   await loadEager(document);
   await loadLazy(document);
   loadRails();

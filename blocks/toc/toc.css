@@ -126,10 +126,11 @@
     content: "";
     box-sizing: content-box;
     background: rgba(0,0,0,0) url(/icons/chevron_down.svg) no-repeat right center;
+    transform: rotate(180deg);
 }
 
 .toc a.js-toggle.collapsed:after {
-    transform: rotate(180deg);
+    transform: rotate(0);
 }
 
 .toc ul li ul li a {
