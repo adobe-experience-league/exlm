@@ -683,9 +683,9 @@ function handleHomePageHashes() {
 }
 
 async function loadPage() {
-  // THIS IS TEMPORARY FOR SUMMIT
+  // THIS IS TEMPORARY FOR SUMMIT.
   if (handleHomePageHashes()) return;
-  // END OF TEMPORARY FOR SUMMIT
+  // END OF TEMPORARY FOR SUMMIT.
   await loadEager(document);
   await loadLazy(document);
   loadRails();
