@@ -9,7 +9,7 @@ Experience League site implementation on https://aem.live
 
 ## Getting started
 
-1. Clone or fork this repo (see nopte bleow on forking)
+1. Clone or fork this repo (see note below on forking)
 2. Create your brannch
 3. Install the [AEM CLI](https://github.com/adobe/aem-cli): `npm install -g @adobe/aem-cli`
 4. Install deopendecies `npm i`
