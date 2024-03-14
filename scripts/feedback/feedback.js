@@ -71,8 +71,7 @@ function decorateFirstQuestion(firstQuestion) {
 }
 
 function decorateSecondQuestion(secondQuestion) {
-  const initialPlaceholder = secondQuestion.querySelector('div:nth-child(1) > div:last-child').textContent.trim();
-  const updatedPlaceholder = secondQuestion.querySelector('div:nth-child(1) > div:first-child').textContent.trim();
+  const feedbackPlaceholder = secondQuestion.querySelector('div:nth-child(1) > div:last-child').textContent.trim();
   const submitText = secondQuestion
     .querySelector('div:nth-child(2) > div:nth-child(1) > p:first-child')
     .textContent.trim();
@@ -85,9 +84,9 @@ function decorateSecondQuestion(secondQuestion) {
   const textarea = createTag('textarea', {
     class: 'input',
     'aria-describedby': 'additional',
-    'aria-label': initialPlaceholder,
-    placeholder: initialPlaceholder,
-    'data-updated-placeholder': updatedPlaceholder,
+    'aria-label': feedbackPlaceholder,
+    placeholder: feedbackPlaceholder,
+    'data-updated-placeholder': feedbackPlaceholder,
     disabled: '',
   });
   const newDiv = createTag('div', { class: 'more-question' }, textarea);
