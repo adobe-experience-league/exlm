@@ -315,6 +315,10 @@ const setupCopyAction = (wrapper) => {
 
 export async function buildCard(container, element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus } = model;
+  // lowercase all urls - because all of our urls are lower-case
+  model.viewLink = model.viewLink?.toLowerCase();
+  model.copyLink = model.copyLink?.toLowerCase();
+
   let type = contentType?.toLowerCase();
   const courseMappingKey = CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase();
   const tutorialMappingKey = CONTENT_TYPES.TUTORIAL.MAPPING_KEY.toLowerCase();
