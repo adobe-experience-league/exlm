@@ -312,7 +312,6 @@ export async function buildCard(container, element, model) {
   // lowercase all urls - because all of our urls are lower-case
   model.viewLink = model.viewLink?.toLowerCase();
   model.copyLink = model.copyLink?.toLowerCase();
-  model.bookmarkLink = model.bookmarkLink?.toLowerCase();
 
   let type = contentType?.toLowerCase();
   const courseMappingKey = CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase();
