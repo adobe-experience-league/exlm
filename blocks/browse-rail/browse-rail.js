@@ -47,9 +47,9 @@ export async function getProducts() {
   if (featured) {
     // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
     const publishedMainProducts = publishedPages
-    .filter((page) => page.path.split('/').length === 4)
-    // sort alphabetically
-    .sort((productA, productB) => productA.path.localeCompare(productB.path));
+      .filter((page) => page.path.split('/').length === 4)
+      // sort alphabetically
+      .sort((productA, productB) => productA.path.localeCompare(productB.path));
     // append remaining published products to final list
     finalProducts.push(...publishedMainProducts);
   }
