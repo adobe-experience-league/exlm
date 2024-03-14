@@ -3,6 +3,7 @@ import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 
 export const exlmCDNUrl = 'https://cdn.experienceleague.adobe.com';
 
@@ -78,7 +79,7 @@ const getCardData = async (articlePath, placeholders) => {
     description: getMetadata('description', doc),
     type,
     contentType: type,
-    badgeTitle: type,
+    badgeTitle: type ? CONTENT_TYPES[type.toUpperCase()]?.LABEL : '',
     thumbnail: createThumbnailURL(doc, type) || '',
     product: solutions,
     tags: [],
