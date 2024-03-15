@@ -147,19 +147,15 @@ export default async function decorate(block) {
   };
 
   /* Update the Role dropdown Labels and Values from Query Parameters */
-  if (roleQueryParamValue.length > 0) {
-    if (roleQueryParamValue[0] !== DEFAULT_OPTIONS.ROLE) {
-      param.role = [roleQueryParamValue];
-      updateDropDownLabels('.role-dropdown', roleQueryParamValue, block);
-    }
+  if (roleQueryParamValue.length > 0 && roleQueryParamValue[0] !== DEFAULT_OPTIONS.ROLE) {
+    param.role = [roleQueryParamValue];
+    updateDropDownLabels('.role-dropdown', roleQueryParamValue, block);
   }
 
   /* Update the Product dropdown Labels and Values from Query Parameters */
-  if (productQueryParamValue.length > 0) {
-    if (productQueryParamValue[0] !== DEFAULT_OPTIONS.PRODUCT) {
-      param.product = [productQueryParamValue];
-      updateDropDownLabels('.product-dropdown', productQueryParamValue, block);
-    }
+  if (productQueryParamValue.length > 0 && productQueryParamValue[0] !== DEFAULT_OPTIONS.PRODUCT) {
+    param.product = [productQueryParamValue];
+    updateDropDownLabels('.product-dropdown', productQueryParamValue, block);
   }
 
   // Function to filter and organize results based on content types
