@@ -77,6 +77,12 @@ export async function pageLoadModel(language) {
     section = 'search';
   }
 
+  const fullSolution = document.querySelector('meta[name="solution"]')
+  ? document.querySelector('meta[name="solution"]').content
+  : '';
+  const feature = document.querySelector('meta[name="feature"]')
+  ? document.querySelector('meta[name="feature"]').content
+  : '';
   const subSolution =
     document.querySelector('meta[name="sub-solution"]') !== null
       ? document.querySelector('meta[name="sub-solution"]').content
@@ -144,13 +150,12 @@ export async function pageLoadModel(language) {
         solutionVersion,
         subSolution,
         type,
+        fullSolution,
+        feature,
       },
     },
     user,
-    userGUID: document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('userGUID='))
-      ?.split('=')[1],
+    userGUID: user.userDetails.userID,
   };
 }
 
