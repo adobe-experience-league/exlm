@@ -53,7 +53,11 @@ const handleSolutionsService = async () => {
 /* Function to update the browser's URL with the selected filter using query parameters */
 const updateURLWithSelectedFilters = (filterType, filterValue) => {
   const currentURL = new URL(window.location);
-  currentURL.searchParams.set(filterType, encodeURIComponent(filterValue));
+  if (filterValue === DEFAULT_OPTIONS.ROLE || filterValue === DEFAULT_OPTIONS.PRODUCT) {
+    currentURL.searchParams.delete(filterType);
+  } else {
+    currentURL.searchParams.set(filterType, encodeURIComponent(filterValue));
+  }
   window.history.pushState({}, '', currentURL.toString());
 };
 
