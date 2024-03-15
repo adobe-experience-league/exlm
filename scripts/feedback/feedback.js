@@ -1,11 +1,22 @@
 import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, getPathDetails, isDocArticlePage } from '../scripts.js'; // eslint-disable-line import/no-cycle
+import { createTag, htmlToElement, getPathDetails, fetchLanguagePlaceholders, isDocArticlePage } from '../scripts.js'; // eslint-disable-line import/no-cycle
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
+import { sendNotice } from '../toast/toast.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 const RETRY_LIMIT = 5;
 const RETRY_DELAY = 500;
 
 const FEEDBACK_CONTAINER_SELECTOR = '.feedback-ui';
+const FEEDBACK_SUCCESS = placeholders?.feedbackSuccess || 'Received! Thank you for your feedback.';
+const FEEDBACK_TEXT_ACTIVE = placeholders?.feedbackTextActive || 'Type your detailed feedback here and submit.';
 
 // fetch fragment html
 const fetchFragment = async (rePath, lang = 'en') => {
@@ -72,7 +83,7 @@ function decorateFirstQuestion(firstQuestion) {
 
 function decorateSecondQuestion(secondQuestion) {
   const initialPlaceholder = secondQuestion.querySelector('div:nth-child(1) > div:last-child').textContent.trim();
-  const updatedPlaceholder = secondQuestion.querySelector('div:nth-child(1) > div:first-child').textContent.trim();
+  const updatedPlaceholder = FEEDBACK_TEXT_ACTIVE;
   const submitText = secondQuestion
     .querySelector('div:nth-child(2) > div:nth-child(1) > p:first-child')
     .textContent.trim();
@@ -411,6 +422,7 @@ function handleFeedbackSubmit(el) {
         const { surveyCompletedText } = firstQuestionElement.dataset;
         const surveyCompletedElement = createTag('p', { class: 'subtitle' }, surveyCompletedText);
         firstQuestionElement.insertAdjacentElement('afterend', surveyCompletedElement);
+        sendNotice(FEEDBACK_SUCCESS);
       }, 300);
     } else {
       console.log('Qualtrics text feedback malformed.'); // eslint-disable-line no-console
