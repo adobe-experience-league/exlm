@@ -491,18 +491,17 @@ const searchDecorator = async (searchBlock) => {
     </div>
   `,
   );
-  searchBlock.append(searchWrapper);
-  await decorateIcons(searchBlock);
 
-  const prepareSearch = async () => {
-    const Search = await loadSearchElement();
-    const searchItem = new Search({ searchBlock });
-    searchItem.configureAutoComplete({
-      searchOptions: options,
-      showSearchSuggestions: true,
-    });
-  };
-  prepareSearch();
+  const Search = await loadSearchElement();
+  searchBlock.append(searchWrapper);
+
+  const searchItem = new Search({ searchBlock });
+  searchItem.configureAutoComplete({
+    searchOptions: options,
+    showSearchSuggestions: true,
+  });
+
+  await decorateIcons(searchBlock);
 
   return searchBlock;
 };

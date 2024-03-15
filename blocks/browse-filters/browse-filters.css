@@ -95,6 +95,10 @@
   max-width: 100%;
 }
 
+.browse-filters-search .search-suggestions-popover {
+  position: absolute;
+}
+
 .browse-filters-search .icon.search-clear-icon {
   display: none;
 }

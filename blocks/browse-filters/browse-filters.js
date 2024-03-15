@@ -830,6 +830,7 @@ function handleCoveoHeadlessSearch(
   searchIcon.addEventListener('click', submitSearchHandler);
   clearIcon.addEventListener('click', () => {
     searchInput.value = '';
+    clearIcon.classList.remove('search-icon-show');
     clearSearchHandler();
   });
   searchInput.addEventListener('keyup', (e) => {
