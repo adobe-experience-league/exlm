@@ -134,8 +134,8 @@ export default async function decorate(block) {
   contentDiv.classList.add('browse-cards-block-content');
 
   /* update Query Param from selected Dropdown */
-  const roleQueryParamValue = updateParamValues(DEFAULT_OPTIONS.ROLE.toLocaleLowerCase());
-  const productQueryParamValue = updateParamValues(DEFAULT_OPTIONS.PRODUCT.toLocaleLowerCase());
+  const roleQueryParamValue = updateParamValues(DEFAULT_OPTIONS.ROLE.toLowerCase());
+  const productQueryParamValue = updateParamValues(DEFAULT_OPTIONS.PRODUCT.toLowerCase());
 
   const param = {
     contentType: contentType && contentType.split(','),
@@ -299,7 +299,7 @@ export default async function decorate(block) {
     const roleValue = value === defaultRoleLabel ? [] : [value];
     param.role = roleValue;
     /* Update the URL Query Param with Selected Role Value */
-    updateURLWithSelectedFilters(DEFAULT_OPTIONS.ROLE.toLocaleLowerCase(), value);
+    updateURLWithSelectedFilters(DEFAULT_OPTIONS.ROLE.toLowerCase(), value);
     fetchNewCards();
   });
 
@@ -307,7 +307,7 @@ export default async function decorate(block) {
     const productValue = value === defaultProductLabel ? [] : [value];
     param.product = productValue;
     /* Update the URL Query Param with Selected Product Value */
-    updateURLWithSelectedFilters(DEFAULT_OPTIONS.PRODUCT.toLocaleLowerCase(), value);
+    updateURLWithSelectedFilters(DEFAULT_OPTIONS.PRODUCT.toLowerCase(), value);
     fetchNewCards();
   });
 
