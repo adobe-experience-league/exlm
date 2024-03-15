@@ -65,7 +65,7 @@ const updateParamValues = (filterValue) => {
   if (filterType) {
     return decodeURIComponent(filterType.replace(/\+/g, ' '));
   }
-  return;
+  return [];
 };
 
 /* Function to update the dropdown Labels and Values from Query Parameters */
@@ -135,21 +135,27 @@ export default async function decorate(block) {
 
   const param = {
     contentType: contentType && contentType.split(','),
-    role: [roleQueryParamValue] || [],
-    product: [productQueryParamValue] || [],
+    role: [],
+    product: [],
     q: keyword,
     sortCriteria,
     noOfResults,
   };
 
   /* Update the Role dropdown Labels and Values from Query Parameters */
-  if (roleQueryParamValue) {
-    updateDropDownLabels('.role-dropdown', roleQueryParamValue, block);
+  if (roleQueryParamValue.length > 0) {
+    if (roleQueryParamValue[0] !== DEFAULT_OPTIONS.ROLE) {
+      param.role = [roleQueryParamValue];
+      updateDropDownLabels('.role-dropdown', roleQueryParamValue, block);
+    }
   }
 
   /* Update the Product dropdown Labels and Values from Query Parameters */
-  if (productQueryParamValue) {
-    updateDropDownLabels('.product-dropdown', productQueryParamValue, block);
+  if (productQueryParamValue.length > 0) {
+    if (productQueryParamValue[0] !== DEFAULT_OPTIONS.PRODUCT) {
+      param.product = [productQueryParamValue];
+      updateDropDownLabels('.product-dropdown', productQueryParamValue, block);
+    }
   }
 
   // Function to filter and organize results based on content types
