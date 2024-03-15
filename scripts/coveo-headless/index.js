@@ -1,6 +1,6 @@
 import buildHeadlessSearchEngine from './engine.js';
 import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
-import { fetchLanguagePlaceholders } from '../scripts.js';
+import { fetchLanguagePlaceholders, handleCoverSearchSubmit } from '../scripts.js';
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -94,6 +94,7 @@ export default async function initiateCoveoHeadlessSearch({
   renderPageNumbers,
   numberOfResults,
   renderSearchQuerySummary,
+  handleSearchBoxSubscription,
 }) {
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
@@ -112,7 +113,8 @@ export default async function initiateCoveoHeadlessSearch({
 
         const headlessSearchBox = module.buildSearchBox(headlessSearchEngine, {
           options: {
-            numberOfSuggestions: 0,
+            numberOfSuggestions: 5,
+            id: 'component-search',
           },
         });
 
@@ -192,12 +194,7 @@ export default async function initiateCoveoHeadlessSearch({
 
         const submitSearchHandler = () => {
           const key = headlessSearchBox.state.value;
-          const [currentSearchString] = window.location.hash.match(/\bq=([^&#]*)/) || [];
-          if (currentSearchString) {
-            window.location.hash = window.location.hash.replace(currentSearchString, `q=${key || ''}`);
-          } else {
-            window.location.hash = `#q=${key || ''}&${fragment()}`;
-          }
+          handleCoverSearchSubmit(key);
         };
         const clearSearchHandler = () => {
           const [currentSearchString] = window.location.hash.match(/\bq=([^&#]*)/) || [];
@@ -209,14 +206,42 @@ export default async function initiateCoveoHeadlessSearch({
             window.location.hash = updatedHash;
           }
         };
-        const searchInputKeyupHandler = (e) => {
+        const searchInputKeyupHandler = async (e) => {
+          const searchText = e.target.value;
+          if (headlessSearchBox.state.value === searchText) {
+            return;
+          }
           // eslint-disable-next-line
-          console.log('onKeyUp', e.target.value);
-          headlessSearchBox.updateText(e.target.value);
+          console.log('onKeyUp', searchText);
+          if (window.headlessSolutionProductKey && headlessContext) {
+            headlessContext.set({ learning_product: window.headlessSolutionProductKey });
+          }
+          headlessSearchBox.updateText(searchText);
         };
         const searchInputKeydownHandler = (e) => {
           if (e.key === 'Enter') {
             submitSearchHandler();
+          } else {
+            const isArrowUp = e.key === 'ArrowUp';
+            const isArrowDown = e.key === 'ArrowDown';
+            if (!isArrowDown && !isArrowUp) {
+              return;
+            }
+            e.preventDefault();
+            e.stopPropagation();
+            const searchSuggestionsPopover = document.querySelector(
+              '.browse-filters-search .search-suggestions-popover',
+            );
+            if (!searchSuggestionsPopover) {
+              return;
+            }
+            const targetElement = isArrowUp
+              ? searchSuggestionsPopover.querySelector('li:last-child')
+              : searchSuggestionsPopover.querySelector('li');
+            if (targetElement) {
+              targetElement.focus();
+              e.target.value = targetElement.textContent;
+            }
           }
         };
         const searchInputEventHandler = (e) => {
@@ -238,6 +263,8 @@ export default async function initiateCoveoHeadlessSearch({
         window.headlessQueryActionCreators = headlessQueryActionCreators;
         window.headlessSearchActionCreators = headlessSearchActionCreators;
         window.logSearchboxSubmit = logSearchboxSubmit;
+
+        headlessSearchBox.subscribe(handleSearchBoxSubscription);
 
         /* TODO: Sorting segments to be extracted & restructured and incorporate them into the browse filters, as this file serves coveo engine methods */
         const sortLabel = {

@@ -1,13 +1,35 @@
 import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import { htmlToElement, getPathDetails, fetchLanguagePlaceholders, decorateLinks } from '../../scripts/scripts.js';
 
 const languageModule = import('../../scripts/language.js');
 const authOperationsModule = import('../../scripts/auth/auth-operations.js');
-const searchModule = import('../../scripts/search/search.js');
+
 // Khoros Proxy URL (Determine the environment based on the host name)
 const environment = window.location.hostname === 'experienceleague.adobe.com' ? '' : '-dev';
 export const khorosProxyProfileAPI = `https://51837-exlmconverter${environment}.adobeioruntime.net/api/v1/web/main/khoros/plugins/custom/adobe/adobedx/profile-menu-list`;
+
+let searchElementPromise = null;
+
+export async function loadSearchElement() {
+  searchElementPromise =
+    searchElementPromise ??
+    new Promise((resolve, reject) => {
+      // eslint-disable-next-line
+      Promise.all([
+        import('../../scripts/search/search.js'),
+        loadCSS(`${window.hlx.codeBasePath}/scripts/search/search.css`),
+      ])
+        .then((results) => {
+          const [mod] = results;
+          resolve(mod.default ?? mod);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    });
+  return searchElementPromise;
+}
 
 class Deferred {
   constructor() {
@@ -473,11 +495,11 @@ const searchDecorator = async (searchBlock) => {
   await decorateIcons(searchBlock);
 
   const prepareSearch = async () => {
-    const Search = (await searchModule).default;
+    const Search = await loadSearchElement();
     const searchItem = new Search({ searchBlock });
     searchItem.configureAutoComplete({
       searchOptions: options,
-      showSearchSuggestions: false,
+      showSearchSuggestions: true,
     });
   };
   prepareSearch();

@@ -233,10 +233,13 @@ export const getParsedSolutionsQuery = (solutionTags) => {
   const query = parsedSolutionsInfo
     .map(({ product, version }) => `(@el_product="${product}"${version ? ` AND @el_version="${version}"` : ''})`)
     .join(' OR ');
+  const [parsedSolutionInfo = {}] = parsedSolutionsInfo;
+  const { product: productKey = '' } = parsedSolutionInfo;
 
   return {
     query: parsedSolutionsInfo.length > 1 ? `(${query})` : query,
     products: solutionInfo.map(({ product }) => product.toLowerCase()),
+    productKey,
   };
 };
 
@@ -259,3 +262,47 @@ export const getCoveoFacets = (type, value) => {
     return acc;
   }, []);
 };
+
+export function hideSearchSuggestions(e) {
+  const browseFilterSearchSection = document.querySelector('.browse-filters-search');
+  const searchInputEl = browseFilterSearchSection.querySelector('input.search-input');
+  const searchSuggestionsPopoverEl = browseFilterSearchSection.querySelector('.search-suggestions-popover');
+  let hideSuggestions = false;
+  if (e.key === 'Escape') {
+    hideSuggestions = true;
+    e.stopPropagation();
+  } else if (!e.key) {
+    hideSuggestions = e.target && !searchInputEl.contains(e.target) && !searchSuggestionsPopoverEl.contains(e.target);
+  }
+  if (hideSuggestions) {
+    // eslint-disable-next-line no-use-before-define
+    toggleSearchSuggestionsVisibility(false);
+  }
+}
+
+export function toggleSearchSuggestionsVisibility(show) {
+  const searchSuggestionsPopoverEl = document.querySelector('.browse-filters-search .search-suggestions-popover');
+  if (!searchSuggestionsPopoverEl) {
+    return;
+  }
+  if (show) {
+    searchSuggestionsPopoverEl.classList.add('search-suggestions-popover-visible');
+    document.addEventListener('keydown', hideSearchSuggestions);
+    document.addEventListener('click', hideSearchSuggestions);
+  } else {
+    searchSuggestionsPopoverEl.classList.remove('search-suggestions-popover-visible');
+    document.removeEventListener('keydown', hideSearchSuggestions);
+    document.removeEventListener('click', hideSearchSuggestions);
+  }
+}
+
+export function showSearchSuggestionsOnInputClick() {
+  const searchSuggestionsPopoverEl = document.querySelector('.browse-filters-search .search-suggestions-popover');
+  if (
+    !searchSuggestionsPopoverEl ||
+    searchSuggestionsPopoverEl.classList.contains('search-suggestions-popover-visible')
+  ) {
+    return;
+  }
+  toggleSearchSuggestionsVisibility(true);
+}

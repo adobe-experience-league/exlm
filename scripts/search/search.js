@@ -75,6 +75,7 @@ export default class Search {
     this.searchKeydown = this.onSearchInputKeydown.bind(this);
     this.hideSearchSuggestions = this.onHideSearchSuggestions.bind(this);
     this.selectSearchSuggestion = this.handleSearchSuggestion.bind(this);
+    this.handleGlobalKeydown = this.onGlobalKeydown.bind(this);
     this.savedDefaultSuggestions = null;
     this.setupAutoCompleteEvents();
     this.callbackFn = this.showSearchSuggestions ? this.fetchInitialSuggestions : null;
@@ -181,6 +182,12 @@ export default class Search {
     this.canHideSearchOptions = true;
   }
 
+  onGlobalKeydown(e) {
+    if (e.key === 'Escape') {
+      this.onHideSearchSuggestions(null, true);
+    }
+  }
+
   onSearchPopoverClick(e) {
     const searchParams = this.searchOptions.map((option) => option.split(':')[0]);
     if (e.target && searchParams.includes(e.target.textContent.trim())) {
@@ -242,17 +249,19 @@ export default class Search {
     document.addEventListener('click', this.hideSearchSuggestions, {
       once: true,
     });
+    document.addEventListener('keydown', this.handleGlobalKeydown);
   }
 
   onHideSearchSuggestions(e, forceHide = false) {
     if (
-      !e.target ||
+      !e?.target ||
       (e.target && !this.searchInput.contains(e.target) && !this.searchSuggestionsPopover.contains(e.target)) ||
       forceHide
     ) {
       this.searchSuggestionsPopover.classList.remove('search-suggestions-popover-visible');
       this.searchSuggestionsPopover.removeEventListener('keydown', this.searchSuggestionsKeydown);
       this.searchSuggestionsPopover.removeEventListener('click', this.searchSuggestionsClick);
+      document.removeEventListener('keydown', this.handleGlobalKeydown);
     }
   }
 
@@ -271,7 +280,7 @@ export default class Search {
     }
     this.clearSearchIcon.classList.add('search-icon-show');
 
-    if (!this.showSearchSuggestions) {
+    if (!this.showSearchSuggestions || e.key === 'Escape') {
       return;
     }
     const suggestions = await this.fetchSearchSuggestions(this.searchQuery);

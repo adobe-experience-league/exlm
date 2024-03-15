@@ -581,6 +581,15 @@ async function loadRails() {
   }
 }
 
+export function handleCoverSearchSubmit(targetSearchText) {
+  const [currentSearchString] = window.location.hash.match(/\bq=([^&#]*)/) || [];
+  if (currentSearchString) {
+    window.location.hash = window.location.hash.replace(currentSearchString, `q=${targetSearchText || ''}`);
+  } else {
+    window.location.hash = `#q=${targetSearchText || ''}&${window.location.hash.slice(1)}`;
+  }
+}
+
 function showBrowseBackgroundGraphic() {
   if (isBrowsePage()) {
     const main = document.querySelector('main');

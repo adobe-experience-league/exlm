@@ -14,8 +14,9 @@ const SearchDelegate = (() => {
     new Promise(async (resolve, reject) => {
       const dataSource = {
         url: `${coveoSearchResultsUrl}/querySuggest`,
-        param: constructCoveoSearchParams(query),
+        param: Object.fromEntries(constructCoveoSearchParams(query).entries()),
       };
+
       const coveoService = new CoveoDataService(dataSource);
       const searchHits = await coveoService.fetchDataFromSource();
       if (searchHits) {
