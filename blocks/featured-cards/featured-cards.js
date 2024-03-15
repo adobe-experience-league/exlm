@@ -54,7 +54,7 @@ const handleSolutionsService = async () => {
 const updateURLWithSelectedFilters = (filterType, filterValue) => {
   const currentURL = new URL(window.location);
   currentURL.searchParams.set(filterType, encodeURIComponent(filterValue));
-  history.pushState({}, '', currentURL.toString());
+  window.history.pushState({}, '', currentURL.toString());
 };
 
 /* Function to update the Query Parameters */
@@ -298,7 +298,7 @@ export default async function decorate(block) {
   roleDropdown.handleOnChange((value) => {
     const roleValue = value === defaultRoleLabel ? [] : [value];
     param.role = roleValue;
-    /* Update the URL Query Param with Selected Role Value*/
+    /* Update the URL Query Param with Selected Role Value */
     updateURLWithSelectedFilters(DEFAULT_OPTIONS.ROLE.toLocaleLowerCase(), value);
     fetchNewCards();
   });
@@ -306,7 +306,7 @@ export default async function decorate(block) {
   productDropdown.handleOnChange((value) => {
     const productValue = value === defaultProductLabel ? [] : [value];
     param.product = productValue;
-    /* Update the URL Query Param with Selected Product Value*/
+    /* Update the URL Query Param with Selected Product Value */
     updateURLWithSelectedFilters(DEFAULT_OPTIONS.PRODUCT.toLocaleLowerCase(), value);
     fetchNewCards();
   });
