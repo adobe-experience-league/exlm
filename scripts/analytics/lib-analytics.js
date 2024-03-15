@@ -78,11 +78,11 @@ export async function pageLoadModel(language) {
   }
 
   const fullSolution = document.querySelector('meta[name="solution"]')
-  ? document.querySelector('meta[name="solution"]').content
-  : '';
+    ? document.querySelector('meta[name="solution"]').content
+    : '';
   const feature = document.querySelector('meta[name="feature"]')
-  ? document.querySelector('meta[name="feature"]').content
-  : '';
+    ? document.querySelector('meta[name="feature"]').content
+    : '';
   const subSolution =
     document.querySelector('meta[name="sub-solution"]') !== null
       ? document.querySelector('meta[name="sub-solution"]').content
