@@ -197,7 +197,7 @@ indices:
         select: head > meta[name="robots"]
         value: attribute(el, "content")
   sitemap-en-2: &base-sitemap-2
-    target: /en/sitemap-index-1.json
+    target: /en/sitemap-index-2.json
     include:
       - '/en/**'
     exclude:
@@ -232,7 +232,7 @@ indices:
     target: /fr/sitemap-index-1.json
   sitemap-fr-2:
     <<: *base-sitemap-2
-    target: /fr/sitemap-index-1.json
+    target: /fr/sitemap-index-2.json
     include:
       - '/fr/**'
     exclude:
