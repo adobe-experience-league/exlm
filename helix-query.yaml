@@ -263,7 +263,7 @@ indices:
     target: /de/sitemap-index-1.json
   sitemap-de-2:
     <<: *base-sitemap-2
-    target: /de/sitemap-index-1.json
+    target: /de/sitemap-index-2.json
     include:
       - '/de/**'
     exclude:
@@ -294,7 +294,7 @@ indices:
     target: /es/sitemap-index-1.json
   sitemap-es-2:
     <<: *base-sitemap-2
-    target: /es/sitemap-index-1.json
+    target: /es/sitemap-index-2.json
     include:
       - '/es/**'
     exclude:
@@ -325,7 +325,7 @@ indices:
     target: /it/sitemap-index-1.json
   sitemap-it-2:
     <<: *base-sitemap-2
-    target: /it/sitemap-index-1.json
+    target: /it/sitemap-index-2.json
     include:
       - '/it/**'
     exclude:
@@ -356,7 +356,7 @@ indices:
     target: /nl/sitemap-index-1.json
   sitemap-nl-2:
     <<: *base-sitemap-2
-    target: /nl/sitemap-index-1.json
+    target: /nl/sitemap-index-2.json
     include:
       - '/nl/**'
     exclude:
@@ -387,7 +387,7 @@ indices:
     target: /pt-br/sitemap-index-1.json
   sitemap-pt-br-2:
     <<: *base-sitemap-2
-    target: /pt-br/sitemap-index-1.json
+    target: /pt-br/sitemap-index-2.json
     include:
       - '/pt-br/**'
     exclude:
@@ -418,7 +418,7 @@ indices:
     target: /ko/sitemap-index-1.json
   sitemap-ko-2:
     <<: *base-sitemap-2
-    target: /ko/sitemap-index-1.json
+    target: /ko/sitemap-index-2.json
     include:
       - '/ko/**'
     exclude:
@@ -449,7 +449,7 @@ indices:
     target: /ja/sitemap-index-1.json
   sitemap-ja-2:
     <<: *base-sitemap-2
-    target: /ja/sitemap-index-1.json
+    target: /ja/sitemap-index-2.json
     include:
       - '/ja/**'
     exclude:
@@ -480,7 +480,7 @@ indices:
     target: /sv/sitemap-index-1.json
   sitemap-sv-2:
     <<: *base-sitemap-2
-    target: /sv/sitemap-index-1.json
+    target: /sv/sitemap-index-2.json
     include:
       - '/sv/**'
     exclude:
@@ -511,7 +511,7 @@ indices:
     target: /zh-hans/sitemap-index-1.json
   sitemap-zh-hans-2:
     <<: *base-sitemap-2
-    target: /zh-hans/sitemap-index-1.json
+    target: /zh-hans/sitemap-index-2.json
     include:
       - '/zh-hans/**'
     exclude:
@@ -542,7 +542,7 @@ indices:
     target: /zh-hant/sitemap-index-1.json
   sitemap-zh-hant-2:
     <<: *base-sitemap-2
-    target: /zh-hant/sitemap-index-1.json
+    target: /zh-hant/sitemap-index-2.json
     include:
       - '/zh-hant/**'
     exclude:
