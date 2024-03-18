@@ -72,14 +72,6 @@ const updateParamValues = (filterValue) => {
   return [];
 };
 
-/* Function to update the dropdown Labels and Values from Query Parameters */
-const updateDropDownLabels = (className, dropdownValue, block) => {
-  const dropdown = block.querySelector(className);
-  dropdown.setAttribute('data-selected', dropdownValue);
-  const dropDownLabel = block.querySelector(`${className} button span`);
-  dropDownLabel.textContent = dropdownValue;
-};
-
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
