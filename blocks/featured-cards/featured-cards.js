@@ -146,17 +146,8 @@ export default async function decorate(block) {
     noOfResults,
   };
 
-  /* Update the Role dropdown Labels and Values from Query Parameters */
-  if (roleQueryParamValue.length > 0 && roleQueryParamValue[0] !== DEFAULT_OPTIONS.ROLE) {
-    param.role = [roleQueryParamValue];
-    updateDropDownLabels('.role-dropdown', roleQueryParamValue, block);
-  }
-
-  /* Update the Product dropdown Labels and Values from Query Parameters */
-  if (productQueryParamValue.length > 0 && productQueryParamValue[0] !== DEFAULT_OPTIONS.PRODUCT) {
-    param.product = [productQueryParamValue];
-    updateDropDownLabels('.product-dropdown', productQueryParamValue, block);
-  }
+  roleDropdown.updateDropdownValue(roleQueryParamValue);
+  productDropdown.updateDropdownValue(productQueryParamValue);
 
   // Function to filter and organize results based on content types
   const filterResults = (data, contentTypesToFilter) => {
