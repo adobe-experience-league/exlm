@@ -32,13 +32,13 @@ const urlMap = {
 export default async function decorate(block) {
   // Extracting elements from the block
   const [headingElement, toolTipElement, ...configs] = [...block.children].map((row) => row.firstElementChild);
-  const [contentTypeText, sortByContent, sortByDateContent] = configs.map((cell) =>
+  const [contentTypeText, filterByDateContent, sortByContent] = configs.map((cell) =>
     cell.textContent.trim().toLowerCase(),
   );
 
   const contentTypeList = contentTypeText.split(',');
   const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase()];
-  const dateList = sortByDateContent && sortByDateContent.split(',');
+  const dateList = filterByDateContent && filterByDateContent.split(',');
   const numberOfResults = 4;
   let buildCardsShimmer = '';
   let contentDiv = '';
