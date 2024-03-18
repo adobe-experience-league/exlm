@@ -1,20 +1,25 @@
 import CoveoDataService from '../data-service/coveo/coveo-data-service.js';
 import { coveoSearchResultsUrl } from '../urls.js';
+import { generateMlParameters, generateCustomContext } from '../coveo-utils.js';
 
 const SearchDelegate = (() => {
   const constructCoveoSearchParams = (query) => {
     const params = new URLSearchParams();
     params.append('q', query);
     params.append('count', 5);
-
     return params;
   };
   const fetchSearchSuggestions = async (query = '') =>
     /* eslint-disable-next-line no-async-promise-executor */
     new Promise(async (resolve, reject) => {
+      const payload = {
+        ...Object.fromEntries(constructCoveoSearchParams(query).entries()),
+        mlParameters: generateMlParameters(window.headlessSolutionProductKey),
+        context: generateCustomContext(window.headlessSolutionProductKey),
+      };
       const dataSource = {
         url: `${coveoSearchResultsUrl}/querySuggest`,
-        param: Object.fromEntries(constructCoveoSearchParams(query).entries()),
+        param: payload,
       };
 
       const coveoService = new CoveoDataService(dataSource);
