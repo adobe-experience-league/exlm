@@ -22,7 +22,9 @@ indices:
         select: none
         value: |
           parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
-
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
   site-fr:
     <<: *base-site
     include:
@@ -106,6 +108,9 @@ indices:
         select: none
         value: |
           parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
 
   browse-fr:
     <<: *base-browse
@@ -172,3 +177,382 @@ indices:
     include:
       - /zh-hant/browse/**
     target: /zh-hant/browse-index.json
+
+  # Sitemap indicies, split in 2 google has a limit of 50k (and 50MB) urls per sitemap
+  sitemap-en-1: &base-sitemap-1
+    include:
+      - '/en/docs/workfront/**'
+      - '/en/docs/dynamic-media-developer-resources/**'
+      - '/en/docs/marketo/**'
+      - '/en/docs/experience-platform/**'
+      - '/en/docs/experience-manager-65/**'
+      - '/en/docs/experience-manager-64/**'
+      - '/en/docs/commerce-knowledge-base/**'
+      - '/en/docs/experience-cloud-kcs/**'
+      - '/en/docs/experience-manager-learn/**'
+      - '/en/docs/experience-manager-cloud-service/**'
+    target: /en/sitemap-index-1.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
+  sitemap-en-2: &base-sitemap-2
+    target: /en/sitemap-index-2.json
+    include:
+      - '/en/**'
+    exclude:
+      - '/en/docs/workfront/**'
+      - '/en/docs/dynamic-media-developer-resources/**'
+      - '/en/docs/marketo/**'
+      - '/en/docs/experience-platform/**'
+      - '/en/docs/experience-manager-65/**'
+      - '/en/docs/experience-manager-64/**'
+      - '/en/docs/commerce-knowledge-base/**'
+      - '/en/docs/experience-cloud-kcs/**'
+      - '/en/docs/experience-manager-learn/**'
+      - '/en/docs/experience-manager-cloud-service/**'
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
+
+  sitemap-fr-1:
+    <<: *base-sitemap-1
+    include:
+      - '/fr/docs/workfront/**'
+      - '/fr/docs/dynamic-media-developer-resources/**'
+      - '/fr/docs/marketo/**'
+      - '/fr/docs/experience-platform/**'
+      - '/fr/docs/experience-manager-65/**'
+      - '/fr/docs/experience-manager-64/**'
+      - '/fr/docs/commerce-knowledge-base/**'
+      - '/fr/docs/experience-cloud-kcs/**'
+      - '/fr/docs/experience-manager-learn/**'
+      - '/fr/docs/experience-manager-cloud-service/**'
+    target: /fr/sitemap-index-1.json
+  sitemap-fr-2:
+    <<: *base-sitemap-2
+    target: /fr/sitemap-index-2.json
+    include:
+      - '/fr/**'
+    exclude:
+      - '/fr/docs/workfront/**'
+      - '/fr/docs/dynamic-media-developer-resources/**'
+      - '/fr/docs/marketo/**'
+      - '/fr/docs/experience-platform/**'
+      - '/fr/docs/experience-manager-65/**'
+      - '/fr/docs/experience-manager-64/**'
+      - '/fr/docs/commerce-knowledge-base/**'
+      - '/fr/docs/experience-cloud-kcs/**'
+      - '/fr/docs/experience-manager-learn/**'
+      - '/fr/docs/experience-manager-cloud-service/**'
+
+  sitemap-de-1:
+    <<: *base-sitemap-1
+    include:
+      - '/de/docs/workfront/**'
+      - '/de/docs/dynamic-media-developer-resources/**'
+      - '/de/docs/marketo/**'
+      - '/de/docs/experience-platform/**'
+      - '/de/docs/experience-manager-65/**'
+      - '/de/docs/experience-manager-64/**'
+      - '/de/docs/commerce-knowledge-base/**'
+      - '/de/docs/experience-cloud-kcs/**'
+      - '/de/docs/experience-manager-learn/**'
+      - '/de/docs/experience-manager-cloud-service/**'
+    target: /de/sitemap-index-1.json
+  sitemap-de-2:
+    <<: *base-sitemap-2
+    target: /de/sitemap-index-2.json
+    include:
+      - '/de/**'
+    exclude:
+      - '/de/docs/workfront/**'
+      - '/de/docs/dynamic-media-developer-resources/**'
+      - '/de/docs/marketo/**'
+      - '/de/docs/experience-platform/**'
+      - '/de/docs/experience-manager-65/**'
+      - '/de/docs/experience-manager-64/**'
+      - '/de/docs/commerce-knowledge-base/**'
+      - '/de/docs/experience-cloud-kcs/**'
+      - '/de/docs/experience-manager-learn/**'
+      - '/de/docs/experience-manager-cloud-service/**'
+
+  sitemap-es-1:
+    <<: *base-sitemap-1
+    include:
+      - '/es/docs/workfront/**'
+      - '/es/docs/dynamic-media-developer-resources/**'
+      - '/es/docs/marketo/**'
+      - '/es/docs/experience-platform/**'
+      - '/es/docs/experience-manager-65/**'
+      - '/es/docs/experience-manager-64/**'
+      - '/es/docs/commerce-knowledge-base/**'
+      - '/es/docs/experience-cloud-kcs/**'
+      - '/es/docs/experience-manager-learn/**'
+      - '/es/docs/experience-manager-cloud-service/**'
+    target: /es/sitemap-index-1.json
+  sitemap-es-2:
+    <<: *base-sitemap-2
+    target: /es/sitemap-index-2.json
+    include:
+      - '/es/**'
+    exclude:
+      - '/es/docs/workfront/**'
+      - '/es/docs/dynamic-media-developer-resources/**'
+      - '/es/docs/marketo/**'
+      - '/es/docs/experience-platform/**'
+      - '/es/docs/experience-manager-65/**'
+      - '/es/docs/experience-manager-64/**'
+      - '/es/docs/commerce-knowledge-base/**'
+      - '/es/docs/experience-cloud-kcs/**'
+      - '/es/docs/experience-manager-learn/**'
+      - '/es/docs/experience-manager-cloud-service/**'
+
+  sitemap-it-1:
+    <<: *base-sitemap-1
+    include:
+      - '/it/docs/workfront/**'
+      - '/it/docs/dynamic-media-developer-resources/**'
+      - '/it/docs/marketo/**'
+      - '/it/docs/experience-platform/**'
+      - '/it/docs/experience-manager-65/**'
+      - '/it/docs/experience-manager-64/**'
+      - '/it/docs/commerce-knowledge-base/**'
+      - '/it/docs/experience-cloud-kcs/**'
+      - '/it/docs/experience-manager-learn/**'
+      - '/it/docs/experience-manager-cloud-service/**'
+    target: /it/sitemap-index-1.json
+  sitemap-it-2:
+    <<: *base-sitemap-2
+    target: /it/sitemap-index-2.json
+    include:
+      - '/it/**'
+    exclude:
+      - '/it/docs/workfront/**'
+      - '/it/docs/dynamic-media-developer-resources/**'
+      - '/it/docs/marketo/**'
+      - '/it/docs/experience-platform/**'
+      - '/it/docs/experience-manager-65/**'
+      - '/it/docs/experience-manager-64/**'
+      - '/it/docs/commerce-knowledge-base/**'
+      - '/it/docs/experience-cloud-kcs/**'
+      - '/it/docs/experience-manager-learn/**'
+      - '/it/docs/experience-manager-cloud-service/**'
+
+  sitemap-nl-1:
+    <<: *base-sitemap-1
+    include:
+      - '/nl/docs/workfront/**'
+      - '/nl/docs/dynamic-media-developer-resources/**'
+      - '/nl/docs/marketo/**'
+      - '/nl/docs/experience-platform/**'
+      - '/nl/docs/experience-manager-65/**'
+      - '/nl/docs/experience-manager-64/**'
+      - '/nl/docs/commerce-knowledge-base/**'
+      - '/nl/docs/experience-cloud-kcs/**'
+      - '/nl/docs/experience-manager-learn/**'
+      - '/nl/docs/experience-manager-cloud-service/**'
+    target: /nl/sitemap-index-1.json
+  sitemap-nl-2:
+    <<: *base-sitemap-2
+    target: /nl/sitemap-index-2.json
+    include:
+      - '/nl/**'
+    exclude:
+      - '/nl/docs/workfront/**'
+      - '/nl/docs/dynamic-media-developer-resources/**'
+      - '/nl/docs/marketo/**'
+      - '/nl/docs/experience-platform/**'
+      - '/nl/docs/experience-manager-65/**'
+      - '/nl/docs/experience-manager-64/**'
+      - '/nl/docs/commerce-knowledge-base/**'
+      - '/nl/docs/experience-cloud-kcs/**'
+      - '/nl/docs/experience-manager-learn/**'
+      - '/nl/docs/experience-manager-cloud-service/**'
+
+  sitemap-pt-br-1:
+    <<: *base-sitemap-1
+    include:
+      - '/pt-br/docs/workfront/**'
+      - '/pt-br/docs/dynamic-media-developer-resources/**'
+      - '/pt-br/docs/marketo/**'
+      - '/pt-br/docs/experience-platform/**'
+      - '/pt-br/docs/experience-manager-65/**'
+      - '/pt-br/docs/experience-manager-64/**'
+      - '/pt-br/docs/commerce-knowledge-base/**'
+      - '/pt-br/docs/experience-cloud-kcs/**'
+      - '/pt-br/docs/experience-manager-learn/**'
+      - '/pt-br/docs/experience-manager-cloud-service/**'
+    target: /pt-br/sitemap-index-1.json
+  sitemap-pt-br-2:
+    <<: *base-sitemap-2
+    target: /pt-br/sitemap-index-2.json
+    include:
+      - '/pt-br/**'
+    exclude:
+      - '/pt-br/docs/workfront/**'
+      - '/pt-br/docs/dynamic-media-developer-resources/**'
+      - '/pt-br/docs/marketo/**'
+      - '/pt-br/docs/experience-platform/**'
+      - '/pt-br/docs/experience-manager-65/**'
+      - '/pt-br/docs/experience-manager-64/**'
+      - '/pt-br/docs/commerce-knowledge-base/**'
+      - '/pt-br/docs/experience-cloud-kcs/**'
+      - '/pt-br/docs/experience-manager-learn/**'
+      - '/pt-br/docs/experience-manager-cloud-service/**'
+
+  sitemap-ko-1:
+    <<: *base-sitemap-1
+    include:
+      - '/ko/docs/workfront/**'
+      - '/ko/docs/dynamic-media-developer-resources/**'
+      - '/ko/docs/marketo/**'
+      - '/ko/docs/experience-platform/**'
+      - '/ko/docs/experience-manager-65/**'
+      - '/ko/docs/experience-manager-64/**'
+      - '/ko/docs/commerce-knowledge-base/**'
+      - '/ko/docs/experience-cloud-kcs/**'
+      - '/ko/docs/experience-manager-learn/**'
+      - '/ko/docs/experience-manager-cloud-service/**'
+    target: /ko/sitemap-index-1.json
+  sitemap-ko-2:
+    <<: *base-sitemap-2
+    target: /ko/sitemap-index-2.json
+    include:
+      - '/ko/**'
+    exclude:
+      - '/ko/docs/workfront/**'
+      - '/ko/docs/dynamic-media-developer-resources/**'
+      - '/ko/docs/marketo/**'
+      - '/ko/docs/experience-platform/**'
+      - '/ko/docs/experience-manager-65/**'
+      - '/ko/docs/experience-manager-64/**'
+      - '/ko/docs/commerce-knowledge-base/**'
+      - '/ko/docs/experience-cloud-kcs/**'
+      - '/ko/docs/experience-manager-learn/**'
+      - '/ko/docs/experience-manager-cloud-service/**'
+
+  sitemap-ja-1:
+    <<: *base-sitemap-1
+    include:
+      - '/ja/docs/workfront/**'
+      - '/ja/docs/dynamic-media-developer-resources/**'
+      - '/ja/docs/marketo/**'
+      - '/ja/docs/experience-platform/**'
+      - '/ja/docs/experience-manager-65/**'
+      - '/ja/docs/experience-manager-64/**'
+      - '/ja/docs/commerce-knowledge-base/**'
+      - '/ja/docs/experience-cloud-kcs/**'
+      - '/ja/docs/experience-manager-learn/**'
+      - '/ja/docs/experience-manager-cloud-service/**'
+    target: /ja/sitemap-index-1.json
+  sitemap-ja-2:
+    <<: *base-sitemap-2
+    target: /ja/sitemap-index-2.json
+    include:
+      - '/ja/**'
+    exclude:
+      - '/ja/docs/workfront/**'
+      - '/ja/docs/dynamic-media-developer-resources/**'
+      - '/ja/docs/marketo/**'
+      - '/ja/docs/experience-platform/**'
+      - '/ja/docs/experience-manager-65/**'
+      - '/ja/docs/experience-manager-64/**'
+      - '/ja/docs/commerce-knowledge-base/**'
+      - '/ja/docs/experience-cloud-kcs/**'
+      - '/ja/docs/experience-manager-learn/**'
+      - '/ja/docs/experience-manager-cloud-service/**'
+
+  sitemap-sv-1:
+    <<: *base-sitemap-1
+    include:
+      - '/sv/docs/workfront/**'
+      - '/sv/docs/dynamic-media-developer-resources/**'
+      - '/sv/docs/marketo/**'
+      - '/sv/docs/experience-platform/**'
+      - '/sv/docs/experience-manager-65/**'
+      - '/sv/docs/experience-manager-64/**'
+      - '/sv/docs/commerce-knowledge-base/**'
+      - '/sv/docs/experience-cloud-kcs/**'
+      - '/sv/docs/experience-manager-learn/**'
+      - '/sv/docs/experience-manager-cloud-service/**'
+    target: /sv/sitemap-index-1.json
+  sitemap-sv-2:
+    <<: *base-sitemap-2
+    target: /sv/sitemap-index-2.json
+    include:
+      - '/sv/**'
+    exclude:
+      - '/sv/docs/workfront/**'
+      - '/sv/docs/dynamic-media-developer-resources/**'
+      - '/sv/docs/marketo/**'
+      - '/sv/docs/experience-platform/**'
+      - '/sv/docs/experience-manager-65/**'
+      - '/sv/docs/experience-manager-64/**'
+      - '/sv/docs/commerce-knowledge-base/**'
+      - '/sv/docs/experience-cloud-kcs/**'
+      - '/sv/docs/experience-manager-learn/**'
+      - '/sv/docs/experience-manager-cloud-service/**'
+
+  sitemap-zh-hans-1:
+    <<: *base-sitemap-1
+    include:
+      - '/zh-hans/docs/workfront/**'
+      - '/zh-hans/docs/dynamic-media-developer-resources/**'
+      - '/zh-hans/docs/marketo/**'
+      - '/zh-hans/docs/experience-platform/**'
+      - '/zh-hans/docs/experience-manager-65/**'
+      - '/zh-hans/docs/experience-manager-64/**'
+      - '/zh-hans/docs/commerce-knowledge-base/**'
+      - '/zh-hans/docs/experience-cloud-kcs/**'
+      - '/zh-hans/docs/experience-manager-learn/**'
+      - '/zh-hans/docs/experience-manager-cloud-service/**'
+    target: /zh-hans/sitemap-index-1.json
+  sitemap-zh-hans-2:
+    <<: *base-sitemap-2
+    target: /zh-hans/sitemap-index-2.json
+    include:
+      - '/zh-hans/**'
+    exclude:
+      - '/zh-hans/docs/workfront/**'
+      - '/zh-hans/docs/dynamic-media-developer-resources/**'
+      - '/zh-hans/docs/marketo/**'
+      - '/zh-hans/docs/experience-platform/**'
+      - '/zh-hans/docs/experience-manager-65/**'
+      - '/zh-hans/docs/experience-manager-64/**'
+      - '/zh-hans/docs/commerce-knowledge-base/**'
+      - '/zh-hans/docs/experience-cloud-kcs/**'
+      - '/zh-hans/docs/experience-manager-learn/**'
+      - '/zh-hans/docs/experience-manager-cloud-service/**'
+
+  sitemap-zh-hant-1:
+    <<: *base-sitemap-1
+    include:
+      - '/zh-hant/docs/workfront/**'
+      - '/zh-hant/docs/dynamic-media-developer-resources/**'
+      - '/zh-hant/docs/marketo/**'
+      - '/zh-hant/docs/experience-platform/**'
+      - '/zh-hant/docs/experience-manager-65/**'
+      - '/zh-hant/docs/experience-manager-64/**'
+      - '/zh-hant/docs/commerce-knowledge-base/**'
+      - '/zh-hant/docs/experience-cloud-kcs/**'
+      - '/zh-hant/docs/experience-manager-learn/**'
+      - '/zh-hant/docs/experience-manager-cloud-service/**'
+    target: /zh-hant/sitemap-index-1.json
+  sitemap-zh-hant-2:
+    <<: *base-sitemap-2
+    target: /zh-hant/sitemap-index-2.json
+    include:
+      - '/zh-hant/**'
+    exclude:
+      - '/zh-hant/docs/workfront/**'
+      - '/zh-hant/docs/dynamic-media-developer-resources/**'
+      - '/zh-hant/docs/marketo/**'
+      - '/zh-hant/docs/experience-platform/**'
+      - '/zh-hant/docs/experience-manager-65/**'
+      - '/zh-hant/docs/experience-manager-64/**'
+      - '/zh-hant/docs/commerce-knowledge-base/**'
+      - '/zh-hant/docs/experience-cloud-kcs/**'
+      - '/zh-hant/docs/experience-manager-learn/**'
+      - '/zh-hant/docs/experience-manager-cloud-service/**'
