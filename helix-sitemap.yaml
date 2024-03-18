@@ -63,3 +63,133 @@ sitemaps:
         destination: /zh-hant/sitemap.xml
         hreflang: zh-hant
         alternate: /zh-hant/{path}
+
+  sitemap-1:
+    origin: https://experienceleague.adobe.com
+    default: en
+    languages:
+      en:
+        source: /en/sitemap-index-1.json
+        destination: /en/sitemap-1.xml
+        alternate: /en/{path}
+        hreflang: en
+      fr:
+        source: /fr/sitemap-index-1.json
+        destination: /fr/sitemap-1.xml
+        hreflang: fr
+        alternate: /fr/{path}
+      de:
+        source: /de/sitemap-index-1.json
+        destination: /de/sitemap-1.xml
+        hreflang: de
+        alternate: /de/{path}
+      es:
+        source: /es/sitemap-index-1.json
+        destination: /es/sitemap-1.xml
+        hreflang: es
+        alternate: /es/{path}
+      it:
+        source: /it/sitemap-index-1.json
+        destination: /it/sitemap-1.xml
+        hreflang: it
+        alternate: /it/{path}
+      nl:
+        source: /nl/sitemap-index-1.json
+        destination: /nl/sitemap-1.xml
+        hreflang: nl
+        alternate: /nl/{path}
+      pt-br:
+        source: /pt-br/sitemap-index-1.json
+        destination: /pt-br/sitemap-1.xml
+        hreflang: pt-br
+        alternate: /pt-br/{path}
+      ko:
+        source: /ko/sitemap-index-1.json
+        destination: /ko/sitemap-1.xml
+        hreflang: ko
+        alternate: /ko/{path}
+      ja:
+        source: /ja/sitemap-index-1.json
+        destination: /ja/sitemap-1.xml
+        hreflang: ja
+        alternate: /ja/{path}
+      sv:
+        source: /sv/sitemap-index-1.json
+        destination: /sv/sitemap-1.xml
+        hreflang: sv
+        alternate: /sv/{path}
+      zh-hans:
+        source: /zh-hans/sitemap-index-1.json
+        destination: /zh-hans/sitemap-1.xml
+        hreflang: zh-hans
+        alternate: /zh-hans/{path}
+      zh-hant:
+        source: /zh-hant/sitemap-index-1.json
+        destination: /zh-hant/sitemap-1.xml
+        hreflang: zh-hant
+        alternate: /zh-hant/{path}
+
+  sitemap-2:
+    origin: https://experienceleague.adobe.com
+    default: en
+    languages:
+      en:
+        source: /en/sitemap-index-2.json
+        destination: /en/sitemap-2.xml
+        alternate: /en/{path}
+        hreflang: en
+      fr:
+        source: /fr/sitemap-index-2.json
+        destination: /fr/sitemap-2.xml
+        hreflang: fr
+        alternate: /fr/{path}
+      de:
+        source: /de/sitemap-index-2.json
+        destination: /de/sitemap-2.xml
+        hreflang: de
+        alternate: /de/{path}
+      es:
+        source: /es/sitemap-index-2.json
+        destination: /es/sitemap-2.xml
+        hreflang: es
+        alternate: /es/{path}
+      it:
+        source: /it/sitemap-index-2.json
+        destination: /it/sitemap-2.xml
+        hreflang: it
+        alternate: /it/{path}
+      nl:
+        source: /nl/sitemap-index-2.json
+        destination: /nl/sitemap-2.xml
+        hreflang: nl
+        alternate: /nl/{path}
+      pt-br:
+        source: /pt-br/sitemap-index-2.json
+        destination: /pt-br/sitemap-2.xml
+        hreflang: pt-br
+        alternate: /pt-br/{path}
+      ko:
+        source: /ko/sitemap-index-2.json
+        destination: /ko/sitemap-2.xml
+        hreflang: ko
+        alternate: /ko/{path}
+      ja:
+        source: /ja/sitemap-index-2.json
+        destination: /ja/sitemap-2.xml
+        hreflang: ja
+        alternate: /ja/{path}
+      sv:
+        source: /sv/sitemap-index-2.json
+        destination: /sv/sitemap-2.xml
+        hreflang: sv
+        alternate: /sv/{path}
+      zh-hans:
+        source: /zh-hans/sitemap-index-2.json
+        destination: /zh-hans/sitemap-2.xml
+        hreflang: zh-hans
+        alternate: /zh-hans/{path}
+      zh-hant:
+        source: /zh-hant/sitemap-index-2.json
+        destination: /zh-hant/sitemap-2.xml
+        hreflang: zh-hant
+        alternate: /zh-hant/{path}
