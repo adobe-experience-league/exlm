@@ -138,16 +138,15 @@ export default async function decorate(block) {
     noOfResults,
   };
 
-  if(roleQueryParamValue.length > 0 && roleQueryParamValue[0] !== DEFAULT_OPTIONS.ROLE) {
-    param.role = [roleQueryParamValue]
+  if (roleQueryParamValue.length > 0 && roleQueryParamValue[0] !== DEFAULT_OPTIONS.ROLE) {
+    param.role = [roleQueryParamValue];
     roleDropdown.updateDropdownValue(roleQueryParamValue);
   }
 
-  if(prodductQueryParamValue.length > 0 && productQueryParamValue[0] !== DEFAULT_OPTIONS.PRODUCT) {
-    param.product = [productQueryParamValue]
+  if (productQueryParamValue.length > 0 && productQueryParamValue[0] !== DEFAULT_OPTIONS.PRODUCT) {
+    param.product = [productQueryParamValue];
     productDropdown.updateDropdownValue(productQueryParamValue);
   }
-
 
   // Function to filter and organize results based on content types
   const filterResults = (data, contentTypesToFilter) => {
