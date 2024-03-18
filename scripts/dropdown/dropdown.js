@@ -45,6 +45,23 @@ export default class Dropdown {
   }
 
   /**
+   * Updates the dropdown value based on the given value.
+   *
+   * @param {type} value - The value to update the dropdown with.
+   * @return {type} - No return value.
+   */
+  updateDropdownValue(value) {
+    this.dropdown.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach((checkbox) => {
+      if (checkbox.value === value) {
+        this.dropdown.dataset.selected = value;
+        const label = this.dropdown.querySelector('button > span');
+        label.innerText = checkbox.dataset.label;
+        checkbox.checked = true;
+      }
+    });
+  }
+
+  /**
    * Handle click events and perform specific actions based on the event target.
    */
   handleClickEvents() {
@@ -135,6 +152,7 @@ export default class Dropdown {
       );
       dropdownContent.appendChild(dropdownitem);
     });
+
     this.parentFormElement.appendChild(dropdown);
   }
 }
