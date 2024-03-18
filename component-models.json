@@ -2125,26 +2125,9 @@
         ]
       },
       {
-        "component": "radio-group",
-        "name": "sortBy",
-        "value": "most_recent",
-        "label": "Sort by",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Most Recent",
-            "value": "most_recent"
-          },
-          {
-            "name": "Most Popular",
-            "value": "most_popular"
-          }
-        ]
-      },
-      {
         "component": "multiselect",
         "name": "sortByDate",
-        "label": "Sort by Date",
+        "label": "Filter by Date",
         "valueType": "string",
         "options": [
           {
@@ -2162,6 +2145,23 @@
           {
             "name": "More than one year ago",
             "value": "more_than_one_year_ago"
+          }
+        ]
+      },
+      {
+        "component": "radio-group",
+        "name": "sortBy",
+        "value": "most_recent",
+        "label": "Sort by",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Most Recent",
+            "value": "most_recent"
+          },
+          {
+            "name": "Most Popular",
+            "value": "most_popular"
           }
         ]
       }
