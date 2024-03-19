@@ -1,5 +1,5 @@
 import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
-import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
+import { decorateIcons, loadCSS, getMetadata } from '../../scripts/lib-franklin.js';
 import { htmlToElement, getPathDetails, fetchLanguagePlaceholders, decorateLinks } from '../../scripts/scripts.js';
 
 const languageModule = import('../../scripts/language.js');
@@ -751,6 +751,12 @@ const decorateNewTabLinks = (block) => {
  */
 export default async function decorate(headerBlock) {
   headerBlock.style.display = 'none';
+  loadSearchElement();
+  const [solutionTag] = getMetadata('solution').trim().split(',');
+  if (solutionTag) {
+    window.headlessSolutionProductKey = solutionTag;
+  }
+
   // eslint-disable-next-line no-unused-vars
   headerBlock.innerHTML = await headerFragment;
 

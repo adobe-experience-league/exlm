@@ -370,10 +370,6 @@ async function loadEager(doc) {
   document.documentElement.lang = lang || 'en';
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
-  const [solutionTag] = getMetadata('solution').trim().split(',');
-  if (solutionTag) {
-    window.headlessSolutionProductKey = solutionTag;
-  }
   if (main) {
     decorateMain(main);
     document.body.classList.add('appear');
