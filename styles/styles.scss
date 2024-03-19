@@ -816,6 +816,7 @@ body[class^='browse-'] .browse-filters-full-container {
     background-color: unset;
     line-height: 21px;
     padding: 0;
+    word-break: break-word;
   }
 
   pre {
@@ -841,6 +842,12 @@ body[class^='browse-'] .browse-filters-full-container {
 
   ul {
     @include text-styles($margin-top: 1em, $margin-bottom: 2em, $line-height: 24px, $color: var(--non-spectrum-grey));
+  }
+
+  li {
+    a:any-link {
+      word-break: break-word;
+    }
   }
 
   main {

@@ -909,6 +909,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   background-color: unset;
   line-height: 21px;
   padding: 0;
+  word-break: break-word;
 }
 .docs pre {
   background-color: var(--overlay-background-color);
@@ -950,6 +951,9 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   color: var(--non-spectrum-grey);
   margin-top: 1em;
   margin-bottom: 2em;
+}
+.docs li a:any-link {
+  word-break: break-word;
 }
 .docs main {
   width: 100%;

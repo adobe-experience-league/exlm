@@ -17,14 +17,40 @@ code[class*=language-],pre[class*=language-] {
   -webkit-hyphens: none;
   -moz-hyphens: none;
   -ms-hyphens: none;
-  hyphens: none
+  hyphens: none;
 }
 
 pre[class*=language-] {
   padding: 1em;
   margin: .5em 0;
-  overflow: auto
+  overflow: auto;
+  border-radius: .3em;
+  display: inline-block;
+  max-width: 254px;
+
 }
+
+li pre[class*=language-], .tabs pre[class*=language-], .shade-box pre[class*=language-] {
+  max-width: 226px;
+}
+
+@media (min-width: 600px) {
+  pre[class*=language-] {
+    max-width: 434px;
+  }
+
+  li pre[class*=language-], .tabs pre[class*=language-], .shade-box pre[class*=language-] {
+    max-width: 404px;
+  }
+}
+
+@media (min-width: 900px) {
+  pre[class*=language-] {
+    display: block;
+    max-width: none;
+  }
+}
+
 
 :not(pre)>code[class*=language-],pre[class*=language-] {
   background: #2d2d2d
@@ -275,7 +301,31 @@ pre[class*=language-] {
   padding: 1em;
   margin: .5em 0;
   overflow: auto;
-  border-radius: .3em
+  border-radius: .3em;
+  display: inline-block;
+  max-width: 254px;
+
+}
+
+li pre[class*=language-], .tabs pre[class*=language-], .shade-box pre[class*=language-] {
+  max-width: 226px;
+}
+
+@media (min-width: 600px) {
+  pre[class*=language-] {
+    max-width: 434px;
+  }
+
+  li pre[class*=language-], .tabs pre[class*=language-], .shade-box pre[class*=language-] {
+    max-width: 404px;
+  }
+}
+
+@media (min-width: 900px) {
+  pre[class*=language-] {
+    display: block;
+    max-width: none;
+  }
 }
 
 :not(pre)>code[class*=language-],pre[class*=language-] {
