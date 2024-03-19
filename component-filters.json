@@ -44,7 +44,7 @@
   },
   {
     "id": "browse-rail-section",
-    "components": ["browse-rail"]
+    "components": []
   },
   {
     "id": "text",
