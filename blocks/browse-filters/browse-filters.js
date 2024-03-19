@@ -5,7 +5,6 @@ import {
   debounce,
   getPathDetails,
   fetchLanguagePlaceholders,
-  handleCoverSearchSubmit,
 } from '../../scripts/scripts.js';
 import {
   roleOptions,
@@ -20,6 +19,7 @@ import {
   getObjectById,
   toggleSearchSuggestionsVisibility,
   showSearchSuggestionsOnInputClick,
+  handleCoverSearchSubmit,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -796,15 +796,6 @@ function handleSearchBoxSubscription() {
 
   const wrapper = searchSuggestionsPopoverEl.firstElementChild;
   wrapper.replaceWith(suggestionsElement);
-
-  if (window.headlessSolutionProductKey && window.headlessContext) {
-    if (window.headlessSearchBox.state.isLoadingSuggestions) {
-      searchInputEl.classList.add('loading');
-    } else if (searchInputEl.classList.contains('loading')) {
-      window.headlessContext.remove('learning_product');
-      searchInputEl.classList.remove('loading');
-    }
-  }
 }
 
 function handleCoveoHeadlessSearch(

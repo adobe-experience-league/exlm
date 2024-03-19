@@ -1,6 +1,7 @@
 import buildHeadlessSearchEngine from './engine.js';
 import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
-import { fetchLanguagePlaceholders, handleCoverSearchSubmit } from '../scripts.js';
+import { fetchLanguagePlaceholders } from '../scripts.js';
+import { handleCoverSearchSubmit } from '../../blocks/browse-filters/browse-filter-utils.js';
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -213,9 +214,6 @@ export default async function initiateCoveoHeadlessSearch({
           }
           // eslint-disable-next-line
           console.log('onKeyUp', searchText);
-          if (window.headlessSolutionProductKey && headlessContext) {
-            headlessContext.set({ learning_product: window.headlessSolutionProductKey });
-          }
           headlessSearchBox.updateText(searchText);
         };
         const searchInputKeydownHandler = (e) => {

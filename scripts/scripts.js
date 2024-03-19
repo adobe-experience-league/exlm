@@ -370,6 +370,10 @@ async function loadEager(doc) {
   document.documentElement.lang = lang || 'en';
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
+  const [solutionTag] = getMetadata('solution').trim().split(',');
+  if (solutionTag) {
+    window.headlessSolutionProductKey = solutionTag;
+  }
   if (main) {
     decorateMain(main);
     document.body.classList.add('appear');
@@ -578,15 +582,6 @@ async function loadRails() {
     if (mod.default) {
       await mod.default();
     }
-  }
-}
-
-export function handleCoverSearchSubmit(targetSearchText) {
-  const [currentSearchString] = window.location.hash.match(/\bq=([^&#]*)/) || [];
-  if (currentSearchString) {
-    window.location.hash = window.location.hash.replace(currentSearchString, `q=${targetSearchText || ''}`);
-  } else {
-    window.location.hash = `#q=${targetSearchText || ''}&${window.location.hash.slice(1)}`;
   }
 }
 
