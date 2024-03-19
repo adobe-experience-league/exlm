@@ -151,8 +151,7 @@ async function displayAllProducts(block, placeholders) {
   }
 }
 
-async function  displayProductNav(block, currentPagePath, results, placeholders) {
-
+async function displayProductNav(block, currentPagePath, results, placeholders) {
   // Find the parent page for product sub-pages
   const parentPage = results.find((page) => page.path === getPathUntilLevel(currentPagePath, 3));
   let parentPageTitle = '';
@@ -197,24 +196,24 @@ async function  displayProductNav(block, currentPagePath, results, placeholders)
   }
 }
 
-function displayManualNav(manualNav,block){
+function displayManualNav(manualNav, block) {
   // get root ul
-  const rootUL  = manualNav.querySelector('ul');
+  const rootUL = manualNav.querySelector('ul');
   rootUL.classList.add('subPages');
 
   // every li entry that is not a link gets a span
   [...rootUL.querySelectorAll('li')]
-    .filter((li) => li.firstChild.nodeName === "#text")
-    .forEach((li)  => {
+    .filter((li) => li.firstChild.nodeName === '#text')
+    .forEach((li) => {
       const span = document.createElement('span');
       span.appendChild(li.firstChild);
-      li.insertBefore(span,li.firstChild);
+      li.insertBefore(span, li.firstChild);
     });
 
   // set class for li with sub pages, add collapse icon
   [...rootUL.querySelectorAll('li')]
     .filter((li) => li.querySelector('ul'))
-    .forEach((li) => { 
+    .forEach((li) => {
       li.classList.add('hasSubPages');
       const toggleIcon = document.createElement('span');
       toggleIcon.classList.add('js-toggle');
@@ -251,7 +250,7 @@ export default async function decorate(block) {
     block.append(browseByUL);
     // Show All Products
     if (manualNav) {
-      displayManualNav(manualNav,block);
+      displayManualNav(manualNav, block);
     } else {
       await displayAllProducts(block, placeholders);
     }
@@ -276,13 +275,13 @@ export default async function decorate(block) {
 
     // For Products and sub-pages
     if (manualNav) {
-        displayManualNav(manualNav,block);
+      displayManualNav(manualNav, block);
     } else {
       // dynamically create sub page nav or if empty show products list
-      await displayProductNav(block,currentPagePath, results, placeholders);
+      await displayProductNav(block, currentPagePath, results, placeholders);
     }
   }
-    
+
   // Toggle functionality for products/sub-pages
   const toggleElements = block.querySelectorAll('.js-toggle');
   if (toggleElements) {

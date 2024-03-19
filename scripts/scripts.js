@@ -167,7 +167,7 @@ export function isBrowsePage() {
  */
 function addBrowseRail(main) {
   // if there is already editable browse rail stored
-  if (main.querySelector("div.browse-rail")) return;
+  if (main.querySelector('div.browse-rail')) return;
 
   // default: create a dynamic uneditable browse rail
   const leftRailSection = document.createElement('div');

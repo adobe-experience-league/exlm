@@ -1,7 +1,7 @@
 [
   {
     "id": "main",
-    "components": ["section","browse-rail-section"]
+    "components": ["section", "browse-rail-section"]
   },
   {
     "id": "columns",
@@ -44,9 +44,7 @@
   },
   {
     "id": "browse-rail-section",
-    "components": [
-      "browse-rail"
-    ]
+    "components": ["browse-rail"]
   },
   {
     "id": "text",
