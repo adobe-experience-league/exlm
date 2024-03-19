@@ -1,7 +1,7 @@
 [
   {
     "id": "main",
-    "components": ["section"]
+    "components": ["section","browse-rail-section"]
   },
   {
     "id": "columns",
@@ -40,6 +40,12 @@
       "tabbed-cards",
       "tabs",
       "recommended-courses"
+    ]
+  },
+  {
+    "id": "browse-rail-section",
+    "components": [
+      "browse-rail"
     ]
   },
   {
