@@ -1,13 +1,35 @@
 import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons, loadCSS, getMetadata } from '../../scripts/lib-franklin.js';
 import { htmlToElement, getPathDetails, fetchLanguagePlaceholders, decorateLinks } from '../../scripts/scripts.js';
 
 const languageModule = import('../../scripts/language.js');
 const authOperationsModule = import('../../scripts/auth/auth-operations.js');
-const searchModule = import('../../scripts/search/search.js');
+
 // Khoros Proxy URL (Determine the environment based on the host name)
 const environment = window.location.hostname === 'experienceleague.adobe.com' ? '' : '-dev';
 export const khorosProxyProfileAPI = `https://51837-exlmconverter${environment}.adobeioruntime.net/api/v1/web/main/khoros/plugins/custom/adobe/adobedx/profile-menu-list`;
+
+let searchElementPromise = null;
+
+export async function loadSearchElement() {
+  searchElementPromise =
+    searchElementPromise ??
+    new Promise((resolve, reject) => {
+      // eslint-disable-next-line
+      Promise.all([
+        import('../../scripts/search/search.js'),
+        loadCSS(`${window.hlx.codeBasePath}/scripts/search/search.css`),
+      ])
+        .then((results) => {
+          const [mod] = results;
+          resolve(mod.default ?? mod);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    });
+  return searchElementPromise;
+}
 
 class Deferred {
   constructor() {
@@ -469,18 +491,17 @@ const searchDecorator = async (searchBlock) => {
     </div>
   `,
   );
-  searchBlock.append(searchWrapper);
-  await decorateIcons(searchBlock);
 
-  const prepareSearch = async () => {
-    const Search = (await searchModule).default;
-    const searchItem = new Search({ searchBlock });
-    searchItem.configureAutoComplete({
-      searchOptions: options,
-      showSearchSuggestions: false,
-    });
-  };
-  prepareSearch();
+  const Search = await loadSearchElement();
+  searchBlock.append(searchWrapper);
+
+  const searchItem = new Search({ searchBlock });
+  searchItem.configureAutoComplete({
+    searchOptions: options,
+    showSearchSuggestions: true,
+  });
+
+  await decorateIcons(searchBlock);
 
   return searchBlock;
 };
@@ -730,6 +751,12 @@ const decorateNewTabLinks = (block) => {
  */
 export default async function decorate(headerBlock) {
   headerBlock.style.display = 'none';
+  loadSearchElement();
+  const [solutionTag] = getMetadata('solution').trim().split(',');
+  if (solutionTag) {
+    window.headlessSolutionProductKey = solutionTag;
+  }
+
   // eslint-disable-next-line no-unused-vars
   headerBlock.innerHTML = await headerFragment;
 

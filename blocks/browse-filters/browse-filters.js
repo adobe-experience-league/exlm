@@ -17,6 +17,9 @@ import {
   getParsedSolutionsQuery,
   getCoveoFacets,
   getObjectById,
+  toggleSearchSuggestionsVisibility,
+  showSearchSuggestionsOnInputClick,
+  handleCoverSearchSubmit,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -94,7 +97,7 @@ function hildeSectionsWithinFilter(block, show) {
 }
 
 function updateClearFilterStatus(block) {
-  const searchEl = block.querySelector('.filter-input-search > input[type="search"]');
+  const searchEl = block.querySelector('.filter-input-search > .search-input');
   const clearFilterBtn = block.querySelector('.browse-filters-clear');
   const selectedTopics = Array.from(block.querySelectorAll('.browse-topics-item-active')).reduce((acc, curr) => {
     const id = curr.dataset.topicname;
@@ -373,16 +376,23 @@ function addLabel(block) {
 
 function constructKeywordSearchEl(block) {
   const searchEl = htmlToElement(`
-    <div class="filter-input filter-input-search">
-      <span class="icon icon-search"></span>
-      <input type="search" placeholder="${placeholders.filterKeywordSearch}">
+    <div class="browse-filters-search search-container">
+      <div class="filter-input filter-input-search">
+        <span class="icon icon-search"></span>
+        <input class="search-input" type="text" placeholder="${placeholders.filterKeywordSearch}">
+        <span title="Clear" class="icon icon-clear search-clear-icon"></span>
+      </div>
+      <div class="search-suggestions-popover">
+            <ul role="listbox">
+            </ul>
+          </div>
     </div>
   `);
   appendToFormInputContainer(block, searchEl);
 }
 
 function onInputSearch(block) {
-  const searchEl = block.querySelector('.filter-input-search input[type="search"]');
+  const searchEl = block.querySelector('.filter-input-search .search-input');
   searchEl.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -564,6 +574,8 @@ function handleUriHash() {
       const [searchValue] = facetValues;
       if (searchValue) {
         searchInput.value = searchValue.trim();
+        const clearIcon = filterInputSection.querySelector('.search-clear-icon');
+        clearIcon.classList.add('search-icon-show');
       } else {
         searchInput.value = '';
       }
@@ -716,9 +728,85 @@ function renderSearchQuerySummary() {
   queryEl.textContent = assetString;
 }
 
+function handleSearchBoxSubscription() {
+  const browseFilterSearchSection = document.querySelector('.browse-filters-search');
+  const searchInputEl = browseFilterSearchSection?.querySelector('input.search-input');
+  if (!searchInputEl || !window.headlessSearchBox?.state || window.headlessSearchBox.state.isLoading) {
+    return;
+  }
+
+  const { suggestions = [], value: searchInputStateValue } = window.headlessSearchBox.state;
+  if (searchInputStateValue !== searchInputEl.value) {
+    return;
+  }
+
+  const hideSuggestions = searchInputEl.value === '' || suggestions.length === 0;
+
+  const searchSuggestionsPopoverEl = browseFilterSearchSection.querySelector('.search-suggestions-popover');
+  toggleSearchSuggestionsVisibility(!hideSuggestions);
+  if (hideSuggestions) {
+    searchInputEl.removeEventListener('click', showSearchSuggestionsOnInputClick);
+  } else {
+    searchInputEl.addEventListener('click', showSearchSuggestionsOnInputClick);
+  }
+  const suggestionsElement = htmlToElement(`<ul>
+    ${suggestions
+      .map((suggestion) => {
+        const { rawValue } = suggestion;
+        return `<li role="option" tabindex="0" class="search-picker-label">${rawValue}</li>`;
+      })
+      .join('')}
+  </ul>`);
+
+  const selectSearchSuggestion = (searchText) => {
+    searchInputEl.value = searchText;
+    handleCoverSearchSubmit(searchText);
+    setTimeout(() => {
+      // setimeout of zero to avoid reopening of popover.
+      toggleSearchSuggestionsVisibility(false);
+    }, 0);
+  };
+
+  suggestionsElement.addEventListener('click', (e) => {
+    const searchText = e.target?.textContent ?? '';
+    selectSearchSuggestion(searchText);
+  });
+
+  suggestionsElement.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const searchText = e.target?.textContent ?? '';
+      selectSearchSuggestion(searchText);
+    } else {
+      const isArrowUp = e.key === 'ArrowUp';
+      const isArrowDown = e.key === 'ArrowDown';
+      if (!isArrowDown && !isArrowUp) {
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      const targetElement = isArrowDown
+        ? e.target.nextElementSibling || e.target.parentElement.firstElementChild
+        : e.target.previousElementSibling || e.target.parentElement.lastElementChild;
+      if (targetElement) {
+        targetElement.focus();
+        searchInputEl.value = targetElement.textContent;
+      }
+    }
+  });
+
+  const wrapper = searchSuggestionsPopoverEl.firstElementChild;
+  wrapper.replaceWith(suggestionsElement);
+}
+
 function handleCoveoHeadlessSearch(
   block,
-  { submitSearchHandler, searchInputKeyupHandler, searchInputKeydownHandler, searchInputEventHandler },
+  {
+    submitSearchHandler,
+    searchInputKeyupHandler,
+    searchInputKeydownHandler,
+    searchInputEventHandler,
+    clearSearchHandler,
+  },
 ) {
   buildCardsShimmer.remove();
   const filterResultsEl = createTag('div', { class: 'browse-filters-results' });
@@ -726,11 +814,22 @@ function handleCoveoHeadlessSearch(
   const browseFiltersSection = block.querySelector('.browse-filters-form');
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchIcon = filterInputSection.querySelector('.icon-search');
+  const clearIcon = filterInputSection.querySelector('.icon-clear');
   const searchInput = filterInputSection.querySelector('input');
   browseFiltersSection.appendChild(filterResultsEl);
 
   searchIcon.addEventListener('click', submitSearchHandler);
-  searchInput.addEventListener('keyup', searchInputKeyupHandler);
+  clearIcon.addEventListener('click', () => {
+    searchInput.value = '';
+    clearIcon.classList.remove('search-icon-show');
+    clearSearchHandler();
+  });
+  searchInput.addEventListener('keyup', (e) => {
+    const containsText = e.target.value !== '';
+    const classOp = containsText ? 'add' : 'remove';
+    clearIcon.classList[classOp]('search-icon-show');
+    searchInputKeyupHandler(e);
+  });
   searchInput.addEventListener('keydown', searchInputKeydownHandler);
   searchInput.addEventListener('input', searchInputEventHandler);
   window.addEventListener('hashchange', handleUriHash);
@@ -848,8 +947,9 @@ function decorateBrowseTopics(block) {
   const allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
   const supportedProducts = [];
   if (allSolutionsTags.length) {
-    const { query: additionalQuery, products } = getParsedSolutionsQuery(allSolutionsTags);
+    const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allSolutionsTags);
     products.forEach((p) => supportedProducts.push(p));
+    window.headlessSolutionProductKey = productKey;
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
   }
 
@@ -936,6 +1036,7 @@ export default async function decorate(block) {
     renderPageNumbers,
     numberOfResults: getBrowseFiltersResultCount(),
     renderSearchQuerySummary,
+    handleSearchBoxSubscription,
   })
     .then(
       (data) => {
