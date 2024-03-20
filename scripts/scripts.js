@@ -413,7 +413,7 @@ export async function loadIms() {
       window.adobeid = {
         client_id: 'ExperienceLeague',
         scope:
-          'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read',
+          'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read,pps.read',
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
         environment,
         debug,
