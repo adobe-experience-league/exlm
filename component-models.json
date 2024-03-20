@@ -600,8 +600,7 @@
         "description": "The section style",
         "valueType": "string",
         "hidden": true,
-        "options": [
-        ]
+        "options": []
       }
     ]
   },
