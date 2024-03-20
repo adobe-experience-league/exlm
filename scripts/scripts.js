@@ -168,10 +168,9 @@ export function isBrowsePage() {
  */
 function addBrowseRail(main) {
   // if there is already editable browse rail stored
-  const browseRailSectionFound = [...main.querySelectorAll('.section-metadata')]
-    .find((sMeta) => 
-      readBlockConfig(sMeta)?.style.split(',').includes('browse-rail-section')
-    )
+  const browseRailSectionFound = [...main.querySelectorAll('.section-metadata')].find((sMeta) =>
+    readBlockConfig(sMeta)?.style.split(',').includes('browse-rail-section'),
+  );
   if (browseRailSectionFound) return;
 
   // default: create a dynamic uneditable browse rail
