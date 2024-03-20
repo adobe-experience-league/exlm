@@ -15,20 +15,27 @@ import { getEDSLink, getLink, getPathDetails, fetchLanguagePlaceholders } from '
 export async function getProducts() {
   // get language
   const { lang } = getPathDetails();
-  // load the <lang>/top_product list
-  const topProducts = await ffetch(`/${lang}/top-products.json`).all();
+  // load the <lang>/top-product list
+  const Products = await ffetch(`/${lang}/top-products.json`).all();
   // get all indexed pages below <lang>/browse
   const publishedPages = await ffetch(`/${lang}/browse-index.json`).all();
+  let featured = true;
 
   // add all published top products to final list
-  const finalProducts = topProducts.filter((topProduct) => {
-    // check if top product is in published list
-    const found = publishedPages.find((elem) => elem.path === topProduct.path);
+  const finalProducts = Products.filter((product) => {
+    // if separator is reached
+    if (product.path.startsWith('-')) {
+      featured = false;
+      return false;
+    }
+
+    // check if product is in published list
+    const found = publishedPages.find((elem) => elem.path === product.path);
     if (found) {
       // keep original title if no nav title is set
-      if (!topProduct.title) topProduct.title = found.title;
-      // set marker for featured product
-      topProduct.featured = true;
+      if (!product.title) product.title = found.title;
+      // set featured flag
+      product.featured = featured;
       // remove it from publishedProducts list
       publishedPages.splice(publishedPages.indexOf(found), 1);
       return true;
@@ -36,13 +43,17 @@ export async function getProducts() {
     return false;
   });
 
-  // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
-  const publishedMainProducts = publishedPages
-    .filter((page) => page.path.split('/').length === 4)
-    // sort alphabetically
-    .sort((productA, productB) => productA.path.localeCompare(productB.path));
-  // append remaining published products to final list
-  finalProducts.push(...publishedMainProducts);
+  // if no separator was found , add the remaining products alphabetically
+  if (featured) {
+    // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
+    const publishedMainProducts = publishedPages
+      .filter((page) => page.path.split('/').length === 4)
+      // sort alphabetically
+      .sort((productA, productB) => productA.path.localeCompare(productB.path));
+    // append remaining published products to final list
+    finalProducts.push(...publishedMainProducts);
+  }
+
   return finalProducts;
 }
 
