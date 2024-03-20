@@ -16,6 +16,7 @@ import {
   getMetadata,
   loadScript,
   fetchPlaceholders,
+  readBlockConfig,
 } from './lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 
@@ -167,7 +168,11 @@ export function isBrowsePage() {
  */
 function addBrowseRail(main) {
   // if there is already editable browse rail stored
-  if (main.querySelector('div.browse-rail')) return;
+  const browseRailSectionFound = [...main.querySelectorAll('.section-metadata')]
+    .find((sMeta) => 
+      readBlockConfig(sMeta)?.style.split(',').includes('browse-rail-section')
+    )
+  if (browseRailSectionFound) return;
 
   // default: create a dynamic uneditable browse rail
   const leftRailSection = document.createElement('div');
