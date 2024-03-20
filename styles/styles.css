@@ -1400,7 +1400,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   main > div.section {
     grid-column: 2;
   }
-  main > div.section.browse-rail {
+  main > div.section.browse-rail-section {
     display: initial;
     grid-column: 1;
     grid-row: 1/100;
@@ -1417,8 +1417,8 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   body.browse-product main {
     max-width: 1440px;
   }
-  body.browse-all main > div.section:not(.browse-rail),
-  body.browse-product main > div.section:not(.browse-rail) {
+  body.browse-all main > div.section:not(.browse-rail-section),
+  body.browse-product main > div.section:not(.browse-rail-section) {
     padding: 30px 32px;
   }
   body.browse-all main > div.section.browse-breadcrumb-container,

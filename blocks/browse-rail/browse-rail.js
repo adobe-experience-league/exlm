@@ -162,17 +162,7 @@ async function displayAllProducts(block, placeholders) {
   }
 }
 
-// Main function to decorate the block
-export default async function decorate(block) {
-  // to avoid dublication when editing
-  block.textContent = '';
-
-  const theme = getMetadata('theme');
-  const label = getMetadata('og:title');
-  const placeholders = await fetchLanguagePlaceholders();
-  const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
-  const currentPagePath = getEDSLink(window.location.pathname);
-
+async function displayProductNav(block, currentPagePath, results, placeholders) {
   // Find the parent page for product sub-pages
   const parentPage = results.find((page) => page.path === getPathUntilLevel(currentPagePath, 3));
   let parentPageTitle = '';
@@ -180,6 +170,85 @@ export default async function decorate(block) {
   if (parentPage) {
     parentPageTitle = parentPage.title;
   }
+
+  const parts = currentPagePath.split('/');
+  // Product sub page
+  if (parts.length >= 5 && parts[3] === currentPagePath.split('/')[3]) {
+    const pagePath = getPathUntilLevel(currentPagePath, 3);
+    const subPages = filterSubPages(results, pagePath);
+    const resultMultiMap = convertToMultiMap(subPages, currentPagePath.split('/')[3]);
+    const htmlList = convertToULList(resultMultiMap);
+    block.appendChild(htmlList);
+    sortFirstLevelList('.subPages');
+    const subPagesBrowseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
+    block.querySelector(
+      '.browse-by > li',
+    ).innerHTML = `<span>${placeholders.browseBy}</span><ul><li><a href="${pagePath}">${subPagesBrowseByLinkText}</a></li></ul>`;
+
+    // Hightlight the current page title in the left rail
+    const targetElement = block.querySelector(`[href="${currentPagePath}"]`);
+    if (targetElement) {
+      targetElement.classList.add('is-active');
+    }
+  } else {
+    // Product page
+    const result = hasDirectLeafNodes(results, currentPagePath);
+    if (result) {
+      const subPages = filterSubPages(results, currentPagePath);
+      const resultMultiMap = convertToMultiMap(subPages, currentPagePath.split('/')[3]);
+      const htmlList = convertToULList(resultMultiMap);
+
+      block.appendChild(htmlList);
+      sortFirstLevelList('.subPages');
+    } else {
+      // In case of no sub-pages, show all products
+      await displayAllProducts(block, placeholders);
+    }
+  }
+}
+
+function displayManualNav(manualNav, block) {
+  // get root ul
+  const rootUL = manualNav.querySelector('ul');
+  rootUL.classList.add('subPages');
+
+  // every li entry that is not a link gets a span
+  [...rootUL.querySelectorAll('li')]
+    .filter((li) => li.firstChild.nodeName === '#text')
+    .forEach((li) => {
+      const span = document.createElement('span');
+      span.appendChild(li.firstChild);
+      li.insertBefore(span, li.firstChild);
+    });
+
+  // set class for li with sub pages, add collapse icon
+  [...rootUL.querySelectorAll('li')]
+    .filter((li) => li.querySelector('ul'))
+    .forEach((li) => {
+      li.classList.add('hasSubPages');
+      const toggleIcon = document.createElement('span');
+      toggleIcon.classList.add('js-toggle');
+      li.querySelector('ul').before(toggleIcon);
+    });
+
+  // add manual nav to rail
+  block.append(rootUL);
+}
+
+// Main function to decorate the block
+export default async function decorate(block) {
+  // get any defined manual navigation
+  const [manualNav] = block.querySelectorAll(':scope div > div');
+
+  // to avoid dublication when editing
+  block.textContent = '';
+
+  const theme = getMetadata('theme');
+
+  const label = getMetadata('og:title');
+  const placeholders = await fetchLanguagePlaceholders();
+  const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
+  const currentPagePath = getEDSLink(window.location.pathname);
 
   // For Browse All Page
   if (theme === 'browse-all') {
@@ -191,7 +260,11 @@ export default async function decorate(block) {
     browseByUL.append(browseByLI);
     block.append(browseByUL);
     // Show All Products
-    await displayAllProducts(block, placeholders);
+    if (manualNav) {
+      displayManualNav(manualNav, block);
+    } else {
+      await displayAllProducts(block, placeholders);
+    }
   }
 
   // For Browse Product Pages
@@ -212,39 +285,11 @@ export default async function decorate(block) {
     block.append(browseByUL);
 
     // For Products and sub-pages
-    const parts = currentPagePath.split('/');
-    // Product sub page
-    if (parts.length >= 5 && parts[3] === currentPagePath.split('/')[3]) {
-      const pagePath = getPathUntilLevel(currentPagePath, 3);
-      const subPages = filterSubPages(results, pagePath);
-      const resultMultiMap = convertToMultiMap(subPages, currentPagePath.split('/')[3]);
-      const htmlList = convertToULList(resultMultiMap);
-      block.appendChild(htmlList);
-      sortFirstLevelList('.subPages');
-      const subPagesBrowseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
-      block.querySelector(
-        '.browse-by > li',
-      ).innerHTML = `<span>${placeholders.browseBy}</span><ul><li><a href="${pagePath}">${subPagesBrowseByLinkText}</a></li></ul>`;
-
-      // Hightlight the current page title in the left rail
-      const targetElement = block.querySelector(`[href="${currentPagePath}"]`);
-      if (targetElement) {
-        targetElement.classList.add('is-active');
-      }
+    if (manualNav) {
+      displayManualNav(manualNav, block);
     } else {
-      // Product page
-      const result = hasDirectLeafNodes(results, currentPagePath);
-      if (result) {
-        const subPages = filterSubPages(results, currentPagePath);
-        const resultMultiMap = convertToMultiMap(subPages, currentPagePath.split('/')[3]);
-        const htmlList = convertToULList(resultMultiMap);
-
-        block.appendChild(htmlList);
-        sortFirstLevelList('.subPages');
-      } else {
-        // In case of no sub-pages, show all products
-        await displayAllProducts(block, placeholders);
-      }
+      // dynamically create sub page nav or if empty show products list
+      await displayProductNav(block, currentPagePath, results, placeholders);
     }
   }
 
