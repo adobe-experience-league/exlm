@@ -404,16 +404,19 @@ export const locales = new Map([
 ]);
 
 export async function loadIms() {
+  const environment = isHelixDomain() ? 'stg1' : 'prod';
+  const debug = isHelixDomain();
   window.imsLoaded =
     window.imsLoaded ||
     new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error('IMS timeout')), 5000);
       window.adobeid = {
-        client_id: isHelixDomain() ? 'ExperienceLeague_Dev' : 'ExperienceLeague',
+        client_id: 'ExperienceLeague',
         scope:
           'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read',
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
-        debug: false,
+        environment,
+        debug,
         onReady: () => {
           // eslint-disable-next-line no-console
           console.log('Adobe IMS Ready!');
