@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/legacy-sitemap/0.9">
   <sitemap>
     <loc>https://experienceleague.adobe.com/en/sitemap-1.xml</loc>
   </sitemap>
@@ -72,4 +72,42 @@
   <sitemap>
     <loc>https://experienceleague.adobe.com/zh-hant/sitemap-2.xml</loc>
   </sitemap>
+
+  <sitemap>
+    <loc>https://experienceleague.adobe.com/legacy-sitemap/sitemap-courses-en.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://experienceleague.adobe.com/legacy-sitemap/sitemap-courses-fr.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://experienceleague.adobe.com/legacy-sitemap/sitemap-courses-de.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://experienceleague.adobe.com/legacy-sitemap/sitemap-courses-es.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://experienceleague.adobe.com/legacy-sitemap/sitemap-courses-it.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://experienceleague.adobe.com/legacy-sitemap/sitemap-courses-nl.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://experienceleague.adobe.com/legacy-sitemap/sitemap-courses-pt-br.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://experienceleague.adobe.com/legacy-sitemap/sitemap-courses-ko.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://experienceleague.adobe.com/legacy-sitemap/sitemap-courses-ja.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://experienceleague.adobe.com/legacy-sitemap/sitemap-courses-sv.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://experienceleague.adobe.com/legacy-sitemap/sitemap-courses-zh-hans.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://experienceleague.adobe.com/legacy-sitemap/sitemap-courses-zh-hant.xml</loc>
+  </sitemap>
+
 </sitemapindex>
