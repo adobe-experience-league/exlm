@@ -952,6 +952,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   margin-top: 1em;
   margin-bottom: 2em;
 }
+.docs li p,
 .docs li a:any-link {
   word-break: break-word;
 }
