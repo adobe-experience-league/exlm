@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import { loadIms } from '../scripts.js';
-import { signOut } from '../auth/auth-operations.js';
+// import { signOut } from '../auth/auth-operations.js';
 import loadJWT from '../auth/jwt.js';
 import csrf from '../auth/csrf.js';
 import { JWTTokenUrl, profileUrl } from '../urls.js';
@@ -80,13 +80,13 @@ export async function profile(reuse = false, explicit = false) {
             result = await profileMerge(arg.data);
             window.exl.profileData = clone(result);
           } else {
-            signOut();
+            // signOut();
           }
         } else {
           result = clone(window.exl.profileData);
         }
       } else {
-        signOut();
+        // signOut();
       }
     }
   } else {

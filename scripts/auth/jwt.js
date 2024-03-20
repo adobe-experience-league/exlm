@@ -1,5 +1,5 @@
 import { JWT, COVEO_TOKEN } from '../session-keys.js';
-import { signOut } from './auth-operations.js';
+// import { signOut } from './auth-operations.js';
 import { JWTTokenUrl } from '../urls.js';
 import csrf from './csrf.js';
 import fetchData from '../request.js';
@@ -51,11 +51,11 @@ async function fetchAndStoreJWT() {
     }
 
     // If the request was not successful or JWT is not present, sign out and throw an error
-    signOut();
+    // signOut();
     return new Error('Failed to retrieve JWT');
   } catch (error) {
     // Sign out and throw an error if an exception occurs during JWT retrieval
-    signOut();
+    // signOut();
     return new Error(`Failed to retrieve JWT: ${error}`);
   }
 }
