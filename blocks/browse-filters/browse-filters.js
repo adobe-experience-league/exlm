@@ -882,14 +882,23 @@ async function handleSearchEngineSubscription() {
   }
   // eslint-disable-next-line
   const search = window.headlessSearchEngine.state.search;
-  const { results } = search;
+  const { results, searchResponseId } = search;
   if (results.length > 0) {
     try {
       buildCardsShimmer.remove();
       const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
+      const renderCards =
+        !filterResultsEl.dataset.searchresponseid ||
+        (filterResultsEl.dataset.searchresponseid && filterResultsEl.dataset.searchresponseid !== searchResponseId) ||
+        !filterResultsEl.querySelector('.browse-filter-card-item');
+      filterResultsEl.dataset.searchresponseid = searchResponseId;
+      if (!renderCards) {
+        return;
+      }
       filterResultsEl.innerHTML = '';
       cardsData.forEach((cardData) => {
         const cardDiv = document.createElement('div');
+        cardDiv.classList.add('browse-filter-card-item');
         buildCard(filterResultsEl, cardDiv, cardData);
         filterResultsEl.appendChild(cardDiv);
       });
