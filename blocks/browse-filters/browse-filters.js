@@ -530,6 +530,7 @@ function handleUriHash() {
   clearAllSelectedTag(browseFiltersSection);
   let containsSearchQuery = false;
   const filtersInfo = decodedHash.split('&').filter((s) => !!s);
+  let pageNumber = 1;
 
   filtersInfo.forEach((filterInfo) => {
     const [facetKeys, facetValueInfo] = filterInfo.split('=');
@@ -591,13 +592,26 @@ function handleUriHash() {
           button.classList.remove('browse-topics-item-active');
         }
       });
+    } else if (keyName === 'firstResult' && window.headlessPager) {
+      const firstResult = parseInt(facetValueInfo, 10);
+      const resultsPerPage = getBrowseFiltersResultCount();
+      const targetPageNumber = Math.floor(firstResult / resultsPerPage) + 1;
+      pageNumber = window.headlessPager.state.maxPage
+        ? Math.min(targetPageNumber, window.headlessPager.state.maxPage)
+        : targetPageNumber;
+
+      if (pageNumber > 1) {
+        window.headlessPager.selectPage(pageNumber);
+      }
     }
   });
   if (!containsSearchQuery) {
     searchInput.value = '';
   }
   if (filtersInfo.length && window.headlessBaseSolutionQuery) {
-    handleTopicSelection();
+    const resetPageIndex = pageNumber === 1;
+    const fireSelection = true;
+    handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex);
   }
   updateClearFilterStatus(browseFiltersSection);
   window.headlessSearchEngine.executeFirstSearch();
