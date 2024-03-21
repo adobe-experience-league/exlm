@@ -753,10 +753,13 @@ function handleSearchBoxSubscription() {
   if (searchInputStateValue !== searchInputEl.value) {
     return;
   }
-
-  const hideSuggestions = searchInputEl.value === '' || suggestions.length === 0;
-
   const searchSuggestionsPopoverEl = browseFilterSearchSection.querySelector('.search-suggestions-popover');
+
+  const hideSuggestions =
+    searchInputEl.value === '' ||
+    suggestions.length === 0 ||
+    searchSuggestionsPopoverEl.classList.contains('search-suggestions-popover-hide');
+
   toggleSearchSuggestionsVisibility(!hideSuggestions);
   if (hideSuggestions) {
     searchInputEl.removeEventListener('click', showSearchSuggestionsOnInputClick);

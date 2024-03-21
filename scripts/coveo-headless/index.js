@@ -219,6 +219,17 @@ export default async function initiateCoveoHeadlessSearch({
         const searchInputKeydownHandler = (e) => {
           if (e.key === 'Enter') {
             submitSearchHandler();
+            const searchSuggestionsPopoverEl = document.querySelector(
+              '.browse-filters-search .search-suggestions-popover',
+            );
+            if (searchSuggestionsPopoverEl) {
+              searchSuggestionsPopoverEl.classList.remove('search-suggestions-popover-visible');
+              searchSuggestionsPopoverEl.classList.add('search-suggestions-popover-hide');
+              setTimeout(() => {
+                // We need this minor delay to make sure that search popOver does not flash when we press enter due to multiple re-renders from searchBox state subscription
+                searchSuggestionsPopoverEl.classList.remove('search-suggestions-popover-hide');
+              }, 0);
+            }
           } else {
             const isArrowUp = e.key === 'ArrowUp';
             const isArrowDown = e.key === 'ArrowDown';
