@@ -38,6 +38,9 @@ function restoreState(newBlock, state) {
  */
 
 async function applyChanges(event) {
+
+  console.log(event);
+  
   // redecorate default content and blocks on patches (in the properties rail)
   const { detail } = event;
 
