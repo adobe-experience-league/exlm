@@ -39,8 +39,6 @@ function restoreState(newBlock, state) {
 
 async function applyChanges(event) {
 
-  console.log(event);
-  
   // redecorate default content and blocks on patches (in the properties rail)
   const { detail } = event;
 
@@ -54,6 +52,11 @@ async function applyChanges(event) {
   const { content } = updates[0];
   if (!content) return false;
 
+  if(event.eventType === "aue:add_content" && content.contians("browse-rail-section")) {
+    console.log('DUBLICATE');
+  }
+  
+  
   const parsedUpdate = new DOMParser().parseFromString(content, 'text/html');
   const element = document.querySelector(`[data-aue-resource="${resource}"]`);
 
