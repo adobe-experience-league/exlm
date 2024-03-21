@@ -20,7 +20,7 @@ export const pageName = (language) => {
       result += document.querySelector('title').innerText.split('|')[0].trim();
     } else {
       result += document.querySelector('meta[name="english-title"]')
-        ? document.querySelector('meta[name="english-title"]').innerText.split('|')[0].trim()
+        ? document.querySelector('meta[name="english-title"]').content.split('|')[0].trim()
         : '';
     }
   }
@@ -78,7 +78,7 @@ export async function pageLoadModel(language) {
   }
 
   const fullSolution = document.querySelector('meta[name="solution"]')?.content || '';
-  const feature = document.querySelector('meta[name="feature"]')?.content || '';
+  const feature = document.querySelector('meta[name="feature"]')?.content.toLowerCase() || '';
   const subSolution = document.querySelector('meta[name="sub-solution"]')?.content || '';
   const solutionVersion = document.querySelector('meta[name="version"]')?.content || '';
   const role = document.querySelector('meta[name="role"]')?.content || '';
