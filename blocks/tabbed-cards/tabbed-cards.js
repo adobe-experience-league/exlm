@@ -5,24 +5,17 @@ import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.
 import { COVEO_SORT_OPTIONS, COVEO_DATE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import {
-  tabbedCardViewAllCoursesLink,
-  tabbedCardViewAllTutorialsLink,
-  tabbedCardViewAllDocumentationLink,
-  tabbedCardViewAllTroubleshootingLink,
-  tabbedCardViewAllOnDemandEventsLink,
-  tabbedCardViewAllCommunityLink,
-  tabbedCardViewAllCertificationLink,
-} from '../../scripts/urls.js';
+
+const lang = document.querySelector('html').lang || 'en';
 
 const urlMap = {
-  course: tabbedCardViewAllCoursesLink,
-  tutorial: tabbedCardViewAllTutorialsLink,
-  documentation: tabbedCardViewAllDocumentationLink,
-  troubleshooting: tabbedCardViewAllTroubleshootingLink,
-  event: tabbedCardViewAllOnDemandEventsLink,
-  community: tabbedCardViewAllCommunityLink,
-  certification: tabbedCardViewAllCertificationLink,
+  course: `/home?lang=${lang}#courses`,
+  tutorial: `/${lang}/docs/home-tutorials`,
+  documentation: `/${lang}/docs`,
+  troubleshooting: `/${lang}/docs`,
+  event: `/events?lang=${lang}#ondemandevents`,
+  community: 'https://experienceleaguecommunities.adobe.com',
+  certification: `/${lang}/docs/certification/program/overview`,
 };
 
 /**

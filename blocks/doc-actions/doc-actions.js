@@ -1,13 +1,21 @@
 import { loadCSS, loadBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
-import { createTag, isDocPage, htmlToElement, decorateMain, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import {
+  createTag,
+  isDocPage,
+  htmlToElement,
+  decorateMain,
+  fetchLanguagePlaceholders,
+  getConfig,
+} from '../../scripts/scripts.js';
 import loadJWT from '../../scripts/auth/jwt.js';
-import { automaticTranslationLink } from '../../scripts/urls.js';
 // import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
 import attachCopyLink from '../../scripts/copy-link/copy-link.js';
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 import { isSignedInUser, profile } from '../../scripts/data-service/profile-service.js';
+
+const { automaticTranslationLink } = getConfig();
 
 function decorateBookmarkMobileBlock() {
   const docActionsMobile = document.querySelector('.doc-actions-mobile'); // should always be present if article-metadata is present

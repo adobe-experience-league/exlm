@@ -1,7 +1,8 @@
 import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
-import { exlmCDNUrl, recommendedCoursesUrl } from '../urls.js';
-import { fetchLanguagePlaceholders } from '../scripts.js';
+import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
+
+const { recommendedCoursesUrl, prodAssetsCdnOrigin } = getConfig();
 /**
  * Module that provides functionality for adapting Paths results to BrowseCards data model
  * @module BrowseCardsPathsAdaptor
@@ -70,7 +71,7 @@ const BrowseCardsPathsAdaptor = (() => {
       contentType,
       id: ID,
       badgeTitle: CONTENT_TYPES.COURSE.LABEL,
-      thumbnail: (Thumbnail || '').replace('/www/img', exlmCDNUrl) || '',
+      thumbnail: (Thumbnail || '').replace('/www/img', prodAssetsCdnOrigin) || '',
       inProgressStatus: inProgressValue || '0',
       product: Solution || '',
       title: PathTitle || '',

@@ -1,9 +1,11 @@
 import csrf from '../../auth/csrf.js';
 import fetchData from '../../request.js';
-import { coveoTokenUrl } from '../../urls.js';
 import { COVEO_TOKEN } from '../../session-keys.js';
 import loadJWT from '../../auth/jwt.js';
 import { isSignedInUser } from '../profile-service.js';
+import { getConfig } from '../../scripts.js';
+
+const { coveoTokenUrl } = getConfig();
 
 const timers = new Map();
 

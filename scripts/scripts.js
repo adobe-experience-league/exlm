@@ -396,6 +396,87 @@ async function loadEager(doc) {
 
 export const isHelixDomain = () => ['hlx.page', 'hlx.live'].some((sfx) => window.location.hostname.endsWith(sfx));
 
+/**
+ * get site config
+ */
+export function getConfig() {
+  if (window.exlm && window.exlm.config) {
+    return window.exlm.config;
+  }
+
+  const HOSTS = [
+    {
+      env: 'PROD',
+      cdn: 'experienceleague.adobe.com',
+      hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
+    },
+    {
+      env: 'STAGE',
+      cdn: 'experienceleague-stage.adobe.com',
+      hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm-stage--adobe-experience-league.live',
+    },
+    {
+      env: 'DEV',
+      cdn: 'experienceleague-dev.adobe.com',
+      hlxPreview: 'main--exlm--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm--adobe-experience-league.hlx.live',
+    },
+  ];
+
+  const currentHost = window.location.hostname;
+  const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
+  const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
+  const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
+  const cdnOrigin = `https://${cdnHost}`;
+  const lang = document.querySelector('html').lang || 'en';
+  const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
+  const isProd = currentEnv?.env === 'PROD';
+  const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
+  const ims = {
+    client_id: 'ExperienceLeague',
+    environment: isProd ? 'prod' : 'stg1',
+    debug: currentEnv !== 'PROD',
+  };
+
+  let launchScriptSrc;
+  if (currentEnv === 'PROD')
+    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
+  else if (currentEnv === 'STAGE')
+    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
+  else launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js';
+
+  window.exlm = window.exlm || {};
+  window.exlm.config = {
+    ims,
+    currentEnv,
+    cdnOrigin,
+    cdnHost,
+    prodAssetsCdnOrigin,
+    ppsOrigin,
+    launchScriptSrc,
+    privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
+    profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
+    JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
+    coveoTokenUrl: `${cdnOrigin}/api/coveo-token?lang=${lang}`,
+    coveoSearchResultsUrl: 'https://platform.cloud.coveo.com/rest/search/v2',
+    liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
+    adlsUrl: 'https://learning.adobe.com/catalog.result.json',
+    searchUrl: `${cdnOrigin}/search.html`,
+    articleUrl: `${cdnOrigin}/api/articles/`,
+    solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
+    pathsUrl: `${cdnOrigin}/api/paths`,
+    // Browse Left nav
+    browseMoreProductsLink: `/${lang}/browse`,
+    // Machine Translation
+    automaticTranslationLink: `/${lang}/docs/contributor/contributor-guide/localization/machine-translation`,
+    // Recommended Courses
+    recommendedCoursesUrl: `${cdnOrigin}/home?lang=${lang}#dashboard/learning`,
+  };
+  return window.exlm.config;
+}
+
 export const locales = new Map([
   ['de', 'de_DE'],
   ['en', 'en_US'],
@@ -412,16 +493,16 @@ export const locales = new Map([
 ]);
 
 export async function loadIms() {
+  const { ims } = getConfig();
   window.imsLoaded =
     window.imsLoaded ||
     new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error('IMS timeout')), 5000);
       window.adobeid = {
-        client_id: isHelixDomain() ? 'ExperienceLeague_Dev' : 'ExperienceLeague',
         scope:
-          'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read',
+          'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read,pps.read',
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
-        debug: false,
+        ...ims,
         onReady: () => {
           // eslint-disable-next-line no-console
           console.log('Adobe IMS Ready!');
@@ -436,17 +517,10 @@ export async function loadIms() {
 }
 
 const loadMartech = async (headerPromise, footerPromise) => {
-  let launchScriptSrc = '';
-  if (window.location.host === 'eds-stage.experienceleague.adobe.com') {
-    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
-  } else if (window.location.host === 'experienceleague.adobe.com') {
-    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
-  } else {
-    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js';
-  }
+  const { privacyScript, launchScriptSrc } = getConfig();
   oneTrust();
 
-  const oneTrustPromise = loadScript('/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js', {
+  const oneTrustPromise = loadScript(privacyScript, {
     async: true,
     defer: true,
   });
