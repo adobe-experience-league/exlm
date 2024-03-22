@@ -456,6 +456,7 @@ export function getConfig() {
     prodAssetsCdnOrigin,
     ppsOrigin,
     launchScriptSrc,
+    privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/coveo-token?lang=${lang}`,
@@ -516,10 +517,10 @@ export async function loadIms() {
 }
 
 const loadMartech = async (headerPromise, footerPromise) => {
-  const { launchScriptSrc } = getConfig();
+  const { privacyScript, launchScriptSrc } = getConfig();
   oneTrust();
 
-  const oneTrustPromise = loadScript('/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js', {
+  const oneTrustPromise = loadScript(privacyScript, {
     async: true,
     defer: true,
   });
