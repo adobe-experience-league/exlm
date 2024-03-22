@@ -414,7 +414,7 @@ export function getConfig() {
     {
       env: 'STAGE',
       cdn: 'eds-stage.experienceleague.adobe.com',
-      hlxPreview: 'main--exlm--adobe-experience-league.hlx.page',
+      hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm-stage--adobe-experience-league.live',
     },
     {
@@ -432,9 +432,14 @@ export function getConfig() {
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
+  const ims = {
+    environment: currentEnv === 'PROD' ? 'prod' : 'stg1',
+    debug: currentEnv !== 'PROD',
+  };
 
   window.exlm = window.exlm || {};
   window.exlm.config = {
+    ims,
     currentEnv,
     cdnOrigin,
     cdnHost,
@@ -475,8 +480,7 @@ export const locales = new Map([
 ]);
 
 export async function loadIms() {
-  const environment = isHelixDomain() ? 'stg1' : 'prod';
-  const debug = isHelixDomain();
+  const { ims } = getConfig();
   window.imsLoaded =
     window.imsLoaded ||
     new Promise((resolve, reject) => {
@@ -486,8 +490,7 @@ export async function loadIms() {
         scope:
           'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read,pps.read',
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
-        environment,
-        debug,
+        ...ims,
         onReady: () => {
           // eslint-disable-next-line no-console
           console.log('Adobe IMS Ready!');
