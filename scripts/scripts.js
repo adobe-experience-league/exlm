@@ -413,13 +413,13 @@ export function getConfig() {
     },
     {
       env: 'STAGE',
-      cdn: 'eds-stage.experienceleague.adobe.com',
+      cdn: 'experienceleague-stage.adobe.com',
       hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm-stage--adobe-experience-league.live',
     },
     {
       env: 'DEV',
-      cdn: 'eds-dev.experienceleague.adobe.com',
+      cdn: 'experienceleague-dev.adobe.com',
       hlxPreview: 'main--exlm--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm--adobe-experience-league.hlx.live',
     },
@@ -432,10 +432,20 @@ export function getConfig() {
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
+  const isProd = currentEnv?.env === 'PROD';
+  const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
   const ims = {
-    environment: currentEnv === 'PROD' ? 'prod' : 'stg1',
+    client_id: 'ExperienceLeague',
+    environment: isProd ? 'prod' : 'stg1',
     debug: currentEnv !== 'PROD',
   };
+
+  let launchScriptSrc;
+  if (currentEnv === 'PROD')
+    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
+  else if (currentEnv === 'STAGE')
+    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
+  else launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js';
 
   window.exlm = window.exlm || {};
   window.exlm.config = {
@@ -444,6 +454,8 @@ export function getConfig() {
     cdnOrigin,
     cdnHost,
     prodAssetsCdnOrigin,
+    ppsOrigin,
+    launchScriptSrc,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/coveo-token?lang=${lang}`,
@@ -486,7 +498,6 @@ export async function loadIms() {
     new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error('IMS timeout')), 5000);
       window.adobeid = {
-        client_id: 'ExperienceLeague',
         scope:
           'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read,pps.read',
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
@@ -505,14 +516,7 @@ export async function loadIms() {
 }
 
 const loadMartech = async (headerPromise, footerPromise) => {
-  let launchScriptSrc = '';
-  if (window.location.host === 'eds-stage.experienceleague.adobe.com') {
-    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
-  } else if (window.location.host === 'experienceleague.adobe.com') {
-    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
-  } else {
-    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js';
-  }
+  const { launchScriptSrc } = getConfig();
   oneTrust();
 
   const oneTrustPromise = loadScript('/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js', {
