@@ -530,6 +530,7 @@ function handleUriHash() {
   clearAllSelectedTag(browseFiltersSection);
   let containsSearchQuery = false;
   const filtersInfo = decodedHash.split('&').filter((s) => !!s);
+  let pageNumber = 1;
 
   filtersInfo.forEach((filterInfo) => {
     const [facetKeys, facetValueInfo] = filterInfo.split('=');
@@ -591,13 +592,26 @@ function handleUriHash() {
           button.classList.remove('browse-topics-item-active');
         }
       });
+    } else if (keyName === 'firstResult' && window.headlessPager) {
+      const firstResult = parseInt(facetValueInfo, 10);
+      const resultsPerPage = getBrowseFiltersResultCount();
+      const targetPageNumber = Math.floor(firstResult / resultsPerPage) + 1;
+      pageNumber = window.headlessPager.state.maxPage
+        ? Math.min(targetPageNumber, window.headlessPager.state.maxPage)
+        : targetPageNumber;
+
+      if (pageNumber > 1) {
+        window.headlessPager.selectPage(pageNumber);
+      }
     }
   });
   if (!containsSearchQuery) {
     searchInput.value = '';
   }
   if (filtersInfo.length && window.headlessBaseSolutionQuery) {
-    handleTopicSelection();
+    const resetPageIndex = pageNumber === 1;
+    const fireSelection = true;
+    handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex);
   }
   updateClearFilterStatus(browseFiltersSection);
   window.headlessSearchEngine.executeFirstSearch();
@@ -739,10 +753,13 @@ function handleSearchBoxSubscription() {
   if (searchInputStateValue !== searchInputEl.value) {
     return;
   }
-
-  const hideSuggestions = searchInputEl.value === '' || suggestions.length === 0;
-
   const searchSuggestionsPopoverEl = browseFilterSearchSection.querySelector('.search-suggestions-popover');
+
+  const hideSuggestions =
+    searchInputEl.value === '' ||
+    suggestions.length === 0 ||
+    searchSuggestionsPopoverEl.classList.contains('search-suggestions-popover-hide');
+
   toggleSearchSuggestionsVisibility(!hideSuggestions);
   if (hideSuggestions) {
     searchInputEl.removeEventListener('click', showSearchSuggestionsOnInputClick);
@@ -865,14 +882,23 @@ async function handleSearchEngineSubscription() {
   }
   // eslint-disable-next-line
   const search = window.headlessSearchEngine.state.search;
-  const { results } = search;
+  const { results, searchResponseId } = search;
   if (results.length > 0) {
     try {
       buildCardsShimmer.remove();
       const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
+      const renderCards =
+        !filterResultsEl.dataset.searchresponseid ||
+        (filterResultsEl.dataset.searchresponseid && filterResultsEl.dataset.searchresponseid !== searchResponseId) ||
+        !filterResultsEl.querySelector('.browse-filter-card-item');
+      filterResultsEl.dataset.searchresponseid = searchResponseId;
+      if (!renderCards) {
+        return;
+      }
       filterResultsEl.innerHTML = '';
       cardsData.forEach((cardData) => {
         const cardDiv = document.createElement('div');
+        cardDiv.classList.add('browse-filter-card-item');
         buildCard(filterResultsEl, cardDiv, cardData);
         filterResultsEl.appendChild(cardDiv);
       });

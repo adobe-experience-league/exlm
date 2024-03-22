@@ -15,20 +15,27 @@ import { getEDSLink, getLink, getPathDetails, fetchLanguagePlaceholders } from '
 export async function getProducts() {
   // get language
   const { lang } = getPathDetails();
-  // load the <lang>/top_product list
-  const topProducts = await ffetch(`/${lang}/top-products.json`).all();
+  // load the <lang>/top-product list
+  const Products = await ffetch(`/${lang}/top-products.json`).all();
   // get all indexed pages below <lang>/browse
   const publishedPages = await ffetch(`/${lang}/browse-index.json`).all();
+  let featured = true;
 
   // add all published top products to final list
-  const finalProducts = topProducts.filter((topProduct) => {
-    // check if top product is in published list
-    const found = publishedPages.find((elem) => elem.path === topProduct.path);
+  const finalProducts = Products.filter((product) => {
+    // if separator is reached
+    if (product.path.startsWith('-')) {
+      featured = false;
+      return false;
+    }
+
+    // check if product is in published list
+    const found = publishedPages.find((elem) => elem.path === product.path);
     if (found) {
       // keep original title if no nav title is set
-      if (!topProduct.title) topProduct.title = found.title;
-      // set marker for featured product
-      topProduct.featured = true;
+      if (!product.title) product.title = found.title;
+      // set featured flag
+      product.featured = featured;
       // remove it from publishedProducts list
       publishedPages.splice(publishedPages.indexOf(found), 1);
       return true;
@@ -36,13 +43,17 @@ export async function getProducts() {
     return false;
   });
 
-  // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
-  const publishedMainProducts = publishedPages
-    .filter((page) => page.path.split('/').length === 4)
-    // sort alphabetically
-    .sort((productA, productB) => productA.path.localeCompare(productB.path));
-  // append remaining published products to final list
-  finalProducts.push(...publishedMainProducts);
+  // if no separator was found , add the remaining products alphabetically
+  if (featured) {
+    // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
+    const publishedMainProducts = publishedPages
+      .filter((page) => page.path.split('/').length === 4)
+      // sort alphabetically
+      .sort((productA, productB) => productA.path.localeCompare(productB.path));
+    // append remaining published products to final list
+    finalProducts.push(...publishedMainProducts);
+  }
+
   return finalProducts;
 }
 
@@ -151,17 +162,7 @@ async function displayAllProducts(block, placeholders) {
   }
 }
 
-// Main function to decorate the block
-export default async function decorate(block) {
-  // to avoid dublication when editing
-  block.textContent = '';
-
-  const theme = getMetadata('theme');
-  const label = getMetadata('og:title');
-  const placeholders = await fetchLanguagePlaceholders();
-  const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
-  const currentPagePath = getEDSLink(window.location.pathname);
-
+async function displayProductNav(block, currentPagePath, results, placeholders) {
   // Find the parent page for product sub-pages
   const parentPage = results.find((page) => page.path === getPathUntilLevel(currentPagePath, 3));
   let parentPageTitle = '';
@@ -169,6 +170,85 @@ export default async function decorate(block) {
   if (parentPage) {
     parentPageTitle = parentPage.title;
   }
+
+  const parts = currentPagePath.split('/');
+  // Product sub page
+  if (parts.length >= 5 && parts[3] === currentPagePath.split('/')[3]) {
+    const pagePath = getPathUntilLevel(currentPagePath, 3);
+    const subPages = filterSubPages(results, pagePath);
+    const resultMultiMap = convertToMultiMap(subPages, currentPagePath.split('/')[3]);
+    const htmlList = convertToULList(resultMultiMap);
+    block.appendChild(htmlList);
+    sortFirstLevelList('.subPages');
+    const subPagesBrowseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
+    block.querySelector(
+      '.browse-by > li',
+    ).innerHTML = `<span>${placeholders.browseBy}</span><ul><li><a href="${pagePath}">${subPagesBrowseByLinkText}</a></li></ul>`;
+
+    // Hightlight the current page title in the left rail
+    const targetElement = block.querySelector(`[href="${currentPagePath}"]`);
+    if (targetElement) {
+      targetElement.classList.add('is-active');
+    }
+  } else {
+    // Product page
+    const result = hasDirectLeafNodes(results, currentPagePath);
+    if (result) {
+      const subPages = filterSubPages(results, currentPagePath);
+      const resultMultiMap = convertToMultiMap(subPages, currentPagePath.split('/')[3]);
+      const htmlList = convertToULList(resultMultiMap);
+
+      block.appendChild(htmlList);
+      sortFirstLevelList('.subPages');
+    } else {
+      // In case of no sub-pages, show all products
+      await displayAllProducts(block, placeholders);
+    }
+  }
+}
+
+function displayManualNav(manualNav, block) {
+  // get root ul
+  const rootUL = manualNav.querySelector('ul');
+  rootUL.classList.add('subPages');
+
+  // every li entry that is not a link gets a span
+  [...rootUL.querySelectorAll('li')]
+    .filter((li) => li.firstChild.nodeName === '#text')
+    .forEach((li) => {
+      const span = document.createElement('span');
+      span.appendChild(li.firstChild);
+      li.insertBefore(span, li.firstChild);
+    });
+
+  // set class for li with sub pages, add collapse icon
+  [...rootUL.querySelectorAll('li')]
+    .filter((li) => li.querySelector('ul'))
+    .forEach((li) => {
+      li.classList.add('hasSubPages');
+      const toggleIcon = document.createElement('span');
+      toggleIcon.classList.add('js-toggle');
+      li.querySelector('ul').before(toggleIcon);
+    });
+
+  // add manual nav to rail
+  block.append(rootUL);
+}
+
+// Main function to decorate the block
+export default async function decorate(block) {
+  // get any defined manual navigation
+  const [manualNav] = block.querySelectorAll(':scope div > div');
+
+  // to avoid dublication when editing
+  block.textContent = '';
+
+  const theme = getMetadata('theme');
+
+  const label = getMetadata('og:title');
+  const placeholders = await fetchLanguagePlaceholders();
+  const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
+  const currentPagePath = getEDSLink(window.location.pathname);
 
   // For Browse All Page
   if (theme === 'browse-all') {
@@ -180,7 +260,11 @@ export default async function decorate(block) {
     browseByUL.append(browseByLI);
     block.append(browseByUL);
     // Show All Products
-    await displayAllProducts(block, placeholders);
+    if (manualNav) {
+      displayManualNav(manualNav, block);
+    } else {
+      await displayAllProducts(block, placeholders);
+    }
   }
 
   // For Browse Product Pages
@@ -201,39 +285,11 @@ export default async function decorate(block) {
     block.append(browseByUL);
 
     // For Products and sub-pages
-    const parts = currentPagePath.split('/');
-    // Product sub page
-    if (parts.length >= 5 && parts[3] === currentPagePath.split('/')[3]) {
-      const pagePath = getPathUntilLevel(currentPagePath, 3);
-      const subPages = filterSubPages(results, pagePath);
-      const resultMultiMap = convertToMultiMap(subPages, currentPagePath.split('/')[3]);
-      const htmlList = convertToULList(resultMultiMap);
-      block.appendChild(htmlList);
-      sortFirstLevelList('.subPages');
-      const subPagesBrowseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
-      block.querySelector(
-        '.browse-by > li',
-      ).innerHTML = `<span>${placeholders.browseBy}</span><ul><li><a href="${pagePath}">${subPagesBrowseByLinkText}</a></li></ul>`;
-
-      // Hightlight the current page title in the left rail
-      const targetElement = block.querySelector(`[href="${currentPagePath}"]`);
-      if (targetElement) {
-        targetElement.classList.add('is-active');
-      }
+    if (manualNav) {
+      displayManualNav(manualNav, block);
     } else {
-      // Product page
-      const result = hasDirectLeafNodes(results, currentPagePath);
-      if (result) {
-        const subPages = filterSubPages(results, currentPagePath);
-        const resultMultiMap = convertToMultiMap(subPages, currentPagePath.split('/')[3]);
-        const htmlList = convertToULList(resultMultiMap);
-
-        block.appendChild(htmlList);
-        sortFirstLevelList('.subPages');
-      } else {
-        // In case of no sub-pages, show all products
-        await displayAllProducts(block, placeholders);
-      }
+      // dynamically create sub page nav or if empty show products list
+      await displayProductNav(block, currentPagePath, results, placeholders);
     }
   }
 
