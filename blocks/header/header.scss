@@ -942,6 +942,13 @@ header {
     }
   }
 
+  img.profile-picture {
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    vertical-align: middle;
+  }
+
   .profile-menu,
   .product-dropdown,
   .product-dropdown a span {

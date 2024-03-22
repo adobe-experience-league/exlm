@@ -893,6 +893,12 @@ header {
 .header .product-toggle[aria-expanded=true] {
   background: var(--spectrum-gray-100);
 }
+.header img.profile-picture {
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
 .header .profile-menu,
 .header .product-dropdown,
 .header .product-dropdown a span {
