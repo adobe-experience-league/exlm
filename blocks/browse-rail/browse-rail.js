@@ -1,8 +1,9 @@
 import ffetch from '../../scripts/ffetch.js';
 import { getMetadata } from '../../scripts/lib-franklin.js';
-import { browseMoreProductsLink } from '../../scripts/urls.js';
 import { filterSubPages, convertToMultiMap, convertToULList, sortFirstLevelList } from './browse-rail-utils.js';
-import { getEDSLink, getLink, getPathDetails, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { getEDSLink, getLink, getPathDetails, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+
+const { browseMoreProductsLink } = getConfig();
 
 /**
  * Helper function thats returns a list of all products

@@ -1,6 +1,9 @@
-import { JWTTokenUrl } from '../urls.js';
 import { JWT } from '../session-keys.js';
 import fetchData from '../request.js';
+// eslint-disable-next-line import/no-cycle
+import { getConfig } from '../scripts.js';
+
+const { JWTTokenUrl } = getConfig();
 
 // Token expiration time in milliseconds (5 minutes)
 const expiry = 3e5;

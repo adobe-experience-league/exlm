@@ -1,7 +1,8 @@
 import { getMetadata } from '../lib-franklin.js';
-import { htmlToElement, loadIms, getLanguageCode } from '../scripts.js';
+import { htmlToElement, loadIms, getLanguageCode, getConfig } from '../scripts.js';
 import SearchDelegate from './search-delegate.js';
-import { searchUrl } from '../urls.js';
+
+const { searchUrl } = getConfig();
 
 // Get language code from URL
 const languageCode = await getLanguageCode();

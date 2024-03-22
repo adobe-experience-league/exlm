@@ -396,6 +396,69 @@ async function loadEager(doc) {
 
 export const isHelixDomain = () => ['hlx.page', 'hlx.live'].some((sfx) => window.location.hostname.endsWith(sfx));
 
+/**
+ * get site config
+ */
+export function getConfig() {
+  if (window.exlm && window.exlm.config) {
+    return window.exlm.config;
+  }
+
+  const HOSTS = [
+    {
+      env: 'PROD',
+      cdn: 'experienceleague.adobe.com',
+      hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
+    },
+    {
+      env: 'STAGE',
+      cdn: 'eds-stage.experienceleague.adobe.com',
+      hlxPreview: 'main--exlm--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm-stage--adobe-experience-league.live',
+    },
+    {
+      env: 'DEV',
+      cdn: 'eds-dev.experienceleague.adobe.com',
+      hlxPreview: 'main--exlm--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm--adobe-experience-league.hlx.live',
+    },
+  ];
+
+  const currentHost = window.location.hostname;
+  const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
+  const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
+  const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
+  const cdnOrigin = `https://${cdnHost}`;
+  const lang = document.querySelector('html').lang || 'en';
+  const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
+
+  window.exlm = window.exlm || {};
+  window.exlm.config = {
+    currentEnv,
+    cdnOrigin,
+    cdnHost,
+    prodAssetsCdnOrigin,
+    profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
+    JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
+    coveoTokenUrl: `${cdnOrigin}/api/coveo-token?lang=${lang}`,
+    coveoSearchResultsUrl: 'https://platform.cloud.coveo.com/rest/search/v2',
+    liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
+    adlsUrl: 'https://learning.adobe.com/catalog.result.json',
+    searchUrl: `${cdnOrigin}/search.html`,
+    articleUrl: `${cdnOrigin}/api/articles/`,
+    solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
+    pathsUrl: `${cdnOrigin}/api/paths`,
+    // Browse Left nav
+    browseMoreProductsLink: `/${lang}/browse`,
+    // Machine Translation
+    automaticTranslationLink: `/${lang}/docs/contributor/contributor-guide/localization/machine-translation`,
+    // Recommended Courses
+    recommendedCoursesUrl: `${cdnOrigin}/home?lang=${lang}#dashboard/learning`,
+  };
+  return window.exlm.config;
+}
+
 export const locales = new Map([
   ['de', 'de_DE'],
   ['en', 'en_US'],

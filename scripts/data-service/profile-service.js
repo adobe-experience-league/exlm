@@ -1,15 +1,16 @@
 // eslint-disable-next-line import/no-cycle
-import { loadIms } from '../scripts.js';
-// import { signOut } from '../auth/auth-operations.js';
+import { getConfig, loadIms } from '../scripts.js';
+import { signOut } from '../auth/auth-operations.js';
 import loadJWT from '../auth/jwt.js';
 import csrf from '../auth/csrf.js';
-import { JWTTokenUrl, profileUrl } from '../urls.js';
 import { Profile, ProfileAttributes } from '../session-keys.js';
 import { request } from '../request.js';
 
 window.exl = window.exl || {};
 window.exl.profileData = window.exl.profileData || null;
 window.exl.meta = window.exl.meta || {};
+
+const { profileUrl, JWTTokenUrl } = getConfig();
 
 export const override = /^(recommended|votes)$/;
 
@@ -80,13 +81,13 @@ export async function profile(reuse = false, explicit = false) {
             result = await profileMerge(arg.data);
             window.exl.profileData = clone(result);
           } else {
-            // signOut();
+            signOut();
           }
         } else {
           result = clone(window.exl.profileData);
         }
       } else {
-        // signOut();
+        signOut();
       }
     }
   } else {

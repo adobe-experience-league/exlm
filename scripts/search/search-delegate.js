@@ -1,6 +1,8 @@
 import CoveoDataService from '../data-service/coveo/coveo-data-service.js';
-import { coveoSearchResultsUrl } from '../urls.js';
+import { getConfig } from '../scripts.js';
 import { generateMlParameters, generateCustomContext } from './search-utils.js';
+
+const { coveoSearchResultsUrl } = getConfig();
 
 const SearchDelegate = (() => {
   const constructCoveoSearchParams = (query) => {
