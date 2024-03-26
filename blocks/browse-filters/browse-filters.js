@@ -27,6 +27,7 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery } from './browse-topics.js';
 import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
+import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 
 const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
@@ -869,7 +870,71 @@ function handleCoveoHeadlessSearch(
   renderPageNumbers();
 }
 
-async function handleSearchEngineSubscription() {
+/**
+ * Retrieves selected dropdown labels based on the field type.
+ * @param {HTMLElement} block - The parent element containing the dropdowns.
+ * @param {string} field - The type of field to retrieve labels for.
+ * @returns {string} - The selected labels separated by '|', or an empty string if no selection.
+ */
+function getSelectedDropdownLabels(block, field) {
+  const fieldSelectors = {
+    el_role: '.filter-dropdown[data-filter-type="el_role"] .custom-checkbox input[type="checkbox"]:checked',
+    el_contenttype:
+      '.filter-dropdown[data-filter-type="el_contenttype"] .custom-checkbox input[type="checkbox"]:checked',
+    el_level: '.filter-dropdown[data-filter-type="el_level"] .custom-checkbox input[type="checkbox"]:checked',
+    search: '.filter-input-search .search-input',
+    topics: '.browse-topics .browse-topics-item-active',
+  };
+
+  // Select appropriate elements based on the field type
+  const fieldSelector = fieldSelectors[field];
+
+  if (fieldSelector) {
+    if (field === 'search') {
+      const element = block.querySelector(fieldSelector);
+      return element.value;
+    }
+    const elements = block.querySelectorAll(fieldSelector);
+    return [...elements].map((el) => el.dataset.label).join('|');
+  }
+  return null;
+}
+
+/**
+ * Generates analytics filters based on selected dropdown values.
+ * @param {HTMLElement} block - The parent element containing the dropdowns.
+ * @param {String} totalCount - The total count.
+ * @returns {Object|null} - The analytics filters object or null if no non-empty values.
+ */
+function generateAnalyticsFilters(block, totalCount) {
+  const filterFields = {
+    el_role: 'Role',
+    el_contenttype: 'ContentType',
+    el_level: 'ExperienceLevel',
+    search: 'KeywordSearch',
+    topics: 'BrowseByTopic',
+  };
+  const filterKeys = Object.keys(filterFields);
+  const filters = {};
+  let hasNonEmptyValue = false;
+  for (let i = 0; i < filterKeys.length; i += 1) {
+    const field = filterKeys[i];
+    const selectedValue = getSelectedDropdownLabels(block, field);
+    if (selectedValue !== '') {
+      filters[filterFields[field]] = selectedValue;
+      hasNonEmptyValue = true;
+    }
+  }
+
+  if (hasNonEmptyValue) {
+    filters.BrowseResults = totalCount;
+    return filters;
+  }
+
+  return null;
+}
+
+async function handleSearchEngineSubscription(block) {
   const browseFilterForm = document.querySelector(CLASS_BROWSE_FILTER_FORM);
   const filterResultsEl = browseFilterForm?.querySelector('.browse-filters-results');
   buildCardsShimmer.add(browseFilterForm);
@@ -882,7 +947,7 @@ async function handleSearchEngineSubscription() {
   }
   // eslint-disable-next-line
   const search = window.headlessSearchEngine.state.search;
-  const { results, searchResponseId } = search;
+  const { results, searchResponseId, response } = search;
   if (results.length > 0) {
     try {
       buildCardsShimmer.remove();
@@ -895,6 +960,15 @@ async function handleSearchEngineSubscription() {
       if (!renderCards) {
         return;
       }
+
+      /* Analytics */
+      if (!filterResultsEl.classList.contains('browse-hide-section')) {
+        const analyticsFilters = generateAnalyticsFilters(block, response.totalCount);
+        if (analyticsFilters) {
+          assetInteractionModel(null, 'Browse Filters', analyticsFilters);
+        }
+      }
+
       filterResultsEl.innerHTML = '';
       cardsData.forEach((cardData) => {
         const cardDiv = document.createElement('div');
@@ -910,6 +984,16 @@ async function handleSearchEngineSubscription() {
     }
   } else {
     buildCardsShimmer.remove();
+    /* Analytics */
+    if (
+      !filterResultsEl.classList.contains('no-results') &&
+      !filterResultsEl.classList.contains('browse-hide-section')
+    ) {
+      const analyticsFilters = generateAnalyticsFilters(block, response.totalCount);
+      if (analyticsFilters) {
+        assetInteractionModel(null, 'Browse Filters', analyticsFilters);
+      }
+    }
     const communityOptionIsSelected = browseFilterForm.querySelector(`input[value="Community"]`)?.checked === true;
     let noResultsText = placeholders.noResultsTextBrowse || 'No Results';
     if (
@@ -1002,6 +1086,7 @@ function decorateBrowseTopics(block) {
         const topicName = parts[parts.length - 1];
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicsButtonTitle;
+        topicsButtonDiv.dataset.label = topicName;
         topicsButtonDiv.innerHTML = topicName;
         contentDiv.appendChild(topicsButtonDiv);
       });
@@ -1058,7 +1143,7 @@ export default async function decorate(block) {
   appendToForm(block, renderFilterResultsHeader());
   decorateBrowseTopics(block);
   initiateCoveoHeadlessSearch({
-    handleSearchEngineSubscription,
+    handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
     renderPageNumbers,
     numberOfResults: getBrowseFiltersResultCount(),
     renderSearchQuerySummary,
