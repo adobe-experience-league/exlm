@@ -21,6 +21,17 @@ export default function buildHeadlessSearchEngine(module, coveoToken) {
         }
         return request;
       },
+      search: {
+        preprocessSearchResponseMiddleware: (data) => {
+          const { results = [], facets = [], searchUid } = data?.body ?? {};
+          // eslint-disable-next-line no-console
+          console.log('**** preprocessSearchResponseMiddleware', {
+            results,
+            facets,
+            searchUid,
+          });
+        },
+      },
     },
   });
 }
