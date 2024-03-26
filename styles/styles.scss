@@ -804,6 +804,8 @@ body[class^='browse-'] .browse-filters-full-container {
   h4,
   h5,
   h6 {
+    word-break: break-word;
+
     code:not([class^='language-']) {
       font-size: inherit;
       line-height: 36px;
