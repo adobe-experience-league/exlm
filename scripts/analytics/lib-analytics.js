@@ -193,7 +193,7 @@ export function linkClickModel(e) {
   });
 }
 
-export function assetInteractionModel(id, assetInteractionType) {
+export function assetInteractionModel(id, assetInteractionType, filters) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   // assetId is set to the current docs page articleId if id param value is null
@@ -206,6 +206,7 @@ export function assetInteractionModel(id, assetInteractionType) {
       linkType: '',
       solution: '',
     },
+    ...filters,
     event: 'assetInteraction',
     asset: {
       id: assetId,

@@ -209,8 +209,6 @@ export default async function initiateCoveoHeadlessSearch({
           if (headlessSearchBox.state.value === searchText) {
             return;
           }
-          // eslint-disable-next-line
-          console.log('onKeyUp', searchText);
           headlessSearchBox.updateText(searchText);
         };
         const searchInputKeydownHandler = (e) => {
