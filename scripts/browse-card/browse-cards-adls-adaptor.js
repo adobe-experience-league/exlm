@@ -36,7 +36,7 @@ const BrowseCardsADLSAdaptor = (() => {
       description: description || '',
       copyLink: `${adlsDomain}${path}` || '',
       viewLink: `${adlsDomain}${path}` || '',
-      viewLinkText: placeholders.instructorLedViewLabel || 'View course',
+      viewLinkText: placeholders.browseCardInstructorLedViewLabel || 'View course',
     };
   };
 
