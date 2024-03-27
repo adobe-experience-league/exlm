@@ -10,7 +10,7 @@ export default class BuildPlaceholder {
     this.count = count;
     this.variant = variant;
     this.shimmer = document.createElement('div');
-    this.shimmer.className = `shimmer-placeholder ${this.variant}`;
+    this.setVariant();
     this.initialise();
   }
 
@@ -27,6 +27,21 @@ export default class BuildPlaceholder {
             <div class="shimmer-placeholder-btn"></div>
           </div>
         </div>`;
+    }
+  }
+
+  setVariant() {
+    this.shimmer.className = `shimmer-placeholder ${this.variant}`;
+  }
+
+  updateConfig({ count = null, variant = null }) {
+    if (count !== null && !Number.isNaN(count) && count !== this.count) {
+      this.count = count;
+      this.initialise();
+    }
+    if (variant !== null && variant !== this.variant) {
+      this.variant = variant;
+      this.setVariant();
     }
   }
 

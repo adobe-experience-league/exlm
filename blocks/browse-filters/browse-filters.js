@@ -51,7 +51,7 @@ const isBrowseProdPage = theme === 'browse-product';
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
-const buildCardsShimmer = new BuildPlaceholder({ variant: 'browse-cards', count: 16 });
+const buildCardsShimmer = new BuildPlaceholder({ variant: 'browse-cards', count: getBrowseFiltersResultCount() });
 
 function enableTagsAsProxy(block) {
   tagsProxy = new Proxy(tags, {
@@ -859,6 +859,7 @@ function handleCoveoHeadlessSearch(
         () => {
           const newResultsPerPage = getBrowseFiltersResultCount();
           if (window.headlessResultsPerPage.state.numberOfResults !== newResultsPerPage) {
+            buildCardsShimmer.updateConfig({ count: newResultsPerPage });
             window.headlessResultsPerPage.set(newResultsPerPage);
           }
         },
