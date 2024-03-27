@@ -1,30 +1,10 @@
+/** This is obselete and should be removed when all pages have been seeded and the old badge is no longer used */
 .badge-wrapper.same-p-tag {
   display: inline-block;
   margin-top: 16px;
   margin-bottom: 16px;
 }
+
 .badge-wrapper .same-p-tag {
   margin-right: 5px;
-}
-.badge-wrapper .badge {
-  background-color: var(--spectrum-blue-900);
-  border: 1px solid transparent;
-  border-radius: 4px;
-  color: var(--spectrum-gray-50);
-  display: inline-block;
-  font-size: var(--spectrum-font-size-75);
-  font-style: normal;
-  font-weight: 400;
-  line-height: 15.6px;
-  padding: 4px 9px 5px;
-  text-decoration: none;
-}
-.badge-wrapper .badge.positive {
-  background-color: var(--spectrum-green-900);
-}
-.badge-wrapper .badge.negative {
-  background-color: var(--spectrum-red-900);
-}
-.badge-wrapper .badge.neutral, .badge-wrapper .badge.caution, .badge-wrapper .badge.yellow {
-  background-color: var(--spectrum-gray-600);
 }

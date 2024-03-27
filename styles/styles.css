@@ -1333,6 +1333,31 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   padding-bottom: 38px;
   margin-bottom: 32px;
 }
+.docs .badge {
+  background-color: var(--spectrum-blue-900);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: white;
+  display: inline-block;
+  font-size: var(--spectrum-font-size-75);
+  font-style: normal;
+  font-weight: 400;
+  line-height: 15px;
+  padding: 5px 9px;
+  text-decoration: none;
+  vertical-align: bottom;
+}
+.docs .badge.positive {
+  background-color: var(--spectrum-green-900);
+}
+.docs .badge.negative {
+  background-color: var(--spectrum-red-900);
+}
+.docs .badge.neutral,
+.docs .badge.caution,
+.docs .badge.yellow {
+  background-color: var(--spectrum-gray-600);
+}
 
 @media (min-width: 600px) {
   .section.highlight.icon-block-container {

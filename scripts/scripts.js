@@ -349,6 +349,49 @@ export function decorateAnchors(main) {
   });
 }
 
+const encodeHTML = (str) => str.replace(/[\u00A0-\u9999<>&]/g, (i) => `&#${i.charCodeAt(0)};`);
+
+/**
+ * converts text with attributes to <span> elements with given attributes.
+ * eg: [text]{color="red" class="highlight"} => <span color="red" class="highlight">text</span>
+ * @param {*} inputStr
+ * @returns
+ */
+export const getDecoratedInlineHtml = (inputStr) => {
+  if (!inputStr) return inputStr;
+  const regex = /\[([^[\]]*)\]\{(.*?)\}/g;
+  return inputStr.replace(regex, (match, text, attrs) => {
+    const encodedText = encodeHTML(text);
+    const newAttrs = attrs
+      .split(/\s+(?=(?:[^"]*"[^"]*")*[^"]*$)/g) // match spaces only if not within quotes
+      .map((attr) => {
+        const [key, value] = attr.split('=');
+        return `${key}="${encodeHTML(value.replace(/"/g, ''))}"`;
+      })
+      .join(' ');
+    return `<span ${newAttrs}>${encodedText}</span>`;
+  });
+};
+
+/**
+ *
+ * @param {HTMLElement} element
+ */
+export function decorateInlineAttributes(element) {
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) {
+    const { currentNode } = walker;
+    const { textContent } = currentNode;
+    if (textContent.includes('[') && textContent.includes(']{')) {
+      const span = document.createElement('span');
+      span.innerHTML = getDecoratedInlineHtml(textContent);
+      window.requestAnimationFrame(() => {
+        currentNode.replaceWith(...span.childNodes);
+      });
+    }
+  }
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -361,6 +404,7 @@ export function decorateMain(main) {
   }
   decorateAnchors(main); // must be run before decorateIcons
   decorateIcons(main);
+  decorateInlineAttributes(main);
   decorateExternalLinks(main);
   buildAutoBlocks(main);
   decorateSections(main);
