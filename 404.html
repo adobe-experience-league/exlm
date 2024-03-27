@@ -12,7 +12,6 @@
     <script type="module">
       import { sampleRUM } from '/scripts/lib-franklin.js';
       import { getPathDetails } from '/scripts/scripts.js';
-
       const { lang = 'en' } = getPathDetails() || {};
       const errorPagePath = `/${lang}/404`;
       const errorHTML = `
@@ -29,7 +28,6 @@
                   </ul>
               </div>
             `;
-
       const fetchAndParseHTML = async (tagName) => {
         try {
           const response = await fetch(errorPagePath);
@@ -38,10 +36,7 @@
           const parser = new DOMParser();
           const doc = parser.parseFromString(text, 'text/html');
           const elements = doc.getElementsByTagName(tagName);
-          console.log(elements.outerHTML);
-
           const container = document.querySelector('.section > div > div:first-child');
-
           if (elements.length > 0) {
             container.innerHTML = elements[0].querySelector('div').outerHTML + container.innerHTML;
           } else {
@@ -57,8 +52,6 @@
           source: document.referrer,
           target: window.location.href,
         });
-
-        // Call the function to fetch and parse HTML after the page has loaded
         fetchAndParseHTML('main');
       });
     </script>
