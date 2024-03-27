@@ -1050,18 +1050,22 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
 }
 @media (min-width: 600px) {
   .docs.docs-landing main {
-    padding: 28px 68px 48px 80px;
-    margin: 0 4rem;
+    padding: 28px 46px 48px 46px;
   }
 }
 @media (min-width: 900px) {
   .docs.docs-landing main {
-    padding: 42px 0 48px 70px;
-    margin: 0 4rem;
+    grid-template-columns: 0 5fr 0;
+    padding: 42px 46 48px 46px;
   }
 }
 .docs.docs-solution-landing main {
   padding: 0 58px;
+}
+@media (min-width: 900px) {
+  .docs.docs-solution-landing main {
+    grid-template-columns: 0 4fr 1fr;
+  }
 }
 .docs.docs-solution-landing main .default-content-wrapper {
   margin: 0;
@@ -1117,8 +1121,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
     padding: 0;
   }
   .docs.docs-solution-landing main > div:first-child {
-    margin: 0 56px;
-    padding: 54px 47px 50px 60px;
+    padding: 54px 101px 50px 116px;
     border: none;
   }
 }

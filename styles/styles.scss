@@ -959,18 +959,21 @@ body[class^='browse-'] .browse-filters-full-container {
     width: auto;
 
     @include breakpoint(tablet) {
-      padding: 28px 68px 48px 80px;
-      margin: 0 4rem;
+      padding: 28px 46px 48px;
     }
 
     @include breakpoint(desktop) {
-      padding: 42px 0 48px 70px;
-      margin: 0 4rem;
+      grid-template-columns: 0 5fr 0;
+      padding: 42px 46 48px 46px;
     }
   }
 
   &.docs-solution-landing main {
     padding: 0 58px;
+
+    @include breakpoint(desktop) {
+      grid-template-columns: 0 4fr 1fr;
+    }
 
     .default-content-wrapper {
       margin: 0;
@@ -1037,8 +1040,7 @@ body[class^='browse-'] .browse-filters-full-container {
       padding: 0;
 
       & > div:first-child {
-        margin: 0 56px;
-        padding: 54px 47px 50px 60px;
+        padding: 54px 101px 50px 116px;
         border: none;
       }
     }
