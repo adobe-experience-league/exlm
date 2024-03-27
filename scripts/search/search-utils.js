@@ -1,5 +1,10 @@
 export const CUSTOM_CONTEXT_LIST = ['entitlements', 'role', 'interests', 'industryInterests'];
 
+export const COVEO_SEARCH_CUSTOM_EVENTS = {
+  PREPROCESS: 'PREPROCESS_COVEO_REQUEST',
+  PROCESS_SEARCH_RESPONSE: 'PROCESS_SEARCH_RESPONSE',
+};
+
 export const getUserData = (key) => {
   const data = JSON.parse(sessionStorage.getItem('profile')) || {};
   return Object.fromEntries(data[key]?.map((value, index) => [index.toString(), value]) || []);

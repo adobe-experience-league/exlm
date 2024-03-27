@@ -2,15 +2,20 @@ import { loadCSS } from '../lib-franklin.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-placeholder.css`); // load placeholder css dynamically
 
+const DEFAULT_SHIMMER_COUNT = 4;
+
 export default class BuildPlaceholder {
-  constructor() {
+  constructor(config = {}) {
+    const { count = DEFAULT_SHIMMER_COUNT, variant = '' } = config;
+    this.count = count;
+    this.variant = variant;
     this.shimmer = document.createElement('div');
-    this.shimmer.className = 'shimmer-placeholder';
+    this.shimmer.className = `shimmer-placeholder ${this.variant}`;
     this.initialise();
   }
 
   initialise() {
-    for (let i = 0; i < 4; i += 1) {
+    for (let i = 0; i < this.count; i += 1) {
       this.shimmer.innerHTML += `<div class="shimmer-placeholder-isloading">
           <div class="shimmer-placeholder-image"></div>
           <div class="shimmer-placeholder-content">
