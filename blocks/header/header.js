@@ -10,10 +10,7 @@ import {
 
 const languageModule = import('../../scripts/language.js');
 const authOperationsModule = import('../../scripts/auth/auth-operations.js');
-
-// Khoros Proxy URL (Determine the environment based on the host name)
-const environment = window.location.hostname === 'experienceleague.adobe.com' ? '' : '-dev';
-export const khorosProxyProfileAPI = `https://51837-exlmconverter${environment}.adobeioruntime.net/api/v1/web/main/khoros/plugins/custom/adobe/adobedx/profile-menu-list`;
+const { khorosProfileUrl, ppsOrigin, ims } = getConfig();
 
 let searchElementPromise = null;
 
@@ -123,7 +120,7 @@ const communityLocalesMap = new Map([
 async function fetchCommunityProfileData() {
   const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
   try {
-    const response = await fetch(`${khorosProxyProfileAPI}?lang=${locale}`, {
+    const response = await fetch(`${khorosProfileUrl}?lang=${locale}`, {
       method: 'GET',
       headers: {
         'x-ims-token': await window.adobeIMS?.getAccessToken().token,
@@ -542,7 +539,6 @@ const languageDecorator = async (languageBlock) => {
 };
 
 async function getPPSProfile(accessToken, accountId) {
-  const { ppsOrigin, ims } = getConfig();
   const res = await fetch(`${ppsOrigin}/api/profile`, {
     headers: {
       'X-Api-Key': ims.client_id,
