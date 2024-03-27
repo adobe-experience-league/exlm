@@ -500,6 +500,7 @@ export function getConfig() {
     prodAssetsCdnOrigin,
     ppsOrigin,
     launchScriptSrc,
+    khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
     privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
