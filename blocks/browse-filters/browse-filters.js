@@ -51,7 +51,7 @@ const isBrowseProdPage = theme === 'browse-product';
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
-const buildCardsShimmer = new BuildPlaceholder({ variant: 'browse-cards', count: getBrowseFiltersResultCount() });
+const buildCardsShimmer = new BuildPlaceholder(getBrowseFiltersResultCount());
 
 function enableTagsAsProxy(block) {
   tagsProxy = new Proxy(tags, {
@@ -859,7 +859,7 @@ function handleCoveoHeadlessSearch(
         () => {
           const newResultsPerPage = getBrowseFiltersResultCount();
           if (window.headlessResultsPerPage.state.numberOfResults !== newResultsPerPage) {
-            buildCardsShimmer.updateConfig({ count: newResultsPerPage });
+            buildCardsShimmer.updateCount(newResultsPerPage);
             window.headlessResultsPerPage.set(newResultsPerPage);
           }
         },
@@ -879,7 +879,7 @@ function handleCoveoHeadlessSearch(
       filterResultsEl.style.display = 'none';
       filtersPaginationEl.style.display = 'none';
       browseFiltersSection.insertBefore(
-        document.querySelector('.shimmer-placeholder.browse-cards'),
+        document.querySelector('.browse-filters-form .shimmer-placeholder'),
         browseFiltersSection.childNodes[document.querySelector('.browse-topics') ? 4 : 3],
       );
     }

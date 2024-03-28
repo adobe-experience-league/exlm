@@ -5,12 +5,10 @@ loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-placeholder.
 const DEFAULT_SHIMMER_COUNT = 4;
 
 export default class BuildPlaceholder {
-  constructor(config = {}) {
-    const { count = DEFAULT_SHIMMER_COUNT, variant = '' } = config;
+  constructor(count = DEFAULT_SHIMMER_COUNT) {
     this.count = count;
-    this.variant = variant;
     this.shimmer = document.createElement('div');
-    this.setVariant();
+    this.shimmer.className = 'shimmer-placeholder';
     this.initialise();
   }
 
@@ -30,18 +28,10 @@ export default class BuildPlaceholder {
     }
   }
 
-  setVariant() {
-    this.shimmer.className = `shimmer-placeholder ${this.variant}`;
-  }
-
-  updateConfig({ count = null, variant = null }) {
+  updateCount(count = null) {
     if (count !== null && !Number.isNaN(count) && count !== this.count) {
       this.count = count;
       this.initialise();
-    }
-    if (variant !== null && variant !== this.variant) {
-      this.variant = variant;
-      this.setVariant();
     }
   }
 

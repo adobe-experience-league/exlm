@@ -114,16 +114,16 @@
   background: var(--shimmer-image-slide-start);
   border-radius: 3px;
 }
-.shimmer-placeholder.browse-cards .shimmer-placeholder-isloading{
+.browse-filters-form .shimmer-placeholder .shimmer-placeholder-isloading{
   min-height: 330px;
 }
-.shimmer-placeholder.browse-cards .shimmer-placeholder-isloading .shimmer-placeholder-image {
+.browse-filters-form .shimmer-placeholder .shimmer-placeholder-isloading .shimmer-placeholder-image {
   min-height: 153px;
 }
-.shimmer-placeholder.browse-cards .shimmer-placeholder-isloading .shimmer-placeholder-main-text {
+.browse-filters-form .shimmer-placeholder .shimmer-placeholder-isloading .shimmer-placeholder-main-text {
   margin-bottom: 4px;
 }
-.shimmer-placeholder.browse-cards .shimmer-placeholder-isloading .shimmer-placeholder-btn {
+.browse-filters-form .shimmer-placeholder .shimmer-placeholder-isloading .shimmer-placeholder-btn {
   height: 22px;
 }
 @media only screen and (min-width: 600px) {
