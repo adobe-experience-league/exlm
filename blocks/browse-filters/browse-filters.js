@@ -28,6 +28,7 @@ import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.
 import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery } from './browse-topics.js';
 import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
+import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 
 const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
@@ -50,7 +51,7 @@ const isBrowseProdPage = theme === 'browse-product';
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
-const buildCardsShimmer = new BuildPlaceholder();
+const buildCardsShimmer = new BuildPlaceholder(getBrowseFiltersResultCount());
 
 function enableTagsAsProxy(block) {
   tagsProxy = new Proxy(tags, {
@@ -127,6 +128,7 @@ function updateClearFilterStatus(block) {
     dispatchCoveoQuery = true;
     clearFilterBtn.disabled = true;
     hideSectionsBelowFilter(block, true);
+    buildCardsShimmer.remove();
     browseFiltersContainer.classList.remove('browse-filters-full-container');
     selectionContainer.classList.remove('browse-filters-input-selected');
     hildeSectionsWithinFilter(browseFiltersSection, false);
@@ -826,7 +828,6 @@ function handleCoveoHeadlessSearch(
     clearSearchHandler,
   },
 ) {
-  buildCardsShimmer.remove();
   const filterResultsEl = createTag('div', { class: 'browse-filters-results' });
 
   const browseFiltersSection = block.querySelector('.browse-filters-form');
@@ -835,7 +836,7 @@ function handleCoveoHeadlessSearch(
   const clearIcon = filterInputSection.querySelector('.icon-clear');
   const searchInput = filterInputSection.querySelector('input');
   browseFiltersSection.appendChild(filterResultsEl);
-
+  constructFilterPagination(block);
   searchIcon.addEventListener('click', submitSearchHandler);
   clearIcon.addEventListener('click', () => {
     searchInput.value = '';
@@ -858,6 +859,7 @@ function handleCoveoHeadlessSearch(
         () => {
           const newResultsPerPage = getBrowseFiltersResultCount();
           if (window.headlessResultsPerPage.state.numberOfResults !== newResultsPerPage) {
+            buildCardsShimmer.updateCount(newResultsPerPage);
             window.headlessResultsPerPage.set(newResultsPerPage);
           }
         },
@@ -865,7 +867,29 @@ function handleCoveoHeadlessSearch(
       );
     });
   }
-  constructFilterPagination(block);
+  const filtersPaginationEl = browseFiltersSection.querySelector('.browse-filters-pagination');
+  document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
+    const { method = '' } = e.detail ?? {};
+    if (method === 'search') {
+      const clearFilterBtn = browseFiltersSection.querySelector('.browse-filters-clear');
+      if (clearFilterBtn?.disabled) {
+        return;
+      }
+      buildCardsShimmer.add(browseFiltersSection);
+      filterResultsEl.style.display = 'none';
+      filtersPaginationEl.style.display = 'none';
+      browseFiltersSection.insertBefore(
+        document.querySelector('.browse-filters-form .shimmer-placeholder'),
+        browseFiltersSection.childNodes[document.querySelector('.browse-topics') ? 4 : 3],
+      );
+    }
+  });
+  document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PROCESS_SEARCH_RESPONSE, () => {
+    filterResultsEl.style.display = '';
+    filtersPaginationEl.style.display = '';
+    buildCardsShimmer.remove();
+  });
+
   handleUriHash();
   renderPageNumbers();
 }
@@ -937,11 +961,6 @@ function generateAnalyticsFilters(block, totalCount) {
 async function handleSearchEngineSubscription(block) {
   const browseFilterForm = document.querySelector(CLASS_BROWSE_FILTER_FORM);
   const filterResultsEl = browseFilterForm?.querySelector('.browse-filters-results');
-  buildCardsShimmer.add(browseFilterForm);
-  browseFilterForm.insertBefore(
-    document.querySelector('.shimmer-placeholder'),
-    browseFilterForm.childNodes[document.querySelector('.browse-topics') ? 4 : 3],
-  );
   if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
     return;
   }
@@ -950,7 +969,6 @@ async function handleSearchEngineSubscription(block) {
   const { results, searchResponseId, response } = search;
   if (results.length > 0) {
     try {
-      buildCardsShimmer.remove();
       const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
       const renderCards =
         !filterResultsEl.dataset.searchresponseid ||
@@ -983,7 +1001,6 @@ async function handleSearchEngineSubscription(block) {
       console.log('*** failed to create card because of the error:', err);
     }
   } else {
-    buildCardsShimmer.remove();
     /* Analytics */
     if (
       !filterResultsEl.classList.contains('no-results') &&

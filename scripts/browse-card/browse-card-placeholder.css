@@ -114,6 +114,18 @@
   background: var(--shimmer-image-slide-start);
   border-radius: 3px;
 }
+.browse-filters-form .shimmer-placeholder .shimmer-placeholder-isloading{
+  min-height: 330px;
+}
+.browse-filters-form .shimmer-placeholder .shimmer-placeholder-isloading .shimmer-placeholder-image {
+  min-height: 153px;
+}
+.browse-filters-form .shimmer-placeholder .shimmer-placeholder-isloading .shimmer-placeholder-main-text {
+  margin-bottom: 4px;
+}
+.browse-filters-form .shimmer-placeholder .shimmer-placeholder-isloading .shimmer-placeholder-btn {
+  height: 22px;
+}
 @media only screen and (min-width: 600px) {
   .shimmer-placeholder{
     gap: 25px;
