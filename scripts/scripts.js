@@ -419,15 +419,23 @@ export function decorateInlineText(textNode) {
  */
 export function decoratePreviousImage(textNode) {
   // if previous element is image, and textNode contains { and }, decorate the image
-  const { previousSibling: picture, textContent } = textNode;
-  const isPrecededByPicture = picture?.tagName.toLowerCase() === 'picture';
-  if (isPrecededByPicture && textContent.startsWith('{') && textContent.includes('}')) {
-    const attrsStr = textContent.substring(1, textContent.indexOf('}'));
-    // remove the attributes from textNode
-    textNode.textContent = textContent.substring(textContent.indexOf('}') + 1);
-    const img = picture?.querySelector('img');
-    const attrsObj = parseInlineAttributes(attrsStr);
+  const { previousSibling, textContent } = textNode;
+  if (textContent.startsWith('{') && textContent.includes('}')) {
+    const isPrecededByPicture = previousSibling?.tagName.toLowerCase() === 'picture';
+    const isPrecededByImg = previousSibling?.tagName.toLowerCase() === 'img';
+    let picture;
+    let img;
+    if (isPrecededByPicture) {
+      picture = previousSibling;
+      img = picture.querySelector('img');
+    } else if (isPrecededByImg) {
+      img = previousSibling;
+    } else return; // only decorate if preceded by picture or img
 
+    const attrsStr = textContent.substring(1, textContent.indexOf('}'));
+    textNode.textContent = textContent.substring(textContent.indexOf('}') + 1);
+    if (img.src === 'about:error') return; // do not decorate broken images
+    const attrsObj = parseInlineAttributes(attrsStr);
     let newPicture = picture;
     if (attrsObj.width) {
       // author defined width
