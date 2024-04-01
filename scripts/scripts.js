@@ -17,6 +17,7 @@ import {
   loadScript,
   fetchPlaceholders,
   readBlockConfig,
+  createOptimizedPicture,
 } from './lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 
@@ -349,8 +350,35 @@ export function decorateAnchors(main) {
   });
 }
 
+/**
+ * creates an element from html string
+ * @param {string} html
+ * @returns {HTMLElement}
+ */
+export function htmlToElement(html) {
+  const template = document.createElement('template');
+  const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
+  template.innerHTML = trimmedHtml;
+  return template.content.firstElementChild;
+}
+
 const encodeHTML = (str) => str.replace(/[\u00A0-\u9999<>&]/g, (i) => `&#${i.charCodeAt(0)};`);
 
+/**
+ * Parse attribute strings like: {color="red" class="highlight"} to object {color: "red", class: "highlight"}
+ * @param {string} attrs
+ * @returns
+ */
+const parseInlineAttributes = (attrs) => {
+  const result = {};
+  attrs
+    .split(/\s+(?=(?:[^"]*"[^"]*")*[^"]*$)/g) // match spaces only if not within quotes
+    .forEach((attr) => {
+      const [key, value] = attr.split('=');
+      result[key] = encodeHTML(value.replace(/"/g, ''));
+    });
+  return result;
+};
 /**
  * converts text with attributes to <span> elements with given attributes.
  * eg: [text]{color="red" class="highlight"} => <span color="red" class="highlight">text</span>
@@ -362,12 +390,9 @@ export const getDecoratedInlineHtml = (inputStr) => {
   const regex = /\[([^[\]]*)\]\{(.*?)\}/g;
   return inputStr.replace(regex, (match, text, attrs) => {
     const encodedText = encodeHTML(text);
-    const newAttrs = attrs
-      .split(/\s+(?=(?:[^"]*"[^"]*")*[^"]*$)/g) // match spaces only if not within quotes
-      .map((attr) => {
-        const [key, value] = attr.split('=');
-        return `${key}="${encodeHTML(value.replace(/"/g, ''))}"`;
-      })
+    const attrsObj = parseInlineAttributes(attrs);
+    const newAttrs = Object.entries(attrsObj)
+      .map(([key, value]) => `${key}="${value}"`)
       .join(' ');
     return `<span ${newAttrs}>${encodedText}</span>`;
   });
@@ -375,20 +400,70 @@ export const getDecoratedInlineHtml = (inputStr) => {
 
 /**
  *
+ * @param {Node} textNode
+ */
+export function decorateInlineText(textNode) {
+  const { textContent } = textNode;
+  if (textContent.includes('[') && textContent.includes(']{')) {
+    const span = document.createElement('span');
+    span.innerHTML = getDecoratedInlineHtml(textContent);
+    window.requestAnimationFrame(() => {
+      textNode.replaceWith(...span.childNodes);
+    });
+  }
+}
+
+/**
+ * decorates the previous image element with attributes defined in the textNode
+ * @param {Node} textNode
+ */
+export function decoratePreviousImage(textNode) {
+  // if previous element is image, and textNode contains { and }, decorate the image
+  const { previousSibling: picture, textContent } = textNode;
+  const isPrecededByPicture = picture?.tagName.toLowerCase() === 'picture';
+  if (isPrecededByPicture && textContent.startsWith('{') && textContent.includes('}')) {
+    const attrsStr = textContent.substring(1, textContent.indexOf('}'));
+    // remove the attributes from textNode
+    textNode.textContent = textContent.substring(textContent.indexOf('}') + 1);
+    const img = picture?.querySelector('img');
+    const attrsObj = parseInlineAttributes(attrsStr);
+
+    let newPicture = picture;
+    if (attrsObj.width) {
+      // author defined width
+      const { width } = attrsObj;
+      const isNumberWithNoUnit = /^\d+$/.test(width);
+      if (isNumberWithNoUnit) {
+        newPicture = createOptimizedPicture(img.src, img.alt, false, [
+          { media: '(min-width: 400px)', width },
+          { width },
+        ]);
+      }
+      // set width, if digits only, add px, else set as is
+      newPicture.style.width = isNumberWithNoUnit ? `${width}px` : width;
+      picture.replaceWith(newPicture);
+    }
+    if (attrsObj.modal) {
+      // modal
+      newPicture.addEventListener('click', () => {
+        // eslint-disable-next-line import/no-cycle
+        const promises = [loadCSS(`${window.hlx.codeBasePath}/styles/image-modal.css`), import('./image-modal.js')];
+        Promise.all(promises).then(([, mod]) => mod.default(newPicture.querySelector('img')));
+      });
+    }
+    Object.entries(attrsObj).forEach(([key, value]) => newPicture.setAttribute(key, value));
+  }
+}
+
+/**
  * @param {HTMLElement} element
  */
 export function decorateInlineAttributes(element) {
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
   while (walker.nextNode()) {
     const { currentNode } = walker;
-    const { textContent } = currentNode;
-    if (textContent.includes('[') && textContent.includes(']{')) {
-      const span = document.createElement('span');
-      span.innerHTML = getDecoratedInlineHtml(textContent);
-      window.requestAnimationFrame(() => {
-        currentNode.replaceWith(...span.childNodes);
-      });
-    }
+    decorateInlineText(currentNode);
+    decoratePreviousImage(currentNode);
   }
 }
 
@@ -648,18 +723,6 @@ export function createTag(tag, attributes, html) {
     });
   }
   return el;
-}
-
-/**
- * creates an element from html string
- * @param {string} html
- * @returns {HTMLElement}
- */
-export function htmlToElement(html) {
-  const template = document.createElement('template');
-  const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
-  template.innerHTML = trimmedHtml;
-  return template.content.firstElementChild;
 }
 
 /**
