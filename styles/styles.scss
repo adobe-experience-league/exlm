@@ -660,6 +660,37 @@ img {
   height: auto;
 }
 
+picture {
+  &[width] {
+    display: inline-flex;
+  }
+
+  &[modal] {
+    cursor: zoom-in;
+  }
+
+  &[modal]:hover {
+    cursor: zoom-in;
+    opacity: 0.95;
+  }
+
+  &[align='left'] {
+    float: left;
+    vertical-align: baseline;
+  }
+
+  &[align='center'] {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  &[align='right'] {
+    float: right;
+    vertical-align: baseline;
+  }
+}
+
 .icon {
   display: inline-block;
   height: 24px;

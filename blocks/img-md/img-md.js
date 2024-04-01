@@ -1,3 +1,5 @@
+/* TODO: This is obselete and should be removed when all pages have been seeded and the old badge is no longer used */
+
 import { htmlToElement } from '../../scripts/scripts.js';
 
 const IMAGE_MODAL_CLASS = 'img-modal';

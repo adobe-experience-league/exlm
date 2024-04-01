@@ -775,6 +775,30 @@ img {
   height: auto;
 }
 
+picture[width] {
+  display: inline-flex;
+}
+picture[modal] {
+  cursor: zoom-in;
+}
+picture[modal]:hover {
+  cursor: zoom-in;
+  opacity: 0.95;
+}
+picture[align=left] {
+  float: left;
+  vertical-align: baseline;
+}
+picture[align=center] {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+picture[align=right] {
+  float: right;
+  vertical-align: baseline;
+}
+
 .icon {
   display: inline-block;
   height: 24px;
@@ -1050,7 +1074,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
 }
 @media (min-width: 600px) {
   .docs.docs-landing main {
-    padding: 28px 46px 48px 46px;
+    padding: 28px 46px 48px;
   }
 }
 @media (min-width: 900px) {
