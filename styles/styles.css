@@ -1008,6 +1008,8 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   padding: 30px 2px;
   box-sizing: border-box;
   width: 100%;
+  max-width: 100%;
+  overflow: hidden;
   display: block !important;
 }
 @media (min-width: 600px) {

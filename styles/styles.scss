@@ -912,6 +912,8 @@ body[class^='browse-'] .browse-filters-full-container {
       padding: 30px 2px;
       box-sizing: border-box;
       width: 100%;
+      max-width: 100%;
+      overflow: hidden;
       display: block !important; // ensure the section is always visible.
 
       @include breakpoint(tablet) {
