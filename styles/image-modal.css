@@ -30,6 +30,7 @@
     z-index: 14;
     display: flex;
     justify-content: center;
+    background: white;
 }
 
 .image-modal .image-modal-content * {
