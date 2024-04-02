@@ -21,19 +21,15 @@
     padding: 0 32px;
   }
 }
-.footer-container {
-  margin: 0 auto;
+.footer .language-selector-button {
+  padding: 0;
 }
-@media (min-width: 900px) {
-  .footer-container {
-    max-width: 1440px;
-  }
-}
+
 .footer-copyrights {
   color: var(--non-spectrum-charcoal-gray);
   font-size: 1rem;
   padding: 0.5rem 0;
-  line-height: 1.6875rem;
+  line-height: 1;
   margin: 24px 0 0;
 }
 @media (min-width: 900px) {
@@ -46,8 +42,15 @@
   font-size: 1rem;
   line-height: 1.6875rem;
   margin: 0;
-  padding: 0.5rem 0;
+  padding: 0;
 }
+
+.footer-social-icon-item-wrapper span,
+.footer-social-icon-item-wrapper a {
+  cursor: pointer;
+  color: var(--non-spectrum-graphite-gray);
+}
+
 .footer-item h2 {
   border-bottom: 1px solid var(--footer-border-color);
   color: var(--non-spectrum-charcoal-gray);
@@ -112,6 +115,16 @@
 .footer-item .footer-link-hidden {
   display: none;
 }
+
+.footer-container {
+  margin: 0 auto;
+}
+@media (min-width: 900px) {
+  .footer-container {
+    max-width: 1440px;
+  }
+}
+
 .footer-item-active {
   position: relative;
 }
@@ -136,9 +149,7 @@
 .footer-item-active ul {
   display: block;
 }
-.footer .language-selector-button {
-  padding: 0;
-}
+
 .footer-lang-social {
   display: flex;
   flex-direction: column;
@@ -180,9 +191,11 @@
     display: block;
   }
 }
+
 .footer-item-list li {
   padding-left: 32px;
 }
+
 @media (min-width: 900px) {
   .footer-menu {
     display: flex;
@@ -197,6 +210,7 @@
     margin: 0;
   }
 }
+
 .footer-item-list h2 {
   padding-left: 32px;
 }
@@ -217,14 +231,11 @@
     color: var(--non-spectrum-navy-blue);
   }
 }
-.footer .footer-social-icon-item-wrapper span,
-.footer .footer-social-icon-item-wrapper a {
-  cursor: pointer;
-  color: var(--non-spectrum-graphite-gray);
-}
+
 .footer-last-row .footer-copyrights-element a {
   display: inline-block;
 }
+
 .footer-lang-social .language-selector .language-selector-button {
   cursor: pointer;
   display: flex;
@@ -241,6 +252,7 @@
   pointer-events: none;
   touch-action: none;
 }
+
 .footer-lang-social .language-selector .dropdown-content {
   display: flex;
   flex-direction: column;
@@ -271,6 +283,7 @@
 .footer-lang-social .language-selector .dropdown-content a::after {
   display: none;
 }
+
 .footer-breadcrumb {
   display: none;
 }
@@ -314,6 +327,7 @@
     cursor: pointer;
   }
 }
+
 .footer-last-row {
   display: flex;
   justify-content: space-between;

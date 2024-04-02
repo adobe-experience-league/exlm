@@ -17,6 +17,9 @@ import {
   getParsedSolutionsQuery,
   getCoveoFacets,
   getObjectById,
+  toggleSearchSuggestionsVisibility,
+  showSearchSuggestionsOnInputClick,
+  handleCoverSearchSubmit,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -24,6 +27,8 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery } from './browse-topics.js';
 import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
+import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
+import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 
 const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
@@ -46,7 +51,7 @@ const isBrowseProdPage = theme === 'browse-product';
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
-const buildCardsShimmer = new BuildPlaceholder();
+const buildCardsShimmer = new BuildPlaceholder(getBrowseFiltersResultCount());
 
 function enableTagsAsProxy(block) {
   tagsProxy = new Proxy(tags, {
@@ -94,7 +99,7 @@ function hildeSectionsWithinFilter(block, show) {
 }
 
 function updateClearFilterStatus(block) {
-  const searchEl = block.querySelector('.filter-input-search > input[type="search"]');
+  const searchEl = block.querySelector('.filter-input-search > .search-input');
   const clearFilterBtn = block.querySelector('.browse-filters-clear');
   const selectedTopics = Array.from(block.querySelectorAll('.browse-topics-item-active')).reduce((acc, curr) => {
     const id = curr.dataset.topicname;
@@ -123,6 +128,7 @@ function updateClearFilterStatus(block) {
     dispatchCoveoQuery = true;
     clearFilterBtn.disabled = true;
     hideSectionsBelowFilter(block, true);
+    buildCardsShimmer.remove();
     browseFiltersContainer.classList.remove('browse-filters-full-container');
     selectionContainer.classList.remove('browse-filters-input-selected');
     hildeSectionsWithinFilter(browseFiltersSection, false);
@@ -373,16 +379,23 @@ function addLabel(block) {
 
 function constructKeywordSearchEl(block) {
   const searchEl = htmlToElement(`
-    <div class="filter-input filter-input-search">
-      <span class="icon icon-search"></span>
-      <input type="search" placeholder="${placeholders.filterKeywordSearch}">
+    <div class="browse-filters-search search-container">
+      <div class="filter-input filter-input-search">
+        <span class="icon icon-search"></span>
+        <input class="search-input" type="text" placeholder="${placeholders.filterKeywordSearch}">
+        <span title="Clear" class="icon icon-clear search-clear-icon"></span>
+      </div>
+      <div class="search-suggestions-popover">
+            <ul role="listbox">
+            </ul>
+          </div>
     </div>
   `);
   appendToFormInputContainer(block, searchEl);
 }
 
 function onInputSearch(block) {
-  const searchEl = block.querySelector('.filter-input-search input[type="search"]');
+  const searchEl = block.querySelector('.filter-input-search .search-input');
   searchEl.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -520,6 +533,7 @@ function handleUriHash() {
   clearAllSelectedTag(browseFiltersSection);
   let containsSearchQuery = false;
   const filtersInfo = decodedHash.split('&').filter((s) => !!s);
+  let pageNumber = 1;
 
   filtersInfo.forEach((filterInfo) => {
     const [facetKeys, facetValueInfo] = filterInfo.split('=');
@@ -564,6 +578,8 @@ function handleUriHash() {
       const [searchValue] = facetValues;
       if (searchValue) {
         searchInput.value = searchValue.trim();
+        const clearIcon = filterInputSection.querySelector('.search-clear-icon');
+        clearIcon.classList.add('search-icon-show');
       } else {
         searchInput.value = '';
       }
@@ -579,13 +595,26 @@ function handleUriHash() {
           button.classList.remove('browse-topics-item-active');
         }
       });
+    } else if (keyName === 'firstResult' && window.headlessPager) {
+      const firstResult = parseInt(facetValueInfo, 10);
+      const resultsPerPage = getBrowseFiltersResultCount();
+      const targetPageNumber = Math.floor(firstResult / resultsPerPage) + 1;
+      pageNumber = window.headlessPager.state.maxPage
+        ? Math.min(targetPageNumber, window.headlessPager.state.maxPage)
+        : targetPageNumber;
+
+      if (pageNumber > 1) {
+        window.headlessPager.selectPage(pageNumber);
+      }
     }
   });
   if (!containsSearchQuery) {
     searchInput.value = '';
   }
   if (filtersInfo.length && window.headlessBaseSolutionQuery) {
-    handleTopicSelection();
+    const resetPageIndex = pageNumber === 1;
+    const fireSelection = true;
+    handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex);
   }
   updateClearFilterStatus(browseFiltersSection);
   window.headlessSearchEngine.executeFirstSearch();
@@ -716,21 +745,113 @@ function renderSearchQuerySummary() {
   queryEl.textContent = assetString;
 }
 
+function handleSearchBoxSubscription() {
+  const browseFilterSearchSection = document.querySelector('.browse-filters-search');
+  const searchInputEl = browseFilterSearchSection?.querySelector('input.search-input');
+  if (!searchInputEl || !window.headlessSearchBox?.state || window.headlessSearchBox.state.isLoading) {
+    return;
+  }
+
+  const { suggestions = [], value: searchInputStateValue } = window.headlessSearchBox.state;
+  if (searchInputStateValue !== searchInputEl.value) {
+    return;
+  }
+  const searchSuggestionsPopoverEl = browseFilterSearchSection.querySelector('.search-suggestions-popover');
+
+  const missingSuggestions =
+    searchInputEl.value === '' ||
+    suggestions.length === 0 ||
+    searchSuggestionsPopoverEl.classList.contains('search-suggestions-popover-hide');
+  const hideSuggestions = missingSuggestions || !searchInputEl.classList.contains('suggestion-interactive');
+
+  toggleSearchSuggestionsVisibility(!hideSuggestions);
+  if (missingSuggestions) {
+    searchInputEl.removeEventListener('click', showSearchSuggestionsOnInputClick);
+  } else {
+    searchInputEl.addEventListener('click', showSearchSuggestionsOnInputClick);
+  }
+  const suggestionsElement = htmlToElement(`<ul>
+    ${suggestions
+      .map((suggestion) => {
+        const { rawValue } = suggestion;
+        return `<li role="option" tabindex="0" class="search-picker-label">${rawValue}</li>`;
+      })
+      .join('')}
+  </ul>`);
+
+  const selectSearchSuggestion = (searchText) => {
+    searchInputEl.value = searchText;
+    handleCoverSearchSubmit(searchText);
+    setTimeout(() => {
+      // setimeout of zero to avoid reopening of popover.
+      toggleSearchSuggestionsVisibility(false);
+    }, 0);
+  };
+
+  suggestionsElement.addEventListener('click', (e) => {
+    const searchText = e.target?.textContent ?? '';
+    searchInputEl.classList.remove('suggestion-interactive');
+    selectSearchSuggestion(searchText);
+  });
+
+  suggestionsElement.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const searchText = e.target?.textContent ?? '';
+      searchInputEl.classList.remove('suggestion-interactive');
+      selectSearchSuggestion(searchText);
+    } else {
+      const isArrowUp = e.key === 'ArrowUp';
+      const isArrowDown = e.key === 'ArrowDown';
+      if (!isArrowDown && !isArrowUp) {
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      const targetElement = isArrowDown
+        ? e.target.nextElementSibling || e.target.parentElement.firstElementChild
+        : e.target.previousElementSibling || e.target.parentElement.lastElementChild;
+      if (targetElement) {
+        targetElement.focus();
+        searchInputEl.value = targetElement.textContent;
+      }
+    }
+  });
+
+  const wrapper = searchSuggestionsPopoverEl.firstElementChild;
+  wrapper.replaceWith(suggestionsElement);
+}
+
 function handleCoveoHeadlessSearch(
   block,
-  { submitSearchHandler, searchInputKeyupHandler, searchInputKeydownHandler, searchInputEventHandler },
+  {
+    submitSearchHandler,
+    searchInputKeyupHandler,
+    searchInputKeydownHandler,
+    searchInputEventHandler,
+    clearSearchHandler,
+  },
 ) {
-  buildCardsShimmer.remove();
   const filterResultsEl = createTag('div', { class: 'browse-filters-results' });
 
   const browseFiltersSection = block.querySelector('.browse-filters-form');
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchIcon = filterInputSection.querySelector('.icon-search');
+  const clearIcon = filterInputSection.querySelector('.icon-clear');
   const searchInput = filterInputSection.querySelector('input');
   browseFiltersSection.appendChild(filterResultsEl);
-
+  constructFilterPagination(block);
   searchIcon.addEventListener('click', submitSearchHandler);
-  searchInput.addEventListener('keyup', searchInputKeyupHandler);
+  clearIcon.addEventListener('click', () => {
+    searchInput.value = '';
+    clearIcon.classList.remove('search-icon-show');
+    clearSearchHandler();
+  });
+  searchInput.addEventListener('keyup', (e) => {
+    const containsText = e.target.value !== '';
+    const classOp = containsText ? 'add' : 'remove';
+    clearIcon.classList[classOp]('search-icon-show');
+    searchInputKeyupHandler(e);
+  });
   searchInput.addEventListener('keydown', searchInputKeydownHandler);
   searchInput.addEventListener('input', searchInputEventHandler);
   window.addEventListener('hashchange', handleUriHash);
@@ -741,6 +862,7 @@ function handleCoveoHeadlessSearch(
         () => {
           const newResultsPerPage = getBrowseFiltersResultCount();
           if (window.headlessResultsPerPage.state.numberOfResults !== newResultsPerPage) {
+            buildCardsShimmer.updateCount(newResultsPerPage);
             window.headlessResultsPerPage.set(newResultsPerPage);
           }
         },
@@ -748,32 +870,130 @@ function handleCoveoHeadlessSearch(
       );
     });
   }
-  constructFilterPagination(block);
+  const filtersPaginationEl = browseFiltersSection.querySelector('.browse-filters-pagination');
+  document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
+    const { method = '' } = e.detail ?? {};
+    if (method === 'search') {
+      const clearFilterBtn = browseFiltersSection.querySelector('.browse-filters-clear');
+      if (clearFilterBtn?.disabled) {
+        return;
+      }
+      buildCardsShimmer.add(browseFiltersSection);
+      filterResultsEl.style.display = 'none';
+      filtersPaginationEl.style.display = 'none';
+      browseFiltersSection.insertBefore(
+        document.querySelector('.browse-filters-form .shimmer-placeholder'),
+        browseFiltersSection.childNodes[document.querySelector('.browse-topics') ? 4 : 3],
+      );
+    }
+  });
+  document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PROCESS_SEARCH_RESPONSE, () => {
+    filterResultsEl.style.display = '';
+    filtersPaginationEl.style.display = '';
+    buildCardsShimmer.remove();
+  });
+
   handleUriHash();
   renderPageNumbers();
 }
 
-async function handleSearchEngineSubscription() {
+/**
+ * Retrieves selected dropdown labels based on the field type.
+ * @param {HTMLElement} block - The parent element containing the dropdowns.
+ * @param {string} field - The type of field to retrieve labels for.
+ * @returns {string} - The selected labels separated by '|', or an empty string if no selection.
+ */
+function getSelectedDropdownLabels(block, field) {
+  const fieldSelectors = {
+    el_role: '.filter-dropdown[data-filter-type="el_role"] .custom-checkbox input[type="checkbox"]:checked',
+    el_contenttype:
+      '.filter-dropdown[data-filter-type="el_contenttype"] .custom-checkbox input[type="checkbox"]:checked',
+    el_level: '.filter-dropdown[data-filter-type="el_level"] .custom-checkbox input[type="checkbox"]:checked',
+    search: '.filter-input-search .search-input',
+    topics: '.browse-topics .browse-topics-item-active',
+  };
+
+  // Select appropriate elements based on the field type
+  const fieldSelector = fieldSelectors[field];
+
+  if (fieldSelector) {
+    if (field === 'search') {
+      const element = block.querySelector(fieldSelector);
+      return element.value;
+    }
+    const elements = block.querySelectorAll(fieldSelector);
+    return [...elements].map((el) => el.dataset.label).join('|');
+  }
+  return null;
+}
+
+/**
+ * Generates analytics filters based on selected dropdown values.
+ * @param {HTMLElement} block - The parent element containing the dropdowns.
+ * @param {String} totalCount - The total count.
+ * @returns {Object|null} - The analytics filters object or null if no non-empty values.
+ */
+function generateAnalyticsFilters(block, totalCount) {
+  const filterFields = {
+    el_role: 'Role',
+    el_contenttype: 'ContentType',
+    el_level: 'ExperienceLevel',
+    search: 'KeywordSearch',
+    topics: 'BrowseByTopic',
+  };
+  const filterKeys = Object.keys(filterFields);
+  const filters = {};
+  let hasNonEmptyValue = false;
+  for (let i = 0; i < filterKeys.length; i += 1) {
+    const field = filterKeys[i];
+    const selectedValue = getSelectedDropdownLabels(block, field);
+    if (selectedValue !== '') {
+      filters[filterFields[field]] = selectedValue;
+      hasNonEmptyValue = true;
+    }
+  }
+
+  if (hasNonEmptyValue) {
+    filters.BrowseResults = totalCount;
+    return filters;
+  }
+
+  return null;
+}
+
+async function handleSearchEngineSubscription(block) {
   const browseFilterForm = document.querySelector(CLASS_BROWSE_FILTER_FORM);
   const filterResultsEl = browseFilterForm?.querySelector('.browse-filters-results');
-  buildCardsShimmer.add(browseFilterForm);
-  browseFilterForm.insertBefore(
-    document.querySelector('.shimmer-placeholder'),
-    browseFilterForm.childNodes[document.querySelector('.browse-topics') ? 4 : 3],
-  );
   if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
     return;
   }
   // eslint-disable-next-line
   const search = window.headlessSearchEngine.state.search;
-  const { results } = search;
+  const { results, searchResponseId, response } = search;
   if (results.length > 0) {
     try {
-      buildCardsShimmer.remove();
       const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
+      const renderCards =
+        !filterResultsEl.dataset.searchresponseid ||
+        (filterResultsEl.dataset.searchresponseid && filterResultsEl.dataset.searchresponseid !== searchResponseId) ||
+        !filterResultsEl.querySelector('.browse-filter-card-item');
+      filterResultsEl.dataset.searchresponseid = searchResponseId;
+      if (!renderCards) {
+        return;
+      }
+
+      /* Analytics */
+      if (!filterResultsEl.classList.contains('browse-hide-section')) {
+        const analyticsFilters = generateAnalyticsFilters(block, response.totalCount);
+        if (analyticsFilters) {
+          assetInteractionModel(null, 'Browse Filters', analyticsFilters);
+        }
+      }
+
       filterResultsEl.innerHTML = '';
       cardsData.forEach((cardData) => {
         const cardDiv = document.createElement('div');
+        cardDiv.classList.add('browse-filter-card-item');
         buildCard(filterResultsEl, cardDiv, cardData);
         filterResultsEl.appendChild(cardDiv);
       });
@@ -784,7 +1004,16 @@ async function handleSearchEngineSubscription() {
       console.log('*** failed to create card because of the error:', err);
     }
   } else {
-    buildCardsShimmer.remove();
+    /* Analytics */
+    if (
+      !filterResultsEl.classList.contains('no-results') &&
+      !filterResultsEl.classList.contains('browse-hide-section')
+    ) {
+      const analyticsFilters = generateAnalyticsFilters(block, response.totalCount);
+      if (analyticsFilters) {
+        assetInteractionModel(null, 'Browse Filters', analyticsFilters);
+      }
+    }
     const communityOptionIsSelected = browseFilterForm.querySelector(`input[value="Community"]`)?.checked === true;
     let noResultsText = placeholders.noResultsTextBrowse || 'No Results';
     if (
@@ -823,7 +1052,11 @@ function renderSortContainer(block) {
         document.addEventListener(
           'click',
           (event) => {
-            if (!event.target || !dropDownBtn.nextSibling.contains(event.target)) {
+            let hideDropdown = !event.target || !dropDownBtn.nextSibling.contains(event.target);
+            if (event.target === dropDownBtn && dropDownBtn.classList.contains('active')) {
+              hideDropdown = false;
+            }
+            if (hideDropdown) {
               dropDownBtn.nextSibling.classList.remove('show');
             }
           },
@@ -848,8 +1081,9 @@ function decorateBrowseTopics(block) {
   const allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
   const supportedProducts = [];
   if (allSolutionsTags.length) {
-    const { query: additionalQuery, products } = getParsedSolutionsQuery(allSolutionsTags);
+    const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allSolutionsTags);
     products.forEach((p) => supportedProducts.push(p));
+    window.headlessSolutionProductKey = productKey;
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
   }
 
@@ -876,6 +1110,7 @@ function decorateBrowseTopics(block) {
         const topicName = parts[parts.length - 1];
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicsButtonTitle;
+        topicsButtonDiv.dataset.label = topicName;
         topicsButtonDiv.innerHTML = topicName;
         contentDiv.appendChild(topicsButtonDiv);
       });
@@ -932,10 +1167,11 @@ export default async function decorate(block) {
   appendToForm(block, renderFilterResultsHeader());
   decorateBrowseTopics(block);
   initiateCoveoHeadlessSearch({
-    handleSearchEngineSubscription,
+    handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
     renderPageNumbers,
     numberOfResults: getBrowseFiltersResultCount(),
     renderSearchQuerySummary,
+    handleSearchBoxSubscription,
   })
     .then(
       (data) => {

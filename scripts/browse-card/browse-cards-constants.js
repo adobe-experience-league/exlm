@@ -55,6 +55,13 @@ export const COVEO_SORT_OPTIONS = Object.freeze({
   MOST_POPULAR: '@el_view_count descending',
 });
 
+export const COVEO_DATE_OPTIONS = Object.freeze({
+  WITHIN_ONE_MONTH: 'within_one_month',
+  WITHIN_SIX_MONTHS: 'within_six_months',
+  WITHIN_ONE_YEAR: 'within_one_year',
+  MORE_THAN_ONE_YEAR_AGO: 'more_than_one_year_ago',
+});
+
 export const ROLE_OPTIONS = Object.freeze({
   ADMIN: 'Admin',
   DEVELOPER: 'Developer',

@@ -1,4 +1,4 @@
-import { COVEO_TOKEN, JWT, ProfileAttributes } from '../session-keys.js';
+import { COVEO_TOKEN, JWT, ProfileAttributes, Profile } from '../session-keys.js';
 
 export function signIn() {
   sessionStorage.removeItem(COVEO_TOKEN);
@@ -10,4 +10,5 @@ export function signOut() {
   sessionStorage.removeItem(COVEO_TOKEN);
   window.adobeIMS?.signOut();
   sessionStorage.removeItem(ProfileAttributes);
+  sessionStorage.removeItem(Profile);
 }

@@ -1,11 +1,11 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 
-export const exlmCDNUrl = 'https://cdn.experienceleague.adobe.com';
+const { prodAssetsCdnOrigin } = getConfig();
 
 /**
  * Retrieves the content of metadata tags.
@@ -21,7 +21,7 @@ export function getMetadata(name, doc = document) {
 function createThumbnailURL(doc, contentType) {
   if (contentType === 'Course') {
     const courseThumbnail = getMetadata('course-thumbnail', doc);
-    return courseThumbnail ? `${exlmCDNUrl}/thumb/${courseThumbnail.split('thumb/')[1]}` : '';
+    return courseThumbnail ? `${prodAssetsCdnOrigin}/thumb/${courseThumbnail.split('thumb/')[1]}` : '';
   }
 
   if (contentType === 'Tutorial') {

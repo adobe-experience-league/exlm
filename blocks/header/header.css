@@ -793,56 +793,6 @@ header {
   color: var(--spectrum-gray-700);
   font-weight: var(--font-weight-400);
 }
-.header .search-picker-popover,
-.header .search-suggestions-popover {
-  position: absolute;
-  z-index: 1;
-  right: 0;
-  top: 50px;
-  background-color: var(--background-color);
-  box-shadow: 0 8px 8px rgba(10, 10, 10, 0.1);
-  border: 1px solid var(--spectrum-gray-400);
-  padding: 8px 0;
-  border-radius: 6px;
-  visibility: hidden;
-  opacity: 0;
-  transition: transform 130ms ease-in-out, opacity 130ms ease-in-out, visibility 0ms linear 130ms;
-  pointer-events: none;
-  touch-action: none;
-}
-.header .search-picker-popover.search-picker-popover-visible, .header .search-picker-popover.search-suggestions-popover-visible,
-.header .search-suggestions-popover.search-picker-popover-visible,
-.header .search-suggestions-popover.search-suggestions-popover-visible {
-  visibility: visible;
-  opacity: 1;
-  pointer-events: auto;
-  touch-action: auto;
-}
-.header .search-picker-popover ul {
-  margin: 0;
-  padding: 0;
-}
-.header .search-suggestions-popover {
-  left: 0;
-  top: 32px;
-}
-.header .search-suggestions-popover ul {
-  margin: 0;
-  list-style: none;
-}
-.header .search-suggestions-popover li.search-picker-label {
-  border-top: 1px solid var(--non-spectrum-bg);
-  padding: 3px 12px;
-  font-size: var(--spectrum-font-size-100);
-  line-height: 18px;
-  color: var(--non-spectrum-charcoal-gray);
-}
-.header .search-suggestions-popover li.search-picker-label:first-child {
-  border-top: none;
-}
-.header .search-suggestions-popover li.search-picker-label .search-highlight-text {
-  color: var(--text-color);
-}
 .header .adobe-logo {
   grid-area: adobe-logo;
   display: var(--adobe-logo-display);
@@ -943,6 +893,12 @@ header {
 .header .product-toggle[aria-expanded=true] {
   background: var(--spectrum-gray-100);
 }
+.header img.profile-picture {
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
 .header .profile-menu,
 .header .product-dropdown,
 .header .product-dropdown a span {
@@ -1015,36 +971,6 @@ header {
   height: 18px;
   vertical-align: middle;
   width: 18px;
-}
-.header .search-picker-popover .search-picker-label,
-.header .search-suggestions-popover .search-picker-label {
-  margin: 0;
-  padding: 7px 12px 7px 32px;
-  position: relative;
-  color: var(--spectrum-gray-800);
-  font-size: var(--spectrum-font-size-100);
-  line-height: var(--exlm-line-height-h6);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  min-width: auto;
-}
-.header .search-picker-popover .search-picker-label:hover,
-.header .search-suggestions-popover .search-picker-label:hover {
-  background: rgba(0, 0, 0, 0.04);
-  cursor: pointer;
-}
-.header .search-picker-popover .search-picker-label .icon,
-.header .search-suggestions-popover .search-picker-label .icon {
-  position: absolute;
-  height: 28px;
-  width: 28px;
-  left: 8px;
-  top: 4px;
-}
-.header .search-picker-popover .search-picker-label .icon path,
-.header .search-suggestions-popover .search-picker-label .icon path {
-  fill: var(--non-spectrum-azure-blue);
 }
 
 @media (min-width: 900px) {

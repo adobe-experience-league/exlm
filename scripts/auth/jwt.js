@@ -1,8 +1,11 @@
 import { JWT, COVEO_TOKEN } from '../session-keys.js';
 import { signOut } from './auth-operations.js';
-import { JWTTokenUrl } from '../urls.js';
+// eslint-disable-next-line import/no-cycle
 import csrf from './csrf.js';
 import fetchData from '../request.js';
+import { getConfig } from '../scripts.js';
+
+const { JWTTokenUrl } = getConfig();
 
 let JWTToken;
 
