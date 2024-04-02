@@ -425,6 +425,7 @@ body {
   color: var(--text-color);
   background-color: var(--background-color);
   display: none;
+  overflow-wrap: break-word;
 }
 
 body[class^='browse-'] {
@@ -913,7 +914,7 @@ body[class^='browse-'] .browse-filters-full-container {
       box-sizing: border-box;
       width: 100%;
       max-width: 100%;
-      overflow: hidden;
+      min-width: 0; // prevent overflow
       display: block !important; // ensure the section is always visible.
 
       @include breakpoint(tablet) {
