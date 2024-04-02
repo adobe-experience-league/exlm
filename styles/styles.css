@@ -1033,7 +1033,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
 }
 @media (min-width: 600px) {
   .docs main > div.mini-toc-container {
-    padding: 32px 10px 10px 0;
+    padding: 32px 10px 10px 10px;
   }
 }
 @media (min-width: 900px) {

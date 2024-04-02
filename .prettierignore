@@ -1,5 +1,6 @@
 prism.js
 blocks/**/**.css
+!blocks/mini-toc/**
 styles/**/**.css
 scripts/prism-grammars/**
 scripts/**/**.css
