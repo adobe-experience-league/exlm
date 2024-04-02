@@ -29,7 +29,7 @@
   color: var(--non-spectrum-charcoal-gray);
   font-size: 1rem;
   padding: 0.5rem 0;
-  line-height: 1.6875rem;
+  line-height: 1;
   margin: 24px 0 0;
 }
 @media (min-width: 900px) {
@@ -42,7 +42,7 @@
   font-size: 1rem;
   line-height: 1.6875rem;
   margin: 0;
-  padding: 0.5rem 0;
+  padding: 0;
 }
 
 .footer-social-icon-item-wrapper span,

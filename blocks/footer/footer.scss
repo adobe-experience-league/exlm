@@ -30,7 +30,7 @@
   color: var(--non-spectrum-charcoal-gray);
   font-size: 1rem; // needs to be this large for accessiabity
   padding: 0.5rem 0;
-  line-height: 1.6875rem;
+  line-height: 1;
   margin: 24px 0 0;
 
   @include breakpoint(desktop) {
@@ -42,7 +42,7 @@
     font-size: 1rem; // needs to be this large for accessiabity
     line-height: 1.6875rem;
     margin: 0;
-    padding: 0.5rem 0;
+    padding: 0;
   }
 }
 
