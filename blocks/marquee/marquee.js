@@ -38,7 +38,8 @@ export default async function decorate(block) {
   const subjectPicture = img.querySelector('picture');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
-  const signInText = confSignInText?.textContent.trim();
+  const signInText = confSignInText?.textContent?.trim();
+  const eyebrowText = eyebrow?.textContent?.trim();
 
   // build sign in button if not in yet and button text is set
   const secondCta = signInText && getSignInButton(signInText);
@@ -47,11 +48,7 @@ export default async function decorate(block) {
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-foreground'>
       <div class='marquee-text'>
-        ${
-          eyebrow.textContent.trim() !== ''
-            ? `<div class='marquee-eyebrow'>${eyebrow.textContent.trim().toUpperCase()}</div>`
-            : ``
-        }
+        ${eyebrowText !== '' ? `<div class='marquee-eyebrow'>${eyebrowText?.toUpperCase()}</div>` : ``}
         <div class='marquee-title'>${title.innerHTML}</div>
         <div class='marquee-long-description'>${longDescr.innerHTML}</div>
         <div class='marquee-cta'>${decorateButtons(firstCta, secondCta)}</div>
