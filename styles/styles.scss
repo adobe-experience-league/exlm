@@ -425,6 +425,7 @@ body {
   color: var(--text-color);
   background-color: var(--background-color);
   display: none;
+  overflow-wrap: break-word;
 }
 
 body[class^='browse-'] {
@@ -439,15 +440,6 @@ body.appear {
 header {
   height: var(--nav-height);
   border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  word-break: break-word;
 }
 
 dl,
@@ -922,7 +914,7 @@ body[class^='browse-'] .browse-filters-full-container {
       box-sizing: border-box;
       width: 100%;
       max-width: 100%;
-      overflow: hidden;
+      min-width: 0; // prevent overflow
       display: block !important; // ensure the section is always visible.
 
       @include breakpoint(tablet) {
