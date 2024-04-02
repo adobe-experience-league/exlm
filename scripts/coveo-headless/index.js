@@ -210,13 +210,18 @@ export default async function initiateCoveoHeadlessSearch({
             return;
           }
           headlessSearchBox.updateText(searchText);
+          e.target.classList.add('suggestion-interactive');
         };
         const searchInputKeydownHandler = (e) => {
           if (e.key === 'Enter') {
             submitSearchHandler();
-            const searchSuggestionsPopoverEl = document.querySelector(
-              '.browse-filters-search .search-suggestions-popover',
-            );
+            const searchBlock = document.querySelector('.browse-filters-search');
+            const searchSuggestionsPopoverEl = searchBlock?.querySelector('.search-suggestions-popover');
+            const searchInputEl = searchBlock?.querySelector('.suggestion-interactive');
+            if (searchInputEl) {
+              searchInputEl.classList.remove('suggestion-interactive');
+            }
+
             if (searchSuggestionsPopoverEl) {
               searchSuggestionsPopoverEl.classList.remove('search-suggestions-popover-visible');
               searchSuggestionsPopoverEl.classList.add('search-suggestions-popover-hide');
