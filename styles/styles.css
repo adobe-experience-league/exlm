@@ -550,6 +550,15 @@ header {
   border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  word-break: break-word;
+}
+
 dl,
 pre {
   margin-top: 1em;
@@ -1033,7 +1042,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
 }
 @media (min-width: 600px) {
   .docs main > div.mini-toc-container {
-    padding: 32px 10px 10px 10px;
+    padding: 32px 10px 10px;
   }
 }
 @media (min-width: 900px) {

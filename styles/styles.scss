@@ -441,6 +441,15 @@ header {
   border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  word-break: break-word;
+}
+
 dl,
 pre {
   margin-top: 1em;
