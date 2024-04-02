@@ -275,6 +275,7 @@ export function hideSearchSuggestions(e) {
     hideSuggestions = e.target && !searchInputEl.contains(e.target) && !searchSuggestionsPopoverEl.contains(e.target);
   }
   if (hideSuggestions) {
+    searchInputEl.classList.remove('suggestion-interactive');
     // eslint-disable-next-line no-use-before-define
     toggleSearchSuggestionsVisibility(false);
   }
@@ -297,12 +298,17 @@ export function toggleSearchSuggestionsVisibility(show) {
 }
 
 export function showSearchSuggestionsOnInputClick() {
-  const searchSuggestionsPopoverEl = document.querySelector('.browse-filters-search .search-suggestions-popover');
+  const searchBlock = document.querySelector('.browse-filters-search');
+  const searchSuggestionsPopoverEl = searchBlock?.querySelector('.search-suggestions-popover');
   if (
     !searchSuggestionsPopoverEl ||
     searchSuggestionsPopoverEl.classList.contains('search-suggestions-popover-visible')
   ) {
     return;
+  }
+  const searchInputEl = searchBlock?.querySelector('.search-input');
+  if (searchInputEl) {
+    searchInputEl.classList.add('suggestion-interactive');
   }
   toggleSearchSuggestionsVisibility(true);
 }

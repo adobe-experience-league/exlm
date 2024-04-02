@@ -758,13 +758,14 @@ function handleSearchBoxSubscription() {
   }
   const searchSuggestionsPopoverEl = browseFilterSearchSection.querySelector('.search-suggestions-popover');
 
-  const hideSuggestions =
+  const missingSuggestions =
     searchInputEl.value === '' ||
     suggestions.length === 0 ||
     searchSuggestionsPopoverEl.classList.contains('search-suggestions-popover-hide');
+  const hideSuggestions = missingSuggestions || !searchInputEl.classList.contains('suggestion-interactive');
 
   toggleSearchSuggestionsVisibility(!hideSuggestions);
-  if (hideSuggestions) {
+  if (missingSuggestions) {
     searchInputEl.removeEventListener('click', showSearchSuggestionsOnInputClick);
   } else {
     searchInputEl.addEventListener('click', showSearchSuggestionsOnInputClick);
@@ -789,12 +790,14 @@ function handleSearchBoxSubscription() {
 
   suggestionsElement.addEventListener('click', (e) => {
     const searchText = e.target?.textContent ?? '';
+    searchInputEl.classList.remove('suggestion-interactive');
     selectSearchSuggestion(searchText);
   });
 
   suggestionsElement.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       const searchText = e.target?.textContent ?? '';
+      searchInputEl.classList.remove('suggestion-interactive');
       selectSearchSuggestion(searchText);
     } else {
       const isArrowUp = e.key === 'ArrowUp';
@@ -1049,7 +1052,11 @@ function renderSortContainer(block) {
         document.addEventListener(
           'click',
           (event) => {
-            if (!event.target || !dropDownBtn.nextSibling.contains(event.target)) {
+            let hideDropdown = !event.target || !dropDownBtn.nextSibling.contains(event.target);
+            if (event.target === dropDownBtn && dropDownBtn.classList.contains('active')) {
+              hideDropdown = false;
+            }
+            if (hideDropdown) {
               dropDownBtn.nextSibling.classList.remove('show');
             }
           },
