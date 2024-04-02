@@ -941,7 +941,7 @@ body[class^='browse-'] .browse-filters-full-container {
 
       @include breakpoint(tablet) {
         &.mini-toc-container {
-          padding: 32px 10px 10px 0;
+          padding: 32px 10px 10px;
         }
       }
 
