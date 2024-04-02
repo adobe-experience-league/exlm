@@ -4,15 +4,15 @@ Experience League site implementation on https://aem.live
 
 ## Environments
 
-- Preview: https://main--exlm--adobe-experience-league.hlx.page/
-- Live: https://main--exlm--adobe-experience-league.hlx.live/
+- Preview: https://main--exlm-stage--adobe-experience-league.hlx.page/
+- Live: https://main--exlm-stage--adobe-experience-league.hlx.live/
 
 ## Getting started
 
 1. Clone or fork this repo (see note below on forking)
 2. Create your brannch
 3. Install the [AEM CLI](https://github.com/adobe/aem-cli): `npm install -g @adobe/aem-cli`
-4. Install deopendecies `npm i`
+4. Install dependencies `npm i`
 5. Start Local Proxy: `aem up` (opens your browser at `http://localhost:3000`)
 6. Start coding!
 
