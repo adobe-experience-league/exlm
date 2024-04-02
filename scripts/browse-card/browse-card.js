@@ -404,6 +404,13 @@ export async function buildCard(container, element, model) {
   if (model.viewLink) {
     const cardContainer = document.createElement('a');
     cardContainer.setAttribute('href', model.viewLink);
+    const browseCardOptions = card.querySelector('.browse-card-options');
+    cardContainer.addEventListener('click', (e) => {
+      const preventLinkRedirection = !!(e.target && browseCardOptions.contains(e.target));
+      if (preventLinkRedirection) {
+        e.preventDefault();
+      }
+    });
     if (
       [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
         contentType.toLowerCase(),

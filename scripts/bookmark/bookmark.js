@@ -34,7 +34,7 @@ const renderBookmark = (labelSel, iconSel, id) => {
 
       setTimeout(() => {
         iconSel.style.pointerEvents = 'auto';
-      }, 3000);
+      }, 0);
     }
   });
 };
