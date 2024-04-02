@@ -403,9 +403,9 @@ export async function buildCard(container, element, model) {
   setupCopyAction(card);
   if (model.viewLink) {
     const cardContainer = document.createElement('a');
-    const browseCardOptions = card.querySelector('.browse-card-options')
+    const browseCardOptions = card.querySelector('.browse-card-options');
     cardContainer.addEventListener('click', (e) => {
-      const preventLinkRedirection = !!(e.target && browseCardOptions.contains(e.target))
+      const preventLinkRedirection = !!(e.target && browseCardOptions.contains(e.target));
       if (!preventLinkRedirection) {
         window.location.href = model.viewLink;
       }
