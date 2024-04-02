@@ -38,7 +38,7 @@ export default async function decorate(block) {
   const subjectPicture = img.querySelector('picture');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
-  const signInText = confSignInText.textContent.trim();
+  const signInText = confSignInText?.textContent.trim();
 
   // build sign in button if not in yet and button text is set
   const secondCta = signInText && getSignInButton(signInText);
