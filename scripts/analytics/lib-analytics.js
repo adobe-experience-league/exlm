@@ -1,13 +1,8 @@
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
-export const solution = document.querySelector('meta[name="solution"]')
-  ? document.querySelector('meta[name="solution"]').content.split(',')[0].toLowerCase()
-  : '';
-
-export const type = document.querySelector('meta[name="type"]')
-  ? document.querySelector('meta[name="type"]').content.toLowerCase()
-  : '';
+export const solution = document.querySelector('meta[name="solution"]')?.content?.split(',')[0].toLowerCase() || '';
+export const type = document.querySelector('meta[name="type"]')?.content?.toLowerCase() || '';
 
 export const pageName = (language) => {
   // Validate if subsolution or solutionversion is not empty
@@ -30,38 +25,44 @@ export const pageName = (language) => {
   return responseStr.toLowerCase();
 };
 
-export async function pageLoadModel(language) {
-  const user = {};
-  user.userDetails = {};
-  user.userDetails.userAccountType = '';
-  user.userDetails.userAuthenticatedStatus = 'unauthenticated';
-  user.userDetails.userAuthenticatedSystem = 'ims';
-  user.userDetails.userID = '';
-  user.userDetails.userLanguageSetting = [];
-  user.userDetails.learningInterest = [];
-  user.userDetails.role = [];
-  user.userDetails.experienceLevel = [];
-  user.userDetails.industry = [];
-  user.userDetails.notificationPref = false;
-  user.userDetails.org = '';
-  user.userDetails.orgs = [];
+export async function pushPageDataLayer(language) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  const user = {
+    userDetails: {
+      userAccountType: '',
+      userAuthenticatedStatus: 'unauthenticated',
+      userAuthenticatedSystem: 'ims',
+      userID: '',
+      userLanguageSetting: [],
+      learningInterest: [],
+      role: [],
+      experienceLevel: [],
+      industry: [],
+      notificationPref: false,
+      org: '',
+      orgs: [],
+    },
+  };
 
   try {
     // eslint-disable-next-line import/no-cycle
     const { profile } = await import('../data-service/profile-service.js');
     const userData = await profile();
     if (userData) {
-      user.userDetails.userAccountType = userData.account_type;
-      user.userDetails.userAuthenticatedStatus = 'logged in';
-      user.userDetails.userID = userData.userId || '';
-      user.userDetails.userLanguageSetting = userData.preferred_languages || ['en-us'];
-      user.userDetails.learningInterest = userData.interests || [];
-      user.userDetails.role = userData.role || [];
-      user.userDetails.experienceLevel = userData.level || [];
-      user.userDetails.industry = userData.industryInterests || [];
-      user.userDetails.notificationPref = userData.emailOptIn === true;
-      user.userDetails.org = userData.org || '';
-      user.userDetails.orgs = userData.orgs || [];
+      user.userDetails = {
+        ...user.userDetails,
+        userAccountType: userData.account_type,
+        userAuthenticatedStatus: 'logged in',
+        userID: userData.userId || '',
+        userLanguageSetting: userData.preferred_languages || ['en-us'],
+        learningInterest: userData.interests || [],
+        role: userData.role || [],
+        experienceLevel: userData.level || [],
+        industry: userData.industryInterests || [],
+        notificationPref: userData.emailOptIn === true,
+        org: userData.org || '',
+        orgs: userData.orgs || [],
+      };
     }
   } catch (e) {
     // eslint-disable-next-line no-console
@@ -93,7 +94,7 @@ export async function pageLoadModel(language) {
 
   const mainSiteSection = search ? 'search' : '';
 
-  return {
+  window.adobeDataLayer.push({
     event: 'page loaded',
     web: {
       webPageDetails: {
@@ -130,10 +131,10 @@ export async function pageLoadModel(language) {
     },
     user,
     userGUID: user.userDetails.userID,
-  };
+  });
 }
 
-export function linkClickModel(e) {
+export function pushLinkClick(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');

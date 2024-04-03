@@ -55,18 +55,6 @@ async function loadFonts() {
 }
 
 /**
- * one trust configuration setup
- */
-function oneTrust() {
-  window.fedsConfig = window.fedsConfig || {};
-  window.fedsConfig.privacy = window.fedsConfig.privacy || {};
-  window.fedsConfig.privacy.otDomainId = `7a5eb705-95ed-4cc4-a11d-0cc5760e93db${
-    window.location.host.split('.').length === 3 ? '' : '-test'
-  }`;
-  window.fedsConfig.privacy.footerLinkSelector = '.footer [href="#onetrust"]';
-}
-
-/**
  * Process current pathname and return details for use in language switching
  * Considers pathnames like /en/path/to/content and /content/exl/global/en/path/to/content.html for both EDS and AEM
  */
@@ -608,6 +596,23 @@ export function getConfig() {
   return window.exlm.config;
 }
 
+/**
+ * one trust configuration setup
+ */
+function loadOneTrust() {
+  window.fedsConfig = window.fedsConfig || {};
+  window.fedsConfig.privacy = window.fedsConfig.privacy || {};
+  window.fedsConfig.privacy.otDomainId = `7a5eb705-95ed-4cc4-a11d-0cc5760e93db${
+    window.location.host.split('.').length === 3 ? '' : '-test'
+  }`;
+  window.fedsConfig.privacy.footerLinkSelector = '.footer [href="#onetrust"]';
+  const { privacyScript } = getConfig();
+  return loadScript(privacyScript, {
+    async: true,
+    defer: true,
+  });
+}
+
 export const locales = new Map([
   ['de', 'de_DE'],
   ['en', 'en_US'],
@@ -648,49 +653,43 @@ export async function loadIms() {
 }
 
 const loadMartech = async (headerPromise, footerPromise) => {
-  const { privacyScript, launchScriptSrc } = getConfig();
-  oneTrust();
-
-  const oneTrustPromise = loadScript(privacyScript, {
-    async: true,
-    defer: true,
-  });
-
-  const launchPromise = loadScript(launchScriptSrc, {
-    async: true,
-  });
-
+  // start datalayer work early
   // eslint-disable-next-line import/no-cycle
-  const libAnalyticsPromise = import('./analytics/lib-analytics.js');
+  import('./analytics/lib-analytics.js').then((libAnalyticsModule) => {
+    const { pushPageDataLayer, pushLinkClick, pageName } = libAnalyticsModule;
+    const { lang } = getPathDetails();
+    //
+    pushPageDataLayer(lang)
+      .then((data) => window.adobeDataLayer.push(data))
+      // eslint-disable-next-line no-console
+      .catch((e) => console.error('Error getting pageLoadModel:', e));
+    localStorage.setItem('prevPage', pageName(lang));
 
-  Promise.all([launchPromise, libAnalyticsPromise, headerPromise, footerPromise, oneTrustPromise]).then(
-    // eslint-disable-next-line no-unused-vars
-    ([launch, libAnalyticsModule, headPr, footPr]) => {
-      const { lang } = getPathDetails();
-      const { pageLoadModel, linkClickModel, pageName } = libAnalyticsModule;
-      document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
-        e.preventDefault();
-        window.adobePrivacy.showConsentPopup();
-      });
-      pageLoadModel(lang)
-        .then((data) => {
-          window.adobeDataLayer.push(data);
-        })
-        .catch((e) => {
-          // eslint-disable-next-line no-console
-          console.error('Error getting pageLoadModel:', e);
-        });
-      localStorage.setItem('prevPage', pageName(lang));
+    Promise.allSettled([headerPromise, footerPromise]).then(() => {
       const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
-      linkClicked.forEach((linkElement) => {
-        linkElement.addEventListener('click', (e) => {
-          if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
-            linkClickModel(e);
-          }
-        });
-      });
-    },
-  );
+      const clickHandler = (e) => {
+        if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') pushLinkClick(e);
+      };
+      linkClicked.forEach((e) => e.addEventListener('click', clickHandler));
+    });
+  });
+
+  // load one trust
+  const oneTrustPromise = loadOneTrust();
+
+  // load launch
+  const { launchScriptSrc } = getConfig();
+  loadScript(launchScriptSrc, {
+    async: true,
+  });
+
+  // footer and one trust loaded, add event listener to open one trust popup,
+  Promise.all([footerPromise, oneTrustPromise]).then(() => {
+    document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.adobePrivacy.showConsentPopup();
+    });
+  });
 };
 
 /**
