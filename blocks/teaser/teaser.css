@@ -299,13 +299,16 @@
   }
 
   /* it gets a border */
+  body[class ^= 'browse-'] .section div.teaser-wrapper {
+    border: 1px solid var(--spectrum-gray-200);
+    border-radius: 4px;
+  }
+
   body[class ^= 'browse-'] .section div.teaser-wrapper .background img {
     border-radius: 4px;
   }
 
-  body[class ^= 'browse-'] .section div.teaser-wrapper .foreground {
-    border: 1px solid var(--spectrum-gray-200);
-    border-radius: 4px;
+  body[class ^= 'browse-'] .section div.teaser-wrapper .foreground {    
     min-height:240px;
     padding: 0 var(--space-token-xl);
   }
