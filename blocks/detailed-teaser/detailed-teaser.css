@@ -238,6 +238,11 @@ border-radius: 30px;
   }
    
   /* it gets a border */
+  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper {
+    border: 1px solid var(--spectrum-gray-200);
+    border-radius: 4px;
+  }
+  
   body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .background img {
     border-radius: 4px;
   }
@@ -247,8 +252,6 @@ border-radius: 30px;
   }
 
   body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .foreground {
-    border: 1px solid var(--spectrum-gray-200);
-    border-radius: 4px;
     min-height:240px;
     padding: 0 var(--space-token-xxl);
   }
