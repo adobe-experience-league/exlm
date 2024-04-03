@@ -459,6 +459,9 @@ export function decoratePreviousImage(textNode) {
         Promise.all(promises).then(([, mod]) => mod.default(newPicture.querySelector('img')));
       });
     }
+    if (img.hasAttribute('data-title')) {
+      newPicture?.querySelector('img')?.setAttribute('title', img?.getAttribute('data-title'));
+    }
     Object.entries(attrsObj).forEach(([key, value]) => newPicture.setAttribute(key, value));
   }
 }
