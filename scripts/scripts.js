@@ -688,9 +688,10 @@ const loadMartech = async (headerPromise, footerPromise) => {
   // load launch
   console.timeLog('martech', `launch: start load launch script ${Date.now()}`);
   const { launchScriptSrc } = getConfig();
-  loadScript(launchScriptSrc, {
+  const launchScriptPromise = loadScript(launchScriptSrc, {
     async: true,
-  }).then(() => {
+  });
+  launchScriptPromise.then(() => {
     console.timeLog('martech', `launch: loaded launch script ${Date.now()}`);
   });
 
@@ -703,10 +704,12 @@ const loadMartech = async (headerPromise, footerPromise) => {
     });
   });
 
-  Promise.allSettled([headerPromise, footerPromise, oneTrustPromise, libAnalyticsPromise]).then(() => {
-    console.timeLog('martech', `all done. ${Date.now()}`);
-    console.timeEnd('martech');
-  });
+  Promise.allSettled([headerPromise, footerPromise, oneTrustPromise, launchScriptPromise, libAnalyticsPromise]).then(
+    () => {
+      console.timeLog('martech', `all done. ${Date.now()}`);
+      console.timeEnd('martech');
+    },
+  );
 };
 
 /**
