@@ -915,7 +915,6 @@ body[class^='browse-'] .browse-filters-full-container {
       width: 100%;
       max-width: 100%;
       min-width: 0; // prevent overflow
-      display: block !important; // ensure the section is always visible.
 
       @include breakpoint(tablet) {
         padding: 30px 32px 32px;

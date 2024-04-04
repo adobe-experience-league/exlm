@@ -1011,7 +1011,6 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  display: block !important;
 }
 @media (min-width: 600px) {
   .docs main > div {
