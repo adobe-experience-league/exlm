@@ -663,9 +663,6 @@ const loadMartech = async (headerPromise, footerPromise) => {
     const { pushPageDataLayer, pushLinkClick, pageName } = libAnalyticsModule;
     const { lang } = getPathDetails();
     pushPageDataLayer(lang)
-      .then((data) => {
-        window.adobeDataLayer.push(data);
-      })
       // eslint-disable-next-line no-console
       .catch((e) => console.error('Error getting pageLoadModel:', e));
     localStorage.setItem('prevPage', pageName(lang));
