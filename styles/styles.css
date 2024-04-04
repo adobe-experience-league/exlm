@@ -901,6 +901,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   --exlm-line-height-h5: 23.4px;
   --exlm-line-height-h6: 23.4px;
   --exlm-line-height-content: 25.6px;
+  /* UGP-10584 Inline badges */
 }
 @media (min-width: 900px) {
   .docs {
@@ -1033,7 +1034,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
 }
 @media (min-width: 600px) {
   .docs main > div.mini-toc-container {
-    padding: 32px 10px 10px 10px;
+    padding: 32px 10px 10px;
   }
 }
 @media (min-width: 900px) {
@@ -1386,6 +1387,12 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
 .docs .badge.caution,
 .docs .badge.yellow {
   background-color: var(--spectrum-gray-600);
+}
+.docs .list-wrapper ul li > .badge-wrapper, .docs .list-wrapper ul li > p {
+  display: inline-block;
+}
+.docs .list-wrapper ul li p + .badge-wrapper, .docs .list-wrapper ul li .badge-wrapper + p {
+  margin-left: 10px;
 }
 
 @media (min-width: 600px) {

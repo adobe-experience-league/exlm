@@ -531,8 +531,7 @@ pre {
   background-color: var(--non-spectrum-silver);
   padding: 1em;
   border-radius: 0.25em;
-  overflow-y: scroll;
-  overflow-x: auto;
+  overflow: auto scroll;
   white-space: pre;
 }
 
@@ -1354,6 +1353,19 @@ body[class^='browse-'] .browse-filters-full-container {
   .badge.caution,
   .badge.yellow {
     background-color: var(--spectrum-gray-600);
+  }
+
+  /* UGP-10584 Inline badges */
+  .list-wrapper ul li {
+    & > .badge-wrapper,
+    & > p {
+      display: inline-block;
+    }
+
+    & p + .badge-wrapper,
+    & .badge-wrapper + p {
+      margin-left: 10px;
+    }
   }
 }
 
