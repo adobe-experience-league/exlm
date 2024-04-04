@@ -653,12 +653,15 @@ export async function loadIms() {
 }
 
 const loadMartech = async (headerPromise, footerPromise) => {
+  console.time('martech');
+  console.timeLog('martech', `start loading lib-analytics.js ${Date.now()}`);
   // start datalayer work early
   // eslint-disable-next-line import/no-cycle
-  import('./analytics/lib-analytics.js').then((libAnalyticsModule) => {
+  const libAnalyticsPromise = import('./analytics/lib-analytics.js');
+  libAnalyticsPromise.then((libAnalyticsModule) => {
+    console.timeLog('martech', `finished loading lib-analytics.js ${Date.now()}`);
     const { pushPageDataLayer, pushLinkClick, pageName } = libAnalyticsModule;
     const { lang } = getPathDetails();
-    //
     pushPageDataLayer(lang)
       .then((data) => window.adobeDataLayer.push(data))
       // eslint-disable-next-line no-console
@@ -666,29 +669,43 @@ const loadMartech = async (headerPromise, footerPromise) => {
     localStorage.setItem('prevPage', pageName(lang));
 
     Promise.allSettled([headerPromise, footerPromise]).then(() => {
+      console.timeLog('martech', `add click event tracking ${Date.now()}`);
       const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
       const clickHandler = (e) => {
         if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') pushLinkClick(e);
       };
       linkClicked.forEach((e) => e.addEventListener('click', clickHandler));
     });
+    console.timeLog('martech', `finished analytics setup ${Date.now()}`);
   });
 
   // load one trust
-  const oneTrustPromise = loadOneTrust();
+  console.timeLog('martech', `onetrust: start load onetrust script ${Date.now()}`);
+  const oneTrustPromise = loadOneTrust().then(() => {
+    console.timeLog('martech', `onetrust: loaded one trust script ${Date.now()}`);
+  });
 
   // load launch
+  console.timeLog('martech', `launch: start load launch script ${Date.now()}`);
   const { launchScriptSrc } = getConfig();
   loadScript(launchScriptSrc, {
     async: true,
+  }).then(() => {
+    console.timeLog('martech', `launch: loaded launch script ${Date.now()}`);
   });
 
   // footer and one trust loaded, add event listener to open one trust popup,
   Promise.all([footerPromise, oneTrustPromise]).then(() => {
+    console.timeLog('martech', `onetrust: set event listeners ${Date.now()}`);
     document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
       e.preventDefault();
       window.adobePrivacy.showConsentPopup();
     });
+  });
+
+  Promise.allSettled([headerPromise, footerPromise, oneTrustPromise, libAnalyticsPromise]).then(() => {
+    console.timeLog('martech', `all done. ${Date.now()}`);
+    console.timeEnd('martech');
   });
 };
 

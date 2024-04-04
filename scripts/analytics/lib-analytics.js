@@ -26,6 +26,7 @@ export const pageName = (language) => {
 };
 
 export async function pushPageDataLayer(language) {
+  console.timeLog('martech', `datalayer: start ${Date.now()}`);
   window.adobeDataLayer = window.adobeDataLayer || [];
   const user = {
     userDetails: {
@@ -45,9 +46,11 @@ export async function pushPageDataLayer(language) {
   };
 
   try {
+    console.timeLog('martech', `datalayer: start profile inquiry ${Date.now()}`);
     // eslint-disable-next-line import/no-cycle
     const { profile } = await import('../data-service/profile-service.js');
     const userData = await profile();
+    console.timeLog('martech', `datalayer: profile inquiry done. Adding profile data to datlayer ${Date.now()}`);
     if (userData) {
       user.userDetails = {
         ...user.userDetails,
@@ -94,6 +97,7 @@ export async function pushPageDataLayer(language) {
 
   const mainSiteSection = search ? 'search' : '';
 
+  console.timeLog('martech', `datalayer: push ${Date.now()}`);
   window.adobeDataLayer.push({
     event: 'page loaded',
     web: {
