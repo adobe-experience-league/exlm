@@ -706,8 +706,10 @@ const loadMartech = async (headerPromise, footerPromise) => {
 
   Promise.allSettled([headerPromise, footerPromise, oneTrustPromise, launchScriptPromise, libAnalyticsPromise]).then(
     () => {
-      console.timeLog('martech', `all done. ${Date.now()}`);
-      console.timeEnd('martech');
+      setTimeout(() => {
+        console.timeLog('martech', `all done. ${Date.now()}`);
+        console.timeEnd('martech');
+      }, 0);
     },
   );
 };
