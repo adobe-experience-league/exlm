@@ -1089,7 +1089,6 @@ function decorateBrowseTopics(block) {
 
   const div = document.createElement('div');
   div.classList.add('browse-topics');
-  const tagFontStyle = topicsElement.firstChild.tagName ? topicsElement.firstChild.tagName.toLowerCase() : 'h4';
 
   const headerDiv = htmlToElement(`
     <div class="browse-topics-block-header">
@@ -1099,6 +1098,7 @@ function decorateBrowseTopics(block) {
     </div>
   `);
 
+  const tagFontStyle = topicsElement.firstChild.tagName?.toLowerCase() || 'h4';
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-topics-block-content');
   const browseFiltersSection = document.querySelector('.browse-filters-form');
