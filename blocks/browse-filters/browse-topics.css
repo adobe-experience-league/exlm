@@ -55,6 +55,18 @@
         font-size: var(--spectrum-font-size-300);
     }
 
+    .browse-topics-item.h1 {
+        font-size: var(--spectrum-font-size-900);
+    }  
+
+    .browse-topics-item.h2 {
+        font-size: var(--spectrum-font-size-700);
+    }  
+
+    .browse-topics-item.h3 {
+        font-size: var(--spectrum-font-size-500);
+    }  
+
     .browse-topics-item.h4 {
         font-size: var(--spectrum-font-size-300);
     }
