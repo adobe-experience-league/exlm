@@ -1426,8 +1426,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
     margin-bottom: 0;
   }
   body[class^=browse-] .browse-filters-container {
-    padding-top: 0;
-    padding-bottom: 0;
+    padding-top: 50px;
   }
   body[class^=browse-] .browse-cards-block {
     min-height: auto;
@@ -1476,6 +1475,10 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   body.browse-all main > div.section:not(.browse-rail-section),
   body.browse-product main > div.section:not(.browse-rail-section) {
     padding: 30px 32px;
+  }
+  body.browse-all main > div.section:not(.browse-rail-section).browse-filters-container,
+  body.browse-product main > div.section:not(.browse-rail-section).browse-filters-container {
+    padding-top: 50px;
   }
   body.browse-all main > div.section.browse-breadcrumb-container,
   body.browse-product main > div.section.browse-breadcrumb-container {
