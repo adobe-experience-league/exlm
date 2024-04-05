@@ -883,6 +883,27 @@ function handleHomePageHashes() {
   return false;
 }
 
+/**
+ * @param {string} placeholderKey
+ * @param {string} fallbackText
+ * @returns
+ */
+export function createPlaceholderSpan(placeholderKey, fallbackText) {
+  const span = document.createElement('span');
+  span.setAttribute('data-placeholder', placeholderKey);
+  span.setAttribute('data-placeholder-fallback', fallbackText);
+  span.style.setProperty('--placeholder-width', `${fallbackText.length}ch`);
+  fetchLanguagePlaceholders()
+    .then((placeholders) => {
+      span.textContent = placeholders[placeholderKey] || fallbackText;
+      span.removeAttribute('data-placeholder');
+    })
+    .catch(() => {
+      span.textContent = fallbackText;
+    });
+  return span;
+}
+
 async function loadPage() {
   // THIS IS TEMPORARY FOR SUMMIT.
   if (handleHomePageHashes()) return;

@@ -1492,3 +1492,16 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
     padding-bottom: 0;
   }
 }
+@keyframes placeholder-shimmer {
+  50% {
+    opacity: 0.6;
+  }
+}
+[data-placeholder] {
+  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
+  background-size: 200% 100%;
+  animation: placeholder-shimmer 1.5s infinite;
+  min-width: var(--placeholder-width);
+  display: inline-block;
+  min-height: 1em;
+}
