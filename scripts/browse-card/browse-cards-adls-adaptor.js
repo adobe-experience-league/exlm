@@ -1,7 +1,8 @@
 import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
-import { adlsUrl } from '../urls.js';
-import { fetchLanguagePlaceholders } from '../scripts.js';
+import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
+
+const { adlsUrl } = getConfig();
 
 /* Fetch the Domain Name and Protocol from ADLS End Point */
 const extractDomain = (url) => {
@@ -35,7 +36,7 @@ const BrowseCardsADLSAdaptor = (() => {
       description: description || '',
       copyLink: `${adlsDomain}${path}` || '',
       viewLink: `${adlsDomain}${path}` || '',
-      viewLinkText: placeholders.instructorLedViewLabel || 'View course',
+      viewLinkText: placeholders.browseCardInstructorLedViewLabel || 'View course',
     };
   };
 

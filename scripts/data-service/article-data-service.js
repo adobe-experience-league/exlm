@@ -1,4 +1,6 @@
-import { articleUrl } from '../urls.js';
+import { getConfig } from '../scripts.js';
+
+const { articleUrl } = getConfig();
 
 /**
  * Fetch Article data fromcontentTypeD

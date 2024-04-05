@@ -1,28 +1,30 @@
-import { htmlToElement, loadIms, getLanguageCode } from '../scripts.js';
+import { getMetadata } from '../lib-franklin.js';
+import { htmlToElement, loadIms, getLanguageCode, getConfig } from '../scripts.js';
 import SearchDelegate from './search-delegate.js';
-import { searchUrl } from '../urls.js';
+
+const { searchUrl } = getConfig();
 
 // Get language code from URL
 const languageCode = await getLanguageCode();
+// Get solution from metadata
+const solution = getMetadata('solution')?.split(',')[0].trim();
 
 // Redirects to the search page based on the provided search input and filters
 export const redirectToSearchPage = (searchInput, filters = '') => {
   const baseTargetUrl = searchUrl;
   let targetUrlWithLanguage = `${baseTargetUrl}?lang=${languageCode}`;
-
+  const filterValue = filters && filters.toLowerCase() === 'all' ? '' : filters;
   if (searchInput) {
     const trimmedSearchInput = encodeURIComponent(searchInput.trim());
-    const filterValue = filters && filters.toLowerCase() === 'all' ? '' : filters;
-
-    if (trimmedSearchInput === '') {
-      targetUrlWithLanguage += `&f:@el_contenttype=${encodeURIComponent(filterValue ? `[${filterValue}]` : '[]')}`;
-    } else {
-      targetUrlWithLanguage += `#q=${trimmedSearchInput}`;
-
-      if (filterValue) {
-        targetUrlWithLanguage += `&f:@el_contenttype=${encodeURIComponent(`[${filterValue}]`)}`;
-      }
-    }
+    targetUrlWithLanguage += `#q=${trimmedSearchInput}`;
+  } else {
+    targetUrlWithLanguage += '#sort=relevancy';
+  }
+  if (filterValue) {
+    targetUrlWithLanguage += `&f:@el_contenttype=${encodeURIComponent(`[${filterValue}]`)}`;
+  }
+  if (solution) {
+    targetUrlWithLanguage += `&f:el_product=${encodeURIComponent(`[${solution}]`)}`;
   }
 
   window.location.href = targetUrlWithLanguage;
@@ -74,6 +76,7 @@ export default class Search {
     this.searchKeydown = this.onSearchInputKeydown.bind(this);
     this.hideSearchSuggestions = this.onHideSearchSuggestions.bind(this);
     this.selectSearchSuggestion = this.handleSearchSuggestion.bind(this);
+    this.handleGlobalKeydown = this.onGlobalKeydown.bind(this);
     this.savedDefaultSuggestions = null;
     this.setupAutoCompleteEvents();
     this.callbackFn = this.showSearchSuggestions ? this.fetchInitialSuggestions : null;
@@ -180,6 +183,12 @@ export default class Search {
     this.canHideSearchOptions = true;
   }
 
+  onGlobalKeydown(e) {
+    if (e.key === 'Escape') {
+      this.onHideSearchSuggestions(null, true);
+    }
+  }
+
   onSearchPopoverClick(e) {
     const searchParams = this.searchOptions.map((option) => option.split(':')[0]);
     if (e.target && searchParams.includes(e.target.textContent.trim())) {
@@ -241,17 +250,19 @@ export default class Search {
     document.addEventListener('click', this.hideSearchSuggestions, {
       once: true,
     });
+    document.addEventListener('keydown', this.handleGlobalKeydown);
   }
 
   onHideSearchSuggestions(e, forceHide = false) {
     if (
-      !e.target ||
+      !e?.target ||
       (e.target && !this.searchInput.contains(e.target) && !this.searchSuggestionsPopover.contains(e.target)) ||
       forceHide
     ) {
       this.searchSuggestionsPopover.classList.remove('search-suggestions-popover-visible');
       this.searchSuggestionsPopover.removeEventListener('keydown', this.searchSuggestionsKeydown);
       this.searchSuggestionsPopover.removeEventListener('click', this.searchSuggestionsClick);
+      document.removeEventListener('keydown', this.handleGlobalKeydown);
     }
   }
 
@@ -270,7 +281,7 @@ export default class Search {
     }
     this.clearSearchIcon.classList.add('search-icon-show');
 
-    if (!this.showSearchSuggestions) {
+    if (!this.showSearchSuggestions || e.key === 'Escape') {
       return;
     }
     const suggestions = await this.fetchSearchSuggestions(this.searchQuery);

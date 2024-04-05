@@ -425,6 +425,7 @@ body {
   color: var(--text-color);
   background-color: var(--background-color);
   display: none;
+  overflow-wrap: break-word;
 }
 
 body[class^='browse-'] {
@@ -660,6 +661,37 @@ img {
   height: auto;
 }
 
+picture {
+  &[width] {
+    display: inline-flex;
+  }
+
+  &[modal] {
+    cursor: zoom-in;
+  }
+
+  &[modal]:hover {
+    cursor: zoom-in;
+    opacity: 0.95;
+  }
+
+  &[align='left'] {
+    float: left;
+    vertical-align: baseline;
+  }
+
+  &[align='center'] {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  &[align='right'] {
+    float: right;
+    vertical-align: baseline;
+  }
+}
+
 .icon {
   display: inline-block;
   height: 24px;
@@ -816,6 +848,7 @@ body[class^='browse-'] .browse-filters-full-container {
     background-color: unset;
     line-height: 21px;
     padding: 0;
+    word-break: break-word;
   }
 
   pre {
@@ -841,6 +874,13 @@ body[class^='browse-'] .browse-filters-full-container {
 
   ul {
     @include text-styles($margin-top: 1em, $margin-bottom: 2em, $line-height: 24px, $color: var(--non-spectrum-grey));
+  }
+
+  li {
+    p,
+    a:any-link {
+      word-break: break-word;
+    }
   }
 
   main {
@@ -873,6 +913,8 @@ body[class^='browse-'] .browse-filters-full-container {
       padding: 30px 2px;
       box-sizing: border-box;
       width: 100%;
+      max-width: 100%;
+      min-width: 0; // prevent overflow
       display: block !important; // ensure the section is always visible.
 
       @include breakpoint(tablet) {
@@ -900,7 +942,7 @@ body[class^='browse-'] .browse-filters-full-container {
 
       @include breakpoint(tablet) {
         &.mini-toc-container {
-          padding: 32px 10px 10px 0;
+          padding: 32px 10px 10px;
         }
       }
 
@@ -951,18 +993,21 @@ body[class^='browse-'] .browse-filters-full-container {
     width: auto;
 
     @include breakpoint(tablet) {
-      padding: 28px 68px 48px 80px;
-      margin: 0 4rem;
+      padding: 28px 46px 48px;
     }
 
     @include breakpoint(desktop) {
-      padding: 42px 0 48px 70px;
-      margin: 0 4rem;
+      grid-template-columns: 0 5fr 0;
+      padding: 42px 46 48px 46px;
     }
   }
 
   &.docs-solution-landing main {
     padding: 0 58px;
+
+    @include breakpoint(desktop) {
+      grid-template-columns: 0 4fr 1fr;
+    }
 
     .default-content-wrapper {
       margin: 0;
@@ -1029,8 +1074,7 @@ body[class^='browse-'] .browse-filters-full-container {
       padding: 0;
 
       & > div:first-child {
-        margin: 0 56px;
-        padding: 54px 47px 50px 60px;
+        padding: 54px 101px 50px 116px;
         border: none;
       }
     }
@@ -1283,6 +1327,35 @@ body[class^='browse-'] .browse-filters-full-container {
     padding-bottom: 38px;
     margin-bottom: 32px;
   }
+
+  .badge {
+    background-color: var(--spectrum-blue-900);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: white;
+    display: inline-block;
+    font-size: var(--spectrum-font-size-75);
+    font-style: normal;
+    font-weight: 400;
+    line-height: 15px;
+    padding: 5px 9px;
+    text-decoration: none;
+    vertical-align: bottom;
+  }
+
+  .badge.positive {
+    background-color: var(--spectrum-green-900);
+  }
+
+  .badge.negative {
+    background-color: var(--spectrum-red-900);
+  }
+
+  .badge.neutral,
+  .badge.caution,
+  .badge.yellow {
+    background-color: var(--spectrum-gray-600);
+  }
 }
 
 @include breakpoint('tablet') {
@@ -1401,7 +1474,7 @@ body[class^='browse-'] .browse-filters-full-container {
     grid-column: 2;
   }
 
-  main > div.section.browse-rail {
+  main > div.section.browse-rail-section {
     display: initial;
     grid-column: 1;
     grid-row: 1 / 100;
@@ -1424,7 +1497,7 @@ body[class^='browse-'] .browse-filters-full-container {
       max-width: 1440px;
     }
 
-    & main > div.section:not(.browse-rail) {
+    & main > div.section:not(.browse-rail-section) {
       padding: 30px 32px;
     }
 

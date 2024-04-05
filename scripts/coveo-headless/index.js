@@ -1,6 +1,7 @@
 import buildHeadlessSearchEngine from './engine.js';
 import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
+import { handleCoverSearchSubmit } from '../../blocks/browse-filters/browse-filter-utils.js';
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -32,48 +33,45 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
   const fields = module
     .loadFieldActions(searchEngine)
     .registerFieldsToInclude([
-      'el_solution',
-      'el_id',
-      'el_type',
-      'el_contenttype',
-      'type',
-      'el_product',
-      'el_version',
-      'date',
-      'el_contenttype',
-      'objecttype',
-      'filetype',
-      'outlookformacuri',
-      'outlookuri',
-      'connectortype',
-      'urihash',
-      'collection',
-      'source',
-      'author',
-      'liboardinteractionstyle',
-      'lithreadhassolution',
-      'sourcetype',
-      'el_interactionstyle',
-      'contenttype',
-      'el_rank_icon',
-      'el_lirank',
-      'el_solutions_authored',
-      'el_reply_status',
-      'el_kudo_status',
-      'el_usergenerictext',
-      'documenttype',
-      'video_url',
-      'sysdocumenttype',
-      'language',
-      'permanentid',
+      '@foldingchild',
       '@foldingcollection',
       '@foldingparent',
-      '@foldingchild',
-      'el_rank_icon',
+      'author',
+      'collection',
+      'connectortype',
+      'contenttype',
+      'date',
+      'documenttype',
+      'el_contenttype',
+      'el_id',
+      'el_interactionstyle',
+      'el_kudo_status',
       'el_lirank',
-      'liMessageLabels',
-      'licommunityurl',
+      'el_product',
+      'el_rank_icon',
+      'el_reply_status',
+      'el_solution',
+      'el_solutions_authored',
+      'el_type',
+      'el_usergenerictext',
+      'el_version',
       'el_view_status',
+      'filetype',
+      'language',
+      'liMessageLabels',
+      'liboardinteractionstyle',
+      'licommunityurl',
+      'lithreadhassolution',
+      'objecttype',
+      'outlookformacuri',
+      'outlookuri',
+      'permanentid',
+      'role',
+      'source',
+      'sourcetype',
+      'sysdocumenttype',
+      'type',
+      'urihash',
       'video_url',
     ]);
 
@@ -94,6 +92,7 @@ export default async function initiateCoveoHeadlessSearch({
   renderPageNumbers,
   numberOfResults,
   renderSearchQuerySummary,
+  handleSearchBoxSubscription,
 }) {
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
@@ -112,7 +111,8 @@ export default async function initiateCoveoHeadlessSearch({
 
         const headlessSearchBox = module.buildSearchBox(headlessSearchEngine, {
           options: {
-            numberOfSuggestions: 0,
+            numberOfSuggestions: 5,
+            id: 'component-search',
           },
         });
 
@@ -192,12 +192,7 @@ export default async function initiateCoveoHeadlessSearch({
 
         const submitSearchHandler = () => {
           const key = headlessSearchBox.state.value;
-          const [currentSearchString] = window.location.hash.match(/\bq=([^&#]*)/) || [];
-          if (currentSearchString) {
-            window.location.hash = window.location.hash.replace(currentSearchString, `q=${key || ''}`);
-          } else {
-            window.location.hash = `#q=${key || ''}&${fragment()}`;
-          }
+          handleCoverSearchSubmit(key);
         };
         const clearSearchHandler = () => {
           const [currentSearchString] = window.location.hash.match(/\bq=([^&#]*)/) || [];
@@ -209,14 +204,53 @@ export default async function initiateCoveoHeadlessSearch({
             window.location.hash = updatedHash;
           }
         };
-        const searchInputKeyupHandler = (e) => {
-          // eslint-disable-next-line
-          console.log('onKeyUp', e.target.value);
-          headlessSearchBox.updateText(e.target.value);
+        const searchInputKeyupHandler = async (e) => {
+          const searchText = e.target.value;
+          if (headlessSearchBox.state.value === searchText) {
+            return;
+          }
+          headlessSearchBox.updateText(searchText);
+          e.target.classList.add('suggestion-interactive');
         };
         const searchInputKeydownHandler = (e) => {
           if (e.key === 'Enter') {
             submitSearchHandler();
+            const searchBlock = document.querySelector('.browse-filters-search');
+            const searchSuggestionsPopoverEl = searchBlock?.querySelector('.search-suggestions-popover');
+            const searchInputEl = searchBlock?.querySelector('.suggestion-interactive');
+            if (searchInputEl) {
+              searchInputEl.classList.remove('suggestion-interactive');
+            }
+
+            if (searchSuggestionsPopoverEl) {
+              searchSuggestionsPopoverEl.classList.remove('search-suggestions-popover-visible');
+              searchSuggestionsPopoverEl.classList.add('search-suggestions-popover-hide');
+              setTimeout(() => {
+                // We need this minor delay to make sure that search popOver does not flash when we press enter due to multiple re-renders from searchBox state subscription
+                searchSuggestionsPopoverEl.classList.remove('search-suggestions-popover-hide');
+              }, 0);
+            }
+          } else {
+            const isArrowUp = e.key === 'ArrowUp';
+            const isArrowDown = e.key === 'ArrowDown';
+            if (!isArrowDown && !isArrowUp) {
+              return;
+            }
+            e.preventDefault();
+            e.stopPropagation();
+            const searchSuggestionsPopover = document.querySelector(
+              '.browse-filters-search .search-suggestions-popover',
+            );
+            if (!searchSuggestionsPopover) {
+              return;
+            }
+            const targetElement = isArrowUp
+              ? searchSuggestionsPopover.querySelector('li:last-child')
+              : searchSuggestionsPopover.querySelector('li');
+            if (targetElement) {
+              targetElement.focus();
+              e.target.value = targetElement.textContent;
+            }
           }
         };
         const searchInputEventHandler = (e) => {
@@ -238,6 +272,8 @@ export default async function initiateCoveoHeadlessSearch({
         window.headlessQueryActionCreators = headlessQueryActionCreators;
         window.headlessSearchActionCreators = headlessSearchActionCreators;
         window.logSearchboxSubmit = logSearchboxSubmit;
+
+        headlessSearchBox.subscribe(handleSearchBoxSubscription);
 
         /* TODO: Sorting segments to be extracted & restructured and incorporate them into the browse filters, as this file serves coveo engine methods */
         const sortLabel = {

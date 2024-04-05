@@ -1,5 +1,5 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
+import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { createTooltip } from './browse-card-tooltip.js';
 import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import loadJWT from '../auth/jwt.js';
@@ -19,6 +19,8 @@ try {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
 }
+
+const { lang } = getPathDetails();
 
 /* User Info for Community Section - Will accomodate once we have KHOROS integration */
 // const generateContributorsMarkup = (contributor) => {
@@ -148,8 +150,14 @@ const buildInProgressBarContent = ({ inProgressStatus, cardFigure, card }) => {
 
 const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardContent }) => {
   const titleElement = createTag('p', { class: 'course-duration' });
-  const remainingTime = calculateRemainingTime(inProgressText, inProgressStatus);
-  titleElement.textContent = `You have ${formatRemainingTime(remainingTime)} left in this course`;
+  if (lang === 'en') {
+    const remainingTime = calculateRemainingTime(inProgressText, inProgressStatus);
+    const timeleftLabel = placeholders?.recommendedCoursesTimeLeftLabel || 'You have $[TIME_LEFT] left in this course';
+    titleElement.textContent = timeleftLabel.replace('$[TIME_LEFT]', formatRemainingTime(remainingTime));
+  } else {
+    const totalDurationTime = placeholders?.recommendedCoursesTotalDurationLabel || 'Total Duration';
+    titleElement.textContent = `${totalDurationTime} ${inProgressText}`;
+  }
   cardContent.appendChild(titleElement);
 };
 
@@ -161,11 +169,9 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText }) => {
       icon = 'play-outline';
       isLeftPlacement = false;
     } else if (
-      [
-        CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
-        CONTENT_TYPES.EVENT.MAPPING_KEY,
-        CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
-      ].includes(contentType.toLowerCase())
+      [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
+        contentType.toLowerCase(),
+      )
     ) {
       icon = 'new-tab';
     }
@@ -378,7 +384,7 @@ export async function buildCard(container, element, model) {
       const tooltipConfig = {
         position: 'top',
         color: 'grey',
-        content: product.join(', ').replace(/\|/g, ' | '),
+        content: product.join(', '),
       };
       createTooltip(container, tooltipElem, tooltipConfig);
     } else {
@@ -398,12 +404,17 @@ export async function buildCard(container, element, model) {
   if (model.viewLink) {
     const cardContainer = document.createElement('a');
     cardContainer.setAttribute('href', model.viewLink);
+    const browseCardOptions = card.querySelector('.browse-card-options');
+    cardContainer.addEventListener('click', (e) => {
+      const preventLinkRedirection = !!(e.target && browseCardOptions.contains(e.target));
+      if (preventLinkRedirection) {
+        e.preventDefault();
+      }
+    });
     if (
-      [
-        CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
-        CONTENT_TYPES.EVENT.MAPPING_KEY,
-        CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
-      ].includes(contentType.toLowerCase())
+      [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
+        contentType.toLowerCase(),
+      )
     ) {
       cardContainer.setAttribute('target', '_blank');
     }

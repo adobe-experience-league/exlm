@@ -1,6 +1,14 @@
-/*Styles from Prism.js (No linting Required) */
 
-code[class*=language-],pre[class*=language-] {
+/* code wrap plugon */
+.code-wrap > code{
+  white-space: pre-wrap !important;
+  word-break: break-word !important; 
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Styles are imported from Prism Library [No Linting Required] */
+code[class*="language-"],pre[class*="language-"] {
   border-radius: 6px;
   color: #ccc;
   background: 0 0;
@@ -11,26 +19,21 @@ code[class*=language-],pre[class*=language-] {
   word-break: normal;
   word-wrap: normal;
   line-height: 1.5;
-  -moz-tab-size: 4;
-  -o-tab-size: 4;
   tab-size: 4;
-  -webkit-hyphens: none;
-  -moz-hyphens: none;
-  -ms-hyphens: none;
-  hyphens: none
+  hyphens: none;
 }
 
-pre[class*=language-] {
+pre[class*="language-"] {
   padding: 1em;
   margin: .5em 0;
   overflow: auto
 }
 
-:not(pre)>code[class*=language-],pre[class*=language-] {
+:not(pre)>code[class*="language-"],pre[class*="language-"] {
   background: #2d2d2d
 }
 
-:not(pre)>code[class*=language-] {
+:not(pre)>code[class*="language-"] {
   padding: .1em;
   border-radius: .3em;
   white-space: normal
@@ -99,28 +102,21 @@ pre[data-line] {
   right: 0;
   padding: inherit 0;
   margin-top: 1em;
-  background: rgba(153,122,102,.3);
-  background: linear-gradient(to right, hsla(24, 20%, 50%, 0.3) 70%, hsla(24, 20%, 50%, 0));
+  background: rgb(153 122 102 / 30%);
+  background: linear-gradient(to right, hsl(24deg 20% 50% / 30%) 70%, hsl(24deg 20% 50% / 0%));
   pointer-events: none;
   line-height: inherit;
   white-space: pre
 }
 
-@media print {
-  .line-highlight {
-      -webkit-print-color-adjust: exact;
-      color-adjust: exact
-  }
-}
-
-.line-highlight:before,.line-highlight[data-end]:after {
+.line-highlight::before,.line-highlight[data-end]::after {
   content: attr(data-start);
   position: absolute;
   top: .4em;
   left: .6em;
   min-width: 1em;
   padding: 0 .5em;
-  background-color: rgba(153,122,102,.4);
+  background-color: rgb(153 122 102 / 40%);
   color: #f4f1ef;
   font: bold 65%/1.5 sans-serif;
   text-align: center;
@@ -130,13 +126,13 @@ pre[data-line] {
   box-shadow: 0 1px #fff
 }
 
-.line-highlight[data-end]:after {
+.line-highlight[data-end]::after {
   content: attr(data-end);
   top: auto;
-  bottom: .4em;
+  bottom: .4em
 }
 
-.line-numbers .line-highlight:after,.line-numbers .line-highlight:before {
+.line-numbers .line-highlight::after,.line-numbers .line-highlight::before {
   content: none
 }
 
@@ -144,21 +140,21 @@ pre[id].linkable-line-numbers span.line-numbers-rows {
   pointer-events: all
 }
 
-pre[id].linkable-line-numbers span.line-numbers-rows>span:before {
+pre[id].linkable-line-numbers span.line-numbers-rows>span::before {
   cursor: pointer
 }
 
-pre[id].linkable-line-numbers span.line-numbers-rows>span:hover:before {
-  background-color: rgba(128,128,128,.2)
+pre[id].linkable-line-numbers span.line-numbers-rows>span:hover::before {
+  background-color: rgb(128 128 128 / 20%)
 }
 
-pre[class*=language-].line-numbers {
+pre[class*="language-"].line-numbers {
   position: relative;
   padding-left: 3.8em;
   counter-reset: linenumber
 }
 
-pre[class*=language-].line-numbers>code {
+pre[class*="language-"].line-numbers>code {
   position: relative;
   white-space: inherit
 }
@@ -172,18 +168,15 @@ pre[class*=language-].line-numbers>code {
   width: 3em;
   letter-spacing: -1px;
   border-right: 1px solid #999;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none
 }
 
-.line-numbers-rows>span {
+.line-numbers-rows > span {
   display: block;
   counter-increment: linenumber
 }
 
-.line-numbers-rows>span:before {
+.line-numbers-rows > span::before {
   content: counter(linenumber);
   color: #999;
   display: block;
@@ -217,7 +210,8 @@ div.code-toolbar:focus-within>.toolbar {
 }
 
 div.code-toolbar>.toolbar>.toolbar-item {
-  display: inline-block
+  display: inline-block;
+  color: white;
 }
 
 div.code-toolbar>.toolbar>.toolbar-item>a {
@@ -232,9 +226,7 @@ div.code-toolbar>.toolbar>.toolbar-item>button {
   line-height: normal;
   overflow: visible;
   padding: 0;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none
+  margin: 0;
 }
 
 div.code-toolbar>.toolbar>.toolbar-item>a,div.code-toolbar>.toolbar>.toolbar-item>button,div.code-toolbar>.toolbar>.toolbar-item>span {
@@ -242,8 +234,8 @@ div.code-toolbar>.toolbar>.toolbar-item>a,div.code-toolbar>.toolbar>.toolbar-ite
   font-size: .8em;
   padding: .5em;
   background: #f5f2f0;
-  background: rgba(224,224,224,.2);
-  box-shadow: 0 2px 0 0 rgba(0,0,0,.2);
+  background: rgb(224 224 224 / 20%);
+  box-shadow: 0 2px 0 0 rgb(0 0 0 / 20%);
   border-radius: 6px
 }
 
@@ -252,9 +244,9 @@ div.code-toolbar>.toolbar>.toolbar-item>a:focus,div.code-toolbar>.toolbar>.toolb
   text-decoration: none
 }
 
-code[class*=language-],pre[class*=language-] {
+code[class*="language-"], pre[class*="language-"] {
   color: #c5c8c6;
-  text-shadow: 0 1px rgba(0,0,0,.3);
+  text-shadow: 0 1px rgb(0 0 0 / 30%);
   font-family: Inconsolata,Monaco,Consolas,"Courier New",Courier,monospace;
   direction: ltr;
   text-align: left;
@@ -262,27 +254,22 @@ code[class*=language-],pre[class*=language-] {
   word-spacing: normal;
   word-break: normal;
   line-height: 1.5;
-  -moz-tab-size: 4;
-  -o-tab-size: 4;
   tab-size: 4;
-  -webkit-hyphens: none;
-  -moz-hyphens: none;
-  -ms-hyphens: none;
   hyphens: none
 }
 
-pre[class*=language-] {
+pre[class*="language-"] {
   padding: 1em;
   margin: .5em 0;
   overflow: auto;
   border-radius: .3em
 }
 
-:not(pre)>code[class*=language-],pre[class*=language-] {
+:not(pre) > code[class*="language-"], pre[class*="language-"] {
   background: #1d1f21
 }
 
-:not(pre)>code[class*=language-] {
+:not(pre)>code[class*="language-"] {
   padding: .1em;
   border-radius: .3em
 }
@@ -371,74 +358,4 @@ pre[class*=language-] {
 
 div.code-toolbar>.toolbar>.toolbar-item>button>span:hover {
   color: #ededed
-}
-
-.code-toolbar, pre code .token, .code-toolbar code .token {
-  align-items: unset;
-  background-color: unset;
-  border-radius: unset;
-  display: unset;
-  font-size: unset;
-  height: unset;
-  justify-content: unset;
-  margin-right: unset;
-  min-width: unset;
-  padding: unset;
-  text-align: unset;
-  vertical-align: unset;
-}
-
-.code-toolbar pre code .tag, .code-toolbar code .tag {
-  align-items: unset;
-  background-color: unset;
-  border-radius: unset;
-  color: unset;
-  display: unset;
-  font-size: unset;
-  height: unset;
-  justify-content: unset;
-  line-height: unset;
-  padding-left: unset;
-  padding-right: unset;
-  white-space: unset;
-}
-
-/* Prism.js overridding styles from docs.css */
-
-.code-toolbar {
-  font-size: 14px;
-}
-
-.code-toolbar pre {
-  margin-bottom: 1em !important;
-}
-
-.code-toolbar pre code,
- .code-toolbar code {
-  padding: 0 !important;
-}
-
-div.code-toolbar div.toolbar>.toolbar-item:not(:last-child) {
-  margin-right: .5rem;
-}
-
-div.code-toolbar div.toolbar>.toolbar-item>button {
-  font-size: .9em;
-  margin: 0;
-}
-
-.code-toolbar pre[class*=language-].code-wrap>code, 
-.code-toolbar pre[class*=language-]>code[class*=language-].code-wrap {
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-x: auto;
-}
-
-div.code-toolbar div.toolbar>.toolbar-item>a:focus,
-div.code-toolbar div.toolbar>.toolbar-item>a:hover,
-div.code-toolbar div.toolbar>.toolbar-item>button:focus,
-div.code-toolbar div.toolbar>.toolbar-item>button:hover, 
-div.code-toolbar div.toolbar>.toolbar-item>span:focus,
-div.code-toolbar div.toolbar>.toolbar-item>span:hover {
-  color: #eee !important;
 }

@@ -20,7 +20,7 @@ export const pageName = (language) => {
       result += document.querySelector('title').innerText.split('|')[0].trim();
     } else {
       result += document.querySelector('meta[name="english-title"]')
-        ? document.querySelector('meta[name="english-title"]').innerText.split('|')[0].trim()
+        ? document.querySelector('meta[name="english-title"]').content.split('|')[0].trim()
         : '';
     }
   }
@@ -77,30 +77,14 @@ export async function pageLoadModel(language) {
     section = 'search';
   }
 
-  const subSolution =
-    document.querySelector('meta[name="sub-solution"]') !== null
-      ? document.querySelector('meta[name="sub-solution"]').content
-      : '';
-  const solutionVersion =
-    document.querySelector('meta[name="version"]') !== null
-      ? document.querySelector('meta[name="version"]').content
-      : '';
-
-  const role =
-    document.querySelector('meta[name="role"]') !== null ? document.querySelector('meta[name="role"]').content : '';
-
-  const docType =
-    document.querySelector('meta[name="doc-type"]') !== null
-      ? document.querySelector('meta[name="doc-type"]').content
-      : '';
-
-  const duration =
-    document.querySelector('meta[name="duration"]') !== null
-      ? document.querySelector('meta[name="duration"]').content
-      : '';
-
+  const fullSolution = document.querySelector('meta[name="solution"]')?.content || '';
+  const feature = document.querySelector('meta[name="feature"]')?.content.toLowerCase() || '';
+  const subSolution = document.querySelector('meta[name="sub-solution"]')?.content || '';
+  const solutionVersion = document.querySelector('meta[name="version"]')?.content || '';
+  const role = document.querySelector('meta[name="role"]')?.content || '';
+  const docType = document.querySelector('meta[name="doc-type"]')?.content || '';
+  const duration = document.querySelector('meta[name="duration"]')?.content || '';
   const name = pageName(language);
-
   const sections = name.replace(/^xl:(docs|learn):/, '').split(':');
 
   if (sections.length > 1) {
@@ -121,12 +105,8 @@ export async function pageLoadModel(language) {
         docduration: duration,
         mainSiteSection,
         name,
-        gitEdit: document.querySelector('meta[name="git-edit"]')
-          ? document.querySelector('meta[name="git-edit"]').content
-          : '',
-        exlId: document.querySelector('meta[name="exl-id"]')
-          ? document.querySelector('meta[name="exl-id"]').content
-          : '',
+        gitEdit: document.querySelector('meta[name="git-edit"]')?.content || '',
+        exlId: document.querySelector('meta[name="exl-id"]')?.content || '',
         pageLanguage: language,
         pageName: name,
         pageType: 'webpage',
@@ -144,13 +124,12 @@ export async function pageLoadModel(language) {
         solutionVersion,
         subSolution,
         type,
+        fullSolution,
+        feature,
       },
     },
     user,
-    userGUID: document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('userGUID='))
-      ?.split('=')[1],
+    userGUID: user.userDetails.userID,
   };
 }
 
@@ -214,7 +193,7 @@ export function linkClickModel(e) {
   });
 }
 
-export function assetInteractionModel(id, assetInteractionType) {
+export function assetInteractionModel(id, assetInteractionType, filters) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   // assetId is set to the current docs page articleId if id param value is null
@@ -227,6 +206,7 @@ export function assetInteractionModel(id, assetInteractionType) {
       linkType: '',
       solution: '',
     },
+    ...filters,
     event: 'assetInteraction',
     asset: {
       id: assetId,

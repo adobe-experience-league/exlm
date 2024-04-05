@@ -5,9 +5,19 @@ import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
 import BrowseCardsLiveEventsAdaptor from './browse-cards-live-events-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
 import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
-import { coveoSearchResultsUrl, liveEventsUrl, adlsUrl, pathsUrl } from '../urls.js';
 import PathsDataService from '../data-service/paths-data-service.js';
-import { getPathDetails } from '../scripts.js';
+import { getConfig, getPathDetails } from '../scripts.js';
+
+const { coveoSearchResultsUrl, liveEventsUrl, adlsUrl, pathsUrl } = getConfig();
+
+const { lang } = getPathDetails();
+
+const locales = new Map([
+  ['es', 'es-ES'],
+  ['pt-br', 'pt-BR'],
+  ['zh-hans', 'zh-CN'],
+  ['zh-hant', 'zh-TW'],
+]);
 /**
  * @module BrowseCardsDelegate
  * @description A module that handles the delegation of fetching card data based on content types.
@@ -62,8 +72,15 @@ const BrowseCardsDelegate = (() => {
     const roleQuery = param.role ? `AND (${param.role.map((type) => `@el_role=="${type}"`).join(' OR ')})` : '';
     const levelQuery = param.level ? `AND (${param.level.map((type) => `@el_level=="${type}"`).join(' OR ')})` : '';
     const query = `${featureQuery} ${contentTypeQuery} ${productQuery} ${versionQuery} ${roleQuery} ${levelQuery}`;
-    return { aq: query };
+    return query;
   };
+
+  /**
+   * Constructs advanced query for Coveo data service based on date array.
+   * @param {Array} dateCriteria - Array of date values.
+   * @returns {string} Advanced query string for date.
+   */
+  const contructDateAdvancedQuery = (dateCriteria) => `@date==(${dateCriteria.join(',')})`;
 
   /**
    * Handles Coveo data service to fetch card data.
@@ -72,12 +89,6 @@ const BrowseCardsDelegate = (() => {
    * @private
    */
   const handleCoveoService = async () => {
-    const locales = new Map([
-      ['es', 'es-ES'],
-      ['pt-br', 'pt-BR'],
-      ['zh-hans', 'zh-CN'],
-      ['zh-hant', 'zh-TW'],
-    ]);
     const facets = [
       ...(param.contentType
         ? [
@@ -105,9 +116,10 @@ const BrowseCardsDelegate = (() => {
         filterField: '@foldingcollection',
         parentField: '@foldingchild',
         childField: '@foldingparent',
-        ...(param.q ? { q: param.q } : ''),
-        ...(param.feature ? constructCoveoAdvancedQuery() : ''),
+        ...(param.q && !param.feature ? { q: param.q } : ''),
+        ...(param.dateCriteria && !param.feature ? { aq: contructDateAdvancedQuery(param.dateCriteria) } : ''),
         ...(!param.feature ? { facets: constructCoveoFacet(facets) } : ''),
+        ...(param.feature ? { aq: constructCoveoAdvancedQuery() } : ''),
       },
     };
     const coveoService = new CoveoDataService(dataSource);
@@ -145,7 +157,6 @@ const BrowseCardsDelegate = (() => {
    * @private
    */
   const constructADLSSearchParams = () => {
-    const { lang } = getPathDetails();
     const languageParamValue = lang === 'ja' ? 'Japanese' : 'English';
     const urlSearchParams = new URLSearchParams();
     urlSearchParams.append('trainingMethod', 'Live Instructor Courses');
@@ -190,10 +201,11 @@ const BrowseCardsDelegate = (() => {
    * @private
    */
   const constructPathsSearchParams = () => {
+    const languageParam = locales.get(lang) || lang;
     const urlSearchParams = new URLSearchParams();
     urlSearchParams.append('page_size', '200');
     urlSearchParams.append('sort', 'Order,Solution,ID');
-    urlSearchParams.append('lang', 'en');
+    urlSearchParams.append('lang', languageParam);
     return urlSearchParams;
   };
 

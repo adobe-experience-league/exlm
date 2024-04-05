@@ -16,6 +16,8 @@ import {
   getMetadata,
   loadScript,
   fetchPlaceholders,
+  readBlockConfig,
+  createOptimizedPicture,
 } from './lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 
@@ -166,8 +168,15 @@ export function isBrowsePage() {
  * add a section for the left rail when on a browse page.
  */
 function addBrowseRail(main) {
+  // if there is already editable browse rail stored
+  const browseRailSectionFound = [...main.querySelectorAll('.section-metadata')].find((sMeta) =>
+    readBlockConfig(sMeta)?.style.split(',').includes('browse-rail-section'),
+  );
+  if (browseRailSectionFound) return;
+
+  // default: create a dynamic uneditable browse rail
   const leftRailSection = document.createElement('div');
-  leftRailSection.classList.add('browse-rail', isBrowsePage());
+  leftRailSection.classList.add('browse-rail-section', isBrowsePage());
   leftRailSection.append(buildBlock('browse-rail', []));
   main.append(leftRailSection);
 }
@@ -342,6 +351,134 @@ export function decorateAnchors(main) {
 }
 
 /**
+ * creates an element from html string
+ * @param {string} html
+ * @returns {HTMLElement}
+ */
+export function htmlToElement(html) {
+  const template = document.createElement('template');
+  const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
+  template.innerHTML = trimmedHtml;
+  return template.content.firstElementChild;
+}
+
+const encodeHTML = (str) => str.replace(/[\u00A0-\u9999<>&]/g, (i) => `&#${i.charCodeAt(0)};`);
+
+/**
+ * Parse attribute strings like: {color="red" class="highlight"} to object {color: "red", class: "highlight"}
+ * @param {string} attrs
+ * @returns
+ */
+const parseInlineAttributes = (attrs) => {
+  const result = {};
+  attrs
+    .split(/\s+(?=(?:[^"]*"[^"]*")*[^"]*$)/g) // match spaces only if not within quotes
+    .forEach((attr) => {
+      const [key, value] = attr.split('=');
+      result[key] = encodeHTML(value.replace(/"/g, ''));
+    });
+  return result;
+};
+/**
+ * converts text with attributes to <span> elements with given attributes.
+ * eg: [text]{color="red" class="highlight"} => <span color="red" class="highlight">text</span>
+ * @param {*} inputStr
+ * @returns
+ */
+export const getDecoratedInlineHtml = (inputStr) => {
+  if (!inputStr) return inputStr;
+  const regex = /\[([^[\]]*)\]\{(.*?)\}/g;
+  return inputStr.replace(regex, (match, text, attrs) => {
+    const encodedText = encodeHTML(text);
+    const attrsObj = parseInlineAttributes(attrs);
+    const newAttrs = Object.entries(attrsObj)
+      .map(([key, value]) => `${key}="${value}"`)
+      .join(' ');
+    return `<span ${newAttrs}>${encodedText}</span>`;
+  });
+};
+
+/**
+ *
+ * @param {Node} textNode
+ */
+export function decorateInlineText(textNode) {
+  const { textContent } = textNode;
+  if (textContent.includes('[') && textContent.includes(']{')) {
+    const span = document.createElement('span');
+    span.innerHTML = getDecoratedInlineHtml(textContent);
+    window.requestAnimationFrame(() => {
+      textNode.replaceWith(...span.childNodes);
+    });
+  }
+}
+
+/**
+ * decorates the previous image element with attributes defined in the textNode
+ * @param {Node} textNode
+ */
+export function decoratePreviousImage(textNode) {
+  // if previous element is image, and textNode contains { and }, decorate the image
+  const { previousSibling, textContent } = textNode;
+  if (textContent.startsWith('{') && textContent.includes('}')) {
+    const isPrecededByPicture = previousSibling?.tagName.toLowerCase() === 'picture';
+    const isPrecededByImg = previousSibling?.tagName.toLowerCase() === 'img';
+    let picture;
+    let img;
+    if (isPrecededByPicture) {
+      picture = previousSibling;
+      img = picture.querySelector('img');
+    } else if (isPrecededByImg) {
+      img = previousSibling;
+    } else return; // only decorate if preceded by picture or img
+
+    const attrsStr = textContent.substring(1, textContent.indexOf('}'));
+    textNode.textContent = textContent.substring(textContent.indexOf('}') + 1);
+    if (img.src === 'about:error') return; // do not decorate broken images
+    const attrsObj = parseInlineAttributes(attrsStr);
+    let newPicture = picture;
+    if (attrsObj.width) {
+      // author defined width
+      const { width } = attrsObj;
+      const isNumberWithNoUnit = /^\d+$/.test(width);
+      if (isNumberWithNoUnit) {
+        newPicture = createOptimizedPicture(img.src, img.alt, false, [
+          { media: '(min-width: 400px)', width },
+          { width },
+        ]);
+      }
+      // set width, if digits only, add px, else set as is
+      newPicture.style.width = isNumberWithNoUnit ? `${width}px` : width;
+      picture.replaceWith(newPicture);
+    }
+    if (attrsObj.modal) {
+      // modal
+      newPicture.addEventListener('click', () => {
+        // eslint-disable-next-line import/no-cycle
+        const promises = [loadCSS(`${window.hlx.codeBasePath}/styles/image-modal.css`), import('./image-modal.js')];
+        Promise.all(promises).then(([, mod]) => mod.default(newPicture.querySelector('img')));
+      });
+    }
+    if (img.hasAttribute('data-title')) {
+      newPicture?.querySelector('img')?.setAttribute('title', img?.getAttribute('data-title'));
+    }
+    Object.entries(attrsObj).forEach(([key, value]) => newPicture.setAttribute(key, value));
+  }
+}
+
+/**
+ * @param {HTMLElement} element
+ */
+export function decorateInlineAttributes(element) {
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) {
+    const { currentNode } = walker;
+    decorateInlineText(currentNode);
+    decoratePreviousImage(currentNode);
+  }
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -353,6 +490,7 @@ export function decorateMain(main) {
   }
   decorateAnchors(main); // must be run before decorateIcons
   decorateIcons(main);
+  decorateInlineAttributes(main);
   decorateExternalLinks(main);
   buildAutoBlocks(main);
   decorateSections(main);
@@ -388,6 +526,88 @@ async function loadEager(doc) {
 
 export const isHelixDomain = () => ['hlx.page', 'hlx.live'].some((sfx) => window.location.hostname.endsWith(sfx));
 
+/**
+ * get site config
+ */
+export function getConfig() {
+  if (window.exlm && window.exlm.config) {
+    return window.exlm.config;
+  }
+
+  const HOSTS = [
+    {
+      env: 'PROD',
+      cdn: 'experienceleague.adobe.com',
+      hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
+    },
+    {
+      env: 'STAGE',
+      cdn: 'experienceleague-stage.adobe.com',
+      hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm-stage--adobe-experience-league.live',
+    },
+    {
+      env: 'DEV',
+      cdn: 'experienceleague-dev.adobe.com',
+      hlxPreview: 'main--exlm--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm--adobe-experience-league.hlx.live',
+    },
+  ];
+
+  const currentHost = window.location.hostname;
+  const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
+  const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
+  const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
+  const cdnOrigin = `https://${cdnHost}`;
+  const lang = document.querySelector('html').lang || 'en';
+  const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
+  const isProd = currentEnv?.env === 'PROD';
+  const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
+  const ims = {
+    client_id: 'ExperienceLeague',
+    environment: isProd ? 'prod' : 'stg1',
+    debug: currentEnv !== 'PROD',
+  };
+
+  let launchScriptSrc;
+  if (currentEnv === 'PROD')
+    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
+  else if (currentEnv === 'STAGE')
+    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
+  else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
+
+  window.exlm = window.exlm || {};
+  window.exlm.config = {
+    ims,
+    currentEnv,
+    cdnOrigin,
+    cdnHost,
+    prodAssetsCdnOrigin,
+    ppsOrigin,
+    launchScriptSrc,
+    khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
+    privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
+    profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
+    JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
+    coveoTokenUrl: `${cdnOrigin}/api/coveo-token?lang=${lang}`,
+    coveoSearchResultsUrl: 'https://platform.cloud.coveo.com/rest/search/v2',
+    liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
+    adlsUrl: 'https://learning.adobe.com/catalog.result.json',
+    searchUrl: `${cdnOrigin}/search.html`,
+    articleUrl: `${cdnOrigin}/api/articles/`,
+    solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
+    pathsUrl: `${cdnOrigin}/api/paths`,
+    // Browse Left nav
+    browseMoreProductsLink: `/${lang}/browse`,
+    // Machine Translation
+    automaticTranslationLink: `/${lang}/docs/contributor/contributor-guide/localization/machine-translation`,
+    // Recommended Courses
+    recommendedCoursesUrl: `${cdnOrigin}/home?lang=${lang}#dashboard/learning`,
+  };
+  return window.exlm.config;
+}
+
 export const locales = new Map([
   ['de', 'de_DE'],
   ['en', 'en_US'],
@@ -404,16 +624,16 @@ export const locales = new Map([
 ]);
 
 export async function loadIms() {
+  const { ims } = getConfig();
   window.imsLoaded =
     window.imsLoaded ||
     new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error('IMS timeout')), 5000);
       window.adobeid = {
-        client_id: isHelixDomain() ? 'ExperienceLeague_Dev' : 'ExperienceLeague',
         scope:
-          'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read',
+          'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read,pps.read',
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
-        debug: false,
+        ...ims,
         onReady: () => {
           // eslint-disable-next-line no-console
           console.log('Adobe IMS Ready!');
@@ -428,17 +648,10 @@ export async function loadIms() {
 }
 
 const loadMartech = async (headerPromise, footerPromise) => {
-  let launchScriptSrc = '';
-  if (window.location.host === 'eds-stage.experienceleague.adobe.com') {
-    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
-  } else if (window.location.host === 'experienceleague.adobe.com') {
-    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
-  } else {
-    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-e6bd665acc0a-development.min.js';
-  }
+  const { privacyScript, launchScriptSrc } = getConfig();
   oneTrust();
 
-  const oneTrustPromise = loadScript('/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js', {
+  const oneTrustPromise = loadScript(privacyScript, {
     async: true,
     defer: true,
   });
@@ -521,18 +734,6 @@ export function createTag(tag, attributes, html) {
     });
   }
   return el;
-}
-
-/**
- * creates an element from html string
- * @param {string} html
- * @returns {HTMLElement}
- */
-export function htmlToElement(html) {
-  const template = document.createElement('template');
-  const trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
-  template.innerHTML = trimmedHtml;
-  return template.content.firstElementChild;
 }
 
 /**

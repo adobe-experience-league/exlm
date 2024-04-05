@@ -25,6 +25,20 @@ function loadPrism(document) {
     .then(() => {
       // see: https://prismjs.com/plugins/autoloader/
       window.Prism.plugins.autoloader.languages_path = '/scripts/prism-grammars/';
+      // Insert button in toolbar
+      window.Prism.plugins.toolbar.registerButton('toggle-wrap', (env) => {
+        const button = document.createElement('button');
+        const span = document.createElement('span');
+        span.textContent = 'Toggle Text Wrapping';
+        button.appendChild(span);
+        button.addEventListener('click', () => {
+          const block = env.element.parentNode;
+          block.classList.toggle('code-wrap');
+          window.Prism.highlightElement(env.element);
+          return false;
+        });
+        return button;
+      });
       // run prism in async mode; uses webworker.
       window.Prism.highlightAll(true);
     })

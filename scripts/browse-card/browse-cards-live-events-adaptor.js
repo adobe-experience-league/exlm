@@ -34,7 +34,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
         },
         copyLink: ctaLink || '',
         viewLink: ctaLink || '',
-        viewLinkText: ctaLabel || placeholders.liveEventViewLabel || 'Register',
+        viewLinkText: ctaLabel || placeholders.browseCardLiveEventViewLabel || 'Register',
       };
     }
     return null;
