@@ -54,6 +54,18 @@
         padding: 16.5px 17px 16.5px 18px;
         font-size: var(--spectrum-font-size-300);
     }
+
+    .browse-topics-item.h4 {
+        font-size: var(--spectrum-font-size-300);
+    }
+
+    .browse-topics-item.h5 {
+        font-size: var(--spectrum-font-size-200);
+    }
+
+    .browse-topics-item.h6 {
+        font-size: var(--spectrum-font-size-100);
+    }
     
     .browse-topics-block-title h2 {
         font-size: var(--spectrum-font-size-900);

@@ -1635,6 +1635,27 @@
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl",
         "description": "Select up to 15 topics or features."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "tagsType",
+        "value": "h4",
+        "label": "Topics Font Type",
+        "options": [
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
       }
     ]
   },

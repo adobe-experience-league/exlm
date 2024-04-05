@@ -1089,6 +1089,7 @@ function decorateBrowseTopics(block) {
 
   const div = document.createElement('div');
   div.classList.add('browse-topics');
+  const tagFontStyle = topicsElement.firstChild.tagName ? topicsElement.firstChild.tagName.toLowerCase() : 'h4';
 
   const headerDiv = htmlToElement(`
     <div class="browse-topics-block-header">
@@ -1108,7 +1109,7 @@ function decorateBrowseTopics(block) {
       .forEach((topicsButtonTitle) => {
         const parts = topicsButtonTitle.split('/');
         const topicName = parts[parts.length - 1];
-        const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
+        const topicsButtonDiv = createTag('button', { class: `browse-topics browse-topics-item ${tagFontStyle}` });
         topicsButtonDiv.dataset.topicname = topicsButtonTitle;
         topicsButtonDiv.dataset.label = topicName;
         topicsButtonDiv.innerHTML = topicName;
