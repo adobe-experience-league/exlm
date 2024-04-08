@@ -6,7 +6,9 @@ import {
   fetchLanguagePlaceholders,
   decorateLinks,
   getConfig,
+  getLink,
 } from '../../scripts/scripts.js';
+import { getProducts } from '../browse-rail/browse-rail.js';
 
 const languageModule = import('../../scripts/language.js');
 const authOperationsModule = import('../../scripts/auth/auth-operations.js');
@@ -421,6 +423,26 @@ const navDecorator = async (navBlock) => {
 
   navBlock.firstChild.id = hamburger.getAttribute('aria-controls');
   navBlock.prepend(hamburger);
+
+  // Featured Product List added in Top Products Page
+  const productList = await getProducts();
+
+  [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
+    if (navItemEl.querySelector(':scope > a[featured-products]')) {
+      const featuredProductLi = navBlock.querySelector('li.nav-item a[featured-products]');
+      // Remove the <li> element from the DOM
+      featuredProductLi.remove();
+      productList.forEach((item) => {
+        if (item.featured) {
+          const newLi = document.createElement('li');
+          newLi.className = 'nav-item nav-item-leaf';
+          newLi.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
+          navItemEl.parentNode.appendChild(newLi);
+        }
+      });
+    }
+  });
+
   const isSignedIn = await isSignedInUser();
   if (!isSignedIn) {
     // hide auth-only nav items - see decorateLinks method for details
