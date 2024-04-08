@@ -586,7 +586,7 @@ function handleUriHash() {
     } else if (keyName === 'aq' && filterInfo) {
       const selectedTopics = getSelectedTopics(filterInfo);
       const contentDiv = document.querySelector('.browse-topics');
-      const buttons = contentDiv.querySelectorAll('button');
+      const buttons = contentDiv?.querySelectorAll('button') ?? [];
       Array.from(buttons).forEach((button) => {
         const matchFound = selectedTopics.find((topic) => button.dataset.topicname?.includes(topic));
         if (matchFound) {

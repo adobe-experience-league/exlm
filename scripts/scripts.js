@@ -563,17 +563,17 @@ export function getConfig() {
   const lang = document.querySelector('html').lang || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
   const isProd = currentEnv?.env === 'PROD';
+  const isStage = currentEnv?.env === 'STAGE';
   const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
   const ims = {
     client_id: 'ExperienceLeague',
     environment: isProd ? 'prod' : 'stg1',
-    debug: currentEnv !== 'PROD',
+    debug: !isProd,
   };
 
   let launchScriptSrc;
-  if (currentEnv === 'PROD')
-    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
-  else if (currentEnv === 'STAGE')
+  if (isProd) launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
+  else if (isStage)
     launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
 
