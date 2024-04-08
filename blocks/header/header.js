@@ -8,56 +8,13 @@ import {
   getConfig,
   getLink,
 } from '../../scripts/scripts.js';
-import ffetch from '../../scripts/ffetch.js';
+import { getProducts } from '../browse-rail/browse-rail.js';
 
 const languageModule = import('../../scripts/language.js');
 const authOperationsModule = import('../../scripts/auth/auth-operations.js');
 const { khorosProfileUrl, ppsOrigin, ims } = getConfig();
 
 let searchElementPromise = null;
-
-// Fetches the Featured Product List from Top Product Page if they are published
-export async function getProducts() {
-  // get language
-  const { lang } = getPathDetails();
-  // load the <lang>/top-product list
-  const Products = await ffetch(`/${lang}/top-products.json`).all();
-  // get all indexed pages below <lang>/browse
-  const publishedPages = await ffetch(`/${lang}/browse-index.json`).all();
-  let featured = true;
-
-  // add all published top products to final list
-  const finalProducts = Products.filter((product) => {
-    // if separator is reached
-    if (product.path.startsWith('-')) {
-      featured = false;
-      return false;
-    }
-
-    // check if product is in published list
-    const found = publishedPages.find((elem) => elem.path === product.path);
-    if (found) {
-      // keep original title if no nav title is set
-      if (!product.title) product.title = found.title;
-      // set featured flag
-      product.featured = featured;
-      // remove it from publishedProducts list
-      publishedPages.splice(publishedPages.indexOf(found), 1);
-      return true;
-    }
-    return false;
-  });
-
-  // if no separator was found , add the remaining products alphabetically
-  if (featured) {
-    // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
-    const publishedMainProducts = publishedPages.filter((page) => page.path.split('/').length === 4);
-    // append remaining published products to final list
-    finalProducts.push(...publishedMainProducts);
-  }
-
-  return finalProducts;
-}
 
 export async function loadSearchElement() {
   searchElementPromise =
