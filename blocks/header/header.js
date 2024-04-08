@@ -433,10 +433,12 @@ const navDecorator = async (navBlock) => {
       // Remove the <li> element from the DOM
       featuredProductLi.remove();
       productList.forEach((item) => {
-        const newLi = document.createElement('li');
-        newLi.className = 'nav-item nav-item-leaf';
-        newLi.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
-        navItemEl.parentNode.appendChild(newLi);
+        if (item.featured) {
+          const newLi = document.createElement('li');
+          newLi.className = 'nav-item nav-item-leaf';
+          newLi.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
+          navItemEl.parentNode.appendChild(newLi);
+        }
       });
     }
   });
