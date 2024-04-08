@@ -586,6 +586,13 @@
             "value": "highlight"
           }
         ]
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "always-show",
+        "label": "Do NOT hide on browse filter results?",
+        "description": "When browse-filter block is used, on browse-filter results, all sections below the browse-filter is hidden. Above toggle makes an exception to show this section even if the browse filter results are displayed."
       }
     ]
   },
