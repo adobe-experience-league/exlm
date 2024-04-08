@@ -1088,7 +1088,7 @@
         "valueType": "string",
         "name": "fileReference",
         "label": "Author Image",
-        "description": "The author image, min Xpx x Ypx...",
+        "description": "Sets the author image.",
         "multi": false
       },
       {
@@ -1097,7 +1097,7 @@
         "name": "fileReferenceAlt",
         "value": "",
         "label": "Author image alt text",
-        "description": "A descriptive text of the image will be shown as tooltip."
+        "description": "Alternate text for the image."
       },
       {
         "component": "text",
