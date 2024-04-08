@@ -7,6 +7,7 @@ import {
   decorateLinks,
   getConfig,
 } from '../../scripts/scripts.js';
+import ffetch from '../../scripts/ffetch.js';
 
 const languageModule = import('../../scripts/language.js');
 const authOperationsModule = import('../../scripts/auth/auth-operations.js');
@@ -421,6 +422,24 @@ const navDecorator = async (navBlock) => {
 
   navBlock.firstChild.id = hamburger.getAttribute('aria-controls');
   navBlock.prepend(hamburger);
+
+  // Featured Product List added in Top Products Page
+  const productList = await getProducts();
+
+  [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
+    if (navItemEl.querySelector(':scope > a[featured-products]')) {
+      const featuredProductLi = navBlock.querySelector('li.nav-item a[featured-products]');
+      // Remove the <li> element from the DOM
+      featuredProductLi.remove();
+      productList.forEach((item) => {
+        const newLi = document.createElement('li');
+        newLi.className = 'nav-item nav-item-leaf';
+        newLi.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
+        navItemEl.parentNode.appendChild(newLi);
+      });
+    }
+  });
+
   const isSignedIn = await isSignedInUser();
   if (!isSignedIn) {
     // hide auth-only nav items - see decorateLinks method for details
@@ -508,6 +527,49 @@ const searchDecorator = async (searchBlock) => {
 
   return searchBlock;
 };
+
+// Fetches the Featured Product List from Top Product Page if they are published
+export async function getProducts() {
+  // get language
+  const { lang } = getPathDetails();
+  // load the <lang>/top-product list
+  const Products = await ffetch(`/${lang}/top-products.json`).all();
+  // get all indexed pages below <lang>/browse
+  const publishedPages = await ffetch(`/${lang}/browse-index.json`).all();
+  let featured = true;
+
+  // add all published top products to final list
+  const finalProducts = Products.filter((product) => {
+    // if separator is reached
+    if (product.path.startsWith('-')) {
+      featured = false;
+      return false;
+    }
+
+    // check if product is in published list
+    const found = publishedPages.find((elem) => elem.path === product.path);
+    if (found) {
+      // keep original title if no nav title is set
+      if (!product.title) product.title = found.title;
+      // set featured flag
+      product.featured = featured;
+      // remove it from publishedProducts list
+      publishedPages.splice(publishedPages.indexOf(found), 1);
+      return true;
+    }
+    return false;
+  });
+
+  // if no separator was found , add the remaining products alphabetically
+  if (featured) {
+    // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
+    const publishedMainProducts = publishedPages.filter((page) => page.path.split('/').length === 4);
+    // append remaining published products to final list
+    finalProducts.push(...publishedMainProducts);
+  }
+
+  return finalProducts;
+}
 
 /**
  * Decorates the language-selector block
