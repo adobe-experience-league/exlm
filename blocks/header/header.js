@@ -6,6 +6,7 @@ import {
   fetchLanguagePlaceholders,
   decorateLinks,
   getConfig,
+  getLink,
 } from '../../scripts/scripts.js';
 import ffetch from '../../scripts/ffetch.js';
 
