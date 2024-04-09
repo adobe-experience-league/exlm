@@ -850,12 +850,25 @@ export async function fetchLanguagePlaceholders() {
 }
 
 export async function getLanguageCode() {
-  const { lang } = getPathDetails();
-  const { default: ffetch } = await import('./ffetch.js');
-  const langMap = await ffetch(`/languages.json`).all();
-  const langObj = langMap.find((item) => item.key === lang);
-  const langCode = langObj ? langObj.value : lang;
-  return langCode;
+  if (window.languageCode) return window.languageCode;
+  window.languageCode = new Promise((resolve, reject) => {
+    const { lang } = getPathDetails();
+    fetch('/languages.json')
+      .then((response) => response.json())
+      .then((languages) => {
+        const langMap = languages.data;
+        const langObj = langMap.find((item) => item.key === lang);
+        const langCode = langObj ? langObj.value : lang;
+        window.languageCode = langCode;
+        resolve(langCode);
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error('Error fetching language code:', error);
+        reject(error);
+      });
+  });
+  return window.languageCode;
 }
 
 async function loadDefaultModule(jsPath) {

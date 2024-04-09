@@ -57,21 +57,7 @@ const solutionMap = new Map([
   ['default', { class: 'CircleExpCloud', name: 'Experience Cloud' }],
 ]);
 
-/**
- * getSolutionName - Sets the name and class of an element based on a given solution name.
- * @param {string} solution - The name of the solution.
- * @returns {object} - The name and class of the solution.
- */
-export default function getSolutionName(solution) {
-  // Validate input
-  if (typeof solution !== 'string') {
-    throw new TypeError('Solution name must be a string');
-  }
-
-  // Split the solution name coma separated values
-  const solutionArray = solution.split(',');
-  const solutionData = solutionArray[0].trim();
-  const elSolution = solutionMap.get(solutionData) || solutionMap.get('default');
-
-  return elSolution;
+export default function getSolutionByName(solutionName) {
+  if (!solutionName) return solutionMap.get('default');
+  return solutionMap.get(solutionName) || solutionMap.get('default');
 }
