@@ -1,6 +1,6 @@
 import { createPlaceholderSpan, getPathDetails } from '../../scripts/scripts.js';
 
-export default async function decorate(block) {
+export default function decorate(block) {
   // create actions div, which is always present after this block.
   const actionsDiv = document.createElement('div');
   actionsDiv.classList.add('doc-actions-mobile');

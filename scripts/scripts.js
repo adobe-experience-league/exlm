@@ -913,6 +913,7 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved) 
       span.textContent = placeholders[placeholderKey] || fallbackText;
       span.removeAttribute('data-placeholder');
       span.removeAttribute('data-placeholder-fallback');
+      span.style.removeProperty('--placeholder-width');
       if (onResolved) onResolved(span);
     })
     .catch(() => {
