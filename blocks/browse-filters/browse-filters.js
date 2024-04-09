@@ -1093,7 +1093,7 @@ function decorateBrowseTopics(block) {
   const headerDiv = htmlToElement(`
     <div class="browse-topics-block-header">
       <div class="browse-topics-block-title">
-          <h2>${headingContent}</h2>
+          ${headingElement.innerHTML}
       </div>
     </div>
   `);
