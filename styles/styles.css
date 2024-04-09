@@ -934,7 +934,6 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   background-color: unset;
   line-height: 21px;
   padding: 0;
-  word-break: break-word;
 }
 .docs pre {
   background-color: var(--overlay-background-color);
