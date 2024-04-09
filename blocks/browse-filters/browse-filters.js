@@ -1074,9 +1074,9 @@ function decorateBrowseTopics(block) {
   const [...configs] = [...block.children].map((row) => row.firstElementChild);
 
   const [solutionsElement, headingElement, topicsElement] = configs.map((cell) => cell);
+  // eslint-disable-next-line no-unused-vars
   const [solutionsContent, headingContent, topicsContent] = configs.map((cell) => cell?.textContent?.trim() ?? '');
 
-  // eslint-disable-next-line no-unused-vars
   const allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
   const allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
   const supportedProducts = [];
