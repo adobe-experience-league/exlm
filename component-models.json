@@ -1699,7 +1699,7 @@
         "description": "Optional - filter results to specific solution(s)."
       },
       {
-        "component": "text",
+        "component": "richtext",
         "valueType": "string",
         "name": "heading",
         "value": "",
