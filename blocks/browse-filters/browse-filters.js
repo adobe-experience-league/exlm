@@ -1089,12 +1089,13 @@ function decorateBrowseTopics(block) {
 
   const div = document.createElement('div');
   div.classList.add('browse-topics');
-  const headerStyle = headingElement.firstElementChild ? headingElement.firstElementChild.tagName.toLowerCase() : 'h2';
+  const styledHeader =
+    headingElement.firstChild.nodeType === Node.TEXT_NODE ? `<h2>${headingContent}</h2>` : headingElement.innerHTML;
 
   const headerDiv = htmlToElement(`
     <div class="browse-topics-block-header">
       <div class="browse-topics-block-title">
-          <${headerStyle}>${headingContent}</${headerStyle}>
+          ${styledHeader}
       </div>
     </div>
   `);
