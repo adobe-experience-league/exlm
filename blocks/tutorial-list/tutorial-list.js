@@ -1,13 +1,9 @@
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { createPlaceholderSpan, htmlToElement } from '../../scripts/scripts.js';
 
+/**
+ * @param {HTMLDivElement} block
+ */
 export default async function decorate(block) {
-  let placeholders = {};
-  try {
-    placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
-  }
   const containerEl = block.querySelector('ul');
   const wrapperEl = containerEl?.parentElement;
   if (!wrapperEl) {
@@ -31,13 +27,17 @@ export default async function decorate(block) {
     li.removeChild(anchor);
     const description = li.textContent;
     if (index === lastIndex) {
-      li.innerHTML = `<a href="${link}">${placeholders?.seeAllTutorials}</a>`;
+      const a = document.createElement('a');
+      a.href = link;
+      a.appendChild(createPlaceholderSpan('seeAllTutorials', 'See all tutorials'));
+      li.replaceChildren(a);
     } else {
-      li.innerHTML = `
-        <p class="tutorial-list-heading">${title}</p>
-        <p class="tutorial-list-description">${description}</p>
-        <a href="${link}">${placeholders?.view}</a>
-      `;
+      const p = htmlToElement(`<p class="tutorial-list-heading">${title}</p>`);
+      const p2 = htmlToElement(`<p class="tutorial-list-description">${description}</p>`);
+      const a = document.createElement('a');
+      a.href = link;
+      a.appendChild(createPlaceholderSpan('view', 'view'));
+      li.replaceChildren(p, p2, a);
     }
   });
 }

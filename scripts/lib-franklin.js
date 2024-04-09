@@ -191,7 +191,7 @@ const ICONS_CACHE = {};
  * Replace icons with inline SVG and prefix with codeBasePath.
  * @param {Element} [element] Element containing icons
  */
-export async function decorateIcons(element) {
+export async function decorateIcons(element, prefix = '') {
   // Prepare the inline sprite
   let svgSprite = document.getElementById('franklin-svg-sprite');
   if (!svgSprite) {
@@ -211,7 +211,7 @@ export async function decorateIcons(element) {
       if (!ICONS_CACHE[iconName]) {
         ICONS_CACHE[iconName] = true;
         try {
-          const response = await fetch(`${window.hlx.codeBasePath}/icons/${iconName}.svg`);
+          const response = await fetch(`${window.hlx.codeBasePath}/icons/${prefix}${iconName}.svg`);
           if (!response.ok) {
             ICONS_CACHE[iconName] = false;
             return;
@@ -489,6 +489,70 @@ function getBlockConfig(block) {
     });
 }
 
+function perfObserver(list) {
+  list.getEntries().forEach((entry) => {
+    if (entry.name.includes('::run')) {
+      if (entry.duration > 100) {
+        console.warn(`Long run time detected: ${entry.name} | duration: ${entry.duration}`);
+      } else {
+        console.log(`${entry.name}'s duration: ${entry.duration}`);
+      }
+    } else {
+      console.log(`${entry.name}'s duration: ${entry.duration}`);
+    }
+  });
+}
+const observer = new PerformanceObserver(perfObserver);
+observer.observe({ entryTypes: ['measure'] });
+
+class BlockPerformance {
+  /**
+   *
+   * @param {HTMLDivElement} block
+   */
+  constructor(block) {
+    this.perfName = BlockPerformance.uniqueBlockName(block);
+    this.block = block.outerHTML;
+  }
+
+  static uniqueBlockName(block) {
+    const { blockName } = getBlockConfig(block);
+    window.blockNames = window.blockNames || [];
+    let uniqueName = blockName;
+    let i = 0;
+    while (window.blockNames.includes(uniqueName)) {
+      i += 1;
+      uniqueName = `${blockName}-${i}`;
+    }
+    window.blockNames.push(uniqueName);
+    return uniqueName;
+  }
+
+  markImportStart() {
+    performance.mark(`${this.perfName}::import-start`, { detail: this.block });
+  }
+
+  markImportEnd() {
+    performance.mark(`${this.perfName}::import-end`, { detail: this.block });
+  }
+
+  markRunStart() {
+    performance.mark(`${this.perfName}::run-start`, { detail: this.block });
+  }
+
+  markRunEnd() {
+    performance.mark(`${this.perfName}::run-end`, { detail: this.block });
+  }
+
+  measureImport() {
+    performance.measure(`${this.perfName}::import`, `${this.perfName}::import-start`, `${this.perfName}::import-end`);
+  }
+
+  measureRun() {
+    performance.measure(`${this.perfName}::run`, `${this.perfName}::run-start`, `${this.perfName}::run-end`);
+  }
+}
+
 /**
  * Loads JS and CSS for a block.
  * @param {Element} block The block element
@@ -503,9 +567,16 @@ export async function loadBlock(block) {
       const decorationComplete = new Promise((resolve) => {
         (async () => {
           try {
+            const perf = new BlockPerformance(block);
+            perf.markImportStart();
             const mod = await import(jsPath);
+            perf.markImportEnd();
+            perf.measureImport();
             if (mod.default) {
+              perf.markRunStart();
               await mod.default(block);
+              perf.markRunEnd();
+              perf.measureRun();
             }
           } catch (error) {
             // eslint-disable-next-line no-console
