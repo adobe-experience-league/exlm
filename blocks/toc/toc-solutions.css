@@ -20,178 +20,177 @@
 }
 
 .toc ul li a.toc-item.is-active  {
-    margin-left: 0;
-    background-color: var(--spectrum-gray-100);
-    color: var(--non-spectrum-eerie-black);
-    font-weight: 600;
-    border-left: 4px solid var(--exlm-toc-active-color);
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    padding-top: 7px;
-    padding-bottom: 10px;
-    padding-left: 10px;
+  margin-left: 0;
+  background-color: var(--spectrum-gray-100);
+  color: var(--non-spectrum-eerie-black);
+  font-weight: 600;
+  border-left: 4px solid var(--exlm-toc-active-color);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding-top: 7px;
+  padding-bottom: 10px;
+  padding-left: 10px;
 }
 
 
 .toc ul > li > a.toc-toggle.is-active {
-    padding-left: 0;
+  padding-left: 0;
 }
 
 .toc ul > li > a.toc-toggle.is-active::before {
-    content: "•";
-    font-size: 20px;
-    opacity: 1;
-    padding-bottom: 3px;
-    margin-right: 3px;
-    color: var(--exlm-toc-active-color);
+  content: "•";
+  font-size: 20px;
+  opacity: 1;
+  padding-bottom: 3px;
+  margin-right: 3px;
+  color: var(--exlm-toc-active-color);
 }
 
-
-.toc.DataAnalytics {
-    --exlm-toc-active-color: var(--exlm-toc-solution-1);
+.toc.DataAnalytics { 
+  --exlm-toc-active-color: var(--exlm-toc-solution-1);
 }
 
 .toc.CircleExpCloud{
-    --exlm-toc-active-color:var(--exlm-toc-solution-2);
+  --exlm-toc-active-color:var(--exlm-toc-solution-2);
 }
 
 .toc.AdminConsole {
-    --exlm-toc-active-color: var(--exlm-toc-solution-3);
+  --exlm-toc-active-color: var(--exlm-toc-solution-3);
 }
 
 
 .toc.AppDevelopment {
-    --exlm-toc-active-color: var(--exlm-toc-solution-4);
+  --exlm-toc-active-color: var(--exlm-toc-solution-4);
 }
 
 .toc.Asset {
-    --exlm-toc-active-color: var(--exlm-toc-solution-5);
+  --exlm-toc-active-color: var(--exlm-toc-solution-5);
 }
 
 
 
 .toc.BoxSearch {
-    --exlm-toc-active-color: var(--exlm-toc-solution-3);
+  --exlm-toc-active-color: var(--exlm-toc-solution-3);
 }
 
 
 .toc.CircleAdvertisingCloud {
-    --exlm-toc-active-color: var(--exlm-toc-solution-2);
+  --exlm-toc-active-color: var(--exlm-toc-solution-2);
 }
 
 
 .toc.acrobat-dc {
-    --exlm-toc-active-color: var(--exlm-toc-solution-2);
+  --exlm-toc-active-color: var(--exlm-toc-solution-2);
 }
 
 
 .toc.adobe-sign {
-    --exlm-toc-active-color: var(--exlm-toc-solution-15);
+  --exlm-toc-active-color: var(--exlm-toc-solution-15);
 }
 
 .toc.CircleExperiencePlatform  {
-    --exlm-toc-active-color: var(--exlm-toc-solution-16);
+  --exlm-toc-active-color: var(--exlm-toc-solution-16);
 }
 
 .toc.Commerce {
-    --exlm-toc-active-color: var(--exlm-toc-solution-14);
+  --exlm-toc-active-color: var(--exlm-toc-solution-14);
 }
 
 .toc.ContentProfile {
-    --exlm-toc-active-color: var(--exlm-toc-solution-8);
+  --exlm-toc-active-color: var(--exlm-toc-solution-8);
 }
 
 .toc.DocumentCloud {
-    --exlm-toc-active-color: var(--exlm-toc-solution-2);
+  --exlm-toc-active-color: var(--exlm-toc-solution-2);
 }
 
 .toc.DynamicChat  {
-    --exlm-toc-active-color: var(--exlm-toc-solution-8);
+  --exlm-toc-active-color: var(--exlm-toc-solution-8);
 }
 
 
 .toc.Efficient {
-    --exlm-toc-active-color: var(--exlm-toc-solution-13);
+  --exlm-toc-active-color: var(--exlm-toc-solution-13);
 }
 
 .toc.EmailGear {
-    --exlm-toc-active-color: var(--exlm-toc-solution-3);
+  --exlm-toc-active-color: var(--exlm-toc-solution-3);
 }
 
 .toc.EmailSend {
-    --exlm-toc-active-color: var(--exlm-toc-solution-8);
+  --exlm-toc-active-color: var(--exlm-toc-solution-8);
 }
 
 .toc.ExperienceManager {
-    --exlm-toc-active-color: var(--exlm-toc-solution-5);
+  --exlm-toc-active-color: var(--exlm-toc-solution-5);
 }
 
 .toc.Fusion {
-    --exlm-toc-active-color: var(--exlm-toc-solution-12);
+  --exlm-toc-active-color: var(--exlm-toc-solution-12);
 }
 
 .toc.Gauge {
-    --exlm-toc-active-color: var(--exlm-toc-solution-3);
+  --exlm-toc-active-color: var(--exlm-toc-solution-3);
 }
 
 .toc.GraphBarMoney {
-    --exlm-toc-active-color: var(--exlm-toc-solution-1);
+  --exlm-toc-active-color: var(--exlm-toc-solution-1);
 }
 
 .toc.JourneyOrchestration {
-    --exlm-toc-active-color: var(--exlm-toc-solution-8);
+  --exlm-toc-active-color: var(--exlm-toc-solution-8);
 }
 
 .toc.Launch {
-    --exlm-toc-active-color: var(--exlm-toc-solution-11);
+  --exlm-toc-active-color: var(--exlm-toc-solution-11);
 }
 
 .toc.LocationService {
-    --exlm-toc-active-color: var(--exlm-toc-solution-11);
+  --exlm-toc-active-color: var(--exlm-toc-solution-11);
 }
 
 
 .toc.MarketoEngage {
-    --exlm-toc-active-color: var(--exlm-toc-solution-8);
+  --exlm-toc-active-color: var(--exlm-toc-solution-8);
 }
 
 .toc.Primetime {
-    --exlm-toc-active-color: var(--exlm-toc-solution-10);
+  --exlm-toc-active-color: var(--exlm-toc-solution-10);
 }
 
 .toc.PrimeTimeFunctional {
-    --exlm-toc-active-color: var(--exlm-toc-solution-9);
+  --exlm-toc-active-color: var(--exlm-toc-solution-9);
 }
 
 .toc.Privacy {
-    --exlm-toc-active-color: var(--exlm-toc-solution-3);
+  --exlm-toc-active-color: var(--exlm-toc-solution-3);
 }
 
 .toc.ReportMapping {
-    --exlm-toc-active-color: var(--exlm-toc-solution-3);
+  --exlm-toc-active-color: var(--exlm-toc-solution-3);
 }
 
 .toc.target {
-    --exlm-toc-active-color: var(--exlm-toc-solution-8);
+  --exlm-toc-active-color: var(--exlm-toc-solution-8);
 }
 
 
 .toc.UserAdmin {
-    --exlm-toc-active-color: var(--exlm-toc-solution-8);
+  --exlm-toc-active-color: var(--exlm-toc-solution-8);
 }
 
 .toc.UserAnalytics {
-    --exlm-toc-active-color: var(--exlm-toc-solution-1);
+  --exlm-toc-active-color: var(--exlm-toc-solution-1);
 }
 
 .toc.UserHighlight {
-    --exlm-toc-active-color: var(--exlm-toc-solution-7);
+  --exlm-toc-active-color: var(--exlm-toc-solution-7);
 }
 
 .toc.WorkfrontCircle {
-    --exlm-toc-active-color: var(--exlm-toc-solution-6);
+  --exlm-toc-active-color: var(--exlm-toc-solution-6);
 }
 
 .toc.CircleExperienceCloud {
-    --exlm-toc-active-color: var(--exlm-toc-solution-2);
+  --exlm-toc-active-color: var(--exlm-toc-solution-2);
 }
