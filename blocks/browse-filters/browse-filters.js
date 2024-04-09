@@ -1089,11 +1089,14 @@ function decorateBrowseTopics(block) {
 
   const div = document.createElement('div');
   div.classList.add('browse-topics');
+  // default style to h2 so existing published pages are not rendered unstyled if not re-authored
+  const styledHeader =
+    headingElement.firstChild.nodeType === Node.TEXT_NODE ? `<h2>${headingContent}</h2>` : headingElement.innerHTML;
 
   const headerDiv = htmlToElement(`
     <div class="browse-topics-block-header">
       <div class="browse-topics-block-title">
-          <h2>${headingContent}</h2>
+          ${styledHeader}
       </div>
     </div>
   `);
