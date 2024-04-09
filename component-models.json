@@ -1081,6 +1081,84 @@
     ]
   },
   {
+    "id": "article-marquee",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Author Image",
+        "description": "Sets the author image.",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fileReferenceAlt",
+        "value": "",
+        "label": "Author image alt text",
+        "description": "Alternate text for the image."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "authorName",
+        "value": "",
+        "label": "Author name",
+        "description": "Sets the Author name."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "authorRole",
+        "value": "",
+        "label": "Author title / role",
+        "description": "Sets the Author title / role"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "articleReadingTime",
+        "value": "",
+        "label": "Reading time",
+        "description": "Sets the reading time for the article."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "sign-up",
     "fields": [
       {

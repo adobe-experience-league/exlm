@@ -830,7 +830,6 @@ body[class^='browse-'] .browse-filters-full-container {
     background-color: unset;
     line-height: 21px;
     padding: 0;
-    word-break: break-word;
   }
 
   pre {
@@ -1410,8 +1409,7 @@ body[class^='browse-'] .browse-filters-full-container {
     }
 
     & .browse-filters-container {
-      padding-top: 0;
-      padding-bottom: 0;
+      padding-top: 50px;
     }
 
     & .browse-cards-block {
@@ -1482,6 +1480,10 @@ body[class^='browse-'] .browse-filters-full-container {
 
     & main > div.section:not(.browse-rail-section) {
       padding: 30px 32px;
+    }
+
+    & main > div.section:not(.browse-rail-section).browse-filters-container {
+      padding-top: 50px;
     }
 
     & main > div.section.browse-breadcrumb-container {

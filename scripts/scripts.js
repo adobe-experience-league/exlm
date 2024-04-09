@@ -373,9 +373,9 @@ const parseInlineAttributes = (attrs) => {
   const result = {};
   attrs
     .split(/\s+(?=(?:[^"]*"[^"]*")*[^"]*$)/g) // match spaces only if not within quotes
-    .forEach((attr) => {
-      const [key, value] = attr.split('=');
-      result[key] = encodeHTML(value.replace(/"/g, ''));
+    .map((attr) => attr.split('='))
+    .forEach(([key, value]) => {
+      result[key] = value === undefined ? undefined : encodeHTML(value?.replace(/"/g, '') || '');
     });
   return result;
 };
@@ -387,10 +387,12 @@ const parseInlineAttributes = (attrs) => {
  */
 export const getDecoratedInlineHtml = (inputStr) => {
   if (!inputStr) return inputStr;
-  const regex = /\[([^[\]]*)\]\{(.*?)\}/g;
+  const regex = /\[([^[\]]*)\]{([^}]+)}/g;
   return inputStr.replace(regex, (match, text, attrs) => {
     const encodedText = encodeHTML(text);
     const attrsObj = parseInlineAttributes(attrs);
+    const validAttrs = Object.values(attrsObj).every((v) => v !== undefined);
+    if (!validAttrs) return match; // ignore expresssion that have attributes with undefined values
     const newAttrs = Object.entries(attrsObj)
       .map(([key, value]) => `${key}="${value}"`)
       .join(' ');
@@ -563,17 +565,17 @@ export function getConfig() {
   const lang = document.querySelector('html').lang || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
   const isProd = currentEnv?.env === 'PROD';
+  const isStage = currentEnv?.env === 'STAGE';
   const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
   const ims = {
     client_id: 'ExperienceLeague',
     environment: isProd ? 'prod' : 'stg1',
-    debug: currentEnv !== 'PROD',
+    debug: !isProd,
   };
 
   let launchScriptSrc;
-  if (currentEnv === 'PROD')
-    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
-  else if (currentEnv === 'STAGE')
+  if (isProd) launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
+  else if (isStage)
     launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
 
