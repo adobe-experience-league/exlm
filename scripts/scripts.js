@@ -373,9 +373,9 @@ const parseInlineAttributes = (attrs) => {
   const result = {};
   attrs
     .split(/\s+(?=(?:[^"]*"[^"]*")*[^"]*$)/g) // match spaces only if not within quotes
-    .forEach((attr) => {
-      const [key, value] = attr.split('=');
-      result[key] = encodeHTML(value.replace(/"/g, ''));
+    .map((attr) => attr.split('='))
+    .forEach(([key, value]) => {
+      result[key] = value === undefined ? undefined : encodeHTML(value?.replace(/"/g, '') || '');
     });
   return result;
 };
@@ -387,10 +387,12 @@ const parseInlineAttributes = (attrs) => {
  */
 export const getDecoratedInlineHtml = (inputStr) => {
   if (!inputStr) return inputStr;
-  const regex = /\[([^[\]]*)\]\{(.*?)\}/g;
+  const regex = /\[([^[\]]*)\]{([^}]+)}/g;
   return inputStr.replace(regex, (match, text, attrs) => {
     const encodedText = encodeHTML(text);
     const attrsObj = parseInlineAttributes(attrs);
+    const validAttrs = Object.values(attrsObj).every((v) => v !== undefined);
+    if (!validAttrs) return match; // ignore expresssion that have attributes with undefined values
     const newAttrs = Object.entries(attrsObj)
       .map(([key, value]) => `${key}="${value}"`)
       .join(' ');
