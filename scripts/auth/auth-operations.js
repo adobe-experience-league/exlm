@@ -1,4 +1,7 @@
-import { COVEO_TOKEN, JWT, ProfileAttributes, Profile } from '../session-keys.js';
+import { COVEO_TOKEN, JWT } from '../session-keys.js';
+
+export const Profile = 'profile';
+export const ProfileAttributes = 'attributes';
 
 export function signIn() {
   sessionStorage.removeItem(COVEO_TOKEN);

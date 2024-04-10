@@ -3,8 +3,10 @@ import { getConfig, loadIms } from '../scripts.js';
 import { signOut } from '../auth/auth-operations.js';
 import loadJWT from '../auth/jwt.js';
 import csrf from '../auth/csrf.js';
-import { Profile, ProfileAttributes } from '../session-keys.js';
 import { request } from '../request.js';
+
+export const Profile = 'profile';
+export const ProfileAttributes = 'attributes';
 
 window.exl = window.exl || {};
 window.exl.profileData = window.exl.profileData || null;
