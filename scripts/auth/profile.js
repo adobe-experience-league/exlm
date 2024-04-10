@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import { getConfig, loadIms } from '../scripts.js';
+// eslint-disable-next-line import/no-cycle
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
 
@@ -20,6 +21,11 @@ export async function isSignedInUser() {
   }
 }
 
+export async function signOut() {
+  ['JWT', 'coveoToken', 'attributes', 'profile'].forEach((key) => sessionStorage.removeItem(key));
+  window.adobeIMS?.signOut();
+}
+
 class ProfileClient {
   constructor(url) {
     this.url = url;
@@ -27,11 +33,6 @@ class ProfileClient {
     this.isSignedIn = isSignedInUser();
 
     this.cache = {};
-  }
-
-  static signOut() {
-    ['JWT', 'coveoToken', 'attributes', 'profile'].forEach((key) => sessionStorage.removeItem(key));
-    window.adobeIMS?.signOut();
   }
 
   async getAttributes() {

@@ -1,4 +1,4 @@
-import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
+import { isSignedInUser, signOut } from '../../scripts/auth/profile.js';
 import { decorateIcons, loadCSS, getMetadata } from '../../scripts/lib-franklin.js';
 import {
   htmlToElement,
@@ -759,7 +759,7 @@ const profileMenuDecorator = async (profileMenuBlock) => {
 
     if (profileMenuWrapper.querySelector('[data-id="sign-out"]')) {
       profileMenuWrapper.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
-        defaultProfileClient.signOut();
+        signOut();
       });
     }
   } else {
