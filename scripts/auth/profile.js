@@ -1,4 +1,4 @@
-// eslint-disable-next-line import/no-cycle
+// eslint-disable-next-line import/no-cycle, max-classes-per-file
 import { getConfig, loadIms } from '../scripts.js';
 // eslint-disable-next-line import/no-cycle
 import loadJWT from './jwt.js';
@@ -8,7 +8,7 @@ window.exl = window.exl || {};
 window.exl.profileData = window.exl.profileData || null;
 window.exl.meta = window.exl.meta || {};
 
-const { profileUrl, JWTTokenUrl } = getConfig();
+const { profileUrl, JWTTokenUrl, ppsOrigin, ims } = getConfig();
 
 const override = /^(recommended|votes)$/;
 
@@ -26,13 +26,34 @@ export async function signOut() {
   window.adobeIMS?.signOut();
 }
 
+// A store that saves promises and their results in sessionStorage
+class PromiseSessionStore {
+  constructor() {
+    this.store = {};
+  }
+
+  async get(key) {
+    const fromStorage = sessionStorage.getItem(key);
+    if (fromStorage) return JSON.parse(fromStorage);
+    if (this.store[key]) return this.cache[key];
+    return null;
+  }
+
+  async set(key, promise) {
+    this.store[key] = promise;
+    promise.then((data) => {
+      sessionStorage.setItem(key, JSON.stringify(data));
+    });
+  }
+}
+
 class ProfileClient {
   constructor(url) {
     this.url = url;
     this.jwt = loadJWT();
     this.isSignedIn = isSignedInUser();
 
-    this.cache = {};
+    this.store = new PromiseSessionStore();
   }
 
   async getAttributes() {
@@ -43,16 +64,37 @@ class ProfileClient {
     return this.fetchProfile({}, 'exl-profile');
   }
 
+  async getPPSProfile() {
+    const profilePicture = 'profilePicture';
+    const signedIn = await this.isSignedIn;
+    if (!signedIn) return null;
+
+    const fromStorage = await this.store.get(profilePicture);
+    if (fromStorage) return fromStorage;
+
+    const { accessToken } = window.adobeIMS.getAccessToken();
+    const accountId = (await window.adobeIMS.getProfile()).userId;
+    const promise = fetch(`${ppsOrigin}/api/profile`, {
+      headers: {
+        'X-Api-Key': ims.client_id,
+        'X-Account-Id': accountId,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((res) => res.json());
+    this.store.set(profilePicture, promise);
+    return promise;
+  }
+
   async getMergedProfile(refresh) {
     const signedIn = await this.isSignedIn;
     if (!signedIn) return null;
     const storageKey = 'profile';
     if (!refresh) {
-      const fromStorage = sessionStorage.getItem(storageKey);
-      if (fromStorage) return JSON.parse(fromStorage);
-      if (this.cache[storageKey]) return this.cache[storageKey];
+      const fromStore = await this.store.get(storageKey);
+      if (fromStore) return fromStore;
     }
-    this.cache[storageKey] = new Promise((resolve, reject) => {
+
+    const promise = new Promise((resolve, reject) => {
       Promise.all([this.getProfile(refresh), window.adobeIMS?.getProfile()])
         .then(([profile, imsProfile]) => {
           const mergedProfile = { ...profile, ...imsProfile };
@@ -61,7 +103,8 @@ class ProfileClient {
         })
         .catch(reject);
     });
-    return this.cache[storageKey];
+    this.store.set(storageKey, promise);
+    return promise;
   }
 
   async updateProfile(key, val, replace = false) {
@@ -109,11 +152,10 @@ class ProfileClient {
 
   async fetchProfile(options, storageKey, refresh) {
     if (!refresh) {
-      const fromStorage = sessionStorage.getItem(storageKey);
-      if (fromStorage) return JSON.parse(fromStorage);
-      if (this.cache[storageKey]) return this.cache[storageKey];
+      const fromStorage = await this.store.get(storageKey);
+      if (fromStorage) return fromStorage;
     }
-    this.cache[storageKey] = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
       this.jwt.then((jwt) => {
         fetch(this.url, {
           ...options,
@@ -132,8 +174,8 @@ class ProfileClient {
           .catch(reject);
       });
     });
-
-    return this.cache[storageKey];
+    this.store.set(storageKey, promise);
+    return promise;
   }
 }
 
