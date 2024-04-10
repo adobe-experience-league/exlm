@@ -74,13 +74,18 @@ class ProfileClient {
 
     const { accessToken } = window.adobeIMS.getAccessToken();
     const accountId = (await window.adobeIMS.getProfile()).userId;
-    const promise = fetch(`${ppsOrigin}/api/profile`, {
-      headers: {
-        'X-Api-Key': ims.client_id,
-        'X-Account-Id': accountId,
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }).then((res) => res.json());
+
+    const promise = new Promise((resolve, reject) => {
+      const res = fetch(`${ppsOrigin}/api/profile`, {
+        headers: {
+          'X-Api-Key': ims.client_id,
+          'X-Account-Id': accountId,
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (res.ok) resolve(res.json());
+      else reject();
+    });
     this.store.set(PPS_PROFILE, promise);
     return promise;
   }
