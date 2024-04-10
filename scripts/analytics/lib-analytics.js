@@ -49,8 +49,8 @@ export async function pushPageDataLayer(language) {
   try {
     console.timeLog('martech', `datalayer: start profile inquiry ${Date.now()}`);
     // eslint-disable-next-line import/no-cycle
-    const { profile } = await import('../auth/profile.js');
-    const userData = await profile();
+    const { defaultProfileClient } = await import('../auth/profile.js');
+    const userData = await defaultProfileClient.getMergedProfile();
     console.timeLog('martech', `datalayer: profile inquiry done. Adding profile data to datlayer ${Date.now()}`);
     if (userData) {
       user.userDetails = {
