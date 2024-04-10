@@ -2372,5 +2372,27 @@
         "description": "Override default behaviour with custom Navigation"
       }
     ]
+  },
+  {
+    "id": "page-metadata",
+    "fields": [
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "article-theme",
+        "label": "Article Theme",
+        "value": "Adobe",
+        "options": [
+          {
+            "name": "Adobe",
+            "value": "adobe"
+          },
+          {
+            "name": "External",
+            "value": "external"
+          }
+        ]
+      }
+    ]
   }
 ]
