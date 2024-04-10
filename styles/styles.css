@@ -1101,6 +1101,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
 }
 .docs.docs-solution-landing main .default-content-wrapper ul li a {
   color: var(--non-spectrum-link);
+  line-height: 30px;
 }
 .docs.docs-solution-landing main .default-content-wrapper ul li a:hover {
   color: var(--non-spectrum-custom-dark);
