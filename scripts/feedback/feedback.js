@@ -362,16 +362,17 @@ function handleFeedbackIcons(el) {
   const textArea = moreQuestion.querySelector('.more-question > textarea');
   const title = el.querySelector('.first-question > h3');
 
-  [...feedbackIcon].forEach((icon) => {
+  [...feedbackIcon].forEach((icon, iconIndex) => {
     icon.addEventListener('click', () => {
       const textarea = el.querySelector('.more-question > textarea');
       textarea.disabled = false;
       toggleFeedbackBar(el, true);
       firstQuestionElement.classList.add('answered');
-      const iconVariation = icon.getAttribute('aria-label').replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
-      const qualtricsIcon = el.querySelector(`.QSI__EmbeddedFeedbackContainer_SVGButton[title="${iconVariation}"]`);
+      // find the real qualtrics icon to click, based on index.
+      const qualtricsIcons = [...el.querySelectorAll(`.QSI__EmbeddedFeedbackContainer_SVGButton`)];
+      const qualtricsIcon = qualtricsIcons.length > iconIndex && qualtricsIcons[iconIndex];
 
-      if (qualtricsIcon && icon) {
+      if (qualtricsIcon) {
         qualtricsIcon.click();
 
         if (textArea) {
