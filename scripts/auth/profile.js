@@ -72,7 +72,7 @@ class ProfileClient {
     const fromStorage = await this.store.get(PPS_PROFILE);
     if (fromStorage) return fromStorage;
 
-    const { accessToken } = window.adobeIMS.getAccessToken();
+    const { token } = window.adobeIMS.getAccessToken();
     const accountId = (await window.adobeIMS.getProfile()).userId;
 
     const promise = new Promise((resolve, reject) => {
@@ -80,7 +80,7 @@ class ProfileClient {
         headers: {
           'X-Api-Key': ims.client_id,
           'X-Account-Id': accountId,
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       if (res.ok) resolve(res.json());
