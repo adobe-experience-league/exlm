@@ -8,10 +8,6 @@
     margin-right: calc(-1 * var(--space-token-xs));
   }
   
-  body[class ^= 'browse-'] .section div.sign-up-wrapper {
-    margin-bottom: 40px;
-  }
-  
   .sign-up {
     position: relative;
   }
@@ -295,7 +291,6 @@
     body[class ^= 'browse-'] .section div.sign-up-wrapper {
       margin-left: unset;
       margin-right: unset;
-      margin-bottom: 40px;
     }
   
     /* title */
