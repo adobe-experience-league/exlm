@@ -113,21 +113,23 @@ class ProfileClient {
       if (this.cache[storageKey]) return this.cache[storageKey];
     }
     this.cache[storageKey] = new Promise((resolve, reject) => {
-      fetch(this.url, {
-        ...options,
-        credentials: 'include',
-        headers: {
-          authorization: this.jwt,
-          accept: 'application/json',
-          ...options.headers,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          sessionStorage.setItem(storageKey, JSON.stringify(data.data));
-          resolve(data.data);
+      this.jwt.then((jwt) => {
+        fetch(this.url, {
+          ...options,
+          credentials: 'include',
+          headers: {
+            authorization: jwt,
+            accept: 'application/json',
+            ...options.headers,
+          },
         })
-        .catch(reject);
+          .then((res) => res.json())
+          .then((data) => {
+            sessionStorage.setItem(storageKey, JSON.stringify(data.data));
+            resolve(data.data);
+          })
+          .catch(reject);
+      });
     });
 
     return this.cache[storageKey];
