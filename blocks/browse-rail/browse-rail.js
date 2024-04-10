@@ -23,11 +23,13 @@ const { browseMoreProductsLink } = getConfig();
 export async function getProducts() {
   // get language
   const { lang } = getPathDetails();
-  // load the <lang>/top-product list
-  const Products = await ffetch(`/${lang}/top-products.json`).all();
-  // get all indexed pages below <lang>/browse
-  const publishedPages = await ffetch(`/${lang}/browse-index.json`).all();
   let featured = true;
+  const [Products, publishedPages] = await Promise.all([
+    // load the <lang>/top-product list
+    ffetch(`/${lang}/top-products.json`, `/en/top-products.json`).all(),
+    // get all indexed pages below <lang>/browse
+    ffetch(`/${lang}/browse-index.json`, `/en/browse-index.json`).all(),
+  ]);
 
   // add all published top products to final list
   const finalProducts = Products.filter((product) => {
