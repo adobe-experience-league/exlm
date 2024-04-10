@@ -76,17 +76,18 @@ function hideSectionsBelowFilter(block, show) {
   if (parent) {
     const siblings = Array.from(parent.parentNode.children);
     const clickedIndex = siblings.indexOf(parent);
-    // eslint-disable-next-line no-plusplus
-    for (let i = clickedIndex + 1; i < siblings.length; i++) {
-      if (!siblings[i].classList.contains('browse-rail')) {
-        const classOp = show ? 'remove' : 'add';
-        siblings[i].classList?.[classOp]('browse-hide-section');
+    for (let index = clickedIndex + 1; index < siblings.length; index += 1) {
+      const alwaysShowAttribute = siblings[index].dataset.alwaysShow;
+      const alwaysShow = alwaysShowAttribute && alwaysShowAttribute.toLowerCase() === 'true';
+      if (!siblings[index].classList.contains('browse-rail') && !alwaysShow) {
+        const classOperation = show ? 'remove' : 'add';
+        siblings[index].classList?.[classOperation]('browse-hide-section');
       }
     }
   }
 }
 
-function hildeSectionsWithinFilter(block, show) {
+function hideSectionsWithinFilter(block, show) {
   const siblings = Array.from(block.children);
 
   // eslint-disable-next-line no-plusplus
@@ -123,7 +124,7 @@ function updateClearFilterStatus(block) {
       coveoQueryConfig.fireSelection = false;
       dispatchCoveoQuery = true;
     }
-    hildeSectionsWithinFilter(browseFiltersSection, true);
+    hideSectionsWithinFilter(browseFiltersSection, true);
   } else {
     dispatchCoveoQuery = true;
     clearFilterBtn.disabled = true;
@@ -131,7 +132,7 @@ function updateClearFilterStatus(block) {
     buildCardsShimmer.remove();
     browseFiltersContainer.classList.remove('browse-filters-full-container');
     selectionContainer.classList.remove('browse-filters-input-selected');
-    hildeSectionsWithinFilter(browseFiltersSection, false);
+    hideSectionsWithinFilter(browseFiltersSection, false);
   }
   if (dispatchCoveoQuery) {
     dispatchCoveoAdvancedQuery(coveoQueryConfig);
@@ -586,7 +587,7 @@ function handleUriHash() {
     } else if (keyName === 'aq' && filterInfo) {
       const selectedTopics = getSelectedTopics(filterInfo);
       const contentDiv = document.querySelector('.browse-topics');
-      const buttons = contentDiv.querySelectorAll('button');
+      const buttons = contentDiv?.querySelectorAll('button') ?? [];
       Array.from(buttons).forEach((button) => {
         const matchFound = selectedTopics.find((topic) => button.dataset.topicname?.includes(topic));
         if (matchFound) {
@@ -1089,11 +1090,14 @@ function decorateBrowseTopics(block) {
 
   const div = document.createElement('div');
   div.classList.add('browse-topics');
+  // default style to h2 so existing published pages are not rendered unstyled if not re-authored
+  const styledHeader =
+    headingElement.firstChild.nodeType === Node.TEXT_NODE ? `<h2>${headingContent}</h2>` : headingElement.innerHTML;
 
   const headerDiv = htmlToElement(`
     <div class="browse-topics-block-header">
       <div class="browse-topics-block-title">
-          <h2>${headingContent}</h2>
+          ${styledHeader}
       </div>
     </div>
   `);

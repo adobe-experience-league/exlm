@@ -1,7 +1,14 @@
 import ffetch from '../../scripts/ffetch.js';
 import { getMetadata } from '../../scripts/lib-franklin.js';
 import { filterSubPages, convertToMultiMap, convertToULList, sortFirstLevelList } from './browse-rail-utils.js';
-import { getEDSLink, getLink, getPathDetails, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import {
+  getEDSLink,
+  getLink,
+  getPathDetails,
+  getConfig,
+  createPlaceholderSpan,
+  htmlToElement,
+} from '../../scripts/scripts.js';
 
 const { browseMoreProductsLink } = getConfig();
 
@@ -16,11 +23,13 @@ const { browseMoreProductsLink } = getConfig();
 export async function getProducts() {
   // get language
   const { lang } = getPathDetails();
-  // load the <lang>/top-product list
-  const Products = await ffetch(`/${lang}/top-products.json`).all();
-  // get all indexed pages below <lang>/browse
-  const publishedPages = await ffetch(`/${lang}/browse-index.json`).all();
   let featured = true;
+  const [Products, publishedPages] = await Promise.all([
+    // load the <lang>/top-product list
+    ffetch(`/${lang}/top-products.json`, `/en/top-products.json`).all(),
+    // get all indexed pages below <lang>/browse
+    ffetch(`/${lang}/browse-index.json`, `/en/browse-index.json`).all(),
+  ]);
 
   // add all published top products to final list
   const finalProducts = Products.filter((product) => {
@@ -111,14 +120,16 @@ function handleViewLessClick(block, numFeaturedProducts) {
   setLinkVisibility(block, '.viewLessLink', false);
 }
 
-async function displayAllProducts(block, placeholders) {
+async function displayAllProducts(block) {
   const productList = await getProducts();
 
   if (productList.length > 0) {
     const productsUL = document.createElement('ul');
     productsUL.classList.add('products');
     const productsLI = document.createElement('li');
-    productsLI.innerHTML = `<span>${placeholders.products}</span><span class="js-toggle"></span>`;
+    const productsPlaceholder = createPlaceholderSpan('products', 'Products');
+    productsLI.appendChild(productsPlaceholder);
+    productsLI.appendChild(htmlToElement('</span><span class="js-toggle"></span>'));
 
     const ul = document.createElement('ul');
     let otherProductFirstItem = false;
@@ -144,12 +155,21 @@ async function displayAllProducts(block, placeholders) {
     if (ul.children.length > numFeaturedProducts) {
       const viewMoreLI = document.createElement('li');
       viewMoreLI.classList.add('left-rail-view-more', 'view-more-less');
-      viewMoreLI.innerHTML = `<span class="viewMoreLink"> + ${placeholders.viewMore}</span>`;
+      const viewMoreSpan = createPlaceholderSpan('viewMore', '+ View More', (span) => {
+        span.textContent = `+ ${span.textContent}`;
+      });
+      viewMoreSpan.classList.add('viewMoreLink');
+      viewMoreLI.appendChild(viewMoreSpan);
       ul.append(viewMoreLI);
 
       const viewLessLI = document.createElement('li');
       viewLessLI.classList.add('left-rail-view-less', 'view-more-less');
-      viewLessLI.innerHTML = `<span class="viewLessLink" style="display: none;"> - ${placeholders.viewLess}</span>`;
+      const viewLessSpan = createPlaceholderSpan('viewLess', '- View Less', (span) => {
+        span.textContent = `- ${span.textContent}`;
+      });
+      viewLessSpan.classList.add('viewLessLink');
+      viewLessSpan.style.display = 'none';
+      viewLessLI.appendChild(viewLessSpan);
       ul.append(viewLessLI);
 
       // Event listeners for "View More" and "View Less" links
@@ -163,7 +183,7 @@ async function displayAllProducts(block, placeholders) {
   }
 }
 
-async function displayProductNav(block, currentPagePath, results, placeholders) {
+async function displayProductNav(block, currentPagePath, results) {
   // Find the parent page for product sub-pages
   const parentPage = results.find((page) => page.path === getPathUntilLevel(currentPagePath, 3));
   let parentPageTitle = '';
@@ -181,10 +201,17 @@ async function displayProductNav(block, currentPagePath, results, placeholders) 
     const htmlList = convertToULList(resultMultiMap);
     block.appendChild(htmlList);
     sortFirstLevelList('.subPages');
-    const subPagesBrowseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
-    block.querySelector(
-      '.browse-by > li',
-    ).innerHTML = `<span>${placeholders.browseBy}</span><ul><li><a href="${pagePath}">${subPagesBrowseByLinkText}</a></li></ul>`;
+    const li = block.querySelector('.browse-by > li');
+    const browseBySpan = createPlaceholderSpan('browseBy', 'Browse By');
+    li.appendChild(browseBySpan);
+    const ul = document.createElement('ul');
+    const li2 = document.createElement('li');
+    ul.appendChild(li2);
+    li2.appendChild(createPlaceholderSpan('all', 'All'));
+    li2.appendChild(document.createTextNode(' '));
+    li2.appendChild(htmlToElement(`<span>${parentPageTitle}</span>`));
+    li2.appendChild(document.createTextNode(' '));
+    li2.appendChild(createPlaceholderSpan('content', 'Content'));
 
     // Hightlight the current page title in the left rail
     const targetElement = block.querySelector(`[href="${currentPagePath}"]`);
@@ -203,7 +230,7 @@ async function displayProductNav(block, currentPagePath, results, placeholders) 
       sortFirstLevelList('.subPages');
     } else {
       // In case of no sub-pages, show all products
-      await displayAllProducts(block, placeholders);
+      await displayAllProducts(block);
     }
   }
 }
@@ -247,7 +274,7 @@ export default async function decorate(block) {
   const theme = getMetadata('theme');
 
   const label = getMetadata('og:title');
-  const placeholders = await fetchLanguagePlaceholders();
+
   const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
   const currentPagePath = getEDSLink(window.location.pathname);
 
@@ -257,14 +284,23 @@ export default async function decorate(block) {
     const browseByUL = document.createElement('ul');
     browseByUL.classList.add('browse-by');
     const browseByLI = document.createElement('li');
-    browseByLI.innerHTML = `<span>${placeholders.browseBy}</span><ul><li><span class="is-active">${placeholders.browseAllContent}</span></li></ul>`;
+    const browseBySpan = createPlaceholderSpan('browseBy', 'Browse By');
+    const browseAllContentSpan = createPlaceholderSpan('browseAllContent', 'Browse All Content');
+    browseAllContentSpan.classList.add('is-active');
+    const ul = document.createElement('ul');
+    const li = document.createElement('li');
+    ul.append(li);
+    li.append(browseAllContentSpan);
+
+    browseByLI.appendChild(browseBySpan);
+    browseByLI.appendChild(ul);
     browseByUL.append(browseByLI);
     block.append(browseByUL);
     // Show All Products
     if (manualNav) {
       displayManualNav(manualNav, block);
     } else {
-      await displayAllProducts(block, placeholders);
+      displayAllProducts(block);
     }
   }
 
@@ -273,15 +309,35 @@ export default async function decorate(block) {
     // Add "Browse more products" link
     const browseMoreProducts = document.createElement('div');
     browseMoreProducts.classList.add('browse-more-products');
-    browseMoreProducts.innerHTML = `<a href="${browseMoreProductsLink}">${placeholders.browseMoreProducts}</a>`;
+    const browseMoreProductsSpan = createPlaceholderSpan('browseMoreProducts', 'Browse more products');
+    const link = document.createElement('a');
+    link.setAttribute('href', browseMoreProductsLink);
+    link.appendChild(browseMoreProductsSpan);
+    browseMoreProducts.appendChild(link);
     block.append(browseMoreProducts);
 
     // Browse By
     const browseByUL = document.createElement('ul');
     browseByUL.classList.add('browse-by');
     const browseByLI = document.createElement('li');
-    const browseByLinkText = `${placeholders.all} ${label} ${placeholders.content}`;
-    browseByLI.innerHTML = `<span>${placeholders.browseBy}</span><ul><li><span class="is-active">${browseByLinkText}</span></li></ul>`;
+    const allSpan = createPlaceholderSpan('all', 'All');
+    const contentSpan = createPlaceholderSpan('content', 'Content');
+    const labelSpan = document.createElement('span');
+    const browseBySpan = createPlaceholderSpan('browseBy', 'Browse By');
+    labelSpan.textContent = label;
+    browseByLI.append(browseBySpan);
+    const ul = document.createElement('ul');
+    const li = document.createElement('li');
+    const activeSpan = document.createElement('span');
+    activeSpan.classList.add('is-active');
+    ul.append(li);
+    li.append(activeSpan);
+    activeSpan.append(allSpan);
+    activeSpan.appendTextNode(' ');
+    activeSpan.append(labelSpan);
+    activeSpan.appendTextNode(' ');
+    activeSpan.append(contentSpan);
+
     browseByUL.append(browseByLI);
     block.append(browseByUL);
 
@@ -290,7 +346,7 @@ export default async function decorate(block) {
       displayManualNav(manualNav, block);
     } else {
       // dynamically create sub page nav or if empty show products list
-      await displayProductNav(block, currentPagePath, results, placeholders);
+      await displayProductNav(block, currentPagePath, results);
     }
   }
 

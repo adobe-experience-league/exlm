@@ -28,7 +28,7 @@
 }
 
 .guide-list-box .guide-list-container a {
-    color: var(--non-spectrum-link-blue);
+    color: var(--non-spectrum-link);
     font-weight: var(--font-weight-700);
 }
 
@@ -47,13 +47,13 @@
     width: 100%;
 }
 
-@media (min-width: 600px) {
+@media (width >= 600px) {
     .guide-list-box .guide-list-container li {
         width: 48%;
     }
 }
 
-@media (min-width: 900px) {
+@media (width >= 900px) {
     .guide-list-box .guide-list-container li {
         width: calc(33.33% - 20px);
     }
