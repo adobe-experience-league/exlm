@@ -65,11 +65,11 @@ class ProfileClient {
   }
 
   async getPPSProfile() {
-    const profilePicture = 'profilePicture';
+    const PPS_PROFILE = 'pps-profile';
     const signedIn = await this.isSignedIn;
     if (!signedIn) return null;
 
-    const fromStorage = await this.store.get(profilePicture);
+    const fromStorage = await this.store.get(PPS_PROFILE);
     if (fromStorage) return fromStorage;
 
     const { accessToken } = window.adobeIMS.getAccessToken();
@@ -81,7 +81,7 @@ class ProfileClient {
         Authorization: `Bearer ${accessToken}`,
       },
     }).then((res) => res.json());
-    this.store.set(profilePicture, promise);
+    this.store.set(PPS_PROFILE, promise);
     return promise;
   }
 
