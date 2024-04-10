@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-cycle
 import csrf from './csrf.js';
-import { getConfig, loadIms } from '../scripts.js';
+import { getConfig } from '../scripts.js';
+import { isSignedInUser } from './profile.js';
 
 const { JWTTokenUrl } = getConfig();
 
@@ -14,7 +15,6 @@ let JWTToken;
  */
 async function fetchAndStoreJWT() {
   try {
-    await loadIms();
     // Get user profile data from Adobe IMS
     const profileData = await adobeIMS?.getProfile(); // eslint-disable-line
     // Construct the request body
@@ -58,19 +58,18 @@ async function fetchAndStoreJWT() {
 export default async function loadJWT() {
   JWTToken =
     JWTToken ||
-    new Promise((resolve) => {
-      const isSignedInUser = window.adobeIMS && window.adobeIMS?.isSignedInUser();
-      if (isSignedInUser) {
-        // If JWT is present in session storage, return it; otherwise, fetch and store JWT
-        if ('JWT' in sessionStorage) {
-          resolve(sessionStorage.getItem('JWT'));
-        } else {
-          sessionStorage.removeItem('coveoToken');
-          const jwt = fetchAndStoreJWT();
-          resolve(jwt);
+    new Promise((resolve, reject) => {
+      isSignedInUser().then((signedIn) => {
+        if (signedIn) {
+          // If JWT is present in session storage, return it; otherwise, fetch and store JWT
+          if ('JWT' in sessionStorage) {
+            resolve(sessionStorage.getItem('JWT'));
+          } else {
+            sessionStorage.removeItem('coveoToken');
+            fetchAndStoreJWT().then(resolve).catch(reject);
+          }
         }
-      }
-      resolve(null);
+      });
     });
   return JWTToken;
 }
