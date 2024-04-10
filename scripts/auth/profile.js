@@ -22,7 +22,9 @@ export async function isSignedInUser() {
 }
 
 export async function signOut() {
-  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile'].forEach((key) => sessionStorage.removeItem(key));
+  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile'].forEach((key) =>
+    sessionStorage.removeItem(key),
+  );
   window.adobeIMS?.signOut();
 }
 
@@ -76,15 +78,19 @@ class ProfileClient {
     const accountId = (await window.adobeIMS.getProfile()).userId;
 
     const promise = new Promise((resolve, reject) => {
-      const res = fetch(`${ppsOrigin}/api/profile`, {
+      fetch(`${ppsOrigin}/api/profile`, {
         headers: {
           'X-Api-Key': ims.client_id,
           'X-Account-Id': accountId,
           Authorization: `Bearer ${token}`,
         },
-      });
-      if (res.ok) resolve(res.json());
-      else reject();
+      })
+        .then((res) => (res.ok ? res.json() : undefined))
+        .then((json) => {
+          if (json) resolve(json);
+          else reject(new Error('Failed to fetch PPS profile'));
+        })
+        .catch(reject);
     });
     this.store.set(PPS_PROFILE, promise);
     return promise;
