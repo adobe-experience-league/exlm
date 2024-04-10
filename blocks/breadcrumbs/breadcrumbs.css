@@ -9,7 +9,7 @@
   display: inline-block;
   font-size: var(--spectrum-font-size-200);
   margin: 0;
-  line-height: var(--spectrum-line-height-xl);
+  line-height: 30px;
 }
 
 .breadcrumbs > div > div > a::before {
