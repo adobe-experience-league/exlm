@@ -1,6 +1,7 @@
-import { JWT } from '../session-keys.js';
 // eslint-disable-next-line import/no-cycle
 import { getConfig } from '../scripts.js';
+
+const JWT = 'JWT';
 
 const { JWTTokenUrl } = getConfig();
 
