@@ -1,0 +1,105 @@
+.section.article-marquee-container {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+  .article-marquee > div > div:first-child {
+    padding: 1em;
+  }
+  
+  .article-marquee > div > div:first-child > p {
+    font-size: 1em;
+    color: gray;
+    display: inline;
+  }
+  
+  .article-marquee > div > div:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: white;
+    padding: 10px;
+    padding-top: 60px;
+    overflow-y: hidden;
+    position: relative;
+  }
+  
+  .article-marquee > div > div:nth-child(2) > p {
+    margin: 10px;
+  }
+  
+  .article-marquee > div > div:nth-child(2) picture {
+    width: 100px;
+    height: 100px;
+    display: block;
+  }
+  
+  .article-marquee > div > div:nth-child(2) img {
+    border-radius: 50%;
+  }
+  
+  .article-marquee-bg-mobile {
+    display: block !important;
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+  
+  .article-marquee-bg path:first-child {
+    fill: red !important;
+  }
+  
+  @media screen and (min-width: 600px) {
+    .article-marquee > div > div:nth-child(2) {
+      background-position: left;
+    }
+  
+    .article-marquee > div {
+      display: flex;
+      flex-direction: row;
+    }
+    .article-marquee > div > div:nth-child(2) {
+      width: 30%;
+      padding-left: 4em;
+      flex-grow: 0;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+  
+    .article-marquee-bg-mobile {
+      display: none !important;
+    }
+    .article-marquee-bg-tablet {
+      display: block !important;
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      height: 100%;
+    }
+  }
+  
+  @media screen and (min-width: 900px) {
+    .article-marquee > div > div:nth-child(2) {
+      padding-left: 12em;
+    }
+  
+    .article-marquee-bg-tablet {
+      display: none !important;
+    }
+    .article-marquee-bg-desktop {
+      display: block !important;
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      height: 100%;
+    }
+  }
+  
