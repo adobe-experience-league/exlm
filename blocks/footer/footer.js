@@ -84,10 +84,12 @@ async function decorateSocial(footer) {
   groupDiv.classList.add('footer-lang-social');
   // build language popover
   const { buildLanguagePopover } = await languageModule;
-  const { popover } = await buildLanguagePopover('top');
+  const { popover } = await buildLanguagePopover('top', 'language-picker-popover-footer');
 
   const langSelectorButton = languageSelector.firstElementChild;
   langSelectorButton.classList.add('language-selector-button');
+  langSelectorButton.setAttribute('aria-haspopup', 'true');
+  langSelectorButton.setAttribute('aria-controls', 'language-picker-popover-footer');
   const icon = document.createElement('span');
   icon.classList.add('icon', 'icon-globegrid');
   langSelectorButton.appendChild(icon);

@@ -9,6 +9,7 @@
   display: inline-block;
   font-size: var(--spectrum-font-size-200);
   margin: 0;
+  line-height: 33px;
 }
 
 .breadcrumbs > div > div > a::before {

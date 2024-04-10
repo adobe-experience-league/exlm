@@ -542,7 +542,7 @@ const languageDecorator = async (languageBlock) => {
 
   const prependLanguagePopover = async (parent) => {
     await languageModule.then(({ buildLanguagePopover }) => {
-      buildLanguagePopover().then(({ popover, languages }) => {
+      buildLanguagePopover(null, 'language-picker-popover-header').then(({ popover, languages }) => {
         decoratorState.languages.resolve(languages);
         parent.append(popover);
       });
@@ -550,7 +550,7 @@ const languageDecorator = async (languageBlock) => {
   };
 
   const languageHtml = `
-      <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover" aria-label="${title}">
+      <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover-header" aria-label="${title}">
         <span class="icon icon-globegrid"></span>
       </button>
     `;

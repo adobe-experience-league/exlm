@@ -299,7 +299,7 @@
   --non-spectrum-viridian: #007e50;
   --non-spectrum-grey: #4a4a4a;
   --non-spectrum-grey-updated: #6e6e6e;
-  --non-spectrum-link: #0265dc;
+  --non-spectrum-link: #0268e3;
   --non-spectrum-navy-blue: #1473e6;
   --non-spectrum-dark-navy-blue: #0265dc;
   --non-spectrum-article-light-gray: #d3d3d3;
@@ -334,7 +334,6 @@
   --non-spectrum-light-cyan: #20a3a8;
   --non-spectrum-azure-blue: #378ef0;
   --non-spectrum-silver-mist: #d2d2d2;
-  --non-spectrum-link-blue: #378ef0;
   --non-spectrum-max-width: 1280px;
   --non-spectrum-footer-max-width: 1440px;
 
@@ -1022,7 +1021,8 @@ body[class^='browse-'] .browse-filters-full-container {
       }
 
       ul li a {
-        color: var(--non-spectrum-link-blue);
+        color: var(--non-spectrum-link);
+        line-height: 30px;
       }
 
       ul li a:hover {
@@ -1073,7 +1073,7 @@ body[class^='browse-'] .browse-filters-full-container {
       ul li a {
         line-height: 24px;
         font-weight: var(--font-weight-700);
-        color: var(--non-spectrum-link-blue);
+        color: var(--non-spectrum-link);
       }
     }
   }
@@ -1146,7 +1146,7 @@ body[class^='browse-'] .browse-filters-full-container {
     }
 
     a {
-      color: var(--non-spectrum-link-blue);
+      color: var(--non-spectrum-link);
 
       &:hover {
         color: var(--non-spectrum-custom-dark);
