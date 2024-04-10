@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import csrf from './csrf.js';
-import { getConfig } from '../scripts.js';
+import { getConfig, loadIms } from '../scripts.js';
 
 const { JWTTokenUrl } = getConfig();
 
@@ -14,6 +14,7 @@ let JWTToken;
  */
 async function fetchAndStoreJWT() {
   try {
+    await loadIms();
     // Get user profile data from Adobe IMS
     const profileData = await adobeIMS?.getProfile(); // eslint-disable-line
     // Construct the request body
