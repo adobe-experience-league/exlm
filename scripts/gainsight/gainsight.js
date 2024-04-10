@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { isSignedInUser, profile } from '../data-service/profile-service.js';
+import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { loadScript } from '../lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 import { getPathDetails } from '../scripts.js';
@@ -64,7 +64,7 @@ async function loadGinsightScript(tagId, co) {
 export default async function loadGainsight() {
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
-    const profilePromise = profile(true);
+    const profilePromise = defaultProfileClient.getMergedProfile(true);
     const loadGainsightPromise = loadGinsightScript('AP-PCBATQJJQHRG-2');
     Promise.all([profilePromise, loadGainsightPromise]).then(([profileData]) => {
       identify(profileData);

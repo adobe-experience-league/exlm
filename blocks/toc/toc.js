@@ -22,6 +22,7 @@ async function fetchToc(tocID) {
     const json = await response.json();
     return json.data;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Error fetching toc data', error);
     return null;
   }

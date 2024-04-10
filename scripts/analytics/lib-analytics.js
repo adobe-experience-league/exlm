@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
@@ -48,7 +49,7 @@ export async function pushPageDataLayer(language) {
   try {
     console.timeLog('martech', `datalayer: start profile inquiry ${Date.now()}`);
     // eslint-disable-next-line import/no-cycle
-    const { profile } = await import('../data-service/profile-service.js');
+    const { profile } = await import('../auth/profile.js');
     const userData = await profile();
     console.timeLog('martech', `datalayer: profile inquiry done. Adding profile data to datlayer ${Date.now()}`);
     if (userData) {

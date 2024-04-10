@@ -1,4 +1,4 @@
-import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
+import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons, loadCSS, getMetadata } from '../../scripts/lib-franklin.js';
 import {
   htmlToElement,
@@ -12,7 +12,6 @@ import {
 import { getProducts } from '../browse-rail/browse-rail.js';
 
 const languageModule = import('../../scripts/language.js');
-const authOperationsModule = import('../../scripts/auth/auth-operations.js');
 const { khorosProfileUrl, ppsOrigin, ims } = getConfig();
 
 let searchElementPromise = null;
@@ -760,8 +759,7 @@ const profileMenuDecorator = async (profileMenuBlock) => {
 
     if (profileMenuWrapper.querySelector('[data-id="sign-out"]')) {
       profileMenuWrapper.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
-        const { signOut } = await authOperationsModule;
-        signOut();
+        defaultProfileClient.signOut();
       });
     }
   } else {
