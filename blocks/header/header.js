@@ -7,6 +7,7 @@ import {
   decorateLinks,
   getConfig,
   getLink,
+  fetchFragment,
 } from '../../scripts/scripts.js';
 import { getProducts } from '../browse-rail/browse-rail.js';
 
@@ -180,11 +181,6 @@ const randomId = (length = 6) =>
  */
 const getCell = (block, row, cell) => block.querySelector(`:scope > div:nth-child(${row}) > div:nth-child(${cell})`);
 
-// fetch fragment html
-const fetchFragment = async (rePath, lang = 'en') => {
-  const response = await fetch(`/fragments/${lang}/${rePath}.plain.html`);
-  return response.text();
-};
 // Mobile Only (Until 1024px)
 const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 

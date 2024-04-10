@@ -832,6 +832,19 @@ export function rewriteDocsPath(docsPath) {
   return url.toString().replace(PROD_BASE, ''); // always remove PROD_BASE if exists
 }
 
+export async function fetchWithFallback(path, fallbackPath) {
+  const response = await fetch(path);
+  if (response.ok) return response;
+  return fetch(fallbackPath);
+}
+
+export async function fetchFragment(rePath, lang = 'en') {
+  const path = `/fragments/${lang}/${rePath}.plain.html`;
+  const fallback = `/fragments/en/${rePath}.plain.html`;
+  const response = await fetchWithFallback(path, fallback);
+  return response.text();
+}
+
 export async function fetchLanguagePlaceholders() {
   const { lang } = getPathDetails();
   try {

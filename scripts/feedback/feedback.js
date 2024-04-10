@@ -1,5 +1,13 @@
 import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, getPathDetails, fetchLanguagePlaceholders, isDocArticlePage } from '../scripts.js'; // eslint-disable-line import/no-cycle
+// eslint-disable-next-line import/no-cycle
+import {
+  createTag,
+  htmlToElement,
+  getPathDetails,
+  fetchLanguagePlaceholders,
+  isDocArticlePage,
+  fetchFragment,
+} from '../scripts.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { sendNotice } from '../toast/toast.js';
 
@@ -17,12 +25,6 @@ const RETRY_DELAY = 500;
 const FEEDBACK_CONTAINER_SELECTOR = '.feedback-ui';
 const FEEDBACK_SUCCESS = placeholders?.feedbackSuccess || 'Received! Thank you for your feedback.';
 const FEEDBACK_TEXT_ACTIVE = placeholders?.feedbackTextActive || 'Type your detailed feedback here and submit.';
-
-// fetch fragment html
-const fetchFragment = async (rePath, lang = 'en') => {
-  const response = await fetch(`/fragments/${lang}/${rePath}.plain.html`);
-  return response.text();
-};
 
 const { lang } = getPathDetails();
 const feedbackFragment = await fetchFragment('feedback-bar/feedback-bar', lang);
