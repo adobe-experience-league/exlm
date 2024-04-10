@@ -22,7 +22,7 @@ export async function isSignedInUser() {
 }
 
 export async function signOut() {
-  ['JWT', 'coveoToken', 'attributes', 'profile'].forEach((key) => sessionStorage.removeItem(key));
+  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile'].forEach((key) => sessionStorage.removeItem(key));
   window.adobeIMS?.signOut();
 }
 
