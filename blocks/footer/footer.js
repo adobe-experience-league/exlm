@@ -1,14 +1,8 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { getPathDetails, decorateLinks } from '../../scripts/scripts.js';
+import { getPathDetails, decorateLinks, fetchFragment } from '../../scripts/scripts.js';
 import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
 
 const languageModule = import('../../scripts/language.js');
-
-// fetch fragment html
-const fetchFragment = async (rePath, lang = 'en') => {
-  const response = await fetch(`/fragments/${lang}/${rePath}.plain.html`);
-  return response.text();
-};
 
 async function decorateMenu(footer) {
   const isSignedIn = await isSignedInUser();

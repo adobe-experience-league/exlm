@@ -1,5 +1,13 @@
 import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, getPathDetails, fetchLanguagePlaceholders, isDocArticlePage } from '../scripts.js'; // eslint-disable-line import/no-cycle
+// eslint-disable-next-line import/no-cycle
+import {
+  createTag,
+  htmlToElement,
+  getPathDetails,
+  fetchLanguagePlaceholders,
+  isDocArticlePage,
+  fetchFragment,
+} from '../scripts.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { sendNotice } from '../toast/toast.js';
 
@@ -17,12 +25,6 @@ const RETRY_DELAY = 500;
 const FEEDBACK_CONTAINER_SELECTOR = '.feedback-ui';
 const FEEDBACK_SUCCESS = placeholders?.feedbackSuccess || 'Received! Thank you for your feedback.';
 const FEEDBACK_TEXT_ACTIVE = placeholders?.feedbackTextActive || 'Type your detailed feedback here and submit.';
-
-// fetch fragment html
-const fetchFragment = async (rePath, lang = 'en') => {
-  const response = await fetch(`/fragments/${lang}/${rePath}.plain.html`);
-  return response.text();
-};
 
 const { lang } = getPathDetails();
 const feedbackFragment = await fetchFragment('feedback-bar/feedback-bar', lang);
@@ -362,16 +364,17 @@ function handleFeedbackIcons(el) {
   const textArea = moreQuestion.querySelector('.more-question > textarea');
   const title = el.querySelector('.first-question > h3');
 
-  [...feedbackIcon].forEach((icon) => {
+  [...feedbackIcon].forEach((icon, iconIndex) => {
     icon.addEventListener('click', () => {
       const textarea = el.querySelector('.more-question > textarea');
       textarea.disabled = false;
       toggleFeedbackBar(el, true);
       firstQuestionElement.classList.add('answered');
-      const iconVariation = icon.getAttribute('aria-label').replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
-      const qualtricsIcon = el.querySelector(`.QSI__EmbeddedFeedbackContainer_SVGButton[title="${iconVariation}"]`);
+      // find the real qualtrics icon to click, based on index.
+      const qualtricsIcons = [...el.querySelectorAll(`.QSI__EmbeddedFeedbackContainer_SVGButton`)];
+      const qualtricsIcon = qualtricsIcons.length > iconIndex && qualtricsIcons[iconIndex];
 
-      if (qualtricsIcon && icon) {
+      if (qualtricsIcon) {
         qualtricsIcon.click();
 
         if (textArea) {
