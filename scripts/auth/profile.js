@@ -119,7 +119,7 @@ class ProfileClient {
   }
 
   async updateProfile(key, val, replace = false) {
-    const profile = await this.profile();
+    const profile = await this.getProfile();
     const attribute = await this.getAttributes();
 
     Object.keys(profile).forEach((i) => {
