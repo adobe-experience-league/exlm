@@ -156,9 +156,9 @@ class ProfileClient {
       },
       body: JSON.stringify([{ op: 'replace', path: `/${key}`, value: profile[key] }]),
     });
-    this.getProfile(true).then(() => {
-      this.getMergedProfile(true);
-    });
+
+    // uppdate the profile in session storage after the changes
+    await this.getMergedProfile(true);
   }
 
   /**
