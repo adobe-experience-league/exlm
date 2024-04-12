@@ -247,7 +247,10 @@ export default async function decorate(block) {
     ) {
       buildNoResultsContent(block, true);
     } else {
-      block.style.display = 'None';
+      const recommendedCoursesContainer = document.querySelector('.recommended-courses-container');
+      if (recommendedCoursesContainer) {
+        recommendedCoursesContainer.remove();
+      }
     }
   });
 }
