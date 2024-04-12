@@ -168,7 +168,7 @@ class ProfileClient {
    * @returns
    */
   async fetchProfile(options, storageKey, refresh) {
-    if (!refresh) {
+    if (storageKey && !refresh) {
       const fromStorage = await this.store.get(storageKey);
       if (fromStorage) return fromStorage;
     }
@@ -185,7 +185,7 @@ class ProfileClient {
         })
           .then((res) => res.json())
           .then((data) => {
-            sessionStorage.setItem(storageKey, JSON.stringify(data.data));
+            if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));
             resolve(structuredClone(data.data));
           })
           .catch(reject);
