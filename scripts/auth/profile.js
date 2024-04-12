@@ -55,11 +55,13 @@ class ProfileClient {
   }
 
   async getAttributes() {
-    return this.fetchProfile({ method: 'OPTIONS' }, 'attributes');
+    const attributes = await this.fetchProfile({ method: 'OPTIONS' }, 'attributes');
+    return structuredClone(attributes);
   }
 
   async getProfile() {
-    return this.fetchProfile({}, 'exl-profile');
+    const profile = await this.fetchProfile({}, 'exl-profile');
+    return structuredClone(profile);
   }
 
   async getPPSProfile() {
@@ -176,7 +178,7 @@ class ProfileClient {
           .then((res) => res.json())
           .then((data) => {
             sessionStorage.setItem(storageKey, JSON.stringify(data.data));
-            resolve(data.data);
+            resolve(structuredClone(data.data));
           })
           .catch(reject);
       });
