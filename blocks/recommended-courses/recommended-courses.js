@@ -1,13 +1,13 @@
 // Importing constants and modules
 import { RECOMMENDED_COURSES_CONSTANTS } from '../../scripts/browse-card/browse-cards-constants.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { isSignedInUser, profile } from '../../scripts/data-service/profile-service.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import BrowseCardsPathsAdaptor from '../../scripts/browse-card/browse-cards-paths-adaptor.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
+import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -197,7 +197,7 @@ export default async function decorate(block) {
       buildCardsShimmer.add(block);
 
       // Fetching user profile data
-      profile().then(async (data) => {
+      defaultProfileClient.getMergedProfile().then(async (data) => {
         // Fetching card data based on parameters
         const browseCardsContent = BrowseCardsDelegate.fetchCardData(parameters);
 

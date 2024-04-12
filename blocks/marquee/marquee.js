@@ -107,7 +107,7 @@ export default async function decorate(block) {
   }
 
   // fetch user auth to toggle hide signin button
-  import('../../scripts/data-service/profile-service.js')
+  import('../../scripts/auth/profile.js')
     .then((module) => module.isSignedInUser())
     .then((isSignedInUser) => {
       if (!isSignedInUser) {
