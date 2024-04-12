@@ -59,8 +59,8 @@ class ProfileClient {
     return structuredClone(attributes);
   }
 
-  async getProfile() {
-    const profile = await this.fetchProfile({}, 'exl-profile');
+  async getProfile(refresh = false) {
+    const profile = await this.fetchProfile({}, 'exl-profile', refresh);
     return structuredClone(profile);
   }
 
@@ -156,9 +156,17 @@ class ProfileClient {
       },
       body: JSON.stringify([{ op: 'replace', path: `/${key}`, value: profile[key] }]),
     });
-    this.fetchProfile();
+    this.getProfile(true).then(() => {
+      this.getMergedProfile(true);
+    });
   }
 
+  /**
+   * @param {Request} options
+   * @param {string} storageKey
+   * @param {boolean} refresh
+   * @returns
+   */
   async fetchProfile(options, storageKey, refresh) {
     if (!refresh) {
       const fromStorage = await this.store.get(storageKey);
