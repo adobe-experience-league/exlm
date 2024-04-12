@@ -55,11 +55,13 @@ class ProfileClient {
   }
 
   async getAttributes() {
-    return this.fetchProfile({ method: 'OPTIONS' }, 'attributes');
+    const attributes = await this.fetchProfile({ method: 'OPTIONS' }, 'attributes');
+    return structuredClone(attributes);
   }
 
-  async getProfile() {
-    return this.fetchProfile({}, 'exl-profile');
+  async getProfile(refresh = false) {
+    const profile = await this.fetchProfile({}, 'exl-profile', refresh);
+    return structuredClone(profile);
   }
 
   async getPPSProfile() {
@@ -154,11 +156,19 @@ class ProfileClient {
       },
       body: JSON.stringify([{ op: 'replace', path: `/${key}`, value: profile[key] }]),
     });
-    this.fetchProfile();
+
+    // uppdate the profile in session storage after the changes
+    await this.getMergedProfile(true);
   }
 
+  /**
+   * @param {Request} options
+   * @param {string} storageKey
+   * @param {boolean} refresh
+   * @returns
+   */
   async fetchProfile(options, storageKey, refresh) {
-    if (!refresh) {
+    if (storageKey && !refresh) {
       const fromStorage = await this.store.get(storageKey);
       if (fromStorage) return fromStorage;
     }
@@ -175,8 +185,8 @@ class ProfileClient {
         })
           .then((res) => res.json())
           .then((data) => {
-            sessionStorage.setItem(storageKey, JSON.stringify(data.data));
-            resolve(data.data);
+            if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));
+            resolve(structuredClone(data.data));
           })
           .catch(reject);
       });
