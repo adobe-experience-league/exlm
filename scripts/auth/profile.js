@@ -4,10 +4,6 @@ import { getConfig, loadIms } from '../scripts.js';
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
 
-window.exl = window.exl || {};
-window.exl.profileData = window.exl.profileData || null;
-window.exl.meta = window.exl.meta || {};
-
 const { profileUrl, JWTTokenUrl, ppsOrigin, ims } = getConfig();
 
 const override = /^(recommended|votes)$/;
@@ -120,10 +116,10 @@ class ProfileClient {
 
   async updateProfile(key, val, replace = false) {
     const profile = await this.getProfile();
-    const attribute = await this.getAttributes();
+    const attriubutes = await this.getAttributes();
 
     Object.keys(profile).forEach((i) => {
-      if (attribute.write.includes(i) === false) {
+      if (attriubutes.write.includes(i) === false) {
         delete profile[i];
       }
     });
@@ -131,7 +127,7 @@ class ProfileClient {
     // eslint-disable-next-line
     if (override.test(key) || replace === true) {
       profile[key] = val;
-    } else if (window.exl.meta.types[key] === 'array') {
+    } else if (attriubutes.types[key] === 'array') {
       // eslint-disable-next-line
       if (profile[key] === void 0 || replace === true) {
         profile[key] = [val];
