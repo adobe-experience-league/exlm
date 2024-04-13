@@ -36,8 +36,7 @@
     color: var(--spectrum-gray-50);
 }
 
-.browse-topics-block-title h2 {
-    font-size: var(--spectrum-font-size-700);
+.browse-topics-block-title h1,h2,h3,h4,h5,h6 {
     line-height: 42px;
     color: var(--spectrum-gray-800);
     margin: 0 0 16px;
@@ -55,8 +54,7 @@
         font-size: var(--spectrum-font-size-300);
     }
     
-    .browse-topics-block-title h2 {
-        font-size: var(--spectrum-font-size-900);
+    .browse-topics-block-title h1,h2,h3,h4,h5,h6 {
         line-height: 54px;
         color: var(--spectrum-gray-900);
         margin: 0 0 20px;
