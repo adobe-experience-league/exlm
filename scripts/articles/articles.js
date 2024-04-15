@@ -11,7 +11,10 @@ export default function decorateArticles() {
     articleBody.removeChild(miniTocWrapper);
     const wrapperEl = document.createElement('div');
     wrapperEl.classList.add('articles-body-content');
-    Array.from(articleBody.children).forEach((element) => wrapperEl.appendChild(element));
+    Array.from(articleBody.children).forEach((element) => {
+      element.classList.add('articles-section');
+      wrapperEl.appendChild(element);
+    });
     articleBody.appendChild(wrapperEl);
     articleBody.appendChild(miniTocWrapper);
   }

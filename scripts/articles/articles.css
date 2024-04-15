@@ -2,6 +2,10 @@
     padding: 32px 0;
 }
 
+.articles-wrapper .articles-section {
+    margin-bottom: 32px;
+}
+
 .articles-wrapper .articles-body-content {
     padding: 0 20px;
     background-color: inherit;
@@ -14,10 +18,6 @@
 
 .articles-wrapper .articles-marquee {
     padding: 40px 20px 0;
-}
-
-.articles-wrapper .articles-body .video-embed-wrapper {
-    margin: 32px 0;
 }
 
 .articles-wrapper .articles-body .default-content-wrapper > h2 {
@@ -65,7 +65,6 @@
 
 @media(min-width: 900px) {
     .articles-wrapper {
-        /* display: grid; */
         padding: 0 82px 80px;
     }
     .articles-wrapper .articles-body {
@@ -89,7 +88,7 @@
         padding: 0;
     }
 
-    .articles-wrapper .articles-body .video-embed-wrapper {
-        margin: 56px 0;
+    .articles-wrapper .articles-section {
+        margin-bottom: 56px;
     }
 }
