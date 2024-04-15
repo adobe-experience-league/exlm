@@ -1,6 +1,6 @@
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getPathDetails, decorateLinks, fetchFragment } from '../../scripts/scripts.js';
-import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
 
 const languageModule = import('../../scripts/language.js');
 

@@ -1,7 +1,7 @@
-import { updateProfile } from '../data-service/profile-service.js';
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
+import { defaultProfileClient } from '../auth/profile.js';
 
 let placeholders = {};
 try {
@@ -17,14 +17,14 @@ const renderBookmark = (labelSel, iconSel, id) => {
     e.stopPropagation();
     if (id) {
       if (iconSel.classList.contains('authed')) {
-        await updateProfile('bookmarks', id);
+        defaultProfileClient.updateProfile('bookmarks', id);
         labelSel.innerHTML = `${placeholders.bookmarkAuthLabelSet}`;
         iconSel.classList.remove('authed');
         sendNotice(`${placeholders.bookmarkUnset}`);
         iconSel.style.pointerEvents = 'none';
         assetInteractionModel(id, 'Bookmark removed');
       } else {
-        await updateProfile('bookmarks', id);
+        defaultProfileClient.updateProfile('bookmarks', id);
         labelSel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
         iconSel.classList.add('authed');
         sendNotice(`${placeholders.bookmarkSet}`);
