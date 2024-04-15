@@ -1,0 +1,95 @@
+.articles-wrapper .articles-body {
+    padding: 32px 0;
+}
+
+.articles-wrapper .articles-body-content {
+    padding: 0 20px;
+    background-color: inherit;
+}
+
+.articles-wrapper .mini-toc-wrapper {
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.articles-wrapper .articles-marquee {
+    padding: 40px 20px 0;
+}
+
+.articles-wrapper .articles-body .video-embed-wrapper {
+    margin: 32px 0;
+}
+
+.articles-wrapper .articles-body .default-content-wrapper > h2 {
+    font-size: var(--spectrum-font-size-700);
+    line-height: 35px;
+    color: var(--text-color);
+    font-weight: var(--font-weight-700);
+    margin: 16px 0;
+}
+
+.articles-wrapper .articles-body .default-content-wrapper > p {
+    font-size: var(--spectrum-font-size-200);
+    line-height: 24px;
+    color: var(--non-spectrum-dark-gray);
+    margin: 0;
+}
+
+.articles-wrapper .articles-body .default-content-wrapper > p:first-of-type {
+    font-size: var(--spectrum-font-size-300);
+    line-height: 27px;
+    margin-bottom: 24px;
+}
+
+.articles-wrapper .articles-body .video-embed-wrapper .video-embed {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+@media(min-width: 600px) {
+    .articles-wrapper .articles-body {
+        padding: 56px 0;
+    }
+    .articles-wrapper .articles-body-content {
+        padding: 0 62px;
+    }
+
+    .articles-wrapper .mini-toc-wrapper {
+        padding: 0 62px;
+    }
+
+    .articles-wrapper .articles-marquee {
+        padding: 40px 62px 0;
+    }
+}
+
+@media(min-width: 900px) {
+    .articles-wrapper {
+        /* display: grid; */
+        padding: 0 82px 80px;
+    }
+    .articles-wrapper .articles-body {
+        display: grid;
+        grid-template-columns: 4fr 1fr;
+        padding: 80px 0;
+    }
+
+    .articles-wrapper .articles-body-content {
+        grid-column-start: 1;
+        display: grid;
+        padding: 0 82px;
+    }
+
+    .articles-wrapper .articles-marquee {
+        padding: 30px 82px 0;
+    }
+
+    .articles-wrapper .mini-toc-wrapper {
+        display: block;
+        padding: 0;
+    }
+
+    .articles-wrapper .articles-body .video-embed-wrapper {
+        margin: 56px 0;
+    }
+}

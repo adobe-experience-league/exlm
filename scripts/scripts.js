@@ -280,6 +280,14 @@ export const decorateLinks = (block) => {
   });
 };
 
+export function isPageOfType(type) {
+  const theme = getMetadata('theme');
+  return theme
+    .split(',')
+    .map((t) => t.toLowerCase().trim())
+    .includes(type);
+}
+
 /**
  * Check if current page is a MD Docs Page.
  * theme = docs is set in bulk metadata for docs paths.
@@ -287,11 +295,11 @@ export const decorateLinks = (block) => {
  *                      docs-landing, docs (optional, default value is docs)
  */
 export function isDocPage(type = 'docs') {
-  const theme = getMetadata('theme');
-  return theme
-    .split(',')
-    .map((t) => t.toLowerCase().trim())
-    .includes(type);
+  return isPageOfType(type);
+}
+
+export function isArticlePage(type = 'articles') {
+  return isPageOfType(type);
 }
 
 /**
@@ -804,6 +812,37 @@ async function loadRails() {
   }
 }
 
+/**
+ * Custom - Loads and builds layout for articles page
+ */
+async function loadArticles() {
+  if (isArticlePage()) {
+    loadCSS(`${window.hlx.codeBasePath}/scripts/articles/articles.css`);
+    const mod = await import('./articles/articles.js');
+    if (mod.default) {
+      await mod.default();
+    }
+  }
+}
+
+function addMiniTocForArticlesPage() {
+  if (isArticlePage()) {
+    const main = document.querySelector('main');
+    const [, articleBody] = main.children;
+    if (articleBody && !articleBody.querySelector('.mini-toc')) {
+      // Dynamically add mini-toc section for articles page
+      const miniTocWrapper = htmlToElement(`
+      <div class="mini-toc">
+        <div>
+          <div></div>
+        </div>
+      </div>
+      `);
+      articleBody.appendChild(miniTocWrapper);
+    }
+  }
+}
+
 function showBrowseBackgroundGraphic() {
   if (isBrowsePage()) {
     const main = document.querySelector('main');
@@ -959,8 +998,10 @@ async function loadPage() {
   // THIS IS TEMPORARY FOR SUMMIT.
   if (handleHomePageHashes()) return;
   // END OF TEMPORARY FOR SUMMIT.
+  addMiniTocForArticlesPage();
   await loadEager(document);
   await loadLazy(document);
+  loadArticles();
   loadRails();
   loadDelayed();
   showBrowseBackgroundGraphic();
