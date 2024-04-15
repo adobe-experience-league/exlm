@@ -21,14 +21,20 @@
 }
 
 .am-article-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   padding: 40px 20px;
+  position: relative;
+  z-index: 1;
 }
 
 .am-author-info {
   display: flex;
   align-items: center;
   flex-direction: column;
-  padding: 4em;
+  padding: 6em 4em 3em;
+  padding-top: 6em;
   position: relative;
   color: #fff;
 }
@@ -37,6 +43,7 @@
   z-index: 1;
 }
 
+
 .am-author-info > div:nth-child(1){
   width: 75px;
   height: 75px;
@@ -44,9 +51,14 @@
   overflow: hidden;
 }
 
+.am-author-info > div:nth-child(2){
+  font-size: var(--spectrum-font-size-100);
+  font-weight: 600;
+}
+
 .am-bg {
   position: absolute;
-  top: 50%;
+  top: 60%;
   bottom: 0;
   left: -60px;
   right: -60px;
@@ -61,12 +73,40 @@
   background-color: #EB1000;
 }
 
-.article-marquee .breadcrumb > a {
+.article-marquee .breadcrumb > a ,
+.article-marquee .breadcrumb > span {
   color: var(--spectrum-gray-500);
   display: inline-block;
   font-size: var(--spectrum-font-size-200);
   line-height: 24px;
   margin: 0;
+}
+
+.article-marquee .breadcrumb > a:hover {
+  text-decoration: underline;
+}
+
+.article-marquee .breadcrumb > span::before,
+.article-marquee .breadcrumb > a::before {
+  background-image: url("../../icons/chevron_right.svg");
+  background-size: 16px;
+  bottom: -3px;
+  content: "";
+  display: inline-block;
+  height: 16px;
+  margin-right: 5px;
+  margin-left: 5px;
+  position: relative;
+  width: 16px;
+}
+
+.article-marquee .breadcrumb > a:first-child::before {
+  content: none;
+}
+
+.article-marquee .breadcrumb > span {
+  color: var(--spectrum-gray-800);
+  font-weight: var(--font-weight-700);
 }
 
 .article-marquee-info {
@@ -79,12 +119,15 @@
 }
 
 .article-marquee-lu {
+  color: #909090;
   margin-left: 1em;
 }
 
 .article-marquee-rt {
   display: flex;
   margin-left: 1em;
+  gap: 5px;
+  color: #909090;
 }
 
 .am-tag {
@@ -107,6 +150,12 @@
     padding: 40px;
   }
 
+  .am-author-info {
+    padding: 1em;
+    min-width: 30%;
+    justify-content: center;
+  }
+
   .am-bg { 
     border-radius: 100% 0% 0% 100% / 50% 100% 0% 50% ;
     right: 0;
@@ -118,14 +167,29 @@
  }
 
  @media (min-width: 900px) {
+  .article-marquee {
+    min-height: 290px;
+  }
+
+  .am-author-info > div:nth-child(2){
+    font-size: var(--spectrum-font-size-200);
+  }
+
+  .am-article-info {
+    max-width: 600px;
+  }
+
   .am-author-info {
     min-width: 300px;
   }
   .am-bg {
-    left: 60%;
+    left: auto;
+    width: 50%;
+    margin-right: -150px;
     border-radius: 10% 0% 0% 100% / 25% 100% 0% 100%;
   }
  }
+
 
 .article-marquee .exl-tooltip {
   display: inline-block;

@@ -1,12 +1,14 @@
 import {
-  fetchLanguagePlaceholders,
   getEDSLink,
   getLink,
+  getPathDetails,
   createPlaceholderSpan,
+  fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
-import { isSignedInUser, profile } from '../../scripts/data-service/profile-service.js';
+import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import ffetch from '../../scripts/ffetch.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
 import attachCopyLink from '../../scripts/copy-link/copy-link.js';
@@ -36,7 +38,7 @@ export async function decorateBookmark(block) {
     const bookmarkAuthedToolTipLabel = authBookmark.querySelector('.exl-tooltip-label');
     const bookmarkAuthedToolTipIcon = authBookmark.querySelector('.bookmark-icon');
     loadJWT().then(async () => {
-      profile().then(async (data) => {
+      defaultProfileClient().then(async (data) => {
         if (data.bookmarks.includes(bookmarkId)) {
           bookmarkAuthedToolTipIcon.classList.add('authed');
           bookmarkAuthedToolTipLabel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
@@ -104,7 +106,36 @@ function createBreadcrumb(container) {
   rootCrumbElem.setAttribute('href', getLink(browseRoot));
   container.append(rootCrumbElem);
 
-  // TODO : Rest of breadcrumb
+  // get the browse index
+  ffetch(`/${getPathDetails().lang}/article-index.json`)
+    .all()
+    .then((index) => {
+      // build the remaining breadcrumbs
+      pathParts[1].split('/').reduce((prevSubPath, nextPathElem) => {
+        // create the next crumble sub path
+        const nextCrumbSubPath = `${prevSubPath}/${nextPathElem}`;
+        // construct full crumb path
+        const fullCrumbPath = `${browseRoot}${nextCrumbSubPath}`;
+        // has page been published and indexed ?
+        const indexEntry = index.find((e) => e.path === fullCrumbPath);
+        if (indexEntry) {
+          let elem;
+          // create crumb element, either 'a' or 'span'
+          if (fullCrumbPath !== currentPath) {
+            elem = document.createElement('a');
+            elem.setAttribute('href', getLink(fullCrumbPath));
+          } else {
+            elem = document.createElement('span');
+          }
+          elem.innerText = indexEntry.title;
+          // append the a element
+          container.append(elem);
+        }
+        // go to next sub path
+        return nextCrumbSubPath;
+      });
+      container.append(createPlaceholderSpan('article', document.title));
+    });
 }
 
 /**
@@ -120,7 +151,9 @@ export default async function ArticleMarquee(block) {
   }
   const articleDetails = `<div class="am-container"><div class="am-article-info">
                                 <div class="breadcrumb"></div>
-                                <${headingType.textContent}>${document.title}</${headingType.textContent}>
+                                <${headingType.textContent ? headingType.textContent : 'h1'}>${document.title}</${
+                                  headingType.textContent ? headingType.textContent : 'h1'
+                                }>
                                 <div class="article-marquee-info"></div>
                             </div>
                             <div class="am-author-info">
