@@ -1,4 +1,4 @@
-import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
+import { defaultProfileClient, isSignedInUser, signOut } from '../../scripts/auth/profile.js';
 import { decorateIcons, loadCSS, getMetadata } from '../../scripts/lib-franklin.js';
 import {
   htmlToElement,
@@ -12,8 +12,7 @@ import {
 import { getProducts } from '../browse-rail/browse-rail.js';
 
 const languageModule = import('../../scripts/language.js');
-const authOperationsModule = import('../../scripts/auth/auth-operations.js');
-const { khorosProfileUrl, ppsOrigin, ims } = getConfig();
+const { khorosProfileUrl } = getConfig();
 
 let searchElementPromise = null;
 
@@ -556,17 +555,6 @@ const languageDecorator = async (languageBlock) => {
   return languageBlock;
 };
 
-async function getPPSProfile(accessToken, accountId) {
-  const res = await fetch(`${ppsOrigin}/api/profile`, {
-    headers: {
-      'X-Api-Key': ims.client_id,
-      'X-Account-Id': accountId,
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  return res.json();
-}
-
 /**
  * Decorates the sign-in block
  * @param {HTMLElement} signInBlock
@@ -588,9 +576,8 @@ const signInDecorator = async (signInBlock) => {
     );
 
     signInBlock.replaceChildren(profile);
-    const { token } = window.adobeIMS.getAccessToken();
-    const accountId = (await window.adobeIMS.getProfile()).userId;
-    getPPSProfile(token, accountId)
+    defaultProfileClient
+      .getPPSProfile()
       .then((ppsProfile) => {
         const profilePicture = ppsProfile?.images['50'];
         if (profilePicture) {
@@ -760,7 +747,6 @@ const profileMenuDecorator = async (profileMenuBlock) => {
 
     if (profileMenuWrapper.querySelector('[data-id="sign-out"]')) {
       profileMenuWrapper.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
-        const { signOut } = await authOperationsModule;
         signOut();
       });
     }
