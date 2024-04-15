@@ -147,6 +147,7 @@
   }
 
   .am-article-info {
+    min-height: 200px;
     padding: 40px;
   }
 
