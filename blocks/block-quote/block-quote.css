@@ -11,7 +11,7 @@
   border-bottom: 0px;
 }
 
-.block-quote-content {
+.block-quote-content *{
   font-style: italic;
   font-weight: normal;
   font-size: 22px;
