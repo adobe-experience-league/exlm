@@ -3,10 +3,10 @@ import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 export default async function decorate(block) {
   let placeholders = {};
   try {
-      placeholders = await fetchLanguagePlaceholders();
+    placeholders = await fetchLanguagePlaceholders();
   } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('Error fetching placeholders:', err);
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
   }
   const allDivs = Array.from(block.children);
   const fragment = document.createDocumentFragment();
