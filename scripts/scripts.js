@@ -178,24 +178,24 @@ function addBrowseBreadCrumb(main) {
   }
 }
 
-// export function isArticlePage() {
-//   const theme = getMetadata('theme');
-//   return theme.split(',').find((t) => t.toLowerCase().startsWith('article-'));
-// }
+export function isArticleLandingPage() {
+  const theme = getMetadata('theme');
+  return theme.split(',').find((t) => t.toLowerCase().startsWith('article-'));
+}
 
-// function addArticleRail(main) {
-//   // if there is already editable browse rail stored
-//   const articleRailSectionFound = [...main.querySelectorAll('.section-metadata')].find((sMeta) =>
-//     readBlockConfig(sMeta)?.style.split(',').includes('article-rail-section'),
-//   );
-//   if (articleRailSectionFound) return;
+function addArticleLandingRail(main) {
+  // if there is already editable browse rail stored
+  const articleRailSectionFound = [...main.querySelectorAll('.section-metadata')].find((sMeta) =>
+    readBlockConfig(sMeta)?.style.split(',').includes('article-rail-section'),
+  );
+  if (articleRailSectionFound) return;
 
-//   // default: create a dynamic uneditable article rail
-//   const leftRailSection = document.createElement('div');
-//   leftRailSection.classList.add('articles-rail-section', isArticlePage());
-//   leftRailSection.append(buildBlock('articles-rail', []));
-//   main.append(leftRailSection);
-// }
+  // default: create a dynamic uneditable article rail
+  const leftRailSection = document.createElement('div');
+  leftRailSection.classList.add('articles-rail-section', isArticleLandingPage());
+  leftRailSection.append(buildBlock('articles-rail', []));
+  main.append(leftRailSection);
+}
 
 /**
  * Builds all synthetic blocks in a container element.
@@ -208,6 +208,9 @@ function buildAutoBlocks(main) {
     if (isBrowsePage()) {
       addBrowseBreadCrumb(main);
       addBrowseRail(main);
+    }
+    if(isArticleLandingPage()) {
+      addArticleLandingRail(main);
     }
     // eslint-disable-next-line no-use-before-define
     addMiniTocForArticlesPage(main);

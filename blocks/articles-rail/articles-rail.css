@@ -133,11 +133,6 @@
     padding: 5px 0 5px 12px;
 }
 
-.articles-rail ul > li > ul > li > a,
-.articles-rail ul > li > ul > li > span {
-    background-color: var(--spectrum-gray-100);
-}
-
 .articles-rail ul > li > ul > li > a:hover,
 .articles-rail ul > li > ul > li > span:hover {
     background-color: var(--spectrum-gray-200);
