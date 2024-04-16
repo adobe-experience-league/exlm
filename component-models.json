@@ -2480,7 +2480,7 @@
         "name": "first-callout-text",
         "value": "",
         "label": "First Callout Text",
-        "description": "Sets the text"
+        "description": "Sets the text for first callout block"
       },
       {
         "component": "select",
@@ -2505,7 +2505,7 @@
         "name": "second-callout-text",
         "value": "",
         "label": "Second Callout Text",
-        "description": "Sets the text"
+        "description": "Sets the text for second callout block"
       },
       {
         "component": "select",
