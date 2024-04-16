@@ -15,7 +15,7 @@ export default function decorateArticles() {
       element.classList.add('articles-section');
       wrapperEl.appendChild(element);
     });
-    articleBody.appendChild(wrapperEl);
     articleBody.appendChild(miniTocWrapper);
+    articleBody.appendChild(wrapperEl);
   }
 }

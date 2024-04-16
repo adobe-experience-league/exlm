@@ -14,6 +14,9 @@
 .articles-wrapper .mini-toc-wrapper {
     padding: 0 20px;
     box-sizing: border-box;
+    position: relative;
+    top: auto;
+    margin-bottom: 32px;
 }
 
 .articles-wrapper .articles-marquee {
@@ -75,6 +78,7 @@
 
     .articles-wrapper .articles-body-content {
         grid-column-start: 1;
+        grid-column-end: 3;
         display: grid;
         padding: 0 82px;
     }
@@ -86,6 +90,11 @@
     .articles-wrapper .mini-toc-wrapper {
         display: block;
         padding: 0;
+        grid-column-start: 4;
+        grid-row-start: 1;
+        position: sticky;
+        top: 52px;
+        margin-bottom: auto;
     }
 
     .articles-wrapper .articles-section {
