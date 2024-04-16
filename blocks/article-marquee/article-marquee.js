@@ -149,20 +149,20 @@ export default async function ArticleMarquee(block) {
   if (ArticleType !== 'adobe') {
     tagname = 'By you';
   }
-  const articleDetails = `<div class="am-container"><div class="am-article-info">
+  const articleDetails = `<div class="article-marquee-info-container"><div class="article-info">
                                 <div class="breadcrumb"></div>
                                 <${headingType.textContent ? headingType.textContent : 'h1'}>${document.title}</${
                                   headingType.textContent ? headingType.textContent : 'h1'
                                 }>
                                 <div class="article-marquee-info"></div>
                             </div>
-                            <div class="am-author-info">
+                            <div class="author-info">
                             ${authorImg.outerHTML} 
                             <div>By ${authorName.textContent.trim()}</div> 
                             ${authorTitle.outerHTML}
-                            <div class="am-tag">${tagname}</div>
+                            <div class="article-marquee-tag">${tagname}</div>
                             </div></div>
-                            <div class="am-bg ${ArticleType}"></div>
+                            <div class="article-marquee-bg ${ArticleType}"></div>
                             `;
   block.innerHTML = articleDetails;
   const infoContainer = block.querySelector('.article-marquee-info');
