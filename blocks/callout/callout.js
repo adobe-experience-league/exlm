@@ -1,4 +1,13 @@
-export default function decorate(block) {
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+
+export default async function decorate(block) {
+  let placeholders = {};
+  try {
+      placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching placeholders:', err);
+  }
   const allDivs = Array.from(block.children);
   const fragment = document.createDocumentFragment();
 
@@ -22,7 +31,7 @@ export default function decorate(block) {
       }
       tagDiv.classList.add('callout-card-tag');
       if (tag) {
-        tagDiv.textContent = isExternalSource ? 'By You' : `By ${tag}`;
+        tagDiv.textContent = isExternalSource ? placeholders?.calloutYouLabel : `By ${tag}`;
       }
 
       card.appendChild(tagDiv);
