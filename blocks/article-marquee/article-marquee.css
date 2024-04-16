@@ -73,6 +73,10 @@
   background-color: var(--spectrum-red-1400);
 }
 
+.article-marquee .breadcrumb {
+  margin-bottom: 1em;
+}
+
 .article-marquee .breadcrumb > a ,
 .article-marquee .breadcrumb > span {
   color: var(--spectrum-gray-500);
@@ -105,25 +109,31 @@
 }
 
 .article-marquee .breadcrumb > span {
+  display: block;
+  margin-top: 8px;
   color: var(--spectrum-gray-800);
+  font-size: 22px;
   font-weight: var(--font-weight-700);
 }
 
 .article-marquee-info {
   display: flex;
   flex-wrap: wrap;
+  margin-top: 1em;
 }
 
 .article-marquee-options {
   display: flex;
+  width: 100%;
+  gap: 10px;
 }
 
-.article-marquee-lu {
+.article-marquee-last-updated {
   color: var(--spectrum-gray-500);
   margin-left: 1em;
 }
 
-.article-marquee-rt {
+.article-marquee-read-time {
   display: flex;
   margin-left: 1em;
   gap: 5px;
@@ -138,6 +148,11 @@
   margin-top: 1em;
   border-radius: 2px;
   background-color: var(--background-color);
+}
+
+.article-marquee .bookmark > .exl-link-label,
+.article-marquee .copy-link > .exl-link-label {
+  font-size: 16px;
 }
 
 @media (min-width: 600px) {
@@ -164,6 +179,17 @@
     top: -100px;
     bottom: -100px;
     outline-offset: 20px;
+  }
+
+  .article-marquee-options {
+    width: auto;
+    gap: 0px;
+  }
+
+  .article-marquee .breadcrumb > span { 
+    display: inline;
+    margin-top: 0;
+    font-size: var(--spectrum-font-size-200);
   }
  }
 
@@ -232,7 +258,7 @@
 }
 .article-marquee .bookmark-icon, 
 .article-marquee .copy-icon{
-  background-size: 20px 20px;
+  background-size: 24px 24px;
   background-repeat: no-repeat;
   color: var(--spectrum-gray-800);
   cursor: pointer;
@@ -257,7 +283,7 @@
 .article-marquee .bookmark.auth .bookmark-icon.authed {
   background-image: url("../../icons/bookmark-active.svg");
   background-position: center 2px;
-  background-size: 17px 17px;
+  background-size: 20px 20px;
   cursor: pointer;
 }
 .article-marquee .bookmark.auth .bookmark-icon.authed:hover + .exl-tooltip-label {
@@ -284,8 +310,8 @@
 }
 
 @media (min-width: 600px) {
-  .bookmark .exl-link-label,
-  .copy-link .exl-link-label {
+  .article-marquee .bookmark .exl-link-label,
+  .article-marquee .copy-link .exl-link-label {
     display: none;
   }
 }

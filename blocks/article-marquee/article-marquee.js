@@ -13,6 +13,11 @@ import loadJWT from '../../scripts/auth/jwt.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
 import attachCopyLink from '../../scripts/copy-link/copy-link.js';
 
+const metadataProperties = {
+  adobe: 'adobe',
+  external: 'external',
+};
+
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
 try {
@@ -26,11 +31,11 @@ export async function decorateBookmark(block) {
   const bookmarkId = ((document.querySelector('meta[name="id"]') || {}).content || '').trim();
   const unAuthBookmark = document.createElement('div');
   unAuthBookmark.className = 'bookmark';
-  unAuthBookmark.innerHTML = tooltipTemplate('bookmark-icon', 'Bookmark page', `${placeholders.bookmarkUnauthLabel}`);
+  unAuthBookmark.innerHTML = tooltipTemplate('bookmark-icon', 'Bookmark page', placeholders.bookmarkUnauthLabel);
 
   const authBookmark = document.createElement('div');
   authBookmark.className = 'bookmark auth';
-  authBookmark.innerHTML = tooltipTemplate('bookmark-icon', 'Bookmark page', `${placeholders.bookmarkAuthLabelSet}`);
+  authBookmark.innerHTML = tooltipTemplate('bookmark-icon', 'Bookmark page', placeholders.bookmarkAuthLabelSet);
 
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
@@ -41,7 +46,7 @@ export async function decorateBookmark(block) {
       defaultProfileClient().then(async (data) => {
         if (data.bookmarks.includes(bookmarkId)) {
           bookmarkAuthedToolTipIcon.classList.add('authed');
-          bookmarkAuthedToolTipLabel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
+          bookmarkAuthedToolTipLabel.innerHTML = placeholders.bookmarkAuthLabelRemove;
         }
       });
 
@@ -55,7 +60,7 @@ export async function decorateBookmark(block) {
 async function decorateCopyLink(block) {
   const copyLinkDivNode = document.createElement('div');
   copyLinkDivNode.className = 'copy-link';
-  copyLinkDivNode.innerHTML = tooltipTemplate('copy-icon', 'copy page url', `${placeholders.toastTiptext}`);
+  copyLinkDivNode.innerHTML = tooltipTemplate('copy-icon', 'Copy page url', placeholders.toastTiptext);
 
   block.appendChild(copyLinkDivNode);
   attachCopyLink(copyLinkDivNode, window.location.href, placeholders.toastSet);
@@ -74,16 +79,16 @@ async function createOptions(container, readTimeText) {
   const lastUpdated = document.createElement('div');
   const lastUpdatedData = document.querySelector('meta[name="published-time"]').getAttribute('content');
   const date = new Date(lastUpdatedData);
-  lastUpdated.classList.add('article-marquee-lu');
-  lastUpdated.textContent = `Last Updated:${date.toLocaleDateString(undefined, {
+  lastUpdated.classList.add('article-marquee-last-updated');
+  lastUpdated.textContent = `${placeholders.articleMarqueeLastUpdatedText} ${date.toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   })}`;
 
   const readTime = document.createElement('div');
-  readTime.classList.add('article-marquee-rt');
-  readTime.innerHTML = `<span class="icon icon-time"></span> <span>${readTimeText} read</span>`;
+  readTime.classList.add('article-marquee-read-time');
+  readTime.innerHTML = `<span class="icon icon-time"></span> <span>${readTimeText} ${placeholders.articleMarqueeReadTimeText}</span>`;
 
   container.appendChild(options);
   container.appendChild(lastUpdated);
@@ -144,10 +149,10 @@ function createBreadcrumb(container) {
 export default async function ArticleMarquee(block) {
   const [authorImg, authorName, authorTitle, readTime, headingType] = block.querySelectorAll(':scope div > div');
 
-  let tagname = 'By Adobe';
+  let tagname = placeholders.articleMarqueeAdobeTag;
   const ArticleType = document.querySelector('meta[name="article-theme"]').getAttribute('content');
-  if (ArticleType !== 'adobe') {
-    tagname = 'By you';
+  if (ArticleType.toLowerCase() !== metadataProperties.adobe) {
+    tagname = placeholders.articleMarqueeExternalTag;
   }
   const articleDetails = `<div class="article-marquee-info-container"><div class="article-info">
                                 <div class="breadcrumb"></div>
@@ -158,7 +163,7 @@ export default async function ArticleMarquee(block) {
                             </div>
                             <div class="author-info">
                             ${authorImg.outerHTML} 
-                            <div>By ${authorName.textContent.trim()}</div> 
+                            <div>${authorName.textContent.trim()}</div> 
                             ${authorTitle.outerHTML}
                             <div class="article-marquee-tag">${tagname}</div>
                             </div></div>
