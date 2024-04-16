@@ -209,7 +209,7 @@ function buildAutoBlocks(main) {
       addBrowseBreadCrumb(main);
       addBrowseRail(main);
     }
-    if(isArticleLandingPage()) {
+    if (isArticleLandingPage()) {
       addArticleLandingRail(main);
     }
     // eslint-disable-next-line no-use-before-define
