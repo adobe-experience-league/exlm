@@ -1,4 +1,4 @@
-import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 function decorateButtons(...buttons) {

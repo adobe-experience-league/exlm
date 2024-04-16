@@ -178,6 +178,93 @@ indices:
       - /zh-hant/browse/**
     target: /zh-hant/browse-index.json
 
+  article-en: &base-article
+    include:
+      - /en/articles/**
+    target: /en/article-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: |
+          attribute(el, 'content')
+      theme:
+        select: head > meta[name="theme"]
+        value: |
+          attribute(el, 'content')
+      lastModified:
+        select: none
+        value: |
+          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
+
+  article-fr:
+    <<: *base-article
+    include:
+      - /fr/articles/**
+    target: /fr/article-index.json
+
+  article-de:
+    <<: *base-article
+    include:
+      - /de/articles/**
+    target: /de/article-index.json
+
+  article-es:
+    <<: *base-article
+    include:
+      - /es/articles/**
+    target: /es/article-index.json
+
+  article-it:
+    <<: *base-article
+    include:
+      - /it/articles/**
+    target: /it/article-index.json
+
+  article-nl:
+    <<: *base-article
+    include:
+      - /nl/articles/**
+    target: /nl/article-index.json
+
+  article-pt-br:
+    <<: *base-article
+    include:
+      - /pt-br/articles/**
+    target: /pt-br/article-index.json
+
+  article-ko:
+    <<: *base-article
+    include:
+      - /ko/articles/**
+    target: /ko/article-index.json
+
+  article-ja:
+    <<: *base-article
+    include:
+      - /ja/articles/**
+    target: /ja/article-index.json
+
+  article-sv:
+    <<: *base-article
+    include:
+      - /sv/articles/**
+    target: /sv/article-index.json
+
+  article-zh-hans:
+    <<: *base-article
+    include:
+      - /zh-hans/articles/**
+    target: /zh-hans/article-index.json
+
+  article-zh-hant:
+    <<: *base-article
+    include:
+      - /zh-hant/articles/**
+    target: /zh-hant/article-index.json
+
   # Sitemap indicies, split in 2 google has a limit of 50k (and 50MB) urls per sitemap
   sitemap-en-1: &base-sitemap-1
     include:

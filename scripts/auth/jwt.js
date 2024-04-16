@@ -1,9 +1,7 @@
-import { JWT, COVEO_TOKEN } from '../session-keys.js';
-import { signOut } from './auth-operations.js';
 // eslint-disable-next-line import/no-cycle
 import csrf from './csrf.js';
-import fetchData from '../request.js';
 import { getConfig } from '../scripts.js';
+import { isSignedInUser } from './profile.js';
 
 const { JWTTokenUrl } = getConfig();
 
@@ -19,7 +17,6 @@ async function fetchAndStoreJWT() {
   try {
     // Get user profile data from Adobe IMS
     const profileData = await adobeIMS?.getProfile(); // eslint-disable-line
-
     // Construct the request body
     const requestBody = {
       firstName: profileData?.first_name || '',
@@ -34,7 +31,7 @@ async function fetchAndStoreJWT() {
     };
 
     // Send a request to fetch JWT token from the server
-    const response = await fetchData(JWTTokenUrl, {
+    const response = await fetch(JWTTokenUrl, {
       credentials: 'include',
       method: 'POST',
       headers: {
@@ -49,16 +46,11 @@ async function fetchAndStoreJWT() {
     if (response.ok && response.headers.has('authorization')) {
       const token = response.headers.get('authorization');
       // Store the JWT token in session storage
-      sessionStorage.setItem(JWT, token);
+      sessionStorage.setItem('JWT', token);
       return token;
     }
-
-    // If the request was not successful or JWT is not present, sign out and throw an error
-    signOut();
     return new Error('Failed to retrieve JWT');
   } catch (error) {
-    // Sign out and throw an error if an exception occurs during JWT retrieval
-    signOut();
     return new Error(`Failed to retrieve JWT: ${error}`);
   }
 }
@@ -66,19 +58,18 @@ async function fetchAndStoreJWT() {
 export default async function loadJWT() {
   JWTToken =
     JWTToken ||
-    new Promise((resolve) => {
-      const isSignedInUser = window.adobeIMS && window.adobeIMS?.isSignedInUser();
-      if (isSignedInUser) {
-        // If JWT is present in session storage, return it; otherwise, fetch and store JWT
-        if (JWT in sessionStorage) {
-          resolve(sessionStorage.getItem(JWT));
-        } else {
-          sessionStorage.removeItem(COVEO_TOKEN);
-          const jwt = fetchAndStoreJWT();
-          resolve(jwt);
+    new Promise((resolve, reject) => {
+      isSignedInUser().then((signedIn) => {
+        if (signedIn) {
+          // If JWT is present in session storage, return it; otherwise, fetch and store JWT
+          if ('JWT' in sessionStorage) {
+            resolve(sessionStorage.getItem('JWT'));
+          } else {
+            sessionStorage.removeItem('coveoToken');
+            fetchAndStoreJWT().then(resolve).catch(reject);
+          }
         }
-      }
-      resolve(null);
+      });
     });
   return JWTToken;
 }

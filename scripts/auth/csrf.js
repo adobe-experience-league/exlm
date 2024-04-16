@@ -1,7 +1,7 @@
-import { JWT } from '../session-keys.js';
-import fetchData from '../request.js';
 // eslint-disable-next-line import/no-cycle
 import { getConfig } from '../scripts.js';
+
+const JWT = 'JWT';
 
 const { JWTTokenUrl } = getConfig();
 
@@ -15,31 +15,6 @@ const tokens = new Map();
 const timers = new Map();
 
 /**
- * Generates a hash value for the given string.
- * @param {string} arg - The string to hash.
- * @returns {number} The hash value generated from the input string.
- */
-function hash(arg = '') {
-  const nth = arg.length;
-  let result = 0;
-  if (nth > 0) {
-    let i = -1;
-    let chr;
-
-    // eslint-disable-next-line no-plusplus
-    while (++i < nth) {
-      chr = arg.charCodeAt(i);
-      // eslint-disable-next-line no-bitwise
-      result = (result << 5) - result + chr;
-      // eslint-disable-next-line no-bitwise
-      result |= 0;
-    }
-  }
-
-  return result;
-}
-
-/**
  * Retrieves or generates a CSRF token for the specified URI.
  *
  * @param {string} uri - The URI for which to retrieve the CSRF token.
@@ -51,7 +26,7 @@ export default async function csrf(uri = JWTTokenUrl) {
   if (result.length === 0) {
     try {
       // Fetch CSRF token from the server
-      const res = await fetchData(uri, {
+      const res = await fetch(uri, {
         method: 'HEAD',
         credentials: 'include',
         headers: JWT in sessionStorage ? { authorization: sessionStorage.getItem(JWT) } : {},
@@ -61,7 +36,7 @@ export default async function csrf(uri = JWTTokenUrl) {
         result = res.headers.get('x-csrf-token') || '';
 
         if (result.length > 0) {
-          const key = `${'CSRFTimer'}:${hash(uri)}`;
+          const key = `CSRFTimer:${uri}`;
 
           // Store the CSRF token
           tokens.set(uri, result);
