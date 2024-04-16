@@ -22,8 +22,7 @@ import {
 } from './lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 
-const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
-
+const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
 export const timers = new Map();
 
 // eslint-disable-next-line
