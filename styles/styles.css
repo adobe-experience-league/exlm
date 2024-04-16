@@ -1313,12 +1313,17 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
 @media (min-width: 1024px) {
   body[class^=browse-] > main, body[class^=article-] > main {
     display: grid;
-    grid-template: "articles-rail main"/256px 1fr;
+    grid-template: "browse-rail main"/256px 1fr;
     /* on pages with rails the max width must be on main */
     max-width: var(--non-spectrum-max-width);
     margin: auto;
     grid-template-rows: auto auto;
   }
+  
+  body[class^=article-] > main {
+    grid-template: "articles-rail main"/256px 1fr;
+  }
+
   main > div.section {
     grid-column: 2;
   }
