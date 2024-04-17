@@ -1321,7 +1321,7 @@ body[class^='browse-'] .browse-filters-full-container {
     & > main {
       display: grid;
       grid-template:
-        'articles-rail main'
+        'browse-rail main'
         / 256px 1fr;
 
       /* on pages with rails the max width must be on main */
@@ -1329,6 +1329,10 @@ body[class^='browse-'] .browse-filters-full-container {
       margin: auto;
       grid-template-rows: auto auto;
     }
+  }
+
+  body[class^='article-'] > main {
+    grid-template: 'articles-rail main'/256px 1fr;
   }
 
   main > div.section {

@@ -267,7 +267,7 @@ strong {
   --spectrum-red-1100: #930000;
   --spectrum-red-1200: #740000;
   --spectrum-red-1300: #590000;
-  --spectrum-red-1400: #EB1000;
+  --spectrum-red-1400: #eb1000;
   --spectrum-celery-100: #cdfcbf;
   --spectrum-celery-200: #aef69d;
   --spectrum-celery-300: #96ee85;
@@ -333,7 +333,7 @@ strong {
   --spectrum-indigo-1100: #3236a8;
   --spectrum-indigo-1200: #262986;
   --spectrum-indigo-1300: #1b1e64;
-  --spectrum-indigo-1400: #4C50CC;
+  --spectrum-indigo-1400: #4c50cc;
   --spectrum-magenta-100: #ffeaf1;
   --spectrum-magenta-200: #ffdce8;
   --spectrum-magenta-300: #ffcadd;
@@ -1317,11 +1317,14 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   body[class^=browse-] > main,
   body[class^=article-] > main {
     display: grid;
-    grid-template: "articles-rail main"/256px 1fr;
+    grid-template: "browse-rail main"/256px 1fr;
     /* on pages with rails the max width must be on main */
     max-width: var(--non-spectrum-max-width);
     margin: auto;
     grid-template-rows: auto auto;
+  }
+  body[class^=article-] > main {
+    grid-template: "articles-rail main"/256px 1fr;
   }
   main > div.section {
     grid-column: 2;
