@@ -201,6 +201,14 @@ export function pushLinkClick(e) {
 
 export function assetInteractionModel(id, assetInteractionType, filters) {
   window.adobeDataLayer = window.adobeDataLayer || [];
+  const dataLayerFilters = {
+    Role: '',
+    ContentType: '',
+    ExperienceLevel: '',
+    KeywordSearch: '',
+    BrowseByTopic: '',
+  };
+  Object.assign(dataLayerFilters, filters);
 
   // assetId is set to the current docs page articleId if id param value is null
   const assetId = id || ((document.querySelector('meta[name="id"]') || {}).content || '').trim();
@@ -212,7 +220,7 @@ export function assetInteractionModel(id, assetInteractionType, filters) {
       linkType: '',
       solution: '',
     },
-    ...filters,
+    ...dataLayerFilters,
     event: 'assetInteraction',
     asset: {
       id: assetId,
