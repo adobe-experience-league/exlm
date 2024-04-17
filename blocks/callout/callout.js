@@ -31,7 +31,7 @@ export default async function decorate(block) {
       }
       tagDiv.classList.add('callout-card-tag');
       if (tag) {
-        tagDiv.textContent = isExternalSource ? placeholders?.calloutYouLabel : `By ${tag}`;
+        tagDiv.textContent = isExternalSource ? placeholders?.articleExternalTag : `By ${tag}`;
       }
 
       card.appendChild(tagDiv);
