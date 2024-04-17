@@ -409,7 +409,8 @@ body {
   overflow-wrap: break-word;
 }
 
-body[class^='browse-'] {
+body[class^='browse-'],
+body[class^='article-'] {
   /* default background color for browse pages */
   background-color: var(--spectrum-gray-100);
 }
@@ -1347,6 +1348,17 @@ body[class^='browse-'] .browse-filters-full-container {
   body[class^='browse-'] {
     & main {
       background-position: -36px 0;
+    }
+  }
+
+  body.article-landing,
+  body.article-product-landing {
+    & main {
+      max-width: 1440px;
+    }
+
+    & main > div.section:not(.articles-rail-section) {
+      padding: 30px 32px;
     }
   }
 
