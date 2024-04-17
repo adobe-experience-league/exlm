@@ -7,7 +7,7 @@ import {
 } from '../../scripts/scripts.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import ffetch from '../../scripts/ffetch.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
@@ -43,7 +43,7 @@ export async function decorateBookmark(block) {
     const bookmarkAuthedToolTipLabel = authBookmark.querySelector('.exl-tooltip-label');
     const bookmarkAuthedToolTipIcon = authBookmark.querySelector('.bookmark-icon');
     loadJWT().then(async () => {
-      defaultProfileClient().then(async (data) => {
+      defaultProfileClient.getMergedProfile().then(async (data) => {
         if (data.bookmarks.includes(bookmarkId)) {
           bookmarkAuthedToolTipIcon.classList.add('authed');
           bookmarkAuthedToolTipLabel.innerHTML = placeholders.bookmarkAuthLabelRemove;
@@ -147,10 +147,12 @@ function createBreadcrumb(container) {
  * @param {HTMLElement} block
  */
 export default async function ArticleMarquee(block) {
+  loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
   const [authorImg, authorName, authorTitle, readTime, headingType] = block.querySelectorAll(':scope div > div');
 
   let tagname = placeholders.articleMarqueeAdobeTag;
-  const ArticleType = document.querySelector('meta[name="article-theme"]').getAttribute('content');
+  let ArticleType = document.querySelector('meta[name="article-theme"]')?.getAttribute('content');
+  if (!ArticleType) ArticleType = metadataProperties.adobe;
   if (ArticleType.toLowerCase() !== metadataProperties.adobe) {
     tagname = placeholders.articleMarqueeExternalTag;
   }
