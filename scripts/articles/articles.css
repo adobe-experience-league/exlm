@@ -17,10 +17,7 @@
     position: relative;
     top: auto;
     margin-bottom: 32px;
-}
-
-.articles-wrapper .articles-marquee {
-    padding: 40px 20px 0;
+    max-width: 295px;
 }
 
 .articles-wrapper .articles-body .default-content-wrapper > h2 {
@@ -60,16 +57,9 @@
     .articles-wrapper .mini-toc-wrapper {
         padding: 0 62px;
     }
-
-    .articles-wrapper .articles-marquee {
-        padding: 40px 62px 0;
-    }
 }
 
 @media(min-width: 900px) {
-    .articles-wrapper {
-        padding: 0 82px 80px;
-    }
     .articles-wrapper .articles-body {
         display: grid;
         grid-template-columns: 4fr 1fr;
@@ -81,10 +71,6 @@
         grid-column-end: 3;
         display: grid;
         padding: 0 82px;
-    }
-
-    .articles-wrapper .articles-marquee {
-        padding: 30px 82px 0;
     }
 
     .articles-wrapper .mini-toc-wrapper {
