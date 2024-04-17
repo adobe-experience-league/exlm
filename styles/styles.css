@@ -1320,6 +1320,11 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
     margin: auto;
     grid-template-rows: auto auto;
   }
+  
+  body[class^=article-] > main {
+    grid-template: "articles-rail main"/256px 1fr;
+  }
+
   main > div.section {
     grid-column: 2;
   }

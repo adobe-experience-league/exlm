@@ -2486,7 +2486,7 @@
         "component": "select",
         "valueType": "string",
         "name": "first-callout-source",
-        "value": "adobe",
+        "value": "",
         "label": "First Callout Source",
         "options": [
           {
@@ -2511,7 +2511,7 @@
         "component": "select",
         "valueType": "string",
         "name": "second-callout-source",
-        "value": "external",
+        "value": "",
         "label": "Second Callout Source",
         "options": [
           {
