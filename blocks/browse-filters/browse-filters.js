@@ -1010,6 +1010,9 @@ async function handleSearchEngineSubscription(block) {
       !filterResultsEl.classList.contains('no-results') &&
       !filterResultsEl.classList.contains('browse-hide-section')
     ) {
+      // EXLM-1367: if no results and any Topics tag is clicked, AA still wants get dataLayer
+      // but removing condition creates unnecessary datalayer events
+      // ??
       const analyticsFilters = generateAnalyticsFilters(block, response.totalCount);
       if (analyticsFilters) {
         assetInteractionModel(null, 'Browse Filters', analyticsFilters);
