@@ -1,4 +1,4 @@
-import { debounce, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { debounce, fetchLanguagePlaceholders, isArticlePage } from '../../scripts/scripts.js';
 import { highlight, setLevels, hashFragment } from './utils.js';
 
 function setPadding(arg = '') {
@@ -33,7 +33,7 @@ export default async function decorate() {
   if (ctx !== null) {
     const headers = Array.from(
       document
-        .querySelector('main')
+        .querySelector(isArticlePage() ? '.article-content-section' : 'main')
         .querySelectorAll(
           setLevels(levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined),
         ),

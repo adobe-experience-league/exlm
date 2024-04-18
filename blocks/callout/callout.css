@@ -67,7 +67,7 @@
   @media(min-width:900px) {
     .callout-card-wrapper {
         gap: 64px;
-        margin: 48px 0;
+        margin: 48px 71px;
     }
 
     .callout-card {
