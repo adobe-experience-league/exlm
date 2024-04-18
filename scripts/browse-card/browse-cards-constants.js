@@ -47,6 +47,10 @@ export const CONTENT_TYPES = Object.freeze({
     MAPPING_KEY: 'instructor-led-training',
     LABEL: placeholders.browseCardInstructorLedLabel || 'Instructor-Led',
   },
+  ARTICLE: {
+    MAPPING_KEY: 'article',
+    LABEL: placeholders.browseCardArticleLabel || 'Article',
+  },
 });
 
 export const COVEO_SORT_OPTIONS = Object.freeze({

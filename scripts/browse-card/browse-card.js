@@ -242,6 +242,16 @@ const buildCardContent = async (card, model) => {
   if (contentType === CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY) {
     buildEventContent({ event, cardContent, card });
   }
+
+  if (contentType === CONTENT_TYPES.ARTICLE.MAPPING_KEY) {
+    const authorElement = createTag('div', { class: 'browse-card-author-info' });
+    const authorPrefix = createTag('span', { class: 'browse-card-author-prefix' }, 'By');
+    const authorName = createTag('span', { class: 'browse-card-author-name' }, 'XXXXX');
+    const authorBadge = createTag('span', { class: 'browse-card-author-badge' }, 'By Adobe');
+    authorElement.append(authorPrefix, authorName, authorBadge);
+    cardContent.appendChild(authorElement);
+  }
+
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
   if (

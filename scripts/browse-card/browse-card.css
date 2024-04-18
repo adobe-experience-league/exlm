@@ -311,6 +311,33 @@
 .browse-card.instructor-led-training-card .browse-card-figure {
   min-height: 72px;
 }
+.browse-card.article-card .browse-card-author-info {
+  display: flex;
+  margin-top: 16px;
+}
+.browse-card.article-card .browse-card-author-prefix {
+  font-size: var(--spectrum-font-size-100);
+  font-weight: normal;
+  line-height: 18.2px;
+  color: var(--spectrum-gray-900);
+}
+.browse-card.article-card .browse-card-author-name {
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-700);
+  line-height: 18.2px;
+  color: var(--spectrum-gray-900);
+  margin-left: 8px;
+}
+.browse-card.article-card .browse-card-author-badge {
+  font-size: 10px;
+  font-weight: var(--font-weight-700);
+  line-height: 18.2px;
+  background-color: var(--spectrum-red-1400);
+  color: var(--spectrum-gray-50);
+  align-self: center;
+  padding: 0px 3px;
+  margin-left: 11px;
+}
 
 /* Browse card content-type specific color codes begins */
 .browse-card.event-card .browse-card-banner {
