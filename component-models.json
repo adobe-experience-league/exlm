@@ -849,7 +849,7 @@
             "value": "tutorial"
           },
           {
-            "name": "Articles",
+            "name": "Article",
             "value": "article"
           }
         ]
@@ -1878,7 +1878,7 @@
             "value": "tutorial"
           },
           {
-            "name": "Articles",
+            "name": "Article",
             "value": "article"
           }
         ]
@@ -2294,7 +2294,7 @@
             "value": "certification"
           },
           {
-            "name": "Articles",
+            "name": "Article",
             "value": "article"
           }
         ]
