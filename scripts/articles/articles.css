@@ -7,7 +7,7 @@
 }
 
 .articles-wrapper .articles-body-content {
-    padding: 0 20px;
+    margin: 0 20px;
     background-color: inherit;
 }
 
@@ -17,10 +17,7 @@
     position: relative;
     top: auto;
     margin-bottom: 32px;
-}
-
-.articles-wrapper .articles-marquee {
-    padding: 40px 20px 0;
+    max-width: 295px;
 }
 
 .articles-wrapper .articles-body .default-content-wrapper > h2 {
@@ -49,49 +46,38 @@
     margin-bottom: 0;
 }
 
+.articles-wrapper .mini-toc-wrapper .mini-toc .scrollable-div:hover {
+    overflow-y: auto;
+}
+
 @media(min-width: 600px) {
     .articles-wrapper .articles-body {
         padding: 56px 0;
     }
     .articles-wrapper .articles-body-content {
-        padding: 0 62px;
+        margin: 0 62px;
     }
 
     .articles-wrapper .mini-toc-wrapper {
         padding: 0 62px;
     }
-
-    .articles-wrapper .articles-marquee {
-        padding: 40px 62px 0;
-    }
 }
 
 @media(min-width: 900px) {
-    .articles-wrapper {
-        padding: 0 82px 80px;
-    }
     .articles-wrapper .articles-body {
-        display: grid;
-        grid-template-columns: 4fr 1fr;
+        display: flex;
+        flex-direction: row-reverse;
         padding: 80px 0;
     }
 
     .articles-wrapper .articles-body-content {
-        grid-column-start: 1;
-        grid-column-end: 3;
-        display: grid;
-        padding: 0 82px;
-    }
-
-    .articles-wrapper .articles-marquee {
-        padding: 30px 82px 0;
+        margin: 0 82px;
+        max-width: 765px;
     }
 
     .articles-wrapper .mini-toc-wrapper {
         display: block;
         padding: 0;
-        grid-column-start: 4;
-        grid-row-start: 1;
         position: sticky;
         top: 52px;
         margin-bottom: auto;
