@@ -29,11 +29,12 @@ export default async function decorate() {
   const render = window.requestAnimationFrame;
   const ctx = document.querySelector('.mini-toc');
   const levels = document.querySelector('meta[name="mini-toc-levels"]');
+  const isArticlesPage = isArticlePage();
 
   if (ctx !== null) {
     const headers = Array.from(
       document
-        .querySelector(isArticlePage() ? '.article-content-section' : 'main')
+        .querySelector(isArticlesPage ? '.article-content-section' : 'main')
         .querySelectorAll(
           setLevels(levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined),
         ),
