@@ -35,9 +35,11 @@ export default async function decorate() {
     const headingLevels = setLevels(
       levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined,
     );
-    const headers = Array.from(document.querySelectorAll(`${miniTocSectionEl} ${headingLevels}`)).filter(
-      headerExclusions,
-    );
+    const selectorQuery = headingLevels
+      .split(',')
+      .map((query) => `${miniTocSectionEl} ${query}`)
+      .join(',');
+    const headers = Array.from(document.querySelectorAll(selectorQuery)).filter(headerExclusions);
 
     if (headers.length > 1) {
       const html = headers.map(
