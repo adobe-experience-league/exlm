@@ -1,4 +1,4 @@
-import { debounce, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { debounce, fetchLanguagePlaceholders, isArticlePage } from '../../scripts/scripts.js';
 import { highlight, setLevels, hashFragment } from './utils.js';
 
 function setPadding(arg = '') {
@@ -31,13 +31,13 @@ export default async function decorate() {
   const levels = document.querySelector('meta[name="mini-toc-levels"]');
 
   if (ctx !== null) {
-    const headers = Array.from(
-      document
-        .querySelector('main')
-        .querySelectorAll(
-          setLevels(levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined),
-        ),
-    ).filter(headerExclusions);
+    const miniTocSectionEl = isArticlePage() ? '.article-content-section' : 'main';
+    const headingLevels = setLevels(
+      levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined,
+    );
+    const headers = Array.from(document.querySelectorAll(`${miniTocSectionEl} ${headingLevels}`)).filter(
+      headerExclusions,
+    );
 
     if (headers.length > 1) {
       const html = headers.map(
