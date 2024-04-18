@@ -24,6 +24,9 @@
   flex-direction: column;
   max-width: var(--non-spectrum-max-width);
   margin: auto;
+  background-color: var(--non-spectrum-bg);
+  position: relative;
+  z-index: 1;
 }
 
 .article-marquee .article-info {
@@ -190,9 +193,6 @@
  }
 
  @media (min-width: 900px) {
-  .article-marquee {
-    min-height: 290px;
-  }
   .article-marquee-info-container {
     justify-content: space-between;
   }
@@ -223,7 +223,7 @@
     right: 0;
     left: 50%;
     top: 0;
-    bottom: 1px;
+    bottom: 0;
     background-color: var(--spectrum-indigo-1400);
   }
   .article-marquee-large-bg.adobe {
