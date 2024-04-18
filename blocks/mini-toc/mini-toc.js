@@ -29,14 +29,18 @@ export default async function decorate() {
   const render = window.requestAnimationFrame;
   const ctx = document.querySelector('.mini-toc');
   const levels = document.querySelector('meta[name="mini-toc-levels"]');
-  const isArticlesPage = isArticlePage();
 
   if (ctx !== null) {
+    let miniTocSectionElSelector = 'main';
+    if (isArticlePage()) {
+      miniTocSectionElSelector = '.article-content-section';
+    }
     const headers = Array.from(
       document
-        .querySelector(isArticlesPage ? '.article-content-section' : 'main')
-        .querySelectorAll(
-          setLevels(levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined),
+        .querySelector(miniTocSectionElSelector)
+        ?.querySelectorAll(
+          setLevels(levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined) ??
+            [],
         ),
     ).filter(headerExclusions);
 
