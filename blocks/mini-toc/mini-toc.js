@@ -31,18 +31,13 @@ export default async function decorate() {
   const levels = document.querySelector('meta[name="mini-toc-levels"]');
 
   if (ctx !== null) {
-    let miniTocSectionElSelector = 'main';
-    if (isArticlePage()) {
-      miniTocSectionElSelector = '.article-content-section';
-    }
-    const headers = Array.from(
-      document
-        .querySelector(miniTocSectionElSelector)
-        ?.querySelectorAll(
-          setLevels(levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined) ??
-            [],
-        ),
-    ).filter(headerExclusions);
+    const miniTocSectionEl = isArticlePage() ? '.article-content-section' : 'main';
+    const headingLevels = setLevels(
+      levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined,
+    );
+    const headers = Array.from(document.querySelectorAll(`${miniTocSectionEl} ${headingLevels}`)).filter(
+      headerExclusions,
+    );
 
     if (headers.length > 1) {
       const html = headers.map(
