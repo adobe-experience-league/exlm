@@ -29,4 +29,4 @@ export default function decorate(block) {
 
     const buildCardsShimmer = new BuildPlaceholder();
     buildCardsShimmer.add(block);
-  }
+}
