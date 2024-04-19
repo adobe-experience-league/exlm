@@ -2538,15 +2538,15 @@
         "options": [
           {
             "name": "Facebook",
-            "value": "facebook"
+            "value": "Facebook"
           },
           {
             "name": "Twitter",
-            "value": "twitter"
+            "value": "X (formerly Twitter)"
           },
           {
             "name": "LinkedIn",
-            "value": "linkedin"
+            "value": "LinkedIn"
           }
         ]
       }
