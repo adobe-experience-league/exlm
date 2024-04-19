@@ -5,7 +5,7 @@ export default function decorate(block) {
     const value2 = "Experience Level";
     const value3 = "Role";
 
-    const [tagElement] = [...block.children].map(
+    const [articleTagHeading] = [...block.children].map(
       (row) => row.firstElementChild,
     );
 
@@ -15,7 +15,7 @@ export default function decorate(block) {
     const headerDiv = htmlToElement(`
       <div class="article-tags-header">
         <div class="article-tags-title">
-          ${tagElement.innerHTML}
+          ${articleTagHeading.innerHTML}
         </div>
         <div class="article-tags-view">
         <div class="article-tags-name">${value1}</div>
@@ -30,4 +30,3 @@ export default function decorate(block) {
     const buildCardsShimmer = new BuildPlaceholder();
     buildCardsShimmer.add(block);
   }
-  
