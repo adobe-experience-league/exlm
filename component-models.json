@@ -2530,7 +2530,7 @@
     "id": "social-share-block",
     "fields": [
       {
-        "component": "multiselect",
+        "component": "checkbox-group",
         "valueType": "string",
         "name": "social network",
         "label": "Select Social Network",
