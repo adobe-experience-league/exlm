@@ -1,8 +1,8 @@
 import { htmlToElement } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-    const value1 = "Solution";
-    const value2 = "Experience Level";
+    const value1 = "Solution1, Solution2";
+    const value2 = "Experience Level, Experience Level2";
     const value3 = "Role";
 
     const [articleTagHeading] = [...block.children].map(
@@ -18,9 +18,9 @@ export default function decorate(block) {
           ${articleTagHeading.innerHTML}
         </div>
         <div class="article-tags-view">
-        <div class="article-tags-name">${value1}</div>
-        <div class="article-tags-name">${value2}</div>
-        <div class="article-tags-name">${value3}</div>
+        ${value1.split(',').map(value => `<div class="article-tags-name">${value.trim()}</div>`).join('')}
+        ${value2.split(',').map(value => `<div class="article-tags-name">${value.trim()}</div>`).join('')}
+        ${value3.split(',').map(value => `<div class="article-tags-name">${value.trim()}</div>`).join('')}
         </div>
       </div>
     `);
