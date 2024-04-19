@@ -984,6 +984,7 @@ async function handleSearchEngineSubscription(block) {
       }
 
       /* Analytics */
+      filterResultsEl.classList.remove('analytics-interaction');
       if (!filterResultsEl.classList.contains('browse-hide-section')) {
         const analyticsFilters = generateAnalyticsFilters(block, response.totalCount);
         if (analyticsFilters) {
@@ -1008,14 +1009,13 @@ async function handleSearchEngineSubscription(block) {
     /* Analytics */
     if (
       !filterResultsEl.classList.contains('no-results') &&
-      !filterResultsEl.classList.contains('browse-hide-section')
+      !filterResultsEl.classList.contains('browse-hide-section') &&
+      !filterResultsEl.classList.contains('analytics-interaction')
     ) {
-      // EXLM-1367: if no results and any Topics tag is clicked, AA still wants get dataLayer
-      // but removing condition creates unnecessary datalayer events
-      // ??
       const analyticsFilters = generateAnalyticsFilters(block, response.totalCount);
       if (analyticsFilters) {
         assetInteractionModel(null, 'Browse Filters', analyticsFilters);
+        filterResultsEl.classList.add('analytics-interaction');
       }
     }
     const communityOptionIsSelected = browseFilterForm.querySelector(`input[value="Community"]`)?.checked === true;
