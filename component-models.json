@@ -2457,16 +2457,12 @@
         ]
       },
       {
-        "component": "select",
+        "component": "multiselect",
         "valueType": "string",
         "name": "coveo-content-type",
         "label": "Coveo Content Type",
-        "value": "",
+        "description": "Sets the coveo content type in page meta.",
         "options": [
-          {
-            "name": "",
-            "value": ""
-          },
           {
             "name": "Article",
             "value": "Article"
