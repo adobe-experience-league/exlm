@@ -1,0 +1,37 @@
+.social-share-header {
+    font-family: 'Adobe Clean', sans-serif; 
+}
+
+.social-share-title{
+    font-weight: 800;
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+.social-share-view{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.social-share-view > a{
+    margin: 0px;
+}
+
+.social-share-name{
+    color: var(--non-spectrum-grey-updated);
+    font-size: 12px;
+}
+
+.social-share-item > svg{
+    width: 20px;
+    height: 20px;
+}
+
+.social-share-item{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+}
