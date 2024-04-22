@@ -1,15 +1,10 @@
-.article-tags-header {
-  font-family: 'Adobe Clean', sans-serif; 
-}
-
 .article-tags-view{
   display: flex;
-  flex-direction: row;
   flex-wrap: wrap;
 }
 
 .article-tags-name{
-  font-size: 12px;
+  font-size: var(--spectrum-body-size-xs);
   color: var(--non-spectrum-grey-updated);
   border: 1px solid var(--non-spectrum-article-light-gray);
   border-radius: 4px;
