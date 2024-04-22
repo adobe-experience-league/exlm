@@ -34,7 +34,4 @@ export default function decorate(block) {
     `);
 
   block.append(headerDiv);
-
-  // const buildCardsShimmer = new BuildPlaceholder();
-  // buildCardsShimmer.add(block);
 }
