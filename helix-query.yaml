@@ -198,6 +198,26 @@ indices:
       robots:
         select: head > meta[name="robots"]
         value: attribute(el, "content")
+      authorBioPage:
+        select: head > meta[property="author-bio-page"]
+        value: |
+          attribute(el, 'content')
+      coveoContentType:
+        select: head > meta[property="coveo-content-type"]
+        value: |
+          attribute(el, 'content')
+      coveoSolution:
+        select: head > meta[property="coveo-solution"]
+        value: |
+          attribute(el, 'content')
+      coveoRole:
+        select: head > meta[property="role"]
+        value: |
+          attribute(el, 'content')
+      coveoLevel:
+        select: head > meta[property="level"]
+        value: |
+          attribute(el, 'content')
 
   article-fr:
     <<: *base-article
