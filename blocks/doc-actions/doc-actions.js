@@ -12,6 +12,7 @@ import renderBookmark from '../../scripts/bookmark/bookmark.js';
 import attachCopyLink from '../../scripts/copy-link/copy-link.js';
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
+import { sendCoveoPageViewEvent } from '../../scripts/coveo-analytics.js';
 
 const { automaticTranslationLink } = getConfig();
 
@@ -204,5 +205,6 @@ export default async function decorate(block) {
       decorateLanguageToggle(block, placeholders);
       decorateBookmarkAndCopy(block, placeholders);
     });
+    sendCoveoPageViewEvent();
   }
 }

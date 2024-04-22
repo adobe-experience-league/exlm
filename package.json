@@ -70,6 +70,7 @@
     ]
   },
   "dependencies": {
+    "crypto-js": "^4.2.0",
     "open": "^9.1.0"
   }
 }
