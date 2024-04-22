@@ -1,5 +1,6 @@
 import { htmlToElement } from '../../scripts/scripts.js';
 import { getMetadata } from '../../scripts/lib-franklin.js';
+
 export default function decorate(block) {
   const solutions = getMetadata('coveo-solution');
   const roles = getMetadata('role');
