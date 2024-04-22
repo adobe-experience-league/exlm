@@ -2555,7 +2555,7 @@
       },
       {
         "component": "multiselect",
-        "name": "roles",
+        "name": "role",
         "label": "Role(s)",
         "valueType": "string",
         "description": "Sets the role(s) in page meta.",
