@@ -26,7 +26,7 @@ export default function decorate(block) {
   };
 
   const headerDiv = htmlToElement(`
-    <div class="social-share-header">
+    <div class="social-share-block">
     <div class="social-share-title">
         ${'SHARE ON SOCIAL'}
     </div>
@@ -41,7 +41,4 @@ export default function decorate(block) {
   `);
 
   block.append(headerDiv);
-
-  // const buildCardsShimmer = new BuildPlaceholder();
-  // buildCardsShimmer.add(block);
 }

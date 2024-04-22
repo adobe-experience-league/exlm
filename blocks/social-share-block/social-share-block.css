@@ -1,16 +1,11 @@
-.social-share-header {
-    font-family: 'Adobe Clean', sans-serif; 
-}
-
 .social-share-title{
-    font-weight: 800;
-    font-size: 12px;
+    font-weight: var(--spectrum-extra-bold-font-weight);
+    font-size: var(--spectrum-body-size-xs);
     margin-bottom: 6px;
 }
 
 .social-share-view{
     display: flex;
-    flex-direction: row;
     gap: 10px;
     flex-wrap: wrap;
 }
@@ -21,7 +16,7 @@
 
 .social-share-name{
     color: var(--non-spectrum-grey-updated);
-    font-size: 12px;
+    font-size: var(--spectrum-body-size-xs);
 }
 
 .social-share-item > svg{
@@ -31,7 +26,6 @@
 
 .social-share-item{
     display: flex;
-    flex-direction: row;
     align-items: center;
     gap: 6px;
 }
