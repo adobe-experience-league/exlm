@@ -1,9 +1,10 @@
 import { htmlToElement } from '../../scripts/scripts.js';
+import { getMetadata } from '../../scripts/lib-franklin.js';
 
 export default function decorate(block) {
-  const value1 = 'Solution1, Solution2';
-  const value2 = 'Experience Level, Experience Level2';
-  const value3 = 'Role';
+  const solution = getMetadata('coveo-solution');
+  const role = getMetadata('role');
+  const experienceLevel = getMetadata('level');
 
   const [articleTagHeading] = [...block.children].map((row) => row.firstElementChild);
 
@@ -16,15 +17,15 @@ export default function decorate(block) {
           ${articleTagHeading.innerHTML}
         </div>
         <div class="article-tags-view">
-        ${value1
+        ${solution
           .split(',')
           .map((value) => `<div class="article-tags-name">${value.trim()}</div>`)
           .join('')}
-        ${value2
+        ${role
           .split(',')
           .map((value) => `<div class="article-tags-name">${value.trim()}</div>`)
           .join('')}
-        ${value3
+        ${experienceLevel
           .split(',')
           .map((value) => `<div class="article-tags-name">${value.trim()}</div>`)
           .join('')}
