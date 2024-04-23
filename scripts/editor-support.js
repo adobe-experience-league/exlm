@@ -40,7 +40,6 @@ function updateUEMainFilters() {
     // browse rail section can only be added once
     browse.setAttribute('data-aue-filter', browse.querySelector(':scope > div.browse-rail-section')?'main':'main_browse');
   }
-  browse?.parentElement.setAttribute('data-aue-filter', 'main_browse');
   // article page sections
   document.querySelector('body[class^=article] > main')?.setAttribute('data-aue-filter', 'main_article');
 }
