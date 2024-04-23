@@ -1118,40 +1118,20 @@
     ]
   },
   {
-    "id": "article-marquee",
+    "id": "author-summary",
     "fields": [
       {
-        "component": "reference",
+        "component": "aem-content",
         "valueType": "string",
-        "name": "fileReference",
-        "label": "Author Image",
-        "description": "Sets the author image.",
-        "multi": false
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "fileReferenceAlt",
+        "name": "author-bio-page",
         "value": "",
-        "label": "Author image alt text",
-        "description": "Alternate text for the image."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "authorName",
-        "value": "",
-        "label": "Author name",
-        "description": "Sets the Author name."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "authorRole",
-        "value": "",
-        "label": "Author title / role",
-        "description": "Sets the Author title / role"
-      },
+        "label": "Author"
+      }
+    ]
+  },
+  {
+    "id": "article-marquee",
+    "fields": [
       {
         "component": "text",
         "valueType": "string",
