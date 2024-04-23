@@ -12,29 +12,23 @@ export default function decorate(block) {
   block.classList.add('article-tags');
 
   const headerDiv = htmlToElement(`
-      <div class="article-tags">
-        <div class="article-tags-title">
-          ${articleTagHeading.innerHTML}
-        </div>
-        <div class="article-tags-view">
-        ${solutions
-          .split(',')
-          .filter(Boolean)
-          .map((value) => `<div class="article-tags-name">${value.trim()}</div>`)
-          .join('')}
-        ${roles
-          .split(',')
-          .filter(Boolean)
-          .map((value) => `<div class="article-tags-name">${value.trim()}</div>`)
-          .join('')}
-        ${experienceLevels
-          .split(',')
-          .filter(Boolean)
-          .map((value) => `<div class="article-tags-name">${value.trim()}</div>`)
-          .join('')}
-        </div>
+    <div class="article-tags">
+      <div class="article-tags-title">
+        ${articleTagHeading.innerHTML}
       </div>
-    `);
+      <div class="article-tags-view">
+        ${[solutions, roles, experienceLevels]
+          .map((values) =>
+            values
+              .split(',')
+              .filter(Boolean)
+              .map((value) => `<div class="article-tags-name">${value.trim()}</div>`)
+              .join(''),
+          )
+          .join('')}
+      </div>
+    </div>
+  `);
 
   block.append(headerDiv);
 }
