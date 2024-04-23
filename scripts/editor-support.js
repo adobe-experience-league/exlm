@@ -37,7 +37,7 @@ function updateUEMainFilters() {
   // browse page sections
   document.querySelector('body[class^=browse-] > main')?.setAttribute('data-aue-filter', 'main_browse');
   // article page sections
-  document.querySelector('body[class^=article-] > main')?.setAttribute('data-aue-filter', 'main_article');
+  document.querySelector('body[class^=article] > main')?.setAttribute('data-aue-filter', 'main_article');
 }
 
 /**
