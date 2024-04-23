@@ -1,7 +1,15 @@
 [
   {
     "id": "main",
-    "components": ["section", "browse-rail-section", "article-content-section", "article-header-section"]
+    "components": ["section"]
+  },
+  {
+    "id": "main_browse",
+    "components": ["section", "browse-rail-section"]
+  },
+  {
+    "id": "main_article",
+    "components": ["article-content-section", "article-header-section","section"]
   },
   {
     "id": "columns",

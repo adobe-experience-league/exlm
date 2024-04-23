@@ -33,6 +33,14 @@ function restoreState(newBlock, state) {
   }
 }
 
+function updateUEFilters() {
+  // browse page sections
+  document.querySelector('body[class^=browse-] > main')?.setAttribute('data-aue-filter', 'main_browse');
+  // article page sections
+  document.querySelector('body[class^=article-] > main')?.setAttribute('data-aue-filter', 'main_article');
+  
+}
+
 /**
  * Event listener for aue:content-patch, edit of a component
  */
@@ -190,3 +198,6 @@ if (signUpBlock) {
     });
   }).observe(document.documentElement, { attributeFilter: ['class'] });
 }
+
+// update UE component filters 
+updateUEFilters();
