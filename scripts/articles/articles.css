@@ -17,7 +17,7 @@
     position: relative;
     top: auto;
     margin-bottom: 32px;
-    max-width: 295px;
+    max-width: 100%;
 }
 
 .articles-wrapper .articles-body .default-content-wrapper > h2 {
@@ -59,7 +59,9 @@
     }
 
     .articles-wrapper .mini-toc-wrapper {
-        padding: 0 62px;
+        padding: 0;
+        margin: 0 62px 32px;
+        max-width: 310px;
     }
 }
 
@@ -81,6 +83,7 @@
         position: sticky;
         top: 52px;
         margin-bottom: auto;
+        max-width: 295px;
     }
 
     .articles-wrapper .articles-section {

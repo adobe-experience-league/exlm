@@ -1,4 +1,4 @@
-import { debounce, fetchLanguagePlaceholders, isArticlePage } from '../../scripts/scripts.js';
+import { debounce, fetchLanguagePlaceholders, htmlToElement, isArticlePage } from '../../scripts/scripts.js';
 import { highlight, setLevels, hashFragment } from './utils.js';
 
 function setPadding(arg = '') {
@@ -41,6 +41,15 @@ export default async function decorate() {
       .join(',');
     const headers = Array.from(document.querySelectorAll(selectorQuery)).filter(headerExclusions);
 
+    const hideMiniTocPopOver = () => {
+      const scrollableDiv = ctx.querySelector('.scrollable-div');
+      if (scrollableDiv?.classList?.contains('mini-toc-popover')) {
+        scrollableDiv.classList.remove('mini-toc-popover');
+        const button = ctx.querySelector('.mini-toc-button');
+        button.ariaExpanded = 'false';
+      }
+    };
+
     if (headers.length > 1) {
       const html = headers.map(
         (i) => `<li><a href="#${i.id}" class="${setPadding(i.nodeName)}">${i.innerText}</a></li>`,
@@ -80,6 +89,7 @@ export default async function decorate() {
                 render(() => {
                   anchors.forEach((a) => a.classList.remove('is-active'));
                   activeAnchor.classList.add('is-active');
+                  hideMiniTocPopOver();
 
                   if (ahash.length > 0) {
                     hashFragment(ahash);
@@ -110,6 +120,23 @@ export default async function decorate() {
             }
           }
 
+          const button = htmlToElement(
+            `<button class="mini-toc-button"aria-expanded="false" ><span>Summary</span></button>`,
+          );
+          button.addEventListener('click', (e) => {
+            const canCLoseDropdown = button.ariaExpanded === 'true';
+            button.ariaExpanded = canCLoseDropdown ? 'false' : 'true';
+            if (canCLoseDropdown) {
+              scrollableDiv.classList.remove('mini-toc-popover');
+            } else {
+              scrollableDiv.classList.add('mini-toc-popover');
+              e.stopPropagation();
+              document.addEventListener('click', hideMiniTocPopOver, {
+                once: true,
+              });
+            }
+          });
+          ctx.appendChild(button);
           window.addEventListener('scroll', () => debounce('scroll', () => highlight(), 16));
         }
       });
