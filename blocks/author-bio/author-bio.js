@@ -31,6 +31,6 @@ export default function decorate(block) {
   </div>
 `);
 
-  block.innerHTML = '';
+  block.textContent = '';
   block.append(authorBioDOM);
 }
