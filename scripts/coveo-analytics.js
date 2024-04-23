@@ -1,10 +1,14 @@
 import { SHA1, MD5 } from 'crypto-js';
+/*
 import { defaultProfileClient } from './auth/profile.js';
 import loadCoveoToken from './data-service/coveo/coveo-token-service.js';
-import { getLanguageCode } from './scripts.js';
+*/
 import { COVEO_TOKEN } from './session-keys.js';
-import { getMetadata } from './lib-franklin.js';
 
+const COVEO_ANALYTICS_URL = {
+  PROD: 'https://adobev2prod9e382h1q.analytics.org.coveo.com/rest/ua/v15/analytics/',
+  STAGE: 'https://adobesystemsincorporatednonprod1.analytics.org.coveo.com/rest/ua/v15/analytics/'
+}
 /**
  *
  * @param {*} type - The type of analytics event, always lower case ex: view, click
@@ -14,8 +18,10 @@ import { getMetadata } from './lib-franklin.js';
 async function postCoveoAnalytics(type, body) {
   try {
     // Load the Coveo Token
-    const coveoToken = await loadCoveoToken();
-    const response = await fetch(`https://adobev2prod9e382h1q.analytics.org.coveo.com/rest/ua/v15/analytics/${type}`, {
+    // const coveoToken = await loadCoveoToken();
+    const coveoToken = sessionStorage.getItem(COVEO_TOKEN);
+
+    const response = await fetch(`${COVEO_ANALYTICS_URL[window.exlm.config.currentEnv.env]}${type}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -50,13 +56,17 @@ async function getCoveoHashOfCurrentUrl() {
  *
  */
 export async function sendCoveoPageViewEvent() {
-  /* 
-  if(window.location.hostname !== 'experienceleague.adobe.com') {
-    return;
+  const contentType = document.querySelector("meta[name='type']")?.content
+  
+  if (contentType === undefined) {
+    // eslint-disable-next-line no-console
+    console.error('Missing "type" meta. Not sending coveo page view')
+    return; // Missing meta type make this event useless
   }
-  */
 
-  const profileData = defaultProfileClient.getMergedProfile(false);
+  const title = document.querySelector("meta[name='og:title']")?.content
+  // const profileData = defaultProfileClient.getMergedProfile(false);
+  const profileData = sessionStorage.getItem('profile');
   const customData =
     profileData === null
       ? {}
@@ -68,14 +78,14 @@ export async function sendCoveoPageViewEvent() {
         };
 
   const baseData = {
-    language: getLanguageCode.substring(0, 1).toLowerCase(), // Two-letter codes only
+    language: window.languageCode.substring(0,2).toLowerCase(), // Two-letter codes only
     clientId: profileData?.authId,
     location: window.location.href, // Current url
     contentIdKey: 'permanentid',
     contentIdValue: getCoveoHashOfCurrentUrl(), // First 30 md5 + first 30 sha1 of coveo url
-    contentType: getMetadata('type'), // If we need page views for non-doc pages we'll need an alternative
+    contentType, // If we need page views for non-doc pages we'll need an alternative
     outcome: 2, // -5 to 5, we might want to adjust this in the future
-    title: getMetadata('og:title'),
+    title,
     anonymous: true,
     originContext: 'originLevel1', // Pull from the coveo token, only override if we need to
     userAgent: window.navigator.userAgent,
@@ -98,7 +108,8 @@ export async function sendCoveoClickEvent(source, model) {
   */
 
   const { index, permanentid, searchQueryUid, title, viewLink } = model;
-  const profileData = defaultProfileClient.getMergedProfile(false);
+  // const profileData = defaultProfileClient.getMergedProfile(false);
+  const profileData = sessionStorage.getItem('profile');
   const customData =
     profileData === null
       ? {
@@ -121,7 +132,7 @@ export async function sendCoveoClickEvent(source, model) {
     documentPosition: index + 1,
     documentTitle: title,
     documentUrl: viewLink,
-    language: getLanguageCode.substring(0, 1).toLowerCase(), // Two letter code only
+    language: window.languageCode.substring(0,2).toLowerCase(), // Two letter code only
     // originLevel1: '', pulled from token. We should only set it if we have to override it
     // originLevel2: '', "tab" value of search request, if we ever use it
     searchQueryUid,
