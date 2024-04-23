@@ -1,6 +1,7 @@
 .article-tags-view{
   display: flex;
   flex-wrap: wrap;
+  gap: 8px;
 }
 
 .article-tags-name{
@@ -9,5 +10,4 @@
   border: 1px solid var(--non-spectrum-article-light-gray);
   border-radius: 4px;
   padding: 2px 6px 2px 6px;
-  margin-right: 8px;
 }
