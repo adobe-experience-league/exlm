@@ -1,16 +1,10 @@
 .author-bio {
   background: var(--non-spectrum-bg);
   border-radius: 6px;
-  position: relative; 
-  border-style: solid;
+  position: relative;
   border: 6px solid var(--spectrum-indigo-1400);
-  border-left: 0px;
-  border-right: 0px;
-  border-bottom: 0px;
-  padding-left: 28px; 
-  padding-top: 38px;
-  padding-right: 28px;
-  padding-bottom: 32px;
+  border-width: 6px 0 0;  
+  padding: 38px 28px 32px; 
 }
 
 .author-image {
@@ -30,42 +24,28 @@
 
 .author-name-title-container {
   margin-left: auto;          
-  flex-grow: 1;            
-}
-
-.author-name-title-container .author-name .author-title-company
-{
-  font-style: normal;
-  font-family: 'Adobe Clean', sans-serif; 
 }
 
 .author-name-title-container .author-name
 {
   font-weight: bold;
   font-size: 19px;
-  line-height: 33px;
   padding-bottom: 8px;
 }
 
 .author-name-title-container .author-title-company
 {
-  font-weight: normal;
   font-size: 14px;
-  line-height: 21px;
   color: var(--non-spectrum-grey);
 }
 
 .author-description-socialLink-container .author-description .author-socialLink
 {
-  font-style: normal;
-  font-weight: normal;
   font-size: 14px;
-  font-family: 'Adobe Clean', sans-serif; 
 }
 
 .author-description-socialLink-container .author-description 
 {
-  line-height: 21px;
   color: var(--non-spectrum-grey);
   padding-bottom: 24px;
   padding-top: 24px;
@@ -73,7 +53,6 @@
 
 .author-description-socialLink-container .author-socialLink
 {
-  line-height: 17px;
   color: var(--non-spectrum-navy-blue);
 }
 
