@@ -1118,7 +1118,7 @@
     ]
   },
   {
-    "id": "author-summary", 
+    "id": "author-summary",
     "fields": [
       {
         "component": "aem-content",
@@ -1126,7 +1126,7 @@
         "name": "author-bio-page",
         "value": "",
         "label": "Author"
-        }
+      }
     ]
   },
   {
