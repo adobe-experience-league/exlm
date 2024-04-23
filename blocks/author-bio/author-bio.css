@@ -26,33 +26,28 @@
   margin-left: auto;          
 }
 
-.author-name-title-container .author-name
-{
+.author-name-title-container .author-name {
   font-weight: bold;
   font-size: 19px;
   padding-bottom: 8px;
 }
 
-.author-name-title-container .author-title-company
-{
-  font-size: 14px;
+.author-name-title-container .author-title-company {
+  font-size: var(--spectrum-font-size-100);
   color: var(--non-spectrum-grey);
 }
 
-.author-description-socialLink-container .author-description .author-socialLink
-{
-  font-size: 14px;
+.author-description-socialLink-container .author-description .author-socialLink {
+  font-size: var(--spectrum-font-size-100);
 }
 
-.author-description-socialLink-container .author-description 
-{
+.author-description-socialLink-container .author-description {
   color: var(--non-spectrum-grey);
   padding-bottom: 24px;
   padding-top: 24px;
 }
 
-.author-description-socialLink-container .author-socialLink
-{
+.author-description-socialLink-container .author-socialLink {
   color: var(--non-spectrum-navy-blue);
 }
 
