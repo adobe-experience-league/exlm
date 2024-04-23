@@ -1,6 +1,6 @@
 name: Page Publish
 
-on: 
+on:
   repository_dispatch:
     types:
       - resource-published
@@ -29,7 +29,7 @@ jobs:
         working-directory: ./coveo
         run: |
           node generate-coveo-index.js --language ${{ steps.get_language.outputs.language }} > coveo_${{ steps.get_language.outputs.language }}.xml
-          
+
           # Check if the file exists or has been modified
           if [ -f ./coveo_${{ steps.get_language.outputs.language }}.xml ]; then
             echo "File exists"
