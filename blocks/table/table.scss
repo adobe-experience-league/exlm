@@ -2,8 +2,7 @@
 
 .table {
   margin-bottom: 21px;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: auto hidden;
 
   &::-webkit-scrollbar {
     background: var(--non-spectrum-hover-bg);
@@ -147,7 +146,6 @@
 
         a {
           margin: 0;
-          font-size: var(--spectrum-font-size-100);
           line-height: 21px;
         }
 
