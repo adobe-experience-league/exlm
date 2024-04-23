@@ -1,7 +1,6 @@
 import { htmlToElement } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  const props = [...block.children].map((row) => row.firstElementChild);
   const [
     authorImage,
     authorName,
@@ -10,7 +9,7 @@ export default function decorate(block) {
     authorDescription,
     authorSocialLinkText,
     authorSocialLinkURL,
-  ] = props;
+  ] = [...block.children].map((row) => row.firstElementChild);
   const authorBioPicture = authorImage.querySelector('picture');
   const authorSocialLinkElement = authorSocialLinkURL.querySelector('a').href;
   const authorBioDOM = htmlToElement(`
