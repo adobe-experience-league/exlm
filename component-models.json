@@ -1118,40 +1118,20 @@
     ]
   },
   {
-    "id": "article-marquee",
+    "id": "author-summary",
     "fields": [
       {
-        "component": "reference",
+        "component": "aem-content",
         "valueType": "string",
-        "name": "fileReference",
-        "label": "Author Image",
-        "description": "Sets the author image.",
-        "multi": false
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "fileReferenceAlt",
+        "name": "author-bio-page",
         "value": "",
-        "label": "Author image alt text",
-        "description": "Alternate text for the image."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "authorName",
-        "value": "",
-        "label": "Author name",
-        "description": "Sets the Author name."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "authorRole",
-        "value": "",
-        "label": "Author title / role",
-        "description": "Sets the Author title / role"
-      },
+        "label": "Author"
+      }
+    ]
+  },
+  {
+    "id": "article-marquee",
+    "fields": [
       {
         "component": "text",
         "valueType": "string",
@@ -2455,6 +2435,149 @@
             "value": "external"
           }
         ]
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "coveo-content-type",
+        "label": "Coveo Content Type",
+        "description": "Sets the coveo content type in page meta.",
+        "options": [
+          {
+            "name": "Article",
+            "value": "Article"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "coveo-solution",
+        "label": "Coveo Solution(s)",
+        "description": "Sets the Coveo Solution(s) in page meta.",
+        "options": [
+          {
+            "name": "AEM Assets",
+            "value": "AEM Assets"
+          },
+          {
+            "name": "AEM Forms",
+            "value": "AEM Forms"
+          },
+          {
+            "name": "AEM Sites",
+            "value": "AEM Sites"
+          },
+          {
+            "name": "Analytics",
+            "value": "Analytics"
+          },
+          {
+            "name": "Audience Manager",
+            "value": "Audience Manager"
+          },
+          {
+            "name": "Campaign Classic",
+            "value": "Campaign Classic"
+          },
+          {
+            "name": "Campaign Standard",
+            "value": "Campaign Standard"
+          },
+          {
+            "name": "Commerce",
+            "value": "Commerce"
+          },
+          {
+            "name": "Content Supply Chain",
+            "value": "Content Supply Chain"
+          },
+          {
+            "name": "Customer Journey Analytics",
+            "value": "Customer Journey Analytics"
+          },
+          {
+            "name": "Experience Cloud Integrations",
+            "value": "Experience Cloud Integrations"
+          },
+          {
+            "name": "Experience Platform",
+            "value": "Experience Platform"
+          },
+          {
+            "name": "Journey Optimizer",
+            "value": "Journey Optimizer"
+          },
+          {
+            "name": "Marketo Engage",
+            "value": "Marketo Engage"
+          },
+          {
+            "name": "Real-Time CDP",
+            "value": "Real-Time CDP"
+          },
+          {
+            "name": "Target",
+            "value": "Target"
+          },
+          {
+            "name": "Workfront",
+            "value": "Workfront"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "author-bio-page",
+        "value": "",
+        "label": "Author Bio page"
+      },
+      {
+        "component": "multiselect",
+        "name": "role",
+        "label": "Role(s)",
+        "valueType": "string",
+        "description": "Sets the role(s) in page meta.",
+        "options": [
+          {
+            "name": "Admin",
+            "value": "Admin"
+          },
+          {
+            "name": "Developer",
+            "value": "Developer"
+          },
+          {
+            "name": "Leader",
+            "value": "Leader"
+          },
+          {
+            "name": "User",
+            "value": "User"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "name": "level",
+        "label": "Experience Level(s)",
+        "valueType": "string",
+        "description": "Sets the level(s) in page meta.",
+        "options": [
+          {
+            "name": "Beginner",
+            "value": "Beginner"
+          },
+          {
+            "name": "Intermediate",
+            "value": "Intermediate"
+          },
+          {
+            "name": "Experienced",
+            "value": "Experienced"
+          }
+        ]
       }
     ]
   },
@@ -2521,6 +2644,121 @@
           {
             "name": "External",
             "value": "external"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "author-bio",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Author image",
+        "description": "Sets the image of Author",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "author-name",
+        "value": "",
+        "label": "Author name",
+        "description": "Sets the name of Author"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "author-title",
+        "value": "",
+        "label": "Author title",
+        "description": "Sets the title of Author"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "author-company",
+        "value": "",
+        "label": "Author company",
+        "options": [
+          {
+            "name": "Adobe",
+            "value": "Adobe"
+          },
+          {
+            "name": "External",
+            "value": "External"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "author-description",
+        "value": "",
+        "label": "Author description",
+        "description": "Sets the description of author"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "author-social-link-text",
+        "value": "",
+        "label": "Author social link text",
+        "description": "Sets the social link text for author"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "author-social-link-URL",
+        "value": "",
+        "label": "Author social link URL",
+        "description": "Sets the social link url for author"
+      }
+    ]
+  },
+  {
+    "id": "article-tags",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
           }
         ]
       }
