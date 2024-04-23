@@ -1,16 +1,17 @@
 import { createTag, fetchLanguagePlaceholders, rewriteDocsPath } from './scripts.js';
+import { getMetadata } from './lib-franklin.js';
 
 export default async function loadPrevNextBtn() {
   const placeholders = await fetchLanguagePlaceholders();
   const mainDoc = document.querySelector('main > div.content-section-last');
   if (!mainDoc) return;
 
-  const prevPageMeta = document.querySelector('meta[name="prev-page"]');
-  const prevPageMetaTitle = document.querySelector('meta[name="prev-page-title"]')?.getAttribute('content') || '';
-  const nextPageMeta = document.querySelector('meta[name="next-page"]');
-  const nextPageMetaTitle = document.querySelector('meta[name="next-page-title"]')?.getAttribute('content') || '';
-  const prevPageMetaContent = prevPageMeta?.getAttribute('content').trim().split('.html')[0];
-  const nextPageMetaContent = nextPageMeta?.getAttribute('content').trim().split('.html')[0];
+  const prevPageMeta = getMetadata('prev-page');
+  const prevPageMetaTitle = getMetadata('prev-page-title') || 'Previous page';
+  const nextPageMeta = getMetadata('next-page');
+  const nextPageMetaTitle = getMetadata('next-page-title') || `Next page`;
+  const prevPageMetaContent = prevPageMeta?.trim().split('.html')[0];
+  const nextPageMetaContent = nextPageMeta?.trim().split('.html')[0];
   const PREV_PAGE = placeholders?.previousPage;
   const NEXT_PAGE = placeholders?.nextPage;
 
