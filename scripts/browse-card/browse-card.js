@@ -311,7 +311,7 @@ const setupCopyAction = (wrapper) => {
   });
 };
 
-export async function buildCard(container, element, model, index) {
+export async function buildCard(container, element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus } = model;
   // lowercase all urls - because all of our urls are lower-case
   model.viewLink = model.viewLink?.toLowerCase();
@@ -425,7 +425,7 @@ export async function buildCard(container, element, model, index) {
   element.querySelector('a').addEventListener(
     'click',
     () => {
-      sendCoveoClickEvent('browse-card', model, index);
+      sendCoveoClickEvent('browse-card', model);
     },
     { once: true },
   );

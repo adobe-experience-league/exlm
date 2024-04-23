@@ -113,7 +113,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       copyLink: url,
       viewLink: url,
       viewLinkText: placeholders[`browseCard${contentTypeTitleCase}ViewLabel`] || 'View',
-      permanentid: raw.permanentid,
+      permanentid: raw?.permanentid,
       searchUid,
       index,
     };

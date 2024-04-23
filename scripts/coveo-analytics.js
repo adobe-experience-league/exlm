@@ -50,6 +50,12 @@ async function getCoveoHashOfCurrentUrl() {
  *
  */
 export async function sendCoveoPageViewEvent() {
+  /* 
+  if(window.location.hostname !== 'experienceleague.adobe.com') {
+    return;
+  }
+  */
+
   const profileData = defaultProfileClient.getMergedProfile(false);
   const customData =
     profileData === null
@@ -85,6 +91,12 @@ export async function sendCoveoPageViewEvent() {
  * @param {*} raw - The 'raw' object on the associated coveo result item.
  */
 export async function sendCoveoClickEvent(source, model) {
+  /*
+  if(window.location.hostname !== 'experienceleague.adobe.com') {
+    return;
+  }
+  */
+
   const { index, permanentid, searchQueryUid, title, viewLink } = model;
   const profileData = defaultProfileClient.getMergedProfile(false);
   const customData =
