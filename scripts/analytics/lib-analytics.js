@@ -186,7 +186,7 @@ export function pushLinkClick(e) {
         linkClicks: { value: 1 },
         name,
         // set to other until we have examples of other types
-        type: 'Other',
+        type: 'other',
       },
       webPageDetails: {
         pageViews: { value: 0 },
