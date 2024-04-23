@@ -7,9 +7,9 @@ export default async function loadPrevNextBtn() {
   if (!mainDoc) return;
 
   const prevPageMeta = getMetadata('prev-page');
-  const prevPageMetaTitle = getMetadata('prev-page-title') || 'Previous page';
+  const prevPageMetaTitle = getMetadata('prev-page-title') || '';
   const nextPageMeta = getMetadata('next-page');
-  const nextPageMetaTitle = getMetadata('next-page-title') || `Next page`;
+  const nextPageMetaTitle = getMetadata('next-page-title') || '';
   const prevPageMetaContent = prevPageMeta?.trim().split('.html')[0];
   const nextPageMetaContent = nextPageMeta?.trim().split('.html')[0];
   const PREV_PAGE = placeholders?.previousPage;
