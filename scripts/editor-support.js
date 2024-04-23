@@ -33,12 +33,11 @@ function restoreState(newBlock, state) {
   }
 }
 
-function updateUEFilters() {
+function updateUEMainFilters() {
   // browse page sections
   document.querySelector('body[class^=browse-] > main')?.setAttribute('data-aue-filter', 'main_browse');
   // article page sections
   document.querySelector('body[class^=article-] > main')?.setAttribute('data-aue-filter', 'main_article');
-  
 }
 
 /**
@@ -74,6 +73,7 @@ async function applyChanges(event) {
       newMain.style.display = null;
       // eslint-disable-next-line no-use-before-define
       attachEventListners(newMain);
+      updateUEMainFilters();
       return true;
     }
 
@@ -200,4 +200,4 @@ if (signUpBlock) {
 }
 
 // update UE component filters 
-updateUEFilters();
+updateUEMainFilters();
