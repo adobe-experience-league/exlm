@@ -8,7 +8,7 @@ export default function decorate(block) {
 
   const [articleTagHeading] = [...block.children].map((row) => row.firstElementChild);
 
-  block.innerHTML = '';
+  block.textContent = '';
 
   const headerDiv = htmlToElement(`
     <div class="article-tags">
