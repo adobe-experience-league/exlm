@@ -42,7 +42,10 @@
       "tabs",
       "recommended-courses",
       "block-quote",
-      "callout"
+      "callout",
+      "article-tags",
+      "author-bio",
+      "author-summary"
     ]
   },
   {
@@ -76,7 +79,10 @@
       "tabs",
       "recommended-courses",
       "block-quote",
-      "callout"
+      "callout",
+      "article-tags",
+      "author-bio",
+      "author-summary"
     ]
   },
   {
