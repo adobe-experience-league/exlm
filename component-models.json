@@ -2668,5 +2668,75 @@
         ]
       }
     ]
+  },
+  {
+    "id": "author-bio",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Author image",
+        "description": "Sets the image of Author",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "author-name",
+        "value": "",
+        "label": "Author name",
+        "description": "Sets the name of Author"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "author-title",
+        "value": "",
+        "label": "Author title",
+        "description": "Sets the title of Author"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "author-company",
+        "value": "",
+        "label": "Author company",
+        "options": [
+          {
+            "name": "Adobe",
+            "value": "Adobe"
+          },
+          {
+            "name": "External",
+            "value": "External"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "author-description",
+        "value": "",
+        "label": "Author description",
+        "description": "Sets the description of author"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "author-social-link-text",
+        "value": "",
+        "label": "Author social link text",
+        "description": "Sets the social link text for author"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "author-social-link-URL",
+        "value": "",
+        "label": "Author social link URL",
+        "description": "Sets the social link url for author"
+      }
+    ]
   }
 ]
