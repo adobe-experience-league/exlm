@@ -35,11 +35,7 @@ function restoreState(newBlock, state) {
 
 function updateUEMainFilters() {
   // browse page sections
-  const browse = document.querySelector('body[class^=browse-] > main');
-  if (browse) {
-    // browse rail section can only be added once
-    browse.setAttribute('data-aue-filter', browse.querySelector(':scope > div.browse-rail-section')?'main':'main_browse');
-  }
+  document.querySelector('body[class^=browse-] > main')?.setAttribute('data-aue-filter', 'main_browse');
   // article page sections
   document.querySelector('body[class^=article] > main')?.setAttribute('data-aue-filter', 'main_article');
 }
