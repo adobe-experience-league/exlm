@@ -7,8 +7,8 @@ import { COVEO_TOKEN } from './session-keys.js';
 
 const COVEO_ANALYTICS_URL = {
   PROD: 'https://adobev2prod9e382h1q.analytics.org.coveo.com/rest/ua/v15/analytics/',
-  STAGE: 'https://adobesystemsincorporatednonprod1.analytics.org.coveo.com/rest/ua/v15/analytics/'
-}
+  STAGE: 'https://adobesystemsincorporatednonprod1.analytics.org.coveo.com/rest/ua/v15/analytics/',
+};
 /**
  *
  * @param {*} type - The type of analytics event, always lower case ex: view, click
@@ -56,15 +56,15 @@ async function getCoveoHashOfCurrentUrl() {
  *
  */
 export async function sendCoveoPageViewEvent() {
-  const contentType = document.querySelector("meta[name='type']")?.content
-  
+  const contentType = document.querySelector("meta[name='type']")?.content;
+
   if (contentType === undefined) {
     // eslint-disable-next-line no-console
-    console.error('Missing "type" meta. Not sending coveo page view')
+    console.error('Missing "type" meta. Not sending coveo page view');
     return; // Missing meta type make this event useless
   }
 
-  const title = document.querySelector("meta[name='og:title']")?.content
+  const title = document.querySelector("meta[name='og:title']")?.content;
   // const profileData = defaultProfileClient.getMergedProfile(false);
   const profileData = sessionStorage.getItem('profile');
   const customData =
@@ -78,7 +78,7 @@ export async function sendCoveoPageViewEvent() {
         };
 
   const baseData = {
-    language: window.languageCode.substring(0,2).toLowerCase(), // Two-letter codes only
+    language: window.languageCode.substring(0, 2).toLowerCase(), // Two-letter codes only
     clientId: profileData?.authId,
     location: window.location.href, // Current url
     contentIdKey: 'permanentid',
@@ -132,7 +132,7 @@ export async function sendCoveoClickEvent(source, model) {
     documentPosition: index + 1,
     documentTitle: title,
     documentUrl: viewLink,
-    language: window.languageCode.substring(0,2).toLowerCase(), // Two letter code only
+    language: window.languageCode.substring(0, 2).toLowerCase(), // Two letter code only
     // originLevel1: '', pulled from token. We should only set it if we have to override it
     // originLevel2: '', "tab" value of search request, if we ever use it
     searchQueryUid,
