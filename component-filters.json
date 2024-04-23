@@ -4,11 +4,11 @@
     "components": ["section"]
   },
   {
-    "id": "main_browse",
+    "id": "main-browse",
     "components": ["section", "browse-rail-section"]
   },
   {
-    "id": "main_article",
+    "id": "main-article",
     "components": ["article-content-section", "article-header-section","section"]
   },
   {

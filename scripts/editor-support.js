@@ -34,10 +34,10 @@ function restoreState(newBlock, state) {
 }
 
 function updateUEMainFilters() {
-  // browse page sections
-  document.querySelector('body[class^=browse-] > main')?.setAttribute('data-aue-filter', 'main_browse');
-  // article page sections
-  document.querySelector('body[class^=article] > main')?.setAttribute('data-aue-filter', 'main_article');
+  // set browse page sections based on theme
+  document.querySelector('body[class^=browse-] > main')?.setAttribute('data-aue-filter', 'main-browse');
+  // set article page sections based on theme
+  document.querySelector('body[class^=article] > main')?.setAttribute('data-aue-filter', 'main-article');
 }
 
 /**
