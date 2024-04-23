@@ -2470,81 +2470,12 @@
         ]
       },
       {
-        "component": "multiselect",
+        "component": "aem-tag",
         "valueType": "string",
         "name": "coveo-solution",
         "label": "Coveo Solution(s)",
-        "description": "Sets the Coveo Solution(s) in page meta.",
-        "options": [
-          {
-            "name": "AEM Assets",
-            "value": "AEM Assets"
-          },
-          {
-            "name": "AEM Forms",
-            "value": "AEM Forms"
-          },
-          {
-            "name": "AEM Sites",
-            "value": "AEM Sites"
-          },
-          {
-            "name": "Analytics",
-            "value": "Analytics"
-          },
-          {
-            "name": "Audience Manager",
-            "value": "Audience Manager"
-          },
-          {
-            "name": "Campaign Classic",
-            "value": "Campaign Classic"
-          },
-          {
-            "name": "Campaign Standard",
-            "value": "Campaign Standard"
-          },
-          {
-            "name": "Commerce",
-            "value": "Commerce"
-          },
-          {
-            "name": "Content Supply Chain",
-            "value": "Content Supply Chain"
-          },
-          {
-            "name": "Customer Journey Analytics",
-            "value": "Customer Journey Analytics"
-          },
-          {
-            "name": "Experience Cloud Integrations",
-            "value": "Experience Cloud Integrations"
-          },
-          {
-            "name": "Experience Platform",
-            "value": "Experience Platform"
-          },
-          {
-            "name": "Journey Optimizer",
-            "value": "Journey Optimizer"
-          },
-          {
-            "name": "Marketo Engage",
-            "value": "Marketo Engage"
-          },
-          {
-            "name": "Real-Time CDP",
-            "value": "Real-Time CDP"
-          },
-          {
-            "name": "Target",
-            "value": "Target"
-          },
-          {
-            "name": "Workfront",
-            "value": "Workfront"
-          }
-        ]
+        "rootPath": "/content/cq:tags/exl/solution",
+        "description": "Sets the Coveo Solution(s) in page meta."
       },
       {
         "component": "text",
@@ -2554,50 +2485,20 @@
         "label": "Author Bio page"
       },
       {
-        "component": "multiselect",
+        "component": "aem-tag",
         "name": "role",
         "label": "Role(s)",
         "valueType": "string",
-        "description": "Sets the role(s) in page meta.",
-        "options": [
-          {
-            "name": "Admin",
-            "value": "Admin"
-          },
-          {
-            "name": "Developer",
-            "value": "Developer"
-          },
-          {
-            "name": "Leader",
-            "value": "Leader"
-          },
-          {
-            "name": "User",
-            "value": "User"
-          }
-        ]
+        "rootPath": "/content/cq:tags/exl/role",
+        "description": "Sets the role(s) in page meta."
       },
       {
-        "component": "multiselect",
+        "component": "aem-tag",
         "name": "level",
         "label": "Experience Level(s)",
         "valueType": "string",
-        "description": "Sets the level(s) in page meta.",
-        "options": [
-          {
-            "name": "Beginner",
-            "value": "Beginner"
-          },
-          {
-            "name": "Intermediate",
-            "value": "Intermediate"
-          },
-          {
-            "name": "Experienced",
-            "value": "Experienced"
-          }
-        ]
+        "rootPath": "/content/cq:tags/exl/experience-level",
+        "description": "Sets the level(s) in page meta."
       }
     ]
   },
