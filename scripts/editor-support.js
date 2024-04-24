@@ -54,9 +54,20 @@ function updateUEFilters() {
     // update available sections
     main.setAttribute('data-aue-filter', 'main-empty');
     // update the only available default sections filter 
-    main.querySelector('.section').setAttribute('data-aue-filter',main.querySelector('div.author-bio.block') ? 'section-empty' : 'section-author-bio');
+    const authorBioBlock = main.querySelector('div.author-bio.block');
+    const section = main.querySelector('.section');
+    if (authorBioBlock) {
+      // you can only add one author bio block
+      section.setAttribute('data-aue-filter','section-empty');
+      // you cant delete the bio block anymore
+      authorBioBlock.setAttribute('data-aue-behavior', '');
+    } else {
+      section.setAttribute('data-aue-filter', 'section-author-bio');
+    }
     // make the only available section uneditable
     main.querySelector('.section').setAttribute('data-aue-behavior', '');
+        // make the only available section uneditable
+        main.querySelector('.section').setAttribute('data-aue-behavior', '');
   }
 }
 
