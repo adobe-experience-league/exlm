@@ -62,6 +62,7 @@ function updateUEFilters() {
       section.setAttribute('data-aue-filter','section-empty');
       // you cant delete the bio block anymore
       authorBioBlock.setAttribute('data-aue-behavior', '');
+      authorBioBlock.setAttribute('data-aue-type', '');
     } else {
       section.setAttribute('data-aue-filter', 'section-author-bio');
     }
