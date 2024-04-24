@@ -8,10 +8,6 @@ div.marquee-wrapper {
   margin-right: calc(-1 * var(--space-token-xs));
 }
 
-body[class ^= 'browse-'] .section div.marquee-wrapper {
-  margin-bottom: 40px;
-}
-
 .marquee {
   position: relative;
 }
@@ -347,7 +343,6 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
   body[class ^= 'browse-'] .section div.marquee-wrapper {
     margin-left: unset;
     margin-right: unset;
-    margin-bottom: 40px;
   }
 
   /* title */
@@ -355,7 +350,6 @@ body[class ^= 'browse-'] .section div.marquee-wrapper {
     font-size: var( --spectrum-font-size-900);
     line-height: 36px;
     margin-bottom:  var(--space-token-xxs);
-
   }
 
  /* description */

@@ -1,4 +1,4 @@
-import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 function decorateButtons(...buttons) {
@@ -85,11 +85,10 @@ export default async function decorate(block) {
     });
   }
 
-  const isUserSignedIn = await isSignedInUser();
-
-  // if not signed in or in UE edit mode
-  if (!isUserSignedIn || document.documentElement.classList.contains('adobe-ue-edit')) {
-    // show the block
-    block.style.display = 'block';
-  }
+  isSignedInUser().then((isUserSignedIn) => {
+    if (!isUserSignedIn || document.documentElement.classList.contains('adobe-ue-edit')) {
+      // show the block
+      block.style.display = 'block';
+    }
+  });
 }

@@ -1,130 +1,157 @@
-import { getMetadata } from '../../scripts/lib-franklin.js';
-import TocDataService from '../../scripts/data-service/toc-data-service.js';
-import { htmlToElement, fetchLanguagePlaceholders, rewriteDocsPath, getLanguageCode } from '../../scripts/scripts.js';
-import getSolutionName from './toc-solutions.js';
+import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
+import {
+  htmlToElement,
+  rewriteDocsPath,
+  getLanguageCode,
+  createPlaceholderSpan,
+  getConfig,
+} from '../../scripts/scripts.js';
+import getSolutionByName from './toc-solutions.js';
 
-const tocUrl = window.location.hostname.includes('experienceleague.adobe.com')
-  ? '/api/action/tocs/'
-  : 'https://51837-exlmconverter-dev.adobeioruntime.net/api/v1/web/main/tocs/';
-
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
-
-// HTML for Tablet&Mobile view dropdown right-rail
-const constructSolutionsDropdownEl = htmlToElement(`
-    <div class="toc-dropdown is-hidden-desktop">
-      <button type="button" class="toc-dropdown-button" aria-expanded="false" aria-controls="toc-dropdown-popover">
-        <span class="toc-dropdown-label">${placeholders.tableOfContents}</span>
-      </button>
-    </div>
-`);
-
-// Toggle list items
-function toggleColumn(block) {
-  const toggleElements = block.querySelectorAll('.js-toggle');
-  if (toggleElements) {
-    toggleElements.forEach((toggleElement) => {
-      const subMenu = toggleElement.parentElement.parentElement.querySelector('ul');
-      subMenu.classList.add('is-hidden');
-      toggleElement.classList.add('collapsed');
-      toggleElement.addEventListener('click', (event) => {
-        event.preventDefault();
-        subMenu.classList.toggle('is-hidden');
-        toggleElement.classList.toggle('collapsed');
-      });
-    });
+/**
+ * fetch toc html from service
+ * @param {string} tocID
+ * @param {string} lang
+ * @returns
+ */
+async function fetchToc(tocID) {
+  const lang = (await getLanguageCode()) || 'en';
+  const { cdnOrigin } = getConfig();
+  try {
+    const response = await fetch(`${cdnOrigin}/api/action/tocs/${tocID}?lang=${lang}`);
+    const json = await response.json();
+    return json.data;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching toc data', error);
+    return null;
   }
 }
 
-// Utility function to toggle visibility of items
-function toggleItemVisibility(items, showAll, limit) {
-  items.forEach((item, index) => {
-    item.classList.remove('is-hidden', 'is-visible');
-    if (!showAll && index >= limit) {
-      item.classList.add('is-hidden');
+/**
+ * @returns {string} product name from metadata
+ */
+function getProductName() {
+  const productNames = getMetadata('original-solution');
+  return productNames.includes(',') ? productNames.split(',')[0].trim() : productNames;
+}
+
+function buildProductHeader() {
+  const productName = getProductName();
+  const solutionInfo = getSolutionByName(productName);
+  return htmlToElement(`
+    <div class="toc-header">
+      <span class="icon icon-${solutionInfo.class}"></span>
+      <h3>${solutionInfo.name}</h3>
+    </div>
+  `);
+}
+
+function buildTocMobileDropdown() {
+  const tocDropdown = htmlToElement(
+    `<button type="button" class="toc-dropdown-button" aria-expanded="false" aria-controls="toc-dropdown-popover"></button>`,
+  );
+  tocDropdown.appendChild(createPlaceholderSpan('tableOfContents', 'Table of Contents'));
+  return tocDropdown;
+}
+
+/**
+ *
+ * @param {string} tocHtml
+ * @param {HTMLElement} tocContent
+ */
+function updateTocContent(tocHtml, tocContent) {
+  tocContent.insertAdjacentHTML('beforeend', tocHtml);
+
+  // prepare links and submenus
+  let submenuIdCount = 0;
+  tocContent.querySelectorAll('a').forEach((anchor) => {
+    const anchorHref = anchor.getAttribute('href');
+    if (anchorHref.startsWith('#')) {
+      submenuIdCount += 1;
+      const submenuId = `toc-submenu-${submenuIdCount}`;
+      anchor.classList.add('toc-toggle');
+      anchor.setAttribute('aria-expanded', 'false');
+      anchor.setAttribute('aria-controls', submenuId);
+      const siblingUl = anchor.nextElementSibling;
+      if (siblingUl && siblingUl.tagName === 'UL') {
+        siblingUl.id = submenuId;
+        siblingUl.classList.add('toc-submenu');
+      }
+      anchor.addEventListener('click', (event) => {
+        event.preventDefault();
+        const isExpanded = anchor.getAttribute('aria-expanded') === 'true';
+        anchor.setAttribute('aria-expanded', !isExpanded);
+      });
     } else {
-      item.classList.add('is-visible');
+      // Rewrite docs path to fix language path
+      const rewritePath = rewriteDocsPath(anchorHref);
+      anchor.setAttribute('href', rewritePath);
+      anchor.classList.add('toc-item');
+    }
+  });
+
+  tocContent.querySelectorAll('ul').forEach((ul) => {
+    // if ul has more than 5 children, add view more link
+    const items = Array.from(ul.children).filter((child) => child.tagName === 'LI');
+    if (items.length > 5) {
+      const viewMoreLessItem = document.createElement('li');
+      viewMoreLessItem.classList.add('toc-view-more-less');
+      ul.setAttribute('aria-expanded', 'false');
+      const viewMoreSpan = createPlaceholderSpan('viewMore', 'View More');
+      viewMoreSpan.className = 'toc-view-more';
+      const viewLessSpan = createPlaceholderSpan('viewLess', 'View Less');
+      viewLessSpan.className = 'toc-view-less';
+      viewMoreLessItem.appendChild(viewMoreSpan);
+      viewMoreLessItem.appendChild(viewLessSpan);
+      viewMoreLessItem.addEventListener('click', () => {
+        const isExpanded = ul.getAttribute('aria-expanded') === 'true';
+        ul.setAttribute('aria-expanded', !isExpanded);
+      });
+      ul.appendChild(viewMoreLessItem);
     }
   });
 }
 
-// Function to handle "View Less" click
-function handleViewMoreClick(ev, items, limit) {
-  ev.preventDefault();
-  if (ev.currentTarget) {
-    const clickElement = ev.currentTarget.querySelector('span');
-    const getViewLinkText = clickElement.classList.contains('plus');
-    clickElement.textContent = getViewLinkText ? placeholders?.viewLess : placeholders?.viewMore;
-    clickElement.classList.toggle('plus');
-    clickElement.classList.toggle('minus');
-    toggleItemVisibility(items, getViewLinkText, limit);
-  }
-}
+/**
+ * Activate current page in TOC
+ * @param {HTMLElement} tocContent
+ */
+function activateCurrentPage(tocContent) {
+  const currentURL = window.location.pathname;
+  const activeAnchor = tocContent.querySelector(`a[href="${currentURL}"]`);
+  if (activeAnchor) {
+    activeAnchor.classList.add('is-active');
+    const activeLi = activeAnchor.closest('li');
 
-async function viewMoreviewLess(list, items, limit) {
-  let viewMoreLessItem = list.querySelector('.view-more-less');
-
-  if (items.length > limit) {
-    if (!viewMoreLessItem) {
-      viewMoreLessItem = document.createElement('li');
-      viewMoreLessItem.classList.add('view-more-less');
-      viewMoreLessItem.innerHTML = `<span class="plus">${placeholders.viewMore}</span>`;
-      viewMoreLessItem.addEventListener('click', (ev) => handleViewMoreClick(ev, items, limit));
-      list.appendChild(viewMoreLessItem);
+    const index = [...activeLi.parentElement.children].indexOf(activeLi);
+    if (index > 4) {
+      const parentUl = activeLi.closest('ul');
+      if (parentUl) {
+        parentUl.setAttribute('aria-expanded', 'true');
+      }
     }
 
-    const isAllVisible = Array.from(items).every((item) => item.classList.contains('is-visible'));
-
-    const viewLinkDiv = viewMoreLessItem.querySelector('span');
-    if (isAllVisible) {
-      viewLinkDiv.textContent = placeholders?.viewLess;
-      viewLinkDiv.classList.remove('plus');
-      viewLinkDiv.classList.add('minus');
-    } else {
-      viewLinkDiv.textContent = placeholders?.viewMore;
-      viewLinkDiv.classList.remove('minus');
-      viewLinkDiv.classList.add('plus');
-    }
-  }
-}
-
-// Items to show initially and highlight the current page
-function initializeItemsToShow(block, currentURL) {
-  const getTocRootList = block.querySelector('.toc-right-rail-content>div>ul');
-  const currentActiveElement = getTocRootList.querySelector(`a[href="${currentURL}"]`);
-  if (currentActiveElement) {
-    currentActiveElement.classList.add('is-active');
-  }
-  function activateListItem(list) {
-    const items = Array.from(list.children).filter((child) => child.tagName === 'LI');
-    const isItemActiveAfterLimit = items.slice(5).some((li) => li.querySelector('.is-active'));
-
-    toggleItemVisibility(items, isItemActiveAfterLimit, 5);
-
-    if (items.length > 5 || (list === getTocRootList && items.length > 5)) {
-      viewMoreviewLess(list, items, 5);
-    }
-    return isItemActiveAfterLimit;
-  }
-  activateListItem(getTocRootList);
-
-  const nestedLists = Array.from(getTocRootList.querySelectorAll('ul'));
-  nestedLists.forEach((nestedList) => activateListItem(nestedList));
-
-  if (currentActiveElement) {
-    let currentItem = currentActiveElement.closest('li');
+    let currentItem = activeAnchor.closest('ul');
     while (currentItem) {
-      currentItem.querySelector('a').classList.add('is-open', 'is-collapsed');
       const parentList = currentItem.closest('ul');
-      if (parentList && parentList !== getTocRootList) {
+      if (parentList) {
+        const toggle = parentList.parentElement.querySelector(':scope > .toc-toggle');
+        // get toggle eleemnt index
+
+        if (toggle) {
+          toggle.classList.add('is-active');
+          toggle.setAttribute('aria-expanded', 'true');
+          const toggleIndex = [...activeAnchor.parentElement.children].indexOf(activeAnchor);
+          if (toggleIndex > 4) {
+            const parentUl = activeAnchor.closest('ul');
+            if (parentUl) {
+              parentUl.setAttribute('aria-expanded', 'true');
+            }
+          }
+        }
         const parentListItem = parentList.closest('li');
         if (parentListItem) {
-          parentListItem.querySelector('a').classList.add('is-collapsed');
           currentItem = parentListItem;
         } else {
           currentItem = null;
@@ -136,100 +163,45 @@ function initializeItemsToShow(block, currentURL) {
   }
 }
 
-const handleTocService = async (tocID, lang) => {
-  const tocsService = new TocDataService(tocUrl);
-  const tocs = await tocsService.fetchDataFromSource(tocID, lang);
-
-  if (!tocs) {
-    throw new Error('An error occurred');
-  }
-
-  return tocs;
-};
-
 /**
  * loads and decorates the toc
  * @param {Element} block The toc block element
  */
 export default async function decorate(block) {
-  const contentDiv = document.createElement('div');
-  contentDiv.classList.add('toc-right-rail-content');
-
-  // Fetch TOC data
-  const currentURL = window.location.pathname;
-  const langCode = await getLanguageCode();
   const tocID = block.querySelector('.toc > div > div').textContent;
-  if (tocID !== '' && !document.querySelector('.toc-dropdown')) {
-    const resp = await handleTocService(tocID, langCode);
-    block.innerHTML = '';
-    block.style.visibility = 'visible';
-    const div = document.createElement('div');
-    const html = resp ? resp?.HTML : '';
-    let productName = '';
-    const productNames = getMetadata('original-solution');
+  if (!tocID && document.querySelector('.toc-dropdown')) return;
+  block.innerHTML = ''; // start clean
+  const themeColor = getMetadata('theme-color');
+  block.style.setProperty('--toc-theme-color', themeColor);
+  block.classList.add(getSolutionByName(getProductName()).class);
 
-    if (productNames.includes(',')) {
-      productName = productNames.split(',')[0].trim();
-    } else {
-      productName = productNames;
-    }
-    const themeColor = getMetadata('theme-color');
-    const solutionInfo = getSolutionName(productName);
-    // decorate TOC DOM
-    div.innerHTML = html;
+  const tocContent = document.createElement('div');
+  tocContent.classList.add('toc-content');
+  tocContent.id = 'toc-dropdown-popover';
 
-    block.parentElement.setAttribute('theme-color', themeColor);
-    block.classList.add(solutionInfo.class);
-    const ul = document.createElement('ul');
-    ul.id = 'product';
-    const li = document.createElement('li');
-    li.innerHTML = `<span class="product-icon"></span><h3>${solutionInfo.name}</h3>`;
-    ul.append(li);
+  const productHeader = buildProductHeader();
+  decorateIcons(productHeader, 'solutions/');
+  const tocMobileDropdown = buildTocMobileDropdown();
 
-    contentDiv.appendChild(ul);
-    contentDiv.appendChild(div);
+  block.appendChild(tocMobileDropdown);
+  tocContent.appendChild(productHeader);
+  block.appendChild(tocContent);
 
-    // Toc dropdow, visible only on mobile
-    block.appendChild(constructSolutionsDropdownEl);
+  const tocReady = fetchToc(tocID);
+  // decorate TOC DOM
+  tocReady.then(({ HTML }) => {
+    updateTocContent(HTML, tocContent);
+    activateCurrentPage(tocContent);
     // click event for TOC dropdown to open solutions
-    const tocMobileButton = block.querySelector('.toc-dropdown-button');
-    tocMobileButton.addEventListener('click', () => {
-      const isExpanded = tocMobileButton.getAttribute('aria-expanded') === 'true';
-      tocMobileButton.setAttribute('aria-expanded', !isExpanded);
-      contentDiv.classList.toggle('toc-wrapper-expanded');
+    tocMobileDropdown.addEventListener('click', () => {
+      const isExpanded = tocMobileDropdown.getAttribute('aria-expanded') === 'true';
+      tocMobileDropdown.setAttribute('aria-expanded', !isExpanded);
     });
-    window.addEventListener('resize', () => {
-      if (window.matchMedia('(min-width:900px)').matches && contentDiv.classList.contains('toc-wrapper-expanded')) {
-        contentDiv.classList.remove('toc-wrapper-expanded');
-      }
-    });
+  });
 
-    block.appendChild(contentDiv);
-
-    const anchors = block.querySelectorAll('.toc a');
-    anchors.forEach((anchor) => {
-      const pTag = document.createElement('p');
-      anchor.parentNode.replaceChild(pTag, anchor);
-      pTag.appendChild(anchor);
-
-      const anchorHref = anchor.getAttribute('href');
-      if (anchorHref.startsWith('#')) {
-        anchor.classList.add('js-toggle');
-      } else {
-        // Rewrite docs path to fix language path
-        const rewritePath = rewriteDocsPath(anchorHref);
-        anchor.setAttribute('href', rewritePath);
-      }
-    });
-
-    // Toggle functionality for TOC Block
-    toggleColumn(block);
-    initializeItemsToShow(block, currentURL);
-    const ActiveEl = block.querySelectorAll('.js-toggle.is-collapsed.is-open');
-    if (ActiveEl != null) {
-      ActiveEl.forEach((el) => {
-        el.click();
-      });
+  window.addEventListener('resize', () => {
+    if (window.matchMedia('(min-width:900px)').matches) {
+      tocMobileDropdown.setAttribute('aria-expanded', 'false');
     }
-  }
+  });
 }

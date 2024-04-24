@@ -1,13 +1,9 @@
+/* eslint-disable no-console */
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
-export const solution = document.querySelector('meta[name="solution"]')
-  ? document.querySelector('meta[name="solution"]').content.split(',')[0].toLowerCase()
-  : '';
-
-export const type = document.querySelector('meta[name="type"]')
-  ? document.querySelector('meta[name="type"]').content.toLowerCase()
-  : '';
+export const solution = document.querySelector('meta[name="solution"]')?.content?.split(',')[0].toLowerCase() || '';
+export const type = document.querySelector('meta[name="type"]')?.content?.toLowerCase() || '';
 
 export const pageName = (language) => {
   // Validate if subsolution or solutionversion is not empty
@@ -30,38 +26,47 @@ export const pageName = (language) => {
   return responseStr.toLowerCase();
 };
 
-export async function pageLoadModel(language) {
-  const user = {};
-  user.userDetails = {};
-  user.userDetails.userAccountType = '';
-  user.userDetails.userAuthenticatedStatus = 'unauthenticated';
-  user.userDetails.userAuthenticatedSystem = 'ims';
-  user.userDetails.userID = '';
-  user.userDetails.userLanguageSetting = [];
-  user.userDetails.learningInterest = [];
-  user.userDetails.role = [];
-  user.userDetails.experienceLevel = [];
-  user.userDetails.industry = [];
-  user.userDetails.notificationPref = false;
-  user.userDetails.org = '';
-  user.userDetails.orgs = [];
+export async function pushPageDataLayer(language) {
+  console.timeLog('martech', `datalayer: start ${Date.now()}`);
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  const user = {
+    userDetails: {
+      userAccountType: '',
+      userAuthenticatedStatus: 'unauthenticated',
+      userAuthenticatedSystem: 'ims',
+      userID: '',
+      userLanguageSetting: [],
+      learningInterest: [],
+      role: [],
+      experienceLevel: [],
+      industry: [],
+      notificationPref: false,
+      org: '',
+      orgs: [],
+    },
+  };
 
   try {
+    console.timeLog('martech', `datalayer: start profile inquiry ${Date.now()}`);
     // eslint-disable-next-line import/no-cycle
-    const { profile } = await import('../data-service/profile-service.js');
-    const userData = await profile();
+    const { defaultProfileClient } = await import('../auth/profile.js');
+    const userData = await defaultProfileClient.getMergedProfile();
+    console.timeLog('martech', `datalayer: profile inquiry done. Adding profile data to datlayer ${Date.now()}`);
     if (userData) {
-      user.userDetails.userAccountType = userData.account_type;
-      user.userDetails.userAuthenticatedStatus = 'logged in';
-      user.userDetails.userID = userData.userId || '';
-      user.userDetails.userLanguageSetting = userData.preferred_languages || ['en-us'];
-      user.userDetails.learningInterest = userData.interests || [];
-      user.userDetails.role = userData.role || [];
-      user.userDetails.experienceLevel = userData.level || [];
-      user.userDetails.industry = userData.industryInterests || [];
-      user.userDetails.notificationPref = userData.emailOptIn === true;
-      user.userDetails.org = userData.org || '';
-      user.userDetails.orgs = userData.orgs || [];
+      user.userDetails = {
+        ...user.userDetails,
+        userAccountType: userData.account_type,
+        userAuthenticatedStatus: 'logged in',
+        userID: userData.userId || '',
+        userLanguageSetting: userData.preferred_languages || ['en-us'],
+        learningInterest: userData.interests || [],
+        role: userData.role || [],
+        experienceLevel: userData.level || [],
+        industry: userData.industryInterests || [],
+        notificationPref: userData.emailOptIn === true,
+        org: userData.org || '',
+        orgs: userData.orgs || [],
+      };
     }
   } catch (e) {
     // eslint-disable-next-line no-console
@@ -93,7 +98,8 @@ export async function pageLoadModel(language) {
 
   const mainSiteSection = search ? 'search' : '';
 
-  return {
+  console.timeLog('martech', `datalayer: push ${Date.now()}`);
+  window.adobeDataLayer.push({
     event: 'page loaded',
     web: {
       webPageDetails: {
@@ -130,10 +136,10 @@ export async function pageLoadModel(language) {
     },
     user,
     userGUID: user.userDetails.userID,
-  };
+  });
 }
 
-export function linkClickModel(e) {
+export function pushLinkClick(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
@@ -180,7 +186,7 @@ export function linkClickModel(e) {
         linkClicks: { value: 1 },
         name,
         // set to other until we have examples of other types
-        type: 'Other',
+        type: 'other',
       },
       webPageDetails: {
         pageViews: { value: 0 },
@@ -195,6 +201,14 @@ export function linkClickModel(e) {
 
 export function assetInteractionModel(id, assetInteractionType, filters) {
   window.adobeDataLayer = window.adobeDataLayer || [];
+  const dataLayerFilters = {
+    Role: '',
+    ContentType: '',
+    ExperienceLevel: '',
+    KeywordSearch: '',
+    BrowseByTopic: '',
+  };
+  Object.assign(dataLayerFilters, filters);
 
   // assetId is set to the current docs page articleId if id param value is null
   const assetId = id || ((document.querySelector('meta[name="id"]') || {}).content || '').trim();
@@ -206,7 +220,7 @@ export function assetInteractionModel(id, assetInteractionType, filters) {
       linkType: '',
       solution: '',
     },
-    ...filters,
+    ...dataLayerFilters,
     event: 'assetInteraction',
     asset: {
       id: assetId,

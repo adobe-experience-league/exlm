@@ -37,9 +37,8 @@ const switchLanguage = (language) => {
 /**
  * Decoration for language popover - shared between header and footer
  */
-export const buildLanguagePopover = async (position) => {
+export const buildLanguagePopover = async (position, popoverId) => {
   loadCSS(`${window.hlx.codeBasePath}/styles/language.css`);
-  const popoverId = 'language-picker-popover';
   const popoverClass =
     position === 'top' ? 'language-selector-popover language-selector-popover--top' : 'language-selector-popover';
   let languagesEl = htmlToElement(await loadLanguageFragment());

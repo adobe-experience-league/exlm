@@ -200,10 +200,6 @@ border-radius: 30px;
 
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
-  .section.detailed-teaser-container {
-    padding: 0 var(--space-token-xl);
-  }
-
   .section div.detailed-teaser-wrapper {
     /* stretches to window edge, cover section padding */
     margin-left: calc(-1 * var(--space-token-xl));

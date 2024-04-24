@@ -7,13 +7,11 @@ import {
   fetchLanguagePlaceholders,
   getConfig,
 } from '../../scripts/scripts.js';
-import loadJWT from '../../scripts/auth/jwt.js';
-// import { adobeIMS, profile } from '../../scripts/data-service/profile-service.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
 import attachCopyLink from '../../scripts/copy-link/copy-link.js';
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
-import { isSignedInUser, profile } from '../../scripts/data-service/profile-service.js';
+import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 
 const { automaticTranslationLink } = getConfig();
 
@@ -61,19 +59,16 @@ export async function decorateBookmark(block, placeholders) {
     const bookmarkAuthedToolTipIconD = bookmarkAuthedDesktop.querySelector('.bookmark-icon');
     const bookmarkAuthedToolTipLabelM = bookmarkAuthedMobile.querySelector('.exl-tooltip-label');
     const bookmarkAuthedToolTipIconM = bookmarkAuthedMobile.querySelector('.bookmark-icon');
-    loadJWT().then(async () => {
-      profile().then(async (data) => {
-        if (data.bookmarks.includes(bookmarkId)) {
-          bookmarkAuthedToolTipIconD.classList.add('authed');
-          bookmarkAuthedToolTipLabelD.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
-          bookmarkAuthedToolTipIconM.classList.add('authed');
-          bookmarkAuthedToolTipLabelM.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
-        }
-      });
-
-      renderBookmark(bookmarkAuthedToolTipLabelD, bookmarkAuthedToolTipIconD, bookmarkId);
-      renderBookmark(bookmarkAuthedToolTipLabelM, bookmarkAuthedToolTipIconM, bookmarkId);
+    defaultProfileClient.getMergedProfile().then(async (data) => {
+      if (data.bookmarks.includes(bookmarkId)) {
+        bookmarkAuthedToolTipIconD.classList.add('authed');
+        bookmarkAuthedToolTipLabelD.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
+        bookmarkAuthedToolTipIconM.classList.add('authed');
+        bookmarkAuthedToolTipLabelM.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
+      }
     });
+    renderBookmark(bookmarkAuthedToolTipLabelD, bookmarkAuthedToolTipIconD, bookmarkId);
+    renderBookmark(bookmarkAuthedToolTipLabelM, bookmarkAuthedToolTipIconM, bookmarkId);
   } else {
     block.appendChild(unAuthBookmark);
     if (docActionsMobileContainer && !docActionsMobileBookmark) {

@@ -16,6 +16,7 @@ async function decorateRail(railSection, position) {
   const railToggler = document.createElement('button');
   railToggler.style.background = 'none'; // override default button styles
   railToggler.classList.add('rail-toggle');
+  railToggler.setAttribute('aria-label', `Toggle ${position} rail`);
   railToggler.innerHTML = '<span class="icon icon-rail"></span>';
   railSection.classList.add('rail');
   railSection.classList.add(`rail-${position}`);

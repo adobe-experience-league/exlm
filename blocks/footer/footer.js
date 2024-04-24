@@ -1,14 +1,8 @@
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { getPathDetails, decorateLinks } from '../../scripts/scripts.js';
-import { isSignedInUser } from '../../scripts/data-service/profile-service.js';
+import { getPathDetails, decorateLinks, fetchFragment } from '../../scripts/scripts.js';
 
 const languageModule = import('../../scripts/language.js');
-
-// fetch fragment html
-const fetchFragment = async (rePath, lang = 'en') => {
-  const response = await fetch(`/fragments/${lang}/${rePath}.plain.html`);
-  return response.text();
-};
 
 async function decorateMenu(footer) {
   const isSignedIn = await isSignedInUser();
@@ -84,10 +78,12 @@ async function decorateSocial(footer) {
   groupDiv.classList.add('footer-lang-social');
   // build language popover
   const { buildLanguagePopover } = await languageModule;
-  const { popover } = await buildLanguagePopover('top');
+  const { popover } = await buildLanguagePopover('top', 'language-picker-popover-footer');
 
   const langSelectorButton = languageSelector.firstElementChild;
   langSelectorButton.classList.add('language-selector-button');
+  langSelectorButton.setAttribute('aria-haspopup', 'true');
+  langSelectorButton.setAttribute('aria-controls', 'language-picker-popover-footer');
   const icon = document.createElement('span');
   icon.classList.add('icon', 'icon-globegrid');
   langSelectorButton.appendChild(icon);

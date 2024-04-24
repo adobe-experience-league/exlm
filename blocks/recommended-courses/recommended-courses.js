@@ -1,13 +1,13 @@
 // Importing constants and modules
 import { RECOMMENDED_COURSES_CONSTANTS } from '../../scripts/browse-card/browse-cards-constants.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { isSignedInUser, profile } from '../../scripts/data-service/profile-service.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import BrowseCardsPathsAdaptor from '../../scripts/browse-card/browse-cards-paths-adaptor.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
+import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -184,69 +184,73 @@ export default async function decorate(block) {
   // Appending header div to the block
   block.appendChild(headerDiv);
 
-  await decorateIcons(headerDiv);
+  decorateIcons(headerDiv);
 
   // Checking if the user is signed in before proceeding
-  const isSignedIn = await isSignedInUser();
-  if (isSignedIn) {
-    // Creating content div for card display
-    const contentDiv = document.createElement('div');
-    contentDiv.classList.add('browse-cards-block-content');
+  isSignedInUser().then((isSignedIn) => {
+    if (isSignedIn) {
+      // Creating content div for card display
+      const contentDiv = document.createElement('div');
+      contentDiv.classList.add('browse-cards-block-content');
 
-    buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
-    buildCardsShimmer.add(block);
+      buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
+      buildCardsShimmer.add(block);
 
-    // Fetching user profile data
-    profile().then(async (data) => {
-      // Fetching card data based on parameters
-      const browseCardsContent = BrowseCardsDelegate.fetchCardData(parameters);
+      // Fetching user profile data
+      defaultProfileClient.getMergedProfile().then(async (data) => {
+        // Fetching card data based on parameters
+        const browseCardsContent = BrowseCardsDelegate.fetchCardData(parameters);
 
-      // Processing fetched data
-      browseCardsContent.then((browseCardsData) => {
-        // Extracting progress and interests data from user profile
-        const progressData = data && data.progress ? extractProgressData(data.progress) : {};
-        const recommendedData = data && data.interests ? [...data.interests] : [];
+        // Processing fetched data
+        browseCardsContent.then((browseCardsData) => {
+          // Extracting progress and interests data from user profile
+          const progressData = data && data.progress ? extractProgressData(data.progress) : {};
+          const recommendedData = data && data.interests ? [...data.interests] : [];
 
-        // Create a Map for courses using their IDs as keys
-        const courseMap = createCourseMap(browseCardsData);
+          // Create a Map for courses using their IDs as keys
+          const courseMap = createCourseMap(browseCardsData);
 
-        // Filtering courses based on progress and recommendations
-        const inProgressCoursesData = filterCoursesByProgress(courseMap, progressData);
-        const recommendedCoursesData = filterCoursesByRecommendations(courseMap, recommendedData);
+          // Filtering courses based on progress and recommendations
+          const inProgressCoursesData = filterCoursesByProgress(courseMap, progressData);
+          const recommendedCoursesData = filterCoursesByRecommendations(courseMap, recommendedData);
 
-        // Combine and limit arrays based on specific conditions
-        const finalCoursesData = recommendedBlockData(inProgressCoursesData, recommendedCoursesData);
+          // Combine and limit arrays based on specific conditions
+          const finalCoursesData = recommendedBlockData(inProgressCoursesData, recommendedCoursesData);
 
-        // Mapping results to card data and displaying cards
-        const cardModifiedData = BrowseCardsPathsAdaptor.mapResultsToCardsData(finalCoursesData);
+          // Mapping results to card data and displaying cards
+          const cardModifiedData = BrowseCardsPathsAdaptor.mapResultsToCardsData(finalCoursesData);
 
-        cardModifiedData
-          .then((cardData) => {
-            buildCardsShimmer.remove();
-            if (cardData && cardData.length > 0) {
-              displayCards(contentDiv, cardData, noOfResults);
-              block.appendChild(contentDiv);
-            } else {
+          cardModifiedData
+            .then((cardData) => {
+              buildCardsShimmer.remove();
+              if (cardData && cardData.length > 0) {
+                displayCards(contentDiv, cardData, noOfResults);
+                block.appendChild(contentDiv);
+              } else {
+                buildNoResultsContent(block, true);
+              }
+              /* Hide Tooltip while scrolling the cards  layout */
+              hideTooltipOnScroll(contentDiv);
+            })
+            .catch((err) => {
+              // Hide shimmer placeholders on error
+              buildCardsShimmer.remove();
               buildNoResultsContent(block, true);
-            }
-            /* Hide Tooltip while scrolling the cards  layout */
-            hideTooltipOnScroll(contentDiv);
-          })
-          .catch((err) => {
-            // Hide shimmer placeholders on error
-            buildCardsShimmer.remove();
-            buildNoResultsContent(block, true);
-            // eslint-disable-next-line no-console
-            console.error('Recommended Cards:', err);
-          });
+              // eslint-disable-next-line no-console
+              console.error('Recommended Cards:', err);
+            });
+        });
       });
-    });
-  } else if (
-    document.documentElement.classList.contains('adobe-ue-edit') ||
-    document.documentElement.classList.contains('adobe-ue-preview')
-  ) {
-    buildNoResultsContent(block, true);
-  } else {
-    block.style.display = 'None';
-  }
+    } else if (
+      document.documentElement.classList.contains('adobe-ue-edit') ||
+      document.documentElement.classList.contains('adobe-ue-preview')
+    ) {
+      buildNoResultsContent(block, true);
+    } else {
+      const recommendedCoursesContainer = document.querySelector('.recommended-courses-container');
+      if (recommendedCoursesContainer) {
+        recommendedCoursesContainer.remove();
+      }
+    }
+  });
 }
