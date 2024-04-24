@@ -1,5 +1,7 @@
-import { debounce, fetchLanguagePlaceholders, htmlToElement, isArticlePage } from '../../scripts/scripts.js';
+import { debounce, fetchLanguagePlaceholders, isArticlePage } from '../../scripts/scripts.js';
 import { highlight, setLevels, hashFragment } from './utils.js';
+import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 function setPadding(arg = '') {
   const num = parseInt(arg.split('')[1], 10);
@@ -41,15 +43,6 @@ export default async function decorate() {
       .join(',');
     const headers = Array.from(document.querySelectorAll(selectorQuery)).filter(headerExclusions);
 
-    const hideMiniTocPopOver = () => {
-      const scrollableDiv = ctx.querySelector('.scrollable-div');
-      if (scrollableDiv?.classList?.contains('mini-toc-popover')) {
-        scrollableDiv.classList.remove('mini-toc-popover');
-        const button = ctx.querySelector('.mini-toc-button');
-        button.ariaExpanded = 'false';
-      }
-    };
-
     if (headers.length > 1) {
       const html = headers.map(
         (i) => `<li><a href="#${i.id}" class="${setPadding(i.nodeName)}">${i.innerText}</a></li>`,
@@ -62,8 +55,30 @@ export default async function decorate() {
         const tocHeadingDivNode = `<div><h2>${miniTOCHeading}</h2></div>`;
         ctx.innerHTML = `${tocHeadingDivNode}\n<div class='scrollable-div'><ul>${html.join('\n')}</ul></div>`;
 
-        const anchors = Array.from(ctx.querySelectorAll('a'));
         let lactive = false;
+
+        const anchors = Array.from(ctx.querySelectorAll('a'));
+        const anchorTexts = anchors.map((anchor) => {
+          const content = anchor.textContent;
+          return {
+            id: content,
+            value: anchor.href,
+            title: content,
+          };
+        });
+        // eslint-disable-next-line no-new
+        new Dropdown(ctx, 'Summary', anchorTexts, DROPDOWN_VARIANTS.MINI_TOC); // Initialise mini-toc dropdown for mobile view
+
+        window.addEventListener('hashchange', () => {
+          const { hash } = window.location;
+          const matchFound = anchorTexts.find((a) => {
+            const [, linkHash] = a.value.split('#');
+            return `#${linkHash}` === hash;
+          });
+          if (matchFound) {
+            Dropdown.closeAllDropdowns();
+          }
+        });
 
         if (anchors.length > 0) {
           anchors.forEach((i, idx) => {
@@ -89,7 +104,6 @@ export default async function decorate() {
                 render(() => {
                   anchors.forEach((a) => a.classList.remove('is-active'));
                   activeAnchor.classList.add('is-active');
-                  hideMiniTocPopOver();
 
                   if (ahash.length > 0) {
                     hashFragment(ahash);
@@ -119,25 +133,8 @@ export default async function decorate() {
               // scrollableDiv.style.maxHeight = `${visibleAnchorsCount * anchorHeight}px`;
             }
           }
-
-          const button = htmlToElement(
-            `<button class="mini-toc-button"aria-expanded="false" ><span>Summary</span></button>`,
-          );
-          button.addEventListener('click', (e) => {
-            const canCLoseDropdown = button.ariaExpanded === 'true';
-            button.ariaExpanded = canCLoseDropdown ? 'false' : 'true';
-            if (canCLoseDropdown) {
-              scrollableDiv.classList.remove('mini-toc-popover');
-            } else {
-              scrollableDiv.classList.add('mini-toc-popover');
-              e.stopPropagation();
-              document.addEventListener('click', hideMiniTocPopOver, {
-                once: true,
-              });
-            }
-          });
-          ctx.appendChild(button);
           window.addEventListener('scroll', () => debounce('scroll', () => highlight(), 16));
+          decorateIcons(ctx);
         }
       });
     } else {
