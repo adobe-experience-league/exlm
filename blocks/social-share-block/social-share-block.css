@@ -19,11 +19,6 @@
     font-size: var(--spectrum-body-size-xs);
 }
 
-.social-share-item > svg{
-    width: 20px;
-    height: 20px;
-}
-
 .social-share-item{
     display: flex;
     align-items: center;
