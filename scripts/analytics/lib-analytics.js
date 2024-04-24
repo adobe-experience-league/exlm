@@ -210,7 +210,7 @@ export function pushLinkClick(e) {
 
 export function assetInteractionModel(id, assetInteractionType, filters) {
   window.adobeDataLayer = window.adobeDataLayer || [];
-  const dataLayerFilters = Object.assign({}, UEFilters);
+  const dataLayerFilters = { ...UEFilters };
   Object.assign(dataLayerFilters, filters);
 
   // assetId is set to the current docs page articleId if id param value is null
