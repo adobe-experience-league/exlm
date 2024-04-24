@@ -41,6 +41,10 @@ function updateUEFilters() {
   if (document.querySelector('body[class^=browse-]')) {
     // update available sections
     main.setAttribute('data-aue-filter', 'main-browse');
+    // update available blocks for default sections
+    main.querySelectorAll('.section').forEach((elem) => {
+      elem.setAttribute('data-aue-filter', 'section-browse')
+    });
   }
 
   // if article page, identified by theme
