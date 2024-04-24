@@ -1,7 +1,7 @@
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, extractAuthorInfo } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  const [
+  const {
     authorImage,
     authorName,
     authorTitle,
@@ -9,7 +9,7 @@ export default function decorate(block) {
     authorDescription,
     authorSocialLinkText,
     authorSocialLinkURL,
-  ] = [...block.children].map((row) => row.firstElementChild);
+  } = extractAuthorInfo(block);
   const authorBioPicture = authorImage.querySelector('picture');
   const authorSocialLinkElement = authorSocialLinkURL.querySelector('a').href;
   const authorBioDOM = htmlToElement(`

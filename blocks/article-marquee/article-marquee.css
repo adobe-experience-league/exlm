@@ -163,6 +163,7 @@
   .article-marquee-info-container {
     flex-direction: row;
     min-height: auto;
+    justify-content: space-between;
   }
 
   .article-marquee .article-info {
@@ -223,7 +224,7 @@
     right: 0;
     left: 50%;
     top: 0;
-    bottom: 0;
+    bottom: 1px;
     background-color: var(--spectrum-indigo-1400);
   }
   .article-marquee-large-bg.adobe {
