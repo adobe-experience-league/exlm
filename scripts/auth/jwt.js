@@ -5,8 +5,6 @@ import { isSignedInUser } from './profile.js';
 
 const { JWTTokenUrl } = getConfig();
 
-let JWTToken;
-
 /**
  * Fetches and stores JWT token in the session storage.
  *
@@ -56,8 +54,9 @@ async function fetchAndStoreJWT() {
 }
 
 export default async function loadJWT() {
-  JWTToken =
-    JWTToken ||
+  window.exlm = window.exlm || {};
+  window.exlm.JWTToken =
+    window.exlm.JWTToken ||
     new Promise((resolve, reject) => {
       isSignedInUser().then((signedIn) => {
         if (signedIn) {
@@ -71,5 +70,5 @@ export default async function loadJWT() {
         }
       });
     });
-  return JWTToken;
+  return window.exlm.JWTToken;
 }

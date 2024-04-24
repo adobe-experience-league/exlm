@@ -1024,7 +1024,7 @@ function handleHomePageHashes() {
  * @param {string} fallbackText
  * @returns
  */
-export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved) {
+export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, onRejected) {
   const span = document.createElement('span');
   span.setAttribute('data-placeholder', placeholderKey);
   span.setAttribute('data-placeholder-fallback', fallbackText);
@@ -1039,6 +1039,7 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved) 
     })
     .catch(() => {
       span.textContent = fallbackText;
+      if (onRejected) onRejected(span);
     });
   return span;
 }
