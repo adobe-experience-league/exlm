@@ -38,6 +38,13 @@ function updateUEMainFilters() {
   document.querySelector('body[class^=browse-] > main')?.setAttribute('data-aue-filter', 'main-browse');
   // set article page sections based on theme
   document.querySelector('body[class^=article] > main')?.setAttribute('data-aue-filter', 'main-article');
+  // adapt article bio pages based on path 
+  if (document.location.pathname.includes('/articles/authors/')) {
+    document.querySelector('main')?.setAttribute('data-aue-filter', 'main-empty');
+  }
+}
+
+function updateUESectionFilters() {
 }
 
 /**
@@ -115,6 +122,8 @@ async function applyChanges(event) {
           await loadBlocks(parentElement);
           element.remove();
           newSection.style.display = null;
+          updateUESectionFilters();
+
         } else {
           element.replaceWith(...newElements);
           decorateButtons(parentElement);
@@ -199,5 +208,7 @@ if (signUpBlock) {
   }).observe(document.documentElement, { attributeFilter: ['class'] });
 }
 
-// update UE component filters 
+// update UE component filter for main
 updateUEMainFilters();
+// update UE component filter for sections
+updateUESectionFilters();

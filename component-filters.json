@@ -4,20 +4,16 @@
     "components": ["section"]
   },
   {
+    "id": "main-empty",
+    "components": []
+  },
+  {
     "id": "main-browse",
     "components": ["section", "browse-rail-section"]
   },
   {
     "id": "main-article",
     "components": ["article-content-section", "article-header-section","section"]
-  },
-  {
-    "id": "columns",
-    "components": []
-  },
-  {
-    "id": "column",
-    "components": ["text", "image", "button", "title"]
   },
   {
     "id": "section",
@@ -47,6 +43,11 @@
       "recommended-courses",
       "block-quote",
       "callout"
+    ]
+  },
+  {
+    "id": "section-empty",
+    "components": [
     ]
   },
   {
@@ -123,6 +124,14 @@
   {
     "id": "article-header-section",
     "components": []
+  },
+  {
+    "id": "columns",
+    "components": []
+  },
+  {
+    "id": "column",
+    "components": ["text", "image", "button", "title"]
   },
   {
     "id": "text",
