@@ -99,13 +99,10 @@ async function applyChanges(event) {
   if (element) {
     if (element.matches('main')) {
       const newMain = parsedUpdate.querySelector(`[data-aue-resource="${resource}"]`);
-
- 
       decorateMain(newMain);
       decorateRichtext(newMain);
       await loadBlocks(newMain);
       element.replaceWith(newMain);
-   
       // eslint-disable-next-line no-use-before-define
       attachEventListners(newMain);
       return true;
