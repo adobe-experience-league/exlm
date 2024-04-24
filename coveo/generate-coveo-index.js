@@ -83,7 +83,15 @@ async function generateXmlContent() {
       let authorName = '';
       let authorType = '';
       if (article.authorBioPage !== '') {
-        const authorBioPage = `${domain}${article.authorBioPage}`;
+        let authorBioPage = `${article.authorBioPage}`;
+        const regex = /^\/content\/exlm(?:-[^\s/]+)?\/global$/;
+        const match = article.authorBioPage.match(regex);
+
+        if (match) {
+          authorBioPage = `${domain}${match[1]}`;
+        } else {
+          authorBioPage = `${domain}${article.authorBioPage}`;
+        }
         try {
           const authorBioPageData = await fetchDataFromURL(authorBioPage);
           const dom = new JSDOM(authorBioPageData);
