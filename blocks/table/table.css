@@ -128,7 +128,6 @@
 }
 .table table tbody td a {
   margin: 0;
-  font-size: var(--spectrum-font-size-100);
   line-height: 21px;
 }
 .table table tbody td strong {
