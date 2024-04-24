@@ -4,6 +4,7 @@ import {
   getPathDetails,
   createPlaceholderSpan,
   fetchLanguagePlaceholders,
+  fetchAuthorBio,
 } from '../../scripts/scripts.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
@@ -160,7 +161,6 @@ function createBreadcrumb(container) {
         // go to next sub path
         return nextCrumbSubPath;
       });
-      container.append(createPlaceholderSpan('article', document.title));
     });
 }
 
@@ -169,7 +169,7 @@ function createBreadcrumb(container) {
  */
 export default async function ArticleMarquee(block) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
-  const [authorImg, authorName, authorTitle, readTime, headingType] = block.querySelectorAll(':scope div > div');
+  const [link, readTime, headingType] = block.querySelectorAll(':scope div > div');
 
   let tagname = placeholders.articleMarqueeAdobeTag;
   let articleType = document.querySelector('meta[name="article-theme"]')?.getAttribute('content');
@@ -190,10 +190,8 @@ export default async function ArticleMarquee(block) {
                               ${tabletSvg}
                               ${desktopSvg}
                             </div>
-                            ${authorImg.outerHTML} 
-                            <div>${authorName.textContent.trim()}</div> 
-                            ${authorTitle.outerHTML}
-                            <div class="article-marquee-tag">${tagname}</div>
+                            <div class="author-details">
+                            </div>
                             </div></div>
                             <div class="article-marquee-large-bg ${articleType}"></div>
                             `;
@@ -204,4 +202,14 @@ export default async function ArticleMarquee(block) {
   const breadcrumbContainer = block.querySelector('.breadcrumb');
   createBreadcrumb(breadcrumbContainer);
   decorateIcons(block);
+
+  fetchAuthorBio(link.querySelector('a')).then((authorInfo) => {
+    const authorInfoContainer = block.querySelector('.author-details');
+    authorInfoContainer.outerHTML = `
+      ${authorInfo.authorImage.outerHTML} 
+      <div>${authorInfo.authorName.textContent.trim()}</div> 
+      ${authorInfo.authorTitle.outerHTML}
+      <div class="article-marquee-tag">${tagname}</div>
+    `;
+  });
 }

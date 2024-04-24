@@ -177,6 +177,33 @@ function addBrowseBreadCrumb(main) {
   }
 }
 
+export function extractAuthorInfo(block) {
+  const authorInfo = [...block.children].map((row) => row.firstElementChild);
+  return {
+    authorImage: authorInfo[0] ?? '',
+    authorName: authorInfo[1] ?? '',
+    authorTitle: authorInfo[2] ?? '',
+    authorCompany: authorInfo[3] ?? '',
+    authorDescription: authorInfo[4] ?? '',
+    authorSocialLinkText: authorInfo[5] ?? '',
+    authorSocialLinkURL: authorInfo[6] ?? '',
+  };
+}
+
+export async function fetchAuthorBio(anchor) {
+  const link = anchor.href ? anchor.href : anchor;
+  return fetch(link)
+    .then((response) => response.text())
+    .then((html) => {
+      const parser = new DOMParser();
+      const htmlDoc = parser.parseFromString(html, 'text/html');
+      return extractAuthorInfo(htmlDoc.querySelector('.author-bio'));
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
 export function isArticleLandingPage() {
   const theme = getMetadata('theme');
   return theme.split(',').find((t) => t.toLowerCase().startsWith('article-'));
@@ -595,7 +622,7 @@ export function getConfig() {
   let launchScriptSrc;
   if (isProd) launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
   else if (isStage)
-    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
+    launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
 
   window.exlm = window.exlm || {};
