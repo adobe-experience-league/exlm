@@ -54,7 +54,7 @@ function updateUEFilters() {
     // update available sections
     main.setAttribute('data-aue-filter', 'main-empty');
     // make the only available section uneditable
-    main.querySelector('.section').setAttribute('data-aue-behavior', 'none');
+    main.querySelector('.section').setAttribute('data-aue-behavior', '');
   }
 }
 
