@@ -53,7 +53,7 @@ function updateUEFilters() {
     main.setAttribute('data-aue-filter', 'main-article');
   }
 
-  // if author bio, identified by path  
+  // if author bio, identified by path segment 
   if (document.location.pathname.includes('/articles/authors/')) {
     // update available sections
     main.setAttribute('data-aue-filter', 'main-empty');
@@ -72,8 +72,6 @@ function updateUEFilters() {
     }
     // make the only available section uneditable
     main.querySelector('.section').setAttribute('data-aue-behavior', '');
-        // make the only available section uneditable
-        main.querySelector('.section').setAttribute('data-aue-behavior', '');
   }
 }
 
@@ -101,13 +99,13 @@ async function applyChanges(event) {
   if (element) {
     if (element.matches('main')) {
       const newMain = parsedUpdate.querySelector(`[data-aue-resource="${resource}"]`);
-      newMain.style.display = 'none';
-      element.insertAdjacentElement('afterend', newMain);
+
+ 
       decorateMain(newMain);
       decorateRichtext(newMain);
       await loadBlocks(newMain);
-      element.remove();
-      newMain.style.display = null;
+      element.replaceWith(newMain);
+   
       // eslint-disable-next-line no-use-before-define
       attachEventListners(newMain);
       return true;
