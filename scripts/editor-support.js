@@ -33,18 +33,29 @@ function restoreState(newBlock, state) {
   }
 }
 
-function updateUEMainFilters() {
-  // set browse page sections based on theme
-  document.querySelector('body[class^=browse-] > main')?.setAttribute('data-aue-filter', 'main-browse');
-  // set article page sections based on theme
-  document.querySelector('body[class^=article] > main')?.setAttribute('data-aue-filter', 'main-article');
-  // adapt article bio pages based on path 
-  if (document.location.pathname.includes('/articles/authors/')) {
-    document.querySelector('main')?.setAttribute('data-aue-filter', 'main-empty');
-  }
-}
+function updateUEFilters() {
 
-function updateUESectionFilters() {
+  const main = document.querySelector('main');
+
+  // if browse page, identified by theme
+  if (document.querySelector('body[class^=browse-]')) {
+    // update available sections
+    main.setAttribute('data-aue-filter', 'main-browse');
+  }
+
+  // if article page, identified by theme
+  if (document.querySelector('body[class^=article]')) {
+    // update available sections
+    main.setAttribute('data-aue-filter', 'main-article');
+  }
+
+  // if author bio  identified by path  
+  if (document.location.pathname.includes('/articles/authors/')) {
+    // update available sections
+    main.setAttribute('data-aue-filter', 'main-empty');
+    // make the only available section uneditable
+    main.querySelector('.section').setAttribute('data-aue-behavior', 'none');
+  }
 }
 
 /**
@@ -80,7 +91,6 @@ async function applyChanges(event) {
       newMain.style.display = null;
       // eslint-disable-next-line no-use-before-define
       attachEventListners(newMain);
-      updateUEMainFilters();
       return true;
     }
 
@@ -122,8 +132,6 @@ async function applyChanges(event) {
           await loadBlocks(parentElement);
           element.remove();
           newSection.style.display = null;
-          updateUESectionFilters();
-
         } else {
           element.replaceWith(...newElements);
           decorateButtons(parentElement);
@@ -176,7 +184,11 @@ function attachEventListners(main) {
       main?.addEventListener(eventType, async (event) => {
         event.stopPropagation();
         const applied = await applyChanges(event);
-        if (!applied) window.location.reload();
+        if (applied) {
+          updateUEFilters();
+        } else {
+          window.location.reload();
+        }
       }),
   );
 
@@ -208,7 +220,5 @@ if (signUpBlock) {
   }).observe(document.documentElement, { attributeFilter: ['class'] });
 }
 
-// update UE component filter for main
-updateUEMainFilters();
-// update UE component filter for sections
-updateUESectionFilters();
+// update UE component filters on page load
+updateUEFilters();
