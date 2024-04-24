@@ -49,15 +49,16 @@ function updateUEFilters() {
     main.setAttribute('data-aue-filter', 'main-article');
   }
 
-  // if author bio  identified by path  
+  // if author bio, identified by path  
   if (document.location.pathname.includes('/articles/authors/')) {
     // update available sections
     main.setAttribute('data-aue-filter', 'main-empty');
     // update the only available default sections filter 
     const authorBioBlock = main.querySelector('div.author-bio.block');
     const section = main.querySelector('.section');
+    // if there is already an author bio block
     if (authorBioBlock) {
-      // you can only add one author bio block
+      // no more blocks selectable
       section.setAttribute('data-aue-filter','section-empty');
       // you cant delete the bio block anymore
       authorBioBlock.setAttribute('data-aue-behavior', '');
