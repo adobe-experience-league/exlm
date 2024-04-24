@@ -53,6 +53,8 @@ function updateUEFilters() {
   if (document.location.pathname.includes('/articles/authors/')) {
     // update available sections
     main.setAttribute('data-aue-filter', 'main-empty');
+    // update only availble default sections filter 
+    main.querySelector('.section').setAttribute('data-aue-filter', 'section-author-bio');
     // make the only available section uneditable
     main.querySelector('.section').setAttribute('data-aue-behavior', '');
   }

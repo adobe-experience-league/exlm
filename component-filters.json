@@ -81,6 +81,12 @@
     ]
   },
   {
+    "id": "section-author-bio",
+    "components": [
+      "author-bio"
+    ]
+  },
+  {
     "id": "article-content-section",
     "components": [
       "text",
