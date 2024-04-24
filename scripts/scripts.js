@@ -1045,7 +1045,7 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved) 
 
 function formatPageMetaTags(inputString) {
   return inputString
-    .replace(/exl:[^\/]*\/*/g, '')
+    .replace(/exl:[^/]*\/*/g, '')
     .split(',')
     .map((part) => part.trim());
 }
@@ -1077,12 +1077,8 @@ function decodePageMetaTags() {
 
     return decodedSolution;
   });
-  const decodedRoles = roles.map((role) => {
-    return atob(role);
-  });
-  const decodedLevels = experienceLevels.map((level) => {
-    return atob(level);
-  });
+  const decodedRoles = roles.map((role) => atob(role));
+  const decodedLevels = experienceLevels.map((level) => atob(level));
 
   if (solutionMeta) {
     solutionMeta.content = decodedSolutions.join(',');
