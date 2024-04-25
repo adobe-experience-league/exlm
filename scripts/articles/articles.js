@@ -8,16 +8,13 @@ export default function decorateArticles() {
   if (articleBody) {
     articleBody.classList.add('articles-body');
     const miniTocWrapper = articleBody.querySelector('.mini-toc-wrapper');
-    if (miniTocWrapper) {
-      articleBody.removeChild(miniTocWrapper);
-    }
+    articleBody.removeChild(miniTocWrapper);
     const wrapperEl = document.createElement('div');
     wrapperEl.classList.add('articles-body-content');
     Array.from(articleBody.children).forEach((element) => {
       element.classList.add('articles-section');
       wrapperEl.appendChild(element);
     });
-    if (miniTocWrapper)
     articleBody.appendChild(miniTocWrapper);
     articleBody.appendChild(wrapperEl);
   }
