@@ -1,4 +1,5 @@
 import { loadCSS } from '../lib-franklin.js';
+// eslint-disable-next-line import/no-cycle
 import { htmlToElement } from '../scripts.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);

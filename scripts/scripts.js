@@ -848,7 +848,7 @@ async function loadArticles() {
   }
 }
 
-function addMiniTocForArticlesPage(main) {
+async function addMiniTocForArticlesPage(main) {
   if (isArticlePage()) {
     const [, articleBody] = main.children;
     if (articleBody && !articleBody.querySelector('.mini-toc')) {
@@ -861,6 +861,12 @@ function addMiniTocForArticlesPage(main) {
       </div>
       `);
       articleBody.appendChild(miniTocWrapper);
+    }
+    loadCSS(`${window.hlx.codeBasePath}/scripts/mini-toc/mini-toc.css`);
+    // eslint-disable-next-line import/no-cycle
+    const mod = await import('./mini-toc/mini-toc.js');
+    if (mod.default) {
+      await mod.default();
     }
   }
 }
