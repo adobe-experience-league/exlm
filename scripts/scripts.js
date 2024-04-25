@@ -178,6 +178,46 @@ function addBrowseBreadCrumb(main) {
   }
 }
 
+export function extractAuthorInfo(block) {
+  const authorInfo = [...block.children].map((row) => row.firstElementChild);
+  return {
+    authorImage: authorInfo[0] ?? '',
+    authorName: authorInfo[1] ?? '',
+    authorTitle: authorInfo[2] ?? '',
+    authorCompany: authorInfo[3] ?? '',
+    authorDescription: authorInfo[4] ?? '',
+    authorSocialLinkText: authorInfo[5] ?? '',
+    authorSocialLinkURL: authorInfo[6] ?? '',
+  };
+}
+
+export async function fetchAuthorBio(anchor) {
+  const link = anchor.href ? anchor.href : anchor;
+  return fetch(link)
+    .then((response) => response.text())
+    .then((html) => {
+      const parser = new DOMParser();
+      const htmlDoc = parser.parseFromString(html, 'text/html');
+      const authorInfo = extractAuthorInfo(htmlDoc.querySelector('.author-bio'));
+      if (authorInfo.authorName) {
+        const meta = document.createElement('meta');
+        meta.name = 'author-name';
+        meta.content = authorInfo.authorName?.textContent;
+        document.head.appendChild(meta);
+      }
+      if (authorInfo.authorCompany) {
+        const meta = document.createElement('meta');
+        meta.name = 'author-type';
+        meta.content = authorInfo.authorCompany?.textContent;
+        document.head.appendChild(meta);
+      }
+      return authorInfo;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
 export function isArticleLandingPage() {
   const theme = getMetadata('theme');
   return theme.split(',').find((t) => t.toLowerCase().startsWith('article-'));
@@ -997,7 +1037,7 @@ function handleHomePageHashes() {
  * @param {string} fallbackText
  * @returns
  */
-export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved) {
+export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, onRejected) {
   const span = document.createElement('span');
   span.setAttribute('data-placeholder', placeholderKey);
   span.setAttribute('data-placeholder-fallback', fallbackText);
@@ -1012,6 +1052,7 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved) 
     })
     .catch(() => {
       span.textContent = fallbackText;
+      if (onRejected) onRejected(span);
     });
   return span;
 }
