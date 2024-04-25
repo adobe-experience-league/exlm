@@ -8,7 +8,7 @@ on:
 jobs:
   build-coveo:
     runs-on: ubuntu-latest
-    if: contains(github.event.client_payload.path, '/articles')
+    if: contains(github.event.client_payload.path, '/articles/') && !contains(github.event.client_payload.path, '/articles/authors')
     steps:
       - name: Extract language
         id: get_language
@@ -62,7 +62,7 @@ jobs:
             echo "File exists"
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
-            git add ./coveo_${{ steps.get_language.outputs.language }}.xml
+            git add ./coveo_articles_${{ steps.get_language.outputs.language }}.xml
             git commit -m "Update generated coveo_${{ steps.get_language.outputs.language }}.xml file"
             git push
           else

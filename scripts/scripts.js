@@ -1079,7 +1079,6 @@ function decodePageMetaTags() {
     // In case of sub-solutions. E.g. exl:solution/campaign/standard
     const parts = solution.split('/');
     const decodedParts = parts.map((part) => atob(part));
-    const decodedSolution = decodedParts.join(' ');
 
     // If it's a sub-solution, create a version meta tag
     if (parts.length > 1) {
@@ -1089,7 +1088,7 @@ function decodePageMetaTags() {
       document.head.appendChild(versionMeta);
     }
 
-    return decodedSolution;
+    return decodedParts[0];
   });
   const decodedRoles = roles.map((role) => atob(role));
   const decodedLevels = experienceLevels.map((level) => atob(level));
