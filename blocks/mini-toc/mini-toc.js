@@ -1,8 +1,7 @@
-// eslint-disable-next-line import/no-cycle
-import { debounce, fetchLanguagePlaceholders, isArticlePage } from "../scripts.js";
+import { debounce, fetchLanguagePlaceholders, isArticlePage } from '../../scripts/scripts.js';
 import { highlight, setLevels, hashFragment } from './utils.js';
-import Dropdown, { DROPDOWN_VARIANTS } from '../dropdown/dropdown.js';
-import { decorateIcons } from '../lib-franklin.js';
+import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 function setPadding(arg = '') {
   const num = parseInt(arg.split('')[1], 10);

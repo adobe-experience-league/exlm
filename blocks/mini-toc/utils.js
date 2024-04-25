@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/no-cycle
-import { isDocPage } from "../scripts.js";
+import { isDocPage } from '../../scripts/scripts.js';
 
 export function setLevels(val = 2) {
   const selectors = [];
