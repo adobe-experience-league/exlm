@@ -37,14 +37,6 @@
   text-transform: uppercase;
   margin: 0;
   line-height: 31px;
-  display: none;
-}
-
-.mini-toc-wrapper .mini-toc .scrollable-div {
-  display: none;
-  position: absolute;
-  top: 44px;
-  background: var(--spectrum-gray-50);
 }
 
 .mini-toc-wrapper .mini-toc ul {
@@ -120,13 +112,6 @@
 
   .mini-toc-wrapper .mini-toc h2 {
     line-height: 14px;
-  }
-
-  .mini-toc-wrapper .mini-toc .scrollable-div {
-    max-height: 50vh;
-    display: block;
-    background: transparent;
-    top: auto;
   }
 
   .mini-toc-wrapper .mini-toc .custom-filter-dropdown {

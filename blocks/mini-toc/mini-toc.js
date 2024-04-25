@@ -56,29 +56,31 @@ export default async function decorate() {
         ctx.innerHTML = `${tocHeadingDivNode}\n<div class='scrollable-div'><ul>${html.join('\n')}</ul></div>`;
 
         let lactive = false;
-
         const anchors = Array.from(ctx.querySelectorAll('a'));
-        const anchorTexts = anchors.map((anchor) => {
-          const content = anchor.textContent;
-          return {
-            id: content,
-            value: anchor.href,
-            title: content,
-          };
-        });
-        // eslint-disable-next-line no-new
-        new Dropdown(ctx, 'Summary', anchorTexts, DROPDOWN_VARIANTS.MINI_TOC); // Initialise mini-toc dropdown for mobile view
 
-        window.addEventListener('hashchange', () => {
-          const { hash } = window.location;
-          const matchFound = anchorTexts.find((a) => {
-            const [, linkHash] = a.value.split('#');
-            return `#${linkHash}` === hash;
+        if (isArticlePage()) {
+          const anchorTexts = anchors.map((anchor) => {
+            const content = anchor.textContent;
+            return {
+              id: content,
+              value: anchor.href,
+              title: content,
+            };
           });
-          if (matchFound) {
-            Dropdown.closeAllDropdowns();
-          }
-        });
+          // eslint-disable-next-line no-new
+          new Dropdown(ctx, 'Summary', anchorTexts, DROPDOWN_VARIANTS.MINI_TOC); // Initialise mini-toc dropdown for mobile view
+
+          window.addEventListener('hashchange', () => {
+            const { hash } = window.location;
+            const matchFound = anchorTexts.find((a) => {
+              const [, linkHash] = a.value.split('#');
+              return `#${linkHash}` === hash;
+            });
+            if (matchFound) {
+              Dropdown.closeAllDropdowns();
+            }
+          });
+        }
 
         if (anchors.length > 0) {
           anchors.forEach((i, idx) => {
