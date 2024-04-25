@@ -159,7 +159,7 @@ function attachEventListners(main) {
       main?.addEventListener(eventType, async (event) => {
         event.stopPropagation();
         const applied = await applyChanges(event);
-        if (!applied || document.querySelector('body[class^=article]')) window.location.reload();
+        if (!applied) window.location.reload();
       }),
   );
 
