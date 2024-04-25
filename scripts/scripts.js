@@ -198,7 +198,20 @@ export async function fetchAuthorBio(anchor) {
     .then((html) => {
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(html, 'text/html');
-      return extractAuthorInfo(htmlDoc.querySelector('.author-bio'));
+      const authorInfo = extractAuthorInfo(htmlDoc.querySelector('.author-bio'));
+      if (authorInfo.authorName) {
+        const meta = document.createElement('meta');
+        meta.name = 'author-name';
+        meta.content = authorInfo.authorName?.textContent;
+        document.head.appendChild(meta);
+      }
+      if (authorInfo.authorCompany) {
+        const meta = document.createElement('meta');
+        meta.name = 'author-type';
+        meta.content = authorInfo.authorCompany?.textContent;
+        document.head.appendChild(meta);
+      }
+      return authorInfo;
     })
     .catch((error) => {
       console.error(error);
