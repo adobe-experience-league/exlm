@@ -37,7 +37,7 @@ function updateUEFilters() {
 
   const main = document.querySelector('main');
 
-  // if browse page, identified by theme
+  // -- if browse page, identified by theme
   if (document.querySelector('body[class^=browse-]')) {
     // update available sections
     main.setAttribute('data-aue-filter', 'main-browse');
@@ -47,13 +47,13 @@ function updateUEFilters() {
     });
   }
 
-  // if article page, identified by theme
+  // -- if article page, identified by theme
   if (document.querySelector('body[class^=article]')) {
     // update available sections
     main.setAttribute('data-aue-filter', 'main-article');
   }
 
-  // if author bio, identified by path segment 
+  // -- if author bio, identified by path segment 
   if (document.location.pathname.includes('/articles/authors/')) {
     // update available sections
     main.setAttribute('data-aue-filter', 'main-empty');
@@ -65,12 +65,12 @@ function updateUEFilters() {
       // no more blocks selectable
       section.setAttribute('data-aue-filter','section-empty');
       // you cant delete the bio block anymore
-      authorBioBlock.setAttribute('data-aue-behavior', '');
+      authorBioBlock.removeAttribute('data-aue-type');
     } else {
       section.setAttribute('data-aue-filter', 'section-author-bio');
     }
     // make the only available section uneditable
-    main.querySelector('.section').setAttribute('data-aue-behavior', '');
+    main.querySelector('.section').removeAttribute('data-aue-behavior');
   }
 }
 
