@@ -192,7 +192,7 @@ export function extractAuthorInfo(block) {
 }
 
 export async function fetchAuthorBio(anchor) {
-  const link = anchor && anchor.href ? anchor.href : anchor;
+  const link = anchor.href ? anchor.href : anchor;
   return fetch(link)
     .then((response) => response.text())
     .then((html) => {
