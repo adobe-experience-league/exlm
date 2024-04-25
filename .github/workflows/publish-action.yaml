@@ -4,6 +4,7 @@ on:
   repository_dispatch:
     types:
       - resource-published
+  workflow_dispatch:
 
 jobs:
   build-coveo:
