@@ -68,7 +68,7 @@ export default async function decorate() {
             };
           });
           // eslint-disable-next-line no-new
-          new Dropdown(ctx, 'Summary', anchorTexts, DROPDOWN_VARIANTS.MINI_TOC); // Initialise mini-toc dropdown for mobile view
+          new Dropdown(ctx, 'Summary', anchorTexts, DROPDOWN_VARIANTS.ANCHOR); // Initialise mini-toc dropdown for mobile view
 
           window.addEventListener('hashchange', () => {
             const { hash } = window.location;

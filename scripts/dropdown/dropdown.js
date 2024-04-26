@@ -5,7 +5,7 @@ loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
 
 export const DROPDOWN_VARIANTS = {
   DEFAULT: 'default',
-  MINI_TOC: 'mini-toc',
+  ANCHOR: 'anchor-menu',
 };
 
 export default class Dropdown {
@@ -18,12 +18,12 @@ export default class Dropdown {
    * @param {Number} id - Unique dropdown id
    * @param {String} variant - Dropdown variant
    */
-  constructor(parentFormElement, defaultValue, optionsArray, variant) {
+  constructor(parentFormElement, defaultValue, optionsArray, variant = DROPDOWN_VARIANTS.DEFAULT) {
     this.parentFormElement = parentFormElement;
     this.defaultValue = defaultValue;
     this.optionsArray = optionsArray;
     this.id = document.querySelectorAll('.custom-filter-dropdown').length;
-    this.variant = variant ?? DROPDOWN_VARIANTS.DEFAULT;
+    this.variant = variant;
     this.initFormElements();
     this.handleClickEvents();
   }
@@ -101,7 +101,7 @@ export default class Dropdown {
               if (event.target.value !== checkbox.value) checkbox.checked = false;
             });
 
-            const updateButtonText = this.variant !== DROPDOWN_VARIANTS.MINI_TOC;
+            const updateButtonText = this.variant !== DROPDOWN_VARIANTS.ANCHOR;
             let buttonText;
             if (event.target.value === dropdown.dataset.selected) {
               dropdown.dataset.selected = dropdown.dataset.filterType;
@@ -158,7 +158,7 @@ export default class Dropdown {
                     }" data-label="${item.title}">
                     <label for="option-${this.id}-${itemIndex + 1}">
                         ${
-                          this.variant === DROPDOWN_VARIANTS.MINI_TOC
+                          this.variant === DROPDOWN_VARIANTS.ANCHOR
                             ? `<a class="title" href=${item.value} >${item.title}</a>`
                             : `<span class="title">${item.title}</span>`
                         }
