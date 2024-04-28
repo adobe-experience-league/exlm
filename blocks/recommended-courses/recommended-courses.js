@@ -1,7 +1,7 @@
 // Importing constants and modules
 import { RECOMMENDED_COURSES_CONSTANTS } from '../../scripts/browse-card/browse-cards-constants.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import BrowseCardsPathsAdaptor from '../../scripts/browse-card/browse-cards-paths-adaptor.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
@@ -50,6 +50,19 @@ export default async function decorate(block) {
       });
     });
     return courseMap;
+  };
+
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
+  const recommendedCoursesNoResuts = (blockData) => {
+    const recommendedCoursesNoResultsElement = block.querySelector('.browse-card-no-results');
+    block.innerHTML = placeholders?.featuredCardRoleLabel;
   };
 
   /**
@@ -228,6 +241,7 @@ export default async function decorate(block) {
                 block.appendChild(contentDiv);
               } else {
                 buildNoResultsContent(block, true);
+                recommendedCoursesNoResuts(block);
               }
               /* Hide Tooltip while scrolling the cards  layout */
               hideTooltipOnScroll(contentDiv);
@@ -236,6 +250,7 @@ export default async function decorate(block) {
               // Hide shimmer placeholders on error
               buildCardsShimmer.remove();
               buildNoResultsContent(block, true);
+              recommendedCoursesNoResuts(block);
               // eslint-disable-next-line no-console
               console.error('Recommended Cards:', err);
             });
@@ -246,6 +261,7 @@ export default async function decorate(block) {
       document.documentElement.classList.contains('adobe-ue-preview')
     ) {
       buildNoResultsContent(block, true);
+      recommendedCoursesNoResuts(block);
     } else {
       const recommendedCoursesContainer = document.querySelector('.recommended-courses-container');
       if (recommendedCoursesContainer) {
