@@ -64,16 +64,11 @@ export default async function decorate(block) {
     return inputText.replace(/\$\{([^}]+)\}/g, `<a href="${url}">$1</a>`);
   };
 
-  const recommendedCoursesNoResuts = (blockData) => {
+  const recommendedCoursesInterestContent = () => {
     const recommendedCoursesNoResultsElement = block.querySelector('.browse-card-no-results');
-    // Function to dynamically find and replace all placeholders with links
-
-    const url = 'URL_TO_PROFILE_UPDATE';
-
-    // Replace all placeholders
-    const text = replaceAllPlaceholders(placeholders?.recommendedCoursesInterestsLabel, url);
-
-    recommendedCoursesNoResultsElement.innerHTML = text;
+    const profileurl = 'home#dashboard/profile';
+    const profileText = replaceAllPlaceholders(placeholders?.recommendedCoursesInterestsLabel, profileurl);
+    recommendedCoursesNoResultsElement.innerHTML = profileText;
   };
 
   /**
@@ -252,7 +247,7 @@ export default async function decorate(block) {
                 block.appendChild(contentDiv);
               } else {
                 buildNoResultsContent(block, true);
-                recommendedCoursesNoResuts(block);
+                recommendedCoursesInterestContent(block);
               }
               /* Hide Tooltip while scrolling the cards  layout */
               hideTooltipOnScroll(contentDiv);
@@ -261,7 +256,7 @@ export default async function decorate(block) {
               // Hide shimmer placeholders on error
               buildCardsShimmer.remove();
               buildNoResultsContent(block, true);
-              recommendedCoursesNoResuts(block);
+              recommendedCoursesInterestContent(block);
               // eslint-disable-next-line no-console
               console.error('Recommended Cards:', err);
             });
@@ -272,7 +267,7 @@ export default async function decorate(block) {
       document.documentElement.classList.contains('adobe-ue-preview')
     ) {
       buildNoResultsContent(block, true);
-      recommendedCoursesNoResuts(block);
+      recommendedCoursesInterestContent(block);
     } else {
       const recommendedCoursesContainer = document.querySelector('.recommended-courses-container');
       if (recommendedCoursesContainer) {
