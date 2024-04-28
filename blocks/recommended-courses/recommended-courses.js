@@ -60,9 +60,20 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
+  const replaceAllPlaceholders = (inputText, url) => {
+    return inputText.replace(/\$\{([^}]+)\}/g, `<a href="${url}">$1</a>`);
+  };
+
   const recommendedCoursesNoResuts = (blockData) => {
     const recommendedCoursesNoResultsElement = block.querySelector('.browse-card-no-results');
-    recommendedCoursesNoResultsElement.innerHTML = placeholders?.recommendedCoursesInterestsLabel;
+    // Function to dynamically find and replace all placeholders with links
+
+    const url = 'URL_TO_PROFILE_UPDATE';
+
+    // Replace all placeholders
+    text = replaceAllPlaceholders(placeholders?.recommendedCoursesInterestsLabel, url);
+
+    recommendedCoursesNoResultsElement.innerHTML = text;
   };
 
   /**
