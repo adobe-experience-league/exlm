@@ -62,7 +62,7 @@ export default async function decorate(block) {
 
   const recommendedCoursesNoResuts = (blockData) => {
     const recommendedCoursesNoResultsElement = block.querySelector('.browse-card-no-results');
-    recommendedCoursesNoResultsElement.innerHTML = placeholders?.featuredCardRoleLabel;
+    recommendedCoursesNoResultsElement.innerHTML = placeholders?.recommendedCoursesInterestsLabel;
   };
 
   /**
