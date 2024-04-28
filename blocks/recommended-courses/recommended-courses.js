@@ -68,8 +68,8 @@ export default async function decorate(block) {
     const recommendedCoursesNoResultsElement = block.querySelector('.browse-card-no-results');
     const profileurl = 'home#dashboard/profile';
     const profileText = convertPlaceholdersToLinks(
-      placeholders?.recommendedCoursesInterestsLabels ||
-        'Pleaseeeee update your profile interests to receive course recommendations.<br><br> ${Click here to update.}',
+      placeholders?.recommendedCoursesInterestsLabel ||
+        'Pleaseeee update your profile interests to receive course recommendations.<br><br> ${Click here to update.}',
       profileurl,
     );
     recommendedCoursesNoResultsElement.innerHTML = profileText;
