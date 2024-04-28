@@ -71,7 +71,7 @@ export default async function decorate(block) {
     const url = 'URL_TO_PROFILE_UPDATE';
 
     // Replace all placeholders
-    text = replaceAllPlaceholders(placeholders?.recommendedCoursesInterestsLabel, url);
+    const text = replaceAllPlaceholders(placeholders?.recommendedCoursesInterestsLabel, url);
 
     recommendedCoursesNoResultsElement.innerHTML = text;
   };
