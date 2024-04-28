@@ -69,7 +69,7 @@ export default async function decorate(block) {
     const profileurl = 'home#dashboard/profile';
     const profileText = convertPlaceholdersToLinks(
       placeholders?.recommendedCoursesInterestsLabels ||
-        'Please update your profile interests to receive course recommendations.<br><br> ${Click here to update.}',
+        'Pleaseeeee update your profile interests to receive course recommendations.<br><br> ${Click here to update.}',
       profileurl,
     );
     recommendedCoursesNoResultsElement.innerHTML = profileText;
