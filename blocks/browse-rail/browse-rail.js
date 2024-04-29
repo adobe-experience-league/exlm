@@ -297,11 +297,6 @@ export default async function decorate(block) {
 
   const theme = getMetadata('theme');
 
-  const label = getMetadata('og:title');
-
-  const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
-  const currentPagePath = getEDSLink(window.location.pathname);
-
   // For Browse All Page
   if (theme === 'browse-all') {
     // Browse By
@@ -330,6 +325,9 @@ export default async function decorate(block) {
 
   // For Browse Product Pages
   if (theme !== 'browse-all') {
+    const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
+    const currentPagePath = getEDSLink(window.location.pathname);
+    const label = getMetadata('og:title');
     // Add "Browse more products" link
     const browseMoreProducts = document.createElement('div');
     browseMoreProducts.classList.add('browse-more-products');
