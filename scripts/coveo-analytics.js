@@ -71,17 +71,17 @@ async function postCoveoAnalytics(type, body) {
 }
 
 async function getCoveoHashOfCurrentUrl() {
-  // The permenantid coveo assigned to docs is based off their original URL at time of indexing
-  // so for legacy docs pages it will be the existing publish-url and not the current page url
-  const url = document.querySelector("meta[name='publish-url']")?.content || window.location.href;
+  // The permenantid coveo assigned to docs is based off their original URL at time of indexing,
+  // so if we ever switch staging to pull from some non-prod site map this will need to be updated
+  const url = `https://experienceleague.adobe.com${window.location.pathname}`;
 
   // Coveo, by default, combined two types of hashes of the url for it's permenantid format
   // for legacy docs pages. If tracking on Universal Editor pages doesn't appear to be working correctly
   // this will need to be updated based on whatever we observe.
-  const md5Fragment = MD5(url).toString().slice(0, 30);
-  const sha1Fragment = SHA1(url).toString().slice(0, 30);
+  const md5Fragment = MD5(url).slice(0, 30);
+  const sha1Fragment = await SHA1(url);
 
-  return `${md5Fragment}${sha1Fragment}`;
+  return `${md5Fragment}${sha1Fragment.slice(0, 30)}`;
 }
 
 /**
@@ -103,13 +103,14 @@ export async function sendCoveoPageViewEvent() {
           context_exl_interests: profileData.interests,
           context_exl_industry_interests: profileData.industryInterests,
         };
+  const contentIdValue = await getCoveoHashOfCurrentUrl();
 
   const baseData = {
     language: window.languageCode.substring(0, 2).toLowerCase(), // Two-letter codes only
     clientId: getCoveoSessionUUID(profileData),
     location: window.location.href, // Current url
     contentIdKey: 'permanentid',
-    contentIdValue: getCoveoHashOfCurrentUrl(), // First 30 md5 + first 30 sha1 of coveo url
+    contentIdValue, // First 30 md5 + first 30 sha1 of coveo url
     contentType: contentType || 'other', // We might need to expand 'other' for non-doc pages down the road
     outcome: 2, // -5 to 5, we might want to adjust this in the future
     title,

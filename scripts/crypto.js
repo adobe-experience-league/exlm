@@ -3,7 +3,7 @@
  * @param {*} e - The string to hash
  * @returns
  */
-/* eslint-disable */ 
+/* eslint-disable */
 export function MD5(e) {
   function h(a, b) {
     var c, d, e, f, g;
@@ -161,11 +161,14 @@ export function MD5(e) {
       (d = h(d, t));
   return (p(a) + p(b) + p(c) + p(d)).toLowerCase();
 }
-/* eslint-enable */ 
+/* eslint-enable */
 
 export async function SHA1(message) {
   const encoder = new TextEncoder();
   const data = encoder.encode(message);
-  const hash = await crypto.subtle.digest('SHA-1', data);
-  return hash;
+  const hashBuffer = await crypto.subtle.digest('SHA-1', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+
+  return hashHex;
 }
