@@ -2739,14 +2739,15 @@
       {
         "component": "container",
         "collapsible": true,
-        "name": "bio-author1",
+        "name": "author1",
         "label": "Author Bio 1",
+        "condition": [],
         "multi": false,
         "fields": [
           {
             "component": "aem-content",
             "valueType": "string",
-            "name": "bio_author1Link",
+            "name": "bio_author1Ref",
             "value": "",
             "label": "Author"
           },
@@ -2769,14 +2770,15 @@
       {
         "component": "container",
         "collapsible": true,
-        "name": "bio-author2",
+        "name": "author2",
         "label": "Author Bio 2",
+        "condition": [],
         "multi": false,
         "fields": [
           {
             "component": "aem-content",
             "valueType": "string",
-            "name": "bio_author2Link",
+            "name": "bio_author2Ref",
             "value": "",
             "label": "Author"
           },

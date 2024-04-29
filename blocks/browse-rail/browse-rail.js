@@ -116,7 +116,7 @@ function handleViewMoreClick(block, numFeaturedProducts) {
 
 // Function to handle Toggle functionality for products/sub-pages
 function handleToggleClick(block) {
-  const toggleElements = block.querySelectorAll('.js-toggle');
+  const toggleElements = block.querySelectorAll('.js-toggle:not(.expanded)');
   if (toggleElements) {
     toggleElements.forEach((toggleElement) => {
       const subMenu = toggleElement.parentElement.querySelector('ul');
@@ -277,6 +277,9 @@ async function displayProductNav(block, currentPagePath, results) {
       await displayAllProducts(block);
     }
   }
+
+  // Event listener for toggle
+  handleToggleClick(block);
 }
 
 function displayManualNav(manualNav, block) {
