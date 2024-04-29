@@ -18,6 +18,10 @@ function headerExclusions(header) {
 }
 
 export default async function decorate() {
+  const ctx = document.querySelector('.mini-toc');
+  if (ctx.classList.contains('mini-toc-transformed')) {
+    return;
+  }
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
@@ -27,7 +31,8 @@ export default async function decorate() {
   }
   const miniTOCHeading = placeholders?.onThisPage;
   const render = window.requestAnimationFrame;
-  const ctx = document.querySelector('.mini-toc');
+
+  ctx.classList.add('mini-toc-transformed');
   const levels = document.querySelector('meta[name="mini-toc-levels"]');
 
   if (ctx !== null) {

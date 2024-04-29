@@ -168,6 +168,10 @@ function createBreadcrumb(container) {
  * @param {HTMLElement} block
  */
 export default async function ArticleMarquee(block) {
+  if (block.classList.contains('article-marquee-transformed')) {
+    return;
+  }
+  block.classList.add('article-marquee-transformed');
   loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
   const [link, readTime, headingType] = block.querySelectorAll(':scope div > div');
 

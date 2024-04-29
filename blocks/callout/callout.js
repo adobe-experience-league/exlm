@@ -1,6 +1,10 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
+  if (block.classList.contains('callout-card-transformed')) {
+    return;
+  }
+  block.classList.add('callout-card-transformed');
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
