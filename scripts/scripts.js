@@ -1107,7 +1107,7 @@ function decodePageMetaTags() {
   }
 }
 
-if (isArticleLandingPage()) {
+if (isArticleLandingPage() || isArticlePage()) {
   decodePageMetaTags();
 }
 
