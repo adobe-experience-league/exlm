@@ -2741,19 +2741,19 @@
         "valueType": "string",
         "name": "bio_author1Ref",
         "value": "",
-        "label": "Author 1"
+        "label": "Author 1 Bio Link"
       },
       {
         "component": "text",
         "name": "bio_author1Text",
-        "value": "Button",
+        "value": "",
         "label": "Author 1 CTA Text",
         "valueType": "string"
       },
       {
         "component": "text",
         "name": "bio_author1",
-        "value": "Text",
+        "value": "",
         "label": "Author 1 CTA URL",
         "valueType": "string"
       },
@@ -2762,19 +2762,19 @@
         "valueType": "string",
         "name": "bio_author2Ref",
         "value": "",
-        "label": "Author 2"
+        "label": "Author 2 Bio Link"
       },
       {
         "component": "text",
         "name": "bio_author2Text",
-        "value": "Button",
+        "value": "",
         "label": "Author 2 CTA Text",
         "valueType": "string"
       },
       {
         "component": "text",
         "name": "bio_author2",
-        "value": "Text",
+        "value": "",
         "label": "Author 2 CTA URL",
         "valueType": "string"
       }
