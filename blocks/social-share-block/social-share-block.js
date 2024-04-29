@@ -27,7 +27,7 @@ export default function decorate(block) {
     <div class="social-share-view">
       ${socialNetworks
         .map(
-          (network) => `<a href="${socialLinks[network]}">
+          (network) => `<a href="${socialLinks[network]}" target="_blank">
       <div class="social-share-item">
       <span class="icon icon-${socialIcons[network]}"></span></span><span class="social-share-name">${network}</span>
       </div>
