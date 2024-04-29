@@ -2741,7 +2741,7 @@
         "valueType": "string",
         "name": "bio_author1Ref",
         "value": "",
-        "label": "Author 1 Bio Link"
+        "label": "Author 1 Bio Page"
       },
       {
         "component": "text",
@@ -2762,7 +2762,7 @@
         "valueType": "string",
         "name": "bio_author2Ref",
         "value": "",
-        "label": "Author 2 Bio Link"
+        "label": "Author 2 Bio Page"
       },
       {
         "component": "text",
