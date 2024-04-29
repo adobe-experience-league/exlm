@@ -2737,66 +2737,46 @@
         "label": "Description"
       },
       {
-        "component": "container",
-        "collapsible": true,
-        "name": "author1",
-        "label": "Author Bio 1",
-        "condition": [],
-        "multi": false,
-        "fields": [
-          {
-            "component": "aem-content",
-            "valueType": "string",
-            "name": "bio_author1Ref",
-            "value": "",
-            "label": "Author"
-          },
-          {
-            "component": "text",
-            "name": "bio_author1Text",
-            "value": "Button",
-            "label": "CTA Button Text",
-            "valueType": "string"
-          },
-          {
-            "component": "text",
-            "name": "bio_author1",
-            "value": "Text",
-            "label": "CTA Button URL",
-            "valueType": "string"
-          }
-        ]
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "bio_author1Ref",
+        "value": "",
+        "label": "Author"
       },
       {
-        "component": "container",
-        "collapsible": true,
-        "name": "author2",
-        "label": "Author Bio 2",
-        "condition": [],
-        "multi": false,
-        "fields": [
-          {
-            "component": "aem-content",
-            "valueType": "string",
-            "name": "bio_author2Ref",
-            "value": "",
-            "label": "Author"
-          },
-          {
-            "component": "text",
-            "name": "bio_author2Text",
-            "value": "Button ",
-            "label": "CTA Button Text",
-            "valueType": "string"
-          },
-          {
-            "component": "text",
-            "name": "bio_author2",
-            "value": "Text",
-            "label": "CTA Button URL",
-            "valueType": "string"
-          }
-        ]
+        "component": "text",
+        "name": "bio_author1Text",
+        "value": "Button",
+        "label": "CTA Button Text",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "name": "bio_author1",
+        "value": "Text",
+        "label": "CTA Button URL",
+        "valueType": "string"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "bio_author2Ref",
+        "value": "",
+        "label": "Author"
+      },
+      {
+        "component": "text",
+        "name": "bio_author2Text",
+        "value": "Button ",
+        "label": "CTA Button Text",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "name": "bio_author2",
+        "value": "Text",
+        "label": "CTA Button URL",
+        "valueType": "string"
       }
     ]
   }
