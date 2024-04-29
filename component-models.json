@@ -2741,6 +2741,7 @@
         "collapsible": true,
         "name": "bio-author1",
         "label": "Author Bio 1",
+        "condition" : [],
         "multi": false,
         "fields": [
           {
@@ -2771,6 +2772,7 @@
         "collapsible": true,
         "name": "bio-author2",
         "label": "Author Bio 2",
+        "condition" : [],
         "multi": false,
         "fields": [
           {
