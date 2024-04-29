@@ -3,6 +3,11 @@ import { htmlToElement } from '../scripts.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
 
+export const DROPDOWN_VARIANTS = {
+  DEFAULT: 'default',
+  ANCHOR: 'anchor-menu',
+};
+
 export default class Dropdown {
   /**
    * Constructor for initializing dropdown using parent form element, default values, options arrays, and id.
@@ -11,12 +16,14 @@ export default class Dropdown {
    * @param {Array} defaultValues - Array of Dropdown default value
    * @param {Array} optionsArrays -  Array of options list
    * @param {Number} id - Unique dropdown id
+   * @param {String} variant - Dropdown variant
    */
-  constructor(parentFormElement, defaultValue, optionsArray) {
+  constructor(parentFormElement, defaultValue, optionsArray, variant = DROPDOWN_VARIANTS.DEFAULT) {
     this.parentFormElement = parentFormElement;
     this.defaultValue = defaultValue;
     this.optionsArray = optionsArray;
     this.id = document.querySelectorAll('.custom-filter-dropdown').length;
+    this.variant = variant;
     this.initFormElements();
     this.handleClickEvents();
   }
@@ -94,12 +101,18 @@ export default class Dropdown {
               if (event.target.value !== checkbox.value) checkbox.checked = false;
             });
 
+            const updateButtonText = this.variant !== DROPDOWN_VARIANTS.ANCHOR;
+            let buttonText;
             if (event.target.value === dropdown.dataset.selected) {
               dropdown.dataset.selected = dropdown.dataset.filterType;
-              button.children[0].textContent = dropdown.dataset.filterType;
+              buttonText = dropdown.dataset.filterType;
             } else {
               dropdown.dataset.selected = event.target.value;
-              button.children[0].textContent = event.target.dataset.label;
+              buttonText = event.target.dataset.label;
+            }
+
+            if (updateButtonText) {
+              button.children[0].textContent = buttonText;
             }
 
             if (dropdown.classList.contains('open')) {
@@ -144,7 +157,11 @@ export default class Dropdown {
                       item.value || item.title
                     }" data-label="${item.title}">
                     <label for="option-${this.id}-${itemIndex + 1}">
-                        <span class="title">${item.title}</span>
+                        ${
+                          this.variant === DROPDOWN_VARIANTS.ANCHOR
+                            ? `<a class="title" href=${item.value} >${item.title}</a>`
+                            : `<span class="title">${item.title}</span>`
+                        }
                         ${item.description ? `<span class="description">${item.description}</span>` : ''}
                         <span class="icon icon-checked"></span>
                     </label>
