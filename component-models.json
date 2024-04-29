@@ -2739,7 +2739,7 @@
       {
         "component": "container",
         "collapsible": true,
-        "name": "bio_author1",
+        "name": "bio-author1",
         "label": "Author Bio 1",
         "multi": false,
         "fields": [
@@ -2753,7 +2753,7 @@
           {
             "component": "text",
             "name": "bio_author1Text",
-            "value": "Button ",
+            "value": "Button",
             "label": "CTA Button Text",
             "valueType": "string"
           },
@@ -2769,7 +2769,7 @@
       {
         "component": "container",
         "collapsible": true,
-        "name": "bio_author2",
+        "name": "bio-author2",
         "label": "Author Bio 2",
         "multi": false,
         "fields": [
