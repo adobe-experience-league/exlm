@@ -2671,5 +2671,131 @@
         ]
       }
     ]
+  },
+  {
+    "id": "featured-authors",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "img",
+        "label": "Image"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imgAlt",
+        "value": "",
+        "label": "Image Description",
+        "description": "A descriptive text of the image."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "authors_heading",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "authors_headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "authors_description",
+        "value": "",
+        "label": "Description"
+      },
+      {
+        "component": "container",
+        "collapsible": true,
+        "name": "bio_author1",
+        "label": "Author Bio 1",
+        "multi": false,
+        "fields": [
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "bio_author1Link",
+            "value": "",
+            "label": "Author"
+          },
+          {
+            "component": "text",
+            "name": "bio_author1Text",
+            "value": "Button ",
+            "label": "CTA Button Text",
+            "valueType": "string"
+          },
+          {
+            "component": "text",
+            "name": "bio_author1",
+            "value": "Text",
+            "label": "CTA Button URL",
+            "valueType": "string"
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "collapsible": true,
+        "name": "bio_author2",
+        "label": "Author Bio 2",
+        "multi": false,
+        "fields": [
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "bio_author2Link",
+            "value": "",
+            "label": "Author"
+          },
+          {
+            "component": "text",
+            "name": "bio_author2Text",
+            "value": "Button ",
+            "label": "CTA Button Text",
+            "valueType": "string"
+          },
+          {
+            "component": "text",
+            "name": "bio_author2",
+            "value": "Text",
+            "label": "CTA Button URL",
+            "valueType": "string"
+          }
+        ]
+      }
+    ]
   }
 ]
