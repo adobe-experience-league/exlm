@@ -9,8 +9,8 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-function getObjectById(obj, ID) {
-  return obj.find((option) => option.id === ID);
+function getObjectById(obj, id) {
+  return obj.find((option) => option.id === id);
 }
 
 export default function decorate(block) {
@@ -21,16 +21,19 @@ export default function decorate(block) {
 
   const socialData = [
     {
+      label: 'Facebook',
       id: 'facebook',
       icon: 'fb-social-icon',
       url: `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`,
     },
     {
+      label: 'Twitter',
       id: 'twitter',
       icon: 'x-social-icon',
       url: `https://twitter.com/intent/tweet?url=${window.location.href}`,
     },
     {
+      label: 'Linkedin',
       id: 'linkedin',
       icon: 'li-social-icon',
       url: `https://www.linkedin.com/shareArticle?mini=true&url=${window.location.href}`,
@@ -47,11 +50,10 @@ export default function decorate(block) {
           .map((network) => {
             const socialInfo = getObjectById(socialData, network);
             if (socialInfo) {
-              const label = socialInfo.id.charAt(0).toUpperCase() + socialInfo.id.slice(1);
               return `
                 <a class="social-share-item" href="${socialInfo.url}" target="_blank">
                   <span class="icon icon-${socialInfo.icon}"></span>
-                  <span class="social-share-name">${placeholders[`socialShare${label}`]}</span>
+                  <span class="social-share-name">${placeholders[`socialShare${socialInfo.label}`]}</span>
                 </a>`;
             }
             return '';
