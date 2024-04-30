@@ -129,6 +129,17 @@ strong {
   color: var(--non-spectrum-custom-dark);
 }
 
+// TODO Need revisit after converter is updated
+em + strong {
+  &:before {
+    content: " ";
+  }
+
+  &:after {
+    content: " ";
+  }
+}
+
 :root {
   /* colors */
   --link-color: #035fe6;
