@@ -56,5 +56,5 @@ loadPrism(document);
 if (window.location.search?.indexOf('martech=off') === -1) {
   loadGainsight();
   loadQualtrics();
-  sendCoveoPageViewEvent(); 
+  sendCoveoPageViewEvent();
 }
