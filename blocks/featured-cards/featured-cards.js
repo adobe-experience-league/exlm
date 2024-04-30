@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, toPascalCase, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { htmlToElement, toPascalCase, fetchLanguagePlaceholders, getLanguageCode } from '../../scripts/scripts.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
@@ -70,6 +70,51 @@ const updateParamValues = (filterValue) => {
     return decodeURIComponent(filterType.replace(/\+/g, ' '));
   }
   return [];
+};
+
+/* EXLM-1305: Function to add/update parameters of Browse More link */
+const updateBrowseMoreWithSelectedFilters = async (block, filterType, filterValue) => {
+  const languageCode = await getLanguageCode();
+  const browseMoreLink = `\\${languageCode}\\browse`;
+  const browseFilterType = `f-el_${filterType}`;
+  const browseMore = block.querySelector('.browse-cards-block-view');
+  let queryParams;
+  if (browseMore) {
+    if (!browseMore.querySelector('a')) {
+      const aTag = document.createElement('a');
+      aTag.href = browseMoreLink;
+      browseMore.appendChild(aTag);
+    }
+    const aTag = browseMore.querySelector('a');
+    /* scenarios:
+         no a tag
+         a href=/en/browse
+         a href=/en/browse?role=xxx
+         a href=/en/browse?product=yyy
+         a href=/en/browse?role=xxx&product=yyy
+    */
+    if (aTag) {
+      let objParams = {};
+      if (aTag.href.indexOf('#') > 0) {
+        queryParams = aTag.href.substr(aTag.href.indexOf('#') + 1);
+        //objParams = Object.fromEntries(queryParams.entries());
+        objParams = Object.assign(...queryParams.split('&').map(s => s.split('='))
+                                         .map(([k, v]) => ({ [k]: v }))
+        );
+        Object.assign(objParams, { [browseFilterType] : filterValue },);
+      } else { 
+        //Object.create(objParams);
+        Object.assign(objParams, { [browseFilterType] : filterValue },);
+      }
+
+      if (filterValue === DEFAULT_OPTIONS.ROLE || filterValue === DEFAULT_OPTIONS.PRODUCT) {
+        delete objParams[browseFilterType];
+      }
+      const params = new URLSearchParams(objParams);
+      const finalHref = browseMoreLink + '#' + params.toString();
+      aTag.href = finalHref;
+    }
+  }
 };
 
 /**
@@ -290,6 +335,8 @@ export default async function decorate(block) {
     param.role = roleValue;
     /* Update the URL Query Param with Selected Role Value */
     updateURLWithSelectedFilters(DEFAULT_OPTIONS.ROLE.toLowerCase(), value);
+    // EXLM-1305: Update View more url parameters
+    updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.ROLE.toLowerCase(), value);
     fetchNewCards();
   });
 
@@ -298,6 +345,8 @@ export default async function decorate(block) {
     param.product = productValue;
     /* Update the URL Query Param with Selected Product Value */
     updateURLWithSelectedFilters(DEFAULT_OPTIONS.PRODUCT.toLowerCase(), value);
+    // EXLM-1305: Update View more url parameters
+    updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.PRODUCT.toLowerCase(), value);
     fetchNewCards();
   });
 
