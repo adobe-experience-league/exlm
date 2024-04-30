@@ -21,19 +21,19 @@ export default function decorate(block) {
 
   const socialData = [
     {
-      label: 'Facebook',
+      label: placeholders.socialShareFacebook || 'Facebook',
       id: 'facebook',
       icon: 'fb-social-icon',
       url: `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`,
     },
     {
-      label: 'Twitter',
+      label: placeholders.socialShareTwitter || 'X (formerly Twitter)',
       id: 'twitter',
       icon: 'x-social-icon',
       url: `https://twitter.com/intent/tweet?url=${window.location.href}`,
     },
     {
-      label: 'Linkedin',
+      label: placeholders.socialShareLinkedin || 'LinkedIn',
       id: 'linkedin',
       icon: 'li-social-icon',
       url: `https://www.linkedin.com/shareArticle?mini=true&url=${window.location.href}`,
@@ -53,7 +53,7 @@ export default function decorate(block) {
               return `
                 <a class="social-share-item" href="${socialInfo.url}" target="_blank">
                   <span class="icon icon-${socialInfo.icon}"></span>
-                  <span class="social-share-name">${placeholders[`socialShare${socialInfo.label}`]}</span>
+                  <span class="social-share-name">${socialInfo.label}</span>
                 </a>`;
             }
             return '';
