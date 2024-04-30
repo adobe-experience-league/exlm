@@ -21,41 +21,44 @@ export default function decorate(block) {
 
   const socialData = [
     {
-      id: 'Facebook',
-      value: 'facebook',
+      id: 'facebook',
       icon: 'fb-social-icon',
       url: `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`,
     },
     {
-      id: 'X (formerly Twitter)',
-      value: 'twitter',
+      id: 'twitter',
       icon: 'x-social-icon',
       url: `https://twitter.com/intent/tweet?url=${window.location.href}`,
     },
     {
-      id: 'LinkedIn',
-      value: 'linkedin',
+      id: 'linkedin',
       icon: 'li-social-icon',
       url: `https://www.linkedin.com/shareArticle?mini=true&url=${window.location.href}`,
     },
   ];
 
   const headerDiv = htmlToElement(`
-    <div class="social-share-block">
+    <div class="social-share-container">
       <div class="social-share-title">
         ${placeholders.shareOnSocial}
       </div>
       <div class="social-share-view">
         ${socialNetworks
-          .map(
-            (network) =>
-              `<a href="${getObjectById(socialData, network).url}" target="_blank">
-                <div class="social-share-item">
-                  <span class="icon icon-${getObjectById(socialData, network).icon}"></span>
-                  <span class="social-share-name">${placeholders[getObjectById(socialData, network).value]}</span>
-                </div>
-              </a>`,
-          )
+          .map((network) => {
+            const socialInfo = getObjectById(socialData, network);
+            if (socialInfo) {
+              const label = socialInfo.id.charAt(0).toUpperCase() + socialInfo.id.slice(1);
+              return `
+                <a href="${socialInfo.url}" target="_blank">
+                  <div class="social-share-item">
+                    <span class="icon icon-${socialInfo.icon}"></span>
+                    <span class="social-share-name">${placeholders['socialShare' + label]}</span>
+                  </div>
+                </a>`;
+            } else {
+              return '';
+            }
+          })
           .join('')}
       </div>
     </div>

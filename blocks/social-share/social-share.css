@@ -1,31 +1,31 @@
-.social-share-title {
+.social-share .social-share-title {
     font-weight: var(--spectrum-extra-bold-font-weight);
     font-size: var(--spectrum-body-size-xs);
     margin-bottom: 6px;
 }
 
-.social-share-view {
+.social-share .social-share-view {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
 }
 
-.social-share-view > a {
+.social-share .social-share-view>a {
     margin: 0px;
 }
 
-.social-share-name {
+.social-share .social-share-name {
     color: var(--non-spectrum-grey-updated);
     font-size: var(--spectrum-body-size-xs);
 }
 
-.social-share-item {
+.social-share .social-share-item {
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
-.social-share-item > .icon {
+.social-share .social-share-item>.icon {
     display: flex;
     align-items: center;
     height: 16px;
