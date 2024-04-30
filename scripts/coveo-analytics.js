@@ -90,6 +90,10 @@ async function getCoveoHashOfCurrentUrl() {
  * https://docs.coveo.com/en/2651/build-a-search-ui/log-view-events
  */
 export async function sendCoveoPageViewEvent() {
+  if (window.location.search?.indexOf('martech=off') === -1) {
+    return;
+  }
+
   const contentType = document.querySelector("meta[name='type']")?.content;
   const title = document.querySelector("meta[name='og:title']")?.content;
   // const profileData = defaultProfileClient.getMergedProfile(false); - Causes cyclic dependency that breaks build
@@ -132,6 +136,10 @@ export async function sendCoveoPageViewEvent() {
  * @param {*} raw - The 'raw' object on the associated coveo result item.
  */
 export async function sendCoveoClickEvent(source, model) {
+  if (window.location.search?.indexOf('martech=off') === -1) {
+    return;
+  }
+
   const { index, permanentid, searchQueryUid, title, viewLink } = model;
   // const profileData = defaultProfileClient.getMergedProfile(false); - Causes cyclic dependency that breaks build
   const profileData = sessionStorage.getItem('profile');
@@ -166,5 +174,5 @@ export async function sendCoveoClickEvent(source, model) {
     customData,
   };
 
-  postCoveoAnalytics(JSON.stringify('click', baseData));
+  postCoveoAnalytics('click', JSON.stringify(baseData));
 }
