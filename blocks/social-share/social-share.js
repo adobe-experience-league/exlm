@@ -51,11 +51,10 @@ export default function decorate(block) {
               return `
                 <a class="social-share-item" href="${socialInfo.url}" target="_blank">
                   <span class="icon icon-${socialInfo.icon}"></span>
-                  <span class="social-share-name">${placeholders['socialShare' + label]}</span>
+                  <span class="social-share-name">${placeholders[`socialShare${label}`]}</span>
                 </a>`;
-            } else {
-              return '';
             }
+            return '';
           })
           .join('')}
       </div>
