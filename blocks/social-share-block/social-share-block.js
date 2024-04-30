@@ -1,5 +1,18 @@
 import { htmlToElement } from '../../scripts/scripts.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
+function getObjectById(obj, ID) {
+  return obj.find((option) => option.id === ID);
+}
 
 export default function decorate(block) {
   const socialDiv = block.firstElementChild;
@@ -7,34 +20,45 @@ export default function decorate(block) {
 
   block.textContent = '';
 
-  const socialLinks = {
-    Facebook: `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`,
-    'X (formerly Twitter)': `https://twitter.com/intent/tweet?url=${window.location.href}`,
-    LinkedIn: `https://www.linkedin.com/shareArticle?mini=true&url=${window.location.href}`,
-  };
-
-  const socialIcons = {
-    Facebook: 'fb-social-icon',
-    LinkedIn: 'li-social-icon',
-    'X (formerly Twitter)': 'x-social-icon',
-  };
+  const socialData = [
+    {
+      id: 'Facebook',
+      value: 'facebook',
+      icon: 'fb-social-icon',
+      url: `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`,
+    },
+    {
+      id: 'X (formerly Twitter)',
+      value: 'twitter',
+      icon: 'x-social-icon',
+      url: `https://twitter.com/intent/tweet?url=${window.location.href}`,
+    },
+    {
+      id: 'LinkedIn',
+      value: 'linkedin',
+      icon: 'li-social-icon',
+      url: `https://www.linkedin.com/shareArticle?mini=true&url=${window.location.href}`,
+    },
+  ];
 
   const headerDiv = htmlToElement(`
     <div class="social-share-block">
-    <div class="social-share-title">
-      ${'SHARE ON SOCIAL'}
-    </div>
-    <div class="social-share-view">
-      ${socialNetworks
-        .map(
-          (network) => `<a href="${socialLinks[network]}" target="_blank">
-      <div class="social-share-item">
-      <span class="icon icon-${socialIcons[network]}"></span></span><span class="social-share-name">${network}</span>
+      <div class="social-share-title">
+        ${placeholders.shareOnSocial}
       </div>
-      </a>`,
-        )
-        .join('')}
-    </div>
+      <div class="social-share-view">
+        ${socialNetworks
+          .map((network) => {
+            return `
+              <a href="${getObjectById(socialData, network).url}" target="_blank">
+                <div class="social-share-item">
+                  <span class="icon icon-${getObjectById(socialData, network).icon}"></span>
+                  <span class="social-share-name">${placeholders[getObjectById(socialData, network).value]}</span>
+                </div>
+              </a>`;
+          })
+          .join('')}
+      </div>
     </div>
   `);
 
