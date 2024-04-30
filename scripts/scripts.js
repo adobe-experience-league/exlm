@@ -197,7 +197,20 @@ export async function fetchAuthorBio(anchor) {
     .then((html) => {
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(html, 'text/html');
-      return extractAuthorInfo(htmlDoc.querySelector('.author-bio'));
+      const authorInfo = extractAuthorInfo(htmlDoc.querySelector('.author-bio'));
+      if (authorInfo.authorName) {
+        const meta = document.createElement('meta');
+        meta.name = 'author-name';
+        meta.content = authorInfo.authorName?.textContent;
+        document.head.appendChild(meta);
+      }
+      if (authorInfo.authorCompany) {
+        const meta = document.createElement('meta');
+        meta.name = 'author-type';
+        meta.content = authorInfo.authorCompany?.textContent;
+        document.head.appendChild(meta);
+      }
+      return authorInfo;
     })
     .catch((error) => {
       console.error(error);
@@ -1023,7 +1036,7 @@ function handleHomePageHashes() {
  * @param {string} fallbackText
  * @returns
  */
-export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved) {
+export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, onRejected) {
   const span = document.createElement('span');
   span.setAttribute('data-placeholder', placeholderKey);
   span.setAttribute('data-placeholder-fallback', fallbackText);
@@ -1038,8 +1051,63 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved) 
     })
     .catch(() => {
       span.textContent = fallbackText;
+      if (onRejected) onRejected(span);
     });
   return span;
+}
+
+function formatPageMetaTags(inputString) {
+  return inputString
+    .replace(/exl:[^/]*\/*/g, '')
+    .split(',')
+    .map((part) => part.trim());
+}
+
+function decodePageMetaTags() {
+  const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
+  const roleMeta = document.querySelector(`meta[name="role"]`);
+  const levelMeta = document.querySelector(`meta[name="level"]`);
+  const authorMeta = document.querySelector(`meta[name="author-bio-page"]`);
+
+  const solutions = solutionMeta ? formatPageMetaTags(solutionMeta.content) : [];
+  const roles = roleMeta ? formatPageMetaTags(roleMeta.content) : [];
+  const experienceLevels = levelMeta ? formatPageMetaTags(levelMeta.content) : [];
+  const authorBio = authorMeta ? `${window.location.origin}${authorMeta.content}` : '';
+
+  const decodedSolutions = solutions.map((solution) => {
+    // In case of sub-solutions. E.g. exl:solution/campaign/standard
+    const parts = solution.split('/');
+    const decodedParts = parts.map((part) => atob(part));
+
+    // If it's a sub-solution, create a version meta tag
+    if (parts.length > 1) {
+      const versionMeta = document.createElement('meta');
+      versionMeta.name = 'version';
+      versionMeta.content = atob(parts.slice(1).join('/'));
+      document.head.appendChild(versionMeta);
+    }
+
+    return decodedParts[0];
+  });
+  const decodedRoles = roles.map((role) => atob(role));
+  const decodedLevels = experienceLevels.map((level) => atob(level));
+
+  if (solutionMeta) {
+    solutionMeta.content = decodedSolutions.join(',');
+  }
+  if (roleMeta) {
+    roleMeta.content = decodedRoles.join(',');
+  }
+  if (levelMeta) {
+    levelMeta.content = decodedLevels.join(',');
+  }
+  if (authorMeta) {
+    authorMeta.content = authorBio;
+  }
+}
+
+if (isArticleLandingPage() || isArticlePage()) {
+  decodePageMetaTags();
 }
 
 async function loadPage() {
