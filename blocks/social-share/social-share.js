@@ -49,11 +49,9 @@ export default function decorate(block) {
             if (socialInfo) {
               const label = socialInfo.id.charAt(0).toUpperCase() + socialInfo.id.slice(1);
               return `
-                <a href="${socialInfo.url}" target="_blank">
-                  <div class="social-share-item">
-                    <span class="icon icon-${socialInfo.icon}"></span>
-                    <span class="social-share-name">${placeholders['socialShare' + label]}</span>
-                  </div>
+                <a class="social-share-item" href="${socialInfo.url}" target="_blank">
+                  <span class="icon icon-${socialInfo.icon}"></span>
+                  <span class="social-share-name">${placeholders['socialShare' + label]}</span>
                 </a>`;
             } else {
               return '';
