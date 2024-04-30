@@ -103,6 +103,7 @@ export async function sendCoveoPageViewEvent() {
           context_exl_interests: profileData.interests,
           context_exl_industry_interests: profileData.industryInterests,
         };
+
   const contentIdValue = await getCoveoHashOfCurrentUrl();
 
   const baseData = {
