@@ -4,6 +4,14 @@ export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
 export const solution = document.querySelector('meta[name="solution"]')?.content?.split(',')[0].toLowerCase() || '';
 export const type = document.querySelector('meta[name="type"]')?.content?.toLowerCase() || '';
+const UEFilters = {
+  Role: '',
+  ContentType: '',
+  ExperienceLevel: '',
+  KeywordSearch: '',
+  BrowseByTopic: '',
+  BrowseResults: '',
+};
 
 export const pageName = (language) => {
   // Validate if subsolution or solutionversion is not empty
@@ -180,6 +188,7 @@ export function pushLinkClick(e) {
           ? document.querySelector('meta[name="solution"]').content.split(',')[0].trim()
           : '',
     },
+    ...UEFilters,
     web: {
       webInteraction: {
         URL: e.target.href,
@@ -201,13 +210,7 @@ export function pushLinkClick(e) {
 
 export function assetInteractionModel(id, assetInteractionType, filters) {
   window.adobeDataLayer = window.adobeDataLayer || [];
-  const dataLayerFilters = {
-    Role: '',
-    ContentType: '',
-    ExperienceLevel: '',
-    KeywordSearch: '',
-    BrowseByTopic: '',
-  };
+  const dataLayerFilters = { ...UEFilters };
   Object.assign(dataLayerFilters, filters);
 
   // assetId is set to the current docs page articleId if id param value is null
