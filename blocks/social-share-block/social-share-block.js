@@ -1,6 +1,5 @@
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 let placeholders = {};
 try {
@@ -48,15 +47,15 @@ export default function decorate(block) {
       </div>
       <div class="social-share-view">
         ${socialNetworks
-          .map((network) => {
-            return `
-              <a href="${getObjectById(socialData, network).url}" target="_blank">
+          .map(
+            (network) =>
+              `<a href="${getObjectById(socialData, network).url}" target="_blank">
                 <div class="social-share-item">
                   <span class="icon icon-${getObjectById(socialData, network).icon}"></span>
                   <span class="social-share-name">${placeholders[getObjectById(socialData, network).value]}</span>
                 </div>
-              </a>`;
-          })
+              </a>`,
+          )
           .join('')}
       </div>
     </div>
