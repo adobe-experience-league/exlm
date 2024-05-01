@@ -10,6 +10,7 @@ import {
   roleOptions,
   contentTypeOptions,
   expTypeOptions,
+  productOptions,
   getObjectByName,
   getFiltersPaginationText,
   getBrowseFiltersResultCount,
@@ -34,6 +35,7 @@ const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
   el_contenttype: 'headlessTypeFacet',
   el_level: 'headlessExperienceFacet',
+  el_product: 'headlessProductFacet',
 };
 
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
@@ -144,7 +146,7 @@ function tagsUpdateHandler(block) {
   updateClearFilterStatus(block);
 }
 
-if (isBrowseProdPage) dropdownOptions.push(expTypeOptions);
+if (isBrowseProdPage) dropdownOptions.push(productOptions);
 
 /**
  * Generate HTML for a single checkbox item.

@@ -1,5 +1,6 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { COMMUNITY_SEARCH_FACET } from '../../scripts/browse-card/browse-cards-constants.js';
+const ffetchModulePromise = import('../../scripts/ffetch.js');
 
 const SUB_FACET_MAP = {
   Community: COMMUNITY_SEARCH_FACET,
@@ -144,6 +145,50 @@ const expLevel = [
     description: placeholders[`filterExpLevel${role.id}Description`],
   }),
 }));
+
+// start 1305: products
+// Helper function thats returns a list of all Featured Card Products //
+async function getFeaturedCardSolutions() {
+  const ffetch = (await ffetchModulePromise).default;
+  // Load the Featured Card Solution list
+  const solutionList = await ffetch(`/featured-card-products.json`).all();
+  // Gets Values from Column Solution in Featured Card Solution list
+  const solutionValues = solutionList.map((solution) => solution.Solution);
+  return solutionValues;
+}
+
+const handleSolutionsService = async () => {
+  const solutions = await getFeaturedCardSolutions();
+
+  if (!solutions) {
+    throw new Error('An error occurred');
+  }
+
+  if (solutions?.length) {
+    return solutions;
+  }
+
+  return [];
+};
+
+  const solutions = await handleSolutionsService();
+  const solutionsList = [];
+  solutions.forEach((solution) => {
+    solutionsList.push({
+      id: solution,
+      value: solution,
+      title: solution,
+      description: '',
+    });
+  });
+
+ export const productOptions = {
+  id: 'el_product',
+  name: placeholders.featuredCardProductLabel || 'Product',
+  items: solutionsList,
+  selected: 0,
+};   
+// end 1305
 
 export const roleOptions = {
   id: 'el_role',
