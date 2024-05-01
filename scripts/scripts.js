@@ -20,7 +20,6 @@ import {
   readBlockConfig,
   createOptimizedPicture,
 } from './lib-franklin.js';
-// eslint-disable-next-line import/no-cycle
 
 const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
 export const timers = new Map();
