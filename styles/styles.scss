@@ -688,6 +688,8 @@ picture {
 
 .section {
   padding: 30px 16px;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
 
   &.browse-filters-container[data-section-status='loading'],
   &.browse-filters-container[data-section-status='initialized'],
