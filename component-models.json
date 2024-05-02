@@ -2690,6 +2690,42 @@
         "description": "A descriptive text of the image."
       },
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Image Border and Alignment",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 2,
+        "options": [
+          {
+            "name": "Content Source",
+            "children": [
+              {
+                "name": "Adobe",
+                "value": "adobe"
+              },
+              {
+                "name": "External",
+                "value": "External"
+              }
+            ]
+          },
+          {
+            "name": "Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "left"
+              },
+              {
+                "name": "Right",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "authors_heading",
@@ -2739,43 +2775,43 @@
       {
         "component": "aem-content",
         "valueType": "string",
-        "name": "bio_author1Ref",
+        "name": "author1_bio",
         "value": "",
-        "label": "Author 11 11 Bio Page"
+        "label": "Author 1 Bio Page"
       },
       {
         "component": "text",
-        "name": "bio_author1Text",
-        "value": "",
-        "label": "Author 1 CTA Text",
-        "valueType": "string"
-      },
-      {
-        "component": "text",
-        "name": "bio_author1",
+        "name": "author1_cta",
         "value": "",
         "label": "Author 1 CTA URL",
         "valueType": "string"
       },
       {
+        "component": "text",
+        "name": "author1_ctaText",
+        "value": "",
+        "label": "Author 1 CTA Text",
+        "valueType": "string"
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
-        "name": "bio_author2Ref",
+        "name": "author2_bio",
         "value": "",
         "label": "Author 2 Bio Page"
       },
       {
         "component": "text",
-        "name": "bio_author2Text",
+        "name": "author2_cta",
         "value": "",
-        "label": "Author 2 CTA Text",
+        "label": "Author 2 CTA URL",
         "valueType": "string"
       },
       {
         "component": "text",
-        "name": "bio_author2",
+        "name": "author2_ctaText",
         "value": "",
-        "label": "Author 2 CTA URL",
+        "label": "Author 2 CTA Text",
         "valueType": "string"
       }
     ]
