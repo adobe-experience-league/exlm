@@ -2815,5 +2815,31 @@
         "valueType": "string"
       }
     ]
+  },
+  {
+    "id": "social-share",
+    "fields": [
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "social network",
+        "label": "Select Social Network",
+        "description": "Select Social Network",
+        "options": [
+          {
+            "name": "Facebook",
+            "value": "facebook"
+          },
+          {
+            "name": "Twitter",
+            "value": "twitter"
+          },
+          {
+            "name": "LinkedIn",
+            "value": "linkedin"
+          }
+        ]
+      }
+    ]
   }
 ]

@@ -3,6 +3,8 @@ import { loadCSS, sampleRUM } from './lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 import loadGainsight from './gainsight/gainsight.js';
 import loadQualtrics from './qualtrics.js';
+import { sendCoveoPageViewEvent } from './coveo-analytics.js';
+
 // add more delayed functionality here
 
 // Core Web Vitals RUM collection
@@ -54,4 +56,5 @@ loadPrism(document);
 if (window.location.search?.indexOf('martech=off') === -1) {
   loadGainsight();
   loadQualtrics();
+  sendCoveoPageViewEvent();
 }
