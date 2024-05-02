@@ -99,6 +99,7 @@
     .articles-wrapper .articles-body > * {
         grid-column: 1;
         max-width: 765px;
+        width: 100%;
     }
 
     .articles-wrapper .articles-body .mini-toc-wrapper {
