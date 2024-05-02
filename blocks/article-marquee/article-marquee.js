@@ -8,7 +8,7 @@ import {
 } from '../../scripts/scripts.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
-import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
+import { createOptimizedPicture, decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import ffetch from '../../scripts/ffetch.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
@@ -197,18 +197,18 @@ export default async function ArticleMarquee(block) {
   createBreadcrumb(breadcrumbContainer);
   decorateIcons(block);
 
-  fetchAuthorBio(link.querySelector('a')).then((authorInfo) => {
+  fetchAuthorBio(link?.querySelector('a')).then((authorInfo) => {
     const authorInfoContainer = block.querySelector('.author-details');
     let tagname = placeholders.articleMarqueeAdobeTag;
-    let articleType = authorInfo?.authorCompany?.textContent.toLowerCase();
+    let articleType = authorInfo?.authorCompany?.toLowerCase();
     if (!articleType) articleType = metadataProperties.adobe;
     if (articleType !== metadataProperties.adobe) {
       tagname = placeholders.articleMarqueeExternalTag;
     }
     authorInfoContainer.outerHTML = `
-      ${authorInfo.authorImage.outerHTML} 
-      <div>${authorInfo.authorName.textContent.trim()}</div> 
-      ${authorInfo.authorTitle.outerHTML}
+      <div>${createOptimizedPicture(authorInfo?.authorImage).outerHTML}</div>
+      <div>${authorInfo?.authorName}</div> 
+      <div>${authorInfo?.authorTitle}</div>
       <div class="article-marquee-tag">${tagname}</div>
     `;
 
