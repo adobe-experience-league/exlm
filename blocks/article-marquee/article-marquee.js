@@ -8,7 +8,7 @@ import {
 } from '../../scripts/scripts.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
-import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
+import { createOptimizedPicture, decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import ffetch from '../../scripts/ffetch.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
@@ -171,12 +171,6 @@ export default async function ArticleMarquee(block) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
   const [link, readTime, headingType] = block.querySelectorAll(':scope div > div');
 
-  let tagname = placeholders.articleMarqueeAdobeTag;
-  let articleType = document.querySelector('meta[name="article-theme"]')?.getAttribute('content');
-  if (!articleType) articleType = metadataProperties.adobe;
-  if (articleType.toLowerCase() !== metadataProperties.adobe) {
-    tagname = placeholders.articleMarqueeExternalTag;
-  }
   const articleDetails = `<div class="article-marquee-info-container"><div class="article-info">
                                 <div class="breadcrumb"></div>
                                 <${headingType.textContent ? headingType.textContent : 'h1'}>${document.title}</${
@@ -185,7 +179,7 @@ export default async function ArticleMarquee(block) {
                                 <div class="article-marquee-info"></div>
                             </div>
                             <div class="author-info">
-                            <div class="article-marquee-bg-container ${articleType}">
+                            <div class="article-marquee-bg-container">
                               ${mobileSvg}
                               ${tabletSvg}
                               ${desktopSvg}
@@ -193,7 +187,7 @@ export default async function ArticleMarquee(block) {
                             <div class="author-details">
                             </div>
                             </div></div>
-                            <div class="article-marquee-large-bg ${articleType}"></div>
+                            <div class="article-marquee-large-bg"></div>
                             `;
   block.innerHTML = articleDetails;
   const infoContainer = block.querySelector('.article-marquee-info');
@@ -203,13 +197,22 @@ export default async function ArticleMarquee(block) {
   createBreadcrumb(breadcrumbContainer);
   decorateIcons(block);
 
-  fetchAuthorBio(link.querySelector('a')).then((authorInfo) => {
+  fetchAuthorBio(link?.querySelector('a')).then((authorInfo) => {
     const authorInfoContainer = block.querySelector('.author-details');
+    let tagname = placeholders.articleMarqueeAdobeTag;
+    let articleType = authorInfo?.authorCompany?.toLowerCase();
+    if (!articleType) articleType = metadataProperties.adobe;
+    if (articleType !== metadataProperties.adobe) {
+      tagname = placeholders.articleMarqueeExternalTag;
+    }
     authorInfoContainer.outerHTML = `
-      ${authorInfo.authorImage.outerHTML} 
-      <div>${authorInfo.authorName.textContent.trim()}</div> 
-      ${authorInfo.authorTitle.outerHTML}
+      <div>${createOptimizedPicture(authorInfo?.authorImage).outerHTML}</div>
+      <div>${authorInfo?.authorName}</div> 
+      <div>${authorInfo?.authorTitle}</div>
       <div class="article-marquee-tag">${tagname}</div>
     `;
+
+    block.querySelector('.article-marquee-large-bg').classList.add(articleType);
+    block.querySelector('.article-marquee-bg-container').classList.add(articleType);
   });
 }

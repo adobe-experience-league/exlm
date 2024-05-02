@@ -11,17 +11,18 @@
   margin-top: 0 !important;
   top: 52px;
   overflow: visible;
+  max-width: 100%;
 }
 
 .mini-toc-wrapper .mini-toc {
   font-size: var(--spectrum-font-size-50);
   font-weight: var(--spectrum-extra-bold-font-weight);
   padding-left: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .mini-toc-wrapper .mini-toc .scrollable-div {
-  max-height: 50vh;
+  max-height: 80vh;
   overflow: hidden;
 }
 
@@ -98,8 +99,22 @@
   color: #1e1e1e;
 }
 
+@media (min-width: 600px) {
+  .mini-toc-wrapper .mini-toc h2 {
+    display: block;
+  }
+}
+
 @media (width >= 900px) {
+  .mini-toc-wrapper .mini-toc {
+    overflow: hidden;
+  }
+
   .mini-toc-wrapper .mini-toc h2 {
     line-height: 14px;
+  }
+
+  .mini-toc-wrapper .mini-toc .custom-filter-dropdown {
+    display: none;
   }
 }
