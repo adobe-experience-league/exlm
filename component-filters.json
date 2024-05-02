@@ -46,7 +46,8 @@
       "article-tags",
       "author-bio",
       "author-summary",
-      "social-share"
+      "social-share",
+      "featured-authors"
     ]
   },
   {
@@ -84,7 +85,8 @@
       "article-tags",
       "author-bio",
       "author-summary",
-      "social-share"
+      "social-share",
+      "featured-authors"
     ]
   },
   {
