@@ -22,6 +22,19 @@
   grid-area: image;
 }
 
+/* hide authors until info is loaded */
+.featured-authors.block > div:nth-child(3) {
+  display:none;
+}
+
+.featured-authors.block > div:nth-child(4) {
+  display:none;
+}
+
+.featured-authors.block > div:has(.author){
+  display: block;
+}
+
 /* the main image */
 .featured-authors.block .featured-authors-image {
   width: 320px;
