@@ -16,8 +16,7 @@ export async function fetchAuthorBio(link) {
     .then((html) => {
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(html, 'text/html');
-      const authorInfo = [...htmlDoc.querySelector('.author-bio').children]
-        .map((row) => row.firstElementChild);
+      const authorInfo = [...htmlDoc.querySelector('.author-bio').children].map((row) => row.firstElementChild);
 
       return {
         authorImage: authorInfo[0].querySelector('img')?.src,
@@ -26,7 +25,7 @@ export async function fetchAuthorBio(link) {
         authorCompany: authorInfo[3].textContent,
         authorDescription: authorInfo[4].textContent,
         authorSocialLinkText: authorInfo[5].textContent,
-        authorSocialLinkURL: authorInfo[6].querySelector('a')?.href
+        authorSocialLinkURL: authorInfo[6].querySelector('a')?.href,
       };
     })
     .catch((error) => {
@@ -42,17 +41,17 @@ async function setAuthorInfo(authorElem) {
   const linkPar = authorElem.firstElementChild;
   // load author bio
   const authorInfo = await fetchAuthorBio(linkPar.firstElementChild.href);
-  // remove the bio link p element 
+  // remove the bio link p element
   linkPar.remove();
   // get a ref to cta link
   const cta = authorElem?.firstElementChild?.firstElementChild;
   if (cta) authorElem.firstElementChild.remove();
-  // set class 
+  // set class
   authorElem.classList.add('author');
 
   // add the author image
   if (authorInfo.authorImage) {
-    const imageDiv = document.createElement('div'); 
+    const imageDiv = document.createElement('div');
     imageDiv.classList.add('author-image');
     const authorPict = document.createElement('picture');
     const authorImg = document.createElement('img');
@@ -81,7 +80,6 @@ async function setAuthorInfo(authorElem) {
   authorTitle.classList.add('author-title');
   authorTitle.textContent = authorInfo.authorTitle;
   authorInfoDiv.append(authorName, authorTitle);
-  
 
   // if a social link is present, add it to the author info div
   const socialLink = authorInfo.authorSocialLinkURL;
@@ -92,7 +90,7 @@ async function setAuthorInfo(authorElem) {
     socialLinkElem.textContent = authorInfo.authorSocialLinkText;
     socialLinkElem.href = socialLink;
   }
- 
+
   // move the cta element into this div
   if (cta) {
     cta.classList.add('author-cta');
@@ -112,10 +110,9 @@ export default async function decorate(block) {
   const sourceTag = document.createElement('div');
   sourceTag.classList.add('source-tag');
   image.append(sourceTag);
-  sourceTag.textContent = block.classList.contains('adobe') ?
-    placeholders.articleMarqueeAdobeTag:
-    placeholders.articleMarqueeExternalTag;
-  
+  sourceTag.textContent = block.classList.contains('adobe')
+    ? placeholders.articleMarqueeAdobeTag
+    : placeholders.articleMarqueeExternalTag;
 
   // check if featured authors have bio links
   if (author1.children.length > 1) {
