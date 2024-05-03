@@ -148,6 +148,7 @@ const expLevel = [
 
 // start 1305: products
 // Helper function thats returns a list of all Featured Card Products //
+// to do: reuse or consolidate getFeaturedCardSolutions() as it exist in featurd-cards as well
 async function getFeaturedCardSolutions() {
   const ffetch = (await ffetchModulePromise).default;
   // Load the Featured Card Solution list
