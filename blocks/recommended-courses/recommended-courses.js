@@ -60,16 +60,14 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
-  const convertPlaceholdersToLinks = (inputText, url) => {
-    return inputText.replace(/\$\{([^}]+)\}/g, `<a href="${url}">$1</a>`);
-  };
+  const convertPlaceholdersToLinks = (inputText, url) => inputText.replace(/\$\{([^}]+)\}/g, `<a href="${url}">$1</a>`);
 
   const recommendedCoursesInterestContent = () => {
     const recommendedCoursesNoResultsElement = block.querySelector('.browse-card-no-results');
     const profileurl = 'home#dashboard/profile';
     const profileText = convertPlaceholdersToLinks(
       placeholders?.recommendedCoursesInterestsLabel ||
-        'Please update your profile interests to receive course recommendations.<br><br> ${Click here to update.}',
+        `Please update your profile interests to receive course recommendations.<br><br> \${Click here to update.}`,
       profileurl,
     );
     recommendedCoursesNoResultsElement.innerHTML = profileText;
