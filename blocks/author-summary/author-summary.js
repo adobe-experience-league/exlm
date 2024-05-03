@@ -1,43 +1,53 @@
+import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
 import { fetchAuthorBio } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   const authorSummaryContainer = document.createElement('div');
-  authorSummaryContainer.classList.add('author-summary-grid');
 
-  fetchAuthorBio(block.querySelector('a').href).then((authorInfo) => {
+  fetchAuthorBio(block.querySelector('a')?.href).then((authorInfo) => {
     if (authorInfo.authorImage) {
-      authorInfo.authorImage.classList.add('author-image');
-      authorSummaryContainer.append(authorInfo.authorImage);
+      const imageContainer = document.createElement('div');
+      imageContainer.classList.add('author-image');
+      imageContainer.append(createOptimizedPicture(authorInfo.authorImage));
+      authorSummaryContainer.append(imageContainer);
     }
 
     if (authorInfo.authorName) {
       const authorDetails = document.createElement('div');
       authorDetails.classList.add('author-details');
-      authorDetails.append(authorInfo.authorName);
+      const authorName = document.createElement('div');
+      authorName.textContent = authorInfo.authorName;
+      authorDetails.append(authorName);
       if (authorInfo.authorTitle) {
-        authorDetails.append(authorInfo.authorTitle);
+        const authorTitle = document.createElement('div');
+        authorTitle.textContent = authorInfo.authorTitle;
+        authorDetails.append(authorTitle);
       }
       authorSummaryContainer.append(authorDetails);
     }
 
-    if (authorInfo.authorDescription) {
+    if (authorInfo.authorDescription || authorInfo.authorSocialLinkURL) {
       const description = document.createElement('div');
       description.classList.add('author-description');
-      description.append(authorInfo.authorDescription);
+      description.innerHTML = `<div>${
+        authorInfo.authorDescription ? authorInfo.authorDescription.innerHTML : ''
+      }</div>`;
       if (authorInfo.authorSocialLinkURL && authorInfo.authorSocialLinkText) {
         const socialLink = document.createElement('a');
-        socialLink.href = authorInfo.authorSocialLinkURL?.textContent.trim();
-        socialLink.append(authorInfo.authorSocialLinkText?.textContent.trim());
+        socialLink.href = authorInfo.authorSocialLinkURL ? authorInfo.authorSocialLinkURL : '#';
+        socialLink.append(authorInfo.authorSocialLinkText);
         description.append(socialLink);
       }
       authorSummaryContainer.append(description);
     }
 
     if (authorInfo.authorCompany) {
-      authorSummaryContainer.classList.add(authorInfo.authorCompany.textContent.toLowerCase().trim());
+      authorSummaryContainer.classList.add(authorInfo.authorCompany.toLowerCase());
     }
+
+    authorSummaryContainer.classList.add('author-summary-grid');
   });
 
-  block.innerHTML = '';
+  block.textContent = '';
   block.append(authorSummaryContainer);
 }

@@ -45,7 +45,9 @@
       "callout",
       "article-tags",
       "author-bio",
-      "author-summary"
+      "author-summary",
+      "social-share",
+      "featured-authors"
     ]
   },
   {
@@ -82,7 +84,9 @@
       "callout",
       "article-tags",
       "author-bio",
-      "author-summary"
+      "author-summary",
+      "social-share",
+      "featured-authors"
     ]
   },
   {

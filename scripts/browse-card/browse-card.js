@@ -6,6 +6,7 @@ import { tooltipTemplate } from '../toast/toast.js';
 import renderBookmark from '../bookmark/bookmark.js';
 import attachCopyLink from '../copy-link/copy-link.js';
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
+import { sendCoveoClickEvent } from '../coveo-analytics.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
 loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
@@ -420,5 +421,13 @@ export async function buildCard(container, element, model) {
   } else {
     element.appendChild(card);
   }
+
+  element.querySelector('a').addEventListener(
+    'click',
+    () => {
+      sendCoveoClickEvent('browse-card', model);
+    },
+    { once: true },
+  );
   decorateIcons(element);
 }

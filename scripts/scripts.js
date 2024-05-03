@@ -20,7 +20,6 @@ import {
   readBlockConfig,
   createOptimizedPicture,
 } from './lib-franklin.js';
-// eslint-disable-next-line import/no-cycle
 
 const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
 export const timers = new Map();
@@ -178,19 +177,27 @@ function addBrowseBreadCrumb(main) {
   }
 }
 
+/**
+ * Extract author information from the author page.
+ * @param {HTMLElement} block
+ */
 export function extractAuthorInfo(block) {
   const authorInfo = [...block.children].map((row) => row.firstElementChild);
   return {
-    authorImage: authorInfo[0] ?? '',
-    authorName: authorInfo[1] ?? '',
-    authorTitle: authorInfo[2] ?? '',
-    authorCompany: authorInfo[3] ?? '',
-    authorDescription: authorInfo[4] ?? '',
-    authorSocialLinkText: authorInfo[5] ?? '',
-    authorSocialLinkURL: authorInfo[6] ?? '',
+    authorImage: authorInfo[0]?.querySelector('img')?.getAttribute('src'),
+    authorName: authorInfo[1]?.textContent.trim(),
+    authorTitle: authorInfo[2]?.textContent.trim(),
+    authorCompany: authorInfo[3]?.textContent.trim(),
+    authorDescription: authorInfo[4],
+    authorSocialLinkText: authorInfo[5]?.textContent.trim(),
+    authorSocialLinkURL: authorInfo[6]?.textContent.trim(),
   };
 }
 
+/**
+ * Fetch the author information from the author page.
+ * @param {HTMLAnchorElement} anchor || {string} link
+ */
 export async function fetchAuthorBio(anchor) {
   const link = anchor.href ? anchor.href : anchor;
   return fetch(link)
@@ -199,18 +206,6 @@ export async function fetchAuthorBio(anchor) {
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(html, 'text/html');
       const authorInfo = extractAuthorInfo(htmlDoc.querySelector('.author-bio'));
-      if (authorInfo.authorName) {
-        const meta = document.createElement('meta');
-        meta.name = 'author-name';
-        meta.content = authorInfo.authorName?.textContent;
-        document.head.appendChild(meta);
-      }
-      if (authorInfo.authorCompany) {
-        const meta = document.createElement('meta');
-        meta.name = 'author-type';
-        meta.content = authorInfo.authorCompany?.textContent;
-        document.head.appendChild(meta);
-      }
       return authorInfo;
     })
     .catch((error) => {
@@ -252,8 +247,6 @@ function buildAutoBlocks(main) {
     if (isArticleLandingPage()) {
       addArticleLandingRail(main);
     }
-    // eslint-disable-next-line no-use-before-define
-    addMiniTocForArticlesPage(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -884,23 +877,6 @@ async function loadArticles() {
     const mod = await import('./articles/articles.js');
     if (mod.default) {
       await mod.default();
-    }
-  }
-}
-
-function addMiniTocForArticlesPage(main) {
-  if (isArticlePage()) {
-    const [, articleBody] = main.children;
-    if (articleBody && !articleBody.querySelector('.mini-toc')) {
-      // Dynamically add mini-toc section for articles page
-      const miniTocWrapper = htmlToElement(`
-      <div class="mini-toc">
-        <div>
-          <div></div>
-        </div>
-      </div>
-      `);
-      articleBody.appendChild(miniTocWrapper);
     }
   }
 }

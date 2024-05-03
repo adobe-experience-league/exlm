@@ -1349,7 +1349,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   }
   body.article-landing main > div.section:not(.articles-rail-section),
   body.article-product-landing main > div.section:not(.articles-rail-section) {
-    padding: 30px 32px;
+    padding: 30px 32px 30px 56px;
   }
   body.browse-all main,
   body.browse-product main {
@@ -1357,7 +1357,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   }
   body.browse-all main > div.section:not(.browse-rail-section),
   body.browse-product main > div.section:not(.browse-rail-section) {
-    padding: 30px 32px;
+    padding: 30px 32px 30px 56px;
   }
   body.browse-all main > div.section:not(.browse-rail-section).browse-filters-container,
   body.browse-product main > div.section:not(.browse-rail-section).browse-filters-container {
