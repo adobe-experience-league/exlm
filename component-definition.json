@@ -135,7 +135,11 @@
                   "filter": "article-content-section",
                   "name": "Article Content Section",
                   "model": "article-content-section",
-                  "style": "article-content-section"
+                  "style": "article-content-section",
+                  "mini-toc": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block",
+                    "name": "Mini TOC"
+                  }
                 }
               }
             }

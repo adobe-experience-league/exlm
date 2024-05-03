@@ -247,8 +247,6 @@ function buildAutoBlocks(main) {
     if (isArticleLandingPage()) {
       addArticleLandingRail(main);
     }
-    // eslint-disable-next-line no-use-before-define
-    addMiniTocForArticlesPage(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -879,23 +877,6 @@ async function loadArticles() {
     const mod = await import('./articles/articles.js');
     if (mod.default) {
       await mod.default();
-    }
-  }
-}
-
-function addMiniTocForArticlesPage(main) {
-  if (isArticlePage()) {
-    const [, articleBody] = main.children;
-    if (articleBody && !articleBody.querySelector('.mini-toc')) {
-      // Dynamically add mini-toc section for articles page
-      const miniTocWrapper = htmlToElement(`
-      <div class="mini-toc">
-        <div>
-          <div></div>
-        </div>
-      </div>
-      `);
-      articleBody.appendChild(miniTocWrapper);
     }
   }
 }
