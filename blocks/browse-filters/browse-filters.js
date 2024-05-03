@@ -49,7 +49,8 @@ try {
 }
 
 const theme = getMetadata('theme').trim();
-const isBrowseProdPage = theme === 'browse-product';
+// const isBrowseProdPage = theme === 'browse-product';
+const isBrowseProdPage = true;  // temporary. to do: will sort theme logic later 
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
@@ -146,7 +147,7 @@ function tagsUpdateHandler(block) {
   updateClearFilterStatus(block);
 }
 
-if (isBrowseProdPage) dropdownOptions.push(productOptions);
+if (isBrowseProdPage) dropdownOptions.push(productOptions);  // temporary. to do: will sort theme logic later 
 
 /**
  * Generate HTML for a single checkbox item.
