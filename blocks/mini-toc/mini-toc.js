@@ -19,7 +19,7 @@ function headerExclusions(header) {
   );
 }
 
-export default async function decorate() {
+export default async function decorate(block) {
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
@@ -29,19 +29,18 @@ export default async function decorate() {
   }
   const miniTOCHeading = placeholders?.onThisPage;
   const render = window.requestAnimationFrame;
-  const ctx = document.querySelector('.mini-toc');
   const levels = document.querySelector('meta[name="mini-toc-levels"]');
 
-  if (ctx !== null) {
-    const miniTocSectionEl = isArticlePage() ? '.article-content-section' : 'main';
+
+    const miniTocSectionEl = block.closest('.article-content-section');
     const headingLevels = setLevels(
       levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined,
     );
     const selectorQuery = headingLevels
       .split(',')
-      .map((query) => `${miniTocSectionEl} ${query}`)
+      .map((query) => `.article-content-section ${query}`)
       .join(',');
-    const headers = Array.from(document.querySelectorAll(selectorQuery)).filter(headerExclusions);
+    const headers = Array.from(miniTocSectionEl.querySelectorAll(selectorQuery)).filter(headerExclusions);
 
     if (headers.length > 1) {
       const html = headers.map(
@@ -53,10 +52,10 @@ export default async function decorate() {
 
       render(() => {
         const tocHeadingDivNode = `<div><h2>${miniTOCHeading}</h2></div>`;
-        ctx.innerHTML = `${tocHeadingDivNode}\n<div class='scrollable-div'><ul>${html.join('\n')}</ul></div>`;
+        block.innerHTML = `${tocHeadingDivNode}\n<div class='scrollable-div'><ul>${html.join('\n')}</ul></div>`;
 
         let lactive = false;
-        const anchors = Array.from(ctx.querySelectorAll('a'));
+        const anchors = Array.from(block.querySelectorAll('a'));
 
         if (isArticlePage()) {
           const anchorTexts = anchors.map((anchor) => {
@@ -68,7 +67,7 @@ export default async function decorate() {
             };
           });
           // eslint-disable-next-line no-new
-          new Dropdown(ctx, 'Summary', anchorTexts, DROPDOWN_VARIANTS.ANCHOR); // Initialise mini-toc dropdown for mobile view
+          new Dropdown(block, 'Summary', anchorTexts, DROPDOWN_VARIANTS.ANCHOR); // Initialise mini-toc dropdown for mobile view
 
           window.addEventListener('hashchange', () => {
             const { hash } = window.location;
@@ -121,7 +120,7 @@ export default async function decorate() {
           });
 
           const anchor = anchors[0].parentElement;
-          const scrollableDiv = ctx.querySelector('.scrollable-div');
+          const scrollableDiv = block.querySelector('.scrollable-div');
           if (scrollableDiv) {
             // dynamically make sure no item is partially visible
             const anchorClientHeight = anchor.offsetHeight;
@@ -136,13 +135,13 @@ export default async function decorate() {
             }
           }
           window.addEventListener('scroll', () => debounce('scroll', () => highlight(), 16));
-          decorateIcons(ctx);
+          decorateIcons(block);
         }
       });
     } else {
       render(() => {
-        ctx.parentElement.parentElement.classList.add('is-hidden');
+        block.parentElement.parentElement.classList.add('is-hidden');
       });
     }
-  }
+
 }
