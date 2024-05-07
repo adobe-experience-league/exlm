@@ -43,7 +43,7 @@ async function setAuthorInfo(authorElem) {
   // load author bio
   const authorInfo = await fetchAuthorBio(links[0].href);
   // get a ref to cta link
-  const cta = links[1]?? null;
+  const cta = links[1] ?? null;
   authorElem.innerHTML = '';
   // set class
   authorElem.classList.add('author');
