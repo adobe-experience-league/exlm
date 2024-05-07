@@ -198,22 +198,24 @@ export default async function ArticleMarquee(block) {
   createBreadcrumb(breadcrumbContainer);
   decorateIcons(block);
 
-  fetchAuthorBio(link).then((authorInfo) => {
-    const authorInfoContainer = block.querySelector('.author-details');
-    let tagname = placeholders.articleMarqueeAdobeTag;
-    let articleType = authorInfo?.authorCompany?.toLowerCase();
-    if (!articleType) articleType = metadataProperties.adobe;
-    if (articleType !== metadataProperties.adobe) {
-      tagname = placeholders.articleMarqueeExternalTag;
-    }
-    authorInfoContainer.outerHTML = `
-      <div>${createOptimizedPicture(authorInfo?.authorImage).outerHTML}</div>
-      <div>${authorInfo?.authorName}</div> 
-      <div>${authorInfo?.authorTitle}</div>
-      <div class="article-marquee-tag">${tagname}</div>
-    `;
+  if (link) {
+    fetchAuthorBio(link).then((authorInfo) => {
+      const authorInfoContainer = block.querySelector('.author-details');
+      let tagname = placeholders.articleMarqueeAdobeTag;
+      let articleType = authorInfo?.authorCompany?.toLowerCase();
+      if (!articleType) articleType = metadataProperties.adobe;
+      if (articleType !== metadataProperties.adobe) {
+        tagname = placeholders.articleMarqueeExternalTag;
+      }
+      authorInfoContainer.outerHTML = `
+        <div>${createOptimizedPicture(authorInfo?.authorImage).outerHTML}</div>
+        <div>${authorInfo?.authorName}</div> 
+        <div>${authorInfo?.authorTitle}</div>
+        <div class="article-marquee-tag">${tagname}</div>
+      `;
 
-    block.querySelector('.article-marquee-large-bg').classList.add(articleType);
-    block.querySelector('.article-marquee-bg-container').classList.add(articleType);
-  });
+      block.querySelector('.article-marquee-large-bg').classList.add(articleType);
+      block.querySelector('.article-marquee-bg-container').classList.add(articleType);
+    });
+  }
 }
