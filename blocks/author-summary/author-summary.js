@@ -1,10 +1,10 @@
-import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
+import { createOptimizedPicture, getMetadata } from '../../scripts/lib-franklin.js';
 import { fetchAuthorBio } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   const authorSummaryContainer = document.createElement('div');
-
-  fetchAuthorBio(block.querySelector('a')?.href).then((authorInfo) => {
+  const link = getMetadata('author-bio-page');
+  fetchAuthorBio(link).then((authorInfo) => {
     if (authorInfo.authorImage) {
       const imageContainer = document.createElement('div');
       imageContainer.classList.add('author-image');

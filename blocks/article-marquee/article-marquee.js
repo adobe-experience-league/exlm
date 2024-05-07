@@ -8,7 +8,7 @@ import {
 } from '../../scripts/scripts.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
-import { createOptimizedPicture, decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
+import { createOptimizedPicture, decorateIcons, getMetadata, loadCSS } from '../../scripts/lib-franklin.js';
 import ffetch from '../../scripts/ffetch.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
@@ -169,7 +169,8 @@ function createBreadcrumb(container) {
  */
 export default async function ArticleMarquee(block) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
-  const [link, readTime, headingType] = block.querySelectorAll(':scope div > div');
+  const [readTime, headingType] = block.querySelectorAll(':scope div > div');
+  const link = getMetadata('author-bio-page');
 
   const articleDetails = `<div class="article-marquee-info-container"><div class="article-info">
                                 <div class="breadcrumb"></div>
@@ -197,7 +198,7 @@ export default async function ArticleMarquee(block) {
   createBreadcrumb(breadcrumbContainer);
   decorateIcons(block);
 
-  fetchAuthorBio(link?.querySelector('a')).then((authorInfo) => {
+  fetchAuthorBio(link).then((authorInfo) => {
     const authorInfoContainer = block.querySelector('.author-details');
     let tagname = placeholders.articleMarqueeAdobeTag;
     let articleType = authorInfo?.authorCompany?.toLowerCase();

@@ -199,7 +199,13 @@ export function extractAuthorInfo(block) {
  * @param {HTMLAnchorElement} anchor || {string} link
  */
 export async function fetchAuthorBio(anchor) {
-  const link = anchor.href ? anchor.href : anchor;
+  let link = anchor.href ? anchor.href : anchor;
+  if (
+    document.documentElement.classList.contains('adobe-ue-edit') ||
+    document.documentElement.classList.contains('adobe-ue-preview')
+  ) {
+    if (link.startsWith('/content/exlm/global/')) link = link.replace('/content/exlm/global/', '/');
+  }
   return fetch(link)
     .then((response) => response.text())
     .then((html) => {
