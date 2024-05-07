@@ -78,6 +78,11 @@
     text-align: left;
     color: var(--spectrum-gray-800);
   }
+
+  .custom-filter-dropdown .custom-checkbox label a.title {
+    margin: 0;
+    line-height: 12px;
+  }
   
   .custom-filter-dropdown .custom-checkbox label .description {
     font-weight: normal;

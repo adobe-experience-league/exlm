@@ -69,10 +69,11 @@ const BrowseCardsCoveoDataAdaptor = (() => {
   /**
    * Maps a result to the BrowseCards data model.
    * @param {Object} result - The result object.
-   * @param {Object} param - The param object.
+   * @param {Number} index - The index of the result object in the source array.
+   * @param {string} searchUid - If the data comes from coveo, provide the searchUid
    * @returns {Object} The BrowseCards data model.
    */
-  const mapResultToCardsDataModel = (result) => {
+  const mapResultToCardsDataModel = (result, index, searchUid) => {
     const { raw, parentResult, title, excerpt, clickUri, uri } = result || {};
     /* eslint-disable camelcase */
 
@@ -112,22 +113,26 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       copyLink: url,
       viewLink: url,
       viewLinkText: placeholders[`browseCard${contentTypeTitleCase}ViewLabel`] || 'View',
+      permanentid: raw?.permanentid,
+      searchUid,
+      index,
     };
   };
 
   /**
    * Maps an array of results to an array of BrowseCards data models.
    * @param {Array} data - The array of result objects.
+   * @param {string} searchUid - Optional. If the data comes from coveo, provide the searchUid
    * @returns {Promise<Array>} A promise that resolves with an array of BrowseCards data models.
    */
-  const mapResultsToCardsData = async (data) => {
+  const mapResultsToCardsData = async (data, searchUid) => {
     try {
       placeholders = await fetchLanguagePlaceholders();
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);
     }
-    return data.map((result) => mapResultToCardsDataModel(result));
+    return data.map((result, index) => mapResultToCardsDataModel(result, index, searchUid));
   };
 
   return {

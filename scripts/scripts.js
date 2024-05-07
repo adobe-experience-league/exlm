@@ -20,7 +20,6 @@ import {
   readBlockConfig,
   createOptimizedPicture,
 } from './lib-franklin.js';
-// eslint-disable-next-line import/no-cycle
 
 const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
 export const timers = new Map();
@@ -178,6 +177,42 @@ function addBrowseBreadCrumb(main) {
   }
 }
 
+/**
+ * Extract author information from the author page.
+ * @param {HTMLElement} block
+ */
+export function extractAuthorInfo(block) {
+  const authorInfo = [...block.children].map((row) => row.firstElementChild);
+  return {
+    authorImage: authorInfo[0]?.querySelector('img')?.getAttribute('src'),
+    authorName: authorInfo[1]?.textContent.trim(),
+    authorTitle: authorInfo[2]?.textContent.trim(),
+    authorCompany: authorInfo[3]?.textContent.trim(),
+    authorDescription: authorInfo[4],
+    authorSocialLinkText: authorInfo[5]?.textContent.trim(),
+    authorSocialLinkURL: authorInfo[6]?.textContent.trim(),
+  };
+}
+
+/**
+ * Fetch the author information from the author page.
+ * @param {HTMLAnchorElement} anchor || {string} link
+ */
+export async function fetchAuthorBio(anchor) {
+  const link = anchor.href ? anchor.href : anchor;
+  return fetch(link)
+    .then((response) => response.text())
+    .then((html) => {
+      const parser = new DOMParser();
+      const htmlDoc = parser.parseFromString(html, 'text/html');
+      const authorInfo = extractAuthorInfo(htmlDoc.querySelector('.author-bio'));
+      return authorInfo;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
 export function isArticleLandingPage() {
   const theme = getMetadata('theme');
   return theme.split(',').find((t) => t.toLowerCase().startsWith('article-'));
@@ -212,8 +247,6 @@ function buildAutoBlocks(main) {
     if (isArticleLandingPage()) {
       addArticleLandingRail(main);
     }
-    // eslint-disable-next-line no-use-before-define
-    addMiniTocForArticlesPage(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -596,7 +629,7 @@ export function getConfig() {
   let launchScriptSrc;
   if (isProd) launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
   else if (isStage)
-    launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-dbb3f007358e-staging.min.js';
+    launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
 
   window.exlm = window.exlm || {};
@@ -848,23 +881,6 @@ async function loadArticles() {
   }
 }
 
-function addMiniTocForArticlesPage(main) {
-  if (isArticlePage()) {
-    const [, articleBody] = main.children;
-    if (articleBody && !articleBody.querySelector('.mini-toc')) {
-      // Dynamically add mini-toc section for articles page
-      const miniTocWrapper = htmlToElement(`
-      <div class="mini-toc">
-        <div>
-          <div></div>
-        </div>
-      </div>
-      `);
-      articleBody.appendChild(miniTocWrapper);
-    }
-  }
-}
-
 function showBrowseBackgroundGraphic() {
   if (isBrowsePage()) {
     const main = document.querySelector('main');
@@ -997,7 +1013,7 @@ function handleHomePageHashes() {
  * @param {string} fallbackText
  * @returns
  */
-export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved) {
+export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, onRejected) {
   const span = document.createElement('span');
   span.setAttribute('data-placeholder', placeholderKey);
   span.setAttribute('data-placeholder-fallback', fallbackText);
@@ -1012,6 +1028,7 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved) 
     })
     .catch(() => {
       span.textContent = fallbackText;
+      if (onRejected) onRejected(span);
     });
   return span;
 }

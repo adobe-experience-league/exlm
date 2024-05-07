@@ -12,6 +12,8 @@ import {
 
 const { browseMoreProductsLink } = getConfig();
 
+const unwrapSpan = (span) => span.replaceWith(span.textContent);
+
 /**
  * Helper function thats returns a list of all products
  * - below <lang>/browse/<product-page>
@@ -112,6 +114,23 @@ function handleViewMoreClick(block, numFeaturedProducts) {
   setLinkVisibility(block, '.viewLessLink', true);
 }
 
+// Function to handle Toggle functionality for products/sub-pages
+function handleToggleClick(block) {
+  const toggleElements = block.querySelectorAll('.js-toggle:not(.expanded)');
+  if (toggleElements) {
+    toggleElements.forEach((toggleElement) => {
+      const subMenu = toggleElement.parentElement.querySelector('ul');
+      toggleElement.classList.add('expanded');
+      toggleElement.addEventListener('click', (event) => {
+        event.preventDefault();
+        subMenu.style.display = subMenu.style.display === 'block' || subMenu.style.display === '' ? 'none' : 'block';
+        toggleElement.classList.toggle('collapsed', subMenu.style.display === 'none');
+        toggleElement.classList.toggle('expanded', subMenu.style.display === 'block');
+      });
+    });
+  }
+}
+
 // Function to handle "View Less" click
 function handleViewLessClick(block, numFeaturedProducts) {
   const itemList = block.querySelectorAll('.products > li > ul > li');
@@ -180,9 +199,18 @@ async function displayAllProducts(block) {
         .querySelector('.viewLessLink')
         .addEventListener('click', () => handleViewLessClick(block, numFeaturedProducts));
     }
+
+    // Event listener for toggle
+    handleToggleClick(block);
   }
 }
 
+/**
+ *
+ * @param {HTMLElement} block
+ * @param {string} currentPagePath
+ * @param {*} results
+ */
 async function displayProductNav(block, currentPagePath, results) {
   // Find the parent page for product sub-pages
   const parentPage = results.find((page) => page.path === getPathUntilLevel(currentPagePath, 3));
@@ -201,17 +229,33 @@ async function displayProductNav(block, currentPagePath, results) {
     const htmlList = convertToULList(resultMultiMap);
     block.appendChild(htmlList);
     sortFirstLevelList('.subPages');
-    const li = block.querySelector('.browse-by > li');
+
+    // const subPagesBrowseByLinkText = `${placeholders.all} ${parentPageTitle} ${placeholders.content}`;
+    // block.querySelector(
+    //   '.browse-by > li',
+    // ).innerHTML = `<ul><li><a href="${pagePath}">${subPagesBrowseByLinkText}</a></li></ul>`;
+
+    const browseByLi = block.querySelector('.browse-by > li');
+    browseByLi.innerHTML = '';
     const browseBySpan = createPlaceholderSpan('browseBy', 'Browse By');
-    li.appendChild(browseBySpan);
+    browseByLi.append(browseBySpan);
+
     const ul = document.createElement('ul');
-    const li2 = document.createElement('li');
-    ul.appendChild(li2);
-    li2.appendChild(createPlaceholderSpan('all', 'All'));
-    li2.appendChild(document.createTextNode(' '));
-    li2.appendChild(htmlToElement(`<span>${parentPageTitle}</span>`));
-    li2.appendChild(document.createTextNode(' '));
-    li2.appendChild(createPlaceholderSpan('content', 'Content'));
+    const li = document.createElement('li');
+    ul.append(li);
+
+    const link = document.createElement('a');
+    link.setAttribute('href', pagePath);
+
+    const span = document.createElement('span');
+    span.appendChild(createPlaceholderSpan('all', 'All', unwrapSpan, unwrapSpan));
+    span.appendChild(document.createTextNode(` ${parentPageTitle} `));
+    span.appendChild(createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan));
+    link.appendChild(span);
+
+    li.append(link);
+
+    browseByLi.append(ul);
 
     // Hightlight the current page title in the left rail
     const targetElement = block.querySelector(`[href="${currentPagePath}"]`);
@@ -233,6 +277,9 @@ async function displayProductNav(block, currentPagePath, results) {
       await displayAllProducts(block);
     }
   }
+
+  // Event listener for toggle
+  handleToggleClick(block);
 }
 
 function displayManualNav(manualNav, block) {
@@ -273,11 +320,6 @@ export default async function decorate(block) {
 
   const theme = getMetadata('theme');
 
-  const label = getMetadata('og:title');
-
-  const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
-  const currentPagePath = getEDSLink(window.location.pathname);
-
   // For Browse All Page
   if (theme === 'browse-all') {
     // Browse By
@@ -306,6 +348,9 @@ export default async function decorate(block) {
 
   // For Browse Product Pages
   if (theme !== 'browse-all') {
+    const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
+    const currentPagePath = getEDSLink(window.location.pathname);
+    const label = getMetadata('og:title');
     // Add "Browse more products" link
     const browseMoreProducts = document.createElement('div');
     browseMoreProducts.classList.add('browse-more-products');
@@ -320,25 +365,24 @@ export default async function decorate(block) {
     const browseByUL = document.createElement('ul');
     browseByUL.classList.add('browse-by');
     const browseByLI = document.createElement('li');
-    const allSpan = createPlaceholderSpan('all', 'All');
-    const contentSpan = createPlaceholderSpan('content', 'Content');
-    const labelSpan = document.createElement('span');
+
     const browseBySpan = createPlaceholderSpan('browseBy', 'Browse By');
-    labelSpan.textContent = label;
     browseByLI.append(browseBySpan);
+    browseByUL.append(browseByLI);
+
     const ul = document.createElement('ul');
     const li = document.createElement('li');
+
     const activeSpan = document.createElement('span');
     activeSpan.classList.add('is-active');
+    activeSpan.append(createPlaceholderSpan('all', 'All', unwrapSpan, unwrapSpan));
+    activeSpan.append(` ${label} `);
+    activeSpan.append(createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan));
+
     ul.append(li);
     li.append(activeSpan);
-    activeSpan.append(allSpan);
-    activeSpan.appendTextNode(' ');
-    activeSpan.append(labelSpan);
-    activeSpan.appendTextNode(' ');
-    activeSpan.append(contentSpan);
+    browseByLI.append(ul);
 
-    browseByUL.append(browseByLI);
     block.append(browseByUL);
 
     // For Products and sub-pages
@@ -349,19 +393,5 @@ export default async function decorate(block) {
       await displayProductNav(block, currentPagePath, results);
     }
   }
-
-  // Toggle functionality for products/sub-pages
-  const toggleElements = block.querySelectorAll('.js-toggle');
-  if (toggleElements) {
-    toggleElements.forEach((toggleElement) => {
-      const subMenu = toggleElement.parentElement.querySelector('ul');
-      toggleElement.classList.add('expanded');
-      toggleElement.addEventListener('click', (event) => {
-        event.preventDefault();
-        subMenu.style.display = subMenu.style.display === 'block' || subMenu.style.display === '' ? 'none' : 'block';
-        toggleElement.classList.toggle('collapsed', subMenu.style.display === 'none');
-        toggleElement.classList.toggle('expanded', subMenu.style.display === 'block');
-      });
-    });
-  }
+  handleToggleClick(block);
 }

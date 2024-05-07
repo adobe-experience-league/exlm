@@ -33,6 +33,20 @@ mappings:
   - /content/exlm/global/zh-CN/top-products:/zh-hans/top-products.json
   - /content/exlm/global/zh-TW/top-products:/zh-hant/top-products.json
 
+  # articles-top-products
+  - /content/exlm/global/en/articles-top-products:/en/articles-top-products.json
+  - /content/exlm/global/fr/articles-top-products:/fr/articles-top-products.json
+  - /content/exlm/global/de/articles-top-products:/de/articles-top-products.json
+  - /content/exlm/global/es/articles-top-products:/es/articles-top-products.json
+  - /content/exlm/global/it/articles-top-products:/it/articles-top-products.json
+  - /content/exlm/global/nl/articles-top-products:/nl/articles-top-products.json
+  - /content/exlm/global/pt-BR/articles-top-products:/pt-br/articles-top-products.json
+  - /content/exlm/global/ko/articles-top-products:/ko/articles-top-products.json
+  - /content/exlm/global/ja/articles-top-products:/ja/articles-top-products.json
+  - /content/exlm/global/sv/articles-top-products:/sv/articles-top-products.json
+  - /content/exlm/global/zh-CN/articles-top-products:/zh-hans/articles-top-products.json
+  - /content/exlm/global/zh-TW/articles-top-products:/zh-hant/articles-top-products.json
+
   # placeholders
   - /content/exlm/global/en/placeholders:/en/placeholders.json
   - /content/exlm/global/fr/placeholders:/fr/placeholders.json
@@ -60,6 +74,20 @@ mappings:
   - /content/exlm.resource/sv/browse-index.json:/sv/browse-index.json
   - /content/exlm.resource/zh-CN/browse-index.json:/zh-hans/browse-index.json
   - /content/exlm.resource/zh-TW/browse-index.json:/zh-hant/browse-index.json
+
+  # article indices
+  - /content/exlm.resource/en/article-index.json:/en/article-index.json
+  - /content/exlm.resource/fr/article-index.json:/fr/article-index.json
+  - /content/exlm.resource/de/article-index.json:/de/article-index.json
+  - /content/exlm.resource/es/article-index.json:/es/article-index.json
+  - /content/exlm.resource/it/article-index.json:/it/article-index.json
+  - /content/exlm.resource/nl/article-index.json:/nl/article-index.json
+  - /content/exlm.resource/pt-BR/article-index.json:/pt-br/article-index.json
+  - /content/exlm.resource/ko/article-index.json:/ko/article-index.json
+  - /content/exlm.resource/ja/article-index.json:/ja/article-index.json
+  - /content/exlm.resource/sv/article-index.json:/sv/article-index.json
+  - /content/exlm.resource/zh-CN/article-index.json:/zh-hans/article-index.json
+  - /content/exlm.resource/zh-TW/article-index.json:/zh-hant/article-index.json
 
   # site indices - for sitemaps
   - /content/exlm.resource/en/query-index.json:/en/query-index.json

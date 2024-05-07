@@ -1,5 +1,7 @@
 import { debounce, fetchLanguagePlaceholders, isArticlePage } from '../../scripts/scripts.js';
 import { highlight, setLevels, hashFragment } from './utils.js';
+import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 function setPadding(arg = '') {
   const num = parseInt(arg.split('')[1], 10);
@@ -35,9 +37,11 @@ export default async function decorate() {
     const headingLevels = setLevels(
       levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined,
     );
-    const headers = Array.from(document.querySelectorAll(`${miniTocSectionEl} ${headingLevels}`)).filter(
-      headerExclusions,
-    );
+    const selectorQuery = headingLevels
+      .split(',')
+      .map((query) => `${miniTocSectionEl} ${query}`)
+      .join(',');
+    const headers = Array.from(document.querySelectorAll(selectorQuery)).filter(headerExclusions);
 
     if (headers.length > 1) {
       const html = headers.map(
@@ -51,8 +55,32 @@ export default async function decorate() {
         const tocHeadingDivNode = `<div><h2>${miniTOCHeading}</h2></div>`;
         ctx.innerHTML = `${tocHeadingDivNode}\n<div class='scrollable-div'><ul>${html.join('\n')}</ul></div>`;
 
-        const anchors = Array.from(ctx.querySelectorAll('a'));
         let lactive = false;
+        const anchors = Array.from(ctx.querySelectorAll('a'));
+
+        if (isArticlePage()) {
+          const anchorTexts = anchors.map((anchor) => {
+            const content = anchor.textContent;
+            return {
+              id: content,
+              value: anchor.href,
+              title: content,
+            };
+          });
+          // eslint-disable-next-line no-new
+          new Dropdown(ctx, 'Summary', anchorTexts, DROPDOWN_VARIANTS.ANCHOR); // Initialise mini-toc dropdown for mobile view
+
+          window.addEventListener('hashchange', () => {
+            const { hash } = window.location;
+            const matchFound = anchorTexts.find((a) => {
+              const [, linkHash] = a.value.split('#');
+              return `#${linkHash}` === hash;
+            });
+            if (matchFound) {
+              Dropdown.closeAllDropdowns();
+            }
+          });
+        }
 
         if (anchors.length > 0) {
           anchors.forEach((i, idx) => {
@@ -107,8 +135,8 @@ export default async function decorate() {
               // scrollableDiv.style.maxHeight = `${visibleAnchorsCount * anchorHeight}px`;
             }
           }
-
           window.addEventListener('scroll', () => debounce('scroll', () => highlight(), 16));
+          decorateIcons(ctx);
         }
       });
     } else {
