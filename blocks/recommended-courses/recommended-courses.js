@@ -60,11 +60,13 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
+  const languageCode = await getLanguageCode();
+
   const convertPlaceholdersToLinks = (inputText, url) => inputText.replace(/\$\{([^}]+)\}/g, `<a href="${url}">$1</a>`);
 
   const recommendedCoursesInterestContent = () => {
     const recommendedCoursesNoResultsElement = block.querySelector('.browse-card-no-results');
-    const profileurl = `${window.location.protocol}//${window.location.host}/home#dashboard/profile`;
+    const profileurl = `${window.location.protocol}//${window.location.host}/home${languageCode === 'en' ? '' : `?lang=${languageCode}`}#dashboard/profile`;
     const profileText = convertPlaceholdersToLinks(
       placeholders?.recommendedCoursesInterestsLabel ||
         `Please update your profile interests to receive course recommendations.<br><br> \${Click here to update.}`,
