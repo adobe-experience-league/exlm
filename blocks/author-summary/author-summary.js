@@ -3,7 +3,14 @@ import { fetchAuthorBio } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   const authorSummaryContainer = document.createElement('div');
-  const link = getMetadata('author-bio-page');
+  let link = getMetadata('author-bio-page');
+  if (
+    link &&
+    (document.documentElement.classList.contains('adobe-ue-edit') ||
+      document.documentElement.classList.contains('adobe-ue-preview'))
+  ) {
+    link = `${link}.html`;
+  }
   if (link) {
     fetchAuthorBio(link).then((authorInfo) => {
       if (authorInfo.authorImage) {
