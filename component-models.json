@@ -1118,27 +1118,8 @@
     ]
   },
   {
-    "id": "author-summary",
-    "fields": [
-      {
-        "component": "aem-content",
-        "valueType": "string",
-        "name": "author-bio-page",
-        "value": "",
-        "label": "Author"
-      }
-    ]
-  },
-  {
     "id": "article-marquee",
     "fields": [
-      {
-        "component": "aem-content",
-        "valueType": "string",
-        "name": "author-bio-page",
-        "value": "",
-        "label": "Author"
-      },
       {
         "component": "text",
         "valueType": "string",
