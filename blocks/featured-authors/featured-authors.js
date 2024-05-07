@@ -38,15 +38,13 @@ export async function fetchAuthorBio(link) {
  *  Organises the DOM structure for one featured author info block
  */
 async function setAuthorInfo(authorElem) {
-  // get p element containg link to author bio
-  const linkPar = authorElem.firstElementChild;
+  // get links
+  const links = authorElem.querySelectorAll('a');
   // load author bio
-  const authorInfo = await fetchAuthorBio(linkPar.firstElementChild.href);
-  // remove the bio link p element
-  linkPar.remove();
+  const authorInfo = await fetchAuthorBio(links[0].href);
   // get a ref to cta link
-  const cta = authorElem?.firstElementChild?.firstElementChild;
-  if (cta) authorElem.firstElementChild.remove();
+  const cta = links[1] ?? null;
+  authorElem.innerHTML = '';
   // set class
   authorElem.classList.add('author');
 
@@ -116,11 +114,11 @@ export default async function decorate(block) {
     : placeholders.articleMarqueeExternalTag;
 
   // check if featured authors have bio links
-  if (author1.children.length > 1) {
+  if (author1.children?.length >= 1) {
     setAuthorInfo(author1);
   }
 
-  if (author2.children.length > 1) {
+  if (author2.children?.length >= 1) {
     setAuthorInfo(author2);
   }
 }

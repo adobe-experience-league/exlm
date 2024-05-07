@@ -2780,6 +2780,9 @@
         "label": "Author 1 Bio Page"
       },
       {
+        "condition": {
+          "!==": [{ "var": "author1_bio" }, ""]
+        },
         "component": "text",
         "name": "author1_cta",
         "value": "",
@@ -2787,6 +2790,9 @@
         "valueType": "string"
       },
       {
+        "condition": {
+          "!==": [{ "var": "author1_bio" }, ""]
+        },
         "component": "text",
         "name": "author1_ctaText",
         "value": "",
@@ -2801,6 +2807,9 @@
         "label": "Author 2 Bio Page"
       },
       {
+        "condition": {
+          "!==": [{ "var": "author2_bio" }, ""]
+        },
         "component": "text",
         "name": "author2_cta",
         "value": "",
@@ -2808,6 +2817,9 @@
         "valueType": "string"
       },
       {
+        "condition": {
+          "!==": [{ "var": "author2_bio" }, ""]
+        },
         "component": "text",
         "name": "author2_ctaText",
         "value": "",
