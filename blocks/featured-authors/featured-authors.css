@@ -245,7 +245,7 @@
 }
 
 /* ------- desktop ------- */
-@media (min-width: 1304px) {
+@media (min-width: 1200px) {
   /* for tablet change grid layout */
   .featured-authors.block {
     grid-template-columns: auto 1fr 1fr;
