@@ -29,6 +29,7 @@ export async function fetchAuthorBio(link) {
       };
     })
     .catch((error) => {
+      // eslint-disable-next-line no-console
       console.error(error);
     });
 }
