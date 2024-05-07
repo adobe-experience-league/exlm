@@ -1,7 +1,7 @@
 // Importing constants and modules
 import { RECOMMENDED_COURSES_CONSTANTS } from '../../scripts/browse-card/browse-cards-constants.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import BrowseCardsPathsAdaptor from '../../scripts/browse-card/browse-cards-paths-adaptor.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
@@ -60,13 +60,14 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
-  const languageCode = await getLanguageCode();
+  const languageCode = (await getLanguageCode()) || 'en';
+  const { cdnOrigin } = getConfig();
 
   const convertPlaceholdersToLinks = (inputText, url) => inputText.replace(/\$\{([^}]+)\}/g, `<a href="${url}">$1</a>`);
 
   const recommendedCoursesInterestContent = () => {
     const recommendedCoursesNoResultsElement = block.querySelector('.browse-card-no-results');
-    const profileurl = `${window.location.protocol}//${window.location.host}/home${languageCode === 'en' ? '' : `?lang=${languageCode}`}#dashboard/profile`;
+    const profileurl = `${cdnOrigin}/home?lang=${languageCode}#dashboard/profile`;
     const profileText = convertPlaceholdersToLinks(
       placeholders?.recommendedCoursesInterestsLabel ||
         `Please update your profile interests to receive course recommendations.<br><br> \${Click here to update.}`,
