@@ -170,7 +170,13 @@ function createBreadcrumb(container) {
 export default async function ArticleMarquee(block) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
   const [readTime, headingType] = block.querySelectorAll(':scope div > div');
-  const link = getMetadata('author-bio-page');
+  let link = getMetadata('author-bio-page');
+  if (
+    (link && document.documentElement.classList.contains('adobe-ue-edit')) ||
+    document.documentElement.classList.contains('adobe-ue-preview')
+  ) {
+    link = `${link}.html`;
+  }
 
   const articleDetails = `<div class="article-marquee-info-container"><div class="article-info">
                                 <div class="breadcrumb"></div>
