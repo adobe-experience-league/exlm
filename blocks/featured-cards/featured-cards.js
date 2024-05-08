@@ -7,8 +7,6 @@ import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-toolt
 import { CONTENT_TYPES, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { roleOptions, solutions } from '../browse-filters/browse-filter-utils.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
-// eslint-disable-next-line import/no-cycle
-const ffetchModulePromise = import('../../scripts/ffetch.js');
 
 let placeholders = {};
 try {
@@ -81,7 +79,7 @@ const updateBrowseMoreWithSelectedFilters = async (block, filterType, filterValu
         delete objParams[browseFilterType];
       }
       const params = new URLSearchParams(objParams);
-      const finalHref = browseMoreLink + '#' + params.toString();
+      const finalHref = `${browseMoreLink}#${params.toString()}`;
       aTag.href = finalHref;
     }
   }

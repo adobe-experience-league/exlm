@@ -1,5 +1,6 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { COMMUNITY_SEARCH_FACET } from '../../scripts/browse-card/browse-cards-constants.js';
+
 const ffetchModulePromise = import('../../scripts/ffetch.js');
 
 const SUB_FACET_MAP = {
