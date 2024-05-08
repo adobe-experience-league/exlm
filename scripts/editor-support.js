@@ -34,17 +34,17 @@ function restoreState(newBlock, state) {
 }
 
 // set the filter for an UE editable
-function setUEFilter(element,filter) {
+function setUEFilter(element, filter) {
   element.dataset.aueFilter = filter;
 }
 
 // set the model for a UE editable
-function setUEModel(element,model) {
+function setUEModel(element, model) {
   element.dataset.aueModel = model;
-} 
+}
 
 // set the behavior for an UE editable
-function setUEBehavior(element,behavior) {
+function setUEBehavior(element, behavior) {
   // eslint-disable-next-line default-case
   switch (behavior) {
     // block stays editable but can't be deleted or moved, visible in content tree
@@ -62,29 +62,28 @@ function setUEBehavior(element,behavior) {
 }
 
 /**
- * See: 
+ * See:
  * https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/attributes-types#data-properties
  */
 function updateUEInstrumentation() {
-
   const main = document.querySelector('main');
 
   // ----- if browse page, identified by theme
   if (document.querySelector('body[class^=browse-]')) {
     // if there is already a editable browse rail on the page
-    const browseRailBlock = main.querySelector('div.browse-rail.block[data-aue-resource]')
+    const browseRailBlock = main.querySelector('div.browse-rail.block[data-aue-resource]');
     if (browseRailBlock) {
       // only more default sections can be added
-      setUEFilter(main,'main');
+      setUEFilter(main, 'main');
       // the browse rail block can only be edited
-      setUEBehavior(browseRailBlock,'editable-only');
+      setUEBehavior(browseRailBlock, 'editable-only');
     } else {
-    // allow adding default sections and browse rail section
-    setUEFilter(main,'main-browse');
+      // allow adding default sections and browse rail section
+      setUEFilter(main, 'main-browse');
     }
     // update available blocks for default sections
     main.querySelectorAll('.section:not(.browse-rail-section)').forEach((elem) => {
-      setUEFilter(elem,'section-browse');
+      setUEFilter(elem, 'section-browse');
     });
     return;
   }
@@ -92,48 +91,47 @@ function updateUEInstrumentation() {
   // ----- if article page, identified by theme
   if (document.querySelector('body[class^=articles]')) {
     // article page has a dedicated set of page metadata settings
-    setUEModel(document.body,'article-page-metadata');
+    setUEModel(document.body, 'article-page-metadata');
     // update available sections
-    setUEFilter(main,'main-article');
+    setUEFilter(main, 'main-article');
     // update available blocks for article content sections
     const articleContentSection = main.querySelector('.article-content-section');
     if (articleContentSection) {
-      setUEFilter(articleContentSection,'article-content-section'); 
-    } 
+      setUEFilter(articleContentSection, 'article-content-section');
+    }
     // make sure article marquee block is editable only
     const articleMarqueeBlock = main.querySelector('.article-marquee');
     if (articleMarqueeBlock) {
-      setUEBehavior(articleMarqueeBlock,'editable-only'); 
+      setUEBehavior(articleMarqueeBlock, 'editable-only');
     }
     // hide the mini-toc from editing
     const miniToc = main.querySelector('.mini-toc');
     if (miniToc) {
-      setUEBehavior(miniToc,'static');
+      setUEBehavior(miniToc, 'static');
     }
     return;
   }
 
-  // ----- if author bio page, identified by path segment 
+  // ----- if author bio page, identified by path segment
   if (document.location.pathname.includes('/articles/authors/')) {
     // update available sections
-    setUEFilter(main,'main-empty');
+    setUEFilter(main, 'main-empty');
     // update the only available default section
     const section = main.querySelector('.section');
     // if there is already an author bio block
     const authorBioBlock = main.querySelector('div.author-bio.block');
     if (authorBioBlock) {
       // no more blocks selectable
-      setUEFilter(section,'section-empty');
+      setUEFilter(section, 'section-empty');
       // you cant delete the bio block anymore
-       setUEBehavior(authorBioBlock,'editable-only');
+      setUEBehavior(authorBioBlock, 'editable-only');
     } else {
       // only allow adding author bio blocks
-      setUEFilter(section,'section-author-bio');
+      setUEFilter(section, 'section-author-bio');
     }
     // make the only available section editable only
-    setUEBehavior(section,'editable-only');
+    setUEBehavior(section, 'editable-only');
   }
-
 }
 
 /**

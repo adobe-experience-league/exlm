@@ -13,7 +13,7 @@
   },
   {
     "id": "main-article",
-    "components": ["article-content-section", "article-header-section","section"]
+    "components": ["article-content-section", "article-header-section", "section"]
   },
   {
     "id": "section",
@@ -47,8 +47,7 @@
   },
   {
     "id": "section-empty",
-    "components": [
-    ]
+    "components": []
   },
   {
     "id": "section-browse",
@@ -82,9 +81,7 @@
   },
   {
     "id": "section-author-bio",
-    "components": [
-      "author-bio"
-    ]
+    "components": ["author-bio"]
   },
   {
     "id": "article-content-section",
