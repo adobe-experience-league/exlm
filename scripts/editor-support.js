@@ -71,8 +71,14 @@ function updateUEInstrumentation() {
 
   // -- if browse page, identified by theme
   if (document.querySelector('body[class^=browse-]')) {
-    // update available sections
+    // if there is already a editable browse rail on the page
+    if (main.querySelector('.browse-rail-section[data-aue-resource]')) {
+      // only default sections can be added
+      setUEFilter(main,'main');
+    } else {
+    // allow adding default sections and browse rail section
     setUEFilter(main,'main-browse');
+    }
     // update available blocks for default sections
     main.querySelectorAll('.section').forEach((elem) => {
       setUEFilter(elem,'section-browse');
