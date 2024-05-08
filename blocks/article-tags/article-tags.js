@@ -8,7 +8,7 @@ function formatPageMetaTags(inputString) {
     .map((part) => part.trim());
 }
 
-export function decodeArticlePageMetaTags() {
+function decodeArticlePageMetaTags() {
   const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
   const roleMeta = document.querySelector(`meta[name="role"]`);
   const levelMeta = document.querySelector(`meta[name="level"]`);
@@ -51,7 +51,7 @@ export default function decorate(block) {
     document.documentElement.classList.contains('adobe-ue-edit') ||
     document.documentElement.classList.contains('adobe-ue-preview')
   ) {
-    // decodeArticlePageMetaTags();
+    decodeArticlePageMetaTags();
   }
   const solutions = getMetadata('coveo-solution');
   const roles = getMetadata('role');
