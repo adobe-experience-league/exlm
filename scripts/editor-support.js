@@ -44,7 +44,7 @@ function setUEModel(element,model) {
 } 
 
 // set the behavior for an UE editable
-function setBehavior(element,behavior) {
+function setUEBehavior(element,behavior) {
   // eslint-disable-next-line default-case
   switch (behavior) {
     // block stays editable but can't be deleted or moved, visible in content tree
@@ -77,7 +77,7 @@ function updateUEInstrumentation() {
       // only more default sections can be added
       setUEFilter(main,'main');
       // the browse rail block can only be edited
-      setBehavior(browseRailBlock,'editable-only');
+      setUEBehavior(browseRailBlock,'editable-only');
     } else {
     // allow adding default sections and browse rail section
     setUEFilter(main,'main-browse');
@@ -86,19 +86,31 @@ function updateUEInstrumentation() {
     main.querySelectorAll('.section:not(.browse-rail-section)').forEach((elem) => {
       setUEFilter(elem,'section-browse');
     });
+    return;
   }
 
   // ----- if article page, identified by theme
-  if (document.querySelector('body[class^=article]')) {
+  if (document.querySelector('body[class^=articles]')) {
     // article page has a dedicated set of page metadata settings
     setUEModel(document.body,'article-page-metadata');
     // update available sections
     setUEFilter(main,'main-article');
+    // update available blocks for article content sections
+    const articleContentSection = main.querySelector('.article-content-section');
+    if (articleContentSection) {
+      setUEFilter(articleContentSection,'article-content-section'); 
+    } 
+    // make sure article marquee block is editable only
+    const articleMarqueeBlock = main.querySelector('.article-marquee');
+    if (articleMarqueeBlock) {
+      setUEBehavior(articleMarqueeBlock,'editable-only'); 
+    }
     // hide the mini-toc from editing
     const miniToc = main.querySelector('.mini-toc');
     if (miniToc) {
-      setBehavior(miniToc,'static');
+      setUEBehavior(miniToc,'static');
     }
+    return;
   }
 
   // ----- if author bio page, identified by path segment 
@@ -113,14 +125,15 @@ function updateUEInstrumentation() {
       // no more blocks selectable
       setUEFilter(section,'section-empty');
       // you cant delete the bio block anymore
-       setBehavior(authorBioBlock,'editable-only');
+       setUEBehavior(authorBioBlock,'editable-only');
     } else {
       // only allow adding author bio blocks
       setUEFilter(section,'section-author-bio');
     }
-    // make the only available section uneditable
-    setBehavior(section,'editable-only');
+    // make the only available section editable only
+    setUEBehavior(section,'editable-only');
   }
+
 }
 
 /**
