@@ -172,7 +172,7 @@ const handleSolutionsService = async () => {
 
 export const solutions = await handleSolutionsService();
 
-// solutions (aka products) object of browse-filters has more properties than the solutions of feature-cards 
+// solutions (aka products) object of browse-filters has more properties than the solutions of feature-cards
 const solutionsList = [];
 solutions.forEach((solution) => {
   solutionsList.push({
