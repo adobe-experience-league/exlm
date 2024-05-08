@@ -33,45 +33,51 @@ function restoreState(newBlock, state) {
   }
 }
 
-function updateUEFilters() {
+/**
+ * See: 
+ * https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/attributes-types#data-properties
+ */
+function updateUEInstrumentation() {
 
   const main = document.querySelector('main');
 
   // -- if browse page, identified by theme
   if (document.querySelector('body[class^=browse-]')) {
     // update available sections
-    main.setAttribute('data-aue-filter', 'main-browse');
+    main.dataset.aueFilter = 'main-browse';
     // update available blocks for default sections
     main.querySelectorAll('.section').forEach((elem) => {
-      elem.setAttribute('data-aue-filter', 'section-browse')
+      elem.dataset.aueFilter = 'section-browse';
     });
   }
 
   // -- if article page, identified by theme
   if (document.querySelector('body[class^=article]')) {
+    // article page has a dedicated set of page metadata settings
+    document.body.dataset.aueModel = 'article-page-metadata';
     // update available sections
-    main.setAttribute('data-aue-filter', 'main-article');
+    main.dataset.aueFilter = 'main-article';
   }
 
   // -- if author bio, identified by path segment 
   if (document.location.pathname.includes('/articles/authors/')) {
     // update available sections
-    main.setAttribute('data-aue-filter', 'main-empty');
-    // update the only available default sections filter 
+    main.dataset.aueFilter = 'main-empty';
+    // update the only available default section
     const section = main.querySelector('.section');
     // if there is already an author bio block
     const authorBioBlock = main.querySelector('div.author-bio.block');
     if (authorBioBlock) {
       // no more blocks selectable
-      section.setAttribute('data-aue-filter','section-empty');
+      section.dataset.aueFilter = 'section-empty';
       // you cant delete the bio block anymore
-      authorBioBlock.removeAttribute('data-aue-type');
-      authorBioBlock.removeAttribute('data-aue-behavior');
+      delete authorBioBlock.dataset.aueType;
+      delete authorBioBlock.dataset.aueBehavior;
     } else {
-      section.setAttribute('data-aue-filter', 'section-author-bio');
+      section.dataset.aueFilter = 'section-author-bio';
     }
     // make the only available section uneditable
-    main.querySelector('.section').removeAttribute('data-aue-behavior');
+    delete main.querySelector('.section').dataset.aueBehavior;
   }
 }
 
@@ -199,7 +205,7 @@ function attachEventListners(main) {
         event.stopPropagation();
         const applied = await applyChanges(event);
         if (applied) {
-          updateUEFilters();
+          updateUEInstrumentation();
         } else {
           window.location.reload();
         }
@@ -235,4 +241,4 @@ if (signUpBlock) {
 }
 
 // update UE component filters on page load
-updateUEFilters();
+updateUEInstrumentation();

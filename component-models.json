@@ -2407,6 +2407,11 @@
   {
     "id": "page-metadata",
     "fields": [
+    ]
+  },
+  {
+    "id": "article-page-metadata",
+    "fields": [
       {
         "component": "select",
         "valueType": "string",
