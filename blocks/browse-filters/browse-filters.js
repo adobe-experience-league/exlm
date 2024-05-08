@@ -48,9 +48,10 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-const theme = getMetadata('theme').trim();
+// const theme = getMetadata('theme').trim();
+const theme = 'browse-all'; // temporary due to metadata.json publish issue
 // const isBrowseProdPage = theme === 'browse-product';
-const isBrowseProdPage = true;  // temporary. to do: will sort theme logic later 
+//const isBrowseProdPage = true;  // temporary. to do: will sort theme logic later 
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
@@ -147,7 +148,9 @@ function tagsUpdateHandler(block) {
   updateClearFilterStatus(block);
 }
 
-if (isBrowseProdPage) dropdownOptions.push(productOptions);  // temporary. to do: will sort theme logic later 
+if (theme === 'browse-all') dropdownOptions.push(productOptions);
+if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
+//if (isBrowseProdPage) dropdownOptions.push(productOptions);  // temporary. to do: will sort theme logic later 
 
 /**
  * Generate HTML for a single checkbox item.
@@ -550,7 +553,7 @@ function handleUriHash() {
         const ddObject = getObjectById(dropdownOptions, keyName);
         const { name } = ddObject;
         facetValues.forEach((facetValueString) => {
-          const [facetValue] = facetValueString.split('|');
+          const [facetValue] = decodeURIComponent(facetValueString).split('|');
           const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
           if (!inputEl.checked) {
             const label = inputEl?.dataset.label || '';

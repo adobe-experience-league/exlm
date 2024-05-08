@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, toPascalCase, fetchLanguagePlaceholders, getLanguageCode } from '../../scripts/scripts.js';
+import { htmlToElement, toPascalCase, fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
@@ -74,8 +74,9 @@ const updateParamValues = (filterValue) => {
 
 /* EXLM-1305: Function to add/update parameters of Browse More link */
 const updateBrowseMoreWithSelectedFilters = async (block, filterType, filterValue) => {
-  const languageCode = await getLanguageCode();
-  const browseMoreLink = `\\${languageCode}\\browse`;
+  // const languageCode = await getLanguageCode();
+  const { lang } = getPathDetails();
+  const browseMoreLink = `/${lang}/browse`;   // `\\${lang}\\browse`;
   const browseFilterType = `f-el_${filterType}`;
   const browseMore = block.querySelector('.browse-cards-block-view');
   let queryParams;
@@ -101,10 +102,10 @@ const updateBrowseMoreWithSelectedFilters = async (block, filterType, filterValu
         objParams = Object.assign(...queryParams.split('&').map(s => s.split('='))
                                          .map(([k, v]) => ({ [k]: v }))
         );
-        Object.assign(objParams, { [browseFilterType] : filterValue },);
+        Object.assign(objParams, { [browseFilterType] : encodeURIComponent(filterValue) },);
       } else { 
         //Object.create(objParams);
-        Object.assign(objParams, { [browseFilterType] : filterValue },);
+        Object.assign(objParams, { [browseFilterType] : encodeURIComponent(filterValue) },);
       }
 
       if (filterValue === DEFAULT_OPTIONS.ROLE || filterValue === DEFAULT_OPTIONS.PRODUCT) {
@@ -183,15 +184,6 @@ export default async function decorate(block) {
     noOfResults,
   };
 
-  if (roleQueryParamValue.length > 0 && roleQueryParamValue[0] !== DEFAULT_OPTIONS.ROLE) {
-    param.role = [roleQueryParamValue];
-    roleDropdown.updateDropdownValue(roleQueryParamValue);
-  }
-
-  if (productQueryParamValue.length > 0 && productQueryParamValue[0] !== DEFAULT_OPTIONS.PRODUCT) {
-    param.product = [productQueryParamValue];
-    productDropdown.updateDropdownValue(productQueryParamValue);
-  }
 
   // Function to filter and organize results based on content types
   const filterResults = (data, contentTypesToFilter) => {
@@ -320,6 +312,21 @@ export default async function decorate(block) {
   `);
   block.appendChild(contentDiv);
   block.appendChild(linkDiv);
+
+  if (roleQueryParamValue.length > 0 && roleQueryParamValue[0] !== DEFAULT_OPTIONS.ROLE) {
+    param.role = [roleQueryParamValue];
+    roleDropdown.updateDropdownValue(roleQueryParamValue);
+    // EXLM-1305: Update View more url parameters
+    updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.ROLE.toLowerCase(), roleQueryParamValue);
+  }
+
+  if (productQueryParamValue.length > 0 && productQueryParamValue[0] !== DEFAULT_OPTIONS.PRODUCT) {
+    param.product = [productQueryParamValue];
+    productDropdown.updateDropdownValue(productQueryParamValue);
+    // EXLM-1305: Update View more url parameters
+    updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.PRODUCT.toLowerCase(), productQueryParamValue);
+  }
+
 
   function fetchNewCards() {
     [...contentDiv.children].forEach((cards) => {
