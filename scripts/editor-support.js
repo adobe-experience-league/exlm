@@ -58,9 +58,9 @@ function updateUEFilters() {
     // update available sections
     main.setAttribute('data-aue-filter', 'main-empty');
     // update the only available default sections filter 
-    const authorBioBlock = main.querySelector('div.author-bio.block');
     const section = main.querySelector('.section');
     // if there is already an author bio block
+    const authorBioBlock = main.querySelector('div.author-bio.block');
     if (authorBioBlock) {
       // no more blocks selectable
       section.setAttribute('data-aue-filter','section-empty');
