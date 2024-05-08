@@ -5,8 +5,10 @@ import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/brow
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { CONTENT_TYPES, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
-import { roleOptions, solutions } from '../browse-filters/browse-filter-utils.js';
+import { roleOptions } from '../browse-filters/browse-filter-utils.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
+// eslint-disable-next-line import/no-cycle
+const ffetchModulePromise = import('../../scripts/ffetch.js');
 
 let placeholders = {};
 try {
@@ -23,6 +25,30 @@ const DEFAULT_OPTIONS = Object.freeze({
 
 const defaultRoleLabel = placeholders?.featuredCardRoleLabel || DEFAULT_OPTIONS.ROLE;
 const defaultProductLabel = placeholders?.featuredCardProductLabel || DEFAULT_OPTIONS.PRODUCT;
+
+// Helper function thats returns a list of all Featured Card Products //
+async function getFeaturedCardSolutions() {
+  const ffetch = (await ffetchModulePromise).default;
+  // Load the Featured Card Solution list
+  const solutionList = await ffetch(`/featured-card-products.json`).all();
+  // Gets Values from Column Solution in Featured Card Solution list
+  const solutionValues = solutionList.map((solution) => solution.Solution);
+  return solutionValues;
+}
+
+const handleSolutionsService = async () => {
+  const solutions = await getFeaturedCardSolutions();
+
+  if (!solutions) {
+    throw new Error('An error occurred');
+  }
+
+  if (solutions?.length) {
+    return solutions;
+  }
+
+  return [];
+};
 
 /* Function to update the browser's URL with the selected filter using query parameters */
 const updateURLWithSelectedFilters = (filterType, filterValue) => {
@@ -118,6 +144,7 @@ export default async function decorate(block) {
 
   block.appendChild(headerDiv);
 
+  const solutions = await handleSolutionsService();
   const solutionsList = [];
   solutions.forEach((solution) => {
     solutionsList.push({
