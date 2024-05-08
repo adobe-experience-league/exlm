@@ -172,8 +172,9 @@ export default async function ArticleMarquee(block) {
   const [readTime, headingType] = block.querySelectorAll(':scope div > div');
   let link = getMetadata('author-bio-page');
   if (
-    (link && document.documentElement.classList.contains('adobe-ue-edit')) ||
-    document.documentElement.classList.contains('adobe-ue-preview')
+    link &&
+    (document.documentElement.classList.contains('adobe-ue-edit') ||
+      document.documentElement.classList.contains('adobe-ue-preview'))
   ) {
     link = `${link}.html`;
   }
