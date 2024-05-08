@@ -101,6 +101,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       contentType,
       badgeTitle: CONTENT_TYPES[contentType.toUpperCase()]?.LABEL,
       thumbnail:
+        raw?.exl_thumbnail ||
         (raw?.video_url &&
           (raw.video_url.includes('?')
             ? raw.video_url.replace(/\?.*/, '?format=jpeg')
@@ -108,7 +109,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
         '',
       product: products && removeProductDuplicates(products),
       title: parentResult?.title || title || '',
-      description: parentResult?.excerpt || excerpt || '',
+      description: parentResult?.excerpt || excerpt || raw?.description || raw?.exl_description || '',
       tags,
       copyLink: url,
       viewLink: url,
