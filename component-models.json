@@ -1118,27 +1118,8 @@
     ]
   },
   {
-    "id": "author-summary",
-    "fields": [
-      {
-        "component": "aem-content",
-        "valueType": "string",
-        "name": "author-bio-page",
-        "value": "",
-        "label": "Author"
-      }
-    ]
-  },
-  {
     "id": "article-marquee",
     "fields": [
-      {
-        "component": "aem-content",
-        "valueType": "string",
-        "name": "author-bio-page",
-        "value": "",
-        "label": "Author"
-      },
       {
         "component": "text",
         "valueType": "string",
@@ -2457,81 +2438,12 @@
         ]
       },
       {
-        "component": "multiselect",
+        "component": "aem-tag",
         "valueType": "string",
         "name": "coveo-solution",
         "label": "Coveo Solution(s)",
-        "description": "Sets the Coveo Solution(s) in page meta.",
-        "options": [
-          {
-            "name": "AEM Assets",
-            "value": "AEM Assets"
-          },
-          {
-            "name": "AEM Forms",
-            "value": "AEM Forms"
-          },
-          {
-            "name": "AEM Sites",
-            "value": "AEM Sites"
-          },
-          {
-            "name": "Analytics",
-            "value": "Analytics"
-          },
-          {
-            "name": "Audience Manager",
-            "value": "Audience Manager"
-          },
-          {
-            "name": "Campaign Classic",
-            "value": "Campaign Classic"
-          },
-          {
-            "name": "Campaign Standard",
-            "value": "Campaign Standard"
-          },
-          {
-            "name": "Commerce",
-            "value": "Commerce"
-          },
-          {
-            "name": "Content Supply Chain",
-            "value": "Content Supply Chain"
-          },
-          {
-            "name": "Customer Journey Analytics",
-            "value": "Customer Journey Analytics"
-          },
-          {
-            "name": "Experience Cloud Integrations",
-            "value": "Experience Cloud Integrations"
-          },
-          {
-            "name": "Experience Platform",
-            "value": "Experience Platform"
-          },
-          {
-            "name": "Journey Optimizer",
-            "value": "Journey Optimizer"
-          },
-          {
-            "name": "Marketo Engage",
-            "value": "Marketo Engage"
-          },
-          {
-            "name": "Real-Time CDP",
-            "value": "Real-Time CDP"
-          },
-          {
-            "name": "Target",
-            "value": "Target"
-          },
-          {
-            "name": "Workfront",
-            "value": "Workfront"
-          }
-        ]
+        "rootPath": "/content/cq:tags/exl/solution",
+        "description": "Sets the Coveo Solution(s) in page meta."
       },
       {
         "component": "text",
@@ -2541,50 +2453,20 @@
         "label": "Author Bio page"
       },
       {
-        "component": "multiselect",
+        "component": "aem-tag",
         "name": "role",
         "label": "Role(s)",
         "valueType": "string",
-        "description": "Sets the role(s) in page meta.",
-        "options": [
-          {
-            "name": "Admin",
-            "value": "Admin"
-          },
-          {
-            "name": "Developer",
-            "value": "Developer"
-          },
-          {
-            "name": "Leader",
-            "value": "Leader"
-          },
-          {
-            "name": "User",
-            "value": "User"
-          }
-        ]
+        "rootPath": "/content/cq:tags/exl/role",
+        "description": "Sets the role(s) in page meta."
       },
       {
-        "component": "multiselect",
+        "component": "aem-tag",
         "name": "level",
         "label": "Experience Level(s)",
         "valueType": "string",
-        "description": "Sets the level(s) in page meta.",
-        "options": [
-          {
-            "name": "Beginner",
-            "value": "Beginner"
-          },
-          {
-            "name": "Intermediate",
-            "value": "Intermediate"
-          },
-          {
-            "name": "Experienced",
-            "value": "Experienced"
-          }
-        ]
+        "rootPath": "/content/cq:tags/exl/experience-level",
+        "description": "Sets the level(s) in page meta."
       }
     ]
   },
@@ -2766,6 +2648,188 @@
           {
             "name": "H6",
             "value": "h6"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "featured-authors",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "img",
+        "label": "Image"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imgAlt",
+        "value": "",
+        "label": "Image Description",
+        "description": "A descriptive text of the image."
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Image Border and Alignment",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 2,
+        "options": [
+          {
+            "name": "Content Source",
+            "children": [
+              {
+                "name": "Adobe",
+                "value": "adobe"
+              },
+              {
+                "name": "External",
+                "value": "External"
+              }
+            ]
+          },
+          {
+            "name": "Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "left"
+              },
+              {
+                "name": "Right",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "authors_heading",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "authors_headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "authors_description",
+        "value": "",
+        "label": "Description"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "author1_bio",
+        "value": "",
+        "label": "Author 1 Bio Page"
+      },
+      {
+        "condition": {
+          "!==": [{ "var": "author1_bio" }, ""]
+        },
+        "component": "text",
+        "name": "author1_cta",
+        "value": "",
+        "label": "Author 1 CTA URL",
+        "valueType": "string"
+      },
+      {
+        "condition": {
+          "!==": [{ "var": "author1_bio" }, ""]
+        },
+        "component": "text",
+        "name": "author1_ctaText",
+        "value": "",
+        "label": "Author 1 CTA Text",
+        "valueType": "string"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "author2_bio",
+        "value": "",
+        "label": "Author 2 Bio Page"
+      },
+      {
+        "condition": {
+          "!==": [{ "var": "author2_bio" }, ""]
+        },
+        "component": "text",
+        "name": "author2_cta",
+        "value": "",
+        "label": "Author 2 CTA URL",
+        "valueType": "string"
+      },
+      {
+        "condition": {
+          "!==": [{ "var": "author2_bio" }, ""]
+        },
+        "component": "text",
+        "name": "author2_ctaText",
+        "value": "",
+        "label": "Author 2 CTA Text",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "social-share",
+    "fields": [
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "social network",
+        "label": "Select Social Network",
+        "description": "Select Social Network",
+        "options": [
+          {
+            "name": "Facebook",
+            "value": "facebook"
+          },
+          {
+            "name": "Twitter",
+            "value": "twitter"
+          },
+          {
+            "name": "LinkedIn",
+            "value": "linkedin"
           }
         ]
       }

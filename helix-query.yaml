@@ -181,6 +181,8 @@ indices:
   article-en: &base-article
     include:
       - /en/articles/**
+    exclude:
+      - /en/articles/authors/**
     target: /en/article-index.json
     properties:
       title:
@@ -199,23 +201,23 @@ indices:
         select: head > meta[name="robots"]
         value: attribute(el, "content")
       authorBioPage:
-        select: head > meta[property="author-bio-page"]
+        select: head > meta[name="author-bio-page"]
         value: |
           attribute(el, 'content')
       coveoContentType:
-        select: head > meta[property="coveo-content-type"]
+        select: head > meta[name="coveo-content-type"]
         value: |
           attribute(el, 'content')
       coveoSolution:
-        select: head > meta[property="coveo-solution"]
+        select: head > meta[name="coveo-solution"]
         value: |
           attribute(el, 'content')
       coveoRole:
-        select: head > meta[property="role"]
+        select: head > meta[name="role"]
         value: |
           attribute(el, 'content')
       coveoLevel:
-        select: head > meta[property="level"]
+        select: head > meta[name="level"]
         value: |
           attribute(el, 'content')
 
@@ -223,66 +225,88 @@ indices:
     <<: *base-article
     include:
       - /fr/articles/**
+    exclude:
+      - /fr/articles/authors/**
     target: /fr/article-index.json
 
   article-de:
     <<: *base-article
     include:
       - /de/articles/**
+    exclude:
+      - /de/articles/authors/**
     target: /de/article-index.json
 
   article-es:
     <<: *base-article
     include:
       - /es/articles/**
+    exclude:
+      - /es/articles/authors/**
     target: /es/article-index.json
 
   article-it:
     <<: *base-article
     include:
       - /it/articles/**
+    exclude:
+      - /it/articles/authors/**
     target: /it/article-index.json
 
   article-nl:
     <<: *base-article
     include:
       - /nl/articles/**
+    exclude:
+      - /nl/articles/authors/**
     target: /nl/article-index.json
 
   article-pt-br:
     <<: *base-article
     include:
       - /pt-br/articles/**
+    exclude:
+      - /pt-br/articles/authors/**
     target: /pt-br/article-index.json
 
   article-ko:
     <<: *base-article
     include:
       - /ko/articles/**
+    exclude:
+      - /ko/articles/authors/**
     target: /ko/article-index.json
 
   article-ja:
     <<: *base-article
     include:
       - /ja/articles/**
+    exclude:
+      - /ja/articles/authors/**
     target: /ja/article-index.json
 
   article-sv:
     <<: *base-article
     include:
       - /sv/articles/**
+    exclude:
+      - /sv/articles/authors/**
     target: /sv/article-index.json
 
   article-zh-hans:
     <<: *base-article
     include:
       - /zh-hans/articles/**
+    exclude:
+      - /zh-hans/articles/authors/**
     target: /zh-hans/article-index.json
 
   article-zh-hant:
     <<: *base-article
     include:
       - /zh-hant/articles/**
+    exclude:
+      - /zh-hant/articles/authors/**
     target: /zh-hant/article-index.json
 
   # Sitemap indicies, split in 2 google has a limit of 50k (and 50MB) urls per sitemap

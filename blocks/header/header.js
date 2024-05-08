@@ -9,7 +9,7 @@ import {
   getLink,
   fetchFragment,
 } from '../../scripts/scripts.js';
-import { getProducts } from '../browse-rail/browse-rail.js';
+import getProducts from '../../scripts/utils/product-utils.js';
 
 const languageModule = import('../../scripts/language.js');
 const { khorosProfileUrl } = getConfig();
@@ -419,8 +419,14 @@ const navDecorator = async (navBlock) => {
   navBlock.firstChild.id = hamburger.getAttribute('aria-controls');
   navBlock.prepend(hamburger);
 
-  // Featured Product List added in Top Products Page
-  const productList = await getProducts();
+  /**
+   * Fetches a list of products to render in main nav.
+   * @async
+   * @function getProducts
+   * @param {string} mode - The mode for fetching products ('browse' or 'articles').
+   * @returns {Promise<Array>} A promise that resolves to an array of products.
+   */
+  const productList = await getProducts('browse');
 
   [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
     if (navItemEl.querySelector(':scope > a[featured-products]')) {
