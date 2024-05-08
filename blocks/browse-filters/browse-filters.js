@@ -48,8 +48,7 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-// const theme = getMetadata('theme').trim();
-const theme = 'browse-all'; // temporary due to metadata.json publish issue
+const theme = getMetadata('theme').trim();
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;

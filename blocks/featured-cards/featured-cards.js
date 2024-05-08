@@ -283,14 +283,12 @@ export default async function decorate(block) {
   if (roleQueryParamValue.length > 0 && roleQueryParamValue[0] !== DEFAULT_OPTIONS.ROLE) {
     param.role = [roleQueryParamValue];
     roleDropdown.updateDropdownValue(roleQueryParamValue);
-    // EXLM-1305: Update View more url parameters
     updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.ROLE.toLowerCase(), roleQueryParamValue);
   }
 
   if (productQueryParamValue.length > 0 && productQueryParamValue[0] !== DEFAULT_OPTIONS.PRODUCT) {
     param.product = [productQueryParamValue];
     productDropdown.updateDropdownValue(productQueryParamValue);
-    // EXLM-1305: Update View more url parameters
     updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.PRODUCT.toLowerCase(), productQueryParamValue);
   }
 
@@ -308,7 +306,6 @@ export default async function decorate(block) {
     param.role = roleValue;
     /* Update the URL Query Param with Selected Role Value */
     updateURLWithSelectedFilters(DEFAULT_OPTIONS.ROLE.toLowerCase(), value);
-    // EXLM-1305: Update View more url parameters
     updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.ROLE.toLowerCase(), value);
     fetchNewCards();
   });
@@ -318,7 +315,6 @@ export default async function decorate(block) {
     param.product = productValue;
     /* Update the URL Query Param with Selected Product Value */
     updateURLWithSelectedFilters(DEFAULT_OPTIONS.PRODUCT.toLowerCase(), value);
-    // EXLM-1305: Update View more url parameters
     updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.PRODUCT.toLowerCase(), value);
     fetchNewCards();
   });
