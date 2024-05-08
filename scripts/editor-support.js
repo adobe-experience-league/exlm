@@ -33,6 +33,34 @@ function restoreState(newBlock, state) {
   }
 }
 
+// set the filter for an UE editable
+function setUEFilter(element,filter) {
+  element.dataset.aueFilter = filter;
+}
+
+// set the model for a UE editable
+function setUEModel(element,model) {
+  element.dataset.aueModel = model;
+} 
+
+// set the behavior for an UE editable
+function setBehavior(element,behavior) {
+  // eslint-disable-next-line default-case
+  switch (behavior) {
+    // block stays editable but can't be deleted or moved, visible in content tree
+    case 'editable-only':
+      if (element.dataset.aueType === 'component') {
+        delete element.dataset.aueType;
+      }
+      delete element.dataset.aueBehavior;
+      break;
+    // block can't be edited, deleted or moved, does not appear in UE content tree
+    case 'static':
+      delete element.dataset.aueResource;
+      break;
+  }
+}
+
 /**
  * See: 
  * https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/attributes-types#data-properties
@@ -44,40 +72,45 @@ function updateUEInstrumentation() {
   // -- if browse page, identified by theme
   if (document.querySelector('body[class^=browse-]')) {
     // update available sections
-    main.dataset.aueFilter = 'main-browse';
+    setUEFilter(main,'main-browse');
     // update available blocks for default sections
     main.querySelectorAll('.section').forEach((elem) => {
-      elem.dataset.aueFilter = 'section-browse';
+      setUEFilter(elem,'section-browse');
     });
   }
 
   // -- if article page, identified by theme
   if (document.querySelector('body[class^=article]')) {
     // article page has a dedicated set of page metadata settings
-    document.body.dataset.aueModel = 'article-page-metadata';
+    setUEModel(document.body,'article-page-metadata');
     // update available sections
-    main.dataset.aueFilter = 'main-article';
+    setUEFilter(main,'main-article');
+    // hide the mini-toc from editing
+    const miniToc = main.querySelector('.mini-toc');
+    if (miniToc) {
+      setBehavior(miniToc,'static');
+    }
   }
 
-  // -- if author bio, identified by path segment 
+  // -- if author bio page, identified by path segment 
   if (document.location.pathname.includes('/articles/authors/')) {
     // update available sections
-    main.dataset.aueFilter = 'main-empty';
+    setUEFilter(main,'main-empty');
     // update the only available default section
     const section = main.querySelector('.section');
     // if there is already an author bio block
     const authorBioBlock = main.querySelector('div.author-bio.block');
     if (authorBioBlock) {
       // no more blocks selectable
-      section.dataset.aueFilter = 'section-empty';
+      setUEFilter(section,'section-empty');
       // you cant delete the bio block anymore
-      delete authorBioBlock.dataset.aueType;
-      delete authorBioBlock.dataset.aueBehavior;
+       setBehavior(authorBioBlock,'editable-only');
     } else {
-      section.dataset.aueFilter = 'section-author-bio';
+      // only allow adding author bio blocks
+      setUEFilter(section,'section-author-bio');
     }
     // make the only available section uneditable
-    delete main.querySelector('.section').dataset.aueBehavior;
+    setBehavior(section,'editable-only');
   }
 }
 
