@@ -69,23 +69,26 @@ function updateUEInstrumentation() {
 
   const main = document.querySelector('main');
 
-  // -- if browse page, identified by theme
+  // ----- if browse page, identified by theme
   if (document.querySelector('body[class^=browse-]')) {
     // if there is already a editable browse rail on the page
-    if (main.querySelector('.browse-rail-section[data-aue-resource]')) {
-      // only default sections can be added
+    const browseRailBlock = main.querySelector('div.browse-rail.block[data-aue-resource]')
+    if (browseRailBlock) {
+      // only more default sections can be added
       setUEFilter(main,'main');
+      // the browse rail block can only be edited
+      setBehavior(browseRailBlock,'editable-only');
     } else {
     // allow adding default sections and browse rail section
     setUEFilter(main,'main-browse');
     }
     // update available blocks for default sections
-    main.querySelectorAll('.section').forEach((elem) => {
+    main.querySelectorAll('.section:not(.browse-rail-section)').forEach((elem) => {
       setUEFilter(elem,'section-browse');
     });
   }
 
-  // -- if article page, identified by theme
+  // ----- if article page, identified by theme
   if (document.querySelector('body[class^=article]')) {
     // article page has a dedicated set of page metadata settings
     setUEModel(document.body,'article-page-metadata');
@@ -98,7 +101,7 @@ function updateUEInstrumentation() {
     }
   }
 
-  // -- if author bio page, identified by path segment 
+  // ----- if author bio page, identified by path segment 
   if (document.location.pathname.includes('/articles/authors/')) {
     // update available sections
     setUEFilter(main,'main-empty');
