@@ -146,9 +146,7 @@ const expLevel = [
   }),
 }));
 
-// start 1305: products
 // Helper function thats returns a list of all Featured Card Products //
-// to do: reuse or consolidate getFeaturedCardSolutions() as it exist in featurd-cards as well
 async function getFeaturedCardSolutions() {
   const ffetch = (await ffetchModulePromise).default;
   // Load the Featured Card Solution list
@@ -172,24 +170,25 @@ const handleSolutionsService = async () => {
   return [];
 };
 
-  const solutions = await handleSolutionsService();
-  const solutionsList = [];
-  solutions.forEach((solution) => {
-    solutionsList.push({
-      id: solution,
-      value: solution,
-      title: solution,
-      description: '',
-    });
-  });
+export const solutions = await handleSolutionsService();
 
- export const productOptions = {
+// solutions (aka products) object of browse-filters has more properties than the solutions of feature-cards 
+const solutionsList = [];
+solutions.forEach((solution) => {
+  solutionsList.push({
+    id: solution,
+    value: solution,
+    title: solution,
+    description: '',
+  });
+});
+
+export const productOptions = {
   id: 'el_product',
   name: placeholders.featuredCardProductLabel || 'Product',
   items: solutionsList,
   selected: 0,
-};   
-// end 1305
+};
 
 export const roleOptions = {
   id: 'el_role',

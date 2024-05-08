@@ -5,7 +5,7 @@ import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/brow
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { CONTENT_TYPES, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
-import { roleOptions } from '../browse-filters/browse-filter-utils.js';
+import { roleOptions, solutions } from '../browse-filters/browse-filter-utils.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 // eslint-disable-next-line import/no-cycle
 const ffetchModulePromise = import('../../scripts/ffetch.js');
@@ -25,30 +25,6 @@ const DEFAULT_OPTIONS = Object.freeze({
 
 const defaultRoleLabel = placeholders?.featuredCardRoleLabel || DEFAULT_OPTIONS.ROLE;
 const defaultProductLabel = placeholders?.featuredCardProductLabel || DEFAULT_OPTIONS.PRODUCT;
-
-// Helper function thats returns a list of all Featured Card Products //
-async function getFeaturedCardSolutions() {
-  const ffetch = (await ffetchModulePromise).default;
-  // Load the Featured Card Solution list
-  const solutionList = await ffetch(`/featured-card-products.json`).all();
-  // Gets Values from Column Solution in Featured Card Solution list
-  const solutionValues = solutionList.map((solution) => solution.Solution);
-  return solutionValues;
-}
-
-const handleSolutionsService = async () => {
-  const solutions = await getFeaturedCardSolutions();
-
-  if (!solutions) {
-    throw new Error('An error occurred');
-  }
-
-  if (solutions?.length) {
-    return solutions;
-  }
-
-  return [];
-};
 
 /* Function to update the browser's URL with the selected filter using query parameters */
 const updateURLWithSelectedFilters = (filterType, filterValue) => {
@@ -72,11 +48,10 @@ const updateParamValues = (filterValue) => {
   return [];
 };
 
-/* EXLM-1305: Function to add/update parameters of Browse More link */
+/* Function to add/update parameters of Feature Card Browse More link */
 const updateBrowseMoreWithSelectedFilters = async (block, filterType, filterValue) => {
-  // const languageCode = await getLanguageCode();
   const { lang } = getPathDetails();
-  const browseMoreLink = `/${lang}/browse`;   // `\\${lang}\\browse`;
+  const browseMoreLink = `/${lang}/browse`;
   const browseFilterType = `f-el_${filterType}`;
   const browseMore = block.querySelector('.browse-cards-block-view');
   let queryParams;
@@ -87,25 +62,19 @@ const updateBrowseMoreWithSelectedFilters = async (block, filterType, filterValu
       browseMore.appendChild(aTag);
     }
     const aTag = browseMore.querySelector('a');
-    /* scenarios:
-         no a tag
-         a href=/en/browse
-         a href=/en/browse?role=xxx
-         a href=/en/browse?product=yyy
-         a href=/en/browse?role=xxx&product=yyy
-    */
     if (aTag) {
       let objParams = {};
       if (aTag.href.indexOf('#') > 0) {
         queryParams = aTag.href.substr(aTag.href.indexOf('#') + 1);
-        //objParams = Object.fromEntries(queryParams.entries());
-        objParams = Object.assign(...queryParams.split('&').map(s => s.split('='))
-                                         .map(([k, v]) => ({ [k]: v }))
+        objParams = Object.assign(
+          ...queryParams
+            .split('&')
+            .map((s) => s.split('='))
+            .map(([k, v]) => ({ [k]: v })),
         );
-        Object.assign(objParams, { [browseFilterType] : encodeURIComponent(filterValue) },);
-      } else { 
-        //Object.create(objParams);
-        Object.assign(objParams, { [browseFilterType] : encodeURIComponent(filterValue) },);
+        Object.assign(objParams, { [browseFilterType]: encodeURIComponent(filterValue) });
+      } else {
+        Object.assign(objParams, { [browseFilterType]: encodeURIComponent(filterValue) });
       }
 
       if (filterValue === DEFAULT_OPTIONS.ROLE || filterValue === DEFAULT_OPTIONS.PRODUCT) {
@@ -151,7 +120,6 @@ export default async function decorate(block) {
 
   block.appendChild(headerDiv);
 
-  const solutions = await handleSolutionsService();
   const solutionsList = [];
   solutions.forEach((solution) => {
     solutionsList.push({
@@ -183,7 +151,6 @@ export default async function decorate(block) {
     sortCriteria,
     noOfResults,
   };
-
 
   // Function to filter and organize results based on content types
   const filterResults = (data, contentTypesToFilter) => {
@@ -326,7 +293,6 @@ export default async function decorate(block) {
     // EXLM-1305: Update View more url parameters
     updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.PRODUCT.toLowerCase(), productQueryParamValue);
   }
-
 
   function fetchNewCards() {
     [...contentDiv.children].forEach((cards) => {

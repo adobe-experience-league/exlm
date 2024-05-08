@@ -50,8 +50,6 @@ try {
 
 // const theme = getMetadata('theme').trim();
 const theme = 'browse-all'; // temporary due to metadata.json publish issue
-// const isBrowseProdPage = theme === 'browse-product';
-//const isBrowseProdPage = true;  // temporary. to do: will sort theme logic later 
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
@@ -150,7 +148,6 @@ function tagsUpdateHandler(block) {
 
 if (theme === 'browse-all') dropdownOptions.push(productOptions);
 if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
-//if (isBrowseProdPage) dropdownOptions.push(productOptions);  // temporary. to do: will sort theme logic later 
 
 /**
  * Generate HTML for a single checkbox item.
