@@ -145,6 +145,21 @@ const expLevel = [
   }),
 }));
 
+const authorTypes = [
+  {
+    id: 'internal',
+    value: 'Internal',
+    title: 'Internal',
+    description: '',
+  },
+  {
+    id: 'external',
+    value: 'External',
+    title: 'External',
+    description: '',
+  },
+];
+
 export const roleOptions = {
   id: 'el_role',
   name: placeholders.filterRoleLabel || 'Role',
@@ -163,6 +178,13 @@ export const expTypeOptions = {
   id: 'el_level',
   name: placeholders.filterExperienceLevelLabel || 'Experience Level',
   items: expLevel,
+  selected: 0,
+};
+
+export const authorOptions = {
+  id: 'el_auth',
+  name: placeholders.filterAuthorLabel || 'Author Type',
+  items: authorTypes,
   selected: 0,
 };
 
