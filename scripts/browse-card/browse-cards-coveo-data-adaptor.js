@@ -117,6 +117,9 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       permanentid: raw?.permanentid,
       searchUid,
       index,
+      authorName: raw?.author_name || '',
+      authorBioPage: raw?.author_bio_page || '',
+      authorType: raw?.author_type || '',
     };
   };
 

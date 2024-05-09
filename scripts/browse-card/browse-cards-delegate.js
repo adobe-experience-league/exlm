@@ -12,6 +12,55 @@ const { coveoSearchResultsUrl, liveEventsUrl, adlsUrl, pathsUrl } = getConfig();
 
 const { lang } = getPathDetails();
 
+// Most of these are copied from an existing call. I do not believe we need all of them, so this list could probably be pruned.
+const fieldsToInclude = [
+  'author',
+  'language',
+  'urihash',
+  'objecttype',
+  'collection',
+  'source',
+  'permanentid',
+  '@foldingchild',
+  '@foldingcollection',
+  '@foldingparent',
+  'connectortype',
+  'contenttype',
+  'date',
+  'documenttype',
+  'el_contenttype',
+  'el_id',
+  'el_interactionstyle',
+  'el_kudo_status',
+  'el_lirank',
+  'el_product',
+  'el_rank_icon',
+  'el_reply_status',
+  'el_solution',
+  'el_solutions_authored',
+  'el_type',
+  'el_usergenerictext',
+  'el_version',
+  'el_view_status',
+  'filetype',
+  'liMessageLabels',
+  'liboardinteractionstyle',
+  'licommunityurl',
+  'lithreadhassolution',
+  'outlookformacuri',
+  'outlookuri',
+  'role',
+  'sourcetype',
+  'sysdocumenttype',
+  'type',
+  'video_url',
+  'exl_thumbnail',
+  'exl_description',
+  'author_name',
+  'author_bio_page',
+  'author_type',
+];
+
 const locales = new Map([
   ['es', 'es-ES'],
   ['pt-br', 'pt-BR'],
@@ -121,6 +170,7 @@ const BrowseCardsDelegate = (() => {
         ...(param.dateCriteria && !param.feature ? { aq: contructDateAdvancedQuery(param.dateCriteria) } : ''),
         ...(!param.feature ? { facets: constructCoveoFacet(facets) } : ''),
         ...(param.feature ? { aq: constructCoveoAdvancedQuery() } : ''),
+        fieldsToInclude,
       },
     };
     const coveoService = new CoveoDataService(dataSource);

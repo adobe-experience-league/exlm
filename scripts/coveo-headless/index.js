@@ -22,7 +22,7 @@ const locales = new Map([
 let coveoToken;
 if (window.location.window !== 'experienceleague.adobe.com') {
   // Token allows acces to staging search functionality, but not analytics
-  resolve('xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99');
+  coveoToken = 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99';
 } else {
   coveoToken = await loadCoveoToken();
 }
