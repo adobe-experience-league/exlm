@@ -19,14 +19,7 @@ function headerExclusions(header) {
   );
 }
 
-export default async function decorate(block) {
-  let placeholders = {};
-  try {
-    placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
-  }
+function buildMiniToc(block, placeholders) {
   const miniTOCHeading = placeholders?.onThisPage;
   const render = window.requestAnimationFrame;
   const levels = document.querySelector('meta[name="mini-toc-levels"]');
@@ -140,5 +133,62 @@ export default async function decorate(block) {
     render(() => {
       block.parentElement.parentElement.classList.add('is-hidden');
     });
+  }
+}
+
+function observeElementHeadingChanges(element, block, placeholders) {
+  let timeoutId = 0;
+  const scheduleMiniTocBuild = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = 0;
+    }
+    timeoutId = setTimeout(() => {
+      buildMiniToc(block, placeholders);
+    }, 100);
+  };
+  const callback = (mutationsList) => {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'childList') {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeName === 'H2' || node.nodeName === 'H3') {
+            scheduleMiniTocBuild();
+          }
+        });
+        mutation.removedNodes.forEach((node) => {
+          if (node.nodeName === 'H2' || node.nodeName === 'H3') {
+            scheduleMiniTocBuild();
+          }
+        });
+      }
+    }
+  };
+
+  const observer = new MutationObserver(callback);
+
+  observer.observe(element, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    characterData: true
+  });
+}
+
+export default async function decorate(block) {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+  buildMiniToc(block, placeholders);
+
+  if (window.hlx.aemRoot) {
+    // This is strictly for UE flow for capturing the updates made to header tags and re-render Mini-TOC
+    const miniTocQuerySelection = isArticlePage() ? '.article-content-section' : 'main';
+    const baseEl = block.closest(miniTocQuerySelection) ?? document;
+    observeElementHeadingChanges(baseEl, block, placeholders);
   }
 }
