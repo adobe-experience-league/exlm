@@ -137,6 +137,13 @@ export default async function initiateCoveoHeadlessSearch({
           numberOfValues: 8,
         });
 
+        const headlessProductFacet = module.buildFacet(headlessSearchEngine, {
+          options: {
+            field: 'el_product',
+          },
+          numberOfValues: 8,
+        });
+
         const headlessPager = module.buildPager(headlessSearchEngine, {
           initialState: {
             page: 1,
@@ -264,6 +271,7 @@ export default async function initiateCoveoHeadlessSearch({
         window.headlessTypeFacet = headlessTypeFacet;
         window.headlessRoleFacet = headlessRoleFacet;
         window.headlessExperienceFacet = headlessExperienceFacet;
+        window.headlessProductFacet = headlessProductFacet;
         window.headlessStatusControllers = statusControllers;
         window.headlessPager = headlessPager;
         window.headlessResultsPerPage = headlessResultsPerPage;

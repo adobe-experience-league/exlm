@@ -30,10 +30,13 @@ import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-card
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 
+const ffetchModulePromise = import('../../scripts/ffetch.js');
+
 const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
   el_contenttype: 'headlessTypeFacet',
   el_level: 'headlessExperienceFacet',
+  el_product: 'headlessProductFacet',
 };
 
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
@@ -46,8 +49,47 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
+// Helper function thats returns a list of all Featured Card Products //
+async function getFeaturedCardSolutions() {
+  const ffetch = (await ffetchModulePromise).default;
+  // Load the Featured Card Solution list
+  const solutionList = await ffetch(`/featured-card-products.json`).all();
+  // Gets Values from Column Solution in Featured Card Solution list
+  const solutionValues = solutionList.map((solution) => solution.Solution);
+  return solutionValues;
+}
+
+const handleSolutionsService = async () => {
+  const solutions = await getFeaturedCardSolutions();
+  if (!solutions) {
+    throw new Error('An error occurred');
+  }
+  if (solutions?.length) {
+    return solutions;
+  }
+  return [];
+};
+
+const solutions = await handleSolutionsService();
+
+const solutionsList = [];
+solutions.forEach((solution) => {
+  solutionsList.push({
+    id: solution,
+    value: solution,
+    title: solution,
+    description: '',
+  });
+});
+
+const productOptions = {
+  id: 'el_product',
+  name: placeholders.featuredCardProductLabel || 'Product',
+  items: solutionsList,
+  selected: 0,
+};
+
 const theme = getMetadata('theme').trim();
-const isBrowseProdPage = theme === 'browse-product';
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
@@ -144,7 +186,8 @@ function tagsUpdateHandler(block) {
   updateClearFilterStatus(block);
 }
 
-if (isBrowseProdPage) dropdownOptions.push(expTypeOptions);
+if (theme === 'browse-all') dropdownOptions.push(productOptions);
+if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
 
 /**
  * Generate HTML for a single checkbox item.
@@ -547,7 +590,7 @@ function handleUriHash() {
         const ddObject = getObjectById(dropdownOptions, keyName);
         const { name } = ddObject;
         facetValues.forEach((facetValueString) => {
-          const [facetValue] = facetValueString.split('|');
+          const [facetValue] = decodeURIComponent(facetValueString).split('|');
           const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
           if (!inputEl.checked) {
             const label = inputEl?.dataset.label || '';
