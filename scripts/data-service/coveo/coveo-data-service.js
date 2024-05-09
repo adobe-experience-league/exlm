@@ -22,7 +22,13 @@ export default class CoveoDataService {
   async fetchDataFromSource() {
     try {
       // Load the Coveo Token
-      const coveoToken = await loadCoveoToken();
+      let coveoToken;
+      if (window.location.window !== 'experienceleague.adobe.com') {
+        // Token allows acces to staging search functionality, but not analytics
+        coveoToken = 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99';
+      } else {
+        coveoToken = await loadCoveoToken();
+      }
       // Send a POST request to the Coveo Data Service
       const response = await fetch(this.dataSource.url, {
         method: 'POST',
