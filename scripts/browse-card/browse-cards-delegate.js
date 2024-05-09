@@ -104,11 +104,12 @@ const BrowseCardsDelegate = (() => {
       ...(param.role ? [{ id: 'el_role', type: 'specific', currentValues: param.role }] : []),
       ...(param.level ? [{ id: 'el_level', type: 'specific', currentValues: param.level }] : []),
     ];
+
     const dataSource = {
       url: coveoSearchResultsUrl,
       param: {
         locale: locales.get(document.querySelector('html').lang) || document.querySelector('html').lang || 'en',
-        searchHub: 'Experience League Learning Hub',
+        searchHub: `Experience League Learning Hub`,
         numberOfResults: param.noOfResults,
         excerptLength: 200,
         sortCriteria: param.sortCriteria,
