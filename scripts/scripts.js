@@ -646,7 +646,10 @@ export function getConfig() {
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/coveo-token?lang=${lang}`,
-    coveoSearchResultsUrl: 'https://platform.cloud.coveo.com/rest/search/v2',
+    coveoSearchResultsUrl: isProd
+      ? 'https://platform.cloud.coveo.com/rest/search/v2'
+      : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
+    coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
     adlsUrl: 'https://learning.adobe.com/catalog.result.json',
     searchUrl: `${cdnOrigin}/search.html`,
