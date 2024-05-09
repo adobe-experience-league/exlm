@@ -3,8 +3,8 @@ import { generateCustomContext, generateMlParameters, COVEO_SEARCH_CUSTOM_EVENTS
 export default function buildHeadlessSearchEngine(module, coveoToken) {
   return module.buildSearchEngine({
     configuration: {
-      organizationId: 'adobesystemsincorporatednonprod1', // 'adobev2prod9e382h1q',
-      organizationEndpoints: module.getOrganizationEndpoints('adobesystemsincorporatednonprod1'), // ('adobev2prod9e382h1q'),
+      organizationId: 'adobev2prod9e382h1q', // 'adobesystemsincorporatednonprod1',
+      organizationEndpoints: module.getOrganizationEndpoints('adobev2prod9e382h1q'), // ('adobesystemsincorporatednonprod1'),
       accessToken: coveoToken,
       preprocessRequest: (request, clientOrigin, metadata) => {
         const { body } = request;
