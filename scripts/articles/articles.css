@@ -1,4 +1,4 @@
-.articles-wrapper .articles-body {
+.articles-wrapper .article-content-section {
     padding: 128px 0 32px 0;
     margin: 0 20px;
     position: relative;
@@ -19,7 +19,7 @@
     top: 32px;
 }
 
-.articles-wrapper .articles-body .default-content-wrapper>h2 {
+.articles-wrapper .article-content-section .default-content-wrapper>h2 {
     font-size: var(--spectrum-font-size-700);
     line-height: 35px;
     color: var(--text-color);
@@ -27,20 +27,20 @@
     margin: 16px 0;
 }
 
-.articles-wrapper .articles-body .default-content-wrapper>p {
+.articles-wrapper .article-content-section .default-content-wrapper>p {
     font-size: var(--spectrum-font-size-200);
     line-height: 24px;
     color: var(--non-spectrum-dark-gray);
     margin: 0;
 }
 
-.articles-wrapper .articles-body .default-content-wrapper>p:first-of-type {
+.articles-wrapper .article-content-section .default-content-wrapper>p:first-of-type {
     font-size: var(--spectrum-font-size-300);
     line-height: 27px;
     margin-bottom: 24px;
 }
 
-.articles-wrapper .articles-body .video-embed-wrapper .video-embed {
+.articles-wrapper .article-content-section .video-embed-wrapper .video-embed {
     margin-top: 0;
     margin-bottom: 0;
 }
@@ -57,12 +57,12 @@
 }
 
 @media(min-width: 600px) {
-    .articles-wrapper .articles-body {
+    .articles-wrapper .article-content-section {
         padding: 152px 0 56px 0;
         margin: 0 62px;
     }
 
-    .articles-wrapper .articles-body-content {
+    .articles-wrapper .article-content-section-content {
         margin: 0 62px;
     }
 
@@ -75,7 +75,7 @@
 }
 
 @media(min-width: 900px) {
-    .articles-wrapper .articles-body {
+    .articles-wrapper .article-content-section {
         display: grid;
         grid-template-columns: 1fr 295px;
         padding: 80px 0;
@@ -96,13 +96,13 @@
         margin-bottom: 56px;
     }
     
-    .articles-wrapper .articles-body > * {
+    .articles-wrapper .article-content-section > * {
         grid-column: 1;
         max-width: 765px;
         width: 100%;
     }
 
-    .articles-wrapper .articles-body .mini-toc-wrapper {
+    .articles-wrapper .article-content-section .mini-toc-wrapper {
         grid-column: 2;
         grid-row: 1;
     }
@@ -112,5 +112,12 @@
         display: block;
         background: transparent;
         top: auto;
+    }
+}
+
+@media (min-width: 1440px) {
+    .articles-wrapper .article-content-section {
+        max-width: var(--non-spectrum-max-width);
+        margin: 0 auto;
     }
 }
