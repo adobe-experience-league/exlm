@@ -19,15 +19,19 @@ function headerExclusions(header) {
   );
 }
 
-function buildMiniToc(block, placeholders) {
-  const miniTOCHeading = placeholders?.onThisPage;
-  const render = window.requestAnimationFrame;
+function getHeadingLevels() {
   const levels = document.querySelector('meta[name="mini-toc-levels"]');
-
-  const miniTocQuerySelection = isArticlePage() ? '.article-content-section' : 'main';
   const headingLevels = setLevels(
     levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined,
   );
+  return headingLevels;
+}
+
+function buildMiniToc(block, placeholders) {
+  const miniTOCHeading = placeholders?.onThisPage;
+  const render = window.requestAnimationFrame;
+  const miniTocQuerySelection = isArticlePage() ? '.article-content-section' : 'main';
+  const headingLevels = getHeadingLevels();
   const selectorQuery = headingLevels
     .split(',')
     .map((query) => `${miniTocQuerySelection} ${query}`)
@@ -147,17 +151,19 @@ function observeElementHeadingChanges(element, block, placeholders) {
       buildMiniToc(block, placeholders);
     }, 100);
   };
+  const headingLevels = getHeadingLevels();
+  const tagNamesToObserve = headingLevels.split(',').map((query) => query.split(':')[0]);
   const callback = (mutationsList) => {
     // eslint-disable-next-line no-restricted-syntax
     for (const mutation of mutationsList) {
       if (mutation.type === 'childList') {
         mutation.addedNodes.forEach((node) => {
-          if (node.nodeName === 'H2' || node.nodeName === 'H3') {
+          if (tagNamesToObserve.includes(node.nodeName.toLowerCase())) {
             scheduleMiniTocBuild();
           }
         });
         mutation.removedNodes.forEach((node) => {
-          if (node.nodeName === 'H2' || node.nodeName === 'H3') {
+          if (tagNamesToObserve.includes(node.nodeName.toLowerCase())) {
             scheduleMiniTocBuild();
           }
         });
@@ -171,7 +177,7 @@ function observeElementHeadingChanges(element, block, placeholders) {
     childList: true,
     subtree: true,
     attributes: true,
-    characterData: true
+    characterData: true,
   });
 }
 
