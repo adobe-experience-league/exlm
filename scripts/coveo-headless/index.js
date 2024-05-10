@@ -43,6 +43,10 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
       '@foldingcollection',
       '@foldingparent',
       'author',
+      'authortype',
+      'authorname',
+      'author_type',
+      'author_name',
       'collection',
       'connectortype',
       'contenttype',
@@ -62,6 +66,7 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
       'el_usergenerictext',
       'el_version',
       'el_view_status',
+      'el_author_type',
       'filetype',
       'language',
       'liMessageLabels',
@@ -146,6 +151,13 @@ export default async function initiateCoveoHeadlessSearch({
         const headlessProductFacet = module.buildFacet(headlessSearchEngine, {
           options: {
             field: 'el_product',
+          },
+          numberOfValues: 8,
+        });
+
+        const headlessAuthorTypeFacet = module.buildFacet(headlessSearchEngine, {
+          options: {
+            field: 'author_type',
           },
           numberOfValues: 8,
         });
@@ -278,6 +290,7 @@ export default async function initiateCoveoHeadlessSearch({
         window.headlessRoleFacet = headlessRoleFacet;
         window.headlessExperienceFacet = headlessExperienceFacet;
         window.headlessProductFacet = headlessProductFacet;
+        window.headlessAuthorTypeFacet = headlessAuthorTypeFacet;
         window.headlessStatusControllers = statusControllers;
         window.headlessPager = headlessPager;
         window.headlessResultsPerPage = headlessResultsPerPage;

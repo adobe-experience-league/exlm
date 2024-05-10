@@ -67,6 +67,12 @@ const contentType = [
     description: 'Credentials that recognize an individual’s skill and competency in an Adobe solution.',
   },
   {
+    id: 'Article',
+    value: 'Article',
+    title: 'Article',
+    description: 'CredenArticletials that recognize an individual’s skill and competency in an Adobe solution.',
+  },
+  {
     id: 'Community',
     value: 'Community',
     title: 'Community',
@@ -155,7 +161,7 @@ const authorTypes = [
   {
     id: 'external',
     value: 'External',
-    title: 'External',
+    title: 'Adobe',
     description: '',
   },
 ];
@@ -182,7 +188,7 @@ export const expTypeOptions = {
 };
 
 export const authorOptions = {
-  id: 'el_auth',
+  id: 'author_type',
   name: placeholders.filterAuthorLabel || 'Author Type',
   items: authorTypes,
   selected: 0,
