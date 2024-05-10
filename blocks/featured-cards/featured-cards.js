@@ -301,8 +301,8 @@ export default async function decorate(block) {
   fetchDataAndRenderBlock(param, contentType, block, contentDiv);
 
   const linkDiv = htmlToElement(
-    linkTextElement
-      ? `<div class='browse-cards-block-view'><a href='${browseMoreLink}' title='${linkTextElement.innerHTML}'>${linkTextElement.innerHTML}</a></div>`
+    linkTextElement.textContent.length > 0
+      ? `<div class='browse-cards-block-view'><a href='${browseMoreLink}' title='${linkTextElement.textContent}'>${linkTextElement.textContent}</a></div>`
       : '',
   );
   block.appendChild(contentDiv);
