@@ -19,7 +19,13 @@ const locales = new Map([
   ['zh-hant', 'zh-TW'],
 ]);
 
+/* let coveoToken;
+if (window.location.window !== 'experienceleague.adobe.com') {
+  // Token allows acces to staging search functionality, but not analytics
+  coveoToken = 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99';
+} else { */
 const coveoToken = await loadCoveoToken();
+// }
 
 function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contextObject, advancedQueryRule }) {
   const advancedQuery = module.loadAdvancedSearchQueryActions(searchEngine).registerAdvancedSearchQueries({
@@ -133,6 +139,13 @@ export default async function initiateCoveoHeadlessSearch({
         const headlessExperienceFacet = module.buildFacet(headlessSearchEngine, {
           options: {
             field: 'el_level',
+          },
+          numberOfValues: 8,
+        });
+
+        const headlessProductFacet = module.buildFacet(headlessSearchEngine, {
+          options: {
+            field: 'el_product',
           },
           numberOfValues: 8,
         });
@@ -264,6 +277,7 @@ export default async function initiateCoveoHeadlessSearch({
         window.headlessTypeFacet = headlessTypeFacet;
         window.headlessRoleFacet = headlessRoleFacet;
         window.headlessExperienceFacet = headlessExperienceFacet;
+        window.headlessProductFacet = headlessProductFacet;
         window.headlessStatusControllers = statusControllers;
         window.headlessPager = headlessPager;
         window.headlessResultsPerPage = headlessResultsPerPage;

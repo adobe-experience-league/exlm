@@ -2458,7 +2458,7 @@
         "description": "Sets the Coveo Solution(s) in page meta."
       },
       {
-        "component": "text",
+        "component": "aem-content",
         "valueType": "string",
         "name": "author-bio-page",
         "value": "",
