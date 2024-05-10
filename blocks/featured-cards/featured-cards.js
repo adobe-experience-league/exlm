@@ -26,6 +26,9 @@ const DEFAULT_OPTIONS = Object.freeze({
 const defaultRoleLabel = placeholders?.featuredCardRoleLabel || DEFAULT_OPTIONS.ROLE;
 const defaultProductLabel = placeholders?.featuredCardProductLabel || DEFAULT_OPTIONS.PRODUCT;
 
+const { lang } = getPathDetails();
+const browseMoreLink = `/${lang}/browse`;
+
 // Helper function thats returns a list of all Featured Card Products //
 async function getFeaturedCardSolutions() {
   const ffetch = (await ffetchModulePromise).default;
@@ -74,8 +77,6 @@ const updateParamValues = (filterValue) => {
 
 /* Function to add/update parameters of Feature Card Browse More link */
 const updateBrowseMoreWithSelectedFilters = async (block, filterType, filterValue) => {
-  const { lang } = getPathDetails();
-  const browseMoreLink = `/${lang}/browse`;
   const browseFilterType = `f-el_${filterType}`;
   const browseMore = block.querySelector('.browse-cards-block-view');
   let queryParams;
@@ -299,9 +300,11 @@ export default async function decorate(block) {
   /* eslint-disable-next-line */
   fetchDataAndRenderBlock(param, contentType, block, contentDiv);
 
-  const linkDiv = htmlToElement(`
-    <div class="browse-cards-block-view">${linkTextElement.innerHTML}</div>
-  `);
+  const linkDiv = htmlToElement(
+    linkTextElement.textContent.length > 0
+      ? `<div class='browse-cards-block-view'><a href='${browseMoreLink}' title='${linkTextElement.textContent}'>${linkTextElement.textContent}</a></div>`
+      : '',
+  );
   block.appendChild(contentDiv);
   block.appendChild(linkDiv);
 
