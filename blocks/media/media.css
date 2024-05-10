@@ -171,3 +171,22 @@
     line-height: 42px;
   }
 }
+
+/* Browse | Article theme */
+body[class ^= 'browse-'] .section div.media-wrapper,
+body[class ^= 'article-'] .section div.media-wrapper {
+  margin-bottom: 0;
+}
+
+body[class ^= 'browse-'] .media.block > .text,
+body[class ^= 'article-'] .media.block > .text {
+  padding: 1em 2em;
+}
+
+@media (min-width: 900px) {
+  body[class ^= 'browse-'] .media.block > .image img,
+  body[class ^= 'article-'] .media.block > .image img {
+    width: 400px;
+    height: 320px;
+  }
+}
