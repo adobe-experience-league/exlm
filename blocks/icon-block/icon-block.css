@@ -93,5 +93,10 @@
   .icon-block > div {
     max-width: 230px;
     min-height: 180px;
-  }
+  } 
+
+   body[class ^= 'browse-'] .icon-block,
+   body[class ^= 'article-'] .icon-block {
+    max-width: none;
+   }
 }
