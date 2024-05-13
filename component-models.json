@@ -821,6 +821,10 @@
         "description": "Select the content type(s).",
         "options": [
           {
+            "name": "Article",
+            "value": "article"
+          },
+          {
             "name": "Certification",
             "value": "certification"
           },
@@ -847,10 +851,6 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
-          },
-          {
-            "name": "Article",
-            "value": "article"
           }
         ]
       },
@@ -1818,6 +1818,10 @@
         "description": "Select the content type(s).",
         "options": [
           {
+            "name": "Article",
+            "value": "article"
+          },
+          {
             "name": "Certification",
             "value": "certification"
           },
@@ -1844,10 +1848,6 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
-          },
-          {
-            "name": "Article",
-            "value": "article"
           }
         ]
       },
@@ -2226,6 +2226,10 @@
         "description": "Select the content type(s).",
         "options": [
           {
+            "name": "Article",
+            "value": "article"
+          },
+          {
             "name": "Courses",
             "value": "course"
           },
@@ -2252,10 +2256,6 @@
           {
             "name": "Certification",
             "value": "certification"
-          },
-          {
-            "name": "Article",
-            "value": "article"
           }
         ]
       },
