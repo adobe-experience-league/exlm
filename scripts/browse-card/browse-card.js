@@ -249,7 +249,11 @@ const buildCardContent = async (card, model) => {
     const authorElement = createTag('div', { class: 'browse-card-author-info' });
 
     if (authorInfo?.name) {
-      const authorPrefix = createTag('span', { class: 'browse-card-author-prefix' }, 'By');
+      const authorPrefix = createTag(
+        'span',
+        { class: 'browse-card-author-prefix' },
+        placeholders?.articleAuthorPrefixLabel,
+      );
       const authorName = createTag('span', { class: 'browse-card-author-name' }, authorInfo?.name);
       authorElement.append(authorPrefix, authorName);
     }
