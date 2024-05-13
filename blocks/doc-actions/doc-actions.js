@@ -185,11 +185,7 @@ async function decorateLanguageToggle(block, placeholders) {
     );
     [...desktopAndMobileRadioFeedback].forEach((radio) => {
       radio.addEventListener('click', async (e) => {
-        if (e.target.value === 'yes') {
-          assetInteractionModel(null, 'helpful-translation - yes');
-        } else {
-          assetInteractionModel(null, 'helpful-translation - no');
-        }
+        assetInteractionModel(null, `helpful-translation - ${e.target.value}`);
       });
     });
   }
