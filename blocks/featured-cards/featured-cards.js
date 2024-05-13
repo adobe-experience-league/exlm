@@ -26,6 +26,9 @@ const DEFAULT_OPTIONS = Object.freeze({
 const defaultRoleLabel = placeholders?.featuredCardRoleLabel || DEFAULT_OPTIONS.ROLE;
 const defaultProductLabel = placeholders?.featuredCardProductLabel || DEFAULT_OPTIONS.PRODUCT;
 
+const { lang } = getPathDetails();
+const browseMoreLink = `/${lang}/browse`;
+
 // Helper function thats returns a list of all Featured Card Products //
 async function getFeaturedCardSolutions() {
   const ffetch = (await ffetchModulePromise).default;
@@ -74,8 +77,6 @@ const updateParamValues = (filterValue) => {
 
 /* Function to add/update parameters of Feature Card Browse More link */
 const updateBrowseMoreWithSelectedFilters = async (block, filterType, filterValue) => {
-  const { lang } = getPathDetails();
-  const browseMoreLink = `/${lang}/browse`;
   const browseFilterType = `f-el_${filterType}`;
   const browseMore = block.querySelector('.browse-cards-block-view');
   let queryParams;
@@ -105,7 +106,7 @@ const updateBrowseMoreWithSelectedFilters = async (block, filterType, filterValu
         delete objParams[browseFilterType];
       }
       const params = new URLSearchParams(objParams);
-      const finalHref = `${browseMoreLink}#${params.toString()}`;
+      const finalHref = `${browseMoreLink}#${decodeURIComponent(params.toString())}`;
       aTag.href = finalHref;
     }
   }
@@ -176,6 +177,26 @@ export default async function decorate(block) {
     sortCriteria,
     noOfResults,
   };
+
+  const linkDiv = htmlToElement(
+    linkTextElement.textContent.length > 0
+      ? `<div class='browse-cards-block-view'><a href='${browseMoreLink}' title='${linkTextElement.textContent}'>${linkTextElement.textContent}</a></div>`
+      : '',
+  );
+  block.appendChild(contentDiv);
+  block.appendChild(linkDiv);
+
+  if (roleQueryParamValue.length > 0 && roleQueryParamValue[0] !== DEFAULT_OPTIONS.ROLE) {
+    param.role = [roleQueryParamValue];
+    roleDropdown.updateDropdownValue(roleQueryParamValue);
+    updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.ROLE.toLowerCase(), roleQueryParamValue);
+  }
+
+  if (productQueryParamValue.length > 0 && productQueryParamValue[0] !== DEFAULT_OPTIONS.PRODUCT) {
+    param.product = [productQueryParamValue];
+    productDropdown.updateDropdownValue(productQueryParamValue);
+    updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.PRODUCT.toLowerCase(), productQueryParamValue);
+  }
 
   // Function to filter and organize results based on content types
   const filterResults = (data, contentTypesToFilter) => {
@@ -298,24 +319,6 @@ export default async function decorate(block) {
   };
   /* eslint-disable-next-line */
   fetchDataAndRenderBlock(param, contentType, block, contentDiv);
-
-  const linkDiv = htmlToElement(`
-    <div class="browse-cards-block-view">${linkTextElement.innerHTML}</div>
-  `);
-  block.appendChild(contentDiv);
-  block.appendChild(linkDiv);
-
-  if (roleQueryParamValue.length > 0 && roleQueryParamValue[0] !== DEFAULT_OPTIONS.ROLE) {
-    param.role = [roleQueryParamValue];
-    roleDropdown.updateDropdownValue(roleQueryParamValue);
-    updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.ROLE.toLowerCase(), roleQueryParamValue);
-  }
-
-  if (productQueryParamValue.length > 0 && productQueryParamValue[0] !== DEFAULT_OPTIONS.PRODUCT) {
-    param.product = [productQueryParamValue];
-    productDropdown.updateDropdownValue(productQueryParamValue);
-    updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.PRODUCT.toLowerCase(), productQueryParamValue);
-  }
 
   function fetchNewCards() {
     [...contentDiv.children].forEach((cards) => {

@@ -1,7 +1,7 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { createTooltip } from './browse-card-tooltip.js';
-import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
+import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS, AUTHOR_TYPE } from './browse-cards-constants.js';
 import { tooltipTemplate } from '../toast/toast.js';
 import renderBookmark from '../bookmark/bookmark.js';
 import attachCopyLink from '../copy-link/copy-link.js';
@@ -195,6 +195,7 @@ const buildCardContent = async (card, model) => {
     viewLinkText,
     copyLink,
     tags,
+    authorInfo,
     event,
     inProgressText,
     inProgressStatus = {},
@@ -243,6 +244,34 @@ const buildCardContent = async (card, model) => {
   if (contentType === CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY) {
     buildEventContent({ event, cardContent, card });
   }
+
+  if (contentType === CONTENT_TYPES.ARTICLE.MAPPING_KEY) {
+    const authorElement = createTag('div', { class: 'browse-card-author-info' });
+
+    if (authorInfo?.name) {
+      const authorPrefix = createTag(
+        'span',
+        { class: 'browse-card-author-prefix' },
+        placeholders?.articleAuthorPrefixLabel,
+      );
+      const authorName = createTag('span', { class: 'browse-card-author-name' }, authorInfo?.name);
+      authorElement.append(authorPrefix, authorName);
+    }
+
+    let authorBadge = '';
+    if (authorInfo?.type === AUTHOR_TYPE.ADOBE) {
+      authorBadge = createTag('span', { class: 'browse-card-author-badge' }, placeholders?.articleAdobeTag);
+    } else if (authorInfo?.type === AUTHOR_TYPE.EXTERNAL) {
+      authorBadge = createTag('span', { class: 'browse-card-author-badge' }, placeholders?.articleExternalTag);
+      authorBadge.classList.add('author-badge-external');
+    }
+    if (authorBadge) {
+      authorElement.append(authorBadge);
+    }
+
+    cardContent.appendChild(authorElement);
+  }
+
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
   if (

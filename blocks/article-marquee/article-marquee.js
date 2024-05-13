@@ -208,11 +208,11 @@ export default async function ArticleMarquee(block) {
   if (link) {
     fetchAuthorBio(link).then((authorInfo) => {
       const authorInfoContainer = block.querySelector('.author-details');
-      let tagname = placeholders.articleMarqueeAdobeTag;
+      let tagname = placeholders.articleAdobeTag;
       let articleType = authorInfo?.authorCompany?.toLowerCase();
       if (!articleType) articleType = metadataProperties.adobe;
       if (articleType !== metadataProperties.adobe) {
-        tagname = placeholders.articleMarqueeExternalTag;
+        tagname = placeholders.articleExternalTag;
       }
       authorInfoContainer.outerHTML = `
         <div>${createOptimizedPicture(authorInfo?.authorImage).outerHTML}</div>
