@@ -847,6 +847,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Article",
+            "value": "article"
           }
         ]
       },
@@ -1840,6 +1844,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Article",
+            "value": "article"
           }
         ]
       },
@@ -1850,14 +1858,6 @@
         "label": "Link Text",
         "valueType": "string",
         "description": "Sets the text for link."
-      },
-      {
-        "component": "text",
-        "name": "link",
-        "value": "",
-        "label": "Link URL",
-        "valueType": "string",
-        "description": "Sets the text url."
       },
       {
         "component": "text",
@@ -2252,6 +2252,10 @@
           {
             "name": "Certification",
             "value": "certification"
+          },
+          {
+            "name": "Article",
+            "value": "article"
           }
         ]
       },
