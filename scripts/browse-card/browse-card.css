@@ -110,19 +110,22 @@
 .browse-card .browse-card-author-info {
   display: flex;
   margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 10px 0;
 }
 .browse-card .browse-card-author-prefix {
   font-size: var(--spectrum-font-size-100);
   font-weight: normal;
   line-height: 18.2px;
   color: var(--spectrum-gray-900);
+  margin-right: 8px;
 }
 .browse-card .browse-card-author-name {
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-700);
   line-height: 18.2px;
   color: var(--spectrum-gray-900);
-  margin-left: 8px;
+  margin-right: 11px;
 }
 .browse-card .browse-card-author-badge {
   font-size: 10px;
@@ -132,7 +135,6 @@
   color: var(--spectrum-gray-50);
   align-self: center;
   padding: 0px 3px;
-  margin-left: 11px;
 }
 .browse-card .browse-card-author-badge.author-badge-external {
   background-color: var(--spectrum-indigo-1400);
