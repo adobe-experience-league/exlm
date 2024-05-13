@@ -107,6 +107,36 @@
   width: 16px;
   margin-top: 2px;
 }
+.browse-card .browse-card-author-info {
+  display: flex;
+  margin-top: 16px;
+}
+.browse-card .browse-card-author-prefix {
+  font-size: var(--spectrum-font-size-100);
+  font-weight: normal;
+  line-height: 18.2px;
+  color: var(--spectrum-gray-900);
+}
+.browse-card .browse-card-author-name {
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-700);
+  line-height: 18.2px;
+  color: var(--spectrum-gray-900);
+  margin-left: 8px;
+}
+.browse-card .browse-card-author-badge {
+  font-size: 10px;
+  font-weight: var(--font-weight-700);
+  line-height: 18.2px;
+  background-color: var(--spectrum-red-1400);
+  color: var(--spectrum-gray-50);
+  align-self: center;
+  padding: 0px 3px;
+  margin-left: 11px;
+}
+.browse-card .browse-card-author-badge.author-badge-external {
+  background-color: var(--spectrum-indigo-1400);
+}
 .browse-card .browse-card-footer {
   padding: 0 16px 22px 15px;
   display: flex;
@@ -285,61 +315,7 @@
   font-size: var(--spectrum-font-size-100);
   color: var(--non-spectrum-navy-blue);
 }
-.browse-card.course-card .browse-card-figure {
-  max-height: 143px;
-}
-.browse-card.course-card .browse-card-meta-info .icon {
-  height: 11px;
-  width: 11px;
-  margin-right: 0;
-  margin-top: -2px;
-}
-.browse-card.course-card .browse-card-content {
-  padding: 16px 16px 0;
-}
-.browse-card.course-card .browse-card-meta-info,
-.browse-card.course-card .browse-card-title-text {
-  margin: 0;
-}
-.browse-card.tutorial-card .browse-card-figure {
-  max-height: 140px;
-}
-.browse-card.article-card .browse-card-figure,
-.browse-card.troubleshooting-card .browse-card-figure,
-.browse-card.certificate-card .browse-card-figure,
-.browse-card.certification-card .browse-card-figure,
-.browse-card.instructor-led-training-card .browse-card-figure {
-  min-height: 72px;
-}
-.browse-card.article-card .browse-card-author-info {
-  display: flex;
-  margin-top: 16px;
-}
-.browse-card.article-card .browse-card-author-prefix {
-  font-size: var(--spectrum-font-size-100);
-  font-weight: normal;
-  line-height: 18.2px;
-  color: var(--spectrum-gray-900);
-}
-.browse-card.article-card .browse-card-author-name {
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-700);
-  line-height: 18.2px;
-  color: var(--spectrum-gray-900);
-  margin-left: 8px;
-}
-.browse-card.article-card .browse-card-author-badge {
-  font-size: 10px;
-  font-weight: var(--font-weight-700);
-  line-height: 18.2px;
-  background-color: var(--spectrum-red-1400);
-  color: var(--spectrum-gray-50);
-  align-self: center;
-  padding: 0px 3px;
-  margin-left: 11px;
-}
-
-/* Browse card content-type specific color codes begins */
+/* Content Type specific styles */
 .browse-card.event-card .browse-card-banner {
   background-color: var(--spectrum-magenta-1000);
 }
@@ -369,8 +345,32 @@
 .browse-card.instructor-led-training-card .browse-card-banner {
   background-color: var(--spectrum-blue-1100);
 }
-/* Browse card content-type specific color codes ends */
-
+.browse-card.course-card .browse-card-figure {
+  max-height: 143px;
+}
+.browse-card.course-card .browse-card-meta-info .icon {
+  height: 11px;
+  width: 11px;
+  margin-right: 0;
+  margin-top: -2px;
+}
+.browse-card.course-card .browse-card-content {
+  padding: 16px 16px 0;
+}
+.browse-card.course-card .browse-card-meta-info,
+.browse-card.course-card .browse-card-title-text {
+  margin: 0;
+}
+.browse-card.tutorial-card .browse-card-figure {
+  max-height: 140px;
+}
+.browse-card.article-card .browse-card-figure,
+.browse-card.troubleshooting-card .browse-card-figure,
+.browse-card.certificate-card .browse-card-figure,
+.browse-card.certification-card .browse-card-figure,
+.browse-card.instructor-led-training-card .browse-card-figure {
+  min-height: 72px;
+}
 .browse-card.community-card .browse-card-meta-info {
   margin: 0;
 }
@@ -382,6 +382,7 @@
   height: 12px;
   width: 11px;
 }
+/* No Results */
 .browse-card-no-results {
   background: var(--spectrum-gray-200);
   border-radius: 4px;
@@ -465,6 +466,7 @@
 .browse-card .tooltip-grey .tooltip-text::before {
   border-color: transparent var(--non-spectrum-dim-gray) transparent transparent;
 }
+/* Skill-Bar */
 .browse-card .skill-bar {
   width: 100%;
   position: absolute;

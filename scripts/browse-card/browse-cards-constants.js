@@ -107,4 +107,9 @@ export const RECOMMENDED_COURSES_CONSTANTS = Object.freeze({
   },
 });
 
+export const AUTHOR_TYPE = Object.freeze({
+  EXTERNAL: 'External',
+  ADOBE: 'Adobe',
+});
+
 export const BASE_COVEO_ADVANCED_QUERY = '(@el_contenttype NOT "Community|User")';
