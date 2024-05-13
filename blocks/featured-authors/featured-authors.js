@@ -110,8 +110,8 @@ export default async function decorate(block) {
   sourceTag.classList.add('source-tag');
   image.append(sourceTag);
   sourceTag.textContent = block.classList.contains('adobe')
-    ? placeholders.articleMarqueeAdobeTag
-    : placeholders.articleMarqueeExternalTag;
+    ? placeholders.articleAdobeTag
+    : placeholders.articleExternalTag;
 
   // check if featured authors have bio links
   if (author1.children?.length >= 1) {
