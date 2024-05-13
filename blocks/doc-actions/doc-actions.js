@@ -184,8 +184,12 @@ async function decorateLanguageToggle(block, placeholders) {
       '.doc-mt-toggle .doc-mt-feedback input[type="radio"]',
     );
     [...desktopAndMobileRadioFeedback].forEach((radio) => {
-      radio.addEventListener('click', async () => {
-        assetInteractionModel(null, 'Radio Select');
+      radio.addEventListener('click', async (e) => {
+        if (e.target.value === 'yes') {
+          assetInteractionModel(null, 'helpful-translation - yes');
+        } else {
+          assetInteractionModel(null, 'helpful-translation - no');
+        }
       });
     });
   }
