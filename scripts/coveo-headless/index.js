@@ -1,5 +1,4 @@
 import buildHeadlessSearchEngine from './engine.js';
-import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
 import { handleCoverSearchSubmit } from '../../blocks/browse-filters/browse-filter-utils.js';
 
@@ -18,14 +17,6 @@ const locales = new Map([
   ['zh-hans', 'zh-CN'],
   ['zh-hant', 'zh-TW'],
 ]);
-
-/* let coveoToken;
-if (window.location.window !== 'experienceleague.adobe.com') {
-  // Token allows acces to staging search functionality, but not analytics
-  coveoToken = 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99';
-} else { */
-const coveoToken = await loadCoveoToken();
-// }
 
 function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contextObject, advancedQueryRule }) {
   const advancedQuery = module.loadAdvancedSearchQueryActions(searchEngine).registerAdvancedSearchQueries({
@@ -108,8 +99,8 @@ export default async function initiateCoveoHeadlessSearch({
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
     import('./libs/browser/headless.esm.js')
-      .then((module) => {
-        const headlessSearchEngine = buildHeadlessSearchEngine(module, coveoToken);
+      .then(async (module) => {
+        const headlessSearchEngine = await buildHeadlessSearchEngine(module);
         const statusControllers = module.buildSearchStatus(headlessSearchEngine);
 
         configureSearchHeadlessEngine({

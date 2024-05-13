@@ -5,6 +5,7 @@ import {
   debounce,
   getPathDetails,
   fetchLanguagePlaceholders,
+  isArticlePage,
 } from '../../scripts/scripts.js';
 import {
   roleOptions,
@@ -92,7 +93,6 @@ const productOptions = {
 };
 
 const theme = getMetadata('theme').trim();
-const isArticlesPage = true;
 const dropdownOptions = [roleOptions, contentTypeOptions];
 
 const tags = [];
@@ -193,7 +193,7 @@ function tagsUpdateHandler(block) {
 if (theme === 'browse-all') dropdownOptions.push(productOptions);
 if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
 
-if (isArticlesPage) {
+if (isArticlePage()) {
   dropdownOptions.push(authorOptions);
 }
 

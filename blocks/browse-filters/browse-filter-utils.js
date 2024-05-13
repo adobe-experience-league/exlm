@@ -70,7 +70,7 @@ const contentType = [
     id: 'Article',
     value: 'Article',
     title: 'Article',
-    description: 'CredenArticletials that recognize an individual’s skill and competency in an Adobe solution.',
+    description: 'Article that recognize an individual’s skill and competency in an Adobe solution.',
   },
   {
     id: 'Community',
@@ -154,15 +154,17 @@ const expLevel = [
 const authorTypes = [
   {
     id: 'internal',
-    value: 'Internal',
-    title: 'Internal',
-    description: '',
+    value: 'Adobe',
+    title: 'Adobe',
+    description:
+      'High degree of proficiency with an advanced understanding of concepts and skill. Regularly manages complex tasks and objectives.',
   },
   {
     id: 'external',
     value: 'External',
-    title: 'Adobe',
-    description: '',
+    title: 'External',
+    description:
+      'High degree of proficiency with an advanced understanding of concepts and skill. Regularly manages complex tasks and objectives.',
   },
 ];
 
