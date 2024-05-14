@@ -168,7 +168,9 @@ const authorTypes = [
   },
 ].map((authorType) => ({
   ...authorType,
-  ...(placeholders[`filterExpLevel${authorType.id}Title`] && { title: placeholders[`filterExpLevel${authorType.id}Title`] }),
+  ...(placeholders[`filterExpLevel${authorType.id}Title`] && {
+    title: placeholders[`filterExpLevel${authorType.id}Title`],
+  }),
   ...(placeholders[`filterExpLevel${authorType.id}Description`] && {
     description: placeholders[`filterExpLevel${authorType.id}Description`],
   }),
