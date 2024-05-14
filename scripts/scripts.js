@@ -650,6 +650,7 @@ export function getConfig() {
       ? 'https://platform.cloud.coveo.com/rest/search/v2'
       : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
+    coveoToken: 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
     liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
     adlsUrl: 'https://learning.adobe.com/catalog.result.json',
     searchUrl: `${cdnOrigin}/search.html`,
