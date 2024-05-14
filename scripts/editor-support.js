@@ -50,7 +50,7 @@ function setUEBehavior(element, behavior) {
     // block stays editable but can't be deleted or moved, visible in content tree
     case 'editable-only':
       if (element.dataset.aueType === 'component') {
-        delete element.dataset.aueType;
+        element.dataset.aueType = 'container';
       }
       delete element.dataset.aueBehavior;
       break;
