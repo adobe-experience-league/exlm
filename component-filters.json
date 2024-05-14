@@ -4,7 +4,7 @@
     "components": ["section"]
   },
   {
-    "id": "main-empty",
+    "id": "empty",
     "components": []
   },
   {
@@ -44,10 +44,6 @@
       "block-quote",
       "callout"
     ]
-  },
-  {
-    "id": "section-empty",
-    "components": []
   },
   {
     "id": "section-browse",

@@ -49,9 +49,14 @@ function setUEBehavior(element, behavior) {
   switch (behavior) {
     // block stays editable but can't be deleted or moved, visible in content tree
     case 'editable-only':
+      // if a block
       if (element.dataset.aueType === 'component') {
+        // turn into a container
         element.dataset.aueType = 'container';
+        // set empty filter
+        setUEFilter(element, 'empty');
       }
+      // for sections
       delete element.dataset.aueBehavior;
       break;
     // block can't be edited, deleted or moved, does not appear in UE content tree
@@ -115,14 +120,14 @@ function updateUEInstrumentation() {
   // ----- if author bio page, identified by path segment
   if (document.location.pathname.includes('/articles/authors/')) {
     // update available sections
-    setUEFilter(main, 'main-empty');
+    setUEFilter(main, 'empty');
     // update the only available default section
     const section = main.querySelector('.section');
     // if there is already an author bio block
     const authorBioBlock = main.querySelector('div.author-bio.block');
     if (authorBioBlock) {
       // no more blocks selectable
-      setUEFilter(section, 'section-empty');
+      setUEFilter(section, 'empty');
       // you cant delete the bio block anymore
       setUEBehavior(authorBioBlock, 'editable-only');
     } else {
