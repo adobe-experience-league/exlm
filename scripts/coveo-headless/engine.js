@@ -4,12 +4,12 @@ import { generateCustomContext, generateMlParameters, COVEO_SEARCH_CUSTOM_EVENTS
 
 export default async function buildHeadlessSearchEngine(module) {
   const { coveoOrganizationId } = getConfig();
-  const coveoTokenString = await loadCoveoToken();
+  const coveoToken = await loadCoveoToken();
   return module.buildSearchEngine({
     configuration: {
       organizationId: coveoOrganizationId,
       organizationEndpoints: module.getOrganizationEndpoints(coveoOrganizationId),
-      accessToken: coveoTokenString,
+      accessToken: coveoToken,
       preprocessRequest: (request, clientOrigin, metadata) => {
         const { body } = request;
         const bodyJSON = JSON.parse(body || '{}');

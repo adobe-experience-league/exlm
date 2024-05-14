@@ -166,7 +166,13 @@ const authorTypes = [
     description:
       'High degree of proficiency with an advanced understanding of concepts and skill. Regularly manages complex tasks and objectives.',
   },
-];
+].map((authorType) => ({
+  ...authorType,
+  ...(placeholders[`filterExpLevel${authorType.id}Title`] && { title: placeholders[`filterExpLevel${authorType.id}Title`] }),
+  ...(placeholders[`filterExpLevel${authorType.id}Description`] && {
+    description: placeholders[`filterExpLevel${authorType.id}Description`],
+  }),
+}));
 
 export const roleOptions = {
   id: 'el_role',
