@@ -1,5 +1,5 @@
 .QSIFeedbackButton #QSIFeedbackButton-btn {
-  border-radius: none;
+  border-radius: 0;
 }
 
 div.doc-pagination {
