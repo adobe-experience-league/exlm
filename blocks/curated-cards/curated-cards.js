@@ -101,7 +101,7 @@ export default async function decorate(block) {
 
   // For Article content type, if experience level is selected as "Advanced", update it to "Experienced"
   let levelParam = level;
-  if (contentType === 'Article' && level === 'Advanced') {
+  if (contentType === 'article' && level === 'Advanced') {
     levelParam = 'Experienced';
   }
   const param = {
