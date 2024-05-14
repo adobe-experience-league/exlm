@@ -195,6 +195,7 @@ if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
 
 if (isArticleLandingPage()) {
   dropdownOptions.push(authorOptions);
+  dropdownOptions.push(expTypeOptions);
 }
 
 /**
