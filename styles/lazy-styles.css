@@ -1,4 +1,4 @@
-.QSIFeedbackButton #QSIFeedbackButton-btn {
+body > .QSIFeedbackButton #QSIFeedbackButton-btn {
   border-radius: 0;
 }
 
