@@ -5,6 +5,7 @@ import {
   debounce,
   getPathDetails,
   fetchLanguagePlaceholders,
+  isArticleLandingPage,
 } from '../../scripts/scripts.js';
 import {
   roleOptions,
@@ -20,6 +21,7 @@ import {
   toggleSearchSuggestionsVisibility,
   showSearchSuggestionsOnInputClick,
   handleCoverSearchSubmit,
+  authorOptions,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -37,6 +39,7 @@ const coveoFacetMap = {
   el_contenttype: 'headlessTypeFacet',
   el_level: 'headlessExperienceFacet',
   el_product: 'headlessProductFacet',
+  author_type: 'headlessAuthorTypeFacet',
 };
 
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
@@ -91,6 +94,7 @@ const productOptions = {
 
 const theme = getMetadata('theme').trim();
 const dropdownOptions = [roleOptions, contentTypeOptions];
+
 const tags = [];
 let tagsProxy;
 const buildCardsShimmer = new BuildPlaceholder(getBrowseFiltersResultCount());
@@ -189,6 +193,11 @@ function tagsUpdateHandler(block) {
 if (theme === 'browse-all') dropdownOptions.push(productOptions);
 if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
 
+if (isArticleLandingPage()) {
+  dropdownOptions.push(authorOptions);
+  dropdownOptions.push(expTypeOptions);
+}
+
 /**
  * Generate HTML for a single checkbox item.
  *
@@ -209,9 +218,10 @@ function generateCheckboxItem(item, index, id) {
   `;
 }
 
-const constructDropdownEl = (options, id) =>
-  htmlToElement(`
-    <div class="filter-dropdown filter-input" data-filter-type="${options.id}">
+const constructDropdownEl = (options, id) => {
+  const optionClassName = `browse-${options.name.split(' ').join('-').toLowerCase()}-dropdown`;
+  return htmlToElement(`
+    <div class="filter-dropdown ${optionClassName} filter-input" data-filter-type="${options.id}">
       <button>
         ${options.name}
         <span class="icon icon-chevron"></span>
@@ -220,7 +230,8 @@ const constructDropdownEl = (options, id) =>
         ${options.items.map((item, index) => generateCheckboxItem(item, index, id)).join('')}
       </div>
     </div>
-`);
+  `);
+};
 
 function appendToForm(block, target) {
   const formEl = block.querySelector('.browse-filters-form');

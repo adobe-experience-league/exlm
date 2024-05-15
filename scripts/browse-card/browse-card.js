@@ -165,12 +165,12 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText }) => {
   if (viewLinkText) {
     let icon = null;
     let isLeftPlacement = false;
-    if (contentType.toLowerCase() === CONTENT_TYPES.TUTORIAL.MAPPING_KEY) {
+    if (contentType?.toLowerCase() === CONTENT_TYPES.TUTORIAL.MAPPING_KEY) {
       icon = 'play-outline';
       isLeftPlacement = false;
     } else if (
       [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
-        contentType.toLowerCase(),
+        contentType?.toLowerCase(),
       )
     ) {
       icon = 'new-tab';
@@ -200,7 +200,7 @@ const buildCardContent = async (card, model) => {
     inProgressText,
     inProgressStatus = {},
   } = model;
-  const contentType = type.toLowerCase();
+  const contentType = type?.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
   const cardFooter = card.querySelector('.browse-card-footer');
 
@@ -390,9 +390,11 @@ export async function buildCard(container, element, model) {
     });
   }
 
-  const bannerElement = createTag('h3', { class: 'browse-card-banner' });
-  bannerElement.innerText = badgeTitle;
-  cardFigure.appendChild(bannerElement);
+  if (badgeTitle) {
+    const bannerElement = createTag('h3', { class: 'browse-card-banner' });
+    bannerElement.innerText = badgeTitle || '';
+    cardFigure.appendChild(bannerElement);
+  }
 
   if (contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {
     buildInProgressBarContent({ inProgressStatus, cardFigure, card });
@@ -440,7 +442,7 @@ export async function buildCard(container, element, model) {
     });
     if (
       [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
-        contentType.toLowerCase(),
+        contentType?.toLowerCase(),
       )
     ) {
       cardContainer.setAttribute('target', '_blank');

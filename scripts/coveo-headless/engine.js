@@ -1,8 +1,10 @@
+import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
 import { getConfig } from '../scripts.js';
 import { generateCustomContext, generateMlParameters, COVEO_SEARCH_CUSTOM_EVENTS } from '../search/search-utils.js';
 
-export default function buildHeadlessSearchEngine(module, coveoToken) {
+export default async function buildHeadlessSearchEngine(module) {
   const { coveoOrganizationId } = getConfig();
+  const coveoToken = await loadCoveoToken();
   return module.buildSearchEngine({
     configuration: {
       organizationId: coveoOrganizationId,

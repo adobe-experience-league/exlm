@@ -49,7 +49,8 @@
   border-radius: 4px;
   padding: 9px 12px;
   width: 100%;
-  font-size: 16px; /* https://defensivecss.dev/tip/input-zoom-safari/ */
+  font-size: 16px;
+  /* https://defensivecss.dev/tip/input-zoom-safari/ */
   text-align: left;
   color: var(--spectrum-gray-700);
   line-height: 10px;
@@ -65,7 +66,7 @@
   padding-left: 28px;
 }
 
-.filter-input > input::placeholder {
+.filter-input>input::placeholder {
   font-family: var(--body-font-family);
   color: var(--spectrum-gray-700);
   font-size: var(--spectrum-body-size-m);
@@ -511,11 +512,24 @@ button.browse-tags:focus {
     grid-area: search;
   }
 
+  .browse-author-type-dropdown {
+    grid-area: author;
+  }
+
   button.browse-filters-clear {
     grid-area: cfilter;
     width: 100%;
     text-align: right;
     padding: 0;
+  }
+
+  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-product-dropdown.filter-dropdown),  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-experience-level-dropdown.filter-dropdown) {
+    grid-template-areas:
+      "label label"
+      "ctype author"
+      "role exp"
+      "search cfilter";
+    grid-template-columns: 1fr 1fr;
   }
 }
 
@@ -534,5 +548,13 @@ button.browse-tags:focus {
   .browse-filters-input-container:has(.filter-dropdown:nth-child(4)) {
     grid-template-areas: "label role ctype exp search cfilter";
     grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
+  }
+
+  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-product-dropdown.filter-dropdown),  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-experience-level-dropdown.filter-dropdown) {
+    grid-template-areas:
+      "label label label label"
+      "ctype author role exp"
+      "search search search cfilter";
+    grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }

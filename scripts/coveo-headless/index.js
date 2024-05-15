@@ -1,5 +1,4 @@
 import buildHeadlessSearchEngine from './engine.js';
-import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
 import { handleCoverSearchSubmit } from '../../blocks/browse-filters/browse-filter-utils.js';
 
@@ -19,14 +18,6 @@ const locales = new Map([
   ['zh-hant', 'zh-TW'],
 ]);
 
-/* let coveoToken;
-if (window.location.window !== 'experienceleague.adobe.com') {
-  // Token allows acces to staging search functionality, but not analytics
-  coveoToken = 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99';
-} else { */
-const coveoToken = await loadCoveoToken();
-// }
-
 function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contextObject, advancedQueryRule }) {
   const advancedQuery = module.loadAdvancedSearchQueryActions(searchEngine).registerAdvancedSearchQueries({
     aq: advancedQueryRule || '',
@@ -43,6 +34,10 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
       '@foldingcollection',
       '@foldingparent',
       'author',
+      'authortype',
+      'authorname',
+      'author_type',
+      'author_name',
       'collection',
       'connectortype',
       'contenttype',
@@ -62,6 +57,7 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
       'el_usergenerictext',
       'el_version',
       'el_view_status',
+      'el_author_type',
       'filetype',
       'language',
       'liMessageLabels',
@@ -103,8 +99,8 @@ export default async function initiateCoveoHeadlessSearch({
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
     import('./libs/browser/headless.esm.js')
-      .then((module) => {
-        const headlessSearchEngine = buildHeadlessSearchEngine(module, coveoToken);
+      .then(async (module) => {
+        const headlessSearchEngine = await buildHeadlessSearchEngine(module);
         const statusControllers = module.buildSearchStatus(headlessSearchEngine);
 
         configureSearchHeadlessEngine({
@@ -146,6 +142,13 @@ export default async function initiateCoveoHeadlessSearch({
         const headlessProductFacet = module.buildFacet(headlessSearchEngine, {
           options: {
             field: 'el_product',
+          },
+          numberOfValues: 8,
+        });
+
+        const headlessAuthorTypeFacet = module.buildFacet(headlessSearchEngine, {
+          options: {
+            field: 'author_type',
           },
           numberOfValues: 8,
         });
@@ -278,6 +281,7 @@ export default async function initiateCoveoHeadlessSearch({
         window.headlessRoleFacet = headlessRoleFacet;
         window.headlessExperienceFacet = headlessExperienceFacet;
         window.headlessProductFacet = headlessProductFacet;
+        window.headlessAuthorTypeFacet = headlessAuthorTypeFacet;
         window.headlessStatusControllers = statusControllers;
         window.headlessPager = headlessPager;
         window.headlessResultsPerPage = headlessResultsPerPage;

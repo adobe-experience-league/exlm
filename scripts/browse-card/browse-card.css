@@ -132,6 +132,7 @@
   font-weight: var(--font-weight-700);
   line-height: 18.2px;
   background-color: var(--spectrum-red-1400);
+  border-radius: 2px;
   color: var(--spectrum-gray-50);
   align-self: center;
   padding: 0px 3px;
