@@ -99,18 +99,13 @@ export default async function decorate(block) {
 
   extractCapability();
 
-  // For Article content type, if experience level is selected as "Advanced", update it to "Experienced"
-  let levelParam = level;
-  if (contentType === 'article' && level === 'Advanced') {
-    levelParam = 'Experienced';
-  }
   const param = {
     contentType: contentType && contentType.toLowerCase().split(','),
     product: products.length ? removeProductDuplicates(products) : null,
     feature: features.length ? [...new Set(features)] : null,
     version: versions.length ? [...new Set(versions)] : null,
     role: role && role.toLowerCase().split(','),
-    level: levelParam && levelParam.toLowerCase().split(','),
+    level: level && level.toLowerCase().split(','),
     sortCriteria,
     noOfResults,
   };
