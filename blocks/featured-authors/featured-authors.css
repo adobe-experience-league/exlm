@@ -264,14 +264,12 @@
 
   /* description alignments */
   .featured-authors.block > div:has(.description){
-    padding-left: 70px;
-    padding-right: 0;
+    padding: 0;
     align-self: center;
   }
 
   .featured-authors.block.right > div:has(.description){
-    padding-right: 70px;
-    padding-left: 0;
+    padding: 0;
   }
   
   /* image size changes */
@@ -279,16 +277,16 @@
     width: 327px;
     height: 327px;
     margin: 0;
+    margin-right: 70px;
     position: relative;
   }
   
-    
-  .featured-authors.block > div:has(.author){
-    justify-self: center;
+  .featured-authors.block.right .featured-authors-image {
+    margin-left: 70px;
   }
 
-  .featured-authors.block.right > div:has(.author){
-    justify-self: center;
+  .featured-authors.block > div:has(.author){
+    justify-self: left;
   }
 
   .featured-authors.block .featured-authors-image img {
@@ -298,5 +296,14 @@
 
   .featured-authors.block .description p{
     margin-bottom: 0;
+  }
+
+  .featured-authors.block .author {
+    flex-direction: column;
+  }
+
+  .featured-authors.block .author .author-details {
+    margin-top: 8px;
+    margin-left: 0;
   }
 }

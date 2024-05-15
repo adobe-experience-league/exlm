@@ -67,6 +67,12 @@ const contentType = [
     description: 'Credentials that recognize an individual’s skill and competency in an Adobe solution.',
   },
   {
+    id: 'Article',
+    value: 'Article',
+    title: 'Article',
+    description: 'Article that recognize an individual’s skill and competency in an Adobe solution.',
+  },
+  {
     id: 'Community',
     value: 'Community',
     title: 'Community',
@@ -145,6 +151,31 @@ const expLevel = [
   }),
 }));
 
+const authorTypes = [
+  {
+    id: 'internal',
+    value: 'Adobe',
+    title: 'Adobe',
+    description:
+      'High degree of proficiency with an advanced understanding of concepts and skill. Regularly manages complex tasks and objectives.',
+  },
+  {
+    id: 'external',
+    value: 'External',
+    title: 'External',
+    description:
+      'High degree of proficiency with an advanced understanding of concepts and skill. Regularly manages complex tasks and objectives.',
+  },
+].map((authorType) => ({
+  ...authorType,
+  ...(placeholders[`filterExpLevel${authorType.id}Title`] && {
+    title: placeholders[`filterExpLevel${authorType.id}Title`],
+  }),
+  ...(placeholders[`filterExpLevel${authorType.id}Description`] && {
+    description: placeholders[`filterExpLevel${authorType.id}Description`],
+  }),
+}));
+
 export const roleOptions = {
   id: 'el_role',
   name: placeholders.filterRoleLabel || 'Role',
@@ -163,6 +194,13 @@ export const expTypeOptions = {
   id: 'el_level',
   name: placeholders.filterExperienceLevelLabel || 'Experience Level',
   items: expLevel,
+  selected: 0,
+};
+
+export const authorOptions = {
+  id: 'author_type',
+  name: placeholders.filterAuthorLabel || 'Author Type',
+  items: authorTypes,
   selected: 0,
 };
 

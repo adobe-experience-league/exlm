@@ -47,6 +47,10 @@ export const CONTENT_TYPES = Object.freeze({
     MAPPING_KEY: 'instructor-led-training',
     LABEL: placeholders.browseCardInstructorLedLabel || 'Instructor-Led',
   },
+  ARTICLE: {
+    MAPPING_KEY: 'article',
+    LABEL: placeholders.browseCardArticleLabel || 'Article',
+  },
 });
 
 export const COVEO_SORT_OPTIONS = Object.freeze({
@@ -101,6 +105,11 @@ export const RECOMMENDED_COURSES_CONSTANTS = Object.freeze({
     MAPPING_KEY: 'paths',
     LABEL: placeholders.recommendedCoursesPathsLabel || 'Paths',
   },
+});
+
+export const AUTHOR_TYPE = Object.freeze({
+  EXTERNAL: 'External',
+  ADOBE: 'Adobe',
 });
 
 export const BASE_COVEO_ADVANCED_QUERY = '(@el_contenttype NOT "Community|User")';
