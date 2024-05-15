@@ -1,11 +1,11 @@
 [
   {
-    "id": "main",
-    "components": ["section"]
-  },
-  {
     "id": "empty",
     "components": []
+  },
+  {
+    "id": "main",
+    "components": ["section"]
   },
   {
     "id": "main-browse",

@@ -43,29 +43,6 @@ function setUEModel(element, model) {
   element.dataset.aueModel = model;
 }
 
-// set the behavior for an UE editable
-function setUEBehavior(element, behavior) {
-  // eslint-disable-next-line default-case
-  switch (behavior) {
-    // block stays editable but can't be deleted or moved, visible in content tree
-    case 'editable-only':
-      // if a block
-      if (element.dataset.aueType === 'component') {
-        // turn into a container
-        element.dataset.aueType = 'container';
-        // set empty filter
-        setUEFilter(element, 'empty');
-      }
-      // for sections
-      delete element.dataset.aueBehavior;
-      break;
-    // block can't be edited, deleted or moved, does not appear in UE content tree
-    case 'static':
-      delete element.dataset.aueResource;
-      break;
-  }
-}
-
 /**
  * See:
  * https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/attributes-types#data-properties
@@ -80,8 +57,6 @@ function updateUEInstrumentation() {
     if (browseRailBlock) {
       // only more default sections can be added
       setUEFilter(main, 'main');
-      // the browse rail block can only be edited
-      setUEBehavior(browseRailBlock, 'editable-only');
     } else {
       // allow adding default sections and browse rail section
       setUEFilter(main, 'main-browse');
@@ -104,16 +79,6 @@ function updateUEInstrumentation() {
     if (articleContentSection) {
       setUEFilter(articleContentSection, 'article-content-section');
     }
-    // make sure article marquee block is editable only
-    const articleMarqueeBlock = main.querySelector('.article-marquee');
-    if (articleMarqueeBlock) {
-      setUEBehavior(articleMarqueeBlock, 'editable-only');
-    }
-    // hide the mini-toc from editing
-    const miniToc = main.querySelector('.mini-toc');
-    if (miniToc) {
-      setUEBehavior(miniToc, 'static');
-    }
     return;
   }
 
@@ -128,14 +93,10 @@ function updateUEInstrumentation() {
     if (authorBioBlock) {
       // no more blocks selectable
       setUEFilter(section, 'empty');
-      // you cant delete the bio block anymore
-      setUEBehavior(authorBioBlock, 'editable-only');
     } else {
       // only allow adding author bio blocks
       setUEFilter(section, 'section-author-bio');
     }
-    // make the only available section editable only
-    setUEBehavior(section, 'editable-only');
   }
 }
 
