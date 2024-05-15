@@ -1,6 +1,57 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 
+/**
+ * @typedef {Object} Video
+ * // src, autoplay = true, title, description, transcriptUrl
+ * @property {string} src
+ * @property {boolean} autoplay
+ * @property {string} title
+ * @property {string} description
+ * @property {string} transcriptUrl
+ * @property {string} duration
+ * @property {string} thumbnailUrl
+ *
+ * @returns
+ */
+
+/**
+ * convert seconds to time in minutes in the format of 'mm:ss'
+ * @param {string} seconds
+ */
+function toTimeInMinutes(seconds) {
+  const secondsNumber = parseInt(seconds, 10);
+  const minutes = Math.floor(secondsNumber / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+}
+
+/**
+ *
+ * @param {Video} video
+ * @returns
+ */
+function generateJsonLd(video) {
+  return htmlToElement(`<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "${video.title}",
+  "description": "${video.description}",
+  "thumbnailUrl": ["${video.thumbnailUrl}"],
+  "uploadDate": "2024-03-31T08:00:00+08:00",
+  "duration": "PT${toTimeInMinutes(video.duration).split(':').join('M')}S",
+  "contentUrl": "${video.src}",
+  "embedUrl": "${video.src}",
+//   "interactionStatistic": {
+//     "@type": "InteractionCounter",
+//     "interactionType": { "@type": "WatchAction" },
+//     "userInteractionCount": 5647018
+//   },
+}
+</script>`);
+}
+
 function iconSpan(icon) {
   return `<span class="icon icon-${icon}"></span>`;
 }
@@ -23,17 +74,6 @@ function newPlayer({ src, autoplay = true, title, description, transcriptUrl }) 
             </div>
         </div>
     `);
-}
-
-/**
- * convert seconds to time in minutes in the format of 'mm:ss'
- * @param {string} seconds
- */
-function toTimeInMinutes(seconds) {
-  const secondsNumber = parseInt(seconds, 10);
-  const minutes = Math.floor(secondsNumber / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
 }
 
 /**
@@ -103,7 +143,7 @@ export default function decorate(block) {
     const [videoCell, videoDataCell] = videoRow.children;
     videoDataCell.classList.add('playlist-item-content');
 
-    const [srcP] = videoCell.children;
+    const [srcP, pictureP] = videoCell.children;
     const [titleH, descriptionP, durationP, transcriptP] = videoDataCell.children;
 
     titleH.outerHTML = `<h6>${titleH.textContent}</h6>`;
@@ -118,6 +158,7 @@ export default function decorate(block) {
       description: descriptionP.textContent,
       duration: durationP.textContent,
       transcriptUrl: transcriptP.textContent,
+      thumbnailUrl: pictureP.querySelector('img').src,
     });
 
     videoDataCell.append(
@@ -126,6 +167,8 @@ export default function decorate(block) {
               <div>${iconSpan('time')} ${toTimeInMinutes(durationP.textContent)} MIN</div>
           </div>`),
     );
+
+    videoRow.append(generateJsonLd(videos[videoIndex]));
 
     videoRow.addEventListener('click', () => {
       showVideo(videoIndex + 1);
