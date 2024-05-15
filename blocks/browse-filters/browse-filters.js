@@ -364,7 +364,6 @@ function handleCheckboxClick(block, el, options) {
         label,
         value,
       });
-      decorateIcons(block);
 
       if (coveoFacet) {
         const facets = getCoveoFacets(value, true);
