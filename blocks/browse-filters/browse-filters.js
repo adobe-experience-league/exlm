@@ -263,7 +263,7 @@ function renderTags() {
   return htmlToElement(tagEl);
 }
 
-async function appendTag(block, tag) {
+async function appendTag(block, tag, source = 'checkboxChange') {
   const tagsContainer = block.querySelector('.browse-tags-container');
   const tagEl = htmlToElement(`
     <button class="browse-tags" value="${tag.value}">
@@ -278,7 +278,9 @@ async function appendTag(block, tag) {
     name: tag.name,
     value: tag.value,
   });
-  await decorateIcons(tagsContainer);
+  if (source === 'checkboxChange') {
+    await decorateIcons(tagsContainer);
+  }
 }
 
 function removeFromTags(block, value) {
@@ -610,7 +612,7 @@ function handleUriHash() {
               name,
               label,
               value: facetValue,
-            });
+            }, 'handleUriHash');
           }
         });
         const btnEl = filterOptionEl.querySelector(':scope > button');
