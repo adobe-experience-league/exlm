@@ -1,0 +1,140 @@
+.playlist-page {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1em;
+  padding: 1em;
+  grid-template-columns: 1fr;
+}
+@media (width >= 600px) {
+  .playlist-page {
+    grid-template-columns: auto 250px;
+  }
+}
+@media (width >= 900px) {
+  .playlist-page {
+    grid-template-columns: auto 275px;
+  }
+}
+@media (width >= 1024px) {
+  .playlist-page {
+    grid-template-columns: auto 300px;
+  }
+}
+
+.section.playlist-container {
+  --playlist-border: #d6d6d6 1px solid;
+  --playlist-border-radius: 10px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.section.playlist-container .icon {
+  vertical-align: sub;
+  width: 16px;
+  height: 16px;
+}
+
+.section.playlist-container .default-content-wrapper {
+  padding: 1em;
+  border-bottom: var(--playlist-border);
+  background-color: #fff;
+  border: var(--playlist-border);
+  border-top-left-radius: var(--playlist-border-radius);
+  border-top-right-radius: var(--playlist-border-radius);
+}
+
+.section.playlist-container .default-content-wrapper h3 {
+  margin: 0;
+}
+
+.section.playlist-container .default-content-wrapper p {
+  display: none;
+}
+
+.playlist-player-container {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.playlist {
+  background-color: #fafafa;
+  padding: 1em;
+  border: var(--playlist-border);
+  border-bottom-left-radius: var(--playlist-border-radius);
+  border-bottom-right-radius: var(--playlist-border-radius);
+}
+
+.playlist-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 1em 0;
+}
+
+.playlist-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 1em 0 0;
+}
+
+.playlist-player-video iframe {
+  width: 100%;
+  aspect-ratio: 16/9;
+}
+
+.playlist-player-info-title {
+  margin: 0;
+}
+
+.playlist-player-info-transcript a {
+  color: inherit !important;
+}
+
+.playlist-item {
+  border: var(--playlist-border);
+  border-radius: var(--playlist-border-radius);
+  background-color: #fff;
+}
+
+.playlist-item.active {
+  outline: 2px solid var(--non-spectrum-navy-blue);
+}
+
+.playlist-item:not(:last-child) {
+  margin-bottom: 1em;
+}
+
+.playlist-item-content {
+  padding: 0 1em 1em;
+}
+
+.playlist-item-content h6 {
+  margin: 0;
+}
+
+.playlist-item img {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.playlist-item picture,
+.playlist-item picture img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4/1;
+  object-fit: cover;
+}
+
+.playlist-item picture {
+  max-height: 75%;
+}
+
+.playlist-item-meta {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0.5em 0 0;
+  font-size: 12px;
+}
