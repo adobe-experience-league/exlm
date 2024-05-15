@@ -57,6 +57,8 @@ function updateUEInstrumentation() {
     if (browseRailBlock) {
       // only more default sections can be added
       setUEFilter(main, 'main');
+      // no more browse rails can be added
+      setUEFilter(document.querySelector('.section.browse-rail-section'), 'empty');
     } else {
       // allow adding default sections and browse rail section
       setUEFilter(main, 'main-browse');
