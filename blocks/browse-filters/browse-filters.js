@@ -608,11 +608,15 @@ function handleUriHash() {
           if (!inputEl.checked) {
             const label = inputEl?.dataset.label || '';
             inputEl.checked = true;
-            appendTag(browseFiltersSection, {
-              name,
-              label,
-              value: facetValue,
-            }, 'handleUriHash');
+            appendTag(
+              browseFiltersSection,
+              {
+                name,
+                label,
+                value: facetValue,
+              },
+              'handleUriHash',
+            );
           }
         });
         const btnEl = filterOptionEl.querySelector(':scope > button');
