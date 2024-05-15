@@ -111,7 +111,7 @@
   },
   {
     "id": "browse-rail-section",
-    "components": []
+    "components": ["browse-rail"]
   },
   {
     "id": "article-header-section",
