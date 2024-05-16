@@ -16,6 +16,10 @@
     "components": ["article-content-section", "article-header-section", "section"]
   },
   {
+    "id": "main-profile",
+    "components": ["section-profile", "section"]
+  },
+  {
     "id": "section",
     "components": [
       "text",
@@ -80,6 +84,14 @@
   {
     "id": "section-author-bio",
     "components": ["author-bio"]
+  },
+  {
+    "id": "section-profile",
+    "components": ["text", "title", "button", "image", "columns"]
+  },
+  {
+    "id": "section-profile-signup",
+    "components": ["text", "title", "button", "image"]
   },
   {
     "id": "article-content-section",
