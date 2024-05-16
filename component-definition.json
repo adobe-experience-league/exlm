@@ -666,7 +666,8 @@
                 "template": {
                   "name": "Browse Rail",
                   "model": "browse-rail",
-                  "title": "Browse Rail"
+                  "title": "Browse Rail",
+                  "navigation": "<ul><li><a href='/content/exlm/global/en/browse.html'>Title with Link</a><br><ul><li><a href='/content/exlm/global/en/browse.html'>Subtitle with link</a></li></ul></li><li>Title with no link<ul><li>Subtitle with no link</li></ul></li></ul>"
                 }
               }
             }

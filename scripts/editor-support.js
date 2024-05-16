@@ -33,6 +33,68 @@ function restoreState(newBlock, state) {
   }
 }
 
+// set the filter for an UE editable
+function setUEFilter(element, filter) {
+  element.dataset.aueFilter = filter;
+}
+
+/**
+ * See:
+ * https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/attributes-types#data-properties
+ */
+function updateUEInstrumentation() {
+  const main = document.querySelector('main');
+
+  // ----- if browse page, identified by theme
+  if (document.querySelector('body[class^=browse-]')) {
+    // if there is already a editable browse rail on the page
+    const browseRailBlock = main.querySelector('div.browse-rail.block[data-aue-resource]');
+    if (browseRailBlock) {
+      // only more default sections can be added
+      setUEFilter(main, 'main');
+      // no more browse rails can be added
+      setUEFilter(document.querySelector('.section.browse-rail-section'), 'empty');
+    } else {
+      // allow adding default sections and browse rail section
+      setUEFilter(main, 'main-browse');
+    }
+    // update available blocks for default sections
+    main.querySelectorAll('.section:not(.browse-rail-section)').forEach((elem) => {
+      setUEFilter(elem, 'section-browse');
+    });
+    return;
+  }
+
+  // ----- if article page, identified by theme
+  if (document.querySelector('body[class^=articles]')) {
+    // update available sections
+    setUEFilter(main, 'main-article');
+    // update available blocks for article content sections
+    const articleContentSection = main.querySelector('.article-content-section');
+    if (articleContentSection) {
+      setUEFilter(articleContentSection, 'article-content-section');
+    }
+    return;
+  }
+
+  // ----- if author bio page, identified by path segment
+  if (document.location.pathname.includes('/articles/authors/')) {
+    // update available sections
+    setUEFilter(main, 'empty');
+    // update the only available default section
+    const section = main.querySelector('.section');
+    // if there is already an author bio block
+    const authorBioBlock = main.querySelector('div.author-bio.block');
+    if (authorBioBlock) {
+      // no more blocks selectable
+      setUEFilter(section, 'empty');
+    } else {
+      // only allow adding author bio blocks
+      setUEFilter(section, 'section-author-bio');
+    }
+  }
+}
+
 /**
  * Event listener for aue:content-patch, edit of a component
  */
@@ -159,7 +221,11 @@ function attachEventListners(main) {
       main?.addEventListener(eventType, async (event) => {
         event.stopPropagation();
         const applied = await applyChanges(event);
-        if (!applied) window.location.reload();
+        if (applied) {
+          updateUEInstrumentation();
+        } else {
+          window.location.reload();
+        }
       }),
   );
 
@@ -190,3 +256,6 @@ if (signUpBlock) {
     });
   }).observe(document.documentElement, { attributeFilter: ['class'] });
 }
+
+// update UE component filters on page load
+updateUEInstrumentation();
