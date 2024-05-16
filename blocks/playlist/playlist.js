@@ -52,6 +52,7 @@ function iconSpan(icon) {
   return `<span class="icon icon-${icon}"></span>`;
 }
 
+// Video Player
 function newPlayer({ src, autoplay = true, title, description, transcriptUrl }) {
   const iframeAllowOptions = ['fullscreen', 'accelerometer', 'encrypted-media', 'gyroscope', 'picture-in-picture'];
   if (autoplay) iframeAllowOptions.push('autoplay');
@@ -73,7 +74,6 @@ function newPlayer({ src, autoplay = true, title, description, transcriptUrl }) 
 }
 
 /**
- *
  * @param {HTMLElement} block
  * @param {Array} videos
  */
@@ -103,17 +103,11 @@ function updatePlayer(video) {
   const playerContainer = document.querySelector('.playlist-player-container');
   playerContainer.innerHTML = '';
   playerContainer.append(player);
-  // check if mobile (less than 600px)
-  if (window.matchMedia('(max-width: 600px)').matches) {
-    // scroll to top
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-const v = [];
-const videos = new Proxy(v, {
+
+// array with proxy to update based on array values
+const videos = new Proxy([], {
   /**
    * @param {Array} target
    * @param {string} index
@@ -133,7 +127,6 @@ const videos = new Proxy(v, {
 });
 
 /**
- *
  * @param {number|string} index
  */
 function activateVideoByIndex(index) {
@@ -174,12 +167,13 @@ export default function decorate(block) {
     };
     videos.push(video);
 
-    // remove elements
+    // remove elements that don't need to show here.
     srcP.remove();
     descriptionP.remove();
     durationP.remove();
     transcriptP.remove();
 
+    // item bottom status
     videoDataCell.append(
       htmlToElement(`<div class="playlist-item-meta">
               <div>${iconSpan('check')} In Progress</div>
@@ -192,6 +186,7 @@ export default function decorate(block) {
     });
   });
 
+  // bottom options
   block.parentElement.append(
     htmlToElement(`<div class="playlist-options">
         <div class="playlist-options-autoplay">
@@ -201,13 +196,16 @@ export default function decorate(block) {
     </div>`),
   );
 
+  // now viewing
   block.parentElement.append(
     htmlToElement(`<div class="playlist-now-viewing">
         <b>NOW VIEWING</b>
         <b><span>1</span> OF ${videos.length}</b>
     </div>`),
   );
+
   decoratePlaylistHeader(block, videos);
+
   decorateIcons(playlistSection);
 
   activateVideoByIndex(getQueryStringParameter('video') || 0);
