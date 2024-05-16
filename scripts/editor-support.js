@@ -38,11 +38,6 @@ function setUEFilter(element, filter) {
   element.dataset.aueFilter = filter;
 }
 
-// set the model for a UE editable
-function setUEModel(element, model) {
-  element.dataset.aueModel = model;
-}
-
 /**
  * See:
  * https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/attributes-types#data-properties
@@ -72,8 +67,6 @@ function updateUEInstrumentation() {
 
   // ----- if article page, identified by theme
   if (document.querySelector('body[class^=articles]')) {
-    // article page has a dedicated set of page metadata settings
-    setUEModel(document.body, 'article-page-metadata');
     // update available sections
     setUEFilter(main, 'main-article');
     // update available blocks for article content sections
