@@ -42,7 +42,7 @@
   border-top-right-radius: var(--playlist-border-radius);
 }
 
-.section.playlist-container .default-content-wrapper h3 {
+.section.playlist-container .default-content-wrapper > h3 {
   margin: 0;
 }
 
@@ -56,7 +56,7 @@
 }
 
 .playlist {
-  background-color: #fafafa;
+  background-color: #eaeaea;
   padding: 1em;
   border: var(--playlist-border);
   border-bottom-left-radius: var(--playlist-border-radius);
@@ -94,10 +94,22 @@
   border: var(--playlist-border);
   border-radius: var(--playlist-border-radius);
   background-color: #fff;
+
+  .playlist-item-title {
+    margin: 0;
+    font-size: var(--exlm-font-size-h6);
+    font-weight: var(--font-weight-700);
+    line-height: var(--exlm-line-height-h6);
+    color: #6e6e6e;
+  }
 }
 
 .playlist-item.active {
   outline: 2px solid var(--non-spectrum-navy-blue);
+
+  .playlist-item-title {
+    color: black;
+  }
 }
 
 .playlist-item:not(:last-child) {
@@ -106,10 +118,6 @@
 
 .playlist-item-content {
   padding: 0 1em 1em;
-}
-
-.playlist-item-content h6 {
-  margin: 0;
 }
 
 .playlist-item img {
@@ -135,4 +143,67 @@
   justify-content: space-between;
   padding: 0.5em 0 0;
   font-size: 12px;
+}
+
+.playlist-options-autoplay input[type='checkbox'] {
+  --switch-on-background: #464646;
+  --switch-off-background: #d5d5d5;
+  --switch-knob-background: #fff;
+  --switch-height: 16px;
+  --switch-width: 30px;
+  --switch-knob-size: 14px;
+  --switch-knob-offset: calc(var(--switch-height) / 2 - var(--switch-knob-size) / 2);
+
+  appearance: none;
+  width: var(--switch-width);
+  height: var(--switch-height);
+  background: var(--switch-off-background);
+  border-radius: var(--switch-height);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+.playlist-options-autoplay input[type='checkbox']:checked {
+  background: var(--switch-on-background);
+}
+
+.playlist-options-autoplay input[type='checkbox']::after {
+  position: absolute;
+  top: var(--switch-knob-offset);
+  right: calc(var(--switch-width) - var(--switch-knob-offset) - var(--switch-knob-size));
+  content: '';
+  width: var(--switch-knob-size);
+  height: var(--switch-knob-size);
+  border-radius: 50%;
+  outline: 2px solid var(--switch-on-background);
+  outline-offset: -1px;
+  background: var(--switch-knob-background);
+  transition: all 0.2s ease-in-out;
+}
+
+.playlist-options-autoplay input[type='checkbox']:checked::after {
+  right: var(--switch-knob-offset);
+  border: 0;
+  outline: 2px solid var(--switch-on-background);
+}
+
+.playlist-options-autoplay {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5em 0;
+  gap: 0.5em;
+  flex-wrap: unset;
+}
+
+.playlist-now-viewing {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
 }

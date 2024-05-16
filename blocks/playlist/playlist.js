@@ -11,7 +11,8 @@ import { htmlToElement } from '../../scripts/scripts.js';
  * @property {string} transcriptUrl
  * @property {string} duration
  * @property {string} thumbnailUrl
- *
+ * @property {boolean} active
+ * @property {HTMLElement} el
  * @returns
  */
 
@@ -27,38 +28,38 @@ function toTimeInMinutes(seconds) {
 }
 
 /**
- *
- * @param {Video} video
- * @returns
+ * Update the query string parameter with the given key and value
  */
-function generateJsonLd(video) {
-  if (video?.src && video?.src?.includes('tv.adobe.com/v/')) {
-    const script = htmlToElement(`<script type="application/ld+json"></script>`);
-    const jsonLdUrl = new URL(video.src);
-    // add format=json-ld query param
-    jsonLdUrl.searchParams.set('format', 'json-ld');
-    fetch(jsonLdUrl.href)
-      .then((response) => response.json())
-      .then((data) => {
-        script.textContent = JSON.stringify(data?.jsonLinkedData);
-      });
-    return script;
-  }
-  return null;
+function updateQueryStringParameter(key, value) {
+  const baseUrl = window.location.href.split('?')[0];
+  const url = new URL(baseUrl);
+  url.searchParams.set(key, value);
+  window.history.pushState({ [key]: value }, '', url);
 }
 
+/**
+ * Get the query string parameter with the given key
+ */
+function getQueryStringParameter(key) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(key);
+}
+
+/**
+ * create an icon span (to be used with decorateIcons())
+ */
 function iconSpan(icon) {
   return `<span class="icon icon-${icon}"></span>`;
 }
 
 function newPlayer({ src, autoplay = true, title, description, transcriptUrl }) {
-  const iframeAllowOptions = ['accelerometer', 'encrypted-media', 'gyroscope', 'picture-in-picture'];
+  const iframeAllowOptions = ['fullscreen', 'accelerometer', 'encrypted-media', 'gyroscope', 'picture-in-picture'];
   if (autoplay) iframeAllowOptions.push('autoplay');
 
   return htmlToElement(`
         <div class="playlist-player">
             <div class="playlist-player-video">
-                <iframe src="${src}" frameborder="0" allow="${iframeAllowOptions.join('; ')}" allowfullscreen></iframe>
+                <iframe src="${src}?autoplay" frameborder="0" allow="${iframeAllowOptions.join('; ')}"></iframe>
             </div>
             <div class="playlist-player-info">
                 <h3 class="playlist-player-info-title">${title}</h3>
@@ -94,6 +95,56 @@ function decoratePlaylistHeader(block, videos) {
 }
 
 /**
+ * Shows the video at the given count
+ * @param {*} count
+ */
+function updatePlayer(video) {
+  const player = newPlayer(video);
+  const playerContainer = document.querySelector('.playlist-player-container');
+  playerContainer.innerHTML = '';
+  playerContainer.append(player);
+  // check if mobile (less than 600px)
+  if (window.matchMedia('(max-width: 600px)').matches) {
+    // scroll to top
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }
+}
+const v = [];
+const videos = new Proxy(v, {
+  /**
+   * @param {Array} target
+   * @param {string} index
+   * @param {Video} video
+   */
+  set(target, prop, val) {
+    if (prop === 'length' || typeof prop === 'symbol') return target[prop];
+    target[prop] = val;
+    const { active, el } = val;
+    el.classList.toggle('active', active);
+    if (active) {
+      updatePlayer(val);
+      updateQueryStringParameter('video', prop);
+    }
+    return true;
+  },
+});
+
+/**
+ *
+ * @param {number|string} index
+ */
+function activateVideoByIndex(index) {
+  let i = parseInt(index, 10);
+  if (!videos[i]) i = 0;
+  videos.forEach((video, j) => {
+    videos[j] = { ...video, active: j === i };
+  });
+}
+
+/**
  * @param {HTMLElement} block
  */
 export default function decorate(block) {
@@ -102,36 +153,6 @@ export default function decorate(block) {
   const playlistSection = block.closest('.section');
   const playerContainer = htmlToElement(`<div class="playlist-player-container"></div>`);
   playlistSection.parentElement.prepend(playerContainer);
-  const videos = [];
-
-  function updateQueryStringParameter(key, value) {
-    const baseUrl = window.location.href.split('?')[0];
-    const url = new URL(baseUrl);
-    url.searchParams.set(key, value);
-    window.history.pushState({ [key]: value }, '', url);
-  }
-
-  function getQueryStringParameter(key) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(key);
-  }
-  function showVideo(count) {
-    const index = count - 1;
-    const player = newPlayer(videos[index]);
-    playerContainer.innerHTML = '';
-    playerContainer.append(player);
-    // check if mobile (less than 600px)
-    if (window.matchMedia('(max-width: 600px)').matches) {
-      // scroll to top
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
-    }
-    document.querySelector('.playlist-item.active')?.classList.remove('active');
-    document.querySelectorAll('.playlist-item')[index].classList.add('active');
-    updateQueryStringParameter('video', count);
-  }
 
   [...block.children].forEach((videoRow, videoIndex) => {
     videoRow.classList.add('playlist-item');
@@ -140,49 +161,61 @@ export default function decorate(block) {
 
     const [srcP, pictureP] = videoCell.children;
     const [titleH, descriptionP, durationP, transcriptP] = videoDataCell.children;
+    titleH.classList.add('playlist-item-title');
 
-    titleH.outerHTML = `<h6>${titleH.textContent}</h6>`;
-    srcP.style.display = 'none';
-    descriptionP.style.display = 'none';
-    durationP.style.display = 'none';
-    transcriptP.style.display = 'none';
-
-    videos.push({
+    const video = {
       src: srcP.textContent,
       title: titleH.textContent,
       description: descriptionP.textContent,
       duration: durationP.textContent,
       transcriptUrl: transcriptP.textContent,
       thumbnailUrl: pictureP.querySelector('img').src,
-    });
+      el: videoRow,
+    };
+    videos.push(video);
+
+    // remove elements
+    srcP.remove();
+    descriptionP.remove();
+    durationP.remove();
+    transcriptP.remove();
 
     videoDataCell.append(
       htmlToElement(`<div class="playlist-item-meta">
               <div>${iconSpan('check')} In Progress</div>
-              <div>${iconSpan('time')} ${toTimeInMinutes(durationP.textContent)} MIN</div>
+              <div>${iconSpan('time')} ${toTimeInMinutes(video.duration)} MIN</div>
           </div>`),
     );
-    const jsonLd = generateJsonLd(videos[videoIndex]);
-    if (jsonLd) videoRow.append(generateJsonLd(videos[videoIndex]));
 
     videoRow.addEventListener('click', () => {
-      showVideo(videoIndex + 1);
+      activateVideoByIndex(videoIndex);
     });
   });
 
   block.parentElement.append(
     htmlToElement(`<div class="playlist-options">
-  
-  </div>`),
+        <div class="playlist-options-autoplay">
+            <input type="checkbox" id="playlist-options-autoplay">
+            <label for="playlist-options-autoplay">Autoplay next Video</label>
+        </div>
+    </div>`),
+  );
+
+  block.parentElement.append(
+    htmlToElement(`<div class="playlist-now-viewing">
+        <b>NOW VIEWING</b>
+        <b><span>1</span> OF ${videos.length}</b>
+    </div>`),
   );
   decoratePlaylistHeader(block, videos);
   decorateIcons(playlistSection);
-  showVideo(getQueryStringParameter('video') || 1);
+
+  activateVideoByIndex(getQueryStringParameter('video') || 0);
 
   // handle browser back within history changes
   window.addEventListener('popstate', (event) => {
     if (event.state?.video) {
-      showVideo(event.state.video);
+      activateVideoByIndex(event.state.video);
     }
   });
 }
