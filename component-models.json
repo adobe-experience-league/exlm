@@ -2892,5 +2892,45 @@
         ]
       }
     ]
+  },
+  {
+    "id": "data-and-email-consent",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "collect-data-heading",
+        "value": "",
+        "label": "Collect data heading"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "collect-data-description",
+        "value": "",
+        "label": "Collect data description"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "email-heading",
+        "value": "",
+        "label": "Email heading"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "email-description",
+        "value": "",
+        "label": "Email description"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "legal",
+        "value": "",
+        "label": "Legal"
+      }
+    ]
   }
 ]
