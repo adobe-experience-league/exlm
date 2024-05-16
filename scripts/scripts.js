@@ -525,7 +525,11 @@ export function decoratePreviousImage(textNode) {
  * @param {HTMLElement} element
  */
 export function decorateInlineAttributes(element) {
-  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  const ignoredElements = ['pre', 'code', 'script', 'style'];
+  const isParentIgnored = (node) => ignoredElements.includes(node?.parentElement?.tagName?.toLowerCase());
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, (node) =>
+    isParentIgnored(node) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
+  );
   while (walker.nextNode()) {
     const { currentNode } = walker;
     decorateInlineText(currentNode);
