@@ -957,8 +957,8 @@
             "value": "Intermediate"
           },
           {
-            "name": "Advanced",
-            "value": "Advanced"
+            "name": "Experienced",
+            "value": "Experienced"
           }
         ]
       },
@@ -2464,6 +2464,10 @@
   },
   {
     "id": "page-metadata",
+    "fields": []
+  },
+  {
+    "id": "article-page-metadata",
     "fields": [
       {
         "component": "select",
