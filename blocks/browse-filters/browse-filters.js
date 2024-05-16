@@ -263,7 +263,7 @@ function renderTags() {
   return htmlToElement(tagEl);
 }
 
-function appendTag(block, tag) {
+async function appendTag(block, tag) {
   const tagsContainer = block.querySelector('.browse-tags-container');
   const tagEl = htmlToElement(`
     <button class="browse-tags" value="${tag.value}">
@@ -278,7 +278,7 @@ function appendTag(block, tag) {
     name: tag.name,
     value: tag.value,
   });
-  decorateIcons(tagEl);
+  await decorateIcons(tagsContainer);
 }
 
 function removeFromTags(block, value) {
