@@ -32,24 +32,19 @@ function toTimeInMinutes(seconds) {
  * @returns
  */
 function generateJsonLd(video) {
-  return htmlToElement(`<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "VideoObject",
-  "name": "${video.title}",
-  "description": "${video.description}",
-  "thumbnailUrl": ["${video.thumbnailUrl}"],
-  "uploadDate": "2024-03-31T08:00:00+08:00",
-  "duration": "PT${toTimeInMinutes(video.duration).split(':').join('M')}S",
-  "contentUrl": "${video.src}",
-  "embedUrl": "${video.src}",
-//   "interactionStatistic": {
-//     "@type": "InteractionCounter",
-//     "interactionType": { "@type": "WatchAction" },
-//     "userInteractionCount": 5647018
-//   },
-}
-</script>`);
+  if (video?.src && video?.src?.includes('tv.adobe.com/v/')) {
+    const script = htmlToElement(`<script type="application/ld+json"></script>`);
+    const jsonLdUrl = new URL(video.src);
+    // add format=json-ld query param
+    jsonLdUrl.searchParams.set('format', 'json-ld');
+    fetch(jsonLdUrl.href)
+      .then((response) => response.json())
+      .then((data) => {
+        script.textContent = JSON.stringify(data?.jsonLinkedData);
+      });
+    return script;
+  }
+  return null;
 }
 
 function iconSpan(icon) {
@@ -167,8 +162,8 @@ export default function decorate(block) {
               <div>${iconSpan('time')} ${toTimeInMinutes(durationP.textContent)} MIN</div>
           </div>`),
     );
-
-    videoRow.append(generateJsonLd(videos[videoIndex]));
+    const jsonLd = generateJsonLd(videos[videoIndex]);
+    if (jsonLd) videoRow.append(generateJsonLd(videos[videoIndex]));
 
     videoRow.addEventListener('click', () => {
       showVideo(videoIndex + 1);
