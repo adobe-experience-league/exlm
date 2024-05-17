@@ -15,10 +15,10 @@ export function MD5(e) {
     return c & d
       ? g ^ 2147483648 ^ e ^ f
       : c | d
-        ? g & 1073741824
-          ? g ^ 3221225472 ^ e ^ f
-          : g ^ 1073741824 ^ e ^ f
-        : g ^ e ^ f;
+      ? g & 1073741824
+        ? g ^ 3221225472 ^ e ^ f
+        : g ^ 1073741824 ^ e ^ f
+      : g ^ e ^ f;
   }
 
   function k(a, b, c, d, e, f, g) {
