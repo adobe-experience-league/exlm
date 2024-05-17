@@ -1,0 +1,33 @@
+.data-and-email-consent-wrapper .notification-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.data-and-email-consent-wrapper .notification {
+  cursor: pointer;
+  margin-bottom: 20px;
+  border: 1px solid var(--spectrum-gray-400);
+  align-items: center;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.data-and-email-consent-wrapper .notification.highlight {
+  border: 2px solid var(--non-spectrum-dark-navy-blue);
+}
+
+.data-and-email-consent-wrapper .notification .checkbox {
+  cursor: pointer;
+  display: inline-flex;
+  gap: 10px;
+}
+
+.data-and-email-consent-wrapper .notification .checkbox .subtext{
+  font-weight: bold;
+}
+
+.data-and-email-consent-wrapper .notification .checkbox input {
+  margin: 0;
+  padding: 0;
+  width: auto;
+}
