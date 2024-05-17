@@ -1,24 +1,24 @@
 .playlist-page {
+  --playlist-border: #d6d6d6 1px solid;
+  --playlist-border-radius: 10px;
+  --playlist-max-height: calc(100vh - 1em - var(--nav-height) - 1em);
   max-width: 1440px;
   margin: 0 auto;
   display: grid;
-  gap: 1em;
+  gap: 2em;
   padding: 1em;
   grid-template-columns: 1fr;
 }
-
 @media (width >= 600px) {
   .playlist-page {
     grid-template-columns: auto 250px;
   }
 }
-
 @media (width >= 900px) {
   .playlist-page {
     grid-template-columns: auto 275px;
   }
 }
-
 @media (width >= 1024px) {
   .playlist-page {
     grid-template-columns: auto 300px;
@@ -26,11 +26,15 @@
 }
 
 .section.playlist-container {
-  --playlist-border: #d6d6d6 1px solid;
-  --playlist-border-radius: 10px;
-
   padding: 0;
+  display: flex;
   overflow: hidden;
+  flex-direction: column;
+}
+@media (width >= 600px) {
+  .section.playlist-container {
+    max-height: var(--playlist-max-height);
+  }
 }
 
 .section.playlist-container .icon {
@@ -41,6 +45,7 @@
 
 .section.playlist-container .default-content-wrapper {
   padding: 1em;
+  margin: 0;
   border-bottom: var(--playlist-border);
   background-color: #fff;
   border: var(--playlist-border);
@@ -61,30 +66,41 @@
   box-sizing: border-box;
 }
 
+.playlist-wrapper {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .playlist {
   background-color: #eaeaea;
   padding: 1em;
   border: var(--playlist-border);
   border-bottom-left-radius: var(--playlist-border-radius);
   border-bottom-right-radius: var(--playlist-border-radius);
+  flex: 1 1 auto;
+  overflow: scroll;
+  position: relative;
+  scroll-behavior: smooth;
 }
 
 .playlist-info {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 1em 0;
+  padding: 0.5em 0;
 }
 
 .playlist-actions {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 1em 0 0;
+  padding: 0.5em 0 0;
 }
 
 .playlist-player-video iframe {
   width: 100%;
+  max-height: calc(var(--playlist-max-height) - 30vh);
   aspect-ratio: 16/9;
 }
 
@@ -92,9 +108,8 @@
   margin: 0;
 }
 
-.playlist-player-info-transcript {
+.playlist-player-info-transcript a {
   color: inherit !important;
-  font-size: 18px;
 }
 
 .playlist-item {
@@ -102,7 +117,6 @@
   border-radius: var(--playlist-border-radius);
   background-color: #fff;
 }
-
 .playlist-item .playlist-item-title {
   margin: 0;
   font-size: var(--exlm-font-size-h6);
@@ -114,7 +128,6 @@
 .playlist-item.active {
   outline: 2px solid var(--non-spectrum-navy-blue);
 }
-
 .playlist-item.active .playlist-item-title {
   color: black;
 }
@@ -125,6 +138,7 @@
 
 .playlist-item-thumbnail {
   position: relative;
+  margin: 0;
 }
 
 .playlist-item-thumbnail::after {
@@ -138,7 +152,7 @@
 }
 
 .playlist-item-content {
-  padding: 0 1em 1em;
+  padding: 0.5em 1em;
 }
 
 .playlist-item img {
@@ -166,7 +180,7 @@
   font-size: 12px;
 }
 
-.playlist-options-autoplay input[type="checkbox"] {
+.playlist-options-autoplay input[type=checkbox] {
   --switch-on-background: #464646;
   --switch-off-background: #d5d5d5;
   --switch-knob-background: #fff;
@@ -174,7 +188,6 @@
   --switch-width: 30px;
   --switch-knob-size: 14px;
   --switch-knob-offset: calc(var(--switch-height) / 2 - var(--switch-knob-size) / 2);
-
   appearance: none;
   width: var(--switch-width);
   height: var(--switch-height);
@@ -188,11 +201,11 @@
   border: 0;
 }
 
-.playlist-options-autoplay input[type="checkbox"]:checked {
+.playlist-options-autoplay input[type=checkbox]:checked {
   background: var(--switch-on-background);
 }
 
-.playlist-options-autoplay input[type="checkbox"]::after {
+.playlist-options-autoplay input[type=checkbox]::after {
   position: absolute;
   top: var(--switch-knob-offset);
   right: calc(var(--switch-width) - var(--switch-knob-offset) - var(--switch-knob-size));
@@ -206,7 +219,7 @@
   transition: all 0.2s ease-in-out;
 }
 
-.playlist-options-autoplay input[type="checkbox"]:checked::after {
+.playlist-options-autoplay input[type=checkbox]:checked::after {
   right: var(--switch-knob-offset);
   border: 0;
   outline: 2px solid var(--switch-on-background);

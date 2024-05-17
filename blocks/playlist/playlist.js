@@ -166,7 +166,9 @@ const playlist = new Playlist();
 playlist.onVideoChange((videos, vIndex) => {
   const currentVideo = videos[vIndex];
   const { active = false, el } = currentVideo;
+  const activeStatusChanged = currentVideo.active !== currentVideo.el.classList.contains('active');
   el.classList.toggle('active', active);
+  if (active && activeStatusChanged) el.parentElement.scrollTop = el.offsetTop - el.clientHeight / 2;
   updatePlayer(currentVideo);
   updateQueryStringParameter('video', playlist.getActiveVideoIndex());
   updateProgress(vIndex, currentVideo);
@@ -196,6 +198,8 @@ export default function decorate(block) {
     const [srcP, pictureP] = videoCell.children;
     const [titleH, descriptionP, durationP, transcriptP] = videoDataCell.children;
     titleH.classList.add('playlist-item-title');
+    const { src } = pictureP.querySelector('img');
+    pictureP.replaceWith(...pictureP.childNodes);
 
     const video = {
       src: srcP.textContent,
@@ -203,7 +207,7 @@ export default function decorate(block) {
       description: descriptionP.textContent,
       duration: durationP.textContent,
       transcriptUrl: transcriptP.textContent,
-      thumbnailUrl: pictureP.querySelector('img').src,
+      thumbnailUrl: src,
       el: videoRow,
     };
     playlist.updateVideoByIndex(videoIndex, video);

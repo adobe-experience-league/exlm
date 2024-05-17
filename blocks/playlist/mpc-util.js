@@ -157,8 +157,11 @@ export class Playlist {
     if (!this.getVideo(i)) i = 0;
     const currentActiveIndex = this.getActiveVideoIndex();
     if (i !== -1 && currentActiveIndex !== index) {
+      // if currentTime is at end of video, reset currentTime
+      let { currentTime } = this.getVideo(i);
+      currentTime = currentTime >= this.getVideo(i).duration - 1 ? 0 : currentTime;
       this.updateActiveVideo({ active: false, autoplay: false });
-      this.updateVideoByIndex(i, { active: true, autoplay });
+      this.updateVideoByIndex(i, { active: true, autoplay, currentTime });
     }
   }
 
