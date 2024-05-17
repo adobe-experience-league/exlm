@@ -95,14 +95,28 @@
   padding: 0.5em 0 0;
 }
 
-.playlist-player-video iframe {
+.playlist-player-video iframe,
+.playlist-player-video-overlay {
   width: 100%;
   max-height: calc(var(--playlist-max-height) - 30vh);
   aspect-ratio: 16 / 9;
 }
 
+.playlist-player-video-overlay {
+  // background object fit cover;
+  background-size: cover !important;
+  overflow: hidden;
+  box-sizing: border-box;
+  z-index: 0;
+  font-family: 'Noto Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .playlist-player-info-title {
   margin: 0;
+  margin-top: 1em;
 }
 
 .playlist-player-info-transcript a {
@@ -240,4 +254,39 @@
   flex-direction: column;
   justify-content: center;
   text-align: center;
+}
+
+.playlist-player-video-overlay-play {
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  cursor: pointer;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  padding: 0;
+}
+
+.playlist-player-video-overlay-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: #1473e6;
+}
+
+.playlist-player-video-overlay-circle:hover {
+  background-color: #005bc2;
+}
+
+.playlist-player-video-overlay-icon {
+  fill: #fff;
+  width: 64px;
+  height: 64px;
 }

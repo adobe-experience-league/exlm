@@ -46,7 +46,7 @@ function iconSpan(icon) {
  */
 function newPlayer(video) {
   if (!video) return null;
-  const { src, autoplay = false, title, description, transcriptUrl, currentTime = 0 } = video;
+  const { src, autoplay = false, title, description, transcriptUrl, currentTime = 0, thumbnailUrl } = video;
   const iframeAllowOptions = [
     'fullscreen',
     'accelerometer',
@@ -56,15 +56,20 @@ function newPlayer(video) {
     'autoplay',
   ];
 
-  return htmlToElement(`
+  const player = htmlToElement(`
         <div class="playlist-player" data-playlist-player>
             <div class="playlist-player-video">
-                <iframe
-                    src="${src}?t=${currentTime}&autoplay=${autoplay}" 
-                    autoplay="${autoplay}"
-                    frameborder="0" 
-                    allow="${iframeAllowOptions.join('; ')}">
-                </iframe>
+              <div class="playlist-player-video-overlay" style="background:url(${thumbnailUrl})">
+                <button aria-label="play" class="playlist-player-video-overlay-play"><div class="playlist-player-video-overlay-circle"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="playlist-player-video-overlay-icon"><path d="M8 5v14l11-7z"></path> <path d="M0 0h24v24H0z" fill="none"></path></svg></div></button>
+              </div>
+                <template id="video-iframe-template">
+                  <iframe
+                      src="${src}?t=${currentTime}&autoplay=${autoplay}" 
+                      autoplay="${autoplay}"
+                      frameborder="0" 
+                      allow="${iframeAllowOptions.join('; ')}">
+                  </iframe>
+                </template>
             </div>
             <div class="playlist-player-info">
                 <h3 class="playlist-player-info-title">${title}</h3>
@@ -76,6 +81,26 @@ function newPlayer(video) {
             </div>
         </div>
     `);
+
+  const showIframe = () => {
+    const iframeTemplate = player.querySelector('#video-iframe-template');
+    const iframe = iframeTemplate.content.firstElementChild.cloneNode(true);
+    player.querySelector('.playlist-player-video').append(iframe);
+    player.querySelector('.playlist-player-video-overlay').replaceWith(iframe);
+    iframeTemplate.remove();
+    // wait for loaded
+    iframe.addEventListener('load', () => {
+      iframe.contentWindow.postMessage({ type: 'mpcAction', action: 'play' }, '*');
+    });
+  };
+
+  if (autoplay) showIframe();
+  else {
+    player.querySelector('.playlist-player-video-overlay').addEventListener('click', () => {
+      showIframe();
+    });
+  }
+  return player;
 }
 
 /**
@@ -141,7 +166,7 @@ function updateTranscript(transcriptDetail) {
 function updatePlayer(video) {
   if (!video) return;
   const exisatingPlayer = document.querySelector('[data-playlist-player]');
-  if (exisatingPlayer?.querySelector('iframe').src?.startsWith(video.src)) return;
+  if (exisatingPlayer?.querySelector('iframe')?.src?.startsWith(video.src)) return;
   const player = newPlayer(video);
   if (!player) return;
   const playerContainer = document.querySelector('[data-playlist-player-container]');
@@ -186,7 +211,7 @@ const playlist = new Playlist();
 playlist.onVideoChange((videos, vIndex) => {
   const currentVideo = videos[vIndex];
   const { active = false, el } = currentVideo;
-  const activeStatusChanged = currentVideo.active !== currentVideo.el.classList.contains('active');
+  const activeStatusChanged = currentVideo.active !== currentVideo?.el?.classList?.contains('active');
   el.classList.toggle('active', active);
   if (active && activeStatusChanged) el.parentElement.scrollTop = el.offsetTop - el.clientHeight / 2;
   updatePlayer(playlist.getActiveVideo());
