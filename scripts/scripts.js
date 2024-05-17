@@ -233,6 +233,47 @@ function addArticleLandingRail(main) {
 }
 
 /**
+ * Check if current page is a Profile page.
+ * theme = profile is set in bulk metadata for /en/profile** paths.
+ */
+export function isProfilePage() {
+  const theme = getMetadata('theme');
+  return theme.toLowerCase().startsWith('profile');
+}
+
+/**
+ * Add a left rail to the profile page.
+ * @param {HTMLElement} main
+ * 
+*/
+function addProfileLeftRail(main) {
+  const profileLeftRailContainer = document.createElement('div');
+  profileLeftRailContainer.classList.add('profile-left-rail-container');
+  profileLeftRailContainer.innerHTML = `
+    <div class="profile-left-rail">
+      <span>My Experience League profile</span>
+      <ul> 
+      <li><a href="#general-information">General Information</a></li>
+      <li><a href="#product-interests">Product Interests</a></li>
+      <li><a href="#Privacy-and-Email">Privacy and Email</a></li>
+      </ul>  
+    </div>
+  `
+  main.prepend(profileLeftRailContainer);
+}
+
+/**
+ * Add a nav tab to the profile page.
+ * @param {HTMLElement} main
+ * 
+*/
+function addProfileTab(main) {
+  const ProfileTab = document.createElement('div');
+  ProfileTab.classList.add('profile-tab-container');
+  main.prepend(ProfileTab);
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -246,6 +287,11 @@ function buildAutoBlocks(main) {
     }
     if (isArticleLandingPage()) {
       addArticleLandingRail(main);
+    }
+    if (isProfilePage()) {
+      console.log('Profile page');
+      addProfileLeftRail(main)
+      addProfileTab(main)
     }
   } catch (error) {
     // eslint-disable-next-line no-console

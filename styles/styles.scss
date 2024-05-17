@@ -1409,3 +1409,37 @@ body[class^='browse-'] .browse-filters-full-container {
   display: inline-block;
   min-height: 1em;
 }
+
+// Profile Pages
+body.profile {
+  background-color: var(--background-color);
+}
+
+@include breakpoint('custom') {
+  body.profile > main {
+    margin: 0 auto;
+    max-width: var(--non-spectrum-max-width);
+    display: grid;
+    grid-template: 'profile-left-rail-container .' auto / 0.6fr 1.4fr;
+    gap: 0 0;
+  }
+
+  body.profile > main > div.profile-left-rail-container {
+    grid-area: profile-left-rail-container;
+    padding: 0 0 0 32px;
+    position: relative;
+  }
+
+  body.profile .profile-left-rail {
+    position: absolute;
+    top: 60px;
+    left: 100px;
+  }
+
+  body.profile .section:not(.profile-tab-container, .profile-left-rail-container) {
+    margin-right: 5em;
+    margin-bottom: 2em;
+    border-radius: 20px;
+    background-color: var(--non-spectrum-bg);
+  }
+}
