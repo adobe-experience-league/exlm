@@ -4,12 +4,6 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import { MPCListener, MCP_EVENT } from './mpc-util.js';
 
 /**
- * @typedef {Object} VideoProgress
- * @property {number} currentTime
- * @property {boolean} complete
- */
-
-/**
  * @typedef {Object} Video
  * // src, autoplay = true, title, description, transcriptUrl
  * @property {string} src
@@ -20,6 +14,8 @@ import { MPCListener, MCP_EVENT } from './mpc-util.js';
  * @property {string} duration
  * @property {string} thumbnailUrl
  * @property {boolean} active
+ * @property {number} currentTime
+ * @property {boolean} complete
  * @property {HTMLElement} el
  * @returns
  */
@@ -60,15 +56,11 @@ function iconSpan(icon) {
   return `<span class="icon icon-${icon}"></span>`;
 }
 
-// Video Player
-function newPlayer({
-  src,
-  autoplay = true,
-  title,
-  description,
-  transcriptUrl,
-  progress = { currentTime: 0, complete: false },
-}) {
+/**
+ * @param {Video} video
+ */
+function newPlayer(video) {
+  const { src, autoplay = false, title, description, transcriptUrl, currentTime = 0 } = video;
   const iframeAllowOptions = ['fullscreen', 'accelerometer', 'encrypted-media', 'gyroscope', 'picture-in-picture'];
   if (autoplay) iframeAllowOptions.push('autoplay');
 
@@ -76,7 +68,7 @@ function newPlayer({
         <div class="playlist-player">
             <div class="playlist-player-video">
                 <iframe 
-                    src="${src}?t=${progress.currentTime}&autoplay=${autoplay}" 
+                    src="${src}?t=${currentTime}&autoplay=${autoplay}" 
                     frameborder="0" 
                     allow="${iframeAllowOptions.join('; ')}">
                 </iframe>
@@ -154,16 +146,14 @@ const videos = new Proxy(savedVideos, {
       ...val,
     };
     const currentVideo = target[prop];
-    const { active, el, progress, duration } = currentVideo;
-
+    const { active, el, currentTime, duration } = currentVideo;
     el.classList.toggle('active', active);
     updatePlayer(currentVideo);
     updateQueryStringParameter('video', prop);
     const nowViewingCount = document.querySelector('.playlist-now-viewing-count');
     if (nowViewingCount) nowViewingCount.textContent = parseInt(prop, 10) + 1;
     const thumbnail = el.querySelector('.playlist-item-thumbnail');
-    const currentTime = progress?.currentTime || 0;
-    thumbnail.style.setProperty('--playlist-item-progress', `${(currentTime / duration) * 100}%`);
+    thumbnail.style.setProperty('--playlist-item-progress', `${((currentTime || 0) / duration) * 100}%`);
     // update localStorage
     localStorage.setItem('videos', JSON.stringify(target));
     return true;
@@ -173,14 +163,30 @@ const videos = new Proxy(savedVideos, {
 // eslint-disable-next-line no-unused-vars
 const playerOptions = {};
 
-const handleSeek = ({ currentTime }) => {
+// const getActiveVideo = () => videos.find((video) => video.active);
+const getActiveVideoIndex = () => videos.findIndex((video) => video.active);
+const updateVideoByIndex = (index, props) => {
+  videos[index] = { ...videos[index], ...props };
+};
+const updateActiveVideo = (props) => {
+  const activeVideoIndex = getActiveVideoIndex();
+  if (activeVideoIndex === -1) return;
+  updateVideoByIndex(activeVideoIndex, props);
+};
+
+function handleSeek(event) {
+  const { currentTime } = event;
+  console.log(event);
   let activeVideoIndex = videos.findIndex((video) => video.active);
   if (activeVideoIndex === -1) activeVideoIndex = 0;
-  const activeVideo = videos[activeVideoIndex];
-  if (currentTime >= 0 && activeVideo) {
-    videos[activeVideoIndex] = { ...activeVideo, progress: { ...activeVideo.progress, currentTime } };
+  if (currentTime >= 0) {
+    updateActiveVideo({ currentTime });
   }
-};
+}
+
+// function handleComplete() {
+//   console.log('completed');
+// }
 
 const mpcListener = new MPCListener();
 mpcListener.on(MCP_EVENT.LOAD, console.log);
@@ -198,11 +204,15 @@ mpcListener.on(MCP_EVENT.ENTER_FULLSCREEN, console.log);
  * @param {number|string} index
  */
 function activateVideoByIndex(index) {
+  mpcListener.pause();
   let i = parseInt(index, 10);
   if (!videos[i]) i = 0;
-  videos.forEach((video, j) => {
-    videos[j] = { ...video, active: j === i };
-  });
+  const currentActiveIndex = getActiveVideoIndex();
+  if (currentActiveIndex !== -1 && currentActiveIndex !== index) {
+    updateActiveVideo({ active: false });
+    updateVideoByIndex(index, { active: true });
+  }
+  mpcListener.resume();
 }
 
 /**
@@ -276,9 +286,7 @@ export default function decorate(block) {
   );
 
   decoratePlaylistHeader(block, videos);
-
   decorateIcons(playlistSection);
-
   activateVideoByIndex(activeVideoIndex);
 
   // handle browser back within history changes
