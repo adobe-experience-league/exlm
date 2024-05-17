@@ -87,11 +87,11 @@
   },
   {
     "id": "section-profile",
-    "components": ["text", "title", "button", "image", "columns", "data-and-email-consent"]
+    "components": ["text", "title", "button", "image", "columns", "data-and-email-consent", "role-cards"]
   },
   {
     "id": "section-profile-signup",
-    "components": ["text", "title", "button", "image", "data-and-email-consent"]
+    "components": ["text", "title", "button", "image", "data-and-email-consent", "role-cards"]
   },
   {
     "id": "article-content-section",
