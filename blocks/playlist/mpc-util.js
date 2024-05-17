@@ -1,4 +1,22 @@
 /* eslint-disable max-classes-per-file */
+
+/**
+ * @typedef {Object} Video
+ * // src, autoplay = true, title, description, transcriptUrl
+ * @property {string} src
+ * @property {boolean} autoplay
+ * @property {string} title
+ * @property {string} description
+ * @property {string} transcriptUrl
+ * @property {string} duration
+ * @property {string} thumbnailUrl
+ * @property {boolean} active
+ * @property {number} currentTime
+ * @property {boolean} complete
+ * @property {HTMLElement} el
+ * @returns
+ */
+
 export const MCP_EVENT = {
   LOAD: 'load',
   START: 'start',
@@ -61,6 +79,7 @@ export class Playlist {
       }
     }
     const thisPlaylist = this;
+    /** @type {Video[]} */
     this.videos = new Proxy(storedPlaylist.videos, {
       /**
        * @param {Array} target
@@ -92,33 +111,47 @@ export class Playlist {
     localStorage.setItem(this.localStorageKey, JSON.stringify({ ...currentLocalStorage, options: this.options }));
   }
 
+  /**
+   *
+   * @param {(target: Video[], index: number, video: Video) => void} fn
+   */
   onVideoChange(fn) {
     this.onVideoChangeCallback = fn;
   }
 
+  /**
+   * @param {number} index
+   * @returns {Video}
+   */
   getVideo = (index) => this.videos[index];
 
+  /** @returns {number} */
   get length() {
     return this.videos.length;
   }
 
+  /** @returns {Video} */
   getActiveVideo = () => this.videos.find((video) => video.active);
 
+  /** @returns {number} */
   getActiveVideoIndex = () => this.videos.findIndex((video) => video.active);
 
+  /**
+   * @param {number} index
+   * @param {Video} props
+   */
   updateVideoByIndex(index, props) {
     this.videos[index] = { ...this.getVideo(index), ...props };
   }
 
+  /** @param {Video} props */
   updateActiveVideo(props) {
     const activeVideoIndex = this.getActiveVideoIndex();
     if (activeVideoIndex === -1) return;
     this.updateVideoByIndex(activeVideoIndex, props);
   }
 
-  /**
-   * @param {number|string} index
-   */
+  /** @param {number|string} index */
   activateVideoByIndex(index, autoplay = false) {
     let i = parseInt(index, 10);
     if (!this.getVideo(i)) i = 0;

@@ -3,23 +3,6 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import { Playlist } from './mpc-util.js';
 
 /**
- * @typedef {Object} Video
- * // src, autoplay = true, title, description, transcriptUrl
- * @property {string} src
- * @property {boolean} autoplay
- * @property {string} title
- * @property {string} description
- * @property {string} transcriptUrl
- * @property {string} duration
- * @property {string} thumbnailUrl
- * @property {boolean} active
- * @property {number} currentTime
- * @property {boolean} complete
- * @property {HTMLElement} el
- * @returns
- */
-
-/**
  * convert seconds to time in minutes in the format of 'mm:ss'
  * @param {string} seconds
  */
@@ -59,6 +42,7 @@ function iconSpan(icon) {
 
 /**
  * @param {Video} video
+ * @returns {HTMLElement}
  */
 function newPlayer(video) {
   const { src, autoplay = false, title, description, transcriptUrl, currentTime = 0 } = video;
@@ -84,9 +68,10 @@ function newPlayer(video) {
             <div class="playlist-player-info">
                 <h3 class="playlist-player-info-title">${title}</h3>
                 <p class="playlist-player-info-description">${description}</p>
-                <div class="playlist-player-info-transcript" data-transcript="${transcriptUrl}">
-                    <a href="javascrpt:void(0)">&gt; Transcript</a>
-                </div>
+                <details class="playlist-player-info-transcript" data-playlist-player-info-transcript="${transcriptUrl}">
+                  <summary>Transcript</summary>
+                  <p>loading...</p>
+                </details>
             </div>
         </div>
     `);
@@ -113,20 +98,62 @@ function decoratePlaylistHeader(block, videoLength) {
   );
 }
 
+/** @param {string} transcriptUrl */
+async function getCaptionParagraphs(transcriptUrl) {
+  window.playlistCaptions = window.playlistCaptions || {};
+  if (window.playlistCaptions[transcriptUrl]) return window.playlistCaptions[transcriptUrl];
+  const response = await fetch(transcriptUrl);
+  const transcriptJson = await response.json();
+  const captions = transcriptJson?.captions || [];
+  const paragraphs = [];
+  let currentParagraph = '';
+  captions.forEach(({ content, startOfParagraph }) => {
+    if (startOfParagraph) {
+      paragraphs.push(currentParagraph);
+      currentParagraph = content;
+    } else {
+      currentParagraph += ` ${content}`;
+    }
+  });
+
+  window.playlistCaptions[transcriptUrl] = paragraphs;
+  return paragraphs;
+}
+
+function updateTranscript(transcriptDetail) {
+  const transcriptUrl = transcriptDetail.getAttribute('data-playlist-player-info-transcript');
+  transcriptDetail.addEventListener('toggle', (event) => {
+    if (event.target.open && transcriptDetail.dataset.ready !== 'true') {
+      getCaptionParagraphs(transcriptUrl).then((paragraphs) => {
+        [...transcriptDetail.querySelectorAll('p')].forEach((p) => p.remove());
+        paragraphs.forEach((paragraph) => transcriptDetail.append(htmlToElement(`<p>${paragraph}</p>`)));
+        transcriptDetail.dataset.ready = 'true';
+      });
+    }
+  });
+}
+
 /**
  * Shows the video at the given count
- * @param {*} count
+ * @param {import('./mpc-util.js').Video} video
  */
 function updatePlayer(video) {
   const exisatingPlayer = document.querySelector('[data-playlist-player]');
   if (exisatingPlayer?.querySelector('iframe').src?.startsWith(video.src)) return;
   const player = newPlayer(video);
   const playerContainer = document.querySelector('[data-playlist-player-container]');
+  const transcriptDetail = player.querySelector('[data-playlist-player-info-transcript]');
+  updateTranscript(transcriptDetail);
   playerContainer.innerHTML = '';
   playerContainer.append(player);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+/**
+ *
+ * @param {number} videoIndex
+ * @param {import('./mpc-util.js').Video} video
+ */
 function updateProgress(videoIndex, video) {
   const { el, currentTime, duration } = video;
   const nowViewingCount = document.querySelector('[data-playlist-now-viewing-count]');
