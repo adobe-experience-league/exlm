@@ -1,33 +1,103 @@
-.data-and-email-consent-wrapper .notification-container {
-  display: flex;
-  flex-direction: column;
-}
-
 .data-and-email-consent-wrapper .notification {
   cursor: pointer;
-  margin-bottom: 20px;
-  border: 1px solid var(--spectrum-gray-400);
-  align-items: center;
-  padding: 10px;
+  top: 480px;
+  left: 425px;
+  width: 590px;
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  border: 1px solid #D6D6D6;
   border-radius: 4px;
+  opacity: 1;
+  margin-bottom: 32px;
+  padding: 24px;
 }
 
 .data-and-email-consent-wrapper .notification.highlight {
-  border: 2px solid var(--non-spectrum-dark-navy-blue);
+  top: 353px;
+  left: 425px;
+  width: 590px;
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 8px #1473E629;
+  border: 1px solid var(--non-spectrum-navy-blue);
+  border-radius: 4px;
+  opacity: 1;
 }
 
 .data-and-email-consent-wrapper .notification .checkbox {
+  top: 504px;
+  left: 449px;
+  width: 363px;
+  height: 22px;
+  opacity: 1;
+
   cursor: pointer;
   display: inline-flex;
   gap: 10px;
+
 }
 
-.data-and-email-consent-wrapper .notification .checkbox .subtext{
-  font-weight: bold;
+.data-and-email-consent-wrapper .notification .checkbox .subtext {
+  top: 377px;
+  left: 471px;
+  width: 317px;
+  height: 22px;
+  text-align: left;
+  font: normal normal bold 18px/22px Adobe Clean;
+  letter-spacing: 0px;
+  color: #000000;
+  opacity: 1;
 }
 
 .data-and-email-consent-wrapper .notification .checkbox input {
-  margin: 0;
-  padding: 0;
-  width: auto;
+  top: 509px;
+  left: 449px;
+  width: 14px;
+  height: 14px;
+  background: #FDFDFD 0% 0% no-repeat padding-box;
+  border: 2px solid #6D6D6D;
+  border-radius: 2px;
+  opacity: 1;
+}
+
+.data-and-email-consent-wrapper .notification.highlight .checkbox input {
+  top: 382px;
+  left: 449px;
+  width: 14px;
+  height: 14px;
+  background: #1473E6 0% 0% no-repeat padding-box;
+  border-radius: 2px;
+  opacity: 1;
+}
+
+.data-and-email-consent-wrapper .notification p {
+  top: 407px;
+  left: 449px;
+  width: 542px;
+  height: 17px;
+  text-align: left;
+  font: normal normal normal 14px/17px Adobe Clean;
+  letter-spacing: 0px;
+  color: #222222;
+  opacity: 1;
+}
+
+.data-and-email-consent-wrapper .notification-container .legal {
+  top: 624px;
+  left: 425px;
+  width: 590px;
+  height: 60px;
+  text-align: left;
+  font: italic normal normal 12px/15px Adobe Clean;
+  letter-spacing: 0px;
+  opacity: 1;
+}
+
+.data-and-email-consent-wrapper .notification-container .legal p {
+  top: 15px;
+  left: 0px;
+  width: 570px;
+  height: 15px;
+  text-align: left;
+  font: italic normal normal 12px/15px Adobe Clean;
+  letter-spacing: 0px;
+  color: #6D6D6D;
 }
