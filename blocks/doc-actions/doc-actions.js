@@ -177,6 +177,7 @@ async function decorateLanguageToggle(block, placeholders) {
       langToggle.addEventListener('change', async (e) => {
         const { checked } = e.target;
         await toggleContent(checked, docContainer);
+        assetInteractionModel(null, `automatic translation ${e.target.checked ? 'on' : 'off'}`);
       });
     });
 
