@@ -45,20 +45,23 @@ export class MPCListener {
   }
 }
 
-export class PlaylistStore {
-  constructor() {
+export class Playlist {
+  constructor(options) {
+    this.options = options || { autoplayNext: true };
     const playlistId = window.location.pathname.split('/').join('-');
-    const localStorageKey = `playlist-${playlistId}`;
-    let storedVideos = [];
-    if (localStorage.getItem(localStorageKey)) {
+    this.localStorageKey = `playlist-${playlistId}`;
+    let storedPlaylist = {
+      videos: [],
+    };
+    if (localStorage.getItem(this.localStorageKey)) {
       try {
-        storedVideos = JSON.parse(localStorage.getItem(localStorageKey));
+        storedPlaylist = JSON.parse(localStorage.getItem(this.localStorageKey));
       } catch (e) {
-        localStorage.removeItem(localStorageKey);
+        localStorage.removeItem(this.localStorageKey);
       }
     }
     const thisPlaylist = this;
-    this.videos = new Proxy(storedVideos, {
+    this.videos = new Proxy(storedPlaylist.videos, {
       /**
        * @param {Array} target
        * @param {string} index
@@ -70,7 +73,8 @@ export class PlaylistStore {
           ...target[prop],
           ...val,
         };
-        localStorage.setItem(localStorageKey, JSON.stringify(target));
+        const currentLocalStorage = JSON.parse(localStorage.getItem(thisPlaylist.localStorageKey));
+        localStorage.setItem(thisPlaylist.localStorageKey, JSON.stringify({ ...currentLocalStorage, videos: target }));
         if (thisPlaylist.onVideoChangeCallback) return thisPlaylist.onVideoChangeCallback(target, prop, val);
         return true;
       },
@@ -79,6 +83,13 @@ export class PlaylistStore {
     this.mpcListener.on(MCP_EVENT.TICK, this.handleSeek.bind(this));
     this.mpcListener.on(MCP_EVENT.SEEK, this.handleSeek.bind(this));
     this.mpcListener.on(MCP_EVENT.COMPLETE, this.handleComplete.bind(this));
+  }
+
+  updateOptions(options) {
+    this.options = { ...this.options, ...options };
+    // update localStroage
+    const currentLocalStorage = JSON.parse(localStorage.getItem(this.localStorageKey));
+    localStorage.setItem(this.localStorageKey, JSON.stringify({ ...currentLocalStorage, options: this.options }));
   }
 
   onVideoChange(fn) {
@@ -108,14 +119,28 @@ export class PlaylistStore {
   /**
    * @param {number|string} index
    */
-  activateVideoByIndex(index) {
+  activateVideoByIndex(index, autoplay = false) {
     let i = parseInt(index, 10);
     if (!this.getVideo(i)) i = 0;
     const currentActiveIndex = this.getActiveVideoIndex();
     if (i !== -1 && currentActiveIndex !== index) {
-      this.updateActiveVideo({ active: false });
-      this.updateVideoByIndex(i, { active: true });
+      this.updateActiveVideo({ active: false, autoplay: false });
+      this.updateVideoByIndex(i, { active: true, autoplay });
     }
+  }
+
+  next(autoplay = false) {
+    const activeVideoIndex = this.getActiveVideoIndex();
+    if (activeVideoIndex === -1) return;
+    if (activeVideoIndex + 1 >= this.length) return;
+    this.activateVideoByIndex(activeVideoIndex + 1, autoplay);
+  }
+
+  prev(autoplay = false) {
+    const activeVideoIndex = this.getActiveVideoIndex();
+    if (activeVideoIndex === -1) return;
+    if (activeVideoIndex - 1 < 0) return;
+    this.activateVideoByIndex(activeVideoIndex - 1, autoplay);
   }
 
   handleSeek(event) {
@@ -128,6 +153,8 @@ export class PlaylistStore {
   }
 
   handleComplete() {
-    this.updateActiveVideo({ complete: true });
+    if (this.options.autoplayNext) {
+      this.next(this.options.autoplayNext);
+    }
   }
 }

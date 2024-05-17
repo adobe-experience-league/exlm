@@ -1,7 +1,6 @@
-/* eslint-disable no-console */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import { PlaylistStore } from './mpc-util.js';
+import { Playlist } from './mpc-util.js';
 
 /**
  * @typedef {Object} Video
@@ -63,14 +62,21 @@ function iconSpan(icon) {
  */
 function newPlayer(video) {
   const { src, autoplay = false, title, description, transcriptUrl, currentTime = 0 } = video;
-  const iframeAllowOptions = ['fullscreen', 'accelerometer', 'encrypted-media', 'gyroscope', 'picture-in-picture'];
-  if (autoplay) iframeAllowOptions.push('autoplay');
+  const iframeAllowOptions = [
+    'fullscreen',
+    'accelerometer',
+    'encrypted-media',
+    'gyroscope',
+    'picture-in-picture',
+    'autoplay',
+  ];
 
   return htmlToElement(`
-        <div class="playlist-player">
+        <div class="playlist-player" data-playlist-player>
             <div class="playlist-player-video">
-                <iframe 
+                <iframe
                     src="${src}?t=${currentTime}&autoplay=${autoplay}" 
+                    autoplay="${autoplay}"
                     frameborder="0" 
                     allow="${iframeAllowOptions.join('; ')}">
                 </iframe>
@@ -112,10 +118,10 @@ function decoratePlaylistHeader(block, videoLength) {
  * @param {*} count
  */
 function updatePlayer(video) {
-  const exisatingPlayer = document.querySelector('.playlist-player');
+  const exisatingPlayer = document.querySelector('[data-playlist-player]');
   if (exisatingPlayer?.querySelector('iframe').src?.startsWith(video.src)) return;
   const player = newPlayer(video);
-  const playerContainer = document.querySelector('.playlist-player-container');
+  const playerContainer = document.querySelector('[data-playlist-player-container]');
   playerContainer.innerHTML = '';
   playerContainer.append(player);
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -123,20 +129,18 @@ function updatePlayer(video) {
 
 function updateProgress(videoIndex, video) {
   const { el, currentTime, duration } = video;
-  const nowViewingCount = document.querySelector('.playlist-now-viewing-count');
+  const nowViewingCount = document.querySelector('[data-playlist-now-viewing-count]');
   if (nowViewingCount) nowViewingCount.textContent = parseInt(videoIndex, 10) + 1;
-  const thumbnail = el.querySelector('.playlist-item-thumbnail');
-  thumbnail.style.setProperty('--playlist-item-progress', `${((currentTime || 0) / duration) * 100}%`);
+  const progressBox = el.querySelector('[data-playlist-item-progress-box]');
+  progressBox.style.setProperty('--playlist-item-progress', `${((currentTime || 0) / duration) * 100}%`);
 }
 
-const playlist = new PlaylistStore();
+const playlist = new Playlist();
 playlist.onVideoChange((videos, vIndex) => {
-  console.log('onVideoChange', videos, vIndex);
   const currentVideo = videos[vIndex];
   const { active = false, el } = currentVideo;
   el.classList.toggle('active', active);
   updatePlayer(currentVideo);
-
   updateQueryStringParameter('video', playlist.getActiveVideoIndex());
   updateProgress(vIndex, currentVideo);
   return true;
@@ -152,13 +156,14 @@ export default function decorate(block) {
   const main = document.querySelector('main');
   main.classList.add('playlist-page');
   const playlistSection = block.closest('.section');
-  const playerContainer = htmlToElement(`<div class="playlist-player-container"></div>`);
+  const playerContainer = htmlToElement(`<div class="playlist-player-container" data-playlist-player-container></div>`);
   playlistSection.parentElement.prepend(playerContainer);
 
   [...block.children].forEach((videoRow, videoIndex) => {
     videoRow.classList.add('playlist-item');
     const [videoCell, videoDataCell] = videoRow.children;
     videoCell.classList.add('playlist-item-thumbnail');
+    videoCell.setAttribute('data-playlist-item-progress-box', '');
     videoDataCell.classList.add('playlist-item-content');
 
     const [srcP, pictureP] = videoCell.children;
@@ -185,7 +190,7 @@ export default function decorate(block) {
     // item bottom status
     videoDataCell.append(
       htmlToElement(`<div class="playlist-item-meta">
-              <div>${iconSpan('check')} In Progress</div>
+              <div class="playlist-item-meta-status">${iconSpan('check')} In Progress</div>
               <div>${iconSpan('time')} ${toTimeInMinutes(video.duration)} MIN</div>
           </div>`),
     );
@@ -199,11 +204,15 @@ export default function decorate(block) {
   block.parentElement.append(
     htmlToElement(`<div class="playlist-options">
         <div class="playlist-options-autoplay">
-            <input type="checkbox" id="playlist-options-autoplay">
+            <input type="checkbox" id="playlist-options-autoplay" checked=${playlist?.options?.autoplayNext || true}>
             <label for="playlist-options-autoplay">Autoplay next Video</label>
         </div>
     </div>`),
   );
+
+  document.querySelector('#playlist-options-autoplay').addEventListener('change', (event) => {
+    playlist.updateOptions({ autoplayNext: event.target.checked });
+  });
 
   const activeVideoIndex = getQueryStringParameter('video') || 0;
 
@@ -211,7 +220,7 @@ export default function decorate(block) {
   block.parentElement.append(
     htmlToElement(`<div class="playlist-now-viewing">
         <b>NOW VIEWING</b>
-        <b><span class="playlist-now-viewing-count">${activeVideoIndex + 1}</span> OF ${playlist.length}</b>
+        <b><span class="playlist-now-viewing-count" data-playlist-now-viewing-count>${activeVideoIndex + 1}</span> OF ${playlist.length}</b>
     </div>`),
   );
 
