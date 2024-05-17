@@ -45,6 +45,7 @@ function iconSpan(icon) {
  * @returns {HTMLElement}
  */
 function newPlayer(video) {
+  if (!video) return null;
   const { src, autoplay = false, title, description, transcriptUrl, currentTime = 0 } = video;
   const iframeAllowOptions = [
     'fullscreen',
@@ -138,9 +139,11 @@ function updateTranscript(transcriptDetail) {
  * @param {import('./mpc-util.js').Video} video
  */
 function updatePlayer(video) {
+  if (!video) return;
   const exisatingPlayer = document.querySelector('[data-playlist-player]');
   if (exisatingPlayer?.querySelector('iframe').src?.startsWith(video.src)) return;
   const player = newPlayer(video);
+  if (!player) return;
   const playerContainer = document.querySelector('[data-playlist-player-container]');
   const transcriptDetail = player.querySelector('[data-playlist-player-info-transcript]');
   updateTranscript(transcriptDetail);
@@ -186,7 +189,7 @@ playlist.onVideoChange((videos, vIndex) => {
   const activeStatusChanged = currentVideo.active !== currentVideo.el.classList.contains('active');
   el.classList.toggle('active', active);
   if (active && activeStatusChanged) el.parentElement.scrollTop = el.offsetTop - el.clientHeight / 2;
-  updatePlayer(currentVideo);
+  updatePlayer(playlist.getActiveVideo());
   updateQueryStringParameter('video', playlist.getActiveVideoIndex());
   updateProgress(vIndex, currentVideo);
   return true;
