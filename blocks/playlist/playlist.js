@@ -17,8 +17,7 @@ function toTimeInMinutes(seconds) {
  * Update the query string parameter with the given key and value
  */
 function updateQueryStringParameter(key, value) {
-  const baseUrl = window.location.href.split('?')[0];
-  const url = new URL(baseUrl);
+  const url = new URL(window.location.href);
   // do not update if same value
   if (url.searchParams.get(key) === value) return;
   url.searchParams.set(key, value);
