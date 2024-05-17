@@ -154,12 +154,26 @@
   margin: 0;
 }
 
-.playlist-item-thumbnail::after {
+[data-playlist-item-progress-box]::after,
+[data-playlist-progress-box]::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 0;
+  height: 3px;
+  background-color: var(--non-spectrum-navy-blue);
+}
+
+[data-playlist-item-progress-box]::after {
   width: var(--playlist-item-progress);
+}
+
+[data-playlist-progress-box]::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: var(--playlist-progress);
   height: 3px;
   background-color: var(--non-spectrum-navy-blue);
 }

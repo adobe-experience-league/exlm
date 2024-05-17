@@ -124,6 +124,8 @@ export class Playlist {
    */
   getVideo = (index) => this.videos[index];
 
+  getVideos = () => this.videos;
+
   /** @returns {number} */
   get length() {
     return this.videos.length;

@@ -110,6 +110,7 @@ function newPlayer(video) {
 function decoratePlaylistHeader(block, videoLength) {
   const playlistSection = block.closest('.section');
   const defaultContent = playlistSection.querySelector('.default-content-wrapper');
+  defaultContent.setAttribute('data-playlist-progress-box', '');
   defaultContent.prepend(
     htmlToElement(`<div class="playlist-info">
         <b>PLAYLIST</b>
@@ -182,7 +183,7 @@ function updatePlayer(video) {
  * @param {number} videoIndex
  * @param {import('./mpc-util.js').Video} video
  */
-function updateProgress(videoIndex, video) {
+function updateProgress(videoIndex, video, playlist) {
   const { el, currentTime, duration } = video;
   // now viewing count
   const nowViewingCount = document.querySelector('[data-playlist-now-viewing-count]');
@@ -190,6 +191,12 @@ function updateProgress(videoIndex, video) {
   // progress bar
   const progressBox = el.querySelector('[data-playlist-item-progress-box]');
   progressBox.style.setProperty('--playlist-item-progress', `${((currentTime || 0) / duration) * 100}%`);
+
+  // update overall progress
+  const playlistProgressBox = document.querySelector('[data-playlist-progress-box]');
+  const completedVideos = playlist.getVideos().filter((v) => v.currentTime >= v.duration - 1).length;
+  playlistProgressBox.style.setProperty('--playlist-progress', `${(completedVideos / playlist.length) * 100}%`);
+
   // progress indicator
   let progressStatus;
   if (currentTime === 0) {
@@ -216,7 +223,7 @@ playlist.onVideoChange((videos, vIndex) => {
   if (active && activeStatusChanged) el.parentElement.scrollTop = el.offsetTop - el.clientHeight / 2;
   updatePlayer(playlist.getActiveVideo());
   updateQueryStringParameter('video', playlist.getActiveVideoIndex());
-  updateProgress(vIndex, currentVideo);
+  updateProgress(vIndex, currentVideo, playlist);
   return true;
 });
 
@@ -232,6 +239,32 @@ export default function decorate(block) {
   const playlistSection = block.closest('.section');
   const playerContainer = htmlToElement(`<div class="playlist-player-container" data-playlist-player-container></div>`);
   playlistSection.parentElement.prepend(playerContainer);
+
+  // bottom options
+  block.parentElement.append(
+    htmlToElement(`<div class="playlist-options">
+        <div class="playlist-options-autoplay">
+            <input type="checkbox" id="playlist-options-autoplay" checked=${playlist?.options?.autoplayNext || true}>
+            <label for="playlist-options-autoplay">Autoplay next Video</label>
+        </div>
+    </div>`),
+  );
+
+  document.querySelector('#playlist-options-autoplay').addEventListener('change', (event) => {
+    playlist.updateOptions({ autoplayNext: event.target.checked });
+  });
+
+  const activeVideoIndex = getQueryStringParameter('video') || 0;
+
+  // now viewing
+  block.parentElement.append(
+    htmlToElement(`<div class="playlist-now-viewing">
+        <b>NOW VIEWING</b>
+        <b><span class="playlist-now-viewing-count" data-playlist-now-viewing-count>${activeVideoIndex + 1}</span> OF ${playlist.length}</b>
+    </div>`),
+  );
+
+  decoratePlaylistHeader(block, playlist.length);
 
   [...block.children].forEach((videoRow, videoIndex) => {
     videoRow.classList.add('playlist-item');
@@ -280,31 +313,6 @@ export default function decorate(block) {
     playlist.updateVideoByIndex(videoIndex, video);
   });
 
-  // bottom options
-  block.parentElement.append(
-    htmlToElement(`<div class="playlist-options">
-        <div class="playlist-options-autoplay">
-            <input type="checkbox" id="playlist-options-autoplay" checked=${playlist?.options?.autoplayNext || true}>
-            <label for="playlist-options-autoplay">Autoplay next Video</label>
-        </div>
-    </div>`),
-  );
-
-  document.querySelector('#playlist-options-autoplay').addEventListener('change', (event) => {
-    playlist.updateOptions({ autoplayNext: event.target.checked });
-  });
-
-  const activeVideoIndex = getQueryStringParameter('video') || 0;
-
-  // now viewing
-  block.parentElement.append(
-    htmlToElement(`<div class="playlist-now-viewing">
-        <b>NOW VIEWING</b>
-        <b><span class="playlist-now-viewing-count" data-playlist-now-viewing-count>${activeVideoIndex + 1}</span> OF ${playlist.length}</b>
-    </div>`),
-  );
-
-  decoratePlaylistHeader(block, playlist.length);
   decorateIcons(playlistSection);
   playlist.activateVideoByIndex(activeVideoIndex);
 
