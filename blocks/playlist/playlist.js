@@ -1,5 +1,13 @@
+/* eslint-disable no-console */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../scripts/scripts.js';
+import { MPCListener, MCP_EVENT } from './mpc-util.js';
+
+/**
+ * @typedef {Object} VideoProgress
+ * @property {number} currentTime
+ * @property {boolean} complete
+ */
 
 /**
  * @typedef {Object} Video
@@ -53,14 +61,25 @@ function iconSpan(icon) {
 }
 
 // Video Player
-function newPlayer({ src, autoplay = true, title, description, transcriptUrl }) {
+function newPlayer({
+  src,
+  autoplay = true,
+  title,
+  description,
+  transcriptUrl,
+  progress = { currentTime: 0, complete: false },
+}) {
   const iframeAllowOptions = ['fullscreen', 'accelerometer', 'encrypted-media', 'gyroscope', 'picture-in-picture'];
   if (autoplay) iframeAllowOptions.push('autoplay');
 
   return htmlToElement(`
         <div class="playlist-player">
             <div class="playlist-player-video">
-                <iframe src="${src}?autoplay" frameborder="0" allow="${iframeAllowOptions.join('; ')}"></iframe>
+                <iframe 
+                    src="${src}?t=${progress.currentTime}&autoplay=${autoplay}" 
+                    frameborder="0" 
+                    allow="${iframeAllowOptions.join('; ')}">
+                </iframe>
             </div>
             <div class="playlist-player-info">
                 <h3 class="playlist-player-info-title">${title}</h3>
@@ -99,6 +118,8 @@ function decoratePlaylistHeader(block, videos) {
  * @param {*} count
  */
 function updatePlayer(video) {
+  const exisatingPlayer = document.querySelector('.playlist-player');
+  if (exisatingPlayer?.querySelector('iframe').src?.startsWith(video.src)) return;
   const player = newPlayer(video);
   const playerContainer = document.querySelector('.playlist-player-container');
   playerContainer.innerHTML = '';
@@ -106,8 +127,21 @@ function updatePlayer(video) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// array with proxy to update based on array values
-const videos = new Proxy([], {
+// get from localStorage or create a new array
+let savedVideos = [];
+if (localStorage.getItem('videos')) {
+  try {
+    savedVideos = JSON.parse(localStorage.getItem('videos'));
+  } catch (e) {
+    localStorage.removeItem('videos');
+  }
+}
+
+/**
+ * array with proxy to update based on array values
+ * @type {Array<Video>}
+ */
+const videos = new Proxy(savedVideos, {
   /**
    * @param {Array} target
    * @param {string} index
@@ -115,16 +149,50 @@ const videos = new Proxy([], {
    */
   set(target, prop, val) {
     if (prop === 'length' || typeof prop === 'symbol') return target[prop];
-    target[prop] = val;
-    const { active, el } = val;
+    target[prop] = {
+      ...target[prop],
+      ...val,
+    };
+    const currentVideo = target[prop];
+    const { active, el, progress, duration } = currentVideo;
+
     el.classList.toggle('active', active);
-    if (active) {
-      updatePlayer(val);
-      updateQueryStringParameter('video', prop);
-    }
+    updatePlayer(currentVideo);
+    updateQueryStringParameter('video', prop);
+    const nowViewingCount = document.querySelector('.playlist-now-viewing-count');
+    if (nowViewingCount) nowViewingCount.textContent = parseInt(prop, 10) + 1;
+    const thumbnail = el.querySelector('.playlist-item-thumbnail');
+    const currentTime = progress?.currentTime || 0;
+    thumbnail.style.setProperty('--playlist-item-progress', `${(currentTime / duration) * 100}%`);
+    // update localStorage
+    localStorage.setItem('videos', JSON.stringify(target));
     return true;
   },
 });
+
+// eslint-disable-next-line no-unused-vars
+const playerOptions = {};
+
+const handleSeek = ({ currentTime }) => {
+  let activeVideoIndex = videos.findIndex((video) => video.active);
+  if (activeVideoIndex === -1) activeVideoIndex = 0;
+  const activeVideo = videos[activeVideoIndex];
+  if (currentTime >= 0 && activeVideo) {
+    videos[activeVideoIndex] = { ...activeVideo, progress: { ...activeVideo.progress, currentTime } };
+  }
+};
+
+const mpcListener = new MPCListener();
+mpcListener.on(MCP_EVENT.LOAD, console.log);
+mpcListener.on(MCP_EVENT.START, console.log);
+mpcListener.on(MCP_EVENT.PLAY, console.log);
+mpcListener.on(MCP_EVENT.PAUSE, console.log);
+mpcListener.on(MCP_EVENT.TICK, handleSeek);
+mpcListener.on(MCP_EVENT.MILESTONE, console.log);
+mpcListener.on(MCP_EVENT.SEEK, handleSeek);
+mpcListener.on(MCP_EVENT.CHAPTER, console.log);
+mpcListener.on(MCP_EVENT.COMPLETE, console.log);
+mpcListener.on(MCP_EVENT.ENTER_FULLSCREEN, console.log);
 
 /**
  * @param {number|string} index
@@ -150,6 +218,7 @@ export default function decorate(block) {
   [...block.children].forEach((videoRow, videoIndex) => {
     videoRow.classList.add('playlist-item');
     const [videoCell, videoDataCell] = videoRow.children;
+    videoCell.classList.add('playlist-item-thumbnail');
     videoDataCell.classList.add('playlist-item-content');
 
     const [srcP, pictureP] = videoCell.children;
@@ -165,7 +234,7 @@ export default function decorate(block) {
       thumbnailUrl: pictureP.querySelector('img').src,
       el: videoRow,
     };
-    videos.push(video);
+    videos[videoIndex] = video;
 
     // remove elements that don't need to show here.
     srcP.remove();
@@ -196,11 +265,13 @@ export default function decorate(block) {
     </div>`),
   );
 
+  const activeVideoIndex = getQueryStringParameter('video') || 0;
+
   // now viewing
   block.parentElement.append(
     htmlToElement(`<div class="playlist-now-viewing">
         <b>NOW VIEWING</b>
-        <b><span>1</span> OF ${videos.length}</b>
+        <b><span class="playlist-now-viewing-count">${activeVideoIndex + 1}</span> OF ${videos.length}</b>
     </div>`),
   );
 
@@ -208,7 +279,7 @@ export default function decorate(block) {
 
   decorateIcons(playlistSection);
 
-  activateVideoByIndex(getQueryStringParameter('video') || 0);
+  activateVideoByIndex(activeVideoIndex);
 
   // handle browser back within history changes
   window.addEventListener('popstate', (event) => {

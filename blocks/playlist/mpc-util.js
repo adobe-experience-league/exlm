@@ -1,4 +1,4 @@
-export const STATE = {
+export const MCP_EVENT = {
   LOAD: 'load',
   START: 'start',
   PLAY: 'play',

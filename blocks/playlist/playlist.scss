@@ -116,6 +116,20 @@
   margin-bottom: 1em;
 }
 
+.playlist-item-thumbnail {
+  position: relative;
+}
+
+.playlist-item-thumbnail::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: var(--playlist-item-progress);
+  height: 3px;
+  background-color: var(--non-spectrum-navy-blue);
+}
+
 .playlist-item-content {
   padding: 0 1em 1em;
 }
