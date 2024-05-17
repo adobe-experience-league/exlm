@@ -12,7 +12,6 @@
  * @property {string} thumbnailUrl
  * @property {boolean} active
  * @property {number} currentTime
- * @property {boolean} complete
  * @property {HTMLElement} el
  * @returns
  */

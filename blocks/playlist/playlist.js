@@ -156,10 +156,27 @@ function updatePlayer(video) {
  */
 function updateProgress(videoIndex, video) {
   const { el, currentTime, duration } = video;
+  // now viewing count
   const nowViewingCount = document.querySelector('[data-playlist-now-viewing-count]');
   if (nowViewingCount) nowViewingCount.textContent = parseInt(videoIndex, 10) + 1;
+  // progress bar
   const progressBox = el.querySelector('[data-playlist-item-progress-box]');
   progressBox.style.setProperty('--playlist-item-progress', `${((currentTime || 0) / duration) * 100}%`);
+  // progress indicator
+  let progressStatus;
+  if (currentTime === 0) {
+    progressStatus = 'not-started';
+  } else if (currentTime >= duration - 1) {
+    progressStatus = 'completed';
+  } else {
+    progressStatus = 'in-progress';
+  }
+  [...el.querySelectorAll('[data-progress-status]')].forEach((status) => {
+    status.style.display = 'none';
+    if (status.getAttribute('data-progress-status') === progressStatus) {
+      status.style.display = 'block';
+    }
+  });
 }
 
 const playlist = new Playlist();
@@ -210,7 +227,6 @@ export default function decorate(block) {
       thumbnailUrl: src,
       el: videoRow,
     };
-    playlist.updateVideoByIndex(videoIndex, video);
 
     // remove elements that don't need to show here.
     srcP.remove();
@@ -221,7 +237,9 @@ export default function decorate(block) {
     // item bottom status
     videoDataCell.append(
       htmlToElement(`<div class="playlist-item-meta">
-              <div class="playlist-item-meta-status">${iconSpan('check')} In Progress</div>
+              <div data-progress-status="not-started"></div>
+              <div data-progress-status="in-progress">${iconSpan('check')} In Progress</div>
+              <div data-progress-status="completed">${iconSpan('check-filled')} Completed</div>
               <div>${iconSpan('time')} ${toTimeInMinutes(video.duration)} MIN</div>
           </div>`),
     );
@@ -229,6 +247,9 @@ export default function decorate(block) {
     videoRow.addEventListener('click', () => {
       playlist.activateVideoByIndex(videoIndex);
     });
+
+    // always do this at the end.
+    playlist.updateVideoByIndex(videoIndex, video);
   });
 
   // bottom options
