@@ -70,7 +70,7 @@ const contentType = [
     id: 'Article',
     value: 'Article',
     title: 'Article',
-    description: 'Article that recognize an individual’s skill and competency in an Adobe solution.',
+    description: 'Real-world customer perspectives and use-cases of Experience Cloud products.',
   },
   {
     id: 'Community',
