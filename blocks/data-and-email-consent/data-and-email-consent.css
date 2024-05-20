@@ -28,13 +28,11 @@
   margin: 0;
   border: 2px solid var(--spectrum-gray-600);
   border-radius: 2px;
-  opacity: 1;
 }
 
 .data-and-email-consent .notification .checkbox > input:checked {
   background-color: var(--non-spectrum-navy-blue);
   border-radius: 2px;
-  opacity: 1;
 }
 
 .data-and-email-consent .notification p {
