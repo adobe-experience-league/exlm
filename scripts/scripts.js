@@ -270,6 +270,11 @@ function addProfileLeftRail(main) {
 function addProfileTab(main) {
   const ProfileTab = document.createElement('div');
   ProfileTab.classList.add('profile-tab-container');
+  ProfileTab.innerHTML = `
+    <div class="profile-tab">
+      <a href="#">Profile Settings</a>
+      <a href="#">Bookmarks & Achievments</a>
+  `
   main.prepend(ProfileTab);
 }
 

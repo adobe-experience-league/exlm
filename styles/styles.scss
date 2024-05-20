@@ -1417,23 +1417,37 @@ body.profile {
 
 @include breakpoint('custom') {
   body.profile > main {
+    position: relative;
     margin: 0 auto;
     max-width: var(--non-spectrum-max-width);
     display: grid;
-    grid-template: 'profile-left-rail-container .' auto / 0.6fr 1.4fr;
+    grid-auto-columns: 1fr;
+    grid-template: '. profile-tab-container' 0.3fr 'profile-left-rail-container .' 1.7fr / 0.5fr 1.5fr;
     gap: 0 0;
   }
 
   body.profile > main > div.profile-left-rail-container {
     grid-area: profile-left-rail-container;
     padding: 0 0 0 32px;
-    position: relative;
+  }
+
+  body.profile > main > div.profile-tab-container {
+    grid-area: profile-tab-container;
+    padding-top: 40px;
+  }
+
+  body.profile div.profile-left-rail-wrapper {
+    position: absolute;
+    top: 80px;
+    bottom: 60px;
   }
 
   body.profile .profile-left-rail {
-    position: absolute;
-    top: 60px;
-    left: 100px;
+    position: sticky;
+    position: sticky;
+    top: 10px;
+    margin-left: 1em;
+    width: max-content;
   }
 
   body.profile .section:not(.profile-tab-container, .profile-left-rail-container) {
@@ -1441,5 +1455,6 @@ body.profile {
     margin-bottom: 2em;
     border-radius: 20px;
     background-color: var(--non-spectrum-bg);
+    border: 1px solid #d6d6d6;
   }
 }
