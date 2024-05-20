@@ -70,7 +70,7 @@ const contentType = [
     id: 'Article',
     value: 'Article',
     title: 'Article',
-    description: 'Article that recognize an individual’s skill and competency in an Adobe solution.',
+    description: 'Real-world customer perspectives and use-cases of Experience Cloud products.',
   },
   {
     id: 'Community',
@@ -168,11 +168,11 @@ const authorTypes = [
   },
 ].map((authorType) => ({
   ...authorType,
-  ...(placeholders[`filterExpLevel${authorType.id}Title`] && {
-    title: placeholders[`filterExpLevel${authorType.id}Title`],
+  ...(placeholders[`filterAuthorType${authorType.id}Title`] && {
+    title: placeholders[`filterAuthorType${authorType.id}Title`],
   }),
-  ...(placeholders[`filterExpLevel${authorType.id}Description`] && {
-    description: placeholders[`filterExpLevel${authorType.id}Description`],
+  ...(placeholders[`filterAuthorType${authorType.id}Description`] && {
+    description: placeholders[`filterAuthorType${authorType.id}Description`],
   }),
 }));
 
