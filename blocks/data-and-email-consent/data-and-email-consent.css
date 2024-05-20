@@ -2,19 +2,18 @@
   cursor: pointer;
   top: 480px;
   left: 425px;
-  width: 590px;
   background: #FFFFFF 0% 0% no-repeat padding-box;
   border: 1px solid #D6D6D6;
   border-radius: 4px;
   opacity: 1;
   margin-bottom: 32px;
   padding: 24px;
+  user-select: none;
 }
 
 .data-and-email-consent-wrapper .notification.highlight {
   top: 353px;
   left: 425px;
-  width: 590px;
   background: #FFFFFF 0% 0% no-repeat padding-box;
   box-shadow: 0px 3px 8px #1473E629;
   border: 1px solid var(--non-spectrum-navy-blue);
@@ -70,7 +69,6 @@
 .data-and-email-consent-wrapper .notification p {
   top: 407px;
   left: 449px;
-  width: 542px;
   height: 17px;
   text-align: left;
   font: normal normal normal 14px/17px "Adobe Clean";
@@ -84,7 +82,6 @@
 .data-and-email-consent-wrapper .notification-container .legal {
   top: 624px;
   left: 425px;
-  width: 590px;
   height: 60px;
   text-align: left;
   font: italic normal normal 12px/15px "Adobe Clean";
@@ -95,7 +92,6 @@
 .data-and-email-consent-wrapper .notification-container .legal p {
   top: 15px;
   left: 0px;
-  width: 570px;
   height: 15px;
   text-align: left;
   font: italic normal normal 12px/15px "Adobe Clean";
