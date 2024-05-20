@@ -61,5 +61,6 @@ body.profile .data-and-email-consent .notification .checkbox > input {
 
 body.profile .data-and-email-consent .notification-container .legal p {
   font-size: 14px;
+  font-style: normal;
   color: var(--spectrum-gray-800);
 }
