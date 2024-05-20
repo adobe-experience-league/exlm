@@ -41,6 +41,7 @@
 }
 
 .section.playlist-container .default-content-wrapper {
+  position: relative;
   padding: 1em;
   margin: 0;
   border-bottom: var(--playlist-border);
