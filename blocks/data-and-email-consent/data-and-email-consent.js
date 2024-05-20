@@ -9,7 +9,7 @@ let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
 } catch (err) {
-  // eslint-disable-next-line no-console
+  /* eslint-disable-next-line no-console */
   console.error('Error fetching placeholders:', err);
 }
 
@@ -20,14 +20,13 @@ export default async function decorate(block) {
   const [collectDataLabel, collectDataDesc, emailLabel, emailDesc, legal] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-  // Extract text content and trim it
+
   const collectDataLabelText = collectDataLabel.textContent.trim();
   const collectDataDescText = collectDataDesc.textContent.trim();
   const emailLabelText = emailLabel.textContent.trim();
   const emailDescText = emailDesc.textContent.trim();
   const legalText = legal.textContent.trim();
 
-  // Build DOM
   const notificationDOM = document.createRange().createContextualFragment(`
     <div class="notification-container">
       <div class='row notification'>
@@ -67,7 +66,6 @@ export default async function decorate(block) {
     const emailOptIn = profileData?.emailOptIn;
     const inProductActivity = profileData?.inProductActivity;
 
-    // Initialize checkbox states based on profile data
     block.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
       const preferenceName = checkbox.getAttribute('data-name');
       if (preferenceName === 'emailOptIn' && emailOptIn === true) {
@@ -80,31 +78,28 @@ export default async function decorate(block) {
     });
   }
 
-  // Add event listeners to checkboxes
-  block.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
-    checkbox.addEventListener('change', function checkboxChangeHandler(e) {
+  block.querySelectorAll('.notification').forEach((notification) => {
+    const checkbox = notification.querySelector('input[type="checkbox"]');
+
+    notification.addEventListener('click', (e) => {
+      const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subtext');
+      if (e.target !== checkbox && !isLabelClicked) {
+        checkbox.checked = !checkbox.checked;
+        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+
+    checkbox.addEventListener('change', (e) => {
       e.preventDefault();
-      e.stopPropagation();
-      const preferenceName = this.getAttribute('data-name');
-      const isChecked = this.checked;
-      this.closest('.notification').classList.toggle('highlight', isChecked);
+      const isChecked = checkbox.checked;
+      checkbox.closest('.notification').classList.toggle('highlight', isChecked);
 
       if (isSignedIn) {
+        const preferenceName = checkbox.getAttribute('data-name');
         defaultProfileClient
           .updateProfile(preferenceName, isChecked)
           .then(() => sendNotice(PROFILE_UPDATED))
           .catch(() => sendNotice(PROFILE_NOT_UPDATED));
-      }
-    });
-  });
-
-  // Add click event listeners to notification rows
-  block.querySelectorAll('.notification').forEach((notification) => {
-    notification.addEventListener('click', function notificationClickHandler(e) {
-      const checkbox = this.querySelector('input[type="checkbox"]');
-      if (e.target !== checkbox) {
-        checkbox.checked = !checkbox.checked;
-        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
       }
     });
   });
