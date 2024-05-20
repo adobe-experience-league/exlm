@@ -9,6 +9,7 @@ let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
 } catch (err) {
+  /* eslint-disable-next-line no-console */
   console.error('Error fetching placeholders:', err);
 }
 
