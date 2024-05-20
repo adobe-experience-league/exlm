@@ -17,8 +17,9 @@ const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes ha
 const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
 
 export default async function decorate(block) {
-  const [collectDataLabel, collectDataDesc, emailLabel, emailDesc, legal] = block.querySelectorAll(':scope div > div');
-
+  const [collectDataLabel, collectDataDesc, emailLabel, emailDesc, legal] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
   // Extract text content and trim it
   const collectDataLabelText = collectDataLabel.textContent.trim();
   const collectDataDescText = collectDataDesc.textContent.trim();
