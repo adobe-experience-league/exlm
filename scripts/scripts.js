@@ -246,20 +246,11 @@ export function isProfilePage() {
  * @param {HTMLElement} main
  * 
 */
-function addProfileLeftRail(main) {
-  const profileLeftRailContainer = document.createElement('div');
-  profileLeftRailContainer.classList.add('profile-left-rail-container');
-  profileLeftRailContainer.innerHTML = `
-    <div class="profile-left-rail">
-      <span>My Experience League profile</span>
-      <ul> 
-      <li><a href="#general-information">General Information</a></li>
-      <li><a href="#product-interests">Product Interests</a></li>
-      <li><a href="#Privacy-and-Email">Privacy and Email</a></li>
-      </ul>  
-    </div>
-  `
-  main.prepend(profileLeftRailContainer);
+function addProfileRail(main) {
+  const profileRailSection = document.createElement('div');
+  profileRailSection.classList.add('profile-rail-section');
+  profileRailSection.append(buildBlock('profile-rail', []))
+  main.prepend(profileRailSection);
 }
 
 /**
@@ -268,14 +259,10 @@ function addProfileLeftRail(main) {
  * 
 */
 function addProfileTab(main) {
-  const ProfileTab = document.createElement('div');
-  ProfileTab.classList.add('profile-tab-container');
-  ProfileTab.innerHTML = `
-    <div class="profile-tab">
-      <a href="#">Profile Settings</a>
-      <a href="#">Bookmarks & Achievments</a>
-  `
-  main.prepend(ProfileTab);
+  const profileTabSection = document.createElement('div');
+  profileTabSection.classList.add('profile-tab-section');
+  profileTabSection.append(buildBlock('profile-tab', []))
+  main.prepend(profileTabSection);
 }
 
 /**
@@ -294,8 +281,7 @@ function buildAutoBlocks(main) {
       addArticleLandingRail(main);
     }
     if (isProfilePage()) {
-      console.log('Profile page');
-      addProfileLeftRail(main)
+      addProfileRail(main)
       addProfileTab(main)
     }
   } catch (error) {

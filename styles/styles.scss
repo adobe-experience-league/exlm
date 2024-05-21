@@ -1422,35 +1422,34 @@ body.profile {
     max-width: var(--non-spectrum-max-width);
     display: grid;
     grid-auto-columns: 1fr;
-    grid-template: '. profile-tab-container' 0.3fr 'profile-left-rail-container .' 1.7fr / 0.5fr 1.5fr;
+    grid-template: '. profile-tab-section' 0.3fr 'profile-rail-section  .' 1.7fr / 0.5fr 1.5fr;
     gap: 0 0;
   }
 
-  body.profile > main > div.profile-left-rail-container {
-    grid-area: profile-left-rail-container;
+  body.profile > main > div.profile-rail-section {
+    grid-area: profile-rail-section;
     padding: 0 0 0 32px;
   }
 
-  body.profile > main > div.profile-tab-container {
-    grid-area: profile-tab-container;
+  body.profile > main > div.profile-tab-section {
+    grid-area: profile-tab-section;
     padding-top: 40px;
   }
 
-  body.profile div.profile-left-rail-wrapper {
+  body.profile div.profile-rail-wrapper {
     position: absolute;
     top: 80px;
     bottom: 60px;
   }
 
-  body.profile .profile-left-rail {
-    position: sticky;
+  body.profile .profile-rail {
     position: sticky;
     top: 10px;
     margin-left: 1em;
     width: max-content;
   }
 
-  body.profile .section:not(.profile-tab-container, .profile-left-rail-container) {
+  body.profile .section:not(.profile-tab-section, .profile-rail-section) {
     margin-right: 5em;
     margin-bottom: 2em;
     border-radius: 20px;
