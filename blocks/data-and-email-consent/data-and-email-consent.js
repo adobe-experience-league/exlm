@@ -38,7 +38,7 @@ export default async function decorate(block) {
           </span>`
             : ``
         }
-        ${collectDataDescText !== '' ? `<p>${collectDataDesc.innerHTML}</p>` : ``}
+        ${collectDataDescText !== '' ? `<div>${collectDataDesc.innerHTML}</div>` : ``}
       </div>
       <div class='row notification'>
         ${
@@ -49,10 +49,10 @@ export default async function decorate(block) {
           </span>`
             : ``
         }
-        ${emailDescText !== '' ? `<p>${emailDesc.innerHTML}</p>` : ``}
+        ${emailDescText !== '' ? `<div>${emailDesc.innerHTML}</div>` : ``}
       </div>
       <div class='row legal'>
-        ${legalText !== '' ? `<p>${legal.innerHTML}</p>` : ``}
+        ${legalText !== '' ? `<div>${legal.innerHTML}</div>` : ``}
       </div>
     </div>
   `);
