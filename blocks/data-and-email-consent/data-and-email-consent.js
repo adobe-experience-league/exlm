@@ -32,10 +32,10 @@ export default async function decorate(block) {
       <div class='row notification'>
         ${
           collectDataLabelText !== ''
-            ? `<label class="checkbox" for="inProductActivityCheckbox">
-                <input data-name="inProductActivity" type="checkbox" id="inProductActivityCheckbox">
-                <span class="subtext">${collectDataLabelText}</span>
-              </label>`
+            ? `<span class="checkbox">
+            <input data-name="inProductActivity" id="inProductActivity" type="checkbox">
+            <label for="inProductActivity" class="subtext">${collectDataLabelText}</label>
+          </span>`
             : ``
         }
         ${collectDataDescText !== '' ? `<p>${collectDataDescText}</p>` : ``}
@@ -43,10 +43,10 @@ export default async function decorate(block) {
       <div class='row notification'>
         ${
           emailLabelText !== ''
-            ? `<label class="checkbox" for="emailOptInCheckbox">
-                <input data-name="emailOptIn" type="checkbox" id="emailOptInCheckbox">
-                <span class="subtext">${emailLabelText}</span>
-              </label>`
+            ? `<span class="checkbox">
+            <input data-name="emailOptIn" id="emailOptIn" type="checkbox">
+            <label for="emailOptIn" class="subtext">${emailLabelText}</label>
+          </span>`
             : ``
         }
         ${emailDescText !== '' ? `<p>${emailDescText}</p>` : ``}

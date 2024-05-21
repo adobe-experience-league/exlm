@@ -1,89 +1,66 @@
-.data-and-email-consent-wrapper .notification {
+.data-and-email-consent .notification {
   cursor: pointer;
-  top: 480px;
-  left: 425px;
-  background: #FFFFFF 0% 0% no-repeat padding-box;
+  background-color: var(--background-color);
   border: 1px solid #D6D6D6;
   border-radius: 4px;
-  opacity: 1;
   margin-bottom: 32px;
   padding: 24px;
   user-select: none;
 }
 
-.data-and-email-consent-wrapper .notification.highlight {
-  box-shadow: 0px 3px 8px #1473E629;
-  border: 1px solid var(--non-spectrum-navy-blue);
+.data-and-email-consent .notification.highlight {
+  border-color: var(--non-spectrum-navy-blue);
 }
 
-.data-and-email-consent-wrapper .notification .checkbox {
-  top: 504px;
-  left: 449px;
-  width: 363px;
-  height: 22px;
-  opacity: 1;
-  cursor: pointer;
-  display: inline-flex;
+.data-and-email-consent .notification .checkbox {
+  display: flex;
   gap: 10px;
 }
 
-.data-and-email-consent-wrapper .notification .checkbox .subtext {
-  top: 377px;
-  left: 471px;
-  width: 317px;
-  height: 22px;
-  text-align: left;
-  font: normal normal bold 18px/22px "Adobe Clean";
+.data-and-email-consent .notification .checkbox > label {
+  font-size: 18px;
   letter-spacing: 0px;
-  color: #000000;
-  opacity: 1;
+  font-weight: 700;
 }
 
-.data-and-email-consent-wrapper .notification .checkbox input {
-  top: 509px;
-  left: 449px;
+.data-and-email-consent .notification .checkbox > input {
   width: 14px;
-  height: 14px;
-  background: #FDFDFD 0% 0% no-repeat padding-box;
-  border: 2px solid #6D6D6D;
+  margin: 0;
+  border: 2px solid var(--spectrum-gray-600);
   border-radius: 2px;
-  opacity: 1;
 }
 
-.data-and-email-consent-wrapper .notification.highlight .checkbox input {
-  top: 382px;
-  background: var(--non-spectrum-navy-blue) 0% 0% no-repeat padding-box;
+.data-and-email-consent .notification .checkbox > input:checked {
+  background-color: var(--non-spectrum-navy-blue);
+  border-radius: 2px;
 }
 
-.data-and-email-consent-wrapper .notification p {
-  top: 407px;
-  left: 449px;
-  height: 17px;
-  text-align: left;
-  font: normal normal normal 14px/17px "Adobe Clean";
+.data-and-email-consent .notification p {
   letter-spacing: 0px;
-  color: #222222;
-  opacity: 1;
+  color: var(--spectrum-gray-800);
   font-size: 14px;
+  margin: 0;
   margin-top: 8px;
 }
 
-.data-and-email-consent-wrapper .notification-container .legal {
-  top: 624px;
-  left: 425px;
-  height: 60px;
-  text-align: left;
-  font: italic normal normal 12px/15px "Adobe Clean";
+.data-and-email-consent .notification-container .legal p {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--spectrum-gray-600);
   letter-spacing: 0px;
-  opacity: 1;
+  line-height: 16px;
 }
 
-.data-and-email-consent-wrapper .notification-container .legal p {
-  top: 15px;
-  left: 0px;
-  height: 15px;
-  text-align: left;
-  font: italic normal normal 12px/15px "Adobe Clean";
-  letter-spacing: 0px;
-  color: var(--spectrum-gray-600);
+body.profile .data-and-email-consent .notification p {
+  font-size: 18px;
+}
+
+body.profile .data-and-email-consent .notification .checkbox > input {
+  width: 18px;
+}
+
+body.profile .data-and-email-consent .notification-container .legal p {
+  font-size: 14px;
+  font-style: normal;
+  color: var(--spectrum-gray-800);
 }
