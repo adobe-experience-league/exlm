@@ -107,7 +107,7 @@ async function getTranslatedDocContent() {
   const translatedDoc = await docResponse.text();
   const docElement = htmlToElement(`<div>${translatedDoc}</div>`);
   decorateMain(docElement);
-  await loadBlocks(docElement);
+  await loadBlocks(docElement.querySelector(':not(.mini-toc-container)'));
   return docElement.querySelector(':scope > div:first-child');
 }
 
