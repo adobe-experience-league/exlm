@@ -1,0 +1,87 @@
+.adobe-account-card-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.adobe-account-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 386px;
+}
+
+.adobe-account-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.adobe-account-card .card-header .adobe-account {
+    text-align: left;
+    font: normal normal bold 12px/15px Adobe Clean;
+    letter-spacing: 0.72px;
+    color: #000000;
+    text-transform: uppercase;
+    opacity: 1;
+    margin-top: 0;
+}
+
+.adobe-account-card .card-header .make-changes {
+    display: inline-flex;
+}
+
+.adobe-account-card .card-header .make-changes .icon-new-tab {
+    margin-top: 8px;
+}
+
+.adobe-account-card .card-header .make-changes a {
+    text-align: left;
+    font: normal normal normal 12px/15px Adobe Clean;
+    letter-spacing: 0px;
+    color: #222222;
+    opacity: 1;
+}
+
+.adobe-account-card .card-body {
+    display: flex;
+    align-items: center;
+}
+
+.adobe-account-card .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #0073e6;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    font-size: 1.5em;
+    margin-right: 15px;
+}
+
+.adobe-account-card .avatar .icon-profile {
+    width: 50px;
+    height: 50px;
+}
+
+.adobe-account-card .user-info .display-name {
+    text-align: left;
+    font: normal normal bold 18px/22px Adobe Clean;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 1;
+}
+
+.adobe-account-card .user-info .email,
+.adobe-account-card .user-info .company {
+    text-align: left;
+    font: normal normal normal 14px/20px Adobe Clean;
+    letter-spacing: 0px;
+    color: #222222;
+    opacity: 1;
+}
