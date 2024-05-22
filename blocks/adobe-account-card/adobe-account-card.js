@@ -26,7 +26,7 @@ export default async function decorate(block) {
     email = profileData?.email || email;
     company = profileData?.company || company;
     const profileImgData = await defaultProfileClient.getPPSProfile();
-    profilePicture = profileImgData?.images?.['50'] || profilePicture;
+    profilePicture = profileImgData?.images?.['100'] || profilePicture;
   }
 
   const accountCardDOM = document.createRange().createContextualFragment(`
