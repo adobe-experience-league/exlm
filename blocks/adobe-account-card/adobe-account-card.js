@@ -24,9 +24,9 @@ export default async function decorate(block) {
     const profileData = await defaultProfileClient.getMergedProfile();
     displayName = profileData?.displayName || '';
     email = profileData?.email || '';
-    company = profileData?.company || '';
-    const profileImgData = await defaultProfileClient.getPPSProfile();
-    profilePicture = profileImgData?.images?.['100'] || profilePicture;
+    const ppsProfileData = await defaultProfileClient.getPPSProfile();
+    profilePicture = ppsProfileData?.images?.['100'] || profilePicture;
+    company = ppsProfileData?.company || '';
   }
 
   const accountCardDOM = document.createRange().createContextualFragment(`
