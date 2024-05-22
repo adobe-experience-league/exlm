@@ -1,4 +1,4 @@
-import { decorateMain, htmlToElement, fetchLanguagePlaceholders, getLanguageCode } from '../scripts.js';
+import { decorateMain, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { loadBlocks, loadCSS, decorateIcons } from '../lib-franklin.js';
 
 let placeholders = {};
@@ -9,28 +9,28 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-const languageCode = (await getLanguageCode()) || 'en';
+const { lang } = getPathDetails();
 
 // Array of pages for the signup flow
 const pages = [
   {
     name: 'step1',
-    path: `/${languageCode}/profile/signup-flow-modal/step1`,
+    path: `/${lang}/profile/signup-flow-modal/step1`,
     title: placeholders?.signupFlowStep1Header,
   },
   {
     name: 'step2',
-    path: `/${languageCode}/profile/signup-flow-modal/step2`,
+    path: `/${lang}/profile/signup-flow-modal/step2`,
     title: placeholders?.signupFlowStep2Header,
   },
   {
     name: 'step3',
-    path: `/${languageCode}/profile/signup-flow-modal/step3`,
+    path: `/${lang}/profile/signup-flow-modal/step3`,
     title: placeholders?.signupFlowStep3Header,
   },
   {
     name: 'confirm',
-    path: `/${languageCode}/profile/signup-flow-modal/confirm`,
+    path: `/${lang}/profile/signup-flow-modal/confirm`,
     title: placeholders?.signupFlowConfirmHeader,
     nofollow: true,
   },
