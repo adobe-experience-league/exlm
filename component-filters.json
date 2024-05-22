@@ -87,11 +87,11 @@
   },
   {
     "id": "section-profile",
-    "components": ["text", "title", "button", "image", "columns", "adobe-account-card", "data-and-email-consent"]
+    "components": ["text", "title", "button", "image", "columns", "adobe-account-card", "data-and-email-consent", "role-cards"]
   },
   {
     "id": "section-profile-signup",
-    "components": ["text", "title", "button", "image", "adobe-account-card", "data-and-email-consent"]
+    "components": ["text", "title", "button", "image", "adobe-account-card", "data-and-email-consent", "role-cards"]
   },
   {
     "id": "article-content-section",

@@ -1,0 +1,80 @@
+body[class ^= 'profile'] .role-cards .role-cards-container {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+body[class ^= 'profile'] .role-cards .role-cards-icon {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+    align-items: start;
+    gap: 8px;
+}
+
+body[class ^= 'profile'] .role-cards .role-cards-selectiondefault p {
+    margin: 0px 0px 10px 0px;
+    min-height: 18px;
+    font-size: 14px;
+}
+
+.role-cards .role-cards-container {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.role-cards .role-cards-icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.role-cards .role-cards-checkbox input {
+    width: 14px;
+    margin: 0px;
+}
+
+.role-cards .role-cards-checkbox label {
+    font-size: 14px;
+} 
+
+.role-cards .role-cards-block {
+    border: 2px solid var(--spectrum-gray-400);
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.role-cards .role-cards-checkbox {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.role-cards .role-cards-description h3 {
+    margin: 0px;
+    font-size: 18px;
+}
+
+.role-cards .role-cards-description p {
+    font-size: 14px;
+}
+
+.role-cards-block.highlight  {
+    border: 2px solid var(--spectrum-blue-600);
+}
+
+@media (max-width: 600px) {
+    .role-cards .role-cards-container {
+        display: grid;
+        gap: 24px;
+        grid-template-rows: 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr;
+    }
+}
