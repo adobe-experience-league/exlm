@@ -6,8 +6,8 @@
 }
 
 .adobe-account-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
+    background-color: var(--background-color);
+    border: 1px solid var(--shimmer-image-slide-mid);
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 24px;
@@ -25,7 +25,7 @@
     font-size: 12px;
     font-weight: bold;
     letter-spacing: 0.72px;
-    color: #000000;
+    color: var(--text-color);
     text-transform: uppercase;
     margin: 0px;
 }
@@ -40,7 +40,7 @@
     margin: 0px;
     font-size: 12px;
     letter-spacing: 0px;
-    color: #222222;
+    color: var(--spectrum-gray-800);
 }
 
 .adobe-account-card .card-body {
@@ -53,8 +53,8 @@
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background-color: #0073e6;
-    color: #fff;
+    background-color: var(--non-spectrum-navy-blue);
+    color: var(--background-color);
 }
 
 .adobe-account-card .avatar .icon-profile {
@@ -66,7 +66,7 @@
     font-size: 18px;
     font-weight: bold;
     letter-spacing: 0px;
-    color: #000000;
+    color: var(--text-color);
     margin-bottom: 4px;
 }
 
@@ -75,5 +75,5 @@
     font-size: 14px;
     font-weight: normal;
     letter-spacing: 0px;
-    color: #222222;
+    color: var(--spectrum-gray-800);
 }
