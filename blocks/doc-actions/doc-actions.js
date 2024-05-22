@@ -107,7 +107,7 @@ async function getTranslatedDocContent() {
   const translatedDoc = await docResponse.text();
   const docElement = htmlToElement(`<div>${translatedDoc}</div>`);
   decorateMain(docElement);
-  await loadBlocks(docElement.querySelector(':not(.mini-toc-container)'));
+  await loadBlocks(docElement);
   return docElement.querySelector(':scope > div:first-child');
 }
 
@@ -174,11 +174,14 @@ async function decorateLanguageToggle(block, placeholders) {
     const docContainer = document.querySelector('main > div:first-child');
 
     [...desktopAndMobileLangToggles].forEach((langToggle) => {
-      langToggle.addEventListener('change', async (e) => {
-        const { checked } = e.target;
-        await toggleContent(checked, docContainer);
-        assetInteractionModel(null, `automatic translation ${e.target.checked ? 'on' : 'off'}`);
-      });
+      if (!langToggle.parentElement.classList.contains('listener')) {
+        langToggle.addEventListener('change', async (e) => {
+          const { checked } = e.target;
+          await toggleContent(checked, docContainer);
+          assetInteractionModel(null, `automatic translation ${e.target.checked ? 'on' : 'off'}`);
+        });
+        langToggle.parentElement.classList.add('listener');
+      }
     });
 
     const desktopAndMobileRadioFeedback = document.querySelectorAll(
