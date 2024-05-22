@@ -10,6 +10,7 @@ import {
   fetchFragment,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
+import initializeSignupFlow from '../../scripts/signup-flow/signup-flow.js';
 
 const languageModule = import('../../scripts/language.js');
 const { khorosProfileUrl } = getConfig();
@@ -832,4 +833,10 @@ export default async function decorate(headerBlock) {
   // do this at the end, always.
   decorateIcons(headerBlock);
   headerBlock.style.display = '';
+}
+
+/* Temp Code - Should be removed once we have the component integration in place */
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('signup-wizard') === 'on') {
+  initializeSignupFlow();
 }
