@@ -1,27 +1,37 @@
-import { decorateMain, htmlToElement } from '../scripts.js';
+import { decorateMain, htmlToElement, fetchLanguagePlaceholders, getLanguageCode } from '../scripts.js';
 import { loadBlocks, loadCSS, decorateIcons } from '../lib-franklin.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  /* eslint-disable-next-line no-console */
+  console.error('Error fetching placeholders:', err);
+}
+
+const languageCode = (await getLanguageCode()) || 'en';
 
 // Array of pages for the signup flow
 const pages = [
   {
     name: 'step1',
-    path: '/en/profile/signup-flow-modal/step1',
-    title: 'Set up your profile. Get learning recs in minutes.',
+    path: `/${languageCode}/profile/signup-flow-modal/step1`,
+    title: placeholders?.signupFlowStep1Header,
   },
   {
     name: 'step2',
-    path: '/en/profile/signup-flow-modal/step2',
-    title: 'Give your profile a personal touch.',
+    path: `/${languageCode}/profile/signup-flow-modal/step2`,
+    title: placeholders?.signupFlowStep2Header,
   },
   {
     name: 'step3',
-    path: '/en/profile/signup-flow-modal/step3',
-    title: 'Set up your data and notification preferences.',
+    path: `/${languageCode}/profile/signup-flow-modal/step3`,
+    title: placeholders?.signupFlowStep3Header,
   },
   {
     name: 'confirm',
-    path: '/en/profile/signup-flow-modal/confirm',
-    title: 'Your profile is all set up.',
+    path: `/${languageCode}/profile/signup-flow-modal/confirm`,
+    title: placeholders?.signupFlowConfirmHeader,
     nofollow: true,
   },
 ];
@@ -35,7 +45,7 @@ const createSignupDialog = () => {
         <dialog class="signup-dialog">
             <div class="signup-dialog-close-bar">
                 <a href="#" class="signup-dialog-close-btn">
-                    <span class="close-text">Close</span>
+                    <span class="close-text">${placeholders?.closeBtnLabel}</span>
                     <div class="close-icon-holder">
                         <span class="icon icon-close"></span>
                     </div>
@@ -44,11 +54,11 @@ const createSignupDialog = () => {
             <div class="signup-dialog-container">
                 <div class="signup-dialog-header">
                     <div class="signup-dialog-nav-bar">
-                        <button class="secondary prev-btn">Back</button>
+                        <button class="secondary prev-btn">${placeholders?.backBtnLabel}</button>
                         <div class="signup-dialog-steps-container"></div>
                         <div class="signup-dialog-actions">
-                            <button class="next-btn">Next</button>
-                            <button class="finish-btn content-hidden">Finish</button>
+                            <button class="next-btn">${placeholders?.nextBtnLabel}</button>
+                            <button class="finish-btn content-hidden">${placeholders?.finishBtnLabel}</button>
                         </div>
                     </div>
                 </div>
