@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { isSignedInUser } from '../../scripts/auth/profile.js';
+import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 
 let placeholders = {};
 try {
@@ -21,11 +21,11 @@ export default async function decorate(block) {
 
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
-    const profileData = JSON.parse(sessionStorage.getItem('profile')) || {};
+    const profileData = await defaultProfileClient.getMergedProfile();
     displayName = profileData?.displayName || displayName;
     email = profileData?.email || email;
     company = profileData?.company || company;
-    const profileImgData = JSON.parse(sessionStorage.getItem('pps-profile')) || {};
+    const profileImgData = await defaultProfileClient.getPPSProfile();
     profilePicture = profileImgData?.images?.['50'] || profilePicture;
   }
 
