@@ -6,7 +6,7 @@
 }
 
 .adobe-account-card {
-    background-color: var(--background-color);
+    background-color: var(--spectrum-gray-50);
     border: 1px solid var(--shimmer-image-slide-mid);
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -39,7 +39,6 @@
 .adobe-account-card .card-header .update-profile a {
     margin: 0px;
     font-size: var(--spectrum-font-size-75);
-    letter-spacing: 0px;
     color: var(--spectrum-gray-800);
 }
 
@@ -54,7 +53,7 @@
     height: 64px;
     border-radius: 50%;
     background-color: var(--non-spectrum-navy-blue);
-    color: var(--background-color);
+    color: var(--spectrum-gray-50);
 }
 
 .adobe-account-card .avatar .icon-profile {
@@ -65,7 +64,6 @@
 .adobe-account-card .user-info .display-name {
     font-size: var(--spectrum-font-size-300);
     font-weight: bold;
-    letter-spacing: 0px;
     color: var(--text-color);
     margin-bottom: 4px;
 }
@@ -74,6 +72,5 @@
 .adobe-account-card .user-info .company {
     font-size: var(--spectrum-font-size-100);
     font-weight: normal;
-    letter-spacing: 0px;
     color: var(--spectrum-gray-800);
 }
