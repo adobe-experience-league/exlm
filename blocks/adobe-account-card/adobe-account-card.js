@@ -10,14 +10,12 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 const adobeAccountLink = 'https://account.adobe.com/';
-const ADOBE_ACCOUNT = placeholders?.myAdobeAccount || 'My Adobe Account';
-const MAKE_CHANGES_TEXT = placeholders?.makeChanges || 'Make changes';
 
 export default async function decorate(block) {
-  let displayName = 'Username';
-  let company = 'Company';
-  let email = 'Email';
-  let profilePicture = null;
+  let displayName = '';
+  let company = '';
+  let email = '';
+  let profilePicture = '';
 
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
@@ -25,16 +23,16 @@ export default async function decorate(block) {
     displayName = profileData?.displayName || '';
     email = profileData?.email || '';
     const ppsProfileData = await defaultProfileClient.getPPSProfile();
-    profilePicture = ppsProfileData?.images?.['100'] || profilePicture;
+    profilePicture = ppsProfileData?.images?.['100'] || '';
     company = ppsProfileData?.company || '';
   }
 
   const accountCardDOM = document.createRange().createContextualFragment(`
     <div class="card-header">
-      <div class="adobe-account">${ADOBE_ACCOUNT}</div>
-      <div class="make-changes">
+      <div class="adobe-account">${placeholders?.myAdobeAccount}</div>
+      <div class="update-profile">
         <span class="icon icon-new-tab"></span>
-        <a href="${adobeAccountLink}" target="_blank">${MAKE_CHANGES_TEXT}</a>
+        <a href="${adobeAccountLink}" target="_blank">${placeholders?.makeChanges}</a>
       </div>
     </div>
     <div class="card-body">
