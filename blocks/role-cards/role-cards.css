@@ -70,8 +70,24 @@ body[class ^= 'profile'] .role-cards .role-cards-selectiondefault p {
     border: 2px solid var(--spectrum-blue-600);
 }
 
+@media (min-width: 601px) and (max-width: 900px) {
+    body[class ^= 'profile'] .role-cards .role-cards-container {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+}
+
 @media (max-width: 600px) {
     .role-cards .role-cards-container {
+        display: grid;
+        gap: 24px;
+        grid-template-rows: 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr;
+    }
+
+    body[class ^= 'profile'] .role-cards .role-cards-container {
         display: grid;
         gap: 24px;
         grid-template-rows: 1fr 1fr 1fr 1fr;
