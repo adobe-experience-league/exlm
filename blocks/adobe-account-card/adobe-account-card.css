@@ -22,7 +22,7 @@
 }
 
 .adobe-account-card .card-header .adobe-account {
-    font-size: 12px;
+    font-size: var(--spectrum-font-size-75);
     font-weight: bold;
     letter-spacing: 0.72px;
     color: var(--text-color);
@@ -38,7 +38,7 @@
 
 .adobe-account-card .card-header .update-profile a {
     margin: 0px;
-    font-size: 12px;
+    font-size: var(--spectrum-font-size-75);
     letter-spacing: 0px;
     color: var(--spectrum-gray-800);
 }
@@ -63,7 +63,7 @@
 }
 
 .adobe-account-card .user-info .display-name {
-    font-size: 18px;
+    font-size: var(--spectrum-font-size-300);
     font-weight: bold;
     letter-spacing: 0px;
     color: var(--text-color);
@@ -72,7 +72,7 @@
 
 .adobe-account-card .user-info .email,
 .adobe-account-card .user-info .company {
-    font-size: 14px;
+    font-size: var(--spectrum-font-size-100);
     font-weight: normal;
     letter-spacing: 0px;
     color: var(--spectrum-gray-800);
