@@ -22,9 +22,9 @@ export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
-    displayName = profileData?.displayName || displayName;
-    email = profileData?.email || email;
-    company = profileData?.company || company;
+    displayName = profileData?.displayName || '';
+    email = profileData?.email || '';
+    company = profileData?.company || '';
     const profileImgData = await defaultProfileClient.getPPSProfile();
     profilePicture = profileImgData?.images?.['100'] || profilePicture;
   }
