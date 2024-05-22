@@ -87,7 +87,16 @@
   },
   {
     "id": "section-profile",
-    "components": ["text", "title", "button", "image", "columns", "adobe-account-card", "data-and-email-consent", "role-cards"]
+    "components": [
+      "text",
+      "title",
+      "button",
+      "image",
+      "columns",
+      "adobe-account-card",
+      "data-and-email-consent",
+      "role-cards"
+    ]
   },
   {
     "id": "section-profile-signup",
