@@ -10,3 +10,8 @@ helix-importer-ui
 /scripts/coveo-headless/libs/node_modules*
 .aio
 .env
+
+# Ignore these files to prevent accidental changes from cross-repo merges.
+fstab.yaml
+helix-sitemap.yaml
+sitemap-index.xml
