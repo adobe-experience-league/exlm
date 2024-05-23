@@ -1,4 +1,4 @@
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import { Playlist } from './mpc-util.js';
 
@@ -106,21 +106,28 @@ function newPlayer(video) {
  * @param {HTMLElement} block
  * @param {number} videoLength
  */
-function decoratePlaylistHeader(block, videoLength) {
+function decoratePlaylistHeader(block, playlist) {
   const playlistSection = block.closest('.section');
   const defaultContent = playlistSection.querySelector('.default-content-wrapper');
   defaultContent.setAttribute('data-playlist-progress-box', '');
   defaultContent.prepend(
     htmlToElement(`<div class="playlist-info">
         <b>PLAYLIST</b>
-        <div>${iconSpan('list')} ${videoLength} Tutorials</div>
+        <div>${iconSpan('list')} ${playlist.length} Tutorials</div>
+        <button data-playlist-action-button class="playlist-action-button">⋮</button>
     </div>`),
   );
+
   defaultContent.append(
-    htmlToElement(`<div class="playlist-actions">
-        <div>${iconSpan('bookmark')} Save Playlist</div>
-        <div>${iconSpan('copy-link')} Share Playlist</div>
-    </div>`),
+    htmlToElement(`<div class="playlist-now-viewing">
+  <b>NOW VIEWING</b>
+  <b><span class="playlist-now-viewing-count" data-playlist-now-viewing-count>${playlist.getActiveVideoIndex() + 1}</span> OF ${playlist.length}</b>
+</div>`),
+  );
+
+  loadCSS('/blocks/playlist/playlist-action-menu.css');
+  import('./playlist-action-menu.js').then((mod) =>
+    mod.default(playlistSection.querySelector('[data-playlist-action-button]')),
   );
 }
 
@@ -255,15 +262,7 @@ export default function decorate(block) {
 
   const activeVideoIndex = getQueryStringParameter('video') || 0;
 
-  // now viewing
-  block.parentElement.append(
-    htmlToElement(`<div class="playlist-now-viewing">
-        <b>NOW VIEWING</b>
-        <b><span class="playlist-now-viewing-count" data-playlist-now-viewing-count>${activeVideoIndex + 1}</span> OF ${playlist.length}</b>
-    </div>`),
-  );
-
-  decoratePlaylistHeader(block, playlist.length);
+  decoratePlaylistHeader(block, playlist);
 
   [...block.children].forEach((videoRow, videoIndex) => {
     videoRow.classList.add('playlist-item');

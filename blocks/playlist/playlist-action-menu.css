@@ -1,0 +1,15 @@
+.playlist-action-menu {
+  display: none;
+  position: absolute;
+  top: 3em;
+  right: 1em;
+  background-color: #fff;
+  padding: 1em;
+  filter: drop-shadow(rgb(0 0 0 / 15%) 0 1px 4px);
+  z-index: 1;
+  border-radius: 4px;
+}
+
+.playlist-action-menu.show {
+  display: block;
+}
