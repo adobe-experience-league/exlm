@@ -95,12 +95,13 @@
       "columns",
       "adobe-account-card",
       "data-and-email-consent",
-      "role-cards"
+      "role-cards",
+      "user-profile-card"
     ]
   },
   {
     "id": "section-profile-signup",
-    "components": ["text", "title", "button", "image", "adobe-account-card", "data-and-email-consent", "role-cards"]
+    "components": ["text", "title", "button", "image", "adobe-account-card", "data-and-email-consent", "role-cards", "user-profile-card"]
   },
   {
     "id": "article-content-section",
