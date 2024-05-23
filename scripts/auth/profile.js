@@ -1,11 +1,12 @@
 // eslint-disable-next-line import/no-cycle, max-classes-per-file
-import { getConfig, loadIms } from '../scripts.js';
+import { getConfig, initStream, loadIms } from '../scripts.js';
 // eslint-disable-next-line import/no-cycle
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
 
 const { profileUrl, JWTTokenUrl, ppsOrigin, ims } = getConfig();
 
+const postSignInStreamKey = 'POST_SIGN_IN_STREAM';
 const override = /^(recommended|votes)$/;
 
 export async function isSignedInUser() {
@@ -185,6 +186,10 @@ class ProfileClient {
         })
           .then((res) => res.json())
           .then((data) => {
+            if (!sessionStorage.getItem(postSignInStreamKey)) {
+              initStream();
+              sessionStorage.setItem(postSignInStreamKey, 'true');
+            }
             if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));
             resolve(structuredClone(data.data));
           })
