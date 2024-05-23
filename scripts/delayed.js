@@ -4,7 +4,6 @@ import { loadCSS, sampleRUM } from './lib-franklin.js';
 import loadGainsight from './gainsight/gainsight.js';
 import loadQualtrics from './qualtrics.js';
 import { sendCoveoPageViewEvent } from './coveo-analytics.js';
-import { initStream } from './scripts.js';
 
 // add more delayed functionality here
 
@@ -57,6 +56,5 @@ loadPrism(document);
 if (window.location.search?.indexOf('martech=off') === -1) {
   loadGainsight();
   loadQualtrics();
-  initStream();
   sendCoveoPageViewEvent();
 }
