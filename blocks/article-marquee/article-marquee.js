@@ -8,7 +8,7 @@ import {
 } from '../../scripts/scripts.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
-import { createOptimizedPicture, decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
+import { createOptimizedPicture, decorateIcons, getMetadata, loadCSS } from '../../scripts/lib-franklin.js';
 import ffetch from '../../scripts/ffetch.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
@@ -169,7 +169,15 @@ function createBreadcrumb(container) {
  */
 export default async function ArticleMarquee(block) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
-  const [link, readTime, headingType] = block.querySelectorAll(':scope div > div');
+  const [readTime, headingType] = block.querySelectorAll(':scope div > div');
+  let link = getMetadata('author-bio-page');
+  if (
+    link &&
+    (document.documentElement.classList.contains('adobe-ue-edit') ||
+      document.documentElement.classList.contains('adobe-ue-preview'))
+  ) {
+    link = `${link}.html`;
+  }
 
   const articleDetails = `<div class="article-marquee-info-container"><div class="article-info">
                                 <div class="breadcrumb"></div>
@@ -197,22 +205,24 @@ export default async function ArticleMarquee(block) {
   createBreadcrumb(breadcrumbContainer);
   decorateIcons(block);
 
-  fetchAuthorBio(link?.querySelector('a')).then((authorInfo) => {
-    const authorInfoContainer = block.querySelector('.author-details');
-    let tagname = placeholders.articleMarqueeAdobeTag;
-    let articleType = authorInfo?.authorCompany?.toLowerCase();
-    if (!articleType) articleType = metadataProperties.adobe;
-    if (articleType !== metadataProperties.adobe) {
-      tagname = placeholders.articleMarqueeExternalTag;
-    }
-    authorInfoContainer.outerHTML = `
-      <div>${createOptimizedPicture(authorInfo?.authorImage).outerHTML}</div>
-      <div>${authorInfo?.authorName}</div> 
-      <div>${authorInfo?.authorTitle}</div>
-      <div class="article-marquee-tag">${tagname}</div>
-    `;
+  if (link) {
+    fetchAuthorBio(link).then((authorInfo) => {
+      const authorInfoContainer = block.querySelector('.author-details');
+      let tagname = placeholders.articleAdobeTag;
+      let articleType = authorInfo?.authorCompany?.toLowerCase();
+      if (!articleType) articleType = metadataProperties.adobe;
+      if (articleType !== metadataProperties.adobe) {
+        tagname = placeholders.articleExternalTag;
+      }
+      authorInfoContainer.outerHTML = `
+        <div>${createOptimizedPicture(authorInfo?.authorImage).outerHTML}</div>
+        <div>${authorInfo?.authorName}</div> 
+        <div>${authorInfo?.authorTitle}</div>
+        <div class="article-marquee-tag">${tagname}</div>
+      `;
 
-    block.querySelector('.article-marquee-large-bg').classList.add(articleType);
-    block.querySelector('.article-marquee-bg-container').classList.add(articleType);
-  });
+      block.querySelector('.article-marquee-large-bg').classList.add(articleType);
+      block.querySelector('.article-marquee-bg-container').classList.add(articleType);
+    });
+  }
 }

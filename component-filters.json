@@ -1,15 +1,19 @@
 [
   {
-    "id": "main",
-    "components": ["section", "browse-rail-section", "article-content-section", "article-header-section"]
-  },
-  {
-    "id": "columns",
+    "id": "empty",
     "components": []
   },
   {
-    "id": "column",
-    "components": ["text", "image", "button", "title"]
+    "id": "main",
+    "components": ["section"]
+  },
+  {
+    "id": "main-browse",
+    "components": ["section", "browse-rail-section"]
+  },
+  {
+    "id": "main-article",
+    "components": ["article-content-section", "article-header-section", "section"]
   },
   {
     "id": "section",
@@ -18,16 +22,44 @@
       "image",
       "button",
       "title",
-      "hero",
-      "cards",
       "columns",
       "icon-block",
       "curated-cards",
       "teaser",
       "detailed-teaser",
       "marquee",
-      "article-marquee",
       "carousel",
+      "sign-up",
+      "video-embed",
+      "secondary-search",
+      "accordion-group",
+      "media",
+      "authorable-card",
+      "featured-cards",
+      "events-cards",
+      "adls-cards",
+      "tabbed-cards",
+      "tabs",
+      "recommended-courses",
+      "block-quote",
+      "callout",
+      "featured-authors",
+      "inline-survey"
+    ]
+  },
+  {
+    "id": "section-browse",
+    "components": [
+      "text",
+      "image",
+      "button",
+      "title",
+      "columns",
+      "icon-block",
+      "curated-cards",
+      "teaser",
+      "detailed-teaser",
+      "marquee",
       "sign-up",
       "video-embed",
       "secondary-search",
@@ -42,12 +74,12 @@
       "tabs",
       "recommended-courses",
       "block-quote",
-      "callout",
-      "article-tags",
-      "author-bio",
-      "author-summary",
-      "social-share"
+      "callout"
     ]
+  },
+  {
+    "id": "section-author-bio",
+    "components": ["author-bio"]
   },
   {
     "id": "article-content-section",
@@ -56,7 +88,6 @@
       "image",
       "button",
       "title",
-      "hero",
       "cards",
       "columns",
       "icon-block",
@@ -64,36 +95,35 @@
       "teaser",
       "detailed-teaser",
       "marquee",
-      "article-marquee",
       "carousel",
       "sign-up",
       "video-embed",
-      "secondary-search",
-      "accordion-group",
       "media",
-      "authorable-card",
-      "browse-filters",
-      "featured-cards",
-      "events-cards",
-      "adls-cards",
-      "tabbed-cards",
-      "tabs",
-      "recommended-courses",
       "block-quote",
       "callout",
       "article-tags",
       "author-bio",
       "author-summary",
-      "social-share"
+      "social-share",
+      "featured-authors",
+      "inline-survey"
     ]
   },
   {
     "id": "browse-rail-section",
-    "components": []
+    "components": ["browse-rail"]
   },
   {
     "id": "article-header-section",
     "components": []
+  },
+  {
+    "id": "columns",
+    "components": []
+  },
+  {
+    "id": "column",
+    "components": ["text", "image", "button", "title"]
   },
   {
     "id": "text",

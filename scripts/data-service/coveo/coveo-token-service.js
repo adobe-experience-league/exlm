@@ -121,6 +121,13 @@ export default async function loadCoveoToken() {
     coveoResponseToken ||
     // eslint-disable-next-line no-async-promise-executor
     new Promise(async (resolve) => {
+      // this is temporary code, will be reverted.
+      if (window.location.window !== 'experienceleague.adobe.com') {
+        // Token allows acces to staging search functionality, but not analytics
+        const { coveoToken } = getConfig();
+        resolve(coveoToken);
+        return;
+      }
       const signedIn = await isSignedInUser();
       if (signedIn) {
         loadJWT().then(async () => {

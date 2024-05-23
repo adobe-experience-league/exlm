@@ -5,6 +5,7 @@ import {
   debounce,
   getPathDetails,
   fetchLanguagePlaceholders,
+  isArticleLandingPage,
 } from '../../scripts/scripts.js';
 import {
   roleOptions,
@@ -20,6 +21,7 @@ import {
   toggleSearchSuggestionsVisibility,
   showSearchSuggestionsOnInputClick,
   handleCoverSearchSubmit,
+  authorOptions,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -30,10 +32,14 @@ import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-card
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 
+const ffetchModulePromise = import('../../scripts/ffetch.js');
+
 const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
   el_contenttype: 'headlessTypeFacet',
   el_level: 'headlessExperienceFacet',
+  el_product: 'headlessProductFacet',
+  author_type: 'headlessAuthorTypeFacet',
 };
 
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
@@ -46,9 +52,49 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
+// Helper function thats returns a list of all Featured Card Products //
+async function getFeaturedCardSolutions() {
+  const ffetch = (await ffetchModulePromise).default;
+  // Load the Featured Card Solution list
+  const solutionList = await ffetch(`/featured-card-products.json`).all();
+  // Gets Values from Column Solution in Featured Card Solution list
+  const solutionValues = solutionList.map((solution) => solution.Solution);
+  return solutionValues;
+}
+
+const handleSolutionsService = async () => {
+  const solutions = await getFeaturedCardSolutions();
+  if (!solutions) {
+    throw new Error('An error occurred');
+  }
+  if (solutions?.length) {
+    return solutions;
+  }
+  return [];
+};
+
+const solutions = await handleSolutionsService();
+
+const solutionsList = [];
+solutions.forEach((solution) => {
+  solutionsList.push({
+    id: solution,
+    value: solution,
+    title: solution,
+    description: '',
+  });
+});
+
+const productOptions = {
+  id: 'el_product',
+  name: placeholders.featuredCardProductLabel || 'Product',
+  items: solutionsList,
+  selected: 0,
+};
+
 const theme = getMetadata('theme').trim();
-const isBrowseProdPage = theme === 'browse-product';
 const dropdownOptions = [roleOptions, contentTypeOptions];
+
 const tags = [];
 let tagsProxy;
 const buildCardsShimmer = new BuildPlaceholder(getBrowseFiltersResultCount());
@@ -144,7 +190,13 @@ function tagsUpdateHandler(block) {
   updateClearFilterStatus(block);
 }
 
-if (isBrowseProdPage) dropdownOptions.push(expTypeOptions);
+if (theme === 'browse-all') dropdownOptions.push(productOptions);
+if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
+
+if (isArticleLandingPage()) {
+  dropdownOptions.push(authorOptions);
+  dropdownOptions.push(expTypeOptions);
+}
 
 /**
  * Generate HTML for a single checkbox item.
@@ -166,9 +218,10 @@ function generateCheckboxItem(item, index, id) {
   `;
 }
 
-const constructDropdownEl = (options, id) =>
-  htmlToElement(`
-    <div class="filter-dropdown filter-input" data-filter-type="${options.id}">
+const constructDropdownEl = (options, id) => {
+  const optionClassName = `browse-${options.name.split(' ').join('-').toLowerCase()}-dropdown`;
+  return htmlToElement(`
+    <div class="filter-dropdown ${optionClassName} filter-input" data-filter-type="${options.id}">
       <button>
         ${options.name}
         <span class="icon icon-chevron"></span>
@@ -177,7 +230,8 @@ const constructDropdownEl = (options, id) =>
         ${options.items.map((item, index) => generateCheckboxItem(item, index, id)).join('')}
       </div>
     </div>
-`);
+  `);
+};
 
 function appendToForm(block, target) {
   const formEl = block.querySelector('.browse-filters-form');
@@ -209,7 +263,7 @@ function renderTags() {
   return htmlToElement(tagEl);
 }
 
-function appendTag(block, tag) {
+async function appendTag(block, tag, source = 'checkboxChange') {
   const tagsContainer = block.querySelector('.browse-tags-container');
   const tagEl = htmlToElement(`
     <button class="browse-tags" value="${tag.value}">
@@ -224,7 +278,9 @@ function appendTag(block, tag) {
     name: tag.name,
     value: tag.value,
   });
-  decorateIcons(tagEl);
+  if (source === 'checkboxChange') {
+    await decorateIcons(tagsContainer);
+  }
 }
 
 function removeFromTags(block, value) {
@@ -547,16 +603,20 @@ function handleUriHash() {
         const ddObject = getObjectById(dropdownOptions, keyName);
         const { name } = ddObject;
         facetValues.forEach((facetValueString) => {
-          const [facetValue] = facetValueString.split('|');
+          const [facetValue] = decodeURIComponent(facetValueString).split('|');
           const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
           if (!inputEl.checked) {
             const label = inputEl?.dataset.label || '';
             inputEl.checked = true;
-            appendTag(browseFiltersSection, {
-              name,
-              label,
-              value: facetValue,
-            });
+            appendTag(
+              browseFiltersSection,
+              {
+                name,
+                label,
+                value: facetValue,
+              },
+              'handleUriHash',
+            );
           }
         });
         const btnEl = filterOptionEl.querySelector(':scope > button');

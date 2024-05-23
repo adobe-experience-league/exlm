@@ -251,6 +251,60 @@
     ]
   },
   {
+    "id": "inline-survey",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the main title of the Inline Survey."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "id",
+        "value": "",
+        "label": "Element ID",
+        "description": "Element ID to be used for qualtrics survey insertion point."
+      }
+    ]
+  },
+  {
     "id": "detailed-teaser",
     "fields": [
       {
@@ -821,6 +875,10 @@
         "description": "Select the content type(s).",
         "options": [
           {
+            "name": "Article",
+            "value": "article"
+          },
+          {
             "name": "Certification",
             "value": "certification"
           },
@@ -899,8 +957,8 @@
             "value": "Intermediate"
           },
           {
-            "name": "Advanced",
-            "value": "Advanced"
+            "name": "Experienced",
+            "value": "Experienced"
           }
         ]
       },
@@ -1118,27 +1176,8 @@
     ]
   },
   {
-    "id": "author-summary",
-    "fields": [
-      {
-        "component": "aem-content",
-        "valueType": "string",
-        "name": "author-bio-page",
-        "value": "",
-        "label": "Author"
-      }
-    ]
-  },
-  {
     "id": "article-marquee",
     "fields": [
-      {
-        "component": "aem-content",
-        "valueType": "string",
-        "name": "author-bio-page",
-        "value": "",
-        "label": "Author"
-      },
       {
         "component": "text",
         "valueType": "string",
@@ -1833,6 +1872,10 @@
         "description": "Select the content type(s).",
         "options": [
           {
+            "name": "Article",
+            "value": "article"
+          },
+          {
             "name": "Certification",
             "value": "certification"
           },
@@ -1869,14 +1912,6 @@
         "label": "Link Text",
         "valueType": "string",
         "description": "Sets the text for link."
-      },
-      {
-        "component": "text",
-        "name": "link",
-        "value": "",
-        "label": "Link URL",
-        "valueType": "string",
-        "description": "Sets the text url."
       },
       {
         "component": "text",
@@ -2245,6 +2280,10 @@
         "description": "Select the content type(s).",
         "options": [
           {
+            "name": "Article",
+            "value": "article"
+          },
+          {
             "name": "Courses",
             "value": "course"
           },
@@ -2465,7 +2504,7 @@
         "description": "Sets the Coveo Solution(s) in page meta."
       },
       {
-        "component": "text",
+        "component": "aem-content",
         "valueType": "string",
         "name": "author-bio-page",
         "value": "",
@@ -2690,6 +2729,42 @@
         "description": "A descriptive text of the image."
       },
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Image Border and Alignment",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 2,
+        "options": [
+          {
+            "name": "Content Source",
+            "children": [
+              {
+                "name": "Adobe",
+                "value": "adobe"
+              },
+              {
+                "name": "External",
+                "value": "External"
+              }
+            ]
+          },
+          {
+            "name": "Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "left"
+              },
+              {
+                "name": "Right",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "authors_heading",
@@ -2739,43 +2814,55 @@
       {
         "component": "aem-content",
         "valueType": "string",
-        "name": "bio_author1Ref",
+        "name": "author1_bio",
         "value": "",
         "label": "Author 1 Bio Page"
       },
       {
+        "condition": {
+          "!==": [{ "var": "author1_bio" }, ""]
+        },
         "component": "text",
-        "name": "bio_author1Text",
-        "value": "",
-        "label": "Author 1 CTA Text",
-        "valueType": "string"
-      },
-      {
-        "component": "text",
-        "name": "bio_author1",
+        "name": "author1_cta",
         "value": "",
         "label": "Author 1 CTA URL",
         "valueType": "string"
       },
       {
+        "condition": {
+          "!==": [{ "var": "author1_bio" }, ""]
+        },
+        "component": "text",
+        "name": "author1_ctaText",
+        "value": "",
+        "label": "Author 1 CTA Text",
+        "valueType": "string"
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
-        "name": "bio_author2Ref",
+        "name": "author2_bio",
         "value": "",
         "label": "Author 2 Bio Page"
       },
       {
+        "condition": {
+          "!==": [{ "var": "author2_bio" }, ""]
+        },
         "component": "text",
-        "name": "bio_author2Text",
+        "name": "author2_cta",
         "value": "",
-        "label": "Author 2 CTA Text",
+        "label": "Author 2 CTA URL",
         "valueType": "string"
       },
       {
+        "condition": {
+          "!==": [{ "var": "author2_bio" }, ""]
+        },
         "component": "text",
-        "name": "bio_author2",
+        "name": "author2_ctaText",
         "value": "",
-        "label": "Author 2 CTA URL",
+        "label": "Author 2 CTA Text",
         "valueType": "string"
       }
     ]

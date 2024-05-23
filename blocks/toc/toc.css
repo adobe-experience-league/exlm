@@ -274,7 +274,7 @@ button.toc-dropdown-button {
     border: 2px solid transparent;
 }
 
-.toc ul[aria-expanded="true"] > .toc-view-more-lessspan::before {
+.toc ul[aria-expanded="true"] > .toc-view-more-less span::before {
     content: "-";
 }
 
