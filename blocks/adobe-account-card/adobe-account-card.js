@@ -29,10 +29,10 @@ export default async function decorate(block) {
 
   const accountCardDOM = document.createRange().createContextualFragment(`
     <div class="card-header">
-      <div class="adobe-account">${placeholders?.myAdobeAccount}</div>
-      <div class="update-profile">
+      <div class="my-adobe-account">${placeholders?.myAdobeAccount || 'My Adobe Account'}</div>
+      <div class="manage-adobe-account">
         <span class="icon icon-new-tab"></span>
-        <a href="${adobeAccountLink}" target="_blank">${placeholders?.makeChanges}</a>
+        <a href="${adobeAccountLink}" target="_blank">${placeholders?.manageAdobeAccount || 'Manage Adobe account'}</a>
       </div>
     </div>
     <div class="card-body">
