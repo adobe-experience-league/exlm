@@ -31,13 +31,13 @@ export function initStream() {
   const { eventSourceStreamUrl } = getConfig();
   const eventSource = new EventSource(eventSourceStreamUrl);
 
-  eventSource.onmessage = (event) => {
+  eventSource.addEventListener('analytics', (event) => {
     const data = deserialize(event.data);
     if (data === 'reg-complete') {
       console.log(`%c post singup event fired!!!`, 'color: brown; font-weight: bolder');
       eventSource.close();
     }
-  };
+  }, false);
 
   eventSource.onerror = (error) => {
     console.error('Error receiving event:', error);
