@@ -101,7 +101,16 @@
   },
   {
     "id": "section-profile-signup",
-    "components": ["text", "title", "button", "image", "adobe-account-card", "data-and-email-consent", "role-cards", "user-profile-card"]
+    "components": [
+      "text",
+      "title",
+      "button",
+      "image",
+      "adobe-account-card",
+      "data-and-email-consent",
+      "role-cards",
+      "user-profile-card"
+    ]
   },
   {
     "id": "article-content-section",
