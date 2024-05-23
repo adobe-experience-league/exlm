@@ -2,6 +2,7 @@
   --playlist-border: #d6d6d6 1px solid;
   --playlist-border-radius: 10px;
   --playlist-max-height: calc(100vh - 1em - var(--nav-height) - 1em);
+
   max-width: 1440px;
   margin: 0 auto;
   display: grid;
@@ -9,16 +10,19 @@
   padding: 1em;
   grid-template-columns: 1fr;
 }
+
 @media (width >= 600px) {
   .playlist-page {
     grid-template-columns: auto 250px;
   }
 }
+
 @media (width >= 900px) {
   .playlist-page {
     grid-template-columns: auto 275px;
   }
 }
+
 @media (width >= 1024px) {
   .playlist-page {
     grid-template-columns: auto 300px;
@@ -31,6 +35,7 @@
   overflow: hidden;
   flex-direction: column;
 }
+
 @media (width >= 600px) {
   .section.playlist-container {
     max-height: var(--playlist-max-height);
@@ -131,6 +136,7 @@
   border-radius: var(--playlist-border-radius);
   background-color: #fff;
 }
+
 .playlist-item .playlist-item-title {
   margin: 0;
   font-size: var(--exlm-font-size-h6);
@@ -142,6 +148,7 @@
 .playlist-item.active {
   outline: 2px solid var(--non-spectrum-navy-blue);
 }
+
 .playlist-item.active .playlist-item-title {
   color: black;
 }
@@ -208,7 +215,7 @@
   font-size: 12px;
 }
 
-.playlist-options-autoplay input[type=checkbox] {
+.playlist-options-autoplay input[type="checkbox"] {
   --switch-on-background: #464646;
   --switch-off-background: #d5d5d5;
   --switch-knob-background: #fff;
@@ -216,6 +223,7 @@
   --switch-width: 30px;
   --switch-knob-size: 14px;
   --switch-knob-offset: calc(var(--switch-height) / 2 - var(--switch-knob-size) / 2);
+
   appearance: none;
   width: var(--switch-width);
   height: var(--switch-height);
@@ -229,11 +237,11 @@
   border: 0;
 }
 
-.playlist-options-autoplay input[type=checkbox]:checked {
+.playlist-options-autoplay input[type="checkbox"]:checked {
   background: var(--switch-on-background);
 }
 
-.playlist-options-autoplay input[type=checkbox]::after {
+.playlist-options-autoplay input[type="checkbox"]::after {
   position: absolute;
   top: var(--switch-knob-offset);
   right: calc(var(--switch-width) - var(--switch-knob-offset) - var(--switch-knob-size));
@@ -247,7 +255,7 @@
   transition: all 0.2s ease-in-out;
 }
 
-.playlist-options-autoplay input[type=checkbox]:checked::after {
+.playlist-options-autoplay input[type="checkbox"]:checked::after {
   right: var(--switch-knob-offset);
   border: 0;
   outline: 2px solid var(--switch-on-background);
