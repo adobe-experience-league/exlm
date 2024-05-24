@@ -41,9 +41,10 @@ function iconSpan(icon) {
 
 /**
  * @param {Video} video
+ * @param {Playlist} playlist
  * @returns {HTMLElement}
  */
-function newPlayer(video) {
+function newPlayer(video, playlist) {
   if (!video) return null;
   const { src, autoplay = false, title, description, transcriptUrl, currentTime = 0, thumbnailUrl } = video;
   const iframeAllowOptions = [
@@ -55,8 +56,13 @@ function newPlayer(video) {
     'autoplay',
   ];
 
+  const breadcrumbs = ['Playlists', playlist.title, video.title];
+
   const player = htmlToElement(`
         <div class="playlist-player" data-playlist-player>
+            <ul class="playlist-player-breadcrumbs">
+                ${breadcrumbs.map((breadcrumb) => `<li>${breadcrumb}</li>`).join('')}
+            </ul>
             <div class="playlist-player-video">
               <div class="playlist-player-video-overlay" style="background:url(${thumbnailUrl})">
                 <button aria-label="play" class="playlist-player-video-overlay-play"><div class="playlist-player-video-overlay-circle"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="playlist-player-video-overlay-icon"><path d="M8 5v14l11-7z"></path> <path d="M0 0h24v24H0z" fill="none"></path></svg></div></button>
@@ -104,17 +110,24 @@ function newPlayer(video) {
 
 /**
  * @param {HTMLElement} block
- * @param {number} videoLength
+ * @param {Playlist} playlist
  */
 function decoratePlaylistHeader(block, playlist) {
   const playlistSection = block.closest('.section');
   const defaultContent = playlistSection.querySelector('.default-content-wrapper');
+
+  // set title and description
+  const playlistTitleH = defaultContent.querySelector('h1, h2, h3, h4, h5, h6');
+  const playlistDescriptionP = defaultContent.querySelector('p');
+  playlist.title = playlistTitleH?.textContent || '';
+  playlist.description = playlistDescriptionP?.textContent || '';
+
   defaultContent.setAttribute('data-playlist-progress-box', '');
   defaultContent.prepend(
     htmlToElement(`<div class="playlist-info">
         <b>PLAYLIST</b>
         <div>${iconSpan('list')} ${playlist.length} Tutorials</div>
-        <button data-playlist-action-button class="playlist-action-button">⋮</button>
+        <button data-playlist-action-button class="playlist-action-button" aria-expanded="false">⋮</button>
     </div>`),
   );
 
@@ -127,7 +140,7 @@ function decoratePlaylistHeader(block, playlist) {
 
   loadCSS('/blocks/playlist/playlist-action-menu.css');
   import('./playlist-action-menu.js').then((mod) =>
-    mod.default(playlistSection.querySelector('[data-playlist-action-button]')),
+    mod.default(playlistSection.querySelector('[data-playlist-action-button]'), playlist),
   );
 }
 
@@ -170,11 +183,12 @@ function updateTranscript(transcriptDetail) {
  * Shows the video at the given count
  * @param {import('./mpc-util.js').Video} video
  */
-function updatePlayer(video) {
+function updatePlayer(playlist) {
+  const video = playlist.getActiveVideo();
   if (!video) return;
   const exisatingPlayer = document.querySelector('[data-playlist-player]');
   if (exisatingPlayer?.querySelector('iframe')?.src?.startsWith(video.src)) return;
-  const player = newPlayer(video);
+  const player = newPlayer(video, playlist);
   if (!player) return;
   const playerContainer = document.querySelector('[data-playlist-player-container]');
   const transcriptDetail = player.querySelector('[data-playlist-player-info-transcript]');
@@ -227,14 +241,11 @@ playlist.onVideoChange((videos, vIndex) => {
   const activeStatusChanged = currentVideo.active !== currentVideo?.el?.classList?.contains('active');
   el.classList.toggle('active', active);
   if (active && activeStatusChanged) el.parentElement.scrollTop = el.offsetTop - el.clientHeight / 2;
-  updatePlayer(playlist.getActiveVideo());
+  updatePlayer(playlist);
   updateQueryStringParameter('video', playlist.getActiveVideoIndex());
   updateProgress(vIndex, currentVideo, playlist);
   return true;
 });
-
-// eslint-disable-next-line no-unused-vars
-const playerOptions = {};
 
 /**
  * @param {HTMLElement} block

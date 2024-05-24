@@ -63,6 +63,10 @@ export class MPCListener {
 }
 
 export class Playlist {
+  title = '';
+
+  description = '';
+
   constructor(options) {
     this.options = options || { autoplayNext: true };
     const playlistId = window.location.pathname.split('/').join('-');
