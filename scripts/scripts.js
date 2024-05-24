@@ -233,6 +233,39 @@ function addArticleLandingRail(main) {
 }
 
 /**
+ * Check if current page is a Profile page.
+ * theme = profile is set in bulk metadata for /en/profile** paths.
+ */
+export function isProfilePage() {
+  const theme = getMetadata('theme');
+  return theme.toLowerCase().startsWith('profile');
+}
+
+/**
+ * Add a left rail to the profile page.
+ * @param {HTMLElement} main
+ *
+ */
+function addProfileRail(main) {
+  const profileRailSection = document.createElement('div');
+  profileRailSection.classList.add('profile-rail-section');
+  profileRailSection.append(buildBlock('profile-rail', []));
+  main.prepend(profileRailSection);
+}
+
+/**
+ * Add a nav tab to the profile page.
+ * @param {HTMLElement} main
+ *
+ */
+function addProfileTab(main) {
+  const profileTabSection = document.createElement('div');
+  profileTabSection.classList.add('profile-tab-section');
+  profileTabSection.append(buildBlock('profile-tab', []));
+  main.prepend(profileTabSection);
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -246,6 +279,10 @@ function buildAutoBlocks(main) {
     }
     if (isArticleLandingPage()) {
       addArticleLandingRail(main);
+    }
+    if (isProfilePage()) {
+      addProfileRail(main);
+      addProfileTab(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -667,6 +704,7 @@ export function getConfig() {
     automaticTranslationLink: `/${lang}/docs/contributor/contributor-guide/localization/machine-translation`,
     // Recommended Courses
     recommendedCoursesUrl: `${cdnOrigin}/home?lang=${lang}#dashboard/learning`,
+    eventSourceStreamUrl: '/api/stream',
   };
   return window.exlm.config;
 }
