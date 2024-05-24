@@ -244,24 +244,24 @@ export function isProfilePage() {
 /**
  * Add a left rail to the profile page.
  * @param {HTMLElement} main
- * 
-*/
+ *
+ */
 function addProfileRail(main) {
   const profileRailSection = document.createElement('div');
   profileRailSection.classList.add('profile-rail-section');
-  profileRailSection.append(buildBlock('profile-rail', []))
+  profileRailSection.append(buildBlock('profile-rail', []));
   main.prepend(profileRailSection);
 }
 
 /**
  * Add a nav tab to the profile page.
  * @param {HTMLElement} main
- * 
-*/
+ *
+ */
 function addProfileTab(main) {
   const profileTabSection = document.createElement('div');
   profileTabSection.classList.add('profile-tab-section');
-  profileTabSection.append(buildBlock('profile-tab', []))
+  profileTabSection.append(buildBlock('profile-tab', []));
   main.prepend(profileTabSection);
 }
 
@@ -281,8 +281,8 @@ function buildAutoBlocks(main) {
       addArticleLandingRail(main);
     }
     if (isProfilePage()) {
-      addProfileRail(main)
-      addProfileTab(main)
+      addProfileRail(main);
+      addProfileTab(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
