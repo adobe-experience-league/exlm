@@ -44,7 +44,8 @@ function iconSpan(icon) {
  * @param {Playlist} playlist
  * @returns {HTMLElement}
  */
-function newPlayer(video, playlist) {
+function newPlayer(playlist) {
+  const video = playlist.getActiveVideo();
   if (!video) return null;
   const { src, autoplay = false, title, description, transcriptUrl, currentTime = 0, thumbnailUrl } = video;
   const iframeAllowOptions = [
@@ -56,13 +57,8 @@ function newPlayer(video, playlist) {
     'autoplay',
   ];
 
-  const breadcrumbs = ['Playlists', playlist.title, video.title];
-
   const player = htmlToElement(`
         <div class="playlist-player" data-playlist-player>
-            <ul class="playlist-player-breadcrumbs">
-                ${breadcrumbs.map((breadcrumb) => `<li>${breadcrumb}</li>`).join('')}
-            </ul>
             <div class="playlist-player-video">
               <div class="playlist-player-video-overlay" style="background:url(${thumbnailUrl})">
                 <button aria-label="play" class="playlist-player-video-overlay-play"><div class="playlist-player-video-overlay-circle"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="playlist-player-video-overlay-icon"><path d="M8 5v14l11-7z"></path> <path d="M0 0h24v24H0z" fill="none"></path></svg></div></button>
@@ -188,7 +184,7 @@ function updatePlayer(playlist) {
   if (!video) return;
   const exisatingPlayer = document.querySelector('[data-playlist-player]');
   if (exisatingPlayer?.querySelector('iframe')?.src?.startsWith(video.src)) return;
-  const player = newPlayer(video, playlist);
+  const player = newPlayer(playlist);
   if (!player) return;
   const playerContainer = document.querySelector('[data-playlist-player-container]');
   const transcriptDetail = player.querySelector('[data-playlist-player-info-transcript]');

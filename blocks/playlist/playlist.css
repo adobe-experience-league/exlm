@@ -73,32 +73,6 @@
   display: none;
 }
 
-.playlist-player-breadcrumbs {
-  /* remove bullets */
-  list-style-type: none;
-  padding: 0.5em 0;
-  margin: 0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.playlist-player-breadcrumbs li {
-  display: inline;
-  font-size: var(--spectrum-font-size-200);
-}
-
-.playlist-player-breadcrumbs li:not(:first-child)::before {
-  content: " ";
-  background-image: url("/icons/chevron_right.svg");
-  padding: 0 0.5em;
-  vertical-align: middle;
-}
-
-.playlist-player-breadcrumbs li:last-child {
-  font-weight: 700;
-}
-
 .playlist-player-container {
   width: 100%;
   box-sizing: border-box;
@@ -163,7 +137,7 @@
   width: 100%;
   max-height: calc(var(--playlist-max-height) - 30vh);
   aspect-ratio: 16/9;
-  border-radius: var(--playlist-border-radius);
+
 }
 
 .playlist-player-video-overlay {
