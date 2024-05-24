@@ -21,34 +21,6 @@ import {
   createOptimizedPicture,
 } from './lib-franklin.js';
 
-function deserialize(arg = '') {
-  // eslint-disable-next-line no-useless-escape
-  return /^[\[\{\"].*[\"|\}\]]$/.test(arg) ? JSON.parse(arg) : arg;
-}
-
-export function initStream() {
-  // eslint-disable-next-line no-use-before-define
-  const { eventSourceStreamUrl } = getConfig();
-  const eventSource = new EventSource(eventSourceStreamUrl);
-
-  eventSource.addEventListener('analytics', (event) => {
-    const data = deserialize(event.data);
-    if (data === 'reg-complete') {
-      console.log(`%c post singup event fired!!!`, 'color: brown; font-weight: bolder');
-      eventSource.close();
-    }
-  }, false);
-
-  eventSource.onerror = (error) => {
-    console.error('Error receiving event:', error);
-    eventSource.close();
-  };
-
-  setTimeout(() => {
-    eventSource.close();
-  }, 15000);
-}
-
 const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
 export const timers = new Map();
 
