@@ -16,7 +16,6 @@ export default function initStream() {
     (event) => {
       const data = deserialize(event.data);
       if (data === 'reg-complete') {
-        console.log(`%c post singup event fired!!!`, 'color: brown; font-weight: bolder');
         eventSource.close();
       }
     },
