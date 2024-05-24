@@ -21,6 +21,7 @@
   font-size: 18px;
   letter-spacing: 0px;
   font-weight: 700;
+  line-height: 22px;
 }
 
 .data-and-email-consent .notification .checkbox > input {
@@ -42,6 +43,7 @@
   font-size: 14px;
   margin: 0;
   margin-top: 8px;
+  line-height: 17px;
 }
 
 .data-and-email-consent .notification a {
