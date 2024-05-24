@@ -30,6 +30,7 @@
     flex-direction: column;
     justify-content: space-between;
     cursor: pointer;
+    background-color: var(--non-spectrum-bg);
 }
 
 .role-cards .role-cards-checkbox {
