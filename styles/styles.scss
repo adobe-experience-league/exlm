@@ -1419,11 +1419,20 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section) {
   margin: 0 32px 32px;
   border-radius: 20px;
   background-color: var(--non-spectrum-bg);
-  border: 1px solid #d6d6d6;
+  border: 1px solid #d5d5d5;
 
   h2,
   h3 {
     margin-top: 12px;
+  }
+
+  & > div:not(.default-content-wrapper) {
+    width: 100%;
+    border-bottom: 1px solid #d6d6d6;
+  }
+
+  & > div:not(.default-content-wrapper):last-child {
+    border-bottom: 0;
   }
 }
 

@@ -1392,11 +1392,18 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section) {
   margin: 0 32px 32px;
   border-radius: 20px;
   background-color: var(--non-spectrum-bg);
-  border: 1px solid #d6d6d6;
+  border: 1px solid #d5d5d5;
 }
 body.profile .section:not(.profile-tab-section, .profile-rail-section) h2,
 body.profile .section:not(.profile-tab-section, .profile-rail-section) h3 {
   margin-top: 12px;
+}
+body.profile .section:not(.profile-tab-section, .profile-rail-section) > div:not(.default-content-wrapper) {
+  width: 100%;
+  border-bottom: 1px solid #d6d6d6;
+}
+body.profile .section:not(.profile-tab-section, .profile-rail-section) > div:not(.default-content-wrapper):last-child {
+  border-bottom: 0;
 }
 
 body.profile .section:nth-child(3) {
