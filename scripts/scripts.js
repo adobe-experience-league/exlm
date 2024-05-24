@@ -704,6 +704,7 @@ export function getConfig() {
     automaticTranslationLink: `/${lang}/docs/contributor/contributor-guide/localization/machine-translation`,
     // Recommended Courses
     recommendedCoursesUrl: `${cdnOrigin}/home?lang=${lang}#dashboard/learning`,
+    eventSourceStreamUrl: '/api/stream',
   };
   return window.exlm.config;
 }
