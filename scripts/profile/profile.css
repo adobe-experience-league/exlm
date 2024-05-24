@@ -1,0 +1,91 @@
+.row {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--shimmer-image-slide-mid);
+}
+
+.row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.card-header .my-adobe-account,
+.card-header .my-community-account {
+    font-size: var(--spectrum-font-size-75);
+    font-weight: bold;
+    letter-spacing: 0.72px;
+    color: var(--text-color);
+    text-transform: uppercase;
+    margin: 0px;
+}
+
+.card-header .manage-adobe-account,
+.card-header .manage-community-account {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.card-header .manage-adobe-account a,
+.card-header .manage-community-account a {
+    font-size: var(--spectrum-font-size-75);
+    color: var(--spectrum-gray-800);
+    text-decoration: none;
+}
+
+.card-body {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: var(--non-spectrum-navy-blue);
+    color: var(--spectrum-gray-50);
+}
+
+.avatar .icon-profile {
+    width: 64px;
+    height: 64px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.user-info .heading {
+    text-transform: uppercase;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.user-info .display-name {
+    font-size: var(--spectrum-font-size-300);
+    font-weight: bold;
+    color: var(--non-spectrum-grey-333);
+}
+
+.user-info .community-display-name {
+    font-size: var(--spectrum-font-size-300);
+    font-weight: bold;
+    color: var(--non-spectrum-blue-0364dc);
+}
+
+.user-info div {
+    font-size: var(--spectrum-font-size-100);
+    font-weight: normal;
+    color: var(--spectrum-gray-800);
+}

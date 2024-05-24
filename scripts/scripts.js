@@ -667,6 +667,12 @@ export function getConfig() {
     automaticTranslationLink: `/${lang}/docs/contributor/contributor-guide/localization/machine-translation`,
     // Recommended Courses
     recommendedCoursesUrl: `${cdnOrigin}/home?lang=${lang}#dashboard/learning`,
+    // Adobe account
+    adobeAccountURL: isProd ? 'https://account.adobe.com/' : 'https://stage.account.adobe.com/',
+    // Community Account
+    communityAccountURL: isProd
+      ? 'https://experienceleaguecommunities.adobe.com/'
+      : 'https://experienceleaguecommunities-dev.adobe.com/',
   };
   return window.exlm.config;
 }
