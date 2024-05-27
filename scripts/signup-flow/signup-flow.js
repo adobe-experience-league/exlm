@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-cycle
 import { decorateMain, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { loadBlocks, loadCSS, decorateIcons } from '../lib-franklin.js';
 
