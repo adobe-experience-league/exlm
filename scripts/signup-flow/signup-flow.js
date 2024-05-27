@@ -226,11 +226,7 @@ const createSignupDialog = () => {
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        if (entry.intersectionRatio < 1) {
-          signupDialogHeader.classList.add('sticky');
-        } else {
-          signupDialogHeader.classList.remove('sticky');
-        }
+        signupDialogHeader.classList.toggle('sticky', entry.intersectionRatio < 1);
       });
     },
     {
