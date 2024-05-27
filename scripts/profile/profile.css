@@ -39,6 +39,13 @@
     font-size: var(--spectrum-font-size-75);
     color: var(--spectrum-gray-800);
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.profile-card-header .manage-adobe-account a>.icon-new-tab,
+.profile-card-header .manage-community-account a>.icon-new-tab {
+    margin-right: 5px;
 }
 
 .profile-card-body {
