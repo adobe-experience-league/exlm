@@ -102,9 +102,6 @@
     font-weight: normal;
     color: var(--spectrum-gray-800);
 }
-.manage-adobe-account .icon g{
-    fill: #000000;
-}
 @media (min-width: 600px) {
 .profile-card-header {
     flex-direction: row;
