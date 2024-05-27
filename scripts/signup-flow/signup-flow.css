@@ -166,8 +166,19 @@
     z-index: 2;
 }
 .signup-dialog-content > .section {
-    padding: 0;       
+    padding: 0;
+    max-width: 318px;
+    margin: 0 auto;
 }
+.signup-dialog-content > .section:last-child {
+    padding-bottom: 40px;
+}
+
+.signup-dialog-content > .section > .default-content-wrapper > * {
+    text-align: center;
+    color: var(--text-color);
+}
+
 @media (min-width: 600px) {
     .signup-dialog {
         margin: 72px auto 16px;
@@ -191,6 +202,9 @@
     .signup-dialog-nav-bar .signup-dialog-actions {
         order: 3;
     }
+    .signup-dialog-content > .section {
+        max-width: 440px;
+    }
 }
 @media (min-width: 900px) {
     .signup-dialog {
@@ -198,6 +212,9 @@
     }
     .signup-dialog-close-bar {
         width: 736px;
+    }
+    .signup-dialog-content > .section {
+        max-width: 590px;
     }
 }
 @media (min-width: 1200px) {
