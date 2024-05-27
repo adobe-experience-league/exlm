@@ -23,6 +23,7 @@ export default function initStream() {
   );
 
   eventSource.onerror = (error) => {
+    // eslint-disable-next-line no-console
     console.error('Error receiving event:', error);
     eventSource.close();
   };
