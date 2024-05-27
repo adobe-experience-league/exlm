@@ -17,7 +17,11 @@
   },
   {
     "id": "main-profile",
-    "components": ["section-profile", "section"]
+    "components": ["profile-section"]
+  },
+  {
+    "id": "main-signup",
+    "components": ["sign-up-flow-section"]
   },
   {
     "id": "section",
@@ -86,13 +90,12 @@
     "components": ["author-bio"]
   },
   {
-    "id": "section-profile",
+    "id": "profile-section",
     "components": [
       "text",
       "title",
       "button",
       "image",
-      "columns",
       "adobe-account-card",
       "data-and-email-consent",
       "role-cards",
@@ -100,7 +103,7 @@
     ]
   },
   {
-    "id": "section-profile-signup",
+    "id": "sign-up-flow-section",
     "components": [
       "text",
       "title",
