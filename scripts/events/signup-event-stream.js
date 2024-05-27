@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import { getConfig } from '../scripts.js';
+import initializeSignupFlow from '../signup-flow/signup-flow.js';
 
 function deserialize(arg = '') {
   // eslint-disable-next-line no-useless-escape
@@ -16,6 +17,7 @@ export default function initStream() {
     (event) => {
       const data = deserialize(event.data);
       if (data === 'reg-complete') {
+        initializeSignupFlow();
         eventSource.close();
       }
     },
@@ -23,6 +25,7 @@ export default function initStream() {
   );
 
   eventSource.onerror = (error) => {
+    /* eslint-disable-next-line no-console */
     console.error('Error receiving event:', error);
     eventSource.close();
   };
