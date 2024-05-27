@@ -54,6 +54,7 @@ const createSignupDialog = () => {
             </div>
             <div class="signup-dialog-container">                              
                 <div class="signup-dialog-header">
+                    <div class="signup-dialog-graphics-top"></div>
                     <div class="signup-dialog-nav-bar">
                         <button class="secondary prev-btn">${placeholders?.backBtnLabel}</button>
                         <div class="signup-dialog-title"></div>
@@ -66,7 +67,9 @@ const createSignupDialog = () => {
                 <div class="signup-dialog-body">
                     <div class="signup-dialog-steps"></div>
                     <div class="signup-dialog-content"></div>
-                </div>                
+                    <div class="signup-dialog-graphics-middle"></div>
+                </div>  
+                <div class="signup-dialog-graphics-bottom"></div>              
             </div>
         </dialog>
     `);

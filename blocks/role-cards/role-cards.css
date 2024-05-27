@@ -25,6 +25,7 @@
 .role-cards .role-cards-block {
     border: 2px solid var(--spectrum-gray-400);
     border-radius: 8px;
+    background-color: var(--spectrum-gray-50);
     padding: 24px;
     display: flex;
     flex-direction: column;
