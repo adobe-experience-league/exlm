@@ -12,5 +12,17 @@
     border-radius: 8px;
     padding: 24px;
     width: 100%;
-    max-width: 400px;
+    max-width: 100%;
+}
+
+@media(min-width: 600px) {
+    .user-profile-card {
+        max-width: 308px;
+    }
+}
+
+@media(min-width: 900px) {
+    .user-profile-card {
+        max-width: 387px;
+    }
 }

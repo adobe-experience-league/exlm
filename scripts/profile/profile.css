@@ -13,8 +13,14 @@
 .profile-card-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 16px;
+    flex-direction: column;
+}
+
+.manage-adobe-account .new-tab-fill,
+.user-profile-card .new-tab-fill {
+    fill: var(--spectrum-gray-800);
 }
 
 .profile-card-header .my-adobe-account,
@@ -32,6 +38,9 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
+    .icon-new-tab {
+        margin-left: -4px;
+    }
 }
 
 .profile-card-header .manage-adobe-account a,
@@ -41,6 +50,7 @@
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+    margin: 0;
 }
 
 .profile-card-header .manage-adobe-account a > .icon-new-tab,
@@ -95,4 +105,11 @@
     font-size: var(--spectrum-font-size-100);
     font-weight: normal;
     color: var(--spectrum-gray-800);
+}
+
+@media(min-width: 900px) {
+    .profile-card-header {
+        flex-direction: row;
+        align-items: center;
+    }
 }
