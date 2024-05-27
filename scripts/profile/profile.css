@@ -43,8 +43,8 @@
     align-items: center;
 }
 
-.profile-card-header .manage-adobe-account a>.icon-new-tab,
-.profile-card-header .manage-community-account a>.icon-new-tab {
+.profile-card-header .manage-adobe-account a > .icon-new-tab,
+.profile-card-header .manage-community-account a > .icon-new-tab {
     margin-right: 5px;
 }
 
