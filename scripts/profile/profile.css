@@ -18,11 +18,6 @@
     flex-direction: column;
 }
 
-.manage-adobe-account .new-tab-fill,
-.user-profile-card .new-tab-fill {
-    fill: var(--spectrum-gray-800);
-}
-
 .profile-card-header .my-adobe-account,
 .profile-card-header .my-community-account {
     font-size: var(--spectrum-font-size-75);
