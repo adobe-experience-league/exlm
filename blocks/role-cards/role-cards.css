@@ -55,6 +55,12 @@
 .role-cards-selectiondefault{
     font-size: var(--spectrum-body-size-s);
 }
+
+.role-cards .role-cards-selectiondefault p {
+    margin: 0px 0px 10px 0px;
+    min-height: 18px;
+    font-size: 14px;
+}
 body.profile .role-cards .role-cards-description h3 {
     margin-top: 0px;
     }
@@ -83,11 +89,5 @@ body.profile .role-cards .role-cards-description h3 {
         margin-bottom: 8px;
         align-items: start;
         gap: 8px;
-    }
-
-    body[class ^= 'profile'] .role-cards .role-cards-selectiondefault p {
-        margin: 0px 0px 10px 0px;
-        min-height: 18px;
-        font-size: 14px;
     }
 }

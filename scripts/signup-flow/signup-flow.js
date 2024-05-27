@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-cycle
 import { decorateMain, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { loadBlocks, loadCSS, decorateIcons } from '../lib-franklin.js';
 
@@ -51,11 +52,11 @@ const createSignupDialog = () => {
                     </div>
                 </a>
             </div>
-            <div class="signup-dialog-container">
+            <div class="signup-dialog-container">                              
                 <div class="signup-dialog-header">
                     <div class="signup-dialog-nav-bar">
                         <button class="secondary prev-btn">${placeholders?.backBtnLabel}</button>
-                        <div class="signup-dialog-steps-container"></div>
+                        <div class="signup-dialog-title"></div>
                         <div class="signup-dialog-actions">
                             <button class="next-btn">${placeholders?.nextBtnLabel}</button>
                             <button class="finish-btn content-hidden">${placeholders?.finishBtnLabel}</button>
@@ -63,8 +64,9 @@ const createSignupDialog = () => {
                     </div>
                 </div>
                 <div class="signup-dialog-body">
+                    <div class="signup-dialog-steps"></div>
                     <div class="signup-dialog-content"></div>
-                </div>
+                </div>                
             </div>
         </dialog>
     `);
@@ -80,11 +82,13 @@ const createSignupDialog = () => {
     const response = await fetch(`${pages[index].path}.plain.html`);
     const signupClose = signupDialog.querySelector('.signup-dialog-close-btn');
     await decorateIcons(signupClose);
+    const signupContainer = signupDialog.querySelector('.signup-dialog-container');
     const signupContent = signupDialog.querySelector('.signup-dialog-content');
     if (response.ok) {
       const pageContent = await response.text();
       if (pageContent) {
         signupContent.setAttribute('data-current-page-index', index);
+        signupContainer.className = `signup-dialog-container ${pages[index].name}-container`;
         signupContent.innerHTML = pageContent;
         decorateMain(signupContent);
         await loadBlocks(signupContent);
@@ -104,7 +108,8 @@ const createSignupDialog = () => {
    */
   const loadStepFlow = async (pageIndex) => {
     const data = pages[pageIndex];
-    const stepContainer = signupDialog.querySelector('.signup-dialog-steps-container');
+    const dialogTitle = signupDialog.querySelector('.signup-dialog-title');
+    const stepsContainer = signupDialog.querySelector('.signup-dialog-steps');
     const navContainer = signupDialog.querySelector('.signup-dialog-nav-bar');
     const prevBtn = navContainer.querySelector('.prev-btn');
     const nextBtn = navContainer.querySelector('.next-btn');
@@ -115,43 +120,41 @@ const createSignupDialog = () => {
     finishBtn.classList.toggle('content-hidden', pageIndex !== pages.length - 1);
 
     // Generate step flow content based on the current step index
-    let flow = `<h4>${data.title}</h4>`;
+    let flow = '';
     if (pageIndex < pages.length - 1) {
-      flow += `
-                <p>Step ${pageIndex + 1} of ${pages.length - 1}</p>
-                <div class="signup-dialog-step-flow">
-                    ${pages
-                      .map((step, index) => {
-                        if (!step.nofollow) {
-                          let result;
-                          if (pageIndex > index) {
-                            result = `<div class="check-icon-shell"><span class="icon icon-checkmark"></span></div>`;
-                          } else if (pageIndex === index) {
-                            result = `<div class="signup-dialog-step current-step">${index + 1}</div>`;
-                          } else {
-                            result = `<div class="signup-dialog-step">${index + 1}</div>`;
-                          }
-                          if (index < pages.length - 2) {
-                            result += '<hr/>';
-                          }
-                          return result;
-                        }
-                        return ''; // Return an empty string for the last element
-                      })
-                      .join('')}
-                </div>`;
+      dialogTitle.innerHTML = `<h4>${data.title}</h4><p>Step ${pageIndex + 1} of ${pages.length - 1}</p>`;
+      flow = `<div class="signup-dialog-step-flow">
+                ${pages
+                  .map((step, index) => {
+                    if (!step.nofollow) {
+                      let result;
+                      if (pageIndex > index) {
+                        result = `<div class="check-icon-shell"><span class="icon icon-checkmark"></span></div>`;
+                      } else if (pageIndex === index) {
+                        result = `<div class="signup-dialog-step current-step">${index + 1}</div>`;
+                      } else {
+                        result = `<div class="signup-dialog-step">${index + 1}</div>`;
+                      }
+                      if (index < pages.length - 2) {
+                        result += '<hr/>';
+                      }
+                      return result;
+                    }
+                    return ''; // Return an empty string for the last element
+                  })
+                  .join('')}
+              </div>`;
     } else {
-      flow += `
-                <div class="signup-dialog-step-flow">
-                    <div class="check-icon-shell">
-                        <span class="icon icon-checkmark"></span>
-                    </div>
-                </div>`;
+      flow = `<div class="signup-dialog-step-flow">
+                <div class="check-icon-shell">
+                    <span class="icon icon-checkmark"></span>
+                </div>
+            </div>`;
     }
 
     // Set the inner HTML of the step container to the generated flow
-    stepContainer.innerHTML = flow;
-    await decorateIcons(stepContainer);
+    stepsContainer.innerHTML = flow;
+    await decorateIcons(stepsContainer);
   };
 
   /**
@@ -218,6 +221,21 @@ const createSignupDialog = () => {
   signupDialog.inert = true;
   signupDialog.showModal();
   signupDialog.inert = false;
+
+  // Create an Intersection Observer instance for Signup Dialog Header
+  const signupDialogHeader = signupDialog.querySelector('.signup-dialog-header');
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        signupDialogHeader.classList.toggle('sticky', entry.intersectionRatio < 1);
+      });
+    },
+    {
+      root: signupDialog,
+      threshold: [1],
+    },
+  );
+  observer.observe(signupDialogHeader);
 };
 
 /**
