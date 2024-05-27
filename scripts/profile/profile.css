@@ -43,9 +43,9 @@
     align-items: center;
 }
 
-.profile-card-header .manage-adobe-account a > .icon-new-tab,
-.profile-card-header .manage-community-account a > .icon-new-tab {
-    margin-right: 5px;
+.profile-card-header .manage-adobe-account .icon-link-out svg,
+.profile-card-header .manage-community-account .icon-link-out svg {
+    height: 13px;
 }
 
 .profile-card-body {
