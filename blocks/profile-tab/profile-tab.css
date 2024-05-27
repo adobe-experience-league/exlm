@@ -1,0 +1,22 @@
+.profile-tab.block {
+    max-width: max-content;
+    border-bottom: 2px solid #D5D5D5;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.profile-tab.block a {
+    display: inline-block;
+    margin: 0;
+    padding-bottom: 15px;
+    color: #222;
+    text-transform: capitalize;
+    font-size: 14px;
+    margin-right: 1em;
+    margin-bottom: -2px;
+}
+
+.profile-tab.block a:first-child{
+    font-weight: 700;
+    border-bottom: 2px solid #000;
+}
