@@ -155,9 +155,6 @@
     color: var(--spectrum-gray-50);
 }
 .signup-dialog-body {
-    height: calc(100% - 233px);
-    overflow-x: hidden;
-    overflow-y: auto;
     padding: 0 20px 16px; 
     position: relative;
     z-index: 2;
@@ -177,13 +174,7 @@
     padding-bottom: 40px;
 }
 
-.signup-dialog-content > .section > .default-content-wrapper > h1,
-.signup-dialog-content > .section > .default-content-wrapper > h2,
-.signup-dialog-content > .section > .default-content-wrapper > h3,
-.signup-dialog-content > .section > .default-content-wrapper > h4,
-.signup-dialog-content > .section > .default-content-wrapper > h5,
-.signup-dialog-content > .section > .default-content-wrapper > h6,
-.signup-dialog-content > .section > .default-content-wrapper > p {
+.signup-dialog-content > .section > .default-content-wrapper > * {
     text-align: center;
     color: var(--text-color);
 }
@@ -211,9 +202,6 @@
     .signup-dialog-nav-bar .signup-dialog-actions {
         order: 3;
     }
-    .signup-dialog-body {
-        height: calc(100% - 177px);	
-    }
     .signup-dialog-content > .section {
         max-width: 440px;
     }
@@ -224,9 +212,6 @@
     }
     .signup-dialog-close-bar {
         width: 736px;
-    }
-    .signup-dialog-body {
-        height: calc(100% - 177px);	
     }
     .signup-dialog-content > .section {
         max-width: 590px;
