@@ -145,7 +145,7 @@
     font-size: var(--spectrum-body-size-l);
     font-weight: var(--font-weight-700);
     height: 30.4px;
-    line-height: 28px;
+    line-height: 27px;
     margin: 0;
     text-align: center;
     width: 30.4px;
@@ -213,9 +213,39 @@
     .signup-dialog-close-bar {
         width: 736px;
     }
+    .signup-dialog-container {
+        position: relative;
+        min-height: 100%;
+    }
     .signup-dialog-content > .section {
         max-width: 590px;
     }
+    .step1-container .signup-dialog-graphics-top {
+        background: url('/images/signup-flow-decor-top.svg') no-repeat top left;
+        height: 102px;
+        left: -2px;
+        position: absolute;
+        top: -2px;
+        width: 237px;
+        z-index: 3;
+    }    
+    .step1-container .signup-dialog-graphics-middle {
+        background: url('/images/signup-flow-decor-middle.svg') no-repeat top right;
+        height: 426px;
+        position: absolute;
+        right: 0;
+        top: calc(50% - 213px);
+        width: 135px;
+        z-index: 1;
+    }    
+    .step3-container .signup-dialog-graphics-bottom {
+        background: url('/images/signup-flow-decor-bottom.svg') no-repeat bottom;
+        bottom: 0;
+        height: 420px;
+        left: 0;
+        position: absolute;
+        width: 100%;
+    }	
 }
 @media (min-width: 1200px) {
     .signup-dialog {
