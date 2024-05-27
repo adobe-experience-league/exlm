@@ -1,6 +1,5 @@
 // eslint-disable-next-line import/no-cycle, max-classes-per-file
 import { getConfig, loadIms } from '../scripts.js';
-// eslint-disable-next-line import/no-cycle
 import initStream from '../events/post-signup-flow-stream.js';
 // eslint-disable-next-line import/no-cycle
 import loadJWT from './jwt.js';
