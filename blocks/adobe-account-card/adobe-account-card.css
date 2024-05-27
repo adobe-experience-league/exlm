@@ -1,3 +1,4 @@
+@import "../../scripts/profile/profile.css";
 .adobe-account-card-wrapper {
     display: flex;
     justify-content: center;
@@ -14,63 +15,3 @@
     width: 386px;
 }
 
-.adobe-account-card .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-}
-
-.adobe-account-card .card-header .my-adobe-account {
-    font-size: var(--spectrum-font-size-75);
-    font-weight: bold;
-    letter-spacing: 0.72px;
-    color: var(--text-color);
-    text-transform: uppercase;
-    margin: 0px;
-}
-
-.adobe-account-card .card-header .manage-adobe-account {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.adobe-account-card .card-header .manage-adobe-account a {
-    margin: 0px;
-    font-size: var(--spectrum-font-size-75);
-    color: var(--spectrum-gray-800);
-}
-
-.adobe-account-card .card-body {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.adobe-account-card .avatar {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background-color: var(--non-spectrum-navy-blue);
-    color: var(--spectrum-gray-50);
-}
-
-.adobe-account-card .avatar .icon-profile {
-    width: 64px;
-    height: 64px;
-}
-
-.adobe-account-card .user-info .display-name {
-    font-size: var(--spectrum-font-size-300);
-    font-weight: bold;
-    color: var(--text-color);
-    margin-bottom: 4px;
-}
-
-.adobe-account-card .user-info .email,
-.adobe-account-card .user-info .company {
-    font-size: var(--spectrum-font-size-100);
-    font-weight: normal;
-    color: var(--spectrum-gray-800);
-}
