@@ -47,12 +47,16 @@
     margin: 0;
 }
 
-.profile-card-header .manage-adobe-account a > .icon-new-tab,
-.profile-card-header .manage-community-account a > .icon-new-tab {
-    margin-right: 5px;
-    margin-left: -5px;
+.profile-card-header .manage-adobe-account a > .icon-link-out,
+.profile-card-header .manage-community-account a > .icon-link-out {
+    width: 14px;
+    height: 13px;
+    margin-right: 5px; 
 }
-
+.profile-card-header .manage-adobe-account a > .icon-link-out svg,
+ .profile-card-header .manage-community-account a > .icon-link-out svg{
+    margin-bottom: 4px;
+}
 .profile-card-body {
     display: flex;
     align-items: center;
@@ -108,8 +112,9 @@
     align-items: center;
     gap: 0;
 }
-.profile-card-header .manage-adobe-account a > .icon-new-tab,
-.profile-card-header .manage-community-account a > .icon-new-tab {
+.profile-card-header .manage-adobe-account a > .icon-link-out,
+.profile-card-header .manage-community-account a > .icon-link-out {
+   
     margin-left: 0;
 }
 }
