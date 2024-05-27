@@ -12,9 +12,12 @@
 
 .profile-card-header {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+    align-items: flex-start;
+    margin-bottom: 26px;
+    line-height: 15px;
+    gap: 8px;
 }
 
 .profile-card-header .my-adobe-account,
@@ -41,11 +44,13 @@
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+    margin: 0;
 }
 
 .profile-card-header .manage-adobe-account a > .icon-new-tab,
 .profile-card-header .manage-community-account a > .icon-new-tab {
     margin-right: 5px;
+    margin-left: -5px;
 }
 
 .profile-card-body {
@@ -60,6 +65,7 @@
     border-radius: 50%;
     background-color: var(--non-spectrum-navy-blue);
     color: var(--spectrum-gray-50);
+    overflow: hidden;
 }
 
 .profile-avatar .icon-profile {
@@ -95,4 +101,18 @@
     font-size: var(--spectrum-font-size-100);
     font-weight: normal;
     color: var(--spectrum-gray-800);
+}
+.manage-adobe-account .icon g{
+    fill: #000000;
+}
+@media (min-width: 600px) {
+.profile-card-header {
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+}
+.profile-card-header .manage-adobe-account a > .icon-new-tab,
+.profile-card-header .manage-community-account a > .icon-new-tab {
+    margin-left: 0;
+}
 }
