@@ -8,8 +8,8 @@ export async function getContentReference(link) {
       const htmlDoc = parser.parseFromString(html, 'text/html');
       const title = htmlDoc.title;
       const description = htmlDoc.querySelector('main div p')?.textContent;
-      // const authorInfo = [...htmlDoc.querySelector('.author-details')?.children].map((row) => row.firstElementChild);
-      const authorBio = htmlDoc.querySelector('.author-bio');
+      // const authorBio = [...htmlDoc.querySelector('.author-bio')?.children].map((row) => row.firstElementChild);
+      const authorBio = htmlDoc.querySelectorAll('.author-bio');
 
       return {
         contentTitle: title,
