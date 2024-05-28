@@ -55,7 +55,7 @@ export const adobeAccountDOM = `<div class="profile-row adobe-account">
     <div class="my-adobe-account">${placeholders?.myAdobeAccount || 'My Adobe Account'}</div>
     <div class="manage-adobe-account">
       <a href="${adobeAccountURL}" target="_blank">
-      <span class="icon icon-link-out"></span>
+      <span class="icon icon-new-tab"></span>
       ${placeholders?.manageAdobeAccount || 'Manage Adobe account'}
       </a>
     </div>
@@ -83,7 +83,7 @@ export const communityAccountDOM = `<div class="profile-row community-account">
     <div class="my-community-account">${placeholders?.myCommunityAccount || 'My Community Profile'}</div>
     <div class="manage-community-account">
       <a href="${communityAccountURL}" target="_blank">
-      <span class="icon icon-link-out"></span>
+      <span class="icon icon-new-tab"></span>
       ${placeholders?.updateCommunityProfile || 'Update profile'}
       </a>
     </div>
