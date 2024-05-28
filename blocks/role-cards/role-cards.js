@@ -1,4 +1,4 @@
-import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
@@ -60,20 +60,19 @@ export default async function decorate(block) {
     },
   ];
 
-  const roleCardsDiv = htmlToElement(`
-    <div class="role-cards-container">
+  const roleCardsDiv = document.createRange().createContextualFragment(`
       ${roleCardsData
         .map(
           (card, index) => `
-        <div class="role-cards-block">
+        <div class="role-cards-item">
         <div class="role-cards-description">
-        <div class="role-cards-icon">
+        <div class="role-cards-title">
         <span class="icon icon-${card.icon}"></span>
         <h3>${card.title}</h3>
         </div>
         <p>${card.description}</p>
         </div>
-        <div class="role-cards-selectiondefault">
+        <div class="role-cards-default-selection">
         ${isSignedIn ? `<p>${card.selectionDefault}</p>` : ''}
         <span class="role-cards-checkbox">
         <input name="${card.role}" type="checkbox" id="selectRole-${index}">
@@ -83,7 +82,6 @@ export default async function decorate(block) {
         </div>`,
         )
         .join('')}
-    </div>
   `);
 
   block.append(roleCardsDiv);
@@ -97,12 +95,12 @@ export default async function decorate(block) {
       const checkBox = document.querySelector(`input[name="${el}"]`);
       if (checkBox) {
         checkBox.checked = true;
-        checkBox.closest('.role-cards-block').classList.toggle('highlight', checkBox.checked);
+        checkBox.closest('.role-cards-item').classList.toggle('role-cards-highlight', checkBox.checked);
       }
     });
   }
 
-  block.querySelectorAll('.role-cards-block').forEach((card) => {
+  block.querySelectorAll('.role-cards-item').forEach((card) => {
     const updatedRoles = [];
     const checkbox = card.querySelector('input[type="checkbox"]');
 
@@ -117,7 +115,7 @@ export default async function decorate(block) {
     checkbox.addEventListener('change', (e) => {
       e.preventDefault();
       const isChecked = checkbox.checked;
-      checkbox.closest('.role-cards-block').classList.toggle('highlight', isChecked);
+      checkbox.closest('.role-cards-item').classList.toggle('role-cards-highlight', isChecked);
 
       if (isSignedIn) {
         const profileKey = checkbox.getAttribute('name');
