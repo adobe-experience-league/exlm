@@ -25,7 +25,7 @@ export async function getContentReference(link) {
 
 async function buildFeaturedContent(contentElem) {
   const link = contentElem.querySelectorAll('a');
-  const contentInfo = await getContentReference(link.href);
+  const contentInfo = await getContentReference(link[0].href);
 }
 
 export default async function decorate(block) {

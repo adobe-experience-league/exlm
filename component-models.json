@@ -2930,7 +2930,7 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "contentHeadingType",
+        "name": "content_headingType",
         "value": "h3",
         "label": "Content Heading Type",
         "options": [
@@ -2963,14 +2963,14 @@
       {
         "component": "richtext",
         "valueType": "string",
-        "name": "contentDescription",
+        "name": "content_description",
         "value": "",
         "label": "Description"
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "contentCtaText",
+        "name": "content_ctaText",
         "value": "Read article",
         "label": "Content CTA Text"
       }
