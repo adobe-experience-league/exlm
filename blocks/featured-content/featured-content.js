@@ -35,18 +35,21 @@ async function buildFeaturedContent(contentElem) {
     div({ class: 'button-container' },
       a({ href: link[0].href, class: 'button primary' }, 'Read Article'),
     ),
-    contentInfo.authorInfo.forEach((author) => {
-      const authorName = author.querySelector('div:nth-child(1)')?.innerText.trim();
-      const authorPicture = author.querySelector('div:first-child picture img')?.src;
-
-      const authorDiv = div({ class: 'author' },
-        img({ src: authorPicture, alt: authorName }),
-        div( authorName),
-      );
-
-      if (authorDiv) contentDiv.appendChild(authorDiv);
-    })
   );
+
+  contentInfo.authorInfo.forEach((author) => {
+    console.log(author);
+    const authorName = author.querySelector('div:nth-child(1)')?.innerText;
+    const authorPicture = author.querySelector('div:first-child picture img')?.src;
+
+    const authorDiv = div({ class: 'author' },
+      img({ src: authorPicture, alt: authorName }),
+      div( authorName),
+    );
+
+    if (authorDiv) contentDiv.appendChild(authorDiv);
+  });
+
   contentElem.appendChild(contentDiv);
 }
 
