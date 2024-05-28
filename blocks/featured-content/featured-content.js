@@ -30,13 +30,13 @@ async function buildFeaturedContent(contentElem) {
 
 export default async function decorate(block) {
   // get the cells
-  const [content, image] = block.querySelectorAll(':scope div > div');
+  const [image, content] = block.querySelectorAll(':scope div > div');
 
   // to make css simpler, add classes to the elements
   image.classList.add('featured-content-image');
 
   // check if featured authors have bio links
   if (content.children?.length >= 1) {
-    buildFeaturedContent(author1);
+    buildFeaturedContent(content);
   }
 }
