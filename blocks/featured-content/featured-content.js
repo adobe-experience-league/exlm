@@ -1,4 +1,4 @@
-import { div, h2 } from "../../scripts/dom-helpers.js";
+import { a, div, h2, img } from "../../scripts/dom-helpers.js";
 
 export async function getContentReference(link) {
   return fetch(link)
