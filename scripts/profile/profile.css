@@ -1,0 +1,98 @@
+.profile-row {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--shimmer-image-slide-mid);
+}
+
+.profile-row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.profile-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.profile-card-header .my-adobe-account,
+.profile-card-header .my-community-account {
+    font-size: var(--spectrum-font-size-75);
+    font-weight: var(--font-weight-700);
+    letter-spacing: 0.72px;
+    color: var(--text-color);
+    text-transform: uppercase;
+    margin: 0px;
+}
+
+.profile-card-header .manage-adobe-account,
+.profile-card-header .manage-community-account {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.profile-card-header .manage-adobe-account a,
+.profile-card-header .manage-community-account a {
+    font-size: var(--spectrum-font-size-75);
+    color: var(--spectrum-gray-800);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.profile-card-header .manage-adobe-account a > .icon-new-tab,
+.profile-card-header .manage-community-account a > .icon-new-tab {
+    margin-right: 5px;
+}
+
+.profile-card-body {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.profile-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: var(--non-spectrum-navy-blue);
+    color: var(--spectrum-gray-50);
+}
+
+.profile-avatar .icon-profile {
+    width: 64px;
+    height: 64px;
+}
+
+.profile-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.profile-user-info .heading {
+    text-transform: uppercase;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.profile-user-info .display-name {
+    font-size: var(--spectrum-font-size-300);
+    font-weight: bold;
+    color: var(--non-spectrum-grey-333);
+}
+
+.profile-user-info .community-display-name {
+    font-size: var(--spectrum-font-size-300);
+    font-weight: bold;
+    color: var(--non-spectrum-blue-cobalt);
+}
+
+.profile-user-info div {
+    font-size: var(--spectrum-font-size-100);
+    font-weight: normal;
+    color: var(--spectrum-gray-800);
+}
