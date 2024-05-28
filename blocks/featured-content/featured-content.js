@@ -25,19 +25,18 @@ export async function getContentReference(link) {
 
 async function buildFeaturedContent(contentElem) {
   const link = contentElem.querySelectorAll('a');
-  const ctaString = contentElem.querySelector('p:last-child').textContent;
   const contentInfo = await getContentReference(link[0].href);
-
+  let contentDiv;
   contentElem.innerHTML = '';
 
-  const contentDiv = div({ class: 'content-details' },
+  contentDiv = div({ class: 'content-details' },
     h2(contentInfo.contentTitle),
     div({ class: 'content-description' }, contentInfo.contentDescription),
     div({ class: 'button-container' },
-      a({ href: link[0].href, class: 'button primary' }, ctaString ? ctaString : 'Read More'),
+      a({ href: link[0].href, class: 'button primary' }, 'Read Article'),
     ),
     contentInfo.authorInfo.forEach((author) => {
-      const authorName = author.querySelector('div:nth-child(1)')?.textContent;
+      const authorName = author.querySelector('div:nth-child(1)')?.innerText.trim();
       const authorPicture = author.querySelector('div:first-child picture img')?.src;
 
       const authorDiv = div({ class: 'author' },
