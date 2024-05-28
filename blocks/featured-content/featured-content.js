@@ -6,10 +6,10 @@ export async function getContentReference(link) {
     .then((html) => {
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(html, 'text/html');
-      const title = htmlDoc.querySelector('head title')?.content;
+      const title = htmlDoc.title;
       const description = htmlDoc.querySelector('main div p')?.textContent;
       // const authorInfo = [...htmlDoc.querySelector('.author-details')?.children].map((row) => row.firstElementChild);
-      const authorInfo = htmlDoc.querySelector('.author-details');
+      const authorInfo = htmlDoc.querySelector('.author-bio');
 
       return {
         contentTitle: title,
@@ -32,7 +32,7 @@ async function buildFeaturedContent(contentElem) {
   const contentDiv = div({ class: 'content-details' },
     h2(contentInfo.contentTitle),
     div({ class: 'content-description' }, contentInfo.contentDescription),
-    div({ class: '.button-container' },
+    div({ class: 'button-container' },
       a({ href: link[0].href, class: 'button primary' }, 'Read More'),
     ),
     authorInfo.forEach((author) => {
