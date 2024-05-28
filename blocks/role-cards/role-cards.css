@@ -2,14 +2,15 @@
 .role-cards-wrapper{
     padding: 24px 0;
 }
-.role-cards .role-cards-container {
+
+.role-cards {
     display: grid;
     gap: 24px;
     grid-template-rows: 1fr 1fr 1fr 1fr;
     grid-template-columns: 1fr;
 }
 
-.role-cards .role-cards-icon {
+.role-cards .role-cards-title {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -26,7 +27,7 @@
     font-size: 14px;
 } 
 
-.role-cards .role-cards-block {
+.role-cards .role-cards-item {
     background-color: var(--spectrum-gray-50);
     border: 1px solid #D6D6D6;
     border-radius: 4px;
@@ -46,6 +47,7 @@
 .role-cards .role-cards-description h3 {
     margin: 0px;
     font-size: 18px;
+    line-height: 22px;
 }
 
 .role-cards .role-cards-description p {
@@ -53,21 +55,23 @@
     line-height: 17px;
 }
 
-.role-cards-block.highlight  {
+.role-cards-item.role-cards-highlight  {
     border: 1px solid var(--spectrum-blue-600);
 }
 
-.role-cards .role-cards-selection-default p {
+.role-cards .role-cards-default-selection p {
     margin: 0px 0px 10px 0px;
     min-height: 18px;
     font-size: 14px;
+    line-height: 17px;
 }
+
 body.profile .role-cards .role-cards-description h3 {
     margin-top: 0px;
-    }
+}
 /* tablet */
 @media (min-width: 600px) {
-    .role-cards .role-cards-container {
+    .role-cards {
         display: grid;
         gap: 24px;
         grid-template-columns: 1fr 1fr;
@@ -77,14 +81,14 @@ body.profile .role-cards .role-cards-description h3 {
 
 /* desktop */
 @media (min-width: 900px) {
-    body.profile .role-cards .role-cards-container {
+    body.profile .role-cards {
         display: grid;
         gap: 24px;
         grid-template-columns: 1fr 1fr 1fr 1fr;
         grid-template-rows: 1fr;
     }
     
-    body.profile .role-cards .role-cards-icon {
+    body.profile .role-cards .role-cards-title {
         display: flex;
         flex-direction: column;
         margin-bottom: 8px;
