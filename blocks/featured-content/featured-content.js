@@ -37,15 +37,15 @@ async function buildFeaturedContent(contentElem) {
       a({ href: link[0].href, class: 'button primary' }, ctaString ? ctaString : 'Read More'),
     ),
     contentInfo.authorInfo.forEach((author) => {
-      const authorName = author.querySelector('.author-name')?.textContent;
-      const authorPicture = author.querySelector('.author-image picture img')?.src;
+      const authorName = author.querySelector('div:nth-child(1)')?.textContent;
+      const authorPicture = author.querySelector('div:first-child picture img')?.src;
 
       const authorDiv = div({ class: 'author' },
         img({ src: authorPicture, alt: authorName }),
         div( authorName),
       );
 
-      contentDiv.appendChild(authorDiv);
+      if (authorDiv) contentDiv.appendChild(authorDiv);
     })
   );
   contentElem.appendChild(contentDiv);
