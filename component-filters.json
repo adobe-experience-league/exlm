@@ -17,7 +17,11 @@
   },
   {
     "id": "main-profile",
-    "components": ["section-profile", "section"]
+    "components": ["profile-section"]
+  },
+  {
+    "id": "main-signup",
+    "components": ["sign-up-flow-section"]
   },
   {
     "id": "section",
@@ -86,12 +90,30 @@
     "components": ["author-bio"]
   },
   {
-    "id": "section-profile",
-    "components": ["text", "title", "button", "image", "columns", "data-and-email-consent"]
+    "id": "profile-section",
+    "components": [
+      "text",
+      "title",
+      "button",
+      "image",
+      "adobe-account-card",
+      "data-and-email-consent",
+      "role-cards",
+      "user-profile-card"
+    ]
   },
   {
-    "id": "section-profile-signup",
-    "components": ["text", "title", "button", "image", "data-and-email-consent"]
+    "id": "sign-up-flow-section",
+    "components": [
+      "text",
+      "title",
+      "button",
+      "image",
+      "adobe-account-card",
+      "data-and-email-consent",
+      "role-cards",
+      "user-profile-card"
+    ]
   },
   {
     "id": "article-content-section",
