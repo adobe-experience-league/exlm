@@ -1,4 +1,4 @@
-import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
