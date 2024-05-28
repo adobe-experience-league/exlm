@@ -9,12 +9,12 @@ export async function getContentReference(link) {
       const title = htmlDoc.title;
       const description = htmlDoc.querySelector('main div p')?.textContent;
       // const authorInfo = [...htmlDoc.querySelector('.author-details')?.children].map((row) => row.firstElementChild);
-      const authorInfo = htmlDoc.querySelector('.author-bio');
+      const authorBio = htmlDoc.querySelector('.author-bio');
 
       return {
         contentTitle: title,
         contentDescription: description,
-        authorName: authorInfo,
+        authorInfo: authorBio,
       };
     })
     .catch((error) => {
@@ -25,6 +25,7 @@ export async function getContentReference(link) {
 
 async function buildFeaturedContent(contentElem) {
   const link = contentElem.querySelectorAll('a');
+  const ctaString = contentElem.querySelector('p:last-child').textContent;
   const contentInfo = await getContentReference(link[0].href);
 
   contentElem.innerHTML = '';
@@ -33,11 +34,11 @@ async function buildFeaturedContent(contentElem) {
     h2(contentInfo.contentTitle),
     div({ class: 'content-description' }, contentInfo.contentDescription),
     div({ class: 'button-container' },
-      a({ href: link[0].href, class: 'button primary' }, 'Read More'),
+      a({ href: link[0].href, class: 'button primary' }, ctaString ? ctaString : 'Read More'),
     ),
-    authorInfo.forEach((author) => {
+    contentInfo.authorInfo.forEach((author) => {
       const authorName = author.querySelector('.author-name')?.textContent;
-      const authorPicture = author.querySelector('.author-picture')?.src;
+      const authorPicture = author.querySelector('.author-image picture img')?.src;
 
       const authorDiv = div({ class: 'author' },
         img({ src: authorPicture, alt: authorName }),
