@@ -15,7 +15,7 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 26px;
+    margin-bottom: 13px;
     line-height: 15px;
     gap: 8px;
 }
@@ -66,6 +66,7 @@
 }
 
 .profile-avatar {
+    width: 64px;
     min-width: 64px;
     height: 64px;
     border-radius: 50%;
