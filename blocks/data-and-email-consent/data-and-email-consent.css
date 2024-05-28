@@ -35,6 +35,7 @@
 
 .data-and-email-consent .notification .checkbox > input:checked {
   background-color: var(--non-spectrum-navy-blue);
+  accent-color: var(--non-spectrum-navy-blue);
   border-radius: 2px;
 }
 

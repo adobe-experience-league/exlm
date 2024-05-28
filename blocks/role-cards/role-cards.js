@@ -73,7 +73,7 @@ export default async function decorate(block) {
         </div>
         <p>${card.description}</p>
         </div>
-        <div class="role-cards-selectiondefault">
+        <div class="role-cards-selection-default">
         ${isSignedIn ? `<p>${card.selectionDefault}</p>` : ''}
         <span class="role-cards-checkbox">
         <input name="${card.role}" type="checkbox" id="selectRole-${index}">

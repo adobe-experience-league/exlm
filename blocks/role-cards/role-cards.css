@@ -19,6 +19,7 @@
 .role-cards .role-cards-checkbox input {
     width: 14px;
     margin: 0px;
+    accent-color: var(--non-spectrum-navy-blue);
 }
 
 .role-cards .role-cards-checkbox label {
@@ -55,11 +56,8 @@
 .role-cards-block.highlight  {
     border: 1px solid var(--spectrum-blue-600);
 }
-.role-cards-selectiondefault{
-    font-size: var(--spectrum-body-size-s);
-}
 
-.role-cards .role-cards-selectiondefault p {
+.role-cards .role-cards-selection-default p {
     margin: 0px 0px 10px 0px;
     min-height: 18px;
     font-size: 14px;
@@ -79,14 +77,14 @@ body.profile .role-cards .role-cards-description h3 {
 
 /* desktop */
 @media (min-width: 900px) {
-    body[class ^= 'profile'] .role-cards .role-cards-container {
+    body.profile .role-cards .role-cards-container {
         display: grid;
         gap: 24px;
         grid-template-columns: 1fr 1fr 1fr 1fr;
         grid-template-rows: 1fr;
     }
     
-    body[class ^= 'profile'] .role-cards .role-cards-icon {
+    body.profile .role-cards .role-cards-icon {
         display: flex;
         flex-direction: column;
         margin-bottom: 8px;
