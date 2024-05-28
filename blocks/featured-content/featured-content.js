@@ -7,7 +7,8 @@ export async function getContentReference(link) {
       const title = htmlDoc.querySelector("meta[name='og:title']")?.content;
       const image =  htmlDoc.querySelector('.article-content-section picture img')?.src;
       const description = htmlDoc.querySelector('article-content-section p')?.textContent;
-      const authorInfo = [...htmlDoc.querySelector('.author-details').children].map((row) => row.firstElementChild);
+      // const authorInfo = [...htmlDoc.querySelector('.author-details')?.children].map((row) => row.firstElementChild);
+      const authorInfo = htmlDoc.querySelector('.author-details');
 
       return {
         contentTitle: title,
