@@ -16,6 +16,14 @@
     "components": ["article-content-section", "article-header-section", "section"]
   },
   {
+    "id": "main-profile",
+    "components": ["profile-section"]
+  },
+  {
+    "id": "main-signup",
+    "components": ["sign-up-flow-section"]
+  },
+  {
     "id": "section",
     "components": [
       "text",
@@ -80,6 +88,32 @@
   {
     "id": "section-author-bio",
     "components": ["author-bio"]
+  },
+  {
+    "id": "profile-section",
+    "components": [
+      "text",
+      "title",
+      "button",
+      "image",
+      "adobe-account-card",
+      "data-and-email-consent",
+      "role-cards",
+      "user-profile-card"
+    ]
+  },
+  {
+    "id": "sign-up-flow-section",
+    "components": [
+      "text",
+      "title",
+      "button",
+      "image",
+      "adobe-account-card",
+      "data-and-email-consent",
+      "role-cards",
+      "user-profile-card"
+    ]
   },
   {
     "id": "article-content-section",

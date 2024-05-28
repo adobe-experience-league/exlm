@@ -1,0 +1,32 @@
+/* Placeholder styles. Replace with actual styles */
+.profile-rail.block > span {
+    font-size: 14px;
+    font-weight: 700;
+    margin-left: 12px;
+}
+.profile-rail.block ul {
+    margin-left: 0;
+}
+
+.profile-rail.block li {
+    cursor: pointer;
+    list-style: none;
+    margin: 4px 0;
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+
+.profile-rail.block li.active {
+    background-color:#0000000F;
+
+}
+
+.profile-rail.block a {
+    color: #222;
+    text-transform: capitalize;
+    font-size: 14px;
+}
+
+.profile-rail.block li:hover {
+    background-color:#0000000F;
+}

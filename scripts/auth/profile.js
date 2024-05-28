@@ -1,11 +1,13 @@
 // eslint-disable-next-line import/no-cycle, max-classes-per-file
 import { getConfig, loadIms } from '../scripts.js';
+import initStream from '../events/signup-event-stream.js';
 // eslint-disable-next-line import/no-cycle
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
 
 const { profileUrl, JWTTokenUrl, ppsOrigin, ims } = getConfig();
 
+const postSignInStreamKey = 'POST_SIGN_IN_STREAM';
 const override = /^(recommended|votes)$/;
 
 export async function isSignedInUser() {
@@ -18,7 +20,7 @@ export async function isSignedInUser() {
 }
 
 export async function signOut() {
-  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile'].forEach((key) =>
+  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile', postSignInStreamKey].forEach((key) =>
     sessionStorage.removeItem(key),
   );
   window.adobeIMS?.signOut();
@@ -185,6 +187,10 @@ class ProfileClient {
         })
           .then((res) => res.json())
           .then((data) => {
+            if (!sessionStorage.getItem(postSignInStreamKey)) {
+              initStream();
+              sessionStorage.setItem(postSignInStreamKey, 'true');
+            }
             if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));
             resolve(structuredClone(data.data));
           })

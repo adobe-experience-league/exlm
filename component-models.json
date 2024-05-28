@@ -2892,5 +2892,82 @@
         ]
       }
     ]
+  },
+  {
+    "id": "data-and-email-consent",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "collect-data-heading",
+        "value": "",
+        "label": "Collect data heading"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "collect-data-description",
+        "value": "",
+        "label": "Collect data description"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "email-heading",
+        "value": "",
+        "label": "Email heading"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "email-description",
+        "value": "",
+        "label": "Email description"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "legal",
+        "value": "",
+        "label": "Legal"
+      }
+    ]
+  },
+  {
+    "id": "profile-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Style",
+        "description": "The section style",
+        "valueType": "string",
+        "hidden": true,
+        "options": []
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "two-column-layout",
+        "label": "Enable two-column layout for this section?",
+        "description": "This will enable two-column layout for this particular section."
+      }
+    ]
+  },
+  {
+    "id": "sign-up-flow-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Style",
+        "description": "The section style",
+        "valueType": "string",
+        "hidden": true,
+        "options": []
+      }
+    ]
   }
 ]
