@@ -34,9 +34,10 @@ export async function getContentReference(link) {
  * @param {HTMLElement} contentElem - The element representing the featured content block.
  * @returns {Promise<void>} - A promise that resolves when the featured content is built.
  */
-async function buildFeaturedContent(contentElem) {
+async function buildFeaturedContent(contentElem, isAdobe) {
   const link = contentElem.querySelectorAll('a');
   const contentInfo = await getContentReference(link[0].href);
+  const company = isAdobe ? 'adobe' : 'external';
   contentElem.innerHTML = '';
 
   const contentDiv = div({ class: 'description' },
@@ -51,8 +52,6 @@ async function buildFeaturedContent(contentElem) {
   contentInfo.authorInfo.forEach((author) => {
     const authorName = author.querySelector('div:nth-child(2) > div')?.innerText;
     const authorPicture = author.querySelector('div:first-child picture img')?.src;
-    const company = author.querySelector('div').classList[1];
-
     const authorDiv = div({ class: 'author' },
       div({class: 'author-image'},
         createOptimizedPicture(authorPicture, authorName, 'eager', [{ width: '100' }]),
@@ -75,12 +74,12 @@ async function buildFeaturedContent(contentElem) {
  */
 export default async function decorate(block) {
   const [image, content] = block.querySelectorAll(':scope div > div');
-  const classes = block.getAttribute('class');
+  const isAdobe = block.getAttribute('class').includes('adobe');
   image.classList.add('featured-content-image');
   const imageInfo = image.querySelector('picture img');
   image.querySelector('picture').replaceWith(createOptimizedPicture(imageInfo.src, imageInfo.alt, 'eager', [{ width: '327' }]));
-  image.append(div({ class: 'source-tag' }));
+  image.append(div({ class: 'source-tag' }, isAdobe ? 'By Adobe' : 'By External'));
   if (content.children?.length >= 1) {
-    buildFeaturedContent(content);
+    buildFeaturedContent(content, isAdobe);
   }
 }
