@@ -106,9 +106,9 @@
   /* the dashed border around the image */
   .featured-content.block .author .author-image {
     position:relative;
-    width:53px;
-    height:53px;
-    border: 2px dashed black;
+    width:52px;
+    height:52px;
+    border: 1px dashed black;
     border-radius: 50%;
     margin-top:10px;
   }
