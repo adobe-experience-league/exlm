@@ -89,7 +89,7 @@ export default async function decorate(block) {
   image.classList.add('featured-content-image');
   const imageInfo = image.querySelector('picture img');
   image.querySelector('picture').replaceWith(createOptimizedPicture(imageInfo.src, imageInfo.alt, 'eager', [{ width: '327' }]));
-  image.append(div({ class: 'source-tag' }, isAdobe ? placeholders.article-adobe-tag : placeholders.article-external-tag));
+  image.append(div({ class: 'source-tag' }, isAdobe ? placeholders.articleAdobeTag : placeholders.articleExternalTag));
   if (content.children?.length >= 1) {
     buildFeaturedContent(content, isAdobe);
   }
