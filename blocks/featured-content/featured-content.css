@@ -94,9 +94,10 @@
   }
 
   /*  the author info entries */
-  .featured-content.block .author-container {
+  .featured-content.block div.author-container {
     display: flex;
     flex-direction: row;
+    gap: 16px;
   }
 
   .featured-content.block .author {
@@ -296,10 +297,6 @@
     .featured-content.block .featured-content-image img {
       width: 327px;
       height: 327px;
-    }
-
-    .featured-content.block .description p{
-      margin-bottom: 0;
     }
 
     .featured-content.block .author {
