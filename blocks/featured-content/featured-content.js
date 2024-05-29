@@ -42,7 +42,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
 
   const contentDiv = div({ class: 'description' },
     h2(contentInfo.contentTitle),
-    p(contentInfo.contentDescription),
+    p(contentInfo.contentDescription.replace(/^SUMMARY: /, '')),
     div({ class: 'button-container' },
       a({ href: link[0].href, 'aria-label': 'Read Article', class: 'button primary' }, 'Read Article'),
     ),
