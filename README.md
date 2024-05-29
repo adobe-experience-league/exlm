@@ -4,21 +4,21 @@ Experience League site implementation on https://aem.live
 
 ## Environments
 
-- Preview: https://main--exlm-stage--adobe-experience-league.hlx.page/
-- Live: https://main--exlm-stage--adobe-experience-league.hlx.live/
+- Preview: https://main--exlm--adobe-experience-league.hlx.page/
+- Live: https://main--exlm--adobe-experience-league.hlx.live/
 
 ## Getting started
 
 1. Clone or fork this repo (see note below on forking)
-2. Create your brannch
+2. Create your brannch - (keep it < 18 chars to avoid domain length limits)
 3. Install the [AEM CLI](https://github.com/adobe/aem-cli): `npm install -g @adobe/aem-cli`
 4. Install dependencies `npm i`
-5. Start Local Proxy: `aem up` (opens your browser at `http://localhost:3000`)
+5. Start Local Proxy: `npm run up` (opens your browser at `http://localhost:3000`)
 6. Start coding!
 
 ### On forking this repo
 
-If you want/need to fork this repository remember to add the [AEM Code Sync GitHub App](https://github.com/apps/aem-code-sync) to the fork repository.
+If you want/need to fork this repository remember to add the [AEM Code Sync GitHub App](https://github.com/apps/aem-code-sync) to the fork repository. Also please be sure to name the repo `exlm` for consistency.
 
 ### Content Source
 
@@ -30,41 +30,12 @@ The action is the entry point for all HTML delivered to https://aem.live service
 
 ## Helpful Commands
 
-### Linting
-
-```sh
-npm run lint
-```
-
-### Fix auto-fixable CSS lint issues
-
-```sh
-npm run quality
-```
-
-### Code Formatting
-
-this should happen on commit automatically, but you can run manually with:
-
-```sh
-npm run format
-```
-
-### Code Quality Check
-
-If you want to run all code quality scripts to ensure your PR will pass:
-
-```sh
-npm run quality
-```
-
-### Run sass auto-compile and Helix Pages
-
-```sh
-npm run up
-```
-
-The above command will run `node sass-compile.js` in parallel with `hlx up` which will start your local Helix Pages development environment.
+| Command           | Usage                                  |
+| ----------------- | -------------------------------------- |
+| `npm run up`      | Run SASS compilation and `aem up`      |
+| `npm run quality` | Code quality check: format and linting |
+| `npm run format`  | Format code                            |
+| `npm run lint`    | Run JS/SASS linters                    |
 
 ### Note on SASS usage and Helix Local Development
 
@@ -78,3 +49,13 @@ Examples:
 As both `sass-compile.js` and `hlx up` are watching for changes, changes made to your sass files while using the `rpm run up` command will be reflected automatically in your localhost.
 
 Note that using only the `hlx up` command will not trigger updates on-change for sass files.
+
+## Gotcha's
+
+### Enabling login on feature branches
+
+Login wont work on feature branches due to IMS restrictions, you must contact a team member to add your fork's main branch to the list of `Redirect Url Patterns` in IMSS. Please name your fork repo `exlm` to make this easier.
+
+### Working with EXL API and Coveo in feature branches and incognito mode.
+
+some of the EXL API's require CSRF tokens, said token depend on cookies set on the environment CDN URLs (`*.adobe.com`), your feature branch will be on `*.hlx.page`. Please be sure to [allow third party cookies in incognito](https://support.google.com/accounts/answer/61416?hl=en&co=GENIE.Platform%3DDesktop) while doing local development.
