@@ -1456,13 +1456,6 @@ body.profile .section:nth-child(3) {
   padding-top: 60px;
 }
 
-body.profile .section:not(.profile-tab-section, .profile-rail-section):last-child {
-  margin-bottom: 0;
-  border-radius: 20px 20px 0 0;
-  border-bottom: 0;
-  padding-bottom: 80px;
-}
-
 @include breakpoint('tablet') {
   body.profile .section[data-two-column-layout] {
     display: grid;
@@ -1526,6 +1519,6 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section):last-chil
   }
 
   body.profile .section:not(.profile-tab-section, .profile-rail-section) {
-    margin-bottom: 2em;
+    margin-bottom: 32px;
   }
 }
