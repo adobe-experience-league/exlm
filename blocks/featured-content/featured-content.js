@@ -39,12 +39,16 @@ async function buildFeaturedContent(contentElem) {
 
   contentInfo.authorInfo.forEach((author) => {
     console.log(author);
-    const authorName = author.querySelector('div:nth-child(1)')?.innerText;
+    const authorName = author.querySelector('div:nth-child(2) > div')?.innerText;
     const authorPicture = author.querySelector('div:first-child picture img')?.src;
+    const company = author.querySelector('div').classList[1];
 
     const authorDiv = div({ class: 'author' },
-      img({ src: authorPicture, alt: authorName }),
-      div( authorName),
+      div({class: 'author-image'},
+        createOptimizedPicture(authorPicture, authorName, 'eager', [{ width: '100' }]),
+        div({class: `company-dot ${company}`})
+      ),
+      div({class: 'author-details'}, div( authorName)),
     );
 
     if (authorDiv) contentDiv.appendChild(authorDiv);
@@ -59,6 +63,7 @@ export default async function decorate(block) {
 
   // to make css simpler, add classes to the elements
   image.classList.add('featured-content-image');
+  image.closest('pictue').replaceWith(createOptimizedPicture(image.querySelector('img').src, image.querySelector('img').alt, 'eager', [{ width: '327' }]));
 
   // check if featured authors have bio links
   if (content.children?.length >= 1) {
