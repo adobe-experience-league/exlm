@@ -1,5 +1,14 @@
 import { a, div, h2, p } from "../../scripts/dom-helpers.js";
 import { createOptimizedPicture } from "../../scripts/lib-franklin.js";
+import { fetchLanguagePlaceholders } from "../../scripts/scripts.js";
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 /**
  * Fetches content from the provided link and extracts relevant information from the HTML response.
@@ -80,7 +89,7 @@ export default async function decorate(block) {
   image.classList.add('featured-content-image');
   const imageInfo = image.querySelector('picture img');
   image.querySelector('picture').replaceWith(createOptimizedPicture(imageInfo.src, imageInfo.alt, 'eager', [{ width: '327' }]));
-  image.append(div({ class: 'source-tag' }, isAdobe ? 'By Adobe' : 'By External'));
+  image.append(div({ class: 'source-tag' }, isAdobe ? placeholders.article-adobe-tag : placeholders.article-external-tag));
   if (content.children?.length >= 1) {
     buildFeaturedContent(content, isAdobe);
   }
