@@ -258,6 +258,7 @@
 .browse-card .browse-card-footer .browse-card-cta-element .icon {
   height: 22px;
   width: 22px;
+  fill: var(--non-spectrum-navy-blue);
 }
 .browse-card .browse-card-footer .icon {
   color: var( --non-spectrum-dim-gray);
