@@ -3,12 +3,6 @@ import { createOptimizedPicture } from "../../scripts/lib-franklin.js";
 import { fetchLanguagePlaceholders } from "../../scripts/scripts.js";
 
 let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
 
 /**
  * Fetches content from the provided link and extracts relevant information from the HTML response.
@@ -84,6 +78,12 @@ async function buildFeaturedContent(contentElem, isAdobe) {
  * @returns {Promise<void>} - A promise that resolves when the decoration is complete.
  */
 export default async function decorate(block) {
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
   const [image, content] = block.querySelectorAll(':scope div > div');
   const isAdobe = block.getAttribute('class').includes('adobe');
   image.classList.add('featured-content-image');
