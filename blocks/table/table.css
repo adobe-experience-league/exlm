@@ -1,7 +1,6 @@
 .table {
   margin-bottom: 21px;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: auto hidden;
 }
 .table::-webkit-scrollbar {
   background: var(--non-spectrum-hover-bg);
@@ -240,14 +239,14 @@
 }
 
 .table.html-authored table tbody tr:nth-child(even) {
-  background-color: unset;
+  background-color: var(--background-color);
 }
 .table.html-authored table tbody tr:nth-child(odd) {
   background-color: var(--non-spectrum-bg);
 }
 
 .table.html-authored.no-header table tbody tr:nth-child(odd) {
-  background-color: unset;
+  background-color: var(--background-color);
 }
 .table.html-authored.no-header table tbody tr:nth-child(even) {
   background-color: var(--non-spectrum-bg);
