@@ -30,14 +30,14 @@ async function buildFeaturedContent(contentElem) {
   let contentDiv;
   contentElem.innerHTML = '';
 
-  contentDiv = div({ class: 'content-details' },
+  contentDiv = div({ class: 'description' },
     h2(contentInfo.contentTitle),
-    div({ class: 'content-description' }, contentInfo.contentDescription),
+    p(contentInfo.contentDescription),
     div({ class: 'button-container' },
       a({ href: link[0].href, class: 'button primary' }, 'Read Article'),
     ),
-    div({ class: 'author-container' }),
-  );
+  ),
+  div({ class: 'author-container' });
 
   contentInfo.authorInfo.forEach((author) => {
     console.log(author);
