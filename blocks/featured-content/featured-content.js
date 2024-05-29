@@ -1,4 +1,4 @@
-import { a, div, h2 } from "../../scripts/dom-helpers.js";
+import { a, div, h2, p } from "../../scripts/dom-helpers.js";
 import { createOptimizedPicture } from "../../scripts/lib-franklin.js";
 
 export async function getContentReference(link) {
@@ -34,7 +34,7 @@ async function buildFeaturedContent(contentElem) {
     h2(contentInfo.contentTitle),
     p(contentInfo.contentDescription),
     div({ class: 'button-container' },
-      a({ href: link[0].href, class: 'button primary' }, 'Read Article'),
+      div({ href: link[0].href, 'aria-label': 'Read Article', class: 'button primary' }, 'Read Article'),
     ),
   ),
   div({ class: 'author-container' });
