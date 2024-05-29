@@ -27,17 +27,16 @@ export async function getContentReference(link) {
 async function buildFeaturedContent(contentElem) {
   const link = contentElem.querySelectorAll('a');
   const contentInfo = await getContentReference(link[0].href);
-  let contentDiv;
   contentElem.innerHTML = '';
 
-  contentDiv = div({ class: 'description' },
+  const contentDiv = div({ class: 'description' },
     h2(contentInfo.contentTitle),
     p(contentInfo.contentDescription),
     div({ class: 'button-container' },
-      div({ href: link[0].href, 'aria-label': 'Read Article', class: 'button primary' }, 'Read Article'),
+      a({ href: link[0].href, 'aria-label': 'Read Article', class: 'button primary' }, 'Read Article'),
     ),
-  ),
-  div({ class: 'author-container' });
+  );
+  const authorDiv = div({ class: 'author-container' });
 
   contentInfo.authorInfo.forEach((author) => {
     console.log(author);
@@ -53,7 +52,7 @@ async function buildFeaturedContent(contentElem) {
       div({class: 'author-details'}, div( authorName)),
     );
 
-    if (authorDiv) contentDiv.lastChild.appendChild(authorDiv);
+    if (authorDiv) authorDiv.appendChild(authorDiv);
   });
 
   contentElem.appendChild(contentDiv);
