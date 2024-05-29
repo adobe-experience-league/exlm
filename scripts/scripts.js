@@ -339,9 +339,6 @@ export function decorateExternalLinks(main) {
       if (a.hostname !== window.location.hostname) {
         a.setAttribute('target', '_blank');
       }
-      if (!href.startsWith('/') && !href.startsWith('http')) {
-        a.href = `//${href}`;
-      }
     }
   });
 }
