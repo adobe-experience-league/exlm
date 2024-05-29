@@ -36,10 +36,9 @@ async function buildFeaturedContent(contentElem) {
       a({ href: link[0].href, 'aria-label': 'Read Article', class: 'button primary' }, 'Read Article'),
     ),
   );
-  const authorDiv = div({ class: 'author-container' });
+  const authorContainer = div({ class: 'author-container' });
 
   contentInfo.authorInfo.forEach((author) => {
-    console.log(author);
     const authorName = author.querySelector('div:nth-child(2) > div')?.innerText;
     const authorPicture = author.querySelector('div:first-child picture img')?.src;
     const company = author.querySelector('div').classList[1];
@@ -52,10 +51,11 @@ async function buildFeaturedContent(contentElem) {
       div({class: 'author-details'}, div( authorName)),
     );
 
-    if (authorDiv) authorDiv.appendChild(authorDiv);
+    if (authorDiv) authorContainer.append(authorDiv);
   });
 
   contentElem.appendChild(contentDiv);
+  contentElem.appendChild(authorContainer);
 }
 
 export default async function decorate(block) {
