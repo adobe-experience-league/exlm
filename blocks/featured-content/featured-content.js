@@ -64,7 +64,8 @@ export default async function decorate(block) {
 
   // to make css simpler, add classes to the elements
   image.classList.add('featured-content-image');
-  image.closest('picture').replaceWith(createOptimizedPicture(image.querySelector('img').src, image.querySelector('img').alt, 'eager', [{ width: '327' }]));
+  const imageInfo = image.querySelector('picture img');
+  image.querySelector('picture').replaceWith(createOptimizedPicture(imageInfo.src, imageInfo.alt, 'eager', [{ width: '327' }]));
 
   // check if featured authors have bio links
   if (content.children?.length >= 1) {
