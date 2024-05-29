@@ -1,6 +1,11 @@
 import { a, div, h2, p } from "../../scripts/dom-helpers.js";
 import { createOptimizedPicture } from "../../scripts/lib-franklin.js";
 
+/**
+ * Fetches content from the provided link and extracts relevant information from the HTML response.
+ * @param {string} link - The URL of the content to fetch.
+ * @returns {Promise<Object>} A promise that resolves to an object containing the extracted content information.
+ */
 export async function getContentReference(link) {
   return fetch(link)
     .then((response) => response.text())
@@ -9,7 +14,6 @@ export async function getContentReference(link) {
       const htmlDoc = parser.parseFromString(html, 'text/html');
       const title = htmlDoc.title;
       const description = htmlDoc.querySelector('main div p')?.textContent;
-      // const authorBio = [...htmlDoc.querySelector('.author-bio')?.children].map((row) => row.firstElementChild);
       const authorBio = htmlDoc.querySelectorAll('.author-bio');
 
       return {
@@ -24,6 +28,12 @@ export async function getContentReference(link) {
     });
 }
 
+/**
+ * Builds the featured content block.
+ *
+ * @param {HTMLElement} contentElem - The element representing the featured content block.
+ * @returns {Promise<void>} - A promise that resolves when the featured content is built.
+ */
 async function buildFeaturedContent(contentElem) {
   const link = contentElem.querySelectorAll('a');
   const contentInfo = await getContentReference(link[0].href);
@@ -57,16 +67,19 @@ async function buildFeaturedContent(contentElem) {
   contentDiv.parentNode.nextSibling.replaceWith(authorContainer);
 }
 
+/**
+ * Decorates a block with featured content.
+ *
+ * @param {HTMLElement} block - The block element to decorate.
+ * @returns {Promise<void>} - A promise that resolves when the decoration is complete.
+ */
 export default async function decorate(block) {
-  // get the cells
   const [image, content] = block.querySelectorAll(':scope div > div');
-
-  // to make css simpler, add classes to the elements
+  const classes = block.getAttribute('class');
   image.classList.add('featured-content-image');
   const imageInfo = image.querySelector('picture img');
   image.querySelector('picture').replaceWith(createOptimizedPicture(imageInfo.src, imageInfo.alt, 'eager', [{ width: '327' }]));
-
-  // check if featured authors have bio links
+  image.append(div({ class: 'source-tag' }));
   if (content.children?.length >= 1) {
     buildFeaturedContent(content);
   }
