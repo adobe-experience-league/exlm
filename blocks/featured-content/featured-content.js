@@ -54,7 +54,7 @@ async function buildFeaturedContent(contentElem) {
     if (authorDiv) authorContainer.append(authorDiv);
   });
   contentElem.replaceWith(contentDiv);
-  contentDiv.parentNode.append(authorContainer);
+  contentDiv.nextSibling.replaceWith(authorContainer);
 }
 
 export default async function decorate(block) {
