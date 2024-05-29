@@ -327,6 +327,10 @@ indices:
       robots:
         select: head > meta[name="robots"]
         value: attribute(el, "content")
+      lastModified:
+        select: none
+        value: |
+          parseTimestamp(headers['last-update'], 'ddd MMM DD YYYY hh:mm:ss GMT')
   sitemap-en-2: &base-sitemap-2
     target: /en/sitemap-index-2.json
     include:
@@ -346,7 +350,10 @@ indices:
       robots:
         select: head > meta[name="robots"]
         value: attribute(el, "content")
-
+      lastModified:
+        select: none
+        value: |
+          parseTimestamp(headers['last-update'], 'ddd MMM DD YYYY hh:mm:ss GMT')
   sitemap-fr-1:
     <<: *base-sitemap-1
     include:
