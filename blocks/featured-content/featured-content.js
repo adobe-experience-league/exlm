@@ -1,4 +1,4 @@
-import { a, div, h2, img } from "../../scripts/dom-helpers.js";
+import { a, div, h2 } from "../../scripts/dom-helpers.js";
 
 export async function getContentReference(link) {
   return fetch(link)
@@ -63,7 +63,7 @@ export default async function decorate(block) {
 
   // to make css simpler, add classes to the elements
   image.classList.add('featured-content-image');
-  image.closest('pictue').replaceWith(createOptimizedPicture(image.querySelector('img').src, image.querySelector('img').alt, 'eager', [{ width: '327' }]));
+  image.closest('picture').replaceWith(createOptimizedPicture(image.querySelector('img').src, image.querySelector('img').alt, 'eager', [{ width: '327' }]));
 
   // check if featured authors have bio links
   if (content.children?.length >= 1) {
