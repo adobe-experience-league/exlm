@@ -1,6 +1,7 @@
 /* mobile */
 .email-card {
-    max-width: 386px;
+    box-sizing: border-box;
+    max-width: 318px;
     padding: 24px 24px 32px 24px;
     background: #FFFFFF 0% 0% no-repeat padding-box;
     box-shadow: 0px 3px 8px #00000014;
@@ -47,14 +48,14 @@
 /* tablet */
 @media (min-width: 600px) {
     .email-card {
-        width: 308px;
+        max-width: 308px;
     }
 }
 
 /* desktop */
 @media (min-width: 900px) {
     .email-card {
-        width: 386px;
+        max-width: 386px;
         padding: 32px 36px 40px 24px;
     }
 
