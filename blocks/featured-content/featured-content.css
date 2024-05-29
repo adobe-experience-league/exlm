@@ -94,6 +94,10 @@
   }
 
   /*  the author info entries */
+  .featured-content.block .author-container {
+    display: flex;
+    flex-direction: row;
+  }
 
   .featured-content.block .author {
     display: flex;
