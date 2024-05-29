@@ -1,4 +1,5 @@
 import { a, div, h2 } from "../../scripts/dom-helpers.js";
+import { createOptimizedPicture } from "../../scripts/lib-franklin.js";
 
 export async function getContentReference(link) {
   return fetch(link)
