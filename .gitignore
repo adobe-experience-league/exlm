@@ -10,4 +10,3 @@ helix-importer-ui
 /scripts/coveo-headless/libs/node_modules*
 .aio
 .env
-paths.json
