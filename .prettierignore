@@ -6,6 +6,7 @@ scripts/prism-grammars/**
 scripts/**/**.css
 scripts/universal-editor-embedded.js
 scripts/coveo-headless/libs/browser/*
+scripts/crypto.js
 plugins/rum-conversion/**
 scripts/analytics/privacy-standalone.js
 scripts/feedback/qualtrics/qualtrics-embed.js
