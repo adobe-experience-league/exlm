@@ -36,6 +36,7 @@ async function buildFeaturedContent(contentElem) {
     div({ class: 'button-container' },
       a({ href: link[0].href, class: 'button primary' }, 'Read Article'),
     ),
+    div({ class: 'author-container' }),
   );
 
   contentInfo.authorInfo.forEach((author) => {
@@ -52,7 +53,7 @@ async function buildFeaturedContent(contentElem) {
       div({class: 'author-details'}, div( authorName)),
     );
 
-    if (authorDiv) contentDiv.appendChild(authorDiv);
+    if (authorDiv) contentDiv.lastChild.appendChild(authorDiv);
   });
 
   contentElem.appendChild(contentDiv);
