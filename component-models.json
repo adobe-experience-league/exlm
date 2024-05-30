@@ -2881,6 +2881,7 @@
         "component": "reference",
         "valueType": "string",
         "name": "img",
+        "required": true,
         "label": "Image"
       },
       {
@@ -2932,6 +2933,7 @@
         "valueType": "string",
         "name": "content_link",
         "value": "",
+        "required": true,
         "label": "Content Page"
       },
       {
@@ -2945,7 +2947,7 @@
         "component": "text",
         "valueType": "string",
         "name": "content_cta",
-        "value": "Read article",
+        "value": "Read Article",
         "label": "Content CTA Text"
       }
     ]
