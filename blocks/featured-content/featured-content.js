@@ -1,6 +1,6 @@
-import { a, div, h2, p } from "../../scripts/dom-helpers.js";
-import { createOptimizedPicture } from "../../scripts/lib-franklin.js";
-import { fetchLanguagePlaceholders } from "../../scripts/scripts.js";
+import { a, div, h2, p } from '../../scripts/dom-helpers.js';
+import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 let placeholders = {};
 try {
@@ -21,12 +21,11 @@ export async function getContentReference(link) {
     .then((html) => {
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(html, 'text/html');
-      const title = htmlDoc.title;
       const description = htmlDoc.querySelector('main div p')?.textContent;
       const authorBio = htmlDoc.querySelectorAll('.author-bio');
 
       return {
-        contentTitle: title,
+        contentTitle: htmlDoc.title,
         contentDescription: description,
         authorInfo: authorBio,
       };
@@ -52,11 +51,16 @@ async function buildFeaturedContent(contentElem, isAdobe) {
   const contentDescription = desc ? desc.textContent : contentInfo.contentDescription.replace(/^SUMMARY: /, '');
   contentElem.innerHTML = '';
 
-  const contentDiv = div({ class: 'description' },
+  const contentDiv = div(
+    { class: 'description' },
     h2(contentInfo.contentTitle),
     p(contentDescription),
-    div({ class: 'button-container' },
-      a({ href: link[0].href, 'aria-label': 'Read Article', class: 'button secondary' }, btnLabel ? btnLabel.textContent : 'Read Article'),
+    div(
+      { class: 'button-container' },
+      a(
+        { href: link[0].href, 'aria-label': 'Read Article', class: 'button secondary' },
+        btnLabel ? btnLabel.textContent : 'Read Article',
+      ),
     ),
   );
   const authorContainer = div({ class: 'author-container' });
@@ -64,14 +68,15 @@ async function buildFeaturedContent(contentElem, isAdobe) {
   contentInfo.authorInfo.forEach((author) => {
     const authorName = author.querySelector('div:nth-child(2) > div')?.innerText;
     const authorPicture = author.querySelector('div:first-child picture img')?.src;
-    const authorDiv = div({ class: 'author' },
-      div({class: 'author-image'},
+    const authorDiv = div(
+      { class: 'author' },
+      div(
+        { class: 'author-image' },
         createOptimizedPicture(authorPicture, authorName, 'eager', [{ width: '100' }]),
-        div({class: `company-dot ${company}`})
+        div({ class: `company-dot ${company}` }),
       ),
-      div({class: 'author-details'}, div( authorName)),
+      div({ class: 'author-details' }, div(authorName)),
     );
-
     if (authorDiv) authorContainer.append(authorDiv);
   });
   contentElem.replaceWith(contentDiv);
@@ -89,7 +94,9 @@ export default async function decorate(block) {
   const isAdobe = block.getAttribute('class').includes('adobe');
   image.classList.add('featured-content-image');
   const imageInfo = image.querySelector('picture img');
-  image.querySelector('picture').replaceWith(createOptimizedPicture(imageInfo.src, imageInfo.alt, 'eager', [{ width: '327' }]));
+  image
+    .querySelector('picture')
+    .replaceWith(createOptimizedPicture(imageInfo.src, imageInfo.alt, 'eager', [{ width: '327' }]));
   image.append(div({ class: 'source-tag' }, isAdobe ? placeholders.articleAdobeTag : placeholders.articleExternalTag));
   if (content.children?.length >= 1) {
     buildFeaturedContent(content, isAdobe);
