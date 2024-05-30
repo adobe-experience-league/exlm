@@ -672,6 +672,7 @@ export function getConfig() {
 
   window.exlm = window.exlm || {};
   window.exlm.config = {
+    isProd,
     ims,
     currentEnv,
     cdnOrigin,
