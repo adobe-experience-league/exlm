@@ -890,6 +890,51 @@
               }
             }
           }
+        },
+        {
+          "title": "Entitled Products",
+          "id": "entitled-products",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Entitled Products",
+                  "model": "entitled-products"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Learning Interests",
+          "id": "learning-interests",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Learning Interests",
+                  "model": "learning-interests"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "More Product Interests",
+          "id": "more-product-interests",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "More Product Interests",
+                  "model": "more-product-interests"
+                }
+              }
+            }
+          }
         }
       ]
     }

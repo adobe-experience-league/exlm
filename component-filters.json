@@ -99,7 +99,10 @@
       "adobe-account-card",
       "data-and-email-consent",
       "role-cards",
-      "user-profile-card"
+      "user-profile-card",
+      "entitled-products",
+      "learning-interests",
+      "more-product-interests"
     ]
   },
   {
@@ -112,7 +115,10 @@
       "adobe-account-card",
       "data-and-email-consent",
       "role-cards",
-      "user-profile-card"
+      "user-profile-card",
+      "entitled-products",
+      "learning-interests",
+      "more-product-interests"
     ]
   },
   {
