@@ -1,7 +1,7 @@
 .guide-list-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 0;
 }
 
 .guide-list-header {
