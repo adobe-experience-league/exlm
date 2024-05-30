@@ -187,7 +187,11 @@ class ProfileClient {
         })
           .then((res) => res.json())
           .then((data) => {
-            if (!sessionStorage.getItem(postSignInStreamKey)) {
+            // FIXME: hostname check to be removed later.
+            if (
+              window.location.hostname !== 'experienceleague.adobe.com' &&
+              !sessionStorage.getItem(postSignInStreamKey)
+            ) {
               initStream();
               sessionStorage.setItem(postSignInStreamKey, 'true');
             }
