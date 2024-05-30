@@ -1,3 +1,5 @@
+let isNoticeVisible = false;
+
 const noticeTemplate = (info) => {
   const noticeContent = document.createElement('div');
   noticeContent.className = 'exl-toast';
@@ -17,16 +19,27 @@ export const tooltipTemplate = (sel, label = '', tiptext) => {
 };
 
 export const sendNotice = (noticelabel) => {
+  if (isNoticeVisible) return;
+
   const sendNoticeContent = noticeTemplate(noticelabel);
-  document.body.prepend(sendNoticeContent);
+  const dialog = document.querySelector('dialog');
+  if (dialog) {
+    dialog.prepend(sendNoticeContent);
+  } else {
+    document.body.prepend(sendNoticeContent);
+  }
+  isNoticeVisible = true;
+
   const isExlNotice = document.querySelector('.exl-toast');
   if (isExlNotice) {
     document.querySelector('.exl-toast .icon-close').addEventListener('click', () => {
       isExlNotice.remove();
+      isNoticeVisible = false;
     });
 
     setTimeout(() => {
       isExlNotice.remove();
+      isNoticeVisible = false;
     }, 3000);
   }
 };

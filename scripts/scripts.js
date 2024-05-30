@@ -233,6 +233,39 @@ function addArticleLandingRail(main) {
 }
 
 /**
+ * Check if current page is a Profile page.
+ * theme = profile is set in bulk metadata for /en/profile** paths.
+ */
+export function isProfilePage() {
+  const theme = getMetadata('theme');
+  return theme.toLowerCase().startsWith('profile');
+}
+
+/**
+ * Add a left rail to the profile page.
+ * @param {HTMLElement} main
+ *
+ */
+function addProfileRail(main) {
+  const profileRailSection = document.createElement('div');
+  profileRailSection.classList.add('profile-rail-section');
+  profileRailSection.append(buildBlock('profile-rail', []));
+  main.prepend(profileRailSection);
+}
+
+/**
+ * Add a nav tab to the profile page.
+ * @param {HTMLElement} main
+ *
+ */
+function addProfileTab(main) {
+  const profileTabSection = document.createElement('div');
+  profileTabSection.classList.add('profile-tab-section');
+  profileTabSection.append(buildBlock('profile-tab', []));
+  main.prepend(profileTabSection);
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -246,6 +279,10 @@ function buildAutoBlocks(main) {
     }
     if (isArticleLandingPage()) {
       addArticleLandingRail(main);
+    }
+    if (isProfilePage()) {
+      addProfileRail(main);
+      addProfileTab(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -301,9 +338,6 @@ export function decorateExternalLinks(main) {
     } else if (!href.startsWith('#')) {
       if (a.hostname !== window.location.hostname) {
         a.setAttribute('target', '_blank');
-      }
-      if (!href.startsWith('/') && !href.startsWith('http')) {
-        a.href = `//${href}`;
       }
     }
   });
@@ -525,7 +559,11 @@ export function decoratePreviousImage(textNode) {
  * @param {HTMLElement} element
  */
 export function decorateInlineAttributes(element) {
-  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  const ignoredElements = ['pre', 'code', 'script', 'style'];
+  const isParentIgnored = (node) => ignoredElements.includes(node?.parentElement?.tagName?.toLowerCase());
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, (node) =>
+    isParentIgnored(node) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
+  );
   while (walker.nextNode()) {
     const { currentNode } = walker;
     decorateInlineText(currentNode);
@@ -627,13 +665,14 @@ export function getConfig() {
   };
 
   let launchScriptSrc;
-  if (isProd) launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
+  if (isProd) launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-7a902c4895c3.min.js';
   else if (isStage)
     launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
 
   window.exlm = window.exlm || {};
   window.exlm.config = {
+    isProd,
     ims,
     currentEnv,
     cdnOrigin,
@@ -663,6 +702,14 @@ export function getConfig() {
     automaticTranslationLink: `/${lang}/docs/contributor/contributor-guide/localization/machine-translation`,
     // Recommended Courses
     recommendedCoursesUrl: `${cdnOrigin}/home?lang=${lang}#dashboard/learning`,
+    // Adobe account
+    adobeAccountURL: isProd ? 'https://account.adobe.com/' : 'https://stage.account.adobe.com/',
+    // Community Account
+    communityAccountURL: isProd
+      ? 'https://experienceleaguecommunities.adobe.com/'
+      : 'https://experienceleaguecommunities-dev.adobe.com/',
+    // Stream API
+    eventSourceStreamUrl: '/api/stream',
   };
   return window.exlm.config;
 }
