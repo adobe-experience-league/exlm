@@ -109,14 +109,27 @@
     font-weight: normal;
     color: var(--spectrum-gray-800);
 }
+
+@media (min-width: 600px) {
+    body.profile .profile-card-header {
+        flex-direction: column;
+    }
+
+    .profile-card-header {
+        flex-direction: row;
+    }
+}
+
 @media (min-width: 900px) {
-.profile-card-header {
-    flex-direction: row;
-    align-items: center;
-    gap: 0;
-}
-.profile-card-header .manage-adobe-account a > .icon-new-tab,
-.profile-card-header .manage-community-account a > .icon-new-tab {
-    margin-left: 0;
-}
+    body.profile .profile-card-header,
+    .profile-card-header {
+        flex-direction: row;
+        align-items: center;
+        gap: 0;
+    }
+
+    .profile-card-header .manage-adobe-account a > .icon-new-tab,
+    .profile-card-header .manage-community-account a > .icon-new-tab {
+        margin-left: 0;
+    }
 }
