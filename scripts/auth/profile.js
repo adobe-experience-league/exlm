@@ -6,7 +6,7 @@ import loadJWT from './jwt.js';
 import csrf from './csrf.js';
 
 const { profileUrl, JWTTokenUrl, ppsOrigin, ims, isProd } = getConfig();
-
+const postSignInStreamKey = 'POST_SIGN_IN_STREAM';
 const override = /^(recommended|votes)$/;
 
 export async function isSignedInUser() {
