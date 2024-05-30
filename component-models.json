@@ -2466,6 +2466,13 @@
     "id": "page-metadata",
     "fields": [
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      },
+      {
         "component": "select",
         "valueType": "string",
         "name": "article-theme",

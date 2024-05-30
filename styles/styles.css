@@ -140,6 +140,7 @@ strong {
   --footer-background-color: #fafafa;
   --footer-border-color: #e1e1e1;
   --box-back-drop-shadow: rgba(0 0 0 / 15%);
+  --highlighted-text-color: rgb(255 255 0 / 20%);
   /* Placeholder */
   --shimmer-image-slide-start: #ececec;
   --shimmer-image-slide-mid: #ddd;
@@ -542,10 +543,16 @@ hr {
   border-bottom: 1px solid var(--overlay-background-color);
 }
 
+/** yellow highlighted section **/
+.section.highlighted {
+  background-color: var(--highlighted-text-color);
+}
+
+/** yellow highlighted inline text **/
 em:has(> u) {
   text-decoration: none;
   font-style: normal;
-  background-color: rgba(255, 255, 0, 0.2);
+  background-color: var(--highlighted-text-color);
   display: inline-block;
 }
 

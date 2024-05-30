@@ -2,8 +2,6 @@
 import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { loadCSS, loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../lib-franklin.js';
 
-loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow.css`);
-
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -47,7 +45,7 @@ const createSignupDialog = () => {
   const signupDialog = htmlToElement(`
         <dialog class="signup-dialog">
             <div class="signup-dialog-close-bar">
-                <a href="#" class="signup-dialog-close-btn close-btn">
+                <a class="signup-dialog-close-btn close-btn">
                     <span class="close-text">${placeholders?.closeBtnLabel}</span>
                     <div class="close-icon-holder">
                         <span class="icon icon-close"></span>
@@ -251,5 +249,8 @@ const createSignupDialog = () => {
  * Loads the necessary CSS and creates the signup dialog.
  */
 export default function initializeSignupFlow() {
-  createSignupDialog();
+  const signupCSSLoaded = loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow.css`);
+  signupCSSLoaded.then(() => {
+    createSignupDialog();
+  });
 }
