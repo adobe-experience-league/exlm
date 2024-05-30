@@ -99,17 +99,17 @@ function updateUEInstrumentation() {
     // update available sections
     setUEFilter(main, 'main-profile');
     main.querySelectorAll('.section').forEach((elem) => {
-      setUEFilter(elem, 'section-profile');
+      setUEFilter(elem, 'profile-section');
     });
   }
 
   // ----- if signup-flow-modal pages, identified by theme
   if (document.querySelector('body[class^=signup]')) {
     // update available sections
-    setUEFilter(main, 'empty');
-    // update the only available default section
-    const section = main.querySelector('.section');
-    setUEFilter(section, 'section-profile-signup');
+    setUEFilter(main, 'main-signup');
+    main.querySelectorAll('.section').forEach((elem) => {
+      setUEFilter(elem, 'sign-up-flow-section');
+    });
   }
 }
 
