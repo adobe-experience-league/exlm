@@ -5,7 +5,7 @@ import initStream from '../events/signup-event-stream.js';
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
 
-const { profileUrl, JWTTokenUrl, ppsOrigin, ims } = getConfig();
+const { profileUrl, JWTTokenUrl, ppsOrigin, ims, isProd } = getConfig();
 
 const postSignInStreamKey = 'POST_SIGN_IN_STREAM';
 const override = /^(recommended|votes)$/;
@@ -188,10 +188,7 @@ class ProfileClient {
           .then((res) => res.json())
           .then((data) => {
             // FIXME: hostname check to be removed later.
-            if (
-              window.location.hostname !== 'experienceleague.adobe.com' &&
-              !sessionStorage.getItem(postSignInStreamKey)
-            ) {
+            if (!isProd && !sessionStorage.getItem(postSignInStreamKey)) {
               initStream();
               sessionStorage.setItem(postSignInStreamKey, 'true');
             }
