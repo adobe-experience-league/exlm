@@ -1,5 +1,7 @@
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { COMMUNITY_SEARCH_FACET } from '../../scripts/browse-card/browse-cards-constants.js';
+
+const { isProd } = getConfig();
 
 const SUB_FACET_MAP = {
   Community: COMMUNITY_SEARCH_FACET,
@@ -71,6 +73,7 @@ const contentType = [
     value: 'Article',
     title: 'Article',
     description: 'Real-world customer perspectives and use-cases of Experience Cloud products.',
+    disabled: isProd,
   },
   {
     id: 'Community',
@@ -110,13 +113,17 @@ const contentType = [
     description:
       'Brief instructional material with step-by-step instructions to learn a specific skill or accomplish a specific task.',
   },
-].map((role) => ({
-  ...role,
-  ...(placeholders[`filterContentType${role.id}Title`] && { title: placeholders[`filterContentType${role.id}Title`] }),
-  ...(placeholders[`filterContentType${role.id}Description`] && {
-    description: placeholders[`filterContentType${role.id}Description`],
-  }),
-}));
+]
+  .filter((type) => !type.disabled)
+  .map((role) => ({
+    ...role,
+    ...(placeholders[`filterContentType${role.id}Title`] && {
+      title: placeholders[`filterContentType${role.id}Title`],
+    }),
+    ...(placeholders[`filterContentType${role.id}Description`] && {
+      description: placeholders[`filterContentType${role.id}Description`],
+    }),
+  }));
 
 /**
  * Array containing expLevel (Experience Level) with associated metadata.
