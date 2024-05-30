@@ -48,7 +48,8 @@
       "block-quote",
       "callout",
       "featured-authors",
-      "inline-survey"
+      "inline-survey",
+      "featured-content"
     ]
   },
   {
@@ -127,7 +128,8 @@
       "author-summary",
       "social-share",
       "featured-authors",
-      "inline-survey"
+      "inline-survey",
+      "featured-content"
     ]
   },
   {
