@@ -22,7 +22,12 @@ export const sendNotice = (noticelabel) => {
   if (isNoticeVisible) return;
 
   const sendNoticeContent = noticeTemplate(noticelabel);
-  document.body.prepend(sendNoticeContent);
+  const dialog = document.querySelector('dialog');
+  if (dialog) {
+    dialog.prepend(sendNoticeContent);
+  } else {
+    document.body.prepend(sendNoticeContent);
+  }
   isNoticeVisible = true;
 
   const isExlNotice = document.querySelector('.exl-toast');
