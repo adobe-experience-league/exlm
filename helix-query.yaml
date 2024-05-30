@@ -19,9 +19,9 @@ indices:
         value: |
           attribute(el, 'content')
       lastModified:
-        select: none
+        select: head > meta[name="last-update"]
         value: |
-          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+          parseTimestamp(attribute(el, "content"), 'ddd MMM DD YYYY hh:mm:ss GMT')
       robots:
         select: head > meta[name="robots"]
         value: attribute(el, "content")
@@ -105,9 +105,9 @@ indices:
         value: |
           attribute(el, 'content')
       lastModified:
-        select: none
+        select: head > meta[name="last-update"]
         value: |
-          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+          parseTimestamp(attribute(el, "content"), 'ddd MMM DD YYYY hh:mm:ss GMT')
       robots:
         select: head > meta[name="robots"]
         value: attribute(el, "content")
@@ -194,9 +194,9 @@ indices:
         value: |
           attribute(el, 'content')
       lastModified:
-        select: none
+        select: head > meta[name="last-update"]
         value: |
-          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+          parseTimestamp(attribute(el, "content"), 'ddd MMM DD YYYY hh:mm:ss GMT')
       robots:
         select: head > meta[name="robots"]
         value: attribute(el, "content")
@@ -327,6 +327,10 @@ indices:
       robots:
         select: head > meta[name="robots"]
         value: attribute(el, "content")
+      lastModified:
+        select: head > meta[name="last-update"]
+        value: |
+          parseTimestamp(attribute(el, "content"), 'ddd MMM DD YYYY hh:mm:ss GMT')
   sitemap-en-2: &base-sitemap-2
     target: /en/sitemap-index-2.json
     include:
@@ -346,7 +350,10 @@ indices:
       robots:
         select: head > meta[name="robots"]
         value: attribute(el, "content")
-
+      lastModified:
+        select: head > meta[name="last-update"]
+        value: |
+          parseTimestamp(attribute(el, "content"), 'ddd MMM DD YYYY hh:mm:ss GMT')
   sitemap-fr-1:
     <<: *base-sitemap-1
     include:

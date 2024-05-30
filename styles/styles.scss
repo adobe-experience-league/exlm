@@ -12,6 +12,7 @@
   --footer-background-color: #fafafa;
   --footer-border-color: #e1e1e1;
   --box-back-drop-shadow: rgba(0 0 0 / 15%);
+  --highlighted-text-color: rgb(255 255 0 / 20%);
 
   /* Placeholder */
   --shimmer-image-slide-start: #ececec;
@@ -432,10 +433,16 @@ hr {
   border-bottom: 1px solid var(--overlay-background-color);
 }
 
+/** yellow highlighted section **/
+.section.highlighted {
+  background-color: var(--highlighted-text-color);
+}
+
+/** yellow highlighted inline text **/
 em:has(> u) {
   text-decoration: none;
   font-style: normal;
-  background-color: rgb(255 255 0 / 20%);
+  background-color: var(--highlighted-text-color);
   display: inline-block;
 }
 
@@ -1456,13 +1463,6 @@ body.profile .section:nth-child(3) {
   padding-top: 60px;
 }
 
-body.profile .section:not(.profile-tab-section, .profile-rail-section):last-child {
-  margin-bottom: 0;
-  border-radius: 20px 20px 0 0;
-  border-bottom: 0;
-  padding-bottom: 80px;
-}
-
 @include breakpoint('tablet') {
   body.profile .section[data-two-column-layout] {
     display: grid;
@@ -1526,6 +1526,6 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section):last-chil
   }
 
   body.profile .section:not(.profile-tab-section, .profile-rail-section) {
-    margin-bottom: 2em;
+    margin-bottom: 32px;
   }
 }

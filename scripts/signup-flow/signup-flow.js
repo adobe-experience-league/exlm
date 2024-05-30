@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-cycle
-import { decorateMain, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
-import { loadBlocks, loadCSS, decorateIcons } from '../lib-franklin.js';
+import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
+import { loadCSS, loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../lib-franklin.js';
 
 let placeholders = {};
 try {
@@ -45,15 +45,14 @@ const createSignupDialog = () => {
   const signupDialog = htmlToElement(`
         <dialog class="signup-dialog">
             <div class="signup-dialog-close-bar">
-                <a href="#" class="signup-dialog-close-btn">
+                <a class="signup-dialog-close-btn close-btn">
                     <span class="close-text">${placeholders?.closeBtnLabel}</span>
                     <div class="close-icon-holder">
                         <span class="icon icon-close"></span>
                     </div>
                 </a>
             </div>
-            <div class="signup-dialog-container">   
-                                           
+            <div class="signup-dialog-container">                                           
                 <div class="signup-dialog-header">
                     <div class="signup-dialog-header-decor"></div>
                     <div class="signup-dialog-nav-bar">
@@ -61,7 +60,8 @@ const createSignupDialog = () => {
                         <div class="signup-dialog-title"></div>
                         <div class="signup-dialog-actions">
                             <button class="next-btn">${placeholders?.nextBtnLabel}</button>
-                            <button class="finish-btn content-hidden">${placeholders?.finishBtnLabel}</button>
+                            <button class="finish-btn">${placeholders?.finishBtnLabel}</button>
+                            <button class="close-btn">${placeholders?.closeBtnLabel}</button>
                         </div>
                     </div>
                 </div>
@@ -95,7 +95,8 @@ const createSignupDialog = () => {
         signupContent.setAttribute('data-current-page-index', index);
         signupContainer.className = `signup-dialog-container ${pages[index].name}-container`;
         signupContent.innerHTML = pageContent;
-        decorateMain(signupContent);
+        decorateSections(signupContent);
+        decorateBlocks(signupContent);
         await loadBlocks(signupContent);
         await decorateIcons(signupDialog);
         return true;
@@ -119,10 +120,12 @@ const createSignupDialog = () => {
     const prevBtn = navContainer.querySelector('.prev-btn');
     const nextBtn = navContainer.querySelector('.next-btn');
     const finishBtn = navContainer.querySelector('.finish-btn');
+    const closeBtn = navContainer.querySelector('.close-btn');
 
     prevBtn.classList.toggle('visibility-hidden', pageIndex === 0);
-    nextBtn.classList.toggle('content-hidden', pageIndex === pages.length - 1);
-    finishBtn.classList.toggle('content-hidden', pageIndex !== pages.length - 1);
+    nextBtn.classList.toggle('content-hidden', pageIndex > 1);
+    finishBtn.classList.toggle('content-hidden', pageIndex !== 2);
+    closeBtn.classList.toggle('content-hidden', pageIndex < pages.length - 1);
 
     // Generate step flow content based on the current step index
     let flow = '';
@@ -150,6 +153,7 @@ const createSignupDialog = () => {
                   .join('')}
               </div>`;
     } else {
+      dialogTitle.innerHTML = `<h4>${data.title}</h4>`;
       flow = `<div class="signup-dialog-step-flow">
                 <div class="check-icon-shell">
                     <span class="icon icon-checkmark"></span>
@@ -183,11 +187,13 @@ const createSignupDialog = () => {
     loadStepFlow(index);
     const isLoaded = await loadPageContent(index);
     if (isLoaded) {
-      const nextBtn = signupDialog.querySelector('.signup-dialog-nav-bar .next-btn');
       const prevBtn = signupDialog.querySelector('.signup-dialog-nav-bar .prev-btn');
+      const nextBtn = signupDialog.querySelector('.signup-dialog-nav-bar .next-btn');
+      const finishBtn = signupDialog.querySelector('.signup-dialog-nav-bar .finish-btn');
 
-      nextBtn.addEventListener('click', () => handleNavigation(1));
       prevBtn.addEventListener('click', () => handleNavigation(-1));
+      nextBtn.addEventListener('click', () => handleNavigation(1));
+      finishBtn.addEventListener('click', () => handleNavigation(1));
     }
   };
 
@@ -195,8 +201,7 @@ const createSignupDialog = () => {
    * Sets up event handlers for closing the dialog.
    */
   const setupCloseEvents = () => {
-    const signupClose = signupDialog.querySelector('.signup-dialog-close-btn');
-    const finishBtn = signupDialog.querySelector('.signup-dialog-nav-bar .finish-btn');
+    const signupClose = signupDialog.querySelectorAll('.close-btn');
 
     signupDialog.addEventListener('click', (event) => {
       if (event.target === signupDialog) {
@@ -205,16 +210,12 @@ const createSignupDialog = () => {
       }
     });
 
-    signupClose.addEventListener('click', (e) => {
-      e.preventDefault();
-      signupDialog.close();
-      document.body.classList.remove('overflow-hidden');
-    });
-
-    finishBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      signupDialog.close();
-      document.body.classList.remove('overflow-hidden');
+    signupClose.forEach((button) => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        signupDialog.close();
+        document.body.classList.remove('overflow-hidden');
+      });
     });
   };
 
@@ -248,6 +249,8 @@ const createSignupDialog = () => {
  * Loads the necessary CSS and creates the signup dialog.
  */
 export default function initializeSignupFlow() {
-  loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow.css`);
-  createSignupDialog();
+  const signupCSSLoaded = loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow.css`);
+  signupCSSLoaded.then(() => {
+    createSignupDialog();
+  });
 }
