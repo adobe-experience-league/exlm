@@ -2466,6 +2466,13 @@
     "id": "page-metadata",
     "fields": [
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      },
+      {
         "component": "select",
         "valueType": "string",
         "name": "article-theme",
@@ -2930,6 +2937,43 @@
         "name": "legal",
         "value": "",
         "label": "Legal"
+      }
+    ]
+  },
+  {
+    "id": "profile-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Style",
+        "description": "The section style",
+        "valueType": "string",
+        "hidden": true,
+        "options": []
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "two-column-layout",
+        "label": "Enable two-column layout for this section?",
+        "description": "This will enable two-column layout for this particular section."
+      }
+    ]
+  },
+  {
+    "id": "sign-up-flow-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Style",
+        "description": "The section style",
+        "valueType": "string",
+        "hidden": true,
+        "options": []
       }
     ]
   }

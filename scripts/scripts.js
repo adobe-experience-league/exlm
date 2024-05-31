@@ -339,9 +339,6 @@ export function decorateExternalLinks(main) {
       if (a.hostname !== window.location.hostname) {
         a.setAttribute('target', '_blank');
       }
-      if (!href.startsWith('/') && !href.startsWith('http')) {
-        a.href = `//${href}`;
-      }
     }
   });
 }
@@ -668,13 +665,14 @@ export function getConfig() {
   };
 
   let launchScriptSrc;
-  if (isProd) launchScriptSrc = 'https://assets.adobedtm.com/a7d65461e54e/6e9802a06173/launch-43baf8381f4b.min.js';
+  if (isProd) launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-7a902c4895c3.min.js';
   else if (isStage)
     launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
 
   window.exlm = window.exlm || {};
   window.exlm.config = {
+    isProd,
     ims,
     currentEnv,
     cdnOrigin,
@@ -704,6 +702,13 @@ export function getConfig() {
     automaticTranslationLink: `/${lang}/docs/contributor/contributor-guide/localization/machine-translation`,
     // Recommended Courses
     recommendedCoursesUrl: `${cdnOrigin}/home?lang=${lang}#dashboard/learning`,
+    // Adobe account
+    adobeAccountURL: isProd ? 'https://account.adobe.com/' : 'https://stage.account.adobe.com/',
+    // Community Account
+    communityAccountURL: isProd
+      ? 'https://experienceleaguecommunities.adobe.com/'
+      : 'https://experienceleaguecommunities-dev.adobe.com/',
+    // Stream API
     eventSourceStreamUrl: '/api/stream',
   };
   return window.exlm.config;
