@@ -117,7 +117,7 @@
   },
   {
     "id": "product-interests-section",
-    "components": []
+    "components": ["text","title"]
   },
   {
     "id": "article-content-section",
