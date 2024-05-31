@@ -13,12 +13,12 @@ try {
 const MANAGE_ADOBE_ACCOUNT = placeholders?.manageAdobeAccount || 'Manage Adobe account';
 const PRIMARY_EMAIL = placeholders?.primaryEmail || 'Primary email';
 
+const { adobeAccountURL } = getConfig();
+const isSignedIn = await isSignedInUser();
+let email = '';
+
 export default async function decorate(block) {
   block.textContent = '';
-
-  const { adobeAccountURL } = getConfig();
-  const isSignedIn = await isSignedInUser();
-  let email = '';
 
   if (isSignedIn) {
     const profileData = await defaultProfileClient.getMergedProfile();
