@@ -1,39 +1,40 @@
 import { feedbackError } from './feedback/feedback.js'; // eslint-disable-line import/no-cycle
 import { defaultProfileClient } from './auth/profile.js';
 
-export default async function loadQualtrics() {
-  const setExlProfile = async () => {
+// Set the EXL_PROFILE object for the Qualtrics survey
+const setExlProfile = async () => {
   try {
-      const userData = await defaultProfileClient.getMergedProfile();
+    const userData = await defaultProfileClient.getMergedProfile();
 
-      window.EXL_PROFILE = {};
+    window.EXL_PROFILE = {};
 
-      if (userData) {
-        window.EXL_PROFILE = {
-          authenticated: true,
-          adobeEmployee: userData.email.includes('@adobe.com') || false,
-          exlRole: userData.role,
-          exlLearningInterests: userData.interests || [],
-          exlExperienceLevel: userData.level || [],
-        };
-      }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('Error getting user profile:', e);
+    if (userData) {
+      const emailIsString = typeof userData.email === 'string';
+      window.EXL_PROFILE = {
+        authenticated: true,
+        adobeEmployee: emailIsString ? userData.email.includes('@adobe.com') : false,
+        exlRole: userData.role || '',
+        exlLearningInterests: userData.interests || [],
+        exlExperienceLevel: userData.level || [],
+      };
     }
-  };
+  } catch (e) {
+    console.error('Error getting user profile:', e); // eslint-disable-line no-console
+  }
+};
 
-
-  await setExlProfile();
-
-  fetch('/qualtrics.json')
+export default async function loadQualtrics() {
+  const profilePromise = setExlProfile();
+  const fetchPromise = fetch('/qualtrics.json')
     .then((resp) => {
       if (resp.ok) {
         return resp.json();
       }
       throw new Error(`${resp.status}: ${resp.statusText}`);
-    })
-    .then((json) => {
+    });
+
+  Promise.all([profilePromise, fetchPromise])
+    .then(([, json]) => {
       json.data.forEach((item) => {
         const interceptId = item['Intercept Id'];
         const interceptURL = item['Intercept URL'];
