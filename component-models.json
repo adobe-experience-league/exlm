@@ -963,6 +963,27 @@
         ]
       },
       {
+        "component": "select",
+        "valueType": "string",
+        "name": "authorType",
+        "value": "",
+        "label": "Author Type",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Adobe",
+            "value": "Adobe"
+          },
+          {
+            "name": "External",
+            "value": "External"
+          }
+        ]
+      },
+      {
         "component": "radio-group",
         "name": "sortBy",
         "value": "RELEVANCE",
