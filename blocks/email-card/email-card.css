@@ -19,7 +19,7 @@
 }
 
 .email-card-title div {
-    font-size: 12px;
+    font-size: var(--spectrum-font-size-75);
     font-weight: 700;
     color: var(--spectrum-gray-900);
     text-transform: uppercase;
@@ -29,7 +29,7 @@
 .email-card-title a {
     display: flex;
     align-items: center;
-    font-size: 14px;
+    font-size: var(--spectrum-font-size-100);
     font-weight: 500;
     color: var(--spectrum-gray-800);
     margin: 0px;
@@ -37,7 +37,7 @@
 }
 
 .email-card-user-email {
-    font-size: 16px;
+    font-size: var(--spectrum-font-size-200);
     font-weight: 500;
     color: var(--spectrum-gray-800);
     word-break: break-word;
