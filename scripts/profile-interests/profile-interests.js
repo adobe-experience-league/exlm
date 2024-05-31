@@ -1,5 +1,5 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
-loadCSS(`${window.hlx.codeBasePath}/scripts/product-card/product-card.css`);
+loadCSS(`${window.hlx.codeBasePath}/scripts/profile-interests/profile-interests.css`);
 
 export async function buildProductCard(container, element, model) {
     const { experienceLevel = 'Beginner', product = 'Target', isSelected = false, contentType = '', badgeTitle = '' } = model;
