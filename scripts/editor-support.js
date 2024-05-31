@@ -98,7 +98,7 @@ function updateUEInstrumentation() {
   if (document.querySelector('body[class^=profile]')) {
     // update available sections
     setUEFilter(main, 'main-profile');
-    main.querySelectorAll('.section').forEach((elem) => {
+    main.querySelectorAll('.section:not(.product-interests-section').forEach((elem) => {
       setUEFilter(elem, 'profile-section');
     });
   }
@@ -107,7 +107,7 @@ function updateUEInstrumentation() {
   if (document.querySelector('body[class^=signup]')) {
     // update available sections
     setUEFilter(main, 'main-signup');
-    main.querySelectorAll('.section').forEach((elem) => {
+    main.querySelectorAll('.section:not(.product-interests-section').forEach((elem) => {
       setUEFilter(elem, 'sign-up-flow-section');
     });
   }

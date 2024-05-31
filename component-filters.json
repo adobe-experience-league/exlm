@@ -17,11 +17,11 @@
   },
   {
     "id": "main-profile",
-    "components": ["profile-section"]
+    "components": ["profile-section", "product-interests-section"]
   },
   {
     "id": "main-signup",
-    "components": ["sign-up-flow-section"]
+    "components": ["sign-up-flow-section", "product-interests-section"]
   },
   {
     "id": "section",
@@ -99,10 +99,7 @@
       "adobe-account-card",
       "data-and-email-consent",
       "role-cards",
-      "user-profile-card",
-      "entitled-products",
-      "learning-interests",
-      "more-product-interests"
+      "user-profile-card"
     ]
   },
   {
@@ -115,11 +112,12 @@
       "adobe-account-card",
       "data-and-email-consent",
       "role-cards",
-      "user-profile-card",
-      "entitled-products",
-      "learning-interests",
-      "more-product-interests"
+      "user-profile-card"
     ]
+  },
+  {
+    "id": "product-interests-section",
+    "components": []
   },
   {
     "id": "article-content-section",
