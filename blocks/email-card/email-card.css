@@ -3,10 +3,9 @@
     box-sizing: border-box;
     max-width: 318px;
     padding: 24px 24px 32px 24px;
-    background: var(--spectrum-gray-50) 0% 0% no-repeat padding-box;
+    background-color: var(--spectrum-gray-50);
     box-shadow: 0px 3px 8px #00000014;
     border-radius: 4px;
-    opacity: 1;
 }
 
 .email-card-title {
@@ -18,12 +17,13 @@
     gap: 8px;
 }
 
-.email-card-title div {
+.email-card-title h6 {
     font-size: var(--spectrum-font-size-75);
     font-weight: 700;
     color: var(--spectrum-gray-900);
     text-transform: uppercase;
     letter-spacing: 0.72px;
+    margin: 0px;
 }
 
 .email-card-title a {
