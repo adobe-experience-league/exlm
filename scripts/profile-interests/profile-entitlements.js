@@ -9,22 +9,22 @@ export default async function getProductEntitlements() {
     try {
       const profileData = await defaultProfileClient.getMergedProfile();
       const userOrgs = profileData?.orgs || [];
+      const entitledProducts = [];
 
       await Promise.all(
         userOrgs.map(async (userOrg) => {
           try {
             const newProfile = await window.adobeIMS.switchProfile(userOrg.userId);
             const accessToken = newProfile.tokenInfo.token;
-            sessionStorage.setItem('JIL-token', `Bearer ${accessToken}`);
 
-            const productEndPoint = jilAPI.replace('#ORG_ID', userOrg.orgId);
-            const requestHeaders = {
+            const jilEndPoint = jilAPI.replace('#ORG_ID', userOrg.orgId);
+            const headers = {
               'x-api-key': ims.client_id,
-              Authorization: sessionStorage.getItem('JIL-token') || '',
+              Authorization: `Bearer ${accessToken}` || '',
             };
 
-            const response = await fetch(productEndPoint, {
-              headers: { ...requestHeaders },
+            const response = await fetch(jilEndPoint, {
+              headers: { ...headers },
             });
 
             if (!response.ok) {
@@ -32,6 +32,7 @@ export default async function getProductEntitlements() {
             }
 
             const productData = await response.json();
+            entitledProducts.push(productData.productArrangementCode);
             // eslint-disable-next-line no-console
             console.log(`Product data for ${userOrg.orgName}:`, productData);
           } catch (error) {
@@ -40,9 +41,11 @@ export default async function getProductEntitlements() {
           }
         }),
       );
+      return entitledProducts;
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error processing user organizations:', error);
     }
   }
+  return [];
 }
