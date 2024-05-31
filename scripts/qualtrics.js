@@ -1,6 +1,31 @@
 import { feedbackError } from './feedback/feedback.js'; // eslint-disable-line import/no-cycle
+import { defaultProfileClient } from './auth/profile.js';
 
 export default async function loadQualtrics() {
+  const setExlProfile = async () => {
+  try {
+      const userData = await defaultProfileClient.getMergedProfile();
+
+      window.EXL_PROFILE = {};
+
+      if (userData) {
+        window.EXL_PROFILE = {
+          authenticated: true,
+          adobeEmployee: userData.email.includes('@adobe.com') || false,
+          exlRole: userData.role,
+          exlLearningInterests: userData.interests || [],
+          exlExperienceLevel: userData.level || [],
+        };
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('Error getting user profile:', e);
+    }
+  };
+
+
+  await setExlProfile();
+
   fetch('/qualtrics.json')
     .then((resp) => {
       if (resp.ok) {

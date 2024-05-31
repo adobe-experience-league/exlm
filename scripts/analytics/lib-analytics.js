@@ -54,8 +54,6 @@ export async function pushPageDataLayer(language) {
     },
   };
 
-  window.EXL_PROFILE = {};
-
   try {
     console.timeLog('martech', `datalayer: start profile inquiry ${Date.now()}`);
     // eslint-disable-next-line import/no-cycle
@@ -77,17 +75,6 @@ export async function pushPageDataLayer(language) {
         org: userData.org || '',
         orgs: userData.orgs || [],
       };
-
-      /**
-       * Copies profile data to be used by Qualtrics
-       */
-      window.EXL_PROFILE = {
-        authenticated: true,
-        adobeEmployee: userData.email.includes('@adobe.com') || false,
-        exlRole: userData.role,
-        exlLearningInterests: userData.interests || [],
-        exlExperienceLevel: userData.level || [],
-      }
     }
   } catch (e) {
     // eslint-disable-next-line no-console
