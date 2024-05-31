@@ -710,6 +710,10 @@ export function getConfig() {
       : 'https://experienceleaguecommunities-dev.adobe.com/',
     // Stream API
     eventSourceStreamUrl: '/api/stream',
+    // JIL API
+    jilAPI: isProd
+      ? 'https://bps-il.adobe.io/jil-api/v2/organizations/#ORG_ID/products'
+      : 'https://bps-il-stage.adobe.io/jil-api/v2/organizations/#ORG_ID/products',
   };
   return window.exlm.config;
 }
