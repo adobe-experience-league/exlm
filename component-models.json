@@ -3051,7 +3051,7 @@
     ]
   },
   {
-    "id": "learning-interests",
+    "id": "product-interests",
     "fields": [
       {
         "component": "text",
@@ -3103,7 +3103,7 @@
     ]
   },
   {
-    "id": "more-product-interests",
+    "id": "product-experience-level",
     "fields": [
       {
         "component": "text",
