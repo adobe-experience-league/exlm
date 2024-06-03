@@ -134,6 +134,7 @@ function decoratePlaylistHeader(block, playlist) {
 </div>`),
   );
 
+  // Load actions Menu
   loadCSS('/blocks/playlist/playlist-action-menu.css');
   import('./playlist-action-menu.js').then((mod) =>
     mod.default(playlistSection.querySelector('[data-playlist-action-button]'), playlist),
@@ -198,9 +199,10 @@ function updatePlayer(playlist) {
  *
  * @param {number} videoIndex
  * @param {import('./mpc-util.js').Video} video
+ * @param {import('./mpc-util.js').Playlist} playlist
  */
-function updateProgress(videoIndex, video, playlist) {
-  const { el, currentTime, duration } = video;
+function updateProgress(videoIndex, playlist) {
+  const { el, currentTime, duration, completed } = playlist.getVideo(videoIndex);
   // now viewing count
   const nowViewingCount = document.querySelector('[data-playlist-now-viewing-count]');
   if (nowViewingCount) nowViewingCount.textContent = parseInt(videoIndex, 10) + 1;
@@ -213,12 +215,16 @@ function updateProgress(videoIndex, video, playlist) {
   const completedVideos = playlist.getVideos().filter((v) => v.currentTime >= v.duration - 1).length;
   playlistProgressBox.style.setProperty('--playlist-progress', `${(completedVideos / playlist.length) * 100}%`);
 
-  // progress indicator
+  // update completed status - completed means a vides has been watched till the end, at-least once.
+  if (currentTime >= duration - 1 && !completed) {
+    playlist.updateVideoByIndex(videoIndex, { completed: true });
+  }
+
   let progressStatus;
-  if (currentTime === 0) {
-    progressStatus = 'not-started';
-  } else if (currentTime >= duration - 1) {
+  if (completed) {
     progressStatus = 'completed';
+  } else if (currentTime >= duration - 1) {
+    progressStatus = 'not-started';
   } else {
     progressStatus = 'in-progress';
   }
@@ -239,7 +245,7 @@ playlist.onVideoChange((videos, vIndex) => {
   if (active && activeStatusChanged) el.parentElement.scrollTop = el.offsetTop - el.clientHeight / 2;
   updatePlayer(playlist);
   updateQueryStringParameter('video', playlist.getActiveVideoIndex());
-  updateProgress(vIndex, currentVideo, playlist);
+  updateProgress(vIndex, playlist);
   return true;
 });
 
