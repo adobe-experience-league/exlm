@@ -923,30 +923,30 @@
           }
         },
         {
-          "title": "Learning Interests",
-          "id": "learning-interests",
+          "title": "Product Interests",
+          "id": "product-interests",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "name": "Learning Interests",
-                  "model": "learning-interests"
+                  "name": "Product Interests",
+                  "model": "product-interests"
                 }
               }
             }
           }
         },
         {
-          "title": "More Product Interests",
-          "id": "more-product-interests",
+          "title": "Product Experience Level",
+          "id": "product-experience-level",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "name": "More Product Interests",
-                  "model": "more-product-interests"
+                  "name": "Product Experience Level",
+                  "model": "product-experience-level"
                 }
               }
             }

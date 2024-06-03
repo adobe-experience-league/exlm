@@ -102,8 +102,8 @@
       "user-profile-card",
       "email-card",
       "entitled-products",
-      "learning-interests",
-      "more-product-interests"
+      "product-interests",
+      "product-experience-level"
     ]
   },
   {
@@ -118,8 +118,8 @@
       "role-cards",
       "user-profile-card",
       "entitled-products",
-      "learning-interests",
-      "more-product-interests",
+      "product-interests",
+      "product-experience-level",
       "icon-block"
     ]
   },
