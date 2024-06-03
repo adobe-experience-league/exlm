@@ -5,8 +5,10 @@ export default function decorate(block) {
   const toggleDiv = block.querySelector('div');
   if (toggleDiv) {
     const toggleDivChild = toggleDiv.firstElementChild;
-    const toggleValue = toggleDivChild.innerHTML;
-    block.setAttribute('data-allow-center', toggleValue);
+    const toggleValue = toggleDivChild.textContent;
+    if (toggleValue === 'true') {
+      block.classList.add('icon-block-center-align');
+    }
     toggleDiv.remove();
   }
 
