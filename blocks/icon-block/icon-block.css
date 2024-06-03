@@ -105,7 +105,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 36px;
+    gap: 24px;
   }
   .icon-block-center-align > div {
     flex: 1 1 230px;
