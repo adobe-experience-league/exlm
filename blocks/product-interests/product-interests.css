@@ -1,0 +1,42 @@
+.product-container {
+    display: flex;
+    gap: 20px;
+}
+
+.product-title {
+    font-size: 1.5em;
+    margin: 0 0 10px;
+    color: #333333;
+}
+
+.product-subtitle {
+    color: #777777;
+    margin: 0 0 20px;
+}
+
+
+.experience-level {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox > input {
+    width: 14px;
+    margin: 0;
+    border: 2px solid var(--spectrum-gray-600);
+    border-radius: 2px;
+}
+.checkbox > label {
+    font-size: 18px;
+    letter-spacing: 0px;
+    line-height: 22px;
+}
