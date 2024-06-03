@@ -1,7 +1,17 @@
+import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
+import { copyToClipboard } from '../../scripts/copy-link/copy-link.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { createPlaceholderSpan, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 // eslint-disable-next-line no-unused-vars
 import { Playlist } from './mpc-util.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 /**
  * @param {HTMLElement} content
@@ -39,22 +49,28 @@ function iconSpan(icon) {
   return `<span class="icon icon-${icon}"></span>`;
 }
 
-function bookmark() {
-  // eslint-disable-next-line no-console
-  console.log('bookmark');
+async function bookmark() {
+  const signedIn = await isSignedInUser();
+  if (!signedIn) {
+    return false;
+  }
+  defaultProfileClient.updateProfile('bookmarks', window.location.href);
+  return true;
 }
 
 function copy() {
-  // copy current window path
-  navigator.clipboard.writeText(window.location.href);
-  // eslint-disable-next-line no-console
-  console.log('copy');
+  copyToClipboard({
+    text: window.location.href,
+    toastNoticeText: placeholders.toastSet,
+  });
+  return true;
 }
 
 /**
+ * @param {Event} event
  * @param {Playlist} playlist
  */
-function info(playlist) {
+function info(event, playlist) {
   // eslint-disable-next-line no-console
   createModal(
     htmlToElement(`
@@ -62,10 +78,52 @@ function info(playlist) {
     <h3>${playlist.title}</h3>
     <p>${playlist.description}<p>
   </div>
-
   `),
     true,
   );
+  return true;
+}
+
+/**
+ * @param {HTMLButtonElement} bookmarkButton
+ */
+export async function decorateBookmark(bookmarkButton) {
+  const tooltip = createPlaceholderSpan('bookmarkUnauthTipText', 'Sign-in to bookmark', (span) => {
+    span.classList.add('exl-tooltip-label');
+  });
+
+  bookmarkButton.appendChild(tooltip);
+
+  // const isSignedIn = await isSignedInUser();
+  // if (isSignedIn) {
+  //   bookmarkButton.appendChild(authBookmark);
+  //   const bookmarkAuthedToolTipLabel = authBookmark.querySelector('.exl-tooltip-label');
+  //   const bookmarkAuthedToolTipIcon = authBookmark.querySelector('.bookmark-icon');
+  //   loadJWT().then(async () => {
+  //     defaultProfileClient.getMergedProfile().then(async (data) => {
+  //       if (data.bookmarks.includes(bookmarkId)) {
+  //         bookmarkAuthedToolTipIcon.classList.add('authed');
+  //         bookmarkAuthedToolTipLabel.innerHTML = placeholders.bookmarkAuthLabelRemove;
+  //       }
+  //     });
+
+  //     renderBookmark(bookmarkAuthedToolTipLabel, bookmarkAuthedToolTipIcon, bookmarkId);
+  //   });
+  // } else {
+  //   bookmarkButton.appendChild(unAuthBookmark);
+  // }
+}
+
+function newActionButton({ labelKey, labelFallback, icons, action, onButtonReady }) {
+  const iconSpans = icons.map(iconSpan).join('');
+  const label = createPlaceholderSpan(labelKey, labelFallback);
+  label.classList.add('playlist-action-label');
+  const button = htmlToElement(`<button data-action="${action}">${iconSpans}</button>`);
+  button.appendChild(label);
+  if (onButtonReady) {
+    onButtonReady(button);
+  }
+  return button;
 }
 
 /**
@@ -75,31 +133,52 @@ function info(playlist) {
  */
 export default function decorate(button, playlist) {
   const menu = htmlToElement(`<div class="playlist-action-menu">
-    <div class="playlist-actions">
-            <button data-action="bookmark">${iconSpan('bookmark')}<span>&nbsp;Save Playlist</span></button>
-            <button data-action="copy">${iconSpan('copy-link')}<span>&nbsp;Copy Link</span></button>
-            <button data-action="info">${iconSpan('info')}<span>&nbsp;&nbsp;About Playlist</span></button>
-        </div>
+      <div class="playlist-actions"></div>
     </div>`);
+  const actionDefs = [
+    {
+      labelKey: 'bookmarkPlaylist',
+      labelFallback: 'Bookmark Playlist',
+      icons: ['bookmark', 'bookmark-active'],
+      action: 'bookmark',
+      onClick: bookmark,
+      onButtonReady: decorateBookmark,
+    },
+    {
+      labelKey: 'copyPlaylistLink',
+      labelFallback: 'Copy Link',
+      icons: ['copy-link'],
+      action: 'copy',
+      onClick: copy,
+    },
+    {
+      labelKey: 'aboutPlaylist',
+      labelFallback: 'About Playlist',
+      icons: ['info'],
+      action: 'info',
+      onClick: info,
+    },
+  ];
+
+  actionDefs.forEach((def) => {
+    menu.querySelector('.playlist-actions').append(newActionButton(def));
+  });
+
   decorateIcons(menu);
 
   const toggleMenu = (force) => {
     const shown = menu.classList.toggle('show', force);
     button.ariaExpanded = shown;
   };
-
-  const actions = {
-    bookmark,
-    copy,
-    info,
-  };
-
-  menu.addEventListener('click', (event) => {
+  menu.addEventListener('click', async (event) => {
     const action = event.target.closest('button')?.dataset.action;
     if (action) {
-      toggleMenu(false);
-      if (actions[action]) {
-        actions[action](playlist);
+      const targetAction = actionDefs.find((def) => def.action === action);
+      if (targetAction) {
+        const closeMenu = await targetAction.onClick(event, playlist);
+        if (closeMenu) {
+          toggleMenu(false);
+        }
       }
     }
   });

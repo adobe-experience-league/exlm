@@ -130,7 +130,9 @@ function decoratePlaylistHeader(block, playlist) {
   defaultContent.append(
     htmlToElement(`<div class="playlist-now-viewing">
   <b>NOW VIEWING</b>
-  <b><span class="playlist-now-viewing-count" data-playlist-now-viewing-count>${playlist.getActiveVideoIndex() + 1}</span> OF ${playlist.length}</b>
+  <b><span class="playlist-now-viewing-count" data-playlist-now-viewing-count>${
+    playlist.getActiveVideoIndex() + 1
+  }</span> OF ${playlist.length}</b>
 </div>`),
   );
 
