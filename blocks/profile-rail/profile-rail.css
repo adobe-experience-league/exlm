@@ -1,4 +1,7 @@
 /* Placeholder styles. Replace with actual styles */
+.profile-rail.block  {
+    margin-right: 20px;
+}
 .profile-rail.block > span {
     font-size: 14px;
     font-weight: 700;
