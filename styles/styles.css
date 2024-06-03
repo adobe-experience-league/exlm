@@ -1410,6 +1410,10 @@ body.profile {
   background-color: var(--background-color);
 }
 
+body.profile .section.profile-rail-section {
+  display: none;
+}
+
 body.profile .section:not(.profile-tab-section, .profile-rail-section) {
   margin: 0 32px 32px;
   border-radius: 20px;
@@ -1461,7 +1465,8 @@ body.profile .section:nth-child(3) {
     grid-template: ". profile-tab-section" 0.3fr "profile-rail-section  ." 1.7fr/300px auto;
     gap: 0 0;
   }
-  body.profile > main > div.profile-rail-section {
+  body.profile > main > .section.profile-rail-section {
+    display: block;
     grid-area: profile-rail-section;
     padding: 0 0 0 32px;
   }
