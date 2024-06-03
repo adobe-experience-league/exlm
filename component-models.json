@@ -3153,5 +3153,17 @@
         "label": "Description"
       }
     ]
+  },
+  {
+    "id": "icon-block",
+    "fields": [
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "allow-center",
+        "label": "Center the section?",
+        "description": "This will center the entire Icon Cards Block."
+      }
+    ]
   }
 ]

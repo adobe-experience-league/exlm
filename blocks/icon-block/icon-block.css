@@ -88,6 +88,16 @@
   }
 }
 @media (min-width: 900px) {
+  .icon-block[data-allow-center='true'] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 794px;
+    gap: 36px;
+  }
+  .icon-block[data-allow-center='true'] > div {
+    margin: 0 24px;
+  }
   .icon-block {
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     column-gap: 24px;
