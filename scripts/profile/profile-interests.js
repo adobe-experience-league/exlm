@@ -1,22 +1,30 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import Dropdown from '../dropdown/dropdown.js';
-import { htmlToElement } from '../scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import getSolutionByName from '../../blocks/toc/toc-solutions.js';
 
-loadCSS(`${window.hlx.codeBasePath}/scripts/profile-interests/profile-interests.css`);
+loadCSS(`${window.hlx.codeBasePath}/scripts/profile/profile-interests.css`);
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 const options = [
   {
-    value: 'Beginner',
-    title: 'Beginner',
+    value: placeholders["profile-exp-level-beginner"],
+    title: placeholders["profile-exp-level-beginner"],
   },
   {
-    value: 'Intermediate',
-    title: 'Intermediate',
+    value: placeholders["profile-exp-level-intermediate"],
+    title: placeholders["profile-exp-level-intermediate"],
   },
   {
-    value: 'Advanced',
-    title: 'Advanced',
+    value: placeholders["profile-exp-level-experienced"],
+    title: placeholders["profile-exp-level-experienced"],
   },
 ];
 
@@ -34,7 +42,7 @@ export async function buildProductCard(container, element, model) {
         <div class="profile-interest-header">
             <div class="profile-interest-logo-wrapper">
                 <img class="profile-interest-logo">
-                <span class="profile-interest-logo-text">My Adobe Product</span>
+                <span class="profile-interest-logo-text">${placeholders["my-adobe-product"]}</span>
             </div>
             <h3>${product}</h3>
         </div>
@@ -46,7 +54,7 @@ export async function buildProductCard(container, element, model) {
   // Content
   const content = htmlToElement(`
         <div class="profile-interest-content">
-            <label for="experience-level">Select your experience level</label>
+            <label for="experience-level">${placeholders["select-your-experience-level"]}</label>
         </div>
     `);
 
@@ -54,7 +62,7 @@ export async function buildProductCard(container, element, model) {
   new Dropdown(content, 'Beginner', options);
 
   // Checkbox
-  const checboxCta = 'Select this product';
+  const checboxCta = placeholders["select-this-product"];
   const changeHandler = (e) => {
     const { checked } = e.target;
     if (checked) {
