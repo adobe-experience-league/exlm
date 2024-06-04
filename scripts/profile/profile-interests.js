@@ -84,7 +84,9 @@ export default async function buildProductCard(container, element, model) {
 
   // Assemble card
   card.appendChild(header);
+  decorateIcons(header, 'solutions/');
   card.appendChild(content);
+  decorateIcons(content);
   card.appendChild(checkboxContainer);
 
   // Add to DOM
