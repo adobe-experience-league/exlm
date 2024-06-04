@@ -1,4 +1,4 @@
-import { loadCSS, loadBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
+import { loadBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
 import {
   createTag,
   isDocPage,
@@ -202,7 +202,6 @@ async function decorateBookmarkAndCopy(block, placeholders) {
 
 export default async function decorate(block) {
   if (isDocPage) {
-    loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
     fetchLanguagePlaceholders().then((placeholders) => {
       decorateBookmarkMobileBlock(block, placeholders);
       decorateLanguageToggle(block, placeholders);
