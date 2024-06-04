@@ -1,117 +1,16 @@
-import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
-import { copyToClipboard } from '../../scripts/copy-link/copy-link.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { createPlaceholderSpan, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { createPlaceholderSpan, htmlToElement } from '../../scripts/scripts.js';
+import { decorateBookmark, bookmark } from './actions/playlist-bookmark-action.js';
+import info from './actions/playlist-info-action.js';
+import copy from './actions/playlist-copy-action.js';
 // eslint-disable-next-line no-unused-vars
-import { Playlist } from './mpc-util.js';
-
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
-
-/**
- * @param {HTMLElement} content
- * @returns {HTMLDialogElement} modal
- */
-function createModal(contentEl, show) {
-  let modal = document.querySelector('.playlist-modal');
-  if (!modal) {
-    modal = htmlToElement(`<dialog class="playlist-modal">
-        <button autofocus class="playlist-modal-close"><span aria-label="close"></button>
-        <div class="playlist-modal-content"></div>
-      </dialog>`);
-    document.body.prepend(modal);
-    document.body.style.overflow = 'hidden';
-    modal.addEventListener('close', () => {
-      document.body.style.overflow = '';
-    });
-    modal.addEventListener('click', (event) => event.target === modal && modal.close());
-    modal.querySelector('button').addEventListener('click', () => modal.close());
-    document.addEventListener('keydown', (event) => event.code === 'Escape' && modal.close());
-  }
-  // remove existing content
-  const content = modal.querySelector('.playlist-modal-content');
-  content.innerHTML = '';
-  // add new content
-  content.appendChild(contentEl);
-  if (show) modal.showModal();
-  return modal;
-}
+import { Playlist } from './playlist-utils.js';
 
 /**
  * create an icon span (to be used with decorateIcons())
  */
 function iconSpan(icon) {
   return `<span class="icon icon-${icon}"></span>`;
-}
-
-async function bookmark() {
-  const signedIn = await isSignedInUser();
-  if (!signedIn) {
-    return false;
-  }
-  defaultProfileClient.updateProfile('bookmarks', window.location.href);
-  return true;
-}
-
-function copy() {
-  copyToClipboard({
-    text: window.location.href,
-    toastNoticeText: placeholders.toastSet,
-  });
-  return true;
-}
-
-/**
- * @param {Event} event
- * @param {Playlist} playlist
- */
-function info(event, playlist) {
-  // eslint-disable-next-line no-console
-  createModal(
-    htmlToElement(`
-  <div>
-    <h3>${playlist.title}</h3>
-    <p>${playlist.description}<p>
-  </div>
-  `),
-    true,
-  );
-  return true;
-}
-
-/**
- * @param {HTMLButtonElement} bookmarkButton
- */
-export async function decorateBookmark(bookmarkButton) {
-  const tooltip = createPlaceholderSpan('bookmarkUnauthTipText', 'Sign-in to bookmark', (span) => {
-    span.classList.add('exl-tooltip-label');
-  });
-
-  bookmarkButton.appendChild(tooltip);
-
-  // const isSignedIn = await isSignedInUser();
-  // if (isSignedIn) {
-  //   bookmarkButton.appendChild(authBookmark);
-  //   const bookmarkAuthedToolTipLabel = authBookmark.querySelector('.exl-tooltip-label');
-  //   const bookmarkAuthedToolTipIcon = authBookmark.querySelector('.bookmark-icon');
-  //   loadJWT().then(async () => {
-  //     defaultProfileClient.getMergedProfile().then(async (data) => {
-  //       if (data.bookmarks.includes(bookmarkId)) {
-  //         bookmarkAuthedToolTipIcon.classList.add('authed');
-  //         bookmarkAuthedToolTipLabel.innerHTML = placeholders.bookmarkAuthLabelRemove;
-  //       }
-  //     });
-
-  //     renderBookmark(bookmarkAuthedToolTipLabel, bookmarkAuthedToolTipIcon, bookmarkId);
-  //   });
-  // } else {
-  //   bookmarkButton.appendChild(unAuthBookmark);
-  // }
 }
 
 function newActionButton({ labelKey, labelFallback, icons, action, onButtonReady }) {
