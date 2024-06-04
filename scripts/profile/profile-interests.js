@@ -15,22 +15,22 @@ try {
 
 const options = [
   {
-    value: placeholders["profile-exp-level-beginner"],
+    value: 'Beginner',
     title: placeholders["profile-exp-level-beginner"],
   },
   {
-    value: placeholders["profile-exp-level-intermediate"],
+    value: 'Intermediate',
     title: placeholders["profile-exp-level-intermediate"],
   },
   {
-    value: placeholders["profile-exp-level-experienced"],
+    value: 'Advanced',
     title: placeholders["profile-exp-level-experienced"],
   },
 ];
 
 // eslint-disable-next-line import/prefer-default-export
 export async function buildProductCard(container, element, model) {
-  const { product = 'Target', isSelected = false } = model;
+  const { product = 'Acrobat', isSelected = false } = model;
 
   // Create card container
   const card = document.createElement('div');
@@ -49,7 +49,7 @@ export async function buildProductCard(container, element, model) {
     `);
 
   const iconEl = header.querySelector('span');
-  iconEl.classList.add(getSolutionByName(solutionInfoClassName));
+  iconEl.classList.add(`icon-${solutionInfoClassName}`);
 
   // Content
   const content = htmlToElement(`
