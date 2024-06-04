@@ -34,6 +34,7 @@ export default async function buildProductCard(container, element, model) {
 
   // Create card container
   const card = document.createElement('div');
+  const cardContent = document.createElement('div');
   card.className = `profile-interest-card ${isSelected ? 'profile-interest-card--selected' : ''}`;
   const { class: solutionInfoClassName } = getSolutionByName(product);
 
@@ -85,9 +86,11 @@ export default async function buildProductCard(container, element, model) {
   // Assemble card
   card.appendChild(header);
   decorateIcons(header, 'solutions/');
-  card.appendChild(content);
+  cardContent.appendChild(content);
   decorateIcons(content);
-  card.appendChild(checkboxContainer);
+  cardContent.appendChild(checkboxContainer);
+
+  card.appendChild(cardContent);
 
   // Add to DOM
   element.appendChild(card);

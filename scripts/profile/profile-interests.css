@@ -3,6 +3,11 @@
     border-radius: 4px;
     border: 1px solid #D6D6D6;
     background-color: var(--spectrum-gray-50);
+    width: 260px;
+    height: 186px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .profile-interest-card--selected {
@@ -75,6 +80,10 @@
 }
 
 @media (min-width: 768px) {
+    .profile-interest-card {
+        width: 200px;
+        height: 186px;
+    }
     .profile-interest-checkbox {
         margin-top: 14px;
     }
