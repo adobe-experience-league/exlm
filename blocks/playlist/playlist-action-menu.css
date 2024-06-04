@@ -52,6 +52,7 @@
 
 .playlist-actions > button:disabled, .playlist-actions > button:disabled:hover {
   background-color: var(--overlay-background-color);
+  color: var(--spectrum-gray-500);
   cursor: unset;
 }
 
@@ -168,19 +169,27 @@
   display: none;
 }
 
+[data-bookmarked="true"] .icon-bookmark {
+  display: none;
+}
+
+[data-bookmarked="false"] .icon-bookmark {
+  display: block;
+}
+
 
 [data-action="bookmark"]:hover .playlist-action-tooltip-label {
   display: block;
 }
 
-.playlist-actions [data-signed-in="false"] [data-signed-in="false"]{
+.playlist-actions [data-signed-in="false"]:hover [data-signed-in="false"]{
   display: block !important;
 }
 
-.playlist-actions [data-bookmarked="true"] [data-bookmarked="true"]{
+.playlist-actions [data-bookmarked="true"]:hover  [data-bookmarked="true"]{
   display: block !important;
 }
 
-.playlist-actions [data-bookmarked="false"] [data-bookmarked="false"]{
+.playlist-actions [data-bookmarked="false"]:hover [data-bookmarked="false"]{
   display: block !important;
 }

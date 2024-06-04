@@ -1,5 +1,5 @@
 import { assetInteractionModel } from '../../../scripts/analytics/lib-analytics.js';
-import { defaultProfileClient } from '../../../scripts/auth/profile.js';
+import { defaultProfileClient, isSignedInUser } from '../../../scripts/auth/profile.js';
 import { createPlaceholderSpan, fetchLanguagePlaceholders } from '../../../scripts/scripts.js';
 import { sendNotice } from '../../../scripts/toast/toast.js';
 
@@ -27,8 +27,9 @@ async function toggleBookmark() {
  * @param {HTMLButtonElement} bookmarkButton
  */
 export async function decorateBookmark(bookmarkButton) {
-  const isSignedIn = true; // await isSignedInUser();
+  const isSignedIn = await isSignedInUser();
   bookmarkButton.dataset.signedIn = isSignedIn;
+  bookmarkButton.dataset.bookmarked = false;
 
   if (!isSignedIn) {
     const signInToBookmarkTooltip = createPlaceholderSpan('bookmarkUnauthTipText', 'Sign-in to bookmark', (span) => {
@@ -37,8 +38,7 @@ export async function decorateBookmark(bookmarkButton) {
     });
 
     bookmarkButton.appendChild(signInToBookmarkTooltip);
-    // TODO - put this back
-    // bookmarkButton.disabled = true;
+    bookmarkButton.disabled = true;
     return;
   }
 
