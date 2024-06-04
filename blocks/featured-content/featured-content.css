@@ -186,7 +186,7 @@
   }
 
   /* ------- tablet ------- */
-  @media (min-width: 768px) {
+  @media (min-width: 600px) {
     /* for tablet change grid layout */
     .featured-content.block {
       grid-template-columns: auto 1fr;
