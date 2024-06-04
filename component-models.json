@@ -2032,7 +2032,7 @@
         "component": "text",
         "valueType": "string",
         "name": "content_cta",
-        "value": "Read article",
+        "value": "",
         "label": "Content CTA Text"
       }
     ]

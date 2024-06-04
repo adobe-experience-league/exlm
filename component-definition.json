@@ -595,7 +595,7 @@
                 "template": {
                   "name": "Featured Content",
                   "model": "featured-content",
-                  "content_headingType": "h2",
+                  "content_cta": "Read Article",
                   "classes": ["adobe", "left"]
                 }
               }
