@@ -16,15 +16,15 @@ try {
 const options = [
   {
     value: 'Beginner',
-    title: placeholders['profile-exp-level-beginner'],
+    title: placeholders.profileExpLevelBeginner || 'Beginner',
   },
   {
     value: 'Intermediate',
-    title: placeholders['profile-exp-level-intermediate'],
+    title: placeholders.profileExpLevelIntermediate || 'Intermediate',
   },
   {
     value: 'Advanced',
-    title: placeholders['profile-exp-level-experienced'],
+    title: placeholders.profileExpLevelExperienced || 'Experienced',
   },
 ];
 
@@ -42,7 +42,7 @@ export default async function buildProductCard(container, element, model) {
         <div class="profile-interest-header">
             <div class="profile-interest-logo-wrapper">
                 <span class="icon profile-interest-logo"></span>
-                <span class="profile-interest-logo-text">${placeholders['my-adobe-product']}</span>
+                <span class="profile-interest-logo-text">${placeholders.myAdobeproduct || 'My Adobe product'}</span>
             </div>
             <h3>${product}</h3>
         </div>
@@ -54,7 +54,9 @@ export default async function buildProductCard(container, element, model) {
   // Content
   const content = htmlToElement(`
         <div class="profile-interest-content">
-            <label for="experience-level">${placeholders['select-your-experience-level']}</label>
+            <label for="experience-level">${
+              placeholders.selectYourExperienceLevel || 'Select your experience level'
+            }</label>
         </div>
     `);
 
@@ -62,7 +64,7 @@ export default async function buildProductCard(container, element, model) {
   new Dropdown(content, 'Beginner', options);
 
   // Checkbox
-  const checboxCta = placeholders['select-this-product'];
+  const checboxCta = placeholders.selectThisProduct || 'Select this product';
   const changeHandler = (e) => {
     const { checked } = e.target;
     if (checked) {
