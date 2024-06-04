@@ -41,15 +41,15 @@ export async function buildProductCard(container, element, model) {
   const header = htmlToElement(`
         <div class="profile-interest-header">
             <div class="profile-interest-logo-wrapper">
-                <img class="profile-interest-logo">
+                <span class="icon profile-interest-logo"></span>
                 <span class="profile-interest-logo-text">${placeholders["my-adobe-product"]}</span>
             </div>
             <h3>${product}</h3>
         </div>
     `);
 
-  const img = header.querySelector('img');
-  img.src = `/icons/solutions/${solutionInfoClassName}.svg`;
+  const iconEl = header.querySelector('span');
+  iconEl.classList.add(getSolutionByName(solutionInfoClassName));
 
   // Content
   const content = htmlToElement(`
