@@ -20,6 +20,19 @@
   width: 100%;
 }
 
+.columns.block.table > div {
+  border: 1px solid var(--non-spectrum-gainsboro-gray);
+  border-bottom: none;
+}
+
+.columns.block.table > div:last-child {
+  border-bottom: 1px solid var(--non-spectrum-gainsboro-gray);
+}
+
+.columns.block.table > div:nth-child(odd){
+  background-color: var(--non-spectrum-bg);
+}
+
 @media (min-width: 600px) {
   .columns > div {
     grid-template-columns: 1fr 1fr;
