@@ -586,6 +586,23 @@
           }
         },
         {
+          "title": "Featured Content",
+          "id": "featured-content",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Featured Content",
+                  "model": "featured-content",
+                  "content_headingType": "h2",
+                  "classes": ["adobe", "left"]
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Events Cards",
           "id": "events-cards",
           "plugins": {
