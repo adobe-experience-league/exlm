@@ -1,6 +1,6 @@
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import { Playlist } from './mpc-util.js';
+import { Playlist } from './playlist-utils.js';
 
 /**
  * convert seconds to time in minutes in the format of 'mm:ss'
