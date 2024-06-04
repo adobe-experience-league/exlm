@@ -808,8 +808,8 @@
             "value": ""
           },
           {
-            "name": "Table w/ alternating rows",
-            "value": "table"
+            "name": "Border w/ alternating rows",
+            "value": "b-alt-row"
           }
         ]
       }

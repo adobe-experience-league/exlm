@@ -20,16 +20,16 @@
   width: 100%;
 }
 
-.columns.block.table > div {
+.columns.block.b-alt-row > div {
   border: 1px solid var(--non-spectrum-gainsboro-gray);
   border-bottom: none;
 }
 
-.columns.block.table > div:last-child {
+.columns.block.b-alt-row > div:last-child {
   border-bottom: 1px solid var(--non-spectrum-gainsboro-gray);
 }
 
-.columns.block.table > div:nth-child(odd){
+.columns.block.b-alt-row > div:nth-child(odd){
   background-color: var(--non-spectrum-bg);
 }
 
