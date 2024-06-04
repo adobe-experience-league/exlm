@@ -21,9 +21,8 @@
 }
 
 .columns.block.table > div {
-  border-top: 1px solid var(--non-spectrum-gainsboro-gray);
-  border-right: 1px solid var(--non-spectrum-gainsboro-gray);
-  border-left: 1px solid var(--non-spectrum-gainsboro-gray);
+  border: 1px solid var(--non-spectrum-gainsboro-gray);
+  border-bottom: none;
 }
 
 .columns.block.table > div:last-child {
