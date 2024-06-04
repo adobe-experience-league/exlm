@@ -65,7 +65,6 @@ export default async function buildProductCard(container, element, model) {
   new Dropdown(content, 'Beginner', options);
 
   // Checkbox
-  const checboxCta = placeholders.selectThisProduct || 'Select this product';
   const changeHandler = (e) => {
     const { checked } = e.target;
     if (checked) {
@@ -76,8 +75,8 @@ export default async function buildProductCard(container, element, model) {
   };
   const checkboxContainer = htmlToElement(`
         <div class="profile-interest-checkbox">
-            <input type="checkbox" data-name="${product}" id="select-product">
-            <label for="select-product">${checboxCta}</label>
+            <input type="checkbox" data-name="${product}">
+            <label for="${product}" class="subtext">${placeholders.selectThisProduct || 'Select this product'}</label>
         </div>`);
   const checkbox = checkboxContainer.querySelector('input');
   checkbox.checked = isSelected;
