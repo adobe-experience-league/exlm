@@ -1,12 +1,19 @@
 import { feedbackError } from './feedback/feedback.js'; // eslint-disable-line import/no-cycle
 import { defaultProfileClient } from './auth/profile.js';
 
-// Set the EXL_PROFILE object for the Qualtrics survey
+// Default EXL_PROFILE object
+const defaultProfile = {
+  authenticated: false,
+  adobeEmployee: false,
+  exlRole: '',
+  exlLearningInterests: [],
+  exlExperienceLevel: []
+};
+
+// Set the EXL_PROFILE object for the Qualtrics survey - UGP-10760
 const setExlProfile = async () => {
   try {
     const userData = await defaultProfileClient.getMergedProfile();
-
-    window.EXL_PROFILE = {};
 
     if (userData) {
       const emailIsString = typeof userData.email === 'string';
@@ -14,12 +21,15 @@ const setExlProfile = async () => {
         authenticated: true,
         adobeEmployee: emailIsString ? userData.email.includes('@adobe.com') : false,
         exlRole: userData.role || '',
-        exlLearningInterests: userData.interests || [],
-        exlExperienceLevel: userData.level || [],
+        exlLearningInterests: Array.isArray(userData.interests) ? userData.interests : [],
+        exlExperienceLevel: Array.isArray(userData.level) ? userData.level : []
       };
+    } else {
+      window.EXL_PROFILE = { ...defaultProfile };
     }
   } catch (e) {
     console.error('Error getting user profile:', e); // eslint-disable-line no-console
+    window.EXL_PROFILE = { ...defaultProfile };
   }
 };
 
@@ -39,29 +49,28 @@ export default async function loadQualtrics() {
         const interceptId = item['Intercept Id'];
         const interceptURL = item['Intercept URL'];
         if (interceptId && interceptURL) {
-          const c = `${interceptId}_container`;
-          let d;
-          const o = document.getElementById(c);
-          if (o) {
-            o.innerHTML = '';
-            d = o;
+          const containerId = `${interceptId}_container`;
+          let container = document.getElementById(containerId);
+          if (!container) {
+            container = document.createElement('div');
+            container.id = containerId;
           } else {
-            d = document.createElement('div');
-            d.id = c;
+            container.innerHTML = ''; // Clear existing content
           }
-          const s = document.createElement('script');
-          s.type = 'text/javascript';
-          s.src = interceptURL;
+
+          const script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = interceptURL;
+
           if (document.body) {
-            document.body.appendChild(s);
-            document.body.appendChild(d);
+            document.body.appendChild(script);
+            document.body.appendChild(container);
           }
         }
       });
     })
     .catch((error) => {
-      // eslint-disable-next-line no-console
-      console.log(error);
+      console.error('Error loading Qualtrics surveys:', error); // eslint-disable-line no-console
       feedbackError();
     });
 }
