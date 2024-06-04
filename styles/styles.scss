@@ -1500,8 +1500,13 @@ body.profile {
   background-color: var(--background-color);
 }
 
+body.profile .section.profile-rail-section {
+  display: none;
+}
+
 body.profile .section:not(.profile-tab-section, .profile-rail-section) {
-  margin: 0 32px 32px;
+  margin: 0 12px 24px;
+  padding: 24px 24px 32px;
   border-radius: 20px;
   background-color: var(--non-spectrum-bg);
   border: 1px solid #d5d5d5;
@@ -1520,13 +1525,22 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section) {
   & > div:not(.default-content-wrapper):first-child {
     border-top: 0;
   }
-}
 
-body.profile .section:nth-child(3) {
-  padding-top: 60px;
+  & > div:not(.default-content-wrapper):last-child {
+    padding-bottom: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 60px;
+  }
 }
 
 @include breakpoint('tablet') {
+  body.profile .section:not(.profile-tab-section, .profile-rail-section) {
+    margin: 0 16px 24px;
+    padding: 48px 52px 64px;
+  }
+
   body.profile .section[data-two-column-layout] {
     display: grid;
     gap: 10px;
@@ -1535,12 +1549,17 @@ body.profile .section:nth-child(3) {
 
   body.profile .section[data-two-column-layout] > div:nth-child(1) {
     height: 100%;
-    margin-top: 28px;
+    margin-right: 20px;
+
+    & > *:first-child {
+      margin-top: 0;
+    }
   }
 
   body.profile .section[data-two-column-layout] > div:nth-child(2) {
     border-top: 0;
     padding-top: 0;
+    margin: 0 auto;
   }
 
   body.profile .section[data-two-column-layout] > div:nth-child(n + 3) {
@@ -1555,13 +1574,18 @@ body.profile .section:nth-child(3) {
     max-width: var(--non-spectrum-max-width);
     display: grid;
     grid-auto-columns: 1fr;
-    grid-template: '. profile-tab-section' 0.3fr 'profile-rail-section  .' 1.7fr / 300px auto;
+    grid-template: '. profile-tab-section' 120px 'profile-rail-section  .' auto / 300px auto;
     gap: 0 0;
   }
 
-  body.profile > main > div.profile-rail-section {
+  body.profile > main > .section.profile-rail-section {
+    display: block;
     grid-area: profile-rail-section;
     padding: 0 0 0 32px;
+  }
+
+  body.profile .section[data-two-column-layout]:nth-child(3) > div:nth-child(1) {
+    margin-top: 28px;
   }
 
   body.profile > main > div.profile-tab-section {
@@ -1572,6 +1596,7 @@ body.profile .section:nth-child(3) {
   body.profile .section:nth-child(3) {
     background-image: url('/icons/solutions/profileDecoration.svg');
     background-repeat: no-repeat;
+    padding-top: 60px;
   }
 
   body.profile div.profile-rail-wrapper {
@@ -1590,5 +1615,11 @@ body.profile .section:nth-child(3) {
 
   body.profile .section:not(.profile-tab-section, .profile-rail-section) {
     margin-bottom: 32px;
+  }
+}
+
+@include breakpoint('desktop-lg') {
+  body.profile .section:not(.profile-tab-section, .profile-rail-section) {
+    padding: 60px 100px 80px;
   }
 }
