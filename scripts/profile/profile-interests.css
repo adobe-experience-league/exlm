@@ -1,7 +1,7 @@
 .profile-interest-card {
     padding: 24px;
     border-radius: 4px;
-    border: 1px solid #D6D6D6;
+    border: 1px solid var(--spectrum-gray-300);
     background-color: var(--spectrum-gray-50);
     width: 260px;
     height: 186px;
@@ -11,22 +11,13 @@
 }
 
 .profile-interest-card-selected {
-    box-shadow: 0px 3px 8px #1473E629;
+    box-shadow: 0px 3px 8px var(--spectrum-blue-100);
     border: 1px solid var(--non-spectrum-navy-blue);
 }
 
 .profile-interest-checkbox {
     display: flex;
     gap: 8px;
-    align-items: center;
-}
-
-.checkbox-container {
-    padding: 10px 20px;
-    background: #f4f4f4;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    display: flex;
     align-items: center;
 }
 

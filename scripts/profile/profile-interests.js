@@ -3,10 +3,11 @@ import Dropdown from '../dropdown/dropdown.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import getSolutionByName from '../../blocks/toc/toc-solutions.js';
 
+loadCSS(`${window.hlx.codeBasePath}/scripts/profile/profile-interests.css`)
+
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
-  await loadCSS(`${window.hlx.codeBasePath}/scripts/profile/profile-interests.css`)
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
@@ -92,5 +93,4 @@ export default async function buildProductCard(container, element, model) {
 
   // Add to DOM
   element.appendChild(card);
-  decorateIcons(element);
 }
