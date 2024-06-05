@@ -101,7 +101,6 @@
       "role-cards",
       "user-profile-card",
       "email-card",
-      "entitled-products",
       "product-interests",
       "product-experience-level"
     ]
@@ -117,7 +116,6 @@
       "data-and-email-consent",
       "role-cards",
       "user-profile-card",
-      "entitled-products",
       "product-interests",
       "product-experience-level",
       "icon-block"
