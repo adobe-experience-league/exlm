@@ -796,6 +796,22 @@
         "name": "rows",
         "value": "",
         "label": "Rows"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "classes",
+        "label": "Style Type",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Border w/ alternating rows",
+            "value": "b-alt-row"
+          }
+        ]
       }
     ]
   },
@@ -1604,10 +1620,6 @@
           {
             "name": "H5",
             "value": "h5"
-          },
-          {
-            "name": "H6",
-            "value": "h6"
           }
         ]
       },
@@ -1962,6 +1974,82 @@
             "value": "MOST_POPULAR"
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "featured-content",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "img",
+        "label": "Image"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imgAlt",
+        "value": "",
+        "label": "Image Description",
+        "description": "A descriptive text of the image."
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Image Border and Alignment",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 2,
+        "options": [
+          {
+            "name": "Content Source",
+            "children": [
+              {
+                "name": "Adobe",
+                "value": "adobe"
+              },
+              {
+                "name": "External",
+                "value": "External"
+              }
+            ]
+          },
+          {
+            "name": "Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "left"
+              },
+              {
+                "name": "Right",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "content_link",
+        "value": "",
+        "label": "Content Page"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "content_description",
+        "value": "",
+        "label": "Description"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "content_cta",
+        "value": "",
+        "label": "Content CTA Text"
       }
     ]
   },
@@ -2560,11 +2648,28 @@
     "id": "block-quote",
     "fields": [
       {
+        "component": "select",
+        "valueType": "string",
+        "name": "block-quote-source",
+        "label": "Block Quote source",
+        "value": "",
+        "options": [
+          {
+            "name": "Adobe",
+            "value": "adobe"
+          },
+          {
+            "name": "External",
+            "value": "external"
+          }
+        ]
+      },
+      {
         "component": "richtext",
         "valueType": "string",
         "name": "block-quote",
         "value": "",
-        "label": "Block quote",
+        "label": "Block quote Text",
         "description": "Sets the text"
       }
     ]
@@ -2995,6 +3100,188 @@
         "valueType": "string",
         "hidden": true,
         "options": []
+      }
+    ]
+  },
+  {
+    "id": "product-interests",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description"
+      }
+    ]
+  },
+  {
+    "id": "product-experience-level",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description"
+      }
+    ]
+  },
+  {
+    "id": "icon-block",
+    "fields": [
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "allow-center",
+        "label": "Center the section?",
+        "description": "This will center the entire Icon Cards Block."
+      }
+    ]
+  },
+  {
+    "id": "note",
+    "fields": [
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "note-type",
+        "label": "Note Type",
+        "value": "",
+        "options": [
+          {
+            "name": "Note",
+            "value": "note"
+          },
+          {
+            "name": "Tip",
+            "value": "tip"
+          },
+          {
+            "name": "Important",
+            "value": "important"
+          },
+          {
+            "name": "Warning",
+            "value": "warning"
+          },
+          {
+            "name": "Caution",
+            "value": "caution"
+          },
+          {
+            "name": "Admin",
+            "value": "admin"
+          },
+          {
+            "name": "Availability",
+            "value": "availability"
+          },
+          {
+            "name": "Prerequisites",
+            "value": "prerequisites"
+          },
+          {
+            "name": "Info",
+            "value": "info"
+          },
+          {
+            "name": "Error",
+            "value": "error"
+          },
+          {
+            "name": "Success",
+            "value": "success"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Note Description",
+        "description": "Sets the Note description"
       }
     ]
   }

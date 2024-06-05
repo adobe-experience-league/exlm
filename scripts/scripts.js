@@ -266,6 +266,24 @@ function addProfileTab(main) {
 }
 
 /**
+ * Render the profile page after the user has signed in.
+ * @param {HTMLElement} main
+ */
+async function renderProfilePage(main) {
+  try {
+    await loadIms(); // eslint-disable-line no-use-before-define
+    if (window?.adobeIMS?.isSignedInUser() || false) {
+      addProfileRail(main);
+      addProfileTab(main);
+    } else {
+      window?.adobeIMS?.signIn();
+    }
+  } catch (e) {
+    window?.adobeIMS?.signIn();
+  }
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -281,8 +299,7 @@ function buildAutoBlocks(main) {
       addArticleLandingRail(main);
     }
     if (isProfilePage()) {
-      addProfileRail(main);
-      addProfileTab(main);
+      renderProfilePage(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
