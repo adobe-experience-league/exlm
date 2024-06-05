@@ -1,5 +1,12 @@
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
-import { createTag, htmlToElement, debounce, getPathDetails, isArticleLandingPage } from '../../scripts/scripts.js';
+import {
+  createTag,
+  htmlToElement,
+  debounce,
+  getPathDetails,
+  fetchLanguagePlaceholders,
+  isArticleLandingPage,
+} from '../../scripts/scripts.js';
 import {
   roleOptions,
   contentTypeOptions,
@@ -37,7 +44,13 @@ const coveoFacetMap = {
 
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
 
-const placeholders = {};
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 // Helper function thats returns a list of all Featured Card Products //
 async function getFeaturedCardSolutions() {

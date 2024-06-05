@@ -63,7 +63,7 @@ export default async function decorate(block) {
   // Appending header div to the block
   block.appendChild(headerDiv);
 
-  decorateIcons(headerDiv);
+  await decorateIcons(headerDiv);
 
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
