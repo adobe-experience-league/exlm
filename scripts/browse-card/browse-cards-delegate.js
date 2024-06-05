@@ -120,7 +120,10 @@ const BrowseCardsDelegate = (() => {
       : '';
     const roleQuery = param.role ? `AND (${param.role.map((type) => `@el_role=="${type}"`).join(' OR ')})` : '';
     const levelQuery = param.level ? `AND (${param.level.map((type) => `@el_level=="${type}"`).join(' OR ')})` : '';
-    const query = `${featureQuery} ${contentTypeQuery} ${productQuery} ${versionQuery} ${roleQuery} ${levelQuery}`;
+    const authorTypeQuery = param.authorType
+      ? `AND (${param.authorType.map((type) => `@author_type=="${type}"`).join(' OR ')})`
+      : '';
+    const query = `${featureQuery} ${contentTypeQuery} ${productQuery} ${versionQuery} ${roleQuery} ${levelQuery} ${authorTypeQuery}`;
     return query;
   };
 
@@ -151,6 +154,7 @@ const BrowseCardsDelegate = (() => {
       ...(param.product ? [{ id: 'el_product', type: 'specific', currentValues: param.product }] : []),
       ...(param.version ? [{ id: 'el_version', type: 'specific', currentValues: param.version }] : []),
       ...(param.role ? [{ id: 'el_role', type: 'specific', currentValues: param.role }] : []),
+      ...(param.authorType ? [{ id: 'author_type', type: 'specific', currentValues: param.authorType }] : []),
       ...(param.level ? [{ id: 'el_level', type: 'specific', currentValues: param.level }] : []),
     ];
 

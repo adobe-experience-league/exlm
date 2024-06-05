@@ -77,8 +77,8 @@ function updateUEInstrumentation() {
     return;
   }
 
-  // ----- if author bio page, identified by path segment
-  if (document.location.pathname.includes('/articles/authors/')) {
+  // ----- if author bio page, identified by theme
+  if (document.querySelector('body[class^=authors-bio-page]')) {
     // update available sections
     setUEFilter(main, 'empty');
     // update the only available default section
