@@ -2634,8 +2634,8 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "block-quote-style",
-        "label": "Block Quote style",
+        "name": "block-quote-source",
+        "label": "Block Quote source",
         "value": "",
         "options": [
           {
@@ -2653,7 +2653,7 @@
         "valueType": "string",
         "name": "block-quote",
         "value": "",
-        "label": "Block quote",
+        "label": "Block quote Text",
         "description": "Sets the text"
       }
     ]
