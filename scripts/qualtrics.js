@@ -7,7 +7,7 @@ const defaultProfile = {
   adobeEmployee: false,
   exlRole: '',
   exlLearningInterests: [],
-  exlExperienceLevel: []
+  exlExperienceLevel: [],
 };
 
 // Set the EXL_PROFILE object for the Qualtrics survey - UGP-10760
@@ -22,7 +22,7 @@ const setExlProfile = async () => {
         adobeEmployee: emailIsString ? userData.email.includes('@adobe.com') : false,
         exlRole: userData.role || '',
         exlLearningInterests: Array.isArray(userData.interests) ? userData.interests : [],
-        exlExperienceLevel: Array.isArray(userData.level) ? userData.level : []
+        exlExperienceLevel: Array.isArray(userData.level) ? userData.level : [],
       };
     } else {
       window.EXL_PROFILE = { ...defaultProfile };
@@ -35,13 +35,12 @@ const setExlProfile = async () => {
 
 export default async function loadQualtrics() {
   const profilePromise = setExlProfile();
-  const fetchPromise = fetch('/qualtrics.json')
-    .then((resp) => {
-      if (resp.ok) {
-        return resp.json();
-      }
-      throw new Error(`${resp.status}: ${resp.statusText}`);
-    });
+  const fetchPromise = fetch('/qualtrics.json').then((resp) => {
+    if (resp.ok) {
+      return resp.json();
+    }
+    throw new Error(`${resp.status}: ${resp.statusText}`);
+  });
 
   Promise.all([profilePromise, fetchPromise])
     .then(([, json]) => {
