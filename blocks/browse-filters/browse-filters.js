@@ -1,4 +1,4 @@
-import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
+import { decorateIcons, getMetadata, fetchArticleIndex } from '../../scripts/lib-franklin.js';
 import {
   createTag,
   htmlToElement,
@@ -202,7 +202,6 @@ if (isArticleLandingPage()) {
   const articleIndex = await fetchArticleIndex();
   const coveoSolutions = articleIndex.reduce((acc, curr) => {
     if (curr?.coveoSolution) {
-      // eslint-disable-next-line no-param-reassign
       acc += `,${curr.coveoSolution}`;
     }
     return acc;
