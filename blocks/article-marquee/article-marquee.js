@@ -8,7 +8,7 @@ import {
 } from '../../scripts/scripts.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
-import { createOptimizedPicture, decorateIcons, getMetadata, loadCSS } from '../../scripts/lib-franklin.js';
+import { createOptimizedPicture, decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import ffetch from '../../scripts/ffetch.js';
 import loadJWT from '../../scripts/auth/jwt.js';
 import renderBookmark from '../../scripts/bookmark/bookmark.js';
@@ -168,7 +168,6 @@ function createBreadcrumb(container) {
  * @param {HTMLElement} block
  */
 export default async function ArticleMarquee(block) {
-  loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
   const [readTime, headingType] = block.querySelectorAll(':scope div > div');
   let link = getMetadata('author-bio-page');
   if (

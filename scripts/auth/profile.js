@@ -10,6 +10,9 @@ const { profileUrl, JWTTokenUrl, ppsOrigin, ims, isProd } = getConfig();
 const postSignInStreamKey = 'POST_SIGN_IN_STREAM';
 const override = /^(recommended|votes)$/;
 
+/**
+ * @returns {Promise<boolean>}
+ */
 export async function isSignedInUser() {
   try {
     await loadIms();
@@ -35,7 +38,7 @@ class PromiseSessionStore {
   async get(key) {
     const fromStorage = sessionStorage.getItem(key);
     if (fromStorage) return JSON.parse(fromStorage);
-    if (this.store[key]) return this.cache[key];
+    if (this.store[key]) return this.store[key];
     return null;
   }
 

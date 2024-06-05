@@ -1,0 +1,87 @@
+import { assetInteractionModel } from '../../../scripts/analytics/lib-analytics.js';
+import { defaultProfileClient, isSignedInUser } from '../../../scripts/auth/profile.js';
+import { createPlaceholderSpan, fetchLanguagePlaceholders } from '../../../scripts/scripts.js';
+import { sendNotice } from '../../../scripts/toast/toast.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
+function getCurrentPlaylistBookmarkPath() {
+  return window.location.pathname;
+}
+
+async function isBookmarkedPlaylist() {
+  const profile = await defaultProfileClient.getMergedProfile();
+  return profile?.bookmarks.includes(getCurrentPlaylistBookmarkPath()) || false;
+}
+
+async function toggleBookmark() {
+  return defaultProfileClient.updateProfile('bookmarks', getCurrentPlaylistBookmarkPath());
+}
+/**
+ * @param {HTMLButtonElement} bookmarkButton
+ */
+export async function decorateBookmark(bookmarkButton) {
+  const isSignedIn = await isSignedInUser();
+  bookmarkButton.dataset.signedIn = isSignedIn;
+  bookmarkButton.dataset.bookmarked = false;
+
+  if (!isSignedIn) {
+    const signInToBookmarkTooltip = createPlaceholderSpan('bookmarkUnauthTipText', 'Sign-in to bookmark', (span) => {
+      span.dataset.signedIn = 'false';
+      span.classList.add('playlist-action-tooltip-label');
+    });
+
+    bookmarkButton.appendChild(signInToBookmarkTooltip);
+    bookmarkButton.disabled = true;
+    return;
+  }
+
+  const isBookmarked = await isBookmarkedPlaylist();
+  bookmarkButton.dataset.bookmarked = isBookmarked;
+
+  const bookmarkTooltip = createPlaceholderSpan('playlistBookmark', 'Bookmark Playlist', (span) => {
+    span.dataset.signedIn = 'true';
+    span.dataset.bookmarked = 'false';
+    span.classList.add('playlist-action-tooltip-label');
+  });
+  bookmarkTooltip.style.display = 'none';
+  bookmarkButton.appendChild(bookmarkTooltip);
+
+  const removeBookmarkTooltip = createPlaceholderSpan('playlistRemoveBookmark', 'Remove Bookmark', (span) => {
+    span.dataset.signedIn = 'true';
+    span.dataset.bookmarked = 'true';
+    span.classList.add('playlist-action-tooltip-label');
+  });
+  removeBookmarkTooltip.style.display = 'none';
+  bookmarkButton.appendChild(removeBookmarkTooltip);
+}
+
+/**
+ *
+ * @param {PointerEvent} event
+ * @param {*} playlist
+ */
+export async function bookmark(event) {
+  const button = event.target.closest('button');
+  const isBookmarked = button.dataset.bookmarked === 'true';
+  await toggleBookmark();
+
+  if (isBookmarked) {
+    // bookmark was just removed
+    button.dataset.bookmarked = 'false';
+    sendNotice(`${placeholders.bookmarkUnset}`);
+    assetInteractionModel(getCurrentPlaylistBookmarkPath(), 'Bookmark removed');
+  } else {
+    // bookmark was just added
+    button.dataset.bookmarked = 'true';
+    sendNotice(`${placeholders.bookmarkSet}`);
+    assetInteractionModel(getCurrentPlaylistBookmarkPath(), 'Bookmarked');
+  }
+  return true;
+}

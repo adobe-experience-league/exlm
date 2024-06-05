@@ -299,6 +299,7 @@ function buildAutoBlocks(main) {
     }
     if (isProfilePage()) {
       renderProfilePage(main);
+      renderProfilePage(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
