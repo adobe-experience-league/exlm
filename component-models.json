@@ -2632,6 +2632,23 @@
     "id": "block-quote",
     "fields": [
       {
+        "component": "select",
+        "valueType": "string",
+        "name": "block-quote-style",
+        "label": "Block Quote style",
+        "value": "",
+        "options": [
+          {
+            "name": "Adobe",
+            "value": "adobe"
+          },
+          {
+            "name": "External",
+            "value": "external"
+          }
+        ]
+      },
+      {
         "component": "richtext",
         "valueType": "string",
         "name": "block-quote",
