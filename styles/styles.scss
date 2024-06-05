@@ -1535,6 +1535,10 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section) {
   }
 }
 
+body.profile .section[data-two-column-layout] > div:nth-child(2) {
+  border-top: 0;
+}
+
 @include breakpoint('tablet') {
   body.profile .section:not(.profile-tab-section, .profile-rail-section) {
     margin: 0 16px 24px;
@@ -1557,7 +1561,6 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section) {
   }
 
   body.profile .section[data-two-column-layout] > div:nth-child(2) {
-    border-top: 0;
     padding-top: 0;
     margin: 0 auto;
   }
@@ -1610,7 +1613,7 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section) {
   body.profile .profile-rail {
     position: sticky;
     top: 10px;
-    margin-left: 5em;
+    margin-left: 54px;
   }
 
   body.profile .section:not(.profile-tab-section, .profile-rail-section) {
