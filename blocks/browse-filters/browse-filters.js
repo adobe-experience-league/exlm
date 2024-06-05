@@ -1,4 +1,4 @@
-import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
+import { decorateIcons, getMetadata, fetchArticleIndex } from '../../scripts/lib-franklin.js';
 import {
   createTag,
   htmlToElement,
@@ -11,6 +11,7 @@ import {
   roleOptions,
   contentTypeOptions,
   expTypeOptions,
+  productTypeOptions,
   getObjectByName,
   getFiltersPaginationText,
   getBrowseFiltersResultCount,
@@ -194,8 +195,32 @@ if (theme === 'browse-all') dropdownOptions.push(productOptions);
 if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
 
 if (isArticleLandingPage()) {
+  const articleIndex = await fetchArticleIndex();
+  const coveoSolutions = articleIndex.reduce((acc, curr) => {
+    if (curr?.coveoSolution) {
+      acc += `,${curr.coveoSolution}`;
+    }
+    return acc;
+  }, '');
+
+  const coveoSolutionArr = coveoSolutions.split(/[,;|]/).filter(Boolean);
+  const coveoSolutionOptionsList = Array.from(new Set(coveoSolutionArr)).sort();
+  const coveoSolutionOptions = coveoSolutionOptionsList.map((solution) => {
+    return {
+      description: '',
+      id: solution.toLowerCase(),
+      title: solution,
+      value: solution
+    }
+  });
+  productTypeOptions.items = coveoSolutionOptions;
+  dropdownOptions.length = 0;
+  dropdownOptions.push(productTypeOptions);
+  dropdownOptions.push(roleOptions);
   dropdownOptions.push(authorOptions);
-  dropdownOptions.push(expTypeOptions);
+
+  // dropdownOptions.push(authorOptions);
+  // dropdownOptions.push(expTypeOptions);
 }
 
 /**

@@ -204,6 +204,13 @@ export const expTypeOptions = {
   selected: 0,
 };
 
+export const productTypeOptions = {
+  id: 'el_product',
+  name: placeholders.filterProductLabel || 'Product',
+  items: expLevel,
+  selected: 0,
+};
+
 export const authorOptions = {
   id: 'author_type',
   name: placeholders.filterAuthorLabel || 'Author Type',
