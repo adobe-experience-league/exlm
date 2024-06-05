@@ -16,12 +16,9 @@
 }
 
 .profile-interest-checkbox {
+    align-items: center;
     display: flex;
     gap: 8px;
-    align-items: center;
-}
-
-.profile-interest-checkbox {
     margin-top: 16px;
 }
 
