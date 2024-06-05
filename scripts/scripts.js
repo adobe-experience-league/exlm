@@ -270,12 +270,11 @@ function addProfileTab(main) {
  * @param {HTMLElement} main
  */
 async function renderProfilePage(main) {
+  addProfileTab(main);
+  addProfileRail(main);
   try {
     await loadIms(); // eslint-disable-line no-use-before-define
-    if (window?.adobeIMS?.isSignedInUser() || false) {
-      addProfileRail(main);
-      addProfileTab(main);
-    } else {
+    if (!window?.adobeIMS?.isSignedInUser()) {
       window?.adobeIMS?.signIn();
     }
   } catch (e) {
