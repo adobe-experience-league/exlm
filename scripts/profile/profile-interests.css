@@ -10,7 +10,7 @@
     justify-content: space-between;
 }
 
-.profile-interest-card--selected {
+.profile-interest-card-selected {
     box-shadow: 0px 3px 8px #1473E629;
     border: 1px solid var(--non-spectrum-navy-blue);
 }

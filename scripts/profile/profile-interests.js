@@ -3,11 +3,10 @@ import Dropdown from '../dropdown/dropdown.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import getSolutionByName from '../../blocks/toc/toc-solutions.js';
 
-loadCSS(`${window.hlx.codeBasePath}/scripts/profile/profile-interests.css`);
-
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
+  await loadCSS(`${window.hlx.codeBasePath}/scripts/profile/profile-interests.css`)
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
@@ -35,7 +34,7 @@ export default async function buildProductCard(container, element, model) {
   // Create card container
   const card = document.createElement('div');
   const cardContent = document.createElement('div');
-  card.className = `profile-interest-card ${isSelected ? 'profile-interest-card--selected' : ''}`;
+  card.className = `profile-interest-card ${isSelected ? 'profile-interest-card-selected' : ''}`;
   const { class: solutionInfoClassName } = getSolutionByName(product);
 
   // Header
@@ -68,9 +67,9 @@ export default async function buildProductCard(container, element, model) {
   const changeHandler = (e) => {
     const { checked } = e.target;
     if (checked) {
-      card.classList.add('profile-interest-card--selected');
+      card.classList.add('profile-interest-card-selected');
     } else {
-      card.classList.remove('profile-interest-card--selected');
+      card.classList.remove('profile-interest-card-selected');
     }
   };
   const checkboxContainer = htmlToElement(`
