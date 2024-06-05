@@ -3,7 +3,7 @@ import Dropdown from '../dropdown/dropdown.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import getSolutionByName from '../../blocks/toc/toc-solutions.js';
 
-loadCSS(`${window.hlx.codeBasePath}/scripts/profile/profile-interests.css`)
+loadCSS(`${window.hlx.codeBasePath}/scripts/profile/profile-interests.css`);
 
 let placeholders = {};
 try {
