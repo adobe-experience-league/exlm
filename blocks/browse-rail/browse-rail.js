@@ -346,9 +346,9 @@ export default async function decorate(block) {
     }
   }
 
+  let promise = Promise.resolve();
   // For Browse Product Pages
   if (theme !== 'browse-all') {
-    const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
     const currentPagePath = getEDSLink(window.location.pathname);
     const label = getMetadata('og:title');
     // Add "Browse more products" link
@@ -390,8 +390,17 @@ export default async function decorate(block) {
       displayManualNav(manualNav, block);
     } else {
       // dynamically create sub page nav or if empty show products list
-      await displayProductNav(block, currentPagePath, results);
+      promise = new Promise((resolve) => {
+        ffetch(`/${getPathDetails().lang}/browse-index.json`)
+          .all()
+          .then((results) => {
+            displayProductNav(block, currentPagePath, results).then(() => resolve());
+          });
+      });
     }
   }
-  handleToggleClick(block);
+  promise.then(() => {
+    // Event listener for toggle
+    handleToggleClick(block);
+  });
 }
