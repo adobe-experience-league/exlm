@@ -796,6 +796,22 @@
         "name": "rows",
         "value": "",
         "label": "Rows"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "classes",
+        "label": "Style Type",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Border w/ alternating rows",
+            "value": "b-alt-row"
+          }
+        ]
       }
     ]
   },
