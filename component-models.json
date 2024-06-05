@@ -3202,5 +3202,71 @@
         "description": "This will center the entire Icon Cards Block."
       }
     ]
+  },
+  {
+    "id": "note",
+    "fields": [
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "note-type",
+        "label": "Note Type",
+        "value": "",
+        "options": [
+          {
+            "name": "Note",
+            "value": "note"
+          },
+          {
+            "name": "Tip",
+            "value": "tip"
+          },
+          {
+            "name": "Important",
+            "value": "important"
+          },
+          {
+            "name": "Warning",
+            "value": "warning"
+          },
+          {
+            "name": "Caution",
+            "value": "caution"
+          },
+          {
+            "name": "Admin",
+            "value": "admin"
+          },
+          {
+            "name": "Availability",
+            "value": "availability"
+          },
+          {
+            "name": "Prerequisites",
+            "value": "prerequisites"
+          },
+          {
+            "name": "Info",
+            "value": "info"
+          },
+          {
+            "name": "Error",
+            "value": "error"
+          },
+          {
+            "name": "Success",
+            "value": "success"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Note Description",
+        "description": "Sets the Note description"
+      }
+    ]
   }
 ]
