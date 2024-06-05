@@ -3215,47 +3215,47 @@
         "options": [
           {
             "name": "Note",
-            "value": "note"
+            "value": "NOTE"
           },
           {
             "name": "Tip",
-            "value": "tip"
+            "value": "TIP"
           },
           {
             "name": "Important",
-            "value": "important"
+            "value": "IMPORTANT"
           },
           {
             "name": "Warning",
-            "value": "warning"
+            "value": "WARNING"
           },
           {
             "name": "Caution",
-            "value": "caution"
+            "value": "CAUTION"
           },
           {
             "name": "Admin",
-            "value": "admin"
+            "value": "ADMIN"
           },
           {
             "name": "Availability",
-            "value": "availability"
+            "value": "AVAILABILITY"
           },
           {
             "name": "Prerequisites",
-            "value": "prerequisites"
+            "value": "PREREQUISITES"
           },
           {
             "name": "Info",
-            "value": "info"
+            "value": "INFO"
           },
           {
             "name": "Error",
-            "value": "error"
+            "value": "ERROR"
           },
           {
             "name": "Success",
-            "value": "success"
+            "value": "SUCCESS"
           }
         ]
       },
