@@ -1099,16 +1099,19 @@ async function loadPage() {
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 if (!window.hlx.DO_NOT_LOAD_PAGE) {
-  if (
-    !document.documentElement.classList.contains('adobe-ue-edit') ||
-    !document.documentElement.classList.contains('adobe-ue-preview') ||
-    isProfilePage()
-  ) {
-    await loadIms();
-    if (window?.adobeIMS?.isSignedInUser()) {
+  if (isProfilePage()) {
+    if (
+      document.documentElement.classList.contains('adobe-ue-edit') ||
+      document.documentElement.classList.contains('adobe-ue-preview')
+    ) {
       loadPage();
     } else {
-      await window?.adobeIMS?.signIn();
+      await loadIms();
+      if (window?.adobeIMS?.isSignedInUser()) {
+        loadPage();
+      } else {
+        await window?.adobeIMS?.signIn();
+      }
     }
   } else {
     loadPage();
