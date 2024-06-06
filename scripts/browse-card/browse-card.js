@@ -339,6 +339,22 @@ const setupCopyAction = (wrapper) => {
   });
 };
 
+/**
+ * @typedef {Object} CardModel
+ * @property {string} thumbnail
+ * @property {string[]} product
+ * @property {string} title
+ * @property {string} contentType
+ * @property {string} badgeTitle
+ * @property {number} inProgressStatus
+ */
+
+/**
+ *
+ * @param {HTMLElement} container
+ * @param {HTMLElement} element
+ * @param {*} model
+ */
 export async function buildCard(container, element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus } = model;
   // lowercase all urls - because all of our urls are lower-case

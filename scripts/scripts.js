@@ -1095,6 +1095,7 @@ async function loadPage() {
   loadDelayed();
   showBrowseBackgroundGraphic();
   loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
+  loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-cards.js`);
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
