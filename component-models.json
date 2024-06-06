@@ -1826,6 +1826,14 @@
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl",
         "description": "Select up to 15 topics or features."
+      },
+      {
+        "component": "aem-tag",
+        "name": "contentType",
+        "label": "Content type",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/content-type",
+        "description": "Filter results to specific content."
       }
     ]
   },
