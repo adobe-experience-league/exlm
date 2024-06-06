@@ -52,7 +52,8 @@
       "block-quote",
       "callout",
       "featured-authors",
-      "inline-survey"
+      "inline-survey",
+      "featured-content"
     ]
   },
   {
@@ -101,7 +102,6 @@
       "role-cards",
       "user-profile-card",
       "email-card",
-      "entitled-products",
       "product-interests",
       "product-experience-level"
     ]
@@ -117,7 +117,6 @@
       "data-and-email-consent",
       "role-cards",
       "user-profile-card",
-      "entitled-products",
       "product-interests",
       "product-experience-level",
       "icon-block"
@@ -137,6 +136,7 @@
       "teaser",
       "detailed-teaser",
       "marquee",
+      "mini-toc",
       "carousel",
       "sign-up",
       "video-embed",
@@ -144,11 +144,12 @@
       "block-quote",
       "callout",
       "article-tags",
-      "author-bio",
       "author-summary",
       "social-share",
       "featured-authors",
-      "inline-survey"
+      "inline-survey",
+      "featured-content",
+      "note"
     ]
   },
   {

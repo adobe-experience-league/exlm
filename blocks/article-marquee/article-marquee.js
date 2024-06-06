@@ -122,7 +122,7 @@ function createBreadcrumb(container) {
   const currentPath = getEDSLink(document.location.pathname);
 
   // split the path at browse root
-  const browseRootName = 'article';
+  const browseRootName = 'actionable-insights';
   const pathParts = currentPath.split(browseRootName);
   // prefix language path
   const browseRoot = `${pathParts[0]}${browseRootName}`;
