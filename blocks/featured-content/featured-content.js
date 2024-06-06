@@ -22,7 +22,7 @@ export async function getContentReference(link) {
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(html, 'text/html');
       const description = htmlDoc.querySelector('main div p')?.textContent;
-      const authorBio = htmlDoc.querySelectorAll('.author-bio');
+      const authorBio = htmlDoc.querySelectorAll('.author-summary-grid');
 
       return {
         contentTitle: htmlDoc.title,
