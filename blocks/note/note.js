@@ -8,7 +8,7 @@ const iconMapping = {
   success: 'check',
 };
 
-export default function decorate(block) {
+export default async function decorate(block) {
   const [noteTypeElement] = [...block.children].map((row) => row.firstElementChild);
 
   // Shouldn't apply to MD Github pages
@@ -21,6 +21,6 @@ export default function decorate(block) {
     noteTypeElement.prepend(iconSpan);
 
     block.classList.add('note', noteType);
-    decorateIcons(block);
+    await decorateIcons(block);
   }
 }
