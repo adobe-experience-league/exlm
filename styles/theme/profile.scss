@@ -100,6 +100,7 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section) {
   body.profile > main > div.profile-tab-section {
     grid-area: profile-tab-section;
     padding-top: 40px;
+    padding-left: 100px;
   }
 
   body.profile .section:nth-child(3) {
