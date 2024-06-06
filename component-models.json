@@ -1844,12 +1844,45 @@
         "description": "Select up to 15 topics or features."
       },
       {
-        "component": "aem-tag",
-        "name": "contentType",
-        "label": "Content type",
+        "component": "multiselect",
         "valueType": "string",
-        "rootPath": "/content/cq:tags/exl/content-type",
-        "description": "Filter results to specific content."
+        "name": "contentTypes",
+        "label": "Filter by Content Type",
+        "description": "Select the content type(s).",
+        "options": [
+          {
+            "name": "Article",
+            "value": "article"
+          },
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
       }
     ]
   },
