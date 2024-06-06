@@ -52,10 +52,7 @@ function decodeArticlePageMetaTags() {
 }
 
 export default function decorate(block) {
-  if (
-    document.documentElement.classList.contains('adobe-ue-edit') ||
-    document.documentElement.classList.contains('adobe-ue-preview')
-  ) {
+  if (window.location.pathname.endsWith('.html')) {
     decodeArticlePageMetaTags();
   }
   const coveosolutions = getMetadata('coveo-solution');
