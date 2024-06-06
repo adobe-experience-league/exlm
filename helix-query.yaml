@@ -180,9 +180,9 @@ indices:
 
   article-en: &base-article
     include:
-      - /en/articles/**
+      - /en/actionable-insights/**
     exclude:
-      - /en/articles/authors/**
+      - /en/actionable-insights/authors/**
     target: /en/article-index.json
     properties:
       title:
@@ -224,89 +224,89 @@ indices:
   article-fr:
     <<: *base-article
     include:
-      - /fr/articles/**
+      - /fr/actionable-insights/**
     exclude:
-      - /fr/articles/authors/**
+      - /fr/actionable-insights/authors/**
     target: /fr/article-index.json
 
   article-de:
     <<: *base-article
     include:
-      - /de/articles/**
+      - /de/actionable-insights/**
     exclude:
-      - /de/articles/authors/**
+      - /de/actionable-insights/authors/**
     target: /de/article-index.json
 
   article-es:
     <<: *base-article
     include:
-      - /es/articles/**
+      - /es/actionable-insights/**
     exclude:
-      - /es/articles/authors/**
+      - /es/actionable-insights/authors/**
     target: /es/article-index.json
 
   article-it:
     <<: *base-article
     include:
-      - /it/articles/**
+      - /it/actionable-insights/**
     exclude:
-      - /it/articles/authors/**
+      - /it/actionable-insights/authors/**
     target: /it/article-index.json
 
   article-nl:
     <<: *base-article
     include:
-      - /nl/articles/**
+      - /nl/actionable-insights/**
     exclude:
-      - /nl/articles/authors/**
+      - /nl/actionable-insights/authors/**
     target: /nl/article-index.json
 
   article-pt-br:
     <<: *base-article
     include:
-      - /pt-br/articles/**
+      - /pt-br/actionable-insights/**
     exclude:
-      - /pt-br/articles/authors/**
+      - /pt-br/actionable-insights/authors/**
     target: /pt-br/article-index.json
 
   article-ko:
     <<: *base-article
     include:
-      - /ko/articles/**
+      - /ko/actionable-insights/**
     exclude:
-      - /ko/articles/authors/**
+      - /ko/actionable-insights/authors/**
     target: /ko/article-index.json
 
   article-ja:
     <<: *base-article
     include:
-      - /ja/articles/**
+      - /ja/actionable-insights/**
     exclude:
-      - /ja/articles/authors/**
+      - /ja/actionable-insights/authors/**
     target: /ja/article-index.json
 
   article-sv:
     <<: *base-article
     include:
-      - /sv/articles/**
+      - /sv/actionable-insights/**
     exclude:
-      - /sv/articles/authors/**
+      - /sv/actionable-insights/authors/**
     target: /sv/article-index.json
 
   article-zh-hans:
     <<: *base-article
     include:
-      - /zh-hans/articles/**
+      - /zh-hans/actionable-insights/**
     exclude:
-      - /zh-hans/articles/authors/**
+      - /zh-hans/actionable-insights/authors/**
     target: /zh-hans/article-index.json
 
   article-zh-hant:
     <<: *base-article
     include:
-      - /zh-hant/articles/**
+      - /zh-hant/actionable-insights/**
     exclude:
-      - /zh-hant/articles/authors/**
+      - /zh-hant/actionable-insights/authors/**
     target: /zh-hant/article-index.json
 
   profile-en: &base-profile
