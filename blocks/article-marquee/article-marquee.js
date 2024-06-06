@@ -171,14 +171,9 @@ export default async function ArticleMarquee(block) {
   loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
   const [readTime, headingType] = block.querySelectorAll(':scope div > div');
   let link = getMetadata('author-bio-page');
-  if (
-    link &&
-    (document.documentElement.classList.contains('adobe-ue-edit') ||
-      document.documentElement.classList.contains('adobe-ue-preview'))
-  ) {
+  if ( link && window.location.pathname.endsWith('.html')) {
     link = `${link}.html`;
   }
-
   const articleDetails = `<div class="article-marquee-info-container"><div class="article-info">
                                 <div class="breadcrumb"></div>
                                 <${headingType.textContent ? headingType.textContent : 'h1'}>${document.title}</${
@@ -216,7 +211,7 @@ export default async function ArticleMarquee(block) {
       }
       authorInfoContainer.outerHTML = `
         <div>${createOptimizedPicture(authorInfo?.authorImage).outerHTML}</div>
-        <div>${authorInfo?.authorName}</div> 
+        <div>${authorInfo?.authorName}</div>
         <div>${authorInfo?.authorTitle}</div>
         <div class="article-marquee-tag">${tagname}</div>
       `;
