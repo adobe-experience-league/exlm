@@ -848,7 +848,7 @@ picture[align=right] {
   vertical-align: middle;
 }
 
-@media (min-width: 600px) {
+@media (width >= 600px) {
   .exl-toast {
     width: auto;
   }
@@ -1551,6 +1551,7 @@ body.profile .section[data-two-column-layout] > div:nth-child(2) {
   body.profile > main > div.profile-tab-section {
     grid-area: profile-tab-section;
     padding-top: 40px;
+    padding-left: 100px;
   }
   body.profile .section:nth-child(3) {
     background-image: url("/icons/solutions/profileDecoration.svg");

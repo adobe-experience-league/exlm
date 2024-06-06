@@ -266,23 +266,6 @@ function addProfileTab(main) {
 }
 
 /**
- * Render the profile page after the user has signed in.
- * @param {HTMLElement} main
- */
-async function renderProfilePage(main) {
-  addProfileTab(main);
-  addProfileRail(main);
-  try {
-    await loadIms(); // eslint-disable-line no-use-before-define
-    if (!window?.adobeIMS?.isSignedInUser()) {
-      window?.adobeIMS?.signIn();
-    }
-  } catch (e) {
-    window?.adobeIMS?.signIn();
-  }
-}
-
-/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -298,7 +281,8 @@ function buildAutoBlocks(main) {
       addArticleLandingRail(main);
     }
     if (isProfilePage()) {
-      renderProfilePage(main);
+      addProfileTab(main);
+      addProfileRail(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -1115,5 +1099,18 @@ async function loadPage() {
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 if (!window.hlx.DO_NOT_LOAD_PAGE) {
-  loadPage();
+  if (
+    !document.documentElement.classList.contains('adobe-ue-edit') ||
+    !document.documentElement.classList.contains('adobe-ue-preview') ||
+    isProfilePage()
+  ) {
+    // await loadIms();
+    // if(window?.adobeIMS?.isSignedInUser()) {
+    loadPage();
+    // } else {
+    //   await window?.adobeIMS?.signIn();
+    // }
+  } else {
+    loadPage();
+  }
 }

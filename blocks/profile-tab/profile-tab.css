@@ -17,11 +17,15 @@
     color: #222;
     text-transform: capitalize;
     font-size: 14px;
-    margin-right: 1em;
+    margin-right: 24px;
     margin-bottom: -2px;
 }
 
-.profile-tab.block a:first-child{
+.profile-tab.block a:last-child {
+    margin-right: 0;
+}
+
+.profile-tab.block a.active{
     font-weight: 700;
     border-bottom: 2px solid #000;
 }
