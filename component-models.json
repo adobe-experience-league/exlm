@@ -796,6 +796,22 @@
         "name": "rows",
         "value": "",
         "label": "Rows"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "classes",
+        "label": "Style Type",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Border w/ alternating rows",
+            "value": "b-alt-row"
+          }
+        ]
       }
     ]
   },
@@ -3200,6 +3216,72 @@
         "name": "allow-center",
         "label": "Center the section?",
         "description": "This will center the entire Icon Cards Block."
+      }
+    ]
+  },
+  {
+    "id": "note",
+    "fields": [
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "note-type",
+        "label": "Note Type",
+        "value": "",
+        "options": [
+          {
+            "name": "Note",
+            "value": "NOTE"
+          },
+          {
+            "name": "Tip",
+            "value": "TIP"
+          },
+          {
+            "name": "Important",
+            "value": "IMPORTANT"
+          },
+          {
+            "name": "Warning",
+            "value": "WARNING"
+          },
+          {
+            "name": "Caution",
+            "value": "CAUTION"
+          },
+          {
+            "name": "Admin",
+            "value": "ADMIN"
+          },
+          {
+            "name": "Availability",
+            "value": "AVAILABILITY"
+          },
+          {
+            "name": "Prerequisites",
+            "value": "PREREQUISITES"
+          },
+          {
+            "name": "Info",
+            "value": "INFO"
+          },
+          {
+            "name": "Error",
+            "value": "ERROR"
+          },
+          {
+            "name": "Success",
+            "value": "SUCCESS"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Note Description",
+        "description": "Sets the Note description"
       }
     ]
   }
