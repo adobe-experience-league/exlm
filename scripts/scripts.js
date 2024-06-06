@@ -1104,12 +1104,12 @@ if (!window.hlx.DO_NOT_LOAD_PAGE) {
     !document.documentElement.classList.contains('adobe-ue-preview') ||
     isProfilePage()
   ) {
-    // await loadIms();
-    // if(window?.adobeIMS?.isSignedInUser()) {
-    loadPage();
-    // } else {
-    //   await window?.adobeIMS?.signIn();
-    // }
+    await loadIms();
+    if (window?.adobeIMS?.isSignedInUser()) {
+      loadPage();
+    } else {
+      await window?.adobeIMS?.signIn();
+    }
   } else {
     loadPage();
   }
