@@ -848,7 +848,7 @@ picture[align=right] {
   vertical-align: middle;
 }
 
-@media (width >= 600px) {
+@media (min-width: 600px) {
   .exl-toast {
     width: auto;
   }
