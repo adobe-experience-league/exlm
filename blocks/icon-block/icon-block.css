@@ -97,9 +97,17 @@
     max-width: 230px;
     min-height: 180px;
   } 
-
-   body[class ^= 'browse-'] .icon-block,
-   body[class ^= 'article-'] .icon-block {
-    max-width: none;
-   }
+  body[class ^= 'browse-'] .icon-block,
+  body[class ^= 'article-'] .icon-block {
+  max-width: none;
+  }
+  .icon-block-center-align {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+  }
+  .icon-block-center-align > div {
+    width: 230px;
+  }
 }

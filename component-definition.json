@@ -138,7 +138,8 @@
                   "style": "article-content-section",
                   "mini-toc": {
                     "sling:resourceType": "core/franklin/components/block/v1/block",
-                    "name": "Mini TOC"
+                    "name": "Mini TOC",
+                    "model": "mini-toc"
                   }
                 }
               }
@@ -195,6 +196,7 @@
                 "template": {
                   "filter": "icon-block",
                   "name": "Icon Block",
+                  "model": "icon-block",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Icon Card",
@@ -924,21 +926,6 @@
           }
         },
         {
-          "title": "Entitled Products",
-          "id": "entitled-products",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block",
-                "template": {
-                  "name": "Entitled Products",
-                  "model": "entitled-products"
-                }
-              }
-            }
-          }
-        },
-        {
           "title": "Product Interests",
           "id": "product-interests",
           "plugins": {
@@ -963,6 +950,36 @@
                 "template": {
                   "name": "Product Experience Level",
                   "model": "product-experience-level"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Mini TOC",
+          "id": "mini-toc",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Mini TOC",
+                  "model": "mini-toc"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Note",
+          "id": "note",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Note",
+                  "model": "note"
                 }
               }
             }

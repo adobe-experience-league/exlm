@@ -281,8 +281,8 @@ function buildAutoBlocks(main) {
       addArticleLandingRail(main);
     }
     if (isProfilePage()) {
-      addProfileRail(main);
       addProfileTab(main);
+      addProfileRail(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -1099,5 +1099,21 @@ async function loadPage() {
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 if (!window.hlx.DO_NOT_LOAD_PAGE) {
-  loadPage();
+  if (isProfilePage()) {
+    if (
+      document.documentElement.classList.contains('adobe-ue-edit') ||
+      document.documentElement.classList.contains('adobe-ue-preview')
+    ) {
+      loadPage();
+    } else {
+      await loadIms();
+      if (window?.adobeIMS?.isSignedInUser()) {
+        loadPage();
+      } else {
+        await window?.adobeIMS?.signIn();
+      }
+    }
+  } else {
+    loadPage();
+  }
 }
