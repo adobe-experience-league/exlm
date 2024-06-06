@@ -739,7 +739,7 @@ picture {
   vertical-align: middle;
 }
 
-@media (width >= 600px) {
+@include breakpoint(tablet) {
   .exl-toast {
     width: auto;
   }
