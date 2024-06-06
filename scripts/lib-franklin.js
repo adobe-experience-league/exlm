@@ -616,18 +616,15 @@ export function normalizeHeadings(el, allowedHeadings) {
  * Set template (page structure) and theme (page styles).
  */
 export function decorateTemplateAndTheme() {
-  const toClassNames = (classes) => classes?.split(',')?.map((c) => toClassName(c.trim())) || [];
-  const addClassesFromMeta = (name) => {
-    const meta = getMetadata(name);
-    if (meta) {
-      toClassNames(meta).forEach((className) => {
-        document.body.classList.add(className);
-        loadCSS(`${window.hlx.codeBasePath}/styles/theme/${className}.css`);
-      });
-    }
+  const addClasses = (element, classes) => {
+    classes.split(',').forEach((c) => {
+      element.classList.add(toClassName(c.trim()));
+    });
   };
-  addClassesFromMeta('template');
-  addClassesFromMeta('theme');
+  const template = getMetadata('template');
+  if (template) addClasses(document.body, template);
+  const theme = getMetadata('theme');
+  if (theme) addClasses(document.body, theme);
 }
 
 /**
