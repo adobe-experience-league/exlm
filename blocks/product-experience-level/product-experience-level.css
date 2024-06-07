@@ -1,0 +1,95 @@
+.product-experience-level {
+  max-width: 318px;
+  margin: 0 auto;
+}
+
+.product-experience-level * {
+  box-sizing: border-box;
+}
+
+.product-experience-level-header {
+    font-size: 28px;
+    line-height: 35px;
+    font-weight: 700;
+    padding: 16px 0;
+    margin: 0;
+    border-bottom: 1px solid #D6D6D6;
+  }
+  
+  .product-experience-level-para {
+    font-size: 16px;
+    line-height: 20px;
+    font-style: italic;
+    margin: 16px 0;
+  }
+  
+  .product-experience-level-type {
+    margin-bottom: 32px;
+  }
+  
+  .personalize-interest-results  {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .product-experience-level-item  h3 {
+    font-size: 18px;
+    line-height: 22px;
+    font-weight: 700;
+    margin: 8px 0;
+  }
+  
+  .product-experience-level-item  p {
+    font-size: 16px;
+    line-height: 21px;
+    color: #222222;
+    margin: 0;
+  }
+
+  @media (min-width: 600px) {
+    .product-experience-level {
+      max-width: none;
+    }
+
+    .product-experience-level-type {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .personalize-interest-results {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+  }
+  
+  @media (min-width: 900px) {
+    .product-experience-level-item  p {
+      font-size: 14px;
+    }
+
+    .product-experience-level-type {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .personalize-interest-results {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  /* Mock - css below */ 
+  .checkbox-container-new {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    justify-content: start;
+  }
+  .checkbox-container-new label {
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+  }

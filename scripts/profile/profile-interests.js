@@ -2,6 +2,7 @@ import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import Dropdown from '../dropdown/dropdown.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import getSolutionByName from '../../blocks/toc/toc-solutions.js';
+import { productExperienceEventEmitter } from '../events.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/profile/profile-interests.css`);
 
@@ -30,8 +31,8 @@ const options = [
 
 // eslint-disable-next-line import/prefer-default-export
 export default async function buildProductCard(container, element, model) {
-  const { product = 'Acrobat', isSelected = false } = model;
-
+  const { product: productsList = [], isSelected = false } = model;
+  const [product] = productsList;
   // Create card container
   const card = document.createElement('div');
   const cardContent = document.createElement('div');
@@ -72,6 +73,7 @@ export default async function buildProductCard(container, element, model) {
     } else {
       card.classList.remove('profile-interest-card-selected');
     }
+    productExperienceEventEmitter.set(product, checked);
   };
   const checkboxContainer = htmlToElement(`
         <div class="profile-interest-checkbox">
