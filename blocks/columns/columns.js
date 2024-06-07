@@ -1,3 +1,8 @@
+import { span } from '../../scripts/dom-helpers.js';
+
+/**
+ * Updates the headers of the columns based on the window width.
+ */
 function updateHeaders() {
   const columns = document.querySelector('.columns');
   const headerCells = columns.querySelector('div:first-child').children;
@@ -7,14 +12,8 @@ function updateHeaders() {
     rows.forEach(row => {
       row.querySelectorAll('div').forEach((cell, index) => {
         if (!cell.querySelector('.header-label')) {
-          const headerLabel = document.createElement('span');
-          headerLabel.className = 'header-label';
-          headerLabel.textContent = headerCells[index].textContent;
-
-          const cellContent = document.createElement('span');
-          cellContent.className = 'cell-content';
-          cellContent.textContent = cell.textContent;
-
+          const headerLabel = span('header-label', headerCells[index].textContent);
+          const cellContent = span('cell-content', cell.textContent);
           cell.textContent = '';
           cell.appendChild(headerLabel);
           cell.appendChild(cellContent);
@@ -36,7 +35,6 @@ function updateHeaders() {
 }
 
 window.addEventListener('resize', updateHeaders);
-window.addEventListener('load', updateHeaders);
 
 export default function decorate(block) {
   const cols = [...block.firstElementChild.children];
@@ -81,4 +79,5 @@ export default function decorate(block) {
       }
     });
   });
+  updateHeaders();
 }
