@@ -1100,9 +1100,11 @@ async function loadPage() {
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 if (!window.hlx.DO_NOT_LOAD_PAGE) {
   if (isProfilePage()) {
+    // Temporary fix for profile page redirecting to sign-in in UE
     if (
-      document.documentElement.classList.contains('adobe-ue-edit') ||
-      document.documentElement.classList.contains('adobe-ue-preview')
+      window.location.host === 'author-p122525-e1200861.adobeaemcloud.com' ||
+      window.location.host === 'author-p122525-e1219192.adobeaemcloud.com' ||
+      window.location.host === 'author-p122525-e1219150.adobeaemcloud.com'
     ) {
       loadPage();
     } else {
