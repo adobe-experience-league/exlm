@@ -39,6 +39,7 @@
   display: inline-flex;
   position: relative;
   padding: 10px;
+  width: 96%;
 }
 
 .columns.block.b-alt-row .header-label {
