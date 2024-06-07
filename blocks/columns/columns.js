@@ -1,3 +1,35 @@
+function updateHeaders() {
+  const columns = document.querySelector('.columns');
+  const headerCells = columns.querySelector('div:first-child').children;
+  const rows = columns.querySelectorAll('div:not(:first-child)');
+
+  if (window.innerWidth < 600) {
+    rows.forEach(row => {
+      row.querySelectorAll('div').forEach((cell, index) => {
+        if (!cell.querySelector('.header-label')) {
+          const headerLabel = document.createElement('span');
+          headerLabel.className = 'header-label';
+          headerLabel.textContent = headerCells[index].textContent;
+          cell.insertBefore(headerLabel, cell.firstChild);
+        }
+      });
+    });
+  } else {
+    // Remove the header labels if they exist
+    rows.forEach(row => {
+      row.querySelectorAll('div').forEach(cell => {
+        const headerLabel = cell.querySelector('.header-label');
+        if (headerLabel) {
+          cell.removeChild(headerLabel);
+        }
+      });
+    });
+  }
+}
+
+window.addEventListener('resize', updateHeaders);
+window.addEventListener('load', updateHeaders);
+
 export default function decorate(block) {
   const cols = [...block.firstElementChild.children];
   block.classList.add(`columns-${cols.length}-cols`);
