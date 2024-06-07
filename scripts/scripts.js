@@ -1101,11 +1101,7 @@ async function loadPage() {
 if (!window.hlx.DO_NOT_LOAD_PAGE) {
   if (isProfilePage()) {
     // Temporary fix for profile page redirecting to sign-in in UE
-    if (
-      window.location.host === 'author-p122525-e1200861.adobeaemcloud.com' ||
-      window.location.host === 'author-p122525-e1219192.adobeaemcloud.com' ||
-      window.location.host === 'author-p122525-e1219150.adobeaemcloud.com'
-    ) {
+    if (window.location.pathname.contains(".html")) {
       loadPage();
     } else {
       await loadIms();
