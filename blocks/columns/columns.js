@@ -1,3 +1,5 @@
+import { span } from '../../scripts/dom-helpers.js';
+
 function updateHeaders() {
   const columns = document.querySelector('.columns');
   const headerCells = columns.querySelector('div:first-child').children;
@@ -7,27 +9,37 @@ function updateHeaders() {
     rows.forEach(row => {
       row.querySelectorAll('div').forEach((cell, index) => {
         if (!cell.querySelector('.header-label')) {
-          const headerLabel = document.createElement('span');
+          const headerLabel = span({className: 'header-label', textContent: headerCells[index].textContent});
+          /* document.createElement('span');
           headerLabel.className = 'header-label';
-          headerLabel.textContent = headerCells[index].textContent;
-          cell.insertBefore(headerLabel, cell.firstChild);
+          headerLabel.textContent = headerCells[index].textContent; */
+
+          const cellContent = span({className: 'cell-content', textContent: cell.textContent});
+          /* document.createElement('span');
+          cellContent.className = 'cell-content';
+          cellContent.textContent = cell.textContent; */
+
+          cell.textContent = '';
+          cell.appendChild(headerLabel);
+          cell.appendChild(cellContent);
         }
       });
     });
   } else {
-    // Remove the header labels if they exist
+    // Remove the header labels if they exist and restore cell content
     rows.forEach(row => {
       row.querySelectorAll('div').forEach(cell => {
         const headerLabel = cell.querySelector('.header-label');
-        if (headerLabel) {
-          cell.removeChild(headerLabel);
+        const cellContent = cell.querySelector('.cell-content');
+        if (headerLabel && cellContent) {
+          cell.textContent = cellContent.textContent;
         }
       });
     });
   }
 }
 
-window.addEventListener('resize', updateHeaders);
+window.addEventListener('resize', updateHeaders)
 window.addEventListener('load', updateHeaders);
 
 export default function decorate(block) {

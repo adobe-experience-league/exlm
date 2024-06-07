@@ -39,13 +39,18 @@
   display: inline-flex;
   position: relative;
   padding: 10px;
-  width: 96%;
 }
 
 .columns.block.b-alt-row .header-label {
   font-weight: bold;
   display: block;
   width: 50%;
+}
+
+.columns.block.b-alt-row .cell-content {
+  display: inline-block;
+  width: 50%;
+  text-align: left;
 }
 
 @media (min-width: 600px) {
