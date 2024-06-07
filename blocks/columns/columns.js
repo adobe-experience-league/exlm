@@ -1,5 +1,3 @@
-import { span } from '../../scripts/dom-helpers.js';
-
 function updateHeaders() {
   const columns = document.querySelector('.columns');
   const headerCells = columns.querySelector('div:first-child').children;
@@ -9,15 +7,13 @@ function updateHeaders() {
     rows.forEach(row => {
       row.querySelectorAll('div').forEach((cell, index) => {
         if (!cell.querySelector('.header-label')) {
-          const headerLabel = span({className: 'header-label', textContent: headerCells[index].textContent});
-          /* document.createElement('span');
+          const headerLabel = document.createElement('span');
           headerLabel.className = 'header-label';
-          headerLabel.textContent = headerCells[index].textContent; */
+          headerLabel.textContent = headerCells[index].textContent;
 
-          const cellContent = span({className: 'cell-content', textContent: cell.textContent});
-          /* document.createElement('span');
+          const cellContent = document.createElement('span');
           cellContent.className = 'cell-content';
-          cellContent.textContent = cell.textContent; */
+          cellContent.textContent = cell.textContent;
 
           cell.textContent = '';
           cell.appendChild(headerLabel);
@@ -39,7 +35,7 @@ function updateHeaders() {
   }
 }
 
-window.addEventListener('resize', updateHeaders)
+window.addEventListener('resize', updateHeaders);
 window.addEventListener('load', updateHeaders);
 
 export default function decorate(block) {
