@@ -9,7 +9,6 @@ import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
-loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
