@@ -1842,6 +1842,47 @@
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl",
         "description": "Select up to 15 topics or features."
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "contentTypes",
+        "label": "Filter by Content Type",
+        "description": "Select the content type(s).",
+        "options": [
+          {
+            "name": "Actionable Insights",
+            "value": "article"
+          },
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
       }
     ]
   },
