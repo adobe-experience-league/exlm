@@ -1101,7 +1101,7 @@ async function loadPage() {
 if (!window.hlx.DO_NOT_LOAD_PAGE) {
   if (isProfilePage()) {
     // Temporary fix for profile page redirecting to sign-in in UE
-    if (window.location.href.contains(".html")) {
+    if (window.location.href.contains('.html')) {
       loadPage();
     } else {
       await loadIms();
