@@ -10,6 +10,9 @@ const { profileUrl, JWTTokenUrl, ppsOrigin, ims, isProd } = getConfig();
 const postSignInStreamKey = 'POST_SIGN_IN_STREAM';
 const override = /^(recommended|votes)$/;
 
+/**
+ * @returns {Promise<boolean>}
+ */
 export async function isSignedInUser() {
   try {
     await loadIms();
@@ -35,7 +38,7 @@ class PromiseSessionStore {
   async get(key) {
     const fromStorage = sessionStorage.getItem(key);
     if (fromStorage) return JSON.parse(fromStorage);
-    if (this.store[key]) return this.cache[key];
+    if (this.store[key]) return this.store[key];
     return null;
   }
 
@@ -200,6 +203,92 @@ class ProfileClient {
     });
     this.store.set(storageKey, promise);
     return promise;
+  }
+
+  /**
+   * Iterates backward through the interactions array to grab the latest instance
+   * of an event.
+   *
+   * @param {String} event
+   * @param {Object} otherConditions - Object of key value pairs to match against interaction
+   * @returns Interaction object or undefined if not found
+   */
+  async getLatestInteraction(event, otherConditions) {
+    const profile = await this.getMergedProfile(false);
+    const conditions = Object.apply({}, { event }, otherConditions || {});
+
+    return profile.interactions.findLast((interaction) => {
+      const keys = Object.keys(conditions);
+      return !keys.some((key) => interaction[key] !== conditions[key]);
+    });
+  }
+
+  /**
+   * Iterates backward through the interactions array to return all instances
+   * of an event matching the provided conditions sorted from most recent to oldest.
+   *
+   * @param {String} event
+   * @param {Object} otherConditions - Object of key value pairs to match against interaction
+   * @returns Array of interaction objects
+   */
+  async getAllInteractionsOfType(event, otherConditions) {
+    const profile = await this.getMergedProfile(false);
+    const conditions = Object.apply({}, { event }, otherConditions || {});
+    const foundInteractions = [];
+
+    profile.interactions.forEach((interaction) => {
+      const keys = Object.keys(conditions);
+      if (!keys.some((key) => interaction[key] !== conditions[key])) {
+        foundInteractions.push(interaction);
+      }
+    });
+
+    return foundInteractions;
+  }
+
+  /**
+   * Not all legacy events were pushed onto the interaction array and therefore
+   * not sorted by date. Only use this for interactions related to Courses
+   * or other legacy interactions. You generally should just use getInteraction.
+   * @param {String} event
+   * @returns Interaction object or undefined if not found
+   */
+  async getLatestLegacyInteraction(event, otherConditions) {
+    const profile = await this.getMergedProfile(false);
+    const conditions = Object.apply({}, { event }, otherConditions || {});
+    let latest;
+
+    profile.interactions.forEach((interaction) => {
+      const keys = Object.keys(conditions);
+      const notAMatch = keys.some((key) => interaction[key] !== conditions[key]);
+
+      latest = notAMatch && latest?.timestamp && latest.timestamp < interaction.timestamp ? interaction : latest;
+    });
+
+    return latest;
+  }
+
+  /**
+   * Adds an interactions to the interaction array. Interactions should only ever
+   * be added and never removed as they are generally used to track repeatable
+   * user interactions of interest through time.
+   *
+   * @param {String} event - Name of interaction event
+   * @param {Object} otherValues - Additional key value pairs to store
+   */
+  async addInteraction(event, otherValues) {
+    const profile = await this.getMergedProfile(false);
+    const interaction = Object.apply(
+      {},
+      {
+        event,
+        timestamp: new Date().toISOString(),
+      },
+      otherValues,
+    );
+
+    profile.interactions.push(interaction);
+    this.updateProfile('interactions', profile.interactions, true);
   }
 }
 
