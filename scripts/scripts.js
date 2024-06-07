@@ -1100,10 +1100,8 @@ async function loadPage() {
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 if (!window.hlx.DO_NOT_LOAD_PAGE) {
   if (isProfilePage()) {
-    if (
-      document.documentElement.classList.contains('adobe-ue-edit') ||
-      document.documentElement.classList.contains('adobe-ue-preview')
-    ) {
+    // Temporary fix for profile page redirecting to sign-in in UE
+    if (window.location.href.includes('.html')) {
       loadPage();
     } else {
       await loadIms();
