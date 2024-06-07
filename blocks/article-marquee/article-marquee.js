@@ -170,7 +170,7 @@ function createBreadcrumb(container) {
 export default async function ArticleMarquee(block) {
   const [readTime, headingType] = block.querySelectorAll(':scope div > div');
   let link = getMetadata('author-bio-page');
-  if (link && window.location.pathname.endsWith('.html')) {
+  if (link && window.location.pathname.startsWith('/content')) {
     link = `${link}.html`;
   }
   const articleDetails = `<div class="article-marquee-info-container"><div class="article-info">
