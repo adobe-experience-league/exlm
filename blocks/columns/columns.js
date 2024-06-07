@@ -12,8 +12,8 @@ function updateHeaders() {
     rows.forEach(row => {
       row.querySelectorAll('div').forEach((cell, index) => {
         if (!cell.querySelector('.header-label')) {
-          const headerLabel = span({ class: 'header-label' }, headerCells[index].textContent);
-          const cellContent = span({ class: 'cell-content' }, cell.textContent);
+          const headerLabel = span({ class: 'header-label', textContent: headerCells[index].textContent });
+          const cellContent = span({ class: 'cell-content', textContent: cell.textContent });
           cell.textContent = '';
           cell.appendChild(headerLabel);
           cell.appendChild(cellContent);
