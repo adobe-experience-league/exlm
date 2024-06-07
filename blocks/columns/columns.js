@@ -9,7 +9,7 @@ function updateHeaders() {
   const rows = columns.querySelectorAll('div:not(:first-child)');
 
   if (window.innerWidth < 600) {
-    rows.forEach(row => {
+    rows.forEach((row) => {
       row.querySelectorAll('div').forEach((cell, index) => {
         if (!cell.querySelector('.header-label')) {
           const headerLabel = span({ class: 'header-label' }, headerCells[index].textContent);
@@ -22,8 +22,8 @@ function updateHeaders() {
     });
   } else {
     // Remove the header labels if they exist and restore cell content
-    rows.forEach(row => {
-      row.querySelectorAll('div').forEach(cell => {
+    rows.forEach((row) => {
+      row.querySelectorAll('div').forEach((cell) => {
         const headerLabel = cell.querySelector('.header-label');
         const cellContent = cell.querySelector('.cell-content');
         if (headerLabel && cellContent) {
