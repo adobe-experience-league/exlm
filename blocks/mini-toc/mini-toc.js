@@ -12,7 +12,7 @@ function setPadding(arg = '') {
 
 function headerExclusions(header) {
   return (
-    header.id.length > 0 &&
+    (window.location.pathname.startsWith('/content') || header.id.length > 0) &&
     !header.classList.contains('no-mtoc') &&
     !header.closest('details') &&
     !header.closest('sp-tabs')
