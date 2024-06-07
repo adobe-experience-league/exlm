@@ -739,7 +739,7 @@ picture {
   vertical-align: middle;
 }
 
-@media (width >= 600px) {
+@include breakpoint(tablet) {
   .exl-toast {
     width: auto;
   }
@@ -1594,6 +1594,7 @@ body.profile .section[data-two-column-layout] > div:nth-child(2) {
   body.profile > main > div.profile-tab-section {
     grid-area: profile-tab-section;
     padding-top: 40px;
+    padding-left: 100px;
   }
 
   body.profile .section:nth-child(3) {

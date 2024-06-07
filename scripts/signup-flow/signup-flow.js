@@ -69,8 +69,7 @@ const createSignupDialog = () => {
                     <div class="signup-dialog-body-top-decor"></div>
                     <div class="signup-dialog-steps"></div>
                     <div class="signup-dialog-content"></div>
-                </div>  
-                <div class="signup-dialog-middle-decor"></div>
+                </div>
                 <div class="signup-dialog-bottom-decor"></div>
             </div>
         </dialog>
