@@ -33,6 +33,21 @@ function restoreState(newBlock, state) {
   }
 }
 
+
+function setIdsforRTETitles(articleContentSection) {
+  // find all titles with no id in the article content section
+  articleContentSection.querySelectorAll("h1:not([id]),h2:not([id],h3:not([id],h4:not([id],h5:not([id],h6:not([id]")
+      .forEach((title) => {
+        title.id = title.textContent
+          .toLowerCase()
+            .trim()
+            .replaceAll("[^a-z0-9-]", "-")
+            .replaceAll("-{2,}", "-")
+            .replaceAll("^-+","")
+            .replaceAll("-+$","");    
+      });
+}
+
 // set the filter for an UE editable
 function setUEFilter(element, filter) {
   element.dataset.aueFilter = filter;
@@ -73,6 +88,7 @@ function updateUEInstrumentation() {
     const articleContentSection = main.querySelector('.article-content-section');
     if (articleContentSection) {
       setUEFilter(articleContentSection, 'article-content-section');
+      setIdsforRTETitles(articleContentSection);
     }
     return;
   }
@@ -277,3 +293,4 @@ if (signUpBlock) {
 
 // update UE component filters on page load
 updateUEInstrumentation();
+
