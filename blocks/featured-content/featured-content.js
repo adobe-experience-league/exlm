@@ -51,7 +51,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
   let btnClass;
   contentEl.forEach((el, index) => {
     if (index === 0) {
-      link = el;
+      link = el.firstElementChild;
     }
     if (contentEl.length === 3) {
       if (index === 1) {
@@ -85,7 +85,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
     div(
       { class: 'button-container' },
       a(
-        { href: link[0].href, 'aria-label': 'Read Article', class: `button ${btnClass}` },
+        { href: link.href, 'aria-label': 'Read Article', class: `button ${btnClass}` },
         btnLabel || placeholders.readArticle,
       ),
     ),
