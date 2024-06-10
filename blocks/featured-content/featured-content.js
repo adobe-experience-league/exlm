@@ -48,8 +48,9 @@ async function buildFeaturedContent(contentElem, isAdobe) {
   let desc;
   let btnLabel;
   let btnClass;
-  if (contentEl.length > 3) {
-    desc = contentElem.querySelector('div p:nth-child(2)');
+  if (contentEl.length === 3) {
+    desc = contentEl.firstElementChild;
+    // desc = contentElem.querySelector('div p:nth-child(2)');
     btnLabel = contentElem.querySelector('div p:nth-child(3)');
     btnClass = contentElem.querySelector('div p:nth-child(4)');
   }
