@@ -43,11 +43,36 @@ export async function getContentReference(link) {
  * @returns {Promise<void>} - A promise that resolves when the featured content is built.
  */
 async function buildFeaturedContent(contentElem, isAdobe) {
-  const link = contentElem.querySelectorAll('a');
+  // const link = contentElem.querySelectorAll('a');
   const contentEl = contentElem.querySelectorAll('div p');
+  let link;
   let desc;
   let btnLabel;
   let btnClass;
+  contentEl.forEach((el, index) => {
+    if (index === 0) {
+      link = el;
+    }
+    if (contentEl.length === 3) {
+      if (index === 1) {
+        desc = el;
+      }
+      if (index === 2) {
+        btnLabel = el;
+      }
+      if (index === 3) {
+        btnClass = el;
+      }
+    } else {
+      if (index === 1) {
+        btnLabel = el;
+      }
+      if (index === 2) {
+        btnClass = el;
+      }
+    }
+  });
+
   if (contentEl.length === 3) {
     desc = contentEl.firstElementChild;
     // desc = contentElem.querySelector('div p:nth-child(2)');
