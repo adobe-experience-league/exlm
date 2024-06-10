@@ -43,7 +43,7 @@ export async function getContentReference(link) {
  * @returns {Promise<void>} - A promise that resolves when the featured content is built.
  */
 async function buildFeaturedContent(props, isAdobe) {
-  const [link, desc, btnLabel, btnClass] = props;
+  const [link, desc, btnLabel, btnClass] = props.children;
 
   const contentInfo = await getContentReference(link[0].href);
   const company = isAdobe ? 'adobe' : 'external';
