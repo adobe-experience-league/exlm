@@ -61,7 +61,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
         btnLabel = el.textContent;
       }
       if (index === 3) {
-        btnClass = el.textContent;
+        btnClass = el.textContent || 'secondary';
       }
     } else {
       if (index === 1) {
