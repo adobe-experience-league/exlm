@@ -46,6 +46,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
   const link = contentElem.querySelectorAll('a');
   const desc = contentElem.querySelector('div p:nth-child(2)');
   const btnLabel = contentElem.querySelector('div p:nth-child(3)');
+  const btnClass = contentElem.querySelector('div p:nth-child(4)');
   const contentInfo = await getContentReference(link[0].href);
   const company = isAdobe ? 'adobe' : 'external';
   const contentDescription = desc ? desc.textContent : contentInfo.contentDescription.replace(/^SUMMARY: /, '');
@@ -58,7 +59,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
     div(
       { class: 'button-container' },
       a(
-        { href: link[0].href, 'aria-label': 'Read Article', class: 'button secondary' },
+        { href: link[0].href, 'aria-label': 'Read Article', class: `button ${btnClass.value ? btnClass.value : 'secondary'}` },
         btnLabel ? btnLabel.textContent : 'Read Article',
       ),
     ),

@@ -2091,6 +2091,24 @@
         "name": "content_cta",
         "value": "",
         "label": "Content CTA Text"
+      },
+      {
+        "component": "select",
+        "name": "content_ctaType",
+        "value": "primary",
+        "label": "CTA Type",
+        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
       }
     ]
   },
