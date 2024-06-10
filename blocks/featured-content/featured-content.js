@@ -45,33 +45,18 @@ export async function getContentReference(link) {
 async function buildFeaturedContent(contentElem, isAdobe) {
   // const link = contentElem.querySelectorAll('a');
   const contentEl = contentElem.querySelectorAll('div p');
-  let link;
   let desc;
   let btnLabel;
   let btnClass;
-  contentEl.forEach((el, index) => {
-    if (index === 0) {
-      link = el.firstElementChild;
-    }
-    if (contentEl.length === 3) {
-      if (index === 1) {
-        desc = el.textContent;
-      }
-      if (index === 2) {
-        btnLabel = el.textContent;
-      }
-      if (index === 3) {
-        btnClass = el.textContent || 'secondary';
-      }
-    } else {
-      if (index === 1) {
-        btnLabel = el.textContent;
-      }
-      if (index === 2) {
-        btnClass = el.textContent || 'secondary';
-      }
-    }
-  });
+  const link = contentEl[0].firstElementChild;
+  if ( contentEl.length === 2 ) {
+    btnLabel = contentEl[1].textContent;
+    btnClass = contentEl[2].textContent || 'secondary';
+  } else {
+    desc = contentEl[1].textContent;
+    btnLabel = contentEl[2].textContent;
+    btnClass = contentEl[3].textContent || 'secondary';
+  }
 
   const contentInfo = await getContentReference(link.href);
   const company = isAdobe ? 'adobe' : 'external';
