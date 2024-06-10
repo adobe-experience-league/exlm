@@ -55,34 +55,27 @@ async function buildFeaturedContent(contentElem, isAdobe) {
     }
     if (contentEl.length === 3) {
       if (index === 1) {
-        desc = el;
+        desc = el.textContent;
       }
       if (index === 2) {
-        btnLabel = el;
+        btnLabel = el.textContent;
       }
       if (index === 3) {
-        btnClass = el;
+        btnClass = el.textContent;
       }
     } else {
       if (index === 1) {
-        btnLabel = el;
+        btnLabel = el.textContent;
       }
       if (index === 2) {
-        btnClass = el;
+        btnClass = el.textContent;
       }
     }
   });
 
-  if (contentEl.length === 3) {
-    desc = contentEl.firstElementChild;
-    // desc = contentElem.querySelector('div p:nth-child(2)');
-    btnLabel = contentElem.querySelector('div p:nth-child(3)');
-    btnClass = contentElem.querySelector('div p:nth-child(4)');
-  }
-
   const contentInfo = await getContentReference(link[0].href);
   const company = isAdobe ? 'adobe' : 'external';
-  const contentDescription = desc ? desc.textContent : contentInfo.contentDescription.replace(/^SUMMARY: /, '');
+  const contentDescription = desc || contentInfo.contentDescription.replace(/^SUMMARY: /, '');
   contentElem.innerHTML = '';
 
   const contentDiv = div(
@@ -92,8 +85,8 @@ async function buildFeaturedContent(contentElem, isAdobe) {
     div(
       { class: 'button-container' },
       a(
-        { href: link[0].href, 'aria-label': 'Read Article', class: `button ${btnClass.textContent}` },
-        btnLabel ? btnLabel.textContent : placeholders.readArticle,
+        { href: link[0].href, 'aria-label': 'Read Article', class: `button ${btnClass}` },
+        btnLabel || placeholders.readArticle,
       ),
     ),
   );
