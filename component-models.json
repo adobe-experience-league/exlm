@@ -2025,7 +2025,8 @@
         "component": "reference",
         "valueType": "string",
         "name": "img",
-        "label": "Image"
+        "label": "Image",
+        "required": true
       },
       {
         "component": "text",
@@ -2076,14 +2077,16 @@
         "valueType": "string",
         "name": "content_link",
         "value": "",
-        "label": "Content Page"
+        "label": "Content Page",
+        "required": true
       },
       {
         "component": "richtext",
         "valueType": "string",
         "name": "content_description",
         "value": "",
-        "label": "Description"
+        "label": "Alternate Description",
+        "description": "Override the article's summary with this description."
       },
       {
         "component": "text",
