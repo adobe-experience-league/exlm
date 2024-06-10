@@ -55,7 +55,7 @@ async function buildFeaturedContent(props, isAdobe) {
     h2(contentInfo.contentTitle),
     p(contentDescription),
     div(
-      { class: 'button-container' },
+      { class: 'cta' },
       a(
         { href: link[0].href, 'aria-label': 'Read Article', class: `button ${btnClass}` },
         btnLabel || placeholders.readArticle,
@@ -90,7 +90,6 @@ async function buildFeaturedContent(props, isAdobe) {
  */
 export default async function decorate(block) {
   const [image, content] = [...block.children].map((row) => row.firstElementChild);
-  // const [image, content] = block.querySelectorAll(':scope div > div');
   const isAdobe = block.getAttribute('class').includes('adobe');
   image.classList.add('featured-content-image');
   const imageInfo = image.querySelector('picture img');
