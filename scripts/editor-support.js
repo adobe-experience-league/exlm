@@ -95,8 +95,7 @@ function updateUEInstrumentation() {
   }
 
   // ----- if author bio page, identified by path segment
-  if (document.location.pathname.includes('/articles/authors/') ||
-  document.querySelector('body[class^=author-bio]')) {
+  if (document.location.pathname.includes('/articles/authors/')) {
     // update available sections
     setUEFilter(main, 'empty');
     // update the only available default section
