@@ -59,7 +59,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
     div(
       { class: 'button-container' },
       a(
-        { href: link[0].href, 'aria-label': 'Read Article', class: `button ${btnClass.value ? btnClass.value : 'secondary'}` },
+        { href: link[0].href, 'aria-label': 'Read Article', class: `button ${btnClass.textContent ? btnClass.textContent : 'secondary'}` },
         btnLabel ? btnLabel.textContent : 'Read Article',
       ),
     ),
