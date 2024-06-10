@@ -2093,12 +2093,12 @@
         "valueType": "string",
         "name": "content_cta",
         "value": "",
-        "label": "Content CTA Text"
+        "label": "CTA Text"
       },
       {
         "component": "select",
         "name": "content_ctaType",
-        "value": "primary",
+        "value": "secondary",
         "label": "CTA Type",
         "description": "'Primary' will render button filled, 'Secondary' with an outline.",
         "valueType": "string",

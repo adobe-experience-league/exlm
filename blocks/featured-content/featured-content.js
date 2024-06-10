@@ -117,6 +117,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
  * @returns {Promise<void>} - A promise that resolves when the decoration is complete.
  */
 export default async function decorate(block) {
+  const props = [...block.children].map((row) => row.firstElementChild);
   const [image, content] = block.querySelectorAll(':scope div > div');
   const isAdobe = block.getAttribute('class').includes('adobe');
   image.classList.add('featured-content-image');
@@ -126,6 +127,6 @@ export default async function decorate(block) {
     .replaceWith(createOptimizedPicture(imageInfo.src, imageInfo.alt, 'eager', [{ width: '327' }]));
   image.append(div({ class: 'source-tag' }, isAdobe ? placeholders.articleAdobeTag : placeholders.articleExternalTag));
   if (content.children?.length >= 1) {
-    buildFeaturedContent(content, isAdobe);
+    buildFeaturedContent(props, isAdobe);
   }
 }
