@@ -73,7 +73,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
     }
   });
 
-  const contentInfo = await getContentReference(link[0].href);
+  const contentInfo = await getContentReference(link.href);
   const company = isAdobe ? 'adobe' : 'external';
   const contentDescription = desc || contentInfo.contentDescription.replace(/^SUMMARY: /, '');
   contentElem.innerHTML = '';
