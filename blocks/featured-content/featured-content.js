@@ -68,7 +68,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
         btnLabel = el.textContent;
       }
       if (index === 2) {
-        btnClass = el.textContent;
+        btnClass = el.textContent || 'secondary';
       }
     }
   });
@@ -83,7 +83,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
     h2(contentInfo.contentTitle),
     p(contentDescription),
     div(
-      { class: 'button-container' },
+      { class: 'cta' },
       a(
         { href: link.href, 'aria-label': 'Read Article', class: `button ${btnClass}` },
         btnLabel || placeholders.readArticle,
