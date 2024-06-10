@@ -51,11 +51,11 @@ async function buildFeaturedContent(contentElem, isAdobe) {
   const link = contentEl[0].firstElementChild;
   if ( contentEl.length === 2 ) {
     btnLabel = contentEl[1].textContent;
-    btnClass = contentEl[2].textContent || 'secondary';
+    btnClass = 'secondary';
   } else {
     desc = contentEl[1].textContent;
     btnLabel = contentEl[2].textContent;
-    btnClass = contentEl[3].textContent || 'secondary';
+    btnClass = 'secondary';
   }
 
   const contentInfo = await getContentReference(link.href);
