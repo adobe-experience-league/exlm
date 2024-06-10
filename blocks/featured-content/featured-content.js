@@ -39,44 +39,16 @@ export async function getContentReference(link) {
 /**
  * Builds the featured content block.
  *
- * @param {HTMLElement} contentElem - The element representing the featured content block.
+ * @param {HTMLElement} props - The element representing the featured content block.
  * @returns {Promise<void>} - A promise that resolves when the featured content is built.
  */
-async function buildFeaturedContent(contentElem, isAdobe) {
-  // const link = contentElem.querySelectorAll('a');
-  const contentEl = contentElem.querySelectorAll('div p');
-  let link;
-  let desc;
-  let btnLabel;
-  let btnClass;
-  contentEl.forEach((el, index) => {
-    if (index === 0) {
-      link = el;
-    }
-    if (contentEl.length === 3) {
-      if (index === 1) {
-        desc = el.textContent;
-      }
-      if (index === 2) {
-        btnLabel = el.textContent;
-      }
-      if (index === 3) {
-        btnClass = el.textContent;
-      }
-    } else {
-      if (index === 1) {
-        btnLabel = el.textContent;
-      }
-      if (index === 2) {
-        btnClass = el.textContent;
-      }
-    }
-  });
+async function buildFeaturedContent(props, isAdobe) {
+  const [link, desc, btnLabel, btnClass] = props;
 
   const contentInfo = await getContentReference(link[0].href);
   const company = isAdobe ? 'adobe' : 'external';
   const contentDescription = desc || contentInfo.contentDescription.replace(/^SUMMARY: /, '');
-  contentElem.innerHTML = '';
+  props.innerHTML = '';
 
   const contentDiv = div(
     { class: 'description' },
@@ -106,7 +78,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
     );
     if (authorDiv) authorContainer.append(authorDiv);
   });
-  contentElem.replaceWith(contentDiv);
+  props.replaceWith(contentDiv);
   contentDiv.parentNode.nextSibling.replaceWith(authorContainer);
 }
 
@@ -117,8 +89,8 @@ async function buildFeaturedContent(contentElem, isAdobe) {
  * @returns {Promise<void>} - A promise that resolves when the decoration is complete.
  */
 export default async function decorate(block) {
-  const props = [...block.children].map((row) => row.firstElementChild);
-  const [image, content] = block.querySelectorAll(':scope div > div');
+  const [image, content] = [...block.children].map((row) => row.firstElementChild);
+  // const [image, content] = block.querySelectorAll(':scope div > div');
   const isAdobe = block.getAttribute('class').includes('adobe');
   image.classList.add('featured-content-image');
   const imageInfo = image.querySelector('picture img');
@@ -127,6 +99,6 @@ export default async function decorate(block) {
     .replaceWith(createOptimizedPicture(imageInfo.src, imageInfo.alt, 'eager', [{ width: '327' }]));
   image.append(div({ class: 'source-tag' }, isAdobe ? placeholders.articleAdobeTag : placeholders.articleExternalTag));
   if (content.children?.length >= 1) {
-    buildFeaturedContent(props, isAdobe);
+    buildFeaturedContent(content, isAdobe);
   }
 }
