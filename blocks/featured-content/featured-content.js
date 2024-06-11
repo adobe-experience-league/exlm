@@ -53,15 +53,15 @@ export async function getContentReference(link) {
 /**
  * Builds the featured content block.
  *
- * @param {HTMLElement} contentElem - The element representing the featured content block.
+ * @param {HTMLElement} contentArray - The element representing the featured content block.
  * @returns {Promise<void>} - A promise that resolves when the featured content is built.
  */
-async function buildFeaturedContent(contentElem, isAdobe) {
+async function buildFeaturedContent(block, contentArray, isAdobe) {
   let desc;
-  if (contentElem.length === 2) {
-    desc = contentElem.shift();
+  if (contentArray.length === 2) {
+    desc = contentArray.shift();
   }
-  const cta = contentElem.shift();
+  const cta = contentArray.shift();
 
   const link = cta.querySelectorAll('a');
   // const desc = contentElem.querySelector('div p:nth-child(2)');
@@ -69,7 +69,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
   const contentInfo = await getContentReference(link[0].href);
   const company = isAdobe ? 'adobe' : 'external';
   const contentDescription = desc ? desc.textContent : contentInfo.contentDescription.replace(/^SUMMARY: /, '');
-  // contentElem.innerHTML = '';
+  block.innerHTML = '';
 
   const contentDiv = div(
     { class: 'description' },
@@ -96,8 +96,8 @@ async function buildFeaturedContent(contentElem, isAdobe) {
     );
     if (authorDiv) authorContainer.append(authorDiv);
   });
-  contentElem.push(contentDiv);
-  contentDiv.parentNode.nextSibling.replaceWith(authorContainer);
+  block.append(contentDiv);
+  // contentDiv.parentNode.nextSibling.replaceWith(authorContainer);
 }
 
 /**
@@ -124,5 +124,5 @@ export default async function decorate(block) {
     }
   }
 
-  buildFeaturedContent(props, isAdobe);
+  buildFeaturedContent(block, props, isAdobe);
 }
