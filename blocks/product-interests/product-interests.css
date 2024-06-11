@@ -1,0 +1,68 @@
+body.profile > main > .section:not(.profile-tab-section, .profile-rail-section) > .product-interests-wrapper {
+    border: none;
+}
+
+.product-interests h1,
+.product-interests h2,
+.product-interests h3,
+.product-interests h4,
+.product-interests h5,
+.product-interests h6{
+    border-bottom: 1px solid #D5D5D5;
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+}
+
+.product-interests > ul.interests-container {
+    margin: 0;
+    margin-top: 28px;
+}
+
+.product-interests > ul.interests-container ul {
+    margin-top: 10px;
+    margin-left: 40px;
+}
+
+.product-interests li {
+    list-style: none;
+    margin: 0;
+    color: var(--spectrum-gray-800);
+}
+
+.product-interests label.checkbox {
+    cursor: pointer;
+    font-size: var(--spectrum-font-size-200);
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.product-interests label.checkbox input {
+    margin: 0;
+    margin-top: 7px;
+    margin-right: 10px;
+    width: auto;
+}
+
+@media (min-width: 600px) {
+    .product-interests .interests-container {
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }   
+
+    .product-interests .interests-container li {
+        margin-bottom: 8px;
+        margin-right: 20px;
+    }
+
+    .product-interests .subtext {
+        max-width: 150px;
+    }
+}
+
+@media (min-width: 900px) {
+    .product-interests label.checkbox {
+        font-size: var(--spectrum-font-size-100);
+    }
+}
