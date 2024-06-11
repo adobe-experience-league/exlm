@@ -1,6 +1,7 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { productExperienceEventEmitter } from '../../scripts/events.js';
 
 const interestsUrl = 'https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=en';
 
@@ -31,17 +32,32 @@ export async function fetchProfileData(url, cType) {
     return null;
   }
 }
+// TODO :: UNCOMMMENT BELOW BLOCK.
 const [interests, profileData] = await Promise.all([
   fetchProfileData(interestsUrl, 'json'),
   defaultProfileClient.getMergedProfile(),
 ]);
+
+function updateInterests(block) {
+  const newInterests = [];
+  block.querySelectorAll('li input:checked').forEach((input) => {
+    newInterests.push(input.title);
+  });
+  defaultProfileClient.updateProfile('interests', newInterests, true).then(() => {
+    sendNotice(placeholders.profileUpdated || 'Profile updated successfully');
+  });
+}
 
 function decorateInterests(block) {
   const columnsContainer = document.createElement('ul');
   block.appendChild(columnsContainer);
   columnsContainer.classList.add('interests-container');
   const userInterests = profileData?.interests ? profileData.interests : [];
-  interests.data.forEach((interest) => {
+  const clonedInterests = structuredClone(interests.data);
+
+  productExperienceEventEmitter.set('interests_data', clonedInterests);
+
+  clonedInterests.forEach((interest) => {
     const column = document.createElement('li');
     column.innerHTML = `<label class="checkbox">
         <input title='${interest.Name}' type='checkbox' value='${interest.Name}'>
@@ -69,25 +85,36 @@ function decorateInterests(block) {
       column.classList.add('interest');
     }
 
-    if (userInterests.includes(interest.Name)) {
-      column.querySelector('input').checked = true;
-      column.querySelector('input').classList.add('checked');
+    const inputEl = column.querySelector('input');
+    if (inputEl) {
+      inputEl.id = `interest__${interest.id}`;
     }
+    if (userInterests.includes(interest.Name)) {
+      inputEl.checked = true;
+      inputEl.classList.add('checked');
+      interest.selected = true;
+      productExperienceEventEmitter.set(interest.id, true);
+    } else {
+      interest.selected = false;
+    }
+  });
+  productExperienceEventEmitter.on('dataChange', ({ key, value }) => {
+    const inputEl = block.querySelector(`#interest__${key}`);
+    if (inputEl) {
+      inputEl.checked = value;
+    }
+    updateInterests(block);
   });
 }
 
 function handleProductInterestChange(block) {
-  block.querySelectorAll('li.row > label').forEach((row) => {
+  block.querySelectorAll('li > label').forEach((row) => {
     row.addEventListener('click', (e) => {
       e.stopPropagation();
       if (e.target.tagName === 'INPUT') {
-        const newInterests = [];
-        block.querySelectorAll('li.row input:checked').forEach((input) => {
-          newInterests.push(input.title);
-        });
-        defaultProfileClient.updateProfile('interests', newInterests, true).then(() => {
-          sendNotice(placeholders.profileUpdated || 'Profile updated successfully');
-        });
+        updateInterests(block);
+        const [, id] = e.target.id.split('__');
+        productExperienceEventEmitter.set(id, e.target.checked);
       }
     });
   });
