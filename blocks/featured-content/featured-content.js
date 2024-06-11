@@ -69,7 +69,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
   const contentInfo = await getContentReference(link[0].href);
   const company = isAdobe ? 'adobe' : 'external';
   const contentDescription = desc ? desc.textContent : contentInfo.contentDescription.replace(/^SUMMARY: /, '');
-  contentElem.innerHTML = '';
+  // contentElem.innerHTML = '';
 
   const contentDiv = div(
     { class: 'description' },
@@ -96,7 +96,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
     );
     if (authorDiv) authorContainer.append(authorDiv);
   });
-  contentElem.replaceWith(contentDiv);
+  contentElem.push(contentDiv);
   contentDiv.parentNode.nextSibling.replaceWith(authorContainer);
 }
 
