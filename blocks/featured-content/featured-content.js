@@ -62,6 +62,14 @@ export async function getContentReference(link) {
  * @param {HTMLElement} contentArray - The element representing the featured content block.
  * @returns {Promise<void>} - A promise that resolves when the featured content is built.
  */
+/**
+ * Builds the featured content block.
+ *
+ * @param {HTMLElement} block - The block element.
+ * @param {Array} contentArray - The array of content elements.
+ * @param {boolean} isAdobe - Indicates whether the content is from Adobe or external.
+ * @returns {Promise<void>} - A promise that resolves when the featured content block is built.
+ */
 async function buildFeaturedContent(block, contentArray, isAdobe) {
   let desc;
   if (contentArray.length === 2) {
