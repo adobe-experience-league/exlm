@@ -1111,7 +1111,10 @@ async function loadPage() {
   loadRails();
   loadDelayed();
   showBrowseBackgroundGraphic();
-  loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
+
+  if (isDocArticlePage()) {
+    loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
+  }
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
