@@ -26,6 +26,10 @@
 .columns.block.b-alt-row > div > div {
   border: 1px solid var(--non-spectrum-gainsboro-gray);
   border-bottom: none;
+  display: inline-flex;
+  position: relative;
+  padding: 10px;
+  width: 96%;
 }
 
 .columns.block.b-alt-row > div > div:last-child {
@@ -35,13 +39,6 @@
 .columns.block.b-alt-row > div {
   display: block;
   margin-bottom: 10px;
-}
-
-.columns.block.b-alt-row > div > div {
-  display: inline-flex;
-  position: relative;
-  padding: 10px;
-  width: 96%;
 }
 
 .columns.block.b-alt-row .header-label {
@@ -76,6 +73,7 @@
     display: flex;
     flex: 1;
     margin-bottom: 0;
+    border: none;
   }
 
   .columns.block.b-alt-row > div:first-child {
@@ -84,10 +82,6 @@
 
   .columns.block.b-alt-row .header-label {
     display: none;
-  }
-
-  .columns.block.b-alt-row > div > div {
-  border: none;
   }
 
   .columns.block.b-alt-row > div {
