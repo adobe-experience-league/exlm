@@ -44,22 +44,11 @@ export async function getContentReference(link) {
  */
 async function buildFeaturedContent(contentElem, isAdobe) {
   const link = contentElem.querySelectorAll('a');
-  const contentEl = contentElem.querySelectorAll('div p');
-  let desc;
-  let btnLabel;
-  let btnClass;
-  if ( contentEl.length === 2 ) {
-    btnLabel = contentEl[1].textContent;
-    btnClass = 'secondary';
-  } else {
-    desc = contentEl[1].textContent;
-    btnLabel = contentEl[2].textContent;
-    btnClass = 'secondary';
-  }
-
-  const contentInfo = await getContentReference(link.href);
+  const desc = contentElem.querySelector('div p:nth-child(2)');
+  const btnLabel = contentElem.querySelector('div p:nth-child(3)');
+  const contentInfo = await getContentReference(link[0].href);
   const company = isAdobe ? 'adobe' : 'external';
-  const contentDescription = desc || contentInfo.contentDescription.replace(/^SUMMARY: /, '');
+  const contentDescription = desc ? desc.textContent : contentInfo.contentDescription.replace(/^SUMMARY: /, '');
   contentElem.innerHTML = '';
 
   const contentDiv = div(
@@ -67,10 +56,10 @@ async function buildFeaturedContent(contentElem, isAdobe) {
     h2(contentInfo.contentTitle),
     p(contentDescription),
     div(
-      { class: 'cta' },
+      { class: 'button-container' },
       a(
-        { href: link.href, 'aria-label': 'Read Article', class: `button ${btnClass}` },
-        btnLabel || placeholders.readArticle,
+        { href: link[0].href, 'aria-label': 'Read Article', class: 'button secondary' },
+        btnLabel ? btnLabel.textContent : 'Read Article',
       ),
     ),
   );
