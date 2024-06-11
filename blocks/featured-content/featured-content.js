@@ -69,7 +69,7 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
   const contentInfo = await getContentReference(link[0].href);
   const company = isAdobe ? 'adobe' : 'external';
   const contentDescription = desc ? desc.textContent : contentInfo.contentDescription.replace(/^SUMMARY: /, '');
-  desc.remove();
+  desc.parentElement.remove();
 
   const contentDiv = div(
     { class: 'description' },
