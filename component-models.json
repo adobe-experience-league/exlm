@@ -2083,7 +2083,7 @@
       {
         "component": "richtext",
         "valueType": "string",
-        "name": "linkText",
+        "name": "desc",
         "value": "",
         "label": "Alternate Description",
         "description": "Override the article's summary with this description."
