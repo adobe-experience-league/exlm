@@ -188,6 +188,7 @@ class ProfileClient {
       // eslint-disable-next-line
       console.log('Error fetching data!!', err);
     }
+    return null;
   }
 
   /**

@@ -101,18 +101,13 @@ export const communityAccountDOM = `<div class="profile-row community-account">
   </div>
 </div>`;
 
-export const additionalProfileInfoDOM = `<div class="profile-row additional-data">
-  <div class="profile-card-body additional-data-body">
-    <div class="profile-user-info">
-      <div class="user-role"><span class="heading">${
-        placeholders?.myRole || 'My Role'
-      }: </span><span>${roles}</span></div>
-      <div class="user-industry"><span class="heading">${
-        placeholders?.myIndustry || 'My Industry'
-      }: </span><span>${industry}</span></div>
-      <div class="user-interests"><span class="heading">${
-        placeholders?.myInterests || 'My interests'
-      }: </span><span>${interests}</span></div>
+export const additionalProfileInfoDOM = `
+  <div class="profile-row additional-data">
+    <div class="profile-card-body additional-data-body">
+      <div class="profile-user-info">
+        ${roles && ((Array.isArray(roles) && roles.length > 0) || (typeof roles === 'string' && roles.trim() !== '')) ? `<div class="user-role"><span class="heading">${placeholders?.myRole || 'My Role'}: </span><span>${roles}</span></div>` : ''}
+        ${industry && ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== '')) ? `<div class="user-industry"><span class="heading">${placeholders?.myIndustry || 'My Industry'}: </span><span>${industry}</span></div>` : ''}
+        ${interests && ((Array.isArray(interests) && interests.length > 0) || (typeof interests === 'string' && interests.trim() !== '')) ? `<div class="user-interests"><span class="heading">${placeholders?.myInterests || 'My Interests'}: </span><span>${interests}</span></div>` : ''}
+      </div>
     </div>
-  </div>
-</div>`;
+  </div>`;
