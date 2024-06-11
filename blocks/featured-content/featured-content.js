@@ -40,7 +40,7 @@ export async function getContentReference(link) {
       if (authorBioPage && window.hlx.aemRoot) {
         authorBioPage = `${authorBioPage}.html`;
       }
-      const authorBio = fetchAuthorBio(authorBioPage);
+      const authorBio = fetchAuthorBio(authorBioPage).then((authorInfo) => authorInfo);
       return {
         contentTitle: htmlDoc.title,
         contentDescription: description,
@@ -83,7 +83,7 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
   );
   const authorContainer = div({ class: 'author-container' });
 
-  const {authorName} = contentInfo.authorInfo;
+  const {authorName} = contentInfo.authorInfo.authorName;
   const {authorImage} = contentInfo.authorInfo.authorImage;
   const authorDiv = div(
     { class: 'author' },
