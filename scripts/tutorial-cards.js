@@ -1,6 +1,13 @@
 import { buildCard } from './browse-card/browse-card.js';
-import { CONTENT_TYPES } from './browse-card/browse-cards-constants.js';
+import { loadCSS } from './lib-franklin.js';
+import BrowseCardsDelegate from './browse-card/browse-cards-delegate.js';
+import BuildPlaceholder from './browse-card/browse-card-placeholder.js';
+import { COVEO_SORT_OPTIONS } from './browse-card/browse-cards-constants.js'
 
+
+loadCSS(`${window.hlx.codeBasePath}/scripts/tutorial-cards.css`);
+
+// Decorate the page with tutorial cards
 export default function decorate() {
   // Select the main content section of the page
   const mainDoc = document.querySelector('main > div.content-section-last');
@@ -9,56 +16,44 @@ export default function decorate() {
   const container = document.createElement('div');
   container.classList.add('tutorial-cards');
 
-  // Create an anchor element to append the card
-  const a = document.createElement('a');
-  a.href = '#';
-  container.appendChild(a);
+  const sortBy = 'RELEVANCY';
 
-  // Define the models for the tutorial cards
-  const model1= {
-    thumbnail: '#',
-    product: ['Target'],
-    title: 'Migrate Target from at.js to Platform Web SDK',
-    description:'Learn how to migrate your at.js implementeation to Adobe Expeirence...',
-    contentType: CONTENT_TYPES.TUTORIAL.LABEL,
-    badgeTitle: CONTENT_TYPES.TUTORIAL.LABEL,
-    inProgressStatus: '',
-    viewLink: 'https://www.google.com',
-    copyLink: 'https://www.google.com',
-    viewLinkText: 'View Tutorial'
-  };
+  // Define the parameters for fetching card data
+  const param = {
+    contentType:['tutorial'],
+    sortCriteria: COVEO_SORT_OPTIONS[sortBy.toUpperCase()],
+    noOfResults: 3,
+  }
 
-  const model2= {
-    thumbnail: '#',
-    product: ['Analytics'],
-    title: 'Training Tutorial Template in Analysis Workspace',
-    description:'The Analysis Workspace Training Tutorial walks users through...',
-    contentType: CONTENT_TYPES.TUTORIAL.LABEL,
-    badgeTitle: CONTENT_TYPES.TUTORIAL.LABEL,
-    inProgressStatus: '',
-    viewLink: 'https://www.google.com',
-    copyLink: 'https://www.google.com',
-    viewLinkText: 'View Tutorial'
-  };
+  // Create a placeholder for the cards while they are loading
+  const buildCardsShimmer = new BuildPlaceholder();
+  buildCardsShimmer.add(container); 
 
-  const model3= {
-    thumbnail: '#',
-    product: ['Journey Optimizer'],
-    title: 'CREATE a campaign',
-    description:'Learn how to deliver one-time content to a specific audience by executing actions immediately, or...',
-    contentType: CONTENT_TYPES.TUTORIAL.LABEL,
-    badgeTitle: CONTENT_TYPES.TUTORIAL.LABEL,
-    inProgressStatus: '',
-    viewLink: 'https://www.google.com',
-    copyLink: 'https://www.google.com',
-    viewLinkText: 'View Tutorial'
-  };
+  // Fetch the card data
+  const tutorialCardsContent = BrowseCardsDelegate.fetchCardData(param);
+  tutorialCardsContent
+    .then((data) => {
+      buildCardsShimmer.remove();
 
-  // Build the tutorial cards
-  buildCard(container, a, model1);
-  buildCard(container, a, model2);
-  buildCard(container, a, model3);
+      // If data is present, build and append the cards
+      if (data?.length) {
+        for (let i = 0; i < Math.min(param.noOfResults, data.length); i += 1) {
+          const cardData = data[i];
 
-  // Append the tutorial cards to the main content section
-  mainDoc.appendChild(container);
+          // Create an anchor element to append the card
+          const cardDiv = document.createElement('div');
+          cardDiv.href = '#';
+          container.appendChild(cardDiv);
+          
+          // Build the card and append it to the contentDiv
+          buildCard(container, cardDiv, cardData);
+        }
+        mainDoc.appendChild(container);
+      }
+    })
+    .catch((err) => {
+      buildCardsShimmer.remove();
+      /* eslint-disable-next-line no-console */
+      console.error(err);
+    });
 }
