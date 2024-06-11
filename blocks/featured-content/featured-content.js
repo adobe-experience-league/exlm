@@ -19,7 +19,7 @@ export function decorateButton(button) {
     } else if (link.parentElement.tagName === 'STRONG') {
       link.classList.add('primary');
     }
-    return link.outerHTML;
+    return link;
   }
   return '';
 }
@@ -69,7 +69,7 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
   const contentInfo = await getContentReference(link[0].href);
   const company = isAdobe ? 'adobe' : 'external';
   const contentDescription = desc ? desc.textContent : contentInfo.contentDescription.replace(/^SUMMARY: /, '');
-  // block.innerHTML = '';
+  desc.remove();
 
   const contentDiv = div(
     { class: 'description' },
