@@ -2075,7 +2075,7 @@
       {
         "component": "aem-content",
         "valueType": "string",
-        "name": "content_link",
+        "name": "link",
         "value": "",
         "label": "Content Page",
         "required": true
@@ -2083,14 +2083,14 @@
       {
         "component": "richtext",
         "valueType": "string",
-        "name": "content_description",
+        "name": "linkText",
         "value": "",
         "label": "Alternate Description",
         "description": "Override the article's summary with this description."
       },
       {
         "component": "select",
-        "name": "content_ctaType",
+        "name": "linkType",
         "value": "secondary",
         "label": "CTA Type",
         "description": "'Primary' will render button filled, 'Secondary' with an outline.",
@@ -2109,7 +2109,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "content_cta",
+        "name": "linkTitle",
         "value": "",
         "label": "CTA Text"
       }
