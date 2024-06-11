@@ -108,7 +108,7 @@ async function buildFeaturedContent(contentElem, isAdobe) {
  */
 export default async function decorate(block) {
   const props = block.querySelectorAll(':scope div > div');
-  const isAdobe = block.classList.includes('adobe');
+  const isAdobe = block.className.includes('adobe');
   const image = props.shift();
   image.classList.add('featured-content-image');
   const imageInfo = image.querySelector('picture img');
