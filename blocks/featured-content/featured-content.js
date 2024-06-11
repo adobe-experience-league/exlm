@@ -36,7 +36,7 @@ export async function getContentReference(link) {
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(html, 'text/html');
       const description = htmlDoc.querySelector('main div p')?.textContent;
-      let authorBioPage = htmlDoc.querySelector('meta[name="author-bio-page"]');
+      let authorBioPage = htmlDoc.querySelector('meta[name="author-bio-page"]').content;
       if (authorBioPage && window.hlx.aemRoot) {
         authorBioPage = `${authorBioPage}.html`;
       }
