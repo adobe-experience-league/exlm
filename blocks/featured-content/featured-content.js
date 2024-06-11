@@ -63,8 +63,8 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
   }
   const cta = contentArray.shift();
 
-  const link = cta.querySelectorAll('a');
-  const contentInfo = await getContentReference(link[0].href);
+  const link = cta.querySelector('a');
+  const contentInfo = await getContentReference(link.href);
   const company = isAdobe ? 'adobe' : 'external';
   const contentDescription = desc.textContent || contentInfo.contentDescription.replace(/^SUMMARY: /, '');
   desc.parentElement.remove();
