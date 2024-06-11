@@ -2081,14 +2081,6 @@
         "description": "Override the article's summary with this description."
       },
       {
-        "component": "aem-content",
-        "valueType": "string",
-        "name": "link",
-        "value": "",
-        "label": "Content Page",
-        "required": true
-      },
-      {
         "component": "select",
         "name": "linkType",
         "value": "secondary",
@@ -2112,6 +2104,14 @@
         "name": "linkText",
         "value": "Read Article",
         "label": "CTA Text"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Content Page",
+        "required": true
       }
     ]
   },
