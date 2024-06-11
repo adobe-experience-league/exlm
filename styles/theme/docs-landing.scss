@@ -1,0 +1,17 @@
+@import '../sass/breakpoints';
+@import '../sass/mixins';
+
+.docs.docs-landing main {
+  margin: 0 12px;
+  padding-top: 24px;
+  width: auto;
+
+  @include breakpoint(tablet) {
+    padding: 28px 46px 48px;
+  }
+
+  @include breakpoint(desktop) {
+    grid-template-columns: 0 5fr 0;
+    padding: 42px 46 48px 46px;
+  }
+}
