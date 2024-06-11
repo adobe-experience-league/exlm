@@ -832,7 +832,11 @@ const loadMartech = async (headerPromise, footerPromise) => {
 };
 
 async function loadThemes() {
-  const toClassNames = (classes) => classes?.split(',')?.map((c) => toClassName(c.trim())).filter(Boolean) || [];
+  const toClassNames = (classes) =>
+    classes
+      ?.split(',')
+      ?.map((c) => toClassName(c.trim()))
+      .filter(Boolean) || [];
   const metaToClassNames = (metaName) => toClassNames(getMetadata(metaName));
   const themeNames = [...metaToClassNames('template'), ...metaToClassNames('theme')];
   if (themeNames.length === 0) return Promise.resolve();

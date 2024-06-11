@@ -79,10 +79,7 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
     { class: 'description' },
     h2(contentInfo.contentTitle),
     p(contentDescription),
-    div(
-      { class: 'cta' },
-      decorateButton(cta),
-    ),
+    div({ class: 'cta' }, decorateButton(cta)),
   );
   const authorContainer = div({ class: 'author-container' });
 
@@ -117,11 +114,11 @@ export default async function decorate(block) {
     image.classList.add('featured-content-image');
     const imageInfo = image.querySelector('picture img');
     if (imageInfo) {
-      image.querySelector('picture').replaceWith(
-        createOptimizedPicture(imageInfo.src, imageInfo.alt, 'eager', [{ width: '327' }])
-      );
+      image
+        .querySelector('picture')
+        .replaceWith(createOptimizedPicture(imageInfo.src, imageInfo.alt, 'eager', [{ width: '327' }]));
       image.append(
-        div({ class: 'source-tag' }, isAdobe ? placeholders.articleAdobeTag : placeholders.articleExternalTag)
+        div({ class: 'source-tag' }, isAdobe ? placeholders.articleAdobeTag : placeholders.articleExternalTag),
       );
     }
   }
