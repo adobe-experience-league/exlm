@@ -2,6 +2,10 @@ import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import Dropdown from '../dropdown/dropdown.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import getSolutionByName from '../../blocks/toc/toc-solutions.js';
+import loadJWT from '../auth/jwt.js';
+import { productExperienceEventEmitter } from '../events.js';
+import { defaultProfileClient } from '../auth/profile.js';
+import { sendNotice } from '../toast/toast.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/profile/profile-interests.css`);
 
@@ -12,6 +16,9 @@ try {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
 }
+
+const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
+const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
 
 const options = [
   {
@@ -30,8 +37,7 @@ const options = [
 
 // eslint-disable-next-line import/prefer-default-export
 export default async function buildProductCard(container, element, model) {
-  const { product = 'Acrobat', isSelected = false } = model;
-
+  const { id, selected: isSelected, Name: product } = model;
   // Create card container
   const card = document.createElement('div');
   const cardContent = document.createElement('div');
@@ -61,8 +67,27 @@ export default async function buildProductCard(container, element, model) {
         </div>
     `);
 
-  // eslint-disable-next-line no-new
-  new Dropdown(content, 'Beginner', options);
+  const cardDropdown = new Dropdown(content, '', options);
+  cardDropdown.handleOnChange((level) => {
+    defaultProfileClient
+      .updateProfile('solutionLevels', `${id}:${level}`)
+      .then(() => sendNotice(PROFILE_UPDATED))
+      .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+  });
+
+  loadJWT().then(async () => {
+    defaultProfileClient.getMergedProfile().then(async (data) => {
+      if (data.solutionLevels?.length) {
+        const currentSolutionLevel = data.solutionLevels.find((solutionLevelInfo) => solutionLevelInfo.includes(id));
+        if (currentSolutionLevel) {
+          const [, selectedOption] = currentSolutionLevel.split(':') || [undefined, 'Beginner'];
+          if (selectedOption) {
+            cardDropdown.updateDropdownValue(selectedOption);
+          }
+        }
+      }
+    });
+  });
 
   // Checkbox
   const changeHandler = (e) => {
@@ -72,6 +97,7 @@ export default async function buildProductCard(container, element, model) {
     } else {
       card.classList.remove('profile-interest-card-selected');
     }
+    productExperienceEventEmitter.set(id, checked);
   };
   const checkboxContainer = htmlToElement(`
         <div class="profile-interest-checkbox">

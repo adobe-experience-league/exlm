@@ -3,8 +3,8 @@
     border-radius: 4px;
     border: 1px solid var(--spectrum-gray-300);
     background-color: var(--spectrum-gray-50);
-    width: 260px;
-    height: 186px;
+    width: 317px;
+    height: 262px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -67,11 +67,19 @@
     color: var(--spectrum-gray-800);
 }
 
-@media (min-width: 768px) {
+.profile-interest-logo svg {
+    height: 42px;
+    width: 42px;
+    transform: scale(0.714);
+    transform-origin: top left;
+}
+
+@media (min-width: 600px) {
     .profile-interest-card {
-        width: 200px;
-        height: 186px;
+        width: 308px;
+        height: 256px;
     }
+
     .profile-interest-checkbox {
         margin-top: 14px;
     }
@@ -94,5 +102,12 @@
     .profile-interest-checkbox label {
         font-size: 14px;
         line-height: 17px;
+    }
+}
+
+@media (min-width: 900px) {
+    .profile-interest-card {
+        width: 308px;
+        height: 262px;
     }
 }
