@@ -91,8 +91,20 @@ export const communityAccountDOM = `<div class="profile-row community-account">
   <div class="profile-card-body community-account-body">
     <div class="profile-user-info">
       <div class="display-name community-display-name">${communityUserName}</div>
-      ${communityUserTitle ? `<div class="community-title"><span class="heading">${placeholders?.title || 'Title'}: </span><span>${communityUserTitle}</span></div>` : ''}
-      ${communityUserLocation ? `<div class="community-location"><span class="heading">${placeholders?.location || 'Location'}: </span><span>${communityUserLocation}</span></div>` : ''}
+      ${
+        communityUserTitle
+          ? `<div class="community-title"><span class="heading">${
+              placeholders?.title || 'Title'
+            }: </span><span>${communityUserTitle}</span></div>`
+          : ''
+      }
+      ${
+        communityUserLocation
+          ? `<div class="community-location"><span class="heading">${
+              placeholders?.location || 'Location'
+            }: </span><span>${communityUserLocation}</span></div>`
+          : ''
+      }
     </div>
   </div>
 </div>`;
@@ -101,9 +113,30 @@ export const additionalProfileInfoDOM = `
   <div class="profile-row additional-data">
     <div class="profile-card-body additional-data-body">
       <div class="profile-user-info">
-        ${roles && ((Array.isArray(roles) && roles.length > 0) || (typeof roles === 'string' && roles.trim() !== '')) ? `<div class="user-role"><span class="heading">${placeholders?.myRole || 'My Role'}: </span><span>${roles}</span></div>` : ''}
-        ${industry && ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== '')) ? `<div class="user-industry"><span class="heading">${placeholders?.myIndustry || 'My Industry'}: </span><span>${industry}</span></div>` : ''}
-        ${interests && ((Array.isArray(interests) && interests.length > 0) || (typeof interests === 'string' && interests.trim() !== '')) ? `<div class="user-interests"><span class="heading">${placeholders?.myInterests || 'My Interests'}: </span><span>${interests}</span></div>` : ''}
+        ${
+          roles && ((Array.isArray(roles) && roles.length > 0) || (typeof roles === 'string' && roles.trim() !== ''))
+            ? `<div class="user-role"><span class="heading">${
+                placeholders?.myRole || 'My Role'
+              }: </span><span>${roles}</span></div>`
+            : ''
+        }
+        ${
+          industry &&
+          ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''))
+            ? `<div class="user-industry"><span class="heading">${
+                placeholders?.myIndustry || 'My Industry'
+              }: </span><span>${industry}</span></div>`
+            : ''
+        }
+        ${
+          interests &&
+          ((Array.isArray(interests) && interests.length > 0) ||
+            (typeof interests === 'string' && interests.trim() !== ''))
+            ? `<div class="user-interests"><span class="heading">${
+                placeholders?.myInterests || 'My Interests'
+              }: </span><span>${interests}</span></div>`
+            : ''
+        }
       </div>
     </div>
   </div>`;
