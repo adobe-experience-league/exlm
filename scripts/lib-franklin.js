@@ -187,44 +187,6 @@ export function toCamelCase(name) {
 }
 
 const ICONS_CACHE = {};
-const ICONS_FETCHING = new Map();
-
-async function fetchIcon(iconName, prefix) {
-  try {
-    const response = await fetch(`${window.hlx.codeBasePath}/icons/${prefix}${iconName}.svg`);
-    if (!response.ok) {
-      ICONS_CACHE[iconName] = false;
-      return;
-    }
-
-    const svg = await response.text();
-    if (svg.match(/(<style | class=|url\(#| xlink:href="#)/)) {
-      ICONS_CACHE[iconName] = {
-        styled: true,
-        html: svg
-          // rescope ids and references to avoid clashes across icons;
-          .replaceAll(/ id="([^"]+)"/g, (_, id) => ` id="${iconName}-${id}"`)
-          .replaceAll(/="url\(#([^)]+)\)"/g, (_, id) => `="url(#${iconName}-${id})"`)
-          .replaceAll(/ xlink:href="#([^"]+)"/g, (_, id) => ` xlink:href="#${iconName}-${id}"`),
-      };
-    } else {
-      ICONS_CACHE[iconName] = {
-        html: svg
-          .replace('<svg', `<symbol id="icons-sprite-${iconName}"`)
-          .replace(/ width=".*?"/, '')
-          .replace(/ height=".*?"/, '')
-          .replace('</svg>', '</symbol>'),
-      };
-    }
-  } catch (error) {
-    ICONS_CACHE[iconName] = false;
-    // eslint-disable-next-line no-console
-    console.error(error);
-  } finally {
-    ICONS_FETCHING.delete(iconName);
-  }
-}
-
 /**
  * Replace icons with inline SVG and prefix with codeBasePath.
  * @param {Element} [element] Element containing icons
@@ -246,12 +208,40 @@ export async function decorateIcons(element, prefix = '') {
       const iconName = Array.from(span.classList)
         .find((c) => c.startsWith('icon-'))
         .substring(5);
-
       if (!ICONS_CACHE[iconName]) {
-        if (!ICONS_FETCHING.has(iconName)) {
-          ICONS_FETCHING.set(iconName, fetchIcon(iconName, prefix));
+        ICONS_CACHE[iconName] = true;
+        try {
+          const response = await fetch(`${window.hlx.codeBasePath}/icons/${prefix}${iconName}.svg`);
+          if (!response.ok) {
+            ICONS_CACHE[iconName] = false;
+            return;
+          }
+          // Styled icons don't play nice with the sprite approach because of shadow dom isolation
+          // and same for internal references
+          const svg = await response.text();
+          if (svg.match(/(<style | class=|url\(#| xlink:href="#)/)) {
+            ICONS_CACHE[iconName] = {
+              styled: true,
+              html: svg
+                // rescope ids and references to avoid clashes across icons;
+                .replaceAll(/ id="([^"]+)"/g, (_, id) => ` id="${iconName}-${id}"`)
+                .replaceAll(/="url\(#([^)]+)\)"/g, (_, id) => `="url(#${iconName}-${id})"`)
+                .replaceAll(/ xlink:href="#([^"]+)"/g, (_, id) => ` xlink:href="#${iconName}-${id}"`),
+            };
+          } else {
+            ICONS_CACHE[iconName] = {
+              html: svg
+                .replace('<svg', `<symbol id="icons-sprite-${iconName}"`)
+                .replace(/ width=".*?"/, '')
+                .replace(/ height=".*?"/, '')
+                .replace('</svg>', '</symbol>'),
+            };
+          }
+        } catch (error) {
+          ICONS_CACHE[iconName] = false;
+          // eslint-disable-next-line no-console
+          console.error(error);
         }
-        await ICONS_FETCHING.get(iconName);
       }
     }),
   );
@@ -269,7 +259,6 @@ export async function decorateIcons(element, prefix = '') {
       .find((c) => c.startsWith('icon-'))
       .substring(5);
     const parent = span.firstElementChild?.tagName === 'A' ? span.firstElementChild : span;
-
     // Styled icons need to be inlined as-is, while unstyled ones can leverage the sprite
     if (ICONS_CACHE[iconName].styled) {
       parent.innerHTML = ICONS_CACHE[iconName].html;
