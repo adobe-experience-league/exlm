@@ -1137,8 +1137,10 @@ function decorateBrowseTopics(block) {
   const { lang } = getPathDetails();
   const [...configs] = [...block.children].map((row) => row.firstElementChild);
 
-  const [solutionsElement, headingElement, topicsElement] = configs.map((cell) => cell);
-  const [solutionsContent, headingContent, topicsContent] = configs.map((cell) => cell?.textContent?.trim() ?? '');
+  const [solutionsElement, headingElement, topicsElement, contentTypeElement] = configs.map((cell) => cell);
+  const [solutionsContent, headingContent, topicsContent, contentTypeContent] = configs.map(
+    (cell) => cell?.textContent?.trim() ?? '',
+  );
 
   // eslint-disable-next-line no-unused-vars
   const allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
@@ -1149,6 +1151,12 @@ function decorateBrowseTopics(block) {
     products.forEach((p) => supportedProducts.push(p));
     window.headlessSolutionProductKey = productKey;
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
+  }
+
+  if (contentTypeContent.length) {
+    const contentTypes = contentTypeContent.split(',').map((type) => type.trim());
+    const contentTypesQuery = contentTypes.map((type) => `@el_contenttype="${type}"`).join('OR');
+    window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${contentTypesQuery}))`;
   }
 
   const div = document.createElement('div');
@@ -1217,6 +1225,7 @@ function decorateBrowseTopics(block) {
   (solutionsElement.parentNode || solutionsElement).remove();
   (headingElement.parentNode || headingElement).remove();
   (topicsElement.parentNode || topicsElement).remove();
+  (contentTypeElement.parentNode || contentTypeElement).remove();
 }
 
 export default async function decorate(block) {
