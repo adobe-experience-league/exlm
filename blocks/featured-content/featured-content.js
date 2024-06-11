@@ -1,6 +1,6 @@
 import { div, h2, p } from '../../scripts/dom-helpers.js';
 import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchAuthorBio, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 let placeholders = {};
 try {
@@ -36,8 +36,11 @@ export async function getContentReference(link) {
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(html, 'text/html');
       const description = htmlDoc.querySelector('main div p')?.textContent;
-      const authorBio = htmlDoc.querySelectorAll('.author-summary-grid');
-
+      let authorBioPage = htmlDoc.querySelector('meta[name="author-bio-page"]');
+      if (authorBioPage && window.hlx.aemRoot) {
+        authorBioPage = `${authorBioPage}.html`;
+      }
+      const authorBio = fetchAuthorBio(authorBioPage);
       return {
         contentTitle: htmlDoc.title,
         contentDescription: description,
