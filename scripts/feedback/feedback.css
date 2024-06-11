@@ -21,6 +21,10 @@
   padding: 10px;
 }
 
+.feedback-ui.no-git .right {
+  display: none!important;
+}
+
 .feedback-ui .first-question {
   display: flex;
   justify-content: space-between;
