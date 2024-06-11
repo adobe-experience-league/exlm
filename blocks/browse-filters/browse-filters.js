@@ -202,6 +202,7 @@ if (isArticleLandingPage()) {
   const articleIndex = await fetchArticleIndex();
   const coveoSolutions = articleIndex.reduce((acc, curr) => {
     if (curr?.coveoSolution) {
+      // eslint-disable-next-line no-param-reassign
       acc += `,${curr.coveoSolution}`;
     }
     return acc;
