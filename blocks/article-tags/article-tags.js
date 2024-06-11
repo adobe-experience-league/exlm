@@ -50,11 +50,9 @@ function decodeArticlePageMetaTags() {
         }
         const featureTag = atob(parts[1]);
         return `${featureTag}`;
-        // eslint-disable-next-line no-else-return
-      } else {
-        decodedSolutions.push(atob(parts[0]));
-        return '';
       }
+      decodedSolutions.push(atob(parts[0]));
+      return '';
     })
     .filter((feature) => feature !== '');
 
