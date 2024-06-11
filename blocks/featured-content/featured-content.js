@@ -86,16 +86,16 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
   );
   const authorContainer = div({ class: 'author-container' });
 
-  const {authorName} = contentInfo.authorInfo.authorName;
-  const {authorImage} = contentInfo.authorInfo.authorImage;
+  const name = contentInfo.authorInfo.authorName;
+  const pic = contentInfo.authorInfo.authorImage;
   const authorDiv = div(
     { class: 'author' },
     div(
       { class: 'author-image' },
-      createOptimizedPicture(authorImage, authorName, 'eager', [{ width: '100' }]),
+      createOptimizedPicture(pic, name, 'eager', [{ width: '100' }]),
       div({ class: `company-dot ${company}` }),
     ),
-    div({ class: 'author-details' }, div(authorName)),
+    div({ class: 'author-details' }, div(name)),
   );
   if (authorDiv) authorContainer.append(authorDiv);
   cta.replaceWith(contentDiv);
