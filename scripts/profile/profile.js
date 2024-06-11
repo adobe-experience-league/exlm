@@ -91,12 +91,8 @@ export const communityAccountDOM = `<div class="profile-row community-account">
   <div class="profile-card-body community-account-body">
     <div class="profile-user-info">
       <div class="display-name community-display-name">${communityUserName}</div>
-      <div class="community-title"><span class="heading">${
-        placeholders?.title || 'Title'
-      }: </span><span>${communityUserTitle}</span></div>
-      <div class="community-location"><span class="heading">${
-        placeholders?.location || 'Location'
-      }: </span><span>${communityUserLocation}</span></div>
+      ${communityUserTitle ? `<div class="community-title"><span class="heading">${placeholders?.title || 'Title'}: </span><span>${communityUserTitle}</span></div>` : ''}
+      ${communityUserLocation ? `<div class="community-location"><span class="heading">${placeholders?.location || 'Location'}: </span><span>${communityUserLocation}</span></div>` : ''}
     </div>
   </div>
 </div>`;
