@@ -1,0 +1,59 @@
+@import '../sass/breakpoints';
+@import '../sass/mixins';
+
+.docs.docs-solution-landing.docs-tutorial {
+  .default-content-wrapper {
+    h2 {
+      font-size: 24px;
+      border-bottom: 3px solid var(--non-spectrum-grey);
+      margin-bottom: 12px;
+    }
+
+    ul {
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: inherit;
+    }
+
+    ul li {
+      list-style: none;
+      width: 100%;
+      margin: 0 14px 7px 0;
+    }
+
+    ul li a {
+      line-height: 24px;
+      font-weight: var(--font-weight-700);
+      color: var(--non-spectrum-link);
+    }
+  }
+}
+
+@include breakpoint('tablet') {
+  .docs {
+    &.docs-solution-landing.docs-tutorial {
+      .default-content-wrapper {
+        ul li {
+          width: 50%;
+        }
+      }
+    }
+  }
+}
+
+@include breakpoint('desktop') {
+  .docs {
+    &.docs-solution-landing.docs-tutorial {
+      .default-content-wrapper {
+        h2 {
+          font-size: var(--spectrum-font-size-700);
+        }
+
+        ul li {
+          width: calc(33.33% - 16px);
+        }
+      }
+    }
+  }
+}

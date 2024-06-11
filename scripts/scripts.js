@@ -19,6 +19,7 @@ import {
   fetchPlaceholders,
   readBlockConfig,
   createOptimizedPicture,
+  toClassName,
 } from './lib-franklin.js';
 
 const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
@@ -830,14 +831,23 @@ const loadMartech = async (headerPromise, footerPromise) => {
   );
 };
 
+async function loadThemes() {
+  const toClassNames = (classes) => classes?.split(',')?.map((c) => toClassName(c.trim())) || [];
+  const metaToClassNames = (metaName) => toClassNames(getMetadata(metaName));
+  const themeNames = [...metaToClassNames('template'), ...metaToClassNames('theme')];
+  if (themeNames.length === 0) return Promise.resolve();
+  return Promise.allSettled(themeNames.map((theme) => loadCSS(`${window.hlx.codeBasePath}/styles/theme/${theme}.css`)));
+}
+
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
-  await loadBlocks(main);
   loadIms(); // start it early, asyncronously
+  await loadThemes();
+  await loadBlocks(main);
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
