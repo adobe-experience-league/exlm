@@ -4,7 +4,7 @@ import { fetchAuthorBio } from '../../scripts/scripts.js';
 export default function decorate(block) {
   const authorSummaryContainer = document.createElement('div');
   let link = getMetadata('author-bio-page');
-  if (link && window.location.pathname.startsWith('/content')) {
+  if (link && window.hlx.aemRoot) {
     link = `${link}.html`;
   }
   if (link) {
