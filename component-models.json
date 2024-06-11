@@ -2073,6 +2073,14 @@
         ]
       },
       {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Alternate Description",
+        "description": "Override the article's summary with this description."
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "link",
@@ -2104,14 +2112,6 @@
         "name": "linkText",
         "value": "Read Article",
         "label": "CTA Text"
-      },
-      {
-        "component": "richtext",
-        "valueType": "string",
-        "name": "description",
-        "value": "",
-        "label": "Alternate Description",
-        "description": "Override the article's summary with this description."
       }
     ]
   },
