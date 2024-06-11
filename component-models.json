@@ -2073,20 +2073,20 @@
         ]
       },
       {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Alternate Description",
+        "description": "Override the article's summary with this description."
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "link",
         "value": "",
         "label": "Content Page",
         "required": true
-      },
-      {
-        "component": "richtext",
-        "valueType": "string",
-        "name": "desc",
-        "value": "",
-        "label": "Alternate Description",
-        "description": "Override the article's summary with this description."
       },
       {
         "component": "select",
