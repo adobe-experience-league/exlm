@@ -83,20 +83,18 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
   );
   const authorContainer = div({ class: 'author-container' });
 
-  contentInfo.authorInfo.forEach((author) => {
-    const authorName = author.querySelector('div:nth-child(2) > div')?.innerText;
-    const authorPicture = author.querySelector('div:first-child picture img')?.src;
-    const authorDiv = div(
-      { class: 'author' },
-      div(
-        { class: 'author-image' },
-        createOptimizedPicture(authorPicture, authorName, 'eager', [{ width: '100' }]),
-        div({ class: `company-dot ${company}` }),
-      ),
-      div({ class: 'author-details' }, div(authorName)),
-    );
-    if (authorDiv) authorContainer.append(authorDiv);
-  });
+  const {authorName} = contentInfo.authorInfo;
+  const {authorImage} = contentInfo.authorInfo.authorImage;
+  const authorDiv = div(
+    { class: 'author' },
+    div(
+      { class: 'author-image' },
+      createOptimizedPicture(authorImage, authorName, 'eager', [{ width: '100' }]),
+      div({ class: `company-dot ${company}` }),
+    ),
+    div({ class: 'author-details' }, div(authorName)),
+  );
+  if (authorDiv) authorContainer.append(authorDiv);
   cta.replaceWith(contentDiv);
   block.append(authorContainer);
 }
