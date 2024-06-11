@@ -97,7 +97,7 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
     if (authorDiv) authorContainer.append(authorDiv);
   });
   cta.replaceWith(contentDiv);
-  cta.parentNode.append(authorContainer);
+  block.append(authorContainer);
 }
 
 /**
