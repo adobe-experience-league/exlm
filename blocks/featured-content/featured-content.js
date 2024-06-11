@@ -30,27 +30,30 @@ export function decorateButton(button) {
  * @returns {Promise<Object>} A promise that resolves to an object containing the extracted content information.
  */
 export async function getContentReference(link) {
-  return fetch(link)
-    .then((response) => response.text())
-    .then((html) => {
-      const parser = new DOMParser();
-      const htmlDoc = parser.parseFromString(html, 'text/html');
-      const description = htmlDoc.querySelector('main div p')?.textContent;
-      let authorBioPage = htmlDoc.querySelector('meta[name="author-bio-page"]').content;
-      if (authorBioPage && window.hlx.aemRoot) {
-        authorBioPage = `${authorBioPage}.html`;
-      }
-      const authorBio = fetchAuthorBio(authorBioPage).then((authorInfo) => authorInfo);
-      return {
-        contentTitle: htmlDoc.title,
-        contentDescription: description,
-        authorInfo: authorBio,
-      };
-    })
-    .catch((error) => {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    });
+  try {
+    const response = await fetch(link);
+    const html = await response.text();
+    const parser = new DOMParser();
+    const htmlDoc = parser.parseFromString(html, 'text/html');
+
+    const description = htmlDoc.querySelector('main div p')?.textContent;
+    let authorBioPage = htmlDoc.querySelector('meta[name="author-bio-page"]')?.content;
+
+    if (authorBioPage && window.hlx.aemRoot) {
+      authorBioPage = `${authorBioPage}.html`;
+    }
+
+    const authorInfo = authorBioPage ? await fetchAuthorBio(authorBioPage) : null;
+
+    return {
+      contentTitle: htmlDoc.title,
+      contentDescription: description,
+      authorInfo,
+    };
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }
 
 /**
