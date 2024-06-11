@@ -2623,31 +2623,21 @@
         "description": "Sets the title of the page in page meta."
       },
       {
-        "component": "select",
+        "component": "aem-content",
         "valueType": "string",
-        "name": "article-theme",
-        "label": "Article Theme",
-        "value": "Adobe",
-        "options": [
-          {
-            "name": "Adobe",
-            "value": "adobe"
-          },
-          {
-            "name": "External",
-            "value": "external"
-          }
-        ]
+        "name": "author-bio-page",
+        "value": "",
+        "label": "Author Bio page URL"
       },
       {
         "component": "multiselect",
         "valueType": "string",
         "name": "coveo-content-type",
-        "label": "Coveo Content Type",
+        "label": "Content Type",
         "description": "Sets the coveo content type in page meta.",
         "options": [
           {
-            "name": "Article",
+            "name": "Actionable Insights",
             "value": "Article"
           }
         ]
@@ -2656,16 +2646,17 @@
         "component": "aem-tag",
         "valueType": "string",
         "name": "coveo-solution",
-        "label": "Coveo Solution(s)",
+        "label": "Solution(s)",
         "rootPath": "/content/cq:tags/exl/solution",
         "description": "Sets the Coveo Solution(s) in page meta."
       },
       {
-        "component": "aem-content",
+        "component": "aem-tag",
         "valueType": "string",
-        "name": "author-bio-page",
-        "value": "",
-        "label": "Author Bio page"
+        "name": "feature",
+        "label": "Feature(s)",
+        "rootPath": "/content/cq:tags/exl/feature",
+        "description": "Sets the Coveo Feature(s) in page meta."
       },
       {
         "component": "aem-tag",

@@ -7,6 +7,7 @@ import {
   fetchLanguagePlaceholders,
   isDocArticlePage,
   fetchFragment,
+  isArticlePage,
 } from '../scripts.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { sendNotice } from '../toast/toast.js';
@@ -344,10 +345,6 @@ function handleClosingFeedbackBar(el) {
   });
 }
 
-function showFeedbackBar() {
-  return getMetadata('id');
-}
-
 function showQualtricsLoadingError(el) {
   const firstQuestionEl = el.querySelector('.first-question');
   const { loadingError } = firstQuestionEl.dataset;
@@ -466,23 +463,28 @@ function checkInterceptLoaded() {
 }
 
 export default async function loadFeedbackUi() {
-  if (!showFeedbackBar()) return;
-
   loadCSS(`${window.hlx.codeBasePath}/scripts/feedback/feedback.css`);
 
   let feedbackHtml = await feedbackFragment;
   feedbackHtml = htmlToElement(feedbackHtml);
 
+  const hasGit = Boolean(getMetadata('git-repo'));
+
   const body = document.querySelector('body');
   const fb = decorateFeedback(feedbackHtml);
   decorateIcons(fb);
-  body.append(fb);
   handleFeedbackToggle(fb);
   handleClosingFeedbackBar(fb);
-  handleGithubBtns(fb);
   handleFeedbackBarVisibilityOnScroll();
 
+  if (hasGit) {
+    handleGithubBtns(fb);
+  } else {
+    fb.classList.add('no-git');
+  }
+
+  body.append(fb);
   window.addEventListener('qsi_js_loaded', checkInterceptLoaded, false);
 }
 
-if (isDocArticlePage()) loadFeedbackUi();
+if (isDocArticlePage() || isArticlePage()) loadFeedbackUi();
