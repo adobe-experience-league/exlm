@@ -1,4 +1,4 @@
-import { a, div, h2, p } from '../../scripts/dom-helpers.js';
+import { div, h2, p } from '../../scripts/dom-helpers.js';
 import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
@@ -8,6 +8,20 @@ try {
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
+}
+
+export function decorateButton(button) {
+  const link = button.querySelector('a');
+  if (link) {
+    link.classList.add('button');
+    if (link.parentElement.tagName === 'EM') {
+      link.classList.add('secondary');
+    } else if (link.parentElement.tagName === 'STRONG') {
+      link.classList.add('primary');
+    }
+    return link.outerHTML;
+  }
+  return '';
 }
 
 /**
@@ -43,9 +57,15 @@ export async function getContentReference(link) {
  * @returns {Promise<void>} - A promise that resolves when the featured content is built.
  */
 async function buildFeaturedContent(contentElem, isAdobe) {
-  const link = contentElem.querySelectorAll('a');
-  const desc = contentElem.querySelector('div p:nth-child(2)');
-  const btnLabel = contentElem.querySelector('div p:nth-child(3)');
+  let desc;
+  if (contentElem.length === 2) {
+    desc = contentElem.shift();
+  }
+  const cta = contentElem.shift();
+
+  const link = cta.querySelectorAll('a');
+  // const desc = contentElem.querySelector('div p:nth-child(2)');
+  // const btnLabel = contentElem.querySelector('div p:nth-child(3)');
   const contentInfo = await getContentReference(link[0].href);
   const company = isAdobe ? 'adobe' : 'external';
   const contentDescription = desc ? desc.textContent : contentInfo.contentDescription.replace(/^SUMMARY: /, '');
@@ -56,11 +76,8 @@ async function buildFeaturedContent(contentElem, isAdobe) {
     h2(contentInfo.contentTitle),
     p(contentDescription),
     div(
-      { class: 'button-container' },
-      a(
-        { href: link[0].href, 'aria-label': 'Read Article', class: 'button secondary' },
-        btnLabel ? btnLabel.textContent : 'Read Article',
-      ),
+      { class: 'cta' },
+      decorateButton(cta),
     ),
   );
   const authorContainer = div({ class: 'author-container' });
@@ -90,15 +107,14 @@ async function buildFeaturedContent(contentElem, isAdobe) {
  * @returns {Promise<void>} - A promise that resolves when the decoration is complete.
  */
 export default async function decorate(block) {
-  const [image, content] = block.querySelectorAll(':scope div > div');
-  const isAdobe = block.getAttribute('class').includes('adobe');
+  const props = block.querySelectorAll(':scope div > div');
+  const isAdobe = block.classList.includes('adobe');
+  const image = props.shift();
   image.classList.add('featured-content-image');
   const imageInfo = image.querySelector('picture img');
   image
     .querySelector('picture')
     .replaceWith(createOptimizedPicture(imageInfo.src, imageInfo.alt, 'eager', [{ width: '327' }]));
   image.append(div({ class: 'source-tag' }, isAdobe ? placeholders.articleAdobeTag : placeholders.articleExternalTag));
-  if (content.children?.length >= 1) {
-    buildFeaturedContent(content, isAdobe);
-  }
+  buildFeaturedContent(props, isAdobe);
 }
