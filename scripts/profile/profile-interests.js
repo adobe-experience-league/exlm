@@ -3,6 +3,8 @@ import Dropdown from '../dropdown/dropdown.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import getSolutionByName from '../../blocks/toc/toc-solutions.js';
 import { productExperienceEventEmitter } from '../events.js';
+import { defaultProfileClient } from '../auth/profile.js';
+import loadJWT from '../auth/jwt.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/profile/profile-interests.css`);
 
@@ -31,7 +33,7 @@ const options = [
 
 // eslint-disable-next-line import/prefer-default-export
 export default async function buildProductCard(container, element, model) {
-  const { product: productsList = [], isSelected = false } = model;
+  const { product: productsList = [], isSelected = false, id } = model;
   const [product] = productsList;
   // Create card container
   const card = document.createElement('div');
@@ -62,8 +64,24 @@ export default async function buildProductCard(container, element, model) {
         </div>
     `);
 
-  // eslint-disable-next-line no-new
-  new Dropdown(content, 'Beginner', options);
+  const cardDropdown = new Dropdown(content, '', options);
+  cardDropdown.handleOnChange((level) => {
+    defaultProfileClient.updateProfile('solutionLevels', `${id}:${level}`);
+  });
+
+  loadJWT().then(async () => {
+    defaultProfileClient.getMergedProfile().then(async (data) => {
+      if (data.solutionLevels?.length) {
+        const currentSolutionLevel = data.solutionLevels.find((solutionLevelInfo) => solutionLevelInfo.includes(id));
+        if (currentSolutionLevel) {
+          const [, selectedOption] = currentSolutionLevel.split(':') || [undefined, 'Beginner'];
+          if (selectedOption) {
+            cardDropdown.updateDropdownValue(selectedOption);
+          }
+        }
+      }
+    });
+  });
 
   // Checkbox
   const changeHandler = (e) => {
