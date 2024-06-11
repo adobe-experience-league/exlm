@@ -30,7 +30,7 @@ const renderCards = (resultsEl) => {
     .forEach((interestData) => {
       const cardDiv = document.createElement('div');
       cardDiv.classList.add('card-item');
-      buildProductCard(resultsEl, cardDiv, interestData);
+      buildProductCard(cardDiv, interestData);
       resultsEl.appendChild(cardDiv);
     });
 };
