@@ -69,7 +69,7 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
   const contentInfo = await getContentReference(link[0].href);
   const company = isAdobe ? 'adobe' : 'external';
   const contentDescription = desc ? desc.textContent : contentInfo.contentDescription.replace(/^SUMMARY: /, '');
-  block.innerHTML = '';
+  // block.innerHTML = '';
 
   const contentDiv = div(
     { class: 'description' },
@@ -96,8 +96,8 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
     );
     if (authorDiv) authorContainer.append(authorDiv);
   });
-  block.append(contentDiv);
-  // contentDiv.parentNode.nextSibling.replaceWith(authorContainer);
+  cta.replaceWith(contentDiv);
+  cta.parentNode.append(authorContainer);
 }
 
 /**
