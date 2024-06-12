@@ -27,8 +27,8 @@ function updateHeaders() {
           const headerLabel = span({ class: 'header-label' }, headerCells[index].textContent);
           const cellContent = span({ class: 'cell-content' }, isHTML(cell.innerHTML) ? parseHTML(cell.innerHTML) : cell.textContent);
           cell.textContent = '';
-          cell.appendChild(headerLabel);
-          cell.appendChild(cellContent);
+          cell.append(headerLabel);
+          cell.append(cellContent);
         }
       });
     });
@@ -39,7 +39,8 @@ function updateHeaders() {
         const headerLabel = cell.querySelector('.header-label');
         const cellContent = cell.querySelector('.cell-content');
         if (headerLabel && cellContent) {
-          cell.innerHTML = isHTML(cellContent.innerHTML) ? parseHTML(cellContent.innerHTML) : cellContent.textContent;
+          // cell.innerHTML = cellContent.innerHTML;
+          cell.replaceWith(cellContent);
         }
       });
     });
