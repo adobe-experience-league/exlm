@@ -1,17 +1,5 @@
 import { span } from '../../scripts/dom-helpers.js';
 
-// Function to check if a string contains HTML tags
-function isHTML(str) {
-  return /<[a-z][\s\S]*>/i.test(str);
-}
-
-// Function to parse HTML string into HTML fragment
-function parseHTML(str) {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(str, 'text/html');
-  return doc.body.firstChild;
-}
-
 /**
  * Updates the headers of the columns based on the window width.
  */
@@ -25,7 +13,7 @@ function updateHeaders() {
       row.querySelectorAll('div').forEach((cell, index) => {
         if (!cell.querySelector('.header-label')) {
           const headerLabel = span({ class: 'header-label' }, headerCells[index].textContent);
-          const cellContent = span({ class: 'cell-content' }, isHTML(cell.innerHTML) ? parseHTML(cell.innerHTML) : cell.textContent);
+          const cellContent = span({ class: 'cell-content' }, cell.innerHTML);
           cell.textContent = '';
           cell.appendChild(headerLabel);
           cell.appendChild(cellContent);
@@ -39,7 +27,7 @@ function updateHeaders() {
         const headerLabel = cell.querySelector('.header-label');
         const cellContent = cell.querySelector('.cell-content');
         if (headerLabel && cellContent) {
-          cell.textContent = cellContent.textContent;
+          cell.innerHTML = cellContent.innerHTML;
         }
       });
     });
