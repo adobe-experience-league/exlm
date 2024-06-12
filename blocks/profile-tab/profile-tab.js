@@ -9,9 +9,9 @@ export default function ProfileTab(block) {
       index.forEach((profileIndex) => {
         if (profileIndex) {
           block.innerHTML += `
-          <a class="${currentURL === profileIndex.path ? 'active' : ''}" href=${profileIndex.path}>${
-            profileIndex.title
-          }</a>
+          <a class="${
+            currentURL === profileIndex.path || currentURL.replace('.html', '') === profileIndex.path ? 'active' : ''
+          }" href=${profileIndex.path}>${profileIndex.title}</a>
           `;
         }
       });
