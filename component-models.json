@@ -2025,7 +2025,8 @@
         "component": "reference",
         "valueType": "string",
         "name": "img",
-        "label": "Image"
+        "label": "Image",
+        "required": true
       },
       {
         "component": "text",
@@ -2072,25 +2073,45 @@
         ]
       },
       {
-        "component": "aem-content",
-        "valueType": "string",
-        "name": "content_link",
-        "value": "",
-        "label": "Content Page"
-      },
-      {
         "component": "richtext",
         "valueType": "string",
-        "name": "content_description",
+        "name": "description",
         "value": "",
-        "label": "Description"
+        "label": "Alternate Description",
+        "description": "Override the article's summary with this description."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Content Page",
+        "required": true
+      },
+      {
+        "component": "select",
+        "name": "linkType",
+        "value": "secondary",
+        "label": "CTA Type",
+        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "content_cta",
-        "value": "",
-        "label": "Content CTA Text"
+        "name": "linkText",
+        "value": "Read Article",
+        "label": "CTA Text"
       }
     ]
   },
