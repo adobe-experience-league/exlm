@@ -39,8 +39,8 @@ function updateHeaders() {
         const headerLabel = cell.querySelector('.header-label');
         const cellContent = cell.querySelector('.cell-content');
         if (headerLabel && cellContent) {
-          // cell.innerHTML = cellContent.innerHTML;
           cell.replaceWith(cellContent);
+          headerLabel.remove();
         }
       });
     });
