@@ -1,4 +1,4 @@
-import { decorateIcons, getMetadata, fetchArticleIndex } from '../../scripts/lib-franklin.js';
+import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import {
   createTag,
   htmlToElement,
@@ -228,9 +228,6 @@ if (isArticleLandingPage()) {
   dropdownOptions.push(productTypeOptions);
   dropdownOptions.push(roleOptions);
   dropdownOptions.push(authorOptions);
-
-  // dropdownOptions.push(authorOptions);
-  // dropdownOptions.push(expTypeOptions);
 }
 
 /**
