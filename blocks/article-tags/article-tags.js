@@ -12,12 +12,14 @@ function decodeArticlePageMetaTags() {
   const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
   const roleMeta = document.querySelector(`meta[name="role"]`);
   const levelMeta = document.querySelector(`meta[name="level"]`);
+  const featureMeta = document.querySelector(`meta[name="feature"]`);
 
   const solutions = solutionMeta ? formatPageMetaTags(solutionMeta.content) : [];
+  const features = featureMeta ? formatPageMetaTags(featureMeta.content) : [];
   const roles = roleMeta ? formatPageMetaTags(roleMeta.content) : [];
   const experienceLevels = levelMeta ? formatPageMetaTags(levelMeta.content) : [];
-
-  const decodedSolutions = solutions.map((solution) => {
+  let decodedSolutions = [];
+  decodedSolutions = solutions.map((solution) => {
     // In case of sub-solutions. E.g. exl:solution/campaign/standard
     const parts = solution.split('/');
     const decodedParts = parts.map((part) => atob(part));
@@ -37,11 +39,31 @@ function decodeArticlePageMetaTags() {
 
     return decodedParts[0];
   });
+
+  const decodedFeatures = features
+    .map((feature) => {
+      const parts = feature.split('/');
+      if (parts.length > 1) {
+        const product = atob(parts[0]);
+        if (!decodedSolutions.includes(product)) {
+          decodedSolutions.push(product);
+        }
+        const featureTag = atob(parts[1]);
+        return `${featureTag}`;
+      }
+      decodedSolutions.push(atob(parts[0]));
+      return '';
+    })
+    .filter((feature) => feature !== '');
+
   const decodedRoles = roles.map((role) => atob(role));
   const decodedLevels = experienceLevels.map((level) => atob(level));
 
   if (solutionMeta) {
     solutionMeta.content = decodedSolutions.join(';');
+  }
+  if (featureMeta) {
+    featureMeta.content = decodedFeatures.join(',');
   }
   if (roleMeta) {
     roleMeta.content = decodedRoles.join(',');
@@ -52,10 +74,7 @@ function decodeArticlePageMetaTags() {
 }
 
 export default function decorate(block) {
-  if (
-    document.documentElement.classList.contains('adobe-ue-edit') ||
-    document.documentElement.classList.contains('adobe-ue-preview')
-  ) {
+  if (window.hlx.aemRoot) {
     decodeArticlePageMetaTags();
   }
   const coveosolutions = getMetadata('coveo-solution');
