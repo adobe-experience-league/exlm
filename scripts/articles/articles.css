@@ -27,8 +27,12 @@
 .articles-wrapper > * > .default-content-wrapper li * {
     font-size: var(--spectrum-font-size-200);
     line-height: 24px;
-    color: var(--non-spectrum-dark-gray);
 } 
+
+.articles-wrapper > * > .default-content-wrapper  p,
+.articles-wrapper > * > .default-content-wrapper  li {
+    color: var(--non-spectrum-dark-gray);
+}
 
 .articles-wrapper > * > .default-content-wrapper>h2 {
     font-size: var(--spectrum-font-size-700);
@@ -59,9 +63,15 @@
 .articles-wrapper > * > .columns-wrapper li * {
     font-size: var(--spectrum-font-size-200);
     line-height: 24px;
-    color: var(--non-spectrum-dark-gray);
 } 
 
+.articles-wrapper > * > .columns-wrapper p,
+.articles-wrapper > * > .columns-wrapper li {
+    color: var(--non-spectrum-dark-gray);
+}
+
+
+    
 .articles-wrapper .mini-toc-wrapper .mini-toc .scrollable-div:hover {
     overflow-y: auto;
 }
