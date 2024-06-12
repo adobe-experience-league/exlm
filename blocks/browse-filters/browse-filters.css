@@ -553,7 +553,11 @@ button.browse-tags:focus {
       "ctype author"
       "role exp"
       "search cfilter";
-    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "label label label label label label"
+      "product product role role author author"
+      "search search search search search cfilter";
+    grid-template-columns: repeat(6, 1fr);
   }
 }
 
@@ -582,11 +586,8 @@ button.browse-tags:focus {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 
-  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(.browse-author-type-dropdown):not(:has(.browse-experience-level-dropdown)) {
-    grid-template-areas:
-      "label label label"
-      "product role author"
-      "search search cfilter";
-    grid-template-columns: 1fr 1fr 1fr;
-  }
+    .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(.browse-author-type-dropdown):not(:has(.browse-experience-level-dropdown)) {
+      grid-template-areas: "label product role author search cfilter";
+      grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
+    }
 }

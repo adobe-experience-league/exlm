@@ -373,3 +373,35 @@ export const handleCoverSearchSubmit = (targetSearchText) => {
     window.location.hash = `#q=${targetSearchText || ''}&${window.location.hash.slice(1)}`;
   }
 };
+
+/**
+ * Gets articleIndex object.
+ * @param {string} [prefix] Location of articleIndex
+ * @returns {object} Window ArticleIndex object
+ */
+export async function fetchArticleIndex(prefix = 'en') {
+  window.articleIndex = window.articleIndex || {};
+  const loaded = window.articleIndex[`${prefix}-loaded`];
+  if (!loaded) {
+    window.articleIndex[`${prefix}-loaded`] = new Promise((resolve, reject) => {
+      const url = `/${prefix}/article-index.json`;
+      fetch(url)
+        .then((resp) => {
+          if (resp.ok) {
+            return resp.json();
+          }
+          throw new Error(`${resp.status}: ${resp.statusText}`);
+        })
+        .then((json) => {
+          window.articleIndex[prefix] = json.data;
+          resolve(json.data);
+        })
+        .catch((error) => {
+          window.articleIndex[prefix] = [];
+          reject(error);
+        });
+    });
+  }
+  await window.articleIndex[`${prefix}-loaded`];
+  return window.articleIndex[prefix];
+}
