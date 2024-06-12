@@ -267,7 +267,7 @@ export default async function decorate(block) {
             });
         });
       });
-    } else if (window.location.pathname.endsWith('.html')) {
+    } else if (window.hlx.aemRoot) {
       buildNoResultsContent(block, true);
       recommendedCoursesInterestContent(block);
     } else {
