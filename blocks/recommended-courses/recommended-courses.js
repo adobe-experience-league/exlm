@@ -267,10 +267,7 @@ export default async function decorate(block) {
             });
         });
       });
-    } else if (
-      document.documentElement.classList.contains('adobe-ue-edit') ||
-      document.documentElement.classList.contains('adobe-ue-preview')
-    ) {
+    } else if (window.hlx.aemRoot) {
       buildNoResultsContent(block, true);
       recommendedCoursesInterestContent(block);
     } else {
