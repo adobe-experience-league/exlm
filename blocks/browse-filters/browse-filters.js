@@ -11,6 +11,7 @@ import {
   roleOptions,
   contentTypeOptions,
   expTypeOptions,
+  productTypeOptions,
   getObjectByName,
   getFiltersPaginationText,
   getBrowseFiltersResultCount,
@@ -22,6 +23,7 @@ import {
   showSearchSuggestionsOnInputClick,
   handleCoverSearchSubmit,
   authorOptions,
+  fetchArticleIndex,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -156,6 +158,9 @@ function updateClearFilterStatus(block) {
   const hasActiveTopics = block.querySelector('.browse-topics') !== null && selectedTopics.length > 0;
   const browseFiltersContainer = document.querySelector('.browse-filters-container');
   const browseFiltersSection = browseFiltersContainer.querySelector('.browse-filters-form');
+  if (!browseFiltersSection) {
+    return;
+  }
   const selectionContainer = browseFiltersSection.querySelector('.browse-filters-input-container');
   const containsSelection = selectionContainer.classList.contains('browse-filters-input-selected');
   const coveoQueryConfig = { query: '', fireSelection: true };
@@ -194,8 +199,35 @@ if (theme === 'browse-all') dropdownOptions.push(productOptions);
 if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
 
 if (isArticleLandingPage()) {
+  const articleIndex = await fetchArticleIndex();
+  const coveoSolutions = articleIndex.reduce((acc, curr) => {
+    if (curr?.coveoSolution) {
+      // eslint-disable-next-line no-param-reassign
+      acc += `,${curr.coveoSolution}`;
+    }
+    return acc;
+  }, '');
+
+  const coveoSolutionArr = coveoSolutions.split(/[,;|]/).filter(Boolean);
+  const coveoSolutionOptionsList = Array.from(new Set(coveoSolutionArr)).sort();
+  const parentCoveoSolutionOptList = coveoSolutionOptionsList.reduce((acc, curr) => {
+    const matchFound = !!acc.find((optName) => optName.includes(curr) || curr.includes(optName));
+    if (!matchFound) {
+      acc.push(curr);
+    }
+    return acc;
+  }, []);
+  const coveoSolutionOptions = parentCoveoSolutionOptList.map((solution) => ({
+    description: '',
+    id: solution.toLowerCase(),
+    title: solution,
+    value: solution,
+  }));
+  productTypeOptions.items = coveoSolutionOptions;
+  dropdownOptions.length = 0;
+  dropdownOptions.push(productTypeOptions);
+  dropdownOptions.push(roleOptions);
   dropdownOptions.push(authorOptions);
-  dropdownOptions.push(expTypeOptions);
 }
 
 /**
@@ -453,6 +485,9 @@ function constructKeywordSearchEl(block) {
 
 function onInputSearch(block) {
   const searchEl = block.querySelector('.filter-input-search .search-input');
+  if (!searchEl) {
+    return;
+  }
   searchEl.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -524,6 +559,9 @@ function clearSelectedFilters(block) {
 function handleClearFilter(block) {
   // show the hidden sections again
   const clearFilterEl = block.querySelector('.browse-filters-clear');
+  if (!clearFilterEl) {
+    return;
+  }
   clearFilterEl.addEventListener('click', () => {
     clearSelectedFilters(block);
   });
@@ -895,6 +933,9 @@ function handleCoveoHeadlessSearch(
   const filterResultsEl = createTag('div', { class: 'browse-filters-results' });
 
   const browseFiltersSection = block.querySelector('.browse-filters-form');
+  if (!browseFiltersSection) {
+    return;
+  }
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchIcon = filterInputSection.querySelector('.icon-search');
   const clearIcon = filterInputSection.querySelector('.icon-clear');
@@ -1098,6 +1139,9 @@ async function handleSearchEngineSubscription(block) {
 
 function renderSortContainer(block) {
   const wrapper = block.querySelector('.browse-filters-form .browse-filters-results-header');
+  if (!wrapper) {
+    return;
+  }
   const sortContainer = document.createElement('div');
   sortContainer.classList.add('sort-container');
   sortContainer.innerHTML = `<span>${placeholders.filterSortLabel}</span>
