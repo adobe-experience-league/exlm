@@ -1,4 +1,4 @@
-import { span } from '../../scripts/dom-helpers.js';
+import { div, span } from '../../scripts/dom-helpers.js';
 
 // Function to check if a string contains HTML tags
 function isHTML(str) {
@@ -25,7 +25,7 @@ function updateHeaders() {
       row.querySelectorAll('div').forEach((cell, index) => {
         if (!cell.querySelector('.header-label')) {
           const headerLabel = span({ class: 'header-label' }, headerCells[index].textContent);
-          const cellContent = span({ class: 'cell-content' }, isHTML(cell.innerHTML) ? parseHTML(cell.innerHTML) : cell.textContent);
+          const cellContent = div({ class: 'cell-content' }, isHTML(cell.innerHTML) ? parseHTML(cell.innerHTML) : cell.textContent);
           cell.textContent = '';
           cell.appendChild(headerLabel);
           cell.appendChild(cellContent);
