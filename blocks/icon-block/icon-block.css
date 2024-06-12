@@ -1,13 +1,13 @@
 .icon-block {
   display: grid;
-  min-width: 250px;
+  min-width: 320px;
   text-align: center;
   margin: 0 auto;
   gap: 32px;
   min-height: 208px;
 }
-body.profile .icon-block {
-  min-width: 320px;
+.signup-dialog-body .icon-block {
+  min-width: 250px;
 }
 .icon-block > div {
   max-width: 283px;
