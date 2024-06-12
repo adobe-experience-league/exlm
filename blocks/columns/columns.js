@@ -27,8 +27,8 @@ function updateHeaders() {
           const headerLabel = span({ class: 'header-label' }, headerCells[index].textContent);
           const cellContent = span({ class: 'cell-content' }, isHTML(cell.innerHTML) ? parseHTML(cell.innerHTML) : cell.textContent);
           cell.textContent = '';
-          cell.append(headerLabel);
-          cell.append(cellContent);
+          cell.appendChild(headerLabel);
+          cell.appendChild(cellContent);
         }
       });
     });
