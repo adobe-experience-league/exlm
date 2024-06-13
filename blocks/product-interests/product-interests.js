@@ -49,10 +49,17 @@ function updateInterests(block) {
 }
 
 function decorateInterests(block) {
+  if (!block.querySelector('h1,h2,h3,h4,h5,h6')) {
+    const title = block.querySelector('div > div');
+    title.innerHTML = `<h3>${title.textContent}</h3>`;
+  }
   const columnsContainer = document.createElement('ul');
   block.appendChild(columnsContainer);
   columnsContainer.classList.add('interests-container');
   const userInterests = profileData?.interests ? profileData.interests : [];
+  // Sort the interests data by Name
+  // eslint-disable-next-line no-nested-ternary
+  interests.data.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
   const clonedInterests = structuredClone(interests.data);
 
   productExperienceEventEmitter.set('interests_data', clonedInterests);
