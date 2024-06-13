@@ -114,7 +114,7 @@ async function createOptions(container, readTimeText) {
 
   container.appendChild(options);
   container.appendChild(lastUpdated);
-  container.appendChild(readTime);
+  if (readTimeText) container.appendChild(readTime);
 }
 
 function createBreadcrumb(container) {
