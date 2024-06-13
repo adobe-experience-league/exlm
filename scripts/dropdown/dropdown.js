@@ -24,7 +24,6 @@ export default class Dropdown {
     this.optionsArray = optionsArray;
     this.id = document.querySelectorAll('.custom-filter-dropdown').length;
     this.variant = variant;
-    this.documentClickHandler = this.handleDocumentClick.bind(this);
     this.initFormElements();
     this.handleClickEvents();
   }
@@ -74,11 +73,9 @@ export default class Dropdown {
    */
   handleClickEvents() {
     if (!Dropdown.isClickHandlerAdded) {
-      document.removeEventListener('click', this.documentClickHandler); // Remove the existing listener if any
-      setTimeout(() => {
-        document.addEventListener('click', this.documentClickHandler); // Add the new listener
-        Dropdown.isClickHandlerAdded = true;
-      }, 500);
+      document.removeEventListener('click', this.constructor.handleDocumentClick); // Remove the existing listener if any
+      document.addEventListener('click', this.constructor.handleDocumentClick); // Add the new listener
+      Dropdown.isClickHandlerAdded = true;
     }
   }
 
@@ -86,9 +83,9 @@ export default class Dropdown {
    * Event handler for document click events
    * @param {Event} event - The click event
    */
-  handleDocumentClick(event) {
+  static handleDocumentClick(event) {
     if (!event.target.closest('.custom-filter-dropdown')) {
-      this.constructor.closeAllDropdowns();
+      Dropdown.closeAllDropdowns();
     }
 
     if (event.target.closest('.custom-filter-dropdown > button')) {
@@ -99,7 +96,7 @@ export default class Dropdown {
         dropdown.classList.remove('open');
         button.nextElementSibling.style.display = 'none';
       } else {
-        this.constructor.closeAllDropdowns();
+        Dropdown.closeAllDropdowns();
         dropdown.classList.add('open');
         button.nextElementSibling.style.display = 'block';
       }
@@ -108,13 +105,14 @@ export default class Dropdown {
     if (event.target.closest('.custom-checkbox')) {
       if (event.target.value) {
         const dropdown = event.target.closest('.custom-filter-dropdown');
+        const { variant } = dropdown.dataset;
         const button = dropdown.children[0];
 
         dropdown.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach((checkbox) => {
           if (event.target.value !== checkbox.value) checkbox.checked = false;
         });
 
-        const updateButtonText = this.variant !== DROPDOWN_VARIANTS.ANCHOR;
+        const updateButtonText = variant !== DROPDOWN_VARIANTS.ANCHOR;
         let buttonText;
         if (event.target.value === dropdown.dataset.selected) {
           dropdown.dataset.selected = dropdown.dataset.filterType;
@@ -145,7 +143,7 @@ export default class Dropdown {
     const dropdown = document.createElement('div');
     dropdown.classList.add(`${this.defaultValue.toLowerCase()}-dropdown`, 'custom-filter-dropdown');
     dropdown.dataset.filterType = this.defaultValue;
-
+    dropdown.dataset.variant = this.variant;
     this.dropdown = dropdown;
 
     dropdown.appendChild(

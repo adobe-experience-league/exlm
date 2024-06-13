@@ -32,7 +32,7 @@ export async function fetchProfileData(url, cType) {
     return null;
   }
 }
-// TODO :: UNCOMMMENT BELOW BLOCK.
+
 const [interests, profileData] = await Promise.all([
   fetchProfileData(interestsUrl, 'json'),
   defaultProfileClient.getMergedProfile(),
