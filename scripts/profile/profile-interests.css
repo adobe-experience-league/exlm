@@ -103,11 +103,19 @@
         font-size: 14px;
         line-height: 17px;
     }
+
+    .signup-dialog .personalize-interest-results {
+        grid-template-columns: auto;
+    }
 }
 
 @media (min-width: 900px) {
     .profile-interest-card {
         width: 232px;
         height: 234px;
+    }
+
+    .signup-dialog .personalize-interest-results {
+        grid-template-columns: auto auto;
     }
 }
