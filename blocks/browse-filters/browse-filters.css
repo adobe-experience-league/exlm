@@ -537,6 +537,7 @@ button.browse-tags:focus {
     "label label label label label label"
     "role role ctype ctype exp exp"
     "search search search search search cfilter";
+    grid-template-columns: repeat(6, 1fr);
   }
 
 }
