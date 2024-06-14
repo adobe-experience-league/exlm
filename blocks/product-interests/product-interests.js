@@ -44,7 +44,7 @@ async function updateInterests(block) {
   block.querySelectorAll('li input:checked').forEach((input) => {
     newInterests.push(input.title);
   });
-  await defaultProfileClient.updateProfile('interests', newInterests, true)
+  await defaultProfileClient.updateProfile('interests', newInterests, true);
 }
 
 function decorateInterests(block) {
@@ -109,16 +109,18 @@ function decorateInterests(block) {
     if (inputEl) {
       inputEl.checked = value;
     }
-    updateInterests(block).then(()=>{
-      defaultProfileClient.getMergedProfile().then((profile)=>{
-        if(JSON.stringify(profileData.interests) !== JSON.stringify(profile.interests)){
-          profileData = profile;
-          sendNotice(placeholders?.profileUpdated || 'Profile updated successfully');
-        }
+    updateInterests(block)
+      .then(() => {
+        defaultProfileClient.getMergedProfile().then((profile) => {
+          if (JSON.stringify(profileData.interests) !== JSON.stringify(profile.interests)) {
+            profileData = profile;
+            sendNotice(placeholders?.profileUpdated || 'Profile updated successfully');
+          }
+        });
       })
-    }).catch(()=>{ 
-      sendNotice(placeholders?.profileNotUpdated|| 'Error updating profile');
-    });
+      .catch(() => {
+        sendNotice(placeholders?.profileNotUpdated || 'Error updating profile');
+      });
   });
 }
 
