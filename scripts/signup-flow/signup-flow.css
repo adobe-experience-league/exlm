@@ -288,7 +288,7 @@
         height: 426px;
         position: absolute;
         right: 0;
-        top: calc(50% - 213px);
+        top: 40%;
         width: 135px;
         z-index: 1;
     }
@@ -297,7 +297,7 @@
         height: 186px;
         left: 0;
         position: absolute;
-        top: 84px;
+        top: 20px;
         width: 197px;
         z-index: 1;
     }  
@@ -306,7 +306,7 @@
         height: 350px;
         position: absolute;
         right: 0;
-        top: calc(50% - 175px);
+        top: 70%;
         width: 112px;
         z-index: 1;
     }    
