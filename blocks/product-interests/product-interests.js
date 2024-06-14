@@ -33,19 +33,18 @@ export async function fetchProfileData(url, cType) {
   }
 }
 
-const [interests, profileData] = await Promise.all([
+// eslint-disable-next-line prefer-const
+let [interests, profileData] = await Promise.all([
   fetchProfileData(interestsUrl, 'json'),
   defaultProfileClient.getMergedProfile(),
 ]);
 
-function updateInterests(block) {
+async function updateInterests(block) {
   const newInterests = [];
   block.querySelectorAll('li input:checked').forEach((input) => {
     newInterests.push(input.title);
   });
-  defaultProfileClient.updateProfile('interests', newInterests, true).then(() => {
-    sendNotice(placeholders.profileUpdated || 'Profile updated successfully');
-  });
+  await defaultProfileClient.updateProfile('interests', newInterests, true)
 }
 
 function decorateInterests(block) {
@@ -110,7 +109,16 @@ function decorateInterests(block) {
     if (inputEl) {
       inputEl.checked = value;
     }
-    updateInterests(block);
+    updateInterests(block).then(()=>{
+      defaultProfileClient.getMergedProfile().then((profile)=>{
+        if(JSON.stringify(profileData.interests) !== JSON.stringify(profile.interests)){
+          profileData = profile;
+          sendNotice(placeholders?.profileUpdated || 'Profile updated successfully');
+        }
+      })
+    }).catch(()=>{ 
+      sendNotice(placeholders?.profileNotUpdated|| 'Error updating profile');
+    });
   });
 }
 
@@ -119,7 +127,6 @@ function handleProductInterestChange(block) {
     row.addEventListener('click', (e) => {
       e.stopPropagation();
       if (e.target.tagName === 'INPUT') {
-        updateInterests(block);
         const [, id] = e.target.id.split('__');
         productExperienceEventEmitter.set(id, e.target.checked);
       }
