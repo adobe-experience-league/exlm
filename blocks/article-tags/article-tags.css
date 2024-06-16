@@ -1,13 +1,17 @@
-.article-tags-view{
+.article-tags {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 8px;
 }
 
-.article-tags-name{
+.article-tags-topics, .article-tags-createdFor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
   font-size: var(--spectrum-body-size-xs);
+}
+
+.article-tags-name {
   color: var(--non-spectrum-grey-updated);
-  border: 1px solid var(--non-spectrum-article-light-gray);
-  border-radius: 4px;
-  padding: 2px 6px 2px 6px;
 }
