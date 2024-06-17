@@ -1,14 +1,22 @@
 import { createOptimizedPicture, getMetadata } from '../../scripts/lib-franklin.js';
 import { fetchAuthorBio } from '../../scripts/scripts.js';
 
-export default function decorate(block) {
-  const authorSummaryContainer = document.createElement('div');
-  let link = getMetadata('author-bio-page');
-  if (link && window.hlx.aemRoot) {
-    link = `${link}.html`;
-  }
-  if (link) {
-    fetchAuthorBio(link).then((authorInfo) => {
+export default async function decorate(block) {
+  let links = getMetadata('author-bio-page');
+  if (links) {
+    if (window.hlx.aemRoot) {
+      links = links.split(',').map((link) => `${link.trim()}.html`);
+    } else {
+      links = links.split(',').map((link) => link.trim());
+    }
+
+    const authorPromises = links.map((link) => fetchAuthorBio(link));
+    const authorsInfo = await Promise.all(authorPromises);
+    block.textContent = '';
+    authorsInfo.forEach((authorInfo) => {
+      const authorSummaryContainer = document.createElement('div');
+      authorSummaryContainer.classList.add('author-summary-grid');
+
       if (authorInfo.authorImage) {
         const imageContainer = document.createElement('div');
         imageContainer.classList.add('author-image');
@@ -38,8 +46,8 @@ export default function decorate(block) {
         }</div>`;
         if (authorInfo.authorSocialLinkURL && authorInfo.authorSocialLinkText) {
           const socialLink = document.createElement('a');
-          socialLink.href = authorInfo.authorSocialLinkURL ? authorInfo.authorSocialLinkURL : '#';
-          socialLink.append(authorInfo.authorSocialLinkText);
+          socialLink.href = authorInfo.authorSocialLinkURL;
+          socialLink.textContent = authorInfo.authorSocialLinkText;
           description.append(socialLink);
         }
         authorSummaryContainer.append(description);
@@ -49,10 +57,7 @@ export default function decorate(block) {
         authorSummaryContainer.classList.add(authorInfo.authorCompany.toLowerCase());
       }
 
-      authorSummaryContainer.classList.add('author-summary-grid');
+      block.append(authorSummaryContainer);
     });
   }
-
-  block.textContent = '';
-  block.append(authorSummaryContainer);
 }
