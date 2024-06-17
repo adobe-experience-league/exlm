@@ -46,8 +46,8 @@ export default async function decorate(block) {
         }</div>`;
         if (authorInfo.authorSocialLinkURL && authorInfo.authorSocialLinkText) {
           const socialLink = document.createElement('a');
-          socialLink.href = authorInfo.authorSocialLinkURL;
-          socialLink.textContent = authorInfo.authorSocialLinkText;
+          socialLink.href = authorInfo.authorSocialLinkURL ? authorInfo.authorSocialLinkURL : '#';
+          socialLink.append(authorInfo.authorSocialLinkText);
           description.append(socialLink);
         }
         authorSummaryContainer.append(description);
