@@ -662,6 +662,13 @@
         "valueType": "string",
         "hidden": true,
         "options": []
+      },
+      {
+        "component": "text",
+        "name": "tab",
+        "value": "",
+        "label": "Tab",
+        "valueType": "string"
       }
     ]
   },
@@ -2562,18 +2569,6 @@
         "name": "content",
         "value": "",
         "label": "Body"
-      }
-    ]
-  },
-  {
-    "id": "tab-section",
-    "fields": [
-      {
-        "component": "text",
-        "name": "tab",
-        "value": "",
-        "label": "Tab",
-        "valueType": "string"
       }
     ]
   },

@@ -17,11 +17,11 @@
   },
   {
     "id": "main-profile",
-    "components": ["profile-section", "tab-section"]
+    "components": ["profile-section"]
   },
   {
     "id": "main-signup",
-    "components": ["sign-up-flow-section", "tab-section"]
+    "components": ["sign-up-flow-section"]
   },
   {
     "id": "section",
