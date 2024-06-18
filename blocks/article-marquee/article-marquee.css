@@ -52,7 +52,6 @@
   overflow: hidden;
   z-index: 1;
   background-color: var(--non-spectrum-bg);
-
 }
 
 .article-marquee .author-info > div {
@@ -60,7 +59,7 @@
   text-align: center;
 }
 
-.article-marquee .author-info > div:nth-child(2){
+.article-marquee .author-info .author-card .author-image {
   width: 75px;
   height: 75px;
   border-radius: 50px;
@@ -68,7 +67,7 @@
   margin-bottom: 10px;
 }
 
-.article-marquee .author-info > div:nth-child(3){
+.article-marquee .author-info .author-card .author-info-text .author-name {
   font-size: var(--spectrum-font-size-100);
   font-weight: 600;
 }
@@ -197,7 +196,7 @@
   .article-marquee-info-container {
     justify-content: space-between;
   }
-  .article-marquee .author-info > div:nth-child(3){
+  .article-marquee .author-info .author-card .author-info-text .author-name {
     font-size: var(--spectrum-font-size-200);
   }
 
@@ -229,6 +228,11 @@
   }
   .article-marquee-large-bg.adobe {
     background-color: var(--spectrum-red-1400);
+  }
+  .article-marquee .author-info .author-details{
+    display: inline-flex;
+    gap: 30px;
+    width: auto;
   }
  }
 
