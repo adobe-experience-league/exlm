@@ -1,4 +1,4 @@
-import { fetchLanguagePlaceholders} from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { getMetadata } from '../../scripts/lib-franklin.js';
 
 let placeholders = {};
