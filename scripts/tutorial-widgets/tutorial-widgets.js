@@ -4,6 +4,7 @@ import BrowseCardsDelegate from '../browse-card/browse-cards-delegate.js';
 import BuildPlaceholder from '../browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../browse-card/browse-cards-constants.js';
 
+
 loadCSS(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.css`);
 
 // Decorate the page with tutorial widgets
@@ -11,9 +12,21 @@ export default function decorate() {
   // Select the main content section of the page
   const mainDoc = document.querySelector('main > div.content-section-last');
 
+  // Create a new div element to contain the tutorial widgets and the header
+const wrapper = document.createElement('div');
+wrapper.classList.add('tutorial-widgets-wrapper');
+
+ // Create a header for the tutorial widgets
+ const header = document.createElement('h2');
+ header.textContent = 'Watch related tutorials';
+ header.classList.add('tutorial-header');
+ wrapper.appendChild(header);
+
   // Create a new div element to contain the tutorial widgets
   const container = document.createElement('div');
   container.classList.add('tutorial-widgets');
+  wrapper.appendChild(container)
+
 
   const sortBy = 'RELEVANCY';
 
@@ -32,6 +45,7 @@ export default function decorate() {
   const tutorialWidgetsContent = BrowseCardsDelegate.fetchCardData(param);
   tutorialWidgetsContent
     .then((data) => {
+
       buildCardsShimmer.remove();
 
       // If data is present, build and append the widgets
@@ -47,7 +61,7 @@ export default function decorate() {
           // Build the widget and append it to the contentDiv
           buildCard(container, widgetDiv, widgetData);
         }
-        mainDoc.appendChild(container);
+        mainDoc.appendChild(wrapper);
       }
     })
     .catch((err) => {

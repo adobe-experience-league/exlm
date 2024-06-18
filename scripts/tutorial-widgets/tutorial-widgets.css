@@ -1,16 +1,28 @@
+.tutorial-widgets-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.tutorial-header {
+  margin-top: 20px;
+  margin-bottom: 25px;
+}
+
 .tutorial-widgets {
   display: flex;
+  justify-content: space-between;
   flex-wrap: nowrap;
   gap: 16px;
   overflow-x: auto;
   overflow-y: hidden;
   padding-bottom: 2px;
   min-height: 400px;
-  align-items: stretch;
 }
 
 .tutorial-widgets > div {
-  flex: 0 0 264px;
+  flex: 0 0 300px;
+  align-items: stretch;
 }
 
 .tutorial-widgets a {
@@ -19,25 +31,6 @@
   margin: 2px 0 0 0;
 }
 
-.tutorial-widgets > div:first-child .bookmark .exl-tooltip-label,
-.tutorial-widgets > div:first-child .copy-link .exl-tooltip-label {
-left: 100%;
-transform: translateX(-20%);
-}
-
-.tutorial-widgets > div:first-child .bookmark .exl-tooltip-label::after,
-.tutorial-widgets > div:first-child .copy-link .exl-tooltip-label::after {
-left: 10%;
-}
-
-.tutorial-widgets > div:first-child .bookmark + .copy-link .exl-tooltip-label {
-left: 50%;
-transform: translateX(-50%);
-}
-
-.tutorial-widgets > div:first-child .bookmark + .copy-link .exl-tooltip-label::after {
-left: 50%;
-}
 
 @media only screen and (min-width: 600px) {
   .tutorial-widgets {
@@ -61,8 +54,6 @@ left: 50%;
 
 @media only screen and (min-width: 1200px) {
   .tutorial-widgets {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    align-items: stretch;
   }
 }
