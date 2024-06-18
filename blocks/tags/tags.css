@@ -1,4 +1,4 @@
-.article-tags {
+.tags-wrapper .tags {
   display: flex;
   flex-direction: column;
   gap: 8px;
