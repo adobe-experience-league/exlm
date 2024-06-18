@@ -229,7 +229,7 @@
   .article-marquee-large-bg.adobe {
     background-color: var(--spectrum-red-1400);
   }
-  .article-marquee .author-info .author-details{
+  .article-marquee .author-info .author-details {
     display: inline-flex;
     gap: 30px;
     width: auto;
