@@ -42,7 +42,7 @@ function buildProductHeader() {
   const productName = getProductName();
   const solutionInfo = getSolutionByName(productName);
   return htmlToElement(`
-    <div class="toc-header">
+    <div class="toc-header is-sticky">
       <span class="icon icon-${solutionInfo.class}"></span>
       <h3>${solutionInfo.name}</h3>
     </div>
@@ -97,6 +97,7 @@ function updateTocContent(tocHtml, tocContent) {
     // if ul has more than MAX_ITEMS children, add view more link
     const items = Array.from(ul.children).filter((child) => child.tagName === 'LI');
     if (items.length > MAX_ITEMS) {
+      /*
       const viewMoreLessItem = document.createElement('li');
       viewMoreLessItem.classList.add('toc-view-more-less');
       ul.setAttribute('aria-expanded', 'false');
@@ -111,6 +112,7 @@ function updateTocContent(tocHtml, tocContent) {
         ul.setAttribute('aria-expanded', !isExpanded);
       });
       ul.appendChild(viewMoreLessItem);
+      */
     }
   });
 }
@@ -192,6 +194,13 @@ export default async function decorate(block) {
       const isExpanded = tocMobileDropdown.getAttribute('aria-expanded') === 'true';
       tocMobileDropdown.setAttribute('aria-expanded', !isExpanded);
     });
+    // Prevents active elements to be hidden below the overflow
+    const activeElement = tocContent.querySelector('.toc-item.is-active');
+    if (activeElement) {
+      const activeElementOffset = activeElement.offsetTop;
+      const desiredOffset = 100;
+      tocContent.scrollTop = activeElementOffset - desiredOffset;
+    }
   });
 
   window.addEventListener('resize', () => {

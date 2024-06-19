@@ -7,6 +7,17 @@
 
 .toc-content  {
     display: none;
+    scroll-behavior: smooth;
+    transition: padding 0.2s ease;
+    max-height: 60vh;
+    overflow: hidden;
+    &:hover {
+        touch-action: pan-y;
+        padding-right: 8px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--spectrum-gray-200) var(--spectrum-gray-100);
+    }
 }
 
 [aria-expanded="true"] + .toc-content {
@@ -64,6 +75,12 @@
 }
 
 .toc-header {
+    &.is-sticky {
+        position: sticky;
+        top: 0;
+        background-color: var(--spectrum-gray-50);
+        z-index: 1;
+    }
     align-items: center;
     display: flex;
     box-sizing: border-box;
