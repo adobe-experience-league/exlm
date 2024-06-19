@@ -114,11 +114,15 @@ export default function decorate(block) {
 
   const articleTags = document.createRange().createContextualFragment(`
       <div class="article-tags-topics">
+      <div class="article-tags-topics-heading">
       ${TOPICS}
+      </div>
         ${[solutions, features].map(createTagsHTML).join('')}
       </div>
       <div class="article-tags-createdFor">
+      <div class="article-tags-createdFor-heading">
       ${CREATED_FOR}
+      </div>
         ${[roles, experienceLevels].map(createTagsHTML).join('')}
       </div>
   `);
