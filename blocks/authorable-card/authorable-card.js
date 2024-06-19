@@ -70,9 +70,16 @@ const getCardData = async (articlePath, placeholders) => {
     type = getMetadata('type', doc);
   }
 
-  const solutions = getMetadata('solutions', doc)
+  let solutions = getMetadata('solutions', doc)
     .split(',')
     .map((s) => s.trim());
+
+  if (solutions.length < 2) {
+    solutions = getMetadata('coveo-solution', doc)
+      .split(';')
+      .map((s) => s.trim());
+  }
+
   return {
     id: getMetadata('id', doc),
     title: doc.querySelector('title').textContent.split('|')[0].trim(),
@@ -82,6 +89,10 @@ const getCardData = async (articlePath, placeholders) => {
     badgeTitle: type ? CONTENT_TYPES[type.toUpperCase()]?.LABEL : '',
     thumbnail: createThumbnailURL(doc, type) || '',
     product: solutions,
+    authorInfo: {
+      name: getMetadata('author-name', doc),
+      type: getMetadata('author-type', doc),
+    },
     tags: [],
     copyLink: fullURL,
     bookmarkLink: '',
