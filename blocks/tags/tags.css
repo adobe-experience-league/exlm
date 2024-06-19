@@ -9,9 +9,14 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+}
+
+.article-tags-topics-heading, .article-tags-createdFor-heading {
   font-size: var(--spectrum-body-size-xs);
+  font-weight: 700;
 }
 
 .article-tags-name {
   color: var(--non-spectrum-grey-updated);
+  font-size: var(--spectrum-body-size-s);
 }
