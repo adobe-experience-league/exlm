@@ -335,7 +335,7 @@
 }
 .browse-card.documentation-card .browse-card-banner,
 .browse-card.article-card .browse-card-banner {
-  background-color: var(--spectrum-celery-900);
+  background-color: var(--spectrum-gray-600);
 }
 .browse-card.troubleshooting-card .browse-card-banner {
   background-color: var(--spectrum-orange-700);

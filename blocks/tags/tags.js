@@ -1,5 +1,16 @@
-import { htmlToElement } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { getMetadata } from '../../scripts/lib-franklin.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
+const TOPICS = placeholders?.topics || 'TOPICS:';
+const CREATED_FOR = placeholders?.createdFor || 'CREATED FOR:';
 
 function formatPageMetaTags(inputString) {
   return inputString
@@ -87,31 +98,30 @@ export default function decorate(block) {
     ),
   ].join(',');
 
+  const features = getMetadata('feature');
   const roles = getMetadata('role');
   const experienceLevels = getMetadata('level');
 
-  const [articleTagHeading] = [...block.children].map((row) => row.firstElementChild);
+  function createTagsHTML(values) {
+    return values
+      .split(',')
+      .filter(Boolean)
+      .map((value) => `<div class="article-tags-name">${value.trim()}</div>`)
+      .join('');
+  }
 
   block.textContent = '';
 
-  const headerDiv = htmlToElement(`
-    <div class="article-tags">
-      <div class="article-tags-title">
-        ${articleTagHeading.innerHTML}
+  const articleTags = document.createRange().createContextualFragment(`
+      <div class="article-tags-topics">
+      ${TOPICS}
+        ${[solutions, features].map(createTagsHTML).join('')}
       </div>
-      <div class="article-tags-view">
-        ${[solutions, roles, experienceLevels]
-          .map((values) =>
-            values
-              .split(',')
-              .filter(Boolean)
-              .map((value) => `<div class="article-tags-name">${value.trim()}</div>`)
-              .join(''),
-          )
-          .join('')}
+      <div class="article-tags-createdFor">
+      ${CREATED_FOR}
+        ${[roles, experienceLevels].map(createTagsHTML).join('')}
       </div>
-    </div>
   `);
 
-  block.append(headerDiv);
+  block.append(articleTags);
 }
