@@ -267,6 +267,17 @@ function addProfileTab(main) {
 }
 
 /**
+ * Tabbed layout for Tab section
+ * @param {HTMLElement} main
+ */
+function buildTabSection(main) {
+  const tabSection = document.createElement('div');
+  main.append(tabSection);
+  tabSection.classList.add('tabs-section');
+  tabSection.append(buildBlock('tabs', []));
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -284,6 +295,10 @@ function buildAutoBlocks(main) {
     if (isProfilePage()) {
       addProfileTab(main);
       addProfileRail(main);
+    }
+    // eslint-disable-next-line no-use-before-define
+    if (!isProfilePage() && !isDocPage() && !isDocArticlePage()) {
+      buildTabSection(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console

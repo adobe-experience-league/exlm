@@ -24,6 +24,7 @@ function initTabs(block) {
 
 let initCount = 0;
 export default function decorate(block) {
+  const tabSections = document.querySelectorAll('.tab-section');
   const tabList = createTag('div', { class: 'tab-list', role: 'tablist' });
   const tabContent = createTag('div', { class: 'tab-content' });
 
@@ -32,19 +33,34 @@ export default function decorate(block) {
   // list of Universal Editor instrumented 'tab content' divs
   const tabInstrumentedDiv = [];
 
-  [...block.children].forEach((child) => {
-    // keep the div that has been instrumented for UE
-    tabInstrumentedDiv.push(child);
+  // Process each .tab-section separately
+  if (tabSections.length) {
+    tabSections.forEach((section) => {
+      tabInstrumentedDiv.push(section);
 
-    [...child.children].forEach((el, index) => {
-      if (index === 0) {
-        tabNames.push(el.textContent.trim());
-      } else {
-        tabContents.push(el.childNodes);
+      const sectionChildren = Array.from(section.children);
+      if (sectionChildren.length > 0) {
+        const firstChild = sectionChildren[0];
+        const restChildren = sectionChildren.slice(1);
+
+        tabNames.push(firstChild.textContent.trim());
+        tabContents.push(restChildren);
       }
     });
-  });
+  } else {
+    [...block.children].forEach((child) => {
+      // keep the div that has been instrumented for UE
+      tabInstrumentedDiv.push(child);
 
+      [...child.children].forEach((el, index) => {
+        if (index === 0) {
+          tabNames.push(el.textContent.trim());
+        } else {
+          tabContents.push(el.childNodes);
+        }
+      });
+    });
+  }
   tabNames.forEach((name, i) => {
     const tabBtnAttributes = {
       role: 'tab',
@@ -71,16 +87,14 @@ export default function decorate(block) {
       'aria-labelledby': `tab-${initCount}-${i}`,
     };
 
-    // get the instrumented div
     const tabContentDiv = tabInstrumentedDiv[i];
-    // add all additional attributes
     Object.entries(tabContentAttributes).forEach(([key, val]) => {
       tabContentDiv.setAttribute(key, val);
     });
-
     // default first tab is active
     if (i === 0) tabContentDiv.classList.add('active');
-    tabContentDiv.replaceChildren(...Array.from(content));
+    tabContentDiv.innerHTML = '';
+    tabContentDiv.append(...Array.from(content));
     tabContent.appendChild(tabContentDiv);
   });
 
