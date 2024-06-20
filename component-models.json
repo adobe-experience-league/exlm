@@ -906,7 +906,7 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Article",
+            "name": "Actionable Insights",
             "value": "article"
           },
           {
@@ -1961,7 +1961,7 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Article",
+            "name": "Actionable Insights",
             "value": "article"
           },
           {
@@ -2466,7 +2466,7 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Article",
+            "name": "Actionable Insights",
             "value": "article"
           },
           {

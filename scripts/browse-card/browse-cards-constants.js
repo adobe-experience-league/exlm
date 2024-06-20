@@ -49,7 +49,7 @@ export const CONTENT_TYPES = Object.freeze({
   },
   ARTICLE: {
     MAPPING_KEY: 'article',
-    LABEL: placeholders.browseCardArticleLabel || 'Article',
+    LABEL: placeholders.browseCardArticleLabel || 'Actionable Insights',
   },
 });
 
