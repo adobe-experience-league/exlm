@@ -652,7 +652,18 @@
   },
   {
     "id": "tab-section",
-    "fields": []
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Style",
+        "description": "The section style",
+        "valueType": "string",
+        "hidden": true,
+        "options": []
+      }
+    ]
   },
   {
     "id": "browse-rail-section",

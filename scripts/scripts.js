@@ -267,24 +267,12 @@ function addProfileTab(main) {
 }
 
 /**
- * Tabbed layout for Tab section
- * @param {HTMLElement} main
- */
-function addTabSection(main) {
-  const tabSection = document.createElement('div');
-  tabSection.classList.add('tab-section');
-  tabSection.append(buildBlock('tabs', []));
-  main.prepend(tabSection);
-}
-
-/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
-    addTabSection(main);
     // if we are on a product browse page
     if (isBrowsePage()) {
       addBrowseBreadCrumb(main);
