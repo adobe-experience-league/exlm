@@ -206,19 +206,21 @@ export default async function ArticleMarquee(block) {
     decorateIcons(block);
 
     if (Array.isArray(links) && links.length > 0) {
-      const authorPromises = links.map((link) => fetchAuthorBio(link));
+      // Filter out null or empty links and map to fetchAuthorBio
+      const authorPromises = links.filter((link) => link).map((link) => fetchAuthorBio(link));
       const authorsInfo = await Promise.all(authorPromises);
       const authorInfoContainer = block.querySelector('.author-details');
       let isExternal = false;
 
       authorsInfo.slice(0, 2).forEach((authorInfo) => {
-        let tagname = placeholders.articleAdobeTag;
-        let articleType = authorInfo?.authorCompany?.toLowerCase();
-        if (!articleType) articleType = metadataProperties.adobe;
-        if (articleType !== metadataProperties.adobe) {
-          tagname = placeholders.articleExternalTag;
-        }
-        const authorHTML = `<div class="author-card">
+        if (authorInfo) {
+          let tagname = placeholders.articleAdobeTag;
+          let articleType = authorInfo?.authorCompany?.toLowerCase();
+          if (!articleType) articleType = metadataProperties.adobe;
+          if (articleType !== metadataProperties.adobe) {
+            tagname = placeholders.articleExternalTag;
+          }
+          const authorHTML = `<div class="author-card">
                               <div class="author-image">${
                                 createOptimizedPicture(authorInfo?.authorImage).outerHTML
                               }</div>
@@ -228,9 +230,10 @@ export default async function ArticleMarquee(block) {
                                 <div class="article-marquee-tag">${tagname}</div>
                               </div>
                             </div>`;
-        authorInfoContainer.innerHTML += authorHTML;
-        if (articleType === 'external') {
-          isExternal = true;
+          authorInfoContainer.innerHTML += authorHTML;
+          if (articleType === 'external') {
+            isExternal = true;
+          }
         }
       });
       if (isExternal) {
