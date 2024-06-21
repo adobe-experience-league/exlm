@@ -662,6 +662,13 @@
         "valueType": "string",
         "hidden": true,
         "options": []
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Tab heading"
       }
     ]
   },

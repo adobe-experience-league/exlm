@@ -90,12 +90,7 @@
                   "name": "Tab Section",
                   "model": "tab-section",
                   "filter": "tab-section",
-                  "style": "tab-section",
-                  "title": {
-                    "sling:resourceType": "core/franklin/components/title/v1/title",
-                    "name": "Title",
-                    "model": "title"
-                  }
+                  "style": "tab-section"
                 }
               }
             }
