@@ -41,7 +41,7 @@ export default async function decorate(block) {
 
   function generateEmptyAwardsBlock() {
     return `
-        <div class="awards-noAwardsYet">
+        <div class="awards-no-award-yet">
           ${NO_AWARDS_YET}
         </div>
       `;

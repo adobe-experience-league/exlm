@@ -32,7 +32,7 @@
     font-size: var(--spectrum-font-size-200);
 }
 
-.awards-noAwardsYet {
+.awards-no-award-yet {
     color: var(--color-black);
     font-size: var(--spectrum-font-size-300);
 }
