@@ -39,7 +39,7 @@ export default async function decorate(block) {
     return `
         <div class="nil-awards">
           ${
-            placeholders?.noAwardsYet ||
+            placeholders?.nilAwardsLabel ||
             'No awards yet! Start exploring Experience League to discover what you can earn.'
           }
         </div>
