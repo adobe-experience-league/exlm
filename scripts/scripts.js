@@ -243,6 +243,15 @@ export function isProfilePage() {
 }
 
 /**
+ * Check if current page is a Signup flow modal page.
+ * theme = signup is set in bulk metadata for /en/profile/signup-flow-modal** paths.
+ */
+export function isSignUpPage() {
+  const theme = getMetadata('theme');
+  return theme.toLowerCase().startsWith('signup');
+}
+
+/**
  * Add a left rail to the profile page.
  * @param {HTMLElement} main
  *
@@ -279,7 +288,7 @@ async function buildTabSection(main) {
     const sectionMeta = section.querySelector('.section-metadata > div > div:nth-child(2)');
     if (sectionMeta?.textContent.includes('tab-section')) {
       if (!tabFound) {
-        tabIndex+=1;
+        tabIndex += 1;
         tabFound = true;
         const tabs = buildBlock('tabs', []);
         tabs.dataset.tabIndex = tabIndex;
@@ -314,7 +323,7 @@ function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
     // eslint-disable-next-line no-use-before-define
-    if (!isProfilePage() && !isDocPage() && !isDocArticlePage()) {
+    if (!isProfilePage() && !isDocPage() && !isDocArticlePage() && !isSignUpPage()) {
       buildTabSection(main);
     }
     // if we are on a product browse page
