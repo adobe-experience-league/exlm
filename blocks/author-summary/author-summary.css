@@ -14,6 +14,7 @@
       "author-description author-description";
     min-height: 100px;
     min-width: 200px;
+    margin-bottom: 20px;
 }
 
 .author-summary-grid.adobe {
