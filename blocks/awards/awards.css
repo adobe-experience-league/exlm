@@ -1,4 +1,4 @@
-.awards-holder {
+.awards .awards-holder {
     display: grid;
     gap: 16px;
     color: var(--color-white);
@@ -38,13 +38,13 @@
 }
 
 @media(min-width: 600px) {
-    .awards-holder {
+    .awards .awards-holder {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media(min-width: 900px) {
-    .awards-holder {
+    .awards .awards-holder {
         grid-template-columns: repeat(3, 1fr);
     }
 }
