@@ -186,6 +186,7 @@
   .article-marquee .article-info {
     min-height: 200px;
     padding: 40px;
+    width: 100%;
   }
 
   .article-marquee .author-info {
