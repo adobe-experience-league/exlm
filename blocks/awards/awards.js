@@ -38,7 +38,10 @@ export default async function decorate(block) {
   function generateEmptyAwardsBlock() {
     return `
         <div class="nil-awards">
-          ${placeholders?.noAwardsYet || 'No awards yet! Start exploring Experience League to discover what you can earn.'}
+          ${
+            placeholders?.noAwardsYet ||
+            'No awards yet! Start exploring Experience League to discover what you can earn.'
+          }
         </div>
       `;
   }
