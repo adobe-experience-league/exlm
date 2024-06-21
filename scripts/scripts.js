@@ -270,11 +270,40 @@ function addProfileTab(main) {
  * Tabbed layout for Tab section
  * @param {HTMLElement} main
  */
-function buildTabSection(main) {
-  const tabSection = document.createElement('div');
-  main.append(tabSection);
-  tabSection.classList.add('tabs-section');
-  tabSection.append(buildBlock('tabs', []));
+async function buildTabSection(main) {
+  let tabIndex = 0;
+  let tabContainer;
+  let tabFound = false;
+  const sections = main.querySelectorAll('main > div');
+  sections.forEach((section, i) => {
+    const sectionMeta = section.querySelector('.section-metadata > div > div:nth-child(2)');
+    if (sectionMeta?.textContent.includes('tab-section')) {
+      if (!tabFound) {
+        tabIndex+=1;
+        tabFound = true;
+        const tabs = buildBlock('tabs', []);
+        tabs.dataset.tabIndex = tabIndex;
+        tabContainer = sections[i - 1];
+        tabContainer.append(tabs);
+      }
+      if (
+        tabFound &&
+        !sections[i + 1].querySelector('.section-metadata > div > div:nth-child(2)').textContent.includes('tab-section')
+      ) {
+        tabFound = false;
+        Array.from(sections[i + 1].children).forEach((child) => {
+          if (!child.classList.contains('section-metadata')) {
+            tabContainer.append(child);
+          }
+        });
+        sections[i + 1].classList.add('delete-this-section');
+      }
+      section.classList.add(`tab-index-${tabIndex}`);
+    }
+  });
+  main.querySelectorAll('.delete-this-section').forEach((section) => {
+    section.remove();
+  });
 }
 
 /**
@@ -284,6 +313,10 @@ function buildTabSection(main) {
 function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
+    // eslint-disable-next-line no-use-before-define
+    if (!isProfilePage() && !isDocPage() && !isDocArticlePage()) {
+      buildTabSection(main);
+    }
     // if we are on a product browse page
     if (isBrowsePage()) {
       addBrowseBreadCrumb(main);
@@ -295,10 +328,6 @@ function buildAutoBlocks(main) {
     if (isProfilePage()) {
       addProfileTab(main);
       addProfileRail(main);
-    }
-    // eslint-disable-next-line no-use-before-define
-    if (!isProfilePage() && !isDocPage() && !isDocArticlePage()) {
-      buildTabSection(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
