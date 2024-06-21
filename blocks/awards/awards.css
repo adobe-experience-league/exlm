@@ -1,11 +1,11 @@
-.awards-block-holder {
+.awards-holder {
     display: grid;
     gap: 16px;
     color: var(--color-white);
     grid-template-columns: 1fr;
 }
 
-.awards-block-card {
+.awards-card {
     display: flex;
     flex-direction: column;
     background-color: #E63524;
@@ -15,36 +15,36 @@
     box-sizing: border-box;
 }
 
-.awards-block-title {
+.awards-title {
     font-size: var(--spectrum-font-size-500);
     font-weight: var(--font-weight-700);;
     margin-bottom: 8px;
 }
 
-.awards-block-time {
+.awards-time {
     font-size: var(--spectrum-font-size-75);
     margin-bottom: 8px;
     border-bottom: 2px var(--color-white) solid;
     padding: 0 0 8px 0;
 }
 
-.awards-block-description {
+.awards-description {
     font-size: var(--spectrum-font-size-200);
 }
 
-.awards-block-noAwardsYet {
+.awards-noAwardsYet {
     color: var(--color-black);
     font-size: var(--spectrum-font-size-300);
 }
 
 @media(min-width: 600px) {
-    .awards-block-holder {
+    .awards-holder {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media(min-width: 900px) {
-    .awards-block-holder {
+    .awards-holder {
         grid-template-columns: repeat(3, 1fr);
     }
 }

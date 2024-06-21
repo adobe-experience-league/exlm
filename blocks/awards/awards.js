@@ -20,11 +20,11 @@ export default async function decorate(block) {
 
   function generateAwardCard(card) {
     return `
-        <div class="awards-block-card">
-          <div class="awards-block-details">
-            <div class="awards-block-title">${card.Title}</div>
-            <div class="awards-block-time">${COMPLETED} ${card.Timestamp}</div>
-            <div class="awards-block-description">${card.Description}</div>
+        <div class="awards-card">
+          <div class="awards-details">
+            <div class="awards-title">${card.Title}</div>
+            <div class="awards-time">${COMPLETED} ${card.Timestamp}</div>
+            <div class="awards-description">${card.Description}</div>
           </div>
           <span class="icon icon-book"></span>
         </div>
@@ -33,7 +33,7 @@ export default async function decorate(block) {
 
   function generateAwardsBlock(awardDetails) {
     return `
-        <div class="awards-block-holder">
+        <div class="awards-holder">
           ${awardDetails.map(generateAwardCard).join('')}
         </div>
       `;
@@ -41,7 +41,7 @@ export default async function decorate(block) {
 
   function generateEmptyAwardsBlock() {
     return `
-        <div class="awards-block-noAwardsYet">
+        <div class="awards-noAwardsYet">
           ${NO_AWARDS_YET}
         </div>
       `;
@@ -75,11 +75,11 @@ export default async function decorate(block) {
       }));
 
     if (awardDetails.length) {
-      const awardsBlockDiv = document.createRange().createContextualFragment(generateAwardsBlock(awardDetails));
-      block.append(awardsBlockDiv);
+      const awardsDiv = document.createRange().createContextualFragment(generateAwardsBlock(awardDetails));
+      block.append(awardsDiv);
     } else {
-      const awardsBlockEmptyDiv = document.createRange().createContextualFragment(generateEmptyAwardsBlock());
-      block.append(awardsBlockEmptyDiv);
+      const awardsEmptyDiv = document.createRange().createContextualFragment(generateEmptyAwardsBlock());
+      block.append(awardsEmptyDiv);
     }
     decorateIcons(block);
   }
