@@ -73,8 +73,7 @@
 }
 
 @media (min-width: 600px) {
-    .author-summary-grid {
-        grid-template-columns: auto auto; 
+    .author-summary-grid { 
         grid-template-rows: auto auto; 
         grid-template-areas: 
             "author-image author-details"
