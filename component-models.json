@@ -906,7 +906,7 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Article",
+            "name": "Actionable Insights",
             "value": "article"
           },
           {
@@ -1961,7 +1961,7 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Article",
+            "name": "Actionable Insights",
             "value": "article"
           },
           {
@@ -2466,7 +2466,7 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Article",
+            "name": "Actionable Insights",
             "value": "article"
           },
           {
@@ -2662,6 +2662,7 @@
         "component": "aem-content",
         "valueType": "string",
         "name": "author-bio-page",
+        "multi": true,
         "value": "",
         "label": "Author Bio page URL"
       },
