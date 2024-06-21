@@ -176,8 +176,7 @@ export default async function ArticleMarquee(block) {
     } else {
       links = links.split(',').map((link) => link.trim());
     }
-    // Filter out null or empty links
-    links = links.filter((link) => link);
+
     const articleDetails = `<div class="article-marquee-info-container">
                               <div class="article-info">
                                 <div class="breadcrumb"></div>
