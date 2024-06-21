@@ -10,10 +10,6 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-const COMPLETED = placeholders?.completed || 'COMPLETED';
-const NO_AWARDS_YET =
-  placeholders?.noAwardsYet || 'No awards yet! Start exploring Experience League to discover what you can earn.';
-
 export default async function decorate(block) {
   block.textContent = '';
   const isSignedIn = await isSignedInUser();
@@ -23,7 +19,7 @@ export default async function decorate(block) {
         <div class="awards-card">
           <div class="awards-details">
             <div class="awards-title">${card.Title}</div>
-            <div class="awards-time">${COMPLETED} ${card.Timestamp}</div>
+            <div class="awards-time">${placeholders?.completed || 'COMPLETED'} ${card.Timestamp}</div>
             <div class="awards-description">${card.Description}</div>
           </div>
           <span class="icon icon-book"></span>
@@ -41,8 +37,8 @@ export default async function decorate(block) {
 
   function generateEmptyAwardsBlock() {
     return `
-        <div class="awards-no-award-yet">
-          ${NO_AWARDS_YET}
+        <div class="nil-awards">
+          ${placeholders?.noAwardsYet || 'No awards yet! Start exploring Experience League to discover what you can earn.'}
         </div>
       `;
   }
