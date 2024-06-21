@@ -71,7 +71,7 @@ const contentType = [
   {
     id: 'Article',
     value: 'Article',
-    title: 'Article',
+    title: 'Actionable Insights',
     description: 'Real-world customer perspectives and use-cases of Experience Cloud products.',
     disabled: isProd,
   },
