@@ -28,10 +28,8 @@ export default async function decorate(block) {
   const tabIndex = block?.dataset?.tabIndex;
   if (tabIndex) {
     block.textContent = '';
-    document.querySelectorAll(`div.tab-index-${tabIndex}.tab-section`).forEach((tabSection) => {
-      const tabTitleElement = tabSection.querySelector('h1, h2, h3, h4, h5, h6');
-      const tabTitle = tabTitleElement?.textContent;
-      tabTitleElement?.remove();
+    document.querySelectorAll(`div.tab-section`).forEach((tabSection) => {
+      const tabTitle = tabSection?.dataset.title;
       block.innerHTML += `
       <div>
         <div>
