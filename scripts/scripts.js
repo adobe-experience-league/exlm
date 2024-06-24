@@ -322,15 +322,13 @@ async function buildTabSection(main) {
 function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
-    // eslint-disable-next-line no-use-before-define
     if (
       !isProfilePage() &&
       // eslint-disable-next-line no-use-before-define
       !isDocPage() &&
       // eslint-disable-next-line no-use-before-define
       !isDocArticlePage() &&
-      !isSignUpPage() &&
-      !window.location.href.includes('.html')
+      !isSignUpPage() 
     ) {
       buildTabSection(main);
     }
