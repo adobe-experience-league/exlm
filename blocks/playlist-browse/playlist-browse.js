@@ -43,6 +43,7 @@ async function toFlatDedupedArray(prop) {
 
 function newPlaylistCard({ title, description, image, path }) {
   const picture = createOptimizedPicture(image, title);
+  const truncatedDescription = description.length > 150 ? `${description.slice(0, 150)}...` : description;
   return htmlToElement(`
       <a class="playlist-browse-card" href="${path}">
           <div class="playlist-browse-card-image">
@@ -50,8 +51,8 @@ function newPlaylistCard({ title, description, image, path }) {
           </div>
           <div class="playlist-browse-card-content">
               <h3 class="playlist-browse-card-title">${title}</h3>
-              <p class="playlist-browse-card-description">
-                  ${description}
+              <p class="playlist-browse-card-description" >
+                  ${truncatedDescription}
               </p>
           </div>
       </a>`);

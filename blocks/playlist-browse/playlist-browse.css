@@ -191,7 +191,7 @@
 }
 
 .playlist-browse-card:hover {
-    box-shadow: 0 4px 16px #0000001a;
+    box-shadow: 0 0 10px 5px #0000001a;
     cursor: pointer;
 }
 
@@ -199,6 +199,7 @@
     position: relative;
     margin: 0;
     height: 150px;
+    border-bottom: 1px solid var(--spectrum-gray-200)
 }
 
 .playlist-browse-card-image picture {
@@ -219,12 +220,15 @@
 }
 
 .playlist-browse-card-title {
-    font-size: 1.5em;
+    font-size: 1em;
+    line-height: 1.5em;
     font-weight: bold;
     margin-top: 0;
 }
 
 .playlist-browse-card-description {
-    font-size: 1em;
+    position: relative;
+    font-size: 16px;
+    line-height: 20px;
 }
 
