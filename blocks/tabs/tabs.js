@@ -40,7 +40,7 @@ export default async function decorate(block) {
         </div>
       </div>
       `;
-      tabSection.remove();
+      if(!window.hlx.aemRoot) tabSection.remove();
     });
     await loadBlocks(block);
   }
