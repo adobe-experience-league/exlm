@@ -1095,7 +1095,8 @@ async function loadPage() {
   loadDelayed();
   showBrowseBackgroundGraphic();
 
-  if (isDocArticlePage()) {
+  // TEMPORARY: Remove this condition when deploying Discoverability 1.2
+  if (isDocArticlePage() && window.location.hostname !== 'experienceleague.com') {
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
   }

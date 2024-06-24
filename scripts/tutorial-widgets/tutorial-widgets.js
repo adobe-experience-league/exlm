@@ -1,9 +1,8 @@
 import { buildCard } from '../browse-card/browse-card.js';
-import { loadCSS} from '../lib-franklin.js';
+import { loadCSS } from '../lib-franklin.js';
 import BrowseCardsDelegate from '../browse-card/browse-cards-delegate.js';
 import BuildPlaceholder from '../browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../browse-card/browse-cards-constants.js';
-
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.css`);
 
@@ -13,20 +12,19 @@ export default function decorate() {
   const mainDoc = document.querySelector('main > div.content-section-last');
 
   // Create a new div element to contain the tutorial widgets and the header
-const wrapper = document.createElement('div');
-wrapper.classList.add('tutorial-widgets-wrapper');
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('tutorial-widgets-wrapper');
 
- // Create a header for the tutorial widgets
- const header = document.createElement('h2');
- header.textContent = 'Watch related tutorials';
- header.classList.add('tutorial-header');
- wrapper.appendChild(header);
+  // Create a header for the tutorial widgets
+  const header = document.createElement('h2');
+  header.textContent = 'Watch related tutorials';
+  header.classList.add('tutorial-header');
+  wrapper.appendChild(header);
 
   // Create a new div element to contain the tutorial widgets
   const container = document.createElement('div');
   container.classList.add('tutorial-widgets');
-  wrapper.appendChild(container)
-
+  wrapper.appendChild(container);
 
   const sortBy = 'RELEVANCY';
 
@@ -45,7 +43,6 @@ wrapper.classList.add('tutorial-widgets-wrapper');
   const tutorialWidgetsContent = BrowseCardsDelegate.fetchCardData(param);
   tutorialWidgetsContent
     .then((data) => {
-
       buildCardsShimmer.remove();
 
       // If data is present, build and append the widgets
