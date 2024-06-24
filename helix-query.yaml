@@ -805,3 +805,117 @@ indices:
       - '/zh-hant/docs/experience-cloud-kcs/**'
       - '/zh-hant/docs/experience-manager-learn/**'
       - '/zh-hant/docs/experience-manager-cloud-service/**'
+
+  playlists-en: &base-playlists
+    target: /en/playlists.json
+    include:
+      - '/en/playlists/**'
+    exclude:
+      - '/en/playlists'
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[property="og:description"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: attribute(el, "content")
+      solution:
+        select: head > meta[name="solution"]
+        value: attribute(el, "content")
+      role:
+        select: head > meta[name="role"]
+        value: attribute(el, "content")
+      level:
+        select: head > meta[name="level"]
+        value: attribute(el, "content")
+
+  playlists-fr:
+    <<: *base-playlists
+    target: /fr/playlists.json
+    include:
+      - '/fr/playlists/**'
+    exclude:
+      - '/fr/playlists'
+
+  playlists-de:
+    <<: *base-playlists
+    target: /de/playlists.json
+    include:
+      - '/de/playlists/**'
+    exclude:
+      - '/de/playlists'
+
+  playlists-es:
+    <<: *base-playlists
+    target: /es/playlists.json
+    include:
+      - '/es/playlists/**'
+    exclude:
+      - '/es/playlists'
+
+  playlists-it:
+    <<: *base-playlists
+    target: /it/playlists.json
+    include:
+      - '/it/playlists/**'
+    exclude:
+      - '/it/playlists'
+
+  playlists-nl:
+    <<: *base-playlists
+    target: /nl/playlists.json
+    include:
+      - '/nl/playlists/**'
+    exclude:
+      - '/nl/playlists'
+
+  playlists-pt-br:
+    <<: *base-playlists
+    target: /pt-br/playlists.json
+    include:
+      - '/pt-br/playlists/**'
+    exclude:
+      - '/pt-br/playlists'
+
+  playlists-ko:
+    <<: *base-playlists
+    target: /ko/playlists.json
+    include:
+      - '/ko/playlists/**'
+    exclude:
+      - '/ko/playlists'
+
+  playlists-ja:
+    <<: *base-playlists
+    target: /ja/playlists.json
+    include:
+      - '/ja/playlists/**'
+    exclude:
+      - '/ja/playlists'
+
+  playlists-sv:
+    <<: *base-playlists
+    target: /sv/playlists.json
+    include:
+      - '/sv/playlists/**'
+    exclude:
+      - '/sv/playlists'
+
+  playlists-zh-hans:
+    <<: *base-playlists
+    target: /zh-hans/playlists.json
+    include:
+      - '/zh-hans/playlists/**'
+    exclude:
+      - '/zh-hans/playlists'
+
+  playlists-zh-hant:
+    <<: *base-playlists
+    target: /zh-hant/playlists.json
+    include:
+      - '/zh-hant/playlists/**'
+    exclude:
+      - '/zh-hant/playlists'

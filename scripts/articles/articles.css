@@ -29,6 +29,13 @@
     line-height: 24px;
 } 
 
+.articles-wrapper > * > .default-content-wrapper p > picture,
+.articles-wrapper > * > .default-content-wrapper > picture {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .articles-wrapper > * > .default-content-wrapper  p,
 .articles-wrapper > * > .default-content-wrapper  li {
     color: var(--non-spectrum-dark-gray);
