@@ -323,7 +323,7 @@ function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
     // eslint-disable-next-line no-use-before-define
-    if (!isProfilePage() && !isDocPage() && !isDocArticlePage() && !isSignUpPage()) {
+    if (!isProfilePage() && !isDocPage() && !isDocArticlePage() && !isSignUpPage() && !window.location.href.includes('.html')) {
       buildTabSection(main);
     }
     // if we are on a product browse page
