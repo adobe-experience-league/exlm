@@ -27,7 +27,8 @@ function decoratePlaylistBrowseMarquee(block) {
         </div>
     </div>`);
 
-  firstCell.replaceWith(marquee);
+  firstCell.remove();
+  block.before(marquee);
 }
 
 async function toFlatDedupedArray(prop) {
@@ -40,10 +41,10 @@ async function toFlatDedupedArray(prop) {
   return [...new Set(solutions)];
 }
 
-function newPlaylistCard({ title, description, image }) {
+function newPlaylistCard({ title, description, image, path }) {
   const picture = createOptimizedPicture(image, title);
   return htmlToElement(`
-      <div class="playlist-browse-card">
+      <a class="playlist-browse-card" href="${path}">
           <div class="playlist-browse-card-image">
               ${picture.outerHTML}
           </div>
@@ -53,7 +54,7 @@ function newPlaylistCard({ title, description, image }) {
                   ${description}
               </p>
           </div>
-      </div>`);
+      </a>`);
 }
 
 const filterPlaylists = (playlists, filters) => {
