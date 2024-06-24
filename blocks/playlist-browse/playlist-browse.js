@@ -11,6 +11,7 @@ async function fetchPlaylists() {
 const playlistsPromise = fetchPlaylists();
 
 /**
+ * Creates the marquee for the playlist browse page.
  * @param {HTMLElement} block
  */
 function decoratePlaylistBrowseMarquee(block) {
@@ -31,33 +32,76 @@ function decoratePlaylistBrowseMarquee(block) {
   block.before(marquee);
 }
 
-async function toFlatDedupedArray(prop) {
+/**
+ * get all possible values for a filter from the playlists
+ * @param {string} filterName
+ * @returns {string[]}
+ */
+async function getAllPossibleFilterValues(filterName) {
   const playlists = await playlistsPromise;
   const solutions = playlists.data
-    .map((p) => p[prop])
+    .map((p) => p[filterName])
     .map((s) => s.split(',').map((p) => p.trim()))
     .flat()
     .filter((s) => s !== '');
   return [...new Set(solutions)];
 }
 
+/**
+ * @typedef {Object} PlaylistCard
+ * @property {string} title
+ * @property {string} description
+ * @property {string} image
+ * @property {string} path
+ * @property {boolean} loading
+ */
+
+/**
+ * Playlist Card UI
+ * @param {PlaylistCard} cardOptions
+ * @returns {HTMLElement}
+ */
 function newPlaylistCard({ title = '', description = '', image, path = '', loading = false }) {
   const picture = image ? createOptimizedPicture(image, title) : '';
   const truncatedDescription = description.length > 150 ? `${description.slice(0, 150)}...` : description;
   return htmlToElement(`
-      <a class="playlist-browse-card ${loading ? 'playlist-browse-card-loading' : ''}" href="${path}">
-          <div class="playlist-browse-card-image" ${loading ? 'data-placeholder' : ''}>
-              ${picture?.outerHTML || ''}
-          </div>
-          <div class="playlist-browse-card-content">
-              <h2 class="playlist-browse-card-title" ${loading ? 'data-placeholder' : ''}>${title}</h2>
-              <p class="playlist-browse-card-description" ${loading ? 'data-placeholder' : ''}>
-                  ${truncatedDescription}
-              </p>
-          </div>
-      </a>`);
+    <a class="playlist-browse-card ${loading ? 'playlist-browse-card-loading' : ''}" href="${path}">
+        <div class="playlist-browse-card-image" ${loading ? 'data-placeholder' : ''}>
+            ${picture?.outerHTML || ''}
+        </div>
+        <div class="playlist-browse-card-content">
+            <h2 class="playlist-browse-card-title" ${loading ? 'data-placeholder' : ''}>${title}</h2>
+            <p class="playlist-browse-card-description" ${loading ? 'data-placeholder' : ''}>
+                ${truncatedDescription}
+            </p>
+        </div>
+    </a>`);
 }
 
+/**
+ * @typedef {Object} Playlist
+ * @property {string} solution
+ * @property {string} role
+ * @property {string} level
+ * @property {string} title
+ * @property {string} description
+ * @property {string} image
+ * @property {string} path
+ */
+
+/**
+ * @typedef {Object} Filters
+ * @property {string[]} solution
+ * @property {string[]} role
+ * @property {string[]} level
+ */
+
+/**
+ * Filter playlists based on the provided filters
+ * @param {Playlist[]} playlists
+ * @param {Filters} filters
+ * @returns
+ */
 const filterPlaylists = (playlists, filters) => {
   const { solution, role, level } = filters;
   return playlists.filter((playlist) => {
@@ -71,6 +115,9 @@ const filterPlaylists = (playlists, filters) => {
   });
 };
 
+/**
+ * @returns {Filters}
+ */
 function readFiltersFromUrl() {
   const url = new URL(window.location.href);
   const solution = url.searchParams.getAll('solution');
@@ -79,6 +126,10 @@ function readFiltersFromUrl() {
   return { solution, role, level } || [];
 }
 
+/**
+ * @param {Filters} filters
+ * @returns {void}
+ */
 function writeFiltersToUrl(filters) {
   const url = new URL(window.location.href);
   url.searchParams.delete('solution');
@@ -96,24 +147,27 @@ function writeFiltersToUrl(filters) {
 export default function decorate(block) {
   decoratePlaylistBrowseMarquee(block);
 
-  const panelContent = htmlToElement('<div></div>');
-
+  // Filter
+  const filters = readFiltersFromUrl();
+  const filterPanelContet = htmlToElement('<div></div>');
   const filterPanel = newShowHidePanel({
     buttonLabel: 'Filter',
     buttonClass: 'playlist-browse-filter-button',
     hiddenPanelClass: 'playlist-browse-filter-hidden',
-    panelContent,
+    panelContent: filterPanelContet,
     panelClass: 'playlist-browse-filter-panel',
     expanded: false,
   });
   filterPanel.classList.add('playlist-browse-filter');
 
+  // Playlist Cards
   const cards = htmlToElement('<div class="playlist-browse-cards"></div>');
 
-  const filters = readFiltersFromUrl();
-
   let pagination;
-  const update = () => {
+
+  // called when filters change
+  const updateCards = () => {
+    // set filter count to show on filter UI
     const filterButton = filterPanel.querySelector('.playlist-browse-filter-button');
     const filterCount = Object.values(filters).flat().length;
     if (filterCount) {
@@ -122,18 +176,22 @@ export default function decorate(block) {
       delete filterButton.dataset.filterCount;
     }
 
+    // reset pagination and cards
     if (pagination) {
       pagination.remove();
     }
     cards.innerHTML = '';
 
-    // array with 16 elements as placeholders
+    // add loading cards
     for (let i = 0; i < 16; i += 1) {
       cards.append(newPlaylistCard({ loading: true }));
     }
 
     playlistsPromise.then((playlists) => {
+      // store filters
       writeFiltersToUrl(filters);
+
+      // add filtered cards and pagination for them.
       const filteredPlaylists = filterPlaylists(playlists.data, filters);
       const onPageChange = (page, ps) => {
         cards.innerHTML = '';
@@ -158,50 +216,30 @@ export default function decorate(block) {
     });
   };
 
-  const { fieldset: productFieldset, addOption: addProductOption } = newMultiSelect({
-    legend: 'Products',
-    onSelect: (selectedValues) => {
-      filters.solution = selectedValues;
-      update();
-    },
-  });
-  panelContent.append(productFieldset);
-  toFlatDedupedArray('solution').then((solutions) => {
-    solutions.forEach((solution) => {
-      addProductOption({ label: solution, value: solution, checked: filters.solution.includes(solution) });
+  // load filter options
+  [
+    { legend: 'Products', filterName: 'solution' },
+    { legend: 'Roles', filterName: 'role' },
+    { legend: 'Experience Level', filterName: 'level' },
+  ].forEach(({ legend, filterName }) => {
+    const { fieldset, addOption } = newMultiSelect({
+      legend,
+      onSelect: (selectedValues) => {
+        filters[filterName] = selectedValues;
+        updateCards();
+      },
     });
-  });
 
-  const { fieldset: roleFieldset, addOption: addRoleOption } = newMultiSelect({
-    legend: 'Roles',
-    onSelect: (selectedValues) => {
-      filters.role = selectedValues;
-      update();
-    },
-  });
-  panelContent.append(roleFieldset);
-  toFlatDedupedArray('role').then((roles) => {
-    roles.forEach((role) => {
-      addRoleOption({ label: role, value: role, checked: filters.role.includes(role) });
-    });
-  });
-
-  const { fieldset: levelFieldset, addOption: addLevelOption } = newMultiSelect({
-    legend: 'Experience Level',
-    onSelect: (selectedValues) => {
-      filters.level = selectedValues;
-      update();
-    },
-  });
-  panelContent.append(levelFieldset);
-  toFlatDedupedArray('level').then((levels) => {
-    levels.forEach((level) => {
-      addLevelOption({ label: level, value: level, checked: filters.level.includes(level) });
+    filterPanelContet.append(fieldset);
+    getAllPossibleFilterValues(filterName).then((filterValues) => {
+      filterValues.forEach((filterValue) => {
+        addOption({ label: filterValue, value: filterValue, checked: filters[filterName].includes(filterValue) });
+      });
     });
   });
 
   block.append(filterPanel);
   block.append(htmlToElement('<br style="clear:both" />'));
   block.append(cards);
-  update();
+  updateCards();
 }

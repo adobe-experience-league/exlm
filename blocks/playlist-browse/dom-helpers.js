@@ -1,9 +1,30 @@
 import { htmlToElement } from '../../scripts/scripts.js';
 
 /**
- * Accessible multi-select panel
- * @param {*} param0
- * @returns
+ * @typedef {Object} MultiSelectOption
+ * @property {string} label
+ * @property {string} value
+ * @property {boolean} checked
+ */
+
+/**
+ * @typedef {Object} MultiSelect
+ * @property {string} legend
+ * @property {MultiSelectOption[]} options
+ * @property {(selectedValues: string[]) => void} onSelect
+ */
+
+/**
+ * @typedef {Object} MultiSelectAPI
+ * @property {HTMLElement} fieldset
+ * @property {(option: MultiSelectOption) => void} addOption
+ */
+
+/**
+ * Creates a fieldset of checkboxes to represent a multiselct panel.
+ * returns API for adding options and getting selected values.
+ * @param {MultiSelect} multiselect
+ * @returns {MultiSelectAPI}
  */
 export function newMultiSelect({ legend, options = [], onSelect }) {
   let values = [];
@@ -39,9 +60,19 @@ export function newMultiSelect({ legend, options = [], onSelect }) {
 }
 
 /**
- * Simple show/hide panel
- * @param {*} options
- * @returns
+ * @typedef {Object} ShowHidePanel
+ * @property {string} buttonLabel
+ * @property {string} buttonClass
+ * @property {HTMLElement} panelContent
+ * @property {string} panelClass
+ * @property {string} hiddenPanelClass
+ * @property {boolean} expanded
+ */
+
+/**
+ * Returns an accessibale button that toggles a panel when clicked.
+ * @param {ShowHidePanel} options
+ * @returns {HTMLElement}
  */
 export function newShowHidePanel({
   buttonLabel,
@@ -78,8 +109,22 @@ export function newShowHidePanel({
 }
 
 /**
- * Simple pagination
- * @param {*} param0
+ * @typedef {Object} Pagination
+ * @property {string} previousLabel
+ * @property {string} previousClass
+ * @property {string} nextLabel
+ * @property {string} nextClass
+ * @property {string} paginationLabelClass
+ * @property {string} ofLabel
+ * @property {number} currentPage
+ * @property {any[]} items
+ * @property {number} itemsPerPage
+ * @property {(page: number, items: any[]) => void} onPageChange
+ */
+
+/**
+ * Returns a pagination element that can be used to navigate through items.
+ * @param {Pagination} pagination
  * @returns
  */
 export function newPagination({
