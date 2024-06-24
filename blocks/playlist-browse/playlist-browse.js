@@ -35,7 +35,8 @@ async function toFlatDedupedArray(prop) {
   const solutions = playlists.data
     .map((p) => p[prop])
     .map((s) => s.split(',').map((p) => p.trim()))
-    .flat();
+    .flat()
+    .filter((s) => s !== '');
   return [...new Set(solutions)];
 }
 
@@ -123,7 +124,7 @@ export default function decorate(block) {
   });
 
   const { fieldset: roleFieldset, addOption: addRoleOption } = newMultiSelect({
-    legend: 'Role',
+    legend: 'Roles',
     onSelect: (selectedValues) => {
       filters.role = selectedValues;
       update();
@@ -137,7 +138,7 @@ export default function decorate(block) {
   });
 
   const { fieldset: levelFieldset, addOption: addLevelOption } = newMultiSelect({
-    legend: 'Level',
+    legend: 'Experience Level',
     onSelect: (selectedValues) => {
       filters.level = selectedValues;
       update();
@@ -151,12 +152,17 @@ export default function decorate(block) {
   });
 
   const showHidePanel = newShowHidePanel({
-    buttonLabel: 'Show/Hide',
+    buttonLabel: 'Filter',
+    buttonClass: 'playlist-browse-filter-button',
+    hiddenPanelClass: 'playlist-browse-filter-hidden',
     panelContent,
+    panelClass: 'playlist-browse-filter-panel',
     expanded: false,
   });
+  showHidePanel.classList.add('playlist-browse-filter');
 
   block.append(showHidePanel);
+  block.append(htmlToElement('<br style="clear:both" />'));
   block.append(cards);
   update();
 }

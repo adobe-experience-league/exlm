@@ -43,19 +43,35 @@ export function newMultiSelect({ legend, options = [], onSelect }) {
  * @param {*} options
  * @returns
  */
-export function newShowHidePanel({ buttonLabel, panelContent, expanded = false }) {
+export function newShowHidePanel({
+  buttonLabel,
+  buttonClass = 'show-hide-button',
+  panelContent,
+  panelClass = 'show-hide-panel',
+  hiddenPanelClass = 'show-hide-panel-hidden',
+  expanded = false,
+}) {
   const uniqueId = `panel-${Date.now().toString()}`;
-  const button = htmlToElement(
-    `<button aria-expanded="${expanded}" aria-controls="${uniqueId}">${buttonLabel}</button>`,
-  );
-  const panel = htmlToElement(`<div id="${uniqueId}"></div>`);
+  const button = htmlToElement(`<button aria-controls="${uniqueId}" class="${buttonClass}">${buttonLabel}</button>`);
+  const panel = htmlToElement(`<div id="${uniqueId}" class="${panelClass}"></div>`);
   panel.append(panelContent);
-  panel.style.display = expanded ? 'block' : 'none';
+
+  const toggle = (isExpanded) => {
+    panel.classList.toggle(hiddenPanelClass, !isExpanded);
+    button.setAttribute('aria-expanded', isExpanded);
+  };
+  panel.classList.toggle(hiddenPanelClass, !expanded);
   button.addEventListener('click', () => {
-    const isVisible = panel.style.display === 'block';
-    panel.style.display = isVisible ? 'none' : 'block';
-    button.setAttribute('aria-expanded', !isVisible);
+    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+    toggle(!isExpanded);
   });
+
+  document.addEventListener('click', (e) => {
+    if (!panel.contains(e.target) && !button.contains(e.target)) toggle(false);
+  });
+
+  toggle(expanded);
+
   const container = htmlToElement('<div></div>');
   container.append(button, panel);
   return container;
