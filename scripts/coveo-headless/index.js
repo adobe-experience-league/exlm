@@ -75,6 +75,7 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
       'type',
       'urihash',
       'video_url',
+      'id',
     ]);
 
   searchEngine.dispatch(advancedQuery);

@@ -17,14 +17,21 @@ const renderBookmark = (labelSel, iconSel, id) => {
     e.stopPropagation();
     if (id) {
       if (iconSel.classList.contains('authed')) {
-        defaultProfileClient.updateProfile('bookmarks', id);
+        const profileData = await defaultProfileClient.getMergedProfile();
+        const { bookmarks = [] } = profileData;
+        const bookmarkItems = bookmarks.filter((bookmark) => !`${bookmark}`.includes(id));
+        defaultProfileClient.updateProfile('bookmarks', bookmarkItems, true);
         labelSel.innerHTML = `${placeholders.bookmarkAuthLabelSet}`;
         iconSel.classList.remove('authed');
         sendNotice(`${placeholders.bookmarkUnset}`);
         iconSel.style.pointerEvents = 'none';
         assetInteractionModel(id, 'Bookmark removed');
       } else {
-        defaultProfileClient.updateProfile('bookmarks', id);
+        const profileData = await defaultProfileClient.getMergedProfile();
+        const { bookmarks = [] } = profileData;
+        const bookmarkItems = bookmarks.filter((bookmark) => !`${bookmark}`.includes(id));
+        bookmarkItems.push(`${id}:${Date.now()}`);
+        defaultProfileClient.updateProfile('bookmarks', bookmarkItems, true);
         labelSel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
         iconSel.classList.add('authed');
         sendNotice(`${placeholders.bookmarkSet}`);
