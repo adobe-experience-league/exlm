@@ -30,3 +30,40 @@
 
 }
 
+
+.playlist-browse-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1em;
+}
+
+.playlist-browse-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1em;
+}
+
+.playlist-browse-card-image {
+    position: relative;
+    margin: 0;
+}
+
+.playlist-browse-card-image img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4/1;
+    object-fit: cover;
+}
+
+.playlist-browse-card-content {
+    padding: 0.5em 1em;
+}
+
+.playlist-browse-card-title {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.playlist-browse-card-description {
+    font-size: 1em;
+}
