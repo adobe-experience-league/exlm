@@ -60,7 +60,7 @@ export async function decorateBookmark(block, placeholders) {
     const bookmarkAuthedToolTipLabelM = bookmarkAuthedMobile.querySelector('.exl-tooltip-label');
     const bookmarkAuthedToolTipIconM = bookmarkAuthedMobile.querySelector('.bookmark-icon');
     defaultProfileClient.getMergedProfile().then(async (data) => {
-      if (data.bookmarks.includes(bookmarkId)) {
+      if (data?.bookmarks?.find((bookmark) => bookmark.includes(bookmarkId))) {
         bookmarkAuthedToolTipIconD.classList.add('authed');
         bookmarkAuthedToolTipLabelD.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
         bookmarkAuthedToolTipIconM.classList.add('authed');

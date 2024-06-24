@@ -315,7 +315,8 @@ const setupBookmarkAction = (wrapper) => {
   defaultProfileClient.getMergedProfile().then(async (data) => {
     const bookmarkAuthed = Array.from(wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark'));
     bookmarkAuthed.forEach((bookmark) => {
-      if (data?.bookmarks.includes(bookmark.getAttribute('data-id'))) {
+      const bookmarkId = bookmark.getAttribute('data-id');
+      if (data?.bookmarks?.find((bookmarkIdInfo) => bookmarkIdInfo.includes(bookmarkId))) {
         bookmark.querySelector('.bookmark-icon').classList.add('authed');
         bookmark.querySelector('.exl-tooltip-label').innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
       }
