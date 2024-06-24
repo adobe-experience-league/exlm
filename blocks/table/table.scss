@@ -304,3 +304,62 @@
     }
   }
 }
+
+.table button {
+  padding: 0.75em 1em;
+  cursor: pointer;
+  box-sizing: content-box;
+  line-height: 1.75em;
+  font-weight: inherit;
+  background: none;
+  border: none;
+  margin: 0;
+  border-radius: 0;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  overflow: visible;
+}
+
+th[aria-sort='ascending'] span::after {
+  content: '▲';
+  color: currentcolor;
+  font-size: 100%;
+  top: 0;
+}
+
+th[aria-sort='descending'] span::after {
+  content: '▲';
+  transform: rotate(180deg);
+  color: currentcolor;
+  font-size: 100%;
+  top: 0;
+}
+
+th:not([aria-sort]) button span::after {
+  content: '♢';
+  color: currentcolor;
+  font-size: 100%;
+  position: relative;
+  top: -3px;
+  left: -4px;
+}
+
+table {
+  text-align: left;
+  position: relative !important;
+  overflow: unset !important;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.25rem;
+}
+
+thead {
+  background: white;
+  position: sticky !important;
+  top: 0 !important; /* Don't forget this, required for the stickiness */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4) !important;
+}
