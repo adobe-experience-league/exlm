@@ -96,17 +96,22 @@ export default function decorate(block) {
       const onPageChange = (page, ps) => {
         cards.innerHTML = '';
         ps.forEach((playlist) => cards.append(newPlaylistCard(playlist)));
+        window.scrollTo({ top: 0 });
       };
 
       pagination = newPagination({
         previousLabel: 'Previous',
+        previousClass: 'playlist-browse-pagination-previous button secondary',
         nextLabel: 'Next',
+        nextClass: 'playlist-browse-pagination-next button secondary',
+        paginationLabelClass: 'playlist-browse-pagination-label',
         ofLabel: 'of',
         currentPage: 1,
         items: filteredPlaylists,
         onPageChange,
       });
 
+      pagination.classList.add('playlist-browse-pagination');
       cards.after(pagination);
     });
   };

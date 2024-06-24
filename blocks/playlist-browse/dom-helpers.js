@@ -84,7 +84,10 @@ export function newShowHidePanel({
  */
 export function newPagination({
   previousLabel = 'Previous',
+  previousClass = 'pagination-previous',
   nextLabel = 'Next',
+  nextClass = 'pagination-next',
+  paginationLabelClass = 'pagination-label',
   ofLabel = 'of',
   currentPage = 1,
   items = [],
@@ -101,10 +104,10 @@ export function newPagination({
   };
 
   const calculatePageLabel = () => `${page} ${ofLabel} ${numberOfPages}`;
-  const pageLabelSpan = htmlToElement(`<span>${calculatePageLabel()}</span>`);
+  const pageLabelSpan = htmlToElement(`<span class="${paginationLabelClass}">${calculatePageLabel()}</span>`);
 
-  const prevButton = htmlToElement(`<button>${previousLabel}</button>`);
-  const nextButton = htmlToElement(`<button>${nextLabel}</button>`);
+  const prevButton = htmlToElement(`<button class="${previousClass}">${previousLabel}</button>`);
+  const nextButton = htmlToElement(`<button class="${nextClass}">${nextLabel}</button>`);
 
   const update = () => {
     prevButton.disabled = page === 1;
