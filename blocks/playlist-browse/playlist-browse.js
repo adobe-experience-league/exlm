@@ -149,7 +149,7 @@ export default function decorate(block) {
   panelContent.append(productFieldset);
   toFlatDedupedArray('solution').then((solutions) => {
     solutions.forEach((solution) => {
-      addProductOption({ label: solution, value: solution, checked: false });
+      addProductOption({ label: solution, value: solution, checked: filters.solution.includes(solution) });
     });
   });
 
@@ -163,7 +163,7 @@ export default function decorate(block) {
   panelContent.append(roleFieldset);
   toFlatDedupedArray('role').then((roles) => {
     roles.forEach((role) => {
-      addRoleOption({ label: role, value: role, checked: false });
+      addRoleOption({ label: role, value: role, checked: filters.role.includes(role) });
     });
   });
 
@@ -177,7 +177,7 @@ export default function decorate(block) {
   panelContent.append(levelFieldset);
   toFlatDedupedArray('level').then((levels) => {
     levels.forEach((level) => {
-      addLevelOption({ label: level, value: level, checked: false });
+      addLevelOption({ label: level, value: level, checked: filters.level.includes(level) });
     });
   });
 
