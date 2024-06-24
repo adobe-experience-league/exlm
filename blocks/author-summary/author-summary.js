@@ -10,7 +10,8 @@ export default async function decorate(block) {
       links = links.split(',').map((link) => link.trim());
     }
 
-    const authorPromises = links.filter((link) => link).map((link) => fetchAuthorBio(link));
+    // Filter out null, empty and duplicate links and map to fetchAuthorBio
+    const authorPromises = Array.from(new Set(links.filter((link) => link))).map((link) => fetchAuthorBio(link));
     const authorsInfo = await Promise.all(authorPromises);
     block.textContent = '';
     authorsInfo.forEach((authorInfo) => {
