@@ -71,6 +71,25 @@ const filterPlaylists = (playlists, filters) => {
   });
 };
 
+function readFiltersFromUrl() {
+  const url = new URL(window.location.href);
+  const solution = url.searchParams.getAll('solution');
+  const role = url.searchParams.getAll('role') || [];
+  const level = url.searchParams.getAll('level') || [];
+  return { solution, role, level } || [];
+}
+
+function writeFiltersToUrl(filters) {
+  const url = new URL(window.location.href);
+  url.searchParams.delete('solution');
+  url.searchParams.delete('role');
+  url.searchParams.delete('level');
+  filters.solution.forEach((s) => url.searchParams.append('solution', s));
+  filters.role.forEach((r) => url.searchParams.append('role', r));
+  filters.level.forEach((l) => url.searchParams.append('level', l));
+  window.history.pushState({}, '', url);
+}
+
 /**
  * @param {HTMLElement} block
  */
@@ -79,11 +98,9 @@ export default function decorate(block) {
 
   const panelContent = htmlToElement('<div></div>');
   const cards = htmlToElement('<div class="playlist-browse-cards"></div>');
-  const filters = {
-    solution: [],
-    role: [],
-    level: [],
-  };
+
+  const filters = readFiltersFromUrl();
+
   let pagination;
   const update = () => {
     if (pagination) {
@@ -97,6 +114,7 @@ export default function decorate(block) {
     }
 
     playlistsPromise.then((playlists) => {
+      writeFiltersToUrl(filters);
       const filteredPlaylists = filterPlaylists(playlists.data, filters);
       const onPageChange = (page, ps) => {
         cards.innerHTML = '';
