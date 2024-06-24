@@ -97,12 +97,26 @@ export default function decorate(block) {
   decoratePlaylistBrowseMarquee(block);
 
   const panelContent = htmlToElement('<div></div>');
+
+  const filterPanel = newShowHidePanel({
+    buttonLabel: 'Filter',
+    buttonClass: 'playlist-browse-filter-button',
+    hiddenPanelClass: 'playlist-browse-filter-hidden',
+    panelContent,
+    panelClass: 'playlist-browse-filter-panel',
+    expanded: false,
+  });
+  filterPanel.classList.add('playlist-browse-filter');
+
   const cards = htmlToElement('<div class="playlist-browse-cards"></div>');
 
   const filters = readFiltersFromUrl();
 
   let pagination;
   const update = () => {
+    filterPanel.querySelector('.playlist-browse-filter-button').dataset.filterCount =
+      Object.values(filters).flat().length;
+
     if (pagination) {
       pagination.remove();
     }
@@ -181,17 +195,7 @@ export default function decorate(block) {
     });
   });
 
-  const showHidePanel = newShowHidePanel({
-    buttonLabel: 'Filter',
-    buttonClass: 'playlist-browse-filter-button',
-    hiddenPanelClass: 'playlist-browse-filter-hidden',
-    panelContent,
-    panelClass: 'playlist-browse-filter-panel',
-    expanded: false,
-  });
-  showHidePanel.classList.add('playlist-browse-filter');
-
-  block.append(showHidePanel);
+  block.append(filterPanel);
   block.append(htmlToElement('<br style="clear:both" />'));
   block.append(cards);
   update();
