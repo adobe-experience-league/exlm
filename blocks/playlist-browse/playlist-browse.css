@@ -1,0 +1,32 @@
+.playlist-browse-marquee {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.playlist-browse-marquee-background {
+    order: -1;
+}
+
+.playlist-browse-marquee-background picture, .playlist-browse-marquee-background img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: left;
+}
+
+@media (width >= 900px) {
+    .playlist-browse-marquee  {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .playlist-browse-marquee-background {
+        order: 1;
+    }
+
+    .playlist-browse-marquee-background picture, .playlist-browse-marquee-background img {
+        object-fit: cover;
+    }
+
+}
+
