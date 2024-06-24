@@ -41,17 +41,17 @@ async function toFlatDedupedArray(prop) {
   return [...new Set(solutions)];
 }
 
-function newPlaylistCard({ title, description, image, path }) {
-  const picture = createOptimizedPicture(image, title);
+function newPlaylistCard({ title = '', description = '', image, path = '', loading = false }) {
+  const picture = image ? createOptimizedPicture(image, title) : '';
   const truncatedDescription = description.length > 150 ? `${description.slice(0, 150)}...` : description;
   return htmlToElement(`
-      <a class="playlist-browse-card" href="${path}">
-          <div class="playlist-browse-card-image">
-              ${picture.outerHTML}
+      <a class="playlist-browse-card ${loading ? 'playlist-browse-card-loading' : ''}" href="${path}">
+          <div class="playlist-browse-card-image" ${loading ? 'data-placeholder' : ''}>
+              ${picture?.outerHTML || ''}
           </div>
           <div class="playlist-browse-card-content">
-              <h2 class="playlist-browse-card-title">${title}</h2>
-              <p class="playlist-browse-card-description" >
+              <h2 class="playlist-browse-card-title" ${loading ? 'data-placeholder' : ''}>${title}</h2>
+              <p class="playlist-browse-card-description" ${loading ? 'data-placeholder' : ''}>
                   ${truncatedDescription}
               </p>
           </div>
@@ -90,6 +90,11 @@ export default function decorate(block) {
       pagination.remove();
     }
     cards.innerHTML = '';
+
+    // array with 16 elements as placeholders
+    for (let i = 0; i < 16; i += 1) {
+      cards.append(newPlaylistCard({ loading: true }));
+    }
 
     playlistsPromise.then((playlists) => {
       const filteredPlaylists = filterPlaylists(playlists.data, filters);
