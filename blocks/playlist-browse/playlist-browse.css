@@ -90,7 +90,7 @@
     box-shadow: 0 0 20px -8px rgb(0 0 0 / 75%);
 }
 
-.playlist-browse-filter-button::before {
+.playlist-browse-filter-button[data-filter-count]::before {
     content: attr(data-filter-count);
     display: block;
     background-repeat: no-repeat;

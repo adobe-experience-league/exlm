@@ -114,8 +114,13 @@ export default function decorate(block) {
 
   let pagination;
   const update = () => {
-    filterPanel.querySelector('.playlist-browse-filter-button').dataset.filterCount =
-      Object.values(filters).flat().length;
+    const filterButton = filterPanel.querySelector('.playlist-browse-filter-button');
+    const filterCount = Object.values(filters).flat().length;
+    if (filterCount) {
+      filterButton.dataset.filterCount = filterCount;
+    } else {
+      delete filterButton.dataset.filterCount;
+    }
 
     if (pagination) {
       pagination.remove();
