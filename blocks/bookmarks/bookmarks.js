@@ -48,26 +48,10 @@ export const parse = (model) => {
     title: Title,
     description: Description,
     tags,
-    event: {
-      time: '',
-    },
-    contributor: {
-      thumbnail: '',
-      name: '',
-      level: '',
-      date: '',
-    },
-    authorInfo: {
-      name: '',
-      type: '',
-    },
     copyLink: URL,
     bookmarkLink: '',
     viewLink: URL,
     viewLinkText: placeholders[`browseCard${contentTypeTitleCase}ViewLabel`] || 'View',
-    inProgressText: '',
-    inProgressStatus: '',
-    permanentid: '',
   };
 };
 
