@@ -26,7 +26,7 @@ function initTabs(block) {
 let initCount = 0;
 export default async function decorate(block) {
   const tabIndex = block?.dataset?.tabIndex;
-  if (tabIndex) {
+  if (tabIndex && !window.hlx.aemRoot) {
     block.textContent = '';
     document.querySelectorAll(`div.tab-section`).forEach((tabSection) => {
       const tabTitle = tabSection?.dataset.title;
