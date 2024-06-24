@@ -120,8 +120,8 @@ function updatePageNumberStyles(block) {
   const paginationInput = bookmarksEl.querySelector('.bookmarks-pg-search-input');
   const [leftNavArrow, rightNavArrow] = paginationBlock.querySelectorAll('.nav-arrow');
   const leftNavEnabled = currentPageNumber > 0;
-  const rightNavEnabled = currentPageNumber < totalPages;
-  const paginationText = `of ${totalPages + 1} page${totalPages > 1 ? 's' : ''}`;
+  const rightNavEnabled = currentPageNumber < totalPages - 1;
+  const paginationText = `of ${totalPages} page${totalPages > 1 ? 's' : ''}`;
 
   const applyNavStyles = (navEl, enabled) => {
     const classOp = enabled ? 'remove' : 'add';
