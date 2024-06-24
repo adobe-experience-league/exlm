@@ -1,0 +1,78 @@
+.docs.docs-solution-landing main {
+  padding: 0 58px;
+}
+@media (min-width: 900px) {
+  .docs.docs-solution-landing main {
+    grid-template-columns: 0 4fr 1fr;
+  }
+}
+.docs.docs-solution-landing main .default-content-wrapper {
+  margin: 0;
+  width: 100%;
+}
+.docs.docs-solution-landing main .default-content-wrapper h1 {
+  font-size: 44px;
+  /* This font is not avaliable in spectrum so we are hardcoding it */
+  line-height: var(--spectrum-line-height-xxxl);
+  margin-top: 0;
+}
+.docs.docs-solution-landing main .default-content-wrapper h2 {
+  font-size: 24px;
+  border-bottom: 3px solid var(--non-spectrum-grey);
+  margin-bottom: 8px;
+}
+.docs.docs-solution-landing main .default-content-wrapper h3 {
+  font-size: var(--spectrum-font-size-100);
+  margin-top: 40px;
+  margin-bottom: 16px;
+}
+.docs.docs-solution-landing main .default-content-wrapper ul {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  width: 100%;
+}
+.docs.docs-solution-landing main .default-content-wrapper ul li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: var(--spectrum-font-size-200);
+  color: var(--spectrum-gray-800);
+}
+.docs.docs-solution-landing main .default-content-wrapper ul li a {
+  color: var(--non-spectrum-link);
+  line-height: 30px;
+}
+.docs.docs-solution-landing main .default-content-wrapper ul li a:hover {
+  color: var(--non-spectrum-custom-dark);
+}
+.docs.docs-solution-landing main .section > div.default-content-wrapper {
+  max-width: 100%;
+}
+.docs.docs-solution-landing main > div:first-child {
+  border: none;
+  gap: 0;
+}
+@media (min-width: 900px) {
+  .docs.docs-solution-landing main {
+    padding: 0;
+  }
+  .docs.docs-solution-landing main > div:first-child {
+    padding: 54px 101px 50px 116px;
+    border: none;
+  }
+}
+
+@media (min-width: 900px) {
+  .docs.docs-solution-landing.docs-tutorial .default-content-wrapper h2 {
+    font-size: var(--spectrum-font-size-700);
+  }
+  .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
+    width: calc(33.33% - 16px);
+  }
+}
+@media (min-width: 600px) {
+  .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
+    width: 50%;
+  }
+}

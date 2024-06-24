@@ -1,5 +1,16 @@
-import { htmlToElement } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { getMetadata } from '../../scripts/lib-franklin.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
+const TOPICS = placeholders?.topics || 'TOPICS:';
+const CREATED_FOR = placeholders?.createdFor || 'CREATED FOR:';
 
 function formatPageMetaTags(inputString) {
   return inputString
@@ -12,12 +23,14 @@ function decodeArticlePageMetaTags() {
   const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
   const roleMeta = document.querySelector(`meta[name="role"]`);
   const levelMeta = document.querySelector(`meta[name="level"]`);
+  const featureMeta = document.querySelector(`meta[name="feature"]`);
 
   const solutions = solutionMeta ? formatPageMetaTags(solutionMeta.content) : [];
+  const features = featureMeta ? formatPageMetaTags(featureMeta.content) : [];
   const roles = roleMeta ? formatPageMetaTags(roleMeta.content) : [];
   const experienceLevels = levelMeta ? formatPageMetaTags(levelMeta.content) : [];
-
-  const decodedSolutions = solutions.map((solution) => {
+  let decodedSolutions = [];
+  decodedSolutions = solutions.map((solution) => {
     // In case of sub-solutions. E.g. exl:solution/campaign/standard
     const parts = solution.split('/');
     const decodedParts = parts.map((part) => atob(part));
@@ -37,11 +50,31 @@ function decodeArticlePageMetaTags() {
 
     return decodedParts[0];
   });
+
+  const decodedFeatures = features
+    .map((feature) => {
+      const parts = feature.split('/');
+      if (parts.length > 1) {
+        const product = atob(parts[0]);
+        if (!decodedSolutions.includes(product)) {
+          decodedSolutions.push(product);
+        }
+        const featureTag = atob(parts[1]);
+        return `${featureTag}`;
+      }
+      decodedSolutions.push(atob(parts[0]));
+      return '';
+    })
+    .filter((feature) => feature !== '');
+
   const decodedRoles = roles.map((role) => atob(role));
   const decodedLevels = experienceLevels.map((level) => atob(level));
 
   if (solutionMeta) {
     solutionMeta.content = decodedSolutions.join(';');
+  }
+  if (featureMeta) {
+    featureMeta.content = decodedFeatures.join(',');
   }
   if (roleMeta) {
     roleMeta.content = decodedRoles.join(',');
@@ -52,10 +85,7 @@ function decodeArticlePageMetaTags() {
 }
 
 export default function decorate(block) {
-  if (
-    document.documentElement.classList.contains('adobe-ue-edit') ||
-    document.documentElement.classList.contains('adobe-ue-preview')
-  ) {
+  if (window.hlx.aemRoot) {
     decodeArticlePageMetaTags();
   }
   const coveosolutions = getMetadata('coveo-solution');
@@ -68,31 +98,34 @@ export default function decorate(block) {
     ),
   ].join(',');
 
+  const features = getMetadata('feature');
   const roles = getMetadata('role');
   const experienceLevels = getMetadata('level');
 
-  const [articleTagHeading] = [...block.children].map((row) => row.firstElementChild);
+  function createTagsHTML(values) {
+    return values
+      .split(',')
+      .filter(Boolean)
+      .map((value) => `<div class="article-tags-name">${value.trim()}</div>`)
+      .join('');
+  }
 
   block.textContent = '';
 
-  const headerDiv = htmlToElement(`
-    <div class="article-tags">
-      <div class="article-tags-title">
-        ${articleTagHeading.innerHTML}
+  const articleTags = document.createRange().createContextualFragment(`
+      <div class="article-tags-topics">
+      <div class="article-tags-topics-heading">
+      ${TOPICS}
       </div>
-      <div class="article-tags-view">
-        ${[solutions, roles, experienceLevels]
-          .map((values) =>
-            values
-              .split(',')
-              .filter(Boolean)
-              .map((value) => `<div class="article-tags-name">${value.trim()}</div>`)
-              .join(''),
-          )
-          .join('')}
+        ${[solutions, features].map(createTagsHTML).join('')}
       </div>
-    </div>
+      <div class="article-tags-createdFor">
+      <div class="article-tags-createdFor-heading">
+      ${CREATED_FOR}
+      </div>
+        ${[roles, experienceLevels].map(createTagsHTML).join('')}
+      </div>
   `);
 
-  block.append(headerDiv);
+  block.append(articleTags);
 }

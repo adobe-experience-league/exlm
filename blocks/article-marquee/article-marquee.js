@@ -114,7 +114,7 @@ async function createOptions(container, readTimeText) {
 
   container.appendChild(options);
   container.appendChild(lastUpdated);
-  container.appendChild(readTime);
+  if (readTimeText) container.appendChild(readTime);
 }
 
 function createBreadcrumb(container) {
@@ -122,7 +122,7 @@ function createBreadcrumb(container) {
   const currentPath = getEDSLink(document.location.pathname);
 
   // split the path at browse root
-  const browseRootName = 'article';
+  const browseRootName = 'actionable-insights';
   const pathParts = currentPath.split(browseRootName);
   // prefix language path
   const browseRoot = `${pathParts[0]}${browseRootName}`;
@@ -170,14 +170,9 @@ function createBreadcrumb(container) {
 export default async function ArticleMarquee(block) {
   const [readTime, headingType] = block.querySelectorAll(':scope div > div');
   let link = getMetadata('author-bio-page');
-  if (
-    link &&
-    (document.documentElement.classList.contains('adobe-ue-edit') ||
-      document.documentElement.classList.contains('adobe-ue-preview'))
-  ) {
+  if (link && window.location.pathname.startsWith('/content')) {
     link = `${link}.html`;
   }
-
   const articleDetails = `<div class="article-marquee-info-container"><div class="article-info">
                                 <div class="breadcrumb"></div>
                                 <${headingType.textContent ? headingType.textContent : 'h1'}>${document.title}</${
@@ -215,7 +210,7 @@ export default async function ArticleMarquee(block) {
       }
       authorInfoContainer.outerHTML = `
         <div>${createOptimizedPicture(authorInfo?.authorImage).outerHTML}</div>
-        <div>${authorInfo?.authorName}</div> 
+        <div>${authorInfo?.authorName}</div>
         <div>${authorInfo?.authorTitle}</div>
         <div class="article-marquee-tag">${tagname}</div>
       `;

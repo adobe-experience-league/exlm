@@ -1,10 +1,13 @@
 .icon-block {
   display: grid;
-  min-width: 320px;
+  min-width: 275px;
   text-align: center;
   margin: 0 auto;
   gap: 32px;
   min-height: 208px;
+}
+.signup-dialog-body .icon-block {
+  min-width: 260px;
 }
 .icon-block > div {
   max-width: 283px;
@@ -97,9 +100,17 @@
     max-width: 230px;
     min-height: 180px;
   } 
-
-   body[class ^= 'browse-'] .icon-block,
-   body[class ^= 'article-'] .icon-block {
-    max-width: none;
-   }
+  body[class ^= 'browse-'] .icon-block,
+  body[class ^= 'article-'] .icon-block {
+  max-width: none;
+  }
+  .icon-block-center-align {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+  }
+  .icon-block-center-align > div {
+    width: 230px;
+  }
 }

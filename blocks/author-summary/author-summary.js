@@ -4,11 +4,7 @@ import { fetchAuthorBio } from '../../scripts/scripts.js';
 export default function decorate(block) {
   const authorSummaryContainer = document.createElement('div');
   let link = getMetadata('author-bio-page');
-  if (
-    link &&
-    (document.documentElement.classList.contains('adobe-ue-edit') ||
-      document.documentElement.classList.contains('adobe-ue-preview'))
-  ) {
+  if (link && window.hlx.aemRoot) {
     link = `${link}.html`;
   }
   if (link) {
