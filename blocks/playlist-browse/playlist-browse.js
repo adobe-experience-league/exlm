@@ -50,7 +50,7 @@ function newPlaylistCard({ title, description, image, path }) {
               ${picture.outerHTML}
           </div>
           <div class="playlist-browse-card-content">
-              <h3 class="playlist-browse-card-title">${title}</h3>
+              <h2 class="playlist-browse-card-title">${title}</h2>
               <p class="playlist-browse-card-description" >
                   ${truncatedDescription}
               </p>
