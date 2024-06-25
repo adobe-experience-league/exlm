@@ -697,6 +697,16 @@ button.secondary {
   color: var(--text-color);
 }
 
+a.button.secondary:disabled,
+button.secondary:disabled {
+  color: var(--spectrum-gray-400);
+}
+
+a.button.secondary:disabled:hover,
+button.secondary:disabled:hover {
+  background-color: transparent;
+}
+
 .button-container {
   margin: 0;
 }
