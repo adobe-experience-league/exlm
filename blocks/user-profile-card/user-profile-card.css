@@ -6,6 +6,11 @@
     position: relative;
 }
 
+.user-profile-card {
+    max-width: 318px;
+    width: 100%;
+}
+
 .user-profile-card-box {
     background: var(--spectrum-gray-50);
     border-radius: 4px;
@@ -14,7 +19,6 @@
     min-height: 488px;
     padding: 24px;
     position: relative;
-    width: 318px;
     z-index: 2;
 }
 .user-profile-card-decor {
@@ -23,6 +27,10 @@
 @media (min-width: 600px) {
     .user-profile-card-box {
         width: 387px;
+    }
+
+    .user-profile-card {
+        max-width: 387px;
     }
 }
 @media (min-width: 900px) {    
