@@ -329,8 +329,7 @@ function buildAutoBlocks(main) {
       !isDocPage() &&
       // eslint-disable-next-line no-use-before-define
       !isDocArticlePage() &&
-      !isSignUpPage() &&
-      !window.location.href.includes('.html')
+      !isSignUpPage()
     ) {
       buildTabSection(main);
     }
