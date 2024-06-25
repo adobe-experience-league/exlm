@@ -39,3 +39,9 @@
 .note .accordion summary {
   color: var(--text-color);
 }
+
+body[class^=browse-] .note-wrapper,
+body[class^=article-] .note-wrapper,
+body[class^=articles] .note-wrapper {
+  margin: 0;
+}

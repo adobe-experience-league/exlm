@@ -232,7 +232,7 @@
 
     /* author blocks */
     .featured-content.block > div:has(.author){
-      justify-self: center;
+      justify-self: left;
     }
 
     .featured-content.block div.author-container {

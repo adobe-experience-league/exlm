@@ -64,7 +64,8 @@ const createSignupDialog = () => {
                             <button class="close-btn">${placeholders?.closeBtnLabel}</button>
                         </div>
                     </div>
-                </div>
+                    </div>
+                    <div class="signup-dialog-middle-decor"></div>
                 <div class="signup-dialog-body">
                     <div class="signup-dialog-body-top-decor"></div>
                     <div class="signup-dialog-steps"></div>

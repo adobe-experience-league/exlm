@@ -5,13 +5,13 @@ import initStream from '../events/signup-event-stream.js';
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
 
-const { profileUrl, JWTTokenUrl, ppsOrigin, ims, isProd } = getConfig();
+const { profileUrl, JWTTokenUrl, ppsOrigin, ims, isProd, khorosProfileDetailsUrl } = getConfig();
 
 const postSignInStreamKey = 'POST_SIGN_IN_STREAM';
 const override = /^(recommended|votes)$/;
 
 /**
- * @returns {Promise<boolean>}
+ * @returns {Promise<boolean>n}
  */
 export async function isSignedInUser() {
   try {
@@ -164,6 +164,31 @@ class ProfileClient {
 
     // uppdate the profile in session storage after the changes
     await this.getMergedProfile(true);
+  }
+
+  // Fetches the community profile details of the specific logged in user
+  async fetchCommunityProfileDetails() {
+    const signedIn = await this.isSignedIn;
+    if (!signedIn) return null;
+
+    const accountId = (await window.adobeIMS.getProfile()).userId;
+    try {
+      const response = await fetch(`${khorosProfileDetailsUrl}?user=${accountId}`, {
+        method: 'GET',
+        headers: {
+          'x-ims-token': await window.adobeIMS?.getAccessToken().token,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data && data.data ? data.data : null;
+      }
+    } catch (err) {
+      // eslint-disable-next-line
+      console.log('Error fetching data!!', err);
+    }
+    return null;
   }
 
   /**

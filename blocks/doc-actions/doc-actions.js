@@ -60,7 +60,7 @@ export async function decorateBookmark(block, placeholders) {
     const bookmarkAuthedToolTipLabelM = bookmarkAuthedMobile.querySelector('.exl-tooltip-label');
     const bookmarkAuthedToolTipIconM = bookmarkAuthedMobile.querySelector('.bookmark-icon');
     defaultProfileClient.getMergedProfile().then(async (data) => {
-      if (data.bookmarks.includes(bookmarkId)) {
+      if (data?.bookmarks?.find((bookmark) => bookmark.includes(bookmarkId))) {
         bookmarkAuthedToolTipIconD.classList.add('authed');
         bookmarkAuthedToolTipLabelD.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
         bookmarkAuthedToolTipIconM.classList.add('authed');
@@ -178,7 +178,7 @@ async function decorateLanguageToggle(block, placeholders) {
         langToggle.addEventListener('change', async (e) => {
           const { checked } = e.target;
           await toggleContent(checked, docContainer);
-          assetInteractionModel(null, `automatic translation ${e.target.checked ? 'on' : 'off'}`);
+          assetInteractionModel(null, `automatic translation ${e.target.checked ? 'off' : 'on'}`);
         });
         langToggle.parentElement.classList.add('listener');
       }
