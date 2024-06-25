@@ -1198,7 +1198,11 @@ async function loadPage() {
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
 
     const params = new URLSearchParams(window.location.search);
-    Boolean(params.get('discoverability')) && loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
+    const hasDiscoverability = Boolean(params.get('discoverability'));
+
+    if (hasDiscoverability) {
+      loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
+    }
   }
 }
 
