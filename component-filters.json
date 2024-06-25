@@ -226,5 +226,9 @@
   {
     "id": "tab",
     "components": ["tab"]
+  },
+  {
+    "id": "topic-results",
+    "components": []
   }
 ]
