@@ -29,14 +29,16 @@ export default async function decorate(block) {
   if (tabIndex) {
     block.textContent = '';
     document.querySelectorAll(`div.tab-section`).forEach((tabSection) => {
-      const tabTitle = tabSection?.dataset.title;
-      const container = document.createElement('div');
-      moveInstrumentation(tabSection, container)
-      const titleContainer = document.createElement('div');
-      titleContainer.textContent = tabTitle.trim();
-      container.append(titleContainer)
-      container.append(tabSection);
-      block.append(container);
+      if(tabSection.children.length) {
+        const tabTitle = tabSection?.dataset.title;
+        const container = document.createElement('div');
+        moveInstrumentation(tabSection, container)
+        const titleContainer = document.createElement('div');
+        titleContainer.textContent = tabTitle.trim();
+        container.append(titleContainer)
+        container.append(tabSection);
+        block.append(container);
+      }
     });
     await loadBlocks(block);
   } 
