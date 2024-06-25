@@ -1196,11 +1196,9 @@ async function loadPage() {
 
   if (isDocArticlePage()) {
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
-  }
 
-  // TEMPORARY: Remove this condition when deploying Discoverability 1.2
-  if (isDocArticlePage() && window.location.hostname !== 'experienceleague.com') {
-    loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
+    const params = new URLSearchParams(window.location.search);
+    Boolean(params.get('discoverability')) && loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
   }
 }
 
