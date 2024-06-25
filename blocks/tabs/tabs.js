@@ -1,5 +1,5 @@
 import { loadBlocks } from '../../scripts/lib-franklin.js';
-import { createTag } from '../../scripts/scripts.js';
+import { createTag, moveInstrumentation } from '../../scripts/scripts.js';
 
 function changeTabs(e) {
   const { target } = e;
@@ -31,6 +31,7 @@ export default async function decorate(block) {
     document.querySelectorAll(`div.tab-section`).forEach((tabSection) => {
       const tabTitle = tabSection?.dataset.title;
       const container = document.createElement('div');
+      moveInstrumentation(tabSection, container)
       const titleContainer = document.createElement('div');
       titleContainer.textContent = tabTitle.trim();
       container.append(titleContainer)
@@ -38,7 +39,7 @@ export default async function decorate(block) {
       block.append(container);
     });
     await loadBlocks(block);
-  } else {
+  } 
   const tabList = createTag('div', { class: 'tab-list', role: 'tablist' });
   const tabContent = createTag('div', { class: 'tab-content' });
 
@@ -106,5 +107,4 @@ export default async function decorate(block) {
 
   initTabs(block);
   initCount += 1;
-  }
 }
