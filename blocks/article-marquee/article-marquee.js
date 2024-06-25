@@ -66,7 +66,7 @@ export async function decorateBookmark(block) {
     const bookmarkAuthedToolTipIcon = authBookmark.querySelector('.bookmark-icon');
     loadJWT().then(async () => {
       defaultProfileClient.getMergedProfile().then(async (data) => {
-        if (data.bookmarks.includes(bookmarkId)) {
+        if (data?.bookmarks?.find((bookmark) => bookmark.includes(bookmarkId))) {
           bookmarkAuthedToolTipIcon.classList.add('authed');
           bookmarkAuthedToolTipLabel.innerHTML = placeholders.bookmarkAuthLabelRemove;
         }
@@ -114,7 +114,7 @@ async function createOptions(container, readTimeText) {
 
   container.appendChild(options);
   container.appendChild(lastUpdated);
-  container.appendChild(readTime);
+  if (readTimeText) container.appendChild(readTime);
 }
 
 function createBreadcrumb(container) {
@@ -169,59 +169,80 @@ function createBreadcrumb(container) {
  */
 export default async function ArticleMarquee(block) {
   const [readTime, headingType] = block.querySelectorAll(':scope div > div');
-  let link = getMetadata('author-bio-page');
-  if (
-    link &&
-    (document.documentElement.classList.contains('adobe-ue-edit') ||
-      document.documentElement.classList.contains('adobe-ue-preview'))
-  ) {
-    link = `${link}.html`;
-  }
+  let links = getMetadata('author-bio-page');
+  if (links) {
+    if (window.hlx.aemRoot) {
+      links = links.split(',').map((link) => `${link.trim()}.html`);
+    } else {
+      links = links.split(',').map((link) => link.trim());
+    }
 
-  const articleDetails = `<div class="article-marquee-info-container"><div class="article-info">
+    const articleDetails = `<div class="article-marquee-info-container">
+                              <div class="article-info">
                                 <div class="breadcrumb"></div>
                                 <${headingType.textContent ? headingType.textContent : 'h1'}>${document.title}</${
                                   headingType.textContent ? headingType.textContent : 'h1'
                                 }>
                                 <div class="article-marquee-info"></div>
+                              </div>
+                              <div class="author-info">
+                                <div class="article-marquee-bg-container">
+                                ${mobileSvg}
+                                ${tabletSvg}
+                                ${desktopSvg}
+                                </div>
+                                <div class="author-details"></div>
+                              </div>
                             </div>
-                            <div class="author-info">
-                            <div class="article-marquee-bg-container">
-                              ${mobileSvg}
-                              ${tabletSvg}
-                              ${desktopSvg}
-                            </div>
-                            <div class="author-details">
-                            </div>
-                            </div></div>
-                            <div class="article-marquee-large-bg"></div>
-                            `;
-  block.innerHTML = articleDetails;
-  const infoContainer = block.querySelector('.article-marquee-info');
-  await createOptions(infoContainer, readTime.textContent.trim());
+                            <div class="article-marquee-large-bg"></div>`;
 
-  const breadcrumbContainer = block.querySelector('.breadcrumb');
-  createBreadcrumb(breadcrumbContainer);
-  decorateIcons(block);
+    block.innerHTML = articleDetails;
 
-  if (link) {
-    fetchAuthorBio(link).then((authorInfo) => {
+    const infoContainer = block.querySelector('.article-marquee-info');
+    await createOptions(infoContainer, readTime.textContent.trim());
+
+    const breadcrumbContainer = block.querySelector('.breadcrumb');
+    createBreadcrumb(breadcrumbContainer);
+    decorateIcons(block);
+
+    if (Array.isArray(links) && links.length > 0) {
+      // Filter out null, empty and duplicate links and map to fetchAuthorBio
+      const authorPromises = Array.from(new Set(links.filter((link) => link))).map((link) => fetchAuthorBio(link));
+      const authorsInfo = await Promise.all(authorPromises);
       const authorInfoContainer = block.querySelector('.author-details');
-      let tagname = placeholders.articleAdobeTag;
-      let articleType = authorInfo?.authorCompany?.toLowerCase();
-      if (!articleType) articleType = metadataProperties.adobe;
-      if (articleType !== metadataProperties.adobe) {
-        tagname = placeholders.articleExternalTag;
-      }
-      authorInfoContainer.outerHTML = `
-        <div>${createOptimizedPicture(authorInfo?.authorImage).outerHTML}</div>
-        <div>${authorInfo?.authorName}</div> 
-        <div>${authorInfo?.authorTitle}</div>
-        <div class="article-marquee-tag">${tagname}</div>
-      `;
+      let isExternal = false;
 
-      block.querySelector('.article-marquee-large-bg').classList.add(articleType);
-      block.querySelector('.article-marquee-bg-container').classList.add(articleType);
-    });
+      authorsInfo.slice(0, 2).forEach((authorInfo) => {
+        if (authorInfo) {
+          let tagname = placeholders.articleAdobeTag;
+          let articleType = authorInfo?.authorCompany?.toLowerCase();
+          if (!articleType) articleType = metadataProperties.adobe;
+          if (articleType !== metadataProperties.adobe) {
+            tagname = placeholders.articleExternalTag;
+          }
+          const authorHTML = `<div class="author-card">
+                              <div class="author-image">${
+                                createOptimizedPicture(authorInfo?.authorImage).outerHTML
+                              }</div>
+                              <div class="author-info-text">
+                                <div class="author-name">${authorInfo?.authorName}</div>
+                                <div class="author-title">${authorInfo?.authorTitle}</div>
+                                <div class="article-marquee-tag">${tagname}</div>
+                              </div>
+                            </div>`;
+          authorInfoContainer.innerHTML += authorHTML;
+          if (articleType === 'external') {
+            isExternal = true;
+          }
+        }
+      });
+      if (isExternal) {
+        block.querySelector('.article-marquee-large-bg').classList.add('external');
+        block.querySelector('.article-marquee-bg-container').classList.add('external');
+      } else {
+        block.querySelector('.article-marquee-large-bg').classList.add('adobe');
+        block.querySelector('.article-marquee-bg-container').classList.add('adobe');
+      }
+    }
   }
 }

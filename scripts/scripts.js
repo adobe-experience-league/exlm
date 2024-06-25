@@ -19,6 +19,7 @@ import {
   fetchPlaceholders,
   readBlockConfig,
   createOptimizedPicture,
+  toClassName,
 } from './lib-franklin.js';
 
 const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
@@ -635,8 +636,20 @@ export function getConfig() {
       hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
     },
     {
+      env: 'PROD-AUTHOR',
+      cdn: 'author-p122525-e1219150.adobeaemcloud.com',
+      hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
+    },
+    {
       env: 'STAGE',
       cdn: 'experienceleague-stage.adobe.com',
+      hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm-stage--adobe-experience-league.live',
+    },
+    {
+      env: 'STAGE-AUTHOR',
+      cdn: 'author-p122525-e1219192.adobeaemcloud.com',
       hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm-stage--adobe-experience-league.live',
     },
@@ -655,8 +668,8 @@ export function getConfig() {
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
-  const isProd = currentEnv?.env === 'PROD';
-  const isStage = currentEnv?.env === 'STAGE';
+  const isProd = currentEnv?.env.includes('PROD', 'PROD-AUTHOR');
+  const isStage = currentEnv?.env.includes('STAGE', 'STAGE-AUTHOR');
   const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
   const ims = {
     client_id: 'ExperienceLeague',
@@ -681,6 +694,7 @@ export function getConfig() {
     ppsOrigin,
     launchScriptSrc,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
+    khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
     privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
@@ -830,14 +844,27 @@ const loadMartech = async (headerPromise, footerPromise) => {
   );
 };
 
+async function loadThemes() {
+  const toClassNames = (classes) =>
+    classes
+      ?.split(',')
+      ?.map((c) => toClassName(c.trim()))
+      .filter(Boolean) || [];
+  const metaToClassNames = (metaName) => toClassNames(getMetadata(metaName));
+  const themeNames = [...metaToClassNames('template'), ...metaToClassNames('theme')];
+  if (themeNames.length === 0) return Promise.resolve();
+  return Promise.allSettled(themeNames.map((theme) => loadCSS(`${window.hlx.codeBasePath}/styles/theme/${theme}.css`)));
+}
+
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
-  await loadBlocks(main);
   loadIms(); // start it early, asyncronously
+  await loadThemes();
+  await loadBlocks(main);
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
@@ -1084,6 +1111,78 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, 
   return span;
 }
 
+function formatPageMetaTags(inputString) {
+  return inputString
+    .replace(/exl:[^/]*\/*/g, '')
+    .split(',')
+    .map((part) => part.trim());
+}
+
+function decodeAemPageMetaTags() {
+  const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
+  const roleMeta = document.querySelector(`meta[name="role"]`);
+  const levelMeta = document.querySelector(`meta[name="level"]`);
+  const featureMeta = document.querySelector(`meta[name="feature"]`);
+
+  const solutions = solutionMeta ? formatPageMetaTags(solutionMeta.content) : [];
+  const features = featureMeta ? formatPageMetaTags(featureMeta.content) : [];
+  const roles = roleMeta ? formatPageMetaTags(roleMeta.content) : [];
+  const experienceLevels = levelMeta ? formatPageMetaTags(levelMeta.content) : [];
+  let decodedSolutions = [];
+  decodedSolutions = solutions.map((solution) => {
+    // In case of sub-solutions. E.g. exl:solution/campaign/standard
+    const parts = solution.split('/');
+    const decodedParts = parts.map((part) => atob(part));
+
+    // If it's a sub-solution, create a version meta tag
+    if (parts.length > 1) {
+      const versionMeta = document.createElement('meta');
+      versionMeta.name = 'version';
+      versionMeta.content = atob(parts.slice(1).join('/'));
+      document.head.appendChild(versionMeta);
+
+      // If there are multiple parts, join them with ";"
+      const product = atob(parts[0]);
+      const version = atob(parts[1]);
+      return `${product}|${product} ${version}`;
+    }
+
+    return decodedParts[0];
+  });
+
+  const decodedFeatures = features
+    .map((feature) => {
+      const parts = feature.split('/');
+      if (parts.length > 1) {
+        const product = atob(parts[0]);
+        if (!decodedSolutions.includes(product)) {
+          decodedSolutions.push(product);
+        }
+        const featureTag = atob(parts[1]);
+        return `${featureTag}`;
+      }
+      decodedSolutions.push(atob(parts[0]));
+      return '';
+    })
+    .filter((feature) => feature !== '');
+
+  const decodedRoles = roles.map((role) => atob(role));
+  const decodedLevels = experienceLevels.map((level) => atob(level));
+
+  if (solutionMeta) {
+    solutionMeta.content = decodedSolutions.join(';');
+  }
+  if (featureMeta) {
+    featureMeta.content = decodedFeatures.join(',');
+  }
+  if (roleMeta) {
+    roleMeta.content = decodedRoles.join(',');
+  }
+  if (levelMeta) {
+    levelMeta.content = decodedLevels.join(',');
+  }
+}
+
 async function loadPage() {
   // THIS IS TEMPORARY FOR SUMMIT.
   if (handleHomePageHashes()) return;
@@ -1095,7 +1194,6 @@ async function loadPage() {
   loadDelayed();
   showBrowseBackgroundGraphic();
 
-
   if (isDocArticlePage()) {
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
   }
@@ -1104,25 +1202,27 @@ async function loadPage() {
   if (isDocArticlePage() && window.location.hostname !== 'experienceleague.com') {
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
   }
-}
 
-// load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
-if (!window.hlx.DO_NOT_LOAD_PAGE) {
-  if (isProfilePage()) {
-    if (
-      document.documentElement.classList.contains('adobe-ue-edit') ||
-      document.documentElement.classList.contains('adobe-ue-preview')
-    ) {
-      loadPage();
-    } else {
-      await loadIms();
-      if (window?.adobeIMS?.isSignedInUser()) {
+  // For AEM Author mode, decode the tags value
+  if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+    decodeAemPageMetaTags();
+  }
+
+  // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
+  if (!window.hlx.DO_NOT_LOAD_PAGE) {
+    if (isProfilePage()) {
+      if (window.location.href.includes('.html')) {
         loadPage();
       } else {
-        await window?.adobeIMS?.signIn();
+        await loadIms();
+        if (window?.adobeIMS?.isSignedInUser()) {
+          loadPage();
+        } else {
+          await window?.adobeIMS?.signIn();
+        }
       }
+    } else {
+      loadPage();
     }
-  } else {
-    loadPage();
   }
 }
