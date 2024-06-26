@@ -1,5 +1,5 @@
 import { loadBlocks } from '../../scripts/lib-franklin.js';
-import { createTag } from '../../scripts/scripts.js';
+import { createTag, moveInstrumentation } from '../../scripts/scripts.js';
 
 function changeTabs(e) {
   const { target } = e;
@@ -28,22 +28,20 @@ export default async function decorate(block) {
   const tabIndex = block?.dataset?.tabIndex;
   if (tabIndex) {
     block.textContent = '';
-    document.querySelectorAll(`div.tab-section`).forEach((tabSection) => {
-      const tabTitle = tabSection?.dataset.title;
-      block.innerHTML += `
-      <div>
-        <div>
-          ${tabTitle?.trim()}
-        </div>
-        <div>
-        ${tabSection.innerHTML}
-        </div>
-      </div>
-      `;
-      if(!window.hlx.aemRoot) tabSection.remove();
+    document.querySelectorAll(`div.tab-section`).forEach((tabSection, i) => {
+      if(tabSection.children.length) {
+        const tabTitle = tabSection?.dataset.title || `tab-${i}`;
+        const container = document.createElement('div');
+        moveInstrumentation(tabSection, container)
+        const titleContainer = document.createElement('div');
+        titleContainer.textContent = tabTitle.trim();
+        container.append(titleContainer)
+        container.append(tabSection);
+        block.append(container);
+      }
     });
     await loadBlocks(block);
-  }
+  } 
   const tabList = createTag('div', { class: 'tab-list', role: 'tablist' });
   const tabContent = createTag('div', { class: 'tab-content' });
 
