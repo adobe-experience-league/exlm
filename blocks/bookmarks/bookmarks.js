@@ -5,6 +5,7 @@ import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { fetchArticleByID } from '../../scripts/data-service/article-data-service.js';
 import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { bookmarksEventEmitter } from '../../scripts/events.js';
 
 const BOOKMARKS_BY_PG_CONFIG = {};
 const CARDS_MODEL = {};
@@ -115,6 +116,7 @@ function setCurrentPaginationStatus({ block, currentPageNumber, totalPageNumbers
 function updatePageNumberStyles(block) {
   const { currentPageNumber, totalPageNumbers: totalPages } = getCurrentPaginationStatus(block);
   const bookmarksEl = block ?? document.querySelector('.bookmarks.block');
+  const paginationEl = bookmarksEl.querySelector('.bookmarks-pagination');
   const paginationTextEl = bookmarksEl.querySelector('.bookmarks-pagination-text');
   const paginationBlock = bookmarksEl.querySelector('.bookmarks-pagination');
   const paginationInput = bookmarksEl.querySelector('.bookmarks-pg-search-input');
@@ -122,6 +124,12 @@ function updatePageNumberStyles(block) {
   const leftNavEnabled = currentPageNumber > 0;
   const rightNavEnabled = currentPageNumber < totalPages - 1;
   const paginationText = `of ${totalPages} page${totalPages > 1 ? 's' : ''}`;
+
+  if (totalPages === 1) {
+    paginationEl.classList.add('bookmarks-pagination-hidden');
+  } else {
+    paginationEl.classList.remove('bookmarks-pagination-hidden');
+  }
 
   const applyNavStyles = (navEl, enabled) => {
     const classOp = enabled ? 'remove' : 'add';
@@ -140,7 +148,7 @@ async function renderCards({ pgNum, cardWrapper }) {
   const bookmarkIds = BOOKMARKS_BY_PG_CONFIG[pgNum];
   const bookmarkPromises = bookmarkIds.map((bookmarkId) => fetchArticleByID(bookmarkId));
   const cardResponse = await Promise.all(bookmarkPromises);
-  const cardsData = cardResponse.map((card) => {
+  const cardsData = cardResponse.filter(Boolean).map((card) => {
     const parsedCard = parse(card);
     if (!CARDS_MODEL[parsedCard.id]) {
       CARDS_MODEL[parsedCard.id] = parsedCard;
@@ -158,35 +166,9 @@ async function renderCards({ pgNum, cardWrapper }) {
   cardWrapper.style.display = '';
 }
 
-export default async function decorateBlock(block) {
-  const [header, order] = block.children;
-  const headerText = header.textContent;
-  const orderText = order.textContent;
-  block.innerHTML = '';
-
-  const profileData = await defaultProfileClient.getMergedProfile();
-  const { bookmarks = [] } = profileData;
-  if (bookmarks.length === 0) {
-    block.classList.add('bookmarks-empty');
-    return;
-  }
-
-  const content = htmlToElement(`
-        <div>
-            <div class="bookmarks-header">
-                <div><h2>${headerText}</h2></div>
-                <div>${orderText}</div>
-            </div>
-            <div class="bookmarks-content"></div>
-        </div>
-    `);
-
-  block.appendChild(content);
-  const cardWrapper = block.querySelector('.bookmarks-content');
+const prepareBookmarksPaginationConfig = () => {
   const resultsPerPage = getBookmarksCount();
-  const pgNum = 0;
-  const totalPages = Math.floor(bookmarks.length / resultsPerPage);
-
+  const bookmarks = bookmarksEventEmitter.get('bookmark_ids') ?? [];
   const sortedBookmarks = bookmarks.sort((a, b) => {
     const [, currentTimeStamp = '0'] = a.split(':');
     const [, nextTimeStamp = '0'] = b.split(':');
@@ -195,6 +177,9 @@ export default async function decorateBlock(block) {
   const bookmarkIds = sortedBookmarks.map((bookmarkIdInfo) => {
     const [bookmarkId] = bookmarkIdInfo.split(':');
     return bookmarkId;
+  });
+  Object.keys(BOOKMARKS_BY_PG_CONFIG).forEach((key) => {
+    delete BOOKMARKS_BY_PG_CONFIG[key];
   });
 
   bookmarkIds.reduce((acc, curr, index) => {
@@ -205,7 +190,58 @@ export default async function decorateBlock(block) {
     acc[pgIndex].push(curr);
     return acc;
   }, BOOKMARKS_BY_PG_CONFIG);
+};
 
+export default async function decorateBlock(block) {
+  const [headerWrapper, order] = block.children;
+  const header = headerWrapper.firstElementChild?.firstElementChild;
+  const headerHTML = header.outerHTML;
+  const orderText = order.textContent;
+  block.innerHTML = '';
+
+  const profileData = await defaultProfileClient.getMergedProfile();
+  const { bookmarks = [] } = profileData;
+  if (bookmarks.length === 0) {
+    block.classList.add('bookmarks-empty');
+    return;
+  }
+  const clonedBookmarkIds = structuredClone(bookmarks);
+  bookmarksEventEmitter.set('bookmark_ids', clonedBookmarkIds);
+
+  const content = htmlToElement(`
+        <div>
+            <div class="bookmarks-header">
+                <div>${headerHTML}</div>
+                <div>${orderText}</div>
+            </div>
+            <div class="bookmarks-content"></div>
+        </div>
+    `);
+
+  block.appendChild(content);
+  const cardWrapper = block.querySelector('.bookmarks-content');
+  const resultsPerPage = getBookmarksCount();
+  const pgNum = 0;
+  const totalPages = Math.ceil(bookmarks.length / resultsPerPage);
+
+  bookmarksEventEmitter.on('dataChange', async () => {
+    const bookmarkItems = bookmarksEventEmitter.get('bookmark_ids') ?? [];
+    const { currentPageNumber } = getCurrentPaginationStatus();
+    const totalPagesCount = Math.ceil(bookmarkItems.length / resultsPerPage);
+    let newPgNum;
+    if (bookmarkItems.length === 0) {
+      cardWrapper.innerHTML = '';
+      block.classList.add('bookmarks-empty');
+      newPgNum = 0;
+    } else {
+      newPgNum = currentPageNumber >= totalPagesCount ? totalPagesCount - 1 : currentPageNumber;
+      prepareBookmarksPaginationConfig();
+      await renderCards({ block, pgNum: newPgNum, cardWrapper });
+    }
+    setCurrentPaginationStatus({ block, currentPageNumber: newPgNum, totalPageNumbers: totalPagesCount });
+    updatePageNumberStyles(block);
+  });
+  prepareBookmarksPaginationConfig();
   await renderCards({ block, pgNum, cardWrapper });
 
   const paginationBlock = htmlToElement(`
