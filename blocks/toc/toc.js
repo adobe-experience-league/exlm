@@ -196,10 +196,14 @@ export default async function decorate(block) {
     });
     // Prevents active elements to be hidden below the overflow
     const activeElement = tocContent.querySelector('.toc-item.is-active');
+    const offset = 100;
+
     if (activeElement) {
-      const activeElementOffset = activeElement.offsetTop;
-      const desiredOffset = 100;
-      tocContent.scrollTop = activeElementOffset - desiredOffset;
+        const activeElementTop = activeElement.getBoundingClientRect().top;
+        const tocContentTop = tocContent.getBoundingClientRect().top;
+        const scrollPosition = activeElementTop - tocContentTop - offset;
+
+        tocContent.scrollTop = scrollPosition;
     }
   });
 
