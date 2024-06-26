@@ -54,7 +54,8 @@
       "featured-authors",
       "inline-survey",
       "featured-content",
-      "browse-filters"
+      "browse-filters",
+      "topic-results"
     ]
   },
   {
@@ -226,5 +227,9 @@
   {
     "id": "tab",
     "components": ["tab"]
+  },
+  {
+    "id": "topic-results",
+    "components": []
   }
 ]

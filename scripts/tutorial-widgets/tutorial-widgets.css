@@ -1,0 +1,59 @@
+.tutorial-widgets-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.tutorial-header {
+  margin-top: 20px;
+  margin-bottom: 25px;
+}
+
+.tutorial-widgets {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 2px;
+  min-height: 400px;
+}
+
+.tutorial-widgets > div {
+  flex: 0 0 300px;
+  align-items: stretch;
+}
+
+.tutorial-widgets a {
+  font-size: 18px;
+  line-height: 17px;
+  margin: 2px 0 0 0;
+}
+
+
+@media only screen and (min-width: 600px) {
+  .tutorial-widgets {
+      gap: 25px;
+      overflow-x: auto;
+      overflow-y: hidden;
+  }
+  .tutorial-widgets > div {
+      flex: 0 0 286px;
+  } 
+}
+
+@media only screen and (min-width: 900px) {
+  .tutorial-widgets {
+      gap: 32px;
+  }
+  .tutorial-widgets > div {
+      flex: 0 0 256px;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .tutorial-widgets {
+    align-items: stretch;
+  }
+}
