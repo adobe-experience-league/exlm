@@ -17,11 +17,21 @@ function getCurrentPlaylistBookmarkPath() {
 
 async function isBookmarkedPlaylist() {
   const profile = await defaultProfileClient.getMergedProfile();
-  return profile?.bookmarks.includes(getCurrentPlaylistBookmarkPath()) || false;
+  const bookmarkId = getCurrentPlaylistBookmarkPath();
+  return profile?.bookmarks.find((bookmarkIdInfo) => bookmarkIdInfo.includes(bookmarkId)) || false;
 }
 
 async function toggleBookmark() {
-  return defaultProfileClient.updateProfile('bookmarks', getCurrentPlaylistBookmarkPath());
+  const bookmarkId = getCurrentPlaylistBookmarkPath();
+  const profileData = await defaultProfileClient.getMergedProfile();
+  const { bookmarks = [] } = profileData;
+  const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => `${bookmarkIdInfo}`.includes(bookmarkId));
+  const newBookmarks = bookmarks.filter((bookmarkIdInfo) => !`${bookmarkIdInfo}`.includes(bookmarkId));
+  if (!targetBookmarkItem) {
+    // During toggle, remove current bookmark if any (OR) add it to bookmarks
+    newBookmarks.push(`${bookmarkId}:${Date.now()}`);
+  }
+  return defaultProfileClient.updateProfile('bookmarks', newBookmarks, true);
 }
 /**
  * @param {HTMLButtonElement} bookmarkButton

@@ -66,7 +66,7 @@ export async function decorateBookmark(block) {
     const bookmarkAuthedToolTipIcon = authBookmark.querySelector('.bookmark-icon');
     loadJWT().then(async () => {
       defaultProfileClient.getMergedProfile().then(async (data) => {
-        if (data.bookmarks.includes(bookmarkId)) {
+        if (data?.bookmarks?.find((bookmark) => bookmark.includes(bookmarkId))) {
           bookmarkAuthedToolTipIcon.classList.add('authed');
           bookmarkAuthedToolTipLabel.innerHTML = placeholders.bookmarkAuthLabelRemove;
         }

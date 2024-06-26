@@ -13,7 +13,7 @@
   },
   {
     "id": "main-article",
-    "components": ["article-content-section", "article-header-section", "section", "tab-section"]
+    "components": ["article-content-section", "article-header-section", "section", "tab-section", "toc-section"]
   },
   {
     "id": "main-profile",
@@ -53,7 +53,8 @@
       "featured-authors",
       "inline-survey",
       "featured-content",
-      "browse-filters"
+      "browse-filters",
+      "topic-results"
     ]
   },
   {
@@ -73,6 +74,10 @@
       "callout",
       "note"
     ]
+  },
+  {
+    "id": "toc-section",
+    "components": []
   },
   {
     "id": "section-browse",
@@ -220,5 +225,9 @@
   {
     "id": "authorable-card",
     "components": ["authored-card"]
+  },
+  {
+    "id": "topic-results",
+    "components": []
   }
 ]

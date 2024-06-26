@@ -315,7 +315,8 @@ const setupBookmarkAction = (wrapper) => {
   defaultProfileClient.getMergedProfile().then(async (data) => {
     const bookmarkAuthed = Array.from(wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark'));
     bookmarkAuthed.forEach((bookmark) => {
-      if (data?.bookmarks.includes(bookmark.getAttribute('data-id'))) {
+      const bookmarkId = bookmark.getAttribute('data-id');
+      if (data?.bookmarks?.find((bookmarkIdInfo) => bookmarkIdInfo.includes(bookmarkId))) {
         bookmark.querySelector('.bookmark-icon').classList.add('authed');
         bookmark.querySelector('.exl-tooltip-label').innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
       }
@@ -339,6 +340,22 @@ const setupCopyAction = (wrapper) => {
   });
 };
 
+/**
+ * @typedef {Object} CardModel
+ * @property {string} thumbnail
+ * @property {string[]} product
+ * @property {string} title
+ * @property {string} contentType
+ * @property {string} badgeTitle
+ * @property {number} inProgressStatus
+ */
+
+/**
+ *
+ * @param {HTMLElement} container
+ * @param {HTMLElement} element
+ * @param {*} model
+ */
 export async function buildCard(container, element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus } = model;
   // lowercase all urls - because all of our urls are lower-case
