@@ -11,7 +11,7 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import { createOptimizedPicture, decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import ffetch from '../../scripts/ffetch.js';
 import loadJWT from '../../scripts/auth/jwt.js';
-import renderBookmark from '../../scripts/bookmark/bookmark.js';
+import renderBookmark from '../../scripts/bookmark/bookmark-action.js';
 import attachCopyLink from '../../scripts/copy-link/copy-link.js';
 
 const metadataProperties = {

@@ -8,7 +8,7 @@ import {
   getConfig,
 } from '../../scripts/scripts.js';
 import { tooltipTemplate } from '../../scripts/toast/toast.js';
-import renderBookmark from '../../scripts/bookmark/bookmark.js';
+import renderBookmark from '../../scripts/bookmark/bookmark-action.js';
 import attachCopyLink from '../../scripts/copy-link/copy-link.js';
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
