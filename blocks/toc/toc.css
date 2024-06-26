@@ -8,15 +8,23 @@
 .toc-content  {
     display: none;
     scroll-behavior: smooth;
-    transition: padding 0.2s ease;
     max-height: 60vh;
-    overflow: hidden;
-    &:hover {
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width: 0;
+    }
+
+    &:hover::-webkit-scrollbar, &:hover {
         touch-action: pan-y;
-        padding-right: 8px;
         overflow-y: auto;
         scrollbar-width: thin;
         scrollbar-color: var(--spectrum-gray-200) var(--spectrum-gray-100);
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+        background-color: var(--spectrum-gray-200);
+        border-radius: 6px;
     }
 }
 
@@ -81,6 +89,7 @@
         background-color: var(--spectrum-gray-50);
         z-index: 1;
     }
+
     align-items: center;
     display: flex;
     box-sizing: border-box;
