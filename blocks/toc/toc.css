@@ -7,6 +7,25 @@
 
 .toc-content  {
     display: none;
+    scroll-behavior: smooth;
+    max-height: 60vh;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width: 0;
+    }
+
+    &:hover::-webkit-scrollbar, &:hover {
+        touch-action: pan-y;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--spectrum-gray-200) var(--spectrum-gray-100);
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+        background-color: var(--spectrum-gray-200);
+        border-radius: 6px;
+    }
 }
 
 [aria-expanded="true"] + .toc-content {
@@ -64,6 +83,13 @@
 }
 
 .toc-header {
+    &.is-sticky {
+        position: sticky;
+        top: 0;
+        background-color: var(--spectrum-gray-50);
+        z-index: 1;
+    }
+
     align-items: center;
     display: flex;
     box-sizing: border-box;
