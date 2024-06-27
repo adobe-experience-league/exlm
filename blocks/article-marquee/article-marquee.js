@@ -49,8 +49,12 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
+function getCurrentPath() {
+  return window.location.pathname;
+}
+
 export async function decorateBookmark(block) {
-  const bookmarkId = ((document.querySelector('meta[name="id"]') || {}).content || '').trim();
+  const bookmarkId = document.querySelector('meta[name="id"]')?.content || getCurrentPath();
   const unAuthBookmark = document.createElement('div');
   unAuthBookmark.className = 'bookmark';
   unAuthBookmark.innerHTML = tooltipTemplate('bookmark-icon', 'Bookmark page', placeholders.bookmarkUnauthLabel);
