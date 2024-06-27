@@ -337,7 +337,7 @@ function addMiniToc(main) {
  * Tabbed layout for Tab section
  * @param {HTMLElement} main
  */
-async function buildTabSection(main) {
+export function buildTabSection(main) {
   let tabIndex = 0;
   let tabContainer;
   let tabFound = false;
