@@ -152,12 +152,7 @@
                   "filter": "article-content-section",
                   "name": "Article Content Section",
                   "model": "article-content-section",
-                  "style": "article-content-section",
-                  "mini-toc": {
-                    "sling:resourceType": "core/franklin/components/block/v1/block",
-                    "name": "Mini TOC",
-                    "model": "mini-toc"
-                  }
+                  "style": "article-content-section"
                 }
               }
             }
@@ -671,46 +666,6 @@
           }
         },
         {
-          "title": "Tabs",
-          "id": "tabs",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block",
-                "template": {
-                  "name": "Tabs",
-                  "model": "tabs",
-                  "filter": "tab",
-                  "item1": {
-                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
-                    "name": "Tab",
-                    "model": "tab",
-                    "title": "Tab",
-                    "content": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "title": "Tab",
-          "id": "tab",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block/item",
-                "template": {
-                  "name": "Tab",
-                  "model": "tab",
-                  "title": "Tab",
-                  "content": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
-                }
-              }
-            }
-          }
-        },
-        {
           "title": "Recommended Courses",
           "id": "recommended-courses",
           "plugins": {
@@ -966,21 +921,6 @@
                 "template": {
                   "name": "Product Experience Level",
                   "model": "product-experience-level"
-                }
-              }
-            }
-          }
-        },
-        {
-          "title": "Mini TOC",
-          "id": "mini-toc",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block",
-                "template": {
-                  "name": "Mini TOC",
-                  "model": "mini-toc"
                 }
               }
             }
