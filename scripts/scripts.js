@@ -25,6 +25,40 @@ import {
 const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
 export const timers = new Map();
 
+/**
+ * Moves all the attributes from a given elmenet to another given element.
+ * @param {Element} from the element to copy attributes from
+ * @param {Element} to the element to copy attributes to
+ */
+export function moveAttributes(from, to, attributes) {
+  if (!attributes) {
+    // eslint-disable-next-line no-param-reassign
+    attributes = [...from.attributes].map(({ nodeName }) => nodeName);
+  }
+  attributes.forEach((attr) => {
+    const value = from.getAttribute(attr);
+    if (value) {
+      to.setAttribute(attr, value);
+      from.removeAttribute(attr);
+    }
+  });
+}
+
+/**
+ * Move instrumentation attributes from a given element to another given element.
+ * @param {Element} from the element to copy attributes from
+ * @param {Element} to the element to copy attributes to
+ */
+export function moveInstrumentation(from, to) {
+  moveAttributes(
+    from,
+    to,
+    [...from.attributes]
+      .map(({ nodeName }) => nodeName)
+      .filter((attr) => attr.startsWith('data-aue-') || attr.startsWith('data-richtext-')),
+  );
+}
+
 // eslint-disable-next-line
 export function debounce(id = '', fn = () => void 0, ms = 250) {
   if (id.length > 0) {
@@ -243,6 +277,15 @@ export function isProfilePage() {
 }
 
 /**
+ * Check if current page is a Signup flow modal page.
+ * theme = signup is set in bulk metadata for /en/profile/signup-flow-modal** paths.
+ */
+export function isSignUpPage() {
+  const theme = getMetadata('theme');
+  return theme.toLowerCase().startsWith('signup');
+}
+
+/**
  * Add a left rail to the profile page.
  * @param {HTMLElement} main
  *
@@ -267,12 +310,85 @@ function addProfileTab(main) {
 }
 
 /**
+ * Add a mini TOC to the article page.
+ * @param {HTMLElement} main
+ */
+function addMiniToc(main) {
+  if (
+    document.querySelectorAll('.mini-toc').forEach((toc) => {
+      toc.remove();
+    })
+  );
+  const tocSection = document.createElement('div');
+  tocSection.classList.add('mini-toc-section');
+  tocSection.append(buildBlock('mini-toc', []));
+  const contentContainer = document.createElement('div');
+  contentContainer.classList.add('content-container');
+  if (document.querySelector('.article-marquee')) {
+    const articleMarquee = document.querySelector('.article-marquee');
+    articleMarquee.parentNode.insertAdjacentElement('afterend', tocSection);
+  } else {
+    contentContainer.append(...main.children);
+    main.prepend(tocSection);
+  }
+}
+
+/**
+ * Tabbed layout for Tab section
+ * @param {HTMLElement} main
+ */
+async function buildTabSection(main) {
+  let tabIndex = 0;
+  let tabContainer;
+  let tabFound = false;
+  const sections = main.querySelectorAll('main > div');
+  sections.forEach((section, i) => {
+    const sectionMeta = section.querySelector('.section-metadata > div > div:nth-child(2)');
+    if (sectionMeta?.textContent.includes('tab-section')) {
+      if (!tabFound) {
+        tabIndex += 1;
+        tabFound = true;
+        const tabs = buildBlock('tabs', []);
+        tabs.dataset.tabIndex = tabIndex;
+        tabContainer = document.createElement('div');
+        tabContainer.classList.add('section');
+        tabContainer.classList.add('article-content-section');
+        tabContainer.append(tabs);
+        main.insertBefore(tabContainer, section);
+      }
+      if (
+        tabFound &&
+        !sections[i + 1]
+          ?.querySelector('.section-metadata > div > div:nth-child(2)')
+          ?.textContent.includes('tab-section')
+      ) {
+        tabFound = false;
+      }
+      section.classList.add(`tab-index-${tabIndex}`);
+    }
+  });
+  main.querySelectorAll('.delete-this-section').forEach((section) => {
+    section.remove();
+  });
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
+    if (
+      !isProfilePage() &&
+      // eslint-disable-next-line no-use-before-define
+      !isDocPage() &&
+      // eslint-disable-next-line no-use-before-define
+      !isDocArticlePage() &&
+      !isSignUpPage()
+    ) {
+      buildTabSection(main);
+    }
     // if we are on a product browse page
     if (isBrowsePage()) {
       addBrowseBreadCrumb(main);
@@ -280,6 +396,10 @@ function buildAutoBlocks(main) {
     }
     if (isArticleLandingPage()) {
       addArticleLandingRail(main);
+    }
+    // eslint-disable-next-line no-use-before-define
+    if (isArticlePage()) {
+      addMiniToc(main);
     }
     if (isProfilePage()) {
       addProfileTab(main);
@@ -956,6 +1076,18 @@ async function loadArticles() {
     if (mod.default) {
       await mod.default();
     }
+    const contentContainer = document.createElement('div');
+    contentContainer.classList.add('article-content-container');
+    document
+      .querySelectorAll('main > .article-content-section, main > .tab-section, main > .mini-toc-section')
+      .forEach((section) => {
+        contentContainer.append(section);
+      });
+    if (document.querySelector('.article-header-section')) {
+      document.querySelector('.article-header-section').after(contentContainer);
+    } else {
+      document.querySelector('main').prepend(contentContainer);
+    }
   }
 }
 
@@ -1196,6 +1328,13 @@ async function loadPage() {
 
   if (isDocArticlePage()) {
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
+
+    const params = new URLSearchParams(window.location.search);
+    const hasDiscoverability = Boolean(params.get('discoverability'));
+
+    if (hasDiscoverability) {
+      loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
+    }
   }
 }
 
