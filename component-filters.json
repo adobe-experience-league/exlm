@@ -47,7 +47,6 @@
       "events-cards",
       "adls-cards",
       "tabbed-cards",
-      "tabs",
       "recommended-courses",
       "block-quote",
       "callout",
@@ -100,7 +99,6 @@
       "events-cards",
       "adls-cards",
       "tabbed-cards",
-      "tabs",
       "recommended-courses",
       "block-quote",
       "callout"
@@ -158,7 +156,6 @@
       "teaser",
       "detailed-teaser",
       "marquee",
-      "mini-toc",
       "carousel",
       "sign-up",
       "video-embed",
@@ -223,10 +220,6 @@
   {
     "id": "authorable-card",
     "components": ["authored-card"]
-  },
-  {
-    "id": "tab",
-    "components": ["tab"]
   },
   {
     "id": "topic-results",
