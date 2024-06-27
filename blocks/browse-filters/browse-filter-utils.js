@@ -163,15 +163,13 @@ const authorTypes = [
     id: 'internal',
     value: 'Adobe',
     title: 'Adobe',
-    description:
-      'High degree of proficiency with an advanced understanding of concepts and skill. Regularly manages complex tasks and objectives.',
+    description: 'Content created by Adobe employees',
   },
   {
     id: 'external',
     value: 'External',
     title: 'External',
-    description:
-      'High degree of proficiency with an advanced understanding of concepts and skill. Regularly manages complex tasks and objectives.',
+    description: 'Content created by expert Experience Cloud customers',
   },
 ].map((authorType) => ({
   ...authorType,
