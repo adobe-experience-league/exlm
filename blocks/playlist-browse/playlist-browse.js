@@ -1,5 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
-import { getPathDetails, htmlToElement } from '../../scripts/scripts.js';
+import { createPlaceholderSpan, getPathDetails, htmlToElement } from '../../scripts/scripts.js';
 import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.js';
 
 async function fetchPlaylists() {
@@ -151,7 +151,7 @@ export default function decorate(block) {
   const filters = readFiltersFromUrl();
   const filterPanelContet = htmlToElement('<div></div>');
   const filterPanel = newShowHidePanel({
-    buttonLabel: 'Filter',
+    buttonLabel: createPlaceholderSpan('filter', 'Filter'),
     buttonClass: 'playlist-browse-filter-button',
     hiddenPanelClass: 'playlist-browse-filter-hidden',
     panelContent: filterPanelContet,
