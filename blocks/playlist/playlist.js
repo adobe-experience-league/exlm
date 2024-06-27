@@ -281,7 +281,7 @@ export default function decorate(block) {
 
   [...block.children].forEach((videoRow, videoIndex) => {
     videoRow.classList.add('playlist-item');
-    const [videoCell, videoDataCell] = videoRow.children;
+    const [videoCell, videoDataCell, jsonLdCell] = videoRow.children;
     videoCell.classList.add('playlist-item-thumbnail');
     videoCell.setAttribute('data-playlist-item-progress-box', '');
     videoDataCell.classList.add('playlist-item-content');
@@ -307,6 +307,8 @@ export default function decorate(block) {
     descriptionP.remove();
     durationP.remove();
     transcriptP.remove();
+
+    jsonLdCell?.replaceWith(htmlToElement(`<script type="application/ld+json">${jsonLdCell.textContent}</script>`));
 
     // item bottom status
     videoDataCell.append(
