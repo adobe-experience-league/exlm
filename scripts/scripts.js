@@ -1243,6 +1243,17 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, 
   return span;
 }
 
+/**
+ * decorates placeholder spans in a given element
+ * @param {HTMLElement} element
+ */
+export function decoratePlaceholders(element) {
+  const placeholdersEls = [...element.querySelectorAll('[data-placeholder]')];
+  placeholdersEls.forEach((el) => {
+    el.replaceWith(createPlaceholderSpan(el.dataset.placeholder, el.textContent));
+  });
+}
+
 function formatPageMetaTags(inputString) {
   return inputString
     .replace(/exl:[^/]*\/*/g, '')
