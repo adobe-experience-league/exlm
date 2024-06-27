@@ -982,7 +982,8 @@ body[class^='browse-'] .browse-filters-full-container {
   }
 }
 
-[data-placeholder] {
+[data-placeholder],
+.loading-shimmer {
   background-image: linear-gradient(
     90deg,
     var(--shimmer-image-slide-start) 0,
