@@ -37,6 +37,12 @@
     margin-right: calc(-1 * var(--space-token-xl)) !important;
 }
 
+.playlist-browse-marquee-background {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+}
+
 .playlist-browse-marquee-background::after {
     content: ' ';
     background: url('/images/playlist-marquee-decoration.svg') no-repeat top left;
@@ -54,6 +60,7 @@
     height: 100%;
     object-fit: contain;
     object-position: left;
+    max-height: 275px;
 }
 
 @media (width >= 900px) {
