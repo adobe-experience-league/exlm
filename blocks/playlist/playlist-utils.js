@@ -1,5 +1,16 @@
 /* eslint-disable max-classes-per-file */
 
+export const LABELS = {
+  tutorials: 'playlist-tutorials',
+  playlist: 'playlist',
+  nowViewing: 'playlist-now-viewing',
+  autoPlayNextVideo: 'playlist-autoplay-next-video',
+  transcript: 'playlist-transcript',
+  bookmarkPlaylist: 'playlist-bookmark-playlist',
+  copyPlaylistLink: 'playlist-copy-playlist-link',
+  aboutPlaylist: 'playlist-about-playlist',
+};
+
 /**
  * @typedef {Object} Video
  * // src, autoplay = true, title, description, transcriptUrl

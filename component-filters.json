@@ -47,14 +47,14 @@
       "events-cards",
       "adls-cards",
       "tabbed-cards",
-      "tabs",
       "recommended-courses",
       "block-quote",
       "callout",
       "featured-authors",
       "inline-survey",
       "featured-content",
-      "browse-filters"
+      "browse-filters",
+      "topic-results"
     ]
   },
   {
@@ -99,7 +99,6 @@
       "events-cards",
       "adls-cards",
       "tabbed-cards",
-      "tabs",
       "recommended-courses",
       "block-quote",
       "callout"
@@ -157,7 +156,6 @@
       "teaser",
       "detailed-teaser",
       "marquee",
-      "mini-toc",
       "carousel",
       "sign-up",
       "video-embed",
@@ -224,7 +222,7 @@
     "components": ["authored-card"]
   },
   {
-    "id": "tab",
-    "components": ["tab"]
+    "id": "topic-results",
+    "components": []
   }
 ]
