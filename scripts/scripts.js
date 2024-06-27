@@ -12,6 +12,7 @@ import {
   decorateTemplateAndTheme,
   waitForLCP,
   loadBlocks,
+  loadBlock,
   loadCSS,
   decorateButtons,
   getMetadata,
@@ -369,6 +370,10 @@ export function buildTabSection(main) {
   });
   main.querySelectorAll('.delete-this-section').forEach((section) => {
     section.remove();
+  });
+  document.querySelectorAll('.tabs').forEach((tab) => {
+    console.log(tab)
+    loadBlock(tab); 
   });
 }
 
