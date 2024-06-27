@@ -1,14 +1,14 @@
 /* eslint-disable max-classes-per-file */
 
 export const LABELS = {
-  tutorials: 'tutorials',
+  tutorials: 'playlist-tutorials',
   playlist: 'playlist',
-  nowViewing: 'now-viewing',
-  autoPlayNextVideo: 'autoplay-next-video',
-  transcript: 'transcript',
-  bookmarkPlaylist: 'bookmark-playlist',
-  copyPlaylistLink: 'copy-playlist-link',
-  aboutPlaylist: 'about-playlist',
+  nowViewing: 'playlist-now-viewing',
+  autoPlayNextVideo: 'playlist-autoplay-next-video',
+  transcript: 'playlist-transcript',
+  bookmarkPlaylist: 'playlist-bookmark-playlist',
+  copyPlaylistLink: 'playlist-copy-playlist-link',
+  aboutPlaylist: 'playlist-about-playlist',
 };
 
 /**
