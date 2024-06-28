@@ -372,7 +372,7 @@ export const handleCoverSearchSubmit = (targetSearchText) => {
  * @param {string} [prefix] Location of perspectiveIndex
  * @returns {object} Window perspectiveIndex object
  */
-export async function fetchperspectiveIndex(prefix = 'en') {
+export async function fetchPerspectiveIndex(prefix = 'en') {
   window.perspectiveIndex = window.perspectiveIndex || {};
   const loaded = window.perspectiveIndex[`${prefix}-loaded`];
   if (!loaded) {

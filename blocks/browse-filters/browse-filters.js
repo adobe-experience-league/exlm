@@ -23,7 +23,7 @@ import {
   showSearchSuggestionsOnInputClick,
   handleCoverSearchSubmit,
   authorOptions,
-  fetchperspectiveIndex,
+  fetchPerspectiveIndex,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -199,7 +199,7 @@ if (theme === 'browse-all') dropdownOptions.push(productOptions);
 if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
 
 if (isArticleLandingPage()) {
-  const perspectiveIndex = await fetchperspectiveIndex();
+  const perspectiveIndex = await fetchPerspectiveIndex();
   const coveoSolutions = perspectiveIndex.reduce((acc, curr) => {
     if (curr?.coveoSolution) {
       // eslint-disable-next-line no-param-reassign
