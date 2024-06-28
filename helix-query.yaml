@@ -178,12 +178,12 @@ indices:
       - /zh-hant/browse/**
     target: /zh-hant/browse-index.json
 
-  article-en: &base-article
+  perspective-en: &base-perspective
     include:
-      - /en/actionable-insights/**
+      - /en/perspectives/**
     exclude:
-      - /en/actionable-insights/authors/**
-    target: /en/article-index.json
+      - /en/perspectives/authors/**
+    target: /en/perspective-index.json
     properties:
       title:
         select: head > meta[property="og:title"]
@@ -212,6 +212,10 @@ indices:
         select: head > meta[name="coveo-solution"]
         value: |
           attribute(el, 'content')
+      coveoFeature:
+        select: head > meta[name="feature"]
+        value: |
+          attribute(el, 'content')
       coveoRole:
         select: head > meta[name="role"]
         value: |
@@ -221,93 +225,93 @@ indices:
         value: |
           attribute(el, 'content')
 
-  article-fr:
-    <<: *base-article
+  perspective-fr:
+    <<: *base-perspective
     include:
-      - /fr/actionable-insights/**
+      - /fr/perspectives/**
     exclude:
-      - /fr/actionable-insights/authors/**
-    target: /fr/article-index.json
+      - /fr/perspectives/authors/**
+    target: /fr/perspective-index.json
 
-  article-de:
-    <<: *base-article
+  perspective-de:
+    <<: *base-perspective
     include:
-      - /de/actionable-insights/**
+      - /de/perspectives/**
     exclude:
-      - /de/actionable-insights/authors/**
-    target: /de/article-index.json
+      - /de/perspectives/authors/**
+    target: /de/perspective-index.json
 
-  article-es:
-    <<: *base-article
+  perspective-es:
+    <<: *base-perspective
     include:
-      - /es/actionable-insights/**
+      - /es/perspectives/**
     exclude:
-      - /es/actionable-insights/authors/**
-    target: /es/article-index.json
+      - /es/perspectives/authors/**
+    target: /es/perspective-index.json
 
-  article-it:
-    <<: *base-article
+  perspective-it:
+    <<: *base-perspective
     include:
-      - /it/actionable-insights/**
+      - /it/perspectives/**
     exclude:
-      - /it/actionable-insights/authors/**
-    target: /it/article-index.json
+      - /it/perspectives/authors/**
+    target: /it/perspective-index.json
 
-  article-nl:
-    <<: *base-article
+  perspective-nl:
+    <<: *base-perspective
     include:
-      - /nl/actionable-insights/**
+      - /nl/perspectives/**
     exclude:
-      - /nl/actionable-insights/authors/**
-    target: /nl/article-index.json
+      - /nl/perspectives/authors/**
+    target: /nl/perspective-index.json
 
-  article-pt-br:
-    <<: *base-article
+  perspective-pt-br:
+    <<: *base-perspective
     include:
-      - /pt-br/actionable-insights/**
+      - /pt-br/perspectives/**
     exclude:
-      - /pt-br/actionable-insights/authors/**
-    target: /pt-br/article-index.json
+      - /pt-br/perspectives/authors/**
+    target: /pt-br/perspective-index.json
 
-  article-ko:
-    <<: *base-article
+  perspective-ko:
+    <<: *base-perspective
     include:
-      - /ko/actionable-insights/**
+      - /ko/perspectives/**
     exclude:
-      - /ko/actionable-insights/authors/**
-    target: /ko/article-index.json
+      - /ko/perspectives/authors/**
+    target: /ko/perspective-index.json
 
-  article-ja:
-    <<: *base-article
+  perspective-ja:
+    <<: *base-perspective
     include:
-      - /ja/actionable-insights/**
+      - /ja/perspectives/**
     exclude:
-      - /ja/actionable-insights/authors/**
-    target: /ja/article-index.json
+      - /ja/perspectives/authors/**
+    target: /ja/perspective-index.json
 
-  article-sv:
-    <<: *base-article
+  perspective-sv:
+    <<: *base-perspective
     include:
-      - /sv/actionable-insights/**
+      - /sv/perspectives/**
     exclude:
-      - /sv/actionable-insights/authors/**
-    target: /sv/article-index.json
+      - /sv/perspectives/authors/**
+    target: /sv/perspective-index.json
 
-  article-zh-hans:
-    <<: *base-article
+  perspective-zh-hans:
+    <<: *base-perspective
     include:
-      - /zh-hans/actionable-insights/**
+      - /zh-hans/perspectives/**
     exclude:
-      - /zh-hans/actionable-insights/authors/**
-    target: /zh-hans/article-index.json
+      - /zh-hans/perspectives/authors/**
+    target: /zh-hans/perspective-index.json
 
-  article-zh-hant:
-    <<: *base-article
+  perspective-zh-hant:
+    <<: *base-perspective
     include:
-      - /zh-hant/actionable-insights/**
+      - /zh-hant/perspectives/**
     exclude:
-      - /zh-hant/actionable-insights/authors/**
-    target: /zh-hant/article-index.json
+      - /zh-hant/perspectives/authors/**
+    target: /zh-hant/perspective-index.json
 
   profile-en: &base-profile
     include:
