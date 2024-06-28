@@ -1077,8 +1077,8 @@ async function loadArticles() {
     }
     const contentContainer = document.createElement('div');
     contentContainer.classList.add('article-content-container');
-    if(!document.querySelector('main > .article-content-section, main > .tab-section')) {
-      document.querySelectorAll("main > .mini-toc-section").remove();
+    if (!document.querySelector('main > .article-content-section, main > .tab-section')) {
+      document.querySelectorAll('main > .mini-toc-section').remove();
     }
     document
       .querySelectorAll('main > .article-content-section, main > .tab-section, main > .mini-toc-section')
