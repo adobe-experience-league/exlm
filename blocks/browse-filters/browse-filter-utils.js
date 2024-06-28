@@ -94,7 +94,7 @@ const contentTypes = [
   {
     id: 'Perspective',
     value: 'Perspective',
-    title: 'Perspective',
+    title: 'Perspectives',
     description: 'Real-world inspiration from Experience Cloud customers and Adobe experts.',
   },
   {
