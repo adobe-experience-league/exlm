@@ -3,7 +3,7 @@ import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } f
 import { createTooltip } from './browse-card-tooltip.js';
 import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS, AUTHOR_TYPE } from './browse-cards-constants.js';
 import { tooltipTemplate } from '../toast/toast.js';
-import renderBookmark from '../bookmark/bookmark-action.js';
+import renderBookmark from '../bookmark/bookmark.js';
 import attachCopyLink from '../copy-link/copy-link.js';
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
