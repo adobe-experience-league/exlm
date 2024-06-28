@@ -2,6 +2,7 @@ import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
 import { defaultProfileClient } from '../auth/profile.js';
+import { bookmarksEventEmitter } from '../events.js';
 
 let placeholders = {};
 try {
@@ -21,6 +22,7 @@ const renderBookmark = (labelSel, iconSel, id) => {
         const { bookmarks = [] } = profileData;
         const bookmarkItems = bookmarks.filter((bookmark) => !`${bookmark}`.includes(id));
         defaultProfileClient.updateProfile('bookmarks', bookmarkItems, true);
+        bookmarksEventEmitter.set('bookmark_ids', bookmarkItems);
         labelSel.innerHTML = `${placeholders.bookmarkAuthLabelSet}`;
         iconSel.classList.remove('authed');
         sendNotice(`${placeholders.bookmarkUnset}`);
@@ -32,6 +34,7 @@ const renderBookmark = (labelSel, iconSel, id) => {
         const bookmarkItems = bookmarks.filter((bookmark) => !`${bookmark}`.includes(id));
         bookmarkItems.push(`${id}:${Date.now()}`);
         defaultProfileClient.updateProfile('bookmarks', bookmarkItems, true);
+        bookmarksEventEmitter.set('bookmark_ids', bookmarkItems);
         labelSel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
         iconSel.classList.add('authed');
         sendNotice(`${placeholders.bookmarkSet}`);

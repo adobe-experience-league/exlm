@@ -36,3 +36,4 @@ export default class EventEmitter {
 }
 
 export const productExperienceEventEmitter = new EventEmitter();
+export const bookmarksEventEmitter = new EventEmitter();
