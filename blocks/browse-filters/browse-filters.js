@@ -207,7 +207,7 @@ if (isArticleLandingPage()) {
     }
     return acc;
   }, '');
-  console.log(coveoSolutions);
+
   const coveoSolutionArr = coveoSolutions.split(/[,;|]/).filter(Boolean);
   const coveoSolutionOptionsList = Array.from(new Set(coveoSolutionArr)).sort();
   const parentCoveoSolutionOptList = coveoSolutionOptionsList.reduce((acc, curr) => {
