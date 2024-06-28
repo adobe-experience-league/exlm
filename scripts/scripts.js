@@ -327,9 +327,6 @@ function addMiniToc(main) {
   if (document.querySelector('.article-marquee')) {
     const articleMarquee = document.querySelector('.article-marquee');
     articleMarquee.parentNode.insertAdjacentElement('afterend', tocSection);
-  } else {
-    contentContainer.append(...main.children);
-    main.prepend(tocSection);
   }
 }
 
