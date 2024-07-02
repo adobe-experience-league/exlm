@@ -12,7 +12,6 @@ import {
   decorateTemplateAndTheme,
   waitForLCP,
   loadBlocks,
-  loadBlock,
   loadCSS,
   decorateButtons,
   getMetadata,
@@ -337,7 +336,7 @@ function addMiniToc(main) {
  * Tabbed layout for Tab section
  * @param {HTMLElement} main
  */
-export function buildTabSection(main) {
+async function buildTabSection(main) {
   let tabIndex = 0;
   let tabContainer;
   let tabFound = false;
@@ -369,10 +368,6 @@ export function buildTabSection(main) {
   });
   main.querySelectorAll('.delete-this-section').forEach((section) => {
     section.remove();
-  });
-  document.querySelectorAll('.tabs').forEach((tab) => {
-    console.log(tab)
-    loadBlock(tab); 
   });
 }
 
