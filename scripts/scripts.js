@@ -351,7 +351,7 @@ async function buildTabSection(main) {
         tabs.dataset.tabIndex = tabIndex;
         tabContainer = document.createElement('div');
         tabContainer.classList.add('section');
-        if (
+        if (i > 0 &&
           sections[i - 1]
             .querySelector('.section-metadata > div > div:nth-child(2)')
             ?.textContent.includes('article-content-section')
