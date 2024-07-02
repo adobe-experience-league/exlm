@@ -208,16 +208,9 @@ if (isArticleLandingPage()) {
     return acc;
   }, '');
 
-  const coveoSolutionArr = coveoSolutions.split(/[,;|]/).filter(Boolean);
+  const coveoSolutionArr = coveoSolutions.split(/[,;]/).filter((solution) => solution && !solution.includes('|'));
   const coveoSolutionOptionsList = Array.from(new Set(coveoSolutionArr)).sort();
-  const parentCoveoSolutionOptList = coveoSolutionOptionsList.reduce((acc, curr) => {
-    const matchFound = !!acc.find((optName) => optName.includes(curr) || curr.includes(optName));
-    if (!matchFound) {
-      acc.push(curr);
-    }
-    return acc;
-  }, []);
-  const coveoSolutionOptions = parentCoveoSolutionOptList.map((solution) => ({
+  const coveoSolutionOptions = coveoSolutionOptionsList.map((solution) => ({
     description: '',
     id: solution.toLowerCase(),
     title: solution,
