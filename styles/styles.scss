@@ -797,6 +797,11 @@ picture {
     }
   }
 
+  &.tabs-container {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
   > div {
     /* limit block wrappers max width */
     max-width: var(--non-spectrum-max-width);

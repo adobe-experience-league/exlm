@@ -888,6 +888,10 @@ picture[align=right] {
   text-align: center;
   margin: 0 0 36px;
 }
+.section.tabs-container {
+  padding-top: 0;
+  padding-bottom: 0;
+}
 .section > div {
   /* limit block wrappers max width */
   max-width: var(--non-spectrum-max-width);
