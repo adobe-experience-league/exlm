@@ -351,9 +351,13 @@ async function buildTabSection(main) {
         tabs.dataset.tabIndex = tabIndex;
         tabContainer = document.createElement('div');
         tabContainer.classList.add('section');
-        if(sections[i-1].querySelector('.section-metadata > div > div:nth-child(2)')?.textContent.includes('article-content-section')){
-          tabContainer.classList.add('article-content-section'); 
-         }
+        if (
+          sections[i - 1]
+            .querySelector('.section-metadata > div > div:nth-child(2)')
+            ?.textContent.includes('article-content-section')
+        ) {
+          tabContainer.classList.add('article-content-section');
+        }
         tabContainer.append(tabs);
         main.insertBefore(tabContainer, section);
       }
