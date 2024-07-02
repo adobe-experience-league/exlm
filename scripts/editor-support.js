@@ -8,7 +8,7 @@ import {
   loadBlocks,
 } from './lib-franklin.js';
 import { decorateRichtext } from './editor-support-rte.js';
-import { decorateMain, loadIms, buildTabSection } from './scripts.js';
+import { decorateMain, loadIms } from './scripts.js';
 
 // set aem content root
 window.hlx.aemRoot = '/content/exlm/global';
@@ -166,7 +166,7 @@ async function applyChanges(event) {
   const parsedUpdate = new DOMParser().parseFromString(content, 'text/html');
   const element = document.querySelector(`[data-aue-resource="${resource}"]`);
 
-  buildTabSection(document.querySelector('main'));
+  console.log("hi")
 
   if (element) {
     if (element.matches('main')) {
