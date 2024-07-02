@@ -209,7 +209,6 @@ if (isArticleLandingPage()) {
   }, '');
 
   const coveoSolutionArr = coveoSolutions.split(/[,;]/).filter((solution) => solution && !solution.includes('|'));
-  console.log(coveoSolutionArr);
   const coveoSolutionOptionsList = Array.from(new Set(coveoSolutionArr)).sort();
   const coveoSolutionOptions = coveoSolutionOptionsList.map((solution) => ({
     description: '',
