@@ -913,10 +913,6 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Actionable Insights",
-            "value": "article"
-          },
-          {
             "name": "Certification",
             "value": "certification"
           },
@@ -935,6 +931,10 @@
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
           },
           {
             "name": "Troubleshooting",
@@ -1873,10 +1873,6 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Actionable Insights",
-            "value": "article"
-          },
-          {
             "name": "Certification",
             "value": "certification"
           },
@@ -1895,6 +1891,10 @@
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
           },
           {
             "name": "Troubleshooting",
@@ -1968,10 +1968,6 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Actionable Insights",
-            "value": "article"
-          },
-          {
             "name": "Certification",
             "value": "certification"
           },
@@ -1990,6 +1986,10 @@
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
           },
           {
             "name": "Troubleshooting",
@@ -2473,10 +2473,6 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Actionable Insights",
-            "value": "article"
-          },
-          {
             "name": "Courses",
             "value": "course"
           },
@@ -2503,6 +2499,10 @@
           {
             "name": "Certification",
             "value": "certification"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
           }
         ]
       },
@@ -2681,8 +2681,8 @@
         "description": "Sets the coveo content type in page meta.",
         "options": [
           {
-            "name": "Actionable Insights",
-            "value": "Article"
+            "name": "Perspectives",
+            "value": "Perspective"
           }
         ]
       },

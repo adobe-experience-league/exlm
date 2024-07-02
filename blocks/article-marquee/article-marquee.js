@@ -126,7 +126,7 @@ function createBreadcrumb(container) {
   const currentPath = getEDSLink(document.location.pathname);
 
   // split the path at browse root
-  const browseRootName = 'actionable-insights';
+  const browseRootName = 'perspectives';
   const pathParts = currentPath.split(browseRootName);
   // prefix language path
   const browseRoot = `${pathParts[0]}${browseRootName}`;
@@ -138,7 +138,7 @@ function createBreadcrumb(container) {
   container.append(rootCrumbElem);
 
   // get the browse index
-  ffetch(`/${getPathDetails().lang}/article-index.json`)
+  ffetch(`/${getPathDetails().lang}/perspective-index.json`)
     .all()
     .then((index) => {
       // build the remaining breadcrumbs

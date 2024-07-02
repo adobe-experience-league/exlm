@@ -48,8 +48,8 @@ export const CONTENT_TYPES = Object.freeze({
     LABEL: placeholders.browseCardInstructorLedLabel || 'Instructor-Led',
   },
   ARTICLE: {
-    MAPPING_KEY: 'article',
-    LABEL: placeholders.browseCardArticleLabel || 'Actionable Insights',
+    MAPPING_KEY: 'perspective',
+    LABEL: placeholders.browseCardArticleLabel || 'Perspective',
   },
 });
 
