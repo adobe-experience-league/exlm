@@ -2,6 +2,7 @@ import { loadCSS } from '../lib-franklin.js';
 import BrowseCardsDelegate from '../browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../browse-card/browse-cards-constants.js';
 import { fetchLanguagePlaceholders, htmlToElement } from '../scripts.js';
+import listPlaceholder from '../placeholders/list-placeholder.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/related-content/related-content-widget.css`);
 
@@ -17,9 +18,7 @@ function contentIcon (type) {
   const bookmark = htmlToElement('<div class="related-content-icon"></div>');
 
   if(type) {
-    const icon = htmlToElement(`<img src="${window.hlx.codeBasePath}/icons/${type}.svg" />`);
-
-    bookmark.appendChild(icon);
+    bookmark.appendChild(htmlToElement(`<img src="${window.hlx.codeBasePath}/icons/${type}.svg" />`));
   }
 
   return bookmark;
@@ -27,7 +26,7 @@ function contentIcon (type) {
 
 function relatedContentWidget() {
   // Select the right section
-  const rightRail = document.querySelector('main > div.section.rail.rail-right > div.rail-content');
+  const rightRail = document.querySelector('main > div.section.rail.rail-right > div.rail-content > div.mini-toc-wrapper');
 
   if(rightRail) {
     // Wrapper element for Related Content
@@ -36,7 +35,8 @@ function relatedContentWidget() {
     // Create a header
     const header = htmlToElement(`<a class="related-content-toggle" aria-expanded="true"><h2>${loc('Related Content')}<h2></a>`);
 
-    // TODO Create a placeholder
+    // Create a placeholder
+    const loader = listPlaceholder(5);
 
     const param = {
       sortCriteria: COVEO_SORT_OPTIONS.RELEVANCE.toUpperCase(),
@@ -44,10 +44,13 @@ function relatedContentWidget() {
     };
 
     wrapper.appendChild(header);
+    wrapper.appendChild(loader);
 
     // Fetch the card/widget data
     BrowseCardsDelegate.fetchCardData(param)
       .then((data) => {
+        wrapper.removeChild(loader);
+
         const list = htmlToElement('<ul class="related-content"></ul>');
         const listItems = data.map(content => {
           if(content.title && content.viewLink) {
@@ -69,7 +72,7 @@ function relatedContentWidget() {
         rightRail.appendChild(wrapper);
 
         // Add toggle functionality
-        header.addEventListener('click',  (event) => {
+        header.addEventListener('click', (event) => {
           event.preventDefault();
 
           const isExpanded = header.getAttribute('aria-expanded') === 'true';
@@ -77,6 +80,8 @@ function relatedContentWidget() {
         });
       })
       .catch((err) => {
+        wrapper.removeChild(loader);
+
         /* eslint-disable-next-line no-console */
         console.log(err);
       });
