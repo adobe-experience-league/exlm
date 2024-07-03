@@ -1087,12 +1087,12 @@ async function loadArticles() {
     if (!document.querySelector('main > .article-content-section, main > .tab-section')) {
       document.querySelector('main > .mini-toc-section').remove();
     } else {
+      document.querySelector(".mini-toc.block").style.display = null;
       document
         .querySelectorAll('main > .article-content-section, main > .tab-section, main > .mini-toc-section')
         .forEach((section) => {
           contentContainer.append(section);
         });
-      document.querySelector("main > .mini-toc-section > .mini-toc.block").style.display = null;
       if (document.querySelector('.article-header-section')) {
         document.querySelector('.article-header-section').after(contentContainer);
       } else {
