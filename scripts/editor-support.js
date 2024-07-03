@@ -209,7 +209,18 @@ async function applyChanges(event) {
       );
       if (newElements.length) {
         const { parentElement } = element;
-        if (element.matches('.section') || element.matches(".tabpanel")) {
+        if(element.matches(".tabpanel")){
+          const [newSection] = newElements;
+          decorateButtons(newSection);
+          decorateIcons(newSection);
+          newSection.querySelector(".section-metadata")?.remove()
+          element.innerHTML = newSection.innerHTML
+          decorateBlocks(parentElement);
+          decorateRichtext(parentElement);
+          await loadBlocks(parentElement);
+          return true;
+        }
+        if (element.matches('.section')) {
           const [newSection] = newElements;
           newSection.style.display = 'none';
           element.insertAdjacentElement('afterend', newSection);
