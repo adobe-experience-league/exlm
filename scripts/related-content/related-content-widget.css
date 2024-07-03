@@ -1,0 +1,55 @@
+.related-content-wrapper .related-content-toggle {
+  display: flex;
+  align-items: center;
+  margin: 20px 0 0;
+  cursor: pointer;
+}
+.related-content-wrapper .related-content-toggle h2 {
+  font-size: var(--spectrum-font-size-50);
+  font-weight: var(--spectrum-extra-bold-font-weight);
+  text-transform: uppercase;
+  line-height: 31px;
+  margin: 0;
+}
+.related-content-wrapper .related-content-toggle[aria-expanded=false] + ul {
+  display: none;
+}
+.related-content-wrapper .related-content-toggle::after {
+  position: absolute;
+  right: 5%;
+  top: auto;
+  display: flex;
+  width: 18px;
+  height: 18px;
+  content: "";
+  box-sizing: content-box;
+  background: rgba(0, 0, 0, 0) url("/icons/chevron_down.svg") no-repeat right center;
+  transform: rotate(180deg);
+}
+.related-content-wrapper .related-content-toggle[aria-expanded=true]::after {
+  transform: rotate(0);
+}
+.related-content-wrapper ul.related-content {
+  list-style: none;
+  margin: 0;
+  padding: 0 10px;
+}
+.related-content-wrapper ul.related-content li {
+  margin: 5px 0;
+  display: flex;
+  cursor: pointer;
+}
+.related-content-wrapper ul.related-content li .related-content-icon {
+  margin: 0 10px 0 0;
+}
+.related-content-wrapper ul.related-content a {
+  font-size: var(--spectrum-font-size-100);
+  display: inline-flex;
+  min-height: 32px;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  border-radius: 4px;
+  color: var(--non-spectrum-grey-updated, var(--spectrum-alias-text-color-hover));
+  line-height: 20px;
+}
