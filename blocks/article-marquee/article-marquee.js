@@ -142,7 +142,7 @@ function createBreadcrumb(container) {
     .all()
     .then((index) => {
       // build the remaining breadcrumbs
-      pathParts[1].split('/').reduce((prevSubPath, nextPathElem) => {
+      pathParts[1]?.split('/').reduce((prevSubPath, nextPathElem) => {
         // create the next crumble sub path
         const nextCrumbSubPath = `${prevSubPath}/${nextPathElem}`;
         // construct full crumb path
