@@ -1097,6 +1097,7 @@ async function loadArticles() {
       } else {
         document.querySelector('main').prepend(contentContainer);
       }
+      document.querySelector(".mini-toc.block").style.display = null;
     }
   }
 }
