@@ -1092,12 +1092,12 @@ async function loadArticles() {
         .forEach((section) => {
           contentContainer.append(section);
         });
+      document.querySelector("main > .mini-toc-section > .mini-toc.block").style.display = null;
       if (document.querySelector('.article-header-section')) {
         document.querySelector('.article-header-section').after(contentContainer);
       } else {
         document.querySelector('main').prepend(contentContainer);
       }
-      document.querySelector(".mini-toc.block").style.display = null;
     }
   }
 }
