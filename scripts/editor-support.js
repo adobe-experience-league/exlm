@@ -209,7 +209,7 @@ async function applyChanges(event) {
       );
       if (newElements.length) {
         const { parentElement } = element;
-        if (element.matches('.section')) {
+        if (element.matches('.section') || element.matches(".tabpanel")) {
           const [newSection] = newElements;
           newSection.style.display = 'none';
           element.insertAdjacentElement('afterend', newSection);

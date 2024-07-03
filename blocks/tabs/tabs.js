@@ -29,7 +29,6 @@ export default async function decorate(block) {
   if (tabIndex) {
     block.textContent = '';
     document.querySelectorAll(`div.tab-section.tab-index-${tabIndex}`).forEach((tabSection, i) => {
-      if (tabSection.children.length) {
         const tabTitle = tabSection?.dataset.title || `tab-${i}`;
         const container = document.createElement('div');
         moveInstrumentation(tabSection, container);
@@ -38,7 +37,6 @@ export default async function decorate(block) {
         container.append(titleContainer);
         container.append(tabSection);
         block.append(container);
-      }
     });
     await loadBlocks(block);
   }
