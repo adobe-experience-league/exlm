@@ -825,6 +825,7 @@ export function getConfig() {
     coveoToken: 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
     liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
     adlsUrl: 'https://learning.adobe.com/catalog.result.json',
+    industryUrl: 'https://experienceleague.adobe.com/api/industries?page_size=200&sort=Order&lang=en',
     searchUrl: `${cdnOrigin}/search.html`,
     articleUrl: `${cdnOrigin}/api/articles/`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
