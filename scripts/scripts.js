@@ -373,9 +373,6 @@ async function buildTabSection(main) {
       section.classList.add(`tab-index-${tabIndex}`);
     }
   });
-  main.querySelectorAll('.delete-this-section').forEach((section) => {
-    section.remove();
-  });
 }
 
 /**
