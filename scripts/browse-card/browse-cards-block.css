@@ -87,21 +87,12 @@
     line-height: 17px;
     margin: 2px 0 0 0;
 }
-.browse-cards-block-content > div:first-child .browse-card .bookmark .exl-tooltip-label,
-.browse-cards-block-content > div:first-child .browse-card .copy-link .exl-tooltip-label {
+.browse-cards-block-content > div:first-child .browse-card .user-actions .action-tooltip {
   left: 100%;
   transform: translateX(-20%);
 }
-.browse-cards-block-content > div:first-child .browse-card .bookmark .exl-tooltip-label::after,
-.browse-cards-block-content > div:first-child .browse-card .copy-link .exl-tooltip-label::after {
+.browse-cards-block-content > div:first-child .browse-card .user-actions .action-tooltip::after {
   left: 10%;
-}
-.browse-cards-block-content > div:first-child .browse-card .bookmark + .copy-link .exl-tooltip-label {
-  left: 50%;
-  transform: translateX(-50%);
-}
-.browse-cards-block-content > div:first-child .browse-card .bookmark + .copy-link .exl-tooltip-label::after {
-  left: 50%;
 }
 @media only screen and (min-width: 600px) {
     .browse-cards-block-title {

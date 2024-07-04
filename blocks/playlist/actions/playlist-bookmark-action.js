@@ -42,10 +42,14 @@ export async function decorateBookmark(bookmarkButton) {
   bookmarkButton.dataset.bookmarked = false;
 
   if (!isSignedIn) {
-    const signInToBookmarkTooltip = createPlaceholderSpan('bookmarkUnauthTipText', 'Sign-in to bookmark', (span) => {
-      span.dataset.signedIn = 'false';
-      span.classList.add('playlist-action-tooltip-label');
-    });
+    const signInToBookmarkTooltip = createPlaceholderSpan(
+      'userActionSigninBookmarkTooltip',
+      'Sign-in to bookmark',
+      (span) => {
+        span.dataset.signedIn = 'false';
+        span.classList.add('playlist-action-tooltip-label');
+      },
+    );
 
     bookmarkButton.appendChild(signInToBookmarkTooltip);
     bookmarkButton.disabled = true;
@@ -85,12 +89,12 @@ export async function bookmark(event) {
   if (isBookmarked) {
     // bookmark was just removed
     button.dataset.bookmarked = 'false';
-    sendNotice(`${placeholders.bookmarkUnset}`);
+    sendNotice(`${placeholders.userActionRemoveBookmarkToastText}`);
     assetInteractionModel(getCurrentPlaylistBookmarkPath(), 'Bookmark removed');
   } else {
     // bookmark was just added
     button.dataset.bookmarked = 'true';
-    sendNotice(`${placeholders.bookmarkSet}`);
+    sendNotice(`${placeholders.userActionBookmarkToastText}`);
     assetInteractionModel(getCurrentPlaylistBookmarkPath(), 'Bookmarked');
   }
   return true;
