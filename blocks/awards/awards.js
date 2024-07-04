@@ -1,7 +1,9 @@
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import Pagination from '../../scripts/pagination/pagination.js';
 
+const RESULTS_PER_PAGE = 6;
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -66,7 +68,6 @@ export default async function decorate(block) {
         description: skill.description,
       }))
       .sort((a, b) => new Date(a.originalTimestamp) - new Date(b.originalTimestamp))
-      .slice(-3)
       .map((skill) => ({
         Timestamp: skill.formattedTimestamp,
         Title: skill.title,
@@ -74,8 +75,21 @@ export default async function decorate(block) {
       }));
 
     if (awardDetails.length) {
-      const awardsDiv = document.createRange().createContextualFragment(generateAwardsBlock(awardDetails));
-      block.append(awardsDiv);
+      const pgNum = 0;
+      const totalPages = Math.ceil(awardDetails.length / RESULTS_PER_PAGE);
+      const renderItems = ({ pgNum: pgNumber, block: blockEl }) => {
+        const start = pgNumber * RESULTS_PER_PAGE;
+        const end = start + RESULTS_PER_PAGE;
+        const items = awardDetails.slice(start, end);
+        const wrapper = blockEl.querySelector('.awards-holder');
+        const awardsDiv = document.createRange().createContextualFragment(generateAwardsBlock(items));
+        wrapper.innerHTML = '';
+        wrapper.append(awardsDiv);
+      };
+      block.innerHTML = `<div class="awards-holder"></div>`;
+      // eslint-disable-next-line no-new
+      new Pagination({ wrapper: block, identifier: 'awards', renderItems, pgNumber: pgNum, totalPages });
+      renderItems({ pgNum, block });
     } else {
       const awardsEmptyDiv = document.createRange().createContextualFragment(generateEmptyAwardsBlock());
       block.append(awardsEmptyDiv);
