@@ -8,7 +8,7 @@ import {
   loadBlocks,
 } from './lib-franklin.js';
 import { decorateRichtext } from './editor-support-rte.js';
-import { decorateMain, loadIms } from './scripts.js';
+import { decorateMain, loadArticles, loadIms } from './scripts.js';
 
 // set aem content root
 window.hlx.aemRoot = '/content/exlm/global';
@@ -175,6 +175,7 @@ async function applyChanges(event) {
       decorateRichtext(newMain);
       await loadBlocks(newMain);
       element.remove();
+      loadArticles();
       newMain.style.display = null;
       // eslint-disable-next-line no-use-before-define
       attachEventListners(newMain);

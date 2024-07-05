@@ -1072,7 +1072,7 @@ async function loadRails() {
 /**
  * Custom - Loads and builds layout for articles page
  */
-async function loadArticles() {
+export async function loadArticles() {
   if (isArticlePage()) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/articles/articles.css`);
     const mod = await import('./articles/articles.js');
