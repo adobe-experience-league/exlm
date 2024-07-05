@@ -3,7 +3,7 @@ import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { decorateBookmark, bookmarkHandler } from './bookmark.js';
 import { copyHandler, decorateCopyLink } from './copy-link.js';
 
-await loadCSS('/scripts/user-actions/user-actions.css');
+await loadCSS(`${window.hlx.codeBasePath}/scripts/user-actions/user-actions.css`);
 
 let placeholders = {};
 try {
