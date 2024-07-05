@@ -253,20 +253,6 @@ export function isArticleLandingPage() {
   return theme.split(',').find((t) => t.toLowerCase().startsWith('article-'));
 }
 
-function addArticleLandingRail(main) {
-  // if there is already editable browse rail stored
-  const articleRailSectionFound = [...main.querySelectorAll('.section-metadata')].find((sMeta) =>
-    readBlockConfig(sMeta)?.style.split(',').includes('article-rail-section'),
-  );
-  if (articleRailSectionFound) return;
-
-  // default: create a dynamic uneditable article rail
-  const leftRailSection = document.createElement('div');
-  leftRailSection.classList.add('articles-rail-section', isArticleLandingPage());
-  leftRailSection.append(buildBlock('articles-rail', []));
-  main.append(leftRailSection);
-}
-
 /**
  * Check if current page is a Profile page.
  * theme = profile is set in bulk metadata for /en/profile** paths.
@@ -396,9 +382,6 @@ function buildAutoBlocks(main) {
     if (isBrowsePage()) {
       addBrowseBreadCrumb(main);
       addBrowseRail(main);
-    }
-    if (isArticleLandingPage()) {
-      addArticleLandingRail(main);
     }
     // eslint-disable-next-line no-use-before-define
     if (isArticlePage()) {

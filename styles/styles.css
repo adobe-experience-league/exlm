@@ -996,8 +996,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
 }
 /* browse rail breakpoint same as main hamburger menu (>= 1024px) */
 @media (min-width: 1024px) {
-  body[class^=browse-] > main,
-  body[class^=article-] > main {
+  body[class^=browse-] > main {
     display: grid;
     grid-template: "browse-rail main"/256px 1fr;
     /* on pages with rails the max width must be on main */
@@ -1005,14 +1004,10 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
     margin: auto;
     grid-template-rows: auto auto;
   }
-  body[class^=article-] > main {
-    grid-template: "articles-rail main"/256px 1fr;
-  }
   main > div.section {
     grid-column: 2;
   }
-  main > div.section.browse-rail-section,
-  main > div.section.articles-rail-section {
+  main > div.section.browse-rail-section {
     display: initial;
     grid-column: 1;
     grid-row: 1/100;
