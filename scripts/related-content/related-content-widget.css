@@ -1,7 +1,9 @@
+.related-content-wrapper {
+  margin: 20px 0 0;
+}
 .related-content-wrapper .related-content-toggle {
   display: flex;
   align-items: center;
-  margin: 20px 0 0;
   cursor: pointer;
 }
 .related-content-wrapper .related-content-toggle h2 {
@@ -12,7 +14,12 @@
   margin: 0;
 }
 .related-content-wrapper .related-content-toggle[aria-expanded=false] + ul {
-  display: none;
+  max-height: 0;
+  transition: max-height 300ms ease;
+}
+.related-content-wrapper .related-content-toggle[aria-expanded=true] + ul {
+  max-height: 15em;
+  transition: max-height 300ms ease;
 }
 .related-content-wrapper .related-content-toggle::after {
   position: absolute;
@@ -25,6 +32,7 @@
   box-sizing: content-box;
   background: rgba(0, 0, 0, 0) url("/icons/chevron_down.svg") no-repeat right center;
   transform: rotate(180deg);
+  transition: transform 300ms;
 }
 .related-content-wrapper .related-content-toggle[aria-expanded=true]::after {
   transform: rotate(0);
@@ -32,15 +40,55 @@
 .related-content-wrapper ul.related-content {
   list-style: none;
   margin: 0;
-  padding: 0 10px;
+  padding: 0 5px;
+  cursor: pointer;
+  overflow: hidden;
 }
 .related-content-wrapper ul.related-content li {
   margin: 5px 0;
   display: flex;
-  cursor: pointer;
 }
 .related-content-wrapper ul.related-content li .related-content-icon {
   margin: 0 10px 0 0;
+}
+.related-content-wrapper ul.related-content li .related-content-icon .related-content-tooltip {
+  display: inline;
+}
+.related-content-wrapper ul.related-content li .related-content-icon .related-content-tooltip .tooltip-label-wrapper {
+  font-size: 12px;
+  position: absolute;
+  visibility: hidden;
+  transition: all 130ms ease-in-out;
+}
+.related-content-wrapper ul.related-content li .related-content-icon .related-content-tooltip .tooltip-label-wrapper .tooltip-label {
+  display: block;
+  background-color: var(--spectrum-gray-600);
+  border-radius: 4px;
+  position: relative;
+  bottom: 3em;
+  left: 0.5em;
+  color: var(--spectrum-gray-50);
+  font-weight: var(--font-weight-400);
+  padding: 2px 8px 4px;
+  text-align: center;
+  text-wrap: nowrap;
+  transform: translateX(-50%);
+  white-space: pre;
+  z-index: 1;
+  visibility: hidden;
+}
+.related-content-wrapper ul.related-content li .related-content-icon .related-content-tooltip .tooltip-label-wrapper .tooltip-label::after {
+  border-width: 4px;
+  border-style: solid;
+  border-color: var(--spectrum-gray-600) transparent transparent transparent;
+  content: "";
+  left: 50%;
+  margin-left: -4px;
+  position: absolute;
+  top: 100%;
+}
+.related-content-wrapper ul.related-content li .related-content-icon:hover .related-content-tooltip .tooltip-label {
+  visibility: visible;
 }
 .related-content-wrapper ul.related-content a {
   font-size: var(--spectrum-font-size-100);
