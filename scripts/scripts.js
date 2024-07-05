@@ -248,6 +248,11 @@ export async function fetchAuthorBio(anchor) {
     });
 }
 
+export function isArticleLandingPage() {
+  const theme = getMetadata('theme');
+  return theme.split(',').find((t) => t.toLowerCase().startsWith('article-'));
+}
+
 /**
  * Check if current page is a Profile page.
  * theme = profile is set in bulk metadata for /en/profile** paths.
