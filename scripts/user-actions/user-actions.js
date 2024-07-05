@@ -75,10 +75,12 @@ const UserActions = (config) => {
    */
   const decorate = async () => {
     const actions = htmlToElement(`<div class="user-actions"></div>`);
-    const actionDefinitions = [
-      {
+    const actionDefinitions = [];
+
+    if (bookmarkConfig !== false) {
+      actionDefinitions.push({
         name: 'bookmark',
-        icons: ['bookmark', 'bookmark-active'],
+        icons: bookmarkConfig?.icons || ['bookmark', 'bookmark-active'],
         label: bookmarkConfig?.label,
         onButtonReady: (element) =>
           decorateBookmark({
@@ -102,8 +104,11 @@ const UserActions = (config) => {
                 'Success! This is no longer bookmarked to your profile.',
             },
           }),
-      },
-      {
+      });
+    }
+
+    if (copyConfig !== false) {
+      actionDefinitions.push({
         name: 'copy-link',
         icons: copyConfig?.icons || ['copy'],
         label: copyConfig?.label,
@@ -122,14 +127,15 @@ const UserActions = (config) => {
               copyToastText: placeholders?.userActionCopylinkToastText || 'URL copied',
             },
           }),
-      },
-    ];
+      });
+    }
 
-    actionDefinitions.forEach((def) => {
-      actions.append(addAction(def));
-    });
-
-    container.appendChild(actions);
+    if (actionDefinitions.length) {
+      actionDefinitions.forEach((def) => {
+        actions.append(addAction(def));
+      });
+      container.appendChild(actions);
+    }
   };
 
   return {
