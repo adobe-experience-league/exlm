@@ -59,6 +59,42 @@
     ]
   },
   {
+    "id": "section-article",
+    "components": [
+      "text",
+      "image",
+      "button",
+      "title",
+      "columns",
+      "icon-block",
+      "curated-cards",
+      "teaser",
+      "detailed-teaser",
+      "marquee",
+      "carousel",
+      "sign-up",
+      "video-embed",
+      "secondary-search",
+      "accordion-group",
+      "media",
+      "authorable-card",
+      "featured-cards",
+      "events-cards",
+      "adls-cards",
+      "tabbed-cards",
+      "tabs",
+      "recommended-courses",
+      "block-quote",
+      "callout",
+      "featured-authors",
+      "inline-survey",
+      "featured-content",
+      "browse-filters",
+      "topic-results",
+      "article-tags"
+    ]
+  },
+  {
     "id": "tab-section",
     "components": [
       "text",

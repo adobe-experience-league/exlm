@@ -106,6 +106,16 @@ function updateUEInstrumentation() {
         setUEFilter(elem, 'tab-section');
       });
     }
+
+    // Update available blocks for default sections excluding article-header-section, article-content-section and tab-section
+    main
+      .querySelectorAll(
+        '.section:not(.article-content-section):not(.article-header-section):not([data-aue-model^="tab-section"])',
+      )
+      .forEach((elem) => {
+        setUEFilter(elem, 'section-article');
+      });
+
     return;
   }
 
