@@ -1,4 +1,4 @@
-import { copyToClipboard } from '../../../scripts/copy-link/copy-link.js';
+import { copyToClipboard } from '../../../scripts/user-actions/copy-link.js';
 import { fetchLanguagePlaceholders } from '../../../scripts/scripts.js';
 
 let placeholders = {};
@@ -12,7 +12,7 @@ try {
 export default function copy() {
   copyToClipboard({
     text: window.location.href,
-    toastNoticeText: placeholders.toastSet,
+    toastText: placeholders.userActionCopylinkToastText,
   });
   return true;
 }
