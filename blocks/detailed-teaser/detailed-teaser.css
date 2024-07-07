@@ -307,3 +307,15 @@ border-radius: 30px;
     padding: 0 var(--space-token-l);
   }
 }
+
+.tabs.block div.detailed-teaser-wrapper {
+  /* stretches to window edge in mobile view */
+  margin-left: unset;
+  margin-right: unset;
+}
+
+@media (min-width: 1024px) {
+  .tabs.block .detailed-teaser.block > .foreground > .text {
+      min-width: 300px;
+  }
+}
