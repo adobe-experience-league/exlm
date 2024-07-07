@@ -225,13 +225,17 @@ async function applyChanges(event) {
         const { parentElement } = element;
         if (element.matches('.tabpanel')) {
           const [newSection] = newElements;
+          element.style.display = 'none';
+          element.insertAdjacentElement('afterend', newSection);
           decorateButtons(newSection);
           decorateIcons(newSection);
-          newSection.querySelector('.section-metadata')?.remove();
-          element.innerHTML = newSection.innerHTML;
+          decorateSections(parentElement);
           decorateBlocks(parentElement);
-          decorateRichtext(parentElement);
+          decorateRichtext(newSection);
           await loadBlocks(parentElement);
+          element.innerHTML = newSection.innerHTML;
+          newSection.remove();
+          element.style.display = null;
           return true;
         }
         if (element.matches('.section')) {
