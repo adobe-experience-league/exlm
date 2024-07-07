@@ -310,14 +310,7 @@ function addMiniToc(main) {
   const miniTocBlock = buildBlock('mini-toc', [])
   tocSection.append(miniTocBlock);
   miniTocBlock.style.display = 'none';
-  const contentContainer = document.createElement('div');
-  contentContainer.classList.add('content-container');
-  if (document.querySelector('.article-marquee')) {
-    const articleMarquee = document.querySelector('.article-marquee');
-    articleMarquee.parentNode.insertAdjacentElement('afterend', tocSection);
-  } else {
-    main.prepend(tocSection);
-  }
+  main.append(tocSection);
 }
 
 /**
