@@ -23,6 +23,7 @@ async function fetchIndustryOptions() {
     const data = await response.json();
     return data;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('There was a problem with the fetch operation:', error);
     return [];
   }
