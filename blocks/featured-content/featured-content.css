@@ -206,6 +206,13 @@
     font-size: 18px;
   }
 
+  .featured-content.block div.description p {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
   /* ------- tablet ------- */
   @media (min-width: 600px) {
     /* for tablet change grid layout */
