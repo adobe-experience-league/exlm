@@ -96,9 +96,8 @@
   /*  the author info entries */
   .featured-content.block .author {
     display: flex;
-    margin: 0 auto;
-    margin-top: 32px;
-    width:320px;
+    margin-top: 8px;
+    margin-left: 8px;
   }
 
   /* the author image */
@@ -140,6 +139,10 @@
 
   .featured-content.block .author .author-image .company-dot.external {
     background-color: var(--spectrum-indigo-1400);
+  }
+
+  .featured-content.block div.author-header h3 {
+    margin: 0;
   }
 
   /* the author details */
@@ -236,6 +239,12 @@
     }
 
     .featured-content.block div.author-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .featured-content.block div.author-wrapper {
         display: flex;
         flex-direction: row;
         gap: 16px;

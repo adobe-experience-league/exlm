@@ -42,13 +42,17 @@ export async function getContentReference(link) {
     if (authorBioPage && window.hlx.aemRoot) {
       authorBioPage = `${authorBioPage}.html`;
     }
-
-    const authorInfo = authorBioPage ? await fetchAuthorBio(authorBioPage) : null;
+    let authorDetails = [];
+    if (authorBioPage) {
+      const authorBioPagesCall = authorBioPage.split(',').map((authorLink) => authorLink ? fetchAuthorBio(authorLink.trim()) : null);
+      const authorDetailsResponse = await Promise.all(authorBioPagesCall);
+      authorDetails = authorDetailsResponse.filter(Boolean);
+    }
 
     return {
       contentTitle: htmlDoc.title,
       contentDescription: description,
-      authorInfo,
+      authorInfo: authorDetails,
     };
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -91,19 +95,30 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
     div({ class: 'cta' }, decorateButton(cta)),
   );
   const authorContainer = div({ class: 'author-container' });
+  const authorWrapper = div({ class: 'author-wrapper' });
+  const authorHeader = div({ class: 'author-header' });
+  authorContainer.appendChild(authorHeader);
+  authorContainer.appendChild(authorWrapper);
+  const { authorInfo } = contentInfo;
+  if (authorInfo.length) {
+    const headerTextKey = authorInfo.length > 1 ? 'featuredAuthor' : 'featuredAuthors';
+    const headerText = placeholders[headerTextKey] ?? `Featured Author${authorInfo.length > 1 ? 's' : ''}`;
+    authorHeader.innerHTML = `<h3>${headerText}</h3>`;
+  }
+  authorInfo.forEach((author) => {
+    const { authorName: name, authorImage: pic } = author;
+    const authorDiv = div(
+      { class: 'author' },
+      div(
+        { class: 'author-image' },
+        createOptimizedPicture(pic, name, 'eager', [{ width: '100' }]),
+        div({ class: `company-dot ${company}` }),
+      ),
+      div({ class: 'author-details' }, div(name)),
+    );
+    if (authorDiv) authorWrapper.append(authorDiv);
+  });
 
-  const name = contentInfo.authorInfo.authorName;
-  const pic = contentInfo.authorInfo.authorImage;
-  const authorDiv = div(
-    { class: 'author' },
-    div(
-      { class: 'author-image' },
-      createOptimizedPicture(pic, name, 'eager', [{ width: '100' }]),
-      div({ class: `company-dot ${company}` }),
-    ),
-    div({ class: 'author-details' }, div(name)),
-  );
-  if (authorDiv) authorContainer.append(authorDiv);
   cta.replaceWith(contentDiv);
   block.append(authorContainer);
 }
