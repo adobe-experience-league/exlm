@@ -103,7 +103,7 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
   authorContainer.appendChild(authorWrapper);
   const { authorInfo } = contentInfo;
   if (authorInfo.length) {
-    const headerTextKey = authorInfo.length > 1 ? 'featuredAuthor' : 'featuredAuthors';
+    const headerTextKey = authorInfo.length > 1 ? 'featuredAuthors' : 'featuredAuthor';
     const headerText = placeholders[headerTextKey] ?? `Featured Author${authorInfo.length > 1 ? 's' : ''}`;
     authorHeader.innerHTML = `<h3>${headerText}</h3>`;
   }
@@ -120,7 +120,6 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
     );
     if (authorDiv) authorWrapper.append(authorDiv);
   });
-
   cta.replaceWith(contentDiv);
   block.append(authorContainer);
 }

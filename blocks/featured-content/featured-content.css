@@ -7,10 +7,11 @@
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto ;
+    gap: 16px;
     grid-template-areas:
       "image"
-      "description"
       "author"
+      "description"
   }
 
   /* the order is different from properties rail */
@@ -143,6 +144,7 @@
 
   .featured-content.block div.author-header h3 {
     margin: 0;
+    text-transform: uppercase;
   }
 
   /* the author details */
@@ -186,6 +188,22 @@
     margin: 0;
     margin-top: 20px;
     padding: 2px 10px;
+  }
+
+  .featured-content.block div.author-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .featured-content.block div.author-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .featured-content.block div.author-header h3 {
+    font-size: 18px;
   }
 
   /* ------- tablet ------- */
@@ -238,12 +256,6 @@
       justify-self: left;
     }
 
-    .featured-content.block div.author-container {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
     .featured-content.block div.author-wrapper {
         display: flex;
         flex-direction: row;
@@ -256,6 +268,24 @@
 
     .featured-content.block  .author .author-image {
       margin-left: 10px;
+    }
+
+    .featured-content.block div.author-header h3 {
+      font-size: 14px;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .featured-content.block {
+      gap: 0;
+      grid-template-areas:
+        "image"
+        "description"
+        "author"
+    }
+  
+    .featured-content.block div.author-container {
+      gap: 0;
     }
   }
 
