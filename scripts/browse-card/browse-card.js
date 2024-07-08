@@ -2,11 +2,8 @@ import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { createTooltip } from './browse-card-tooltip.js';
 import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS, AUTHOR_TYPE } from './browse-cards-constants.js';
-import { tooltipTemplate } from '../toast/toast.js';
-import renderBookmark from '../bookmark/bookmark.js';
-import attachCopyLink from '../copy-link/copy-link.js';
-import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
+import UserActions from '../user-actions/user-actions.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
 
@@ -191,6 +188,7 @@ const buildCardContent = async (card, model) => {
     id,
     description,
     contentType: type,
+    viewLink,
     viewLinkText,
     copyLink,
     tags,
@@ -244,7 +242,7 @@ const buildCardContent = async (card, model) => {
     buildEventContent({ event, cardContent, card });
   }
 
-  if (contentType === CONTENT_TYPES.ARTICLE.MAPPING_KEY) {
+  if (contentType === CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY) {
     const authorElement = createTag('div', { class: 'browse-card-author-info' });
 
     if (authorInfo?.name) {
@@ -273,71 +271,23 @@ const buildCardContent = async (card, model) => {
 
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
-  if (
-    contentType !== CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY &&
-    contentType !== CONTENT_TYPES.COMMUNITY.MAPPING_KEY &&
-    contentType !== CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY
-  ) {
-    const unAuthBookmark = document.createElement('div');
-    unAuthBookmark.className = 'bookmark';
-    unAuthBookmark.innerHTML = tooltipTemplate('bookmark-icon', '', `${placeholders.bookmarkUnauthLabel}`);
 
-    const authBookmark = document.createElement('div');
-    authBookmark.className = 'bookmark auth';
-    authBookmark.innerHTML = tooltipTemplate('bookmark-icon', '', `${placeholders.bookmarkAuthLabelSet}`);
-    const isSignedIn = await isSignedInUser();
-    if (isSignedIn) {
-      cardOptions.appendChild(authBookmark);
-      if (id) {
-        cardOptions.children[0].setAttribute('data-id', id);
-      } else {
-        cardOptions.children[0].setAttribute('data-id', 'none');
-      }
-    } else {
-      cardOptions.appendChild(unAuthBookmark);
-    }
-  }
-  if (copyLink) {
-    const copyLinkElem = document.createElement('div');
-    copyLinkElem.className = 'copy-link';
-    copyLinkElem.innerHTML = tooltipTemplate('copy-icon', '', `${placeholders.toastTiptext}`);
-    cardOptions.appendChild(copyLinkElem);
-    copyLinkElem.setAttribute('data-link', copyLink);
-    if (id) {
-      copyLinkElem.setAttribute('data-id', id);
-    }
-  }
+  const bookmarkEnabled = ![
+    CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
+    CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
+    CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
+  ].includes(contentType);
+  const cardAction = UserActions({
+    container: cardOptions,
+    id: id || viewLink ? new URL(viewLink).pathname : '',
+    link: copyLink,
+    bookmarkConfig: bookmarkEnabled,
+  });
+
+  cardAction.decorate();
+
   cardFooter.appendChild(cardOptions);
   buildCardCtaContent({ cardFooter, contentType, viewLinkText });
-};
-
-const setupBookmarkAction = (wrapper) => {
-  defaultProfileClient.getMergedProfile().then(async (data) => {
-    const bookmarkAuthed = Array.from(wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark'));
-    bookmarkAuthed.forEach((bookmark) => {
-      const bookmarkId = bookmark.getAttribute('data-id');
-      if (data?.bookmarks?.find((bookmarkIdInfo) => bookmarkIdInfo.includes(bookmarkId))) {
-        bookmark.querySelector('.bookmark-icon').classList.add('authed');
-        bookmark.querySelector('.exl-tooltip-label').innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
-      }
-    });
-  });
-
-  Array.from(wrapper.querySelectorAll('.browse-card-footer .browse-card-options .bookmark')).forEach((bookmark) => {
-    const bookmarkAuthedToolTipLabel = bookmark.querySelector('.exl-tooltip-label');
-    const bookmarkAuthedToolTipIcon = bookmark.querySelector('.bookmark-icon');
-    const bookmarkId = bookmark.getAttribute('data-id');
-    renderBookmark(bookmarkAuthedToolTipLabel, bookmarkAuthedToolTipIcon, bookmarkId);
-  });
-};
-
-const setupCopyAction = (wrapper) => {
-  Array.from(wrapper.querySelectorAll('.copy-link')).forEach((copylink) => {
-    const copylinkvalue = copylink.getAttribute('data-link');
-    if (copylinkvalue) {
-      attachCopyLink(copylink, copylinkvalue, placeholders.toastSet);
-    }
-  });
 };
 
 /**
@@ -444,14 +394,11 @@ export async function buildCard(container, element, model) {
     cardContent.appendChild(titleElement);
   }
   await buildCardContent(card, model);
-  setupBookmarkAction(card);
-  setupCopyAction(card);
   if (model.viewLink) {
     const cardContainer = document.createElement('a');
     cardContainer.setAttribute('href', model.viewLink);
-    const browseCardOptions = card.querySelector('.browse-card-options');
     cardContainer.addEventListener('click', (e) => {
-      const preventLinkRedirection = !!(e.target && browseCardOptions.contains(e.target));
+      const preventLinkRedirection = !!(e.target && e.target.closest('.user-actions'));
       if (preventLinkRedirection) {
         e.preventDefault();
       }
@@ -476,5 +423,5 @@ export async function buildCard(container, element, model) {
     },
     { once: true },
   );
-  decorateIcons(element);
+  await decorateIcons(element);
 }

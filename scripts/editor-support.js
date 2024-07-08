@@ -8,7 +8,7 @@ import {
   loadBlocks,
 } from './lib-franklin.js';
 import { decorateRichtext } from './editor-support-rte.js';
-import { decorateMain, loadIms } from './scripts.js';
+import { decorateMain, loadArticles, loadIms } from './scripts.js';
 
 // set aem content root
 window.hlx.aemRoot = '/content/exlm/global';
@@ -106,6 +106,16 @@ function updateUEInstrumentation() {
         setUEFilter(elem, 'tab-section');
       });
     }
+
+    // Update available blocks for default sections excluding article-header-section, article-content-section and tab-section
+    main
+      .querySelectorAll(
+        '.section:not(.article-content-section):not(.article-header-section):not([data-aue-model^="tab-section"])',
+      )
+      .forEach((elem) => {
+        setUEFilter(elem, 'section-article');
+      });
+
     return;
   }
 
@@ -175,6 +185,7 @@ async function applyChanges(event) {
       decorateRichtext(newMain);
       await loadBlocks(newMain);
       element.remove();
+      loadArticles();
       newMain.style.display = null;
       // eslint-disable-next-line no-use-before-define
       attachEventListners(newMain);
@@ -207,6 +218,17 @@ async function applyChanges(event) {
       );
       if (newElements.length) {
         const { parentElement } = element;
+        if (element.matches('.tabpanel')) {
+          const [newSection] = newElements;
+          decorateButtons(newSection);
+          decorateIcons(newSection);
+          newSection.querySelector('.section-metadata')?.remove();
+          element.innerHTML = newSection.innerHTML;
+          decorateBlocks(parentElement);
+          decorateRichtext(parentElement);
+          await loadBlocks(parentElement);
+          return true;
+        }
         if (element.matches('.section')) {
           const [newSection] = newElements;
           newSection.style.display = 'none';

@@ -253,20 +253,6 @@ export function isArticleLandingPage() {
   return theme.split(',').find((t) => t.toLowerCase().startsWith('article-'));
 }
 
-function addArticleLandingRail(main) {
-  // if there is already editable browse rail stored
-  const articleRailSectionFound = [...main.querySelectorAll('.section-metadata')].find((sMeta) =>
-    readBlockConfig(sMeta)?.style.split(',').includes('article-rail-section'),
-  );
-  if (articleRailSectionFound) return;
-
-  // default: create a dynamic uneditable article rail
-  const leftRailSection = document.createElement('div');
-  leftRailSection.classList.add('articles-rail-section', isArticleLandingPage());
-  leftRailSection.append(buildBlock('articles-rail', []));
-  main.append(leftRailSection);
-}
-
 /**
  * Check if current page is a Profile page.
  * theme = profile is set in bulk metadata for /en/profile** paths.
@@ -351,7 +337,14 @@ async function buildTabSection(main) {
         tabs.dataset.tabIndex = tabIndex;
         tabContainer = document.createElement('div');
         tabContainer.classList.add('section');
-        tabContainer.classList.add('article-content-section');
+        if (
+          i > 0 &&
+          sections[i - 1]
+            .querySelector('.section-metadata > div > div:nth-child(2)')
+            ?.textContent.includes('article-content-section')
+        ) {
+          tabContainer.classList.add('article-content-section');
+        }
         tabContainer.append(tabs);
         main.insertBefore(tabContainer, section);
       }
@@ -365,9 +358,6 @@ async function buildTabSection(main) {
       }
       section.classList.add(`tab-index-${tabIndex}`);
     }
-  });
-  main.querySelectorAll('.delete-this-section').forEach((section) => {
-    section.remove();
   });
 }
 
@@ -392,9 +382,6 @@ function buildAutoBlocks(main) {
     if (isBrowsePage()) {
       addBrowseBreadCrumb(main);
       addBrowseRail(main);
-    }
-    if (isArticleLandingPage()) {
-      addArticleLandingRail(main);
     }
     // eslint-disable-next-line no-use-before-define
     if (isArticlePage()) {
@@ -1068,7 +1055,7 @@ async function loadRails() {
 /**
  * Custom - Loads and builds layout for articles page
  */
-async function loadArticles() {
+export async function loadArticles() {
   if (isArticlePage()) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/articles/articles.css`);
     const mod = await import('./articles/articles.js');
@@ -1080,11 +1067,14 @@ async function loadArticles() {
     if (!document.querySelector('main > .article-content-section, main > .tab-section')) {
       document.querySelector('main > .mini-toc-section').remove();
     } else {
-    document
-      .querySelectorAll('main > .article-content-section, main > .tab-section, main > .mini-toc-section')
-      .forEach((section) => {
-        contentContainer.append(section);
-      });
+      if (document.querySelector('.mini-toc.block')) {
+        document.querySelector('.mini-toc.block').style.display = null;
+      }
+      document
+        .querySelectorAll('main > .article-content-section, main > .tab-section, main > .mini-toc-section')
+        .forEach((section) => {
+          contentContainer.append(section);
+        });
       if (document.querySelector('.article-header-section')) {
         document.querySelector('.article-header-section').after(contentContainer);
       } else {

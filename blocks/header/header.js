@@ -12,7 +12,7 @@ import {
 import getProducts from '../../scripts/utils/product-utils.js';
 
 const languageModule = import('../../scripts/language.js');
-const { khorosProfileUrl, isProd } = getConfig();
+const { khorosProfileUrl } = getConfig();
 
 let searchElementPromise = null;
 
@@ -470,14 +470,6 @@ const searchDecorator = async (searchBlock) => {
   const searchOptions = getCell(searchBlock, 1, 3)?.firstElementChild?.children || [];
   const options = [...searchOptions].map((option) => option.textContent);
 
-  const parsedOptions = options
-    .map((option) => {
-      const [label, value] = option.split(':');
-      return { label, value };
-    })
-    // TODO - remove this filter once articles need to be live on Prod.
-    .filter((option) => !isProd || option?.value?.toLowerCase() !== 'article');
-
   searchBlock.innerHTML = '';
   const searchWrapper = htmlToElement(
     `<div class="search-wrapper">
@@ -499,19 +491,23 @@ const searchDecorator = async (searchBlock) => {
           </div>
         </div>
         <button type="button" class="search-picker-button" aria-haspopup="true" aria-controls="search-picker-popover">
-          <span class="search-picker-label" data-filter-value="${parsedOptions[0]?.value}">${
-            parsedOptions[0]?.label || ''
+          <span class="search-picker-label" data-filter-value="${options[0].split(':')[1]}">${
+            options[0].split(':')[0] || ''
           }</span>
         </button>
         <div class="search-picker-popover" id="search-picker-popover">
           <ul role="listbox">
-            ${parsedOptions
+            ${options
               .map(
-                ({ label, value }, index) =>
-                  `<li tabindex="0" role="option" class="search-picker-label" data-filter-value="${value}">${
+                (option, index) =>
+                  `<li tabindex="0" role="option" class="search-picker-label" data-filter-value="${
+                    option.split(':')[1]
+                  }">${
                     index === 0
-                      ? `<span class="icon icon-checkmark"></span> <span data-filter-value="${value}">${label}</span>`
-                      : `<span data-filter-value="${value}">${label}</span>`
+                      ? `<span class="icon icon-checkmark"></span> <span data-filter-value="${option.split(':')[1]}">${
+                          option.split(':')[0]
+                        }</span>`
+                      : `<span data-filter-value="${option.split(':')[1]}">${option.split(':')[0]}</span>`
                   }</li>`,
               )
               .join('')}
