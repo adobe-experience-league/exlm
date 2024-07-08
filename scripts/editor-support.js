@@ -180,10 +180,10 @@ async function applyChanges(event) {
     if (element.matches('main')) {
       const newMain = parsedUpdate.querySelector(`[data-aue-resource="${resource}"]`);
       newMain.style.display = 'none';
-      if(isArticlePage()) {
-        element.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((heading)=>{
-          heading.classList.add("no-mtoc")
-        }) 
+      if (isArticlePage()) {
+        element.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
+          heading.classList.add('no-mtoc');
+        });
       }
       element.insertAdjacentElement('afterend', newMain);
       decorateMain(newMain);
@@ -245,17 +245,19 @@ async function applyChanges(event) {
           element.insertAdjacentElement('afterend', newSection);
           decorateButtons(newSection);
           decorateIcons(newSection);
-          if(document.querySelector(".article-content-container")){
-            articleContentContainer = document.querySelector(".article-content-container").cloneNode(true);
+          if (document.querySelector('.article-content-container')) {
+            articleContentContainer = document.querySelector('.article-content-container').cloneNode(true);
           }
           decorateSections(parentElement);
           decorateBlocks(parentElement);
           decorateRichtext(newSection);
           await loadBlocks(parentElement);
           element.remove();
-          if(articleContentContainer){
-            parentElement.querySelector(".article-content-container").insertAdjacentElement("afterend", articleContentContainer)
-            parentElement.querySelector(".article-content-container").remove();
+          if (articleContentContainer) {
+            parentElement
+              .querySelector('.article-content-container')
+              .insertAdjacentElement('afterend', articleContentContainer);
+            parentElement.querySelector('.article-content-container').remove();
           }
           newSection.style.display = null;
         } else {
