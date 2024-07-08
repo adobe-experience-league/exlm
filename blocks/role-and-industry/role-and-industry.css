@@ -4,29 +4,9 @@
     flex-direction: column;
 }
 
-body.profile .role-and-industry .industry-selection-holder {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-body.profile .role-and-industry .industry-selection-heading {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    text-align: left;
-}
-
 .role-and-industry .industry-selection-heading {
     text-align: center;
 } 
-
-body.profile .role-and-industry .industry-selection-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: #000;
-}
 
 .role-and-industry .industry-selection-title {
     font-size: 28px;
@@ -34,23 +14,10 @@ body.profile .role-and-industry .industry-selection-title {
     color: #000;
 }
 
-body.profile .role-and-industry .industry-selection-description {
-    font-size: 16px;
-    color: #222222;
-    font-style: italic;
-    font-weight: 500;
-}
-
 .role-and-industry .industry-selection-description {
     font-style: normal;
 }
 
-body.profile .role-and-industry .industry-selection-dropdown {
-    margin-top: 5px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
 
 .role-and-industry .industry-selection-dropdown {
     display: none;
@@ -124,6 +91,40 @@ body.profile .role-and-industry .industry-selection-dropdown {
     min-height: 18px;
     font-size: 14px;
     line-height: 17px;
+}
+
+body.profile .role-and-industry .industry-selection-holder {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+body.profile .role-and-industry .industry-selection-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+}
+
+body.profile .role-and-industry .industry-selection-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #000;
+}
+
+body.profile .role-and-industry .industry-selection-description {
+    font-size: 16px;
+    color: #222222;
+    font-style: italic;
+    font-weight: 500;
+}
+
+body.profile .role-and-industry .industry-selection-dropdown {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 body.profile .role-and-industry .role-cards-description h3 {
