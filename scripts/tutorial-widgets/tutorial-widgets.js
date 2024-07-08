@@ -9,7 +9,7 @@ loadCSS(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.cs
 // Decorate the page with tutorial widgets
 export default function decorate() {
   // Select the main content section of the page
-  const mainDoc = document.querySelector('main > div.content-section-last');
+  const mainDoc = document.querySelector('main  div.content-section-last');
 
   // Create a new div element to contain the tutorial widgets and the header
   const wrapper = document.createElement('div');
