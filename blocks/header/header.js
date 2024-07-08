@@ -8,11 +8,12 @@ import {
   getConfig,
   getLink,
   fetchFragment,
+  isFeatureEnabled,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
 
 const languageModule = import('../../scripts/language.js');
-const { khorosProfileUrl, isProd } = getConfig();
+const { khorosProfileUrl } = getConfig();
 
 let searchElementPromise = null;
 
@@ -475,8 +476,8 @@ const searchDecorator = async (searchBlock) => {
       const [label, value] = option.split(':');
       return { label, value };
     })
-    // TODO - remove this filter once perspectives need to be live on Prod.
-    .filter((option) => !isProd || option?.value?.toLowerCase() !== 'perspective');
+    // TODO - remove dependecy on feature flag once perspectives are perminantely live
+    .filter((option) => option?.value?.toLowerCase() !== 'perspective' || isFeatureEnabled('perspectives'));
 
   searchBlock.innerHTML = '';
   const searchWrapper = htmlToElement(

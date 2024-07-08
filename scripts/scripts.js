@@ -1197,6 +1197,13 @@ async function loadDefaultModule(jsPath) {
   }
 }
 
+export function isFeatureEnabled(name) {
+  return getMetadata('feature-flags')
+    .split(',')
+    .map((t) => t.toLowerCase().trim())
+    .includes(name);
+}
+
 /**
  * THIS IS TEMPORARY FOR SUMMIT
  */
