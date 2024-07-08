@@ -31,7 +31,7 @@ async function fetchIndustryOptions() {
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
   const industryOptions = await fetchIndustryOptions();
-  const updatedIndustryOptions = industryOptions.data.map((industry) => ({
+  const updatedIndustryOptions = (industryOptions.data).map((industry) => ({
     ...industry,
     value: industry.Name,
     title: industry.Name,
@@ -119,7 +119,7 @@ export default async function decorate(block) {
 
   const selectIndustryDropDown = new Dropdown(
     block.querySelector('.industry-selection-dropdown'),
-    'Select Industry',
+    `${placeholders?.select || 'Select'}`,
     updatedIndustryOptions,
   );
   if (isSignedIn) {

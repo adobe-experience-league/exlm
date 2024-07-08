@@ -141,7 +141,7 @@ export default class Dropdown {
     this.parentFormElement.addEventListener('submit', (event) => event.preventDefault());
 
     const dropdown = document.createElement('div');
-    dropdown.classList.add(`${this.defaultValue.toLowerCase().replaceAll(' ', '')}-dropdown`, 'custom-filter-dropdown');
+    dropdown.classList.add(`${this.defaultValue.toLowerCase()}-dropdown`, 'custom-filter-dropdown');
     dropdown.dataset.filterType = this.defaultValue;
     dropdown.dataset.variant = this.variant;
     this.dropdown = dropdown;
