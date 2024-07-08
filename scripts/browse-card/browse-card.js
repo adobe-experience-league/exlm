@@ -242,7 +242,7 @@ const buildCardContent = async (card, model) => {
     buildEventContent({ event, cardContent, card });
   }
 
-  if (contentType === CONTENT_TYPES.ARTICLE.MAPPING_KEY) {
+  if (contentType === CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY) {
     const authorElement = createTag('div', { class: 'browse-card-author-info' });
 
     if (authorInfo?.name) {

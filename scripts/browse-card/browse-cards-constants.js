@@ -47,9 +47,9 @@ export const CONTENT_TYPES = Object.freeze({
     MAPPING_KEY: 'instructor-led-training',
     LABEL: placeholders.browseCardInstructorLedLabel || 'Instructor-Led',
   },
-  ARTICLE: {
+  PERSPECTIVE: {
     MAPPING_KEY: 'perspective',
-    LABEL: placeholders.browseCardArticleLabel || 'Perspective',
+    LABEL: placeholders.browseCardPerspectiveLabel || 'Perspective',
   },
 });
 

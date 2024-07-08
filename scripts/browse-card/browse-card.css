@@ -239,7 +239,7 @@
 .browse-card.documentation-card .browse-card-banner {
   background-color: var(--spectrum-celery-900);
 }
-.browse-card.article-card .browse-card-banner {
+.browse-card.perspective-card .browse-card-banner {
   background-color: var(--spectrum-gray-600);
 }
 .browse-card.troubleshooting-card .browse-card-banner {
@@ -273,7 +273,7 @@
 .browse-card.tutorial-card .browse-card-figure {
   max-height: 140px;
 }
-.browse-card.article-card .browse-card-figure,
+.browse-card.perspective-card .browse-card-figure,
 .browse-card.troubleshooting-card .browse-card-figure,
 .browse-card.certificate-card .browse-card-figure,
 .browse-card.certification-card .browse-card-figure,
