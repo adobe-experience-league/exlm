@@ -7,10 +7,11 @@
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto ;
+    gap: 16px;
     grid-template-areas:
       "image"
-      "description"
       "author"
+      "description"
   }
 
   /* the order is different from properties rail */
@@ -96,9 +97,8 @@
   /*  the author info entries */
   .featured-content.block .author {
     display: flex;
-    margin: 0 auto;
-    margin-top: 32px;
-    width:320px;
+    margin-top: 8px;
+    margin-left: 8px;
   }
 
   /* the author image */
@@ -142,6 +142,11 @@
     background-color: var(--spectrum-indigo-1400);
   }
 
+  .featured-content.block div.author-header h3 {
+    margin: 0;
+    text-transform: uppercase;
+  }
+
   /* the author details */
   .featured-content.block .author .author-details {
     display: flex;
@@ -183,6 +188,29 @@
     margin: 0;
     margin-top: 20px;
     padding: 2px 10px;
+  }
+
+  .featured-content.block div.author-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .featured-content.block div.author-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .featured-content.block div.author-header h3 {
+    font-size: 18px;
+  }
+
+  .featured-content.block div.description p {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   /* ------- tablet ------- */
@@ -235,7 +263,7 @@
       justify-self: left;
     }
 
-    .featured-content.block div.author-container {
+    .featured-content.block div.author-wrapper {
         display: flex;
         flex-direction: row;
         gap: 16px;
@@ -247,6 +275,24 @@
 
     .featured-content.block  .author .author-image {
       margin-left: 10px;
+    }
+
+    .featured-content.block div.author-header h3 {
+      font-size: 14px;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .featured-content.block {
+      gap: 0;
+      grid-template-areas:
+        "image"
+        "description"
+        "author"
+    }
+  
+    .featured-content.block div.author-container {
+      gap: 0;
     }
   }
 
