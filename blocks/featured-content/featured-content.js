@@ -44,7 +44,9 @@ export async function getContentReference(link) {
     }
     let authorDetails = [];
     if (authorBioPage) {
-      const authorBioPagesCall = authorBioPage.split(',').map((authorLink) => authorLink ? fetchAuthorBio(authorLink.trim()) : null);
+      const authorBioPagesCall = authorBioPage
+        .split(',')
+        .map((authorLink) => (authorLink ? fetchAuthorBio(authorLink.trim()) : null));
       const authorDetailsResponse = await Promise.all(authorBioPagesCall);
       authorDetails = authorDetailsResponse.filter(Boolean);
     }
