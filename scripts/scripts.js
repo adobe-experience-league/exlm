@@ -1332,11 +1332,22 @@ async function loadPage() {
   showBrowseBackgroundGraphic();
 
   if (isDocArticlePage()) {
+    // wrap main content in a div - UGP-11165
+    const main = document.querySelector('main');
+    const mainSections = [...main.children].slice(0, -2); // ignore last two sections: toc and mini-toc
+    const mainContent = document.createElement('div');
+    // insert mainContent as first child of main
+    main.prepend(mainContent);
+    mainSections.forEach((section) => {
+      mainContent.append(section);
+    });
+
+    // load prex/next buttons
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
 
+    // discoverability
     const params = new URLSearchParams(window.location.search);
     const hasDiscoverability = Boolean(params.get('discoverability'));
-
     if (hasDiscoverability) {
       loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
     }
