@@ -383,11 +383,12 @@ export async function fetchPerspectiveIndex(prefix = 'en') {
           if (resp.ok) {
             return resp.json();
           }
-          throw new Error(`${resp.status}: ${resp.statusText}`);
+          window.perspectiveIndex[prefix] = [];
+          return {};
         })
         .then((json) => {
-          window.perspectiveIndex[prefix] = json.data;
-          resolve(json.data);
+          window.perspectiveIndex[prefix] = json?.data ?? [];
+          resolve(json?.data ?? []);
         })
         .catch((error) => {
           window.perspectiveIndex[prefix] = [];
