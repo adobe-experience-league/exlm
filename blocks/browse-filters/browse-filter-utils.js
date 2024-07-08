@@ -1,7 +1,5 @@
-import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, isFeatureEnabled } from '../../scripts/scripts.js';
 import { COMMUNITY_SEARCH_FACET } from '../../scripts/browse-card/browse-cards-constants.js';
-
-const { isProd } = getConfig();
 
 const SUB_FACET_MAP = {
   Community: COMMUNITY_SEARCH_FACET,
@@ -98,7 +96,7 @@ const contentTypes = [
     value: 'Perspective',
     title: 'Perspectives',
     description: 'Real-world inspiration from Experience Cloud customers and Adobe experts.',
-    disabled: isProd,
+    disabled: !isFeatureEnabled('perspectives'),
   },
   {
     id: 'Troubleshooting',
