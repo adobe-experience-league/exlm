@@ -5,18 +5,22 @@
   }
 
 
-  [data-placeholder] {
+[data-placeholder] {
     background-image: linear-gradient(
-      90deg,
-      var(--shimmer-image-slide-start) 0,
-      var(--shimmer-image-slide-end) 40px,
-      var(--shimmer-image-slide-start) 80px
+        90deg,
+        var(--shimmer-image-slide-start) 0,
+        var(--shimmer-image-slide-end) 40px,
+        var(--shimmer-image-slide-start) 80px
     );
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
     display: inline-block;
     min-height: 1em;
-  }
+}
+
+.playlist-browse-container {
+    padding-top: 0 !important;
+}
 
 .playlist-browse {
     max-width: 1000px;
@@ -26,10 +30,28 @@
 .playlist-browse-marquee {
     display: grid;
     grid-template-columns: 1fr;
+    position: relative;
+    max-width: unset !important;
+    box-sizing: content-box;
+    margin-left: calc(-1 * var(--space-token-xl)) !important;
+    margin-right: calc(-1 * var(--space-token-xl)) !important;
 }
 
 .playlist-browse-marquee-background {
-    order: -1;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+}
+
+.playlist-browse-marquee-background::after {
+    content: ' ';
+    background: url('/images/playlist-marquee-decoration.svg') no-repeat top left;
+    height: 112px;
+    left: -1px;
+    position: absolute;
+    top: -1px;
+    width: 260px;
+    z-index: -1;
 }
 
 .playlist-browse-marquee-background picture, .playlist-browse-marquee-background img {
@@ -38,11 +60,16 @@
     height: 100%;
     object-fit: contain;
     object-position: left;
+    max-height: 275px;
 }
 
 @media (width >= 900px) {
     .playlist-browse-marquee  {
         grid-template-columns: 1fr 1fr;
+        margin-left: calc(-1 * var(--space-token-xl)) !important;
+        margin-right: calc(-1 * var(--space-token-xl)) !important;
+        padding-left: 4em;
+        padding-top: 5em;
     }
 
     .playlist-browse-marquee-background {
@@ -52,6 +79,12 @@
     .playlist-browse-marquee-background picture, .playlist-browse-marquee-background img {
         object-fit: cover;
     }
+}
+
+.playlist-browse-marquee-content {
+    max-width: var(--non-spectrum-max-width);
+    padding-left: var(--space-token-xl) !important;
+    padding-right: var(--space-token-xl) !important;
 }
 
 .playlist-browse-filter {

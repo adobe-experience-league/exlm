@@ -10,15 +10,20 @@
     flex-direction: column;
     background-color: #E63524;
     padding: 32px 16px 16px 16px;
-    height: 390px;
+    min-height: 390px;
     justify-content: space-between;
     box-sizing: border-box;
+}
+
+.awards .awards-card .awards-details {
+    margin-bottom: 30px;
 }
 
 .awards .awards-title {
     font-size: var(--spectrum-font-size-500);
     font-weight: var(--font-weight-700);;
     margin-bottom: 8px;
+    line-height: var(--spectrum-line-height-l);
 }
 
 .awards .awards-time {
@@ -30,6 +35,7 @@
 
 .awards .awards-description {
     font-size: var(--spectrum-font-size-200);
+    line-height: var(--spectrum-line-height-m);
 }
 
 .awards .nil-awards {

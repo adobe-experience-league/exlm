@@ -1,6 +1,6 @@
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
-import { htmlToElement } from '../../scripts/scripts.js';
-import { Playlist } from './playlist-utils.js';
+import { htmlToElement, decoratePlaceholders } from '../../scripts/scripts.js';
+import { Playlist, LABELS } from './playlist-utils.js';
 
 /**
  * convert seconds to time in minutes in the format of 'mm:ss'
@@ -57,6 +57,10 @@ function newPlayer(playlist) {
     'autoplay',
   ];
 
+  const transcriptLoading = [100, 100, 100, 80, 70, 40]
+    .map((i) => `<p class="loading-shimmer" style="--placeholder-width: ${i}%"></p>`)
+    .join('');
+
   const player = htmlToElement(`
         <div class="playlist-player" data-playlist-player>
             <div class="playlist-player-video">
@@ -76,12 +80,16 @@ function newPlayer(playlist) {
                 <h3 class="playlist-player-info-title">${title}</h3>
                 <p class="playlist-player-info-description">${description}</p>
                 <details class="playlist-player-info-transcript" data-playlist-player-info-transcript="${transcriptUrl}">
-                  <summary>Transcript</summary>
-                  <p>loading...</p>
+                  <summary>
+                    <span data-placeholder="${LABELS.transcript}">Transcript</span>
+                  </summary>
+                  ${transcriptLoading}
                 </details>
             </div>
         </div>
     `);
+
+  decoratePlaceholders(player);
 
   const showIframe = () => {
     const iframeTemplate = player.querySelector('#video-iframe-template');
@@ -119,22 +127,22 @@ function decoratePlaylistHeader(block, playlist) {
   playlist.description = playlistDescriptionP?.textContent || '';
 
   defaultContent.setAttribute('data-playlist-progress-box', '');
-  defaultContent.prepend(
-    htmlToElement(`<div class="playlist-info">
-        <b>PLAYLIST</b>
-        <div>${iconSpan('list')} ${playlist.length} Tutorials</div>
-        <button data-playlist-action-button class="playlist-action-button" aria-expanded="false">⋮</button>
-    </div>`),
-  );
 
-  defaultContent.append(
-    htmlToElement(`<div class="playlist-now-viewing">
-  <b>NOW VIEWING</b>
-  <b><span class="playlist-now-viewing-count" data-playlist-now-viewing-count>${
-    playlist.getActiveVideoIndex() + 1
-  }</span> OF ${playlist.length}</b>
-</div>`),
-  );
+  const playlistInfo = htmlToElement(`<div class="playlist-info">
+    <b><span data-placeholder="${LABELS.playlist}">Playlist<span></b>
+    <div>${iconSpan('list')} ${playlist.length} <span data-placeholder="${LABELS.tutorials}">Tutorials<span></div>
+    <button data-playlist-action-button class="playlist-action-button" aria-expanded="false">⋮</button>
+  </div>`);
+
+  defaultContent.prepend(playlistInfo);
+
+  const nowViewing = htmlToElement(`<div class="playlist-now-viewing">
+    <b><span data-placeholder="${LABELS.nowViewing}">NOW VIEWING</span></b>
+    <b><span class="playlist-now-viewing-count" data-playlist-now-viewing-count>${
+      playlist.getActiveVideoIndex() + 1
+    }</span> OF ${playlist.length}</b>
+  </div>`);
+  defaultContent.append(nowViewing);
 
   // Load actions Menu
   loadCSS('/blocks/playlist/playlist-action-menu.css');
@@ -261,15 +269,16 @@ export default function decorate(block) {
   const playerContainer = htmlToElement(`<div class="playlist-player-container" data-playlist-player-container></div>`);
   playlistSection.parentElement.prepend(playerContainer);
 
+  const playlistOptions = htmlToElement(`<div class="playlist-options">
+    <div class="playlist-options-autoplay">
+        <input type="checkbox" id="playlist-options-autoplay" checked=${playlist?.options?.autoplayNext || true}>
+        <label for="playlist-options-autoplay">
+          <span data-placeholder="${LABELS.autoPlayNextVideo}">Auto Play Next Video</span>
+        </label>
+    </div>
+  </div>`);
   // bottom options
-  block.parentElement.append(
-    htmlToElement(`<div class="playlist-options">
-        <div class="playlist-options-autoplay">
-            <input type="checkbox" id="playlist-options-autoplay" checked=${playlist?.options?.autoplayNext || true}>
-            <label for="playlist-options-autoplay">Autoplay next Video</label>
-        </div>
-    </div>`),
-  );
+  block.parentElement.append(playlistOptions);
 
   document.querySelector('#playlist-options-autoplay').addEventListener('change', (event) => {
     playlist.updateOptions({ autoplayNext: event.target.checked });
@@ -281,7 +290,7 @@ export default function decorate(block) {
 
   [...block.children].forEach((videoRow, videoIndex) => {
     videoRow.classList.add('playlist-item');
-    const [videoCell, videoDataCell] = videoRow.children;
+    const [videoCell, videoDataCell, jsonLdCell] = videoRow.children;
     videoCell.classList.add('playlist-item-thumbnail');
     videoCell.setAttribute('data-playlist-item-progress-box', '');
     videoDataCell.classList.add('playlist-item-content');
@@ -308,6 +317,8 @@ export default function decorate(block) {
     durationP.remove();
     transcriptP.remove();
 
+    jsonLdCell?.replaceWith(htmlToElement(`<script type="application/ld+json">${jsonLdCell.textContent}</script>`));
+
     // item bottom status
     videoDataCell.append(
       htmlToElement(`<div class="playlist-item-meta">
@@ -327,6 +338,7 @@ export default function decorate(block) {
   });
 
   decorateIcons(playlistSection);
+  decoratePlaceholders(playlistSection);
   playlist.activateVideoByIndex(activeVideoIndex);
 
   // // handle browser back within history changes

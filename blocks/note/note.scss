@@ -21,6 +21,10 @@
     margin-bottom: 8px;
   }
 
+  & > div a {
+    font-size: var(--spectrum-body-size-m);
+  }
+
   span.icon {
     width: 16px;
     height: 16px;

@@ -83,7 +83,8 @@ export function newShowHidePanel({
   expanded = false,
 }) {
   const uniqueId = `panel-${Date.now().toString()}`;
-  const button = htmlToElement(`<button aria-controls="${uniqueId}" class="${buttonClass}">${buttonLabel}</button>`);
+  const button = htmlToElement(`<button aria-controls="${uniqueId}" class="${buttonClass}"></button>`);
+  button.append(buttonLabel);
   const panel = htmlToElement(`<div id="${uniqueId}" class="${panelClass}"></div>`);
   panel.append(panelContent);
 

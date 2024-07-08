@@ -888,6 +888,10 @@ picture[align=right] {
   text-align: center;
   margin: 0 0 36px;
 }
+.section.tabs-container {
+  padding-top: 0;
+  padding-bottom: 0;
+}
 .section > div {
   /* limit block wrappers max width */
   max-width: var(--non-spectrum-max-width);
@@ -992,8 +996,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
 }
 /* browse rail breakpoint same as main hamburger menu (>= 1024px) */
 @media (min-width: 1024px) {
-  body[class^=browse-] > main,
-  body[class^=article-] > main {
+  body[class^=browse-] > main {
     display: grid;
     grid-template: "browse-rail main"/256px 1fr;
     /* on pages with rails the max width must be on main */
@@ -1001,14 +1004,10 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
     margin: auto;
     grid-template-rows: auto auto;
   }
-  body[class^=article-] > main {
-    grid-template: "articles-rail main"/256px 1fr;
-  }
   main > div.section {
     grid-column: 2;
   }
-  main > div.section.browse-rail-section,
-  main > div.section.articles-rail-section {
+  main > div.section.browse-rail-section {
     display: initial;
     grid-column: 1;
     grid-row: 1/100;
@@ -1027,7 +1026,8 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
     opacity: 0.6;
   }
 }
-[data-placeholder] {
+[data-placeholder],
+.loading-shimmer {
   background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
   background-size: 200% 100%;
   animation: placeholder-shimmer 1.5s infinite;

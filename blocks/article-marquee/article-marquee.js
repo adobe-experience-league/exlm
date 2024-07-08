@@ -6,13 +6,9 @@ import {
   fetchLanguagePlaceholders,
   fetchAuthorBio,
 } from '../../scripts/scripts.js';
-import { tooltipTemplate } from '../../scripts/toast/toast.js';
-import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { createOptimizedPicture, decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import ffetch from '../../scripts/ffetch.js';
-import loadJWT from '../../scripts/auth/jwt.js';
-import renderBookmark from '../../scripts/bookmark/bookmark.js';
-import attachCopyLink from '../../scripts/copy-link/copy-link.js';
+import UserActions from '../../scripts/user-actions/user-actions.js';
 
 const metadataProperties = {
   adobe: 'adobe',
@@ -49,54 +45,16 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-export async function decorateBookmark(block) {
-  const bookmarkId = ((document.querySelector('meta[name="id"]') || {}).content || '').trim();
-  const unAuthBookmark = document.createElement('div');
-  unAuthBookmark.className = 'bookmark';
-  unAuthBookmark.innerHTML = tooltipTemplate('bookmark-icon', 'Bookmark page', placeholders.bookmarkUnauthLabel);
-
-  const authBookmark = document.createElement('div');
-  authBookmark.className = 'bookmark auth';
-  authBookmark.innerHTML = tooltipTemplate('bookmark-icon', 'Bookmark page', placeholders.bookmarkAuthLabelSet);
-
-  const isSignedIn = await isSignedInUser();
-  if (isSignedIn) {
-    block.appendChild(authBookmark);
-    const bookmarkAuthedToolTipLabel = authBookmark.querySelector('.exl-tooltip-label');
-    const bookmarkAuthedToolTipIcon = authBookmark.querySelector('.bookmark-icon');
-    loadJWT().then(async () => {
-      defaultProfileClient.getMergedProfile().then(async (data) => {
-        if (data?.bookmarks?.find((bookmark) => bookmark.includes(bookmarkId))) {
-          bookmarkAuthedToolTipIcon.classList.add('authed');
-          bookmarkAuthedToolTipLabel.innerHTML = placeholders.bookmarkAuthLabelRemove;
-        }
-      });
-
-      renderBookmark(bookmarkAuthedToolTipLabel, bookmarkAuthedToolTipIcon, bookmarkId);
-    });
-  } else {
-    block.appendChild(unAuthBookmark);
-  }
-}
-
-async function decorateCopyLink(block) {
-  const copyLinkDivNode = document.createElement('div');
-  copyLinkDivNode.className = 'copy-link';
-  copyLinkDivNode.innerHTML = tooltipTemplate('copy-icon', 'Copy page url', placeholders.toastTiptext);
-
-  block.appendChild(copyLinkDivNode);
-  attachCopyLink(copyLinkDivNode, window.location.href, placeholders.toastSet);
-}
-
-async function decorateBookmarkAndCopy(block) {
-  await decorateBookmark(block);
-  await decorateCopyLink(block);
-}
-
 async function createOptions(container, readTimeText) {
   const options = document.createElement('div');
   options.classList.add('article-marquee-options');
-  await decorateBookmarkAndCopy(options, placeholders);
+  const cardAction = UserActions({
+    container: options,
+    id: window.location.pathname,
+    link: window.location.href,
+  });
+
+  cardAction.decorate();
 
   const lastUpdated = document.createElement('div');
   const lastUpdatedData = document.querySelector('meta[name="published-time"]').getAttribute('content');
@@ -122,7 +80,7 @@ function createBreadcrumb(container) {
   const currentPath = getEDSLink(document.location.pathname);
 
   // split the path at browse root
-  const browseRootName = 'actionable-insights';
+  const browseRootName = 'perspectives';
   const pathParts = currentPath.split(browseRootName);
   // prefix language path
   const browseRoot = `${pathParts[0]}${browseRootName}`;
@@ -134,11 +92,11 @@ function createBreadcrumb(container) {
   container.append(rootCrumbElem);
 
   // get the browse index
-  ffetch(`/${getPathDetails().lang}/article-index.json`)
+  ffetch(`/${getPathDetails().lang}/perspective-index.json`)
     .all()
     .then((index) => {
       // build the remaining breadcrumbs
-      pathParts[1].split('/').reduce((prevSubPath, nextPathElem) => {
+      pathParts[1]?.split('/').reduce((prevSubPath, nextPathElem) => {
         // create the next crumble sub path
         const nextCrumbSubPath = `${prevSubPath}/${nextPathElem}`;
         // construct full crumb path

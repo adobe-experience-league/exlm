@@ -1,5 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
-import { getPathDetails, htmlToElement } from '../../scripts/scripts.js';
+import { createPlaceholderSpan, getPathDetails, htmlToElement } from '../../scripts/scripts.js';
 import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.js';
 
 async function fetchPlaylists() {
@@ -17,19 +17,21 @@ const playlistsPromise = fetchPlaylists();
 function decoratePlaylistBrowseMarquee(block) {
   const [firstRow] = block.children;
   const [firstCell] = firstRow.children;
-  const [p, header, description] = firstCell.children;
+
+  const picture = createOptimizedPicture('/images/playlists-marquee-background.png', '');
 
   const marquee = htmlToElement(`
     <div class="playlist-browse-marquee">
-        <div class="playlist-browse-marquee-background">${p.innerHTML}</div>
+        <div class="playlist-browse-marquee-background"></div>
         <div class="playlist-browse-marquee-content">
-        <h1>${header.outerHTML}</h1>
-        <p>${description.outerHTML}</p>
+        <h1>${firstCell.innerHTML}</h1>
         </div>
     </div>`);
 
+  marquee.querySelector('.playlist-browse-marquee-background').append(picture);
+
   firstCell.remove();
-  block.before(marquee);
+  block.parentElement.before(marquee);
 }
 
 /**
@@ -151,7 +153,7 @@ export default function decorate(block) {
   const filters = readFiltersFromUrl();
   const filterPanelContet = htmlToElement('<div></div>');
   const filterPanel = newShowHidePanel({
-    buttonLabel: 'Filter',
+    buttonLabel: createPlaceholderSpan('filter', 'Filter'),
     buttonClass: 'playlist-browse-filter-button',
     hiddenPanelClass: 'playlist-browse-filter-hidden',
     panelContent: filterPanelContet,

@@ -20,6 +20,9 @@
   line-height: 21px;
   margin-bottom: 8px;
 }
+.note div a {
+  font-size: var(--spectrum-body-size-m);
+}
 .note span.icon {
   width: 16px;
   height: 16px;
