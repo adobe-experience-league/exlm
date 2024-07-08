@@ -1,6 +1,11 @@
+
+.profile-tab-wrapper {
+   display: flex;
+   justify-content: center; 
+}
 .profile-tab.block {
     max-width: max-content;
-    border-bottom: 2px solid #D5D5D5;
+    border-bottom: 2px solid var(--spectrum-gray-300);
     display: flex;
     flex-wrap: wrap;
 }
@@ -9,14 +14,25 @@
     display: inline-block;
     margin: 0;
     padding-bottom: 15px;
-    color: #222;
+    color: var(--spectrum-gray-800);
     text-transform: capitalize;
     font-size: 14px;
-    margin-right: 1em;
+    margin-right: 24px;
     margin-bottom: -2px;
 }
 
-.profile-tab.block a:first-child{
-    font-weight: 700;
-    border-bottom: 2px solid #000;
+.profile-tab.block a:last-child {
+    margin-right: 0;
+}
+
+.profile-tab.block a.active{
+    font-weight: var(--font-weight-700);
+    border-bottom: 2px solid var(--spectrum-gray-900);
+}
+
+@media (min-width: 1024px){
+    .profile-tab-wrapper {
+        justify-content: flex-start;
+    }
+    
 }

@@ -5,15 +5,15 @@
   },
   {
     "id": "main",
-    "components": ["section"]
+    "components": ["section", "tab-section"]
   },
   {
     "id": "main-browse",
-    "components": ["section", "browse-rail-section"]
+    "components": ["section", "browse-rail-section", "tab-section"]
   },
   {
     "id": "main-article",
-    "components": ["article-content-section", "article-header-section", "section"]
+    "components": ["article-content-section", "article-header-section", "section", "tab-section"]
   },
   {
     "id": "main-profile",
@@ -52,7 +52,64 @@
       "block-quote",
       "callout",
       "featured-authors",
-      "inline-survey"
+      "inline-survey",
+      "featured-content",
+      "browse-filters",
+      "topic-results"
+    ]
+  },
+  {
+    "id": "section-article",
+    "components": [
+      "text",
+      "image",
+      "button",
+      "title",
+      "columns",
+      "icon-block",
+      "curated-cards",
+      "teaser",
+      "detailed-teaser",
+      "marquee",
+      "carousel",
+      "sign-up",
+      "video-embed",
+      "secondary-search",
+      "accordion-group",
+      "media",
+      "authorable-card",
+      "featured-cards",
+      "events-cards",
+      "adls-cards",
+      "tabbed-cards",
+      "tabs",
+      "recommended-courses",
+      "block-quote",
+      "callout",
+      "featured-authors",
+      "inline-survey",
+      "featured-content",
+      "browse-filters",
+      "topic-results",
+      "article-tags"
+    ]
+  },
+  {
+    "id": "tab-section",
+    "components": [
+      "text",
+      "image",
+      "button",
+      "title",
+      "columns",
+      "icon-block",
+      "teaser",
+      "detailed-teaser",
+      "video-embed",
+      "media",
+      "block-quote",
+      "callout",
+      "note"
     ]
   },
   {
@@ -98,9 +155,13 @@
       "image",
       "adobe-account-card",
       "data-and-email-consent",
-      "role-cards",
+      "role-and-industry",
       "user-profile-card",
-      "email-card"
+      "email-card",
+      "product-interests",
+      "product-experience-level",
+      "bookmarks",
+      "awards"
     ]
   },
   {
@@ -112,8 +173,11 @@
       "image",
       "adobe-account-card",
       "data-and-email-consent",
-      "role-cards",
-      "user-profile-card"
+      "role-and-industry",
+      "user-profile-card",
+      "product-interests",
+      "product-experience-level",
+      "icon-block"
     ]
   },
   {
@@ -137,11 +201,12 @@
       "block-quote",
       "callout",
       "article-tags",
-      "author-bio",
       "author-summary",
       "social-share",
       "featured-authors",
-      "inline-survey"
+      "inline-survey",
+      "featured-content",
+      "note"
     ]
   },
   {
@@ -197,5 +262,9 @@
   {
     "id": "tab",
     "components": ["tab"]
+  },
+  {
+    "id": "topic-results",
+    "components": []
   }
 ]

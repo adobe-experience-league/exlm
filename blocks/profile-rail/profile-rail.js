@@ -1,5 +1,8 @@
-// This is a placeholder. Replace with actual implementation.
-
+/**
+ * ProfileRail (Create a TOC using the headings in the page sections that highlights on scroll)
+ * Autoblocked along with profile tab on the profile pages.
+ * @param {HTMLElement} block
+ */
 export default function ProfileRail(block) {
   const sections = document.querySelectorAll('body.profile .section:not(.profile-tab-section, .profile-rail-section)');
   block.innerHTML = `<span>My Experience League profile</span>`;

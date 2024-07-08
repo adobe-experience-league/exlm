@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "lint:js": "eslint .",
-    "lint:sass": "stylelint blocks/**/*.scss styles/*.scss",
+    "lint:sass": "stylelint blocks/**/*.scss styles/*.scss styles/theme/*.scss",
     "lint:sass:fix": "stylelint blocks/**/*.scss styles/*.scss --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

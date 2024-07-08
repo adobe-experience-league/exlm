@@ -21,6 +21,10 @@
     margin-bottom: 8px;
   }
 
+  & > div a {
+    font-size: var(--spectrum-body-size-m);
+  }
+
   span.icon {
     width: 16px;
     height: 16px;
@@ -46,4 +50,10 @@
   .accordion summary {
     color: var(--text-color);
   }
+}
+
+body[class^='browse-'] .note-wrapper,
+body[class^='article-'] .note-wrapper,
+body[class^='articles'] .note-wrapper {
+  margin: 0;
 }

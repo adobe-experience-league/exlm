@@ -15,7 +15,7 @@ export default async function decorate(block) {
     (row) => row.firstElementChild,
   );
   const [contentType, capabilities, role, level, authorType, sortBy] = configs.map((cell) => cell.textContent.trim());
-  const sortCriteria = COVEO_SORT_OPTIONS[sortBy.toUpperCase()];
+  const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase() ?? 'RELEVANCE'];
   const noOfResults = 4;
   const productKey = 'exl:solution';
   const featureKey = 'exl:feature';

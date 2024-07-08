@@ -8,7 +8,7 @@ import {
   loadBlocks,
 } from './lib-franklin.js';
 import { decorateRichtext } from './editor-support-rte.js';
-import { decorateMain, loadIms } from './scripts.js';
+import { decorateMain, loadArticles, loadIms } from './scripts.js';
 
 // set aem content root
 window.hlx.aemRoot = '/content/exlm/global';
@@ -31,6 +31,21 @@ function restoreState(newBlock, state) {
   if (state.scrollLeft) {
     newBlock.querySelector('.panel-container').scrollTo({ left: state.scrollLeft, behavior: 'instant' });
   }
+}
+
+function setIdsforRTETitles(articleContentSection) {
+  // find all titles with no id in the article content section
+  articleContentSection
+    .querySelectorAll('h1:not([id]),h2:not([id]),h3:not([id]),h4:not([id]),h5:not([id]),h6:not([id])')
+    .forEach((title) => {
+      title.id = title.textContent
+        .toLowerCase()
+        .trim()
+        .replaceAll('[^a-z0-9-]', '-')
+        .replaceAll('-{2,}', '-')
+        .replaceAll('^-+', '')
+        .replaceAll('-+$', '');
+    });
 }
 
 // set the filter for an UE editable
@@ -58,10 +73,19 @@ function updateUEInstrumentation() {
       // allow adding default sections and browse rail section
       setUEFilter(main, 'main-browse');
     }
-    // update available blocks for default sections
-    main.querySelectorAll('.section:not(.browse-rail-section)').forEach((elem) => {
+    // Update available blocks for tab sections
+    const tabSections = main.querySelectorAll('div[data-aue-model^="tab-section"]');
+    if (tabSections) {
+      tabSections.forEach((elem) => {
+        setUEFilter(elem, 'tab-section');
+      });
+    }
+
+    // Update available blocks for default sections excluding browse-rail-section and tab-section
+    main.querySelectorAll('.section:not(.browse-rail-section):not([data-aue-model^="tab-section"])').forEach((elem) => {
       setUEFilter(elem, 'section-browse');
     });
+
     return;
   }
 
@@ -73,12 +97,30 @@ function updateUEInstrumentation() {
     const articleContentSection = main.querySelector('.article-content-section');
     if (articleContentSection) {
       setUEFilter(articleContentSection, 'article-content-section');
+      setIdsforRTETitles(articleContentSection);
     }
+    // Update available blocks for tab sections
+    const tabSections = main.querySelectorAll('div[data-aue-model^="tab-section"]');
+    if (tabSections) {
+      tabSections.forEach((elem) => {
+        setUEFilter(elem, 'tab-section');
+      });
+    }
+
+    // Update available blocks for default sections excluding article-header-section, article-content-section and tab-section
+    main
+      .querySelectorAll(
+        '.section:not(.article-content-section):not(.article-header-section):not([data-aue-model^="tab-section"])',
+      )
+      .forEach((elem) => {
+        setUEFilter(elem, 'section-article');
+      });
+
     return;
   }
 
-  // ----- if author bio page, identified by path segment
-  if (document.location.pathname.includes('/articles/authors/')) {
+  // ----- if author bio page, identified by theme
+  if (document.querySelector('body[class^=authors-bio-page]')) {
     // update available sections
     setUEFilter(main, 'empty');
     // update the only available default section
@@ -143,6 +185,7 @@ async function applyChanges(event) {
       decorateRichtext(newMain);
       await loadBlocks(newMain);
       element.remove();
+      loadArticles();
       newMain.style.display = null;
       // eslint-disable-next-line no-use-before-define
       attachEventListners(newMain);
@@ -175,6 +218,17 @@ async function applyChanges(event) {
       );
       if (newElements.length) {
         const { parentElement } = element;
+        if (element.matches('.tabpanel')) {
+          const [newSection] = newElements;
+          decorateButtons(newSection);
+          decorateIcons(newSection);
+          newSection.querySelector('.section-metadata')?.remove();
+          element.innerHTML = newSection.innerHTML;
+          decorateBlocks(parentElement);
+          decorateRichtext(parentElement);
+          await loadBlocks(parentElement);
+          return true;
+        }
         if (element.matches('.section')) {
           const [newSection] = newElements;
           newSection.style.display = 'none';

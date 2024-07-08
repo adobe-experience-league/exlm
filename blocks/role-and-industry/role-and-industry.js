@@ -1,9 +1,8 @@
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
+import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
-
-loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
+import Dropdown from '../../scripts/dropdown/dropdown.js';
 
 let placeholders = {};
 try {
@@ -13,13 +12,26 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
+const { industryUrl } = getConfig();
 const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
 const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
 const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
 
+async function fetchIndustryOptions() {
+  try {
+    const response = await fetch(industryUrl);
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('There was a problem with the fetch operation:', error);
+    return [];
+  }
+}
+
 export default async function decorate(block) {
-  block.textContent = '';
   const isSignedIn = await isSignedInUser();
+  const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
 
   const roleCardsData = [
     {
@@ -60,36 +72,80 @@ export default async function decorate(block) {
     },
   ];
 
-  const roleCardsDiv = document.createRange().createContextualFragment(`
-      ${roleCardsData
-        .map(
-          (card, index) => `
-        <div class="role-cards-item">
-        <div class="role-cards-description">
-        <div class="role-cards-title">
-        <span class="icon icon-${card.icon}"></span>
-        <h3>${card.title}</h3>
-        </div>
-        <p>${card.description}</p>
-        </div>
-        <div class="role-cards-default-selection">
-        ${isSignedIn ? `<p>${card.selectionDefault}</p>` : ''}
-        <span class="role-cards-checkbox">
-        <input name="${card.role}" type="checkbox" id="selectRole-${index}">
-        <label class="subText" for="selectRole-${index}">${SELECT_ROLE}</label>
-        </span>
-        </div>
-        </div>`,
-        )
-        .join('')}
-  `);
+  const roleAndIndustryDiv = document.createRange().createContextualFragment(`
+    <div class="industry-selection-holder">
+      <div class="industry-selection-heading">
+        <div class="industry-selection-title">${roleAndIndustryTitle.innerHTML}</div>
+        <div class="industry-selection-description">${roleAndIndustryDescription.innerHTML}</div>
+      </div>
+      <form class="industry-selection-dropdown">
+        <label for="industry">${
+          placeholders?.selectIndustry || 'Choose the best match for your industry (optional)'
+        }</label>
+      </form>
+    </div>
+    <div class="role-cards-holder">
+    ${roleCardsData
+      .map(
+        (card, index) => `
+            <div class="role-cards-item">
+              <div class="role-cards-description">
+                <div class="role-cards-title">
+                  <span class="icon icon-${card.icon}"></span>
+                  <h3>${card.title}</h3>
+                </div>
+                <p>${card.description}</p>
+              </div>
+              <div class="role-cards-default-selection">
+                ${isSignedIn ? `<p>${card.selectionDefault}</p>` : ''}
+                <span class="role-cards-checkbox">
+                  <input name="${card.role}" type="checkbox" id="selectRole-${index}">
+                  <label class="subText" for="selectRole-${index}">${SELECT_ROLE}</label>
+                </span>
+              </div>
+            </div>`,
+      )
+      .join('')}
+  </div>
+`);
 
-  block.append(roleCardsDiv);
-  decorateIcons(block);
+  block.textContent = '';
+  block.append(roleAndIndustryDiv);
 
   if (isSignedIn) {
+    const industryOptions = await fetchIndustryOptions();
+    const updatedIndustryOptions = industryOptions.map((industry) => ({
+      ...industry,
+      value: industry.Name,
+      title: industry.Name,
+    }));
+    const selectIndustryDropDown = new Dropdown(
+      block.querySelector('.industry-selection-dropdown'),
+      `${placeholders?.select || 'Select'}`,
+      updatedIndustryOptions,
+    );
+    selectIndustryDropDown.handleOnChange((selectedIndustry) => {
+      if (Array.isArray(selectedIndustry)) {
+        const industrySelection = [];
+        industrySelection.push(selectedIndustry);
+        defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
+      } else if (typeof selectedIndustry === 'string') {
+        const industrySelection = selectedIndustry;
+        defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
+      }
+    });
+
     const profileData = await defaultProfileClient.getMergedProfile();
     const role = profileData?.role;
+    const industryInterest = profileData?.industryInterests;
+
+    if (
+      (Array.isArray(industryInterest) && industryInterest.length > 0) ||
+      (typeof industryInterest === 'string' && industryInterest.trim() !== '')
+    ) {
+      const selectedOption = Array.isArray(industryInterest) ? industryInterest[0] : industryInterest.trim();
+      selectIndustryDropDown.updateDropdownValue(selectedOption);
+    }
 
     role.forEach((el) => {
       const checkBox = document.querySelector(`input[name="${el}"]`);
@@ -127,4 +183,6 @@ export default async function decorate(block) {
       }
     });
   });
+
+  decorateIcons(block);
 }

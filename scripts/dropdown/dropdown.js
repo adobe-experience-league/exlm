@@ -72,56 +72,65 @@ export default class Dropdown {
    * Handle click events and perform specific actions based on the event target.
    */
   handleClickEvents() {
-    if (this.id === 0) {
-      document.addEventListener('click', (event) => {
-        if (!event.target.closest('.custom-filter-dropdown')) {
-          this.constructor.closeAllDropdowns();
+    if (!Dropdown.isClickHandlerAdded) {
+      document.removeEventListener('click', this.constructor.handleDocumentClick); // Remove the existing listener if any
+      document.addEventListener('click', this.constructor.handleDocumentClick); // Add the new listener
+      Dropdown.isClickHandlerAdded = true;
+    }
+  }
+
+  /**
+   * Event handler for document click events
+   * @param {Event} event - The click event
+   */
+  static handleDocumentClick(event) {
+    if (!event.target.closest('.custom-filter-dropdown')) {
+      Dropdown.closeAllDropdowns();
+    }
+
+    if (event.target.closest('.custom-filter-dropdown > button')) {
+      const button = event.target.closest('.custom-filter-dropdown > button');
+      const dropdown = button.parentElement;
+
+      if (dropdown.classList.contains('open')) {
+        dropdown.classList.remove('open');
+        button.nextElementSibling.style.display = 'none';
+      } else {
+        Dropdown.closeAllDropdowns();
+        dropdown.classList.add('open');
+        button.nextElementSibling.style.display = 'block';
+      }
+    }
+
+    if (event.target.closest('.custom-checkbox')) {
+      if (event.target.value) {
+        const dropdown = event.target.closest('.custom-filter-dropdown');
+        const { variant } = dropdown.dataset;
+        const button = dropdown.children[0];
+
+        dropdown.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach((checkbox) => {
+          if (event.target.value !== checkbox.value) checkbox.checked = false;
+        });
+
+        const updateButtonText = variant !== DROPDOWN_VARIANTS.ANCHOR;
+        let buttonText;
+        if (event.target.value === dropdown.dataset.selected) {
+          dropdown.dataset.selected = dropdown.dataset.filterType;
+          buttonText = dropdown.dataset.filterType;
+        } else {
+          dropdown.dataset.selected = event.target.value;
+          buttonText = event.target.dataset.label;
         }
 
-        if (event.target.closest('.custom-filter-dropdown > button')) {
-          const button = event.target.closest('.custom-filter-dropdown > button');
-          const dropdown = button.parentElement;
-
-          if (dropdown.classList.contains('open')) {
-            dropdown.classList.remove('open');
-            button.nextElementSibling.style.display = 'none';
-          } else {
-            this.constructor.closeAllDropdowns();
-            dropdown.classList.add('open');
-            button.nextElementSibling.style.display = 'block';
-          }
+        if (updateButtonText) {
+          button.children[0].textContent = buttonText;
         }
 
-        if (event.target.closest('.custom-checkbox')) {
-          if (event.target.value) {
-            const dropdown = event.target.closest('.custom-filter-dropdown');
-            const button = dropdown.children[0];
-
-            dropdown.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach((checkbox) => {
-              if (event.target.value !== checkbox.value) checkbox.checked = false;
-            });
-
-            const updateButtonText = this.variant !== DROPDOWN_VARIANTS.ANCHOR;
-            let buttonText;
-            if (event.target.value === dropdown.dataset.selected) {
-              dropdown.dataset.selected = dropdown.dataset.filterType;
-              buttonText = dropdown.dataset.filterType;
-            } else {
-              dropdown.dataset.selected = event.target.value;
-              buttonText = event.target.dataset.label;
-            }
-
-            if (updateButtonText) {
-              button.children[0].textContent = buttonText;
-            }
-
-            if (dropdown.classList.contains('open')) {
-              dropdown.classList.remove('open');
-              button.nextElementSibling.style.display = 'none';
-            }
-          }
+        if (dropdown.classList.contains('open')) {
+          dropdown.classList.remove('open');
+          button.nextElementSibling.style.display = 'none';
         }
-      });
+      }
     }
   }
 
@@ -134,7 +143,7 @@ export default class Dropdown {
     const dropdown = document.createElement('div');
     dropdown.classList.add(`${this.defaultValue.toLowerCase()}-dropdown`, 'custom-filter-dropdown');
     dropdown.dataset.filterType = this.defaultValue;
-
+    dropdown.dataset.variant = this.variant;
     this.dropdown = dropdown;
 
     dropdown.appendChild(
@@ -173,3 +182,6 @@ export default class Dropdown {
     this.parentFormElement.appendChild(dropdown);
   }
 }
+
+// Static property to check if the click handler has been added
+Dropdown.isClickHandlerAdded = false;

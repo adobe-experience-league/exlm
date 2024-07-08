@@ -1,0 +1,195 @@
+.playlist-action-menu {
+  display: none;
+  position: absolute;
+  overflow: visible;
+  top: 3em;
+  right: 1em;
+  background-color: #fff;
+  filter: drop-shadow(rgb(0 0 0 / 15%) 0 1px 4px);
+  z-index: 1;
+  border-radius: 4px;
+}
+
+.playlist-action-menu.show {
+  display: block;
+}
+
+.playlist-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.playlist-actions > button {
+  padding: 0.75em 1em;
+  cursor: pointer;
+  box-sizing: content-box;
+  line-height: 1.75em;
+  font-weight: inherit;
+  background: none;
+  border: none;
+  margin: 0;
+  border-radius: 0;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  overflow: visible;
+}
+
+.playlist-actions > button span {
+  flex: 1 1 auto;
+}
+
+.playlist-actions > button .icon {
+  flex: 0 0 auto;
+}
+
+
+.playlist-actions > button:hover, .playlist-actions > button:focus {
+  background-color: #d6d6d6;
+}
+
+
+.playlist-actions > button:disabled, .playlist-actions > button:disabled:hover {
+  background-color: var(--overlay-background-color);
+  color: var(--spectrum-gray-500);
+  cursor: unset;
+}
+
+.playlist-action-label::before {
+  content: " ";
+  display: inline-block;
+  width: 1ch;
+  height: 1ch;
+}
+
+.playlist-modal {
+  align-items: center;
+  overflow: hidden;
+  border: 0;
+  z-index: 99999;
+  max-width: 600px;
+  position: relative;
+  padding: 2em;
+  padding-top: 0;
+  border-radius: 5px;
+}
+
+.playlist-modal .playlist-modal-close {
+  background: transparent;
+  border-radius: 50px;
+  cursor: pointer;
+  display: inline-block;
+  height: 32px;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 32px;
+  z-index: 99;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-align: left;
+  font-weight: initial;
+}
+
+.playlist-modal .playlist-modal-close::before,
+.playlist-modal .playlist-modal-close::after {
+  background-color: black;
+  box-sizing: inherit;
+  content: "";
+  display: block;
+  height: 2px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%) rotate(45deg);
+  transform-origin: center center;
+  width: 50%;
+}
+
+.playlist-modal .playlist-modal-close::after {
+  height: 50%;
+  width: 2px;
+}
+
+.playlist-modal .playlist-modal-close:hover {
+  background: rgb(10 10 10 / 30%);
+}
+
+::backdrop {
+  background: rgb(10 10 10 / 86%);
+  height: 100%;
+  left: 0;
+  position: fixed;
+  transition: all 200ms;
+  top: 0;
+  width: 100%;
+  z-index: 12;
+}
+
+.playlist-actions [data-action] {
+  position: relative;
+}
+
+.playlist-actions [data-action] .playlist-action-tooltip-label {
+  display: none;
+  background-color: var(--spectrum-gray-600);
+  border-radius: 4px;
+  bottom: 120%;
+  color: var(--spectrum-gray-50);
+  font-weight: var(--font-weight-400);
+  left: 50%;
+  padding: 2px 8px 4px;
+  position: absolute;
+  text-align: center;
+  text-wrap: nowrap;
+  transform: translateX(-50%);
+  visibility: visible;
+  white-space: pre;
+  z-index: 2;
+}
+
+.playlist-actions [data-action] .playlist-action-tooltip-label::after {
+  border-width: 4px;
+  border-style: solid;
+  border-color: var(--spectrum-gray-600) transparent transparent transparent;
+  content: "";
+  left: 50%;
+  margin-left: -4px;
+  position: absolute;
+  top: 100%;
+}
+
+[data-bookmarked="true"] .icon-bookmark-active {
+  display: block;
+}
+
+[data-bookmarked="false"] .icon-bookmark-active {
+  display: none;
+}
+
+[data-bookmarked="true"] .icon-bookmark {
+  display: none;
+}
+
+[data-bookmarked="false"] .icon-bookmark {
+  display: block;
+}
+
+
+[data-action="bookmark"]:hover .playlist-action-tooltip-label {
+  display: block;
+}
+
+.playlist-actions [data-signed-in="false"]:hover [data-signed-in="false"]{
+  display: block !important;
+}
+
+.playlist-actions [data-bookmarked="true"]:hover  [data-bookmarked="true"]{
+  display: block !important;
+}
+
+.playlist-actions [data-bookmarked="false"]:hover [data-bookmarked="false"]{
+  display: block !important;
+}

@@ -178,12 +178,12 @@ indices:
       - /zh-hant/browse/**
     target: /zh-hant/browse-index.json
 
-  article-en: &base-article
+  perspective-en: &base-perspective
     include:
-      - /en/articles/**
+      - /en/perspectives/**
     exclude:
-      - /en/articles/authors/**
-    target: /en/article-index.json
+      - /en/perspectives/authors/**
+    target: /en/perspective-index.json
     properties:
       title:
         select: head > meta[property="og:title"]
@@ -212,6 +212,10 @@ indices:
         select: head > meta[name="coveo-solution"]
         value: |
           attribute(el, 'content')
+      coveoFeature:
+        select: head > meta[name="feature"]
+        value: |
+          attribute(el, 'content')
       coveoRole:
         select: head > meta[name="role"]
         value: |
@@ -221,93 +225,204 @@ indices:
         value: |
           attribute(el, 'content')
 
-  article-fr:
-    <<: *base-article
+  perspective-fr:
+    <<: *base-perspective
     include:
-      - /fr/articles/**
+      - /fr/perspectives/**
     exclude:
-      - /fr/articles/authors/**
-    target: /fr/article-index.json
+      - /fr/perspectives/authors/**
+    target: /fr/perspective-index.json
 
-  article-de:
-    <<: *base-article
+  perspective-de:
+    <<: *base-perspective
     include:
-      - /de/articles/**
+      - /de/perspectives/**
     exclude:
-      - /de/articles/authors/**
-    target: /de/article-index.json
+      - /de/perspectives/authors/**
+    target: /de/perspective-index.json
 
-  article-es:
-    <<: *base-article
+  perspective-es:
+    <<: *base-perspective
     include:
-      - /es/articles/**
+      - /es/perspectives/**
     exclude:
-      - /es/articles/authors/**
-    target: /es/article-index.json
+      - /es/perspectives/authors/**
+    target: /es/perspective-index.json
 
-  article-it:
-    <<: *base-article
+  perspective-it:
+    <<: *base-perspective
     include:
-      - /it/articles/**
+      - /it/perspectives/**
     exclude:
-      - /it/articles/authors/**
-    target: /it/article-index.json
+      - /it/perspectives/authors/**
+    target: /it/perspective-index.json
 
-  article-nl:
-    <<: *base-article
+  perspective-nl:
+    <<: *base-perspective
     include:
-      - /nl/articles/**
+      - /nl/perspectives/**
     exclude:
-      - /nl/articles/authors/**
-    target: /nl/article-index.json
+      - /nl/perspectives/authors/**
+    target: /nl/perspective-index.json
 
-  article-pt-br:
-    <<: *base-article
+  perspective-pt-br:
+    <<: *base-perspective
     include:
-      - /pt-br/articles/**
+      - /pt-br/perspectives/**
     exclude:
-      - /pt-br/articles/authors/**
-    target: /pt-br/article-index.json
+      - /pt-br/perspectives/authors/**
+    target: /pt-br/perspective-index.json
 
-  article-ko:
-    <<: *base-article
+  perspective-ko:
+    <<: *base-perspective
     include:
-      - /ko/articles/**
+      - /ko/perspectives/**
     exclude:
-      - /ko/articles/authors/**
-    target: /ko/article-index.json
+      - /ko/perspectives/authors/**
+    target: /ko/perspective-index.json
 
-  article-ja:
-    <<: *base-article
+  perspective-ja:
+    <<: *base-perspective
     include:
-      - /ja/articles/**
+      - /ja/perspectives/**
     exclude:
-      - /ja/articles/authors/**
-    target: /ja/article-index.json
+      - /ja/perspectives/authors/**
+    target: /ja/perspective-index.json
 
-  article-sv:
-    <<: *base-article
+  perspective-sv:
+    <<: *base-perspective
     include:
-      - /sv/articles/**
+      - /sv/perspectives/**
     exclude:
-      - /sv/articles/authors/**
-    target: /sv/article-index.json
+      - /sv/perspectives/authors/**
+    target: /sv/perspective-index.json
 
-  article-zh-hans:
-    <<: *base-article
+  perspective-zh-hans:
+    <<: *base-perspective
     include:
-      - /zh-hans/articles/**
+      - /zh-hans/perspectives/**
     exclude:
-      - /zh-hans/articles/authors/**
-    target: /zh-hans/article-index.json
+      - /zh-hans/perspectives/authors/**
+    target: /zh-hans/perspective-index.json
 
-  article-zh-hant:
-    <<: *base-article
+  perspective-zh-hant:
+    <<: *base-perspective
     include:
-      - /zh-hant/articles/**
+      - /zh-hant/perspectives/**
     exclude:
-      - /zh-hant/articles/authors/**
-    target: /zh-hant/article-index.json
+      - /zh-hant/perspectives/authors/**
+    target: /zh-hant/perspective-index.json
+
+  profile-en: &base-profile
+    include:
+      - /en/profile/**
+    exclude:
+      - /en/profile/signup-flow-modal/**
+    target: /en/profile-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: |
+          attribute(el, 'content')
+      theme:
+        select: head > meta[name="theme"]
+        value: |
+          attribute(el, 'content')
+      lastModified:
+        select: head > meta[name="last-update"]
+        value: |
+          parseTimestamp(attribute(el, "content"), 'ddd MMM DD YYYY hh:mm:ss GMT')
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
+
+  profile-fr:
+    <<: *base-profile
+    include:
+      - /fr/profile/**
+    exclude:
+      - /fr/profile/signup-flow-modal/**
+    target: /fr/profile-index.json
+
+  profile-de:
+    <<: *base-profile
+    include:
+      - /de/profile/**
+    exclude:
+      - /de/profile/signup-flow-modal/**
+    target: /de/profile-index.json
+
+  profile-es:
+    <<: *base-profile
+    include:
+      - /es/profile/**
+    exclude:
+      - /es/profile/signup-flow-modal/**
+    target: /es/profile-index.json
+
+  profile-it:
+    <<: *base-profile
+    include:
+      - /it/profile/**
+    exclude:
+      - /it/profile/signup-flow-modal/**
+    target: /it/profile-index.json
+
+  profile-nl:
+    <<: *base-profile
+    include:
+      - /nl/profile/**
+    exclude:
+      - /nl/profile/signup-flow-modal/**
+    target: /nl/profile-index.json
+
+  profile-pt-br:
+    <<: *base-profile
+    include:
+      - /pt-br/profile/**
+    exclude:
+      - /pt-br/profile/signup-flow-modal/**
+    target: /pt-br/profile-index.json
+
+  profile-ko:
+    <<: *base-profile
+    include:
+      - /ko/profile/**
+    exclude:
+      - /ko/profile/signup-flow-modal/**
+    target: /ko/profile-index.json
+
+  profile-ja:
+    <<: *base-profile
+    include:
+      - /ja/profile/**
+    exclude:
+      - /ja/profile/signup-flow-modal/**
+    target: /ja/profile-index.json
+
+  profile-sv:
+    <<: *base-profile
+    include:
+      - /sv/profile/**
+    exclude:
+      - /sv/profile/signup-flow-modal/**
+    target: /sv/profile-index.json
+
+  profile-zh-hans:
+    <<: *base-profile
+    include:
+      - /zh-hans/profile/**
+    exclude:
+      - /zh-hans/profile/signup-flow-modal/**
+    target: /zh-hans/profile-index.json
+
+  profile-zh-hant:
+    <<: *base-profile
+    include:
+      - /zh-hant/profile/**
+    exclude:
+      - /zh-hant/profile/signup-flow-modal/**
+    target: /zh-hant/profile-index.json
 
   # Sitemap indicies, split in 2 google has a limit of 50k (and 50MB) urls per sitemap
   sitemap-en-1: &base-sitemap-1
@@ -694,3 +809,117 @@ indices:
       - '/zh-hant/docs/experience-cloud-kcs/**'
       - '/zh-hant/docs/experience-manager-learn/**'
       - '/zh-hant/docs/experience-manager-cloud-service/**'
+
+  playlists-en: &base-playlists
+    target: /en/playlists.json
+    include:
+      - '/en/playlists/**'
+    exclude:
+      - '/en/playlists'
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[property="og:description"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: attribute(el, "content")
+      solution:
+        select: head > meta[name="solution"]
+        value: attribute(el, "content")
+      role:
+        select: head > meta[name="role"]
+        value: attribute(el, "content")
+      level:
+        select: head > meta[name="level"]
+        value: attribute(el, "content")
+
+  playlists-fr:
+    <<: *base-playlists
+    target: /fr/playlists.json
+    include:
+      - '/fr/playlists/**'
+    exclude:
+      - '/fr/playlists'
+
+  playlists-de:
+    <<: *base-playlists
+    target: /de/playlists.json
+    include:
+      - '/de/playlists/**'
+    exclude:
+      - '/de/playlists'
+
+  playlists-es:
+    <<: *base-playlists
+    target: /es/playlists.json
+    include:
+      - '/es/playlists/**'
+    exclude:
+      - '/es/playlists'
+
+  playlists-it:
+    <<: *base-playlists
+    target: /it/playlists.json
+    include:
+      - '/it/playlists/**'
+    exclude:
+      - '/it/playlists'
+
+  playlists-nl:
+    <<: *base-playlists
+    target: /nl/playlists.json
+    include:
+      - '/nl/playlists/**'
+    exclude:
+      - '/nl/playlists'
+
+  playlists-pt-br:
+    <<: *base-playlists
+    target: /pt-br/playlists.json
+    include:
+      - '/pt-br/playlists/**'
+    exclude:
+      - '/pt-br/playlists'
+
+  playlists-ko:
+    <<: *base-playlists
+    target: /ko/playlists.json
+    include:
+      - '/ko/playlists/**'
+    exclude:
+      - '/ko/playlists'
+
+  playlists-ja:
+    <<: *base-playlists
+    target: /ja/playlists.json
+    include:
+      - '/ja/playlists/**'
+    exclude:
+      - '/ja/playlists'
+
+  playlists-sv:
+    <<: *base-playlists
+    target: /sv/playlists.json
+    include:
+      - '/sv/playlists/**'
+    exclude:
+      - '/sv/playlists'
+
+  playlists-zh-hans:
+    <<: *base-playlists
+    target: /zh-hans/playlists.json
+    include:
+      - '/zh-hans/playlists/**'
+    exclude:
+      - '/zh-hans/playlists'
+
+  playlists-zh-hant:
+    <<: *base-playlists
+    target: /zh-hant/playlists.json
+    include:
+      - '/zh-hant/playlists/**'
+    exclude:
+      - '/zh-hant/playlists'

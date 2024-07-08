@@ -20,6 +20,9 @@
   line-height: 21px;
   margin-bottom: 8px;
 }
+.note div a {
+  font-size: var(--spectrum-body-size-m);
+}
 .note span.icon {
   width: 16px;
   height: 16px;
@@ -38,4 +41,10 @@
 }
 .note .accordion summary {
   color: var(--text-color);
+}
+
+body[class^=browse-] .note-wrapper,
+body[class^=article-] .note-wrapper,
+body[class^=articles] .note-wrapper {
+  margin: 0;
 }

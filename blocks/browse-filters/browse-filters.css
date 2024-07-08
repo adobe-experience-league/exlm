@@ -107,6 +107,9 @@
 .filter-dropdown .filter-dropdown-content {
   display: none;
   position: absolute;
+  max-height: 300px;
+  overflow: hidden;
+  overflow-y: auto;
   background-color: var(--non-spectrum-grey-100);
   min-width: 160px;
   z-index: 2;
@@ -531,6 +534,15 @@ button.browse-tags:focus {
       "search cfilter";
     grid-template-columns: 1fr 1fr;
   }
+
+  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(.browse-author-type-dropdown):not(:has(.browse-experience-level-dropdown)) {
+    grid-template-areas:
+    "label label label label label label"
+    "role role ctype ctype exp exp"
+    "search search search search search cfilter";
+    grid-template-columns: repeat(6, 1fr);
+  }
+
 }
 
 @media (min-width: 900px) {
@@ -550,11 +562,22 @@ button.browse-tags:focus {
     grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
   }
 
+  
+  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(.browse-author-type-dropdown):not(:has(.browse-experience-level-dropdown)) {
+    grid-template-areas: "label role ctype exp search cfilter";
+    grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
+  }
+
   .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-product-dropdown.filter-dropdown),  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-experience-level-dropdown.filter-dropdown) {
     grid-template-areas:
       "label label label label"
       "ctype author role exp"
       "search search search cfilter";
     grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(.browse-author-type-dropdown):not(:has(.browse-experience-level-dropdown)) {
+    grid-template-areas: "label role ctype exp search cfilter";
+    grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
   }
 }

@@ -23,7 +23,7 @@ export const sendNotice = (noticelabel) => {
 
   const sendNoticeContent = noticeTemplate(noticelabel);
   const dialog = document.querySelector('dialog');
-  if (dialog) {
+  if (dialog && dialog.open) {
     dialog.prepend(sendNoticeContent);
   } else {
     document.body.prepend(sendNoticeContent);

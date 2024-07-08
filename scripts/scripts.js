@@ -19,10 +19,45 @@ import {
   fetchPlaceholders,
   readBlockConfig,
   createOptimizedPicture,
+  toClassName,
 } from './lib-franklin.js';
 
 const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
 export const timers = new Map();
+
+/**
+ * Moves all the attributes from a given elmenet to another given element.
+ * @param {Element} from the element to copy attributes from
+ * @param {Element} to the element to copy attributes to
+ */
+export function moveAttributes(from, to, attributes) {
+  if (!attributes) {
+    // eslint-disable-next-line no-param-reassign
+    attributes = [...from.attributes].map(({ nodeName }) => nodeName);
+  }
+  attributes.forEach((attr) => {
+    const value = from.getAttribute(attr);
+    if (value) {
+      to.setAttribute(attr, value);
+      from.removeAttribute(attr);
+    }
+  });
+}
+
+/**
+ * Move instrumentation attributes from a given element to another given element.
+ * @param {Element} from the element to copy attributes from
+ * @param {Element} to the element to copy attributes to
+ */
+export function moveInstrumentation(from, to) {
+  moveAttributes(
+    from,
+    to,
+    [...from.attributes]
+      .map(({ nodeName }) => nodeName)
+      .filter((attr) => attr.startsWith('data-aue-') || attr.startsWith('data-richtext-')),
+  );
+}
 
 // eslint-disable-next-line
 export function debounce(id = '', fn = () => void 0, ms = 250) {
@@ -218,20 +253,6 @@ export function isArticleLandingPage() {
   return theme.split(',').find((t) => t.toLowerCase().startsWith('article-'));
 }
 
-function addArticleLandingRail(main) {
-  // if there is already editable browse rail stored
-  const articleRailSectionFound = [...main.querySelectorAll('.section-metadata')].find((sMeta) =>
-    readBlockConfig(sMeta)?.style.split(',').includes('article-rail-section'),
-  );
-  if (articleRailSectionFound) return;
-
-  // default: create a dynamic uneditable article rail
-  const leftRailSection = document.createElement('div');
-  leftRailSection.classList.add('articles-rail-section', isArticleLandingPage());
-  leftRailSection.append(buildBlock('articles-rail', []));
-  main.append(leftRailSection);
-}
-
 /**
  * Check if current page is a Profile page.
  * theme = profile is set in bulk metadata for /en/profile** paths.
@@ -239,6 +260,15 @@ function addArticleLandingRail(main) {
 export function isProfilePage() {
   const theme = getMetadata('theme');
   return theme.toLowerCase().startsWith('profile');
+}
+
+/**
+ * Check if current page is a Signup flow modal page.
+ * theme = signup is set in bulk metadata for /en/profile/signup-flow-modal** paths.
+ */
+export function isSignUpPage() {
+  const theme = getMetadata('theme');
+  return theme.toLowerCase().startsWith('signup');
 }
 
 /**
@@ -266,23 +296,100 @@ function addProfileTab(main) {
 }
 
 /**
+ * Add a mini TOC to the article page.
+ * @param {HTMLElement} main
+ */
+function addMiniToc(main) {
+  if (
+    document.querySelectorAll('.mini-toc').forEach((toc) => {
+      toc.remove();
+    })
+  );
+  const tocSection = document.createElement('div');
+  tocSection.classList.add('mini-toc-section');
+  tocSection.append(buildBlock('mini-toc', []));
+  const contentContainer = document.createElement('div');
+  contentContainer.classList.add('content-container');
+  if (document.querySelector('.article-marquee')) {
+    const articleMarquee = document.querySelector('.article-marquee');
+    articleMarquee.parentNode.insertAdjacentElement('afterend', tocSection);
+  } else {
+    main.prepend(tocSection);
+  }
+}
+
+/**
+ * Tabbed layout for Tab section
+ * @param {HTMLElement} main
+ */
+async function buildTabSection(main) {
+  let tabIndex = 0;
+  let tabContainer;
+  let tabFound = false;
+  const sections = main.querySelectorAll('main > div');
+  sections.forEach((section, i) => {
+    const sectionMeta = section.querySelector('.section-metadata > div > div:nth-child(2)');
+    if (sectionMeta?.textContent.includes('tab-section')) {
+      if (!tabFound) {
+        tabIndex += 1;
+        tabFound = true;
+        const tabs = buildBlock('tabs', []);
+        tabs.dataset.tabIndex = tabIndex;
+        tabContainer = document.createElement('div');
+        tabContainer.classList.add('section');
+        if (
+          i > 0 &&
+          sections[i - 1]
+            .querySelector('.section-metadata > div > div:nth-child(2)')
+            ?.textContent.includes('article-content-section')
+        ) {
+          tabContainer.classList.add('article-content-section');
+        }
+        tabContainer.append(tabs);
+        main.insertBefore(tabContainer, section);
+      }
+      if (
+        tabFound &&
+        !sections[i + 1]
+          ?.querySelector('.section-metadata > div > div:nth-child(2)')
+          ?.textContent.includes('tab-section')
+      ) {
+        tabFound = false;
+      }
+      section.classList.add(`tab-index-${tabIndex}`);
+    }
+  });
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
+    if (
+      !isProfilePage() &&
+      // eslint-disable-next-line no-use-before-define
+      !isDocPage() &&
+      // eslint-disable-next-line no-use-before-define
+      !isDocArticlePage() &&
+      !isSignUpPage()
+    ) {
+      buildTabSection(main);
+    }
     // if we are on a product browse page
     if (isBrowsePage()) {
       addBrowseBreadCrumb(main);
       addBrowseRail(main);
     }
-    if (isArticleLandingPage()) {
-      addArticleLandingRail(main);
+    // eslint-disable-next-line no-use-before-define
+    if (isArticlePage()) {
+      addMiniToc(main);
     }
     if (isProfilePage()) {
-      addProfileRail(main);
       addProfileTab(main);
+      addProfileRail(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -635,8 +742,20 @@ export function getConfig() {
       hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
     },
     {
+      env: 'PROD-AUTHOR',
+      cdn: 'author-p122525-e1219150.adobeaemcloud.com',
+      hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
+    },
+    {
       env: 'STAGE',
       cdn: 'experienceleague-stage.adobe.com',
+      hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
+      hlxLive: 'main--exlm-stage--adobe-experience-league.live',
+    },
+    {
+      env: 'STAGE-AUTHOR',
+      cdn: 'author-p122525-e1219192.adobeaemcloud.com',
       hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm-stage--adobe-experience-league.live',
     },
@@ -655,8 +774,8 @@ export function getConfig() {
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
-  const isProd = currentEnv?.env === 'PROD';
-  const isStage = currentEnv?.env === 'STAGE';
+  const isProd = currentEnv?.env.includes('PROD', 'PROD-AUTHOR');
+  const isStage = currentEnv?.env.includes('STAGE', 'STAGE-AUTHOR');
   const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
   const ims = {
     client_id: 'ExperienceLeague',
@@ -681,6 +800,7 @@ export function getConfig() {
     ppsOrigin,
     launchScriptSrc,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
+    khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
     privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
@@ -692,6 +812,7 @@ export function getConfig() {
     coveoToken: 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
     liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
     adlsUrl: 'https://learning.adobe.com/catalog.result.json',
+    industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     searchUrl: `${cdnOrigin}/search.html`,
     articleUrl: `${cdnOrigin}/api/articles/`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
@@ -830,14 +951,27 @@ const loadMartech = async (headerPromise, footerPromise) => {
   );
 };
 
+async function loadThemes() {
+  const toClassNames = (classes) =>
+    classes
+      ?.split(',')
+      ?.map((c) => toClassName(c.trim()))
+      .filter(Boolean) || [];
+  const metaToClassNames = (metaName) => toClassNames(getMetadata(metaName));
+  const themeNames = [...metaToClassNames('template'), ...metaToClassNames('theme')];
+  if (themeNames.length === 0) return Promise.resolve();
+  return Promise.allSettled(themeNames.map((theme) => loadCSS(`${window.hlx.codeBasePath}/styles/theme/${theme}.css`)));
+}
+
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
-  await loadBlocks(main);
   loadIms(); // start it early, asyncronously
+  await loadThemes();
+  await loadBlocks(main);
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
@@ -922,12 +1056,31 @@ async function loadRails() {
 /**
  * Custom - Loads and builds layout for articles page
  */
-async function loadArticles() {
+export async function loadArticles() {
   if (isArticlePage()) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/articles/articles.css`);
     const mod = await import('./articles/articles.js');
     if (mod.default) {
       await mod.default();
+    }
+    const contentContainer = document.createElement('div');
+    contentContainer.classList.add('article-content-container');
+    if (!document.querySelector('main > .article-content-section, main > .tab-section')) {
+      document.querySelector('main > .mini-toc-section').remove();
+    } else {
+      if (document.querySelector('.mini-toc.block')) {
+        document.querySelector('.mini-toc.block').style.display = null;
+      }
+      document
+        .querySelectorAll('main > .article-content-section, main > .tab-section, main > .mini-toc-section')
+        .forEach((section) => {
+          contentContainer.append(section);
+        });
+      if (document.querySelector('.article-header-section')) {
+        document.querySelector('.article-header-section').after(contentContainer);
+      } else {
+        document.querySelector('main').prepend(contentContainer);
+      }
     }
   }
 }
@@ -1044,6 +1197,13 @@ async function loadDefaultModule(jsPath) {
   }
 }
 
+export function isFeatureEnabled(name) {
+  return getMetadata('feature-flags')
+    .split(',')
+    .map((t) => t.toLowerCase().trim())
+    .includes(name);
+}
+
 /**
  * THIS IS TEMPORARY FOR SUMMIT
  */
@@ -1084,6 +1244,89 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, 
   return span;
 }
 
+/**
+ * decorates placeholder spans in a given element
+ * @param {HTMLElement} element
+ */
+export function decoratePlaceholders(element) {
+  const placeholdersEls = [...element.querySelectorAll('[data-placeholder]')];
+  placeholdersEls.forEach((el) => {
+    el.replaceWith(createPlaceholderSpan(el.dataset.placeholder, el.textContent));
+  });
+}
+
+function formatPageMetaTags(inputString) {
+  return inputString
+    .replace(/exl:[^/]*\/*/g, '')
+    .split(',')
+    .map((part) => part.trim());
+}
+
+function decodeAemPageMetaTags() {
+  const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
+  const roleMeta = document.querySelector(`meta[name="role"]`);
+  const levelMeta = document.querySelector(`meta[name="level"]`);
+  const featureMeta = document.querySelector(`meta[name="feature"]`);
+
+  const solutions = solutionMeta ? formatPageMetaTags(solutionMeta.content) : [];
+  const features = featureMeta ? formatPageMetaTags(featureMeta.content) : [];
+  const roles = roleMeta ? formatPageMetaTags(roleMeta.content) : [];
+  const experienceLevels = levelMeta ? formatPageMetaTags(levelMeta.content) : [];
+  let decodedSolutions = [];
+  decodedSolutions = solutions.map((solution) => {
+    // In case of sub-solutions. E.g. exl:solution/campaign/standard
+    const parts = solution.split('/');
+    const decodedParts = parts.map((part) => atob(part));
+
+    // If it's a sub-solution, create a version meta tag
+    if (parts.length > 1) {
+      const versionMeta = document.createElement('meta');
+      versionMeta.name = 'version';
+      versionMeta.content = atob(parts.slice(1).join('/'));
+      document.head.appendChild(versionMeta);
+
+      // If there are multiple parts, join them with ";"
+      const product = atob(parts[0]);
+      const version = atob(parts[1]);
+      return `${product}|${product} ${version}`;
+    }
+
+    return decodedParts[0];
+  });
+
+  const decodedFeatures = features
+    .map((feature) => {
+      const parts = feature.split('/');
+      if (parts.length > 1) {
+        const product = atob(parts[0]);
+        if (!decodedSolutions.includes(product)) {
+          decodedSolutions.push(product);
+        }
+        const featureTag = atob(parts[1]);
+        return `${featureTag}`;
+      }
+      decodedSolutions.push(atob(parts[0]));
+      return '';
+    })
+    .filter((feature) => feature !== '');
+
+  const decodedRoles = roles.map((role) => atob(role));
+  const decodedLevels = experienceLevels.map((level) => atob(level));
+
+  if (solutionMeta) {
+    solutionMeta.content = decodedSolutions.join(';');
+  }
+  if (featureMeta) {
+    featureMeta.content = decodedFeatures.join(',');
+  }
+  if (roleMeta) {
+    roleMeta.content = decodedRoles.join(',');
+  }
+  if (levelMeta) {
+    levelMeta.content = decodedLevels.join(',');
+  }
+}
+
 async function loadPage() {
   // THIS IS TEMPORARY FOR SUMMIT.
   if (handleHomePageHashes()) return;
@@ -1094,10 +1337,49 @@ async function loadPage() {
   loadRails();
   loadDelayed();
   showBrowseBackgroundGraphic();
-  loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
+
+  if (isDocArticlePage()) {
+    // wrap main content in a div - UGP-11165
+    const main = document.querySelector('main');
+    const mainSections = [...main.children].slice(0, -2); // ignore last two sections: toc and mini-toc
+    const mainContent = document.createElement('div');
+    // insert mainContent as first child of main
+    main.prepend(mainContent);
+    mainSections.forEach((section) => {
+      mainContent.append(section);
+    });
+
+    // load prex/next buttons
+    loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
+
+    // discoverability
+    const params = new URLSearchParams(window.location.search);
+    const hasDiscoverability = Boolean(params.get('discoverability'));
+    if (hasDiscoverability) {
+      loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
+    }
+  }
+}
+
+// For AEM Author mode, decode the tags value
+if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+  decodeAemPageMetaTags();
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 if (!window.hlx.DO_NOT_LOAD_PAGE) {
-  loadPage();
+  if (isProfilePage()) {
+    if (window.location.href.includes('.html')) {
+      loadPage();
+    } else {
+      await loadIms();
+      if (window?.adobeIMS?.isSignedInUser()) {
+        loadPage();
+      } else {
+        await window?.adobeIMS?.signIn();
+      }
+    }
+  } else {
+    loadPage();
+  }
 }

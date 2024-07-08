@@ -167,17 +167,20 @@ export default async function decorate(block) {
           }
           // Append content div to shimmer card parent and decorate icons
           block.appendChild(contentDiv);
+          contentDiv.style.display = 'flex';
           /* Hide Tooltip while scrolling the cards layout */
           hideTooltipOnScroll(contentDiv);
         } else {
           buildCardsShimmer.remove();
           buildNoResultsContent(block, true);
+          contentDiv.style.display = 'none';
         }
       })
       .catch((err) => {
         // Hide shimmer placeholders on error
         buildCardsShimmer.remove();
         buildNoResultsContent(block, true);
+        contentDiv.style.display = 'none';
         /* eslint-disable-next-line no-console */
         console.error(err);
       });

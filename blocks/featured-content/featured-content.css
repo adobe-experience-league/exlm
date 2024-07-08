@@ -1,0 +1,357 @@
+/* stylelint-disable media-feature-range-notation */
+/* stylelint-disable declaration-block-no-redundant-longhand-properties */
+/* ----- mobile ------ */
+
+/* the order is different from properties rail */
+.featured-content.block {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto ;
+    gap: 16px;
+    grid-template-areas:
+      "image"
+      "author"
+      "description"
+  }
+
+  /* the order is different from properties rail */
+  .featured-content.block > div:has(.description){
+    grid-area: description;
+  }
+
+  .featured-content.block > div:has(.featured-content-image){
+    grid-area: image;
+  }
+
+  /* hide authors until info is loaded */
+  .featured-content.block > div:nth-child(3) {
+    display:none;
+  }
+
+  .featured-content.block > div:nth-child(4) {
+    display:none;
+  }
+
+  .featured-content.block > div:has(.author){
+    display: block;
+  }
+
+  /* the main image */
+  .featured-content.block .featured-content-image {
+    width: 320px;
+    height: 320px;
+    margin: auto;
+    position: relative;
+  }
+
+  .featured-content.block.adobe .featured-content-image {
+    border: 6px solid var(--spectrum-red-1400);
+  }
+
+  .featured-content.block.external .featured-content-image {
+    border: 6px solid var(--spectrum-indigo-1400);
+  }
+
+  .featured-content.block .featured-content-image img {
+    width: 320px;
+    height: 320px;
+    object-fit: cover;
+    margin: auto;
+  }
+
+  /* the top right tag in the image */
+  .featured-content.block .featured-content-image .source-tag  {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    color:white;
+    letter-spacing: 0.6px;
+    font-size: var(--spectrum-font-size-200);
+    font-weight: var(--font-weight-900);
+    max-width: fit-content;
+    padding: 4px 10px;
+    border-radius: 0 0 0 4px;
+  }
+
+  .featured-content.block.adobe .featured-content-image .source-tag  {
+    display:block;
+    background-color: var(--spectrum-red-1400);
+  }
+
+  .featured-content.block.external .featured-content-image .source-tag  {
+    display:block;
+    background-color: var(--spectrum-indigo-1400);
+  }
+
+  /* the featured authors title */
+  .featured-content.block  .description :where(h1,h2,h3,h4,h5,h6)  {
+    margin: 0;
+    margin-bottom: 16px;
+    font-size: 40px;
+    font-weight: var(--font-weight-700);
+    line-height: var(--exlm-line-height-h1);
+    color: var(--non-spectrum-dark-charcoal);
+  }
+
+  /*  the author info entries */
+  .featured-content.block .author {
+    display: flex;
+    margin-top: 8px;
+    margin-left: 8px;
+  }
+
+  /* the author image */
+
+  /* the dashed border around the image */
+  .featured-content.block .author .author-image {
+    position:relative;
+    width:52px;
+    height:52px;
+    border: 1px dashed black;
+    border-radius: 50%;
+    margin-top:10px;
+  }
+
+  /* the image itself */
+  .featured-content.block .author .author-image img {
+    position:absolute;
+    top: -10px;
+    left: -10px;
+    width:53px;
+    height:53px;
+    border-radius: 50%;
+  }
+
+  /* the company dot (adobe or external) */
+  .featured-content.block .author .author-image .company-dot {
+    position:absolute;
+    top: -10px;
+    left: 30px;
+    width:21px;
+    height:21px;
+    border-radius: 50%;
+    background-color: var(--spectrum-red-1400)
+  }
+
+  .featured-content.block .author .author-image .company-dot.adobe {
+    background-color: var(--spectrum-red-1400);
+  }
+
+  .featured-content.block .author .author-image .company-dot.external {
+    background-color: var(--spectrum-indigo-1400);
+  }
+
+  .featured-content.block div.author-header h3 {
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  /* the author details */
+  .featured-content.block .author .author-details {
+    display: flex;
+    flex-direction: column;
+    margin-left: 16px;
+    font-weight: var(--font-weight-700);
+  }
+
+  /* the author name */
+  .featured-content.block .author .author-details .author-name {
+    font-weight: bold;
+  }
+
+  /* the author title */
+  .featured-content.block .author .author-details .author-title {
+    margin-top: 8px;;
+  }
+
+  /* the author social link */
+  .featured-content.block .author .author-details .author-social-link {
+    text-decoration: underline;
+    font-size: var(--spectrum-body-size-s);
+    margin-top: 8px;
+    margin-bottom: 0;
+    line-height: 15px;
+  }
+
+  /* the author cta link */
+  .featured-content.block .author .author-details .author-cta {
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 15px;
+    font-weight: bold;
+    color: #505050;
+    border: 2px solid #505050;
+    border-radius: 14px;
+    height:18px;
+    width:fit-content;
+    margin: 0;
+    margin-top: 20px;
+    padding: 2px 10px;
+  }
+
+  .featured-content.block div.author-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .featured-content.block div.author-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .featured-content.block div.author-header h3 {
+    font-size: 18px;
+  }
+
+  .featured-content.block div.description p {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ------- tablet ------- */
+  @media (min-width: 600px) {
+    /* for tablet change grid layout */
+    .featured-content.block {
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto;
+      grid-template-areas:
+        "image description"
+        "author author";
+    }
+
+    /* if image is on the right */
+    .featured-content.block.right {
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+      grid-template-areas:
+        "description image"
+        "author author";
+    }
+
+    /* description alignments */
+    .featured-content.block > div:has(.description){
+      padding-left: 48px;
+      padding-right: 0;
+      align-self: center;
+    }
+
+    .featured-content.block.right > div:has(.description){
+      padding-right: 48px;
+      padding-left: 0;
+    }
+
+    /* image size changes */
+    .featured-content.block .featured-content-image {
+      width: 286px;
+      height: 286px;
+      margin: 0;
+      position: relative;
+    }
+
+    .featured-content.block .featured-content-image img {
+      width: 286px;
+      height: 286px;
+    }
+
+    /* author blocks */
+    .featured-content.block > div:has(.author){
+      justify-self: left;
+    }
+
+    .featured-content.block div.author-wrapper {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+      }
+
+    .featured-content.block .author {
+      width:auto;
+    }
+
+    .featured-content.block  .author .author-image {
+      margin-left: 10px;
+    }
+
+    .featured-content.block div.author-header h3 {
+      font-size: 14px;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .featured-content.block {
+      gap: 0;
+      grid-template-areas:
+        "image"
+        "description"
+        "author"
+    }
+  
+    .featured-content.block div.author-container {
+      gap: 0;
+    }
+  }
+
+  /* ------- desktop ------- */
+  @media (min-width: 1200px) {
+    /* for tablet change grid layout */
+    .featured-content.block {
+      grid-template-columns: auto 1fr 1fr;
+      grid-template-areas:
+        "image description description"
+        "image author1 author2";
+    }
+
+    /* if image is on the right */
+    .featured-content.block.right {
+      grid-template-columns: 1fr 1fr auto;
+      grid-template-areas:
+        "description description image"
+        "author1 author2 image";
+    }
+
+    /* description alignments */
+    .featured-content.block > div:has(.description){
+      padding: 0;
+      align-self: center;
+    }
+
+    .featured-content.block.right > div:has(.description){
+      padding: 0;
+    }
+
+    /* image size changes */
+    .featured-content.block .featured-content-image {
+      width: 327px;
+      height: 327px;
+      margin: 0;
+      margin-right: 70px;
+      position: relative;
+    }
+
+    .featured-content.block.right .featured-content-image {
+      margin-left: 70px;
+    }
+
+    .featured-content.block > div:has(.author){
+      justify-self: left;
+    }
+
+    .featured-content.block .featured-content-image img {
+      width: 327px;
+      height: 327px;
+    }
+
+    .featured-content.block .author {
+      flex-direction: column;
+    }
+
+    .featured-content.block .author .author-details {
+      margin-top: 8px;
+      margin-left: 0;
+    }
+  }

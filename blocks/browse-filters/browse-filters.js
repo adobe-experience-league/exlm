@@ -11,6 +11,7 @@ import {
   roleOptions,
   contentTypeOptions,
   expTypeOptions,
+  productTypeOptions,
   getObjectByName,
   getFiltersPaginationText,
   getBrowseFiltersResultCount,
@@ -22,6 +23,7 @@ import {
   showSearchSuggestionsOnInputClick,
   handleCoverSearchSubmit,
   authorOptions,
+  fetchPerspectiveIndex,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -156,6 +158,9 @@ function updateClearFilterStatus(block) {
   const hasActiveTopics = block.querySelector('.browse-topics') !== null && selectedTopics.length > 0;
   const browseFiltersContainer = document.querySelector('.browse-filters-container');
   const browseFiltersSection = browseFiltersContainer.querySelector('.browse-filters-form');
+  if (!browseFiltersSection) {
+    return;
+  }
   const selectionContainer = browseFiltersSection.querySelector('.browse-filters-input-container');
   const containsSelection = selectionContainer.classList.contains('browse-filters-input-selected');
   const coveoQueryConfig = { query: '', fireSelection: true };
@@ -194,8 +199,30 @@ if (theme === 'browse-all') dropdownOptions.push(productOptions);
 if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
 
 if (isArticleLandingPage()) {
+  const perspectiveIndex = await fetchPerspectiveIndex();
+  const coveoSolutions = perspectiveIndex.reduce((acc, curr) => {
+    if (curr?.coveoSolution) {
+      // eslint-disable-next-line no-param-reassign
+      acc += `,${curr.coveoSolution}`;
+    }
+    return acc;
+  }, '');
+
+  const coveoSolutionArr = coveoSolutions.split(/[,;]/).filter((solution) => solution && !solution.includes('|'));
+  const coveoSolutionOptionsList = Array.from(new Set(coveoSolutionArr)).sort();
+  const coveoSolutionOptions = coveoSolutionOptionsList.map((solution) => ({
+    description: '',
+    id: solution.toLowerCase(),
+    title: solution,
+    value: solution,
+  }));
+  productTypeOptions.items = coveoSolutionOptions;
+  dropdownOptions.length = 0;
+  if (productTypeOptions.items.length > 0) {
+    dropdownOptions.push(productTypeOptions);
+  }
+  dropdownOptions.push(roleOptions);
   dropdownOptions.push(authorOptions);
-  dropdownOptions.push(expTypeOptions);
 }
 
 /**
@@ -453,6 +480,9 @@ function constructKeywordSearchEl(block) {
 
 function onInputSearch(block) {
   const searchEl = block.querySelector('.filter-input-search .search-input');
+  if (!searchEl) {
+    return;
+  }
   searchEl.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -524,6 +554,9 @@ function clearSelectedFilters(block) {
 function handleClearFilter(block) {
   // show the hidden sections again
   const clearFilterEl = block.querySelector('.browse-filters-clear');
+  if (!clearFilterEl) {
+    return;
+  }
   clearFilterEl.addEventListener('click', () => {
     clearSelectedFilters(block);
   });
@@ -895,6 +928,9 @@ function handleCoveoHeadlessSearch(
   const filterResultsEl = createTag('div', { class: 'browse-filters-results' });
 
   const browseFiltersSection = block.querySelector('.browse-filters-form');
+  if (!browseFiltersSection) {
+    return;
+  }
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchIcon = filterInputSection.querySelector('.icon-search');
   const clearIcon = filterInputSection.querySelector('.icon-clear');
@@ -1098,6 +1134,9 @@ async function handleSearchEngineSubscription(block) {
 
 function renderSortContainer(block) {
   const wrapper = block.querySelector('.browse-filters-form .browse-filters-results-header');
+  if (!wrapper) {
+    return;
+  }
   const sortContainer = document.createElement('div');
   sortContainer.classList.add('sort-container');
   sortContainer.innerHTML = `<span>${placeholders.filterSortLabel}</span>
@@ -1137,8 +1176,10 @@ function decorateBrowseTopics(block) {
   const { lang } = getPathDetails();
   const [...configs] = [...block.children].map((row) => row.firstElementChild);
 
-  const [solutionsElement, headingElement, topicsElement] = configs.map((cell) => cell);
-  const [solutionsContent, headingContent, topicsContent] = configs.map((cell) => cell?.textContent?.trim() ?? '');
+  const [solutionsElement, headingElement, topicsElement, contentTypeElement] = configs.map((cell) => cell);
+  const [solutionsContent, headingContent, topicsContent, contentTypeContent] = configs.map(
+    (cell) => cell?.textContent?.trim() ?? '',
+  );
 
   // eslint-disable-next-line no-unused-vars
   const allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
@@ -1149,6 +1190,12 @@ function decorateBrowseTopics(block) {
     products.forEach((p) => supportedProducts.push(p));
     window.headlessSolutionProductKey = productKey;
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
+  }
+
+  if (contentTypeContent.length) {
+    const contentTypes = contentTypeContent.split(',').map((type) => type.trim());
+    const contentTypesQuery = contentTypes.map((type) => `@el_contenttype="${type}"`).join('OR');
+    window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${contentTypesQuery}))`;
   }
 
   const div = document.createElement('div');
@@ -1217,6 +1264,7 @@ function decorateBrowseTopics(block) {
   (solutionsElement.parentNode || solutionsElement).remove();
   (headingElement.parentNode || headingElement).remove();
   (topicsElement.parentNode || topicsElement).remove();
+  (contentTypeElement.parentNode || contentTypeElement).remove();
 }
 
 export default async function decorate(block) {

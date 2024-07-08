@@ -1,9 +1,6 @@
-import { loadCSS } from '../../scripts/lib-franklin.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
-
-loadCSS(`${window.hlx.codeBasePath}/scripts/toast/toast.css`);
 
 let placeholders = {};
 try {
