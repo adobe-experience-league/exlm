@@ -239,16 +239,24 @@ async function applyChanges(event) {
           return true;
         }
         if (element.matches('.section')) {
+          let articleContentContainer;
           const [newSection] = newElements;
           newSection.style.display = 'none';
           element.insertAdjacentElement('afterend', newSection);
           decorateButtons(newSection);
           decorateIcons(newSection);
+          if(document.querySelector(".article-content-container")){
+            articleContentContainer = document.querySelector(".article-content-container").cloneNode(true);
+          }
           decorateSections(parentElement);
           decorateBlocks(parentElement);
           decorateRichtext(newSection);
           await loadBlocks(parentElement);
           element.remove();
+          if(articleContentContainer){
+            parentElement.querySelector(".article-content-container").insertAdjacentElement("afterend", articleContentContainer)
+            parentElement.querySelector(".article-content-container").remove();
+          }
           newSection.style.display = null;
         } else {
           element.replaceWith(...newElements);
