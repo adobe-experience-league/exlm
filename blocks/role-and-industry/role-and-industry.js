@@ -21,7 +21,7 @@ async function fetchIndustryOptions() {
   try {
     const response = await fetch(industryUrl);
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('There was a problem with the fetch operation:', error);
@@ -114,7 +114,7 @@ export default async function decorate(block) {
 
   if (isSignedIn) {
     const industryOptions = await fetchIndustryOptions();
-    const updatedIndustryOptions = industryOptions.data.map((industry) => ({
+    const updatedIndustryOptions = industryOptions.map((industry) => ({
       ...industry,
       value: industry.Name,
       title: industry.Name,
@@ -124,7 +124,9 @@ export default async function decorate(block) {
       `${placeholders?.select || 'Select'}`,
       updatedIndustryOptions,
     );
-    selectIndustryDropDown.handleOnChange((industrySelection) => {
+    selectIndustryDropDown.handleOnChange((selectedIndustry) => {
+      const industrySelection = [];
+      industrySelection.push(selectedIndustry);
       defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
     });
 
@@ -133,7 +135,7 @@ export default async function decorate(block) {
     const industryInterest = profileData?.industryInterests;
 
     if (industryInterest) {
-      const selectedOption = industryInterest;
+      const selectedOption = industryInterest[0];
       selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
 
