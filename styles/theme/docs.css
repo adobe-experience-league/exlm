@@ -100,10 +100,22 @@
   box-sizing: border-box;
   max-width: 1700px;
 }
+.docs main .section {
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0;
+}
+@media (min-width: 900px) {
+  .docs main .section {
+    padding-left: 54px;
+    padding-right: 54px;
+    padding-top: 54px;
+    padding-bottom: 0;
+  }
+}
 @media (min-width: 900px) {
   .docs main {
     grid-template-columns: 1fr 3fr 1fr;
-    grid-template-rows: repeat(var(--content-sections-count), max-content);
     padding: 0;
   }
   .docs main.rail-left-closed {
@@ -117,22 +129,16 @@
   }
 }
 .docs main > div {
-  padding: 30px 2px;
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
   min-width: 0;
 }
-@media (min-width: 600px) {
-  .docs main > div {
-    padding: 30px 32px 32px;
-  }
-}
 .docs main > div:nth-last-child(2) {
   display: block !important;
   grid-row: 1/1;
   min-height: 90px;
-  padding: 32px 10px 10px;
+  padding: 32px 0 10px;
 }
 .docs main > div:nth-last-child(2) .toc {
   display: none;
@@ -142,6 +148,12 @@
 }
 .docs main > div.mini-toc-container {
   padding: 32px 10px 0 0;
+  display: none;
+}
+@media (min-width: 900px) {
+  .docs main > div.mini-toc-container {
+    display: flex;
+  }
 }
 @media (min-width: 600px) {
   .docs main > div.mini-toc-container {
@@ -157,20 +169,13 @@
   }
   .docs main > div:not(.toc-container, .mini-toc-container) {
     overflow: auto;
-    padding-block: 0;
-    padding-inline: 37px 50px;
+    padding: 0;
     grid-column: 2;
-  }
-  .docs main > div:not(.toc-container, .mini-toc-container).content-section-first {
-    padding-block-start: 54px;
-  }
-  .docs main > div:not(.toc-container, .mini-toc-container).content-section-last {
-    padding-block-end: 50px;
   }
   .docs main > div.toc-container {
     grid-column: 1/1;
     grid-row: 1/-1;
-    padding: 46px 10px 10px;
+    padding: 0;
   }
   .docs main > div.mini-toc-container {
     grid-column: 3/3;
