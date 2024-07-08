@@ -3,7 +3,6 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
-import IndustryDataService from '../../scripts/data-service/industry-data-service.js';
 
 let placeholders = {};
 try {
@@ -18,19 +17,21 @@ const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes ha
 const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
 const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
 
-const handleIndustryService = async () => {
-  const dataSource = {
-    url: industryUrl,
-  };
-  const industryService = new IndustryDataService(dataSource);
-  const industryOptions = await industryService.fetchDataFromSource();
-  return industryOptions;
-};
+async function fetchIndustryOptions() {
+  try {
+    const response = await fetch(industryUrl);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    return [];
+  }
+}
 
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
-  const industryOptions = await handleIndustryService();
-  const updatedIndustryOptions = industryOptions.map((industry) => ({
+  const industryOptions = await fetchIndustryOptions();
+  const updatedIndustryOptions = industryOptions.data.map((industry) => ({
     ...industry,
     value: industry.Name,
     title: industry.Name,
