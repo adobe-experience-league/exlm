@@ -1,6 +1,6 @@
 import { div, h2, p } from '../../scripts/dom-helpers.js';
 import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
-import { fetchAuthorBio, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchAuthorBio, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 
 let placeholders = {};
 try {
@@ -108,7 +108,7 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
     authorHeader.innerHTML = `<h3>${headerText}</h3>`;
   }
   authorInfo.forEach((author) => {
-    const { authorName: name, authorImage: pic } = author;
+    const { authorName: name, authorImage: pic, authorTitle, authorSocialLinkURL, authorSocialLinkText } = author;
     const authorDiv = div(
       { class: 'author' },
       div(
@@ -116,9 +116,20 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
         createOptimizedPicture(pic, name, 'eager', [{ width: '100' }]),
         div({ class: `company-dot ${company}` }),
       ),
-      div({ class: 'author-details' }, div(name)),
     );
-    if (authorDiv) authorWrapper.append(authorDiv);
+    if (authorDiv) {
+      const socialDetails = authorSocialLinkURL && authorSocialLinkText;
+      const authorBiodata = htmlToElement(`
+          <div class="author-details">
+            <div class="author-name">${name}</div>
+            <div class="author-title">${authorTitle}</div>
+            ${socialDetails ? `<a class="author-social" href="${authorSocialLinkURL}">${authorSocialLinkText}</a>` : ''}
+          </div>
+      `);
+      authorDiv.appendChild(authorBiodata);
+      authorWrapper.append(authorDiv);
+    }
+
   });
   cta.replaceWith(contentDiv);
   block.append(authorContainer);
