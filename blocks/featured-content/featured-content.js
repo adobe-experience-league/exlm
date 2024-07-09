@@ -129,7 +129,6 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
       authorDiv.appendChild(authorBiodata);
       authorWrapper.append(authorDiv);
     }
-
   });
   cta.replaceWith(contentDiv);
   block.append(authorContainer);
