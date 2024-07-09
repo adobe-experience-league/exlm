@@ -26,7 +26,6 @@ class CustomHeader extends HTMLElement {
         this.shadowRoot.appendChild(htmlToElement(html));
       });
     });
-    console.log('header rendered');
   }
 }
 // Define the new element
