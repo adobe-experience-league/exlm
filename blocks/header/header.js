@@ -8,6 +8,7 @@ import {
   getConfig,
   getLink,
   fetchFragment,
+  isFeatureEnabled,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
 
@@ -470,6 +471,14 @@ const searchDecorator = async (searchBlock) => {
   const searchOptions = getCell(searchBlock, 1, 3)?.firstElementChild?.children || [];
   const options = [...searchOptions].map((option) => option.textContent);
 
+  const parsedOptions = options
+    .map((option) => {
+      const [label, value] = option.split(':');
+      return { label, value };
+    })
+    // TODO - remove dependecy on feature flag once perspectives are perminantely live
+    .filter((option) => option?.value?.toLowerCase() !== 'perspective' || isFeatureEnabled('perspectives'));
+
   searchBlock.innerHTML = '';
   const searchWrapper = htmlToElement(
     `<div class="search-wrapper">
@@ -491,23 +500,19 @@ const searchDecorator = async (searchBlock) => {
           </div>
         </div>
         <button type="button" class="search-picker-button" aria-haspopup="true" aria-controls="search-picker-popover">
-          <span class="search-picker-label" data-filter-value="${options[0].split(':')[1]}">${
-            options[0].split(':')[0] || ''
+          <span class="search-picker-label" data-filter-value="${parsedOptions[0]?.value}">${
+            parsedOptions[0]?.label || ''
           }</span>
         </button>
         <div class="search-picker-popover" id="search-picker-popover">
           <ul role="listbox">
-            ${options
+            ${parsedOptions
               .map(
-                (option, index) =>
-                  `<li tabindex="0" role="option" class="search-picker-label" data-filter-value="${
-                    option.split(':')[1]
-                  }">${
+                ({ label, value }, index) =>
+                  `<li tabindex="0" role="option" class="search-picker-label" data-filter-value="${value}">${
                     index === 0
-                      ? `<span class="icon icon-checkmark"></span> <span data-filter-value="${option.split(':')[1]}">${
-                          option.split(':')[0]
-                        }</span>`
-                      : `<span data-filter-value="${option.split(':')[1]}">${option.split(':')[0]}</span>`
+                      ? `<span class="icon icon-checkmark"></span> <span data-filter-value="${value}">${label}</span>`
+                      : `<span data-filter-value="${value}">${label}</span>`
                   }</li>`,
               )
               .join('')}

@@ -218,7 +218,7 @@ if (isArticleLandingPage()) {
   }));
   productTypeOptions.items = coveoSolutionOptions;
   dropdownOptions.length = 0;
-  if (productTypeOptions.length > 0) {
+  if (productTypeOptions.items.length > 0) {
     dropdownOptions.push(productTypeOptions);
   }
   dropdownOptions.push(roleOptions);
