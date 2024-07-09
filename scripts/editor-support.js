@@ -265,7 +265,7 @@ async function applyChanges(event) {
           newSection.style.display = null;
         } else {
           element.replaceWith(...newElements);
-          if(element.closest(".tab-panel")) element.classList.add("no-mtoc")
+          if (element.closest('.tab-panel')) element.classList.add('no-mtoc');
           decorateButtons(parentElement);
           decorateIcons(parentElement);
           decorateRichtext(parentElement);
