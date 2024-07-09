@@ -8,7 +8,7 @@ import {
   loadBlocks,
 } from './lib-franklin.js';
 import { decorateRichtext } from './editor-support-rte.js';
-import { decorateMain, loadArticles, loadIms } from './scripts.js';
+import { decorateMain, isArticlePage, loadArticles, loadIms } from './scripts.js';
 
 // set aem content root
 window.hlx.aemRoot = '/content/exlm/global';
@@ -180,6 +180,11 @@ async function applyChanges(event) {
     if (element.matches('main')) {
       const newMain = parsedUpdate.querySelector(`[data-aue-resource="${resource}"]`);
       newMain.style.display = 'none';
+      if (isArticlePage()) {
+        element.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
+          heading.classList.add('no-mtoc');
+        });
+      }
       element.insertAdjacentElement('afterend', newMain);
       decorateMain(newMain);
       decorateRichtext(newMain);
@@ -220,18 +225,7 @@ async function applyChanges(event) {
         const { parentElement } = element;
         if (element.matches('.tabpanel')) {
           const [newSection] = newElements;
-          decorateButtons(newSection);
-          decorateIcons(newSection);
-          newSection.querySelector('.section-metadata')?.remove();
-          element.innerHTML = newSection.innerHTML;
-          decorateBlocks(parentElement);
-          decorateRichtext(parentElement);
-          await loadBlocks(parentElement);
-          return true;
-        }
-        if (element.matches('.section')) {
-          const [newSection] = newElements;
-          newSection.style.display = 'none';
+          element.style.display = 'none';
           element.insertAdjacentElement('afterend', newSection);
           decorateButtons(newSection);
           decorateIcons(newSection);
@@ -239,7 +233,32 @@ async function applyChanges(event) {
           decorateBlocks(parentElement);
           decorateRichtext(newSection);
           await loadBlocks(parentElement);
+          element.innerHTML = newSection.innerHTML;
+          newSection.remove();
+          element.style.display = null;
+          return true;
+        }
+        if (element.matches('.section')) {
+          let articleContentContainer;
+          const [newSection] = newElements;
+          newSection.style.display = 'none';
+          element.insertAdjacentElement('afterend', newSection);
+          decorateButtons(newSection);
+          decorateIcons(newSection);
+          if (document.querySelector('.article-content-container')) {
+            articleContentContainer = document.querySelector('.article-content-container').cloneNode(true);
+          }
+          decorateSections(parentElement);
+          decorateBlocks(parentElement);
+          decorateRichtext(newSection);
+          await loadBlocks(parentElement);
           element.remove();
+          if (articleContentContainer) {
+            parentElement
+              .querySelector('.article-content-container')
+              .insertAdjacentElement('afterend', articleContentContainer);
+            parentElement.querySelector('.article-content-container').remove();
+          }
           newSection.style.display = null;
         } else {
           element.replaceWith(...newElements);
