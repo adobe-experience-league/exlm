@@ -227,15 +227,15 @@ async function applyChanges(event) {
           const [newSection] = newElements;
           element.style.display = 'none';
           element.insertAdjacentElement('afterend', newSection);
+          newSection.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
+            heading.classList.add('no-mtoc');
+          });
           decorateButtons(newSection);
           decorateIcons(newSection);
           decorateSections(parentElement);
           decorateBlocks(parentElement);
           decorateRichtext(newSection);
           await loadBlocks(parentElement);
-          newSection.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
-            heading.classList.add('no-mtoc');
-          });
           element.innerHTML = newSection.innerHTML;
           newSection.remove();
           element.style.display = null;
