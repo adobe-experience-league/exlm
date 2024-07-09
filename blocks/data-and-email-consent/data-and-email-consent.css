@@ -77,11 +77,11 @@
   text-decoration: underline;
 }
 
-body.profile .data-and-email-consent .notification p {
+body.profile .data-and-email-consent .notification p:not(.signup-dialog .data-and-email-consent .notification p) {
   font-size: 18px;
 }
 
-body.profile .data-and-email-consent .notification .checkbox > input {
+body.profile .data-and-email-consent .notification .checkbox > input:not(.signup-dialog .data-and-email-consent .notification .checkbox > input) {
   width: 18px;
 }
 
@@ -94,7 +94,7 @@ body.profile .data-and-email-consent .notification .checkbox > input {
     }
 }
 @media (min-width: 900px) {
-body.profile .data-and-email-consent .notification-container .legal p {
+body.profile .data-and-email-consent .notification-container .legal p:not(.signup-dialog .data-and-email-consent .notification-container .legal p) {
   font-size: 14px;
   font-style: normal;
   color: var(--spectrum-gray-800);
