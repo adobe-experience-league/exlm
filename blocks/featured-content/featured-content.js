@@ -40,7 +40,10 @@ export async function getContentReference(link) {
     let authorBioPage = htmlDoc.querySelector('meta[name="author-bio-page"]')?.content;
 
     if (authorBioPage && window.hlx.aemRoot) {
-      authorBioPage = `${authorBioPage}.html`;
+      authorBioPage = authorBioPage
+        .split(',')
+        .map((authorBioPageLink) => `${authorBioPageLink.trim()}.html`)
+        .join(', ');
     }
     let authorDetails = [];
     if (authorBioPage) {
