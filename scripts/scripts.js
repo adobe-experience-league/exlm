@@ -240,7 +240,11 @@ export async function fetchAuthorBio(anchor) {
     .then((html) => {
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(html, 'text/html');
-      const authorInfo = extractAuthorInfo(htmlDoc.querySelector('.author-bio'));
+      const authorInfoEl = htmlDoc.querySelector('.author-bio');
+      if (!authorInfoEl) {
+        return null;
+      }
+      const authorInfo = extractAuthorInfo(authorInfoEl);
       return authorInfo;
     })
     .catch((error) => {
