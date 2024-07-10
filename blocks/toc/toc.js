@@ -93,11 +93,14 @@ function ensureElementInView(tocContent, element) {
  * @param {HTMLElement} tocContent
  */
 function updateTocContent(tocHtml, tocContent) {
-  tocContent.insertAdjacentHTML('beforeend', tocHtml);
+  const tocTree = document.createElement('div');
+  tocTree.classList.add('toc-tree');
+  tocTree.insertAdjacentHTML('beforeend', tocHtml);
+  tocContent.appendChild(tocTree);
 
   // prepare links and submenus
   let submenuIdCount = 0;
-  tocContent.querySelectorAll('a').forEach((anchor) => {
+  tocTree.querySelectorAll('a').forEach((anchor) => {
     const anchorHref = anchor.getAttribute('href');
     if (anchorHref.startsWith('#')) {
       submenuIdCount += 1;
