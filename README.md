@@ -78,3 +78,16 @@ Examples:
 As both `sass-compile.js` and `hlx up` are watching for changes, changes made to your sass files while using the `rpm run up` command will be reflected automatically in your localhost.
 
 Note that using only the `hlx up` command will not trigger updates on-change for sass files.
+
+## Local SignedIn Development
+
+Use this only if you need sign-in to work locally for development purposes.
+
+1. add this entry to `hosts` file (`/etc/hosts` on mac)
+   `127.0.0.1 experienceleague-local.adobe.com`
+   (you likely will need `sudo` to save this file)
+2. run `npm run up-secure` (instead of `npm run up`)
+3. Browser should automatically open at `https://experienceleague-local.adobe.com`
+   > if asked to trust the certificate on the browser, do trust it. Might also need to allow runnig nas admin (`sudo`)
+
+> If you have a Windows machine, please add any learnings to this Doc. The current dev team uses MacOs.
