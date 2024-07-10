@@ -129,6 +129,7 @@
     position:relative;
     width:52px;
     height:52px;
+    min-width: 52px;;
     border: 1px dashed black;
     border-radius: 50%;
     margin-top:10px;
@@ -380,6 +381,10 @@
       justify-self: left;
       grid-row-start: 2;
       grid-row-end: 2;
+      grid-column-start: 1;
+      grid-column-end: 2;
+      margin-right: 48px;
+      margin-left: 0;
     }
 
     .featured-content.block .featured-content-image img {
@@ -395,6 +400,7 @@
       grid-column-start: 2;
       grid-column-end: 3;
       margin-left: 48px;
+      margin-right: 0;
     }
 
     .featured-content .cta {
