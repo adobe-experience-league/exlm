@@ -93,41 +93,41 @@
     line-height: 17px;
 }
 
-body.profile .role-and-industry .industry-selection-holder {
+body.profile .role-and-industry .industry-selection-holder:not(.signup-dialog .role-and-industry .industry-selection-holder) {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: 20px;
 }
 
-body.profile .role-and-industry .industry-selection-heading {
+body.profile .role-and-industry .industry-selection-heading:not(.signup-dialog .role-and-industry .industry-selection-heading) {
     display: flex;
     flex-direction: column;
     gap: 16px;
     text-align: left;
 }
 
-body.profile .role-and-industry .industry-selection-title {
+body.profile .role-and-industry .industry-selection-title:not(.signup-dialog .role-and-industry .industry-selection-title) {
     font-size: 22px;
     font-weight: 700;
     color: #000;
 }
 
-body.profile .role-and-industry .industry-selection-description {
+body.profile .role-and-industry .industry-selection-description:not(.signup-dialog .role-and-industry .industry-selection-description){
     font-size: 16px;
     color: #222222;
     font-style: italic;
     font-weight: 500;
 }
 
-body.profile .role-and-industry .industry-selection-dropdown {
+body.profile .role-and-industry .industry-selection-dropdown:not(.signup-dialog .role-and-industry .industry-selection-dropdown) {
     margin-top: 5px;
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-body.profile .role-and-industry .role-cards-description h3 {
+body.profile .role-and-industry .role-cards-description h3:not(.signup-dialog .role-and-industry .role-cards-description h3) {
     margin-top: 0px;
 }
 /* tablet */
@@ -138,7 +138,7 @@ body.profile .role-and-industry .role-cards-description h3 {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
     }
-    body.profile .role-and-industry .industry-selection-holder {
+    body.profile .role-and-industry .industry-selection-holder:not(.signup-dialog .role-and-industry .industry-selection-holder) {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -147,14 +147,14 @@ body.profile .role-and-industry .role-cards-description h3 {
 
 /* desktop */
 @media (min-width: 900px) {
-    body.profile .role-and-industry .role-cards-holder {
+    body.profile .role-and-industry .role-cards-holder:not(.signup-dialog .role-and-industry .role-cards-holder) {
         display: grid;
         gap: 24px;
         grid-template-columns: 1fr 1fr 1fr 1fr;
         grid-template-rows: 1fr;
     }
     
-    body.profile .role-and-industry .role-cards-title {
+    body.profile .role-and-industry .role-cards-title:not(.signup-dialog .role-and-industry .role-cards-title) {
         display: flex;
         flex-direction: column;
         margin-bottom: 8px;
