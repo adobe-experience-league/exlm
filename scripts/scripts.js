@@ -741,20 +741,8 @@ export function getConfig() {
       hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
     },
     {
-      env: 'PROD-AUTHOR',
-      cdn: 'author-p122525-e1219150.adobeaemcloud.com',
-      hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
-    },
-    {
       env: 'STAGE',
       cdn: 'experienceleague-stage.adobe.com',
-      hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm-stage--adobe-experience-league.live',
-    },
-    {
-      env: 'STAGE-AUTHOR',
-      cdn: 'author-p122525-e1219192.adobeaemcloud.com',
       hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm-stage--adobe-experience-league.live',
     },
@@ -773,8 +761,8 @@ export function getConfig() {
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
-  const isProd = currentEnv?.env.includes('PROD', 'PROD-AUTHOR');
-  const isStage = currentEnv?.env.includes('STAGE', 'STAGE-AUTHOR');
+  const isProd = currentEnv?.env === 'PROD';
+  const isStage = currentEnv?.env === 'STAGE';
   const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
   const ims = {
     client_id: 'ExperienceLeague',
