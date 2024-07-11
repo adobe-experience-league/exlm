@@ -77,10 +77,9 @@ export async function getContentReference(link) {
  *
  * @param {HTMLElement} block - The block element.
  * @param {Array} contentArray - The array of content elements.
- * @param {boolean} isAdobe - Indicates whether the content is from Adobe or external.
  * @returns {Promise<void>} - A promise that resolves when the featured content block is built.
  */
-async function buildFeaturedContent(block, contentArray, isAdobe) {
+async function buildFeaturedContent(block, contentArray) {
   let desc;
   if (contentArray.length === 2) {
     desc = contentArray.shift();
@@ -89,7 +88,6 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
 
   const link = cta.querySelector('a');
   const contentInfo = await getContentReference(link.href);
-  const company = isAdobe ? 'adobe' : 'external';
   const contentDescription = desc.textContent || contentInfo.contentDescription.replace(/^SUMMARY: /, '');
   desc.parentElement.remove();
 
@@ -111,13 +109,20 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
     authorHeader.innerHTML = `<h3>${headerText}</h3>`;
   }
   authorInfo.forEach((author) => {
-    const { authorName: name, authorImage: pic, authorTitle, authorSocialLinkURL, authorSocialLinkText } = author;
+    const {
+      authorName: name,
+      authorImage: pic,
+      authorTitle,
+      authorCompany = '',
+      authorSocialLinkURL,
+      authorSocialLinkText,
+    } = author;
     const authorDiv = div(
       { class: 'author' },
       div(
         { class: 'author-image' },
         createOptimizedPicture(pic, name, 'eager', [{ width: '100' }]),
-        div({ class: `company-dot ${company}` }),
+        div({ class: `company-dot ${authorCompany.toLowerCase()}` }),
       ),
     );
     if (authorDiv) {
@@ -161,5 +166,5 @@ export default async function decorate(block) {
     }
   }
 
-  buildFeaturedContent(block, props, isAdobe);
+  buildFeaturedContent(block, props);
 }
