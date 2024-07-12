@@ -325,8 +325,25 @@
 }
 @media (min-width: 1200px) {
     .signup-dialog {
-        margin: 32px auto;
+        max-width: 996px;
     }
+    .signup-dialog-close-bar {
+        width: 996px;
+    }
+    .step1-container .signup-dialog-content,
+    .step3-container .signup-dialog-content {
+        max-width: 590px;
+    }
+    .step2-container .signup-dialog-content,
+    .confirm-container .signup-dialog-content {
+        max-width: 795px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .signup-dialog {
+        margin: 32px auto;
+    }    
     .signup-dialog-close-bar {
         right: 32px;
         top: 32px;
