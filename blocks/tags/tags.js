@@ -11,7 +11,7 @@ try {
 
 const TOPICS = placeholders?.topics || 'TOPICS:';
 const CREATED_FOR = placeholders?.createdFor || 'CREATED FOR:';
-const PRODUCTS = placeholders?.products || 'PRODUCTS:';
+const TAGS_BLOCK_PRODUCTS = placeholders?.tagsBlockProducts || 'PRODUCTS:';
 
 export default function decorate(block) {
   const coveosolutions = getMetadata('coveo-solution');
@@ -45,7 +45,7 @@ export default function decorate(block) {
     productSection.classList.add('article-tags-product');
     productSection.innerHTML = `
       <div class="article-tags-product-heading">
-        ${PRODUCTS}
+        ${TAGS_BLOCK_PRODUCTS}
       </div>
       ${createTagsHTML(solutions)}
     `;
