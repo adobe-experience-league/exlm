@@ -91,6 +91,7 @@
     min-height: 18px;
     font-size: 14px;
     line-height: 17px;
+    font-style: italic;
 }
 
 body.profile .role-and-industry .industry-selection-holder:not(.signup-dialog .role-and-industry .industry-selection-holder) {
