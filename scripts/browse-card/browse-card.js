@@ -256,9 +256,9 @@ const buildCardContent = async (card, model) => {
     }
 
     let authorBadge = '';
-    if (authorInfo?.type === AUTHOR_TYPE.ADOBE) {
+    if (authorInfo?.type[0] === AUTHOR_TYPE.ADOBE) {
       authorBadge = createTag('span', { class: 'browse-card-author-badge' }, placeholders?.articleAdobeTag);
-    } else if (authorInfo?.type === AUTHOR_TYPE.EXTERNAL) {
+    } else if (authorInfo?.type[0] === AUTHOR_TYPE.EXTERNAL) {
       authorBadge = createTag('span', { class: 'browse-card-author-badge' }, placeholders?.articleExternalTag);
       authorBadge.classList.add('author-badge-external');
     }
