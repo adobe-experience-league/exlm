@@ -36,38 +36,38 @@ export default async function decorate(block) {
   const roleCardsData = [
     {
       role: 'User',
-      title: placeholders.filterRoleUserTitle || 'Business User',
+      title: placeholders.roleCardUserTitle || 'Business User',
       icon: 'business-user',
       description:
-        placeholders.filterRoleUserDescription ||
+        placeholders.roleCardUserDescription ||
         `Responsible for utilizing Adobe solutions to achieve daily job functions, complete tasks, and achieve business objectives.`,
-      selectionDefault: placeholders.noSelectionDefault || '(No selection default)',
+      selectionDefault: placeholders.noSelectionDefault || 'Default selection',
     },
     {
       role: 'Developer',
-      title: placeholders.filterRoleDeveloperTitle || 'Developer',
+      title: placeholders.roleCardDeveloperTitle || 'Developer',
       icon: 'developer',
       description:
-        placeholders.filterRoleDeveloperDescription ||
-        `Responsible for engineering Adobe solutions' implementation, integration, data-modeling, data engineering, and other technical skills.`,
+        placeholders.roleCardDeveloperDescription ||
+        `Responsible for engineering Adobe products implementation, integration, data-modeling, data engineering, and other technical skills.`,
       selectionDefault: '',
     },
     {
       role: 'Admin',
-      title: placeholders.filterRoleAdminTitle || 'Administrator',
+      title: placeholders.roleCardAdministratorTitle || 'Administrator',
       icon: 'admin',
       description:
-        placeholders.filterRoleAdminDescription ||
-        `Responsible for the technical operations, configuration, permissions, management, and support needs of Adobe solutions.`,
+        placeholders.roleCardAdministratorDescription ||
+        `Responsible for the technical operations, configuration, permissions, management, and support needs of Adobe products.`,
       selectionDefault: '',
     },
     {
       role: 'Leader',
-      title: placeholders.filterRoleLeaderTitle || 'Business Leader',
+      title: placeholders.roleCardBusinessLeaderTitle || 'Business Leader',
       icon: 'business-leader',
       description:
-        placeholders.filterRoleLeaderDescription ||
-        `Responsible for owning the digital strategy and accelerating value through Adobe solutions.`,
+        placeholders.roleCardBusinessLeaderDescription ||
+        `Responsible for owning the digital strategy and accelerating value through Adobe products.`,
       selectionDefault: '',
     },
   ];
