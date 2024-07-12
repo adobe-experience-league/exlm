@@ -279,7 +279,7 @@ const buildCardContent = async (card, model) => {
   ].includes(contentType);
   const cardAction = UserActions({
     container: cardOptions,
-    id: id || viewLink ? new URL(viewLink).pathname : '',
+    id: id || (viewLink ? new URL(viewLink).pathname : ''),
     link: copyLink,
     bookmarkConfig: bookmarkEnabled,
   });

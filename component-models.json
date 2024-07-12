@@ -2132,7 +2132,7 @@
         "component": "text",
         "valueType": "string",
         "name": "linkText",
-        "value": "Read Article",
+        "value": "",
         "label": "CTA Text"
       }
     ]

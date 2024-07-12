@@ -610,7 +610,8 @@
                   "name": "Featured Content",
                   "model": "featured-content",
                   "content_cta": "Read Article",
-                  "classes": ["adobe", "left"]
+                  "classes": ["adobe", "left"],
+                  "linkText": "Read Article"
                 }
               }
             }
