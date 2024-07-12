@@ -11,6 +11,7 @@ try {
 
 const TOPICS = placeholders?.topics || 'TOPICS:';
 const CREATED_FOR = placeholders?.createdFor || 'CREATED FOR:';
+const PRODUCT = placeholders?.product || 'PRODUCT:';
 
 export default function decorate(block) {
   const coveosolutions = getMetadata('coveo-solution');
@@ -38,11 +39,17 @@ export default function decorate(block) {
   block.textContent = '';
 
   const articleTags = document.createRange().createContextualFragment(`
+      <div class="article-tags-product">
+      <div class="article-tags-product-heading">
+      ${PRODUCT}
+      </div>
+        ${[solutions].map(createTagsHTML).join('')}
+      </div>
       <div class="article-tags-topics">
       <div class="article-tags-topics-heading">
       ${TOPICS}
       </div>
-        ${[solutions, features].map(createTagsHTML).join('')}
+        ${[features].map(createTagsHTML).join('')}
       </div>
       <div class="article-tags-createdFor">
       <div class="article-tags-createdFor-heading">
