@@ -40,7 +40,7 @@ export default async function decorate(block) {
       icon: 'business-user',
       description:
         placeholders.roleCardUserDescription ||
-        `Responsible for utilizing Adobe solutions to achieve daily job functions, complete tasks, and achieve business objectives.`,
+        `Responsible for utilizing Adobe products to achieve daily job functions, complete tasks, and achieve business objectives.`,
       selectionDefault: placeholders.noSelectionDefault || 'Default selection',
     },
     {
