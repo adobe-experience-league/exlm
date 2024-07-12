@@ -1321,7 +1321,7 @@ function decodeAemPageMetaTags() {
     const decodedCQTags = segments.map((segment) =>
       segment
         .split('/')
-        .map((part) => atob(part))
+        .map((part, index) => (index > 0 ? atob(part) : part))
         .join('/'),
     );
     cqTagsMeta.content = decodedCQTags.join(', ');
