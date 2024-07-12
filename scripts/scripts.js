@@ -1257,6 +1257,7 @@ function decodeAemPageMetaTags() {
   const roleMeta = document.querySelector(`meta[name="role"]`);
   const levelMeta = document.querySelector(`meta[name="level"]`);
   const featureMeta = document.querySelector(`meta[name="feature"]`);
+  const cqTagsMeta = document.querySelector(`meta[name="cq-tags"]`);
 
   const solutions = solutionMeta ? formatPageMetaTags(solutionMeta.content) : [];
   const features = featureMeta ? formatPageMetaTags(featureMeta.content) : [];
@@ -1314,6 +1315,16 @@ function decodeAemPageMetaTags() {
   }
   if (levelMeta) {
     levelMeta.content = decodedLevels.join(',');
+  }
+  if (cqTagsMeta) {
+    const segments = cqTagsMeta.content.split(', ');
+    const decodedCQTags = segments.map((segment) =>
+      segment
+        .split('/')
+        .map((part) => atob(part))
+        .join('/'),
+    );
+    cqTagsMeta.content = decodedCQTags.join(', ');
   }
 }
 
