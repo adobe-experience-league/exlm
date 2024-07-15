@@ -10,7 +10,7 @@ const HEADER_CSS = `${window.hlx.codeBasePath}/blocks/header/header-old.css`;
 class CustomHeader extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    // this.attachShadow({ mode: 'open' });
     this.loadStyles();
   }
 

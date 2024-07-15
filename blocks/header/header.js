@@ -1,5 +1,5 @@
 import { defaultProfileClient, isSignedInUser, signOut } from '../../scripts/auth/profile.js';
-import { decorateIcons, loadCSS, getMetadata } from '../../scripts/lib-franklin.js';
+import { decorateIcons, loadCSS, getMetadata } from './importedFunctions.js';
 import {
   htmlToElement,
   getPathDetails,
@@ -810,7 +810,7 @@ export const createNavigation = (block) => {
 
 export default async function decorate(headerBlock) {
   const newHeader = document.createElement('exl-header');
-  const shadow = newHeader.shadowRoot;
+  const shadow = newHeader;
   headerBlock.appendChild(shadow);
   const exlHeader = document.createElement('div');
   shadow.appendChild(exlHeader);
