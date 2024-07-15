@@ -91,7 +91,7 @@ const getCardData = async (articlePath, placeholders) => {
     product: solutions,
     authorInfo: {
       name: getMetadata('author-name', doc),
-      type: getMetadata('author-type', doc),
+      type: [getMetadata('author-type', doc)],
     },
     tags: [],
     copyLink: fullURL,
