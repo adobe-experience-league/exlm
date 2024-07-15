@@ -395,7 +395,10 @@ const buildNavItems = async (ul, level = 0) => {
     await addMobileLangSelector();
   }
 
-  [...ul.children].forEach(decorateNavItem);
+  [...ul.children]
+  .filter((option) =>
+    option?.querySelector('a')?.textContent?.toLowerCase() !== 'perspectives' || isFeatureEnabled('perspectives'))
+  .forEach(decorateNavItem);
 };
 
 /**
