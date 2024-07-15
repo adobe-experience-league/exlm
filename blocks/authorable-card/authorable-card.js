@@ -5,7 +5,7 @@ import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/br
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 
-const { prodAssetsCdnOrigin } = getConfig();
+const { prodAssetsCdnOrigin, cdnOrigin } = getConfig();
 
 /**
  * Retrieves the content of metadata tags.
@@ -156,6 +156,9 @@ export default async function decorate(block) {
   const cardLoading$ = Promise.all(
     linksContainer.map(async (linkContainer) => {
       let link = linkContainer.textContent?.trim();
+      if (window.hlx.aemRoot) {
+        link = link.startsWith('/') ? `${cdnOrigin}${link}` : link;
+      }
       link = link.startsWith('/') ? `${window.hlx.codeBasePath}${link}` : link;
       // use the link containers parent as container for the card as it is instruented for authoring
       // eslint-disable-next-line no-param-reassign
