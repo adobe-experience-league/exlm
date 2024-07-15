@@ -396,9 +396,11 @@ const buildNavItems = async (ul, level = 0) => {
   }
 
   [...ul.children]
-  .filter((option) =>
-    option?.querySelector('a')?.textContent?.toLowerCase() !== 'perspectives' || isFeatureEnabled('perspectives'))
-  .forEach(decorateNavItem);
+    .filter(
+      (option) =>
+        option?.querySelector('a')?.textContent?.toLowerCase() !== 'perspectives' || isFeatureEnabled('perspectives'),
+    )
+    .forEach(decorateNavItem);
 };
 
 /**
