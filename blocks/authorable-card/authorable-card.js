@@ -90,8 +90,10 @@ const getCardData = async (articlePath, placeholders) => {
     thumbnail: createThumbnailURL(doc, type) || '',
     product: solutions,
     authorInfo: {
-      name: getMetadata('author-name', doc),
-      type: getMetadata('author-type', doc),
+      name: getMetadata('author-name', doc)
+        .split(',')
+        .map((name) => name.trim()),
+      type: [getMetadata('author-type', doc)],
     },
     tags: [],
     copyLink: fullURL,
