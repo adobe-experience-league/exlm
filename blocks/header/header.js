@@ -395,12 +395,15 @@ const buildNavItems = async (ul, level = 0) => {
     await addMobileLangSelector();
   }
 
-  [...ul.children]
-    .filter(
-      (option) =>
-        option?.querySelector('a')?.textContent?.toLowerCase() !== 'perspectives' || isFeatureEnabled('perspectives'),
-    )
-    .forEach(decorateNavItem);
+  [...ul.children].forEach((option) => {
+    const link = option.querySelector('a');
+    const text = link?.textContent?.toLowerCase()?.trim();
+    if (text === 'perspectives' && !isFeatureEnabled('perspectives')) {
+      option.remove(); // Remove the element if 'perspectives' and feature is not enabled
+    } else {
+      decorateNavItem(option); // Decorate the element otherwise
+    }
+  });
 };
 
 /**
