@@ -5,7 +5,7 @@ import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/br
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 
-const { prodAssetsCdnOrigin } = getConfig();
+const { prodAssetsCdnOrigin, cdnOrigin } = getConfig();
 
 /**
  * Retrieves the content of metadata tags.
@@ -63,7 +63,18 @@ const getCardData = async (articlePath, placeholders) => {
   }
   const html = await response.text();
   const doc = domParser.parseFromString(html, 'text/html');
-  const fullURL = new URL(articlePath, window.location.origin).href;
+  let fullURL = new URL(articlePath, window.location.origin).href;
+  if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+    if (fullURL.includes('/docs/')) {
+      fullURL = `${cdnOrigin}${articlePath.replace(`${window.hlx.codeBasePath}`, '')}`;
+    } else {
+      const nonDocPath = new URL(
+        articlePath.replace(window.hlx.codeBasePath, window.hlx.aemRoot),
+        window.location.origin,
+      ).href;
+      fullURL = `${nonDocPath}.html`;
+    }
+  }
 
   let type = getMetadata('coveo-content-type', doc);
   if (!type) {
@@ -90,8 +101,10 @@ const getCardData = async (articlePath, placeholders) => {
     thumbnail: createThumbnailURL(doc, type) || '',
     product: solutions,
     authorInfo: {
-      name: getMetadata('author-name', doc),
-      type: getMetadata('author-type', doc),
+      name: getMetadata('author-name', doc)
+        .split(',')
+        .map((name) => name.trim()),
+      type: [getMetadata('author-type', doc)],
     },
     tags: [],
     copyLink: fullURL,

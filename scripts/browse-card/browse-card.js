@@ -251,7 +251,7 @@ const buildCardContent = async (card, model) => {
         { class: 'browse-card-author-prefix' },
         placeholders?.articleAuthorPrefixLabel,
       );
-      const authorName = createTag('span', { class: 'browse-card-author-name' }, authorInfo?.name);
+      const authorName = createTag('span', { class: 'browse-card-author-name' }, authorInfo?.name.join(', '));
       authorElement.append(authorPrefix, authorName);
     }
 
