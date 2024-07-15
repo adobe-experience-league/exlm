@@ -63,16 +63,18 @@ const getCardData = async (articlePath, placeholders) => {
   }
   const html = await response.text();
   const doc = domParser.parseFromString(html, 'text/html');
-  let fullURL = new URL(articlePath, window.location.origin).href
-  if(window.hlx.aemRoot || window.location.href.includes('.html')){
-    if(fullURL.includes("/docs/")){
-      fullURL = `${cdnOrigin}${articlePath.replace(`${window.hlx.codeBasePath}`, '')}`
+  let fullURL = new URL(articlePath, window.location.origin).href;
+  if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+    if (fullURL.includes('/docs/')) {
+      fullURL = `${cdnOrigin}${articlePath.replace(`${window.hlx.codeBasePath}`, '')}`;
     } else {
-      const nonDocPath = new URL(articlePath.replace(window.hlx.codeBasePath, window.hlx.aemRoot), window.location.origin).href
-      fullURL = `${nonDocPath}.html`
+      const nonDocPath = new URL(
+        articlePath.replace(window.hlx.codeBasePath, window.hlx.aemRoot),
+        window.location.origin,
+      ).href;
+      fullURL = `${nonDocPath}.html`;
     }
   }
-
 
   let type = getMetadata('coveo-content-type', doc);
   if (!type) {
@@ -165,7 +167,7 @@ export default async function decorate(block) {
   const cardLoading$ = Promise.all(
     linksContainer.map(async (linkContainer) => {
       let link = linkContainer.textContent?.trim();
-      link = link.startsWith('/') ? `${window.hlx.codeBasePath}${link}` : link; 
+      link = link.startsWith('/') ? `${window.hlx.codeBasePath}${link}` : link;
       // use the link containers parent as container for the card as it is instruented for authoring
       // eslint-disable-next-line no-param-reassign
       linkContainer = linkContainer.parentElement;
