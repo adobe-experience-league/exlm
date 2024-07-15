@@ -11,7 +11,7 @@ try {
 
 const TOPICS = placeholders?.topics || 'TOPICS:';
 const CREATED_FOR = placeholders?.createdFor || 'CREATED FOR:';
-const PRODUCT = placeholders?.product || 'PRODUCT:';
+const TAGS_BLOCK_PRODUCTS = placeholders?.tagsBlockProducts || 'PRODUCTS:';
 
 export default function decorate(block) {
   const coveosolutions = getMetadata('coveo-solution');
@@ -38,26 +38,44 @@ export default function decorate(block) {
 
   block.textContent = '';
 
-  const articleTags = document.createRange().createContextualFragment(`
-      <div class="article-tags-product">
+  const articleTags = document.createDocumentFragment();
+
+  if (solutions) {
+    const productSection = document.createElement('div');
+    productSection.classList.add('article-tags-product');
+    productSection.innerHTML = `
       <div class="article-tags-product-heading">
-      ${PRODUCT}
+        ${TAGS_BLOCK_PRODUCTS}
       </div>
-        ${[solutions].map(createTagsHTML).join('')}
-      </div>
-      <div class="article-tags-topics">
+      ${createTagsHTML(solutions)}
+    `;
+    articleTags.appendChild(productSection);
+  }
+
+  if (features) {
+    const topicsSection = document.createElement('div');
+    topicsSection.classList.add('article-tags-topics');
+    topicsSection.innerHTML = `
       <div class="article-tags-topics-heading">
-      ${TOPICS}
+        ${TOPICS}
       </div>
-        ${[features].map(createTagsHTML).join('')}
-      </div>
-      <div class="article-tags-createdFor">
+      ${createTagsHTML(features)}
+    `;
+    articleTags.appendChild(topicsSection);
+  }
+
+  const createdForContent = [roles, experienceLevels].filter(Boolean).map(createTagsHTML).join('');
+  if (createdForContent) {
+    const createdForSection = document.createElement('div');
+    createdForSection.classList.add('article-tags-createdFor');
+    createdForSection.innerHTML = `
       <div class="article-tags-createdFor-heading">
-      ${CREATED_FOR}
+        ${CREATED_FOR}
       </div>
-        ${[roles, experienceLevels].map(createTagsHTML).join('')}
-      </div>
-  `);
+      ${createdForContent}
+    `;
+    articleTags.appendChild(createdForSection);
+  }
 
   block.append(articleTags);
 }
