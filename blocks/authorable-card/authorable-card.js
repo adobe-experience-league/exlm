@@ -3,7 +3,7 @@ import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
-import { getCardData } from '../../scripts/utils/card-utils.js';
+import { getCardData } from '../../scripts/browse-card/browse-card-utils.js';
 
 /**
  * Decorate function to process and log the mapped data.

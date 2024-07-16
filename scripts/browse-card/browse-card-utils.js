@@ -1,5 +1,5 @@
 import { getConfig } from '../scripts.js';
-import { CONTENT_TYPES } from '../browse-card/browse-cards-constants.js';
+import { CONTENT_TYPES } from './browse-cards-constants.js';
 
 const domParser = new DOMParser();
 const { prodAssetsCdnOrigin, cdnOrigin } = getConfig();
