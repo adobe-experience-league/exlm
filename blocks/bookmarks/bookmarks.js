@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
-import { htmlToElement, fetchLanguagePlaceholders, getLanguageCode } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { fetchArticleByID } from '../../scripts/data-service/article-data-service.js';
 import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
@@ -55,7 +55,7 @@ export const parse = (model) => {
 };
 
 async function renderCards({ pgNum, block }) {
-  const languageCode = await getLanguageCode();
+  const { lang: languageCode } = getPathDetails();
   const wrapper = (block || document).querySelector('.bookmarks-content');
   wrapper.innerHTML = '';
   buildCardsShimmer.add(wrapper.parentElement);

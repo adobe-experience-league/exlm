@@ -1,5 +1,5 @@
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
-import { createPlaceholderSpan, getLanguageCode } from '../scripts.js';
+import { createPlaceholderSpan, getPathDetails } from '../scripts.js';
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { bookmarksEventEmitter } from '../events.js';
@@ -25,7 +25,8 @@ async function isBookmarked(bookmarkId) {
  */
 export async function bookmarkHandler(config) {
   const { element, id: idValue, tooltips } = config;
-  const [profileData, languageCode] = await Promise.all([defaultProfileClient.getMergedProfile(), getLanguageCode()]);
+  const { lang: languageCode } = getPathDetails();
+  const profileData = await defaultProfileClient.getMergedProfile();
   let id = idValue;
   if (idValue.includes(`/${languageCode}`)) {
     id = idValue.replace(`/${languageCode}`, '');
