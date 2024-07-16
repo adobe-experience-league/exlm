@@ -6,7 +6,7 @@ import { fetchArticleByID } from '../../scripts/data-service/article-data-servic
 import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { bookmarksEventEmitter } from '../../scripts/events.js';
-import { getCardData, convertToTitleCase } from '../../scripts/utils/article-utils.js';
+import { getCardData, convertToTitleCase } from '../../scripts/utils/card-utils.js';
 import Pagination from '../../scripts/pagination/pagination.js';
 
 const BOOKMARKS_BY_PG_CONFIG = {};

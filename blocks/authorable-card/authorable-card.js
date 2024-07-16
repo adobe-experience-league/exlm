@@ -3,7 +3,7 @@ import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
-import { getCardData } from '../../scripts/utils/article-utils.js';
+import { getCardData } from '../../scripts/utils/card-utils.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -55,7 +55,6 @@ export default async function decorate(block) {
 
   const cardLoading$ = Promise.all(
     linksContainer.map(async (linkContainer) => {
-      // check check check
       let link = linkContainer.textContent?.trim();
       link = link.startsWith('/') ? `${window.hlx.codeBasePath}${link}` : link;
       // use the link containers parent as container for the card as it is instruented for authoring
