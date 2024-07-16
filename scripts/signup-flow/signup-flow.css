@@ -190,12 +190,11 @@
     padding: 0;
     text-align: center;
 }
+/* Overriding Block Specific CSS */
 .signup-dialog-content .user-profile-card-wrapper {
     padding: 16px 0;
 }
-.signup-dialog-content .icon-block-wrapper {
-    margin-top: 32px;
-}
+
 .signup-dialog-content .user-profile-card-wrapper + .default-content-wrapper {
     max-width: 318px;
 }
@@ -210,6 +209,16 @@
 .signup-dialog-content .user-profile-card-wrapper + .default-content-wrapper p a {
     color: var(--text-color);
     text-decoration: underline;
+}
+.signup-dialog-content .icon-block-wrapper {
+    margin-top: 32px;
+}
+.signup-dialog-content .icon-block {
+    max-width: 250px;
+}
+.signup-dialog-content .icon-block-center-align > div {
+    margin: 0;
+    width: 250px;
 }
 /* Styles for Sign up - Finish */
 .confirm-container .signup-dialog-header {
@@ -331,6 +340,15 @@
     .confirm-container .signup-dialog-steps {
         margin-top: 0;
     }
+    .signup-dialog-content .icon-block {
+        max-width: 520px;
+        gap: 20px;
+    }
+    .signup-dialog-content .icon-block-center-align > div {
+        margin: 0;
+        width: 250px;
+        max-width: 250px;
+    }
 }
 @media (min-width: 1200px) {
     .signup-dialog {
@@ -345,6 +363,9 @@
     }
     .step2-container .signup-dialog-content,
     .confirm-container .signup-dialog-content {
+        max-width: 795px;
+    }
+    .signup-dialog-content .icon-block {
         max-width: 795px;
     }
 }
