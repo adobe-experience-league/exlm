@@ -1,5 +1,5 @@
-import { getConfig } from "../scripts.js";
-import { CONTENT_TYPES } from "../browse-card/browse-cards-constants.js";
+import { getConfig } from '../scripts.js';
+import { CONTENT_TYPES } from '../browse-card/browse-cards-constants.js';
 
 const domParser = new DOMParser();
 const { prodAssetsCdnOrigin, cdnOrigin } = getConfig();
@@ -10,7 +10,6 @@ const { prodAssetsCdnOrigin, cdnOrigin } = getConfig();
  * @returns {string} The string in title case.
  */
 export const convertToTitleCase = (str) => (str ? str.replace(/\b\w/g, (match) => match.toUpperCase()) : '');
-
 
 /**
  * Retrieves the content of metadata tags.

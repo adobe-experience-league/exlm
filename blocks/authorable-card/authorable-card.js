@@ -5,7 +5,6 @@ import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/br
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { getCardData } from '../../scripts/utils/article-utils.js';
 
-
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.

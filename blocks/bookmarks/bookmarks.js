@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
-import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, getLanguageCode } from '../../scripts/scripts.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { fetchArticleByID } from '../../scripts/data-service/article-data-service.js';
 import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
@@ -55,6 +55,7 @@ export const parse = (model) => {
 };
 
 async function renderCards({ pgNum, block }) {
+  const languageCode = await getLanguageCode();
   const wrapper = (block || document).querySelector('.bookmarks-content');
   wrapper.innerHTML = '';
   buildCardsShimmer.add(wrapper.parentElement);
@@ -62,7 +63,10 @@ async function renderCards({ pgNum, block }) {
   const bookmarkIds = BOOKMARKS_BY_PG_CONFIG[pgNum];
   const bookmarkPromises = bookmarkIds.map((bookmarkId) => {
     if (bookmarkId.startsWith('/')) {
-      return getCardData(`${window.hlx.codeBasePath}${bookmarkId}`, placeholders);
+      const url = bookmarkId.includes(`/${languageCode}`)
+        ? `${window.hlx.codeBasePath}${bookmarkId}`
+        : `/${languageCode}${window.hlx.codeBasePath}${bookmarkId}`;
+      return getCardData(url, placeholders);
     }
     return fetchArticleByID(bookmarkId);
   });
