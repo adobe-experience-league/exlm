@@ -16,6 +16,7 @@ const languageModule = import('../../scripts/language.js');
 const { khorosProfileUrl } = getConfig();
 
 let searchElementPromise = null;
+const FEATURE_FLAG = 'perspectives';
 
 export async function loadSearchElement() {
   searchElementPromise =
@@ -397,8 +398,9 @@ const buildNavItems = async (ul, level = 0) => {
 
   [...ul.children].forEach((option) => {
     const link = option.querySelector('a');
-    const text = link?.textContent?.toLowerCase()?.trim();
-    if (text === 'perspectives' && !isFeatureEnabled('perspectives')) {
+    const featureFlagValue = link?.getAttribute('feature-flags');
+
+    if (featureFlagValue === FEATURE_FLAG && !isFeatureEnabled(FEATURE_FLAG)) {
       option.remove(); // Remove the element if 'perspectives' and feature is not enabled
     } else {
       decorateNavItem(option); // Decorate the element otherwise
@@ -485,7 +487,7 @@ const searchDecorator = async (searchBlock) => {
       return { label, value };
     })
     // TODO - remove dependecy on feature flag once perspectives are perminantely live
-    .filter((option) => option?.value?.toLowerCase() !== 'perspective' || isFeatureEnabled('perspectives'));
+    .filter((option) => option?.value?.toLowerCase() !== 'perspective' || isFeatureEnabled(FEATURE_FLAG));
 
   searchBlock.innerHTML = '';
   const searchWrapper = htmlToElement(
