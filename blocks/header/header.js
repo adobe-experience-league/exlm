@@ -28,6 +28,7 @@ export async function loadSearchElement() {
       Promise.all([
         import('../../scripts/search/search.js'),
         loadCSS(`${window.hlx.codeBasePath}/scripts/search/search.css`),
+        // loadCSS(`${window.hlx.codeBasePath}/blocks/header/header.css`)
       ])
         .then((results) => {
           const [mod] = results;
@@ -671,6 +672,7 @@ const signInDecorator = async (signInBlock) => {
 
 const productGridDecorator = async (productGridBlock) => {
   simplifySingleCellBlock(productGridBlock);
+  productGridBlock.style.display = 'none';
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
     productGridBlock.classList.add('signed-in');
@@ -811,11 +813,11 @@ const decorateNewTabLinks = (block) => {
  */
 
 export default async function decorate(headerBlock) {
-  const newHeader = document.createElement('exl-header');
-  const shadow = newHeader;
-  headerBlock.appendChild(shadow);
+  const newComponent = document.createElement('exl-header');
+  headerBlock.appendChild(newComponent);
   const exlHeader = document.createElement('div');
-  shadow.appendChild(exlHeader);
+  exlHeader.classList.add('header');
+  newComponent.shadowRoot.appendChild(exlHeader);
 
   exlHeader.style.display = 'none';
   loadSearchElement();

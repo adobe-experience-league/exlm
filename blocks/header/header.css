@@ -38,19 +38,6 @@
   }
 }
 
-header {
-  position: relative;
-  box-sizing: content-box;
-  z-index: 10;
-}
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-  }
-}
-
 .header-wrapper {
   /* header is always white */
   background-color: var(--color-white);
@@ -91,6 +78,9 @@ header {
   container-name: headersection;
   container-type: inline-size;
   /* stylelint-disable-next-line */
+}
+.header a {
+  text-decoration: none;
 }
 @media (min-width: 1024px) {
   .header {
