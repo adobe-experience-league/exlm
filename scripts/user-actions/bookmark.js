@@ -12,7 +12,12 @@ import { bookmarksEventEmitter } from '../events.js';
  */
 async function isBookmarked(bookmarkId) {
   const profile = await defaultProfileClient.getMergedProfile();
-  return profile?.bookmarks.some((bookmarkIdInfo) => `${bookmarkIdInfo}`.includes(bookmarkId));
+  const { lang: languageCode } = getPathDetails();
+  return profile?.bookmarks.some(
+    (bookmarkIdInfo) =>
+      `${bookmarkIdInfo}`.includes(bookmarkId) ||
+      `${bookmarkIdInfo}`.includes(bookmarkId.replace(`/${languageCode}`, '')),
+  );
 }
 
 /**
@@ -64,7 +69,6 @@ export async function decorateBookmark(config) {
 
   if (isSignedIn) {
     element.dataset.signedIn = true;
-    const { lang: languageCode } = getPathDetails();
     const bookmarkTooltip = createPlaceholderSpan(tooltips?.bookmarkTooltip, 'Bookmark Page', (span) => {
       span.classList.add('action-tooltip', 'bookmark-tooltip');
     });
@@ -76,7 +80,7 @@ export async function decorateBookmark(config) {
     element.appendChild(bookmarkTooltip);
     element.appendChild(removeBookmarkTooltip);
 
-    element.dataset.bookmarked = id ? await isBookmarked(id.replace(`/${languageCode}`, '')) : false;
+    element.dataset.bookmarked = id ? await isBookmarked(id) : false;
   } else {
     const signInToBookmarkTooltip = createPlaceholderSpan(
       tooltips?.signInToBookmarkTooltip,
