@@ -1,4 +1,4 @@
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement } from './importedFunctions.js';
 
 const HEADER_CSS = `${window.hlx.codeBasePath}/blocks/header/header-old.css`;
 

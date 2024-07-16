@@ -1,19 +1,21 @@
 import { defaultProfileClient, isSignedInUser, signOut } from '../../scripts/auth/profile.js';
-import { decorateIcons, loadCSS, getMetadata } from './importedFunctions.js';
 import {
   htmlToElement,
-  getPathDetails,
-  fetchLanguagePlaceholders,
+  decorateIcons,
+  loadCSS,
+  getMetadata,
   decorateLinks,
+  getPathDetails,
   getConfig,
   getLink,
   fetchFragment,
   isFeatureEnabled,
-} from '../../scripts/scripts.js';
-import getProducts from '../../scripts/utils/product-utils.js';
+  fetchLanguagePlaceholders,
+} from './importedFunctions.js';
+import getProducts from './product-utils.js';
 import './exl-header.js';
 
-const languageModule = import('../../scripts/language.js');
+const languageModule = import('./language.js');
 const { khorosProfileUrl } = getConfig();
 
 let searchElementPromise = null;
@@ -791,17 +793,17 @@ const decorateNewTabLinks = (block) => {
   });
 };
 
-export const createNavigation = (block) => {
-  const headerBlockFirstRow = getBlockFirstRow(block);
-  headerBlockFirstRow.outerHTML = `<nav>${headerBlockFirstRow.innerHTML}</nav>`;
-  const nav = block.querySelector('nav');
-  nav.role = 'navigation';
-  nav.ariaLabel = 'Main navigation';
+// export const createNavigation = (block) => {
+//   const headerBlockFirstRow = getBlockFirstRow(block);
+//   headerBlockFirstRow.outerHTML = `<nav>${headerBlockFirstRow.innerHTML}</nav>`;
+//   const nav = block.querySelector('nav');
+//   nav.role = 'navigation';
+//   nav.ariaLabel = 'Main navigation';
 
-  const navOverlay = document.createElement('div');
-  navOverlay.classList.add('nav-overlay', 'hidden');
-  document.body.appendChild(navOverlay);
-};
+//   const navOverlay = document.createElement('div');
+//   navOverlay.classList.add('nav-overlay', 'hidden');
+//   document.body.appendChild(navOverlay);
+// };
 
 /**
  * Main header decorator, calls all the other decorators
@@ -830,6 +832,7 @@ export default async function decorate(headerBlock) {
   const nav = exlHeader.querySelector('nav');
   nav.role = 'navigation';
   nav.ariaLabel = 'Main navigation';
+  nav.style.display = 'flex';
 
   const navOverlay = document.createElement('div');
   navOverlay.classList.add('nav-overlay', 'hidden');
