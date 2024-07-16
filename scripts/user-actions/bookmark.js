@@ -1,5 +1,5 @@
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
-import { createPlaceholderSpan } from '../scripts.js';
+import { createPlaceholderSpan, getPathDetails } from '../scripts.js';
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { bookmarksEventEmitter } from '../events.js';
@@ -24,8 +24,13 @@ async function isBookmarked(bookmarkId) {
  * @param {string} config.tooltips - tooltips object to be displayed in a toast notification.
  */
 export async function bookmarkHandler(config) {
-  const { element, id, tooltips } = config;
+  const { element, id: idValue, tooltips } = config;
+  const { lang: languageCode } = getPathDetails();
   const profileData = await defaultProfileClient.getMergedProfile();
+  let id = idValue;
+  if (idValue.includes(`/${languageCode}`)) {
+    id = idValue.replace(`/${languageCode}`, '');
+  }
   const { bookmarks = [] } = profileData;
   const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => `${bookmarkIdInfo}`.includes(id));
   const newBookmarks = bookmarks.filter((bookmarkIdInfo) => !`${bookmarkIdInfo}`.includes(id));
