@@ -2,15 +2,10 @@ body.profile > main > .section:not(.profile-tab-section, .profile-rail-section, 
     border: none;
 }
 
-.product-interests h1,
-.product-interests h2,
-.product-interests h3,
-.product-interests h4,
-.product-interests h5,
-.product-interests h6{
-    border-bottom: 1px solid #D5D5D5;
+.product-interests :where(h2,h3,h4,h5,h6) {
+    border-bottom: 1px solid var(--spectrum-gray-300);
     padding-bottom: 18px;
-    margin-bottom: 18px;
+    margin: 0 0 18px;
 }
 
 .product-interests > ul.interests-container {
