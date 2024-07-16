@@ -8,13 +8,10 @@ import {
 } from '../../scripts/scripts.js';
 import getSolutionByName from './toc-solutions.js';
 
-const MAX_ITEMS = 5;
-
 /**
  * fetch toc html from service
  * @param {string} tocID
- * @param {string} lang
- * @returns
+ * @returns {Promise<string>}
  */
 async function fetchToc(tocID) {
   const lang = (await getLanguageCode()) || 'en';
@@ -58,16 +55,52 @@ function buildTocMobileDropdown() {
 }
 
 /**
- *
+ * Collapse sibling submenus of the clicked element
+ * @param {HTMLElement} element
+ */
+function collapseSiblingSubmenus(element) {
+  const parentList = element.closest('ul');
+  if (parentList) {
+    const siblingToggles = parentList.querySelectorAll(':scope > li > .toc-toggle');
+    siblingToggles.forEach((toggle) => {
+      if (toggle !== element) {
+        toggle.setAttribute('aria-expanded', 'false');
+        const siblingUl = toggle.nextElementSibling;
+        if (siblingUl && siblingUl.tagName === 'UL') {
+          siblingUl.setAttribute('aria-hidden', 'true');
+        }
+      }
+    });
+  }
+}
+
+/**
+ * Ensure the active element is scrolled into view
+ * @param {HTMLElement} tocContent
+ * @param {HTMLElement} element
+ */
+function ensureElementInView(tocContent, element) {
+  const elementTop = element.getBoundingClientRect().top;
+  const tocContentTop = tocContent.getBoundingClientRect().top;
+  const scrollPosition = elementTop - tocContentTop - 20;
+
+  tocContent.scrollTop += scrollPosition;
+}
+
+/**
+ * Update TOC content with HTML and set up event listeners
  * @param {string} tocHtml
  * @param {HTMLElement} tocContent
  */
 function updateTocContent(tocHtml, tocContent) {
-  tocContent.insertAdjacentHTML('beforeend', tocHtml);
+  const tocTree = document.createElement('div');
+  tocTree.classList.add('toc-tree');
+  tocTree.insertAdjacentHTML('beforeend', tocHtml);
+  tocContent.appendChild(tocTree);
 
   // prepare links and submenus
   let submenuIdCount = 0;
-  tocContent.querySelectorAll('a').forEach((anchor) => {
+  tocTree.querySelectorAll('a').forEach((anchor) => {
     const anchorHref = anchor.getAttribute('href');
     if (anchorHref.startsWith('#')) {
       submenuIdCount += 1;
@@ -79,11 +112,19 @@ function updateTocContent(tocHtml, tocContent) {
       if (siblingUl && siblingUl.tagName === 'UL') {
         siblingUl.id = submenuId;
         siblingUl.classList.add('toc-submenu');
+        siblingUl.setAttribute('aria-hidden', 'true');
       }
       anchor.addEventListener('click', (event) => {
         event.preventDefault();
         const isExpanded = anchor.getAttribute('aria-expanded') === 'true';
         anchor.setAttribute('aria-expanded', !isExpanded);
+        siblingUl.setAttribute('aria-hidden', isExpanded ? 'true' : 'false');
+
+        if (!isExpanded) {
+          // Collapse other submenus at the same level
+          collapseSiblingSubmenus(anchor);
+        }
+        ensureElementInView(tocContent, anchor);
       });
     } else {
       // Rewrite docs path to fix language path
@@ -92,41 +133,16 @@ function updateTocContent(tocHtml, tocContent) {
       anchor.classList.add('toc-item');
     }
   });
-
-  tocContent.querySelectorAll('ul').forEach((ul) => {
-    // if ul has more than MAX_ITEMS children, add view more link
-    const items = Array.from(ul.children).filter((child) => child.tagName === 'LI');
-    if (items.length > MAX_ITEMS) {
-      /*
-      const viewMoreLessItem = document.createElement('li');
-      viewMoreLessItem.classList.add('toc-view-more-less');
-      ul.setAttribute('aria-expanded', 'false');
-      const viewMoreSpan = createPlaceholderSpan('viewMore', 'View More');
-      viewMoreSpan.className = 'toc-view-more';
-      const viewLessSpan = createPlaceholderSpan('viewLess', 'View Less');
-      viewLessSpan.className = 'toc-view-less';
-      viewMoreLessItem.appendChild(viewMoreSpan);
-      viewMoreLessItem.appendChild(viewLessSpan);
-      viewMoreLessItem.addEventListener('click', () => {
-        const isExpanded = ul.getAttribute('aria-expanded') === 'true';
-        ul.setAttribute('aria-expanded', !isExpanded);
-      });
-      ul.appendChild(viewMoreLessItem);
-      */
-    }
-  });
 }
 
 const activate = (el, expandSelf) => {
   if (!el) return;
   el.classList.add('is-active');
-  if (expandSelf) el.setAttribute('aria-expanded', 'true');
-  const activeLi = el.closest('li');
-  const index = [...activeLi.parentElement.children].indexOf(activeLi);
-  if (index > MAX_ITEMS - 1) {
-    const parentUl = activeLi.closest('ul');
-    if (parentUl) {
-      parentUl.setAttribute('aria-expanded', 'true');
+  if (expandSelf) {
+    el.setAttribute('aria-expanded', 'true');
+    const siblingUl = el.nextElementSibling;
+    if (siblingUl && siblingUl.tagName === 'UL') {
+      siblingUl.setAttribute('aria-hidden', 'false');
     }
   }
 };
@@ -147,7 +163,6 @@ function activateCurrentPage(tocContent) {
       currentItem = null;
       if (parentList) {
         const toggle = parentList.parentElement.querySelector(':scope > .toc-toggle');
-        // get toggle eleemnt index
         if (toggle) {
           activate(toggle, true);
         }
@@ -157,6 +172,9 @@ function activateCurrentPage(tocContent) {
         }
       }
     }
+
+    // Ensure the active element is in view
+    ensureElementInView(tocContent, activeAnchor);
   }
 }
 
@@ -199,11 +217,11 @@ export default async function decorate(block) {
     const offset = 100;
 
     if (activeElement) {
-        const activeElementTop = activeElement.getBoundingClientRect().top;
-        const tocContentTop = tocContent.getBoundingClientRect().top;
-        const scrollPosition = activeElementTop - tocContentTop - offset;
+      const activeElementTop = activeElement.getBoundingClientRect().top;
+      const tocContentTop = tocContent.getBoundingClientRect().top;
+      const scrollPosition = activeElementTop - tocContentTop - offset;
 
-        tocContent.scrollTop = scrollPosition;
+      tocContent.scrollTop = scrollPosition;
     }
   });
 
