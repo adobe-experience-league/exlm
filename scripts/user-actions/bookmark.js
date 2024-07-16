@@ -12,7 +12,12 @@ import { bookmarksEventEmitter } from '../events.js';
  */
 async function isBookmarked(bookmarkId) {
   const profile = await defaultProfileClient.getMergedProfile();
-  return profile?.bookmarks.some((bookmarkIdInfo) => `${bookmarkIdInfo}`.includes(bookmarkId));
+  const { lang: languageCode } = getPathDetails();
+  return profile?.bookmarks.some(
+    (bookmarkIdInfo) =>
+      `${bookmarkIdInfo}`.includes(bookmarkId) ||
+      `${bookmarkIdInfo}`.includes(bookmarkId.replace(`/${languageCode}`, '')),
+  );
 }
 
 /**
@@ -64,7 +69,6 @@ export async function decorateBookmark(config) {
 
   if (isSignedIn) {
     element.dataset.signedIn = true;
-
     const bookmarkTooltip = createPlaceholderSpan(tooltips?.bookmarkTooltip, 'Bookmark Page', (span) => {
       span.classList.add('action-tooltip', 'bookmark-tooltip');
     });
