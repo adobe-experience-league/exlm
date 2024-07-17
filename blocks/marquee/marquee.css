@@ -317,7 +317,7 @@ div.marquee-wrapper {
 
   .marquee-subject img {
     object-fit: cover;
-    width: 100%;
+    width: auto;
     position: relative;
     z-index: 2;
   }
