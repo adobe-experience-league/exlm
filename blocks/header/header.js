@@ -1,9 +1,13 @@
 import { defaultProfileClient, isSignedInUser, signOut } from '../../scripts/auth/profile.js';
-import {
+
+import getProducts from './product-utils.js';
+import './exl-header.js';
+
+const scripts = './importedFunctions.js';
+const lib = './importedFunctions.js';
+
+const {
   htmlToElement,
-  decorateIcons,
-  loadCSS,
-  getMetadata,
   decorateLinks,
   getPathDetails,
   getConfig,
@@ -11,9 +15,9 @@ import {
   fetchFragment,
   isFeatureEnabled,
   fetchLanguagePlaceholders,
-} from './importedFunctions.js';
-import getProducts from './product-utils.js';
-import './exl-header.js';
+} = await import(scripts);
+
+const { getMetadata, loadCSS, decorateIcons } = await import(lib);
 
 const languageModule = import('./language.js');
 const { khorosProfileUrl } = getConfig();
@@ -189,8 +193,6 @@ const getCell = (block, row, cell) => block.querySelector(`:scope > div:nth-chil
 // Mobile Only (Until 1024px)
 const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
-const { lang } = getPathDetails();
-const headerFragment = await fetchFragment('header/header', lang);
 const decoratorState = {
   languages: new Deferred(),
 };
@@ -836,7 +838,8 @@ export default async function decorate(headerBlock) {
     window.headlessSolutionProductKey = solutionTag;
   }
 
-  // eslint-disable-next-line no-unused-vars
+  const { lang } = getPathDetails();
+  const headerFragment = await fetchFragment('header/header', lang);
   exlHeader.innerHTML = headerFragment;
 
   const exlHeaderFirstRow = getBlockFirstRow(exlHeader);
