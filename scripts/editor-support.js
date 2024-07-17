@@ -227,6 +227,9 @@ async function applyChanges(event) {
           const [newSection] = newElements;
           element.style.display = 'none';
           element.insertAdjacentElement('afterend', newSection);
+          newSection.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
+            heading.classList.add('no-mtoc');
+          });
           decorateButtons(newSection);
           decorateIcons(newSection);
           decorateSections(parentElement);
@@ -262,6 +265,7 @@ async function applyChanges(event) {
           newSection.style.display = null;
         } else {
           element.replaceWith(...newElements);
+          if (element.closest('.tab-panel')) element.classList.add('no-mtoc');
           decorateButtons(parentElement);
           decorateIcons(parentElement);
           decorateRichtext(parentElement);
