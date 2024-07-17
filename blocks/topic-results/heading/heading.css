@@ -1,0 +1,19 @@
+.topics-header {
+    display: flex;
+    flex-direction: column;
+   }
+   
+   @media (width >= 600px)  {
+    .topics-header {
+     flex-direction: row;
+     justify-content: space-between;
+    }
+   }
+   .topics-header-heading {
+    /* add styles */
+}
+
+.topics-header-result {
+    /* add styles */
+}
+   

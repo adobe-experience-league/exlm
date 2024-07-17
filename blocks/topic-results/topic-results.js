@@ -1,50 +1,36 @@
-import { loadCSS } from '../../scripts/lib-franklin.js';
-import { htmlToElement } from '../../scripts/scripts.js';
-import createTabs from './tabs.js';
-
-/**
- * @param {HTMLDivElement} block
- */
-function createHeading({ title, headding, resultCount, ResultTotal, viewMoreResultsLabel, viewMoreResultsUrl }) {
-  return htmlToElement(`
-    <div class="topics-header">
-      <div class="topics-header-headding">
-        <span>${title}</span>
-        <h1>${headding}</h1>
-      </div>
-      <div class="topics-header-result">
-        <p>Showing ${resultCount} of ${ResultTotal}</p>
-        <a href="${viewMoreResultsUrl}">${viewMoreResultsLabel}</a>
-      </div>
-    </div>
-  `);
-}
+import createHeading from './heading/heading.js';
+import decorateTabs from './tabs/tabs.js';
+import { populateFilteredResults } from './filtered-results.js';
+import { initPagination } from './pagination/pagination.js';
 
 /**
  * @param {HTMLDivElement} block
  */
 export default async function decorate(block) {
-  loadCSS(`${window.hlx.codeBasePath}/blocks/topic-results/tabs.css`);
+  // Create heading and append it to the block
   block.appendChild(
     createHeading({
       title: 'Topics',
-      headding: 'Artificial Intelligence',
+      heading: 'Artificial Intelligence',
       resultCount: 10,
-      ResultTotal: 100,
+      resultTotal: 100,
       viewMoreResultsLabel: 'View all results',
       viewMoreResultsUrl: '#',
     }),
   );
 
-  block.appendChild(
-    createTabs({
-      title: 'Some Title',
-      tabs: [
-        { label: 'Maria Ahlefeldt', content: 'My content', selected: true },
-        { label: 'Carl Andersen', content: 'My content' },
-        { label: 'Ida da Fonseca', content: 'My content' },
-        { label: 'Peter Müller', content: 'My content' },
-      ],
-    }),
-  );
+  // Initialize tabs and append them to the block
+  decorateTabs(block, (contentType) => {
+    populateFilteredResults(block, contentType);
+  });
+
+  // Initialize pagination
+  // assuming that we have 100 items in total and want to display 10 items max per page
+  initPagination(100, 10, (_currentPage) => {
+    // placeholder for logic to fetch and display the items for the current page
+    // use _currentPage minimally to avoid linter error
+    if (_currentPage >= 0) {
+      // placeholder for logic to fetch and display the items for the current page
+    }
+  });
 }

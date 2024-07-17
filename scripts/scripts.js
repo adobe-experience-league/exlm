@@ -1080,11 +1080,11 @@ async function loadArticles() {
     if (!document.querySelector('main > .article-content-section, main > .tab-section')) {
       document.querySelector('main > .mini-toc-section').remove();
     } else {
-    document
-      .querySelectorAll('main > .article-content-section, main > .tab-section, main > .mini-toc-section')
-      .forEach((section) => {
-        contentContainer.append(section);
-      });
+      document
+        .querySelectorAll('main > .article-content-section, main > .tab-section, main > .mini-toc-section')
+        .forEach((section) => {
+          contentContainer.append(section);
+        });
       if (document.querySelector('.article-header-section')) {
         document.querySelector('.article-header-section').after(contentContainer);
       } else {
