@@ -4,6 +4,13 @@ import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { bookmarksEventEmitter } from '../events.js';
 
+function isBookmarkSelected(bookmarkIdInfo, bookmarkId) {
+  const { lang: languageCode } = getPathDetails();
+  return (
+    `${bookmarkIdInfo}`.includes(bookmarkId) || `${bookmarkIdInfo}`.includes(bookmarkId.replace(`/${languageCode}`, ''))
+  );
+}
+
 /**
  * Checks if a given bookmark ID is present in the user's bookmark list.
  *
@@ -12,12 +19,7 @@ import { bookmarksEventEmitter } from '../events.js';
  */
 async function isBookmarked(bookmarkId) {
   const profile = await defaultProfileClient.getMergedProfile();
-  const { lang: languageCode } = getPathDetails();
-  return profile?.bookmarks.some(
-    (bookmarkIdInfo) =>
-      `${bookmarkIdInfo}`.includes(bookmarkId) ||
-      `${bookmarkIdInfo}`.includes(bookmarkId.replace(`/${languageCode}`, '')),
-  );
+  return profile?.bookmarks.some((bookmarkIdInfo) => isBookmarkSelected(bookmarkIdInfo, bookmarkId));
 }
 
 /**
@@ -37,8 +39,8 @@ export async function bookmarkHandler(config) {
     id = idValue.replace(`/${languageCode}`, '');
   }
   const { bookmarks = [] } = profileData;
-  const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => `${bookmarkIdInfo}`.includes(id));
-  const newBookmarks = bookmarks.filter((bookmarkIdInfo) => !`${bookmarkIdInfo}`.includes(id));
+  const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => isBookmarkSelected(bookmarkIdInfo, id));
+  const newBookmarks = bookmarks.filter((bookmarkIdInfo) => !isBookmarkSelected(bookmarkIdInfo, id));
   if (!targetBookmarkItem) {
     newBookmarks.push(`${id}:${Date.now()}`);
     element.dataset.bookmarked = true;
