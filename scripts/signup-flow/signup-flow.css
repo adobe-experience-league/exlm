@@ -179,16 +179,16 @@
     z-index: 2;
 }
 .signup-dialog-content > .section {
-    padding: 0 0 40px 0;    
-}
-.signup-dialog-content > .section:last-child {
-    padding-bottom: 40px;
+    padding: 0 0 56px 0;    
 }
 .signup-dialog-content > .section > .default-content-wrapper > * {
     color: var(--text-color);
     margin: 0;
     padding: 0;
     text-align: center;
+}
+.signup-dialog-content > .section > .default-content-wrapper :where(h1,h2,h3,h4,h5,h6)  {
+    margin-bottom: 8px;
 }
 /* Overriding Block Specific CSS */
 .signup-dialog-content .user-profile-card-wrapper {
@@ -220,6 +220,9 @@
     margin: 0;
     width: 250px;
 }
+.signup-dialog-content .product-experience-level {
+    max-width: unset;
+}
 /* Styles for Sign up - Finish */
 .confirm-container .signup-dialog-header {
     padding-bottom: 36px;
@@ -230,9 +233,7 @@
 .confirm-container .signup-dialog-steps {
     margin: 20px auto 8px;
 }
-.confirm-container .signup-dialog-content .default-content-wrapper :where(h1,h2,h3,h4,h5,h6)  {
-    margin-top: 0;
-}
+
 @media (min-width: 600px) {
     .signup-dialog {
         margin: 72px auto 16px;
@@ -270,6 +271,9 @@
     .signup-dialog-content .user-profile-card-wrapper + .default-content-wrapper {
         max-width: 387px;
     }
+    .signup-dialog-content .product-interests .interests-container {
+        max-height: 540px;
+    }
 }
 @media (min-width: 900px) {
     .signup-dialog {
@@ -288,9 +292,6 @@
     }
     .signup-dialog-content {
         max-width: 636px;
-    }
-    .signup-dialog-content > .section {
-        padding-bottom: 56px;    
     }
     .step1-container .signup-dialog-header-decor {
         background: url('/images/top-frame-decor.svg') no-repeat top left;
@@ -348,6 +349,9 @@
         margin: 0;
         width: 250px;
         max-width: 250px;
+    }
+    .signup-dialog-content .product-interests .interests-container {
+        max-height: 390px;
     }
 }
 @media (min-width: 1200px) {

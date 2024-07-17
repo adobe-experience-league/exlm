@@ -11,10 +11,6 @@ import {
   isFeatureEnabled,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
-import initializeSignupFlow from '../../scripts/signup-flow/signup-flow.js';
-
-/* Temp Code to display the sign-up flow dialog on page load */
-initializeSignupFlow();
 
 const languageModule = import('../../scripts/language.js');
 const { khorosProfileUrl } = getConfig();
