@@ -31,9 +31,7 @@ export default async function decorate(block) {
 
   function generateAwardsBlock(awardDetails) {
     return `
-        <div class="awards-holder">
-          ${awardDetails.map(generateAwardCard).join('')}
-        </div>
+        ${awardDetails.map(generateAwardCard).join('')}
       `;
   }
 
@@ -85,6 +83,7 @@ export default async function decorate(block) {
         const awardsDiv = document.createRange().createContextualFragment(generateAwardsBlock(items));
         wrapper.innerHTML = '';
         wrapper.append(awardsDiv);
+        decorateIcons(blockEl);
       };
       block.innerHTML = `<div class="awards-holder"></div>`;
       // eslint-disable-next-line no-new
@@ -94,6 +93,5 @@ export default async function decorate(block) {
       const awardsEmptyDiv = document.createRange().createContextualFragment(generateEmptyAwardsBlock());
       block.append(awardsEmptyDiv);
     }
-    decorateIcons(block);
   }
 }

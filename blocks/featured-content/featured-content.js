@@ -1,6 +1,6 @@
 import { div, h2, p } from '../../scripts/dom-helpers.js';
 import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
-import { fetchAuthorBio, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchAuthorBio, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 
 let placeholders = {};
 try {
@@ -40,7 +40,10 @@ export async function getContentReference(link) {
     let authorBioPage = htmlDoc.querySelector('meta[name="author-bio-page"]')?.content;
 
     if (authorBioPage && window.hlx.aemRoot) {
-      authorBioPage = `${authorBioPage}.html`;
+      authorBioPage = authorBioPage
+        .split(',')
+        .map((authorBioPageLink) => `${authorBioPageLink.trim()}.html`)
+        .join(', ');
     }
     let authorDetails = [];
     if (authorBioPage) {
@@ -74,10 +77,9 @@ export async function getContentReference(link) {
  *
  * @param {HTMLElement} block - The block element.
  * @param {Array} contentArray - The array of content elements.
- * @param {boolean} isAdobe - Indicates whether the content is from Adobe or external.
  * @returns {Promise<void>} - A promise that resolves when the featured content block is built.
  */
-async function buildFeaturedContent(block, contentArray, isAdobe) {
+async function buildFeaturedContent(block, contentArray) {
   let desc;
   if (contentArray.length === 2) {
     desc = contentArray.shift();
@@ -86,7 +88,6 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
 
   const link = cta.querySelector('a');
   const contentInfo = await getContentReference(link.href);
-  const company = isAdobe ? 'adobe' : 'external';
   const contentDescription = desc.textContent || contentInfo.contentDescription.replace(/^SUMMARY: /, '');
   desc.parentElement.remove();
 
@@ -108,17 +109,34 @@ async function buildFeaturedContent(block, contentArray, isAdobe) {
     authorHeader.innerHTML = `<h3>${headerText}</h3>`;
   }
   authorInfo.forEach((author) => {
-    const { authorName: name, authorImage: pic } = author;
+    const {
+      authorName: name,
+      authorImage: pic,
+      authorTitle,
+      authorCompany = '',
+      authorSocialLinkURL,
+      authorSocialLinkText,
+    } = author;
     const authorDiv = div(
       { class: 'author' },
       div(
         { class: 'author-image' },
         createOptimizedPicture(pic, name, 'eager', [{ width: '100' }]),
-        div({ class: `company-dot ${company}` }),
+        div({ class: `company-dot ${authorCompany.toLowerCase()}` }),
       ),
-      div({ class: 'author-details' }, div(name)),
     );
-    if (authorDiv) authorWrapper.append(authorDiv);
+    if (authorDiv) {
+      const socialDetails = authorSocialLinkURL && authorSocialLinkText;
+      const authorBiodata = htmlToElement(`
+          <div class="author-details">
+            <div class="author-name">${name}</div>
+            <div class="author-title">${authorTitle}</div>
+            ${socialDetails ? `<a class="author-social" href="${authorSocialLinkURL}">${authorSocialLinkText}</a>` : ''}
+          </div>
+      `);
+      authorDiv.appendChild(authorBiodata);
+      authorWrapper.append(authorDiv);
+    }
   });
   cta.replaceWith(contentDiv);
   block.append(authorContainer);
@@ -148,5 +166,5 @@ export default async function decorate(block) {
     }
   }
 
-  buildFeaturedContent(block, props, isAdobe);
+  buildFeaturedContent(block, props);
 }

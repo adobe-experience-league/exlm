@@ -15,6 +15,7 @@
     "sass:watch": "node sass-compile.js --watch",
     "sass:compile": "node sass-compile.js --compile",
     "up": "npm run sass:watch & aem up",
+    "up-secure": "npm run sass:watch & sudo aem up --tls-cert=local-cert/server.crt --tls-key=local-cert/server.key --port=443 --open https://experienceleague-local.adobe.com",
     "prepare": "husky install",
     "preview": "node preview.js",
     "validate:paths": "node validate-paths.js",

@@ -240,7 +240,11 @@ export async function fetchAuthorBio(anchor) {
     .then((html) => {
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(html, 'text/html');
-      const authorInfo = extractAuthorInfo(htmlDoc.querySelector('.author-bio'));
+      const authorInfoEl = htmlDoc.querySelector('.author-bio');
+      if (!authorInfoEl) {
+        return null;
+      }
+      const authorInfo = extractAuthorInfo(authorInfoEl);
       return authorInfo;
     })
     .catch((error) => {
@@ -307,15 +311,10 @@ function addMiniToc(main) {
   );
   const tocSection = document.createElement('div');
   tocSection.classList.add('mini-toc-section');
-  tocSection.append(buildBlock('mini-toc', []));
-  const contentContainer = document.createElement('div');
-  contentContainer.classList.add('content-container');
-  if (document.querySelector('.article-marquee')) {
-    const articleMarquee = document.querySelector('.article-marquee');
-    articleMarquee.parentNode.insertAdjacentElement('afterend', tocSection);
-  } else {
-    main.prepend(tocSection);
-  }
+  const miniTocBlock = buildBlock('mini-toc', []);
+  tocSection.append(miniTocBlock);
+  miniTocBlock.style.display = 'none';
+  main.append(tocSection);
 }
 
 /**
@@ -738,30 +737,21 @@ export function getConfig() {
     {
       env: 'PROD',
       cdn: 'experienceleague.adobe.com',
-      hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
-    },
-    {
-      env: 'PROD-AUTHOR',
-      cdn: 'author-p122525-e1219150.adobeaemcloud.com',
+      authorUrl: 'author-p122525-e1219150.adobeaemcloud.com',
       hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
     },
     {
       env: 'STAGE',
       cdn: 'experienceleague-stage.adobe.com',
-      hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm-stage--adobe-experience-league.live',
-    },
-    {
-      env: 'STAGE-AUTHOR',
-      cdn: 'author-p122525-e1219192.adobeaemcloud.com',
+      authorUrl: 'author-p122525-e1219192.adobeaemcloud.com',
       hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm-stage--adobe-experience-league.live',
     },
     {
       env: 'DEV',
       cdn: 'experienceleague-dev.adobe.com',
+      authorUrl: 'author-p122525-e1200861.adobeaemcloud.com',
       hlxPreview: 'main--exlm--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm--adobe-experience-league.hlx.live',
     },
@@ -774,8 +764,8 @@ export function getConfig() {
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
-  const isProd = currentEnv?.env.includes('PROD', 'PROD-AUTHOR');
-  const isStage = currentEnv?.env.includes('STAGE', 'STAGE-AUTHOR');
+  const isProd = currentEnv?.env === 'PROD' || currentEnv?.authorUrl === 'author-p122525-e1219150.adobeaemcloud.com';
+  const isStage = currentEnv?.env === 'STAGE' || currentEnv?.authorUrl === 'author-p122525-e1219192.adobeaemcloud.com';
   const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
   const ims = {
     client_id: 'ExperienceLeague',
@@ -1068,8 +1058,8 @@ export async function loadArticles() {
     if (!document.querySelector('main > .article-content-section, main > .tab-section')) {
       document.querySelector('main > .mini-toc-section').remove();
     } else {
-      if (document.querySelector('.mini-toc.block')) {
-        document.querySelector('.mini-toc.block').style.display = null;
+      if (document.querySelector('.mini-toc')) {
+        document.querySelector('.mini-toc').style.display = null;
       }
       document
         .querySelectorAll('main > .article-content-section, main > .tab-section, main > .mini-toc-section')
@@ -1267,6 +1257,7 @@ function decodeAemPageMetaTags() {
   const roleMeta = document.querySelector(`meta[name="role"]`);
   const levelMeta = document.querySelector(`meta[name="level"]`);
   const featureMeta = document.querySelector(`meta[name="feature"]`);
+  const cqTagsMeta = document.querySelector(`meta[name="cq-tags"]`);
 
   const solutions = solutionMeta ? formatPageMetaTags(solutionMeta.content) : [];
   const features = featureMeta ? formatPageMetaTags(featureMeta.content) : [];
@@ -1324,6 +1315,16 @@ function decodeAemPageMetaTags() {
   }
   if (levelMeta) {
     levelMeta.content = decodedLevels.join(',');
+  }
+  if (cqTagsMeta) {
+    const segments = cqTagsMeta.content.split(', ');
+    const decodedCQTags = segments.map((segment) =>
+      segment
+        .split('/')
+        .map((part, index) => (index > 0 ? atob(part) : part))
+        .join('/'),
+    );
+    cqTagsMeta.content = decodedCQTags.join(', ');
   }
 }
 

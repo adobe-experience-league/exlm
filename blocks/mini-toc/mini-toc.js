@@ -53,7 +53,6 @@ function buildMiniToc(block, placeholders) {
       const anchors = Array.from(block.querySelectorAll('a'));
 
       if (isArticlePage()) {
-        block.style.display = 'none';
         const anchorTexts = anchors.map((anchor) => {
           const content = anchor.textContent;
           return {
