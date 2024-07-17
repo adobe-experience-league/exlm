@@ -9,7 +9,7 @@ function isBookmarkSelected(bookmarkIdInfo, bookmarkId) {
   return (
     `${bookmarkIdInfo}`.includes(bookmarkId) || `${bookmarkIdInfo}`.includes(bookmarkId.replace(`/${languageCode}`, ''))
   );
-};
+}
 
 /**
  * Checks if a given bookmark ID is present in the user's bookmark list.

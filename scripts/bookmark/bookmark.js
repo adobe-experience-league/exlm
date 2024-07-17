@@ -17,7 +17,7 @@ function isBookmarkSelected(bookmarkIdInfo, bookmarkId) {
   return (
     `${bookmarkIdInfo}`.includes(bookmarkId) || `${bookmarkIdInfo}`.includes(bookmarkId.replace(`/${languageCode}`, ''))
   );
-};
+}
 
 const renderBookmark = (labelSel, iconSel, id) => {
   iconSel.addEventListener('click', async (e) => {
