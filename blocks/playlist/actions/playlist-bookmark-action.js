@@ -2,6 +2,7 @@ import { assetInteractionModel } from '../../../scripts/analytics/lib-analytics.
 import { defaultProfileClient, isSignedInUser } from '../../../scripts/auth/profile.js';
 import { createPlaceholderSpan, fetchLanguagePlaceholders } from '../../../scripts/scripts.js';
 import { sendNotice } from '../../../scripts/toast/toast.js';
+import { isBookmarkSelected } from '../../../scripts/browse-card/browse-card-utils.js';
 
 let placeholders = {};
 try {
@@ -18,15 +19,15 @@ function getCurrentPlaylistBookmarkPath() {
 async function isBookmarkedPlaylist() {
   const profile = await defaultProfileClient.getMergedProfile();
   const bookmarkId = getCurrentPlaylistBookmarkPath();
-  return profile?.bookmarks.find((bookmarkIdInfo) => bookmarkIdInfo.includes(bookmarkId)) || false;
+  return profile?.bookmarks.find((bookmarkIdInfo) => isBookmarkSelected(bookmarkIdInfo, bookmarkId)) || false;
 }
 
 async function toggleBookmark() {
   const bookmarkId = getCurrentPlaylistBookmarkPath();
   const profileData = await defaultProfileClient.getMergedProfile();
   const { bookmarks = [] } = profileData;
-  const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => `${bookmarkIdInfo}`.includes(bookmarkId));
-  const newBookmarks = bookmarks.filter((bookmarkIdInfo) => !`${bookmarkIdInfo}`.includes(bookmarkId));
+  const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => isBookmarkSelected(bookmarkIdInfo, bookmarkId));
+  const newBookmarks = bookmarks.filter((bookmarkIdInfo) => !isBookmarkSelected(bookmarkIdInfo, bookmarkId));
   if (!targetBookmarkItem) {
     // During toggle, remove current bookmark if any (OR) add it to bookmarks
     newBookmarks.push(`${bookmarkId}:${Date.now()}`);
