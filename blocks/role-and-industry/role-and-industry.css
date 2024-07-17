@@ -135,7 +135,7 @@ body.profile .role-and-industry .role-cards-description h3:not(.signup-dialog .r
 @media (min-width: 600px) {
     .role-and-industry .role-cards-holder {
         display: grid;
-        gap: 24px;
+        gap: 20px;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
     }
