@@ -1,5 +1,6 @@
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { createPlaceholderSpan, getPathDetails } from '../scripts.js';
+import { isBookmarkSelected } from '../browse-card/browse-card-utils.js';
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { bookmarksEventEmitter } from '../events.js';
@@ -12,12 +13,7 @@ import { bookmarksEventEmitter } from '../events.js';
  */
 async function isBookmarked(bookmarkId) {
   const profile = await defaultProfileClient.getMergedProfile();
-  const { lang: languageCode } = getPathDetails();
-  return profile?.bookmarks.some(
-    (bookmarkIdInfo) =>
-      `${bookmarkIdInfo}`.includes(bookmarkId) ||
-      `${bookmarkIdInfo}`.includes(bookmarkId.replace(`/${languageCode}`, '')),
-  );
+  return profile?.bookmarks.some((bookmarkIdInfo) => isBookmarkSelected(bookmarkIdInfo, bookmarkId));
 }
 
 /**
@@ -37,8 +33,8 @@ export async function bookmarkHandler(config) {
     id = idValue.replace(`/${languageCode}`, '');
   }
   const { bookmarks = [] } = profileData;
-  const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => `${bookmarkIdInfo}`.includes(id));
-  const newBookmarks = bookmarks.filter((bookmarkIdInfo) => !`${bookmarkIdInfo}`.includes(id));
+  const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => isBookmarkSelected(bookmarkIdInfo, id));
+  const newBookmarks = bookmarks.filter((bookmarkIdInfo) => !isBookmarkSelected(bookmarkIdInfo, id));
   if (!targetBookmarkItem) {
     newBookmarks.push(`${id}:${Date.now()}`);
     element.dataset.bookmarked = true;
