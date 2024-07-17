@@ -1,9 +1,8 @@
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
-import { fetchLanguagePlaceholders } from '../scripts.js';
+import { fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { defaultProfileClient } from '../auth/profile.js';
 import { bookmarksEventEmitter } from '../events.js';
-import { isBookmarkSelected } from '../browse-card/browse-card-utils.js';
 
 let placeholders = {};
 try {
@@ -12,6 +11,13 @@ try {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
 }
+
+function isBookmarkSelected(bookmarkIdInfo, bookmarkId) {
+  const { lang: languageCode } = getPathDetails();
+  return (
+    `${bookmarkIdInfo}`.includes(bookmarkId) || `${bookmarkIdInfo}`.includes(bookmarkId.replace(`/${languageCode}`, ''))
+  );
+};
 
 const renderBookmark = (labelSel, iconSel, id) => {
   iconSel.addEventListener('click', async (e) => {

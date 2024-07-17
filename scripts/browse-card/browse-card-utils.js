@@ -1,4 +1,4 @@
-import { getConfig, getPathDetails } from '../scripts.js';
+import { getConfig } from '../scripts.js';
 import { CONTENT_TYPES } from './browse-cards-constants.js';
 
 const domParser = new DOMParser();
@@ -109,11 +109,4 @@ export const getCardData = async (articlePath, placeholders) => {
       ? placeholders[`browseCard${convertToTitleCase(type)}ViewLabel`]
       : `View ${type}`,
   };
-};
-
-export const isBookmarkSelected = (bookmarkIdInfo, bookmarkId) => {
-  const { lang: languageCode } = getPathDetails();
-  return (
-    `${bookmarkIdInfo}`.includes(bookmarkId) || `${bookmarkIdInfo}`.includes(bookmarkId.replace(`/${languageCode}`, ''))
-  );
 };

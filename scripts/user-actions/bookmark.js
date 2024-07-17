@@ -1,9 +1,15 @@
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { createPlaceholderSpan, getPathDetails } from '../scripts.js';
-import { isBookmarkSelected } from '../browse-card/browse-card-utils.js';
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { bookmarksEventEmitter } from '../events.js';
+
+function isBookmarkSelected(bookmarkIdInfo, bookmarkId) {
+  const { lang: languageCode } = getPathDetails();
+  return (
+    `${bookmarkIdInfo}`.includes(bookmarkId) || `${bookmarkIdInfo}`.includes(bookmarkId.replace(`/${languageCode}`, ''))
+  );
+};
 
 /**
  * Checks if a given bookmark ID is present in the user's bookmark list.
