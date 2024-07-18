@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-cycle
 import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { loadCSS, loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../lib-franklin.js';
+import Shimmer from './signup-flow-placeholder.js';
 
 let placeholders = {};
 try {
@@ -42,6 +43,9 @@ const pages = [
  * The function sets up the dialog structure, navigation, and event handlers.
  */
 const createSignupDialog = () => {
+  pages.forEach((page) =>
+    document.head.appendChild(htmlToElement(`<link rel="prefetch" href="${page.path}.plain.html">`)),
+  );
   const signupDialog = htmlToElement(`
         <dialog class="signup-dialog">
             <div class="signup-dialog-close-bar">
@@ -76,6 +80,23 @@ const createSignupDialog = () => {
         </dialog>
     `);
 
+  const shimmer = new Shimmer();
+
+  function showLoading() {
+    signupDialog.querySelectorAll('div[class$="-decor"]').forEach((decor) => {
+      decor.style.display = 'none';
+    });
+    const signupBody = signupDialog.querySelector('.signup-dialog-body');
+    shimmer.add(signupBody);
+  }
+
+  function removeLoading() {
+    signupDialog.querySelectorAll('div[class$="-decor"]').forEach((decor) => {
+      decor.style.display = 'block';
+    });
+    shimmer.remove();
+  }
+
   /**
    * Loads the content for a specific page by index.
    * @param {number} index - The index of the page to load.
@@ -83,12 +104,12 @@ const createSignupDialog = () => {
    */
   const loadPageContent = async (index) => {
     if (index < 0 || index >= pages.length) return null;
-
     const response = await fetch(`${pages[index].path}.plain.html`);
     const signupClose = signupDialog.querySelector('.signup-dialog-close-btn');
     await decorateIcons(signupClose);
     const signupContainer = signupDialog.querySelector('.signup-dialog-container');
     const signupContent = signupDialog.querySelector('.signup-dialog-content');
+
     if (response.ok) {
       const pageContent = await response.text();
       if (pageContent) {
@@ -174,8 +195,10 @@ const createSignupDialog = () => {
     const signupContent = signupDialog.querySelector('.signup-dialog-content');
     const currentPageIndex = parseInt(signupContent.dataset.currentPageIndex, 10);
     const newIndex = currentPageIndex + direction;
+    showLoading();
     const isLoaded = await loadPageContent(newIndex);
     if (isLoaded) {
+      removeLoading();
       loadStepFlow(newIndex);
     }
   };
@@ -185,8 +208,10 @@ const createSignupDialog = () => {
    */
   const initNavigation = async (index) => {
     loadStepFlow(index);
+    showLoading();
     const isLoaded = await loadPageContent(index);
     if (isLoaded) {
+      removeLoading();
       const prevBtn = signupDialog.querySelector('.signup-dialog-nav-bar .prev-btn');
       const nextBtn = signupDialog.querySelector('.signup-dialog-nav-bar .next-btn');
       const finishBtn = signupDialog.querySelector('.signup-dialog-nav-bar .finish-btn');
