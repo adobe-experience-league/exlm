@@ -2,21 +2,57 @@ import { COVEO_SORT_OPTIONS, CONTENT_TYPES } from '../../../scripts/browse-card/
 import { populateFilteredResults } from '../filtered-results.js';
 import BrowseCardsDelegate from '../../../scripts/browse-card/browse-cards-delegate.js';
 import { loadCSS } from '../../../scripts/lib-franklin.js';
+import { fetchLanguagePlaceholders, htmlToElement } from '../../../scripts/scripts.js';
 
-// Adjusted CONTENT_TYPES to include only the specified tabs
-const CUSTOM_CONTENT_TYPES = {
-  DOCUMENTATION: { ...CONTENT_TYPES.DOCUMENTATION, LABEL: 'Documentation' },
-  TUTORIALS: { ...CONTENT_TYPES.TUTORIAL, LABEL: 'Tutorials' },
-  COMMUNITY: { ...CONTENT_TYPES.COMMUNITY, LABEL: 'Community' },
-  EVENTS: { ...CONTENT_TYPES.EVENT, LABEL: 'Events' },
+//TODO: We need to grab the translated name of the topic from the topics API
+let activeTopic = {
+  label: 'Analytics Basics',
+  value: [''],
 };
 
-async function fetchCardData(sortOption, contentType = [], feature = null) {
+let tabBlock = {};
+
+function getQueryParam(param) {
+  let value = '';
+  const searchParams = new URLSearchParams(window.location.search);
+  const queryParam = searchParams.get(param);
+
+  if (queryParam) {
+    try {
+      const decoded = decodeURIComponent(queryParam);
+      if (Boolean(decoded)) {
+        value = JSON.parse(decoded);
+      }
+    } catch (err) {
+      console.error(`Failed to decode query parameter ${param}`);
+    }
+  }
+
+  return value;
+}
+
+function setQueryParam(param, value) {
+  if (value) {
+    let encoded = '';
+
+    try {
+      const str = JSON.stringify(value);
+      encoded = encodeURIComponent(str);
+    } catch (err) {
+      console.error(`Failed to encode query parameter ${param}`);
+    } 
+    const url = new URL(window.location);
+    url.searchParams.set(param, encoded);
+    history.pushState(null, '', url);
+  }
+}
+
+async function fetchCardData(sortOption, contentType = []) {
   // Construct parameters for the fetch operation
   const params = {
-    sortOption,
+    sortOption: [sortOption],
     contentType: contentType ? [contentType] : [],
-    feature: feature ? [feature] : [],
+    feature: activeTopic.value,
   };
 
   return BrowseCardsDelegate.fetchCardData(params);
@@ -27,64 +63,38 @@ async function fetchCardData(sortOption, contentType = [], feature = null) {
  * @param {string} contentType - The content type to display in the block.
  * @param {HTMLElement} block - The block element to update with content.
  */
-async function displayTabContent(block, contentType = [], sortOption = COVEO_SORT_OPTIONS.RELEVANCE, feature = null) {
+async function displayTabContent(block, contentType = [], sortOption = COVEO_SORT_OPTIONS.RELEVANCE) {
   try {
-    const data = await fetchCardData(sortOption, contentType, feature);
+    const data = await fetchCardData(sortOption, contentType);
     if (data && data.length > 0) {
       populateFilteredResults(block, data);
     }
   } catch (error) {
-    // Error intentionally ignored to ensure uninterrupted user experience
+    // TODO: Render "No results" view
   }
-}
-
-function setActiveTab(index, block, feature = null) {
-  const tabs = block.querySelectorAll('.tab-button');
-  tabs.forEach((tab, tabIndex) => {
-    if (tabIndex === index) {
-      tab.classList.add('active');
-      const contentType = index === 0 ? [] : Object.values(CUSTOM_CONTENT_TYPES)[index - 1].MAPPING_KEY;
-      const sortOption = COVEO_SORT_OPTIONS.RELEVANCE;
-      displayTabContent(block, contentType, sortOption, feature);
-    } else {
-      tab.classList.remove('active');
-    }
-  });
 }
 
 /**
- * Initializes tabs within the provided block element.
- * @param {HTMLElement} block - The block element where tabs will be initialized.
+ *
  */
-function initializeTabs(block) {
-  // Check if block is a DOM element
-  if (!(block instanceof HTMLElement)) {
-    return;
-  }
-
-  const tabContainer = document.createElement('div');
-  tabContainer.className = 'tab-container';
-
-  // Manually add the "Most relevant" tab
-  const mostRelevantTab = document.createElement('button');
-  mostRelevantTab.className = 'tab-button';
-  mostRelevantTab.textContent = 'Most relevant';
-  mostRelevantTab.addEventListener('click', () => setActiveTab(0, block));
-  tabContainer.appendChild(mostRelevantTab);
-
-  // Add tabs for other content types
-  // Convert CONTENT_TYPES from an object to an array of its values
-  Object.values(CUSTOM_CONTENT_TYPES).forEach((type, index) => {
-    const tabButton = document.createElement('button');
-    tabButton.className = 'tab-button';
-    tabButton.textContent = type.LABEL;
-    tabButton.addEventListener('click', () => setActiveTab(index + 1, block));
-
-    tabContainer.appendChild(tabButton);
+async function toggleTab(value, dataset, tabHtml) {
+  tabHtml.querySelectorAll('.active').forEach((el) => {
+    el.classList.remove('active');
   });
 
-  block.appendChild(tabContainer);
-  setActiveTab(0, block); // set the first tab as active by default
+  tabHtml.querySelectorAll(`input[value="${value}"]`).forEach((el) => {
+    el.classList.add('active');
+  });
+
+  (tabHtml.querySelector('.topic-results-dropdown-value span') || {}).textContent = value;
+
+  const sortBy = dataset.sortby || '';
+  const contentType = dataset.contenttype || [];
+
+  //Add block to insert content
+  await displayTabContent(tabBlock, contentType, sortBy, activeTopic);
+  setQueryParam('sortBy', sortBy);
+  setQueryParam('contenttype', contentType);
 }
 
 /**
@@ -94,5 +104,102 @@ function initializeTabs(block) {
 export default async function decorateTabs(block) {
   // Load the CSS for the tabs component
   loadCSS(`${window.hlx.codeBasePath}../blocks/topic-results/tabs/tabs.css`);
-  initializeTabs(block);
+
+  tabBlock = block;
+
+  let placeholders = {};
+
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    console.error('Error fetching placeholders:', err);
+  }
+
+  const tabHtml = htmlToElement(`
+    <div class="topic-results-filters">
+      <div class="topic-results-tabs">
+        <ul>
+        <li>
+          <input type="button" value="${
+            placeholders?.mostRelevant || 'Most relevant'
+          }" data-contenttype="[]" data-sortby="${COVEO_SORT_OPTIONS.RELEVANCE}"/>
+        </li>
+        <li>
+          <input type="button" value="${placeholders?.documentation || 'Documentation'}" data-contenttype="[${
+            CONTENT_TYPES.DOCUMENTATION.MAPPING_KEY
+          }]" data-sortby="${COVEO_SORT_OPTIONS.RELEVANCE}"/>
+        </li>
+        <li>
+          <input type="button" value="${placeholders?.tutorials || 'Tutorials'}" data-contenttype="[${
+            CONTENT_TYPES.TUTORIAL.MAPPING_KEY
+          }]" data-sortby="${COVEO_SORT_OPTIONS.RELEVANCE}" />
+        </li>
+        <li>
+          <input type="button" value="${placeholders?.community || 'Community'}" data-contenttype="[${
+            CONTENT_TYPES.COMMUNITY.MAPPING_KEY
+          }]" data-sortby="${COVEO_SORT_OPTIONS.RELEVANCE}"/>
+        </li>
+        <li>
+          <input type="button" value="${placeholders?.events || 'Events'}" data-contenttype="[${
+            CONTENT_TYPES.EVENT.MAPPING_KEY
+          }]" data-sortby="${COVEO_SORT_OPTIONS.RELEVANCE}"/>
+        </li>
+        </ul>
+      </div>
+
+      <div class="topic-results-dropdown">
+        <div class="topic-results-dropdown-value">
+          <span></span>
+        </div>
+
+        <div class="topic-results-dropdown-popover">
+          <ul>
+            <li>
+              <input type="button" value="${
+                placeholders?.mostRelevant || 'Most relevant'
+              }" data-contenttype="[]" data-sortby="${COVEO_SORT_OPTIONS.RELEVANCE}"/>
+            </li>
+            <li>
+              <input type="button" value="${placeholders?.documentation || 'Documentation'}" data-contenttype="[${
+                CONTENT_TYPES.DOCUMENTATION.MAPPING_KEY
+              }]" data-sortby="${COVEO_SORT_OPTIONS.RELEVANCE}"/>
+            </li>
+            <li>
+              <input type="button" value="${placeholders?.tutorials || 'Tutorials'}" data-contenttype="[${
+                CONTENT_TYPES.TUTORIAL.MAPPING_KEY
+              }]" data-sortby="${COVEO_SORT_OPTIONS.RELEVANCE}" />
+            </li>
+            <li>
+              <input type="button" value="${placeholders?.community || 'Community'}" data-contenttype="[${
+                CONTENT_TYPES.COMMUNITY.MAPPING_KEY
+              }]" data-sortby="${COVEO_SORT_OPTIONS.RELEVANCE}"/>
+            </li>
+            <li>
+              <input type="button" value="${placeholders?.events || 'Events'}" data-contenttype="[${
+                CONTENT_TYPES.EVENT.MAPPING_KEY
+              }]" data-sortby="${COVEO_SORT_OPTIONS.RELEVANCE}"/>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  `);
+
+  (tabHtml.querySelectorAll('input') || []).forEach((button) => {
+    button.addEventListener('click', async (e) => {
+      await toggleTab(e.target.value, e.target.dataset, tabHtml);
+    });
+  });
+
+  block.appendChild(tabHtml);
+
+  activeTopic = getQueryParam('topic') || activeTopic;
+  toggleTab(
+    placeholders?.mostRelevant || 'Most relevant',
+    {
+      sortBy: getQueryParam('sortBy') || COVEO_SORT_OPTIONS.RELEVANCE,
+      contenttype: getQueryParam('contenttype') || [],
+    },
+    tabHtml,
+  );
 }
