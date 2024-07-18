@@ -17,7 +17,7 @@ const {
   fetchLanguagePlaceholders,
 } = await import(scripts);
 
-const { getMetadata, loadCSS, decorateIcons } = await import(lib);
+const { getMetadata, decorateIcons } = await import(lib);
 
 const languageModule = import('./language.js');
 const { khorosProfileUrl } = getConfig();
@@ -30,11 +30,7 @@ export async function loadSearchElement() {
     searchElementPromise ??
     new Promise((resolve, reject) => {
       // eslint-disable-next-line
-      Promise.all([
-        import('../../scripts/search/search.js'),
-        loadCSS(`${window.hlx.codeBasePath}/scripts/search/search.css`),
-        // loadCSS(`${window.hlx.codeBasePath}/blocks/header/header.css`)
-      ])
+      Promise.all([import('../../scripts/search/search.js')])
         .then((results) => {
           const [mod] = results;
           resolve(mod.default ?? mod);
@@ -826,12 +822,13 @@ const decorateNewTabLinks = (block) => {
 
 export default async function decorate(headerBlock) {
   const newComponent = document.createElement('exl-header');
+  newComponent.classList.add('header-wrapper');
   headerBlock.appendChild(newComponent);
   const exlHeader = document.createElement('div');
   exlHeader.classList.add('header');
   newComponent.shadowRoot.appendChild(exlHeader);
 
-  exlHeader.style.display = 'none';
+  // exlHeader.style.display = 'none';
   loadSearchElement();
   const [solutionTag] = getMetadata('solution').trim().split(',');
   if (solutionTag) {
@@ -847,7 +844,6 @@ export default async function decorate(headerBlock) {
   const nav = exlHeader.querySelector('nav');
   nav.role = 'navigation';
   nav.ariaLabel = 'Main navigation';
-  nav.style.display = 'flex';
 
   const navOverlay = document.createElement('div');
   navOverlay.classList.add('nav-overlay', 'hidden');

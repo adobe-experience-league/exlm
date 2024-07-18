@@ -24,9 +24,12 @@
   --nav-item-expanded-border: 2px solid #222;
   --nav-item-expanded-bg: #fafafa;
   --nav-item-text-color: #2c2c2c;
-  --nav-font: var(--body-font-family);
   --color-white: #fff;
   --color-black: #000;
+
+  /* fonts */
+  --body-font-family: 'Adobe Clean', adobe-clean, 'Source Sans Pro', -apple-system, system-ui, 'Segoe UI', roboto,
+    ubuntu, 'Trebuchet MS', 'Lucida Grande', sans-serif;
 
   @include breakpoint(custom) {
     --nav-item-padding-x: 24px;
@@ -75,17 +78,28 @@
   transform: rotateZ(-45deg);
 }
 
-// header {
-//   position: relative;
-//   box-sizing: content-box;
-//   z-index: 10;
+header {
+  position: relative;
+  box-sizing: content-box;
+  z-index: 10;
 
-//   @include breakpoint(custom) {
-//     display: flex;
-//     flex-direction: row;
-//     justify-content: center;
-//   }
-// }
+  @include breakpoint(custom) {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+.icon {
+  display: inline-block;
+  height: 24px;
+  width: 24px;
+}
+
+.icon svg {
+  height: 100%;
+  width: 100%;
+}
 
 .header-wrapper {
   /* header is always white */
@@ -118,6 +132,53 @@
   top: 2px;
 }
 
+a:any-link {
+  font-family: var(--body-font-family);
+  font-size: var(--exlm-font-size-content);
+  font-weight: var(--font-weight-400);
+  font-style: normal;
+  line-height: var(--spectrum-line-height-l);
+  color: var(--non-spectrum-link);
+  margin-top: 12px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--non-spectrum-custom-dark);
+}
+
+/* buttons */
+a.button:any-link,
+button {
+  font-family: var(--body-font-family);
+  display: inline-block;
+  box-sizing: border-box;
+  text-decoration: none;
+  border: 2px solid transparent;
+  padding: 5px 30px;
+  text-align: center;
+  font-style: normal;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--background-color);
+  background-color: var(--link-color);
+  margin: 16px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 30px;
+}
+
+a.button:hover,
+a.button:focus,
+button:hover,
+button:focus {
+  background-color: var(--link-hover-color);
+  cursor: pointer;
+}
+
 .header {
   padding-right: var(--header-padding-x);
   height: 100%;
@@ -126,10 +187,6 @@
   background-color: var(--color-white);
   container-name: headersection;
   container-type: inline-size;
-
-  a {
-    text-decoration: none;
-  }
 
   @include breakpoint(custom) {
     width: 100%;
@@ -163,7 +220,7 @@
     a {
       color: var(--nav-item-text-color) !important;
       /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-      font: normal normal bold 16px/21px var(--nav-font) !important;
+      font: normal normal bold 16px/21px var(--body-font-family) !important;
       margin: 0;
     }
   }
@@ -327,15 +384,6 @@
     padding: 0;
     margin: 0;
 
-    .icon {
-      display: inline-block;
-      vertical-align: middle;
-
-      svg {
-        height: 14px;
-      }
-    }
-
     @include breakpoint(custom) {
       display: flex;
       flex-direction: column;
@@ -393,7 +441,7 @@
       a {
         width: 100%;
         /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-        font: normal normal bold 14px/21px var(--nav-font);
+        font: normal normal bold 14px/21px var(--body-font-family);
         padding: 8px 8px 8px var(--nav-item-padding-x);
 
         @include breakpoint(custom) {
@@ -422,7 +470,7 @@
 
           a {
             display: inline-block;
-            font: normal normal bold 14px/21px var(--nav-font);
+            font: normal normal bold 14px/21px var(--body-font-family);
             padding: 8px 8px 15px 40px;
             width: 100%;
           }
@@ -446,7 +494,7 @@
   .nav-item-subtitle {
     display: none;
     /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-    font: normal normal normal 11px/14px var(--nav-font);
+    font: normal normal normal 11px/14px var(--body-font-family);
     white-space: break-spaces;
 
     @include breakpoint(custom) {
@@ -487,7 +535,7 @@
 
     &:not(.nav-item-toggle-root) {
       @include breakpoint(custom) {
-        font: normal normal bold 12px/18px var(--nav-font);
+        font: normal normal bold 12px/18px var(--body-font-family);
         padding: var(--nav-item-padding-x);
         padding-bottom: calc(var(--nav-item-padding-x) / 2);
         color: var(--non-spectrum-article-dark-gray);
@@ -611,7 +659,7 @@
       align-items: center;
 
       a {
-        font: normal normal normal 14px/18px var(--nav-font);
+        font: normal normal normal 14px/18px var(--body-font-family);
         color: var(--spectrum-blue-900) !important;
         text-align: right;
         margin-right: 0;
@@ -783,8 +831,8 @@
     font-family: var(--body-font-family);
     color: var(--non-spectrum-graphite-gray);
     line-height: 15px;
-    height: 32px;
-    padding: 7px 22px 9px 28px;
+    height: auto;
+    padding: 6px 22px 9px 28px;
     margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;

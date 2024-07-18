@@ -1,30 +1,7 @@
 import { htmlToElement } from './importedFunctions.js';
 
 const HEADER_CSS = `${window.hlx.codeBasePath}/blocks/header/header.css`;
-
-/**
- *
- * @param {HTMLElement} headerBlock
- */
-
-class CustomHeader extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
-  }
-
-  loadStyles() {
-    const cssLink = htmlToElement(`<link rel="stylesheet" href="${HEADER_CSS}">`);
-    this.shadowRoot.append(cssLink);
-  }
-
-  connectedCallback() {
-    this.loadStyles();
-  }
-}
-
-// Define the new element
-customElements.define('exl-header', CustomHeader);
+const SEARCH_CSS = `${window.hlx.codeBasePath}/scripts/search/search.css`;
 
 // /**
 //  * Main header decorator, calls all the other decorators
@@ -32,7 +9,8 @@ customElements.define('exl-header', CustomHeader);
 //  */
 
 // export default async function decorate(headerBlock) {
-//   const newHeader = CustomHeader()
+//   const newComponent = document.createElement('ex-header');
+
 //   headerBlock.appendChild(newHeader);
 //   const exlHeader = document.createElement('div');
 //   newHeader.appendChild(exlHeader);
@@ -82,3 +60,29 @@ customElements.define('exl-header', CustomHeader);
 //   decorateIcons(exlHeader);
 //   exlHeader.style.display = '';
 // }
+
+/**
+ *
+ * @param {HTMLElement} headerBlock
+ */
+
+class CustomHeader extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+
+  loadStyles() {
+    const cssLink = htmlToElement(`<link rel="stylesheet" href="${HEADER_CSS}">`);
+    const searchLink = htmlToElement(`<link rel="stylesheet" href="${SEARCH_CSS}">`);
+    this.shadowRoot.append(cssLink);
+    this.shadowRoot.append(searchLink);
+  }
+
+  connectedCallback() {
+    this.loadStyles();
+  }
+}
+
+// Define the new element
+customElements.define('exl-header', CustomHeader);
