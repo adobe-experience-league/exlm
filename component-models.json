@@ -913,10 +913,6 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Actionable Insights",
-            "value": "article"
-          },
-          {
             "name": "Certification",
             "value": "certification"
           },
@@ -935,6 +931,10 @@
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
           },
           {
             "name": "Troubleshooting",
@@ -1175,10 +1175,6 @@
           {
             "name": "H5",
             "value": "h5"
-          },
-          {
-            "name": "H6",
-            "value": "h6"
           }
         ]
       },
@@ -1801,7 +1797,7 @@
         "name": "contentURL",
         "value": "",
         "label": "Content URL",
-        "description": "Provide a link to one of the following content types: Course, Tutorial, Documentation, Troubleshooting, On-Demand Event, or Certification"
+        "description": "Provide a link to one of the following content types: Course, Tutorial, Documentation, Troubleshooting, On-Demand Event, Certification or Perspective"
       }
     ]
   },
@@ -1873,10 +1869,6 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Actionable Insights",
-            "value": "article"
-          },
-          {
             "name": "Certification",
             "value": "certification"
           },
@@ -1895,6 +1887,10 @@
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
           },
           {
             "name": "Troubleshooting",
@@ -1968,10 +1964,6 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Actionable Insights",
-            "value": "article"
-          },
-          {
             "name": "Certification",
             "value": "certification"
           },
@@ -1990,6 +1982,10 @@
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
           },
           {
             "name": "Troubleshooting",
@@ -2132,7 +2128,7 @@
         "component": "text",
         "valueType": "string",
         "name": "linkText",
-        "value": "Read Article",
+        "value": "",
         "label": "CTA Text"
       }
     ]
@@ -2473,10 +2469,6 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Actionable Insights",
-            "value": "article"
-          },
-          {
             "name": "Courses",
             "value": "course"
           },
@@ -2503,6 +2495,10 @@
           {
             "name": "Certification",
             "value": "certification"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
           }
         ]
       },
@@ -2546,6 +2542,29 @@
             "value": "most_popular"
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "tabs",
+    "fields": []
+  },
+  {
+    "id": "tab",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "content",
+        "value": "",
+        "label": "Body"
       }
     ]
   },
@@ -2658,8 +2677,8 @@
         "description": "Sets the coveo content type in page meta.",
         "options": [
           {
-            "name": "Actionable Insights",
-            "value": "Article"
+            "name": "Perspectives",
+            "value": "Perspective"
           }
         ]
       },
@@ -3342,6 +3361,25 @@
         "name": "description",
         "value": "",
         "label": "Description"
+      }
+    ]
+  },
+  {
+    "id": "role-and-industry",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Role and Industry Heading"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Role and Industry Description"
       }
     ]
   }

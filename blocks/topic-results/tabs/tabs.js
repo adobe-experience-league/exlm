@@ -4,7 +4,7 @@ import BrowseCardsDelegate from '../../../scripts/browse-card/browse-cards-deleg
 import { loadCSS } from '../../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders, htmlToElement } from '../../../scripts/scripts.js';
 
-//TODO: We need to grab the translated name of the topic from the topics API
+//  TODO: We need to grab the translated name of the topic from the topics API
 let activeTopic = {
   label: 'Analytics Basics',
   value: [''],
@@ -20,10 +20,11 @@ function getQueryParam(param) {
   if (queryParam) {
     try {
       const decoded = decodeURIComponent(queryParam);
-      if (Boolean(decoded)) {
+      if (decoded) {
         value = JSON.parse(decoded);
       }
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error(`Failed to decode query parameter ${param}`);
     }
   }
@@ -39,11 +40,12 @@ function setQueryParam(param, value) {
       const str = JSON.stringify(value);
       encoded = encodeURIComponent(str);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error(`Failed to encode query parameter ${param}`);
-    } 
+    }
     const url = new URL(window.location);
     url.searchParams.set(param, encoded);
-    history.pushState(null, '', url);
+    window.history.pushState(null, '', url);
   }
 }
 
@@ -91,7 +93,7 @@ async function toggleTab(value, dataset, tabHtml) {
   const sortBy = dataset.sortby || '';
   const contentType = dataset.contenttype || [];
 
-  //Add block to insert content
+  //  Add block to insert content
   await displayTabContent(tabBlock, contentType, sortBy, activeTopic);
   setQueryParam('sortBy', sortBy);
   setQueryParam('contenttype', contentType);
@@ -112,6 +114,7 @@ export default async function decorateTabs(block) {
   try {
     placeholders = await fetchLanguagePlaceholders();
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
   }
 

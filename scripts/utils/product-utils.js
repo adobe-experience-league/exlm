@@ -18,7 +18,7 @@ export default async function getProducts(theme = 'browse') {
     },
     articles: {
       name: 'articles-top-products', // Articles top products
-      index: 'article-index',
+      index: 'perspective-index',
     },
   };
   let featured = true;

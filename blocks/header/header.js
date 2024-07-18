@@ -8,13 +8,15 @@ import {
   getConfig,
   getLink,
   fetchFragment,
+  isFeatureEnabled,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
 
 const languageModule = import('../../scripts/language.js');
-const { khorosProfileUrl, isProd } = getConfig();
+const { khorosProfileUrl } = getConfig();
 
 let searchElementPromise = null;
+const FEATURE_FLAG = 'perspectives';
 
 export async function loadSearchElement() {
   searchElementPromise =
@@ -394,7 +396,16 @@ const buildNavItems = async (ul, level = 0) => {
     await addMobileLangSelector();
   }
 
-  [...ul.children].forEach(decorateNavItem);
+  [...ul.children].forEach((option) => {
+    const link = option.querySelector('a');
+    const featureFlagValue = link?.getAttribute('feature-flags');
+
+    if (featureFlagValue === FEATURE_FLAG && !isFeatureEnabled(FEATURE_FLAG)) {
+      option.remove(); // Remove the element if 'perspectives' and feature is not enabled
+    } else {
+      decorateNavItem(option); // Decorate the element otherwise
+    }
+  });
 };
 
 /**
@@ -475,8 +486,8 @@ const searchDecorator = async (searchBlock) => {
       const [label, value] = option.split(':');
       return { label, value };
     })
-    // TODO - remove this filter once articles need to be live on Prod.
-    .filter((option) => !isProd || option?.value?.toLowerCase() !== 'article');
+    // TODO - remove dependecy on feature flag once perspectives are perminantely live
+    .filter((option) => option?.value?.toLowerCase() !== 'perspective' || isFeatureEnabled(FEATURE_FLAG));
 
   searchBlock.innerHTML = '';
   const searchWrapper = htmlToElement(

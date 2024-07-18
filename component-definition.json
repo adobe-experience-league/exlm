@@ -610,7 +610,8 @@
                   "name": "Featured Content",
                   "model": "featured-content",
                   "content_cta": "Read Article",
-                  "classes": ["adobe", "left"]
+                  "classes": ["adobe", "left"],
+                  "linkText": "Read Article"
                 }
               }
             }
@@ -660,6 +661,46 @@
                   "name": "Tabbed Cards",
                   "model": "tabbed-cards",
                   "headingType": "h2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Tabs",
+          "id": "tabs",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Tabs",
+                  "model": "tabs",
+                  "filter": "tab",
+                  "item1": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Tab",
+                    "model": "tab",
+                    "title": "Tab",
+                    "content": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Tab",
+          "id": "tab",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Tab",
+                  "model": "tab",
+                  "title": "Tab",
+                  "content": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
                 }
               }
             }
@@ -852,15 +893,15 @@
           }
         },
         {
-          "title": "Role Cards",
-          "id": "role-cards",
+          "title": "Role and Industry",
+          "id": "role-and-industry",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "name": "Role Cards",
-                  "model": "role-cards"
+                  "name": "Role and Industry",
+                  "model": "role-and-industry"
                 }
               }
             }
