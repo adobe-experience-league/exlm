@@ -275,6 +275,7 @@ const buildCardContent = async (card, model) => {
   const bookmarkEnabled = ![
     CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
     CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
+    CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY,
     CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
   ].includes(contentType);
   const cardAction = UserActions({
