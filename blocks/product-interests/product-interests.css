@@ -1,16 +1,11 @@
-body.profile > main > .section:not(.profile-tab-section, .profile-rail-section) > .product-interests-wrapper {
+body.profile > main > .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > .product-interests-wrapper {
     border: none;
 }
 
-.product-interests h1,
-.product-interests h2,
-.product-interests h3,
-.product-interests h4,
-.product-interests h5,
-.product-interests h6{
-    border-bottom: 1px solid #D5D5D5;
+.product-interests :where(h2,h3,h4,h5,h6) {
+    border-bottom: 1px solid var(--spectrum-gray-300);
     padding-bottom: 18px;
-    margin-bottom: 18px;
+    margin: 0 0 18px;
 }
 
 .product-interests > ul.interests-container {
@@ -28,6 +23,7 @@ body.profile > main > .section:not(.profile-tab-section, .profile-rail-section) 
     margin: 0;
     margin-right: 10px;
     color: var(--spectrum-gray-800);
+    max-width: 167px;
 }
 
 .product-interests label.checkbox {
@@ -56,25 +52,27 @@ body.profile > main > .section:not(.profile-tab-section, .profile-rail-section) 
         flex-direction: column;
         flex-wrap: wrap;
         max-height: 480px;
-    }   
+    }
+    .product-interests .interests-container li {
+        max-width: 167px;
+    }
     .product-interests .subtext {
         max-width: 150px;
     }
 }
 
 @media (min-width: 900px) {
-    .product-interests .interests-container li {
-        margin-bottom: 8px;
-        margin-right: 20px;
-    }
-
     .product-interests .interests-container {
         max-height: 390px;
     }   
+    .product-interests .interests-container li {
+        margin-bottom: 8px;
+        margin-right: 20px;
+        max-width: 176px;
+    }
     .product-interests label.checkbox {
         font-size: var(--spectrum-font-size-100);
     }
-
     .product-interests .subtext {
         max-width: none;
     }

@@ -251,14 +251,14 @@ const buildCardContent = async (card, model) => {
         { class: 'browse-card-author-prefix' },
         placeholders?.articleAuthorPrefixLabel,
       );
-      const authorName = createTag('span', { class: 'browse-card-author-name' }, authorInfo?.name);
+      const authorName = createTag('span', { class: 'browse-card-author-name' }, authorInfo?.name.join(', '));
       authorElement.append(authorPrefix, authorName);
     }
 
     let authorBadge = '';
-    if (authorInfo?.type === AUTHOR_TYPE.ADOBE) {
+    if (authorInfo?.type[0] === AUTHOR_TYPE.ADOBE) {
       authorBadge = createTag('span', { class: 'browse-card-author-badge' }, placeholders?.articleAdobeTag);
-    } else if (authorInfo?.type === AUTHOR_TYPE.EXTERNAL) {
+    } else if (authorInfo?.type[0] === AUTHOR_TYPE.EXTERNAL) {
       authorBadge = createTag('span', { class: 'browse-card-author-badge' }, placeholders?.articleExternalTag);
       authorBadge.classList.add('author-badge-external');
     }
@@ -275,11 +275,12 @@ const buildCardContent = async (card, model) => {
   const bookmarkEnabled = ![
     CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
     CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
+    CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY,
     CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
   ].includes(contentType);
   const cardAction = UserActions({
     container: cardOptions,
-    id: id || viewLink ? new URL(viewLink).pathname : '',
+    id: id || (viewLink ? new URL(viewLink).pathname : ''),
     link: copyLink,
     bookmarkConfig: bookmarkEnabled,
   });

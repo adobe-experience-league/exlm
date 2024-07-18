@@ -52,6 +52,7 @@ async function createOptions(container, readTimeText) {
     container: options,
     id: window.location.pathname,
     link: window.location.href,
+    bookmarkConfig: false,
   });
 
   cardAction.decorate();

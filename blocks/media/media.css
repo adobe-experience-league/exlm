@@ -189,3 +189,9 @@ body[class ^= 'article-'] .media.block > .text {
     height: 320px;
   }
 }
+
+@media (min-width: 900px) {
+  .media.block > .image img {
+    width: unset;
+  }
+}
