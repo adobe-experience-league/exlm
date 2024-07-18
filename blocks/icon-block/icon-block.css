@@ -6,9 +6,6 @@
   gap: 32px;
   min-height: 208px;
 }
-.signup-dialog-body .icon-block {
-  min-width: 260px;
-}
 .icon-block > div {
   max-width: 283px;
   min-height: 147.95px;

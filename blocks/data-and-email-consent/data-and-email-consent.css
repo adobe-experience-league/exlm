@@ -7,9 +7,7 @@
   padding: 24px;
   user-select: none;
 }
-.data-and-email-consent-wrapper{
-  padding: 24px 0;
-}
+
 .data-and-email-consent .notification.highlight {
   border-color: var(--non-spectrum-navy-blue);
 }
