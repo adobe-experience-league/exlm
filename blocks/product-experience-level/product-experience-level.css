@@ -14,6 +14,7 @@
   padding: 0 0 16px 0;
   margin: 0;
   border-bottom: 1px solid #D6D6D6;
+  color: var(--text-color);
 }
 
 .product-experience-level-para {
