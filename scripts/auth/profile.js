@@ -23,9 +23,16 @@ export async function isSignedInUser() {
 }
 
 export async function signOut() {
-  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile', postSignInStreamKey].forEach((key) =>
-    sessionStorage.removeItem(key),
-  );
+  [
+    'JWT',
+    'coveoToken',
+    'attributes',
+    'exl-profile',
+    'profile',
+    'pps-profile',
+    'community-profile',
+    postSignInStreamKey,
+  ].forEach((key) => sessionStorage.removeItem(key));
   window.adobeIMS?.signOut();
 }
 
@@ -168,27 +175,42 @@ class ProfileClient {
 
   // Fetches the community profile details of the specific logged in user
   async fetchCommunityProfileDetails() {
+    const COMMUNITY_PROFILE = 'community-profile';
     const signedIn = await this.isSignedIn;
+
     if (!signedIn) return null;
 
+    const fromStorage = await this.store.get(COMMUNITY_PROFILE);
+    if (fromStorage) return fromStorage;
+
     const accountId = (await window.adobeIMS.getProfile()).userId;
-    try {
-      const response = await fetch(`${khorosProfileDetailsUrl}?user=${accountId}`, {
+    const { token } = window.adobeIMS.getAccessToken();
+
+    const promise = new Promise((resolve, reject) => {
+      fetch(`${khorosProfileDetailsUrl}?user=${accountId}`, {
         method: 'GET',
         headers: {
-          'x-ims-token': await window.adobeIMS?.getAccessToken().token,
+          'x-ims-token': token,
         },
-      });
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Failed to fetch community profile');
+          }
+          return res.json();
+        })
+        .then((data) => {
+          if (data && data.data) {
+            resolve(data.data);
+          } else {
+            reject(new Error('No data found in response'));
+          }
+        })
+        .catch(reject);
+    });
 
-      if (response.ok) {
-        const data = await response.json();
-        return data && data.data ? data.data : null;
-      }
-    } catch (err) {
-      // eslint-disable-next-line
-      console.log('Error fetching data!!', err);
-    }
-    return null;
+    this.store.set(COMMUNITY_PROFILE, promise);
+    return promise;
   }
 
   /**
