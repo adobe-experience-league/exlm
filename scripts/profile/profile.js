@@ -33,7 +33,7 @@ export const fetchProfileData = async (profileFlags) => {
     company: ppsProfileData?.company || '',
     communityUserName: communityProfileDetails?.username || '',
     communityUserTitle: communityProfileDetails?.title || '',
-    communityUserLocation: communityProfileDetails?.location || ''
+    communityUserLocation: communityProfileDetails?.location || '',
   };
 };
 
