@@ -24,16 +24,20 @@ export const fetchProfileData = async (profileFlags) => {
   }
 
   return {
-    adobeDisplayName: profileData?.displayName || '',
-    email: profileData?.email || '',
-    industry: profileData?.industryInterests || '',
-    roles: profileData?.role || [],
-    interests: profileData?.interests || [],
-    profilePicture: ppsProfileData?.images?.['100'] || '',
-    company: ppsProfileData?.company || '',
-    communityUserName: communityProfileDetails?.username || '',
-    communityUserTitle: communityProfileDetails?.title || '',
-    communityUserLocation: communityProfileDetails?.location || '',
+    ...(profileFlags.includes(EXL_PROFILE) && {
+      adobeDisplayName: profileData?.displayName || '',
+      email: profileData?.email || '',
+      industry: profileData?.industryInterests || '',
+      roles: profileData?.role || [],
+      interests: profileData?.interests || [],
+      profilePicture: ppsProfileData?.images?.['100'] || '',
+      company: ppsProfileData?.company || '',
+    }),
+    ...(profileFlags.includes(COMMUNITY_PROFILE) && {
+      communityUserName: communityProfileDetails?.username || '',
+      communityUserTitle: communityProfileDetails?.title || '',
+      communityUserLocation: communityProfileDetails?.location || '',
+    }),
   };
 };
 
