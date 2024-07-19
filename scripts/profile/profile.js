@@ -24,16 +24,16 @@ export const fetchProfileData = async (profileFlags) => {
   }
 
   return {
-    adobeDisplayName: profileFlags.includes(EXL_PROFILE) ? profileData?.displayName || '' : '',
-    email: profileFlags.includes(EXL_PROFILE) ? profileData?.email || '' : '',
-    industry: profileFlags.includes(EXL_PROFILE) ? profileData?.industryInterests || '' : '',
-    roles: profileFlags.includes(EXL_PROFILE) ? profileData?.role || [] : [],
-    interests: profileFlags.includes(EXL_PROFILE) ? profileData?.interests || [] : [],
-    profilePicture: profileFlags.includes(EXL_PROFILE) ? ppsProfileData?.images?.['100'] || '' : '',
-    company: profileFlags.includes(EXL_PROFILE) ? ppsProfileData?.company || '' : '',
-    communityUserName: profileFlags.includes(COMMUNITY_PROFILE) ? communityProfileDetails?.username || '' : '',
-    communityUserTitle: profileFlags.includes(COMMUNITY_PROFILE) ? communityProfileDetails?.title || '' : '',
-    communityUserLocation: profileFlags.includes(COMMUNITY_PROFILE) ? communityProfileDetails?.location || '' : '',
+    adobeDisplayName: profileData?.displayName || '',
+    email: profileData?.email || '',
+    industry: profileData?.industryInterests || '',
+    roles: profileData?.role || [],
+    interests: profileData?.interests || [],
+    profilePicture: ppsProfileData?.images?.['100'] || '',
+    company: ppsProfileData?.company || '',
+    communityUserName: communityProfileDetails?.username || '',
+    communityUserTitle: communityProfileDetails?.title || '',
+    communityUserLocation: communityProfileDetails?.location || ''
   };
 };
 
