@@ -741,14 +741,22 @@ const profileMenuDecorator = async (profileMenuBlock) => {
     fetchCommunityProfileData()
       .then((res) => {
         if (res) {
-          res.data.menu.forEach((item) => {
-            if (item.title && item.url) {
-              const communityProfile = document.createElement('a');
-              communityProfile.href = item.url;
-              communityProfile.textContent = item.title;
-              profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
-            }
-          });
+          const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
+          if (res.data.menu.length > 0) {
+            res.data.menu.forEach((item) => {
+              if (item.title && item.url) {
+                const communityProfile = document.createElement('a');
+                communityProfile.href = item.url;
+                communityProfile.textContent = item.title;
+                profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
+              }
+            });
+          }else{
+            const communityProfile = document.createElement('a');
+            communityProfile.href = `https://experienceleaguecommunities.adobe.com/?profile.language=${locale}`;
+            communityProfile.textContent = placeholders?.createYourCommunityProfile || 'Create your community profile';
+            profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
+          }
         }
       })
       .catch((err) => {
