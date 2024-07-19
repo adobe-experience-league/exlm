@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-cycle
 import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { loadCSS, loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../lib-franklin.js';
-import Shimmer from './signup-flow-placeholder.js';
+import SignUpFlowShimmer from './signup-flow-shimmer.js';
 
 let placeholders = {};
 try {
@@ -80,21 +80,21 @@ const createSignupDialog = () => {
         </dialog>
     `);
 
-  const shimmer = new Shimmer();
+  const signUpFlowShimmer = new SignUpFlowShimmer();
 
-  function showLoading() {
+  function showShimmer() {
     signupDialog.querySelectorAll('div[class$="-decor"]').forEach((decor) => {
       decor.style.display = 'none';
     });
     const signupBody = signupDialog.querySelector('.signup-dialog-body');
-    shimmer.add(signupBody);
+    signUpFlowShimmer.add(signupBody);
   }
 
-  function removeLoading() {
+  function hideShimmer() {
     signupDialog.querySelectorAll('div[class$="-decor"]').forEach((decor) => {
       decor.style.display = 'block';
     });
-    shimmer.remove();
+    signUpFlowShimmer.remove();
   }
 
   /**
@@ -195,10 +195,10 @@ const createSignupDialog = () => {
     const signupContent = signupDialog.querySelector('.signup-dialog-content');
     const currentPageIndex = parseInt(signupContent.dataset.currentPageIndex, 10);
     const newIndex = currentPageIndex + direction;
-    showLoading();
+    showShimmer();
     const isLoaded = await loadPageContent(newIndex);
     if (isLoaded) {
-      removeLoading();
+      hideShimmer();
       loadStepFlow(newIndex);
     }
   };
@@ -208,10 +208,10 @@ const createSignupDialog = () => {
    */
   const initNavigation = async (index) => {
     loadStepFlow(index);
-    showLoading();
+    showShimmer();
     const isLoaded = await loadPageContent(index);
     if (isLoaded) {
-      removeLoading();
+      hideShimmer();
       const prevBtn = signupDialog.querySelector('.signup-dialog-nav-bar .prev-btn');
       const nextBtn = signupDialog.querySelector('.signup-dialog-nav-bar .next-btn');
       const finishBtn = signupDialog.querySelector('.signup-dialog-nav-bar .finish-btn');

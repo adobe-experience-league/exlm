@@ -1,13 +1,13 @@
-.shimmer-container {
+.signup-flow-shimmer-container {
     position: relative;
     overflow: hidden;
 }
 
-.shimmer-container > *:not(.shimmer) {
+.signup-flow-shimmer-container > *:not(.signup-flow-shimmer) {
     display: none;
 }
 
-.shimmer {
+.signup-flow-shimmer {
     position: absolute;
     top: 0;
     left: 0;
@@ -19,7 +19,7 @@
     z-index: 5;
 }
 
-.shimmer .loader {
+.signup-flow-shimmer .signup-flow-loader {
     width: 48px;
     height: 48px;
     border: 5px solid var(--spectrum-gray-600);
