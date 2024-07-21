@@ -677,7 +677,6 @@ const signInDecorator = async (signInBlock) => {
  * Decorates the product-grid block
  * @param {HTMLElement} productGrid
  */
-
 const productGridDecorator = async (productGridBlock) => {
   simplifySingleCellBlock(productGridBlock);
   productGridBlock.style.display = 'none';
@@ -731,7 +730,6 @@ const productGridDecorator = async (productGridBlock) => {
  * Decorates the profile-menu block
  * @param {HTMLElement} profileMenu
  */
-
 const profileMenuDecorator = async (profileMenuBlock) => {
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
@@ -819,7 +817,6 @@ const decorateNewTabLinks = (block) => {
  * Main header decorator, calls all the other decorators
  * @param {HTMLHeadElement} headerBlock
  */
-
 export default async function decorate(headerBlock) {
   const newComponent = document.createElement('exl-header');
   newComponent.classList.add('header-wrapper');

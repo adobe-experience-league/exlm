@@ -399,3 +399,12 @@ export function isFeatureEnabled(name) {
     .map((t) => t.toLowerCase().trim())
     .includes(name);
 }
+
+export class Deferred {
+  constructor() {
+    this.promise = new Promise((resolve, reject) => {
+      this.reject = reject;
+      this.resolve = resolve;
+    });
+  }
+}
