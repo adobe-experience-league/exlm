@@ -751,7 +751,7 @@ const profileMenuDecorator = async (profileMenuBlock) => {
                 profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
               }
             });
-          }else{
+          } else {
             const communityProfile = document.createElement('a');
             communityProfile.href = `https://experienceleaguecommunities.adobe.com/?profile.language=${locale}`;
             communityProfile.textContent = placeholders?.createYourCommunityProfile || 'Create your community profile';
