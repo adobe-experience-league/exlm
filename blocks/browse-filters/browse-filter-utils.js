@@ -1,5 +1,5 @@
+import { COMMUNITY_SEARCH_FACET } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import { fetchLanguagePlaceholders, isFeatureEnabled } from '../../scripts/scripts.js';
-import { COMMUNITY_SEARCH_FACET } from '../../scripts/browse-card/browse-cards-constants.js';
 
 const SUB_FACET_MAP = {
   Community: COMMUNITY_SEARCH_FACET,

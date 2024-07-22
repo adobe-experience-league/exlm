@@ -857,6 +857,13 @@ export const locales = new Map([
   ['sv', 'sv_SE'],
 ]);
 
+export const URL_SPECIAL_CASE_LOCALES = new Map([
+  ['es', 'es-ES'],
+  ['pt-br', 'pt-BR'],
+  ['zh-hans', 'zh-CN'],
+  ['zh-hant', 'zh-TW'],
+]);
+
 export async function loadIms() {
   const { ims } = getConfig();
   window.imsLoaded =
