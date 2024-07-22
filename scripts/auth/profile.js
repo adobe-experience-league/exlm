@@ -23,15 +23,9 @@ export async function isSignedInUser() {
 }
 
 export async function signOut() {
-  [
-    'JWT',
-    'coveoToken',
-    'attributes',
-    'exl-profile',
-    'profile',
-    'pps-profile',
-    postSignInStreamKey,
-  ].forEach((key) => sessionStorage.removeItem(key));
+  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile', postSignInStreamKey].forEach((key) =>
+    sessionStorage.removeItem(key),
+  );
   window.adobeIMS?.signOut();
 }
 
@@ -178,7 +172,7 @@ class ProfileClient {
     if (!signedIn) return null;
 
     const accountId = (await window.adobeIMS.getProfile()).userId;
-    
+
     try {
       const response = await fetch(`${khorosProfileDetailsUrl}?user=${accountId}`, {
         method: 'GET',
