@@ -30,7 +30,6 @@ export async function signOut() {
     'exl-profile',
     'profile',
     'pps-profile',
-    'community-profile',
     postSignInStreamKey,
   ].forEach((key) => sessionStorage.removeItem(key));
   window.adobeIMS?.signOut();
