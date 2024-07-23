@@ -14,6 +14,58 @@ const { liveEventsUrl, adlsUrl, pathsUrl } = getConfig();
 
 const { lang } = getPathDetails();
 
+const fieldsToInclude = [
+  '@foldingchild',
+  '@foldingcollection',
+  '@foldingparent',
+  'author',
+  'author_bio_page',
+  'author_name',
+  'author_type',
+  'authorname',
+  'authortype',
+  'collection',
+  'connectortype',
+  'contenttype',
+  'date',
+  'documenttype',
+  'el_author_type',
+  'el_contenttype',
+  'el_id',
+  'el_interactionstyle',
+  'el_kudo_status',
+  'el_lirank',
+  'el_product',
+  'el_rank_icon',
+  'el_reply_status',
+  'el_solution',
+  'el_solutions_authored',
+  'el_type',
+  'el_usergenerictext',
+  'el_version',
+  'el_view_status',
+  'exl_description',
+  'exl_thumbnail',
+  'filetype',
+  'id',
+  'language',
+  'liMessageLabels',
+  'liboardinteractionstyle',
+  'licommunityurl',
+  'lithreadhassolution',
+  'objecttype',
+  'outlookformacuri',
+  'outlookuri',
+  'permanentid',
+  'role',
+  'source',
+  'sourcetype',
+  'sysdocumenttype',
+  'type',
+  'urihash',
+  'video_url',
+];
+
 /**
  * @module BrowseCardsDelegate
  * @description A module that handles the delegation of fetching card data based on content types.
@@ -33,7 +85,7 @@ const BrowseCardsDelegate = (() => {
    * @private
    */
   const handleCoveoService = async () => {
-    const dataSource = getExlPipelineDataSourceParams(param);
+    const dataSource = getExlPipelineDataSourceParams(param, fieldsToInclude);
     const coveoService = new CoveoDataService(dataSource);
     const cardData = await coveoService.fetchDataFromSource();
     if (!cardData) {

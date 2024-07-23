@@ -138,8 +138,8 @@ export function getFacets(param) {
   return constructCoveoFacet(facets);
 }
 
-export function getExlPipelineDataSourceParams(param) {
-  return {
+export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) {
+  const dataSource = {
     url: coveoSearchResultsUrl,
     param: {
       locale:
@@ -158,9 +158,16 @@ export function getExlPipelineDataSourceParams(param) {
       ...(param.dateCriteria && !param.feature ? { aq: contructDateAdvancedQuery(param.dateCriteria) } : ''),
       ...(!param.feature ? { facets: getFacets(param) } : ''),
       ...(param.feature ? { aq: constructCoveoAdvancedQuery(param) } : ''),
-      fieldsToInclude,
+      fieldsToInclude: fields,
     },
   };
+
+  // Set to select page
+  if (param.firstResult) {
+    dataSource.param.firstResult = param.firstResult;
+  }
+
+  return dataSource;
 }
 
 export async function exlPipelineCoveoDataAdaptor(params) {
@@ -238,10 +245,10 @@ export async function exlPipelineCoveoDataAdaptor(params) {
    * Maps a result to the data model.
    * @param {Object} result - The result object.
    * @param {Number} index - The index of the result object in the source array.
-   * @param {string} searchUid - If the data comes from coveo, provide the searchUid
-   * @returns {Object} The BrowseCards data model.
+   * @param {Object} queryData - Values from top level coveo return
+   * @returns {Object} The data model.
    */
-  const mapResultsDataModel = (result, index, searchUid) => {
+  const mapResultsDataModel = (result, index, queryData) => {
     const { raw, parentResult, title, excerpt, clickUri, uri } = result || {};
     /* eslint-disable camelcase */
 
@@ -265,6 +272,7 @@ export async function exlPipelineCoveoDataAdaptor(params) {
 
     return {
       ...raw,
+      ...queryData,
       id: parentResult?.el_id || el_id || '',
       contentType,
       badgeTitle: contentType ? CONTENT_TYPES[contentType.toUpperCase()]?.LABEL : '',
@@ -285,7 +293,6 @@ export async function exlPipelineCoveoDataAdaptor(params) {
       copyLink: url,
       viewLink: url,
       viewLinkText: placeholders[`browseCard${contentTypeTitleCase}ViewLabel`] || 'View',
-      searchUid,
       index,
       authorInfo: {
         name: raw?.author_name || '',
@@ -294,5 +301,9 @@ export async function exlPipelineCoveoDataAdaptor(params) {
     };
   };
 
-  return data.map((result, index) => mapResultsDataModel(result, index, data.searchUid)) || [];
+  const queryData = {
+    searchUid: data.searchUid,
+    totalCount: data.totalCount
+  }
+  return data.map((result, index) => mapResultsDataModel(result, index, queryData)) || [];
 }
