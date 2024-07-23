@@ -1,9 +1,10 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { createTooltip } from './browse-card-tooltip.js';
-import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS, AUTHOR_TYPE } from './browse-cards-constants.js';
+import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
+import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
 
@@ -275,6 +276,7 @@ const buildCardContent = async (card, model) => {
   const bookmarkEnabled = ![
     CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
     CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
+    CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY,
     CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
   ].includes(contentType);
   const cardAction = UserActions({

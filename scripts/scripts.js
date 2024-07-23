@@ -801,7 +801,7 @@ export function getConfig() {
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     coveoToken: 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
     liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
-    adlsUrl: 'https://learning.adobe.com/catalog.result.json',
+    adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     searchUrl: `${cdnOrigin}/search.html`,
     articleUrl: `${cdnOrigin}/api/articles/`,
@@ -855,6 +855,13 @@ export const locales = new Map([
   ['zh-hant', 'zh_HANT'],
   ['nl', 'nl_NL'],
   ['sv', 'sv_SE'],
+]);
+
+export const URL_SPECIAL_CASE_LOCALES = new Map([
+  ['es', 'es-ES'],
+  ['pt-br', 'pt-BR'],
+  ['zh-hans', 'zh-CN'],
+  ['zh-hant', 'zh-TW'],
 ]);
 
 export async function loadIms() {

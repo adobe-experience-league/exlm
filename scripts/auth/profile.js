@@ -172,6 +172,7 @@ class ProfileClient {
     if (!signedIn) return null;
 
     const accountId = (await window.adobeIMS.getProfile()).userId;
+
     try {
       const response = await fetch(`${khorosProfileDetailsUrl}?user=${accountId}`, {
         method: 'GET',
