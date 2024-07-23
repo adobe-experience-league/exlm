@@ -303,7 +303,7 @@ export async function exlPipelineCoveoDataAdaptor(params) {
 
   const queryData = {
     searchUid: data.searchUid,
-    totalCount: data.totalCount
-  }
+    totalCount: data.totalCount,
+  };
   return data.map((result, index) => mapResultsDataModel(result, index, queryData)) || [];
 }

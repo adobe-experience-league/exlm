@@ -1,5 +1,5 @@
 import browseCardDataModel from '../data-model/browse-cards-model.js';
-import {RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
+import { RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
