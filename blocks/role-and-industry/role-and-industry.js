@@ -148,7 +148,7 @@ export default async function decorate(block) {
     }
 
     role.forEach((el) => {
-      const checkBox = document.querySelector(`input[name="${el}"]`);
+      const checkBox = block.querySelector(`input[name="${el}"]`);
       if (checkBox) {
         checkBox.checked = true;
         checkBox.closest('.role-cards-item').classList.toggle('role-cards-highlight', checkBox.checked);

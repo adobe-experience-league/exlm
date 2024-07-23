@@ -1,4 +1,4 @@
-import { fetchLanguagePlaceholders, isFeatureEnabled } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { COMMUNITY_SEARCH_FACET } from '../../scripts/browse-card/browse-cards-constants.js';
 
 const SUB_FACET_MAP = {
@@ -96,7 +96,6 @@ const contentTypes = [
     value: 'Perspective',
     title: 'Perspectives',
     description: 'Real-world inspiration from Experience Cloud customers and Adobe experts.',
-    disabled: !isFeatureEnabled('perspectives'),
   },
   {
     id: 'Troubleshooting',
@@ -111,17 +110,15 @@ const contentTypes = [
     description:
       'Brief instructional material with step-by-step instructions to learn a specific skill or accomplish a specific task.',
   },
-]
-  .filter((type) => !type.disabled)
-  .map((contentType) => ({
-    ...contentType,
-    ...(placeholders[`filterContentType${contentType.id}Title`] && {
-      title: placeholders[`filterContentType${contentType.id}Title`],
-    }),
-    ...(placeholders[`filterContentType${contentType.id}Description`] && {
-      description: placeholders[`filterContentType${contentType.id}Description`],
-    }),
-  }));
+].map((contentType) => ({
+  ...contentType,
+  ...(placeholders[`filterContentType${contentType.id}Title`] && {
+    title: placeholders[`filterContentType${contentType.id}Title`],
+  }),
+  ...(placeholders[`filterContentType${contentType.id}Description`] && {
+    description: placeholders[`filterContentType${contentType.id}Description`],
+  }),
+}));
 
 /**
  * Array containing expLevel (Experience Level) with associated metadata.
