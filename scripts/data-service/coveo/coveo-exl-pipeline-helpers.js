@@ -308,12 +308,12 @@ export async function exlPipelineCoveoDataAdaptor(params) {
     };
   };
 
-  if (data && data.length > 0) {
+  if (data && data?.results?.length > 0) {
     const queryData = {
       searchUid: data?.searchUid,
       totalCount: data?.totalCount,
     };
-    return data.map((result, index) => mapResultsDataModel(result, index, queryData)) || [];
+    return data.results.map((result, index) => mapResultsDataModel(result, index, queryData)) || [];
   }
 
   return [];
