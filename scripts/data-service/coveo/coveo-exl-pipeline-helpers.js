@@ -172,6 +172,7 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
 
 export async function exlPipelineCoveoDataAdaptor(params) {
   let placeholders = {};
+  let data = {};
 
   try {
     placeholders = await fetchLanguagePlaceholders();
@@ -182,7 +183,13 @@ export async function exlPipelineCoveoDataAdaptor(params) {
 
   const dataSourceParams = getExlPipelineDataSourceParams(params);
   const coveoService = new CoveoDataService(dataSourceParams);
-  const data = await coveoService.fetchDataFromSource();
+
+  try {
+    data = await coveoService.fetchDataFromSource();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching coveo query:', err);
+  }
 
   /**
    * Converts a string to title case.
@@ -301,9 +308,14 @@ export async function exlPipelineCoveoDataAdaptor(params) {
     };
   };
 
-  const queryData = {
-    searchUid: data.searchUid,
-    totalCount: data.totalCount,
-  };
-  return data.map((result, index) => mapResultsDataModel(result, index, queryData)) || [];
+  if (data && data.length > 0 ) {
+    const queryData = {
+      searchUid: data?.searchUid,
+      totalCount: data?.totalCount,
+    };
+    return data.map((result, index) => mapResultsDataModel(result, index, queryData)) || [];
+  }
+
+  return []; 
+
 }
