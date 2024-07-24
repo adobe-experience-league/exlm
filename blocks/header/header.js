@@ -10,9 +10,10 @@ import {
   fetchFragment,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
+import initializeSignupFlow from '../../scripts/signup-flow/signup-flow.js';
 
 const languageModule = import('../../scripts/language.js');
-const { khorosProfileUrl } = getConfig();
+const { khorosProfileUrl, isProd } = getConfig();
 
 let searchElementPromise = null;
 
@@ -832,4 +833,11 @@ export default async function decorate(headerBlock) {
   // do this at the end, always.
   decorateIcons(headerBlock);
   headerBlock.style.display = '';
+}
+
+/* FIXME: Temp Code - Should be removed once we have the profile integration in place */
+const isSignedIn = await isSignedInUser();
+const urlParams = new URLSearchParams(window.location.search);
+if (isSignedIn && !isProd && urlParams.get('signup-wizard') === 'on') {
+  initializeSignupFlow();
 }
