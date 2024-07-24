@@ -1,5 +1,3 @@
-import ExlHeader from '../blocks/header/exl-header.js';
-
 /* eslint-disable no-bitwise */
 /*
  * Copyright 2022 Adobe. All rights reserved.
@@ -694,8 +692,10 @@ export async function waitForLCP(lcpBlocks) {
  * @returns {Promise}
  */
 export function loadHeader(header) {
-  const exlHeader = new ExlHeader();
-  header.appendChild(exlHeader);
+  const headerBlock = buildBlock('header', '');
+  header.append(headerBlock);
+  decorateBlock(headerBlock);
+  return loadBlock(headerBlock);
 }
 
 /**

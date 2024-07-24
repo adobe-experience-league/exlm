@@ -1,6 +1,12 @@
+import { defaultProfileClient, isSignedInUser, signOut } from '../../scripts/auth/profile.js';
+
 import getProducts from './product-utils.js';
-import { isSignedInUser, defaultProfileClient, signOut } from '../../scripts/auth/profile.js';
-import {
+import './header.js';
+
+const scripts = './importedFunctions.js';
+const lib = './importedFunctions.js';
+
+const {
   htmlToElement,
   decorateLinks,
   getPathDetails,
@@ -9,22 +15,17 @@ import {
   fetchFragment,
   isFeatureEnabled,
   fetchLanguagePlaceholders,
-  Deferred,
-  getMetadata,
-  decorateIcons,
-} from './importedFunctions.js';
+} = await import(scripts);
 
-const HEADER_CSS = '/blocks/header/exlheader.css';
-const SEARCH_CSS = '/scripts/search/search.css';
+const { getMetadata, decorateIcons } = await import(lib);
 
 const languageModule = import('./language.js');
 const { khorosProfileUrl } = getConfig();
 
 let searchElementPromise = null;
-
 const FEATURE_FLAG = 'perspectives';
 
-async function loadSearchElement() {
+export async function loadSearchElement() {
   searchElementPromise =
     searchElementPromise ??
     new Promise((resolve, reject) => {
@@ -39,6 +40,15 @@ async function loadSearchElement() {
         });
     });
   return searchElementPromise;
+}
+
+class Deferred {
+  constructor() {
+    this.promise = new Promise((resolve, reject) => {
+      this.reject = reject;
+      this.resolve = resolve;
+    });
+  }
 }
 
 /**
@@ -258,7 +268,6 @@ const buildNavItems = async (ul, level = 0) => {
     navItem.classList.add(...navItemClasses);
     const controlName = `content-${level}-${randomId()}`; // unique id
     const [content, secondaryContent] = navItem.querySelectorAll(':scope > ul');
-
     if (content) {
       const firstEl = navItem.firstElementChild;
       const toggleClass = level === 0 ? 'nav-item-toggle nav-item-toggle-root' : 'nav-item-toggle';
@@ -274,6 +283,7 @@ const buildNavItems = async (ul, level = 0) => {
         navItemContent.append(secondaryContent);
       }
       const children = [toggler, navItemContent];
+
       navItem.replaceChildren(...children);
       const currentActiveClass = 'nav-item-expanded-active';
       const itemContentExpanded = 'nav-item-content-expanded';
@@ -406,17 +416,21 @@ const buildNavItems = async (ul, level = 0) => {
  */
 const navDecorator = async (navBlock) => {
   simplifySingleCellBlock(navBlock);
+
   const navOverlay = document.querySelector('.nav-overlay');
+
   const navWrapper = htmlToElement('<div class="nav-wrapper"></div>');
   const hamburger = hamburgerButton(navWrapper, navOverlay);
 
-  navWrapper.replaceChildren(...navBlock.children);
-  navBlock.appendChild(navWrapper);
-  navBlock.appendChild(hamburger);
+  navWrapper.replaceChildren(hamburger, ...navBlock.children);
+  navBlock.replaceChildren(navWrapper);
 
   // build navItems
   const ul = navWrapper.querySelector(':scope > ul');
   await buildNavItems(ul);
+
+  navBlock.firstChild.id = hamburger.getAttribute('aria-controls');
+  navBlock.prepend(hamburger);
 
   /**
    * Fetches a list of products to render in main nav.
@@ -444,7 +458,6 @@ const navDecorator = async (navBlock) => {
   });
 
   const isSignedIn = await isSignedInUser();
-
   if (!isSignedIn) {
     // hide auth-only nav items - see decorateLinks method for details
     [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
@@ -569,6 +582,7 @@ const languageDecorator = async (languageBlock) => {
  * Decorates the sign-in block
  * @param {HTMLElement} signInBlock
  */
+
 const signInDecorator = async (signInBlock) => {
   simplifySingleCellBlock(signInBlock);
   const isSignedIn = await isSignedInUser();
@@ -787,41 +801,50 @@ const decorateNewTabLinks = (block) => {
   });
 };
 
+// export const createNavigation = (block) => {
+//   const headerBlockFirstRow = getBlockFirstRow(block);
+//   headerBlockFirstRow.outerHTML = `<nav>${headerBlockFirstRow.innerHTML}</nav>`;
+//   const nav = block.querySelector('nav');
+//   nav.role = 'navigation';
+//   nav.ariaLabel = 'Main navigation';
+
+//   const navOverlay = document.createElement('div');
+//   navOverlay.classList.add('nav-overlay', 'hidden');
+//   document.body.appendChild(navOverlay);
+// };
+
 /**
  * Main header decorator, calls all the other decorators
  * @param {HTMLHeadElement} headerBlock
  */
 export default async function decorate(headerBlock) {
-  const { lang } = getPathDetails();
-  const exlHeader = document.createElement('exl-header');
-  headerBlock.append(exlHeader);
-  exlHeader.attachShadow({ mode: 'open' });
-  const cssLink = htmlToElement(`<link rel="stylesheet" href="${HEADER_CSS}">`);
-  const searchLink = htmlToElement(`<link rel="stylesheet" href="${SEARCH_CSS}">`);
-  exlHeader.shadowRoot.append(cssLink);
-  exlHeader.shadowRoot.append(searchLink);
+  const newComponent = document.createElement('exl-header');
+  newComponent.classList.add('header-wrapper');
+  headerBlock.appendChild(newComponent);
+  const exlHeader = document.createElement('div');
+  exlHeader.classList.add('header');
+  newComponent.shadowRoot.appendChild(exlHeader);
 
-  const header = document.createElement('div');
-  header.classList.add('header');
-  exlHeader.shadowRoot.appendChild(header);
-
-  const navOverlay = document.createElement('div');
-  navOverlay.classList.add('nav-overlay', 'hidden');
-  document.body.appendChild(navOverlay);
-
+  // exlHeader.style.display = 'none';
   loadSearchElement();
   const [solutionTag] = getMetadata('solution').trim().split(',');
   if (solutionTag) {
     window.headlessSolutionProductKey = solutionTag;
   }
-  const headerFragment = await fetchFragment('header/header', lang);
-  header.innerHTML = headerFragment;
 
-  const exlHeaderFirstRow = getBlockFirstRow(header);
+  const { lang } = getPathDetails();
+  const headerFragment = await fetchFragment('header/header', lang);
+  exlHeader.innerHTML = headerFragment;
+
+  const exlHeaderFirstRow = getBlockFirstRow(exlHeader);
   exlHeaderFirstRow.outerHTML = `<nav>${exlHeaderFirstRow.innerHTML}</nav>`;
-  const nav = header.querySelector('nav');
+  const nav = exlHeader.querySelector('nav');
   nav.role = 'navigation';
   nav.ariaLabel = 'Main navigation';
+
+  const navOverlay = document.createElement('div');
+  navOverlay.classList.add('nav-overlay', 'hidden');
+  document.body.appendChild(navOverlay);
 
   const decorateHeaderBlock = async (className, decorator) => {
     const block = nav.querySelector(`:scope > .${className}`);
@@ -829,7 +852,7 @@ export default async function decorate(headerBlock) {
   };
 
   // Do this first to ensure all links are decorated correctly before they are used.
-  decorateLinks(header);
+  decorateLinks(exlHeader);
 
   decorateHeaderBlock('brand', brandDecorator);
   decorateHeaderBlock('search', searchDecorator);
@@ -840,35 +863,9 @@ export default async function decorate(headerBlock) {
   decorateHeaderBlock('adobe-logo', adobeLogoDecorator);
   await decorateHeaderBlock('nav', navDecorator);
 
-  decorateNewTabLinks(header);
+  decorateNewTabLinks(exlHeader);
 
   // do this at the end, always.
-  decorateIcons(header);
-  header.style.display = '';
+  decorateIcons(exlHeader);
+  exlHeader.style.display = '';
 }
-
-/**
- * Shadom Dom starts here
- * @param {HTMLElement} headerBlock
- */
-
-// class ExlHeader extends HTMLElement {
-//   constructor() {
-//     super();
-//     this.attachShadow({ mode: 'open' });
-//   }
-
-//   loadStyles() {
-//     const cssLink = htmlToElement(`<link rel="stylesheet" href="${HEADER_CSS}">`);
-//     const searchLink = htmlToElement(`<link rel="stylesheet" href="${SEARCH_CSS}">`);
-//     this.shadowRoot.append(cssLink);
-//     this.shadowRoot.append(searchLink);
-//   }
-
-//   connectedCallback() {
-//     this.loadStyles();
-//   }
-// }
-
-// // Define the new element
-// customElements.define('exl-header', ExlHeader);

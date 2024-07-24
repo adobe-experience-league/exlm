@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { loadCSS, htmlToElement, getPathDetails } from './importedFunctions.js';
+import { htmlToElement, getPathDetails } from './importedFunctions.js';
 
 const pathDetails = getPathDetails();
 /**
@@ -37,7 +37,6 @@ const switchLanguage = (language) => {
  * Decoration for language popover - shared between header and footer
  */
 export const buildLanguagePopover = async (position, popoverId) => {
-  loadCSS(`${window.hlx.codeBasePath}/styles/language.css`);
   const popoverClass =
     position === 'top' ? 'language-selector-popover language-selector-popover--top' : 'language-selector-popover';
   let languagesEl = htmlToElement(await loadLanguageFragment());

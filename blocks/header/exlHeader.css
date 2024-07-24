@@ -24,7 +24,7 @@
   --color-black: #000;
   /* fonts */
   --body-font-family: "Adobe Clean", adobe-clean, "Source Sans Pro", -apple-system, system-ui, "Segoe UI", roboto,
-  ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif;
+    ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif;
 }
 @media (min-width: 1024px) {
   :root {
@@ -51,6 +51,17 @@ header {
     flex-direction: row;
     justify-content: center;
   }
+}
+
+.icon {
+  display: inline-block;
+  height: 24px;
+  width: 24px;
+}
+
+.icon svg {
+  height: 100%;
+  width: 100%;
 }
 
 .header-wrapper {
@@ -82,6 +93,51 @@ header {
   padding: 15px;
   position: relative;
   top: 2px;
+}
+
+.language-selector-popover {
+  background: var(--non-spectrum-bg);
+  box-shadow: 0 8px 8px rgba(10, 10, 10, 0.1);
+  display: none;
+  left: 50%;
+  width: 120px;
+  position: absolute;
+  transform: translate(-50%, 0);
+  top: 64px;
+  z-index: 10;
+}
+
+.language-selector-popover-top {
+  top: unset;
+  bottom: 100%;
+}
+
+.language-selector-label {
+  cursor: pointer;
+  display: block;
+  font-size: var(--spectrum-font-size-100);
+  padding: 5px 15px;
+  margin: 0;
+}
+
+.language-selector-label:hover {
+  background: var(--non-spectrum-hover-bg);
+}
+
+.language-selector-label[selected] {
+  background: url("/icons/checkmark.svg");
+  background-size: 10px;
+  background-repeat: no-repeat;
+  background-position-y: center;
+  background-position-x: 95%;
+}
+
+.language-selector:hover {
+  background: var(--non-spectrum-bg) !important;
+}
+
+.language-selector:hover .language-selector-popover {
+  display: block !important;
 }
 
 a:any-link {
@@ -129,17 +185,6 @@ button:hover,
 button:focus {
   background-color: var(--link-hover-color);
   cursor: pointer;
-}
-
-.icon {
-  display: inline-block;
-  height: 24px;
-  width: 24px;
-}
-
-.icon svg {
-  height: 100%;
-  width: 100%;
 }
 
 .header {
