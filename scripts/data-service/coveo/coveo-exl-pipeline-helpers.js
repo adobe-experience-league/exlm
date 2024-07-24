@@ -308,7 +308,7 @@ export async function exlPipelineCoveoDataAdaptor(params) {
     };
   };
 
-  if (data && data.length > 0 ) {
+  if (data && data.length > 0) {
     const queryData = {
       searchUid: data?.searchUid,
       totalCount: data?.totalCount,
@@ -316,6 +316,5 @@ export async function exlPipelineCoveoDataAdaptor(params) {
     return data.map((result, index) => mapResultsDataModel(result, index, queryData)) || [];
   }
 
-  return []; 
-
+  return [];
 }
