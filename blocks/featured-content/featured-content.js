@@ -159,12 +159,7 @@ export default async function decorate(block) {
     if (imageInfo) {
       image
         .querySelector('picture')
-        .replaceWith(
-          createOptimizedPicture(imageInfo.src, imageInfo.alt, 'eager', [
-            { media: '(min-width: 600px)', width: '2000' },
-            { width: '2000' },
-          ]),
-        );
+        .replaceWith(createOptimizedPicture(imageInfo.src, imageInfo.alt, 'eager', [{ width: '2000' }]));
       image.append(
         div({ class: 'source-tag' }, isAdobe ? placeholders.articleAdobeTag : placeholders.articleExternalTag),
       );
