@@ -282,12 +282,11 @@ const buildCardContent = async (card, model) => {
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
 
-  const bookmarkEnabled = !bookmarkExclusionContentypes.includes(contentType);
   const cardAction = UserActions({
     container: cardOptions,
     id: id || (viewLink ? new URL(viewLink).pathname : ''),
     link: copyLink,
-    bookmarkConfig: bookmarkEnabled,
+    bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
   });
 
   cardAction.decorate();
