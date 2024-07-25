@@ -8,10 +8,7 @@ import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constant
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
 
-const isPerspectivesBookmarkEnabled = () => {
-  const { isProd } = getConfig();
-  return !isProd; // Bookmarks are enabled only on lower env.
-};
+const { isProd } = getConfig();
 
 const BOOKMARK_EXCLUSION_CONTENTYPES = [
   CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
@@ -19,7 +16,7 @@ const BOOKMARK_EXCLUSION_CONTENTYPES = [
   CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
 ];
 
-if (!isPerspectivesBookmarkEnabled()) {
+if (!isProd) {
   BOOKMARK_EXCLUSION_CONTENTYPES.push(CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY);
 }
 

@@ -37,11 +37,6 @@ const desktopSvg = `
 </svg>
 `;
 
-const isPerspectivesBookmarkEnabled = () => {
-  const { isProd } = getConfig();
-  return !isProd; // Bookmarks are enabled only on lower env.
-};
-
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
 try {
@@ -52,13 +47,14 @@ try {
 }
 
 async function createOptions(container, readTimeText) {
+  const { isProd } = getConfig();
   const options = document.createElement('div');
   options.classList.add('article-marquee-options');
   const cardAction = UserActions({
     container: options,
     id: window.location.pathname,
     link: window.location.href,
-    bookmarkConfig: isPerspectivesBookmarkEnabled(),
+    bookmarkConfig: !isProd,
   });
 
   cardAction.decorate();
