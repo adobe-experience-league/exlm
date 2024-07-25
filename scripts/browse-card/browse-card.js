@@ -10,15 +10,12 @@ loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
 
 const { isProd } = getConfig();
 
-const BOOKMARK_EXCLUSION_CONTENTYPES = [
+const bookmarkExclusionContentypes = [
   CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
   CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
   CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
+  ...(isProd ? [CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY] : []),
 ];
-
-if (!isProd) {
-  BOOKMARK_EXCLUSION_CONTENTYPES.push(CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY);
-}
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -285,7 +282,7 @@ const buildCardContent = async (card, model) => {
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
 
-  const bookmarkEnabled = !BOOKMARK_EXCLUSION_CONTENTYPES.includes(contentType);
+  const bookmarkEnabled = !bookmarkExclusionContentypes.includes(contentType);
   const cardAction = UserActions({
     container: cardOptions,
     id: id || (viewLink ? new URL(viewLink).pathname : ''),
