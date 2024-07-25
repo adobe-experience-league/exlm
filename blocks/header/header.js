@@ -1,5 +1,5 @@
 import getProducts from './product-utils.js';
-import { isSignedInUser, defaultProfileClient, signOut } from '../../scripts/auth/profile.js';
+import { isSignedInUser, defaultProfileClient, signOut } from './profile.js';
 import {
   htmlToElement,
   decorateLinks,
@@ -9,19 +9,17 @@ import {
   fetchFragment,
   isFeatureEnabled,
   fetchLanguagePlaceholders,
-  Deferred,
-  getMetadata,
-  decorateIcons,
-} from './importedFunctions.js';
+} from '../../scripts/scripts.js';
+import { getMetadata, decorateIcons } from '../../scripts/lib-franklin.js';
+import Deferred from './importedFunctions.js';
 
-const HEADER_CSS = '/blocks/header/exlheader.css';
+const HEADER_CSS = '/blocks/header/exl-header.css';
 const SEARCH_CSS = '/scripts/search/search.css';
 
 const languageModule = import('./language.js');
 const { khorosProfileUrl } = getConfig();
 
 let searchElementPromise = null;
-
 const FEATURE_FLAG = 'perspectives';
 
 async function loadSearchElement() {
@@ -795,11 +793,6 @@ export default async function decorate(headerBlock) {
   const { lang } = getPathDetails();
   const exlHeader = document.createElement('exl-header');
   headerBlock.append(exlHeader);
-  exlHeader.attachShadow({ mode: 'open' });
-  const cssLink = htmlToElement(`<link rel="stylesheet" href="${HEADER_CSS}">`);
-  const searchLink = htmlToElement(`<link rel="stylesheet" href="${SEARCH_CSS}">`);
-  exlHeader.shadowRoot.append(cssLink);
-  exlHeader.shadowRoot.append(searchLink);
 
   const header = document.createElement('div');
   header.classList.add('header');
@@ -814,6 +807,7 @@ export default async function decorate(headerBlock) {
   if (solutionTag) {
     window.headlessSolutionProductKey = solutionTag;
   }
+
   const headerFragment = await fetchFragment('header/header', lang);
   header.innerHTML = headerFragment;
 
@@ -847,28 +841,22 @@ export default async function decorate(headerBlock) {
   header.style.display = '';
 }
 
-/**
- * Shadom Dom starts here
- * @param {HTMLElement} headerBlock
- */
+class ExlHeader extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
 
-// class ExlHeader extends HTMLElement {
-//   constructor() {
-//     super();
-//     this.attachShadow({ mode: 'open' });
-//   }
+  loadStyles() {
+    const cssLink = htmlToElement(`<link rel="stylesheet" href="${HEADER_CSS}">`);
+    const searchLink = htmlToElement(`<link rel="stylesheet" href="${SEARCH_CSS}">`);
+    this.shadowRoot.append(cssLink);
+    this.shadowRoot.append(searchLink);
+  }
 
-//   loadStyles() {
-//     const cssLink = htmlToElement(`<link rel="stylesheet" href="${HEADER_CSS}">`);
-//     const searchLink = htmlToElement(`<link rel="stylesheet" href="${SEARCH_CSS}">`);
-//     this.shadowRoot.append(cssLink);
-//     this.shadowRoot.append(searchLink);
-//   }
+  connectedCallback() {
+    this.loadStyles();
+  }
+}
 
-//   connectedCallback() {
-//     this.loadStyles();
-//   }
-// }
-
-// // Define the new element
-// customElements.define('exl-header', ExlHeader);
+customElements.define('exl-header', ExlHeader);

@@ -380,7 +380,7 @@ export function isFeatureEnabled(name) {
     .includes(name);
 }
 
-export class Deferred {
+export default class Deferred {
   constructor() {
     this.promise = new Promise((resolve, reject) => {
       this.reject = reject;

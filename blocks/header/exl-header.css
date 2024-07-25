@@ -188,7 +188,7 @@ button:focus {
 }
 
 .header {
-  padding-right: var(--header-padding-x);
+  padding: 0px;
   height: 100%;
   position: relative;
   max-width: 1440px;
