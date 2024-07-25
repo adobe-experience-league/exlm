@@ -5,6 +5,7 @@ import {
   createPlaceholderSpan,
   fetchLanguagePlaceholders,
   fetchAuthorBio,
+  getConfig,
 } from '../../scripts/scripts.js';
 import { createOptimizedPicture, decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import ffetch from '../../scripts/ffetch.js';
@@ -36,6 +37,11 @@ const desktopSvg = `
 </svg>
 `;
 
+const isPerspectivesBookmarkEnabled = () => {
+  const { isProd } = getConfig();
+  return !isProd; // Bookmarks are enabled only on lower env.
+};
+
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
 try {
@@ -52,7 +58,7 @@ async function createOptions(container, readTimeText) {
     container: options,
     id: window.location.pathname,
     link: window.location.href,
-    bookmarkConfig: false,
+    bookmarkConfig: isPerspectivesBookmarkEnabled(),
   });
 
   cardAction.decorate();

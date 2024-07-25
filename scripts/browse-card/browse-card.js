@@ -1,5 +1,5 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
+import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails, getConfig } from '../scripts.js';
 import { createTooltip } from './browse-card-tooltip.js';
 import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
@@ -7,6 +7,21 @@ import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
+
+const isPerspectivesBookmarkEnabled = () => {
+  const { isProd } = getConfig();
+  return !isProd; // Bookmarks are enabled only on lower env.
+};
+
+const BOOKMARK_EXCLUSION_CONTENTYPES = [
+  CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
+  CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
+  CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
+];
+
+if (!isPerspectivesBookmarkEnabled()) {
+  BOOKMARK_EXCLUSION_CONTENTYPES.push(CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY);
+}
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -273,12 +288,7 @@ const buildCardContent = async (card, model) => {
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
 
-  const bookmarkEnabled = ![
-    CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
-    CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
-    CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY,
-    CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
-  ].includes(contentType);
+  const bookmarkEnabled = !BOOKMARK_EXCLUSION_CONTENTYPES.includes(contentType);
   const cardAction = UserActions({
     container: cardOptions,
     id: id || (viewLink ? new URL(viewLink).pathname : ''),
