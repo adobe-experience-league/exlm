@@ -26,11 +26,6 @@ const pages = [
     title: placeholders?.signupFlowStep2Header,
   },
   {
-    name: 'step3',
-    path: `/${lang}/profile/signup-flow-modal/step3`,
-    title: placeholders?.signupFlowStep3Header,
-  },
-  {
     name: 'confirm',
     path: `/${lang}/profile/signup-flow-modal/confirm`,
     title: placeholders?.signupFlowConfirmHeader,
@@ -144,9 +139,9 @@ const createSignupDialog = () => {
     const closeBtn = navContainer.querySelector('.close-btn');
 
     prevBtn.classList.toggle('visibility-hidden', pageIndex === 0);
-    nextBtn.classList.toggle('content-hidden', pageIndex > 1);
-    finishBtn.classList.toggle('content-hidden', pageIndex !== 2);
-    closeBtn.classList.toggle('content-hidden', pageIndex < pages.length - 1);
+    nextBtn.classList.toggle('hidden', pageIndex > 0);
+    finishBtn.classList.toggle('hidden', pageIndex !== 1);
+    closeBtn.classList.toggle('hidden', pageIndex < pages.length - 1);
 
     // Generate step flow content based on the current step index
     let flow = '';
