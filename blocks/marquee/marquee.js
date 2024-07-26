@@ -18,13 +18,13 @@ function decorateButtons(...buttons) {
     .join('');
 }
 
-function getSignInButton(signInText, primaryCtaLink) {
+function getPrimaryCtaButton(primaryCtaText, primaryCtaLink) {
   const secondCta = document.createElement('div');
   const link = document.createElement('a');
   link.classList.add('signin');
   link.setAttribute('href', primaryCtaLink);
-  link.setAttribute('title', signInText);
-  link.textContent = signInText;
+  link.setAttribute('title', primaryCtaText);
+  link.textContent = primaryCtaText;
   secondCta.append(link);
   return secondCta;
 }
@@ -32,18 +32,18 @@ function getSignInButton(signInText, primaryCtaLink) {
 export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
-  const [img, eyebrow, title, longDescr, firstCta, linkType, confSignInText, secondCtaLink] =
+  const [img, eyebrow, title, longDescr, firstCta, linkType, secondCtaText, secondCtaLink] =
     block.querySelectorAll(':scope div > div');
 
   const subjectPicture = img.querySelector('picture');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
-  const signInText = confSignInText?.textContent?.trim();
+  const primaryCtaText = secondCtaText?.textContent?.trim();
   const eyebrowText = eyebrow?.textContent?.trim();
   const primaryCtaLink = secondCtaLink?.textContent?.trim();
 
   // build sign in button if not in yet and button text is set
-  const secondCta = signInText && getSignInButton(signInText, primaryCtaLink);
+  const secondCta = primaryCtaText && getPrimaryCtaButton(primaryCtaText, primaryCtaLink);
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
@@ -113,7 +113,7 @@ export default async function decorate(block) {
     .then((isSignedInUser) => {
       if (!isSignedInUser) {
         block.classList.add('unauthenticated');
-        block.querySelector('.signin')?.addEventListener('click', () => window.adobeIMS.signUp());
+        block.querySelector('.signin')?.addEventListener('click', () => window.adobeIMS.signIn());
       }
     });
 
