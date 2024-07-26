@@ -1227,6 +1227,14 @@
         "value": "",
         "label": "Sign up CTA Text",
         "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta2",
+        "value": "",
+        "label": "Sign up CTA Link",
+        "description": "What link to open when clicking the button."
       }
     ]
   },
