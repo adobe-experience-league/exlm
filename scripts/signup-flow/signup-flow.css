@@ -114,7 +114,7 @@
     width: 100%;
 }
 .signup-dialog-steps {
-    margin: 0 auto 36px;
+    margin: 0 auto 34px;
     max-width: 272px;
 }
 .signup-dialog-step-flow {
@@ -181,19 +181,20 @@
 .signup-dialog-content > .section {
     padding: 0 0 56px 0;    
 }
-.signup-dialog-content > .section:last-child {
-    padding-bottom: 40px;
-}
 .signup-dialog-content > .section > .default-content-wrapper > * {
-    text-align: center;
     color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    text-align: center;
 }
+.signup-dialog-content > .section > .default-content-wrapper :where(h1,h2,h3,h4,h5,h6)  {
+    margin-bottom: 8px;
+}
+/* Overriding Block Specific CSS */
 .signup-dialog-content .user-profile-card-wrapper {
     padding: 16px 0;
 }
-.signup-dialog-content .icon-block-wrapper {
-    margin-top: 32px;
-}
+
 .signup-dialog-content .user-profile-card-wrapper + .default-content-wrapper {
     max-width: 318px;
 }
@@ -209,6 +210,19 @@
     color: var(--text-color);
     text-decoration: underline;
 }
+.signup-dialog-content .icon-block-wrapper {
+    margin-top: 32px;
+}
+.signup-dialog-content .icon-block {
+    max-width: 250px;
+}
+.signup-dialog-content .icon-block-center-align > div {
+    margin: 0;
+    width: 250px;
+}
+.signup-dialog-content .product-experience-level {
+    max-width: unset;
+}
 /* Styles for Sign up - Finish */
 .confirm-container .signup-dialog-header {
     padding-bottom: 36px;
@@ -219,9 +233,7 @@
 .confirm-container .signup-dialog-steps {
     margin: 20px auto 8px;
 }
-.confirm-container .signup-dialog-content .default-content-wrapper :where(h1,h2,h3,h4,h5,h6)  {
-    margin-top: 0;
-}
+
 @media (min-width: 600px) {
     .signup-dialog {
         margin: 72px auto 16px;
@@ -248,12 +260,19 @@
     .signup-dialog-nav-bar .signup-dialog-actions {
         order: 3;
     }
+    .step2-container .signup-dialog-steps,
+    .step3-container .signup-dialog-steps {
+        margin-bottom: 60px;
+    }
     .signup-dialog-content {        
         margin: 0 auto;
         max-width: 440px;
     }
     .signup-dialog-content .user-profile-card-wrapper + .default-content-wrapper {
         max-width: 387px;
+    }
+    .signup-dialog-content .product-interests .interests-container {
+        max-height: 540px;
     }
 }
 @media (min-width: 900px) {
@@ -297,7 +316,7 @@
         height: 186px;
         left: 0;
         position: absolute;
-        top: 20px;
+        top: 12px;
         width: 197px;
         z-index: 1;
     }  
@@ -322,11 +341,43 @@
     .confirm-container .signup-dialog-steps {
         margin-top: 0;
     }
+    .signup-dialog-content .icon-block {
+        max-width: 520px;
+        gap: 20px;
+    }
+    .signup-dialog-content .icon-block-center-align > div {
+        margin: 0;
+        width: 250px;
+        max-width: 250px;
+    }
+    .signup-dialog-content .product-interests .interests-container {
+        max-height: 390px;
+    }
 }
 @media (min-width: 1200px) {
     .signup-dialog {
-        margin: 32px auto;
+        max-width: 996px;
     }
+    .signup-dialog-close-bar {
+        width: 996px;
+    }
+    .step1-container .signup-dialog-content,
+    .step3-container .signup-dialog-content {
+        max-width: 590px;
+    }
+    .step2-container .signup-dialog-content,
+    .confirm-container .signup-dialog-content {
+        max-width: 795px;
+    }
+    .signup-dialog-content .icon-block {
+        max-width: 795px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .signup-dialog {
+        margin: 32px auto;
+    }    
     .signup-dialog-close-bar {
         right: 32px;
         top: 32px;

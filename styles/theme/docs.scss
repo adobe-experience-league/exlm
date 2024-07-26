@@ -93,9 +93,18 @@
     box-sizing: border-box;
     max-width: 1700px;
 
+    .section {
+      padding-left: 0;
+      padding-right: 0;
+      padding-top: 0;
+
+      @include breakpoint(desktop) {
+        padding: 54px 54px 0;
+      }
+    }
+
     @include breakpoint(desktop) {
       grid-template-columns: 1fr 3fr 1fr;
-      grid-template-rows: repeat(var(--content-sections-count), max-content);
       padding: 0;
 
       &.rail-left-closed {
@@ -112,27 +121,21 @@
     }
 
     > div {
-      padding: 30px 2px;
       box-sizing: border-box;
       width: 100%;
       max-width: 100%;
       min-width: 0; // prevent overflow
 
-      @include breakpoint(tablet) {
-        padding: 30px 32px 32px;
-      }
-
       // TOC is ALWAYS in the section before last
       &:nth-last-child(2) {
         display: block !important;
+        grid-row: 1 / 1;
+        min-height: 90px; // predefined height to help with CLS
+        padding: 32px 0 10px; // predefined padding to help with CLS
 
         .toc {
           display: none;
         }
-
-        grid-row: 1 / 1;
-        min-height: 90px; // predefined height to help with CLS
-        padding: 32px 10px 10px; // predefined padding to help with CLS
 
         .rail-content {
           display: block;
@@ -141,6 +144,11 @@
 
       &.mini-toc-container {
         padding: 32px 10px 0 0;
+        display: none;
+
+        @include breakpoint(desktop) {
+          display: flex;
+        }
       }
 
       @include breakpoint(tablet) {
@@ -159,23 +167,14 @@
 
         &:not(.toc-container, .mini-toc-container) {
           overflow: auto;
-          padding-block: 0;
-          padding-inline: 37px 50px;
+          padding: 0;
           grid-column: 2;
-        }
-
-        &:not(.toc-container, .mini-toc-container).content-section-first {
-          padding-block-start: 54px;
-        }
-
-        &:not(.toc-container, .mini-toc-container).content-section-last {
-          padding-block-end: 50px;
         }
 
         &.toc-container {
           grid-column: 1 / 1;
           grid-row: 1 / -1;
-          padding: 46px 10px 10px;
+          padding: 0;
         }
 
         &.mini-toc-container {

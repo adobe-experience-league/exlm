@@ -23,7 +23,7 @@ import {
   showSearchSuggestionsOnInputClick,
   handleCoverSearchSubmit,
   authorOptions,
-  fetchArticleIndex,
+  fetchPerspectiveIndex,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -199,8 +199,8 @@ if (theme === 'browse-all') dropdownOptions.push(productOptions);
 if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
 
 if (isArticleLandingPage()) {
-  const articleIndex = await fetchArticleIndex();
-  const coveoSolutions = articleIndex.reduce((acc, curr) => {
+  const perspectiveIndex = await fetchPerspectiveIndex();
+  const coveoSolutions = perspectiveIndex.reduce((acc, curr) => {
     if (curr?.coveoSolution) {
       // eslint-disable-next-line no-param-reassign
       acc += `,${curr.coveoSolution}`;
@@ -218,7 +218,9 @@ if (isArticleLandingPage()) {
   }));
   productTypeOptions.items = coveoSolutionOptions;
   dropdownOptions.length = 0;
-  dropdownOptions.push(productTypeOptions);
+  if (productTypeOptions.items.length > 0) {
+    dropdownOptions.push(productTypeOptions);
+  }
   dropdownOptions.push(roleOptions);
   dropdownOptions.push(authorOptions);
 }

@@ -415,3 +415,12 @@
     }
   }
   
+  .tabs.block div.teaser-wrapper {
+    /* stretches to window edge in mobile view */
+    margin-left: unset;
+    margin-right: unset;
+  }
+
+  .tabs.block .teaser.block > .foreground > .text > .cta {
+    flex-wrap: wrap;
+  }

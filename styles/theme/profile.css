@@ -2,6 +2,11 @@ body.profile {
   background-color: var(--background-color);
 }
 
+body.profile .section .product-experience-level-wrapper  ~ .default-content-wrapper p {
+  text-align: center;
+  margin-top: 24px;
+}
+
 body.profile .section.profile-rail-section {
   display: none;
 }
@@ -10,34 +15,34 @@ body.profile .section[data-two-column-layout] > div:nth-child(2) {
   border-top: 0;
 }
 
-body.profile .section:not(.profile-tab-section, .profile-rail-section) {
+body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) {
   margin: 0 12px 24px;
   padding: 24px 24px 32px;
   border-radius: 20px;
   background-color: var(--non-spectrum-bg);
   border: 1px solid #d5d5d5;
 }
-body.profile .section:not(.profile-tab-section, .profile-rail-section) h2,
-body.profile .section:not(.profile-tab-section, .profile-rail-section) h3 {
+body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) h2,
+body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) h3 {
   margin-top: 12px;
 }
-body.profile .section:not(.profile-tab-section, .profile-rail-section) > div:not(.default-content-wrapper, .product-experience-level-wrapper) {
+body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper, .product-experience-level-wrapper) {
   width: 100%;
   padding: 32px 0;
   border-top: 1px solid #d6d6d6;
 }
-body.profile .section:not(.profile-tab-section, .profile-rail-section) > div:not(.default-content-wrapper):first-child {
+body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper):first-child {
   border-top: 0;
 }
-body.profile .section:not(.profile-tab-section, .profile-rail-section) > div:not(.default-content-wrapper):last-child {
+body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper):last-child {
   padding-bottom: 0;
 }
-body.profile .section:not(.profile-tab-section, .profile-rail-section):last-child {
+body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section):last-child {
   margin-bottom: 60px;
 }
 
 @media (min-width: 600px) {
-  body.profile .section:not(.profile-tab-section, .profile-rail-section) {
+  body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) {
     margin: 0 16px 24px;
     padding: 48px 52px 64px;
   }
@@ -101,12 +106,12 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section):last-chil
     top: 10px;
     margin-left: 54px;
   }
-  body.profile .section:not(.profile-tab-section, .profile-rail-section) {
+  body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) {
     margin-bottom: 32px;
   }
 }
 @media (min-width: 1200px) {
-  body.profile .section:not(.profile-tab-section, .profile-rail-section) {
+  body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) {
     padding: 60px 100px 80px;
   }
 }

@@ -59,7 +59,6 @@ div.marquee-wrapper {
 .marquee-title :where(h1,h2,h3,h4,h5,h6) {
   margin: 0;
   color: inherit;
-  font: inherit;
 }
 
 .marquee-short-description,
@@ -317,7 +316,7 @@ div.marquee-wrapper {
 
   .marquee-subject img {
     object-fit: cover;
-    width: 100%;
+    width: auto;
     position: relative;
     z-index: 2;
   }
