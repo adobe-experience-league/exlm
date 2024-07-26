@@ -1377,7 +1377,7 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 if (!window.hlx.DO_NOT_LOAD_PAGE) {
   if (isProfilePage()) {
-    if (true) {
+    if (window.location.href.includes('.html')) {
       loadPage();
     } else {
       await loadIms();
