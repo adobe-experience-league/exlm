@@ -202,20 +202,20 @@ const createSignupDialog = () => {
     }
   };
 
-    /**
+  /**
    * Sets up event handlers for closing the dialog.
    */
-    const setupCloseEvents = () => {
-      const signupClose = signupDialog.querySelectorAll('.close-action');
-  
-      signupClose.forEach((button) => {
-        button.addEventListener('click', (e) => {
-          e.preventDefault();
-          signupDialog.close();
-          document.body.classList.remove('overflow-hidden');
-        });
+  const setupCloseEvents = () => {
+    const signupClose = signupDialog.querySelectorAll('.close-action');
+
+    signupClose.forEach((button) => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        signupDialog.close();
+        document.body.classList.remove('overflow-hidden');
       });
-    };
+    });
+  };
 
   const defaultPageIndex = 0;
   initNavigation(defaultPageIndex);
