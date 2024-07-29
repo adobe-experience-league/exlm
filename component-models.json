@@ -1175,10 +1175,6 @@
           {
             "name": "H5",
             "value": "h5"
-          },
-          {
-            "name": "H6",
-            "value": "h6"
           }
         ]
       },
@@ -1229,8 +1225,16 @@
         "valueType": "string",
         "name": "cta2Text",
         "value": "",
-        "label": "Sign up CTA Text",
+        "label": "Second CTA Text",
         "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta2",
+        "value": "",
+        "label": "Second CTA Link",
+        "description": "What link to open when clicking the button."
       }
     ]
   },
@@ -1427,8 +1431,16 @@
         "valueType": "string",
         "name": "cta1Text",
         "value": "",
-        "label": "Sign in CTA text",
+        "label": "First CTA text",
         "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1",
+        "value": "",
+        "label": "First CTA Link",
+        "description": "What link to open when clicking the button."
       },
       {
         "component": "text",
@@ -1801,7 +1813,7 @@
         "name": "contentURL",
         "value": "",
         "label": "Content URL",
-        "description": "Provide a link to one of the following content types: Course, Tutorial, Documentation, Troubleshooting, On-Demand Event, or Certification"
+        "description": "Provide a link to one of the following content types: Course, Tutorial, Documentation, Troubleshooting, On-Demand Event, Certification or Perspective"
       }
     ]
   },

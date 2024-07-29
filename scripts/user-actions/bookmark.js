@@ -1,8 +1,15 @@
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
-import { createPlaceholderSpan } from '../scripts.js';
+import { createPlaceholderSpan, getPathDetails } from '../scripts.js';
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { bookmarksEventEmitter } from '../events.js';
+
+function isBookmarkSelected(bookmarkIdInfo, bookmarkId) {
+  const { lang: languageCode } = getPathDetails();
+  return (
+    `${bookmarkIdInfo}`.includes(bookmarkId) || `${bookmarkIdInfo}`.includes(bookmarkId.replace(`/${languageCode}`, ''))
+  );
+}
 
 /**
  * Checks if a given bookmark ID is present in the user's bookmark list.
@@ -12,7 +19,7 @@ import { bookmarksEventEmitter } from '../events.js';
  */
 async function isBookmarked(bookmarkId) {
   const profile = await defaultProfileClient.getMergedProfile();
-  return profile?.bookmarks.some((bookmarkIdInfo) => `${bookmarkIdInfo}`.includes(bookmarkId));
+  return profile?.bookmarks.some((bookmarkIdInfo) => isBookmarkSelected(bookmarkIdInfo, bookmarkId));
 }
 
 /**
@@ -24,11 +31,16 @@ async function isBookmarked(bookmarkId) {
  * @param {string} config.tooltips - tooltips object to be displayed in a toast notification.
  */
 export async function bookmarkHandler(config) {
-  const { element, id, tooltips } = config;
+  const { element, id: idValue, tooltips } = config;
+  const { lang: languageCode } = getPathDetails();
   const profileData = await defaultProfileClient.getMergedProfile();
+  let id = idValue;
+  if (idValue.includes(`/${languageCode}`)) {
+    id = idValue.replace(`/${languageCode}`, '');
+  }
   const { bookmarks = [] } = profileData;
-  const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => `${bookmarkIdInfo}`.includes(id));
-  const newBookmarks = bookmarks.filter((bookmarkIdInfo) => !`${bookmarkIdInfo}`.includes(id));
+  const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => isBookmarkSelected(bookmarkIdInfo, id));
+  const newBookmarks = bookmarks.filter((bookmarkIdInfo) => !isBookmarkSelected(bookmarkIdInfo, id));
   if (!targetBookmarkItem) {
     newBookmarks.push(`${id}:${Date.now()}`);
     element.dataset.bookmarked = true;
@@ -59,7 +71,6 @@ export async function decorateBookmark(config) {
 
   if (isSignedIn) {
     element.dataset.signedIn = true;
-
     const bookmarkTooltip = createPlaceholderSpan(tooltips?.bookmarkTooltip, 'Bookmark Page', (span) => {
       span.classList.add('action-tooltip', 'bookmark-tooltip');
     });

@@ -15,7 +15,7 @@
     grid-template-areas:
       "description"
       "image"
-      "author";  
+      "author";
   }
 
   .featured-content-wrapper {
@@ -48,7 +48,6 @@
   .featured-content.block .featured-content-image {
     width: calc(100vw - 40px);
     height: calc(100vw - 40px);
-    margin: auto;
     position: relative;
     margin-bottom: 16px;
   }
@@ -65,7 +64,6 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    margin: auto;
   }
 
   /* the top right tag in the image */
@@ -246,7 +244,7 @@
 
   .featured-content.block div.description p {
     display: -webkit-box;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     margin: 0;
@@ -315,11 +313,6 @@
       position: relative;
     }
 
-    .featured-content.block .featured-content-image img {
-      width: 100%;
-      height: 100%;
-    }
-
     /* author blocks */
     .featured-content.block > div:has(.author){
       justify-self: left;
@@ -385,15 +378,6 @@
       grid-column-end: 2;
       margin-right: 48px;
       margin-left: 0;
-    }
-
-    .featured-content.block .featured-content-image img {
-      width: 100%;
-      height: 100%;
-    }
-
-    .featured-content.block div.description p {
-      font-size: var(--spectrum-font-size-100);
     }
 
     .featured-content.block.left > div:has(.author) {

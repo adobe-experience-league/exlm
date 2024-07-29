@@ -5,6 +5,7 @@ import {
   createPlaceholderSpan,
   fetchLanguagePlaceholders,
   fetchAuthorBio,
+  getConfig,
 } from '../../scripts/scripts.js';
 import { createOptimizedPicture, decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import ffetch from '../../scripts/ffetch.js';
@@ -46,12 +47,14 @@ try {
 }
 
 async function createOptions(container, readTimeText) {
+  const { isProd } = getConfig();
   const options = document.createElement('div');
   options.classList.add('article-marquee-options');
   const cardAction = UserActions({
     container: options,
     id: window.location.pathname,
     link: window.location.href,
+    bookmarkConfig: !isProd,
   });
 
   cardAction.decorate();
