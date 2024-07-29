@@ -1225,8 +1225,16 @@
         "valueType": "string",
         "name": "cta2Text",
         "value": "",
-        "label": "Sign up CTA Text",
+        "label": "Second CTA Text",
         "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta2",
+        "value": "",
+        "label": "Second CTA Link",
+        "description": "What link to open when clicking the button."
       }
     ]
   },
