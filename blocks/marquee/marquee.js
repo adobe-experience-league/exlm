@@ -21,7 +21,9 @@ function decorateButtons(...buttons) {
 function getPrimaryCtaButton(primaryCtaText, primaryCtaLink) {
   const secondCta = document.createElement('div');
   const link = document.createElement('a');
-  link.classList.add('signin');
+  if (primaryCtaLink === '#') {
+    link.classList.add('signin');
+  }
   link.setAttribute('href', primaryCtaLink);
   link.setAttribute('title', primaryCtaText);
   link.textContent = primaryCtaText;
@@ -40,7 +42,7 @@ export default async function decorate(block) {
   const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
   const primaryCtaText = secondCtaText?.textContent?.trim();
   const eyebrowText = eyebrow?.textContent?.trim();
-  const primaryCtaLink = secondCtaLink?.textContent?.trim();
+  const primaryCtaLink = secondCtaLink?.textContent ? secondCtaLink?.textContent?.trim() : '#';
 
   // build sign in button if not in yet and button text is set
   const secondCta = primaryCtaText && getPrimaryCtaButton(primaryCtaText, primaryCtaLink);
