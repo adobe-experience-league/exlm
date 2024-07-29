@@ -153,7 +153,7 @@ export function pushLinkClick(e) {
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
 
   let linkLocation = 'unidentified';
-  if (e.target.closest('.rail-right')) {
+  if (e.target.closest('.rail-right') || e.target.closest('.mini-toc-wrapper')) {
     linkLocation = 'mtoc';
   } else if (e.target.closest('.rail-left')) {
     linkLocation = 'toc';
