@@ -2,6 +2,8 @@
 import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { loadCSS, loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../lib-franklin.js';
 import SignUpFlowShimmer from './signup-flow-shimmer.js';
+import FormValidator from '../form-validator.js';
+import { sendNotice } from '../toast/toast.js';
 
 let placeholders = {};
 try {
@@ -174,6 +176,26 @@ const createSignupDialog = () => {
    * @param {number} direction - The direction to navigate (1 for next, -1 for previous).
    */
   const handleNavigation = async (direction) => {
+    const productInterestsBlock = signupDialog.querySelector('.product-interests');
+    const productInterestsForm =
+      productInterestsBlock && productInterestsBlock.querySelector('#product-interests-form');
+    if (productInterestsForm && direction === 1) {
+      const options = {
+        aggregateRules: {
+          checkBoxGroup: {
+            errorContainer: productInterestsForm.querySelector('.product-interests-form-error'),
+            errorMessage: placeholders?.productInterestFormErrorMessage,
+          },
+        },
+      };
+      const validator = new FormValidator(productInterestsForm, placeholders, options);
+      const isValidForm = validator.validate();
+      if (!isValidForm) {
+        sendNotice(placeholders?.signupFlowToastErrorMessage || 'Please fill in the missing details.', 'error');
+        productInterestsBlock.scrollIntoView({ behavior: 'smooth' });
+        return false;
+      }
+    }
     const signupContent = signupDialog.querySelector('.signup-dialog-content');
     const currentPageIndex = parseInt(signupContent.dataset.currentPageIndex, 10);
     const newIndex = currentPageIndex + direction;
@@ -183,6 +205,7 @@ const createSignupDialog = () => {
       hideShimmer();
       loadStepFlow(newIndex);
     }
+    return true;
   };
 
   /**
