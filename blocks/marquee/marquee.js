@@ -10,6 +10,9 @@ function decorateButtons(...buttons) {
           a.classList.add('button');
           if (index === 0) a.classList.add('secondary');
           if (index === 1) a.classList.add('primary');
+          if (a.getAttribute('href') === '#') {
+            a.classList.add('signin');
+          }
           return a.outerHTML;
         }
       }
@@ -18,34 +21,15 @@ function decorateButtons(...buttons) {
     .join('');
 }
 
-function getPrimaryCtaButton(primaryCtaText, primaryCtaLink) {
-  const secondCta = document.createElement('div');
-  const link = document.createElement('a');
-  if (primaryCtaLink === '#') {
-    link.classList.add('signin');
-  }
-  link.setAttribute('href', primaryCtaLink);
-  link.setAttribute('title', primaryCtaText);
-  link.textContent = primaryCtaText;
-  secondCta.append(link);
-  return secondCta;
-}
-
 export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
-  const [img, eyebrow, title, longDescr, firstCta, linkType, secondCtaText, secondCtaLink] =
-    block.querySelectorAll(':scope div > div');
+  const [img, eyebrow, title, longDescr, firstCta, linkType, secondCta] = block.querySelectorAll(':scope div > div');
 
   const subjectPicture = img.querySelector('picture');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
-  const primaryCtaText = secondCtaText?.textContent?.trim();
   const eyebrowText = eyebrow?.textContent?.trim();
-  const primaryCtaLink = secondCtaLink?.textContent ? secondCtaLink?.textContent?.trim() : '#';
-
-  // build sign in button if not in yet and button text is set
-  const secondCta = primaryCtaText && getPrimaryCtaButton(primaryCtaText, primaryCtaLink);
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
