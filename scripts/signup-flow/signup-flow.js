@@ -43,14 +43,6 @@ const createSignupDialog = () => {
   );
   const signupDialog = htmlToElement(`
         <dialog class="signup-dialog">
-            <div class="signup-dialog-close-bar">
-                <a class="signup-dialog-close-btn close-action">
-                    <span class="close-text">${placeholders?.closeBtnLabel}</span>
-                    <div class="close-icon-holder">
-                        <span class="icon icon-close"></span>
-                    </div>
-                </a>
-            </div>
             <div class="signup-dialog-container">                                           
                 <div class="signup-dialog-header">
                     <div class="signup-dialog-header-decor"></div>
