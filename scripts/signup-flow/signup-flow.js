@@ -43,14 +43,6 @@ const createSignupDialog = () => {
   );
   const signupDialog = htmlToElement(`
         <dialog class="signup-dialog">
-            <div class="signup-dialog-close-bar">
-                <a class="signup-dialog-close-btn close-action">
-                    <span class="close-text">${placeholders?.closeBtnLabel}</span>
-                    <div class="close-icon-holder">
-                        <span class="icon icon-close"></span>
-                    </div>
-                </a>
-            </div>
             <div class="signup-dialog-container">                                           
                 <div class="signup-dialog-header">
                     <div class="signup-dialog-header-decor"></div>
@@ -210,20 +202,20 @@ const createSignupDialog = () => {
     }
   };
 
-  /**
+    /**
    * Sets up event handlers for closing the dialog.
    */
-  const setupCloseEvents = () => {
-    const signupClose = signupDialog.querySelectorAll('.close-action');
-
-    signupClose.forEach((button) => {
-      button.addEventListener('click', (e) => {
-        e.preventDefault();
-        signupDialog.close();
-        document.body.classList.remove('overflow-hidden');
+    const setupCloseEvents = () => {
+      const signupClose = signupDialog.querySelectorAll('.close-action');
+  
+      signupClose.forEach((button) => {
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
+          signupDialog.close();
+          document.body.classList.remove('overflow-hidden');
+        });
       });
-    });
-  };
+    };
 
   const defaultPageIndex = 0;
   initNavigation(defaultPageIndex);
