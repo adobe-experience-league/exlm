@@ -797,15 +797,6 @@ const decorateNewTabLinks = (block) => {
 };
 
 /**
- * Create header web component and attach to the DOM
- * @param {HTMLHeadElement} headerBlock
- */
-export default function decorate(headerBlock) {
-  const exlHeader = document.createElement('exl-header');
-  headerBlock.replaceChildren(exlHeader);
-}
-
-/**
  * Main header decorator, calls all the other decorators
  */
 class ExlHeader extends HTMLElement {
@@ -814,17 +805,37 @@ class ExlHeader extends HTMLElement {
     this.attachShadow({ mode: 'open' });
   }
 
-  loadStyles() {
-    const cssLink = htmlToElement(`<link rel="stylesheet" href="${HEADER_CSS}">`);
-    const searchLink = htmlToElement(`<link rel="stylesheet" href="${SEARCH_CSS}">`);
-    this.shadowRoot.append(cssLink);
-    this.shadowRoot.append(searchLink);
+  /**
+   * Loads a CSS file.
+   * @param {string} href URL to the CSS file
+   */
+  loadCSS(href, media) {
+    return new Promise((resolve, reject) => {
+      if (!this.shadowRoot.querySelector(`link[href="${href}"]`)) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        if (media) link.media = media;
+        link.onload = resolve;
+        link.onerror = reject;
+        this.shadowRoot.append(link);
+      } else {
+        resolve();
+      }
+    });
+  }
+
+  async loadStyles() {
+    return Promise.allSettled([this.loadCSS(HEADER_CSS), this.loadCSS(SEARCH_CSS)]);
   }
 
   async decorate() {
-    const { lang } = getPathDetails();
-
     const headerWrapper = htmlToElement('<div class="header-wrapper" id="header-wrapper"></div>');
+    headerWrapper.style.display = 'none';
+    this.loadStyles().then(() => {
+      headerWrapper.style.display = 'flex';
+    });
+    const { lang } = getPathDetails();
     this.shadowRoot.appendChild(headerWrapper);
     const header = document.createElement('div');
     header.classList.add('header', 'block');
@@ -869,9 +880,17 @@ class ExlHeader extends HTMLElement {
   }
 
   connectedCallback() {
-    this.loadStyles();
     this.decorate();
   }
 }
 
 customElements.define('exl-header', ExlHeader);
+
+/**
+ * Create header web component and attach to the DOM
+ * @param {HTMLHeadElement} headerBlock
+ */
+export default async function decorate(headerBlock) {
+  const exlHeader = new ExlHeader();
+  headerBlock.replaceChildren(exlHeader);
+}
