@@ -914,9 +914,12 @@ customElements.define('exl-header', ExlHeader);
  * Create header web component and attach to the DOM
  * @param {HTMLHeadElement} headerBlock
  */
-export default async function decorate(headerBlock) {
-  const exlHeader = new ExlHeader({
-    isCommunity: false, // TODO: update this to be dynamic when used in community
-  });
+export default async function decorate(
+  headerBlock,
+  options = {
+    isCommunity: true,
+  },
+) {
+  const exlHeader = new ExlHeader(options);
   headerBlock.replaceChildren(exlHeader);
 }
