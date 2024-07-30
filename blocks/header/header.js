@@ -532,6 +532,16 @@ const searchDecorator = async (searchBlock) => {
   return searchBlock;
 };
 
+async function communityDecorator(communityBlock) {
+  if (!this.isCommunity) {
+    if (communityBlock) communityBlock.style.display = 'none';
+  } else if (!communityBlock) {
+    // find language block, add community block before that because there is no community block returned from the fragment
+    // eslint-disable-next-line no-console -- TODO: remove console log!
+    console.log('this is a community page');
+  }
+}
+
 /**
  * Decorates the language-selector block
  * @param {HTMLElement} languageBlock
@@ -800,8 +810,21 @@ const decorateNewTabLinks = (block) => {
  * Main header decorator, calls all the other decorators
  */
 class ExlHeader extends HTMLElement {
-  constructor() {
+  constructor({ isCommunity = false } = {}) {
     super();
+    this.isCommunity = isCommunity;
+
+    // yes, even though this is extra, it ensures that these functions remain pure-esque.
+    this.navDecorator = navDecorator.bind(this);
+    this.adobeLogoDecorator = adobeLogoDecorator.bind(this);
+    this.brandDecorator = brandDecorator.bind(this);
+    this.searchDecorator = searchDecorator.bind(this);
+    this.communityDecorator = communityDecorator.bind(this);
+    this.languageDecorator = languageDecorator.bind(this);
+    this.productGridDecorator = productGridDecorator.bind(this);
+    this.signInDecorator = signInDecorator.bind(this);
+    this.profileMenuDecorator = profileMenuDecorator.bind(this);
+
     this.attachShadow({ mode: 'open' });
   }
 
@@ -833,7 +856,7 @@ class ExlHeader extends HTMLElement {
     const headerWrapper = htmlToElement('<div class="header-wrapper" id="header-wrapper"></div>');
     headerWrapper.style.display = 'none';
     this.loadStyles().then(() => {
-      headerWrapper.style.display = 'flex';
+      headerWrapper.style.display = '';
     });
     const { lang } = getPathDetails();
     this.shadowRoot.appendChild(headerWrapper);
@@ -860,21 +883,22 @@ class ExlHeader extends HTMLElement {
     nav.role = 'navigation';
     nav.ariaLabel = 'Main navigation';
 
-    const decorateHeaderBlock = async (className, decorator) => {
+    const decorateHeaderBlock = async (className, decorator, options) => {
       const block = nav.querySelector(`:scope > .${className}`);
-      await decorator(block);
+      await decorator(block, options);
     };
 
     // Do this first to ensure all links are decorated correctly before they are used.
     decorateLinks(header);
-    decorateHeaderBlock('nav', navDecorator);
-    decorateHeaderBlock('adobe-logo', adobeLogoDecorator);
-    decorateHeaderBlock('brand', brandDecorator);
-    decorateHeaderBlock('search', searchDecorator);
-    decorateHeaderBlock('language-selector', languageDecorator);
-    decorateHeaderBlock('product-grid', productGridDecorator);
-    decorateHeaderBlock('sign-in', signInDecorator);
-    decorateHeaderBlock('profile-menu', profileMenuDecorator);
+    decorateHeaderBlock('nav', this.navDecorator);
+    decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator);
+    decorateHeaderBlock('brand', this.brandDecorator);
+    decorateHeaderBlock('search', this.searchDecorator);
+    decorateHeaderBlock('community', this.communityDecorator);
+    decorateHeaderBlock('language-selector', this.languageDecorator);
+    decorateHeaderBlock('product-grid', this.productGridDecorator);
+    decorateHeaderBlock('sign-in', this.signInDecorator);
+    decorateHeaderBlock('profile-menu', this.profileMenuDecorator);
     decorateNewTabLinks(header);
     decorateIcons(header);
   }
@@ -891,6 +915,8 @@ customElements.define('exl-header', ExlHeader);
  * @param {HTMLHeadElement} headerBlock
  */
 export default async function decorate(headerBlock) {
-  const exlHeader = new ExlHeader();
+  const exlHeader = new ExlHeader({
+    isCommunity: false, // TODO: update this to be dynamic when used in community
+  });
   headerBlock.replaceChildren(exlHeader);
 }
