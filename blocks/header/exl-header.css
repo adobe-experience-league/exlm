@@ -1,5 +1,5 @@
 @charset "UTF-8";
-:root {
+:host {
   --header-padding-x: 16px;
   --search-display: inline-flex;
   --sign-up-display: none;
@@ -27,7 +27,7 @@
     ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif;
 }
 @media (min-width: 1024px) {
-  :root {
+  :host {
     --nav-item-padding-x: 24px;
     --search-display: inline-flex;
     --language-selector-display: flex;
@@ -37,19 +37,6 @@
     --nav-order: unset;
     --brand-order: unset;
     --sign-in-order: unset;
-  }
-}
-
-header {
-  position: relative;
-  box-sizing: content-box;
-  z-index: 10;
-}
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
   }
 }
 
@@ -67,6 +54,15 @@ header {
 .header-wrapper {
   /* header is always white */
   background-color: var(--color-white);
+  position: relative;
+  z-index: 10;
+  height: 4rem;
+}
+@media (min-width: 1024px) {
+  .header-wrapper {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .language-selector {
@@ -187,8 +183,21 @@ button:focus {
   cursor: pointer;
 }
 
+exl-header {
+  position: relative;
+  box-sizing: content-box;
+  z-index: 10;
+}
+@media (min-width: 1024px) {
+  exl-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
 .header {
-  padding: 0px;
+  padding-right: var(--header-padding-x);
   height: 100%;
   position: relative;
   max-width: 1440px;
@@ -486,6 +495,9 @@ button:focus {
     width: 100%;
   }
 }
+.header .nav-item .icon svg {
+  height: 14px;
+}
 .header .nav-item-mobile {
   display: block;
 }
@@ -615,7 +627,7 @@ button:focus {
 }
 @media (min-width: 1024px) {
   .header .nav-item-content-expanded > ul {
-    padding: 0;
+    padding: 0 0 40px;
   }
 }
 @media (min-width: 1024px) {
@@ -661,11 +673,11 @@ button:focus {
     display: flex;
     position: absolute;
     margin: 0;
-    padding: 0 !important;
     bottom: var(--nav-item-padding-x);
     right: var(--nav-item-padding-x);
     list-style-type: none;
     align-items: center;
+    padding: 0 !important;
   }
   .header .nav-items-secondary a {
     font: normal normal normal 14px/18px var(--body-font-family);
@@ -775,6 +787,10 @@ button:focus {
 .header .search-short .icon {
   height: 18px;
 }
+.header .search-icon {
+  background: url("../../icons/search.svg") no-repeat center center;
+  background-size: 1em 1em;
+}
 .header .search-full {
   display: flex;
   flex-grow: 1;
@@ -783,20 +799,15 @@ button:focus {
   position: relative;
 }
 .header .search-full .icon {
+  width: 14px;
+  height: 14px;
   position: absolute;
-  height: 100%;
   z-index: 1;
   display: flex;
   align-items: center;
-  right: 0;
+  left: 0;
+  padding-left: 1rem;
   cursor: pointer;
-}
-.header .search-full .icon svg {
-  width: 14px;
-  height: 14px;
-}
-.header .search-full .icon.icon-search {
-  left: 8px;
 }
 .header .search-full .icon.search-clear-icon {
   display: none;

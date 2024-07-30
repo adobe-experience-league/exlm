@@ -187,7 +187,7 @@ const decoratorState = {
  * */
 const brandDecorator = (brandBlock) => {
   simplifySingleCellBlock(brandBlock);
-  const brandLink = brandBlock.querySelector('a'); // we expect one.
+  const brandLink = brandBlock.querySelector('a');
   brandBlock.replaceChildren(brandLink);
   return brandBlock;
 };
@@ -481,12 +481,12 @@ const searchDecorator = async (searchBlock) => {
     `<div class="search-wrapper">
       <div class="search-short">
         <a href="https://experienceleague.adobe.com/search.html" aria-label="Search">
-          <span class="icon icon-search search-icon"></span>
+          <span title="Search" class="icon search-icon"></span>
         </a>
       </div>
       <div class="search-full">
         <div class="search-container">
-          <span title="Search" class="icon icon-search"></span>
+          <span title="Search" class="icon search-icon"></span>
           <input autocomplete="off" class="search-input" type="text" aria-label="top-nav-combo-search" aria-expanded="false" title="Insert a query. Press enter to send" role="combobox" placeholder="${
             searchPlaceholder.textContent
           }">
@@ -529,8 +529,6 @@ const searchDecorator = async (searchBlock) => {
     showSearchSuggestions: true,
   });
 
-  await decorateIcons(searchBlock);
-
   return searchBlock;
 };
 
@@ -568,6 +566,7 @@ const languageDecorator = async (languageBlock) => {
  * @param {HTMLElement} signInBlock
  */
 const signInDecorator = async (signInBlock) => {
+  const shadowHost = document.querySelector('exl-header');
   simplifySingleCellBlock(signInBlock);
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
@@ -599,10 +598,20 @@ const signInDecorator = async (signInBlock) => {
         console.error(err);
       });
 
-    const toggler = signInBlock.querySelector('.profile-toggle');
+    // const notificationWrapper = document.createElement('div');
+    // profile.append(notificationWrapper);
+    // console.log('icon');
+    // notificationWrapper.classList.add('notification-wrapper');
+    // notificationWrapper.innerHTML = `
+    //       <div class="notification">
+    //         <span class="icon icon-edit"></span>
+    //       </div>
+    //     `;
+
+    const toggler = shadowHost.shadowRoot.querySelector('.profile-toggle');
     const navOverlay = document.querySelector('.nav-overlay');
     const toggleExpandContentMobile = () => {
-      const navButton = document.querySelector('.nav-hamburger');
+      const navButton = shadowHost.shadowRoot.querySelector('.nav-hamburger');
       if (navButton.getAttribute('aria-expanded') === 'true') {
         navButton.click();
       }
@@ -666,6 +675,7 @@ const productGridDecorator = async (productGridBlock) => {
   productGridBlock.style.display = 'none';
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
+    productGridBlock.style.display = 'block';
     productGridBlock.classList.add('signed-in');
     const productDropdown = document.createElement('div');
     productDropdown.classList.add('product-dropdown');
@@ -681,7 +691,7 @@ const productGridDecorator = async (productGridBlock) => {
     productToggle.setAttribute('aria-controls', 'product-dropdown');
     productToggle.innerHTML = `<span class="icon-grid"></span>`;
     productGridBlock.innerHTML = `${productToggle.outerHTML}${productDropdown.outerHTML}`;
-    const gridToggler = document.querySelector('.product-toggle');
+    const gridToggler = productGridBlock.querySelector('.product-toggle');
     const toggleExpandGridContent = () => {
       const isExpanded = gridToggler.getAttribute('aria-expanded') === 'true';
       gridToggler.setAttribute('aria-expanded', !isExpanded);
@@ -715,6 +725,7 @@ const productGridDecorator = async (productGridBlock) => {
  * @param {HTMLElement} profileMenu
  */
 const profileMenuDecorator = async (profileMenuBlock) => {
+  const shadowHost = document.querySelector('exl-header');
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
     simplifySingleCellBlock(profileMenuBlock);
@@ -723,7 +734,7 @@ const profileMenuDecorator = async (profileMenuBlock) => {
         ptag.outerHTML = ptag.querySelector('a').outerHTML;
       }
     });
-    const profileMenuWrapper = document.querySelector('.profile-menu');
+    const profileMenuWrapper = shadowHost.shadowRoot.querySelector('.profile-menu');
     const communityHeading = document.createElement('h2');
     communityHeading.textContent = placeholders?.headerCommunityLabel || 'Community';
     if (profileMenuWrapper) {
@@ -786,61 +797,17 @@ const decorateNewTabLinks = (block) => {
 };
 
 /**
- * Main header decorator, calls all the other decorators
+ * Create header web component and attach to the DOM
  * @param {HTMLHeadElement} headerBlock
  */
-export default async function decorate(headerBlock) {
-  const { lang } = getPathDetails();
+export default function decorate(headerBlock) {
   const exlHeader = document.createElement('exl-header');
-  headerBlock.append(exlHeader);
-
-  const header = document.createElement('div');
-  header.classList.add('header');
-  exlHeader.shadowRoot.appendChild(header);
-
-  const navOverlay = document.createElement('div');
-  navOverlay.classList.add('nav-overlay', 'hidden');
-  document.body.appendChild(navOverlay);
-
-  loadSearchElement();
-  const [solutionTag] = getMetadata('solution').trim().split(',');
-  if (solutionTag) {
-    window.headlessSolutionProductKey = solutionTag;
-  }
-
-  const headerFragment = await fetchFragment('header/header', lang);
-  header.innerHTML = headerFragment;
-
-  const exlHeaderFirstRow = getBlockFirstRow(header);
-  exlHeaderFirstRow.outerHTML = `<nav>${exlHeaderFirstRow.innerHTML}</nav>`;
-  const nav = header.querySelector('nav');
-  nav.role = 'navigation';
-  nav.ariaLabel = 'Main navigation';
-
-  const decorateHeaderBlock = async (className, decorator) => {
-    const block = nav.querySelector(`:scope > .${className}`);
-    await decorator(block);
-  };
-
-  // Do this first to ensure all links are decorated correctly before they are used.
-  decorateLinks(header);
-
-  decorateHeaderBlock('brand', brandDecorator);
-  decorateHeaderBlock('search', searchDecorator);
-  decorateHeaderBlock('language-selector', languageDecorator);
-  decorateHeaderBlock('product-grid', productGridDecorator);
-  decorateHeaderBlock('sign-in', signInDecorator);
-  decorateHeaderBlock('profile-menu', profileMenuDecorator);
-  decorateHeaderBlock('adobe-logo', adobeLogoDecorator);
-  await decorateHeaderBlock('nav', navDecorator);
-
-  decorateNewTabLinks(header);
-
-  // do this at the end, always.
-  decorateIcons(header);
-  header.style.display = '';
+  headerBlock.replaceChildren(exlHeader);
 }
 
+/**
+ * Main header decorator, calls all the other decorators
+ */
 class ExlHeader extends HTMLElement {
   constructor() {
     super();
@@ -854,8 +821,56 @@ class ExlHeader extends HTMLElement {
     this.shadowRoot.append(searchLink);
   }
 
+  async decorate() {
+    const { lang } = getPathDetails();
+
+    const headerWrapper = htmlToElement('<div class="header-wrapper" id="header-wrapper"></div>');
+    this.shadowRoot.appendChild(headerWrapper);
+    const header = document.createElement('div');
+    header.classList.add('header', 'block');
+    headerWrapper.appendChild(header);
+
+    const navOverlay = document.createElement('div');
+    navOverlay.classList.add('nav-overlay', 'hidden');
+    document.body.appendChild(navOverlay);
+
+    loadSearchElement();
+    const [solutionTag] = getMetadata('solution').trim().split(',');
+    if (solutionTag) {
+      window.headlessSolutionProductKey = solutionTag;
+    }
+
+    const headerFragment = await fetchFragment('header/header', lang);
+    header.innerHTML = headerFragment;
+
+    const exlHeaderFirstRow = getBlockFirstRow(header);
+    exlHeaderFirstRow.outerHTML = `<nav>${exlHeaderFirstRow.innerHTML}</nav>`;
+    const nav = header.querySelector('nav');
+    nav.role = 'navigation';
+    nav.ariaLabel = 'Main navigation';
+
+    const decorateHeaderBlock = async (className, decorator) => {
+      const block = nav.querySelector(`:scope > .${className}`);
+      await decorator(block);
+    };
+
+    // Do this first to ensure all links are decorated correctly before they are used.
+    decorateLinks(header);
+    decorateHeaderBlock('nav', navDecorator);
+    decorateHeaderBlock('adobe-logo', adobeLogoDecorator);
+    decorateHeaderBlock('brand', brandDecorator);
+    decorateHeaderBlock('search', searchDecorator);
+    decorateHeaderBlock('language-selector', languageDecorator);
+    decorateHeaderBlock('product-grid', productGridDecorator);
+    decorateHeaderBlock('sign-in', signInDecorator);
+    decorateHeaderBlock('profile-menu', profileMenuDecorator);
+    decorateNewTabLinks(header);
+    decorateIcons(header);
+  }
+
   connectedCallback() {
     this.loadStyles();
+    this.decorate();
   }
 }
 

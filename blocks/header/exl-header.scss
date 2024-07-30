@@ -2,8 +2,9 @@
 @import '../../styles/sass/mixins';
 
 // Mobile-First Header
+// root is not recognized when using shadow dom
 
-:root {
+:host {
   --header-padding-x: 16px;
   --search-display: inline-flex;
   --sign-up-display: none;
@@ -78,18 +79,6 @@
   transform: rotateZ(-45deg);
 }
 
-header {
-  position: relative;
-  box-sizing: content-box;
-  z-index: 10;
-
-  @include breakpoint(custom) {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-  }
-}
-
 .icon {
   display: inline-block;
   height: 24px;
@@ -104,7 +93,29 @@ header {
 .header-wrapper {
   /* header is always white */
   background-color: var(--color-white);
+  position: relative;
+  z-index: 10;
+  height: 4rem;
+
+  @include breakpoint(custom) {
+    display: flex;
+    justify-content: center;
+  }
 }
+
+// ul {
+//   margin-left: 28px;
+//   list-style-type: disc;
+//   padding: 0;
+
+//   > li {
+//     @include text-styles($margin-top: 1em, $margin-bottom: 2em, $line-height: 27px, $color: var(--non-spectrum-grey));
+
+//     > p {
+//       margin-bottom: 8px;
+//     }
+//   }
+// }
 
 .language-selector {
   grid-area: language;
@@ -225,8 +236,20 @@ button:focus {
   cursor: pointer;
 }
 
+exl-header {
+  position: relative;
+  box-sizing: content-box;
+  z-index: 10;
+
+  @include breakpoint(custom) {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
 .header {
-  padding: 0;
+  padding-right: var(--header-padding-x);
   height: 100%;
   position: relative;
   max-width: 1440px;
@@ -523,6 +546,10 @@ button:focus {
         }
       }
     }
+
+    .icon svg {
+      height: 14px;
+    }
   }
 
   .nav-item-mobile {
@@ -646,7 +673,7 @@ button:focus {
       background-color: var(--nav-item-expanded-bg);
 
       @include breakpoint(custom) {
-        padding: 0;
+        padding: 0 0 40px;
       }
     }
 
@@ -698,11 +725,11 @@ button:focus {
       display: flex;
       position: absolute;
       margin: 0;
-      padding: 0 !important;
       bottom: var(--nav-item-padding-x);
       right: var(--nav-item-padding-x);
       list-style-type: none;
       align-items: center;
+      padding: 0 !important;
 
       a {
         font: normal normal normal 14px/18px var(--body-font-family);
@@ -816,6 +843,11 @@ button:focus {
     }
   }
 
+  .search-icon {
+    background: url('../../icons/search.svg') no-repeat center center;
+    background-size: 1em 1em;
+  }
+
   .search-full {
     display: flex;
     flex-grow: 1;
@@ -823,29 +855,16 @@ button:focus {
     justify-content: flex-end;
     position: relative;
 
-    // display: none;
-
-    // @media (width >= 1200px) {
-
-    // }
-
     .icon {
-      svg {
-        width: 14px;
-        height: 14px;
-      }
-
+      width: 14px;
+      height: 14px;
       position: absolute;
-      height: 100%;
       z-index: 1;
       display: flex;
       align-items: center;
-      right: 0;
+      left: 0;
+      padding-left: 1rem;
       cursor: pointer;
-
-      &.icon-search {
-        left: 8px;
-      }
 
       &.search-clear-icon {
         display: none;
