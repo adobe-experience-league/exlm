@@ -101,7 +101,7 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-
     padding-top: 40px;
     padding-left: 100px;
   }
-  body.profile .section:nth-child(3) {
+  body.profile .section:nth-child(3):not(.sign-up-flow-section) {
     background-image: url("/icons/solutions/profileDecoration.svg");
     background-repeat: no-repeat;
     padding-top: 60px;
