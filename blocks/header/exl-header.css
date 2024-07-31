@@ -925,6 +925,11 @@ exl-header {
 }
 .header .notification span {
   height: 18px;
+  width: 18px;
+  display: flex;
+}
+.header .notification .notification-icon {
+  padding: 0 5px;
 }
 .header .signed-in .profile {
   position: initial;

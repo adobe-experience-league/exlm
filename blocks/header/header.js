@@ -410,8 +410,8 @@ const navDecorator = async (navBlock) => {
   const hamburger = hamburgerButton(navWrapper, navOverlay);
 
   navWrapper.replaceChildren(...navBlock.children);
-  navBlock.appendChild(navWrapper);
   navBlock.appendChild(hamburger);
+  navBlock.appendChild(navWrapper);
 
   // build navItems
   const ul = navWrapper.querySelector(':scope > ul');
@@ -540,19 +540,22 @@ async function decorateCommunityBlock(header, isCommunity) {
   notificationWrapper.classList.add('notification');
   notificationWrapper.style.display = 'none';
   notificationWrapper.innerHTML = `  
- 
-    <a href="/t5/notificationfeed/page">
+<div class="notification-icon">
+    <a href="/t5/notificationfeed/page" data-id="notifications" title="notifications">
       <span class="icon icon-bell"></span>
     </a>
-    <a href="/t5/notes/privatenotespage">
+ </div>
+<div class="notification-icon">   
+    <a href="/t5/notes/privatenotespage" data-id="messages" title="messages">
       <span class ="icon icon-email"></span>
-    </a>  
+    </a> 
+<div> 
  
 `;
   communityBlock.appendChild(notificationWrapper);
   const isSignedIn = await isSignedInUser();
   if (isCommunity) {
-    if (isSignedIn) {
+    if (isSignedIn && !isMobile()) {
       notificationWrapper.style.display = 'flex';
     }
   }
@@ -892,7 +895,6 @@ class ExlHeader extends HTMLElement {
 
       // Do this first to ensure all links are decorated correctly before they are used.
       decorateLinks(header);
-      decorateHeaderBlock('nav', this.navDecorator);
       decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator);
       decorateHeaderBlock('brand', this.brandDecorator);
       decorateHeaderBlock('search', this.searchDecorator);
@@ -903,6 +905,7 @@ class ExlHeader extends HTMLElement {
       decorateCommunityBlock(header, this.isCommunity);
       decorateNewTabLinks(header);
       decorateIcons(header);
+      await decorateHeaderBlock('nav', this.navDecorator);
     }
   }
 

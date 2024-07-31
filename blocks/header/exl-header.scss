@@ -974,6 +974,12 @@ exl-header {
 
     span {
       height: 18px;
+      width: 18px;
+      display: flex;
+    }
+
+    .notification-icon {
+      padding: 0 5px;
     }
   }
 
