@@ -452,6 +452,7 @@ const navDecorator = async (navBlock) => {
       }
     });
   }
+  decorateIcons(navBlock);
   navBlock.style.display = '';
 };
 
@@ -530,7 +531,6 @@ const searchDecorator = async (searchBlock) => {
     searchOptions: options,
     showSearchSuggestions: true,
   });
-
   return searchBlock;
 };
 
