@@ -240,7 +240,11 @@ export async function fetchAuthorBio(anchor) {
     .then((html) => {
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(html, 'text/html');
-      const authorInfo = extractAuthorInfo(htmlDoc.querySelector('.author-bio'));
+      const authorInfoEl = htmlDoc.querySelector('.author-bio');
+      if (!authorInfoEl) {
+        return null;
+      }
+      const authorInfo = extractAuthorInfo(authorInfoEl);
       return authorInfo;
     })
     .catch((error) => {
@@ -251,20 +255,6 @@ export async function fetchAuthorBio(anchor) {
 export function isArticleLandingPage() {
   const theme = getMetadata('theme');
   return theme.split(',').find((t) => t.toLowerCase().startsWith('article-'));
-}
-
-function addArticleLandingRail(main) {
-  // if there is already editable browse rail stored
-  const articleRailSectionFound = [...main.querySelectorAll('.section-metadata')].find((sMeta) =>
-    readBlockConfig(sMeta)?.style.split(',').includes('article-rail-section'),
-  );
-  if (articleRailSectionFound) return;
-
-  // default: create a dynamic uneditable article rail
-  const leftRailSection = document.createElement('div');
-  leftRailSection.classList.add('articles-rail-section', isArticleLandingPage());
-  leftRailSection.append(buildBlock('articles-rail', []));
-  main.append(leftRailSection);
 }
 
 /**
@@ -321,15 +311,10 @@ function addMiniToc(main) {
   );
   const tocSection = document.createElement('div');
   tocSection.classList.add('mini-toc-section');
-  tocSection.append(buildBlock('mini-toc', []));
-  const contentContainer = document.createElement('div');
-  contentContainer.classList.add('content-container');
-  if (document.querySelector('.article-marquee')) {
-    const articleMarquee = document.querySelector('.article-marquee');
-    articleMarquee.parentNode.insertAdjacentElement('afterend', tocSection);
-  } else {
-    main.prepend(tocSection);
-  }
+  const miniTocBlock = buildBlock('mini-toc', []);
+  tocSection.append(miniTocBlock);
+  miniTocBlock.style.display = 'none';
+  main.append(tocSection);
 }
 
 /**
@@ -351,7 +336,14 @@ async function buildTabSection(main) {
         tabs.dataset.tabIndex = tabIndex;
         tabContainer = document.createElement('div');
         tabContainer.classList.add('section');
-        tabContainer.classList.add('article-content-section');
+        if (
+          i > 0 &&
+          sections[i - 1]
+            .querySelector('.section-metadata > div > div:nth-child(2)')
+            ?.textContent.includes('article-content-section')
+        ) {
+          tabContainer.classList.add('article-content-section');
+        }
         tabContainer.append(tabs);
         main.insertBefore(tabContainer, section);
       }
@@ -365,9 +357,6 @@ async function buildTabSection(main) {
       }
       section.classList.add(`tab-index-${tabIndex}`);
     }
-  });
-  main.querySelectorAll('.delete-this-section').forEach((section) => {
-    section.remove();
   });
 }
 
@@ -392,9 +381,6 @@ function buildAutoBlocks(main) {
     if (isBrowsePage()) {
       addBrowseBreadCrumb(main);
       addBrowseRail(main);
-    }
-    if (isArticleLandingPage()) {
-      addArticleLandingRail(main);
     }
     // eslint-disable-next-line no-use-before-define
     if (isArticlePage()) {
@@ -751,30 +737,21 @@ export function getConfig() {
     {
       env: 'PROD',
       cdn: 'experienceleague.adobe.com',
-      hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
-    },
-    {
-      env: 'PROD-AUTHOR',
-      cdn: 'author-p122525-e1219150.adobeaemcloud.com',
+      authorUrl: 'author-p122525-e1219150.adobeaemcloud.com',
       hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
     },
     {
       env: 'STAGE',
       cdn: 'experienceleague-stage.adobe.com',
-      hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm-stage--adobe-experience-league.live',
-    },
-    {
-      env: 'STAGE-AUTHOR',
-      cdn: 'author-p122525-e1219192.adobeaemcloud.com',
+      authorUrl: 'author-p122525-e1219192.adobeaemcloud.com',
       hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm-stage--adobe-experience-league.live',
     },
     {
       env: 'DEV',
       cdn: 'experienceleague-dev.adobe.com',
+      authorUrl: 'author-p122525-e1200861.adobeaemcloud.com',
       hlxPreview: 'main--exlm--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm--adobe-experience-league.hlx.live',
     },
@@ -787,8 +764,8 @@ export function getConfig() {
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
-  const isProd = currentEnv?.env.includes('PROD', 'PROD-AUTHOR');
-  const isStage = currentEnv?.env.includes('STAGE', 'STAGE-AUTHOR');
+  const isProd = currentEnv?.env === 'PROD' || currentEnv?.authorUrl === 'author-p122525-e1219150.adobeaemcloud.com';
+  const isStage = currentEnv?.env === 'STAGE' || currentEnv?.authorUrl === 'author-p122525-e1219192.adobeaemcloud.com';
   const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
   const ims = {
     client_id: 'ExperienceLeague',
@@ -824,7 +801,8 @@ export function getConfig() {
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     coveoToken: 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
     liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
-    adlsUrl: 'https://learning.adobe.com/catalog.result.json',
+    adlsUrl: 'https://learning.adobe.com/courses.result.json',
+    industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     searchUrl: `${cdnOrigin}/search.html`,
     articleUrl: `${cdnOrigin}/api/articles/`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
@@ -877,6 +855,13 @@ export const locales = new Map([
   ['zh-hant', 'zh_HANT'],
   ['nl', 'nl_NL'],
   ['sv', 'sv_SE'],
+]);
+
+export const URL_SPECIAL_CASE_LOCALES = new Map([
+  ['es', 'es-ES'],
+  ['pt-br', 'pt-BR'],
+  ['zh-hans', 'zh-CN'],
+  ['zh-hant', 'zh-TW'],
 ]);
 
 export async function loadIms() {
@@ -1068,7 +1053,7 @@ async function loadRails() {
 /**
  * Custom - Loads and builds layout for articles page
  */
-async function loadArticles() {
+export async function loadArticles() {
   if (isArticlePage()) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/articles/articles.css`);
     const mod = await import('./articles/articles.js');
@@ -1080,6 +1065,9 @@ async function loadArticles() {
     if (!document.querySelector('main > .article-content-section, main > .tab-section')) {
       document.querySelector('main > .mini-toc-section').remove();
     } else {
+      if (document.querySelector('.mini-toc')) {
+        document.querySelector('.mini-toc').style.display = null;
+      }
       document
         .querySelectorAll('main > .article-content-section, main > .tab-section, main > .mini-toc-section')
         .forEach((section) => {
@@ -1206,6 +1194,13 @@ async function loadDefaultModule(jsPath) {
   }
 }
 
+export function isFeatureEnabled(name) {
+  return getMetadata('feature-flags')
+    .split(',')
+    .map((t) => t.toLowerCase().trim())
+    .includes(name);
+}
+
 /**
  * THIS IS TEMPORARY FOR SUMMIT
  */
@@ -1269,6 +1264,7 @@ function decodeAemPageMetaTags() {
   const roleMeta = document.querySelector(`meta[name="role"]`);
   const levelMeta = document.querySelector(`meta[name="level"]`);
   const featureMeta = document.querySelector(`meta[name="feature"]`);
+  const cqTagsMeta = document.querySelector(`meta[name="cq-tags"]`);
 
   const solutions = solutionMeta ? formatPageMetaTags(solutionMeta.content) : [];
   const features = featureMeta ? formatPageMetaTags(featureMeta.content) : [];
@@ -1327,6 +1323,16 @@ function decodeAemPageMetaTags() {
   if (levelMeta) {
     levelMeta.content = decodedLevels.join(',');
   }
+  if (cqTagsMeta) {
+    const segments = cqTagsMeta.content.split(', ');
+    const decodedCQTags = segments.map((segment) =>
+      segment
+        .split('/')
+        .map((part, index) => (index > 0 ? atob(part) : part))
+        .join('/'),
+    );
+    cqTagsMeta.content = decodedCQTags.join(', ');
+  }
 }
 
 async function loadPage() {
@@ -1341,11 +1347,22 @@ async function loadPage() {
   showBrowseBackgroundGraphic();
 
   if (isDocArticlePage()) {
+    // wrap main content in a div - UGP-11165
+    const main = document.querySelector('main');
+    const mainSections = [...main.children].slice(0, -2); // ignore last two sections: toc and mini-toc
+    const mainContent = document.createElement('div');
+    // insert mainContent as first child of main
+    main.prepend(mainContent);
+    mainSections.forEach((section) => {
+      mainContent.append(section);
+    });
+
+    // load prex/next buttons
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
 
+    // discoverability
     const params = new URLSearchParams(window.location.search);
     const hasDiscoverability = Boolean(params.get('discoverability'));
-
     if (hasDiscoverability) {
       loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
     }

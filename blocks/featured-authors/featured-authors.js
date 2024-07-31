@@ -49,7 +49,7 @@ async function setAuthorInfo(authorElem) {
   authorElem.classList.add('author');
 
   // add the author image
-  if (authorInfo.authorImage) {
+  if (authorInfo?.authorImage) {
     const imageDiv = document.createElement('div');
     imageDiv.classList.add('author-image');
     const authorPict = document.createElement('picture');

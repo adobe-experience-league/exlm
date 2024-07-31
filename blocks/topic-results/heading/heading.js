@@ -27,7 +27,7 @@ function createHeading({ title, heading, resultCount, resultTotal, viewMoreResul
       <h1>${heading}</h1>
     </div>
     <div class="topics-header-result">
-      <p>Showing ${resultCount} of ${resultTotal}</p>
+      <p>Showing  <span>${resultCount}</span> of <span>${resultTotal}</span></p>
       <a href="${viewMoreResultsUrl}">${viewMoreResultsLabel}</a>
     </div>
   </div>

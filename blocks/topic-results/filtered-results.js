@@ -5,12 +5,12 @@ import { htmlToElement } from '../../scripts/scripts.js';
  * @param {Object} options - The options for creating a filtered result.
  * @param {string} options.title - The title of the result.
  * @param {string} options.description - The description of the result.
- * @param {string} options.productName - The product name associated with the result.
+ * @param {string} options.product - The product name associated with the result.
  * @param {string} options.contentType - The content type of the result.
- * @param {string} options.dateUpdated - The date the result was last updated.
+ * @param {string} options.date - The date the result was last updated.
  * @returns {HTMLElement} The filtered result element.
  */
-function createFilteredResult({ title = '', description = '', productName = '', contentType = '', dateUpdated = '' }) {
+function createFilteredResult({ title = '', description = '', product = [], contentType = '', date = '' }) {
   const truncatedDescription = description.length > 150 ? `${description.slice(0, 150)}...` : description;
   return htmlToElement(`
     <a class="filtered-result-container" href="#">
@@ -19,9 +19,9 @@ function createFilteredResult({ title = '', description = '', productName = '', 
             <p class="filtered-result-description">
                 ${truncatedDescription}
             </p>
-            <span class="filtered-result-product-name" >${productName}</span>
+            <span class="filtered-result-product-name" >${product}</span>
             <span class="filtered-result-content-type" >${contentType}</span>
-            <span class="filtered-result-date-updated" >${dateUpdated}</span>
+            <span class="filtered-result-date-updated" >${date}</span>
         </div>
     </a>`);
 }

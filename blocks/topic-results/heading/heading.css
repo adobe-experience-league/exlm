@@ -1,19 +1,27 @@
+.topics-header-heading span{
+    font-weight: bold; 
+}
+.topics-header-result span{
+    font-weight: bold; 
+}
+
+/* Existing styles */
 .topics-header {
     display: flex;
     flex-direction: column;
-   }
-   
-   @media (width >= 600px)  {
+}
+
+@media (min-width: 600px) {
     .topics-header {
-     flex-direction: row;
-     justify-content: space-between;
+        flex-direction: row;
+        justify-content: space-between;
     }
-   }
-   .topics-header-heading {
-    /* add styles */
+}
+
+.topics-header-heading {
+    /* Add your existing styles here */
 }
 
 .topics-header-result {
-    /* add styles */
+    /* Add your existing styles here */
 }
-   

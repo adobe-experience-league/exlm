@@ -1,38 +1,68 @@
 .pagination-container {
-    padding-left: 0;
-    margin: 0;
-    display: inline-block; 
-}
-
-.pagination__item {
+    display: flex;
+    flex-direction: row;
     list-style-type: none;
-    display: inline-block; 
-    margin-right: 10px; 
+    padding: 0;
+    margin: 0;
+    align-items: center;
 }
 
-.pagination__link {
-    text-decoration: none; 
-    color: #007bff; 
-    background-color: #ffffff; 
-    border: 1px solid #dee2e6; 
-    padding: 5px 10px; 
-    border-radius: 5px; 
-}
-
-.pagination__item--active .pagination__link {
-    color: #ffffff; 
-    background-color: #007bff;
-    border-color: #007bff; 
-}
-
+.pagination__link,
 .pagination__item--prev .pagination__link,
 .pagination__item--next .pagination__link {
-    font-weight: bold;
+    font-family: var(--body-font-family);
+    display: inline-block;
+    box-sizing: border-box;
+    text-decoration: none;
+    padding: 5px 30px;
+    text-align: center;
+    font-style: normal;
+    font-weight: 600;
+    cursor: pointer;
+    color: black;
+    background-color: unset;
+    margin: 16px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: 30px;
+    position: relative;
+}
+
+
+.pagination__item .pagination__link {
+    border: none;
+}
+
+
+.pagination__item--next .pagination__link {
+    border: 2px solid black;
 }
 
 .pagination__item.disabled .pagination__link {
-    color: #6c757d; 
-    pointer-events: none; 
-    background-color: #e9ecef; 
-    border-color: #dee2e6; 
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+.pagination__item--next .pagination__link:hover,
+.pagination__item--next .pagination__link:focus {
+    border: 2px solid black; 
+}
+
+
+.pagination__item--active .pagination__link {
+    position: relative;
+}
+
+.pagination__item--active .pagination__link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background-color: gray;
+    border-radius: 1.5px;
 }

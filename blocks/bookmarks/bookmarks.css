@@ -15,88 +15,14 @@
     border-bottom: 1px solid var(--spectrum-gray-300);
 }
 
-.bookmarks-pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 36px;
-    margin-top: 36px;
-}
-
-.bookmarks-pagination span {
-    font-size: var(--spectrum-font-size-100);
-    line-height: 17px;
-    color: var(--spectrum-gray-700);
-}
-
-.bookmarks-pagination input {
-    width: 49px;
-    height: 32px;
-    margin: 0 8px;
-    border-radius: 4px;
-    border: 1px solid var(--spectrum-gray-200);
-    font-size: var(--spectrum-font-size-100);
-    line-height: 17px;
-    color: var(--spectrum-gray-700);
-    font-family: var(--body-font-family);
-}
-
 .bookmarks .shimmer-placeholder {
     display: flex;
     flex-direction: column;
 }
 
-.bookmarks-pagination.bookmarks-pagination-hidden {
-    display: none;
-}
-
-.bookmarks-pagination .nav-arrow {
-    position: relative;
-    background: transparent;
-    outline: none;
-    height: 36px;
-    width: 36px;
-    padding: 0;
-    margin: 0;
-}
-
-.bookmarks-pagination .nav-arrow::after {
-    position: absolute;
-    top: 50%;
-    display: flex;
-    width: 6px;
-    height: 6px;
-    border-width: 0 2px 2px 0;
-    border-style: solid;
-    transform-origin: 75% 75%;
-    transform: rotateZ(135deg);
-    transition: transform 0.1s ease;
-    content: "";
-    margin-top: -5px;
-    right: 16px;
-    color: var(--spectrum-gray-700);
-}
-
-.bookmarks-pagination .nav-arrow.nav-arrow-hidden {
-    pointer-events: none;
-    touch-action: none;
-}
-
-.bookmarks-pagination .nav-arrow.right-nav-arrow::after {
-    transform: rotateZ(315deg);
-}
-
-.bookmarks-pagination .nav-arrow.nav-arrow-hidden::after {
-    color: var(--spectrum-gray-200);
-}
-
 .bookmarks-content .bookmarks-card, .bookmarks-content .bookmarks-card .browse-card {
     width: 318px;
     min-height: 390px;
-}
-
-.bookmarks .bookmarks-pagination-hidden.bookmarks-pagination {
-    display: none;
 }
 
 body.profile .bookmarks-wrapper .bookmarks .bookmarks-header > *:first-child {

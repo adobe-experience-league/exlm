@@ -1,0 +1,39 @@
+/* Increased specificity for filtered results container */
+body .filtered-results-container *,
+#main-content .filtered-results-container * {
+  box-sizing: border-box;
+}
+
+/* Title within the filtered results */
+body .filtered-results-container .filtered-result-title,
+#main-content .filtered-results-container .filtered-result-title {
+  font-size: 14px;
+  color: #323232;
+  font-weight: bold;
+  line-height: 17px;
+  font-family: "adobe-clean";
+}
+
+/* Links within the filtered results */
+body .filtered-results-container a.filtered-result-container,
+#main-content .filtered-results-container a.filtered-result-container {
+  color: #0059b3;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Description within the filtered results */
+body .filtered-results-container .filtered-result-description,
+#main-content .filtered-results-container .filtered-result-description {
+  font-size: 12px;
+  color: #505050;
+  line-height: 18px;
+  font-weight: normal;
+  font-family: "adobe-clean";
+  width: 60%;
+  text-align: left;
+  vertical-align: middle;
+  padding-right: 28px;
+}
+
+/* Ensure your CSS file is correctly linked in your HTML <head> */

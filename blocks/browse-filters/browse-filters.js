@@ -23,7 +23,7 @@ import {
   showSearchSuggestionsOnInputClick,
   handleCoverSearchSubmit,
   authorOptions,
-  fetchArticleIndex,
+  fetchPerspectiveIndex,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -199,8 +199,8 @@ if (theme === 'browse-all') dropdownOptions.push(productOptions);
 if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
 
 if (isArticleLandingPage()) {
-  const articleIndex = await fetchArticleIndex();
-  const coveoSolutions = articleIndex.reduce((acc, curr) => {
+  const perspectiveIndex = await fetchPerspectiveIndex();
+  const coveoSolutions = perspectiveIndex.reduce((acc, curr) => {
     if (curr?.coveoSolution) {
       // eslint-disable-next-line no-param-reassign
       acc += `,${curr.coveoSolution}`;
@@ -208,16 +208,9 @@ if (isArticleLandingPage()) {
     return acc;
   }, '');
 
-  const coveoSolutionArr = coveoSolutions.split(/[,;|]/).filter(Boolean);
+  const coveoSolutionArr = coveoSolutions.split(/[,;]/).filter((solution) => solution && !solution.includes('|'));
   const coveoSolutionOptionsList = Array.from(new Set(coveoSolutionArr)).sort();
-  const parentCoveoSolutionOptList = coveoSolutionOptionsList.reduce((acc, curr) => {
-    const matchFound = !!acc.find((optName) => optName.includes(curr) || curr.includes(optName));
-    if (!matchFound) {
-      acc.push(curr);
-    }
-    return acc;
-  }, []);
-  const coveoSolutionOptions = parentCoveoSolutionOptList.map((solution) => ({
+  const coveoSolutionOptions = coveoSolutionOptionsList.map((solution) => ({
     description: '',
     id: solution.toLowerCase(),
     title: solution,
@@ -225,7 +218,9 @@ if (isArticleLandingPage()) {
   }));
   productTypeOptions.items = coveoSolutionOptions;
   dropdownOptions.length = 0;
-  dropdownOptions.push(productTypeOptions);
+  if (productTypeOptions.items.length > 0) {
+    dropdownOptions.push(productTypeOptions);
+  }
   dropdownOptions.push(roleOptions);
   dropdownOptions.push(authorOptions);
 }

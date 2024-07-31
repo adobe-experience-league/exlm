@@ -1,6 +1,6 @@
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
-import { fetchLanguagePlaceholders } from '../scripts.js';
+import { fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { defaultProfileClient } from '../auth/profile.js';
 import { bookmarksEventEmitter } from '../events.js';
 
@@ -12,6 +12,13 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
+function isBookmarkSelected(bookmarkIdInfo, bookmarkId) {
+  const { lang: languageCode } = getPathDetails();
+  return (
+    `${bookmarkIdInfo}`.includes(bookmarkId) || `${bookmarkIdInfo}`.includes(bookmarkId.replace(`/${languageCode}`, ''))
+  );
+}
+
 const renderBookmark = (labelSel, iconSel, id) => {
   iconSel.addEventListener('click', async (e) => {
     e.preventDefault();
@@ -20,7 +27,7 @@ const renderBookmark = (labelSel, iconSel, id) => {
       if (iconSel.classList.contains('authed')) {
         const profileData = await defaultProfileClient.getMergedProfile();
         const { bookmarks = [] } = profileData;
-        const bookmarkItems = bookmarks.filter((bookmark) => !`${bookmark}`.includes(id));
+        const bookmarkItems = bookmarks.filter((bookmark) => !isBookmarkSelected(bookmark, id));
         defaultProfileClient.updateProfile('bookmarks', bookmarkItems, true);
         bookmarksEventEmitter.set('bookmark_ids', bookmarkItems);
         labelSel.innerHTML = `${placeholders.bookmarkAuthLabelSet}`;
@@ -31,7 +38,7 @@ const renderBookmark = (labelSel, iconSel, id) => {
       } else {
         const profileData = await defaultProfileClient.getMergedProfile();
         const { bookmarks = [] } = profileData;
-        const bookmarkItems = bookmarks.filter((bookmark) => !`${bookmark}`.includes(id));
+        const bookmarkItems = bookmarks.filter((bookmark) => !isBookmarkSelected(bookmark, id));
         bookmarkItems.push(`${id}:${Date.now()}`);
         defaultProfileClient.updateProfile('bookmarks', bookmarkItems, true);
         bookmarksEventEmitter.set('bookmark_ids', bookmarkItems);
