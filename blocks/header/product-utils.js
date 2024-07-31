@@ -1,5 +1,24 @@
 import { getPathDetails } from './importedFunctions.js';
-import ffetch from './ffetch.js';
+
+/**
+ * Fetch Json with fallback.
+ */
+function fetchJson(url, fallbackUrl) {
+  return fetch(url)
+    .then((response) => {
+      if (!response.ok && fallbackUrl) {
+        return fetch(fallbackUrl);
+      }
+      return response;
+    })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      return null;
+    })
+    .then((json) => json?.data || []);
+}
 
 /**
  * Retrieves products based on the specified theme.
@@ -23,9 +42,9 @@ export default async function getProducts(theme = 'browse') {
   };
   let featured = true;
   const [Products, publishedPages] = await Promise.all([
-    ffetch(`/${lang}/${content[theme].name}.json`, `/en/${content[theme].name}.json`).all(),
+    fetchJson(`/${lang}/${content[theme].name}.json`, `/en/${content[theme].name}.json`),
     // get all indexed pages
-    ffetch(`/${lang}/${content[theme].index}.json`, `/en/${content[theme].index}.json`).all(),
+    fetchJson(`/${lang}/${content[theme].index}.json`, `/en/${content[theme].index}.json`),
   ]);
 
   // add all published top products to final list
