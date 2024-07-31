@@ -1,6 +1,9 @@
 // eslint-disable-next-line import/no-cycle
 import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { loadCSS, loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../lib-franklin.js';
+import SignUpFlowShimmer from './signup-flow-shimmer.js';
+import FormValidator from '../form-validator.js';
+import { sendNotice } from '../toast/toast.js';
 
 let placeholders = {};
 try {
@@ -25,11 +28,6 @@ const pages = [
     title: placeholders?.signupFlowStep2Header,
   },
   {
-    name: 'step3',
-    path: `/${lang}/profile/signup-flow-modal/step3`,
-    title: placeholders?.signupFlowStep3Header,
-  },
-  {
     name: 'confirm',
     path: `/${lang}/profile/signup-flow-modal/confirm`,
     title: placeholders?.signupFlowConfirmHeader,
@@ -42,16 +40,11 @@ const pages = [
  * The function sets up the dialog structure, navigation, and event handlers.
  */
 const createSignupDialog = () => {
+  pages.forEach((page) =>
+    document.head.appendChild(htmlToElement(`<link rel="prefetch" href="${page.path}.plain.html">`)),
+  );
   const signupDialog = htmlToElement(`
         <dialog class="signup-dialog">
-            <div class="signup-dialog-close-bar">
-                <a class="signup-dialog-close-btn close-btn">
-                    <span class="close-text">${placeholders?.closeBtnLabel}</span>
-                    <div class="close-icon-holder">
-                        <span class="icon icon-close"></span>
-                    </div>
-                </a>
-            </div>
             <div class="signup-dialog-container">                                           
                 <div class="signup-dialog-header">
                     <div class="signup-dialog-header-decor"></div>
@@ -60,8 +53,7 @@ const createSignupDialog = () => {
                         <div class="signup-dialog-title"></div>
                         <div class="signup-dialog-actions">
                             <button class="next-btn">${placeholders?.nextBtnLabel}</button>
-                            <button class="finish-btn">${placeholders?.finishBtnLabel}</button>
-                            <button class="close-btn">${placeholders?.closeBtnLabel}</button>
+                            <button class="complete-btn close-action">${placeholders?.completeBtnLabel}</button>
                         </div>
                     </div>
                     </div>
@@ -76,6 +68,23 @@ const createSignupDialog = () => {
         </dialog>
     `);
 
+  const signUpFlowShimmer = new SignUpFlowShimmer();
+
+  function showShimmer() {
+    signupDialog.querySelectorAll('div[class$="-decor"]').forEach((decor) => {
+      decor.style.display = 'none';
+    });
+    const signupBody = signupDialog.querySelector('.signup-dialog-body');
+    signUpFlowShimmer.add(signupBody);
+  }
+
+  function hideShimmer() {
+    signupDialog.querySelectorAll('div[class$="-decor"]').forEach((decor) => {
+      decor.style.display = 'block';
+    });
+    signUpFlowShimmer.remove();
+  }
+
   /**
    * Loads the content for a specific page by index.
    * @param {number} index - The index of the page to load.
@@ -83,12 +92,10 @@ const createSignupDialog = () => {
    */
   const loadPageContent = async (index) => {
     if (index < 0 || index >= pages.length) return null;
-
     const response = await fetch(`${pages[index].path}.plain.html`);
-    const signupClose = signupDialog.querySelector('.signup-dialog-close-btn');
-    await decorateIcons(signupClose);
     const signupContainer = signupDialog.querySelector('.signup-dialog-container');
     const signupContent = signupDialog.querySelector('.signup-dialog-content');
+
     if (response.ok) {
       const pageContent = await response.text();
       if (pageContent) {
@@ -119,13 +126,11 @@ const createSignupDialog = () => {
     const navContainer = signupDialog.querySelector('.signup-dialog-nav-bar');
     const prevBtn = navContainer.querySelector('.prev-btn');
     const nextBtn = navContainer.querySelector('.next-btn');
-    const finishBtn = navContainer.querySelector('.finish-btn');
-    const closeBtn = navContainer.querySelector('.close-btn');
+    const completeBtn = navContainer.querySelector('.complete-btn');
 
     prevBtn.classList.toggle('visibility-hidden', pageIndex === 0);
-    nextBtn.classList.toggle('content-hidden', pageIndex > 1);
-    finishBtn.classList.toggle('content-hidden', pageIndex !== 2);
-    closeBtn.classList.toggle('content-hidden', pageIndex < pages.length - 1);
+    nextBtn.classList.toggle('hidden', pageIndex > 1);
+    completeBtn.classList.toggle('hidden', pageIndex < pages.length - 1);
 
     // Generate step flow content based on the current step index
     let flow = '';
@@ -171,13 +176,36 @@ const createSignupDialog = () => {
    * @param {number} direction - The direction to navigate (1 for next, -1 for previous).
    */
   const handleNavigation = async (direction) => {
+    const productInterestsBlock = signupDialog.querySelector('.product-interests');
+    const productInterestsForm =
+      productInterestsBlock && productInterestsBlock.querySelector('#product-interests-form');
+    if (productInterestsForm && direction === 1) {
+      const options = {
+        aggregateRules: {
+          checkBoxGroup: {
+            errorContainer: productInterestsForm.querySelector('.product-interests-form-error'),
+            errorMessage: placeholders?.productInterestFormErrorMessage,
+          },
+        },
+      };
+      const validator = new FormValidator(productInterestsForm, placeholders, options);
+      const isValidForm = validator.validate();
+      if (!isValidForm) {
+        sendNotice(placeholders?.signupFlowToastErrorMessage || 'Please fill in the missing details.', 'error');
+        productInterestsBlock.scrollIntoView({ behavior: 'smooth' });
+        return false;
+      }
+    }
     const signupContent = signupDialog.querySelector('.signup-dialog-content');
     const currentPageIndex = parseInt(signupContent.dataset.currentPageIndex, 10);
     const newIndex = currentPageIndex + direction;
+    showShimmer();
     const isLoaded = await loadPageContent(newIndex);
     if (isLoaded) {
+      hideShimmer();
       loadStepFlow(newIndex);
     }
+    return true;
   };
 
   /**
@@ -185,15 +213,15 @@ const createSignupDialog = () => {
    */
   const initNavigation = async (index) => {
     loadStepFlow(index);
+    showShimmer();
     const isLoaded = await loadPageContent(index);
     if (isLoaded) {
+      hideShimmer();
       const prevBtn = signupDialog.querySelector('.signup-dialog-nav-bar .prev-btn');
       const nextBtn = signupDialog.querySelector('.signup-dialog-nav-bar .next-btn');
-      const finishBtn = signupDialog.querySelector('.signup-dialog-nav-bar .finish-btn');
 
       prevBtn.addEventListener('click', () => handleNavigation(-1));
       nextBtn.addEventListener('click', () => handleNavigation(1));
-      finishBtn.addEventListener('click', () => handleNavigation(1));
     }
   };
 
@@ -201,14 +229,7 @@ const createSignupDialog = () => {
    * Sets up event handlers for closing the dialog.
    */
   const setupCloseEvents = () => {
-    const signupClose = signupDialog.querySelectorAll('.close-btn');
-
-    signupDialog.addEventListener('click', (event) => {
-      if (event.target === signupDialog) {
-        signupDialog.close();
-        document.body.classList.remove('overflow-hidden');
-      }
-    });
+    const signupClose = signupDialog.querySelectorAll('.close-action');
 
     signupClose.forEach((button) => {
       button.addEventListener('click', (e) => {

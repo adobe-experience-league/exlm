@@ -19,14 +19,13 @@ export function setLevels(val = 2) {
   return selectors.join(',');
 }
 
-export function highlight(replace = false) {
+export function highlight(replace = false, isAnchorScroll = false) {
   const render = window.requestAnimationFrame;
   const ctx = document.querySelector('.mini-toc');
   const levels = document.querySelector('meta[name="mini-toc-levels"]');
   const mtocScroll = ctx.querySelectorAll('a').length > 10;
 
   if (ctx !== null) {
-    const top = window.scrollY;
     const headers = Array.from(
       document
         .querySelector('main')
@@ -34,24 +33,23 @@ export function highlight(replace = false) {
           setLevels(levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined),
         ),
     ).filter((i) => i.id.length > 0);
-    const anchors = Array.from(ctx.querySelectorAll('a'));
-    let el;
-
+    let anchorElement;
     // eslint-disable-next-line no-restricted-syntax
-    for (const [idx, i] of headers.entries()) {
-      if (parseInt(i.offsetTop, 10) + parseInt(i.offsetHeight, 10) >= top) {
-        el = anchors[idx];
-        break;
+    for (const elem of headers) {
+      const rect = elem.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      if (rect.top <= viewportHeight * 0.2) {
+        anchorElement = ctx.querySelector(`[href="#${elem.id}"]`);
       }
     }
 
-    if (el !== undefined) {
+    if (anchorElement !== undefined && !isAnchorScroll) {
       render(() => {
         ctx.querySelectorAll('a.is-active').forEach((i) => i.classList.remove('is-active'));
-        el.classList.add('is-active');
+        anchorElement.classList.add('is-active');
 
         const scrollOptions = {
-          top: el.offsetTop - ctx.offsetTop,
+          top: anchorElement.offsetTop - ctx.offsetTop,
           behavior: 'smooth',
         };
 
@@ -60,12 +58,12 @@ export function highlight(replace = false) {
         }
 
         const scrollableDivBlock = ctx.querySelector('.scrollable-div');
-        const anchorTopPos = el.offsetTop;
-        el.classList.add('is-active');
+        const anchorTopPos = anchorElement.offsetTop;
+        anchorElement.classList.add('is-active');
         scrollableDivBlock.scrollTop = anchorTopPos - 30;
 
         if (replace) {
-          window.history.replaceState({}, '', el.href);
+          window.history.replaceState({}, '', anchorElement.href);
         }
       });
     }

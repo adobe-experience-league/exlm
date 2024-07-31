@@ -8,15 +8,14 @@ import {
   getConfig,
   getLink,
   fetchFragment,
-  isFeatureEnabled,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
+import initializeSignupFlow from '../../scripts/signup-flow/signup-flow.js';
 
 const languageModule = import('../../scripts/language.js');
-const { khorosProfileUrl } = getConfig();
+const { khorosProfileUrl, isProd } = getConfig();
 
 let searchElementPromise = null;
-const FEATURE_FLAG = 'perspectives';
 
 export async function loadSearchElement() {
   searchElementPromise =
@@ -396,16 +395,7 @@ const buildNavItems = async (ul, level = 0) => {
     await addMobileLangSelector();
   }
 
-  [...ul.children].forEach((option) => {
-    const link = option.querySelector('a');
-    const featureFlagValue = link?.getAttribute('feature-flags');
-
-    if (featureFlagValue === FEATURE_FLAG && !isFeatureEnabled(FEATURE_FLAG)) {
-      option.remove(); // Remove the element if 'perspectives' and feature is not enabled
-    } else {
-      decorateNavItem(option); // Decorate the element otherwise
-    }
-  });
+  [...ul.children].forEach(decorateNavItem);
 };
 
 /**
@@ -481,14 +471,6 @@ const searchDecorator = async (searchBlock) => {
   const searchOptions = getCell(searchBlock, 1, 3)?.firstElementChild?.children || [];
   const options = [...searchOptions].map((option) => option.textContent);
 
-  const parsedOptions = options
-    .map((option) => {
-      const [label, value] = option.split(':');
-      return { label, value };
-    })
-    // TODO - remove dependecy on feature flag once perspectives are perminantely live
-    .filter((option) => option?.value?.toLowerCase() !== 'perspective' || isFeatureEnabled(FEATURE_FLAG));
-
   searchBlock.innerHTML = '';
   const searchWrapper = htmlToElement(
     `<div class="search-wrapper">
@@ -510,19 +492,23 @@ const searchDecorator = async (searchBlock) => {
           </div>
         </div>
         <button type="button" class="search-picker-button" aria-haspopup="true" aria-controls="search-picker-popover">
-          <span class="search-picker-label" data-filter-value="${parsedOptions[0]?.value}">${
-            parsedOptions[0]?.label || ''
+          <span class="search-picker-label" data-filter-value="${options[0].split(':')[1]}">${
+            options[0].split(':')[0] || ''
           }</span>
         </button>
         <div class="search-picker-popover" id="search-picker-popover">
           <ul role="listbox">
-            ${parsedOptions
+            ${options
               .map(
-                ({ label, value }, index) =>
-                  `<li tabindex="0" role="option" class="search-picker-label" data-filter-value="${value}">${
+                (option, index) =>
+                  `<li tabindex="0" role="option" class="search-picker-label" data-filter-value="${
+                    option.split(':')[1]
+                  }">${
                     index === 0
-                      ? `<span class="icon icon-checkmark"></span> <span data-filter-value="${value}">${label}</span>`
-                      : `<span data-filter-value="${value}">${label}</span>`
+                      ? `<span class="icon icon-checkmark"></span> <span data-filter-value="${option.split(':')[1]}">${
+                          option.split(':')[0]
+                        }</span>`
+                      : `<span data-filter-value="${option.split(':')[1]}">${option.split(':')[0]}</span>`
                   }</li>`,
               )
               .join('')}
@@ -751,14 +737,22 @@ const profileMenuDecorator = async (profileMenuBlock) => {
     fetchCommunityProfileData()
       .then((res) => {
         if (res) {
-          res.data.menu.forEach((item) => {
-            if (item.title && item.url) {
-              const communityProfile = document.createElement('a');
-              communityProfile.href = item.url;
-              communityProfile.textContent = item.title;
-              profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
-            }
-          });
+          const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
+          if (res.data.menu.length > 0) {
+            res.data.menu.forEach((item) => {
+              if (item.title && item.url) {
+                const communityProfile = document.createElement('a');
+                communityProfile.href = item.url;
+                communityProfile.textContent = item.title;
+                profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
+              }
+            });
+          } else {
+            const communityProfile = document.createElement('a');
+            communityProfile.href = `https://experienceleaguecommunities.adobe.com/?profile.language=${locale}`;
+            communityProfile.textContent = placeholders?.createYourCommunityProfile || 'Create your community profile';
+            profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
+          }
         }
       })
       .catch((err) => {
@@ -847,4 +841,11 @@ export default async function decorate(headerBlock) {
   // do this at the end, always.
   decorateIcons(headerBlock);
   headerBlock.style.display = '';
+}
+
+/* FIXME: Temp Code - Should be removed once we have the profile integration in place */
+const isSignedIn = await isSignedInUser();
+const urlParams = new URLSearchParams(window.location.search);
+if (isSignedIn && !isProd && urlParams.get('signup-wizard') === 'on') {
+  initializeSignupFlow();
 }

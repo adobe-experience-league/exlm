@@ -1,5 +1,5 @@
+import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import { getConfig } from '../scripts.js';
-import { CONTENT_TYPES } from './browse-cards-constants.js';
 
 const domParser = new DOMParser();
 const { prodAssetsCdnOrigin, cdnOrigin } = getConfig();

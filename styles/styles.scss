@@ -698,7 +698,7 @@ picture {
 
 .exl-toast {
   align-items: center;
-  background: var(--spectrum-green-900);
+  background: var(--spectrum-gray-900);
   border-radius: 5px;
   color: var(--spectrum-gray-50);
   display: flex;
@@ -711,6 +711,14 @@ picture {
   bottom: unset;
   z-index: 999;
   width: 90%;
+}
+
+.exl-toast.exl-toast-success {
+  background: var(--spectrum-green-900);
+}
+
+.exl-toast.exl-toast-error {
+  background: var(--spectrum-red-900);
 }
 
 .exl-toast-content {
@@ -747,6 +755,11 @@ picture {
   width: 20px;
   margin-left: 5px;
   vertical-align: middle;
+}
+
+.form-error,
+.form-field-error {
+  color: var(--spectrum-red-900);
 }
 
 @include breakpoint(tablet) {
@@ -860,7 +873,7 @@ body[class^='browse-'] .browse-filters-full-container {
   visibility: hidden;
 }
 
-.content-hidden {
+.hidden {
   display: none;
 }
 
