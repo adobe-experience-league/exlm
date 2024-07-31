@@ -10,9 +10,10 @@ import {
   fetchFragment,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
+import initializeSignupFlow from '../../scripts/signup-flow/signup-flow.js';
 
 const languageModule = import('../../scripts/language.js');
-const { khorosProfileUrl } = getConfig();
+const { khorosProfileUrl, isProd } = getConfig();
 
 let searchElementPromise = null;
 
@@ -736,14 +737,22 @@ const profileMenuDecorator = async (profileMenuBlock) => {
     fetchCommunityProfileData()
       .then((res) => {
         if (res) {
-          res.data.menu.forEach((item) => {
-            if (item.title && item.url) {
-              const communityProfile = document.createElement('a');
-              communityProfile.href = item.url;
-              communityProfile.textContent = item.title;
-              profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
-            }
-          });
+          const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
+          if (res.data.menu.length > 0) {
+            res.data.menu.forEach((item) => {
+              if (item.title && item.url) {
+                const communityProfile = document.createElement('a');
+                communityProfile.href = item.url;
+                communityProfile.textContent = item.title;
+                profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
+              }
+            });
+          } else {
+            const communityProfile = document.createElement('a');
+            communityProfile.href = `https://experienceleaguecommunities.adobe.com/?profile.language=${locale}`;
+            communityProfile.textContent = placeholders?.createYourCommunityProfile || 'Create your community profile';
+            profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
+          }
         }
       })
       .catch((err) => {
@@ -832,4 +841,11 @@ export default async function decorate(headerBlock) {
   // do this at the end, always.
   decorateIcons(headerBlock);
   headerBlock.style.display = '';
+}
+
+/* FIXME: Temp Code - Should be removed once we have the profile integration in place */
+const isSignedIn = await isSignedInUser();
+const urlParams = new URLSearchParams(window.location.search);
+if (isSignedIn && !isProd && urlParams.get('signup-wizard') === 'on') {
+  initializeSignupFlow();
 }
