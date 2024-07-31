@@ -403,6 +403,7 @@ const buildNavItems = async (ul, level = 0) => {
  * @param {HTMLElement} navBlock
  */
 const navDecorator = async (navBlock) => {
+  navBlock.style.display = 'none';
   simplifySingleCellBlock(navBlock);
   const navOverlay = document.querySelector('.nav-overlay');
   const navWrapper = htmlToElement('<div class="nav-wrapper"></div>');
@@ -451,6 +452,7 @@ const navDecorator = async (navBlock) => {
       }
     });
   }
+  navBlock.style.display = '';
 };
 
 /**
@@ -532,13 +534,27 @@ const searchDecorator = async (searchBlock) => {
   return searchBlock;
 };
 
-async function communityDecorator(communityBlock) {
-  if (!this.isCommunity) {
-    if (communityBlock) communityBlock.style.display = 'none';
-  } else if (!communityBlock) {
-    // find language block, add community block before that because there is no community block returned from the fragment
-    // eslint-disable-next-line no-console -- TODO: remove console log!
-    console.log('this is a community page');
+async function decorateCommunityBlock(header, isCommunity) {
+  const communityBlock = header.querySelector('nav');
+  const notificationWrapper = document.createElement('div');
+  notificationWrapper.classList.add('notification');
+  notificationWrapper.style.display = 'none';
+  notificationWrapper.innerHTML = `  
+ 
+    <a href="/t5/notificationfeed/page">
+      <span class="icon icon-bell"></span>
+    </a>
+    <a href="/t5/notes/privatenotespage">
+      <span class ="icon icon-email"></span>
+    </a>  
+ 
+`;
+  communityBlock.appendChild(notificationWrapper);
+  const isSignedIn = await isSignedInUser();
+  if (isCommunity) {
+    if (isSignedIn) {
+      notificationWrapper.style.display = 'flex';
+    }
   }
 }
 
@@ -607,16 +623,6 @@ const signInDecorator = async (signInBlock) => {
         // eslint-disable-next-line no-console
         console.error(err);
       });
-
-    // const notificationWrapper = document.createElement('div');
-    // profile.append(notificationWrapper);
-    // console.log('icon');
-    // notificationWrapper.classList.add('notification-wrapper');
-    // notificationWrapper.innerHTML = `
-    //       <div class="notification">
-    //         <span class="icon icon-edit"></span>
-    //       </div>
-    //     `;
 
     const toggler = shadowHost.shadowRoot.querySelector('.profile-toggle');
     const navOverlay = document.querySelector('.nav-overlay');
@@ -789,7 +795,7 @@ const profileMenuDecorator = async (profileMenuBlock) => {
  * Decorates the adobe-logo block
  * @param {HTMLElement} adobeLogoBlock
  */
-const adobeLogoDecorator = (adobeLogoBlock) => {
+const adobeLogoDecorator = async (adobeLogoBlock) => {
   simplifySingleCellBlock(adobeLogoBlock);
   adobeLogoBlock.querySelector('a').setAttribute('title', 'logo');
   return adobeLogoBlock;
@@ -819,12 +825,10 @@ class ExlHeader extends HTMLElement {
     this.adobeLogoDecorator = adobeLogoDecorator.bind(this);
     this.brandDecorator = brandDecorator.bind(this);
     this.searchDecorator = searchDecorator.bind(this);
-    this.communityDecorator = communityDecorator.bind(this);
     this.languageDecorator = languageDecorator.bind(this);
     this.productGridDecorator = productGridDecorator.bind(this);
     this.signInDecorator = signInDecorator.bind(this);
     this.profileMenuDecorator = profileMenuDecorator.bind(this);
-
     this.attachShadow({ mode: 'open' });
   }
 
@@ -853,58 +857,58 @@ class ExlHeader extends HTMLElement {
   }
 
   async decorate() {
-    const headerWrapper = htmlToElement('<div class="header-wrapper" id="header-wrapper"></div>');
-    headerWrapper.style.display = 'none';
-    this.loadStyles().then(() => {
-      headerWrapper.style.display = '';
-    });
     const { lang } = getPathDetails();
-    this.shadowRoot.appendChild(headerWrapper);
-    const header = document.createElement('div');
-    header.classList.add('header', 'block');
-    headerWrapper.appendChild(header);
-
-    const navOverlay = document.createElement('div');
-    navOverlay.classList.add('nav-overlay', 'hidden');
-    document.body.appendChild(navOverlay);
-
-    loadSearchElement();
-    const [solutionTag] = getMetadata('solution').trim().split(',');
-    if (solutionTag) {
-      window.headlessSolutionProductKey = solutionTag;
-    }
-
     const headerFragment = await fetchFragment('header/header', lang);
-    header.innerHTML = headerFragment;
+    if (headerFragment) {
+      loadSearchElement();
 
-    const exlHeaderFirstRow = getBlockFirstRow(header);
-    exlHeaderFirstRow.outerHTML = `<nav>${exlHeaderFirstRow.innerHTML}</nav>`;
-    const nav = header.querySelector('nav');
-    nav.role = 'navigation';
-    nav.ariaLabel = 'Main navigation';
+      const [solutionTag] = getMetadata('solution').trim().split(',');
+      if (solutionTag) {
+        window.headlessSolutionProductKey = solutionTag;
+      }
 
-    const decorateHeaderBlock = async (className, decorator, options) => {
-      const block = nav.querySelector(`:scope > .${className}`);
-      await decorator(block, options);
-    };
+      const headerWrapper = htmlToElement('<div class="header-wrapper" id="header-wrapper"></div>');
+      const header = document.createElement('div');
 
-    // Do this first to ensure all links are decorated correctly before they are used.
-    decorateLinks(header);
-    decorateHeaderBlock('nav', this.navDecorator);
-    decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator);
-    decorateHeaderBlock('brand', this.brandDecorator);
-    decorateHeaderBlock('search', this.searchDecorator);
-    decorateHeaderBlock('community', this.communityDecorator);
-    decorateHeaderBlock('language-selector', this.languageDecorator);
-    decorateHeaderBlock('product-grid', this.productGridDecorator);
-    decorateHeaderBlock('sign-in', this.signInDecorator);
-    decorateHeaderBlock('profile-menu', this.profileMenuDecorator);
-    decorateNewTabLinks(header);
-    decorateIcons(header);
+      header.classList.add('header', 'block');
+      this.shadowRoot.appendChild(headerWrapper);
+      headerWrapper.appendChild(header);
+
+      const navOverlay = document.createElement('div');
+      navOverlay.classList.add('nav-overlay', 'hidden');
+      document.body.appendChild(navOverlay);
+      header.innerHTML = headerFragment;
+
+      const exlHeaderFirstRow = getBlockFirstRow(header);
+      exlHeaderFirstRow.outerHTML = `<nav>${exlHeaderFirstRow.innerHTML}</nav>`;
+      const nav = header.querySelector('nav');
+      nav.role = 'navigation';
+      nav.ariaLabel = 'Main navigation';
+
+      const decorateHeaderBlock = async (className, decorator, options) => {
+        const block = nav.querySelector(`:scope > .${className}`);
+        await decorator(block, options);
+      };
+
+      // Do this first to ensure all links are decorated correctly before they are used.
+      decorateLinks(header);
+      decorateHeaderBlock('nav', this.navDecorator);
+      decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator);
+      decorateHeaderBlock('brand', this.brandDecorator);
+      decorateHeaderBlock('search', this.searchDecorator);
+      decorateHeaderBlock('language-selector', this.languageDecorator);
+      decorateHeaderBlock('product-grid', this.productGridDecorator);
+      decorateHeaderBlock('sign-in', this.signInDecorator);
+      decorateHeaderBlock('profile-menu', this.profileMenuDecorator);
+      decorateCommunityBlock(header, this.isCommunity);
+      decorateNewTabLinks(header);
+      decorateIcons(header);
+    }
   }
 
-  connectedCallback() {
-    this.decorate();
+  async connectedCallback() {
+    await this.loadStyles();
+    await this.decorate();
   }
 }
 

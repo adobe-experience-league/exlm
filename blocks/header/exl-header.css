@@ -10,6 +10,7 @@
   --nav-order: 1;
   --brand-order: 2;
   --sign-in-order: 3;
+  --notification-order: 4;
   --nav-item-desktop-padding-x: 1.25rem;
   --hover-backgroud: #fafafa;
   --hover-background-dark: #f8f8f8;
@@ -37,6 +38,7 @@
     --nav-order: unset;
     --brand-order: unset;
     --sign-in-order: unset;
+    --notification-order: unset;
   }
 }
 
@@ -213,7 +215,7 @@ exl-header {
 }
 .header > nav {
   display: grid;
-  grid-template-areas: "nav adobe-logo brand product-grid search sign-in";
+  grid-template-areas: "nav adobe-logo brand product-grid search sign-in notification";
   justify-content: space-between;
   height: 100%;
 }
@@ -221,8 +223,8 @@ exl-header {
   .header > nav {
     width: 100%;
     justify-content: initial;
-    grid-template-areas: "adobe-logo brand nav sign-in search language product-grid signed-in";
-    grid-template-columns: min-content min-content max-content min-content auto max-content max-content max-content;
+    grid-template-areas: "adobe-logo brand nav sign-in search notification language product-grid signed-in";
+    grid-template-columns: min-content min-content max-content min-content auto max-content max-content max-content max-content;
   }
 }
 .header .brand {
@@ -915,6 +917,14 @@ exl-header {
 .header .adobe-logo .icon svg {
   height: 24px;
   width: 24px;
+}
+.header .notification {
+  grid-area: notification;
+  order: var(--notification-order);
+  align-items: center;
+}
+.header .notification span {
+  height: 18px;
 }
 .header .signed-in .profile {
   position: initial;
