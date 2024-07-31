@@ -1,7 +1,7 @@
 // Importing constants and modules
 import { RECOMMENDED_COURSES_CONSTANTS } from '../../scripts/browse-card/browse-cards-constants.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, getConfig, getLanguageCode } from '../../scripts/scripts.js';
 import BrowseCardsPathsAdaptor from '../../scripts/browse-card/browse-cards-paths-adaptor.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
@@ -50,6 +50,30 @@ export default async function decorate(block) {
       });
     });
     return courseMap;
+  };
+
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
+  const languageCode = (await getLanguageCode()) || 'en';
+  const { cdnOrigin } = getConfig();
+
+  const convertPlaceholdersToLinks = (inputText, url) => inputText.replace(/\$\{([^}]+)\}/g, `<a href="${url}">$1</a>`);
+
+  const recommendedCoursesInterestContent = () => {
+    const recommendedCoursesNoResultsElement = block.querySelector('.browse-card-no-results');
+    const profileurl = `${cdnOrigin}/home?lang=${languageCode}#dashboard/profile`;
+    const profileText = convertPlaceholdersToLinks(
+      placeholders?.recommendedCoursesInterestsLabel ||
+        `Please update your profile interests to receive course recommendations.<br><br> \${Click here to update.}`,
+      profileurl,
+    );
+    recommendedCoursesNoResultsElement.innerHTML = profileText;
   };
 
   /**
@@ -228,6 +252,7 @@ export default async function decorate(block) {
                 block.appendChild(contentDiv);
               } else {
                 buildNoResultsContent(block, true);
+                recommendedCoursesInterestContent(block);
               }
               /* Hide Tooltip while scrolling the cards  layout */
               hideTooltipOnScroll(contentDiv);
@@ -236,16 +261,15 @@ export default async function decorate(block) {
               // Hide shimmer placeholders on error
               buildCardsShimmer.remove();
               buildNoResultsContent(block, true);
+              recommendedCoursesInterestContent(block);
               // eslint-disable-next-line no-console
               console.error('Recommended Cards:', err);
             });
         });
       });
-    } else if (
-      document.documentElement.classList.contains('adobe-ue-edit') ||
-      document.documentElement.classList.contains('adobe-ue-preview')
-    ) {
+    } else if (window.hlx.aemRoot) {
       buildNoResultsContent(block, true);
+      recommendedCoursesInterestContent(block);
     } else {
       const recommendedCoursesContainer = document.querySelector('.recommended-courses-container');
       if (recommendedCoursesContainer) {

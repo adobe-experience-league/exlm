@@ -1,3 +1,7 @@
+body > .QSIFeedbackButton #QSIFeedbackButton-btn {
+  border-radius: 0;
+}
+
 div.doc-pagination {
   display: flex;
   margin-top: 48px;
@@ -46,9 +50,21 @@ a.pagination-btn.is-disabled {
 }
 
 a.pagination-btn > span {
-  padding-block-start: 5px;
-  padding-block-end: 6px;
+  padding-block: 5px 6px;
   line-height: 16.8px;
   white-space: nowrap;
   align-self: start;
+}
+
+span.pagination-btn-title {
+  display: block;
+  font-family: var(--heading-font-family);
+  font-size: var(--spectrum-body-size-s);
+  font-weight: var(--font-weight-700);
+  color: var(--spectrum-gray-500);
+  margin: 15px 0 55px;
+  text-transform: uppercase;
+}
+span.pagination-btn-title.is-hidden {
+  display: none;
 }

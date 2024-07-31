@@ -1,7 +1,8 @@
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
-import { fetchLanguagePlaceholders } from '../scripts.js';
+import { fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { defaultProfileClient } from '../auth/profile.js';
+import { bookmarksEventEmitter } from '../events.js';
 
 let placeholders = {};
 try {
@@ -11,20 +12,36 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
+function isBookmarkSelected(bookmarkIdInfo, bookmarkId) {
+  const { lang: languageCode } = getPathDetails();
+  return (
+    `${bookmarkIdInfo}`.includes(bookmarkId) || `${bookmarkIdInfo}`.includes(bookmarkId.replace(`/${languageCode}`, ''))
+  );
+}
+
 const renderBookmark = (labelSel, iconSel, id) => {
   iconSel.addEventListener('click', async (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (id) {
       if (iconSel.classList.contains('authed')) {
-        defaultProfileClient.updateProfile('bookmarks', id);
+        const profileData = await defaultProfileClient.getMergedProfile();
+        const { bookmarks = [] } = profileData;
+        const bookmarkItems = bookmarks.filter((bookmark) => !isBookmarkSelected(bookmark, id));
+        defaultProfileClient.updateProfile('bookmarks', bookmarkItems, true);
+        bookmarksEventEmitter.set('bookmark_ids', bookmarkItems);
         labelSel.innerHTML = `${placeholders.bookmarkAuthLabelSet}`;
         iconSel.classList.remove('authed');
         sendNotice(`${placeholders.bookmarkUnset}`);
         iconSel.style.pointerEvents = 'none';
         assetInteractionModel(id, 'Bookmark removed');
       } else {
-        defaultProfileClient.updateProfile('bookmarks', id);
+        const profileData = await defaultProfileClient.getMergedProfile();
+        const { bookmarks = [] } = profileData;
+        const bookmarkItems = bookmarks.filter((bookmark) => !isBookmarkSelected(bookmark, id));
+        bookmarkItems.push(`${id}:${Date.now()}`);
+        defaultProfileClient.updateProfile('bookmarks', bookmarkItems, true);
+        bookmarksEventEmitter.set('bookmark_ids', bookmarkItems);
         labelSel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
         iconSel.classList.add('authed');
         sendNotice(`${placeholders.bookmarkSet}`);

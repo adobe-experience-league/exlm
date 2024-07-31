@@ -1,14 +1,17 @@
 import { createTag, fetchLanguagePlaceholders, rewriteDocsPath } from './scripts.js';
+import { getMetadata } from './lib-franklin.js';
 
 export default async function loadPrevNextBtn() {
   const placeholders = await fetchLanguagePlaceholders();
-  const mainDoc = document.querySelector('main > div.content-section-last');
+  const mainDoc = document.querySelector('main div.content-section-last');
   if (!mainDoc) return;
 
-  const prevPageMeta = document.querySelector('meta[name="prev-page"]');
-  const nextPageMeta = document.querySelector('meta[name="next-page"]');
-  const prevPageMetaContent = prevPageMeta?.getAttribute('content').trim().split('.html')[0];
-  const nextPageMetaContent = nextPageMeta?.getAttribute('content').trim().split('.html')[0];
+  const prevPageMeta = getMetadata('prev-page');
+  const prevPageMetaTitle = getMetadata('prev-page-title') || '';
+  const nextPageMeta = getMetadata('next-page');
+  const nextPageMetaTitle = getMetadata('next-page-title') || '';
+  const prevPageMetaContent = prevPageMeta?.trim().split('.html')[0];
+  const nextPageMetaContent = nextPageMeta?.trim().split('.html')[0];
   const PREV_PAGE = placeholders?.previousPage;
   const NEXT_PAGE = placeholders?.nextPage;
 
@@ -25,9 +28,10 @@ export default async function loadPrevNextBtn() {
     };
     const anchorLeft = createTag('a', anchorLeftAttr);
     const spanLeft = createTag('span', '', PREV_PAGE);
+    const titleLeft = prevPageMetaTitle ? createTag('span', { class: 'pagination-btn-title' }, prevPageMetaTitle) : '';
 
     anchorLeft.append(spanLeft);
-    btnGotoLeft.append(anchorLeft);
+    btnGotoLeft.append(anchorLeft, titleLeft);
 
     const btnGotoRight = createTag('div', {
       class: 'btn-goto is-right-desktop',
@@ -40,16 +44,19 @@ export default async function loadPrevNextBtn() {
     };
     const anchorRight = createTag('a', anchorRightAttr);
     const spanRight = createTag('span', '', NEXT_PAGE);
+    const titleRight = nextPageMetaTitle ? createTag('span', { class: 'pagination-btn-title' }, nextPageMetaTitle) : '';
 
     anchorRight.append(spanRight);
-    btnGotoRight.append(anchorRight);
+    btnGotoRight.append(anchorRight, titleRight);
 
     if (!prevPageMeta || prevPageMetaContent === '') {
       anchorLeft.classList.add('is-disabled');
+      titleLeft.classList.add('is-hidden');
     }
 
     if (!nextPageMeta || nextPageMetaContent === '') {
       anchorRight.classList.add('is-disabled');
+      titleRight.classList.add('is-hidden');
     }
 
     docPagination.append(btnGotoLeft, btnGotoRight);

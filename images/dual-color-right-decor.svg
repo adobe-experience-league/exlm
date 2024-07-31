@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="135" height="426" viewBox="0 0 135 426">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_217572" data-name="Rectangle 217572" width="135" height="426" transform="translate(1083 404)" fill="#fff"/>
+    </clipPath>
+    <filter id="Path_749752" x="-35.666" y="-43.165" width="391.333" height="420.33" filterUnits="userSpaceOnUse">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Path_749753" x="8.618" y="103.5" width="353.028" height="360.812" filterUnits="userSpaceOnUse">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="10" result="blur-2"/>
+      <feFlood flood-opacity="0.2"/>
+      <feComposite operator="in" in2="blur-2"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Mask_Group_3237" data-name="Mask Group 3237" transform="translate(-1083 -404)" clip-path="url(#clip-path)">
+    <g transform="matrix(1, 0, 0, 1, 1083, 404)" filter="url(#Path_749752)">
+      <path id="Path_749752-2" data-name="Path 749752" d="M155.748.821c-29.233.552-85.171,15.948-115.762,46.054C11.812,74.6-11.1,115.009,5.729,137.531c15.918,21.3,45.677-1.368,94.615,20.325,39.554,17.534,37.678,40.131,72.149,50.99,31.459,9.909,79.5,5.732,104.446-27.581,31.83-42.512,11.726-113.347-25.29-145.276C229.612,16.981,201.578-4.489,155.748.821" transform="translate(-5.67 240.39) rotate(-60)" fill="#38bebc"/>
+    </g>
+    <g transform="matrix(1, 0, 0, 1, 1083, 404)" filter="url(#Path_749753)">
+      <path id="Path_749753-2" data-name="Path 749753" d="M27.374,178.227c5.731,20.668,23,42.974,48.856,50.639,3.605,1.069,34.046,9.588,56.4-8.562,16.6-13.478,11.113-27.355,30.525-72.271,15.891-36.768,23.348-36.22,27.273-57.778,4.315-23.7,2.132-61.9-19.579-78.672-14.876-11.49-22.278-.068-75.236-6.905C68.889,1.229,59.954-3.076,48.382,3.2,36.233,9.788,39.613,20.878,23.137,50.484,7.7,78.232.414,77.817.016,90.145c-.628,19.449,17.4,23.433,24.533,54.057,4.135,17.77-1.326,19.054,2.825,34.025" transform="translate(331.65 318.62) rotate(143)" fill="#ffcd2e"/>
+    </g>
+  </g>
+</svg>

@@ -229,7 +229,8 @@
    }
 
    
-  body[class ^= 'browse-'] .signup-foreground {
+  body[class ^= 'browse-'] .signup-foreground,
+  body[class ^= 'article-'] .signup-foreground {
     min-height: 260px;
   }
   
@@ -288,13 +289,15 @@
   /* when shown on a page with a rail */
   @media (min-width: 1024px) {
     /* no longer goes from end to end */
-    body[class ^= 'browse-'] .section div.sign-up-wrapper {
+    body[class ^= 'browse-'] .section div.sign-up-wrapper,
+    body[class ^= 'article-'] .section div.sign-up-wrapper {
       margin-left: unset;
       margin-right: unset;
     }
   
     /* title */
-    body[class ^= 'browse-'] .signup-title {
+    body[class ^= 'browse-'] .signup-title,
+    body[class ^= 'article-'] .signup-title {
       font-size: var( --spectrum-font-size-900);
       line-height: 36px;
       margin-bottom: var(--space-token-xxs);
@@ -303,24 +306,29 @@
   
    /* description */
     body[class ^= 'browse-'] .signup-long-description,
-    body[class ^= 'browse-'] .signup-long-description * {
+    body[class ^= 'article-'] .signup-long-description,
+    body[class ^= 'browse-'] .signup-long-description * ,
+    body[class ^= 'article-'] .signup-long-description * {
       line-height: 23.4px;
     }
   
     /* cta */
-    body[class ^= 'browse-'] .signup-cta a.button {
+    body[class ^= 'browse-'] .signup-cta a.button ,
+    body[class ^= 'article-'] .signup-cta a.button {
       font-size: 17px;
       line-height: 21px;
       padding: 6px 16px 9px 20px; 
     }
   
-    body[class ^= 'browse-'] .section div.sign-up-wrapper .signup-foreground {
+    body[class ^= 'browse-'] .section div.sign-up-wrapper .signup-foreground,
+    body[class ^= 'article-'] .section div.sign-up-wrapper .signup-foreground {
       padding: 0;
       justify-content:space-between;
     }
   
     /* text block */
-    body[class ^= 'browse-'] .signup-text {
+    body[class ^= 'browse-'] .signup-text,
+    body[class ^= 'article-'] .signup-text {
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -331,7 +339,8 @@
     }
   
     /* subject image */
-    body[class ^= 'browse-'] .signup-subject {
+    body[class ^= 'browse-'] .signup-subject,
+    body[class ^= 'article-'] .signup-subject {
       min-width: unset;
       min-height: unset;
       width: 320px;
@@ -339,14 +348,16 @@
       margin: unset;
     }
   
-    body[class ^= 'browse-'] .signup-subject img {
+    body[class ^= 'browse-'] .signup-subject img,
+    body[class ^= 'article-'] .signup-subject img {
       display: block;
       min-width: unset;
       padding: 0;
       height:260px;
     }
   
-    body[class ^= 'browse-'] .section div.sign-up-wrapper .signup-background {
+    body[class ^= 'browse-'] .section div.sign-up-wrapper .signup-background, 
+    body[class ^= 'article-'] .section div.sign-up-wrapper .signup-background {
       min-height: 240px;
       border: 1px solid var(--spectrum-gray-200);
       border-radius: 4px;
@@ -354,7 +365,8 @@
       background-color: var(--background-color);
     }
   
-    body[class ^= 'browse-'] .section div.sign-up-wrapper .signup-background svg{
+    body[class ^= 'browse-'] .section div.sign-up-wrapper .signup-background svg,
+    body[class ^= 'article-'] .section div.sign-up-wrapper .signup-background svg {
       min-width: 130%;
       min-height: 0%;
     }

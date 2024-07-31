@@ -1,4 +1,5 @@
-import { createTag } from '../../scripts/scripts.js';
+import { loadBlocks } from '../../scripts/lib-franklin.js';
+import { createTag, moveInstrumentation } from '../../scripts/scripts.js';
 
 function changeTabs(e) {
   const { target } = e;
@@ -23,7 +24,25 @@ function initTabs(block) {
 }
 
 let initCount = 0;
-export default function decorate(block) {
+export default async function decorate(block) {
+  const tabIndex = block?.dataset?.tabIndex;
+  if (tabIndex) {
+    block.textContent = '';
+    document.querySelectorAll(`div.tab-section.tab-index-${tabIndex}`).forEach((tabSection, i) => {
+      tabSection.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
+        heading.classList.add('no-mtoc');
+      });
+      const tabTitle = tabSection?.dataset.title || `tab-${i}`;
+      const container = document.createElement('div');
+      moveInstrumentation(tabSection, container);
+      const titleContainer = document.createElement('div');
+      titleContainer.textContent = tabTitle.trim();
+      container.append(titleContainer);
+      container.append(tabSection);
+      block.append(container);
+    });
+    await loadBlocks(block);
+  }
   const tabList = createTag('div', { class: 'tab-list', role: 'tablist' });
   const tabContent = createTag('div', { class: 'tab-content' });
 

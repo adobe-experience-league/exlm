@@ -8,6 +8,8 @@ import {
 } from '../../scripts/scripts.js';
 import getSolutionByName from './toc-solutions.js';
 
+const MAX_ITEMS = 5;
+
 /**
  * fetch toc html from service
  * @param {string} tocID
@@ -92,9 +94,9 @@ function updateTocContent(tocHtml, tocContent) {
   });
 
   tocContent.querySelectorAll('ul').forEach((ul) => {
-    // if ul has more than 5 children, add view more link
+    // if ul has more than MAX_ITEMS children, add view more link
     const items = Array.from(ul.children).filter((child) => child.tagName === 'LI');
-    if (items.length > 5) {
+    if (items.length > MAX_ITEMS) {
       const viewMoreLessItem = document.createElement('li');
       viewMoreLessItem.classList.add('toc-view-more-less');
       ul.setAttribute('aria-expanded', 'false');
@@ -113,6 +115,20 @@ function updateTocContent(tocHtml, tocContent) {
   });
 }
 
+const activate = (el, expandSelf) => {
+  if (!el) return;
+  el.classList.add('is-active');
+  if (expandSelf) el.setAttribute('aria-expanded', 'true');
+  const activeLi = el.closest('li');
+  const index = [...activeLi.parentElement.children].indexOf(activeLi);
+  if (index > MAX_ITEMS - 1) {
+    const parentUl = activeLi.closest('ul');
+    if (parentUl) {
+      parentUl.setAttribute('aria-expanded', 'true');
+    }
+  }
+};
+
 /**
  * Activate current page in TOC
  * @param {HTMLElement} tocContent
@@ -121,43 +137,22 @@ function activateCurrentPage(tocContent) {
   const currentURL = window.location.pathname;
   const activeAnchor = tocContent.querySelector(`a[href="${currentURL}"]`);
   if (activeAnchor) {
-    activeAnchor.classList.add('is-active');
-    const activeLi = activeAnchor.closest('li');
-
-    const index = [...activeLi.parentElement.children].indexOf(activeLi);
-    if (index > 4) {
-      const parentUl = activeLi.closest('ul');
-      if (parentUl) {
-        parentUl.setAttribute('aria-expanded', 'true');
-      }
-    }
+    activate(activeAnchor);
 
     let currentItem = activeAnchor.closest('ul');
     while (currentItem) {
       const parentList = currentItem.closest('ul');
+      currentItem = null;
       if (parentList) {
         const toggle = parentList.parentElement.querySelector(':scope > .toc-toggle');
         // get toggle eleemnt index
-
         if (toggle) {
-          toggle.classList.add('is-active');
-          toggle.setAttribute('aria-expanded', 'true');
-          const toggleIndex = [...activeAnchor.parentElement.children].indexOf(activeAnchor);
-          if (toggleIndex > 4) {
-            const parentUl = activeAnchor.closest('ul');
-            if (parentUl) {
-              parentUl.setAttribute('aria-expanded', 'true');
-            }
-          }
+          activate(toggle, true);
         }
         const parentListItem = parentList.closest('li');
         if (parentListItem) {
           currentItem = parentListItem;
-        } else {
-          currentItem = null;
         }
-      } else {
-        currentItem = null;
       }
     }
   }

@@ -107,6 +107,39 @@
   width: 16px;
   margin-top: 2px;
 }
+.browse-card .browse-card-author-info {
+  display: flex;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 10px 0;
+}
+.browse-card .browse-card-author-prefix {
+  font-size: var(--spectrum-font-size-100);
+  font-weight: normal;
+  line-height: 18.2px;
+  color: var(--spectrum-gray-900);
+  margin-right: 8px;
+}
+.browse-card .browse-card-author-name {
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-700);
+  line-height: 18.2px;
+  color: var(--spectrum-gray-900);
+  margin-right: 11px;
+}
+.browse-card .browse-card-author-badge {
+  font-size: 10px;
+  font-weight: var(--font-weight-700);
+  line-height: 18.2px;
+  background-color: var(--spectrum-red-1400);
+  border-radius: 2px;
+  color: var(--spectrum-gray-50);
+  align-self: center;
+  padding: 0px 3px;
+}
+.browse-card .browse-card-author-badge.author-badge-external {
+  background-color: var(--spectrum-indigo-1400);
+}
 .browse-card .browse-card-footer {
   padding: 0 16px 22px 15px;
   display: flex;
@@ -118,96 +151,6 @@
   position: relative;
   display: flex;
   top: 8px;
-}
-.browse-card .browse-card-footer .browse-card-options .exl-tooltip {
-  display: inline-block;
-  font-size: 12px;
-  position: relative;
-  transition: all 130ms ease-in-out;
-}
-.browse-card .browse-card-footer .browse-card-options .exl-tooltip-label {
-  background-color: var(--spectrum-gray-600);
-  border-radius: 4px;
-  bottom: 120%;
-  color: var(--spectrum-gray-50);
-  font-weight: var(--font-weight-400);
-  left: 50%;
-  padding: 2px 8px 4px;
-  position: absolute;
-  text-align: center;
-  text-wrap: nowrap;
-  transform: translateX(-50%);
-  white-space: pre;
-  visibility: hidden;
-  z-index: 1;
-}
-.browse-card .browse-card-footer .browse-card-options .exl-tooltip-label::after {
-  border-width: 4px;
-  border-style: solid;
-  border-color: var(--spectrum-gray-600) transparent transparent transparent;
-  content: "";
-  left: 50%;
-  margin-left: -4px;
-  position: absolute;
-  top: 100%;
-}
-.browse-card .browse-card-footer .browse-card-options .exl-link-label {
-  color: var(--non-spectrum-grey);
-  font-size: var(--spectrum-font-size-75);
-  font-weight: var(--font-weight-400);
-  line-height: 28px;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark-icon, 
-.browse-card .browse-card-footer .browse-card-options .copy-icon{
-  background-size: 20px 20px;
-  background-repeat: no-repeat;
-  color: var(--spectrum-gray-800);
-  cursor: pointer;
-  display: inline-block;
-  height: 20px;
-  padding: 5px 2px 5px 5px;
-  transition: all 200ms ease-in-out;
-  vertical-align: middle;
-  width: 20px;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark .bookmark-icon {
-  background-image: url("../../icons/bookmark.svg");
-  background-position: center 0;
-  cursor: inherit;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark .bookmark-icon:hover + .exl-tooltip-label {
-  visibility: visible;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark.auth .bookmark-icon {
-  cursor: pointer;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark.auth .bookmark-icon.authed {
-  background-image: url("../../icons/bookmark-active.svg");
-  background-position: center 2px;
-  background-size: 17px 17px;
-  cursor: pointer;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark.auth .bookmark-icon.authed:hover + .exl-tooltip-label {
-  visibility: visible;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark.auth .bookmark-icon:hover {
-  background-color: var(--spectrum-gray-200);
-  border-radius: 4px;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark.auth[data-id='none'] {
-  display: none;
-}
-.browse-card .browse-card-footer .browse-card-options .copy-link .copy-icon {
-  background-image: url("../../icons/copy.svg");
-  background-position: center 0;
-  transition: all 200ms ease-in-out;
-}
-.browse-card .browse-card-footer .browse-card-options .copy-link .copy-icon:hover {
-  background-color: var(--spectrum-gray-200);
-  border-radius: 4px;
-}
-.browse-card .browse-card-footer .browse-card-options .copy-link .copy-icon:hover + .exl-tooltip-label {
-  visibility: visible;
 }
 .browse-card .browse-card-footer .browse-card-cta-element {
   background-color: var(--background-color);
@@ -225,13 +168,7 @@
 .browse-card .browse-card-footer .browse-card-cta-element .icon {
   height: 22px;
   width: 22px;
-}
-.browse-card .browse-card-footer .icon {
-  color: var( --non-spectrum-dim-gray);
-  fill: var( --non-spectrum-dim-gray);
-  margin-right: 2px;
-  height: 24px;
-  width: 24px;
+  fill: var(--non-spectrum-navy-blue);
 }
 .browse-card .browse-card-meta-anchor {
   margin: 0;
@@ -285,8 +222,37 @@
   font-size: var(--spectrum-font-size-100);
   color: var(--non-spectrum-navy-blue);
 }
+/* Content Type specific styles */
+.browse-card.event-card .browse-card-banner {
+  background-color: var(--spectrum-magenta-1000);
+}
+.browse-card.certificate-card .browse-card-banner,
+.browse-card.certification-card .browse-card-banner {
+  background-color: var(--spectrum-purple-900);
+}
+.browse-card.tutorial-card .browse-card-banner {
+  background-color: var(--spectrum-celery-600);
+}
 .browse-card.course-card .browse-card-banner {
-  background-color: var(--non-spectrum-victoria-blue);
+  background-color: var(--spectrum-blue-800);
+}
+.browse-card.documentation-card .browse-card-banner {
+  background-color: var(--spectrum-celery-900);
+}
+.browse-card.perspective-card .browse-card-banner {
+  background-color: var(--spectrum-gray-600);
+}
+.browse-card.troubleshooting-card .browse-card-banner {
+  background-color: var(--spectrum-orange-700);
+}
+.browse-card.community-card .browse-card-banner {
+  background-color: var(--spectrum-seafoam-700);
+}
+.browse-card.live-event-card .browse-card-banner {
+  background-color: var(--spectrum-magenta-900);
+}
+.browse-card.instructor-led-training-card .browse-card-banner {
+  background-color: var(--spectrum-blue-1100);
 }
 .browse-card.course-card .browse-card-figure {
   max-height: 143px;
@@ -304,50 +270,15 @@
 .browse-card.course-card .browse-card-title-text {
   margin: 0;
 }
-.browse-card.tutorial-card .browse-card-banner {
-  background-color: var(--non-spectrum-light-coral);
-}
 .browse-card.tutorial-card .browse-card-figure {
   max-height: 140px;
 }
-.browse-card.article-card .browse-card-banner,
-.browse-card.troubleshooting-card .browse-card-banner,
-.browse-card.certificate-card .browse-card-banner,
-.browse-card.certification-card .browse-card-banner,
-.browse-card.instructor-led-training-card .browse-card-banner {
-  background-color: var(--non-spectrum-lime-green);
-}
-.browse-card.article-card .browse-card-figure,
+.browse-card.perspective-card .browse-card-figure,
 .browse-card.troubleshooting-card .browse-card-figure,
 .browse-card.certificate-card .browse-card-figure,
 .browse-card.certification-card .browse-card-figure,
 .browse-card.instructor-led-training-card .browse-card-figure {
   min-height: 72px;
-}
-.browse-card.troubleshooting-card .browse-card-banner {
-  background-color: var(--non-spectrum-royal-crest);
-}
-.browse-card.event-card .browse-card-banner {
-  background-color: var(--non-spectrum-darker-princess-pink);
-}
-.browse-card.live-event-card .browse-card-banner {
-  background-color: var(--non-spectrum-dark-princess-pink);
-}
-.browse-card.certificate-card .browse-card-banner,
-.browse-card.certification-card .browse-card-banner {
-  background-color: var(--non-spectrum-frost-bite);
-}
-.browse-card.instructor-led-training-card .browse-card-banner {
-  background-color: var(--non-spectrum-cyan-paprika);
-}
-.browse-card.documentation-card .browse-card-banner {
-  background-color: var(--non-spectrum-dark-coral);
-}
-.browse-card.tutorial-card .browse-card-banner {
-  background-color: var(--non-spectrum-venetian-green);
-}
-.browse-card.community-card .browse-card-banner {
-  background-color: var(--non-spectrum-light-cyan);
 }
 .browse-card.community-card .browse-card-meta-info {
   margin: 0;
@@ -360,6 +291,7 @@
   height: 12px;
   width: 11px;
 }
+/* No Results */
 .browse-card-no-results {
   background: var(--spectrum-gray-200);
   border-radius: 4px;
@@ -443,6 +375,28 @@
 .browse-card .tooltip-grey .tooltip-text::before {
   border-color: transparent var(--non-spectrum-dim-gray) transparent transparent;
 }
+/* Skill-Bar */
+.browse-card .skill-bar {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+.browse-card .skill-bar-container {
+  width: 100%;
+  max-width: 350px;
+  overflow: hidden;
+  background-color: var(--spectrum-gray-200);
+}
+.browse-card .skill-bar-value {
+  height: 4px;
+  float: left;
+  background: var(--spectrum-blue-900)
+}
+.browse-card .course-duration {
+  color: var(--spectrum-gray-700);
+  font-size: 12px;
+  font-style: italic;
+}
 @media only screen and (min-width: 900px) {
   .browse-card.tutorial-card .browse-card-figure,
   .browse-card.course-card .browse-card-figure {
@@ -456,24 +410,3 @@
     margin: 8px 0;
   }
 }
-.skill-bar {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-}
-.skill-bar-container {
-  width: 100%;
-  max-width: 350px;
-  overflow: hidden;
-  background-color: var(--spectrum-gray-200);
-}
-.skill-bar-value {
-  height: 4px;
-  float: left;
-  background: var(--spectrum-blue-900)
-}
-.course-duration {
-  color: var(--spectrum-gray-700);
-  font-size: 12px;
-  font-style: italic;
-  }

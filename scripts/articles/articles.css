@@ -1,89 +1,164 @@
-.articles-wrapper .articles-body {
-    padding: 32px 0;
+.article-content-container {
+    display: grid;
+    grid-template-rows: auto auto; 
 }
 
-.articles-wrapper .articles-section {
-    margin-bottom: 32px;
+.article-content-container .mini-toc-section {
+    grid-row: 1;
 }
 
-.articles-wrapper .articles-body-content {
-    margin: 0 20px;
-    background-color: inherit;
+.articles-wrapper .mini-toc-wrapper .mini-toc .scrollable-div {
+    display: none;
 }
 
-.articles-wrapper .mini-toc-wrapper {
-    padding: 0 20px;
-    box-sizing: border-box;
-    position: relative;
-    top: auto;
-    margin-bottom: 32px;
-    max-width: 295px;
+.article-content-container .tabs-container + .section:not(.mini-toc-section) {
+    padding-top: 0;
 }
 
-.articles-wrapper .articles-body .default-content-wrapper > h2 {
+.article-content-container .section:has(+ .tabs-container) {
+    padding-bottom: 0;
+}
+
+.articles-wrapper .article-content-container > .section:first-child {
+    padding-top: 0;
+}
+
+.articles-wrapper .article-content-container > .section:first-child > *:first-child,
+.articles-wrapper .article-content-container > .section:first-child > *:first-child > *:first-child {
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.article-content-container > * > .default-content-wrapper p,
+.article-content-container > * > .default-content-wrapper p *,
+.article-content-container > * > .default-content-wrapper li,
+.article-content-container > * > .default-content-wrapper li * {
+    font-size: var(--spectrum-font-size-200);
+    line-height: 24px;
+} 
+
+.article-content-container > * > .default-content-wrapper p > picture,
+.article-content-container > * > .default-content-wrapper > picture {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.article-content-container > * > .default-content-wrapper  p,
+.article-content-container > * > .default-content-wrapper  li {
+    color: var(--non-spectrum-dark-gray);
+}
+
+.article-content-container > * > .default-content-wrapper>h2 {
     font-size: var(--spectrum-font-size-700);
     line-height: 35px;
     color: var(--text-color);
     font-weight: var(--font-weight-700);
-    margin: 16px 0;
+    margin: 32px 0 16px;
 }
 
-.articles-wrapper .articles-body .default-content-wrapper > p {
+.article-content-container > * > .default-content-wrapper>h3 {
+    margin-top: 16px;
+}
+
+.article-content-container > * > .default-content-wrapper>p {
     font-size: var(--spectrum-font-size-200);
     line-height: 24px;
     color: var(--non-spectrum-dark-gray);
-    margin: 0;
-}
+} 
 
-.articles-wrapper .articles-body .default-content-wrapper > p:first-of-type {
-    font-size: var(--spectrum-font-size-300);
-    line-height: 27px;
-    margin-bottom: 24px;
-}
-
-.articles-wrapper .articles-body .video-embed-wrapper .video-embed {
+.article-content-container .video-embed-wrapper .video-embed {
     margin-top: 0;
     margin-bottom: 0;
 }
 
-.articles-wrapper .mini-toc-wrapper .mini-toc .scrollable-div:hover {
-    overflow-y: auto;
+.article-content-container > * > .columns-wrapper p,
+.article-content-container > * > .columns-wrapper p *,
+.article-content-container > * > .columns-wrapper li,
+.article-content-container > * > .columns-wrapper li * {
+    font-size: var(--spectrum-font-size-200);
+    line-height: 24px;
+} 
+
+.article-content-container > * > .columns-wrapper p,
+.article-content-container > * > .columns-wrapper li {
+    color: var(--non-spectrum-dark-gray);
 }
 
-@media(min-width: 600px) {
-    .articles-wrapper .articles-body {
-        padding: 56px 0;
-    }
-    .articles-wrapper .articles-body-content {
-        margin: 0 62px;
-    }
+.article-content-container .article-tags-title > * {
+    margin-top: 0;
+}
 
-    .articles-wrapper .mini-toc-wrapper {
-        padding: 0 62px;
+.article-content-container .callout-wrapper .callout {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.article-content-container .social-share-wrapper {
+    margin: 24px auto 24px 0;
+}
+
+.article-content-container .default-content-wrapper {
+    margin-left: 0;
+}
+
+@media (min-width: 600px) {
+    .article-content-container .mini-toc-wrapper {
+        padding: 0;
+        margin: 0;
+        max-width: 310px;
     }
 }
 
-@media(min-width: 900px) {
-    .articles-wrapper .articles-body {
-        display: flex;
-        flex-direction: row-reverse;
-        padding: 80px 0;
+@media (min-width: 900px) {
+    .articles-wrapper .article-content-container {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        column-gap: 56px;
+        padding: 50px 62px 30px;
+        position: relative;
     }
-
-    .articles-wrapper .articles-body-content {
-        margin: 0 82px;
+    
+    .articles-wrapper .article-content-container > .section:not(.mini-toc-section) {
         max-width: 765px;
     }
 
-    .articles-wrapper .mini-toc-wrapper {
-        display: block;
-        padding: 0;
-        position: sticky;
-        top: 52px;
-        margin-bottom: auto;
+    .articles-wrapper .article-content-container > .section {
+        padding-right: 0;
+        grid-column: 1;
     }
 
-    .articles-wrapper .articles-section {
-        margin-bottom: 56px;
+    .articles-wrapper .article-content-container > .section:first-child {
+        grid-row: 1;
+    }
+    .articles-wrapper .article-content-container > .mini-toc-section {
+        grid-column: 2;
+        grid-row: unset;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        bottom: 0;
+        top: 50px;
+    }
+    
+    .article-content-container .mini-toc-wrapper {
+        padding: 0;
+        margin-bottom: 30px;
+        max-width: 295px;
+    }
+
+    .articles-wrapper .mini-toc-wrapper .mini-toc .scrollable-div {
+        max-height: 50vh;
+        display: block;
+        background: transparent;
+        top: auto;
+        position: relative;
     }
 }
+
+@media (min-width: 1440px) {
+    .articles-wrapper .article-content-container {
+        max-width: calc(var(--non-spectrum-max-width) - 80px);
+        margin: 0 auto;
+    }
+}  

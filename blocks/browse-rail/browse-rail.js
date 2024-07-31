@@ -114,6 +114,23 @@ function handleViewMoreClick(block, numFeaturedProducts) {
   setLinkVisibility(block, '.viewLessLink', true);
 }
 
+// Function to handle Toggle functionality for products/sub-pages
+function handleToggleClick(block) {
+  const toggleElements = block.querySelectorAll('.js-toggle:not(.expanded)');
+  if (toggleElements) {
+    toggleElements.forEach((toggleElement) => {
+      const subMenu = toggleElement.parentElement.querySelector('ul');
+      toggleElement.classList.add('expanded');
+      toggleElement.addEventListener('click', (event) => {
+        event.preventDefault();
+        subMenu.style.display = subMenu.style.display === 'block' || subMenu.style.display === '' ? 'none' : 'block';
+        toggleElement.classList.toggle('collapsed', subMenu.style.display === 'none');
+        toggleElement.classList.toggle('expanded', subMenu.style.display === 'block');
+      });
+    });
+  }
+}
+
 // Function to handle "View Less" click
 function handleViewLessClick(block, numFeaturedProducts) {
   const itemList = block.querySelectorAll('.products > li > ul > li');
@@ -182,6 +199,9 @@ async function displayAllProducts(block) {
         .querySelector('.viewLessLink')
         .addEventListener('click', () => handleViewLessClick(block, numFeaturedProducts));
     }
+
+    // Event listener for toggle
+    handleToggleClick(block);
   }
 }
 
@@ -257,6 +277,9 @@ async function displayProductNav(block, currentPagePath, results) {
       await displayAllProducts(block);
     }
   }
+
+  // Event listener for toggle
+  handleToggleClick(block);
 }
 
 function displayManualNav(manualNav, block) {
@@ -297,11 +320,6 @@ export default async function decorate(block) {
 
   const theme = getMetadata('theme');
 
-  const label = getMetadata('og:title');
-
-  const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
-  const currentPagePath = getEDSLink(window.location.pathname);
-
   // For Browse All Page
   if (theme === 'browse-all') {
     // Browse By
@@ -330,6 +348,9 @@ export default async function decorate(block) {
 
   // For Browse Product Pages
   if (theme !== 'browse-all') {
+    const results = await ffetch(`/${getPathDetails().lang}/browse-index.json`).all();
+    const currentPagePath = getEDSLink(window.location.pathname);
+    const label = getMetadata('og:title');
     // Add "Browse more products" link
     const browseMoreProducts = document.createElement('div');
     browseMoreProducts.classList.add('browse-more-products');
@@ -372,19 +393,5 @@ export default async function decorate(block) {
       await displayProductNav(block, currentPagePath, results);
     }
   }
-
-  // Toggle functionality for products/sub-pages
-  const toggleElements = block.querySelectorAll('.js-toggle');
-  if (toggleElements) {
-    toggleElements.forEach((toggleElement) => {
-      const subMenu = toggleElement.parentElement.querySelector('ul');
-      toggleElement.classList.add('expanded');
-      toggleElement.addEventListener('click', (event) => {
-        event.preventDefault();
-        subMenu.style.display = subMenu.style.display === 'block' || subMenu.style.display === '' ? 'none' : 'block';
-        toggleElement.classList.toggle('collapsed', subMenu.style.display === 'none');
-        toggleElement.classList.toggle('expanded', subMenu.style.display === 'block');
-      });
-    });
-  }
+  handleToggleClick(block);
 }

@@ -5,11 +5,13 @@ import {
   debounce,
   getPathDetails,
   fetchLanguagePlaceholders,
+  isArticleLandingPage,
 } from '../../scripts/scripts.js';
 import {
   roleOptions,
   contentTypeOptions,
   expTypeOptions,
+  productTypeOptions,
   getObjectByName,
   getFiltersPaginationText,
   getBrowseFiltersResultCount,
@@ -20,6 +22,8 @@ import {
   toggleSearchSuggestionsVisibility,
   showSearchSuggestionsOnInputClick,
   handleCoverSearchSubmit,
+  authorOptions,
+  fetchPerspectiveIndex,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
@@ -30,10 +34,14 @@ import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-card
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 
+const ffetchModulePromise = import('../../scripts/ffetch.js');
+
 const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
   el_contenttype: 'headlessTypeFacet',
   el_level: 'headlessExperienceFacet',
+  el_product: 'headlessProductFacet',
+  author_type: 'headlessAuthorTypeFacet',
 };
 
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
@@ -46,9 +54,49 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
+// Helper function thats returns a list of all Featured Card Products //
+async function getFeaturedCardSolutions() {
+  const ffetch = (await ffetchModulePromise).default;
+  // Load the Featured Card Solution list
+  const solutionList = await ffetch(`/featured-card-products.json`).all();
+  // Gets Values from Column Solution in Featured Card Solution list
+  const solutionValues = solutionList.map((solution) => solution.Solution);
+  return solutionValues;
+}
+
+const handleSolutionsService = async () => {
+  const solutions = await getFeaturedCardSolutions();
+  if (!solutions) {
+    throw new Error('An error occurred');
+  }
+  if (solutions?.length) {
+    return solutions;
+  }
+  return [];
+};
+
+const solutions = await handleSolutionsService();
+
+const solutionsList = [];
+solutions.forEach((solution) => {
+  solutionsList.push({
+    id: solution,
+    value: solution,
+    title: solution,
+    description: '',
+  });
+});
+
+const productOptions = {
+  id: 'el_product',
+  name: placeholders.featuredCardProductLabel || 'Product',
+  items: solutionsList,
+  selected: 0,
+};
+
 const theme = getMetadata('theme').trim();
-const isBrowseProdPage = theme === 'browse-product';
 const dropdownOptions = [roleOptions, contentTypeOptions];
+
 const tags = [];
 let tagsProxy;
 const buildCardsShimmer = new BuildPlaceholder(getBrowseFiltersResultCount());
@@ -110,6 +158,9 @@ function updateClearFilterStatus(block) {
   const hasActiveTopics = block.querySelector('.browse-topics') !== null && selectedTopics.length > 0;
   const browseFiltersContainer = document.querySelector('.browse-filters-container');
   const browseFiltersSection = browseFiltersContainer.querySelector('.browse-filters-form');
+  if (!browseFiltersSection) {
+    return;
+  }
   const selectionContainer = browseFiltersSection.querySelector('.browse-filters-input-container');
   const containsSelection = selectionContainer.classList.contains('browse-filters-input-selected');
   const coveoQueryConfig = { query: '', fireSelection: true };
@@ -144,7 +195,35 @@ function tagsUpdateHandler(block) {
   updateClearFilterStatus(block);
 }
 
-if (isBrowseProdPage) dropdownOptions.push(expTypeOptions);
+if (theme === 'browse-all') dropdownOptions.push(productOptions);
+if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
+
+if (isArticleLandingPage()) {
+  const perspectiveIndex = await fetchPerspectiveIndex();
+  const coveoSolutions = perspectiveIndex.reduce((acc, curr) => {
+    if (curr?.coveoSolution) {
+      // eslint-disable-next-line no-param-reassign
+      acc += `,${curr.coveoSolution}`;
+    }
+    return acc;
+  }, '');
+
+  const coveoSolutionArr = coveoSolutions.split(/[,;]/).filter((solution) => solution && !solution.includes('|'));
+  const coveoSolutionOptionsList = Array.from(new Set(coveoSolutionArr)).sort();
+  const coveoSolutionOptions = coveoSolutionOptionsList.map((solution) => ({
+    description: '',
+    id: solution.toLowerCase(),
+    title: solution,
+    value: solution,
+  }));
+  productTypeOptions.items = coveoSolutionOptions;
+  dropdownOptions.length = 0;
+  if (productTypeOptions.items.length > 0) {
+    dropdownOptions.push(productTypeOptions);
+  }
+  dropdownOptions.push(roleOptions);
+  dropdownOptions.push(authorOptions);
+}
 
 /**
  * Generate HTML for a single checkbox item.
@@ -166,9 +245,10 @@ function generateCheckboxItem(item, index, id) {
   `;
 }
 
-const constructDropdownEl = (options, id) =>
-  htmlToElement(`
-    <div class="filter-dropdown filter-input" data-filter-type="${options.id}">
+const constructDropdownEl = (options, id) => {
+  const optionClassName = `browse-${options.name.split(' ').join('-').toLowerCase()}-dropdown`;
+  return htmlToElement(`
+    <div class="filter-dropdown ${optionClassName} filter-input" data-filter-type="${options.id}">
       <button>
         ${options.name}
         <span class="icon icon-chevron"></span>
@@ -177,7 +257,8 @@ const constructDropdownEl = (options, id) =>
         ${options.items.map((item, index) => generateCheckboxItem(item, index, id)).join('')}
       </div>
     </div>
-`);
+  `);
+};
 
 function appendToForm(block, target) {
   const formEl = block.querySelector('.browse-filters-form');
@@ -209,7 +290,7 @@ function renderTags() {
   return htmlToElement(tagEl);
 }
 
-function appendTag(block, tag) {
+async function appendTag(block, tag, source = 'checkboxChange') {
   const tagsContainer = block.querySelector('.browse-tags-container');
   const tagEl = htmlToElement(`
     <button class="browse-tags" value="${tag.value}">
@@ -224,7 +305,9 @@ function appendTag(block, tag) {
     name: tag.name,
     value: tag.value,
   });
-  decorateIcons(tagEl);
+  if (source === 'checkboxChange') {
+    await decorateIcons(tagsContainer);
+  }
 }
 
 function removeFromTags(block, value) {
@@ -397,6 +480,9 @@ function constructKeywordSearchEl(block) {
 
 function onInputSearch(block) {
   const searchEl = block.querySelector('.filter-input-search .search-input');
+  if (!searchEl) {
+    return;
+  }
   searchEl.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -468,6 +554,9 @@ function clearSelectedFilters(block) {
 function handleClearFilter(block) {
   // show the hidden sections again
   const clearFilterEl = block.querySelector('.browse-filters-clear');
+  if (!clearFilterEl) {
+    return;
+  }
   clearFilterEl.addEventListener('click', () => {
     clearSelectedFilters(block);
   });
@@ -547,16 +636,20 @@ function handleUriHash() {
         const ddObject = getObjectById(dropdownOptions, keyName);
         const { name } = ddObject;
         facetValues.forEach((facetValueString) => {
-          const [facetValue] = facetValueString.split('|');
+          const [facetValue] = decodeURIComponent(facetValueString).split('|');
           const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
           if (!inputEl.checked) {
             const label = inputEl?.dataset.label || '';
             inputEl.checked = true;
-            appendTag(browseFiltersSection, {
-              name,
-              label,
-              value: facetValue,
-            });
+            appendTag(
+              browseFiltersSection,
+              {
+                name,
+                label,
+                value: facetValue,
+              },
+              'handleUriHash',
+            );
           }
         });
         const btnEl = filterOptionEl.querySelector(':scope > button');
@@ -835,6 +928,9 @@ function handleCoveoHeadlessSearch(
   const filterResultsEl = createTag('div', { class: 'browse-filters-results' });
 
   const browseFiltersSection = block.querySelector('.browse-filters-form');
+  if (!browseFiltersSection) {
+    return;
+  }
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchIcon = filterInputSection.querySelector('.icon-search');
   const clearIcon = filterInputSection.querySelector('.icon-clear');
@@ -984,6 +1080,7 @@ async function handleSearchEngineSubscription(block) {
       }
 
       /* Analytics */
+      filterResultsEl.classList.remove('analytics-interaction');
       if (!filterResultsEl.classList.contains('browse-hide-section')) {
         const analyticsFilters = generateAnalyticsFilters(block, response.totalCount);
         if (analyticsFilters) {
@@ -1008,11 +1105,13 @@ async function handleSearchEngineSubscription(block) {
     /* Analytics */
     if (
       !filterResultsEl.classList.contains('no-results') &&
-      !filterResultsEl.classList.contains('browse-hide-section')
+      !filterResultsEl.classList.contains('browse-hide-section') &&
+      !filterResultsEl.classList.contains('analytics-interaction')
     ) {
       const analyticsFilters = generateAnalyticsFilters(block, response.totalCount);
       if (analyticsFilters) {
         assetInteractionModel(null, 'Browse Filters', analyticsFilters);
+        filterResultsEl.classList.add('analytics-interaction');
       }
     }
     const communityOptionIsSelected = browseFilterForm.querySelector(`input[value="Community"]`)?.checked === true;
@@ -1035,6 +1134,9 @@ async function handleSearchEngineSubscription(block) {
 
 function renderSortContainer(block) {
   const wrapper = block.querySelector('.browse-filters-form .browse-filters-results-header');
+  if (!wrapper) {
+    return;
+  }
   const sortContainer = document.createElement('div');
   sortContainer.classList.add('sort-container');
   sortContainer.innerHTML = `<span>${placeholders.filterSortLabel}</span>
@@ -1074,8 +1176,10 @@ function decorateBrowseTopics(block) {
   const { lang } = getPathDetails();
   const [...configs] = [...block.children].map((row) => row.firstElementChild);
 
-  const [solutionsElement, headingElement, topicsElement] = configs.map((cell) => cell);
-  const [solutionsContent, headingContent, topicsContent] = configs.map((cell) => cell?.textContent?.trim() ?? '');
+  const [solutionsElement, headingElement, topicsElement, contentTypeElement] = configs.map((cell) => cell);
+  const [solutionsContent, headingContent, topicsContent, contentTypeContent] = configs.map(
+    (cell) => cell?.textContent?.trim() ?? '',
+  );
 
   // eslint-disable-next-line no-unused-vars
   const allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
@@ -1086,6 +1190,12 @@ function decorateBrowseTopics(block) {
     products.forEach((p) => supportedProducts.push(p));
     window.headlessSolutionProductKey = productKey;
     window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
+  }
+
+  if (contentTypeContent.length) {
+    const contentTypes = contentTypeContent.split(',').map((type) => type.trim());
+    const contentTypesQuery = contentTypes.map((type) => `@el_contenttype="${type}"`).join('OR');
+    window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${contentTypesQuery}))`;
   }
 
   const div = document.createElement('div');
@@ -1154,6 +1264,7 @@ function decorateBrowseTopics(block) {
   (solutionsElement.parentNode || solutionsElement).remove();
   (headingElement.parentNode || headingElement).remove();
   (topicsElement.parentNode || topicsElement).remove();
+  (contentTypeElement.parentNode || contentTypeElement).remove();
 }
 
 export default async function decorate(block) {

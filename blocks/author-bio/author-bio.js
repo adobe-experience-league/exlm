@@ -1,3 +1,4 @@
+import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
 import { htmlToElement, extractAuthorInfo } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
@@ -10,21 +11,22 @@ export default function decorate(block) {
     authorSocialLinkText,
     authorSocialLinkURL,
   } = extractAuthorInfo(block);
-  const authorBioPicture = authorImage.querySelector('picture');
-  const authorSocialLinkElement = authorSocialLinkURL.querySelector('a').href;
+
+  const authorBioPicture = createOptimizedPicture(authorImage, 'author-bio-picture');
+  const authorSocialLinkElement = authorSocialLinkURL ?? '#';
   const authorBioDOM = htmlToElement(`
-  <div class='author-bio-content ${authorCompany ? authorCompany.innerHTML : 'external'}'>
+  <div class='author-bio-content ${authorCompany ?? 'external'}'>
     <div class='author-image'>${authorBioPicture ? authorBioPicture.outerHTML : ''}</div>
     <div class="author-name-title-container">
-      <div class='author-name'>${authorName ? authorName.innerHTML : ''}</div>
+      <div class='author-name'>${authorName ?? ''}</div>
       <div class='author-title-company'>
-        ${authorTitle ? authorTitle.innerHTML : ''} ${authorCompany ? authorCompany.innerHTML : ''}
+        ${authorTitle ?? ''} ${authorCompany ?? ''}
       </div>
     </div>
     <div class="author-description-socialLink-container">
-      <div class='author-description'>${authorDescription ? authorDescription.innerHTML : ''}</div>
+      <div class='author-description'>${authorDescription?.innerHTML ?? ''}</div>
       <a href='${authorSocialLinkElement}' class='author-socialLink' title='${authorSocialLinkElement}'>
-        ${authorSocialLinkText ? authorSocialLinkText.innerHTML : ''}
+        ${authorSocialLinkText ?? ''}
       </a>
     </div>
   </div>

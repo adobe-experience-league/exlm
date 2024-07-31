@@ -1,0 +1,141 @@
+.product-experience-level {
+  max-width: 318px;
+  margin: 0 auto;
+}
+
+.product-experience-level * {
+  box-sizing: border-box;
+}
+
+.product-experience-level-header {
+  font-size: 28px;
+  line-height: 35px;
+  font-weight: 700;
+  padding: 0 0 16px 0;
+  margin: 0;
+  border-bottom: 1px solid #D6D6D6;
+  color: var(--text-color);
+}
+
+.product-experience-level-para {
+  font-size: 16px;
+  line-height: 20px;
+  font-style: italic;
+  margin: 16px 0;
+}
+
+.product-experience-level-type {
+  margin-bottom: 32px;
+}
+
+.product-experience-level-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.personalize-interest-results {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.product-experience-level-item h3 {
+  font-size: 18px;
+  line-height: 22px;
+  font-weight: 700;
+  margin: 10px 0 8px;
+}
+
+.product-experience-level-item p {
+  font-size: 16px;
+  line-height: 21px;
+  color: #222222;
+  margin: 0;
+}
+
+.product-interest-icon {
+  display: flex;
+  align-items: flex-end;
+  width: 18px;
+  height: 18px;
+  position: relative;
+}
+
+.product-interest-icon-bar {
+  width: 4px;
+  background-color: var(--spectrum-gray-300);
+  margin: 0 1px;
+}
+
+.product-interest-icon-bar-beginner {
+  height: 6px;
+}
+
+.product-interest-icon-bar-intermediate {
+  height: 10px;
+}
+
+.product-interest-icon-bar-experience {
+  height: 14px;
+}
+
+.beginner .product-interest-icon-bar-beginner {
+  background-color: var(--spectrum-gray-700);
+}
+
+.intermediate .product-interest-icon-bar-beginner,
+.intermediate .product-interest-icon-bar-intermediate {
+  background-color: var(--spectrum-gray-700);
+}
+
+.experienced .product-interest-icon-bar-beginner,
+.experienced .product-interest-icon-bar-intermediate,
+.experienced .product-interest-icon-bar-experience {
+  background-color: var(--spectrum-gray-700);
+}
+
+.product-interest-icon::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 0.8px;
+  background-color: var(--spectrum-gray-700);
+}
+
+@media (min-width: 600px) {
+  .product-experience-level {
+    max-width: none;
+  }
+
+  .product-experience-level-type {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .personalize-interest-results {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (min-width: 900px) {
+  .product-experience-level-item p {
+    font-size: 14px;
+  }
+
+  .product-experience-level-type {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .personalize-interest-results {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

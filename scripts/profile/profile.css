@@ -1,0 +1,130 @@
+.profile-row {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--shimmer-image-slide-mid);
+}
+
+.profile-row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.profile-card-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 13px;
+    line-height: 15px;
+    gap: 8px;
+}
+
+.profile-card-header .my-adobe-account,
+.profile-card-header .my-community-account {
+    font-size: var(--spectrum-font-size-75);
+    font-weight: var(--font-weight-700);
+    letter-spacing: 0.72px;
+    color: var(--text-color);
+    text-transform: uppercase;
+    margin: 0px;
+}
+
+.profile-card-header .manage-adobe-account,
+.profile-card-header .manage-community-account {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.profile-card-header .manage-adobe-account a,
+.profile-card-header .manage-community-account a {
+    font-size: var(--spectrum-font-size-75);
+    color: var(--spectrum-gray-800);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    line-height: 17px;
+}
+
+.profile-card-header .manage-adobe-account a > .icon-new-tab,
+.profile-card-header .manage-community-account a > .icon-new-tab {
+    margin-right: 2px;
+}
+
+.manage-adobe-account .icon-new-tab svg,
+.user-profile-card .icon-new-tab svg {
+    fill: var(--spectrum-gray-800);
+}
+
+.profile-card-body {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.profile-avatar {
+    width: 64px;
+    min-width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: var(--non-spectrum-navy-blue);
+    color: var(--spectrum-gray-50);
+    overflow: hidden;
+}
+
+.profile-avatar .icon-profile {
+    width: 64px;
+    height: 64px;
+}
+
+.profile-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    word-break: break-word;
+}
+
+.profile-user-info .heading {
+    text-transform: uppercase;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.profile-user-info .display-name {
+    font-size: var(--spectrum-font-size-300);
+    font-weight: bold;
+    color: #000;
+}
+
+.profile-user-info .community-display-name {
+    font-size: var(--spectrum-font-size-300);
+    font-weight: bold;
+    color: var(--non-spectrum-blue-cobalt);
+}
+
+.profile-user-info div {
+    font-size: var(--spectrum-font-size-100);
+    font-weight: normal;
+    color: var(--spectrum-gray-800);
+}
+
+@media (min-width: 600px) {
+    body.profile .profile-card-header {
+        flex-direction: column;
+    }
+
+    .profile-card-header {
+        flex-direction: row;
+    }
+}
+
+@media (min-width: 900px) {
+    body.profile .profile-card-header,
+    .profile-card-header {
+        flex-direction: row;
+        align-items: center;
+        gap: 0;
+    }
+}

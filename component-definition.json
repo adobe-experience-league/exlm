@@ -72,7 +72,25 @@
                 "template": {
                   "name": "Section",
                   "model": "section",
-                  "style": "default"
+                  "style": "default",
+                  "filter": "section"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Tab Section",
+          "id": "tab-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "Tab Section",
+                  "model": "tab-section",
+                  "filter": "tab-section",
+                  "style": "tab-section"
                 }
               }
             }
@@ -139,6 +157,40 @@
               }
             }
           }
+        },
+        {
+          "title": "Profile Section",
+          "id": "profile-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "Profile Section",
+                  "model": "profile-section",
+                  "style": "profile-section",
+                  "filter": "profile-section"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Sign Up Flow Section",
+          "id": "sign-up-flow-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "Sign Up Flow Section",
+                  "model": "sign-up-flow-section",
+                  "style": "sign-up-flow-section",
+                  "filter": "sign-up-flow-section"
+                }
+              }
+            }
+          }
         }
       ]
     },
@@ -156,6 +208,7 @@
                 "template": {
                   "filter": "icon-block",
                   "name": "Icon Block",
+                  "model": "icon-block",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Icon Card",
@@ -547,6 +600,24 @@
           }
         },
         {
+          "title": "Featured Content",
+          "id": "featured-content",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Featured Content",
+                  "model": "featured-content",
+                  "content_cta": "Read Article",
+                  "classes": ["adobe", "left"],
+                  "linkText": "Read Article"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Events Cards",
           "id": "events-cards",
           "plugins": {
@@ -661,7 +732,8 @@
                 "template": {
                   "name": "Browse Rail",
                   "model": "browse-rail",
-                  "title": "Browse Rail"
+                  "title": "Browse Rail",
+                  "navigation": "<ul><li><a href='/content/exlm/global/en/browse.html'>Title with Link</a><br><ul><li><a href='/content/exlm/global/en/browse.html'>Subtitle with link</a></li></ul></li><li>Title with no link<ul><li>Subtitle with no link</li></ul></li></ul>"
                 }
               }
             }
@@ -729,15 +801,225 @@
           }
         },
         {
-          "title": "Article Tags",
+          "title": "Tags",
           "id": "article-tags",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "name": "Article Tags",
-                  "model": "article-tags"
+                  "name": "Tags"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Social Share",
+          "id": "social-share",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Social Share",
+                  "model": "social-share"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Featured Authors",
+          "id": "featured-authors",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Featured Authors",
+                  "model": "featured-authors",
+                  "authors_headingType": "h2",
+                  "classes": ["adobe", "left"]
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Inline Survey",
+          "id": "inline-survey",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Inline Survey",
+                  "model": "inline-survey",
+                  "title": "Have an Idea for Content? Drop us a Line."
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Data and Email consent",
+          "id": "data-and-email-consent",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Data and Email consent",
+                  "model": "data-and-email-consent"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Adobe Account Card",
+          "id": "adobe-account-card",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Adobe Account Card",
+                  "model": "adobe-account-card"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Role and Industry",
+          "id": "role-and-industry",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Role and Industry",
+                  "model": "role-and-industry"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "User Profile Card",
+          "id": "user-profile-card",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "User Profile Card",
+                  "model": "user-profile-card"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Email Card",
+          "id": "email-card",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Email Card",
+                  "model": "email-card"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Product Interests",
+          "id": "product-interests",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Product Interests",
+                  "model": "product-interests"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Product Experience Level",
+          "id": "product-experience-level",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Product Experience Level",
+                  "model": "product-experience-level"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Note",
+          "id": "note",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Note",
+                  "model": "note"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Bookmarks",
+          "id": "bookmarks",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Bookmarks",
+                  "model": "bookmarks"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Awards",
+          "id": "awards",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Awards"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Topic Results",
+          "id": "topic-results",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Topic Results"
                 }
               }
             }

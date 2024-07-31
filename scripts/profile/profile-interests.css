@@ -1,0 +1,127 @@
+.profile-interest-card {
+    padding: 24px;
+    border-radius: 4px;
+    border: 1px solid var(--spectrum-gray-300);
+    background-color: var(--spectrum-gray-50);
+    width: 317px;
+    height: 262px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.profile-interest-card-selected {
+    box-shadow: 0px 3px 8px var(--spectrum-blue-100);
+    border: 1px solid var(--non-spectrum-navy-blue);
+}
+
+.profile-interest-checkbox {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.profile-interest-logo-text {
+    color: var(--spectrum-gray-700);
+    font-size: 15px;
+    line-height: 19px;
+}
+
+.profile-interest-logo-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.profile-interest-logo {
+    height: 30px;
+    width: 30px;
+}
+
+.profile-interest-header h3 {
+    font-size: 20px;
+    line-height: 25px;
+    font-weight: var(--font-weight-700);
+    color: var(--spectrum-gray-900);
+    margin: 0 0 20px;
+}
+
+.profile-interest-content label {
+    color: var(--spectrum-gray-700);
+    font-size: 15px;
+    line-height: 19px;
+    margin-bottom: 6px;
+}
+
+.profile-interest-checkbox input {
+    padding: 0;
+    margin: 0;
+    width: auto;
+}
+
+.profile-interest-checkbox label {
+    font-size: 17px;
+    line-height: 21px;
+    color: var(--spectrum-gray-800);
+}
+
+.profile-interest-logo svg {
+    height: 42px;
+    width: 42px;
+    transform: scale(0.714);
+    transform-origin: top left;
+}
+
+@media (min-width: 600px) {
+    .profile-interest-card {
+        width: 308px;
+        height: 256px;
+    }
+
+    .profile-interest-checkbox {
+        margin-top: 14px;
+    }
+
+    .profile-interest-logo-text {
+        font-size: 12px;
+        line-height: 15px;
+    }
+
+    .profile-interest-header h3 {
+        font-size: 18px;
+        line-height: 22px;
+    }
+
+    .profile-interest-content label {
+        font-size: 12px;
+        line-height: 15px;
+    }
+
+    .profile-interest-checkbox label {
+        font-size: 14px;
+        line-height: 17px;
+    }
+
+    .signup-dialog .personalize-interest-results {
+        grid-template-columns: auto;
+    }
+}
+
+@media (min-width: 900px) {
+    .profile-interest-card {
+        width: 251px;
+        height: 234px;
+    }
+
+    .signup-dialog .personalize-interest-results {
+        grid-template-columns: auto auto;
+    }
+}
+
+@media (min-width: 1200px) {
+    .signup-dialog .personalize-interest-results {
+        grid-template-columns: auto auto auto;
+    }
+}

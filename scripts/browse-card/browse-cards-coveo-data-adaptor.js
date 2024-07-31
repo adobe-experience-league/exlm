@@ -1,5 +1,5 @@
 import browseCardDataModel from '../data-model/browse-cards-model.js';
-import { CONTENT_TYPES } from './browse-cards-constants.js';
+import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import { rewriteDocsPath, fetchLanguagePlaceholders } from '../scripts.js';
 
 /**
@@ -69,10 +69,11 @@ const BrowseCardsCoveoDataAdaptor = (() => {
   /**
    * Maps a result to the BrowseCards data model.
    * @param {Object} result - The result object.
-   * @param {Object} param - The param object.
+   * @param {Number} index - The index of the result object in the source array.
+   * @param {string} searchUid - If the data comes from coveo, provide the searchUid
    * @returns {Object} The BrowseCards data model.
    */
-  const mapResultToCardsDataModel = (result) => {
+  const mapResultToCardsDataModel = (result, index, searchUid) => {
     const { raw, parentResult, title, excerpt, clickUri, uri } = result || {};
     /* eslint-disable camelcase */
 
@@ -89,7 +90,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     } else if (el_product) {
       products = Array.isArray(el_product) ? el_product : el_product.split(/,\s*/);
     }
-    const tags = createTags(result, contentType.toLowerCase());
+    const tags = createTags(result, contentType?.toLowerCase());
     let url = parentResult?.clickUri || parentResult?.uri || clickUri || uri || '';
     url = rewriteDocsPath(url);
     const contentTypeTitleCase = convertToTitleCase(contentType?.toLowerCase());
@@ -98,8 +99,9 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       ...browseCardDataModel,
       id: parentResult?.el_id || el_id || '',
       contentType,
-      badgeTitle: CONTENT_TYPES[contentType.toUpperCase()]?.LABEL,
+      badgeTitle: contentType ? CONTENT_TYPES[contentType.toUpperCase()]?.LABEL : '',
       thumbnail:
+        raw?.exl_thumbnail ||
         (raw?.video_url &&
           (raw.video_url.includes('?')
             ? raw.video_url.replace(/\?.*/, '?format=jpeg')
@@ -107,27 +109,38 @@ const BrowseCardsCoveoDataAdaptor = (() => {
         '',
       product: products && removeProductDuplicates(products),
       title: parentResult?.title || title || '',
-      description: parentResult?.excerpt || excerpt || '',
+      description:
+        contentType?.toLowerCase() === CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY
+          ? raw?.exl_description || parentResult?.excerpt || ''
+          : parentResult?.excerpt || excerpt || raw?.description || raw?.exl_description || '',
       tags,
       copyLink: url,
       viewLink: url,
       viewLinkText: placeholders[`browseCard${contentTypeTitleCase}ViewLabel`] || 'View',
+      permanentid: raw?.permanentid,
+      searchUid,
+      index,
+      authorInfo: {
+        name: raw?.author_name || '',
+        type: raw?.author_type || '',
+      },
     };
   };
 
   /**
    * Maps an array of results to an array of BrowseCards data models.
    * @param {Array} data - The array of result objects.
+   * @param {string} searchUid - Optional. If the data comes from coveo, provide the searchUid
    * @returns {Promise<Array>} A promise that resolves with an array of BrowseCards data models.
    */
-  const mapResultsToCardsData = async (data) => {
+  const mapResultsToCardsData = async (data, searchUid) => {
     try {
       placeholders = await fetchLanguagePlaceholders();
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);
     }
-    return data.map((result) => mapResultToCardsDataModel(result));
+    return data.map((result, index) => mapResultToCardsDataModel(result, index, searchUid));
   };
 
   return {

@@ -1,0 +1,33 @@
+.inline-survey .hidden {
+  display: none;
+}
+
+.inline-survey-view, .inline-survey-form {
+  padding: 1em;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+}
+
+.inline-survey-form-content > div,
+.inline-survey-form-content > div > div,
+.inline-survey-form-content > div > div,
+.inline-survey-form-content > div > div > div,
+.inline-survey-form-content > div > div > div > div {
+  width: 100% !important;
+  position: relative !important;
+  overflow: visible !important;
+  background-color: transparent !important;
+}
+
+.inline-survey-view, .inline-survey-form-header  {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.inline-survey-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}

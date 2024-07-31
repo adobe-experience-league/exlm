@@ -517,7 +517,7 @@ header {
 }
 @media (min-width: 1024px) {
   .header .nav-item-content-expanded > ul {
-    padding: 0;
+    padding: 0 0 40px 0;
   }
 }
 @media (min-width: 1024px) {
@@ -926,8 +926,7 @@ header {
   z-index: 20000;
   padding: 1.5em;
   box-shadow: 0 8px 16px rgba(10, 10, 10, 0.1);
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden auto;
 }
 @media (min-width: 600px) {
   .header .profile-menu.profile-menu-expanded,

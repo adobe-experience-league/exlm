@@ -283,7 +283,7 @@
 
 .table.html-authored table tbody {
   tr:nth-child(even) {
-    background-color: unset;
+    background-color: var(--background-color);
   }
 
   tr:nth-child(odd) {
@@ -295,7 +295,7 @@
   table {
     tbody {
       tr:nth-child(odd) {
-        background-color: unset;
+        background-color: var(--background-color);
       }
 
       tr:nth-child(even) {

@@ -1,3 +1,41 @@
+import { span } from '../../scripts/dom-helpers.js';
+
+/**
+ * Updates the headers of the columns based on the window width.
+ */
+function updateHeaders() {
+  const columns = document.querySelector('.columns');
+  const headerCells = columns.querySelector('div:first-child').children;
+  const rows = columns.querySelectorAll('div:not(:first-child)');
+
+  if (window.innerWidth < 600) {
+    rows.forEach((row) => {
+      row.querySelectorAll('div').forEach((cell, index) => {
+        if (!cell.querySelector('.header-label')) {
+          const headerLabel = span({ class: 'header-label' }, headerCells[index].textContent);
+          const cellContent = span({ class: 'cell-content' }, cell.textContent);
+          cell.textContent = '';
+          cell.appendChild(headerLabel);
+          cell.appendChild(cellContent);
+        }
+      });
+    });
+  } else {
+    // Remove the header labels if they exist and restore cell content
+    rows.forEach((row) => {
+      row.querySelectorAll('div').forEach((cell) => {
+        const headerLabel = cell.querySelector('.header-label');
+        const cellContent = cell.querySelector('.cell-content');
+        if (headerLabel && cellContent) {
+          cell.textContent = cellContent.textContent;
+        }
+      });
+    });
+  }
+}
+
+window.addEventListener('resize', updateHeaders);
+
 export default function decorate(block) {
   const cols = [...block.firstElementChild.children];
   block.classList.add(`columns-${cols.length}-cols`);
@@ -41,4 +79,5 @@ export default function decorate(block) {
       }
     });
   });
+  updateHeaders();
 }

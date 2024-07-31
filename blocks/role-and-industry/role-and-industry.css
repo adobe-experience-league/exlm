@@ -1,0 +1,165 @@
+/* mobile */
+.role-and-industry {
+    display: flex;
+    flex-direction: column;
+}
+
+.role-and-industry .industry-selection-heading {
+    text-align: center;
+} 
+
+.role-and-industry .industry-selection-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000;
+}
+
+.role-and-industry .industry-selection-description {
+    font-style: normal;
+}
+
+
+.role-and-industry .industry-selection-dropdown {
+    display: none;
+}
+
+.role-and-industry .industry-selection-dropdown label {
+    font-size: 15px;
+    color: #464646;
+    font-weight: 500;
+}
+
+.role-and-industry .role-cards-holder {
+    margin-top: 24px;
+    display: grid;
+    gap: 24px;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr;
+}
+
+.role-and-industry .role-cards-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.role-and-industry .role-cards-checkbox input {
+    width: 14px;
+    margin: 0px;
+    accent-color: var(--non-spectrum-navy-blue);
+}
+
+.role-and-industry .role-cards-checkbox label {
+    font-size: 14px;
+} 
+
+.role-and-industry .role-cards-item {
+    background-color: var(--spectrum-gray-50);
+    border: 1px solid #D6D6D6;
+    border-radius: 4px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.role-and-industry .role-cards-checkbox {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.role-and-industry .role-cards-description h3 {
+    margin: 0px;
+    font-size: 18px;
+    line-height: 22px;
+}
+
+.role-and-industry .role-cards-description p {
+    font-size: 14px;
+    line-height: 17px;
+}
+
+.role-and-industry .role-cards-item.role-cards-highlight  {
+    border: 1px solid var(--spectrum-blue-600);
+}
+
+.role-and-industry .role-cards-default-selection p {
+    margin: 0px 0px 10px 0px;
+    min-height: 18px;
+    font-size: 14px;
+    line-height: 17px;
+    font-style: italic;
+}
+
+body.profile .role-and-industry .industry-selection-holder:not(.signup-dialog .role-and-industry .industry-selection-holder) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+body.profile .role-and-industry .industry-selection-heading:not(.signup-dialog .role-and-industry .industry-selection-heading) {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+}
+
+body.profile .role-and-industry .industry-selection-title:not(.signup-dialog .role-and-industry .industry-selection-title) {
+    font-size: 22px;
+    font-weight: 700;
+    color: #000;
+}
+
+body.profile .role-and-industry .industry-selection-description:not(.signup-dialog .role-and-industry .industry-selection-description){
+    font-size: 16px;
+    color: #222222;
+    font-style: italic;
+    font-weight: 500;
+}
+
+body.profile .role-and-industry .industry-selection-dropdown:not(.signup-dialog .role-and-industry .industry-selection-dropdown) {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+body.profile .role-and-industry .role-cards-description h3:not(.signup-dialog .role-and-industry .role-cards-description h3) {
+    margin-top: 0px;
+}
+/* tablet */
+@media (min-width: 600px) {
+    .role-and-industry .role-cards-holder {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+    body.profile .role-and-industry .industry-selection-holder:not(.signup-dialog .role-and-industry .industry-selection-holder) {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+/* desktop */
+@media (min-width: 900px) {
+    body.profile .role-and-industry .role-cards-holder:not(.signup-dialog .role-and-industry .role-cards-holder) {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-rows: 1fr;
+    }
+    
+    body.profile .role-and-industry .role-cards-title:not(.signup-dialog .role-and-industry .role-cards-title) {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 8px;
+        align-items: start;
+        gap: 8px;
+    }
+}

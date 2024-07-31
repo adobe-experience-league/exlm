@@ -16,6 +16,10 @@ const browseCardDataModel = {
     level: '',
     date: '',
   },
+  authorInfo: {
+    name: '',
+    type: '',
+  },
   copyLink: '',
   bookmarkLink: '',
   viewLink: '',

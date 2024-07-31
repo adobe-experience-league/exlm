@@ -21,6 +21,23 @@
   padding: 10px;
 }
 
+
+.feedback-ui.no-git {
+  display: block;
+}
+
+.feedback-ui.no-git .right {
+  display: none!important;
+}
+
+.feedback-ui.no-git .like-btns {
+  padding-right: 10px;
+}
+
+.feedback-ui.no-git .first-question > span.icon {
+  display: none!important;
+}
+
 .feedback-ui .first-question {
   display: flex;
   justify-content: space-between;
@@ -385,12 +402,16 @@
 @media (width >= 1301px) {
   .feedback-ui {
     width: 60%;
-    max-width: 850px;
+    max-width: 800px;
   }
 }
 
 @media (width >= 1407px) {
   .feedback-ui {
     max-width:1344px
+  }
+
+  .feedback-ui.no-git {
+    max-width: 800px;
   }
 }

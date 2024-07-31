@@ -285,47 +285,57 @@
   }
 
   /* teaser on browse pages has different width for text */
-  body[class ^= 'browse-'] .teaser.block > .foreground > .text {
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text,
+  body[class ^= 'article-'] .teaser.block > .foreground > .text {
     width:55%;
   }
 
   /* teaser on browse has smaller height no background shift required */
-  body[class ^= 'browse-'] .teaser.block > .background img {
+  body[class ^= 'browse-'] .teaser.block > .background img,
+  body[class ^= 'article-'] .teaser.block > .background img {
     object-position: right;
   }
 
-  body[class ^= 'browse-'] .teaser.block.right > .background img {
+  body[class ^= 'browse-'] .teaser.block.right > .background img,
+  body[class ^= 'article-'] .teaser.block.right > .background img {
     object-position: left;
   }
 
   /* it gets a border */
-  body[class ^= 'browse-'] .section div.teaser-wrapper {
+  body[class ^= 'browse-'] .section div.teaser-wrapper,
+  body[class ^= 'article-'] .section div.teaser-wrapper {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
   }
 
-  body[class ^= 'browse-'] .section div.teaser-wrapper .background img {
+  body[class ^= 'browse-'] .section div.teaser-wrapper .background img,
+  body[class ^= 'article-'] .section div.teaser-wrapper .background img {
     border-radius: 4px;
   }
 
-  body[class ^= 'browse-'] .section div.teaser-wrapper .foreground {    
+  body[class ^= 'browse-'] .section div.teaser-wrapper .foreground,
+  body[class ^= 'article-'] .section div.teaser-wrapper .foreground {    
     min-height:240px;
     padding: 0 var(--space-token-xl);
   }
 
   /* the main title, hidden in mobile */
-  body[class ^= 'browse-'] .teaser.block > .foreground > .text > .title {
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text > .title,
+  body[class ^= 'article-'] .teaser.block > .foreground > .text > .title {
     font-size: var(--spectrum-font-size-600);
     line-height: 37.5px;
   }
 
   body[class ^= 'browse-'] .teaser.block > .foreground > .text > .long-description,
-  body[class ^= 'browse-'] .teaser.block > .foreground > .text > .long-description * {
+  body[class ^= 'article-'] .teaser.block > .foreground > .text > .long-description,
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text > .long-description *,
+  body[class ^= 'article-'] .teaser.block > .foreground > .text > .long-description * {
     font-size: var(--spectrum-body-size-s);
     line-height: 18.2px;
 }
 
-  body[class ^= 'browse-'] .teaser.block > .foreground > .text > .cta > a.button {
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text > .cta > a.button,
+  body[class ^= 'article-'] .teaser.block > .foreground > .text > .cta > a.button {
     font-size: 13px;
     line-height: 16px;
     padding: 4px 14px 6px;
@@ -334,7 +344,8 @@
 
 @media (min-width: 786px) {
   /* teaser on browse pages has different width for text */
-  body[class ^= 'browse-'] .teaser.block > .foreground > .text {
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text,
+  body[class ^= 'article-'] .teaser.block > .foreground > .text {
     width:60%;
   }
 }
@@ -351,39 +362,46 @@
   }
   
   /* teaser on browse pages has different width for text */
-  body[class ^= 'browse-'] .teaser.block > .foreground > .text {
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text,
+  body[class ^= 'article-'] .teaser.block > .foreground > .text {
     width:50%;
   }
 
   /* when shown on a page with a rail 
    no longer goes from end to end */
-  body[class ^= 'browse-'] .section div.teaser-wrapper {
+  body[class ^= 'browse-'] .section div.teaser-wrapper,
+  body[class ^= 'article-'] .section div.teaser-wrapper {
     margin-left: unset;
     margin-right: unset;
   }
 
-  body[class ^= 'browse-'] .section div.teaser-wrapper .foreground {
+  body[class ^= 'browse-'] .section div.teaser-wrapper .foreground,
+  body[class ^= 'article-'] .section div.teaser-wrapper .foreground {
     padding: 0 var(--space-token-l);
   }
 }
 
 @media (min-width: 1200px) {
   /* when shown on a page with a rail he eybrow title */
-  body:not([class ^= 'browse-']) .teaser.block > .foreground > .text > .eyebrow {
+  body:not([class ^= 'browse-']) .teaser.block > .foreground > .text > .eyebrow,
+  body:not([class ^= 'article-']) .teaser.block > .foreground > .text > .eyebrow {
     font-size: var(--spectrum-font-size-100);
   }
 
-  body[class ^= 'browse-'] .section div.teaser-wrapper .foreground {
+  body[class ^= 'browse-'] .section div.teaser-wrapper .foreground,
+  body[class ^= 'article-'] .section div.teaser-wrapper .foreground {
     padding: 0 var(--spectrum-spacing-600);
   }
 
   /* teaser on browse pages has different width for text */
-  body[class ^= 'browse-'] .teaser.block > .foreground > .text {
+  body[class ^= 'browse-'] .teaser.block > .foreground > .text,
+  body[class ^= 'article-'] .teaser.block > .foreground > .text {
     width:60%;
   }
 
   /* the main title */
-  body:not([class ^= 'browse-']) .teaser.block > .foreground > .text > .title {
+  body:not([class ^= 'browse-']) .teaser.block > .foreground > .text > .title,
+  body:not([class ^= 'article-']) .teaser.block > .foreground > .text > .title {
     font-size: var(--spectrum-heading-size-xl);
     line-height: 46.8px;
   }
@@ -391,8 +409,18 @@
 
 @media (min-width: 1440px) {
     /* teaser on browse pages has different width for text */
-    body[class ^= 'browse-'] .teaser.block > .foreground > .text {
+    body[class ^= 'browse-'] .teaser.block > .foreground > .text, 
+    body[class ^= 'article-'] .teaser.block > .foreground > .text {
       width:70%;
     }
   }
   
+  .tabs.block div.teaser-wrapper {
+    /* stretches to window edge in mobile view */
+    margin-left: unset;
+    margin-right: unset;
+  }
+
+  .tabs.block .teaser.block > .foreground > .text > .cta {
+    flex-wrap: wrap;
+  }

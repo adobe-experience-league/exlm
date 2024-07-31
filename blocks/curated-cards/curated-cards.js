@@ -14,8 +14,8 @@ export default async function decorate(block) {
   const [headingElement, toolTipElement, linkElement, ...configs] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-  const [contentType, capabilities, role, level, sortBy] = configs.map((cell) => cell.textContent.trim());
-  const sortCriteria = COVEO_SORT_OPTIONS[sortBy.toUpperCase()];
+  const [contentType, capabilities, role, level, authorType, sortBy] = configs.map((cell) => cell.textContent.trim());
+  const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase() ?? 'RELEVANCE'];
   const noOfResults = 4;
   const productKey = 'exl:solution';
   const featureKey = 'exl:feature';
@@ -106,6 +106,7 @@ export default async function decorate(block) {
     version: versions.length ? [...new Set(versions)] : null,
     role: role && role.toLowerCase().split(','),
     level: level && level.toLowerCase().split(','),
+    authorType: authorType && authorType.split(','),
     sortCriteria,
     noOfResults,
   };

@@ -10,45 +10,6 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-export const CONTENT_TYPES = Object.freeze({
-  COURSE: {
-    MAPPING_KEY: 'course',
-    LABEL: placeholders.browseCardCourseLabel || 'Course',
-  },
-  TUTORIAL: {
-    MAPPING_KEY: 'tutorial',
-    LABEL: placeholders.browseCardTutorialLabel || 'Tutorial',
-  },
-  DOCUMENTATION: {
-    MAPPING_KEY: 'documentation',
-    LABEL: placeholders.browseCardDocumentationLabel || 'Documentation',
-  },
-  TROUBLESHOOTING: {
-    MAPPING_KEY: 'troubleshooting',
-    LABEL: placeholders.browseCardTroubleshootingLabel || 'Troubleshooting',
-  },
-  EVENT: {
-    MAPPING_KEY: 'event',
-    LABEL: placeholders.browseCardEventLabel || 'On-Demand Event',
-  },
-  COMMUNITY: {
-    MAPPING_KEY: 'community',
-    LABEL: placeholders.browseCardCommunityLabel || 'Community',
-  },
-  CERTIFICATION: {
-    MAPPING_KEY: 'certification',
-    LABEL: placeholders.browseCardCertificationLabel || 'Certification',
-  },
-  LIVE_EVENT: {
-    MAPPING_KEY: 'live-event',
-    LABEL: placeholders.browseCardLiveEventLabel || 'Live Event',
-  },
-  INSTRUCTOR_LED: {
-    MAPPING_KEY: 'instructor-led-training',
-    LABEL: placeholders.browseCardInstructorLedLabel || 'Instructor-Led',
-  },
-});
-
 export const COVEO_SORT_OPTIONS = Object.freeze({
   RELEVANCE: 'relevancy',
   MOST_RECENT: 'date descending',
@@ -69,25 +30,6 @@ export const ROLE_OPTIONS = Object.freeze({
   USER: 'User',
 });
 
-export const COMMUNITY_SEARCH_FACET = Object.freeze([
-  {
-    value: 'Questions',
-    state: 'selected',
-  },
-  {
-    value: 'Discussions',
-    state: 'selected',
-  },
-  {
-    value: 'Ideas',
-    state: 'selected',
-  },
-  {
-    value: 'Blogs',
-    state: 'selected',
-  },
-]);
-
 export const RECOMMENDED_COURSES_CONSTANTS = Object.freeze({
   IN_PROGRESS: {
     MAPPING_KEY: 'inprogress-courses',
@@ -101,6 +43,11 @@ export const RECOMMENDED_COURSES_CONSTANTS = Object.freeze({
     MAPPING_KEY: 'paths',
     LABEL: placeholders.recommendedCoursesPathsLabel || 'Paths',
   },
+});
+
+export const AUTHOR_TYPE = Object.freeze({
+  EXTERNAL: 'External',
+  ADOBE: 'Adobe',
 });
 
 export const BASE_COVEO_ADVANCED_QUERY = '(@el_contenttype NOT "Community|User")';

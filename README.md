@@ -50,12 +50,15 @@ As both `sass-compile.js` and `hlx up` are watching for changes, changes made to
 
 Note that using only the `hlx up` command will not trigger updates on-change for sass files.
 
-## Gotcha's
+## Local SignedIn Development
 
-### Enabling login on feature branches
+Use this only if you need sign-in to work locally for development purposes.
 
-Login wont work on feature branches due to IMS restrictions, you must contact a team member to add your fork's main branch to the list of `Redirect Url Patterns` in IMSS. Please name your fork repo `exlm` to make this easier.
+1. add this entry to `hosts` file (`/etc/hosts` on mac)
+   `127.0.0.1 experienceleague-local.adobe.com`
+   (you likely will need `sudo` to save this file)
+2. run `npm run up-secure` (instead of `npm run up`)
+3. Browser should automatically open at `https://experienceleague-local.adobe.com`
+   > if asked to trust the certificate on the browser, do trust it. Might also need to allow runnig nas admin (`sudo`)
 
-### Working with EXL API and Coveo in feature branches and incognito mode.
-
-some of the EXL API's require CSRF tokens, said token depend on cookies set on the environment CDN URLs (`*.adobe.com`), your feature branch will be on `*.hlx.page`. Please be sure to [allow third party cookies in incognito](https://support.google.com/accounts/answer/61416?hl=en&co=GENIE.Platform%3DDesktop) while doing local development.
+> If you have a Windows machine, please add any learnings to this Doc. The current dev team uses MacOs.

@@ -1,6 +1,6 @@
 .icon-block {
   display: grid;
-  min-width: 320px;
+  min-width: 275px;
   text-align: center;
   margin: 0 auto;
   gap: 32px;
@@ -69,6 +69,9 @@
   width: 17px;
   height: 17px;
 }
+.icon-block .icon-new-tab svg {
+  fill: var(--non-spectrum-navy-blue);
+}
 
 @media (min-width: 600px) {
   .icon-block {
@@ -93,5 +96,18 @@
   .icon-block > div {
     max-width: 230px;
     min-height: 180px;
+  } 
+  body[class ^= 'browse-'] .icon-block,
+  body[class ^= 'article-'] .icon-block {
+  max-width: none;
+  }
+  .icon-block-center-align {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+  }
+  .icon-block-center-align > div {
+    width: 230px;
   }
 }

@@ -1,0 +1,301 @@
+@import '../sass/breakpoints';
+@import '../sass/mixins';
+
+/* three column layout */
+.docs {
+  --exlm-font-size-h1: var(--spectrum-heading-size-l);
+  --exlm-font-size-h2: 24px;
+  --exlm-font-size-h3: var(--spectrum-font-size-400);
+  --exlm-font-size-h4: var(--spectrum-heading-size-s);
+  --exlm-font-size-h5: var(--spectrum-heading-size-s);
+  --exlm-font-size-h6: var(--spectrum-heading-size-s);
+  --exlm-font-size-content: var(--spectrum-body-size-m);
+  --exlm-line-height-h1: var(--spectrum-line-height-xxl);
+  --exlm-line-height-h2: 31.2px;
+  --exlm-line-height-h3: 26px;
+  --exlm-line-height-h4: 23.4px;
+  --exlm-line-height-h5: 23.4px;
+  --exlm-line-height-h6: 23.4px;
+  --exlm-line-height-content: 25.6px;
+
+  @include breakpoint('desktop') {
+    --exlm-font-size-h1: 44px;
+    --exlm-font-size-h2: var(--spectrum-heading-size-l);
+    --exlm-font-size-h3: var(--spectrum-heading-size-m);
+    --exlm-font-size-h4: var(--spectrum-heading-size-s);
+    --exlm-font-size-h5: var(--spectrum-heading-size-xs);
+    --exlm-font-size-h6: var(--spectrum-heading-size-xxs);
+    --exlm-line-height-h1: var(--spectrum-line-height-xxxl);
+    --exlm-line-height-h2: var(--spectrum-line-height-xxl);
+    --exlm-line-height-h3: var(--spectrum-line-height-xl);
+    --exlm-line-height-h4: 23.4px;
+    --exlm-line-height-h5: 20.8px;
+    --exlm-line-height-h6: 18.2px;
+  }
+
+  code,
+  pre,
+  samp {
+    font-family: var(--fixed-font-family);
+    font-size: 12.25px;
+    line-height: 18.375px;
+    font-weight: var(--font-weight-400);
+  }
+
+  code:not([class^='language-']) {
+    font-family: var(--spectrum-code-font-family);
+    font-size: var(--spectrum-font-size-100);
+    background-color: unset;
+    line-height: 21px;
+    padding: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    code:not([class^='language-']) {
+      font-size: inherit;
+      line-height: 36px;
+    }
+  }
+
+  pre {
+    background-color: var(--overlay-background-color);
+  }
+
+  p {
+    @include text-styles($line-height: var(--spectrum-line-height-m));
+  }
+
+  ol {
+    @include text-styles($margin-bottom: 2em, $margin-top: 0, $color: var(--non-spectrum-grey), $line-height: 24px);
+  }
+
+  ul {
+    @include text-styles($margin-top: 1em, $margin-bottom: 2em, $line-height: 24px, $color: var(--non-spectrum-grey));
+  }
+
+  li {
+    p,
+    a:any-link {
+      word-break: break-word;
+    }
+  }
+
+  main {
+    width: 100%;
+    display: grid;
+    margin: 0 auto;
+    padding: 0 46px;
+    box-sizing: border-box;
+    max-width: 1700px;
+
+    .section {
+      padding-left: 0;
+      padding-right: 0;
+      padding-top: 0;
+
+      @include breakpoint(desktop) {
+        padding: 54px 54px 0;
+      }
+    }
+
+    @include breakpoint(desktop) {
+      grid-template-columns: 1fr 3fr 1fr;
+      padding: 0;
+
+      &.rail-left-closed {
+        grid-template-columns: 0 4fr 1fr;
+      }
+
+      &.rail-right-closed {
+        grid-template-columns: 1fr 4fr 0;
+      }
+
+      &.rail-left-closed.rail-right-closed {
+        grid-template-columns: 0 5fr 0;
+      }
+    }
+
+    > div {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0; // prevent overflow
+
+      // TOC is ALWAYS in the section before last
+      &:nth-last-child(2) {
+        display: block !important;
+        grid-row: 1 / 1;
+        min-height: 90px; // predefined height to help with CLS
+        padding: 32px 0 10px; // predefined padding to help with CLS
+
+        .toc {
+          display: none;
+        }
+
+        .rail-content {
+          display: block;
+        }
+      }
+
+      &.mini-toc-container {
+        padding: 32px 10px 0 0;
+        display: none;
+
+        @include breakpoint(desktop) {
+          display: flex;
+        }
+      }
+
+      @include breakpoint(tablet) {
+        &.mini-toc-container {
+          padding: 32px 10px 10px;
+        }
+      }
+
+      @include breakpoint(desktop) {
+        border-right: 1px solid #eaeaea;
+
+        &:not(.rail),
+        &.rail-right {
+          border-right: none;
+        }
+
+        &:not(.toc-container, .mini-toc-container) {
+          overflow: auto;
+          padding: 0;
+          grid-column: 2;
+        }
+
+        &.toc-container {
+          grid-column: 1 / 1;
+          grid-row: 1 / -1;
+          padding: 0;
+        }
+
+        &.mini-toc-container {
+          grid-column: 3 / 3;
+          grid-row: 1 / -1;
+          position: relative;
+          display: flex !important;
+          gap: 8px;
+          padding: 46px 10px 10px 0;
+        }
+      }
+    }
+  }
+
+  table:not(.code table, .table table) {
+    display: block;
+    margin: 2rem 0;
+    font-size: var(--spectrum-body-size-m);
+    line-height: var(--exlm-line-height-content);
+    color: var(--non-spectrum-custom-dark);
+    border-collapse: collapse;
+
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+      display: block;
+    }
+
+    table,
+    thead,
+    tbody {
+      width: 100%;
+    }
+
+    tr {
+      margin-bottom: 16px;
+    }
+
+    td {
+      border: none;
+      border-bottom: 1px solid #eee;
+      position: relative;
+      white-space: normal;
+      text-align: start;
+      padding: 0.5em 0.75em;
+    }
+
+    img {
+      max-width: 100%;
+      width: auto;
+    }
+
+    a {
+      color: var(--non-spectrum-link);
+
+      &:hover {
+        color: var(--non-spectrum-custom-dark);
+      }
+
+      strong {
+        color: currentcolor;
+      }
+    }
+
+    @include breakpoint(tablet) {
+      display: table;
+      border-spacing: 0;
+
+      thead {
+        display: table-header-group;
+      }
+
+      tbody {
+        display: table-row-group;
+      }
+
+      tr {
+        display: table-row;
+        margin: 0;
+        vertical-align: middle;
+      }
+
+      th,
+      td {
+        width: auto;
+        display: table-cell;
+        border: 1px solid #dbdbdb;
+        border-width: 1px;
+        vertical-align: top;
+      }
+    }
+  }
+
+  .badge {
+    background-color: var(--spectrum-blue-900);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: white;
+    display: inline-block;
+    font-size: var(--spectrum-font-size-75);
+    font-style: normal;
+    font-weight: 400;
+    line-height: 15px;
+    padding: 5px 9px;
+    text-decoration: none;
+    vertical-align: bottom;
+  }
+
+  .badge.positive {
+    background-color: var(--spectrum-green-900);
+  }
+
+  .badge.negative {
+    background-color: var(--spectrum-red-900);
+  }
+
+  .badge.neutral,
+  .badge.caution,
+  .badge.yellow {
+    background-color: var(--spectrum-gray-600);
+  }
+}

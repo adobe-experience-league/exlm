@@ -1,0 +1,91 @@
+.author-summary-grid {
+    padding: 28px 38px;
+    border-radius: 6px;
+    border-top: 6px solid var(--spectrum-indigo-1400);
+    background-color: var(--non-spectrum-bg);
+
+    display: grid; 
+    grid-auto-columns: 1fr; 
+    grid-template-columns: .1fr auto; 
+    grid-template-rows: auto auto; 
+    gap: 0px 0px; 
+    grid-template-areas: 
+      "author-image author-details"
+      "author-description author-description";
+    min-height: 100px;
+    min-width: 200px;
+    margin-bottom: 20px;
+}
+
+.author-summary-grid.adobe {
+    border-color: var(--spectrum-red-1400);
+}
+
+.author-summary .author-image { grid-area: author-image; }
+.author-summary .author-details { grid-area: author-details; }
+.author-summary .author-description { grid-area: author-description; }
+
+.author-summary .author-image {
+    border-radius: 50%;
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+    padding: 8px;
+    border: 2px dashed var(--non-spectrum-dark-gray);
+    box-sizing: border-box;
+}
+
+.author-summary .author-image img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.author-summary .author-details {
+    margin-top: 10px;
+    margin-left: 24px;
+}
+
+.author-summary .author-details > div:first-child {
+    font-size: var(--spectrum-font-size-400);
+    font-weight: 600;
+    color: var(--spectrum-gray-900);
+}
+
+.author-summary .author-details > div {
+    color: var(--non-spectrum-grey);
+}
+
+.author-summary .author-description {
+    color: var(--non-spectrum-grey);
+    line-height: 21px;
+}
+
+.author-summary .author-description > div {
+    margin: 24px 0;
+}
+
+.author-summary .author-description a{
+    font-size: var(--spectrum-font-size-100);
+    text-decoration: underline;
+}
+
+@media (min-width: 600px) {
+    .author-summary-grid { 
+        grid-template-rows: auto auto; 
+        grid-template-areas: 
+            "author-image author-details"
+            "author-image author-description";
+        min-width: 500px;
+    }
+
+    .author-summary .author-details {
+        margin-top: 0;
+    }
+
+    .author-summary .author-description {
+        margin-left: 24px;
+     }
+}

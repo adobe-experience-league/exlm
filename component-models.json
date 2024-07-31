@@ -251,6 +251,60 @@
     ]
   },
   {
+    "id": "inline-survey",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the main title of the Inline Survey."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "id",
+        "value": "",
+        "label": "Element ID",
+        "description": "Element ID to be used for qualtrics survey insertion point."
+      }
+    ]
+  },
+  {
     "id": "detailed-teaser",
     "fields": [
       {
@@ -597,6 +651,28 @@
     ]
   },
   {
+    "id": "tab-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Style",
+        "description": "The section style",
+        "valueType": "string",
+        "hidden": true,
+        "options": []
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Tab heading"
+      }
+    ]
+  },
+  {
     "id": "browse-rail-section",
     "fields": [
       {
@@ -742,6 +818,22 @@
         "name": "rows",
         "value": "",
         "label": "Rows"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "classes",
+        "label": "Style Type",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Border w/ alternating rows",
+            "value": "b-alt-row"
+          }
+        ]
       }
     ]
   },
@@ -841,6 +933,10 @@
             "value": "event"
           },
           {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
             "name": "Troubleshooting",
             "value": "troubleshooting"
           },
@@ -899,8 +995,29 @@
             "value": "Intermediate"
           },
           {
-            "name": "Advanced",
-            "value": "Advanced"
+            "name": "Experienced",
+            "value": "Experienced"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "authorType",
+        "value": "",
+        "label": "Author Type",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Adobe",
+            "value": "Adobe"
+          },
+          {
+            "name": "External",
+            "value": "External"
           }
         ]
       },
@@ -1058,10 +1175,6 @@
           {
             "name": "H5",
             "value": "h5"
-          },
-          {
-            "name": "H6",
-            "value": "h6"
           }
         ]
       },
@@ -1112,33 +1225,22 @@
         "valueType": "string",
         "name": "cta2Text",
         "value": "",
-        "label": "Sign up CTA Text",
+        "label": "Second CTA Text",
         "description": "Text to be shown inside button."
-      }
-    ]
-  },
-  {
-    "id": "author-summary",
-    "fields": [
+      },
       {
-        "component": "aem-content",
+        "component": "text",
         "valueType": "string",
-        "name": "author-bio-page",
+        "name": "cta2",
         "value": "",
-        "label": "Author"
+        "label": "Second CTA Link",
+        "description": "What link to open when clicking the button."
       }
     ]
   },
   {
     "id": "article-marquee",
     "fields": [
-      {
-        "component": "aem-content",
-        "valueType": "string",
-        "name": "author-bio-page",
-        "value": "",
-        "label": "Author"
-      },
       {
         "component": "text",
         "valueType": "string",
@@ -1151,7 +1253,7 @@
         "component": "select",
         "valueType": "string",
         "name": "titleType",
-        "value": "h3",
+        "value": "h1",
         "label": "Heading Type",
         "options": [
           {
@@ -1329,8 +1431,16 @@
         "valueType": "string",
         "name": "cta1Text",
         "value": "",
-        "label": "Sign in CTA text",
+        "label": "First CTA text",
         "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1",
+        "value": "",
+        "label": "First CTA Link",
+        "description": "What link to open when clicking the button."
       },
       {
         "component": "text",
@@ -1544,10 +1654,6 @@
           {
             "name": "H5",
             "value": "h5"
-          },
-          {
-            "name": "H6",
-            "value": "h6"
           }
         ]
       },
@@ -1707,7 +1813,7 @@
         "name": "contentURL",
         "value": "",
         "label": "Content URL",
-        "description": "Provide a link to one of the following content types: Course, Tutorial, Documentation, Troubleshooting, On-Demand Event, or Certification"
+        "description": "Provide a link to one of the following content types: Course, Tutorial, Documentation, Troubleshooting, On-Demand Event, Certification or Perspective"
       }
     ]
   },
@@ -1770,6 +1876,47 @@
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl",
         "description": "Select up to 15 topics or features."
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "contentTypes",
+        "label": "Filter by Content Type",
+        "description": "Select the content type(s).",
+        "options": [
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
       }
     ]
   },
@@ -1853,6 +2000,10 @@
             "value": "event"
           },
           {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
             "name": "Troubleshooting",
             "value": "troubleshooting"
           },
@@ -1869,14 +2020,6 @@
         "label": "Link Text",
         "valueType": "string",
         "description": "Sets the text for link."
-      },
-      {
-        "component": "text",
-        "name": "link",
-        "value": "",
-        "label": "Link URL",
-        "valueType": "string",
-        "description": "Sets the text url."
       },
       {
         "component": "text",
@@ -1906,6 +2049,103 @@
             "value": "MOST_POPULAR"
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "featured-content",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "img",
+        "label": "Image",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imgAlt",
+        "value": "",
+        "label": "Image Description",
+        "description": "A descriptive text of the image."
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Image Border and Alignment",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 2,
+        "options": [
+          {
+            "name": "Content Source",
+            "children": [
+              {
+                "name": "Adobe",
+                "value": "adobe"
+              },
+              {
+                "name": "External",
+                "value": "External"
+              }
+            ]
+          },
+          {
+            "name": "Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "left"
+              },
+              {
+                "name": "Right",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Alternate Description",
+        "description": "Override the article's summary with this description."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Content Page",
+        "required": true
+      },
+      {
+        "component": "select",
+        "name": "linkType",
+        "value": "secondary",
+        "label": "CTA Type",
+        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "linkText",
+        "value": "",
+        "label": "CTA Text"
       }
     ]
   },
@@ -2271,6 +2511,10 @@
           {
             "name": "Certification",
             "value": "certification"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
           }
         ]
       },
@@ -2427,11 +2671,76 @@
     "id": "page-metadata",
     "fields": [
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "author-bio-page",
+        "multi": true,
+        "value": "",
+        "label": "Author Bio page URL"
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "coveo-content-type",
+        "label": "Content Type",
+        "description": "Sets the coveo content type in page meta.",
+        "options": [
+          {
+            "name": "Perspectives",
+            "value": "Perspective"
+          }
+        ]
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "coveo-solution",
+        "label": "Solution(s)",
+        "rootPath": "/content/cq:tags/exl/solution",
+        "description": "Sets the Coveo Solution(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "feature",
+        "label": "Feature(s)",
+        "rootPath": "/content/cq:tags/exl/feature",
+        "description": "Sets the Coveo Feature(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "role",
+        "label": "Role(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/role",
+        "description": "Sets the role(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "level",
+        "label": "Experience Level(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/experience-level",
+        "description": "Sets the level(s) in page meta."
+      }
+    ]
+  },
+  {
+    "id": "block-quote",
+    "fields": [
+      {
         "component": "select",
         "valueType": "string",
-        "name": "article-theme",
-        "label": "Article Theme",
-        "value": "Adobe",
+        "name": "block-quote-source",
+        "label": "Block Quote source",
+        "value": "",
         "options": [
           {
             "name": "Adobe",
@@ -2444,159 +2753,11 @@
         ]
       },
       {
-        "component": "multiselect",
-        "valueType": "string",
-        "name": "coveo-content-type",
-        "label": "Coveo Content Type",
-        "description": "Sets the coveo content type in page meta.",
-        "options": [
-          {
-            "name": "Article",
-            "value": "Article"
-          }
-        ]
-      },
-      {
-        "component": "multiselect",
-        "valueType": "string",
-        "name": "coveo-solution",
-        "label": "Coveo Solution(s)",
-        "description": "Sets the Coveo Solution(s) in page meta.",
-        "options": [
-          {
-            "name": "AEM Assets",
-            "value": "AEM Assets"
-          },
-          {
-            "name": "AEM Forms",
-            "value": "AEM Forms"
-          },
-          {
-            "name": "AEM Sites",
-            "value": "AEM Sites"
-          },
-          {
-            "name": "Analytics",
-            "value": "Analytics"
-          },
-          {
-            "name": "Audience Manager",
-            "value": "Audience Manager"
-          },
-          {
-            "name": "Campaign Classic",
-            "value": "Campaign Classic"
-          },
-          {
-            "name": "Campaign Standard",
-            "value": "Campaign Standard"
-          },
-          {
-            "name": "Commerce",
-            "value": "Commerce"
-          },
-          {
-            "name": "Content Supply Chain",
-            "value": "Content Supply Chain"
-          },
-          {
-            "name": "Customer Journey Analytics",
-            "value": "Customer Journey Analytics"
-          },
-          {
-            "name": "Experience Cloud Integrations",
-            "value": "Experience Cloud Integrations"
-          },
-          {
-            "name": "Experience Platform",
-            "value": "Experience Platform"
-          },
-          {
-            "name": "Journey Optimizer",
-            "value": "Journey Optimizer"
-          },
-          {
-            "name": "Marketo Engage",
-            "value": "Marketo Engage"
-          },
-          {
-            "name": "Real-Time CDP",
-            "value": "Real-Time CDP"
-          },
-          {
-            "name": "Target",
-            "value": "Target"
-          },
-          {
-            "name": "Workfront",
-            "value": "Workfront"
-          }
-        ]
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "author-bio-page",
-        "value": "",
-        "label": "Author Bio page"
-      },
-      {
-        "component": "multiselect",
-        "name": "role",
-        "label": "Role(s)",
-        "valueType": "string",
-        "description": "Sets the role(s) in page meta.",
-        "options": [
-          {
-            "name": "Admin",
-            "value": "Admin"
-          },
-          {
-            "name": "Developer",
-            "value": "Developer"
-          },
-          {
-            "name": "Leader",
-            "value": "Leader"
-          },
-          {
-            "name": "User",
-            "value": "User"
-          }
-        ]
-      },
-      {
-        "component": "multiselect",
-        "name": "level",
-        "label": "Experience Level(s)",
-        "valueType": "string",
-        "description": "Sets the level(s) in page meta.",
-        "options": [
-          {
-            "name": "Beginner",
-            "value": "Beginner"
-          },
-          {
-            "name": "Intermediate",
-            "value": "Intermediate"
-          },
-          {
-            "name": "Experienced",
-            "value": "Experienced"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "block-quote",
-    "fields": [
-      {
         "component": "richtext",
         "valueType": "string",
         "name": "block-quote",
         "value": "",
-        "label": "Block quote",
+        "label": "Block quote Text",
         "description": "Sets the text"
       }
     ]
@@ -2727,7 +2888,266 @@
     ]
   },
   {
-    "id": "article-tags",
+    "id": "featured-authors",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "img",
+        "label": "Image"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imgAlt",
+        "value": "",
+        "label": "Image Description",
+        "description": "A descriptive text of the image."
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Image Border and Alignment",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 2,
+        "options": [
+          {
+            "name": "Content Source",
+            "children": [
+              {
+                "name": "Adobe",
+                "value": "adobe"
+              },
+              {
+                "name": "External",
+                "value": "External"
+              }
+            ]
+          },
+          {
+            "name": "Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "left"
+              },
+              {
+                "name": "Right",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "authors_heading",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "authors_headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "authors_description",
+        "value": "",
+        "label": "Description"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "author1_bio",
+        "value": "",
+        "label": "Author 1 Bio Page"
+      },
+      {
+        "condition": {
+          "!==": [{ "var": "author1_bio" }, ""]
+        },
+        "component": "text",
+        "name": "author1_cta",
+        "value": "",
+        "label": "Author 1 CTA URL",
+        "valueType": "string"
+      },
+      {
+        "condition": {
+          "!==": [{ "var": "author1_bio" }, ""]
+        },
+        "component": "text",
+        "name": "author1_ctaText",
+        "value": "",
+        "label": "Author 1 CTA Text",
+        "valueType": "string"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "author2_bio",
+        "value": "",
+        "label": "Author 2 Bio Page"
+      },
+      {
+        "condition": {
+          "!==": [{ "var": "author2_bio" }, ""]
+        },
+        "component": "text",
+        "name": "author2_cta",
+        "value": "",
+        "label": "Author 2 CTA URL",
+        "valueType": "string"
+      },
+      {
+        "condition": {
+          "!==": [{ "var": "author2_bio" }, ""]
+        },
+        "component": "text",
+        "name": "author2_ctaText",
+        "value": "",
+        "label": "Author 2 CTA Text",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "social-share",
+    "fields": [
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "social network",
+        "label": "Select Social Network",
+        "description": "Select Social Network",
+        "options": [
+          {
+            "name": "Facebook",
+            "value": "facebook"
+          },
+          {
+            "name": "Twitter",
+            "value": "twitter"
+          },
+          {
+            "name": "LinkedIn",
+            "value": "linkedin"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "data-and-email-consent",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "collect-data-heading",
+        "value": "",
+        "label": "Collect data heading"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "collect-data-description",
+        "value": "",
+        "label": "Collect data description"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "email-heading",
+        "value": "",
+        "label": "Email heading"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "email-description",
+        "value": "",
+        "label": "Email description"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "legal",
+        "value": "",
+        "label": "Legal"
+      }
+    ]
+  },
+  {
+    "id": "profile-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Style",
+        "description": "The section style",
+        "valueType": "string",
+        "hidden": true,
+        "options": []
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "two-column-layout",
+        "label": "Enable two-column layout for this section?",
+        "description": "This will enable two-column layout for this particular section."
+      }
+    ]
+  },
+  {
+    "id": "sign-up-flow-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Style",
+        "description": "The section style",
+        "valueType": "string",
+        "hidden": true,
+        "options": []
+      }
+    ]
+  },
+  {
+    "id": "product-interests",
     "fields": [
       {
         "component": "text",
@@ -2768,6 +3188,214 @@
             "value": "h6"
           }
         ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description"
+      }
+    ]
+  },
+  {
+    "id": "product-experience-level",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description"
+      }
+    ]
+  },
+  {
+    "id": "icon-block",
+    "fields": [
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "allow-center",
+        "label": "Center the section?",
+        "description": "This will center the entire Icon Cards Block."
+      }
+    ]
+  },
+  {
+    "id": "note",
+    "fields": [
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "note-type",
+        "label": "Note Type",
+        "value": "",
+        "options": [
+          {
+            "name": "Note",
+            "value": "NOTE"
+          },
+          {
+            "name": "Tip",
+            "value": "TIP"
+          },
+          {
+            "name": "Important",
+            "value": "IMPORTANT"
+          },
+          {
+            "name": "Warning",
+            "value": "WARNING"
+          },
+          {
+            "name": "Caution",
+            "value": "CAUTION"
+          },
+          {
+            "name": "Admin",
+            "value": "ADMIN"
+          },
+          {
+            "name": "Availability",
+            "value": "AVAILABILITY"
+          },
+          {
+            "name": "Prerequisites",
+            "value": "PREREQUISITES"
+          },
+          {
+            "name": "Info",
+            "value": "INFO"
+          },
+          {
+            "name": "Error",
+            "value": "ERROR"
+          },
+          {
+            "name": "Success",
+            "value": "SUCCESS"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Note Description",
+        "description": "Sets the Note description"
+      }
+    ]
+  },
+  {
+    "id": "bookmarks",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description"
+      }
+    ]
+  },
+  {
+    "id": "role-and-industry",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Role and Industry Heading"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Role and Industry Description"
       }
     ]
   }

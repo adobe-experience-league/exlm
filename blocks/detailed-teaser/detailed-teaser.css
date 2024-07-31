@@ -218,7 +218,8 @@ border-radius: 30px;
   }
 
   /* teaser on browse pages has different width for text */
-  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text {
+  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text,
+  body[class ^= 'article-'] .detailed-teaser.block > .foreground > .text {
     min-width:unset;
   }
 
@@ -234,20 +235,24 @@ border-radius: 30px;
   }
    
   /* it gets a border */
-  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper {
+  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper ,
+  body[class ^= 'article-'] .section div.detailed-teaser-wrapper {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
   }
   
-  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .background img {
+  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .background img ,
+  body[class ^= 'article-'] .section div.detailed-teaser-wrapper .background img {
     border-radius: 4px;
   }
 
-  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .spacer  img{
+  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .spacer  img ,
+  body[class ^= 'article-'] .detailed-teaser.block > .foreground > .spacer  img {
     object-position: left;
   }
 
-  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .foreground {
+  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .foreground ,
+  body[class ^= 'article-'] .section div.detailed-teaser-wrapper .foreground {
     min-height:240px;
     padding: 0 var(--space-token-xxl);
   }
@@ -291,12 +296,26 @@ border-radius: 30px;
 
   /* when shown on a page with a rail 
    no longer goes from end to end */
-  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper {
+  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper,
+  body[class ^= 'article-'] .section div.detailed-teaser-wrapper {
     margin-left: unset;
     margin-right: unset;
   }
 
-  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .foreground {
+  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .foreground,
+  body[class ^= 'article-'] .section div.detailed-teaser-wrapper .foreground {
     padding: 0 var(--space-token-l);
+  }
+}
+
+.tabs.block div.detailed-teaser-wrapper {
+  /* stretches to window edge in mobile view */
+  margin-left: unset;
+  margin-right: unset;
+}
+
+@media (min-width: 1024px) {
+  .tabs.block .detailed-teaser.block > .foreground > .text {
+      min-width: 300px;
   }
 }
