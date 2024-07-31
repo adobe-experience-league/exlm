@@ -168,6 +168,7 @@ async function getCaptionParagraphs(transcriptUrl) {
       currentParagraph += ` ${content}`;
     }
   });
+  paragraphs.push(currentParagraph);
 
   window.playlistCaptions[transcriptUrl] = paragraphs;
   return paragraphs;
