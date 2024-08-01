@@ -13,15 +13,39 @@ function toTimeInMinutes(seconds) {
   return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
 }
 
+function isSameInteger(a, b) {
+  return parseInt(a, 10) === parseInt(b, 10);
+}
+
 /**
  * Update the query string parameter with the given key and value
  */
 function updateQueryStringParameter(key, value) {
+  if (value < 0) return;
   const url = new URL(window.location.href);
   // do not update if same value
   if (url.searchParams.get(key) === value) return;
-  url.searchParams.set(key, value);
-  window.history.pushState({ [key]: value }, '', url);
+  if (value === undefined || value === null) {
+    url.searchParams.delete(key);
+    window.history.pushState({ [key]: 0 }, '', url);
+  } else {
+    url.searchParams.set(key, value);
+    window.history.pushState({ [key]: value }, '', url);
+  }
+}
+
+function updateVideoIndexParam(activeIndex) {
+  const url = new URL(window.location.href);
+  const currentVideoIndexParam = url.searchParams.get('video');
+  if (isSameInteger(currentVideoIndexParam, activeIndex)) return;
+
+  // if the active index is 0, remove the video query param
+  if (isSameInteger(activeIndex, 0)) {
+    updateQueryStringParameter('video', null);
+  } else {
+    // if the active index is not 0, update the video query param
+    updateQueryStringParameter('video', activeIndex);
+  }
 }
 
 /**
@@ -255,7 +279,7 @@ playlist.onVideoChange((videos, vIndex) => {
   el.classList.toggle('active', active);
   if (active && activeStatusChanged) el.parentElement.scrollTop = el.offsetTop - el.clientHeight / 2;
   updatePlayer(playlist);
-  updateQueryStringParameter('video', playlist.getActiveVideoIndex());
+  updateVideoIndexParam(playlist.getActiveVideoIndex());
   updateProgress(vIndex, playlist);
   return true;
 });
@@ -342,10 +366,12 @@ export default function decorate(block) {
   decoratePlaceholders(playlistSection);
   playlist.activateVideoByIndex(activeVideoIndex);
 
-  // // handle browser back within history changes
-  // window.addEventListener('popstate', (event) => {
-  //   if (event.state?.video) {
-  //     playlist.activateVideoByIndex(event.state.video);
-  //   }
-  // });
+  // handle browser back within history changes
+  window.addEventListener('popstate', (event) => {
+    if (event.state?.video) {
+      playlist.activateVideoByIndex(event.state.video);
+    } else if (!event.state) {
+      playlist.activateVideoByIndex(0);
+    }
+  });
 }
