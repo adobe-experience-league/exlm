@@ -15,17 +15,23 @@ body.profile > main > .section:not(.profile-tab-section, .profile-rail-section, 
 
 .product-interests .interests-container {
     margin: 16px 0 0 0;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 8px 10px; 
 }
 
-.product-interests .interests-container ul {
-    margin-top: 10px;
-    margin-left: 40px;
+.product-interests .sub-interests-container {
+    margin: 8px 0 0 28px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 8px 10px; 
 }
 
-.product-interests li {
+.product-interests .interests-container li {
     list-style: none;
     margin: 0;
-    margin-right: 10px;
     color: var(--spectrum-gray-800);
 }
 
@@ -51,9 +57,6 @@ body.profile > main > .section:not(.profile-tab-section, .profile-rail-section, 
 
 @media (min-width: 600px) {
     .product-interests .interests-container {
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
         max-height: 480px;
     }
     .product-interests .interests-container li {
@@ -64,10 +67,9 @@ body.profile > main > .section:not(.profile-tab-section, .profile-rail-section, 
 @media (min-width: 900px) {
     .product-interests .interests-container {
         max-height: 380px;
+        gap: 8px 20px; 
     }   
     .product-interests .interests-container li {
-        margin-bottom: 8px;
-        margin-right: 20px;
         max-width: calc(33% - 20px);
     }
     .product-interests label.checkbox {
