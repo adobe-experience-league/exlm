@@ -237,7 +237,7 @@
 .playlist-browse-cards {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1em;
+    gap: 2em;
 }
 
 @media (width >= 600px) {

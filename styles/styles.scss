@@ -822,7 +822,7 @@ picture {
   }
 
   @include breakpoint(tablet) {
-    padding: 30px 56px;
+    padding: 3em 3.5em;
   }
 
   &.curated-cards-container,
