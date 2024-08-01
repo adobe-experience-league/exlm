@@ -4,7 +4,7 @@ import { loadCSS, loadBlocks, decorateSections, decorateBlocks, decorateIcons } 
 import SignUpFlowShimmer from './signup-flow-shimmer.js';
 import FormValidator from '../form-validator.js';
 import { sendNotice } from '../toast/toast.js';
-import { addModalSeenInteraction } from '../events/signup-event.js';
+import { addModalSeenInteraction } from '../events/signup-flow-event.js';
 
 let placeholders = {};
 try {

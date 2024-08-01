@@ -4,7 +4,7 @@ import { getConfig, loadIms } from '../scripts.js';
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
 // eslint-disable-next-line import/no-cycle
-import showSignupModal from '../events/signup-event.js';
+import showSignupModal from '../events/signup-flow-event.js';
 
 const { profileUrl, JWTTokenUrl, ppsOrigin, ims, isProd, khorosProfileDetailsUrl } = getConfig();
 
