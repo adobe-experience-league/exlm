@@ -340,7 +340,7 @@
         max-width: 250px;
     }
     .signup-dialog-content .product-interests .interests-container {
-        max-height: 390px;
+        max-height: 380px;
     }
 }
 @media (min-width: 1200px) {

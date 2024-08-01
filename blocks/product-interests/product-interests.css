@@ -8,12 +8,16 @@ body.profile > main > .section:not(.profile-tab-section, .profile-rail-section, 
     margin: 0 0 18px;
 }
 
-.product-interests > ul.interests-container {
-    margin: 0;
-    margin-top: 28px;
+.product-interests .product-interests-form-error .form-error {
+    display: block;
+    margin-top: 10px;
 }
 
-.product-interests > ul.interests-container ul {
+.product-interests .interests-container {
+    margin: 16px 0 0 0;
+}
+
+.product-interests .interests-container ul {
     margin-top: 10px;
     margin-left: 40px;
 }
@@ -23,7 +27,6 @@ body.profile > main > .section:not(.profile-tab-section, .profile-rail-section, 
     margin: 0;
     margin-right: 10px;
     color: var(--spectrum-gray-800);
-    max-width: 167px;
 }
 
 .product-interests label.checkbox {
@@ -31,7 +34,7 @@ body.profile > main > .section:not(.profile-tab-section, .profile-rail-section, 
     font-size: var(--spectrum-font-size-200);
     display: inline-flex;
     justify-content: flex-start;
-    align-items: center;  
+    align-items: flex-start;  
 }
 
 .product-interests label.checkbox input {
@@ -43,37 +46,31 @@ body.profile > main > .section:not(.profile-tab-section, .profile-rail-section, 
 
 .product-interests .subtext {
     line-height: var(--spectrum-line-height-s);
+    margin-top: -4px;
 }
 
 @media (min-width: 600px) {
     .product-interests .interests-container {
-        margin: 0;
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
         max-height: 480px;
     }
     .product-interests .interests-container li {
-        max-width: 167px;
-    }
-    .product-interests .subtext {
-        max-width: 150px;
+        max-width: calc(50% - 10px);
     }
 }
 
 @media (min-width: 900px) {
     .product-interests .interests-container {
-        max-height: 390px;
+        max-height: 380px;
     }   
     .product-interests .interests-container li {
         margin-bottom: 8px;
         margin-right: 20px;
-        max-width: 176px;
+        max-width: calc(33% - 20px);
     }
     .product-interests label.checkbox {
         font-size: var(--spectrum-font-size-100);
-    }
-    .product-interests .subtext {
-        max-width: none;
     }
 }
