@@ -4,7 +4,10 @@ body.profile {
 
 body.profile .section .product-experience-level-wrapper  ~ .default-content-wrapper p {
   text-align: center;
-  margin-top: 24px;
+}
+
+body.profile .section .product-experience-level-wrapper + .default-content-wrapper {
+  margin-top: 50px;
 }
 
 body.profile .section.profile-rail-section {
