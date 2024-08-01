@@ -75,6 +75,9 @@ const createSignupDialog = () => {
     signupDialog.querySelectorAll('div[class$="-decor"]').forEach((decor) => {
       decor.style.display = 'none';
     });
+    signupDialog.querySelectorAll("button").forEach((button) => {
+      button.style.pointerEvents = 'none';
+    });
     const signupBody = signupDialog.querySelector('.signup-dialog-body');
     signUpFlowShimmer.add(signupBody);
   }
@@ -82,6 +85,9 @@ const createSignupDialog = () => {
   function hideShimmer() {
     signupDialog.querySelectorAll('div[class$="-decor"]').forEach((decor) => {
       decor.style.display = 'block';
+    });
+    signupDialog.querySelectorAll("button").forEach((button) => {
+      button.style.pointerEvents = 'auto';
     });
     signUpFlowShimmer.remove();
   }
