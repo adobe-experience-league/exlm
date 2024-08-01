@@ -4,6 +4,7 @@ import { loadCSS, loadBlocks, decorateSections, decorateBlocks, decorateIcons } 
 import SignUpFlowShimmer from './signup-flow-shimmer.js';
 import FormValidator from '../form-validator.js';
 import { sendNotice } from '../toast/toast.js';
+import { addModalSeenInteraction } from '../events/signup-event.js';
 
 let placeholders = {};
 try {
@@ -198,6 +199,9 @@ const createSignupDialog = () => {
     }
     const signupContent = signupDialog.querySelector('.signup-dialog-content');
     const currentPageIndex = parseInt(signupContent.dataset.currentPageIndex, 10);
+    if (currentPageIndex === 1 && direction === 1) {
+      await addModalSeenInteraction();
+    }
     const newIndex = currentPageIndex + direction;
     showShimmer();
     const isLoaded = await loadPageContent(newIndex);

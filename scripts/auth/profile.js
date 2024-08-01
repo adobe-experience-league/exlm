@@ -1,9 +1,10 @@
 // eslint-disable-next-line import/no-cycle, max-classes-per-file
 import { getConfig, loadIms } from '../scripts.js';
-import initStream from '../events/signup-event-stream.js';
 // eslint-disable-next-line import/no-cycle
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
+// eslint-disable-next-line import/no-cycle
+import showSignupModal from '../events/signup-event.js';
 
 const { profileUrl, JWTTokenUrl, ppsOrigin, ims, isProd, khorosProfileDetailsUrl } = getConfig();
 
@@ -218,7 +219,7 @@ class ProfileClient {
           .then((data) => {
             // FIXME: hostname check to be removed later.
             if (!isProd && !sessionStorage.getItem(postSignInStreamKey)) {
-              initStream();
+              showSignupModal();
               sessionStorage.setItem(postSignInStreamKey, 'true');
             }
             if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));
