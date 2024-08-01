@@ -1,4 +1,4 @@
-import { getPathDetails } from './importedFunctions.js';
+import { getPathDetails } from '../../scripts/scripts.js';
 
 /**
  * Fetch Json with fallback.

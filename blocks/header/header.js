@@ -1,5 +1,5 @@
-import getProducts from './product-utils.js';
-import { isSignedInUser, defaultProfileClient, signOut } from './profile.js';
+import getProducts from '../../scripts/utils/product-utils.js';
+import { isSignedInUser, defaultProfileClient, signOut } from '../../scripts/auth/profile.js';
 import {
   htmlToElement,
   decorateLinks,
@@ -16,7 +16,7 @@ import Deferred from './importedFunctions.js';
 const HEADER_CSS = '/blocks/header/exl-header.css';
 const SEARCH_CSS = '/scripts/search/search.css';
 
-const languageModule = import('./language.js');
+const languageModule = import('../../scripts/language.js');
 const { khorosProfileUrl } = getConfig();
 
 let searchElementPromise = null;
