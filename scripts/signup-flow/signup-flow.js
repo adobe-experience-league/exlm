@@ -166,11 +166,6 @@ const createSignupDialog = () => {
               </div>`;
     } else {
       dialogTitle.innerHTML = `<h4>${data.title}</h4>`;
-      flow = `<div class="signup-dialog-step-flow">
-                <div class="check-icon-shell">
-                    <span class="icon icon-checkmark"></span>
-                </div>
-            </div>`;
     }
 
     // Set the inner HTML of the step container to the generated flow
