@@ -2,6 +2,14 @@ body.profile {
   background-color: var(--background-color);
 }
 
+body.profile .section .product-experience-level-wrapper  ~ .default-content-wrapper p {
+  text-align: center;
+}
+
+body.profile .section .product-experience-level-wrapper + .default-content-wrapper {
+  margin-top: 50px;
+}
+
 body.profile .section.profile-rail-section {
   display: none;
 }
