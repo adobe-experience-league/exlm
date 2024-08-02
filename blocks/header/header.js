@@ -13,6 +13,14 @@ import {
 import { getMetadata, decorateIcons } from '../../scripts/lib-franklin.js';
 import Deferred from './importedFunctions.js';
 
+/**
+ * @typedef {Object} DecoratorOptions
+ * @property {() => Promise<boolean>} isUserSignedIn
+ * @property {() => {}} onSignOut
+ * @property {() => Promise<string>} getProfilePicture
+ * @property {boolean} isCommunity
+ */
+
 const HEADER_CSS = '/blocks/header/exl-header.css';
 const SEARCH_CSS = '/scripts/search/search.css';
 
@@ -401,8 +409,9 @@ const buildNavItems = async (ul, level = 0) => {
 /**
  * Decorates the nav block
  * @param {HTMLElement} navBlock
+ * @param {DecoratorOptions} decoratorOptions
  */
-const navDecorator = async (navBlock) => {
+const navDecorator = async (navBlock, decoratorOptions) => {
   navBlock.style.display = 'none';
   simplifySingleCellBlock(navBlock);
   const navOverlay = document.querySelector('.nav-overlay');
@@ -442,7 +451,7 @@ const navDecorator = async (navBlock) => {
     }
   });
 
-  const isSignedIn = await isSignedInUser();
+  const isSignedIn = await decoratorOptions.isUserSignedIn();
 
   if (!isSignedIn) {
     // hide auth-only nav items - see decorateLinks method for details
@@ -459,6 +468,7 @@ const navDecorator = async (navBlock) => {
 /**
  * Decorates the search block
  * @param {HTMLElement} searchBlock
+ * @param {DecoratorOptions} decoratorOptions
  */
 const searchDecorator = async (searchBlock) => {
   // save this for later use in mobile nav.
@@ -534,7 +544,12 @@ const searchDecorator = async (searchBlock) => {
   return searchBlock;
 };
 
-async function decorateCommunityBlock(header, isCommunity) {
+/**
+ *
+ * @param {HTMLHRElement} header
+ * @param {DecoratorOptions} decoratorOptions
+ */
+async function decorateCommunityBlock(header, decoratorOptions) {
   const communityBlock = header.querySelector('nav');
   const notificationWrapper = document.createElement('div');
   notificationWrapper.classList.add('notification');
@@ -553,8 +568,8 @@ async function decorateCommunityBlock(header, isCommunity) {
  
 `;
   communityBlock.appendChild(notificationWrapper);
-  const isSignedIn = await isSignedInUser();
-  if (isCommunity) {
+  const isSignedIn = await decoratorOptions.isUserSignedIn();
+  if (decoratorOptions.isCommunity) {
     if (isSignedIn && !isMobile()) {
       notificationWrapper.style.display = 'flex';
     }
@@ -593,11 +608,12 @@ const languageDecorator = async (languageBlock) => {
 /**
  * Decorates the sign-in block
  * @param {HTMLElement} signInBlock
+ * @param {DecoratorOptions} decoratorOptions
  */
-const signInDecorator = async (signInBlock) => {
+const signInDecorator = async (signInBlock, decoratorOptions) => {
   const shadowHost = document.querySelector('exl-header');
   simplifySingleCellBlock(signInBlock);
-  const isSignedIn = await isSignedInUser();
+  const isSignedIn = await decoratorOptions.isUserSignedIn();
   if (isSignedIn) {
     signInBlock.classList.add('signed-in');
     const profile = htmlToElement(
@@ -611,10 +627,10 @@ const signInDecorator = async (signInBlock) => {
     );
 
     signInBlock.replaceChildren(profile);
-    defaultProfileClient
-      .getPPSProfile()
-      .then((ppsProfile) => {
-        const profilePicture = ppsProfile?.images['50'];
+
+    decoratorOptions
+      .getProfilePicture()
+      .then((profilePicture) => {
         if (profilePicture) {
           const profileToggle = profile.querySelector('.profile-toggle');
           profileToggle.replaceChildren(
@@ -688,11 +704,12 @@ const signInDecorator = async (signInBlock) => {
 /**
  * Decorates the product-grid block
  * @param {HTMLElement} productGrid
+ * @param {DecoratorOptions} decoratorOptions
  */
-const productGridDecorator = async (productGridBlock) => {
+const productGridDecorator = async (productGridBlock, decoratorOptions) => {
   simplifySingleCellBlock(productGridBlock);
   productGridBlock.style.display = 'none';
-  const isSignedIn = await isSignedInUser();
+  const isSignedIn = await decoratorOptions.isUserSignedIn();
   if (isSignedIn) {
     productGridBlock.style.display = 'block';
     productGridBlock.classList.add('signed-in');
@@ -742,10 +759,11 @@ const productGridDecorator = async (productGridBlock) => {
 /**
  * Decorates the profile-menu block
  * @param {HTMLElement} profileMenu
+ * @param {DecoratorOptions} decoratorOptions
  */
-const profileMenuDecorator = async (profileMenuBlock) => {
+const profileMenuDecorator = async (profileMenuBlock, decoratorOptions) => {
   const shadowHost = document.querySelector('exl-header');
-  const isSignedIn = await isSignedInUser();
+  const isSignedIn = await decoratorOptions.isUserSignedIn();
   if (isSignedIn) {
     simplifySingleCellBlock(profileMenuBlock);
     profileMenuBlock.querySelectorAll('p').forEach((ptag) => {
@@ -783,7 +801,7 @@ const profileMenuDecorator = async (profileMenuBlock) => {
 
     if (profileMenuWrapper.querySelector('[data-id="sign-out"]')) {
       profileMenuWrapper.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
-        signOut();
+        decoratorOptions.onSignOut();
       });
     }
   } else {
@@ -815,13 +833,32 @@ const decorateNewTabLinks = (block) => {
   });
 };
 
+async function getPPSProfilePicture() {
+  return defaultProfileClient
+    .getPPSProfile()
+    .then((ppsProfile) => ppsProfile?.images['50'])
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error(err);
+    });
+}
+
 /**
  * Main header decorator, calls all the other decorators
  */
 class ExlHeader extends HTMLElement {
-  constructor({ isCommunity = false } = {}) {
+  /**
+   * @param {DecoratorOptions} options
+   */
+  constructor(options = {}) {
     super();
-    this.isCommunity = isCommunity;
+
+    options.isUserSignedIn = options.isUserSignedIn || isSignedInUser;
+    options.onSignOut = options.onSignOut || signOut;
+    options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
+    options.isCommunity = options.isCommunity ?? false;
+
+    this.decoratorOptions = options;
 
     // yes, even though this is extra, it ensures that these functions remain pure-esque.
     this.navDecorator = navDecorator.bind(this);
@@ -892,20 +929,19 @@ class ExlHeader extends HTMLElement {
         const block = nav.querySelector(`:scope > .${className}`);
         await decorator(block, options);
       };
-
       // Do this first to ensure all links are decorated correctly before they are used.
       decorateLinks(header);
-      decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator);
-      decorateHeaderBlock('brand', this.brandDecorator);
-      decorateHeaderBlock('search', this.searchDecorator);
-      decorateHeaderBlock('language-selector', this.languageDecorator);
-      decorateHeaderBlock('product-grid', this.productGridDecorator);
-      decorateHeaderBlock('sign-in', this.signInDecorator);
-      decorateHeaderBlock('profile-menu', this.profileMenuDecorator);
-      decorateCommunityBlock(header, this.isCommunity);
+      decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator, this.decoratorOptions);
+      decorateHeaderBlock('brand', this.brandDecorator, this.decoratorOptions);
+      decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
+      decorateHeaderBlock('language-selector', this.languageDecorator, this.decoratorOptions);
+      decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
+      decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);
+      decorateHeaderBlock('profile-menu', this.profileMenuDecorator, this.decoratorOptions);
+      decorateCommunityBlock(header, this.decoratorOptions);
       decorateNewTabLinks(header);
       decorateIcons(header);
-      await decorateHeaderBlock('nav', this.navDecorator);
+      await decorateHeaderBlock('nav', this.navDecorator, this.decoratorOptions);
     }
   }
 
@@ -921,12 +957,7 @@ customElements.define('exl-header', ExlHeader);
  * Create header web component and attach to the DOM
  * @param {HTMLHeadElement} headerBlock
  */
-export default async function decorate(
-  headerBlock,
-  options = {
-    isCommunity: true,
-  },
-) {
+export default async function decorate(headerBlock, options = {}) {
   const exlHeader = new ExlHeader(options);
   headerBlock.replaceChildren(exlHeader);
 }
