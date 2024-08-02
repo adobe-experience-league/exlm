@@ -1,5 +1,10 @@
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
-import { htmlToElement, decoratePlaceholders, createPlaceholderSpan } from '../../scripts/scripts.js';
+import {
+  htmlToElement,
+  decoratePlaceholders,
+  createPlaceholderSpan,
+  fetchLanguagePlaceholders,
+} from '../../scripts/scripts.js';
 import { Playlist, LABELS } from './playlist-utils.js';
 
 /**
@@ -54,6 +59,10 @@ function updateVideoIndexParam(activeIndex) {
 function getQueryStringParameter(key) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(key);
+}
+
+function hasQueryStringParameter(key) {
+  return new URLSearchParams(window.location.search).has(key);
 }
 
 /**
@@ -391,4 +400,18 @@ export default function decorate(block) {
       playlist.activateVideoByIndex(0);
     }
   });
+
+  // if the url contains "redirected" query param, show a toast message and remove the query param.
+  if (hasQueryStringParameter('redirected')) {
+    // replace page history to remove the query param
+    updateQueryStringParameter('redirected', null);
+    Promise.allSettled([import('../../scripts/toast/toast.js'), fetchLanguagePlaceholders()]).then(
+      ([toastResult, placeholdersResult]) => {
+        const notice =
+          placeholdersResult.value[LABELS.courseReplacedNotice] ||
+          'The course you visited was migrated to a video playlist for easier access';
+        toastResult.value.sendNotice(notice, 'success');
+      },
+    );
+  }
 }
