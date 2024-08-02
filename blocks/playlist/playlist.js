@@ -1,5 +1,5 @@
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
-import { htmlToElement, decoratePlaceholders } from '../../scripts/scripts.js';
+import { htmlToElement, decoratePlaceholders, createPlaceholderSpan } from '../../scripts/scripts.js';
 import { Playlist, LABELS } from './playlist-utils.js';
 
 /**
@@ -198,15 +198,32 @@ async function getCaptionParagraphs(transcriptUrl) {
   return paragraphs;
 }
 
+/**
+ * Updates current video transcript
+ * @param {HTMLDetailsElement} transcriptDetail
+ */
 function updateTranscript(transcriptDetail) {
   const transcriptUrl = transcriptDetail.getAttribute('data-playlist-player-info-transcript');
+  const clearTranscript = () => [...transcriptDetail.querySelectorAll('p')].forEach((p) => p.remove());
+  const showTranscriptNotAvailable = () => {
+    clearTranscript();
+    transcriptDetail.append(createPlaceholderSpan(LABELS.transcriptNotAvailable, 'Transcript not available'));
+  };
   transcriptDetail.addEventListener('toggle', (event) => {
     if (event.target.open && transcriptDetail.dataset.ready !== 'true') {
-      getCaptionParagraphs(transcriptUrl).then((paragraphs) => {
-        [...transcriptDetail.querySelectorAll('p')].forEach((p) => p.remove());
-        paragraphs.forEach((paragraph) => transcriptDetail.append(htmlToElement(`<p>${paragraph}</p>`)));
-        transcriptDetail.dataset.ready = 'true';
-      });
+      getCaptionParagraphs(transcriptUrl)
+        .then((paragraphs) => {
+          clearTranscript();
+          if (!paragraphs || !paragraphs.length || !paragraphs.join('').trim()) {
+            showTranscriptNotAvailable();
+          } else paragraphs.forEach((paragraph) => transcriptDetail.append(htmlToElement(`<p>${paragraph}</p>`)));
+        })
+        .catch(() => {
+          showTranscriptNotAvailable();
+        })
+        .finally(() => {
+          transcriptDetail.dataset.ready = 'true';
+        });
     }
   });
 }
