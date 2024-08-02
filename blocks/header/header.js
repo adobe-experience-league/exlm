@@ -20,8 +20,8 @@ import Deferred from './importedFunctions.js';
  * @property {boolean} isCommunity
  */
 
-const HEADER_CSS = `${window.hlx.aemRoot}/blocks/header/exl-header.css`;
-const SEARCH_CSS = `${window.hlx.aemRoot}/scripts/search/search.css`;
+const HEADER_CSS = `/blocks/header/exl-header.css`;
+const SEARCH_CSS = `/scripts/search/search.css`;
 
 const languageModule = import('../../scripts/language.js');
 const { khorosProfileUrl } = getConfig();
@@ -62,13 +62,16 @@ export const debounce = (ms, fn) => {
   };
 };
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
+let cachedPlaceholders;
+
+const getPlaceholders = async (origin = window.location.origin) => {
+  if (cachedPlaceholders) {
+    return Promise.resolve(cachedPlaceholders);
+  }
+  const result = await fetchLanguagePlaceholders(origin);
+  cachedPlaceholders = result;
+  return result;
+};
 
 /**
  * Register page resize handler
@@ -772,6 +775,7 @@ const profileMenuDecorator = async (profileMenuBlock, decoratorOptions) => {
     });
     const profileMenuWrapper = shadowHost.shadowRoot.querySelector('.profile-menu');
     const communityHeading = document.createElement('h2');
+    const placeholders = await getPlaceholders();
     communityHeading.textContent = placeholders?.headerCommunityLabel || 'Community';
     if (profileMenuWrapper) {
       profileMenuWrapper.innerHTML = `<h2>${placeholders?.headerLearningLabel || 'Learning'}</h2>${
@@ -868,6 +872,7 @@ class ExlHeader extends HTMLElement {
     options.onSignOut = options.onSignOut || doSignOut;
     options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
     options.isCommunity = options.isCommunity ?? false;
+    options.origin = options.origin || window.location.origin;
 
     this.decoratorOptions = options;
 
@@ -904,12 +909,15 @@ class ExlHeader extends HTMLElement {
   }
 
   async loadStyles() {
-    return Promise.allSettled([this.loadCSS(HEADER_CSS), this.loadCSS(SEARCH_CSS)]);
+    return Promise.allSettled([
+      this.loadCSS(`${this.decoratorOptions.origin}${HEADER_CSS}`),
+      this.loadCSS(`${this.decoratorOptions.origin}${SEARCH_CSS}`),
+    ]);
   }
 
   async decorate() {
     const { lang } = getPathDetails();
-    const headerFragment = await fetchFragment('header/header', lang);
+    const headerFragment = await fetchFragment('header/header', lang, this.decoratorOptions.origin);
     if (headerFragment) {
       loadSearchElement();
 
