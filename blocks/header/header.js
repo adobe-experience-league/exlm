@@ -873,6 +873,7 @@ class ExlHeader extends HTMLElement {
     options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
     options.isCommunity = options.isCommunity ?? false;
     options.origin = options.origin || window.location.origin;
+    this.lang = options.lang || getPathDetails()?.lang || 'en';
 
     this.decoratorOptions = options;
 
@@ -916,8 +917,11 @@ class ExlHeader extends HTMLElement {
   }
 
   async decorate() {
-    const { lang } = getPathDetails();
-    const headerFragment = await fetchFragment('header/header', lang, this.decoratorOptions.origin);
+    const headerFragment = await fetchFragment(
+      'header/header',
+      this.decoratorOptions.lang,
+      this.decoratorOptions.origin,
+    );
     if (headerFragment) {
       loadSearchElement();
 
