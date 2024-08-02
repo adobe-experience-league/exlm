@@ -706,8 +706,8 @@ picture {
   padding: 0 10px;
   position: fixed;
   transition: all 200ms ease-in-out;
-  transform: translate(-50%, -50%);
-  top: 10%;
+  transform: translateX(-50%);
+  top: calc(var(--nav-height) + 10px);
   bottom: unset;
   z-index: 999;
   width: 90%;

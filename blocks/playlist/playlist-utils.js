@@ -12,6 +12,7 @@ export const LABELS = {
   copyPlaylistLink: 'playlist-copy-playlist-link',
   aboutPlaylist: 'playlist-about-playlist',
   transcriptNotAvailable: 'playlist-transcript-not-available',
+  courseReplacedNotice: 'playlist-course-replaced-notice',
 };
 
 /**
