@@ -1140,13 +1140,13 @@ export async function fetchLanguagePlaceholders() {
   const { lang } = getPathDetails();
   try {
     // Try fetching placeholders with the specified language
-    return await fetchPlaceholders(`/${lang}`);
+    return await fetchPlaceholders(`${window.hlx.aemRoot}/${lang}`);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(`Error fetching placeholders for lang: ${lang}. Will try to get en placeholders`, error);
     // Retry without specifying a language (using the default language)
     try {
-      return await fetchPlaceholders('/en');
+      return await fetchPlaceholders(`${window.hlx.aemRoot}/en`);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);

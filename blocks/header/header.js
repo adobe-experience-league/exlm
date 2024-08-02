@@ -20,8 +20,8 @@ import Deferred from './importedFunctions.js';
  * @property {boolean} isCommunity
  */
 
-const HEADER_CSS = '/blocks/header/exl-header.css';
-const SEARCH_CSS = '/scripts/search/search.css';
+const HEADER_CSS = `${window.hlx.aemRoot}/blocks/header/exl-header.css`;
+const SEARCH_CSS = `${window.hlx.aemRoot}/scripts/search/search.css`;
 
 const languageModule = import('../../scripts/language.js');
 const { khorosProfileUrl } = getConfig();
