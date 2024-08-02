@@ -844,8 +844,8 @@ export default async function decorate(headerBlock) {
 }
 
 /* FIXME: Temp Code - Should be removed once we have the profile integration in place */
-// const isSignedIn = await isSignedInUser();
+const isSignedIn = await isSignedInUser();
 const urlParams = new URLSearchParams(window.location.search);
-if (!isProd && urlParams.get('signup-wizard') === 'on') {
+if (isSignedIn && !isProd && urlParams.get('signup-wizard') === 'on') {
   initializeSignupFlow();
 }
