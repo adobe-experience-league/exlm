@@ -1,5 +1,4 @@
 import getProducts from '../../scripts/utils/product-utils.js';
-import { isSignedInUser, defaultProfileClient, signOut } from '../../scripts/auth/profile.js';
 import {
   htmlToElement,
   decorateLinks,
@@ -834,13 +833,15 @@ const decorateNewTabLinks = (block) => {
 };
 
 async function getPPSProfilePicture() {
-  return defaultProfileClient
-    .getPPSProfile()
-    .then((ppsProfile) => ppsProfile?.images['50'])
-    .catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error(err);
-    });
+  import('../../scripts/auth/profile.js').then(({ defaultProfileClient }) =>
+    defaultProfileClient
+      .getPPSProfile()
+      .then((ppsProfile) => ppsProfile?.images['50'])
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error(err);
+      }),
+  );
 }
 
 /**
@@ -853,8 +854,18 @@ class ExlHeader extends HTMLElement {
   constructor(options = {}) {
     super();
 
-    options.isUserSignedIn = options.isUserSignedIn || isSignedInUser;
-    options.onSignOut = options.onSignOut || signOut;
+    const doIsSignedInUSer = async () => {
+      const { isSignedInUser } = await import('../../scripts/auth/profile.js');
+      return isSignedInUser();
+    };
+
+    const doSignOut = async () => {
+      const { signOut } = await import('../../scripts/auth/profile.js');
+      return signOut();
+    };
+
+    options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
+    options.onSignOut = options.onSignOut || doSignOut;
     options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
     options.isCommunity = options.isCommunity ?? false;
 
