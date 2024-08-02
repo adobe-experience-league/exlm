@@ -1,37 +1,41 @@
-export const tooltipTemplate = (sel, label = '', tiptext = '') => {
-  const tooltipContent = `<div class="exl-tooltip">
-          <span class="${sel}"></span>
-          <span class="exl-tooltip-label">${tiptext}</span></div>
-          <span class="exl-link-label">${label}</span>`;
-  return tooltipContent;
+// eslint-disable-next-line import/no-cycle
+import { htmlToElement } from '../scripts.js';
+
+/**
+ * Create toast message HTML
+ * @param {string} message
+ * @param {'success'|'error'} type
+ * @returns
+ */
+const newToastElement = (message, type) => {
+  const el = htmlToElement(`
+    <div class="exl-toast exl-toast-${type}">
+      <div class="icon-info"></div>
+      <div class="exl-toast-content">${message}</div>
+      <div class="icon-close"></div>
+    <div>`);
+  el.querySelector('.icon-close').addEventListener('click', () => el.remove());
+  return el;
 };
 
-const noticeTemplate = (info, status) => {
-  const noticeContent = document.createElement('div');
-  noticeContent.className = `exl-toast exl-toast-${status}`;
-  noticeContent.innerHTML = `<div class="icon-info"></div>
-            <div class="exl-toast-content">${info}</div>
-            <div class="icon-close"></div>`;
-  return noticeContent;
-};
-
-export const sendNotice = (message, type = 'success') => {
-  const existingToast = document.querySelector('.exl-toast');
-  if (existingToast) existingToast.remove();
-
-  const notificationElement = noticeTemplate(message, type);
+/**
+ * Show a toast message
+ * @param {string} message
+ * @param {'success'|'error'} type
+ * @param {number} duration
+ */
+// eslint-disable-next-line import/prefer-default-export
+export const sendNotice = (message, type = 'success', duration = 3000) => {
+  // Remove existing toast
+  document.querySelector('.exl-toast')?.remove();
+  // add new toast
+  const toastEl = newToastElement(message, type);
   const dialogElement = document.querySelector('dialog');
   if (dialogElement && dialogElement.open) {
-    dialogElement.prepend(notificationElement);
+    dialogElement.prepend(toastEl);
   } else {
-    document.body.prepend(notificationElement);
+    document.body.prepend(toastEl);
   }
-
-  notificationElement.querySelector('.icon-close').addEventListener('click', () => {
-    notificationElement.remove();
-  });
-
-  setTimeout(() => {
-    notificationElement.remove();
-  }, 3000);
+  // Remove toast after duration
+  setTimeout(() => toastEl.remove(), duration);
 };
