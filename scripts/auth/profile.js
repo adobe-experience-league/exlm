@@ -6,7 +6,7 @@ import csrf from './csrf.js';
 // eslint-disable-next-line import/no-cycle
 import showSignupModal from '../events/signup-flow-event.js';
 
-const { profileUrl, JWTTokenUrl, ppsOrigin, ims, isProd, khorosProfileDetailsUrl } = getConfig();
+const { profileUrl, JWTTokenUrl, ppsOrigin, ims, khorosProfileDetailsUrl } = getConfig();
 
 const postSignInStreamKey = 'POST_SIGN_IN_STREAM';
 const override = /^(recommended|votes)$/;
@@ -217,8 +217,7 @@ class ProfileClient {
         })
           .then((res) => res.json())
           .then((data) => {
-            // FIXME: hostname check to be removed later.
-            if (!isProd && !sessionStorage.getItem(postSignInStreamKey)) {
+            if (!sessionStorage.getItem(postSignInStreamKey)) {
               showSignupModal();
               sessionStorage.setItem(postSignInStreamKey, 'true');
             }
