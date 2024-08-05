@@ -12,16 +12,16 @@ export default async function showSignupModal() {
   const configDate = new Date(configDateString);
   const profileData = await defaultProfileClient.getMergedProfile();
   const profileTimeStamp = new Date(profileData.timestamp);
-  const modelSeen = await defaultProfileClient.getLatestInteraction('modelSeen');
-  if (profileTimeStamp >= configDate && !modelSeen) {
+  const modalSeen = await defaultProfileClient.getLatestInteraction('modalSeen');
+  if (profileTimeStamp >= configDate && !modalSeen) {
     initializeSignupFlow();
   }
 }
 
 export async function addModalSeenInteraction() {
-  const modelInteraction = await defaultProfileClient.getLatestInteraction('modelSeen');
+  const modelInteraction = await defaultProfileClient.getLatestInteraction('modalSeen');
   if (!modelInteraction) {
-    const modelSeen = [{ event: 'modelSeen', timestamp: new Date().toISOString(), modelSeen: true }];
-    await defaultProfileClient.updateProfile('interactions', modelSeen);
+    const modalSeen = [{ event: 'modalSeen', timestamp: new Date().toISOString(), modalSeen: true }];
+    await defaultProfileClient.updateProfile('interactions', modalSeen);
   }
 }
