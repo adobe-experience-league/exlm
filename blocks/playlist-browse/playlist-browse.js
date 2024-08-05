@@ -155,8 +155,20 @@ let pagination;
 // called when filters change
 const updateCards = (filters) => {
   // set filter count to show on filter UI
-  // const filterButton = filterWrapper.querySelector('.playlist-browse-filter-button');
-  // const filterCount = Object.values(filters).flat().length;
+  const filterButton = filters.filterWrapper.querySelectorAll('.playlist-browse-filter-button');
+  filterButton.forEach((button) => {
+    const filterName = button.classList[1];
+    const legend = button.classList[2];
+    const span = button.querySelector('span');
+    const filterCount = filters.filters[filterName].length;
+    if (filterCount) {
+      span.innerHTML = `${legend} (${filterCount})`;
+    } else {
+      span.innerHTML = `${legend}`;
+    }
+  });
+
+  // const filterCount = Object.values(filters.filters).flat().length;
   // if (filterCount) {
   //   filterButton.dataset.filterCount = filterCount;
   // } else {
@@ -255,13 +267,13 @@ class Filter {
       // load filter options
       const filterPanel = newShowHidePanel({
         buttonLabel: createPlaceholderSpan(filterName, legend),
-        buttonClass: 'playlist-browse-filter-button',
+        buttonClass: `playlist-browse-filter-button ${filterName} ${legend}`,
         hiddenPanelClass: 'playlist-browse-filter-hidden',
         panelContent,
         panelClass: 'playlist-browse-filter-panel',
         expanded: false,
       });
-      filterPanel.classList.add('playlist-browse-filter');
+      filterPanel.classList.add(`playlist-browse-filter-${filterName}`, 'filter-dropdown');
 
       const { fieldset, addOption } = newMultiSelect({
         legend,
@@ -292,7 +304,12 @@ class Filter {
 export default function decorate(block) {
   decoratePlaylistBrowseMarquee(block);
 
-  const filterWrapper = htmlToElement('<div class="playlist-browse-cards"></div>');
+  // create the filter UI
+  const filterContainer = htmlToElement('<div class="playlist-filter-container"></div>');
+  const label = htmlToElement(`<label class="playlist-filter-label">Filters</label>`);
+  const filterWrapper = htmlToElement('<div class="playlist-filter-wrapper"></div>');
+  filterWrapper.append(label);
+
   const filters = new Filter({
     filters: {},
     onFilterChange: () => updateCards(filters),
@@ -306,7 +323,8 @@ export default function decorate(block) {
     filterWrapper,
   });
 
-  block.append(filterWrapper);
+  filterContainer.append(filterWrapper);
+  block.append(filterContainer);
   block.append(htmlToElement('<br style="clear:both" />'));
   block.append(cards);
   updateCards(filters);

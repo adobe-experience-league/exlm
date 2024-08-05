@@ -88,6 +88,58 @@
     padding-right: var(--space-token-xl) !important;
 }
 
+
+
+/* playlist filter */
+
+.playlist-filter-container {
+    display: flex;
+    flex-direction: column;
+    padding: 1em 0;
+ }
+
+ .playlist-filter-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+ }
+
+  .playlist-filter-label {
+    font-weight: bold;
+    font-size: var(--spectrum-body-size-s);
+    color: var(--spectrum-gray-800);
+    margin-right: 1em;
+  }
+
+  .filter-dropdown {
+   position: relative;
+   display: block;
+  }
+ 
+
+@media (min-width: 900px) {
+    .playlist-filter-wrapper {
+      display: grid;
+      grid-template-areas: "label solution role level";
+      grid-template-columns: auto 1fr 1fr 1fr;
+      align-items: center;
+      gap: 2em;
+    }
+}
+
+  .playlist-filter-label {
+    grid-area: label;
+    font-weight: bold;
+    font-size: var(--spectrum-body-size-s);
+    color: var(--spectrum-gray-800);
+    margin-right: 1em;
+  }
+
+  .filter-dropdown {
+   position: relative;
+   display: block;
+  }
+
 .playlist-browse-filter {
     position: relative;
     margin: 1em 0;
@@ -97,11 +149,23 @@
     .filter-option{
         margin-bottom: 0.25rem;
     }
-
+/* 
     input {
         display: none;        
-    }
+    } */
 }
+
+.playlist-browse-filter-solution {
+   grid-area: solution;
+}
+
+.playlist-browse-filter-role {
+    grid-area: role;
+ }
+
+ .playlist-browse-filter-level {
+    grid-area: level;
+ }
 
 /* @media (width >= 600px) {
     .playlist-browse-filter {
@@ -114,6 +178,8 @@
        wi
     } */
 /*  */
+
+
 
 
 /* filter pill */
