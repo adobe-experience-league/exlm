@@ -1,0 +1,164 @@
+.topic-results-tabs {
+    color: var(--spectrum-gray-700);
+    padding-bottom: 0;
+    margin: 0;
+    border-bottom: 1px solid var(--spectrum-gray-500);
+    line-height: 20.8px;
+  }
+  .topic-results-tabs>ul{
+    height: 45px;
+  }
+  .topic-results-tabs>ul li{
+  position: relative;
+  padding-bottom: 11px;
+  }
+  
+  .topic-results-tabs input {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: var(--spectrum-font-size-200);
+    font-weight: var(--font-weight-400);
+    color: var(--spectrum-gray-700);
+    margin: 0;
+    position: relative;
+    padding:0, 0, 0, 15px;
+  }
+  
+  .topic-results-tabs input:hover {
+    color: var(--spectrum-blue-900); 
+  }
+  
+  
+  
+  .topic-results-tabs>ul li.active::after {
+    border-bottom: 3px solid var(--spectrum-blue-900);
+    content:"";
+    position: absolute;
+    bottom: -18px;
+    width: 100%;
+  }
+  
+  
+  
+  .topic-results-dropdown {
+    display: none;
+  }
+  
+  .topic-results-dropdown ul,
+  .topic-results-tabs ul {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .tab-wrapper {
+    &.active {
+      input {
+        color: var(--spectrum-blue-900);
+      }
+    }
+    input {
+      padding: 0;
+      font-family:"Adobe Clean", adobe-clean, "Source Sans Pro", -apple-system, system-ui, "Segoe UI", roboto, ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif;
+    }
+    &:not(:first-child) {
+      margin-left: 16px;
+    }
+  }
+  
+  @media (max-width: 1024px) {
+    .topic-results-dropdown {
+      display:flex;
+      margin:20px 0 5px 0;
+    }
+  
+    .custom-select-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+    
+  
+    .tab-select-arrow {
+      border: 1px solid #B3B3B3;
+      border-radius: 4px;
+      width: 36px;
+      height: 36px;
+      background-color: red;
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%) rotate(180deg);
+      background: url("../../../icons/chevron_down.svg") no-repeat right 8.9px center ;
+    }
+  
+    .downArrow {
+      transform: translateY(-50%)  !important;
+    }
+  
+    .topic-results-dropdown-value{
+      position: relative; 
+      width:100%;
+      border: 1px solid #B3B3B3;
+      background: #fbfbfb;
+      padding: 7px 12px;
+      margin:8px 0;
+      border-radius: 4px;
+      color: #4B4B4B;
+      font-size: var(--exlm-font-size-content);
+      cursor: pointer;
+      text-align: left;
+      font-family: "Adobe Clean", adobe-clean, "Source Sans Pro", -apple-system, system-ui, "Segoe UI", roboto, ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif;
+      font-weight: 400;
+      &:focus {
+        outline: none;
+      };
+      &:active, &:hover, &:focus {
+        background-color: unset;
+      }
+    }
+   
+    .topic-results-tabs {
+      display: none;
+    }
+  }
+  
+  .tab-options {
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+    color: #4B4B4B;
+    display: none !important;
+    &.open {
+      display: block !important;
+      border: 1px solid var(--spectrum-gray-500);
+      border-radius: 4px;
+      &>li {
+        font-family: "Adobe Clean", adobe-clean, "Source Sans Pro", -apple-system, system-ui, "Segoe UI", roboto, ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif;
+        display: flex;
+        margin: 0;
+        padding: 8px 16px;
+        cursor: pointer;
+        &:hover {
+          background-color: #e9ecef;
+        }
+        & .tab-option-button{
+          width: calc(100% - 36px);
+          height: 100%;
+        }
+      }
+  
+      .tab-option-button {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+  
+    }
+  }
+  
+  .topic-results-filters {
+    margin-top: 30px;
+  }
