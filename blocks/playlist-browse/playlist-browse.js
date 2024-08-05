@@ -9,6 +9,11 @@ async function fetchPlaylists() {
 }
 
 const playlistsPromise = fetchPlaylists();
+const filterOptions = [
+  { legend: 'Product', filterName: 'solution' },
+  { legend: 'Role', filterName: 'role' },
+  { legend: 'Experience Level', filterName: 'level' },
+];
 
 /**
  * Creates the marquee for the playlist browse page.
@@ -105,7 +110,7 @@ function newPlaylistCard({ title = '', description = '', image, path = '', loadi
  * @returns
  */
 const filterPlaylists = (playlists, filters) => {
-  const { solution, role, level } = filters;
+  const { solution, role, level } = filters.filters;
   return playlists.filter((playlist) => {
     const playlistSolutions = playlist.solution.split(',').map((s) => s.trim());
     const solutionMatch = !solution.length || solution.some((s) => playlistSolutions.includes(s));
@@ -137,10 +142,148 @@ function writeFiltersToUrl(filters) {
   url.searchParams.delete('solution');
   url.searchParams.delete('role');
   url.searchParams.delete('level');
-  filters.solution.forEach((s) => url.searchParams.append('solution', s));
-  filters.role.forEach((r) => url.searchParams.append('role', r));
-  filters.level.forEach((l) => url.searchParams.append('level', l));
+  filters.filters.solution.forEach((s) => url.searchParams.append('solution', s));
+  filters.filters.role.forEach((r) => url.searchParams.append('role', r));
+  filters.filters.level.forEach((l) => url.searchParams.append('level', l));
   window.history.pushState({}, '', url);
+}
+
+// Playlist Cards
+const cards = htmlToElement('<div class="playlist-browse-cards"></div>');
+
+let pagination;
+// called when filters change
+const updateCards = (filters) => {
+  // set filter count to show on filter UI
+  // const filterButton = filterWrapper.querySelector('.playlist-browse-filter-button');
+  // const filterCount = Object.values(filters).flat().length;
+  // if (filterCount) {
+  //   filterButton.dataset.filterCount = filterCount;
+  // } else {
+  //   delete filterButton.dataset.filterCount;
+  // }
+
+  // add filter pills
+
+  // const filterPills = filterWrapper.querySelectorAll('.filter-pill');
+  // filterPills.forEach((pill) => pill.remove());
+  // Object.entries(filters.filters).forEach(([filterName, filterValues]) => {
+  //   filterValues.forEach((value) => {
+  //     const pill = htmlToElement(`
+  //     <button class="filter-pill" data-value="${value}"  data-filter="${filterName}">
+  //       <span>${value}</span>
+  //       <span class="icon icon-close"></span>
+  //     </button>`);
+  //     decorateIcons(pill);
+  //     filterWrapper.append(pill);
+  //     pill.addEventListener('click', (event) => {
+  //       const { filter, value } = event.target.dataset;
+  //       filters.filters[filter] = filters.filters[filter].filter((v) => v !== value);
+  //       filters.onFilterChange();
+  //     });
+  //   });
+  // });
+
+  // reset pagination and cards
+  if (pagination) {
+    pagination.remove();
+  }
+  cards.innerHTML = '';
+
+  // add loading cards
+  for (let i = 0; i < 16; i += 1) {
+    cards.append(newPlaylistCard({ loading: true }));
+  }
+
+  playlistsPromise.then((playlists) => {
+    // store filters when switching pages
+    writeFiltersToUrl(filters);
+
+    // add filtered cards and pagination for them.
+    const filteredPlaylists = filterPlaylists(playlists.data, filters);
+    const onPageChange = (page, ps) => {
+      cards.innerHTML = '';
+      ps.forEach((playlist) => cards.append(newPlaylistCard(playlist)));
+      window.scrollTo({ top: 0 });
+    };
+
+    pagination = newPagination({
+      previousLabel: 'Previous',
+      previousClass: 'playlist-browse-pagination-previous button secondary',
+      nextLabel: 'Next',
+      nextClass: 'playlist-browse-pagination-next button secondary',
+      paginationLabelClass: 'playlist-browse-pagination-label',
+      ofLabel: 'of',
+      currentPage: 1,
+      items: filteredPlaylists,
+      onPageChange,
+    });
+
+    pagination.classList.add('playlist-browse-pagination');
+    cards.after(pagination);
+  });
+};
+
+/**
+ * @typedef {Object} Filter Option
+ * @property {string} value
+ * @property {string} label
+ * @property {string} selected
+ */
+
+/**
+ * @typedef {Object} Filter
+ * @property {string} name
+ * @property {string} label
+ * @property {Array.<Filter>} options
+ */
+
+class Filter {
+  constructor({ filters, onFilterChange, onClearAll, labels: { clearAll, filter }, filterWrapper }) {
+    this.filters = filters;
+    this.onFilterChange = onFilterChange;
+    this.onClearAll = onClearAll;
+    this.labels = { clearAll, filter };
+    this.filterWrapper = filterWrapper;
+    this.updateUI();
+  }
+
+  updateUI = () => {
+    this.filters = readFiltersFromUrl();
+    filterOptions.forEach(({ legend, filterName }) => {
+      const panelContent = htmlToElement(`<div></div>`);
+      // load filter options
+      const filterPanel = newShowHidePanel({
+        buttonLabel: createPlaceholderSpan(filterName, legend),
+        buttonClass: 'playlist-browse-filter-button',
+        hiddenPanelClass: 'playlist-browse-filter-hidden',
+        panelContent,
+        panelClass: 'playlist-browse-filter-panel',
+        expanded: false,
+      });
+      filterPanel.classList.add('playlist-browse-filter');
+
+      const { fieldset, addOption } = newMultiSelect({
+        legend,
+        onSelect: (selectedValues) => {
+          this.filters[filterName] = selectedValues;
+          this.onFilterChange();
+        },
+      });
+      this.filterWrapper.append(filterPanel);
+
+      getAllPossibleFilterValues(filterName).then((filterValues) => {
+        filterValues.forEach((filterValue) => {
+          addOption({
+            label: filterValue,
+            value: filterValue,
+            checked: this.filters[filterName].includes(filterValue),
+          });
+        });
+        panelContent.append(fieldset);
+      });
+    });
+  };
 }
 
 /**
@@ -149,99 +292,22 @@ function writeFiltersToUrl(filters) {
 export default function decorate(block) {
   decoratePlaylistBrowseMarquee(block);
 
-  // Filter
-  const filters = readFiltersFromUrl();
-  const filterPanelContet = htmlToElement('<div></div>');
-  const filterPanel = newShowHidePanel({
-    buttonLabel: createPlaceholderSpan('filter', 'Filter'),
-    buttonClass: 'playlist-browse-filter-button',
-    hiddenPanelClass: 'playlist-browse-filter-hidden',
-    panelContent: filterPanelContet,
-    panelClass: 'playlist-browse-filter-panel',
-    expanded: false,
-  });
-  filterPanel.classList.add('playlist-browse-filter');
-
-  // Playlist Cards
-  const cards = htmlToElement('<div class="playlist-browse-cards"></div>');
-
-  let pagination;
-
-  // called when filters change
-  const updateCards = () => {
-    // set filter count to show on filter UI
-    const filterButton = filterPanel.querySelector('.playlist-browse-filter-button');
-    const filterCount = Object.values(filters).flat().length;
-    if (filterCount) {
-      filterButton.dataset.filterCount = filterCount;
-    } else {
-      delete filterButton.dataset.filterCount;
-    }
-
-    // reset pagination and cards
-    if (pagination) {
-      pagination.remove();
-    }
-    cards.innerHTML = '';
-
-    // add loading cards
-    for (let i = 0; i < 16; i += 1) {
-      cards.append(newPlaylistCard({ loading: true }));
-    }
-
-    playlistsPromise.then((playlists) => {
-      // store filters
-      writeFiltersToUrl(filters);
-
-      // add filtered cards and pagination for them.
-      const filteredPlaylists = filterPlaylists(playlists.data, filters);
-      const onPageChange = (page, ps) => {
-        cards.innerHTML = '';
-        ps.forEach((playlist) => cards.append(newPlaylistCard(playlist)));
-        window.scrollTo({ top: 0 });
-      };
-
-      pagination = newPagination({
-        previousLabel: 'Previous',
-        previousClass: 'playlist-browse-pagination-previous button secondary',
-        nextLabel: 'Next',
-        nextClass: 'playlist-browse-pagination-next button secondary',
-        paginationLabelClass: 'playlist-browse-pagination-label',
-        ofLabel: 'of',
-        currentPage: 1,
-        items: filteredPlaylists,
-        onPageChange,
-      });
-
-      pagination.classList.add('playlist-browse-pagination');
-      cards.after(pagination);
-    });
-  };
-
-  // load filter options
-  [
-    { legend: 'Products', filterName: 'solution' },
-    { legend: 'Roles', filterName: 'role' },
-    { legend: 'Experience Level', filterName: 'level' },
-  ].forEach(({ legend, filterName }) => {
-    const { fieldset, addOption } = newMultiSelect({
-      legend,
-      onSelect: (selectedValues) => {
-        filters[filterName] = selectedValues;
-        updateCards();
-      },
-    });
-
-    filterPanelContet.append(fieldset);
-    getAllPossibleFilterValues(filterName).then((filterValues) => {
-      filterValues.forEach((filterValue) => {
-        addOption({ label: filterValue, value: filterValue, checked: filters[filterName].includes(filterValue) });
-      });
-    });
+  const filterWrapper = htmlToElement('<div class="playlist-browse-cards"></div>');
+  const filters = new Filter({
+    filters: {},
+    onFilterChange: () => updateCards(filters),
+    onClearAll: () => {
+      this.filters = {};
+    },
+    labels: {
+      clearAll: 'Clear All',
+      filter: 'Filter',
+    },
+    filterWrapper,
   });
 
-  block.append(filterPanel);
+  block.append(filterWrapper);
   block.append(htmlToElement('<br style="clear:both" />'));
   block.append(cards);
-  updateCards();
+  updateCards(filters);
 }

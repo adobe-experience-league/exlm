@@ -70,6 +70,7 @@
         margin-right: calc(-1 * var(--space-token-xl)) !important;
         padding-left: 4em;
         padding-top: 5em;
+        padding-bottom: 1em;
     }
 
     .playlist-browse-marquee-background {
@@ -92,9 +93,17 @@
     margin: 1em 0;
     float: right;
     width: 100%;
+
+    .filter-option{
+        margin-bottom: 0.25rem;
+    }
+
+    input {
+        display: none;        
+    }
 }
 
-@media (width >= 600px) {
+/* @media (width >= 600px) {
     .playlist-browse-filter {
         width: 50%;
     }
@@ -102,10 +111,42 @@
 
 @media (width >= 900px) {
     .playlist-browse-filter {
-        width: 33%;
+       wi
+    } */
+/*  */
+
+
+/* filter pill */
+.filter-pill {
+    border-radius: 4px;
+    background: var(--background-color);
+    border: 1px solid var(--spectrum-gray-500);
+    margin-right: 10px;
+    padding: 4px 25px 5px 12px;
+    margin-bottom: 10px;
+    font-weight: normal;
+    font-size: 12px;
+    text-align: left;
+    color: var(--spectrum-gray-500);
+    line-height: normal;
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    margin-top: 0;
+
+    .icon-close{
+        width: 13px;
+        height: auto;
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-6px);
+
+        svg{
+            fill: var(--spectrum-gray-500);
+        }
     }
 }
-
 
 
 .playlist-browse-filter-button {
@@ -158,11 +199,12 @@
 
 
 .playlist-browse-filter-button[aria-expanded="false"]::after {
-    background-image: url("/icons/properties.svg");
+    background-image: url("/icons/chevron_down.svg");
 }
 
 .playlist-browse-filter-button[aria-expanded="true"]::after {
-    background-image: url("/icons/close.svg");
+    background-image: url("/icons/chevron_down.svg");
+    transform: translateX(-30%) translateY(-30%) rotate(180deg);
 }
 
 .playlist-browse-filter-button:hover, .playlist-browse-filter-button:focus {
@@ -226,7 +268,7 @@
 }
 
 .playlist-browse-filter-panel li {
-    padding: 0;
+    padding-left: 1em;
     margin: 0 !important;
     color: #4a4a4a !important;
     font-size: 14px;
