@@ -4,6 +4,7 @@ import { loadCSS, loadBlocks, decorateSections, decorateBlocks, decorateIcons } 
 import SignUpFlowShimmer from './signup-flow-shimmer.js';
 import FormValidator from '../form-validator.js';
 import { sendNotice } from '../toast/toast.js';
+import { addModalSeenInteraction } from '../events/signup-flow-event.js';
 
 let placeholders = {};
 try {
@@ -74,6 +75,9 @@ const createSignupDialog = () => {
     signupDialog.querySelectorAll('div[class$="-decor"]').forEach((decor) => {
       decor.style.display = 'none';
     });
+    signupDialog.querySelectorAll('.signup-dialog-header button').forEach((button) => {
+      button.style.pointerEvents = 'none';
+    });
     const signupBody = signupDialog.querySelector('.signup-dialog-body');
     signUpFlowShimmer.add(signupBody);
   }
@@ -81,6 +85,9 @@ const createSignupDialog = () => {
   function hideShimmer() {
     signupDialog.querySelectorAll('div[class$="-decor"]').forEach((decor) => {
       decor.style.display = 'block';
+    });
+    signupDialog.querySelectorAll('.signup-dialog-header button').forEach((button) => {
+      button.style.pointerEvents = 'auto';
     });
     signUpFlowShimmer.remove();
   }
@@ -159,11 +166,6 @@ const createSignupDialog = () => {
               </div>`;
     } else {
       dialogTitle.innerHTML = `<h4>${data.title}</h4>`;
-      flow = `<div class="signup-dialog-step-flow">
-                <div class="check-icon-shell">
-                    <span class="icon icon-checkmark"></span>
-                </div>
-            </div>`;
     }
 
     // Set the inner HTML of the step container to the generated flow
@@ -198,6 +200,9 @@ const createSignupDialog = () => {
     }
     const signupContent = signupDialog.querySelector('.signup-dialog-content');
     const currentPageIndex = parseInt(signupContent.dataset.currentPageIndex, 10);
+    if (currentPageIndex === 1 && direction === 1) {
+      await addModalSeenInteraction();
+    }
     const newIndex = currentPageIndex + direction;
     showShimmer();
     const isLoaded = await loadPageContent(newIndex);
