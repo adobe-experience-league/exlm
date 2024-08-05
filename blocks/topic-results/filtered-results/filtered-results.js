@@ -13,22 +13,69 @@ loadCSS(`${window.hlx.codeBasePath}../blocks/topic-results/filtered-results/filt
  * @param {string} options.dateUpdated - The date the result was last updated.
  * @returns {HTMLElement} The filtered result element.
  */
-function createFilteredResult({ title = '', description = '', product = [], contentType = [], dateUpdated = ''}) {
+function createFilteredResult({
+  title = '',
+  description = '',
+  copyLink = '',
+  product = [],
+  contentType = [],
+  date = '',
+  thumbnail = '',
+  video_url: videoUrl = '',
+}) {
   const truncatedDescription = description.length > 150 ? `${description.slice(0, 150)}...` : description;
-  const formattedDate = dateUpdated ? new Date(dateUpdated).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Date not available';
+  const formattedDate = date ? new Date(date).toISOString().split('T')[0] : 'Date not available';
+
+  // Determine the class for the content type
+  let contentTypeClass = '';
+  switch (contentType.toLowerCase()) {
+    case 'tutorial':
+      contentTypeClass = 'tutorial';
+      break;
+    case 'documentation':
+      contentTypeClass = 'documentation';
+      break;
+    case 'community':
+      contentTypeClass = 'community';
+      break;
+    case 'events':
+      contentTypeClass = 'events';
+      break;
+    default:
+      contentTypeClass = '';
+  }
 
   return htmlToElement(`
-    <a class="filtered-result-container" href="#">
-        <div class="filtered-result-content">
+<div class="filtered-result-content">
+    <div class="filtered-result-left-container ${!!videoUrl && 'thumbnail'}">
             <div class="filtered-result-title-description-container">
-                <h2 class="filtered-result-title">${title}</h2>
-                <p class="filtered-result-description">${truncatedDescription}</p>
+                <div class="filtered-result-title-container">
+                    <a href="${copyLink}" >
+                        <h4 class="filtered-result-title">
+                            ${title}
+                        </h4>
+                    </a>
+                </div>
+                <div class="filtered-result-description">${truncatedDescription}</div>
             </div>
-            <span class="filtered-result-content-type">${contentType}</span>
+            <a class="filtered-result-video" href="${videoUrl}">
+                <img src="${thumbnail}" alt="Video Preview">
+            </a>
+          
+    </div>
+    <div class="filtered-result-right-container">
+        <div class="filtered-result-product-content-type-container">
+            <div class="filtered-result-product-name">${product}</div>
+            <div class="filtered-result-content-type ${contentTypeClass}">
+                <span>${contentTypeClass}</span>
+            </div>
         </div>
-        <span class="filtered-result-product-name">${product}</span>
-        <span class="filtered-result-date-updated">${formattedDate}</span>
-    </a>`);
+        <div class="filtered-result-date-container"> 
+            <div class="filtered-result-date">${formattedDate}</div>
+        </div>
+    </div>
+</div>
+`);
 }
 
 /**
@@ -37,11 +84,8 @@ function createFilteredResult({ title = '', description = '', product = [], cont
  * @param {Array|Object} results - The results to display, can be a single object or an array of objects.
  */
 function populateFilteredResults(block, results) {
-  
-  // Create a new variable to hold the processed results
   const processedResults = Array.isArray(results) ? results : [results];
 
-  // Create or clear a container for the filtered results
   let resultsContainer = block.querySelector('.filtered-results-container');
   if (!resultsContainer) {
     resultsContainer = document.createElement('div');
@@ -51,7 +95,6 @@ function populateFilteredResults(block, results) {
     resultsContainer.innerHTML = '';
   }
 
-  // Append new filtered results
   processedResults.forEach((result) => {
     resultsContainer.appendChild(createFilteredResult(result));
   });

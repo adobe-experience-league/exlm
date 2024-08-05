@@ -1,11 +1,12 @@
 import { htmlToElement } from '../../../scripts/scripts.js';
 import { loadCSS } from '../../../scripts/lib-franklin.js';
 
+let currentPage = 0;
+const maxVisiblePages = 5;
 
-const getTotalPages = (totalItems, itemsPerPage) => Math.min(Math.ceil(totalItems / itemsPerPage), 100);
-  let currentPage = 0;
-  const maxVisiblePages = 5;
-
+function getTotalPages(totalItems, itemsPerPage) {
+  return Math.min(Math.ceil(totalItems / itemsPerPage), 100);
+}
 
 /**
  * Creates a page number button.
@@ -16,7 +17,7 @@ const getTotalPages = (totalItems, itemsPerPage) => Math.min(Math.ceil(totalItem
 function createPageButton(pageNum, isActive) {
   return htmlToElement(`
     <li class="pagination__item ${isActive ? 'pagination__item--active' : ''}">
-      <input type="button" class="pagination__link" value="${pageNum}" aria-label="Page ${pageNum}">
+      <input type="button" class="pagination__link pagination__num" value="${pageNum}" aria-label="Page ${pageNum}">
     </li>
   `);
 }
@@ -57,45 +58,30 @@ function calculatePageRange(totalItems, itemsPerPage) {
 
 function updatePaginationDisplay(container, totalItems, itemsPerPage) {
   const totalPages = getTotalPages(totalItems, itemsPerPage);
-  console.log('updatePaginationDisplay');
   container.innerHTML = '';
 
   const prevButton = createNavButton('prev', currentPage === 0);
   container.appendChild(prevButton);
 
-  const [startPage, endPage] = calculatePageRange(currentPage, totalPages, maxVisiblePages);
+  const [startPage, endPage] = calculatePageRange(totalItems, itemsPerPage);
 
   for (let i = startPage; i <= endPage; i += 1) {
-    const pageButton = createPageButton(i, i === currentPage);
+    const pageButton = createPageButton(i, i === currentPage + 1);
     container.appendChild(pageButton);
   }
 
-  const nextButton = createNavButton('next', currentPage === totalPages);
+  const nextButton = createNavButton('next', currentPage >= totalPages - 1);
   container.appendChild(nextButton);
 }
 
-
 function handlePageChange(newPage, onPageChange, totalItems, itemsPerPage) {
   const totalPages = getTotalPages(totalItems, itemsPerPage);
-  if (newPage >= 0 && newPage <= totalPages - 1 && newPage !== currentPage) {
+  if (newPage >= 0 && newPage <= totalPages) {
     currentPage = newPage;
     onPageChange(currentPage);
-    console.log('handlePageChange from Change');
-    updatePaginationDisplay();
+    updatePaginationDisplay(document.querySelector('.pagination-container'), totalItems, itemsPerPage);
   }
 }
-
-
-
-
-// document.addEventListener('readystatechange', (e) => {
-//   e.stopPropagation();
-//   console.log('HIIIIIIIIIII! load event');
-//   updatePaginationDisplay();
-// });
-
-// updatePaginationDisplay();
-
 
 /**
  * Initializes and renders pagination controls.
@@ -105,6 +91,8 @@ function handlePageChange(newPage, onPageChange, totalItems, itemsPerPage) {
  */
 export function initPagination(totalItems, itemsPerPage, onPageChange) {
   loadCSS(`${window.hlx.codeBasePath}../blocks/topic-results/pagination/pagination.css`);
+
+  currentPage = 0;
 
   let container = document.querySelector('.pagination-container');
   if (!container) {
@@ -118,9 +106,6 @@ export function initPagination(totalItems, itemsPerPage, onPageChange) {
     }
   }
 
-  
-  
-
   container.addEventListener('click', (e) => {
     if (e.target.type === 'button') {
       const newPage = e.target.value;
@@ -129,21 +114,11 @@ export function initPagination(totalItems, itemsPerPage, onPageChange) {
       } else if (newPage === 'Next') {
         handlePageChange(currentPage + 1, onPageChange, totalItems, itemsPerPage);
       } else {
-        handlePageChange(parseInt(newPage, 10), onPageChange, totalItems, itemsPerPage);
+        handlePageChange(parseInt(newPage, 10) - 1, onPageChange, totalItems, itemsPerPage);
       }
     }
   });
-
-  container.addEventListener( 'load', (e) => {
-    e.stopPropagation();
-    console.log('HIIIIIIIIIII! load event');
-    updatePaginationDisplay();
-  }
-  );
-  
-  console.log('handlePageChange from Init');
-  updatePaginationDisplay();
-  
+  updatePaginationDisplay(container, totalItems, itemsPerPage);
 }
 
 export default initPagination;

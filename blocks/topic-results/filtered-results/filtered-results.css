@@ -1,39 +1,166 @@
-/* Increased specificity for filtered results container */
-body .filtered-results-container *,
-#main-content .filtered-results-container * {
-  box-sizing: border-box;
+.filtered-result-content {
+  display: flex ;
+  flex-direction: row;
+  padding: 30px 0 0 0;
+  border-bottom: 1px solid #e9ecef;
+ 
 }
 
-/* Title within the filtered results */
-body .filtered-results-container .filtered-result-title,
-#main-content .filtered-results-container .filtered-result-title {
-  font-size: 14px;
-  color: #323232;
-  font-weight: bold;
-  line-height: 17px;
-  font-family: "adobe-clean";
+.filtered-result-content:last-child {
+  border-bottom: none;
 }
 
-/* Links within the filtered results */
-body .filtered-results-container a.filtered-result-container,
-#main-content .filtered-results-container a.filtered-result-container {
-  color: #0059b3;
-  text-decoration: none;
-  cursor: pointer;
+.filtered-result-left-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  flex: 5;
+  padding:0 20px 1px 0;
 }
 
-/* Description within the filtered results */
-body .filtered-results-container .filtered-result-description,
-#main-content .filtered-results-container .filtered-result-description {
+
+.filtered-result-left-container .filtered-result-title-description-container {
+  flex-grow: 1;
+}
+
+.thumbnail .filtered-result-title-description-container {
+  flex: 4 1 0;
+  padding-right: 15px;
+}
+
+.filtered-result-left-container .filtered-result-video,
+.filtered-result-left-container .filtered-result-video img {
+  flex: 0 0 0;
+  display: none;
+  margin-top: 0;
+} 
+
+
+.thumbnail .filtered-result-video,
+.thumbnail .filtered-result-video img {
+  flex: 1 1 min-content;
+  display: block;
+}
+
+ .filtered-result-title{
+  padding-top: 0px;
+  margin:0;
+  color: var(--non-spectrum-grey);
+  font-family: var(--body-font-family);
+  font-size: var(--exlm-font-size-content);
+  font-weight: var(--font-weight-400);
+  font-style: normal;
+  line-height: var(--spectrum-line-height-s);
+}
+
+.filtered-result-description {
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-400);
+  color: var(--spectrum-gray-700);
+  margin-top: 10px;
+}
+
+.filtered-result-right-container {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  padding: 0 0 30px;
+} 
+
+.filtered-result-product-content-type-container{
+  & > div:not(:last-child) {
+    padding-bottom: 10px;
+  }
+  flex: 1 1 0;
+
+}
+
+.filtered-result-product-name{
   font-size: 12px;
-  color: #505050;
-  line-height: 18px;
-  font-weight: normal;
-  font-family: "adobe-clean";
-  width: 60%;
-  text-align: left;
-  vertical-align: middle;
-  padding-right: 28px;
+  color: #707070;
+
 }
 
-/* Ensure your CSS file is correctly linked in your HTML <head> */
+.filtered-result-date-container {
+  display:flex;
+  justify-content: flex-end;
+  flex: 1 1 0;
+  padding-left: 8px;
+}
+
+.filtered-result-date{
+  font-family: "adobe-clean";
+  font-size: 12px;
+}
+
+.filtered-result-content-type.tutorial {
+  border: 1px solid #5151D3;
+  color:#5151D3;
+  display: inline-flex;
+  border-radius: 4px;
+  padding: 4px 7px;
+  position: relative;
+  line-height: 19px;
+  background: #FAFAFA;
+}
+
+.filtered-result-content-type.documentation {
+  border: 1px solid #0F797D;
+  color: #0F797D;
+  display: inline-flex;
+  border-radius: 4px;
+  padding: 4px 7px;
+  position: relative;
+  line-height: 19px;
+  background: #FAFAFA;
+}
+
+.filtered-result-content-type.community {
+  border: 1px solid #379947;
+  color: #379947;
+  display: inline-flex;
+  border-radius: 4px;
+  padding: 4px 7px;
+  position: relative;
+  line-height: 19px;
+  background: #FAFAFA;
+}
+
+.filtered-result-content-type.events {
+  border: 1px solid #A228AD;
+  color: #A228AD;
+  display: inline-flex;
+  border-radius: 4px;
+  padding: 4px 7px;
+  position: relative;
+  line-height: 19px;
+  background: #FAFAFA;
+}
+
+@media (max-width: 1024px) { 
+  .filtered-result-content {
+    flex-direction: column;
+  }
+  .filtered-result-content .filtered-result-left-container,
+  .filtered-result-content .thumbnail {
+    padding: 0;
+  }
+}
+
+@media (max-width: 600px) { 
+  .filtered-result-content {
+    flex-direction: column;
+  }
+  .filtered-result-content .thumbnail {
+    flex-direction: column;
+    .filtered-result-video img {
+      width: 100%;
+    }
+  }
+
+  .filtered-result-left-container .filtered-result-video,
+  .filtered-result-left-container .filtered-result-video img {
+    margin-top: 10px;
+  } 
+
+}

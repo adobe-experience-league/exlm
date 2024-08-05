@@ -15,23 +15,40 @@ import { htmlToElement } from '../../../scripts/scripts.js';
  * @param {string} params.viewMoreResultsUrl - The URL for the 'View More Results' link.
  * @returns {HTMLElement} The constructed heading element.
  */
-function createHeading({ title, heading, resultCount, resultTotal, viewMoreResultsLabel, viewMoreResultsUrl }) {
-  // Load the CSS for the heading component
+function createHeading({
+  title,
+  heading,
+  resultCount = '',
+  resultTotal = '',
+  viewMoreResultsLabel = '',
+  viewMoreResultsUrl = '',
+}) {
   loadCSS(`${window.hlx.codeBasePath}../blocks/topic-results/heading/heading.css`);
 
-  // Construct and return the heading HTML element using the provided data
   return htmlToElement(`
   <div class="topics-header">
     <div class="topics-header-heading">
-      <span>${title}</span>
-      <h1>${heading}</h1>
+      <h6>${title}</h6>
+      <h2>${heading}</h2>
     </div>
     <div class="topics-header-result">
-      <p>Showing  <span>${resultCount}</span> of <span>${resultTotal}</span></p>
-      <a href="${viewMoreResultsUrl}">${viewMoreResultsLabel}</a>
+      <div class="topics-header-result-count">
+        <p>Showing  <span>${resultCount}</span> of <span>${resultTotal}</span> results</p>
+      </div>
+      <div class="topics-header-result-view-more">
+        <a href="${viewMoreResultsUrl}">${viewMoreResultsLabel}</a>
+      </div>
     </div>
+    
   </div>
 `);
+}
+export function updateHeading(resultTotal, resultCount) {
+  const resultContainer = document.querySelector('.topics-header-result-count');
+
+  if (resultContainer) {
+    resultContainer.innerHTML = `<p>Showing <span>${resultCount}</span> of <span>${resultTotal}</span> results</p>`;
+  }
 }
 
 export default createHeading;
