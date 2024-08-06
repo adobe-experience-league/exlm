@@ -71,43 +71,4 @@
   </sitemap>
   <sitemap>
     <loc>https://experienceleague-stage.adobe.com/zh-hant/sitemap-2.xml</loc>
-  </sitemap>
-
-  <sitemap>
-    <loc>https://experienceleague-stage.adobe.com/legacy-sitemap/sitemap-courses-en.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://experienceleague-stage.adobe.com/legacy-sitemap/sitemap-courses-fr.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://experienceleague-stage.adobe.com/legacy-sitemap/sitemap-courses-de.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://experienceleague-stage.adobe.com/legacy-sitemap/sitemap-courses-es.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://experienceleague-stage.adobe.com/legacy-sitemap/sitemap-courses-it.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://experienceleague-stage.adobe.com/legacy-sitemap/sitemap-courses-nl.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://experienceleague-stage.adobe.com/legacy-sitemap/sitemap-courses-pt-br.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://experienceleague-stage.adobe.com/legacy-sitemap/sitemap-courses-ko.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://experienceleague-stage.adobe.com/legacy-sitemap/sitemap-courses-ja.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://experienceleague-stage.adobe.com/legacy-sitemap/sitemap-courses-sv.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://experienceleague-stage.adobe.com/legacy-sitemap/sitemap-courses-zh-hans.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://experienceleague-stage.adobe.com/legacy-sitemap/sitemap-courses-zh-hant.xml</loc>
-  </sitemap>
-
 </sitemapindex>
