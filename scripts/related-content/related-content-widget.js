@@ -28,7 +28,7 @@ function contentIcon (type) {
         <div class="tooltip-label-wrapper"> 
           <span class="tooltip-label">${loc(info.label)}</span>
         </div>
-        <img src="${window.hlx.codeBasePath}/icons/${info.icon}.svg" />
+        <img src="${window.hlx.codeBasePath}/icons/${info.icon}" />
       </div>
     `));
   }
