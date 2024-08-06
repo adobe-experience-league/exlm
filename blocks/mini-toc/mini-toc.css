@@ -99,7 +99,7 @@
   color: #1e1e1e;
 }
 
-@media (min-width: 600px) {
+@media (width >= 600px) {
   .mini-toc-wrapper .mini-toc h2 {
     display: block;
   }
