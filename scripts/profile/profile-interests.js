@@ -95,7 +95,7 @@ export default async function buildProductCard(element, model) {
   // Add to DOM
   element.appendChild(card);
 
-  const cardDropdown = new Dropdown(content, '', options);
+  const cardDropdown = new Dropdown(content, options[0].value, options);
   cardDropdown.handleOnChange(async (level) => {
     const profileData = await defaultProfileClient.getMergedProfile();
     const { solutionLevels = [] } = profileData;
