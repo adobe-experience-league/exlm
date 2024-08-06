@@ -4,7 +4,10 @@ body.profile {
 
 body.profile .section .product-experience-level-wrapper  ~ .default-content-wrapper p {
   text-align: center;
-  margin-top: 24px;
+}
+
+body.profile .section .product-experience-level-wrapper + .default-content-wrapper {
+  margin-top: 50px;
 }
 
 body.profile .section.profile-rail-section {
@@ -22,18 +25,35 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-
   background-color: var(--non-spectrum-bg);
   border: 1px solid #d5d5d5;
 }
+
+body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) .default-content-wrapper :where(h1,h2,h3,h4,h5,h6) {
+  color: var(--spectrum-gray-900);
+}
+
+body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) .default-content-wrapper :where(h1,h2,h3,h4,h5,h6):first-child {
+  font-size: 12px;
+}
+
 body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) h2,
 body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) h3 {
   margin-top: 12px;
 }
-body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper, .product-experience-level-wrapper) {
+
+body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) .default-content-wrapper > p {
+  line-height: 22px;
+}
+
+body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper) {
   width: 100%;
   padding: 32px 0;
   border-top: 1px solid #d6d6d6;
 }
-body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper):first-child {
+
+body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > div.user-profile-card-wrapper,
+body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > div.product-experience-level-wrapper {
   border-top: 0;
 }
+
 body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper):last-child {
   padding-bottom: 0;
 }
@@ -89,7 +109,7 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-
     padding-top: 40px;
     padding-left: 100px;
   }
-  body.profile .section:nth-child(3) {
+  body.profile .section:nth-child(3):not(.sign-up-flow-section) {
     background-image: url("/icons/solutions/profileDecoration.svg");
     background-repeat: no-repeat;
     padding-top: 60px;

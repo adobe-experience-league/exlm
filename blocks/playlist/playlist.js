@@ -1,5 +1,10 @@
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
-import { htmlToElement, decoratePlaceholders } from '../../scripts/scripts.js';
+import {
+  htmlToElement,
+  decoratePlaceholders,
+  createPlaceholderSpan,
+  fetchLanguagePlaceholders,
+} from '../../scripts/scripts.js';
 import { Playlist, LABELS } from './playlist-utils.js';
 
 /**
@@ -13,15 +18,39 @@ function toTimeInMinutes(seconds) {
   return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
 }
 
+function isSameInteger(a, b) {
+  return parseInt(a, 10) === parseInt(b, 10);
+}
+
 /**
  * Update the query string parameter with the given key and value
  */
 function updateQueryStringParameter(key, value) {
+  if (value < 0) return;
   const url = new URL(window.location.href);
   // do not update if same value
   if (url.searchParams.get(key) === value) return;
-  url.searchParams.set(key, value);
-  window.history.pushState({ [key]: value }, '', url);
+  if (value === undefined || value === null) {
+    url.searchParams.delete(key);
+    window.history.pushState({ [key]: 0 }, '', url);
+  } else {
+    url.searchParams.set(key, value);
+    window.history.pushState({ [key]: value }, '', url);
+  }
+}
+
+function updateVideoIndexParam(activeIndex) {
+  const url = new URL(window.location.href);
+  const currentVideoIndexParam = url.searchParams.get('video');
+  if (isSameInteger(currentVideoIndexParam, activeIndex)) return;
+
+  // if the active index is 0, remove the video query param
+  if (isSameInteger(activeIndex, 0)) {
+    updateQueryStringParameter('video', null);
+  } else {
+    // if the active index is not 0, update the video query param
+    updateQueryStringParameter('video', activeIndex);
+  }
 }
 
 /**
@@ -30,6 +59,10 @@ function updateQueryStringParameter(key, value) {
 function getQueryStringParameter(key) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(key);
+}
+
+function hasQueryStringParameter(key) {
+  return new URLSearchParams(window.location.search).has(key);
 }
 
 /**
@@ -168,20 +201,38 @@ async function getCaptionParagraphs(transcriptUrl) {
       currentParagraph += ` ${content}`;
     }
   });
+  paragraphs.push(currentParagraph);
 
   window.playlistCaptions[transcriptUrl] = paragraphs;
   return paragraphs;
 }
 
+/**
+ * Updates current video transcript
+ * @param {HTMLDetailsElement} transcriptDetail
+ */
 function updateTranscript(transcriptDetail) {
   const transcriptUrl = transcriptDetail.getAttribute('data-playlist-player-info-transcript');
+  const clearTranscript = () => [...transcriptDetail.querySelectorAll('p')].forEach((p) => p.remove());
+  const showTranscriptNotAvailable = () => {
+    clearTranscript();
+    transcriptDetail.append(createPlaceholderSpan(LABELS.transcriptNotAvailable, 'Transcript not available'));
+  };
   transcriptDetail.addEventListener('toggle', (event) => {
     if (event.target.open && transcriptDetail.dataset.ready !== 'true') {
-      getCaptionParagraphs(transcriptUrl).then((paragraphs) => {
-        [...transcriptDetail.querySelectorAll('p')].forEach((p) => p.remove());
-        paragraphs.forEach((paragraph) => transcriptDetail.append(htmlToElement(`<p>${paragraph}</p>`)));
-        transcriptDetail.dataset.ready = 'true';
-      });
+      getCaptionParagraphs(transcriptUrl)
+        .then((paragraphs) => {
+          clearTranscript();
+          if (!paragraphs || !paragraphs.length || !paragraphs.join('').trim()) {
+            showTranscriptNotAvailable();
+          } else paragraphs.forEach((paragraph) => transcriptDetail.append(htmlToElement(`<p>${paragraph}</p>`)));
+        })
+        .catch(() => {
+          showTranscriptNotAvailable();
+        })
+        .finally(() => {
+          transcriptDetail.dataset.ready = 'true';
+        });
     }
   });
 }
@@ -254,7 +305,7 @@ playlist.onVideoChange((videos, vIndex) => {
   el.classList.toggle('active', active);
   if (active && activeStatusChanged) el.parentElement.scrollTop = el.offsetTop - el.clientHeight / 2;
   updatePlayer(playlist);
-  updateQueryStringParameter('video', playlist.getActiveVideoIndex());
+  updateVideoIndexParam(playlist.getActiveVideoIndex());
   updateProgress(vIndex, playlist);
   return true;
 });
@@ -341,10 +392,26 @@ export default function decorate(block) {
   decoratePlaceholders(playlistSection);
   playlist.activateVideoByIndex(activeVideoIndex);
 
-  // // handle browser back within history changes
-  // window.addEventListener('popstate', (event) => {
-  //   if (event.state?.video) {
-  //     playlist.activateVideoByIndex(event.state.video);
-  //   }
-  // });
+  // handle browser back within history changes
+  window.addEventListener('popstate', (event) => {
+    if (event.state?.video) {
+      playlist.activateVideoByIndex(event.state.video);
+    } else if (!event.state) {
+      playlist.activateVideoByIndex(0);
+    }
+  });
+
+  // if the url contains "redirected" query param, show a toast message and remove the query param.
+  if (hasQueryStringParameter('redirected')) {
+    // replace page history to remove the query param
+    updateQueryStringParameter('redirected', null);
+    Promise.allSettled([import('../../scripts/toast/toast.js'), fetchLanguagePlaceholders()]).then(
+      ([toastResult, placeholdersResult]) => {
+        const notice =
+          placeholdersResult.value[LABELS.courseReplacedNotice] ||
+          'The course you visited was migrated to a video playlist for easier access';
+        toastResult.value.sendNotice(notice, 'success');
+      },
+    );
+  }
 }
