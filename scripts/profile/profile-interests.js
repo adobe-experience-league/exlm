@@ -95,16 +95,22 @@ export default async function buildProductCard(element, model) {
   // Add to DOM
   element.appendChild(card);
 
-  const cardDropdown = new Dropdown(content, '', options);
+  const cardDropdown = new Dropdown(content, options[0].value, options);
   cardDropdown.handleOnChange(async (level) => {
     const profileData = await defaultProfileClient.getMergedProfile();
     const { solutionLevels = [] } = profileData;
-    const newSolutionItems = solutionLevels.filter((solution) => !`${solution}`.includes(id));
-    newSolutionItems.push(`${id}:${level}`);
-    defaultProfileClient
-      .updateProfile('solutionLevels', newSolutionItems, true)
-      .then(() => sendNotice(PROFILE_UPDATED))
-      .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+    let defaultSelection = false;
+    solutionLevels.forEach((solution) => {
+      if (solution === `${id}:${level}`) defaultSelection = true;
+    });
+    if (!defaultSelection) {
+      const newSolutionItems = solutionLevels.filter((solution) => !`${solution}`.includes(id));
+      newSolutionItems.push(`${id}:${level}`);
+      defaultProfileClient
+        .updateProfile('solutionLevels', newSolutionItems, true)
+        .then(() => sendNotice(PROFILE_UPDATED))
+        .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+    }
   });
 
   loadJWT()

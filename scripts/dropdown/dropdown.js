@@ -117,6 +117,9 @@ export default class Dropdown {
         if (event.target.value === dropdown.dataset.selected) {
           dropdown.dataset.selected = dropdown.dataset.filterType;
           buttonText = dropdown.dataset.filterType;
+          dropdown.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach((checkbox) => {
+            if (dropdown.dataset.selected === checkbox.value) checkbox.checked = true;
+          });
         } else {
           dropdown.dataset.selected = event.target.value;
           buttonText = event.target.dataset.label;
