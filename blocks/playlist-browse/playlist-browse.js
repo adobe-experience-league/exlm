@@ -1,4 +1,4 @@
-import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
+import { createOptimizedPicture, decorateIcons } from '../../scripts/lib-franklin.js';
 import { createPlaceholderSpan, getPathDetails, htmlToElement } from '../../scripts/scripts.js';
 import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.js';
 
@@ -148,13 +148,8 @@ function writeFiltersToUrl(filters) {
   window.history.pushState({}, '', url);
 }
 
-// Playlist Cards
-const cards = htmlToElement('<div class="playlist-browse-cards"></div>');
-
-let pagination;
-// called when filters change
-const updateCards = (filters) => {
-  // set filter count to show on filter UI
+// update filter count
+function updateCount(filters) {
   const filterButton = filters.filterWrapper.querySelectorAll('.playlist-browse-filter-button');
   filterButton.forEach((button) => {
     const filterName = button.classList[1];
@@ -163,38 +158,40 @@ const updateCards = (filters) => {
     const filterCount = filters.filters[filterName].length;
     if (filterCount) {
       span.innerHTML = `${legend} (${filterCount})`;
-    } else {
-      span.innerHTML = `${legend}`;
     }
   });
+}
 
-  // const filterCount = Object.values(filters.filters).flat().length;
-  // if (filterCount) {
-  //   filterButton.dataset.filterCount = filterCount;
-  // } else {
-  //   delete filterButton.dataset.filterCount;
-  // }
+// add filter pills
+function updateFilterPills(filters) {
+  const filterPills = filters.block.querySelector('.filter-pill-container');
+  writeFiltersToUrl(filters);
+  filterPills.innerHTML = '';
+  Object.entries(filters.filters).forEach(([legend, filterValues]) => {
+    filterValues.forEach((value) => {
+      const pill = htmlToElement(`
+        <button class="filter-pill" data-value="${value}" data-filter="${legend}">
+          <span>${value}</span>
+          <span class="icon icon-close"></span>
+        </button>`);
+      filterPills.append(pill);
+      decorateIcons(pill);
+      // remove filter when pill is clicked
+      pill.addEventListener('click', () => {
+        filters.filters[legend] = filters.filters[legend].filter((v) => v !== value);
+        filters.onFilterChange();
+      });
+    });
+  });
+}
 
-  // add filter pills
+// Playlist Cards
+const cards = htmlToElement('<div class="playlist-browse-cards"></div>');
+let pagination;
 
-  // const filterPills = filterWrapper.querySelectorAll('.filter-pill');
-  // filterPills.forEach((pill) => pill.remove());
-  // Object.entries(filters.filters).forEach(([filterName, filterValues]) => {
-  //   filterValues.forEach((value) => {
-  //     const pill = htmlToElement(`
-  //     <button class="filter-pill" data-value="${value}"  data-filter="${filterName}">
-  //       <span>${value}</span>
-  //       <span class="icon icon-close"></span>
-  //     </button>`);
-  //     decorateIcons(pill);
-  //     filterWrapper.append(pill);
-  //     pill.addEventListener('click', (event) => {
-  //       const { filter, value } = event.target.dataset;
-  //       filters.filters[filter] = filters.filters[filter].filter((v) => v !== value);
-  //       filters.onFilterChange();
-  //     });
-  //   });
-  // });
+// called when filters change
+const updateCards = async (filters) => {
+  updateFilterPills(filters);
 
   // reset pagination and cards
   if (pagination) {
@@ -251,17 +248,23 @@ const updateCards = (filters) => {
  */
 
 class Filter {
-  constructor({ filters, onFilterChange, onClearAll, labels: { clearAll, filter }, filterWrapper }) {
+  constructor({ filters, onFilterChange, onClearAll, labels: { clearAll, filter }, block }) {
     this.filters = filters;
     this.onFilterChange = onFilterChange;
     this.onClearAll = onClearAll;
     this.labels = { clearAll, filter };
-    this.filterWrapper = filterWrapper;
+    this.block = block;
     this.updateUI();
   }
 
   updateUI = () => {
     this.filters = readFiltersFromUrl();
+    this.filterContainer = htmlToElement('<div class="playlist-filter-container"></div>');
+    this.filterPill = htmlToElement('<div class="filter-pill-container"></div>');
+    this.filterWrapper = htmlToElement(
+      '<div class="playlist-filter-wrapper"><label class="playlist-filter-label">Filters</label></div>',
+    );
+
     filterOptions.forEach(({ legend, filterName }) => {
       const panelContent = htmlToElement(`<div></div>`);
       // load filter options
@@ -282,7 +285,11 @@ class Filter {
           this.onFilterChange();
         },
       });
+
       this.filterWrapper.append(filterPanel);
+      this.filterContainer.append(this.filterWrapper);
+      this.filterContainer.append(this.filterPill);
+      this.block.append(this.filterContainer);
 
       getAllPossibleFilterValues(filterName).then((filterValues) => {
         filterValues.forEach((filterValue) => {
@@ -296,6 +303,12 @@ class Filter {
       });
     });
   };
+
+  clearAll = () => {
+    this.filters = {};
+    this.onClearAll();
+    this.updateUI();
+  };
 }
 
 /**
@@ -305,27 +318,28 @@ export default function decorate(block) {
   decoratePlaylistBrowseMarquee(block);
 
   // create the filter UI
-  const filterContainer = htmlToElement('<div class="playlist-filter-container"></div>');
-  const label = htmlToElement(`<label class="playlist-filter-label">Filters</label>`);
-  const filterWrapper = htmlToElement('<div class="playlist-filter-wrapper"></div>');
-  filterWrapper.append(label);
-
   const filters = new Filter({
     filters: {},
-    onFilterChange: () => updateCards(filters),
+    onFilterChange: () => {
+      updateFilterPills(filters);
+      updateCount(filters);
+      updateCards(filters);
+      decorateIcons(filters);
+    },
     onClearAll: () => {
-      this.filters = {};
+      filters.filters = {};
     },
     labels: {
       clearAll: 'Clear All',
       filter: 'Filter',
     },
-    filterWrapper,
+    block,
   });
 
-  filterContainer.append(filterWrapper);
-  block.append(filterContainer);
+  updateCount(filters);
+  updateFilterPills(filters);
+  updateCards(filters);
+
   block.append(htmlToElement('<br style="clear:both" />'));
   block.append(cards);
-  updateCards(filters);
 }

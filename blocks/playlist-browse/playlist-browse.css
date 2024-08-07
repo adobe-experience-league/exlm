@@ -183,6 +183,12 @@
 
 
 /* filter pill */
+.filter-pill-container {   
+        display: inline-flex;
+        flex-flow: row wrap;
+        margin-top: 1em;
+}
+
 .filter-pill {
     border-radius: 4px;
     background: var(--background-color);
@@ -200,7 +206,7 @@
     position: relative;
     margin-top: 0;
 
-    .icon-close{
+    .icon-close {
         width: 13px;
         height: auto;
         position: absolute;
@@ -210,8 +216,18 @@
 
         svg{
             fill: var(--spectrum-gray-500);
+            height: 13px;
+            width: 13px;
         }
     }
+}
+
+button.filter-pill:hover,
+button.filter-pill:focus {
+  background-color: var(--background-color);
+  color: var(--spectrum-gray-500);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 
