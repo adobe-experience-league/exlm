@@ -143,7 +143,7 @@ export function newPagination({
   ofLabel = 'of',
   currentPage = 1,
   items = [],
-  itemsPerPage = 18,
+  itemsPerPage = 12,
   onPageChange,
 }) {
   const numberOfPages = Math.ceil(items.length / itemsPerPage);

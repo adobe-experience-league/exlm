@@ -419,6 +419,12 @@ button.filter-pill:focus
     }
 }
 
+@media (width >= 1200px) {
+    .playlist-browse-cards {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+}
+
 .playlist-browse-card {
     margin: 0 !important;
     display: grid;
