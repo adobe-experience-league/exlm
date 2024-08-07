@@ -148,7 +148,7 @@
 .filter-option{    
     line-height: 2em;
 
-    label{
+    label {
         position: relative;
         cursor: pointer;
         font-size: var(--spectrum-body-size-s);
@@ -159,7 +159,7 @@
         box-sizing: border-box;
 
         .icon-checked {
-            display: none;
+            display: none; 
         }
 
         .title {
@@ -168,24 +168,23 @@
             font-size: var(--spectrum-body-size-s);
             text-align: left;
             color: var(--spectrum-gray-800);
-        }
-    }
-    
-    input:checked+label .icon-checked {
-        font-size: var(--spectrum-body-size-s);
-        color: var(--non-spectrum-grey-333);
-        text-align: center;
-        line-height: 18px;
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(calc(50% - 12px));
-        width: 12px;
-        height: 12px;
-        box-sizing: border-box;
-        display: inline-block;
-    }
+        }  
+}
   }   
+}
+.filter-option input:checked+label .icon-checked {
+    font-size: var(--spectrum-body-size-s);
+    color: var(--non-spectrum-grey-333);
+    text-align: center;
+    line-height: 18px;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(calc(50% - 12px));
+    width: 12px;
+    height: 12px;
+    box-sizing: border-box;
+    display: inline-block;
 }
 
 
@@ -416,7 +415,7 @@ button.filter-pill:focus
 
 @media (width >= 900px) {
     .playlist-browse-cards {
-        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
     }
 }
 

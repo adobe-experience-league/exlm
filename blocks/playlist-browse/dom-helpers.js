@@ -55,7 +55,14 @@ export function newMultiSelect({ options = [], onSelect }) {
     onSelect(values);
   });
 
-  return { fieldset, addOption };
+  const onClear = () => {
+    values = [];
+    fieldset.querySelectorAll('input').forEach((input) => {
+      input.checked = false;
+    });
+  };
+
+  return { fieldset, addOption, onClear };
 }
 
 /**

@@ -14,6 +14,7 @@ const filterOptions = [
   { legend: 'Role', filterName: 'role' },
   { legend: 'Experience Level', filterName: 'level' },
 ];
+const multiSelects = [];
 
 /**
  * Creates the marquee for the playlist browse page.
@@ -295,13 +296,14 @@ class Filter {
       const span = filterPanel.querySelector('span');
       span.classList.add('button-span');
 
-      const { fieldset, addOption } = newMultiSelect({
+      const { fieldset, addOption, onClear } = newMultiSelect({
         legend,
         onSelect: (selectedValues) => {
           this.filters[filterName] = selectedValues;
           this.onFilterChange();
         },
       });
+      multiSelects.push(onClear);
 
       this.filterWrapper.append(filterPanel);
       this.filterWrapper.append(this.clearButton);
@@ -338,11 +340,8 @@ class Filter {
       Object.keys(this.filters).forEach((key) => {
         this.filters[key] = [];
       });
-      const unselectedOption = this.filterWrapper.querySelectorAll(
-        ':scope > div > div > div > fieldset > div > input:checked',
-      );
-      unselectedOption.forEach((option) => {
-        option.checked = false;
+      multiSelects.forEach((onClear) => {
+        onClear();
       });
       this.onClearAll();
     });
