@@ -133,65 +133,6 @@ function readFiltersFromUrl() {
   return { solution, role, level } || [];
 }
 
-/**
- * @param {Filters} filters
- * @returns {void}
- */
-function writeFiltersToUrl(filters) {
-  const url = new URL(window.location.href);
-  url.searchParams.delete('solution');
-  url.searchParams.delete('role');
-  url.searchParams.delete('level');
-  filters.filters.solution.forEach((s) => url.searchParams.append('solution', s));
-  filters.filters.role.forEach((r) => url.searchParams.append('role', r));
-  filters.filters.level.forEach((l) => url.searchParams.append('level', l));
-  window.history.pushState({}, '', url);
-}
-
-// update filter count
-const updateCount = (filters) => {
-  const filterButton = filters.filterWrapper.querySelectorAll('.playlist-browse-filter-button');
-  filterButton.forEach((button) => {
-    const filterName = button.classList[1];
-    const legend = button.classList[2];
-    const span = button.querySelector('.button-span');
-    const filterCount = filters.filters[filterName].length;
-    if (filterCount) {
-      span.innerHTML = `${legend} (${filterCount})`;
-    } else {
-      span.innerHTML = `${legend}`;
-    }
-  });
-};
-
-// add filter pills
-const updateFilterPills = (filters) => {
-  const filterPills = filters.block.querySelector('.filter-pill-container');
-  writeFiltersToUrl(filters);
-  filterPills.innerHTML = '';
-  Object.entries(filters.filters).forEach(([legend, filterValues]) => {
-    filterValues.forEach((value) => {
-      const pill = htmlToElement(`
-        <button class="filter-pill" data-value="${value}" data-filter="${legend}">
-          <span>${value}</span>
-          <span class="icon icon-close"></span>
-        </button>`);
-      filterPills.append(pill);
-      decorateIcons(pill);
-      updateCount(filters);
-      // remove filter when pill is clicked
-      pill.addEventListener('click', () => {
-        filters.filters[legend] = filters.filters[legend].filter((v) => v !== value);
-        const unselectedOption = filters.filterWrapper.querySelector(
-          `:scope > div > div > div > fieldset > div > input[value="${value}"]`,
-        );
-        unselectedOption.checked = false;
-        filters.onFilterChange();
-      });
-    });
-  });
-};
-
 // Playlist Cards
 const cards = htmlToElement('<div class="playlist-browse-cards"></div>');
 let pagination;
@@ -210,9 +151,6 @@ const updateCards = (filters) => {
   }
 
   playlistsPromise.then((playlists) => {
-    // store filters when switching pages
-    writeFiltersToUrl(filters);
-
     // add filtered cards and pagination for them.
     const filteredPlaylists = filterPlaylists(playlists.data, filters);
     const onPageChange = (page, ps) => {
@@ -253,8 +191,16 @@ const updateCards = (filters) => {
  */
 
 class Filter {
-  constructor({ filters, onFilterChange, onClearAll, labels: { clearAll, filter }, block }) {
-    this.filters = filters;
+  constructor({ onFilterChange, onClearAll, labels: { clearAll, filter }, block }) {
+    const thisFilter = this;
+    const filters = readFiltersFromUrl();
+    this.filters = new Proxy(filters, {
+      set(target, prop, val) {
+        target[prop] = val;
+        // this is where change to filters should be reacted to.
+        thisFilter.updateAll();
+      },
+    });
     this.onFilterChange = onFilterChange;
     this.onClearAll = onClearAll;
     this.labels = { clearAll, filter };
@@ -262,9 +208,65 @@ class Filter {
     this.updateUI();
   }
 
+  updateAll() {
+    this.updateFilterPills();
+    this.writeFiltersToUrl(this);
+    this.updateCount();
+  }
+
+  /**
+   * @param {Filters} filters
+   * @returns {void}
+   */
+  writeFiltersToUrl() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('solution');
+    url.searchParams.delete('role');
+    url.searchParams.delete('level');
+    this.filters.solution.forEach((s) => url.searchParams.append('solution', s));
+    this.filters.role.forEach((r) => url.searchParams.append('role', r));
+    this.filters.level.forEach((l) => url.searchParams.append('level', l));
+    window.history.pushState({}, '', url);
+  }
+
+  // update filter count
+  updateCount() {
+    const filterButton = this.filterWrapper.querySelectorAll('.playlist-browse-filter-button');
+    filterButton.forEach((button) => {
+      const filterName = button.classList[1];
+      const span = button.querySelector('.count-span');
+      const filterCount = this.filters[filterName].length;
+      span.innerHTML = filterCount ? ` (${filterCount})` : '';
+    });
+  }
+
+  // add filter pills
+  updateFilterPills = () => {
+    const filterPills = this.block.querySelector('.filter-pill-container');
+
+    filterPills.innerHTML = '';
+    Object.entries(this.filters).forEach(([legend, filterValues]) => {
+      filterValues.forEach((value) => {
+        const pill = htmlToElement(`
+          <button class="filter-pill" data-value="${value}" data-filter="${legend}">
+            <span>${value}</span>
+            <span class="icon icon-close"></span>
+          </button>`);
+        filterPills.append(pill);
+        // remove filter when pill is clicked
+        pill.addEventListener('click', () => {
+          this.filters[legend] = this.filters[legend].filter((v) => v !== value);
+          const unselectedOption = this.filterWrapper.querySelector(
+            `:scope > div > div > div > fieldset > div > input[value="${value}"]`,
+          );
+          unselectedOption.checked = false;
+        });
+      });
+    });
+    decorateIcons(filterPills);
+  };
+
   updateUI = () => {
-    // ccreate the filter UI
-    this.filters = readFiltersFromUrl();
     this.filterContainer = htmlToElement('<div class="playlist-filter-container"></div>');
     this.filterPill = htmlToElement('<div class="filter-pill-container"></div>');
     this.filterWrapper = htmlToElement(
@@ -272,11 +274,15 @@ class Filter {
     );
     this.clearButton = htmlToElement(`<button class="filters-clear">Clear filters</button>`);
 
-    filterOptions.forEach(({ legend, filterName }) => {
+    const filterOptionsPromises = filterOptions.map(({ legend, filterName }) => {
       const panelContent = htmlToElement(`<div></div>`);
+      const buttonLabel = document.createElement('span');
+      buttonLabel.append(createPlaceholderSpan(filterName, legend));
+      buttonLabel.append(htmlToElement(`<span class="count-span"></span>`));
+
       // load filter options
       const filterPanel = newShowHidePanel({
-        buttonLabel: createPlaceholderSpan(filterName, legend),
+        buttonLabel,
         buttonClass: `playlist-browse-filter-button ${filterName} ${legend}`,
         hiddenPanelClass: 'playlist-browse-filter-hidden',
         panelContent,
@@ -301,7 +307,7 @@ class Filter {
       this.filterContainer.append(this.filterPill);
       this.block.append(this.filterContainer);
 
-      getAllPossibleFilterValues(filterName).then((filterValues) => {
+      return getAllPossibleFilterValues(filterName).then((filterValues) => {
         filterValues.forEach((filterValue) => {
           addOption({
             label: filterValue,
@@ -314,6 +320,10 @@ class Filter {
       });
     });
 
+    Promise.allSettled(filterOptionsPromises).then(() => {
+      this.updateAll();
+    });
+
     // add event listener to clear filters
     const clearButton = this.filterWrapper.querySelector('.filters-clear');
     clearButton.addEventListener('click', () => {
@@ -322,7 +332,7 @@ class Filter {
       url.searchParams.delete('role');
       url.searchParams.delete('level');
       window.history.pushState({}, '', url);
-      this.filters = { solution: [], role: [], level: [] };
+      Object.assign(this.filters, { solution: [], role: [], level: [] });
       const unselectedOption = this.filterWrapper.querySelectorAll(
         ':scope > div > div > div > fieldset > div > input:checked',
       );
@@ -342,16 +352,11 @@ export default async function decorate(block) {
 
   // create the filter UI
   const filters = new Filter({
-    filters: {},
     onFilterChange: () => {
-      updateFilterPills(filters);
-      updateCount(filters);
       updateCards(filters);
     },
     onClearAll: () => {
       updateCards(filters);
-      updateFilterPills(filters);
-      updateCount(filters);
     },
     labels: {
       clearAll: 'Clear All',
@@ -361,8 +366,6 @@ export default async function decorate(block) {
   });
 
   updateCards(filters);
-  updateCount(filters);
-  updateFilterPills(filters);
 
   block.append(htmlToElement('<br style="clear:both" />'));
   block.append(cards);
