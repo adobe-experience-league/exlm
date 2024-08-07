@@ -30,6 +30,7 @@ async function fetchIndustryOptions() {
 }
 
 export default async function decorate(block) {
+  const isSignedIn = await isSignedInUser();
   const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
 
   const roleCardsData = [
@@ -110,7 +111,7 @@ export default async function decorate(block) {
 
   block.textContent = '';
   block.append(roleAndIndustryDiv);
-  const isSignedIn = await isSignedInUser();
+
   if (isSignedIn) {
     const industryOptions = await fetchIndustryOptions();
     const updatedIndustryOptions = industryOptions.map((industry) => ({

@@ -12,9 +12,7 @@ const fetchExlProfileData = async () => {
   return { profileData, ppsProfileData };
 };
 
-const fetchCommunityProfileData = async () => {
-  return await defaultProfileClient.fetchCommunityProfileDetails();
-};
+const fetchCommunityProfileData = async () => defaultProfileClient.fetchCommunityProfileDetails();
 
 const fetchProfileData = async (profileFlags) => {
   const isSignedIn = await isSignedInUser();
@@ -23,9 +21,14 @@ const fetchProfileData = async (profileFlags) => {
   }
 
   const exlProfilePromise = profileFlags.includes(EXL_PROFILE) ? fetchExlProfileData() : Promise.resolve({});
-  const communityProfilePromise = profileFlags.includes(COMMUNITY_PROFILE) ? fetchCommunityProfileData() : Promise.resolve({});
+  const communityProfilePromise = profileFlags.includes(COMMUNITY_PROFILE)
+    ? fetchCommunityProfileData()
+    : Promise.resolve({});
 
-  const [{ profileData, ppsProfileData }, communityProfileDetails] = await Promise.all([exlProfilePromise, communityProfilePromise]);
+  const [{ profileData, ppsProfileData }, communityProfileDetails] = await Promise.all([
+    exlProfilePromise,
+    communityProfilePromise,
+  ]);
 
   return {
     ...(profileFlags.includes(EXL_PROFILE) && {
@@ -46,12 +49,7 @@ const fetchProfileData = async (profileFlags) => {
 };
 
 const generateAdobeAccountDOM = (profileData, placeholders, adobeAccountURL) => {
-  const {
-    adobeDisplayName,
-    email,
-    profilePicture,
-    company,
-  } = profileData;
+  const { adobeDisplayName, email, profilePicture, company } = profileData;
 
   return `<div class="profile-row adobe-account">
     <div class="profile-card-header adobe-account-header">
@@ -83,11 +81,7 @@ const generateAdobeAccountDOM = (profileData, placeholders, adobeAccountURL) => 
 };
 
 const generateCommunityAccountDOM = (profileData, placeholders, communityAccountURL) => {
-  const {
-    communityUserName,
-    communityUserTitle,
-    communityUserLocation,
-  } = profileData;
+  const { communityUserName, communityUserTitle, communityUserLocation } = profileData;
 
   return `<div class="profile-row community-account">
     <div class="profile-card-header community-account-header">
@@ -122,11 +116,7 @@ const generateCommunityAccountDOM = (profileData, placeholders, communityAccount
 };
 
 const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
-  const {
-    roles,
-    industry,
-    interests,
-  } = profileData;
+  const { roles, industry, interests } = profileData;
 
   return `<div class="profile-row additional-data">
     <div class="profile-card-body additional-data-body">
@@ -140,8 +130,7 @@ const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
         }
         ${
           industry &&
-          ((Array.isArray(industry) && industry.length > 0) ||
-            (typeof industry === 'string' && industry.trim() !== ''))
+          ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''))
             ? `<div class="user-industry"><span class="heading">${
                 placeholders?.myIndustry || 'My Industry'
               }: </span><span>${industry}</span></div>`
@@ -161,11 +150,13 @@ const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
   </div>`;
 };
 
+// eslint-disable-next-line import/prefer-default-export
 export const generateProfileDOM = async (profileFlags) => {
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
   }
 
