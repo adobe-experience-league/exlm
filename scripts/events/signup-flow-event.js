@@ -12,7 +12,7 @@ export default async function showSignupModal() {
   let configDateString = getMetadata('signup-flow-config-date');
 
   // Temporary fix for the case where the config date is not present in the metadata of a page
-  if(!configDateString) {
+  if (!configDateString) {
     const { signUpFlowConfigDate } = getConfig();
     configDateString = signUpFlowConfigDate;
   }

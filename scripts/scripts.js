@@ -778,7 +778,7 @@ export function getConfig() {
   else if (isStage)
     launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
-  const signUpFlowConfigDate = "2024-08-05T11:12:40.762Z"
+  const signUpFlowConfigDate = '2024-08-05T11:12:40.762Z';
 
   window.exlm = window.exlm || {};
   window.exlm.config = {
