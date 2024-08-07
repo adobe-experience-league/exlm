@@ -199,6 +199,8 @@ class Filter {
         target[prop] = val;
         // this is where change to filters should be reacted to.
         thisFilter.updateAll();
+        // the assignment was successful, see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/set
+        return true;
       },
     });
     this.onFilterChange = onFilterChange;
@@ -332,7 +334,10 @@ class Filter {
       url.searchParams.delete('role');
       url.searchParams.delete('level');
       window.history.pushState({}, '', url);
-      Object.assign(this.filters, { solution: [], role: [], level: [] });
+      // Need this to allow proxy to trigger change
+      Object.keys(this.filters).forEach((key) => {
+        this.filters[key] = [];
+      });
       const unselectedOption = this.filterWrapper.querySelectorAll(
         ':scope > div > div > div > fieldset > div > input:checked',
       );
