@@ -3,12 +3,20 @@ import { getMetadata } from '../lib-franklin.js';
 import initializeSignupFlow from '../signup-flow/signup-flow.js';
 // eslint-disable-next-line import/no-cycle
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
+import { getConfig } from '../scripts.js';
 
 export default async function showSignupModal() {
   if (!isSignedInUser()) {
     return;
   }
-  const configDateString = getMetadata('signup-flow-config-date');
+  let configDateString = getMetadata('signup-flow-config-date');
+
+  // Temporary fix for the case where the config date is not present in the metadata of a page
+  if(!configDateString) {
+    const { signUpFlowConfigDate } = getConfig();
+    configDateString = signUpFlowConfigDate;
+  }
+
   const configDate = new Date(configDateString);
   const profileData = await defaultProfileClient.getMergedProfile();
   const profileTimeStamp = new Date(profileData.timestamp);
