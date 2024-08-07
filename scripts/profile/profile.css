@@ -110,6 +110,26 @@
     color: var(--spectrum-gray-800);
 }
 
+main:has(.profile-rail-section[data-section-status="initialized"]) .user-profile-card-container[data-section-status="loaded"], main:has(.profile-tab-section[data-section-status="initialized"]) .user-profile-card-container[data-section-status="loaded"] {
+    min-height: 100vh;
+}
+
+.user-profile-card-box .community-account .shimmer-placeholder {
+    min-height: 64px;
+}
+
+.user-profile-card-box .community-account .shimmer-placeholder-isloading {
+    flex: 0 0 330px;
+}
+
+.user-profile-card-box .community-account .shimmer-placeholder .shimmer-placeholder-image {
+    height: 64px;
+}
+
+.user-profile-card-box .community-account .shimmer-placeholder .shimmer-placeholder-content {
+    display: none;
+}
+
 @media (min-width: 600px) {
     body.profile .profile-card-header {
         flex-direction: column;
