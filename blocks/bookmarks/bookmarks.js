@@ -72,7 +72,17 @@ async function renderCards({ pgNum, block }) {
   });
   const cardResponse = await Promise.all(bookmarkPromises);
 
-  const cardsData = cardResponse.filter(Boolean).map((card) => {
+  const cardsData = cardResponse.map((card, index) => {
+    if (!card) {
+      const data = {
+        id: bookmarkIds[index],
+        description: 'There has been an error retrieving this bookmarked content.',
+        title: '',
+        failedToLoad: true,
+      };
+      CARDS_MODEL[bookmarkIds[index]] = data;
+      return data;
+    }
     const parsedCard = parse(card);
     if (parsedCard.id && !CARDS_MODEL[parsedCard.id]) {
       CARDS_MODEL[parsedCard.id] = parsedCard;
