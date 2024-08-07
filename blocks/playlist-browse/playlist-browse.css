@@ -23,7 +23,7 @@
 }
 
 .playlist-browse {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
@@ -114,14 +114,15 @@
   .filter-dropdown {
    position: relative;
    display: block;
+
   }
  
 
 @media (min-width: 900px) {
     .playlist-filter-wrapper {
       display: grid;
-      grid-template-areas: "label solution role level";
-      grid-template-columns: auto 1fr 1fr 1fr;
+      grid-template-areas: "label solution role level clear";
+      grid-template-columns: auto 1fr 1fr 1fr auto;
       align-items: center;
       gap: 2em;
     }
@@ -138,22 +139,29 @@
   .filter-dropdown {
    position: relative;
    display: block;
+
+   input {
+display: none;
+}
+
+.filter-option{
+    line-height: 2rem;
+}
+
+
   }
 
-.playlist-browse-filter {
+/* .playlist-browse-filter {
     position: relative;
     margin: 1em 0;
     float: right;
     width: 100%;
 
-    .filter-option{
-        margin-bottom: 0.25rem;
-    }
-/* 
+
     input {
         display: none;        
-    } */
-}
+    }
+} */
 
 .playlist-browse-filter-solution {
    grid-area: solution;
@@ -166,21 +174,6 @@
  .playlist-browse-filter-level {
     grid-area: level;
  }
-
-/* @media (width >= 600px) {
-    .playlist-browse-filter {
-        width: 50%;
-    }
-}
-
-@media (width >= 900px) {
-    .playlist-browse-filter {
-       wi
-    } */
-/*  */
-
-
-
 
 /* filter pill */
 .filter-pill-container {   
@@ -223,7 +216,8 @@
 }
 
 button.filter-pill:hover,
-button.filter-pill:focus {
+button.filter-pill:focus
+ {
   background-color: var(--background-color);
   color: var(--spectrum-gray-500);
   text-decoration: underline;
@@ -235,7 +229,6 @@ button.filter-pill:focus {
     margin: 0;
     padding: 0.25rem 1rem;
     border: solid #dbdbdb 1px;
-    font-size: 1rem;
     width: 100%;
     text-align: left;
     background: none;
@@ -357,7 +350,30 @@ button.filter-pill:focus {
 
 }
 
+.filters-clear {
+    grid-area: clear;
+    font-weight: 500;
+    font-size: var(--spectrum-body-size-s);
+    text-align: left;
+    color: var(--spectrum-gray-500);
+    background-color: transparent;
+    display: inline-block;
+    width: fit-content;
+    padding: 12px 10px 12px 0;
+    margin: 0;
+    line-height: 17px;
+    border-radius: 0;  
 
+
+    
+}
+.filters-clear:hover, .filters-clear:focus {
+    background-color: transparent !important;
+    cursor: pointer;
+}
+
+
+/* cards  */
 .playlist-browse-cards {
     display: grid;
     grid-template-columns: 1fr;
@@ -372,7 +388,7 @@ button.filter-pill:focus {
 
 @media (width >= 900px) {
     .playlist-browse-cards {
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
     }
 }
 

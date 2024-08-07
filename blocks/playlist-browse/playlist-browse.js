@@ -149,21 +149,23 @@ function writeFiltersToUrl(filters) {
 }
 
 // update filter count
-function updateCount(filters) {
+const updateCount = (filters) => {
   const filterButton = filters.filterWrapper.querySelectorAll('.playlist-browse-filter-button');
   filterButton.forEach((button) => {
     const filterName = button.classList[1];
     const legend = button.classList[2];
-    const span = button.querySelector('span');
+    const span = button.querySelector('.button-span');
     const filterCount = filters.filters[filterName].length;
     if (filterCount) {
       span.innerHTML = `${legend} (${filterCount})`;
+    } else {
+      span.innerHTML = `${legend}`;
     }
   });
-}
+};
 
 // add filter pills
-function updateFilterPills(filters) {
+const updateFilterPills = (filters) => {
   const filterPills = filters.block.querySelector('.filter-pill-container');
   writeFiltersToUrl(filters);
   filterPills.innerHTML = '';
@@ -176,23 +178,26 @@ function updateFilterPills(filters) {
         </button>`);
       filterPills.append(pill);
       decorateIcons(pill);
+      updateCount(filters);
       // remove filter when pill is clicked
       pill.addEventListener('click', () => {
         filters.filters[legend] = filters.filters[legend].filter((v) => v !== value);
+        const unselectedOption = filters.filterWrapper.querySelector(
+          `:scope > div > div > div > fieldset > div > input[value="${value}"]`,
+        );
+        unselectedOption.checked = false;
         filters.onFilterChange();
       });
     });
   });
-}
+};
 
 // Playlist Cards
 const cards = htmlToElement('<div class="playlist-browse-cards"></div>');
 let pagination;
 
 // called when filters change
-const updateCards = async (filters) => {
-  updateFilterPills(filters);
-
+const updateCards = (filters) => {
   // reset pagination and cards
   if (pagination) {
     pagination.remove();
@@ -258,12 +263,14 @@ class Filter {
   }
 
   updateUI = () => {
+    // ccreate the filter UI
     this.filters = readFiltersFromUrl();
     this.filterContainer = htmlToElement('<div class="playlist-filter-container"></div>');
     this.filterPill = htmlToElement('<div class="filter-pill-container"></div>');
     this.filterWrapper = htmlToElement(
       '<div class="playlist-filter-wrapper"><label class="playlist-filter-label">Filters</label></div>',
     );
+    this.clearButton = htmlToElement(`<button class="filters-clear">Clear Filters</button>`);
 
     filterOptions.forEach(({ legend, filterName }) => {
       const panelContent = htmlToElement(`<div></div>`);
@@ -277,6 +284,8 @@ class Filter {
         expanded: false,
       });
       filterPanel.classList.add(`playlist-browse-filter-${filterName}`, 'filter-dropdown');
+      const span = filterPanel.querySelector('span');
+      span.classList.add('button-span');
 
       const { fieldset, addOption } = newMultiSelect({
         legend,
@@ -287,6 +296,7 @@ class Filter {
       });
 
       this.filterWrapper.append(filterPanel);
+      this.filterWrapper.append(this.clearButton);
       this.filterContainer.append(this.filterWrapper);
       this.filterContainer.append(this.filterPill);
       this.block.append(this.filterContainer);
@@ -302,19 +312,25 @@ class Filter {
         panelContent.append(fieldset);
       });
     });
-  };
 
-  clearAll = () => {
-    this.filters = {};
-    this.onClearAll();
-    this.updateUI();
+    // add event listener to clear filters
+    const clearButton = this.filterWrapper.querySelector('.filters-clear');
+    clearButton.addEventListener('click', () => {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('solution');
+      url.searchParams.delete('role');
+      url.searchParams.delete('level');
+      window.history.pushState({}, '', url);
+      this.filters = { solution: [], role: [], level: [] };
+      this.onClearAll();
+    });
   };
 }
 
 /**
  * @param {HTMLElement} block
  */
-export default function decorate(block) {
+export default async function decorate(block) {
   decoratePlaylistBrowseMarquee(block);
 
   // create the filter UI
@@ -324,10 +340,11 @@ export default function decorate(block) {
       updateFilterPills(filters);
       updateCount(filters);
       updateCards(filters);
-      decorateIcons(filters);
     },
     onClearAll: () => {
-      filters.filters = {};
+      updateCards(filters);
+      updateFilterPills(filters);
+      updateCount(filters);
     },
     labels: {
       clearAll: 'Clear All',
@@ -336,9 +353,9 @@ export default function decorate(block) {
     block,
   });
 
+  updateCards(filters);
   updateCount(filters);
   updateFilterPills(filters);
-  updateCards(filters);
 
   block.append(htmlToElement('<br style="clear:both" />'));
   block.append(cards);
