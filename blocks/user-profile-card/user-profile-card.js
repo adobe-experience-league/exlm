@@ -8,10 +8,10 @@ function lazyLoadCommunityAccountDOM(block) {
   generateProfileDOM(profileFlags).then(({ communityAccountDOM }) => {
     const communityAccountElement = block.querySelector('.profile-row.community-account');
     if (communityAccountElement) {
-       const communityProfileFragment = document.createRange().createContextualFragment(communityAccountDOM);
+      const communityProfileFragment = document.createRange().createContextualFragment(communityAccountDOM);
       communityAccountElement.replaceWith(communityProfileFragment);
     }
-  })
+  });
 }
 
 export default async function decorate(block) {
