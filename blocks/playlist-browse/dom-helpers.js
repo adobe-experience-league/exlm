@@ -33,7 +33,10 @@ export function newMultiSelect({ options = [], onSelect }) {
     htmlToElement(` 
       <div class="filter-option">    
           <input type="checkbox"  id="${value}"value="${value}" ${checked ? 'checked' : ''} />
-          <label for="${value}" title="${label}">${label}</label>  
+          <label for="${value}" title="${label}">
+            <span class="title">${label}</span>
+            <span class="icon icon-checked"></span>
+          </label>  
       </div>     
       `);
   const fieldset = htmlToElement(`<fieldset></fieldset>`);

@@ -270,7 +270,7 @@ class Filter {
     this.filterWrapper = htmlToElement(
       '<div class="playlist-filter-wrapper"><label class="playlist-filter-label">Filters</label></div>',
     );
-    this.clearButton = htmlToElement(`<button class="filters-clear">Clear Filters</button>`);
+    this.clearButton = htmlToElement(`<button class="filters-clear">Clear filters</button>`);
 
     filterOptions.forEach(({ legend, filterName }) => {
       const panelContent = htmlToElement(`<div></div>`);
@@ -310,6 +310,7 @@ class Filter {
           });
         });
         panelContent.append(fieldset);
+        decorateIcons(fieldset);
       });
     });
 
@@ -322,6 +323,12 @@ class Filter {
       url.searchParams.delete('level');
       window.history.pushState({}, '', url);
       this.filters = { solution: [], role: [], level: [] };
+      const unselectedOption = this.filterWrapper.querySelectorAll(
+        ':scope > div > div > div > fieldset > div > input:checked',
+      );
+      unselectedOption.forEach((option) => {
+        option.checked = false;
+      });
       this.onClearAll();
     });
   };
