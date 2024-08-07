@@ -284,7 +284,7 @@ function addProfileRail(main) {
   const profileRailSection = document.createElement('div');
   profileRailSection.classList.add('profile-rail-section');
   profileRailSection.append(buildBlock('profile-rail', []));
-  main.append(profileRailSection);
+  main.prepend(profileRailSection);
 }
 
 /**
@@ -296,7 +296,7 @@ function addProfileTab(main) {
   const profileTabSection = document.createElement('div');
   profileTabSection.classList.add('profile-tab-section');
   profileTabSection.append(buildBlock('profile-tab', []));
-  main.append(profileTabSection);
+  main.prepend(profileTabSection);
 }
 
 /**

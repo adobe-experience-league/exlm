@@ -48,8 +48,8 @@
     line-height: 17px;
 }
 
-.profile-card-header .manage-adobe-account a > .icon-new-tab,
-.profile-card-header .manage-community-account a > .icon-new-tab {
+.profile-card-header .manage-adobe-account a>.icon-new-tab,
+.profile-card-header .manage-community-account a>.icon-new-tab {
     margin-right: 2px;
 }
 
@@ -110,24 +110,55 @@
     color: var(--spectrum-gray-800);
 }
 
-main:has(.profile-rail-section[data-section-status="initialized"]) .user-profile-card-container[data-section-status="loaded"], main:has(.profile-tab-section[data-section-status="initialized"]) .user-profile-card-container[data-section-status="loaded"] {
-    min-height: 100vh;
+.product-interests-container[data-section-status="initialized"],
+.product-interests-container[data-section-status="loading"],
+.user-profile-card-container[data-section-status="initialized"],
+.user-profile-card-container[data-section-status="loading"],
+.email-card-container[data-section-status="loading"],
+.email-card-container[data-section-status="initialized"],
+.profile-tab-container[data-section-status="initialized"],
+.profile-tab-container[data-section-status="loading"] {
+    visibility: hidden;
 }
 
-.user-profile-card-box .community-account .shimmer-placeholder {
-    min-height: 64px;
+.product-interests-container[data-section-status="loaded"],
+.email-card-container[data-section-status="loaded"],
+.profile-tab-container[data-section-status="loaded"] {
+    visibility: visible;
 }
 
-.user-profile-card-box .community-account .shimmer-placeholder-isloading {
-    flex: 0 0 330px;
+.user-profile-card-box .profile-row-shimmer {
+    background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
+    background-size: 200% 100%;
+    animation: placeholder-wave 1.5s infinite;
 }
 
-.user-profile-card-box .community-account .shimmer-placeholder .shimmer-placeholder-image {
+.profile-row.adobe-account.loading {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.profile-row.adobe-account.loading .adobe-account-logo {
     height: 64px;
+    width: 64px;
+    border-radius: 100%;
 }
 
-.user-profile-card-box .community-account .shimmer-placeholder .shimmer-placeholder-content {
-    display: none;
+.profile-row.adobe-account.loading .adobe-account-text {
+    height: 56px;
+    width: 200px;
+}
+
+.profile-row.additional-data.loading {
+    height: 160px;
+    width: 332px;
+}
+
+.profile-row.community-account.loading {
+    height: 60px;
+    width: 332px;
+    padding: 0;
 }
 
 @media (min-width: 600px) {
@@ -141,6 +172,7 @@ main:has(.profile-rail-section[data-section-status="initialized"]) .user-profile
 }
 
 @media (min-width: 900px) {
+
     body.profile .profile-card-header,
     .profile-card-header {
         flex-direction: row;
