@@ -9,8 +9,8 @@ import {
   isFeatureEnabled,
   fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
-import { getMetadata, decorateIcons } from '../../scripts/lib-franklin.js';
-import Deferred from './importedFunctions.js';
+import { getMetadata } from '../../scripts/lib-franklin.js';
+import { Deferred, decorateIcons } from './importedFunctions.js';
 
 /**
  * @typedef {Object} DecoratorOptions
