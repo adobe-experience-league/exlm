@@ -24,7 +24,9 @@ function decoratePlaylistBrowseMarquee(block) {
   const [firstRow] = block.children;
   const [firstCell] = firstRow.children;
 
-  const picture = createOptimizedPicture('/images/playlists-marquee-background.png', '', true);
+  const picture = createOptimizedPicture('/images/playlists-marquee-background.png', '', true, [
+    { media: '(min-width: 600px)', width: '700' },
+  ]);
 
   const marquee = htmlToElement(`
     <div class="playlist-browse-marquee">
