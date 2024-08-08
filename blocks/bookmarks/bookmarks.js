@@ -107,7 +107,7 @@ const prepareBookmarksPaginationConfig = () => {
   const sortedBookmarks = bookmarks.sort((a, b) => {
     const [, currentTimeStamp = '0'] = a.split(':');
     const [, nextTimeStamp = '0'] = b.split(':');
-    return +currentTimeStamp - +nextTimeStamp;
+    return +nextTimeStamp - +currentTimeStamp;
   });
   const bookmarkIds = sortedBookmarks.map((bookmarkIdInfo) => {
     const [bookmarkId] = bookmarkIdInfo.split(':');
