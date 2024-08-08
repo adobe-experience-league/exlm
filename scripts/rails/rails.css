@@ -14,6 +14,7 @@
   .docs main .section.rail .rail-content {
     margin: 0;
     padding-top: 8px;
+    padding-bottom: 50px;
   }
   .docs main .section.rail .rail-toggle {
     background: none;
