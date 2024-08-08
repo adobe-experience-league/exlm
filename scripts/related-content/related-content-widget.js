@@ -9,28 +9,33 @@ loadCSS(`${window.hlx.codeBasePath}/scripts/related-content/related-content-widg
 
 const MAX_RESULTS = 5;
 
-const loc = ((placeholders = {}) => (key) => {
-  if(key in placeholders) {
-    return placeholders[key];
+const loc = (
+  (placeholders = {}) =>
+  (key) => {
+    if (key in placeholders) {
+      return placeholders[key];
+    }
+
+    return key;
   }
+)((async () => fetchLanguagePlaceholders())());
 
-  return key;
-})((async () => fetchLanguagePlaceholders())());
-
-function contentIcon (type) {
+function contentIcon(type) {
   const bookmark = htmlToElement('<div class="related-content-icon"></div>');
 
-  if(type in SUPPORTED_TYPES) {
+  if (type in SUPPORTED_TYPES) {
     const info = SUPPORTED_TYPES[type];
 
-    bookmark.appendChild(htmlToElement(`
+    bookmark.appendChild(
+      htmlToElement(`
       <div class="related-content-tooltip">
         <div class="tooltip-label-wrapper"> 
           <span class="tooltip-label">${loc(info.label)}</span>
         </div>
         <img src="${window.hlx.codeBasePath}/icons/${info.icon}" />
       </div>
-    `));
+    `),
+    );
   }
 
   return bookmark;
@@ -39,14 +44,18 @@ function contentIcon (type) {
 function relatedContentWidget() {
   try {
     // Select the right section
-    const rightRail = document.querySelector('main > div.section.rail.rail-right > div.rail-content > div.mini-toc-wrapper');
+    const rightRail = document.querySelector(
+      'main > div.section.rail.rail-right > div.rail-content > div.mini-toc-wrapper',
+    );
 
-    if(rightRail) {
+    if (rightRail) {
       // Wrapper element for Related Content
       const wrapper = htmlToElement('<div class="related-content-wrapper"></div>');
 
       // Create a header
-      const header = htmlToElement(`<div class="related-content-toggle" aria-expanded="true"><h2>${loc('Related Content')}<h2></div>`);
+      const header = htmlToElement(
+        `<div class="related-content-toggle" aria-expanded="true"><h2>${loc('Related Content')}<h2></div>`,
+      );
 
       rightRail.appendChild(wrapper);
 
@@ -58,7 +67,7 @@ function relatedContentWidget() {
         sortCriteria: COVEO_SORT_OPTIONS.RELEVANCE.toUpperCase(),
         noOfResults: MAX_RESULTS,
       };
-      
+
       wrapper.appendChild(loader);
 
       // Fetch the card/widget data
@@ -66,12 +75,12 @@ function relatedContentWidget() {
         .then((data) => {
           wrapper.removeChild(loader);
 
-          if(data.length > 0) {
+          if (data.length > 0) {
             data.length = MAX_RESULTS;
 
             const list = htmlToElement('<ul class="related-content"></ul>');
-            const listItems = data.map(content => {
-              if(content.title && content.viewLink) {
+            const listItems = data.map((content) => {
+              if (content.title && content.viewLink) {
                 const li = htmlToElement('<li></li>');
                 const icon = contentIcon(content.contentType);
                 const title = htmlToElement(`<a href="${content?.viewLink ?? '#'}">${content.title}</a>`);

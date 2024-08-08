@@ -5,12 +5,12 @@
 const SUPPORTED_TYPES = {
   Tutorial: {
     icon: 'tutorial.svg',
-    label: 'Tutorial'
+    label: 'Tutorial',
   },
   Documentation: {
     icon: 'documentation.svg',
-    label: 'Documentation'
-  }
-}
+    label: 'Documentation',
+  },
+};
 
 export default SUPPORTED_TYPES;
