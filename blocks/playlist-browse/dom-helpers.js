@@ -26,28 +26,27 @@ import { htmlToElement } from '../../scripts/scripts.js';
  * @param {MultiSelect} multiselect
  * @returns {MultiSelectAPI}
  */
-export function newMultiSelect({ legend, options = [], onSelect }) {
+export function newMultiSelect({ options = [], onSelect }) {
   let values = [];
 
-  const newLi = ({ label, value, checked }) =>
-    htmlToElement(`
-      <li>
-        <label>
-          <input type="checkbox" value="${value}" ${checked ? 'checked' : ''} />
-          ${label}
-        </label>
-      </li>`);
-  const ul = htmlToElement('<ul></ul>');
+  const filterSubOptions = ({ label, value, checked }) =>
+    htmlToElement(` 
+      <div class="filter-option">    
+          <input type="checkbox"  id="${value}"value="${value}" ${checked ? 'checked' : ''} />
+          <label for="${value}" title="${label}">
+            <span class="title">${label}</span>
+            <span class="icon icon-checked"></span>
+          </label>  
+      </div>     
+      `);
+  const fieldset = htmlToElement(`<fieldset></fieldset>`);
 
   const addOption = (option) => {
     if (option.checked) values.push(option.value);
-    ul.append(newLi(option));
+    fieldset.append(filterSubOptions(option));
   };
 
   options.forEach(addOption);
-
-  const fieldset = htmlToElement(`<fieldset><legend>${legend}</legend></fieldset>`);
-  fieldset.append(ul);
 
   fieldset.addEventListener('change', (event) => {
     const { value, checked } = event.target;
@@ -56,7 +55,14 @@ export function newMultiSelect({ legend, options = [], onSelect }) {
     onSelect(values);
   });
 
-  return { fieldset, addOption };
+  const onClear = () => {
+    values = [];
+    fieldset.querySelectorAll('input').forEach((input) => {
+      input.checked = false;
+    });
+  };
+
+  return { fieldset, addOption, onClear };
 }
 
 /**
@@ -137,7 +143,7 @@ export function newPagination({
   ofLabel = 'of',
   currentPage = 1,
   items = [],
-  itemsPerPage = 18,
+  itemsPerPage = 12,
   onPageChange,
 }) {
   const numberOfPages = Math.ceil(items.length / itemsPerPage);
