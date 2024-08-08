@@ -2,7 +2,6 @@ import getProducts from '../../scripts/utils/product-utils.js';
 import {
   htmlToElement,
   decorateLinks,
-  getPathDetails,
   getConfig,
   getLink,
   fetchFragment,
@@ -10,7 +9,7 @@ import {
   fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import { getMetadata } from '../../scripts/lib-franklin.js';
-import { Deferred, decorateIcons } from './importedFunctions.js';
+import { Deferred, decorateIcons, getPathDetails } from './importedFunctions.js';
 
 /**
  * @typedef {Object} DecoratorOptions

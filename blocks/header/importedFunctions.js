@@ -32,7 +32,7 @@ export async function decorateIcons(element, prefix = '') {
       if (!ICONS_CACHE[iconName]) {
         ICONS_CACHE[iconName] = true;
         try {
-          const response = await fetch(`${this.decoratorOptions.origin}/icons/${prefix}${iconName}.svg`);
+          const response = await fetch(`${window.location.origin}/icons/${prefix}${iconName}.svg`);
           if (!response.ok) {
             ICONS_CACHE[iconName] = false;
             return;
@@ -87,4 +87,67 @@ export async function decorateIcons(element, prefix = '') {
       parent.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg"><use href="#icons-sprite-${iconName}"/></svg>`;
     }
   });
+}
+
+/**
+ * Process current pathname and return details for use in language switching for the experience league site
+ */
+function getAemPathDetails() {
+  const { pathname } = window.location;
+  const extParts = pathname.split('.');
+  const ext = extParts.length > 1 ? extParts[extParts.length - 1] : '';
+  const isContentPath = pathname.startsWith('/content');
+  const parts = pathname.split('/');
+  const safeLangGet = (index) => (parts.length > index ? parts[index] : 'en');
+  // 4 is the index of the language in the path for AEM content paths like  /content/exl/global/en/path/to/content.html
+  // 1 is the index of the language in the path for EDS paths like /en/path/to/content
+  let lang = isContentPath ? safeLangGet(4) : safeLangGet(1);
+  // remove suffix from lang if any
+  if (lang.indexOf('.') > -1) {
+    lang = lang.substring(0, lang.indexOf('.'));
+  }
+  if (!lang) lang = 'en'; // default to en
+  // substring before lang
+  const prefix = pathname.substring(0, pathname.indexOf(`/${lang}`)) || '';
+  const suffix = pathname.substring(pathname.indexOf(`/${lang}`) + lang.length + 1) || '';
+  return {
+    ext,
+    prefix,
+    suffix,
+    lang,
+    isContentPath,
+  };
+}
+
+/**
+ * Process current pathname and return details for use in language switching for the community site
+ */
+function getCommunityPathDetails() {
+  const pathname = window.location;
+  const extParts = pathname.split('=');
+  let lang = extParts.length > 1 ? extParts[extParts.length - 1] : '';
+  if (lang.indexOf('.') > -1) {
+    lang = lang.substring(0, lang.indexOf('.'));
+  }
+  if (!lang) lang = 'en'; // default to en
+  // substring before lang
+  const prefix = pathname.substring(0, pathname.indexOf(`/?profile.languages=${lang}`)) || '';
+  const suffix = pathname.substring(pathname.indexOf(`/?profile.languages=${lang}`) + lang.length + 1) || '';
+  return {
+    prefix,
+    suffix,
+    lang,
+  };
+}
+
+/**
+ * Process current pathname and return details for use in language switching
+ * Considers pathnames like /en/path/to/content and /content/exl/global/en/path/to/content.html for both EDS and AEM
+ */
+export function getPathDetails() {
+  const url = window.location.href;
+  if (url.includes('experienceleaguecommunities')) {
+    return getCommunityPathDetails();
+  }
+  return getAemPathDetails();
 }
