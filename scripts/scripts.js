@@ -814,7 +814,7 @@ export function getConfig() {
     // Recommended Courses
     recommendedCoursesUrl: `${cdnOrigin}/home?lang=${lang}#dashboard/learning`,
     // Adobe account
-    adobeAccountURL: `/${lang}/profile`,
+    adobeAccountURL: isProd ? 'https://account.adobe.com/' : 'https://stage.account.adobe.com/',
     // Community Account
     communityAccountURL: isProd
       ? 'https://experienceleaguecommunities.adobe.com/'
