@@ -77,7 +77,7 @@ async function renderCards({ pgNum, block }) {
       const data = {
         id: bookmarkIds[index],
         description:
-          placeholders['bookmarkLoadFailureText'] || 'There has been an error retrieving this bookmarked content.',
+          placeholders.bookmarkLoadFailureText || 'There has been an error retrieving this bookmarked content.',
         title: '',
         failedToLoad: true,
       };
