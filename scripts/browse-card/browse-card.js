@@ -206,6 +206,7 @@ const buildCardContent = async (card, model) => {
     event,
     inProgressText,
     inProgressStatus = {},
+    failedToLoad = false,
   } = model;
   const contentType = type?.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
@@ -287,6 +288,7 @@ const buildCardContent = async (card, model) => {
     id: id || (viewLink ? new URL(viewLink).pathname : ''),
     link: copyLink,
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
+    copyConfig: failedToLoad ? false : undefined,
   });
 
   cardAction.decorate();
