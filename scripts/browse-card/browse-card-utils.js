@@ -23,7 +23,7 @@ export function getMetadata(name, doc = document) {
 }
 
 function createThumbnailURL(doc, contentType) {
-  if (contentType === 'Course') {
+  if (contentType === 'Playlist') {
     const courseThumbnail = getMetadata('course-thumbnail', doc);
     return courseThumbnail ? `${prodAssetsCdnOrigin}/thumb/${courseThumbnail.split('thumb/')[1]}` : '';
   }

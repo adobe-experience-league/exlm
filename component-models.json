@@ -921,16 +921,16 @@
             "value": "community"
           },
           {
-            "name": "Playlists",
-            "value": "playlist"
-          },
-          {
             "name": "Documentation",
             "value": "documentation"
           },
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Perspectives",
@@ -1893,16 +1893,16 @@
             "value": "community"
           },
           {
-            "name": "Playlists",
-            "value": "playlist"
-          },
-          {
             "name": "Documentation",
             "value": "documentation"
           },
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Perspectives",
@@ -1988,16 +1988,16 @@
             "value": "community"
           },
           {
-            "name": "Playlists",
-            "value": "playlist"
-          },
-          {
             "name": "Documentation",
             "value": "documentation"
           },
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Perspectives",
