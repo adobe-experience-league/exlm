@@ -73,9 +73,9 @@ const contentTypes = [
     description: 'Questions, answers, ideas, and expertise shared from Adobe customers and experts growing together.',
   },
   {
-    id: 'Course',
-    value: 'Course',
-    title: 'Courses',
+    id: 'Playlist',
+    value: 'Playlist',
+    title: 'Playlists',
     description: 'Expertly curated collections designed to help you gain skills and advance your knowledge.',
   },
   {

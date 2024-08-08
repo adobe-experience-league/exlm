@@ -921,8 +921,8 @@
             "value": "community"
           },
           {
-            "name": "Courses",
-            "value": "course"
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Documentation",
@@ -1813,7 +1813,7 @@
         "name": "contentURL",
         "value": "",
         "label": "Content URL",
-        "description": "Provide a link to one of the following content types: Course, Tutorial, Documentation, Troubleshooting, On-Demand Event, Certification or Perspective"
+        "description": "Provide a link to one of the following content types: Playlist, Tutorial, Documentation, Troubleshooting, On-Demand Event, Certification or Perspective"
       }
     ]
   },
@@ -1893,8 +1893,8 @@
             "value": "community"
           },
           {
-            "name": "Courses",
-            "value": "course"
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Documentation",
@@ -1988,8 +1988,8 @@
             "value": "community"
           },
           {
-            "name": "Courses",
-            "value": "course"
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Documentation",
@@ -2485,8 +2485,8 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Courses",
-            "value": "course"
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Tutorials",
