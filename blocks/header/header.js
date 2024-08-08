@@ -627,7 +627,6 @@ const signInDecorator = async (signInBlock, decoratorOptions) => {
         </div>
       </div>`,
     );
-
     signInBlock.replaceChildren(profile);
 
     decoratorOptions
@@ -873,8 +872,7 @@ class ExlHeader extends HTMLElement {
     options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
     options.isCommunity = options.isCommunity ?? false;
     options.origin = options.origin || window.location.origin;
-    this.lang = options.lang || getPathDetails()?.lang || 'en';
-
+    options.lang = options.lang || getPathDetails().lang || 'en';
     this.decoratorOptions = options;
 
     // yes, even though this is extra, it ensures that these functions remain pure-esque.
