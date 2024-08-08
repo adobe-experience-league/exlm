@@ -175,9 +175,10 @@ export default async function decorate(block) {
       );
       if (checkedCheckboxes.length < 1) {
         checkbox.checked = true;
-        block
-          .querySelector('.industry-selection-holder')
-          .insertAdjacentHTML('afterend', `<span class="form-error">${FORM_ERROR}</span>`);
+        if (!block.querySelector('.form-error'))
+          block
+            .querySelector('.role-cards-holder')
+            ?.insertAdjacentHTML('beforebegin', `<span class="form-error">${FORM_ERROR}</span>`);
       } else {
         const isChecked = checkbox.checked;
         checkbox.closest('.role-cards-item').classList.toggle('role-cards-highlight', isChecked);
