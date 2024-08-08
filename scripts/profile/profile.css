@@ -161,6 +161,10 @@
     padding: 0;
 }
 
+.profile-row.community-account.loading .profile-row-shimmer {
+    height: 40px;
+}
+
 @media (min-width: 600px) {
     body.profile .profile-card-header {
         flex-direction: column;

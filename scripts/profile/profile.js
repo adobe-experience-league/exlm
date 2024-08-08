@@ -167,13 +167,13 @@ export const generateProfileDOM = async (profileFlags) => {
     return ''; // Return empty string or a message indicating the user is not signed in.
   }
 
-  const adobeAccountDOM = generateAdobeAccountDOM(profileData, placeholders, adobeAccountURL);
-  const communityAccountDOM = generateCommunityAccountDOM(profileData, placeholders, communityAccountURL);
-  const additionalProfileInfoDOM = generateAdditionalProfileInfoDOM(profileData, placeholders);
+  const hasExlProfileFlag = profileFlags.includes(EXL_PROFILE);
 
   return {
-    adobeAccountDOM,
-    communityAccountDOM,
-    additionalProfileInfoDOM,
+    ...(hasExlProfileFlag && { adobeAccountDOM: generateAdobeAccountDOM(profileData, placeholders, adobeAccountURL) }),
+    ...(hasExlProfileFlag && { additionalProfileInfoDOM: generateAdditionalProfileInfoDOM(profileData, placeholders) }),
+    ...(profileFlags.includes(COMMUNITY_PROFILE) && {
+      communityAccountDOM: generateCommunityAccountDOM(profileData, placeholders, communityAccountURL),
+    }),
   };
 };

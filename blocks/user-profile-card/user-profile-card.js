@@ -2,7 +2,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { generateProfileDOM } from '../../scripts/profile/profile.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 
-function lazyLoadCommunityAccountDOM(block) {
+function loadCommunityAccountDOM(block) {
   const profileFlags = ['communityProfile'];
   generateProfileDOM(profileFlags).then(({ communityAccountDOM }) => {
     const communityAccountElement = block.querySelector('.profile-row.community-account');
@@ -23,7 +23,9 @@ export default async function decorate(block) {
         <div class="adobe-account-logo profile-row-shimmer"></div>
         <div class="adobe-account-text profile-row-shimmer"></div>
       </div>
-      <div class="profile-row community-account loading profile-row-shimmer"></div>
+      <div class="profile-row community-account loading">
+        <div class="profile-row-shimmer"></div>
+      </div>
       <div class="profile-row additional-data loading profile-row-shimmer"></div>
     </div>
   `);
@@ -34,7 +36,7 @@ export default async function decorate(block) {
   const cardDecor = htmlToElement(`<div class="user-profile-card-decor"></div>`);
   block.append(cardDecor);
   await decorateIcons(block);
-  lazyLoadCommunityAccountDOM(block);
+  loadCommunityAccountDOM(block);
   profileInfoPromise.then(({ adobeAccountDOM, additionalProfileInfoDOM }) => {
     const adobeAccountElement = block.querySelector('.profile-row.adobe-account');
     const additionalProfileElement = block.querySelector('.profile-row.additional-data');
