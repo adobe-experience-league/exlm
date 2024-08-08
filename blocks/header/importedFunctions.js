@@ -123,8 +123,9 @@ function getAemPathDetails() {
  * Process current pathname and return details for use in language switching for the community site
  */
 function getCommunityPathDetails() {
-  const { pathname } = window.location;
-  const extParts = pathname.split('=');
+  const pathname = window.location.href;
+  const pathLocation = pathname.split('?')[1];
+  const extParts = pathLocation.split('=');
   let lang = extParts.length > 1 ? extParts[extParts.length - 1] : '';
   if (lang.indexOf('.') > -1) {
     lang = lang.substring(0, lang.indexOf('.'));
