@@ -410,7 +410,7 @@ export default function decorate(block) {
         const notice =
           placeholdersResult.value[LABELS.courseReplacedNotice] ||
           'The course you visited was migrated to a video playlist for easier access';
-        toastResult.value.sendNotice(notice, 'success');
+        toastResult.value.sendNotice(notice, 'info', 5000);
       },
     );
   }
