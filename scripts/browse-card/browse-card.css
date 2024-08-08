@@ -79,6 +79,23 @@
   overflow: hidden;
   position: relative;
 }
+
+.load-fail-card.browse-card .browse-card-banner {
+  height: 32px;
+  width: 132px;
+  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
+  background-size: 200% 100%;
+  animation: placeholder-wave 1.5s infinite;
+}
+
+.load-fail-card.browse-card .browse-card-tag-text {
+  height: 21px;
+  width: 100px;
+  margin-bottom: 16px;
+  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
+  background-size: 200% 100%;
+  animation: placeholder-wave 1.5s infinite;
+}
 .browse-card .browse-card-figure.img-custom-height {
   min-height: 153px;
 }
