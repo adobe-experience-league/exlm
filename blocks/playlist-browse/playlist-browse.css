@@ -118,7 +118,7 @@
   }
  
 
-@media (min-width: 900px) {
+@media (width >= 900px) {
     .playlist-filter-wrapper {
       display: grid;
       grid-template-areas: "label solution role level clear";
@@ -172,6 +172,7 @@
 }
   }   
 }
+
 .filter-option input:checked+label .icon-checked {
     font-size: var(--spectrum-body-size-s);
     color: var(--non-spectrum-grey-333);
@@ -260,6 +261,7 @@ button.filter-pill:focus
     padding: 9px 12px;
     width: 100%;
     font-size: 16px;
+
     /* https://defensivecss.dev/tip/input-zoom-safari/ */
     text-align: left;
     color: var(--spectrum-gray-700);
@@ -331,6 +333,7 @@ button.filter-pill:focus
         box-sizing: border-box;
         padding: 12px;
         border-radius: 4px;
+
         /* box-shadow: 0px 1px 4px rgba(0 0 0 / 15%); */
         border: 1px solid var(--spectrum-gray-400);
       }
