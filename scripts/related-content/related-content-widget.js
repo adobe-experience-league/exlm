@@ -48,6 +48,8 @@ function relatedContentWidget() {
       // Create a header
       const header = htmlToElement(`<div class="related-content-toggle" aria-expanded="true"><h2>${loc('Related Content')}<h2></div>`);
 
+      rightRail.appendChild(wrapper);
+
       // Create a placeholder
       const loader = listPlaceholder(5);
 
@@ -56,7 +58,7 @@ function relatedContentWidget() {
         sortCriteria: COVEO_SORT_OPTIONS.RELEVANCE.toUpperCase(),
         noOfResults: MAX_RESULTS,
       };
-
+      
       wrapper.appendChild(loader);
 
       // Fetch the card/widget data
@@ -86,7 +88,6 @@ function relatedContentWidget() {
             wrapper.appendChild(header);
             list.append(...listItems);
             wrapper.appendChild(list);
-            rightRail.appendChild(wrapper);
 
             // Add toggle functionality
             header.addEventListener('click', (event) => {
