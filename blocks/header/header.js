@@ -8,7 +8,7 @@ import {
   isFeatureEnabled,
   fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
-import { getMetadata } from '../../scripts/lib-franklin.js';
+// import { getMetadata } from '../../scripts/lib-franklin.js';
 import { Deferred, decorateIcons, getPathDetails } from './importedFunctions.js';
 
 /**
@@ -601,7 +601,6 @@ const languageDecorator = async (languageBlock) => {
       </button>
     `;
   languageBlock.innerHTML = languageHtml;
-  decorateIcons(languageBlock);
   prependLanguagePopover(languageBlock);
   return languageBlock;
 };
@@ -922,21 +921,20 @@ class ExlHeader extends HTMLElement {
     if (headerFragment) {
       loadSearchElement();
 
-      const [solutionTag] = getMetadata('solution').trim().split(',');
-      if (solutionTag) {
-        window.headlessSolutionProductKey = solutionTag;
-      }
+      // const [solutionTag] = getMetadata('solution').trim().split(',');
+      // if (solutionTag) {
+      //   window.headlessSolutionProductKey = solutionTag;
+      // }
 
-      const headerWrapper = htmlToElement('<div class="header-wrapper" id="header-wrapper"></div>');
-      const header = document.createElement('div');
-
-      header.classList.add('header', 'block');
+      const headerWrapper = htmlToElement(
+        '<div class="header-wrapper" id="header-wrapper"><div class="header block"></div></div>',
+      );
       this.shadowRoot.appendChild(headerWrapper);
-      headerWrapper.appendChild(header);
+      const header = this.shadowRoot.querySelector('.header');
 
-      const navOverlay = document.createElement('div');
-      navOverlay.classList.add('nav-overlay', 'hidden');
+      const navOverlay = htmlToElement('<div class="nav-overlay hidden"></div>');
       document.body.appendChild(navOverlay);
+
       header.innerHTML = headerFragment;
 
       const exlHeaderFirstRow = getBlockFirstRow(header);

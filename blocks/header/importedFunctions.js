@@ -34,9 +34,12 @@ export async function decorateIcons(element, prefix = '') {
         try {
           const response = await fetch(`${window.hlx.codeBasePath}/icons/${prefix}${iconName}.svg`);
           if (!response.ok) {
+            await fetch(`https://experienceleague.adobe.com/icons/${iconName}.svg`);
+          } else {
             ICONS_CACHE[iconName] = false;
             return;
           }
+
           // Styled icons don't play nice with the sprite approach because of shadow dom isolation
           // and same for internal references
           const svg = await response.text();
@@ -123,9 +126,8 @@ function getAemPathDetails() {
  * Process current pathname and return details for use in language switching for the community site
  */
 function getCommunityPathDetails() {
-  const pathname = window.location.href;
-  const pathLocation = pathname.split('?')[1];
-  const extParts = pathLocation.split('=');
+  const pathname = window.location.search;
+  const extParts = pathname.split('=');
   let lang = extParts.length > 1 ? extParts[extParts.length - 1] : '';
   if (lang.indexOf('.') > -1) {
     lang = lang.substring(0, lang.indexOf('.'));
