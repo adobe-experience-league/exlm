@@ -73,12 +73,6 @@ const contentTypes = [
     description: 'Questions, answers, ideas, and expertise shared from Adobe customers and experts growing together.',
   },
   {
-    id: 'Playlist',
-    value: 'Playlist',
-    title: 'Playlists',
-    description: 'Expertly curated collections designed to help you gain skills and advance your knowledge.',
-  },
-  {
     id: 'Documentation',
     value: 'Documentation',
     title: 'Documentation',
@@ -96,6 +90,12 @@ const contentTypes = [
     value: 'Perspective',
     title: 'Perspectives',
     description: 'Real-world inspiration from Experience Cloud customers and Adobe experts.',
+  },
+  {
+    id: 'Playlist',
+    value: 'Playlist',
+    title: 'Playlists',
+    description: 'Expertly curated collections designed to help you gain skills and advance your knowledge.',
   },
   {
     id: 'Troubleshooting',
