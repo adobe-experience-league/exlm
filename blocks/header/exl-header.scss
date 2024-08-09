@@ -1,3 +1,4 @@
+/* stylelint-disable  color-hex-length */
 @import '../../styles/sass/breakpoints';
 @import '../../styles/sass/mixins';
 
@@ -28,6 +29,33 @@
   --nav-item-text-color: #2c2c2c;
   --color-white: #fff;
   --color-black: #000;
+
+  // add variables referenced in this file whose values are defined in the global scope
+  --spectrum-font-size-100: 14px;
+  --spectrum-font-size-75: 12px;
+  --spectrum-line-height-l: 21px;
+  --spectrum-gray-200: #f3f3f3;
+  --spectrum-gray-400: #d1d1d1;
+  --spectrum-gray-700: #6a6a6a;
+  --spectrum-gray-800: #2c2c2c;
+  --spectrum-gray-100: #f8f8f8;
+  --spectrum-blue-900: #0066cc;
+  --spectrum-gray-600: #8e8e8e;
+  --non-spectrum-bg: #fff;
+  --non-spectrum-hover-bg: #f8f8f8;
+  --non-spectrum-link: #2c2c2c;
+  --non-spectrum-custom-dark: #0066cc;
+  --non-spectrum-article-dark-gray: #6a6a6a;
+  --non-spectrum-silver-mist: #d1d1d1;
+  --non-spectrum-grey-updated: #8e8e8e;
+  --background-color: #fff;
+  --link-color: #0066cc;
+  --link-hover-color: #0055b3;
+  --nav-height: 4rem;
+  --exlm-font-size-content: 14px;
+  --font-weight-400: 400;
+  --font-weight-600: 600;
+  --font-weight-700: 700;
 
   /* fonts */
   --body-font-family: 'Adobe Clean', adobe-clean, 'Source Sans Pro', -apple-system, system-ui, 'Segoe UI', roboto,
