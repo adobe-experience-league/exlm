@@ -104,7 +104,7 @@ async function renderCards({ pgNum, block }) {
 const prepareBookmarksPaginationConfig = () => {
   const resultsPerPage = Pagination.getItemsCount();
   const bookmarks = bookmarksEventEmitter.get('bookmark_ids') ?? [];
-  const sortedBookmarks = bookmarks.sort((a, b) => {
+  const sortedBookmarks = structuredClone(bookmarks).sort((a, b) => {
     const [, currentTimeStamp = '0'] = a.split(':');
     const [, nextTimeStamp = '0'] = b.split(':');
     return +nextTimeStamp - +currentTimeStamp;
