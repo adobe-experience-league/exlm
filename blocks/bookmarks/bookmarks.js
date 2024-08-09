@@ -31,11 +31,11 @@ export const parse = (model) => {
     }
     return model;
   }
-  const [contentType = 'Course'] = Type;
+  const [contentType = 'Playlist'] = Type;
   const [role] = Role;
   const contentTypeTitleCase = convertToTitleCase(contentType?.toLowerCase());
   const tags = [];
-  if (contentType === 'Course') {
+  if (contentType === 'Playlist') {
     tags.push({ icon: 'user', text: role || '' });
   }
   return {
