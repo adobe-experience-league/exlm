@@ -434,7 +434,7 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   const ul = navWrapper.querySelector(':scope > ul');
   await buildNavItems(ul);
 
-  const productList = await getProducts('browse');
+  const productList = await getProducts(decoratorOptions.lang, 'browse');
 
   [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
     if (navItemEl.querySelector(':scope > a[featured-products]')) {

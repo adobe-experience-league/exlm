@@ -2,6 +2,7 @@ import { fetchJson } from '../scripts.js';
 
 /**
  * Retrieves products based on the specified theme.
+ * @param {string} lang - The language of products to retrieve
  * @param {string} theme - The theme of products to retrieve. Defaults to 'browse'.
  * @returns {Promise<Array>} - A promise that resolves to an array of products.
  */
