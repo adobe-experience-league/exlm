@@ -1,23 +1,8 @@
 // eslint-disable-next-line import/no-cycle
 import { loadCSS } from './lib-franklin.js';
-import { htmlToElement, getPathDetails } from './scripts.js';
+import { htmlToElement, getPathDetails, fetchFragment } from './scripts.js';
 
 const pathDetails = getPathDetails();
-/**
- * loads the one and only language fragment.
- */
-const loadLanguageFragment = async () => {
-  window.languagePromise =
-    window.languagePromise ||
-    new Promise((resolve) => {
-      fetch(`/fragments/en/languages/languages.plain.html`)
-        .then((response) => response.text())
-        .then((text) => {
-          resolve(text);
-        });
-    });
-  return window.languagePromise;
-};
 
 export const getLanguagePath = (language) => {
   const { prefix, suffix } = pathDetails;
@@ -41,7 +26,7 @@ export const buildLanguagePopover = async (position, popoverId) => {
   loadCSS(`${window.hlx.codeBasePath}/styles/language.css`);
   const popoverClass =
     position === 'top' ? 'language-selector-popover language-selector-popover--top' : 'language-selector-popover';
-  let languagesEl = htmlToElement(await loadLanguageFragment());
+  let languagesEl = htmlToElement(await fetchFragment('languages/languages', 'en'));
   languagesEl = languagesEl.querySelector('ul');
   const languageOptions = languagesEl?.children || [];
   const languages = [...languageOptions].map((option) => ({
