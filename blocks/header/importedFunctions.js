@@ -94,6 +94,7 @@ export async function decorateIcons(element, prefix = '') {
         ICONS_CACHE[iconName] = true;
         try {
           const checkPath = checkOrigin();
+          const { origin } = window.location;
           let response;
           if (checkPath === origin) {
             response = await fetch(`${window.hlx.codeBasePath}/icons/${prefix}${iconName}.svg`);
