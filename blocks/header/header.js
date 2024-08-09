@@ -7,8 +7,11 @@ import {
   fetchFragment,
   isFeatureEnabled,
   fetchLanguagePlaceholders,
+  getPathDetails,
 } from '../../scripts/scripts.js';
 import { Deferred, decorateIcons, getMetadata } from './importedFunctions.js';
+
+const { lang } = getPathDetails();
 
 /**
  * @typedef {Object} DecoratorOptions
@@ -867,7 +870,7 @@ class ExlHeader extends HTMLElement {
     options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
     options.isCommunity = options.isCommunity ?? false;
     options.origin = options.origin || window.location.origin;
-    options.lang = options.lang || 'en';
+    options.lang = options.lang || lang || 'en';
     this.decoratorOptions = options;
 
     // yes, even though this is extra, it ensures that these functions remain pure-esque.
