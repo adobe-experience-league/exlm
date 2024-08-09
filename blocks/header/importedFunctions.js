@@ -94,13 +94,7 @@ export async function decorateIcons(element, prefix = '') {
       if (!ICONS_CACHE[iconName]) {
         ICONS_CACHE[iconName] = true;
         try {
-          const checkPath = checkOrigin();
-          let response;
-          if (checkPath === origin) {
-            response = await fetch(`${window.hlx.codeBasePath}/icons/${prefix}${iconName}.svg`);
-          } else {
-            response = await fetch(`https://experienceleague.adobe.com/icons/${prefix}${iconName}.svg`);
-          }
+          const response = await fetch(`${window.hlx.codeBasePath}/icons/${prefix}${iconName}.svg`);
           if (!response.ok) {
             ICONS_CACHE[iconName] = false;
             return;
