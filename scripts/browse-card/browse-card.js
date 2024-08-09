@@ -206,6 +206,7 @@ const buildCardContent = async (card, model) => {
     event,
     inProgressText,
     inProgressStatus = {},
+    failedToLoad = false,
   } = model;
   const contentType = type?.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
@@ -287,6 +288,7 @@ const buildCardContent = async (card, model) => {
     id: id || (viewLink ? new URL(viewLink).pathname : ''),
     link: copyLink,
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
+    copyConfig: failedToLoad ? false : undefined,
   });
 
   cardAction.decorate();
@@ -312,7 +314,7 @@ const buildCardContent = async (card, model) => {
  * @param {*} model
  */
 export async function buildCard(container, element, model) {
-  const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus } = model;
+  const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
   // lowercase all urls - because all of our urls are lower-case
   model.viewLink = model.viewLink?.toLowerCase();
   model.copyLink = model.copyLink?.toLowerCase();
@@ -333,7 +335,7 @@ export async function buildCard(container, element, model) {
   }
   const card = createTag(
     'div',
-    { class: `browse-card ${type}-card` },
+    { class: `browse-card ${type}-card ${failedToLoad ? 'load-fail-card' : ''}` },
     `<div class="browse-card-figure"></div><div class="browse-card-content"></div><div class="browse-card-footer"></div>`,
   );
   const cardFigure = card.querySelector('.browse-card-figure');
@@ -361,7 +363,7 @@ export async function buildCard(container, element, model) {
     });
   }
 
-  if (badgeTitle) {
+  if (badgeTitle || failedToLoad) {
     const bannerElement = createTag('h3', { class: 'browse-card-banner' });
     bannerElement.innerText = badgeTitle || '';
     cardFigure.appendChild(bannerElement);
@@ -371,9 +373,9 @@ export async function buildCard(container, element, model) {
     buildInProgressBarContent({ inProgressStatus, cardFigure, card });
   }
 
-  if (product) {
+  if (product || failedToLoad) {
     let tagElement;
-    if (product.length > 1) {
+    if (product?.length > 1) {
       tagElement = createTag(
         'div',
         { class: 'browse-card-tag-text' },
@@ -388,7 +390,8 @@ export async function buildCard(container, element, model) {
       };
       createTooltip(container, tooltipElem, tooltipConfig);
     } else {
-      tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${product.join(', ')}</h4>`);
+      const tagText = product ? product.join(', ') : '';
+      tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${tagText}</h4>`);
       cardContent.appendChild(tagElement);
     }
   }
