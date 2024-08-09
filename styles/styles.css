@@ -697,6 +697,16 @@ button.secondary {
   color: var(--text-color);
 }
 
+a.button.secondary:disabled,
+button.secondary:disabled {
+  color: var(--spectrum-gray-400);
+}
+
+a.button.secondary:disabled:hover,
+button.secondary:disabled:hover {
+  background-color: transparent;
+}
+
 .button-container {
   margin: 0;
 }
@@ -797,7 +807,7 @@ picture[align=right] {
 
 .exl-toast {
   align-items: center;
-  background: var(--spectrum-green-900);
+  background: var(--spectrum-gray-900);
   border-radius: 5px;
   color: var(--spectrum-gray-50);
   display: flex;
@@ -805,11 +815,39 @@ picture[align=right] {
   padding: 0 10px;
   position: fixed;
   transition: all 200ms ease-in-out;
-  transform: translate(-50%, -50%);
-  top: 10%;
+  transform: translateX(-50%);
+  top: calc(var(--nav-height) + 10px);
   bottom: unset;
   z-index: 999;
   width: 90%;
+}
+
+.exl-toast .exl-toast-icon {
+  cursor: pointer;
+  height: 18px;
+  padding: 5px;
+  width: 18px;
+  vertical-align: middle;
+}
+.exl-toast .exl-toast-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: white;
+}
+.exl-toast .exl-toast-icon path {
+  fill: white;
+}
+
+.exl-toast.exl-toast-success {
+  background: var(--spectrum-green-900);
+}
+
+.exl-toast.exl-toast-error {
+  background: var(--spectrum-red-900);
+}
+
+.exl-toast.exl-toast-info {
+  background: var(--spectrum-blue-900);
 }
 
 .exl-toast-content {
@@ -823,18 +861,6 @@ picture[align=right] {
   white-space: unset;
 }
 
-.exl-toast .icon-info {
-  background-image: url("../../icons/info-circle.svg");
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 18px;
-  cursor: pointer;
-  height: 18px;
-  padding: 5px;
-  width: 18px;
-  vertical-align: middle;
-}
-
 .exl-toast .icon-close {
   background-image: url("../../icons/icon-close.svg");
   background-repeat: no-repeat;
@@ -846,6 +872,11 @@ picture[align=right] {
   width: 20px;
   margin-left: 5px;
   vertical-align: middle;
+}
+
+.form-error,
+.form-field-error {
+  color: var(--spectrum-red-900);
 }
 
 @media (min-width: 600px) {
@@ -878,6 +909,10 @@ picture[align=right] {
   text-align: center;
   margin: 0 0 36px;
 }
+.section.tabs-container {
+  padding-top: 0;
+  padding-bottom: 0;
+}
 .section > div {
   /* limit block wrappers max width */
   max-width: var(--non-spectrum-max-width);
@@ -885,7 +920,7 @@ picture[align=right] {
 }
 @media (min-width: 600px) {
   .section {
-    padding: 30px 56px;
+    padding: 3em 3.5em;
   }
 }
 .section.curated-cards-container, .section.events-cards-container {
@@ -932,7 +967,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   visibility: hidden;
 }
 
-.content-hidden {
+.hidden {
   display: none;
 }
 
@@ -982,8 +1017,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
 }
 /* browse rail breakpoint same as main hamburger menu (>= 1024px) */
 @media (min-width: 1024px) {
-  body[class^=browse-] > main,
-  body[class^=article-] > main {
+  body[class^=browse-] > main {
     display: grid;
     grid-template: "browse-rail main"/256px 1fr;
     /* on pages with rails the max width must be on main */
@@ -991,14 +1025,10 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
     margin: auto;
     grid-template-rows: auto auto;
   }
-  body[class^=article-] > main {
-    grid-template: "articles-rail main"/256px 1fr;
-  }
   main > div.section {
     grid-column: 2;
   }
-  main > div.section.browse-rail-section,
-  main > div.section.articles-rail-section {
+  main > div.section.browse-rail-section {
     display: initial;
     grid-column: 1;
     grid-row: 1/100;
@@ -1017,7 +1047,8 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
     opacity: 0.6;
   }
 }
-[data-placeholder] {
+[data-placeholder],
+.loading-shimmer {
   background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
   background-size: 200% 100%;
   animation: placeholder-shimmer 1.5s infinite;

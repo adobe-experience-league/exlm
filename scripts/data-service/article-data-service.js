@@ -7,7 +7,7 @@ const { articleUrl } = getConfig();
  * @param {string} id - ID of the content source
  * @returns {Promise<object>} - Promise that resolves to the data results
  */
-async function fetchArticleByID(id) {
+export async function fetchArticleByID(id) {
   try {
     const response = await fetch(articleUrl + id);
     const json = await response.json();

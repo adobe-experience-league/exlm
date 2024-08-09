@@ -1,5 +1,20 @@
 /* eslint-disable max-classes-per-file */
 
+import { pushVideoEvent } from '../../scripts/analytics/lib-analytics.js';
+
+export const LABELS = {
+  tutorials: 'playlist-tutorials',
+  playlist: 'playlist',
+  nowViewing: 'playlist-now-viewing',
+  autoPlayNextVideo: 'playlist-autoplay-next-video',
+  transcript: 'playlist-transcript',
+  bookmarkPlaylist: 'playlist-bookmark-playlist',
+  copyPlaylistLink: 'playlist-copy-playlist-link',
+  aboutPlaylist: 'playlist-about-playlist',
+  transcriptNotAvailable: 'playlist-transcript-not-available',
+  courseReplacedNotice: 'playlist-course-replaced-notice',
+};
+
 /**
  * @typedef {Object} Video
  * // src, autoplay = true, title, description, transcriptUrl
@@ -106,6 +121,10 @@ export class Playlist {
     this.mpcListener.on(MCP_EVENT.TICK, this.handleSeek.bind(this));
     this.mpcListener.on(MCP_EVENT.SEEK, this.handleSeek.bind(this));
     this.mpcListener.on(MCP_EVENT.COMPLETE, this.handleComplete.bind(this));
+    this.mpcListener.on(MCP_EVENT.START, () => {
+      const { title, description, duration, src } = this.getActiveVideo();
+      pushVideoEvent({ title, description, url: src, duration });
+    });
   }
 
   updateOptions(options) {

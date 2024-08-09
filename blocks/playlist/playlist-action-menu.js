@@ -4,7 +4,7 @@ import { decorateBookmark, bookmark } from './actions/playlist-bookmark-action.j
 import info from './actions/playlist-info-action.js';
 import copy from './actions/playlist-copy-action.js';
 // eslint-disable-next-line no-unused-vars
-import { Playlist } from './playlist-utils.js';
+import { LABELS, Playlist } from './playlist-utils.js';
 
 /**
  * create an icon span (to be used with decorateIcons())
@@ -36,7 +36,7 @@ export default function decorate(button, playlist) {
     </div>`);
   const actionDefs = [
     {
-      labelKey: 'bookmarkPlaylist',
+      labelKey: LABELS.bookmarkPlaylist,
       labelFallback: 'Bookmark Playlist',
       icons: ['bookmark', 'bookmark-active'],
       action: 'bookmark',
@@ -44,14 +44,14 @@ export default function decorate(button, playlist) {
       onButtonReady: decorateBookmark,
     },
     {
-      labelKey: 'copyPlaylistLink',
+      labelKey: LABELS.copyPlaylistLink,
       labelFallback: 'Copy Link',
       icons: ['copy-link'],
       action: 'copy',
       onClick: copy,
     },
     {
-      labelKey: 'aboutPlaylist',
+      labelKey: LABELS.aboutPlaylist,
       labelFallback: 'About Playlist',
       icons: ['info'],
       action: 'info',

@@ -17,11 +17,21 @@ function getCurrentPlaylistBookmarkPath() {
 
 async function isBookmarkedPlaylist() {
   const profile = await defaultProfileClient.getMergedProfile();
-  return profile?.bookmarks.includes(getCurrentPlaylistBookmarkPath()) || false;
+  const bookmarkId = getCurrentPlaylistBookmarkPath();
+  return profile?.bookmarks.find((bookmarkIdInfo) => bookmarkIdInfo.includes(bookmarkId)) || false;
 }
 
 async function toggleBookmark() {
-  return defaultProfileClient.updateProfile('bookmarks', getCurrentPlaylistBookmarkPath());
+  const bookmarkId = getCurrentPlaylistBookmarkPath();
+  const profileData = await defaultProfileClient.getMergedProfile();
+  const { bookmarks = [] } = profileData;
+  const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => `${bookmarkIdInfo}`.includes(bookmarkId));
+  const newBookmarks = bookmarks.filter((bookmarkIdInfo) => !`${bookmarkIdInfo}`.includes(bookmarkId));
+  if (!targetBookmarkItem) {
+    // During toggle, remove current bookmark if any (OR) add it to bookmarks
+    newBookmarks.push(`${bookmarkId}:${Date.now()}`);
+  }
+  return defaultProfileClient.updateProfile('bookmarks', newBookmarks, true);
 }
 /**
  * @param {HTMLButtonElement} bookmarkButton
@@ -32,10 +42,14 @@ export async function decorateBookmark(bookmarkButton) {
   bookmarkButton.dataset.bookmarked = false;
 
   if (!isSignedIn) {
-    const signInToBookmarkTooltip = createPlaceholderSpan('bookmarkUnauthTipText', 'Sign-in to bookmark', (span) => {
-      span.dataset.signedIn = 'false';
-      span.classList.add('playlist-action-tooltip-label');
-    });
+    const signInToBookmarkTooltip = createPlaceholderSpan(
+      'userActionSigninBookmarkTooltip',
+      'Sign-in to bookmark',
+      (span) => {
+        span.dataset.signedIn = 'false';
+        span.classList.add('playlist-action-tooltip-label');
+      },
+    );
 
     bookmarkButton.appendChild(signInToBookmarkTooltip);
     bookmarkButton.disabled = true;
@@ -75,12 +89,12 @@ export async function bookmark(event) {
   if (isBookmarked) {
     // bookmark was just removed
     button.dataset.bookmarked = 'false';
-    sendNotice(`${placeholders.bookmarkUnset}`);
+    sendNotice(`${placeholders.userActionRemoveBookmarkToastText}`);
     assetInteractionModel(getCurrentPlaylistBookmarkPath(), 'Bookmark removed');
   } else {
     // bookmark was just added
     button.dataset.bookmarked = 'true';
-    sendNotice(`${placeholders.bookmarkSet}`);
+    sendNotice(`${placeholders.userActionBookmarkToastText}`);
     assetInteractionModel(getCurrentPlaylistBookmarkPath(), 'Bookmarked');
   }
   return true;

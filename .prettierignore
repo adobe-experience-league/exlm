@@ -12,4 +12,3 @@ scripts/analytics/privacy-standalone.js
 scripts/feedback/qualtrics/qualtrics-embed.js
 scripts/ffetch.js
 sitemap-index.xml
-legacy-sitemap/**.xml

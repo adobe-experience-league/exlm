@@ -79,6 +79,23 @@
   overflow: hidden;
   position: relative;
 }
+
+.load-fail-card.browse-card .browse-card-banner {
+  height: 32px;
+  width: 132px;
+  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
+  background-size: 200% 100%;
+  animation: placeholder-wave 1.5s infinite;
+}
+
+.load-fail-card.browse-card .browse-card-tag-text {
+  height: 21px;
+  width: 100px;
+  margin-bottom: 16px;
+  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
+  background-size: 200% 100%;
+  animation: placeholder-wave 1.5s infinite;
+}
 .browse-card .browse-card-figure.img-custom-height {
   min-height: 153px;
 }
@@ -152,96 +169,6 @@
   display: flex;
   top: 8px;
 }
-.browse-card .browse-card-footer .browse-card-options .exl-tooltip {
-  display: inline-block;
-  font-size: 12px;
-  position: relative;
-  transition: all 130ms ease-in-out;
-}
-.browse-card .browse-card-footer .browse-card-options .exl-tooltip-label {
-  background-color: var(--spectrum-gray-600);
-  border-radius: 4px;
-  bottom: 120%;
-  color: var(--spectrum-gray-50);
-  font-weight: var(--font-weight-400);
-  left: 50%;
-  padding: 2px 8px 4px;
-  position: absolute;
-  text-align: center;
-  text-wrap: nowrap;
-  transform: translateX(-50%);
-  white-space: pre;
-  visibility: hidden;
-  z-index: 1;
-}
-.browse-card .browse-card-footer .browse-card-options .exl-tooltip-label::after {
-  border-width: 4px;
-  border-style: solid;
-  border-color: var(--spectrum-gray-600) transparent transparent transparent;
-  content: "";
-  left: 50%;
-  margin-left: -4px;
-  position: absolute;
-  top: 100%;
-}
-.browse-card .browse-card-footer .browse-card-options .exl-link-label {
-  color: var(--non-spectrum-grey);
-  font-size: var(--spectrum-font-size-75);
-  font-weight: var(--font-weight-400);
-  line-height: 28px;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark-icon, 
-.browse-card .browse-card-footer .browse-card-options .copy-icon{
-  background-size: 20px 20px;
-  background-repeat: no-repeat;
-  color: var(--spectrum-gray-800);
-  cursor: pointer;
-  display: inline-block;
-  height: 20px;
-  padding: 5px 2px 5px 5px;
-  transition: all 200ms ease-in-out;
-  vertical-align: middle;
-  width: 20px;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark .bookmark-icon {
-  background-image: url("../../icons/bookmark.svg");
-  background-position: center 0;
-  cursor: inherit;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark .bookmark-icon:hover + .exl-tooltip-label {
-  visibility: visible;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark.auth .bookmark-icon {
-  cursor: pointer;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark.auth .bookmark-icon.authed {
-  background-image: url("../../icons/bookmark-active.svg");
-  background-position: center 2px;
-  background-size: 17px 17px;
-  cursor: pointer;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark.auth .bookmark-icon.authed:hover + .exl-tooltip-label {
-  visibility: visible;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark.auth .bookmark-icon:hover {
-  background-color: var(--spectrum-gray-200);
-  border-radius: 4px;
-}
-.browse-card .browse-card-footer .browse-card-options .bookmark.auth[data-id='none'] {
-  display: none;
-}
-.browse-card .browse-card-footer .browse-card-options .copy-link .copy-icon {
-  background-image: url("../../icons/copy.svg");
-  background-position: center 0;
-  transition: all 200ms ease-in-out;
-}
-.browse-card .browse-card-footer .browse-card-options .copy-link .copy-icon:hover {
-  background-color: var(--spectrum-gray-200);
-  border-radius: 4px;
-}
-.browse-card .browse-card-footer .browse-card-options .copy-link .copy-icon:hover + .exl-tooltip-label {
-  visibility: visible;
-}
 .browse-card .browse-card-footer .browse-card-cta-element {
   background-color: var(--background-color);
   color: var(--non-spectrum-dark-navy-blue);
@@ -259,13 +186,6 @@
   height: 22px;
   width: 22px;
   fill: var(--non-spectrum-navy-blue);
-}
-.browse-card .browse-card-footer .icon {
-  color: var( --non-spectrum-dim-gray);
-  fill: var( --non-spectrum-dim-gray);
-  margin-right: 2px;
-  height: 24px;
-  width: 24px;
 }
 .browse-card .browse-card-meta-anchor {
   margin: 0;
@@ -330,13 +250,13 @@
 .browse-card.tutorial-card .browse-card-banner {
   background-color: var(--spectrum-celery-600);
 }
-.browse-card.course-card .browse-card-banner {
+.browse-card.playlist-card .browse-card-banner {
   background-color: var(--spectrum-blue-800);
 }
 .browse-card.documentation-card .browse-card-banner {
   background-color: var(--spectrum-celery-900);
 }
-.browse-card.article-card .browse-card-banner {
+.browse-card.perspective-card .browse-card-banner {
   background-color: var(--spectrum-gray-600);
 }
 .browse-card.troubleshooting-card .browse-card-banner {
@@ -351,26 +271,26 @@
 .browse-card.instructor-led-training-card .browse-card-banner {
   background-color: var(--spectrum-blue-1100);
 }
-.browse-card.course-card .browse-card-figure {
+.browse-card.playlist-card .browse-card-figure {
   max-height: 143px;
 }
-.browse-card.course-card .browse-card-meta-info .icon {
+.browse-card.playlist-card .browse-card-meta-info .icon {
   height: 11px;
   width: 11px;
   margin-right: 0;
   margin-top: -2px;
 }
-.browse-card.course-card .browse-card-content {
+.browse-card.playlist-card .browse-card-content {
   padding: 16px 16px 0;
 }
-.browse-card.course-card .browse-card-meta-info,
-.browse-card.course-card .browse-card-title-text {
+.browse-card.playlist-card .browse-card-meta-info,
+.browse-card.playlist-card .browse-card-title-text {
   margin: 0;
 }
 .browse-card.tutorial-card .browse-card-figure {
   max-height: 140px;
 }
-.browse-card.article-card .browse-card-figure,
+.browse-card.perspective-card .browse-card-figure,
 .browse-card.troubleshooting-card .browse-card-figure,
 .browse-card.certificate-card .browse-card-figure,
 .browse-card.certification-card .browse-card-figure,
@@ -496,14 +416,14 @@
 }
 @media only screen and (min-width: 900px) {
   .browse-card.tutorial-card .browse-card-figure,
-  .browse-card.course-card .browse-card-figure {
+  .browse-card.playlist-card .browse-card-figure {
     max-height: 199px;
   }
-  .browse-card.course-card .browse-card-content {
+  .browse-card.playlist-card .browse-card-content {
     padding: 16px 16px 12px;
   }
-  .browse-card.course-card .browse-card-meta-info,
-  .browse-card.course-card .browse-card-title-text {
+  .browse-card.playlist-card .browse-card-meta-info,
+  .browse-card.playlist-card .browse-card-title-text {
     margin: 8px 0;
   }
 }

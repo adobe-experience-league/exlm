@@ -10,12 +10,7 @@
 }
 
 .doc-actions-mobile {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  font-size: var(--spectrum-font-size-75);
-  margin: 10px;
-  margin: 20px 0 0 -8px;
+  margin: 20px 0 0 -3px;
   min-height: 40px;
 }
 

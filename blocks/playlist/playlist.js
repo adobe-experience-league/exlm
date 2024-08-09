@@ -1,6 +1,11 @@
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
-import { htmlToElement } from '../../scripts/scripts.js';
-import { Playlist } from './playlist-utils.js';
+import {
+  htmlToElement,
+  decoratePlaceholders,
+  createPlaceholderSpan,
+  fetchLanguagePlaceholders,
+} from '../../scripts/scripts.js';
+import { Playlist, LABELS } from './playlist-utils.js';
 
 /**
  * convert seconds to time in minutes in the format of 'mm:ss'
@@ -13,15 +18,39 @@ function toTimeInMinutes(seconds) {
   return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
 }
 
+function isSameInteger(a, b) {
+  return parseInt(a, 10) === parseInt(b, 10);
+}
+
 /**
  * Update the query string parameter with the given key and value
  */
 function updateQueryStringParameter(key, value) {
+  if (value < 0) return;
   const url = new URL(window.location.href);
   // do not update if same value
   if (url.searchParams.get(key) === value) return;
-  url.searchParams.set(key, value);
-  window.history.pushState({ [key]: value }, '', url);
+  if (value === undefined || value === null) {
+    url.searchParams.delete(key);
+    window.history.pushState({ [key]: 0 }, '', url);
+  } else {
+    url.searchParams.set(key, value);
+    window.history.pushState({ [key]: value }, '', url);
+  }
+}
+
+function updateVideoIndexParam(activeIndex) {
+  const url = new URL(window.location.href);
+  const currentVideoIndexParam = url.searchParams.get('video');
+  if (isSameInteger(currentVideoIndexParam, activeIndex)) return;
+
+  // if the active index is 0, remove the video query param
+  if (isSameInteger(activeIndex, 0)) {
+    updateQueryStringParameter('video', null);
+  } else {
+    // if the active index is not 0, update the video query param
+    updateQueryStringParameter('video', activeIndex);
+  }
 }
 
 /**
@@ -30,6 +59,10 @@ function updateQueryStringParameter(key, value) {
 function getQueryStringParameter(key) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(key);
+}
+
+function hasQueryStringParameter(key) {
+  return new URLSearchParams(window.location.search).has(key);
 }
 
 /**
@@ -57,6 +90,10 @@ function newPlayer(playlist) {
     'autoplay',
   ];
 
+  const transcriptLoading = [100, 100, 100, 80, 70, 40]
+    .map((i) => `<p class="loading-shimmer" style="--placeholder-width: ${i}%"></p>`)
+    .join('');
+
   const player = htmlToElement(`
         <div class="playlist-player" data-playlist-player>
             <div class="playlist-player-video">
@@ -76,12 +113,16 @@ function newPlayer(playlist) {
                 <h3 class="playlist-player-info-title">${title}</h3>
                 <p class="playlist-player-info-description">${description}</p>
                 <details class="playlist-player-info-transcript" data-playlist-player-info-transcript="${transcriptUrl}">
-                  <summary>Transcript</summary>
-                  <p>loading...</p>
+                  <summary>
+                    <span data-placeholder="${LABELS.transcript}">Transcript</span>
+                  </summary>
+                  ${transcriptLoading}
                 </details>
             </div>
         </div>
     `);
+
+  decoratePlaceholders(player);
 
   const showIframe = () => {
     const iframeTemplate = player.querySelector('#video-iframe-template');
@@ -119,22 +160,22 @@ function decoratePlaylistHeader(block, playlist) {
   playlist.description = playlistDescriptionP?.textContent || '';
 
   defaultContent.setAttribute('data-playlist-progress-box', '');
-  defaultContent.prepend(
-    htmlToElement(`<div class="playlist-info">
-        <b>PLAYLIST</b>
-        <div>${iconSpan('list')} ${playlist.length} Tutorials</div>
-        <button data-playlist-action-button class="playlist-action-button" aria-expanded="false">⋮</button>
-    </div>`),
-  );
 
-  defaultContent.append(
-    htmlToElement(`<div class="playlist-now-viewing">
-  <b>NOW VIEWING</b>
-  <b><span class="playlist-now-viewing-count" data-playlist-now-viewing-count>${
-    playlist.getActiveVideoIndex() + 1
-  }</span> OF ${playlist.length}</b>
-</div>`),
-  );
+  const playlistInfo = htmlToElement(`<div class="playlist-info">
+    <b><span data-placeholder="${LABELS.playlist}">Playlist<span></b>
+    <div>${iconSpan('list')} ${playlist.length} <span data-placeholder="${LABELS.tutorials}">Tutorials<span></div>
+    <button data-playlist-action-button class="playlist-action-button" aria-expanded="false">⋮</button>
+  </div>`);
+
+  defaultContent.prepend(playlistInfo);
+
+  const nowViewing = htmlToElement(`<div class="playlist-now-viewing">
+    <b><span data-placeholder="${LABELS.nowViewing}">NOW VIEWING</span></b>
+    <b><span class="playlist-now-viewing-count" data-playlist-now-viewing-count>${
+      playlist.getActiveVideoIndex() + 1
+    }</span> OF ${playlist.length}</b>
+  </div>`);
+  defaultContent.append(nowViewing);
 
   // Load actions Menu
   loadCSS('/blocks/playlist/playlist-action-menu.css');
@@ -160,20 +201,38 @@ async function getCaptionParagraphs(transcriptUrl) {
       currentParagraph += ` ${content}`;
     }
   });
+  paragraphs.push(currentParagraph);
 
   window.playlistCaptions[transcriptUrl] = paragraphs;
   return paragraphs;
 }
 
+/**
+ * Updates current video transcript
+ * @param {HTMLDetailsElement} transcriptDetail
+ */
 function updateTranscript(transcriptDetail) {
   const transcriptUrl = transcriptDetail.getAttribute('data-playlist-player-info-transcript');
+  const clearTranscript = () => [...transcriptDetail.querySelectorAll('p')].forEach((p) => p.remove());
+  const showTranscriptNotAvailable = () => {
+    clearTranscript();
+    transcriptDetail.append(createPlaceholderSpan(LABELS.transcriptNotAvailable, 'Transcript not available'));
+  };
   transcriptDetail.addEventListener('toggle', (event) => {
     if (event.target.open && transcriptDetail.dataset.ready !== 'true') {
-      getCaptionParagraphs(transcriptUrl).then((paragraphs) => {
-        [...transcriptDetail.querySelectorAll('p')].forEach((p) => p.remove());
-        paragraphs.forEach((paragraph) => transcriptDetail.append(htmlToElement(`<p>${paragraph}</p>`)));
-        transcriptDetail.dataset.ready = 'true';
-      });
+      getCaptionParagraphs(transcriptUrl)
+        .then((paragraphs) => {
+          clearTranscript();
+          if (!paragraphs || !paragraphs.length || !paragraphs.join('').trim()) {
+            showTranscriptNotAvailable();
+          } else paragraphs.forEach((paragraph) => transcriptDetail.append(htmlToElement(`<p>${paragraph}</p>`)));
+        })
+        .catch(() => {
+          showTranscriptNotAvailable();
+        })
+        .finally(() => {
+          transcriptDetail.dataset.ready = 'true';
+        });
     }
   });
 }
@@ -246,7 +305,7 @@ playlist.onVideoChange((videos, vIndex) => {
   el.classList.toggle('active', active);
   if (active && activeStatusChanged) el.parentElement.scrollTop = el.offsetTop - el.clientHeight / 2;
   updatePlayer(playlist);
-  updateQueryStringParameter('video', playlist.getActiveVideoIndex());
+  updateVideoIndexParam(playlist.getActiveVideoIndex());
   updateProgress(vIndex, playlist);
   return true;
 });
@@ -261,15 +320,16 @@ export default function decorate(block) {
   const playerContainer = htmlToElement(`<div class="playlist-player-container" data-playlist-player-container></div>`);
   playlistSection.parentElement.prepend(playerContainer);
 
+  const playlistOptions = htmlToElement(`<div class="playlist-options">
+    <div class="playlist-options-autoplay">
+        <input type="checkbox" id="playlist-options-autoplay" checked=${playlist?.options?.autoplayNext || true}>
+        <label for="playlist-options-autoplay">
+          <span data-placeholder="${LABELS.autoPlayNextVideo}">Auto Play Next Video</span>
+        </label>
+    </div>
+  </div>`);
   // bottom options
-  block.parentElement.append(
-    htmlToElement(`<div class="playlist-options">
-        <div class="playlist-options-autoplay">
-            <input type="checkbox" id="playlist-options-autoplay" checked=${playlist?.options?.autoplayNext || true}>
-            <label for="playlist-options-autoplay">Autoplay next Video</label>
-        </div>
-    </div>`),
-  );
+  block.parentElement.append(playlistOptions);
 
   document.querySelector('#playlist-options-autoplay').addEventListener('change', (event) => {
     playlist.updateOptions({ autoplayNext: event.target.checked });
@@ -281,7 +341,7 @@ export default function decorate(block) {
 
   [...block.children].forEach((videoRow, videoIndex) => {
     videoRow.classList.add('playlist-item');
-    const [videoCell, videoDataCell] = videoRow.children;
+    const [videoCell, videoDataCell, jsonLdCell] = videoRow.children;
     videoCell.classList.add('playlist-item-thumbnail');
     videoCell.setAttribute('data-playlist-item-progress-box', '');
     videoDataCell.classList.add('playlist-item-content');
@@ -308,6 +368,8 @@ export default function decorate(block) {
     durationP.remove();
     transcriptP.remove();
 
+    jsonLdCell?.replaceWith(htmlToElement(`<script type="application/ld+json">${jsonLdCell.textContent}</script>`));
+
     // item bottom status
     videoDataCell.append(
       htmlToElement(`<div class="playlist-item-meta">
@@ -327,12 +389,29 @@ export default function decorate(block) {
   });
 
   decorateIcons(playlistSection);
+  decoratePlaceholders(playlistSection);
   playlist.activateVideoByIndex(activeVideoIndex);
 
-  // // handle browser back within history changes
-  // window.addEventListener('popstate', (event) => {
-  //   if (event.state?.video) {
-  //     playlist.activateVideoByIndex(event.state.video);
-  //   }
-  // });
+  // handle browser back within history changes
+  window.addEventListener('popstate', (event) => {
+    if (event.state?.video) {
+      playlist.activateVideoByIndex(event.state.video);
+    } else if (!event.state) {
+      playlist.activateVideoByIndex(0);
+    }
+  });
+
+  // if the url contains "redirected" query param, show a toast message and remove the query param.
+  if (hasQueryStringParameter('redirected')) {
+    // replace page history to remove the query param
+    updateQueryStringParameter('redirected', null);
+    Promise.allSettled([import('../../scripts/toast/toast.js'), fetchLanguagePlaceholders()]).then(
+      ([toastResult, placeholdersResult]) => {
+        const notice =
+          placeholdersResult.value[LABELS.courseReplacedNotice] ||
+          'The course you visited was migrated to a video playlist for easier access';
+        toastResult.value.sendNotice(notice, 'info', 5000);
+      },
+    );
+  }
 }

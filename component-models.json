@@ -651,6 +651,28 @@
     ]
   },
   {
+    "id": "tab-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Style",
+        "description": "The section style",
+        "valueType": "string",
+        "hidden": true,
+        "options": []
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Tab heading"
+      }
+    ]
+  },
+  {
     "id": "browse-rail-section",
     "fields": [
       {
@@ -891,10 +913,6 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Article",
-            "value": "article"
-          },
-          {
             "name": "Certification",
             "value": "certification"
           },
@@ -903,16 +921,20 @@
             "value": "community"
           },
           {
-            "name": "Courses",
-            "value": "course"
-          },
-          {
             "name": "Documentation",
             "value": "documentation"
           },
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Troubleshooting",
@@ -1153,10 +1175,6 @@
           {
             "name": "H5",
             "value": "h5"
-          },
-          {
-            "name": "H6",
-            "value": "h6"
           }
         ]
       },
@@ -1186,10 +1204,10 @@
       },
       {
         "component": "select",
-        "name": "linkType",
-        "value": "link",
-        "label": "Link Type",
-        "description": "Link will render a normal Anchor button, video will render a video button that opens the video player when clicked.",
+        "name": "firstCTALinkType",
+        "value": "",
+        "label": "First CTA Type",
+        "description": "The 'Link' option will render a standard anchor button, the 'Video' option will render a button that opens the video player when clicked, and the 'Sign In' option will trigger the sign-in process.",
         "valueType": "string",
         "options": [
           {
@@ -1199,6 +1217,10 @@
           {
             "name": "Video",
             "value": "video"
+          },
+          {
+            "name": "Sign In",
+            "value": "signin"
           }
         ]
       },
@@ -1207,8 +1229,38 @@
         "valueType": "string",
         "name": "cta2Text",
         "value": "",
-        "label": "Sign up CTA Text",
+        "label": "Second CTA Text",
         "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta2",
+        "value": "",
+        "label": "Second CTA Link",
+        "description": "What link should be opened when clicking the button? Add a hash (#) when the sign-in option is getting selected"
+      },
+      {
+        "component": "select",
+        "name": "secondCTALinkType",
+        "value": "",
+        "label": "Second CTA Type",
+        "description": "The 'Link' option will render a standard anchor button, the 'Video' option will render a button that opens the video player when clicked, and the 'Sign In' option will trigger the sign-in process.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Link",
+            "value": "link"
+          },
+          {
+            "name": "Video",
+            "value": "video"
+          },
+          {
+            "name": "Sign In",
+            "value": "signin"
+          }
+        ]
       }
     ]
   },
@@ -1405,8 +1457,34 @@
         "valueType": "string",
         "name": "cta1Text",
         "value": "",
-        "label": "Sign in CTA text",
+        "label": "First CTA text",
         "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1",
+        "value": "",
+        "label": "First CTA Link",
+        "description": "What link to open when clicking the button."
+      },
+      {
+        "component": "select",
+        "name": "firstCTALinkType",
+        "value": "",
+        "label": "First CTA Type",
+        "description": "The 'Link' option will render a standard anchor button, and the 'Sign In' option will trigger the sign-in process.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Link",
+            "value": "link"
+          },
+          {
+            "name": "Sign In",
+            "value": "signin"
+          }
+        ]
       },
       {
         "component": "text",
@@ -1422,7 +1500,25 @@
         "name": "cta2",
         "value": "",
         "label": "Second CTA Link",
-        "description": "What link to open when clicking the button."
+        "description": "What link should be opened when clicking the button? Add a hash (#) when the sign-in option is getting selected"
+      },
+      {
+        "component": "select",
+        "name": "secondCTALinkType",
+        "value": "",
+        "label": "Second CTA Type",
+        "description": "The 'Link' option will render a standard anchor button, and the 'Sign In' option will trigger the sign-in process.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Link",
+            "value": "link"
+          },
+          {
+            "name": "Sign In",
+            "value": "signin"
+          }
+        ]
       }
     ]
   },
@@ -1779,7 +1875,7 @@
         "name": "contentURL",
         "value": "",
         "label": "Content URL",
-        "description": "Provide a link to one of the following content types: Course, Tutorial, Documentation, Troubleshooting, On-Demand Event, or Certification"
+        "description": "Provide a link to one of the following content types: Playlist, Tutorial, Documentation, Troubleshooting, On-Demand Event, Certification or Perspective"
       }
     ]
   },
@@ -1851,10 +1947,6 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Actionable Insights",
-            "value": "article"
-          },
-          {
             "name": "Certification",
             "value": "certification"
           },
@@ -1863,16 +1955,20 @@
             "value": "community"
           },
           {
-            "name": "Courses",
-            "value": "course"
-          },
-          {
             "name": "Documentation",
             "value": "documentation"
           },
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Troubleshooting",
@@ -1946,10 +2042,6 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Article",
-            "value": "article"
-          },
-          {
             "name": "Certification",
             "value": "certification"
           },
@@ -1958,16 +2050,20 @@
             "value": "community"
           },
           {
-            "name": "Courses",
-            "value": "course"
-          },
-          {
             "name": "Documentation",
             "value": "documentation"
           },
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Troubleshooting",
@@ -2110,7 +2206,7 @@
         "component": "text",
         "valueType": "string",
         "name": "linkText",
-        "value": "Read Article",
+        "value": "",
         "label": "CTA Text"
       }
     ]
@@ -2451,12 +2547,8 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Article",
-            "value": "article"
-          },
-          {
-            "name": "Courses",
-            "value": "course"
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Tutorials",
@@ -2481,6 +2573,10 @@
           {
             "name": "Certification",
             "value": "certification"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
           }
         ]
       },
@@ -2647,6 +2743,7 @@
         "component": "aem-content",
         "valueType": "string",
         "name": "author-bio-page",
+        "multi": true,
         "value": "",
         "label": "Author Bio page URL"
       },
@@ -2658,8 +2755,8 @@
         "description": "Sets the coveo content type in page meta.",
         "options": [
           {
-            "name": "Actionable Insights",
-            "value": "Article"
+            "name": "Perspectives",
+            "value": "Perspective"
           }
         ]
       },
@@ -3342,6 +3439,25 @@
         "name": "description",
         "value": "",
         "label": "Description"
+      }
+    ]
+  },
+  {
+    "id": "role-and-industry",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Role and Industry Heading"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Role and Industry Description"
       }
     ]
   }

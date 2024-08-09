@@ -8,7 +8,7 @@ import {
   loadBlocks,
 } from './lib-franklin.js';
 import { decorateRichtext } from './editor-support-rte.js';
-import { decorateMain, loadIms } from './scripts.js';
+import { decorateMain, isArticlePage, loadArticles, loadIms } from './scripts.js';
 
 // set aem content root
 window.hlx.aemRoot = '/content/exlm/global';
@@ -36,7 +36,7 @@ function restoreState(newBlock, state) {
 function setIdsforRTETitles(articleContentSection) {
   // find all titles with no id in the article content section
   articleContentSection
-    .querySelectorAll('h1:not([id]),h2:not([id],h3:not([id],h4:not([id],h5:not([id],h6:not([id]')
+    .querySelectorAll('h1:not([id]),h2:not([id]),h3:not([id]),h4:not([id]),h5:not([id]),h6:not([id])')
     .forEach((title) => {
       title.id = title.textContent
         .toLowerCase()
@@ -73,10 +73,19 @@ function updateUEInstrumentation() {
       // allow adding default sections and browse rail section
       setUEFilter(main, 'main-browse');
     }
-    // update available blocks for default sections
-    main.querySelectorAll('.section:not(.browse-rail-section)').forEach((elem) => {
+    // Update available blocks for tab sections
+    const tabSections = main.querySelectorAll('div[data-aue-model^="tab-section"]');
+    if (tabSections) {
+      tabSections.forEach((elem) => {
+        setUEFilter(elem, 'tab-section');
+      });
+    }
+
+    // Update available blocks for default sections excluding browse-rail-section and tab-section
+    main.querySelectorAll('.section:not(.browse-rail-section):not([data-aue-model^="tab-section"])').forEach((elem) => {
       setUEFilter(elem, 'section-browse');
     });
+
     return;
   }
 
@@ -90,6 +99,23 @@ function updateUEInstrumentation() {
       setUEFilter(articleContentSection, 'article-content-section');
       setIdsforRTETitles(articleContentSection);
     }
+    // Update available blocks for tab sections
+    const tabSections = main.querySelectorAll('div[data-aue-model^="tab-section"]');
+    if (tabSections) {
+      tabSections.forEach((elem) => {
+        setUEFilter(elem, 'tab-section');
+      });
+    }
+
+    // Update available blocks for default sections excluding article-header-section, article-content-section and tab-section
+    main
+      .querySelectorAll(
+        '.section:not(.article-content-section):not(.article-header-section):not([data-aue-model^="tab-section"])',
+      )
+      .forEach((elem) => {
+        setUEFilter(elem, 'section-article');
+      });
+
     return;
   }
 
@@ -154,11 +180,17 @@ async function applyChanges(event) {
     if (element.matches('main')) {
       const newMain = parsedUpdate.querySelector(`[data-aue-resource="${resource}"]`);
       newMain.style.display = 'none';
+      if (isArticlePage()) {
+        element.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
+          heading.classList.add('no-mtoc');
+        });
+      }
       element.insertAdjacentElement('afterend', newMain);
       decorateMain(newMain);
       decorateRichtext(newMain);
       await loadBlocks(newMain);
       element.remove();
+      loadArticles();
       newMain.style.display = null;
       // eslint-disable-next-line no-use-before-define
       attachEventListners(newMain);
@@ -191,20 +223,49 @@ async function applyChanges(event) {
       );
       if (newElements.length) {
         const { parentElement } = element;
-        if (element.matches('.section')) {
+        if (element.matches('.tabpanel')) {
           const [newSection] = newElements;
-          newSection.style.display = 'none';
+          element.style.display = 'none';
           element.insertAdjacentElement('afterend', newSection);
+          newSection.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
+            heading.classList.add('no-mtoc');
+          });
           decorateButtons(newSection);
           decorateIcons(newSection);
           decorateSections(parentElement);
           decorateBlocks(parentElement);
           decorateRichtext(newSection);
           await loadBlocks(parentElement);
+          element.innerHTML = newSection.innerHTML;
+          newSection.remove();
+          element.style.display = null;
+          return true;
+        }
+        if (element.matches('.section')) {
+          let articleContentContainer;
+          const [newSection] = newElements;
+          newSection.style.display = 'none';
+          element.insertAdjacentElement('afterend', newSection);
+          decorateButtons(newSection);
+          decorateIcons(newSection);
+          if (document.querySelector('.article-content-container')) {
+            articleContentContainer = document.querySelector('.article-content-container').cloneNode(true);
+          }
+          decorateSections(parentElement);
+          decorateBlocks(parentElement);
+          decorateRichtext(newSection);
+          await loadBlocks(parentElement);
           element.remove();
+          if (articleContentContainer) {
+            parentElement
+              .querySelector('.article-content-container')
+              .insertAdjacentElement('afterend', articleContentContainer);
+            parentElement.querySelector('.article-content-container').remove();
+          }
           newSection.style.display = null;
         } else {
           element.replaceWith(...newElements);
+          if (element.closest('.tab-panel')) element.classList.add('no-mtoc');
           decorateButtons(parentElement);
           decorateIcons(parentElement);
           decorateRichtext(parentElement);

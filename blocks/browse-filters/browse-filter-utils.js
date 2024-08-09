@@ -1,7 +1,5 @@
-import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
-import { COMMUNITY_SEARCH_FACET } from '../../scripts/browse-card/browse-cards-constants.js';
-
-const { isProd } = getConfig();
+import { COMMUNITY_SEARCH_FACET } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 const SUB_FACET_MAP = {
   Community: COMMUNITY_SEARCH_FACET,
@@ -61,7 +59,7 @@ const roles = [
  * Each contentType object includes a id, value, title and description.
  * The title and description are fetched from language placeholders or falls back to a default description.
  */
-const contentType = [
+const contentTypes = [
   {
     id: 'Certification',
     value: 'Certification',
@@ -69,23 +67,10 @@ const contentType = [
     description: 'Credentials that recognize an individual’s skill and competency in an Adobe solution.',
   },
   {
-    id: 'Article',
-    value: 'Article',
-    title: 'Article',
-    description: 'Real-world customer perspectives and use-cases of Experience Cloud products.',
-    disabled: isProd,
-  },
-  {
     id: 'Community',
     value: 'Community',
     title: 'Community',
     description: 'Questions, answers, ideas, and expertise shared from Adobe customers and experts growing together.',
-  },
-  {
-    id: 'Course',
-    value: 'Course',
-    title: 'Courses',
-    description: 'Expertly curated collections designed to help you gain skills and advance your knowledge.',
   },
   {
     id: 'Documentation',
@@ -101,6 +86,18 @@ const contentType = [
     description: 'Recordings of learning and skill enablement events. Watch and learn from Adobe experts and peers.',
   },
   {
+    id: 'Perspective',
+    value: 'Perspective',
+    title: 'Perspectives',
+    description: 'Real-world inspiration from Experience Cloud customers and Adobe experts.',
+  },
+  {
+    id: 'Playlist',
+    value: 'Playlist',
+    title: 'Playlists',
+    description: 'Expertly curated collections designed to help you gain skills and advance your knowledge.',
+  },
+  {
     id: 'Troubleshooting',
     value: 'Troubleshooting',
     title: 'Troubleshooting',
@@ -113,17 +110,15 @@ const contentType = [
     description:
       'Brief instructional material with step-by-step instructions to learn a specific skill or accomplish a specific task.',
   },
-]
-  .filter((type) => !type.disabled)
-  .map((role) => ({
-    ...role,
-    ...(placeholders[`filterContentType${role.id}Title`] && {
-      title: placeholders[`filterContentType${role.id}Title`],
-    }),
-    ...(placeholders[`filterContentType${role.id}Description`] && {
-      description: placeholders[`filterContentType${role.id}Description`],
-    }),
-  }));
+].map((contentType) => ({
+  ...contentType,
+  ...(placeholders[`filterContentType${contentType.id}Title`] && {
+    title: placeholders[`filterContentType${contentType.id}Title`],
+  }),
+  ...(placeholders[`filterContentType${contentType.id}Description`] && {
+    description: placeholders[`filterContentType${contentType.id}Description`],
+  }),
+}));
 
 /**
  * Array containing expLevel (Experience Level) with associated metadata.
@@ -163,15 +158,13 @@ const authorTypes = [
     id: 'internal',
     value: 'Adobe',
     title: 'Adobe',
-    description:
-      'High degree of proficiency with an advanced understanding of concepts and skill. Regularly manages complex tasks and objectives.',
+    description: 'Content created by Adobe employees',
   },
   {
     id: 'external',
     value: 'External',
     title: 'External',
-    description:
-      'High degree of proficiency with an advanced understanding of concepts and skill. Regularly manages complex tasks and objectives.',
+    description: 'Content created by expert Experience Cloud customers',
   },
 ].map((authorType) => ({
   ...authorType,
@@ -193,7 +186,7 @@ export const roleOptions = {
 export const contentTypeOptions = {
   id: 'el_contenttype',
   name: placeholders.filterContentTypeLabel || 'Content Type',
-  items: contentType,
+  items: contentTypes,
   selected: 0,
 };
 
@@ -375,33 +368,34 @@ export const handleCoverSearchSubmit = (targetSearchText) => {
 };
 
 /**
- * Gets articleIndex object.
- * @param {string} [prefix] Location of articleIndex
- * @returns {object} Window ArticleIndex object
+ * Gets perspectiveIndex object.
+ * @param {string} [prefix] Location of perspectiveIndex
+ * @returns {object} Window perspectiveIndex object
  */
-export async function fetchArticleIndex(prefix = 'en') {
-  window.articleIndex = window.articleIndex || {};
-  const loaded = window.articleIndex[`${prefix}-loaded`];
+export async function fetchPerspectiveIndex(prefix = 'en') {
+  window.perspectiveIndex = window.perspectiveIndex || {};
+  const loaded = window.perspectiveIndex[`${prefix}-loaded`];
   if (!loaded) {
-    window.articleIndex[`${prefix}-loaded`] = new Promise((resolve, reject) => {
-      const url = `/${prefix}/article-index.json`;
+    window.perspectiveIndex[`${prefix}-loaded`] = new Promise((resolve, reject) => {
+      const url = `/${prefix}/perspective-index.json`;
       fetch(url)
         .then((resp) => {
           if (resp.ok) {
             return resp.json();
           }
-          throw new Error(`${resp.status}: ${resp.statusText}`);
+          window.perspectiveIndex[prefix] = [];
+          return {};
         })
         .then((json) => {
-          window.articleIndex[prefix] = json.data;
-          resolve(json.data);
+          window.perspectiveIndex[prefix] = json?.data ?? [];
+          resolve(json?.data ?? []);
         })
         .catch((error) => {
-          window.articleIndex[prefix] = [];
+          window.perspectiveIndex[prefix] = [];
           reject(error);
         });
     });
   }
-  await window.articleIndex[`${prefix}-loaded`];
-  return window.articleIndex[prefix];
+  await window.perspectiveIndex[`${prefix}-loaded`];
+  return window.perspectiveIndex[prefix];
 }

@@ -574,6 +574,16 @@ button.secondary {
   color: var(--text-color);
 }
 
+a.button.secondary:disabled,
+button.secondary:disabled {
+  color: var(--spectrum-gray-400);
+}
+
+a.button.secondary:disabled:hover,
+button.secondary:disabled:hover {
+  background-color: transparent;
+}
+
 .button-container {
   margin: 0;
 
@@ -688,7 +698,7 @@ picture {
 
 .exl-toast {
   align-items: center;
-  background: var(--spectrum-green-900);
+  background: var(--spectrum-gray-900);
   border-radius: 5px;
   color: var(--spectrum-gray-50);
   display: flex;
@@ -696,11 +706,41 @@ picture {
   padding: 0 10px;
   position: fixed;
   transition: all 200ms ease-in-out;
-  transform: translate(-50%, -50%);
-  top: 10%;
+  transform: translateX(-50%);
+  top: calc(var(--nav-height) + 10px);
   bottom: unset;
   z-index: 999;
   width: 90%;
+}
+
+.exl-toast .exl-toast-icon {
+  cursor: pointer;
+  height: 18px;
+  padding: 5px;
+  width: 18px;
+  vertical-align: middle;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: white;
+  }
+
+  path {
+    fill: white;
+  }
+}
+
+.exl-toast.exl-toast-success {
+  background: var(--spectrum-green-900);
+}
+
+.exl-toast.exl-toast-error {
+  background: var(--spectrum-red-900);
+}
+
+.exl-toast.exl-toast-info {
+  background: var(--spectrum-blue-900);
 }
 
 .exl-toast-content {
@@ -714,18 +754,6 @@ picture {
   white-space: unset;
 }
 
-.exl-toast .icon-info {
-  background-image: url('../../icons/info-circle.svg');
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 18px;
-  cursor: pointer;
-  height: 18px;
-  padding: 5px;
-  width: 18px;
-  vertical-align: middle;
-}
-
 .exl-toast .icon-close {
   background-image: url('../../icons/icon-close.svg');
   background-repeat: no-repeat;
@@ -737,6 +765,11 @@ picture {
   width: 20px;
   margin-left: 5px;
   vertical-align: middle;
+}
+
+.form-error,
+.form-field-error {
+  color: var(--spectrum-red-900);
 }
 
 @include breakpoint(tablet) {
@@ -787,6 +820,11 @@ picture {
     }
   }
 
+  &.tabs-container {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
   > div {
     /* limit block wrappers max width */
     max-width: var(--non-spectrum-max-width);
@@ -794,7 +832,7 @@ picture {
   }
 
   @include breakpoint(tablet) {
-    padding: 30px 56px;
+    padding: 3em 3.5em;
   }
 
   &.curated-cards-container,
@@ -845,7 +883,7 @@ body[class^='browse-'] .browse-filters-full-container {
   visibility: hidden;
 }
 
-.content-hidden {
+.hidden {
   display: none;
 }
 
@@ -924,8 +962,7 @@ body[class^='browse-'] .browse-filters-full-container {
 
 /* browse rail breakpoint same as main hamburger menu (>= 1024px) */
 @include breakpoint('custom') {
-  body[class^='browse-'],
-  body[class^='article-'] {
+  body[class^='browse-'] {
     & > main {
       display: grid;
       grid-template:
@@ -939,16 +976,11 @@ body[class^='browse-'] .browse-filters-full-container {
     }
   }
 
-  body[class^='article-'] > main {
-    grid-template: 'articles-rail main'/256px 1fr;
-  }
-
   main > div.section {
     grid-column: 2;
   }
 
-  main > div.section.browse-rail-section,
-  main > div.section.articles-rail-section {
+  main > div.section.browse-rail-section {
     display: initial;
     grid-column: 1;
     grid-row: 1 / 100;
@@ -972,7 +1004,8 @@ body[class^='browse-'] .browse-filters-full-container {
   }
 }
 
-[data-placeholder] {
+[data-placeholder],
+.loading-shimmer {
   background-image: linear-gradient(
     90deg,
     var(--shimmer-image-slide-start) 0,
