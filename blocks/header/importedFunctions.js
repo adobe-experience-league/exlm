@@ -11,11 +11,12 @@ export class Deferred {
  * Process current pathname and return details for use in language switching
  * Considers pathnames like /en/path/to/content and /content/exl/global/en/path/to/content.html for both EDS and AEM
  */
+const { origin } = window.location;
+const community = 'isCommunity';
+
 const checkOrigin = () => {
-  const { origin } = window.location;
-  const communityOrigin = 'https://experienceleaguecommunities.adobe.com';
   if (origin.includes('experienceleaguecommunities')) {
-    return communityOrigin;
+    return community;
   }
   return origin;
 };
@@ -94,7 +95,6 @@ export async function decorateIcons(element, prefix = '') {
         ICONS_CACHE[iconName] = true;
         try {
           const checkPath = checkOrigin();
-          const { origin } = window.location;
           let response;
           if (checkPath === origin) {
             response = await fetch(`${window.hlx.codeBasePath}/icons/${prefix}${iconName}.svg`);
