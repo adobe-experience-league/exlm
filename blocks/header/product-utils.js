@@ -42,9 +42,9 @@ export default async function getProducts(theme = 'browse') {
   };
   let featured = true;
   const [Products, publishedPages] = await Promise.all([
-    fetchJson(`/${lang}/${content[theme].name}.json`, `/en/${content[theme].name}.json`),
+    fetchJson(`${window.hlx.codeBasePath}/${lang}/${content[theme].name}.json`, `/en/${content[theme].name}.json`),
     // get all indexed pages
-    fetchJson(`/${lang}/${content[theme].index}.json`, `/en/${content[theme].index}.json`),
+    fetchJson(`${window.hlx.codeBasePath}/${lang}/${content[theme].index}.json`, `/en/${content[theme].index}.json`),
   ]);
 
   // add all published top products to final list
