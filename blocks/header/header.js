@@ -9,7 +9,7 @@ import {
   fetchLanguagePlaceholders,
   getPathDetails,
 } from '../../scripts/scripts.js';
-import { Deferred, decorateIcons, getMetadata } from './importedFunctions.js';
+import { Deferred, decorateIcons, getMetadata } from './header-util.js';
 
 const { lang } = getPathDetails();
 
