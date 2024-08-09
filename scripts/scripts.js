@@ -1328,6 +1328,16 @@ function decodeAemPageMetaTags() {
   }
 }
 
+/**
+ * Fetch Json with fallback.
+ */
+export async function fetchJson(url, fallbackUrl) {
+  return fetch(url)
+    .then((response) => (!response.ok && fallbackUrl ? fetch(fallbackUrl) : response))
+    .then((response) => (response.ok ? response.json() : null))
+    .then((json) => json?.data || []);
+}
+
 async function loadPage() {
   // THIS IS TEMPORARY FOR SUMMIT.
   if (handleHomePageHashes()) return;
