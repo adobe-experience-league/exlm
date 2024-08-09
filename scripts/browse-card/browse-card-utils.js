@@ -2,7 +2,7 @@ import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constant
 import { getConfig } from '../scripts.js';
 
 const domParser = new DOMParser();
-const { prodAssetsCdnOrigin, cdnOrigin } = getConfig();
+const { cdnOrigin } = getConfig();
 
 /**
  * Converts a string to title case.
@@ -24,8 +24,8 @@ export function getMetadata(name, doc = document) {
 
 function createThumbnailURL(doc, contentType) {
   if (contentType === 'Playlist') {
-    const courseThumbnail = getMetadata('course-thumbnail', doc);
-    return courseThumbnail ? `${prodAssetsCdnOrigin}/thumb/${courseThumbnail.split('thumb/')[1]}` : '';
+    const courseThumbnail = getMetadata('og:image', doc);
+    return courseThumbnail || '';
   }
 
   if (contentType === 'Tutorial') {
