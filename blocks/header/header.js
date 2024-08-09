@@ -133,7 +133,7 @@ const communityLocalesMap = new Map([
 async function fetchCommunityProfileData(url = khorosProfileUrl) {
   const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
   try {
-    const response = await fetch(`${khorosProfileUrl}?lang=${locale}`, {
+    const response = await fetch(`${url}?lang=${locale}`, {
       method: 'GET',
       headers: {
         'x-ims-token': await window.adobeIMS?.getAccessToken().token,
