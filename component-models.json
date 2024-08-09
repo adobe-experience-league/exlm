@@ -929,12 +929,12 @@
             "value": "event"
           },
           {
-            "name": "Playlists",
-            "value": "playlist"
-          },
-          {
             "name": "Perspectives",
             "value": "perspective"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Troubleshooting",
@@ -1901,12 +1901,12 @@
             "value": "event"
           },
           {
-            "name": "Playlists",
-            "value": "playlist"
-          },
-          {
             "name": "Perspectives",
             "value": "perspective"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Troubleshooting",
@@ -1996,12 +1996,12 @@
             "value": "event"
           },
           {
-            "name": "Playlists",
-            "value": "playlist"
-          },
-          {
             "name": "Perspectives",
             "value": "perspective"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Troubleshooting",
