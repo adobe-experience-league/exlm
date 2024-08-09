@@ -89,6 +89,28 @@
     margin: 0;
 }
 
+.toc-tree {
+    scroll-behavior: smooth;
+    max-height: 80vh;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width: 0;
+    }
+
+    &:hover::-webkit-scrollbar, &:hover {
+        touch-action: pan-y;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--spectrum-gray-200) var(--spectrum-gray-100);
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+        background-color: var(--spectrum-gray-200);
+        border-radius: 6px;
+    }
+}
+
 .toc ul li a {
     width: 100%;
     display: flex;
