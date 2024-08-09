@@ -121,13 +121,13 @@ export default async function loadCoveoToken() {
     coveoResponseToken ||
     // eslint-disable-next-line no-async-promise-executor
     new Promise(async (resolve) => {
-      // this is temporary code, will be reverted.
-      // Token allows acces to staging search functionality, but not analytics
-      const { isProd, coveoToken } = getConfig();
-      if (!isProd) {
-        resolve(coveoToken);
-        return;
-      }
+      // // this is temporary code, will be reverted.
+      // // Token allows acces to staging search functionality, but not analytics
+      // const { isProd, coveoToken } = getConfig();
+      // if (!isProd) {
+      //   resolve(coveoToken);
+      //   return;
+      // }
       const signedIn = await isSignedInUser();
       if (signedIn) {
         loadJWT().then(async () => {
