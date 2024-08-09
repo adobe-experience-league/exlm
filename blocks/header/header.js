@@ -8,8 +8,7 @@ import {
   isFeatureEnabled,
   fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
-// import { getMetadata } from '../../scripts/lib-franklin.js';
-import { Deferred, decorateIcons, getPathDetails } from './importedFunctions.js';
+import { Deferred, decorateIcons, getMetadata } from './importedFunctions.js';
 
 /**
  * @typedef {Object} DecoratorOptions
@@ -17,6 +16,7 @@ import { Deferred, decorateIcons, getPathDetails } from './importedFunctions.js'
  * @property {() => {}} onSignOut
  * @property {() => Promise<string>} getProfilePicture
  * @property {boolean} isCommunity
+ * @property {boolean} lang
  */
 
 const HEADER_CSS = `/blocks/header/exl-header.css`;
@@ -29,6 +29,10 @@ let searchElementPromise = null;
 const FEATURE_FLAG = 'perspectives';
 
 async function loadSearchElement() {
+  const [solutionTag] = getMetadata('solution').trim().split(',');
+  if (solutionTag) {
+    window.headlessSolutionProductKey = solutionTag;
+  }
   searchElementPromise =
     searchElementPromise ??
     new Promise((resolve, reject) => {
@@ -427,13 +431,6 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   const ul = navWrapper.querySelector(':scope > ul');
   await buildNavItems(ul);
 
-  /**
-   * Fetches a list of products to render in main nav.
-   * @async
-   * @function getProducts
-   * @param {string} mode - The mode for fetching products ('browse' or 'articles').
-   * @returns {Promise<Array>} A promise that resolves to an array of products.
-   */
   const productList = await getProducts('browse');
 
   [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
@@ -870,7 +867,7 @@ class ExlHeader extends HTMLElement {
     options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
     options.isCommunity = options.isCommunity ?? false;
     options.origin = options.origin || window.location.origin;
-    options.lang = options.lang || getPathDetails().lang || 'en';
+    options.lang = options.lang || 'en';
     this.decoratorOptions = options;
 
     // yes, even though this is extra, it ensures that these functions remain pure-esque.
@@ -920,11 +917,6 @@ class ExlHeader extends HTMLElement {
     );
     if (headerFragment) {
       loadSearchElement();
-
-      // const [solutionTag] = getMetadata('solution').trim().split(',');
-      // if (solutionTag) {
-      //   window.headlessSolutionProductKey = solutionTag;
-      // }
 
       const headerWrapper = htmlToElement(
         '<div class="header-wrapper" id="header-wrapper"><div class="header block"></div></div>',
