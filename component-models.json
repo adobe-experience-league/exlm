@@ -929,10 +929,6 @@
             "value": "event"
           },
           {
-            "name": "Playlists",
-            "value": "playlist"
-          },
-          {
             "name": "Perspectives",
             "value": "perspective"
           },
@@ -1213,7 +1209,7 @@
         "label": "First CTA Type",
         "description": "The 'Link' option will render a standard anchor button, the 'Video' option will render a button that opens the video player when clicked, and the 'Sign In' option will trigger the sign-in process.",
         "valueType": "string",
-        "options": [
+        "options": [          
           {
             "name": "Link",
             "value": "link"
@@ -1251,7 +1247,7 @@
         "label": "Second CTA Type",
         "description": "The 'Link' option will render a standard anchor button, the 'Video' option will render a button that opens the video player when clicked, and the 'Sign In' option will trigger the sign-in process.",
         "valueType": "string",
-        "options": [
+        "options": [          
           {
             "name": "Link",
             "value": "link"
@@ -1967,10 +1963,6 @@
             "value": "event"
           },
           {
-            "name": "Playlists",
-            "value": "playlist"
-          },
-          {
             "name": "Perspectives",
             "value": "perspective"
           },
@@ -2064,10 +2056,6 @@
           {
             "name": "On-Demand Event",
             "value": "event"
-          },
-          {
-            "name": "Playlists",
-            "value": "playlist"
           },
           {
             "name": "Perspectives",
