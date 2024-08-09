@@ -18,6 +18,7 @@ const { lang } = getPathDetails();
  * @property {() => Promise<boolean>} isUserSignedIn
  * @property {() => {}} onSignOut
  * @property {() => Promise<string>} getProfilePicture
+ * @property {string} khorosProfileUrl
  * @property {boolean} isCommunity
  * @property {boolean} lang
  */
@@ -129,7 +130,7 @@ const communityLocalesMap = new Map([
 ]);
 
 // eslint-disable-next-line
-async function fetchCommunityProfileData() {
+async function fetchCommunityProfileData(url = khorosProfileUrl) {
   const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
   try {
     const response = await fetch(`${khorosProfileUrl}?lang=${locale}`, {
@@ -781,7 +782,7 @@ const profileMenuDecorator = async (profileMenuBlock, decoratorOptions) => {
       profileMenuWrapper.lastElementChild.setAttribute('data-id', 'sign-out');
       profileMenuWrapper.insertBefore(communityHeading, profileMenuWrapper.lastElementChild);
     }
-    fetchCommunityProfileData()
+    fetchCommunityProfileData(decoratorOptions.khorosProfileUrl)
       .then((res) => {
         if (res) {
           res.data.menu.forEach((item) => {
@@ -869,7 +870,7 @@ class ExlHeader extends HTMLElement {
     options.onSignOut = options.onSignOut || doSignOut;
     options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
     options.isCommunity = options.isCommunity ?? false;
-    options.origin = options.origin || window.location.origin;
+    options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
     options.lang = options.lang || lang || 'en';
     this.decoratorOptions = options;
 
@@ -907,17 +908,13 @@ class ExlHeader extends HTMLElement {
 
   async loadStyles() {
     return Promise.allSettled([
-      this.loadCSS(`${this.decoratorOptions.origin}${HEADER_CSS}`),
-      this.loadCSS(`${this.decoratorOptions.origin}${SEARCH_CSS}`),
+      this.loadCSS(`${window.hlx.codeBasePath}${HEADER_CSS}`),
+      this.loadCSS(`${window.hlx.codeBasePath}${SEARCH_CSS}`),
     ]);
   }
 
   async decorate() {
-    const headerFragment = await fetchFragment(
-      'header/header',
-      this.decoratorOptions.lang,
-      this.decoratorOptions.origin,
-    );
+    const headerFragment = await fetchFragment('header/header', this.decoratorOptions.lang);
     if (headerFragment) {
       loadSearchElement();
 
