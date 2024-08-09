@@ -18,6 +18,7 @@ const { lang } = getPathDetails();
  * @property {() => Promise<boolean>} isUserSignedIn
  * @property {() => {}} onSignOut
  * @property {() => Promise<string>} getProfilePicture
+ * @property {() => Promise<string>} getAccessToken
  * @property {boolean} isCommunity
  * @property {boolean} lang
  */
@@ -129,13 +130,13 @@ const communityLocalesMap = new Map([
 ]);
 
 // eslint-disable-next-line
-async function fetchCommunityProfileData() {
+async function fetchCommunityProfileData(getAccessToken) {
   const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
   try {
     const response = await fetch(`${khorosProfileUrl}?lang=${locale}`, {
       method: 'GET',
       headers: {
-        'x-ims-token': await window.adobeIMS?.getAccessToken().token,
+        'x-ims-token': await getAccessToken(),
       },
     });
 
@@ -781,7 +782,7 @@ const profileMenuDecorator = async (profileMenuBlock, decoratorOptions) => {
       profileMenuWrapper.lastElementChild.setAttribute('data-id', 'sign-out');
       profileMenuWrapper.insertBefore(communityHeading, profileMenuWrapper.lastElementChild);
     }
-    fetchCommunityProfileData()
+    fetchCommunityProfileData(decoratorOptions.getAccessToken)
       .then((res) => {
         if (res) {
           res.data.menu.forEach((item) => {
@@ -845,6 +846,10 @@ async function getPPSProfilePicture() {
   );
 }
 
+async function defaultGetaccessToken() {
+  return window.adobeIMS?.getAccessToken().token;
+}
+
 /**
  * Main header decorator, calls all the other decorators
  */
@@ -868,6 +873,7 @@ class ExlHeader extends HTMLElement {
     options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
     options.onSignOut = options.onSignOut || doSignOut;
     options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
+    options.getAccessToken = options.getAccessToken || defaultGetaccessToken;
     options.isCommunity = options.isCommunity ?? false;
     options.origin = options.origin || window.location.origin;
     options.lang = options.lang || lang || 'en';
