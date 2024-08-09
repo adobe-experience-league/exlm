@@ -41,6 +41,7 @@
   --spectrum-gray-100: #f8f8f8;
   --spectrum-blue-900: #0066cc;
   --spectrum-gray-600: #8e8e8e;
+  --spectrum-gray-50: #fff;
   --non-spectrum-bg: #fff;
   --non-spectrum-hover-bg: #f8f8f8;
   --non-spectrum-link: #2c2c2c;
@@ -335,7 +336,6 @@ exl-header {
     align-items: center;
 
     a {
-      color: var(--nav-item-text-color);
       margin: 16px 0;
 
       @include button;
