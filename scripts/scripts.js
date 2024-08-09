@@ -1136,14 +1136,14 @@ export async function fetchFragment(rePath, lang = 'en') {
   return response.text();
 }
 
-export async function fetchLanguagePlaceholders() {
-  const { lang } = getPathDetails();
+export async function fetchLanguagePlaceholders(lang) {
+  const langCode = lang || getPathDetails()?.lang || 'en';
   try {
     // Try fetching placeholders with the specified language
-    return await fetchPlaceholders(`${window.hlx.aemRoot}/${lang}`);
+    return await fetchPlaceholders(`${window.hlx.aemRoot}/${langCode}`);
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(`Error fetching placeholders for lang: ${lang}. Will try to get en placeholders`, error);
+    console.error(`Error fetching placeholders for lang: ${langCode}. Will try to get en placeholders`, error);
     // Retry without specifying a language (using the default language)
     try {
       return await fetchPlaceholders(`${window.hlx.aemRoot}/en`);

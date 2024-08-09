@@ -70,11 +70,11 @@ export const debounce = (ms, fn) => {
 
 let cachedPlaceholders;
 
-const getPlaceholders = async (origin = window.location.origin) => {
+const getPlaceholders = async (langCode) => {
   if (cachedPlaceholders) {
     return Promise.resolve(cachedPlaceholders);
   }
-  const result = await fetchLanguagePlaceholders(origin);
+  const result = await fetchLanguagePlaceholders(langCode);
   cachedPlaceholders = result;
   return result;
 };
@@ -772,7 +772,7 @@ const profileMenuDecorator = async (profileMenuBlock, decoratorOptions) => {
     });
     const profileMenuWrapper = shadowHost.shadowRoot.querySelector('.profile-menu');
     const communityHeading = document.createElement('h2');
-    const placeholders = await getPlaceholders();
+    const placeholders = await getPlaceholders(decoratorOptions.lang);
     communityHeading.textContent = placeholders?.headerCommunityLabel || 'Community';
     if (profileMenuWrapper) {
       profileMenuWrapper.innerHTML = `<h2>${placeholders?.headerLearningLabel || 'Learning'}</h2>${
