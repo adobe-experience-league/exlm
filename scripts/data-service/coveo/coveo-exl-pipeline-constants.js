@@ -28,9 +28,9 @@ export const COMMUNITY_SEARCH_FACET = Object.freeze([
 ]);
 
 export const CONTENT_TYPES = Object.freeze({
-  COURSE: {
-    MAPPING_KEY: 'course',
-    LABEL: placeholders.browseCardCourseLabel || 'Course',
+  PLAYLIST: {
+    MAPPING_KEY: 'playlist',
+    LABEL: placeholders.browseCardPlaylistLabel || 'Playlist',
   },
   TUTORIAL: {
     MAPPING_KEY: 'tutorial',
