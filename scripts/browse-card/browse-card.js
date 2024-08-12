@@ -158,7 +158,6 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
   const titleElement = createTag('p', { class: 'course-duration' });
   if (lang === 'en') {
     const remainingTime = calculateRemainingTime(inProgressText, inProgressStatus);
-    // 987654
     const timeleftLabel = placeholders?.recommendedCoursesTimeLeftLabel || 'You have $[TIME_LEFT] left in this course';
     titleElement.textContent = timeleftLabel.replace('$[TIME_LEFT]', formatRemainingTime(remainingTime));
   } else {
@@ -227,12 +226,10 @@ const buildCardContent = async (card, model) => {
   if (
     contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
     contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ||
-    contentType === RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY ||
-    contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY
+    contentType === RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY
   ) {
     buildTagsContent(cardMeta, tags);
   }
-  // 98765
   if (contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {
     if (inProgressStatus && inProgressText) {
       buildCourseDurationContent({ inProgressStatus, inProgressText, cardContent });
@@ -322,7 +319,6 @@ export async function buildCard(container, element, model) {
   model.copyLink = model.copyLink?.toLowerCase();
 
   let type = contentType?.toLowerCase();
-  const courseMappingKey = CONTENT_TYPES.PLAYLIST.MAPPING_KEY.toLowerCase();
   const tutorialMappingKey = CONTENT_TYPES.TUTORIAL.MAPPING_KEY.toLowerCase();
   const inProgressMappingKey = RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY.toLowerCase();
   const recommededMappingKey = RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY.toLowerCase();
@@ -345,8 +341,7 @@ export async function buildCard(container, element, model) {
   const cardContent = card.querySelector('.browse-card-content');
 
   if (
-    (type === courseMappingKey ||
-      type === tutorialMappingKey ||
+    (type === tutorialMappingKey ||
       type === inProgressMappingKey ||
       type === recommededMappingKey ||
       type === playlistMappingKey) &&

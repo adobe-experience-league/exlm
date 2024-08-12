@@ -68,8 +68,4 @@ export const CONTENT_TYPES = Object.freeze({
     MAPPING_KEY: 'perspective',
     LABEL: placeholders.browseCardPerspectiveLabel || 'Perspective',
   },
-  PLAYLIST: {
-    MAPPING_KEY: 'playlist',
-    LABEL: placeholders.browseCardPlaylistLabel || 'Playlist',
-  },
 });
