@@ -96,6 +96,28 @@ const formatRemainingTime = (remainingTime) => {
   return `${remainingTime.hours} hours and ${remainingTime.minutes} minutes`;
 };
 
+const convertTimeToPT = (isoString) => {
+  // Create a new Date object from the ISO string
+  const date = new Date(isoString);
+
+  // Convert to PT (Pacific Time)
+  const options = {
+    timeZone: 'America/Los_Angeles',
+    month: 'short',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  };
+  const ptTime = date.toLocaleString('en-US', options);
+
+  // Format the output
+  const [monthDay, time] = ptTime.split(', ');
+  const formattedTime = `${monthDay.replace(',', '')} | ${time} PT`;
+
+  return formattedTime;
+};
+
 const buildTagsContent = (cardMeta, tags = []) => {
   tags.forEach((tag) => {
     const { icon: iconName, text } = tag;
@@ -130,7 +152,7 @@ const buildEventContent = ({ event, cardContent, card }) => {
     <div class="browse-card-event-info">
         <span class="icon icon-time"></span>
         <div class="browse-card-event-time">
-            <h6>${time}</h6>
+            <h6>${convertTimeToPT(time)}</h6>
         </div>
     </div>
   `);
