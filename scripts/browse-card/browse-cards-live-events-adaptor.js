@@ -18,8 +18,8 @@ const BrowseCardsLiveEventsAdaptor = (() => {
     const { productFocus, eventTitle, eventDescription, startTime, endTime, time, cta } = result || {};
     const product = productFocus && (Array.isArray(productFocus) ? productFocus : productFocus.split(/,\s*/));
     const { ctaLabel, ctaLink } = cta || {};
-    const eventStartTime = new Date(`${startTime}Z`);
-    const eventEndTime = new Date(`${endTime}Z`);
+    const eventStartTime = new Date(`${startTime}`);
+    const eventEndTime = new Date(`${endTime}`);
     const currentDate = new Date();
     if (currentDate >= eventStartTime && currentDate <= eventEndTime) {
       return {

@@ -114,13 +114,27 @@ export const buildNoResultsContent = (block, show) => {
   }
 };
 
+function formatDateString(dateString) {
+  const date = new Date(dateString);
+  const optionsDate = { month: 'short', day: '2-digit' };
+  const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' };
+
+  const formattedDate = date.toLocaleDateString(undefined, optionsDate).toUpperCase();
+  const formattedTime = date.toLocaleTimeString(undefined, optionsTime);
+
+  const [time, period] = formattedTime.split(' ');
+  const formattedTimeWithoutZone = `${time} ${period}`;
+  // Return date and time without timezone
+  return `${formattedDate} | ${formattedTimeWithoutZone}`;
+}
+
 const buildEventContent = ({ event, cardContent, card }) => {
   const { time } = event;
   const eventInfo = htmlToElement(`
     <div class="browse-card-event-info">
         <span class="icon icon-time"></span>
         <div class="browse-card-event-time">
-            <h6>${time}</h6>
+            <h6>${formatDateString(time)}</h6>
         </div>
     </div>
   `);
