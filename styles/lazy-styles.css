@@ -5,6 +5,7 @@ body > .QSIFeedbackButton #QSIFeedbackButton-btn {
 div.doc-pagination {
   display: flex;
   margin-top: 48px;
+  margin-bottom: 48px;
 }
 
 .btn-goto {
@@ -65,6 +66,7 @@ span.pagination-btn-title {
   margin: 15px 0 55px;
   text-transform: uppercase;
 }
+
 span.pagination-btn-title.is-hidden {
   display: none;
 }

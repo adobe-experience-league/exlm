@@ -105,7 +105,10 @@
 }
 @media (min-width: 900px) {
   .docs main .section {
-    padding: 0 54px 0 54px;
+    padding: 0 54px;
+  }
+  .docs main .section:first-of-type {
+    padding-top: 54px;
   }
 }
 @media (min-width: 900px) {

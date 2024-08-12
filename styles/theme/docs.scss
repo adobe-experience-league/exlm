@@ -98,6 +98,10 @@
 
       @include breakpoint(desktop) {
         padding: 0 54px;
+
+        &:first-of-type {
+          padding-top: 54px;
+        }
       }
     }
 
