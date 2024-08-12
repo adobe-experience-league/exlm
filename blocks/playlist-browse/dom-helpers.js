@@ -55,6 +55,7 @@ export function newMultiSelect({ options = [], onSelect }) {
     onSelect(values);
   });
 
+  // Clear all selected values
   const onClear = () => {
     values = [];
     fieldset.querySelectorAll('input').forEach((input) => {
@@ -62,7 +63,12 @@ export function newMultiSelect({ options = [], onSelect }) {
     });
   };
 
-  return { fieldset, addOption, onClear };
+  // Remove option from selected values
+  const removeOption = (option) => {
+    values = values.filter((v) => v !== option);
+  };
+
+  return { fieldset, addOption, onClear, removeOption };
 }
 
 /**

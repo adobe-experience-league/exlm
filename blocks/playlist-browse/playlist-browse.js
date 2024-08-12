@@ -246,7 +246,6 @@ class Filter {
   // add filter pills
   updateFilterPills = () => {
     const filterPills = this.block.querySelector('.filter-pill-container');
-
     filterPills.innerHTML = '';
     Object.entries(this.filters).forEach(([legend, filterValues]) => {
       filterValues.forEach((value) => {
@@ -259,10 +258,10 @@ class Filter {
         // remove filter when pill is clicked
         pill.addEventListener('click', () => {
           this.filters[legend] = this.filters[legend].filter((v) => v !== value);
-          const unselectedOption = this.filterWrapper.querySelector(
-            `:scope > div > div > div > fieldset > div > input[value="${value}"]`,
-          );
-          unselectedOption.checked = false;
+          const fieldset = this.filterWrapper.querySelector(`fieldset > div > input[id="${value}"]`);
+          fieldset.checked = false;
+          multiSelects.find(({ filterName }) => filterName === legend).removeOption(value);
+          updateCards(this);
         });
       });
     });
@@ -296,14 +295,15 @@ class Filter {
       const span = filterPanel.querySelector('span');
       span.classList.add('button-span');
 
-      const { fieldset, addOption, onClear } = newMultiSelect({
+      const { fieldset, addOption, onClear, removeOption } = newMultiSelect({
         legend,
         onSelect: (selectedValues) => {
           this.filters[filterName] = selectedValues;
+          this.updateAll();
           this.onFilterChange();
         },
       });
-      multiSelects.push(onClear);
+      multiSelects.push({ filterName, onClear, removeOption });
 
       this.filterWrapper.append(filterPanel);
       this.filterWrapper.append(this.clearButton);
@@ -312,7 +312,11 @@ class Filter {
       this.block.append(this.filterContainer);
 
       return getAllPossibleFilterValues(filterName).then((filterValues) => {
-        filterValues.forEach((filterValue) => {
+        const sortedLevels = filterValues.sort((a, b) => {
+          const levels = ['Beginner', 'Intermediate', 'Experienced'];
+          return levels.indexOf(a) - levels.indexOf(b);
+        });
+        sortedLevels.forEach((filterValue) => {
           addOption({
             label: filterValue,
             value: filterValue,
@@ -340,7 +344,7 @@ class Filter {
       Object.keys(this.filters).forEach((key) => {
         this.filters[key] = [];
       });
-      multiSelects.forEach((onClear) => {
+      multiSelects.forEach(({ onClear }) => {
         onClear();
       });
       this.onClearAll();
