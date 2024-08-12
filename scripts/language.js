@@ -19,16 +19,34 @@ const switchLanguage = (language) => {
   }
 };
 
+const communityLang = [
+  { legend: 'de', title: 'Deutsch' },
+  { legend: 'en', title: 'English' },
+  { legend: 'es', title: 'Español' },
+  { legend: 'fr', title: 'Français' },
+  { legend: 'ja', title: '日本語' },
+  { legend: 'pt-br', title: 'Português' },
+  { legend: 'ko', title: '한국어' },
+];
 /**
  * Decoration for language popover - shared between header and footer
  */
-export const buildLanguagePopover = async (position, popoverId) => {
+export const buildLanguagePopover = async (position, popoverId, decoratorOptions) => {
   loadCSS(`${window.hlx.codeBasePath}/styles/language.css`);
   const popoverClass =
     position === 'top' ? 'language-selector-popover language-selector-popover--top' : 'language-selector-popover';
-  let languagesEl = htmlToElement(await fetchFragment('languages/languages', 'en'));
-  languagesEl = languagesEl.querySelector('ul');
-  const languageOptions = languagesEl?.children || [];
+  let languagesEl;
+  if (decoratorOptions.isCommunity) {
+    languagesEl = htmlToElement(
+      `<div><ul>${communityLang
+        .map((lang) => `<li><a href="${lang.legend}">${lang.title}</a></li>`)
+        .join('')}</ul><div>`,
+    );
+  } else {
+    languagesEl = htmlToElement(await fetchFragment('languages/languages', 'en'));
+  }
+  const newLanguagesEl = languagesEl.querySelector('ul');
+  const languageOptions = newLanguagesEl?.children || [];
   const languages = [...languageOptions].map((option) => ({
     title: option.textContent,
     lang: option?.firstElementChild?.getAttribute('href'),

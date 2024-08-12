@@ -557,17 +557,16 @@ async function decorateCommunityBlock(header, decoratorOptions) {
   notificationWrapper.classList.add('notification');
   notificationWrapper.style.display = 'none';
   notificationWrapper.innerHTML = `  
-<div class="notification-icon">
-    <a href="/t5/notificationfeed/page" data-id="notifications" title="notifications">
-      <span class="icon icon-bell"></span>
-    </a>
- </div>
-<div class="notification-icon">   
-    <a href="/t5/notes/privatenotespage" data-id="messages" title="messages">
-      <span class ="icon icon-email"></span>
-    </a> 
-<div> 
- 
+    <div class="notification-icon">
+        <a href="/t5/notificationfeed/page" data-id="notifications" title="notifications">
+          <span class="icon icon-bell"></span>
+        </a>
+    </div>
+    <div class="notification-icon">   
+        <a href="/t5/notes/privatenotespage" data-id="messages" title="messages">
+          <span class ="icon icon-email"></span>
+        </a> 
+    <div>  
 `;
   communityBlock.appendChild(notificationWrapper);
   const isSignedIn = await decoratorOptions.isUserSignedIn();
@@ -582,14 +581,14 @@ async function decorateCommunityBlock(header, decoratorOptions) {
  * Decorates the language-selector block
  * @param {HTMLElement} languageBlock
  */
-const languageDecorator = async (languageBlock) => {
+const languageDecorator = async (languageBlock, decoratorOptions) => {
   const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
   decoratorState.languageTitle = title;
   decoratorState.languages = new Deferred();
 
   const prependLanguagePopover = async (parent) => {
     await languageModule.then(({ buildLanguagePopover }) => {
-      buildLanguagePopover(null, 'language-picker-popover-header').then(({ popover, languages }) => {
+      buildLanguagePopover(null, 'language-picker-popover-header', decoratorOptions).then(({ popover, languages }) => {
         decoratorState.languages.resolve(languages);
         parent.append(popover);
       });

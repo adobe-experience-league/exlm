@@ -827,8 +827,6 @@ exl-header {
   position: relative;
 }
 .header .search-full .icon {
-  width: 14px;
-  height: 14px;
   position: absolute;
   z-index: 1;
   display: flex;
