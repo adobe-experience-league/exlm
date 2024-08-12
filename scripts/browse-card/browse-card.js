@@ -96,6 +96,13 @@ const formatRemainingTime = (remainingTime) => {
   return `${remainingTime.hours} hours and ${remainingTime.minutes} minutes`;
 };
 
+const getBookmarkId = ({ id, viewLink, contentType }) => {
+  if (id) {
+    return contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ? `/playlists/${id}` : id;
+  }
+  return viewLink ? new URL(viewLink).pathname : '';
+};
+
 const buildTagsContent = (cardMeta, tags = []) => {
   tags.forEach((tag) => {
     const { icon: iconName, text } = tag;
@@ -285,7 +292,7 @@ const buildCardContent = async (card, model) => {
 
   const cardAction = UserActions({
     container: cardOptions,
-    id: id || (viewLink ? new URL(viewLink).pathname : ''),
+    id: getBookmarkId({ id, viewLink, contentType }),
     link: copyLink,
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,
