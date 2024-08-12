@@ -261,7 +261,7 @@ class Filter {
           const fieldset = this.filterWrapper.querySelector(`fieldset > div > input[id="${value}"]`);
           fieldset.checked = false;
           multiSelects.find(({ filterName }) => filterName === legend).removeOption(value);
-          updateCards(this);
+          this.onFilterChange();
         });
       });
     });
