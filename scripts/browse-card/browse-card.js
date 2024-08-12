@@ -96,6 +96,13 @@ const formatRemainingTime = (remainingTime) => {
   return `${remainingTime.hours} hours and ${remainingTime.minutes} minutes`;
 };
 
+const getBookmarkId = ({ id, viewLink, contentType }) => {
+  if (id) {
+    return contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ? `/playlists/${id}` : id;
+  }
+  return viewLink ? new URL(viewLink).pathname : '';
+};
+
 const buildTagsContent = (cardMeta, tags = []) => {
   tags.forEach((tag) => {
     const { icon: iconName, text } = tag;
@@ -224,7 +231,7 @@ const buildCardContent = async (card, model) => {
   cardMeta.classList.add('browse-card-meta-info');
 
   if (
-    contentType === CONTENT_TYPES.COURSE.MAPPING_KEY ||
+    contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
     contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ||
     contentType === RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY
   ) {
@@ -285,7 +292,7 @@ const buildCardContent = async (card, model) => {
 
   const cardAction = UserActions({
     container: cardOptions,
-    id: id || (viewLink ? new URL(viewLink).pathname : ''),
+    id: getBookmarkId({ id, viewLink, contentType }),
     link: copyLink,
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,
@@ -320,7 +327,7 @@ export async function buildCard(container, element, model) {
   model.copyLink = model.copyLink?.toLowerCase();
 
   let type = contentType?.toLowerCase();
-  const courseMappingKey = CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase();
+  const courseMappingKey = CONTENT_TYPES.PLAYLIST.MAPPING_KEY.toLowerCase();
   const tutorialMappingKey = CONTENT_TYPES.TUTORIAL.MAPPING_KEY.toLowerCase();
   const inProgressMappingKey = RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY.toLowerCase();
   const recommededMappingKey = RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY.toLowerCase();

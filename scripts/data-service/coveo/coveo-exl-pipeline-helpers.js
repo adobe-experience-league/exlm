@@ -207,7 +207,7 @@ export async function exlPipelineCoveoDataAdaptor(params) {
   const createTags = (result, contentType) => {
     const tags = [];
     const role = result?.raw?.role ? result.raw.role.replace(/,/g, ', ') : '';
-    if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
+    if (contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY) {
       tags.push({ icon: 'user', text: role || '' });
       /* TODO: Will enable once we have the API changes ready from ExL */
       // tags.push({ icon: 'book', text: `0 ${placeholders.lesson}` });

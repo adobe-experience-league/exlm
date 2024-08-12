@@ -23,7 +23,10 @@ try {
 }
 
 export const parse = (model) => {
-  const { id, Type = [], Thumbnail, Solution = [], Title, URL, Description, Role = [], viewLinkText } = model;
+  const { 'Full Meta': fullMeta = '', viewLinkText, id, Thumbnail, URL, Role = [], Solution = [] } = model;
+
+  const fullMetaJson = parseFullMeta(fullMeta);
+
   if (viewLinkText) {
     // Already parsed as part of getCardData. No need to parse again.
     if (!model.badgeTitle) {
@@ -31,21 +34,22 @@ export const parse = (model) => {
     }
     return model;
   }
-  const [contentType = 'Course'] = Type;
+  const contentType = fullMetaJson.type || '';
+  const title = fullMetaJson.title || model.Title;
+  const description = fullMetaJson.description || model.Description;
   const [role] = Role;
-  const contentTypeTitleCase = convertToTitleCase(contentType?.toLowerCase());
-  const tags = [];
-  if (contentType === 'Course') {
-    tags.push({ icon: 'user', text: role || '' });
-  }
+  const contentTypeTitleCase = convertToTitleCase(contentType.toLowerCase());
+
+  const tags = contentType === 'Playlist' ? [{ icon: 'user', text: role || '' }] : [];
+
   return {
     id,
     contentType,
-    badgeTitle: contentType ? CONTENT_TYPES[contentType.toUpperCase()]?.LABEL : '',
+    badgeTitle: CONTENT_TYPES[contentType.toUpperCase()]?.LABEL || '',
     thumbnail: Thumbnail,
     product: Solution,
-    title: Title,
-    description: Description,
+    title,
+    description,
     tags,
     copyLink: URL,
     bookmarkLink: '',
@@ -53,6 +57,19 @@ export const parse = (model) => {
     viewLinkText: placeholders[`browseCard${contentTypeTitleCase}ViewLabel`] || 'View',
   };
 };
+
+// Function to parse Full Meta
+function parseFullMeta(metaString) {
+  const lines = metaString.split('\n');
+  const jsonObject = {};
+  lines.forEach((line) => {
+    const [key, value] = line.split(': ').map((item) => item.trim());
+    if (key) {
+      jsonObject[key] = value;
+    }
+  });
+  return jsonObject;
+}
 
 async function renderCards({ pgNum, block }) {
   const { lang: languageCode } = getPathDetails();
@@ -104,7 +121,7 @@ async function renderCards({ pgNum, block }) {
 const prepareBookmarksPaginationConfig = () => {
   const resultsPerPage = Pagination.getItemsCount();
   const bookmarks = bookmarksEventEmitter.get('bookmark_ids') ?? [];
-  const sortedBookmarks = bookmarks.sort((a, b) => {
+  const sortedBookmarks = structuredClone(bookmarks).sort((a, b) => {
     const [, currentTimeStamp = '0'] = a.split(':');
     const [, nextTimeStamp = '0'] = b.split(':');
     return +nextTimeStamp - +currentTimeStamp;

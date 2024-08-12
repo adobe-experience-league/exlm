@@ -71,7 +71,7 @@ const BrowseCardsPathsAdaptor = (() => {
       ...browseCardDataModel,
       contentType,
       id: ID,
-      badgeTitle: CONTENT_TYPES.COURSE.LABEL,
+      badgeTitle: CONTENT_TYPES.PLAYLIST.LABEL,
       thumbnail: (Thumbnail || '').replace('/www/img', prodAssetsCdnOrigin) || '',
       inProgressStatus: inProgressValue || '0',
       product: Solution || '',
