@@ -23,7 +23,7 @@
 }
 
 .playlist-browse {
-    max-width: 1200px;
+    max-width: var(--non-spectrum-max-width);
     margin: 0 auto;
 }
 
@@ -147,6 +147,7 @@
 
 .filter-option{    
     line-height: 2em;
+    padding: 6px 0;
 
     label {
         position: relative;
