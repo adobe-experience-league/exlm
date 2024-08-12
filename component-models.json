@@ -955,6 +955,13 @@
         "description": "Optional - all are included if no selection is made."
       },
       {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "profile-interests-context",
+        "label": "Override Solution(s) or Feature(s) with profile context?",
+        "description": "This will override the Solution(s) or Feature(s) tags selection and use profile interests."
+      },
+      {
         "component": "multiselect",
         "name": "roles",
         "label": "Role(s)",
@@ -976,6 +983,10 @@
           {
             "name": "User",
             "value": "User"
+          },
+          {
+            "name": "Based on Profile Context",
+            "value": "profile-context"
           }
         ]
       },
@@ -997,6 +1008,10 @@
           {
             "name": "Experienced",
             "value": "Experienced"
+          },
+          {
+            "name": "Based on Profile Context",
+            "value": "profile-context"
           }
         ]
       },
