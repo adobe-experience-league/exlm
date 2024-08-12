@@ -249,8 +249,11 @@ class Filter {
     filterPills.innerHTML = '';
     Object.entries(this.filters).forEach(([legend, filterValues]) => {
       filterValues.forEach((value) => {
+        const legendPill = filterOptions.find((filterOption) => filterOption.filterName === legend)?.legend;
         const pill = htmlToElement(`
           <button class="filter-pill" data-value="${value}" data-filter="${legend}">
+            <span>${legendPill}</span>
+            <span>:&nbsp</span>
             <span>${value}</span>
             <span class="icon icon-close"></span>
           </button>`);
