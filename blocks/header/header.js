@@ -266,7 +266,7 @@ const hamburgerButton = (navWrapper, navOverlay) => {
  * Builds nav items from the provided basic list
  * @param {HTMLUListElement} ul
  */
-const buildNavItems = async (ul, decoratorOptions, level = 0) => {
+const buildNavItems = async (ul, level = 0) => {
   const decorateNavItem = async (navItem) => {
     const navItemClasses = ['nav-item'];
     if (level === 0) navItemClasses.push('nav-item-root');
@@ -360,7 +360,7 @@ const buildNavItems = async (ul, decoratorOptions, level = 0) => {
           }
         }
       });
-      buildNavItems(content, decoratorOptions, level + 1);
+      buildNavItems(content, level + 1);
     } else {
       navItem.classList.add('nav-item-leaf');
       // if nav item is a leaf, remove the <p> wrapper
@@ -380,30 +380,30 @@ const buildNavItems = async (ul, decoratorOptions, level = 0) => {
     }
   };
 
-  if (level === 0) {
-    // add search link (visible on mobile only)
-    ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
+  // if (level === 0) {
+  //   // add search link (visible on mobile only)
+  //   ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
 
-    const addMobileLangSelector = async () => {
-      const { getLanguagePath } = await languageModule;
-      const languages = await decoratorState.languages.promise;
-      // add language select (visible on mobile only)
-      const navItem = ul.appendChild(
-        htmlToElement(
-          `<li class="nav-item-mobile">
-            <p>${decoratorState.languageTitle}</p>
-            <ul>
-              ${languages
-                .map((l) => `<li><a href="${getLanguagePath(l.lang, decoratorOptions)}">${l.title}</a></li>`)
-                .join('')}
-            </ul>
-          </li>`,
-        ),
-      );
-      decorateNavItem(navItem);
-    };
-    await addMobileLangSelector();
-  }
+  //   const addMobileLangSelector = async () => {
+  //     const { getLanguagePath } = await languageModule;
+  //     const languages = await decoratorState.languages.promise;
+  //     // add language select (visible on mobile only)
+  //     const navItem = ul.appendChild(
+  //       htmlToElement(
+  //         `<li class="nav-item-mobile">
+  //           <p>${decoratorState.languageTitle}</p>
+  //           <ul>
+  //             ${languages
+  //               .map((l) => `<li><a href="${getLanguagePath(l.lang)}">${l.title}</a></li>`)
+  //               .join('')}
+  //           </ul>
+  //         </li>`,
+  //       ),
+  //     );
+  //     decorateNavItem(navItem);
+  //   };
+  //   await addMobileLangSelector();
+  // }
 
   [...ul.children].forEach((option) => {
     const link = option.querySelector('a');

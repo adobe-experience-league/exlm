@@ -11,7 +11,7 @@ const pathDetails = getPathDetails();
 
 export const getLanguagePath = (language, decoratorOptions) => {
   const { prefix, suffix } = pathDetails;
-  if (decoratorOptions?.isCommunity) {
+  if (decoratorOptions.isCommunity) {
     return language;
   }
   return `${prefix}/${language}${suffix}`;
