@@ -1117,7 +1117,11 @@ export const toPascalCase = (name) => `${(name || '').charAt(0).toUpperCase()}${
 export function rewriteDocsPath(docsPath) {
   const PROD_BASE = 'https://experienceleague.adobe.com';
   const url = new URL(docsPath, PROD_BASE);
-  if (!url.pathname.startsWith('/docs') || url.pathname.startsWith('/docs/courses/')) {
+  if (
+    !url.pathname.startsWith('/docs') ||
+    url.pathname.startsWith('/docs/courses/') ||
+    url.pathname.startsWith('/docs/playlist/')
+  ) {
     return docsPath; // not a docs path, return as is
   }
   // eslint-disable-next-line no-use-before-define
