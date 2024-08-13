@@ -15,7 +15,7 @@ try {
  */
 export default function ProfileRail(block) {
   const sections = document.querySelectorAll('body.profile .section:not(.profile-tab-section, .profile-rail-section)');
-  block.innerHTML = `<span>${placeholders?.myEXLProfile || 'My Experience League profile'}</span>`;
+  block.innerHTML = `<span>${placeholders?.myExlProfile || 'My Experience League profile'}</span>`;
   const nav = document.createElement('ul');
   nav.classList.add('profile-rail-nav');
   sections.forEach((section, i) => {
