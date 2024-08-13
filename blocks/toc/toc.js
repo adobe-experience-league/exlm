@@ -63,11 +63,11 @@ function buildTocMobileDropdown() {
  * @param {HTMLElement} tocContent
  */
 function updateTocContent(tocHtml, tocContent) {
-  tocContent.insertAdjacentHTML('beforeend', tocHtml);
+  // tocContent.insertAdjacentHTML('beforeend', tocHtml);
 
   // prepare links and submenus
   let submenuIdCount = 0;
-  tocContent.querySelectorAll('a').forEach((anchor) => {
+  tocContent.querySelectorAll('a')?.forEach((anchor) => {
     const anchorHref = anchor.getAttribute('href');
     if (anchorHref.startsWith('#')) {
       submenuIdCount += 1;
