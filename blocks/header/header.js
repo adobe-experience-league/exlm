@@ -266,7 +266,7 @@ const hamburgerButton = (navWrapper, navOverlay) => {
  * Builds nav items from the provided basic list
  * @param {HTMLUListElement} ul
  */
-const buildNavItems = async (ul, level = 0) => {
+const buildNavItems = async (ul, decoratorOptions, level = 0) => {
   const decorateNavItem = async (navItem) => {
     const navItemClasses = ['nav-item'];
     if (level === 0) navItemClasses.push('nav-item-root');
@@ -360,7 +360,7 @@ const buildNavItems = async (ul, level = 0) => {
           }
         }
       });
-      buildNavItems(content, level + 1);
+      buildNavItems(content, decoratorOptions, level + 1);
     } else {
       navItem.classList.add('nav-item-leaf');
       // if nav item is a leaf, remove the <p> wrapper
@@ -393,7 +393,9 @@ const buildNavItems = async (ul, level = 0) => {
           `<li class="nav-item-mobile">
             <p>${decoratorState.languageTitle}</p>
             <ul>
-              ${languages.map((l) => `<li><a href="${getLanguagePath(l.lang)}">${l.title}</a></li>`).join('')}
+              ${languages
+                .map((l) => `<li><a href="${getLanguagePath(l.lang, decoratorOptions)}">${l.title}</a></li>`)
+                .join('')}
             </ul>
           </li>`,
         ),
@@ -868,7 +870,7 @@ class ExlHeader extends HTMLElement {
     options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
     options.onSignOut = options.onSignOut || doSignOut;
     options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
-    options.isCommunity = options.isCommunity ?? false;
+    options.isCommunity = options.isCommunity ?? true;
     options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
     options.lang = options.lang || lang || 'en';
     this.decoratorOptions = options;

@@ -4,18 +4,26 @@ import { htmlToElement, getPathDetails, fetchFragment } from './scripts.js';
 
 const pathDetails = getPathDetails();
 
-export const getLanguagePath = (language) => {
+/**
+ * @typedef {Object} DecoratorOptions
+ * @property {boolean} isCommunity
+ */
+
+export const getLanguagePath = (language, decoratorOptions) => {
   const { prefix, suffix } = pathDetails;
+  if (decoratorOptions?.isCommunity) {
+    return language;
+  }
   return `${prefix}/${language}${suffix}`;
 };
 
 /**
  * changes current url to the new language url
  */
-const switchLanguage = (language) => {
+const switchLanguage = (language, decoratorOptions) => {
   const { lang } = pathDetails;
   if (lang !== language) {
-    window.location.pathname = getLanguagePath(language);
+    window.location.pathname = getLanguagePath(language, decoratorOptions);
   }
 };
 
@@ -70,7 +78,7 @@ export const buildLanguagePopover = async (position, popoverId, decoratorOptions
     if (target.classList.contains('language-selector-label')) {
       target.setAttribute('selected', 'true');
       const lang = target.getAttribute('data-value');
-      switchLanguage(lang);
+      switchLanguage(lang, decoratorOptions);
     }
   });
   return {
