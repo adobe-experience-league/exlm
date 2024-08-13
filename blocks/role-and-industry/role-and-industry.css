@@ -95,6 +95,7 @@
 }
 
 .role-and-industry .form-error {
+    display: none;
     text-align: center;
 }
 
