@@ -22,8 +22,8 @@ export const getLanguagePath = (language) => {
  */
 const switchLanguage = (lang) => {
   if (pathDetails.lang !== lang) {
-    window.location.pathname = getLanguagePath(lang);
-  }
+  window.location.pathname = getLanguagePath(lang );
+};
 };
 
 const communityLang = [
@@ -59,7 +59,7 @@ const buildLanguagePopover = async (decoratorOptions) => {
     lang: option?.firstElementChild?.getAttribute('href'),
   }));
 
-  const currentLang = pathDetails.lang;
+  const currentLang = pathDetails.lang; 
   const options = languages
     .map((option) => {
       const lan = option.lang?.toLowerCase();
@@ -93,7 +93,7 @@ export class LanguageBlock {
   constructor(decoratorOptions = {}) {
     this.decoratorOptions = decoratorOptions;
     decoratorOptions.lang = decoratorOptions.lang || pathDetails.lang || 'en';
-    decoratorOptions.isCommunity = decoratorOptions.isCommunity ?? true;
+    decoratorOptions.isCommunity = decoratorOptions.isCommunity ?? false;
     this.languagePopover = buildLanguagePopover(decoratorOptions);
   }
 }
