@@ -163,7 +163,9 @@ function decoratePlaylistHeader(block, playlist) {
 
   const playlistInfo = htmlToElement(`<div class="playlist-info">
     <b><span data-placeholder="${LABELS.playlist}">Playlist<span></b>
-    <div>${iconSpan('list')} ${playlist.length} <span data-placeholder="${LABELS.tutorials}">Tutorials<span></div>
+    <div>${iconSpan('list')} <span data-playlist-length>${playlist.length}</span> <span data-placeholder="${
+      LABELS.tutorials
+    }">Tutorials<span></div>
     <button data-playlist-action-button class="playlist-action-button" aria-expanded="false">⋮</button>
   </div>`);
 
@@ -173,7 +175,7 @@ function decoratePlaylistHeader(block, playlist) {
     <b><span data-placeholder="${LABELS.nowViewing}">NOW VIEWING</span></b>
     <b><span class="playlist-now-viewing-count" data-playlist-now-viewing-count>${
       playlist.getActiveVideoIndex() + 1
-    }</span> OF ${playlist.length}</b>
+    }</span> OF <span data-playlist-length>${playlist.length}</span></b>
   </div>`);
   defaultContent.append(nowViewing);
 
@@ -267,6 +269,12 @@ function updateProgress(videoIndex, playlist) {
   // now viewing count
   const nowViewingCount = document.querySelector('[data-playlist-now-viewing-count]');
   if (nowViewingCount) nowViewingCount.textContent = parseInt(videoIndex, 10) + 1;
+
+  // total count
+  [...document.querySelectorAll('[data-playlist-length]')].forEach((span) => {
+    span.textContent = playlist.length;
+  });
+
   // progress bar
   const progressBox = el.querySelector('[data-playlist-item-progress-box]');
   progressBox.style.setProperty('--playlist-item-progress', `${((currentTime || 0) / duration) * 100}%`);
