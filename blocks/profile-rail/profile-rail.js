@@ -20,16 +20,12 @@ export default function ProfileRail(block) {
   nav.classList.add('profile-rail-nav');
   sections.forEach((section, i) => {
     const heading = section.querySelector('h1, h2, h3, h4, h5, h6');
+    if (section.classList.contains('bookmarks-container')) heading.id = `my-bookmarks`;
+    if (section.classList.contains('awards-container')) heading.id = `my-awards`;
     if (heading && heading.id) {
       const li = document.createElement('li');
       if (i === 0) li.classList.add('active');
-      if (section.classList.contains('bookmarks-container')) {
-        li.innerHTML = `<a href="#my-bookmarks">${heading.textContent.toLowerCase()}</a>`;
-      } else if (section.classList.contains('awards-container')) {
-        li.innerHTML = `<a href="#my-awards">${heading.textContent.toLowerCase()}</a>`;
-      } else {
-        li.innerHTML = `<a href="#${heading.id}">${heading.textContent.toLowerCase()}</a>`;
-      }
+      li.innerHTML = `<a href="#${heading.id}">${heading.textContent.toLowerCase()}</a>`;
       nav.appendChild(li);
     }
   });
