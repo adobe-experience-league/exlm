@@ -9,7 +9,7 @@ import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/br
 const lang = document.querySelector('html').lang || 'en';
 
 const urlMap = {
-  course: `/home?lang=${lang}#courses`,
+  playlist: `/${lang}/playlists`,
   tutorial: `/${lang}/docs/home-tutorials`,
   documentation: `/${lang}/docs`,
   troubleshooting: `/${lang}/docs`,

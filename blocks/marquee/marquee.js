@@ -1,18 +1,13 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
-function decorateButtons(...buttons) {
+function decorateButtons(buttons) {
   return buttons
-    .map((div, index) => {
-      if (div) {
-        const a = div.querySelector('a');
+    .map(({ ctaElem, ctaStyle, ctaLinkType = 'link' }) => {
+      if (ctaElem && ctaElem.textContent?.trim() !== '') {
+        const a = ctaElem.querySelector('a');
         if (a) {
-          a.classList.add('button');
-          if (index === 0) a.classList.add('secondary');
-          if (index === 1) a.classList.add('primary');
-          if (a.getAttribute('href') === '#') {
-            a.classList.add('signin');
-          }
+          a.classList.add('button', ctaStyle, ctaLinkType);
           return a.outerHTML;
         }
       }
@@ -24,7 +19,8 @@ function decorateButtons(...buttons) {
 export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
-  const [img, eyebrow, title, longDescr, firstCta, linkType, secondCta] = block.querySelectorAll(':scope div > div');
+  const [img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] =
+    block.querySelectorAll(':scope div > div');
 
   const subjectPicture = img.querySelector('picture');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
@@ -38,7 +34,20 @@ export default async function decorate(block) {
         ${eyebrowText !== '' ? `<div class='marquee-eyebrow'>${eyebrowText?.toUpperCase()}</div>` : ``}
         <div class='marquee-title'>${title.innerHTML}</div>
         <div class='marquee-long-description'>${longDescr.innerHTML}</div>
-        <div class='marquee-cta'>${decorateButtons(firstCta, secondCta)}</div>
+        <div class='marquee-cta'>
+          ${decorateButtons([
+            {
+              ctaElem: firstCta,
+              ctaStyle: 'secondary',
+              ctaLinkType: firstCtaLinkType?.textContent?.trim() || 'link',
+            },
+            {
+              ctaElem: secondCta,
+              ctaStyle: 'primary',
+              ctaLinkType: secondCtaLinkType?.textContent?.trim() || 'link',
+            },
+          ])}
+        </div>
       </div>
       ${
         subjectPicture
@@ -57,15 +66,15 @@ export default async function decorate(block) {
     block.classList.add('no-subject');
   }
 
-  if (linkType.textContent.trim() === 'video') {
-    const firstCtaButton = marqueeDOM.querySelector('.marquee-cta > a:first-child');
-    const videoLink = firstCtaButton.getAttribute('href');
+  const videoLinkElems = marqueeDOM.querySelectorAll('.marquee-cta > .video');
+  videoLinkElems.forEach((videoLinkElem) => {
+    const videoLink = videoLinkElem.getAttribute('href');
 
-    firstCtaButton.setAttribute('href', '#');
-    firstCtaButton.removeAttribute('target');
+    videoLinkElem.setAttribute('href', '#');
+    videoLinkElem.removeAttribute('target');
     const playIcon = document.createElement('span');
     playIcon.classList.add('icon', 'icon-play');
-    firstCtaButton.prepend(playIcon);
+    videoLinkElem.prepend(playIcon);
     const modal = document.createElement('div');
     modal.classList.add('modal');
     const closeIcon = document.createElement('span');
@@ -74,7 +83,8 @@ export default async function decorate(block) {
     modal.style.display = 'none';
     block.append(modal);
 
-    firstCtaButton.addEventListener('click', () => {
+    videoLinkElem.addEventListener('click', (e) => {
+      e.preventDefault();
       modal.style.display = 'flex';
       document.body.style.overflow = 'hidden';
       if (!modal.querySelector('iframe')) {
@@ -91,7 +101,7 @@ export default async function decorate(block) {
       document.body.removeAttribute('style');
       modal.querySelector('.iframe-container').remove();
     });
-  }
+  });
 
   // fetch user auth to toggle hide signin button
   import('../../scripts/auth/profile.js')
@@ -99,7 +109,12 @@ export default async function decorate(block) {
     .then((isSignedInUser) => {
       if (!isSignedInUser) {
         block.classList.add('unauthenticated');
-        block.querySelector('.signin')?.addEventListener('click', () => window.adobeIMS.signIn());
+        block.querySelectorAll('.signin').forEach((signIn) => {
+          signIn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.adobeIMS.signIn();
+          });
+        });
       }
     });
 

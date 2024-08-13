@@ -96,6 +96,27 @@ const formatRemainingTime = (remainingTime) => {
   return `${remainingTime.hours} hours and ${remainingTime.minutes} minutes`;
 };
 
+const getBookmarkId = ({ id, viewLink, contentType }) => {
+  if (id) {
+    return contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ? `/playlists/${id}` : id;
+  }
+  return viewLink ? new URL(viewLink).pathname : '';
+};
+
+function formatDateString(dateString) {
+  const date = new Date(dateString);
+  const optionsDate = { month: 'short', day: '2-digit' };
+  const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' };
+
+  const formattedDate = date.toLocaleDateString(undefined, optionsDate).toUpperCase();
+  const formattedTime = date.toLocaleTimeString(undefined, optionsTime);
+
+  const [time, period] = formattedTime.split(' ');
+  const formattedTimeWithoutZone = `${time} ${period}`;
+  // Return date and time without timezone
+  return `${formattedDate} | ${formattedTimeWithoutZone}`;
+}
+
 const buildTagsContent = (cardMeta, tags = []) => {
   tags.forEach((tag) => {
     const { icon: iconName, text } = tag;
@@ -130,7 +151,7 @@ const buildEventContent = ({ event, cardContent, card }) => {
     <div class="browse-card-event-info">
         <span class="icon icon-time"></span>
         <div class="browse-card-event-time">
-            <h6>${time}</h6>
+            <h6>${formatDateString(time)}</h6>
         </div>
     </div>
   `);
@@ -206,6 +227,7 @@ const buildCardContent = async (card, model) => {
     event,
     inProgressText,
     inProgressStatus = {},
+    failedToLoad = false,
   } = model;
   const contentType = type?.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
@@ -223,7 +245,7 @@ const buildCardContent = async (card, model) => {
   cardMeta.classList.add('browse-card-meta-info');
 
   if (
-    contentType === CONTENT_TYPES.COURSE.MAPPING_KEY ||
+    contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
     contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ||
     contentType === RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY
   ) {
@@ -284,9 +306,10 @@ const buildCardContent = async (card, model) => {
 
   const cardAction = UserActions({
     container: cardOptions,
-    id: id || (viewLink ? new URL(viewLink).pathname : ''),
+    id: getBookmarkId({ id, viewLink, contentType }),
     link: copyLink,
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
+    copyConfig: failedToLoad ? false : undefined,
   });
 
   cardAction.decorate();
@@ -312,13 +335,13 @@ const buildCardContent = async (card, model) => {
  * @param {*} model
  */
 export async function buildCard(container, element, model) {
-  const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus } = model;
+  const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
   // lowercase all urls - because all of our urls are lower-case
   model.viewLink = model.viewLink?.toLowerCase();
   model.copyLink = model.copyLink?.toLowerCase();
 
   let type = contentType?.toLowerCase();
-  const courseMappingKey = CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase();
+  const courseMappingKey = CONTENT_TYPES.PLAYLIST.MAPPING_KEY.toLowerCase();
   const tutorialMappingKey = CONTENT_TYPES.TUTORIAL.MAPPING_KEY.toLowerCase();
   const inProgressMappingKey = RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY.toLowerCase();
   const recommededMappingKey = RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY.toLowerCase();
@@ -333,7 +356,7 @@ export async function buildCard(container, element, model) {
   }
   const card = createTag(
     'div',
-    { class: `browse-card ${type}-card` },
+    { class: `browse-card ${type}-card ${failedToLoad ? 'load-fail-card' : ''}` },
     `<div class="browse-card-figure"></div><div class="browse-card-content"></div><div class="browse-card-footer"></div>`,
   );
   const cardFigure = card.querySelector('.browse-card-figure');
@@ -361,7 +384,7 @@ export async function buildCard(container, element, model) {
     });
   }
 
-  if (badgeTitle) {
+  if (badgeTitle || failedToLoad) {
     const bannerElement = createTag('h3', { class: 'browse-card-banner' });
     bannerElement.innerText = badgeTitle || '';
     cardFigure.appendChild(bannerElement);
@@ -371,9 +394,9 @@ export async function buildCard(container, element, model) {
     buildInProgressBarContent({ inProgressStatus, cardFigure, card });
   }
 
-  if (product) {
+  if (product || failedToLoad) {
     let tagElement;
-    if (product.length > 1) {
+    if (product?.length > 1) {
       tagElement = createTag(
         'div',
         { class: 'browse-card-tag-text' },
@@ -388,7 +411,8 @@ export async function buildCard(container, element, model) {
       };
       createTooltip(container, tooltipElem, tooltipConfig);
     } else {
-      tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${product.join(', ')}</h4>`);
+      const tagText = product ? product.join(', ') : '';
+      tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${tagText}</h4>`);
       cardContent.appendChild(tagElement);
     }
   }
