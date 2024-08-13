@@ -10,6 +10,7 @@ import {
   getPathDetails,
 } from '../../scripts/scripts.js';
 import { Deferred, decorateIcons, getMetadata } from './header-util.js';
+import { LanguageBlock } from '../../scripts/language.js';
 
 const { lang } = getPathDetails();
 
@@ -26,7 +27,7 @@ const { lang } = getPathDetails();
 const HEADER_CSS = `/blocks/header/exl-header.css`;
 const SEARCH_CSS = `/scripts/search/search.css`;
 
-const languageModule = import('../../scripts/language.js');
+// const languageModule = import('../../scripts/language.js');
 const { khorosProfileUrl } = getConfig();
 
 let searchElementPromise = null;
@@ -583,18 +584,16 @@ async function decorateCommunityBlock(header, decoratorOptions) {
  * Decorates the language-selector block
  * @param {HTMLElement} languageBlock
  */
-const languageDecorator = async (languageBlock, decoratorOptions) => {
+const languageDecorator = async (languageBlock) => {
   const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
   decoratorState.languageTitle = title;
   decoratorState.languages = new Deferred();
 
   const prependLanguagePopover = async (parent) => {
-    await languageModule.then(({ buildLanguagePopover }) => {
-      buildLanguagePopover(null, 'language-picker-popover-header', decoratorOptions).then(({ popover, languages }) => {
-        decoratorState.languages.resolve(languages);
-        parent.append(popover);
-      });
-    });
+    const language = new LanguageBlock({ position: null, popoverId: 'language-picker-popover-header' });
+    const { popover, languages } = await language.languagePopover;
+    decoratorState.languages.resolve(languages);
+    parent.append(popover);
   };
 
   const languageHtml = `
@@ -870,7 +869,7 @@ class ExlHeader extends HTMLElement {
     options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
     options.onSignOut = options.onSignOut || doSignOut;
     options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
-    options.isCommunity = options.isCommunity ?? true;
+    options.isCommunity = options.isCommunity ?? false;
     options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
     options.lang = options.lang || lang || 'en';
     this.decoratorOptions = options;

@@ -3,10 +3,14 @@ import { loadCSS } from './lib-franklin.js';
 import { htmlToElement, getPathDetails, fetchFragment } from './scripts.js';
 
 const pathDetails = getPathDetails();
+const { lang } = getPathDetails();
 
 /**
  * @typedef {Object} DecoratorOptions
  * @property {boolean} isCommunity
+ * @property {string} position
+ * @property {string} popoverId
+ * @property {boolean} lang
  */
 
 export const getLanguagePath = (language, decoratorOptions) => {
@@ -21,7 +25,6 @@ export const getLanguagePath = (language, decoratorOptions) => {
  * changes current url to the new language url
  */
 const switchLanguage = (language, decoratorOptions) => {
-  const { lang } = pathDetails;
   if (lang !== language) {
     window.location.pathname = getLanguagePath(language, decoratorOptions);
   }
@@ -39,16 +42,16 @@ const communityLang = [
 /**
  * Decoration for language popover - shared between header and footer
  */
-export const buildLanguagePopover = async (position, popoverId, decoratorOptions) => {
+const buildLanguagePopover = async (decoratorOptions) => {
   loadCSS(`${window.hlx.codeBasePath}/styles/language.css`);
   const popoverClass =
-    position === 'top' ? 'language-selector-popover language-selector-popover--top' : 'language-selector-popover';
+    decoratorOptions.position === 'top'
+      ? 'language-selector-popover language-selector-popover--top'
+      : 'language-selector-popover';
   let languagesEl;
   if (decoratorOptions.isCommunity) {
     languagesEl = htmlToElement(
-      `<div><ul>${communityLang
-        .map((lang) => `<li><a href="${lang.legend}">${lang.title}</a></li>`)
-        .join('')}</ul><div>`,
+      `<div><ul>${communityLang.map((l) => `<li><a href="${l.legend}">${l.title}</a></li>`).join('')}</ul><div>`,
     );
   } else {
     languagesEl = htmlToElement(await fetchFragment('languages/languages', 'en'));
@@ -63,13 +66,13 @@ export const buildLanguagePopover = async (position, popoverId, decoratorOptions
   const { lang: currentLang } = getPathDetails();
   const options = languages
     .map((option) => {
-      const lang = option.lang?.toLowerCase();
-      const selected = currentLang === lang ? 'selected' : '';
-      return `<span class="language-selector-label" data-value="${lang}" ${selected}>${option.title}</span>`;
+      const lan = option.lang?.toLowerCase();
+      const selected = currentLang === lan ? 'selected' : '';
+      return `<span class="language-selector-label" data-value="${lan}" ${selected}>${option.title}</span>`;
     })
     .join('');
   const popover = htmlToElement(`
-    <div class="${popoverClass}" id="${popoverId}" style="display:none">
+    <div class="${popoverClass}" id="${decoratorOptions.popoverId}" style="display:none">
       ${options}
     </div>`);
 
@@ -77,8 +80,8 @@ export const buildLanguagePopover = async (position, popoverId, decoratorOptions
     const { target } = e;
     if (target.classList.contains('language-selector-label')) {
       target.setAttribute('selected', 'true');
-      const lang = target.getAttribute('data-value');
-      switchLanguage(lang, decoratorOptions);
+      const language = target.getAttribute('data-value');
+      switchLanguage(language, decoratorOptions);
     }
   });
   return {
@@ -86,3 +89,15 @@ export const buildLanguagePopover = async (position, popoverId, decoratorOptions
     languages,
   };
 };
+
+export class LanguageBlock {
+  /**
+   * @param {DecoratorOptions} decoratorOptions
+   */
+  constructor(decoratorOptions = {}) {
+    this.decoratorOptions = decoratorOptions;
+    decoratorOptions.lang = decoratorOptions.lang || lang || 'en';
+    decoratorOptions.isCommunity = decoratorOptions.isCommunity ?? false;
+    this.languagePopover = buildLanguagePopover(decoratorOptions);
+  }
+}
