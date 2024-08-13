@@ -22,10 +22,10 @@ export default function ProfileRail(block) {
     const heading = section.querySelector('h1, h2, h3, h4, h5, h6');
     if (heading && heading.id) {
       const li = document.createElement('li');
-      if (i === 0) {
-        li.classList.add('active');
+      if (i === 0) li.classList.add('active');
+      if (section.classList.contains('bookmarks-container')) {
         li.innerHTML = `<a href="#my-bookmarks">${heading.textContent.toLowerCase()}</a>`;
-      } else if (i === 1) {
+      } else if (section.classList.contains('awards-container')) {
         li.innerHTML = `<a href="#my-awards">${heading.textContent.toLowerCase()}</a>`;
       } else {
         li.innerHTML = `<a href="#${heading.id}">${heading.textContent.toLowerCase()}</a>`;
