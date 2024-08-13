@@ -66,8 +66,8 @@ export default async function decorate(block) {
     block.classList.add('no-subject');
   }
 
-  const videoLinkElem = marqueeDOM.querySelector('.marquee-cta > .video');
-  if (videoLinkElem) {
+  const videoLinkElems = marqueeDOM.querySelectorAll('.marquee-cta > .video');
+  videoLinkElems.forEach((videoLinkElem) => {
     const videoLink = videoLinkElem.getAttribute('href');
 
     videoLinkElem.setAttribute('href', '#');
@@ -101,7 +101,7 @@ export default async function decorate(block) {
       document.body.removeAttribute('style');
       modal.querySelector('.iframe-container').remove();
     });
-  }
+  });
 
   // fetch user auth to toggle hide signin button
   import('../../scripts/auth/profile.js')
@@ -109,9 +109,11 @@ export default async function decorate(block) {
     .then((isSignedInUser) => {
       if (!isSignedInUser) {
         block.classList.add('unauthenticated');
-        block.querySelector('.signin')?.addEventListener('click', (e) => {
-          e.preventDefault();
-          window.adobeIMS.signIn();
+        block.querySelectorAll('.signin').forEach((signIn) => {
+          signIn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.adobeIMS.signIn();
+          });
         });
       }
     });
