@@ -37,12 +37,13 @@ const renderCards = (resultsEl) => {
 
 export default function ProfileExperienceLevel(block) {
   const [firstLevel, secondLevel] = block.children;
-  const heading = firstLevel.innerText?.trim() ?? '';
+  const heading = firstLevel.querySelector('h1, h2, h3, h4, h5, h6');
+  heading?.classList.add('product-experience-level-header');
   const subHeading = secondLevel.innerText?.trim() ?? '';
   block.innerHTML = '';
   const content = htmlToElement(`
     <div>
-        <h2 class="product-experience-level-header">${heading}</h2>
+        ${heading ? heading.outerHTML : '<h3 class="product-experience-level-header"></h3>'}
     <div>
       <p class="product-experience-level-para">${subHeading}</p>
       <div class="product-experience-level-type">

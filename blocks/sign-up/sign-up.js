@@ -72,14 +72,14 @@ export default async function decorate(block) {
   decorateIcons(signupDOM);
   block.append(signupDOM);
 
-  const signInBtn = block.querySelector('.signin');
+  const signInBtns = block.querySelectorAll('.signin');
 
-  if (signInBtn) {
+  signInBtns.forEach((signInBtn) => {
     signInBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       window.adobeIMS.signIn();
     });
-  }
+  });
 
   isSignedInUser().then((isUserSignedIn) => {
     if (!isUserSignedIn || document.documentElement.classList.contains('adobe-ue-edit')) {
