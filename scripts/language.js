@@ -3,7 +3,6 @@ import { loadCSS } from './lib-franklin.js';
 import { htmlToElement, getPathDetails, fetchFragment } from './scripts.js';
 
 const pathDetails = getPathDetails();
-const { lang } = getPathDetails();
 
 /**
  * @typedef {Object} DecoratorOptions
@@ -13,20 +12,17 @@ const { lang } = getPathDetails();
  * @property {boolean} lang
  */
 
-export const getLanguagePath = (language, decoratorOptions) => {
+export const getLanguagePath = (language) => {
   const { prefix, suffix } = pathDetails;
-  if (decoratorOptions.isCommunity) {
-    return language;
-  }
   return `${prefix}/${language}${suffix}`;
 };
 
 /**
  * changes current url to the new language url
  */
-const switchLanguage = (language, decoratorOptions) => {
-  if (lang !== language) {
-    window.location.pathname = getLanguagePath(language, decoratorOptions);
+const switchLanguage = (lang) => {
+  if (pathDetails.lang !== lang) {
+    window.location.pathname = getLanguagePath(lang);
   }
 };
 
@@ -63,7 +59,7 @@ const buildLanguagePopover = async (decoratorOptions) => {
     lang: option?.firstElementChild?.getAttribute('href'),
   }));
 
-  const { lang: currentLang } = getPathDetails();
+  const currentLang = pathDetails.lang;
   const options = languages
     .map((option) => {
       const lan = option.lang?.toLowerCase();
@@ -80,8 +76,8 @@ const buildLanguagePopover = async (decoratorOptions) => {
     const { target } = e;
     if (target.classList.contains('language-selector-label')) {
       target.setAttribute('selected', 'true');
-      const language = target.getAttribute('data-value');
-      switchLanguage(language, decoratorOptions);
+      const lang = target.getAttribute('data-value');
+      switchLanguage(lang, decoratorOptions);
     }
   });
   return {
@@ -96,8 +92,8 @@ export class LanguageBlock {
    */
   constructor(decoratorOptions = {}) {
     this.decoratorOptions = decoratorOptions;
-    decoratorOptions.lang = decoratorOptions.lang || lang || 'en';
-    decoratorOptions.isCommunity = decoratorOptions.isCommunity ?? false;
+    decoratorOptions.lang = decoratorOptions.lang || pathDetails.lang || 'en';
+    decoratorOptions.isCommunity = decoratorOptions.isCommunity ?? true;
     this.languagePopover = buildLanguagePopover(decoratorOptions);
   }
 }
