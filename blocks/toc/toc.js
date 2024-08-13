@@ -160,7 +160,7 @@ function activateCurrentPage(tocContent) {
 
 /**
  * loads and decorates the toc
- * @param {Element} block The toc block element
+ * @param {Element} block The toc block element.
  */
 export default async function decorate(block) {
   const tocID = block.querySelector('.toc > div > div').textContent;
