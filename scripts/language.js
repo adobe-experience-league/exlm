@@ -23,7 +23,7 @@ export const getLanguagePath = (language) => {
 const switchLanguage = (lang, languageDecorator) => {
   if (pathDetails.lang !== lang) {
     if (languageDecorator.isCommunity) {
-      fetch(`${window.hlx.codeBasePath}/api/ads?lang=${lang}&page_size=12`)
+      fetch(`${window.location.origin}/api/ads?lang=${lang}&page_size=12`)
         .then((response) => response.json())
         .then((data) => {
           if (data) {
