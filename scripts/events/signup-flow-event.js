@@ -1,4 +1,3 @@
-import { getMetadata } from '../lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 import initializeSignupFlow from '../signup-flow/signup-flow.js';
 // eslint-disable-next-line import/no-cycle
@@ -9,15 +8,12 @@ export default async function showSignupModal() {
   if (!isSignedInUser()) {
     return;
   }
-  let configDateString = getMetadata('signup-flow-config-date');
 
-  // Temporary fix for the case where the config date is not present in the metadata of a page
-  if (!configDateString) {
-    const { signUpFlowConfigDate } = getConfig();
-    configDateString = signUpFlowConfigDate;
-  }
-
-  const configDate = new Date(configDateString);
+  // This value is hard-coded. Using a Bulk metadata Value for this did not work due to CDN issues;
+  //  some pages had the metadata while others did not.
+  const { signUpFlowConfigDate } = getConfig();
+  
+  const configDate = new Date(signUpFlowConfigDate);
   const profileData = await defaultProfileClient.getMergedProfile();
   const profileTimeStamp = new Date(profileData.timestamp);
   const modalSeen = await defaultProfileClient.getLatestInteraction('modalSeen');
