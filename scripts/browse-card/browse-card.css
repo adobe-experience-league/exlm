@@ -79,6 +79,23 @@
   overflow: hidden;
   position: relative;
 }
+
+.load-fail-card.browse-card .browse-card-banner {
+  height: 32px;
+  width: 132px;
+  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
+  background-size: 200% 100%;
+  animation: placeholder-wave 1.5s infinite;
+}
+
+.load-fail-card.browse-card .browse-card-tag-text {
+  height: 21px;
+  width: 100px;
+  margin-bottom: 16px;
+  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
+  background-size: 200% 100%;
+  animation: placeholder-wave 1.5s infinite;
+}
 .browse-card .browse-card-figure.img-custom-height {
   min-height: 153px;
 }
@@ -233,7 +250,7 @@
 .browse-card.tutorial-card .browse-card-banner {
   background-color: var(--spectrum-celery-600);
 }
-.browse-card.course-card .browse-card-banner {
+.browse-card.playlist-card .browse-card-banner {
   background-color: var(--spectrum-blue-800);
 }
 .browse-card.documentation-card .browse-card-banner {
@@ -254,20 +271,20 @@
 .browse-card.instructor-led-training-card .browse-card-banner {
   background-color: var(--spectrum-blue-1100);
 }
-.browse-card.course-card .browse-card-figure {
+.browse-card.playlist-card .browse-card-figure {
   max-height: 143px;
 }
-.browse-card.course-card .browse-card-meta-info .icon {
+.browse-card.playlist-card .browse-card-meta-info .icon {
   height: 11px;
   width: 11px;
   margin-right: 0;
   margin-top: -2px;
 }
-.browse-card.course-card .browse-card-content {
+.browse-card.playlist-card .browse-card-content {
   padding: 16px 16px 0;
 }
-.browse-card.course-card .browse-card-meta-info,
-.browse-card.course-card .browse-card-title-text {
+.browse-card.playlist-card .browse-card-meta-info,
+.browse-card.playlist-card .browse-card-title-text {
   margin: 0;
 }
 .browse-card.tutorial-card .browse-card-figure {
@@ -399,14 +416,14 @@
 }
 @media only screen and (min-width: 900px) {
   .browse-card.tutorial-card .browse-card-figure,
-  .browse-card.course-card .browse-card-figure {
+  .browse-card.playlist-card .browse-card-figure {
     max-height: 199px;
   }
-  .browse-card.course-card .browse-card-content {
+  .browse-card.playlist-card .browse-card-content {
     padding: 16px 16px 12px;
   }
-  .browse-card.course-card .browse-card-meta-info,
-  .browse-card.course-card .browse-card-title-text {
+  .browse-card.playlist-card .browse-card-meta-info,
+  .browse-card.playlist-card .browse-card-title-text {
     margin: 8px 0;
   }
 }

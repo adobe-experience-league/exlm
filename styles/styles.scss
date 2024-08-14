@@ -713,12 +713,34 @@ picture {
   width: 90%;
 }
 
+.exl-toast .exl-toast-icon {
+  cursor: pointer;
+  height: 18px;
+  padding: 5px;
+  width: 18px;
+  vertical-align: middle;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: white;
+  }
+
+  path {
+    fill: white;
+  }
+}
+
 .exl-toast.exl-toast-success {
   background: var(--spectrum-green-900);
 }
 
 .exl-toast.exl-toast-error {
   background: var(--spectrum-red-900);
+}
+
+.exl-toast.exl-toast-info {
+  background: var(--spectrum-blue-900);
 }
 
 .exl-toast-content {
@@ -730,18 +752,6 @@ picture {
   padding: 7px 15px 7px 5px;
   margin: 8px 0;
   white-space: unset;
-}
-
-.exl-toast .icon-info {
-  background-image: url('../../icons/info-circle.svg');
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 18px;
-  cursor: pointer;
-  height: 18px;
-  padding: 5px;
-  width: 18px;
-  vertical-align: middle;
 }
 
 .exl-toast .icon-close {
@@ -822,7 +832,7 @@ picture {
   }
 
   @include breakpoint(tablet) {
-    padding: 30px 56px;
+    padding: 3em 3.5em;
   }
 
   &.curated-cards-container,

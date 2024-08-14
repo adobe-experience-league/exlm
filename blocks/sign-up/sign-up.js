@@ -1,19 +1,13 @@
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
-function decorateButtons(...buttons) {
+function decorateButtons(buttons) {
   return buttons
-    .map((div, index) => {
-      if (div) {
-        const a = div.querySelector('a');
+    .map(({ ctaElem, ctaStyle, ctaLinkType }) => {
+      if (ctaElem && ctaElem.textContent?.trim() !== '') {
+        const a = ctaElem.querySelector('a');
         if (a) {
-          a.classList.add('button');
-          if (index === 1) a.classList.add('secondary');
-          if (a.getAttribute('href') === '#') {
-            a.classList.add('sign-in-cta-btn');
-          }
-          if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
-          if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
+          a.classList.add('button', ctaStyle, ctaLinkType);
           return a.outerHTML;
         }
       }
@@ -26,7 +20,8 @@ export default async function decorate(block) {
   block.style.display = 'none';
   // Extract properties
   // always same order as in model, empty string if not set
-  const [img, eyebrow, title, longDescr, firstCta, secondCta] = block.querySelectorAll(':scope div > div');
+  const [img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] =
+    block.querySelectorAll(':scope div > div');
   const subjectPicture = img.querySelector('picture');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `--${bgColorCls.substr(3)}` : '--spectrum-gray-700';
@@ -42,7 +37,20 @@ export default async function decorate(block) {
       }
       <div class='signup-title'>${title.innerHTML}</div>
       <div class='signup-long-description'>${longDescr.innerHTML}</div>
-      <div class='signup-cta'>${decorateButtons(firstCta, secondCta)}</div>
+      <div class='signup-cta'>
+        ${decorateButtons([
+          {
+            ctaElem: firstCta,
+            ctaStyle: 'secondary',
+            ctaLinkType: firstCtaLinkType?.textContent?.trim() || 'link',
+          },
+          {
+            ctaElem: secondCta,
+            ctaStyle: 'primary',
+            ctaLinkType: secondCtaLinkType?.textContent?.trim() || 'link',
+          },
+        ])}
+      </div>
     </div>
     ${
       subjectPicture
@@ -64,13 +72,14 @@ export default async function decorate(block) {
   decorateIcons(signupDOM);
   block.append(signupDOM);
 
-  const signInBtn = block.querySelector('.sign-in-cta-btn');
+  const signInBtns = block.querySelectorAll('.signin');
 
-  if (signInBtn) {
-    signInBtn.addEventListener('click', async () => {
+  signInBtns.forEach((signInBtn) => {
+    signInBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
       window.adobeIMS.signIn();
     });
-  }
+  });
 
   isSignedInUser().then((isUserSignedIn) => {
     if (!isUserSignedIn || document.documentElement.classList.contains('adobe-ue-edit')) {
