@@ -15,7 +15,7 @@ export function getPathDetails(languageDecorator) {
   let extParts;
   let lang;
   if (languageDecorator.isCommunity) {
-    pathname = 'https://experienceleaguecommunities.adobe.com/?profile.language=fr';
+    pathname = window.location.href;
     extParts = pathname.split('=');
   } else {
     pathname = window.location.pathname;
