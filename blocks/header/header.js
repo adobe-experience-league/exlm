@@ -7,12 +7,9 @@ import {
   fetchFragment,
   isFeatureEnabled,
   fetchLanguagePlaceholders,
-  getPathDetails,
 } from '../../scripts/scripts.js';
 import { Deferred, decorateIcons, getMetadata } from './header-util.js';
-import { LanguageBlock } from '../../scripts/language.js';
-
-const { lang } = getPathDetails();
+import { LanguageBlock, getPathDetails } from '../../scripts/language.js';
 
 /**
  * @typedef {Object} DecoratorOptions
@@ -866,13 +863,13 @@ class ExlHeader extends HTMLElement {
       return signOut();
     };
 
+    this.decoratorOptions = options;
     options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
     options.onSignOut = options.onSignOut || doSignOut;
     options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
     options.isCommunity = options.isCommunity ?? false;
     options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
-    options.lang = options.lang || lang || 'en';
-    this.decoratorOptions = options;
+    options.lang = options.lang || getPathDetails(this.decoratorOptions).lang || 'en';
 
     // yes, even though this is extra, it ensures that these functions remain pure-esque.
     this.navDecorator = navDecorator.bind(this);

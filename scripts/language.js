@@ -1,8 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import { loadCSS } from './lib-franklin.js';
-import { htmlToElement, getPathDetails, fetchFragment } from './scripts.js';
-
-const pathDetails = getPathDetails();
+import { htmlToElement, fetchFragment } from './scripts.js';
 
 /**
  * @typedef {Object} languageDecorator
@@ -12,28 +10,42 @@ const pathDetails = getPathDetails();
  * @property {boolean} lang
  */
 
-export const getLanguagePath = (language) => {
-  const { prefix, suffix } = pathDetails;
-  return `${prefix}/${language}${suffix}`;
-};
+export function getPathDetails(languageDecorator) {
+  let pathname;
+  let extParts;
+  let lang;
+  if (languageDecorator.isCommunity) {
+    pathname = 'https://experienceleaguecommunities.adobe.com/?profile.language=fr';
+    extParts = pathname.split('=');
+  } else {
+    pathname = window.location.pathname;
+    extParts = pathname.split('/');
+  }
+  lang = extParts.length > 1 ? extParts[extParts.length - 1] : '';
+  if (!lang) lang = 'en'; // default to en
+  // substring before lang
+  const prefix = pathname.substring(0, pathname.indexOf(`/${lang}`)) || '';
+  const suffix = pathname.substring(pathname.indexOf(`/${lang}`) + lang.length + 1) || '';
+  return {
+    prefix,
+    suffix,
+    lang,
+  };
+}
 
 /**
  * changes current url to the new language url
  */
 const switchLanguage = (lang, languageDecorator) => {
+  const pathDetails = getPathDetails(languageDecorator);
+  const { prefix, suffix } = pathDetails;
   if (pathDetails.lang !== lang) {
     if (languageDecorator.isCommunity) {
-      fetch(`${window.location.origin}/api/ads?lang=${lang}&page_size=12`)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data) {
-            const url = new URL(window.location.href);
-            url.searchParams.set('profile.language', lang);
-            window.location.href = url.href;
-          }
-        });
+      const url = new URL(window.location.href);
+      url.searchParams.set('profile.language', lang);
+      window.location.href = url.href;
     } else {
-      window.location.pathname = getLanguagePath(lang);
+      window.location.pathname = `${prefix}${lang}${suffix}`;
     }
   }
 };
@@ -71,7 +83,7 @@ const buildLanguagePopover = async (languageDecorator) => {
     lang: option?.firstElementChild?.getAttribute('href'),
   }));
 
-  const currentLang = pathDetails.lang;
+  const currentLang = getPathDetails(languageDecorator).lang;
   const options = languages
     .map((option) => {
       const lan = option.lang?.toLowerCase();
@@ -103,7 +115,6 @@ export class LanguageBlock {
    * @param {languageDecorator} languageDecorator
    */
   constructor(languageDecorator = {}) {
-    languageDecorator.lang = languageDecorator.lang || pathDetails.lang || 'en';
     languageDecorator.isCommunity = languageDecorator.decoratorOptions
       ? languageDecorator.decoratorOptions.isCommunity ?? languageDecorator.isCommunity ?? false
       : languageDecorator.isCommunity ?? false;
