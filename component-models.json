@@ -799,6 +799,23 @@
         "value": "",
         "label": "Link URL",
         "description": "Sets the link URL for Card."
+      },
+      {
+        "component": "radio-group",
+        "name": "target",
+        "value": "",
+        "label": "Link target",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Open in same tab",
+            "value": ""
+          },
+          {
+            "name": "Open in new tab",
+            "value": "new-tab"
+          }
+        ]
       }
     ]
   },

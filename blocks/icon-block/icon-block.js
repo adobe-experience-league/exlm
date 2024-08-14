@@ -3,48 +3,46 @@ import { decorateExternalLinks } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   const toggleDiv = block.querySelector('div');
-  if (toggleDiv && toggleDiv.firstElementChild.textContent === 'true') {
+  if (toggleDiv?.firstElementChild?.textContent === 'true') {
     block.classList.add('icon-block-center-align');
   }
   toggleDiv?.remove();
 
   [...block.children].forEach((column) => {
-    const [, headingWrapper, descriptionWrapper, linkWrapper] = column.children;
+    const [, headingWrapper, descriptionWrapper, linkWrapper, targetElement] = column.children;
 
-    descriptionWrapper.classList.add('icon-description');
-
-    const heading = headingWrapper.firstElementChild;
-    if (heading) {
-      heading.classList.add('icon-heading');
-      heading.remove();
-      headingWrapper.replaceWith(heading);
-    } else {
-      headingWrapper.remove();
+    if (descriptionWrapper) {
+      descriptionWrapper.classList.add('icon-description');
     }
 
-    const link = linkWrapper.querySelector('a');
+    const heading = headingWrapper?.firstElementChild;
+    if (heading) {
+      heading.classList.add('icon-heading');
+      headingWrapper.replaceWith(heading);
+    } else {
+      headingWrapper?.remove();
+    }
+
+    const link = linkWrapper?.querySelector('a');
     if (link) {
-      // FIXME: Temp Code - To be updated once EXLM-2046 UE changes are in place.
-      if (link.closest('.signup-dialog-content')) {
+      link.classList.add('icon-link');
+      if (targetElement?.textContent === 'new-tab') {
         link.setAttribute('target', '_blank');
       }
-      link.classList.add('icon-link');
-      link.remove();
       linkWrapper.replaceWith(link);
+      targetElement?.remove();
     } else {
-      linkWrapper.remove();
+      linkWrapper?.remove();
+      targetElement?.remove();
     }
   });
 
   decorateExternalLinks(block);
 
-  const anchorEls = [...block.querySelectorAll('a')];
-  anchorEls.forEach((a) => {
-    if (a.target === '_blank') {
-      const icon = '<span class="icon icon-new-tab"></span>';
-      a.classList.add('external');
-      a.insertAdjacentHTML('beforeend', icon);
-    }
+  block.querySelectorAll('a[target="_blank"]').forEach((a) => {
+    const icon = '<span class="icon icon-new-tab"></span>';
+    a.classList.add('external');
+    a.insertAdjacentHTML('beforeend', icon);
   });
 
   decorateIcons(block);
