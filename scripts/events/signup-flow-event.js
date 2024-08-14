@@ -12,7 +12,7 @@ export default async function showSignupModal() {
   // This value is hard-coded. Using a Bulk metadata Value for this did not work due to CDN issues;
   //  some pages had the metadata while others did not.
   const { signUpFlowConfigDate } = getConfig();
-  
+
   const configDate = new Date(signUpFlowConfigDate);
   const profileData = await defaultProfileClient.getMergedProfile();
   const profileTimeStamp = new Date(profileData.timestamp);
