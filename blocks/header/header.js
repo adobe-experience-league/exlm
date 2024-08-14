@@ -381,30 +381,27 @@ const buildNavItems = async (ul, level = 0) => {
     }
   };
 
-  // if (level === 0) {
-  //   // add search link (visible on mobile only)
-  //   ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
+  if (level === 0) {
+    // add search link (visible on mobile only)
+    ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
 
-  //   const addMobileLangSelector = async () => {
-  //     const { getLanguagePath } = await languageModule;
-  //     const languages = await decoratorState.languages.promise;
-  //     // add language select (visible on mobile only)
-  //     const navItem = ul.appendChild(
-  //       htmlToElement(
-  //         `<li class="nav-item-mobile">
-  //           <p>${decoratorState.languageTitle}</p>
-  //           <ul>
-  //             ${languages
-  //               .map((l) => `<li><a href="${getLanguagePath(l.lang)}">${l.title}</a></li>`)
-  //               .join('')}
-  //           </ul>
-  //         </li>`,
-  //       ),
-  //     );
-  //     decorateNavItem(navItem);
-  //   };
-  //   await addMobileLangSelector();
-  // }
+    const addMobileLangSelector = async () => {
+      const languages = await decoratorState.languages.promise;
+      // add language select (visible on mobile only)
+      const navItem = ul.appendChild(
+        htmlToElement(
+          `<li class="nav-item-mobile">
+            <p>${decoratorState.languageTitle}</p>
+            <ul>
+              ${languages.map((l) => `<li><a href="${l.lang}">${l.title}</a></li>`).join('')}
+            </ul>
+          </li>`,
+        ),
+      );
+      decorateNavItem(navItem);
+    };
+    await addMobileLangSelector();
+  }
 
   [...ul.children].forEach((option) => {
     const link = option.querySelector('a');
@@ -584,17 +581,30 @@ async function decorateCommunityBlock(header, decoratorOptions) {
  * Decorates the language-selector block
  * @param {HTMLElement} languageBlock
  */
-const languageDecorator = async (languageBlock) => {
+const languageDecorator = async (languageBlock, decoratorOptions) => {
   const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
   decoratorState.languageTitle = title;
   decoratorState.languages = new Deferred();
 
   const prependLanguagePopover = async (parent) => {
-    const language = new LanguageBlock({ position: null, popoverId: 'language-picker-popover-header' });
+    const language = new LanguageBlock({
+      position: null,
+      popoverId: 'language-picker-popover-header',
+      decoratorOptions,
+    });
     const { popover, languages } = await language.languagePopover;
     decoratorState.languages.resolve(languages);
     parent.append(popover);
   };
+
+  // const prependLanguagePopover = async (parent) => {
+  //   await languageModule.then(({ buildLanguagePopover }) => {
+  //     buildLanguagePopover(null, 'language-picker-popover-header', decoratorOptions).then(({ popover, languages }) => {
+  //       decoratorState.languages.resolve(languages);
+  //       parent.append(popover);
+  //     });
+  //   });
+  // };
 
   const languageHtml = `
       <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover-header" aria-label="${title}">

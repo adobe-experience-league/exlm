@@ -5,7 +5,7 @@ import { htmlToElement, getPathDetails, fetchFragment } from './scripts.js';
 const pathDetails = getPathDetails();
 
 /**
- * @typedef {Object} DecoratorOptions
+ * @typedef {Object} languageDecorator
  * @property {boolean} isCommunity
  * @property {string} position
  * @property {string} popoverId
@@ -22,8 +22,8 @@ export const getLanguagePath = (language) => {
  */
 const switchLanguage = (lang) => {
   if (pathDetails.lang !== lang) {
-  window.location.pathname = getLanguagePath(lang );
-};
+    window.location.pathname = getLanguagePath(lang);
+  }
 };
 
 const communityLang = [
@@ -38,14 +38,14 @@ const communityLang = [
 /**
  * Decoration for language popover - shared between header and footer
  */
-const buildLanguagePopover = async (decoratorOptions) => {
+const buildLanguagePopover = async (languageDecorator) => {
   loadCSS(`${window.hlx.codeBasePath}/styles/language.css`);
   const popoverClass =
-    decoratorOptions.position === 'top'
+    languageDecorator.position === 'top'
       ? 'language-selector-popover language-selector-popover--top'
       : 'language-selector-popover';
   let languagesEl;
-  if (decoratorOptions.isCommunity) {
+  if (languageDecorator.isCommunity) {
     languagesEl = htmlToElement(
       `<div><ul>${communityLang.map((l) => `<li><a href="${l.legend}">${l.title}</a></li>`).join('')}</ul><div>`,
     );
@@ -59,7 +59,7 @@ const buildLanguagePopover = async (decoratorOptions) => {
     lang: option?.firstElementChild?.getAttribute('href'),
   }));
 
-  const currentLang = pathDetails.lang; 
+  const currentLang = pathDetails.lang;
   const options = languages
     .map((option) => {
       const lan = option.lang?.toLowerCase();
@@ -68,7 +68,7 @@ const buildLanguagePopover = async (decoratorOptions) => {
     })
     .join('');
   const popover = htmlToElement(`
-    <div class="${popoverClass}" id="${decoratorOptions.popoverId}" style="display:none">
+    <div class="${popoverClass}" id="${languageDecorator.popoverId}" style="display:none">
       ${options}
     </div>`);
 
@@ -77,7 +77,7 @@ const buildLanguagePopover = async (decoratorOptions) => {
     if (target.classList.contains('language-selector-label')) {
       target.setAttribute('selected', 'true');
       const lang = target.getAttribute('data-value');
-      switchLanguage(lang, decoratorOptions);
+      switchLanguage(lang, languageDecorator);
     }
   });
   return {
@@ -88,12 +88,14 @@ const buildLanguagePopover = async (decoratorOptions) => {
 
 export class LanguageBlock {
   /**
-   * @param {DecoratorOptions} decoratorOptions
+   * @param {languageDecorator} languageDecorator
    */
-  constructor(decoratorOptions = {}) {
-    this.decoratorOptions = decoratorOptions;
-    decoratorOptions.lang = decoratorOptions.lang || pathDetails.lang || 'en';
-    decoratorOptions.isCommunity = decoratorOptions.isCommunity ?? false;
-    this.languagePopover = buildLanguagePopover(decoratorOptions);
+  constructor(languageDecorator = {}) {
+    languageDecorator.lang = languageDecorator.lang || pathDetails.lang || 'en';
+    languageDecorator.isCommunity = languageDecorator.decoratorOptions
+      ? languageDecorator.decoratorOptions.isCommunity ?? languageDecorator.isCommunity ?? false
+      : languageDecorator.isCommunity ?? false;
+    this.languageDecorator = languageDecorator;
+    this.languagePopover = buildLanguagePopover(languageDecorator);
   }
 }
