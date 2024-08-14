@@ -27,7 +27,6 @@ const { lang } = getPathDetails();
 const HEADER_CSS = `/blocks/header/exl-header.css`;
 const SEARCH_CSS = `/scripts/search/search.css`;
 
-// const languageModule = import('../../scripts/language.js');
 const { khorosProfileUrl } = getConfig();
 
 let searchElementPromise = null;
@@ -596,15 +595,6 @@ const languageDecorator = async (languageBlock, decoratorOptions) => {
     decoratorState.languages.resolve(languages);
     parent.append(popover);
   };
-
-  // const prependLanguagePopover = async (parent) => {
-  //   await languageModule.then(({ buildLanguagePopover }) => {
-  //     buildLanguagePopover(null, 'language-picker-popover-header', decoratorOptions).then(({ popover, languages }) => {
-  //       decoratorState.languages.resolve(languages);
-  //       parent.append(popover);
-  //     });
-  //   });
-  // };
 
   const languageHtml = `
       <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover-header" aria-label="${title}">

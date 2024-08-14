@@ -20,9 +20,21 @@ export const getLanguagePath = (language) => {
 /**
  * changes current url to the new language url
  */
-const switchLanguage = (lang) => {
+const switchLanguage = (lang, languageDecorator) => {
   if (pathDetails.lang !== lang) {
-    window.location.pathname = getLanguagePath(lang);
+    if (languageDecorator.isCommunity) {
+      fetch(`${window.hlx.codeBasePath}/api/ads?lang=${lang}&page_size=12`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('profile.language', lang);
+            window.location.href = url.href;
+          }
+        });
+    } else {
+      window.location.pathname = getLanguagePath(lang);
+    }
   }
 };
 
