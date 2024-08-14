@@ -24,6 +24,7 @@ export default function decorate(block) {
 
     const link = linkWrapper.querySelector('a');
     if (link) {
+      link.setAttribute('target', '_blank');
       link.classList.add('icon-link');
       link.remove();
       linkWrapper.replaceWith(link);
