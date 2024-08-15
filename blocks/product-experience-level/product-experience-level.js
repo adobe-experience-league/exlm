@@ -17,7 +17,7 @@ const beginnerDescription =
   placeholders?.profileExpLevelBeginnerDesc ||
   'You’re just starting out with the selected product and are looking to grow your skills.';
 const intermediateDescription =
-  placeholders?.profileExpLevelprofileExpLevelIntermediateDesc ||
+  placeholders?.profileExpLevelIntermediateDesc ||
   'You have a moderate understanding of the selected product, but have room to level up your skills.';
 const experiencedDescription =
   placeholders?.profileExpLevelExperiencedDesc ||
