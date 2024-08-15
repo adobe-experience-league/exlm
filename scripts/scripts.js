@@ -1139,6 +1139,8 @@ export async function fetchFragment(rePath, lang) {
 }
 
 export async function fetchLanguagePlaceholders(lang) {
+  let language = lang;
+  if (language === 'pt') language = 'pt-br';
   const langCode = lang || getPathDetails()?.lang || 'en';
   try {
     // Try fetching placeholders with the specified language
