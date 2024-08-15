@@ -698,7 +698,7 @@ picture {
 
 .exl-toast {
   align-items: center;
-  background: var(--spectrum-green-900);
+  background: var(--spectrum-gray-900);
   border-radius: 5px;
   color: var(--spectrum-gray-50);
   display: flex;
@@ -706,11 +706,41 @@ picture {
   padding: 0 10px;
   position: fixed;
   transition: all 200ms ease-in-out;
-  transform: translate(-50%, -50%);
-  top: 10%;
+  transform: translateX(-50%);
+  top: calc(var(--nav-height) + 10px);
   bottom: unset;
   z-index: 999;
   width: 90%;
+}
+
+.exl-toast .exl-toast-icon {
+  cursor: pointer;
+  height: 18px;
+  padding: 5px;
+  width: 18px;
+  vertical-align: middle;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: white;
+  }
+
+  path {
+    fill: white;
+  }
+}
+
+.exl-toast.exl-toast-success {
+  background: var(--spectrum-green-900);
+}
+
+.exl-toast.exl-toast-error {
+  background: var(--spectrum-red-900);
+}
+
+.exl-toast.exl-toast-info {
+  background: var(--spectrum-blue-900);
 }
 
 .exl-toast-content {
@@ -724,18 +754,6 @@ picture {
   white-space: unset;
 }
 
-.exl-toast .icon-info {
-  background-image: url('../../icons/info-circle.svg');
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 18px;
-  cursor: pointer;
-  height: 18px;
-  padding: 5px;
-  width: 18px;
-  vertical-align: middle;
-}
-
 .exl-toast .icon-close {
   background-image: url('../../icons/icon-close.svg');
   background-repeat: no-repeat;
@@ -747,6 +765,11 @@ picture {
   width: 20px;
   margin-left: 5px;
   vertical-align: middle;
+}
+
+.form-error,
+.form-field-error {
+  color: var(--spectrum-red-900);
 }
 
 @include breakpoint(tablet) {
@@ -809,7 +832,7 @@ picture {
   }
 
   @include breakpoint(tablet) {
-    padding: 30px 56px;
+    padding: 3em 3.5em;
   }
 
   &.curated-cards-container,
@@ -860,7 +883,7 @@ body[class^='browse-'] .browse-filters-full-container {
   visibility: hidden;
 }
 
-.content-hidden {
+.hidden {
   display: none;
 }
 

@@ -5,7 +5,7 @@
     box-shadow: 0px 3px 24px rgba(0,0,0,0.16);
     height: auto;
     left: 0;
-    margin: 72px 16px 16px;
+    margin: 32px 16px 16px;
     overflow: hidden;
     padding: 0;
     position: fixed;
@@ -15,11 +15,6 @@
 }
 .signup-dialog::backdrop {
     background: rgba(0,0,0,0.8);
-}
-.signup-dialog-close-bar {
-    position: fixed;
-    top: 16px;
-    width: calc(100% - 32px);
 }
 .signup-dialog-close-btn,
 .signup-dialog-close-btn:hover,
@@ -179,7 +174,7 @@
     z-index: 2;
 }
 .signup-dialog-content > .section {
-    padding: 0 0 56px 0;    
+    padding: 0 0 20px 0;    
 }
 .signup-dialog-content > .section > .default-content-wrapper > * {
     color: var(--text-color);
@@ -225,7 +220,7 @@
 }
 /* Styles for Sign up - Finish */
 .confirm-container .signup-dialog-header {
-    padding-bottom: 36px;
+    padding-bottom: 20px;
 }
 .confirm-container .signup-dialog-header.sticky {
     padding-bottom: 20px;
@@ -236,11 +231,8 @@
 
 @media (min-width: 600px) {
     .signup-dialog {
-        margin: 72px auto 16px;
+        margin: 32px auto 16px;
         max-width: 568px;
-    }
-    .signup-dialog-close-bar {
-        width: 568px;
     }
     .signup-dialog-header {    
         padding: 20px;
@@ -262,7 +254,7 @@
     }
     .step2-container .signup-dialog-steps,
     .step3-container .signup-dialog-steps {
-        margin-bottom: 60px;
+        margin-bottom: 20px;
     }
     .signup-dialog-content {        
         margin: 0 auto;
@@ -278,9 +270,6 @@
 @media (min-width: 900px) {
     .signup-dialog {
         max-width: 736px;
-    }
-    .signup-dialog-close-bar {
-        width: 736px;
     }
     .signup-dialog-container {
         height: 100%;
@@ -314,9 +303,9 @@
     .step2-container .signup-dialog-body-top-decor {
         background: url('/images/square-box-decor.svg') no-repeat top left;
         height: 186px;
-        left: 0;
+        left: -13px;
         position: absolute;
-        top: 12px;
+        top: -53px;
         width: 197px;
         z-index: 1;
     }  
@@ -351,15 +340,12 @@
         max-width: 250px;
     }
     .signup-dialog-content .product-interests .interests-container {
-        max-height: 390px;
+        max-height: 280px;
     }
 }
 @media (min-width: 1200px) {
     .signup-dialog {
         max-width: 996px;
-    }
-    .signup-dialog-close-bar {
-        width: 996px;
     }
     .step1-container .signup-dialog-content,
     .step3-container .signup-dialog-content {
@@ -377,10 +363,5 @@
 @media (min-width: 1400px) {
     .signup-dialog {
         margin: 32px auto;
-    }    
-    .signup-dialog-close-bar {
-        right: 32px;
-        top: 32px;
-        width: auto;
     }
 }

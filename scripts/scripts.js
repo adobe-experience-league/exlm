@@ -778,6 +778,7 @@ export function getConfig() {
   else if (isStage)
     launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
+  const signUpFlowConfigDate = '2024-08-05T11:12:40.762Z';
 
   window.exlm = window.exlm || {};
   window.exlm.config = {
@@ -789,6 +790,7 @@ export function getConfig() {
     prodAssetsCdnOrigin,
     ppsOrigin,
     launchScriptSrc,
+    signUpFlowConfigDate,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
     privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
@@ -801,7 +803,7 @@ export function getConfig() {
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     coveoToken: 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
     liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
-    adlsUrl: 'https://learning.adobe.com/catalog.result.json',
+    adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     searchUrl: `${cdnOrigin}/search.html`,
     articleUrl: `${cdnOrigin}/api/articles/`,
@@ -855,6 +857,13 @@ export const locales = new Map([
   ['zh-hant', 'zh_HANT'],
   ['nl', 'nl_NL'],
   ['sv', 'sv_SE'],
+]);
+
+export const URL_SPECIAL_CASE_LOCALES = new Map([
+  ['es', 'es-ES'],
+  ['pt-br', 'pt-BR'],
+  ['zh-hans', 'zh-CN'],
+  ['zh-hant', 'zh-TW'],
 ]);
 
 export async function loadIms() {
@@ -1105,7 +1114,7 @@ export const removeExtension = (pathStr) => {
 };
 
 // Convert the given String to Pascal Case
-export const toPascalCase = (name) => `${(name || '').charAt(0).toUpperCase()}${name.slice(1)}`;
+export const toPascalCase = (name) => (name ? `${name.charAt(0).toUpperCase()}${name.slice(1)}` : '');
 
 export function rewriteDocsPath(docsPath) {
   const PROD_BASE = 'https://experienceleague.adobe.com';
@@ -1358,6 +1367,7 @@ async function loadPage() {
     const hasDiscoverability = Boolean(params.get('discoverability'));
     if (hasDiscoverability) {
       loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
+      loadDefaultModule(`${window.hlx.codeBasePath}/scripts/related-content/related-content-widget.js`);
     }
   }
 }

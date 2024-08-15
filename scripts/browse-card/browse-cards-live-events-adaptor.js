@@ -1,6 +1,6 @@
 import browseCardDataModel from '../data-model/browse-cards-model.js';
+import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
-import { CONTENT_TYPES } from './browse-cards-constants.js';
 
 /**
  * Module that provides functionality for adapting live event results to BrowseCards data model.

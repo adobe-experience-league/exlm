@@ -95,40 +95,52 @@ export default async function buildProductCard(element, model) {
   // Add to DOM
   element.appendChild(card);
 
-  const cardDropdown = new Dropdown(content, '', options);
+  const cardDropdown = new Dropdown(content, options[0].value, options);
   cardDropdown.handleOnChange(async (level) => {
     const profileData = await defaultProfileClient.getMergedProfile();
     const { solutionLevels = [] } = profileData;
-    const newSolutionItems = solutionLevels.filter((solution) => !`${solution}`.includes(id));
-    newSolutionItems.push(`${id}:${level}`);
-    defaultProfileClient
-      .updateProfile('solutionLevels', newSolutionItems, true)
-      .then(() => sendNotice(PROFILE_UPDATED))
-      .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+    let defaultSelection = false;
+    solutionLevels.forEach((solution) => {
+      if (solution === `${id}:${level}`) defaultSelection = true;
+    });
+    if (!defaultSelection) {
+      const newSolutionItems = solutionLevels.filter((solution) => !`${solution}`.includes(id));
+      newSolutionItems.push(`${id}:${level}`);
+      defaultProfileClient
+        .updateProfile('solutionLevels', newSolutionItems, true)
+        .then(() => sendNotice(PROFILE_UPDATED))
+        .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+    }
   });
 
-  loadJWT().then(async () => {
-    defaultProfileClient
-      .getMergedProfile()
-      .then(async (data) => {
-        if (data.solutionLevels?.length) {
-          const currentSolutionLevel = data.solutionLevels.find((solutionLevelInfo) =>
-            `${solutionLevelInfo}`.includes(id),
-          );
-          if (currentSolutionLevel) {
-            const [, selectedOption] = currentSolutionLevel.split(':') || [undefined, 'Beginner'];
-            if (selectedOption) {
-              cardDropdown.updateDropdownValue(selectedOption);
+  loadJWT()
+    .then(async () => {
+      defaultProfileClient
+        .getMergedProfile()
+        .then(async (data) => {
+          if (data?.solutionLevels?.length) {
+            const currentSolutionLevel = data.solutionLevels.find((solutionLevelInfo) =>
+              `${solutionLevelInfo}`.includes(id),
+            );
+            if (currentSolutionLevel) {
+              const [, selectedOption] = currentSolutionLevel.split(':') || [undefined, 'Beginner'];
+              if (selectedOption) {
+                cardDropdown.updateDropdownValue(selectedOption);
+              }
+            } else {
+              cardDropdown.updateDropdownValue('Beginner');
             }
           } else {
             cardDropdown.updateDropdownValue('Beginner');
           }
-        }
-      })
-      .catch(() => {
-        cardDropdown.updateDropdownValue('Beginner');
-      });
-  });
+        })
+        .catch(() => {
+          cardDropdown.updateDropdownValue('Beginner');
+        });
+    })
+    .catch(() => {
+      cardDropdown.updateDropdownValue('Beginner');
+    });
 
   decorateIcons(content);
   await decorateIcons(header, 'solutions/');
