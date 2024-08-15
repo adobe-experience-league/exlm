@@ -1129,7 +1129,7 @@ export async function fetchWithFallback(path, fallbackPath) {
   return fetch(fallbackPath);
 }
 
-export async function fetchFragment(rePath, lang = 'en') {
+export async function fetchFragment(rePath, lang) {
   const path = `${window.hlx.aemRoot}/fragments/${lang}/${rePath}.plain.html`;
   const fallback = `${window.hlx.aemRoot}/fragments/en/${rePath}.plain.html`;
   const response = await fetchWithFallback(path, fallback);

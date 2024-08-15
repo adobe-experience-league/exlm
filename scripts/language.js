@@ -56,7 +56,7 @@ const communityLang = [
   { legend: 'es', title: 'Español' },
   { legend: 'fr', title: 'Français' },
   { legend: 'ja', title: '日本語' },
-  { legend: 'pt-br', title: 'Português' },
+  { legend: 'pt', title: 'Português' },
   { legend: 'ko', title: '한국어' },
 ];
 /**
