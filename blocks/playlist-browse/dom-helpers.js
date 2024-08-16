@@ -1,4 +1,4 @@
-import { htmlToElement } from '../../scripts/scripts.js';
+import { decoratePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 
 /**
  * @typedef {Object} MultiSelectOption
@@ -29,16 +29,20 @@ import { htmlToElement } from '../../scripts/scripts.js';
 export function newMultiSelect({ options = [], onSelect }) {
   let values = [];
 
-  const filterSubOptions = ({ label, value, checked }) =>
-    htmlToElement(` 
+  const filterSubOptions = ({ label, labelPlaceholderKey, value, checked }) => {
+    const option = htmlToElement(` 
       <div class="filter-option">    
-          <input type="checkbox"  id="${value}"value="${value}" ${checked ? 'checked' : ''} />
-          <label for="${value}" title="${label}">
-            <span class="title">${label}</span>
+          <input type="checkbox"  id="${value}" value="${value}" ${checked ? 'checked' : ''} />
+          <label for="${value}">
+            <span class="title" data-placeholder="${labelPlaceholderKey}">${label}</span>
             <span class="icon icon-checked"></span>
           </label>  
       </div>     
       `);
+    decoratePlaceholders(option);
+    return option;
+  };
+
   const fieldset = htmlToElement(`<fieldset></fieldset>`);
 
   const addOption = (option) => {

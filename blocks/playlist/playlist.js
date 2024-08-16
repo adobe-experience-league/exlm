@@ -81,6 +81,11 @@ function newPlayer(playlist) {
   const video = playlist.getActiveVideo();
   if (!video) return null;
   const { src, autoplay = false, title, description, transcriptUrl, currentTime = 0, thumbnailUrl } = video;
+
+  const iframeSrc = new URL(src);
+  iframeSrc.searchParams.set('t', currentTime);
+  iframeSrc.searchParams.set('autoplay', autoplay);
+
   const iframeAllowOptions = [
     'fullscreen',
     'accelerometer',
@@ -102,7 +107,7 @@ function newPlayer(playlist) {
               </div>
                 <template id="video-iframe-template">
                   <iframe
-                      src="${src}?t=${currentTime}&autoplay=${autoplay}" 
+                      src="${iframeSrc}" 
                       autoplay="${autoplay}"
                       frameborder="0" 
                       allow="${iframeAllowOptions.join('; ')}">
