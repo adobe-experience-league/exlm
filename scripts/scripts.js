@@ -20,6 +20,7 @@ import {
   readBlockConfig,
   createOptimizedPicture,
   toClassName,
+  toCamelCase,
 } from './lib-franklin.js';
 
 const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
@@ -1228,7 +1229,7 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, 
   span.style.setProperty('--placeholder-width', `${fallbackText.length}ch`);
   fetchLanguagePlaceholders()
     .then((placeholders) => {
-      span.textContent = placeholders[placeholderKey] || fallbackText;
+      span.textContent = placeholders[toCamelCase(placeholderKey)] || fallbackText;
       span.removeAttribute('data-placeholder');
       span.removeAttribute('data-placeholder-fallback');
       span.style.removeProperty('--placeholder-width');
