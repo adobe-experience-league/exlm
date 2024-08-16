@@ -703,8 +703,6 @@ export function decorateMain(main) {
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
-  const { lang } = getPathDetails();
-  document.documentElement.lang = lang || 'en';
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
@@ -806,7 +804,7 @@ export function getConfig() {
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     searchUrl: `${cdnOrigin}/search.html`,
-    articleUrl: `${cdnOrigin}/api/articles/`,
+    articleUrl: `${cdnOrigin}/api/articles/$ID?lang=${lang}`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
     // Browse Left nav
@@ -1379,6 +1377,8 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 if (!window.hlx.DO_NOT_LOAD_PAGE) {
+  const { lang } = getPathDetails();
+  document.documentElement.lang = lang || 'en';
   if (isProfilePage()) {
     if (window.location.href.includes('.html')) {
       loadPage();
