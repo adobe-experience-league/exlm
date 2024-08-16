@@ -81,6 +81,11 @@ function newPlayer(playlist) {
   const video = playlist.getActiveVideo();
   if (!video) return null;
   const { src, autoplay = false, title, description, transcriptUrl, currentTime = 0, thumbnailUrl } = video;
+
+  const iframeSrc = new URL(src);
+  iframeSrc.searchParams.set('t', currentTime);
+  iframeSrc.searchParams.set('autoplay', autoplay);
+
   const iframeAllowOptions = [
     'fullscreen',
     'accelerometer',
@@ -102,7 +107,7 @@ function newPlayer(playlist) {
               </div>
                 <template id="video-iframe-template">
                   <iframe
-                      src="${src}?t=${currentTime}&autoplay=${autoplay}" 
+                      src="${iframeSrc}" 
                       autoplay="${autoplay}"
                       frameborder="0" 
                       allow="${iframeAllowOptions.join('; ')}">
@@ -169,14 +174,22 @@ function decoratePlaylistHeader(block, playlist) {
     <button data-playlist-action-button class="playlist-action-button" aria-expanded="false">⋮</button>
   </div>`);
 
+  decoratePlaceholders(playlistInfo);
   defaultContent.prepend(playlistInfo);
 
-  const nowViewing = htmlToElement(`<div class="playlist-now-viewing">
-    <b><span data-placeholder="${LABELS.nowViewing}">NOW VIEWING</span></b>
-    <b><span class="playlist-now-viewing-count" data-playlist-now-viewing-count>${
-      playlist.getActiveVideoIndex() + 1
-    }</span> OF <span data-playlist-length>${playlist.length}</span></b>
-  </div>`);
+  const nowViewing = createPlaceholderSpan(LABELS.nowViewing, 'NOW VIEWING {} OF {}', (span) => {
+    const [nowViewingText = 'NOW VIEWING ', ofText = ' OF '] = span.textContent.split('{}');
+
+    span.replaceWith(
+      htmlToElement(`<div class="playlist-now-viewing">
+        <b>${nowViewingText}</b>
+        <b><span class="playlist-now-viewing-count" data-playlist-now-viewing-count>${
+          playlist.getActiveVideoIndex() + 1
+        }</span>${ofText}<span data-playlist-length>${playlist.length}</span></b>
+      </div>`),
+    );
+  });
+
   defaultContent.append(nowViewing);
 
   // Load actions Menu
@@ -336,6 +349,7 @@ export default function decorate(block) {
         </label>
     </div>
   </div>`);
+  decoratePlaceholders(playlistOptions);
   // bottom options
   block.parentElement.append(playlistOptions);
 
@@ -397,7 +411,6 @@ export default function decorate(block) {
   });
 
   decorateIcons(playlistSection);
-  decoratePlaceholders(playlistSection);
   playlist.activateVideoByIndex(activeVideoIndex);
 
   // handle browser back within history changes

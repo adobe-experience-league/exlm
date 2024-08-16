@@ -20,6 +20,7 @@ import {
   readBlockConfig,
   createOptimizedPicture,
   toClassName,
+  toCamelCase,
 } from './lib-franklin.js';
 
 const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
@@ -804,7 +805,7 @@ export function getConfig() {
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     searchUrl: `${cdnOrigin}/search.html`,
-    articleUrl: `${cdnOrigin}/api/articles/$ID?lang=${lang}`,
+    articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
     // Browse Left nav
@@ -1228,7 +1229,7 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, 
   span.style.setProperty('--placeholder-width', `${fallbackText.length}ch`);
   fetchLanguagePlaceholders()
     .then((placeholders) => {
-      span.textContent = placeholders[placeholderKey] || fallbackText;
+      span.textContent = placeholders[toCamelCase(placeholderKey)] || fallbackText;
       span.removeAttribute('data-placeholder');
       span.removeAttribute('data-placeholder-fallback');
       span.style.removeProperty('--placeholder-width');
