@@ -1,4 +1,4 @@
-import { createPlaceholderSpan } from '../scripts.js';
+import { htmlToElement } from '../scripts.js';
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 
@@ -53,8 +53,6 @@ export function copyHandler(config) {
  */
 export async function decorateCopyLink(config) {
   const { element, tooltip } = config;
-  const copyTooltip = createPlaceholderSpan(tooltip?.copyTooltip, 'Copy Link', (span) => {
-    span.classList.add('action-tooltip');
-  });
+  const copyTooltip = htmlToElement(`<span class="action-tooltip">${tooltip?.copyTooltip || 'Copy Link'}</span>`);
   element.appendChild(copyTooltip);
 }
