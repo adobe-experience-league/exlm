@@ -43,6 +43,7 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section)>div.bookm
         grid-template-columns: 1fr 1fr;
         row-gap: 32px;
         column-gap: 20px;
+        align-items: stretch;
     }
 
     .bookmarks-header {
