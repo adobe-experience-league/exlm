@@ -30,20 +30,27 @@ async function fetchPlaylists() {
   return resp.json();
 }
 
+const sortAlphanumerically = (a, b) => a.localeCompare(b);
+
 const playlistsPromise = fetchPlaylists();
 const filterOptions = [
-  { legend: 'Product', filterName: 'solution', placeholderKey: 'filter-product-label' },
+  { legend: 'Product', filterName: 'solution', placeholderKey: 'filter-product-label', sort: sortAlphanumerically },
   {
     legend: 'Role',
     filterName: 'role',
     placeholderKey: 'filter-role-label',
     optionPlaceholders: ROLE_PLACEHOLDERS,
+    sort: sortAlphanumerically,
   },
   {
     legend: 'Experience Level',
     filterName: 'level',
     placeholderKey: 'filter-experience-level-label',
     optionPlaceholders: EXPERIENCE_LEVEL_PLACEHOLDERS,
+    sort: (a, b) => {
+      const levels = ['Beginner', 'Intermediate', 'Experienced'];
+      return levels.indexOf(a) - levels.indexOf(b);
+    },
   },
 ];
 const multiSelects = [];
@@ -284,11 +291,16 @@ class Filter {
     Object.entries(this.filters).forEach(([legend, filterValues]) => {
       filterValues.forEach((value) => {
         const filterOption = filterOptions.find((f) => f.filterName === legend);
+
+        const filterValuePlaceholderKey = filterOption?.optionPlaceholders?.find(
+          (o) => o?.label?.toLowerCase() === value?.toLowerCase(),
+        )?.placeholder;
+
         const pill = htmlToElement(`
           <button class="filter-pill" data-value="${value}" data-filter="${filterOption.legend}">
             <span data-placeholder="${filterOption.placeholderKey}">${filterOption.legend}</span>
             <span>:&nbsp</span>
-            <span>${value}</span>
+            <span data-placeholder="${filterValuePlaceholderKey}">${value}</span>
             <span class="icon icon-close"></span>
           </button>`);
         decoratePlaceholders(pill);
@@ -314,62 +326,61 @@ class Filter {
     );
     this.clearButton = htmlToElement(`<button class="filters-clear">Clear filters</button>`);
 
-    const filterOptionsPromises = filterOptions.map(({ legend, filterName, placeholderKey, optionPlaceholders }) => {
-      const panelContent = htmlToElement(`<div></div>`);
-      const buttonLabel = document.createElement('span');
-      buttonLabel.append(createPlaceholderSpan(placeholderKey, legend));
-      buttonLabel.append(htmlToElement(`<span class="count-span"></span>`));
+    const filterOptionsPromises = filterOptions.map(
+      ({ legend, filterName, placeholderKey, optionPlaceholders, sort }) => {
+        const panelContent = htmlToElement(`<div></div>`);
+        const buttonLabel = document.createElement('span');
+        buttonLabel.append(createPlaceholderSpan(placeholderKey, legend));
+        buttonLabel.append(htmlToElement(`<span class="count-span"></span>`));
 
-      // load filter options
-      const filterPanel = newShowHidePanel({
-        buttonLabel,
-        buttonClass: `playlist-browse-filter-button ${filterName} ${legend}`,
-        hiddenPanelClass: 'playlist-browse-filter-hidden',
-        panelContent,
-        panelClass: 'playlist-browse-filter-panel',
-        expanded: false,
-      });
-      filterPanel.classList.add(`playlist-browse-filter-${filterName}`, 'filter-dropdown');
-      const span = filterPanel.querySelector('span');
-      span.classList.add('button-span');
-
-      const { fieldset, addOption, onClear, removeOption } = newMultiSelect({
-        legend,
-        onSelect: (selectedValues) => {
-          this.filters[filterName] = selectedValues;
-          this.updateAll();
-          this.onFilterChange();
-        },
-      });
-      multiSelects.push({ filterName, onClear, removeOption });
-
-      this.filterWrapper.append(filterPanel);
-      this.filterWrapper.append(this.clearButton);
-      this.filterContainer.append(this.filterWrapper);
-      this.filterContainer.append(this.filterPill);
-      this.block.append(this.filterContainer);
-
-      return getAllPossibleFilterValues(filterName).then((filterValues) => {
-        const sortedLevels = filterValues.sort((a, b) => {
-          const levels = ['Beginner', 'Intermediate', 'Experienced'];
-          return levels.indexOf(a) - levels.indexOf(b);
+        // load filter options
+        const filterPanel = newShowHidePanel({
+          buttonLabel,
+          buttonClass: `playlist-browse-filter-button ${filterName} ${legend}`,
+          hiddenPanelClass: 'playlist-browse-filter-hidden',
+          panelContent,
+          panelClass: 'playlist-browse-filter-panel',
+          expanded: false,
         });
-        sortedLevels.forEach((filterValue) => {
-          const filterValuePlaceholderKey = optionPlaceholders?.find(
-            (o) => o?.label?.toLowerCase() === filterValue?.toLowerCase(),
-          )?.placeholder;
+        filterPanel.classList.add(`playlist-browse-filter-${filterName}`, 'filter-dropdown');
+        const span = filterPanel.querySelector('span');
+        span.classList.add('button-span');
 
-          addOption({
-            label: filterValue,
-            labelPlaceholderKey: filterValuePlaceholderKey || filterValue,
-            value: filterValue,
-            checked: this.filters[filterName].includes(filterValue),
+        const { fieldset, addOption, onClear, removeOption } = newMultiSelect({
+          legend,
+          onSelect: (selectedValues) => {
+            this.filters[filterName] = selectedValues;
+            this.updateAll();
+            this.onFilterChange();
+          },
+        });
+        multiSelects.push({ filterName, onClear, removeOption });
+
+        this.filterWrapper.append(filterPanel);
+        this.filterWrapper.append(this.clearButton);
+        this.filterContainer.append(this.filterWrapper);
+        this.filterContainer.append(this.filterPill);
+        this.block.append(this.filterContainer);
+
+        return getAllPossibleFilterValues(filterName).then((filterValues) => {
+          const sortedValues = filterValues.sort(sort);
+          sortedValues.forEach((filterValue) => {
+            const filterValuePlaceholderKey = optionPlaceholders?.find(
+              (o) => o?.label?.toLowerCase() === filterValue?.toLowerCase(),
+            )?.placeholder;
+
+            addOption({
+              label: filterValue,
+              labelPlaceholderKey: filterValuePlaceholderKey || filterValue,
+              value: filterValue,
+              checked: this.filters[filterName].includes(filterValue),
+            });
           });
+          panelContent.append(fieldset);
+          decorateIcons(fieldset);
         });
-        panelContent.append(fieldset);
-        decorateIcons(fieldset);
-      });
-    });
+      },
+    );
 
     Promise.allSettled(filterOptionsPromises).then(() => {
       this.updateAll();
