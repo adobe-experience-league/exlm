@@ -778,6 +778,7 @@ export function getConfig() {
   else if (isStage)
     launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
+  const signUpFlowConfigDate = '2024-08-15T00:00:00.762Z';
 
   window.exlm = window.exlm || {};
   window.exlm.config = {
@@ -789,6 +790,7 @@ export function getConfig() {
     prodAssetsCdnOrigin,
     ppsOrigin,
     launchScriptSrc,
+    signUpFlowConfigDate,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
     privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
@@ -1112,7 +1114,7 @@ export const removeExtension = (pathStr) => {
 };
 
 // Convert the given String to Pascal Case
-export const toPascalCase = (name) => `${(name || '').charAt(0).toUpperCase()}${name.slice(1)}`;
+export const toPascalCase = (name) => (name ? `${name.charAt(0).toUpperCase()}${name.slice(1)}` : '');
 
 export function rewriteDocsPath(docsPath) {
   const PROD_BASE = 'https://experienceleague.adobe.com';

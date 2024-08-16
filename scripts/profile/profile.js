@@ -5,11 +5,17 @@ const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
 
 const fetchExlProfileData = async () => {
-  const [profileData, ppsProfileData] = await Promise.all([
+  const [profileData, ppsProfileData] = await Promise.allSettled([
     defaultProfileClient.getMergedProfile(),
     defaultProfileClient.getPPSProfile(),
   ]);
-  return { profileData, ppsProfileData };
+
+  // Throw error only if profileData is rejected
+  if (profileData.status === 'rejected') {
+    throw new Error(profileData.reason);
+  }
+  // Return profileData and ppsProfileData (or empty object if ppsProfileData is rejected)
+  return { profileData: profileData.value, ppsProfileData: ppsProfileData.value || {} };
 };
 
 const fetchCommunityProfileData = async () => defaultProfileClient.fetchCommunityProfileDetails();
