@@ -10,16 +10,16 @@
 }
 
 .profile-curated-card .profile-curated-card-eyebrowtext {
-    font-size: 14px;
-    font-weight: 700;
+    font-size: var(--spectrum-font-size-100);
+    font-weight: var(--font-weight-700);
     color: var(--spectrum-gray-900);
     text-align: center;
     text-transform: uppercase;
 }
 
 .profile-curated-card .profile-curated-card-heading {
-    font-size: 36px;
-    font-weight: 700;
+    font-size: var(--spectrum-font-size-900);
+    font-weight: var(--font-weight-700);
     color: var(--spectrum-gray-900);
     margin-top: 8px;
     line-height: normal;
@@ -27,8 +27,8 @@
 }
 
 .profile-curated-card .profile-curated-card-description {
-    font-size: 20px;
-    font-weight: 500;
+    font-size: var(--spectrum-font-size-400);
+    font-weight: var(--font-weight-400);
     color: var(--spectrum-gray-800);
     margin-top: 16px;
     text-align: center;
@@ -44,7 +44,7 @@
     flex-direction: column;
     border: 1px solid #D6D6D6;
     border-radius: 8px;
-    background: #FFFFFF;
+    background: var(--background-color);
     padding: 24px 16px;
 }
 
@@ -91,53 +91,69 @@
 }
 
 .profile-user-card-left .profile-user-card-title .heading, .profile-user-card-location .heading {
-    font-size: 12px;
-    font-weight: 700;
+    font-size: var(--spectrum-font-size-75);
+    font-weight: var(--font-weight-700);
     color: var(--spectrum-gray-900);
     text-transform: uppercase;
 }
 
-.profile-user-card-left .profile-user-card-incomplete, .profile-user-card-title, .profile-user-card-location {
-    font-size: 14px;
+.profile-user-card-left .profile-user-card-title, .profile-user-card-location {
+    font-size: var(--spectrum-font-size-100);;
     color: var(--spectrum-gray-800);
-    font-weight: 500;
+    font-weight: var(--font-weight-400);
+}
+
+.profile-user-card-left .profile-user-card-incomplete {
+    display: flex;
+    font-size: var(--spectrum-font-size-100);;
+    color: var(--spectrum-gray-800);
+    font-weight: var(--font-weight-400);
+    gap: 8px;
+}
+
+.profile-user-card-right .profile-user-card-role .incompleteProfile, .profile-user-card-industry .incompleteProfile, .profile-user-card-interests .incompleteProfile {
+    font-style: italic;
 }
 
 .profile-user-card-right .profile-user-card-role .heading, .profile-user-card-industry .heading, .profile-user-card-interests .heading {
-    font-size: 12px;
-    font-weight: 700;
+    font-size: var(--spectrum-font-size-75);
+    font-weight: var(--font-weight-700);
     color: var(--spectrum-gray-900);
     text-transform: uppercase;
 }
 
 .profile-user-card-right .profile-user-card-role, .profile-user-card-industry, .profile-user-card-interests {
-    font-size: 14px;
+    font-size: var(--spectrum-font-size-100);;
     color: var(--spectrum-gray-800);
-    font-weight: 500;
+    font-weight: var(--font-weight-400);
 }
 
 .profile-user-card-left .profile-user-card-info .profile-user-card-name {
-    font-size: 18px;
-    font-weight: 700;
+    font-size: var(--spectrum-font-size-300);
+    font-weight: var(--font-weight-700);
     color: var(--spectrum-gray-900);
     margin-bottom: 8px;
 }
 
+.profile-user-card-left .profile-user-card-info .profile-user-card-name {
+    white-space: nowrap;
+}
+
 .profile-user-card-left .profile-user-card-info .profile-user-card-tag {
-    font-size: 14px;
+    font-size: var(--spectrum-font-size-100);;
     color: var(--spectrum-blue-900);
-    font-weight: 700;
+    font-weight: var(--font-weight-700);
 }
 
 .profile-user-card-left .profile-user-card-info .profile-user-card-org {
-    font-size: 14px;
+    font-size: var(--spectrum-font-size-100);;
     color: var(--spectrum-gray-800);
-    font-weight: 500;
+    font-weight: var(--font-weight-400);
 }
 
 .profile-user-card-cta > a.button {
-    font-size: 14px;
-    font-weight: 700;
+    font-size: var(--spectrum-font-size-100);;
+    font-weight: var(--font-weight-700);
     width: min-content;
     min-width: 152px;
     background-color: var(--non-spectrum-true-blue);
@@ -168,7 +184,7 @@
     }
 
     .profile-curated-card .profile-curated-card-heading {
-        font-size: 45px;
+        font-size: var(--spectrum-font-size-1100);
     }
 
     .profile-welcome-block .profile-user-card {
