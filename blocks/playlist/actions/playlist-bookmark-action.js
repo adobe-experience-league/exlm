@@ -1,6 +1,6 @@
 import { assetInteractionModel } from '../../../scripts/analytics/lib-analytics.js';
 import { defaultProfileClient, isSignedInUser } from '../../../scripts/auth/profile.js';
-import { createPlaceholderSpan, fetchLanguagePlaceholders } from '../../../scripts/scripts.js';
+import { createPlaceholderSpan, fetchLanguagePlaceholders, getPathDetails } from '../../../scripts/scripts.js';
 import { sendNotice } from '../../../scripts/toast/toast.js';
 
 let placeholders = {};
@@ -22,7 +22,8 @@ async function isBookmarkedPlaylist() {
 }
 
 async function toggleBookmark() {
-  const bookmarkId = getCurrentPlaylistBookmarkPath();
+  const { lang } = getPathDetails();
+  const bookmarkId = getCurrentPlaylistBookmarkPath().replace(`/${lang}`, '');
   const profileData = await defaultProfileClient.getMergedProfile();
   const { bookmarks = [] } = profileData;
   const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => `${bookmarkIdInfo}`.includes(bookmarkId));
