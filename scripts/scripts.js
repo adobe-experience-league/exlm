@@ -806,7 +806,7 @@ export function getConfig() {
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     searchUrl: `${cdnOrigin}/search.html`,
-    articleUrl: `${cdnOrigin}/api/articles/`,
+    articleUrl: `${cdnOrigin}/api/articles/$ID?lang=${lang}`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
     // Browse Left nav

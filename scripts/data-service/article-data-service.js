@@ -9,7 +9,7 @@ const { articleUrl } = getConfig();
  */
 export async function fetchArticleByID(id) {
   try {
-    const response = await fetch(articleUrl + id);
+    const response = await fetch(articleUrl.replace('$ID', id));
     const json = await response.json();
     return json.data;
   } catch (error) {
