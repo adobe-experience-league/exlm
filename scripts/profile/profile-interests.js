@@ -49,7 +49,7 @@ export default async function buildProductCard(element, model) {
         <div class="profile-interest-header">
             <div class="profile-interest-logo-wrapper">
                 <span class="icon profile-interest-logo"></span>
-                <span class="profile-interest-logo-text">${placeholders.myAdobeproduct || 'My Adobe product'}</span>
+                <span class="profile-interest-logo-text">${placeholders.myAdobeProduct || 'My Adobe product'}</span>
             </div>
             <h3>${product}</h3>
         </div>
@@ -95,16 +95,22 @@ export default async function buildProductCard(element, model) {
   // Add to DOM
   element.appendChild(card);
 
-  const cardDropdown = new Dropdown(content, '', options);
+  const cardDropdown = new Dropdown(content, options[0].value, options);
   cardDropdown.handleOnChange(async (level) => {
     const profileData = await defaultProfileClient.getMergedProfile();
     const { solutionLevels = [] } = profileData;
-    const newSolutionItems = solutionLevels.filter((solution) => !`${solution}`.includes(id));
-    newSolutionItems.push(`${id}:${level}`);
-    defaultProfileClient
-      .updateProfile('solutionLevels', newSolutionItems, true)
-      .then(() => sendNotice(PROFILE_UPDATED))
-      .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+    let defaultSelection = false;
+    solutionLevels.forEach((solution) => {
+      if (solution === `${id}:${level}`) defaultSelection = true;
+    });
+    if (!defaultSelection) {
+      const newSolutionItems = solutionLevels.filter((solution) => !`${solution}`.includes(id));
+      newSolutionItems.push(`${id}:${level}`);
+      defaultProfileClient
+        .updateProfile('solutionLevels', newSolutionItems, true)
+        .then(() => sendNotice(PROFILE_UPDATED))
+        .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+    }
   });
 
   loadJWT()

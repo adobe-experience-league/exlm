@@ -20,6 +20,7 @@ import {
   readBlockConfig,
   createOptimizedPicture,
   toClassName,
+  toCamelCase,
 } from './lib-franklin.js';
 
 const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
@@ -703,8 +704,6 @@ export function decorateMain(main) {
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
-  const { lang } = getPathDetails();
-  document.documentElement.lang = lang || 'en';
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
@@ -778,6 +777,7 @@ export function getConfig() {
   else if (isStage)
     launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
+  const signUpFlowConfigDate = '2024-08-15T00:00:00.762Z';
 
   window.exlm = window.exlm || {};
   window.exlm.config = {
@@ -789,6 +789,7 @@ export function getConfig() {
     prodAssetsCdnOrigin,
     ppsOrigin,
     launchScriptSrc,
+    signUpFlowConfigDate,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
     privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
@@ -804,7 +805,7 @@ export function getConfig() {
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     searchUrl: `${cdnOrigin}/search.html`,
-    articleUrl: `${cdnOrigin}/api/articles/`,
+    articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
     // Browse Left nav
@@ -1112,7 +1113,7 @@ export const removeExtension = (pathStr) => {
 };
 
 // Convert the given String to Pascal Case
-export const toPascalCase = (name) => `${(name || '').charAt(0).toUpperCase()}${name.slice(1)}`;
+export const toPascalCase = (name) => (name ? `${name.charAt(0).toUpperCase()}${name.slice(1)}` : '');
 
 export function rewriteDocsPath(docsPath) {
   const PROD_BASE = 'https://experienceleague.adobe.com';
@@ -1228,7 +1229,7 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, 
   span.style.setProperty('--placeholder-width', `${fallbackText.length}ch`);
   fetchLanguagePlaceholders()
     .then((placeholders) => {
-      span.textContent = placeholders[placeholderKey] || fallbackText;
+      span.textContent = placeholders[toCamelCase(placeholderKey)] || fallbackText;
       span.removeAttribute('data-placeholder');
       span.removeAttribute('data-placeholder-fallback');
       span.style.removeProperty('--placeholder-width');
@@ -1365,6 +1366,7 @@ async function loadPage() {
     const hasDiscoverability = Boolean(params.get('discoverability'));
     if (hasDiscoverability) {
       loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
+      loadDefaultModule(`${window.hlx.codeBasePath}/scripts/related-content/related-content-widget.js`);
     }
   }
 }
@@ -1376,6 +1378,8 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 if (!window.hlx.DO_NOT_LOAD_PAGE) {
+  const { lang } = getPathDetails();
+  document.documentElement.lang = lang || 'en';
   if (isProfilePage()) {
     if (window.location.href.includes('.html')) {
       loadPage();

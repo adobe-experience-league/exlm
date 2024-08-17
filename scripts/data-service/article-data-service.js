@@ -1,4 +1,4 @@
-import { getConfig } from '../scripts.js';
+import { getConfig, getPathDetails } from '../scripts.js';
 
 const { articleUrl } = getConfig();
 
@@ -9,7 +9,11 @@ const { articleUrl } = getConfig();
  */
 export async function fetchArticleByID(id) {
   try {
-    const response = await fetch(articleUrl + id);
+    const { lang } = getPathDetails();
+    const url = new URL(articleUrl);
+    url.pathname = `${url.pathname}/${id}`;
+    url.searchParams.set('lang', lang);
+    const response = await fetch(url);
     const json = await response.json();
     return json.data;
   } catch (error) {

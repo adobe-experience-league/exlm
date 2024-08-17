@@ -101,16 +101,14 @@
   max-width: 1700px;
 }
 .docs main .section {
-  padding-left: 0;
-  padding-right: 0;
-  padding-top: 0;
+  padding: 0;
 }
 @media (min-width: 900px) {
   .docs main .section {
-    padding-left: 54px;
-    padding-right: 54px;
+    padding: 0 54px;
+  }
+  .docs main .section:first-of-type {
     padding-top: 54px;
-    padding-bottom: 0;
   }
 }
 @media (min-width: 900px) {

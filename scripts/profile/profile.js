@@ -4,24 +4,37 @@ import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
 
-export const fetchProfileData = async (profileFlags) => {
+const fetchExlProfileData = async () => {
+  const [profileData, ppsProfileData] = await Promise.allSettled([
+    defaultProfileClient.getMergedProfile(),
+    defaultProfileClient.getPPSProfile(),
+  ]);
+
+  // Throw error only if profileData is rejected
+  if (profileData.status === 'rejected') {
+    throw new Error(profileData.reason);
+  }
+  // Return profileData and ppsProfileData (or empty object if ppsProfileData is rejected)
+  return { profileData: profileData.value, ppsProfileData: ppsProfileData.value || {} };
+};
+
+const fetchCommunityProfileData = async () => defaultProfileClient.fetchCommunityProfileDetails();
+
+const fetchProfileData = async (profileFlags) => {
   const isSignedIn = await isSignedInUser();
   if (!isSignedIn) {
     return null;
   }
 
-  let profileData = {};
-  let ppsProfileData = {};
-  let communityProfileDetails = {};
+  const exlProfilePromise = profileFlags.includes(EXL_PROFILE) ? fetchExlProfileData() : Promise.resolve({});
+  const communityProfilePromise = profileFlags.includes(COMMUNITY_PROFILE)
+    ? fetchCommunityProfileData()
+    : Promise.resolve({});
 
-  if (profileFlags.includes(EXL_PROFILE)) {
-    profileData = await defaultProfileClient.getMergedProfile();
-    ppsProfileData = await defaultProfileClient.getPPSProfile();
-  }
-
-  if (profileFlags.includes(COMMUNITY_PROFILE)) {
-    communityProfileDetails = await defaultProfileClient.fetchCommunityProfileDetails();
-  }
+  const [{ profileData, ppsProfileData }, communityProfileDetails] = await Promise.all([
+    exlProfilePromise,
+    communityProfilePromise,
+  ]);
 
   return {
     ...(profileFlags.includes(EXL_PROFILE) && {
@@ -41,36 +54,10 @@ export const fetchProfileData = async (profileFlags) => {
   };
 };
 
-export const generateProfileDOM = async (profileFlags) => {
-  let placeholders = {};
-  try {
-    placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
-  }
+const generateAdobeAccountDOM = (profileData, placeholders, adobeAccountURL) => {
+  const { adobeDisplayName, email, profilePicture, company } = profileData;
 
-  const { adobeAccountURL, communityAccountURL } = getConfig();
-  const profileData = await fetchProfileData(profileFlags);
-
-  if (!profileData) {
-    return ''; // Return empty string or a message indicating the user is not signed in.
-  }
-
-  const {
-    adobeDisplayName,
-    email,
-    industry,
-    roles,
-    interests,
-    profilePicture,
-    company,
-    communityUserName,
-    communityUserTitle,
-    communityUserLocation,
-  } = profileData;
-
-  const adobeAccountDOM = `<div class="profile-row adobe-account">
+  return `<div class="profile-row adobe-account">
     <div class="profile-card-header adobe-account-header">
       <div class="my-adobe-account">${placeholders?.myAdobeAccount || 'My Adobe Account'}</div>
       <div class="manage-adobe-account">
@@ -97,8 +84,12 @@ export const generateProfileDOM = async (profileFlags) => {
       </div>
     </div>
   </div>`;
+};
 
-  const communityAccountDOM = `<div class="profile-row community-account">
+const generateCommunityAccountDOM = (profileData, placeholders, communityAccountURL) => {
+  const { communityUserName, communityUserTitle, communityUserLocation } = profileData;
+
+  return `<div class="profile-row community-account">
     <div class="profile-card-header community-account-header">
       <div class="my-community-account">${placeholders?.myCommunityAccount || 'My Community Profile'}</div>
       <div class="manage-community-account">
@@ -128,43 +119,67 @@ export const generateProfileDOM = async (profileFlags) => {
       </div>
     </div>
   </div>`;
+};
 
-  const additionalProfileInfoDOM = `
-    <div class="profile-row additional-data">
-      <div class="profile-card-body additional-data-body">
-        <div class="profile-user-info">
-          ${
-            roles && ((Array.isArray(roles) && roles.length > 0) || (typeof roles === 'string' && roles.trim() !== ''))
-              ? `<div class="user-role"><span class="heading">${
-                  placeholders?.myRole || 'My Role'
-                }: </span><span>${roles.join('&nbsp;&nbsp;')}</span></div>`
-              : ''
-          }
-          ${
-            industry &&
-            ((Array.isArray(industry) && industry.length > 0) ||
-              (typeof industry === 'string' && industry.trim() !== ''))
-              ? `<div class="user-industry"><span class="heading">${
-                  placeholders?.myIndustry || 'My Industry'
-                }: </span><span>${industry}</span></div>`
-              : ''
-          }
-          ${
-            interests &&
-            ((Array.isArray(interests) && interests.length > 0) ||
-              (typeof interests === 'string' && interests.trim() !== ''))
-              ? `<div class="user-interests"><span class="heading">${
-                  placeholders?.myInterests || 'My Interests'
-                }: </span><span>${interests.join('&nbsp;&nbsp;')}</span></div>`
-              : ''
-          }
-        </div>
+const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
+  const { roles, industry, interests } = profileData;
+
+  return `<div class="profile-row additional-data">
+    <div class="profile-card-body additional-data-body">
+      <div class="profile-user-info">
+        ${
+          roles && ((Array.isArray(roles) && roles.length > 0) || (typeof roles === 'string' && roles.trim() !== ''))
+            ? `<div class="user-role"><span class="heading">${
+                placeholders?.myRole || 'My Role'
+              }: </span><span>${roles.join('&nbsp;&nbsp;')}</span></div>`
+            : ''
+        }
+        ${
+          industry &&
+          ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''))
+            ? `<div class="user-industry"><span class="heading">${
+                placeholders?.myIndustry || 'My Industry'
+              }: </span><span>${industry}</span></div>`
+            : ''
+        }
+        ${
+          interests &&
+          ((Array.isArray(interests) && interests.length > 0) ||
+            (typeof interests === 'string' && interests.trim() !== ''))
+            ? `<div class="user-interests"><span class="heading">${
+                placeholders?.myInterests || 'My Interests'
+              }: </span><span>${interests.join('&nbsp;&nbsp;')}</span></div>`
+            : ''
+        }
       </div>
+    </div>
   </div>`;
+};
+
+// eslint-disable-next-line import/prefer-default-export
+export const generateProfileDOM = async (profileFlags) => {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
+  const { adobeAccountURL, communityAccountURL } = getConfig();
+  const profileData = await fetchProfileData(profileFlags);
+
+  if (!profileData) {
+    return ''; // Return empty string or a message indicating the user is not signed in.
+  }
+
+  const hasExlProfileFlag = profileFlags.includes(EXL_PROFILE);
 
   return {
-    adobeAccountDOM,
-    communityAccountDOM,
-    additionalProfileInfoDOM,
+    ...(hasExlProfileFlag && { adobeAccountDOM: generateAdobeAccountDOM(profileData, placeholders, adobeAccountURL) }),
+    ...(hasExlProfileFlag && { additionalProfileInfoDOM: generateAdditionalProfileInfoDOM(profileData, placeholders) }),
+    ...(profileFlags.includes(COMMUNITY_PROFILE) && {
+      communityAccountDOM: generateCommunityAccountDOM(profileData, placeholders, communityAccountURL),
+    }),
   };
 };

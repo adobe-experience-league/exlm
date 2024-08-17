@@ -40,6 +40,7 @@ const solutionMap = new Map([
   ['Experience Platform', { class: 'CircleExperiencePlatform', name: 'Experience Platform' }],
   ['General', { class: 'CircleExpCloud', name: 'General' }],
   ['Journey Optimizer', { class: 'JourneyOrchestration', name: 'Journey Optimizer' }],
+  ['Journey Optimizer B2B Edition', { class: 'JourneyOptimizerB2B', name: 'Journey Optimizer B2B Edition' }],
   ['Journey Orchestration', { class: 'JourneyOrchestration', name: 'Journey Orchestration' }],
   ['Learning Manager', { class: 'ContentProfile', name: 'Learning Manager' }],
   ['Magento Business Intelligence', { class: 'CircleExperienceCloud', name: 'Magento Business Intelligence' }],

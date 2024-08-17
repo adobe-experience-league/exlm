@@ -141,6 +141,10 @@
   --exlm-toc-active-color: var(--exlm-toc-solution-8);
 }
 
+.toc.JourneyOptimizerB2B {
+  --exlm-toc-active-color: var(--exlm-toc-solution-8);
+}
+
 .toc.Launch {
   --exlm-toc-active-color: var(--exlm-toc-solution-11);
 }

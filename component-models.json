@@ -921,10 +921,6 @@
             "value": "community"
           },
           {
-            "name": "Courses",
-            "value": "course"
-          },
-          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -935,6 +931,10 @@
           {
             "name": "Perspectives",
             "value": "perspective"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Troubleshooting",
@@ -1204,10 +1204,10 @@
       },
       {
         "component": "select",
-        "name": "linkType",
-        "value": "link",
-        "label": "Link Type",
-        "description": "Link will render a normal Anchor button, video will render a video button that opens the video player when clicked.",
+        "name": "firstCTALinkType",
+        "value": "",
+        "label": "First CTA Type",
+        "description": "The 'Link' option will render a standard anchor button, the 'Video' option will render a button that opens the video player when clicked, and the 'Sign In' option will trigger the sign-in process.",
         "valueType": "string",
         "options": [
           {
@@ -1217,6 +1217,10 @@
           {
             "name": "Video",
             "value": "video"
+          },
+          {
+            "name": "Sign In",
+            "value": "signin"
           }
         ]
       },
@@ -1234,7 +1238,29 @@
         "name": "cta2",
         "value": "",
         "label": "Second CTA Link",
-        "description": "What link to open when clicking the button."
+        "description": "What link should be opened when clicking the button? Add a hash (#) when the sign-in option is getting selected"
+      },
+      {
+        "component": "select",
+        "name": "secondCTALinkType",
+        "value": "",
+        "label": "Second CTA Type",
+        "description": "The 'Link' option will render a standard anchor button, the 'Video' option will render a button that opens the video player when clicked, and the 'Sign In' option will trigger the sign-in process.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Link",
+            "value": "link"
+          },
+          {
+            "name": "Video",
+            "value": "video"
+          },
+          {
+            "name": "Sign In",
+            "value": "signin"
+          }
+        ]
       }
     ]
   },
@@ -1443,6 +1469,24 @@
         "description": "What link to open when clicking the button."
       },
       {
+        "component": "select",
+        "name": "firstCTALinkType",
+        "value": "",
+        "label": "First CTA Type",
+        "description": "The 'Link' option will render a standard anchor button, and the 'Sign In' option will trigger the sign-in process.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Link",
+            "value": "link"
+          },
+          {
+            "name": "Sign In",
+            "value": "signin"
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "cta2Text",
@@ -1456,7 +1500,25 @@
         "name": "cta2",
         "value": "",
         "label": "Second CTA Link",
-        "description": "What link to open when clicking the button."
+        "description": "What link should be opened when clicking the button? Add a hash (#) when the sign-in option is getting selected"
+      },
+      {
+        "component": "select",
+        "name": "secondCTALinkType",
+        "value": "",
+        "label": "Second CTA Type",
+        "description": "The 'Link' option will render a standard anchor button, and the 'Sign In' option will trigger the sign-in process.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Link",
+            "value": "link"
+          },
+          {
+            "name": "Sign In",
+            "value": "signin"
+          }
+        ]
       }
     ]
   },
@@ -1813,7 +1875,7 @@
         "name": "contentURL",
         "value": "",
         "label": "Content URL",
-        "description": "Provide a link to one of the following content types: Course, Tutorial, Documentation, Troubleshooting, On-Demand Event, Certification or Perspective"
+        "description": "Provide a link to one of the following content types: Playlist, Tutorial, Documentation, Troubleshooting, On-Demand Event, Certification or Perspective"
       }
     ]
   },
@@ -1893,10 +1955,6 @@
             "value": "community"
           },
           {
-            "name": "Courses",
-            "value": "course"
-          },
-          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -1907,6 +1965,10 @@
           {
             "name": "Perspectives",
             "value": "perspective"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Troubleshooting",
@@ -1988,10 +2050,6 @@
             "value": "community"
           },
           {
-            "name": "Courses",
-            "value": "course"
-          },
-          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -2002,6 +2060,10 @@
           {
             "name": "Perspectives",
             "value": "perspective"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Troubleshooting",
@@ -2485,8 +2547,8 @@
         "description": "Select the content type(s).",
         "options": [
           {
-            "name": "Courses",
-            "value": "course"
+            "name": "Playlists",
+            "value": "playlist"
           },
           {
             "name": "Tutorials",
