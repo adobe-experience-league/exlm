@@ -4,14 +4,10 @@ import { CONTENT_TYPES } from '../../../scripts/data-service/coveo/coveo-exl-pip
 import { populateFilteredResults } from '../filtered-results/filtered-results.js';
 import { initPagination } from '../pagination/pagination.js';
 import { loadCSS } from '../../../scripts/lib-franklin.js';
-import { fetchLanguagePlaceholders, htmlToElement } from '../../../scripts/scripts.js';
+import { htmlToElement, decoratePlaceholders } from '../../../scripts/scripts.js';
 import { updateHeading } from '../heading/heading.js';
+import ExlClient from '../exl-client.js';
 
-// TODO: We need to grab the translated name of the topic from the topics API
-let activeTopic = {
-  label: 'Analytics Basics',
-  value: [''],
-};
 let tabBlock = {};
 let isPaginationInitialized = false;
 
@@ -78,8 +74,11 @@ async function displayTabContent(block, contentType = [], sortOption = COVEO_SOR
     isPaginationInitialized = false; // Reset the flag to false when the page is 0
   }
 
+  const activeTopic = getQueryParam('topic');
+
   try {
     const params = {
+      feature: [activeTopic],
       sortCriteria: sortOption,
       contentType: contentType.length > 0 ? contentType : [],
       firstResult,
@@ -101,7 +100,7 @@ async function displayTabContent(block, contentType = [], sortOption = COVEO_SOR
   updateHeading(totalCount, resultCount);
 
   // Append new content
-  if (data?.length) {
+  if (Number.isInteger(data?.length)) {
     populateFilteredResults(block, data);
 
     if (!isPaginationInitialized) {
@@ -127,6 +126,10 @@ async function displayTabContent(block, contentType = [], sortOption = COVEO_SOR
  * @param {HTMLElement} tabHtml - The HTML element containing the tabs.
  */
 async function toggleTab(value, dataset, tabHtml) {
+  const client = new ExlClient();
+  const combinedData = await client.getCombinedTopicsAndFeatures();
+  const firstTopic = Object.values(combinedData)[488];
+
   tabHtml.querySelectorAll('.tab-wrapper.active').forEach((el) => {
     el.classList.remove('active');
   });
@@ -155,6 +158,7 @@ async function toggleTab(value, dataset, tabHtml) {
   }
 
   await displayTabContent(tabBlock, contentType, sortBy, 0);
+  setQueryParam('topic', firstTopic.Name);
   setQueryParam('sortBy', sortBy);
   setQueryParam('contenttype', contentType);
 }
@@ -166,44 +170,37 @@ async function toggleTab(value, dataset, tabHtml) {
 export default async function decorateTabs(block) {
   loadCSS(`${window.hlx.codeBasePath}../blocks/topic-results/tabs/tabs.css`);
   tabBlock = block;
-  let placeholders = {};
-  try {
-    placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
-  }
 
   // Options for dropdown
   const options = {
-    [placeholders?.mostRelevant || 'Most relevant']: {
-      value: placeholders?.mostRelevant || 'Most relevant',
+    'Most relevant': {
+      value: 'Most relevant',
       'data-contenttype': '[]',
       'data-sortby': COVEO_SORT_OPTIONS.RELEVANCE,
     },
-    [placeholders?.documentation || 'Documentation']: {
-      value: placeholders?.documentation || 'Documentation',
+    Documentation: {
+      value: 'Documentation',
       'data-contenttype': JSON.stringify([CONTENT_TYPES.DOCUMENTATION.MAPPING_KEY]),
       'data-sortby': COVEO_SORT_OPTIONS.RELEVANCE,
     },
-    [placeholders?.tutorials || 'Tutorials']: {
-      value: placeholders?.tutorials || 'Tutorials',
+    Tutorials: {
+      value: 'Tutorials',
       'data-contenttype': JSON.stringify([CONTENT_TYPES.TUTORIAL.MAPPING_KEY]),
       'data-sortby': COVEO_SORT_OPTIONS.RELEVANCE,
     },
-    [placeholders?.community || 'Community']: {
-      value: placeholders?.community || 'Community',
+    Community: {
+      value: 'Community',
       'data-contenttype': JSON.stringify([CONTENT_TYPES.COMMUNITY.MAPPING_KEY]),
       'data-sortby': COVEO_SORT_OPTIONS.RELEVANCE,
     },
-    [placeholders?.events || 'Events']: {
-      value: placeholders?.events || 'Events',
+    Events: {
+      value: 'Events',
       'data-contenttype': JSON.stringify([CONTENT_TYPES.EVENT.MAPPING_KEY]),
       'data-sortby': COVEO_SORT_OPTIONS.RELEVANCE,
     },
   };
 
-  let selectValue = options[placeholders?.mostRelevant || 'Most relevant'];
+  let selectValue = options['Most relevant'];
 
   document.addEventListener('click', (e) => {
     if (e.target.closest('.tab-select-container')) {
@@ -218,6 +215,34 @@ export default async function decorateTabs(block) {
       }
     }
   });
+
+  const tabs = [
+    {
+      value: 'Most relevant',
+      'data-contenttype': [],
+      'data-sortby': COVEO_SORT_OPTIONS.RELEVANCE,
+    },
+    {
+      value: 'Documentation',
+      'data-contenttype': JSON.stringify([CONTENT_TYPES.DOCUMENTATION.MAPPING_KEY]),
+      'data-sortby': COVEO_SORT_OPTIONS.RELEVANCE,
+    },
+    {
+      value: 'Tutorials',
+      'data-contenttype': JSON.stringify([CONTENT_TYPES.TUTORIAL.MAPPING_KEY]),
+      'data-sortby': COVEO_SORT_OPTIONS.RELEVANCE,
+    },
+    {
+      value: 'Community',
+      'data-contenttype': JSON.stringify([CONTENT_TYPES.COMMUNITY.MAPPING_KEY]),
+      'data-sortby': COVEO_SORT_OPTIONS.RELEVANCE,
+    },
+    {
+      value: 'Events',
+      'data-contenttype': JSON.stringify([CONTENT_TYPES.EVENT.MAPPING_KEY]),
+      'data-sortby': COVEO_SORT_OPTIONS.RELEVANCE,
+    },
+  ];
 
   const tabHtml = htmlToElement(`
 <div class="topic-results-filters">
@@ -246,41 +271,22 @@ export default async function decorateTabs(block) {
     </div>
     <div class="topic-results-tabs">
         <ul>
+        ${tabs
+          .map(
+            (tab) => `
             <li class="tab-wrapper">
-                <input type="button" 
-                value="${placeholders?.mostRelevant || 'Most relevant'}" 
-                data-contenttype='[]' 
-                data-sortby="${COVEO_SORT_OPTIONS.RELEVANCE}"
-                />
+                <input type="button" value="${tab.value}" data-contenttype=${tab['data-contenttype']} data-sortby="${tab['data-sortby']}" />
             </li>
-            <li class="tab-wrapper"><input type="button" value="${
-              placeholders?.documentation || 'Documentation'
-            }" data-contenttype='${JSON.stringify([CONTENT_TYPES.DOCUMENTATION.MAPPING_KEY])}' data-sortby="${
-              COVEO_SORT_OPTIONS.RELEVANCE
-            }"/>
-            </li>
-            <li class="tab-wrapper"><input type="button" value="${
-              placeholders?.tutorials || 'Tutorials'
-            }" data-contenttype='${JSON.stringify([CONTENT_TYPES.TUTORIAL.MAPPING_KEY])}' data-sortby="${
-              COVEO_SORT_OPTIONS.RELEVANCE
-            }" />
-            </li>
-            <li class="tab-wrapper"><input type="button" value="${
-              placeholders?.community || 'Community'
-            }" data-contenttype='${JSON.stringify([CONTENT_TYPES.COMMUNITY.MAPPING_KEY])}' data-sortby="${
-              COVEO_SORT_OPTIONS.RELEVANCE
-            }"/>
-            </li>
-            <li class="tab-wrapper"><input type="button" value="${
-              placeholders?.events || 'Events'
-            }" data-contenttype='${JSON.stringify([CONTENT_TYPES.EVENT.MAPPING_KEY])}' data-sortby="${
-              COVEO_SORT_OPTIONS.RELEVANCE
-            }"/>
-            </li>
+        `,
+          )
+          .join('')}
         </ul>
     </div>
 </div>
 `);
+
+  // Show shimmer loading state for placeholders
+  decoratePlaceholders(tabHtml);
 
   tabHtml.querySelectorAll('input').forEach((button) => {
     button.addEventListener('click', async (e) => {
@@ -315,10 +321,9 @@ export default async function decorateTabs(block) {
     }
   });
 
-  activeTopic = getQueryParam('topic') || activeTopic;
   // TODO: We need to grab the translated name of the topic from the topics API
   toggleTab(
-    placeholders?.mostRelevant || 'Most relevant',
+    'Most relevant',
     {
       sortBy: getQueryParam('sortBy') || COVEO_SORT_OPTIONS.RELEVANCE,
       contenttype: getQueryParam('contenttype') || [],

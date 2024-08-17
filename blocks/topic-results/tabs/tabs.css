@@ -22,7 +22,7 @@
     color: var(--spectrum-gray-700);
     margin: 0;
     position: relative;
-    padding:0, 0, 0, 15px;
+    padding-left:15px;
   }
   
   .topic-results-tabs input:hover {
@@ -61,7 +61,7 @@
     }
     input {
       padding: 0;
-      font-family:"Adobe Clean", adobe-clean, "Source Sans Pro", -apple-system, system-ui, "Segoe UI", roboto, ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif;
+      font-family: var(--body-font-family);
     }
     &:not(:first-child) {
       margin-left: 16px;
@@ -82,11 +82,10 @@
     
   
     .tab-select-arrow {
-      border: 1px solid #B3B3B3;
+      border: 1px solid var(--spectrum-gray-700);
       border-radius: 4px;
       width: 36px;
       height: 36px;
-      background-color: red;
       position: absolute;
       top: 50%;
       right: 0;
@@ -101,16 +100,16 @@
     .topic-results-dropdown-value{
       position: relative; 
       width:100%;
-      border: 1px solid #B3B3B3;
-      background: #fbfbfb;
+      border: 1px solid var(--spectrum-gray-400);
+      background: var(--background-color);
       padding: 7px 12px;
       margin:8px 0;
       border-radius: 4px;
-      color: #4B4B4B;
+      color: var(--spectrum-gray-700);
       font-size: var(--exlm-font-size-content);
       cursor: pointer;
       text-align: left;
-      font-family: "Adobe Clean", adobe-clean, "Source Sans Pro", -apple-system, system-ui, "Segoe UI", roboto, ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif;
+      font-family: var(--body-font-family);
       font-weight: 400;
       &:focus {
         outline: none;
@@ -127,20 +126,20 @@
   
   .tab-options {
     box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
-    color: #4B4B4B;
+    color: var(--spectrum-gray-700);
     display: none !important;
     &.open {
       display: block !important;
-      border: 1px solid var(--spectrum-gray-500);
+      border: 1px solid var(--spectrum-gray-400);
       border-radius: 4px;
       &>li {
-        font-family: "Adobe Clean", adobe-clean, "Source Sans Pro", -apple-system, system-ui, "Segoe UI", roboto, ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif;
+        font-family: var(--body-font-family);
         display: flex;
         margin: 0;
         padding: 8px 16px;
         cursor: pointer;
         &:hover {
-          background-color: #e9ecef;
+          background-color: var(--non-spectrum-grey-100);
         }
         & .tab-option-button{
           width: calc(100% - 36px);

@@ -1,5 +1,5 @@
 import { loadCSS } from '../../../scripts/lib-franklin.js';
-import { htmlToElement } from '../../../scripts/scripts.js';
+import { htmlToElement, decoratePlaceholders } from '../../../scripts/scripts.js';
 
 /**
  * Creates and returns a heading element for topic results.
@@ -33,7 +33,11 @@ function createHeading({
     </div>
     <div class="topics-header-result">
       <div class="topics-header-result-count">
-        <p>Showing  <span>${resultCount}</span> of <span>${resultTotal}</span> results</p>
+        <span data-placeholder="topic-results-showing">Showing</span> 
+      <span class='result-count'>${resultCount}</span> 
+      <span data-placeholder="topic-results-of">of</span> 
+      <span class='result-count'>${resultTotal}</span> 
+      <span data-placeholder="topic-results-results">results</span>
       </div>
       <div class="topics-header-result-view-more">
         <a href="${viewMoreResultsUrl}">${viewMoreResultsLabel}</a>
@@ -47,7 +51,14 @@ export function updateHeading(resultTotal, resultCount) {
   const resultContainer = document.querySelector('.topics-header-result-count');
 
   if (resultContainer) {
-    resultContainer.innerHTML = `<p>Showing <span>${resultCount}</span> of <span>${resultTotal}</span> results</p>`;
+    resultContainer.innerHTML = `<p>
+      <span data-placeholder="topic-results-showing">Showing</span> 
+      <span class='result-count'>${Math.min(resultCount, resultTotal)}</span> 
+      <span data-placeholder="topic-results-of">of</span> 
+      <span class='result-count'>${resultTotal}</span> 
+      <span data-placeholder="topic-results-results">results</span>
+    </p>`;
+    decoratePlaceholders(resultContainer);
   }
 }
 

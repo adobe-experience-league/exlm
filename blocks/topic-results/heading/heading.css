@@ -1,12 +1,13 @@
 .topics-header-heading span{
-    font-weight: bold; 
+    font-weight: normal; 
 }
 .topics-header-result-count p{
     margin-top: 10px;
     margin-bottom:0;
+
 }
 
-.topics-header-result-count span{
+.topics-header-result-count span.result-count{
     font-weight: bold; 
 }
 

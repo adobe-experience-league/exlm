@@ -4,6 +4,16 @@ import { loadCSS } from '../../../scripts/lib-franklin.js';
 loadCSS(`${window.hlx.codeBasePath}../blocks/topic-results/filtered-results/filtered-results.css`);
 
 /**
+ * Capitalizes the first letter of a string.
+ * @param {string} str - The string to capitalize.
+ * @returns {string} The capitalized string.
+ */
+function capitalizeFirstLetter(str) {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
  * Creates a filtered result element based on the provided options.
  * @param {Object} options - The options for creating a filtered result.
  * @param {string} options.title - The title of the result.
@@ -28,21 +38,33 @@ function createFilteredResult({
 
   // Determine the class for the content type
   let contentTypeClass = '';
+  contentTypeClass = contentType?.toLowerCase() || '';
+
+  let iconSrc = '';
   switch (contentType.toLowerCase()) {
     case 'tutorial':
       contentTypeClass = 'tutorial';
+      iconSrc = '../icons/tutorial.svg';
       break;
     case 'documentation':
       contentTypeClass = 'documentation';
+      iconSrc = '../icons/documentation.svg';
       break;
     case 'community':
       contentTypeClass = 'community';
+      iconSrc = '../icons/community.svg';
       break;
-    case 'events':
-      contentTypeClass = 'events';
+    case 'event':
+      contentTypeClass = 'event';
+      iconSrc = '../icons/event.svg';
+      break;
+    case 'troubleshooting':
+      contentTypeClass = 'troubleshooting';
+      iconSrc = '../icons/troubleshooting.svg';
       break;
     default:
       contentTypeClass = '';
+      iconSrc = '';
   }
 
   return htmlToElement(`
@@ -67,7 +89,8 @@ function createFilteredResult({
         <div class="filtered-result-product-content-type-container">
             <div class="filtered-result-product-name">${product}</div>
             <div class="filtered-result-content-type ${contentTypeClass}">
-                <span>${contentTypeClass}</span>
+            <img src="${iconSrc}" alt="${contentType} icon">
+                <span>${capitalizeFirstLetter(contentTypeClass)}</span>
             </div>
         </div>
         <div class="filtered-result-date-container"> 
