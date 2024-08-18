@@ -29,12 +29,13 @@ import { decoratePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 export function newMultiSelect({ options = [], onSelect }) {
   let values = [];
 
-  const filterSubOptions = ({ label, labelPlaceholderKey, value, checked }) => {
+  const filterSubOptions = ({ label, labelPlaceholderKey, description, value, checked }) => {
     const option = htmlToElement(` 
       <div class="filter-option">    
           <input type="checkbox"  id="${value}" value="${value}" ${checked ? 'checked' : ''} />
           <label for="${value}">
             <span class="title" data-placeholder="${labelPlaceholderKey}">${label}</span>
+            <span class="description">${description}</span>
             <span class="icon icon-checked"></span>
           </label>  
       </div>     

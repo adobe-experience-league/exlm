@@ -170,6 +170,14 @@
             text-align: left;
             color: var(--spectrum-gray-800);
         }  
+
+        .description {
+            font-weight: normal;
+            font-size: 12px;
+            line-height: 16px;
+            text-align: left;
+            color: var(--spectrum-gray-500);
+          }
 }
   }   
 }

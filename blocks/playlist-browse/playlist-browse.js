@@ -6,22 +6,45 @@ const EXPERIENCE_LEVEL_PLACEHOLDERS = [
   {
     label: 'Beginner',
     placeholder: 'filter-exp-level-beginner-title',
+    description: 'Minimal experience and foundational understanding of a subject.',
   },
   {
     label: 'Intermediate',
     placeholder: 'filter-exp-level-intermediate-title',
+    description: 'Moderate level of expertise, with some understanding of core concepts and skills.',
   },
   {
     label: 'Experienced',
     placeholder: 'filter-exp-level-experienced-title',
+    description:
+      'High degree of proficiency with an advanced understanding of concepts and skill. Regularly manages complex tasks and objectives.',
   },
 ];
 
 const ROLE_PLACEHOLDERS = [
-  { label: 'Developer', placeholder: 'filter-role-developer-title' },
-  { label: 'User', placeholder: 'filter-role-user-title' },
-  { label: 'Leader', placeholder: 'filter-role-leader-title' },
-  { label: 'Admin', placeholder: 'filter-role-admin-title' },
+  {
+    label: 'Developer',
+    placeholder: 'filter-role-developer-title',
+    description:
+      "Responsible for engineering Adobe solutions' implementation, integration, data-modeling, data engineering, and other technical skills.",
+  },
+  {
+    label: 'User',
+    placeholder: 'filter-role-user-title',
+    description:
+      'Responsible for utilizing Adobe solutions to achieve daily job functions, complete tasks, and achieve business objectives.',
+  },
+  {
+    label: 'Leader',
+    placeholder: 'filter-role-leader-title',
+    description: 'Responsible for owning the digital strategy and accelerating value through Adobe solutions.',
+  },
+  {
+    label: 'Admin',
+    placeholder: 'filter-role-admin-title',
+    description:
+      'Responsible for the technical operations, configuration, permissions, management, and support needs of Adobe solutions.',
+  },
 ];
 
 async function fetchPlaylists() {
@@ -368,9 +391,13 @@ class Filter {
             const filterValuePlaceholderKey = optionPlaceholders?.find(
               (o) => o?.label?.toLowerCase() === filterValue?.toLowerCase(),
             )?.placeholder;
+            const filterDescription = optionPlaceholders?.find(
+              (o) => o?.label?.toLowerCase() === filterValue?.toLowerCase(),
+            )?.description;
 
             addOption({
               label: filterValue,
+              description: filterDescription || '',
               labelPlaceholderKey: filterValuePlaceholderKey || filterValue,
               value: filterValue,
               checked: this.filters[filterName].includes(filterValue),
