@@ -37,9 +37,9 @@ export default async function decorate(block) {
 
     const adobeDisplayName = profileData?.displayName || '';
     const adobeFirstName = profileData?.first_name || '';
-    const industry = profileData?.industryInterests || '';
-    const roles = profileData?.role || '';
-    const interests = profileData?.interests || '';
+    const industry = profileData?.industryInterests || [];
+    const roles = profileData?.role || [];
+    const interests = profileData?.interests || [];
 
     const profilePicture = ppsProfileData?.images?.['100'] || '';
     const company = ppsProfileData?.company || '';
@@ -48,16 +48,10 @@ export default async function decorate(block) {
     const communityUserTitle = communityProfileData?.title || '';
     const communityUserLocation = communityProfileData?.location || '';
 
-    // const industryText = industry.length > 0 ? industry : (placeholders?.unknown || 'Unknown');
-    // const interestsText = interests.length > 0 ? interests.join(' | ') : (placeholders?.unknown || 'Unknown');
-
-    const hasInterests = interests &&
-    ((Array.isArray(interests) && interests.length > 0) ||
-      (typeof interests === 'string' && interests.trim() !== ''));
-    
-    // const industryClass = industry.length > 0 ? '' : 'incompleteProfile';
-    // const interestsClass = interests.length > 0 ? '' : 'incompleteProfile';
-    // const roleClass = industryClass && interestsClass;
+    const hasInterests =
+      interests &&
+      ((Array.isArray(interests) && interests.length > 0) ||
+        (typeof interests === 'string' && interests.trim() !== ''));
 
     const profileWelcomeBlock = document.createRange().createContextualFragment(`
         <div class="profile-curated-card">
@@ -73,23 +67,24 @@ export default async function decorate(block) {
             </div>
             <div class="profile-user-card">
                 <div class="profile-user-card-left">
-                <div class="profile-user-card-avatar-company-info">
-                    <div class="profile-user-card-avatar">
-                    ${
-                      profilePicture
-                        ? `<img width="75" height="75" class="profile-picture" src="${profilePicture}" alt="Profile Picture" />`
-                        : '<span class="icon icon-profile"></span>'
-                    }
-                    </div>
-                    <div class="profile-user-card-info">
-                        <div class="profile-user-card-name">${adobeDisplayName}</div>
-                        ${communityUserName ? `<div class="profile-user-card-tag">@${communityUserName}</div>` : ''}
-                        <div class="profile-user-card-org">${company}</div>
-                    </div> 
-                </div> 
+                  <div class="profile-user-card-avatar-company-info">
+                        <div class="profile-user-card-avatar">
+                        ${
+                          profilePicture
+                            ? `<img width="75" height="75" class="profile-picture" src="${profilePicture}" alt="Profile Picture" />`
+                            : '<span class="icon icon-profile"></span>'
+                        }
+                        </div>
+                        <div class="profile-user-card-info">
+                            <div class="profile-user-card-name">${adobeDisplayName}</div>
+                            ${communityUserName ? `<div class="profile-user-card-tag">@${communityUserName}</div>` : ''}
+                            <div class="profile-user-card-org">${company}</div>
+                        </div> 
+                  </div>
                 ${
                   hasInterests
                     ? `
+                    <div class="profile-user-card-communityInfo">
                       ${
                         communityUserTitle
                           ? `<div class="profile-user-card-title">
@@ -103,38 +98,39 @@ export default async function decorate(block) {
                             }</span>${communityUserLocation}</div>`
                           : ''
                       }
+                      </div>
                       `
                     : `
                         <div class="profile-user-card-incomplete">
-                          <span class="icon icon-profile"></span>
+                          <span class="icon icon-exclamation"></span>
                           ${incompleteProfileText.innerHTML}
                         </div>
-                        `
+                    `
                 }
                 </div>
                 <div class="profile-user-card-right">
+                  <div class="profile-user-card-details">
                     <div class="profile-user-card-role">
                     <span class="heading">${placeholders?.myRole || 'MY ROLE: '}</span>
                     <span class="${!hasInterests ? 'incompleteProfile' : ''}">${roles.join(' | ')}</span>
                     </div>
-                    ${industry &&
-                      ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== '')) ? 
-                    `<div class="profile-user-card-industry">
+                    <div class="profile-user-card-industry">
                       <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY: '}</span>
                       <span class="${!hasInterests ? 'incompleteProfile' : ''}">
-                        ${!hasInterests ? (placeholders?.unknown || 'Unknown') : industry}
+                        ${!hasInterests ? placeholders?.unknown || 'Unknown' : industry}
                       </span>
-                    </div>` : ''}  
+                    </div>  
                     <div class="profile-user-card-interests">
                       <span class="heading">${placeholders?.myInterests || 'MY INTERESTS: '}</span>
                       <span class="${!hasInterests ? 'incompleteProfile' : ''}">
-                        ${!hasInterests ? (placeholders?.unknown || 'Unknown') : interests.join(' | ')}
+                        ${!hasInterests ? placeholders?.unknown || 'Unknown' : interests.join(' | ')}
                       </span>
                     </div>
+                  </div>
                     <div class="profile-user-card-cta">${decorateButton(
-                    profileCtaType.innerHTML,
-                    profileCtaText.innerHTML,
-                    profileCtaLink.innerHTML,
+                      profileCtaType.innerHTML,
+                      profileCtaText.innerHTML,
+                      profileCtaLink.innerHTML,
                     )}</div>
                 </div>    
         </div>

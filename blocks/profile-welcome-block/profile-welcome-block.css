@@ -46,6 +46,8 @@
     border-radius: 8px;
     background: var(--background-color);
     padding: 24px 16px;
+    /* max-width: 320px; */
+    box-sizing: border-box;
 }
 
 .profile-user-card .profile-user-card-left{
@@ -55,6 +57,7 @@
     box-sizing: border-box;
     border-bottom: 2px solid rgba(213, 213, 213, 0.3);;
     padding-bottom: 16px;
+    justify-content: space-between;
 }
 
 .profile-user-card .profile-user-card-right{
@@ -63,6 +66,7 @@
     flex: 1;
     box-sizing: border-box;
     padding-top: 16px;
+    justify-content: space-between;
 }
 
 .profile-user-card-left .profile-user-card-avatar-company-info {
@@ -191,6 +195,7 @@
         display: flex;
         flex-direction: row;
         padding: 24px;
+        /* max-width: 552px; */
     }
 
     .profile-user-card .profile-user-card-left{
@@ -219,6 +224,7 @@
 
     .profile-welcome-block .profile-user-card {
         margin-top: 34px;
+        /* max-width: 549px; */
     }
     
     .profile-curated-card .profile-curated-card-heading {
