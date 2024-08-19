@@ -1,6 +1,6 @@
 import { assetInteractionModel } from '../../../scripts/analytics/lib-analytics.js';
 import { defaultProfileClient, isSignedInUser } from '../../../scripts/auth/profile.js';
-import { createPlaceholderSpan, fetchLanguagePlaceholders } from '../../../scripts/scripts.js';
+import { createPlaceholderSpan, fetchLanguagePlaceholders, getPathDetails } from '../../../scripts/scripts.js';
 import { sendNotice } from '../../../scripts/toast/toast.js';
 
 let placeholders = {};
@@ -15,23 +15,41 @@ function getCurrentPlaylistBookmarkPath() {
   return window.location.pathname;
 }
 
-async function isBookmarkedPlaylist() {
-  const profile = await defaultProfileClient.getMergedProfile();
-  const bookmarkId = getCurrentPlaylistBookmarkPath();
-  return profile?.bookmarks.find((bookmarkIdInfo) => bookmarkIdInfo.includes(bookmarkId)) || false;
+function getBookmarkId() {
+  const { lang } = getPathDetails();
+  const bookmarkId = getCurrentPlaylistBookmarkPath().replace(`/${lang}`, '');
+  return bookmarkId;
+}
+
+async function getAllBookmarks() {
+  const profileData = await defaultProfileClient.getMergedProfile();
+  const { bookmarks = [] } = profileData;
+  return bookmarks;
+}
+
+async function getCurrentlyBookmarkedId() {
+  const bookmarkId = getBookmarkId();
+  const profileData = await defaultProfileClient.getMergedProfile();
+  const { bookmarks = [] } = profileData;
+
+  const parsedBokkmarks = bookmarks
+    .map((bookmarkIdInfo) => bookmarkIdInfo.split(':'))
+    .map(([id, timestamp = 0]) => ({ id, timestamp }));
+
+  const foundBookmark = parsedBokkmarks.find((bookmarkIdInfo) => bookmarkIdInfo?.id === bookmarkId);
+  return foundBookmark;
 }
 
 async function toggleBookmark() {
-  const bookmarkId = getCurrentPlaylistBookmarkPath();
-  const profileData = await defaultProfileClient.getMergedProfile();
-  const { bookmarks = [] } = profileData;
-  const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => `${bookmarkIdInfo}`.includes(bookmarkId));
-  const newBookmarks = bookmarks.filter((bookmarkIdInfo) => !`${bookmarkIdInfo}`.includes(bookmarkId));
-  if (!targetBookmarkItem) {
-    // During toggle, remove current bookmark if any (OR) add it to bookmarks
-    newBookmarks.push(`${bookmarkId}:${Date.now()}`);
+  let bookmarks = await getAllBookmarks();
+  const foundBookmark = await getCurrentlyBookmarkedId();
+  if (foundBookmark) {
+    const foundBookmarkId = `${foundBookmark.id}:${foundBookmark.timestamp}`;
+    bookmarks = bookmarks.filter((b) => b !== foundBookmarkId);
+  } else {
+    bookmarks.push(`${getBookmarkId()}:${Date.now()}`);
   }
-  return defaultProfileClient.updateProfile('bookmarks', newBookmarks, true);
+  return defaultProfileClient.updateProfile('bookmarks', bookmarks, true);
 }
 /**
  * @param {HTMLButtonElement} bookmarkButton
@@ -56,7 +74,8 @@ export async function decorateBookmark(bookmarkButton) {
     return;
   }
 
-  const isBookmarked = await isBookmarkedPlaylist();
+  const currentlyBookmarkedId = await getCurrentlyBookmarkedId();
+  const isBookmarked = !!currentlyBookmarkedId;
   bookmarkButton.dataset.bookmarked = isBookmarked;
 
   const bookmarkTooltip = createPlaceholderSpan('playlistBookmark', 'Bookmark Playlist', (span) => {

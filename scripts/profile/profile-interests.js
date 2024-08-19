@@ -49,7 +49,7 @@ export default async function buildProductCard(element, model) {
         <div class="profile-interest-header">
             <div class="profile-interest-logo-wrapper">
                 <span class="icon profile-interest-logo"></span>
-                <span class="profile-interest-logo-text">${placeholders.myAdobeproduct || 'My Adobe product'}</span>
+                <span class="profile-interest-logo-text">${placeholders.myAdobeProduct || 'My Adobe product'}</span>
             </div>
             <h3>${product}</h3>
         </div>
