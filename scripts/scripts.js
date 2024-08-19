@@ -289,18 +289,6 @@ function addProfileRail(main) {
 }
 
 /**
- * Add a nav tab to the profile page.
- * @param {HTMLElement} main
- *
- */
-function addProfileTab(main) {
-  const profileTabSection = document.createElement('div');
-  profileTabSection.classList.add('profile-tab-section');
-  profileTabSection.append(buildBlock('profile-tab', []));
-  main.prepend(profileTabSection);
-}
-
-/**
  * Add a mini TOC to the article page.
  * @param {HTMLElement} main
  */
@@ -388,7 +376,6 @@ function buildAutoBlocks(main) {
       addMiniToc(main);
     }
     if (isProfilePage()) {
-      addProfileTab(main);
       addProfileRail(main);
     }
   } catch (error) {
@@ -1346,6 +1333,13 @@ async function loadPage() {
   loadRails();
   loadDelayed();
   showBrowseBackgroundGraphic();
+
+  if (isProfilePage()) {
+    await loadDefaultModule(`${window.hlx.codeBasePath}/scripts/profile/profile.js`);
+    document.body.appendChild(
+      htmlToElement('<div class="profile-background" role="presentation" aria-hidden="true"></div>'),
+    );
+  }
 
   if (isDocArticlePage()) {
     // wrap main content in a div - UGP-11165
