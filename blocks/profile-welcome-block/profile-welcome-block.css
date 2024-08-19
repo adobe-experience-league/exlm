@@ -46,7 +46,6 @@
     border-radius: 8px;
     background: var(--background-color);
     padding: 24px 16px;
-    /* max-width: 320px; */
     box-sizing: border-box;
 }
 
@@ -143,10 +142,6 @@
     margin-bottom: 8px;
 }
 
-/* .profile-user-card-left .profile-user-card-info .profile-user-card-name {
-    white-space: nowrap;
-} */
-
 .profile-user-card-left .profile-user-card-info .profile-user-card-tag {
     font-size: var(--spectrum-font-size-100);;
     color: var(--spectrum-blue-900);
@@ -199,7 +194,6 @@
         display: flex;
         flex-direction: row;
         padding: 24px;
-        /* max-width: 552px; */
     }
 
     .profile-user-card .profile-user-card-left{
@@ -228,7 +222,6 @@
 
     .profile-welcome-block .profile-user-card {
         margin-top: 34px;
-        /* max-width: 549px; */
     }
     
     .profile-curated-card .profile-curated-card-heading {
