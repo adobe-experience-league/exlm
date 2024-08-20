@@ -301,6 +301,12 @@ class Filter {
       const filterCount = this.filters[filterName]?.length;
       span.innerHTML = filterCount ? ` (${filterCount})` : '';
     });
+    // enable clear button if filters are selected
+    if (this.filters.solution.length || this.filters.role.length || this.filters.level.length) {
+      this.clearButton.disabled = false;
+    } else {
+      this.clearButton.disabled = true;
+    }
   }
 
   // add filter pills
@@ -344,7 +350,7 @@ class Filter {
       `<div class="playlist-filter-wrapper"><label class="playlist-filter-label"><span data-placeholder="${'filter-label'}"></span></label></div>`,
     );
     this.clearButton = htmlToElement(
-      `<button class="filters-clear"><span data-placeholder="${'filter-clear-label'}"></span></button>`,
+      `<button class="filters-clear" disabled><span data-placeholder="${'filter-clear-label'}"></span></button>`,
     );
 
     const filterOptionsPromises = filterOptions.map(
@@ -423,6 +429,7 @@ class Filter {
       Object.keys(this.filters).forEach((key) => {
         this.filters[key] = [];
       });
+      clearButton.disabled = true;
       multiSelects.forEach(({ onClear }) => {
         onClear();
       });
