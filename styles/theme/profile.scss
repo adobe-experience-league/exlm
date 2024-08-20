@@ -14,6 +14,35 @@ body.profile-home-page > main {
   min-height: 500px;
 }
 
+body.profile-home-page .profile-shimmer {
+  min-height: 200px;
+  display: grid;
+  place-items: center;
+  z-index: 5;
+}
+
+body.profile-home-page .profile-shimmer span {
+  width: 48px;
+  height: 48px;
+  border: 5px solid var(--spectrum-gray-600);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 body.profile-home-page .profile-background {
   position: absolute;
   overflow: hidden;

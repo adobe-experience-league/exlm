@@ -12,29 +12,33 @@ const paths = {
 
 let commonPageFetched = false;
 
-const fetchPageContent = async (url) => {
-  const main = document.querySelector('main');
-  const response = await fetch(`${url}.plain.html`);
-  if (response.ok) {
-    const pageContent = await response.text();
-    const container = document.createElement('div');
-    container.innerHTML = pageContent;
-    decorateSections(container);
-    decorateBlocks(container);
-    await loadBlocks(container);
-    await decorateIcons(container);
-    Array.from(container.children).forEach((section) => {
-      main.appendChild(section);
-    });
+const fetchPageContent = async (url, loader) => {
+  try {
+    const response = await fetch(`${url}.plain.html`);
+    if (response.ok) {
+      const pageContent = await response.text();
+      const container = document.createElement('div');
+      container.innerHTML = pageContent;
+      decorateSections(container);
+      decorateBlocks(container);
+      await loadBlocks(container);
+      await decorateIcons(container);
+      Array.from(container.children).forEach((section) => {
+        loader.insertAdjacentElement('beforebegin', section);
+      });
+    }
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.log(err);
   }
 };
 
-const fetchCommonContent = async () => {
+const fetchCommonContent = async (loader) => {
   if (!commonPageFetched) {
     commonPageFetched = true;
-    fetchPageContent(paths.commonPageURL)
+    fetchPageContent(paths.commonPageURL, loader)
       .then(() => {
-        window.removeEventListener('scroll', fetchCommonContent);
+        loader.remove();
       })
       .catch((err) => {
         /* eslint-disable-next-line no-console */
@@ -43,7 +47,7 @@ const fetchCommonContent = async () => {
   }
 };
 
-export default function classifyProfileAndFetchContent() {
+export default async function classifyProfileAndFetchContent() {
   try {
     if (suffix === '/profile') {
       Object.keys(paths).forEach((url) => {
@@ -54,23 +58,19 @@ export default function classifyProfileAndFetchContent() {
           section.remove();
         }
       });
+      document.body.classList.add('profile-home-page');
       document.body.appendChild(
         htmlToElement('<div class="profile-background" role="presentation" aria-hidden="true"></div>'),
       );
-      defaultProfileClient
-        .getMergedProfile()
-        .then((profileData) => {
-          if (profileData.interests.length) {
-            fetchPageContent(paths.completePageURL);
-          } else {
-            fetchPageContent(paths.incompletePageURL);
-          }
-        })
-        .catch((err) => {
-          /* eslint-disable-next-line no-console */
-          console.log(err);
-        });
-      window.addEventListener('scroll', fetchCommonContent);
+      const loader = htmlToElement('<div class="section profile-shimmer"><span></span></div>');
+      document.querySelector('main').appendChild(loader);
+      const profileData = await defaultProfileClient.getMergedProfile();
+      if (profileData.interests.length) {
+        await fetchPageContent(paths.completePageURL, loader);
+      } else {
+        await fetchPageContent(paths.incompletePageURL, loader);
+      }
+      await fetchCommonContent(loader);
     }
   } catch (err) {
     /* eslint-disable-next-line no-console */
