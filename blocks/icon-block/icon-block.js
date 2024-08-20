@@ -24,6 +24,10 @@ export default function decorate(block) {
 
     const link = linkWrapper.querySelector('a');
     if (link) {
+      // FIXME: Temp Code - To be updated once EXLM-2046 UE changes are in place.
+      if (link.closest('.signup-dialog-content')) {
+        link.setAttribute('target', '_blank');
+      }
       link.classList.add('icon-link');
       link.remove();
       linkWrapper.replaceWith(link);

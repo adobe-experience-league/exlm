@@ -3,7 +3,7 @@ import { getMetadata } from './lib-franklin.js';
 
 export default async function loadPrevNextBtn() {
   const placeholders = await fetchLanguagePlaceholders();
-  const mainDoc = document.querySelector('main > div.content-section-last');
+  const mainDoc = document.querySelector('main div.content-section-last');
   if (!mainDoc) return;
 
   const prevPageMeta = getMetadata('prev-page');

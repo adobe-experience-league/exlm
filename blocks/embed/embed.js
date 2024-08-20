@@ -4,6 +4,8 @@
  * https://www.hlx.live/developer/block-collection/embed
  */
 
+import { pushVideoEvent } from '../../scripts/analytics/lib-analytics.js';
+
 const loadScript = (url, callback, type) => {
   const head = document.querySelector('head');
   const script = document.createElement('script');
@@ -28,6 +30,12 @@ const embedTwitter = (url) => {
   return embedHTML;
 };
 
+export function getMetadata(name, win = window) {
+  const attr = name && name.includes(':') ? 'property' : 'name';
+  const meta = [...win.document.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((m) => m.content).join(', ');
+  return meta || '';
+}
+
 const loadEmbed = (block, link, autoplay) => {
   if (block.classList.contains('embed-is-loaded')) {
     return;
@@ -47,8 +55,25 @@ const loadEmbed = (block, link, autoplay) => {
     block.classList = `block embed embed-${config.match[0]}`;
   } else {
     block.innerHTML = getDefaultEmbed(url);
+    window.addEventListener(
+      'message',
+      (event) => {
+        if (event.data?.type === 'mpcStatus') {
+          if (event.data.state === 'play') {
+            pushVideoEvent({
+              title: getMetadata('og:title'),
+              description: getMetadata('og:description'),
+              url: link,
+              duration: getMetadata('video:duration'),
+            });
+          }
+        }
+      },
+      false,
+    );
     block.classList = 'block embed';
   }
+
   block.classList.add('embed-is-loaded');
 };
 

@@ -76,6 +76,7 @@ function buildMiniToc(block, placeholders) {
         });
       }
 
+      let isAnchorScroll = false;
       if (anchors.length > 0) {
         anchors.forEach((i, idx) => {
           if (lhash === false && idx === 0) {
@@ -90,13 +91,7 @@ function buildMiniToc(block, placeholders) {
             'click',
             () => {
               const ahash = (i.href.length > 0 ? new URL(i.href).hash || '' : '').replace(/^#/, '');
-              let activeAnchor = i;
-              if (
-                !i.classList.contains('is-padded-left-big') &&
-                i.parentElement?.nextElementSibling?.firstElementChild?.classList?.contains('is-padded-left-big')
-              ) {
-                activeAnchor = i.parentElement.nextElementSibling.firstChild;
-              }
+              const activeAnchor = i;
               render(() => {
                 anchors.forEach((a) => a.classList.remove('is-active'));
                 activeAnchor.classList.add('is-active');
@@ -105,6 +100,10 @@ function buildMiniToc(block, placeholders) {
                   hashFragment(ahash);
                 }
               });
+              isAnchorScroll = true;
+              setTimeout(() => {
+                isAnchorScroll = false;
+              }, 1000);
             },
             false,
           );
@@ -113,23 +112,7 @@ function buildMiniToc(block, placeholders) {
             highlight(false);
           }
         });
-
-        const anchor = anchors[0].parentElement;
-        const scrollableDiv = block.querySelector('.scrollable-div');
-        if (scrollableDiv) {
-          // dynamically make sure no item is partially visible
-          const anchorClientHeight = anchor.offsetHeight;
-          const anchorStyles = getComputedStyle(anchor);
-          const marginTop = parseInt(anchorStyles.marginTop || '0', 10);
-          const marginBottom = parseInt(anchorStyles.marginBottom || '0', 10);
-          const anchorHeight = anchorClientHeight + marginTop + marginBottom;
-          const halfWindowHeight = window.innerHeight / 2;
-          const visibleAnchorsCount = Math.floor(halfWindowHeight / anchorHeight);
-          if (visibleAnchorsCount && anchors.length > visibleAnchorsCount) {
-            // scrollableDiv.style.maxHeight = `${visibleAnchorsCount * anchorHeight}px`;
-          }
-        }
-        window.addEventListener('scroll', () => debounce('scroll', () => highlight(), 16));
+        window.addEventListener('scroll', () => debounce('scroll', () => highlight(false, isAnchorScroll), 10));
         decorateIcons(block);
       }
     });

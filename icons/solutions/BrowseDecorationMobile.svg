@@ -1,17 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="360" height="60" viewBox="0 0 360 60">
-  <defs>
-    <clipPath id="clip-path">
-      <rect id="Rectangle_189223" data-name="Rectangle 189223" width="360" height="60" transform="translate(1080 64)" fill="#fafafa"/>
-    </clipPath>
-    <clipPath id="clip-path-2">
-      <rect id="Rectangle_189222" data-name="Rectangle 189222" width="480" height="109" transform="translate(67.416)" fill="#fff" stroke="#909090" stroke-width="1"/>
-    </clipPath>
-  </defs>
-  <g id="Hero" transform="translate(-1080 -64)" clip-path="url(#clip-path)">
-    <g id="Courses-MarqueeLeft" transform="translate(1228.584 64)" clip-path="url(#clip-path-2)">
-      <ellipse id="Ellipse_20380" data-name="Ellipse 20380" cx="14" cy="13.5" rx="14" ry="13.5" transform="translate(143.416 32)" fill="#46a8f7"/>
-      <circle id="Ellipse_20381" data-name="Ellipse 20381" cx="6" cy="6" r="6" transform="translate(176.416 45)" fill="#f68d2e"/>
-      <path id="Path_425671" data-name="Path 425671" d="M0,19.619C2.577,79.273,18.815,124.093,51.6,150.387c27.629,22.156,53.886,15.427,79.643,41.292,38.62,38.781,11.71,92.041,92.734,119.646s192.354,31.1,275.788-41.918,100.083-200.96,15-244.64c-23.316-11.97-44.1-5.763-73.784-2.288C374.158,30.3,291.166-2.67,267.682.175Q140.979,15.515,3.432,16.188" transform="translate(-1.917 -108.601) rotate(-20)" fill="#eb1000" fill-rule="evenodd"/>
-    </g>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="60"><defs><clipPath id="a"><path data-name="Rectangle 189223" transform="translate(1080 64)" fill="#fafafa" d="M0 0h360v60H0z"/></clipPath><clipPath id="b"><path data-name="Rectangle 189222" transform="translate(67.416)" fill="#fff" stroke="#909090" d="M0 0h480v109H0z"/></clipPath></defs><g transform="translate(-1080 -64)" clip-path="url(#a)"><g transform="translate(1228.584 64)" clip-path="url(#b)"><ellipse data-name="Ellipse 20380" cx="14" cy="13.5" rx="14" ry="13.5" transform="translate(143.416 32)" fill="#46a8f7"/><circle data-name="Ellipse 20381" cx="6" cy="6" r="6" transform="translate(176.416 45)" fill="#f68d2e"/><path data-name="Path 425671" d="M4.793-90.165C27.618-34.99 58.206 1.573 98.007 15.068c33.54 11.37 55.912-3.933 88.962 11.563 49.555 23.233 42.484 82.485 128.063 80.713S506.422 70.78 559.852-26.37s25.314-223.071-69.577-235.017c-26.004-3.273-43.412 9.668-70.117 23.086-60.118 30.204-149.382 27.607-170.476 38.313Q135.866-142.24 6.845-94.563" fill="#eb1000" fill-rule="evenodd"/></g></g></svg>

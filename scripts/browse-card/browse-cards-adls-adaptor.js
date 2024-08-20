@@ -1,5 +1,5 @@
 import browseCardDataModel from '../data-model/browse-cards-model.js';
-import { CONTENT_TYPES } from './browse-cards-constants.js';
+import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
 
 const { adlsUrl } = getConfig();

@@ -1,0 +1,115 @@
+.user-actions {
+    align-items: baseline;
+    display: flex;
+}
+
+.user-actions button {
+    align-items: center;
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-sizing: content-box;
+    color: inherit;
+    display: flex;
+    flex-wrap: wrap;
+    font-weight: inherit;
+    line-height: 1.75em;
+    margin: 0;
+    overflow: visible;
+    padding: 0;
+    position: relative;
+}
+
+.user-actions button:hover,
+.user-actions button:focus {
+    background-color: none;
+    cursor: pointer;
+}
+
+button:disabled, button:disabled:hover {
+    background: none;
+}
+
+.user-actions button .icon {
+    height: 20px;
+    width: 20px;
+}
+
+.user-actions button label {
+    color: var(--non-spectrum-grey);
+    cursor: pointer;
+    font-size: var(--spectrum-font-size-75);
+    font-weight: var(--font-weight-400);
+    line-height: 28px;
+    margin-left: 5px;
+    vertical-align: 5px;
+}
+
+.user-actions button:hover .icon {
+    background-color: var(--spectrum-gray-200);
+    border-radius: 4px;
+}
+
+.user-actions button .icon-bookmark-active {
+    height: 20px;
+    margin: 0 1px;
+    width: 18px;
+}
+
+.user-actions .action-tooltip {
+    background-color: var(--spectrum-gray-600);
+    border-radius: 4px;
+    bottom: 120%;
+    color: var(--spectrum-gray-50);
+    display: none;
+    font-size: 12px;
+    font-weight: var(--font-weight-400);
+    left: 50%;
+    padding: 2px 8px 4px;
+    position: absolute;
+    text-align: center;
+    text-wrap: nowrap;
+    transform: translateX(-50%);
+    transition: all 130ms ease-in-out;
+    white-space: pre;
+    z-index: 1;
+}
+
+.user-actions .action-tooltip::after {
+    border-width: 4px;
+    border-style: solid;
+    border-color: var(--spectrum-gray-600) transparent transparent transparent;
+    content: "";
+    left: 50%;
+    margin-left: -4px;
+    position: absolute;
+    top: 100%;
+}
+
+.user-actions .copy-link:hover .action-tooltip {
+    display: block;
+}
+
+.user-actions .bookmark .icon-bookmark-active {
+    display: none;
+}
+
+.user-actions .bookmark[data-bookmarked="true"] .icon-bookmark {
+    display: none;
+}
+
+.user-actions .bookmark[data-bookmarked="true"] .icon-bookmark-active {
+    display: block;
+}
+
+.user-actions .bookmark:hover .signedin-tooltip {
+    display: block;
+}
+
+.user-actions .bookmark[data-bookmarked="false"]:hover .bookmark-tooltip {
+    display: block;
+}
+
+.user-actions .bookmark[data-bookmarked="true"]:hover .remove-bookmark-tooltip {
+    display: block;
+}

@@ -19,4 +19,9 @@ export default function decorate(block) {
   `);
 
   block.replaceChildren(replacement);
+  if (wrapperId === 'recommendation-more-help') {
+    block.remove();
+    const lastSection = document.querySelector('.content-section-last');
+    lastSection?.append(block);
+  }
 }

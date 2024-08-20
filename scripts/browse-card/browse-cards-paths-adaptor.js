@@ -1,6 +1,7 @@
 import browseCardDataModel from '../data-model/browse-cards-model.js';
-import { CONTENT_TYPES, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
+import { RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
+import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
 const { recommendedCoursesUrl, prodAssetsCdnOrigin } = getConfig();
 /**
@@ -70,7 +71,7 @@ const BrowseCardsPathsAdaptor = (() => {
       ...browseCardDataModel,
       contentType,
       id: ID,
-      badgeTitle: CONTENT_TYPES.COURSE.LABEL,
+      badgeTitle: CONTENT_TYPES.PLAYLIST.LABEL,
       thumbnail: (Thumbnail || '').replace('/www/img', prodAssetsCdnOrigin) || '',
       inProgressStatus: inProgressValue || '0',
       product: Solution || '',

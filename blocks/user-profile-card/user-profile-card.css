@@ -11,6 +11,10 @@
     width: 100%;
 }
 
+body.profile .user-profile-card:not(.sign-up-flow-section .user-profile-card) {
+    max-width: none;
+}
+
 .user-profile-card-box {
     background: var(--spectrum-gray-50);
     border-radius: 4px;
@@ -29,9 +33,18 @@
         width: 387px;
     }
 
+    body.profile .user-profile-card-box:not(.sign-up-flow-section .user-profile-card-box) {
+        width: auto;
+    }
+
     .user-profile-card {
         max-width: 387px;
     }
+
+    body.profile .user-profile-card:not(.sign-up-flow-section .user-profile-card) {
+        max-width: none;
+    }
+    
 }
 @media (min-width: 900px) {    
     .sign-up-flow-section .user-profile-card-decor {

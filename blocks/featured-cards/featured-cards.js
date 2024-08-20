@@ -4,9 +4,10 @@ import { htmlToElement, toPascalCase, fetchLanguagePlaceholders, getPathDetails 
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import { CONTENT_TYPES, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
+import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { roleOptions } from '../browse-filters/browse-filter-utils.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
+import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 // eslint-disable-next-line import/no-cycle
 const ffetchModulePromise = import('../../scripts/ffetch.js');
 

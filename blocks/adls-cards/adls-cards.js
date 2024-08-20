@@ -4,7 +4,7 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
-import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
+import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 
 /**
  * Decorate function to process and log the mapped data.

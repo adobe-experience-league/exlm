@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+  <g id="Icon" transform="translate(-10 -7)">
+    <rect id="Canvas" width="18" height="18" transform="translate(10 7)" fill="#747474" opacity="0"/>
+    <path id="Path_597193" data-name="Path 597193" d="M9,1a8,8,0,1,0,8,8A8,8,0,0,0,9,1Zm4.268,8.43-6.013,3.5A.5.5,0,0,1,7,13H6.5a.5.5,0,0,1-.5-.5v-7A.5.5,0,0,1,6.5,5H7a.5.5,0,0,1,.255.07l6.013,3.5a.5.5,0,0,1,0,.86Z" transform="translate(10 7)" fill="#747474"/>
+  </g>
+</svg>

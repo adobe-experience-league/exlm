@@ -4,7 +4,7 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
-import { CONTENT_TYPES } from '../../scripts/browse-card/browse-cards-constants.js';
+import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 
 /**
  * formattedSolutionTags returns the solution type by stripping off the exl:solution/ string
@@ -100,45 +100,6 @@ export default async function decorate(block) {
     });
 
   /**
-   * convertTimeString convert the "time" string from events JSON to a comparable format
-   * @param {string} timeString - The "time" key in events json data.
-   * @returns The converted time compatible for comparsion between two "time" values.
-   */
-  const convertTimeString = (timeString) => {
-    const [, month, day, time] = timeString.match(/([A-Z]{3}) (\d{1,2}) \| (.+?) ([A-Z]{2})/);
-    const monthMap = {
-      JAN: 0,
-      FEB: 1,
-      MAR: 2,
-      APR: 3,
-      MAY: 4,
-      JUN: 5,
-      JUL: 6,
-      AUG: 7,
-      SEP: 8,
-      OCT: 9,
-      NOV: 10,
-      DEC: 11,
-    };
-
-    const currentMonth = new Date().getMonth();
-    const currentDay = new Date().getDate();
-    const currentYear = new Date().getFullYear();
-
-    // Calculate the event date
-    const eventDate = new Date(currentYear, monthMap[month], parseInt(day, 10), ...time.split(':').map(Number));
-
-    // Check if the event month is in the past, if so, add 1 to the year
-    if (
-      (currentYear === eventDate.getFullYear() && currentMonth > monthMap[month]) ||
-      (currentYear === eventDate.getFullYear() && currentMonth === monthMap[month] && currentDay > parseInt(day, 10))
-    ) {
-      eventDate.setFullYear(currentYear + 1);
-    }
-    return eventDate.getTime();
-  };
-
-  /**
    * fetchFilteredCardData filters the events data based on productFocus key in events JSON
    * @param {string} data - The events json data.
    * @param {string} params - The solutions tag parameter(s) from AEM UE.
@@ -152,7 +113,7 @@ export default async function decorate(block) {
       if (solutionsList.length === 0 || solutionsList.some((param) => param === '')) {
         return eventData.data
           .filter((card) => card.event.time)
-          .sort((card1, card2) => convertTimeString(card1.event.time) - convertTimeString(card2.event.time));
+          .sort((card1, card2) => new Date(card1.event.time) - new Date(card2.event.time));
       }
 
       const solutionParam = solutionsList.map((parameter) => {
@@ -171,7 +132,7 @@ export default async function decorate(block) {
       // Sort events by startTime in ascending order
       return filteredData
         .filter((card) => card.event.time)
-        .sort((card1, card2) => convertTimeString(card1.event.time) - convertTimeString(card2.event.time));
+        .sort((card1, card2) => new Date(card1.event.time) - new Date(card2.event.time));
     }
     // In case of invalid solution param, return empty results.
     return [];

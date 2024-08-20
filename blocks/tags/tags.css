@@ -2,16 +2,19 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--spectrum-gray-300);
 }
 
-.article-tags-topics, .article-tags-createdFor {
+.article-tags-product, .article-tags-topics, .article-tags-createdFor {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
 }
 
-.article-tags-topics-heading, .article-tags-createdFor-heading {
+.article-tags-product-heading, .article-tags-topics-heading, .article-tags-createdFor-heading {
   font-size: var(--spectrum-body-size-xs);
   font-weight: 700;
 }
