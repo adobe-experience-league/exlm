@@ -393,18 +393,12 @@ position: relative;
 margin-top: 0;
 
 .icon-close {
-    width: 13px;
-    height: auto;
+    background: url('../../icons/close.svg') no-repeat;
+    background-size: 13px;
     position: absolute;
-    right: 6px;
+    right: -5px;
     top: 50%;
     transform: translateY(-6px);
-
-    svg{
-        fill: var(--spectrum-gray-500);
-        height: 13px;
-        width: 13px;
-    }
 }
 }
 

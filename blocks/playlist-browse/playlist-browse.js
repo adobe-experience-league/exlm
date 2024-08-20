@@ -316,7 +316,6 @@ class Filter {
     Object.entries(this.filters).forEach(([legend, filterValues]) => {
       filterValues.forEach((value) => {
         const filterOption = filterOptions.find((f) => f.filterName === legend);
-
         const filterValuePlaceholderKey = filterOption?.optionPlaceholders?.find(
           (o) => o?.label?.toLowerCase() === value?.toLowerCase(),
         )?.placeholder;
@@ -340,7 +339,6 @@ class Filter {
         });
       });
     });
-    decorateIcons(filterPills);
   };
 
   updateUI = () => {
