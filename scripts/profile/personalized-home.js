@@ -54,6 +54,9 @@ export default function classifyProfileAndFetchContent() {
           section.remove();
         }
       });
+      document.body.appendChild(
+        htmlToElement('<div class="profile-background" role="presentation" aria-hidden="true"></div>'),
+      );
       defaultProfileClient
         .getMergedProfile()
         .then((profileData) => {

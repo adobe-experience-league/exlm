@@ -1336,9 +1336,7 @@ async function loadPage() {
 
   if (isProfilePage()) {
     await loadDefaultModule(`${window.hlx.codeBasePath}/scripts/profile/profile.js`);
-    document.body.appendChild(
-      htmlToElement('<div class="profile-background" role="presentation" aria-hidden="true"></div>'),
-    );
+    document.body.classList.remove('loading');
   }
 
   if (isDocArticlePage()) {
@@ -1375,6 +1373,7 @@ if (!window.hlx.DO_NOT_LOAD_PAGE) {
   const { lang } = getPathDetails();
   document.documentElement.lang = lang || 'en';
   if (isProfilePage()) {
+    document.body.classList.add('loading');
     if (window.location.href.includes('.html')) {
       loadPage();
     } else {

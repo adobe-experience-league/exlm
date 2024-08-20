@@ -1,12 +1,16 @@
 body.profile {
+  background-color: var(--background-color);
+}
+
+body.profile-home-page {
   background-color: var(--spectrum-gray-100);
 }
 
-body.profile > main {
+body.profile-home-page > main {
   min-height: 500px;
 }
 
-body.profile .profile-background {
+body.profile-home-page .profile-background {
   position: absolute;
   overflow: hidden;
   left: 0;
@@ -15,7 +19,7 @@ body.profile .profile-background {
   top: var(--nav-height);
 }
 
-body.profile .profile-background::before {
+body.profile-home-page .profile-background::before {
   content: "";
   position: absolute;
   top: -113px;
@@ -28,51 +32,129 @@ body.profile .profile-background::before {
   z-index: -1;
 }
 
-body.profile .section:not(.sign-up-flow-section) {
+body.profile .section .product-experience-level-wrapper ~ .default-content-wrapper p {
+  text-align: center;
+}
+
+body.profile .section .product-experience-level-wrapper + .default-content-wrapper {
+  margin-top: 50px;
+}
+
+body.profile .section[data-two-column-layout] > div:nth-child(2) {
+  border-top: 0;
+}
+
+body.profile .section:not(.profile-rail-section, .sign-up-flow-section) {
+  margin: 0 12px 24px;
+  padding: 24px 24px 32px;
+  border-radius: 20px;
+  background-color: var(--non-spectrum-bg);
+  border: 1px solid #d5d5d5;
+}
+
+body.profile-home-page .section:not(.sign-up-flow-section) {
+  border-radius: unset;
+  background-color: unset;
+  border: unset;
   margin: 0 20px;
   padding: 40px 0;
   border-bottom: 1px solid var(--spectrum-gray-300);
 }
 
-body.profile .section.profile-rail-section:not(.sign-up-flow-section) {
+body.profile.loading .section:not(.profile-rail-section, .sign-up-flow-section) {
+  visibility: hidden;
+}
+
+body.profile-home-page .section.profile-rail-section:not(.sign-up-flow-section) {
   padding: 24px 0;
 }
 
-body.profile .section:not(.sign-up-flow-section):first-child,
-body.profile .section:not(.sign-up-flow-section):last-child {
+body.profile-home-page .section:not(.sign-up-flow-section):first-child,
+body.profile-home-page .section:not(.sign-up-flow-section):last-child {
   border: none;
 }
 
-body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper) {
-  padding-bottom: 40px;
-}
-
-body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper):last-child {
-  padding-bottom: 0;
-}
-
-body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) {
+body.profile .section:not(.profile-rail-section, .sign-up-flow-section) .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) {
   color: var(--spectrum-gray-900);
 }
 
-body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) .default-content-wrapper > p {
+body.profile:not(.profile-home-page) .section:not(.profile-rail-section, .sign-up-flow-section) .default-content-wrapper :where(h1, h2, h3, h4, h5, h6):first-child {
+  font-size: 12px;
+}
+
+body.profile .section:not(.profile-rail-section, .sign-up-flow-section) h2,
+body.profile .section:not(.profile-rail-section, .sign-up-flow-section) h3 {
+  margin-top: 12px;
+}
+
+body.profile .section:not(.profile-rail-section, .sign-up-flow-section) .default-content-wrapper > p {
   line-height: 22px;
 }
 
+body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper) {
+  padding-bottom: 40px;
+}
+
+body.profile:not(.profile-home-page) .section:not(.profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper) {
+  width: 100%;
+  padding: 32px 0;
+  border-top: 1px solid #d6d6d6;
+}
+
+body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.user-profile-card-wrapper,
+body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.product-experience-level-wrapper {
+  border-top: 0;
+}
+
+body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper):last-child {
+  padding-bottom: 0;
+}
+
+body.profile .section:not(.profile-rail-section, .sign-up-flow-section):last-child {
+  margin-bottom: 60px;
+}
+
+body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper):last-child {
+  padding-bottom: 0;
+}
+
 @media (min-width: 600px) {
-  body.profile .profile-background {
+  body.profile-home-page .profile-background {
     height: 145px;
   }
-  body.profile .profile-background::before {
+  body.profile-home-page .profile-background::before {
     top: -167px;
     width: 145px;
     height: 452px;
   }
-  body.profile .section:not(.sign-up-flow-section) {
+  body.profile .section:not(.profile-rail-section, .sign-up-flow-section) {
+    margin: 0 16px 24px;
+    padding: 48px 52px 64px;
+  }
+  body.profile .section[data-two-column-layout] {
+    display: grid;
+    gap: 10px;
+    grid-template: ". ." auto "normal-flow normal-flow" auto/1fr 1fr;
+  }
+  body.profile .section[data-two-column-layout] > div:nth-child(1) {
+    height: 100%;
+    margin-right: 20px;
+  }
+  body.profile .section[data-two-column-layout] > div:nth-child(1) > *:first-child {
+    margin-top: 0;
+  }
+  body.profile .section[data-two-column-layout] > div:nth-child(2) {
+    padding-top: 0;
+    margin: 0 auto;
+  }
+  body.profile .section[data-two-column-layout] > div:nth-child(n+3) {
+    grid-area: normal-flow;
+  }
+  body.profile-home-page .section:not(.sign-up-flow-section) {
     margin: 0 24px;
     padding: 48px 0;
   }
-  body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper) {
+  body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper) {
     padding-bottom: 48px;
   }
 }
@@ -84,33 +166,39 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-
     max-width: var(--non-spectrum-max-width);
     grid-template-columns: minmax(100px, 25%) 1fr;
   }
-  body.profile .profile-background {
+  body.profile-home-page .profile-background {
     left: auto;
     right: 0;
     height: 452px;
     width: 145px;
   }
-  body.profile .profile-background::before {
+  body.profile-home-page .profile-background::before {
     top: 0;
     left: 0;
     transform: none;
   }
-  body.profile .section:not(.sign-up-flow-section) {
-    margin: 0 32px;
-    padding: 64px 0;
-  }
-  body.profile .section.profile-rail-section {
+  body.profile > main > .section.profile-rail-section {
     grid-column: 1;
     padding: 0;
     margin-right: 0;
     margin-top: 88px;
   }
-  body.profile .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(3) {
+  body.profile .section[data-two-column-layout]:nth-child(3) > div:nth-child(1) {
+    margin-top: 28px;
+  }
+  body.profile .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(2) {
     margin-top: 80px;
+  }
+  body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(2) {
     padding-top: 0;
   }
-  body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper) {
-    padding-bottom: 64px;
+  body.profile .section:not(.profile-rail-section, .sign-up-flow-section) {
+    margin-bottom: 32px;
+  }
+  body.profile:not(.profile-home-page) .section:nth-child(2):not(.sign-up-flow-section) {
+    background-image: url("/icons/solutions/profileDecoration.svg");
+    background-repeat: no-repeat;
+    padding-top: 60px;
   }
   body.profile div.profile-rail-wrapper {
     position: absolute;
@@ -123,5 +211,10 @@ body.profile .section:not(.profile-tab-section, .profile-rail-section, .sign-up-
     position: sticky;
     top: 10px;
     margin-left: 54px;
+  }
+}
+@media (min-width: 1200px) {
+  body.profile:not(.profile-home-page) .section:not(.profile-rail-section, .sign-up-flow-section) {
+    padding: 60px 100px 80px;
   }
 }
