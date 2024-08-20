@@ -48,6 +48,13 @@ export default async function decorate(block) {
     const communityUserTitle = communityProfileData?.title || '';
     const communityUserLocation = communityProfileData?.location || '';
 
+    const roleMappings = {
+      Developer: placeholders?.roleCardDeveloperTitle || 'Developer',
+      User: placeholders?.roleCardUserTitle || 'Business User',
+      Leader: placeholders?.roleCardBusinessLeaderTitle || 'Business Leader',
+      Admin: placeholders?.roleCardAdministratorTitle || 'Administrator',
+    };
+
     const hasInterests =
       interests &&
       ((Array.isArray(interests) && interests.length > 0) ||
@@ -112,7 +119,9 @@ export default async function decorate(block) {
                   <div class="profile-user-card-details">
                     <div class="profile-user-card-role">
                     <span class="heading">${placeholders?.myRole || 'MY ROLE: '}</span>
-                    <span class="${!hasInterests ? 'incompleteProfile' : ''}">${roles.join(' | ')}</span>
+                    <span class="${!hasInterests ? 'incompleteProfile' : ''}">${roles
+                      .map((role) => roleMappings[role] || role)
+                      .join(' | ')}</span>
                     </div>
                     <div class="profile-user-card-industry">
                       <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY: '}</span>
