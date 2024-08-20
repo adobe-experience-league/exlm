@@ -3,25 +3,16 @@ import { createPlaceholderSpan, decoratePlaceholders, getPathDetails, htmlToElem
 import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.js';
 
 const EXPERIENCE_LEVEL_PLACEHOLDERS = [
-  {
-    label: 'Beginner',
-    placeholder: 'filter-exp-level-beginner-title',
-  },
-  {
-    label: 'Intermediate',
-    placeholder: 'filter-exp-level-intermediate-title',
-  },
-  {
-    label: 'Experienced',
-    placeholder: 'filter-exp-level-experienced-title',
-  },
+  { label: 'Beginner', placeholder: 'filterExpLevelBeginnerTitle' },
+  { label: 'Intermediate', placeholder: 'filterExpLevelIntermediateTitle' },
+  { label: 'Experienced', placeholder: 'filterExpLevelExperiencedTitle' },
 ];
 
 const ROLE_PLACEHOLDERS = [
-  { label: 'Developer', placeholder: 'filter-role-developer-title' },
-  { label: 'User', placeholder: 'filter-role-user-title' },
-  { label: 'Leader', placeholder: 'filter-role-leader-title' },
-  { label: 'Admin', placeholder: 'filter-role-admin-title' },
+  { label: 'Developer', placeholder: 'filterRoleDeveloperTitle' },
+  { label: 'User', placeholder: 'filterRoleUserTitle' },
+  { label: 'Leader', placeholder: 'filterRoleLeaderTitle' },
+  { label: 'Admin', placeholder: 'filterRoleAdminTitle' },
 ];
 
 async function fetchPlaylists() {
@@ -34,18 +25,18 @@ const sortAlphanumerically = (a, b) => a.localeCompare(b);
 
 const playlistsPromise = fetchPlaylists();
 const filterOptions = [
-  { legend: 'Product', filterName: 'solution', placeholderKey: 'filter-product-label', sort: sortAlphanumerically },
+  { legend: 'Product', filterName: 'solution', placeholderKey: 'filterProductLabel', sort: sortAlphanumerically },
   {
     legend: 'Role',
     filterName: 'role',
-    placeholderKey: 'filter-role-label',
+    placeholderKey: 'filterRoleLabel',
     optionPlaceholders: ROLE_PLACEHOLDERS,
     sort: sortAlphanumerically,
   },
   {
     legend: 'Experience Level',
     filterName: 'level',
-    placeholderKey: 'filter-experience-level-label',
+    placeholderKey: 'filterExperienceLevelLabel',
     optionPlaceholders: EXPERIENCE_LEVEL_PLACEHOLDERS,
     sort: (a, b) => {
       const levels = ['Beginner', 'Intermediate', 'Experienced'];

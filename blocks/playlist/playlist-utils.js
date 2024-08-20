@@ -3,16 +3,16 @@
 import { pushVideoEvent } from '../../scripts/analytics/lib-analytics.js';
 
 export const LABELS = {
-  tutorials: 'playlist-tutorials',
+  tutorials: 'playlistTutorials',
   playlist: 'playlist',
-  nowViewing: 'playlist-now-viewing',
-  autoPlayNextVideo: 'playlist-autoplay-next-video',
-  transcript: 'playlist-transcript',
-  bookmarkPlaylist: 'playlist-bookmark-playlist',
-  copyPlaylistLink: 'playlist-copy-playlist-link',
-  aboutPlaylist: 'playlist-about-playlist',
-  transcriptNotAvailable: 'playlist-transcript-not-available',
-  courseReplacedNotice: 'playlist-course-replaced-notice',
+  nowViewing: 'playlistNowViewing',
+  autoPlayNextVideo: 'playlistAutoplayNextVideo',
+  transcript: 'playlistTranscript',
+  bookmarkPlaylist: 'playlistBookmarkPlaylist',
+  copyPlaylistLink: 'playlistCopyPlaylistLink',
+  aboutPlaylist: 'playlistAboutPlaylist',
+  transcriptNotAvailable: 'playlistTranscriptNotAvailable',
+  courseReplacedNotice: 'playlistCourseReplacedNotice',
 };
 
 /**
