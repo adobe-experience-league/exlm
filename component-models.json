@@ -3462,7 +3462,7 @@
     ]
   },
   {
-    "id": "profile-welcome-block",
+    "id": "profile-welcome",
     "fields": [
       {
         "component": "text",
