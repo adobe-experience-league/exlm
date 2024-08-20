@@ -34,8 +34,12 @@ export function newMultiSelect({ options = [], onSelect }) {
       <div class="filter-option">    
           <input type="checkbox"  id="${value}" value="${value}" ${checked ? 'checked' : ''} />
           <label for="${value}">
-            <span class="title" data-placeholder="${labelPlaceholderKey}">${label}</span>
-            <span class="description">${description}</span>
+            <div class="title">
+              <span data-placeholder="${labelPlaceholderKey}">${label}</span>
+            </div>
+            <div class="description">
+              <span data-placeholder="${description}"></span>
+            </div>
             <span class="icon icon-checked"></span>
           </label>  
       </div>     

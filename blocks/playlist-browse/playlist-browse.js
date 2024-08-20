@@ -6,18 +6,17 @@ const EXPERIENCE_LEVEL_PLACEHOLDERS = [
   {
     label: 'Beginner',
     placeholder: 'filter-exp-level-beginner-title',
-    description: 'Minimal experience and foundational understanding of a subject.',
+    description: 'filter-exp-level-beginner-description',
   },
   {
     label: 'Intermediate',
     placeholder: 'filter-exp-level-intermediate-title',
-    description: 'Moderate level of expertise, with some understanding of core concepts and skills.',
+    description: 'filter-exp-level-intermediate-description',
   },
   {
     label: 'Experienced',
     placeholder: 'filter-exp-level-experienced-title',
-    description:
-      'High degree of proficiency with an advanced understanding of concepts and skill. Regularly manages complex tasks and objectives.',
+    description: 'filter-exp-level-experienced-description',
   },
 ];
 
@@ -25,25 +24,22 @@ const ROLE_PLACEHOLDERS = [
   {
     label: 'Developer',
     placeholder: 'filter-role-developer-title',
-    description:
-      "Responsible for engineering Adobe solutions' implementation, integration, data-modeling, data engineering, and other technical skills.",
+    description: 'filter-role-developer-description',
   },
   {
     label: 'User',
     placeholder: 'filter-role-user-title',
-    description:
-      'Responsible for utilizing Adobe solutions to achieve daily job functions, complete tasks, and achieve business objectives.',
+    description: 'filter-role-user-description',
   },
   {
     label: 'Leader',
     placeholder: 'filter-role-leader-title',
-    description: 'Responsible for owning the digital strategy and accelerating value through Adobe solutions.',
+    description: 'filter-role-leader-description',
   },
   {
     label: 'Admin',
     placeholder: 'filter-role-admin-title',
-    description:
-      'Responsible for the technical operations, configuration, permissions, management, and support needs of Adobe solutions.',
+    description: 'filter-role-admin-description',
   },
 ];
 
@@ -345,9 +341,11 @@ class Filter {
     this.filterContainer = htmlToElement('<div class="playlist-filter-container"></div>');
     this.filterPill = htmlToElement('<div class="filter-pill-container"></div>');
     this.filterWrapper = htmlToElement(
-      '<div class="playlist-filter-wrapper"><label class="playlist-filter-label">Filters</label></div>',
+      `<div class="playlist-filter-wrapper"><label class="playlist-filter-label"><span data-placeholder="${'filter-label'}"></span></label></div>`,
     );
-    this.clearButton = htmlToElement(`<button class="filters-clear">Clear filters</button>`);
+    this.clearButton = htmlToElement(
+      `<button class="filters-clear"><span data-placeholder="${'filter-clear-label'}"></span></button>`,
+    );
 
     const filterOptionsPromises = filterOptions.map(
       ({ legend, filterName, placeholderKey, optionPlaceholders, sort }) => {
@@ -384,20 +382,20 @@ class Filter {
         this.filterContainer.append(this.filterWrapper);
         this.filterContainer.append(this.filterPill);
         this.block.append(this.filterContainer);
+        decoratePlaceholders(this.filterWrapper);
 
         return getAllPossibleFilterValues(filterName).then((filterValues) => {
           const sortedValues = filterValues.sort(sort);
           sortedValues.forEach((filterValue) => {
-            const filterValuePlaceholderKey = optionPlaceholders?.find(
+            const sortFilterValue = optionPlaceholders?.find(
               (o) => o?.label?.toLowerCase() === filterValue?.toLowerCase(),
-            )?.placeholder;
-            const filterDescription = optionPlaceholders?.find(
-              (o) => o?.label?.toLowerCase() === filterValue?.toLowerCase(),
-            )?.description;
+            );
+            const filterValuePlaceholderKey = sortFilterValue?.placeholder;
+            const filterDescriptionPlaceholderKey = sortFilterValue?.description;
 
             addOption({
               label: filterValue,
-              description: filterDescription || '',
+              description: filterDescriptionPlaceholderKey || '',
               labelPlaceholderKey: filterValuePlaceholderKey || filterValue,
               value: filterValue,
               checked: this.filters[filterName].includes(filterValue),
