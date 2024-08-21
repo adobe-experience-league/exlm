@@ -3460,5 +3460,72 @@
         "label": "Role and Industry Description"
       }
     ]
+  },
+  {
+    "id": "profile-welcome",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "value": "",
+        "label": "Profile welcome block eyebrow text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Profile welcome block heading"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Profile welcome block description"
+      },
+      {
+        "component": "select",
+        "name": "profileCtaType",
+        "value": "primary",
+        "label": "Profile CTA Type",
+        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "profileCtaText",
+        "value": "",
+        "label": "Profile CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "profileCtaLink",
+        "value": "",
+        "label": "Profile CTA Link",
+        "description": "What link to open when clicking the button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "incompleteProfileText",
+        "value": "",
+        "label": "Text to be shown for incomplete profile."
+      }
+    ]
   }
 ]

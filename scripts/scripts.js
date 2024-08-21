@@ -288,18 +288,6 @@ function addProfileRail(main) {
 }
 
 /**
- * Add a nav tab to the profile page.
- * @param {HTMLElement} main
- *
- */
-function addProfileTab(main) {
-  const profileTabSection = document.createElement('div');
-  profileTabSection.classList.add('profile-tab-section');
-  profileTabSection.append(buildBlock('profile-tab', []));
-  main.prepend(profileTabSection);
-}
-
-/**
  * Add a mini TOC to the article page.
  * @param {HTMLElement} main
  */
@@ -387,7 +375,6 @@ function buildAutoBlocks(main) {
       addMiniToc(main);
     }
     if (isProfilePage()) {
-      addProfileTab(main);
       addProfileRail(main);
     }
   } catch (error) {
@@ -1346,6 +1333,11 @@ async function loadPage() {
   loadDelayed();
   showBrowseBackgroundGraphic();
 
+  if (isProfilePage()) {
+    await loadDefaultModule(`${window.hlx.codeBasePath}/scripts/profile/personalized-home.js`);
+    document.body.classList.remove('loading');
+  }
+
   if (isDocArticlePage()) {
     // wrap main content in a div - UGP-11165
     const main = document.querySelector('main');
@@ -1380,6 +1372,7 @@ if (!window.hlx.DO_NOT_LOAD_PAGE) {
   const { lang } = getPathDetails();
   document.documentElement.lang = lang || 'en';
   if (isProfilePage()) {
+    document.body.classList.add('loading');
     if (window.location.href.includes('.html')) {
       loadPage();
     } else {
