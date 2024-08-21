@@ -10,13 +10,15 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-function decorateButton(profileCtaType, profileCtaText, profileCtaLink) {
-  if (!profileCtaLink) return '';
-  const a = document.createElement('a');
-  a.classList.add('button', profileCtaType === 'primary' ? 'primary' : 'secondary');
-  a.href = profileCtaLink;
-  a.textContent = profileCtaText;
-  return a.outerHTML;
+function decorateButton(button) {
+  const a = button.querySelector('a');
+      if (a) {
+        a.classList.add('button');
+        if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
+        if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
+        return a.outerHTML;
+      }
+      return '';
 }
 
 export default async function decorate(block) {
@@ -24,9 +26,7 @@ export default async function decorate(block) {
     profileEyebrowText,
     profileHeading,
     profileDescription,
-    profileCtaType,
-    profileCtaText,
-    profileCtaLink,
+    profileCta,
     incompleteProfileText,
   ] = block.querySelectorAll(':scope div > div');
 
@@ -70,7 +70,7 @@ export default async function decorate(block) {
       industryContent = `
           <div class="profile-user-card-industry">
             <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
-            <span class="${!hasInterests ? 'incompleteProfile' : ''}">
+            <span class="${!hasInterests ? 'incomplete-profile' : ''}">
               ${Array.isArray(industry) ? industry.join(', ') : industry}
             </span>
           </div>`;
@@ -78,7 +78,7 @@ export default async function decorate(block) {
       industryContent = `
           <div class="profile-user-card-industry">
             <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
-            <span class="${!hasInterests ? 'incompleteProfile' : ''}">
+            <span class="${!hasInterests ? 'incomplete-profile' : ''}">
               ${placeholders?.unknown || 'Unknown'}
             </span>
           </div>`;
@@ -119,14 +119,14 @@ export default async function decorate(block) {
                       ${
                         communityUserTitle
                           ? `<div class="profile-user-card-title">
-                      <span class="heading">${placeholders?.title || 'TITLE'}: </span>${communityUserTitle}</div>`
+                      <span class="heading">${placeholders?.title || 'TITLE'}: </span><span class="content">${communityUserTitle}</span></div>`
                           : ''
                       }
                       ${
                         communityUserLocation
                           ? `<div class="profile-user-card-location"><span class="heading">${
                               placeholders?.location || 'LOCATION'
-                            }: </span>${communityUserLocation}</div>`
+                            }: </span><span class="content">${communityUserLocation}</span></div>`
                           : ''
                       }
                       </div>
@@ -143,22 +143,20 @@ export default async function decorate(block) {
                   <div class="profile-user-card-details">
                     <div class="profile-user-card-role">
                     <span class="heading">${placeholders?.myRole || 'MY ROLE'}: </span>
-                    <span class="${!hasInterests ? 'incompleteProfile' : ''}">${roles
+                    <span class="${!hasInterests ? 'incomplete-profile' : 'content'}">${roles
                       .map((role) => roleMappings[role] || role)
                       .join(' | ')}</span>
                     </div>
                     ${industryContent}
                     <div class="profile-user-card-interests">
                       <span class="heading">${placeholders?.myInterests || 'MY INTERESTS'}: </span>
-                      <span class="${!hasInterests ? 'incompleteProfile' : ''}">
+                      <span class="${!hasInterests ? 'incomplete-profile' : 'content'}">
                         ${!hasInterests ? placeholders?.unknown || 'Unknown' : interests.join(' | ')}
                       </span>
                     </div>
                   </div>
                     <div class="profile-user-card-cta">${decorateButton(
-                      profileCtaType.innerHTML,
-                      profileCtaText.innerHTML,
-                      profileCtaLink.innerHTML,
+                      profileCta
                     )}</div>
                 </div>    
         </div>

@@ -19,11 +19,8 @@
 }
 
 .profile-welcome .profile-curated-card .profile-curated-card-heading {
-    font-size: var(--spectrum-font-size-900);
-    font-weight: var(--font-weight-700);
     color: var(--spectrum-gray-900);
     margin-top: 8px;
-    line-height: 57px;
     text-align: center;
 }
 
@@ -99,12 +96,14 @@
     font-weight: var(--font-weight-700);
     color: var(--spectrum-gray-900);
     text-transform: uppercase;
+    line-height: 15px;
 }
 
-.profile-welcome .profile-user-card-left .profile-user-card-title, .profile-user-card-location {
-    font-size: var(--spectrum-font-size-100);;
+.profile-welcome .profile-user-card-left .profile-user-card-title .content, .profile-user-card-location .content {
+    font-size: var(--spectrum-font-size-100);
     color: var(--spectrum-gray-800);
     font-weight: var(--font-weight-400);
+    line-height: 17px;
 }
 
 .profile-welcome .profile-user-card-left .profile-user-card-incomplete {
@@ -115,8 +114,12 @@
     gap: 8px;
 }
 
-.profile-welcome .profile-user-card-right .profile-user-card-role .incompleteProfile, .profile-user-card-industry .incompleteProfile, .profile-user-card-interests .incompleteProfile {
+.profile-welcome .profile-user-card-right .profile-user-card-role .incomplete-profile, .profile-user-card-industry .incomplete-profile, .profile-user-card-interests .incomplete-profile {
     font-style: italic;
+    line-height: 17px;
+    font-size: var(--spectrum-font-size-100);
+    color: var(--spectrum-gray-800);
+    font-weight: var(--font-weight-400);
 }
 
 .profile-welcome .profile-user-card-right .profile-user-card-role .heading, .profile-user-card-industry .heading, .profile-user-card-interests .heading {
@@ -127,8 +130,8 @@
     line-height: 15px;
 }
 
-.profile-welcome .profile-user-card-right .profile-user-card-role, .profile-user-card-industry, .profile-user-card-interests {
-    font-size: var(--spectrum-font-size-100);;
+.profile-welcome .profile-user-card-right .profile-user-card-role .content, .profile-user-card-industry .content, .profile-user-card-interests .content {
+    font-size: var(--spectrum-font-size-100);
     color: var(--spectrum-gray-800);
     font-weight: var(--font-weight-400);
     line-height: 17px;
