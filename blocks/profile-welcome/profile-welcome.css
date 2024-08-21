@@ -25,12 +25,9 @@
 }
 
 .profile-welcome .profile-curated-card .profile-curated-card-description {
-    font-size: var(--spectrum-font-size-400);
-    font-weight: var(--font-weight-400);
     color: var(--spectrum-gray-800);
     margin-top: 16px;
     text-align: center;
-    line-height: 25px;
 }
 
 .profile-welcome .profile-curated-card {
@@ -91,7 +88,7 @@
     height: 75px;
 }
 
-.profile-welcome .profile-user-card-left .profile-user-card-title .heading, .profile-user-card-location .heading {
+.profile-welcome .profile-user-card-left .profile-user-card-title .title-heading, .profile-user-card-location .location-heading {
     font-size: var(--spectrum-font-size-75);
     font-weight: var(--font-weight-700);
     color: var(--spectrum-gray-900);
@@ -122,7 +119,7 @@
     font-weight: var(--font-weight-400);
 }
 
-.profile-welcome .profile-user-card-right .profile-user-card-role .heading, .profile-user-card-industry .heading, .profile-user-card-interests .heading {
+.profile-welcome .profile-user-card-right .profile-user-card-role .role-heading, .profile-user-card-industry .industry-heading, .profile-user-card-interests .interest-heading {
     font-size: var(--spectrum-font-size-75);
     font-weight: var(--font-weight-700);
     color: var(--spectrum-gray-900);
@@ -145,7 +142,7 @@
     line-height: 22px;
 }
 
-.profile-welcome.profile-user-card .profile-user-card-left .profile-user-card-communityInfo {
+.profile-welcome.profile-user-card .profile-user-card-left .profile-user-card-community-info {
     margin-bottom: 8px;
 }
 
@@ -230,7 +227,7 @@
         max-width: none;
     }
 
-    .profile-welcome .profile-curated-card .profile-curated-card-eyebrowtext {
+    .profile-welcome .profile-curated-card .profile-curated-eyebrowtext {
         text-align: left;
     }
 

@@ -64,7 +64,7 @@ export default async function decorate(block) {
     if (hasIndustry) {
       industryContent = `
           <div class="profile-user-card-industry">
-            <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
+            <span class="industry-heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
             <span class="${!hasInterests ? 'incomplete-profile' : ''}">
               ${Array.isArray(industry) ? industry.join(', ') : industry}
             </span>
@@ -72,7 +72,7 @@ export default async function decorate(block) {
     } else if (!hasInterests) {
       industryContent = `
           <div class="profile-user-card-industry">
-            <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
+            <span class="industry-heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
             <span class="${!hasInterests ? 'incomplete-profile' : ''}">
               ${placeholders?.unknown || 'Unknown'}
             </span>
@@ -81,7 +81,7 @@ export default async function decorate(block) {
 
     const profileWelcomeBlock = document.createRange().createContextualFragment(`
         <div class="profile-curated-card">
-                <div class="profile-curated-card-eyebrowtext">
+                <div class="profile-curated-eyebrowtext">
                 ${profileEyebrowText.innerHTML.replace('{adobeIMS.first_name}', adobeFirstName)}
                 </div>
                 <div class="profile-curated-card-heading">
@@ -110,18 +110,18 @@ export default async function decorate(block) {
                 ${
                   hasInterests
                     ? `
-                    <div class="profile-user-card-communityInfo">
+                    <div class="profile-user-card-community-info">
                       ${
                         communityUserTitle
                           ? `<div class="profile-user-card-title">
-                      <span class="heading">${
+                      <span class="title-heading">${
                         placeholders?.title || 'TITLE'
                       }: </span><span class="content">${communityUserTitle}</span></div>`
                           : ''
                       }
                       ${
                         communityUserLocation
-                          ? `<div class="profile-user-card-location"><span class="heading">${
+                          ? `<div class="profile-user-card-location"><span class="location-heading">${
                               placeholders?.location || 'LOCATION'
                             }: </span><span class="content">${communityUserLocation}</span></div>`
                           : ''
@@ -139,14 +139,14 @@ export default async function decorate(block) {
                 <div class="profile-user-card-right">
                   <div class="profile-user-card-details">
                     <div class="profile-user-card-role">
-                    <span class="heading">${placeholders?.myRole || 'MY ROLE'}: </span>
+                    <span class="role-heading">${placeholders?.myRole || 'MY ROLE'}: </span>
                     <span class="${!hasInterests ? 'incomplete-profile' : 'content'}">${roles
                       .map((role) => roleMappings[role] || role)
                       .join(' | ')}</span>
                     </div>
                     ${industryContent}
                     <div class="profile-user-card-interests">
-                      <span class="heading">${placeholders?.myInterests || 'MY INTERESTS'}: </span>
+                      <span class="interest-heading">${placeholders?.myInterests || 'MY INTERESTS'}: </span>
                       <span class="${!hasInterests ? 'incomplete-profile' : 'content'}">
                         ${!hasInterests ? placeholders?.unknown || 'Unknown' : interests.join(' | ')}
                       </span>
