@@ -12,23 +12,18 @@ try {
 
 function decorateButton(button) {
   const a = button.querySelector('a');
-      if (a) {
-        a.classList.add('button');
-        if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
-        if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
-        return a.outerHTML;
-      }
-      return '';
+  if (a) {
+    a.classList.add('button');
+    if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
+    if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
+    return a.outerHTML;
+  }
+  return '';
 }
 
 export default async function decorate(block) {
-  const [
-    profileEyebrowText,
-    profileHeading,
-    profileDescription,
-    profileCta,
-    incompleteProfileText,
-  ] = block.querySelectorAll(':scope div > div');
+  const [profileEyebrowText, profileHeading, profileDescription, profileCta, incompleteProfileText] =
+    block.querySelectorAll(':scope div > div');
 
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
@@ -119,7 +114,9 @@ export default async function decorate(block) {
                       ${
                         communityUserTitle
                           ? `<div class="profile-user-card-title">
-                      <span class="heading">${placeholders?.title || 'TITLE'}: </span><span class="content">${communityUserTitle}</span></div>`
+                      <span class="heading">${
+                        placeholders?.title || 'TITLE'
+                      }: </span><span class="content">${communityUserTitle}</span></div>`
                           : ''
                       }
                       ${
@@ -155,9 +152,7 @@ export default async function decorate(block) {
                       </span>
                     </div>
                   </div>
-                    <div class="profile-user-card-cta">${decorateButton(
-                      profileCta
-                    )}</div>
+                    <div class="profile-user-card-cta">${decorateButton(profileCta)}</div>
                 </div>    
         </div>
         `);
