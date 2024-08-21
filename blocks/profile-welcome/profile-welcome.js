@@ -1,5 +1,6 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 let placeholders = {};
 try {
@@ -95,14 +96,14 @@ export default async function decorate(block) {
                       ${
                         communityUserTitle
                           ? `<div class="profile-user-card-title">
-                      <span class="heading">${placeholders?.title || 'TITLE: '}</span>${communityUserTitle}</div>`
+                      <span class="heading">${placeholders?.title || 'TITLE'}: </span>${communityUserTitle}</div>`
                           : ''
                       }
                       ${
                         communityUserLocation
                           ? `<div class="profile-user-card-location"><span class="heading">${
-                              placeholders?.location || 'LOCATION: '
-                            }</span>${communityUserLocation}</div>`
+                              placeholders?.location || 'LOCATION'
+                            }: </span>${communityUserLocation}</div>`
                           : ''
                       }
                       </div>
@@ -118,19 +119,19 @@ export default async function decorate(block) {
                 <div class="profile-user-card-right">
                   <div class="profile-user-card-details">
                     <div class="profile-user-card-role">
-                    <span class="heading">${placeholders?.myRole || 'MY ROLE: '}</span>
+                    <span class="heading">${placeholders?.myRole || 'MY ROLE'}: </span>
                     <span class="${!hasInterests ? 'incompleteProfile' : ''}">${roles
                       .map((role) => roleMappings[role] || role)
                       .join(' | ')}</span>
                     </div>
                     <div class="profile-user-card-industry">
-                      <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY: '}</span>
+                      <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
                       <span class="${!hasInterests ? 'incompleteProfile' : ''}">
                         ${!hasInterests ? placeholders?.unknown || 'Unknown' : industry}
                       </span>
                     </div>  
                     <div class="profile-user-card-interests">
-                      <span class="heading">${placeholders?.myInterests || 'MY INTERESTS: '}</span>
+                      <span class="heading">${placeholders?.myInterests || 'MY INTERESTS'}: </span>
                       <span class="${!hasInterests ? 'incompleteProfile' : ''}">
                         ${!hasInterests ? placeholders?.unknown || 'Unknown' : interests.join(' | ')}
                       </span>
@@ -147,5 +148,6 @@ export default async function decorate(block) {
 
     block.textContent = '';
     block.append(profileWelcomeBlock);
+    decorateIcons(block);
   }
 }
