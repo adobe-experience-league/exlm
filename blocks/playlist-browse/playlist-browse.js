@@ -367,7 +367,7 @@ class Filter {
           panelClass: 'playlist-browse-filter-panel',
           expanded: false,
         });
-        filterPanel.classList.add(`playlist-browse-filter-${filterName}`, 'filter-dropdown');
+        filterPanel.classList.add(`playlist-browse-filter-${filterName}`, 'playlist-filter-dropdown');
         const span = filterPanel.querySelector('span');
         span.classList.add('button-span');
 
