@@ -61,6 +61,29 @@ export default async function decorate(block) {
       ((Array.isArray(interests) && interests.length > 0) ||
         (typeof interests === 'string' && interests.trim() !== ''));
 
+    const hasIndustry =
+      industry &&
+      ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''));
+
+    let industryContent = '';
+    if (hasIndustry) {
+      industryContent = `
+          <div class="profile-user-card-industry">
+            <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
+            <span class="${!hasInterests ? 'incompleteProfile' : ''}">
+              ${Array.isArray(industry) ? industry.join(', ') : industry}
+            </span>
+          </div>`;
+    } else if (!hasInterests) {
+      industryContent = `
+          <div class="profile-user-card-industry">
+            <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
+            <span class="${!hasInterests ? 'incompleteProfile' : ''}">
+              ${placeholders?.unknown || 'Unknown'}
+            </span>
+          </div>`;
+    }
+
     const profileWelcomeBlock = document.createRange().createContextualFragment(`
         <div class="profile-curated-card">
                 <div class="profile-curated-card-eyebrowtext">
@@ -124,12 +147,7 @@ export default async function decorate(block) {
                       .map((role) => roleMappings[role] || role)
                       .join(' | ')}</span>
                     </div>
-                    <div class="profile-user-card-industry">
-                      <span class="heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
-                      <span class="${!hasInterests ? 'incompleteProfile' : ''}">
-                        ${!hasInterests ? placeholders?.unknown || 'Unknown' : industry}
-                      </span>
-                    </div>  
+                    ${industryContent}
                     <div class="profile-user-card-interests">
                       <span class="heading">${placeholders?.myInterests || 'MY INTERESTS'}: </span>
                       <span class="${!hasInterests ? 'incompleteProfile' : ''}">

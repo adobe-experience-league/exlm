@@ -15,6 +15,7 @@
     color: var(--spectrum-gray-900);
     text-align: center;
     text-transform: uppercase;
+    line-height: 17px;
 }
 
 .profile-welcome .profile-curated-card .profile-curated-card-heading {
@@ -22,7 +23,7 @@
     font-weight: var(--font-weight-700);
     color: var(--spectrum-gray-900);
     margin-top: 8px;
-    line-height: normal;
+    line-height: 57px;
     text-align: center;
 }
 
@@ -32,6 +33,7 @@
     color: var(--spectrum-gray-800);
     margin-top: 16px;
     text-align: center;
+    line-height: 25px;
 }
 
 .profile-welcome .profile-curated-card {
@@ -56,7 +58,6 @@
     box-sizing: border-box;
     border-bottom: 2px solid rgba(213, 213, 213, 0.3);;
     padding-bottom: 16px;
-    justify-content: space-between;
 }
 
 .profile-welcome .profile-user-card .profile-user-card-right{
@@ -123,12 +124,14 @@
     font-weight: var(--font-weight-700);
     color: var(--spectrum-gray-900);
     text-transform: uppercase;
+    line-height: 15px;
 }
 
 .profile-welcome .profile-user-card-right .profile-user-card-role, .profile-user-card-industry, .profile-user-card-interests {
     font-size: var(--spectrum-font-size-100);;
     color: var(--spectrum-gray-800);
     font-weight: var(--font-weight-400);
+    line-height: 17px;
 }
 
 .profile-welcome .profile-user-card-left .profile-user-card-info .profile-user-card-name {
@@ -136,6 +139,7 @@
     font-weight: var(--font-weight-700);
     color: var(--spectrum-gray-900);
     margin-bottom: 8px;
+    line-height: 22px;
 }
 
 .profile-welcome.profile-user-card .profile-user-card-left .profile-user-card-communityInfo {
@@ -146,12 +150,14 @@
     font-size: var(--spectrum-font-size-100);;
     color: var(--spectrum-blue-900);
     font-weight: var(--font-weight-700);
+    line-height: 20px;
 }
 
 .profile-welcome .profile-user-card-left .profile-user-card-info .profile-user-card-org {
     font-size: var(--spectrum-font-size-100);;
     color: var(--spectrum-gray-800);
     font-weight: var(--font-weight-400);
+    line-height: 20px;
 }
 
 .profile-welcome .profile-user-card-cta > a.button {
@@ -165,6 +171,7 @@
     margin-top: 16px;
     margin-bottom: 0px;
     padding: 6px 16px;
+    line-height: 21px;
 }
 
 .profile-welcome .profile-user-card-cta > a.button.primary {
