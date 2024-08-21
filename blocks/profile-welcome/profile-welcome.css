@@ -191,6 +191,8 @@
     .profile-welcome {
         display: flex;
         gap: 40px;
+        max-width: 556px;
+        margin: 0 auto;
     }
 
     .profile-welcome .profile-curated-card .profile-curated-card-heading {
@@ -221,6 +223,8 @@
     .profile-welcome {
         flex-direction: row;
         gap: 20px;
+        margin: 0px;
+        max-width: none;
     }
 
     .profile-welcome .profile-curated-card .profile-curated-card-eyebrowtext {
