@@ -88,7 +88,7 @@ body.profile-home-page .section:not(.sign-up-flow-section) {
   border-bottom: 1px solid var(--spectrum-gray-300);
 }
 
-body.profile.loading .section:not(.profile-rail-section, .sign-up-flow-section) {
+body.profile.loading .section:not(.profile-rail-section, .sign-up-flow-section, .profile-shimmer) {
   visibility: hidden;
 }
 
