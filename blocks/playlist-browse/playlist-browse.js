@@ -5,18 +5,18 @@ import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.j
 const EXPERIENCE_LEVEL_PLACEHOLDERS = [
   {
     label: 'Beginner',
-    placeholder: 'filter-exp-level-beginner-title',
-    description: 'filter-exp-level-beginner-description',
+    placeholder: 'filterExpLevelBeginnerTitle',
+    description: 'filterExpLevelBeginnerDescription',
   },
   {
     label: 'Intermediate',
-    placeholder: 'filter-exp-level-intermediate-title',
-    description: 'filter-exp-level-intermediate-description',
+    placeholder: 'filterExpLevelIntermediateTitle',
+    description: 'filterExpLevelIntermediateDescription',
   },
   {
     label: 'Experienced',
-    placeholder: 'filter-exp-level-experienced-title',
-    description: 'filter-exp-level-experienced-description',
+    placeholder: 'filterExpLevelExperiencedTitle',
+    description: 'filterExpLevelExperiencedDescription',
   },
 ];
 
@@ -24,22 +24,22 @@ const ROLE_PLACEHOLDERS = [
   {
     label: 'Developer',
     placeholder: 'filterRoleDeveloperTitle',
-    description: 'filter-role-developer-description',
+    description: 'filterRoleDeveloperDescription',
   },
   {
     label: 'User',
     placeholder: 'filterRoleUserTitle',
-    description: 'filter-role-user-description',
+    description: 'filterRoleUserDescription',
   },
   {
     label: 'Leader',
     placeholder: 'filterRoleLeaderTitle',
-    description: 'filter-role-leader-description',
+    description: 'filterRoleLeaderDescription',
   },
   {
     label: 'Admin',
     placeholder: 'filterRoleAdminTitle',
-    description: 'filter-role-admin-description',
+    description: 'filterRoleAdminDescription',
   },
 ];
 
@@ -345,10 +345,10 @@ class Filter {
     this.filterContainer = htmlToElement('<div class="playlist-filter-container"></div>');
     this.filterPill = htmlToElement('<div class="filter-pill-container"></div>');
     this.filterWrapper = htmlToElement(
-      `<div class="playlist-filter-wrapper"><label class="playlist-filter-label"><span data-placeholder="${'filter-label'}"></span></label></div>`,
+      `<div class="playlist-filter-wrapper"><label class="playlist-filter-label"><span data-placeholder="${'filterLabel'}"></span></label></div>`,
     );
     this.clearButton = htmlToElement(
-      `<button class="filters-clear" disabled><span data-placeholder="${'filter-clear-label'}"></span></button>`,
+      `<button class="filters-clear" disabled><span data-placeholder="${'filterClearLabel'}"></span></button>`,
     );
 
     const filterOptionsPromises = filterOptions.map(
