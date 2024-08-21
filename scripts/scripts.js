@@ -288,18 +288,6 @@ function addProfileRail(main) {
 }
 
 /**
- * Add a nav tab to the profile page.
- * @param {HTMLElement} main
- *
- */
-function addProfileTab(main) {
-  const profileTabSection = document.createElement('div');
-  profileTabSection.classList.add('profile-tab-section');
-  profileTabSection.append(buildBlock('profile-tab', []));
-  main.prepend(profileTabSection);
-}
-
-/**
  * Add a mini TOC to the article page.
  * @param {HTMLElement} main
  */
@@ -387,7 +375,6 @@ function buildAutoBlocks(main) {
       addMiniToc(main);
     }
     if (isProfilePage()) {
-      addProfileTab(main);
       addProfileRail(main);
     }
   } catch (error) {
@@ -703,8 +690,6 @@ export function decorateMain(main) {
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
-  const { lang } = getPathDetails();
-  document.documentElement.lang = lang || 'en';
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
@@ -778,6 +763,7 @@ export function getConfig() {
   else if (isStage)
     launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
+  const signUpFlowConfigDate = '2024-08-15T00:00:00.762Z';
 
   window.exlm = window.exlm || {};
   window.exlm.config = {
@@ -789,6 +775,7 @@ export function getConfig() {
     prodAssetsCdnOrigin,
     ppsOrigin,
     launchScriptSrc,
+    signUpFlowConfigDate,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
     privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
@@ -801,10 +788,10 @@ export function getConfig() {
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     coveoToken: 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
     liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
-    adlsUrl: 'https://learning.adobe.com/catalog.result.json',
+    adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     searchUrl: `${cdnOrigin}/search.html`,
-    articleUrl: `${cdnOrigin}/api/articles/`,
+    articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
     // Browse Left nav
@@ -855,6 +842,13 @@ export const locales = new Map([
   ['zh-hant', 'zh_HANT'],
   ['nl', 'nl_NL'],
   ['sv', 'sv_SE'],
+]);
+
+export const URL_SPECIAL_CASE_LOCALES = new Map([
+  ['es', 'es-ES'],
+  ['pt-br', 'pt-BR'],
+  ['zh-hans', 'zh-CN'],
+  ['zh-hant', 'zh-TW'],
 ]);
 
 export async function loadIms() {
@@ -1105,7 +1099,7 @@ export const removeExtension = (pathStr) => {
 };
 
 // Convert the given String to Pascal Case
-export const toPascalCase = (name) => `${(name || '').charAt(0).toUpperCase()}${name.slice(1)}`;
+export const toPascalCase = (name) => (name ? `${name.charAt(0).toUpperCase()}${name.slice(1)}` : '');
 
 export function rewriteDocsPath(docsPath) {
   const PROD_BASE = 'https://experienceleague.adobe.com';
@@ -1353,6 +1347,11 @@ async function loadPage() {
   loadDelayed();
   showBrowseBackgroundGraphic();
 
+  if (isProfilePage()) {
+    await loadDefaultModule(`${window.hlx.codeBasePath}/scripts/profile/personalized-home.js`);
+    document.body.classList.remove('loading');
+  }
+
   if (isDocArticlePage()) {
     // wrap main content in a div - UGP-11165
     const main = document.querySelector('main');
@@ -1372,6 +1371,7 @@ async function loadPage() {
     const hasDiscoverability = Boolean(params.get('discoverability'));
     if (hasDiscoverability) {
       loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
+      loadDefaultModule(`${window.hlx.codeBasePath}/scripts/related-content/related-content-widget.js`);
     }
   }
 }
@@ -1383,7 +1383,10 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 if (!window.hlx.DO_NOT_LOAD_PAGE) {
+  const { lang } = getPathDetails();
+  document.documentElement.lang = lang || 'en';
   if (isProfilePage()) {
+    document.body.classList.add('loading');
     if (window.location.href.includes('.html')) {
       loadPage();
     } else {

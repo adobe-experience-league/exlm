@@ -1,6 +1,6 @@
 import browseCardDataModel from '../data-model/browse-cards-model.js';
+import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
-import { CONTENT_TYPES } from './browse-cards-constants.js';
 
 /**
  * Module that provides functionality for adapting live event results to BrowseCards data model.
@@ -18,8 +18,8 @@ const BrowseCardsLiveEventsAdaptor = (() => {
     const { productFocus, eventTitle, eventDescription, startTime, endTime, time, cta } = result || {};
     const product = productFocus && (Array.isArray(productFocus) ? productFocus : productFocus.split(/,\s*/));
     const { ctaLabel, ctaLink } = cta || {};
-    const eventStartTime = new Date(`${startTime}Z`);
-    const eventEndTime = new Date(`${endTime}Z`);
+    const eventStartTime = new Date(`${startTime}`);
+    const eventEndTime = new Date(`${endTime}`);
     const currentDate = new Date();
     if (currentDate >= eventStartTime && currentDate <= eventEndTime) {
       return {

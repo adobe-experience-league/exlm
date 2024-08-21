@@ -1,9 +1,10 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
 import { productExperienceEventEmitter } from '../../scripts/events.js';
 
-const interestsUrl = 'https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=en';
+const { lang } = getPathDetails();
+const interestsUrl = `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`;
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -52,9 +53,18 @@ function decorateInterests(block) {
     const title = block.querySelector('div > div');
     title.innerHTML = `<h3>${title.textContent}</h3>`;
   }
+  const formContainer = document.createElement('form');
+  formContainer.id = 'product-interests-form';
+
+  const formErrorContainer = document.createElement('div');
+  formErrorContainer.classList.add('product-interests-form-error');
+
   const columnsContainer = document.createElement('ul');
-  block.appendChild(columnsContainer);
   columnsContainer.classList.add('interests-container');
+
+  formContainer.appendChild(formErrorContainer);
+  formContainer.appendChild(columnsContainer);
+
   const userInterests = profileData?.interests ? profileData.interests : [];
   // Sort the interests data by Name
   // eslint-disable-next-line no-nested-ternary
@@ -104,7 +114,14 @@ function decorateInterests(block) {
       interest.selected = false;
     }
   });
+
+  block.appendChild(formContainer);
+
   productExperienceEventEmitter.on('dataChange', ({ key, value }) => {
+    if (formErrorContainer) {
+      formErrorContainer.textContent = '';
+    }
+
     const inputEl = block.querySelector(`#interest__${key}`);
     if (inputEl) {
       inputEl.checked = value;

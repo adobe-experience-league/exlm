@@ -1,5 +1,5 @@
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
-import { createPlaceholderSpan, getPathDetails } from '../scripts.js';
+import { getPathDetails, htmlToElement } from '../scripts.js';
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { bookmarksEventEmitter } from '../events.js';
@@ -71,25 +71,23 @@ export async function decorateBookmark(config) {
 
   if (isSignedIn) {
     element.dataset.signedIn = true;
-    const bookmarkTooltip = createPlaceholderSpan(tooltips?.bookmarkTooltip, 'Bookmark Page', (span) => {
-      span.classList.add('action-tooltip', 'bookmark-tooltip');
-    });
-
-    const removeBookmarkTooltip = createPlaceholderSpan(tooltips?.removeBookmarkTooltip, 'Remove Bookmark', (span) => {
-      span.classList.add('action-tooltip', 'remove-bookmark-tooltip');
-    });
-
+    const bookmarkTooltip = htmlToElement(
+      `<span class="action-tooltip bookmark-tooltip">${tooltips?.bookmarkTooltip || 'Bookmark Page'}</span>`,
+    );
+    const removeBookmarkTooltip = htmlToElement(
+      `<span class="action-tooltip remove-bookmark-tooltip">${
+        tooltips?.removeBookmarkTooltip || 'Remove Bookmark'
+      }</span>`,
+    );
     element.appendChild(bookmarkTooltip);
     element.appendChild(removeBookmarkTooltip);
 
     element.dataset.bookmarked = id ? await isBookmarked(id) : false;
   } else {
-    const signInToBookmarkTooltip = createPlaceholderSpan(
-      tooltips?.signInToBookmarkTooltip,
-      'Sign-in to bookmark',
-      (span) => {
-        span.classList.add('action-tooltip', 'signedin-tooltip');
-      },
+    const signInToBookmarkTooltip = htmlToElement(
+      `<span class="action-tooltip signedin-tooltip">${
+        tooltips?.signInToBookmarkTooltip || 'Sign-in to bookmark'
+      }</span>`,
     );
     element.appendChild(signInToBookmarkTooltip);
     element.disabled = true;

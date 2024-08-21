@@ -16,6 +16,7 @@ const { industryUrl } = getConfig();
 const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
 const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
 const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
+const FORM_ERROR = placeholders?.formFieldGroupError || 'Please select at least one option.';
 
 async function fetchIndustryOptions() {
   try {
@@ -36,37 +37,37 @@ export default async function decorate(block) {
   const roleCardsData = [
     {
       role: 'User',
-      title: placeholders.roleCardUserTitle || 'Business User',
+      title: placeholders?.roleCardUserTitle || 'Business User',
       icon: 'business-user',
       description:
-        placeholders.roleCardUserDescription ||
+        placeholders?.roleCardUserDescription ||
         `Responsible for utilizing Adobe products to achieve daily job functions, complete tasks, and achieve business objectives.`,
-      selectionDefault: placeholders.noSelectionDefault || 'Default selection',
+      selectionDefault: placeholders?.noSelectionDefault || 'Default selection',
     },
     {
       role: 'Developer',
-      title: placeholders.roleCardDeveloperTitle || 'Developer',
+      title: placeholders?.roleCardDeveloperTitle || 'Developer',
       icon: 'developer',
       description:
-        placeholders.roleCardDeveloperDescription ||
+        placeholders?.roleCardDeveloperDescription ||
         `Responsible for engineering Adobe products implementation, integration, data-modeling, data engineering, and other technical skills.`,
       selectionDefault: '',
     },
     {
       role: 'Admin',
-      title: placeholders.roleCardAdministratorTitle || 'Administrator',
+      title: placeholders?.roleCardAdministratorTitle || 'Administrator',
       icon: 'admin',
       description:
-        placeholders.roleCardAdministratorDescription ||
+        placeholders?.roleCardAdministratorDescription ||
         `Responsible for the technical operations, configuration, permissions, management, and support needs of Adobe products.`,
       selectionDefault: '',
     },
     {
       role: 'Leader',
-      title: placeholders.roleCardBusinessLeaderTitle || 'Business Leader',
+      title: placeholders?.roleCardBusinessLeaderTitle || 'Business Leader',
       icon: 'business-leader',
       description:
-        placeholders.roleCardBusinessLeaderDescription ||
+        placeholders?.roleCardBusinessLeaderDescription ||
         `Responsible for owning the digital strategy and accelerating value through Adobe products.`,
       selectionDefault: '',
     },
@@ -148,7 +149,7 @@ export default async function decorate(block) {
     }
 
     role.forEach((el) => {
-      const checkBox = document.querySelector(`input[name="${el}"]`);
+      const checkBox = block.querySelector(`input[name="${el}"]`);
       if (checkBox) {
         checkBox.checked = true;
         checkBox.closest('.role-cards-item').classList.toggle('role-cards-highlight', checkBox.checked);
@@ -157,7 +158,6 @@ export default async function decorate(block) {
   }
 
   block.querySelectorAll('.role-cards-item').forEach((card) => {
-    const updatedRoles = [];
     const checkbox = card.querySelector('input[type="checkbox"]');
 
     card.addEventListener('click', (e) => {
@@ -170,16 +170,33 @@ export default async function decorate(block) {
 
     checkbox.addEventListener('change', (e) => {
       e.preventDefault();
-      const isChecked = checkbox.checked;
-      checkbox.closest('.role-cards-item').classList.toggle('role-cards-highlight', isChecked);
+      const checkedCheckboxes = Array.from(block.querySelectorAll('.role-cards-item input[type="checkbox"]')).filter(
+        (el) => el.checked,
+      );
+      if (checkedCheckboxes.length < 1) {
+        checkbox.checked = true;
+        if (!block.querySelector('.form-error'))
+          block
+            .querySelector('.role-cards-holder')
+            ?.insertAdjacentHTML('beforebegin', `<span class="form-error">${FORM_ERROR}</span>`);
+      } else {
+        const isChecked = checkbox.checked;
+        checkbox.closest('.role-cards-item').classList.toggle('role-cards-highlight', isChecked);
+        if (block.querySelector('.form-error')) block.querySelector('.form-error').remove();
 
-      if (isSignedIn) {
-        const profileKey = checkbox.getAttribute('name');
-        updatedRoles.push(profileKey);
-        defaultProfileClient
-          .updateProfile('role', updatedRoles)
-          .then(() => sendNotice(PROFILE_UPDATED))
-          .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+        if (isSignedIn) {
+          const updatedRoles = [];
+          roleCardsData.forEach((roleCard) => {
+            const roleCardCheckbox = block.querySelector(`input[name="${roleCard.role}"]`);
+            if (roleCardCheckbox.checked) {
+              updatedRoles.push(roleCard.role);
+            }
+          });
+          defaultProfileClient
+            .updateProfile('role', updatedRoles, true)
+            .then(() => sendNotice(PROFILE_UPDATED))
+            .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+        }
       }
     });
   });

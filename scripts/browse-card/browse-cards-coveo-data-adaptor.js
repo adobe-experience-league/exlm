@@ -1,5 +1,5 @@
 import browseCardDataModel from '../data-model/browse-cards-model.js';
-import { CONTENT_TYPES } from './browse-cards-constants.js';
+import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import { rewriteDocsPath, fetchLanguagePlaceholders } from '../scripts.js';
 
 /**
@@ -25,7 +25,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
   const createTags = (result, contentType) => {
     const tags = [];
     const role = result?.raw?.role ? result.raw.role.replace(/,/g, ', ') : '';
-    if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
+    if (contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY) {
       tags.push({ icon: 'user', text: role || '' });
       /* TODO: Will enable once we have the API changes ready from ExL */
       // tags.push({ icon: 'book', text: `0 ${placeholders.lesson}` });
@@ -109,7 +109,10 @@ const BrowseCardsCoveoDataAdaptor = (() => {
         '',
       product: products && removeProductDuplicates(products),
       title: parentResult?.title || title || '',
-      description: parentResult?.excerpt || excerpt || raw?.description || raw?.exl_description || '',
+      description:
+        contentType?.toLowerCase() === CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY
+          ? raw?.exl_description || parentResult?.excerpt || ''
+          : parentResult?.excerpt || excerpt || raw?.description || raw?.exl_description || '',
       tags,
       copyLink: url,
       viewLink: url,

@@ -94,6 +94,15 @@
     font-style: italic;
 }
 
+.role-and-industry .form-error {
+    text-align: center;
+}
+
+body.profile .role-and-industry .form-error:not(.signup-dialog .role-and-industry .form-error) {
+    text-align: left;
+}
+
+
 body.profile .role-and-industry .industry-selection-holder:not(.signup-dialog .role-and-industry .industry-selection-holder) {
     display: flex;
     flex-direction: column;
@@ -131,6 +140,8 @@ body.profile .role-and-industry .industry-selection-dropdown:not(.signup-dialog 
 body.profile .role-and-industry .role-cards-description h3:not(.signup-dialog .role-and-industry .role-cards-description h3) {
     margin-top: 0px;
 }
+
+
 /* tablet */
 @media (min-width: 600px) {
     .role-and-industry .role-cards-holder {
