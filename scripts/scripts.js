@@ -1334,7 +1334,7 @@ async function loadPage() {
   showBrowseBackgroundGraphic();
 
   if (isProfilePage()) {
-    await loadDefaultModule(`${window.hlx.codeBasePath}/scripts/profile/profile.js`);
+    await loadDefaultModule(`${window.hlx.codeBasePath}/scripts/profile/personalized-home.js`);
     document.body.classList.remove('loading');
   }
 
