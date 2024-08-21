@@ -124,14 +124,21 @@ const generateCommunityAccountDOM = (profileData, placeholders, communityAccount
 const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
 
+  const roleMappings = {
+    Developer: placeholders?.roleCardDeveloperTitle || 'Developer',
+    User: placeholders?.roleCardUserTitle || 'Business User',
+    Leader: placeholders?.roleCardBusinessLeaderTitle || 'Business Leader',
+    Admin: placeholders?.roleCardAdministratorTitle || 'Administrator',
+  };
+
   return `<div class="profile-row additional-data">
     <div class="profile-card-body additional-data-body">
       <div class="profile-user-info">
         ${
           roles && ((Array.isArray(roles) && roles.length > 0) || (typeof roles === 'string' && roles.trim() !== ''))
-            ? `<div class="user-role"><span class="heading">${
-                placeholders?.myRole || 'My Role'
-              }: </span><span>${roles.join('&nbsp;&nbsp;')}</span></div>`
+            ? `<div class="user-role"><span class="heading">${placeholders?.myRole || 'My Role'}: </span><span>${roles
+                .map((role) => roleMappings[role] || role)
+                .join('&nbsp;&nbsp;')}</span></div>`
             : ''
         }
         ${

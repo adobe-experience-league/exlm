@@ -20,7 +20,6 @@ import {
   readBlockConfig,
   createOptimizedPicture,
   toClassName,
-  toCamelCase,
 } from './lib-franklin.js';
 
 const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
@@ -289,18 +288,6 @@ function addProfileRail(main) {
 }
 
 /**
- * Add a nav tab to the profile page.
- * @param {HTMLElement} main
- *
- */
-function addProfileTab(main) {
-  const profileTabSection = document.createElement('div');
-  profileTabSection.classList.add('profile-tab-section');
-  profileTabSection.append(buildBlock('profile-tab', []));
-  main.prepend(profileTabSection);
-}
-
-/**
  * Add a mini TOC to the article page.
  * @param {HTMLElement} main
  */
@@ -388,7 +375,6 @@ function buildAutoBlocks(main) {
       addMiniToc(main);
     }
     if (isProfilePage()) {
-      addProfileTab(main);
       addProfileRail(main);
     }
   } catch (error) {
@@ -805,7 +791,7 @@ export function getConfig() {
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     searchUrl: `${cdnOrigin}/search.html`,
-    articleUrl: `${cdnOrigin}/api/articles/$ID?lang=${lang}`,
+    articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
     // Browse Left nav
@@ -1229,7 +1215,7 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, 
   span.style.setProperty('--placeholder-width', `${fallbackText.length}ch`);
   fetchLanguagePlaceholders()
     .then((placeholders) => {
-      span.textContent = placeholders[toCamelCase(placeholderKey)] || fallbackText;
+      span.textContent = placeholders[placeholderKey] || fallbackText;
       span.removeAttribute('data-placeholder');
       span.removeAttribute('data-placeholder-fallback');
       span.style.removeProperty('--placeholder-width');
@@ -1347,6 +1333,11 @@ async function loadPage() {
   loadDelayed();
   showBrowseBackgroundGraphic();
 
+  if (isProfilePage()) {
+    await loadDefaultModule(`${window.hlx.codeBasePath}/scripts/profile/personalized-home.js`);
+    document.body.classList.remove('loading');
+  }
+
   if (isDocArticlePage()) {
     // wrap main content in a div - UGP-11165
     const main = document.querySelector('main');
@@ -1381,6 +1372,7 @@ if (!window.hlx.DO_NOT_LOAD_PAGE) {
   const { lang } = getPathDetails();
   document.documentElement.lang = lang || 'en';
   if (isProfilePage()) {
+    document.body.classList.add('loading');
     if (window.location.href.includes('.html')) {
       loadPage();
     } else {

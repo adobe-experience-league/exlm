@@ -37,37 +37,37 @@ export default async function decorate(block) {
   const roleCardsData = [
     {
       role: 'User',
-      title: placeholders.roleCardUserTitle || 'Business User',
+      title: placeholders?.roleCardUserTitle || 'Business User',
       icon: 'business-user',
       description:
-        placeholders.roleCardUserDescription ||
+        placeholders?.roleCardUserDescription ||
         `Responsible for utilizing Adobe products to achieve daily job functions, complete tasks, and achieve business objectives.`,
-      selectionDefault: placeholders.noSelectionDefault || 'Default selection',
+      selectionDefault: placeholders?.noSelectionDefault || 'Default selection',
     },
     {
       role: 'Developer',
-      title: placeholders.roleCardDeveloperTitle || 'Developer',
+      title: placeholders?.roleCardDeveloperTitle || 'Developer',
       icon: 'developer',
       description:
-        placeholders.roleCardDeveloperDescription ||
+        placeholders?.roleCardDeveloperDescription ||
         `Responsible for engineering Adobe products implementation, integration, data-modeling, data engineering, and other technical skills.`,
       selectionDefault: '',
     },
     {
       role: 'Admin',
-      title: placeholders.roleCardAdministratorTitle || 'Administrator',
+      title: placeholders?.roleCardAdministratorTitle || 'Administrator',
       icon: 'admin',
       description:
-        placeholders.roleCardAdministratorDescription ||
+        placeholders?.roleCardAdministratorDescription ||
         `Responsible for the technical operations, configuration, permissions, management, and support needs of Adobe products.`,
       selectionDefault: '',
     },
     {
       role: 'Leader',
-      title: placeholders.roleCardBusinessLeaderTitle || 'Business Leader',
+      title: placeholders?.roleCardBusinessLeaderTitle || 'Business Leader',
       icon: 'business-leader',
       description:
-        placeholders.roleCardBusinessLeaderDescription ||
+        placeholders?.roleCardBusinessLeaderDescription ||
         `Responsible for owning the digital strategy and accelerating value through Adobe products.`,
       selectionDefault: '',
     },

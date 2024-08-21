@@ -23,22 +23,22 @@ const EXPERIENCE_LEVEL_PLACEHOLDERS = [
 const ROLE_PLACEHOLDERS = [
   {
     label: 'Developer',
-    placeholder: 'filter-role-developer-title',
+    placeholder: 'filterRoleDeveloperTitle',
     description: 'filter-role-developer-description',
   },
   {
     label: 'User',
-    placeholder: 'filter-role-user-title',
+    placeholder: 'filterRoleUserTitle',
     description: 'filter-role-user-description',
   },
   {
     label: 'Leader',
-    placeholder: 'filter-role-leader-title',
+    placeholder: 'filterRoleLeaderTitle',
     description: 'filter-role-leader-description',
   },
   {
     label: 'Admin',
-    placeholder: 'filter-role-admin-title',
+    placeholder: 'filterRoleAdminTitle',
     description: 'filter-role-admin-description',
   },
 ];
@@ -53,18 +53,18 @@ const sortAlphanumerically = (a, b) => a.localeCompare(b);
 
 const playlistsPromise = fetchPlaylists();
 const filterOptions = [
-  { legend: 'Product', filterName: 'solution', placeholderKey: 'filter-product-label', sort: sortAlphanumerically },
+  { legend: 'Product', filterName: 'solution', placeholderKey: 'filterProductLabel', sort: sortAlphanumerically },
   {
     legend: 'Role',
     filterName: 'role',
-    placeholderKey: 'filter-role-label',
+    placeholderKey: 'filterRoleLabel',
     optionPlaceholders: ROLE_PLACEHOLDERS,
     sort: sortAlphanumerically,
   },
   {
     legend: 'Experience Level',
     filterName: 'level',
-    placeholderKey: 'filter-experience-level-label',
+    placeholderKey: 'filterExperienceLevelLabel',
     optionPlaceholders: EXPERIENCE_LEVEL_PLACEHOLDERS,
     sort: (a, b) => {
       const levels = ['Beginner', 'Intermediate', 'Experienced'];
