@@ -7,7 +7,7 @@ const { lang, suffix } = getPathDetails();
 const paths = {
   incompletePageURL: `/${lang}/profile/home/incomplete`,
   completePageURL: `/${lang}/profile/home/complete`,
-  commonPageURL: `/${lang}/profile/home/common`,
+  commonPageURL: `/${lang}/profile/home/shared`,
 };
 
 let commonPageFetched = false;
