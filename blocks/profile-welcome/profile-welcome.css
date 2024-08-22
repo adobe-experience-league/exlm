@@ -20,13 +20,13 @@
 
 .profile-welcome .profile-curated-card .profile-curated-card-heading {
     color: var(--spectrum-gray-900);
-    margin-top: 8px;
     text-align: center;
 }
 
 .profile-welcome .profile-curated-card .profile-curated-card-description {
+    font-size: var(--spectrum-font-size-400);
+    font-weight: var(--font-weight-400);
     color: var(--spectrum-gray-800);
-    margin-top: 16px;
     text-align: center;
 }
 
@@ -186,6 +186,16 @@
     color: var(--spectrum-gray-800);
 }
 
+.profile-welcome .profile-user-card-incomplete .icon {
+    width: 18px;
+}
+
+.profile-welcome .profile-user-card-incomplete svg {
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+}
+
 /* tablet */
 @media (min-width: 600px) {
     .profile-welcome {
@@ -193,10 +203,6 @@
         gap: 40px;
         max-width: 556px;
         margin: 0 auto;
-    }
-
-    .profile-welcome .profile-curated-card .profile-curated-card-heading {
-        font-size: var(--spectrum-font-size-1100);
     }
 
     .profile-welcome .profile-user-card {
