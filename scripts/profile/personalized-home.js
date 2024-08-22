@@ -64,13 +64,14 @@ export default async function classifyProfileAndFetchContent() {
       );
       const loader = htmlToElement('<div class="section profile-shimmer"><span></span></div>');
       document.querySelector('main').appendChild(loader);
-      const profileData = await defaultProfileClient.getMergedProfile();
-      if (profileData.interests.length) {
-        await fetchPageContent(paths.completePageURL, loader);
-      } else {
-        await fetchPageContent(paths.incompletePageURL, loader);
-      }
-      await fetchCommonContent(loader);
+      defaultProfileClient.getMergedProfile().then(async (profileData) => {
+        if (profileData.interests.length) {
+          await fetchPageContent(paths.completePageURL, loader);
+        } else {
+          await fetchPageContent(paths.incompletePageURL, loader);
+        }
+        await fetchCommonContent(loader);
+      });
     }
   } catch (err) {
     /* eslint-disable-next-line no-console */
