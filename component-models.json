@@ -3479,6 +3479,39 @@
         "label": "Profile welcome block heading"
       },
       {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h2",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
         "component": "richtext",
         "valueType": "string",
         "name": "description",
@@ -3487,9 +3520,9 @@
       },
       {
         "component": "select",
-        "name": "profileCtaType",
+        "name": "cta1Type",
         "value": "primary",
-        "label": "Profile CTA Type",
+        "label": "First CTA Type",
         "description": "'Primary' will render button filled, 'Secondary' with an outline.",
         "valueType": "string",
         "options": [
@@ -3506,17 +3539,17 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "profileCtaText",
+        "name": "cta1Text",
         "value": "",
-        "label": "Profile CTA Text",
+        "label": "First CTA Text",
         "description": "Text to be shown inside button."
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "profileCtaLink",
+        "name": "cta1",
         "value": "",
-        "label": "Profile CTA Link",
+        "label": "First CTA Link",
         "description": "What link to open when clicking the button."
       },
       {
