@@ -9,7 +9,7 @@
     flex: 1;
 }
 
-.profile-welcome .profile-curated-card .profile-curated-card-eyebrowtext {
+.profile-welcome .profile-curated-card .profile-curated-eyebrowtext {
     font-size: var(--spectrum-font-size-100);
     font-weight: var(--font-weight-700);
     color: var(--spectrum-gray-900);
