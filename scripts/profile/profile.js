@@ -155,7 +155,7 @@ const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
             (typeof interests === 'string' && interests.trim() !== ''))
             ? `<div class="user-interests"><span class="heading">${
                 placeholders?.myInterests || 'My Interests'
-              }: </span><span>${interests.join('&nbsp;&nbsp;')}</span></div>`
+              }: </span><span>${interests.join(' | ')}</span></div>`
             : ''
         }
       </div>
