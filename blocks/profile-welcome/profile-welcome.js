@@ -27,8 +27,6 @@ export default async function decorate(block) {
 
   const isSignedIn = await isSignedInUser();
 
-  if (!isSignedIn) return;
-
   let profileData = '';
   let ppsProfileData = '';
   let communityProfileData = '';
