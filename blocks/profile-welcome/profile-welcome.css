@@ -186,6 +186,16 @@
     color: var(--spectrum-gray-800);
 }
 
+.profile-welcome .profile-user-card-incomplete .icon {
+    width: 18px;
+}
+
+.profile-welcome .profile-user-card-incomplete svg {
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+}
+
 /* tablet */
 @media (min-width: 600px) {
     .profile-welcome {
