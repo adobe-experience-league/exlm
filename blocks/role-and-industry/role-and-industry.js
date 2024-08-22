@@ -85,29 +85,32 @@ export default async function decorate(block) {
         }</label>
       </form>
     </div>
-    <div class="role-cards-holder">
-    ${roleCardsData
-      .map(
-        (card, index) => `
-            <div class="role-cards-item">
-              <div class="role-cards-description">
-                <div class="role-cards-title">
-                  <span class="icon icon-${card.icon}"></span>
-                  <h3>${card.title}</h3>
+    <form id="role-and-industry-form">
+      <div class="role-and-industry-form-error"></div>
+      <div class="role-cards-holder">
+      ${roleCardsData
+        .map(
+          (card, index) => `
+              <div class="role-cards-item">
+                <div class="role-cards-description">
+                  <div class="role-cards-title">
+                    <span class="icon icon-${card.icon}"></span>
+                    <h3>${card.title}</h3>
+                  </div>
+                  <p>${card.description}</p>
                 </div>
-                <p>${card.description}</p>
-              </div>
-              <div class="role-cards-default-selection">
-                ${isSignedIn ? `<p>${card.selectionDefault}</p>` : ''}
-                <span class="role-cards-checkbox">
-                  <input name="${card.role}" type="checkbox" id="selectRole-${index}">
-                  <label class="subText" for="selectRole-${index}">${SELECT_ROLE}</label>
-                </span>
-              </div>
-            </div>`,
-      )
-      .join('')}
-  </div>
+                <div class="role-cards-default-selection">
+                  ${isSignedIn ? `<p>${card.selectionDefault}</p>` : ''}
+                  <span class="role-cards-checkbox">
+                    <input name="${card.role}" type="checkbox" id="selectRole-${index}">
+                    <label class="subText" for="selectRole-${index}">${SELECT_ROLE}</label>
+                  </span>
+                </div>
+              </div>`,
+        )
+        .join('')}
+    </div>
+    </form>
 `);
 
   block.textContent = '';
@@ -170,28 +173,33 @@ export default async function decorate(block) {
 
     checkbox.addEventListener('change', (e) => {
       e.preventDefault();
+
       const checkedCheckboxes = Array.from(block.querySelectorAll('.role-cards-item input[type="checkbox"]')).filter(
         (el) => el.checked,
       );
-      if (checkedCheckboxes.length < 1) {
+      const formErrorContainer = block.querySelector('.role-and-industry-form-error');
+
+      if (formErrorContainer) {
+        formErrorContainer.textContent = '';
+      }
+
+      const isInSignupDialog = e.target.closest('.signup-dialog');
+      const isAnyCheckboxChecked = checkedCheckboxes.length > 0;
+
+      if (!isInSignupDialog && !isAnyCheckboxChecked) {
         checkbox.checked = true;
-        if (!block.querySelector('.form-error'))
-          block
-            .querySelector('.role-cards-holder')
-            ?.insertAdjacentHTML('beforebegin', `<span class="form-error">${FORM_ERROR}</span>`);
+        if (formErrorContainer) {
+          formErrorContainer.innerHTML = `<span class='form-error'>${FORM_ERROR}</span>`;
+        }
       } else {
         const isChecked = checkbox.checked;
         checkbox.closest('.role-cards-item').classList.toggle('role-cards-highlight', isChecked);
-        if (block.querySelector('.form-error')) block.querySelector('.form-error').remove();
 
-        if (isSignedIn) {
-          const updatedRoles = [];
-          roleCardsData.forEach((roleCard) => {
-            const roleCardCheckbox = block.querySelector(`input[name="${roleCard.role}"]`);
-            if (roleCardCheckbox.checked) {
-              updatedRoles.push(roleCard.role);
-            }
-          });
+        if (isSignedIn && isAnyCheckboxChecked) {
+          const updatedRoles = roleCardsData
+            .filter((roleCard) => block.querySelector(`input[name="${roleCard.role}"]`).checked)
+            .map((roleCard) => roleCard.role);
+
           defaultProfileClient
             .updateProfile('role', updatedRoles, true)
             .then(() => sendNotice(PROFILE_UPDATED))
