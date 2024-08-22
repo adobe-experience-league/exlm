@@ -263,9 +263,6 @@
     .signup-dialog-content .user-profile-card-wrapper + .default-content-wrapper {
         max-width: 387px;
     }
-    .signup-dialog-content .product-interests .interests-container {
-        max-height: 540px;
-    }
 }
 @media (min-width: 900px) {
     .signup-dialog {
@@ -341,6 +338,9 @@
     }
     .signup-dialog-content .product-interests .interests-container {
         max-height: 280px;
+    }
+    .signup-dialog-content .product-interests .interests-container li {
+        max-width: calc(33% - 10px);
     }
 }
 @media (min-width: 1200px) {
