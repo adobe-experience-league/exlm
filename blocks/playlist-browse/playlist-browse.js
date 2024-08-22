@@ -3,16 +3,44 @@ import { createPlaceholderSpan, decoratePlaceholders, getPathDetails, htmlToElem
 import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.js';
 
 const EXPERIENCE_LEVEL_PLACEHOLDERS = [
-  { label: 'Beginner', placeholder: 'filterExpLevelBeginnerTitle' },
-  { label: 'Intermediate', placeholder: 'filterExpLevelIntermediateTitle' },
-  { label: 'Experienced', placeholder: 'filterExpLevelExperiencedTitle' },
+  {
+    label: 'Beginner',
+    placeholder: 'filterExpLevelBeginnerTitle',
+    description: 'filterExpLevelBeginnerDescription',
+  },
+  {
+    label: 'Intermediate',
+    placeholder: 'filterExpLevelIntermediateTitle',
+    description: 'filterExpLevelIntermediateDescription',
+  },
+  {
+    label: 'Experienced',
+    placeholder: 'filterExpLevelExperiencedTitle',
+    description: 'filterExpLevelExperiencedDescription',
+  },
 ];
 
 const ROLE_PLACEHOLDERS = [
-  { label: 'Developer', placeholder: 'filterRoleDeveloperTitle' },
-  { label: 'User', placeholder: 'filterRoleUserTitle' },
-  { label: 'Leader', placeholder: 'filterRoleLeaderTitle' },
-  { label: 'Admin', placeholder: 'filterRoleAdminTitle' },
+  {
+    label: 'Developer',
+    placeholder: 'filterRoleDeveloperTitle',
+    description: 'filterRoleDeveloperDescription',
+  },
+  {
+    label: 'User',
+    placeholder: 'filterRoleUserTitle',
+    description: 'filterRoleUserDescription',
+  },
+  {
+    label: 'Leader',
+    placeholder: 'filterRoleLeaderTitle',
+    description: 'filterRoleLeaderDescription',
+  },
+  {
+    label: 'Admin',
+    placeholder: 'filterRoleAdminTitle',
+    description: 'filterRoleAdminDescription',
+  },
 ];
 
 async function fetchPlaylists() {
@@ -273,6 +301,12 @@ class Filter {
       const filterCount = this.filters[filterName]?.length;
       span.innerHTML = filterCount ? ` (${filterCount})` : '';
     });
+    // enable clear button if filters are selected
+    if (this.filters.solution.length || this.filters.role.length || this.filters.level.length) {
+      this.clearButton.disabled = false;
+    } else {
+      this.clearButton.disabled = true;
+    }
   }
 
   // add filter pills
@@ -282,7 +316,6 @@ class Filter {
     Object.entries(this.filters).forEach(([legend, filterValues]) => {
       filterValues.forEach((value) => {
         const filterOption = filterOptions.find((f) => f.filterName === legend);
-
         const filterValuePlaceholderKey = filterOption?.optionPlaceholders?.find(
           (o) => o?.label?.toLowerCase() === value?.toLowerCase(),
         )?.placeholder;
@@ -306,16 +339,17 @@ class Filter {
         });
       });
     });
-    decorateIcons(filterPills);
   };
 
   updateUI = () => {
     this.filterContainer = htmlToElement('<div class="playlist-filter-container"></div>');
     this.filterPill = htmlToElement('<div class="filter-pill-container"></div>');
     this.filterWrapper = htmlToElement(
-      '<div class="playlist-filter-wrapper"><label class="playlist-filter-label">Filters</label></div>',
+      `<div class="playlist-filter-wrapper"><label class="playlist-filter-label"><span data-placeholder="${'filterLabel'}"></span></label></div>`,
     );
-    this.clearButton = htmlToElement(`<button class="filters-clear">Clear filters</button>`);
+    this.clearButton = htmlToElement(
+      `<button class="filters-clear" disabled><span data-placeholder="${'filterClearLabel'}"></span></button>`,
+    );
 
     const filterOptionsPromises = filterOptions.map(
       ({ legend, filterName, placeholderKey, optionPlaceholders, sort }) => {
@@ -333,7 +367,7 @@ class Filter {
           panelClass: 'playlist-browse-filter-panel',
           expanded: false,
         });
-        filterPanel.classList.add(`playlist-browse-filter-${filterName}`, 'filter-dropdown');
+        filterPanel.classList.add(`playlist-browse-filter-${filterName}`, 'playlist-filter-dropdown');
         const span = filterPanel.querySelector('span');
         span.classList.add('button-span');
 
@@ -352,16 +386,20 @@ class Filter {
         this.filterContainer.append(this.filterWrapper);
         this.filterContainer.append(this.filterPill);
         this.block.append(this.filterContainer);
+        decoratePlaceholders(this.filterWrapper);
 
         return getAllPossibleFilterValues(filterName).then((filterValues) => {
           const sortedValues = filterValues.sort(sort);
           sortedValues.forEach((filterValue) => {
-            const filterValuePlaceholderKey = optionPlaceholders?.find(
+            const sortFilterValue = optionPlaceholders?.find(
               (o) => o?.label?.toLowerCase() === filterValue?.toLowerCase(),
-            )?.placeholder;
+            );
+            const filterValuePlaceholderKey = sortFilterValue?.placeholder;
+            const filterDescriptionPlaceholderKey = sortFilterValue?.description;
 
             addOption({
               label: filterValue,
+              description: filterDescriptionPlaceholderKey || '',
               labelPlaceholderKey: filterValuePlaceholderKey || filterValue,
               value: filterValue,
               checked: this.filters[filterName].includes(filterValue),
@@ -389,6 +427,7 @@ class Filter {
       Object.keys(this.filters).forEach((key) => {
         this.filters[key] = [];
       });
+      clearButton.disabled = true;
       multiSelects.forEach(({ onClear }) => {
         onClear();
       });
