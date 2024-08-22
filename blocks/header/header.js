@@ -6,11 +6,12 @@ import {
   fetchFragment,
   isFeatureEnabled,
   fetchLanguagePlaceholders,
+  getPathDetails,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
 import initializeSignupFlow from '../../scripts/signup-flow/signup-flow.js';
 import { Deferred, decorateIcons, getMetadata } from './header-util.js';
-import { LanguageBlock, getPathDetails } from '../../scripts/language.js';
+import { LanguageBlock } from '../../scripts/language.js';
 
 /**
  * @typedef {Object} DecoratorOptions
@@ -564,7 +565,7 @@ async function decorateCommunityBlock(header, decoratorOptions) {
  * Decorates the language-selector block
  * @param {HTMLElement} languageBlock
  */
-const languageDecorator = async (languageBlock, decoratorOptions) => {
+const languageDecorator = async (languageBlock) => {
   const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
   decoratorState.languageTitle = title;
   decoratorState.languages = new Deferred();
@@ -573,7 +574,6 @@ const languageDecorator = async (languageBlock, decoratorOptions) => {
     const language = new LanguageBlock({
       position: null,
       popoverId: 'language-picker-popover-header',
-      decoratorOptions,
     });
     const { popover, languages } = await language.languagePopover;
     decoratorState.languages.resolve(languages);

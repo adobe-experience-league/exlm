@@ -77,7 +77,7 @@ async function decorateSocial(footer) {
   groupDiv.classList.add('footer-lang-social');
   // build language popover
   const languageBlock = new LanguageBlock({ position: 'top', popoverId: 'language-picker-popover-footer' });
-  const { popover } = await languageBlock.languagePopover;
+  const { popover } = await languageBlock.languagePopover
 
   const langSelectorButton = languageSelector.firstElementChild;
   langSelectorButton.classList.add('language-selector-button');
