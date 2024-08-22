@@ -1,5 +1,4 @@
 import { getPathDetails, htmlToElement } from '../scripts.js';
-import { defaultProfileClient } from '../auth/profile.js';
 import { loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../lib-franklin.js';
 
 const { lang, suffix } = getPathDetails();
@@ -64,14 +63,18 @@ export default async function classifyProfileAndFetchContent() {
       );
       const loader = htmlToElement('<div class="section profile-shimmer"><span></span></div>');
       document.querySelector('main').appendChild(loader);
-      defaultProfileClient.getMergedProfile().then(async (profileData) => {
+      const profileDataString = sessionStorage.getItem('profile');
+      const profileData = JSON.parse(profileDataString);
+      if (profileData) {
         if (profileData.interests.length) {
           await fetchPageContent(paths.completePageURL, loader);
         } else {
           await fetchPageContent(paths.incompletePageURL, loader);
         }
         await fetchCommonContent(loader);
-      });
+      } else {
+        throw new Error('Profile Data not found in session storage');
+      }
     }
   } catch (err) {
     /* eslint-disable-next-line no-console */
