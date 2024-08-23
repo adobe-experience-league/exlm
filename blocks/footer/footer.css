@@ -21,9 +21,25 @@
     padding: 0 32px;
   }
 }
-.footer .language-selector-button {
-  padding: 0;
-}
+
+.language-selector-button { 
+    border-radius: 0;
+    margin: 0;
+    border: 0;
+    text-align: left;
+    background: none;
+    background-color: transparent !important;
+    font-weight: initial;
+    padding: 15px;
+    position: relative;
+    top: 2px;
+  }
+
+  .language-selector
+    .icon{
+    height:18px;
+    width:18px;
+    }
 
 .footer-copyrights {
   color: var(--non-spectrum-charcoal-gray);
@@ -239,7 +255,6 @@
 .footer-lang-social .language-selector .language-selector-button {
   cursor: pointer;
   display: flex;
-  flex-direction: row-reverse;
   align-items: center;
   gap: 4px;
 }

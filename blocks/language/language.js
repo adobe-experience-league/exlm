@@ -1,4 +1,4 @@
-import { loadCSS } from '../../scripts/lib-franklin.js';
+import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import { htmlToElement, getPathDetails } from '../../scripts/scripts.js';
 import { getCell } from '../header/header-utils.js';
 
@@ -69,22 +69,23 @@ const switchLanguage = (language) => {
   }
 };
 
-const loadStyles = () => {
+const loadStyles = async () => {
   loadCSS(`${window.hlx.codeBasePath}/blocks/language/language.css`);
 };
 
 export default class LanguageBlock extends HTMLElement {
-  constructor(position, popoverId, languageBlock) {
+  constructor(position, popoverId, block, type) {
     super();
     this.position = position;
     this.popoverId = popoverId;
-    this.languageBlock = languageBlock;
+    this.block = block;
+    this.type = type;
   }
 
   decorateButton = async () => {
-    const title = getCell(this.languageBlock, 1, 1)?.firstChild.textContent;
+    const title = getCell(this.block, 1, 1)?.firstChild.textContent;
     const languageHtml = htmlToElement(`
-    <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover-header" aria-label="${title}">
+    <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover-${this.type}" aria-label="${title}">
       <span class="icon icon-globegrid"></span>
     </button>        
   `);
@@ -119,10 +120,11 @@ export default class LanguageBlock extends HTMLElement {
     this.appendChild(popover);
   };
 
-  connectedCallback() {
+  async connectedCallback() {
     loadStyles();
-    this.decorateButton();
-    this.buildLanguageBlock();
+    await this.decorateButton();
+    await this.buildLanguageBlock();
+    decorateIcons(this);
   }
 }
 

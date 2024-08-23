@@ -502,9 +502,8 @@ async function decorateCommunityBlock(header, decoratorOptions) {
  * @param {HTMLElement} languageBlock
  */
 const languageDecorator = async (languageBlock) => {
-  const language = new LanguageBlock('top', 'language-picker-popover-header', languageBlock);
+  const language = new LanguageBlock('top', 'language-picker-popover-header', languageBlock, 'header');
   languageBlock.replaceChildren(language);
-  decorateIcons(languageBlock);
   return languageBlock;
 };
 
