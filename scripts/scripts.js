@@ -1327,16 +1327,15 @@ async function loadPage() {
   if (handleHomePageHashes()) return;
   // END OF TEMPORARY FOR SUMMIT.
   await loadEager(document);
+  if (isProfilePage()) {
+    await loadDefaultModule(`${window.hlx.codeBasePath}/scripts/profile/personalized-home.js`);
+    document.body.classList.remove('loading');
+  }
   await loadLazy(document);
   loadArticles();
   loadRails();
   loadDelayed();
   showBrowseBackgroundGraphic();
-
-  if (isProfilePage()) {
-    await loadDefaultModule(`${window.hlx.codeBasePath}/scripts/profile/personalized-home.js`);
-    document.body.classList.remove('loading');
-  }
 
   if (isDocArticlePage()) {
     // wrap main content in a div - UGP-11165
