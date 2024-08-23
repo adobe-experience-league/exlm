@@ -12,7 +12,7 @@ import getProducts from '../../scripts/utils/product-utils.js';
 import initializeSignupFlow from '../../scripts/signup-flow/signup-flow.js';
 import { decoratorState, isMobile, registerHeaderResizeHandler, getCell } from './header-utils.js';
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
-import LanguageBlock from '../../scripts/language.js';
+import LanguageBlock from '../language/language.js';
 import Profile from './load-profile.js';
 /**
  * @typedef {Object} DecoratorOptions
@@ -502,16 +502,8 @@ async function decorateCommunityBlock(header, decoratorOptions) {
  * @param {HTMLElement} languageBlock
  */
 const languageDecorator = async (languageBlock) => {
-  const language = new LanguageBlock('top', 'language-picker-popover-header');
-  const { popover } = await language.buildLanguageBlock();
-  const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
-  const languageHtml = htmlToElement(`
-    <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover-header" aria-label="${title}">
-      <span class="icon icon-globegrid"></span>
-    </button>
-  `);
+  const language = new LanguageBlock('top', 'language-picker-popover-header', languageBlock);
   languageBlock.replaceChildren(language);
-  language.append(languageHtml, popover);
   decorateIcons(languageBlock);
   return languageBlock;
 };

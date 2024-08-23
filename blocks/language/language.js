@@ -1,5 +1,6 @@
-import { loadCSS } from './lib-franklin.js';
-import { htmlToElement, getPathDetails } from './scripts.js';
+import { loadCSS } from '../../scripts/lib-franklin.js';
+import { htmlToElement, getPathDetails } from '../../scripts/scripts.js';
+import { getCell } from '../header/header-utils.js';
 
 const pathDetails = getPathDetails();
 const defaultLanguages = [
@@ -68,12 +69,27 @@ const switchLanguage = (language) => {
   }
 };
 
+const loadStyles = () => {
+  loadCSS(`${window.hlx.codeBasePath}/blocks/language/language.css`);
+};
+
 export default class LanguageBlock extends HTMLElement {
-  constructor(position, popoverId) {
+  constructor(position, popoverId, languageBlock) {
     super();
     this.position = position;
     this.popoverId = popoverId;
+    this.languageBlock = languageBlock;
   }
+
+  decorateButton = async () => {
+    const title = getCell(this.languageBlock, 1, 1)?.firstChild.textContent;
+    const languageHtml = htmlToElement(`
+    <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover-header" aria-label="${title}">
+      <span class="icon icon-globegrid"></span>
+    </button>        
+  `);
+    this.appendChild(languageHtml);
+  };
 
   /**
    * Decoration for language popover - shared between header and footer
@@ -83,7 +99,6 @@ export default class LanguageBlock extends HTMLElement {
       this.position === 'top'
         ? 'language-selector-popover language-selector-popover--top'
         : 'language-selector-popover';
-    loadCSS(`${window.hlx.codeBasePath}/styles/language.css`);
 
     const spans = languages.map(
       ({ lang, title }) => `<span class="language-selector-label" data-value="${lang}">${title}</span>`,
@@ -101,11 +116,14 @@ export default class LanguageBlock extends HTMLElement {
         onLanguageChange(lang);
       }
     });
-    return {
-      popover,
-      languages,
-    };
+    this.appendChild(popover);
   };
+
+  connectedCallback() {
+    loadStyles();
+    this.decorateButton();
+    this.buildLanguageBlock();
+  }
 }
 
 customElements.define('language-block', LanguageBlock);

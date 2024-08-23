@@ -1,7 +1,7 @@
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getPathDetails, decorateLinks, fetchFragment } from '../../scripts/scripts.js';
-import LanguageBlock from '../../scripts/language.js';
+import LanguageBlock from '../language/language.js';
 
 async function decorateMenu(footer) {
   const isSignedIn = await isSignedInUser();
