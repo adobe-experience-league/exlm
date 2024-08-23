@@ -123,6 +123,11 @@ body.profile .role-and-industry .industry-selection-title:not(.signup-dialog .ro
     color: #000;
 }
 
+body.profile .role-and-industry .industry-selection-title :where(h1, h2, h3, h4, h5, h6):not(.signup-dialog .role-and-industry .industry-selection-title) {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
 body.profile .role-and-industry .industry-selection-description:not(.signup-dialog .role-and-industry .industry-selection-description){
     font-size: 16px;
     color: #222222;
