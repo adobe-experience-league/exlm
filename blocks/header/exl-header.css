@@ -815,7 +815,7 @@ exl-header {
 .header .search-short .icon {
   height: 18px;
 }
-.header .search-icon {
+.header .icon-search {
   background: url("../../icons/search.svg") no-repeat center center;
   background-size: 1em 1em;
 }
@@ -828,11 +828,9 @@ exl-header {
 }
 .header .search-full .icon {
   position: absolute;
-  z-index: 1;
   display: flex;
   align-items: center;
   left: 0;
-  padding-left: 1rem;
   cursor: pointer;
 }
 .header .search-full .icon.search-clear-icon {
@@ -972,6 +970,10 @@ exl-header {
 }
 .header .signed-in .profile .profile-menu h2:first-child {
   margin: 0;
+}
+.header .signed-in .profile .icon-profile {
+  background: url("../../icons/profile.svg") no-repeat center center;
+  background-size: 1em 1em;
 }
 .header .signed-in .profile a {
   border-radius: 0;

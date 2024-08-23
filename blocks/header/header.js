@@ -10,9 +10,10 @@ import {
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
 import initializeSignupFlow from '../../scripts/signup-flow/signup-flow.js';
-import { Deferred, decorateIcons, getMetadata } from './header-util.js';
-import { LanguageBlock } from '../../scripts/language.js';
-
+import { decoratorState, isMobile, registerHeaderResizeHandler, getCell } from './header-utils.js';
+import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
+import LanguageBlock from '../../scripts/language.js';
+import Profile from './load-profile.js';
 /**
  * @typedef {Object} DecoratorOptions
  * @property {() => Promise<boolean>} isUserSignedIn
@@ -51,22 +52,6 @@ async function loadSearchElement() {
   return searchElementPromise;
 }
 
-/**
- * debounce fn execution
- * @param {number} ms
- * @param {Function} fn
- * @returns {Function} debounced function
- */
-export const debounce = (ms, fn) => {
-  let timer;
-  // eslint-disable-next-line func-names
-  return function (...args) {
-    clearTimeout(timer);
-    args.unshift(this);
-    timer = setTimeout(fn(args), ms);
-  };
-};
-
 let cachedPlaceholders;
 
 const getPlaceholders = async (langCode) => {
@@ -77,40 +62,6 @@ const getPlaceholders = async (langCode) => {
   cachedPlaceholders = result;
   return result;
 };
-
-/**
- * Register page resize handler
- * @param {ResizeObserverCallback} handler
- * @returns {void} nothing
- */
-function registerHeaderResizeHandler(callback) {
-  window.customResizeHandlers = window.customResizeHandlers || [];
-  const header = document.querySelector('header');
-  // register resize observer only once.
-  if (!window.pageResizeObserver) {
-    const pageResizeObserver = new ResizeObserver(
-      debounce(100, () => {
-        window.customResizeHandlers.forEach((handler) => {
-          try {
-            handler();
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error(e);
-          }
-        });
-      }),
-    );
-    // observe immediately
-    pageResizeObserver.observe(header, {
-      box: 'border-box',
-    });
-    window.pageResizeObserver = pageResizeObserver;
-  }
-  // push handler
-  window.customResizeHandlers.push(callback);
-  // ensure handler runs at-least once
-  callback();
-}
 
 const communityLocalesMap = new Map([
   ['de', 'de'],
@@ -180,21 +131,6 @@ const randomId = (length = 6) =>
   Math.random()
     .toString(36)
     .substring(2, length + 2);
-
-/**
- * @param {HTMLElement} block
- * @param {number} row
- * @param {number} cell
- * @returns
- */
-const getCell = (block, row, cell) => block.querySelector(`:scope > div:nth-child(${row}) > div:nth-child(${cell})`);
-
-// Mobile Only (Until 1024px)
-const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
-
-const decoratorState = {
-  languages: new Deferred(),
-};
 
 /**
  * Decorates the brand block
@@ -476,12 +412,12 @@ const searchDecorator = async (searchBlock) => {
     `<div class="search-wrapper">
       <div class="search-short">
         <a href="https://experienceleague.adobe.com/search.html" aria-label="Search">
-          <span title="Search" class="icon search-icon"></span>
+          <span title="Search" class="icon icon-search"></span>
         </a>
       </div>
       <div class="search-full">
         <div class="search-container">
-          <span title="Search" class="icon search-icon"></span>
+          <span title="Search" class="icon icon-search"></span>
           <input autocomplete="off" class="search-input" type="text" aria-label="top-nav-combo-search" aria-expanded="false" title="Insert a query. Press enter to send" role="combobox" placeholder="${
             searchPlaceholder.textContent
           }">
@@ -566,27 +502,17 @@ async function decorateCommunityBlock(header, decoratorOptions) {
  * @param {HTMLElement} languageBlock
  */
 const languageDecorator = async (languageBlock) => {
+  const language = new LanguageBlock('top', 'language-picker-popover-header');
+  const { popover } = await language.buildLanguageBlock();
   const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
-  decoratorState.languageTitle = title;
-  decoratorState.languages = new Deferred();
-
-  const prependLanguagePopover = async (parent) => {
-    const language = new LanguageBlock({
-      position: null,
-      popoverId: 'language-picker-popover-header',
-    });
-    const { popover, languages } = await language.languagePopover;
-    decoratorState.languages.resolve(languages);
-    parent.append(popover);
-  };
-
-  const languageHtml = `
-      <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover-header" aria-label="${title}">
-        <span class="icon icon-globegrid"></span>
-      </button>
-    `;
-  languageBlock.innerHTML = languageHtml;
-  prependLanguagePopover(languageBlock);
+  const languageHtml = htmlToElement(`
+    <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover-header" aria-label="${title}">
+      <span class="icon icon-globegrid"></span>
+    </button>
+  `);
+  languageBlock.replaceChildren(language);
+  language.append(languageHtml, popover);
+  decorateIcons(languageBlock);
   return languageBlock;
 };
 
@@ -596,86 +522,13 @@ const languageDecorator = async (languageBlock) => {
  * @param {DecoratorOptions} decoratorOptions
  */
 const signInDecorator = async (signInBlock, decoratorOptions) => {
-  const shadowHost = document.querySelector('exl-header');
   simplifySingleCellBlock(signInBlock);
   const isSignedIn = await decoratorOptions.isUserSignedIn();
+
   if (isSignedIn) {
     signInBlock.classList.add('signed-in');
-    const profile = htmlToElement(
-      `<div class="profile">
-        <button class="profile-toggle" aria-controls="profile-menu">
-          <span class="icon icon-profile"></span>
-        </button>
-        <div class="profile-menu" id="profile-menu">
-        </div>
-      </div>`,
-    );
+    const profile = new Profile(decoratorOptions);
     signInBlock.replaceChildren(profile);
-
-    decoratorOptions
-      .getProfilePicture()
-      .then((profilePicture) => {
-        if (profilePicture) {
-          const profileToggle = profile.querySelector('.profile-toggle');
-          profileToggle.replaceChildren(
-            htmlToElement(`<img class="profile-picture" src="${profilePicture}" alt="profile picture" />`),
-          );
-        }
-      })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error(err);
-      });
-
-    const toggler = shadowHost.shadowRoot.querySelector('.profile-toggle');
-    const navOverlay = document.querySelector('.nav-overlay');
-    const toggleExpandContentMobile = () => {
-      const navButton = shadowHost.shadowRoot.querySelector('.nav-hamburger');
-      if (navButton.getAttribute('aria-expanded') === 'true') {
-        navButton.click();
-      }
-      const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
-      toggler.setAttribute('aria-expanded', !isExpanded);
-      const profileMenu = toggler.nextElementSibling;
-      const expandedClass = 'profile-menu-expanded';
-      if (!isExpanded) {
-        profileMenu.classList.add(expandedClass);
-        navOverlay.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-      } else {
-        profileMenu.classList.remove(expandedClass);
-        navOverlay.classList.add('hidden');
-        document.body.removeAttribute('style');
-      }
-    };
-
-    const toggleExpandContent = () => {
-      const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
-      toggler.setAttribute('aria-expanded', !isExpanded);
-      const profileMenu = toggler.nextElementSibling;
-      const expandedClass = 'profile-menu-expanded';
-      if (!isExpanded) {
-        profileMenu.classList.add(expandedClass);
-      } else {
-        profileMenu.classList.remove(expandedClass);
-      }
-    };
-
-    registerHeaderResizeHandler(() => {
-      if (isMobile()) {
-        // if mobile, add click event, remove mouseenter/mouseleave
-        toggler.addEventListener('click', toggleExpandContentMobile);
-        toggler.parentElement.removeEventListener('mouseenter', toggleExpandContent);
-        toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
-      } else {
-        navOverlay.classList.add('hidden');
-        document.body.removeAttribute('style');
-        // if desktop, add mouseenter/mouseleave, remove click event
-        toggler.removeEventListener('click', toggleExpandContentMobile);
-        toggler.parentElement.addEventListener('mouseenter', toggleExpandContent);
-        toggler.parentElement.addEventListener('mouseleave', toggleExpandContent);
-      }
-    });
   } else {
     signInBlock.classList.remove('signed-in');
     signInBlock.firstChild.addEventListener('click', async () => {
@@ -826,18 +679,6 @@ const decorateNewTabLinks = (block) => {
   });
 };
 
-async function getPPSProfilePicture() {
-  import('../../scripts/auth/profile.js').then(({ defaultProfileClient }) =>
-    defaultProfileClient
-      .getPPSProfile()
-      .then((ppsProfile) => ppsProfile?.images['50'])
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error(err);
-      }),
-  );
-}
-
 // /* FIXME: Temp Code - Should be removed once we have the profile integration in place */
 async function signupFlow() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -864,6 +705,18 @@ class ExlHeader extends HTMLElement {
     const doSignOut = async () => {
       const { signOut } = await import('../../scripts/auth/profile.js');
       return signOut();
+    };
+
+    const getPPSProfilePicture = async () => {
+      import('../../scripts/auth/profile.js').then(({ defaultProfileClient }) =>
+        defaultProfileClient
+          .getPPSProfile()
+          .then((ppsProfile) => ppsProfile?.images['50'])
+          .catch((err) => {
+            // eslint-disable-next-line no-console
+            console.error(err);
+          }),
+      );
     };
 
     this.decoratorOptions = options;

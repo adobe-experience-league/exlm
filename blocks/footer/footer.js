@@ -1,7 +1,7 @@
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getPathDetails, decorateLinks, fetchFragment } from '../../scripts/scripts.js';
-import { LanguageBlock } from '../../scripts/language.js';
+import LanguageBlock from '../../scripts/language.js';
 
 async function decorateMenu(footer) {
   const isSignedIn = await isSignedInUser();
@@ -76,8 +76,8 @@ async function decorateSocial(footer) {
   const groupDiv = document.createElement('div');
   groupDiv.classList.add('footer-lang-social');
   // build language popover
-  const languageBlock = new LanguageBlock({ position: 'top', popoverId: 'language-picker-popover-footer' });
-  const { popover } = await languageBlock.languagePopover
+  const languageBlock = new LanguageBlock('top', 'language-picker-popover-footer');
+  const { popover } = await languageBlock.buildLanguageBlock();
 
   const langSelectorButton = languageSelector.firstElementChild;
   langSelectorButton.classList.add('language-selector-button');

@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-cycle
 import { loadCSS } from './lib-franklin.js';
 import { htmlToElement, getPathDetails } from './scripts.js';
 
@@ -29,7 +28,7 @@ const defaultLanguages = [
     title: 'Nederlands',
   },
   {
-    lang: 'pt',
+    lang: 'pt-br',
     title: 'Português',
   },
   {
@@ -54,7 +53,7 @@ const defaultLanguages = [
   },
 ];
 
-export const getLanguagePath = (language) => {
+const getLanguagePath = (language) => {
   const { prefix, suffix } = pathDetails;
   return `${prefix}/${language}${suffix}`;
 };
@@ -69,50 +68,44 @@ const switchLanguage = (language) => {
   }
 };
 
-/**
- * Decoration for language popover - shared between header and footer
- */
-const buildLanguageBlock = async ( 
-  options,
-  languages = defaultLanguages,
-  onLanguageChange = switchLanguage,
-) => {
-  const popoverClass =
-    options.position === 'top' ? 'language-selector-popover language-selector-popover--top' : 'language-selector-popover';
-  loadCSS(`${window.hlx.codeBasePath}/styles/language.css`);
+export default class LanguageBlock extends HTMLElement {
+  constructor(position, popoverId) {
+    super();
+    this.position = position;
+    this.popoverId = popoverId;
+  }
 
-  const spans = languages.map(
-    ({ lang, title }) => `<span class="language-selector-label" data-value="${lang}">${title}</span>`,
-  );
-  const popover = htmlToElement(
-    `<div class="${popoverClass}" id="${options.popoverId}"style="display:none">
+  /**
+   * Decoration for language popover - shared between header and footer
+   */
+  buildLanguageBlock = async (languages = defaultLanguages, onLanguageChange = switchLanguage) => {
+    const popoverClass =
+      this.position === 'top'
+        ? 'language-selector-popover language-selector-popover--top'
+        : 'language-selector-popover';
+    loadCSS(`${window.hlx.codeBasePath}/styles/language.css`);
+
+    const spans = languages.map(
+      ({ lang, title }) => `<span class="language-selector-label" data-value="${lang}">${title}</span>`,
+    );
+    const popover = htmlToElement(
+      `<div class="${popoverClass}" id="${this.popoverId}"style="display:none">
       ${spans.join('')}
     </div>`,
-  );
-  popover.addEventListener('click', (e) => {
-    const { target } = e;
-    if (target.classList.contains('language-selector-label')) {
-      target.setAttribute('selected', 'true');
-      const lang = target.getAttribute('data-value');
-      onLanguageChange(lang);
-    }
-  });
-  return {
-    popover,
-    languages
+    );
+    popover.addEventListener('click', (e) => {
+      const { target } = e;
+      if (target.classList.contains('language-selector-label')) {
+        target.setAttribute('selected', 'true');
+        const lang = target.getAttribute('data-value');
+        onLanguageChange(lang);
+      }
+    });
+    return {
+      popover,
+      languages,
+    };
   };
-};
-
-export class LanguageBlock  extends HTMLElement {
-
-  constructor(options = {}) {
-  super();
-    this.options = options;
-    this.popoverId = options.popoverId;
-    this.position = options.position;
-    this.languagePopover = buildLanguageBlock(options);   
-  } 
-
 }
 
 customElements.define('language-block', LanguageBlock);
