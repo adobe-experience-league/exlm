@@ -106,7 +106,7 @@ export async function pushPageDataLayer(language) {
   if (sections.length > 1) {
     sections.shift();
   }
-  const updatedSections = sections.map((element) => (section === 'perspective' ? 'perspectives' : element));
+
   const mainSiteSection = search ? 'search' : '';
 
   console.timeLog('martech', `datalayer: push ${Date.now()}`);
@@ -132,11 +132,11 @@ export async function pushPageDataLayer(language) {
         userAgent: window.navigator.userAgent,
         server: window.location.host,
         siteSection: section,
-        siteSubSection1: updatedSections[0] || '',
-        siteSubSection2: updatedSections[1] || '',
-        siteSubSection3: updatedSections[2] || '',
-        siteSubSection4: updatedSections[3] || '',
-        siteSubSection5: updatedSections[4] || '',
+        siteSubSection1: sections[0] === 'perspective' ? 'perspectives' : sections[0] || '',
+        siteSubSection2: sections[1] || '',
+        siteSubSection3: sections[2] || '',
+        siteSubSection4: sections[3] || '',
+        siteSubSection5: sections[4] || '',
         solution,
         solutionVersion,
         subSolution,
