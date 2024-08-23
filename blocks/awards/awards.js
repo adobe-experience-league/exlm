@@ -35,17 +35,6 @@ export default async function decorate(block) {
       `;
   }
 
-  function generateEmptyAwardsBlock() {
-    return `
-        <div class="nil-awards">
-          ${
-            placeholders?.nilAwardsLabel ||
-            'No awards yet! Start exploring Experience League to discover what you can earn.'
-          }
-        </div>
-      `;
-  }
-
   function formatTimestampToMonthYear(timestamp) {
     const date = new Date(timestamp);
     const options = { year: 'numeric', month: 'short' };
@@ -90,8 +79,12 @@ export default async function decorate(block) {
       new Pagination({ wrapper: block, identifier: 'awards', renderItems, pgNumber: pgNum, totalPages });
       renderItems({ pgNum, block });
     } else {
-      const awardsEmptyDiv = document.createRange().createContextualFragment(generateEmptyAwardsBlock());
-      block.append(awardsEmptyDiv);
+      // FIXME: Temporary fix until Personalized home page is launched
+      const awardsSection = block.closest('.section.awards-container');
+      if (awardsSection) {
+        awardsSection.remove();
+        document.querySelector('.profile-rail-nav li:last-child').style.display = 'none';
+      }
     }
   }
 }
