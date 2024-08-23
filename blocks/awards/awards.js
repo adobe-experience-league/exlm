@@ -83,7 +83,12 @@ export default async function decorate(block) {
       const awardsSection = block.closest('.section.awards-container');
       if (awardsSection) {
         awardsSection.remove();
-        document.querySelector('.profile-rail-nav li:last-child').style.display = 'none';
+        const profileRail = document.querySelector('.profile-rail-nav');
+        const awardsNav = profileRail?.querySelector('li:last-child');
+
+        if (profileRail && awardsNav) {
+          awardsNav.style.display = 'none';
+        }
       }
     }
   }
