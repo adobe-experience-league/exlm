@@ -174,30 +174,63 @@ const createSignupDialog = () => {
   };
 
   /**
+   * Validates a form within a given block element and handles error display and scrolling behavior.
+   *
+   * @param {Element} block - The block element.
+   * @param {string} formSelector - The ID selector to locate the form within the block.
+   * @param {string} errorSelector - The CSS selector to locate the error container within the form.
+   * @param {string} errorMessage - The error message to display if validation fails.
+   * @returns {boolean} - Returns true if the form is valid; otherwise, false.
+   */
+  function validateForm(block, formSelector, errorSelector, errorMessage) {
+    const form = block && block.querySelector(formSelector);
+    if (form) {
+      const options = {
+        aggregateRules: {
+          checkBoxGroup: {
+            errorContainer: form.querySelector(errorSelector),
+            errorMessage,
+          },
+        },
+      };
+      const validator = new FormValidator(form, placeholders, options);
+      const isValidForm = validator.validate();
+      if (!isValidForm) {
+        sendNotice(placeholders?.signupFlowToastErrorMessage || 'Please fill in the missing details.', 'error');
+        block.scrollIntoView({ behavior: 'smooth' });
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * Handles the navigation between pages in the signup dialog.
    * @param {number} direction - The direction to navigate (1 for next, -1 for previous).
    */
   const handleNavigation = async (direction) => {
-    const productInterestsBlock = signupDialog.querySelector('.product-interests');
-    const productInterestsForm =
-      productInterestsBlock && productInterestsBlock.querySelector('#product-interests-form');
-    if (productInterestsForm && direction === 1) {
-      const options = {
-        aggregateRules: {
-          checkBoxGroup: {
-            errorContainer: productInterestsForm.querySelector('.product-interests-form-error'),
-            errorMessage: placeholders?.productInterestFormErrorMessage,
-          },
-        },
-      };
-      const validator = new FormValidator(productInterestsForm, placeholders, options);
-      const isValidForm = validator.validate();
-      if (!isValidForm) {
-        sendNotice(placeholders?.signupFlowToastErrorMessage || 'Please fill in the missing details.', 'error');
-        productInterestsBlock.scrollIntoView({ behavior: 'smooth' });
+    if (direction === 1) {
+      const productInterestsBlock = signupDialog.querySelector('.product-interests');
+      const roleIndustryBlock = signupDialog.querySelector('.role-and-industry');
+
+      if (
+        !validateForm(
+          productInterestsBlock,
+          '#product-interests-form',
+          '.product-interests-form-error',
+          placeholders?.productInterestFormErrorMessage,
+        ) ||
+        !validateForm(
+          roleIndustryBlock,
+          '#role-and-industry-form',
+          '.role-and-industry-form-error',
+          placeholders?.formFieldGroupError,
+        )
+      ) {
         return false;
       }
     }
+
     const signupContent = signupDialog.querySelector('.signup-dialog-content');
     const currentPageIndex = parseInt(signupContent.dataset.currentPageIndex, 10);
     if (currentPageIndex === 1 && direction === 1) {
