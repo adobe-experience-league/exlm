@@ -319,14 +319,14 @@ const buildNavItems = async (ul, level = 0) => {
     ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
 
     const addMobileLangSelector = async () => {
-      const languages = await decoratorState.languages.promise;
       // add language select (visible on mobile only)
+
       const navItem = ul.appendChild(
         htmlToElement(
           `<li class="nav-item-mobile">
             <p>${decoratorState.languageTitle}</p>
             <ul>
-              ${languages.map((l) => `<li><a href="${l.lang}">${l.title}</a></li>`).join('')}
+              ${decoratorState.languages.map((l) => `<li><a href="${l.lang}">${l.title}</a></li>`).join('')}
             </ul>
           </li>`,
         ),
@@ -503,6 +503,10 @@ async function decorateCommunityBlock(header, decoratorOptions) {
  */
 const languageDecorator = async (languageBlock) => {
   const language = new LanguageBlock('top', 'language-picker-popover-header', languageBlock, 'header');
+  const title = getCell(languageBlock, 1, 1)?.firstChild.textContent
+  decoratorState.languageTitle = title;
+  decoratorState.languages = language.languages;
+
   languageBlock.replaceChildren(language);
   return languageBlock;
 };

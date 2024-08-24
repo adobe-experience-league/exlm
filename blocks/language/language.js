@@ -74,12 +74,13 @@ const loadStyles = async () => {
 };
 
 export default class LanguageBlock extends HTMLElement {
-  constructor(position, popoverId, block, type) {
+  constructor(position, popoverId, block, type, languages = defaultLanguages) {
     super();
     this.position = position;
     this.popoverId = popoverId;
     this.block = block;
     this.type = type;
+    this.languages = languages;
   }
 
   decorateButton = async () => {
@@ -95,13 +96,13 @@ export default class LanguageBlock extends HTMLElement {
   /**
    * Decoration for language popover - shared between header and footer
    */
-  buildLanguageBlock = async (languages = defaultLanguages, onLanguageChange = switchLanguage) => {
+  buildLanguageBlock = async (onLanguageChange = switchLanguage) => {
     const popoverClass =
       this.position === 'top'
         ? 'language-selector-popover language-selector-popover--top'
         : 'language-selector-popover';
 
-    const spans = languages.map(
+    const spans = this.languages.map(
       ({ lang, title }) => `<span class="language-selector-label" data-value="${lang}">${title}</span>`,
     );
     const popover = htmlToElement(
