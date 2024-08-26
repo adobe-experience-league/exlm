@@ -278,6 +278,13 @@ const createSignupDialog = () => {
     });
   };
 
+  /**
+   * Listen for the dialog 'cancel' event
+   */
+  signupDialog.addEventListener('cancel', () => {
+    document.body.classList.remove('overflow-hidden');
+  });
+
   const defaultPageIndex = 0;
   initNavigation(defaultPageIndex);
   setupCloseEvents();
