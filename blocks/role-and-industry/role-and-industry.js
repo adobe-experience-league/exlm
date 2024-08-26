@@ -120,7 +120,7 @@ export default async function decorate(block) {
     const industryOptions = await fetchIndustryOptions();
     const updatedIndustryOptions = industryOptions.map((industry) => ({
       ...industry,
-      value: industry.Name,
+      value: industry.id,
       title: industry.Name,
     }));
     const selectIndustryDropDown = new Dropdown(
@@ -128,13 +128,13 @@ export default async function decorate(block) {
       `${placeholders?.select || 'Select'}`,
       updatedIndustryOptions,
     );
-    selectIndustryDropDown.handleOnChange((selectedIndustry) => {
-      if (Array.isArray(selectedIndustry)) {
+    selectIndustryDropDown.handleOnChange((selectedIndustryId) => {
+      if (Array.isArray(selectedIndustryId)) {
         const industrySelection = [];
-        industrySelection.push(selectedIndustry);
+        industrySelection.push(selectedIndustryId);
         defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
-      } else if (typeof selectedIndustry === 'string') {
-        const industrySelection = selectedIndustry;
+      } else if (typeof selectedIndustryId === 'string') {
+        const industrySelection = selectedIndustryId;
         defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
       }
     });

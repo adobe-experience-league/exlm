@@ -3,6 +3,7 @@ import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 
 const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
+const { industryUrl } = getConfig();
 
 const fetchExlProfileData = async () => {
   const [profileData, ppsProfileData] = await Promise.allSettled([
@@ -16,6 +17,36 @@ const fetchExlProfileData = async () => {
   }
   // Return profileData and ppsProfileData (or empty object if ppsProfileData is rejected)
   return { profileData: profileData.value, ppsProfileData: ppsProfileData.value || {} };
+};
+
+async function fetchIndustryOptions() {
+  try {
+    const response = await fetch(industryUrl);
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('There was a problem with the fetch operation:', error);
+    return [];
+  }
+}
+
+const industryOptions = await fetchIndustryOptions();
+const getIndustryNameById = (industryId, industryOptionsArray) => {
+  let industry;
+
+  if (Array.isArray(industryId)) {
+    // If industryId is an array, find the first matching industry name for any ID in the array
+    industry = industryOptionsArray.find((option) => industryId.includes(option.id));
+  } else {
+    // If industryId is a string, find the matching industry name directly
+    industry = industryOptionsArray.find((option) => option.id === industryId);
+  }
+  if (!industry) {
+    return [];
+  }
+
+  return industry.Name || '';
 };
 
 const fetchCommunityProfileData = async () => defaultProfileClient.fetchCommunityProfileDetails();
@@ -123,6 +154,7 @@ const generateCommunityAccountDOM = (profileData, placeholders, communityAccount
 
 const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
+  const industryName = getIndustryNameById(industry, industryOptions);
 
   const roleMappings = {
     Developer: placeholders?.roleCardDeveloperTitle || 'Developer',
@@ -142,11 +174,12 @@ const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
             : ''
         }
         ${
-          industry &&
-          ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''))
+          industryName &&
+          ((Array.isArray(industryName) && industryName.length > 0) ||
+            (typeof industryName === 'string' && industryName.trim() !== ''))
             ? `<div class="user-industry"><span class="heading">${
                 placeholders?.myIndustry || 'My Industry'
-              }: </span><span>${industry}</span></div>`
+              }: </span><span>${industryName}</span></div>`
             : ''
         }
         ${
