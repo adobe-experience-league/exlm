@@ -2748,19 +2748,6 @@
         "label": "Author Bio page URL"
       },
       {
-        "component": "multiselect",
-        "valueType": "string",
-        "name": "coveo-content-type",
-        "label": "Content Type",
-        "description": "Sets the coveo content type in page meta.",
-        "options": [
-          {
-            "name": "Perspectives",
-            "value": "Perspective"
-          }
-        ]
-      },
-      {
         "component": "aem-tag",
         "valueType": "string",
         "name": "coveo-solution",
