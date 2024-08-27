@@ -16,7 +16,7 @@
 
 /* the foreground contains text and spacer */
 .teaser.block > .foreground {
-  max-width: var(--non-spectrum-max-width);
+  max-width: var(--default-max-width);
   margin: auto;
 }
 

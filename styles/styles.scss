@@ -330,9 +330,10 @@
   --non-spectrum-azure-blue: #378ef0;
   --non-spectrum-silver-mist: #d2d2d2;
   --non-spectrum-blue-cobalt: #0364dc;
-  --non-spectrum-max-width: 1280px;
-  --non-spectrum-footer-max-width: 1440px;
-  --non-spectrum-profile-max-width: 1440px;
+
+  /* Max-width values */
+  --default-max-width: 1280px;
+  --secondary-max-width: 1440px;
 
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
@@ -828,7 +829,7 @@ picture {
 
   > div {
     /* limit block wrappers max width */
-    max-width: var(--non-spectrum-max-width);
+    max-width: var(--default-max-width);
     margin: auto;
   }
 
@@ -971,7 +972,7 @@ body[class^='browse-'] .browse-filters-full-container {
         / 256px 1fr;
 
       /* on pages with rails the max width must be on main */
-      max-width: var(--non-spectrum-max-width);
+      max-width: var(--default-max-width);
       margin: auto;
       grid-template-rows: auto auto;
     }

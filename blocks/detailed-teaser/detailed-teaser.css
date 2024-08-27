@@ -42,7 +42,7 @@
   display: flex;
   flex-direction: column;
   position:relative;
-  max-width: var(--non-spectrum-max-width);
+  max-width: var(--default-max-width);
   margin: auto;
 }
 
@@ -264,7 +264,7 @@ border-radius: 30px;
     flex-direction: row;
     gap: 40px;
     justify-content: space-between; 
-    max-width: var(--non-spectrum-max-width);
+    max-width: var(--default-max-width);
     width:100%;
   }
 
