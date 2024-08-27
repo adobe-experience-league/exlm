@@ -21,6 +21,10 @@ body.profile > main > .section:not(.profile-tab-section, .profile-rail-section, 
     gap: 8px 10px; 
 }
 
+.product-interests .product-interest-description {
+    font-size: var(--spectrum-font-size-200);
+}
+
 .product-interests .sub-interests-container {
     margin: 8px 0 0 28px;
     display: flex;
