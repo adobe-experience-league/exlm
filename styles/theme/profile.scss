@@ -218,7 +218,7 @@ body.profile-home-page
     position: relative;
     display: grid;
     margin: 0 auto;
-    max-width: var(--non-spectrum-max-width);
+    max-width: var(--non-spectrum-profile-max-width);
     grid-template-columns: minmax(100px, 25%) 1fr;
   }
 
