@@ -19,7 +19,7 @@ const fetchExlProfileData = async () => {
   return { profileData: profileData.value, ppsProfileData: ppsProfileData.value || {} };
 };
 
-async function fetchIndustryOptions() {
+export async function fetchIndustryOptions() {
   try {
     const response = await fetch(industryUrl);
     const data = await response.json();
@@ -32,9 +32,8 @@ async function fetchIndustryOptions() {
 }
 
 const industryOptions = await fetchIndustryOptions();
-const getIndustryNameById = (industryId, industryOptionsArray) => {
-  let industry;
-
+export const getIndustryNameById = (industryId, industryOptionsArray) => {
+  let industry = '';
   if (Array.isArray(industryId)) {
     // If industryId is an array, find the first matching industry name for any ID in the array
     industry = industryOptionsArray.find((option) => industryId.includes(option.id));
@@ -42,11 +41,7 @@ const getIndustryNameById = (industryId, industryOptionsArray) => {
     // If industryId is a string, find the matching industry name directly
     industry = industryOptionsArray.find((option) => option.id === industryId);
   }
-  if (!industry) {
-    return [];
-  }
-
-  return industry.Name || '';
+  return industry.trim() !== '' ? industry.Name : '';
 };
 
 const fetchCommunityProfileData = async () => defaultProfileClient.fetchCommunityProfileDetails();
@@ -71,7 +66,7 @@ const fetchProfileData = async (profileFlags) => {
     ...(profileFlags.includes(EXL_PROFILE) && {
       adobeDisplayName: profileData?.displayName || '',
       email: profileData?.email || '',
-      industry: profileData?.industryInterests || '',
+      industry: profileData?.industryInterests || [],
       roles: profileData?.role || [],
       interests: profileData?.interests || [],
       profilePicture: ppsProfileData?.images?.['100'] || '',
@@ -154,7 +149,13 @@ const generateCommunityAccountDOM = (profileData, placeholders, communityAccount
 
 const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
-  const industryName = getIndustryNameById(industry, industryOptions);
+  let industryName = '';
+  if (Array.isArray(industry)) {
+    industryName = getIndustryNameById(industry[0], industryOptions);
+  }
+  if (typeof industry === 'string') {
+    industryName = getIndustryNameById(industry, industryOptions);
+  }
 
   const roleMappings = {
     Developer: placeholders?.roleCardDeveloperTitle || 'Developer',
@@ -174,9 +175,7 @@ const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
             : ''
         }
         ${
-          industryName &&
-          ((Array.isArray(industryName) && industryName.length > 0) ||
-            (typeof industryName === 'string' && industryName.trim() !== ''))
+          industryName.trim() !== ''
             ? `<div class="user-industry"><span class="heading">${
                 placeholders?.myIndustry || 'My Industry'
               }: </span><span>${industryName}</span></div>`

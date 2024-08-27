@@ -1,6 +1,7 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { fetchIndustryOptions, getIndustryNameById } from '../../scripts/profile/profile.js';
 
 let placeholders = {};
 try {
@@ -32,9 +33,9 @@ export default async function decorate(block) {
   let communityProfileData = '';
   let adobeDisplayName = '';
   let adobeFirstName = '';
-  let industry = '';
-  let roles = '';
-  let interests = '';
+  let industry = [];
+  let roles = [];
+  let interests = [];
   let profilePicture = '';
   let company = '';
   let communityUserName = '';
@@ -47,18 +48,18 @@ export default async function decorate(block) {
     ppsProfileData = await defaultProfileClient.getPPSProfile();
     communityProfileData = await defaultProfileClient.fetchCommunityProfileDetails();
 
-    adobeDisplayName = profileData?.displayName || '';
-    adobeFirstName = profileData?.first_name || '';
-    industry = profileData?.industryInterests || [];
-    roles = profileData?.role || [];
-    interests = profileData?.interests || [];
+    adobeDisplayName = profileData?.displayName;
+    adobeFirstName = profileData?.first_name;
+    industry = profileData?.industryInterests;
+    roles = profileData?.role;
+    interests = profileData?.interests;
 
-    profilePicture = ppsProfileData?.images?.['100'] || '';
-    company = ppsProfileData?.company || '';
+    profilePicture = ppsProfileData?.images?.['100'];
+    company = ppsProfileData?.company;
 
-    communityUserName = communityProfileData?.username || '';
-    communityUserTitle = communityProfileData?.title || '';
-    communityUserLocation = communityProfileData?.location || '';
+    communityUserName = communityProfileData?.username;
+    communityUserTitle = communityProfileData?.title;
+    communityUserLocation = communityProfileData?.location;
   }
 
   const roleMappings = {
@@ -76,12 +77,21 @@ export default async function decorate(block) {
     industry &&
     ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''));
 
+  const industryArray = fetchIndustryOptions();
+  let industryName = '';
+  if (Array.isArray(industry)) {
+    industryName = getIndustryNameById(industry[0], industryArray);
+  }
+  if (typeof industryName === 'string') {
+    industryName = getIndustryNameById(industry, industryArray);
+  }
+
   if (hasIndustry) {
     industryContent = `
           <div class="profile-user-card-industry">
             <span class="industry-heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
             <span class="${!hasInterests ? 'incomplete-profile' : ''}">
-              ${Array.isArray(industry) ? industry.join(', ') : industry}
+              ${industryName}
             </span>
           </div>`;
   } else if (!hasInterests) {

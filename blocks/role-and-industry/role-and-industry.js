@@ -1,8 +1,9 @@
-import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
+import { fetchIndustryOptions } from '../../scripts/profile/profile.js';
 
 let placeholders = {};
 try {
@@ -12,23 +13,10 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-const { industryUrl } = getConfig();
 const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
 const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
 const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
 const FORM_ERROR = placeholders?.formFieldGroupError || 'Please select at least one option.';
-
-async function fetchIndustryOptions() {
-  try {
-    const response = await fetch(industryUrl);
-    const data = await response.json();
-    return data.data;
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('There was a problem with the fetch operation:', error);
-    return [];
-  }
-}
 
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
@@ -124,14 +112,15 @@ export default async function decorate(block) {
       updatedIndustryOptions,
     );
     selectIndustryDropDown.handleOnChange((selectedIndustryId) => {
-      if (Array.isArray(selectedIndustryId)) {
-        const industrySelection = [];
-        industrySelection.push(selectedIndustryId);
-        defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
-      } else if (typeof selectedIndustryId === 'string') {
-        const industrySelection = selectedIndustryId;
-        defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
-      }
+      const industrySelection = [];
+      // if (Array.isArray(selectedIndustryId)) {
+      //   industrySelection.push(selectedIndustryId[0]);
+      //   defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
+      // } else
+      // if (typeof selectedIndustryId === 'string') {
+      industrySelection.push(selectedIndustryId);
+      defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
+      // }
     });
 
     const profileData = await defaultProfileClient.getMergedProfile();
