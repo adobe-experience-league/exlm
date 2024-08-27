@@ -503,8 +503,8 @@ async function decorateCommunityBlock(header, decoratorOptions) {
  */
 const languageDecorator = async (languageBlock) => {
   const language = new LanguageBlock('top', 'language-picker-popover-header', languageBlock, 'header');
-  const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
-  decoratorState.languageTitle = title;
+  // const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
+  decoratorState.languageTitle = language.title;
   decoratorState.languages = language.languages;
 
   languageBlock.replaceChildren(language);

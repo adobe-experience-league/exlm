@@ -81,12 +81,12 @@ export default class LanguageBlock extends HTMLElement {
     this.block = block;
     this.type = type;
     this.languages = languages;
+    this.title = getCell(this.block, 1, 1)?.firstChild.textContent;
   }
 
   decorateButton = async () => {
-    const title = getCell(this.block, 1, 1)?.firstChild.textContent;
     const languageHtml = htmlToElement(`
-    <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover-${this.type}" aria-label="${title}">
+    <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover-${this.type}" aria-label="${this.title}">
       <span class="icon icon-globegrid"></span>
     </button>        
   `);
