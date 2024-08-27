@@ -22,7 +22,7 @@
 }
 
 .playlist-browse {
-  max-width: var(--non-spectrum-max-width);
+  max-width: var(--default-max-width);
   margin: 0 auto;
 }
 
@@ -84,7 +84,7 @@
 }
 
 .playlist-browse-marquee-content {
-  max-width: var(--non-spectrum-max-width);
+  max-width: var(--default-max-width);
   padding-left: var(--space-token-xl) !important;
   padding-right: var(--space-token-xl) !important;
 }
