@@ -973,7 +973,8 @@ exl-header {
 }
 .header .signed-in .profile .icon-profile {
   background: url("../../icons/profile.svg") no-repeat center center;
-  background-size: 1em 1em;
+  background-size: 24px 24px;
+  vertical-align: middle;
 }
 .header .signed-in .profile a {
   border-radius: 0;

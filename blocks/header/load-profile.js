@@ -5,6 +5,13 @@ export default class Profile extends HTMLElement {
   constructor(options = {}) {
     super();
     this.options = options;
+    this.PPS_PROFILE = 'pps-profile';
+  }
+
+  async getProfilePicture() {
+    const retrieveProfilePicture = await sessionStorage.getItem(this.PPS_PROFILE);
+    const jsonParse = JSON.parse(retrieveProfilePicture);
+    return jsonParse.images['50'];
   }
 
   async createProfile() {
@@ -19,8 +26,7 @@ export default class Profile extends HTMLElement {
     );
     this.appendChild(profile);
 
-    this.options
-      .getProfilePicture()
+    this.getProfilePicture()
       .then((profilePicture) => {
         if (profilePicture) {
           const profileToggle = profile.querySelector('.profile-toggle');
