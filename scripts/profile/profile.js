@@ -30,6 +30,9 @@ export async function fetchIndustryOptions() {
     return [];
   }
 }
+
+const industryOptions = await fetchIndustryOptions();
+
 export const getIndustryNameById = (industryId, industryOptionsArray) => {
   let industry = '';
   if (Array.isArray(industryId)) {
@@ -39,7 +42,7 @@ export const getIndustryNameById = (industryId, industryOptionsArray) => {
     // If industryId is a string, find the matching industry name directly
     industry = industryOptionsArray.find((option) => option.id === industryId);
   }
-  return industry.trim() !== '' ? industry.Name : '';
+  return industry ? industry.Name : '';
 };
 
 const fetchCommunityProfileData = async () => defaultProfileClient.fetchCommunityProfileDetails();
@@ -141,9 +144,8 @@ const generateCommunityAccountDOM = (profileData, placeholders, communityAccount
   </div>`;
 };
 
-const generateAdditionalProfileInfoDOM = async (profileData, placeholders) => {
+const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
-  const industryOptions = await fetchIndustryOptions();
   let industryName = '';
   if (Array.isArray(industry)) {
     industryName = getIndustryNameById(industry[0], industryOptions);
