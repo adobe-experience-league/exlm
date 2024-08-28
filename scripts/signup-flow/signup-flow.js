@@ -16,27 +16,29 @@ try {
 
 const { lang } = getPathDetails();
 
-const pages = [];
+let pages = [];
 
 const setPagesConfig = (modalType) => {
   pages.length = 0;
   // Array of pages for the flow
-  pages.push({
-    name: 'step1',
-    path: `/${lang}/profile/${modalType}-modal/step1`,
-    title: placeholders?.signupFlowStep1Header,
-  });
-  pages.push({
-    name: 'step2',
-    path: `/${lang}/profile/${modalType}-modal/step2`,
-    title: placeholders?.signupFlowStep2Header,
-  });
-  pages.push({
-    name: 'confirm',
-    path: `/${lang}/profile/${modalType}-modal/confirm`,
-    title: placeholders?.signupFlowConfirmHeader,
-    nofollow: true,
-  });
+  pages = [
+    {
+      name: 'step1',
+      path: `/${lang}/profile/${modalType}-modal/step1`,
+      title: placeholders?.signupFlowStep1Header,
+    },
+    {
+      name: 'step2',
+      path: `/${lang}/profile/${modalType}-modal/step2`,
+      title: placeholders?.signupFlowStep2Header,
+    },
+    {
+      name: 'confirm',
+      path: `/${lang}/profile/${modalType}-modal/confirm`,
+      title: placeholders?.signupFlowConfirmHeader,
+      nofollow: true,
+    },
+  ];
 };
 
 /**
