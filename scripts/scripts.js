@@ -1124,8 +1124,8 @@ export async function fetchWithFallback(path, fallbackPath) {
 }
 
 export async function fetchFragment(rePath, lang) {
-  const path = `${window.hlx.aemRoot}/fragments/${lang}/${rePath}.plain.html`;
-  const fallback = `${window.hlx.aemRoot}/fragments/en/${rePath}.plain.html`;
+  const path = `${window.hlx.codeBasePath}/fragments/${lang}/${rePath}.plain.html`;
+  const fallback = `${window.hlx.codeBasePath}/fragments/en/${rePath}.plain.html`;
   const response = await fetchWithFallback(path, fallback);
   return response.text();
 }
@@ -1134,13 +1134,13 @@ export async function fetchLanguagePlaceholders(lang) {
   const langCode = lang || getPathDetails()?.lang || 'en';
   try {
     // Try fetching placeholders with the specified language
-    return await fetchPlaceholders(`${window.hlx.aemRoot}/${langCode}`);
+    return await fetchPlaceholders(`${window.hlx.codeBasePath}/${langCode}`);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(`Error fetching placeholders for lang: ${langCode}. Will try to get en placeholders`, error);
     // Retry without specifying a language (using the default language)
     try {
-      return await fetchPlaceholders(`${window.hlx.aemRoot}/en`);
+      return await fetchPlaceholders(`${window.hlx.codeBasePath}/en`);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);
@@ -1153,7 +1153,7 @@ export async function getLanguageCode() {
   if (window.languageCode) return window.languageCode;
   window.languageCode = new Promise((resolve, reject) => {
     const { lang } = getPathDetails();
-    fetch(`${window.hlx.aemRoot}/languages.json`)
+    fetch(`${window.hlx.codeBasePath}/languages.json`)
       .then((response) => response.json())
       .then((languages) => {
         const langMap = languages.data;
