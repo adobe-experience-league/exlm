@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import initializeSignupFlow from '../signup-flow/signup-flow.js';
+import initializeSignupFlow, { FLOW_TYPE } from '../signup-flow/signup-flow.js';
 // eslint-disable-next-line import/no-cycle
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { getConfig } from '../scripts.js';
@@ -16,9 +16,17 @@ export default async function showSignupModal() {
   const configDate = new Date(signUpFlowConfigDate);
   const profileData = await defaultProfileClient.getMergedProfile();
   const profileTimeStamp = new Date(profileData.timestamp);
+  const interests = profileData.interests ?? [];
   const modalSeen = await defaultProfileClient.getLatestInteraction('modalSeen');
-  if (profileTimeStamp >= configDate && !modalSeen) {
-    initializeSignupFlow();
+  if (modalSeen) {
+    return;
+  }
+  const todayStartTimeStamp = new Date();
+  todayStartTimeStamp.setHours(0, 0, 0, 0);
+  if (profileTimeStamp < todayStartTimeStamp && interests.length === 0) {
+    initializeSignupFlow(FLOW_TYPE.INCOMPLETE_PROFILE);
+  } else if (profileTimeStamp >= configDate) {
+    initializeSignupFlow(FLOW_TYPE.NEW_PROFILE);
   }
 }
 

@@ -240,6 +240,7 @@ body.profile-home-page
     padding: 0;
     margin-right: 0;
     margin-top: 88px;
+    min-height: 500px;
   }
 
   body.profile .section[data-two-column-layout]:nth-child(3) > div:nth-child(1) {
@@ -260,9 +261,10 @@ body.profile-home-page
 
   body.profile div.profile-rail-wrapper {
     position: absolute;
-    top: 108px;
+    top: 80px;
     left: 0;
     bottom: 60px;
+    overflow-y: auto;
   }
 
   body.profile .profile-rail {
