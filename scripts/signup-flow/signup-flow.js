@@ -6,6 +6,11 @@ import FormValidator from '../form-validator.js';
 import { sendNotice } from '../toast/toast.js';
 import { addModalSeenInteraction } from '../events/signup-flow-event.js';
 
+export const FLOW_TYPE = {
+  INCOMPLETE_PROFILE: 'incomplete-profile',
+  NEW_PROFILE: 'new-profile',
+};
+
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -16,36 +21,40 @@ try {
 
 const { lang } = getPathDetails();
 
-// Array of pages for the signup flow
-const pages = [
-  {
-    name: 'step1',
-    path: `/${lang}/profile/signup-flow-modal/step1`,
-    title: placeholders?.signupFlowStep1Header,
-  },
-  {
-    name: 'step2',
-    path: `/${lang}/profile/signup-flow-modal/step2`,
-    title: placeholders?.signupFlowStep2Header,
-  },
-  {
-    name: 'confirm',
-    path: `/${lang}/profile/signup-flow-modal/confirm`,
-    title: placeholders?.signupFlowConfirmHeader,
-    nofollow: true,
-  },
-];
+let pages = [];
+
+const setPagesConfig = (modalType) => {
+  pages = [
+    {
+      name: 'step1',
+      path: `/${lang}/profile/${modalType}-modal/step1`,
+      title: placeholders?.signupFlowStep1Header,
+    },
+    {
+      name: 'step2',
+      path: `/${lang}/profile/${modalType}-modal/step2`,
+      title: placeholders?.signupFlowStep2Header,
+    },
+    {
+      name: 'confirm',
+      path: `/${lang}/profile/${modalType}-modal/confirm`,
+      title: placeholders?.signupFlowConfirmHeader,
+      nofollow: true,
+    },
+  ];
+};
 
 /**
  * Creates and initializes the signup dialog.
  * The function sets up the dialog structure, navigation, and event handlers.
  */
-const createSignupDialog = () => {
+const createSignupDialog = (modalType) => {
+  setPagesConfig(modalType);
   pages.forEach((page) =>
     document.head.appendChild(htmlToElement(`<link rel="prefetch" href="${page.path}.plain.html">`)),
   );
   const signupDialog = htmlToElement(`
-        <dialog class="signup-dialog">
+        <dialog class="signup-dialog" data-modaltype="${modalType}" >
             <div class="signup-dialog-container">                                           
                 <div class="signup-dialog-header">
                     <div class="signup-dialog-header-decor"></div>
@@ -174,30 +183,63 @@ const createSignupDialog = () => {
   };
 
   /**
+   * Validates a form within a given block element and handles error display and scrolling behavior.
+   *
+   * @param {Element} block - The block element.
+   * @param {string} formSelector - The ID selector to locate the form within the block.
+   * @param {string} errorSelector - The CSS selector to locate the error container within the form.
+   * @param {string} errorMessage - The error message to display if validation fails.
+   * @returns {boolean} - Returns true if the form is valid; otherwise, false.
+   */
+  function validateForm(block, formSelector, errorSelector, errorMessage) {
+    const form = block && block.querySelector(formSelector);
+    if (form) {
+      const options = {
+        aggregateRules: {
+          checkBoxGroup: {
+            errorContainer: form.querySelector(errorSelector),
+            errorMessage,
+          },
+        },
+      };
+      const validator = new FormValidator(form, placeholders, options);
+      const isValidForm = validator.validate();
+      if (!isValidForm) {
+        sendNotice(placeholders?.signupFlowToastErrorMessage || 'Please fill in the missing details.', 'error');
+        block.scrollIntoView({ behavior: 'smooth' });
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * Handles the navigation between pages in the signup dialog.
    * @param {number} direction - The direction to navigate (1 for next, -1 for previous).
    */
   const handleNavigation = async (direction) => {
-    const productInterestsBlock = signupDialog.querySelector('.product-interests');
-    const productInterestsForm =
-      productInterestsBlock && productInterestsBlock.querySelector('#product-interests-form');
-    if (productInterestsForm && direction === 1) {
-      const options = {
-        aggregateRules: {
-          checkBoxGroup: {
-            errorContainer: productInterestsForm.querySelector('.product-interests-form-error'),
-            errorMessage: placeholders?.productInterestFormErrorMessage,
-          },
-        },
-      };
-      const validator = new FormValidator(productInterestsForm, placeholders, options);
-      const isValidForm = validator.validate();
-      if (!isValidForm) {
-        sendNotice(placeholders?.signupFlowToastErrorMessage || 'Please fill in the missing details.', 'error');
-        productInterestsBlock.scrollIntoView({ behavior: 'smooth' });
+    if (direction === 1) {
+      const productInterestsBlock = signupDialog.querySelector('.product-interests');
+      const roleIndustryBlock = signupDialog.querySelector('.role-and-industry');
+
+      if (
+        !validateForm(
+          productInterestsBlock,
+          '#product-interests-form',
+          '.product-interests-form-error',
+          placeholders?.productInterestFormErrorMessage,
+        ) ||
+        !validateForm(
+          roleIndustryBlock,
+          '#role-and-industry-form',
+          '.role-and-industry-form-error',
+          placeholders?.formFieldGroupError,
+        )
+      ) {
         return false;
       }
     }
+
     const signupContent = signupDialog.querySelector('.signup-dialog-content');
     const currentPageIndex = parseInt(signupContent.dataset.currentPageIndex, 10);
     if (currentPageIndex === 1 && direction === 1) {
@@ -245,6 +287,13 @@ const createSignupDialog = () => {
     });
   };
 
+  /**
+   * Listen for the dialog 'cancel' event
+   */
+  signupDialog.addEventListener('cancel', () => {
+    document.body.classList.remove('overflow-hidden');
+  });
+
   const defaultPageIndex = 0;
   initNavigation(defaultPageIndex);
   setupCloseEvents();
@@ -274,9 +323,9 @@ const createSignupDialog = () => {
  * Entry point for initializing the signup dialog flow.
  * Loads the necessary CSS and creates the signup dialog.
  */
-export default function initializeSignupFlow() {
+export default function initializeSignupFlow(flowType = FLOW_TYPE.NEW_PROFILE) {
   const signupCSSLoaded = loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow.css`);
   signupCSSLoaded.then(() => {
-    createSignupDialog();
+    createSignupDialog(flowType);
   });
 }

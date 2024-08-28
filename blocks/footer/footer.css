@@ -13,7 +13,7 @@
 .footer {
   --language-selector-display: block;
   margin: 0 auto;
-  max-width: var(--non-spectrum-max-width);
+  max-width: var(--default-max-width);
   padding: 0;
 }
 @media (min-width: 900px) {
