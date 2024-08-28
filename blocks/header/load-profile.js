@@ -2,7 +2,7 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import { isMobile, registerHeaderResizeHandler } from './header-utils.js';
 
 export default class Profile extends HTMLElement {
-  constructor(options={}) {
+  constructor(options = {}) {
     super();
     this.options = options;
     this.profilePicture = options.profilePicture;
@@ -20,15 +20,12 @@ export default class Profile extends HTMLElement {
     );
     this.appendChild(profile);
 
-    
-    
-        if (this.profilePicture) {
-          const profileToggle = profile.querySelector('.profile-toggle');
-          profileToggle.replaceChildren(
-            htmlToElement(`<img class="profile-picture" src="${this.profilePicture}" alt="profile picture" />`),
-          );
-        }
-  
+    if (this.profilePicture) {
+      const profileToggle = profile.querySelector('.profile-toggle');
+      profileToggle.replaceChildren(
+        htmlToElement(`<img class="profile-picture" src="${this.profilePicture}" alt="profile picture" />`),
+      );
+    }
 
     const toggler = profile.querySelector('.profile-toggle');
     const navOverlay = document.querySelector('.nav-overlay');

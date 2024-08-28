@@ -33,22 +33,21 @@ const { khorosProfileUrl } = getConfig();
 
 const getPPSProfilePicture = async () => {
   try {
-  const { defaultProfileClient } = await import('../../scripts/auth/profile.js');
-  const ppsProfile = await defaultProfileClient.getPPSProfile();
-  const profilePicture = ppsProfile?.images['50'];
-  if (profilePicture) {
-    return profilePicture;
-  }
-  return null; // or any other default value
+    const { defaultProfileClient } = await import('../../scripts/auth/profile.js');
+    const ppsProfile = await defaultProfileClient.getPPSProfile();
+    const profilePicture = ppsProfile?.images['50'];
+    if (profilePicture) {
+      return profilePicture;
+    }
+    return null; // or any other default value
   } catch (err) {
-  // eslint-disable-next-line no-console
-  console.error(err);
-  return err; // or any other default value
+    // eslint-disable-next-line no-console
+    console.error(err);
+    return err; // or any other default value
   }
 };
 
 const profilePicture = await getPPSProfilePicture();
-
 
 async function loadSearchElement() {
   const [solutionTag] = getMetadata('solution').trim().split(',');
@@ -364,7 +363,6 @@ const buildNavItems = async (ul, level = 0) => {
  * @param {DecoratorOptions} decoratorOptions
  */
 const navDecorator = async (navBlock, decoratorOptions) => {
-  navBlock.style.display = 'none';
   simplifySingleCellBlock(navBlock);
   const navOverlay = document.querySelector('.nav-overlay');
   const navWrapper = htmlToElement('<div class="nav-wrapper"></div>');
@@ -407,7 +405,6 @@ const navDecorator = async (navBlock, decoratorOptions) => {
     });
   }
   decorateIcons(navBlock);
-  navBlock.style.display = '';
 };
 
 /**
@@ -522,7 +519,6 @@ async function decorateCommunityBlock(header, decoratorOptions) {
  */
 const languageDecorator = async (languageBlock) => {
   const language = new LanguageBlock('top', 'language-picker-popover-header', languageBlock, 'header');
-  // const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
   decoratorState.languageTitle = language.title;
   decoratorState.languages = language.languages;
 
@@ -720,7 +716,6 @@ class ExlHeader extends HTMLElement {
       const { signOut } = await import('../../scripts/auth/profile.js');
       return signOut();
     };
-
 
     this.decoratorOptions = options;
     options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
