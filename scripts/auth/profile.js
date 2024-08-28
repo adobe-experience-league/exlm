@@ -56,6 +56,7 @@ class ProfileClient {
     this.url = url;
     this.jwt = loadJWT();
     this.isSignedIn = isSignedInUser();
+
     this.store = new PromiseSessionStore();
   }
 
