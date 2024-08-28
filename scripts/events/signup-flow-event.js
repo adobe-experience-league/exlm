@@ -16,8 +16,16 @@ export default async function showSignupModal() {
   const configDate = new Date(signUpFlowConfigDate);
   const profileData = await defaultProfileClient.getMergedProfile();
   const profileTimeStamp = new Date(profileData.timestamp);
+  const interests = profileData.interests ?? [];
   const modalSeen = await defaultProfileClient.getLatestInteraction('modalSeen');
-  if (profileTimeStamp >= configDate && !modalSeen) {
+  if (modalSeen) {
+    return;
+  }
+  const todayStartTimeStamp = new Date();
+  todayStartTimeStamp.setHours(0, 0, 0, 0);
+  if (profileTimeStamp < todayStartTimeStamp && interests.length === 0) {
+    initializeSignupFlow(true);
+  } else if (profileTimeStamp >= configDate) {
     initializeSignupFlow();
   }
 }

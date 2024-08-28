@@ -16,36 +16,41 @@ try {
 
 const { lang } = getPathDetails();
 
-// Array of pages for the signup flow
-const pages = [
-  {
+const pages = [];
+
+const setPagesConfig = (modalType) => {
+  pages.length = 0;
+  // Array of pages for the flow
+  pages.push({
     name: 'step1',
-    path: `/${lang}/profile/signup-flow-modal/step1`,
+    path: `/${lang}/profile/${modalType}-modal/step1`,
     title: placeholders?.signupFlowStep1Header,
-  },
-  {
+  });
+  pages.push({
     name: 'step2',
-    path: `/${lang}/profile/signup-flow-modal/step2`,
+    path: `/${lang}/profile/${modalType}-modal/step2`,
     title: placeholders?.signupFlowStep2Header,
-  },
-  {
+  });
+  pages.push({
     name: 'confirm',
-    path: `/${lang}/profile/signup-flow-modal/confirm`,
+    path: `/${lang}/profile/${modalType}-modal/confirm`,
     title: placeholders?.signupFlowConfirmHeader,
     nofollow: true,
-  },
-];
+  });
+};
 
 /**
  * Creates and initializes the signup dialog.
  * The function sets up the dialog structure, navigation, and event handlers.
  */
-const createSignupDialog = () => {
+const createSignupDialog = (showIncompleteProfileModal) => {
+  const modalType = showIncompleteProfileModal === true ? 'incomplete-profile' : 'signup-flow';
+  setPagesConfig(modalType);
   pages.forEach((page) =>
     document.head.appendChild(htmlToElement(`<link rel="prefetch" href="${page.path}.plain.html">`)),
   );
   const signupDialog = htmlToElement(`
-        <dialog class="signup-dialog">
+        <dialog class="signup-dialog" data-modaltype="${modalType}" >
             <div class="signup-dialog-container">                                           
                 <div class="signup-dialog-header">
                     <div class="signup-dialog-header-decor"></div>
@@ -314,9 +319,9 @@ const createSignupDialog = () => {
  * Entry point for initializing the signup dialog flow.
  * Loads the necessary CSS and creates the signup dialog.
  */
-export default function initializeSignupFlow() {
+export default function initializeSignupFlow(showIncompleteProfileModal = false) {
   const signupCSSLoaded = loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow.css`);
   signupCSSLoaded.then(() => {
-    createSignupDialog();
+    createSignupDialog(showIncompleteProfileModal);
   });
 }
