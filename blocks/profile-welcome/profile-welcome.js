@@ -71,7 +71,7 @@ export default async function decorate(block) {
     industry &&
     ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''));
 
-  const industryOptions = fetchIndustryOptions();
+  const industryOptions = await fetchIndustryOptions();
   let industryName = '';
   if (Array.isArray(industry)) {
     industryName = getIndustryNameById(industry[0], industryOptions);
