@@ -79,17 +79,7 @@ export default async function decorate(block) {
       new Pagination({ wrapper: block, identifier: 'awards', renderItems, pgNumber: pgNum, totalPages });
       renderItems({ pgNum, block });
     } else {
-      // Dynamically remove awards container if user doesn't have awards
       block.closest('.section.awards-container')?.remove();
-      const profileRailLinks = document.querySelectorAll('.profile-rail .profile-rail-links');
-      if (profileRailLinks) {
-        profileRailLinks.forEach((profileRailLink) => {
-          const awardsLinks = profileRailLink.querySelectorAll('a[href*="/awards"]');
-          awardsLinks.forEach((awardsLink) => {
-            awardsLink.style.display = 'none';
-          });
-        });
-      }
     }
   }
 }

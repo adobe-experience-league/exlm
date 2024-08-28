@@ -1,5 +1,17 @@
+import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getPathDetails, htmlToElement } from '../../scripts/scripts.js';
+
+const isSignedIn = await isSignedInUser();
+let awards = false;
+if (isSignedIn) {
+  const profileData = await defaultProfileClient.getMergedProfile();
+  const skills = profileData?.skills;
+  const awardedSkills = skills.filter((skill) => skill.award === true);
+  if (awardedSkills.length) {
+    awards = true;
+  }
+}
 
 const { lang } = getPathDetails();
 const navURL = `${window.location.origin}/${lang}/profile/nav`;
@@ -25,6 +37,7 @@ export default async function ProfileRail(block) {
   } else {
     throw new Error(`Failed to fetch content from ${navURL}`);
   }
+
   block.querySelectorAll('.profile-rail > div > *').forEach((navItem) => {
     if (navItem.tagName === 'UL') {
       navItem.classList.add('profile-rail-links');
@@ -32,7 +45,14 @@ export default async function ProfileRail(block) {
       navItem.classList.add('profile-rail-heading');
     }
   });
+
   block.querySelectorAll('.profile-rail-links > li').forEach((navLink) => {
+    if (!awards) {
+      const awardsLink = navLink.querySelector('a[href*="/profile/awards"]');
+      if (awardsLink) {
+        navLink.style.display = 'none';
+      }
+    }
     const link = navLink.querySelector('a');
     const icon = navLink.querySelector('span.icon');
     if (link && icon) link.prepend(icon);
