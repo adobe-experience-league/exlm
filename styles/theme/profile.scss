@@ -219,7 +219,7 @@ body.profile-home-page
     display: grid;
     margin: 0 auto;
     max-width: var(--secondary-max-width);
-    grid-template-columns: minmax(100px, 25%) 1fr;
+    grid-template-columns: minmax(100px, 20%) 1fr;
   }
 
   body.profile-home-page .profile-background {
@@ -263,13 +263,11 @@ body.profile-home-page
     top: 108px;
     left: 0;
     bottom: 60px;
-    width: 277px;
   }
 
   body.profile .profile-rail {
     position: sticky;
     top: 10px;
-    margin-left: 54px;
   }
 
   body.profile:not(.profile-home-page) .section:nth-child(2):not(.sign-up-flow-section) {

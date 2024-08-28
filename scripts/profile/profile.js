@@ -1,5 +1,5 @@
 import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
-import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
+import { defaultProfileClient } from '../auth/profile.js';
 
 const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
@@ -45,11 +45,7 @@ export const getIndustryNameById = (industryId, industryOptionsArray) => {
 const fetchCommunityProfileData = async () => defaultProfileClient.fetchCommunityProfileDetails();
 
 const fetchProfileData = async (profileFlags) => {
-  const isSignedIn = await isSignedInUser();
-  if (!isSignedIn) {
-    return null;
-  }
-
+  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
   const exlProfilePromise = profileFlags.includes(EXL_PROFILE) ? fetchExlProfileData() : Promise.resolve({});
   const communityProfilePromise = profileFlags.includes(COMMUNITY_PROFILE)
     ? fetchCommunityProfileData()
@@ -62,18 +58,18 @@ const fetchProfileData = async (profileFlags) => {
 
   return {
     ...(profileFlags.includes(EXL_PROFILE) && {
-      adobeDisplayName: profileData?.displayName || '',
-      email: profileData?.email || '',
-      industry: profileData?.industryInterests || [],
-      roles: profileData?.role || [],
-      interests: profileData?.interests || [],
+      adobeDisplayName: UEAuthorMode ? 'User Name' : profileData?.displayName || '',
+      email: UEAuthorMode ? 'User Email' : profileData?.email || '',
+      industry: UEAuthorMode ? 'User Industry' : profileData?.industryInterests || '',
+      roles: UEAuthorMode ? ['User Roles'] : profileData?.role || [],
+      interests: UEAuthorMode ? ['User Interests'] : profileData?.interests || [],
       profilePicture: ppsProfileData?.images?.['100'] || '',
-      company: ppsProfileData?.company || '',
+      company: UEAuthorMode ? 'User Company' : ppsProfileData?.company || '',
     }),
     ...(profileFlags.includes(COMMUNITY_PROFILE) && {
-      communityUserName: communityProfileDetails?.username || '',
-      communityUserTitle: communityProfileDetails?.title || '',
-      communityUserLocation: communityProfileDetails?.location || '',
+      communityUserName: UEAuthorMode ? 'Community User Name' : communityProfileDetails?.username || '',
+      communityUserTitle: UEAuthorMode ? 'Community User Title' : communityProfileDetails?.title || '',
+      communityUserLocation: UEAuthorMode ? 'Community User Location' : communityProfileDetails?.location || '',
     }),
   };
 };
