@@ -18,7 +18,7 @@ import Profile from './load-profile.js';
  * @typedef {Object} DecoratorOptions
  * @property {() => Promise<boolean>} isUserSignedIn
  * @property {() => {}} onSignOut
- * @property {() => Promise<string>} getProfilePicture
+ * @property {string} profilePicture
  * @property {string} khorosProfileUrl
  * @property {boolean} isCommunity
  * @property {boolean} lang
@@ -30,6 +30,25 @@ const SEARCH_CSS = `/scripts/search/search.css`;
 let searchElementPromise = null;
 const FEATURE_FLAG = 'perspectives';
 const { khorosProfileUrl } = getConfig();
+
+const getPPSProfilePicture = async () => {
+  try {
+  const { defaultProfileClient } = await import('../../scripts/auth/profile.js');
+  const ppsProfile = await defaultProfileClient.getPPSProfile();
+  const profilePicture = ppsProfile?.images['50'];
+  if (profilePicture) {
+    return profilePicture;
+  }
+  return null; // or any other default value
+  } catch (err) {
+  // eslint-disable-next-line no-console
+  console.error(err);
+  return err; // or any other default value
+  }
+};
+
+const profilePicture = await getPPSProfilePicture();
+
 
 async function loadSearchElement() {
   const [solutionTag] = getMetadata('solution').trim().split(',');
@@ -702,22 +721,11 @@ class ExlHeader extends HTMLElement {
       return signOut();
     };
 
-    const getPPSProfilePicture = async () => {
-      import('../../scripts/auth/profile.js').then(({ defaultProfileClient }) =>
-        defaultProfileClient
-          .getPPSProfile()
-          .then((ppsProfile) => ppsProfile?.images['50'])
-          .catch((err) => {
-            // eslint-disable-next-line no-console
-            console.error(err);
-          }),
-      );
-    };
 
     this.decoratorOptions = options;
     options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
     options.onSignOut = options.onSignOut || doSignOut;
-    options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
+    options.profilePicture = options.profilePicture || profilePicture;
     options.isCommunity = options.isCommunity ?? false;
     options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
     options.lang = options.lang || getPathDetails(this.decoratorOptions).lang || 'en';

@@ -2,16 +2,10 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import { isMobile, registerHeaderResizeHandler } from './header-utils.js';
 
 export default class Profile extends HTMLElement {
-  constructor(options = {}) {
+  constructor(options={}) {
     super();
     this.options = options;
-    this.PPS_PROFILE = 'pps-profile';
-  }
-
-  async getProfilePicture() {
-    const retrieveProfilePicture = await sessionStorage.getItem(this.PPS_PROFILE);
-    const jsonParse = JSON.parse(retrieveProfilePicture);
-    return jsonParse.images['50'];
+    this.profilePicture = options.profilePicture;
   }
 
   async createProfile() {
@@ -26,19 +20,15 @@ export default class Profile extends HTMLElement {
     );
     this.appendChild(profile);
 
-    this.getProfilePicture()
-      .then((profilePicture) => {
-        if (profilePicture) {
+    
+    
+        if (this.profilePicture) {
           const profileToggle = profile.querySelector('.profile-toggle');
           profileToggle.replaceChildren(
-            htmlToElement(`<img class="profile-picture" src="${profilePicture}" alt="profile picture" />`),
+            htmlToElement(`<img class="profile-picture" src="${this.profilePicture}" alt="profile picture" />`),
           );
         }
-      })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error(err);
-      });
+  
 
     const toggler = profile.querySelector('.profile-toggle');
     const navOverlay = document.querySelector('.nav-overlay');
