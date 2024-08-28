@@ -43,10 +43,10 @@ export default async function ProfileRail(block) {
     }
   });
 
-  const unActiveLinks = block.querySelectorAll('.profile-rail-links > li > a:not(.active)');
+  const inActiveLinks = block.querySelectorAll('.profile-rail-links > li > a:not(.active)');
   const profileRailOverlay = document.createElement('div');
   profileRailOverlay.classList.add('profile-rail-overlay', 'hidden');
-  unActiveLinks.forEach((link) => {
+  inActiveLinks.forEach((link) => {
     profileRailOverlay.appendChild(link.cloneNode(true));
   });
   block.append(profileRailOverlay);
