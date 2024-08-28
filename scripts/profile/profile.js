@@ -30,8 +30,6 @@ export async function fetchIndustryOptions() {
     return [];
   }
 }
-
-const industryOptions = await fetchIndustryOptions();
 export const getIndustryNameById = (industryId, industryOptionsArray) => {
   let industry = '';
   if (Array.isArray(industryId)) {
@@ -147,8 +145,9 @@ const generateCommunityAccountDOM = (profileData, placeholders, communityAccount
   </div>`;
 };
 
-const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
+const generateAdditionalProfileInfoDOM = async (profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
+  const industryOptions = await fetchIndustryOptions();
   let industryName = '';
   if (Array.isArray(industry)) {
     industryName = getIndustryNameById(industry[0], industryOptions);

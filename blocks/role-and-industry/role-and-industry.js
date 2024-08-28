@@ -113,14 +113,8 @@ export default async function decorate(block) {
     );
     selectIndustryDropDown.handleOnChange((selectedIndustryId) => {
       const industrySelection = [];
-      // if (Array.isArray(selectedIndustryId)) {
-      //   industrySelection.push(selectedIndustryId[0]);
-      //   defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
-      // } else
-      // if (typeof selectedIndustryId === 'string') {
       industrySelection.push(selectedIndustryId);
       defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
-      // }
     });
 
     const profileData = await defaultProfileClient.getMergedProfile();
