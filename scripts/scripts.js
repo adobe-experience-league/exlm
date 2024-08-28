@@ -1124,17 +1124,13 @@ export async function fetchWithFallback(path, fallbackPath) {
 }
 
 export async function fetchFragment(rePath, lang) {
-  let language = lang;
-  if (language === 'pt') language = 'pt-br';
-  const path = `${window.hlx.aemRoot}/fragments/${language}/${rePath}.plain.html`;
+  const path = `${window.hlx.aemRoot}/fragments/${lang}/${rePath}.plain.html`;
   const fallback = `${window.hlx.aemRoot}/fragments/en/${rePath}.plain.html`;
   const response = await fetchWithFallback(path, fallback);
   return response.text();
 }
 
 export async function fetchLanguagePlaceholders(lang) {
-  let language = lang;
-  if (language === 'pt') language = 'pt-br';
   const langCode = lang || getPathDetails()?.lang || 'en';
   try {
     // Try fetching placeholders with the specified language
