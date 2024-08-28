@@ -79,16 +79,16 @@ export default async function decorate(block) {
       new Pagination({ wrapper: block, identifier: 'awards', renderItems, pgNumber: pgNum, totalPages });
       renderItems({ pgNum, block });
     } else {
-      // FIXME: Temporary fix until Personalized home page is launched
-      const awardsSection = block.closest('.section.awards-container');
-      if (awardsSection) {
-        awardsSection.remove();
-        const profileRail = document.querySelector('.profile-rail-nav');
-        const awardsNav = profileRail?.querySelector('li:last-child');
-
-        if (profileRail && awardsNav) {
-          awardsNav.style.display = 'none';
-        }
+      // Dynamically remove awards container if user doesn't have awards
+      block.closest('.section.awards-container')?.remove();
+      const profileRailLinks = document.querySelectorAll('.profile-rail .profile-rail-links');
+      if (profileRailLinks) {
+        profileRailLinks.forEach((profileRailLink) => {
+          const awardsLinks = profileRailLink.querySelectorAll('a[href*="/awards"]');
+          awardsLinks.forEach((awardsLink) => {
+            awardsLink.style.display = 'none';
+          });
+        });
       }
     }
   }
