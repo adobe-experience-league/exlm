@@ -6,8 +6,10 @@ import FormValidator from '../form-validator.js';
 import { sendNotice } from '../toast/toast.js';
 import { addModalSeenInteraction } from '../events/signup-flow-event.js';
 
-export const INCOMPLETE_PROFILE = 'incomplete-profile';
-export const NEW_PROFILE = 'new-profile';
+export const FLOW_TYPE = {
+  INCOMPLETE_PROFILE: 'incomplete-profile',
+  NEW_PROFILE: 'new-profile',
+};
 
 let placeholders = {};
 try {
@@ -321,7 +323,7 @@ const createSignupDialog = (modalType) => {
  * Entry point for initializing the signup dialog flow.
  * Loads the necessary CSS and creates the signup dialog.
  */
-export default function initializeSignupFlow(flowType = NEW_PROFILE) {
+export default function initializeSignupFlow(flowType = FLOW_TYPE.NEW_PROFILE) {
   const signupCSSLoaded = loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow.css`);
   signupCSSLoaded.then(() => {
     createSignupDialog(flowType);
