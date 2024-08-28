@@ -114,7 +114,7 @@ export default async function decorate(block) {
     selectIndustryDropDown.handleOnChange((selectedIndustryId) => {
       const industrySelection = [];
       industrySelection.push(selectedIndustryId);
-      defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
+      defaultProfileClient.updateProfile('industryInterests', industrySelection, true).then(() => sendNotice(PROFILE_UPDATED)).catch(() => sendNotice(PROFILE_NOT_UPDATED));
     });
 
     const profileData = await defaultProfileClient.getMergedProfile();
