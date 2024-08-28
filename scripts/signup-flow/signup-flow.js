@@ -6,6 +6,9 @@ import FormValidator from '../form-validator.js';
 import { sendNotice } from '../toast/toast.js';
 import { addModalSeenInteraction } from '../events/signup-flow-event.js';
 
+export const INCOMPLETE_PROFILE = 'incomplete-profile';
+export const NEW_PROFILE = 'new-profile';
+
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -19,8 +22,6 @@ const { lang } = getPathDetails();
 let pages = [];
 
 const setPagesConfig = (modalType) => {
-  pages.length = 0;
-  // Array of pages for the flow
   pages = [
     {
       name: 'step1',
@@ -45,8 +46,7 @@ const setPagesConfig = (modalType) => {
  * Creates and initializes the signup dialog.
  * The function sets up the dialog structure, navigation, and event handlers.
  */
-const createSignupDialog = (showIncompleteProfileModal) => {
-  const modalType = showIncompleteProfileModal === true ? 'incomplete-profile' : 'signup-flow';
+const createSignupDialog = (modalType) => {
   setPagesConfig(modalType);
   pages.forEach((page) =>
     document.head.appendChild(htmlToElement(`<link rel="prefetch" href="${page.path}.plain.html">`)),
@@ -321,9 +321,9 @@ const createSignupDialog = (showIncompleteProfileModal) => {
  * Entry point for initializing the signup dialog flow.
  * Loads the necessary CSS and creates the signup dialog.
  */
-export default function initializeSignupFlow(showIncompleteProfileModal = false) {
+export default function initializeSignupFlow(flowType = NEW_PROFILE) {
   const signupCSSLoaded = loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow.css`);
   signupCSSLoaded.then(() => {
-    createSignupDialog(showIncompleteProfileModal);
+    createSignupDialog(flowType);
   });
 }

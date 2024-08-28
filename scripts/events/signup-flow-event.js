@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import initializeSignupFlow from '../signup-flow/signup-flow.js';
+import initializeSignupFlow, { INCOMPLETE_PROFILE, NEW_PROFILE } from '../signup-flow/signup-flow.js';
 // eslint-disable-next-line import/no-cycle
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { getConfig } from '../scripts.js';
@@ -24,9 +24,9 @@ export default async function showSignupModal() {
   const todayStartTimeStamp = new Date();
   todayStartTimeStamp.setHours(0, 0, 0, 0);
   if (profileTimeStamp < todayStartTimeStamp && interests.length === 0) {
-    initializeSignupFlow(true);
+    initializeSignupFlow(INCOMPLETE_PROFILE);
   } else if (profileTimeStamp >= configDate) {
-    initializeSignupFlow();
+    initializeSignupFlow(NEW_PROFILE);
   }
 }
 
