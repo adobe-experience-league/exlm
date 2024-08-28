@@ -191,7 +191,7 @@ body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section
     display: grid;
     margin: 0 auto;
     max-width: var(--secondary-max-width);
-    grid-template-columns: minmax(100px, 25%) 1fr;
+    grid-template-columns: minmax(100px, 20%) 1fr;
   }
   body.profile-home-page .profile-background {
     left: auto;
@@ -227,12 +227,10 @@ body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section
     top: 108px;
     left: 0;
     bottom: 60px;
-    width: 277px;
   }
   body.profile .profile-rail {
     position: sticky;
     top: 10px;
-    margin-left: 54px;
   }
   body.profile:not(.profile-home-page) .section:nth-child(2):not(.sign-up-flow-section) {
     background-image: url("/icons/solutions/profileDecoration.svg");
