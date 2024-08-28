@@ -883,14 +883,13 @@ const loadMartech = async (headerPromise, footerPromise) => {
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
   libAnalyticsPromise.then((libAnalyticsModule) => {
     console.timeLog('martech', `finished loading lib-analytics.js ${Date.now()}`);
-    const { pushPageDataLayer, pushLinkClick, pageName } = libAnalyticsModule;
-    const { lang } = getPathDetails();
-    pushPageDataLayer(lang)
-      // eslint-disable-next-line no-console
-      .catch((e) => console.error('Error getting pageLoadModel:', e));
-    localStorage.setItem('prevPage', pageName(lang));
-
     Promise.allSettled([headerPromise, footerPromise]).then(() => {
+      const { pushPageDataLayer, pushLinkClick, pageName } = libAnalyticsModule;
+      const { lang } = getPathDetails();
+      pushPageDataLayer(lang)
+        // eslint-disable-next-line no-console
+        .catch((e) => console.error('Error getting pageLoadModel:', e));
+      localStorage.setItem('prevPage', pageName(lang));
       console.timeLog('martech', `add click event tracking ${Date.now()}`);
       const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
       const clickHandler = (e) => {
