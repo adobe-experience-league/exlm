@@ -30,6 +30,7 @@ export default async function decorate(block) {
       description:
         placeholders?.roleCardUserDescription ||
         `Responsible for utilizing Adobe products to achieve daily job functions, complete tasks, and achieve business objectives.`,
+      selectionDefault: placeholders?.noSelectionDefault || 'Default selection',
     },
     {
       role: 'Developer',
@@ -84,6 +85,7 @@ export default async function decorate(block) {
                   <p>${card.description}</p>
                 </div>
                 <div class="role-cards-default-selection">
+                  ${isSignedIn && card?.selectionDefault ? `<p>${card.selectionDefault}</p>` : ''}
                   <span class="role-cards-checkbox">
                     <input name="${card.role}" type="checkbox" id="selectRole-${index}">
                     <label class="subText" for="selectRole-${index}">${SELECT_ROLE}</label>
