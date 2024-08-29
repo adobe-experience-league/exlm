@@ -128,11 +128,6 @@ body.profile:not(.profile-home-page) .section:not(.profile-rail-section, .sign-u
   border-top: 1px solid #d6d6d6;
 }
 
-body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.user-profile-card-wrapper,
-body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.product-experience-level-wrapper {
-  border-top: 0;
-}
-
 body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper):last-child {
   padding-bottom: 0;
 }
@@ -143,6 +138,15 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section):last-chi
 
 body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper):last-child {
   padding-bottom: 0;
+}
+
+body.profile:not(.profile-home-page) .section:not(.profile-rail-section, .sign-up-flow-section) > div:nth-child(2):not(.default-content-wrapper) {
+  border-top: none;
+}
+
+body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.user-profile-card-wrapper:not(.default-content-wrapper),
+body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.product-experience-level-wrapper:not(.default-content-wrapper) {
+  border-top: 0;
 }
 
 @media (min-width: 600px) {
