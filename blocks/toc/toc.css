@@ -5,7 +5,7 @@
     display: block !important;
 }
 
-.toc-content  {
+.toc-content, .is-hidden {
     display: none;
 }
 
@@ -87,28 +87,6 @@
 .toc-header > h3 {
     font-size: var(--spectrum-font-size-300);
     margin: 0;
-}
-
-.toc-tree {
-    scroll-behavior: smooth;
-    max-height: 80vh;
-    overflow-y: auto;
-
-    &::-webkit-scrollbar {
-        width: 0;
-    }
-
-    &:hover::-webkit-scrollbar, &:hover {
-        touch-action: pan-y;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: var(--spectrum-gray-200) var(--spectrum-gray-100);
-    }
-
-    &:hover::-webkit-scrollbar-thumb {
-        background-color: var(--spectrum-gray-200);
-        border-radius: 6px;
-    }
 }
 
 .toc ul li a {
@@ -342,8 +320,51 @@ button.toc-dropdown-button {
 }
 
 @media only screen and (width >= 900px) {
-    .toc-content {
-        display: block;
+    .toc-container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    
+        .rail-content {
+            height: 100%;
+        }
+    
+        .toc-wrapper {
+            position: sticky;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+    
+            .toc-content {
+                flex: 1 1 auto;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+    
+                .toc-tree {
+                    flex: 1 1 auto;
+                    overflow-y: auto;
+                    scroll-behavior: smooth;
+                    max-height: 100vh;
+    
+                    &::-webkit-scrollbar {
+                        width: 0;
+                    }
+    
+                    &:hover::-webkit-scrollbar, &:hover {
+                        touch-action: pan-y;
+                        overflow-y: auto;
+                        scrollbar-width: thin;
+                        scrollbar-color: var(--spectrum-gray-200) var(--spectrum-gray-100);
+                    }
+        
+                    &:hover::-webkit-scrollbar-thumb {
+                        background-color: var(--spectrum-gray-200);
+                        border-radius: 6px;
+                    }
+                }
+            }
+        }
     }
 
     button.toc-dropdown-button {

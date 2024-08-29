@@ -42,6 +42,9 @@ function buildProductHeader() {
     <div class="toc-header is-sticky">
       <span class="icon icon-${solutionInfo.class}"></span>
       <h3>${solutionInfo.name}</h3>
+      <div class="toc-header-actions">
+        <button class="spectrum-Button spectrum-Button--secondary is-hidden" id="collapse-all-btn">Collapse All</button>
+      </div>
     </div>
   `);
 }
@@ -55,36 +58,22 @@ function buildTocMobileDropdown() {
 }
 
 /**
- * Collapse sibling submenus of the clicked element
- * @param {HTMLElement} element
- */
-function collapseSiblingSubmenus(element) {
-  const parentList = element.closest('ul');
-  if (parentList) {
-    const siblingToggles = parentList.querySelectorAll(':scope > li > .toc-toggle');
-    siblingToggles.forEach((toggle) => {
-      if (toggle !== element) {
-        toggle.setAttribute('aria-expanded', 'false');
-        const siblingUl = toggle.nextElementSibling;
-        if (siblingUl && siblingUl.tagName === 'UL') {
-          siblingUl.setAttribute('aria-hidden', 'true');
-        }
-      }
-    });
-  }
-}
-
-/**
- * Ensure the active element is scrolled into view
- * @param {HTMLElement} tocContent
- * @param {HTMLElement} element
+ * Ensure the active element is scrolled into view within an overflowed container,
+ * positioning the element at the top of the tocContent.
+ * @param {HTMLElement} tocContent - The container with overflow and scroll
+ * @param {HTMLElement} element - The element to bring into view
  */
 function ensureElementInView(tocContent, element) {
-  const elementTop = element.getBoundingClientRect().top;
-  const tocContentTop = tocContent.getBoundingClientRect().top;
-  const scrollPosition = elementTop - tocContentTop - 20;
+  if (!tocContent || !element) {
+    console.error('tocContent or element is null', { tocContent, element }); // eslint-disable-line no-console
+    return;
+  }
 
-  tocContent.scrollTop += scrollPosition;
+  const elementRect = element.getBoundingClientRect();
+  const tocContentRect = tocContent.getBoundingClientRect();
+  const scrollPosition = elementRect.top - tocContentRect.top + tocContent.scrollTop;
+
+  tocContent.scrollTop = scrollPosition;
 }
 
 /**
@@ -120,10 +109,6 @@ function updateTocContent(tocHtml, tocContent) {
         anchor.setAttribute('aria-expanded', !isExpanded);
         siblingUl.setAttribute('aria-hidden', isExpanded ? 'true' : 'false');
 
-        if (!isExpanded) {
-          // Collapse other submenus at the same level
-          collapseSiblingSubmenus(anchor);
-        }
         ensureElementInView(tocContent, anchor);
       });
     } else {
@@ -135,17 +120,41 @@ function updateTocContent(tocHtml, tocContent) {
   });
 }
 
+/**
+ * Activate and expands multiple levels of TOC
+ * @param {HTMLElement} el
+ * @param {boolean} expandSelf
+ */
 const activate = (el, expandSelf) => {
   if (!el) return;
   el.classList.add('is-active');
-  if (expandSelf) {
-    el.setAttribute('aria-expanded', 'true');
-    const siblingUl = el.nextElementSibling;
-    if (siblingUl && siblingUl.tagName === 'UL') {
-      siblingUl.setAttribute('aria-hidden', 'false');
-    }
+  if (expandSelf) el.setAttribute('aria-expanded', 'true');
+  const activeLi = el.closest('li');
+  const parentUl = activeLi.closest('ul');
+  if (parentUl) {
+    parentUl.setAttribute('aria-expanded', 'true');
   }
 };
+
+/**
+ * Toggle collapse/expand all submenus in the TOC
+ * @param {HTMLElement} tocContent - The container of the TOC
+ */
+function collapseAllSubmenus(tocContent) {
+  const anyExpanded = tocContent.querySelector('.toc-toggle[aria-expanded="true"]') !== null;
+
+  const toggles = tocContent.querySelectorAll('.toc-toggle');
+  
+  toggles.forEach((toggle) => {
+    const newState = anyExpanded ? 'false' : 'true';
+    toggle.setAttribute('aria-expanded', newState);
+
+    const submenu = tocContent.querySelector(`#${toggle.getAttribute('aria-controls')}`);
+    if (submenu) {
+      submenu.setAttribute('aria-hidden', anyExpanded ? 'true' : 'false');
+    }
+  });
+}
 
 /**
  * Activate current page in TOC
@@ -171,10 +180,7 @@ function activateCurrentPage(tocContent) {
           currentItem = parentListItem;
         }
       }
-    }
-
-    // Ensure the active element is in view
-    ensureElementInView(tocContent, activeAnchor);
+    }    
   }
 }
 
@@ -213,15 +219,15 @@ export default async function decorate(block) {
       tocMobileDropdown.setAttribute('aria-expanded', !isExpanded);
     });
     // Prevents active elements to be hidden below the overflow
+    const overflowBlock = tocContent.querySelector('.toc-tree');
     const activeElement = tocContent.querySelector('.toc-item.is-active');
-    const offset = 100;
 
-    if (activeElement) {
-      const activeElementTop = activeElement.getBoundingClientRect().top;
-      const tocContentTop = tocContent.getBoundingClientRect().top;
-      const scrollPosition = activeElementTop - tocContentTop - offset;
+    ensureElementInView(overflowBlock, activeElement);
+  });
 
-      tocContent.scrollTop = scrollPosition;
+  document.getElementById('collapse-all-btn').addEventListener('click', () => {
+    if (tocContent) {
+      collapseAllSubmenus(tocContent);
     }
   });
 
