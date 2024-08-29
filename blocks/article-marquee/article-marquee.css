@@ -22,7 +22,7 @@
 .article-marquee-info-container {
   display: flex;
   flex-direction: column;
-  max-width: var(--non-spectrum-max-width);
+  max-width: var(--default-max-width);
   margin: auto;
   background-color: var(--non-spectrum-bg);
   position: relative;
