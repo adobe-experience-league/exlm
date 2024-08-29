@@ -25,7 +25,6 @@ import Profile from './load-profile.js';
  */
 
 const HEADER_CSS = `/blocks/header/exl-header.css`;
-const SEARCH_CSS = `/scripts/search/search.css`;
 
 let searchElementPromise = null;
 const FEATURE_FLAG = 'perspectives';
@@ -479,6 +478,7 @@ const searchDecorator = async (searchBlock) => {
     searchOptions: options,
     showSearchSuggestions: true,
   });
+  decorateIcons(searchBlock);
   return searchBlock;
 };
 
@@ -758,10 +758,7 @@ class ExlHeader extends HTMLElement {
   }
 
   async loadStyles() {
-    return Promise.allSettled([
-      this.loadCSS(`${window.hlx.codeBasePath}${HEADER_CSS}`),
-      this.loadCSS(`${window.hlx.codeBasePath}${SEARCH_CSS}`),
-    ]);
+    return Promise.allSettled([this.loadCSS(`${window.hlx.codeBasePath}${HEADER_CSS}`)]);
   }
 
   async decorate() {

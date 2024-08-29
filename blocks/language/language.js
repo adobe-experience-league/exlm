@@ -102,9 +102,14 @@ export default class LanguageBlock extends HTMLElement {
         ? 'language-selector-popover language-selector-popover--top'
         : 'language-selector-popover';
 
-    const spans = this.languages.map(
-      ({ lang, title }) => `<span class="language-selector-label" data-value="${lang}">${title}</span>`,
-    );
+    const { lang: currentLang } = getPathDetails();
+    const spans = this.languages.map((option) => {
+      const lang = option.lang?.toLowerCase();
+      const { title } = option;
+      const selected = currentLang === lang ? 'selected' : '';
+      return `<span class="language-selector-label" data-value="${lang}" ${selected}>${title}</span>`;
+    });
+
     const popover = htmlToElement(
       `<div class="${popoverClass}" id="${this.popoverId}"style="display:none">
       ${spans.join('')}
