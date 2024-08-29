@@ -27,17 +27,17 @@ const setPagesConfig = (modalType) => {
   pages = [
     {
       name: 'step1',
-      path: `/${lang}/profile/${modalType}-modal/step1`,
+      path: `/${lang}/profile/signup-flow-modal/${modalType}/step1`,
       title: placeholders?.signupFlowStep1Header,
     },
     {
       name: 'step2',
-      path: `/${lang}/profile/${modalType}-modal/step2`,
+      path: `/${lang}/profile/signup-flow-modal/${modalType}/step2`,
       title: placeholders?.signupFlowStep2Header,
     },
     {
       name: 'confirm',
-      path: `/${lang}/profile/${modalType}-modal/confirm`,
+      path: `/${lang}/profile/signup-flow-modal/${modalType}/confirm`,
       title: placeholders?.signupFlowConfirmHeader,
       nofollow: true,
     },
