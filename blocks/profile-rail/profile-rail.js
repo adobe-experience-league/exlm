@@ -50,7 +50,7 @@ export default async function ProfileRail(block) {
     if (!awards) {
       const awardsLink = navLink.querySelector('a[href*="/profile/awards"]');
       if (awardsLink) {
-        navLink.style.display = 'none';
+        navLink.remove();
       }
     }
     const link = navLink.querySelector('a');
