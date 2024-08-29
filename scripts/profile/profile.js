@@ -142,7 +142,7 @@ const generateCommunityAccountDOM = (profileData, placeholders, communityAccount
   </div>`;
 };
 
-const generateAdditionalProfileInfoDOM = async(profileData, placeholders) => {
+const generateAdditionalProfileInfoDOM = async (profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
   const industryOptions = await fetchIndustryOptions();
   let industryName = '';
@@ -210,9 +210,7 @@ export const generateProfileDOM = async (profileFlags) => {
 
   const hasExlProfileFlag = profileFlags.includes(EXL_PROFILE);
 
-  const adobeAccountDOM = hasExlProfileFlag
-    ? generateAdobeAccountDOM(profileData, placeholders, adobeAccountURL)
-    : '';
+  const adobeAccountDOM = hasExlProfileFlag ? generateAdobeAccountDOM(profileData, placeholders, adobeAccountURL) : '';
 
   // Await the asynchronous call to generate the additional profile information DOM
   const additionalProfileInfoDOM = hasExlProfileFlag
@@ -229,4 +227,3 @@ export const generateProfileDOM = async (profileFlags) => {
     communityAccountDOM,
   };
 };
-
