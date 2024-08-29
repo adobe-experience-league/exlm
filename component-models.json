@@ -2757,7 +2757,6 @@
         "valueType": "string",
         "name": "author-bio-page",
         "multi": true,
-        "value": "",
         "label": "Author Bio page URL"
       },
       {
