@@ -1,6 +1,7 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { fetchIndustryOptions, getIndustryNameById } from '../../scripts/profile/profile.js';
 
 let placeholders = {};
 try {
@@ -27,39 +28,33 @@ export default async function decorate(block) {
 
   const isSignedIn = await isSignedInUser();
 
-  let profileData = '';
-  let ppsProfileData = '';
-  let communityProfileData = '';
-  let adobeDisplayName = '';
-  let adobeFirstName = '';
-  let industry = '';
-  let roles = '';
-  let interests = '';
-  let profilePicture = '';
-  let company = '';
-  let communityUserName = '';
-  let communityUserTitle = '';
-  let communityUserLocation = '';
-  let industryContent = '';
+  let profileData = {};
+  let ppsProfileData = {};
+  let communityProfileData = {};
 
   if (isSignedIn) {
-    profileData = await defaultProfileClient.getMergedProfile();
-    ppsProfileData = await defaultProfileClient.getPPSProfile();
-    communityProfileData = await defaultProfileClient.fetchCommunityProfileDetails();
-
-    adobeDisplayName = profileData?.displayName || '';
-    adobeFirstName = profileData?.first_name || '';
-    industry = profileData?.industryInterests || [];
-    roles = profileData?.role || [];
-    interests = profileData?.interests || [];
-
-    profilePicture = ppsProfileData?.images?.['100'] || '';
-    company = ppsProfileData?.company || '';
-
-    communityUserName = communityProfileData?.username || '';
-    communityUserTitle = communityProfileData?.title || '';
-    communityUserLocation = communityProfileData?.location || '';
+    [profileData, ppsProfileData, communityProfileData] = await Promise.all([
+      defaultProfileClient.getMergedProfile(),
+      defaultProfileClient.getPPSProfile(),
+      defaultProfileClient.fetchCommunityProfileDetails(),
+    ]);
   }
+
+  const {
+    displayName: adobeDisplayName = '',
+    first_name: adobeFirstName = '',
+    industryInterests: industry = [],
+    role: roles = [],
+    interests = [],
+  } = profileData || {};
+
+  const { images: { 100: profilePicture } = '', company = '' } = ppsProfileData || {};
+
+  const {
+    username: communityUserName = '',
+    title: communityUserTitle = '',
+    location: communityUserLocation = '',
+  } = communityProfileData || {};
 
   const roleMappings = {
     Developer: placeholders?.roleCardDeveloperTitle || 'Developer',
@@ -76,12 +71,22 @@ export default async function decorate(block) {
     industry &&
     ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''));
 
+  const industryOptions = await fetchIndustryOptions();
+  let industryName = '';
+  if (Array.isArray(industry)) {
+    industryName = getIndustryNameById(industry[0], industryOptions);
+  }
+  if (typeof industryName === 'string') {
+    industryName = getIndustryNameById(industry, industryOptions);
+  }
+
+  let industryContent = '';
   if (hasIndustry) {
     industryContent = `
           <div class="profile-user-card-industry">
             <span class="industry-heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
             <span class="${!hasInterests ? 'incomplete-profile' : ''}">
-              ${Array.isArray(industry) ? industry.join(', ') : industry}
+              ${industryName}
             </span>
           </div>`;
   } else if (!hasInterests) {

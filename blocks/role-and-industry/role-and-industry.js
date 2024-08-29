@@ -1,8 +1,9 @@
-import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
+import { fetchIndustryOptions } from '../../scripts/profile/profile.js';
 
 let placeholders = {};
 try {
@@ -12,23 +13,10 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-const { industryUrl } = getConfig();
 const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
 const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
 const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
 const FORM_ERROR = placeholders?.formFieldGroupError || 'Please select at least one option.';
-
-async function fetchIndustryOptions() {
-  try {
-    const response = await fetch(industryUrl);
-    const data = await response.json();
-    return data.data;
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('There was a problem with the fetch operation:', error);
-    return [];
-  }
-}
 
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
@@ -42,6 +30,7 @@ export default async function decorate(block) {
       description:
         placeholders?.roleCardUserDescription ||
         `Responsible for utilizing Adobe products to achieve daily job functions, complete tasks, and achieve business objectives.`,
+      selectionDefault: placeholders?.noSelectionDefault || 'Default selection',
     },
     {
       role: 'Developer',
@@ -96,6 +85,7 @@ export default async function decorate(block) {
                   <p>${card.description}</p>
                 </div>
                 <div class="role-cards-default-selection">
+                  ${isSignedIn && card?.selectionDefault ? `<p>${card.selectionDefault}</p>` : ''}
                   <span class="role-cards-checkbox">
                     <input name="${card.role}" type="checkbox" id="selectRole-${index}">
                     <label class="subText" for="selectRole-${index}">${SELECT_ROLE}</label>
@@ -115,7 +105,7 @@ export default async function decorate(block) {
     const industryOptions = await fetchIndustryOptions();
     const updatedIndustryOptions = industryOptions.map((industry) => ({
       ...industry,
-      value: industry.Name,
+      value: industry.id,
       title: industry.Name,
     }));
     const selectIndustryDropDown = new Dropdown(
@@ -123,15 +113,13 @@ export default async function decorate(block) {
       `${placeholders?.select || 'Select'}`,
       updatedIndustryOptions,
     );
-    selectIndustryDropDown.handleOnChange((selectedIndustry) => {
-      if (Array.isArray(selectedIndustry)) {
-        const industrySelection = [];
-        industrySelection.push(selectedIndustry);
-        defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
-      } else if (typeof selectedIndustry === 'string') {
-        const industrySelection = selectedIndustry;
-        defaultProfileClient.updateProfile('industryInterests', industrySelection, true);
-      }
+    selectIndustryDropDown.handleOnChange((selectedIndustryId) => {
+      const industrySelection = [];
+      industrySelection.push(selectedIndustryId);
+      defaultProfileClient
+        .updateProfile('industryInterests', industrySelection, true)
+        .then(() => sendNotice(PROFILE_UPDATED))
+        .catch(() => sendNotice(PROFILE_NOT_UPDATED));
     });
 
     const profileData = await defaultProfileClient.getMergedProfile();
