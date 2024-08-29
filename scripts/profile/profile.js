@@ -31,10 +31,8 @@ export async function fetchIndustryOptions() {
   }
 }
 
-const industryOptions = await fetchIndustryOptions();
-
 export const getIndustryNameById = (industryId, industryOptionsArray) => {
-  let industry = '';
+  let industry = {};
   if (Array.isArray(industryId)) {
     // If industryId is an array, find the first matching industry name for any ID in the array
     industry = industryOptionsArray.find((option) => industryId.includes(option.id));
@@ -144,8 +142,9 @@ const generateCommunityAccountDOM = (profileData, placeholders, communityAccount
   </div>`;
 };
 
-const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
+const generateAdditionalProfileInfoDOM = async(profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
+  const industryOptions = await fetchIndustryOptions();
   let industryName = '';
   if (Array.isArray(industry)) {
     industryName = getIndustryNameById(industry[0], industryOptions);
@@ -211,11 +210,23 @@ export const generateProfileDOM = async (profileFlags) => {
 
   const hasExlProfileFlag = profileFlags.includes(EXL_PROFILE);
 
+  const adobeAccountDOM = hasExlProfileFlag
+    ? generateAdobeAccountDOM(profileData, placeholders, adobeAccountURL)
+    : '';
+
+  // Await the asynchronous call to generate the additional profile information DOM
+  const additionalProfileInfoDOM = hasExlProfileFlag
+    ? await generateAdditionalProfileInfoDOM(profileData, placeholders)
+    : '';
+
+  const communityAccountDOM = profileFlags.includes(COMMUNITY_PROFILE)
+    ? generateCommunityAccountDOM(profileData, placeholders, communityAccountURL)
+    : '';
+
   return {
-    ...(hasExlProfileFlag && { adobeAccountDOM: generateAdobeAccountDOM(profileData, placeholders, adobeAccountURL) }),
-    ...(hasExlProfileFlag && { additionalProfileInfoDOM: generateAdditionalProfileInfoDOM(profileData, placeholders) }),
-    ...(profileFlags.includes(COMMUNITY_PROFILE) && {
-      communityAccountDOM: generateCommunityAccountDOM(profileData, placeholders, communityAccountURL),
-    }),
+    adobeAccountDOM,
+    additionalProfileInfoDOM,
+    communityAccountDOM,
   };
 };
+
