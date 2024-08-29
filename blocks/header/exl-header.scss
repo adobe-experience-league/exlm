@@ -207,6 +207,14 @@
   justify-content: flex-end;
 }
 
+.icon-search {
+  position: absolute;
+  background: url('../../icons/search.svg') no-repeat center center;
+  background-size: 1em 1em;
+  left: 4px;
+  cursor: pointer;
+}
+
 .search-container {
   display: flex;
   justify-content: center;
@@ -228,7 +236,6 @@
       display: flex !important;
       align-items: center;
       line-height: 1;
-      margin: 0;
     }
   }
 }
@@ -254,29 +261,21 @@
   justify-content: flex-end;
   position: relative;
 
-  .icon-search {
-    position: absolute;
-    background: url('../../icons/search.svg') no-repeat center center;
-    background-size: 1em 1em;
-    left: 4px;
-    cursor: pointer;
+  &.search-clear-icon {
+    display: none;
+  }
 
-    &.search-clear-icon {
-      display: none;
-    }
+  &.search-clear-icon.search-icon-show {
+    display: flex;
+    width: 6px;
+    height: 6px;
+    padding: 4px;
+    background: var(--non-spectrum-silver-mist);
+    border-radius: 100%;
+    right: 4px;
 
-    &.search-clear-icon.search-icon-show {
-      display: flex;
-      width: 6px;
-      height: 6px;
-      padding: 4px;
-      background: var(--non-spectrum-silver-mist);
-      border-radius: 100%;
-      right: 4px;
-
-      .fill {
-        fill: var(--background-color);
-      }
+    .fill {
+      fill: var(--background-color);
     }
   }
 }
@@ -541,7 +540,6 @@ button:focus {
 }
 
 .header {
-  padding-right: var(--header-padding-x);
   height: 100%;
   position: relative;
   max-width: 1440px;
@@ -565,11 +563,6 @@ button:focus {
       justify-content: initial;
       grid-template-areas: 'adobe-logo brand nav sign-in search notification language product-grid signed-in';
       grid-template-columns: min-content min-content max-content min-content auto max-content max-content max-content max-content;
-    }
-
-    .icon svg {
-      vertical-align: middle;
-      padding-left: 5px;
     }
   }
 
@@ -616,6 +609,11 @@ button:focus {
     display: var(--sign-in-display);
     order: var(--sign-in-order);
     align-items: center;
+    padding-left: 1em;
+
+    @include breakpoint(custom) {
+      padding-left: 0;
+    }
 
     a {
       margin: 16px 0;
@@ -653,10 +651,7 @@ button:focus {
         background: url('../../icons/profile.svg') no-repeat center center;
         background-size: 24px 24px;
         border-radius: 50%;
-
-        svg {
-          vertical-align: bottom;
-        }
+        display: flex;
       }
 
       a {
@@ -898,6 +893,11 @@ button:focus {
         margin-top: -10px; // bring subtitle close to title
         padding: 0 24px;
         line-height: 1.5;
+      }
+
+      .icon svg {
+        vertical-align: middle;
+        padding-left: 5px;
       }
     }
 

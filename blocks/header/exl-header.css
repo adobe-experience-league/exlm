@@ -163,6 +163,14 @@
   justify-content: flex-end;
 }
 
+.icon-search {
+  position: absolute;
+  background: url("../../icons/search.svg") no-repeat center center;
+  background-size: 1em 1em;
+  left: 4px;
+  cursor: pointer;
+}
+
 .search-container {
   display: flex;
   justify-content: center;
@@ -183,7 +191,6 @@
     display: flex !important;
     align-items: center;
     line-height: 1;
-    margin: 0;
   }
 }
 @container headersection (max-width: 1024px) {
@@ -205,17 +212,10 @@
   justify-content: flex-end;
   position: relative;
 }
-.search-full .icon-search {
-  position: absolute;
-  background: url("../../icons/search.svg") no-repeat center center;
-  background-size: 1em 1em;
-  left: 4px;
-  cursor: pointer;
-}
-.search-full .icon-search.search-clear-icon {
+.search-full.search-clear-icon {
   display: none;
 }
-.search-full .icon-search.search-clear-icon.search-icon-show {
+.search-full.search-clear-icon.search-icon-show {
   display: flex;
   width: 6px;
   height: 6px;
@@ -224,7 +224,7 @@
   border-radius: 100%;
   right: 4px;
 }
-.search-full .icon-search.search-clear-icon.search-icon-show .fill {
+.search-full.search-clear-icon.search-icon-show .fill {
   fill: var(--background-color);
 }
 
@@ -492,7 +492,6 @@ button:focus {
 }
 
 .header {
-  padding-right: var(--header-padding-x);
   height: 100%;
   position: relative;
   max-width: 1440px;
@@ -519,10 +518,6 @@ button:focus {
     grid-template-areas: "adobe-logo brand nav sign-in search notification language product-grid signed-in";
     grid-template-columns: min-content min-content max-content min-content auto max-content max-content max-content max-content;
   }
-}
-.header > nav .icon svg {
-  vertical-align: middle;
-  padding-left: 5px;
 }
 .header .adobe-logo {
   grid-area: adobe-logo;
@@ -559,6 +554,12 @@ button:focus {
   display: var(--sign-in-display);
   order: var(--sign-in-order);
   align-items: center;
+  padding-left: 1em;
+}
+@media (min-width: 1024px) {
+  .header .sign-in {
+    padding-left: 0;
+  }
 }
 .header .sign-in a {
   margin: 16px 0;
@@ -598,9 +599,7 @@ button:focus {
   background: url("../../icons/profile.svg") no-repeat center center;
   background-size: 24px 24px;
   border-radius: 50%;
-}
-.header .signed-in .profile .icon-profile svg {
-  vertical-align: bottom;
+  display: flex;
 }
 .header .signed-in .profile a {
   border-radius: 0;
@@ -846,6 +845,10 @@ button:focus {
   margin-top: -10px;
   padding: 0 24px;
   line-height: 1.5;
+}
+.header .nav-item .nav-item .icon svg {
+  vertical-align: middle;
+  padding-left: 5px;
 }
 @media (max-width: 1024px) {
   .header .nav-item:has(.nav-item-expanded-active) .nav-items-secondary {
