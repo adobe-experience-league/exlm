@@ -566,6 +566,11 @@ button:focus {
       grid-template-areas: 'adobe-logo brand nav sign-in search notification language product-grid signed-in';
       grid-template-columns: min-content min-content max-content min-content auto max-content max-content max-content max-content;
     }
+
+    .icon svg {
+      vertical-align: middle;
+      padding-left: 5px;
+    }
   }
 
   // adobe logo
@@ -605,23 +610,6 @@ button:focus {
     }
   }
 
-  // header sign-up
-  // .sign-up {
-  //   grid-area: sign-up;
-  //   display: var(--sign-up-display);
-  //   align-items: center;
-
-  //   @include breakpoint(custom) {
-  //     padding: var(--nav-root-item-padding-x);
-  //   }
-
-  //   a {
-  //     margin: 16px 0;
-
-  //     @include button;
-  //   }
-  // }
-
   // header sign-in
   .sign-in {
     grid-area: sign-in;
@@ -658,6 +646,16 @@ button:focus {
 
         &:first-child {
           margin: 0;
+        }
+      }
+
+      .icon-profile {
+        background: url('../../icons/profile.svg') no-repeat center center;
+        background-size: 24px 24px;
+        border-radius: 50%;
+
+        svg {
+          vertical-align: bottom;
         }
       }
 
@@ -922,11 +920,6 @@ button:focus {
           }
         }
       }
-    }
-
-    .icon svg {
-      vertical-align: middle;
-      padding-left: 5px;
     }
   }
 
@@ -1273,6 +1266,10 @@ button:focus {
     vertical-align: middle;
     width: 18px;
   }
+}
+
+profile-block {
+  height: 100%;
 }
 
 @include breakpoint('desktop') {

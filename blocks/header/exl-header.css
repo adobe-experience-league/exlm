@@ -520,6 +520,10 @@ button:focus {
     grid-template-columns: min-content min-content max-content min-content auto max-content max-content max-content max-content;
   }
 }
+.header > nav .icon svg {
+  vertical-align: middle;
+  padding-left: 5px;
+}
 .header .adobe-logo {
   grid-area: adobe-logo;
   display: var(--adobe-logo-display);
@@ -589,6 +593,14 @@ button:focus {
 }
 .header .signed-in .profile .profile-menu h2:first-child {
   margin: 0;
+}
+.header .signed-in .profile .icon-profile {
+  background: url("../../icons/profile.svg") no-repeat center center;
+  background-size: 24px 24px;
+  border-radius: 50%;
+}
+.header .signed-in .profile .icon-profile svg {
+  vertical-align: bottom;
 }
 .header .signed-in .profile a {
   border-radius: 0;
@@ -850,10 +862,6 @@ button:focus {
     padding: 8px 8px 15px 40px;
     width: 100%;
   }
-}
-.header .nav-item .icon svg {
-  vertical-align: middle;
-  padding-left: 5px;
 }
 .header .nav-item-mobile {
   display: block;
@@ -1202,6 +1210,10 @@ button:focus {
   height: 18px;
   vertical-align: middle;
   width: 18px;
+}
+
+profile-block {
+  height: 100%;
 }
 
 @media (min-width: 900px) {
