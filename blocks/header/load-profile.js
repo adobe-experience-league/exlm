@@ -1,5 +1,6 @@
 import { htmlToElement } from '../../scripts/scripts.js';
 import { isMobile, registerHeaderResizeHandler } from './header-utils.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 export default class Profile extends HTMLElement {
   constructor(options = {}) {
@@ -18,6 +19,7 @@ export default class Profile extends HTMLElement {
           </div>
         </div>`,
     );
+    decorateIcons(profile);
     this.appendChild(profile);
 
     if (this.profilePicture) {

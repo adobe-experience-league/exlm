@@ -661,12 +661,6 @@ button:focus {
         }
       }
 
-      .icon-profile {
-        background: url('../../icons/profile.svg') no-repeat center center;
-        background-size: 24px 24px;
-        vertical-align: middle;
-      }
-
       a {
         @include button-reset;
 
