@@ -2,6 +2,7 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getPathDetails, htmlToElement } from '../../scripts/scripts.js';
 
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const isSignedIn = await isSignedInUser();
 let awards = false;
 if (isSignedIn) {
@@ -47,7 +48,7 @@ export default async function ProfileRail(block) {
   });
 
   block.querySelectorAll('.profile-rail-links > li').forEach((navLink) => {
-    if (!awards) {
+    if (!awards && !UEAuthorMode) {
       const awardsLink = navLink.querySelector('a[href*="/profile/awards"]');
       if (awardsLink) {
         navLink.remove();
