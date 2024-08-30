@@ -328,6 +328,7 @@
   height: 32px;
   line-height: 15px;
   text-align: right;
+  margin: 0;
 
   &::after {
     @include chevron;
