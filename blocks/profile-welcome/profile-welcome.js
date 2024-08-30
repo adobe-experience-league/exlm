@@ -71,17 +71,21 @@ export default async function decorate(block) {
     industry &&
     ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''));
 
-  const industryOptions = await fetchIndustryOptions();
   let industryName = '';
-  if (Array.isArray(industry)) {
-    industryName = getIndustryNameById(industry[0], industryOptions);
+
+  if (hasIndustry) {
+    const industryOptions = await fetchIndustryOptions();
+    if (Array.isArray(industry)) {
+      industryName = getIndustryNameById(industry[0], industryOptions);
+    }
+    if (typeof industryName === 'string') {
+      industryName = getIndustryNameById(industry, industryOptions);
+    }
   }
-  if (typeof industryName === 'string') {
-    industryName = getIndustryNameById(industry, industryOptions);
-  }
+  const hasIndustryName = industryName.trim() !== '';
 
   let industryContent = '';
-  if (hasIndustry) {
+  if (hasIndustryName) {
     industryContent = `
           <div class="profile-user-card-industry">
             <span class="industry-heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
