@@ -274,6 +274,7 @@
   height: 32px;
   line-height: 15px;
   text-align: right;
+  margin: 0;
 }
 .search-picker-button::after {
   position: absolute;
@@ -424,6 +425,8 @@ button > .search-picker-label {
   width: 28px;
   left: 8px;
   top: 4px;
+  display: flex;
+  align-items: center;
 }
 
 .search-picker-popover .search-picker-label .icon path,
