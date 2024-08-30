@@ -83,6 +83,9 @@ export default async function decorate(block) {
       // eslint-disable-next-line no-lonely-if
       if (!UEAuthorMode) {
         block.closest('.section.awards-container')?.remove();
+        if (window.location.href.includes('/profile/awards')) {
+          window.location.href = '/profile-settings';
+        }
       }
     }
   }
