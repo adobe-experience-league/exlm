@@ -168,7 +168,8 @@ const brandDecorator = (brandBlock) => {
  * @param {Element} navOverlay - The overlay element for the navigation menu
  */
 function toggleNav(button, navWrapper, navOverlay) {
-  const profileButton = document.querySelector('.profile-toggle');
+  const shadowRoot = button.getRootNode();
+  const profileButton = shadowRoot.querySelector('.profile-toggle');
   if (profileButton && profileButton.getAttribute('aria-expanded') === 'true') {
     profileButton.click();
   }
@@ -265,7 +266,7 @@ const buildNavItems = async (ul, level = 0) => {
       const setExpandedState = (toggleElement, containerElement, expanded) => {
         // reset state
 
-        // set new state
+        // set new state for nav items
         resetExpandedAttribute();
         toggleElement.setAttribute('aria-expanded', expanded);
         // remove active class from all other expanded nav items

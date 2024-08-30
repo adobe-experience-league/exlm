@@ -32,6 +32,11 @@ export default class Profile extends HTMLElement {
     const toggler = profile.querySelector('.profile-toggle');
     const navOverlay = document.querySelector('.nav-overlay');
     const toggleExpandContentMobile = () => {
+      const shadowRoot = toggler.getRootNode();
+      const navButton = shadowRoot.querySelector('.nav-hamburger');
+      if (navButton.getAttribute('aria-expanded') === 'true') {
+        navButton.click();
+      }
       const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
       toggler.setAttribute('aria-expanded', !isExpanded);
       const profileMenu = toggler.nextElementSibling;
