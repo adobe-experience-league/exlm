@@ -142,11 +142,6 @@ body.profile:not(.profile-home-page)
   border-top: 1px solid #d6d6d6;
 }
 
-body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.user-profile-card-wrapper,
-body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.product-experience-level-wrapper {
-  border-top: 0;
-}
-
 body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper):last-child {
   padding-bottom: 0;
 }
@@ -159,6 +154,21 @@ body.profile-home-page
   .section:not(.profile-rail-section, .sign-up-flow-section)
   > div:not(.default-content-wrapper):last-child {
   padding-bottom: 0;
+}
+
+body.profile:not(.profile-home-page)
+  .section:not(.profile-rail-section, .sign-up-flow-section)
+  > div:nth-child(2):not(.default-content-wrapper) {
+  border-top: none;
+}
+
+body.profile
+  .section:not(.profile-rail-section, .sign-up-flow-section)
+  > div.user-profile-card-wrapper:not(.default-content-wrapper),
+body.profile
+  .section:not(.profile-rail-section, .sign-up-flow-section)
+  > div.product-experience-level-wrapper:not(.default-content-wrapper) {
+  border-top: 0;
 }
 
 @include breakpoint('tablet') {
@@ -192,11 +202,6 @@ body.profile-home-page
     margin-top: 0;
   }
 
-  body.profile .section[data-two-column-layout] > div:nth-child(2) {
-    padding-top: 0;
-    margin: 0 auto;
-  }
-
   body.profile .section[data-two-column-layout] > div:nth-child(n + 3) {
     grid-area: normal-flow;
   }
@@ -210,6 +215,12 @@ body.profile-home-page
     .section:not(.profile-rail-section, .sign-up-flow-section)
     > div:not(.default-content-wrapper) {
     padding-bottom: 48px;
+  }
+
+  body.profile .section[data-two-column-layout] > div:nth-child(2):not(.default-content-wrapper) {
+    padding-top: 0;
+    margin: 0 auto;
+    border-top: none;
   }
 }
 
