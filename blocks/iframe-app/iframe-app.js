@@ -26,7 +26,7 @@ async function getIMSInfo() {
 }
 
 /**
- * This function listens to messages from iframe. 
+ * This function listens to messages from iframe.
  * If the message type is 'REQUEST_AUTH_STATE', it sends the IMS info to the iframe if user is logged in.
  * @param {HTMLIFrameElement} iframe
  */
