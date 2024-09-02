@@ -1536,6 +1536,19 @@
     ]
   },
   {
+    "id": "iframe-app",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "iframeUrl",
+        "value": "",
+        "label": "iFrame URL",
+        "description": "Please provide a URL to an iFrame app."
+      }
+    ]
+  },
+  {
     "id": "secondary-search",
     "fields": [
       {
@@ -2744,21 +2757,7 @@
         "valueType": "string",
         "name": "author-bio-page",
         "multi": true,
-        "value": "",
         "label": "Author Bio page URL"
-      },
-      {
-        "component": "multiselect",
-        "valueType": "string",
-        "name": "coveo-content-type",
-        "label": "Content Type",
-        "description": "Sets the coveo content type in page meta.",
-        "options": [
-          {
-            "name": "Perspectives",
-            "value": "Perspective"
-          }
-        ]
       },
       {
         "component": "aem-tag",
@@ -3591,6 +3590,371 @@
         "name": "incompleteProfileText",
         "value": "",
         "label": "Text to be shown for incomplete profile."
+      }
+    ]
+  },
+  {
+    "id": "recommended-content",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the heading."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "filterLabel",
+        "value": "",
+        "label": "Filter Label",
+        "description": "Sets the text for filter label"
+      },
+      {
+        "component": "select",
+        "name": "cardOne",
+        "value": "",
+        "label": "Card One",
+        "description": "Recommendation results will be placed on the page based on content type by order selected, if no content type is selected will be dynamic based on profile context.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "cardTwo",
+        "value": "",
+        "label": "Card Two",
+        "description": "Recommendation results will be placed on the page based on content type by order selected, if no content type is selected will be dynamic based on profile context.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "cardThree",
+        "value": "",
+        "label": "Card Three",
+        "description": "Recommendation results will be placed on the page based on content type by order selected, if no content type is selected will be dynamic based on profile context.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "cardFour",
+        "value": "",
+        "label": "Card Four",
+        "description": "Recommendation results will be placed on the page based on content type by order selected, if no content type is selected will be dynamic based on profile context.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "aem-tag",
+        "name": "tags",
+        "label": "Solution(s) or Feature(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl",
+        "description": "Optional - based on Profile Context if no selection is made."
+      },
+      {
+        "component": "multiselect",
+        "name": "roles",
+        "label": "Role(s)",
+        "valueType": "string",
+        "description": "Sets the Role(s).",
+        "options": [
+          {
+            "name": "Profile Context",
+            "value": "profile_context"
+          },
+          {
+            "name": "Admin",
+            "value": "Admin"
+          },
+          {
+            "name": "Developer",
+            "value": "Developer"
+          },
+          {
+            "name": "Leader",
+            "value": "Leader"
+          },
+          {
+            "name": "User",
+            "value": "User"
+          }
+        ]
+      },
+      {
+        "component": "multiselect",
+        "name": "industries",
+        "label": "Industries",
+        "valueType": "string",
+        "description": "Sets the Industries.",
+        "options": [
+          {
+            "name": "Profile Context",
+            "value": "profile_context"
+          },
+          {
+            "name": "Financial Services",
+            "value": "recnimdzX9I4pPOxW"
+          },
+          {
+            "name": "High Tech",
+            "value": "rec6lPTfBw9dzB1C9"
+          },
+          {
+            "name": "Government",
+            "value": "rectSd3DmTitTVc0M"
+          },
+          {
+            "name": "Telecommunications",
+            "value": "rec9FT7VnY7fpyfXY"
+          },
+          {
+            "name": "Healthcare",
+            "value": "recYTRHMCbBRXZDig"
+          },
+          {
+            "name": "Education",
+            "value": "recgygMmWplkQwADZ"
+          },
+          {
+            "name": "Manufacturing",
+            "value": "recxaWHICuSXrjPH3"
+          },
+          {
+            "name": "Media and Entertainment",
+            "value": "media_entertainment"
+          },
+          {
+            "name": "Retail",
+            "value": "recAVnGpO0fTu1T8e"
+          },
+          {
+            "name": "Travel and Hospitality",
+            "value": "recvz0dWodhrWFK0V"
+          }
+        ]
+      },
+      {
+        "component": "radio-group",
+        "name": "sortBy",
+        "value": "",
+        "label": "Sort by",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Relevance",
+            "value": "RELEVANCE"
+          },
+          {
+            "name": "Most recent",
+            "value": "MOST_RECENT"
+          },
+          {
+            "name": "Most popular",
+            "value": "MOST_POPULAR"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "resultText",
+        "value": "",
+        "label": "Result text",
+        "description": "Sets the result text."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "linkText",
+        "value": "",
+        "label": "Link text",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "description": "Sets the text url."
       }
     ]
   }

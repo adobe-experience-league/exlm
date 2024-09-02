@@ -39,6 +39,7 @@
       "carousel",
       "sign-up",
       "video-embed",
+      "iframe-app",
       "secondary-search",
       "accordion-group",
       "media",
@@ -162,7 +163,8 @@
       "product-experience-level",
       "bookmarks",
       "awards",
-      "profile-welcome"
+      "profile-welcome",
+      "recommended-content"
     ]
   },
   {

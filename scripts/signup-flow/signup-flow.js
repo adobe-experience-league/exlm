@@ -6,6 +6,11 @@ import FormValidator from '../form-validator.js';
 import { sendNotice } from '../toast/toast.js';
 import { addModalSeenInteraction } from '../events/signup-flow-event.js';
 
+export const FLOW_TYPE = {
+  INCOMPLETE_PROFILE: 'incomplete-profile',
+  NEW_PROFILE: 'new-profile',
+};
+
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -16,36 +21,40 @@ try {
 
 const { lang } = getPathDetails();
 
-// Array of pages for the signup flow
-const pages = [
-  {
-    name: 'step1',
-    path: `/${lang}/profile/signup-flow-modal/step1`,
-    title: placeholders?.signupFlowStep1Header,
-  },
-  {
-    name: 'step2',
-    path: `/${lang}/profile/signup-flow-modal/step2`,
-    title: placeholders?.signupFlowStep2Header,
-  },
-  {
-    name: 'confirm',
-    path: `/${lang}/profile/signup-flow-modal/confirm`,
-    title: placeholders?.signupFlowConfirmHeader,
-    nofollow: true,
-  },
-];
+let pages = [];
+
+const setPagesConfig = (modalType) => {
+  pages = [
+    {
+      name: 'step1',
+      path: `/${lang}/profile/signup-flow-modal/${modalType}/step1`,
+      title: placeholders?.signupFlowStep1Header,
+    },
+    {
+      name: 'step2',
+      path: `/${lang}/profile/signup-flow-modal/${modalType}/step2`,
+      title: placeholders?.signupFlowStep2Header,
+    },
+    {
+      name: 'confirm',
+      path: `/${lang}/profile/signup-flow-modal/${modalType}/confirm`,
+      title: placeholders?.signupFlowConfirmHeader,
+      nofollow: true,
+    },
+  ];
+};
 
 /**
  * Creates and initializes the signup dialog.
  * The function sets up the dialog structure, navigation, and event handlers.
  */
-const createSignupDialog = () => {
+const createSignupDialog = (modalType) => {
+  setPagesConfig(modalType);
   pages.forEach((page) =>
     document.head.appendChild(htmlToElement(`<link rel="prefetch" href="${page.path}.plain.html">`)),
   );
   const signupDialog = htmlToElement(`
-        <dialog class="signup-dialog">
+        <dialog class="signup-dialog" data-modaltype="${modalType}" >
             <div class="signup-dialog-container">                                           
                 <div class="signup-dialog-header">
                     <div class="signup-dialog-header-decor"></div>
@@ -278,6 +287,13 @@ const createSignupDialog = () => {
     });
   };
 
+  /**
+   * Listen for the dialog 'cancel' event
+   */
+  signupDialog.addEventListener('cancel', () => {
+    document.body.classList.remove('overflow-hidden');
+  });
+
   const defaultPageIndex = 0;
   initNavigation(defaultPageIndex);
   setupCloseEvents();
@@ -307,9 +323,9 @@ const createSignupDialog = () => {
  * Entry point for initializing the signup dialog flow.
  * Loads the necessary CSS and creates the signup dialog.
  */
-export default function initializeSignupFlow() {
+export default function initializeSignupFlow(flowType = FLOW_TYPE.NEW_PROFILE) {
   const signupCSSLoaded = loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow.css`);
   signupCSSLoaded.then(() => {
-    createSignupDialog();
+    createSignupDialog(flowType);
   });
 }
