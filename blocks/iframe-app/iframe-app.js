@@ -14,7 +14,7 @@ async function getIMSInfo() {
   let imsToken;
   let imsProfile;
   if (isAuthenticated) {
-    imsToken = await defaultProfileClient.getIMSaccessToken();
+    imsToken = await defaultProfileClient.getIMSAccessToken();
     imsProfile = await defaultProfileClient.getIMSProfile();
   }
   return {
