@@ -9,65 +9,11 @@ import {
   createPlaceholderSpan,
   htmlToElement,
 } from '../../scripts/scripts.js';
+import getProducts from '../../scripts/utils/product-utils.js';
 
 const { browseMoreProductsLink } = getConfig();
 
 const unwrapSpan = (span) => span.replaceWith(span.textContent);
-
-/**
- * Helper function thats returns a list of all products
- * - below <lang>/browse/<product-page>
- * - To get added, the product page must be published
- * - Product pages listed in <lang>/browse/top-products are put at the the top
- *   in the order they appear in top-products
- * - the top product list can point to sub product pages
- */
-export async function getProducts() {
-  // get language
-  const { lang } = getPathDetails();
-  let featured = true;
-  const [Products, publishedPages] = await Promise.all([
-    // load the <lang>/top-product list
-    ffetch(`/${lang}/top-products.json`, `/en/top-products.json`).all(),
-    // get all indexed pages below <lang>/browse
-    ffetch(`/${lang}/browse-index.json`, `/en/browse-index.json`).all(),
-  ]);
-
-  // add all published top products to final list
-  const finalProducts = Products.filter((product) => {
-    // if separator is reached
-    if (product.path.startsWith('-')) {
-      featured = false;
-      return false;
-    }
-
-    // check if product is in published list
-    const found = publishedPages.find((elem) => elem.path === product.path);
-    if (found) {
-      // keep original title if no nav title is set
-      if (!product.title) product.title = found.title;
-      // set featured flag
-      product.featured = featured;
-      // remove it from publishedProducts list
-      publishedPages.splice(publishedPages.indexOf(found), 1);
-      return true;
-    }
-    return false;
-  });
-
-  // if no separator was found , add the remaining products alphabetically
-  if (featured) {
-    // for the rest only keep main product pages (<lang>/browse/<main-product-page>)
-    const publishedMainProducts = publishedPages
-      .filter((page) => page.path.split('/').length === 4)
-      // sort alphabetically
-      .sort((productA, productB) => productA.path.localeCompare(productB.path));
-    // append remaining published products to final list
-    finalProducts.push(...publishedMainProducts);
-  }
-
-  return finalProducts;
-}
 
 // Utility function to toggle visibility of items
 function toggleItemVisibility(itemList, startIndex, show) {
@@ -140,7 +86,8 @@ function handleViewLessClick(block, numFeaturedProducts) {
 }
 
 async function displayAllProducts(block) {
-  const productList = await getProducts();
+  const { lang } = getPathDetails();
+  const productList = await getProducts(lang);
 
   if (productList.length > 0) {
     const productsUL = document.createElement('ul');
