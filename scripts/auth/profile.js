@@ -65,6 +65,20 @@ class ProfileClient {
     return structuredClone(attributes);
   }
 
+  async getIMSaccessToken() {
+    const signedIn = await this.isSignedIn;
+    if (!signedIn) return null;
+    const token = await window.adobeIMS.getAccessToken();
+    return token;
+  }
+
+  async getIMSProfile() {
+    const signedIn = await this.isSignedIn;
+    if (!signedIn) return null;
+    const profile = await window.adobeIMS.getProfile();
+    return profile;
+  }
+
   async getProfile(refresh = false) {
     const profile = await this.fetchProfile({}, 'exl-profile', refresh);
     return structuredClone(profile);
