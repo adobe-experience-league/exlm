@@ -5,6 +5,10 @@ const authEventType = 'REQUEST_AUTH_STATE';
 
 const { lang } = getPathDetails();
 
+/**
+ * This function gets the IMS info.
+ * @returns {Promise<IMSInfo>}
+ */
 async function getIMSInfo() {
   const isAuthenticated = await isSignedInUser();
   let imsToken;
@@ -21,6 +25,11 @@ async function getIMSInfo() {
   };
 }
 
+/**
+ * This function listens to messages from iframe. 
+ * If the message type is 'REQUEST_AUTH_STATE', it sends the IMS info to the iframe if user is logged in.
+ * @param {HTMLIFrameElement} iframe
+ */
 function listenToMessages(iframe) {
   window.addEventListener('message', (event) => {
     if (event.origin === new URL(iframe.src).origin && event.data.type === authEventType) {
