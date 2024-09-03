@@ -83,7 +83,7 @@ export default async function decorate(block) {
 
   filterOptions.unshift(ALL_MY_OPTIONS_KEY);
 
-  const renderDropdown = filterOptions?.length > 4 || true;
+  const renderDropdown = filterOptions?.length > 4;
   const numberOfResults = 8;
   const [defaultFilterOption = ''] = filterOptions;
 
