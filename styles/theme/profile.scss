@@ -230,7 +230,7 @@ body.profile
     display: grid;
     margin: 0 auto;
     max-width: var(--secondary-max-width);
-    grid-template-columns: minmax(100px, 20%) 1fr;
+    grid-template-columns: 214px 1fr;
   }
 
   body.profile-home-page .profile-background {
@@ -275,7 +275,7 @@ body.profile
     top: 80px;
     left: 0;
     bottom: 60px;
-    overflow-y: auto;
+    min-width: 214px;
   }
 
   body.profile .profile-rail {
@@ -291,6 +291,14 @@ body.profile
 }
 
 @include breakpoint('desktop-lg') {
+  body.profile > main {
+    grid-template-columns: 264px 1fr;
+  }
+
+  body.profile div.profile-rail-wrapper {
+    min-width: 264px;
+  }
+
   body.profile:not(.profile-home-page) .section:not(.profile-rail-section, .sign-up-flow-section) {
     padding: 60px 100px 80px;
   }
