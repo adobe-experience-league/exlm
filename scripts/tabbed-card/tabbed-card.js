@@ -49,7 +49,7 @@ export default class TabbedCard {
       const contentTypeLowerCase = contentType.toLowerCase();
       const contentTypeTitleCase = convertToTitleCaseAndRemove(contentType);
       const tabLabel = document.createElement('li');
-      tabLabel.textContent = this.placeholders[`tabbedCard${contentTypeTitleCase}TabLabel`];
+      tabLabel.textContent = this.placeholders[`tabbedCard${contentTypeTitleCase}TabLabel`] || contentType;
       // Create individual tab labels and attach click event listener
       tabLabel.addEventListener('click', () => {
         // Clear Existing Label
