@@ -196,7 +196,7 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
     display: grid;
     margin: 0 auto;
     max-width: var(--secondary-max-width);
-    grid-template-columns: minmax(100px, 20%) 1fr;
+    grid-template-columns: 214px 1fr;
   }
   body.profile-home-page .profile-background {
     left: auto;
@@ -233,7 +233,7 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
     top: 80px;
     left: 0;
     bottom: 60px;
-    overflow-y: auto;
+    min-width: 214px;
   }
   body.profile .profile-rail {
     position: sticky;
@@ -246,6 +246,12 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
   }
 }
 @media (min-width: 1200px) {
+  body.profile > main {
+    grid-template-columns: 264px 1fr;
+  }
+  body.profile div.profile-rail-wrapper {
+    min-width: 264px;
+  }
   body.profile:not(.profile-home-page) .section:not(.profile-rail-section, .sign-up-flow-section) {
     padding: 60px 100px 80px;
   }

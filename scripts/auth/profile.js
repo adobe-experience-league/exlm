@@ -65,7 +65,7 @@ class ProfileClient {
     return structuredClone(attributes);
   }
 
-  async getIMSaccessToken() {
+  async getIMSAccessToken() {
     const signedIn = await this.isSignedIn;
     if (!signedIn) return null;
     const token = await window.adobeIMS.getAccessToken();

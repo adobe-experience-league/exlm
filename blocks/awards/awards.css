@@ -16,6 +16,7 @@
 }
 
 .awards .awards-card .awards-details {
+    color: var(--color-white);
     margin-bottom: 30px;
 }
 
