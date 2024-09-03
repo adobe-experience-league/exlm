@@ -213,8 +213,8 @@ export default async function decorate(block) {
                     <div class="profile-user-card-role">
                     <span class="role-heading">${placeholders?.myRole || 'MY ROLE'}: </span>
                     <span class="${!hasInterests ? 'incomplete-profile' : 'content'}">${roles
-                      .map((role) => roleMappings[role] || role)
-                      .join(' | ')}</span>
+                      ?.map((role) => roleMappings[role] || role)
+                      ?.join(' | ')}</span>
                     </div>
                     ${industryContent}
                     <div class="profile-user-card-interests">

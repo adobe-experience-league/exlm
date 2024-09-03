@@ -5,6 +5,7 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
+import { extractCapability, removeProductDuplicates } from '../../scripts/browse-card/browse-card-utils.js';
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -17,11 +18,7 @@ export default async function decorate(block) {
   const [contentType, capabilities, role, level, authorType, sortBy] = configs.map((cell) => cell.textContent.trim());
   const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase() ?? 'RELEVANCE'];
   const noOfResults = 4;
-  const productKey = 'exl:solution';
-  const featureKey = 'exl:feature';
-  const products = [];
-  const versions = [];
-  const features = [];
+  const { products, features, versions } = extractCapability(capabilities);
   headingElement.firstElementChild?.classList.add('h2');
 
   // Clearing the block's content
@@ -52,52 +49,6 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   await decorateIcons(headerDiv);
-
-  /**
-   * Removes duplicate items from an array of products/solutions (with sub-solutions)
-   * @returns {Array} - Array of unique products.
-   */
-  const removeProductDuplicates = () => {
-    const filteredProducts = [];
-    for (let outerIndex = 0; outerIndex < products.length; outerIndex += 1) {
-      const currentItem = products[outerIndex];
-      let isDuplicate = false;
-      for (let innerIndex = 0; innerIndex < products.length; innerIndex += 1) {
-        if (outerIndex !== innerIndex && products[innerIndex].startsWith(currentItem)) {
-          isDuplicate = true;
-          break;
-        }
-      }
-      if (!isDuplicate) {
-        filteredProducts.push(products[outerIndex]);
-      }
-    }
-    return filteredProducts;
-  };
-
-  /**
-   * Extracts capabilities from a comma-separated string and populates relevant arrays.
-   * Existence of variables declared on top: capabilities, productKey, featureKey, products, versions, features.
-   */
-  const extractCapability = () => {
-    const items = capabilities.split(',');
-    items.forEach((item) => {
-      const [type, productBase64, subsetBase64] = item.split('/');
-      if (productBase64) {
-        const decryptedProduct = atob(productBase64);
-        if (!products.includes(decryptedProduct)) {
-          products.push(decryptedProduct);
-        }
-      }
-      if (type === productKey) {
-        if (subsetBase64) versions.push(atob(subsetBase64));
-      } else if (type === featureKey) {
-        if (subsetBase64) features.push(atob(subsetBase64));
-      }
-    });
-  };
-
-  extractCapability();
 
   const param = {
     contentType: contentType && contentType.toLowerCase().split(','),

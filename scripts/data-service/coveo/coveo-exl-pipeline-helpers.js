@@ -78,11 +78,25 @@ function constructCoveoFacet(facets) {
     field: facet.id,
     type: facet.type,
     numberOfValues: facet.currentValues?.length || 2,
-    currentValues: facet.currentValues.map((value) => ({
-      value,
-      state: value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? 'idle' : 'selected',
-      ...(value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? { children: COMMUNITY_SEARCH_FACET } : []),
-    })),
+    currentValues: facet.currentValues.map((facetValue) => {
+      const excluded = facetValue.startsWith('!');
+      const facetValueName = facetValue.replace('!', '');
+      const [value] = facetValueName.split('|');
+      const isCommunityFacet = value.toLowerCase() === CONTENT_TYPES.COMMUNITY.MAPPING_KEY;
+      let state;
+      if (isCommunityFacet) {
+        state = 'idle';
+      } else if (excluded) {
+        state = 'excluded';
+      } else {
+        state = 'selected';
+      }
+      return {
+        value,
+        state,
+        ...(isCommunityFacet ? { children: COMMUNITY_SEARCH_FACET } : []),
+      };
+    }),
   }));
   return facetsArray;
 }
@@ -123,7 +137,7 @@ export function getFacets(param) {
       ? [
           {
             id: 'el_contenttype',
-            type: param.contentType[0] === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? 'hierarchical' : 'specific',
+            type: param.contentType[0].includes(CONTENT_TYPES.COMMUNITY.MAPPING_KEY) ? 'hierarchical' : 'specific',
             currentValues: param.contentType,
           },
         ]
@@ -139,6 +153,13 @@ export function getFacets(param) {
 }
 
 export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) {
+  let context = { entitlements: {}, role: {}, interests: {}, industryInterests: {} };
+  if (param.context) {
+    context = {
+      ...context,
+      ...param.context,
+    };
+  }
   const dataSource = {
     url: coveoSearchResultsUrl,
     param: {
@@ -150,7 +171,7 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
       numberOfResults: param.noOfResults,
       excerptLength: 200,
       sortCriteria: param.sortCriteria,
-      context: { entitlements: {}, role: {}, interests: {}, industryInterests: {} },
+      context,
       filterField: '@foldingcollection',
       parentField: '@foldingchild',
       childField: '@foldingparent',
