@@ -152,7 +152,7 @@ export default class Dropdown {
     dropdown.appendChild(
       htmlToElement(`
                 <button>
-          		    <span>${this.defaultValue}</span>
+          		    <span class="custom-filter-dropdown-name">${this.defaultValue}</span>
           		    <span class="icon icon-chevron"></span>
           	    </button>
               `),
