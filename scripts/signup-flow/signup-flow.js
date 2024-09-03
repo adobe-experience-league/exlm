@@ -11,19 +11,11 @@ export const FLOW_TYPE = {
   NEW_PROFILE: 'new-profile',
 };
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  /* eslint-disable-next-line no-console */
-  console.error('Error fetching placeholders:', err);
-}
-
 const { lang } = getPathDetails();
 
 let pages = [];
 
-const setPagesConfig = (modalType) => {
+const setPagesConfig = (modalType, placeholders) => {
   pages = [
     {
       name: 'step1',
@@ -48,8 +40,8 @@ const setPagesConfig = (modalType) => {
  * Creates and initializes the signup dialog.
  * The function sets up the dialog structure, navigation, and event handlers.
  */
-const createSignupDialog = (modalType) => {
-  setPagesConfig(modalType);
+const createSignupDialog = (modalType, placeholders) => {
+  setPagesConfig(modalType, placeholders);
   pages.forEach((page) =>
     document.head.appendChild(htmlToElement(`<link rel="prefetch" href="${page.path}.plain.html">`)),
   );
@@ -324,8 +316,10 @@ const createSignupDialog = (modalType) => {
  * Loads the necessary CSS and creates the signup dialog.
  */
 export default function initializeSignupFlow(flowType = FLOW_TYPE.NEW_PROFILE) {
-  const signupCSSLoaded = loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow.css`);
-  signupCSSLoaded.then(() => {
-    createSignupDialog(flowType);
+  Promise.all([
+    fetchLanguagePlaceholders(lang),
+    loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow.css`),
+  ]).then(([placeholders]) => {
+    createSignupDialog(flowType, placeholders);
   });
 }
