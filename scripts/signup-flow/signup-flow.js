@@ -6,41 +6,32 @@ import FormValidator from '../form-validator.js';
 import { sendNotice } from '../toast/toast.js';
 import { addModalSeenInteraction } from '../events/signup-flow-event.js';
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  /* eslint-disable-next-line no-console */
-  console.error('Error fetching placeholders:', err);
-}
-
 const { lang } = getPathDetails();
-
-// Array of pages for the signup flow
-const pages = [
-  {
-    name: 'step1',
-    path: `/${lang}/profile/signup-flow-modal/step1`,
-    title: placeholders?.signupFlowStep1Header,
-  },
-  {
-    name: 'step2',
-    path: `/${lang}/profile/signup-flow-modal/step2`,
-    title: placeholders?.signupFlowStep2Header,
-  },
-  {
-    name: 'confirm',
-    path: `/${lang}/profile/signup-flow-modal/confirm`,
-    title: placeholders?.signupFlowConfirmHeader,
-    nofollow: true,
-  },
-];
 
 /**
  * Creates and initializes the signup dialog.
  * The function sets up the dialog structure, navigation, and event handlers.
  */
-const createSignupDialog = () => {
+const createSignupDialog = (placeholders) => {
+  // Array of pages for the signup flow
+  const pages = [
+    {
+      name: 'step1',
+      path: `/${lang}/profile/signup-flow-modal/step1`,
+      title: placeholders?.signupFlowStep1Header,
+    },
+    {
+      name: 'step2',
+      path: `/${lang}/profile/signup-flow-modal/step2`,
+      title: placeholders?.signupFlowStep2Header,
+    },
+    {
+      name: 'confirm',
+      path: `/${lang}/profile/signup-flow-modal/confirm`,
+      title: placeholders?.signupFlowConfirmHeader,
+      nofollow: true,
+    },
+  ];
   pages.forEach((page) =>
     document.head.appendChild(htmlToElement(`<link rel="prefetch" href="${page.path}.plain.html">`)),
   );
@@ -275,8 +266,10 @@ const createSignupDialog = () => {
  * Loads the necessary CSS and creates the signup dialog.
  */
 export default function initializeSignupFlow() {
-  const signupCSSLoaded = loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow.css`);
-  signupCSSLoaded.then(() => {
-    createSignupDialog();
+  Promise.all([
+    fetchLanguagePlaceholders(),
+    loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow.css`),
+  ]).then(([placeholders]) => {
+    createSignupDialog(placeholders);
   });
 }
