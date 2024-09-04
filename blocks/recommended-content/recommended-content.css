@@ -48,7 +48,7 @@
     margin-top: 0;
     margin-bottom: 0;
     padding-bottom: 4px;
-    gap: 24px;s
+    gap: 24px;
 }
 
 .recommended-content.block:has(.tabbed-cards-label) .recommended-content-block-header {
