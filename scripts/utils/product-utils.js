@@ -1,15 +1,12 @@
-import ffetch from '../ffetch.js';
-import { getPathDetails } from '../scripts.js';
+import { fetchJson } from '../scripts.js';
 
 /**
  * Retrieves products based on the specified theme.
+ * @param {string} lang - The language of products to retrieve
  * @param {string} theme - The theme of products to retrieve. Defaults to 'browse'.
  * @returns {Promise<Array>} - A promise that resolves to an array of products.
  */
-
-export default async function getProducts(theme = 'browse') {
-  const { lang } = getPathDetails();
-
+export default async function getProducts(lang, theme = 'browse') {
   // Define content based on theme
   const content = {
     browse: {
@@ -22,10 +19,11 @@ export default async function getProducts(theme = 'browse') {
     },
   };
   let featured = true;
+  const prefix = window.hlx.codeBasePath;
   const [Products, publishedPages] = await Promise.all([
-    ffetch(`/${lang}/${content[theme].name}.json`, `/en/${content[theme].name}.json`).all(),
+    fetchJson(`${prefix}/${lang}/${content[theme].name}.json`, `${prefix}/en/${content[theme].name}.json`),
     // get all indexed pages
-    ffetch(`/${lang}/${content[theme].index}.json`, `/en/${content[theme].index}.json`).all(),
+    fetchJson(`${prefix}/${lang}/${content[theme].index}.json`, `${prefix}/en/${content[theme].index}.json`),
   ]);
 
   // add all published top products to final list
