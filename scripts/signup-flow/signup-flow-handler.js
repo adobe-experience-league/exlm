@@ -4,7 +4,7 @@ import SignupFlowDialog from './signup-flow-dialog.js';
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { getConfig } from '../scripts.js';
 
-export default async function showSignupModal() {
+export default async function showSignupDialog() {
   if (!isSignedInUser()) {
     return;
   }
