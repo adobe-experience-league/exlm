@@ -62,6 +62,8 @@ export default async function decorate(block) {
   block.appendChild(filterSectionElement);
   block.appendChild(blockHeader);
 
+  const isDesktop = window.matchMedia('(min-width:900px)').matches;
+
   const { contentTypeOptions, sections: itemsEl } = remainingElements.reduce(
     (acc, curr) => {
       const { contentTypeOptions: optionsEl, sections, readSolutions } = acc;
@@ -119,7 +121,7 @@ export default async function decorate(block) {
 
   filterOptions.unshift(ALL_MY_OPTIONS_KEY);
 
-  const renderDropdown = window.matchMedia('(min-width:900px)').matches ? filterOptions?.length > 4 : true;
+  const renderDropdown = isDesktop ? filterOptions?.length > 4 : true;
   const numberOfResults = 1;
   const [defaultFilterOption = ''] = filterOptions;
 
@@ -143,10 +145,10 @@ export default async function decorate(block) {
     }
     const params = {
       contentType: ['!Community|User', '!troubleshooting'],
-      product: products.length && !showProfileOptions ? clonedProducts : null,
-      feature: features.length && !showProfileOptions ? [...new Set(features)] : null,
-      version: versions.length && !showProfileOptions ? [...new Set(versions)] : null,
-      role: role?.length && !showProfileOptions ? role : null,
+      product: products.length ? clonedProducts : null,
+      feature: features.length ? [...new Set(features)] : null,
+      version: versions.length ? [...new Set(versions)] : null,
+      role: role?.length ? role : null,
       sortCriteria,
       noOfResults: numberOfResults,
       context: showProfileOptions
@@ -295,11 +297,15 @@ export default async function decorate(block) {
     });
     fetchDataAndRenderBlock(initialDropdownValue);
     filterDropdown.updateDropdownValue(initialDropdownValue);
-    renderNavigationArrows();
+    if (!isDesktop) {
+      renderNavigationArrows();
+    }
   } else {
     const onTabReady = () => {
       renderCardBlock(block);
-      renderNavigationArrows();
+      if (!isDesktop) {
+        renderNavigationArrows();
+      }
     };
     // eslint-disable-next-line no-new
     new TabbedCard({
