@@ -42,9 +42,9 @@ export default async function decorate(block) {
   block.appendChild(filterSectionElement);
   block.appendChild(blockHeader);
 
-  const { filterOptionsEl, sections: itemsEl } = remainingElements.reduce(
+  const { contentTypeOptions, sections: itemsEl } = remainingElements.reduce(
     (acc, curr) => {
-      const { filterOptionsEl: optionsEl, sections, readSolutions } = acc;
+      const { contentTypeOptions: optionsEl, sections, readSolutions } = acc;
       if (curr.innerHTML.includes('exl:')) {
         acc.readSolutions = true;
         sections.push(curr);
@@ -56,18 +56,17 @@ export default async function decorate(block) {
       return acc;
     },
     {
-      filterOptionsEl: [],
+      contentTypeOptions: [],
       sections: [],
       readSolutions: false,
     },
   );
-  const filterOptions = Array.from(new Set(filterOptionsEl.map((el) => el.innerText)));
+  const contentTypes = Array.from(new Set(contentTypeOptions.map((el) => el.innerText)));
 
   const [encodedSolutionsText, configuredRoles = '', configuredIndustries = '', sortByContent] = itemsEl.map(
     (el) => el.innerText?.trim() || '',
   );
   const { products, versions, features } = extractCapability(encodedSolutionsText);
-  const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase() ?? 'RELEVANCE'];
 
   const profileData = (await defaultProfileClient.getMergedProfile()) || {};
   const {
@@ -75,7 +74,10 @@ export default async function decorate(block) {
     interests: profileInterests = [],
     industryInterests: profileIndustries = [],
   } = profileData;
-
+  const filterOptions = [...profileInterests];
+  const profileInterestIsEmpty = profileIndustries.length === 0;
+  const sortKey = profileInterestIsEmpty ? 'MOST_POPULAR' : sortByContent?.toUpperCase();
+  const sortCriteria = COVEO_SORT_OPTIONS[sortKey ?? 'RELEVANCE'];
   const role = configuredRoles?.includes('profile_context') ? profileRoles : configuredRoles.split(',');
   const industryList = configuredIndustries?.includes('profile_context')
     ? profileIndustries
@@ -84,18 +86,21 @@ export default async function decorate(block) {
   filterOptions.unshift(ALL_MY_OPTIONS_KEY);
 
   const renderDropdown = filterOptions?.length > 4;
-  const numberOfResults = 8;
+  const numberOfResults = 1;
   const [defaultFilterOption = ''] = filterOptions;
 
-  const buildCardsShimmer = new BuildPlaceholder();
+  const buildCardsShimmer = new BuildPlaceholder(contentTypes.length);
 
-  const fetchDataAndRenderBlock = (contentType) => {
-    const showProfileOptions = contentType?.toLowerCase() === ALL_MY_OPTIONS_KEY.toLowerCase();
+  const fetchDataAndRenderBlock = (optionType) => {
+    const contentDiv = block.querySelector('.recommended-content-block-section');
+    const currentActiveOption = contentDiv.dataset.selected;
+    if (currentActiveOption && optionType.toLowerCase() === currentActiveOption.toLowerCase()) {
+      return;
+    }
+    contentDiv.dataset.selected = optionType;
+    const showProfileOptions = optionType?.toLowerCase() === ALL_MY_OPTIONS_KEY.toLowerCase();
     const params = {
-      contentType:
-        contentType && !showProfileOptions
-          ? contentType.toLowerCase().split(',')
-          : ['!Community|User', '!troubleshooting'],
+      contentType: ['!Community|User', '!troubleshooting'],
       product: products.length && !showProfileOptions ? removeProductDuplicates(products) : null,
       feature: features.length && !showProfileOptions ? [...new Set(features)] : null,
       version: versions.length && !showProfileOptions ? [...new Set(versions)] : null,
@@ -105,9 +110,9 @@ export default async function decorate(block) {
       industry: industryList?.length && !showProfileOptions ? industryList : null,
       context: showProfileOptions
         ? { role: profileRoles, interests: profileInterests, industryInterests: profileIndustries }
-        : null,
+        : { interests: [optionType] },
     };
-    const contentDiv = block.querySelector('.recommended-content-block-section');
+
     contentDiv.innerHTML = '';
     buildCardsShimmer.add(contentDiv);
     contentDiv.style.display = '';
@@ -115,14 +120,20 @@ export default async function decorate(block) {
     if (noResultsContent) {
       noResultsContent.remove();
     }
-    const browseCardsContent = BrowseCardsDelegate.fetchCardData(params);
-    browseCardsContent
-      .then((data) => {
+    const cardPromises = contentTypes.map((contentType) =>
+      BrowseCardsDelegate.fetchCardData({
+        ...params,
+        contentType: [contentType],
+      }),
+    );
+    Promise.all(cardPromises)
+      .then((cardDataValues) => {
         // Hide shimmer placeholders
+        const data = cardDataValues?.flat() || [];
         buildCardsShimmer.remove();
         if (data?.length) {
           // Render cards
-          for (let i = 0; i < Math.min(numberOfResults, data.length); i += 1) {
+          for (let i = 0; i < data.length; i += 1) {
             const cardData = data[i];
             const cardDiv = document.createElement('div');
             buildCard(contentDiv, cardDiv, cardData);
@@ -238,9 +249,6 @@ export default async function decorate(block) {
     filterDropdown.handleOnChange((selectedOptionValue) => {
       const option = dropdownOptions.find((opt) => opt.value === selectedOptionValue);
       if (option?.id) {
-        const contentDiv = block.querySelector('.recommended-content-block-section');
-        contentDiv.innerHTML = '';
-
         fetchDataAndRenderBlock(option.id);
       }
     });

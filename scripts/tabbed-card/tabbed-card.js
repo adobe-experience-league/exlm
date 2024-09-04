@@ -18,7 +18,7 @@ export default class TabbedCard {
   }) {
     const [firstOption] = optionsArray;
     this.parentFormElement = parentFormElement;
-    this.defaultValue = defaultValue || firstOption;
+    this.defaultValue = (defaultValue || firstOption).toLowerCase();
     this.optionsArray = optionsArray;
     this.placeholders = placeholders;
     this.decorateExternalLinks = decorateExternalLinks;
@@ -80,11 +80,12 @@ export default class TabbedCard {
         if (this.fetchDataAndRenderBlock) {
           this.fetchDataAndRenderBlock(contentTypeLowerCase);
         }
+        tabList.dataset.selectedvalue = contentTypeLowerCase;
       });
       tabListUlElement.appendChild(tabLabel);
       // Append tab label to the tab list
       tabList.appendChild(tabListUlElement);
-      if (contentType === this.defaultValue) {
+      if (contentTypeLowerCase === this.defaultValue) {
         tabLabel.classList.add('active');
       }
       if (this.decorateExternalLinks) {
@@ -97,6 +98,7 @@ export default class TabbedCard {
     if (this.fetchDataAndRenderBlock) {
       this.fetchDataAndRenderBlock(this.defaultValue);
     }
+    tabList.dataset.selectedvalue = this.defaultValue;
   }
 
   // eslint-disable-next-line class-methods-use-this
