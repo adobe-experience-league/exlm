@@ -224,6 +224,7 @@ export async function decorateIcons(element, prefix = '') {
               styled: true,
               html: svg
                 // rescope ids and references to avoid clashes across icons;
+                .replace('</svg>', '&nbsp;</svg>')
                 .replaceAll(/ id="([^"]+)"/g, (_, id) => ` id="${iconName}-${id}"`)
                 .replaceAll(/="url\(#([^)]+)\)"/g, (_, id) => `="url(#${iconName}-${id})"`)
                 .replaceAll(/ xlink:href="#([^"]+)"/g, (_, id) => ` xlink:href="#${iconName}-${id}"`),
@@ -234,7 +235,7 @@ export async function decorateIcons(element, prefix = '') {
                 .replace('<svg', `<symbol id="icons-sprite-${iconName}"`)
                 .replace(/ width=".*?"/, '')
                 .replace(/ height=".*?"/, '')
-                .replace('</svg>', '</symbol>'),
+                .replace('</svg>', '&nbsp;</symbol>'),
             };
           }
         } catch (error) {
@@ -263,7 +264,7 @@ export async function decorateIcons(element, prefix = '') {
     if (ICONS_CACHE[iconName].styled) {
       parent.innerHTML = ICONS_CACHE[iconName].html;
     } else {
-      parent.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg"><use href="#icons-sprite-${iconName}"/></svg>`;
+      parent.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg"><use href="#icons-sprite-${iconName}"/>&nbsp</svg>`;
     }
   });
 }
