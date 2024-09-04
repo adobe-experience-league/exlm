@@ -69,6 +69,7 @@ export default async function decorate(block) {
   const { products, versions, features } = extractCapability(encodedSolutionsText);
 
   const profileData = (await defaultProfileClient.getMergedProfile()) || {};
+
   const {
     role: profileRoles = [],
     interests: profileInterests = [],
@@ -78,10 +79,10 @@ export default async function decorate(block) {
   const profileInterestIsEmpty = profileIndustries.length === 0;
   const sortKey = profileInterestIsEmpty ? 'MOST_POPULAR' : sortByContent?.toUpperCase();
   const sortCriteria = COVEO_SORT_OPTIONS[sortKey ?? 'RELEVANCE'];
-  const role = configuredRoles?.includes('profile_context') ? profileRoles : configuredRoles.split(',');
+  const role = configuredRoles?.includes('profile_context') ? profileRoles : configuredRoles.split(',').filter(Boolean);
   const industryList = configuredIndustries?.includes('profile_context')
     ? profileIndustries
-    : configuredIndustries.split(',');
+    : configuredIndustries.split(',').filter(Boolean);
 
   filterOptions.unshift(ALL_MY_OPTIONS_KEY);
 
@@ -94,11 +95,13 @@ export default async function decorate(block) {
   const fetchDataAndRenderBlock = (optionType) => {
     const contentDiv = block.querySelector('.recommended-content-block-section');
     const currentActiveOption = contentDiv.dataset.selected;
-    if (currentActiveOption && optionType.toLowerCase() === currentActiveOption.toLowerCase()) {
+    const lowercaseOptionType = optionType?.toLowerCase();
+    if (currentActiveOption && lowercaseOptionType === currentActiveOption.toLowerCase()) {
       return;
     }
-    contentDiv.dataset.selected = optionType;
-    const showProfileOptions = optionType?.toLowerCase() === ALL_MY_OPTIONS_KEY.toLowerCase();
+    contentDiv.dataset.selected = lowercaseOptionType;
+    const showProfileOptions = lowercaseOptionType === ALL_MY_OPTIONS_KEY.toLowerCase();
+    const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
     const params = {
       contentType: ['!Community|User', '!troubleshooting'],
       product: products.length && !showProfileOptions ? removeProductDuplicates(products) : null,
@@ -110,7 +113,7 @@ export default async function decorate(block) {
       industry: industryList?.length && !showProfileOptions ? industryList : null,
       context: showProfileOptions
         ? { role: profileRoles, interests: profileInterests, industryInterests: profileIndustries }
-        : { interests: [optionType] },
+        : { interests: [interest] },
     };
 
     contentDiv.innerHTML = '';
