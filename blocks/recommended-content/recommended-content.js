@@ -119,7 +119,7 @@ export default async function decorate(block) {
 
   filterOptions.unshift(ALL_MY_OPTIONS_KEY);
 
-  const renderDropdown = filterOptions?.length > 4;
+  const renderDropdown = window.matchMedia('(min-width:900px)').matches ? filterOptions?.length > 4 : true;
   const numberOfResults = 1;
   const [defaultFilterOption = ''] = filterOptions;
 
@@ -137,9 +137,13 @@ export default async function decorate(block) {
     const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
     const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
     const expLevel = experienceLevels[expLevelIndex] ?? 'Beginner';
+    const clonedProducts = structuredClone(removeProductDuplicates(products));
+    if (!showProfileOptions && !clonedProducts.find((c) => c.toLowerCase() === lowercaseOptionType)) {
+      clonedProducts.push(interest);
+    }
     const params = {
       contentType: ['!Community|User', '!troubleshooting'],
-      product: products.length && !showProfileOptions ? removeProductDuplicates(products) : null,
+      product: products.length && !showProfileOptions ? clonedProducts : null,
       feature: features.length && !showProfileOptions ? [...new Set(features)] : null,
       version: versions.length && !showProfileOptions ? [...new Set(versions)] : null,
       role: role?.length && !showProfileOptions ? role : null,
@@ -147,7 +151,7 @@ export default async function decorate(block) {
       noOfResults: numberOfResults,
       context: showProfileOptions
         ? { role: profileRoles, interests: sortedProfileInterests, experience: experienceLevels }
-        : { interests: [interest], experience: [expLevel] },
+        : { interests: [interest], experience: [expLevel], role: profileRoles },
     };
 
     contentDiv.innerHTML = '';

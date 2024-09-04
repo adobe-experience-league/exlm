@@ -10,7 +10,7 @@
     font-size: var(--spectrum-font-size-200);
     line-height: 20px;
     color: var(--spectrum-gray-800);
-    margin-bottom: 32px;
+    margin-bottom: 30px;
 }
 
 .recommended-content-filter-heading {
@@ -48,6 +48,7 @@
     margin-top: 0;
     margin-bottom: 0;
     padding-bottom: 4px;
+    gap: 24px;s
 }
 
 .recommended-content.block:has(.tabbed-cards-label) .recommended-content-block-header {
@@ -75,7 +76,7 @@
 .recommended-content.block .tabbed-cards-label li {
     font-size: var(--spectrum-font-size-100);
     line-height: 17px;
-    color: var(---non-spectrum-dim-gray);
+    color: var(--non-spectrum-dim-gray);
 }
 
 .recommended-content.block .tabbed-cards-label ul {
@@ -135,7 +136,7 @@
 }
 
 .recommended-content.block .custom-filter-dropdown>button>.icon-chevron {
-    color: var(---non-spectrum-dim-gray);
+    color: var(--non-spectrum-dim-gray);
 }
 
 .recommended-content.block:has(.browse-card-no-results) .recommended-content-nav-section {
