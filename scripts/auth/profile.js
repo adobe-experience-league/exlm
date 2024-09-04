@@ -4,7 +4,7 @@ import { getConfig, loadIms } from '../scripts.js';
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
 // eslint-disable-next-line import/no-cycle
-import showSignupModal from '../events/signup-flow-event.js';
+import showSignupDialog from '../signup-flow/signup-flow-handler.js';
 
 const { profileUrl, JWTTokenUrl, ppsOrigin, ims, khorosProfileDetailsUrl } = getConfig();
 
@@ -232,7 +232,7 @@ class ProfileClient {
           .then((res) => res.json())
           .then((data) => {
             if (!sessionStorage.getItem(postSignInStreamKey)) {
-              showSignupModal();
+              showSignupDialog();
               sessionStorage.setItem(postSignInStreamKey, 'true');
             }
             if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));

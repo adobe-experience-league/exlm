@@ -4,12 +4,10 @@ import {
   getConfig,
   getLink,
   fetchFragment,
-  isFeatureEnabled,
   fetchLanguagePlaceholders,
   getPathDetails,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
-import initializeSignupFlow from '../../scripts/signup-flow/signup-flow.js';
 import { decoratorState, isMobile, registerHeaderResizeHandler, getCell } from './header-utils.js';
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import LanguageBlock from '../language/language.js';
@@ -27,7 +25,6 @@ import Profile from './load-profile.js';
 const HEADER_CSS = `/blocks/header/exl-header.css`;
 
 let searchElementPromise = null;
-const FEATURE_FLAG = 'perspectives';
 const { khorosProfileUrl } = getConfig();
 
 const getPPSProfilePicture = async () => {
@@ -690,14 +687,6 @@ const decorateNewTabLinks = (block) => {
   });
 };
 
-// /* FIXME: Temp Code - Should be removed once we have the profile integration in place */
-async function signupFlow() {
-  const urlParams = new URLSearchParams(window.location.search);
-  if (isFeatureEnabled(FEATURE_FLAG) && urlParams.get('signup-wizard') === 'on') {
-    initializeSignupFlow();
-  }
-}
-
 /**
  * Main header decorator, calls all the other decorators
  */
@@ -807,7 +796,6 @@ class ExlHeader extends HTMLElement {
   async connectedCallback() {
     await this.loadStyles();
     await this.decorate();
-    await signupFlow();
   }
 }
 

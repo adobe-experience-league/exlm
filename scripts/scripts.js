@@ -1069,6 +1069,16 @@ export async function loadArticles() {
   }
 }
 
+function showSignupDialog() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const isSignedIn = window?.adobeIMS?.isSignedInUser();
+  const { isProd } = getConfig();
+  if (isSignedIn && !isProd && urlParams.get('signup-wizard') === 'on') {
+    // eslint-disable-next-line import/no-cycle
+    import('./signup-flow/signup-flow-dialog.js').then((mod) => mod.default.init());
+  }
+}
+
 function showBrowseBackgroundGraphic() {
   if (isBrowsePage()) {
     const main = document.querySelector('main');
@@ -1342,6 +1352,7 @@ async function loadPage() {
   loadRails();
   loadDelayed();
   showBrowseBackgroundGraphic();
+  showSignupDialog();
 
   if (isProfilePage()) {
     await loadDefaultModule(`${window.hlx.codeBasePath}/scripts/profile/personalized-home.js`);
