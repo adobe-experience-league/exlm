@@ -50,7 +50,7 @@ export default class SignupFlowDialog {
     const { lang } = getPathDetails();
     Promise.all([
       fetchLanguagePlaceholders(lang),
-      loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow.css`),
+      loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow-dialog.css`),
     ]).then(([placeholders]) => {
       this.placeholders = placeholders;
       this.lang = lang;
@@ -389,7 +389,7 @@ export default class SignupFlowDialog {
    * @returns {Promise<void>}
    */
   static async init(modalType = SIGNUP_DIALOG_TYPE.NEW_PROFILE, defaultPageIndex = 0) {
-    const signupFlowDialog = new SignupFlowDialog(modalType, defaultPageIndex);
-    signupFlowDialog.init();
+    // eslint-disable-next-line no-new
+    new SignupFlowDialog(modalType, defaultPageIndex);
   }
 }
