@@ -185,7 +185,9 @@ export default async function decorate(block) {
       : '',
   );
   block.appendChild(contentDiv);
-  block.appendChild(linkDiv);
+  if (linkDiv) {
+    block.appendChild(linkDiv);
+  }
 
   if (roleQueryParamValue.length > 0 && roleQueryParamValue[0] !== DEFAULT_OPTIONS.ROLE) {
     param.role = [roleQueryParamValue];

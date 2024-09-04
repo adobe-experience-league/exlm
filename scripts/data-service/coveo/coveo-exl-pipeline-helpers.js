@@ -314,7 +314,8 @@ export async function exlPipelineCoveoDataAdaptor(params) {
       product: products && removeProductDuplicates(products),
       title: parentResult?.title || title || '',
       description:
-        contentType?.toLowerCase() === CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY
+        contentType?.toLowerCase() === CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY ||
+        contentType?.toLowerCase() === CONTENT_TYPES.PLAYLIST.MAPPING_KEY
           ? raw?.exl_description || parentResult?.excerpt || ''
           : parentResult?.excerpt || excerpt || raw?.description || raw?.exl_description || '',
       tags,
