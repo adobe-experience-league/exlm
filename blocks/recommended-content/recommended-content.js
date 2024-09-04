@@ -1,5 +1,5 @@
 import TabbedCard from '../../scripts/tabbed-card/tabbed-card.js';
-import { createTag, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders, htmlToElement, getPathDetails } from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
@@ -12,6 +12,26 @@ import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
+async function fetchInterestData() {
+  try {
+    let data;
+    const { lang } = getPathDetails();
+    const interestsUrl = `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`;
+    const response = await fetch(interestsUrl, {
+      method: 'GET',
+    });
+    if (response.ok) {
+      data = await response.json();
+    }
+    return data?.data || [];
+  } catch (error) {
+    /* eslint-disable no-console */
+    console.error('Error fetching data', error);
+    return [];
+  }
+}
+
+const interestDataPromise = fetchInterestData();
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -62,27 +82,40 @@ export default async function decorate(block) {
     },
   );
   const contentTypes = Array.from(new Set(contentTypeOptions.map((el) => el.innerText)));
-
+  // eslint-disable-next-line no-unused-vars
   const [encodedSolutionsText, configuredRoles = '', configuredIndustries = '', sortByContent] = itemsEl.map(
     (el) => el.innerText?.trim() || '',
   );
+
   const { products, versions, features } = extractCapability(encodedSolutionsText);
 
   const profileData = (await defaultProfileClient.getMergedProfile()) || {};
+  const interestsDataArray = await interestDataPromise;
 
   const {
     role: profileRoles = [],
     interests: profileInterests = [],
-    industryInterests: profileIndustries = [],
+    solutionLevels: profileSolutionLevels = [],
   } = profileData;
-  const filterOptions = [...profileInterests];
-  const profileInterestIsEmpty = profileIndustries.length === 0;
+  const sortedProfileInterests = profileInterests.sort();
+  const filterOptions = [...sortedProfileInterests];
+  const experienceLevels = sortedProfileInterests.map((interestName) => {
+    const interest = interestsDataArray.find((int) => int.Name === interestName);
+    let expLevel = 'Beginner';
+    if (interest) {
+      const solution = profileSolutionLevels.find((sol) => sol.includes(interest.id)) || '';
+      const [, level] = solution.split(':');
+      if (level) {
+        expLevel = level;
+      }
+    }
+    return expLevel;
+  });
+
+  const profileInterestIsEmpty = profileInterests.length === 0;
   const sortKey = profileInterestIsEmpty ? 'MOST_POPULAR' : sortByContent?.toUpperCase();
   const sortCriteria = COVEO_SORT_OPTIONS[sortKey ?? 'RELEVANCE'];
   const role = configuredRoles?.includes('profile_context') ? profileRoles : configuredRoles.split(',').filter(Boolean);
-  const industryList = configuredIndustries?.includes('profile_context')
-    ? profileIndustries
-    : configuredIndustries.split(',').filter(Boolean);
 
   filterOptions.unshift(ALL_MY_OPTIONS_KEY);
 
@@ -102,6 +135,8 @@ export default async function decorate(block) {
     contentDiv.dataset.selected = lowercaseOptionType;
     const showProfileOptions = lowercaseOptionType === ALL_MY_OPTIONS_KEY.toLowerCase();
     const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
+    const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
+    const expLevel = experienceLevels[expLevelIndex] ?? 'Beginner';
     const params = {
       contentType: ['!Community|User', '!troubleshooting'],
       product: products.length && !showProfileOptions ? removeProductDuplicates(products) : null,
@@ -110,10 +145,9 @@ export default async function decorate(block) {
       role: role?.length && !showProfileOptions ? role : null,
       sortCriteria,
       noOfResults: numberOfResults,
-      industry: industryList?.length && !showProfileOptions ? industryList : null,
       context: showProfileOptions
-        ? { role: profileRoles, interests: profileInterests, industryInterests: profileIndustries }
-        : { interests: [interest] },
+        ? { role: profileRoles, interests: sortedProfileInterests, experience: experienceLevels }
+        : { interests: [interest], experience: [expLevel] },
     };
 
     contentDiv.innerHTML = '';
