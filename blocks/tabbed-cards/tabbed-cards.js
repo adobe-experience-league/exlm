@@ -5,7 +5,7 @@ import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.
 import { COVEO_SORT_OPTIONS, COVEO_DATE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import { convertToTitleCaseAndRemove } from '../../scripts/browse-card/browse-card-utils.js';
+import { formatTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
 
 const lang = document.querySelector('html').lang || 'en';
 
@@ -198,7 +198,7 @@ export default async function decorate(block) {
     const tabListUlElement = document.createElement('ul');
     contentTypeList.forEach((contentType) => {
       const contentTypeLowerCase = contentType.toLowerCase();
-      const contentTypeTitleCase = convertToTitleCaseAndRemove(contentType);
+      const contentTypeTitleCase = formatTitleCase(contentType);
       const tabLabel = document.createElement('li');
       tabLabel.textContent = placeholders[`tabbedCard${contentTypeTitleCase}TabLabel`];
       // Create individual tab labels and attach click event listener
@@ -246,7 +246,7 @@ export default async function decorate(block) {
 
     // Update view link for initial content type
     viewLinkURLElement.innerHTML =
-      placeholders[`tabbedCard${convertToTitleCaseAndRemove(initialContentType)}ViewAllLabel`] || 'View All';
+      placeholders[`tabbedCard${formatTitleCase(initialContentType)}ViewAllLabel`] || 'View All';
     viewLinkURLElement.setAttribute('href', urlMap[initialContentType]);
     tabList.appendChild(viewLinkURLElement);
     tabList.children[0].children[0].classList.add('active');

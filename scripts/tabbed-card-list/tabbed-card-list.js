@@ -1,5 +1,5 @@
 import { loadCSS } from '../lib-franklin.js';
-import { convertToTitleCaseAndRemove } from '../browse-card/browse-card-utils.js';
+import { formatTitleCase } from '../browse-card/browse-card-utils.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/tabbed-card-list/tabbed-card-list.css`);
 
@@ -46,7 +46,7 @@ export default class TabbedCard {
     const tabListUlElement = document.createElement('ul');
     this.optionsArray.forEach((contentType) => {
       const contentTypeLowerCase = contentType.toLowerCase();
-      const contentTypeTitleCase = convertToTitleCaseAndRemove(contentType);
+      const contentTypeTitleCase = formatTitleCase(contentType);
       const tabLabel = document.createElement('li');
       tabLabel.textContent = this.placeholders[`tabbedCard${contentTypeTitleCase}TabLabel`] || contentType;
       // Create individual tab labels and attach click event listener
