@@ -119,7 +119,7 @@ const generateCommunityAccountDOM = (profileData, placeholders) => {
           ? `<div class="manage-community-account">
         <a href="${communityProfileURL}" target="_blank">
         <span class="icon icon-new-tab"></span>
-        ${placeholders?.updateCommunityProfile || 'Update profile'}
+        ${placeholders?.updateCommunityProfile || 'Go to your community profile'}
         </a>
       </div>`
           : `<div class="manage-community-account">
