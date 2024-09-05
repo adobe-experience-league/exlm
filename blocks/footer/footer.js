@@ -147,7 +147,11 @@ function decorateCopyrightsMenu(footer) {
   const footerMenu = document.querySelector('.footer-menu');
   footerMenu.parentElement.appendChild(footerLastRow);
   const languageSelector = footer.querySelector('.language-selector');
-  const languageBlock = new LanguageBlock('top', 'language-picker-popover-footer', languageSelector);
+  const languageBlock = new LanguageBlock({
+    position: 'top',
+    popoverId: 'language-picker-popover-footer',
+    block: languageSelector,
+  });
   languageSelector.appendChild(languageBlock);
   const languageSelectorDiv = languageSelector.querySelector('div');
   const languageBlockButton = languageBlock.querySelector('.language-selector-button');

@@ -20,6 +20,8 @@ import Profile from './load-profile.js';
  * @property {string} khorosProfileUrl
  * @property {boolean} isCommunity
  * @property {boolean} lang
+ * @property {Language[]} languages
+ * @property {(lang: string) => void} onLanguageChange
  */
 
 const HEADER_CSS = `/blocks/header/exl-header.css`;
@@ -517,8 +519,14 @@ async function decorateCommunityBlock(header, decoratorOptions) {
  * Decorates the language-selector block
  * @param {HTMLElement} languageBlock
  */
-const languageDecorator = async (languageBlock) => {
-  const language = new LanguageBlock('top', 'language-picker-popover-header', languageBlock);
+const languageDecorator = async (languageBlock, decoratorOptions) => {
+  const language = new LanguageBlock({
+    position: 'bottom',
+    popoverId: 'language-picker-popover-header',
+    block: languageBlock,
+    languages: decoratorOptions.languages,
+    onLanguageChange: decoratorOptions.onLanguageChange,
+  });
   decoratorState.languageTitle = language.title;
   decoratorState.languages = language.languages;
 
