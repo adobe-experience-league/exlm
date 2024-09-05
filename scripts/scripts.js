@@ -768,7 +768,7 @@ export function getConfig() {
     ['nl', 'nl'],
     ['it', 'it'],
     ['zh-hant', 'zh-Hant'],
-    ['zh-hans', 'en'],
+    ['zh-hans', 'zh-Hans'],
     ['pt-br', 'pt'],
   ]);
 
