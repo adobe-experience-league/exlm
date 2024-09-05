@@ -808,6 +808,7 @@ export function getConfig() {
       : 'https://experienceleaguecommunities-dev.adobe.com/',
     // Stream API
     eventSourceStreamUrl: '/api/stream',
+    interestsUrl: `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`,
   };
   return window.exlm.config;
 }
