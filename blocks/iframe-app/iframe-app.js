@@ -33,5 +33,7 @@ const fetchPageContent = async (url, loader) => {
 
 export default async function decorate(block) {
   block.innerHTML = `Hi`;
-  await fetchPageContent(paths.commonPageURL, document.querySelector('.iframe-app-container'));
+  if(!window.hlx.aemRoot) {
+    await fetchPageContent(paths.commonPageURL, document.querySelector('.iframe-app-container'));
+  }
 }
