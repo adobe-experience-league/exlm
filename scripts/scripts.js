@@ -742,6 +742,37 @@ export function getConfig() {
     },
   ];
 
+  const communityLocalesMap = new Map([
+    ['de', 'de'],
+    ['en', 'en'],
+    ['ja', 'ja'],
+    ['fr', 'fr'],
+    ['es', 'es'],
+    ['pt-br', 'pt'],
+    ['ko', 'ko'],
+    ['sv', 'en'],
+    ['nl', 'en'],
+    ['it', 'en'],
+    ['zh-hans', 'en'],
+    ['zh-hant', 'en'],
+  ]);
+
+  // const adobeAccountLocalesMap = new Map([
+  //   ['de', 'de'],
+  //   ['en', 'en'],
+  //   ['ja', 'ja'],
+  //   ['fr', 'fr'],
+  //   ['es', 'es'],
+  //   ['pt-br', 'pt'],
+  //   ['ko', 'ko'],
+  //   ['sv', 'en'],
+  //   ['nl', 'en'],
+  //   ['it', 'en'],
+  //   ['zh-hans', 'en'],
+  //   ['zh-hant', 'en'],
+  // ]);
+
+  const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
   const currentHost = window.location.hostname;
   const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
   const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
@@ -804,10 +835,8 @@ export function getConfig() {
     adobeAccountURL: isProd ? 'https://account.adobe.com/' : 'https://stage.account.adobe.com/',
     // Community Account
     communityAccountURL: isProd
-      ? 'https://experienceleaguecommunities.adobe.com/'
-      : 'https://experienceleaguecommunities-dev.adobe.com/',
-    // Stream API
-    eventSourceStreamUrl: '/api/stream',
+      ? `https://experienceleaguecommunities.adobe.com/?profile.language=${locale}`
+      : `https://experienceleaguecommunities-dev.adobe.com/?profile.language=${locale}`,
     interestsUrl: `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`,
   };
   return window.exlm.config;

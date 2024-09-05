@@ -1,9 +1,23 @@
 import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
 import { defaultProfileClient } from '../auth/profile.js';
+import { fetchCommunityProfileData } from '../../blocks/header/header.js';
 
 const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
-const { industryUrl } = getConfig();
+const { industryUrl, khorosProfileUrl, adobeAccountURL, communityAccountURL } = getConfig();
+
+let hasCommunityProfile = false;
+let communityProfileURL = communityAccountURL;
+await fetchCommunityProfileData(khorosProfileUrl).then((res) => {
+  if (res && res.data.menu.length > 0) {
+    res.data.menu.forEach((item) => {
+      if (item.id && item.id === 'profile') {
+        hasCommunityProfile = true;
+        communityProfileURL = item.url;
+      }
+    });
+  }
+});
 
 const fetchExlProfileData = async () => {
   const [profileData, ppsProfileData] = await Promise.allSettled([
@@ -43,13 +57,13 @@ export const getIndustryNameById = (industryId, industryOptionsArray) => {
   return industry ? industry.Name : '';
 };
 
-const fetchCommunityProfileData = async () => defaultProfileClient.fetchCommunityProfileDetails();
+const fetchCommunityProfileDetails = async () => defaultProfileClient.fetchCommunityProfileDetails();
 
 const fetchProfileData = async (profileFlags) => {
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
   const exlProfilePromise = profileFlags.includes(EXL_PROFILE) ? fetchExlProfileData() : Promise.resolve({});
   const communityProfilePromise = profileFlags.includes(COMMUNITY_PROFILE)
-    ? fetchCommunityProfileData()
+    ? fetchCommunityProfileDetails()
     : Promise.resolve({});
 
   const [{ profileData, ppsProfileData }, communityProfileDetails] = await Promise.all([
@@ -75,7 +89,7 @@ const fetchProfileData = async (profileFlags) => {
   };
 };
 
-const generateAdobeAccountDOM = (profileData, placeholders, adobeAccountURL) => {
+const generateAdobeAccountDOM = (profileData, placeholders) => {
   const { adobeDisplayName, email, profilePicture, company } = profileData;
 
   return `<div class="profile-row adobe-account">
@@ -107,14 +121,14 @@ const generateAdobeAccountDOM = (profileData, placeholders, adobeAccountURL) => 
   </div>`;
 };
 
-const generateCommunityAccountDOM = (profileData, placeholders, communityAccountURL) => {
+const generateCommunityAccountDOM = (profileData, placeholders) => {
   const { communityUserName, communityUserTitle, communityUserLocation } = profileData;
 
   return `<div class="profile-row community-account">
     <div class="profile-card-header community-account-header">
       <div class="my-community-account">${placeholders?.myCommunityAccount || 'My Community Profile'}</div>
       <div class="manage-community-account">
-        <a href="${communityAccountURL}" target="_blank">
+        <a href="${communityProfileURL}" target="_blank">
         <span class="icon icon-new-tab"></span>
         ${placeholders?.updateCommunityProfile || 'Update profile'}
         </a>
@@ -141,6 +155,18 @@ const generateCommunityAccountDOM = (profileData, placeholders, communityAccount
     </div>
   </div>`;
 };
+
+const generateCreateCommunityAccountDOM = (placeholders) => `<div class="profile-row community-account">
+    <div class="profile-card-header community-account-header">
+      <div class="my-community-account">${placeholders?.myCommunityAccount || 'My Community Profile'}</div>
+      <div class="manage-community-account">
+        <a href="${communityProfileURL}" target="_blank">
+        <span class="icon icon-new-tab"></span>
+        ${placeholders?.createYourCommunityProfile || 'Create your community profile'}
+        </a>
+      </div>
+    </div>
+  </div>`;
 
 const generateAdditionalProfileInfoDOM = async (profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
@@ -201,7 +227,6 @@ export const generateProfileDOM = async (profileFlags) => {
     console.error('Error fetching placeholders:', err);
   }
 
-  const { adobeAccountURL, communityAccountURL } = getConfig();
   const profileData = await fetchProfileData(profileFlags);
 
   if (!profileData) {
@@ -210,16 +235,17 @@ export const generateProfileDOM = async (profileFlags) => {
 
   const hasExlProfileFlag = profileFlags.includes(EXL_PROFILE);
 
-  const adobeAccountDOM = hasExlProfileFlag ? generateAdobeAccountDOM(profileData, placeholders, adobeAccountURL) : '';
+  const adobeAccountDOM = hasExlProfileFlag ? generateAdobeAccountDOM(profileData, placeholders) : '';
 
   // Await the asynchronous call to generate the additional profile information DOM
   const additionalProfileInfoDOM = hasExlProfileFlag
     ? await generateAdditionalProfileInfoDOM(profileData, placeholders)
     : '';
 
-  const communityAccountDOM = profileFlags.includes(COMMUNITY_PROFILE)
-    ? generateCommunityAccountDOM(profileData, placeholders, communityAccountURL)
-    : '';
+  const communityAccountDOM =
+    profileFlags.includes(COMMUNITY_PROFILE) && hasCommunityProfile
+      ? generateCommunityAccountDOM(profileData, placeholders)
+      : generateCreateCommunityAccountDOM(placeholders);
 
   return {
     adobeAccountDOM,
