@@ -20,7 +20,7 @@ import Profile from './load-profile.js';
  * @property {string} khorosProfileUrl
  * @property {boolean} isCommunity
  * @property {boolean} lang
- * @property {Language[]} languages
+ * @property {import('../language/language.js').Language[]} languages
  * @property {(lang: string) => void} onLanguageChange
  */
 
