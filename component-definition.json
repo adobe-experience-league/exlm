@@ -1074,8 +1074,7 @@
                 "template": {
                   "name": "Recommended Content",
                   "model": "recommended-content",
-                  "roles": ["profile_context"],
-                  "industries": ["profile_context"]
+                  "roles": ["profile_context"]
                 }
               }
             }

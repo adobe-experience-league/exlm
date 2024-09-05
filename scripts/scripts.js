@@ -808,6 +808,7 @@ export function getConfig() {
       : 'https://experienceleaguecommunities-dev.adobe.com/',
     // Stream API
     eventSourceStreamUrl: '/api/stream',
+    interestsUrl: `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`,
   };
   return window.exlm.config;
 }
@@ -1066,6 +1067,16 @@ export async function loadArticles() {
         document.querySelector('main').prepend(contentContainer);
       }
     }
+  }
+}
+
+function showSignupDialog() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const isSignedIn = window?.adobeIMS?.isSignedInUser();
+  const { isProd } = getConfig();
+  if (isSignedIn && !isProd && urlParams.get('signup-wizard') === 'on') {
+    // eslint-disable-next-line import/no-cycle
+    import('./signup-flow/signup-flow-dialog.js').then((mod) => mod.default.init());
   }
 }
 
@@ -1342,6 +1353,7 @@ async function loadPage() {
   loadRails();
   loadDelayed();
   showBrowseBackgroundGraphic();
+  showSignupDialog();
 
   if (isProfilePage()) {
     await loadDefaultModule(`${window.hlx.codeBasePath}/scripts/profile/personalized-home.js`);
