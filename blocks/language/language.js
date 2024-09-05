@@ -7,18 +7,22 @@ const defaultLanguages = [
   {
     lang: 'de',
     title: 'Deutsch',
+    isCommunity: true,
   },
   {
     lang: 'en',
     title: 'English',
+    isCommunity: true,
   },
   {
     lang: 'es',
     title: 'Español',
+    isCommunity: true,
   },
   {
     lang: 'fr',
     title: 'Français',
+    isCommunity: true,
   },
   {
     lang: 'it',
@@ -31,6 +35,7 @@ const defaultLanguages = [
   {
     lang: 'pt-br',
     title: 'Português',
+    isCommunity: true,
   },
   {
     lang: 'sv',
@@ -47,10 +52,12 @@ const defaultLanguages = [
   {
     lang: 'ja',
     title: '日本語',
+    isCommunity: true,
   },
   {
     lang: 'ko',
     title: '한국어',
+    isCommunity: true,
   },
 ];
 
@@ -82,6 +89,7 @@ export default class LanguageBlock extends HTMLElement {
     this.type = type;
     this.languages = languages;
     this.title = getCell(this.block, 1, 1)?.firstChild.textContent;
+    this.isCommunity = this.block.classList.contains('community');
   }
 
   decorateButton = async () => {
@@ -103,6 +111,11 @@ export default class LanguageBlock extends HTMLElement {
         : 'language-selector-popover';
 
     const { lang: currentLang } = getPathDetails();
+
+    if (this.isCommunity === true) {
+      const comLanguages = this.languages.filter((lang) => lang.isCommunity);
+      this.languages = comLanguages;
+    }
     const spans = this.languages.map((option) => {
       const lang = option.lang?.toLowerCase();
       const { title } = option;
