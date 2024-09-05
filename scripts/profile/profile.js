@@ -43,13 +43,13 @@ export const getIndustryNameById = (industryId, industryOptionsArray) => {
   return industry ? industry.Name : '';
 };
 
-const fetchCommunityProfileDetails = async () => defaultProfileClient.fetchCommunityProfileDetails();
+const fetchCommunityProfileData = async () => defaultProfileClient.fetchCommunityProfileDetails();
 
 const fetchProfileData = async (profileFlags) => {
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
   const exlProfilePromise = profileFlags.includes(EXL_PROFILE) ? fetchExlProfileData() : Promise.resolve({});
   const communityProfilePromise = profileFlags.includes(COMMUNITY_PROFILE)
-    ? fetchCommunityProfileDetails()
+    ? fetchCommunityProfileData()
     : Promise.resolve({});
 
   const [{ profileData, ppsProfileData }, communityProfileDetails] = await Promise.all([
