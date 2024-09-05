@@ -1,61 +1,37 @@
 import { getPathDetails } from '../../scripts/scripts.js';
-import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
+import { loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
 
-const authEventType = 'REQUEST_AUTH_STATE';
+const { lang} = getPathDetails();
 
-const { lang } = getPathDetails();
+const paths = {
+  incompletePageURL: `/${lang}/profile/home/incomplete`,
+  completePageURL: `/${lang}/profile/home/complete`,
+  commonPageURL: `/${lang}/profile/home/shared`,
+};
 
-/**
- * This function gets the IMS info.
- * @returns {Promise<IMSInfo>}
- */
-async function getIMSInfo() {
-  const isAuthenticated = await isSignedInUser();
-  let imsToken;
-  let imsProfile;
-  if (isAuthenticated) {
-    imsToken = await defaultProfileClient.getIMSAccessToken();
-    imsProfile = await defaultProfileClient.getIMSProfile();
-  }
-  return {
-    isAuthenticated,
-    imsToken,
-    imsProfile,
-    locale: lang,
-  };
-}
-
-/**
- * This function listens to messages from iframe.
- * If the message type is 'REQUEST_AUTH_STATE', it sends the IMS info to the iframe if user is logged in.
- * @param {HTMLIFrameElement} iframe
- */
-function listenToMessages(iframe) {
-  window.addEventListener('message', (event) => {
-    if (event.origin === new URL(iframe.src).origin && event.data.type === authEventType) {
-      getIMSInfo().then((payload) => {
-        event.source.postMessage(
-          {
-            type: 'AUTH_STATE_RESPONSE',
-            requestId: event.data?.requestId,
-            payload,
-          },
-          event.origin,
-        );
+const fetchPageContent = async (url, loader) => {
+  try {
+    const response = await fetch(`${url}.plain.html`);
+    if (response.ok) {
+      const pageContent = await response.text();
+      const container = document.createElement('div');
+      container.innerHTML = pageContent;
+      decorateSections(container);
+      decorateBlocks(container);
+      await loadBlocks(container);
+      await decorateIcons(container);
+      Array.from(container.children).forEach((section) => {
+        loader.insertAdjacentElement('beforebegin', section);
       });
     }
-  });
-}
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.log(err);
+  }
+};
 
-export default function decorate(block) {
-  const props = [...block.children].map((row) => row.firstElementChild);
-  const appUrl = props[0].textContent;
-  const iframe = document.createElement('iframe');
-  iframe.src = appUrl;
-  iframe.width = '100%';
-  iframe.height = '100%';
-  iframe.style.border = 'none';
-  block.textContent = '';
-  block.append(iframe);
-  listenToMessages(iframe);
+
+export default async function decorate(block) {
+  block.innerHTML = `Hi`;
+  await fetchPageContent(paths.commonPageURL, document.querySelector('.iframe-app-container'));
 }
