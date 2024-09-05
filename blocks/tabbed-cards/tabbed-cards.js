@@ -5,6 +5,7 @@ import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.
 import { COVEO_SORT_OPTIONS, COVEO_DATE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
+import { convertToTitleCaseAndRemove } from '../../scripts/browse-card/browse-card-utils.js';
 
 const lang = document.querySelector('html').lang || 'en';
 
@@ -130,10 +131,6 @@ export default async function decorate(block) {
     buildCardsShimmer = new BuildPlaceholder();
     buildCardsShimmer.add(block);
   }
-
-  // Function to convert a string to title case
-  const convertToTitleCaseAndRemove = (str) =>
-    str.replace(/[-\s]/g, '').replace(/\b\w/g, (match) => match.toUpperCase());
 
   let placeholders = {};
   try {

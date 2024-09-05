@@ -162,3 +162,7 @@ export const removeProductDuplicates = (products) => {
   }
   return filteredProducts;
 };
+
+// Function to convert a string to title case
+export const convertToTitleCaseAndRemove = (str) =>
+  str.replace(/[-\s]/g, '').replace(/\b\w/g, (match) => match.toUpperCase());

@@ -1,5 +1,5 @@
-import TabbedCard from '../../scripts/tabbed-card/tabbed-card.js';
-import { createTag, fetchLanguagePlaceholders, htmlToElement, getPathDetails } from '../../scripts/scripts.js';
+import TabbedCardList from '../../scripts/tabbed-card-list/tabbed-card-list.js';
+import { createTag, fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
@@ -15,8 +15,7 @@ import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.
 async function fetchInterestData() {
   try {
     let data;
-    const { lang } = getPathDetails();
-    const interestsUrl = `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`;
+    const { interestsUrl } = getConfig();
     const response = await fetch(interestsUrl, {
       method: 'GET',
     });
@@ -40,7 +39,7 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-const ALL_MY_OPTIONS_KEY = 'All my products';
+const ALL_MY_OPTIONS_KEY = placeholders?.allMyProducts || 'All my products';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -308,7 +307,7 @@ export default async function decorate(block) {
       }
     };
     // eslint-disable-next-line no-new
-    new TabbedCard({
+    new TabbedCardList({
       parentFormElement: blockHeader,
       defaultValue: defaultFilterOption,
       optionsArray: filterOptions,

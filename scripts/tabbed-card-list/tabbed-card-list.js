@@ -1,8 +1,7 @@
 import { loadCSS } from '../lib-franklin.js';
+import { convertToTitleCaseAndRemove } from '../browse-card/browse-card-utils.js';
 
-loadCSS(`${window.hlx.codeBasePath}/scripts/tabbed-card/tabbed-card.css`);
-
-const convertToTitleCaseAndRemove = (str) => str.replace(/[-\s]/g, '').replace(/\b\w/g, (match) => match.toUpperCase());
+loadCSS(`${window.hlx.codeBasePath}/scripts/tabbed-card-list/tabbed-card-list.css`);
 
 export default class TabbedCard {
   constructor({
