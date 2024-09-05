@@ -20,6 +20,8 @@ import Profile from './load-profile.js';
  * @property {string} khorosProfileUrl
  * @property {boolean} isCommunity
  * @property {boolean} lang
+ * @property {import('../language/language.js').Language[]} languages
+ * @property {(lang: string) => void} onLanguageChange
  */
 
 const HEADER_CSS = `/blocks/header/exl-header.css`;
@@ -504,7 +506,9 @@ async function decorateCommunityBlock(header, decoratorOptions) {
 `;
   communityBlock.appendChild(notificationWrapper);
   const isSignedIn = await decoratorOptions.isUserSignedIn();
+  const languageBlock = header.querySelector('.language-selector');
   if (decoratorOptions.isCommunity) {
+    languageBlock.classList.add('community');
     if (isSignedIn && !isMobile()) {
       notificationWrapper.style.display = 'flex';
     }
@@ -515,8 +519,14 @@ async function decorateCommunityBlock(header, decoratorOptions) {
  * Decorates the language-selector block
  * @param {HTMLElement} languageBlock
  */
-const languageDecorator = async (languageBlock) => {
-  const language = new LanguageBlock('top', 'language-picker-popover-header', languageBlock, 'header');
+const languageDecorator = async (languageBlock, decoratorOptions) => {
+  const language = new LanguageBlock({
+    position: 'bottom',
+    popoverId: 'language-picker-popover-header',
+    block: languageBlock,
+    languages: decoratorOptions.languages,
+    onLanguageChange: decoratorOptions.onLanguageChange,
+  });
   decoratorState.languageTitle = language.title;
   decoratorState.languages = language.languages;
 
@@ -773,6 +783,8 @@ class ExlHeader extends HTMLElement {
       nav.role = 'navigation';
       nav.ariaLabel = 'Main navigation';
 
+      await decorateCommunityBlock(header, this.decoratorOptions);
+
       const decorateHeaderBlock = async (className, decorator, options) => {
         const block = nav.querySelector(`:scope > .${className}`);
         await decorator(block, options);
@@ -786,7 +798,6 @@ class ExlHeader extends HTMLElement {
       decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
       decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);
       decorateHeaderBlock('profile-menu', this.profileMenuDecorator, this.decoratorOptions);
-      decorateCommunityBlock(header, this.decoratorOptions);
       decorateNewTabLinks(header);
       decorateIcons(header);
       await decorateHeaderBlock('nav', this.navDecorator, this.decoratorOptions);
