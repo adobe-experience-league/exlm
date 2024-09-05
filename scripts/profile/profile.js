@@ -1,23 +1,9 @@
 import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
 import { defaultProfileClient } from '../auth/profile.js';
-import { fetchCommunityProfileData } from '../../blocks/header/header.js';
 
 const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
-const { industryUrl, khorosProfileUrl, adobeAccountURL, communityAccountURL } = getConfig();
-
-let hasCommunityProfile = false;
-let communityProfileURL = communityAccountURL;
-await fetchCommunityProfileData(khorosProfileUrl).then((res) => {
-  if (res && res.data.menu.length > 0) {
-    res.data.menu.forEach((item) => {
-      if (item.id && item.id === 'profile') {
-        hasCommunityProfile = true;
-        communityProfileURL = item.url;
-      }
-    });
-  }
-});
+const { industryUrl, adobeAccountURL, communityAccountURL } = getConfig();
 
 const fetchExlProfileData = async () => {
   const [profileData, ppsProfileData] = await Promise.allSettled([
@@ -85,6 +71,7 @@ const fetchProfileData = async (profileFlags) => {
       communityUserName: UEAuthorMode ? 'Community User Name' : communityProfileDetails?.username || '',
       communityUserTitle: UEAuthorMode ? 'Community User Title' : communityProfileDetails?.title || '',
       communityUserLocation: UEAuthorMode ? 'Community User Location' : communityProfileDetails?.location || '',
+      communityProfileURL: UEAuthorMode ? '' : communityProfileDetails?.profilePageUrl || '',
     }),
   };
 };
@@ -122,17 +109,26 @@ const generateAdobeAccountDOM = (profileData, placeholders) => {
 };
 
 const generateCommunityAccountDOM = (profileData, placeholders) => {
-  const { communityUserName, communityUserTitle, communityUserLocation } = profileData;
+  const { communityUserName, communityUserTitle, communityUserLocation, communityProfileURL } = profileData;
 
   return `<div class="profile-row community-account">
     <div class="profile-card-header community-account-header">
       <div class="my-community-account">${placeholders?.myCommunityAccount || 'My Community Profile'}</div>
-      <div class="manage-community-account">
+      ${
+        communityProfileURL
+          ? `<div class="manage-community-account">
         <a href="${communityProfileURL}" target="_blank">
         <span class="icon icon-new-tab"></span>
         ${placeholders?.updateCommunityProfile || 'Update profile'}
         </a>
-      </div>
+      </div>`
+          : `<div class="manage-community-account">
+      <a href="${communityAccountURL}" target="_blank">
+      <span class="icon icon-new-tab"></span>
+      ${placeholders?.createYourCommunityProfile || 'Create your community profile'}
+      </a>
+    </div>`
+      }
     </div>
     <div class="profile-card-body community-account-body">
       <div class="profile-user-info">
@@ -155,18 +151,6 @@ const generateCommunityAccountDOM = (profileData, placeholders) => {
     </div>
   </div>`;
 };
-
-const generateCreateCommunityAccountDOM = (placeholders) => `<div class="profile-row community-account">
-    <div class="profile-card-header community-account-header">
-      <div class="my-community-account">${placeholders?.myCommunityAccount || 'My Community Profile'}</div>
-      <div class="manage-community-account">
-        <a href="${communityProfileURL}" target="_blank">
-        <span class="icon icon-new-tab"></span>
-        ${placeholders?.createYourCommunityProfile || 'Create your community profile'}
-        </a>
-      </div>
-    </div>
-  </div>`;
 
 const generateAdditionalProfileInfoDOM = async (profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
@@ -242,10 +226,9 @@ export const generateProfileDOM = async (profileFlags) => {
     ? await generateAdditionalProfileInfoDOM(profileData, placeholders)
     : '';
 
-  const communityAccountDOM =
-    profileFlags.includes(COMMUNITY_PROFILE) && hasCommunityProfile
-      ? generateCommunityAccountDOM(profileData, placeholders)
-      : generateCreateCommunityAccountDOM(placeholders);
+  const communityAccountDOM = profileFlags.includes(COMMUNITY_PROFILE)
+    ? generateCommunityAccountDOM(profileData, placeholders)
+    : '';
 
   return {
     adobeAccountDOM,

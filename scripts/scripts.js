@@ -757,22 +757,24 @@ export function getConfig() {
     ['zh-hant', 'en'],
   ]);
 
-  // const adobeAccountLocalesMap = new Map([
-  //   ['de', 'de'],
-  //   ['en', 'en'],
-  //   ['ja', 'ja'],
-  //   ['fr', 'fr'],
-  //   ['es', 'es'],
-  //   ['pt-br', 'pt'],
-  //   ['ko', 'ko'],
-  //   ['sv', 'en'],
-  //   ['nl', 'en'],
-  //   ['it', 'en'],
-  //   ['zh-hans', 'en'],
-  //   ['zh-hant', 'en'],
-  // ]);
+  const adobeAccountLocalesMap = new Map([
+    ['de', 'de'],
+    ['en', 'en'],
+    ['ja', 'ja'],
+    ['fr', 'fr'],
+    ['es', 'es'],
+    ['ko', 'ko'],
+    ['sv', 'sv'],
+    ['nl', 'nl'],
+    ['it', 'it'],
+    ['zh-hant', 'zh-Hant'],
+    ['zh-hans', 'en'],
+    ['pt-br', 'pt'],
+  ]);
 
-  const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
+  const communityLocale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
+  const adobeAccountLang =
+    adobeAccountLocalesMap.get(document.querySelector('html').lang) || adobeAccountLocalesMap.get('en');
   const currentHost = window.location.hostname;
   const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
   const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
@@ -832,11 +834,13 @@ export function getConfig() {
     // Recommended Courses
     recommendedCoursesUrl: `${cdnOrigin}/home?lang=${lang}#dashboard/learning`,
     // Adobe account
-    adobeAccountURL: isProd ? 'https://account.adobe.com/' : 'https://stage.account.adobe.com/',
+    adobeAccountURL: isProd
+      ? `https://account.adobe.com/?lang=${adobeAccountLang}`
+      : `https://stage.account.adobe.com/?lang=${adobeAccountLang}`,
     // Community Account
     communityAccountURL: isProd
-      ? `https://experienceleaguecommunities.adobe.com/?profile.language=${locale}`
-      : `https://experienceleaguecommunities-dev.adobe.com/?profile.language=${locale}`,
+      ? `https://experienceleaguecommunities.adobe.com/?profile.language=${communityLocale}`
+      : `https://experienceleaguecommunities-dev.adobe.com/?profile.language=${communityLocale}`,
     interestsUrl: `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`,
   };
   return window.exlm.config;

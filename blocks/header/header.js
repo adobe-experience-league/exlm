@@ -93,7 +93,7 @@ const communityLocalesMap = new Map([
 ]);
 
 // eslint-disable-next-line
-export async function fetchCommunityProfileData(url = khorosProfileUrl) {
+async function fetchCommunityProfileData(url = khorosProfileUrl) {
   const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
   try {
     const response = await fetch(`${url}?lang=${locale}`, {
