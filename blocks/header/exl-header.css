@@ -347,6 +347,7 @@ button > .search-picker-label {
   border-radius: 100%;
   right: 4px;
   cursor: pointer;
+  position: absolute;
 }
 
 .search-container.browse-filters-search .icon.search-clear-icon.search-icon-show {
@@ -437,6 +438,15 @@ button > .search-picker-label {
 .search-picker-popover .search-picker-label .icon path,
 .search-suggestions-popover .search-picker-label .icon path {
   fill: var(--non-spectrum-azure-blue);
+}
+
+.icon-clear svg {
+  vertical-align: 10px;
+  width: 14px;
+  height: 6px;
+}
+.icon-clear svg path {
+  fill: white;
 }
 
 .header-wrapper {
