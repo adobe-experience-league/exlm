@@ -1,10 +1,9 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
-import { fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { productExperienceEventEmitter } from '../../scripts/events.js';
 
-const { lang } = getPathDetails();
-const interestsUrl = `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`;
+const { interestsUrl } = getConfig();
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};

@@ -80,6 +80,7 @@ export async function pushPageDataLayer(language) {
         learningInterest: userData.interests || [],
         role: userData.role || [],
         experienceLevel: userData.level || [],
+        solutionLevel: userData.solutionLevels || [],
         industry: userData.industryInterests || [],
         notificationPref: userData.emailOptIn === true,
         org: userData.org || '',

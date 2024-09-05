@@ -110,3 +110,58 @@ export const getCardData = async (articlePath, placeholders) => {
       : `View ${type}`,
   };
 };
+
+/**
+ * Extracts capabilities from a comma-separated string and populates relevant arrays.
+ * Existence of variables declared on top: capabilities, productKey, featureKey, products, versions, features.
+ */
+export const extractCapability = (capabilities) => {
+  const products = [];
+  const features = [];
+  const versions = [];
+  const productKey = 'exl:solution';
+  const featureKey = 'exl:feature';
+
+  const items = capabilities.split(',');
+  items.forEach((item) => {
+    const [type, productBase64, subsetBase64] = item.split('/');
+    if (productBase64) {
+      const decryptedProduct = atob(productBase64);
+      if (!products.includes(decryptedProduct)) {
+        products.push(decryptedProduct);
+      }
+    }
+    if (type === productKey) {
+      if (subsetBase64) versions.push(atob(subsetBase64));
+    } else if (type === featureKey) {
+      if (subsetBase64) features.push(atob(subsetBase64));
+    }
+  });
+
+  return { products, features, versions };
+};
+
+/**
+ * Removes duplicate items from an array of products/solutions (with sub-solutions)
+ * @returns {Array} - Array of unique products.
+ */
+export const removeProductDuplicates = (products) => {
+  const filteredProducts = [];
+  for (let outerIndex = 0; outerIndex < products.length; outerIndex += 1) {
+    const currentItem = products[outerIndex];
+    let isDuplicate = false;
+    for (let innerIndex = 0; innerIndex < products.length; innerIndex += 1) {
+      if (outerIndex !== innerIndex && products[innerIndex].startsWith(currentItem)) {
+        isDuplicate = true;
+        break;
+      }
+    }
+    if (!isDuplicate) {
+      filteredProducts.push(products[outerIndex]);
+    }
+  }
+  return filteredProducts;
+};
+
+// Function to convert a string to title case
+export const formatTitleCase = (str) => str.replace(/[-\s]/g, '').replace(/\b\w/g, (match) => match.toUpperCase());

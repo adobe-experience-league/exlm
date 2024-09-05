@@ -3,6 +3,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import Pagination from '../../scripts/pagination/pagination.js';
 
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const RESULTS_PER_PAGE = 6;
 let placeholders = {};
 try {
@@ -32,17 +33,6 @@ export default async function decorate(block) {
   function generateAwardsBlock(awardDetails) {
     return `
         ${awardDetails.map(generateAwardCard).join('')}
-      `;
-  }
-
-  function generateEmptyAwardsBlock() {
-    return `
-        <div class="nil-awards">
-          ${
-            placeholders?.nilAwardsLabel ||
-            'No awards yet! Start exploring Experience League to discover what you can earn.'
-          }
-        </div>
       `;
   }
 
@@ -90,8 +80,10 @@ export default async function decorate(block) {
       new Pagination({ wrapper: block, identifier: 'awards', renderItems, pgNumber: pgNum, totalPages });
       renderItems({ pgNum, block });
     } else {
-      const awardsEmptyDiv = document.createRange().createContextualFragment(generateEmptyAwardsBlock());
-      block.append(awardsEmptyDiv);
+      // eslint-disable-next-line no-lonely-if
+      if (!UEAuthorMode) {
+        block.closest('.section.awards-container')?.remove();
+      }
     }
   }
 }

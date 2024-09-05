@@ -65,6 +65,20 @@ class ProfileClient {
     return structuredClone(attributes);
   }
 
+  async getIMSAccessToken() {
+    const signedIn = await this.isSignedIn;
+    if (!signedIn) return null;
+    const token = await window.adobeIMS.getAccessToken();
+    return token;
+  }
+
+  async getIMSProfile() {
+    const signedIn = await this.isSignedIn;
+    if (!signedIn) return null;
+    const profile = await window.adobeIMS.getProfile();
+    return profile;
+  }
+
   async getProfile(refresh = false) {
     const profile = await this.fetchProfile({}, 'exl-profile', refresh);
     return structuredClone(profile);
@@ -219,8 +233,8 @@ class ProfileClient {
           .then(async (data) => {
             if (!sessionStorage.getItem(postSignInStreamKey)) {
               // eslint-disable-next-line import/no-cycle
-              const { showSignupModal } = await import('../events/signup-flow-event.js');
-              showSignupModal();
+              const { showSignupDialog } = await import('../signup-flow/signup-flow-handler.js');
+              showSignupDialog();
               sessionStorage.setItem(postSignInStreamKey, 'true');
             }
             if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));

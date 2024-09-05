@@ -1536,6 +1536,19 @@
     ]
   },
   {
+    "id": "iframe-app",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "iframeUrl",
+        "value": "",
+        "label": "iFrame URL",
+        "description": "Please provide a URL to an iFrame app."
+      }
+    ]
+  },
+  {
     "id": "secondary-search",
     "fields": [
       {
@@ -2744,7 +2757,6 @@
         "valueType": "string",
         "name": "author-bio-page",
         "multi": true,
-        "value": "",
         "label": "Author Bio page URL"
       },
       {
@@ -3843,59 +3855,6 @@
           {
             "name": "User",
             "value": "User"
-          }
-        ]
-      },
-      {
-        "component": "multiselect",
-        "name": "industries",
-        "label": "Industries",
-        "valueType": "string",
-        "description": "Sets the Industries.",
-        "options": [
-          {
-            "name": "Profile Context",
-            "value": "profile_context"
-          },
-          {
-            "name": "Financial Services",
-            "value": "recnimdzX9I4pPOxW"
-          },
-          {
-            "name": "High Tech",
-            "value": "rec6lPTfBw9dzB1C9"
-          },
-          {
-            "name": "Government",
-            "value": "rectSd3DmTitTVc0M"
-          },
-          {
-            "name": "Telecommunications",
-            "value": "rec9FT7VnY7fpyfXY"
-          },
-          {
-            "name": "Healthcare",
-            "value": "recYTRHMCbBRXZDig"
-          },
-          {
-            "name": "Education",
-            "value": "recgygMmWplkQwADZ"
-          },
-          {
-            "name": "Manufacturing",
-            "value": "recxaWHICuSXrjPH3"
-          },
-          {
-            "name": "Media and Entertainment",
-            "value": "media_entertainment"
-          },
-          {
-            "name": "Retail",
-            "value": "recAVnGpO0fTu1T8e"
-          },
-          {
-            "name": "Travel and Hospitality",
-            "value": "recvz0dWodhrWFK0V"
           }
         ]
       },
