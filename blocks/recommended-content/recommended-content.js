@@ -63,28 +63,11 @@ export default async function decorate(block) {
 
   const isDesktop = window.matchMedia('(min-width:900px)').matches;
   const reversedDomElements = remainingElements.reverse();
-  const [firstEl, secondEl, thirdEl, ...otherElements] = reversedDomElements;
-
-  const [configuredRoles = '', ...restOfElements] = otherElements.map((el) => el.innerText?.trim() || '');
-  const sortByContent = thirdEl.innerText?.trim();
-  const { contentTypeOptions, sections: itemsEl } = restOfElements.reduce(
-    (acc, curr) => {
-      const { contentTypeOptions: optionsEl, sections } = acc;
-      if (curr.includes('exl:')) {
-        sections.push(curr);
-      } else {
-        optionsEl.push(curr);
-      }
-      return acc;
-    },
-    {
-      contentTypeOptions: [],
-      sections: [],
-    },
-  );
-  const contentTypes = contentTypeOptions.reverse();
-  const contentTypeIsEmpty = contentTypes.length === 0;
-  const [encodedSolutionsText = ''] = itemsEl;
+  const [firstEl, secondEl, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
+  const sortByContent = thirdEl?.innerText?.trim();
+  const contentTypes = otherEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse();
+  const contentTypeIsEmpty = contentTypes?.length === 0;
+  const encodedSolutionsText = fifthEl.innerText?.trim() ?? '';
 
   const { products, versions, features } = extractCapability(encodedSolutionsText);
 
@@ -112,7 +95,9 @@ export default async function decorate(block) {
   });
 
   const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase() ?? 'MOST_POPULAR'];
-  const role = configuredRoles?.includes('profile_context') ? profileRoles : configuredRoles.split(',').filter(Boolean);
+  const role = fourthEl?.innerText?.trim()?.includes('profile_context')
+    ? profileRoles
+    : fourthEl?.innerText?.trim().split(',').filter(Boolean);
 
   filterOptions.unshift(ALL_MY_OPTIONS_KEY);
 
@@ -145,7 +130,7 @@ export default async function decorate(block) {
     }
     console.log({ sortedProfileInterests, clonedProducts, products });
     const params = {
-      contentType: ['!Community|User', '!troubleshooting'],
+      contentType: null,
       product: products.length ? clonedProducts : null,
       feature: features.length ? [...new Set(features)] : null,
       version: versions.length ? [...new Set(versions)] : null,
