@@ -63,13 +63,10 @@ export default async function decorate(block) {
 
   const isDesktop = window.matchMedia('(min-width:900px)').matches;
   const reversedDomElements = remainingElements.reverse();
-  const [seeWhatsNew, discoverResources, sortingEl, ...rolesAndOtherElements] = reversedDomElements;
+  const [firstEl, secondEl, thirdEl, ...otherElements] = reversedDomElements;
 
-  // eslint-disable-next-line no-unused-vars
-  const [configuredRoles = '', configuredIndustries = '', ...restOfElements] = rolesAndOtherElements.map(
-    (el) => el.innerText?.trim() || '',
-  );
-  const sortByContent = sortingEl.innerText?.trim();
+  const [configuredRoles = '', ...restOfElements] = otherElements.map((el) => el.innerText?.trim() || '');
+  const sortByContent = thirdEl.innerText?.trim();
   const { contentTypeOptions: contentTypes, sections: itemsEl } = restOfElements.reduce(
     (acc, curr) => {
       const { contentTypeOptions: optionsEl, sections } = acc;
@@ -209,11 +206,11 @@ export default async function decorate(block) {
     const contentDiv = document.createElement('div');
     contentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
     parentDiv.appendChild(contentDiv);
-    discoverResources.classList.add('recommended-content-discover-resource');
-    seeWhatsNew.classList.add('recommended-content-see-link');
-    const seeMoreEl = htmlToElement(`<div class="recommended-content-see-new">
-      ${discoverResources.outerHTML}
-      ${seeWhatsNew.outerHTML}
+    secondEl.classList.add('recommended-content-discover-resource');
+    firstEl.classList.add('recommended-content-see-link');
+    const seeMoreEl = htmlToElement(`<div class="recommended-content-result-text">
+      ${secondEl.outerHTML}
+      ${firstEl.outerHTML}
       </div>`);
     parentDiv.appendChild(seeMoreEl);
   };

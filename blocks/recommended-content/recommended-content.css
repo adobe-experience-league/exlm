@@ -33,7 +33,7 @@
     align-items: center;
 }
 
-.recommended-content-see-new {
+.recommended-content-result-text {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -43,7 +43,7 @@
     margin-bottom: 30px;
 }
 
-.recommended-content-see-new * {
+.recommended-content-result-text * {
     box-sizing: border-box;
 }
 
@@ -203,7 +203,7 @@
         display: flex;
     }
 
-    .recommended-content-see-new {
+    .recommended-content-result-text {
         display: flex;
         align-items: flex-start;
         justify-content: center;
@@ -218,7 +218,7 @@
 }
 
 @media (min-width: 900px) {
-    .recommended-content-see-new {
+    .recommended-content-result-text {
         gap: 148px;
     }
 }
