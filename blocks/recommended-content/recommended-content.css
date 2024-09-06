@@ -1,5 +1,5 @@
 .recommended-content-header {
-    font-size: 28px;
+    font-size: var(--spectrum-font-size-700);
     line-height: 35px;
     font-weight: bold;
     color: var(--spectrum-gray-800);
@@ -48,15 +48,14 @@
 }
 
 .recommended-content-discover-resource {
-    font-size: 22px;
+    font-size: var(--spectrum-font-size-500);
     line-height: 27px;
     font-weight: bold;
-    color: #000000;
+    color: var(--spectrum-gray-900);
 }
 
 .recommended-content-see-link {
-    border: 2px solid #D5D5D5;
-    /* width: 144px; */
+    border: 2px solid var(--spectrum-gray-300);
     height: 50px;
     display: flex;
     align-items: center;
@@ -67,10 +66,10 @@
 }
 
 .recommended-content-see-link a {
-    font-size: 16px;
+    font-size: var(--spectrum-font-size-200);
     line-height: 20px;
     font-weight: bold;
-    color: #222222;
+    color: var(--spectrum-gray-800);
     margin: 0;
     white-space: nowrap;
 }
