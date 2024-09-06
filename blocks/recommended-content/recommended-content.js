@@ -207,7 +207,7 @@ export default async function decorate(block) {
     contentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
     parentDiv.appendChild(contentDiv);
     secondEl.classList.add('recommended-content-discover-resource');
-    firstEl.classList.add('recommended-content-see-link');
+    firstEl.classList.add('recommended-content-result-link');
     const seeMoreEl = htmlToElement(`<div class="recommended-content-result-text">
       ${secondEl.outerHTML}
       ${firstEl.outerHTML}

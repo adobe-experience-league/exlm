@@ -54,7 +54,7 @@
     color: var(--spectrum-gray-900);
 }
 
-.recommended-content-see-link {
+.recommended-content-result-link {
     border: 2px solid var(--spectrum-gray-300);
     height: 50px;
     display: flex;
@@ -65,7 +65,7 @@
     padding: 12px 25px 14px 25px ;
 }
 
-.recommended-content-see-link a {
+.recommended-content-result-link a {
     font-size: var(--spectrum-font-size-200);
     line-height: 20px;
     font-weight: bold;
@@ -211,7 +211,7 @@
         gap: 69px;
     }
 
-    .recommended-content-see-link {
+    .recommended-content-result-link {
         padding: 9px 20px 11px;
         height: 40px;
     }
