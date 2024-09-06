@@ -233,7 +233,7 @@ class ProfileClient {
           .then(async (data) => {
             if (!sessionStorage.getItem(postSignInStreamKey)) {
               // eslint-disable-next-line import/no-cycle
-              const { showSignupDialog } = await import('../signup-flow/signup-flow-handler.js');
+              const { default: showSignupDialog } = await import('../signup-flow/signup-flow-handler.js');
               showSignupDialog();
               sessionStorage.setItem(postSignInStreamKey, 'true');
             }
