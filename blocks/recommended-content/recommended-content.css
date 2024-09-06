@@ -63,6 +63,7 @@
     border-radius: 20px;
     background-color: #FFFFFF00;
     padding: 12px 25px 14px 25px ;
+    margin-right: 0;
 }
 
 .recommended-content-result-link a {
@@ -214,11 +215,15 @@
     .recommended-content-result-link {
         padding: 9px 20px 11px;
         height: 40px;
+        margin-right: 28px;
     }
 }
 
 @media (min-width: 900px) {
     .recommended-content-result-text {
         gap: 148px;
+    }
+    .recommended-content-result-link {
+        margin-right: 0;
     }
 }
