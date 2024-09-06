@@ -18,11 +18,11 @@ export default class Dropdown {
    * @param {Number} id - Unique dropdown id
    * @param {String} variant - Dropdown variant
    */
-  constructor(parentFormElement, defaultValue, optionsArray, variant = DROPDOWN_VARIANTS.DEFAULT) {
+  constructor(parentFormElement, defaultValue, optionsArray, variant = DROPDOWN_VARIANTS.DEFAULT, id = null) {
     this.parentFormElement = parentFormElement;
     this.defaultValue = defaultValue;
     this.optionsArray = optionsArray;
-    this.id = document.querySelectorAll('.custom-filter-dropdown').length;
+    this.id = id || document.querySelectorAll('.custom-filter-dropdown').length;
     this.variant = variant;
     this.initFormElements();
     this.handleClickEvents();

@@ -33,6 +33,48 @@
     align-items: center;
 }
 
+.recommended-content-see-new {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    justify-content: flex-start;
+    margin-top: 38px;
+    margin-bottom: 30px;
+}
+
+.recommended-content-see-new * {
+    box-sizing: border-box;
+}
+
+.recommended-content-discover-resource {
+    font-size: 22px;
+    line-height: 27px;
+    font-weight: bold;
+    color: #000000;
+}
+
+.recommended-content-see-link {
+    border: 2px solid #D5D5D5;
+    /* width: 144px; */
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background-color: #FFFFFF00;
+    padding: 12px 25px 14px 25px ;
+}
+
+.recommended-content-see-link a {
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: bold;
+    color: #222222;
+    margin: 0;
+    white-space: nowrap;
+}
+
 .recommended-content.block .shimmer-placeholder {
     min-width: 100%;
     max-height: 404px;
@@ -49,6 +91,14 @@
     margin-bottom: 0;
     padding-bottom: 4px;
     gap: 24px;
+}
+
+.recommended-content.block .browse-card-no-results {
+    margin-top: 0;
+}
+
+.recommended-content.block .browse-cards-block-content:has(.browse-card-no-results) {
+    min-height: auto;
 }
 
 .recommended-content.block:has(.tabbed-cards-label) .recommended-content-block-header {
@@ -152,5 +202,24 @@
 @media (min-width: 600px) {
     .recommended-content-nav-section {
         display: flex;
+    }
+
+    .recommended-content-see-new {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        flex-direction: row;
+        gap: 69px;
+    }
+
+    .recommended-content-see-link {
+        padding: 9px 20px 11px;
+        height: 40px;
+    }
+}
+
+@media (min-width: 900px) {
+    .recommended-content-see-new {
+        gap: 148px;
     }
 }
