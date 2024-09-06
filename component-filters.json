@@ -17,7 +17,7 @@
   },
   {
     "id": "main-profile",
-    "components": ["profile-section"]
+    "components": ["section", "profile-section"]
   },
   {
     "id": "main-signup",
