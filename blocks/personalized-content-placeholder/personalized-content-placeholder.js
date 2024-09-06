@@ -2,6 +2,7 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
 
+// Will be refactoring this function to use a loadFragment() function from scripts.js 
 const fetchPageContent = async (url, loader) => {
   try {
     const response = await fetch(`${url}.plain.html`);
