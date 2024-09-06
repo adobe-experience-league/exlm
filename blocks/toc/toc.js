@@ -38,12 +38,19 @@ function getProductName() {
 function buildProductHeader() {
   const productName = getProductName();
   const solutionInfo = getSolutionByName(productName);
+  // TODO: localize the switch label
   return htmlToElement(`
     <div class="toc-header is-sticky">
-      <span class="icon icon-${solutionInfo.class}"></span>
-      <h3>${solutionInfo.name}</h3>
+      <div class="toc-header-content">
+        <span class="icon icon-${solutionInfo.class}"></span>
+        <h3>${solutionInfo.name}</h3>
+      </div>
       <div class="toc-header-actions">
-        <button class="spectrum-Button spectrum-Button--secondary is-hidden" id="collapse-all-btn">Collapse All</button>
+        <div class="spectrum-switch">
+          <input type="checkbox" class="spectrum-switch-input" id="custom-switch" />
+          <span class="spectrum-switch-switch"></span>
+          <label class="spectrum-switch-label" for="custom-switch">Expand all sections</label>
+        </div>
       </div>
     </div>
   `);
@@ -137,23 +144,26 @@ const activate = (el, expandSelf) => {
 };
 
 /**
- * Toggle collapse/expand all submenus in the TOC
+ * Collapse all submenus in the TOC
  * @param {HTMLElement} tocContent - The container of the TOC
  */
-function collapseAllSubmenus(tocContent) {
-  const anyExpanded = tocContent.querySelector('.toc-toggle[aria-expanded="true"]') !== null;
-
+function collapseAllSubmenus(tocContent, collapseSelf = true) {
   const toggles = tocContent.querySelectorAll('.toc-toggle');
   
   toggles.forEach((toggle) => {
-    const newState = anyExpanded ? 'false' : 'true';
-    toggle.setAttribute('aria-expanded', newState);
+    toggle.setAttribute('aria-expanded', collapseSelf);
 
     const submenu = tocContent.querySelector(`#${toggle.getAttribute('aria-controls')}`);
     if (submenu) {
-      submenu.setAttribute('aria-hidden', anyExpanded ? 'true' : 'false');
+      submenu.setAttribute('aria-hidden', collapseSelf);
     }
   });
+
+  // Prevents active elements to be hidden below the overflow
+  const overflowBlock = tocContent.querySelector('.toc-tree');
+  const activeElement = tocContent.querySelector('.toc-item.is-active');
+
+  ensureElementInView(overflowBlock, activeElement);
 }
 
 /**
@@ -180,7 +190,12 @@ function activateCurrentPage(tocContent) {
           currentItem = parentListItem;
         }
       }
-    }    
+    }
+    // Prevents active elements to be hidden below the overflow
+    const overflowBlock = tocContent.querySelector('.toc-tree');
+    const activeElement = tocContent.querySelector('.toc-item.is-active');
+
+    ensureElementInView(overflowBlock, activeElement); 
   }
 }
 
@@ -218,18 +233,22 @@ export default async function decorate(block) {
       const isExpanded = tocMobileDropdown.getAttribute('aria-expanded') === 'true';
       tocMobileDropdown.setAttribute('aria-expanded', !isExpanded);
     });
-    // Prevents active elements to be hidden below the overflow
-    const overflowBlock = tocContent.querySelector('.toc-tree');
-    const activeElement = tocContent.querySelector('.toc-item.is-active');
-
-    ensureElementInView(overflowBlock, activeElement);
   });
 
-  document.getElementById('collapse-all-btn').addEventListener('click', () => {
-    if (tocContent) {
-      collapseAllSubmenus(tocContent);
+const spectrumSwitch = document.querySelector('.spectrum-switch input');
+
+if (spectrumSwitch) {
+  spectrumSwitch.addEventListener('change', () => {
+    if (spectrumSwitch.checked) {
+      collapseAllSubmenus(tocContent, true);
+    } else {
+      const tocTree = tocContent.querySelector('.toc-tree');
+      collapseAllSubmenus(tocTree, false);
+      activateCurrentPage(tocContent);
     }
   });
+}
+
 
   window.addEventListener('resize', () => {
     if (window.matchMedia('(min-width:900px)').matches) {
