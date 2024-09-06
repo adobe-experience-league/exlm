@@ -171,7 +171,7 @@ export default async function decorate(block) {
             ...params,
           };
           if (contentType) {
-            payload['contentType'] = [contentType];
+            payload.contentType = [contentType];
           }
           return BrowseCardsDelegate.fetchCardData(payload);
         });
