@@ -56,8 +56,7 @@
       "inline-survey",
       "featured-content",
       "browse-filters",
-      "topic-results",
-      "recommended-content"
+      "topic-results"
     ]
   },
   {
@@ -155,8 +154,6 @@
       "title",
       "button",
       "image",
-      "icon-block",
-      "secondary-search",
       "adobe-account-card",
       "data-and-email-consent",
       "role-and-industry",
