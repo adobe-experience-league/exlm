@@ -1,4 +1,5 @@
 @import './toc-solutions.css';
+@import '../switch/switch.css';
 
 .toc {
     position: relative;
@@ -64,16 +65,26 @@
 }
 
 .toc-header {
-    align-items: center;
     display: flex;
+    flex-direction: column;
+    align-self: normal;
     box-sizing: border-box;
     width: 100%;
     min-height: 32px;
-    padding: 1em 0 2em 8px;
+    padding: 1em 0 1em var(--spectrum-spacing-200);
+}
+
+.toc-header > .toc-header-content {
+    display: flex;
+    align-items: center;
+}
+
+.toc-header > .toc-header-actions {
+    margin-top: var(--spectrum-spacing-300);
 }
 
 
-.toc-header > span.icon {
+.toc-header-content > span.icon {
     width: 42px;
     height: 42px;
     border-radius: 50%;
@@ -84,7 +95,7 @@
     flex: none;
 }
 
-.toc-header > h3 {
+.toc-header-content > h3 {
     font-size: var(--spectrum-font-size-300);
     margin: 0;
 }
