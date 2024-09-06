@@ -17,7 +17,7 @@
   },
   {
     "id": "main-profile",
-    "components": ["profile-section"]
+    "components": ["section", "profile-section"]
   },
   {
     "id": "main-signup",
@@ -164,7 +164,8 @@
       "bookmarks",
       "awards",
       "profile-welcome",
-      "recommended-content"
+      "recommended-content",
+      "personalized-content-placeholder"
     ]
   },
   {
