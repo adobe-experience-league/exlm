@@ -17,7 +17,7 @@
   },
   {
     "id": "main-profile",
-    "components": ["profile-section"]
+    "components": ["section", "profile-section"]
   },
   {
     "id": "main-signup",
@@ -56,7 +56,8 @@
       "inline-survey",
       "featured-content",
       "browse-filters",
-      "topic-results"
+      "topic-results",
+      "recommended-content"
     ]
   },
   {
@@ -154,6 +155,8 @@
       "title",
       "button",
       "image",
+      "icon-block",
+      "secondary-search",
       "adobe-account-card",
       "data-and-email-consent",
       "role-and-industry",
