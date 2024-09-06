@@ -206,7 +206,7 @@
     .recommended-content-result-text {
         display: flex;
         align-items: flex-start;
-        justify-content: center;
+        justify-content: space-between;
         flex-direction: row;
         gap: 69px;
     }

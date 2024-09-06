@@ -67,7 +67,7 @@ export default async function decorate(block) {
 
   const [configuredRoles = '', ...restOfElements] = otherElements.map((el) => el.innerText?.trim() || '');
   const sortByContent = thirdEl.innerText?.trim();
-  const { contentTypeOptions: contentTypes, sections: itemsEl } = restOfElements.reduce(
+  const { contentTypeOptions, sections: itemsEl } = restOfElements.reduce(
     (acc, curr) => {
       const { contentTypeOptions: optionsEl, sections } = acc;
       if (curr.includes('exl:')) {
@@ -82,6 +82,7 @@ export default async function decorate(block) {
       sections: [],
     },
   );
+  const contentTypes = contentTypeOptions.reverse();
   const contentTypeIsEmpty = contentTypes.length === 0;
   const [encodedSolutionsText = ''] = itemsEl;
 
@@ -133,10 +134,16 @@ export default async function decorate(block) {
     const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
     const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
     const expLevel = experienceLevels[expLevelIndex] ?? 'Beginner';
-    const clonedProducts = structuredClone(removeProductDuplicates(products));
+    let clonedProducts = structuredClone(removeProductDuplicates(products));
     if (!showProfileOptions && !clonedProducts.find((c) => c.toLowerCase() === lowercaseOptionType)) {
       clonedProducts.push(interest);
     }
+
+    if (showProfileOptions) {
+      // show everything for default tab
+      clonedProducts = [...new Set([...products, ...sortedProfileInterests])];
+    }
+    console.log({ sortedProfileInterests, clonedProducts, products });
     const params = {
       contentType: ['!Community|User', '!troubleshooting'],
       product: products.length ? clonedProducts : null,
@@ -159,12 +166,15 @@ export default async function decorate(block) {
     }
     const cardPromises = contentTypeIsEmpty
       ? [BrowseCardsDelegate.fetchCardData(params)]
-      : contentTypes.map((contentType) =>
-          BrowseCardsDelegate.fetchCardData({
+      : contentTypes.map((contentType) => {
+          const payload = {
             ...params,
-            contentType: [contentType],
-          }),
-        );
+          };
+          if (contentType) {
+            payload['contentType'] = [contentType];
+          }
+          return BrowseCardsDelegate.fetchCardData(payload);
+        });
     Promise.all(cardPromises)
       .then((cardDataValues) => {
         // Hide shimmer placeholders
@@ -208,11 +218,13 @@ export default async function decorate(block) {
     parentDiv.appendChild(contentDiv);
     secondEl.classList.add('recommended-content-discover-resource');
     firstEl.classList.add('recommended-content-result-link');
-    const seeMoreEl = htmlToElement(`<div class="recommended-content-result-text">
-      ${secondEl.outerHTML}
-      ${firstEl.outerHTML}
-      </div>`);
-    parentDiv.appendChild(seeMoreEl);
+    if (firstEl.innerHTML || secondEl.innerHTML) {
+      const seeMoreEl = htmlToElement(`<div class="recommended-content-result-text">
+        ${secondEl.outerHTML}
+        ${firstEl.outerHTML}
+        </div>`);
+      parentDiv.appendChild(seeMoreEl);
+    }
   };
 
   const setNavigationElementStatus = () => {
