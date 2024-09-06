@@ -251,7 +251,7 @@ body.profile
     padding: 0;
     margin-right: 0;
     margin-top: 88px;
-    min-height: 500px;
+    min-height: auto;
   }
 
   body.profile .section[data-two-column-layout='true']:nth-child(3) > div:nth-child(1) {
