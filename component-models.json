@@ -3920,5 +3920,22 @@
         "description": "Sets the text url."
       }
     ]
+  },
+  {
+    "id": "personalized-content-placeholder",
+    "fields": [
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "complete-profile-url",
+        "label": "Complete profile page URL"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "incomplete-profile-url",
+        "label": "Inomplete profile page URL"
+      }
+    ]
   }
 ]
