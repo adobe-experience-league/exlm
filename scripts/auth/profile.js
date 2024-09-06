@@ -3,8 +3,8 @@ import { getConfig, loadIms } from '../scripts.js';
 // eslint-disable-next-line import/no-cycle
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
-// eslint-disable-next-line import/no-cycle
-import showSignupDialog from '../signup-flow/signup-flow-handler.js';
+
+// NOTE: to keep this viatl utility small, please do not increase the number of imports or use dynamic imports when needed.
 
 const { profileUrl, JWTTokenUrl, ppsOrigin, ims, khorosProfileDetailsUrl } = getConfig();
 
@@ -230,8 +230,10 @@ class ProfileClient {
           },
         })
           .then((res) => res.json())
-          .then((data) => {
+          .then(async (data) => {
             if (!sessionStorage.getItem(postSignInStreamKey)) {
+              // eslint-disable-next-line import/no-cycle
+              const { default: showSignupDialog } = await import('../signup-flow/signup-flow-handler.js');
               showSignupDialog();
               sessionStorage.setItem(postSignInStreamKey, 'true');
             }
