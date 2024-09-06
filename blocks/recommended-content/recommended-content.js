@@ -131,10 +131,10 @@ export default async function decorate(block) {
     console.log({ sortedProfileInterests, clonedProducts, products });
     const params = {
       contentType: null,
-      product: products.length ? clonedProducts : null,
+      product: clonedProducts,
       feature: features.length ? [...new Set(features)] : null,
       version: versions.length ? [...new Set(versions)] : null,
-      role: role?.length ? role : null,
+      role: role?.length ? role : profileRoles,
       sortCriteria,
       noOfResults: numberOfResults,
       context: showProfileOptions
