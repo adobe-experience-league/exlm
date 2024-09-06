@@ -259,10 +259,6 @@ const hamburgerButton = (navWrapper, navOverlay) => {
  * @param {HTMLUListElement} ul
  */
 const buildNavItems = async (ul, level = 0) => {
-  /**
-   *
-   * @param {HTMLElement} navItem
-   */
   const decorateNavItem = async (navItem) => {
     const navItemClasses = ['nav-item'];
     if (level === 0) navItemClasses.push('nav-item-root');
@@ -270,7 +266,7 @@ const buildNavItems = async (ul, level = 0) => {
     const controlName = `content-${level}-${randomId()}`; // unique id
     const [content, secondaryContent] = navItem.querySelectorAll(':scope > ul');
     if (content) {
-      const firstEl = navItem.firstChild;
+      const firstEl = navItem.firstElementChild;
       const toggleClass = level === 0 ? 'nav-item-toggle nav-item-toggle-root' : 'nav-item-toggle';
       const toggler = htmlToElement(
         `<button class="${toggleClass}" aria-controls="${controlName}" aria-expanded="false">${firstEl.textContent}</button>`,
