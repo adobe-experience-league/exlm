@@ -81,9 +81,7 @@ export const getCardData = async (articlePath, placeholders) => {
     .split(',')
     .map((s) => s.trim());
   if (solutions.length < 2 && coveoSolution) {
-    solutions = getMetadata('coveo-solution', doc)
-      .split(';')
-      .map((s) => s.trim());
+    solutions = coveoSolution.split(';').map((s) => s.trim());
   }
 
   return {
