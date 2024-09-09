@@ -76,6 +76,10 @@ const fetchProfileData = async (profileFlags) => {
   };
 };
 
+/**
+ * Generates HTML for displaying a Adobe account profile.
+ *
+ */
 const generateAdobeAccountDOM = (profileData, placeholders) => {
   const { adobeDisplayName, email, profilePicture, company } = profileData;
 
@@ -108,6 +112,10 @@ const generateAdobeAccountDOM = (profileData, placeholders) => {
   </div>`;
 };
 
+/**
+ * Generates HTML for displaying a community account profile.
+ *
+ */
 const generateCommunityAccountDOM = (profileData, placeholders) => {
   const { communityUserName, communityUserTitle, communityUserLocation, communityProfileURL } = profileData;
 
@@ -152,6 +160,10 @@ const generateCommunityAccountDOM = (profileData, placeholders) => {
   </div>`;
 };
 
+/**
+ * Generates HTML for displaying additional profile info like Role, Industry and Interests.
+ *
+ */
 const generateAdditionalProfileInfoDOM = async (profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
   const industryOptions = await fetchIndustryOptions();
