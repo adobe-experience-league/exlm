@@ -1,5 +1,5 @@
 .recommended-content-header {
-    font-size: 28px;
+    font-size: var(--spectrum-font-size-700);
     line-height: 35px;
     font-weight: bold;
     color: var(--spectrum-gray-800);
@@ -33,6 +33,48 @@
     align-items: center;
 }
 
+.recommended-content-result-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    justify-content: flex-start;
+    margin-top: 38px;
+    margin-bottom: 30px;
+}
+
+.recommended-content-result-text * {
+    box-sizing: border-box;
+}
+
+.recommended-content-discover-resource {
+    font-size: var(--spectrum-font-size-500);
+    line-height: 27px;
+    font-weight: bold;
+    color: var(--spectrum-gray-900);
+}
+
+.recommended-content-result-link {
+    border: 2px solid var(--spectrum-gray-300);
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background-color: #FFFFFF00;
+    padding: 12px 25px 14px 25px ;
+    margin-right: 0;
+}
+
+.recommended-content-result-link a {
+    font-size: var(--spectrum-font-size-200);
+    line-height: 20px;
+    font-weight: bold;
+    color: var(--spectrum-gray-800);
+    margin: 0;
+    white-space: nowrap;
+}
+
 .recommended-content.block .shimmer-placeholder {
     min-width: 100%;
     max-height: 404px;
@@ -49,6 +91,14 @@
     margin-bottom: 0;
     padding-bottom: 4px;
     gap: 24px;
+}
+
+.recommended-content.block .browse-card-no-results {
+    margin-top: 0;
+}
+
+.recommended-content.block .browse-cards-block-content:has(.browse-card-no-results) {
+    min-height: auto;
 }
 
 .recommended-content.block:has(.tabbed-cards-label) .recommended-content-block-header {
@@ -152,5 +202,28 @@
 @media (min-width: 600px) {
     .recommended-content-nav-section {
         display: flex;
+    }
+
+    .recommended-content-result-text {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-direction: row;
+        gap: 69px;
+    }
+
+    .recommended-content-result-link {
+        padding: 9px 20px 11px;
+        height: 40px;
+        margin-right: 28px;
+    }
+}
+
+@media (min-width: 900px) {
+    .recommended-content-result-text {
+        gap: 148px;
+    }
+    .recommended-content-result-link {
+        margin-right: 0;
     }
 }

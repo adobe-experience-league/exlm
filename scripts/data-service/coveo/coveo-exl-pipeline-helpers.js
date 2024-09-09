@@ -78,25 +78,11 @@ function constructCoveoFacet(facets) {
     field: facet.id,
     type: facet.type,
     numberOfValues: facet.currentValues?.length || 2,
-    currentValues: facet.currentValues.map((facetValue) => {
-      const excluded = facetValue.startsWith('!');
-      const facetValueName = facetValue.replace('!', '');
-      const [value] = facetValueName.split('|');
-      const isCommunityFacet = value.toLowerCase() === CONTENT_TYPES.COMMUNITY.MAPPING_KEY;
-      let state;
-      if (isCommunityFacet) {
-        state = 'idle';
-      } else if (excluded) {
-        state = 'excluded';
-      } else {
-        state = 'selected';
-      }
-      return {
-        value,
-        state,
-        ...(isCommunityFacet ? { children: COMMUNITY_SEARCH_FACET } : []),
-      };
-    }),
+    currentValues: facet.currentValues.map((value) => ({
+      value,
+      state: value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? 'idle' : 'selected',
+      ...(value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? { children: COMMUNITY_SEARCH_FACET } : []),
+    })),
   }));
   return facetsArray;
 }

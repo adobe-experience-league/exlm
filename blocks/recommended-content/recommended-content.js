@@ -9,7 +9,7 @@ import {
   removeProductDuplicates,
 } from '../../scripts/browse-card/browse-card-utils.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
-import Dropdown from '../../scripts/dropdown/dropdown.js';
+import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
 async function fetchInterestData() {
@@ -62,31 +62,12 @@ export default async function decorate(block) {
   block.appendChild(blockHeader);
 
   const isDesktop = window.matchMedia('(min-width:900px)').matches;
-
-  const { contentTypeOptions, sections: itemsEl } = remainingElements.reduce(
-    (acc, curr) => {
-      const { contentTypeOptions: optionsEl, sections, readSolutions } = acc;
-      if (curr.innerHTML.includes('exl:')) {
-        acc.readSolutions = true;
-        sections.push(curr);
-      } else if (readSolutions) {
-        sections.push(curr);
-      } else {
-        optionsEl.push(curr);
-      }
-      return acc;
-    },
-    {
-      contentTypeOptions: [],
-      sections: [],
-      readSolutions: false,
-    },
-  );
-  const contentTypes = Array.from(new Set(contentTypeOptions.map((el) => el.innerText)));
-  // eslint-disable-next-line no-unused-vars
-  const [encodedSolutionsText, configuredRoles = '', configuredIndustries = '', sortByContent] = itemsEl.map(
-    (el) => el.innerText?.trim() || '',
-  );
+  const reversedDomElements = remainingElements.reverse();
+  const [firstEl, secondEl, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
+  const sortByContent = thirdEl?.innerText?.trim();
+  const contentTypes = otherEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse();
+  const contentTypeIsEmpty = contentTypes?.length === 0;
+  const encodedSolutionsText = fifthEl.innerText?.trim() ?? '';
 
   const { products, versions, features } = extractCapability(encodedSolutionsText);
 
@@ -99,7 +80,7 @@ export default async function decorate(block) {
     solutionLevels: profileSolutionLevels = [],
   } = profileData;
   const sortedProfileInterests = profileInterests.sort();
-  const filterOptions = [...sortedProfileInterests];
+  const filterOptions = [...new Set(sortedProfileInterests)];
   const experienceLevels = sortedProfileInterests.map((interestName) => {
     const interest = interestsDataArray.find((int) => int.Name === interestName);
     let expLevel = 'Beginner';
@@ -113,18 +94,18 @@ export default async function decorate(block) {
     return expLevel;
   });
 
-  const profileInterestIsEmpty = profileInterests.length === 0;
-  const sortKey = profileInterestIsEmpty ? 'MOST_POPULAR' : sortByContent?.toUpperCase();
-  const sortCriteria = COVEO_SORT_OPTIONS[sortKey ?? 'RELEVANCE'];
-  const role = configuredRoles?.includes('profile_context') ? profileRoles : configuredRoles.split(',').filter(Boolean);
+  const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase() ?? 'MOST_POPULAR'];
+  const role = fourthEl?.innerText?.trim()?.includes('profile_context')
+    ? profileRoles
+    : fourthEl?.innerText?.trim().split(',').filter(Boolean);
 
   filterOptions.unshift(ALL_MY_OPTIONS_KEY);
 
   const renderDropdown = isDesktop ? filterOptions?.length > 4 : true;
-  const numberOfResults = 1;
+  const numberOfResults = contentTypeIsEmpty ? 4 : 1;
   const [defaultFilterOption = ''] = filterOptions;
 
-  const buildCardsShimmer = new BuildPlaceholder(contentTypes.length);
+  const buildCardsShimmer = new BuildPlaceholder(contentTypeIsEmpty ? numberOfResults : contentTypes.length);
 
   const fetchDataAndRenderBlock = (optionType) => {
     const contentDiv = block.querySelector('.recommended-content-block-section');
@@ -138,16 +119,22 @@ export default async function decorate(block) {
     const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
     const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
     const expLevel = experienceLevels[expLevelIndex] ?? 'Beginner';
-    const clonedProducts = structuredClone(removeProductDuplicates(products));
+    let clonedProducts = structuredClone(removeProductDuplicates(products));
     if (!showProfileOptions && !clonedProducts.find((c) => c.toLowerCase() === lowercaseOptionType)) {
       clonedProducts.push(interest);
     }
+
+    if (showProfileOptions) {
+      // show everything for default tab
+      clonedProducts = [...new Set([...products, ...sortedProfileInterests])];
+    }
+    console.log({ sortedProfileInterests, clonedProducts, products });
     const params = {
-      contentType: ['!Community|User', '!troubleshooting'],
-      product: products.length ? clonedProducts : null,
+      contentType: null,
+      product: clonedProducts,
       feature: features.length ? [...new Set(features)] : null,
       version: versions.length ? [...new Set(versions)] : null,
-      role: role?.length ? role : null,
+      role: role?.length ? role : profileRoles,
       sortCriteria,
       noOfResults: numberOfResults,
       context: showProfileOptions
@@ -162,12 +149,17 @@ export default async function decorate(block) {
     if (noResultsContent) {
       noResultsContent.remove();
     }
-    const cardPromises = contentTypes.map((contentType) =>
-      BrowseCardsDelegate.fetchCardData({
-        ...params,
-        contentType: [contentType],
-      }),
-    );
+    const cardPromises = contentTypeIsEmpty
+      ? [BrowseCardsDelegate.fetchCardData(params)]
+      : contentTypes.map((contentType) => {
+          const payload = {
+            ...params,
+          };
+          if (contentType) {
+            payload.contentType = [contentType];
+          }
+          return BrowseCardsDelegate.fetchCardData(payload);
+        });
     Promise.all(cardPromises)
       .then((cardDataValues) => {
         // Hide shimmer placeholders
@@ -181,13 +173,11 @@ export default async function decorate(block) {
             buildCard(contentDiv, cardDiv, cardData);
             contentDiv.appendChild(cardDiv);
           }
-          // Append content div to shimmer card parent and decorate icons
-          block.appendChild(contentDiv);
           contentDiv.style.display = 'flex';
         } else {
           buildCardsShimmer.remove();
-          buildNoResultsContent(block, true);
-          contentDiv.style.display = 'none';
+          buildNoResultsContent(contentDiv, true);
+          contentDiv.style.display = 'block';
         }
 
         const navSectionEl = block.querySelector('.recommended-content-nav-section');
@@ -200,8 +190,8 @@ export default async function decorate(block) {
       .catch((err) => {
         // Hide shimmer placeholders on error
         buildCardsShimmer.remove();
-        buildNoResultsContent(block, true);
-        contentDiv.style.display = 'none';
+        buildNoResultsContent(contentDiv, true);
+        contentDiv.style.display = 'block';
         /* eslint-disable-next-line no-console */
         console.error(err);
       });
@@ -211,6 +201,15 @@ export default async function decorate(block) {
     const contentDiv = document.createElement('div');
     contentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
     parentDiv.appendChild(contentDiv);
+    secondEl.classList.add('recommended-content-discover-resource');
+    firstEl.classList.add('recommended-content-result-link');
+    if (firstEl.innerHTML || secondEl.innerHTML) {
+      const seeMoreEl = htmlToElement(`<div class="recommended-content-result-text">
+        ${secondEl.outerHTML}
+        ${firstEl.outerHTML}
+        </div>`);
+      parentDiv.appendChild(seeMoreEl);
+    }
   };
 
   const setNavigationElementStatus = () => {
@@ -286,7 +285,14 @@ export default async function decorate(block) {
       };
     });
     const initialDropdownValue = convertToTitleCase(defaultFilterOption || `${placeholders?.select || 'Select'}`);
-    const filterDropdown = new Dropdown(blockHeader, initialDropdownValue, dropdownOptions);
+    const uniqueId = parseInt(Math.random() * 10 ** 8, 10);
+    const filterDropdown = new Dropdown(
+      blockHeader,
+      initialDropdownValue,
+      dropdownOptions,
+      DROPDOWN_VARIANTS.DEFAULT,
+      uniqueId,
+    );
     renderCardBlock(block);
     filterDropdown.handleOnChange((selectedOptionValue) => {
       const option = dropdownOptions.find((opt) => opt.value === selectedOptionValue);

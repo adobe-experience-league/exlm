@@ -67,7 +67,7 @@ body.profile .section .product-experience-level-wrapper + .default-content-wrapp
   margin-top: 50px;
 }
 
-body.profile .section[data-two-column-layout] > div:nth-child(2) {
+body.profile .section[data-two-column-layout="true"] > div:nth-child(2) {
   border-top: 0;
 }
 
@@ -162,19 +162,19 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
     margin: 0 16px 24px;
     padding: 48px 52px 64px;
   }
-  body.profile .section[data-two-column-layout] {
+  body.profile .section[data-two-column-layout="true"] {
     display: grid;
     gap: 10px;
     grid-template: ". ." auto "normal-flow normal-flow" auto/1fr 1fr;
   }
-  body.profile .section[data-two-column-layout] > div:nth-child(1) {
+  body.profile .section[data-two-column-layout="true"] > div:nth-child(1) {
     height: 100%;
     margin-right: 20px;
   }
-  body.profile .section[data-two-column-layout] > div:nth-child(1) > *:first-child {
+  body.profile .section[data-two-column-layout="true"] > div:nth-child(1) > *:first-child {
     margin-top: 0;
   }
-  body.profile .section[data-two-column-layout] > div:nth-child(n+3) {
+  body.profile .section[data-two-column-layout="true"] > div:nth-child(n+3) {
     grid-area: normal-flow;
   }
   body.profile-home-page .section:not(.sign-up-flow-section) {
@@ -184,7 +184,7 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
   body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper) {
     padding-bottom: 48px;
   }
-  body.profile .section[data-two-column-layout] > div:nth-child(2):not(.default-content-wrapper) {
+  body.profile .section[data-two-column-layout="true"] > div:nth-child(2):not(.default-content-wrapper) {
     padding-top: 0;
     margin: 0 auto;
     border-top: none;
@@ -214,9 +214,9 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
     padding: 0;
     margin-right: 0;
     margin-top: 88px;
-    min-height: 500px;
+    min-height: auto;
   }
-  body.profile .section[data-two-column-layout]:nth-child(3) > div:nth-child(1) {
+  body.profile .section[data-two-column-layout="true"]:nth-child(3) > div:nth-child(1) {
     margin-top: 28px;
   }
   body.profile .section:not(.profile-rail-section, .sign-up-flow-section) {
