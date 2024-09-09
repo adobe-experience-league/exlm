@@ -134,6 +134,14 @@ export default class SignupFlowDialog {
   createSignupDialog() {
     this.signupDialog = htmlToElement(`
       <dialog class="signup-dialog" data-modaltype="${this.modalType}" >
+        <div class="signup-dialog-close-bar">
+          <a class="signup-dialog-close-btn close-action">
+              <span class="close-text">${this.placeholders?.closeBtnLabel || 'Close'}</span>
+              <div class="close-icon-holder">
+                  <span class="icon icon-close"></span>
+              </div>
+          </a>
+        </div>
         <div class="signup-dialog-container">                                           
           <div class="signup-dialog-header">
             <div class="signup-dialog-header-decor"></div>
@@ -163,6 +171,8 @@ export default class SignupFlowDialog {
     this.observeHeader();
     document.body.append(this.signupDialog);
     document.body.classList.add('overflow-hidden');
+    const signupCloseBtn = this.signupDialog.querySelector('.signup-dialog-close-btn');
+    decorateIcons(signupCloseBtn);
     this.signupDialog.inert = true;
     this.signupDialog.showModal();
     this.signupDialog.inert = false;
