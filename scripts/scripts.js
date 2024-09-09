@@ -742,7 +742,7 @@ export function getConfig() {
     },
   ];
 
-  const communityLocalesMap = new Map([
+  const baseLocalesMap = new Map([
     ['de', 'de'],
     ['en', 'en'],
     ['ja', 'ja'],
@@ -750,6 +750,10 @@ export function getConfig() {
     ['es', 'es'],
     ['pt-br', 'pt'],
     ['ko', 'ko'],
+  ]);
+
+  const communityLangsMap = new Map([
+    ...baseLocalesMap,
     ['sv', 'en'],
     ['nl', 'en'],
     ['it', 'en'],
@@ -757,30 +761,23 @@ export function getConfig() {
     ['zh-hant', 'en'],
   ]);
 
-  const adobeAccountLocalesMap = new Map([
-    ['de', 'de'],
-    ['en', 'en'],
-    ['ja', 'ja'],
-    ['fr', 'fr'],
-    ['es', 'es'],
-    ['ko', 'ko'],
+  const adobeAccountLangsMap = new Map([
+    ...baseLocalesMap,
     ['sv', 'sv'],
     ['nl', 'nl'],
     ['it', 'it'],
     ['zh-hant', 'zh-Hant'],
     ['zh-hans', 'zh-Hans'],
-    ['pt-br', 'pt'],
   ]);
 
-  const communityLocale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
-  const adobeAccountLang =
-    adobeAccountLocalesMap.get(document.querySelector('html').lang) || adobeAccountLocalesMap.get('en');
   const currentHost = window.location.hostname;
   const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
   const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
+  const communityLocale = communityLangsMap.get(lang) || 'en';
+  const adobeAccountLang = adobeAccountLangsMap.get(lang) || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
   const isProd = currentEnv?.env === 'PROD' || currentEnv?.authorUrl === 'author-p122525-e1219150.adobeaemcloud.com';
   const isStage = currentEnv?.env === 'STAGE' || currentEnv?.authorUrl === 'author-p122525-e1219192.adobeaemcloud.com';
