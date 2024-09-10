@@ -268,7 +268,7 @@ export function isProfilePage() {
 
 /**
  * Check if current page is a Signup flow modal page.
- * theme = signup is set in bulk metadata for /en/profile/signup-flow-modal** paths.
+ * theme = signup is set in bulk metadata for /en/home/signup-flow-modal** paths.
  */
 export function isSignUpPage() {
   const theme = getMetadata('theme');
