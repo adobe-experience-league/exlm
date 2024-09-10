@@ -1059,7 +1059,8 @@
                   "description": "Reaching your career goals has never been easier. Explore learning recommendations we made just for you based on your product interests, experience level, and role.",
                   "incompleteProfileText": "Complete your profile for a more personalized experience.",
                   "cta1Type": "primary",
-                  "cta1Text": "Manage profile"
+                  "cta1Text": "Manage profile",
+                  "showProfileCard": "true"
                 }
               }
             }
