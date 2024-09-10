@@ -96,7 +96,7 @@ export default async function buildProductCard(element, model) {
   };
   const checkboxContainer = htmlToElement(`
         <div class="profile-interest-checkbox">
-            <input type="checkbox" data-name="${product}" name="profile-interest">
+            <input type="checkbox" data-name="${product}" name="profile-interest" id="${product}">
             <label for="${product}" class="subtext">${placeholders.selectThisProduct || 'Select this product'}</label>
         </div>`);
   const checkbox = checkboxContainer.querySelector('input');

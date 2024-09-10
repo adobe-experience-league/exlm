@@ -94,11 +94,12 @@
     font-style: italic;
 }
 
-.role-and-industry .form-error {
+.role-and-industry .role-and-industry-form-error {
     text-align: center;
+    margin-top: 5px;
 }
 
-body.profile .role-and-industry .form-error:not(.signup-dialog .role-and-industry .form-error) {
+body.profile .role-and-industry .role-and-industry-form-error:not(.signup-dialog .role-and-industry .role-and-industry-form-error) {
     text-align: left;
 }
 

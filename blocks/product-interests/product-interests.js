@@ -1,6 +1,6 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
-import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { productExperienceEventEmitter } from '../../scripts/events.js';
 
 const { interestsUrl } = getConfig();
@@ -55,23 +55,16 @@ function decorateInterests(block) {
   title?.classList.add('product-interest-header');
   description?.classList.add('product-interest-description');
 
-  const formContainer = document.createElement('form');
-  formContainer.id = 'product-interests-form';
+  const content = htmlToElement(`
+    <form id="product-interests-form">
+      <div class="product-interests-form-error hidden">
+        <span class="form-error">${placeholders?.formFieldGroupError || 'Please select at least one option.'}</span>  
+      </div>
+      <ul class="interests-container"></ul>
+    </form>`);
 
-  const formErrorContainer = document.createElement('div');
-  formErrorContainer.classList.add('product-interests-form-error', 'hidden');
-
-  const formError = document.createElement('span');
-  formError.classList.add('form-error');
-  formError.textContent = placeholders?.formFieldGroupError || 'Please select at least one option.';
-  formErrorContainer.appendChild(formError);
-
-  const columnsContainer = document.createElement('ul');
-  columnsContainer.classList.add('interests-container');
-
-  formContainer.appendChild(formErrorContainer);
-  formContainer.appendChild(columnsContainer);
-
+  const columnsContainer = content.querySelector('.interests-container');
+  const formErrorContainer = content.querySelector('.product-interests-form-error');
   const userInterests = profileData?.interests ? profileData.interests : [];
   // Sort the interests data by Name
   // eslint-disable-next-line no-nested-ternary
@@ -122,7 +115,7 @@ function decorateInterests(block) {
     }
   });
 
-  block.appendChild(formContainer);
+  block.appendChild(content);
 
   productExperienceEventEmitter.on('dataChange', ({ key, value }) => {
     if (formErrorContainer) {
