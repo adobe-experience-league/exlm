@@ -1130,8 +1130,34 @@
           {
             "name": "Yellow",
             "value": "bg-spectrum-yellow-700"
+          },
+          {
+            "name": "Adobe Red",
+            "value": "bg-non-spectrum-adobe-red"
+          },
+          {
+            "name": "Custom",
+            "value": "custom"
           }
         ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "custom"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "customHexCode",
+        "value": "",
+        "label": "Custom Hexcode",
+        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "backgroundHexCode",
+        "label": "Fill marquee with background color",
+        "description": "Fill marquee with background color."
       },
       {
         "component": "text",
