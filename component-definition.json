@@ -1060,7 +1060,7 @@
                   "incompleteProfileText": "Complete your profile for a more personalized experience.",
                   "cta1Type": "primary",
                   "cta1Text": "Manage profile",
-                  "showProfileCard": "true"
+                  "showProfileCard": true
                 }
               }
             }
