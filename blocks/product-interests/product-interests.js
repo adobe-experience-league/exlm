@@ -59,7 +59,12 @@ function decorateInterests(block) {
   formContainer.id = 'product-interests-form';
 
   const formErrorContainer = document.createElement('div');
-  formErrorContainer.classList.add('product-interests-form-error');
+  formErrorContainer.classList.add('product-interests-form-error', 'hidden');
+
+  const formError = document.createElement('span');
+  formError.classList.add('form-error');
+  formError.textContent = placeholders?.formFieldGroupError || 'Please select at least one option.';
+  formErrorContainer.appendChild(formError);
 
   const columnsContainer = document.createElement('ul');
   columnsContainer.classList.add('interests-container');
@@ -121,25 +126,31 @@ function decorateInterests(block) {
 
   productExperienceEventEmitter.on('dataChange', ({ key, value }) => {
     if (formErrorContainer) {
-      formErrorContainer.textContent = '';
+      formErrorContainer.classList.toggle('hidden', true);
     }
-
     const inputEl = block.querySelector(`#interest__${key}`);
     if (inputEl) {
       inputEl.checked = value;
     }
-    updateInterests(block)
-      .then(() => {
-        defaultProfileClient.getMergedProfile().then((profile) => {
-          if (JSON.stringify(profileData.interests) !== JSON.stringify(profile.interests)) {
-            profileData = profile;
-            sendNotice(placeholders?.profileUpdated || 'Profile updated successfully');
-          }
+    const checkedCheckboxes = Array.from(block.querySelectorAll('.interests-container input[type="checkbox"]')).filter(
+      (el) => el.checked,
+    );
+    // const isInSignupDialog = block.closest('.signup-dialog');
+    const isAnyCheckboxChecked = checkedCheckboxes.length > 0;
+    if (isAnyCheckboxChecked) {
+      updateInterests(block)
+        .then(() => {
+          defaultProfileClient.getMergedProfile().then((profile) => {
+            if (JSON.stringify(profileData.interests) !== JSON.stringify(profile.interests)) {
+              profileData = profile;
+              sendNotice(placeholders?.profileUpdated || 'Profile updated successfully');
+            }
+          });
+        })
+        .catch(() => {
+          sendNotice(placeholders?.profileNotUpdated || 'Error updating profile');
         });
-      })
-      .catch(() => {
-        sendNotice(placeholders?.profileNotUpdated || 'Error updating profile');
-      });
+    }
   });
 }
 
@@ -147,14 +158,13 @@ function handleProductInterestChange(block) {
   const isInSignupDialog = block.closest('.signup-dialog');
   const formErrorContainer = block.querySelector('.product-interests-form-error');
   const checkboxList = block.querySelectorAll('.interests-container input[type="checkbox"]');
-  const formErrorMessage = placeholders?.formFieldGroupError || 'Please select at least one option.';
 
   checkboxList.forEach((checkbox) => {
     checkbox.addEventListener('click', (event) => {
       event.stopPropagation();
 
       if (formErrorContainer) {
-        formErrorContainer.textContent = '';
+        formErrorContainer.classList.toggle('hidden', true);
       }
 
       const checkedCheckboxes = Array.from(checkboxList).filter((el) => el.checked);
@@ -163,7 +173,7 @@ function handleProductInterestChange(block) {
 
       if (!isInSignupDialog && !isAnyCheckboxChecked) {
         if (formErrorContainer) {
-          formErrorContainer.innerHTML = `<span class='form-error'>${formErrorMessage}</span>`;
+          formErrorContainer.classList.toggle('hidden', false);
         }
         event.preventDefault();
         return false;

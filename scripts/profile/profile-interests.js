@@ -69,22 +69,39 @@ export default async function buildProductCard(element, model) {
 
   // Checkbox
   const changeHandler = (e) => {
-    const { checked } = e.target;
+    const targetElement = e.target;
+    const parentElement = targetElement.closest('.personalize-interest');
+    const isInSignupDialog = targetElement.closest('.signup-dialog');
+    const formErrorContainer = parentElement.querySelector('.personalize-interest-form-error');
+    const checkboxList = parentElement.querySelectorAll('.personalize-interest-results input[name="profile-interest"]');
+
+    const checkedCheckboxes = Array.from(checkboxList).filter((el) => el.checked);
+    const isAnyCheckboxChecked = checkedCheckboxes.length > 0;
+    formErrorContainer.classList.toggle('hidden', true);
+
+    if (!isInSignupDialog && !isAnyCheckboxChecked) {
+      e.preventDefault();
+      formErrorContainer.classList.toggle('hidden', false);
+      return false;
+    }
+
+    const { checked } = targetElement;
     if (checked) {
       card.classList.add('profile-interest-card-selected');
     } else {
       card.classList.remove('profile-interest-card-selected');
     }
     productExperienceEventEmitter.set(id, checked);
+    return true;
   };
   const checkboxContainer = htmlToElement(`
         <div class="profile-interest-checkbox">
-            <input type="checkbox" data-name="${product}">
+            <input type="checkbox" data-name="${product}" name="profile-interest">
             <label for="${product}" class="subtext">${placeholders.selectThisProduct || 'Select this product'}</label>
         </div>`);
   const checkbox = checkboxContainer.querySelector('input');
   checkbox.checked = isSelected;
-  checkbox.onchange = changeHandler;
+  checkbox.onclick = changeHandler;
 
   // Assemble card
   card.appendChild(header);

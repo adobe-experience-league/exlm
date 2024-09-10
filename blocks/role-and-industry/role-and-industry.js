@@ -71,7 +71,9 @@ export default async function decorate(block) {
       </form>
     </div>
     <form id="role-and-industry-form">
-      <div class="role-and-industry-form-error"></div>
+      <div class="role-and-industry-form-error hidden">
+        <span class='form-error'>${FORM_ERROR}</span>
+      </div>
       <div class="role-cards-holder">
       ${roleCardsData
         .map(
@@ -161,19 +163,14 @@ export default async function decorate(block) {
         (el) => el.checked,
       );
       const formErrorContainer = block.querySelector('.role-and-industry-form-error');
-
-      if (formErrorContainer) {
-        formErrorContainer.textContent = '';
-      }
+      formErrorContainer.classList.toggle('hidden', true);
 
       const isInSignupDialog = e.target.closest('.signup-dialog');
       const isAnyCheckboxChecked = checkedCheckboxes.length > 0;
 
       if (!isInSignupDialog && !isAnyCheckboxChecked) {
         checkbox.checked = true;
-        if (formErrorContainer) {
-          formErrorContainer.innerHTML = `<span class='form-error'>${FORM_ERROR}</span>`;
-        }
+        formErrorContainer.classList.toggle('hidden', false);
       } else {
         const isChecked = checkbox.checked;
         checkbox.closest('.role-cards-item').classList.toggle('role-cards-highlight', isChecked);

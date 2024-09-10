@@ -72,11 +72,17 @@ export default class FormValidator {
         this.isValidForm = false;
         const { errorContainer, errorMessage } = checkboxGroup;
         if (errorContainer) {
+          const formErrorElement = errorContainer.querySelector('.form-error');
+          if (formErrorElement) {
+            errorContainer.classList.toggle('hidden', false);
+            return false;
+          }
           const displayErrorMessage =
             errorMessage || this.placeholders?.formFieldGroupError || 'Please select at least one option.';
           errorContainer.innerHTML = `<span class='form-error'>${displayErrorMessage}</span>`;
         }
       }
     }
+    return true;
   }
 }
