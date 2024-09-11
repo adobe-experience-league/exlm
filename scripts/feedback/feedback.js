@@ -1,12 +1,6 @@
 import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
-import {
-  createTag,
-  htmlToElement,
-  getPathDetails,
-  fetchLanguagePlaceholders,
-  fetchFragment,
-} from '../scripts.js';
+import { createTag, htmlToElement, getPathDetails, fetchLanguagePlaceholders, fetchFragment } from '../scripts.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { sendNotice } from '../toast/toast.js';
 
@@ -486,8 +480,10 @@ export default async function loadFeedbackUi() {
 }
 
 function renderFeedbackCheck() {
-  const isNonLandingDocsPage = window.location.pathname.includes('/docs/') && !document.querySelector('meta[name="theme"]')?.content.includes("docs-landing");
-  const isPerspectivePage = document.querySelector('meta[name="type"]')?.content.includes("Perspective");
+  const isNonLandingDocsPage =
+    window.location.pathname.includes('/docs/') &&
+    !document.querySelector('meta[name="theme"]')?.content.includes('docs-landing');
+  const isPerspectivePage = document.querySelector('meta[name="type"]')?.content.includes('Perspective');
   return isNonLandingDocsPage || isPerspectivePage;
 }
 
