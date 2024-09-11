@@ -259,7 +259,7 @@ export function isArticleLandingPage() {
 
 /**
  * Check if current page is a Profile page.
- * theme = profile is set in bulk metadata for /en/profile** paths.
+ * theme = profile is set in bulk metadata for /en/home** paths.
  */
 export function isProfilePage() {
   const theme = getMetadata('theme');
