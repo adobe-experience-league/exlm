@@ -268,7 +268,7 @@ export function isProfilePage() {
 
 /**
  * Check if current page is a Signup flow modal page.
- * theme = signup is set in bulk metadata for /en/profile/signup-flow-modal** paths.
+ * theme = signup is set in bulk metadata for /en/home/signup-flow-modal** paths.
  */
 export function isSignUpPage() {
   const theme = getMetadata('theme');
@@ -742,12 +742,44 @@ export function getConfig() {
     },
   ];
 
+  const baseLocalesMap = new Map([
+    ['de', 'de'],
+    ['en', 'en'],
+    ['ja', 'ja'],
+    ['fr', 'fr'],
+    ['es', 'es'],
+    ['pt-br', 'pt'],
+    ['ko', 'ko'],
+  ]);
+
+  const communityLangsMap = new Map([
+    ...baseLocalesMap,
+    ['sv', 'en'],
+    ['nl', 'en'],
+    ['it', 'en'],
+    ['zh-hans', 'en'],
+    ['zh-hant', 'en'],
+  ]);
+
+  const adobeAccountLangsMap = new Map([
+    ...baseLocalesMap,
+    ['sv', 'sv'],
+    ['nl', 'nl'],
+    ['it', 'it'],
+    ['zh-hant', 'zh-Hant'],
+    ['zh-hans', 'zh-Hans'],
+  ]);
+
   const currentHost = window.location.hostname;
   const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
   const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
+  // Locale param for Community page URL
+  const communityLocale = communityLangsMap.get(lang) || 'en';
+  // Lang param for Adobe account URL
+  const adobeAccountLang = adobeAccountLangsMap.get(lang) || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
   const isProd = currentEnv?.env === 'PROD' || currentEnv?.authorUrl === 'author-p122525-e1219150.adobeaemcloud.com';
   const isStage = currentEnv?.env === 'STAGE' || currentEnv?.authorUrl === 'author-p122525-e1219192.adobeaemcloud.com';
@@ -800,14 +832,14 @@ export function getConfig() {
     automaticTranslationLink: `/${lang}/docs/contributor/contributor-guide/localization/machine-translation`,
     // Recommended Courses
     recommendedCoursesUrl: `${cdnOrigin}/home?lang=${lang}#dashboard/learning`,
-    // Adobe account
-    adobeAccountURL: isProd ? 'https://account.adobe.com/' : 'https://stage.account.adobe.com/',
-    // Community Account
+    // Adobe account URL
+    adobeAccountURL: isProd
+      ? `https://account.adobe.com/?lang=${adobeAccountLang}`
+      : `https://stage.account.adobe.com/?lang=${adobeAccountLang}`,
+    // Community Account URL
     communityAccountURL: isProd
-      ? 'https://experienceleaguecommunities.adobe.com/'
-      : 'https://experienceleaguecommunities-dev.adobe.com/',
-    // Stream API
-    eventSourceStreamUrl: '/api/stream',
+      ? `https://experienceleaguecommunities.adobe.com/?profile.language=${communityLocale}`
+      : `https://experienceleaguecommunities-dev.adobe.com/?profile.language=${communityLocale}`,
     interestsUrl: `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`,
   };
   return window.exlm.config;

@@ -3,7 +3,7 @@ import { defaultProfileClient } from '../auth/profile.js';
 
 const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
-const { industryUrl } = getConfig();
+const { industryUrl, adobeAccountURL, communityAccountURL } = getConfig();
 
 const fetchExlProfileData = async () => {
   const [profileData, ppsProfileData] = await Promise.allSettled([
@@ -71,11 +71,16 @@ const fetchProfileData = async (profileFlags) => {
       communityUserName: UEAuthorMode ? 'Community User Name' : communityProfileDetails?.username || '',
       communityUserTitle: UEAuthorMode ? 'Community User Title' : communityProfileDetails?.title || '',
       communityUserLocation: UEAuthorMode ? 'Community User Location' : communityProfileDetails?.location || '',
+      communityProfileURL: UEAuthorMode ? '' : communityProfileDetails?.profilePageUrl || '',
     }),
   };
 };
 
-const generateAdobeAccountDOM = (profileData, placeholders, adobeAccountURL) => {
+/**
+ * Generates HTML for displaying a Adobe account profile.
+ *
+ */
+const generateAdobeAccountDOM = (profileData, placeholders) => {
   const { adobeDisplayName, email, profilePicture, company } = profileData;
 
   return `<div class="profile-row adobe-account">
@@ -107,18 +112,31 @@ const generateAdobeAccountDOM = (profileData, placeholders, adobeAccountURL) => 
   </div>`;
 };
 
-const generateCommunityAccountDOM = (profileData, placeholders, communityAccountURL) => {
-  const { communityUserName, communityUserTitle, communityUserLocation } = profileData;
+/**
+ * Generates HTML for displaying a community account profile.
+ *
+ */
+const generateCommunityAccountDOM = (profileData, placeholders) => {
+  const { communityUserName, communityUserTitle, communityUserLocation, communityProfileURL } = profileData;
 
   return `<div class="profile-row community-account">
     <div class="profile-card-header community-account-header">
       <div class="my-community-account">${placeholders?.myCommunityAccount || 'My Community Profile'}</div>
-      <div class="manage-community-account">
-        <a href="${communityAccountURL}" target="_blank">
+      ${
+        communityProfileURL
+          ? `<div class="manage-community-account">
+        <a href="${communityProfileURL}" target="_blank">
         <span class="icon icon-new-tab"></span>
-        ${placeholders?.updateCommunityProfile || 'Update profile'}
+        ${placeholders?.updateCommunityProfile || 'Go to your community profile'}
         </a>
-      </div>
+      </div>`
+          : `<div class="manage-community-account">
+      <a href="${communityAccountURL}" target="_blank">
+      <span class="icon icon-new-tab"></span>
+      ${placeholders?.createYourCommunityProfile || 'Create your community profile'}
+      </a>
+    </div>`
+      }
     </div>
     <div class="profile-card-body community-account-body">
       <div class="profile-user-info">
@@ -142,6 +160,10 @@ const generateCommunityAccountDOM = (profileData, placeholders, communityAccount
   </div>`;
 };
 
+/**
+ * Generates HTML for displaying additional profile info like Role, Industry and Interests.
+ *
+ */
 const generateAdditionalProfileInfoDOM = async (profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
   const industryOptions = await fetchIndustryOptions();
@@ -201,7 +223,6 @@ export const generateProfileDOM = async (profileFlags) => {
     console.error('Error fetching placeholders:', err);
   }
 
-  const { adobeAccountURL, communityAccountURL } = getConfig();
   const profileData = await fetchProfileData(profileFlags);
 
   if (!profileData) {
@@ -210,7 +231,7 @@ export const generateProfileDOM = async (profileFlags) => {
 
   const hasExlProfileFlag = profileFlags.includes(EXL_PROFILE);
 
-  const adobeAccountDOM = hasExlProfileFlag ? generateAdobeAccountDOM(profileData, placeholders, adobeAccountURL) : '';
+  const adobeAccountDOM = hasExlProfileFlag ? generateAdobeAccountDOM(profileData, placeholders) : '';
 
   // Await the asynchronous call to generate the additional profile information DOM
   const additionalProfileInfoDOM = hasExlProfileFlag
@@ -218,7 +239,7 @@ export const generateProfileDOM = async (profileFlags) => {
     : '';
 
   const communityAccountDOM = profileFlags.includes(COMMUNITY_PROFILE)
-    ? generateCommunityAccountDOM(profileData, placeholders, communityAccountURL)
+    ? generateCommunityAccountDOM(profileData, placeholders)
     : '';
 
   return {
