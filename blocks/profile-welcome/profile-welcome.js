@@ -22,10 +22,17 @@ function decorateButton(button) {
   return '';
 }
 
+function replaceProfileText(field, value) {
+  return field.replace('{adobeIMS.first_name}', value);
+}
+
 export default async function decorate(block) {
   const [profileEyebrowText, profileHeading, profileDescription, profileCta, incompleteProfileText, showProfileCard] =
     block.querySelectorAll(':scope div > div');
 
+  const eyebrowText = profileEyebrowText.innerHTML;
+  const headingText = profileHeading.innerHTML;
+  const descriptionText = profileDescription.innerHTML;
   const isSignedIn = await isSignedInUser();
 
   let profileData = {};
@@ -106,13 +113,13 @@ export default async function decorate(block) {
   const profileWelcomeBlock = document.createRange().createContextualFragment(`
     <div class="profile-curated-card">
       <div class="profile-curated-eyebrowtext">
-        ${profileEyebrowText.innerHTML.replace('{adobeIMS.first_name}', adobeFirstName)}
+      ${eyebrowText ? replaceProfileText(eyebrowText, adobeFirstName) : ``}
       </div>
       <div class="profile-curated-card-heading">
-        ${profileHeading.innerHTML.replace('{adobeIMS.first_name}', adobeFirstName)}
+      ${headingText ? replaceProfileText(headingText, adobeFirstName) : ``}
       </div>
       <div class="profile-curated-card-description">
-        ${profileDescription.innerHTML.replace('{adobeIMS.first_name}', adobeFirstName)}
+      ${descriptionText ? replaceProfileText(descriptionText, adobeFirstName) : ``}
       </div>
     </div>
   `);
