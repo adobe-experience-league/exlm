@@ -66,17 +66,17 @@ export default class SignupFlowDialog {
     this.pages = [
       {
         name: 'step1',
-        path: `/${this.lang}/profile/signup-flow-modal/${this.modalType}/step1`,
+        path: `/${this.lang}/home/signup-flow-modal/${this.modalType}/step1`,
         title: this.placeholders?.signupFlowStep1Header,
       },
       {
         name: 'step2',
-        path: `/${this.lang}/profile/signup-flow-modal/${this.modalType}/step2`,
+        path: `/${this.lang}/home/signup-flow-modal/${this.modalType}/step2`,
         title: this.placeholders?.signupFlowStep2Header,
       },
       {
         name: 'confirm',
-        path: `/${this.lang}/profile/signup-flow-modal/${this.modalType}/confirm`,
+        path: `/${this.lang}/home/signup-flow-modal/${this.modalType}/confirm`,
         title: this.placeholders?.signupFlowConfirmHeader,
         nofollow: true,
       },
@@ -134,6 +134,14 @@ export default class SignupFlowDialog {
   createSignupDialog() {
     this.signupDialog = htmlToElement(`
       <dialog class="signup-dialog" data-modaltype="${this.modalType}" >
+        <div class="signup-dialog-close-bar">
+          <a class="signup-dialog-close-btn close-action">
+              <span class="close-text">${this.placeholders?.closeBtnLabel || 'Close'}</span>
+              <div class="close-icon-holder">
+                  <span class="icon icon-close"></span>
+              </div>
+          </a>
+        </div>
         <div class="signup-dialog-container">                                           
           <div class="signup-dialog-header">
             <div class="signup-dialog-header-decor"></div>
@@ -163,6 +171,8 @@ export default class SignupFlowDialog {
     this.observeHeader();
     document.body.append(this.signupDialog);
     document.body.classList.add('overflow-hidden');
+    const signupCloseBtn = this.signupDialog.querySelector('.signup-dialog-close-btn');
+    decorateIcons(signupCloseBtn);
     this.signupDialog.inert = true;
     this.signupDialog.showModal();
     this.signupDialog.inert = false;
