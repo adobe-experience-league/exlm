@@ -1157,7 +1157,7 @@
         "valueType": "boolean",
         "name": "backgroundHexCode",
         "label": "Fill marquee with background color",
-        "description": "Fill marquee with background color."
+        "description": "This option allows to fill marquee with the above selected background color."
       },
       {
         "component": "text",
