@@ -3616,6 +3616,13 @@
         "name": "incompleteProfileText",
         "value": "",
         "label": "Text to be shown for incomplete profile."
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "showProfileCard",
+        "label": "Show profile card?",
+        "description": "This will enable profile card for this block."
       }
     ]
   },

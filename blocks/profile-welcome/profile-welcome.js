@@ -22,10 +22,17 @@ function decorateButton(button) {
   return '';
 }
 
+function replaceProfileText(field, value) {
+  return field.replace('{adobeIMS.first_name}', value);
+}
+
 export default async function decorate(block) {
-  const [profileEyebrowText, profileHeading, profileDescription, profileCta, incompleteProfileText] =
+  const [profileEyebrowText, profileHeading, profileDescription, profileCta, incompleteProfileText, showProfileCard] =
     block.querySelectorAll(':scope div > div');
 
+  const eyebrowText = profileEyebrowText.innerHTML;
+  const headingText = profileHeading.innerHTML;
+  const descriptionText = profileDescription.innerHTML;
   const isSignedIn = await isSignedInUser();
 
   let profileData = {};
@@ -104,17 +111,23 @@ export default async function decorate(block) {
   }
 
   const profileWelcomeBlock = document.createRange().createContextualFragment(`
-        <div class="profile-curated-card">
-                <div class="profile-curated-eyebrowtext">
-                ${profileEyebrowText.innerHTML.replace('{adobeIMS.first_name}', adobeFirstName)}
-                </div>
-                <div class="profile-curated-card-heading">
-                ${profileHeading.innerHTML}
-                </div>
-                <div class="profile-curated-card-description">
-                ${profileDescription.innerHTML}
-                </div>
-            </div>
+    <div class="profile-curated-card">
+      <div class="profile-curated-eyebrowtext">
+      ${eyebrowText ? replaceProfileText(eyebrowText, adobeFirstName) : ``}
+      </div>
+      <div class="profile-curated-card-heading">
+      ${headingText ? replaceProfileText(headingText, adobeFirstName) : ``}
+      </div>
+      <div class="profile-curated-card-description">
+      ${descriptionText ? replaceProfileText(descriptionText, adobeFirstName) : ``}
+      </div>
+    </div>
+  `);
+  block.textContent = '';
+  block.append(profileWelcomeBlock);
+  // Conditionally display this part based on showProfileCard
+  if (showProfileCard.textContent.trim() === 'true') {
+    const profileUserCard = document.createRange().createContextualFragment(`
             ${
               document.documentElement.classList.contains('adobe-ue-edit')
                 ? `
@@ -229,8 +242,7 @@ export default async function decorate(block) {
               </div>`
             }
         `);
-
-  block.textContent = '';
-  block.append(profileWelcomeBlock);
+    block.append(profileUserCard);
+  }
   decorateIcons(block);
 }
