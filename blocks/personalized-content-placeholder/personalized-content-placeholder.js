@@ -37,8 +37,8 @@ export default async function decorate(block) {
   );
   if (completePageURL && incompletePageURL) {
     if (window.hlx.aemRoot) {
-      completePageURL = completePageURL.slice(0, -5);
-      incompletePageURL = incompletePageURL.slice(0, -5);
+      completePageURL = completePageURL.replace('.html', '');
+      incompletePageURL = incompletePageURL.replace('.html', '');
     }
     block.textContent = 'This block will load content authored based on if the profile is completed or incomplete';
     const currentSection = block.parentElement.parentElement;
