@@ -5,9 +5,7 @@ import {
   htmlToElement,
   getPathDetails,
   fetchLanguagePlaceholders,
-  isDocArticlePage,
   fetchFragment,
-  isArticlePage,
 } from '../scripts.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { sendNotice } from '../toast/toast.js';
@@ -487,4 +485,10 @@ export default async function loadFeedbackUi() {
   window.addEventListener('qsi_js_loaded', checkInterceptLoaded, false);
 }
 
-if (isDocArticlePage() || isArticlePage()) loadFeedbackUi();
+function renderFeedbackCheck() {
+  const isNonLandingDocsPage = window.location.pathname.includes('/docs/') && !document.querySelector('meta[name="theme"]')?.content.includes("docs-landing");
+  const isPerspectivePage = document.querySelector('meta[name="type"]')?.content.includes("Perspective");
+  return isNonLandingDocsPage || isPerspectivePage;
+}
+
+if (renderFeedbackCheck()) loadFeedbackUi();
