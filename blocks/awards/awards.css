@@ -1,7 +1,7 @@
 .awards .awards-holder {
     display: grid;
     gap: 16px;
-    color: var(--color-white);
+    color: var(--spectrum-gray-50);
     grid-template-columns: 1fr;
 }
 
@@ -16,6 +16,7 @@
 }
 
 .awards .awards-card .awards-details {
+    color: var(--spectrum-gray-50);
     margin-bottom: 30px;
 }
 
@@ -29,7 +30,7 @@
 .awards .awards-time {
     font-size: var(--spectrum-font-size-75);
     margin-bottom: 8px;
-    border-bottom: 2px var(--color-white) solid;
+    border-bottom: 2px var(--spectrum-gray-50) solid;
     padding: 0 0 8px 0;
 }
 

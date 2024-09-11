@@ -3,8 +3,8 @@ import { getConfig, loadIms } from '../scripts.js';
 // eslint-disable-next-line import/no-cycle
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
-// eslint-disable-next-line import/no-cycle
-import showSignupModal from '../events/signup-flow-event.js';
+
+// NOTE: to keep this viatl utility small, please do not increase the number of imports or use dynamic imports when needed.
 
 const { profileUrl, JWTTokenUrl, ppsOrigin, ims, khorosProfileDetailsUrl } = getConfig();
 
@@ -63,6 +63,20 @@ class ProfileClient {
   async getAttributes() {
     const attributes = await this.fetchProfile({ method: 'OPTIONS' }, 'attributes');
     return structuredClone(attributes);
+  }
+
+  async getIMSAccessToken() {
+    const signedIn = await this.isSignedIn;
+    if (!signedIn) return null;
+    const token = await window.adobeIMS.getAccessToken();
+    return token;
+  }
+
+  async getIMSProfile() {
+    const signedIn = await this.isSignedIn;
+    if (!signedIn) return null;
+    const profile = await window.adobeIMS.getProfile();
+    return profile;
   }
 
   async getProfile(refresh = false) {
@@ -216,9 +230,11 @@ class ProfileClient {
           },
         })
           .then((res) => res.json())
-          .then((data) => {
+          .then(async (data) => {
             if (!sessionStorage.getItem(postSignInStreamKey)) {
-              showSignupModal();
+              // eslint-disable-next-line import/no-cycle
+              const { default: showSignupDialog } = await import('../signup-flow/signup-flow-handler.js');
+              showSignupDialog();
               sessionStorage.setItem(postSignInStreamKey, 'true');
             }
             if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));

@@ -15,7 +15,7 @@
   .signup-foreground {
     display: flex;
     flex-direction: column-reverse;
-    max-width: var(--non-spectrum-max-width);
+    max-width: var(--default-max-width);
     margin: auto;
   }
   

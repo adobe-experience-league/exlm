@@ -4,11 +4,12 @@ import { htmlToElement } from '../../scripts/scripts.js';
 
 function loadCommunityAccountDOM(block) {
   const profileFlags = ['communityProfile'];
-  generateProfileDOM(profileFlags).then(({ communityAccountDOM }) => {
+  generateProfileDOM(profileFlags).then(async ({ communityAccountDOM }) => {
     const communityAccountElement = block.querySelector('.profile-row.community-account');
     if (communityAccountElement) {
       const communityProfileFragment = document.createRange().createContextualFragment(communityAccountDOM);
       communityAccountElement.replaceWith(communityProfileFragment);
+      await decorateIcons(block);
     }
   });
 }
@@ -35,9 +36,8 @@ export default async function decorate(block) {
 
   const cardDecor = htmlToElement(`<div class="user-profile-card-decor"></div>`);
   block.append(cardDecor);
-  await decorateIcons(block);
   loadCommunityAccountDOM(block);
-  profileInfoPromise.then(({ adobeAccountDOM, additionalProfileInfoDOM }) => {
+  profileInfoPromise.then(async ({ adobeAccountDOM, additionalProfileInfoDOM }) => {
     const adobeAccountElement = block.querySelector('.profile-row.adobe-account');
     const additionalProfileElement = block.querySelector('.profile-row.additional-data');
     if (adobeAccountDOM && adobeAccountElement) {
@@ -49,5 +49,6 @@ export default async function decorate(block) {
       const profileFragment = document.createRange().createContextualFragment(additionalProfileInfoDOM);
       additionalProfileElement.replaceWith(profileFragment);
     }
+    await decorateIcons(block);
   });
 }

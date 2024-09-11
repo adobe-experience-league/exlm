@@ -65,6 +65,7 @@ span.pagination-btn-title {
   margin: 15px 0 55px;
   text-transform: uppercase;
 }
+
 span.pagination-btn-title.is-hidden {
   display: none;
 }

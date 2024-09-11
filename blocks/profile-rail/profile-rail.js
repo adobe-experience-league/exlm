@@ -1,35 +1,89 @@
-/**
- * ProfileRail (Create a TOC using the headings in the page sections that highlights on scroll)
- * Autoblocked along with profile tab on the profile pages.
- * @param {HTMLElement} block
- */
-export default function ProfileRail(block) {
-  const sections = document.querySelectorAll('body.profile .section:not(.profile-tab-section, .profile-rail-section)');
-  block.innerHTML = `<span>My Experience League profile</span>`;
-  const nav = document.createElement('ul');
-  nav.classList.add('profile-rail-nav');
-  sections.forEach((section, i) => {
-    const heading = section.querySelector('h1, h2, h3, h4, h5, h6');
-    if (heading && heading.id) {
-      const li = document.createElement('li');
-      if (i === 0) li.classList.add('active');
-      li.innerHTML = `<a href="#${heading.id}">${heading.textContent.toLowerCase()}</a>`;
-      nav.appendChild(li);
+import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { getPathDetails, htmlToElement } from '../../scripts/scripts.js';
+
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+const isSignedIn = await isSignedInUser();
+let awards = false;
+if (isSignedIn) {
+  const profileData = await defaultProfileClient.getMergedProfile();
+  const skills = profileData?.skills;
+  const awardedSkills = skills.filter((skill) => skill.award === true);
+  if (awardedSkills.length) {
+    awards = true;
+  }
+}
+
+const { lang } = getPathDetails();
+const navURL = `${window.location.origin}/${lang}/home/nav`;
+
+async function fetchNavContent() {
+  try {
+    const response = await fetch(`${navURL}.plain.html`);
+    if (response.ok) {
+      const pageContent = await response.text();
+      return pageContent;
+    }
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.log(err);
+  }
+  return '';
+}
+
+export default async function ProfileRail(block) {
+  const content = await fetchNavContent();
+  if (content) {
+    block.innerHTML = content;
+  } else {
+    throw new Error(`Failed to fetch content from ${navURL}`);
+  }
+
+  block.querySelectorAll('.profile-rail > div > *').forEach((navItem) => {
+    if (navItem.tagName === 'UL') {
+      navItem.classList.add('profile-rail-links');
+    } else {
+      navItem.classList.add('profile-rail-heading');
     }
   });
-  block.appendChild(nav);
-  window.addEventListener('scroll', () => {
-    const { scrollY } = window;
-    sections.forEach((current) => {
-      const sectionHeight = current.offsetHeight;
-      const sectionTop = current.offsetTop - 50;
 
-      if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-        nav.querySelector('li.active')?.classList.remove('active');
-        nav
-          .querySelector(`a[href="#${current.querySelector('h1, h2, h3, h4, h5, h6').id}"]`)
-          .parentElement.classList.add('active');
+  block.querySelectorAll('.profile-rail-links > li').forEach((navLink) => {
+    if (!awards && !UEAuthorMode) {
+      const awardsLink = navLink.querySelector('a[href*="/home/awards"]');
+      if (awardsLink) {
+        navLink.remove();
       }
-    });
+    }
+    const link = navLink.querySelector('a');
+    const icon = navLink.querySelector('span.icon');
+    if (link && icon) link.prepend(icon);
+    if (link && link.href === `${window.location.origin}${window.location.pathname}`) {
+      link.href = '#';
+      link.classList.add('active');
+      link.appendChild(htmlToElement('<span class="icon icon-chevron_down"></span>'));
+    }
   });
+
+  const inActiveLinks = block.querySelectorAll('.profile-rail-links > li > a:not(.active)');
+  const profileRailOverlay = document.createElement('div');
+  profileRailOverlay.classList.add('profile-rail-overlay', 'hidden');
+  inActiveLinks.forEach((link) => {
+    profileRailOverlay.appendChild(link.cloneNode(true));
+  });
+  block.append(profileRailOverlay);
+
+  document.addEventListener('click', (event) => {
+    if (event.target.closest('.profile-rail-links > li > a.active')) {
+      if (!window.matchMedia('(min-width: 1024)').matches) {
+        event.preventDefault();
+        event.target.classList.toggle('overlay-active');
+        profileRailOverlay.classList.toggle('hidden');
+      }
+    } else {
+      profileRailOverlay.classList.add('hidden');
+      block.querySelector('.profile-rail-links > li > a.active').classList.remove('overlay-active');
+    }
+  });
+
+  decorateIcons(block);
 }
