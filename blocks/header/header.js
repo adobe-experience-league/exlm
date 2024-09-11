@@ -1,31 +1,62 @@
-import { defaultProfileClient, isSignedInUser, signOut } from '../../scripts/auth/profile.js';
-import { decorateIcons, loadCSS, getMetadata } from '../../scripts/lib-franklin.js';
 import {
   htmlToElement,
-  getPathDetails,
-  fetchLanguagePlaceholders,
   decorateLinks,
   getConfig,
   getLink,
   fetchFragment,
+  fetchLanguagePlaceholders,
+  getPathDetails,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
-import initializeSignupFlow from '../../scripts/signup-flow/signup-flow.js';
+import { decoratorState, isMobile, registerHeaderResizeHandler, getCell } from './header-utils.js';
+import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
+import LanguageBlock from '../language/language.js';
+import Profile from './load-profile.js';
+/**
+ * @typedef {Object} DecoratorOptions
+ * @property {() => Promise<boolean>} isUserSignedIn
+ * @property {() => {}} onSignOut
+ * @property {string} profilePicture
+ * @property {string} khorosProfileUrl
+ * @property {boolean} isCommunity
+ * @property {boolean} lang
+ * @property {import('../language/language.js').Language[]} languages
+ * @property {(lang: string) => void} onLanguageChange
+ */
 
-const languageModule = import('../../scripts/language.js');
-const { khorosProfileUrl, isProd } = getConfig();
+const HEADER_CSS = `/blocks/header/exl-header.css`;
 
 let searchElementPromise = null;
+const { khorosProfileUrl } = getConfig();
 
-export async function loadSearchElement() {
+const getPPSProfilePicture = async () => {
+  try {
+    const { defaultProfileClient } = await import('../../scripts/auth/profile.js');
+    const ppsProfile = await defaultProfileClient.getPPSProfile();
+    const profilePicture = ppsProfile?.images['50'];
+    if (profilePicture) {
+      return profilePicture;
+    }
+    return null; // or any other default value
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error(err);
+    return err; // or any other default value
+  }
+};
+
+const profilePicture = await getPPSProfilePicture();
+
+async function loadSearchElement() {
+  const [solutionTag] = getMetadata('solution').trim().split(',');
+  if (solutionTag) {
+    window.headlessSolutionProductKey = solutionTag;
+  }
   searchElementPromise =
     searchElementPromise ??
     new Promise((resolve, reject) => {
       // eslint-disable-next-line
-      Promise.all([
-        import('../../scripts/search/search.js'),
-        loadCSS(`${window.hlx.codeBasePath}/scripts/search/search.css`),
-      ])
+      Promise.all([import('../../scripts/search/search.js')])
         .then((results) => {
           const [mod] = results;
           resolve(mod.default ?? mod);
@@ -37,72 +68,16 @@ export async function loadSearchElement() {
   return searchElementPromise;
 }
 
-class Deferred {
-  constructor() {
-    this.promise = new Promise((resolve, reject) => {
-      this.reject = reject;
-      this.resolve = resolve;
-    });
-  }
-}
+let cachedPlaceholders;
 
-/**
- * debounce fn execution
- * @param {number} ms
- * @param {Function} fn
- * @returns {Function} debounced function
- */
-export const debounce = (ms, fn) => {
-  let timer;
-  // eslint-disable-next-line func-names
-  return function (...args) {
-    clearTimeout(timer);
-    args.unshift(this);
-    timer = setTimeout(fn(args), ms);
-  };
+const getPlaceholders = async (langCode) => {
+  if (cachedPlaceholders) {
+    return Promise.resolve(cachedPlaceholders);
+  }
+  const result = await fetchLanguagePlaceholders(langCode);
+  cachedPlaceholders = result;
+  return result;
 };
-
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
-
-/**
- * Register page resize handler
- * @param {ResizeObserverCallback} handler
- * @returns {void} nothing
- */
-function registerHeaderResizeHandler(callback) {
-  window.customResizeHandlers = window.customResizeHandlers || [];
-  const header = document.querySelector('header');
-  // register resize observer only once.
-  if (!window.pageResizeObserver) {
-    const pageResizeObserver = new ResizeObserver(
-      debounce(100, () => {
-        window.customResizeHandlers.forEach((handler) => {
-          try {
-            handler();
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error(e);
-          }
-        });
-      }),
-    );
-    // observe immediately
-    pageResizeObserver.observe(header, {
-      box: 'border-box',
-    });
-    window.pageResizeObserver = pageResizeObserver;
-  }
-  // push handler
-  window.customResizeHandlers.push(callback);
-  // ensure handler runs at-least once
-  callback();
-}
 
 const communityLocalesMap = new Map([
   ['de', 'de'],
@@ -120,10 +95,10 @@ const communityLocalesMap = new Map([
 ]);
 
 // eslint-disable-next-line
-async function fetchCommunityProfileData() {
+async function fetchCommunityProfileData(url = khorosProfileUrl) {
   const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
   try {
-    const response = await fetch(`${khorosProfileUrl}?lang=${locale}`, {
+    const response = await fetch(`${url}?lang=${locale}`, {
       method: 'GET',
       headers: {
         'x-ims-token': await window.adobeIMS?.getAccessToken().token,
@@ -174,29 +149,12 @@ const randomId = (length = 6) =>
     .substring(2, length + 2);
 
 /**
- * @param {HTMLElement} block
- * @param {number} row
- * @param {number} cell
- * @returns
- */
-const getCell = (block, row, cell) => block.querySelector(`:scope > div:nth-child(${row}) > div:nth-child(${cell})`);
-
-// Mobile Only (Until 1024px)
-const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
-
-const { lang } = getPathDetails();
-const headerFragment = await fetchFragment('header/header', lang);
-const decoratorState = {
-  languages: new Deferred(),
-};
-
-/**
  * Decorates the brand block
  * @param {HTMLElement} brandBlock
  * */
 const brandDecorator = (brandBlock) => {
   simplifySingleCellBlock(brandBlock);
-  const brandLink = brandBlock.querySelector('a'); // we expect one.
+  const brandLink = brandBlock.querySelector('a');
   brandBlock.replaceChildren(brandLink);
   return brandBlock;
 };
@@ -209,7 +167,8 @@ const brandDecorator = (brandBlock) => {
  * @param {Element} navOverlay - The overlay element for the navigation menu
  */
 function toggleNav(button, navWrapper, navOverlay) {
-  const profileButton = document.querySelector('.profile-toggle');
+  const shadowRoot = button.getRootNode();
+  const profileButton = shadowRoot.querySelector('.profile-toggle');
   if (profileButton && profileButton.getAttribute('aria-expanded') === 'true') {
     profileButton.click();
   }
@@ -265,6 +224,7 @@ const buildNavItems = async (ul, level = 0) => {
     navItem.classList.add(...navItemClasses);
     const controlName = `content-${level}-${randomId()}`; // unique id
     const [content, secondaryContent] = navItem.querySelectorAll(':scope > ul');
+
     if (content) {
       const firstEl = navItem.firstElementChild;
       const toggleClass = level === 0 ? 'nav-item-toggle nav-item-toggle-root' : 'nav-item-toggle';
@@ -280,7 +240,6 @@ const buildNavItems = async (ul, level = 0) => {
         navItemContent.append(secondaryContent);
       }
       const children = [toggler, navItemContent];
-
       navItem.replaceChildren(...children);
       const currentActiveClass = 'nav-item-expanded-active';
       const itemContentExpanded = 'nav-item-content-expanded';
@@ -306,7 +265,7 @@ const buildNavItems = async (ul, level = 0) => {
       const setExpandedState = (toggleElement, containerElement, expanded) => {
         // reset state
 
-        // set new state
+        // set new state for nav items
         resetExpandedAttribute();
         toggleElement.setAttribute('aria-expanded', expanded);
         // remove active class from all other expanded nav items
@@ -377,15 +336,14 @@ const buildNavItems = async (ul, level = 0) => {
     ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
 
     const addMobileLangSelector = async () => {
-      const { getLanguagePath } = await languageModule;
-      const languages = await decoratorState.languages.promise;
       // add language select (visible on mobile only)
+
       const navItem = ul.appendChild(
         htmlToElement(
           `<li class="nav-item-mobile">
             <p>${decoratorState.languageTitle}</p>
             <ul>
-              ${languages.map((l) => `<li><a href="${getLanguagePath(l.lang)}">${l.title}</a></li>`).join('')}
+              ${decoratorState.languages.map((l) => `<li><a href="${l.lang}">${l.title}</a></li>`).join('')}
             </ul>
           </li>`,
         ),
@@ -401,33 +359,23 @@ const buildNavItems = async (ul, level = 0) => {
 /**
  * Decorates the nav block
  * @param {HTMLElement} navBlock
+ * @param {DecoratorOptions} decoratorOptions
  */
-const navDecorator = async (navBlock) => {
+const navDecorator = async (navBlock, decoratorOptions) => {
   simplifySingleCellBlock(navBlock);
-
   const navOverlay = document.querySelector('.nav-overlay');
-
   const navWrapper = htmlToElement('<div class="nav-wrapper"></div>');
   const hamburger = hamburgerButton(navWrapper, navOverlay);
 
-  navWrapper.replaceChildren(hamburger, ...navBlock.children);
-  navBlock.replaceChildren(navWrapper);
+  navWrapper.replaceChildren(...navBlock.children);
+  navBlock.appendChild(hamburger);
+  navBlock.appendChild(navWrapper);
 
   // build navItems
   const ul = navWrapper.querySelector(':scope > ul');
   await buildNavItems(ul);
 
-  navBlock.firstChild.id = hamburger.getAttribute('aria-controls');
-  navBlock.prepend(hamburger);
-
-  /**
-   * Fetches a list of products to render in main nav.
-   * @async
-   * @function getProducts
-   * @param {string} mode - The mode for fetching products ('browse' or 'articles').
-   * @returns {Promise<Array>} A promise that resolves to an array of products.
-   */
-  const productList = await getProducts('browse');
+  const productList = await getProducts(decoratorOptions.lang, 'browse');
 
   [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
     if (navItemEl.querySelector(':scope > a[featured-products]')) {
@@ -445,7 +393,8 @@ const navDecorator = async (navBlock) => {
     }
   });
 
-  const isSignedIn = await isSignedInUser();
+  const isSignedIn = await decoratorOptions.isUserSignedIn();
+
   if (!isSignedIn) {
     // hide auth-only nav items - see decorateLinks method for details
     [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
@@ -454,11 +403,13 @@ const navDecorator = async (navBlock) => {
       }
     });
   }
+  decorateIcons(navBlock);
 };
 
 /**
  * Decorates the search block
  * @param {HTMLElement} searchBlock
+ * @param {DecoratorOptions} decoratorOptions
  */
 const searchDecorator = async (searchBlock) => {
   // save this for later use in mobile nav.
@@ -476,7 +427,7 @@ const searchDecorator = async (searchBlock) => {
     `<div class="search-wrapper">
       <div class="search-short">
         <a href="https://experienceleague.adobe.com/search.html" aria-label="Search">
-          <span class="icon icon-search search-icon"></span>
+          <span title="Search" class="icon icon-search"></span>
         </a>
       </div>
       <div class="search-full">
@@ -527,127 +478,75 @@ const searchDecorator = async (searchBlock) => {
     searchOptions: options,
     showSearchSuggestions: true,
   });
-
-  await decorateIcons(searchBlock);
-
+  decorateIcons(searchBlock);
   return searchBlock;
 };
+
+/**
+ *
+ * @param {HTMLHRElement} header
+ * @param {DecoratorOptions} decoratorOptions
+ */
+async function decorateCommunityBlock(header, decoratorOptions) {
+  const communityBlock = header.querySelector('nav');
+  const notificationWrapper = document.createElement('div');
+  notificationWrapper.classList.add('notification');
+  notificationWrapper.style.display = 'none';
+  notificationWrapper.innerHTML = `  
+    <div class="notification-icon">
+        <a href="/t5/notificationfeed/page" data-id="notifications" title="notifications">
+          <span class="icon icon-bell"></span>
+        </a>
+    </div>
+    <div class="notification-icon">   
+        <a href="/t5/notes/privatenotespage" data-id="messages" title="messages">
+          <span class ="icon icon-email"></span>
+        </a> 
+    <div>  
+`;
+  communityBlock.appendChild(notificationWrapper);
+  const isSignedIn = await decoratorOptions.isUserSignedIn();
+  const languageBlock = header.querySelector('.language-selector');
+  if (decoratorOptions.isCommunity) {
+    languageBlock.classList.add('community');
+    if (isSignedIn && !isMobile()) {
+      notificationWrapper.style.display = 'flex';
+    }
+  }
+}
 
 /**
  * Decorates the language-selector block
  * @param {HTMLElement} languageBlock
  */
-const languageDecorator = async (languageBlock) => {
-  const title = getCell(languageBlock, 1, 1)?.firstChild.textContent;
-  decoratorState.languageTitle = title;
-  decoratorState.languages = new Deferred();
+const languageDecorator = async (languageBlock, decoratorOptions) => {
+  const language = new LanguageBlock({
+    position: 'bottom',
+    popoverId: 'language-picker-popover-header',
+    block: languageBlock,
+    languages: decoratorOptions.languages,
+    onLanguageChange: decoratorOptions.onLanguageChange,
+  });
+  decoratorState.languageTitle = language.title;
+  decoratorState.languages = language.languages;
 
-  const prependLanguagePopover = async (parent) => {
-    await languageModule.then(({ buildLanguagePopover }) => {
-      buildLanguagePopover(null, 'language-picker-popover-header').then(({ popover, languages }) => {
-        decoratorState.languages.resolve(languages);
-        parent.append(popover);
-      });
-    });
-  };
-
-  const languageHtml = `
-      <button type="button" class="language-selector-button" aria-haspopup="true" aria-controls="language-picker-popover-header" aria-label="${title}">
-        <span class="icon icon-globegrid"></span>
-      </button>
-    `;
-  languageBlock.innerHTML = languageHtml;
-  decorateIcons(languageBlock);
-  prependLanguagePopover(languageBlock);
+  languageBlock.replaceChildren(language);
   return languageBlock;
 };
 
 /**
  * Decorates the sign-in block
  * @param {HTMLElement} signInBlock
+ * @param {DecoratorOptions} decoratorOptions
  */
-
-const signInDecorator = async (signInBlock) => {
+const signInDecorator = async (signInBlock, decoratorOptions) => {
   simplifySingleCellBlock(signInBlock);
-  const isSignedIn = await isSignedInUser();
+  const isSignedIn = await decoratorOptions.isUserSignedIn();
+
   if (isSignedIn) {
     signInBlock.classList.add('signed-in');
-    const profile = htmlToElement(
-      `<div class="profile">
-        <button class="profile-toggle" aria-controls="profile-menu">
-          <span class="icon icon-profile"></span>
-        </button>
-        <div class="profile-menu" id="profile-menu">
-        </div>
-      </div>`,
-    );
-
+    const profile = new Profile(decoratorOptions);
     signInBlock.replaceChildren(profile);
-    defaultProfileClient
-      .getPPSProfile()
-      .then((ppsProfile) => {
-        const profilePicture = ppsProfile?.images['50'];
-        if (profilePicture) {
-          const profileToggle = profile.querySelector('.profile-toggle');
-          profileToggle.replaceChildren(
-            htmlToElement(`<img class="profile-picture" src="${profilePicture}" alt="profile picture" />`),
-          );
-        }
-      })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error(err);
-      });
-
-    const toggler = signInBlock.querySelector('.profile-toggle');
-    const navOverlay = document.querySelector('.nav-overlay');
-    const toggleExpandContentMobile = () => {
-      const navButton = document.querySelector('.nav-hamburger');
-      if (navButton.getAttribute('aria-expanded') === 'true') {
-        navButton.click();
-      }
-      const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
-      toggler.setAttribute('aria-expanded', !isExpanded);
-      const profileMenu = toggler.nextElementSibling;
-      const expandedClass = 'profile-menu-expanded';
-      if (!isExpanded) {
-        profileMenu.classList.add(expandedClass);
-        navOverlay.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-      } else {
-        profileMenu.classList.remove(expandedClass);
-        navOverlay.classList.add('hidden');
-        document.body.removeAttribute('style');
-      }
-    };
-
-    const toggleExpandContent = () => {
-      const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
-      toggler.setAttribute('aria-expanded', !isExpanded);
-      const profileMenu = toggler.nextElementSibling;
-      const expandedClass = 'profile-menu-expanded';
-      if (!isExpanded) {
-        profileMenu.classList.add(expandedClass);
-      } else {
-        profileMenu.classList.remove(expandedClass);
-      }
-    };
-
-    registerHeaderResizeHandler(() => {
-      if (isMobile()) {
-        // if mobile, add click event, remove mouseenter/mouseleave
-        toggler.addEventListener('click', toggleExpandContentMobile);
-        toggler.parentElement.removeEventListener('mouseenter', toggleExpandContent);
-        toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
-      } else {
-        navOverlay.classList.add('hidden');
-        document.body.removeAttribute('style');
-        // if desktop, add mouseenter/mouseleave, remove click event
-        toggler.removeEventListener('click', toggleExpandContentMobile);
-        toggler.parentElement.addEventListener('mouseenter', toggleExpandContent);
-        toggler.parentElement.addEventListener('mouseleave', toggleExpandContent);
-      }
-    });
   } else {
     signInBlock.classList.remove('signed-in');
     signInBlock.firstChild.addEventListener('click', async () => {
@@ -660,12 +559,14 @@ const signInDecorator = async (signInBlock) => {
 /**
  * Decorates the product-grid block
  * @param {HTMLElement} productGrid
+ * @param {DecoratorOptions} decoratorOptions
  */
-
-const productGridDecorator = async (productGridBlock) => {
+const productGridDecorator = async (productGridBlock, decoratorOptions) => {
   simplifySingleCellBlock(productGridBlock);
-  const isSignedIn = await isSignedInUser();
+  productGridBlock.style.display = 'none';
+  const isSignedIn = await decoratorOptions.isUserSignedIn();
   if (isSignedIn) {
+    productGridBlock.style.display = 'block';
     productGridBlock.classList.add('signed-in');
     const productDropdown = document.createElement('div');
     productDropdown.classList.add('product-dropdown');
@@ -681,7 +582,7 @@ const productGridDecorator = async (productGridBlock) => {
     productToggle.setAttribute('aria-controls', 'product-dropdown');
     productToggle.innerHTML = `<span class="icon-grid"></span>`;
     productGridBlock.innerHTML = `${productToggle.outerHTML}${productDropdown.outerHTML}`;
-    const gridToggler = document.querySelector('.product-toggle');
+    const gridToggler = productGridBlock.querySelector('.product-toggle');
     const toggleExpandGridContent = () => {
       const isExpanded = gridToggler.getAttribute('aria-expanded') === 'true';
       gridToggler.setAttribute('aria-expanded', !isExpanded);
@@ -713,10 +614,11 @@ const productGridDecorator = async (productGridBlock) => {
 /**
  * Decorates the profile-menu block
  * @param {HTMLElement} profileMenu
+ * @param {DecoratorOptions} decoratorOptions
  */
-
-const profileMenuDecorator = async (profileMenuBlock) => {
-  const isSignedIn = await isSignedInUser();
+const profileMenuDecorator = async (profileMenuBlock, decoratorOptions) => {
+  const shadowHost = document.querySelector('exl-header');
+  const isSignedIn = await decoratorOptions.isUserSignedIn();
   if (isSignedIn) {
     simplifySingleCellBlock(profileMenuBlock);
     profileMenuBlock.querySelectorAll('p').forEach((ptag) => {
@@ -724,8 +626,9 @@ const profileMenuDecorator = async (profileMenuBlock) => {
         ptag.outerHTML = ptag.querySelector('a').outerHTML;
       }
     });
-    const profileMenuWrapper = document.querySelector('.profile-menu');
+    const profileMenuWrapper = shadowHost.shadowRoot.querySelector('.profile-menu');
     const communityHeading = document.createElement('h2');
+    const placeholders = await getPlaceholders(decoratorOptions.lang);
     communityHeading.textContent = placeholders?.headerCommunityLabel || 'Community';
     if (profileMenuWrapper) {
       profileMenuWrapper.innerHTML = `<h2>${placeholders?.headerLearningLabel || 'Learning'}</h2>${
@@ -734,7 +637,7 @@ const profileMenuDecorator = async (profileMenuBlock) => {
       profileMenuWrapper.lastElementChild.setAttribute('data-id', 'sign-out');
       profileMenuWrapper.insertBefore(communityHeading, profileMenuWrapper.lastElementChild);
     }
-    fetchCommunityProfileData()
+    fetchCommunityProfileData(decoratorOptions.khorosProfileUrl)
       .then((res) => {
         if (res) {
           const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
@@ -762,7 +665,7 @@ const profileMenuDecorator = async (profileMenuBlock) => {
 
     if (profileMenuWrapper.querySelector('[data-id="sign-out"]')) {
       profileMenuWrapper.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
-        signOut();
+        decoratorOptions.onSignOut();
       });
     }
   } else {
@@ -777,7 +680,7 @@ const profileMenuDecorator = async (profileMenuBlock) => {
  * Decorates the adobe-logo block
  * @param {HTMLElement} adobeLogoBlock
  */
-const adobeLogoDecorator = (adobeLogoBlock) => {
+const adobeLogoDecorator = async (adobeLogoBlock) => {
   simplifySingleCellBlock(adobeLogoBlock);
   adobeLogoBlock.querySelector('a').setAttribute('title', 'logo');
   return adobeLogoBlock;
@@ -796,56 +699,124 @@ const decorateNewTabLinks = (block) => {
 
 /**
  * Main header decorator, calls all the other decorators
- * @param {HTMLElement} headerBlock
  */
-export default async function decorate(headerBlock) {
-  headerBlock.style.display = 'none';
-  loadSearchElement();
-  const [solutionTag] = getMetadata('solution').trim().split(',');
-  if (solutionTag) {
-    window.headlessSolutionProductKey = solutionTag;
+class ExlHeader extends HTMLElement {
+  /**
+   * @param {DecoratorOptions} options
+   */
+  constructor(options = {}) {
+    super();
+
+    const doIsSignedInUSer = async () => {
+      const { isSignedInUser } = await import('../../scripts/auth/profile.js');
+      return isSignedInUser();
+    };
+
+    const doSignOut = async () => {
+      const { signOut } = await import('../../scripts/auth/profile.js');
+      return signOut();
+    };
+
+    this.decoratorOptions = options;
+    options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
+    options.onSignOut = options.onSignOut || doSignOut;
+    options.profilePicture = options.profilePicture || profilePicture;
+    options.isCommunity = options.isCommunity ?? false;
+    options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
+    options.lang = options.lang || getPathDetails(this.decoratorOptions).lang || 'en';
+
+    // yes, even though this is extra, it ensures that these functions remain pure-esque.
+    this.navDecorator = navDecorator.bind(this);
+    this.adobeLogoDecorator = adobeLogoDecorator.bind(this);
+    this.brandDecorator = brandDecorator.bind(this);
+    this.searchDecorator = searchDecorator.bind(this);
+    this.languageDecorator = languageDecorator.bind(this);
+    this.productGridDecorator = productGridDecorator.bind(this);
+    this.signInDecorator = signInDecorator.bind(this);
+    this.profileMenuDecorator = profileMenuDecorator.bind(this);
+    this.attachShadow({ mode: 'open' });
   }
 
-  // eslint-disable-next-line no-unused-vars
-  headerBlock.innerHTML = await headerFragment;
+  /**
+   * Loads a CSS file.
+   * @param {string} href URL to the CSS file
+   */
+  loadCSS(href, media) {
+    return new Promise((resolve, reject) => {
+      if (!this.shadowRoot.querySelector(`link[href="${href}"]`)) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        if (media) link.media = media;
+        link.onload = resolve;
+        link.onerror = reject;
+        this.shadowRoot.append(link);
+      } else {
+        resolve();
+      }
+    });
+  }
 
-  const headerBlockFirstRow = getBlockFirstRow(headerBlock);
-  headerBlockFirstRow.outerHTML = `<nav>${headerBlockFirstRow.innerHTML}</nav>`;
-  const nav = headerBlock.querySelector('nav');
-  nav.role = 'navigation';
-  nav.ariaLabel = 'Main navigation';
+  async loadStyles() {
+    return Promise.allSettled([this.loadCSS(`${window.hlx.codeBasePath}${HEADER_CSS}`)]);
+  }
 
-  const navOverlay = document.createElement('div');
-  navOverlay.classList.add('nav-overlay', 'hidden');
-  document.body.appendChild(navOverlay);
+  async decorate() {
+    const headerFragment = await fetchFragment('header/header', this.decoratorOptions.lang);
+    if (headerFragment) {
+      loadSearchElement();
 
-  const decorateHeaderBlock = async (className, decorator) => {
-    const block = nav.querySelector(`:scope > .${className}`);
-    await decorator(block);
-  };
+      const headerWrapper = htmlToElement(
+        '<div class="header-wrapper" id="header-wrapper"><div class="header block"></div></div>',
+      );
+      this.shadowRoot.appendChild(headerWrapper);
+      const header = this.shadowRoot.querySelector('.header');
 
-  // Do this first to ensure all links are decorated correctly before they are used.
-  decorateLinks(headerBlock);
+      const navOverlay = htmlToElement('<div class="nav-overlay hidden"></div>');
+      document.body.appendChild(navOverlay);
 
-  decorateHeaderBlock('brand', brandDecorator);
-  decorateHeaderBlock('search', searchDecorator);
-  decorateHeaderBlock('language-selector', languageDecorator);
-  decorateHeaderBlock('product-grid', productGridDecorator);
-  decorateHeaderBlock('sign-in', signInDecorator);
-  decorateHeaderBlock('profile-menu', profileMenuDecorator);
-  decorateHeaderBlock('adobe-logo', adobeLogoDecorator);
-  await decorateHeaderBlock('nav', navDecorator);
+      header.innerHTML = headerFragment;
 
-  decorateNewTabLinks(headerBlock);
+      const exlHeaderFirstRow = getBlockFirstRow(header);
+      exlHeaderFirstRow.outerHTML = `<nav>${exlHeaderFirstRow.innerHTML}</nav>`;
+      const nav = header.querySelector('nav');
+      nav.role = 'navigation';
+      nav.ariaLabel = 'Main navigation';
 
-  // do this at the end, always.
-  decorateIcons(headerBlock);
-  headerBlock.style.display = '';
+      await decorateCommunityBlock(header, this.decoratorOptions);
+
+      const decorateHeaderBlock = async (className, decorator, options) => {
+        const block = nav.querySelector(`:scope > .${className}`);
+        await decorator(block, options);
+      };
+      // Do this first to ensure all links are decorated correctly before they are used.
+      decorateLinks(header);
+      decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator, this.decoratorOptions);
+      decorateHeaderBlock('brand', this.brandDecorator, this.decoratorOptions);
+      decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
+      decorateHeaderBlock('language-selector', this.languageDecorator, this.decoratorOptions);
+      decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
+      decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);
+      decorateHeaderBlock('profile-menu', this.profileMenuDecorator, this.decoratorOptions);
+      decorateNewTabLinks(header);
+      decorateIcons(header);
+      await decorateHeaderBlock('nav', this.navDecorator, this.decoratorOptions);
+    }
+  }
+
+  async connectedCallback() {
+    await this.loadStyles();
+    await this.decorate();
+  }
 }
 
-/* FIXME: Temp Code - Should be removed once we have the profile integration in place */
-const isSignedIn = await isSignedInUser();
-const urlParams = new URLSearchParams(window.location.search);
-if (isSignedIn && !isProd && urlParams.get('signup-wizard') === 'on') {
-  initializeSignupFlow();
+customElements.define('exl-header', ExlHeader);
+
+/**
+ * Create header web component and attach to the DOM
+ * @param {HTMLHeadElement} headerBlock
+ */
+export default async function decorate(headerBlock, options = {}) {
+  const exlHeader = new ExlHeader(options);
+  headerBlock.replaceChildren(exlHeader);
 }

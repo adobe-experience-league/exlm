@@ -1,9 +1,9 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { productExperienceEventEmitter } from '../../scripts/events.js';
 
-const interestsUrl = 'https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=en';
+const { interestsUrl } = getConfig();
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -48,10 +48,13 @@ async function updateInterests(block) {
 }
 
 function decorateInterests(block) {
-  if (!block.querySelector('h1,h2,h3,h4,h5,h6')) {
-    const title = block.querySelector('div > div');
+  const [title, description] = block.children;
+  if (!title.querySelector('h1,h2,h3,h4,h5,h6')) {
     title.innerHTML = `<h3>${title.textContent}</h3>`;
   }
+  title?.classList.add('product-interest-header');
+  description?.classList.add('product-interest-description');
+
   const formContainer = document.createElement('form');
   formContainer.id = 'product-interests-form';
 
@@ -141,13 +144,36 @@ function decorateInterests(block) {
 }
 
 function handleProductInterestChange(block) {
-  block.querySelectorAll('li > label').forEach((row) => {
-    row.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (e.target.tagName === 'INPUT') {
-        const [, id] = e.target.id.split('__');
-        productExperienceEventEmitter.set(id, e.target.checked);
+  const isInSignupDialog = block.closest('.signup-dialog');
+  const formErrorContainer = block.querySelector('.product-interests-form-error');
+  const checkboxList = block.querySelectorAll('.interests-container input[type="checkbox"]');
+  const formErrorMessage = placeholders?.formFieldGroupError || 'Please select at least one option.';
+
+  checkboxList.forEach((checkbox) => {
+    checkbox.addEventListener('click', (event) => {
+      event.stopPropagation();
+
+      if (formErrorContainer) {
+        formErrorContainer.textContent = '';
       }
+
+      const checkedCheckboxes = Array.from(checkboxList).filter((el) => el.checked);
+
+      const isAnyCheckboxChecked = checkedCheckboxes.length > 0;
+
+      if (!isInSignupDialog && !isAnyCheckboxChecked) {
+        if (formErrorContainer) {
+          formErrorContainer.innerHTML = `<span class='form-error'>${formErrorMessage}</span>`;
+        }
+        event.preventDefault();
+        return false;
+      }
+
+      if (event.target.tagName === 'INPUT') {
+        const [, id] = event.target.id.split('__');
+        productExperienceEventEmitter.set(id, event.target.checked);
+      }
+      return true;
     });
   });
 }

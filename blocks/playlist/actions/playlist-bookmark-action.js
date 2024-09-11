@@ -3,13 +3,7 @@ import { defaultProfileClient, isSignedInUser } from '../../../scripts/auth/prof
 import { createPlaceholderSpan, fetchLanguagePlaceholders, getPathDetails } from '../../../scripts/scripts.js';
 import { sendNotice } from '../../../scripts/toast/toast.js';
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
+const placeholdersPromise = fetchLanguagePlaceholders();
 
 function getCurrentPlaylistBookmarkPath() {
   return window.location.pathname;
@@ -104,6 +98,7 @@ export async function bookmark(event) {
   const button = event.target.closest('button');
   const isBookmarked = button.dataset.bookmarked === 'true';
   await toggleBookmark();
+  const placeholders = await placeholdersPromise;
 
   if (isBookmarked) {
     // bookmark was just removed

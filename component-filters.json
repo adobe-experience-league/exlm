@@ -17,7 +17,7 @@
   },
   {
     "id": "main-profile",
-    "components": ["profile-section"]
+    "components": ["section", "profile-section"]
   },
   {
     "id": "main-signup",
@@ -39,6 +39,7 @@
       "carousel",
       "sign-up",
       "video-embed",
+      "iframe-app",
       "secondary-search",
       "accordion-group",
       "media",
@@ -161,7 +162,10 @@
       "product-interests",
       "product-experience-level",
       "bookmarks",
-      "awards"
+      "awards",
+      "profile-welcome",
+      "recommended-content",
+      "personalized-content-placeholder"
     ]
   },
   {

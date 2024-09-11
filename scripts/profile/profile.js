@@ -1,8 +1,9 @@
 import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
-import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
+import { defaultProfileClient } from '../auth/profile.js';
 
 const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
+const { industryUrl, adobeAccountURL, communityAccountURL } = getConfig();
 
 const fetchExlProfileData = async () => {
   const [profileData, ppsProfileData] = await Promise.allSettled([
@@ -18,14 +19,34 @@ const fetchExlProfileData = async () => {
   return { profileData: profileData.value, ppsProfileData: ppsProfileData.value || {} };
 };
 
+export async function fetchIndustryOptions() {
+  try {
+    const response = await fetch(industryUrl);
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('There was a problem with the fetch operation:', error);
+    return [];
+  }
+}
+
+export const getIndustryNameById = (industryId, industryOptionsArray) => {
+  let industry = {};
+  if (Array.isArray(industryId)) {
+    // If industryId is an array, find the first matching industry name for any ID in the array
+    industry = industryOptionsArray.find((option) => industryId.includes(option.id));
+  } else {
+    // If industryId is a string, find the matching industry name directly
+    industry = industryOptionsArray.find((option) => option.id === industryId);
+  }
+  return industry ? industry.Name : '';
+};
+
 const fetchCommunityProfileData = async () => defaultProfileClient.fetchCommunityProfileDetails();
 
 const fetchProfileData = async (profileFlags) => {
-  const isSignedIn = await isSignedInUser();
-  if (!isSignedIn) {
-    return null;
-  }
-
+  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
   const exlProfilePromise = profileFlags.includes(EXL_PROFILE) ? fetchExlProfileData() : Promise.resolve({});
   const communityProfilePromise = profileFlags.includes(COMMUNITY_PROFILE)
     ? fetchCommunityProfileData()
@@ -38,23 +59,28 @@ const fetchProfileData = async (profileFlags) => {
 
   return {
     ...(profileFlags.includes(EXL_PROFILE) && {
-      adobeDisplayName: profileData?.displayName || '',
-      email: profileData?.email || '',
-      industry: profileData?.industryInterests || '',
-      roles: profileData?.role || [],
-      interests: profileData?.interests || [],
+      adobeDisplayName: UEAuthorMode ? 'User Name' : profileData?.displayName || '',
+      email: UEAuthorMode ? 'User Email' : profileData?.email || '',
+      industry: UEAuthorMode ? 'User Industry' : profileData?.industryInterests || '',
+      roles: UEAuthorMode ? ['User Roles'] : profileData?.role || [],
+      interests: UEAuthorMode ? ['User Interests'] : profileData?.interests || [],
       profilePicture: ppsProfileData?.images?.['100'] || '',
-      company: ppsProfileData?.company || '',
+      company: UEAuthorMode ? 'User Company' : ppsProfileData?.company || '',
     }),
     ...(profileFlags.includes(COMMUNITY_PROFILE) && {
-      communityUserName: communityProfileDetails?.username || '',
-      communityUserTitle: communityProfileDetails?.title || '',
-      communityUserLocation: communityProfileDetails?.location || '',
+      communityUserName: UEAuthorMode ? 'Community User Name' : communityProfileDetails?.username || '',
+      communityUserTitle: UEAuthorMode ? 'Community User Title' : communityProfileDetails?.title || '',
+      communityUserLocation: UEAuthorMode ? 'Community User Location' : communityProfileDetails?.location || '',
+      communityProfileURL: UEAuthorMode ? '' : communityProfileDetails?.profilePageUrl || '',
     }),
   };
 };
 
-const generateAdobeAccountDOM = (profileData, placeholders, adobeAccountURL) => {
+/**
+ * Generates HTML for displaying a Adobe account profile.
+ *
+ */
+const generateAdobeAccountDOM = (profileData, placeholders) => {
   const { adobeDisplayName, email, profilePicture, company } = profileData;
 
   return `<div class="profile-row adobe-account">
@@ -86,18 +112,31 @@ const generateAdobeAccountDOM = (profileData, placeholders, adobeAccountURL) => 
   </div>`;
 };
 
-const generateCommunityAccountDOM = (profileData, placeholders, communityAccountURL) => {
-  const { communityUserName, communityUserTitle, communityUserLocation } = profileData;
+/**
+ * Generates HTML for displaying a community account profile.
+ *
+ */
+const generateCommunityAccountDOM = (profileData, placeholders) => {
+  const { communityUserName, communityUserTitle, communityUserLocation, communityProfileURL } = profileData;
 
   return `<div class="profile-row community-account">
     <div class="profile-card-header community-account-header">
       <div class="my-community-account">${placeholders?.myCommunityAccount || 'My Community Profile'}</div>
-      <div class="manage-community-account">
-        <a href="${communityAccountURL}" target="_blank">
+      ${
+        communityProfileURL
+          ? `<div class="manage-community-account">
+        <a href="${communityProfileURL}" target="_blank">
         <span class="icon icon-new-tab"></span>
-        ${placeholders?.updateCommunityProfile || 'Update profile'}
+        ${placeholders?.updateCommunityProfile || 'Go to your community profile'}
         </a>
-      </div>
+      </div>`
+          : `<div class="manage-community-account">
+      <a href="${communityAccountURL}" target="_blank">
+      <span class="icon icon-new-tab"></span>
+      ${placeholders?.createYourCommunityProfile || 'Create your community profile'}
+      </a>
+    </div>`
+      }
     </div>
     <div class="profile-card-body community-account-body">
       <div class="profile-user-info">
@@ -121,25 +160,43 @@ const generateCommunityAccountDOM = (profileData, placeholders, communityAccount
   </div>`;
 };
 
-const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
+/**
+ * Generates HTML for displaying additional profile info like Role, Industry and Interests.
+ *
+ */
+const generateAdditionalProfileInfoDOM = async (profileData, placeholders) => {
   const { roles, industry, interests } = profileData;
+  const industryOptions = await fetchIndustryOptions();
+  let industryName = '';
+  if (Array.isArray(industry)) {
+    industryName = getIndustryNameById(industry[0], industryOptions);
+  }
+  if (typeof industry === 'string') {
+    industryName = getIndustryNameById(industry, industryOptions);
+  }
+
+  const roleMappings = {
+    Developer: placeholders?.roleCardDeveloperTitle || 'Developer',
+    User: placeholders?.roleCardUserTitle || 'Business User',
+    Leader: placeholders?.roleCardBusinessLeaderTitle || 'Business Leader',
+    Admin: placeholders?.roleCardAdministratorTitle || 'Administrator',
+  };
 
   return `<div class="profile-row additional-data">
     <div class="profile-card-body additional-data-body">
       <div class="profile-user-info">
         ${
           roles && ((Array.isArray(roles) && roles.length > 0) || (typeof roles === 'string' && roles.trim() !== ''))
-            ? `<div class="user-role"><span class="heading">${
-                placeholders?.myRole || 'My Role'
-              }: </span><span>${roles.join('&nbsp;&nbsp;')}</span></div>`
+            ? `<div class="user-role"><span class="heading">${placeholders?.myRole || 'My Role'}: </span><span>${roles
+                .map((role) => roleMappings[role] || role)
+                .join('&nbsp;&nbsp;')}</span></div>`
             : ''
         }
         ${
-          industry &&
-          ((Array.isArray(industry) && industry.length > 0) || (typeof industry === 'string' && industry.trim() !== ''))
+          industryName.trim() !== ''
             ? `<div class="user-industry"><span class="heading">${
                 placeholders?.myIndustry || 'My Industry'
-              }: </span><span>${industry}</span></div>`
+              }: </span><span>${industryName}</span></div>`
             : ''
         }
         ${
@@ -148,7 +205,7 @@ const generateAdditionalProfileInfoDOM = (profileData, placeholders) => {
             (typeof interests === 'string' && interests.trim() !== ''))
             ? `<div class="user-interests"><span class="heading">${
                 placeholders?.myInterests || 'My Interests'
-              }: </span><span>${interests.join('&nbsp;&nbsp;')}</span></div>`
+              }: </span><span>${interests.join(' | ')}</span></div>`
             : ''
         }
       </div>
@@ -166,7 +223,6 @@ export const generateProfileDOM = async (profileFlags) => {
     console.error('Error fetching placeholders:', err);
   }
 
-  const { adobeAccountURL, communityAccountURL } = getConfig();
   const profileData = await fetchProfileData(profileFlags);
 
   if (!profileData) {
@@ -175,11 +231,20 @@ export const generateProfileDOM = async (profileFlags) => {
 
   const hasExlProfileFlag = profileFlags.includes(EXL_PROFILE);
 
+  const adobeAccountDOM = hasExlProfileFlag ? generateAdobeAccountDOM(profileData, placeholders) : '';
+
+  // Await the asynchronous call to generate the additional profile information DOM
+  const additionalProfileInfoDOM = hasExlProfileFlag
+    ? await generateAdditionalProfileInfoDOM(profileData, placeholders)
+    : '';
+
+  const communityAccountDOM = profileFlags.includes(COMMUNITY_PROFILE)
+    ? generateCommunityAccountDOM(profileData, placeholders)
+    : '';
+
   return {
-    ...(hasExlProfileFlag && { adobeAccountDOM: generateAdobeAccountDOM(profileData, placeholders, adobeAccountURL) }),
-    ...(hasExlProfileFlag && { additionalProfileInfoDOM: generateAdditionalProfileInfoDOM(profileData, placeholders) }),
-    ...(profileFlags.includes(COMMUNITY_PROFILE) && {
-      communityAccountDOM: generateCommunityAccountDOM(profileData, placeholders, communityAccountURL),
-    }),
+    adobeAccountDOM,
+    additionalProfileInfoDOM,
+    communityAccountDOM,
   };
 };
