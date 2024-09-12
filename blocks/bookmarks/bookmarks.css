@@ -29,11 +29,11 @@ body.profile .bookmarks-wrapper .bookmarks .bookmarks-header > *:first-child {
     margin: 0;
 }
 
-body.profile:has(.bookmarks-empty) .section:not(.profile-tab-section, .profile-rail-section)>div.bookmarks-wrapper {
+body.profile:has(.bookmarks-empty) .section:not(.profile-rail-section)>div.bookmarks-wrapper {
     display: none;
 }
 
-body.profile .section:not(.profile-tab-section, .profile-rail-section)>div.bookmarks-wrapper {
+body.profile .section:not(.profile-rail-section)>div.bookmarks-wrapper {
     border: none;
 }
 

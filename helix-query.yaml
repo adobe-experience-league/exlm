@@ -315,9 +315,9 @@ indices:
 
   profile-en: &base-profile
     include:
-      - /en/profile/**
+      - /en/home/**
     exclude:
-      - /en/profile/signup-flow-modal/**
+      - /en/home/signup-flow-modal/**
     target: /en/profile-index.json
     properties:
       title:
@@ -339,89 +339,89 @@ indices:
   profile-fr:
     <<: *base-profile
     include:
-      - /fr/profile/**
+      - /fr/home/**
     exclude:
-      - /fr/profile/signup-flow-modal/**
+      - /fr/home/signup-flow-modal/**
     target: /fr/profile-index.json
 
   profile-de:
     <<: *base-profile
     include:
-      - /de/profile/**
+      - /de/home/**
     exclude:
-      - /de/profile/signup-flow-modal/**
+      - /de/home/signup-flow-modal/**
     target: /de/profile-index.json
 
   profile-es:
     <<: *base-profile
     include:
-      - /es/profile/**
+      - /es/home/**
     exclude:
-      - /es/profile/signup-flow-modal/**
+      - /es/home/signup-flow-modal/**
     target: /es/profile-index.json
 
   profile-it:
     <<: *base-profile
     include:
-      - /it/profile/**
+      - /it/home/**
     exclude:
-      - /it/profile/signup-flow-modal/**
+      - /it/home/signup-flow-modal/**
     target: /it/profile-index.json
 
   profile-nl:
     <<: *base-profile
     include:
-      - /nl/profile/**
+      - /nl/home/**
     exclude:
-      - /nl/profile/signup-flow-modal/**
+      - /nl/home/signup-flow-modal/**
     target: /nl/profile-index.json
 
   profile-pt-br:
     <<: *base-profile
     include:
-      - /pt-br/profile/**
+      - /pt-br/home/**
     exclude:
-      - /pt-br/profile/signup-flow-modal/**
+      - /pt-br/home/signup-flow-modal/**
     target: /pt-br/profile-index.json
 
   profile-ko:
     <<: *base-profile
     include:
-      - /ko/profile/**
+      - /ko/home/**
     exclude:
-      - /ko/profile/signup-flow-modal/**
+      - /ko/home/signup-flow-modal/**
     target: /ko/profile-index.json
 
   profile-ja:
     <<: *base-profile
     include:
-      - /ja/profile/**
+      - /ja/home/**
     exclude:
-      - /ja/profile/signup-flow-modal/**
+      - /ja/home/signup-flow-modal/**
     target: /ja/profile-index.json
 
   profile-sv:
     <<: *base-profile
     include:
-      - /sv/profile/**
+      - /sv/home/**
     exclude:
-      - /sv/profile/signup-flow-modal/**
+      - /sv/home/signup-flow-modal/**
     target: /sv/profile-index.json
 
   profile-zh-hans:
     <<: *base-profile
     include:
-      - /zh-hans/profile/**
+      - /zh-hans/home/**
     exclude:
-      - /zh-hans/profile/signup-flow-modal/**
+      - /zh-hans/home/signup-flow-modal/**
     target: /zh-hans/profile-index.json
 
   profile-zh-hant:
     <<: *base-profile
     include:
-      - /zh-hant/profile/**
+      - /zh-hant/home/**
     exclude:
-      - /zh-hant/profile/signup-flow-modal/**
+      - /zh-hant/home/signup-flow-modal/**
     target: /zh-hant/profile-index.json
 
   # Sitemap indicies, split in 2 google has a limit of 50k (and 50MB) urls per sitemap

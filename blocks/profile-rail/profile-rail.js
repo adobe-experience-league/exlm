@@ -15,7 +15,7 @@ if (isSignedIn) {
 }
 
 const { lang } = getPathDetails();
-const navURL = `${window.location.origin}/${lang}/profile/nav`;
+const navURL = `${window.location.origin}/${lang}/home/nav`;
 
 async function fetchNavContent() {
   try {
@@ -49,7 +49,7 @@ export default async function ProfileRail(block) {
 
   block.querySelectorAll('.profile-rail-links > li').forEach((navLink) => {
     if (!awards && !UEAuthorMode) {
-      const awardsLink = navLink.querySelector('a[href*="/profile/awards"]');
+      const awardsLink = navLink.querySelector('a[href*="/home/awards"]');
       if (awardsLink) {
         navLink.remove();
       }

@@ -1130,8 +1130,34 @@
           {
             "name": "Yellow",
             "value": "bg-spectrum-yellow-700"
+          },
+          {
+            "name": "Adobe Red",
+            "value": "bg-non-spectrum-adobe-red"
+          },
+          {
+            "name": "Custom",
+            "value": "custom"
           }
         ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "custom"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "customHexCode",
+        "value": "",
+        "label": "Custom Hexcode",
+        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "backgroundHexCode",
+        "label": "Fill marquee with background color",
+        "description": "This option allows to fill marquee with the above selected background color."
       },
       {
         "component": "text",
@@ -3590,6 +3616,13 @@
         "name": "incompleteProfileText",
         "value": "",
         "label": "Text to be shown for incomplete profile."
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "showProfileCard",
+        "label": "Show profile card?",
+        "description": "This will enable profile card for this block."
       }
     ]
   },
@@ -3934,7 +3967,7 @@
         "component": "aem-content",
         "valueType": "string",
         "name": "incomplete-profile-url",
-        "label": "Inomplete profile page URL"
+        "label": "Incomplete profile page URL"
       }
     ]
   }

@@ -1,4 +1,4 @@
-body.profile > main > .section:not(.profile-tab-section, .profile-rail-section, .sign-up-flow-section) > .product-interests-wrapper {
+body.profile > main > .section:not(.profile-rail-section, .sign-up-flow-section) > .product-interests-wrapper {
     border: none;
 }
 
