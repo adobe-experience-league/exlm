@@ -54,7 +54,7 @@ export default async function ProfileRail(block) {
         navLink.remove();
       }
       if (window.location.pathname.includes('/home/awards')) {
-        window.location.pathname = `/${lang}/home`;
+        window.location.pathname = `/${lang}/home/profile-settings`;
       }
     }
     const link = navLink.querySelector('a');
