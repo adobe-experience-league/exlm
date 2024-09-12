@@ -53,6 +53,9 @@ export default async function ProfileRail(block) {
       if (awardsLink) {
         navLink.remove();
       }
+      if (window.location.pathname.includes('/home/awards')) {
+        window.location.pathname = `/${lang}/home`;
+      }
     }
     const link = navLink.querySelector('a');
     const icon = navLink.querySelector('span.icon');
