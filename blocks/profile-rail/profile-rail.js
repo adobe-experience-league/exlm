@@ -5,9 +5,9 @@ import { getPathDetails, htmlToElement } from '../../scripts/scripts.js';
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const { lang } = getPathDetails();
 
-const awardsPage = `${lang}/home/awards`;
+const awardsPage = `/${lang}/home/awards`;
 const navPage = `${lang}/home/nav`;
-const profileSettingsPage = `${lang}/home/profile-settings`;
+const profileSettingsPage = `/${lang}/home/profile-settings`;
 const navURL = `${window.location.origin}/${navPage}`;
 
 const isSignedIn = await isSignedInUser();
@@ -61,7 +61,7 @@ export default async function ProfileRail(block) {
       }
       // redirect awards page to profile-settings page
       if (window.location.pathname === `${awardsPage}`) {
-        window.location.pathname = `/${profileSettingsPage}`;
+        window.location.pathname = `${profileSettingsPage}`;
       }
     }
     const link = navLink.querySelector('a');
