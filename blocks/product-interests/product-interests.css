@@ -8,9 +8,8 @@ body.profile > main > .section:not(.profile-rail-section, .sign-up-flow-section)
     margin: 0 0 18px;
 }
 
-.product-interests .product-interests-form-error .form-error {
-    display: block;
-    margin-top: 10px;
+.product-interests .product-interests-form-error {
+    margin-top: 5px;
 }
 
 .product-interests .interests-container {
