@@ -65,16 +65,20 @@ export default class FormValidator {
    */
   aggregateRules() {
     const checkboxGroup = this.options?.aggregateRules?.checkBoxGroup;
+    const { groupName, errorContainer } = checkboxGroup;
+    if (errorContainer) {
+      errorContainer.classList.toggle('hidden', true);
+    }
+
     if (checkboxGroup) {
-      const checkboxes = this.form.querySelectorAll('input[type="checkbox"]');
+      const checkboxes = groupName
+        ? this.form.querySelectorAll(`input[name="${groupName}"]`)
+        : this.form.querySelectorAll('input[type="checkbox"]');
       const isGroupValid = Array.from(checkboxes).some((checkbox) => checkbox.checked);
       if (!isGroupValid) {
         this.isValidForm = false;
-        const { errorContainer, errorMessage } = checkboxGroup;
         if (errorContainer) {
-          const displayErrorMessage =
-            errorMessage || this.placeholders?.formFieldGroupError || 'Please select at least one option.';
-          errorContainer.innerHTML = `<span class='form-error'>${displayErrorMessage}</span>`;
+          errorContainer.classList.toggle('hidden', false);
         }
       }
     }

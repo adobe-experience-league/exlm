@@ -38,6 +38,10 @@ body.profile .product-experience-level:not(.sign-up-flow-section .product-experi
   gap: 8px;
 }
 
+.personalize-interest-form-error {
+  margin-bottom: 15px;
+}
+
 .personalize-interest-results {
   display: flex;
   justify-content: center;
