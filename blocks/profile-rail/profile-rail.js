@@ -48,11 +48,14 @@ export default async function ProfileRail(block) {
   });
 
   block.querySelectorAll('.profile-rail-links > li').forEach((navLink) => {
+    // In case of no awards for the profile
     if (!awards && !UEAuthorMode) {
+      // remove the Awards link from left rail
       const awardsLink = navLink.querySelector('a[href*="/home/awards"]');
       if (awardsLink) {
         navLink.remove();
       }
+      // redirect awards page to profile-settings page
       if (window.location.pathname.includes('/home/awards')) {
         window.location.pathname = `/${lang}/home/profile-settings`;
       }
