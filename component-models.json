@@ -3967,7 +3967,7 @@
         "component": "aem-content",
         "valueType": "string",
         "name": "incomplete-profile-url",
-        "label": "Inomplete profile page URL"
+        "label": "Incomplete profile page URL"
       }
     ]
   }
