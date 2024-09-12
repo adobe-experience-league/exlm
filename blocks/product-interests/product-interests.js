@@ -2,6 +2,7 @@ import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { productExperienceEventEmitter } from '../../scripts/events.js';
+import FormValidator from '../../scripts/form-validator.js';
 
 const { interestsUrl } = getConfig();
 
@@ -56,9 +57,9 @@ function decorateInterests(block) {
   description?.classList.add('product-interest-description');
 
   const content = htmlToElement(`
-    <form id="product-interests-form">
-      <div class="product-interests-form-error hidden">
-        <span class="form-error">${placeholders?.formFieldGroupError || 'Please select at least one option.'}</span>  
+    <form class="product-interests-form">
+      <div class="product-interests-form-error form-error hidden">
+        ${placeholders?.formFieldGroupError || 'Please select at least one option.'}
       </div>
       <ul class="interests-container"></ul>
     </form>`);
@@ -147,36 +148,46 @@ function decorateInterests(block) {
   });
 }
 
+function validateForm(formSelector) {
+  if (!formSelector) return true;
+
+  const options = {
+    aggregateRules: { checkBoxGroup: {} },
+  };
+
+  const validator = new FormValidator(formSelector, placeholders, options);
+  return validator.validate();
+}
+
 function handleProductInterestChange(block) {
-  const isInSignupDialog = block.closest('.signup-dialog');
-  const formErrorContainer = block.querySelector('.product-interests-form-error');
+  const isInSignupDialog = block.closest('.signup-dialog') !== null;
+  const formElement = block.querySelector('.product-interests-form');
+  const formErrorElement = formElement.querySelector('.product-interests-form-error');
   const checkboxList = block.querySelectorAll('.interests-container input[type="checkbox"]');
+
+  const toggleFormError = (visible) => {
+    if (formErrorElement) {
+      formErrorElement.classList.toggle('hidden', !visible);
+    }
+  };
 
   checkboxList.forEach((checkbox) => {
     checkbox.addEventListener('click', (event) => {
       event.stopPropagation();
 
-      if (formErrorContainer) {
-        formErrorContainer.classList.toggle('hidden', true);
-      }
+      const isValid = validateForm(formElement);
+      toggleFormError(false);
 
-      const checkedCheckboxes = Array.from(checkboxList).filter((el) => el.checked);
-
-      const isAnyCheckboxChecked = checkedCheckboxes.length > 0;
-
-      if (!isInSignupDialog && !isAnyCheckboxChecked) {
-        if (formErrorContainer) {
-          formErrorContainer.classList.toggle('hidden', false);
-        }
+      if (!isInSignupDialog && !isValid) {
+        toggleFormError(true);
         event.preventDefault();
-        return false;
+        return;
       }
 
       if (event.target.tagName === 'INPUT') {
         const [, id] = event.target.id.split('__');
         productExperienceEventEmitter.set(id, event.target.checked);
       }
-      return true;
     });
   });
 }

@@ -6,6 +6,7 @@ import loadJWT from '../auth/jwt.js';
 import { productExperienceEventEmitter } from '../events.js';
 import { defaultProfileClient } from '../auth/profile.js';
 import { sendNotice } from '../toast/toast.js';
+import FormValidator from '../form-validator.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/profile/profile-interests.css`);
 
@@ -20,7 +21,7 @@ try {
 const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
 const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
 
-const options = [
+const dropdownOptions = [
   {
     value: 'Beginner',
     title: placeholders.profileExpLevelBeginner || 'Beginner',
@@ -34,6 +35,21 @@ const options = [
     title: placeholders.profileExpLevelExperienced || 'Experienced',
   },
 ];
+
+function validateForm(formSelector) {
+  if (!formSelector) return true;
+
+  const options = {
+    aggregateRules: {
+      checkBoxGroup: {
+        groupName: 'profile-interest',
+      },
+    },
+  };
+
+  const validator = new FormValidator(formSelector, placeholders, options);
+  return validator.validate();
+}
 
 // eslint-disable-next-line import/prefer-default-export
 export default async function buildProductCard(element, model) {
@@ -70,18 +86,22 @@ export default async function buildProductCard(element, model) {
   // Checkbox
   const changeHandler = (e) => {
     const targetElement = e.target;
-    const parentElement = targetElement.closest('.personalize-interest');
+    const formElement = targetElement.closest('.personalize-interest-form');
     const isInSignupDialog = targetElement.closest('.signup-dialog');
-    const formErrorContainer = parentElement.querySelector('.personalize-interest-form-error');
-    const checkboxList = parentElement.querySelectorAll('.personalize-interest-results input[name="profile-interest"]');
+    const formErrorElement = formElement.querySelector('.personalize-interest-form-error');
+    const isValid = validateForm(formElement);
 
-    const checkedCheckboxes = Array.from(checkboxList).filter((el) => el.checked);
-    const isAnyCheckboxChecked = checkedCheckboxes.length > 0;
-    formErrorContainer.classList.toggle('hidden', true);
+    const toggleFormError = (visible) => {
+      if (formErrorElement) {
+        formErrorElement.classList.toggle('hidden', !visible);
+      }
+    };
 
-    if (!isInSignupDialog && !isAnyCheckboxChecked) {
+    toggleFormError(false);
+
+    if (!isInSignupDialog && !isValid) {
       e.preventDefault();
-      formErrorContainer.classList.toggle('hidden', false);
+      toggleFormError(true);
       return false;
     }
 
@@ -112,7 +132,7 @@ export default async function buildProductCard(element, model) {
   // Add to DOM
   element.appendChild(card);
 
-  const cardDropdown = new Dropdown(content, options[0].value, options);
+  const cardDropdown = new Dropdown(content, dropdownOptions[0].value, dropdownOptions);
   cardDropdown.handleOnChange(async (level) => {
     const profileData = await defaultProfileClient.getMergedProfile();
     const { solutionLevels = [] } = profileData;

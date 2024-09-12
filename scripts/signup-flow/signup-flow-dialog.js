@@ -66,17 +66,17 @@ export default class SignupFlowDialog {
     this.pages = [
       {
         name: 'step1',
-        path: `/${this.lang}/profile/signup-flow-modal/${this.modalType}/step1`,
+        path: `/${this.lang}/home/signup-flow-modal/${this.modalType}/step1`,
         title: this.placeholders?.signupFlowStep1Header,
       },
       {
         name: 'step2',
-        path: `/${this.lang}/profile/signup-flow-modal/${this.modalType}/step2`,
+        path: `/${this.lang}/home/signup-flow-modal/${this.modalType}/step2`,
         title: this.placeholders?.signupFlowStep2Header,
       },
       {
         name: 'confirm',
-        path: `/${this.lang}/profile/signup-flow-modal/${this.modalType}/confirm`,
+        path: `/${this.lang}/home/signup-flow-modal/${this.modalType}/confirm`,
         title: this.placeholders?.signupFlowConfirmHeader,
         nofollow: true,
       },
@@ -344,13 +344,13 @@ export default class SignupFlowDialog {
       if (
         !this.validateForm(
           productInterestsBlock,
-          '#product-interests-form',
+          '.product-interests-form',
           '.product-interests-form-error',
           this.placeholders?.productInterestFormErrorMessage,
         ) ||
         !this.validateForm(
           roleIndustryBlock,
-          '#role-and-industry-form',
+          '.role-and-industry-form',
           '.role-and-industry-form-error',
           this.placeholders?.formFieldGroupError,
         )

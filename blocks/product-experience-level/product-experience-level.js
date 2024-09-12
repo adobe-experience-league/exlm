@@ -82,10 +82,8 @@ export default function ProfileExperienceLevel(block) {
           <p>${experiencedDescription}</p>
         </div>
       </div>
-      <div class="personalize-interest">
-        <div class="personalize-interest-form-error hidden">
-          <span class="form-error">${formErrorMessage}</span>
-        </div>
+      <div class="personalize-interest-form">
+        <div class="personalize-interest-form-error form-error hidden">${formErrorMessage}</div>
         <div class="personalize-interest-results"></div>
       </div>
     </div>
@@ -98,8 +96,8 @@ export default function ProfileExperienceLevel(block) {
     const { key, value } = data;
     const interests = productExperienceEventEmitter.get('interests_data') ?? [];
     const model = interests.find((interest) => interest.id === key);
-    const formErrorContainer = block.querySelector('.personalize-interest .personalize-interest-form-error');
-    formErrorContainer.classList.toggle('hidden', true);
+    const formErrorElement = block.querySelector('.personalize-interest-form .personalize-interest-form-error');
+    formErrorElement.classList.toggle('hidden', true);
     if (model) {
       model.selected = value;
       resultsEl.innerHTML = '';
