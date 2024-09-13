@@ -197,6 +197,7 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
     margin: 0 auto;
     max-width: var(--secondary-max-width);
     grid-template-columns: 214px 1fr;
+    min-height: 400px;
   }
   body.profile-home-page .profile-background {
     left: auto;
@@ -214,13 +215,9 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
     padding: 0;
     margin-right: 0;
     margin-top: 88px;
-    min-height: 300px;
   }
   body.profile .section[data-two-column-layout="true"]:nth-child(3) > div:nth-child(1) {
     margin-top: 28px;
-  }
-  body.profile .section:not(.profile-rail-section, .sign-up-flow-section) {
-    margin-bottom: 32px;
   }
   body.profile .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(2) {
     margin-top: 80px;
