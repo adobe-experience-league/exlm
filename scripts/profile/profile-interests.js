@@ -101,6 +101,7 @@ export default async function buildProductCard(element, model) {
 
     if (!isInSignupDialog && !isValid) {
       e.preventDefault();
+      e.target.checked = true;
       toggleFormError(true);
       return false;
     }
@@ -121,7 +122,7 @@ export default async function buildProductCard(element, model) {
         </div>`);
   const checkbox = checkboxContainer.querySelector('input');
   checkbox.checked = isSelected;
-  checkbox.onclick = changeHandler;
+  checkbox.onchange = changeHandler;
 
   // Assemble card
   card.appendChild(header);
