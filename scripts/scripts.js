@@ -265,7 +265,12 @@ export function isProfilePage() {
   const theme = getMetadata('theme');
   return theme.toLowerCase().startsWith('profile');
 }
-
+/**
+ * Check if current page is a home page.
+ */
+export function isHomePage(lang) {
+  return window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
+}
 /**
  * Check if current page is a Signup flow modal page.
  * theme = signup is set in bulk metadata for /en/home/signup-flow-modal** paths.
@@ -1248,26 +1253,6 @@ function handleHomePageHashes() {
   return false;
 }
 
-// Function to handle user redirection to personalized home page if signed in
-async function homePageRedirection() {
-  const { lang } = getPathDetails();
-  if (window?.location.pathname === '/' || window?.location.pathname === `/${lang}`) {
-    try {
-      await loadIms();
-      const { personalizedHomeLink } = getConfig() || {};
-      if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
-        window.location.replace(`${window.location.origin}${personalizedHomeLink}`);
-        return true;
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error during redirect process:', error);
-    }
-  }
-
-  return false;
-}
-
 /**
  * @param {string} placeholderKey
  * @param {string} fallbackText
@@ -1402,9 +1387,6 @@ async function loadPage() {
   if (handleHomePageHashes()) return;
   // END OF TEMPORARY FOR SUMMIT.
 
-  // Redirect logged-in users to their personalized home page if applicable.
-  if (await homePageRedirection()) return;
-
   await loadEager(document);
   await loadLazy(document);
   loadArticles();
@@ -1456,6 +1438,18 @@ if (!window.hlx.DO_NOT_LOAD_PAGE) {
       } else {
         await window?.adobeIMS?.signIn();
       }
+    }
+  } else if (isHomePage(lang)) {
+    try {
+      await loadIms();
+      const { personalizedHomeLink } = getConfig() || {};
+      if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
+        window.location.replace(`${window.location.origin}${personalizedHomeLink}`);
+      }
+      loadPage();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error during redirect process:', error);
     }
   } else {
     loadPage();
