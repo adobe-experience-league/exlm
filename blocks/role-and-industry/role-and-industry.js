@@ -87,7 +87,7 @@ export default async function decorate(block) {
       <div class="role-cards-holder">
       ${roleCardsData
         .map(
-          (card, index) => `
+          (card) => `
               <div class="role-cards-item">
                 <div class="role-cards-description">
                   <div class="role-cards-title">
@@ -99,8 +99,8 @@ export default async function decorate(block) {
                 <div class="role-cards-default-selection">
                   ${isSignedIn && card?.selectionDefault ? `<p>${card.selectionDefault}</p>` : ''}
                   <span class="role-cards-checkbox">
-                    <input name="${card.role}" type="checkbox" id="selectRole-${index}">
-                    <label class="select-role-label" for="selectRole-${index}">${SELECT_ROLE}</label>
+                    <input name="${card.role}" type="checkbox">
+                    <label class="select-role-label">${SELECT_ROLE}</label>
                   </span>
                 </div>
               </div>`,
@@ -162,8 +162,7 @@ export default async function decorate(block) {
     const checkbox = card.querySelector('input[type="checkbox"]');
 
     card.addEventListener('click', (e) => {
-      const isLabelElement = e.target.tagName === 'LABEL' && e.target.classList.contains('select-role-label');
-      if (e.target !== checkbox && !isLabelElement) {
+      if (e.target !== checkbox) {
         checkbox.checked = !checkbox.checked;
         const changeEvent = new Event('change');
         checkbox.dispatchEvent(changeEvent);
