@@ -1,7 +1,8 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
-import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { productExperienceEventEmitter } from '../../scripts/events.js';
+import FormValidator from '../../scripts/form-validator.js';
 
 const { interestsUrl } = getConfig();
 
@@ -55,18 +56,16 @@ function decorateInterests(block) {
   title?.classList.add('product-interest-header');
   description?.classList.add('product-interest-description');
 
-  const formContainer = document.createElement('form');
-  formContainer.id = 'product-interests-form';
+  const content = htmlToElement(`
+    <form class="product-interests-form">
+      <div class="product-interests-form-error form-error hidden">
+        ${placeholders?.formFieldGroupError || 'Please select at least one option.'}
+      </div>
+      <ul class="interests-container"></ul>
+    </form>`);
 
-  const formErrorContainer = document.createElement('div');
-  formErrorContainer.classList.add('product-interests-form-error');
-
-  const columnsContainer = document.createElement('ul');
-  columnsContainer.classList.add('interests-container');
-
-  formContainer.appendChild(formErrorContainer);
-  formContainer.appendChild(columnsContainer);
-
+  const columnsContainer = content.querySelector('.interests-container');
+  const formErrorContainer = content.querySelector('.product-interests-form-error');
   const userInterests = profileData?.interests ? profileData.interests : [];
   // Sort the interests data by Name
   // eslint-disable-next-line no-nested-ternary
@@ -117,63 +116,78 @@ function decorateInterests(block) {
     }
   });
 
-  block.appendChild(formContainer);
+  block.appendChild(content);
 
   productExperienceEventEmitter.on('dataChange', ({ key, value }) => {
     if (formErrorContainer) {
-      formErrorContainer.textContent = '';
+      formErrorContainer.classList.toggle('hidden', true);
     }
-
     const inputEl = block.querySelector(`#interest__${key}`);
     if (inputEl) {
       inputEl.checked = value;
     }
-    updateInterests(block)
-      .then(() => {
-        defaultProfileClient.getMergedProfile().then((profile) => {
-          if (JSON.stringify(profileData.interests) !== JSON.stringify(profile.interests)) {
-            profileData = profile;
-            sendNotice(placeholders?.profileUpdated || 'Profile updated successfully');
-          }
+    const checkedCheckboxes = Array.from(block.querySelectorAll('.interests-container input[type="checkbox"]')).filter(
+      (el) => el.checked,
+    );
+    // const isInSignupDialog = block.closest('.signup-dialog');
+    const isAnyCheckboxChecked = checkedCheckboxes.length > 0;
+    if (isAnyCheckboxChecked) {
+      updateInterests(block)
+        .then(() => {
+          defaultProfileClient.getMergedProfile().then((profile) => {
+            if (JSON.stringify(profileData.interests) !== JSON.stringify(profile.interests)) {
+              profileData = profile;
+              sendNotice(placeholders?.profileUpdated || 'Profile updated successfully');
+            }
+          });
+        })
+        .catch(() => {
+          sendNotice(placeholders?.profileNotUpdated || 'Error updating profile');
         });
-      })
-      .catch(() => {
-        sendNotice(placeholders?.profileNotUpdated || 'Error updating profile');
-      });
+    }
   });
 }
 
+function validateForm(formSelector) {
+  if (!formSelector) return true;
+
+  const options = {
+    aggregateRules: { checkBoxGroup: {} },
+  };
+
+  const validator = new FormValidator(formSelector, placeholders, options);
+  return validator.validate();
+}
+
 function handleProductInterestChange(block) {
-  const isInSignupDialog = block.closest('.signup-dialog');
-  const formErrorContainer = block.querySelector('.product-interests-form-error');
+  const isInSignupDialog = block.closest('.signup-dialog') !== null;
+  const formElement = block.querySelector('.product-interests-form');
+  const formErrorElement = formElement.querySelector('.product-interests-form-error');
   const checkboxList = block.querySelectorAll('.interests-container input[type="checkbox"]');
-  const formErrorMessage = placeholders?.formFieldGroupError || 'Please select at least one option.';
+
+  const toggleFormError = (visible) => {
+    if (formErrorElement) {
+      formErrorElement.classList.toggle('hidden', !visible);
+    }
+  };
 
   checkboxList.forEach((checkbox) => {
     checkbox.addEventListener('click', (event) => {
       event.stopPropagation();
 
-      if (formErrorContainer) {
-        formErrorContainer.textContent = '';
-      }
+      const isValid = validateForm(formElement);
+      toggleFormError(false);
 
-      const checkedCheckboxes = Array.from(checkboxList).filter((el) => el.checked);
-
-      const isAnyCheckboxChecked = checkedCheckboxes.length > 0;
-
-      if (!isInSignupDialog && !isAnyCheckboxChecked) {
-        if (formErrorContainer) {
-          formErrorContainer.innerHTML = `<span class='form-error'>${formErrorMessage}</span>`;
-        }
+      if (!isInSignupDialog && !isValid) {
+        toggleFormError(true);
         event.preventDefault();
-        return false;
+        return;
       }
 
       if (event.target.tagName === 'INPUT') {
         const [, id] = event.target.id.split('__');
         productExperienceEventEmitter.set(id, event.target.checked);
       }
-      return true;
     });
   });
 }

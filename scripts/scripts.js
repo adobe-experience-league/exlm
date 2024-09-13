@@ -265,7 +265,12 @@ export function isProfilePage() {
   const theme = getMetadata('theme');
   return theme.toLowerCase().startsWith('profile');
 }
-
+/**
+ * Check if current page is a home page.
+ */
+export function isHomePage(lang) {
+  return window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
+}
 /**
  * Check if current page is a Signup flow modal page.
  * theme = signup is set in bulk metadata for /en/home/signup-flow-modal** paths.
@@ -826,6 +831,8 @@ export function getConfig() {
     articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
+    // Personlized Home Page Link
+    personalizedHomeLink: `/${lang}/home`,
     // Browse Left nav
     browseMoreProductsLink: `/${lang}/browse`,
     // Machine Translation
@@ -1379,6 +1386,7 @@ async function loadPage() {
   // THIS IS TEMPORARY FOR SUMMIT.
   if (handleHomePageHashes()) return;
   // END OF TEMPORARY FOR SUMMIT.
+
   await loadEager(document);
   await loadLazy(document);
   loadArticles();
@@ -1430,6 +1438,18 @@ if (!window.hlx.DO_NOT_LOAD_PAGE) {
       } else {
         await window?.adobeIMS?.signIn();
       }
+    }
+  } else if (isHomePage(lang)) {
+    try {
+      await loadIms();
+      const { personalizedHomeLink } = getConfig() || {};
+      if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
+        window.location.replace(`${window.location.origin}${personalizedHomeLink}`);
+      }
+      loadPage();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error during redirect process:', error);
     }
   } else {
     loadPage();

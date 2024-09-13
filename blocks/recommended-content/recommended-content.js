@@ -66,6 +66,14 @@ export default async function decorate(block) {
   const [firstEl, secondEl, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
   const sortByContent = thirdEl?.innerText?.trim();
   const contentTypes = otherEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse();
+  const contentTypesFetchMap = contentTypes.reduce((acc, curr) => {
+    if (!acc[curr]) {
+      acc[curr] = 1;
+    } else {
+      acc[curr] += 1;
+    }
+    return acc;
+  }, {});
   const contentTypeIsEmpty = contentTypes?.length === 0;
   const encodedSolutionsText = fifthEl.innerText?.trim() ?? '';
 
@@ -151,19 +159,46 @@ export default async function decorate(block) {
     }
     const cardPromises = contentTypeIsEmpty
       ? [BrowseCardsDelegate.fetchCardData(params)]
-      : contentTypes.map((contentType) => {
+      : Object.keys(contentTypesFetchMap).map((contentType) => {
           const payload = {
             ...params,
           };
           if (contentType) {
             payload.contentType = [contentType];
           }
-          return BrowseCardsDelegate.fetchCardData(payload);
+          if (contentTypesFetchMap[contentType]) {
+            payload.noOfResults = contentTypesFetchMap[contentType];
+          }
+
+          return new Promise((resolve) => {
+            BrowseCardsDelegate.fetchCardData(payload)
+              .then((data) => {
+                const [ct] = payload.contentType || [''];
+                resolve({
+                  contentType: ct,
+                  data,
+                });
+              })
+              .catch(() => {
+                resolve({});
+              });
+          });
         });
     Promise.all(cardPromises)
-      .then((cardDataValues) => {
-        // Hide shimmer placeholders
-        const data = cardDataValues?.flat() || [];
+      .then((cardResponses) => {
+        let data;
+        if (contentTypeIsEmpty) {
+          data = cardResponses?.flat() || [];
+        } else {
+          data = contentTypes.reduce((acc, curr) => {
+            const contentTypeData = cardResponses.find(({ contentType }) => contentType === curr);
+            const { data: cards = [] } = contentTypeData || {};
+            if (cards.length) {
+              acc.push(cards.shift());
+            }
+            return acc;
+          }, []);
+        }
         buildCardsShimmer.remove();
         if (data?.length) {
           // Render cards

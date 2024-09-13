@@ -344,13 +344,13 @@ export default class SignupFlowDialog {
       if (
         !this.validateForm(
           productInterestsBlock,
-          '#product-interests-form',
+          '.product-interests-form',
           '.product-interests-form-error',
           this.placeholders?.productInterestFormErrorMessage,
         ) ||
         !this.validateForm(
           roleIndustryBlock,
-          '#role-and-industry-form',
+          '.role-and-industry-form',
           '.role-and-industry-form-error',
           this.placeholders?.formFieldGroupError,
         )
