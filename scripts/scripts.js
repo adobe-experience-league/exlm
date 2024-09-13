@@ -1250,8 +1250,8 @@ function handleHomePageHashes() {
 
 // Function to handle user redirection to personalized home page if signed in
 async function homePageRedirection() {
-  const {lang} = getPathDetails();
-  if (window?.location.pathname === "/" || window?.location.pathname === `/${lang}`) {
+  const { lang } = getPathDetails();
+  if (window?.location.pathname === '/' || window?.location.pathname === `/${lang}`) {
     try {
       await loadIms();
       const { personalizedHomeLink } = getConfig() || {};
@@ -1261,12 +1261,11 @@ async function homePageRedirection() {
       }
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error("Error during redirect process:", error);
+      console.error('Error during redirect process:', error);
     }
   }
-  
+
   return false;
-  
 }
 
 /**
