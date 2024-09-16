@@ -3930,7 +3930,7 @@
       },
       {
         "component": "select",
-        "name": "Sort Target results by",
+        "name": "SortTargetResultsBy",
         "value": "882600",
         "label": "Sort Target results by",
         "description": "Adobe Target will load data based on the selected criteria if user has cookies enabled.",

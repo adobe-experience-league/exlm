@@ -63,7 +63,8 @@ export default async function decorate(block) {
 
   const isDesktop = window.matchMedia('(min-width:900px)').matches;
   const reversedDomElements = remainingElements.reverse();
-  const [firstEl, secondEl, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
+  const [firstEl, secondEl, targetCriteria, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
+  console.log(targetCriteria);
   const sortByContent = thirdEl?.innerText?.trim();
   const contentTypes = otherEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse();
   const contentTypesFetchMap = contentTypes.reduce((acc, curr) => {
