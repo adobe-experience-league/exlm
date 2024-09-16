@@ -3929,6 +3929,27 @@
         ]
       },
       {
+        "component": "select",
+        "name": "Sort Target results by",
+        "value": "882600",
+        "label": "Sort Target results by",
+        "description": "Adobe Target will load data based on the selected criteria if user has cookies enabled.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Most Popular across ExL",
+            "value": "882600"
+          }, {
+            "name": "Recommended For You",
+            "value": "882599"
+          }, {
+            "name": "Recently Viewed Content",
+            "value": "882601"
+          }
+
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "resultText",
