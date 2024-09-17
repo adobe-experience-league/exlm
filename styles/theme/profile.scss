@@ -278,9 +278,11 @@ body.profile
     position: sticky;
     top: 10px;
   }
+
   body.profile-home-page:has(.profile-background) main {
     grid-template-columns: 264px minmax(50vw, calc(100vw - 264px - 145px));
   }
+
   body.profile:not(.profile-home-page) .section:nth-child(2):not(.sign-up-flow-section) {
     background-image: url('/icons/solutions/profileDecoration.svg');
     background-repeat: no-repeat;
