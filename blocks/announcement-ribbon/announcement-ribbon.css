@@ -1,0 +1,99 @@
+/* Mobile (<600px) */
+.announcement-ribbon {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    background-color: var(--spectrum-gray-50);
+    border: 1px solid var(--non-spectrum-pale-grey);
+    border-radius: 8px;
+    padding: 24px;
+  }
+  
+  .announcement-ribbon :where(h1, h2, h3, h4, h5, h6) {
+    margin-bottom: 8px;
+    margin-top: 0;
+  }
+  
+  .announcement-ribbon .ribbon-default-content,
+  .announcement-ribbon .ribbon-description {
+    margin-bottom: 8px;
+  }
+  
+  .announcement-ribbon .ribbon-description {
+    font-size: var(--spectrum-font-size-200);
+    color: var(--spectrum-gray-800);
+    line-height: 19px;
+  }
+  
+  .announcement-ribbon .ribbon-button-container {
+    display: flex;
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+  
+  .announcement-ribbon .icon,
+  .announcement-ribbon .icon svg {
+    height: 16px;
+    width: 16px;
+  }
+  
+  .announcement-ribbon .icon svg path {
+    fill: var(--spectrum-gray-900);
+  }
+  
+  .announcement-ribbon .icon-close {
+    cursor: pointer;
+  }
+  
+  /* Tablet view (600px to 899px) */
+  @media (min-width: 600px) {
+    .announcement-ribbon {
+      gap: 24px;
+      padding: 16px 24px 8px 100px;
+    }
+  
+    .announcement-ribbon .ribbon-button-container {
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: 16px;
+    }
+  
+    .announcement-ribbon .ribbon-description {
+      margin-bottom: 0;
+    }
+  
+    .announcement-ribbon .icon-close {
+      margin-top: 30px;
+    }
+  }
+  
+  /* Desktop view (>900px) */
+  @media (min-width: 900px) {
+    .announcement-ribbon {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 16px 24px 16px 88px;
+      margin: 16px 0;
+    }
+  
+    .announcement-ribbon .ribbon-content-container {
+      display: flex;
+      flex-direction: row;
+      gap: 24px;
+    }
+  
+    .announcement-ribbon .ribbon-button-container {
+      flex-direction: row;
+      justify-content: flex-end;
+      gap: 16px;
+      width: auto;
+      align-self: center;
+    }
+  
+    .announcement-ribbon .icon-close {
+      margin: 0 12px 0 16px;
+    }
+  }
+  
