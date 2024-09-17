@@ -1077,7 +1077,7 @@
                   "name": "Recommended Content",
                   "model": "recommended-content",
                   "roles": ["profile_context"],
-                  "SortTargetResultsBy": ""
+                  "sortTargetResultsBy": ""
                 }
               }
             }
