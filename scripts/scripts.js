@@ -774,6 +774,12 @@ export function getConfig() {
     ['zh-hant', 'zh-Hant'],
     ['zh-hans', 'zh-Hans'],
   ]);
+  const cookieConsentName = 'OptanonConsent';
+  const targetCriteriaIds = {
+    mostPopular: '882600',
+    recommended: '882599',
+    recentlyViewed: '882601',
+  };
 
   const currentHost = window.location.hostname;
   const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
@@ -813,6 +819,8 @@ export function getConfig() {
     ppsOrigin,
     launchScriptSrc,
     signUpFlowConfigDate,
+    cookieConsentName,
+    targetCriteriaIds,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
     privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
@@ -1380,6 +1388,21 @@ export async function fetchJson(url, fallbackUrl) {
     .then((response) => (!response.ok && fallbackUrl ? fetch(fallbackUrl) : response))
     .then((response) => (response.ok ? response.json() : null))
     .then((json) => json?.data || []);
+}
+
+export function getCookie(cookieName) {
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const cookies = decodedCookie.split(';');
+  for (let i = 0; i < cookies.length; i += 1) {
+    let cookie = cookies[i];
+    while (cookie.charAt(0) === ' ') {
+      cookie = cookie.substring(1);
+    }
+    if (cookie.indexOf(cookieName) === 0) {
+      return cookie.substring(cookieName.length + 1, cookie.indexOf('&') ? cookie.indexOf('&') : cookie.length);
+    }
+  }
+  return null;
 }
 
 async function loadPage() {

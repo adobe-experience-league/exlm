@@ -1,16 +1,56 @@
 import TabbedCardList from '../../scripts/tabbed-card-list/tabbed-card-list.js';
-import { createTag, fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
+import {
+  createTag,
+  fetchLanguagePlaceholders,
+  htmlToElement,
+  getConfig,
+  getPathDetails,
+  getCookie,
+} from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import {
   convertToTitleCase,
   extractCapability,
+  getCardData,
   removeProductDuplicates,
 } from '../../scripts/browse-card/browse-card-utils.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+
+const { targetCriteriaIds, cookieConsentName } = getConfig();
+
+/**
+ * Listens for the target-recs-ready event to fetch the content as per the given criteria
+ * @param {string} criteriaId - The criteria id to listen for
+ * @returns {Promise}
+ */
+function handleTargetEvent(criteria = targetCriteriaIds?.recommended) {
+  return new Promise((resolve) => {
+    function targetEventHandler(event) {
+      if (event?.detail?.meta['offer.id'] === criteria) {
+        document.removeEventListener('target-recs-ready', targetEventHandler);
+        resolve(event.detail);
+      }
+    }
+    document.addEventListener('target-recs-ready', targetEventHandler);
+  });
+}
+
+/**
+ * Check if the user has accepted the cookie policy for target
+ * @returns {boolean}
+ */
+function checkTargetSupport() {
+  const value = getCookie(cookieConsentName);
+  const cookieConsentValues = value.split(',').map((part) => part[part.length - 1]);
+  if (cookieConsentValues[0] === '1' && cookieConsentValues[1] === '1') {
+    return true;
+  }
+  return false;
+}
 
 async function fetchInterestData() {
   try {
@@ -31,6 +71,7 @@ async function fetchInterestData() {
 }
 
 const interestDataPromise = fetchInterestData();
+
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -46,6 +87,9 @@ const ALL_MY_OPTIONS_KEY = placeholders?.allMyProducts || 'All my products';
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
+  handleTargetEvent();
+  const targetSupport = checkTargetSupport();
+
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
@@ -64,7 +108,6 @@ export default async function decorate(block) {
   const isDesktop = window.matchMedia('(min-width:900px)').matches;
   const reversedDomElements = remainingElements.reverse();
   const [firstEl, secondEl, targetCriteria, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
-  console.log(targetCriteria);
   const sortByContent = thirdEl?.innerText?.trim();
   const contentTypes = otherEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse();
   const contentTypesFetchMap = contentTypes.reduce((acc, curr) => {
@@ -89,7 +132,7 @@ export default async function decorate(block) {
     solutionLevels: profileSolutionLevels = [],
   } = profileData;
   const sortedProfileInterests = profileInterests.sort();
-  const filterOptions = [...new Set(sortedProfileInterests)];
+  let filterOptions = [...new Set(sortedProfileInterests)];
   const experienceLevels = sortedProfileInterests.map((interestName) => {
     const interest = interestsDataArray.find((int) => int.Name === interestName);
     let expLevel = 'Beginner';
@@ -109,14 +152,19 @@ export default async function decorate(block) {
     : fourthEl?.innerText?.trim().split(',').filter(Boolean);
 
   filterOptions.unshift(ALL_MY_OPTIONS_KEY);
+  const [defaultFilterOption = ''] = filterOptions;
+
+  // Disable filters for target (Will be done in the future sprints)
+  if (targetSupport) {
+    filterOptions = [];
+  }
 
   const renderDropdown = isDesktop ? filterOptions?.length > 4 : true;
   const numberOfResults = contentTypeIsEmpty ? 4 : 1;
-  const [defaultFilterOption = ''] = filterOptions;
 
   const buildCardsShimmer = new BuildPlaceholder(contentTypeIsEmpty ? numberOfResults : contentTypes.length);
 
-  const fetchDataAndRenderBlock = (optionType) => {
+  const fetchDataAndRenderBlock = async (optionType) => {
     const contentDiv = block.querySelector('.recommended-content-block-section');
     const currentActiveOption = contentDiv.dataset.selected;
     const lowercaseOptionType = optionType?.toLowerCase();
@@ -137,7 +185,6 @@ export default async function decorate(block) {
       // show everything for default tab
       clonedProducts = [...new Set([...products, ...sortedProfileInterests])];
     }
-    console.log({ sortedProfileInterests, clonedProducts, products });
     const params = {
       contentType: null,
       product: clonedProducts,
@@ -158,37 +205,63 @@ export default async function decorate(block) {
     if (noResultsContent) {
       noResultsContent.remove();
     }
-    const cardPromises = contentTypeIsEmpty
-      ? [BrowseCardsDelegate.fetchCardData(params)]
-      : Object.keys(contentTypesFetchMap).map((contentType) => {
-          const payload = {
-            ...params,
-          };
-          if (contentType) {
-            payload.contentType = [contentType];
+    let cardPromises = [];
+    if (targetSupport) {
+      const { data } = await handleTargetEvent(targetCriteria.textContent.trim());
+      const cardData = [];
+      let i = 0;
+      while (cardData.length < 4 && i < data.length) {
+        let link = data[i].path;
+        link = link.startsWith('/') ? `/${getPathDetails().lang}${window.hlx.codeBasePath}${link}` : link;
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          const dataObj = await getCardData(link, placeholders);
+          if (dataObj) {
+            cardData.push(dataObj);
+            cardPromises.push(
+              new Promise((resolve) => {
+                resolve(dataObj);
+              }),
+            );
           }
-          if (contentTypesFetchMap[contentType]) {
-            payload.noOfResults = contentTypesFetchMap[contentType];
-          }
+        } catch (err) {
+          console.error(err);
+        }
+        i += 1;
+      }
+    } else {
+      cardPromises = contentTypeIsEmpty
+        ? [BrowseCardsDelegate.fetchCardData(params)]
+        : Object.keys(contentTypesFetchMap).map((contentType) => {
+            const payload = {
+              ...params,
+            };
+            if (contentType) {
+              payload.contentType = [contentType];
+            }
+            if (contentTypesFetchMap[contentType]) {
+              payload.noOfResults = contentTypesFetchMap[contentType];
+            }
 
-          return new Promise((resolve) => {
-            BrowseCardsDelegate.fetchCardData(payload)
-              .then((data) => {
-                const [ct] = payload.contentType || [''];
-                resolve({
-                  contentType: ct,
-                  data,
+            return new Promise((resolve) => {
+              BrowseCardsDelegate.fetchCardData(payload)
+                .then((data) => {
+                  const [ct] = payload.contentType || [''];
+                  resolve({
+                    contentType: ct,
+                    data,
+                  });
+                })
+                .catch(() => {
+                  resolve({});
                 });
-              })
-              .catch(() => {
-                resolve({});
-              });
+            });
           });
-        });
+    }
     Promise.all(cardPromises)
       .then((cardResponses) => {
         let data;
-        if (contentTypeIsEmpty) {
+        if (targetSupport || contentTypeIsEmpty) {
           data = cardResponses?.flat() || [];
         } else {
           data = contentTypes.reduce((acc, curr) => {
