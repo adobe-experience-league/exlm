@@ -1450,6 +1450,7 @@ if (!window.hlx.DO_NOT_LOAD_PAGE) {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error during redirect process:', error);
+      loadPage();
     }
   } else {
     loadPage();
