@@ -20,14 +20,14 @@ import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
-const { targetCriteriaIds } = getConfig();
+const { targetCriteriaIds, cookieConsentName } = getConfig();
 
 /**
  * Listens for the target-recs-ready event to fetch the content as per the given criteria
  * @param {string} criteriaId - The criteria id to listen for
  * @returns {Promise}
  */
-function handleTargetEvent(criteria = targetCriteriaIds.recommended) {
+function handleTargetEvent(criteria = targetCriteriaIds?.recommended) {
   return new Promise((resolve) => {
     function targetEventHandler(event) {
       if (event?.detail?.meta['offer.id'] === criteria) {
@@ -44,7 +44,7 @@ function handleTargetEvent(criteria = targetCriteriaIds.recommended) {
  * @returns {boolean}
  */
 function checkTargetSupport() {
-  const value = getCookies('OptanonConsent');
+  const value = getCookies(cookieConsentName);
   const cookieConsentValues = value.split(',').map((part) => part[part.length - 1]);
   if (cookieConsentValues[0] === '1' && cookieConsentValues[1] === '1') {
     return true;

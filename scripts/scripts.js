@@ -774,7 +774,7 @@ export function getConfig() {
     ['zh-hant', 'zh-Hant'],
     ['zh-hans', 'zh-Hans'],
   ]);
-
+  const cookieConsentName = 'OptanonConsent';
   const targetCriteriaIds = {
     mostPopular: '882600',
     recommended: '882599',
@@ -819,6 +819,7 @@ export function getConfig() {
     ppsOrigin,
     launchScriptSrc,
     signUpFlowConfigDate,
+    cookieConsentName,
     targetCriteriaIds,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
