@@ -156,7 +156,7 @@ export default async function decorate(block) {
   const [defaultFilterOption = ''] = filterOptions;
 
   // Disable filters for target (Will be done in the future sprints)
-  if (targetSupport) {
+  if (targetSupport && targetCriteria) {
     filterOptions = [];
   }
 
