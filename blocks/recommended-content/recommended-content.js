@@ -5,6 +5,7 @@ import {
   htmlToElement,
   getConfig,
   getPathDetails,
+  getCookies,
 } from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
@@ -19,20 +20,17 @@ import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 
-// Criteria ID for Most Popular across ExL as fallback if Author does not provide one
-const defaultTargetCriteriaId = '882600';
+const { targetCriteriaIds } = getConfig();
 
 /**
  * Listens for the target-recs-ready event to fetch the content as per the given criteria
  * @param {string} criteriaId - The criteria id to listen for
  * @returns {Promise}
  */
-function handleTargetEvent(criteriaId = defaultTargetCriteriaId) {
-  // eslint-disable-next-line no-param-reassign
-  if (criteriaId.length < 1) criteriaId = defaultTargetCriteriaId;
+function handleTargetEvent(criteria = targetCriteriaIds.recommended) {
   return new Promise((resolve) => {
     function targetEventHandler(event) {
-      if (event?.detail?.meta['offer.id'] === criteriaId) {
+      if (event?.detail?.meta['offer.id'] === criteria) {
         document.removeEventListener('target-recs-ready', targetEventHandler);
         resolve(event.detail);
       }
@@ -46,22 +44,10 @@ function handleTargetEvent(criteriaId = defaultTargetCriteriaId) {
  * @returns {boolean}
  */
 function checkTargetSupport() {
-  const name = 'OptanonConsent=';
-  const decodedCookie = decodeURIComponent(document.cookie);
-  const cookies = decodedCookie.split(';');
-  for (let i = 0; i < cookies.length; i += 1) {
-    let cookie = cookies[i];
-    while (cookie.charAt(0) === ' ') {
-      cookie = cookie.substring(1);
-    }
-    if (cookie.indexOf(name) === 0) {
-      const value = cookie.substring(name.length, cookie.indexOf('&') ? cookie.indexOf('&') : cookie.length);
-      const cookieConsentValues = value.split(',').map((part) => part[part.length - 1]);
-      if (cookieConsentValues[0] === '1' && cookieConsentValues[1] === '1') {
-        return true;
-      }
-      return false;
-    }
+  const value = getCookies('OptanonConsent');
+  const cookieConsentValues = value.split(',').map((part) => part[part.length - 1]);
+  if (cookieConsentValues[0] === '1' && cookieConsentValues[1] === '1') {
+    return true;
   }
   return false;
 }
