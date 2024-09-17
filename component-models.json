@@ -3937,6 +3937,10 @@
         "valueType": "string",
         "options": [
           {
+            "name": "Default",
+            "value": ""
+          },
+          {
             "name": "Most Popular across ExL",
             "value": "882600"
           },
