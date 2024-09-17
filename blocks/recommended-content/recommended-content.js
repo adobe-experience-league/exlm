@@ -45,6 +45,7 @@ function handleTargetEvent(criteria = targetCriteriaIds?.recommended) {
  */
 function checkTargetSupport() {
   const value = getCookie(cookieConsentName);
+  if (!value || window.hlx.aemRoot) return false;
   const cookieConsentValues = value.split(',').map((part) => part[part.length - 1]);
   if (cookieConsentValues[0] === '1' && cookieConsentValues[1] === '1') {
     return true;
@@ -155,7 +156,7 @@ export default async function decorate(block) {
   const [defaultFilterOption = ''] = filterOptions;
 
   // Disable filters for target (Will be done in the future sprints)
-  if (targetSupport) {
+  if (targetSupport && targetCriteria) {
     filterOptions = [];
   }
 
@@ -206,7 +207,7 @@ export default async function decorate(block) {
       noResultsContent.remove();
     }
     let cardPromises = [];
-    if (targetSupport) {
+    if (targetSupport && targetCriteria) {
       const { data } = await handleTargetEvent(targetCriteria.textContent.trim());
       const cardData = [];
       let i = 0;

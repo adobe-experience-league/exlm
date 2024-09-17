@@ -1076,7 +1076,8 @@
                 "template": {
                   "name": "Recommended Content",
                   "model": "recommended-content",
-                  "roles": ["profile_context"]
+                  "roles": ["profile_context"],
+                  "sortTargetResultsBy": ""
                 }
               }
             }
