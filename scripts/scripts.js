@@ -1469,12 +1469,11 @@ if (!window.hlx.DO_NOT_LOAD_PAGE) {
       if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
         window.location.replace(`${window.location.origin}${personalizedHomeLink}`);
       }
-      loadPage();
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error during redirect process:', error);
-      loadPage();
     }
+    loadPage();
   } else {
     loadPage();
   }

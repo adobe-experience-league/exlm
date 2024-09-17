@@ -37,12 +37,14 @@ export default async function decorate(block) {
   description?.classList.add('ribbon-description');
 
   const ribbonDom = document.createRange().createContextualFragment(`
+  <div class = "ribbon-content-container">
     <div class="ribbon-default-content">
       ${heading ? heading.outerHTML : ''}
       ${description ? description.outerHTML : ''}
     </div>
     <div class="ribbon-button-container">
       ${decorateButtons(firstCta, secondCta)}
+    </div>
     </div>
     <span class="icon icon-close"></span>
   `);
