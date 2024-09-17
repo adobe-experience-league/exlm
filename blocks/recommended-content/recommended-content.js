@@ -5,7 +5,7 @@ import {
   htmlToElement,
   getConfig,
   getPathDetails,
-  getCookies,
+  getCookie,
 } from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
@@ -44,7 +44,7 @@ function handleTargetEvent(criteria = targetCriteriaIds?.recommended) {
  * @returns {boolean}
  */
 function checkTargetSupport() {
-  const value = getCookies(cookieConsentName);
+  const value = getCookie(cookieConsentName);
   const cookieConsentValues = value.split(',').map((part) => part[part.length - 1]);
   if (cookieConsentValues[0] === '1' && cookieConsentValues[1] === '1') {
     return true;

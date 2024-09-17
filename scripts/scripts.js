@@ -778,7 +778,7 @@ export function getConfig() {
   const targetCriteriaIds = {
     mostPopular: '882600',
     recommended: '882599',
-    recentlyViwed: '882601',
+    recentlyViewed: '882601',
   };
 
   const currentHost = window.location.hostname;
@@ -1390,7 +1390,7 @@ export async function fetchJson(url, fallbackUrl) {
     .then((json) => json?.data || []);
 }
 
-export function getCookies(cookieName) {
+export function getCookie(cookieName) {
   const decodedCookie = decodeURIComponent(document.cookie);
   const cookies = decodedCookie.split(';');
   for (let i = 0; i < cookies.length; i += 1) {
