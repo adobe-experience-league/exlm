@@ -207,7 +207,7 @@ export default async function decorate(block) {
       noResultsContent.remove();
     }
     let cardPromises = [];
-    if (targetSupport) {
+    if (targetSupport && targetCriteria) {
       const { data } = await handleTargetEvent(targetCriteria.textContent.trim());
       const cardData = [];
       let i = 0;
