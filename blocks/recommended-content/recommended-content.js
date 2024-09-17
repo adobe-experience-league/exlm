@@ -45,7 +45,7 @@ function handleTargetEvent(criteria = targetCriteriaIds?.recommended) {
  */
 function checkTargetSupport() {
   const value = getCookie(cookieConsentName);
-  if(!value || window.hlx.aemRoot) return false;
+  if (!value || window.hlx.aemRoot) return false;
   const cookieConsentValues = value.split(',').map((part) => part[part.length - 1]);
   if (cookieConsentValues[0] === '1' && cookieConsentValues[1] === '1') {
     return true;
