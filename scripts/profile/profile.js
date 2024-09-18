@@ -4,6 +4,7 @@ import { defaultProfileClient } from '../auth/profile.js';
 const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
 const { localizedCommunityProfile, industryUrl, adobeAccountURL, communityAccountURL } = getConfig();
+
 const fetchExlProfileData = async () => {
   const [profileData, ppsProfileData] = await Promise.allSettled([
     defaultProfileClient.getMergedProfile(),
