@@ -1,4 +1,4 @@
-import { htmlToElement, moveInstrumentation } from '../../scripts/scripts.js';
+import { htmlToElement, moveInstrumentation, decorateExternalLinks } from '../../scripts/scripts.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
 
@@ -12,6 +12,7 @@ const fetchPageContent = async (url, loader, block) => {
       container.innerHTML = pageContent;
       decorateSections(container);
       decorateBlocks(container);
+      decorateExternalLinks(container);
       await loadBlocks(container);
       await decorateIcons(container);
       if (window.hlx.aemRoot) {
