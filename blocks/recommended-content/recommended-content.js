@@ -29,9 +29,14 @@ const { targetCriteriaIds, cookieConsentName } = getConfig();
  */
 function handleTargetEvent(criteria = targetCriteriaIds?.recommended) {
   return new Promise((resolve) => {
+    window.exlm?.targetData?.forEach((data) => {
+      if (data?.meta['offer.id'] === criteria) resolve(data);
+    });
     function targetEventHandler(event) {
       if (event?.detail?.meta['offer.id'] === criteria) {
         document.removeEventListener('target-recs-ready', targetEventHandler);
+        if (!window.exlm.targetData) window.exlm.targetData = [];
+        window.exlm.targetData.push(event.detail);
         resolve(event.detail);
       }
     }
@@ -133,7 +138,7 @@ export default async function decorate(block) {
     solutionLevels: profileSolutionLevels = [],
   } = profileData;
   const sortedProfileInterests = profileInterests.sort();
-  let filterOptions = [...new Set(sortedProfileInterests)];
+  const filterOptions = [...new Set(sortedProfileInterests)];
   const experienceLevels = sortedProfileInterests.map((interestName) => {
     const interest = interestsDataArray.find((int) => int.Name === interestName);
     let expLevel = 'Beginner';
@@ -154,11 +159,6 @@ export default async function decorate(block) {
 
   filterOptions.unshift(ALL_MY_OPTIONS_KEY);
   const [defaultFilterOption = ''] = filterOptions;
-
-  // Disable filters for target (Will be done in the future sprints)
-  if (targetSupport && targetCriteria) {
-    filterOptions = [];
-  }
 
   const renderDropdown = isDesktop ? filterOptions?.length > 4 : true;
   const numberOfResults = contentTypeIsEmpty ? 4 : 1;
@@ -208,7 +208,17 @@ export default async function decorate(block) {
     }
     let cardPromises = [];
     if (targetSupport && targetCriteria) {
-      const { data } = await handleTargetEvent(targetCriteria.textContent.trim());
+      let { data } = await handleTargetEvent(targetCriteria.textContent.trim());
+
+      if (params.context.interests.length) {
+        if (optionType === ALL_MY_OPTIONS_KEY.toLowerCase()) {
+          data = data.filter((pageData) =>
+            params.context.interests.some((ele) => pageData.product.toLowerCase().includes(ele.toLowerCase())),
+          );
+        } else {
+          data = data.filter((pageData) => pageData.product.toLowerCase().includes(optionType.toLowerCase()));
+        }
+      }
       const cardData = [];
       let i = 0;
       while (cardData.length < 4 && i < data.length) {
