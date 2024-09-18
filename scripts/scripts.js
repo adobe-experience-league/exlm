@@ -856,6 +856,8 @@ export function getConfig() {
       ? `https://experienceleaguecommunities.adobe.com/?profile.language=${communityLocale}`
       : `https://experienceleaguecommunities-dev.adobe.com/?profile.language=${communityLocale}`,
     interestsUrl: `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`,
+    // Community Profile URL
+    localizedCommunityProfile: `{communityProfileLink}?profile.language=${communityLocale}`,
   };
   return window.exlm.config;
 }
