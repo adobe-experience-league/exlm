@@ -3,7 +3,7 @@ import { defaultProfileClient } from '../auth/profile.js';
 
 const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
-const { localizedCommunityProfile, industryUrl, adobeAccountURL, communityAccountURL } = getConfig();
+const { localizedCommunityProfileParam, industryUrl, adobeAccountURL, communityAccountURL } = getConfig();
 
 const fetchExlProfileData = async () => {
   const [profileData, ppsProfileData] = await Promise.allSettled([
@@ -125,7 +125,7 @@ const generateCommunityAccountDOM = (profileData, placeholders) => {
       ${
         communityProfileURL
           ? `<div class="manage-community-account">
-        <a href="${localizedCommunityProfile.replace('{communityProfileLink}', communityProfileURL)}" target="_blank">
+        <a href="${communityProfileURL}${localizedCommunityProfileParam}" target="_blank">
         <span class="icon icon-new-tab"></span>
         ${placeholders?.updateCommunityProfile || 'Go to your community profile'}
         </a>
