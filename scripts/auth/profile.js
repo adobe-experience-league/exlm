@@ -189,7 +189,7 @@ class ProfileClient {
     const accountId = (await window.adobeIMS.getProfile()).userId;
 
     try {
-      const response = await fetch(`${khorosProfileDetailsUrl}?user=${accountId}`, {
+      const response = await fetch(`${khorosProfileDetailsUrl}&user=${accountId}`, {
         method: 'GET',
         headers: {
           'x-ims-token': await window.adobeIMS?.getAccessToken().token,
