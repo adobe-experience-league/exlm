@@ -5,7 +5,7 @@ import { getPathDetails, htmlToElement } from '../../scripts/scripts.js';
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const { lang } = getPathDetails();
 
-const awardsPage = `/${lang}/home/awards`;
+const awardsPage = '/home/awards';
 const navPage = `${lang}/home/nav`;
 const profileSettingsPage = `/${lang}/home/profile-settings`;
 const navURL = `${window.location.origin}/${navPage}`;
@@ -60,7 +60,7 @@ export default async function ProfileRail(block) {
         navLink.remove();
       }
       // redirect awards page to profile-settings page
-      if (window.location.pathname === `${awardsPage}`) {
+      if (window.location.pathname === `/${lang}${awardsPage}`) {
         window.location.pathname = `${profileSettingsPage}`;
       }
     }
