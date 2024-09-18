@@ -822,7 +822,7 @@ export function getConfig() {
     cookieConsentName,
     targetCriteriaIds,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
-    khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details?lang=${communityLocale}`,
+    khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
     privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
@@ -856,6 +856,8 @@ export function getConfig() {
       ? `https://experienceleaguecommunities.adobe.com/?profile.language=${communityLocale}`
       : `https://experienceleaguecommunities-dev.adobe.com/?profile.language=${communityLocale}`,
     interestsUrl: `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`,
+    // Param for localized Community Profile URL
+    localizedCommunityProfileParam: `?profile.language=${communityLocale}`,
   };
   return window.exlm.config;
 }
