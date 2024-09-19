@@ -1450,7 +1450,8 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
-if (!window.hlx.DO_NOT_LOAD_PAGE) {
+(async function(){
+  if (!window.hlx.DO_NOT_LOAD_PAGE) {
   const { lang } = getPathDetails();
   document.documentElement.lang = lang || 'en';
   if (isProfilePage()) {
@@ -1464,19 +1465,8 @@ if (!window.hlx.DO_NOT_LOAD_PAGE) {
         await window?.adobeIMS?.signIn();
       }
     }
-  } else if (isHomePage(lang)) {
-    try {
-      await loadIms();
-      const { personalizedHomeLink } = getConfig() || {};
-      if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
-        window.location.replace(`${window.location.origin}${personalizedHomeLink}`);
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error during redirect process:', error);
-    }
-    loadPage();
   } else {
     loadPage();
   }
 }
+})();
