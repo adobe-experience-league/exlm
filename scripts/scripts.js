@@ -1401,7 +1401,7 @@ export function getCookie(cookieName) {
       cookie = cookie.substring(1);
     }
     if (cookie.indexOf(cookieName) === 0) {
-      return cookie.substring(cookieName.length + 1, cookie.indexOf('&') ? cookie.indexOf('&') : cookie.length);
+      return cookie.substring(cookieName.length + 1);
     }
   }
   return null;
