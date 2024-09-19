@@ -811,6 +811,7 @@ export function getConfig() {
   window.exlm = window.exlm || {};
   window.exlm.config = {
     isProd,
+    isStage,
     ims,
     currentEnv,
     cdnOrigin,
@@ -1467,8 +1468,8 @@ if (!window.hlx.DO_NOT_LOAD_PAGE) {
   } else if (isHomePage(lang)) {
     try {
       await loadIms();
-      const { personalizedHomeLink } = getConfig() || {};
-      if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
+      const { isProd, isStage, personalizedHomeLink } = getConfig() || {};
+      if (!isProd && !isStage && window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
         window.location.replace(`${window.location.origin}${personalizedHomeLink}`);
       }
     } catch (error) {
