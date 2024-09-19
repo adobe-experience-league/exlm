@@ -21,14 +21,13 @@ export default async function showSignupDialog() {
   const configDate = new Date(signUpFlowConfigDate);
   const profileData = await defaultProfileClient.getMergedProfile();
   const profileTimeStamp = new Date(profileData.timestamp);
-  const interests = profileData.interests ?? [];
   const modalSeen = await defaultProfileClient.getLatestInteraction('modalSeen');
   if (modalSeen) {
     return;
   }
   const todayStartTimeStamp = new Date();
   todayStartTimeStamp.setHours(0, 0, 0, 0);
-  if (profileTimeStamp < todayStartTimeStamp && interests.length === 0) {
+  if (profileTimeStamp < todayStartTimeStamp) {
     SignupFlowDialog.init(SIGNUP_DIALOG_TYPE.INCOMPLETE_PROFILE);
   } else if (profileTimeStamp >= configDate) {
     SignupFlowDialog.init(SIGNUP_DIALOG_TYPE.NEW_PROFILE);
