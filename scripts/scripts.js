@@ -932,10 +932,16 @@ const loadMartech = async (headerPromise, footerPromise) => {
   // footer and one trust loaded, add event listener to open one trust popup,
   Promise.all([footerPromise, oneTrustPromise]).then(() => {
     console.timeLog('martech', `onetrust: set event listeners ${Date.now()}`);
-    document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
-      e.preventDefault();
-      window.adobePrivacy.showConsentPopup();
-    });
+    const onetrust = document.querySelector('[href="#onetrust"]');
+
+    if (onetrust) {
+      onetrust.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.adobePrivacy.showConsentPopup();
+      });
+    } else {
+      console.log('OneTrust anchor not found.');
+    }
   });
 
   Promise.allSettled([headerPromise, footerPromise, oneTrustPromise, launchScriptPromise, libAnalyticsPromise]).then(
@@ -1376,21 +1382,23 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
-if (!window.hlx.DO_NOT_LOAD_PAGE) {
-  const { lang } = getPathDetails();
-  document.documentElement.lang = lang || 'en';
-  if (isProfilePage()) {
-    if (window.location.href.includes('.html')) {
-      loadPage();
-    } else {
-      await loadIms();
-      if (window?.adobeIMS?.isSignedInUser()) {
+(async function () {
+  if (!window.hlx.DO_NOT_LOAD_PAGE) {
+    const { lang } = getPathDetails();
+    document.documentElement.lang = lang || 'en';
+    if (isProfilePage()) {
+      if (window.location.href.includes('.html')) {
         loadPage();
       } else {
-        await window?.adobeIMS?.signIn();
+        await loadIms();
+        if (window?.adobeIMS?.isSignedInUser()) {
+          loadPage();
+        } else {
+          await window?.adobeIMS?.signIn();
+        }
       }
+    } else {
+      loadPage();
     }
-  } else {
-    loadPage();
   }
-}
+})();
