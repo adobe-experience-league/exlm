@@ -933,14 +933,14 @@ const loadMartech = async (headerPromise, footerPromise) => {
   Promise.all([footerPromise, oneTrustPromise]).then(() => {
     console.timeLog('martech', `onetrust: set event listeners ${Date.now()}`);
     const onetrust = document.querySelector('[href="#onetrust"]');
-    
+
     if (onetrust) {
       onetrust.addEventListener('click', (e) => {
         e.preventDefault();
         window.adobePrivacy.showConsentPopup();
       });
     } else {
-      console.log('OneTrust anchor not found.')
+      console.log('OneTrust anchor not found.');
     }
   });
 
@@ -1382,23 +1382,23 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
-(async function(){
+(async function () {
   if (!window.hlx.DO_NOT_LOAD_PAGE) {
-  const { lang } = getPathDetails();
-  document.documentElement.lang = lang || 'en';
-  if (isProfilePage()) {
-    if (window.location.href.includes('.html')) {
-      loadPage();
-    } else {
-      await loadIms();
-      if (window?.adobeIMS?.isSignedInUser()) {
+    const { lang } = getPathDetails();
+    document.documentElement.lang = lang || 'en';
+    if (isProfilePage()) {
+      if (window.location.href.includes('.html')) {
         loadPage();
       } else {
-        await window?.adobeIMS?.signIn();
+        await loadIms();
+        if (window?.adobeIMS?.isSignedInUser()) {
+          loadPage();
+        } else {
+          await window?.adobeIMS?.signIn();
+        }
       }
+    } else {
+      loadPage();
     }
-  } else {
-    loadPage();
   }
-}
 })();
