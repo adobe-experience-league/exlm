@@ -3932,12 +3932,12 @@
         "component": "select",
         "name": "sortTargetResultsBy",
         "value": "",
-        "label": "Sort Target results by",
-        "description": "Adobe Target will load data based on the selected criteria if user has cookies enabled.",
+        "label": "Adobe Target: Sort results by",
+        "description": "Adobe Target will load data based on the selected criteria if user has cookies enabled. Not applicable will default to Coveo",
         "valueType": "string",
         "options": [
           {
-            "name": "Default",
+            "name": "Not Applicable",
             "value": ""
           },
           {
