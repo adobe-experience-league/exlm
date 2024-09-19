@@ -77,7 +77,7 @@ function targetDataAdapter(data) {
     ...data,
     badgeTitle: data?.contentType,
     type: data?.contentType,
-    authorInfo: {
+    authorInfo: data?.authorInfo || {
       name: [''],
       type: [''],
     },
