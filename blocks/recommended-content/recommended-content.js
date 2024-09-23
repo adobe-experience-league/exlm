@@ -196,6 +196,14 @@ export default async function decorate(block) {
 
   const buildCardsShimmer = new BuildPlaceholder(contentTypeIsEmpty ? numberOfResults : contentTypes.length);
 
+  const recommendedContentNoResults = () => {
+    const recommendedContentNoResultsElement = block.querySelector('.browse-card-no-results');
+    const noResultsText =
+      placeholders?.recommendedContentNoResultsText ||
+      `We couldn’t find specific matches, but here are the latest tutorials/articles that others are loving right now!`;
+    recommendedContentNoResultsElement.innerHTML = noResultsText;
+  };
+
   const fetchDataAndRenderBlock = async (optionType) => {
     const contentDiv = block.querySelector('.recommended-content-block-section');
     const currentActiveOption = contentDiv.dataset.selected;
@@ -315,6 +323,7 @@ export default async function decorate(block) {
         } else {
           buildCardsShimmer.remove();
           buildNoResultsContent(contentDiv, true);
+          recommendedContentNoResults(contentDiv);
           contentDiv.style.display = 'block';
         }
 
@@ -329,6 +338,7 @@ export default async function decorate(block) {
         // Hide shimmer placeholders on error
         buildCardsShimmer.remove();
         buildNoResultsContent(contentDiv, true);
+        recommendedContentNoResults(contentDiv);
         contentDiv.style.display = 'block';
         /* eslint-disable-next-line no-console */
         console.error(err);
