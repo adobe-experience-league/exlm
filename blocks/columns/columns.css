@@ -12,7 +12,8 @@
   grid-template-columns: 1fr;
 }
 
-.columns > div > div {
+div:not([data-aue-model^='columns']).columns > div > div,
+div[data-aue-model^='columns'].columns > div > div > div {
   padding: 16px;
 }
 
@@ -31,6 +32,11 @@ div[data-aue-model^='columns'].columns.block.b-alt-row > div > div > div {
   display: inline-flex;
   position: relative;
   padding: 10px;
+  width: 96%;
+}
+
+div[data-aue-model^='columns'].columns.block.b-alt-row > div > div {
+  position: relative;
   width: 96%;
 }
 
