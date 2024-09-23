@@ -18,6 +18,7 @@ import {
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 let placeholders = {};
 try {
@@ -461,4 +462,5 @@ export default async function decorate(block) {
       onTabFormReady: onTabReady,
     });
   }
+  await decorateIcons(block);
 }
