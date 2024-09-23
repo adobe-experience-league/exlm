@@ -113,6 +113,7 @@ async function fetchInterestData() {
 const interestDataPromise = fetchInterestData();
 
 const ALL_MY_OPTIONS_KEY = placeholders?.allMyProducts || 'All my products';
+const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -186,7 +187,8 @@ export default async function decorate(block) {
     ? profileRoles
     : fourthEl?.innerText?.trim().split(',').filter(Boolean);
 
-  filterOptions.unshift(ALL_MY_OPTIONS_KEY);
+  const defaultOptionsKey = profileInterests.length === 0 ? ALL_ADOBE_OPTIONS_KEY : ALL_MY_OPTIONS_KEY;
+  filterOptions.unshift(defaultOptionsKey);
   const [defaultFilterOption = ''] = filterOptions;
 
   const renderDropdown = isDesktop ? filterOptions?.length > 4 : true;
@@ -202,7 +204,7 @@ export default async function decorate(block) {
       return;
     }
     contentDiv.dataset.selected = lowercaseOptionType;
-    const showProfileOptions = lowercaseOptionType === ALL_MY_OPTIONS_KEY.toLowerCase();
+    const showProfileOptions = lowercaseOptionType === defaultOptionsKey.toLowerCase();
     const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
     const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
     const expLevel = experienceLevels[expLevelIndex] ?? 'Beginner';
@@ -273,7 +275,7 @@ export default async function decorate(block) {
         if (targetSupport) {
           data = cardResponses[0].data;
           if (params.context.interests.length) {
-            if (optionType.toLowerCase() === ALL_MY_OPTIONS_KEY.toLowerCase()) {
+            if (optionType.toLowerCase() === defaultOptionsKey.toLowerCase()) {
               data = data.filter((pageData) =>
                 params.context.interests.some((ele) => pageData.product.toLowerCase().includes(ele.toLowerCase())),
               );
