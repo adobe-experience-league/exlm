@@ -840,7 +840,7 @@ export function getConfig() {
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
     // Personlized Home Page Link
-    personalizedHomeLink: `/${lang}/home`,
+    personalizedHomeLink: `/home`,
     // Browse Left nav
     browseMoreProductsLink: `/${lang}/browse`,
     // Machine Translation
@@ -1450,9 +1450,10 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
-(async function () {
+(async () => {
   if (!window.hlx.DO_NOT_LOAD_PAGE) {
     const { lang } = getPathDetails();
+    const { isProd, personalizedHomeLink } = getConfig() || {};
     document.documentElement.lang = lang || 'en';
     if (isProfilePage()) {
       if (window.location.href.includes('.html')) {
@@ -1465,6 +1466,17 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
           await window?.adobeIMS?.signIn();
         }
       }
+    } else if (isHomePage(lang) && !isProd) {
+      try {
+        await loadIms();
+        if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
+          window.location.replace(`${window.location.origin}/${lang}${personalizedHomeLink}`);
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error during redirect process:', error);
+      }
+      loadPage();
     } else {
       loadPage();
     }
