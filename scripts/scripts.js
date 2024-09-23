@@ -840,7 +840,7 @@ export function getConfig() {
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
     // Personlized Home Page Link
-    personalizedHomeLink: `/${lang}/home`,
+    personalizedHomeLink: `/home`,
     // Browse Left nav
     browseMoreProductsLink: `/${lang}/browse`,
     // Machine Translation
@@ -1453,6 +1453,7 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 (async () => {
   if (!window.hlx.DO_NOT_LOAD_PAGE) {
     const { lang } = getPathDetails();
+    const { isProd, personalizedHomeLink } = getConfig() || {};
     document.documentElement.lang = lang || 'en';
     if (isProfilePage()) {
       if (window.location.href.includes('.html')) {
@@ -1465,12 +1466,11 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
           await window?.adobeIMS?.signIn();
         }
       }
-    } else if (isHomePage(lang)) {
+    } else if (isHomePage(lang) && !isProd) {
       try {
         await loadIms();
-        const { isProd, personalizedHomeLink } = getConfig() || {};
-        if (!isProd && window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
-          window.location.replace(`${window.location.origin}${personalizedHomeLink}`);
+        if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
+          window.location.replace(`${window.location.origin}/${lang}${personalizedHomeLink}`);
         }
       } catch (error) {
         // eslint-disable-next-line no-console
