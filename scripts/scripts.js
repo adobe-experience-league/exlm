@@ -1468,7 +1468,7 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
     } else if (isHomePage(lang)) {
       try {
         await loadIms();
-        const { isProd, isStage, personalizedHomeLink } = getConfig() || {};
+        const { isProd, personalizedHomeLink } = getConfig() || {};
         if (!isProd && window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
           window.location.replace(`${window.location.origin}${personalizedHomeLink}`);
         }
