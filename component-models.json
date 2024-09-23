@@ -4001,6 +4001,21 @@
     "id": "announcement-ribbon",
     "fields": [
       {
+        "component": "reference",
+        "valueType": "string",
+        "name": "iconImage",
+        "label": "Icon Image",
+        "description": "Sets the Icon Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "iconImageAlt",
+        "label": "Icon Image Alt Text",
+        "description": "Sets the icon image's alternative text"
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "title",
