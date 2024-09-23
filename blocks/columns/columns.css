@@ -55,10 +55,6 @@ div[data-aue-model^='columns'].columns.block.b-alt-row > div > div > div {
   text-align: left;
 }
 
-.columns p:empty {
-  display: none;
-}
-
 @media (min-width: 600px) {
   .columns > div {
     grid-template-columns: 1fr 1fr;
