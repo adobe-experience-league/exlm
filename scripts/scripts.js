@@ -811,7 +811,6 @@ export function getConfig() {
   window.exlm = window.exlm || {};
   window.exlm.config = {
     isProd,
-    isStage,
     ims,
     currentEnv,
     cdnOrigin,
@@ -1402,7 +1401,7 @@ export function getCookie(cookieName) {
       cookie = cookie.substring(1);
     }
     if (cookie.indexOf(cookieName) === 0) {
-      return cookie.substring(cookieName.length + 1, cookie.indexOf('&') ? cookie.indexOf('&') : cookie.length);
+      return cookie.substring(cookieName.length + 1);
     }
   }
   return null;
@@ -1451,33 +1450,35 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
-if (!window.hlx.DO_NOT_LOAD_PAGE) {
-  const { lang } = getPathDetails();
-  document.documentElement.lang = lang || 'en';
-  if (isProfilePage()) {
-    if (window.location.href.includes('.html')) {
-      loadPage();
-    } else {
-      await loadIms();
-      if (window?.adobeIMS?.isSignedInUser()) {
+(async function () {
+  if (!window.hlx.DO_NOT_LOAD_PAGE) {
+    const { lang } = getPathDetails();
+    document.documentElement.lang = lang || 'en';
+    if (isProfilePage()) {
+      if (window.location.href.includes('.html')) {
         loadPage();
       } else {
-        await window?.adobeIMS?.signIn();
+        await loadIms();
+        if (window?.adobeIMS?.isSignedInUser()) {
+          loadPage();
+        } else {
+          await window?.adobeIMS?.signIn();
+        }
       }
-    }
-  } else if (isHomePage(lang)) {
-    try {
-      await loadIms();
-      const { isProd, isStage, personalizedHomeLink } = getConfig() || {};
-      if (!isProd && !isStage && window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
-        window.location.replace(`${window.location.origin}${personalizedHomeLink}`);
+    } else if (isHomePage(lang)) {
+      try {
+        await loadIms();
+        const { isProd, isStage, personalizedHomeLink } = getConfig() || {};
+        if (!isProd && window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
+          window.location.replace(`${window.location.origin}${personalizedHomeLink}`);
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error during redirect process:', error);
       }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error during redirect process:', error);
+      loadPage();
+    } else {
+      loadPage();
     }
-    loadPage();
-  } else {
-    loadPage();
   }
-}
+})();

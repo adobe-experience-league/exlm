@@ -13,12 +13,19 @@ import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/brow
 import {
   convertToTitleCase,
   extractCapability,
-  getCardData,
   removeProductDuplicates,
 } from '../../scripts/browse-card/browse-card-utils.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 const { targetCriteriaIds, cookieConsentName } = getConfig();
 
@@ -27,7 +34,7 @@ const { targetCriteriaIds, cookieConsentName } = getConfig();
  * @param {string} criteriaId - The criteria id to listen for
  * @returns {Promise}
  */
-function handleTargetEvent(criteria = targetCriteriaIds?.recommended) {
+function handleTargetEvent(criteria) {
   return new Promise((resolve) => {
     window.exlm?.targetData?.forEach((data) => {
       if (data?.meta['offer.id'] === criteria) resolve(data);
@@ -41,6 +48,10 @@ function handleTargetEvent(criteria = targetCriteriaIds?.recommended) {
       }
     }
     document.addEventListener('target-recs-ready', targetEventHandler);
+    setTimeout(() => {
+      document.removeEventListener('target-recs-ready', targetEventHandler);
+      resolve({ data: [] });
+    }, 5000);
   });
 }
 
@@ -56,6 +67,29 @@ function checkTargetSupport() {
     return true;
   }
   return false;
+}
+
+function targetDataAdapter(data) {
+  const articlePath = `/${getPathDetails().lang}${data?.path}`;
+  const fullURL = new URL(articlePath, window.location.origin).href;
+  const solutions = data?.product.split(',').map((s) => s.trim());
+  return {
+    ...data,
+    badgeTitle: data?.contentType,
+    type: data?.contentType,
+    authorInfo: data?.authorInfo || {
+      name: [''],
+      type: [''],
+    },
+    product: solutions,
+    tags: [],
+    copyLink: fullURL,
+    bookmarkLink: '',
+    viewLink: fullURL,
+    viewLinkText: placeholders[`browseCard${convertToTitleCase(data?.contentType)}ViewLabel`]
+      ? placeholders[`browseCard${convertToTitleCase(data?.contentType)}ViewLabel`]
+      : `View ${data?.contentType}`,
+  };
 }
 
 async function fetchInterestData() {
@@ -78,23 +112,15 @@ async function fetchInterestData() {
 
 const interestDataPromise = fetchInterestData();
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
-
 const ALL_MY_OPTIONS_KEY = placeholders?.allMyProducts || 'All my products';
+const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
 
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
-  handleTargetEvent();
-  const targetSupport = checkTargetSupport();
+  let targetSupport = checkTargetSupport();
 
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
@@ -114,6 +140,10 @@ export default async function decorate(block) {
   const isDesktop = window.matchMedia('(min-width:900px)').matches;
   const reversedDomElements = remainingElements.reverse();
   const [firstEl, secondEl, targetCriteria, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
+  const targetCriteriaId = targetCriteria.textContent.trim();
+  if (targetSupport) {
+    targetSupport = Object.values(targetCriteriaIds).indexOf(targetCriteriaId) > -1;
+  }
   const sortByContent = thirdEl?.innerText?.trim();
   const contentTypes = otherEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse();
   const contentTypesFetchMap = contentTypes.reduce((acc, curr) => {
@@ -157,7 +187,8 @@ export default async function decorate(block) {
     ? profileRoles
     : fourthEl?.innerText?.trim().split(',').filter(Boolean);
 
-  filterOptions.unshift(ALL_MY_OPTIONS_KEY);
+  const defaultOptionsKey = profileInterests.length === 0 ? ALL_ADOBE_OPTIONS_KEY : ALL_MY_OPTIONS_KEY;
+  filterOptions.unshift(defaultOptionsKey);
   const [defaultFilterOption = ''] = filterOptions;
 
   const renderDropdown = isDesktop ? filterOptions?.length > 4 : true;
@@ -173,7 +204,7 @@ export default async function decorate(block) {
       return;
     }
     contentDiv.dataset.selected = lowercaseOptionType;
-    const showProfileOptions = lowercaseOptionType === ALL_MY_OPTIONS_KEY.toLowerCase();
+    const showProfileOptions = lowercaseOptionType === defaultOptionsKey.toLowerCase();
     const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
     const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
     const expLevel = experienceLevels[expLevelIndex] ?? 'Beginner';
@@ -207,39 +238,8 @@ export default async function decorate(block) {
       noResultsContent.remove();
     }
     let cardPromises = [];
-    if (targetSupport && targetCriteria) {
-      let { data } = await handleTargetEvent(targetCriteria.textContent.trim());
-
-      if (params.context.interests.length) {
-        if (optionType === ALL_MY_OPTIONS_KEY.toLowerCase()) {
-          data = data.filter((pageData) =>
-            params.context.interests.some((ele) => pageData.product.toLowerCase().includes(ele.toLowerCase())),
-          );
-        } else {
-          data = data.filter((pageData) => pageData.product.toLowerCase().includes(optionType.toLowerCase()));
-        }
-      }
-      const cardData = [];
-      let i = 0;
-      while (cardData.length < 4 && i < data.length) {
-        let link = data[i].path;
-        link = link.startsWith('/') ? `/${getPathDetails().lang}${window.hlx.codeBasePath}${link}` : link;
-        try {
-          // eslint-disable-next-line no-await-in-loop
-          const dataObj = await getCardData(link, placeholders);
-          if (dataObj) {
-            cardData.push(dataObj);
-            cardPromises.push(
-              new Promise((resolve) => {
-                resolve(dataObj);
-              }),
-            );
-          }
-        } catch (err) {
-          console.error(err);
-        }
-        i += 1;
-      }
+    if (targetSupport) {
+      cardPromises.push(handleTargetEvent(targetCriteriaId));
     } else {
       cardPromises = contentTypeIsEmpty
         ? [BrowseCardsDelegate.fetchCardData(params)]
@@ -272,7 +272,25 @@ export default async function decorate(block) {
     Promise.all(cardPromises)
       .then((cardResponses) => {
         let data;
-        if (targetSupport || contentTypeIsEmpty) {
+        if (targetSupport) {
+          data = cardResponses[0].data;
+          if (params.context.interests.length) {
+            if (optionType.toLowerCase() === defaultOptionsKey.toLowerCase()) {
+              data = data.filter((pageData) =>
+                params.context.interests.some((ele) => pageData.product.toLowerCase().includes(ele.toLowerCase())),
+              );
+            } else {
+              data = data.filter((pageData) => pageData.product.toLowerCase().includes(optionType.toLowerCase()));
+            }
+          }
+          const cardData = [];
+          let i = 0;
+          while (cardData.length < 4 && i < data.length) {
+            cardData.push(targetDataAdapter(data[i]));
+            i += 1;
+          }
+          data = cardData;
+        } else if (contentTypeIsEmpty) {
           data = cardResponses?.flat() || [];
         } else {
           data = contentTypes.reduce((acc, curr) => {
