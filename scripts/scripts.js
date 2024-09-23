@@ -1450,7 +1450,7 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
-(async function () {
+(async () => {
   if (!window.hlx.DO_NOT_LOAD_PAGE) {
     const { lang } = getPathDetails();
     document.documentElement.lang = lang || 'en';
