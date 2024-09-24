@@ -6,6 +6,7 @@ import {
   getConfig,
   getPathDetails,
   getCookie,
+  handleTargetEvent
 } from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
@@ -29,32 +30,6 @@ try {
 }
 
 const { targetCriteriaIds, cookieConsentName } = getConfig();
-
-/**
- * Listens for the target-recs-ready event to fetch the content as per the given criteria
- * @param {string} criteriaId - The criteria id to listen for
- * @returns {Promise}
- */
-function handleTargetEvent(criteria) {
-  return new Promise((resolve) => {
-    window.exlm?.targetData?.forEach((data) => {
-      if (data?.meta.scope === criteria) resolve(data);
-    });
-    function targetEventHandler(event) {
-      if (event?.detail?.meta.scope === criteria) {
-        document.removeEventListener('target-recs-ready', targetEventHandler);
-        if (!window.exlm.targetData) window.exlm.targetData = [];
-        window.exlm.targetData.push(event.detail);
-        resolve(event.detail);
-      }
-    }
-    document.addEventListener('target-recs-ready', targetEventHandler);
-    setTimeout(() => {
-      document.removeEventListener('target-recs-ready', targetEventHandler);
-      resolve({ data: [] });
-    }, 5000);
-  });
-}
 
 /**
  * Check if the user has accepted the cookie policy for target
@@ -144,6 +119,15 @@ export default async function decorate(block) {
   const targetCriteriaId = targetCriteria.textContent.trim();
   if (targetSupport) {
     targetSupport = Object.values(targetCriteriaIds).indexOf(targetCriteriaId) > -1;
+    handleTargetEvent(targetCriteriaId).then((data) => {
+      if (data && data.meta) {
+        const targetTitle = data.meta.heading;
+        const targetDescription = data.meta.subheading;
+
+        headingElement.innerHTML = targetTitle;
+        descriptionElement.innerHTML = targetDescription;
+      }
+    });
   }
   const sortByContent = thirdEl?.innerText?.trim();
   const contentTypes = otherEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse();
