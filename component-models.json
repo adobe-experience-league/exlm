@@ -3942,15 +3942,15 @@
           },
           {
             "name": "Most Popular across ExL",
-            "value": "882600"
+            "value": "exl-hp-auth-recs-2"
           },
           {
             "name": "Recommended For You",
-            "value": "882599"
+            "value": "exl-hp-auth-recs-1"
           },
           {
             "name": "Recently Viewed Content",
-            "value": "882601"
+            "value": "exl-hp-auth-recs-3"
           }
         ]
       },

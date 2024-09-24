@@ -776,9 +776,9 @@ export function getConfig() {
   ]);
   const cookieConsentName = 'OptanonConsent';
   const targetCriteriaIds = {
-    mostPopular: '882600',
-    recommended: '882599',
-    recentlyViewed: '882601',
+    mostPopular: 'exl-hp-auth-recs-2',
+    recommended: 'exl-hp-auth-recs-1',
+    recentlyViewed: 'exl-hp-auth-recs-3',
   };
 
   const currentHost = window.location.hostname;
