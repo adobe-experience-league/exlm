@@ -186,7 +186,13 @@
 }
 
 .recommended-content.block .custom-filter-dropdown>button>.icon-chevron {
+    width: auto;
     color: var(--non-spectrum-dim-gray);
+}
+
+.recommended-content.block .custom-filter-dropdown>button>.icon-chevron svg{
+    width: 20px;
+    height: 20px;
 }
 
 .recommended-content.block:has(.browse-card-no-results) .recommended-content-nav-section {

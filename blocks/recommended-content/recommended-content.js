@@ -18,6 +18,7 @@ import {
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 let placeholders = {};
 try {
@@ -37,10 +38,10 @@ const { targetCriteriaIds, cookieConsentName } = getConfig();
 function handleTargetEvent(criteria) {
   return new Promise((resolve) => {
     window.exlm?.targetData?.forEach((data) => {
-      if (data?.meta['offer.id'] === criteria) resolve(data);
+      if (data?.meta.scope === criteria) resolve(data);
     });
     function targetEventHandler(event) {
-      if (event?.detail?.meta['offer.id'] === criteria) {
+      if (event?.detail?.meta.scope === criteria) {
         document.removeEventListener('target-recs-ready', targetEventHandler);
         if (!window.exlm.targetData) window.exlm.targetData = [];
         window.exlm.targetData.push(event.detail);
@@ -196,6 +197,14 @@ export default async function decorate(block) {
 
   const buildCardsShimmer = new BuildPlaceholder(contentTypeIsEmpty ? numberOfResults : contentTypes.length);
 
+  const recommendedContentNoResults = () => {
+    const recommendedContentNoResultsElement = block.querySelector('.browse-card-no-results');
+    const noResultsText =
+      placeholders?.recommendedContentNoResultsText ||
+      `We couldn’t find specific matches, but here are the latest tutorials/articles that others are loving right now!`;
+    recommendedContentNoResultsElement.innerHTML = noResultsText;
+  };
+
   const fetchDataAndRenderBlock = async (optionType) => {
     const contentDiv = block.querySelector('.recommended-content-block-section');
     const currentActiveOption = contentDiv.dataset.selected;
@@ -315,6 +324,7 @@ export default async function decorate(block) {
         } else {
           buildCardsShimmer.remove();
           buildNoResultsContent(contentDiv, true);
+          recommendedContentNoResults(contentDiv);
           contentDiv.style.display = 'block';
         }
 
@@ -329,6 +339,7 @@ export default async function decorate(block) {
         // Hide shimmer placeholders on error
         buildCardsShimmer.remove();
         buildNoResultsContent(contentDiv, true);
+        recommendedContentNoResults(contentDiv);
         contentDiv.style.display = 'block';
         /* eslint-disable-next-line no-console */
         console.error(err);
@@ -461,4 +472,5 @@ export default async function decorate(block) {
       onTabFormReady: onTabReady,
     });
   }
+  await decorateIcons(block);
 }
