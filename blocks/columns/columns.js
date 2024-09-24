@@ -84,7 +84,7 @@ export default function decorate(block) {
   // Remove empty <p> tags
   if (UEAuthorMode) {
     block.querySelectorAll('p').forEach((p) => {
-      if (p.innerHTML.trim() === '' || p.innerHTML.trim() === '&bnsp;') {
+      if (p.innerHTML.trim() === '' || p.innerHTML.trim() === '&nbsp;') {
         p.remove();
       }
     });
