@@ -1128,8 +1128,8 @@
                 "template": {
                   "name": "Recently Reviewed",
                   "model": "recently-reviewed",
-                  "headline": "Recently Reviewed Title",
-                  "headlineType": "h3",
+                  "heading": "Recently Reviewed Title",
+                  "headingType": "h3",
                   "description": "Recently reviewed description"
                 }
               }

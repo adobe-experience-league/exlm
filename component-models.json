@@ -4123,9 +4123,9 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "headline",
+        "name": "heading",
         "value": "",
-        "label": "Headline",
+        "label": "Heading",
         "description": "Sets the headline for recently reviewed."
       },
       {
@@ -4133,7 +4133,7 @@
         "valueType": "string",
         "name": "headingType",
         "value": "h3",
-        "label": "Headline Type",
+        "label": "Heading Type",
         "options": [
           {
             "name": "H1",
