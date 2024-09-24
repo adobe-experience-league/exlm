@@ -6,7 +6,7 @@ import {
   getConfig,
   getPathDetails,
   getCookie,
-  handleTargetEvent
+  handleTargetEvent,
 } from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
