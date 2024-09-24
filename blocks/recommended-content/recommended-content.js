@@ -38,10 +38,10 @@ const { targetCriteriaIds, cookieConsentName } = getConfig();
 function handleTargetEvent(criteria) {
   return new Promise((resolve) => {
     window.exlm?.targetData?.forEach((data) => {
-      if (data?.meta['offer.id'] === criteria) resolve(data);
+      if (data?.meta.scope === criteria) resolve(data);
     });
     function targetEventHandler(event) {
-      if (event?.detail?.meta['offer.id'] === criteria) {
+      if (event?.detail?.meta.scope === criteria) {
         document.removeEventListener('target-recs-ready', targetEventHandler);
         if (!window.exlm.targetData) window.exlm.targetData = [];
         window.exlm.targetData.push(event.detail);
