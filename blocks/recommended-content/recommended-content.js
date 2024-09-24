@@ -102,6 +102,11 @@ export default async function decorate(block) {
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
 
+  if (targetSupport) {
+    headingElement.style.display = 'none';
+    descriptionElement.style.display = 'none';
+  }
+
   // Clearing the block's content and adding CSS class
   block.innerHTML = '';
   headingElement.classList.add('recommended-content-header');
@@ -121,12 +126,11 @@ export default async function decorate(block) {
     targetSupport = Object.values(targetCriteriaIds).indexOf(targetCriteriaId) > -1;
     handleTargetEvent(targetCriteriaId).then((data) => {
       if (data && data.meta) {
-        const targetTitle = data.meta.heading;
-        const targetDescription = data.meta.subheading;
-
-        headingElement.innerHTML = targetTitle;
-        descriptionElement.innerHTML = targetDescription;
+        headingElement.innerHTML = data.meta.heading;
+        descriptionElement.innerHTML = data.meta.subheading;
       }
+      headingElement.style.display = 'block';
+      descriptionElement.style.display = 'block';
     });
   }
   const sortByContent = thirdEl?.innerText?.trim();
