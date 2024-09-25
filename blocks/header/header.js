@@ -8,7 +8,13 @@ import {
   getPathDetails,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
-import { decoratorState, isMobile, registerHeaderResizeHandler, getCell } from './header-utils.js';
+import {
+  decoratorState,
+  isMobile,
+  registerHeaderResizeHandler,
+  getCell,
+  getFirstChildTextNodes,
+} from './header-utils.js';
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import LanguageBlock from '../language/language.js';
 import Profile from './load-profile.js';
@@ -218,6 +224,10 @@ const hamburgerButton = (navWrapper, navOverlay) => {
  * @param {HTMLUListElement} ul
  */
 const buildNavItems = async (ul, level = 0) => {
+  /**
+   *
+   * @param {HTMLElement} navItem
+   */
   const decorateNavItem = async (navItem) => {
     const navItemClasses = ['nav-item'];
     if (level === 0) navItemClasses.push('nav-item-root');
@@ -226,7 +236,18 @@ const buildNavItems = async (ul, level = 0) => {
     const [content, secondaryContent] = navItem.querySelectorAll(':scope > ul');
 
     if (content) {
-      const firstEl = navItem.firstElementChild;
+      // first el is the first element if it is a <p> tag OR all text nodes untill the first UL element
+      let firstEl = navItem.firstElementChild;
+      if (firstEl?.tagName !== 'P') {
+        const textNodes = getFirstChildTextNodes(navItem);
+        const allText = textNodes.map((node) => node.textContent).join('');
+        if (allText.trim().length !== 0) {
+          firstEl = document.createElement('p');
+          textNodes.forEach((node) => firstEl.appendChild(node));
+          navItem.prepend(firstEl);
+        }
+      }
+
       const toggleClass = level === 0 ? 'nav-item-toggle nav-item-toggle-root' : 'nav-item-toggle';
       const toggler = htmlToElement(
         `<button class="${toggleClass}" aria-controls="${controlName}" aria-expanded="false">${firstEl.textContent}</button>`,
