@@ -225,7 +225,6 @@ const hamburgerButton = (navWrapper, navOverlay) => {
  */
 const buildNavItems = async (ul, level = 0) => {
   /**
-   *
    * @param {HTMLElement} navItem
    */
   const decorateNavItem = async (navItem) => {
@@ -236,12 +235,14 @@ const buildNavItems = async (ul, level = 0) => {
     const [content, secondaryContent] = navItem.querySelectorAll(':scope > ul');
 
     if (content) {
-      // first el is the first element if it is a <p> tag OR all text nodes untill the first UL element
+      // first elment is the first element if it is a <p> tag OR all text nodes untill the first element wrapped in a <p> tag
+      // see: UGP-11860
       let firstEl = navItem.firstElementChild;
       if (firstEl?.tagName !== 'P') {
         const textNodes = getFirstChildTextNodes(navItem);
         const allText = textNodes.map((node) => node.textContent).join('');
         if (allText.trim().length !== 0) {
+          // if there is text, wrap it in a <p> tag
           firstEl = document.createElement('p');
           textNodes.forEach((node) => firstEl.appendChild(node));
           navItem.prepend(firstEl);
