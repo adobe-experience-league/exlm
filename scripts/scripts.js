@@ -776,9 +776,9 @@ export function getConfig() {
   ]);
   const cookieConsentName = 'OptanonConsent';
   const targetCriteriaIds = {
-    mostPopular: '882600',
-    recommended: '882599',
-    recentlyViewed: '882601',
+    mostPopular: 'exl-hp-auth-recs-2',
+    recommended: 'exl-hp-auth-recs-1',
+    recentlyViewed: 'exl-hp-auth-recs-3',
   };
 
   const currentHost = window.location.hostname;
@@ -1405,6 +1405,32 @@ export function getCookie(cookieName) {
     }
   }
   return null;
+}
+
+/**
+ * Listens for the target-recs-ready event to fetch the content as per the given criteria
+ * @param {string} criteriaId - The criteria id to listen for
+ * @returns {Promise}
+ */
+export function handleTargetEvent(criteria) {
+  return new Promise((resolve) => {
+    window.exlm?.targetData?.forEach((data) => {
+      if (data?.meta.scope === criteria) resolve(data);
+    });
+    function targetEventHandler(event) {
+      if (event?.detail?.meta.scope === criteria) {
+        document.removeEventListener('target-recs-ready', targetEventHandler);
+        if (!window.exlm.targetData) window.exlm.targetData = [];
+        window.exlm.targetData.push(event.detail);
+        resolve(event.detail);
+      }
+    }
+    document.addEventListener('target-recs-ready', targetEventHandler);
+    setTimeout(() => {
+      document.removeEventListener('target-recs-ready', targetEventHandler);
+      resolve({ data: [] });
+    }, 5000);
+  });
 }
 
 async function loadPage() {

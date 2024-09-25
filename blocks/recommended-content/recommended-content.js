@@ -6,6 +6,7 @@ import {
   getConfig,
   getPathDetails,
   getCookie,
+  handleTargetEvent,
 } from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
@@ -18,6 +19,7 @@ import {
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 let placeholders = {};
 try {
@@ -28,32 +30,6 @@ try {
 }
 
 const { targetCriteriaIds, cookieConsentName } = getConfig();
-
-/**
- * Listens for the target-recs-ready event to fetch the content as per the given criteria
- * @param {string} criteriaId - The criteria id to listen for
- * @returns {Promise}
- */
-function handleTargetEvent(criteria) {
-  return new Promise((resolve) => {
-    window.exlm?.targetData?.forEach((data) => {
-      if (data?.meta['offer.id'] === criteria) resolve(data);
-    });
-    function targetEventHandler(event) {
-      if (event?.detail?.meta['offer.id'] === criteria) {
-        document.removeEventListener('target-recs-ready', targetEventHandler);
-        if (!window.exlm.targetData) window.exlm.targetData = [];
-        window.exlm.targetData.push(event.detail);
-        resolve(event.detail);
-      }
-    }
-    document.addEventListener('target-recs-ready', targetEventHandler);
-    setTimeout(() => {
-      document.removeEventListener('target-recs-ready', targetEventHandler);
-      resolve({ data: [] });
-    }, 5000);
-  });
-}
 
 /**
  * Check if the user has accepted the cookie policy for target
@@ -126,6 +102,11 @@ export default async function decorate(block) {
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
 
+  if (targetSupport) {
+    headingElement.style.display = 'none';
+    descriptionElement.style.display = 'none';
+  }
+
   // Clearing the block's content and adding CSS class
   block.innerHTML = '';
   headingElement.classList.add('recommended-content-header');
@@ -143,6 +124,14 @@ export default async function decorate(block) {
   const targetCriteriaId = targetCriteria.textContent.trim();
   if (targetSupport) {
     targetSupport = Object.values(targetCriteriaIds).indexOf(targetCriteriaId) > -1;
+    handleTargetEvent(targetCriteriaId).then((data) => {
+      if (data && data.meta) {
+        headingElement.innerHTML = data.meta.heading;
+        descriptionElement.innerHTML = data.meta.subheading;
+      }
+      headingElement.style.display = 'block';
+      descriptionElement.style.display = 'block';
+    });
   }
   const sortByContent = thirdEl?.innerText?.trim();
   const contentTypes = otherEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse();
@@ -195,6 +184,14 @@ export default async function decorate(block) {
   const numberOfResults = contentTypeIsEmpty ? 4 : 1;
 
   const buildCardsShimmer = new BuildPlaceholder(contentTypeIsEmpty ? numberOfResults : contentTypes.length);
+
+  const recommendedContentNoResults = () => {
+    const recommendedContentNoResultsElement = block.querySelector('.browse-card-no-results');
+    const noResultsText =
+      placeholders?.recommendedContentNoResultsText ||
+      `We couldn’t find specific matches, but here are the latest tutorials/articles that others are loving right now!`;
+    recommendedContentNoResultsElement.innerHTML = noResultsText;
+  };
 
   const fetchDataAndRenderBlock = async (optionType) => {
     const contentDiv = block.querySelector('.recommended-content-block-section');
@@ -315,6 +312,7 @@ export default async function decorate(block) {
         } else {
           buildCardsShimmer.remove();
           buildNoResultsContent(contentDiv, true);
+          recommendedContentNoResults(contentDiv);
           contentDiv.style.display = 'block';
         }
 
@@ -329,6 +327,7 @@ export default async function decorate(block) {
         // Hide shimmer placeholders on error
         buildCardsShimmer.remove();
         buildNoResultsContent(contentDiv, true);
+        recommendedContentNoResults(contentDiv);
         contentDiv.style.display = 'block';
         /* eslint-disable-next-line no-console */
         console.error(err);
@@ -461,4 +460,5 @@ export default async function decorate(block) {
       onTabFormReady: onTabReady,
     });
   }
+  await decorateIcons(block);
 }

@@ -3,7 +3,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 function decorateButtons(...buttons) {
   return buttons
     .map((button) => {
-      const link = button.querySelector('a');
+      const link = button?.querySelector('a');
       if (link) {
         link.classList.add('button');
         if (link.parentElement.tagName === 'EM') link.classList.add('secondary');
@@ -31,13 +31,16 @@ export default async function decorate(block) {
     block.style.display = 'none';
     return;
   }
-  const [heading, description, firstCta, secondCta] = [...block.children].map((row) => row.firstElementChild);
+  const [image, heading, description, firstCta, secondCta] = [...block.children].map((row) => row.firstElementChild);
 
   heading?.classList.add('ribbon-heading');
   description?.classList.add('ribbon-description');
 
   const ribbonDom = document.createRange().createContextualFragment(`
-  <div class = "ribbon-content-container">
+  <div class="ribbon-image">
+  ${image ? image.outerHTML : ''}
+  </div>
+  <div class="ribbon-content-container">
     <div class="ribbon-default-content">
       ${heading ? heading.outerHTML : ''}
       ${description ? description.outerHTML : ''}
