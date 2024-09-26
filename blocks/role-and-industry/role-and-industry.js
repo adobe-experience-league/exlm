@@ -4,6 +4,7 @@ import { sendNotice } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { fetchIndustryOptions } from '../../scripts/profile/profile.js';
+import FormValidator from '../../scripts/form-validator.js';
 
 let placeholders = {};
 try {
@@ -17,6 +18,17 @@ const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes ha
 const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
 const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
 const FORM_ERROR = placeholders?.formFieldGroupError || 'Please select at least one option.';
+
+function validateForm(formSelector) {
+  if (!formSelector) return true;
+
+  const options = {
+    aggregateRules: { checkBoxGroup: {} },
+  };
+
+  const validator = new FormValidator(formSelector, placeholders, options);
+  return validator.validate();
+}
 
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
@@ -70,12 +82,12 @@ export default async function decorate(block) {
         }</label>
       </form>
     </div>
-    <form id="role-and-industry-form">
-      <div class="role-and-industry-form-error"></div>
+    <form class="role-and-industry-form">
+      <div class="role-and-industry-form-error form-error hidden">${FORM_ERROR}</div>
       <div class="role-cards-holder">
       ${roleCardsData
         .map(
-          (card, index) => `
+          (card) => `
               <div class="role-cards-item">
                 <div class="role-cards-description">
                   <div class="role-cards-title">
@@ -87,8 +99,8 @@ export default async function decorate(block) {
                 <div class="role-cards-default-selection">
                   ${isSignedIn && card?.selectionDefault ? `<p>${card.selectionDefault}</p>` : ''}
                   <span class="role-cards-checkbox">
-                    <input name="${card.role}" type="checkbox" id="selectRole-${index}">
-                    <label class="subText" for="selectRole-${index}">${SELECT_ROLE}</label>
+                    <input name="${card.role}" type="checkbox">
+                    <label class="select-role-label">${SELECT_ROLE}</label>
                   </span>
                 </div>
               </div>`,
@@ -143,42 +155,40 @@ export default async function decorate(block) {
     });
   }
 
+  const formElement = block.querySelector('.role-and-industry-form');
+  const formErrorElement = formElement.querySelector('.role-and-industry-form-error');
+
   block.querySelectorAll('.role-cards-item').forEach((card) => {
     const checkbox = card.querySelector('input[type="checkbox"]');
 
     card.addEventListener('click', (e) => {
-      const isLabelClicked = e.target.tagName === 'LABEL' || e.target.classList.contains('subText');
-      if (e.target !== checkbox && !isLabelClicked) {
+      if (e.target !== checkbox) {
         checkbox.checked = !checkbox.checked;
-        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        const changeEvent = new Event('change');
+        checkbox.dispatchEvent(changeEvent);
       }
     });
 
+    const toggleFormError = (visible) => {
+      if (formErrorElement) {
+        formErrorElement.classList.toggle('hidden', !visible);
+      }
+    };
+
     checkbox.addEventListener('change', (e) => {
       e.preventDefault();
-
-      const checkedCheckboxes = Array.from(block.querySelectorAll('.role-cards-item input[type="checkbox"]')).filter(
-        (el) => el.checked,
-      );
-      const formErrorContainer = block.querySelector('.role-and-industry-form-error');
-
-      if (formErrorContainer) {
-        formErrorContainer.textContent = '';
-      }
-
       const isInSignupDialog = e.target.closest('.signup-dialog');
-      const isAnyCheckboxChecked = checkedCheckboxes.length > 0;
+      const isValid = validateForm(formElement);
+      toggleFormError(false);
 
-      if (!isInSignupDialog && !isAnyCheckboxChecked) {
+      if (!isInSignupDialog && !isValid) {
         checkbox.checked = true;
-        if (formErrorContainer) {
-          formErrorContainer.innerHTML = `<span class='form-error'>${FORM_ERROR}</span>`;
-        }
+        toggleFormError(true);
       } else {
         const isChecked = checkbox.checked;
         checkbox.closest('.role-cards-item').classList.toggle('role-cards-highlight', isChecked);
 
-        if (isSignedIn && isAnyCheckboxChecked) {
+        if (isSignedIn && isValid) {
           const updatedRoles = roleCardsData
             .filter((roleCard) => block.querySelector(`input[name="${roleCard.role}"]`).checked)
             .map((roleCard) => roleCard.role);

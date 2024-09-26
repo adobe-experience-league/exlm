@@ -3,7 +3,7 @@ import { defaultProfileClient } from '../auth/profile.js';
 
 const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
-const { industryUrl, adobeAccountURL, communityAccountURL } = getConfig();
+const { localizedCommunityProfileParam, industryUrl, adobeAccountURL, communityAccountURL } = getConfig();
 
 const fetchExlProfileData = async () => {
   const [profileData, ppsProfileData] = await Promise.allSettled([
@@ -125,7 +125,7 @@ const generateCommunityAccountDOM = (profileData, placeholders) => {
       ${
         communityProfileURL
           ? `<div class="manage-community-account">
-        <a href="${communityProfileURL}" target="_blank">
+        <a href="${communityProfileURL}${localizedCommunityProfileParam}" target="_blank">
         <span class="icon icon-new-tab"></span>
         ${placeholders?.updateCommunityProfile || 'Go to your community profile'}
         </a>
@@ -189,7 +189,7 @@ const generateAdditionalProfileInfoDOM = async (profileData, placeholders) => {
           roles && ((Array.isArray(roles) && roles.length > 0) || (typeof roles === 'string' && roles.trim() !== ''))
             ? `<div class="user-role"><span class="heading">${placeholders?.myRole || 'My Role'}: </span><span>${roles
                 .map((role) => roleMappings[role] || role)
-                .join('&nbsp;&nbsp;')}</span></div>`
+                .join(' | ')}</span></div>`
             : ''
         }
         ${

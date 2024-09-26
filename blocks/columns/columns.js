@@ -1,5 +1,6 @@
 import { span } from '../../scripts/dom-helpers.js';
 
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 /**
  * Updates the headers of the columns based on the window width.
  */
@@ -80,4 +81,15 @@ export default function decorate(block) {
     });
   });
   updateHeaders();
+  // Remove empty <p> tags
+  if (UEAuthorMode) {
+    block.querySelectorAll('p').forEach((p) => {
+      if (p.innerHTML.trim() === '' || p.innerHTML.trim() === '&nbsp;') {
+        p.remove();
+      }
+    });
+    block.querySelectorAll('br').forEach((br) => {
+      br.remove();
+    });
+  }
 }
