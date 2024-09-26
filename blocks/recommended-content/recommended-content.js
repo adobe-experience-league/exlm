@@ -121,6 +121,7 @@ const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Produ
  */
 export default async function decorate(block) {
   let targetSupport = checkTargetSupport();
+  console.log('====== logs::', block)
 
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
