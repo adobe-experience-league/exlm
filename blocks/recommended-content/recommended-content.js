@@ -126,6 +126,7 @@ export default async function decorate(block) {
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
+  console.log('----data::', { htmlElementData })
 
   // Clearing the block's content and adding CSS class
   block.innerHTML = '';
