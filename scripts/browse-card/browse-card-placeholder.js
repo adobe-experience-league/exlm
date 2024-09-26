@@ -14,18 +14,23 @@ export default class BuildPlaceholder {
 
   initialise() {
     for (let i = 0; i < this.count; i += 1) {
-      this.shimmer.innerHTML += `<div class="shimmer-placeholder-isloading">
-          <div class="shimmer-placeholder-image"></div>
-          <div class="shimmer-placeholder-content">
-            <div class="shimmer-placeholder-description"></div>
-            <div class="shimmer-placeholder-text-container">
-              <div class="shimmer-placeholder-main-text"></div>
-              <div class="shimmer-placeholder-sub-text"></div>
-            </div>
-            <div class="shimmer-placeholder-btn"></div>
-          </div>
-        </div>`;
+      this.shimmer.innerHTML += this.createShimmer();
     }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  createShimmer() {
+    return `<div class="shimmer-placeholder-isloading">
+    <div class="shimmer-placeholder-image"></div>
+    <div class="shimmer-placeholder-content">
+      <div class="shimmer-placeholder-description"></div>
+      <div class="shimmer-placeholder-text-container">
+        <div class="shimmer-placeholder-main-text"></div>
+        <div class="shimmer-placeholder-sub-text"></div>
+      </div>
+      <div class="shimmer-placeholder-btn"></div>
+    </div>
+  </div>`;
   }
 
   updateCount(count = null) {
