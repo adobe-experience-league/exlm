@@ -341,6 +341,7 @@ export default async function decorate(block) {
     }
   };
 
+  /* TODO: Commenting it for further references, will up updating for the below code for navigation arrow changes */
   /*
   const setNavigationElementStatus = () => {
     const prevNav = block.querySelector('.prev-nav');
