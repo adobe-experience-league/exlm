@@ -107,7 +107,7 @@ export default class SignupFlowDialog {
         this.signupDialog.close();
         document.body.classList.remove('overflow-hidden');
         if (!this.eventEmitted) {
-          signupModalEventEmitter.emit('data', '1');
+          signupModalEventEmitter.emit('data', 'Profile data updated!');
           this.eventEmitted = true;
         }
       });
@@ -395,7 +395,7 @@ export default class SignupFlowDialog {
       nextBtn.addEventListener('click', () => {
         this.handleNavigation(1);
         if (!this.eventEmitted) {
-          signupModalEventEmitter.emit('data', '1');
+          signupModalEventEmitter.emit('data', 'Profile data updated!');
           this.eventEmitted = true;
         }
       });
