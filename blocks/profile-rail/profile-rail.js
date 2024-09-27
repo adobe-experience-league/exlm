@@ -3,6 +3,13 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getPathDetails, htmlToElement } from '../../scripts/scripts.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+const { lang } = getPathDetails();
+
+const awardsPage = '/home/awards';
+const navPage = `${lang}/home/nav`;
+const profileSettingsPage = `/${lang}/home/profile-settings`;
+const navURL = `${window.location.origin}/${navPage}`;
+
 const isSignedIn = await isSignedInUser();
 let awards = false;
 if (isSignedIn) {
@@ -13,9 +20,6 @@ if (isSignedIn) {
     awards = true;
   }
 }
-
-const { lang } = getPathDetails();
-const navURL = `${window.location.origin}/${lang}/home/nav`;
 
 async function fetchNavContent() {
   try {
@@ -48,10 +52,16 @@ export default async function ProfileRail(block) {
   });
 
   block.querySelectorAll('.profile-rail-links > li').forEach((navLink) => {
+    // In case of no awards for the profile
     if (!awards && !UEAuthorMode) {
-      const awardsLink = navLink.querySelector('a[href*="/home/awards"]');
+      // remove the Awards link from left rail
+      const awardsLink = navLink.querySelector(`a[href*="${awardsPage}"]`);
       if (awardsLink) {
         navLink.remove();
+      }
+      // redirect awards page to profile-settings page
+      if (window.location.pathname === `/${lang}${awardsPage}`) {
+        window.location.pathname = `${profileSettingsPage}`;
       }
     }
     const link = navLink.querySelector('a');

@@ -265,7 +265,12 @@ export function isProfilePage() {
   const theme = getMetadata('theme');
   return theme.toLowerCase().startsWith('profile');
 }
-
+/**
+ * Check if current page is a home page.
+ */
+export function isHomePage(lang) {
+  return window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
+}
 /**
  * Check if current page is a Signup flow modal page.
  * theme = signup is set in bulk metadata for /en/home/signup-flow-modal** paths.
@@ -769,6 +774,12 @@ export function getConfig() {
     ['zh-hant', 'zh-Hant'],
     ['zh-hans', 'zh-Hans'],
   ]);
+  const cookieConsentName = 'OptanonConsent';
+  const targetCriteriaIds = {
+    mostPopular: 'exl-hp-auth-recs-2',
+    recommended: 'exl-hp-auth-recs-1',
+    recentlyViewed: 'exl-hp-auth-recs-3',
+  };
 
   const currentHost = window.location.hostname;
   const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
@@ -808,6 +819,8 @@ export function getConfig() {
     ppsOrigin,
     launchScriptSrc,
     signUpFlowConfigDate,
+    cookieConsentName,
+    targetCriteriaIds,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
     privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
@@ -826,6 +839,8 @@ export function getConfig() {
     articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
+    // Personlized Home Page Link
+    personalizedHomeLink: `/home`,
     // Browse Left nav
     browseMoreProductsLink: `/${lang}/browse`,
     // Machine Translation
@@ -841,6 +856,8 @@ export function getConfig() {
       ? `https://experienceleaguecommunities.adobe.com/?profile.language=${communityLocale}`
       : `https://experienceleaguecommunities-dev.adobe.com/?profile.language=${communityLocale}`,
     interestsUrl: `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`,
+    // Param for localized Community Profile URL
+    localizedCommunityProfileParam: `?profile.language=${communityLocale}`,
   };
   return window.exlm.config;
 }
@@ -1375,10 +1392,52 @@ export async function fetchJson(url, fallbackUrl) {
     .then((json) => json?.data || []);
 }
 
+export function getCookie(cookieName) {
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const cookies = decodedCookie.split(';');
+  for (let i = 0; i < cookies.length; i += 1) {
+    let cookie = cookies[i];
+    while (cookie.charAt(0) === ' ') {
+      cookie = cookie.substring(1);
+    }
+    if (cookie.indexOf(cookieName) === 0) {
+      return cookie.substring(cookieName.length + 1);
+    }
+  }
+  return null;
+}
+
+/**
+ * Listens for the target-recs-ready event to fetch the content as per the given criteria
+ * @param {string} criteriaId - The criteria id to listen for
+ * @returns {Promise}
+ */
+export function handleTargetEvent(criteria) {
+  return new Promise((resolve) => {
+    window.exlm?.targetData?.forEach((data) => {
+      if (data?.meta.scope === criteria) resolve(data);
+    });
+    function targetEventHandler(event) {
+      if (event?.detail?.meta.scope === criteria) {
+        document.removeEventListener('target-recs-ready', targetEventHandler);
+        if (!window.exlm.targetData) window.exlm.targetData = [];
+        window.exlm.targetData.push(event.detail);
+        resolve(event.detail);
+      }
+    }
+    document.addEventListener('target-recs-ready', targetEventHandler);
+    setTimeout(() => {
+      document.removeEventListener('target-recs-ready', targetEventHandler);
+      resolve({ data: [] });
+    }, 5000);
+  });
+}
+
 async function loadPage() {
   // THIS IS TEMPORARY FOR SUMMIT.
   if (handleHomePageHashes()) return;
   // END OF TEMPORARY FOR SUMMIT.
+
   await loadEager(document);
   await loadLazy(document);
   loadArticles();
@@ -1417,21 +1476,35 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
-if (!window.hlx.DO_NOT_LOAD_PAGE) {
-  const { lang } = getPathDetails();
-  document.documentElement.lang = lang || 'en';
-  if (isProfilePage()) {
-    if (window.location.href.includes('.html')) {
-      loadPage();
-    } else {
-      await loadIms();
-      if (window?.adobeIMS?.isSignedInUser()) {
+(async () => {
+  if (!window.hlx.DO_NOT_LOAD_PAGE) {
+    const { lang } = getPathDetails();
+    const { isProd, personalizedHomeLink } = getConfig() || {};
+    document.documentElement.lang = lang || 'en';
+    if (isProfilePage()) {
+      if (window.location.href.includes('.html')) {
         loadPage();
       } else {
-        await window?.adobeIMS?.signIn();
+        await loadIms();
+        if (window?.adobeIMS?.isSignedInUser()) {
+          loadPage();
+        } else {
+          await window?.adobeIMS?.signIn();
+        }
       }
+    } else if (isHomePage(lang) && !isProd) {
+      try {
+        await loadIms();
+        if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
+          window.location.replace(`${window.location.origin}/${lang}${personalizedHomeLink}`);
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error during redirect process:', error);
+      }
+      loadPage();
+    } else {
+      loadPage();
     }
-  } else {
-    loadPage();
   }
-}
+})();

@@ -22,6 +22,7 @@ const intermediateDescription =
 const experiencedDescription =
   placeholders?.profileExpLevelExperiencedDesc ||
   'You know the selected product inside and out and use your advanced skills to achieve complex objectives.';
+const formErrorMessage = placeholders?.formFieldGroupError || 'Please select at least one option.';
 
 const renderCards = (resultsEl) => {
   const interests = productExperienceEventEmitter.get('interests_data') ?? [];
@@ -81,7 +82,10 @@ export default function ProfileExperienceLevel(block) {
           <p>${experiencedDescription}</p>
         </div>
       </div>
-      <div class="personalize-interest-results"></div>
+      <div class="personalize-interest-form">
+        <div class="personalize-interest-form-error form-error hidden">${formErrorMessage}</div>
+        <div class="personalize-interest-results"></div>
+      </div>
     </div>
   </div>`);
   block.appendChild(content);
@@ -92,6 +96,8 @@ export default function ProfileExperienceLevel(block) {
     const { key, value } = data;
     const interests = productExperienceEventEmitter.get('interests_data') ?? [];
     const model = interests.find((interest) => interest.id === key);
+    const formErrorElement = block.querySelector('.personalize-interest-form .personalize-interest-form-error');
+    formErrorElement.classList.toggle('hidden', true);
     if (model) {
       model.selected = value;
       resultsEl.innerHTML = '';
