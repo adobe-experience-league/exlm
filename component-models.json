@@ -1575,6 +1575,19 @@
     ]
   },
   {
+    "id": "html-app",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "htmlUrl",
+        "value": "",
+        "label": "HTML App URL",
+        "description": "Please provide a URL to an HTML app."
+      }
+    ]
+  },
+  {
     "id": "secondary-search",
     "fields": [
       {
@@ -2783,7 +2796,10 @@
         "valueType": "string",
         "name": "author-bio-page",
         "multi": true,
-        "label": "Author Bio page URL"
+        "label": "Author Bio page URL",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/perspectives/authors"
+        }
       },
       {
         "component": "aem-tag",

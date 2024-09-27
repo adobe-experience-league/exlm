@@ -1,4 +1,3 @@
-import TabbedCardList from '../../scripts/tabbed-card-list/tabbed-card-list.js';
 import { createTag, fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
@@ -9,9 +8,8 @@ import {
   removeProductDuplicates,
 } from '../../scripts/browse-card/browse-card-utils.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
-import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import { handleTargetEvent, checkTargetSupport, targetDataAdapter } from '../../scripts/target/target.js';
 
 let placeholders = {};
@@ -74,7 +72,6 @@ export default async function decorate(block) {
   block.appendChild(filterSectionElement);
   block.appendChild(blockHeader);
 
-  const isDesktop = window.matchMedia('(min-width:900px)').matches;
   const reversedDomElements = remainingElements.reverse();
   const [firstEl, secondEl, targetCriteria, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
   const targetCriteriaId = targetCriteria.textContent.trim();
@@ -136,7 +133,6 @@ export default async function decorate(block) {
   filterOptions.unshift(defaultOptionsKey);
   const [defaultFilterOption = ''] = filterOptions;
 
-  const renderDropdown = isDesktop ? filterOptions?.length > 4 : true;
   const numberOfResults = contentTypeIsEmpty ? 4 : 1;
 
   const buildCardsShimmer = new BuildPlaceholder(contentTypeIsEmpty ? numberOfResults : contentTypes.length);
@@ -151,11 +147,7 @@ export default async function decorate(block) {
 
   const fetchDataAndRenderBlock = async (optionType) => {
     const contentDiv = block.querySelector('.recommended-content-block-section');
-    const currentActiveOption = contentDiv.dataset.selected;
     const lowercaseOptionType = optionType?.toLowerCase();
-    if (currentActiveOption && lowercaseOptionType === currentActiveOption.toLowerCase()) {
-      return;
-    }
     contentDiv.dataset.selected = lowercaseOptionType;
     const showProfileOptions = lowercaseOptionType === defaultOptionsKey.toLowerCase();
     const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
@@ -305,6 +297,8 @@ export default async function decorate(block) {
     }
   };
 
+  /* TODO: Commenting it for further references, will up updating for the below code for navigation arrow changes */
+  /*
   const setNavigationElementStatus = () => {
     const prevNav = block.querySelector('.prev-nav');
     const nextNav = block.querySelector('.next-nav');
@@ -323,7 +317,7 @@ export default async function decorate(block) {
       nextNav.classList.remove('disabled');
     }
   };
-
+  
   const handleScroll = (next) => {
     const loadNext = next === true;
     const blockContent = block.querySelector('.recommended-content-block-section');
@@ -342,7 +336,7 @@ export default async function decorate(block) {
     blockContent.scrollLeft = targetScrollLeft;
     setNavigationElementStatus();
   };
-
+  
   const renderNavigationArrows = () => {
     const navigationElements = htmlToElement(`
                 <div class="recommended-content-nav-section">
@@ -367,54 +361,34 @@ export default async function decorate(block) {
     blockHeader.appendChild(navigationElements);
     setNavigationElementStatus();
   };
+  */
 
-  if (renderDropdown) {
-    const dropdownOptions = filterOptions.map((opt) => {
-      const value = convertToTitleCase(opt);
-      return {
-        value,
-        title: value,
-        id: opt,
-      };
-    });
-    const initialDropdownValue = convertToTitleCase(defaultFilterOption || `${placeholders?.select || 'Select'}`);
-    const uniqueId = parseInt(Math.random() * 10 ** 8, 10);
-    const filterDropdown = new Dropdown(
-      blockHeader,
-      initialDropdownValue,
-      dropdownOptions,
-      DROPDOWN_VARIANTS.DEFAULT,
-      uniqueId,
-    );
-    renderCardBlock(block);
-    filterDropdown.handleOnChange((selectedOptionValue) => {
-      const option = dropdownOptions.find((opt) => opt.value === selectedOptionValue);
-      if (option?.id) {
-        fetchDataAndRenderBlock(option.id);
-      }
-    });
-    fetchDataAndRenderBlock(initialDropdownValue);
-    filterDropdown.updateDropdownValue(initialDropdownValue);
-    if (!isDesktop) {
-      renderNavigationArrows();
-    }
-  } else {
-    const onTabReady = () => {
-      renderCardBlock(block);
-      if (!isDesktop) {
-        renderNavigationArrows();
-      }
+  /* Responsive List View */
+  const listItems = filterOptions.map((item) => {
+    const value = item ? convertToTitleCase(item) : '';
+    return {
+      value,
+      title: value,
     };
-    // eslint-disable-next-line no-new
-    new TabbedCardList({
-      parentFormElement: blockHeader,
-      defaultValue: defaultFilterOption,
-      optionsArray: filterOptions,
-      placeholders,
-      showViewAll: false,
-      fetchDataAndRenderBlock,
-      onTabFormReady: onTabReady,
-    });
-  }
-  await decorateIcons(block);
+  });
+
+  const defaultOption = defaultFilterOption ? convertToTitleCase(defaultFilterOption) : null;
+
+  // eslint-disable-next-line no-new
+  new ResponsiveList({
+    wrapper: blockHeader,
+    items: listItems,
+    defaultSelected: defaultOption,
+    onInitCallback: () => {
+      /* Reused the existing method */
+      renderCardBlock(block);
+      fetchDataAndRenderBlock(defaultOption);
+    },
+    onSelectCallback: (selectedItem) => {
+      /* Reused the existing method */
+      if (selectedItem) {
+        fetchDataAndRenderBlock(selectedItem);
+      }
+    },
+  });
 }
