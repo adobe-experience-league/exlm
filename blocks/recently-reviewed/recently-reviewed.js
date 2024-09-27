@@ -79,7 +79,7 @@ export default async function decorate(block) {
     }
   }
 
-  if (window.exlm.aemRoot) {
+  if (window.hlx.aemRoot) {
     block.style.display = 'block';
     buildNoResultsContent(contentDiv, true, authorInfo);
     buildCardsShimmer.remove();
