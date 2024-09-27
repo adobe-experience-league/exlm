@@ -128,10 +128,10 @@ const buildTagsContent = (cardMeta, tags = []) => {
 };
 
 /* Default No Results Content from Placeholder */
-export const buildNoResultsContent = (block, show) => {
+export const buildNoResultsContent = (block, show, placeholder = placeholders.noResultsText) => {
   if (show) {
     const noResultsInfo = htmlToElement(`
-    <div class="browse-card-no-results">${placeholders.noResultsText}</div>
+    <div class="browse-card-no-results">${placeholder}</div>
   `);
     block.appendChild(noResultsInfo);
   } else {
