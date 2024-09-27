@@ -1,58 +1,55 @@
-@import "../../scripts/browse-card/browse-cards-block.css";
-
-.tabbed-cards-label {
+.responsive-list {
     color: var(--spectrum-gray-700);
-    display: flex;
     font-size: var(--spectrum-font-size-200);
+    justify-content: space-between;
     line-height: 20.8px;
-    justify-content: space-between;
 }
 
-.tabbed-cards-label>ul {
+.responsive-list ul {
     align-items: center;
-    display: flex;
+    border-bottom: 2px solid var(--non-spectrurm-whisper-gray);
+    display: inline-flex;
+    flex-wrap: nowrap;
+    gap: 24px;
     justify-content: space-between;
-    margin: 0;
-    padding: 0;
     list-style: none;
-    gap: 23px;
+    margin: 0;
+    padding: 0 0 17px 0;
+    position: relative;
 }
 
-.tabbed-cards-label>ul li {
+.responsive-list ul li {
+    color: var(--non-spectrum-dim-gray);
     cursor: pointer;
+    font-size: var(--spectrum-font-size-100);
+    line-height: 17px;
     margin: 0;
     padding: 0;
     position: relative;
     white-space: pre;
-    font-size: var(--spectrum-font-size-200);
 }
 
-.tabbed-cards-label>ul li.active {
-    color: var(--spectrum-blue-900);
+.responsive-list ul li.active {
+    color: var(--non-spectrum-navy-blue);
 }
 
-.tabbed-cards-label>ul li.active::after {
+.responsive-list ul li.active::after {
     border-bottom: 3px solid var(--spectrum-blue-900);
+    bottom: -17px;
+    color: var(--non-spectrum-navy-blue);
     content: "";
-    position: absolute;
-    bottom: -14px;
     left: 0;
+    position: absolute;
     width: 100%;
 }
 
-.tabbed-cards-label>a {
-    color: var(--spectrum-blue-900);
-    font-size: var(--spectrum-font-size-300);
-    line-height: 23.4px;
-}
-
 @media (max-width: 1024px) {
-    .tabbed-cards-label {
+    .responsive-list {
         border-bottom: 0 none;
         display: block;
     }
 
-    .tabbed-cards-label>ul {
+    .responsive-list ul {
         border-bottom: 1px solid var(--spectrum-gray-500);
         margin-bottom: 20px;
         overflow: hidden;

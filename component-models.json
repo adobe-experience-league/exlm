@@ -1575,6 +1575,19 @@
     ]
   },
   {
+    "id": "html-app",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "htmlUrl",
+        "value": "",
+        "label": "HTML App URL",
+        "description": "Please provide a URL to an HTML app."
+      }
+    ]
+  },
+  {
     "id": "secondary-search",
     "fields": [
       {
@@ -2783,7 +2796,10 @@
         "valueType": "string",
         "name": "author-bio-page",
         "multi": true,
-        "label": "Author Bio page URL"
+        "label": "Author Bio page URL",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/perspectives/authors"
+        }
       },
       {
         "component": "aem-tag",
@@ -3942,15 +3958,15 @@
           },
           {
             "name": "Most Popular across ExL",
-            "value": "882600"
+            "value": "exl-hp-auth-recs-2"
           },
           {
             "name": "Recommended For You",
-            "value": "882599"
+            "value": "exl-hp-auth-recs-1"
           },
           {
             "name": "Recently Viewed Content",
-            "value": "882601"
+            "value": "exl-hp-auth-recs-3"
           }
         ]
       },
@@ -4000,6 +4016,21 @@
   {
     "id": "announcement-ribbon",
     "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "iconImage",
+        "label": "Icon Image",
+        "description": "Sets the Icon Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "iconImageAlt",
+        "label": "Icon Image Alt Text",
+        "description": "Sets the icon image's alternative text"
+      },
       {
         "component": "text",
         "valueType": "string",
@@ -4114,6 +4145,60 @@
         "value": "",
         "label": "Second CTA Link",
         "description": "What link to open when clicking the button."
+      }
+    ]
+  },
+  {
+    "id": "recently-reviewed",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the headline for recently reviewed."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description for the recently reviewed."
       }
     ]
   }
