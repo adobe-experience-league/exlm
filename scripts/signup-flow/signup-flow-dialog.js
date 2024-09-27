@@ -51,6 +51,7 @@ export default class SignupFlowDialog {
     Promise.all([
       fetchLanguagePlaceholders(lang),
       loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow-dialog.css`),
+      this.addModalSeenInteraction()
     ]).then(([placeholders]) => {
       this.placeholders = placeholders;
       this.lang = lang;
@@ -361,9 +362,6 @@ export default class SignupFlowDialog {
 
     const signupContent = this.signupDialog.querySelector('.signup-dialog-content');
     const currentPageIndex = parseInt(signupContent.dataset.currentPageIndex, 10);
-    if (currentPageIndex === 1 && direction === 1) {
-      await this.addModalSeenInteraction();
-    }
     const newIndex = currentPageIndex + direction;
     this.toggleShimmer(true);
     const isLoaded = await this.loadPageContent(newIndex);
