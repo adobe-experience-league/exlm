@@ -6,6 +6,7 @@ import { defaultProfileClient } from '../auth/profile.js';
 import SignUpFlowShimmer from './signup-flow-shimmer.js';
 import FormValidator from '../form-validator.js';
 import { sendNotice } from '../toast/toast.js';
+import { signupModalEventEmitter } from '../events.js';
 
 /**
  * Types of signup dialog modals.
@@ -40,6 +41,7 @@ export default class SignupFlowDialog {
     this.signupDialog = null;
     this.shimmer = null;
     this.interactions = [];
+    this.eventEmitted = false;
     this.initialize();
   }
 
@@ -104,6 +106,10 @@ export default class SignupFlowDialog {
         e.preventDefault();
         this.signupDialog.close();
         document.body.classList.remove('overflow-hidden');
+        if (!this.eventEmitted) {
+          signupModalEventEmitter.emit('data', '1');
+          this.eventEmitted = true;
+        }
       });
     });
 
@@ -386,7 +392,13 @@ export default class SignupFlowDialog {
       const nextBtn = this.signupDialog.querySelector('.signup-dialog-nav-bar .next-btn');
 
       prevBtn.addEventListener('click', () => this.handleNavigation(-1));
-      nextBtn.addEventListener('click', () => this.handleNavigation(1));
+      nextBtn.addEventListener('click', () => {
+        this.handleNavigation(1);
+        if (!this.eventEmitted) {
+          signupModalEventEmitter.emit('data', '1');
+          this.eventEmitted = true;
+        }
+      });
     }
   }
 
