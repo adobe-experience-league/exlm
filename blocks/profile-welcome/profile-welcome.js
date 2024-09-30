@@ -2,8 +2,9 @@ import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchIndustryOptions, getIndustryNameById } from '../../scripts/profile/profile.js';
-import { globalEmitter } from '../../scripts/events.js';
+import eventEmitter from '../../scripts/events.js';
 
+const globalChannel = eventEmitter.get('global');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
 let placeholders = {};
@@ -208,7 +209,7 @@ export default async function decorate(block) {
   const blockInnerHTML = block.innerHTML;
   await decorateProfileWelcomeBlock(block);
 
-  globalEmitter.on('profileDataUpdated', async () => {
+  globalChannel.on('profileDataUpdated', async () => {
     block.innerHTML = blockInnerHTML;
     await decorateProfileWelcomeBlock(block);
   });

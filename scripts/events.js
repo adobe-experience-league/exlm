@@ -1,4 +1,5 @@
-export default class EventEmitter {
+/* eslint-disable max-classes-per-file */
+class Channel {
   constructor(initialValue = {}) {
     this.listeners = {};
     this.data = initialValue;
@@ -35,7 +36,15 @@ export default class EventEmitter {
   }
 }
 
-export const globalEmitter = new EventEmitter();
-/* TODO: Below Emitters to be cleaned up and make use of globalEmitter and update the set method */
-export const productExperienceEventEmitter = new EventEmitter();
-export const bookmarksEventEmitter = new EventEmitter();
+class EventEmitter {
+  channels = {};
+
+  getChannel = (channelName) => {
+    if (!this.channels[channelName]) {
+      this.channels[channelName] = new Channel();
+    }
+    return this.channels[channelName];
+  };
+}
+
+export default new EventEmitter();

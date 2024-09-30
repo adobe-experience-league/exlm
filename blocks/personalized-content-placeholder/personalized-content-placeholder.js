@@ -1,7 +1,9 @@
 import { htmlToElement, moveInstrumentation, decorateExternalLinks } from '../../scripts/scripts.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
-import { globalEmitter } from '../../scripts/events.js';
+import eventEmitter from '../../scripts/events.js';
+
+const globalChannel = eventEmitter.get('global');
 
 // Will be refactoring this function to use a loadFragment() function from scripts.js
 const fetchPageContent = async (url, loader, block) => {
@@ -63,7 +65,7 @@ export default async function decorate(block) {
   const blockInnerHTML = block.innerHTML;
   decoratePersonalizedContent(block);
 
-  globalEmitter.on('signupDialogClose', async () => {
+  globalChannel.on('signupDialogClose', async () => {
     block.innerHTML = blockInnerHTML;
 
     const profileSections = document.querySelectorAll('.profile-custom-container');
