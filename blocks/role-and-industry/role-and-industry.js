@@ -30,6 +30,8 @@ function validateForm(formSelector) {
   return validator.validate();
 }
 
+
+
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
   const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
@@ -146,12 +148,15 @@ export default async function decorate(block) {
       selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
 
-    role.forEach((el) => {
-      const checkBox = block.querySelector(`input[name="${el}"]`);
-      if (checkBox) {
-        checkBox.checked = true;
-        checkBox.closest('.role-cards-item').classList.toggle('role-cards-highlight', checkBox.checked);
-      }
+    applyCheckboxesState();
+  }
+
+  const applyCheckboxesState = () => {
+    block.querySelectorAll('.role-cards-item').forEach((card) => {
+      const checkbox = card.querySelector('input[type="checkbox"]');
+      const name = checkbox.name;
+      checkbox.checked = role.includes(name);
+      checkbox.closest('.role-cards-item').classList.toggle('role-cards-highlight', checkbox.checked);
     });
   }
 
@@ -195,7 +200,9 @@ export default async function decorate(block) {
 
           defaultProfileClient
             .updateProfile('role', updatedRoles, true)
-            .then(() => sendNotice(PROFILE_UPDATED))
+            .then(() => {
+              sendNotice(PROFILE_UPDATED);
+            })
             .catch(() => sendNotice(PROFILE_NOT_UPDATED));
         }
       }
