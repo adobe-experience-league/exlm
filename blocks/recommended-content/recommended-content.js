@@ -1,12 +1,4 @@
-import {
-  createTag,
-  fetchLanguagePlaceholders,
-  htmlToElement,
-  getConfig,
-  getPathDetails,
-  getCookie,
-  handleTargetEvent,
-} from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
@@ -18,6 +10,7 @@ import {
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
+import { handleTargetEvent, checkTargetSupport, targetDataAdapter } from '../../scripts/target/target.js';
 
 const DEFAULT_NUM_CARDS = 4;
 let placeholders = {};
@@ -28,44 +21,7 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 const countNumberAsArray = (n) => Array.from({ length: n }, (_, i) => n - i);
-const { targetCriteriaIds, cookieConsentName } = getConfig();
-
-/**
- * Check if the user has accepted the cookie policy for target
- * @returns {boolean}
- */
-function checkTargetSupport() {
-  const value = getCookie(cookieConsentName);
-  if (!value || window.hlx.aemRoot) return false;
-  const cookieConsentValues = value.split(',').map((part) => part[part.length - 1]);
-  if (cookieConsentValues[0] === '1' && cookieConsentValues[1] === '1') {
-    return true;
-  }
-  return false;
-}
-
-function targetDataAdapter(data) {
-  const articlePath = `/${getPathDetails().lang}${data?.path}`;
-  const fullURL = new URL(articlePath, window.location.origin).href;
-  const solutions = data?.product.split(',').map((s) => s.trim());
-  return {
-    ...data,
-    badgeTitle: data?.contentType,
-    type: data?.contentType,
-    authorInfo: data?.authorInfo || {
-      name: [''],
-      type: [''],
-    },
-    product: solutions,
-    tags: [],
-    copyLink: fullURL,
-    bookmarkLink: '',
-    viewLink: fullURL,
-    viewLinkText: placeholders[`browseCard${convertToTitleCase(data?.contentType)}ViewLabel`]
-      ? placeholders[`browseCard${convertToTitleCase(data?.contentType)}ViewLabel`]
-      : `View ${data?.contentType}`,
-  };
-}
+const { targetCriteriaIds } = getConfig();
 
 async function fetchInterestData() {
   try {
@@ -246,7 +202,7 @@ export default async function decorate(block) {
       const cardData = [];
       let i = 0;
       while (cardData.length < 4 && i < data.length) {
-        cardData.push(targetDataAdapter(data[i]));
+        cardData.push(targetDataAdapter(data[i], placeholders));
         i += 1;
       }
       data = cardData;
