@@ -252,7 +252,7 @@ export default async function decorate(block) {
       data = cardData;
     } else {
       const { data: cards = [], contentType: ctType } = cardResponse || {};
-      const { shimmers: cardShimmers, payload: apiPayload } = apiConfigObject;
+      const { shimmers: cardShimmers, payload: apiPayload, wrappers: cardWrappers } = apiConfigObject;
       const { noOfResults } = apiPayload;
       if (cards.length) {
         countNumberAsArray(noOfResults).forEach(() => {
@@ -274,6 +274,7 @@ export default async function decorate(block) {
           cardPromise: getCardsData(payloadInfo),
           shimmers: cardShimmers,
           contentType: ctType,
+          wrappers: cardWrappers,
         });
       }
     }
@@ -281,26 +282,40 @@ export default async function decorate(block) {
   };
 
   const renderCardsBlock = (cardModels, payloadConfig, contentDiv) => {
-    cardModels.forEach((cardData, i) => {
-      const cardDiv = payloadConfig.wrappers[i];
-      if (cardData?.cardPromise) {
-        cardData.cardPromise.then((cardDataResponse) => {
-          const { data: delayedCardData = [] } = cardDataResponse;
-          delayedCardData.forEach((cardModel, index) => {
-            const shimmer = cardData.shimmers[index];
-            if (shimmer) {
-              shimmer.remove();
-            }
+    const promises = cardModels.map(
+      (cardData, i) =>
+        new Promise((resolve) => {
+          const cardDiv = payloadConfig.wrappers[i];
+          if (cardData?.cardPromise) {
+            cardData.cardPromise.then((cardDataResponse) => {
+              const { data: delayedCardData = [] } = cardDataResponse;
+              if (delayedCardData.length === 0) {
+                cardData.shimmers.forEach((shim, index) => {
+                  shim.remove();
+                  cardData.wrappers[index].style.display = 'none';
+                });
+              } else {
+                delayedCardData.forEach((cardModel, index) => {
+                  const shimmer = cardData.shimmers[index];
+                  const wrapperDiv = cardData.wrappers[index];
+                  if (shimmer) {
+                    shimmer.remove();
+                  }
+                  wrapperDiv.innerHTML = '';
+                  buildCard(contentDiv, wrapperDiv, cardModel);
+                });
+              }
+              resolve(true);
+            });
+          } else {
             cardDiv.innerHTML = '';
-            buildCard(contentDiv, cardDiv, cardModel);
-          });
-        });
-      } else {
-        cardDiv.innerHTML = '';
-        buildCard(contentDiv, cardDiv, cardData);
-      }
-    });
+            buildCard(contentDiv, cardDiv, cardData);
+            resolve(true);
+          }
+        }),
+    );
     contentDiv.style.display = 'flex';
+    return promises;
   };
 
   const recommendedContentNoResults = () => {
@@ -408,10 +423,11 @@ export default async function decorate(block) {
           wrappers,
         };
         return new Promise((resolve) => {
-          getCardsData(payload).then((resp) => {
+          getCardsData(payload).then(async (resp) => {
             const cardModels = parseCardResponseData(resp, payloadConfig);
             if (cardModels?.length) {
-              renderCardsBlock(cardModels, payloadConfig, contentDiv);
+              const renderPromises = renderCardsBlock(cardModels, payloadConfig, contentDiv);
+              await Promise.all(renderPromises);
             }
             resolve({
               data: cardModels,
@@ -422,8 +438,8 @@ export default async function decorate(block) {
       });
     }
     Promise.all(cardPromises)
-      .then((cardResponses) => {
-        const cardsCount = cardResponses.reduce((acc, curr) => acc + (curr?.data?.length || 0), 0);
+      .then(() => {
+        const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
         if (cardsCount === 0) {
           buildNoResultsContent(contentDiv, true);
           recommendedContentNoResults(contentDiv);
