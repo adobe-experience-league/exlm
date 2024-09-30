@@ -89,8 +89,6 @@ export default async function decorate(block) {
   if (targetSupport) {
     block.style.display = 'block';
     handleTargetEvent(targetCriteriaIds.recentlyViewed).then(({ data }) => {
-      // if(meta.heading) block.querySelector(".recently-reviewed-header").textContent = meta.heading
-      // if(meta.subheading) block.querySelector(".recently-reviewed-description").textContent = meta.subheading
       if (data.length) {
         data.forEach((item) => {
           const cardData = targetDataAdapter(item, placeholders);
