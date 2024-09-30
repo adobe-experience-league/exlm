@@ -1,6 +1,7 @@
 import { htmlToElement, moveInstrumentation, decorateExternalLinks } from '../../scripts/scripts.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
+import { signupModalEventEmitter } from '../../scripts/events.js';
 
 // Will be refactoring this function to use a loadFragment() function from scripts.js
 const fetchPageContent = async (url, loader, block) => {
@@ -20,6 +21,7 @@ const fetchPageContent = async (url, loader, block) => {
         moveInstrumentation(block, container);
       } else {
         Array.from(container.children).forEach((section) => {
+          section.classList.add('profile-custom-container');
           loader.insertAdjacentElement('beforebegin', section);
         });
       }
@@ -30,8 +32,9 @@ const fetchPageContent = async (url, loader, block) => {
   }
 };
 
-export default async function decorate(block) {
+const decoratePersonalizedContent = async (block) => {
   let [completePageURL, incompletePageURL] = [...block.children].map((row) => row.querySelector('a')?.href);
+  block.textContent = '';
   document.body.classList.add('profile-home-page');
   document.body.appendChild(
     htmlToElement('<div class="profile-background" role="presentation" aria-hidden="true"></div>'),
@@ -40,8 +43,8 @@ export default async function decorate(block) {
     if (window.hlx.aemRoot) {
       completePageURL = completePageURL.replace('.html', '');
       incompletePageURL = incompletePageURL.replace('.html', '');
+      block.textContent = 'This block will load content authored based on if the profile is completed or incomplete';
     }
-    block.textContent = 'This block will load content authored based on if the profile is completed or incomplete';
     const currentSection = block.parentElement.parentElement;
     const loader = htmlToElement('<div class="section profile-shimmer"><span></span></div>');
     currentSection.insertAdjacentElement('beforebegin', loader);
@@ -52,6 +55,23 @@ export default async function decorate(block) {
       await fetchPageContent(incompletePageURL, currentSection, block);
     }
     loader.remove();
-    currentSection.remove();
+    currentSection.style.display = 'none';
   }
+};
+
+export default async function decorate(block) {
+  const blockInnerHTML = block.innerHTML;
+  decoratePersonalizedContent(block);
+
+  signupModalEventEmitter.on('dataChange', async () => {
+    block.innerHTML = blockInnerHTML;
+
+    const profileSections = document.querySelectorAll('.profile-custom-container');
+    if (profileSections.length > 0) {
+      profileSections.forEach((section) => {
+        section.remove();
+      });
+    }
+    decoratePersonalizedContent(block);
+  });
 }
