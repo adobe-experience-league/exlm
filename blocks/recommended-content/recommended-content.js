@@ -183,15 +183,16 @@ export default async function decorate(block) {
   filterOptions.unshift(defaultOptionsKey);
   const [defaultFilterOption = ''] = filterOptions;
 
-  const apiConfig = [];
-
-  const renderShimmer = (contentDiv) => {
+  const renderCardPlaceholders = (contentDiv) => {
     const cardDiv = document.createElement('div');
     cardDiv.classList.add('card-wrapper');
     contentDiv.appendChild(cardDiv);
     const cardPlaceholder = new BuildPlaceholder(1);
     cardPlaceholder.add(cardDiv);
-    return cardPlaceholder;
+    return {
+      shimmer: cardPlaceholder,
+      wrapper: cardDiv,
+    };
   };
 
   const getCardsData = (payload) =>
@@ -208,6 +209,83 @@ export default async function decorate(block) {
           resolve({});
         });
     });
+
+  const parseCardResponseData = (cardResponse, apiConfigObject) => {
+    let data = [];
+    if (targetSupport) {
+      data = cardResponse.data;
+      const { shimmers, params, optionType } = apiConfigObject;
+      shimmers.forEach((shimmer) => {
+        shimmer.remove();
+      });
+      if (params.context.interests.length) {
+        if (optionType.toLowerCase() === defaultOptionsKey.toLowerCase()) {
+          data = data.filter((pageData) =>
+            params.context.interests.some((ele) => pageData.product.toLowerCase().includes(ele.toLowerCase())),
+          );
+        } else {
+          data = data.filter((pageData) => pageData.product.toLowerCase().includes(optionType.toLowerCase()));
+        }
+      }
+      const cardData = [];
+      let i = 0;
+      while (cardData.length < 4 && i < data.length) {
+        cardData.push(targetDataAdapter(data[i]));
+        i += 1;
+      }
+      data = cardData;
+    } else {
+      const { data: cards = [], contentType: ctType } = cardResponse || {};
+      const { shimmers: cardShimmers, payload: apiPayload } = apiConfigObject;
+      const { noOfResults } = apiPayload;
+      if (cards.length) {
+        countNumberAsArray(noOfResults).forEach(() => {
+          const model = cards.shift();
+          if (model) {
+            data.push(model);
+          }
+          const cardShimmer = cardShimmers.shift();
+          if (cardShimmer) {
+            cardShimmer.remove();
+          }
+        });
+      } else {
+        const payloadInfo = {
+          ...apiPayload,
+          contentType: null,
+        };
+        data.push({
+          cardPromise: getCardsData(payloadInfo),
+          shimmers: cardShimmers,
+          contentType: ctType,
+        });
+      }
+    }
+    return data;
+  };
+
+  const renderCardsBlock = (cardModels, payloadConfig, contentDiv) => {
+    cardModels.forEach((cardData, i) => {
+      const cardDiv = payloadConfig.wrappers[i];
+      if (cardData?.cardPromise) {
+        cardData.cardPromise.then((cardDataResponse) => {
+          const { data: delayedCardData = [] } = cardDataResponse;
+          delayedCardData.forEach((cardModel, index) => {
+            const shimmer = cardData.shimmers[index];
+            if (shimmer) {
+              shimmer.remove();
+            }
+            cardDiv.innerHTML = '';
+            buildCard(contentDiv, cardDiv, cardModel);
+          });
+        });
+      } else {
+        cardDiv.innerHTML = '';
+        buildCard(contentDiv, cardDiv, cardData);
+      }
+    });
+    contentDiv.style.display = 'flex';
+  };
 
   const recommendedContentNoResults = () => {
     const recommendedContentNoResultsElement = block.querySelector('.browse-card-no-results');
@@ -256,15 +334,37 @@ export default async function decorate(block) {
     let cardPromises = [];
     if (targetSupport) {
       const cardShimmers = [];
+      const wrappers = [];
       countNumberAsArray(DEFAULT_NUM_CARDS).forEach(() => {
-        const shimmer = renderShimmer(contentDiv);
+        const { shimmer, wrapper } = renderCardPlaceholders(contentDiv);
         cardShimmers.push(shimmer);
+        wrappers.push(wrapper);
       });
-      apiConfig.push({
+      const payloadConfig = {
         targetSupport,
         shimmers: cardShimmers,
-      });
-      cardPromises.push(handleTargetEvent(targetCriteriaId));
+        wrappers,
+        params,
+        optionType,
+      };
+      cardPromises.push(
+        new Promise((resolve) => {
+          handleTargetEvent(targetCriteriaId)
+            .then((resp) => {
+              const cardModels = parseCardResponseData(resp, payloadConfig);
+              if (cardModels?.length) {
+                renderCardsBlock(cardModels, payloadConfig, contentDiv);
+              }
+              resolve({
+                data: cardModels,
+                payloadConfig,
+              });
+            })
+            .catch(() => {
+              resolve({ data: [] });
+            });
+        }),
+      );
     } else {
       cardPromises = Object.keys(contentTypesFetchMap).map((contentType) => {
         const payload = {
@@ -278,102 +378,41 @@ export default async function decorate(block) {
         }
         const { noOfResults } = payload;
         const cardShimmers = [];
+        const wrappers = [];
         countNumberAsArray(noOfResults).forEach(() => {
-          const shimmer = renderShimmer(contentDiv);
+          const { shimmer, wrapper } = renderCardPlaceholders(contentDiv);
           cardShimmers.push(shimmer);
+          wrappers.push(wrapper);
         });
         const [payloadContentType] = payload.contentType || [''];
-        apiConfig.push({
+        const payloadConfig = {
           payload,
           shimmers: cardShimmers,
           contentType: payloadContentType,
+          wrappers,
+        };
+        return new Promise((resolve) => {
+          getCardsData(payload).then((resp) => {
+            const cardModels = parseCardResponseData(resp, payloadConfig);
+            if (cardModels?.length) {
+              renderCardsBlock(cardModels, payloadConfig, contentDiv);
+            }
+            resolve({
+              data: cardModels,
+              payloadConfig,
+            });
+          });
         });
-        return getCardsData(payload);
       });
     }
     Promise.all(cardPromises)
       .then((cardResponses) => {
-        let data;
-        if (targetSupport) {
-          data = cardResponses[0].data;
-          const [{ shimmers }] = apiConfig;
-          shimmers.forEach((shimmer) => {
-            shimmer.remove();
-          });
-          if (params.context.interests.length) {
-            if (optionType.toLowerCase() === defaultOptionsKey.toLowerCase()) {
-              data = data.filter((pageData) =>
-                params.context.interests.some((ele) => pageData.product.toLowerCase().includes(ele.toLowerCase())),
-              );
-            } else {
-              data = data.filter((pageData) => pageData.product.toLowerCase().includes(optionType.toLowerCase()));
-            }
-          }
-          const cardData = [];
-          let i = 0;
-          while (cardData.length < 4 && i < data.length) {
-            cardData.push(targetDataAdapter(data[i]));
-            i += 1;
-          }
-          data = cardData;
-        } else {
-          data = contentTypes.reduce((acc, curr) => {
-            const contentTypeData = cardResponses.find(({ contentType }) => contentType === curr);
-            const { shimmers: cardShimmers = [], payload: apiPayload = null } =
-              apiConfig.find(({ contentType }) => contentType === curr) || {};
-            const { data: cards = [] } = contentTypeData || {};
-            if (cards.length) {
-              const cardShimmer = cardShimmers.shift();
-              if (cardShimmer) {
-                cardShimmer.remove();
-              }
-              acc.push(cards.shift());
-            } else {
-              const existingDelayedApiConfig = acc.find(
-                (configData) => configData.cardPromise && configData.contentType === curr,
-              );
-              if (!existingDelayedApiConfig) {
-                const payloadInfo = {
-                  ...apiPayload,
-                  contentType: null,
-                };
-                acc.push({
-                  cardPromise: getCardsData(payloadInfo),
-                  shimmers: cardShimmers,
-                  contentType: curr,
-                });
-              }
-            }
-            return acc;
-          }, []);
-        }
-        if (data?.length) {
-          // Render cards
-          for (let i = 0; i < data.length; i += 1) {
-            const cardData = data[i];
-            const cardDiv = contentDiv.querySelectorAll('.card-wrapper')[i];
-            if (cardData?.cardPromise) {
-              cardData.cardPromise.then((cardDataResponse) => {
-                const { data: delayedCardData = [] } = cardDataResponse;
-                delayedCardData.forEach((cardModel, index) => {
-                  const shimmer = cardData.shimmers[index];
-                  if (shimmer) {
-                    shimmer.remove();
-                  }
-                  cardDiv.innerHTML = '';
-                  buildCard(contentDiv, cardDiv, cardModel);
-                });
-              });
-            } else {
-              cardDiv.innerHTML = '';
-              buildCard(contentDiv, cardDiv, cardData);
-            }
-          }
-          contentDiv.style.display = 'flex';
-        } else {
+        const cardsCount = cardResponses.reduce((acc, curr) => acc + (curr?.data?.length || 0), 0);
+        if (cardsCount === 0) {
           buildNoResultsContent(contentDiv, true);
           recommendedContentNoResults(contentDiv);
           contentDiv.style.display = 'block';
+          return;
         }
 
         const navSectionEl = block.querySelector('.recommended-content-nav-section');
@@ -384,9 +423,17 @@ export default async function decorate(block) {
         }
       })
       .catch((err) => {
-        buildNoResultsContent(contentDiv, true);
-        recommendedContentNoResults(contentDiv);
-        contentDiv.style.display = 'block';
+        const cardsBlockCount = contentDiv.querySelectorAll('.browse-card').length;
+        if (cardsBlockCount === 0) {
+          buildNoResultsContent(contentDiv, true);
+          recommendedContentNoResults(contentDiv);
+          contentDiv.style.display = 'block';
+        } else {
+          // In the unlikely scenario that some card promises were successfully resolved, while some others failed. Try to show the rendered cards.
+          Array.from(contentDiv.querySelectorAll('.shimmer-placeholder')).forEach((element) => {
+            element.remove();
+          });
+        }
         /* eslint-disable-next-line no-console */
         console.error(err);
       });
