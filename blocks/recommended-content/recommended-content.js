@@ -186,7 +186,7 @@ export default async function decorate(block) {
       const cardData = [];
       let i = 0;
       while (cardData.length < 4 && i < data.length) {
-        cardData.push(targetDataAdapter(data[i]));
+        cardData.push(targetDataAdapter(data[i], placeholders));
         i += 1;
       }
       data = cardData;
