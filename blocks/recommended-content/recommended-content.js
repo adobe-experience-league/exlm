@@ -234,8 +234,8 @@ export default async function decorate(block) {
       shimmers.forEach((shimmer) => {
         shimmer.remove();
       });
-      if (params.context.interests.length) {
-        if (optionType.toLowerCase() === defaultOptionsKey.toLowerCase()) {
+      if (params.context.interests.length && optionType.toLowerCase() !== defaultOptionsKey[0].toLowerCase()) {
+        if (optionType.toLowerCase() === defaultOptionsKey[1].toLowerCase()) {
           data = data.filter((pageData) =>
             params.context.interests.some((ele) => pageData.product.toLowerCase().includes(ele.toLowerCase())),
           );
