@@ -5,6 +5,7 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { fetchIndustryOptions } from '../../scripts/profile/profile.js';
 import FormValidator from '../../scripts/form-validator.js';
+import { roleAndIndustryEmitter } from '../../scripts/events.js';
 
 let placeholders = {};
 try {
@@ -29,8 +30,6 @@ function validateForm(formSelector) {
   const validator = new FormValidator(formSelector, placeholders, options);
   return validator.validate();
 }
-
-
 
 export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
@@ -115,6 +114,38 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(roleAndIndustryDiv);
 
+  let selectedRoles = [];
+
+  const applyCheckboxesState = () => {
+    block.querySelectorAll('.role-cards-item').forEach((card) => {
+      const checkbox = card.querySelector('input[type="checkbox"]');
+      const name = checkbox.name;
+      checkbox.checked = selectedRoles.includes(name);
+      card.classList.toggle('role-cards-highlight', checkbox.checked);
+    });
+  }
+
+  const updateCheckboxAndEmit = (name, isChecked, emit = true) => {
+    if (isChecked) {
+      if (!selectedRoles.includes(name)) {
+        selectedRoles.push(name);
+      }
+    } else {
+      selectedRoles = selectedRoles.filter(checkboxName => checkboxName !== name);
+    }
+    if (emit) {
+      roleAndIndustryEmitter.emit('roleChange', selectedRoles);
+    }
+    else {
+      applyCheckboxesState();
+    }
+  }
+
+  roleAndIndustryEmitter.on('roleChange', (data) => {
+    selectedRoles = data;
+    applyCheckboxesState();
+  });
+
   if (isSignedIn) {
     const industryOptions = await fetchIndustryOptions();
     const updatedIndustryOptions = industryOptions.map((industry) => ({
@@ -137,7 +168,7 @@ export default async function decorate(block) {
     });
 
     const profileData = await defaultProfileClient.getMergedProfile();
-    const role = profileData?.role;
+    selectedRoles = profileData?.role;
     const industryInterest = profileData?.industryInterests;
 
     if (
@@ -151,20 +182,12 @@ export default async function decorate(block) {
     applyCheckboxesState();
   }
 
-  const applyCheckboxesState = () => {
-    block.querySelectorAll('.role-cards-item').forEach((card) => {
-      const checkbox = card.querySelector('input[type="checkbox"]');
-      const name = checkbox.name;
-      checkbox.checked = role.includes(name);
-      checkbox.closest('.role-cards-item').classList.toggle('role-cards-highlight', checkbox.checked);
-    });
-  }
-
   const formElement = block.querySelector('.role-and-industry-form');
   const formErrorElement = formElement.querySelector('.role-and-industry-form-error');
 
   block.querySelectorAll('.role-cards-item').forEach((card) => {
     const checkbox = card.querySelector('input[type="checkbox"]');
+    const name = checkbox.name;
 
     card.addEventListener('click', (e) => {
       if (e.target !== checkbox) {
@@ -186,28 +209,32 @@ export default async function decorate(block) {
       const isValid = validateForm(formElement);
       toggleFormError(false);
 
-      if (!isInSignupDialog && !isValid) {
-        checkbox.checked = true;
-        toggleFormError(true);
-      } else {
-        const isChecked = checkbox.checked;
-        checkbox.closest('.role-cards-item').classList.toggle('role-cards-highlight', isChecked);
-
-        if (isSignedIn && isValid) {
-          const updatedRoles = roleCardsData
-            .filter((roleCard) => block.querySelector(`input[name="${roleCard.role}"]`).checked)
-            .map((roleCard) => roleCard.role);
-
+      if (isInSignupDialog) {
+          const isChecked = checkbox.checked;
+          updateCheckboxAndEmit(name, isChecked, isValid);
+          if (isValid) {
+            defaultProfileClient
+            .updateProfile('role', selectedRoles, true)
+            .then(() => sendNotice(PROFILE_UPDATED))
+            .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+          }
+      }
+      else {
+        if (!isValid) {
+          checkbox.checked = true;
+          toggleFormError(true);
+          return;
+        }
+        else {
+          const isChecked = checkbox.checked;
+          updateCheckboxAndEmit(name, isChecked);
           defaultProfileClient
-            .updateProfile('role', updatedRoles, true)
-            .then(() => {
-              sendNotice(PROFILE_UPDATED);
-            })
+            .updateProfile('role', selectedRoles, true)
+            .then(() => sendNotice(PROFILE_UPDATED))
             .catch(() => sendNotice(PROFILE_NOT_UPDATED));
         }
       }
     });
   });
-
   decorateIcons(block);
 }
