@@ -61,6 +61,7 @@ export async function pushPageDataLayer(language) {
       notificationPref: false,
       org: '',
       orgs: [],
+      userCorporateName: '',
     },
   };
 
@@ -85,6 +86,7 @@ export async function pushPageDataLayer(language) {
         notificationPref: userData.emailOptIn === true,
         org: userData.org || '',
         orgs: userData.orgs || [],
+        userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
       };
     }
   } catch (e) {
