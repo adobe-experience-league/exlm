@@ -4,13 +4,14 @@ import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../../
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { fetchArticleByID } from '../../scripts/data-service/article-data-service.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
-import { bookmarksEventEmitter } from '../../scripts/events.js';
+import eventEmitter from '../../scripts/events.js';
 import { getCardData, convertToTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
 import Pagination from '../../scripts/pagination/pagination.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 
 const BOOKMARKS_BY_PG_CONFIG = {};
 const CARDS_MODEL = {};
+const bookmarksChannel = eventEmitter.getChannel('bookmarks');
 
 const buildCardsShimmer = new BuildPlaceholder(Pagination.getItemsCount());
 
@@ -120,7 +121,7 @@ async function renderCards({ pgNum, block }) {
 
 const prepareBookmarksPaginationConfig = () => {
   const resultsPerPage = Pagination.getItemsCount();
-  const bookmarks = bookmarksEventEmitter.get('bookmark_ids') ?? [];
+  const bookmarks = bookmarksChannel.get('bookmark_ids') ?? [];
   const sortedBookmarks = structuredClone(bookmarks).sort((a, b) => {
     const [, currentTimeStamp = '0'] = a.split(':');
     const [, nextTimeStamp = '0'] = b.split(':');
@@ -171,7 +172,7 @@ export default async function decorateBlock(block) {
       return;
     }
     const clonedBookmarkIds = structuredClone(bookmarks);
-    bookmarksEventEmitter.set('bookmark_ids', clonedBookmarkIds);
+    bookmarksChannel.set('bookmark_ids', clonedBookmarkIds);
 
     const wrapper = block.querySelector('.bookmarks-content');
     const resultsPerPage = Pagination.getItemsCount();
@@ -185,8 +186,8 @@ export default async function decorateBlock(block) {
       totalPages,
     });
 
-    bookmarksEventEmitter.on('dataChange', async () => {
-      const bookmarkItems = bookmarksEventEmitter.get('bookmark_ids') ?? [];
+    bookmarksChannel.on('dataChange', async () => {
+      const bookmarkItems = bookmarksChannel.get('bookmark_ids') ?? [];
       const { currentPageNumber } = pagination.getCurrentPaginationStatus();
       const totalPagesCount = Math.ceil(bookmarkItems.length / resultsPerPage);
       let newPgNum;
