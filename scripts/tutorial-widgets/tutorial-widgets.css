@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  border-top: 1px solid var(--non-spectrurm-whisper-gray);
+  padding-top: 30px;
 }
 
 .tutorial-header {

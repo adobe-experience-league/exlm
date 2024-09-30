@@ -41,7 +41,6 @@ export default class SignupFlowDialog {
     this.signupDialog = null;
     this.shimmer = null;
     this.interactions = [];
-    this.eventEmitted = false;
     this.initialize();
   }
 
@@ -106,15 +105,13 @@ export default class SignupFlowDialog {
         e.preventDefault();
         this.signupDialog.close();
         document.body.classList.remove('overflow-hidden');
-        if (!this.eventEmitted) {
-          signupModalEventEmitter.emit('data', 'Profile data updated!');
-          this.eventEmitted = true;
-        }
+        signupModalEventEmitter.emit('dataChange', 'Profile data updated!');
       });
     });
 
     this.signupDialog.addEventListener('cancel', () => {
       document.body.classList.remove('overflow-hidden');
+      signupModalEventEmitter.emit('dataChange', 'Profile data updated!');
     });
   }
 
@@ -392,13 +389,7 @@ export default class SignupFlowDialog {
       const nextBtn = this.signupDialog.querySelector('.signup-dialog-nav-bar .next-btn');
 
       prevBtn.addEventListener('click', () => this.handleNavigation(-1));
-      nextBtn.addEventListener('click', () => {
-        this.handleNavigation(1);
-        if (!this.eventEmitted) {
-          signupModalEventEmitter.emit('data', 'Profile data updated!');
-          this.eventEmitted = true;
-        }
-      });
+      nextBtn.addEventListener('click', () => this.handleNavigation(1));
     }
   }
 
