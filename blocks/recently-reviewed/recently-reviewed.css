@@ -1,7 +1,7 @@
 @import "../../scripts/browse-card/browse-cards-block.css";
 
 
-.recently-reviewed.block  .recently-reviewed-header {
+.recently-reviewed  .recently-reviewed-header {
     font-size: var(--spectrum-font-size-700);
     line-height: 35px;
     font-weight: bold;
@@ -10,19 +10,19 @@
 }
 
 
-.recently-reviewed.block  .recently-reviewed-description {
+.recently-reviewed  .recently-reviewed-description {
     font-size: var(--spectrum-font-size-200);
     line-height: 20px;
     color: var(--spectrum-gray-800);
     margin-bottom: 30px;
 }
 
-.recently-reviewed.block  .browse-cards-block-content:has(.browse-card-no-results) {
+.recently-reviewed  .browse-cards-block-content:has(.browse-card-no-results) {
     display: block;
     min-height: auto;
 }
 
-.recently-reviewed.block .browse-cards-block-content > .browse-card-no-results {
+.recently-reviewed .browse-cards-block-content > .browse-card-no-results {
     margin-top: 0;
     flex: 1;
     display: block;
