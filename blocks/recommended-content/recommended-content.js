@@ -120,6 +120,29 @@ export default async function decorate(block) {
   const reversedDomElements = remainingElements.reverse();
   const [firstEl, secondEl, targetCriteria, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
   const targetCriteriaId = targetCriteria.textContent.trim();
+  const profileData = (await defaultProfileClient.getMergedProfile()) || {};
+  const {
+    role: profileRoles = [],
+    interests: profileInterests = [],
+    solutionLevels: profileSolutionLevels = [],
+  } = profileData;
+
+  let defaultOptionsKey = [];
+
+  if (profileInterests.length === 0) {
+    defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
+  } else {
+    defaultOptionsKey.push(ALL_MY_OPTIONS_KEY);
+  }
+
+  if (targetSupport && targetCriteriaId) {
+    if (profileInterests.length > 0) {
+      defaultOptionsKey = [];
+      defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
+      defaultOptionsKey.push(ALL_MY_OPTIONS_KEY);
+    }
+  }
+
   if (targetSupport) {
     targetSupport = Object.values(targetCriteriaIds).indexOf(targetCriteriaId) > -1;
     handleTargetEvent(targetCriteriaId).then((data) => {
@@ -151,14 +174,8 @@ export default async function decorate(block) {
 
   const { products, versions, features } = extractCapability(encodedSolutionsText);
 
-  const profileData = (await defaultProfileClient.getMergedProfile()) || {};
   const interestsDataArray = await interestDataPromise;
 
-  const {
-    role: profileRoles = [],
-    interests: profileInterests = [],
-    solutionLevels: profileSolutionLevels = [],
-  } = profileData;
   const sortedProfileInterests = profileInterests.sort();
   const filterOptions = [...new Set(sortedProfileInterests)];
   const experienceLevels = sortedProfileInterests.map((interestName) => {
@@ -179,8 +196,7 @@ export default async function decorate(block) {
     ? profileRoles
     : fourthEl?.innerText?.trim().split(',').filter(Boolean);
 
-  const defaultOptionsKey = profileInterests.length === 0 ? ALL_ADOBE_OPTIONS_KEY : ALL_MY_OPTIONS_KEY;
-  filterOptions.unshift(defaultOptionsKey);
+  filterOptions.unshift(...defaultOptionsKey);
   const [defaultFilterOption = ''] = filterOptions;
 
   const renderCardPlaceholders = (contentDiv) => {
@@ -218,8 +234,8 @@ export default async function decorate(block) {
       shimmers.forEach((shimmer) => {
         shimmer.remove();
       });
-      if (params.context.interests.length) {
-        if (optionType.toLowerCase() === defaultOptionsKey.toLowerCase()) {
+      if (params.context.interests.length && optionType.toLowerCase() !== defaultOptionsKey[0].toLowerCase()) {
+        if (optionType.toLowerCase() === defaultOptionsKey[1].toLowerCase()) {
           data = data.filter((pageData) =>
             params.context.interests.some((ele) => pageData.product.toLowerCase().includes(ele.toLowerCase())),
           );
@@ -299,7 +315,7 @@ export default async function decorate(block) {
     const contentDiv = block.querySelector('.recommended-content-block-section');
     const lowercaseOptionType = optionType?.toLowerCase();
     contentDiv.dataset.selected = lowercaseOptionType;
-    const showProfileOptions = lowercaseOptionType === defaultOptionsKey.toLowerCase();
+    const showProfileOptions = defaultOptionsKey.some((key) => lowercaseOptionType === key.toLowerCase());
     const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
     const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
     const expLevel = experienceLevels[expLevelIndex] ?? 'Beginner';
