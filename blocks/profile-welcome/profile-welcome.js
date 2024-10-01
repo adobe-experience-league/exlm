@@ -40,13 +40,11 @@ async function decorateProfileWelcomeBlock(block) {
 
   let profileData = {};
   let ppsProfileData = {};
-  let communityProfileData = {};
 
   if (isSignedIn) {
-    [profileData, ppsProfileData, communityProfileData] = await Promise.all([
+    [profileData, ppsProfileData] = await Promise.all([
       defaultProfileClient.getMergedProfile(),
       defaultProfileClient.getPPSProfile(),
-      defaultProfileClient.fetchCommunityProfileDetails(),
     ]);
   }
 
@@ -59,12 +57,6 @@ async function decorateProfileWelcomeBlock(block) {
   } = profileData || {};
 
   const { images: { 100: profilePicture } = '', company = UEAuthorMode ? 'User Company' : '' } = ppsProfileData || {};
-
-  const {
-    username: communityUserName = UEAuthorMode ? 'Community User Name' : '',
-    title: communityUserTitle = UEAuthorMode ? 'Community User Title' : '',
-    location: communityUserLocation = UEAuthorMode ? 'Community User Location' : '',
-  } = communityProfileData || {};
 
   const roleMappings = {
     Developer: placeholders?.roleCardDeveloperTitle || 'Developer',
@@ -131,6 +123,16 @@ async function decorateProfileWelcomeBlock(block) {
 
   // Conditionally display the profile card based on showProfileCard toggle
   if (showProfileCard.textContent.trim() === 'true') {
+    let communityProfileData = {};
+    if (isSignedIn) {
+      communityProfileData = await defaultProfileClient.fetchCommunityProfileDetails();
+    }
+    const {
+      username: communityUserName = UEAuthorMode ? 'Community User Name' : '',
+      title: communityUserTitle = UEAuthorMode ? 'Community User Title' : '',
+      location: communityUserLocation = UEAuthorMode ? 'Community User Location' : '',
+    } = communityProfileData || {};
+
     const profileUserCard = document.createRange().createContextualFragment(`
           <div class="profile-user-card">
                 <div class="profile-user-card-left">
