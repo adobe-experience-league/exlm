@@ -1,4 +1,4 @@
-import { loadCSS } from '../lib-franklin.js';
+import { loadCSS, decorateIcons } from '../lib-franklin.js';
 import { htmlToElement } from '../scripts.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
@@ -183,6 +183,7 @@ export default class Dropdown {
     });
 
     this.parentFormElement.appendChild(dropdown);
+    decorateIcons(this.parentFormElement);
   }
 }
 

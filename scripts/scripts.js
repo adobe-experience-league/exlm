@@ -1407,32 +1407,6 @@ export function getCookie(cookieName) {
   return null;
 }
 
-/**
- * Listens for the target-recs-ready event to fetch the content as per the given criteria
- * @param {string} criteriaId - The criteria id to listen for
- * @returns {Promise}
- */
-export function handleTargetEvent(criteria) {
-  return new Promise((resolve) => {
-    window.exlm?.targetData?.forEach((data) => {
-      if (data?.meta.scope === criteria) resolve(data);
-    });
-    function targetEventHandler(event) {
-      if (event?.detail?.meta.scope === criteria) {
-        document.removeEventListener('target-recs-ready', targetEventHandler);
-        if (!window.exlm.targetData) window.exlm.targetData = [];
-        window.exlm.targetData.push(event.detail);
-        resolve(event.detail);
-      }
-    }
-    document.addEventListener('target-recs-ready', targetEventHandler);
-    setTimeout(() => {
-      document.removeEventListener('target-recs-ready', targetEventHandler);
-      resolve({ data: [] });
-    }, 5000);
-  });
-}
-
 async function loadPage() {
   // THIS IS TEMPORARY FOR SUMMIT.
   if (handleHomePageHashes()) return;
@@ -1479,8 +1453,8 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 (async () => {
   if (!window.hlx.DO_NOT_LOAD_PAGE) {
     const { lang } = getPathDetails();
-    const { personalizedHomeLink } = getConfig() || {};
     document.documentElement.lang = lang || 'en';
+    const { personalizedHomeLink } = getConfig() || {};
     if (isProfilePage()) {
       if (window.location.href.includes('.html')) {
         loadPage();
