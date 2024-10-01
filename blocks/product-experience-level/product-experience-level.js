@@ -1,6 +1,6 @@
 import buildProductCard from '../../scripts/profile/profile-interests.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { productExperienceEventEmitter } from '../../scripts/events.js';
+import { productExperienceEventEmitter, signupModalEventEmitter } from '../../scripts/events.js';
 
 let placeholders = {};
 try {
@@ -37,6 +37,15 @@ const renderCards = (resultsEl) => {
 };
 
 export default function ProfileExperienceLevel(block) {
+  const blockInnerHTML = block.innerHTML;
+  decorateContent(block);
+  signupModalEventEmitter.on('dataChange', async () => {
+    block.innerHTML = blockInnerHTML;
+    decorateContent(block);
+  });
+}
+
+function decorateContent(block) {
   const [firstLevel, secondLevel] = block.children;
   const heading = firstLevel.querySelector('h1, h2, h3, h4, h5, h6');
   heading?.classList.add('product-experience-level-header');
