@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { generateProfileDOM } from '../../scripts/profile/profile.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { fetchIndustryOptions, getIndustryNameById, generateProfileDOM } from '../../scripts/profile/profile.js';
+import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 import { productExperienceEventEmitter, globalEmitter } from '../../scripts/events.js';
 
 function loadCommunityAccountDOM(block) {
@@ -60,7 +60,6 @@ export default async function decorate(block) {
   productExperienceEventEmitter.on('dataChange', async (data) => {
     const { key, value } = data;
     const updatedInterests = productExperienceEventEmitter.get('interests_data') ?? [];
-
     const interests = updatedInterests.find((interest) => interest.id === key);
     if (interests) {
       interests.selected = value;
@@ -71,19 +70,47 @@ export default async function decorate(block) {
     newInterestsSpan.innerHTML = selectedInterests.join(' | ');
 
     const interestsElement = block.querySelector('.user-interests span:last-child');
-    if (interestsElement) {
-      interestsElement.replaceWith(newInterestsSpan);
-    }
+    interestsElement?.replaceWith(newInterestsSpan);
   });
 
-  globalEmitter.on('roleChange', (data) => {
+  globalEmitter.on('roleChange', async (data) => {
+    let placeholders = {};
+    try {
+      placeholders = await fetchLanguagePlaceholders();
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching placeholders:', err);
+    }
+
+    const roleMappings = {
+      Developer: placeholders?.roleCardDeveloperTitle || 'Developer',
+      User: placeholders?.roleCardUserTitle || 'Business User',
+      Leader: placeholders?.roleCardBusinessLeaderTitle || 'Business Leader',
+      Admin: placeholders?.roleCardAdministratorTitle || 'Administrator',
+    };
+
     const selectedRoles = data;
     const newRolesSpan = document.createElement('span');
-    newRolesSpan.innerHTML = selectedRoles.join(' | ');
+    newRolesSpan.innerHTML = selectedRoles.map((role) => roleMappings[role] || role).join(' | ');
 
     const rolesElement = block.querySelector('.user-role span:last-child');
-    if (rolesElement) {
-      rolesElement.replaceWith(newRolesSpan);
+    rolesElement?.replaceWith(newRolesSpan);
+  });
+
+  globalEmitter.on('industryChange', async (data) => {
+    const selectedIndustry = data;
+    const industryOptions = await fetchIndustryOptions();
+    let industryName = '';
+    if (Array.isArray(selectedIndustry)) {
+      industryName = getIndustryNameById(selectedIndustry[0], industryOptions);
     }
+    if (typeof selectedIndustry === 'string') {
+      industryName = getIndustryNameById(selectedIndustry, industryOptions);
+    }
+    const newIndustrySpan = document.createElement('span');
+    newIndustrySpan.innerHTML = industryName;
+
+    const industryElement = block.querySelector('.user-industry span:last-child');
+    industryElement?.replaceWith(newIndustrySpan);
   });
 }
