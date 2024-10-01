@@ -1453,8 +1453,8 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 (async () => {
   if (!window.hlx.DO_NOT_LOAD_PAGE) {
     const { lang } = getPathDetails();
-    const { isProd, personalizedHomeLink } = getConfig() || {};
     document.documentElement.lang = lang || 'en';
+    const { isProd, personalizedHomeLink } = getConfig() || {};
     if (isProfilePage()) {
       if (window.location.href.includes('.html')) {
         loadPage();
