@@ -1,7 +1,7 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
-import { productExperienceEventEmitter } from '../../scripts/events.js';
+import { productExperienceEventEmitter, signupModalEventEmitter } from '../../scripts/events.js';
 import FormValidator from '../../scripts/form-validator.js';
 
 const { interestsUrl } = getConfig();
@@ -193,6 +193,13 @@ function handleProductInterestChange(block) {
 }
 
 export default async function decorateProfile(block) {
+  const blockInnerHTML = block.innerHTML;
   decorateInterests(block);
   handleProductInterestChange(block);
+
+  signupModalEventEmitter.on('dataChange', async () => {
+    block.innerHTML = blockInnerHTML;
+    decorateInterests(block);
+    handleProductInterestChange(block);
+  });
 }
