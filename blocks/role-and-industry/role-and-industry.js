@@ -5,7 +5,7 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { fetchIndustryOptions } from '../../scripts/profile/profile.js';
 import FormValidator from '../../scripts/form-validator.js';
-import { roleAndIndustryEmitter } from '../../scripts/events.js';
+import { signupModalEventEmitter } from '../../scripts/events.js';
 
 let placeholders = {};
 try {
@@ -31,10 +31,10 @@ function validateForm(formSelector) {
   return validator.validate();
 }
 
-export default async function decorate(block) {
+async function decorateContent(block) {
   const isSignedIn = await isSignedInUser();
   const [roleAndIndustryTitle, roleAndIndustryDescription] = block.querySelectorAll(':scope div > div');
-
+  let selectedRoles = [];
   const roleCardsData = [
     {
       role: 'User',
@@ -70,7 +70,6 @@ export default async function decorate(block) {
         `Responsible for owning the digital strategy and accelerating value through Adobe products.`,
     },
   ];
-
   const roleAndIndustryDiv = document.createRange().createContextualFragment(`
     <div class="industry-selection-holder">
       <div class="industry-selection-heading">
@@ -114,38 +113,6 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(roleAndIndustryDiv);
 
-  let selectedRoles = [];
-
-  const applyCheckboxesState = () => {
-    block.querySelectorAll('.role-cards-item').forEach((card) => {
-      const checkbox = card.querySelector('input[type="checkbox"]');
-      const name = checkbox.name;
-      checkbox.checked = selectedRoles.includes(name);
-      card.classList.toggle('role-cards-highlight', checkbox.checked);
-    });
-  }
-
-  const updateCheckboxAndEmit = (name, isChecked, emit = true) => {
-    if (isChecked) {
-      if (!selectedRoles.includes(name)) {
-        selectedRoles.push(name);
-      }
-    } else {
-      selectedRoles = selectedRoles.filter(checkboxName => checkboxName !== name);
-    }
-    if (emit) {
-      roleAndIndustryEmitter.emit('roleChange', selectedRoles);
-    }
-    else {
-      applyCheckboxesState();
-    }
-  }
-
-  roleAndIndustryEmitter.on('roleChange', (data) => {
-    selectedRoles = data;
-    applyCheckboxesState();
-  });
-
   if (isSignedIn) {
     const industryOptions = await fetchIndustryOptions();
     const updatedIndustryOptions = industryOptions.map((industry) => ({
@@ -179,23 +146,18 @@ export default async function decorate(block) {
       selectIndustryDropDown.updateDropdownValue(selectedOption);
     }
 
-    applyCheckboxesState();
-  }
+    const formElement = block.querySelector('.role-and-industry-form');
+    const formErrorElement = formElement.querySelector('.role-and-industry-form-error');
 
-  const formElement = block.querySelector('.role-and-industry-form');
-  const formErrorElement = formElement.querySelector('.role-and-industry-form-error');
-
-  block.querySelectorAll('.role-cards-item').forEach((card) => {
-    const checkbox = card.querySelector('input[type="checkbox"]');
-    const name = checkbox.name;
-
-    card.addEventListener('click', (e) => {
-      if (e.target !== checkbox) {
-        checkbox.checked = !checkbox.checked;
-        const changeEvent = new Event('change');
-        checkbox.dispatchEvent(changeEvent);
+    const updateRoles = (name, isChecked) => {
+      if (isChecked) {
+        if (!selectedRoles.includes(name)) {
+          selectedRoles.push(name);
+        }
+      } else {
+        selectedRoles = selectedRoles.filter((checkboxName) => checkboxName !== name);
       }
-    });
+    };
 
     const toggleFormError = (visible) => {
       if (formErrorElement) {
@@ -203,38 +165,61 @@ export default async function decorate(block) {
       }
     };
 
-    checkbox.addEventListener('change', (e) => {
-      e.preventDefault();
-      const isInSignupDialog = e.target.closest('.signup-dialog');
-      const isValid = validateForm(formElement);
-      toggleFormError(false);
+    const handleProfileUpdate = () => {
+      defaultProfileClient
+        .updateProfile('role', selectedRoles, true)
+        .then(() => sendNotice(PROFILE_UPDATED))
+        .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+    };
 
-      if (isInSignupDialog) {
-          const isChecked = checkbox.checked;
-          updateCheckboxAndEmit(name, isChecked, isValid);
-          if (isValid) {
-            defaultProfileClient
-            .updateProfile('role', selectedRoles, true)
-            .then(() => sendNotice(PROFILE_UPDATED))
-            .catch(() => sendNotice(PROFILE_NOT_UPDATED));
-          }
-      }
-      else {
-        if (!isValid) {
+    block.querySelectorAll('.role-cards-item').forEach((card) => {
+      const checkbox = card.querySelector('input[type="checkbox"]');
+      const name = checkbox.getAttribute('name');
+
+      // Initial checkbox state and card highlight
+      checkbox.checked = selectedRoles.includes(name);
+      card.classList.toggle('role-cards-highlight', checkbox.checked);
+
+      const handleCheckboxChange = (e) => {
+        e.preventDefault();
+        const isInSignupDialog = e.target.closest('.signup-dialog');
+        const isValid = validateForm(formElement);
+        const isChecked = checkbox.checked;
+
+        card.classList.toggle('role-cards-highlight', isChecked);
+        updateRoles(name, isChecked);
+        toggleFormError(false);
+
+        if (isInSignupDialog || isValid) {
+          handleProfileUpdate();
+        } else {
           checkbox.checked = true;
+          card.classList.toggle('role-cards-highlight', true);
           toggleFormError(true);
-          return;
         }
-        else {
-          const isChecked = checkbox.checked;
-          updateCheckboxAndEmit(name, isChecked);
-          defaultProfileClient
-            .updateProfile('role', selectedRoles, true)
-            .then(() => sendNotice(PROFILE_UPDATED))
-            .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+      };
+
+      card.addEventListener('click', (e) => {
+        if (e.target !== checkbox) {
+          checkbox.checked = !checkbox.checked;
+          const changeEvent = new Event('change');
+          checkbox.dispatchEvent(changeEvent);
         }
-      }
+      });
+
+      checkbox.addEventListener('change', handleCheckboxChange);
     });
+
+    decorateIcons(block);
+  }
+}
+
+export default async function decorate(block) {
+  const blockInnerHTML = block.innerHTML;
+  decorateContent(block);
+
+  signupModalEventEmitter.on('dataChange', async () => {
+    block.innerHTML = blockInnerHTML;
+    decorateContent(block);
   });
-  decorateIcons(block);
 }
