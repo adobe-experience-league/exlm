@@ -132,7 +132,7 @@ async function decorateContent(block) {
         .updateProfile('industryInterests', industrySelection, true)
         .then(() => {
           sendNotice(PROFILE_UPDATED);
-          globalEmitter.emit('dataChange', industrySelection);
+          globalEmitter.emit('profileDataUpdated');
         })
         .catch(() => sendNotice(PROFILE_NOT_UPDATED));
     });
@@ -173,7 +173,7 @@ async function decorateContent(block) {
         .updateProfile('role', selectedRoles, true)
         .then(() => {
           sendNotice(PROFILE_UPDATED);
-          globalEmitter.emit('dataChange', selectedRoles);
+          globalEmitter.emit('profileDataUpdated');
         })
         .catch(() => sendNotice(PROFILE_NOT_UPDATED));
     };

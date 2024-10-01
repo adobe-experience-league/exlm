@@ -138,7 +138,7 @@ function decorateInterests(block) {
             if (JSON.stringify(profileData.interests) !== JSON.stringify(profile.interests)) {
               profileData = profile;
               sendNotice(placeholders?.profileUpdated || 'Profile updated successfully');
-              globalEmitter.emit('dataChange', {});
+              globalEmitter.emit('profileDataUpdated');
             }
           });
         })
