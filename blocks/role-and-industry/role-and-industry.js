@@ -132,6 +132,7 @@ async function decorateContent(block) {
         .updateProfile('industryInterests', industrySelection, true)
         .then(() => sendNotice(PROFILE_UPDATED))
         .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+      globalEmitter.emit('industryChange', industrySelection);
     });
 
     const profileData = await defaultProfileClient.getMergedProfile();
