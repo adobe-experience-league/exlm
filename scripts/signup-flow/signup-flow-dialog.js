@@ -105,13 +105,13 @@ export default class SignupFlowDialog {
         e.preventDefault();
         this.signupDialog.close();
         document.body.classList.remove('overflow-hidden');
-        globalEmitter.emit('signupDialogClose', {status: 'closed'});
+        globalEmitter.emit('signupDialogClose', { status: 'closed' });
       });
     });
 
     this.signupDialog.addEventListener('cancel', () => {
       document.body.classList.remove('overflow-hidden');
-      globalEmitter.emit('signupDialogClose', {status: 'closed'});
+      globalEmitter.emit('signupDialogClose', { status: 'closed' });
     });
   }
 

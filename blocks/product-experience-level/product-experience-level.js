@@ -36,7 +36,6 @@ const renderCards = (resultsEl) => {
     });
 };
 
-
 function decorateContent(block) {
   const [firstLevel, secondLevel] = block.children;
   const heading = firstLevel.querySelector('h1, h2, h3, h4, h5, h6');
