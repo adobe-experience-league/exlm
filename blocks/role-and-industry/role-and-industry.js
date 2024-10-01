@@ -200,11 +200,10 @@ async function decorateContent(block) {
             checkbox.checked = true;
             card.classList.toggle('role-cards-highlight', true);
             toggleFormError(true);
+            return;
           }
-          else {
-            updateRoles(name, isChecked);
-            handleProfileUpdate();
-          }
+          updateRoles(name, isChecked);
+          handleProfileUpdate();
         }
       };
 
