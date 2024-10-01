@@ -1,6 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { generateProfileDOM } from '../../scripts/profile/profile.js';
 import { htmlToElement } from '../../scripts/scripts.js';
+import { productExperienceEventEmitter, roleAndIndustryEmitter } from '../../scripts/events.js';
 
 function loadCommunityAccountDOM(block) {
   const profileFlags = ['communityProfile'];
@@ -14,7 +15,7 @@ function loadCommunityAccountDOM(block) {
   });
 }
 
-export default async function decorate(block) {
+const decorateUserProfileCard = async (block) => {
   const profileFlags = ['exlProfile'];
   const profileInfoPromise = generateProfileDOM(profileFlags);
 
@@ -50,5 +51,39 @@ export default async function decorate(block) {
       additionalProfileElement.replaceWith(profileFragment);
     }
     await decorateIcons(block);
+  });
+};
+
+export default async function decorate(block) {
+  await decorateUserProfileCard(block);
+
+  productExperienceEventEmitter.on('dataChange', async (data) => {
+    const { key, value } = data;
+    const updatedInterests = productExperienceEventEmitter.get('interests_data') ?? [];
+
+    const interests = updatedInterests.find((interest) => interest.id === key);
+    if (interests) {
+      interests.selected = value;
+    }
+
+    const selectedInterests = updatedInterests.filter((interest) => interest.selected).map((interest) => interest.Name);
+    const newInterestsSpan = document.createElement('span');
+    newInterestsSpan.innerHTML = selectedInterests.join(' | ');
+
+    const interestsElement = block.querySelector('.user-interests span:last-child');
+    if (interestsElement) {
+      interestsElement.replaceWith(newInterestsSpan);
+    }
+  });
+
+  roleAndIndustryEmitter.on('roleChange', (data) => {
+    const selectedRoles = data;
+    const newRolesSpan = document.createElement('span');
+    newRolesSpan.innerHTML = selectedRoles.join(' | ');
+
+    const rolesElement = block.querySelector('.user-role span:last-child');
+    if (rolesElement) {
+      rolesElement.replaceWith(newRolesSpan);
+    }
   });
 }
