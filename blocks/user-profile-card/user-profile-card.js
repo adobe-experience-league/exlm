@@ -76,7 +76,7 @@ export default async function decorate(block) {
     }
   });
 
-  roleAndIndustryEmitter.on('roleChange', (data) => {
+  roleAndIndustryEmitter.on('dataChange', (data) => {
     const selectedRoles = data;
     const newRolesSpan = document.createElement('span');
     newRolesSpan.innerHTML = selectedRoles.join(' | ');

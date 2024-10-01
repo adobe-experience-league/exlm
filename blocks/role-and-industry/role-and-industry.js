@@ -5,7 +5,7 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { fetchIndustryOptions } from '../../scripts/profile/profile.js';
 import FormValidator from '../../scripts/form-validator.js';
-import { signupModalEventEmitter } from '../../scripts/events.js';
+import { signupModalEventEmitter, roleAndIndustryEmitter } from '../../scripts/events.js';
 
 let placeholders = {};
 try {
@@ -157,6 +157,7 @@ async function decorateContent(block) {
       } else {
         selectedRoles = selectedRoles.filter((checkboxName) => checkboxName !== name);
       }
+      roleAndIndustryEmitter.emit('dataChange', selectedRoles);
     };
 
     const toggleFormError = (visible) => {
@@ -187,15 +188,23 @@ async function decorateContent(block) {
         const isChecked = checkbox.checked;
 
         card.classList.toggle('role-cards-highlight', isChecked);
-        updateRoles(name, isChecked);
         toggleFormError(false);
 
-        if (isInSignupDialog || isValid) {
-          handleProfileUpdate();
+        if (isInSignupDialog) {
+          if (isValid) {
+            updateRoles(name, isChecked);
+            handleProfileUpdate();
+          }
         } else {
-          checkbox.checked = true;
-          card.classList.toggle('role-cards-highlight', true);
-          toggleFormError(true);
+          if (!isValid) {
+            checkbox.checked = true;
+            card.classList.toggle('role-cards-highlight', true);
+            toggleFormError(true);
+          }
+          else {
+            updateRoles(name, isChecked);
+            handleProfileUpdate();
+          }
         }
       };
 
