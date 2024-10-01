@@ -1,0 +1,7 @@
+.swiper-container {
+    overflow: hidden;
+}
+
+.swiper-container > div {
+    transition: all .5s ease-in-out;
+}

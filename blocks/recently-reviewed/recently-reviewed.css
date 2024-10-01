@@ -1,0 +1,62 @@
+@import "../../scripts/browse-card/browse-cards-block.css";
+
+
+.recently-reviewed  .recently-reviewed-header {
+    font-size: var(--spectrum-font-size-700);
+    line-height: 35px;
+    font-weight: bold;
+    color: var(--spectrum-gray-800);
+    margin-bottom: 16px;
+}
+
+
+.recently-reviewed  .recently-reviewed-description {
+    font-size: var(--spectrum-font-size-200);
+    line-height: 20px;
+    color: var(--spectrum-gray-800);
+    margin-bottom: 30px;
+}
+
+.recently-reviewed  .browse-cards-block-content:has(.browse-card-no-results) {
+    display: block;
+    min-height: auto;
+}
+
+.recently-reviewed .browse-cards-block-content > .browse-card-no-results {
+    margin-top: 0;
+    flex: 1;
+    display: block;
+}
+
+.recently-viewed-nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.recently-viewed-nav-container > div:first-child {
+    max-width: 60%;
+}
+
+.recently-viewed-nav-section button {
+    height: 40px;
+    width: 40px;
+    margin: 0;
+    padding: 0;
+    border-radius: 4px;
+    background-color: var(--spectrum-gray-75);
+    border: 1px solid var(--spectrum-gray-400);
+    color: var(--spectrum-gray-800);
+    transform: rotate(90deg);
+}
+
+.recently-viewed-nav-section .next-nav {
+    transform: rotate(270deg);
+}
+
+.recently-viewed-nav-section button[disabled] {
+    background: #FFFFFF1A;
+    border-color: var(--spectrum-gray-300);
+    color: var(--spectrum-gray-400);
+    cursor: default;
+}
