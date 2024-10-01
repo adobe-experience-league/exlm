@@ -206,7 +206,7 @@ export default async function decorate(block) {
   const blockInnerHTML = block.innerHTML;
   await decorateProfileWelcomeBlock(block);
 
-  globalEmitter.on('dataChange', async () => {
+  globalEmitter.on('profileDataUpdated', async () => {
     block.innerHTML = blockInnerHTML;
     await decorateProfileWelcomeBlock(block);
   });

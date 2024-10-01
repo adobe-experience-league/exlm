@@ -58,7 +58,7 @@ export default async function decorate(block) {
   const blockInnerHTML = block.innerHTML;
   await decorateUserProfileCard(block);
 
-  globalEmitter.on('dataChange', async () => {
+  globalEmitter.on('profileDataUpdated', async () => {
     block.innerHTML = blockInnerHTML;
     await decorateUserProfileCard(block);
   });

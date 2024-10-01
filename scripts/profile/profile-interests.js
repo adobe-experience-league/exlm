@@ -148,7 +148,7 @@ export default async function buildProductCard(element, model) {
         .updateProfile('solutionLevels', newSolutionItems, true)
         .then(() => {
           sendNotice(PROFILE_UPDATED);
-          globalEmitter.emit('dataChange', {});
+          globalEmitter.emit('profileDataUpdated');
         })
         .catch(() => sendNotice(PROFILE_NOT_UPDATED));
     }
