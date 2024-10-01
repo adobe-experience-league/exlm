@@ -130,9 +130,11 @@ async function decorateContent(block) {
       industrySelection.push(selectedIndustryId);
       defaultProfileClient
         .updateProfile('industryInterests', industrySelection, true)
-        .then(() => sendNotice(PROFILE_UPDATED))
+        .then(() => {
+          sendNotice(PROFILE_UPDATED);
+          globalEmitter.emit('industryChange', industrySelection);
+        })
         .catch(() => sendNotice(PROFILE_NOT_UPDATED));
-      globalEmitter.emit('industryChange', industrySelection);
     });
 
     const profileData = await defaultProfileClient.getMergedProfile();
@@ -158,7 +160,6 @@ async function decorateContent(block) {
       } else {
         selectedRoles = selectedRoles.filter((checkboxName) => checkboxName !== name);
       }
-      globalEmitter.emit('roleChange', selectedRoles);
     };
 
     const toggleFormError = (visible) => {
@@ -170,7 +171,10 @@ async function decorateContent(block) {
     const handleProfileUpdate = () => {
       defaultProfileClient
         .updateProfile('role', selectedRoles, true)
-        .then(() => sendNotice(PROFILE_UPDATED))
+        .then(() => {
+          sendNotice(PROFILE_UPDATED);
+          globalEmitter.emit('dataChange', selectedRoles);
+        })
         .catch(() => sendNotice(PROFILE_NOT_UPDATED));
     };
 
