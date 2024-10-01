@@ -2,6 +2,7 @@ import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchIndustryOptions, getIndustryNameById } from '../../scripts/profile/profile.js';
+import { globalEmitter } from '../../scripts/events.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
@@ -28,7 +29,7 @@ function replaceProfileText(field, value) {
   return field.replace('{adobeIMS.first_name}', value);
 }
 
-export default async function decorate(block) {
+async function decorateProfileWelcomeBlock(block) {
   const [profileEyebrowText, profileHeading, profileDescription, profileCta, incompleteProfileText, showProfileCard] =
     block.querySelectorAll(':scope div > div');
 
@@ -199,4 +200,14 @@ export default async function decorate(block) {
     block.append(profileUserCard);
   }
   decorateIcons(block);
+}
+
+export default async function decorate(block) {
+  const blockInnerHTML = block.innerHTML;
+  await decorateProfileWelcomeBlock(block);
+
+  globalEmitter.on('dataChange', async () => {
+    block.innerHTML = blockInnerHTML;
+    await decorateProfileWelcomeBlock(block);
+  });
 }

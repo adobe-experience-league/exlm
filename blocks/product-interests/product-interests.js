@@ -1,7 +1,7 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
-import { productExperienceEventEmitter } from '../../scripts/events.js';
+import { globalEmitter, productExperienceEventEmitter } from '../../scripts/events.js';
 import FormValidator from '../../scripts/form-validator.js';
 
 const { interestsUrl } = getConfig();
@@ -138,6 +138,7 @@ function decorateInterests(block) {
             if (JSON.stringify(profileData.interests) !== JSON.stringify(profile.interests)) {
               profileData = profile;
               sendNotice(placeholders?.profileUpdated || 'Profile updated successfully');
+              globalEmitter.emit('dataChange', {});
             }
           });
         })
@@ -193,6 +194,13 @@ function handleProductInterestChange(block) {
 }
 
 export default async function decorateProfile(block) {
+  const blockInnerHTML = block.innerHTML;
   decorateInterests(block);
   handleProductInterestChange(block);
+
+  globalEmitter.on('signupDialogClose', async () => {
+    block.innerHTML = blockInnerHTML;
+    decorateInterests(block);
+    handleProductInterestChange(block);
+  });
 }
