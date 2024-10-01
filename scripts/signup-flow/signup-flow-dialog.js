@@ -6,7 +6,7 @@ import { defaultProfileClient } from '../auth/profile.js';
 import SignUpFlowShimmer from './signup-flow-shimmer.js';
 import FormValidator from '../form-validator.js';
 import { sendNotice } from '../toast/toast.js';
-import { signupModalEventEmitter } from '../events.js';
+import { globalEmitter } from '../events.js';
 
 /**
  * Types of signup dialog modals.
@@ -105,13 +105,13 @@ export default class SignupFlowDialog {
         e.preventDefault();
         this.signupDialog.close();
         document.body.classList.remove('overflow-hidden');
-        signupModalEventEmitter.emit('dataChange', 'Profile data updated!');
+        globalEmitter.emit('signupDialogClose', {status: 'closed'});
       });
     });
 
     this.signupDialog.addEventListener('cancel', () => {
       document.body.classList.remove('overflow-hidden');
-      signupModalEventEmitter.emit('dataChange', 'Profile data updated!');
+      globalEmitter.emit('signupDialogClose', {status: 'closed'});
     });
   }
 

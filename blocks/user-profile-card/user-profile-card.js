@@ -1,7 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { generateProfileDOM } from '../../scripts/profile/profile.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import { productExperienceEventEmitter, roleAndIndustryEmitter } from '../../scripts/events.js';
+import { productExperienceEventEmitter, globalEmitter } from '../../scripts/events.js';
 
 function loadCommunityAccountDOM(block) {
   const profileFlags = ['communityProfile'];
@@ -76,7 +76,7 @@ export default async function decorate(block) {
     }
   });
 
-  roleAndIndustryEmitter.on('dataChange', (data) => {
+  globalEmitter.on('roleChange', (data) => {
     const selectedRoles = data;
     const newRolesSpan = document.createElement('span');
     newRolesSpan.innerHTML = selectedRoles.join(' | ');

@@ -5,7 +5,7 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { fetchIndustryOptions } from '../../scripts/profile/profile.js';
 import FormValidator from '../../scripts/form-validator.js';
-import { signupModalEventEmitter, roleAndIndustryEmitter } from '../../scripts/events.js';
+import { globalEmitter } from '../../scripts/events.js';
 
 let placeholders = {};
 try {
@@ -157,7 +157,7 @@ async function decorateContent(block) {
       } else {
         selectedRoles = selectedRoles.filter((checkboxName) => checkboxName !== name);
       }
-      roleAndIndustryEmitter.emit('dataChange', selectedRoles);
+      globalEmitter.emit('roleChange', selectedRoles);
     };
 
     const toggleFormError = (visible) => {
@@ -226,7 +226,7 @@ export default async function decorate(block) {
   const blockInnerHTML = block.innerHTML;
   decorateContent(block);
 
-  signupModalEventEmitter.on('dataChange', async () => {
+  globalEmitter.on('signupDialogClose', async () => {
     block.innerHTML = blockInnerHTML;
     decorateContent(block);
   });

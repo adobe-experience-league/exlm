@@ -1,6 +1,6 @@
 import buildProductCard from '../../scripts/profile/profile-interests.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { productExperienceEventEmitter, signupModalEventEmitter } from '../../scripts/events.js';
+import { globalEmitter, productExperienceEventEmitter } from '../../scripts/events.js';
 
 let placeholders = {};
 try {
@@ -36,14 +36,6 @@ const renderCards = (resultsEl) => {
     });
 };
 
-export default function ProfileExperienceLevel(block) {
-  const blockInnerHTML = block.innerHTML;
-  decorateContent(block);
-  signupModalEventEmitter.on('dataChange', async () => {
-    block.innerHTML = blockInnerHTML;
-    decorateContent(block);
-  });
-}
 
 function decorateContent(block) {
   const [firstLevel, secondLevel] = block.children;
@@ -112,5 +104,14 @@ function decorateContent(block) {
       resultsEl.innerHTML = '';
       renderCards(resultsEl);
     }
+  });
+}
+
+export default function ProfileExperienceLevel(block) {
+  const blockInnerHTML = block.innerHTML;
+  decorateContent(block);
+  globalEmitter.on('signupDialogClose', async () => {
+    block.innerHTML = blockInnerHTML;
+    decorateContent(block);
   });
 }
