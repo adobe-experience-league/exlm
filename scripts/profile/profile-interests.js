@@ -3,7 +3,7 @@ import Dropdown from '../dropdown/dropdown.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import getSolutionByName from '../../blocks/toc/toc-solutions.js';
 import loadJWT from '../auth/jwt.js';
-import { productExperienceEventEmitter } from '../events.js';
+import { globalEmitter, productExperienceEventEmitter } from '../events.js';
 import { defaultProfileClient } from '../auth/profile.js';
 import { sendNotice } from '../toast/toast.js';
 import FormValidator from '../form-validator.js';
@@ -146,7 +146,10 @@ export default async function buildProductCard(element, model) {
       newSolutionItems.push(`${id}:${level}`);
       defaultProfileClient
         .updateProfile('solutionLevels', newSolutionItems, true)
-        .then(() => sendNotice(PROFILE_UPDATED))
+        .then(() => {
+          sendNotice(PROFILE_UPDATED);
+          globalEmitter.emit('profileDataUpdated');
+        })
         .catch(() => sendNotice(PROFILE_NOT_UPDATED));
     }
   });

@@ -148,12 +148,18 @@
 .search {
   grid-area: search;
   display: var(--search-display);
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   padding-right: 15px;
+  padding-left: 15px;
   container-type: inline-size;
   container-name: searchs;
   z-index: 1;
+}
+@media (min-width: 1024px) {
+  .search {
+    justify-content: flex-end;
+  }
 }
 
 .search-wrapper {
@@ -188,6 +194,9 @@
     display: flex !important;
     align-items: center;
   }
+  .search-short .icon {
+    position: initial;
+  }
   .search-short a {
     display: flex !important;
     align-items: center;
@@ -202,8 +211,17 @@
 .search-short {
   display: none;
 }
+.search-short a {
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+}
 .search-short .icon {
   height: 18px;
+  width: 18px;
+  vertical-align: middle;
 }
 
 .search-full {
@@ -244,6 +262,7 @@
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  width: 100%;
 }
 .search-input::placeholder {
   font-style: italic;
@@ -300,6 +319,15 @@
 }
 .search-picker-button.search-picker-open::after {
   transform: rotateZ(225deg);
+}
+
+.icon-clear svg {
+  vertical-align: 10px;
+  width: 14px;
+  height: 6px;
+}
+.icon-clear svg path {
+  fill: white;
 }
 
 .search-picker-label {
@@ -440,15 +468,6 @@ button > .search-picker-label {
   fill: var(--non-spectrum-azure-blue);
 }
 
-.icon-clear svg {
-  vertical-align: 10px;
-  width: 14px;
-  height: 6px;
-}
-.icon-clear svg path {
-  fill: white;
-}
-
 .header-wrapper {
   /* header is always white */
   background-color: var(--color-white);
@@ -525,9 +544,10 @@ button:focus {
 }
 .header > nav {
   display: grid;
-  grid-template-areas: "nav adobe-logo brand product-grid search sign-in notification";
+  grid-template-areas: "nav brand search sign-in";
   justify-content: space-between;
   height: 100%;
+  grid-template-columns: min-content max-content min-content min-content;
 }
 @media (min-width: 1024px) {
   .header > nav {
@@ -544,8 +564,13 @@ button:focus {
   padding: var(--nav-root-item-padding-x);
   padding-right: 0;
 }
+.header .adobe-logo a {
+  margin: 0;
+}
 .header .adobe-logo .icon {
-  vertical-align: middle;
+  display: block;
+  height: 24px;
+  width: 24px;
 }
 .header .adobe-logo .icon svg {
   height: 24px;
@@ -573,10 +598,12 @@ button:focus {
   order: var(--sign-in-order);
   align-items: center;
   padding-left: 1em;
+  padding-right: 1em;
 }
 @media (min-width: 1024px) {
   .header .sign-in {
     padding-left: 0;
+    padding-right: 0;
   }
 }
 .header .sign-in a {
