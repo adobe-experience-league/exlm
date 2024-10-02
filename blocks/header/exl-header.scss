@@ -192,12 +192,17 @@
 .search {
   grid-area: search;
   display: var(--search-display);
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   padding-right: 15px;
+  padding-left: 15px;
   container-type: inline-size;
   container-name: searchs;
   z-index: 1;
+
+  @include breakpoint(custom) {
+    justify-content: flex-end;
+  }
 }
 
 .search-wrapper {
@@ -233,6 +238,10 @@
     display: flex !important;
     align-items: center;
 
+    .icon {
+      position: initial;
+    }
+
     a {
       display: flex !important;
       align-items: center;
@@ -250,8 +259,18 @@
 .search-short {
   display: none;
 
+  a {
+    width: 48px;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 !important;
+  }
+
   .icon {
     height: 18px;
+    width: 18px;
+    vertical-align: middle;
   }
 }
 
@@ -296,6 +315,7 @@
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  width: 100%;
 
   &::placeholder {
     font-style: italic;
@@ -575,9 +595,10 @@ button:focus {
   // main nav
   > nav {
     display: grid;
-    grid-template-areas: 'nav adobe-logo brand product-grid search sign-in notification';
+    grid-template-areas: 'nav brand search sign-in';
     justify-content: space-between;
     height: 100%;
+    grid-template-columns: min-content max-content min-content min-content;
 
     @include breakpoint(custom) {
       width: 100%;
@@ -595,13 +616,19 @@ button:focus {
     padding: var(--nav-root-item-padding-x);
     padding-right: 0;
 
+    a {
+      margin: 0;
+    }
+
     .icon {
+      display: block;
+      height: 24px;
+      width: 24px;
+
       svg {
         height: 24px;
         width: 24px;
       }
-
-      vertical-align: middle;
     }
   }
 
@@ -631,9 +658,11 @@ button:focus {
     order: var(--sign-in-order);
     align-items: center;
     padding-left: 1em;
+    padding-right: 1em;
 
     @include breakpoint(custom) {
       padding-left: 0;
+      padding-right: 0;
     }
 
     a {
