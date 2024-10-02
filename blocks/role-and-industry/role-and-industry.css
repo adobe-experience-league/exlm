@@ -52,6 +52,7 @@
 
 .role-and-industry .role-cards-checkbox label {
     font-size: 14px;
+    cursor: pointer;
 } 
 
 .role-and-industry .role-cards-item {
@@ -94,11 +95,12 @@
     font-style: italic;
 }
 
-.role-and-industry .form-error {
+.role-and-industry .role-and-industry-form-error {
     text-align: center;
+    margin-top: 5px;
 }
 
-body.profile .role-and-industry .form-error:not(.signup-dialog .role-and-industry .form-error) {
+body.profile .role-and-industry .role-and-industry-form-error:not(.signup-dialog .role-and-industry .role-and-industry-form-error) {
     text-align: left;
 }
 
@@ -121,6 +123,11 @@ body.profile .role-and-industry .industry-selection-title:not(.signup-dialog .ro
     font-size: 22px;
     font-weight: 700;
     color: #000;
+}
+
+body.profile .role-and-industry .industry-selection-title :where(h1, h2, h3, h4, h5, h6):not(.signup-dialog .role-and-industry .industry-selection-title) {
+    margin-top: 0px;
+    margin-bottom: 0px;
 }
 
 body.profile .role-and-industry .industry-selection-description:not(.signup-dialog .role-and-industry .industry-selection-description){

@@ -353,7 +353,8 @@
                   "fileReference": "/content/dam/exlm/Community_headshot_single.png",
                   "title": "Marquee Title",
                   "titleType": "h2",
-                  "longDescr": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt"
+                  "longDescr": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt",
+                  "customHexCode": "FFFFFF"
                 }
               }
             }
@@ -444,6 +445,21 @@
                 "template": {
                   "name": "Iframe App",
                   "model": "iframe-app"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "HTML App",
+          "id": "html-app",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "HTML App",
+                  "model": "html-app"
                 }
               }
             }
@@ -916,7 +932,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Role and Industry",
-                  "model": "role-and-industry"
+                  "model": "role-and-industry",
+                  "titleType": "h2"
                 }
               }
             }
@@ -1006,7 +1023,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Bookmarks",
-                  "model": "bookmarks"
+                  "model": "bookmarks",
+                  "headingType": "h3"
                 }
               }
             }
@@ -1035,6 +1053,99 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Topic Results"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Profile Welcome",
+          "id": "profile-welcome",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Profile Welcome",
+                  "model": "profile-welcome",
+                  "headingType": "h2",
+                  "eyebrow": "Hey User! Welcome Back",
+                  "heading": "Your Experience League just got more personal.",
+                  "description": "Reaching your career goals has never been easier. Explore learning recommendations we made just for you based on your product interests, experience level, and role.",
+                  "incompleteProfileText": "Complete your profile for a more personalized experience.",
+                  "cta1Type": "primary",
+                  "cta1Text": "Manage profile",
+                  "showProfileCard": true
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Recommended Content",
+          "id": "recommended-content",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Recommended Content",
+                  "model": "recommended-content",
+                  "roles": ["profile_context"],
+                  "sortTargetResultsBy": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Personalized Content Placeholder",
+          "id": "personalized-content-placeholder",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Personalized Content Placeholder",
+                  "model": "personalized-content-placeholder"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Announcement Ribbon",
+          "id": "announcement-ribbon",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Announcement Ribbon",
+                  "model": "announcement-ribbon",
+                  "title": "Announcement Ribbon Title",
+                  "titleType": "h3",
+                  "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt",
+                  "cta1Type": "primary",
+                  "cta2Type": "primary"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Recently Reviewed",
+          "id": "recently-reviewed",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Recently Reviewed",
+                  "model": "recently-reviewed",
+                  "heading": "Recently Reviewed Title",
+                  "headingType": "h3",
+                  "description": "Recently reviewed description"
                 }
               }
             }

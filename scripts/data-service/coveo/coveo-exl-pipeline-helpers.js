@@ -123,7 +123,7 @@ export function getFacets(param) {
       ? [
           {
             id: 'el_contenttype',
-            type: param.contentType[0] === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? 'hierarchical' : 'specific',
+            type: param.contentType[0].includes(CONTENT_TYPES.COMMUNITY.MAPPING_KEY) ? 'hierarchical' : 'specific',
             currentValues: param.contentType,
           },
         ]
@@ -139,6 +139,13 @@ export function getFacets(param) {
 }
 
 export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) {
+  let context = { entitlements: {}, role: {}, interests: {}, industryInterests: {} };
+  if (param.context) {
+    context = {
+      ...context,
+      ...param.context,
+    };
+  }
   const dataSource = {
     url: coveoSearchResultsUrl,
     param: {
@@ -150,7 +157,7 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
       numberOfResults: param.noOfResults,
       excerptLength: 200,
       sortCriteria: param.sortCriteria,
-      context: { entitlements: {}, role: {}, interests: {}, industryInterests: {} },
+      context,
       filterField: '@foldingcollection',
       parentField: '@foldingchild',
       childField: '@foldingparent',
@@ -293,7 +300,8 @@ export async function exlPipelineCoveoDataAdaptor(params) {
       product: products && removeProductDuplicates(products),
       title: parentResult?.title || title || '',
       description:
-        contentType?.toLowerCase() === CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY
+        contentType?.toLowerCase() === CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY ||
+        contentType?.toLowerCase() === CONTENT_TYPES.PLAYLIST.MAPPING_KEY
           ? raw?.exl_description || parentResult?.excerpt || ''
           : parentResult?.excerpt || excerpt || raw?.description || raw?.exl_description || '',
       tags,

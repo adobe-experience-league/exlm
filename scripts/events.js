@@ -35,5 +35,7 @@ export default class EventEmitter {
   }
 }
 
+export const globalEmitter = new EventEmitter();
+/* TODO: Below Emitters to be cleaned up and make use of globalEmitter and update the set method */
 export const productExperienceEventEmitter = new EventEmitter();
 export const bookmarksEventEmitter = new EventEmitter();

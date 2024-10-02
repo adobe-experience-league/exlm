@@ -22,12 +22,6 @@
     height: 14px;
 }
 
-.search-container .icon.icon-search {
-    left: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
 .search-container .icon.search-clear-icon {
     display: none;

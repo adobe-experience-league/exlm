@@ -6,6 +6,7 @@ import {
   decorateSections,
   loadBlock,
   loadBlocks,
+  getMetadata,
 } from './lib-franklin.js';
 import { decorateRichtext } from './editor-support-rte.js';
 import { decorateMain, isArticlePage, loadArticles, loadIms } from './scripts.js';
@@ -137,12 +138,9 @@ function updateUEInstrumentation() {
   }
 
   // ----- if profile pages, identified by theme
-  if (document.querySelector('body[class^=profile]')) {
+  if (document.querySelector('body[class^=profile]') || getMetadata('theme') === 'profile') {
     // update available sections
     setUEFilter(main, 'main-profile');
-    main.querySelectorAll('.section').forEach((elem) => {
-      setUEFilter(elem, 'profile-section');
-    });
   }
 
   // ----- if signup-flow-modal pages, identified by theme
