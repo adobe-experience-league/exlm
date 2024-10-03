@@ -101,6 +101,8 @@ export default async function decorate(block) {
         handleArrowClick(block, swiper);
       } else {
         buildNoResultsContent(contentDiv, true);
+        const nextButton = block.querySelector('.recently-viewed-nav-section > .next-nav');
+        nextButton.disabled = true; 
       }
       buildCardsShimmer.remove();
     });
