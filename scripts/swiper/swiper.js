@@ -3,7 +3,7 @@ import { loadCSS } from '../lib-franklin.js';
 loadCSS(`${window.hlx.codeBasePath}/scripts/swiper/swiper.css`);
 
 export default class Swiper {
-  constructor(container, items, dynamicallyChangeItems, handleSwipe) {
+  constructor(container, items, dynamicallyChangeItems, handleSwipe, leftBtn, rightBtn) {
     this.container = container;
     this.handleSwipe = handleSwipe;
     this.items = items;
@@ -19,7 +19,12 @@ export default class Swiper {
     if (dynamicallyChangeItems) {
       this.calculateVisibleItems();
     }
+    this.leftBtn = leftBtn;
+    this.rightBtn = rightBtn;
     this.init();
+    if (leftBtn && rightBtn) {
+      this.handleArrowClick();
+    }
   }
 
   init() {
@@ -43,10 +48,29 @@ export default class Swiper {
     this.items.forEach((item) => {
       item.style.transform = `translateX(0px)`;
     });
+    if (this.leftBtn && this.rightBtn) {
+      this.leftBtn.disabled = true;
+      if (this.totalSlides <= 1) {
+        this.rightBtn.disabled = true;
+      } else {
+        this.rightBtn.disabled = false;
+      }
+    }
   }
 
   swipe(direction) {
-    this.handleSwipe(direction);
+    if (this.handleSwipe) this.handleSwipe(direction);
+    if (this.leftBtn && this.rightBtn) {
+      this.leftBtn.disabled = false;
+      this.rightBtn.disabled = false;
+      if (direction) {
+        if (this.currentIndex >= this.totalSlides - 2) {
+          this.rightBtn.disabled = true;
+        }
+      } else if (this.currentIndex <= 1) {
+        this.leftBtn.disabled = true;
+      }
+    }
     if (direction) {
       if (this.currentIndex >= this.totalSlides - 1) return;
       this.currentIndex += 1;
@@ -58,6 +82,16 @@ export default class Swiper {
     }
     this.items.forEach((item) => {
       item.style.transform = `translateX(${this.translateLength}px)`;
+    });
+  }
+
+  handleArrowClick() {
+    this.leftBtn.addEventListener('click', () => {
+      this.swipe(false);
+    });
+
+    this.rightBtn.addEventListener('click', () => {
+      this.swipe(true);
     });
   }
 
