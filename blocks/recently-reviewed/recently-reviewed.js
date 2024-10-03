@@ -102,7 +102,7 @@ export default async function decorate(block) {
       } else {
         buildNoResultsContent(contentDiv, true);
         const nextButton = block.querySelector('.recently-viewed-nav-section > .next-nav');
-        nextButton.disabled = true; 
+        nextButton.disabled = true;
       }
       buildCardsShimmer.remove();
     });
