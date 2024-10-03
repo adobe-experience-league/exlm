@@ -23,25 +23,13 @@ function renderNavigationArrows(titleContainer) {
             <button class="prev-nav" disabled>
                 <span class="icon icon-chevron"></span>
             </button>
-            <button class="next-nav">
+            <button class="next-nav" disabled>
                 <span class="icon icon-chevron"></span>
             </button
         </div>
     `);
   decorateIcons(navigationElements);
   titleContainer.appendChild(navigationElements);
-}
-
-function handleArrowClick(block, swiper) {
-  const prevButton = block.querySelector('.recently-viewed-nav-section > .prev-nav');
-  const nextButton = block.querySelector('.recently-viewed-nav-section > .next-nav');
-
-  prevButton.addEventListener('click', () => {
-    swiper.swipe(false);
-  });
-  nextButton.addEventListener('click', () => {
-    swiper.swipe(true);
-  });
 }
 
 export default async function decorate(block) {
@@ -65,20 +53,6 @@ export default async function decorate(block) {
   const buildCardsShimmer = new BuildPlaceholder();
   buildCardsShimmer.add(block);
 
-  function handleSwipe(direction) {
-    const prevButton = block.querySelector('.recently-viewed-nav-section > .prev-nav');
-    const nextButton = block.querySelector('.recently-viewed-nav-section > .next-nav');
-    nextButton.disabled = false;
-    prevButton.disabled = false;
-    if (direction) {
-      if (this.currentIndex >= this.totalSlides - 2) {
-        nextButton.disabled = true;
-      }
-    } else if (this.currentIndex <= 1) {
-      prevButton.disabled = true;
-    }
-  }
-
   if (window.hlx.aemRoot) {
     block.style.display = 'block';
     buildNoResultsContent(contentDiv, true, authorInfo);
@@ -96,13 +70,13 @@ export default async function decorate(block) {
           buildCard(contentDiv, cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         });
+        const prevButton = block.querySelector('.recently-viewed-nav-section > .prev-nav');
+        const nextButton = block.querySelector('.recently-viewed-nav-section > .next-nav');
         const items = contentDiv.querySelectorAll('.browse-cards-block-content > div');
-        const swiper = new Swiper(contentDiv, items, true, handleSwipe);
-        handleArrowClick(block, swiper);
+        // eslint-disable-next-line no-new
+        new Swiper(contentDiv, items, true, null, prevButton, nextButton);
       } else {
         buildNoResultsContent(contentDiv, true);
-        const nextButton = block.querySelector('.recently-viewed-nav-section > .next-nav');
-        nextButton.disabled = true;
       }
       buildCardsShimmer.remove();
     });
