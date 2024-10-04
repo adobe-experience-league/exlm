@@ -695,6 +695,9 @@ button:focus {
     grid-area: signed-in;
   }
 }
+.header .product-grid {
+  display: none;
+}
 .header .product-grid.signed-in {
   grid-area: product-grid;
   display: none;
