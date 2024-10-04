@@ -446,8 +446,11 @@ strong {
   --non-spectrum-azure-blue: #378ef0;
   --non-spectrum-silver-mist: #d2d2d2;
   --non-spectrum-blue-cobalt: #0364dc;
-  --non-spectrum-max-width: 1280px;
-  --non-spectrum-footer-max-width: 1440px;
+  --non-spectrum-adobe-red: #ff0000;
+  --non-spectrum-pale-grey: #d6d6d6;
+  /* Max-width values  */
+  --default-max-width: 1280px;
+  --secondary-max-width: 1440px;
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
   /* Spacing Tokens */
@@ -915,7 +918,7 @@ picture[align=right] {
 }
 .section > div {
   /* limit block wrappers max width */
-  max-width: var(--non-spectrum-max-width);
+  max-width: var(--default-max-width);
   margin: auto;
 }
 @media (min-width: 600px) {
@@ -1021,7 +1024,7 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
     display: grid;
     grid-template: "browse-rail main"/256px 1fr;
     /* on pages with rails the max width must be on main */
-    max-width: var(--non-spectrum-max-width);
+    max-width: var(--default-max-width);
     margin: auto;
     grid-template-rows: auto auto;
   }

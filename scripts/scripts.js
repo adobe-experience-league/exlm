@@ -259,16 +259,21 @@ export function isArticleLandingPage() {
 
 /**
  * Check if current page is a Profile page.
- * theme = profile is set in bulk metadata for /en/profile** paths.
+ * theme = profile is set in bulk metadata for /en/home** paths.
  */
 export function isProfilePage() {
   const theme = getMetadata('theme');
   return theme.toLowerCase().startsWith('profile');
 }
-
+/**
+ * Check if current page is a home page.
+ */
+export function isHomePage(lang) {
+  return window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
+}
 /**
  * Check if current page is a Signup flow modal page.
- * theme = signup is set in bulk metadata for /en/profile/signup-flow-modal** paths.
+ * theme = signup is set in bulk metadata for /en/home/signup-flow-modal** paths.
  */
 export function isSignUpPage() {
   const theme = getMetadata('theme');
@@ -285,18 +290,6 @@ function addProfileRail(main) {
   profileRailSection.classList.add('profile-rail-section');
   profileRailSection.append(buildBlock('profile-rail', []));
   main.prepend(profileRailSection);
-}
-
-/**
- * Add a nav tab to the profile page.
- * @param {HTMLElement} main
- *
- */
-function addProfileTab(main) {
-  const profileTabSection = document.createElement('div');
-  profileTabSection.classList.add('profile-tab-section');
-  profileTabSection.append(buildBlock('profile-tab', []));
-  main.prepend(profileTabSection);
 }
 
 /**
@@ -387,7 +380,6 @@ function buildAutoBlocks(main) {
       addMiniToc(main);
     }
     if (isProfilePage()) {
-      addProfileTab(main);
       addProfileRail(main);
     }
   } catch (error) {
@@ -755,12 +747,50 @@ export function getConfig() {
     },
   ];
 
+  const baseLocalesMap = new Map([
+    ['de', 'de'],
+    ['en', 'en'],
+    ['ja', 'ja'],
+    ['fr', 'fr'],
+    ['es', 'es'],
+    ['pt-br', 'pt'],
+    ['ko', 'ko'],
+  ]);
+
+  const communityLangsMap = new Map([
+    ...baseLocalesMap,
+    ['sv', 'en'],
+    ['nl', 'en'],
+    ['it', 'en'],
+    ['zh-hans', 'en'],
+    ['zh-hant', 'en'],
+  ]);
+
+  const adobeAccountLangsMap = new Map([
+    ...baseLocalesMap,
+    ['sv', 'sv'],
+    ['nl', 'nl'],
+    ['it', 'it'],
+    ['zh-hant', 'zh-Hant'],
+    ['zh-hans', 'zh-Hans'],
+  ]);
+  const cookieConsentName = 'OptanonConsent';
+  const targetCriteriaIds = {
+    mostPopular: 'exl-hp-auth-recs-2',
+    recommended: 'exl-hp-auth-recs-1',
+    recentlyViewed: 'exl-hp-auth-recs-3',
+  };
+
   const currentHost = window.location.hostname;
   const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
   const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
+  // Locale param for Community page URL
+  const communityLocale = communityLangsMap.get(lang) || 'en';
+  // Lang param for Adobe account URL
+  const adobeAccountLang = adobeAccountLangsMap.get(lang) || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
   const isProd = currentEnv?.env === 'PROD' || currentEnv?.authorUrl === 'author-p122525-e1219150.adobeaemcloud.com';
   const isStage = currentEnv?.env === 'STAGE' || currentEnv?.authorUrl === 'author-p122525-e1219192.adobeaemcloud.com';
@@ -789,6 +819,8 @@ export function getConfig() {
     ppsOrigin,
     launchScriptSrc,
     signUpFlowConfigDate,
+    cookieConsentName,
+    targetCriteriaIds,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
     privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
@@ -807,20 +839,25 @@ export function getConfig() {
     articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
+    // Personlized Home Page Link
+    personalizedHomeLink: `/home`,
     // Browse Left nav
     browseMoreProductsLink: `/${lang}/browse`,
     // Machine Translation
     automaticTranslationLink: `/${lang}/docs/contributor/contributor-guide/localization/machine-translation`,
     // Recommended Courses
     recommendedCoursesUrl: `${cdnOrigin}/home?lang=${lang}#dashboard/learning`,
-    // Adobe account
-    adobeAccountURL: isProd ? 'https://account.adobe.com/' : 'https://stage.account.adobe.com/',
-    // Community Account
+    // Adobe account URL
+    adobeAccountURL: isProd
+      ? `https://account.adobe.com/?lang=${adobeAccountLang}`
+      : `https://stage.account.adobe.com/?lang=${adobeAccountLang}`,
+    // Community Account URL
     communityAccountURL: isProd
-      ? 'https://experienceleaguecommunities.adobe.com/'
-      : 'https://experienceleaguecommunities-dev.adobe.com/',
-    // Stream API
-    eventSourceStreamUrl: '/api/stream',
+      ? `https://experienceleaguecommunities.adobe.com/?profile.language=${communityLocale}`
+      : `https://experienceleaguecommunities-dev.adobe.com/?profile.language=${communityLocale}`,
+    interestsUrl: `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`,
+    // Param for localized Community Profile URL
+    localizedCommunityProfileParam: `?profile.language=${communityLocale}`,
   };
   return window.exlm.config;
 }
@@ -1088,6 +1125,16 @@ export async function loadArticles() {
   }
 }
 
+function showSignupDialog() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const isSignedIn = window?.adobeIMS?.isSignedInUser();
+  const { isProd } = getConfig();
+  if (isSignedIn && !isProd && urlParams.get('signup-wizard') === 'on') {
+    // eslint-disable-next-line import/no-cycle
+    import('./signup-flow/signup-flow-dialog.js').then((mod) => mod.default.init());
+  }
+}
+
 function showBrowseBackgroundGraphic() {
   if (isBrowsePage()) {
     const main = document.querySelector('main');
@@ -1142,24 +1189,24 @@ export async function fetchWithFallback(path, fallbackPath) {
   return fetch(fallbackPath);
 }
 
-export async function fetchFragment(rePath, lang = 'en') {
-  const path = `/fragments/${lang}/${rePath}.plain.html`;
-  const fallback = `/fragments/en/${rePath}.plain.html`;
+export async function fetchFragment(rePath, lang) {
+  const path = `${window.hlx.codeBasePath}/fragments/${lang}/${rePath}.plain.html`;
+  const fallback = `${window.hlx.codeBasePath}/fragments/en/${rePath}.plain.html`;
   const response = await fetchWithFallback(path, fallback);
   return response.text();
 }
 
-export async function fetchLanguagePlaceholders() {
-  const { lang } = getPathDetails();
+export async function fetchLanguagePlaceholders(lang) {
+  const langCode = lang || getPathDetails()?.lang || 'en';
   try {
     // Try fetching placeholders with the specified language
-    return await fetchPlaceholders(`/${lang}`);
+    return await fetchPlaceholders(`${window.hlx.codeBasePath}/${langCode}`);
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(`Error fetching placeholders for lang: ${lang}. Will try to get en placeholders`, error);
+    console.error(`Error fetching placeholders for lang: ${langCode}. Will try to get en placeholders`, error);
     // Retry without specifying a language (using the default language)
     try {
-      return await fetchPlaceholders('/en');
+      return await fetchPlaceholders(`${window.hlx.codeBasePath}/en`);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);
@@ -1172,7 +1219,7 @@ export async function getLanguageCode() {
   if (window.languageCode) return window.languageCode;
   window.languageCode = new Promise((resolve, reject) => {
     const { lang } = getPathDetails();
-    fetch('/languages.json')
+    fetch(`${window.hlx.codeBasePath}/languages.json`)
       .then((response) => response.json())
       .then((languages) => {
         const langMap = languages.data;
@@ -1341,16 +1388,43 @@ function decodeAemPageMetaTags() {
   }
 }
 
+/**
+ * Fetch Json with fallback.
+ */
+export async function fetchJson(url, fallbackUrl) {
+  return fetch(url)
+    .then((response) => (!response.ok && fallbackUrl ? fetch(fallbackUrl) : response))
+    .then((response) => (response.ok ? response.json() : null))
+    .then((json) => json?.data || []);
+}
+
+export function getCookie(cookieName) {
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const cookies = decodedCookie.split(';');
+  for (let i = 0; i < cookies.length; i += 1) {
+    let cookie = cookies[i];
+    while (cookie.charAt(0) === ' ') {
+      cookie = cookie.substring(1);
+    }
+    if (cookie.indexOf(cookieName) === 0) {
+      return cookie.substring(cookieName.length + 1);
+    }
+  }
+  return null;
+}
+
 async function loadPage() {
   // THIS IS TEMPORARY FOR SUMMIT.
   if (handleHomePageHashes()) return;
   // END OF TEMPORARY FOR SUMMIT.
+
   await loadEager(document);
   await loadLazy(document);
   loadArticles();
   loadRails();
   loadDelayed();
   showBrowseBackgroundGraphic();
+  showSignupDialog();
 
   if (isDocArticlePage()) {
     // wrap main content in a div - UGP-11165
@@ -1382,10 +1456,11 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
-(async function () {
+(async () => {
   if (!window.hlx.DO_NOT_LOAD_PAGE) {
     const { lang } = getPathDetails();
     document.documentElement.lang = lang || 'en';
+    const { isProd, personalizedHomeLink } = getConfig() || {};
     if (isProfilePage()) {
       if (window.location.href.includes('.html')) {
         loadPage();
@@ -1397,6 +1472,17 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
           await window?.adobeIMS?.signIn();
         }
       }
+    } else if (isHomePage(lang) && !isProd) {
+      try {
+        await loadIms();
+        if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
+          window.location.replace(`${window.location.origin}/${lang}${personalizedHomeLink}`);
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error during redirect process:', error);
+      }
+      loadPage();
     } else {
       loadPage();
     }

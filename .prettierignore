@@ -1,6 +1,7 @@
 prism.js
 blocks/**/**.css
 !blocks/mini-toc/**
+!blocks/playlist-browse/**
 styles/**/**.css
 scripts/prism-grammars/**
 scripts/**/**.css

@@ -1,8 +1,7 @@
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getPathDetails, decorateLinks, fetchFragment } from '../../scripts/scripts.js';
-
-const languageModule = import('../../scripts/language.js');
+import LanguageBlock from '../language/language.js';
 
 async function decorateMenu(footer) {
   const isSignedIn = await isSignedInUser();
@@ -72,27 +71,21 @@ function extractDomain(domain) {
 }
 
 async function decorateSocial(footer) {
+  // create the divs to acomodate the social icons and the language selector
   const languageSelector = footer.querySelector('.language-selector');
-  const social = footer.querySelector('.social');
   const groupDiv = document.createElement('div');
   groupDiv.classList.add('footer-lang-social');
-  // build language popover
-  const { buildLanguagePopover } = await languageModule;
-  const { popover } = await buildLanguagePopover('top', 'language-picker-popover-footer');
-
-  const langSelectorButton = languageSelector.firstElementChild;
-  langSelectorButton.classList.add('language-selector-button');
-  langSelectorButton.setAttribute('aria-haspopup', 'true');
-  langSelectorButton.setAttribute('aria-controls', 'language-picker-popover-footer');
-  const icon = document.createElement('span');
-  icon.classList.add('icon', 'icon-globegrid');
-  langSelectorButton.appendChild(icon);
-  languageSelector.appendChild(popover);
-
   groupDiv.appendChild(languageSelector);
+
+  // append languageBlock to footer
+  const footerLastRow = document.createElement('div');
+  footerLastRow.classList.add('footer-last-row');
+  footerLastRow.appendChild(groupDiv);
+  footer.appendChild(footerLastRow);
+
+  // create social media icons
+  const social = footer.querySelector('.social');
   groupDiv.appendChild(social);
-  const elem = footer.children[0];
-  elem.insertBefore(groupDiv, elem.children[2]);
   const socialParas = social.querySelectorAll('p');
   const socialFrag = document.createDocumentFragment();
   Array.from(socialParas).forEach((p) => {
@@ -125,14 +118,10 @@ function decorateBreadcrumb(footer) {
   }
 }
 
-function decorateCopyrightsMenu() {
-  const footerLastRow = document.createElement('div');
-  footerLastRow.classList.add('footer-last-row');
-  const footerLangSocial = document.querySelector('.footer-lang-social');
+function decorateCopyrightsMenu(footer) {
+  const footerLastRow = footer.querySelector('.footer-last-row');
   const footerRights = document.querySelector('.footer-copyrights');
-  footerLastRow.appendChild(footerLangSocial);
   footerLastRow.appendChild(footerRights);
-  const footerMenu = document.querySelector('.footer-menu');
   const firstFooterAnchor = footerRights.querySelector('a');
   const copyRightWrapper = firstFooterAnchor.parentElement;
   Array.from(copyRightWrapper.querySelectorAll('a')).forEach((anchor) => {
@@ -153,8 +142,20 @@ function decorateCopyrightsMenu() {
       `<span class="footer-copyrights-text">${copyRightWrapper.firstChild.textContent}</span>`,
     );
   }
+
   copyRightWrapper.classList.add('footer-copyrights-element');
+  const footerMenu = document.querySelector('.footer-menu');
   footerMenu.parentElement.appendChild(footerLastRow);
+  const languageSelector = footer.querySelector('.language-selector');
+  const languageBlock = new LanguageBlock({
+    position: 'top',
+    popoverId: 'language-picker-popover-footer',
+    block: languageSelector,
+  });
+  languageSelector.appendChild(languageBlock);
+  const languageSelectorDiv = languageSelector.querySelector('div');
+  const languageBlockButton = languageBlock.querySelector('.language-selector-button');
+  languageBlockButton.appendChild(languageSelectorDiv);
 }
 
 function handleSocialIconStyles(footer) {
@@ -200,13 +201,13 @@ export default async function decorate(block) {
     // decorate footer DOM
     const footer = document.createElement('div');
     footer.innerHTML = footerFragment;
+    block.append(footer);
     await decorateSocial(footer);
     decorateBreadcrumb(footer);
     await decorateMenu(footer);
-    block.append(footer);
     handleSocialIconStyles(footer);
     handleLoginFunctionality(footer);
-    decorateCopyrightsMenu();
+    decorateCopyrightsMenu(footer);
     await decorateIcons(footer);
   }
 }

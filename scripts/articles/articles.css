@@ -158,7 +158,7 @@
 
 @media (min-width: 1440px) {
     .articles-wrapper .article-content-container {
-        max-width: calc(var(--non-spectrum-max-width) - 80px);
+        max-width: calc(var(--default-max-width) - 80px);
         margin: 0 auto;
     }
 }  

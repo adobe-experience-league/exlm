@@ -115,15 +115,12 @@
 .user-profile-card-container[data-section-status="initialized"],
 .user-profile-card-container[data-section-status="loading"],
 .email-card-container[data-section-status="loading"],
-.email-card-container[data-section-status="initialized"],
-.profile-tab-container[data-section-status="initialized"],
-.profile-tab-container[data-section-status="loading"] {
+.email-card-container[data-section-status="initialized"] {
     visibility: hidden;
 }
 
 .product-interests-container[data-section-status="loaded"],
-.email-card-container[data-section-status="loaded"],
-.profile-tab-container[data-section-status="loaded"] {
+.email-card-container[data-section-status="loaded"] {
     visibility: visible;
 }
 

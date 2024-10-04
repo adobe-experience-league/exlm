@@ -1,9 +1,10 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { productExperienceEventEmitter } from '../../scripts/events.js';
+import { htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import { globalEmitter, productExperienceEventEmitter } from '../../scripts/events.js';
+import FormValidator from '../../scripts/form-validator.js';
 
-const interestsUrl = 'https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=en';
+const { interestsUrl } = getConfig();
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -48,22 +49,23 @@ async function updateInterests(block) {
 }
 
 function decorateInterests(block) {
-  if (!block.querySelector('h1,h2,h3,h4,h5,h6')) {
-    const title = block.querySelector('div > div');
+  const [title, description] = block.children;
+  if (!title.querySelector('h1,h2,h3,h4,h5,h6')) {
     title.innerHTML = `<h3>${title.textContent}</h3>`;
   }
-  const formContainer = document.createElement('form');
-  formContainer.id = 'product-interests-form';
+  title?.classList.add('product-interest-header');
+  description?.classList.add('product-interest-description');
 
-  const formErrorContainer = document.createElement('div');
-  formErrorContainer.classList.add('product-interests-form-error');
+  const content = htmlToElement(`
+    <form class="product-interests-form">
+      <div class="product-interests-form-error form-error hidden">
+        ${placeholders?.formFieldGroupError || 'Please select at least one option.'}
+      </div>
+      <ul class="interests-container"></ul>
+    </form>`);
 
-  const columnsContainer = document.createElement('ul');
-  columnsContainer.classList.add('interests-container');
-
-  formContainer.appendChild(formErrorContainer);
-  formContainer.appendChild(columnsContainer);
-
+  const columnsContainer = content.querySelector('.interests-container');
+  const formErrorContainer = content.querySelector('.product-interests-form-error');
   const userInterests = profileData?.interests ? profileData.interests : [];
   // Sort the interests data by Name
   // eslint-disable-next-line no-nested-ternary
@@ -114,45 +116,91 @@ function decorateInterests(block) {
     }
   });
 
-  block.appendChild(formContainer);
+  block.appendChild(content);
 
   productExperienceEventEmitter.on('dataChange', ({ key, value }) => {
     if (formErrorContainer) {
-      formErrorContainer.textContent = '';
+      formErrorContainer.classList.toggle('hidden', true);
     }
-
     const inputEl = block.querySelector(`#interest__${key}`);
     if (inputEl) {
       inputEl.checked = value;
     }
-    updateInterests(block)
-      .then(() => {
-        defaultProfileClient.getMergedProfile().then((profile) => {
-          if (JSON.stringify(profileData.interests) !== JSON.stringify(profile.interests)) {
-            profileData = profile;
-            sendNotice(placeholders?.profileUpdated || 'Profile updated successfully');
-          }
+    const checkedCheckboxes = Array.from(block.querySelectorAll('.interests-container input[type="checkbox"]')).filter(
+      (el) => el.checked,
+    );
+    // const isInSignupDialog = block.closest('.signup-dialog');
+    const isAnyCheckboxChecked = checkedCheckboxes.length > 0;
+    if (isAnyCheckboxChecked) {
+      updateInterests(block)
+        .then(() => {
+          defaultProfileClient.getMergedProfile().then((profile) => {
+            if (JSON.stringify(profileData.interests) !== JSON.stringify(profile.interests)) {
+              profileData = profile;
+              sendNotice(placeholders?.profileUpdated || 'Profile updated successfully');
+              globalEmitter.emit('profileDataUpdated');
+            }
+          });
+        })
+        .catch(() => {
+          sendNotice(placeholders?.profileNotUpdated || 'Error updating profile');
         });
-      })
-      .catch(() => {
-        sendNotice(placeholders?.profileNotUpdated || 'Error updating profile');
-      });
+    }
   });
 }
 
+function validateForm(formSelector) {
+  if (!formSelector) return true;
+
+  const options = {
+    aggregateRules: { checkBoxGroup: {} },
+  };
+
+  const validator = new FormValidator(formSelector, placeholders, options);
+  return validator.validate();
+}
+
 function handleProductInterestChange(block) {
-  block.querySelectorAll('li > label').forEach((row) => {
-    row.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (e.target.tagName === 'INPUT') {
-        const [, id] = e.target.id.split('__');
-        productExperienceEventEmitter.set(id, e.target.checked);
+  const isInSignupDialog = block.closest('.signup-dialog') !== null;
+  const formElement = block.querySelector('.product-interests-form');
+  const formErrorElement = formElement.querySelector('.product-interests-form-error');
+  const checkboxList = block.querySelectorAll('.interests-container input[type="checkbox"]');
+
+  const toggleFormError = (visible) => {
+    if (formErrorElement) {
+      formErrorElement.classList.toggle('hidden', !visible);
+    }
+  };
+
+  checkboxList.forEach((checkbox) => {
+    checkbox.addEventListener('click', (event) => {
+      event.stopPropagation();
+
+      const isValid = validateForm(formElement);
+      toggleFormError(false);
+
+      if (!isInSignupDialog && !isValid) {
+        toggleFormError(true);
+        event.preventDefault();
+        return;
+      }
+
+      if (event.target.tagName === 'INPUT') {
+        const [, id] = event.target.id.split('__');
+        productExperienceEventEmitter.set(id, event.target.checked);
       }
     });
   });
 }
 
 export default async function decorateProfile(block) {
+  const blockInnerHTML = block.innerHTML;
   decorateInterests(block);
   handleProductInterestChange(block);
+
+  globalEmitter.on('signupDialogClose', async () => {
+    block.innerHTML = blockInnerHTML;
+    decorateInterests(block);
+    handleProductInterestChange(block);
+  });
 }

@@ -61,6 +61,7 @@ export async function pushPageDataLayer(language) {
       notificationPref: false,
       org: '',
       orgs: [],
+      userCorporateName: '',
     },
   };
 
@@ -80,10 +81,12 @@ export async function pushPageDataLayer(language) {
         learningInterest: userData.interests || [],
         role: userData.role || [],
         experienceLevel: userData.level || [],
+        solutionLevel: userData.solutionLevels || [],
         industry: userData.industryInterests || [],
         notificationPref: userData.emailOptIn === true,
         org: userData.org || '',
         orgs: userData.orgs || [],
+        userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
       };
     }
   } catch (e) {
@@ -132,7 +135,7 @@ export async function pushPageDataLayer(language) {
         userAgent: window.navigator.userAgent,
         server: window.location.host,
         siteSection: section,
-        siteSubSection1: sections[0] || '',
+        siteSubSection1: sections[0] === 'perspective' ? 'perspectives' : sections[0] || '',
         siteSubSection2: sections[1] || '',
         siteSubSection3: sections[2] || '',
         siteSubSection4: sections[3] || '',
