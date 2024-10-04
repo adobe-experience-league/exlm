@@ -251,18 +251,15 @@ class ProfileClient {
    * Iterates backward through the interactions array to grab the latest instance
    * of an event.
    *
-   * @param {String} event
-   * @param {Object} otherConditions - Object of key value pairs to match against interaction
-   * @returns Interaction object or undefined if not found
+   * @param {String} interactionName
+   * @returns {Object|undefined} Interaction object or undefined if not found
    */
-  async getLatestInteraction(event, otherConditions) {
+  async getLatestInteraction(interactionName) {
     const profile = await this.getMergedProfile(false);
-    const conditions = Object.apply({}, { event }, otherConditions || {});
-
-    return profile.interactions.findLast((interaction) => {
-      const keys = Object.keys(conditions);
-      return !keys.some((key) => interaction[key] !== conditions[key]);
-    });
+    if (profile.interactions && profile.interactions.length) {
+      return profile.interactions.findLast((interaction) => interaction.event === interactionName);
+    }
+    return undefined;
   }
 
   /**
