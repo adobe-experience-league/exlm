@@ -752,9 +752,13 @@ button:focus {
   // header prouct-grid
   .product-grid.signed-in {
     grid-area: product-grid;
-    display: var(--sign-in-display);
+    display: none;
     order: var(--sign-in-order);
     align-items: center;
+
+    @include breakpoint(custom) {
+      display: var(--sign-in-display);
+    }
 
     a {
       color: var(--nav-item-text-color);

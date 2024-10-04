@@ -588,7 +588,6 @@ const productGridDecorator = async (productGridBlock, decoratorOptions) => {
   productGridBlock.style.display = 'none';
   const isSignedIn = await decoratorOptions.isUserSignedIn();
   if (isSignedIn) {
-    productGridBlock.style.display = 'block';
     productGridBlock.classList.add('signed-in');
     const productDropdown = document.createElement('div');
     productDropdown.classList.add('product-dropdown');
