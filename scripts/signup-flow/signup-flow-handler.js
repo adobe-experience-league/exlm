@@ -21,8 +21,8 @@ export default async function showSignupDialog() {
   const configDate = new Date(signUpFlowConfigDate);
   const profileData = await defaultProfileClient.getMergedProfile();
   const profileTimeStamp = new Date(profileData.timestamp);
-  const modalSeen = await defaultProfileClient.getLatestInteraction('modalSeen');
-  if (modalSeen) {
+  const modalSeenInteraction = await defaultProfileClient.getLatestInteraction('modalSeen');
+  if (modalSeenInteraction) {
     return;
   }
   const todayStartTimeStamp = new Date();
