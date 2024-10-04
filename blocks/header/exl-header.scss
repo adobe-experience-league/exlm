@@ -749,6 +749,10 @@ button:focus {
     }
   }
 
+  .product-grid {
+    display: none;
+  }
+
   // header prouct-grid
   .product-grid.signed-in {
     grid-area: product-grid;
