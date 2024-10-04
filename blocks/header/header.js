@@ -585,7 +585,6 @@ const signInDecorator = async (signInBlock, decoratorOptions) => {
  */
 const productGridDecorator = async (productGridBlock, decoratorOptions) => {
   simplifySingleCellBlock(productGridBlock);
-  productGridBlock.style.display = 'none';
   const isSignedIn = await decoratorOptions.isUserSignedIn();
   if (isSignedIn) {
     productGridBlock.classList.add('signed-in');
