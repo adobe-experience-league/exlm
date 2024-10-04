@@ -427,17 +427,38 @@ export default async function decorate(block) {
       });
   };
 
-  const renderCardBlock = (parentDiv) => {
+  const renderCardBlock = async (parentDiv) => {
     const contentDiv = document.createElement('div');
     contentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
     parentDiv.appendChild(contentDiv);
     secondEl.classList.add('recommended-content-discover-resource');
     firstEl.classList.add('recommended-content-result-link');
+
+    const isNonEmptyString = (value) => value && value.trim() !== '';
+
     if (firstEl.innerHTML || secondEl.innerHTML) {
-      const seeMoreEl = htmlToElement(`<div class="recommended-content-result-text">
-        ${secondEl.outerHTML}
-        ${firstEl.outerHTML}
-        </div>`);
+      if (targetSupport && targetCriteriaId) {
+        const data = await handleTargetEvent(targetCriteriaId);
+
+        if (data && data.meta) {
+          const anchor = firstEl.querySelector('a');
+          if (isNonEmptyString(data.meta['tagline-cta-text'])) {
+            anchor.textContent = data.meta['tagline-cta-text'];
+          }
+          if (isNonEmptyString(data.meta['tagline-cta-url'])) {
+            anchor.setAttribute('href', data.meta['tagline-cta-url']);
+          }
+          if (isNonEmptyString(data.meta['tagline-text'])) {
+            secondEl.innerHTML = data.meta['tagline-text'];
+          }
+        }
+      }
+      const seeMoreEl = htmlToElement(`
+        <div class="recommended-content-result-text">
+          ${secondEl.outerHTML}
+          ${firstEl.outerHTML}
+        </div>
+      `);
       parentDiv.appendChild(seeMoreEl);
     }
   };
