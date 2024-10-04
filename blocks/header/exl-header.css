@@ -150,15 +150,18 @@
   display: var(--search-display);
   justify-content: flex-start;
   align-items: center;
-  padding-right: 15px;
-  padding-left: 15px;
+  padding-left: 0;
+  padding-right: 0;
   container-type: inline-size;
   container-name: searchs;
   z-index: 1;
+  min-width: 48px;
 }
 @media (min-width: 1024px) {
   .search {
     justify-content: flex-end;
+    padding-right: 15px;
+    padding-left: 15px;
   }
 }
 
@@ -545,9 +548,8 @@ button:focus {
 .header > nav {
   display: grid;
   grid-template-areas: "nav brand search sign-in";
-  justify-content: space-between;
   height: 100%;
-  grid-template-columns: min-content max-content min-content min-content;
+  grid-template-columns: min-content auto min-content min-content;
 }
 @media (min-width: 1024px) {
   .header > nav {
@@ -580,6 +582,7 @@ button:focus {
   grid-area: brand;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: var(--nav-root-item-padding-x);
   order: var(--brand-order);
   font-size: 17px;
@@ -694,9 +697,14 @@ button:focus {
 }
 .header .product-grid.signed-in {
   grid-area: product-grid;
-  display: var(--sign-in-display);
+  display: none;
   order: var(--sign-in-order);
   align-items: center;
+}
+@media (min-width: 1024px) {
+  .header .product-grid.signed-in {
+    display: var(--sign-in-display);
+  }
 }
 .header .product-grid.signed-in a {
   color: var(--nav-item-text-color);
