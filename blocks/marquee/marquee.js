@@ -87,11 +87,13 @@ export default async function decorate(block) {
     const playIcon = document.createElement('span');
     playIcon.classList.add('icon', 'icon-play');
     videoLinkElem.prepend(playIcon);
+    decorateIcons(videoLinkElem);
     const modal = document.createElement('div');
     modal.classList.add('modal');
     const closeIcon = document.createElement('span');
-    closeIcon.classList.add('icon', 'icon-close');
+    closeIcon.classList.add('icon', 'icon-close-light');
     modal.appendChild(closeIcon);
+    decorateIcons(modal);
     modal.style.display = 'none';
     block.append(modal);
 
@@ -105,7 +107,7 @@ export default async function decorate(block) {
         iframeContainer.innerHTML = `<iframe src=${videoLink} frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe>`;
         modal.append(iframeContainer);
       }
-      decorateIcons(modal);
+      
     });
 
     modal.addEventListener('click', () => {
@@ -130,6 +132,5 @@ export default async function decorate(block) {
       }
     });
 
-  decorateIcons(marqueeDOM);
   block.append(marqueeDOM);
 }
