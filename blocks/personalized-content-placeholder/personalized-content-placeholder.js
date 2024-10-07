@@ -1,6 +1,6 @@
 import { htmlToElement, moveInstrumentation, decorateExternalLinks } from '../../scripts/scripts.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
-import { loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
+import { loadBlocks, decorateSections, decorateBlocks} from '../../scripts/lib-franklin.js';
 import { globalEmitter } from '../../scripts/events.js';
 
 // Will be refactoring this function to use a loadFragment() function from scripts.js
@@ -15,7 +15,6 @@ const fetchPageContent = async (url, loader, block) => {
       decorateBlocks(container);
       decorateExternalLinks(container);
       await loadBlocks(container);
-      await decorateIcons(container);
       if (window.hlx.aemRoot) {
         loader.insertAdjacentElement('beforebegin', container);
         moveInstrumentation(block, container);
