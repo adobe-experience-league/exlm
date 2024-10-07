@@ -807,7 +807,7 @@ export function getConfig() {
     launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
   const signUpFlowConfigDate = '2024-08-15T00:00:00.762Z';
-  const modalReDisplayDuration = '1'; // in days
+  const modalReDisplayDuration = '3'; // in months
 
   window.exlm = window.exlm || {};
   window.exlm.config = {
