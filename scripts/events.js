@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-class Channel {
+class EventEmitter {
   constructor(initialValue = {}) {
     this.listeners = {};
     this.data = initialValue;
@@ -36,15 +36,24 @@ class Channel {
   }
 }
 
-class EventEmitter {
-  channels = {};
+class EventChannel {
+  eventEmitter = {};
 
-  getChannel = (channelName) => {
-    if (!this.channels[channelName]) {
-      this.channels[channelName] = new Channel();
+  static instance = null;
+
+  getEmitter = (emitterName) => {
+    if (!this.eventEmitter[emitterName]) {
+      this.eventEmitter[emitterName] = new EventEmitter();
     }
-    return this.channels[channelName];
+    return this.eventEmitter[emitterName];
   };
+
+  static getInstance() {
+    if (!EventChannel.instance) {
+      EventChannel.instance = new EventChannel();
+    }
+    return EventChannel.instance;
+  }
 }
 
-export default new EventEmitter();
+export default EventChannel.getInstance();

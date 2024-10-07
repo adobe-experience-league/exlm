@@ -6,9 +6,9 @@ import { defaultProfileClient } from '../auth/profile.js';
 import SignUpFlowShimmer from './signup-flow-shimmer.js';
 import FormValidator from '../form-validator.js';
 import { sendNotice } from '../toast/toast.js';
-import eventEmitter from '../events.js';
+import eventChannel from '../events.js';
 
-const globalChannel = eventEmitter.get('global');
+const signupDialogEventEmitter = eventChannel.getEmitter('signupDialog');
 
 /**
  * Types of signup dialog modals.
@@ -107,13 +107,13 @@ export default class SignupFlowDialog {
         e.preventDefault();
         this.signupDialog.close();
         document.body.classList.remove('overflow-hidden');
-        globalChannel.emit('signupDialogClose', { status: 'closed' });
+        signupDialogEventEmitter.emit('signupDialogClose', { status: 'closed' });
       });
     });
 
     this.signupDialog.addEventListener('cancel', () => {
       document.body.classList.remove('overflow-hidden');
-      globalChannel.emit('signupDialogClose', { status: 'closed' });
+      signupDialogEventEmitter.emit('signupDialogClose', { status: 'closed' });
     });
   }
 
