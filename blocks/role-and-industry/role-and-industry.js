@@ -111,6 +111,7 @@ async function decorateContent(block) {
 `);
 
   block.textContent = '';
+  decorateIcons(roleAndIndustryDiv);
   block.append(roleAndIndustryDiv);
 
   if (isSignedIn) {
@@ -223,7 +224,7 @@ async function decorateContent(block) {
       checkbox.addEventListener('change', handleCheckboxChange);
     });
 
-    decorateIcons(block);
+    
   }
 }
 
