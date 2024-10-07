@@ -154,6 +154,7 @@ export default async function decorate(block) {
 
   filterOptions.unshift(...defaultOptionsKey);
   const [defaultFilterOption = ''] = filterOptions;
+  const renderedCardTitles = [];
 
   const renderCardPlaceholders = (contentDiv) => {
     const cardDiv = document.createElement('div');
@@ -225,12 +226,14 @@ export default async function decorate(block) {
         const payloadInfo = {
           ...apiPayload,
           contentType: null,
+          noOfResults: 4,
         };
         data.push({
           cardPromise: getCardsData(payloadInfo),
           shimmers: cardShimmers,
           contentType: ctType,
           wrappers: cardWrappers,
+          cardsToRenderCount: noOfResults,
         });
       }
     }
@@ -244,6 +247,7 @@ export default async function decorate(block) {
           const cardDiv = payloadConfig.wrappers[i];
           if (cardData?.cardPromise) {
             cardData.cardPromise.then((cardDataResponse) => {
+              const { cardsToRenderCount } = cardData;
               const { data: delayedCardData = [] } = cardDataResponse;
               if (delayedCardData.length === 0) {
                 cardData.shimmers.forEach((shim, index) => {
@@ -251,13 +255,26 @@ export default async function decorate(block) {
                   cardData.wrappers[index].style.display = 'none';
                 });
               } else {
-                delayedCardData.forEach((cardModel, index) => {
+                countNumberAsArray(cardsToRenderCount).forEach((_, index) => {
                   const shimmer = cardData.shimmers[index];
                   const wrapperDiv = cardData.wrappers[index];
                   if (shimmer) {
                     shimmer.remove();
                   }
                   wrapperDiv.innerHTML = '';
+                  const [defaultCardModel] = delayedCardData;
+                  const targetIndex = delayedCardData.findIndex(
+                    (delayData) => !renderedCardTitles.includes(delayData.title),
+                  );
+                  let cardModel;
+                  if (targetIndex !== -1) {
+                    cardModel = delayedCardData[targetIndex];
+                    delayedCardData.splice(targetIndex, 1);
+                  } else {
+                    cardModel = defaultCardModel;
+                    delayedCardData.splice(0, 1);
+                  }
+                  renderedCardTitles.push(cardModel.title);
                   buildCard(contentDiv, wrapperDiv, cardModel);
                 });
               }
@@ -265,6 +282,9 @@ export default async function decorate(block) {
             });
           } else {
             cardDiv.innerHTML = '';
+            if (cardData?.title) {
+              renderedCardTitles.push(cardData.title);
+            }
             buildCard(contentDiv, cardDiv, cardData);
             resolve(true);
           }
