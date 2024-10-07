@@ -1456,7 +1456,7 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
   if (!window.hlx.DO_NOT_LOAD_PAGE) {
     const { lang } = getPathDetails();
     document.documentElement.lang = lang || 'en';
-    const { isProd, personalizedHomeLink } = getConfig() || {};
+    const { personalizedHomeLink } = getConfig() || {};
     if (isProfilePage()) {
       if (window.location.href.includes('.html')) {
         loadPage();
@@ -1468,7 +1468,7 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
           await window?.adobeIMS?.signIn();
         }
       }
-    } else if (isHomePage(lang) && !isProd) {
+    } else if (isHomePage(lang)) {
       try {
         await loadIms();
         if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
