@@ -2,9 +2,9 @@ import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { getPathDetails, htmlToElement } from '../scripts.js';
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
-import eventEmitter from '../events.js';
+import eventChannel from '../events.js';
 
-const bookmarksChannel = eventEmitter.getChannel('bookmarks');
+const bookmarksEventEmitter = eventChannel.getEmitter('bookmarks');
 
 function isBookmarkSelected(bookmarkIdInfo, bookmarkId) {
   const { lang: languageCode } = getPathDetails();
@@ -47,13 +47,13 @@ export async function bookmarkHandler(config) {
     newBookmarks.push(`${id}:${Date.now()}`);
     element.dataset.bookmarked = true;
     defaultProfileClient.updateProfile('bookmarks', newBookmarks, true);
-    bookmarksChannel.set('bookmark_ids', newBookmarks);
+    bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
     sendNotice(tooltips?.bookmarkToastText);
     assetInteractionModel(id, 'Bookmarked');
   } else {
     element.dataset.bookmarked = false;
     defaultProfileClient.updateProfile('bookmarks', newBookmarks, true);
-    bookmarksChannel.set('bookmark_ids', newBookmarks);
+    bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
     sendNotice(tooltips?.removeBookmarkToastText);
     assetInteractionModel(id, 'Bookmark Removed');
   }

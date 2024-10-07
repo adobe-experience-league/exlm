@@ -2,9 +2,9 @@ import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { defaultProfileClient } from '../auth/profile.js';
-import eventEmitter from '../events.js';
+import eventChannel from '../events.js';
 
-const bookmarksChannel = eventEmitter.getChannel('bookmarks');
+const bookmarksEventEmitter = eventChannel.getEmitter('bookmarks');
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -30,7 +30,7 @@ const renderBookmark = (labelSel, iconSel, id) => {
         const { bookmarks = [] } = profileData;
         const bookmarkItems = bookmarks.filter((bookmark) => !isBookmarkSelected(bookmark, id));
         defaultProfileClient.updateProfile('bookmarks', bookmarkItems, true);
-        bookmarksChannel.set('bookmark_ids', bookmarkItems);
+        bookmarksEventEmitter.set('bookmark_ids', bookmarkItems);
         labelSel.innerHTML = `${placeholders.bookmarkAuthLabelSet}`;
         iconSel.classList.remove('authed');
         sendNotice(`${placeholders.bookmarkUnset}`);
@@ -42,7 +42,7 @@ const renderBookmark = (labelSel, iconSel, id) => {
         const bookmarkItems = bookmarks.filter((bookmark) => !isBookmarkSelected(bookmark, id));
         bookmarkItems.push(`${id}:${Date.now()}`);
         defaultProfileClient.updateProfile('bookmarks', bookmarkItems, true);
-        bookmarksChannel.set('bookmark_ids', bookmarkItems);
+        bookmarksEventEmitter.set('bookmark_ids', bookmarkItems);
         labelSel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
         iconSel.classList.add('authed');
         sendNotice(`${placeholders.bookmarkSet}`);

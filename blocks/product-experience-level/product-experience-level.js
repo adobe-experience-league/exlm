@@ -1,9 +1,9 @@
 import buildProductCard from '../../scripts/profile/profile-interests.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import eventEmitter from '../../scripts/events.js';
+import eventChannel from '../../scripts/events.js';
 
-const interestsChannel = eventEmitter.get('interests');
-const globalChannel = eventEmitter.get('global');
+const interestsEventEmitter = eventChannel.getEmitter('interests');
+const signupDialogEventEmitter = eventChannel.getEmitter('signupDialog');
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -27,7 +27,7 @@ const experiencedDescription =
 const formErrorMessage = placeholders?.formFieldGroupError || 'Please select at least one option.';
 
 const renderCards = (resultsEl) => {
-  const interests = interestsChannel.get('interests_data') ?? [];
+  const interests = interestsEventEmitter.get('interests_data') ?? [];
   interests
     .filter((interest) => interest.selected)
     .forEach((interestData) => {
@@ -94,9 +94,9 @@ function decorateContent(block) {
   const resultsEl = block.querySelector('.personalize-interest-results');
   renderCards(resultsEl);
 
-  interestsChannel.on('dataChange', (data) => {
+  interestsEventEmitter.on('dataChange', (data) => {
     const { key, value } = data;
-    const interests = interestsChannel.get('interests_data') ?? [];
+    const interests = interestsEventEmitter.get('interests_data') ?? [];
     const model = interests.find((interest) => interest.id === key);
     const formErrorElement = block.querySelector('.personalize-interest-form .personalize-interest-form-error');
     formErrorElement.classList.toggle('hidden', true);
@@ -111,7 +111,7 @@ function decorateContent(block) {
 export default function ProfileExperienceLevel(block) {
   const blockInnerHTML = block.innerHTML;
   decorateContent(block);
-  globalChannel.on('signupDialogClose', async () => {
+  signupDialogEventEmitter.on('signupDialogClose', async () => {
     block.innerHTML = blockInnerHTML;
     decorateContent(block);
   });

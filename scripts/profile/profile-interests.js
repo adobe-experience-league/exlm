@@ -3,14 +3,14 @@ import Dropdown from '../dropdown/dropdown.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import getSolutionByName from '../../blocks/toc/toc-solutions.js';
 import loadJWT from '../auth/jwt.js';
-import eventEmitter from '../events.js';
+import eventChannel from '../events.js';
 import { defaultProfileClient } from '../auth/profile.js';
 import { sendNotice } from '../toast/toast.js';
 import FormValidator from '../form-validator.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/profile/profile-interests.css`);
-const interestsChannel = eventEmitter.getChannel('interests');
-const globalChannel = eventEmitter.get('global');
+const interestsEventEmitter = eventChannel.getEmitter('interests');
+const profileEventEmitter = eventChannel.getEmitter('profile');
 
 let placeholders = {};
 try {
@@ -114,7 +114,7 @@ export default async function buildProductCard(element, model) {
     } else {
       card.classList.remove('profile-interest-card-selected');
     }
-    interestsChannel.set(id, checked);
+    interestsEventEmitter.set(id, checked);
     return true;
   };
   const checkboxContainer = htmlToElement(`
@@ -150,7 +150,7 @@ export default async function buildProductCard(element, model) {
         .updateProfile('solutionLevels', newSolutionItems, true)
         .then(() => {
           sendNotice(PROFILE_UPDATED);
-          globalChannel.emit('profileDataUpdated');
+          profileEventEmitter.emit('profileDataUpdated');
         })
         .catch(() => sendNotice(PROFILE_NOT_UPDATED));
     }

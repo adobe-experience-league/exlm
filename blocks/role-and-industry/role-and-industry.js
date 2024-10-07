@@ -5,9 +5,10 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { fetchIndustryOptions } from '../../scripts/profile/profile.js';
 import FormValidator from '../../scripts/form-validator.js';
-import eventEmitter from '../../scripts/events.js';
+import eventChannel from '../../scripts/events.js';
 
-const globalChannel = eventEmitter.get('global');
+const profileEventEmitter = eventChannel.getEmitter('profile');
+const signupDialogEventEmitter = eventChannel.getEmitter('signupDialog');
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -133,7 +134,7 @@ async function decorateContent(block) {
         .updateProfile('industryInterests', industrySelection, true)
         .then(() => {
           sendNotice(PROFILE_UPDATED);
-          globalChannel.emit('profileDataUpdated');
+          profileEventEmitter.emit('profileDataUpdated');
         })
         .catch(() => sendNotice(PROFILE_NOT_UPDATED));
     });
@@ -174,7 +175,7 @@ async function decorateContent(block) {
         .updateProfile('role', selectedRoles, true)
         .then(() => {
           sendNotice(PROFILE_UPDATED);
-          globalChannel.emit('profileDataUpdated');
+          profileEventEmitter.emit('profileDataUpdated');
         })
         .catch(() => sendNotice(PROFILE_NOT_UPDATED));
     };
@@ -232,7 +233,7 @@ export default async function decorate(block) {
   const blockInnerHTML = block.innerHTML;
   decorateContent(block);
 
-  globalChannel.on('signupDialogClose', async () => {
+  signupDialogEventEmitter.on('signupDialogClose', async () => {
     block.innerHTML = blockInnerHTML;
     decorateContent(block);
   });
