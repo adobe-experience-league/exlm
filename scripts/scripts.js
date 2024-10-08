@@ -807,6 +807,7 @@ export function getConfig() {
     launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
   const signUpFlowConfigDate = '2024-08-15T00:00:00.762Z';
+  const modalReDisplayDuration = '3'; // in months
 
   window.exlm = window.exlm || {};
   window.exlm.config = {
@@ -819,6 +820,7 @@ export function getConfig() {
     ppsOrigin,
     launchScriptSrc,
     signUpFlowConfigDate,
+    modalReDisplayDuration,
     cookieConsentName,
     targetCriteriaIds,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
@@ -1454,7 +1456,7 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
   if (!window.hlx.DO_NOT_LOAD_PAGE) {
     const { lang } = getPathDetails();
     document.documentElement.lang = lang || 'en';
-    const { isProd, personalizedHomeLink } = getConfig() || {};
+    const { personalizedHomeLink } = getConfig() || {};
     if (isProfilePage()) {
       if (window.location.href.includes('.html')) {
         loadPage();
@@ -1466,11 +1468,12 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
           await window?.adobeIMS?.signIn();
         }
       }
-    } else if (isHomePage(lang) && !isProd) {
+    } else if (isHomePage(lang)) {
       try {
         await loadIms();
         if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
-          window.location.replace(`${window.location.origin}/${lang}${personalizedHomeLink}`);
+          window.location.pathname = `${lang}${personalizedHomeLink}`;
+          return;
         }
       } catch (error) {
         // eslint-disable-next-line no-console

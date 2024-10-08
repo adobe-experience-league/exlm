@@ -2,8 +2,9 @@ import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { defaultProfileClient } from '../auth/profile.js';
-import { bookmarksEventEmitter } from '../events.js';
+import getEmitter from '../events.js';
 
+const bookmarksEventEmitter = getEmitter('bookmarks');
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();

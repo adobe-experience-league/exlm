@@ -2,8 +2,9 @@ import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchIndustryOptions, getIndustryNameById } from '../../scripts/profile/profile.js';
-import { globalEmitter } from '../../scripts/events.js';
+import getEmitter from '../../scripts/events.js';
 
+const profileEventEmitter = getEmitter('profile');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
 let placeholders = {};
@@ -40,13 +41,11 @@ async function decorateProfileWelcomeBlock(block) {
 
   let profileData = {};
   let ppsProfileData = {};
-  let communityProfileData = {};
 
   if (isSignedIn) {
-    [profileData, ppsProfileData, communityProfileData] = await Promise.all([
+    [profileData, ppsProfileData] = await Promise.all([
       defaultProfileClient.getMergedProfile(),
       defaultProfileClient.getPPSProfile(),
-      defaultProfileClient.fetchCommunityProfileDetails(),
     ]);
   }
 
@@ -59,12 +58,6 @@ async function decorateProfileWelcomeBlock(block) {
   } = profileData || {};
 
   const { images: { 100: profilePicture } = '', company = UEAuthorMode ? 'User Company' : '' } = ppsProfileData || {};
-
-  const {
-    username: communityUserName = UEAuthorMode ? 'Community User Name' : '',
-    title: communityUserTitle = UEAuthorMode ? 'Community User Title' : '',
-    location: communityUserLocation = UEAuthorMode ? 'Community User Location' : '',
-  } = communityProfileData || {};
 
   const roleMappings = {
     Developer: placeholders?.roleCardDeveloperTitle || 'Developer',
@@ -131,6 +124,16 @@ async function decorateProfileWelcomeBlock(block) {
 
   // Conditionally display the profile card based on showProfileCard toggle
   if (showProfileCard.textContent.trim() === 'true') {
+    let communityProfileData = {};
+    if (isSignedIn) {
+      communityProfileData = await defaultProfileClient.fetchCommunityProfileDetails();
+    }
+    const {
+      username: communityUserName = UEAuthorMode ? 'Community User Name' : '',
+      title: communityUserTitle = UEAuthorMode ? 'Community User Title' : '',
+      location: communityUserLocation = UEAuthorMode ? 'Community User Location' : '',
+    } = communityProfileData || {};
+
     const profileUserCard = document.createRange().createContextualFragment(`
           <div class="profile-user-card">
                 <div class="profile-user-card-left">
@@ -206,7 +209,7 @@ export default async function decorate(block) {
   const blockInnerHTML = block.innerHTML;
   await decorateProfileWelcomeBlock(block);
 
-  globalEmitter.on('profileDataUpdated', async () => {
+  profileEventEmitter.on('profileDataUpdated', async () => {
     block.innerHTML = blockInnerHTML;
     await decorateProfileWelcomeBlock(block);
   });

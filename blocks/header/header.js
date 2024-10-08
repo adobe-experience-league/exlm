@@ -585,10 +585,8 @@ const signInDecorator = async (signInBlock, decoratorOptions) => {
  */
 const productGridDecorator = async (productGridBlock, decoratorOptions) => {
   simplifySingleCellBlock(productGridBlock);
-  productGridBlock.style.display = 'none';
   const isSignedIn = await decoratorOptions.isUserSignedIn();
   if (isSignedIn) {
-    productGridBlock.style.display = 'block';
     productGridBlock.classList.add('signed-in');
     const productDropdown = document.createElement('div');
     productDropdown.classList.add('product-dropdown');
