@@ -1472,7 +1472,8 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
       try {
         await loadIms();
         if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
-          window.location.replace(`${window.location.origin}/${lang}${personalizedHomeLink}`);
+          window.location.pathname = `${lang}${personalizedHomeLink}`;
+          return;
         }
       } catch (error) {
         // eslint-disable-next-line no-console
