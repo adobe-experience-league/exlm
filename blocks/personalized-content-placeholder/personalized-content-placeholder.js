@@ -1,9 +1,9 @@
 import { htmlToElement, moveInstrumentation, decorateExternalLinks } from '../../scripts/scripts.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
-import eventChannel from '../../scripts/events.js';
+import getEmitter from '../../scripts/events.js';
 
-const signupDialogEventEmitter = eventChannel.getEmitter('signupDialog');
+const signupDialogEventEmitter = getEmitter('signupDialog');
 
 // Will be refactoring this function to use a loadFragment() function from scripts.js
 const fetchPageContent = async (url, loader, block) => {

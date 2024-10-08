@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 class EventEmitter {
   constructor(initialValue = {}) {
     this.listeners = {};
@@ -36,24 +35,13 @@ class EventEmitter {
   }
 }
 
-class EventChannel {
-  eventEmitter = {};
+const eventEmitter = {};
 
-  static instance = null;
-
-  getEmitter = (emitterName) => {
-    if (!this.eventEmitter[emitterName]) {
-      this.eventEmitter[emitterName] = new EventEmitter();
-    }
-    return this.eventEmitter[emitterName];
-  };
-
-  static getInstance() {
-    if (!EventChannel.instance) {
-      EventChannel.instance = new EventChannel();
-    }
-    return EventChannel.instance;
+const getEmitter = (emitterName) => {
+  if (!eventEmitter[emitterName]) {
+    eventEmitter[emitterName] = new EventEmitter();
   }
-}
+  return eventEmitter[emitterName];
+};
 
-export default EventChannel.getInstance();
+export default getEmitter;

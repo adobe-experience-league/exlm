@@ -6,9 +6,9 @@ import { defaultProfileClient } from '../auth/profile.js';
 import SignUpFlowShimmer from './signup-flow-shimmer.js';
 import FormValidator from '../form-validator.js';
 import { sendNotice } from '../toast/toast.js';
-import eventChannel from '../events.js';
+import getEmitter from '../events.js';
 
-const signupDialogEventEmitter = eventChannel.getEmitter('signupDialog');
+const signupDialogEventEmitter = getEmitter('signupDialog');
 
 /**
  * Types of signup dialog modals.

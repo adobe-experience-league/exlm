@@ -4,14 +4,14 @@ import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../../
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { fetchArticleByID } from '../../scripts/data-service/article-data-service.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
-import eventChannel from '../../scripts/events.js';
+import getEmitter from '../../scripts/events.js';
 import { getCardData, convertToTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
 import Pagination from '../../scripts/pagination/pagination.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 
 const BOOKMARKS_BY_PG_CONFIG = {};
 const CARDS_MODEL = {};
-const bookmarksEventEmitter = eventChannel.getEmitter('bookmarks');
+const bookmarksEventEmitter = getEmitter('bookmarks');
 
 const buildCardsShimmer = new BuildPlaceholder(Pagination.getItemsCount());
 

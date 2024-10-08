@@ -1,9 +1,9 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { generateProfileDOM } from '../../scripts/profile/profile.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import eventChannel from '../../scripts/events.js';
+import getEmitter from '../../scripts/events.js';
 
-const profileEventEmitter = eventChannel.getEmitter('profile');
+const profileEventEmitter = getEmitter('profile');
 
 function loadCommunityAccountDOM(block) {
   const profileFlags = ['communityProfile'];

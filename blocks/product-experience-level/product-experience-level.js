@@ -1,9 +1,9 @@
 import buildProductCard from '../../scripts/profile/profile-interests.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import eventChannel from '../../scripts/events.js';
+import getEmitter from '../../scripts/events.js';
 
-const interestsEventEmitter = eventChannel.getEmitter('interests');
-const signupDialogEventEmitter = eventChannel.getEmitter('signupDialog');
+const interestsEventEmitter = getEmitter('interests');
+const signupDialogEventEmitter = getEmitter('signupDialog');
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();

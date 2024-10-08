@@ -5,10 +5,10 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { fetchIndustryOptions } from '../../scripts/profile/profile.js';
 import FormValidator from '../../scripts/form-validator.js';
-import eventChannel from '../../scripts/events.js';
+import getEmitter from '../../scripts/events.js';
 
-const profileEventEmitter = eventChannel.getEmitter('profile');
-const signupDialogEventEmitter = eventChannel.getEmitter('signupDialog');
+const profileEventEmitter = getEmitter('profile');
+const signupDialogEventEmitter = getEmitter('signupDialog');
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();

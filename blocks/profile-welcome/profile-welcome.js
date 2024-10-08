@@ -2,9 +2,9 @@ import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchIndustryOptions, getIndustryNameById } from '../../scripts/profile/profile.js';
-import eventChannel from '../../scripts/events.js';
+import getEmitter from '../../scripts/events.js';
 
-const profileEventEmitter = eventChannel.getEmitter('profile');
+const profileEventEmitter = getEmitter('profile');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
 let placeholders = {};

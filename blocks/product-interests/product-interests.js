@@ -1,13 +1,13 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
-import eventChannel from '../../scripts/events.js';
+import getEmitter from '../../scripts/events.js';
 import FormValidator from '../../scripts/form-validator.js';
 
 const { interestsUrl } = getConfig();
-const interestsEventEmitter = eventChannel.getEmitter('interests');
-const profileEventEmitter = eventChannel.getEmitter('profile');
-const signupDialogEventEmitter = eventChannel.getEmitter('signupDialog');
+const interestsEventEmitter = getEmitter('interests');
+const profileEventEmitter = getEmitter('profile');
+const signupDialogEventEmitter = getEmitter('signupDialog');
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
