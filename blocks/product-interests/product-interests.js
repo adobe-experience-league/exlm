@@ -1,10 +1,13 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
-import { globalEmitter, productExperienceEventEmitter } from '../../scripts/events.js';
+import getEmitter from '../../scripts/events.js';
 import FormValidator from '../../scripts/form-validator.js';
 
 const { interestsUrl } = getConfig();
+const interestsEventEmitter = getEmitter('interests');
+const profileEventEmitter = getEmitter('profile');
+const signupDialogEventEmitter = getEmitter('signupDialog');
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -72,7 +75,7 @@ function decorateInterests(block) {
   interests.data.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
   const clonedInterests = structuredClone(interests.data);
 
-  productExperienceEventEmitter.set('interests_data', clonedInterests);
+  interestsEventEmitter.set('interests_data', clonedInterests);
 
   clonedInterests.forEach((interest) => {
     const column = document.createElement('li');
@@ -110,7 +113,7 @@ function decorateInterests(block) {
       inputEl.checked = true;
       inputEl.classList.add('checked');
       interest.selected = true;
-      productExperienceEventEmitter.set(interest.id, true);
+      interestsEventEmitter.set(interest.id, true);
     } else {
       interest.selected = false;
     }
@@ -118,7 +121,7 @@ function decorateInterests(block) {
 
   block.appendChild(content);
 
-  productExperienceEventEmitter.on('dataChange', ({ key, value }) => {
+  interestsEventEmitter.on('dataChange', ({ key, value }) => {
     if (formErrorContainer) {
       formErrorContainer.classList.toggle('hidden', true);
     }
@@ -138,7 +141,7 @@ function decorateInterests(block) {
             if (JSON.stringify(profileData.interests) !== JSON.stringify(profile.interests)) {
               profileData = profile;
               sendNotice(placeholders?.profileUpdated || 'Profile updated successfully');
-              globalEmitter.emit('profileDataUpdated');
+              profileEventEmitter.emit('profileDataUpdated');
             }
           });
         })
@@ -187,7 +190,7 @@ function handleProductInterestChange(block) {
 
       if (event.target.tagName === 'INPUT') {
         const [, id] = event.target.id.split('__');
-        productExperienceEventEmitter.set(id, event.target.checked);
+        interestsEventEmitter.set(id, event.target.checked);
       }
     });
   });
@@ -198,7 +201,7 @@ export default async function decorateProfile(block) {
   decorateInterests(block);
   handleProductInterestChange(block);
 
-  globalEmitter.on('signupDialogClose', async () => {
+  signupDialogEventEmitter.on('signupDialogClose', async () => {
     block.innerHTML = blockInnerHTML;
     decorateInterests(block);
     handleProductInterestChange(block);

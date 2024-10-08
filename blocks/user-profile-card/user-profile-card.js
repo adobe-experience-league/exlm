@@ -1,7 +1,9 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { generateProfileDOM } from '../../scripts/profile/profile.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import { globalEmitter } from '../../scripts/events.js';
+import getEmitter from '../../scripts/events.js';
+
+const profileEventEmitter = getEmitter('profile');
 
 function loadCommunityAccountDOM(block) {
   const profileFlags = ['communityProfile'];
@@ -58,7 +60,7 @@ export default async function decorate(block) {
   const blockInnerHTML = block.innerHTML;
   await decorateUserProfileCard(block);
 
-  globalEmitter.on('profileDataUpdated', async () => {
+  profileEventEmitter.on('profileDataUpdated', async () => {
     block.innerHTML = blockInnerHTML;
     await decorateUserProfileCard(block);
   });
