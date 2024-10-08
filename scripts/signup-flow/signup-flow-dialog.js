@@ -97,7 +97,7 @@ export default class SignupFlowDialog {
   }
 
   /**
-   * Sets up events to handle closing the signup dialog.
+   * Sets up events to handle closing of the signup dialog.
    */
   setupCloseEvents() {
     const signupClose = this.signupDialog.querySelectorAll('.close-action');
