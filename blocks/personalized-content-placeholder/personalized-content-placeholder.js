@@ -1,6 +1,6 @@
 import { htmlToElement, moveInstrumentation, decorateExternalLinks } from '../../scripts/scripts.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
-import { loadBlocks, decorateSections, decorateBlocks} from '../../scripts/lib-franklin.js';
+import { loadBlocks, decorateSections, decorateBlocks } from '../../scripts/lib-franklin.js';
 import { globalEmitter } from '../../scripts/events.js';
 
 // Will be refactoring this function to use a loadFragment() function from scripts.js

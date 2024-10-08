@@ -223,8 +223,6 @@ async function decorateContent(block) {
 
       checkbox.addEventListener('change', handleCheckboxChange);
     });
-
-    
   }
 }
 

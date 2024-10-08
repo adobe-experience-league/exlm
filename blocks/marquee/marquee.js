@@ -107,7 +107,6 @@ export default async function decorate(block) {
         iframeContainer.innerHTML = `<iframe src=${videoLink} frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe>`;
         modal.append(iframeContainer);
       }
-      
     });
 
     modal.addEventListener('click', () => {

@@ -45,15 +45,14 @@
     height: 40px;
     width: 40px;
 }
-.signup-dialog-close-btn .icon-close {
-    fill: var(--spectrum-gray-50);
+.signup-dialog-close-btn .icon-close-light {
     height: 16px;
     width: 16px;
 }
-.signup-dialog-close-btn .icon-close svg {
+.signup-dialog-close-btn .icon-close-light img {
     margin: 12px;
 }
-.signup-dialog-close-btn .icon-close .a {
+.signup-dialog-close-btn .icon-close-light .a {
     fill: var(--spectrum-gray-50);
 }
 .signup-dialog-container {
@@ -134,21 +133,18 @@
     height: 32px;
     width: 32px;
 }
-.signup-dialog-step-flow .icon-checkmark {
+.signup-dialog-step-flow .icon-checkmark-light {
     height: 17px;
     width: 17px;
 }
-.signup-dialog-step-flow .icon-checkmark svg {
+.signup-dialog-step-flow .icon-checkmark-light img {
     margin: 8px;
-}
-.signup-dialog-step-flow .icon-checkmark svg .fill{
-    fill: var(--spectrum-gray-50);
 }
 .confirm-container .signup-dialog-step-flow .check-icon-shell {
     height: 40px;
     width: 40px;
 }
-.confirm-container .signup-dialog-step-flow .icon-checkmark svg {
+.confirm-container .signup-dialog-step-flow .icon-checkmark-light img {
     margin: 11px;
 }
 .signup-dialog-step {

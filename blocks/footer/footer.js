@@ -101,7 +101,7 @@ async function decorateSocial(footer) {
   });
   social.innerHTML = '';
   social.appendChild(socialFrag);
-  decorateIcons(social)
+  decorateIcons(social);
 }
 
 function decorateBreadcrumb(footer) {
@@ -117,7 +117,7 @@ function decorateBreadcrumb(footer) {
   if (firstBreadcrumbAnchor) {
     firstBreadcrumbAnchor.innerHTML = `<span class="icon icon-home"></span>`;
   }
-  decorateIcons(breadCrumb)
+  decorateIcons(breadCrumb);
 }
 
 function decorateCopyrightsMenu(footer) {

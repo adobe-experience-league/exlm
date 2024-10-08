@@ -199,10 +199,9 @@ async function decorateProfileWelcomeBlock(block) {
                 </div>    
               </div>
         `);
-      block.append(profileUserCard);
-    }
-    decorateIcons(block);
-  
+    block.append(profileUserCard);
+  }
+  decorateIcons(block);
 }
 
 export default async function decorate(block) {

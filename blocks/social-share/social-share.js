@@ -64,5 +64,4 @@ export default function decorate(block) {
   `);
   block.append(headerDiv);
   decorateIcons(block);
-  
 }

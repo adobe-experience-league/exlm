@@ -142,7 +142,7 @@ export default class SignupFlowDialog {
           <a class="signup-dialog-close-btn close-action">
               <span class="close-text">${this.placeholders?.closeBtnLabel || 'Close'}</span>
               <div class="close-icon-holder">
-                  <span class="icon icon-close"></span>
+                  <span class="icon icon-close-light"></span>
               </div>
           </a>
         </div>
@@ -230,7 +230,7 @@ export default class SignupFlowDialog {
                     if (!step.nofollow) {
                       let result;
                       if (pageIndex > index) {
-                        result = `<div class="check-icon-shell"><span class="icon icon-checkmark"></span></div>`;
+                        result = `<div class="check-icon-shell"><span class="icon icon-checkmark-light"></span></div>`;
                       } else if (pageIndex === index) {
                         result = `<div class="signup-dialog-step current-step">${index + 1}</div>`;
                       } else {

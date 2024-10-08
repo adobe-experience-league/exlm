@@ -49,7 +49,7 @@ export default async function decorate(block) {
       ${decorateButtons(firstCta, secondCta)}
     </div>
     </div>
-    <span class="icon icon-close"></span>
+    <span class="icon icon-close-black"></span>
   `);
 
   block.textContent = '';
@@ -58,7 +58,7 @@ export default async function decorate(block) {
   await decorateIcons(block);
 
   // Add close button functionality
-  const closeIcon = block.querySelector('.icon-close');
+  const closeIcon = block.querySelector('.icon-close-black');
   if (closeIcon && !window.location.href.includes('.html')) {
     closeIcon.addEventListener('click', () => hideRibbon(block));
   }
