@@ -62,7 +62,7 @@ export default function decorate(block) {
       </div>
     </div>
   `);
-
+  decorateIcons(headerDiv);
   block.append(headerDiv);
-  decorateIcons(block);
+  
 }
