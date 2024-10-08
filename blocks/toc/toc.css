@@ -1,5 +1,6 @@
 @import './toc-solutions.css';
 @import '../switch/switch.css';
+@import './toc-filter.css';
 
 .toc {
     position: relative;
@@ -80,7 +81,7 @@
 }
 
 .toc-header > .toc-header-actions {
-    margin-top: var(--spectrum-spacing-300);
+    margin-top: var(--spectrum-spacing-100);
 }
 
 
