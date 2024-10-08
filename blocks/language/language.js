@@ -1,4 +1,4 @@
-import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
+import { loadCSS } from '../../scripts/lib-franklin.js';
 import { htmlToElement, getPathDetails } from '../../scripts/scripts.js';
 import { getCell } from '../header/header-utils.js';
 
@@ -113,7 +113,6 @@ export default class LanguageBlock extends HTMLElement {
     loadStyles();
     await this.decorateButton();
     await this.buildLanguageBlock();
-    decorateIcons(this);
   }
 }
 
