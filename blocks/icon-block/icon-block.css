@@ -63,16 +63,12 @@
 .icon-block .icon-link.external::after {
   content: "";
 }
-.icon-block .icon-new-tab {
+.icon-block .icon-new-tab-blue {
   position: relative;
   top: 1px;
   width: 17px;
   height: 17px;
 }
-.icon-block .icon-new-tab svg {
-  fill: var(--non-spectrum-navy-blue);
-}
-
 @media (min-width: 600px) {
   .icon-block {
     grid-template-columns: repeat(auto-fit, minmax(286px, 1fr));
