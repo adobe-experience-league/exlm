@@ -66,10 +66,7 @@ export default async function ProfileRail(block) {
     }
     const link = navLink.querySelector('a');
     const icon = navLink.querySelector('span.icon');
-    if (link && icon) {
-      link.prepend(icon);
-      decorateIcons(link);
-    };
+    if (link && icon) link.prepend(icon);
     if (link && link.href === `${window.location.origin}${window.location.pathname}`) {
       link.href = '#';
       link.classList.add('active');
@@ -98,5 +95,5 @@ export default async function ProfileRail(block) {
     }
   });
 
-  
+  decorateIcons(block);
 }

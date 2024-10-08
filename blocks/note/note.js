@@ -19,9 +19,9 @@ export default async function decorate(block) {
     const iconSpan = document.createElement('span');
     iconSpan.className = `icon icon-${svgName}`;
     noteTypeElement.prepend(iconSpan);
-    decorateIcons(noteTypeElement);
 
     block.classList.add('note', noteType);
+    decorateIcons(block);
     
   }
 }
