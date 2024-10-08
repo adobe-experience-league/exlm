@@ -9,8 +9,8 @@ function loadCommunityAccountDOM(block) {
     const communityAccountElement = block.querySelector('.profile-row.community-account');
     if (communityAccountElement) {
       const communityProfileFragment = document.createRange().createContextualFragment(communityAccountDOM);
+      decorateIcons(communityProfileFragment);
       communityAccountElement.replaceWith(communityProfileFragment);
-      await decorateIcons(block);
     }
   });
 }
@@ -43,14 +43,15 @@ async function decorateUserProfileCard(block) {
     const additionalProfileElement = block.querySelector('.profile-row.additional-data');
     if (adobeAccountDOM && adobeAccountElement) {
       const profileFragment = document.createRange().createContextualFragment(adobeAccountDOM);
+      decorateIcons(profileFragment);
       adobeAccountElement.replaceWith(profileFragment);
     }
 
     if (additionalProfileInfoDOM && additionalProfileElement) {
       const profileFragment = document.createRange().createContextualFragment(additionalProfileInfoDOM);
+      decorateIcons(profileFragment);
       additionalProfileElement.replaceWith(profileFragment);
     }
-    await decorateIcons(block);
   });
 }
 
