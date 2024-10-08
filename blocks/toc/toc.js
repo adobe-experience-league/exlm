@@ -35,23 +35,48 @@ function getProductName() {
   return productNames.includes(',') ? productNames.split(',')[0].trim() : productNames;
 }
 
+// The TOC additional UI elements
+// TODO: Localizable strings, move to a separate file if needed
+const tocActions = () => `
+  <div class="toc-header-actions">
+    <!-- TOC Filter Bar -->
+    <div class="toc-filter-wrapper">
+      <div class="toc-filter-container">
+        <span title="Filter" class="icon icon-filter">
+          <svg width="18" height="18">
+            <object type="image/svg+xml" data="/icons/icon-filter.svg"></object>
+          </svg>
+        </span>
+        <input autocomplete="off" class="toc-filter-input" type="text" 
+          aria-label="Filter by keyword" aria-expanded="false" 
+          title="Type to filter" role="textbox" placeholder="Filter by keyword">
+        <span title="Clear" class="icon icon-clear toc-filter-clear-icon">
+          <svg width="18" height="18">
+            <object type="image/svg+xml" data="/icons/icon-close.svg"></object>
+          </svg>
+        </span>
+      </div>
+    </div>
+
+    <!-- TOC Expand All Switch -->
+    <div class="spectrum-switch">
+      <input type="checkbox" class="spectrum-switch-input" id="custom-switch" />
+      <span class="spectrum-switch-switch"></span>
+      <label class="spectrum-switch-label" for="custom-switch">Expand all sections</label>
+    </div>
+  </div>
+`;
+
 function buildProductHeader() {
   const productName = getProductName();
   const solutionInfo = getSolutionByName(productName);
-  // TODO: localize the switch label
   return htmlToElement(`
     <div class="toc-header is-sticky">
       <div class="toc-header-content">
         <span class="icon icon-${solutionInfo.class}"></span>
         <h3>${solutionInfo.name}</h3>
       </div>
-      <div class="toc-header-actions">
-        <div class="spectrum-switch">
-          <input type="checkbox" class="spectrum-switch-input" id="custom-switch" />
-          <span class="spectrum-switch-switch"></span>
-          <label class="spectrum-switch-label" for="custom-switch">Expand all sections</label>
-        </div>
-      </div>
+      ${tocActions()}
     </div>
   `);
 }
@@ -200,6 +225,122 @@ function activateCurrentPage(tocContent) {
 }
 
 /**
+ * Filters TOC items based on the input query without altering the original structure.
+ * @param {string} query - The search input value
+ */
+function tocFilter(query) {
+  const tocItems = document.querySelectorAll('.toc-tree li');
+  const filterQuery = query.toLowerCase();
+
+  tocItems.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    let hasMatchingDescendants = false;
+
+    // Recursively check for matches in descendants
+    function checkForMatches(element) {
+      const childItems = Array.from(element.querySelectorAll('li'));
+      childItems.forEach(child => {
+        const childText = child.textContent.toLowerCase();
+        if (childText.includes(filterQuery)) {
+          hasMatchingDescendants = true;
+          child.style.display = '';
+        } else {
+          child.style.display = 'none';
+        }
+        // Recursive call for deeper nesting
+        checkForMatches(child);
+      });
+    }
+
+    checkForMatches(item); // Start from the current item
+
+    if (text.includes(filterQuery) || hasMatchingDescendants) {
+      item.style.display = '';
+    } else {
+      item.style.display = 'none';
+    }
+
+    // Expand/collapse toggles based on parent/child visibility
+    const toggle = item.querySelector('a'); 
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', hasMatchingDescendants ? 'true' : 'false');
+    }
+  });
+}
+
+/**
+ * tocFilterDebounce: Debounce function to prevent multiple filter calls in quick succession
+ * @param {Function} func - The filter function
+ * @param {number} delay - The debounce delay in milliseconds
+ * @returns {Function} - The debounced filter function
+ */
+function tocFilterDebounce(func, delay) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
+}
+
+/**
+ * resetTocToInitialState: Reset the TOC to its initial state after filtering
+ * Restores the original structure and collapses all toggles
+ * @returns {void}
+ */
+function resetTocToInitialState() {
+  const tocItems = document.querySelectorAll('.toc-tree li');
+  const toggles = document.querySelectorAll('.toc-tree a'); 
+
+  tocItems.forEach(item => {
+    item.style.display = ''; // Show all items
+  });
+
+  toggles.forEach(toggle => {
+    toggle.setAttribute('aria-expanded', 'false'); // Collapse all toggles
+  });
+
+  // Re-activate the current page in the TOC TODO: replace with a state management?
+  activateCurrentPage(document.querySelector('.toc-content')); 
+}
+
+/**
+ * clearFilter: Clear the filter input and restore the original TOC structure
+ * TODO: Refactor to avoid duplication with resetTocToInitialState
+ * needed if we use the TOC State Management
+ * @returns {void}
+ */
+function clearFilter() {
+  resetTocToInitialState();
+}
+
+/**
+ * initializeTocFilter: Initialize the TOC filter functionality
+ * Adds event listeners for filtering and clearing the filter
+ * @returns {void}
+ */
+function initializeTocFilter() {
+  const tocFilterInput = document.querySelector('.toc-filter-input');
+  const tocFilterClearIcon = document.querySelector('.toc-filter-clear-icon');
+
+  // Apply the debounced filter function
+  const debouncedFilter = tocFilterDebounce((event) => {
+    const query = event.target.value;
+    tocFilter(query);
+  }, 300); // 300ms debounce delay
+
+  // Add input event listener for filtering
+  tocFilterInput.addEventListener('input', debouncedFilter);
+
+  // Clear filter on clear icon click
+  tocFilterClearIcon.addEventListener('click', () => {
+    tocFilterInput.value = '';
+    clearFilter(); // Restore the original or user structure
+  });
+}
+
+/**
  * loads and decorates the toc
  * @param {Element} block The toc block element
  */
@@ -228,6 +369,8 @@ export default async function decorate(block) {
   tocReady.then(({ HTML }) => {
     updateTocContent(HTML, tocContent);
     activateCurrentPage(tocContent);
+    initializeTocFilter();
+
     // click event for TOC dropdown to open solutions
     tocMobileDropdown.addEventListener('click', () => {
       const isExpanded = tocMobileDropdown.getAttribute('aria-expanded') === 'true';
