@@ -25,6 +25,18 @@ const SIGNUP_DIALOG_TYPE = {
  */
 const SIGNUP_INTERACTION_NAME = 'modalSeen';
 
+  /**
+   * Decorates the signup dialog content with sections, blocks, and icons.
+   * @param {Element} signupContent - The container element for the signup content.
+   * @returns {Promise<void>}
+   */
+  async function decorateDialog(signupContent) {
+    decorateSections(signupContent);
+    decorateIcons(signupContent);
+    decorateBlocks(signupContent);
+    await loadBlocks(signupContent);
+  }
+
 /**
  * Class representing the Signup Flow Dialog.
  */
@@ -298,18 +310,6 @@ export default class SignupFlowDialog {
   }
 
   /**
-   * Decorates the signup dialog content with sections, blocks, and icons.
-   * @param {Element} signupContent - The container element for the signup content.
-   * @returns {Promise<void>}
-   */
-  async decorateDialog(signupContent) {
-    decorateSections(signupContent);
-    decorateIcons(this.signupDialog);
-    decorateBlocks(signupContent);
-    await loadBlocks(signupContent);
-  }
-
-  /**
    * Loads the content of the signup dialog for a specific page.
    * @param {number} index - The index of the page to load.
    * @returns {Promise<boolean>} - Returns true if the content was successfully loaded, false otherwise.
@@ -327,7 +327,7 @@ export default class SignupFlowDialog {
         signupContent.setAttribute('data-current-page-index', index);
         signupContainer.className = `signup-dialog-container ${this.pages[index].name}-container`;
         signupContent.innerHTML = pageContent;
-        await this.decorateDialog(signupContent);
+        await decorateDialog(signupContent);
         return true;
       }
       return false;
