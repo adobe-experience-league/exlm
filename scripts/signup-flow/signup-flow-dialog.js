@@ -7,7 +7,7 @@ import SignUpFlowShimmer from './signup-flow-shimmer.js';
 import FormValidator from '../form-validator.js';
 import { sendNotice } from '../toast/toast.js';
 import getEmitter from '../events.js';
-import { pushSignupEvent } from '../../scripts/analytics/lib-analytics.js';
+import { pushSignupEvent } from '../analytics/lib-analytics.js';
 
 const signupDialogEventEmitter = getEmitter('signupDialog');
 
