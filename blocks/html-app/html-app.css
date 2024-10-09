@@ -2,10 +2,12 @@
     /* override default section spacing */
     padding: 0 !important;
     margin: 0 !important;
+    max-width: initial !important;
 }
 
 .html-app-wrapper {
     /* override default block spacing */
     padding: 0 !important;
     margin: 0 !important;
+    max-width: initial !important;
 }
