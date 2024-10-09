@@ -2,7 +2,9 @@ import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { getPathDetails, htmlToElement } from '../scripts.js';
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
-import { bookmarksEventEmitter } from '../events.js';
+import getEmitter from '../events.js';
+
+const bookmarksEventEmitter = getEmitter('bookmarks');
 
 function isBookmarkSelected(bookmarkIdInfo, bookmarkId) {
   const { lang: languageCode } = getPathDetails();

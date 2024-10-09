@@ -55,7 +55,7 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(ribbonDom);
 
-  await decorateIcons(block);
+  decorateIcons(block);
 
   // Add close button functionality
   const closeIcon = block.querySelector('.icon-close-black');

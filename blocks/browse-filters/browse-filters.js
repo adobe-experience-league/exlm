@@ -306,7 +306,7 @@ async function appendTag(block, tag, source = 'checkboxChange') {
     value: tag.value,
   });
   if (source === 'checkboxChange') {
-    await decorateIcons(tagsContainer);
+    decorateIcons(tagsContainer);
   }
 }
 
