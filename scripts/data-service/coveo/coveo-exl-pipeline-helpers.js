@@ -165,6 +165,7 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
       ...(param.dateCriteria && !param.feature ? { aq: contructDateAdvancedQuery(param.dateCriteria) } : ''),
       ...(!param.feature ? { facets: getFacets(param) } : ''),
       ...(param.feature ? { aq: constructCoveoAdvancedQuery(param) } : ''),
+      ...(param.aq ? { aq: param.aq } : ''),
       fieldsToInclude: fields,
     },
   };
