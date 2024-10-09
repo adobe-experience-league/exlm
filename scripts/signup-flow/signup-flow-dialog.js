@@ -304,9 +304,9 @@ export default class SignupFlowDialog {
    */
   async decorateDialog(signupContent) {
     decorateSections(signupContent);
+    decorateIcons(this.signupDialog);
     decorateBlocks(signupContent);
     await loadBlocks(signupContent);
-    decorateIcons(this.signupDialog);
   }
 
   /**
