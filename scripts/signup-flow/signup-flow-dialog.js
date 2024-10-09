@@ -253,7 +253,7 @@ export default class SignupFlowDialog {
 
     // Set the inner HTML of the step container to the generated flow
     stepsContainer.innerHTML = flow;
-    await decorateIcons(stepsContainer);
+    decorateIcons(stepsContainer);
   }
 
   /**
@@ -306,7 +306,7 @@ export default class SignupFlowDialog {
     decorateSections(signupContent);
     decorateBlocks(signupContent);
     await loadBlocks(signupContent);
-    await decorateIcons(this.signupDialog);
+    decorateIcons(this.signupDialog);
   }
 
   /**

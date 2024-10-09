@@ -53,6 +53,11 @@
     margin-right: 2px;
 }
 
+.manage-adobe-account .icon-new-tab img {
+    width: 24px;
+    height: 24px;
+}
+
 .profile-card-body {
     display: flex;
     align-items: center;

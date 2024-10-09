@@ -184,5 +184,5 @@ export default async function buildProductCard(element, model) {
     .catch(() => {
       cardDropdown.updateDropdownValue('Beginner');
     });
-  await decorateIcons(header, 'solutions/');
+  decorateIcons(header, 'solutions/');
 }
