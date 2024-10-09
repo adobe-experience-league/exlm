@@ -187,6 +187,7 @@
 }
 
 .profile-welcome .profile-user-card-incomplete .icon {
+    flex-shrink: 0;
     width: 18px;
 }
 
