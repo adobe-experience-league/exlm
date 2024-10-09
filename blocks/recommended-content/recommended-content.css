@@ -97,6 +97,12 @@
     gap: 24px;
 }
 
+.recommended-content.block .browse-cards-block-content .card-wrapper {
+    flex: 1;
+    min-width: 264px;
+    max-width: 552px;
+}
+
 .recommended-content.block .browse-card-no-results {
     margin-top: 0;
 }
@@ -191,6 +197,10 @@
         display: flex;
     }
 
+    .recommended-content.block .browse-cards-block-content .card-wrapper {
+        min-width: 286px;
+    }
+
     .recommended-content-result-text {
         display: flex;
         align-items: flex-start;
@@ -207,6 +217,9 @@
 }
 
 @media (min-width: 900px) {
+    .recommended-content.block .browse-cards-block-content .card-wrapper {
+        min-width: 256px;
+    }
     .recommended-content-result-text {
         gap: 148px;
     }
