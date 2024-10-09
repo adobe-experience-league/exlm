@@ -1,0 +1,5 @@
+.html-app-container {
+    /* override default section spacing */
+    padding: 0 !important;
+    margin: 0 !important;
+}
