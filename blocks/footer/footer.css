@@ -338,7 +338,7 @@
   .footer-breadcrumb p:last-child a::after {
     display: none;
   }
-  .footer-breadcrumb .icon svg {
+  .footer-breadcrumb .icon img {
     cursor: pointer;
   }
 }
@@ -391,9 +391,7 @@
   height: 20px;
   width: 20px;
 }
-.footer-last-row .footer-social-icon-item-wrapper .icon svg {
-  color: var(--non-spectrum-trolley-gray);
-}
+
 .footer-last-row .footer-copyrights-element a:hover {
   color: var(--non-spectrum-navy-blue);
 }

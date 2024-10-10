@@ -101,6 +101,7 @@ async function decorateSocial(footer) {
   });
   social.innerHTML = '';
   social.appendChild(socialFrag);
+  decorateIcons(social);
 }
 
 function decorateBreadcrumb(footer) {
@@ -116,6 +117,7 @@ function decorateBreadcrumb(footer) {
   if (firstBreadcrumbAnchor) {
     firstBreadcrumbAnchor.innerHTML = `<span class="icon icon-home"></span>`;
   }
+  decorateIcons(breadCrumb);
 }
 
 function decorateCopyrightsMenu(footer) {
@@ -156,6 +158,7 @@ function decorateCopyrightsMenu(footer) {
   const languageSelectorDiv = languageSelector.querySelector('div');
   const languageBlockButton = languageBlock.querySelector('.language-selector-button');
   languageBlockButton.appendChild(languageSelectorDiv);
+  decorateIcons(footerRights);
 }
 
 function handleSocialIconStyles(footer) {
@@ -208,6 +211,5 @@ export default async function decorate(block) {
     handleSocialIconStyles(footer);
     handleLoginFunctionality(footer);
     decorateCopyrightsMenu(footer);
-    await decorateIcons(footer);
   }
 }

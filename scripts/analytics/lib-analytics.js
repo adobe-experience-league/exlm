@@ -267,3 +267,35 @@ export function assetInteractionModel(id, assetInteractionType, filters) {
     },
   });
 }
+
+/**
+ * Used to push a signup modal event to the data layer
+ * @param {HTMLButtonElement} target
+ * @param {String} action
+ */
+export function pushSignupEvent(target, action) {
+  const signupStep = target.closest('.signup-dialog-container')?.classList[1] || '';
+  const stepDLValue = signupStep?.split('-')[0].replace('step', 'step ');
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'signup-dialog',
+    eventType: 'web.webinteraction.assetInteraction',
+    signupDialog: {
+      action: `sign up dialog ${action}`,
+      step: stepDLValue,
+      buttontext: action,
+    },
+    web: {
+      webInteraction: {
+        URL: '',
+        linkClicks: { value: 1 },
+        name: `sign up dialog ${stepDLValue}`,
+        type: 'other',
+      },
+      webPageDetails: {
+        pageViews: { value: 0 },
+      },
+    },
+  });
+}

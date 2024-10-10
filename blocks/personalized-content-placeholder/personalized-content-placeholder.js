@@ -1,6 +1,6 @@
 import { htmlToElement, moveInstrumentation, decorateExternalLinks } from '../../scripts/scripts.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
-import { loadBlocks, decorateSections, decorateBlocks, decorateIcons } from '../../scripts/lib-franklin.js';
+import { loadBlocks, decorateSections, decorateBlocks } from '../../scripts/lib-franklin.js';
 import getEmitter from '../../scripts/events.js';
 
 const signupDialogEventEmitter = getEmitter('signupDialog');
@@ -17,7 +17,6 @@ const fetchPageContent = async (url, loader, block) => {
       decorateBlocks(container);
       decorateExternalLinks(container);
       await loadBlocks(container);
-      await decorateIcons(container);
       if (window.hlx.aemRoot) {
         loader.insertAdjacentElement('beforebegin', container);
         moveInstrumentation(block, container);
