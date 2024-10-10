@@ -187,7 +187,7 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
   cardContent.appendChild(titleElement);
 };
 
-const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText }) => {
+const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }) => {
   if (viewLinkText) {
     let icon = null;
     let isLeftPlacement = false;
@@ -203,7 +203,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText }) => {
     }
     const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
     const linkText = htmlToElement(`
-          <div class="browse-card-cta-element">
+          <div class="browse-card-cta-element" data-analytics-id="${viewLink}">
               ${isLeftPlacement ? `${iconMarkup} ${viewLinkText}` : `${viewLinkText} ${iconMarkup}`}
           </div>
       `);
@@ -315,7 +315,7 @@ const buildCardContent = async (card, model) => {
   cardAction.decorate();
 
   cardFooter.appendChild(cardOptions);
-  buildCardCtaContent({ cardFooter, contentType, viewLinkText });
+  buildCardCtaContent({ cardFooter, contentType, viewLinkText, viewLink });
 };
 
 /**
@@ -336,6 +336,8 @@ const buildCardContent = async (card, model) => {
  */
 export async function buildCard(container, element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
+
+  element.setAttribute('data-analytics-content-type', contentType);
   // lowercase all urls - because all of our urls are lower-case
   model.viewLink = model.viewLink?.toLowerCase();
   model.copyLink = model.copyLink?.toLowerCase();
