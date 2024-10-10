@@ -107,10 +107,12 @@ body.profile-home-page .section.profile-rail-section:not(.sign-up-flow-section) 
   padding: 24px 0;
 }
 
+body.profile .section:not(.sign-up-flow-section):first-child {
+  margin-top: 80px;
+}
+
 body.profile-home-page .section:not(.sign-up-flow-section):first-child {
   padding-top: 0;
-  margin-top: 80px;
-  max-width: calc(100% - 145px);
 }
 
 body.profile
@@ -152,7 +154,7 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div:no
   padding-bottom: 0;
 }
 
-body.profile .section:not(.profile-rail-section, .sign-up-flow-section):last-child {
+body.profile:not(.profile-home-page) .section:not(.profile-rail-section, .sign-up-flow-section):nth-last-of-type(2) {
   margin-bottom: 60px;
 }
 
@@ -263,11 +265,11 @@ body.profile
     margin-top: 28px;
   }
 
-  body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(2) {
+  body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):first-child {
     max-width: calc(100% - 145px);
   }
 
-  body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(3) {
+  body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(2) {
     max-width: calc(100% - 145px);
   }
 
@@ -288,8 +290,8 @@ body.profile
     grid-template-columns: 264px minmax(50vw, calc(100vw - 264px));
   }
 
-  body.profile:not(.profile-home-page) .section:nth-child(2):not(.sign-up-flow-section) {
-    background-image: url('/icons/solutions/profileDecoration.svg');
+  body.profile:not(.profile-home-page) .section:first-child:not(.sign-up-flow-section) {
+    background-image: url('/solutions/icons/profileDecoration.svg');
     background-repeat: no-repeat;
     padding-top: 60px;
   }
@@ -319,13 +321,16 @@ body.profile
     order: -1;
   }
 
-  body.profile-home-page .section:nth-last-of-type(2),
-  body.profile-home-page .section:not(.sign-up-flow-section):last-child {
-    margin-bottom: 60px;
+  body.profile .section:not(.sign-up-flow-section):first-child {
+    margin-top: 0;
+    max-width: 100%;
   }
 
   body.profile-home-page .section:not(.sign-up-flow-section):first-child {
-    margin-top: 0;
-    max-width: 100%;
+    margin-top: 80px;
+  }
+
+  body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section):nth-last-of-type(2) {
+    margin-bottom: 60px;
   }
 }
