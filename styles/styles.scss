@@ -785,18 +785,7 @@ picture {
 .section {
   padding: 30px 16px;
 
-  &.browse-filters-container[data-section-status='loading'],
-  &.browse-filters-container[data-section-status='initialized'],
-  &.curated-cards-container[data-section-status='loading'],
-  &.curated-cards-container[data-section-status='initialized'],
-  &.events-cards-container[data-section-status='loading'],
-  &.events-cards-container[data-section-status='initialized'],
-  &.adls-cards-container[data-section-status='loading'],
-  &.adls-cards-container[data-section-status='initialized'],
-  &.authorable-card-container[data-section-status='loading'],
-  &.authorable-card-container[data-section-status='initialized'],
-  &.featured-cards-container[data-section-status='loading'],
-  &.featured-cards-container[data-section-status='initialized'] {
+  &:not([data-section-status='loaded']) {
     visibility: hidden;
   }
 
