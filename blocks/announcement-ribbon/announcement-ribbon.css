@@ -41,7 +41,7 @@
   max-width: none;
 }
 
-.announcement-ribbon .icon-close {
+.announcement-ribbon .icon-close-black {
   cursor: pointer;
 }
 
@@ -71,10 +71,6 @@
   .announcement-ribbon .ribbon-description {
     margin-bottom: 0;
   }
-
-  .announcement-ribbon .icon-close {
-    margin-top: 30px;
-  }
 }
 
 /* Desktop (>900px) */
@@ -99,7 +95,7 @@
     width: auto;
   }
 
-  .announcement-ribbon .icon-close {
+  .announcement-ribbon .icon-close-black {
     margin: 0 12px 0 16px;
   }
 }
