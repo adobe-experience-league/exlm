@@ -319,6 +319,7 @@ export default async function decorate(block) {
       const saveCardResponse =
         [ALL_MY_OPTIONS_KEY.toLowerCase()].includes(lowercaseOptionType) && cardIdsToExclude.length === 0;
       contentDiv.dataset.selected = lowercaseOptionType;
+      contentDiv.setAttribute('data-analytics-filter-id', lowercaseOptionType);
       const showProfileOptions = defaultOptionsKey.some((key) => lowercaseOptionType === key.toLowerCase());
       const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
       const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
@@ -382,6 +383,9 @@ export default async function decorate(block) {
                 if (resp.data) {
                   updateCopyFromTarget(resp, headingElement, descriptionElement, firstEl, secondEl);
                   block.style.display = 'block';
+                  block
+                    .querySelector('.recommended-content-block-section')
+                    ?.setAttribute('data-analytics-rec-source', 'target');
                 }
                 const cardModels = parseCardResponseData(resp, payloadConfig);
                 let renderedCardModels = [];
@@ -401,6 +405,7 @@ export default async function decorate(block) {
           }),
         );
       } else {
+        block.querySelector('.recommended-content-block-section')?.setAttribute('data-analytics-rec-source', 'coveo');
         cardPromises = Object.keys(contentTypesFetchMap).map((contentType) => {
           const payload = {
             ...params,
