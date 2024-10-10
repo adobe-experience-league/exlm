@@ -10,9 +10,19 @@ const { cookieConsentName } = getConfig();
  * @param {HTMLElement} subheading
  * @returns {void}
  */
-export function updateCopyFromTarget(data, heading, subheading) {
+export function updateCopyFromTarget(data, heading, subheading, firstEl, secondEl) {
   if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
   if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
+  if (data?.meta['tagline-cta-text'] && data?.meta['tagline-cta-url'] && firstEl) {
+    firstEl.innerHTML = `
+      <a href="${data.meta['tagline-cta-url']}" title="${data.meta['tagline-cta-text']}">
+        ${data.meta['tagline-cta-text']}
+      </a>
+    `;
+  }
+  if (data?.meta['tagline-text'] && secondEl) {
+    secondEl.innerHTML = data.meta['tagline-text'];
+  }
 }
 
 /**

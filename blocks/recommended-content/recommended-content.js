@@ -350,7 +350,7 @@ export default async function decorate(block) {
             handleTargetEvent(targetCriteriaId)
               .then((resp) => {
                 if (resp.data) {
-                  updateCopyFromTarget(resp, headingElement, descriptionElement);
+                  updateCopyFromTarget(resp, headingElement, descriptionElement, firstEl, secondEl);
                   block.style.display = 'block';
                 }
                 const cardModels = parseCardResponseData(resp, payloadConfig);
@@ -448,13 +448,15 @@ export default async function decorate(block) {
       parentDiv.appendChild(contentDiv);
       secondEl.classList.add('recommended-content-discover-resource');
       firstEl.classList.add('recommended-content-result-link');
-      if (firstEl.innerHTML || secondEl.innerHTML) {
-        const seeMoreEl = htmlToElement(`<div class="recommended-content-result-text">
+      setTimeout(() => {
+        if (firstEl.innerHTML || secondEl.innerHTML) {
+          const seeMoreEl = htmlToElement(`<div class="recommended-content-result-text">
         ${secondEl.outerHTML}
         ${firstEl.outerHTML}
         </div>`);
-        parentDiv.appendChild(seeMoreEl);
-      }
+          parentDiv.appendChild(seeMoreEl);
+        }
+      }, 0);
     };
 
     /* TODO: Commenting it for further references, will up updating for the below code for navigation arrow changes */
