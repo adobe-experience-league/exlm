@@ -8,5 +8,5 @@ export default async function decorate(block) {
   const accountCardDOM = document.createRange().createContextualFragment(adobeAccountDOM);
   block.textContent = '';
   block.append(accountCardDOM);
-  await decorateIcons(block);
+  decorateIcons(block);
 }
