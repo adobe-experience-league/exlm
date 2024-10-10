@@ -1,4 +1,4 @@
-import { createTag, fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
@@ -448,15 +448,13 @@ export default async function decorate(block) {
       parentDiv.appendChild(contentDiv);
       secondEl.classList.add('recommended-content-discover-resource');
       firstEl.classList.add('recommended-content-result-link');
-      setTimeout(() => {
-        if (firstEl.innerHTML || secondEl.innerHTML) {
-          const seeMoreEl = htmlToElement(`<div class="recommended-content-result-text">
-        ${secondEl.outerHTML}
-        ${firstEl.outerHTML}
-        </div>`);
-          parentDiv.appendChild(seeMoreEl);
-        }
-      }, 0);
+      if (firstEl.innerHTML || secondEl.innerHTML) {
+        const seeMoreEl = document.createElement('div');
+        seeMoreEl.classList.add('recommended-content-result-text');
+        seeMoreEl.appendChild(secondEl);
+        seeMoreEl.appendChild(firstEl);
+        parentDiv.appendChild(seeMoreEl);
+      }
     };
 
     /* TODO: Commenting it for further references, will up updating for the below code for navigation arrow changes */
