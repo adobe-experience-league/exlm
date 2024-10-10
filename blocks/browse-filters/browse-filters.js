@@ -308,7 +308,6 @@ async function appendTag(block, tag, source = 'checkboxChange') {
     name: tag.name,
     value: tag.value,
   });
-  
 }
 
 function removeFromTags(block, value) {
