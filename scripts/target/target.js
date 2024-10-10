@@ -10,9 +10,25 @@ const { cookieConsentName } = getConfig();
  * @param {HTMLElement} subheading
  * @returns {void}
  */
-export function updateCopyFromTarget(data, heading, subheading) {
+export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
   if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
   if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
+  if (
+    taglineCta &&
+    data?.meta['tagline-cta-text'] &&
+    data?.meta['tagline-cta-url'] &&
+    data.meta['tagline-cta-text'].trim() !== '' &&
+    data.meta['tagline-cta-url'].trim() !== ''
+  ) {
+    taglineCta.innerHTML = `
+      <a href="${data.meta['tagline-cta-url']}" title="${data.meta['tagline-cta-text']}">
+        ${data.meta['tagline-cta-text']}
+      </a>
+    `;
+  }
+  if (taglineText && data?.meta['tagline-text'] && data?.meta['tagline-text'].trim() !== '') {
+    taglineText.innerHTML = data.meta['tagline-text'];
+  }
 }
 
 /**
