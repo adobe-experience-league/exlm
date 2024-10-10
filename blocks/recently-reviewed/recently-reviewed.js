@@ -4,6 +4,7 @@ import {
   checkTargetSupport,
   targetDataAdapter,
   updateCopyFromTarget,
+  setTargetDataAsBlockAttribute,
 } from '../../scripts/target/target.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
@@ -81,6 +82,7 @@ export default async function decorate(block) {
           const items = contentDiv.querySelectorAll('.browse-cards-block-content > div');
           // eslint-disable-next-line no-new
           new Swiper(contentDiv, items, true, null, prevButton, nextButton);
+          setTargetDataAsBlockAttribute(resp, block);
         } else {
           buildNoResultsContent(contentDiv, true);
         }

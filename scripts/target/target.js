@@ -32,6 +32,23 @@ export function updateCopyFromTarget(data, heading, subheading, taglineCta, tagl
 }
 
 /**
+ * Sets target data as a data attribute on the given block element.
+ *
+ * This function checks if the provided `data` object contains a `meta` property.
+ * If the `meta` property exists, it serializes the metadata as a JSON string and
+ * adds it to the specified block element as a custom data attribute `data-analytics-target-meta`.
+ *
+ * @param {Object} data - The data returned from target.
+ * @param {HTMLElement} block - The DOM element to which the meta data will be added as an attribute.
+ *
+ */
+export function setTargetDataAsBlockAttribute(data, block) {
+  if (data?.meta) {
+    block.setAttribute('data-analytics-target-meta', JSON.stringify(data?.meta));
+  }
+}
+
+/**
  * Listens for the target-recs-ready event to fetch the content as per the given criteria
  * @param {string} criteriaId - The criteria id to listen for
  * @returns {Promise}
