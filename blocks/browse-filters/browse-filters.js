@@ -5,7 +5,7 @@ import {
   debounce,
   getPathDetails,
   fetchLanguagePlaceholders,
-  isArticleLandingPage,
+  matchesAnyTheme,
 } from '../../scripts/scripts.js';
 import {
   roleOptions,
@@ -52,6 +52,10 @@ try {
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
+}
+
+function isArticleLandingPage() {
+  return matchesAnyTheme(/^article-.*/);
 }
 
 // Helper function thats returns a list of all Featured Card Products //

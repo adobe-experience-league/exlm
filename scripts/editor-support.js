@@ -9,7 +9,7 @@ import {
   getMetadata,
 } from './lib-franklin.js';
 import { decorateRichtext } from './editor-support-rte.js';
-import { decorateMain, isArticlePage, loadArticles, loadIms } from './scripts.js';
+import { decorateMain, isPerspectivePage, loadArticles, loadIms } from './scripts.js';
 
 // set aem content root
 window.hlx.aemRoot = '/content/exlm/global';
@@ -178,7 +178,7 @@ async function applyChanges(event) {
     if (element.matches('main')) {
       const newMain = parsedUpdate.querySelector(`[data-aue-resource="${resource}"]`);
       newMain.style.display = 'none';
-      if (isArticlePage()) {
+      if (isPerspectivePage) {
         element.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
           heading.classList.add('no-mtoc');
         });
