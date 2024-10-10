@@ -186,6 +186,10 @@
     display: none;
 }
 
+.recommended-content.block .browse-cards-block-content .card-wrapper:not(:has(.browse-card)) {
+    display: none;
+}
+
 @media (min-width: 420px) {
     .recommended-content.block .custom-filter-dropdown {
         min-width: 360px;
