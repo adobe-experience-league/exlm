@@ -69,7 +69,7 @@
   }
 }
 
-.icon svg {
+.icon img {
   height: 18px;
   width: 18px;
 }
@@ -175,10 +175,12 @@
 
 .icon-search {
   position: absolute;
-  background: url("../../icons/search.svg") no-repeat center center;
-  background-size: 1em 1em;
-  left: 4px;
+  left: 7px;
+  top: 7px;
   cursor: pointer;
+}
+.icon-search img {
+  width: 14px;
 }
 
 .search-container {
@@ -324,20 +326,17 @@
   transform: rotateZ(225deg);
 }
 
-.icon-clear svg {
+.icon-clear img {
   vertical-align: 10px;
   width: 14px;
   height: 6px;
-}
-.icon-clear svg path {
-  fill: white;
 }
 
 .search-picker-label {
   min-width: max-content;
   display: block;
 }
-.search-picker-label span.icon svg {
+.search-picker-label span.icon img {
   width: 14px;
   height: 14px;
 }
@@ -574,7 +573,7 @@ button:focus {
   height: 24px;
   width: 24px;
 }
-.header .adobe-logo .icon svg {
+.header .adobe-logo .icon img {
   height: 24px;
   width: 24px;
 }
@@ -902,7 +901,7 @@ button:focus {
   padding: 0 24px;
   line-height: 1.5;
 }
-.header .nav-item .nav-item .icon svg {
+.header .nav-item .nav-item .icon img {
   vertical-align: middle;
   padding-left: 5px;
 }

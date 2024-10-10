@@ -110,7 +110,7 @@
   transform: rotateZ(-45deg);
 }
 
-.icon svg {
+.icon img {
   height: 18px;
   width: 18px;
 }
@@ -218,10 +218,13 @@
 
 .icon-search {
   position: absolute;
-  background: url('../../icons/search.svg') no-repeat center center;
-  background-size: 1em 1em;
-  left: 4px;
+  left: 7px;
+  top: 7px;
   cursor: pointer;
+
+  img {
+    width: 14px;
+  }
 }
 
 .search-container {
@@ -371,14 +374,10 @@
 }
 
 .icon-clear {
-  svg {
+  img {
     vertical-align: 10px;
     width: 14px;
     height: 6px;
-
-    path {
-      fill: white;
-    }
   }
 }
 
@@ -386,7 +385,7 @@
   min-width: max-content;
   display: block;
 
-  span.icon svg {
+  span.icon img {
     width: 14px;
     height: 14px;
   }
@@ -627,7 +626,7 @@ button:focus {
       height: 24px;
       width: 24px;
 
-      svg {
+      img {
         height: 24px;
         width: 24px;
       }
@@ -956,7 +955,7 @@ button:focus {
         line-height: 1.5;
       }
 
-      .icon svg {
+      .icon img {
         vertical-align: middle;
         padding-left: 5px;
       }

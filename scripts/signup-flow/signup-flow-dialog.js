@@ -27,6 +27,18 @@ const SIGNUP_DIALOG_TYPE = {
 const SIGNUP_INTERACTION_NAME = 'modalSeen';
 
 /**
+ * Decorates the signup dialog content with sections, blocks, and icons.
+ * @param {Element} signupContent - The container element for the signup content.
+ * @returns {Promise<void>}
+ */
+async function decorateDialog(signupContent) {
+  decorateSections(signupContent);
+  decorateIcons(signupContent);
+  decorateBlocks(signupContent);
+  await loadBlocks(signupContent);
+}
+
+/**
  * Class representing the Signup Flow Dialog.
  */
 export default class SignupFlowDialog {
@@ -146,7 +158,7 @@ export default class SignupFlowDialog {
           <a class="signup-dialog-close-btn close-action">
               <span class="close-text">${this.placeholders?.closeBtnLabel || 'Close'}</span>
               <div class="close-icon-holder">
-                  <span class="icon icon-close"></span>
+                  <span class="icon icon-close-light"></span>
               </div>
           </a>
         </div>
@@ -234,7 +246,7 @@ export default class SignupFlowDialog {
                     if (!step.nofollow) {
                       let result;
                       if (pageIndex > index) {
-                        result = `<div class="check-icon-shell"><span class="icon icon-checkmark"></span></div>`;
+                        result = `<div class="check-icon-shell"><span class="icon icon-checkmark-light"></span></div>`;
                       } else if (pageIndex === index) {
                         result = `<div class="signup-dialog-step current-step">${index + 1}</div>`;
                       } else {
@@ -255,7 +267,7 @@ export default class SignupFlowDialog {
 
     // Set the inner HTML of the step container to the generated flow
     stepsContainer.innerHTML = flow;
-    await decorateIcons(stepsContainer);
+    decorateIcons(stepsContainer);
   }
 
   /**
@@ -300,18 +312,6 @@ export default class SignupFlowDialog {
   }
 
   /**
-   * Decorates the signup dialog content with sections, blocks, and icons.
-   * @param {Element} signupContent - The container element for the signup content.
-   * @returns {Promise<void>}
-   */
-  async decorateDialog(signupContent) {
-    decorateSections(signupContent);
-    decorateBlocks(signupContent);
-    await loadBlocks(signupContent);
-    await decorateIcons(this.signupDialog);
-  }
-
-  /**
    * Loads the content of the signup dialog for a specific page.
    * @param {number} index - The index of the page to load.
    * @returns {Promise<boolean>} - Returns true if the content was successfully loaded, false otherwise.
@@ -329,7 +329,7 @@ export default class SignupFlowDialog {
         signupContent.setAttribute('data-current-page-index', index);
         signupContainer.className = `signup-dialog-container ${this.pages[index].name}-container`;
         signupContent.innerHTML = pageContent;
-        await this.decorateDialog(signupContent);
+        await decorateDialog(signupContent);
         return true;
       }
       return false;

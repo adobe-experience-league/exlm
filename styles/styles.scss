@@ -695,7 +695,7 @@ picture {
   width: 24px;
 }
 
-.icon svg {
+.icon img {
   height: 100%;
   width: 100%;
 }
@@ -724,13 +724,9 @@ picture {
   width: 18px;
   vertical-align: middle;
 
-  svg {
+  img {
     width: 18px;
     height: 18px;
-    fill: white;
-  }
-
-  path {
     fill: white;
   }
 }
@@ -759,7 +755,7 @@ picture {
 }
 
 .exl-toast .icon-close {
-  background-image: url('../../icons/icon-close.svg');
+  background-image: url('../icons/icon-close.svg');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 20px;

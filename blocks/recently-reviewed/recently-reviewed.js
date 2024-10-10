@@ -26,10 +26,10 @@ function renderNavigationArrows(titleContainer) {
   const navigationElements = htmlToElement(`
         <div class="recently-viewed-nav-section">
             <button class="prev-nav" disabled>
-                <span class="icon icon-chevron"></span>
+                <span class="icon icon-chevron-gray"></span>
             </button>
             <button class="next-nav" disabled>
-                <span class="icon icon-chevron"></span>
+                <span class="icon icon-chevron-gray"></span>
             </button
         </div>
     `);

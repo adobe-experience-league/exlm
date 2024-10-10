@@ -36,14 +36,9 @@
   width: 100%;
 }
 
-.announcement-ribbon .icon,
-.announcement-ribbon .icon svg {
-  height: 16px;
+.announcement-ribbon .icon img {
   width: 16px;
-}
-
-.announcement-ribbon .icon svg path {
-  fill: var(--spectrum-gray-900);
+  max-width: none;
 }
 
 .announcement-ribbon .icon-close {

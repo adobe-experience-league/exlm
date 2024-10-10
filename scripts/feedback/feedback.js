@@ -42,14 +42,14 @@ function decorateFirstQuestion(firstQuestion) {
 
   const thumbUpButton = createTag('button', { 'aria-label': 'thumbs up' });
   thumbUpButton.innerHTML = `
-    <span class="icon icon-thumb-up"></span>
+    <span class="icon icon-thumb-up-light"></span>
     <span class="tooltip">${helpFul}</span>
   `;
   newDiv.appendChild(thumbUpButton);
 
   const thumbDownButton = createTag('button', { 'aria-label': 'thumbs down' });
   thumbDownButton.innerHTML = `
-    <span class="icon icon-thumb-down"></span>
+    <span class="icon icon-thumb-down-light"></span>
     <span class="tooltip">${notHelpFul}</span>
   `;
   newDiv.appendChild(thumbDownButton);
@@ -67,7 +67,7 @@ function decorateFirstQuestion(firstQuestion) {
   firstQuestion.appendChild(document.createElement('h3')).textContent = wasThisHelpful;
   firstQuestion.appendChild(newDiv);
   firstQuestion.appendChild(createTag('div', { class: 'error' }));
-  firstQuestion.innerHTML += '<span class="icon icon-chevron"></span>';
+  firstQuestion.innerHTML += '<span class="icon icon-chevron-gray"></span>';
   firstQuestion.dataset.updatedTitle = thankyouForYourFeedback;
   firstQuestion.dataset.subtitle = subTitle;
   firstQuestion.dataset.surveyCompletedText = surveyCompletedText;
@@ -189,7 +189,7 @@ function decorateCloseBtnEl() {
 function decorateOpenedCtrl(openedControl) {
   const detailedFb = createTag('span');
   const text = openedControl.querySelector('div:nth-child(1) > div').textContent.trim();
-  const desktopChevronIcon = htmlToElement('<span class="icon is-desktop icon-chevron"></span>');
+  const desktopChevronIcon = htmlToElement('<span class="icon is-desktop icon-chevron-gray"></span>');
   detailedFb.textContent = text;
   openedControl.innerHTML = '';
   openedControl.append(detailedFb);
@@ -252,7 +252,7 @@ function decorateFeedback(el) {
 }
 
 function handleFeedbackToggle(el) {
-  const chevrons = el.querySelectorAll('.icon-chevron');
+  const chevrons = el.querySelectorAll('.icon-chevron-gray');
 
   chevrons.forEach((chevron) => {
     chevron.addEventListener('click', () => {
