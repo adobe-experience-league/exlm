@@ -702,6 +702,7 @@ const profileMenuDecorator = async (profileMenuBlock, decoratorOptions) => {
 const adobeLogoDecorator = async (adobeLogoBlock) => {
   simplifySingleCellBlock(adobeLogoBlock);
   adobeLogoBlock.querySelector('a').setAttribute('title', 'logo');
+  decorateIcons(adobeLogoBlock);
   return adobeLogoBlock;
 };
 
