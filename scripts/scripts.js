@@ -177,14 +177,28 @@ export function buildSyntheticBlocks(main) {
   });
 }
 
-/**
- * return browse page theme if its browse page otherwise undefined.
- * theme = browse-* is set in bulk metadata for /en/browse paths.
- */
-export function isBrowsePage() {
-  const theme = getMetadata('theme');
-  return theme.split(',').find((t) => t.toLowerCase().startsWith('browse-'));
+/** @returns {string[]} */
+export function getThemes() {
+  return (
+    getMetadata('theme')
+      ?.split(',')
+      ?.map((t) => t.trim()) || []
+  );
 }
+
+/**
+ * Check if any of the page themes match the given regex.
+ * @param {RegExp} regex
+ */
+export function matchesAnyTheme(regex) {
+  return getThemes()?.some((t) => t.match(regex)) || false;
+}
+
+export const isDocPage = matchesAnyTheme(/docs/);
+export const isPerspectivePage = matchesAnyTheme(/articles/);
+export const isProfilePage = matchesAnyTheme(/^profile.*/);
+export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
+export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 
 /**
  * add a section for the left rail when on a browse page.
@@ -198,7 +212,7 @@ function addBrowseRail(main) {
 
   // default: create a dynamic uneditable browse rail
   const leftRailSection = document.createElement('div');
-  leftRailSection.classList.add('browse-rail-section', isBrowsePage());
+  leftRailSection.classList.add('browse-rail-section', isBrowsePage);
   leftRailSection.append(buildBlock('browse-rail', []));
   main.append(leftRailSection);
 }
@@ -252,32 +266,11 @@ export async function fetchAuthorBio(anchor) {
     });
 }
 
-export function isArticleLandingPage() {
-  const theme = getMetadata('theme');
-  return theme.split(',').find((t) => t.toLowerCase().startsWith('article-'));
-}
-
-/**
- * Check if current page is a Profile page.
- * theme = profile is set in bulk metadata for /en/home** paths.
- */
-export function isProfilePage() {
-  const theme = getMetadata('theme');
-  return theme.toLowerCase().startsWith('profile');
-}
 /**
  * Check if current page is a home page.
  */
 export function isHomePage(lang) {
   return window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
-}
-/**
- * Check if current page is a Signup flow modal page.
- * theme = signup is set in bulk metadata for /en/home/signup-flow-modal** paths.
- */
-export function isSignUpPage() {
-  const theme = getMetadata('theme');
-  return theme.toLowerCase().startsWith('signup');
 }
 
 /**
@@ -360,26 +353,18 @@ async function buildTabSection(main) {
 function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
-    if (
-      !isProfilePage() &&
-      // eslint-disable-next-line no-use-before-define
-      !isDocPage() &&
-      // eslint-disable-next-line no-use-before-define
-      !isDocArticlePage() &&
-      !isSignUpPage()
-    ) {
+    if (!isProfilePage && !isDocPage && !isSignUpPage) {
       buildTabSection(main);
     }
     // if we are on a product browse page
-    if (isBrowsePage()) {
+    if (isBrowsePage) {
       addBrowseBreadCrumb(main);
       addBrowseRail(main);
     }
-    // eslint-disable-next-line no-use-before-define
-    if (isArticlePage()) {
+    if (isPerspectivePage) {
       addMiniToc(main);
     }
-    if (isProfilePage()) {
+    if (isProfilePage) {
       addProfileRail(main);
     }
   } catch (error) {
@@ -466,38 +451,6 @@ export const decorateLinks = (block) => {
       link.href = decodedHref.substring(0, endIndex);
     }
   });
-};
-
-export function isPageOfType(type) {
-  const theme = getMetadata('theme');
-  return theme
-    .split(',')
-    .map((t) => t.toLowerCase().trim())
-    .includes(type);
-}
-
-/**
- * Check if current page is a MD Docs Page.
- * theme = docs is set in bulk metadata for docs paths.
- * @param {string} type The type of doc page - example: docs-solution-landing,
- *                      docs-landing, docs (optional, default value is docs)
- */
-export function isDocPage(type = 'docs') {
-  return isPageOfType(type);
-}
-
-export function isArticlePage(type = 'articles') {
-  return isPageOfType(type);
-}
-
-/**
- * Check if current page is a MD Docs Article Page.
- * theme = docs is set in bulk metadata for docs paths.
- * @param {string} type The type of doc page - docs (optional, default value is docs)
- */
-export const isDocArticlePage = (type = 'docs') => {
-  const theme = getMetadata('theme');
-  return theme?.toLowerCase().trim() === type;
 };
 
 /**
@@ -676,7 +629,7 @@ export function decorateInlineAttributes(element) {
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
   // docs pages do not use buttons, only links
-  if (!isDocPage()) {
+  if (!isDocPage) {
     decorateButtons(main);
   }
   decorateAnchors(main); // must be run before decorateIcons
@@ -1080,7 +1033,7 @@ function loadDelayed() {
  * Custom - Loads the right and left rails for doc pages only.
  */
 async function loadRails() {
-  if (isDocPage()) {
+  if (isDocPage) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/rails/rails.css`);
     const mod = await import('./rails/rails.js');
     if (mod.default) {
@@ -1093,7 +1046,7 @@ async function loadRails() {
  * Custom - Loads and builds layout for articles page
  */
 export async function loadArticles() {
-  if (isArticlePage()) {
+  if (isPerspectivePage) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/articles/articles.css`);
     const mod = await import('./articles/articles.js');
     if (mod.default) {
@@ -1132,7 +1085,7 @@ function showSignupDialog() {
 }
 
 function showBrowseBackgroundGraphic() {
-  if (isBrowsePage()) {
+  if (isBrowsePage) {
     const main = document.querySelector('main');
     main.classList.add('browse-background-img');
   }
@@ -1409,30 +1362,34 @@ export function getCookie(cookieName) {
   return null;
 }
 
+function createDocColumns() {
+  if (!isDocPage) return;
+  // wrap main content in a div - UGP-11165
+  const main = document.querySelector('main');
+  const mainSections = [...main.children].slice(0, -2); // ignore last two sections: toc and mini-toc
+  const mainContent = document.createElement('div');
+  // insert mainContent as first child of main
+  main.prepend(mainContent);
+  mainSections.forEach((section) => {
+    mainContent.append(section);
+  });
+}
+
 async function loadPage() {
   // THIS IS TEMPORARY FOR SUMMIT.
   if (handleHomePageHashes()) return;
   // END OF TEMPORARY FOR SUMMIT.
 
   await loadEager(document);
+  createDocColumns();
+  loadRails();
   await loadLazy(document);
   loadArticles();
-  loadRails();
   loadDelayed();
   showBrowseBackgroundGraphic();
   showSignupDialog();
 
-  if (isDocArticlePage()) {
-    // wrap main content in a div - UGP-11165
-    const main = document.querySelector('main');
-    const mainSections = [...main.children].slice(0, -2); // ignore last two sections: toc and mini-toc
-    const mainContent = document.createElement('div');
-    // insert mainContent as first child of main
-    main.prepend(mainContent);
-    mainSections.forEach((section) => {
-      mainContent.append(section);
-    });
-
+  if (isDocPage) {
     // load prex/next buttons
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
 
@@ -1457,7 +1414,7 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
     const { lang } = getPathDetails();
     document.documentElement.lang = lang || 'en';
     const { personalizedHomeLink } = getConfig() || {};
-    if (isProfilePage()) {
+    if (isProfilePage) {
       if (window.location.href.includes('.html')) {
         loadPage();
       } else {

@@ -891,7 +891,7 @@ picture[align=right] {
   padding: 30px 16px;
   /* section metadata */
 }
-.section.browse-filters-container[data-section-status=loading], .section.browse-filters-container[data-section-status=initialized], .section.curated-cards-container[data-section-status=loading], .section.curated-cards-container[data-section-status=initialized], .section.events-cards-container[data-section-status=loading], .section.events-cards-container[data-section-status=initialized], .section.adls-cards-container[data-section-status=loading], .section.adls-cards-container[data-section-status=initialized], .section.authorable-card-container[data-section-status=loading], .section.authorable-card-container[data-section-status=initialized], .section.featured-cards-container[data-section-status=loading], .section.featured-cards-container[data-section-status=initialized] {
+.section:not([data-section-status=loaded]) {
   visibility: hidden;
 }
 .section > .default-content-wrapper:last-child > p:last-child {
