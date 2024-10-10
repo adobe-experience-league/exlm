@@ -384,7 +384,7 @@ export default async function decorate(block) {
                 if (resp.data) {
                   updateCopyFromTarget(resp, headingElement, descriptionElement);
                   block.style.display = 'block';
-                  setTargetDataAsBlockAttribute(resp.data, block);
+                  setTargetDataAsBlockAttribute(resp, block);
                   block
                     .querySelector('.recommended-content-block-section')
                     ?.setAttribute('data-analytics-rec-source', 'target');

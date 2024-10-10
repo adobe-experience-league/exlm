@@ -82,7 +82,7 @@ export default async function decorate(block) {
           const items = contentDiv.querySelectorAll('.browse-cards-block-content > div');
           // eslint-disable-next-line no-new
           new Swiper(contentDiv, items, true, null, prevButton, nextButton);
-          setTargetDataAsBlockAttribute(resp.data, block);
+          setTargetDataAsBlockAttribute(resp, block);
         } else {
           buildNoResultsContent(contentDiv, true);
         }
