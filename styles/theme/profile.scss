@@ -108,7 +108,8 @@ body.profile-home-page .section.profile-rail-section:not(.sign-up-flow-section) 
 }
 
 body.profile-home-page .section:not(.sign-up-flow-section):first-child {
-  margin-top: 80px;
+  padding-top: 80px;
+  max-width: calc(100% - 145px);
 }
 
 body.profile
@@ -262,7 +263,6 @@ body.profile
   }
 
   body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(2) {
-    padding-top: 0;
     max-width: calc(100% - 145px);
   }
 
@@ -324,6 +324,7 @@ body.profile
   }
 
   body.profile-home-page .section:not(.sign-up-flow-section):first-child {
-    margin-top: 0;
+    padding-top: 0;
+    max-width: 100%;
   }
 }

@@ -102,7 +102,8 @@ body.profile-home-page .section.profile-rail-section:not(.sign-up-flow-section) 
 }
 
 body.profile-home-page .section:not(.sign-up-flow-section):first-child {
-  margin-top: 80px;
+  padding-top: 80px;
+  max-width: calc(100% - 145px);
 }
 
 body.profile .section:not(.profile-rail-section, .sign-up-flow-section) .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) {
@@ -223,7 +224,6 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
     margin-top: 28px;
   }
   body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(2) {
-    padding-top: 0;
     max-width: calc(100% - 145px);
   }
   body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(3){
@@ -272,6 +272,7 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
     margin-bottom: 60px;
   }
   body.profile-home-page .section:not(.sign-up-flow-section):first-child {
-    margin-top: 0;
+    padding-top: 0;
+    max-width: 100%;
   }
 }
