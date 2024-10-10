@@ -1,4 +1,4 @@
-import { createTag, fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
@@ -15,6 +15,7 @@ import {
   checkTargetSupport,
   targetDataAdapter,
   updateCopyFromTarget,
+  setTargetDataAsBlockAttribute,
 } from '../../scripts/target/target.js';
 
 const DEFAULT_NUM_CARDS = 4;
@@ -381,8 +382,9 @@ export default async function decorate(block) {
             handleTargetEvent(targetCriteriaId)
               .then(async (resp) => {
                 if (resp.data) {
-                  updateCopyFromTarget(resp, headingElement, descriptionElement);
+                  updateCopyFromTarget(resp, headingElement, descriptionElement, firstEl, secondEl);
                   block.style.display = 'block';
+                  setTargetDataAsBlockAttribute(resp, block);
                   block
                     .querySelector('.recommended-content-block-section')
                     ?.setAttribute('data-analytics-rec-source', 'target');
@@ -506,10 +508,10 @@ export default async function decorate(block) {
       secondEl.classList.add('recommended-content-discover-resource');
       firstEl.classList.add('recommended-content-result-link');
       if (firstEl.innerHTML || secondEl.innerHTML) {
-        const seeMoreEl = htmlToElement(`<div class="recommended-content-result-text">
-        ${secondEl.outerHTML}
-        ${firstEl.outerHTML}
-        </div>`);
+        const seeMoreEl = document.createElement('div');
+        seeMoreEl.classList.add('recommended-content-result-text');
+        seeMoreEl.appendChild(secondEl);
+        seeMoreEl.appendChild(firstEl);
         parentDiv.appendChild(seeMoreEl);
       }
     };

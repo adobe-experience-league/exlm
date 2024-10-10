@@ -10,9 +10,42 @@ const { cookieConsentName } = getConfig();
  * @param {HTMLElement} subheading
  * @returns {void}
  */
-export function updateCopyFromTarget(data, heading, subheading) {
+export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
   if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
   if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
+  if (
+    taglineCta &&
+    data?.meta['tagline-cta-text'] &&
+    data?.meta['tagline-cta-url'] &&
+    data.meta['tagline-cta-text'].trim() !== '' &&
+    data.meta['tagline-cta-url'].trim() !== ''
+  ) {
+    taglineCta.innerHTML = `
+      <a href="${data.meta['tagline-cta-url']}" title="${data.meta['tagline-cta-text']}">
+        ${data.meta['tagline-cta-text']}
+      </a>
+    `;
+  }
+  if (taglineText && data?.meta['tagline-text'] && data?.meta['tagline-text'].trim() !== '') {
+    taglineText.innerHTML = data.meta['tagline-text'];
+  }
+}
+
+/**
+ * Sets target data as a data attribute on the given block element.
+ *
+ * This function checks if the provided `data` object contains a `meta` property.
+ * If the `meta` property exists, it serializes the metadata as a JSON string and
+ * adds it to the specified block element as a custom data attribute `data-analytics-target-meta`.
+ *
+ * @param {Object} data - The data returned from target.
+ * @param {HTMLElement} block - The DOM element to which the meta data will be added as an attribute.
+ *
+ */
+export function setTargetDataAsBlockAttribute(data, block) {
+  if (data?.meta) {
+    block.setAttribute('data-analytics-target-meta', JSON.stringify(data?.meta));
+  }
 }
 
 /**
