@@ -45,6 +45,12 @@ async function fetchInterestData() {
   }
 }
 
+const prepareExclusionQuery = (cardIdsToExclude) => {
+  // eslint-disable-next-line no-useless-escape
+  const query = cardIdsToExclude.map((id) => `(@el_id NOT \"${id}\")`).join(' AND ');
+  return cardIdsToExclude.length <= 1 ? query : `(${query})`;
+};
+
 const interestDataPromise = fetchInterestData();
 
 const ALL_MY_OPTIONS_KEY = placeholders?.allMyProducts || 'All my products';
@@ -83,21 +89,21 @@ export default async function decorate(block) {
       solutionLevels: profileSolutionLevels = [],
     } = profileData;
 
-    let defaultOptionsKey = [];
+    const defaultOptionsKey = [];
 
     if (profileInterests.length === 0) {
+      filterSectionElement.style.display = 'none';
+      blockHeader.style.display = 'none';
+      defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
+    } else if (profileInterests.length === 1) {
+      filterSectionElement.style.display = 'none';
       defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
     } else {
+      defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       defaultOptionsKey.push(ALL_MY_OPTIONS_KEY);
     }
 
-    if (targetSupport && targetCriteriaId) {
-      if (profileInterests.length > 0) {
-        defaultOptionsKey = [];
-        defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
-        defaultOptionsKey.push(ALL_MY_OPTIONS_KEY);
-      }
-    } else {
+    if (!(targetSupport && targetCriteriaId)) {
       block.style.display = 'block';
     }
 
@@ -146,11 +152,17 @@ export default async function decorate(block) {
     filterOptions.unshift(...defaultOptionsKey);
     const [defaultFilterOption = ''] = filterOptions;
     const renderedCardTitles = [];
+    const containsAllMyProductsTab = filterOptions.includes(ALL_MY_OPTIONS_KEY);
+    const cardIdsToExclude = [];
+    const allMyProductsCardModels = [];
 
-    const renderCardPlaceholders = (contentDiv) => {
+    const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
       const cardDiv = document.createElement('div');
       cardDiv.classList.add('card-wrapper');
-      contentDiv.appendChild(cardDiv);
+      if (renderCardsFlag) {
+        contentDiv.appendChild(cardDiv);
+      }
+
       const cardPlaceholder = new BuildPlaceholder(1);
       cardPlaceholder.add(cardDiv);
       return {
@@ -177,7 +189,7 @@ export default async function decorate(block) {
     const parseCardResponseData = (cardResponse, apiConfigObject) => {
       let data = [];
       if (targetSupport) {
-        data = cardResponse.data;
+        data = cardResponse?.data ?? [];
         const { shimmers, params, optionType } = apiConfigObject;
         shimmers.forEach((shimmer) => {
           shimmer.remove();
@@ -232,6 +244,7 @@ export default async function decorate(block) {
     };
 
     const renderCardsBlock = (cardModels, payloadConfig, contentDiv) => {
+      const { renderCards = true } = payloadConfig;
       const promises = cardModels.map(
         (cardData, i) =>
           new Promise((resolve) => {
@@ -240,19 +253,24 @@ export default async function decorate(block) {
               cardData.cardPromise.then((cardDataResponse) => {
                 const { cardsToRenderCount } = cardData;
                 const { data: delayedCardData = [] } = cardDataResponse;
+                const cardModelsList = [];
                 if (delayedCardData.length === 0) {
-                  cardData.shimmers.forEach((shim, index) => {
-                    shim.remove();
-                    cardData.wrappers[index].style.display = 'none';
-                  });
+                  if (renderCards) {
+                    cardData.shimmers.forEach((shim, index) => {
+                      shim.remove();
+                      cardData.wrappers[index].style.display = 'none';
+                    });
+                  }
                 } else {
                   countNumberAsArray(cardsToRenderCount).forEach((_, index) => {
                     const shimmer = cardData.shimmers[index];
                     const wrapperDiv = cardData.wrappers[index];
-                    if (shimmer) {
-                      shimmer.remove();
+                    if (renderCards) {
+                      if (shimmer) {
+                        shimmer.remove();
+                      }
+                      wrapperDiv.innerHTML = '';
                     }
-                    wrapperDiv.innerHTML = '';
                     const [defaultCardModel] = delayedCardData;
                     const targetIndex = delayedCardData.findIndex(
                       (delayData) => !renderedCardTitles.includes(delayData.title),
@@ -265,19 +283,21 @@ export default async function decorate(block) {
                       cardModel = defaultCardModel;
                       delayedCardData.splice(0, 1);
                     }
-                    renderedCardTitles.push(cardModel.title);
-                    buildCard(contentDiv, wrapperDiv, cardModel);
+                    if (renderCards) {
+                      renderedCardTitles.push(cardModel.title);
+                      buildCard(contentDiv, wrapperDiv, cardModel);
+                    }
+                    cardModelsList.push(cardModel);
                   });
                 }
-                resolve(true);
+                resolve(cardModelsList);
               });
             } else {
-              cardDiv.innerHTML = '';
-              if (cardData?.title) {
-                renderedCardTitles.push(cardData.title);
+              if (renderCards) {
+                cardDiv.innerHTML = '';
+                buildCard(contentDiv, cardDiv, cardData);
               }
-              buildCard(contentDiv, cardDiv, cardData);
-              resolve(true);
+              resolve([cardData]);
             }
           }),
       );
@@ -293,9 +313,11 @@ export default async function decorate(block) {
       recommendedContentNoResultsElement.innerHTML = noResultsText;
     };
 
-    const fetchDataAndRenderBlock = async (optionType) => {
+    const fetchDataAndRenderBlock = async (optionType, renderCards = true) => {
       const contentDiv = block.querySelector('.recommended-content-block-section');
       const lowercaseOptionType = optionType?.toLowerCase();
+      const saveCardResponse =
+        [ALL_MY_OPTIONS_KEY.toLowerCase()].includes(lowercaseOptionType) && cardIdsToExclude.length === 0;
       contentDiv.dataset.selected = lowercaseOptionType;
       const showProfileOptions = defaultOptionsKey.some((key) => lowercaseOptionType === key.toLowerCase());
       const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
@@ -323,18 +345,25 @@ export default async function decorate(block) {
           : { interests: [interest], experience: [expLevel], role: profileRoles },
       };
 
-      contentDiv.innerHTML = '';
-      contentDiv.style.display = '';
-      const noResultsContent = block.querySelector('.browse-card-no-results');
-      if (noResultsContent) {
-        noResultsContent.remove();
+      if (!showProfileOptions && cardIdsToExclude.length) {
+        const aq = prepareExclusionQuery(cardIdsToExclude);
+        params.aq = aq;
+      }
+
+      if (renderCards) {
+        contentDiv.innerHTML = '';
+        contentDiv.style.display = '';
+        const noResultsContent = block.querySelector('.browse-card-no-results');
+        if (noResultsContent) {
+          noResultsContent.remove();
+        }
       }
       let cardPromises = [];
       if (targetSupport) {
         const cardShimmers = [];
         const wrappers = [];
         countNumberAsArray(DEFAULT_NUM_CARDS).forEach(() => {
-          const { shimmer, wrapper } = renderCardPlaceholders(contentDiv);
+          const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, renderCards);
           cardShimmers.push(shimmer);
           wrappers.push(wrapper);
         });
@@ -344,26 +373,30 @@ export default async function decorate(block) {
           wrappers,
           params,
           optionType,
+          renderCards,
         };
         cardPromises.push(
           new Promise((resolve) => {
             handleTargetEvent(targetCriteriaId)
-              .then((resp) => {
+              .then(async (resp) => {
                 if (resp.data) {
                   updateCopyFromTarget(resp, headingElement, descriptionElement, firstEl, secondEl);
                   block.style.display = 'block';
                 }
                 const cardModels = parseCardResponseData(resp, payloadConfig);
+                let renderedCardModels = [];
                 if (cardModels?.length) {
-                  renderCardsBlock(cardModels, payloadConfig, contentDiv);
+                  const targetCardRenderPromises = renderCardsBlock(cardModels, payloadConfig, contentDiv);
+                  renderedCardModels = await Promise.all(targetCardRenderPromises);
                 }
                 resolve({
                   data: cardModels,
                   payloadConfig,
+                  renderedCardModels,
                 });
               })
               .catch(() => {
-                resolve({ data: [] });
+                resolve({ data: [], renderedCardModels: [] });
               });
           }),
         );
@@ -382,7 +415,7 @@ export default async function decorate(block) {
           const cardShimmers = [];
           const wrappers = [];
           countNumberAsArray(noOfResults).forEach(() => {
-            const { shimmer, wrapper } = renderCardPlaceholders(contentDiv);
+            const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, renderCards);
             cardShimmers.push(shimmer);
             wrappers.push(wrapper);
           });
@@ -392,24 +425,43 @@ export default async function decorate(block) {
             shimmers: cardShimmers,
             contentType: payloadContentType,
             wrappers,
+            renderCards,
           };
           return new Promise((resolve) => {
             getCardsData(payload).then(async (resp) => {
               const cardModels = parseCardResponseData(resp, payloadConfig);
+              let renderedCardModels = [];
               if (cardModels?.length) {
                 const renderPromises = renderCardsBlock(cardModels, payloadConfig, contentDiv);
-                await Promise.all(renderPromises);
+                renderedCardModels = await Promise.all(renderPromises);
               }
               resolve({
                 data: cardModels,
                 payloadConfig,
+                renderedCardModels,
               });
             });
           });
         });
       }
       Promise.all(cardPromises)
-        .then(() => {
+        .then((finalPromiseResponse) => {
+          const dontRenderCards = finalPromiseResponse.some((data) => data?.payloadConfig?.renderCards === false);
+          if (saveCardResponse) {
+            const renderedModels = finalPromiseResponse.reduce((acc, curr) => {
+              curr.renderedCardModels?.flat()?.forEach((d) => acc.push(d));
+              return acc;
+            }, allMyProductsCardModels);
+
+            renderedModels.forEach((model) => {
+              if (model?.id) {
+                cardIdsToExclude.push(model.id);
+              }
+            });
+          }
+          if (dontRenderCards) {
+            return;
+          }
           const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
           if (cardsCount === 0) {
             buildNoResultsContent(contentDiv, true);
@@ -545,6 +597,11 @@ export default async function decorate(block) {
         /* Reused the existing method */
         renderCardBlock(block);
         fetchDataAndRenderBlock(defaultOption);
+        if (containsAllMyProductsTab && defaultOption !== ALL_MY_OPTIONS_KEY) {
+          setTimeout(() => {
+            fetchDataAndRenderBlock(ALL_MY_OPTIONS_KEY, false); // pre-fetch all my tab cards to avoid duplicates in indvidual tab. Timeout helps with 429 status code of v2 calls.
+          }, 500);
+        }
       },
       onSelectCallback: (selectedItem) => {
         /* Reused the existing method */

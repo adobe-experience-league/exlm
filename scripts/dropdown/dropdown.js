@@ -157,6 +157,7 @@ export default class Dropdown {
           	    </button>
               `),
     );
+    decorateIcons(dropdown);
 
     const dropdownContent = document.createElement('div');
     dropdownContent.classList.add('filter-dropdown-content');
@@ -179,11 +180,11 @@ export default class Dropdown {
                     </label>
                     </div>`,
       );
+      decorateIcons(dropdownitem);
       dropdownContent.appendChild(dropdownitem);
     });
 
     this.parentFormElement.appendChild(dropdown);
-    decorateIcons(this.parentFormElement);
   }
 }
 

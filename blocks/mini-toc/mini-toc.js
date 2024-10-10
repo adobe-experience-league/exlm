@@ -1,7 +1,6 @@
 import { debounce, fetchLanguagePlaceholders, isArticlePage } from '../../scripts/scripts.js';
 import { highlight, setLevels, hashFragment } from './utils.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
-import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 function setPadding(arg = '') {
   const num = parseInt(arg.split('')[1], 10);
@@ -113,7 +112,6 @@ function buildMiniToc(block, placeholders) {
           }
         });
         window.addEventListener('scroll', () => debounce('scroll', () => highlight(false, isAnchorScroll), 10));
-        decorateIcons(block);
       }
     });
   } else {

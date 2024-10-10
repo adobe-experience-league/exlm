@@ -123,6 +123,7 @@ const buildTagsContent = (cardMeta, tags = []) => {
       anchor.textContent = text;
       anchor.appendChild(span);
       cardMeta.appendChild(anchor);
+      decorateIcons(anchor);
     }
   });
 };
@@ -152,6 +153,7 @@ const buildEventContent = ({ event, cardContent, card }) => {
         </div>
     </div>
   `);
+  decorateIcons(eventInfo);
   const title = card.querySelector('.browse-card-title-text');
   cardContent.insertBefore(eventInfo, title.nextElementSibling);
 };
@@ -197,7 +199,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText }) => {
         contentType?.toLowerCase(),
       )
     ) {
-      icon = 'new-tab';
+      icon = 'new-tab-blue';
     }
     const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
     const linkText = htmlToElement(`
@@ -205,6 +207,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText }) => {
               ${isLeftPlacement ? `${iconMarkup} ${viewLinkText}` : `${viewLinkText} ${iconMarkup}`}
           </div>
       `);
+    decorateIcons(linkText);
     cardFooter.appendChild(linkText);
   }
 };
@@ -449,5 +452,4 @@ export async function buildCard(container, element, model) {
     },
     { once: true },
   );
-  await decorateIcons(element);
 }

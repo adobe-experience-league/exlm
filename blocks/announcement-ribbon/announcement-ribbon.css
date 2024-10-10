@@ -36,17 +36,12 @@
   width: 100%;
 }
 
-.announcement-ribbon .icon,
-.announcement-ribbon .icon svg {
-  height: 16px;
+.announcement-ribbon .icon img {
   width: 16px;
+  max-width: none;
 }
 
-.announcement-ribbon .icon svg path {
-  fill: var(--spectrum-gray-900);
-}
-
-.announcement-ribbon .icon-close {
+.announcement-ribbon .icon-close-black {
   cursor: pointer;
 }
 
@@ -76,10 +71,6 @@
   .announcement-ribbon .ribbon-description {
     margin-bottom: 0;
   }
-
-  .announcement-ribbon .icon-close {
-    margin-top: 30px;
-  }
 }
 
 /* Desktop (>900px) */
@@ -104,7 +95,7 @@
     width: auto;
   }
 
-  .announcement-ribbon .icon-close {
+  .announcement-ribbon .icon-close-black {
     margin: 0 12px 0 16px;
   }
 }
