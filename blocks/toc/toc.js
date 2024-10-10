@@ -5,6 +5,7 @@ import {
   getLanguageCode,
   createPlaceholderSpan,
   getConfig,
+  matchesAnyTheme,
 } from '../../scripts/scripts.js';
 import getSolutionByName from './toc-solutions.js';
 
@@ -163,6 +164,7 @@ function activateCurrentPage(tocContent) {
  * @param {Element} block The toc block element
  */
 export default async function decorate(block) {
+  if (matchesAnyTheme(/kb-article/)) return;
   const tocID = block.querySelector('.toc > div > div').textContent;
   if (!tocID && document.querySelector('.toc-dropdown')) return;
   block.innerHTML = ''; // start clean
