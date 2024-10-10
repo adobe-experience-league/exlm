@@ -300,14 +300,15 @@ async function appendTag(block, tag, source = 'checkboxChange') {
       <span class="icon icon-close"></span>
     </button>
   `);
+  if (source === 'checkboxChange') {
+    decorateIcons(tagEl);
+  }
   tagsContainer.append(tagEl);
   tagsProxy.push({
     name: tag.name,
     value: tag.value,
   });
-  if (source === 'checkboxChange') {
-    decorateIcons(tagsContainer);
-  }
+  
 }
 
 function removeFromTags(block, value) {
