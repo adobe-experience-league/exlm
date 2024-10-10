@@ -53,9 +53,9 @@
     margin-right: 2px;
 }
 
-.manage-adobe-account .icon-new-tab svg,
-.user-profile-card .icon-new-tab svg {
-    fill: var(--spectrum-gray-800);
+.manage-adobe-account .icon-new-tab img {
+    width: 24px;
+    height: 24px;
 }
 
 .profile-card-body {

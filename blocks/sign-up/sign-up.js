@@ -1,5 +1,4 @@
 import { isSignedInUser } from '../../scripts/auth/profile.js';
-import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 function decorateButtons(buttons) {
   return buttons
@@ -69,7 +68,6 @@ export default async function decorate(block) {
     block.classList.add('no-subject');
   }
 
-  decorateIcons(signupDOM);
   block.append(signupDOM);
 
   const signInBtns = block.querySelectorAll('.signin');

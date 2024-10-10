@@ -175,7 +175,7 @@ export default async function decorate(block) {
   tocContent.id = 'toc-dropdown-popover';
 
   const productHeader = buildProductHeader();
-  decorateIcons(productHeader, 'solutions/');
+  decorateIcons(productHeader, '/solutions');
   const tocMobileDropdown = buildTocMobileDropdown();
 
   block.appendChild(tocMobileDropdown);

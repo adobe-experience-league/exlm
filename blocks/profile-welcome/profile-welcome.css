@@ -187,10 +187,11 @@
 }
 
 .profile-welcome .profile-user-card-incomplete .icon {
+    flex-shrink: 0;
     width: 18px;
 }
 
-.profile-welcome .profile-user-card-incomplete svg {
+.profile-welcome .profile-user-card-incomplete img {
     width: 18px;
     height: 18px;
     margin-top: 3px;

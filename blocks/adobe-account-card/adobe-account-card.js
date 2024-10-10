@@ -65,5 +65,5 @@ export default async function decorate(block) {
   </div>`);
   block.textContent = '';
   block.append(accountCardDOM);
-  await decorateIcons(block);
+  decorateIcons(block);
 }

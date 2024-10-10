@@ -69,6 +69,7 @@ async function createOptions(container, readTimeText) {
   const readTime = document.createElement('div');
   readTime.classList.add('article-marquee-read-time');
   readTime.innerHTML = `<span class="icon icon-time"></span> <span>${readTimeText} ${placeholders.articleMarqueeReadTimeText}</span>`;
+  decorateIcons(readTime);
 
   container.appendChild(options);
   container.appendChild(lastUpdated);
@@ -161,7 +162,6 @@ export default async function ArticleMarquee(block) {
 
     const breadcrumbContainer = block.querySelector('.breadcrumb');
     createBreadcrumb(breadcrumbContainer);
-    decorateIcons(block);
 
     if (Array.isArray(links) && links.length > 0) {
       // Filter out null, empty and duplicate links and map to fetchAuthorBio

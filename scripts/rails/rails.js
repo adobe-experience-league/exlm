@@ -21,7 +21,7 @@ async function decorateRail(railSection, position) {
   railSection.classList.add('rail');
   railSection.classList.add(`rail-${position}`);
   railSection.prepend(railToggler);
-  await decorateIcons(railToggler);
+  decorateIcons(railToggler);
   railToggler.addEventListener('click', () => {
     railSection.classList.toggle('closed');
     const main = railSection.parentElement;
