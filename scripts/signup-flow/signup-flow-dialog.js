@@ -7,6 +7,7 @@ import SignUpFlowShimmer from './signup-flow-shimmer.js';
 import FormValidator from '../form-validator.js';
 import { sendNotice } from '../toast/toast.js';
 import getEmitter from '../events.js';
+import { pushSignupEvent } from '../analytics/lib-analytics.js';
 
 const signupDialogEventEmitter = getEmitter('signupDialog');
 
@@ -120,6 +121,7 @@ export default class SignupFlowDialog {
         this.signupDialog.close();
         document.body.classList.remove('overflow-hidden');
         signupDialogEventEmitter.emit('signupDialogClose', { status: 'closed' });
+        pushSignupEvent(e.target, 'complete');
       });
     });
 
@@ -390,8 +392,14 @@ export default class SignupFlowDialog {
       const prevBtn = this.signupDialog.querySelector('.signup-dialog-nav-bar .prev-btn');
       const nextBtn = this.signupDialog.querySelector('.signup-dialog-nav-bar .next-btn');
 
-      prevBtn.addEventListener('click', () => this.handleNavigation(-1));
-      nextBtn.addEventListener('click', () => this.handleNavigation(1));
+      prevBtn.addEventListener('click', (e) => {
+        this.handleNavigation(-1);
+        pushSignupEvent(e.target, 'back');
+      });
+      nextBtn.addEventListener('click', (e) => {
+        this.handleNavigation(1);
+        pushSignupEvent(e.target, 'view');
+      });
     }
   }
 
