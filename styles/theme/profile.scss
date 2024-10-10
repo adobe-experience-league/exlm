@@ -108,7 +108,7 @@ body.profile-home-page .section.profile-rail-section:not(.sign-up-flow-section) 
 }
 
 body.profile-home-page .section:not(.sign-up-flow-section):first-child {
-  padding-top: 80px;
+  margin-top: 80px;
 }
 
 body.profile
@@ -324,6 +324,6 @@ body.profile
   }
 
   body.profile-home-page .section:not(.sign-up-flow-section):first-child {
-    padding-top: 0;
+    margin-top: 0;
   }
 }
