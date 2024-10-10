@@ -425,7 +425,6 @@ const navDecorator = async (navBlock, decoratorOptions) => {
       }
     });
   }
-  decorateIcons(navBlock);
 };
 
 /**
@@ -714,6 +713,7 @@ const decorateNewTabLinks = (block) => {
     // insert before first text child node
     const icon = htmlToElement('<span class="icon icon-link-out"></span>');
     link.firstChild.after(icon);
+    decorateIcons(link);
   });
 };
 
@@ -819,7 +819,6 @@ class ExlHeader extends HTMLElement {
       decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);
       decorateHeaderBlock('profile-menu', this.profileMenuDecorator, this.decoratorOptions);
       decorateNewTabLinks(header);
-      decorateIcons(header);
       await decorateHeaderBlock('nav', this.navDecorator, this.decoratorOptions);
     }
   }

@@ -25,17 +25,17 @@ const SIGNUP_DIALOG_TYPE = {
  */
 const SIGNUP_INTERACTION_NAME = 'modalSeen';
 
-  /**
-   * Decorates the signup dialog content with sections, blocks, and icons.
-   * @param {Element} signupContent - The container element for the signup content.
-   * @returns {Promise<void>}
-   */
-  async function decorateDialog(signupContent) {
-    decorateSections(signupContent);
-    decorateIcons(signupContent);
-    decorateBlocks(signupContent);
-    await loadBlocks(signupContent);
-  }
+/**
+ * Decorates the signup dialog content with sections, blocks, and icons.
+ * @param {Element} signupContent - The container element for the signup content.
+ * @returns {Promise<void>}
+ */
+async function decorateDialog(signupContent) {
+  decorateSections(signupContent);
+  decorateIcons(signupContent);
+  decorateBlocks(signupContent);
+  await loadBlocks(signupContent);
+}
 
 /**
  * Class representing the Signup Flow Dialog.
