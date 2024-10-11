@@ -282,7 +282,7 @@ function addProfileRail(main) {
   const profileRailSection = document.createElement('div');
   profileRailSection.classList.add('profile-rail-section');
   profileRailSection.append(buildBlock('profile-rail', []));
-  main.prepend(profileRailSection);
+  main.append(profileRailSection);
 }
 
 /**
