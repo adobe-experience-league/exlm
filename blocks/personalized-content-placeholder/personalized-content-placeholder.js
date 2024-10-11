@@ -58,7 +58,6 @@ const decoratePersonalizedContent = async (block) => {
     }
     loader.remove();
     currentSection.style.display = 'none';
-    currentSection.classList.remove('section');
   }
 };
 
