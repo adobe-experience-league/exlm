@@ -18,8 +18,11 @@ const fetchPageContent = async (url, loader, block) => {
       decorateExternalLinks(container);
       await loadBlocks(container);
       if (window.hlx.aemRoot) {
-        loader.insertAdjacentElement('beforebegin', container);
-        moveInstrumentation(block, container);
+        Array.from(container.children).forEach((section) => {
+          section.classList.add('profile-custom-container');
+          loader.insertAdjacentElement('beforebegin', section);
+          moveInstrumentation(block, section);
+        });
       } else {
         Array.from(container.children).forEach((section) => {
           section.classList.add('profile-custom-container');
