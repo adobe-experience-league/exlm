@@ -269,10 +269,6 @@ body.profile
     max-width: calc(100% - 145px);
   }
 
-  body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(2) {
-    max-width: calc(100% - 145px);
-  }
-
   body.profile-home-page .personalized-section {
     max-width: 100%;
     margin-top: 0;
