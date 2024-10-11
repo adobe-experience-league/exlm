@@ -107,7 +107,7 @@ body.profile-home-page .section.profile-rail-section:not(.sign-up-flow-section) 
   padding: 24px 0;
 }
 
-body.profile .section:not(.sign-up-flow-section):first-child {
+body.profile .section:not(.sign-up-flow-section, .personalized-section):first-child {
   margin-top: 80px;
 }
 
@@ -265,7 +265,7 @@ body.profile
     margin-top: 28px;
   }
 
-  body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):first-child {
+  body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section, .personalized-section):first-child {
     max-width: calc(100% - 145px);
   }
 

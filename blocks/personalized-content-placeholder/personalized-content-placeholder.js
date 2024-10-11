@@ -20,6 +20,7 @@ const fetchPageContent = async (url, loader, block) => {
       if (window.hlx.aemRoot) {
         loader.insertAdjacentElement('beforebegin', container);
         moveInstrumentation(block, container);
+        container.classList.add('section', 'personalized-section');
       } else {
         Array.from(container.children).forEach((section) => {
           section.classList.add('profile-custom-container');
