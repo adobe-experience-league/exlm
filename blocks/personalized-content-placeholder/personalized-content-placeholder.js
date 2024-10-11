@@ -18,11 +18,9 @@ const fetchPageContent = async (url, loader, block) => {
       decorateExternalLinks(container);
       await loadBlocks(container);
       if (window.hlx.aemRoot) {
-        Array.from(container.children).forEach((section) => {
-          section.classList.add('profile-custom-container');
-          loader.insertAdjacentElement('beforebegin', section);
-          moveInstrumentation(block, section);
-        });
+        loader.insertAdjacentElement('beforebegin', container);
+        moveInstrumentation(block, container);
+        container.classList.add('section', 'personalized-section');
       } else {
         Array.from(container.children).forEach((section) => {
           section.classList.add('profile-custom-container');
@@ -60,6 +58,7 @@ const decoratePersonalizedContent = async (block) => {
     }
     loader.remove();
     currentSection.style.display = 'none';
+    currentSection.classList.remove('section');
   }
 };
 
