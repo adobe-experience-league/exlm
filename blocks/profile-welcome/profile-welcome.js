@@ -37,11 +37,10 @@ async function decorateProfileWelcomeBlock(block) {
   const eyebrowText = profileEyebrowText.innerHTML;
   const headingText = profileHeading.innerHTML;
   const descriptionText = profileDescription.innerHTML;
-  const isSignedInPromise = isSignedInUser();
 
   // eslint-disable-next-line no-async-promise-executor
-  const profilePromise = new Promise(async (resolve) => {
-    const isSignedIn = await isSignedInPromise;
+  const fetchProfileData = new Promise(async (resolve) => {
+    const isSignedIn = await isSignedInUser();
     let profileDataValue = {};
     let ppsProfileDataValue = {};
     if (isSignedIn) {
@@ -56,7 +55,7 @@ async function decorateProfileWelcomeBlock(block) {
   });
 
   const getProfileInfoData = async () => {
-    const { profileData, ppsProfileData } = await profilePromise;
+    const { profileData, ppsProfileData } = await fetchProfileData;
     const {
       displayName: adobeDisplayName = UEAuthorMode ? 'User Name' : '',
       first_name: adobeFirstName = UEAuthorMode ? 'First Name' : '',
@@ -102,15 +101,32 @@ async function decorateProfileWelcomeBlock(block) {
   const profileWelcomeBlock = document.createRange().createContextualFragment(`
     <div class="profile-curated-card">
       <div class="profile-curated-eyebrowtext">
-        ${eyebrowText ? replaceProfileText(eyebrowText, '<span class="profile-welcome-shimmer">loading</span>') : ``}
+        ${
+          eyebrowText
+            ? replaceProfileText(
+                eyebrowText,
+                `<p class="profile-text-shimmer loading-shimmer" style="--placeholder-width: 20%; height: 17px"></p>`,
+              )
+            : ``
+        }
       </div>
       <div class="profile-curated-card-heading">
-        ${headingText ? replaceProfileText(headingText, '<span class="profile-welcome-shimmer">loading</span>') : ``}
+        ${
+          headingText
+            ? replaceProfileText(
+                headingText,
+                `<p class="profile-text-shimmer loading-shimmer" style="--placeholder-width: 30%; height: 36px"></p>`,
+              )
+            : ``
+        }
       </div>
       <div class="profile-curated-card-description">
       ${
         descriptionText
-          ? replaceProfileText(descriptionText, '<span class="profile-welcome-shimmer">loading</span>')
+          ? replaceProfileText(
+              descriptionText,
+              `<p class="profile-text-shimmer loading-shimmer" style="--placeholder-width: 30%; height: 32px"></p>`,
+            )
           : ``
       }
        
@@ -124,7 +140,7 @@ async function decorateProfileWelcomeBlock(block) {
   if (showProfileCard.textContent.trim() === 'true') {
     // eslint-disable-next-line no-async-promise-executor
     const communityProfilePromise = new Promise(async (resolve) => {
-      const isSignedIn = await isSignedInPromise;
+      const isSignedIn = await isSignedInUser();
       if (isSignedIn) {
         defaultProfileClient.fetchCommunityProfileDetails().then((data) => {
           resolve(data);
@@ -186,14 +202,14 @@ async function decorateProfileWelcomeBlock(block) {
                 <div class="profile-user-card-left">
                   <div class="profile-user-card-avatar-company-info">
                         <div class="profile-user-card-avatar">
-                        <span class="profile-welcome-shimmer"></span>
+                        <p class="loading-shimmer" style="--placeholder-width: 100%; height: 75px"></p>
                         </div>
                         <div class="profile-user-card-info">
-                            <span class="profile-welcome-shimmer"></span>
+                            <p class="loading-shimmer" style="--placeholder-width: 100%; height: 44px"></p>
                         </div> 
                   </div>
                   <div class="profile-card-wrap-section">
-                      <span class="profile-welcome-shimmer"></span>  
+                      <p class="loading-shimmer" style="--placeholder-width: 100%; height: 64px"></p>  
                   </div>
                 </div>
                 <div class="profile-user-card-right">
@@ -201,16 +217,16 @@ async function decorateProfileWelcomeBlock(block) {
                     <div class="profile-user-card-role">
                     <span class="role-heading">${placeholders?.myRole || 'MY ROLE'}: </span>
                     <span class="profile-role-contents">
-                      <span class="profile-welcome-shimmer"></span>
+                      <p class="loading-shimmer" style="--placeholder-width: 100%; height: 32px"></p>
                     </span>
                     </div>
                     <div class="profile-user-card-industry">
-                      <span class="profile-welcome-shimmer"></span>
+                      <p class="loading-shimmer" style="--placeholder-width: 100%; height: 32px"></p>
                     </div>
                     <div class="profile-user-card-interests">
                       <span class="interest-heading">${placeholders?.myInterests || 'MY INTERESTS'}: </span>
                       <span class="profile-interest-contents">
-                        <span class="profile-welcome-shimmer"></span>
+                        <p class="loading-shimmer" style="--placeholder-width: 100%; height: 32px"></p>
                       </span>
                     </div>
                   </div>
@@ -224,36 +240,46 @@ async function decorateProfileWelcomeBlock(block) {
   getProfileInfoData().then(({ interests, industry, adobeFirstName, roles, profilePicture }) => {
     const hasInterests = checkIfInterestsExist(interests);
     const hasIndustry = checkIfIndustryExists(industry);
-    if (hasIndustry) {
-      fetchIndustryOptions().then((industryOptions) => {
+    const profileUserCardIndustryPlaceholder = block.querySelector('.profile-user-card-industry');
+    const fetchIndustryData = new Promise((resolve) => {
+      if (hasIndustry) {
+        fetchIndustryOptions().then((industryData) => {
+          resolve(industryData);
+        });
+      } else {
+        resolve(null);
+      }
+    });
+    fetchIndustryData.then((industryOptions) => {
+      if (hasIndustry && industryOptions) {
         if (Array.isArray(industry)) {
           industryName = getIndustryNameById(industry[0], industryOptions);
         }
         if (typeof industryName === 'string') {
           industryName = getIndustryNameById(industry, industryOptions);
         }
-        const hasIndustryName = industryName.trim() !== '';
+      }
+      const hasIndustryName = industryName.trim() !== '';
 
-        let industryContent = '';
-        if (hasIndustryName) {
-          industryContent = `
-              <span class="industry-heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
-              <span class="${!hasInterests ? 'incomplete-profile' : ''}">
-                ${industryName}
-              </span>`;
-        } else if (!hasInterests || UEAuthorMode) {
-          industryContent = `
-              <span class="industry-heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
-              <span class="${!hasInterests ? 'incomplete-profile' : ''}">
-                ${placeholders?.unknown || 'Unknown'}
-              </span>`;
-        }
-        const profileUserCardIndustryPlaceholder = block.querySelector('.profile-user-card-industry');
-        if (profileUserCardIndustryPlaceholder) {
-          profileUserCardIndustryPlaceholder.innerHTML = industryContent;
-        }
-      });
-    }
+      let industryContent = '';
+      if (hasIndustryName) {
+        industryContent = `
+            <span class="industry-heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
+            <span class="${!hasInterests ? 'incomplete-profile' : ''}">
+              ${industryName}
+            </span>`;
+      } else if (!hasInterests || UEAuthorMode) {
+        industryContent = `
+            <span class="industry-heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
+            <span class="${!hasInterests ? 'incomplete-profile' : ''}">
+              ${placeholders?.unknown || 'Unknown'}
+            </span>`;
+      }
+      if (profileUserCardIndustryPlaceholder) {
+        profileUserCardIndustryPlaceholder.innerHTML = industryContent;
+      }
+    });
+
     const eyebrowTextEl = block.querySelector('.profile-curated-eyebrowtext');
     if (eyebrowTextEl) {
       eyebrowTextEl.innerHTML = eyebrowText ? replaceProfileText(eyebrowText, adobeFirstName) : ``;

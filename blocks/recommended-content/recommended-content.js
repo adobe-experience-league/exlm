@@ -1,4 +1,4 @@
-import { createTag, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders, getConfig, htmlToElement } from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
@@ -57,6 +57,21 @@ const interestDataPromise = fetchInterestData();
 const ALL_MY_OPTIONS_KEY = placeholders?.allMyProducts || 'All my products';
 const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
 
+const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
+  const cardDiv = document.createElement('div');
+  cardDiv.classList.add('card-wrapper');
+  if (renderCardsFlag) {
+    contentDiv.appendChild(cardDiv);
+  }
+
+  const cardPlaceholder = new BuildPlaceholder(1);
+  cardPlaceholder.add(cardDiv);
+  return {
+    shimmer: cardPlaceholder,
+    wrapper: cardDiv,
+  };
+};
+
 /**
  * Decorate function to process and log the mapped data.
  * @param {HTMLElement} block - The block of data to process.
@@ -82,6 +97,23 @@ export default async function decorate(block) {
   const [firstEl, secondEl, targetCriteria, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
   const targetCriteriaId = targetCriteria.textContent.trim();
   const profileDataPromise = defaultProfileClient.getMergedProfile();
+
+  const tempWrapper = htmlToElement(`
+      <div class="recommended-content-temp-wrapper">
+        <div class="recommended-tab-headers">
+          <p class="loading-shimmer" style="--placeholder-width: 100%; height: 48px"></p>
+        </div>
+        <div class="browse-cards-block-content recommended-content-block-section recommended-content-shimmer-wrapper"></div>
+      </div>
+    `);
+  const tempContentSection = tempWrapper.querySelector('.recommended-content-block-section');
+  countNumberAsArray(4).forEach(() => {
+    const { shimmer: shimmerInstance, wrapper } = renderCardPlaceholders(tempWrapper);
+    wrapper.appendChild(shimmerInstance.shimmer);
+    tempContentSection.appendChild(wrapper);
+  });
+
+  block.appendChild(tempWrapper);
 
   checkTargetSupport().then(async (targetSupport) => {
     Promise.all([profileDataPromise, interestDataPromise]).then((promiseResponses) => {
@@ -156,21 +188,6 @@ export default async function decorate(block) {
       const containsAllMyProductsTab = filterOptions.includes(ALL_MY_OPTIONS_KEY);
       const cardIdsToExclude = [];
       const allMyProductsCardModels = [];
-
-      const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
-        const cardDiv = document.createElement('div');
-        cardDiv.classList.add('card-wrapper');
-        if (renderCardsFlag) {
-          contentDiv.appendChild(cardDiv);
-        }
-
-        const cardPlaceholder = new BuildPlaceholder(1);
-        cardPlaceholder.add(cardDiv);
-        return {
-          shimmer: cardPlaceholder,
-          wrapper: cardDiv,
-        };
-      };
 
       const getCardsData = (payload) =>
         new Promise((resolve) => {
@@ -471,6 +488,9 @@ export default async function decorate(block) {
             }
             const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
             if (cardsCount === 0) {
+              Array.from(contentDiv.querySelectorAll('.shimmer-placeholder')).forEach((shimmer) => {
+                shimmer.remove();
+              });
               buildNoResultsContent(contentDiv, true);
               recommendedContentNoResults(contentDiv);
               contentDiv.style.display = 'block';
@@ -502,6 +522,7 @@ export default async function decorate(block) {
       };
 
       const renderCardBlock = (parentDiv) => {
+        block.removeChild(tempWrapper);
         const contentDiv = document.createElement('div');
         contentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
         parentDiv.appendChild(contentDiv);

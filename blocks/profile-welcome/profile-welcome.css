@@ -50,47 +50,15 @@
     width: 75px;
 }
 
-
-.profile-welcome .profile-welcome-shimmer {
-    background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
-    background-size: 200% 100%;
-    animation: placeholder-wave 1.5s infinite;
-    display: block;
-    height: 100%;
-    width: 100%;
-}
-
-.profile-welcome .profile-role-contents .profile-welcome-shimmer, .profile-welcome .profile-interest-contents .profile-welcome-shimmer {
-    height: 64px;
-    margin-bottom: 12px;
-}
-
-.profile-welcome .profile-user-card-info .profile-welcome-shimmer {
-    height: 44px;
-    width: 100px;
-}
-
-.profile-welcome .profile-curated-eyebrowtext .profile-welcome-shimmer {
+.profile-welcome .profile-text-shimmer {
     height: 17px;
+    display: inline-block;
     margin: 0 4px;
-    color: transparent;
-    display: inline;
+    position: relative;
+    top: 4px;
 }
 
-.profile-welcome .profile-curated-card-heading .profile-welcome-shimmer {
-    height: 36px;
-    margin: 0 4px;
-    color: transparent;
-    display: inline;
-}
-
-.profile-welcome .profile-curated-card-description .profile-welcome-shimmer {
-    height: 32px;
-    color: transparent;
-    display: inline;
-}
-
-.profile-welcome .profile-user-card-avatar:has(.profile-welcome-shimmer) {
+.profile-welcome .profile-user-card-avatar:has(.loading-shimmer) {
     background-color: transparent;
 }
 
