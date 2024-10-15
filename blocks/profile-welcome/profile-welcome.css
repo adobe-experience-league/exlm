@@ -51,7 +51,6 @@
 }
 
 .profile-welcome .profile-text-shimmer {
-    height: 17px;
     display: inline-block;
     margin: 0 4px;
     position: relative;
@@ -60,6 +59,14 @@
 
 .profile-welcome .profile-user-card-avatar:has(.loading-shimmer) {
     background-color: transparent;
+}
+
+.profile-welcome .profile-curated-eyebrowtext:has(.loading-shimmer) {
+    margin-bottom: 24px;
+}
+
+.profile-welcome .profile-curated-card-heading:has(.loading-shimmer) {
+    margin-bottom: 32px;
 }
 
 .profile-welcome .profile-user-card .profile-user-card-left{

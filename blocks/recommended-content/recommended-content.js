@@ -184,10 +184,10 @@ export default async function decorate(block) {
 
       filterOptions.unshift(...defaultOptionsKey);
       const [defaultFilterOption = ''] = filterOptions;
-      const renderedCardTitles = [];
       const containsAllMyProductsTab = filterOptions.includes(ALL_MY_OPTIONS_KEY);
       const cardIdsToExclude = [];
       const allMyProductsCardModels = [];
+      const dataConfiguration = {};
 
       const getCardsData = (payload) =>
         new Promise((resolve) => {
@@ -244,6 +244,7 @@ export default async function decorate(block) {
               }
             });
           } else {
+            // Remove contentType and make new call.
             const payloadInfo = {
               ...apiPayload,
               contentType: null,
@@ -262,11 +263,12 @@ export default async function decorate(block) {
       };
 
       const renderCardsBlock = (cardModels, payloadConfig, contentDiv) => {
-        const { renderCards = true } = payloadConfig;
+        const { renderCards = true, lowercaseOptionType } = payloadConfig;
         const promises = cardModels.map(
           (cardData, i) =>
             new Promise((resolve) => {
               const cardDiv = payloadConfig.wrappers[i];
+              const alreadyRenderedCardIds = dataConfiguration[lowercaseOptionType]?.renderedCardIds || [];
               if (cardData?.cardPromise) {
                 cardData.cardPromise.then((cardDataResponse) => {
                   const { cardsToRenderCount } = cardData;
@@ -274,8 +276,8 @@ export default async function decorate(block) {
                   const cardModelsList = [];
                   if (delayedCardData.length === 0) {
                     if (renderCards) {
-                      cardData.shimmers.forEach((shim, index) => {
-                        shim.remove();
+                      cardData.shimmers?.forEach((shimmerEl, index) => {
+                        shimmerEl.remove();
                         cardData.wrappers[index].style.display = 'none';
                       });
                     }
@@ -290,8 +292,8 @@ export default async function decorate(block) {
                         wrapperDiv.innerHTML = '';
                       }
                       const [defaultCardModel] = delayedCardData;
-                      const targetIndex = delayedCardData.findIndex(
-                        (delayData) => !renderedCardTitles.includes(delayData.title),
+                      const targetIndex = delayedCardData.findIndex((delayData) =>
+                        delayData.id ? !alreadyRenderedCardIds.includes(delayData.id) : false,
                       );
                       let cardModel;
                       if (targetIndex !== -1) {
@@ -302,7 +304,9 @@ export default async function decorate(block) {
                         delayedCardData.splice(0, 1);
                       }
                       if (renderCards) {
-                        renderedCardTitles.push(cardModel.title);
+                        if (cardModel.id) {
+                          dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
+                        }
                         buildCard(contentDiv, wrapperDiv, cardModel);
                       }
                       cardModelsList.push(cardModel);
@@ -313,6 +317,9 @@ export default async function decorate(block) {
               } else {
                 if (renderCards) {
                   cardDiv.innerHTML = '';
+                  if (cardData.id) {
+                    dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardData.id);
+                  }
                   buildCard(contentDiv, cardDiv, cardData);
                 }
                 resolve([cardData]);
@@ -336,6 +343,10 @@ export default async function decorate(block) {
         const lowercaseOptionType = optionType?.toLowerCase();
         const saveCardResponse =
           [ALL_MY_OPTIONS_KEY.toLowerCase()].includes(lowercaseOptionType) && cardIdsToExclude.length === 0;
+        if (!dataConfiguration[lowercaseOptionType]) {
+          dataConfiguration[lowercaseOptionType] = {};
+        }
+        dataConfiguration[lowercaseOptionType].renderedCardIds = [];
         contentDiv.dataset.selected = lowercaseOptionType;
         contentDiv.setAttribute('data-analytics-filter-id', lowercaseOptionType);
         const showProfileOptions = defaultOptionsKey.some((key) => lowercaseOptionType === key.toLowerCase());
@@ -393,6 +404,7 @@ export default async function decorate(block) {
             params,
             optionType,
             renderCards,
+            lowercaseOptionType,
           };
           cardPromises.push(
             new Promise((resolve) => {
@@ -450,6 +462,7 @@ export default async function decorate(block) {
               contentType: payloadContentType,
               wrappers,
               renderCards,
+              lowercaseOptionType,
             };
             return new Promise((resolve) => {
               getCardsData(payload).then(async (resp) => {

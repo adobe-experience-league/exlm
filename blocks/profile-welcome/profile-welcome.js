@@ -101,35 +101,24 @@ async function decorateProfileWelcomeBlock(block) {
   const profileWelcomeBlock = document.createRange().createContextualFragment(`
     <div class="profile-curated-card">
       <div class="profile-curated-eyebrowtext">
-        ${
-          eyebrowText
-            ? replaceProfileText(
-                eyebrowText,
-                `<p class="profile-text-shimmer loading-shimmer" style="--placeholder-width: 20%; height: 17px"></p>`,
-              )
-            : ``
-        }
+        <p class="profile-text-shimmer loading-shimmer" style="--placeholder-width: 20%; --placeholder-height: 14px"></p>
       </div>
       <div class="profile-curated-card-heading">
-        ${
-          headingText
-            ? replaceProfileText(
-                headingText,
-                `<p class="profile-text-shimmer loading-shimmer" style="--placeholder-width: 30%; height: 36px"></p>`,
-              )
-            : ``
-        }
+          ${[90, 70]
+            .map(
+              (i) =>
+                `<p class="profile-text-shimmer loading-shimmer" style="--placeholder-width: ${i}%; --placeholder-height: 36px"></p>`,
+            )
+            .join('')}
       </div>
       <div class="profile-curated-card-description">
-      ${
-        descriptionText
-          ? replaceProfileText(
-              descriptionText,
-              `<p class="profile-text-shimmer loading-shimmer" style="--placeholder-width: 30%; height: 32px"></p>`,
-            )
-          : ``
-      }
-       
+        ${[100, 90, 95, 30]
+          .map(
+            (i) =>
+              `<p class="profile-text-shimmer loading-shimmer" style="--placeholder-width: ${i}%; --placeholder-height: 20px"></p>`,
+          )
+          .join('')}
+      
       </div>
     </div>
   `);
@@ -202,31 +191,35 @@ async function decorateProfileWelcomeBlock(block) {
                 <div class="profile-user-card-left">
                   <div class="profile-user-card-avatar-company-info">
                         <div class="profile-user-card-avatar">
-                        <p class="loading-shimmer" style="--placeholder-width: 100%; height: 75px"></p>
+                        <p class="loading-shimmer" style="--placeholder-width: 100%; --placeholder-height: 75px"></p>
                         </div>
                         <div class="profile-user-card-info">
-                            <p class="loading-shimmer" style="--placeholder-width: 100%; height: 44px"></p>
+                            <p class="loading-shimmer" style="--placeholder-width: 100%; --placeholder-height: 44px"></p>
                         </div> 
                   </div>
                   <div class="profile-card-wrap-section">
-                      <p class="loading-shimmer" style="--placeholder-width: 100%; height: 64px"></p>  
+                      <p class="loading-shimmer" style="--placeholder-width: 100%; --placeholder-height: 64px"></p>  
                   </div>
                 </div>
                 <div class="profile-user-card-right">
                   <div class="profile-user-card-details">
                     <div class="profile-user-card-role">
-                    <span class="role-heading">${placeholders?.myRole || 'MY ROLE'}: </span>
+                    <span class="role-heading">
+                      <p class="loading-shimmer" style="--placeholder-width: 25%; --placeholder-height: 12px"></p>
+                    </span>
                     <span class="profile-role-contents">
-                      <p class="loading-shimmer" style="--placeholder-width: 100%; height: 32px"></p>
+                      <p class="loading-shimmer" style="--placeholder-width: 100%; --placeholder-height: 32px"></p>
                     </span>
                     </div>
                     <div class="profile-user-card-industry">
-                      <p class="loading-shimmer" style="--placeholder-width: 100%; height: 32px"></p>
+                      <p class="loading-shimmer" style="--placeholder-width: 100%; --placeholder-height: 32px"></p>
                     </div>
                     <div class="profile-user-card-interests">
-                      <span class="interest-heading">${placeholders?.myInterests || 'MY INTERESTS'}: </span>
+                      <span class="interest-heading">
+                        <p class="loading-shimmer" style="--placeholder-width: 25%; --placeholder-height: 12px"></p>
+                      </span>
                       <span class="profile-interest-contents">
-                        <p class="loading-shimmer" style="--placeholder-width: 100%; height: 32px"></p>
+                        <p class="loading-shimmer" style="--placeholder-width: 100%; --placeholder-height: 32px"></p>
                       </span>
                     </div>
                   </div>
@@ -300,10 +293,18 @@ async function decorateProfileWelcomeBlock(block) {
           : '<span class="icon icon-profile"></span>'
       }`;
     }
+    const roleHeadingEl = block.querySelector('.role-heading');
+    if (roleHeadingEl) {
+      roleHeadingEl.innerHTML = `${placeholders?.myRole || 'MY ROLE'}: `;
+    }
     const roleContentWrapperEl = block.querySelector('.profile-role-contents');
     if (roleContentWrapperEl) {
       roleContentWrapperEl.innerHTML = `${roles?.map((role) => roleMappings[role] || role)?.join(' | ')}`;
       roleContentWrapperEl.classList.add(!hasInterests ? 'incomplete-profile' : 'content');
+    }
+    const interestHeadingEl = block.querySelector('.interest-heading');
+    if (interestHeadingEl) {
+      interestHeadingEl.innerHTML = `${placeholders?.myInterests || 'MY INTERESTS'}: `;
     }
     const interestContentWrapperEl = block.querySelector('.profile-interest-contents');
     if (interestContentWrapperEl) {
