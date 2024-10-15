@@ -491,6 +491,7 @@ export default async function decorate(block) {
               Array.from(contentDiv.querySelectorAll('.shimmer-placeholder')).forEach((shimmer) => {
                 shimmer.remove();
               });
+              buildNoResultsContent(contentDiv, false);
               buildNoResultsContent(contentDiv, true);
               recommendedContentNoResults(contentDiv);
               contentDiv.style.display = 'block';
