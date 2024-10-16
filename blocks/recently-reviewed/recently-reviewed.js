@@ -67,10 +67,15 @@ export default async function decorate(block) {
     }
 
     if (targetSupport) {
-      block.style.display = 'block';
       handleTargetEvent(targetCriteriaIds.recentlyViewed).then((resp) => {
+        if (resp) {
+          block.style.display = 'block';
+        } else {
+          block.style.display = 'none';
+          return;
+        }
         updateCopyFromTarget(resp, headingElement, descriptionElement);
-        if (resp.data.length) {
+        if (resp?.data.length) {
           resp.data.forEach((item) => {
             const cardData = targetDataAdapter(item, placeholders);
             const cardDiv = document.createElement('div');
