@@ -423,7 +423,10 @@ export default async function decorate(block) {
             new Promise((resolve) => {
               handleTargetEvent(targetCriteriaId)
                 .then(async (resp) => {
-                  if (resp.data) {
+                  if (!resp) {
+                    block.style.display = 'none';
+                  }
+                  if (resp?.data) {
                     updateCopyFromTarget(resp, headingElement, descriptionElement, firstEl, secondEl);
                     block.style.display = 'block';
                     setTargetDataAsBlockAttribute(resp, block);
@@ -631,17 +634,20 @@ export default async function decorate(block) {
     */
       async function findEmptyFilters() {
         const removeFilters = [];
-        const { data } = await handleTargetEvent(targetCriteriaId);
-        profileInterests.forEach((interest) => {
-          let found = false;
-          for (let i = 0; i < data.length; i += 1) {
-            if (data[i].product.split(',').includes(interest)) {
-              found = true;
-              break;
+        const resp = await handleTargetEvent(targetCriteriaId);
+        if (resp?.data) {
+          const { data } = resp;
+          profileInterests.forEach((interest) => {
+            let found = false;
+            for (let i = 0; i < data?.length ? data.length : 0; i += 1) {
+              if (data[i].product.split(',').includes(interest)) {
+                found = true;
+                break;
+              }
             }
-          }
-          if (!found) removeFilters.push(interest);
-        });
+            if (!found) removeFilters.push(interest);
+          });
+        }
         return removeFilters;
       }
 
