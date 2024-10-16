@@ -45,6 +45,30 @@
     box-sizing: border-box;
 }
 
+.profile-welcome .profile-user-card-avatar {
+    height: 75px;
+    width: 75px;
+}
+
+.profile-welcome .profile-text-shimmer {
+    display: inline-block;
+    margin: 0 4px;
+    position: relative;
+    top: 4px;
+}
+
+.profile-welcome .profile-user-card-avatar:has(.loading-shimmer) {
+    background-color: transparent;
+}
+
+.profile-welcome .profile-curated-eyebrowtext:has(.loading-shimmer) {
+    margin-bottom: 24px;
+}
+
+.profile-welcome .profile-curated-card-heading:has(.loading-shimmer) {
+    margin-bottom: 32px;
+}
+
 .profile-welcome .profile-user-card .profile-user-card-left{
     display: flex;
     flex-direction: column;

@@ -19,6 +19,7 @@
   --shimmer-image-slide-mid: #ddd;
   --shimmer-image-slide-end: #f4f4f4;
   --shimmer-content-background: #f7f7f7;
+  --placeholder-height: auto;
 
   /* fonts */
   --body-font-family: 'Adobe Clean', adobe-clean, 'Source Sans Pro', -apple-system, system-ui, 'Segoe UI', roboto,
@@ -727,7 +728,6 @@ picture {
   img {
     width: 18px;
     height: 18px;
-    fill: white;
   }
 }
 

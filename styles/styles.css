@@ -146,6 +146,7 @@ strong {
   --shimmer-image-slide-mid: #ddd;
   --shimmer-image-slide-end: #f4f4f4;
   --shimmer-content-background: #f7f7f7;
+  --placeholder-height: auto;
   /* fonts */
   --body-font-family: "Adobe Clean", adobe-clean, "Source Sans Pro", -apple-system, system-ui, "Segoe UI", roboto,
     ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif;
@@ -835,7 +836,6 @@ picture[align=right] {
 .exl-toast .exl-toast-icon img {
   width: 18px;
   height: 18px;
-  fill: white;
 }
 
 .exl-toast.exl-toast-success {
@@ -1055,4 +1055,5 @@ body[class^=browse-] .browse-filters-full-container .browse-filters-pagination, 
   min-width: var(--placeholder-width);
   display: inline-block;
   min-height: 1em;
+  height: var(--placeholder-height);
 }
