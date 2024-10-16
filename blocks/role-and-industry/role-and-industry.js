@@ -18,7 +18,8 @@ try {
 }
 
 const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
-const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
+const PROFILE_NOT_UPDATED =
+  placeholders?.profileNotUpdated || 'An error occurred during profile update. Please try again at a later time.';
 const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
 const FORM_ERROR = placeholders?.formFieldGroupError || 'Please select at least one option.';
 
@@ -137,7 +138,7 @@ async function decorateContent(block) {
           sendNotice(PROFILE_UPDATED);
           profileEventEmitter.emit('profileDataUpdated');
         })
-        .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+        .catch(() => sendNotice(PROFILE_NOT_UPDATED, 'error'));
     });
 
     const profileData = await defaultProfileClient.getMergedProfile();
@@ -178,7 +179,7 @@ async function decorateContent(block) {
           sendNotice(PROFILE_UPDATED);
           profileEventEmitter.emit('profileDataUpdated');
         })
-        .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+        .catch(() => sendNotice(PROFILE_NOT_UPDATED, 'error'));
     };
 
     block.querySelectorAll('.role-cards-item').forEach((card) => {

@@ -11,7 +11,8 @@ try {
 }
 
 const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
-const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
+const PROFILE_NOT_UPDATED =
+  placeholders?.profileNotUpdated || 'An error occurred during profile update. Please try again at a later time.';
 
 export default async function decorate(block) {
   const [collectDataLabel, collectDataDesc, emailLabel, emailDesc, legal] = [...block.children].map(
@@ -96,7 +97,7 @@ export default async function decorate(block) {
         defaultProfileClient
           .updateProfile(preferenceName, isChecked)
           .then(() => sendNotice(PROFILE_UPDATED))
-          .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+          .catch(() => sendNotice(PROFILE_NOT_UPDATED, 'error'));
       }
     });
   });
