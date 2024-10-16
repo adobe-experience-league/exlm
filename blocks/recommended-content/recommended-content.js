@@ -116,7 +116,7 @@ export default async function decorate(block) {
   block.appendChild(tempWrapper);
 
   checkTargetSupport().then(async (targetSupport) => {
-    Promise.all([profileDataPromise, interestDataPromise]).then((promiseResponses) => {
+    Promise.all([profileDataPromise, interestDataPromise]).then(async (promiseResponses) => {
       const [profileData, interestsDataArray] = promiseResponses;
       const {
         role: profileRoles = [],
@@ -163,7 +163,7 @@ export default async function decorate(block) {
       const { products, versions, features } = extractCapability(encodedSolutionsText);
 
       const sortedProfileInterests = profileInterests.sort();
-      const filterOptions = [...new Set(sortedProfileInterests)];
+      let filterOptions = [...new Set(sortedProfileInterests)];
       const experienceLevels = sortedProfileInterests.map((interestName) => {
         const interest = (interestsDataArray || []).find((int) => int.Name === interestName);
         let expLevel = 'Beginner';
@@ -212,13 +212,26 @@ export default async function decorate(block) {
           shimmers.forEach((shimmer) => {
             shimmer.remove();
           });
-          if (params.context.interests.length && optionType.toLowerCase() !== defaultOptionsKey[0].toLowerCase()) {
-            if (optionType.toLowerCase() === defaultOptionsKey[1].toLowerCase()) {
-              data = data.filter((pageData) =>
-                params.context.interests.some((ele) => pageData.product.toLowerCase().includes(ele.toLowerCase())),
-              );
+          if (optionType.toLowerCase() !== defaultOptionsKey[0].toLowerCase()) {
+            if (defaultOptionsKey.length > 1 && optionType.toLowerCase() === defaultOptionsKey[1].toLowerCase()) {
+              if (cardResponse?.allMyProducts) {
+                data = cardResponse.allMyProducts;
+              } else {
+                data = data.filter((pageData) =>
+                  params.context.interests.some((ele) => pageData.product.toLowerCase().includes(ele.toLowerCase())),
+                );
+                cardResponse.allMyProducts = Array.from(data).sort(() => Math.random() - 0.5);
+              }
             } else {
               data = data.filter((pageData) => pageData.product.toLowerCase().includes(optionType.toLowerCase()));
+            }
+          }
+          if (optionType.toLowerCase() === defaultOptionsKey[0].toLowerCase()) {
+            if (cardResponse?.allAdobeProducts) {
+              data = cardResponse.allAdobeProducts;
+            } else {
+              cardResponse.allAdobeProducts = Array.from(data).sort(() => Math.random() - 0.5);
+              data = cardResponse.allAdobeProducts;
             }
           }
           const cardData = [];
@@ -616,7 +629,26 @@ export default async function decorate(block) {
       setNavigationElementStatus();
     };
     */
+      async function findEmptyFilters() {
+        const removeFilters = [];
+        const { data } = await handleTargetEvent(targetCriteriaId);
+        profileInterests.forEach((interest) => {
+          let found = false;
+          for (let i = 0; i < data.length; i += 1) {
+            if (data[i].product.split(',').includes(interest)) {
+              found = true;
+              break;
+            }
+          }
+          if (!found) removeFilters.push(interest);
+        });
+        return removeFilters;
+      }
 
+      if (targetSupport) {
+        const emptyFilters = await findEmptyFilters();
+        filterOptions = filterOptions.filter((ele) => !emptyFilters.includes(ele));
+      }
       /* Responsive List View */
       const listItems = filterOptions.map((item) => {
         const value = item ? convertToTitleCase(item) : '';
