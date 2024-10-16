@@ -160,6 +160,12 @@
     display: none;
 }
 
+.recommended-content.block .recommended-tab-headers {
+    height: 48px;
+    margin: 12px 0;
+    max-width: 256px;
+}
+
 
 .recommended-content.block .custom-filter-dropdown button {
     height: 40px;
