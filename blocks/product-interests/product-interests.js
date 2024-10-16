@@ -146,7 +146,11 @@ function decorateInterests(block) {
           });
         })
         .catch(() => {
-          sendNotice(placeholders?.profileNotUpdated || 'Error updating profile');
+          sendNotice(
+            placeholders?.profileNotUpdated ||
+              'An error occurred during profile update. Please try again at a later time.',
+            'error',
+          );
         });
     }
   });

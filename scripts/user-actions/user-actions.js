@@ -102,6 +102,9 @@ const UserActions = (config) => {
               removeBookmarkToastText:
                 placeholders?.userActionRemoveBookmarkToastText ||
                 'Success! This is no longer bookmarked to your profile.',
+              profileNotUpdated:
+                placeholders?.profileNotUpdated ||
+                'An error occurred during profile update. Please try again at a later time.',
             },
           }),
       });
