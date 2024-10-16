@@ -50,7 +50,7 @@ export async function bookmarkHandler(config) {
       .then(() => {
         element.dataset.bookmarked = true;
         bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
-        sendNotice(tooltips?.bookmarkToastText, 'success');
+        sendNotice(tooltips?.bookmarkToastText);
         assetInteractionModel(id, 'Bookmarked');
       })
       .catch(() => sendNotice(tooltips?.profileNotUpdated, 'error'));

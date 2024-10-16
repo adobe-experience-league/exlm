@@ -140,13 +140,17 @@ function decorateInterests(block) {
           defaultProfileClient.getMergedProfile().then((profile) => {
             if (JSON.stringify(profileData.interests) !== JSON.stringify(profile.interests)) {
               profileData = profile;
-              sendNotice(placeholders?.profileUpdated || 'Profile updated successfully', 'success');
+              sendNotice(placeholders?.profileUpdated || 'Profile updated successfully');
               profileEventEmitter.emit('profileDataUpdated');
             }
           });
         })
         .catch(() => {
-          sendNotice(placeholders?.profileNotUpdated || 'An error occurred during profile update. Please try again at a later time.', 'error');
+          sendNotice(
+            placeholders?.profileNotUpdated ||
+              'An error occurred during profile update. Please try again at a later time.',
+            'error',
+          );
         });
     }
   });

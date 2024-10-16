@@ -18,7 +18,8 @@ try {
 }
 
 const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
-const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'An error occurred during profile update. Please try again at a later time.';
+const PROFILE_NOT_UPDATED =
+  placeholders?.profileNotUpdated || 'An error occurred during profile update. Please try again at a later time.';
 const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
 const FORM_ERROR = placeholders?.formFieldGroupError || 'Please select at least one option.';
 
@@ -134,7 +135,7 @@ async function decorateContent(block) {
       defaultProfileClient
         .updateProfile('industryInterests', industrySelection, true)
         .then(() => {
-          sendNotice(PROFILE_UPDATED, 'success');
+          sendNotice(PROFILE_UPDATED);
           profileEventEmitter.emit('profileDataUpdated');
         })
         .catch(() => sendNotice(PROFILE_NOT_UPDATED, 'error'));
@@ -175,7 +176,7 @@ async function decorateContent(block) {
       defaultProfileClient
         .updateProfile('role', selectedRoles, true)
         .then(() => {
-          sendNotice(PROFILE_UPDATED, 'success');
+          sendNotice(PROFILE_UPDATED);
           profileEventEmitter.emit('profileDataUpdated');
         })
         .catch(() => sendNotice(PROFILE_NOT_UPDATED, 'error'));
