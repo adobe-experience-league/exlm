@@ -6,7 +6,7 @@ import getEmitter from '../../scripts/events.js';
 const signupDialogEventEmitter = getEmitter('signupDialog');
 
 // Will be refactoring this function to use a loadFragment() function from scripts.js
-const fetchPageContent = async (url, loader, block) => {
+const fetchPageContent = async (url, content, block) => {
   try {
     const response = await fetch(`${url}.plain.html`);
     if (response.ok) {
@@ -18,13 +18,13 @@ const fetchPageContent = async (url, loader, block) => {
       decorateExternalLinks(container);
       await loadBlocks(container);
       if (window.hlx.aemRoot) {
-        loader.insertAdjacentElement('beforebegin', container);
+        content.insertAdjacentElement('beforebegin', container);
         moveInstrumentation(block, container);
         container.classList.add('section', 'personalized-section');
       } else {
         Array.from(container.children).forEach((section) => {
           section.classList.add('profile-custom-container');
-          loader.insertAdjacentElement('beforebegin', section);
+          content.insertAdjacentElement('beforebegin', section);
         });
       }
     }
@@ -63,7 +63,7 @@ const decoratePersonalizedContent = async (block) => {
 
 export default async function decorate(block) {
   const blockInnerHTML = block.innerHTML;
-  decoratePersonalizedContent(block);
+  await decoratePersonalizedContent(block);
 
   signupDialogEventEmitter.on('signupDialogClose', async () => {
     block.innerHTML = blockInnerHTML;
@@ -74,6 +74,6 @@ export default async function decorate(block) {
         section.remove();
       });
     }
-    decoratePersonalizedContent(block);
+    await decoratePersonalizedContent(block);
   });
 }
