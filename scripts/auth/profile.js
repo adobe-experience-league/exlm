@@ -145,9 +145,12 @@ class ProfileClient {
         delete profile[i];
       }
     });
-
-    // eslint-disable-next-line
-    if (override.test(key) || replace === true) {
+    const replaceMultipleItems = Array.isArray(key) && Array.isArray(val) && replace === true;
+    if (replaceMultipleItems) {
+      key.forEach((keyId, i) => {
+        profile[keyId] = val[i];
+      });
+    } else if (override.test(key) || replace === true) {
       profile[key] = val;
     } else if (attriubutes.types[key] === 'array') {
       // eslint-disable-next-line
@@ -167,14 +170,21 @@ class ProfileClient {
     } else {
       profile[key] = val;
     }
-
+    const payload = [];
+    if (replaceMultipleItems) {
+      key.forEach((keyId) => {
+        payload.push({ op: 'replace', path: `/${keyId}`, value: profile[keyId] });
+      });
+    } else {
+      payload.push({ op: 'replace', path: `/${key}`, value: profile[key] });
+    }
     await this.fetchProfile({
       method: 'PATCH',
       headers: {
         'content-type': 'application/json-patch+json',
         'x-csrf-token': await csrf(JWTTokenUrl),
       },
-      body: JSON.stringify([{ op: 'replace', path: `/${key}`, value: profile[key] }]),
+      body: JSON.stringify(payload),
     });
 
     // uppdate the profile in session storage after the changes

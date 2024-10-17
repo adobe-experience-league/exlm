@@ -45,10 +45,28 @@ let [interests, profileData] = await Promise.all([
 
 async function updateInterests(block) {
   const newInterests = [];
+  const newInterestIds = [];
+  const profileData = await defaultProfileClient.getMergedProfile();
+  const { solutionLevels = [] } = profileData;
   block.querySelectorAll('li input:checked').forEach((input) => {
     newInterests.push(input.title);
+    newInterestIds.push(input.id.replace('interest__', ''));
   });
-  await defaultProfileClient.updateProfile('interests', newInterests, true);
+  const newSoutionsToAdd = solutionLevels.filter((solutionId) => {
+    const [id] = solutionId.split(':');
+    return newInterestIds.includes(id);
+  });
+
+  const missingSolutionIds = newInterestIds.filter((interestId) => {
+    return !newSoutionsToAdd.find((solutionId) => {
+      const [id] = solutionId.split(':');
+      return interestId === id;
+    });
+  });
+  missingSolutionIds.forEach((id) => {
+    newSoutionsToAdd.push(`${id}:Beginner`);
+  });
+  await defaultProfileClient.updateProfile(['interests', 'solutionLevels'], [newInterests, newSoutionsToAdd], true);
 }
 
 function decorateInterests(block) {
