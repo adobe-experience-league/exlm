@@ -303,18 +303,6 @@ button.toc-dropdown-button {
     color: var(--spectrum-alias-text-color-hover);
 } 
 
-
-/* select all elemetns after the fifth li in a ul */
-.toc ul > li:nth-child(n+6) {
-    display: none;
-}
-
-.toc ul[aria-expanded="true"] > li:nth-child(n+6) {
-    display: list-item;
-}
-
-
-
 .toc ul li.toc-view-more-less {
     display: list-item;
 }
