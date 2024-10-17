@@ -22,7 +22,21 @@
   }
 
   .language-selector-button {
-    padding: 0;
+    border-radius: 0;
+    margin: 0;
+    border: 0;
+    text-align: left;
+    background: none;
+    background-color: transparent !important;
+    font-weight: initial;
+    padding: 0 15px;
+    position: relative;
+    top: 2px;
+  }
+
+  .language-selector .icon {
+    height: 18px;
+    width: 18px;
   }
 }
 
@@ -261,12 +275,12 @@
 .footer-lang-social .language-selector .language-selector-button {
   cursor: pointer;
   display: flex;
-  flex-direction: row-reverse;
   align-items: center;
   gap: 4px;
 
   @include breakpoint(tablet) {
     min-width: 132px;
+    min-height: 48px;
   }
 
   a {
@@ -356,7 +370,7 @@
       display: none;
     }
 
-    .icon svg {
+    .icon img {
       cursor: pointer;
     }
   }
@@ -412,10 +426,6 @@
     .icon {
       height: 20px;
       width: 20px;
-
-      svg {
-        color: var(--non-spectrum-trolley-gray);
-      }
     }
   }
 
