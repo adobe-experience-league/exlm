@@ -1,10 +1,4 @@
-import {
-  createTag,
-  fetchLanguagePlaceholders,
-  getConfig,
-  htmlToElement,
-  sectionContainsOnlyOneBlock,
-} from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders, getConfig, htmlToElement } from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
@@ -82,7 +76,6 @@ const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
-  const blockSection = block.parentElement.parentElement;
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
@@ -143,7 +136,7 @@ export default async function decorate(block) {
       }
 
       if (!(targetSupport && targetCriteriaId)) {
-        block.parentElement.style.display = 'block';
+        block.style.display = 'block';
       }
 
       const sortByContent = thirdEl?.innerText?.trim();
@@ -428,17 +421,11 @@ export default async function decorate(block) {
               handleTargetEvent(targetCriteriaId)
                 .then(async (resp) => {
                   if (!resp) {
-                    block.parentElement.style.display = 'none';
-                    if (sectionContainsOnlyOneBlock(blockSection)) {
-                      blockSection.style.display = 'none';
-                    }
+                    block.remove();
                   }
                   if (resp?.data) {
                     updateCopyFromTarget(resp, headingElement, descriptionElement, firstEl, secondEl);
-                    block.parentElement.style.display = 'block';
-                    if (sectionContainsOnlyOneBlock(blockSection)) {
-                      blockSection.style.display = 'block';
-                    }
+                    block.style.display = 'block';
                     setTargetDataAsBlockAttribute(resp, block);
                     block
                       .querySelector('.recommended-content-block-section')

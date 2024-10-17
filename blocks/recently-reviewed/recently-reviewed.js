@@ -1,9 +1,4 @@
-import {
-  getConfig,
-  fetchLanguagePlaceholders,
-  htmlToElement,
-  sectionContainsOnlyOneBlock,
-} from '../../scripts/scripts.js';
+import { getConfig, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 import {
   handleTargetEvent,
   checkTargetSupport,
@@ -44,12 +39,8 @@ function renderNavigationArrows(titleContainer) {
 }
 
 export default async function decorate(block) {
-  const blockSection = block.parentElement.parentElement;
   checkTargetSupport().then((targetSupport) => {
-    block.parentElement.style.display = 'none';
-    if (sectionContainsOnlyOneBlock(blockSection)) {
-      blockSection.style.display = 'none';
-    }
+    block.style.display = 'none';
     const [headingElement, descriptionElement] = [...block.children].map((row) => row.firstElementChild);
     headingElement.classList.add('recently-reviewed-header');
     descriptionElement.classList.add('recently-reviewed-description');
@@ -78,15 +69,9 @@ export default async function decorate(block) {
     if (targetSupport) {
       handleTargetEvent(targetCriteriaIds.recentlyViewed).then((resp) => {
         if (resp) {
-          block.parentElement.style.display = 'block';
-          if (sectionContainsOnlyOneBlock(blockSection)) {
-            blockSection.style.display = 'block';
-          }
+          block.style.display = 'block';
         } else {
-          block.parentElement.style.display = 'none';
-          if (sectionContainsOnlyOneBlock(blockSection)) {
-            blockSection.style.display = 'none';
-          }
+          block.remove();
           return;
         }
         updateCopyFromTarget(resp, headingElement, descriptionElement);
