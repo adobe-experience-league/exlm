@@ -54,7 +54,6 @@ const prepareExclusionQuery = (cardIdsToExclude) => {
 
 const interestDataPromise = fetchInterestData();
 
-const ALL_MY_OPTIONS_KEY = placeholders?.allMyProducts || 'All my products';
 const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
 
 const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
@@ -135,7 +134,6 @@ export default async function decorate(block) {
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       } else {
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
-        defaultOptionsKey.push(ALL_MY_OPTIONS_KEY);
       }
 
       if (!(targetSupport && targetCriteriaId)) {
@@ -184,7 +182,7 @@ export default async function decorate(block) {
 
       filterOptions.unshift(...defaultOptionsKey);
       const [defaultFilterOption = ''] = filterOptions;
-      const containsAllMyProductsTab = filterOptions.includes(ALL_MY_OPTIONS_KEY);
+      const containsAllAdobeProductsTab = filterOptions.includes(ALL_ADOBE_OPTIONS_KEY);
       const cardIdsToExclude = [];
       const allMyProductsCardModels = [];
       const dataConfiguration = {};
@@ -355,7 +353,7 @@ export default async function decorate(block) {
         const contentDiv = block.querySelector('.recommended-content-block-section');
         const lowercaseOptionType = optionType?.toLowerCase();
         const saveCardResponse =
-          [ALL_MY_OPTIONS_KEY.toLowerCase()].includes(lowercaseOptionType) && cardIdsToExclude.length === 0;
+          [ALL_ADOBE_OPTIONS_KEY.toLowerCase()].includes(lowercaseOptionType) && cardIdsToExclude.length === 0;
         if (!dataConfiguration[lowercaseOptionType]) {
           dataConfiguration[lowercaseOptionType] = {};
         }
@@ -675,9 +673,9 @@ export default async function decorate(block) {
           /* Reused the existing method */
           renderCardBlock(block);
           fetchDataAndRenderBlock(defaultOption);
-          if (containsAllMyProductsTab && defaultOption !== ALL_MY_OPTIONS_KEY) {
+          if (containsAllAdobeProductsTab && defaultOption !== ALL_ADOBE_OPTIONS_KEY) {
             setTimeout(() => {
-              fetchDataAndRenderBlock(ALL_MY_OPTIONS_KEY, false); // pre-fetch all my tab cards to avoid duplicates in indvidual tab. Timeout helps with 429 status code of v2 calls.
+              fetchDataAndRenderBlock(ALL_ADOBE_OPTIONS_KEY, false); // pre-fetch all my tab cards to avoid duplicates in indvidual tab. Timeout helps with 429 status code of v2 calls.
             }, 500);
           }
         },
