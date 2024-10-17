@@ -82,7 +82,6 @@ export default async function decorate(block) {
 
   // Clearing the block's content and adding CSS class
   block.innerHTML = '';
-  // block.style.display = 'none';
   headingElement.classList.add('recommended-content-header');
   descriptionElement.classList.add('recommended-content-description');
   filterSectionElement.classList.add('recommended-content-filter-heading');
@@ -422,7 +421,7 @@ export default async function decorate(block) {
               handleTargetEvent(targetCriteriaId)
                 .then(async (resp) => {
                   if (!resp) {
-                    block.style.display = 'none';
+                    block.remove();
                   }
                   if (resp?.data) {
                     updateCopyFromTarget(resp, headingElement, descriptionElement, firstEl, secondEl);

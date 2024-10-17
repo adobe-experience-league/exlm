@@ -71,7 +71,7 @@ export default async function decorate(block) {
         if (resp) {
           block.style.display = 'block';
         } else {
-          block.style.display = 'none';
+          block.remove();
           return;
         }
         updateCopyFromTarget(resp, headingElement, descriptionElement);

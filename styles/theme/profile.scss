@@ -94,7 +94,14 @@ body.profile-home-page .section:not(.sign-up-flow-section) {
   border-bottom: 1px solid var(--spectrum-gray-300);
 }
 
-body.profile-home-page .section:nth-last-of-type(2),
+body.profile-home-page .section:nth-last-of-type(2) {
+  border: none;
+}
+
+body.profile-home-page .section:has(> div:empty) {
+  display: none;
+}
+
 body.profile-home-page .section:not(.sign-up-flow-section):last-child {
   border: none;
 }
