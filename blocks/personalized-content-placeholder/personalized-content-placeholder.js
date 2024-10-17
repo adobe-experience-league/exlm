@@ -18,9 +18,8 @@ const fetchPageContent = async (url, content, block) => {
       decorateExternalLinks(container);
       await loadBlocks(container);
       if (window.hlx.aemRoot) {
-        content.insertAdjacentElement('beforebegin', container);
+        content.append(container);
         moveInstrumentation(block, container);
-        container.classList.add('section', 'personalized-section');
       } else {
         Array.from(container.children).forEach((section) => {
           section.classList.add('profile-custom-container');
@@ -64,7 +63,9 @@ export default async function decorate(block) {
   const blockInnerHTML = block.innerHTML;
   await decoratePersonalizedContent(block);
   const currentSection = block.parentElement.parentElement;
-  currentSection.classList.add('personalized-content-hidden');
+  currentSection
+    .querySelector('.personalized-content-placeholder-wrapper')
+    ?.classList.add('personalized-content-hidden');
 
   signupDialogEventEmitter.on('signupDialogClose', async () => {
     block.innerHTML = blockInnerHTML;
@@ -76,6 +77,8 @@ export default async function decorate(block) {
       });
     }
     await decoratePersonalizedContent(block);
-    currentSection.classList.add('personalized-content-hidden');
+    currentSection
+      .querySelector('.personalized-content-placeholder-wrapper')
+      ?.classList.add('personalized-content-hidden');
   });
 }
