@@ -141,7 +141,7 @@ function updateTocContent(tocHtml, tocContent) {
         anchor.setAttribute('aria-expanded', !isExpanded);
         siblingUl.setAttribute('aria-hidden', isExpanded ? 'true' : 'false');
 
-        ensureElementInView(tocContent, anchor);
+        ensureElementInView(tocTree, anchor);
       });
     } else {
       // Rewrite docs path to fix language path
