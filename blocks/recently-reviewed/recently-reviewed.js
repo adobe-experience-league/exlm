@@ -1,4 +1,9 @@
-import { getConfig, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import {
+  getConfig,
+  fetchLanguagePlaceholders,
+  htmlToElement,
+  sectionContainsOnlyOneBlock,
+} from '../../scripts/scripts.js';
 import {
   handleTargetEvent,
   checkTargetSupport,
@@ -39,8 +44,12 @@ function renderNavigationArrows(titleContainer) {
 }
 
 export default async function decorate(block) {
+  const blockSection = block.parentElement.parentElement;
   checkTargetSupport().then((targetSupport) => {
-    block.style.display = 'none';
+    block.parentElement.style.display = 'none';
+    if (sectionContainsOnlyOneBlock(blockSection)) {
+      blockSection.style.display = 'none';
+    }
     const [headingElement, descriptionElement] = [...block.children].map((row) => row.firstElementChild);
     headingElement.classList.add('recently-reviewed-header');
     descriptionElement.classList.add('recently-reviewed-description');
@@ -69,9 +78,15 @@ export default async function decorate(block) {
     if (targetSupport) {
       handleTargetEvent(targetCriteriaIds.recentlyViewed).then((resp) => {
         if (resp) {
-          block.style.display = 'block';
+          block.parentElement.style.display = 'block';
+          if (sectionContainsOnlyOneBlock(blockSection)) {
+            blockSection.style.display = 'block';
+          }
         } else {
-          block.style.display = 'none';
+          block.parentElement.style.display = 'none';
+          if (sectionContainsOnlyOneBlock(blockSection)) {
+            blockSection.style.display = 'none';
+          }
           return;
         }
         updateCopyFromTarget(resp, headingElement, descriptionElement);

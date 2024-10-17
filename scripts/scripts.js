@@ -1408,6 +1408,15 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
   decodeAemPageMetaTags();
 }
 
+// Checks if a section contains only one block with a class ending in '-container'.
+export function sectionContainsOnlyOneBlock(element) {
+  const targetElement = typeof element === 'string' ? document.querySelector(element) : element;
+  const classNames = targetElement.className;
+  const classArray = classNames.split(' ');
+  const containerClasses = classArray.filter((className) => className.endsWith('-container'));
+  return containerClasses.length === 1;
+}
+
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 (async () => {
   if (!window.hlx.DO_NOT_LOAD_PAGE) {
