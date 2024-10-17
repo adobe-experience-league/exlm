@@ -12,7 +12,9 @@ const { cookieConsentName } = getConfig();
  */
 export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
   if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
+  else heading?.remove();
   if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
+  else subheading?.remove();
   if (
     taglineCta &&
     data?.meta['tagline-cta-text'] &&
@@ -25,9 +27,19 @@ export function updateCopyFromTarget(data, heading, subheading, taglineCta, tagl
         ${data.meta['tagline-cta-text']}
       </a>
     `;
+  } else {
+    taglineCta?.remove();
   }
   if (taglineText && data?.meta['tagline-text'] && data?.meta['tagline-text'].trim() !== '') {
     taglineText.innerHTML = data.meta['tagline-text'];
+  } else {
+    taglineText?.remove();
+  }
+  if (!document.contains(taglineCta) && !document.contains(taglineText)) {
+    const taglineParentBlock = document.querySelector('.recommended-content-result-text');
+    if (taglineParentBlock) {
+      taglineParentBlock?.remove();
+    }
   }
 }
 
