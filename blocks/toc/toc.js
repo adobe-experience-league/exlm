@@ -161,7 +161,7 @@ function activateCurrentPage(tocContent) {
 
 /**
  * loads and decorates the toc
- * @param {Element} block The toc block element
+ * @param {Element} block The toc block element.
  */
 export default async function decorate(block) {
   if (matchesAnyTheme(/kb-article/)) return;
