@@ -130,7 +130,7 @@ body.profile:not(.profile-home-page)
 }
 
 body.profile .section:not(.profile-rail-section, .sign-up-flow-section) h2,
-body.profile .section:not(.profile-rail-section, .sign-up-flow-section) h3 {
+body.profile .section:not(.profile-rail-section, .sign-up-flow-section) h3:not(.browse-card-banner) {
   margin-top: 12px;
 }
 
