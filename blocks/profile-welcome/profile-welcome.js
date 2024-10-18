@@ -183,6 +183,7 @@ async function decorateProfileWelcomeBlock(block) {
         } else {
           profileCardWrapSectionEl.classList.add('profile-user-card-incomplete');
         }
+        decorateIcons(profileCardWrapSectionEl);
       }
     });
 
@@ -292,6 +293,7 @@ async function decorateProfileWelcomeBlock(block) {
           ? `<img width="75" height="75" class="profile-picture" src="${profilePicture}" alt="Profile Picture" />`
           : '<span class="icon icon-profile"></span>'
       }`;
+      decorateIcons(profileUserCardAvatar);
     }
     const roleHeadingEl = block.querySelector('.role-heading');
     if (roleHeadingEl) {
@@ -314,7 +316,6 @@ async function decorateProfileWelcomeBlock(block) {
       interestContentWrapperEl.classList.add(!hasInterests ? 'incomplete-profile' : 'content');
     }
   });
-  decorateIcons(block);
 }
 
 export default async function decorate(block) {
