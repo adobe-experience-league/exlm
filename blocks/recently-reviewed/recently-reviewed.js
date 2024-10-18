@@ -74,6 +74,11 @@ export default async function decorate(block) {
         } else {
           if (!UEAuthorMode) {
             block.parentElement.remove();
+            document.querySelectorAll('.section').forEach((element) => {
+              if (element.innerHTML.trim() === '') {
+                element.remove();
+              }
+            });
           }
           return;
         }

@@ -424,6 +424,11 @@ export default async function decorate(block) {
                   if (!resp) {
                     if (!UEAuthorMode) {
                       block.parentElement.remove();
+                      document.querySelectorAll('.section').forEach((element) => {
+                        if (element.innerHTML.trim() === '') {
+                          element.remove();
+                        }
+                      });
                     }
                   }
                   if (resp?.data) {
