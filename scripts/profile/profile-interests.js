@@ -1,5 +1,5 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
-import Dropdown from '../dropdown/dropdown.js';
+import Dropdown, { DROPDOWN_VARIANTS } from '../dropdown/dropdown.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import getSolutionByName from '../../blocks/toc/toc-solutions.js';
 import loadJWT from '../auth/jwt.js';
@@ -136,7 +136,13 @@ export default async function buildProductCard(element, model) {
   // Add to DOM
   element.appendChild(card);
 
-  const cardDropdown = new Dropdown(content, dropdownOptions[0].value, dropdownOptions);
+  const cardDropdown = new Dropdown(
+    content,
+    dropdownOptions[0].value,
+    dropdownOptions,
+    DROPDOWN_VARIANTS.DEFAULT,
+    product,
+  );
   cardDropdown.handleOnChange(async (level) => {
     const profileData = await defaultProfileClient.getMergedProfile();
     const { solutionLevels = [] } = profileData;
