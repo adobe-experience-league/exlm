@@ -18,6 +18,7 @@ import {
   setTargetDataAsBlockAttribute,
 } from '../../scripts/target/target.js';
 
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const DEFAULT_NUM_CARDS = 4;
 let placeholders = {};
 try {
@@ -421,7 +422,9 @@ export default async function decorate(block) {
               handleTargetEvent(targetCriteriaId)
                 .then(async (resp) => {
                   if (!resp) {
-                    block.remove();
+                    if (!UEAuthorMode) {
+                      block.parentElement.remove();
+                    }
                   }
                   if (resp?.data) {
                     updateCopyFromTarget(resp, headingElement, descriptionElement, firstEl, secondEl);
