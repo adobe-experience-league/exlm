@@ -65,14 +65,14 @@ export default async function decorate(block) {
   const blockInnerHTML = block.innerHTML;
   await decoratePersonalizedContent(block);
   const currentSection = block.parentElement.parentElement;
-  if(!UEAuthorMode) { 
-    currentSection.classList.add('personalized-content-hidden'); 
+  if (!UEAuthorMode) {
+    currentSection.classList.add('personalized-content-hidden');
   }
 
   signupDialogEventEmitter.on('signupDialogClose', async () => {
     block.innerHTML = blockInnerHTML;
-    if(!UEAuthorMode) {  
-      currentSection.classList.remove('personalized-content-hidden'); 
+    if (!UEAuthorMode) {
+      currentSection.classList.remove('personalized-content-hidden');
     }
     const profileSections = document.querySelectorAll('.profile-custom-container');
     if (profileSections.length > 0) {
@@ -81,8 +81,8 @@ export default async function decorate(block) {
       });
     }
     await decoratePersonalizedContent(block);
-    if(!UEAuthorMode) { 
-      currentSection.classList.add('personalized-content-hidden'); 
+    if (!UEAuthorMode) {
+      currentSection.classList.add('personalized-content-hidden');
     }
   });
 }
