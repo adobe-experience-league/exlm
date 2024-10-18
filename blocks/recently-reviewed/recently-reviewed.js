@@ -11,6 +11,7 @@ import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/brow
 import Swiper from '../../scripts/swiper/swiper.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const { targetCriteriaIds } = getConfig();
 
 const authorInfo = 'Based on profile context, if the customer has enabled the necessary cookies';
@@ -71,7 +72,14 @@ export default async function decorate(block) {
         if (resp) {
           block.style.display = 'block';
         } else {
-          block.style.display = 'none';
+          if (!UEAuthorMode) {
+            block.parentElement.remove();
+            document.querySelectorAll('.section').forEach((element) => {
+              if (element.innerHTML.trim() === '') {
+                element.remove();
+              }
+            });
+          }
           return;
         }
         updateCopyFromTarget(resp, headingElement, descriptionElement);
