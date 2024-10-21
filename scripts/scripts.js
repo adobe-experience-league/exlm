@@ -1461,12 +1461,8 @@ async function loadPage() {
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
 
     // discoverability
-    const params = new URLSearchParams(window.location.search);
-    const hasDiscoverability = Boolean(params.get('discoverability'));
-    if (hasDiscoverability) {
-      loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
-      loadDefaultModule(`${window.hlx.codeBasePath}/scripts/related-content/related-content-widget.js`);
-    }
+    loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
+    loadDefaultModule(`${window.hlx.codeBasePath}/scripts/related-content/related-content-widget.js`);
   }
 }
 
