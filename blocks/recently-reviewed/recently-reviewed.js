@@ -41,49 +41,35 @@ function renderNavigationArrows(titleContainer) {
 
 export default async function decorate(block) {
   checkTargetSupport().then((targetSupport) => {
-    block.style.display = 'none';
     const [headingElement, descriptionElement] = [...block.children].map((row) => row.firstElementChild);
     headingElement.classList.add('recently-reviewed-header');
     descriptionElement.classList.add('recently-reviewed-description');
     const titleContainer = document.createElement('div');
     const navContainer = document.createElement('div');
-    block.appendChild(navContainer);
-    navContainer.classList.add('recently-viewed-nav-container');
-    navContainer.appendChild(titleContainer);
-    titleContainer.appendChild(headingElement);
-    titleContainer.appendChild(descriptionElement);
-    renderNavigationArrows(navContainer);
-
     const contentDiv = document.createElement('div');
     contentDiv.className = 'browse-cards-block-content';
-    block.appendChild(contentDiv);
-
     const buildCardsShimmer = new BuildPlaceholder();
-    buildCardsShimmer.add(block);
 
     if (window.hlx.aemRoot) {
-      block.style.display = 'block';
+      block.appendChild(contentDiv);
+      buildCardsShimmer.add(block);
       buildNoResultsContent(contentDiv, true, authorInfo);
       buildCardsShimmer.remove();
     }
 
     if (targetSupport) {
       handleTargetEvent(targetCriteriaIds.recentlyViewed).then((resp) => {
-        if (resp) {
-          block.style.display = 'block';
-        } else {
-          if (!UEAuthorMode) {
-            block.parentElement.remove();
-            document.querySelectorAll('.section').forEach((element) => {
-              if (element.innerHTML.trim() === '') {
-                element.remove();
-              }
-            });
-          }
-          return;
-        }
         updateCopyFromTarget(resp, headingElement, descriptionElement);
         if (resp?.data.length) {
+          block.appendChild(navContainer);
+          navContainer.classList.add('recently-viewed-nav-container');
+          navContainer.appendChild(titleContainer);
+          titleContainer.appendChild(headingElement);
+          titleContainer.appendChild(descriptionElement);
+          renderNavigationArrows(navContainer);
+          block.appendChild(contentDiv);
+          buildCardsShimmer.add(block);
+
           resp.data.forEach((item) => {
             const cardData = targetDataAdapter(item, placeholders);
             const cardDiv = document.createElement('div');
@@ -101,6 +87,16 @@ export default async function decorate(block) {
         }
         buildCardsShimmer.remove();
       });
+    } else {
+      // eslint-disable-next-line no-lonely-if
+      if (!UEAuthorMode) {
+        block.parentElement.remove();
+        document.querySelectorAll('.section').forEach((element) => {
+          if (element.innerHTML.trim() === '') {
+            element.remove();
+          }
+        });
+      }
     }
   });
 }
