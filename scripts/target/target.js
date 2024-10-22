@@ -1,4 +1,7 @@
 import { getCookie, getConfig } from '../scripts.js';
+import getEmitter from '../../scripts/events.js';
+
+const targetEventEmitter = getEmitter('loadTargetBlocks');
 
 /**
  * Update the copy from the target
