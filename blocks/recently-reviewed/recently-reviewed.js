@@ -14,6 +14,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const { targetCriteriaIds } = getConfig();
 let placeholders = {};
+let displayBlock = false;
 
 function renderNavigationArrows(titleContainer) {
   const navigationElements = htmlToElement(`
@@ -59,7 +60,8 @@ export default async function decorate(block) {
       block.appendChild(contentDiv);
     }
 
-    if (window.hlx.aemRoot) {
+    if (UEAuthorMode) {
+      displayBlock = true;
       appendNavAndContent();
       buildCardsShimmer.add(block);
       const authorInfo = 'Based on profile context, if the customer has enabled the necessary cookies';
@@ -71,6 +73,7 @@ export default async function decorate(block) {
       handleTargetEvent(targetCriteriaIds.recentlyViewed).then((resp) => {
         updateCopyFromTarget(resp, headingElement, descriptionElement);
         if (resp?.data.length) {
+          displayBlock = true;
           appendNavAndContent();
           buildCardsShimmer.add(block);
 
@@ -92,16 +95,15 @@ export default async function decorate(block) {
         }
         buildCardsShimmer.remove();
       });
-    } else {
-      // eslint-disable-next-line no-lonely-if
-      if (!UEAuthorMode) {
-        block.parentElement.remove();
-        document.querySelectorAll('.section').forEach((element) => {
-          if (element.innerHTML.trim() === '') {
-            element.remove();
-          }
-        });
-      }
     }
   });
+
+  if (!UEAuthorMode && !displayBlock) {
+    block.parentElement.remove();
+    document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
+      if (element.textContent.trim() === '') {
+        element.remove();
+      }
+    });
+  }
 }
