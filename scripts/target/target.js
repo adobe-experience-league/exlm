@@ -1,5 +1,4 @@
-import { getCookie, getPathDetails, getConfig } from '../scripts.js';
-import { convertToTitleCase } from '../browse-card/browse-card-utils.js';
+import { getCookie, getConfig } from '../scripts.js';
 
 /**
  * Update the copy from the target
@@ -162,27 +161,4 @@ export async function checkTargetSupport() {
     }
   }
   return false;
-}
-
-export function targetDataAdapter(data, placeholders) {
-  const articlePath = `/${getPathDetails().lang}${data?.path}`;
-  const fullURL = new URL(articlePath, window.location.origin).href;
-  const solutions = data?.product.split(',').map((s) => s.trim());
-  return {
-    ...data,
-    badgeTitle: data?.contentType,
-    type: data?.contentType,
-    authorInfo: data?.authorInfo || {
-      name: [''],
-      type: [''],
-    },
-    product: solutions,
-    tags: [],
-    copyLink: fullURL,
-    bookmarkLink: '',
-    viewLink: fullURL,
-    viewLinkText: placeholders[`browseCard${convertToTitleCase(data?.contentType)}ViewLabel`]
-      ? placeholders[`browseCard${convertToTitleCase(data?.contentType)}ViewLabel`]
-      : `View ${data?.contentType}`,
-  };
 }

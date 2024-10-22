@@ -1,7 +1,6 @@
-import { getConfig, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { getConfig, htmlToElement } from '../../scripts/scripts.js';
 import {
   checkTargetSupport,
-  targetDataAdapter,
   updateCopyFromTarget,
   setTargetDataAsBlockAttribute,
   getTargetData,
@@ -10,18 +9,11 @@ import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import Swiper from '../../scripts/swiper/swiper.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-card-target-data-adapter.js';
 
 const { targetCriteriaIds } = getConfig();
 
 const authorInfo = 'Based on profile context, if the customer has enabled the necessary cookies';
-
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
 
 function renderNavigationArrows(titleContainer) {
   const navigationElements = htmlToElement(`
@@ -67,7 +59,7 @@ export default async function decorate(block) {
     }
 
     if (targetSupport) {
-      getTargetData(targetCriteriaIds.recentlyViewed).then((resp) => {
+      getTargetData(targetCriteriaIds.recentlyViewed).then(async (resp) => {
         if (resp) {
           block.style.display = 'block';
         } else {
@@ -76,10 +68,10 @@ export default async function decorate(block) {
         }
         updateCopyFromTarget(resp, headingElement, descriptionElement);
         if (resp?.data.length) {
-          resp.data.forEach((item) => {
-            const cardData = targetDataAdapter(item, placeholders);
+          const cardData = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(resp.data);
+          cardData.forEach((item) => {
             const cardDiv = document.createElement('div');
-            buildCard(contentDiv, cardDiv, cardData);
+            buildCard(contentDiv, cardDiv, item);
             contentDiv.appendChild(cardDiv);
           });
           const prevButton = block.querySelector('.recently-viewed-nav-section > .prev-nav');

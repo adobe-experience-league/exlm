@@ -12,11 +12,11 @@ import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import {
   checkTargetSupport,
-  targetDataAdapter,
   updateCopyFromTarget,
   setTargetDataAsBlockAttribute,
   getTargetData,
 } from '../../scripts/target/target.js';
+import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-card-target-data-adapter.js';
 
 const DEFAULT_NUM_CARDS = 4;
 let placeholders = {};
@@ -202,7 +202,7 @@ export default async function decorate(block) {
             });
         });
 
-      const parseCardResponseData = (cardResponse, apiConfigObject) => {
+      async function parseCardResponseData(cardResponse, apiConfigObject) {
         let data = [];
         if (targetSupport) {
           data = cardResponse?.data ?? [];
@@ -232,13 +232,7 @@ export default async function decorate(block) {
               data = cardResponse.allAdobeProducts;
             }
           }
-          const cardData = [];
-          let i = 0;
-          while (cardData.length < 4 && i < data.length) {
-            cardData.push(targetDataAdapter(data[i], placeholders));
-            i += 1;
-          }
-          data = cardData;
+          data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(0, 4));
         } else {
           const { data: cards = [], contentType: ctType } = cardResponse || {};
           const { shimmers: cardShimmers, payload: apiPayload, wrappers: cardWrappers } = apiConfigObject;
@@ -271,7 +265,7 @@ export default async function decorate(block) {
           }
         }
         return data;
-      };
+      }
 
       const renderCardsBlock = (cardModels, payloadConfig, contentDiv) => {
         const { renderCards = true, lowercaseOptionType } = payloadConfig;
@@ -432,7 +426,7 @@ export default async function decorate(block) {
                       .querySelector('.recommended-content-block-section')
                       ?.setAttribute('data-analytics-rec-source', 'target');
                   }
-                  const cardModels = parseCardResponseData(resp, payloadConfig);
+                  const cardModels = await parseCardResponseData(resp, payloadConfig);
                   let renderedCardModels = [];
                   if (cardModels?.length) {
                     const targetCardRenderPromises = renderCardsBlock(cardModels, payloadConfig, contentDiv);
@@ -480,7 +474,7 @@ export default async function decorate(block) {
             };
             return new Promise((resolve) => {
               getCardsData(payload).then(async (resp) => {
-                const cardModels = parseCardResponseData(resp, payloadConfig);
+                const cardModels = await parseCardResponseData(resp, payloadConfig);
                 let renderedCardModels = [];
                 if (cardModels?.length) {
                   const renderPromises = renderCardsBlock(cardModels, payloadConfig, contentDiv);
