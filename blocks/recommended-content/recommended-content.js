@@ -18,6 +18,7 @@ import {
 } from '../../scripts/target/target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-card-target-data-adapter.js';
 
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const DEFAULT_NUM_CARDS = 4;
 let placeholders = {};
 try {
@@ -82,7 +83,6 @@ export default async function decorate(block) {
 
   // Clearing the block's content and adding CSS class
   block.innerHTML = '';
-  // block.style.display = 'none';
   headingElement.classList.add('recommended-content-header');
   descriptionElement.classList.add('recommended-content-description');
   filterSectionElement.classList.add('recommended-content-filter-heading');
@@ -416,7 +416,14 @@ export default async function decorate(block) {
               getTargetData(targetCriteriaId)
                 .then(async (resp) => {
                   if (!resp) {
-                    block.style.display = 'none';
+                    if (!UEAuthorMode) {
+                      block.parentElement.remove();
+                      document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
+                        if (element.textContent.trim() === '') {
+                          element.remove();
+                        }
+                      });
+                    }
                   }
                   if (resp?.data) {
                     updateCopyFromTarget(resp, headingElement, descriptionElement, firstEl, secondEl);

@@ -4,6 +4,7 @@ import { loadBlocks, decorateSections, decorateBlocks } from '../../scripts/lib-
 import getEmitter from '../../scripts/events.js';
 
 const signupDialogEventEmitter = getEmitter('signupDialog');
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
 // Will be refactoring this function to use a loadFragment() function from scripts.js
 const fetchPageContent = async (url, content, block) => {
@@ -18,9 +19,9 @@ const fetchPageContent = async (url, content, block) => {
       decorateExternalLinks(container);
       await loadBlocks(container);
       if (window.hlx.aemRoot) {
-        content.insertAdjacentElement('beforebegin', container);
+        content.innerHTML = '';
+        content.append(container);
         moveInstrumentation(block, container);
-        container.classList.add('section', 'personalized-section');
       } else {
         Array.from(container.children).forEach((section) => {
           section.classList.add('profile-custom-container');
@@ -64,11 +65,15 @@ export default async function decorate(block) {
   const blockInnerHTML = block.innerHTML;
   await decoratePersonalizedContent(block);
   const currentSection = block.parentElement.parentElement;
-  currentSection.classList.add('personalized-content-hidden');
+  if (!UEAuthorMode) {
+    currentSection.classList.add('personalized-content-hidden');
+  }
 
   signupDialogEventEmitter.on('signupDialogClose', async () => {
     block.innerHTML = blockInnerHTML;
-    currentSection.classList.remove('personalized-content-hidden');
+    if (!UEAuthorMode) {
+      currentSection.classList.remove('personalized-content-hidden');
+    }
     const profileSections = document.querySelectorAll('.profile-custom-container');
     if (profileSections.length > 0) {
       profileSections.forEach((section) => {
@@ -76,6 +81,8 @@ export default async function decorate(block) {
       });
     }
     await decoratePersonalizedContent(block);
-    currentSection.classList.add('personalized-content-hidden');
+    if (!UEAuthorMode) {
+      currentSection.classList.add('personalized-content-hidden');
+    }
   });
 }
