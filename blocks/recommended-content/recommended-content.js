@@ -424,8 +424,8 @@ export default async function decorate(block) {
                   if (!resp) {
                     if (!UEAuthorMode) {
                       block.parentElement.remove();
-                      document.querySelectorAll('.section').forEach((element) => {
-                        if (element.innerHTML.trim() === '') {
+                      document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
+                        if (element.textContent.trim() === '') {
                           element.remove();
                         }
                       });
