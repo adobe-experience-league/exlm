@@ -1,8 +1,6 @@
 import { getCookie, getPathDetails, getConfig } from '../scripts.js';
 import { convertToTitleCase } from '../browse-card/browse-card-utils.js';
 
-const { cookieConsentName } = getConfig();
-
 /**
  * Update the copy from the target
  * @param {Object} data
@@ -61,29 +59,34 @@ export function setTargetDataAsBlockAttribute(data, block) {
 }
 
 /**
- * Listens for the target-recs-ready event to fetch the content as per the given criteria
- * @param {string} criteriaId - The criteria id to listen for
+ * This function fetches the target data based on the given criteria id.
+ * If the criteria id is not provided, it returns the entire target data.
+ *
+ * @param {string} criteria - The criteria id to fetch the target data
  * @returns {Promise}
  */
-export async function handleTargetEvent(criteria) {
-  if (!window.exlm.targetData) window.exlm.targetData = [];
+export function getTargetData(criteria) {
   return new Promise((resolve) => {
-    if (criteria) {
+    if (!criteria) resolve(window?.exlm.targetData);
+    else {
       window.exlm?.targetData?.forEach((data) => {
         if (data?.meta.scope === criteria) resolve(data);
       });
       resolve(null);
-      return;
     }
-    if (window.exlm?.targetData?.length) {
-      resolve(true);
-      return;
-    }
+  });
+}
+
+/**
+ * Listens for the target-recs-ready event to fetch the content as per the given criteria
+ * @param {string} criteriaId - The criteria id to listen for
+ * @returns {Promise}
+ */
+export async function handleTargetEvent() {
+  return new Promise((resolve) => {
     function targetEventHandler(event) {
-      if (window.exlm?.targetData?.length >= 2) {
-        document.removeEventListener('target-recs-ready', targetEventHandler);
-      }
-      if (!window.exlm.targetData.filter((data) => data?.meta?.scope === event?.detail?.meta?.scope).length) {
+      if (!window?.exlm?.targetData) window.exlm.targetData = [];
+      if (!window?.exlm?.targetData.filter((data) => data?.meta?.scope === event?.detail?.meta?.scope).length) {
         window.exlm.targetData.push(event.detail);
       }
       resolve(true);
@@ -130,14 +133,26 @@ async function loadTargetData() {
 }
 
 /**
- * Check if the user has accepted the cookie policy for target and loads target
- * @returns {Promise}
+ * Check if the user has accepted the cookie policy for target
+ * @returns {boolean}
  */
-export async function checkTargetSupport() {
+export function isTargetCookieEnabled() {
+  const { cookieConsentName } = getConfig();
   const value = getCookie(cookieConsentName);
   if (!value || window.hlx.aemRoot) return false;
   const cookieConsentValues = value.split(',').map((part) => part[part.length - 1]);
   if (cookieConsentValues[0] === '1' && cookieConsentValues[1] === '1') {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Check if the user has accepted the cookie policy for target and loads target
+ * @returns {Promise}
+ */
+export async function checkTargetSupport() {
+  if (isTargetCookieEnabled()) {
     try {
       const isTargetDataLoaded = await loadTargetData();
       return isTargetDataLoaded;

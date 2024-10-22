@@ -11,11 +11,11 @@ import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import {
-  handleTargetEvent,
   checkTargetSupport,
   targetDataAdapter,
   updateCopyFromTarget,
   setTargetDataAsBlockAttribute,
+  getTargetData,
 } from '../../scripts/target/target.js';
 
 const DEFAULT_NUM_CARDS = 4;
@@ -419,7 +419,7 @@ export default async function decorate(block) {
           };
           cardPromises.push(
             new Promise((resolve) => {
-              handleTargetEvent(targetCriteriaId)
+              getTargetData(targetCriteriaId)
                 .then(async (resp) => {
                   if (!resp) {
                     block.style.display = 'none';
@@ -632,7 +632,7 @@ export default async function decorate(block) {
     */
       async function findEmptyFilters() {
         const removeFilters = [];
-        const resp = await handleTargetEvent(targetCriteriaId);
+        const resp = await getTargetData(targetCriteriaId);
         if (resp?.data) {
           const { data } = resp;
           profileInterests.forEach((interest) => {

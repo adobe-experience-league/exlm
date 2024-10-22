@@ -1,10 +1,10 @@
 import { getConfig, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 import {
-  handleTargetEvent,
   checkTargetSupport,
   targetDataAdapter,
   updateCopyFromTarget,
   setTargetDataAsBlockAttribute,
+  getTargetData,
 } from '../../scripts/target/target.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
@@ -67,7 +67,7 @@ export default async function decorate(block) {
     }
 
     if (targetSupport) {
-      handleTargetEvent(targetCriteriaIds.recentlyViewed).then((resp) => {
+      getTargetData(targetCriteriaIds.recentlyViewed).then((resp) => {
         if (resp) {
           block.style.display = 'block';
         } else {
