@@ -39,38 +39,39 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
-  checkTargetSupport().then((targetSupport) => {
-    const [headingElement, descriptionElement] = [...block.children].map((row) => row.firstElementChild);
-    headingElement.classList.add('recently-reviewed-header');
-    descriptionElement.classList.add('recently-reviewed-description');
+  checkTargetSupport()
+    .then(async (targetSupport) => {
+      const [headingElement, descriptionElement] = [...block.children].map((row) => row.firstElementChild);
+      headingElement.classList.add('recently-reviewed-header');
+      descriptionElement.classList.add('recently-reviewed-description');
 
-    const titleContainer = document.createElement('div');
-    const navContainer = document.createElement('div');
-    const contentDiv = document.createElement('div');
-    contentDiv.className = 'browse-cards-block-content';
-    const buildCardsShimmer = new BuildPlaceholder();
+      const titleContainer = document.createElement('div');
+      const navContainer = document.createElement('div');
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'browse-cards-block-content';
+      const buildCardsShimmer = new BuildPlaceholder();
 
-    function appendNavAndContent() {
-      navContainer.classList.add('recently-viewed-nav-container');
-      navContainer.appendChild(titleContainer);
-      titleContainer.appendChild(headingElement);
-      titleContainer.appendChild(descriptionElement);
-      renderNavigationArrows(navContainer);
-      block.appendChild(navContainer);
-      block.appendChild(contentDiv);
-    }
+      function appendNavAndContent() {
+        navContainer.classList.add('recently-viewed-nav-container');
+        navContainer.appendChild(titleContainer);
+        titleContainer.appendChild(headingElement);
+        titleContainer.appendChild(descriptionElement);
+        renderNavigationArrows(navContainer);
+        block.appendChild(navContainer);
+        block.appendChild(contentDiv);
+      }
 
-    if (UEAuthorMode) {
-      displayBlock = true;
-      appendNavAndContent();
-      buildCardsShimmer.add(block);
-      const authorInfo = 'Based on profile context, if the customer has enabled the necessary cookies';
-      buildNoResultsContent(contentDiv, true, authorInfo);
-      buildCardsShimmer.remove();
-    }
+      if (UEAuthorMode) {
+        displayBlock = true;
+        appendNavAndContent();
+        buildCardsShimmer.add(block);
+        const authorInfo = 'Based on profile context, if the customer has enabled the necessary cookies';
+        buildNoResultsContent(contentDiv, true, authorInfo);
+        buildCardsShimmer.remove();
+      }
 
-    if (targetSupport) {
-      handleTargetEvent(targetCriteriaIds.recentlyViewed).then((resp) => {
+      if (targetSupport) {
+        const resp = await handleTargetEvent(targetCriteriaIds.recentlyViewed);
         updateCopyFromTarget(resp, headingElement, descriptionElement);
         if (resp?.data.length) {
           displayBlock = true;
@@ -94,16 +95,16 @@ export default async function decorate(block) {
           buildNoResultsContent(contentDiv, true);
         }
         buildCardsShimmer.remove();
-      });
-    }
-  });
-
-  if (!UEAuthorMode && !displayBlock) {
-    block.parentElement.remove();
-    document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
-      if (element.textContent.trim() === '') {
-        element.remove();
+      }
+    })
+    .finally(() => {
+      if (!UEAuthorMode && !displayBlock) {
+        block.parentElement.remove();
+        document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
+          if (element.textContent.trim() === '') {
+            element.remove();
+          }
+        });
       }
     });
-  }
 }
