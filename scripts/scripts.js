@@ -267,13 +267,6 @@ export async function fetchAuthorBio(anchor) {
 }
 
 /**
- * Check if current page is a home page.
- */
-export function isHomePage(lang) {
-  return window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
-}
-
-/**
  * Add a left rail to the profile page.
  * @param {HTMLElement} main
  *
@@ -1403,42 +1396,62 @@ async function loadPage() {
   }
 }
 
-// For AEM Author mode, decode the tags value
-if (window.hlx.aemRoot || window.location.href.includes('.html')) {
-  decodeAemPageMetaTags();
-}
-
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 (async () => {
-  if (!window.hlx.DO_NOT_LOAD_PAGE) {
-    const { lang } = getPathDetails();
-    document.documentElement.lang = lang || 'en';
-    const { personalizedHomeLink } = getConfig() || {};
-    if (isProfilePage) {
-      if (window.location.href.includes('.html')) {
-        loadPage();
-      } else {
-        await loadIms();
-        if (window?.adobeIMS?.isSignedInUser()) {
-          loadPage();
-        } else {
-          await window?.adobeIMS?.signIn();
-        }
-      }
-    } else if (isHomePage(lang)) {
-      try {
-        await loadIms();
-        if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
-          window.location.pathname = `${lang}${personalizedHomeLink}`;
-          return;
-        }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error during redirect process:', error);
-      }
+  if (window.hlx.DO_NOT_LOAD_PAGE) return;
+
+  // For AEM Author mode, decode the tags value
+  if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+    decodeAemPageMetaTags();
+  }
+
+  const { lang } = getPathDetails();
+  document.documentElement.lang = lang || 'en';
+  const isMainPage = (window?.location.pathname === '/' || window?.location.pathname === `/${lang}`);
+
+  const isUserSignedIn = async () => {
+    await loadIms();
+    return window?.adobeIMS?.isSignedInUser();
+  };
+
+  const handleProfilePage = async () => {
+    if (window.location.href.includes('.html')) {
       loadPage();
     } else {
-      loadPage();
+      const signedIn = await isUserSignedIn();
+      if (signedIn) {
+        loadPage();
+        const { checkTargetSupport, mapComponentsToTarget } = await import('./target/target.js');
+        const isTargetSupported = await checkTargetSupport();
+        if (isTargetSupported) {
+          mapComponentsToTarget();
+        }        
+      } else {
+        await window?.adobeIMS?.signIn();
+      }
     }
+  };
+
+  const handleMainPage = async () => {
+    try {
+      const signedIn = await isUserSignedIn();
+      const { personalizedHomeLink } = getConfig() || {};
+      
+      if (signedIn && personalizedHomeLink) {
+        window.location.pathname = `${lang}${personalizedHomeLink}`;
+        return;
+      }
+    } catch (error) {
+      console.error('Error during redirect process:', error);
+    }
+    loadPage();
+  };
+
+  if (isProfilePage) {
+    await handleProfilePage();
+  } else if (isMainPage) {
+    await handleMainPage();
+  } else {
+    loadPage();
   }
 })();

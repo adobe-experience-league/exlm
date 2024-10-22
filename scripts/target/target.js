@@ -162,3 +162,61 @@ export async function checkTargetSupport() {
   }
   return false;
 }
+
+/* WIP */
+function handleMode(item) {
+    const blockId = item?.blockId;
+    if (blockId) {
+        const blockElem = document.querySelector(`#${blockId}`);
+        switch (item.mode) {
+            case "new":
+                console.log("New", item.blockId);
+                break;
+            case "replace":
+                console.log("Replace", blockElem);
+                break;
+            case "update":
+                console.log("Update", blockElem);
+                targetEventEmitter.set('blockId', item.blockId);
+                break;
+        }
+    }
+}
+
+function reviseBlocks(targetArray, blocks) {
+    const blockIds = new Set(targetArray.map(item => item.blockId));
+
+    blocks.forEach(blockElem => {
+        if (!blockIds.has(blockElem.id)) blockElem.remove();
+    });
+
+    targetArray.forEach(handleMode);
+}
+
+export async function mapComponentsToTarget() {
+    const main = document.querySelector('main');
+    const blocks = main.querySelectorAll('.recommended-content, .recently-reviewed');
+    const targetData = await getTargetData();
+
+    if (targetData.length) {
+        const targetArray = targetData.map(({ meta }) => {
+            const { scope, 'criteria.title': criteriaTitle } = meta;
+            const indexMatch = scope.match(/-(\d+)$/);
+            const targetIndex = indexMatch ? indexMatch[1] - 1 : null;
+            const blockElement = blocks[targetIndex];
+            const blockId = blockElement?.id;
+            const blockName = blockElement?.dataset.blockName;
+
+            const mode = blockId
+                ? (criteriaTitle === 'exl-php-recently-viewed-content' && blockName === 'recently-reviewed') ||
+                  (criteriaTitle !== 'exl-php-recently-viewed-content' && blockName === 'recommended-content')
+                    ? "update"
+                    : "replace"
+                : "new";
+
+            return { blockId, scope, mode };
+        });
+
+        reviseBlocks(targetArray, blocks);
+    }
+}
