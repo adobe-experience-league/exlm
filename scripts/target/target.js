@@ -166,8 +166,11 @@ export async function checkTargetSupport() {
   return false;
 }
 
-/* WIP */
-function handleMode(item) {
+/**
+ * Handles the action of a block (new, replace, update) based on the item properties.
+ * @param {Object} item - Object representing the block action type and associated block ID.
+ */
+function handleAction(item) {
     const blockId = item?.blockId;
     if (blockId) {
         const blockElem = document.querySelector(`#${blockId}`);
@@ -186,6 +189,11 @@ function handleMode(item) {
     }
 }
 
+/**
+ * Revises the DOM blocks by removing and processing the target array.
+ * @param {Array} targetArray - Array of target elements defines the blockId and scope.
+ * @param {NodeList} blocks - NodeList of existing DOM block elements to compare with.
+ */
 function reviseBlocks(targetArray, blocks) {
     const blockIds = new Set(targetArray.map(item => item.blockId));
 
@@ -193,9 +201,13 @@ function reviseBlocks(targetArray, blocks) {
         if (!blockIds.has(blockElem.id)) blockElem.remove();
     });
 
-    targetArray.forEach(handleMode);
+    targetArray.forEach(handleAction);
 }
 
+/**
+ * Fetches target data and maps it to the appropriate DOM components for processing.
+ * It determines whether to update, replace, or add new blocks to the DOM.
+ */
 export async function mapComponentsToTarget() {
     const main = document.querySelector('main');
     const blocks = main.querySelectorAll('.recommended-content, .recently-reviewed');
