@@ -1414,6 +1414,8 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
     const { lang } = getPathDetails();
     document.documentElement.lang = lang || 'en';
     const { personalizedHomeLink } = getConfig() || {};
+    const PHP_AB = 'phpAB';
+
     if (isProfilePage) {
       if (window.location.href.includes('.html')) {
         loadPage();
@@ -1428,7 +1430,7 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
     } else if (isHomePage(lang)) {
       try {
         await loadIms();
-        if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
+        if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink && sessionStorage.getItem(PHP_AB) === 'authHP') {
           window.location.pathname = `${lang}${personalizedHomeLink}`;
           return;
         }
