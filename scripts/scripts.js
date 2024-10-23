@@ -1408,6 +1408,32 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
   decodeAemPageMetaTags();
 }
 
+/**
+ * Prehides content by adding a temporary style element to the document that hides the body.
+ * The style element is automatically removed after a specified timeout.
+ *
+ * @param {Document} e - The document object (usually `document`).
+ * @param {boolean} a - A boolean flag that determines whether to skip prehiding.
+ *                      If `true`, the function returns early and does nothing.
+ * @param {string} n - The CSS styles to apply, typically used to hide content (e.g., `body { opacity: 0 !important }`).
+ * @param {number} t - The timeout in milliseconds after which the style element is removed.
+ */
+function prehideFunction(e, a, n, t) {
+  if (a) return;
+  const i = e.head;
+  if (i) {
+    const o = e.createElement('style');
+    o.id = 'alloy-prehiding';
+    o.innerText = n;
+    i.appendChild(o);
+    setTimeout(() => {
+      if (o.parentNode) {
+        o.parentNode.removeChild(o);
+      }
+    }, t);
+  }
+}
+
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 (async () => {
   if (!window.hlx.DO_NOT_LOAD_PAGE) {
@@ -1430,9 +1456,21 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
     } else if (isHomePage(lang)) {
       try {
         await loadIms();
-        if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink && sessionStorage.getItem(PHP_AB) === 'authHP') {
-          window.location.pathname = `${lang}${personalizedHomeLink}`;
-          return;
+        const isSignedIn = window?.adobeIMS?.isSignedInUser();
+        if (isSignedIn) {
+          // Execute the prehiding function
+          if (!sessionStorage.getItem(PHP_AB)) {
+            prehideFunction(
+              document,
+              window.location.href.indexOf('adobeaemcloud.com') !== -1,
+              'body { opacity: 0 !important }',
+              3000,
+            );
+          }
+          if (personalizedHomeLink && sessionStorage.getItem(PHP_AB) === 'authHP') {
+            window.location.pathname = `${lang}${personalizedHomeLink}`;
+            return;
+          }
         }
       } catch (error) {
         // eslint-disable-next-line no-console
