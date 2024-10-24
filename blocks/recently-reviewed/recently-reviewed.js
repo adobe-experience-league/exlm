@@ -1,19 +1,71 @@
 import { getConfig, htmlToElement } from '../../scripts/scripts.js';
-import {
-  checkTargetSupport,
-  updateCopyFromTarget,
-  setTargetDataAsBlockAttribute,
-  getTargetData,
-} from '../../scripts/target/target.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import Swiper from '../../scripts/swiper/swiper.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-card-target-data-adapter.js';
+import AdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const { targetCriteriaIds } = getConfig();
 let displayBlock = false;
+
+/**
+ * Update the copy from the target
+ * @param {Object} data
+ * @param {HTMLElement} heading
+ * @param {HTMLElement} subheading
+ * @returns {void}
+ */
+export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
+  if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
+  else heading?.remove();
+  if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
+  else subheading?.remove();
+  if (
+    taglineCta &&
+    data?.meta['tagline-cta-text'] &&
+    data?.meta['tagline-cta-url'] &&
+    data.meta['tagline-cta-text'].trim() !== '' &&
+    data.meta['tagline-cta-url'].trim() !== ''
+  ) {
+    taglineCta.innerHTML = `
+        <a href="${data.meta['tagline-cta-url']}" title="${data.meta['tagline-cta-text']}">
+          ${data.meta['tagline-cta-text']}
+        </a>
+      `;
+  } else {
+    taglineCta?.remove();
+  }
+  if (taglineText && data?.meta['tagline-text'] && data?.meta['tagline-text'].trim() !== '') {
+    taglineText.innerHTML = data.meta['tagline-text'];
+  } else {
+    taglineText?.remove();
+  }
+  if (!document.contains(taglineCta) && !document.contains(taglineText)) {
+    const taglineParentBlock = document.querySelector('.recommended-content-result-text');
+    if (taglineParentBlock) {
+      taglineParentBlock?.remove();
+    }
+  }
+}
+
+/**
+ * Sets target data as a data attribute on the given block element.
+ *
+ * This function checks if the provided `data` object contains a `meta` property.
+ * If the `meta` property exists, it serializes the metadata as a JSON string and
+ * adds it to the specified block element as a custom data attribute `data-analytics-target-meta`.
+ *
+ * @param {Object} data - The data returned from target.
+ * @param {HTMLElement} block - The DOM element to which the meta data will be added as an attribute.
+ *
+ */
+export function setTargetDataAsBlockAttribute(data, block) {
+  if (data?.meta) {
+    block.setAttribute('data-analytics-target-meta', JSON.stringify(data?.meta));
+  }
+}
 
 function renderNavigationArrows(titleContainer) {
   const navigationElements = htmlToElement(`
@@ -31,7 +83,7 @@ function renderNavigationArrows(titleContainer) {
 }
 
 export default async function decorate(block) {
-  checkTargetSupport()
+  AdobeTargetClient.checkTargetSupport()
     .then((targetSupport) => {
       const [headingElement, descriptionElement] = [...block.children].map((row) => row.firstElementChild);
       headingElement.classList.add('recently-reviewed-header');
@@ -63,7 +115,7 @@ export default async function decorate(block) {
       }
 
       if (targetSupport) {
-        getTargetData(targetCriteriaIds.recentlyViewed).then(async (resp) => {
+        AdobeTargetClient.getTargetData(targetCriteriaIds.recentlyViewed).then(async (resp) => {
           updateCopyFromTarget(resp, headingElement, descriptionElement);
           if (resp?.data.length) {
             displayBlock = true;

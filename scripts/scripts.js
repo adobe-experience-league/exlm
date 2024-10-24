@@ -1407,7 +1407,7 @@ async function loadPage() {
 
   const { lang } = getPathDetails();
   document.documentElement.lang = lang || 'en';
-  const isMainPage = (window?.location.pathname === '/' || window?.location.pathname === `/${lang}`);
+  const isMainPage = window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
 
   const isUserSignedIn = async () => {
     await loadIms();
@@ -1421,11 +1421,11 @@ async function loadPage() {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
         loadPage();
-        const { checkTargetSupport, mapComponentsToTarget } = await import('./target/target.js');
-        const isTargetSupported = await checkTargetSupport();
+        const defaultAdobeTargetClient = await import('./adobe-target/adobe-target.js');
+        const isTargetSupported = await defaultAdobeTargetClient.checkTargetSupport();
         if (isTargetSupported) {
-          mapComponentsToTarget();
-        }        
+          defaultAdobeTargetClient.mapComponentsToTarget();
+        }
       } else {
         await window?.adobeIMS?.signIn();
       }
@@ -1436,7 +1436,7 @@ async function loadPage() {
     try {
       const signedIn = await isUserSignedIn();
       const { personalizedHomeLink } = getConfig() || {};
-      
+
       if (signedIn && personalizedHomeLink) {
         window.location.pathname = `${lang}${personalizedHomeLink}`;
         return;

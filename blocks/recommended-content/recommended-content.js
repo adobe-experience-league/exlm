@@ -10,12 +10,7 @@ import {
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
-import {
-  checkTargetSupport,
-  updateCopyFromTarget,
-  setTargetDataAsBlockAttribute,
-  getTargetData,
-} from '../../scripts/target/target.js';
+import AdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-card-target-data-adapter.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -28,6 +23,63 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 const countNumberAsArray = (n) => Array.from({ length: n }, (_, i) => n - i);
+
+/**
+ * Update the copy from the target
+ * @param {Object} data
+ * @param {HTMLElement} heading
+ * @param {HTMLElement} subheading
+ * @returns {void}
+ */
+export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
+  if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
+  else heading?.remove();
+  if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
+  else subheading?.remove();
+  if (
+    taglineCta &&
+    data?.meta['tagline-cta-text'] &&
+    data?.meta['tagline-cta-url'] &&
+    data.meta['tagline-cta-text'].trim() !== '' &&
+    data.meta['tagline-cta-url'].trim() !== ''
+  ) {
+    taglineCta.innerHTML = `
+        <a href="${data.meta['tagline-cta-url']}" title="${data.meta['tagline-cta-text']}">
+          ${data.meta['tagline-cta-text']}
+        </a>
+      `;
+  } else {
+    taglineCta?.remove();
+  }
+  if (taglineText && data?.meta['tagline-text'] && data?.meta['tagline-text'].trim() !== '') {
+    taglineText.innerHTML = data.meta['tagline-text'];
+  } else {
+    taglineText?.remove();
+  }
+  if (!document.contains(taglineCta) && !document.contains(taglineText)) {
+    const taglineParentBlock = document.querySelector('.recommended-content-result-text');
+    if (taglineParentBlock) {
+      taglineParentBlock?.remove();
+    }
+  }
+}
+
+/**
+ * Sets target data as a data attribute on the given block element.
+ *
+ * This function checks if the provided `data` object contains a `meta` property.
+ * If the `meta` property exists, it serializes the metadata as a JSON string and
+ * adds it to the specified block element as a custom data attribute `data-analytics-target-meta`.
+ *
+ * @param {Object} data - The data returned from target.
+ * @param {HTMLElement} block - The DOM element to which the meta data will be added as an attribute.
+ *
+ */
+export function setTargetDataAsBlockAttribute(data, block) {
+  if (data?.meta) {
+    block.setAttribute('data-analytics-target-meta', JSON.stringify(data?.meta));
+  }
+}
 
 async function fetchInterestData() {
   try {
@@ -114,7 +166,7 @@ export default async function decorate(block) {
 
   block.appendChild(tempWrapper);
 
-  checkTargetSupport().then(async (targetSupport) => {
+  AdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
     Promise.all([profileDataPromise, interestDataPromise]).then(async (promiseResponses) => {
       const [profileData, interestsDataArray] = promiseResponses;
       const {
@@ -413,7 +465,7 @@ export default async function decorate(block) {
           };
           cardPromises.push(
             new Promise((resolve) => {
-              getTargetData(targetCriteriaId)
+              AdobeTargetClient.getTargetData(targetCriteriaId)
                 .then(async (resp) => {
                   if (!resp) {
                     if (!UEAuthorMode) {
@@ -633,7 +685,7 @@ export default async function decorate(block) {
     */
       async function findEmptyFilters() {
         const removeFilters = [];
-        const resp = await getTargetData(targetCriteriaId);
+        const resp = await AdobeTargetClient.getTargetData(targetCriteriaId);
         if (resp?.data) {
           const { data } = resp;
           profileInterests.forEach((interest) => {
