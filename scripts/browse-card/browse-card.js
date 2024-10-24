@@ -412,6 +412,7 @@ export async function buildCard(container, element, model) {
         content: product.join(', '),
       };
       createTooltip(container, tooltipElem, tooltipConfig);
+      decorateIcons(tooltipElem);
     } else {
       const tagText = product ? product.join(', ') : '';
       tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${tagText}</h4>`);
