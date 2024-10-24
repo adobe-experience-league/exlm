@@ -1,8 +1,9 @@
+import { buildBlock, decorateBlock, loadBlock } from '../lib-franklin.js';
 import getEmitter from '../events.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
 
-function getCookie(cookieName) {
+export function getCookie(cookieName) {
   const decodedCookie = decodeURIComponent(document.cookie);
   const cookies = decodedCookie.split(';');
   for (let i = 0; i < cookies.length; i += 1) {
@@ -17,60 +18,48 @@ function getCookie(cookieName) {
   return null;
 }
 
-/**
- * Update the copy from the target
- * @param {Object} data
- * @param {HTMLElement} heading
- * @param {HTMLElement} subheading
- * @returns {void}
- */
-export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
-  if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
-  else heading?.remove();
-  if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
-  else subheading?.remove();
-  if (
-    taglineCta &&
-    data?.meta['tagline-cta-text'] &&
-    data?.meta['tagline-cta-url'] &&
-    data.meta['tagline-cta-text'].trim() !== '' &&
-    data.meta['tagline-cta-url'].trim() !== ''
-  ) {
-    taglineCta.innerHTML = `
-        <a href="${data.meta['tagline-cta-url']}" title="${data.meta['tagline-cta-text']}">
-          ${data.meta['tagline-cta-text']}
-        </a>
-      `;
+async function createBlock(item, currentBlock) {
+  let newBlock = 'recommended-content';
+  if (item.criteriaTitle === 'exl-php-recently-viewed-content') {
+    newBlock = 'recently-reviewed';
+  }
+  const blockEl = buildBlock(newBlock, []);
+  if (item.mode === 'replace' && currentBlock) {
+    const containerSection = currentBlock.parentElement.parentElement;
+    containerSection.replaceChild(blockEl, currentBlock.parentElement);
   } else {
-    taglineCta?.remove();
+    const containerSection = document.createElement('div');
+    containerSection.classList.add('section', 'profile-section');
+    containerSection.dataset.sectionStatus = 'loaded';
+    document.querySelector('main').appendChild(containerSection);
+    containerSection.appendChild(blockEl);
   }
-  if (taglineText && data?.meta['tagline-text'] && data?.meta['tagline-text'].trim() !== '') {
-    taglineText.innerHTML = data.meta['tagline-text'];
-  } else {
-    taglineText?.remove();
-  }
-  if (!document.contains(taglineCta) && !document.contains(taglineText)) {
-    const taglineParentBlock = document.querySelector('.recommended-content-result-text');
-    if (taglineParentBlock) {
-      taglineParentBlock?.remove();
-    }
-  }
+  if (item.blockId) blockEl.id = item.blockId;
+  blockEl.dataset.targetScope = item.scope;
+  decorateBlock(blockEl);
+  await loadBlock(blockEl);
 }
 
 /**
- * Sets target data as a data attribute on the given block element.
- *
- * This function checks if the provided `data` object contains a `meta` property.
- * If the `meta` property exists, it serializes the metadata as a JSON string and
- * adds it to the specified block element as a custom data attribute `data-analytics-target-meta`.
- *
- * @param {Object} data - The data returned from target.
- * @param {HTMLElement} block - The DOM element to which the meta data will be added as an attribute.
- *
+ * Handles the action of a block (new, replace, update) based on the item properties.
+ * @param {Object} item - Object representing the block action type and associated block ID.
  */
-export function setTargetDataAsBlockAttribute(data, block) {
-  if (data?.meta) {
-    block.setAttribute('data-analytics-target-meta', JSON.stringify(data?.meta));
+function handleAction(item) {
+  switch (item.mode) {
+    case 'new':
+      createBlock(item);
+      break;
+    case 'replace': {
+      const blockElem = document.querySelector(`div#${item?.blockId}`);
+      createBlock(item, blockElem);
+      break;
+    }
+    case 'update': {
+      targetEventEmitter.set('blockId', item);
+      break;
+    }
+    default:
+      break;
   }
 }
 
@@ -206,8 +195,11 @@ class AdobeTargetClient {
         const indexMatch = scope.match(/-(\d+)$/);
         const targetIndex = indexMatch ? indexMatch[1] - 1 : null;
         const blockElement = this.blocks[targetIndex];
-        blockElement.id = `rc-${Math.random().toString(36).substring(2)}`;
-        const blockId = blockElement?.id;
+        let blockId;
+        if (blockElement) {
+          blockId = `rc-${Math.random().toString(36).substring(2)}`;
+          blockElement.id = blockId;
+        }
         const blockName = blockElement?.dataset.blockName;
 
         // eslint-disable-next-line no-nested-ternary
@@ -218,7 +210,7 @@ class AdobeTargetClient {
             : 'replace'
           : 'new';
 
-        return { blockId, scope, mode };
+        return { blockId, scope, mode, criteriaTitle };
       });
       this.reviseBlocks();
     }
@@ -236,40 +228,9 @@ class AdobeTargetClient {
       if (!blockIds.has(blockElem.id)) blockElem.remove();
     });
 
-    this.targetArray.forEach(this.handleAction);
-  }
-
-  /**
-   * Handles the action of a block (new, replace, update) based on the item properties.
-   * @param {Object} item - Object representing the block action type and associated block ID.
-   */
-  handleAction(item) {
-    const blockId = item?.blockId;
-    if (blockId) {
-      const blockElem = document.querySelector(`div#${blockId}`);
-      switch (item.mode) {
-        case 'new':
-          console.log('New', item.blockId);
-          this.createBlock();
-          break;
-        case 'replace':
-          console.log('Replace', blockElem);
-          this.createBlock();
-          break;
-        case 'update':
-          console.log('Update', blockElem);
-          targetEventEmitter.set('blockId', item);
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  createBlock() {
-    console.log(this.targetArray, 'createBlock');
+    this.targetArray.forEach(handleAction);
   }
 }
 
-const defaultAdobeTargetClient = new AdobeTargetClient();
-export default defaultAdobeTargetClient;
+// const defaultAdobeTargetClient ;
+export const defaultAdobeTargetClient = new AdobeTargetClient();

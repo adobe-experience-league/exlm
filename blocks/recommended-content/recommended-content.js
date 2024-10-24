@@ -11,7 +11,7 @@ import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import getEmitter from '../../scripts/events.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
-import AdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
+import { defaultAdobeTargetClient } from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-card-target-data-adapter.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
@@ -109,7 +109,7 @@ const prepareExclusionQuery = (cardIdsToExclude) => {
 
 async function findEmptyFilters(targetCriteriaId, profileInterests = []) {
   const removeFilters = [];
-  const resp = await AdobeTargetClient.getTargetData(targetCriteriaId);
+  const resp = await defaultAdobeTargetClient.getTargetData(targetCriteriaId);
   if (resp?.data) {
     const { data } = resp;
     profileInterests.forEach((interest) => {
@@ -150,6 +150,11 @@ const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
+  if (block.dataset.targetScope) {
+    for (let i = 0; i < 13; i += 1) {
+      block.innerHTML += '<div><div></div></div>';
+    }
+  }
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
@@ -167,7 +172,7 @@ export default async function decorate(block) {
 
   const reversedDomElements = remainingElements.reverse();
   const [firstEl, secondEl, targetCriteria, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
-  const targetCriteriaId = targetCriteria.textContent.trim();
+  const targetCriteriaId = block.dataset.targetScope ? block.dataset.targetScope : targetCriteria.textContent.trim();
   const profileDataPromise = defaultProfileClient.getMergedProfile();
 
   const tempWrapper = htmlToElement(`
@@ -513,7 +518,8 @@ export default async function decorate(block) {
           };
           targetPromises.push(
             new Promise((resolve) => {
-              AdobeTargetClient.getTargetData(targetCriteriaScopeId)
+              defaultAdobeTargetClient
+                .getTargetData(targetCriteriaScopeId)
                 .then(async (resp) => {
                   if (!resp) {
                     if (!UEAuthorMode) {
@@ -698,7 +704,7 @@ export default async function decorate(block) {
     }
   });
 
-  AdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
+  defaultAdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
     renderBlock({ targetSupport, targetCriteriaScopeId: targetCriteriaId });
   });
 }

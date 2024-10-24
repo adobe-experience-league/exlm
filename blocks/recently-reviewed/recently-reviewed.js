@@ -1,13 +1,12 @@
-import { getConfig, htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement } from '../../scripts/scripts.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import Swiper from '../../scripts/swiper/swiper.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-card-target-data-adapter.js';
-import AdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
+import { defaultAdobeTargetClient } from '../../scripts/adobe-target/adobe-target.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
-const { targetCriteriaIds } = getConfig();
 let displayBlock = false;
 
 /**
@@ -83,12 +82,21 @@ function renderNavigationArrows(titleContainer) {
 }
 
 export default async function decorate(block) {
-  AdobeTargetClient.checkTargetSupport()
+  defaultAdobeTargetClient
+    .checkTargetSupport()
     .then((targetSupport) => {
-      const [headingElement, descriptionElement] = [...block.children].map((row) => row.firstElementChild);
+      let headingElement;
+      let descriptionElement;
+      if (!block.dataset.targetScope) {
+        [headingElement, descriptionElement] = [...block.children].map((row) => row.firstElementChild);
+      } else {
+        headingElement = htmlToElement('<h2></h2>');
+        descriptionElement = htmlToElement('<p></p>');
+        block.prepend(headingElement);
+        block.prepend(descriptionElement);
+      }
       headingElement.classList.add('recently-reviewed-header');
       descriptionElement.classList.add('recently-reviewed-description');
-
       const titleContainer = document.createElement('div');
       const navContainer = document.createElement('div');
       const contentDiv = document.createElement('div');
@@ -115,7 +123,7 @@ export default async function decorate(block) {
       }
 
       if (targetSupport) {
-        AdobeTargetClient.getTargetData(targetCriteriaIds.recentlyViewed).then(async (resp) => {
+        defaultAdobeTargetClient.getTargetData(block.dataset.targetScope).then(async (resp) => {
           updateCopyFromTarget(resp, headingElement, descriptionElement);
           if (resp?.data.length) {
             displayBlock = true;
