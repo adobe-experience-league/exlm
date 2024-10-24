@@ -8,11 +8,13 @@ import {
   removeProductDuplicates,
 } from '../../scripts/browse-card/browse-card-utils.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
+import getEmitter from '../../scripts/events.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import AdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-card-target-data-adapter.js';
 
+const targetEventEmitter = getEmitter('loadTargetBlocks');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const DEFAULT_NUM_CARDS = 4;
 let placeholders = {};
@@ -352,13 +354,13 @@ export default async function decorate(block) {
       contentTypesFetchMap = contentTypeIsEmpty
         ? { '': DEFAULT_NUM_CARDS }
         : contentTypes.reduce((acc, curr) => {
-          if (!acc[curr]) {
-            acc[curr] = 1;
-          } else {
-            acc[curr] += 1;
-          }
-          return acc;
-        }, {});
+            if (!acc[curr]) {
+              acc[curr] = 1;
+            } else {
+              acc[curr] += 1;
+            }
+            return acc;
+          }, {});
 
       const encodedSolutionsText = fifthEl.innerText?.trim() ?? '';
       const { products, versions, features } = extractCapability(encodedSolutionsText);
@@ -688,6 +690,13 @@ export default async function decorate(block) {
     });
   }
 
+  targetEventEmitter.on('dataChange', async (data) => {
+    const blockId = block.id;
+    const { blockId: targetBlockId, scope } = data.value;
+    if (targetBlockId === blockId) {
+      renderBlock({ targetSupport: true, targetCriteriaScopeId: scope });
+    }
+  });
 
   AdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
     renderBlock({ targetSupport, targetCriteriaScopeId: targetCriteriaId });

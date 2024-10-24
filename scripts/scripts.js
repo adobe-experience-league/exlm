@@ -1421,7 +1421,8 @@ async function loadPage() {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
         loadPage();
-        const defaultAdobeTargetClient = await import('./adobe-target/adobe-target.js');
+        const mod = await import('./adobe-target/adobe-target.js');
+        const defaultAdobeTargetClient = mod.default;
         const isTargetSupported = await defaultAdobeTargetClient.checkTargetSupport();
         if (isTargetSupported) {
           defaultAdobeTargetClient.mapComponentsToTarget();

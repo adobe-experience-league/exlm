@@ -258,7 +258,7 @@ class AdobeTargetClient {
           break;
         case 'update':
           console.log('Update', blockElem);
-          targetEventEmitter.set('blockId', item.blockId);
+          targetEventEmitter.set('blockId', item);
           break;
         default:
           break;
