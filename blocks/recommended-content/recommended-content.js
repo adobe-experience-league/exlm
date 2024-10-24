@@ -105,6 +105,25 @@ const prepareExclusionQuery = (cardIdsToExclude) => {
   return cardIdsToExclude.length <= 1 ? query : `(${query})`;
 };
 
+async function findEmptyFilters(targetCriteriaId, profileInterests = []) {
+  const removeFilters = [];
+  const resp = await AdobeTargetClient.getTargetData(targetCriteriaId);
+  if (resp?.data) {
+    const { data } = resp;
+    profileInterests.forEach((interest) => {
+      let found = false;
+      for (let i = 0; i < data?.length ? data.length : 0; i += 1) {
+        if (data[i].product.split(',').includes(interest)) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) removeFilters.push(interest);
+    });
+  }
+  return removeFilters;
+}
+
 const interestDataPromise = fetchInterestData();
 
 const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
@@ -166,7 +185,142 @@ export default async function decorate(block) {
 
   block.appendChild(tempWrapper);
 
-  AdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
+  const defaultOptionsKey = [];
+  let contentTypesFetchMap = {};
+  const cardIdsToExclude = [];
+  const allMyProductsCardModels = [];
+  const dataConfiguration = {};
+
+  const getCardsData = (payload) =>
+    new Promise((resolve) => {
+      BrowseCardsDelegate.fetchCardData(payload)
+        .then((data) => {
+          const [ct] = payload.contentType || [''];
+          resolve({
+            contentType: ct,
+            data,
+          });
+        })
+        .catch(() => {
+          resolve({});
+        });
+    });
+
+  const renderCardsBlock = (cardModels, payloadConfig, contentDiv) => {
+    const { renderCards = true, lowercaseOptionType } = payloadConfig;
+    const promises = cardModels.map(
+      (cardData, i) =>
+        new Promise((resolve) => {
+          const cardDiv = payloadConfig.wrappers[i];
+          const alreadyRenderedCardIds = dataConfiguration[lowercaseOptionType]?.renderedCardIds || [];
+          if (cardData?.cardPromise) {
+            cardData.cardPromise.then((cardDataResponse) => {
+              const { cardsToRenderCount } = cardData;
+              const { data: delayedCardData = [] } = cardDataResponse;
+              const cardModelsList = [];
+              if (delayedCardData.length === 0) {
+                if (renderCards) {
+                  cardData.shimmers?.forEach((shimmerEl, index) => {
+                    shimmerEl.remove();
+                    cardData.wrappers[index].style.display = 'none';
+                  });
+                }
+              } else {
+                countNumberAsArray(cardsToRenderCount).forEach((_, index) => {
+                  const shimmer = cardData.shimmers[index];
+                  const wrapperDiv = cardData.wrappers[index];
+                  if (renderCards) {
+                    if (shimmer) {
+                      shimmer.remove();
+                    }
+                    wrapperDiv.innerHTML = '';
+                  }
+                  const [defaultCardModel] = delayedCardData;
+                  const targetIndex = delayedCardData.findIndex((delayData) =>
+                    delayData.id ? !alreadyRenderedCardIds.includes(delayData.id) : false,
+                  );
+                  let cardModel;
+                  if (targetIndex !== -1) {
+                    cardModel = delayedCardData[targetIndex];
+                    delayedCardData.splice(targetIndex, 1);
+                  } else {
+                    cardModel = defaultCardModel;
+                    delayedCardData.splice(0, 1);
+                  }
+                  if (renderCards) {
+                    if (cardModel.id) {
+                      dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
+                    }
+                    buildCard(contentDiv, wrapperDiv, cardModel);
+                  }
+                  cardModelsList.push(cardModel);
+                });
+              }
+              resolve(cardModelsList);
+            });
+          } else {
+            if (renderCards) {
+              cardDiv.innerHTML = '';
+              if (cardData.id) {
+                dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardData.id);
+              }
+              buildCard(contentDiv, cardDiv, cardData);
+            }
+            resolve([cardData]);
+          }
+        }),
+    );
+    contentDiv.style.display = 'flex';
+    return promises;
+  };
+
+  const recommendedContentNoResults = () => {
+    const recommendedContentNoResultsElement = block.querySelector('.browse-card-no-results');
+    const noResultsText =
+      placeholders?.recommendedContentNoResultsText ||
+      `We couldn’t find specific matches, but here are the latest tutorials/articles that others are loving right now!`;
+    recommendedContentNoResultsElement.innerHTML = noResultsText;
+  };
+
+  const renderCardBlock = (parentDiv) => {
+    if (block.contains(tempWrapper)) {
+      block.removeChild(tempWrapper);
+    }
+    const contentDiv = document.createElement('div');
+    contentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
+    parentDiv.appendChild(contentDiv);
+    secondEl.classList.add('recommended-content-discover-resource');
+    firstEl.classList.add('recommended-content-result-link');
+    if (firstEl.innerHTML || secondEl.innerHTML) {
+      const seeMoreEl = document.createElement('div');
+      seeMoreEl.classList.add('recommended-content-result-text');
+      seeMoreEl.appendChild(secondEl);
+      seeMoreEl.appendChild(firstEl);
+      parentDiv.appendChild(seeMoreEl);
+    }
+  };
+
+  const getListOfFilterOptions = async (targetSupport, profileInterests) => {
+    const sortedProfileInterests = profileInterests.sort();
+    let filterOptions = [...new Set(sortedProfileInterests)];
+    filterOptions.unshift(...defaultOptionsKey);
+    if (targetSupport) {
+      const emptyFilters = await findEmptyFilters(targetCriteriaId, profileInterests);
+      filterOptions = filterOptions.filter((ele) => !emptyFilters.includes(ele));
+    }
+    return filterOptions;
+  };
+
+  const resetContentDiv = (contentDiv) => {
+    contentDiv.innerHTML = '';
+    contentDiv.style.display = '';
+    const noResultsContent = block.querySelector('.browse-card-no-results');
+    if (noResultsContent) {
+      noResultsContent.remove();
+    }
+  };
+
+  async function renderBlock({ targetSupport, targetCriteriaScopeId }) {
     Promise.all([profileDataPromise, interestDataPromise]).then(async (promiseResponses) => {
       const [profileData, interestsDataArray] = promiseResponses;
       const {
@@ -174,8 +328,6 @@ export default async function decorate(block) {
         interests: profileInterests = [],
         solutionLevels: profileSolutionLevels = [],
       } = profileData || {};
-
-      const defaultOptionsKey = [];
 
       if (profileInterests.length === 0) {
         filterSectionElement.style.display = 'none';
@@ -188,7 +340,7 @@ export default async function decorate(block) {
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       }
 
-      if (!(targetSupport && targetCriteriaId)) {
+      if (!(targetSupport && targetCriteriaScopeId)) {
         block.style.display = 'block';
       }
 
@@ -197,23 +349,20 @@ export default async function decorate(block) {
       const contentTypeIsEmpty = contentTypes?.length === 0;
       const numberOfResults = contentTypeIsEmpty ? DEFAULT_NUM_CARDS : 1;
 
-      const contentTypesFetchMap = contentTypeIsEmpty
+      contentTypesFetchMap = contentTypeIsEmpty
         ? { '': DEFAULT_NUM_CARDS }
         : contentTypes.reduce((acc, curr) => {
-            if (!acc[curr]) {
-              acc[curr] = 1;
-            } else {
-              acc[curr] += 1;
-            }
-            return acc;
-          }, {});
+          if (!acc[curr]) {
+            acc[curr] = 1;
+          } else {
+            acc[curr] += 1;
+          }
+          return acc;
+        }, {});
 
       const encodedSolutionsText = fifthEl.innerText?.trim() ?? '';
-
       const { products, versions, features } = extractCapability(encodedSolutionsText);
-
       const sortedProfileInterests = profileInterests.sort();
-      let filterOptions = [...new Set(sortedProfileInterests)];
       const experienceLevels = sortedProfileInterests.map((interestName) => {
         const interest = (interestsDataArray || []).find((int) => int.Name === interestName);
         let expLevel = 'Beginner';
@@ -226,33 +375,14 @@ export default async function decorate(block) {
         }
         return expLevel;
       });
-
       const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase() ?? 'MOST_POPULAR'];
       const role = fourthEl?.innerText?.trim()?.includes('profile_context')
         ? profileRoles
         : fourthEl?.innerText?.trim().split(',').filter(Boolean);
 
-      filterOptions.unshift(...defaultOptionsKey);
+      const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests);
       const [defaultFilterOption = ''] = filterOptions;
       const containsAllAdobeProductsTab = filterOptions.includes(ALL_ADOBE_OPTIONS_KEY);
-      const cardIdsToExclude = [];
-      const allMyProductsCardModels = [];
-      const dataConfiguration = {};
-
-      const getCardsData = (payload) =>
-        new Promise((resolve) => {
-          BrowseCardsDelegate.fetchCardData(payload)
-            .then((data) => {
-              const [ct] = payload.contentType || [''];
-              resolve({
-                contentType: ct,
-                data,
-              });
-            })
-            .catch(() => {
-              resolve({});
-            });
-        });
 
       async function parseCardResponseData(cardResponse, apiConfigObject) {
         let data = [];
@@ -319,82 +449,6 @@ export default async function decorate(block) {
         return data;
       }
 
-      const renderCardsBlock = (cardModels, payloadConfig, contentDiv) => {
-        const { renderCards = true, lowercaseOptionType } = payloadConfig;
-        const promises = cardModels.map(
-          (cardData, i) =>
-            new Promise((resolve) => {
-              const cardDiv = payloadConfig.wrappers[i];
-              const alreadyRenderedCardIds = dataConfiguration[lowercaseOptionType]?.renderedCardIds || [];
-              if (cardData?.cardPromise) {
-                cardData.cardPromise.then((cardDataResponse) => {
-                  const { cardsToRenderCount } = cardData;
-                  const { data: delayedCardData = [] } = cardDataResponse;
-                  const cardModelsList = [];
-                  if (delayedCardData.length === 0) {
-                    if (renderCards) {
-                      cardData.shimmers?.forEach((shimmerEl, index) => {
-                        shimmerEl.remove();
-                        cardData.wrappers[index].style.display = 'none';
-                      });
-                    }
-                  } else {
-                    countNumberAsArray(cardsToRenderCount).forEach((_, index) => {
-                      const shimmer = cardData.shimmers[index];
-                      const wrapperDiv = cardData.wrappers[index];
-                      if (renderCards) {
-                        if (shimmer) {
-                          shimmer.remove();
-                        }
-                        wrapperDiv.innerHTML = '';
-                      }
-                      const [defaultCardModel] = delayedCardData;
-                      const targetIndex = delayedCardData.findIndex((delayData) =>
-                        delayData.id ? !alreadyRenderedCardIds.includes(delayData.id) : false,
-                      );
-                      let cardModel;
-                      if (targetIndex !== -1) {
-                        cardModel = delayedCardData[targetIndex];
-                        delayedCardData.splice(targetIndex, 1);
-                      } else {
-                        cardModel = defaultCardModel;
-                        delayedCardData.splice(0, 1);
-                      }
-                      if (renderCards) {
-                        if (cardModel.id) {
-                          dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
-                        }
-                        buildCard(contentDiv, wrapperDiv, cardModel);
-                      }
-                      cardModelsList.push(cardModel);
-                    });
-                  }
-                  resolve(cardModelsList);
-                });
-              } else {
-                if (renderCards) {
-                  cardDiv.innerHTML = '';
-                  if (cardData.id) {
-                    dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardData.id);
-                  }
-                  buildCard(contentDiv, cardDiv, cardData);
-                }
-                resolve([cardData]);
-              }
-            }),
-        );
-        contentDiv.style.display = 'flex';
-        return promises;
-      };
-
-      const recommendedContentNoResults = () => {
-        const recommendedContentNoResultsElement = block.querySelector('.browse-card-no-results');
-        const noResultsText =
-          placeholders?.recommendedContentNoResultsText ||
-          `We couldn’t find specific matches, but here are the latest tutorials/articles that others are loving right now!`;
-        recommendedContentNoResultsElement.innerHTML = noResultsText;
-      };
-
       const fetchDataAndRenderBlock = async (optionType, renderCards = true) => {
         const contentDiv = block.querySelector('.recommended-content-block-section');
         const lowercaseOptionType = optionType?.toLowerCase();
@@ -427,26 +481,18 @@ export default async function decorate(block) {
           role: role?.length ? role : profileRoles,
           sortCriteria,
           noOfResults: numberOfResults,
+          aq: !showProfileOptions && cardIdsToExclude.length ? prepareExclusionQuery(cardIdsToExclude) : undefined,
           context: showProfileOptions
             ? { role: profileRoles, interests: sortedProfileInterests, experience: experienceLevels }
             : { interests: [interest], experience: [expLevel], role: profileRoles },
         };
 
-        if (!showProfileOptions && cardIdsToExclude.length) {
-          const aq = prepareExclusionQuery(cardIdsToExclude);
-          params.aq = aq;
+        if (renderCards) {
+          resetContentDiv(contentDiv);
         }
 
-        if (renderCards) {
-          contentDiv.innerHTML = '';
-          contentDiv.style.display = '';
-          const noResultsContent = block.querySelector('.browse-card-no-results');
-          if (noResultsContent) {
-            noResultsContent.remove();
-          }
-        }
-        let cardPromises = [];
-        if (targetSupport) {
+        const prepareTargetBlockCardPromise = () => {
+          const targetPromises = [];
           const cardShimmers = [];
           const wrappers = [];
           countNumberAsArray(DEFAULT_NUM_CARDS).forEach(() => {
@@ -455,7 +501,7 @@ export default async function decorate(block) {
             wrappers.push(wrapper);
           });
           const payloadConfig = {
-            targetSupport,
+            targetSupport: true,
             shimmers: cardShimmers,
             wrappers,
             params,
@@ -463,9 +509,9 @@ export default async function decorate(block) {
             renderCards,
             lowercaseOptionType,
           };
-          cardPromises.push(
+          targetPromises.push(
             new Promise((resolve) => {
-              AdobeTargetClient.getTargetData(targetCriteriaId)
+              AdobeTargetClient.getTargetData(targetCriteriaScopeId)
                 .then(async (resp) => {
                   if (!resp) {
                     if (!UEAuthorMode) {
@@ -481,9 +527,6 @@ export default async function decorate(block) {
                     updateCopyFromTarget(resp, headingElement, descriptionElement, firstEl, secondEl);
                     block.style.display = 'block';
                     setTargetDataAsBlockAttribute(resp, block);
-                    block
-                      .querySelector('.recommended-content-block-section')
-                      ?.setAttribute('data-analytics-rec-source', 'target');
                   }
                   const cardModels = await parseCardResponseData(resp, payloadConfig);
                   let renderedCardModels = [];
@@ -502,9 +545,10 @@ export default async function decorate(block) {
                 });
             }),
           );
-        } else {
-          block.querySelector('.recommended-content-block-section')?.setAttribute('data-analytics-rec-source', 'coveo');
-          cardPromises = Object.keys(contentTypesFetchMap).map((contentType) => {
+          return targetPromises;
+        };
+        const prepareV2CardPromise = () =>
+          Object.keys(contentTypesFetchMap).map((contentType) => {
             const payload = {
               ...params,
             };
@@ -547,7 +591,13 @@ export default async function decorate(block) {
               });
             });
           });
-        }
+
+        const cardPromises = targetSupport ? prepareTargetBlockCardPromise() : prepareV2CardPromise();
+
+        block
+          .querySelector('.recommended-content-block-section')
+          ?.setAttribute('data-analytics-rec-source', targetSupport ? 'target' : 'coveo');
+
         Promise.all(cardPromises)
           .then((finalPromiseResponse) => {
             const dontRenderCards = finalPromiseResponse.some((data) => data?.payloadConfig?.renderCards === false);
@@ -602,110 +652,6 @@ export default async function decorate(block) {
           });
       };
 
-      const renderCardBlock = (parentDiv) => {
-        block.removeChild(tempWrapper);
-        const contentDiv = document.createElement('div');
-        contentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
-        parentDiv.appendChild(contentDiv);
-        secondEl.classList.add('recommended-content-discover-resource');
-        firstEl.classList.add('recommended-content-result-link');
-        if (firstEl.innerHTML || secondEl.innerHTML) {
-          const seeMoreEl = document.createElement('div');
-          seeMoreEl.classList.add('recommended-content-result-text');
-          seeMoreEl.appendChild(secondEl);
-          seeMoreEl.appendChild(firstEl);
-          parentDiv.appendChild(seeMoreEl);
-        }
-      };
-
-      /* TODO: Commenting it for further references, will up updating for the below code for navigation arrow changes */
-      /*
-    const setNavigationElementStatus = () => {
-      const prevNav = block.querySelector('.prev-nav');
-      const nextNav = block.querySelector('.next-nav');
-      const scrollBarSection = block.querySelector('.recommended-content-block-section');
-      const { scrollLeft } = scrollBarSection;
-      const delta = 10;
-      const scrollRightMax = scrollBarSection.scrollWidth - delta;
-      if (scrollLeft === 0) {
-        prevNav.classList.add('disabled');
-      } else {
-        prevNav.classList.remove('disabled');
-      }
-      if (scrollBarSection.offsetWidth && scrollLeft + scrollBarSection.offsetWidth >= scrollRightMax) {
-        nextNav.classList.add('disabled');
-      } else {
-        nextNav.classList.remove('disabled');
-      }
-    };
-    
-    const handleScroll = (next) => {
-      const loadNext = next === true;
-      const blockContent = block.querySelector('.recommended-content-block-section');
-      const elementWidth = blockContent?.firstElementChild?.offsetWidth || 0;
-      if (!elementWidth) {
-        return;
-      }
-      const currentScrollLeft = Math.ceil(blockContent.scrollLeft);
-      const gapValue = parseInt(getComputedStyle(blockContent).gap, 10);
-      const scrollOffsetValue = gapValue + elementWidth;
-  
-      const offsetDelta =
-        currentScrollLeft % scrollOffsetValue > 0.6 * scrollOffsetValue ? 0 : currentScrollLeft % scrollOffsetValue;
-  
-      const targetScrollLeft = currentScrollLeft - offsetDelta + (loadNext ? scrollOffsetValue : -scrollOffsetValue);
-      blockContent.scrollLeft = targetScrollLeft;
-      setNavigationElementStatus();
-    };
-    
-    const renderNavigationArrows = () => {
-      const navigationElements = htmlToElement(`
-                  <div class="recommended-content-nav-section">
-                      <button class="prev-nav">
-                          <span class="icon icon-chevron"></span>
-                      </button>
-                      <button class="next-nav">
-                          <span class="icon icon-chevron"></span>
-                      </button
-                  </div>
-              `);
-      const prevButton = navigationElements.querySelector('.prev-nav');
-      const nextButton = navigationElements.querySelector('.next-nav');
-      prevButton.addEventListener('click', () => {
-        handleScroll(false);
-      });
-      nextButton.addEventListener('click', () => {
-        handleScroll(true);
-      });
-      const scrollBarSection = block.querySelector('.recommended-content-block-section');
-      scrollBarSection.addEventListener('scrollend', setNavigationElementStatus);
-      blockHeader.appendChild(navigationElements);
-      setNavigationElementStatus();
-    };
-    */
-      async function findEmptyFilters() {
-        const removeFilters = [];
-        const resp = await AdobeTargetClient.getTargetData(targetCriteriaId);
-        if (resp?.data) {
-          const { data } = resp;
-          profileInterests.forEach((interest) => {
-            let found = false;
-            for (let i = 0; i < data?.length ? data.length : 0; i += 1) {
-              if (data[i].product.split(',').includes(interest)) {
-                found = true;
-                break;
-              }
-            }
-            if (!found) removeFilters.push(interest);
-          });
-        }
-        return removeFilters;
-      }
-
-      if (targetSupport) {
-        const emptyFilters = await findEmptyFilters();
-        filterOptions = filterOptions.filter((ele) => !emptyFilters.includes(ele));
-      }
       /* Responsive List View */
       const listItems = filterOptions.map((item) => {
         const value = item ? convertToTitleCase(item) : '';
@@ -740,5 +686,10 @@ export default async function decorate(block) {
         },
       });
     });
+  }
+
+
+  AdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
+    renderBlock({ targetSupport, targetCriteriaScopeId: targetCriteriaId });
   });
 }
