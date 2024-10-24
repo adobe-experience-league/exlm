@@ -439,7 +439,7 @@ const navDecorator = async (navBlock, decoratorOptions) => {
  * @param {HTMLElement} searchBlock
  * @param {DecoratorOptions} decoratorOptions
  */
-const searchDecorator = async (searchBlock) => {
+const searchDecorator = async (searchBlock, decoratorOptions) => {
   // save this for later use in mobile nav.
   const searchLink = getCell(searchBlock, 1, 1)?.firstChild;
   decoratorState.searchLinkHtml = searchLink.outerHTML;
@@ -506,6 +506,10 @@ const searchDecorator = async (searchBlock) => {
     searchOptions: options,
     showSearchSuggestions: true,
   });
+
+  if (decoratorOptions.isCommunity) {
+    searchItem.setSelectedSearchOption('Community');
+  }
   decorateIcons(searchBlock);
   return searchBlock;
 };
@@ -532,6 +536,7 @@ async function decorateCommunityBlock(header, decoratorOptions) {
         </a> 
     <div>  
 `;
+  decorateIcons(notificationWrapper);
   communityBlock.appendChild(notificationWrapper);
   const isSignedIn = await decoratorOptions.isUserSignedIn();
   const languageBlock = header.querySelector('.language-selector');
@@ -553,6 +558,7 @@ const languageDecorator = async (languageBlock, decoratorOptions) => {
     popoverId: 'language-picker-popover-header',
     block: languageBlock,
     languages: decoratorOptions.languages,
+    selectedLanguage: decoratorOptions.lang,
     onLanguageChange: decoratorOptions.onLanguageChange,
   });
   decoratorState.languageTitle = language.title;
@@ -751,7 +757,7 @@ class ExlHeader extends HTMLElement {
     options.profilePicture = options.profilePicture || profilePicture;
     options.isCommunity = options.isCommunity ?? false;
     options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
-    options.lang = options.lang || getPathDetails(this.decoratorOptions).lang || 'en';
+    options.lang = options.lang || getPathDetails().lang || 'en';
     options.navLinkOrigin = options.navLinkOrigin || window.location.origin;
 
     // yes, even though this is extra, it ensures that these functions remain pure-esque.
