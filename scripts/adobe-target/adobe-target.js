@@ -55,6 +55,8 @@ function handleAction(item) {
       break;
     }
     case 'update': {
+      const blockElem = document.querySelector(`div#${item?.blockId}`);
+      blockElem.dataset.targetScope = item.scope;
       targetEventEmitter.set('blockId', item);
       break;
     }
@@ -227,7 +229,6 @@ class AdobeTargetClient {
     this.blocks.forEach((blockElem) => {
       if (!blockIds.has(blockElem.id)) blockElem.remove();
     });
-
     this.targetArray.forEach(handleAction);
   }
 }

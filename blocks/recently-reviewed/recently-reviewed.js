@@ -125,7 +125,7 @@ export default async function decorate(block) {
       if (targetSupport) {
         defaultAdobeTargetClient.getTargetData(block.dataset.targetScope).then(async (resp) => {
           updateCopyFromTarget(resp, headingElement, descriptionElement);
-          if (resp?.data.length) {
+          if (resp?.data?.length) {
             displayBlock = true;
             appendNavAndContent();
             buildCardsShimmer.add(block);

@@ -171,8 +171,8 @@ export default async function decorate(block) {
   block.appendChild(blockHeader);
 
   const reversedDomElements = remainingElements.reverse();
-  const [firstEl, secondEl, targetCriteria, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
-  const targetCriteriaId = block.dataset.targetScope ? block.dataset.targetScope : targetCriteria.textContent.trim();
+  const [firstEl, secondEl, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
+  const targetCriteriaId = block.dataset.targetScope;
   const profileDataPromise = defaultProfileClient.getMergedProfile();
 
   const tempWrapper = htmlToElement(`
