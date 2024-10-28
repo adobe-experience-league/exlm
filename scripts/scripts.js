@@ -1410,6 +1410,8 @@ if (window.hlx.aemRoot || window.location.href.includes('.html')) {
 
 /**
  * WARNING: DO NOT MODIFY - This function is referenced from Target
+ * https://experienceleague.adobe.com/en/docs/experience-platform/web-sdk/personalization/manage-flicker#manage-flicker-for-asynchronous-deployments
+ *
  * Prehides content by adding a temporary style element to the document that hides the body.
  * The style element is automatically removed after a specified timeout.
  *
