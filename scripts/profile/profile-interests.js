@@ -34,7 +34,7 @@ const dropdownOptions = [
     title: placeholders.profileExpLevelIntermediate || 'Intermediate',
   },
   {
-    value: 'Advanced',
+    value: 'Experienced',
     title: placeholders.profileExpLevelExperienced || 'Experienced',
   },
 ];
@@ -52,6 +52,13 @@ function validateForm(formSelector) {
 
   const validator = new FormValidator(formSelector, placeholders, options);
   return validator.validate();
+}
+
+function sanitizeSolutionLevels(solutionLevels) {
+  return solutionLevels.map((solLevel) => {
+    const [id, level = 'Beginner'] = solLevel.split(':');
+    return `${id}:${level === 'Advanced' ? 'Experienced' : level}`;
+  });
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -154,7 +161,7 @@ export default async function buildProductCard(element, model) {
       const newSolutionItems = solutionLevels.filter((solution) => !`${solution}`.includes(id));
       newSolutionItems.push(`${id}:${level}`);
       defaultProfileClient
-        .updateProfile('solutionLevels', newSolutionItems, true)
+        .updateProfile('solutionLevels', sanitizeSolutionLevels(newSolutionItems), true)
         .then(() => {
           sendNotice(PROFILE_UPDATED);
           profileEventEmitter.emit('profileDataUpdated');
@@ -169,7 +176,7 @@ export default async function buildProductCard(element, model) {
         .getMergedProfile()
         .then(async (data) => {
           if (data?.solutionLevels?.length) {
-            const currentSolutionLevel = data.solutionLevels.find((solutionLevelInfo) =>
+            const currentSolutionLevel = sanitizeSolutionLevels(data.solutionLevels).find((solutionLevelInfo) =>
               `${solutionLevelInfo}`.includes(id),
             );
             if (currentSolutionLevel) {
