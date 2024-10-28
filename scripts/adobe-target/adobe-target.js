@@ -1,80 +1,18 @@
-import { buildBlock, decorateBlock, loadBlock } from '../lib-franklin.js';
+import { buildBlock, decorateBlock, decorateSections, loadBlock } from '../lib-franklin.js';
+import getCookie from '../utils/cookie-utils.js';
 import getEmitter from '../events.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
-
-export function getCookie(cookieName) {
-  const decodedCookie = decodeURIComponent(document.cookie);
-  const cookies = decodedCookie.split(';');
-  for (let i = 0; i < cookies.length; i += 1) {
-    let cookie = cookies[i];
-    while (cookie.charAt(0) === ' ') {
-      cookie = cookie.substring(1);
-    }
-    if (cookie.indexOf(cookieName) === 0) {
-      return cookie.substring(cookieName.length + 1);
-    }
-  }
-  return null;
-}
-
-async function createBlock(item, currentBlock) {
-  let newBlock = 'recommended-content';
-  if (item.criteriaTitle === 'exl-php-recently-viewed-content') {
-    newBlock = 'recently-reviewed';
-  }
-  const blockEl = buildBlock(newBlock, []);
-  if (item.mode === 'replace' && currentBlock) {
-    const containerSection = currentBlock.parentElement.parentElement;
-    containerSection.replaceChild(blockEl, currentBlock.parentElement);
-  } else {
-    const containerSection = document.createElement('div');
-    containerSection.classList.add('section', 'profile-section');
-    containerSection.dataset.sectionStatus = 'loaded';
-    document.querySelector('main').appendChild(containerSection);
-    containerSection.appendChild(blockEl);
-  }
-  if (item.blockId) blockEl.id = item.blockId;
-  blockEl.dataset.targetScope = item.scope;
-  decorateBlock(blockEl);
-  await loadBlock(blockEl);
-}
-
-/**
- * Handles the action of a block (new, replace, update) based on the item properties.
- * @param {Object} item - Object representing the block action type and associated block ID.
- */
-function handleAction(item) {
-  switch (item.mode) {
-    case 'new':
-      createBlock(item);
-      break;
-    case 'replace': {
-      const blockElem = document.querySelector(`div#${item?.blockId}`);
-      createBlock(item, blockElem);
-      break;
-    }
-    case 'update': {
-      const blockElem = document.querySelector(`div#${item?.blockId}`);
-      blockElem.dataset.targetScope = item.scope;
-      targetEventEmitter.set('blockId', item);
-      break;
-    }
-    default:
-      break;
-  }
-}
-
 class AdobeTargetClient {
   constructor() {
     this.targetData = window.exlm.targetData || [];
     this.targetDataEventName = 'target-recs-ready';
-    // getConfig().cookieConsentName - cannot use getConfig because of cyclic dependency
     this.cookieConsentName = 'OptanonConsent';
     this.targetCookieEnabled = this.checkIsTargetCookieEnabled();
     const main = document.querySelector('main');
     this.blocks = main.querySelectorAll('.recommended-content, .recently-reviewed');
     this.targetArray = [];
+    this.currentItem = null;
   }
 
   /**
@@ -212,7 +150,12 @@ class AdobeTargetClient {
             : 'replace'
           : 'new';
 
-        return { blockId, scope, mode, criteriaTitle };
+        let newBlock = 'recommended-content';
+        if (criteriaTitle === 'exl-php-recently-viewed-content') {
+          newBlock = 'recently-reviewed';
+        }
+
+        return { blockId, scope, mode, criteriaTitle, newBlock };
       });
       this.reviseBlocks();
     }
@@ -229,9 +172,56 @@ class AdobeTargetClient {
     this.blocks.forEach((blockElem) => {
       if (!blockIds.has(blockElem.id)) blockElem.remove();
     });
-    this.targetArray.forEach(handleAction);
+    this.handleAction();
+  }
+
+  /**
+   * Handles the action of a block (new, replace, update) based on the item properties.
+   * @param {Object} item - Object representing the block action type and associated block ID.
+   */
+  handleAction() {
+    this.targetArray.forEach((item) => {
+      this.currentItem = item;
+      switch (item.mode) {
+        case 'new':
+          this.createBlock();
+          break;
+        case 'replace': {
+          const blockElem = document.querySelector(`div#${item?.blockId}`);
+          this.createBlock(blockElem);
+          break;
+        }
+        case 'update': {
+          const blockElem = document.querySelector(`div#${item?.blockId}`);
+          blockElem.dataset.targetScope = item.scope;
+          targetEventEmitter.set('blockId', item);
+          break;
+        }
+        default:
+          break;
+      }
+    });
+  }
+
+  async createBlock(currentBlock) {
+    const blockEl = buildBlock(this.currentItem.newBlock, []);
+    if (this.currentItem.mode === 'replace' && currentBlock) {
+      const containerSection = currentBlock?.parentElement?.parentElement;
+      containerSection.replaceChild(blockEl, currentBlock?.parentElement);
+    } else {
+      const containerSection = document.createElement('div');
+      containerSection.classList.add('section', 'profile-section');
+      const main = document.querySelector('main');
+      main.appendChild(containerSection);
+      decorateSections(main);
+      containerSection.appendChild(blockEl);
+    }
+    if (this.currentItem.blockId) blockEl.id = this.currentItem.blockId;
+    blockEl.dataset.targetScope = this.currentItem.scope;
+    decorateBlock(blockEl);
+    await loadBlock(blockEl);
   }
 }
 
-// const defaultAdobeTargetClient ;
-export const defaultAdobeTargetClient = new AdobeTargetClient();
+const defaultAdobeTargetClient = new AdobeTargetClient();
+export default defaultAdobeTargetClient;
