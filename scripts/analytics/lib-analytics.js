@@ -291,7 +291,7 @@ export function pushSignupEvent(target, action) {
 
   window.adobeDataLayer.push({
     event: 'signup-dialog',
-    eventType: 'web.webinteraction.assetInteraction',
+    eventType: action === 'show-modal' ? 'web.webinteraction.linkClicks' : 'web.webinteraction.assetInteraction',
     signupDialog: {
       action: `sign up dialog ${action}`,
       step: stepDLValue,
