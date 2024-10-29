@@ -1477,7 +1477,7 @@ function prehideFunction(e, a, n, t) {
             3000,
           );
         }
-        if ( personalizedHomeLink && sessionStorage.getItem(PHP_AB) === 'authHP') {
+        if (personalizedHomeLink && sessionStorage.getItem(PHP_AB) === 'authHP') {
           window.location.pathname = `${lang}${personalizedHomeLink}`;
           return;
         }
