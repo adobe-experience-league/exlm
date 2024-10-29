@@ -24,17 +24,24 @@ const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes ha
 const PROFILE_NOT_UPDATED =
   placeholders?.profileNotUpdated || 'An error occurred during profile update. Please try again at a later time.';
 
+const EXP_LEVELS = {
+  BEGINNER: 'Beginner',
+  INTERMEDIATE: 'Intermediate',
+  EXPERIENCED: 'Experienced',
+  ADVANCED: 'Advanced',
+};
+
 const dropdownOptions = [
   {
-    value: 'Beginner',
+    value: EXP_LEVELS.BEGINNER,
     title: placeholders.profileExpLevelBeginner || 'Beginner',
   },
   {
-    value: 'Intermediate',
+    value: EXP_LEVELS.INTERMEDIATE,
     title: placeholders.profileExpLevelIntermediate || 'Intermediate',
   },
   {
-    value: 'Experienced',
+    value: EXP_LEVELS.EXPERIENCED,
     title: placeholders.profileExpLevelExperienced || 'Experienced',
   },
 ];
@@ -56,8 +63,8 @@ function validateForm(formSelector) {
 
 function sanitizeSolutionLevels(solutionLevels) {
   return solutionLevels.map((solLevel) => {
-    const [id, level = 'Beginner'] = solLevel.split(':');
-    return `${id}:${level === 'Advanced' ? 'Experienced' : level}`;
+    const [id, level = EXP_LEVELS.BEGINNER] = solLevel.split(':');
+    return `${id}:${level === EXP_LEVELS.ADVANCED ? EXP_LEVELS.EXPERIENCED : level}`;
   });
 }
 
