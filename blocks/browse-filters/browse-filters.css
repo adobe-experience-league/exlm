@@ -543,7 +543,6 @@ button.browse-tags:focus {
   cursor: pointer;
 }
 
-
 @media (min-width: 600px) {
   .browse-filters-input-container {
     display: grid;
