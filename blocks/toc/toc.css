@@ -155,7 +155,7 @@
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 0 12px;
+    padding: 0 30px 0 12px;
     cursor: pointer;
     text-transform: uppercase;
     font-weight: var(--spectrum-extra-bold-font-weight);
@@ -179,7 +179,7 @@
 
 .toc a.toc-toggle::after {
     position: absolute;
-    right: 0%;
+    right: 7px;
     top: auto;
     display: flex;
     width: 18px;
@@ -343,22 +343,18 @@ button.toc-dropdown-button {
     
                 .toc-tree {
                     flex: 1 1 auto;
-                    overflow-y: auto;
                     scroll-behavior: smooth;
+                    overflow-y: auto;
+                    touch-action: pan-y;
+                    scrollbar-width: auto;
+                    scrollbar-color: var(--spectrum-gray-200) var(--spectrum-gray-50);
                     max-height: 100vh;
     
                     &::-webkit-scrollbar {
                         width: 0;
                     }
-    
-                    &:hover::-webkit-scrollbar, &:hover {
-                        touch-action: pan-y;
-                        overflow-y: auto;
-                        scrollbar-width: thin;
-                        scrollbar-color: var(--spectrum-gray-200) var(--spectrum-gray-100);
-                    }
-        
-                    &:hover::-webkit-scrollbar-thumb {
+
+                    &::-webkit-scrollbar-thumb {
                         background-color: var(--spectrum-gray-200);
                         border-radius: 6px;
                     }
