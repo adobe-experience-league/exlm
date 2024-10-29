@@ -543,15 +543,6 @@ button.browse-tags:focus {
   cursor: pointer;
 }
 
-.search-suggestions-popover .search-picker-label .icon {
-  position: absolute;
-  height: 28px;
-  width: 28px;
-  left: 8px;
-  top: 4px;
-  display: flex;
-  align-items: center;
-}
 
 @media (min-width: 600px) {
   .browse-filters-input-container {
