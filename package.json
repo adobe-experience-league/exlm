@@ -31,7 +31,7 @@
   "bugs": {
     "url": "https://github.com/adobe-experience-league/exlm/issues"
   },
-  "homepage": "https://experienceleague.adobe.com/",
+  "homepage": "https://main--exlm--adobe-experience-league.hlx.live/",
   "devDependencies": {
     "@babel/core": "7.21.0",
     "@babel/eslint-parser": "7.19.1",
