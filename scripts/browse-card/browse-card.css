@@ -21,6 +21,7 @@
   position: absolute;
   top: 32px;
   left: 0;
+  max-width: 90%;
   background-color: var(--non-spectrum-light-coral);
   color: var(--background-color);
   padding: 8px 16px;
@@ -295,7 +296,7 @@
 .browse-card.certificate-card .browse-card-figure,
 .browse-card.certification-card .browse-card-figure,
 .browse-card.instructor-led-training-card .browse-card-figure {
-  min-height: 72px;
+  min-height: 85px;
 }
 .browse-card.community-card .browse-card-meta-info {
   margin: 0;

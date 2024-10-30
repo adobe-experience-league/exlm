@@ -267,13 +267,6 @@ export async function fetchAuthorBio(anchor) {
 }
 
 /**
- * Check if current page is a home page.
- */
-export function isHomePage(lang) {
-  return window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
-}
-
-/**
  * Add a left rail to the profile page.
  * @param {HTMLElement} main
  *
@@ -1403,11 +1396,6 @@ async function loadPage() {
   }
 }
 
-// For AEM Author mode, decode the tags value
-if (window.hlx.aemRoot || window.location.href.includes('.html')) {
-  decodeAemPageMetaTags();
-}
-
 /**
  * WARNING: DO NOT MODIFY - This function is referenced from Target
  * https://experienceleague.adobe.com/en/docs/experience-platform/web-sdk/personalization/manage-flicker#manage-flicker-for-asynchronous-deployments
@@ -1439,49 +1427,72 @@ function prehideFunction(e, a, n, t) {
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 (async () => {
-  if (!window.hlx.DO_NOT_LOAD_PAGE) {
-    const { lang } = getPathDetails();
-    document.documentElement.lang = lang || 'en';
-    const { personalizedHomeLink } = getConfig() || {};
-    const PHP_AB = 'phpAB';
+  if (window.hlx.DO_NOT_LOAD_PAGE) return;
 
-    if (isProfilePage) {
-      if (window.location.href.includes('.html')) {
-        loadPage();
-      } else {
-        await loadIms();
-        if (window?.adobeIMS?.isSignedInUser()) {
-          loadPage();
-        } else {
-          await window?.adobeIMS?.signIn();
-        }
-      }
-    } else if (isHomePage(lang)) {
-      try {
-        await loadIms();
-        const isSignedIn = window?.adobeIMS?.isSignedInUser();
-        if (isSignedIn) {
-          // Execute the prehiding function
-          if (!sessionStorage.getItem(PHP_AB)) {
-            prehideFunction(
-              document,
-              window.location.href.indexOf('adobeaemcloud.com') !== -1,
-              'body { opacity: 0 !important }',
-              3000,
-            );
-          }
-          if (personalizedHomeLink && sessionStorage.getItem(PHP_AB) === 'authHP') {
-            window.location.pathname = `${lang}${personalizedHomeLink}`;
-            return;
-          }
-        }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error during redirect process:', error);
-      }
+  // For AEM Author mode, decode the tags value
+  if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+    decodeAemPageMetaTags();
+  }
+
+  const { lang } = getPathDetails();
+  document.documentElement.lang = lang || 'en';
+  const isMainPage = window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
+  const PHP_AB = 'phpAB';
+
+  const isUserSignedIn = async () => {
+    await loadIms();
+    return window?.adobeIMS?.isSignedInUser();
+  };
+
+  const handleProfilePage = async () => {
+    if (window.location.href.includes('.html')) {
       loadPage();
     } else {
-      loadPage();
+      const signedIn = await isUserSignedIn();
+      if (signedIn) {
+        loadPage();
+        const mod = await import('./adobe-target/adobe-target.js');
+        const defaultAdobeTargetClient = mod.default;
+        const isTargetSupported = await defaultAdobeTargetClient.checkTargetSupport();
+        if (isTargetSupported) {
+          defaultAdobeTargetClient.mapComponentsToTarget();
+        }
+      } else {
+        await window?.adobeIMS?.signIn();
+      }
     }
+  };
+
+  const handleMainPage = async () => {
+    try {
+      const signedIn = await isUserSignedIn();
+      const { personalizedHomeLink } = getConfig() || {};
+      if (signedIn) {
+        // Execute the prehiding function
+        if (!sessionStorage.getItem(PHP_AB)) {
+          prehideFunction(
+            document,
+            window.location.href.indexOf('adobeaemcloud.com') !== -1,
+            'body { opacity: 0 !important }',
+            3000,
+          );
+        }
+        if (personalizedHomeLink && sessionStorage.getItem(PHP_AB) === 'authHP') {
+          window.location.pathname = `${lang}${personalizedHomeLink}`;
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Error during redirect process:', error);
+    }
+    loadPage();
+  };
+
+  if (isProfilePage) {
+    await handleProfilePage();
+  } else if (isMainPage) {
+    await handleMainPage();
+  } else {
+    loadPage();
   }
 })();
