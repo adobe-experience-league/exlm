@@ -43,19 +43,11 @@ const tocActions = () => `
     <!-- TOC Filter Bar -->
     <div class="toc-filter-wrapper">
       <div class="toc-filter-container">
-        <span title="Filter" class="icon icon-filter">
-          <svg width="18" height="18">
-            <object type="image/svg+xml" data="/icons/icon-filter.svg"></object>
-          </svg>
-        </span>
+        <span title="Filter" class="icon icon-icon-filter"/>
         <input autocomplete="off" class="toc-filter-input" type="text" 
           aria-label="Filter by keyword" aria-expanded="false" 
           title="Type to filter" role="textbox" placeholder="Filter by keyword">
-        <span title="Clear" class="icon icon-clear toc-filter-clear-icon">
-          <svg width="18" height="18">
-            <object type="image/svg+xml" data="/icons/icon-close.svg"></object>
-          </svg>
-        </span>
+        <span title="Clear" class="icon icon-icon-clear toc-filter-clear-icon"/>
       </div>
     </div>
 
@@ -359,7 +351,8 @@ export default async function decorate(block) {
   tocContent.id = 'toc-dropdown-popover';
 
   const productHeader = buildProductHeader();
-  decorateIcons(productHeader, '/solutions');
+  decorateIcons(productHeader.querySelector('.toc-header-content'), '/solutions');
+  decorateIcons(productHeader.querySelector('.toc-header-actions'));
   const tocMobileDropdown = buildTocMobileDropdown();
 
   block.appendChild(tocMobileDropdown);
