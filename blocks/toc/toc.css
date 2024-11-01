@@ -336,14 +336,11 @@ button.toc-dropdown-button {
             flex-direction: column;
     
             .toc-content {
-                flex: 1 1 auto;
                 overflow: hidden;
                 display: flex;
                 flex-direction: column;
     
                 .toc-tree {
-                    flex: 1 1 auto;
-                    scroll-behavior: smooth;
                     overflow-y: auto;
                     touch-action: pan-y;
                     scrollbar-width: auto;
