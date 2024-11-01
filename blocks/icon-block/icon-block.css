@@ -28,7 +28,6 @@
   color: var(--non-spectrum-custom-dark);
   font-weight: bold;
   margin-bottom: 8px;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 229px;
@@ -39,7 +38,7 @@
   line-height: 18.2px;
   color: var(--spectrum-gray-700);
   text-overflow: ellipsis;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
   display: -webkit-box;
@@ -63,16 +62,12 @@
 .icon-block .icon-link.external::after {
   content: "";
 }
-.icon-block .icon-new-tab {
+.icon-block .icon-new-tab-blue {
   position: relative;
   top: 1px;
   width: 17px;
   height: 17px;
 }
-.icon-block .icon-new-tab svg {
-  fill: var(--non-spectrum-navy-blue);
-}
-
 @media (min-width: 600px) {
   .icon-block {
     grid-template-columns: repeat(auto-fit, minmax(286px, 1fr));
@@ -89,14 +84,17 @@
 }
 @media (min-width: 900px) {
   .icon-block {
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    column-gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    column-gap: 16px;
     max-width: 1278px;
   }
   .icon-block > div {
     max-width: 230px;
     min-height: 180px;
   } 
+  .icon-block .icon-description {
+    min-height: 73px;
+  }
   body[class ^= 'browse-'] .icon-block,
   body[class ^= 'article-'] .icon-block {
   max-width: none;

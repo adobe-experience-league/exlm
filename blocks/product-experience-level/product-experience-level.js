@@ -1,7 +1,9 @@
 import buildProductCard from '../../scripts/profile/profile-interests.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { productExperienceEventEmitter } from '../../scripts/events.js';
+import getEmitter from '../../scripts/events.js';
 
+const interestsEventEmitter = getEmitter('interests');
+const signupDialogEventEmitter = getEmitter('signupDialog');
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -25,7 +27,7 @@ const experiencedDescription =
 const formErrorMessage = placeholders?.formFieldGroupError || 'Please select at least one option.';
 
 const renderCards = (resultsEl) => {
-  const interests = productExperienceEventEmitter.get('interests_data') ?? [];
+  const interests = interestsEventEmitter.get('interests_data') ?? [];
   interests
     .filter((interest) => interest.selected)
     .forEach((interestData) => {
@@ -36,7 +38,7 @@ const renderCards = (resultsEl) => {
     });
 };
 
-export default function ProfileExperienceLevel(block) {
+function decorateContent(block) {
   const [firstLevel, secondLevel] = block.children;
   const heading = firstLevel.querySelector('h1, h2, h3, h4, h5, h6');
   heading?.classList.add('product-experience-level-header');
@@ -92,9 +94,9 @@ export default function ProfileExperienceLevel(block) {
   const resultsEl = block.querySelector('.personalize-interest-results');
   renderCards(resultsEl);
 
-  productExperienceEventEmitter.on('dataChange', (data) => {
+  interestsEventEmitter.on('dataChange', (data) => {
     const { key, value } = data;
-    const interests = productExperienceEventEmitter.get('interests_data') ?? [];
+    const interests = interestsEventEmitter.get('interests_data') ?? [];
     const model = interests.find((interest) => interest.id === key);
     const formErrorElement = block.querySelector('.personalize-interest-form .personalize-interest-form-error');
     formErrorElement.classList.toggle('hidden', true);
@@ -103,5 +105,14 @@ export default function ProfileExperienceLevel(block) {
       resultsEl.innerHTML = '';
       renderCards(resultsEl);
     }
+  });
+}
+
+export default function ProfileExperienceLevel(block) {
+  const blockInnerHTML = block.innerHTML;
+  decorateContent(block);
+  signupDialogEventEmitter.on('signupDialogClose', async () => {
+    block.innerHTML = blockInnerHTML;
+    decorateContent(block);
   });
 }

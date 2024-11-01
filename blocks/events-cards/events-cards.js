@@ -1,4 +1,3 @@
-import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
@@ -62,8 +61,6 @@ export default async function decorate(block) {
 
   // Appending header div to the block
   block.appendChild(headerDiv);
-
-  await decorateIcons(headerDiv);
 
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');

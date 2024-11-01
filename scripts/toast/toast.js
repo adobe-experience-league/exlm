@@ -4,9 +4,9 @@ import { decorateIcons } from '../lib-franklin.js';
 import { htmlToElement } from '../scripts.js';
 
 const iconMapping = {
-  info: 'info-filled',
+  info: 'info-filled-light',
   success: 'check-circle',
-  error: 'warning',
+  error: 'warning-light',
 };
 
 /**

@@ -68,13 +68,6 @@
     cursor: pointer;
 }
 
-.profile-interest-logo svg {
-    height: 42px;
-    width: 42px;
-    transform: scale(0.714);
-    transform-origin: top left;
-}
-
 @media (min-width: 600px) {
     .profile-interest-card {
         width: 308px;

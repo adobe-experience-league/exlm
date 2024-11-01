@@ -110,7 +110,7 @@
   transform: rotateZ(-45deg);
 }
 
-.icon svg {
+.icon img {
   height: 18px;
   width: 18px;
 }
@@ -147,11 +147,10 @@
   background: var(--non-spectrum-bg);
   box-shadow: 0 8px 8px rgb(10 10 10 / 10%);
   display: none;
-  left: 50%;
   width: 120px;
   position: absolute;
   transform: translate(-50%, 0);
-  top: 64px;
+  top: var(--nav-height);
   z-index: 10;
 }
 
@@ -192,12 +191,20 @@
 .search {
   grid-area: search;
   display: var(--search-display);
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
-  padding-right: 15px;
+  padding-left: 0;
+  padding-right: 0;
   container-type: inline-size;
   container-name: searchs;
   z-index: 1;
+  min-width: 48px; // a11y minimum
+
+  @include breakpoint(custom) {
+    justify-content: flex-end;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
 }
 
 .search-wrapper {
@@ -210,10 +217,13 @@
 
 .icon-search {
   position: absolute;
-  background: url('../../icons/search.svg') no-repeat center center;
-  background-size: 1em 1em;
-  left: 4px;
+  left: 7px;
+  top: 7px;
   cursor: pointer;
+
+  img {
+    width: 14px;
+  }
 }
 
 .search-container {
@@ -233,6 +243,10 @@
     display: flex !important;
     align-items: center;
 
+    .icon {
+      position: initial;
+    }
+
     a {
       display: flex !important;
       align-items: center;
@@ -250,8 +264,18 @@
 .search-short {
   display: none;
 
+  a {
+    width: 48px;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 !important;
+  }
+
   .icon {
     height: 18px;
+    width: 18px;
+    vertical-align: middle;
   }
 }
 
@@ -296,6 +320,7 @@
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  width: 100%;
 
   &::placeholder {
     font-style: italic;
@@ -348,14 +373,10 @@
 }
 
 .icon-clear {
-  svg {
+  img {
     vertical-align: 10px;
     width: 14px;
     height: 6px;
-
-    path {
-      fill: white;
-    }
   }
 }
 
@@ -363,7 +384,7 @@
   min-width: max-content;
   display: block;
 
-  span.icon svg {
+  span.icon img {
     width: 14px;
     height: 14px;
   }
@@ -575,9 +596,9 @@ button:focus {
   // main nav
   > nav {
     display: grid;
-    grid-template-areas: 'nav adobe-logo brand product-grid search sign-in notification';
-    justify-content: space-between;
+    grid-template-areas: 'nav brand search sign-in';
     height: 100%;
+    grid-template-columns: min-content auto min-content min-content;
 
     @include breakpoint(custom) {
       width: 100%;
@@ -595,13 +616,19 @@ button:focus {
     padding: var(--nav-root-item-padding-x);
     padding-right: 0;
 
+    a {
+      margin: 0;
+    }
+
     .icon {
-      svg {
+      display: block;
+      height: 24px;
+      width: 24px;
+
+      img {
         height: 24px;
         width: 24px;
       }
-
-      vertical-align: middle;
     }
   }
 
@@ -610,6 +637,7 @@ button:focus {
     grid-area: brand;
     display: flex;
     align-items: center;
+    justify-content: center;
     padding: var(--nav-root-item-padding-x);
     order: var(--brand-order);
     font-size: 17px;
@@ -631,9 +659,11 @@ button:focus {
     order: var(--sign-in-order);
     align-items: center;
     padding-left: 1em;
+    padding-right: 1em;
 
     @include breakpoint(custom) {
       padding-left: 0;
+      padding-right: 0;
     }
 
     a {
@@ -717,12 +747,20 @@ button:focus {
     }
   }
 
+  .product-grid {
+    display: none;
+  }
+
   // header prouct-grid
   .product-grid.signed-in {
     grid-area: product-grid;
-    display: var(--sign-in-display);
+    display: none;
     order: var(--sign-in-order);
     align-items: center;
+
+    @include breakpoint(custom) {
+      display: var(--sign-in-display);
+    }
 
     a {
       color: var(--nav-item-text-color);
@@ -916,7 +954,7 @@ button:focus {
         line-height: 1.5;
       }
 
-      .icon svg {
+      .icon img {
         vertical-align: middle;
         padding-left: 5px;
       }

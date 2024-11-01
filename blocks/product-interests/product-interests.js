@@ -1,10 +1,13 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
-import { productExperienceEventEmitter } from '../../scripts/events.js';
+import getEmitter from '../../scripts/events.js';
 import FormValidator from '../../scripts/form-validator.js';
 
 const { interestsUrl } = getConfig();
+const interestsEventEmitter = getEmitter('interests');
+const profileEventEmitter = getEmitter('profile');
+const signupDialogEventEmitter = getEmitter('signupDialog');
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -42,10 +45,29 @@ let [interests, profileData] = await Promise.all([
 
 async function updateInterests(block) {
   const newInterests = [];
+  const newInterestIds = [];
+  const profileDataValue = await defaultProfileClient.getMergedProfile();
+  const { solutionLevels = [] } = profileDataValue;
   block.querySelectorAll('li input:checked').forEach((input) => {
     newInterests.push(input.title);
+    newInterestIds.push(input.id.replace('interest__', ''));
   });
-  await defaultProfileClient.updateProfile('interests', newInterests, true);
+  const newSoutionsToAdd = solutionLevels.filter((solutionId) => {
+    const [id] = solutionId.split(':');
+    return newInterestIds.includes(id);
+  });
+
+  const missingSolutionIds = newInterestIds.filter(
+    (interestId) =>
+      !newSoutionsToAdd.find((solutionId) => {
+        const [id] = solutionId.split(':');
+        return interestId === id;
+      }),
+  );
+  missingSolutionIds.forEach((id) => {
+    newSoutionsToAdd.push(`${id}:Beginner`);
+  });
+  await defaultProfileClient.updateProfile(['interests', 'solutionLevels'], [newInterests, newSoutionsToAdd], true);
 }
 
 function decorateInterests(block) {
@@ -72,7 +94,7 @@ function decorateInterests(block) {
   interests.data.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
   const clonedInterests = structuredClone(interests.data);
 
-  productExperienceEventEmitter.set('interests_data', clonedInterests);
+  interestsEventEmitter.set('interests_data', clonedInterests);
 
   clonedInterests.forEach((interest) => {
     const column = document.createElement('li');
@@ -110,7 +132,7 @@ function decorateInterests(block) {
       inputEl.checked = true;
       inputEl.classList.add('checked');
       interest.selected = true;
-      productExperienceEventEmitter.set(interest.id, true);
+      interestsEventEmitter.set(interest.id, true);
     } else {
       interest.selected = false;
     }
@@ -118,7 +140,7 @@ function decorateInterests(block) {
 
   block.appendChild(content);
 
-  productExperienceEventEmitter.on('dataChange', ({ key, value }) => {
+  interestsEventEmitter.on('dataChange', ({ key, value }) => {
     if (formErrorContainer) {
       formErrorContainer.classList.toggle('hidden', true);
     }
@@ -138,11 +160,16 @@ function decorateInterests(block) {
             if (JSON.stringify(profileData.interests) !== JSON.stringify(profile.interests)) {
               profileData = profile;
               sendNotice(placeholders?.profileUpdated || 'Profile updated successfully');
+              profileEventEmitter.emit('profileDataUpdated');
             }
           });
         })
         .catch(() => {
-          sendNotice(placeholders?.profileNotUpdated || 'Error updating profile');
+          sendNotice(
+            placeholders?.profileNotUpdated ||
+              'An error occurred during profile update. Please try again at a later time.',
+            'error',
+          );
         });
     }
   });
@@ -186,13 +213,20 @@ function handleProductInterestChange(block) {
 
       if (event.target.tagName === 'INPUT') {
         const [, id] = event.target.id.split('__');
-        productExperienceEventEmitter.set(id, event.target.checked);
+        interestsEventEmitter.set(id, event.target.checked);
       }
     });
   });
 }
 
 export default async function decorateProfile(block) {
+  const blockInnerHTML = block.innerHTML;
   decorateInterests(block);
   handleProductInterestChange(block);
+
+  signupDialogEventEmitter.on('signupDialogClose', async () => {
+    block.innerHTML = blockInnerHTML;
+    decorateInterests(block);
+    handleProductInterestChange(block);
+  });
 }

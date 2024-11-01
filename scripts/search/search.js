@@ -190,18 +190,13 @@ export default class Search {
   }
 
   onSearchPopoverClick(e) {
-    const searchParams = this.searchOptions.map((option) => option.split(':')[0]);
-    if (e.target && searchParams.includes(e.target.textContent.trim())) {
-      this.searchPickerPopover.querySelector('.icon').remove();
-      this.setSelectedSearchOption(e.target.textContent, e.target.dataset.filterValue);
-      e.target.append(this.selectedCheckmarkEl);
-    }
+    if (e.target) this.setSelectedSearchOption(e.target.dataset.filterValue);
   }
 
   onSearchPopoverKeydown(e) {
     if (e.key === 'Enter' && e.target && this.searchOptions.includes(e.target.textContent.trim())) {
       this.searchPickerPopover.querySelector('.icon').remove();
-      this.setSelectedSearchOption(e.target.textContent, e.target.dataset.filterValue);
+      this.setSelectedSearchOption(e.target.dataset.filterValue);
       e.target.append(this.selectedCheckmarkEl);
     }
   }
@@ -333,8 +328,17 @@ export default class Search {
     redirectToSearchPage(suggestion, this.searchPickerLabelEl.dataset.filterValue);
   }
 
-  setSelectedSearchOption(option, filterValue) {
-    this.selectedSearchOption = option;
+  setSelectedSearchOption(filterValue) {
+    const selectedEl = this.searchPickerPopover.querySelector(`.search-picker-label[data-filter-value=${filterValue}]`);
+    const optionLabel = selectedEl.textContent;
+
+    const searchParams = this.searchOptions.map((o) => o.split(':')[0]);
+    if (searchParams.includes(optionLabel)) {
+      this.searchPickerPopover.querySelector('.icon').remove();
+      selectedEl.append(this.selectedCheckmarkEl);
+    }
+
+    this.selectedSearchOption = optionLabel;
     this.searchPickerLabelEl.textContent = this.selectedSearchOption;
     this.searchPickerLabelEl.setAttribute('data-filter-value', filterValue);
   }
