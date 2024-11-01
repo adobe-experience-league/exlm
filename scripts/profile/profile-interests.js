@@ -24,17 +24,24 @@ const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes ha
 const PROFILE_NOT_UPDATED =
   placeholders?.profileNotUpdated || 'An error occurred during profile update. Please try again at a later time.';
 
+const EXP_LEVELS = {
+  BEGINNER: 'Beginner',
+  INTERMEDIATE: 'Intermediate',
+  EXPERIENCED: 'Experienced',
+  ADVANCED: 'Advanced',
+};
+
 const dropdownOptions = [
   {
-    value: 'Beginner',
+    value: EXP_LEVELS.BEGINNER,
     title: placeholders.profileExpLevelBeginner || 'Beginner',
   },
   {
-    value: 'Intermediate',
+    value: EXP_LEVELS.INTERMEDIATE,
     title: placeholders.profileExpLevelIntermediate || 'Intermediate',
   },
   {
-    value: 'Advanced',
+    value: EXP_LEVELS.EXPERIENCED,
     title: placeholders.profileExpLevelExperienced || 'Experienced',
   },
 ];
@@ -52,6 +59,13 @@ function validateForm(formSelector) {
 
   const validator = new FormValidator(formSelector, placeholders, options);
   return validator.validate();
+}
+
+function sanitizeSolutionLevels(solutionLevels) {
+  return solutionLevels.map((solLevel) => {
+    const [id, level = EXP_LEVELS.BEGINNER] = solLevel.split(':');
+    return `${id}:${level === EXP_LEVELS.ADVANCED ? EXP_LEVELS.EXPERIENCED : level}`;
+  });
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -154,7 +168,7 @@ export default async function buildProductCard(element, model) {
       const newSolutionItems = solutionLevels.filter((solution) => !`${solution}`.includes(id));
       newSolutionItems.push(`${id}:${level}`);
       defaultProfileClient
-        .updateProfile('solutionLevels', newSolutionItems, true)
+        .updateProfile('solutionLevels', sanitizeSolutionLevels(newSolutionItems), true)
         .then(() => {
           sendNotice(PROFILE_UPDATED);
           profileEventEmitter.emit('profileDataUpdated');
@@ -169,7 +183,7 @@ export default async function buildProductCard(element, model) {
         .getMergedProfile()
         .then(async (data) => {
           if (data?.solutionLevels?.length) {
-            const currentSolutionLevel = data.solutionLevels.find((solutionLevelInfo) =>
+            const currentSolutionLevel = sanitizeSolutionLevels(data.solutionLevels).find((solutionLevelInfo) =>
               `${solutionLevelInfo}`.includes(id),
             );
             if (currentSolutionLevel) {

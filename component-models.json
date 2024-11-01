@@ -3945,32 +3945,6 @@
         ]
       },
       {
-        "component": "select",
-        "name": "sortTargetResultsBy",
-        "value": "",
-        "label": "Adobe Target: Sort results by",
-        "description": "Adobe Target will load data based on the selected criteria if user has cookies enabled. Not applicable will default to Coveo",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Not Applicable",
-            "value": ""
-          },
-          {
-            "name": "Most Popular across ExL",
-            "value": "exl-hp-auth-recs-2"
-          },
-          {
-            "name": "Recommended For You",
-            "value": "exl-hp-auth-recs-1"
-          },
-          {
-            "name": "Recently Viewed Content",
-            "value": "exl-hp-auth-recs-3"
-          }
-        ]
-      },
-      {
         "component": "text",
         "valueType": "string",
         "name": "resultText",
