@@ -56,15 +56,26 @@ export default class LanguageBlock extends HTMLElement {
   /**
    * @param {LanguageBlockOptions} options
    */
-  constructor({ position, popoverId, block, onLanguageChange, languages }) {
+  constructor({ position, popoverId, block, onLanguageChange, languages, selectedLanguage }) {
     super();
     this.position = position;
     this.popoverId = popoverId;
     this.block = block;
     this.languages = languages || defaultLanguages;
+    this.selectedLanguage = selectedLanguage || 'en';
     this.title = getCell(this.block, 1, 1)?.firstChild.textContent;
     this.onLanguageChange = onLanguageChange || switchLanguage;
   }
+
+  updateSelectedLanguage = (lang) => {
+    const labels = this.querySelectorAll('.language-selector-label');
+    labels.forEach((label) => {
+      label.removeAttribute('selected');
+      if (label.getAttribute('data-value') === lang) {
+        label.setAttribute('selected', 'true');
+      }
+    });
+  };
 
   decorateButton = async () => {
     const languageHtml = htmlToElement(`
@@ -84,13 +95,10 @@ export default class LanguageBlock extends HTMLElement {
         ? 'language-selector-popover language-selector-popover--top'
         : 'language-selector-popover';
 
-    const { lang: currentLang } = getPathDetails();
-
     const spans = this.languages.map((option) => {
       const lang = option.lang?.toLowerCase();
       const { title } = option;
-      const selected = currentLang === lang ? 'selected' : '';
-      return `<span class="language-selector-label" data-value="${lang}" ${selected}>${title}</span>`;
+      return `<span class="language-selector-label" data-value="${lang}">${title}</span>`;
     });
 
     const popover = htmlToElement(
@@ -101,8 +109,8 @@ export default class LanguageBlock extends HTMLElement {
     popover.addEventListener('click', (e) => {
       const { target } = e;
       if (target.classList.contains('language-selector-label')) {
-        target.setAttribute('selected', 'true');
         const lang = target.getAttribute('data-value');
+        this.updateSelectedLanguage(lang);
         this.onLanguageChange(lang);
       }
     });
@@ -113,6 +121,7 @@ export default class LanguageBlock extends HTMLElement {
     loadStyles();
     await this.decorateButton();
     await this.buildLanguageBlock();
+    this.updateSelectedLanguage(this.selectedLanguage);
     decorateIcons(this);
   }
 }
