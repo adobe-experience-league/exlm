@@ -315,7 +315,7 @@ function clearFilter() {
  */
 function initializeTocFilter() {
   const tocFilterInput = document.querySelector('.toc-filter-input');
-  const tocFilterClearIcon = document.querySelector('.toc-filter-clear-icon');
+  const tocFilterClearIcon = document.querySelector('.toc-clear-icon');
 
   // Apply the debounced filter function
   const debouncedFilter = tocFilterDebounce((event) => {
