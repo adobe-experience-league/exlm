@@ -5,7 +5,7 @@ import {
   debounce,
   getPathDetails,
   fetchLanguagePlaceholders,
-  isArticleLandingPage,
+  matchesAnyTheme,
 } from '../../scripts/scripts.js';
 import {
   roleOptions,
@@ -52,6 +52,10 @@ try {
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
+}
+
+function isArticleLandingPage() {
+  return matchesAnyTheme(/^article-.*/);
 }
 
 // Helper function thats returns a list of all Featured Card Products //
@@ -300,14 +304,14 @@ async function appendTag(block, tag, source = 'checkboxChange') {
       <span class="icon icon-close"></span>
     </button>
   `);
+  if (source === 'checkboxChange') {
+    decorateIcons(tagEl);
+  }
   tagsContainer.append(tagEl);
   tagsProxy.push({
     name: tag.name,
     value: tag.value,
   });
-  if (source === 'checkboxChange') {
-    await decorateIcons(tagsContainer);
-  }
 }
 
 function removeFromTags(block, value) {

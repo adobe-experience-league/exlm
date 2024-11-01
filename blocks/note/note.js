@@ -21,6 +21,6 @@ export default async function decorate(block) {
     noteTypeElement.prepend(iconSpan);
 
     block.classList.add('note', noteType);
-    await decorateIcons(block);
+    decorateIcons(block);
   }
 }

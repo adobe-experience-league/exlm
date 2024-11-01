@@ -1,7 +1,6 @@
-import { debounce, fetchLanguagePlaceholders, isArticlePage } from '../../scripts/scripts.js';
+import { debounce, fetchLanguagePlaceholders, isPerspectivePage } from '../../scripts/scripts.js';
 import { highlight, setLevels, hashFragment } from './utils.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
-import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 function setPadding(arg = '') {
   const num = parseInt(arg.split('')[1], 10);
@@ -30,7 +29,7 @@ function getHeadingLevels() {
 function buildMiniToc(block, placeholders) {
   const miniTOCHeading = placeholders?.onThisPage;
   const render = window.requestAnimationFrame;
-  const miniTocQuerySelection = isArticlePage() ? '.article-content-section' : 'main';
+  const miniTocQuerySelection = isPerspectivePage ? '.article-content-section' : 'main';
   const headingLevels = getHeadingLevels();
   const selectorQuery = headingLevels
     .split(',')
@@ -52,7 +51,7 @@ function buildMiniToc(block, placeholders) {
       let lactive = false;
       const anchors = Array.from(block.querySelectorAll('a'));
 
-      if (isArticlePage()) {
+      if (isPerspectivePage) {
         const anchorTexts = anchors.map((anchor) => {
           const content = anchor.textContent;
           return {
@@ -113,7 +112,6 @@ function buildMiniToc(block, placeholders) {
           }
         });
         window.addEventListener('scroll', () => debounce('scroll', () => highlight(false, isAnchorScroll), 10));
-        decorateIcons(block);
       }
     });
   } else {
@@ -176,7 +174,7 @@ export default async function decorate(block) {
 
   if (window.hlx.aemRoot) {
     // This is strictly for UE flow for capturing the updates made to header tags and re-render Mini-TOC
-    const miniTocQuerySelection = isArticlePage() ? '.article-content-section' : 'main';
+    const miniTocQuerySelection = isPerspectivePage ? '.article-content-section' : 'main';
     const baseEl = block.closest(miniTocQuerySelection) ?? document;
     observeElementHeadingChanges(baseEl, block, placeholders);
   }

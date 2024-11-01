@@ -177,14 +177,28 @@ export function buildSyntheticBlocks(main) {
   });
 }
 
-/**
- * return browse page theme if its browse page otherwise undefined.
- * theme = browse-* is set in bulk metadata for /en/browse paths.
- */
-export function isBrowsePage() {
-  const theme = getMetadata('theme');
-  return theme.split(',').find((t) => t.toLowerCase().startsWith('browse-'));
+/** @returns {string[]} */
+export function getThemes() {
+  return (
+    getMetadata('theme')
+      ?.split(',')
+      ?.map((t) => t.trim()) || []
+  );
 }
+
+/**
+ * Check if any of the page themes match the given regex.
+ * @param {RegExp} regex
+ */
+export function matchesAnyTheme(regex) {
+  return getThemes()?.some((t) => t.match(regex)) || false;
+}
+
+export const isDocPage = matchesAnyTheme(/docs/);
+export const isPerspectivePage = matchesAnyTheme(/articles/);
+export const isProfilePage = matchesAnyTheme(/^profile.*/);
+export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
+export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 
 /**
  * add a section for the left rail when on a browse page.
@@ -198,7 +212,7 @@ function addBrowseRail(main) {
 
   // default: create a dynamic uneditable browse rail
   const leftRailSection = document.createElement('div');
-  leftRailSection.classList.add('browse-rail-section', isBrowsePage());
+  leftRailSection.classList.add('browse-rail-section', isBrowsePage);
   leftRailSection.append(buildBlock('browse-rail', []));
   main.append(leftRailSection);
 }
@@ -252,34 +266,6 @@ export async function fetchAuthorBio(anchor) {
     });
 }
 
-export function isArticleLandingPage() {
-  const theme = getMetadata('theme');
-  return theme.split(',').find((t) => t.toLowerCase().startsWith('article-'));
-}
-
-/**
- * Check if current page is a Profile page.
- * theme = profile is set in bulk metadata for /en/home** paths.
- */
-export function isProfilePage() {
-  const theme = getMetadata('theme');
-  return theme.toLowerCase().startsWith('profile');
-}
-/**
- * Check if current page is a home page.
- */
-export function isHomePage(lang) {
-  return window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
-}
-/**
- * Check if current page is a Signup flow modal page.
- * theme = signup is set in bulk metadata for /en/home/signup-flow-modal** paths.
- */
-export function isSignUpPage() {
-  const theme = getMetadata('theme');
-  return theme.toLowerCase().startsWith('signup');
-}
-
 /**
  * Add a left rail to the profile page.
  * @param {HTMLElement} main
@@ -289,7 +275,7 @@ function addProfileRail(main) {
   const profileRailSection = document.createElement('div');
   profileRailSection.classList.add('profile-rail-section');
   profileRailSection.append(buildBlock('profile-rail', []));
-  main.prepend(profileRailSection);
+  main.append(profileRailSection);
 }
 
 /**
@@ -360,26 +346,18 @@ async function buildTabSection(main) {
 function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
-    if (
-      !isProfilePage() &&
-      // eslint-disable-next-line no-use-before-define
-      !isDocPage() &&
-      // eslint-disable-next-line no-use-before-define
-      !isDocArticlePage() &&
-      !isSignUpPage()
-    ) {
+    if (!isProfilePage && !isDocPage && !isSignUpPage) {
       buildTabSection(main);
     }
     // if we are on a product browse page
-    if (isBrowsePage()) {
+    if (isBrowsePage) {
       addBrowseBreadCrumb(main);
       addBrowseRail(main);
     }
-    // eslint-disable-next-line no-use-before-define
-    if (isArticlePage()) {
+    if (isPerspectivePage) {
       addMiniToc(main);
     }
-    if (isProfilePage()) {
+    if (isProfilePage) {
       addProfileRail(main);
     }
   } catch (error) {
@@ -466,38 +444,6 @@ export const decorateLinks = (block) => {
       link.href = decodedHref.substring(0, endIndex);
     }
   });
-};
-
-export function isPageOfType(type) {
-  const theme = getMetadata('theme');
-  return theme
-    .split(',')
-    .map((t) => t.toLowerCase().trim())
-    .includes(type);
-}
-
-/**
- * Check if current page is a MD Docs Page.
- * theme = docs is set in bulk metadata for docs paths.
- * @param {string} type The type of doc page - example: docs-solution-landing,
- *                      docs-landing, docs (optional, default value is docs)
- */
-export function isDocPage(type = 'docs') {
-  return isPageOfType(type);
-}
-
-export function isArticlePage(type = 'articles') {
-  return isPageOfType(type);
-}
-
-/**
- * Check if current page is a MD Docs Article Page.
- * theme = docs is set in bulk metadata for docs paths.
- * @param {string} type The type of doc page - docs (optional, default value is docs)
- */
-export const isDocArticlePage = (type = 'docs') => {
-  const theme = getMetadata('theme');
-  return theme?.toLowerCase().trim() === type;
 };
 
 /**
@@ -676,7 +622,7 @@ export function decorateInlineAttributes(element) {
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
   // docs pages do not use buttons, only links
-  if (!isDocPage()) {
+  if (!isDocPage) {
     decorateButtons(main);
   }
   decorateAnchors(main); // must be run before decorateIcons
@@ -807,6 +753,7 @@ export function getConfig() {
     launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
   const signUpFlowConfigDate = '2024-08-15T00:00:00.762Z';
+  const modalReDisplayDuration = '3'; // in months
 
   window.exlm = window.exlm || {};
   window.exlm.config = {
@@ -819,6 +766,7 @@ export function getConfig() {
     ppsOrigin,
     launchScriptSrc,
     signUpFlowConfigDate,
+    modalReDisplayDuration,
     cookieConsentName,
     targetCriteriaIds,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
@@ -926,13 +874,10 @@ export async function loadIms() {
 }
 
 const loadMartech = async (headerPromise, footerPromise) => {
-  console.time('martech');
-  console.timeLog('martech', `start loading lib-analytics.js ${Date.now()}`);
   // start datalayer work early
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
   libAnalyticsPromise.then((libAnalyticsModule) => {
-    console.timeLog('martech', `finished loading lib-analytics.js ${Date.now()}`);
     const { pushPageDataLayer, pushLinkClick, pageName } = libAnalyticsModule;
     const { lang } = getPathDetails();
     pushPageDataLayer(lang)
@@ -941,7 +886,6 @@ const loadMartech = async (headerPromise, footerPromise) => {
     localStorage.setItem('prevPage', pageName(lang));
 
     Promise.allSettled([headerPromise, footerPromise]).then(() => {
-      console.timeLog('martech', `add click event tracking ${Date.now()}`);
       const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
       const clickHandler = (e) => {
         if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') pushLinkClick(e);
@@ -951,38 +895,21 @@ const loadMartech = async (headerPromise, footerPromise) => {
   });
 
   // load one trust
-  console.timeLog('martech', `onetrust: start load onetrust script ${Date.now()}`);
-  const oneTrustPromise = loadOneTrust().then(() => {
-    console.timeLog('martech', `onetrust: loaded one trust script ${Date.now()}`);
-  });
+  const oneTrustPromise = loadOneTrust();
 
   // load launch
-  console.timeLog('martech', `launch: start load launch script ${Date.now()}`);
   const { launchScriptSrc } = getConfig();
-  const launchScriptPromise = loadScript(launchScriptSrc, {
+  loadScript(launchScriptSrc, {
     async: true,
-  });
-  launchScriptPromise.then(() => {
-    console.timeLog('martech', `launch: loaded launch script ${Date.now()}`);
   });
 
   // footer and one trust loaded, add event listener to open one trust popup,
   Promise.all([footerPromise, oneTrustPromise]).then(() => {
-    console.timeLog('martech', `onetrust: set event listeners ${Date.now()}`);
     document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
       e.preventDefault();
       window.adobePrivacy.showConsentPopup();
     });
   });
-
-  Promise.allSettled([headerPromise, footerPromise, oneTrustPromise, launchScriptPromise, libAnalyticsPromise]).then(
-    () => {
-      setTimeout(() => {
-        console.timeLog('martech', `all done. ${Date.now()}`);
-        console.timeEnd('martech');
-      }, 0);
-    },
-  );
 };
 
 async function loadThemes() {
@@ -1078,7 +1005,7 @@ function loadDelayed() {
  * Custom - Loads the right and left rails for doc pages only.
  */
 async function loadRails() {
-  if (isDocPage()) {
+  if (isDocPage) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/rails/rails.css`);
     const mod = await import('./rails/rails.js');
     if (mod.default) {
@@ -1091,7 +1018,7 @@ async function loadRails() {
  * Custom - Loads and builds layout for articles page
  */
 export async function loadArticles() {
-  if (isArticlePage()) {
+  if (isPerspectivePage) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/articles/articles.css`);
     const mod = await import('./articles/articles.js');
     if (mod.default) {
@@ -1130,7 +1057,7 @@ function showSignupDialog() {
 }
 
 function showBrowseBackgroundGraphic() {
-  if (isBrowsePage()) {
+  if (isBrowsePage) {
     const main = document.querySelector('main');
     main.classList.add('browse-background-img');
   }
@@ -1407,29 +1334,16 @@ export function getCookie(cookieName) {
   return null;
 }
 
-/**
- * Listens for the target-recs-ready event to fetch the content as per the given criteria
- * @param {string} criteriaId - The criteria id to listen for
- * @returns {Promise}
- */
-export function handleTargetEvent(criteria) {
-  return new Promise((resolve) => {
-    window.exlm?.targetData?.forEach((data) => {
-      if (data?.meta.scope === criteria) resolve(data);
-    });
-    function targetEventHandler(event) {
-      if (event?.detail?.meta.scope === criteria) {
-        document.removeEventListener('target-recs-ready', targetEventHandler);
-        if (!window.exlm.targetData) window.exlm.targetData = [];
-        window.exlm.targetData.push(event.detail);
-        resolve(event.detail);
-      }
-    }
-    document.addEventListener('target-recs-ready', targetEventHandler);
-    setTimeout(() => {
-      document.removeEventListener('target-recs-ready', targetEventHandler);
-      resolve({ data: [] });
-    }, 5000);
+function createDocColumns() {
+  if (!isDocPage) return;
+  // wrap main content in a div - UGP-11165
+  const main = document.querySelector('main');
+  const mainSections = [...main.children].slice(0, -2); // ignore last two sections: toc and mini-toc
+  const mainContent = document.createElement('div');
+  // insert mainContent as first child of main
+  main.prepend(mainContent);
+  mainSections.forEach((section) => {
+    mainContent.append(section);
   });
 }
 
@@ -1439,24 +1353,15 @@ async function loadPage() {
   // END OF TEMPORARY FOR SUMMIT.
 
   await loadEager(document);
+  createDocColumns();
+  loadRails();
   await loadLazy(document);
   loadArticles();
-  loadRails();
   loadDelayed();
   showBrowseBackgroundGraphic();
   showSignupDialog();
 
-  if (isDocArticlePage()) {
-    // wrap main content in a div - UGP-11165
-    const main = document.querySelector('main');
-    const mainSections = [...main.children].slice(0, -2); // ignore last two sections: toc and mini-toc
-    const mainContent = document.createElement('div');
-    // insert mainContent as first child of main
-    main.prepend(mainContent);
-    mainSections.forEach((section) => {
-      mainContent.append(section);
-    });
-
+  if (isDocPage) {
     // load prex/next buttons
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
 
@@ -1466,41 +1371,103 @@ async function loadPage() {
   }
 }
 
-// For AEM Author mode, decode the tags value
-if (window.hlx.aemRoot || window.location.href.includes('.html')) {
-  decodeAemPageMetaTags();
+/**
+ * WARNING: DO NOT MODIFY - This function is referenced from Target
+ * https://experienceleague.adobe.com/en/docs/experience-platform/web-sdk/personalization/manage-flicker#manage-flicker-for-asynchronous-deployments
+ *
+ * Prehides content by adding a temporary style element to the document that hides the body.
+ * The style element is automatically removed after a specified timeout.
+ *
+ * @param {Document} e - The document object (usually `document`).
+ * @param {boolean} a - A boolean flag that determines whether to skip prehiding.
+ *                      If `true`, the function returns early and does nothing.
+ * @param {string} n - The CSS styles to apply, typically used to hide content (e.g., `body { opacity: 0 !important }`).
+ * @param {number} t - The timeout in milliseconds after which the style element is removed.
+ */
+function prehideFunction(e, a, n, t) {
+  if (a) return;
+  const i = e.head;
+  if (i) {
+    const o = e.createElement('style');
+    o.id = 'alloy-prehiding';
+    o.innerText = n;
+    i.appendChild(o);
+    setTimeout(() => {
+      if (o.parentNode) {
+        o.parentNode.removeChild(o);
+      }
+    }, t);
+  }
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 (async () => {
-  if (!window.hlx.DO_NOT_LOAD_PAGE) {
-    const { lang } = getPathDetails();
-    const { isProd, personalizedHomeLink } = getConfig() || {};
-    document.documentElement.lang = lang || 'en';
-    if (isProfilePage()) {
-      if (window.location.href.includes('.html')) {
-        loadPage();
-      } else {
-        await loadIms();
-        if (window?.adobeIMS?.isSignedInUser()) {
-          loadPage();
-        } else {
-          await window?.adobeIMS?.signIn();
-        }
-      }
-    } else if (isHomePage(lang) && !isProd) {
-      try {
-        await loadIms();
-        if (window?.adobeIMS?.isSignedInUser() && personalizedHomeLink) {
-          window.location.replace(`${window.location.origin}/${lang}${personalizedHomeLink}`);
-        }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error during redirect process:', error);
-      }
+  if (window.hlx.DO_NOT_LOAD_PAGE) return;
+
+  // For AEM Author mode, decode the tags value
+  if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+    decodeAemPageMetaTags();
+  }
+
+  const { lang } = getPathDetails();
+  document.documentElement.lang = lang || 'en';
+  const isMainPage = window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
+  const PHP_AB = 'phpAB';
+
+  const isUserSignedIn = async () => {
+    await loadIms();
+    return window?.adobeIMS?.isSignedInUser();
+  };
+
+  const handleProfilePage = async () => {
+    if (window.location.href.includes('.html')) {
       loadPage();
     } else {
-      loadPage();
+      const signedIn = await isUserSignedIn();
+      if (signedIn) {
+        loadPage();
+        const mod = await import('./adobe-target/adobe-target.js');
+        const defaultAdobeTargetClient = mod.default;
+        const isTargetSupported = await defaultAdobeTargetClient.checkTargetSupport();
+        if (isTargetSupported) {
+          defaultAdobeTargetClient.mapComponentsToTarget();
+        }
+      } else {
+        await window?.adobeIMS?.signIn();
+      }
     }
+  };
+
+  const handleMainPage = async () => {
+    try {
+      const signedIn = await isUserSignedIn();
+      const { personalizedHomeLink } = getConfig() || {};
+      if (signedIn) {
+        // Execute the prehiding function
+        if (!sessionStorage.getItem(PHP_AB)) {
+          prehideFunction(
+            document,
+            window.location.href.indexOf('adobeaemcloud.com') !== -1,
+            'body { opacity: 0 !important }',
+            3000,
+          );
+        }
+        if (personalizedHomeLink && sessionStorage.getItem(PHP_AB) === 'authHP') {
+          window.location.pathname = `${lang}${personalizedHomeLink}`;
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Error during redirect process:', error);
+    }
+    loadPage();
+  };
+
+  if (isProfilePage) {
+    await handleProfilePage();
+  } else if (isMainPage) {
+    await handleMainPage();
+  } else {
+    loadPage();
   }
 })();

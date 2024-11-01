@@ -69,7 +69,7 @@
   }
 }
 
-.icon svg {
+.icon img {
   height: 18px;
   width: 18px;
 }
@@ -104,11 +104,10 @@
   background: var(--non-spectrum-bg);
   box-shadow: 0 8px 8px rgba(10, 10, 10, 0.1);
   display: none;
-  left: 50%;
   width: 120px;
   position: absolute;
   transform: translate(-50%, 0);
-  top: 64px;
+  top: var(--nav-height);
   z-index: 10;
 }
 
@@ -148,12 +147,21 @@
 .search {
   grid-area: search;
   display: var(--search-display);
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
-  padding-right: 15px;
+  padding-left: 0;
+  padding-right: 0;
   container-type: inline-size;
   container-name: searchs;
   z-index: 1;
+  min-width: 48px;
+}
+@media (min-width: 1024px) {
+  .search {
+    justify-content: flex-end;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
 }
 
 .search-wrapper {
@@ -166,10 +174,12 @@
 
 .icon-search {
   position: absolute;
-  background: url("../../icons/search.svg") no-repeat center center;
-  background-size: 1em 1em;
-  left: 4px;
+  left: 7px;
+  top: 7px;
   cursor: pointer;
+}
+.icon-search img {
+  width: 14px;
 }
 
 .search-container {
@@ -188,6 +198,9 @@
     display: flex !important;
     align-items: center;
   }
+  .search-short .icon {
+    position: initial;
+  }
   .search-short a {
     display: flex !important;
     align-items: center;
@@ -202,8 +215,17 @@
 .search-short {
   display: none;
 }
+.search-short a {
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+}
 .search-short .icon {
   height: 18px;
+  width: 18px;
+  vertical-align: middle;
 }
 
 .search-full {
@@ -244,6 +266,7 @@
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  width: 100%;
 }
 .search-input::placeholder {
   font-style: italic;
@@ -302,11 +325,17 @@
   transform: rotateZ(225deg);
 }
 
+.icon-clear img {
+  vertical-align: 10px;
+  width: 14px;
+  height: 6px;
+}
+
 .search-picker-label {
   min-width: max-content;
   display: block;
 }
-.search-picker-label span.icon svg {
+.search-picker-label span.icon img {
   width: 14px;
   height: 14px;
 }
@@ -440,15 +469,6 @@ button > .search-picker-label {
   fill: var(--non-spectrum-azure-blue);
 }
 
-.icon-clear svg {
-  vertical-align: 10px;
-  width: 14px;
-  height: 6px;
-}
-.icon-clear svg path {
-  fill: white;
-}
-
 .header-wrapper {
   /* header is always white */
   background-color: var(--color-white);
@@ -525,9 +545,9 @@ button:focus {
 }
 .header > nav {
   display: grid;
-  grid-template-areas: "nav adobe-logo brand product-grid search sign-in notification";
-  justify-content: space-between;
+  grid-template-areas: "nav brand search sign-in";
   height: 100%;
+  grid-template-columns: min-content auto min-content min-content;
 }
 @media (min-width: 1024px) {
   .header > nav {
@@ -544,10 +564,15 @@ button:focus {
   padding: var(--nav-root-item-padding-x);
   padding-right: 0;
 }
-.header .adobe-logo .icon {
-  vertical-align: middle;
+.header .adobe-logo a {
+  margin: 0;
 }
-.header .adobe-logo .icon svg {
+.header .adobe-logo .icon {
+  display: block;
+  height: 24px;
+  width: 24px;
+}
+.header .adobe-logo .icon img {
   height: 24px;
   width: 24px;
 }
@@ -555,6 +580,7 @@ button:focus {
   grid-area: brand;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: var(--nav-root-item-padding-x);
   order: var(--brand-order);
   font-size: 17px;
@@ -573,10 +599,12 @@ button:focus {
   order: var(--sign-in-order);
   align-items: center;
   padding-left: 1em;
+  padding-right: 1em;
 }
 @media (min-width: 1024px) {
   .header .sign-in {
     padding-left: 0;
+    padding-right: 0;
   }
 }
 .header .sign-in a {
@@ -665,11 +693,19 @@ button:focus {
     grid-area: signed-in;
   }
 }
+.header .product-grid {
+  display: none;
+}
 .header .product-grid.signed-in {
   grid-area: product-grid;
-  display: var(--sign-in-display);
+  display: none;
   order: var(--sign-in-order);
   align-items: center;
+}
+@media (min-width: 1024px) {
+  .header .product-grid.signed-in {
+    display: var(--sign-in-display);
+  }
 }
 .header .product-grid.signed-in a {
   color: var(--nav-item-text-color);
@@ -864,7 +900,7 @@ button:focus {
   padding: 0 24px;
   line-height: 1.5;
 }
-.header .nav-item .nav-item .icon svg {
+.header .nav-item .nav-item .icon img {
   vertical-align: middle;
   padding-left: 5px;
 }

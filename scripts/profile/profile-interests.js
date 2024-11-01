@@ -1,14 +1,16 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
-import Dropdown from '../dropdown/dropdown.js';
+import Dropdown, { DROPDOWN_VARIANTS } from '../dropdown/dropdown.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import getSolutionByName from '../../blocks/toc/toc-solutions.js';
 import loadJWT from '../auth/jwt.js';
-import { productExperienceEventEmitter } from '../events.js';
+import getEmitter from '../events.js';
 import { defaultProfileClient } from '../auth/profile.js';
 import { sendNotice } from '../toast/toast.js';
 import FormValidator from '../form-validator.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/profile/profile-interests.css`);
+const interestsEventEmitter = getEmitter('interests');
+const profileEventEmitter = getEmitter('profile');
 
 let placeholders = {};
 try {
@@ -19,19 +21,27 @@ try {
 }
 
 const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
-const PROFILE_NOT_UPDATED = placeholders?.profileNotUpdated || 'Your profile changes have not been saved!';
+const PROFILE_NOT_UPDATED =
+  placeholders?.profileNotUpdated || 'An error occurred during profile update. Please try again at a later time.';
+
+const EXP_LEVELS = {
+  BEGINNER: 'Beginner',
+  INTERMEDIATE: 'Intermediate',
+  EXPERIENCED: 'Experienced',
+  ADVANCED: 'Advanced',
+};
 
 const dropdownOptions = [
   {
-    value: 'Beginner',
+    value: EXP_LEVELS.BEGINNER,
     title: placeholders.profileExpLevelBeginner || 'Beginner',
   },
   {
-    value: 'Intermediate',
+    value: EXP_LEVELS.INTERMEDIATE,
     title: placeholders.profileExpLevelIntermediate || 'Intermediate',
   },
   {
-    value: 'Advanced',
+    value: EXP_LEVELS.EXPERIENCED,
     title: placeholders.profileExpLevelExperienced || 'Experienced',
   },
 ];
@@ -49,6 +59,13 @@ function validateForm(formSelector) {
 
   const validator = new FormValidator(formSelector, placeholders, options);
   return validator.validate();
+}
+
+function sanitizeSolutionLevels(solutionLevels) {
+  return solutionLevels.map((solLevel) => {
+    const [id, level = EXP_LEVELS.BEGINNER] = solLevel.split(':');
+    return `${id}:${level === EXP_LEVELS.ADVANCED ? EXP_LEVELS.EXPERIENCED : level}`;
+  });
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -112,7 +129,7 @@ export default async function buildProductCard(element, model) {
     } else {
       card.classList.remove('profile-interest-card-selected');
     }
-    productExperienceEventEmitter.set(id, checked);
+    interestsEventEmitter.set(id, checked);
     return true;
   };
   const checkboxContainer = htmlToElement(`
@@ -133,7 +150,13 @@ export default async function buildProductCard(element, model) {
   // Add to DOM
   element.appendChild(card);
 
-  const cardDropdown = new Dropdown(content, dropdownOptions[0].value, dropdownOptions);
+  const cardDropdown = new Dropdown(
+    content,
+    dropdownOptions[0].value,
+    dropdownOptions,
+    DROPDOWN_VARIANTS.DEFAULT,
+    product,
+  );
   cardDropdown.handleOnChange(async (level) => {
     const profileData = await defaultProfileClient.getMergedProfile();
     const { solutionLevels = [] } = profileData;
@@ -145,9 +168,12 @@ export default async function buildProductCard(element, model) {
       const newSolutionItems = solutionLevels.filter((solution) => !`${solution}`.includes(id));
       newSolutionItems.push(`${id}:${level}`);
       defaultProfileClient
-        .updateProfile('solutionLevels', newSolutionItems, true)
-        .then(() => sendNotice(PROFILE_UPDATED))
-        .catch(() => sendNotice(PROFILE_NOT_UPDATED));
+        .updateProfile('solutionLevels', sanitizeSolutionLevels(newSolutionItems), true)
+        .then(() => {
+          sendNotice(PROFILE_UPDATED);
+          profileEventEmitter.emit('profileDataUpdated');
+        })
+        .catch(() => sendNotice(PROFILE_NOT_UPDATED, 'error'));
     }
   });
 
@@ -157,7 +183,7 @@ export default async function buildProductCard(element, model) {
         .getMergedProfile()
         .then(async (data) => {
           if (data?.solutionLevels?.length) {
-            const currentSolutionLevel = data.solutionLevels.find((solutionLevelInfo) =>
+            const currentSolutionLevel = sanitizeSolutionLevels(data.solutionLevels).find((solutionLevelInfo) =>
               `${solutionLevelInfo}`.includes(id),
             );
             if (currentSolutionLevel) {
@@ -179,7 +205,5 @@ export default async function buildProductCard(element, model) {
     .catch(() => {
       cardDropdown.updateDropdownValue('Beginner');
     });
-
-  decorateIcons(content);
-  await decorateIcons(header, 'solutions/');
+  decorateIcons(header, '/solutions');
 }

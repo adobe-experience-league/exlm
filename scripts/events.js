@@ -1,4 +1,4 @@
-export default class EventEmitter {
+class EventEmitter {
   constructor(initialValue = {}) {
     this.listeners = {};
     this.data = initialValue;
@@ -35,5 +35,13 @@ export default class EventEmitter {
   }
 }
 
-export const productExperienceEventEmitter = new EventEmitter();
-export const bookmarksEventEmitter = new EventEmitter();
+const eventEmitter = {};
+
+const getEmitter = (emitterName) => {
+  if (!eventEmitter[emitterName]) {
+    eventEmitter[emitterName] = new EventEmitter();
+  }
+  return eventEmitter[emitterName];
+};
+
+export default getEmitter;

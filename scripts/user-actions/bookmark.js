@@ -2,7 +2,9 @@ import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { getPathDetails, htmlToElement } from '../scripts.js';
 import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
-import { bookmarksEventEmitter } from '../events.js';
+import getEmitter from '../events.js';
+
+const bookmarksEventEmitter = getEmitter('bookmarks');
 
 function isBookmarkSelected(bookmarkIdInfo, bookmarkId) {
   const { lang: languageCode } = getPathDetails();
@@ -43,17 +45,27 @@ export async function bookmarkHandler(config) {
   const newBookmarks = bookmarks.filter((bookmarkIdInfo) => !isBookmarkSelected(bookmarkIdInfo, id));
   if (!targetBookmarkItem) {
     newBookmarks.push(`${id}:${Date.now()}`);
-    element.dataset.bookmarked = true;
-    defaultProfileClient.updateProfile('bookmarks', newBookmarks, true);
-    bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
-    sendNotice(tooltips?.bookmarkToastText);
-    assetInteractionModel(id, 'Bookmarked');
+    defaultProfileClient
+      .updateProfile('bookmarks', newBookmarks, true)
+      .then(() => {
+        element.dataset.bookmarked = true;
+        bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
+        sendNotice(tooltips?.bookmarkToastText);
+        assetInteractionModel(id, 'Bookmarked');
+      })
+      .catch(() => sendNotice(tooltips?.profileNotUpdated, 'error'));
   } else {
-    element.dataset.bookmarked = false;
-    defaultProfileClient.updateProfile('bookmarks', newBookmarks, true);
-    bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
-    sendNotice(tooltips?.removeBookmarkToastText);
-    assetInteractionModel(id, 'Bookmark Removed');
+    defaultProfileClient
+      .updateProfile('bookmarks', newBookmarks, true)
+      .then(() => {
+        element.dataset.bookmarked = false;
+        bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
+        sendNotice(tooltips?.removeBookmarkToastText);
+        assetInteractionModel(id, 'Bookmark Removed');
+      })
+      .catch(() => {
+        sendNotice(tooltips?.profileNotUpdated, 'error');
+      });
   }
 }
 

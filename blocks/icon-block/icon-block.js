@@ -41,7 +41,7 @@ export default function decorate(block) {
   const anchorEls = [...block.querySelectorAll('a')];
   anchorEls.forEach((a) => {
     if (a.target === '_blank') {
-      const icon = '<span class="icon icon-new-tab"></span>';
+      const icon = '<span class="icon icon-new-tab-blue"></span>';
       a.classList.add('external');
       a.insertAdjacentHTML('beforeend', icon);
     }

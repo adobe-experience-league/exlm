@@ -123,15 +123,16 @@ const buildTagsContent = (cardMeta, tags = []) => {
       anchor.textContent = text;
       anchor.appendChild(span);
       cardMeta.appendChild(anchor);
+      decorateIcons(anchor);
     }
   });
 };
 
 /* Default No Results Content from Placeholder */
-export const buildNoResultsContent = (block, show) => {
+export const buildNoResultsContent = (block, show, placeholder = placeholders.noResultsText) => {
   if (show) {
     const noResultsInfo = htmlToElement(`
-    <div class="browse-card-no-results">${placeholders.noResultsText}</div>
+    <div class="browse-card-no-results">${placeholder}</div>
   `);
     block.appendChild(noResultsInfo);
   } else {
@@ -152,6 +153,7 @@ const buildEventContent = ({ event, cardContent, card }) => {
         </div>
     </div>
   `);
+  decorateIcons(eventInfo);
   const title = card.querySelector('.browse-card-title-text');
   cardContent.insertBefore(eventInfo, title.nextElementSibling);
 };
@@ -185,7 +187,7 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
   cardContent.appendChild(titleElement);
 };
 
-const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText }) => {
+const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }) => {
   if (viewLinkText) {
     let icon = null;
     let isLeftPlacement = false;
@@ -197,14 +199,15 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText }) => {
         contentType?.toLowerCase(),
       )
     ) {
-      icon = 'new-tab';
+      icon = 'new-tab-blue';
     }
     const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
     const linkText = htmlToElement(`
-          <div class="browse-card-cta-element">
+          <div class="browse-card-cta-element" data-analytics-id="${viewLink}">
               ${isLeftPlacement ? `${iconMarkup} ${viewLinkText}` : `${viewLinkText} ${iconMarkup}`}
           </div>
       `);
+    decorateIcons(linkText);
     cardFooter.appendChild(linkText);
   }
 };
@@ -312,7 +315,7 @@ const buildCardContent = async (card, model) => {
   cardAction.decorate();
 
   cardFooter.appendChild(cardOptions);
-  buildCardCtaContent({ cardFooter, contentType, viewLinkText });
+  buildCardCtaContent({ cardFooter, contentType, viewLinkText, viewLink });
 };
 
 /**
@@ -333,6 +336,8 @@ const buildCardContent = async (card, model) => {
  */
 export async function buildCard(container, element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
+
+  element.setAttribute('data-analytics-content-type', contentType);
   // lowercase all urls - because all of our urls are lower-case
   model.viewLink = model.viewLink?.toLowerCase();
   model.copyLink = model.copyLink?.toLowerCase();
@@ -407,6 +412,7 @@ export async function buildCard(container, element, model) {
         content: product.join(', '),
       };
       createTooltip(container, tooltipElem, tooltipConfig);
+      decorateIcons(tooltipElem);
     } else {
       const tagText = product ? product.join(', ') : '';
       tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${tagText}</h4>`);
@@ -449,5 +455,4 @@ export async function buildCard(container, element, model) {
     },
     { once: true },
   );
-  await decorateIcons(element);
 }
