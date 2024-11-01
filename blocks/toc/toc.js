@@ -43,11 +43,11 @@ const tocActions = () => `
     <!-- TOC Filter Bar -->
     <div class="toc-filter-wrapper">
       <div class="toc-filter-container">
-        <span title="Filter" class="icon icon-icon-filter"/>
+        <span title="Filter" class="icon icon-icon-filter toc-filter-icon"></span>
         <input autocomplete="off" class="toc-filter-input" type="text" 
           aria-label="Filter by keyword" aria-expanded="false" 
-          title="Type to filter" role="textbox" placeholder="Filter by keyword">
-        <span title="Clear" class="icon icon-icon-clear toc-filter-clear-icon"/>
+          title="Type to filter" role="textbox" placeholder="Filter by keyword" />
+        <span title="Clear" class="icon icon-icon-clear toc-clear-icon"/>
       </div>
     </div>
 

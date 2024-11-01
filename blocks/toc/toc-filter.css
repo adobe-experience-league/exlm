@@ -37,21 +37,19 @@
 }
 
 /* Filter icon */
-.icon-filter {
+.toc-filter-icon {
   position: absolute;
   left: 5px;
   top: 10px;
-  background: rgb(0 0 0 / 0%) url("/icons/icon-filter.svg") no-repeat right center;
   fill: var(--spectrum-gray-600);
   pointer-events: none; /* Ensures the icon doesn't interfere with typing */
 }
 
 /* Clear button (shown when input has text) */
-.toc-filter-clear-icon {
+.toc-clear-icon {
   position: absolute;
   right: 0;
   top: 10px; /* Positioned inside the right side of the input */
-  background: rgb(0 0 0 / 0%) url("/icons/icon-clear.svg") no-repeat right center;
   cursor: pointer;
   color: var(--spectrum-gray-600);
 }
