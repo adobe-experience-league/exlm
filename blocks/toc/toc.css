@@ -1,4 +1,6 @@
 @import './toc-solutions.css';
+@import '../switch/switch.css';
+@import './toc-filter.css';
 
 .toc {
     position: relative;
@@ -15,7 +17,8 @@
     }
 }
 
-.toc-content  {
+
+.toc-content, .is-hidden {
     display: none;
 }
 
@@ -74,8 +77,9 @@
 }
 
 .toc-header {
-    align-items: center;
     display: flex;
+    flex-direction: column;
+    align-self: normal;
     box-sizing: border-box;
     width: 100%;
     min-height: 32px;
@@ -88,8 +92,17 @@
     }
 }
 
+.toc-header > .toc-header-content {
+    display: flex;
+    align-items: center;
+}
 
-.toc-header > span.icon {
+.toc-header > .toc-header-actions {
+    margin-top: var(--spectrum-spacing-100);
+}
+
+
+.toc-header-content > span.icon {
     width: 42px;
     height: 42px;
     border-radius: 50%;
@@ -100,7 +113,7 @@
     flex: none;
 }
 
-.toc-header > h3 {
+.toc-header-content > h3 {
     font-size: var(--spectrum-font-size-300);
     margin: 0;
 }
@@ -159,7 +172,7 @@
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 0 12px;
+    padding: 0 30px 0 12px;
     cursor: pointer;
     text-transform: uppercase;
     font-weight: var(--spectrum-extra-bold-font-weight);
@@ -184,7 +197,7 @@
 
 .toc a.toc-toggle::after {
     position: absolute;
-    right: 0%;
+    right: 7px;
     top: auto;
     display: flex;
     width: 18px;
@@ -308,18 +321,6 @@ button.toc-dropdown-button {
     color: var(--spectrum-alias-text-color-hover);
 } 
 
-
-/* select all elemetns after the fifth li in a ul */
-.toc ul > li:nth-child(n+6) {
-    display: none;
-}
-
-.toc ul[aria-expanded="true"] > li:nth-child(n+6) {
-    display: list-item;
-}
-
-
-
 .toc ul li.toc-view-more-less {
     display: list-item;
 }
@@ -337,8 +338,44 @@ button.toc-dropdown-button {
 }
 
 @media only screen and (width >= 900px) {
-    .toc-content {
-        display: block;
+    .toc-container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    
+        .rail-content {
+            height: 100%;
+        }
+    
+        .toc-wrapper {
+            position: sticky;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+    
+            .toc-content {
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+    
+                .toc-tree {
+                    overflow-y: auto;
+                    touch-action: pan-y;
+                    scrollbar-width: auto;
+                    scrollbar-color: var(--spectrum-gray-200) var(--spectrum-gray-50);
+                    max-height: 100vh;
+    
+                    &::-webkit-scrollbar {
+                        width: 0;
+                    }
+
+                    &::-webkit-scrollbar-thumb {
+                        background-color: var(--spectrum-gray-200);
+                        border-radius: 6px;
+                    }
+                }
+            }
+        }
     }
 
     button.toc-dropdown-button {
