@@ -87,3 +87,17 @@ export function getFirstChildTextNodes(el) {
   }
   return textNodes;
 }
+
+/**
+ * add the given origin to every relative link in the container
+ * @param {HTMLElement} container
+ * @param {String} origin
+ */
+export function addOriginToRelativeLinks(container, origin) {
+  container.querySelectorAll('a').forEach((anchor) => {
+    // if anchor link is relative, add the origin
+    const href = anchor.getAttribute('href');
+    const url = new URL(href, origin);
+    anchor.setAttribute('href', url.href);
+  });
+}
