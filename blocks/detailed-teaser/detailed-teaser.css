@@ -11,16 +11,16 @@
 
 .detailed-teaser.block {
   width: 100%;
-  height:100%;
+  height: 100%;
   position: relative;
   overflow-x: hidden;
-  display:flex;
+  display: flex;
   flex-direction: row;
 }
 
 /* the background image container */
 .detailed-teaser.block > .background {
-  display:block;
+  display: block;
   position: absolute;
   width: 100%;
   height: 100%;
@@ -29,10 +29,10 @@
 }
 
 /* the background image */
-  .detailed-teaser.block > .background img {
-  display:block;  
+.detailed-teaser.block > .background img {
+  display: block;
   object-fit: cover;
-  object-position:center;
+  object-position: center;
   height: 100%;
   width: 100%;
 }
@@ -41,7 +41,7 @@
 .detailed-teaser.block > .foreground {
   display: flex;
   flex-direction: column;
-  position:relative;
+  position: relative;
   max-width: var(--default-max-width);
   margin: auto;
 }
@@ -76,25 +76,25 @@
 }
 
 .detailed-teaser.block > .foreground > .text > .eyebrow > .logo img {
-  height:32px;
+  height: 32px;
 }
 
 /* the eyebrow titles */
-.detailed-teaser.block > .foreground > .text > .eyebrow > .title  {
+.detailed-teaser.block > .foreground > .text > .eyebrow > .title {
   font-size: var(--spectrum-font-size-300);
   font-weight: var(--font-weight-700);
   color: var(--non-spectrum-grey);
   margin: 0;
 }
 
-.detailed-teaser.block > .foreground > .text > .eyebrow > .subtitle  {
+.detailed-teaser.block > .foreground > .text > .eyebrow > .subtitle {
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-700);
-  color: #8C8C8C;
+  color: #8c8c8c;
   margin: 0;
 }
 
-.detailed-teaser.block.dark > .foreground > .text > .eyebrow > .subtitle  {
+.detailed-teaser.block.dark > .foreground > .text > .eyebrow > .subtitle {
   color: #ccc;
 }
 
@@ -107,7 +107,7 @@
   color: var(--non-spectrum-custom-dark);
 }
 
-.detailed-teaser.block > .foreground > .text > .title :where(h1,h2,h3,h4,h5,h6) {
+.detailed-teaser.block > .foreground > .text > .title :where(h1, h2, h3, h4, h5, h6) {
   margin: 0;
   color: inherit;
   font: inherit;
@@ -133,14 +133,13 @@
   color: var(--background-color);
 }
 
-
 /* the list of CTA's */
 .detailed-teaser.block > .foreground > .text > .cta {
   display: flex;
   gap: var(--spectrum-spacing-400);
   margin-top: 20px;
   padding: 0;
-  width:min-content;
+  width: min-content;
 }
 
 .detailed-teaser.block > .foreground > .text > .cta:empty {
@@ -156,7 +155,7 @@
   padding: 5px 14px 6px;
 }
 
- /* behavior for primary and secondary */
+/* behavior for primary and secondary */
 .detailed-teaser.block > .foreground > .text > .cta > a.button.secondary {
   background-color: unset;
   border: 2px solid currentcolor;
@@ -177,7 +176,7 @@
 
 /* spacer/subject image */
 .detailed-teaser.block > .foreground > .spacer {
-  display:block;
+  display: block;
   order: 1;
   padding: 0 var(--space-token-xs) var(--spectrum-spacing-400) var(--space-token-xs);
 }
@@ -190,12 +189,12 @@
 }
 
 .detailed-teaser.block > .foreground > .spacer:empty {
-  display:none;
+  display: none;
 }
 
 /* stylelint-disable-next-line no-descending-specificity */
 .detailed-teaser.block > .foreground > .spacer img {
-border-radius: 30px;
+  border-radius: 30px;
 }
 
 /* ----- TABLET ----- */
@@ -209,7 +208,7 @@ border-radius: 30px;
   /* foreground container, flex (text + spacer), always on top */
   .detailed-teaser.block > .foreground {
     padding: 0 var(--space-token-xl);
-    min-height:320px;
+    min-height: 320px;
   }
 
   /* limit width of text part and set order */
@@ -218,9 +217,9 @@ border-radius: 30px;
   }
 
   /* teaser on browse pages has different width for text */
-  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .text,
-  body[class ^= 'article-'] .detailed-teaser.block > .foreground > .text {
-    min-width:unset;
+  body[class^='browse-'] .detailed-teaser.block > .foreground > .text,
+  body[class^='article-'] .detailed-teaser.block > .foreground > .text {
+    min-width: unset;
   }
 
   .detailed-teaser.block > .foreground > .text > .title {
@@ -233,27 +232,27 @@ border-radius: 30px;
     padding-left: 0;
     padding-right: 0;
   }
-   
+
   /* it gets a border */
-  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper ,
-  body[class ^= 'article-'] .section div.detailed-teaser-wrapper {
+  body[class^='browse-'] .section div.detailed-teaser-wrapper,
+  body[class^='article-'] .section div.detailed-teaser-wrapper {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
   }
-  
-  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .background img ,
-  body[class ^= 'article-'] .section div.detailed-teaser-wrapper .background img {
+
+  body[class^='browse-'] .section div.detailed-teaser-wrapper .background img,
+  body[class^='article-'] .section div.detailed-teaser-wrapper .background img {
     border-radius: 4px;
   }
 
-  body[class ^= 'browse-'] .detailed-teaser.block > .foreground > .spacer  img ,
-  body[class ^= 'article-'] .detailed-teaser.block > .foreground > .spacer  img {
+  body[class^='browse-'] .detailed-teaser.block > .foreground > .spacer img,
+  body[class^='article-'] .detailed-teaser.block > .foreground > .spacer img {
     object-position: left;
   }
 
-  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .foreground ,
-  body[class ^= 'article-'] .section div.detailed-teaser-wrapper .foreground {
-    min-height:240px;
+  body[class^='browse-'] .section div.detailed-teaser-wrapper .foreground,
+  body[class^='article-'] .section div.detailed-teaser-wrapper .foreground {
+    min-height: 240px;
     padding: 0 var(--space-token-xxl);
   }
 }
@@ -263,19 +262,19 @@ border-radius: 30px;
   .detailed-teaser.block .foreground {
     flex-direction: row;
     gap: 40px;
-    justify-content: space-between; 
+    justify-content: space-between;
     max-width: var(--default-max-width);
-    width:100%;
+    width: 100%;
   }
 
-    /* the cta buttons */
+  /* the cta buttons */
   .detailed-teaser.block > .foreground > .text > .cta > a.button {
     line-height: unset;
   }
-  
+
   /* teaser on browse pages has different width for text */
   .detailed-teaser.block > .foreground > .text {
-    min-width:550px;
+    min-width: 550px;
   }
 
   /* the subject image /spacer */
@@ -284,11 +283,11 @@ border-radius: 30px;
     align-items: center;
     padding: var(--spectrum-spacing-500) 0;
   }
-  
+
   .detailed-teaser.block > .foreground > .spacer img {
     border-radius: 30px;
     padding: 0;
-    object-fit:cover;
+    object-fit: cover;
     min-height: 260px;
     max-height: 290px;
     object-position: center;
@@ -296,14 +295,14 @@ border-radius: 30px;
 
   /* when shown on a page with a rail 
    no longer goes from end to end */
-  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper,
-  body[class ^= 'article-'] .section div.detailed-teaser-wrapper {
+  body[class^='browse-'] .section div.detailed-teaser-wrapper,
+  body[class^='article-'] .section div.detailed-teaser-wrapper {
     margin-left: unset;
     margin-right: unset;
   }
 
-  body[class ^= 'browse-'] .section div.detailed-teaser-wrapper .foreground,
-  body[class ^= 'article-'] .section div.detailed-teaser-wrapper .foreground {
+  body[class^='browse-'] .section div.detailed-teaser-wrapper .foreground,
+  body[class^='article-'] .section div.detailed-teaser-wrapper .foreground {
     padding: 0 var(--space-token-l);
   }
 }
@@ -316,6 +315,6 @@ border-radius: 30px;
 
 @media (min-width: 1024px) {
   .tabs.block .detailed-teaser.block > .foreground > .text {
-      min-width: 300px;
+    min-width: 300px;
   }
 }

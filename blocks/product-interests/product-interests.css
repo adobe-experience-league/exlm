@@ -1,77 +1,77 @@
 body.profile > main > .section:not(.profile-rail-section, .sign-up-flow-section) > .product-interests-wrapper {
-    border: none;
+  border: none;
 }
 
-.product-interests :where(h2,h3,h4,h5,h6) {
-    border-bottom: 1px solid var(--spectrum-gray-300);
-    padding-bottom: 18px;
-    margin: 0 0 18px;
+.product-interests :where(h2, h3, h4, h5, h6) {
+  border-bottom: 1px solid var(--spectrum-gray-300);
+  padding-bottom: 18px;
+  margin: 0 0 18px;
 }
 
 .product-interests .product-interests-form-error {
-    margin-top: 5px;
+  margin-top: 5px;
 }
 
 .product-interests .interests-container {
-    margin: 16px 0 0 0;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    gap: 8px 10px; 
+  margin: 16px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 8px 10px;
 }
 
 .product-interests .product-interest-description {
-    font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-200);
 }
 
 .product-interests .sub-interests-container {
-    margin: 8px 0 0 28px;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    gap: 8px 10px; 
+  margin: 8px 0 0 28px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 8px 10px;
 }
 
 .product-interests .interests-container li {
-    list-style: none;
-    margin: 0;
-    color: var(--spectrum-gray-800);
+  list-style: none;
+  margin: 0;
+  color: var(--spectrum-gray-800);
 }
 
 .product-interests label.checkbox {
-    cursor: pointer;
-    font-size: var(--spectrum-font-size-200);
-    display: inline-flex;
-    justify-content: flex-start;
-    align-items: flex-start;  
+  cursor: pointer;
+  font-size: var(--spectrum-font-size-200);
+  display: inline-flex;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .product-interests label.checkbox input {
-    margin: 0;
-    margin-right: 10px;
-    width: auto;
-    accent-color: #0265DC;
+  margin: 0;
+  margin-right: 10px;
+  width: auto;
+  accent-color: #0265dc;
 }
 
 .product-interests .subtext {
-    line-height: var(--spectrum-line-height-s);
-    margin-top: -4px;
+  line-height: var(--spectrum-line-height-s);
+  margin-top: -4px;
 }
 
 @media (min-width: 600px) {
-    .product-interests .interests-container {
-        max-height: 540px;
-    }
-    .product-interests .interests-container li {
-        max-width: calc(50% - 10px);
-    }
+  .product-interests .interests-container {
+    max-height: 540px;
+  }
+  .product-interests .interests-container li {
+    max-width: calc(50% - 10px);
+  }
 }
 
 @media (min-width: 900px) {
-    .product-interests .interests-container {
-        gap: 8px 20px; 
-    }
-    .product-interests label.checkbox {
-        font-size: var(--spectrum-font-size-100);
-    }
+  .product-interests .interests-container {
+    gap: 8px 20px;
+  }
+  .product-interests label.checkbox {
+    font-size: var(--spectrum-font-size-100);
+  }
 }

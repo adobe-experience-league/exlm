@@ -13,10 +13,10 @@
 }
 
 .breadcrumbs > div > div > a::before {
-  background-image: url("/icons/chevron_right.svg");
+  background-image: url('/icons/chevron_right.svg');
   background-size: 16px;
   bottom: -3px;
-  content: "";
+  content: '';
   display: inline-block;
   height: 16px;
   margin-right: 5px;

@@ -1,71 +1,71 @@
 .tutorial-list-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .tutorial-list-header {
-    border-bottom: 3px solid var(--non-spectrum-grey);
-    margin-bottom: 8px;
+  border-bottom: 3px solid var(--non-spectrum-grey);
+  margin-bottom: 8px;
 }
 
 .tutorial-list-header-box {
-    width: 100%;
+  width: 100%;
 }
 
 .tutorial-list-box .tutorial-list-container {
-    margin: 0;
+  margin: 0;
 }
 
 .tutorial-list-box .tutorial-list-container ul {
-    margin-top: 0;
+  margin-top: 0;
 }
 
 .tutorial-list-box .tutorial-list-container li {
-    list-style: none;
-    width: 100%;
-    margin: 0;
-    font-size: var(--spectrum-font-size-200);
-    color: var(--spectrum-gray-800);
-    border: 1px solid var(--non-spectrurm-whisper-gray);
-    padding: 10.5px;
-    box-sizing: border-box;
+  list-style: none;
+  width: 100%;
+  margin: 0;
+  font-size: var(--spectrum-font-size-200);
+  color: var(--spectrum-gray-800);
+  border: 1px solid var(--non-spectrurm-whisper-gray);
+  padding: 10.5px;
+  box-sizing: border-box;
 }
 
 .tutorial-list-box .tutorial-list-container li:last-of-type {
-    border: none;
-    width: 100%;
+  border: none;
+  width: 100%;
 }
 
 .tutorial-list-box .tutorial-list-container .tutorial-list-heading {
-    color: var(--non-spectrum-grey);
-    font-size: var(--spectrum-font-size-100);
-    font-weight: var(--font-weight-700);
-    margin-bottom: 12px;
-    line-height: 21px;
-    height: auto;
-    margin-top: 4px;
-    display: block;
+  color: var(--non-spectrum-grey);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-700);
+  margin-bottom: 12px;
+  line-height: 21px;
+  height: auto;
+  margin-top: 4px;
+  display: block;
 }
 
 .tutorial-list-box .tutorial-list-container a {
-    color: var(--non-spectrum-link);
-    font-size: var(--spectrum-font-size-100);
-    font-weight: var(--font-weight-700);
+  color: var(--non-spectrum-link);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-700);
 }
 
 .tutorial-list-box .tutorial-list-container a:hover {
-    color: var(--non-spectrum-custom-dark);
+  color: var(--non-spectrum-custom-dark);
 }
 
 @media (width >= 600px) {
-    .tutorial-list-box .tutorial-list-container li {
-        width: 48%;
-    }
+  .tutorial-list-box .tutorial-list-container li {
+    width: 48%;
+  }
 }
 
 @media (width >= 900px) {
-    .tutorial-list-box .tutorial-list-container li {
-        width: calc(33.33% - 20px);
-    }
+  .tutorial-list-box .tutorial-list-container li {
+    width: calc(33.33% - 20px);
+  }
 }

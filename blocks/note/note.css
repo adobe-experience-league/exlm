@@ -38,7 +38,9 @@
   border-color: var(--non-spectrum-tawny-orange);
 }
 
-.note.warning, .note.caution, .note.error {
+.note.warning,
+.note.caution,
+.note.error {
   border-color: var(--non-spectrum-ue-red);
 }
 
@@ -50,8 +52,8 @@
   color: var(--text-color);
 }
 
-body[class^="browse-"] .note-wrapper,
-body[class^="article-"] .note-wrapper,
-body[class^="articles"] .note-wrapper {
+body[class^='browse-'] .note-wrapper,
+body[class^='article-'] .note-wrapper,
+body[class^='articles'] .note-wrapper {
   margin: 0;
 }

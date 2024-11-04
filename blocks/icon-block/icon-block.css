@@ -62,12 +62,12 @@
 }
 
 .icon-block .icon-link::after {
-  content: ">";
+  content: '>';
   padding-left: 4px;
 }
 
 .icon-block .icon-link.external::after {
-  content: "";
+  content: '';
 }
 
 .icon-block .icon-new-tab-blue {
@@ -104,15 +104,15 @@
   .icon-block > div {
     max-width: 230px;
     min-height: 180px;
-  } 
+  }
 
   .icon-block .icon-description {
     min-height: 73px;
   }
 
-  body[class ^= 'browse-'] .icon-block,
-  body[class ^= 'article-'] .icon-block {
-  max-width: none;
+  body[class^='browse-'] .icon-block,
+  body[class^='article-'] .icon-block {
+    max-width: none;
   }
 
   .icon-block-center-align {
