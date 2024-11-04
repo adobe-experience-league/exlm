@@ -510,7 +510,7 @@ strong {
 :lang(zh-hant),
 :lang(ja),
 :lang(ko) {
-  font-synthesis: none;
+  font-synthesis: weight small-caps;
 }
 
 html {
