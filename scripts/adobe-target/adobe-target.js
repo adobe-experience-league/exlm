@@ -5,7 +5,6 @@ import getEmitter from '../events.js';
 const targetEventEmitter = getEmitter('loadTargetBlocks');
 class AdobeTargetClient {
   constructor() {
-    this.targetData = window.exlm.targetData || [];
     this.targetDataEventName = 'target-recs-ready';
     this.cookieConsentName = 'OptanonConsent';
     this.targetCookieEnabled = this.checkIsTargetCookieEnabled();
@@ -93,7 +92,6 @@ class AdobeTargetClient {
         if (!window?.exlm?.targetData) window.exlm.targetData = [];
         if (!window?.exlm?.targetData.filter((data) => data?.meta?.scope === event?.detail?.meta?.scope).length) {
           window.exlm.targetData.push(event.detail);
-          this.targetData = window.exlm.targetData;
         }
         resolve(true);
       }
@@ -109,9 +107,9 @@ class AdobeTargetClient {
    * @param {string} criteria - The criteria id to fetch the target data
    * @returns {Promise}
    */
+  // eslint-disable-next-line class-methods-use-this
   getTargetData(criteria) {
     return new Promise((resolve) => {
-      if (!criteria && this.targetArray.length) resolve(this.targetData);
       if (!criteria) resolve(window.exlm.targetData);
       else {
         window.exlm.targetData.forEach((data) => {
