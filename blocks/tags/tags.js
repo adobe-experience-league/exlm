@@ -1,19 +1,59 @@
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { getPathDetails, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { getMetadata } from '../../scripts/lib-franklin.js';
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
+async function fetchData(url) {
+  try {
+    let data;
+    const response = await fetch(url, {
+      method: 'GET',
+    });
+    if (response.ok) {
+      data = await response.json();
+    }
+    return data?.data || [];
+  } catch (error) {
+    /* eslint-disable no-console */
+    console.error('Error fetching data', error);
+    return [];
+  }
 }
 
-const TOPICS = placeholders?.topics || 'TOPICS:';
-const CREATED_FOR = placeholders?.createdFor || 'CREATED FOR:';
-const TAGS_BLOCK_PRODUCTS = placeholders?.tagsBlockProducts || 'PRODUCTS:';
+function parseMetaData(metaDataString) {
+  return metaDataString.split(',').map((item) => item.trim());
+}
 
-export default function decorate(block) {
+function getLocalizedData(dataArray, metaArray, lang, nameFieldEn, nameFieldLocalized) {
+  if (lang !== 'en') {
+    const localizedData = dataArray
+      .filter((item) => metaArray.includes(item[nameFieldEn]))
+      .map((item) => item[nameFieldLocalized])
+      .join(',');
+
+    // Return metaArray if localizedData is empty
+    if (!localizedData) {
+      return metaArray.join(',');
+    }
+
+    return localizedData;
+  }
+  return metaArray.join(',');
+}
+
+export default async function decorate(block) {
+  const { lang } = getPathDetails();
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
+  const { rolesUrl, expLevelUrl, featuresUrl } = getConfig();
+  const roles = await fetchData(rolesUrl);
+  const levels = await fetchData(expLevelUrl);
+  const features = await fetchData(featuresUrl);
+
   const coveosolutions = getMetadata('coveo-solution');
   const solutions = [
     ...new Set(
@@ -24,9 +64,13 @@ export default function decorate(block) {
     ),
   ].join(',');
 
-  const features = getMetadata('feature');
-  const roles = getMetadata('role');
-  const experienceLevels = getMetadata('level');
+  const metaFeatures = parseMetaData(getMetadata('feature'));
+  const metaRoles = parseMetaData(getMetadata('role'));
+  const metaExpLevels = parseMetaData(getMetadata('level'));
+
+  const localizedRoles = getLocalizedData(roles, metaRoles, lang, 'Name_en', 'Name');
+  const localizedExpLevels = getLocalizedData(levels, metaExpLevels, lang, 'Name_en', 'Name');
+  const localizedFeatures = getLocalizedData(features, metaFeatures, lang, 'Name_en', 'Name');
 
   function createTagsHTML(values) {
     return values
@@ -45,32 +89,32 @@ export default function decorate(block) {
     productSection.classList.add('article-tags-product');
     productSection.innerHTML = `
       <div class="article-tags-product-heading">
-        ${TAGS_BLOCK_PRODUCTS}
+        ${placeholders?.tagsBlockProducts || 'PRODUCTS:'}
       </div>
       ${createTagsHTML(solutions)}
     `;
     articleTags.appendChild(productSection);
   }
 
-  if (features) {
+  if (metaFeatures) {
     const topicsSection = document.createElement('div');
     topicsSection.classList.add('article-tags-topics');
     topicsSection.innerHTML = `
       <div class="article-tags-topics-heading">
-        ${TOPICS}
+        ${placeholders?.topics || 'TOPICS:'}
       </div>
-      ${createTagsHTML(features)}
+      ${createTagsHTML(localizedFeatures)}
     `;
     articleTags.appendChild(topicsSection);
   }
 
-  const createdForContent = [roles, experienceLevels].filter(Boolean).map(createTagsHTML).join('');
+  const createdForContent = [localizedRoles, localizedExpLevels].filter(Boolean).map(createTagsHTML).join('');
   if (createdForContent) {
     const createdForSection = document.createElement('div');
     createdForSection.classList.add('article-tags-createdFor');
     createdForSection.innerHTML = `
       <div class="article-tags-createdFor-heading">
-        ${CREATED_FOR}
+        ${placeholders?.createdFor || 'CREATED FOR:'}
       </div>
       ${createdForContent}
     `;
