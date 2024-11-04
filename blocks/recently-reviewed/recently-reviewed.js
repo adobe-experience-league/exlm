@@ -138,10 +138,10 @@ export default async function decorate(block) {
         } else {
           buildNoResultsContent(contentDiv, true);
           if (!UEAuthorMode && !displayBlock) {
-            block.parentElement.style.display = 'none';
+            block.parentElement.remove();
             document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
               if (element.textContent.trim() === '') {
-                element.style.display = 'none';
+                element.remove();
               }
             });
           }
