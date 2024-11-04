@@ -498,14 +498,12 @@ strong {
     --exlm-line-height-h5: 23.4px;
   }
 }
-
 @font-face {
   font-family: roboto-fallback;
   size-adjust: 100.06%;
   ascent-override: 95%;
   src: local("Arial");
 }
-
 :lang(zh-hans),
 :lang(zh-hant),
 :lang(ja),
