@@ -1,11 +1,13 @@
 .related-content-wrapper {
   margin: 20px 0 0;
 }
+
 .related-content-wrapper .related-content-toggle {
   display: flex;
   align-items: center;
   cursor: pointer;
 }
+
 .related-content-wrapper .related-content-toggle h2 {
   font-size: var(--spectrum-font-size-50);
   font-weight: var(--spectrum-extra-bold-font-weight);
@@ -13,14 +15,17 @@
   line-height: 31px;
   margin: 0;
 }
-.related-content-wrapper .related-content-toggle[aria-expanded=false] + ul {
+
+.related-content-wrapper .related-content-toggle[aria-expanded='false'] + ul {
   max-height: 0;
   transition: max-height 300ms ease;
 }
-.related-content-wrapper .related-content-toggle[aria-expanded=true] + ul {
+
+.related-content-wrapper .related-content-toggle[aria-expanded='true'] + ul {
   max-height: 15em;
   transition: max-height 300ms ease;
 }
+
 .related-content-wrapper .related-content-toggle::after {
   position: absolute;
   right: 5%;
@@ -28,15 +33,17 @@
   display: flex;
   width: 18px;
   height: 18px;
-  content: "";
+  content: '';
   box-sizing: content-box;
-  background: rgba(0, 0, 0, 0) url("/icons/chevron_down.svg") no-repeat right center;
+  background: rgb(0 0 0 / 0%) url('/icons/chevron_down.svg') no-repeat right center;
   transform: rotate(180deg);
   transition: transform 300ms;
 }
-.related-content-wrapper .related-content-toggle[aria-expanded=true]::after {
+
+.related-content-wrapper .related-content-toggle[aria-expanded='true']::after {
   transform: rotate(0);
 }
+
 .related-content-wrapper ul.related-content {
   list-style: none;
   margin: 0;
@@ -44,23 +51,34 @@
   cursor: pointer;
   overflow: hidden;
 }
+
 .related-content-wrapper ul.related-content li {
   margin: 5px 0;
   display: flex;
 }
+
 .related-content-wrapper ul.related-content li .related-content-icon {
   margin: 0 10px 0 0;
 }
+
 .related-content-wrapper ul.related-content li .related-content-icon .related-content-tooltip {
   display: inline;
 }
+
 .related-content-wrapper ul.related-content li .related-content-icon .related-content-tooltip .tooltip-label-wrapper {
   font-size: 12px;
   position: absolute;
   visibility: hidden;
   transition: all 130ms ease-in-out;
 }
-.related-content-wrapper ul.related-content li .related-content-icon .related-content-tooltip .tooltip-label-wrapper .tooltip-label {
+
+.related-content-wrapper
+  ul.related-content
+  li
+  .related-content-icon
+  .related-content-tooltip
+  .tooltip-label-wrapper
+  .tooltip-label {
   display: block;
   background-color: var(--spectrum-gray-600);
   border-radius: 4px;
@@ -77,19 +95,28 @@
   z-index: 1;
   visibility: hidden;
 }
-.related-content-wrapper ul.related-content li .related-content-icon .related-content-tooltip .tooltip-label-wrapper .tooltip-label::after {
+
+.related-content-wrapper
+  ul.related-content
+  li
+  .related-content-icon
+  .related-content-tooltip
+  .tooltip-label-wrapper
+  .tooltip-label::after {
   border-width: 4px;
   border-style: solid;
   border-color: var(--spectrum-gray-600) transparent transparent transparent;
-  content: "";
+  content: '';
   left: 50%;
   margin-left: -4px;
   position: absolute;
   top: 100%;
 }
+
 .related-content-wrapper ul.related-content li .related-content-icon:hover .related-content-tooltip .tooltip-label {
   visibility: visible;
 }
+
 .related-content-wrapper ul.related-content a {
   font-size: var(--spectrum-font-size-100);
   display: inline-flex;

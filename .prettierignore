@@ -1,9 +1,6 @@
 prism.js
-!blocks/mini-toc/**
-!blocks/playlist-browse/**
-styles/**/**.css
+styles/styles.css
 scripts/prism-grammars/**
-scripts/**/**.css
 scripts/universal-editor-embedded.js
 scripts/coveo-headless/libs/browser/*
 scripts/crypto.js

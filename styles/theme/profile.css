@@ -49,13 +49,13 @@ body.profile-home-page .profile-background {
 }
 
 body.profile-home-page .profile-background::before {
-  content: "";
+  content: '';
   position: absolute;
   top: -113px;
   left: 43%;
   width: 109px;
   height: 336px;
-  background: url("/images/pentagon-stripes-right-decor.svg") no-repeat center center;
+  background: url('/images/pentagon-stripes-right-decor.svg') no-repeat center center;
   background-size: cover;
   transform: rotate(-90deg);
   z-index: -1;
@@ -69,7 +69,7 @@ body.profile .section .product-experience-level-wrapper + .default-content-wrapp
   margin-top: 50px;
 }
 
-body.profile .section[data-two-column-layout="true"] > div:nth-child(2) {
+body.profile .section[data-two-column-layout='true'] > div:nth-child(2) {
   border-top: 0;
 }
 
@@ -103,19 +103,26 @@ body.profile-home-page .section.profile-rail-section:not(.sign-up-flow-section) 
   padding: 24px 0;
 }
 
-body.profile .section:not(.sign-up-flow-section, .personalized-section, .personalized-content-placeholder-container):first-child {
+body.profile
+  .section:not(.sign-up-flow-section, .personalized-section, .personalized-content-placeholder-container):first-child {
   margin-top: 80px;
-} 
+}
 
 body.profile-home-page .section:not(.sign-up-flow-section):first-child {
   padding-top: 0;
 }
 
-body.profile .section:not(.profile-rail-section, .sign-up-flow-section) .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) {
+body.profile
+  .section:not(.profile-rail-section, .sign-up-flow-section)
+  .default-content-wrapper
+  :where(h1, h2, h3, h4, h5, h6) {
   color: var(--spectrum-gray-900);
 }
 
-body.profile:not(.profile-home-page) .section:not(.profile-rail-section, .sign-up-flow-section) .default-content-wrapper :where(h1, h2, h3, h4, h5, h6):first-child {
+body.profile:not(.profile-home-page)
+  .section:not(.profile-rail-section, .sign-up-flow-section)
+  .default-content-wrapper
+  :where(h1, h2, h3, h4, h5, h6):first-child {
   font-size: 12px;
 }
 
@@ -132,7 +139,9 @@ body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section
   padding-bottom: 40px;
 }
 
-body.profile:not(.profile-home-page) .section:not(.profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper) {
+body.profile:not(.profile-home-page)
+  .section:not(.profile-rail-section, .sign-up-flow-section)
+  > div:not(.default-content-wrapper) {
   width: 100%;
   padding: 32px 0;
   border-top: 1px solid #d6d6d6;
@@ -146,16 +155,24 @@ body.profile:not(.profile-home-page) .section:not(.profile-rail-section, .sign-u
   margin-bottom: 60px;
 }
 
-body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper):last-child {
+body.profile-home-page
+  .section:not(.profile-rail-section, .sign-up-flow-section)
+  > div:not(.default-content-wrapper):last-child {
   padding-bottom: 0;
 }
 
-body.profile:not(.profile-home-page) .section:not(.profile-rail-section, .sign-up-flow-section) > div:nth-child(2):not(.default-content-wrapper) {
+body.profile:not(.profile-home-page)
+  .section:not(.profile-rail-section, .sign-up-flow-section)
+  > div:nth-child(2):not(.default-content-wrapper) {
   border-top: none;
 }
 
-body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.user-profile-card-wrapper:not(.default-content-wrapper),
-body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.product-experience-level-wrapper:not(.default-content-wrapper) {
+body.profile
+  .section:not(.profile-rail-section, .sign-up-flow-section)
+  > div.user-profile-card-wrapper:not(.default-content-wrapper),
+body.profile
+  .section:not(.profile-rail-section, .sign-up-flow-section)
+  > div.product-experience-level-wrapper:not(.default-content-wrapper) {
   border-top: 0;
 }
 
@@ -175,22 +192,22 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
     padding: 48px 52px 64px;
   }
 
-  body.profile .section[data-two-column-layout="true"] {
+  body.profile .section[data-two-column-layout='true'] {
     display: grid;
     gap: 10px;
-    grid-template: ". ." auto "normal-flow normal-flow" auto/1fr 1fr;
+    grid-template: '. .' auto 'normal-flow normal-flow' auto/1fr 1fr;
   }
 
-  body.profile .section[data-two-column-layout="true"] > div:nth-child(1) {
+  body.profile .section[data-two-column-layout='true'] > div:nth-child(1) {
     height: 100%;
     margin-right: 20px;
   }
 
-  body.profile .section[data-two-column-layout="true"] > div:nth-child(1) > *:first-child {
+  body.profile .section[data-two-column-layout='true'] > div:nth-child(1) > *:first-child {
     margin-top: 0;
   }
 
-  body.profile .section[data-two-column-layout="true"] > div:nth-child(n+3) {
+  body.profile .section[data-two-column-layout='true'] > div:nth-child(n + 3) {
     grid-area: normal-flow;
   }
 
@@ -199,11 +216,13 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
     padding: 48px 0;
   }
 
-  body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper) {
+  body.profile-home-page
+    .section:not(.profile-rail-section, .sign-up-flow-section)
+    > div:not(.default-content-wrapper) {
     padding-bottom: 48px;
   }
 
-  body.profile .section[data-two-column-layout="true"] > div:nth-child(2):not(.default-content-wrapper) {
+  body.profile .section[data-two-column-layout='true'] > div:nth-child(2):not(.default-content-wrapper) {
     padding-top: 0;
     margin: 0 auto;
     border-top: none;
@@ -239,15 +258,21 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
     margin-right: 0;
   }
 
-  body.profile .section[data-two-column-layout="true"]:nth-child(3) > div:nth-child(1) {
+  body.profile .section[data-two-column-layout='true']:nth-child(3) > div:nth-child(1) {
     margin-top: 28px;
   }
 
-  body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section, .personalized-section, .personalized-content-placeholder-container):first-child {
+  body.profile-home-page
+    .section:not(
+      .sign-up-flow-section,
+      .profile-rail-section,
+      .personalized-section,
+      .personalized-content-placeholder-container
+    ):first-child {
     max-width: calc(100% - 145px);
   }
 
-  body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(2){
+  body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(2) {
     max-width: calc(100% - 145px);
   }
 
@@ -269,7 +294,7 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
   }
 
   body.profile:not(.profile-home-page) .section:first-child:not(.sign-up-flow-section) {
-    background-image: url("/solutions/icons/profileDecoration.svg");
+    background-image: url('/solutions/icons/profileDecoration.svg');
     background-repeat: no-repeat;
     padding-top: 60px;
   }
@@ -291,12 +316,12 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
 
 @media (width <= 1024px) {
   main {
-      display: flex;
-      flex-direction: column;
+    display: flex;
+    flex-direction: column;
   }
 
   .profile-rail-section {
-      order: -1;
+    order: -1;
   }
 
   body.profile .section:not(.sign-up-flow-section):first-child {

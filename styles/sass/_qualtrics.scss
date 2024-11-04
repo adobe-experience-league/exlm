@@ -1,6 +1,0 @@
-// For whatever reason, not all qualtrics creatives allow custom css
-
-// body > to avoid interacting with other qualtrics UI embeded at lower levels
-body > .QSIFeedbackButton #QSIFeedbackButton-btn {
-  border-radius: 0;
-}
