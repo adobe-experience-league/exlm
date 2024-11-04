@@ -1,0 +1,60 @@
+/* Wrapper for the search bar */
+.toc-filter-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-radius: 4px;
+  background-color: var(--spectrum-global-color-gray-50);
+  box-shadow: var(--spectrum-global-shadow-default);
+}
+
+/* Container for input and icons */
+.toc-filter-container {
+  display: flex;
+  align-items: center;
+  position: relative; /* Allows icons to be positioned over input */
+  width: 100%;
+}
+
+/* Search input styling */
+.toc-filter-input {
+  flex-grow: 1;
+  border: 1px solid var(--spectrum-gray-300);
+  font-family: var(--body-font-family);
+  font-style: italic;
+  border-radius: 4px;
+  padding: 8px 32px;
+  margin-bottom: 16px;
+  font-size: var(--spectrum-font-size-100);
+  color: var(--spectrum-gray-800);
+  background-color: white;
+  outline: none;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.toc-filter-input:focus {
+  border-color: var(--spectrum-global-color-blue-500);
+}
+
+/* Filter icon */
+.toc-filter-icon {
+  position: absolute;
+  left: 5px;
+  top: 10px;
+  fill: var(--spectrum-gray-600);
+  pointer-events: none; /* Ensures the icon doesn't interfere with typing */
+}
+
+/* Clear button (shown when input has text) */
+.toc-clear-icon {
+  position: absolute;
+  right: 0;
+  top: 10px; /* Positioned inside the right side of the input */
+  cursor: pointer;
+  color: var(--spectrum-gray-600);
+}
+
+/* Show clear icon when input has text */
+.toc-filter-input:not(:placeholder-shown) + .toc-filter-clear-icon {
+  display: inline;
+}
