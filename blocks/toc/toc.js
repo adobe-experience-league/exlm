@@ -167,7 +167,7 @@ const activate = (el, expandSelf) => {
  */
 function collapseAllSubmenus(tocContent, collapseSelf = true) {
   const toggles = tocContent.querySelectorAll('.toc-toggle');
-  
+
   toggles.forEach((toggle) => {
     toggle.setAttribute('aria-expanded', collapseSelf);
 
@@ -213,7 +213,7 @@ function activateCurrentPage(tocContent) {
     const overflowBlock = tocContent.querySelector('.toc-tree');
     const activeElement = tocContent.querySelector('.toc-item.is-active');
 
-    ensureElementInView(overflowBlock, activeElement); 
+    ensureElementInView(overflowBlock, activeElement);
   }
 }
 
@@ -225,14 +225,14 @@ function tocFilter(query) {
   const tocItems = document.querySelectorAll('.toc-tree li');
   const filterQuery = query.toLowerCase();
 
-  tocItems.forEach(item => {
+  tocItems.forEach((item) => {
     const text = item.textContent.toLowerCase();
     let hasMatchingDescendants = false;
 
     // Recursively check for matches in descendants
     function checkForMatches(element) {
       const childItems = Array.from(element.querySelectorAll('li'));
-      childItems.forEach(child => {
+      childItems.forEach((child) => {
         const childText = child.textContent.toLowerCase();
         if (childText.includes(filterQuery)) {
           hasMatchingDescendants = true;
@@ -254,7 +254,7 @@ function tocFilter(query) {
     }
 
     // Expand/collapse toggles based on parent/child visibility
-    const toggle = item.querySelector('a'); 
+    const toggle = item.querySelector('a');
     if (toggle) {
       toggle.setAttribute('aria-expanded', hasMatchingDescendants ? 'true' : 'false');
     }
@@ -284,18 +284,18 @@ function tocFilterDebounce(func, delay) {
  */
 function resetTocToInitialState() {
   const tocItems = document.querySelectorAll('.toc-tree li');
-  const toggles = document.querySelectorAll('.toc-tree a'); 
+  const toggles = document.querySelectorAll('.toc-tree a');
 
-  tocItems.forEach(item => {
+  tocItems.forEach((item) => {
     item.style.display = ''; // Show all items
   });
 
-  toggles.forEach(toggle => {
+  toggles.forEach((toggle) => {
     toggle.setAttribute('aria-expanded', 'false'); // Collapse all toggles
   });
 
   // Re-activate the current page in the TOC TODO: replace with a state management?
-  activateCurrentPage(document.querySelector('.toc-content')); 
+  activateCurrentPage(document.querySelector('.toc-content'));
 }
 
 /**
@@ -373,20 +373,19 @@ export default async function decorate(block) {
     });
   });
 
-const spectrumSwitch = document.querySelector('.spectrum-switch input');
+  const spectrumSwitch = document.querySelector('.spectrum-switch input');
 
-if (spectrumSwitch) {
-  spectrumSwitch.addEventListener('change', () => {
-    if (spectrumSwitch.checked) {
-      collapseAllSubmenus(tocContent, true);
-    } else {
-      const tocTree = tocContent.querySelector('.toc-tree');
-      collapseAllSubmenus(tocTree, false);
-      activateCurrentPage(tocContent);
-    }
-  });
-}
-
+  if (spectrumSwitch) {
+    spectrumSwitch.addEventListener('change', () => {
+      if (spectrumSwitch.checked) {
+        collapseAllSubmenus(tocContent, true);
+      } else {
+        const tocTree = tocContent.querySelector('.toc-tree');
+        collapseAllSubmenus(tocTree, false);
+        activateCurrentPage(tocContent);
+      }
+    });
+  }
 
   window.addEventListener('resize', () => {
     if (window.matchMedia('(min-width:900px)').matches) {

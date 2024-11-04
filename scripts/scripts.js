@@ -1368,7 +1368,7 @@ async function loadPage() {
     // discoverability
     const params = new URLSearchParams(window.location.search);
     const hasDiscoverability = Boolean(params.get('discoverability'));
-    if (hasDiscoverability) { 
+    if (hasDiscoverability) {
       loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
       loadDefaultModule(`${window.hlx.codeBasePath}/scripts/related-content/related-content-widget.js`);
     }
