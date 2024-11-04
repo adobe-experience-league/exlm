@@ -58,7 +58,8 @@
       "featured-content",
       "browse-filters",
       "topic-results",
-      "announcement-ribbon"
+      "announcement-ribbon",
+      "qualtrics"
     ]
   },
   {
@@ -94,7 +95,8 @@
       "featured-content",
       "browse-filters",
       "topic-results",
-      "article-tags"
+      "article-tags",
+      "qualtrics"
     ]
   },
   {
@@ -142,7 +144,8 @@
       "tabs",
       "recommended-courses",
       "block-quote",
-      "callout"
+      "callout",
+      "qualtrics"
     ]
   },
   {
@@ -169,7 +172,8 @@
       "recommended-content",
       "personalized-content-placeholder",
       "announcement-ribbon",
-      "recently-reviewed"
+      "recently-reviewed",
+      "qualtrics"
     ]
   },
   {
@@ -214,7 +218,8 @@
       "featured-authors",
       "inline-survey",
       "featured-content",
-      "note"
+      "note",
+      "qualtrics"
     ]
   },
   {
