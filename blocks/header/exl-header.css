@@ -104,11 +104,10 @@
   background: var(--non-spectrum-bg);
   box-shadow: 0 8px 8px rgba(10, 10, 10, 0.1);
   display: none;
-  left: 50%;
   width: 120px;
   position: absolute;
   transform: translate(-50%, 0);
-  top: 64px;
+  top: var(--nav-height);
   z-index: 10;
 }
 

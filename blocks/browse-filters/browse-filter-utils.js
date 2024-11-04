@@ -155,13 +155,13 @@ const expLevel = [
 
 const authorTypes = [
   {
-    id: 'internal',
+    id: 'Internal',
     value: 'Adobe',
     title: 'Adobe',
     description: 'Content created by Adobe employees',
   },
   {
-    id: 'external',
+    id: 'External',
     value: 'External',
     title: 'External',
     description: 'Content created by expert Experience Cloud customers',

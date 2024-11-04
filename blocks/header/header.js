@@ -14,20 +14,23 @@ import {
   registerHeaderResizeHandler,
   getCell,
   getFirstChildTextNodes,
+  addOriginToRelativeLinks,
 } from './header-utils.js';
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import LanguageBlock from '../language/language.js';
 import Profile from './load-profile.js';
+
 /**
  * @typedef {Object} DecoratorOptions
- * @property {() => Promise<boolean>} isUserSignedIn
- * @property {() => {}} onSignOut
- * @property {string} profilePicture
- * @property {string} khorosProfileUrl
- * @property {boolean} isCommunity
- * @property {boolean} lang
- * @property {import('../language/language.js').Language[]} languages
- * @property {(lang: string) => void} onLanguageChange
+ * @property {() => Promise<boolean>} isUserSignedIn - header uses this to check if the user is signed in or not
+ * @property {() => {}} onSignOut - called when signout happens.
+ * @property {string} profilePicture - url to profile picture to display in header
+ * @property {string} khorosProfileUrl - url to fetch community profile data
+ * @property {boolean} isCommunity - is this a community header
+ * @property {boolean} lang - language code
+ * @property {string} navLinkOrigin - origin to be added to relative links in the nav
+ * @property {import('../language/language.js').Language[]} languages - array of languages to dispay in language selector
+ * @property {(lang: string) => void} onLanguageChange - called when language is changed
  */
 
 const HEADER_CSS = `/blocks/header/exl-header.css`;
@@ -158,10 +161,11 @@ const randomId = (length = 6) =>
  * Decorates the brand block
  * @param {HTMLElement} brandBlock
  * */
-const brandDecorator = (brandBlock) => {
+const brandDecorator = (brandBlock, decoratorOptions) => {
   simplifySingleCellBlock(brandBlock);
   const brandLink = brandBlock.querySelector('a');
   brandBlock.replaceChildren(brandLink);
+  addOriginToRelativeLinks(brandBlock, decoratorOptions.navLinkOrigin);
   return brandBlock;
 };
 
@@ -425,6 +429,9 @@ const navDecorator = async (navBlock, decoratorOptions) => {
       }
     });
   }
+  // add origin to relative links - this is especially useful when we need to
+  // configure navLinkOrigin in header. Eg. on community.
+  addOriginToRelativeLinks(navBlock, decoratorOptions.navLinkOrigin);
 };
 
 /**
@@ -432,7 +439,7 @@ const navDecorator = async (navBlock, decoratorOptions) => {
  * @param {HTMLElement} searchBlock
  * @param {DecoratorOptions} decoratorOptions
  */
-const searchDecorator = async (searchBlock) => {
+const searchDecorator = async (searchBlock, decoratorOptions) => {
   // save this for later use in mobile nav.
   const searchLink = getCell(searchBlock, 1, 1)?.firstChild;
   decoratorState.searchLinkHtml = searchLink.outerHTML;
@@ -499,6 +506,10 @@ const searchDecorator = async (searchBlock) => {
     searchOptions: options,
     showSearchSuggestions: true,
   });
+
+  if (decoratorOptions.isCommunity) {
+    searchItem.setSelectedSearchOption('Community');
+  }
   decorateIcons(searchBlock);
   return searchBlock;
 };
@@ -525,6 +536,7 @@ async function decorateCommunityBlock(header, decoratorOptions) {
         </a> 
     <div>  
 `;
+  decorateIcons(notificationWrapper);
   communityBlock.appendChild(notificationWrapper);
   const isSignedIn = await decoratorOptions.isUserSignedIn();
   const languageBlock = header.querySelector('.language-selector');
@@ -546,6 +558,7 @@ const languageDecorator = async (languageBlock, decoratorOptions) => {
     popoverId: 'language-picker-popover-header',
     block: languageBlock,
     languages: decoratorOptions.languages,
+    selectedLanguage: decoratorOptions.lang,
     onLanguageChange: decoratorOptions.onLanguageChange,
   });
   decoratorState.languageTitle = language.title;
@@ -744,7 +757,8 @@ class ExlHeader extends HTMLElement {
     options.profilePicture = options.profilePicture || profilePicture;
     options.isCommunity = options.isCommunity ?? false;
     options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
-    options.lang = options.lang || getPathDetails(this.decoratorOptions).lang || 'en';
+    options.lang = options.lang || getPathDetails().lang || 'en';
+    options.navLinkOrigin = options.navLinkOrigin || window.location.origin;
 
     // yes, even though this is extra, it ensures that these functions remain pure-esque.
     this.navDecorator = navDecorator.bind(this);
