@@ -55,16 +55,15 @@ class AdobeTargetClient {
       if (window?.exlm?.targetData?.length) resolve(true);
       document.addEventListener(
         'web-sdk-send-event-complete',
-        (event) => {
+        async (event) => {
           try {
             if (
               event.detail.$type === 'adobe-alloy.send-event-complete' &&
               event.detail.$rule.name === 'AT: PHP: Handle response propositions'
             ) {
-              this.handleTargetEvent().then(() => {
-                if (window?.exlm?.targetData.length) resolve(true);
-                else resolve(false);
-              });
+              await this.handleTargetEvent();
+              if (window?.exlm?.targetData.length) resolve(true);
+              else resolve(false);
             } else {
               resolve(false);
             }
@@ -112,9 +111,10 @@ class AdobeTargetClient {
    */
   getTargetData(criteria) {
     return new Promise((resolve) => {
-      if (!criteria) resolve(this.targetData);
+      if (!criteria && this.targetArray.length) resolve(this.targetData);
+      if (!criteria) resolve(window.exlm.targetData);
       else {
-        this.targetData.forEach((data) => {
+        window.exlm.targetData.forEach((data) => {
           if (data?.meta.scope === criteria) resolve(data);
         });
         resolve(null);
