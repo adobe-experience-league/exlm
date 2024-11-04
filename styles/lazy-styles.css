@@ -1,3 +1,5 @@
+
+/* stylelint-disable-next-line selector-id-pattern, selector-class-pattern  */
 body > .QSIFeedbackButton #QSIFeedbackButton-btn {
   border-radius: 0;
 }

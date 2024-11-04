@@ -33,10 +33,12 @@ body.profile-home-page .profile-shimmer span {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
 }
+
 body.profile-home-page .profile-background {
   position: absolute;
   overflow: hidden;
@@ -157,48 +159,58 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
   border-top: 0;
 }
 
-@media (min-width: 600px) {
+@media (width >= 600px) {
   body.profile-home-page .profile-background {
     height: 145px;
   }
+
   body.profile-home-page .profile-background::before {
     top: -167px;
     width: 145px;
     height: 452px;
   }
+
   body.profile .section:not(.profile-rail-section, .sign-up-flow-section) {
     margin: 0 16px 24px;
     padding: 48px 52px 64px;
   }
+
   body.profile .section[data-two-column-layout="true"] {
     display: grid;
     gap: 10px;
     grid-template: ". ." auto "normal-flow normal-flow" auto/1fr 1fr;
   }
+
   body.profile .section[data-two-column-layout="true"] > div:nth-child(1) {
     height: 100%;
     margin-right: 20px;
   }
+
   body.profile .section[data-two-column-layout="true"] > div:nth-child(1) > *:first-child {
     margin-top: 0;
   }
+
   body.profile .section[data-two-column-layout="true"] > div:nth-child(n+3) {
     grid-area: normal-flow;
   }
+
   body.profile-home-page .section:not(.sign-up-flow-section) {
     margin: 0 24px;
     padding: 48px 0;
   }
+
   body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper) {
     padding-bottom: 48px;
   }
+
   body.profile .section[data-two-column-layout="true"] > div:nth-child(2):not(.default-content-wrapper) {
     padding-top: 0;
     margin: 0 auto;
     border-top: none;
   }
 }
-@media (min-width: 1024px) {
+
+@media (width >= 1024px) {
   body.profile > main {
     position: relative;
     display: grid;
@@ -207,31 +219,38 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
     grid-template-columns: 214px 1fr;
     min-height: 400px;
   }
+
   body.profile-home-page .profile-background {
     left: auto;
     right: 0;
     height: 452px;
     width: 145px;
   }
+
   body.profile-home-page .profile-background::before {
     top: 0;
     left: 0;
     transform: none;
   }
+
   body.profile > main > .section.profile-rail-section {
     grid-column: 1;
     padding: 0;
     margin-right: 0;
   }
+
   body.profile .section[data-two-column-layout="true"]:nth-child(3) > div:nth-child(1) {
     margin-top: 28px;
   }
+
   body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section, .personalized-section, .personalized-content-placeholder-container):first-child {
     max-width: calc(100% - 145px);
   }
+
   body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(2){
     max-width: calc(100% - 145px);
   }
+
   body.profile div.profile-rail-wrapper {
     position: absolute;
     top: 80px;
@@ -239,45 +258,56 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) > div.pr
     bottom: 60px;
     min-width: 214px;
   }
+
   body.profile .profile-rail {
     position: sticky;
     top: 10px;
   }
+
   body.profile-home-page:has(.profile-background) main {
     grid-template-columns: 264px minmax(50vw, calc(100vw - 264px));
   }
+
   body.profile:not(.profile-home-page) .section:first-child:not(.sign-up-flow-section) {
     background-image: url("/solutions/icons/profileDecoration.svg");
     background-repeat: no-repeat;
     padding-top: 60px;
   }
 }
-@media (min-width: 1200px) {
+
+@media (width >= 1200px) {
   body.profile > main {
     grid-template-columns: 264px 1fr;
   }
+
   body.profile div.profile-rail-wrapper {
     min-width: 264px;
   }
+
   body.profile:not(.profile-home-page) .section:not(.profile-rail-section, .sign-up-flow-section) {
     padding: 60px 100px 80px;
   }
 }
-@media (max-width: 1024px) {
+
+@media (width <= 1024px) {
   main {
       display: flex;
       flex-direction: column;
   }
+
   .profile-rail-section {
       order: -1;
   }
+
   body.profile .section:not(.sign-up-flow-section):first-child {
     margin-top: 0;
     max-width: 100%;
   }
+
   body.profile-home-page .section:not(.sign-up-flow-section):first-child {
     margin-top: 80px;
   }
+
   body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section):nth-last-of-type(2) {
     margin-bottom: 60px;
   }
