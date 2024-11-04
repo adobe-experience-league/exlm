@@ -1,5 +1,4 @@
 prism.js
-blocks/**/**.css
 !blocks/mini-toc/**
 !blocks/playlist-browse/**
 styles/**/**.css
