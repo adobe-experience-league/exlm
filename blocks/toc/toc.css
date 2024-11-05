@@ -5,16 +5,8 @@
 .toc {
   position: relative;
   display: block !important;
-}
-
-@media (width >= 900px) {
-  .toc {
-    max-height: calc(100vh - var(--nav-height) - 60px);
-    overflow-y: scroll;
-    border-bottom: 1px solid #eaeaea;
-    padding-left: 12px;
-    padding-right: 12px;
-  }
+  padding-left: 12px;
+  padding-right: 12px;
 }
 
 .toc-content,
@@ -83,7 +75,7 @@
   box-sizing: border-box;
   width: 100%;
   min-height: 32px;
-  padding: 16px 12px 0;
+  padding: 1em 0 1em var(--spectrum-spacing-200);
 }
 
 @media (width >= 900px) {
@@ -184,7 +176,6 @@
   position: relative;
   cursor: pointer;
   flex: 12%;
-  padding-right: 12px;
 }
 
 .toc a.toc-toggle::after {
@@ -264,68 +255,6 @@ button.toc-dropdown-button {
 
 .toc-dropdown-button.toc-dropdown-open::after {
   transform: rotateZ(225deg);
-}
-
-/** View More Less Button */
-.toc .toc-view-more-less {
-  border-radius: 4px;
-}
-
-.toc .toc-view-more-less span {
-  cursor: pointer;
-  text-transform: none;
-  font-size: 12px;
-  color: var(--non-spectrum-article-dark-gray);
-  position: relative;
-  padding-left: 12px;
-  display: inline-flex;
-  align-items: baseline;
-  justify-content: start;
-  margin: 0;
-  width: 100%;
-  min-height: 32px;
-}
-
-.toc .toc-view-more-less span::before {
-  color: var(--non-spectrum-dim-gray);
-  font-weight: 800;
-  font-size: 20px;
-  padding-right: 6px;
-  border: 2px solid transparent;
-}
-
-.toc ul[aria-expanded='true'] > .toc-view-more-less span::before {
-  content: '-';
-}
-
-.toc ul[aria-expanded='false'] > .toc-view-more-less span::before {
-  content: '+';
-}
-
-.toc .toc-view-more-less:hover {
-  background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
-  color: var(--spectrum-alias-text-color-hover);
-}
-
-.toc .toc-view-more-less:hover span {
-  color: var(--spectrum-alias-text-color-hover);
-}
-
-.toc ul li.toc-view-more-less {
-  display: list-item;
-}
-
-.toc ul li.toc-view-more-less .toc-view-more,
-.toc ul li.toc-view-more-less .toc-view-less {
-  display: none;
-}
-
-.toc ul[aria-expanded='true'] > li.toc-view-more-less .toc-view-less {
-  display: block;
-}
-
-.toc ul[aria-expanded='false'] > li.toc-view-more-less .toc-view-more {
-  display: block;
 }
 
 @media only screen and (width >= 900px) {
