@@ -159,6 +159,15 @@ export default async function decorate(block) {
       buildCardsShimmer.remove();
     }
 
+    if (!targetSupport && !UEAuthorMode) {
+      block.parentElement.remove();
+      document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
+        if (element.textContent.trim() === '') {
+          element.remove();
+        }
+      });
+    }
+
     if (targetSupport && block.dataset.targetScope) {
       renderCards();
     }
