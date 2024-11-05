@@ -1,4 +1,3 @@
-import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, decorateExternalLinks, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
@@ -252,7 +251,6 @@ export default async function decorate(block) {
     tabList.children[0].children[0].classList.add('active');
 
     fetchDataAndRenderBlock(initialContentType);
-    decorateIcons(headerDiv);
     decorateExternalLinks(block);
   } else {
     buildNoResultsContent(block, true);

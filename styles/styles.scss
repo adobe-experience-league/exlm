@@ -395,6 +395,13 @@
   src: local('Arial');
 }
 
+:lang(zh-hans),
+:lang(zh-hant),
+:lang(ja),
+:lang(ko) {
+  font-synthesis: weight small-caps;
+}
+
 html {
   -webkit-font-smoothing: antialiased;
 }
