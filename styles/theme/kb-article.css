@@ -1,16 +1,27 @@
-.docs.kb-article main h2[id*=-description], .docs.kb-article main h2[id*=-resolution], .docs.kb-article main #description, .docs.kb-article main #resolution {
+.docs.kb-article main h2[id*='-description'],
+.docs.kb-article main h2[id*='-resolution'],
+.docs.kb-article main #description,
+.docs.kb-article main #resolution {
   padding-bottom: 6px;
   border-bottom: 3px solid var(--non-spectrum-grey);
 }
-.docs.kb-article main h2[id*=-description] + h3, .docs.kb-article main h2[id*=-resolution] + h3, .docs.kb-article main #description + h3, .docs.kb-article main #resolution + h3 {
+
+.docs.kb-article main h2[id*='-description'] + h3,
+.docs.kb-article main h2[id*='-resolution'] + h3,
+.docs.kb-article main #description + h3,
+.docs.kb-article main #resolution + h3 {
   margin-top: 24px;
 }
-.docs.kb-article main .doc-pagination, .docs.kb-article main .toc-container {
+
+.docs.kb-article main .doc-pagination,
+.docs.kb-article main .toc-container {
   display: none !important;
 }
+
 .docs.kb-article main .mini-toc > .scrollable-div {
   margin-bottom: 16px;
 }
+
 @media (width >= 1600px) {
   .docs.kb-article main {
     grid-template-columns: 0.3fr 3fr 1fr !important;

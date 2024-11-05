@@ -1,91 +1,91 @@
 .browse-cards-block {
-    min-height: 532px;
-    position: relative;
+  min-height: 532px;
+  position: relative;
 }
 .browse-cards-block-content {
-    margin-top: 16px;
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 16px;
-    margin-bottom: 40px;
-    transition: all .5s ease-in-out;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding-bottom: 2px;
-    min-height: 400px;
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 16px;
+  margin-bottom: 40px;
+  transition: all 0.5s ease-in-out;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 2px;
+  min-height: 400px;
 }
 .browse-cards-block-content > div {
-    flex: 0 0 264px;
+  flex: 0 0 264px;
 }
 .browse-cards-block-header h4 {
-    padding: 0;
-    margin: 0;
+  padding: 0;
+  margin: 0;
 }
 .browse-cards-block-title {
-    position: relative;
-    margin: 0;
-    max-width: 300px;
+  position: relative;
+  margin: 0;
+  max-width: 300px;
 }
 .browse-cards-block-title .tooltip {
-    display: inline;
-    margin: 0 0 0 9px;
+  display: inline;
+  margin: 0 0 0 9px;
 }
 .browse-cards-block-title .tooltip .icon-info {
-    width: 15px;
-    height: 15px;
+  width: 15px;
+  height: 15px;
 }
 .browse-cards-block-title .tooltip svg {
-    pointer-events: none;
+  pointer-events: none;
 }
 .browse-cards-block-title .tooltip .tooltip-text {
-    background-color: var(--non-spectrum-royal-blue);
-    border-radius: 4px;
-    color: var(--spectrum-gray-50);
-    display: inline-block;
-    font-size: 12px;
-    font-weight: normal;
-    left: -999px;
-    line-height: 15px;
-    margin-left: 10px;
-    margin-top: -16px;
-    opacity: 0;
-    padding: 4px 9px 5px 10px;
-    position: absolute;
-    top: 0;
-    transition: opacity 0.3s;
-    visibility: hidden;
-    width: max-content;
-    max-width: 155px;
-    z-index: 1;
+  background-color: var(--non-spectrum-royal-blue);
+  border-radius: 4px;
+  color: var(--spectrum-gray-50);
+  display: inline-block;
+  font-size: 12px;
+  font-weight: normal;
+  left: -999px;
+  line-height: 15px;
+  margin-left: 10px;
+  margin-top: -16px;
+  opacity: 0;
+  padding: 4px 9px 5px 10px;
+  position: absolute;
+  top: 0;
+  transition: opacity 0.3s;
+  visibility: hidden;
+  width: max-content;
+  max-width: 155px;
+  z-index: 1;
 }
 .browse-cards-block-title .tooltip .tooltip-text.tooltip-visible {
-    visibility: visible;
-    opacity: 1;
+  visibility: visible;
+  opacity: 1;
 }
 .browse-cards-block-title .tooltip .tooltip-text::before {
-    border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
-    border-style: solid;
-    border-width: 4px;
-    content: "";
-    display: inline-block;
-    margin-top: -4px;
-    position: absolute;
-    right: 100%;
-    top: 50%;
+  border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
+  border-style: solid;
+  border-width: 4px;
+  content: '';
+  display: inline-block;
+  margin-top: -4px;
+  position: absolute;
+  right: 100%;
+  top: 50%;
 }
-.browse-cards-block-title :where(h2,.h2) {
-    display: inline;
-    margin: 0;
-    color: var(--text-color);
-    word-break: break-word;
+.browse-cards-block-title :where(h2, .h2) {
+  display: inline;
+  margin: 0;
+  color: var(--text-color);
+  word-break: break-word;
 }
 .browse-cards-block-title .tooltip-placeholder {
-    display: inline-block;
+  display: inline-block;
 }
 .browse-cards-block-view a {
-    font-size: 18px;
-    line-height: 17px;
-    margin: 2px 0 0 0;
+  font-size: 18px;
+  line-height: 17px;
+  margin: 2px 0 0 0;
 }
 .browse-cards-block-content > div:first-child .browse-card .user-actions .action-tooltip {
   left: 100%;
@@ -95,39 +95,39 @@
   left: 10%;
 }
 @media only screen and (min-width: 600px) {
-    .browse-cards-block-title {
-        max-width: unset;
-    }
-    .browse-cards-block-content {
-        gap: 25px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        margin-bottom: 56px;
-        margin-top: 16px;
-    }
-    .browse-cards-block-content > div {
-        flex: 0 0 286px;
-    } 
+  .browse-cards-block-title {
+    max-width: unset;
+  }
+  .browse-cards-block-content {
+    gap: 25px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin-bottom: 56px;
+    margin-top: 16px;
+  }
+  .browse-cards-block-content > div {
+    flex: 0 0 286px;
+  }
 }
 @media only screen and (min-width: 900px) {
-    .browse-cards-block-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .browse-cards-block-content {
-        gap: 32px;
-        margin-bottom: 80px;
-        margin-top: 24px;
-    }
-    .browse-cards-block-content > div {
-        flex: 0 0 256px;
-    }
+  .browse-cards-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .browse-cards-block-content {
+    gap: 32px;
+    margin-bottom: 80px;
+    margin-top: 24px;
+  }
+  .browse-cards-block-content > div {
+    flex: 0 0 256px;
+  }
 }
 @media only screen and (min-width: 1200px) {
-    .browse-cards-block-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+  .browse-cards-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }

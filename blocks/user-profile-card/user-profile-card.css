@@ -1,61 +1,60 @@
-@import "../../scripts/profile/profile.css";
+@import '../../scripts/profile/profile.css';
 .user-profile-card-wrapper {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    position: relative;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  position: relative;
 }
 
 .user-profile-card {
-    max-width: 318px;
-    width: 100%;
+  max-width: 318px;
+  width: 100%;
 }
 
 body.profile .user-profile-card:not(.sign-up-flow-section .user-profile-card) {
-    max-width: none;
+  max-width: none;
 }
 
 .user-profile-card-box {
-    background: var(--spectrum-gray-50);
-    border-radius: 4px;
-    box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.05);
-    box-sizing: border-box;
-    min-height: 488px;
-    padding: 24px;
-    position: relative;
-    z-index: 2;
+  background: var(--spectrum-gray-50);
+  border-radius: 4px;
+  box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  min-height: 488px;
+  padding: 24px;
+  position: relative;
+  z-index: 2;
 }
 .user-profile-card-decor {
-    display: none;
+  display: none;
 }
 @media (min-width: 600px) {
-    .user-profile-card-box {
-        width: 387px;
-    }
+  .user-profile-card-box {
+    width: 387px;
+  }
 
-    body.profile .user-profile-card-box:not(.sign-up-flow-section .user-profile-card-box) {
-        width: auto;
-    }
+  body.profile .user-profile-card-box:not(.sign-up-flow-section .user-profile-card-box) {
+    width: auto;
+  }
 
-    .user-profile-card {
-        max-width: 387px;
-    }
+  .user-profile-card {
+    max-width: 387px;
+  }
 
-    body.profile .user-profile-card:not(.sign-up-flow-section .user-profile-card) {
-        max-width: none;
-    }
-    
+  body.profile .user-profile-card:not(.sign-up-flow-section .user-profile-card) {
+    max-width: none;
+  }
 }
-@media (min-width: 900px) {    
-    .sign-up-flow-section .user-profile-card-decor {
-        background: url('/images/bee-background-decor.svg') no-repeat bottom;
-        display: block;
-        height: 520px;
-        left: 50%;
-        position: absolute;
-        top: 45%;
-        transform: translate(-50%, -50%);
-        width: 672px;        
-        z-index: 1;
-    }
+@media (min-width: 900px) {
+  .sign-up-flow-section .user-profile-card-decor {
+    background: url('/images/bee-background-decor.svg') no-repeat bottom;
+    display: block;
+    height: 520px;
+    left: 50%;
+    position: absolute;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    width: 672px;
+    z-index: 1;
+  }
 }

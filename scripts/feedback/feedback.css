@@ -21,13 +21,12 @@
   padding: 10px;
 }
 
-
 .feedback-ui.no-git {
   display: block;
 }
 
 .feedback-ui.no-git .right {
-  display: none!important;
+  display: none !important;
 }
 
 .feedback-ui.no-git .like-btns {
@@ -35,7 +34,7 @@
 }
 
 .feedback-ui.no-git .first-question > span.icon {
-  display: none!important;
+  display: none !important;
 }
 
 .feedback-ui .first-question {
@@ -279,7 +278,7 @@
 }
 
 .feedback-ui .tooltip::after {
-  content: "";
+  content: '';
   position: absolute;
   block-size: 8px;
   inline-size: 8px;
@@ -291,7 +290,7 @@
 }
 
 .feedback-ui .like-btns button:hover .tooltip,
-.feedback-ui .git-buttons button:hover .tooltip, 
+.feedback-ui .git-buttons button:hover .tooltip,
 .feedback-ui .cta button:disabled:hover .tooltip {
   visibility: visible;
   opacity: 1;
@@ -408,7 +407,7 @@
 
 @media (width >= 1407px) {
   .feedback-ui {
-    max-width:1344px
+    max-width: 1344px;
   }
 
   .feedback-ui.no-git {

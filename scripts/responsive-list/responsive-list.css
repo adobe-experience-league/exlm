@@ -1,59 +1,59 @@
 .responsive-list {
-    color: var(--spectrum-gray-700);
-    font-size: var(--spectrum-font-size-200);
-    justify-content: space-between;
-    line-height: 20.8px;
+  color: var(--spectrum-gray-700);
+  font-size: var(--spectrum-font-size-200);
+  justify-content: space-between;
+  line-height: 20.8px;
 }
 
 .responsive-list ul {
-    align-items: center;
-    border-bottom: 2px solid var(--non-spectrurm-whisper-gray);
-    display: inline-flex;
-    flex-wrap: nowrap;
-    gap: 24px;
-    justify-content: space-between;
-    list-style: none;
-    margin: 0;
-    padding: 0 0 17px 0;
-    position: relative;
+  align-items: center;
+  border-bottom: 2px solid var(--non-spectrurm-whisper-gray);
+  display: inline-flex;
+  flex-wrap: nowrap;
+  gap: 24px;
+  justify-content: space-between;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 17px 0;
+  position: relative;
 }
 
 .responsive-list ul li {
-    color: var(--non-spectrum-dim-gray);
-    cursor: pointer;
-    font-size: var(--spectrum-font-size-100);
-    line-height: 17px;
-    margin: 0;
-    padding: 0;
-    position: relative;
-    white-space: pre;
+  color: var(--non-spectrum-dim-gray);
+  cursor: pointer;
+  font-size: var(--spectrum-font-size-100);
+  line-height: 17px;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  white-space: pre;
 }
 
 .responsive-list ul li.active {
-    color: var(--non-spectrum-navy-blue);
+  color: var(--non-spectrum-navy-blue);
 }
 
 .responsive-list ul li.active::after {
-    border-bottom: 3px solid var(--spectrum-blue-900);
-    bottom: -17px;
-    color: var(--non-spectrum-navy-blue);
-    content: "";
-    left: 0;
-    position: absolute;
-    width: 100%;
+  border-bottom: 3px solid var(--spectrum-blue-900);
+  bottom: -17px;
+  color: var(--non-spectrum-navy-blue);
+  content: '';
+  left: 0;
+  position: absolute;
+  width: 100%;
 }
 
 @media (max-width: 1024px) {
-    .responsive-list {
-        border-bottom: 0 none;
-        display: block;
-    }
+  .responsive-list {
+    border-bottom: 0 none;
+    display: block;
+  }
 
-    .responsive-list ul {
-        border-bottom: 1px solid var(--spectrum-gray-500);
-        margin-bottom: 20px;
-        overflow: hidden;
-        overflow-x: scroll;
-        padding-bottom: 12px;
-    }
+  .responsive-list ul {
+    border-bottom: 1px solid var(--spectrum-gray-500);
+    margin-bottom: 20px;
+    overflow: hidden;
+    overflow-x: scroll;
+    padding-bottom: 12px;
+  }
 }

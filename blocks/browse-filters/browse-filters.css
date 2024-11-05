@@ -1,6 +1,6 @@
-@import "../../scripts/browse-card/browse-cards-block.css";
-@import "../../scripts/browse-card/browse-card.css";
-@import "./browse-topics.css";
+@import '../../scripts/browse-card/browse-cards-block.css';
+@import '../../scripts/browse-card/browse-card.css';
+@import './browse-topics.css';
 
 .browse-filters-form {
   display: flex;
@@ -39,8 +39,8 @@
   line-height: 13px;
 }
 
-.filter-input>button,
-.filter-input>input {
+.filter-input > button,
+.filter-input > input {
   cursor: pointer;
   position: relative;
   height: 32px;
@@ -58,15 +58,15 @@
   margin: 0;
 }
 
-.filter-input>button {
+.filter-input > button {
   padding-right: 24px;
 }
 
-.filter-input>input {
+.filter-input > input {
   padding-left: 28px;
 }
 
-.filter-input>input::placeholder {
+.filter-input > input::placeholder {
   font-family: var(--body-font-family);
   color: var(--spectrum-gray-700);
   font-size: var(--spectrum-body-size-m);
@@ -83,7 +83,7 @@
 }
 
 .filter-input .icon-search svg {
-  fill: var(--spectrum-gray-700)
+  fill: var(--spectrum-gray-700);
 }
 
 .browse-filters-search {
@@ -91,7 +91,7 @@
   height: fit-content;
 }
 
-.browse-filters-search>input {
+.browse-filters-search > input {
   padding-left: 32px;
   max-width: 100%;
 }
@@ -166,7 +166,7 @@
   display: none;
 }
 
-.filter-dropdown .custom-checkbox input:checked+label .icon-checked {
+.filter-dropdown .custom-checkbox input:checked + label .icon-checked {
   font-size: var(--spectrum-body-size-s);
   color: var(--non-spectrum-grey-333);
   text-align: center;
@@ -232,7 +232,7 @@ button.browse-filters-clear:disabled:hover {
   gap: 8px;
   grid-template-columns: 1fr;
   margin: 0 auto;
-  transition: all .5s ease-in-out;
+  transition: all 0.5s ease-in-out;
   position: relative;
   width: 100%;
 }
@@ -255,7 +255,6 @@ button.browse-filters-clear:disabled:hover {
   position: relative;
 }
 
-
 .browse-filters-pagination {
   display: flex;
   justify-content: center;
@@ -275,7 +274,7 @@ button.browse-tags:focus {
   cursor: pointer;
 }
 
-.browse-filters-results>div {
+.browse-filters-results > div {
   min-width: 0;
   min-height: 330px;
 }
@@ -327,7 +326,7 @@ button.browse-tags:focus {
   transform-origin: 75% 75%;
   transform: rotateZ(135deg);
   transition: transform 0.1s ease;
-  content: "";
+  content: '';
   margin-top: -5px;
   right: 16px;
   color: var(--spectrum-gray-700);
@@ -390,11 +389,11 @@ button.browse-tags:focus {
 }
 
 .browse-filters-form .sort-container .sort-drop-btn:after {
-  background-image: url("../../icons/down-arrow.svg");
+  background-image: url('../../icons/down-arrow.svg');
   background-position: 0 0;
   background-repeat: no-repeat;
   background-size: 8px;
-  content: "";
+  content: '';
   height: 6px;
   position: absolute;
   right: 0;
@@ -432,7 +431,7 @@ button.browse-tags:focus {
 }
 
 .browse-filters-form .sort-container .sort-dropdown-content a.selected {
-  background-image: url("../../icons/checkmark.svg");
+  background-image: url('../../icons/checkmark.svg');
   background-position: 93% 12px;
   background-repeat: no-repeat;
   background-size: 12px;
@@ -488,7 +487,10 @@ button.browse-tags:focus {
   border-radius: 6px;
   visibility: hidden;
   opacity: 0;
-  transition: transform 130ms ease-in-out, opacity 130ms ease-in-out, visibility 0ms linear 130ms;
+  transition:
+    transform 130ms ease-in-out,
+    opacity 130ms ease-in-out,
+    visibility 0ms linear 130ms;
   pointer-events: none;
   touch-action: none;
 }
@@ -547,17 +549,17 @@ button.browse-tags:focus {
   .browse-filters-input-container {
     display: grid;
     grid-template-areas:
-      "label label label label label label"
-      "role role role ctype ctype ctype"
-      "search search search search search cfilter";
+      'label label label label label label'
+      'role role role ctype ctype ctype'
+      'search search search search search cfilter';
     grid-template-columns: repeat(6, 1fr);
   }
 
   .browse-filters-input-container:has(.filter-dropdown:nth-child(4)) {
     grid-template-areas:
-      "label label label label label label"
-      "role role ctype ctype exp exp"
-      "search search search search search cfilter";
+      'label label label label label label'
+      'role role ctype ctype exp exp'
+      'search search search search search cfilter';
   }
 
   .browse-filters-label {
@@ -595,29 +597,35 @@ button.browse-tags:focus {
     padding: 0;
   }
 
-  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-product-dropdown.filter-dropdown),  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-experience-level-dropdown.filter-dropdown) {
+  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(
+      .browse-product-dropdown.filter-dropdown
+    ),
+  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(
+      .browse-experience-level-dropdown.filter-dropdown
+    ) {
     grid-template-areas:
-      "label label"
-      "ctype author"
-      "role exp"
-      "search cfilter";
+      'label label'
+      'ctype author'
+      'role exp'
+      'search cfilter';
     grid-template-columns: 1fr 1fr;
   }
 
-  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(.browse-author-type-dropdown):not(:has(.browse-experience-level-dropdown)) {
+  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(
+      .browse-author-type-dropdown
+    ):not(:has(.browse-experience-level-dropdown)) {
     grid-template-areas:
-    "label label label label label label"
-    "role role ctype ctype exp exp"
-    "search search search search search cfilter";
+      'label label label label label label'
+      'role role ctype ctype exp exp'
+      'search search search search search cfilter';
     grid-template-columns: repeat(6, 1fr);
   }
-
 }
 
 @media (min-width: 900px) {
   .browse-filters-input-container {
     display: grid;
-    grid-template-areas: "label role ctype search cfilter";
+    grid-template-areas: 'label role ctype search cfilter';
     grid-template-columns: auto 1fr 1fr 1fr auto;
     align-items: center;
   }
@@ -627,26 +635,34 @@ button.browse-tags:focus {
   }
 
   .browse-filters-input-container:has(.filter-dropdown:nth-child(4)) {
-    grid-template-areas: "label role ctype exp search cfilter";
+    grid-template-areas: 'label role ctype exp search cfilter';
     grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
   }
 
-  
-  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(.browse-author-type-dropdown):not(:has(.browse-experience-level-dropdown)) {
-    grid-template-areas: "label role ctype exp search cfilter";
+  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(
+      .browse-author-type-dropdown
+    ):not(:has(.browse-experience-level-dropdown)) {
+    grid-template-areas: 'label role ctype exp search cfilter';
     grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
   }
 
-  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-product-dropdown.filter-dropdown),  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-experience-level-dropdown.filter-dropdown) {
+  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(
+      .browse-product-dropdown.filter-dropdown
+    ),
+  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(
+      .browse-experience-level-dropdown.filter-dropdown
+    ) {
     grid-template-areas:
-      "label label label label"
-      "ctype author role exp"
-      "search search search cfilter";
+      'label label label label'
+      'ctype author role exp'
+      'search search search cfilter';
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 
-  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(.browse-author-type-dropdown):not(:has(.browse-experience-level-dropdown)) {
-    grid-template-areas: "label role ctype exp search cfilter";
+  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(
+      .browse-author-type-dropdown
+    ):not(:has(.browse-experience-level-dropdown)) {
+    grid-template-areas: 'label role ctype exp search cfilter';
     grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
   }
 }

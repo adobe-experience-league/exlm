@@ -1,76 +1,76 @@
 .docs .section.cloud-solutions-container {
-    padding-top: 0;
-    border: none;
+  padding-top: 0;
+  border: none;
 }
 
 .docs .cloud-solutions-container .default-content-wrapper h1 {
-    margin-top: 4px;
+  margin-top: 4px;
 }
 
 .cloud-solutions-container h1 {
-    font-size: 44px;
-    line-height: var(--spectrum-line-height-xxxl);
+  font-size: 44px;
+  line-height: var(--spectrum-line-height-xxxl);
 }
 
 .cloud-solutions-container h2 {
-    border-bottom: 3px solid var(--non-spectrum-grey);
+  border-bottom: 3px solid var(--non-spectrum-grey);
 }
 
 .cloud-solutions-content {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .cloud-solutions-content h3 {
-    font-size: var(--spectrum-font-size-100);
-    margin: 40px 0 10px;
+  font-size: var(--spectrum-font-size-100);
+  margin: 40px 0 10px;
 }
 
 .cloud-solutions-list {
-    flex-shrink: 0;
-    width: 100%;
-    margin-bottom: 20px;
+  flex-shrink: 0;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .cloud-solutions-content .cloud-solutions-list ul,
 .cloud-solutions-content .cloud-solutions-list li {
-    margin: 0;
-    list-style: none;
+  margin: 0;
+  list-style: none;
 }
 
 .cloud-solutions-list li {
-    height: auto;
-    line-height: 21px;
+  height: auto;
+  line-height: 21px;
 }
 
 .cloud-solutions-list a {
-    font-size: var(--spectrum-font-size-100);
-    line-height: 30px;
-    color: var(--non-spectrum-link);
+  font-size: var(--spectrum-font-size-100);
+  line-height: 30px;
+  color: var(--non-spectrum-link);
 }
 
 .cloud-solutions-list a:hover {
-    color: var(--non-spectrum-custom-dark);
+  color: var(--non-spectrum-custom-dark);
 }
 
 @media (width >= 600px) {
-    .cloud-solutions-content {
-        gap: 4px;
-    }
+  .cloud-solutions-content {
+    gap: 4px;
+  }
 
-    .cloud-solutions-list {
-        width: 47%;
-        margin-bottom: 28px;
-    }
+  .cloud-solutions-list {
+    width: 47%;
+    margin-bottom: 28px;
+  }
 }
 
 @media (width >= 900px) {
-    .cloud-solutions-content {
-        gap: 8px;
-    }
+  .cloud-solutions-content {
+    gap: 8px;
+  }
 
-    .cloud-solutions-list {
-        width: 30%;
-    }
+  .cloud-solutions-list {
+    width: 30%;
+  }
 }

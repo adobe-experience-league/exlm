@@ -1,8 +1,8 @@
 .block-quote {
   background: var(--non-spectrum-bg);
   border-radius: 6px;
-  position: relative; 
-  padding-left: 20px; 
+  position: relative;
+  padding-left: 20px;
   padding: 20px;
   border-style: solid;
   border: 6px solid var(--spectrum-indigo-1400);
@@ -11,19 +11,19 @@
   border-bottom: 0px;
 }
 
-.block-quote-content *{
+.block-quote-content * {
   font-style: italic;
   font-weight: normal;
   font-size: 22px;
   line-height: 32px;
-  font-family: 'Adobe Clean', sans-serif; 
+  font-family: 'Adobe Clean', sans-serif;
   color: var(--non-spectrum-grey-updated);
 }
 
 .block-quote.external {
-  border-color: var(--spectrum-indigo-1400); 
+  border-color: var(--spectrum-indigo-1400);
 }
 
 .block-quote.adobe {
-  border-color: var(--spectrum-red-1400); 
+  border-color: var(--spectrum-red-1400);
 }

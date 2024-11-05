@@ -56,7 +56,7 @@ div.marquee-wrapper {
   margin-bottom: var(--space-token-xs);
 }
 
-.marquee-title :where(h1,h2,h3,h4,h5,h6) {
+.marquee-title :where(h1, h2, h3, h4, h5, h6) {
   margin: 0;
   color: inherit;
 }
@@ -99,7 +99,7 @@ div.marquee-wrapper {
   padding: 8px 40px;
   width: min-content;
   min-width: 264px;
-  background-color: var( --non-spectrum-true-blue);
+  background-color: var(--non-spectrum-true-blue);
   border: 2px solid var(--non-spectrum-true-blue);
   color: var(--background-color);
 }
@@ -111,7 +111,7 @@ div.marquee-wrapper {
 }
 
 .marquee-cta > a.button.primary {
-  background-color: var( --non-spectrum-true-blue);
+  background-color: var(--non-spectrum-true-blue);
   border: 2px solid var(--non-spectrum-true-blue);
   color: var(--background-color);
 }
@@ -170,7 +170,7 @@ div.marquee-wrapper {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(10, 10, 10, .86);
+  background-color: rgba(10, 10, 10, 0.86);
   justify-content: center;
   align-items: center;
   overflow: hidden;
@@ -187,7 +187,7 @@ div.marquee-wrapper {
 }
 
 .marquee .modal .icon:hover {
-  background-color: rgba(10, 10, 10, .3);
+  background-color: rgba(10, 10, 10, 0.3);
   border-radius: 50%;
 }
 
@@ -219,7 +219,7 @@ div.marquee-wrapper {
     min-height: 350px;
     background: none !important;
   }
-  
+
   .marquee-subject img {
     position: relative;
     z-index: 2;
@@ -253,7 +253,7 @@ div.marquee-wrapper {
     flex-wrap: wrap;
   }
 
-  .marquee-cta > a.button { 
+  .marquee-cta > a.button {
     padding: 8px 20px;
   }
 
@@ -276,8 +276,8 @@ div.marquee-wrapper {
     width: 100%;
   }
 
-  body[class ^= 'browse-'] .marquee-foreground,
-  body[class ^= 'article-'] .marquee-foreground {
+  body[class^='browse-'] .marquee-foreground,
+  body[class^='article-'] .marquee-foreground {
     min-height: 260px;
   }
 
@@ -286,7 +286,7 @@ div.marquee-wrapper {
     width: 50%;
     max-width: 500px;
     margin: auto 0;
-    background: none ;
+    background: none;
   }
 
   .marquee-title {
@@ -297,11 +297,11 @@ div.marquee-wrapper {
     flex-wrap: nowrap;
   }
 
-  .marquee-cta > a.button { 
+  .marquee-cta > a.button {
     min-width: auto;
     padding: 10px 22px;
   }
-  
+
   .marquee-subject {
     width: 40%;
     min-width: 400px;
@@ -331,50 +331,49 @@ div.marquee-wrapper {
     position: absolute;
     min-height: 100%;
   }
-} 
+}
 
 /* when shown on a page with a rail */
 @media (min-width: 1024px) {
   /* no longer goes from end to end */
-  body[class ^= 'browse-'] .section div.marquee-wrapper,
-  body[class ^= 'article-'] .section div.marquee-wrapper  {
+  body[class^='browse-'] .section div.marquee-wrapper,
+  body[class^='article-'] .section div.marquee-wrapper {
     margin-left: unset;
     margin-right: unset;
   }
 
   /* title */
-  body[class ^= 'browse-'] .marquee-title,
-  body[class ^= 'article-'] .marquee-title {
-    font-size: var( --spectrum-font-size-900);
+  body[class^='browse-'] .marquee-title,
+  body[class^='article-'] .marquee-title {
+    font-size: var(--spectrum-font-size-900);
     line-height: 36px;
-    margin-bottom:  var(--space-token-xxs);
+    margin-bottom: var(--space-token-xxs);
   }
 
- /* description */
-  body[class ^= 'browse-'] .marquee-long-description,
-  body[class ^= 'article-'] .marquee-long-description,
-  body[class ^= 'browse-'] .marquee-long-description * 
-  body[class ^= 'article-'] .marquee-long-description * {
+  /* description */
+  body[class^='browse-'] .marquee-long-description,
+  body[class^='article-'] .marquee-long-description,
+  body[class^='browse-'] .marquee-long-description * body[class^='article-'] .marquee-long-description * {
     line-height: 23.4px;
   }
 
   /* cta */
-  body[class ^= 'browse-'] .marquee-cta a.button,
-  body[class ^= 'article-'] .marquee-cta a.button {
+  body[class^='browse-'] .marquee-cta a.button,
+  body[class^='article-'] .marquee-cta a.button {
     font-size: 17px;
     line-height: 21px;
-    padding: 6px 16px 9px 20px; 
+    padding: 6px 16px 9px 20px;
   }
 
-  body[class ^= 'browse-'] .section div.marquee-wrapper .marquee-foreground ,
-  body[class ^= 'article-'] .section div.marquee-wrapper .marquee-foreground {
+  body[class^='browse-'] .section div.marquee-wrapper .marquee-foreground,
+  body[class^='article-'] .section div.marquee-wrapper .marquee-foreground {
     padding: 0;
-    justify-content:space-between;
+    justify-content: space-between;
   }
 
   /* text block */
-  body[class ^= 'browse-'] .marquee-text ,
-  body[class ^= 'article-'] .marquee-text {
+  body[class^='browse-'] .marquee-text,
+  body[class^='article-'] .marquee-text {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -385,8 +384,8 @@ div.marquee-wrapper {
   }
 
   /* subject image */
-  body[class ^= 'browse-'] .marquee-subject,
-  body[class ^= 'article-'] .marquee-subject {
+  body[class^='browse-'] .marquee-subject,
+  body[class^='article-'] .marquee-subject {
     min-width: unset;
     min-height: unset;
     width: 320px;
@@ -394,16 +393,16 @@ div.marquee-wrapper {
     margin: unset;
   }
 
-  body[class ^= 'browse-'] .marquee-subject img,
-  body[class ^= 'article-'] .marquee-subject img {
+  body[class^='browse-'] .marquee-subject img,
+  body[class^='article-'] .marquee-subject img {
     display: block;
     min-width: unset;
     padding: 0;
-    height:260px;
+    height: 260px;
   }
 
-  body[class ^= 'browse-'] .section div.marquee-wrapper .marquee-background,
-  body[class ^= 'article-'] .section div.marquee-wrapper .marquee-background {
+  body[class^='browse-'] .section div.marquee-wrapper .marquee-background,
+  body[class^='article-'] .section div.marquee-wrapper .marquee-background {
     min-height: 240px;
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
@@ -411,8 +410,8 @@ div.marquee-wrapper {
     background-color: var(--background-color);
   }
 
-  body[class ^= 'browse-'] .section div.marquee-wrapper .marquee-background svg,
-  body[class ^= 'article-'] .section div.marquee-wrapper .marquee-background svg {
+  body[class^='browse-'] .section div.marquee-wrapper .marquee-background svg,
+  body[class^='article-'] .section div.marquee-wrapper .marquee-background svg {
     min-width: 130%;
     min-height: 0%;
   }

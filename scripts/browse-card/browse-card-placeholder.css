@@ -1,6 +1,6 @@
 @keyframes placeholder-wave {
   50% {
-    opacity: .6;
+    opacity: 0.6;
   }
 }
 .browse-card-shimmer {
@@ -11,7 +11,7 @@
   display: flex;
   flex-wrap: nowrap;
   gap: 16px;
-  transition: all .5s ease-in-out;
+  transition: all 0.5s ease-in-out;
   overflow-x: auto;
   overflow-y: hidden;
   min-height: 400px;
@@ -23,7 +23,7 @@
   height: 0px;
   margin: 0;
   z-index: 0;
-  visibility: hidden
+  visibility: hidden;
 }
 .browse-filters-wrapper .shimmer-placeholder.hide-shimmer {
   display: none;
@@ -32,14 +32,14 @@
   position: relative;
 }
 .featured-cards .shimmer-placeholder {
-  display: grid; 
-  grid-template-columns: 1fr; 
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 32px;
   margin-top: 24px;
 }
-.browse-filters-wrapper .shimmer-placeholder{
+.browse-filters-wrapper .shimmer-placeholder {
   gap: 8px;
-  display: grid; 
+  display: grid;
   grid-template-columns: 1fr;
   overflow: unset;
   height: fit-content;
@@ -53,8 +53,8 @@
   flex: 0 0 264px;
   border: 1px solid var(--spectrum-gray-200);
 }
-.browse-filters-wrapper .shimmer-placeholder-isloading, 
-.featured-cards .shimmer-placeholder-isloading  {
+.browse-filters-wrapper .shimmer-placeholder-isloading,
+.featured-cards .shimmer-placeholder-isloading {
   min-height: 380px;
 }
 .shimmer-placeholder-isloading .shimmer-placeholder-content {
@@ -70,12 +70,17 @@
 .shimmer-placeholder-isloading .shimmer-placeholder-text-container {
   flex: 1 0 50%;
 }
-.shimmer-placeholder-image, 
-.shimmer-placeholder-description, 
+.shimmer-placeholder-image,
+.shimmer-placeholder-description,
 .shimmer-placeholder-main-text,
-.shimmer-placeholder-sub-text, 
-.shimmer-placeholder-btn{
-  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
+.shimmer-placeholder-sub-text,
+.shimmer-placeholder-btn {
+  background-image: linear-gradient(
+    90deg,
+    var(--shimmer-image-slide-start) 0px,
+    var(--shimmer-image-slide-end) 40px,
+    var(--shimmer-image-slide-start) 80px
+  );
   background-size: 200% 100%;
   animation: placeholder-wave 1.5s infinite;
 }
@@ -114,7 +119,7 @@
   background: var(--shimmer-image-slide-start);
   border-radius: 3px;
 }
-.browse-filters-form .shimmer-placeholder .shimmer-placeholder-isloading{
+.browse-filters-form .shimmer-placeholder .shimmer-placeholder-isloading {
   min-height: 330px;
 }
 .browse-filters-form .shimmer-placeholder .shimmer-placeholder-isloading .shimmer-placeholder-image {
@@ -127,25 +132,25 @@
   height: 22px;
 }
 @media only screen and (min-width: 600px) {
-  .shimmer-placeholder{
+  .shimmer-placeholder {
     gap: 25px;
     overflow-x: auto;
     overflow-y: hidden;
     margin-top: 16px;
   }
-  .featured-cards .shimmer-placeholder, 
-  .browse-filters-wrapper .shimmer-placeholder {  
+  .featured-cards .shimmer-placeholder,
+  .browse-filters-wrapper .shimmer-placeholder {
     grid-template-columns: 1fr 1fr;
   }
   .browse-filters-wrapper .shimmer-placeholder {
     margin-top: 0;
   }
   .shimmer-placeholder-isloading {
-    flex: 0 0 286px; 
+    flex: 0 0 286px;
   }
 }
 @media only screen and (min-width: 900px) {
-  .shimmer-placeholder{
+  .shimmer-placeholder {
     gap: 32px;
     margin-top: 24px;
   }

@@ -15,7 +15,7 @@
   line-height: 21px;
 }
 
-.accordion details summary :where(h2,h3,h4,h5,h6) {
+.accordion details summary :where(h2, h3, h4, h5, h6) {
   margin: 0;
   font: inherit;
   color: inherit;
@@ -23,8 +23,8 @@
 }
 
 .accordion details summary::before {
-  content: url("../../icons/chevron_right.svg");
-  position: relative; 
+  content: url('../../icons/chevron_right.svg');
+  position: relative;
   top: 3.5px;
   left: -4.2px;
   margin-right: -2px;
@@ -104,11 +104,11 @@ ol .accordion ul {
 }
 
 .accordion details[open] summary::before {
-  content: url("../../icons/chevron_down.svg");
+  content: url('../../icons/chevron_down.svg');
 }
 
-.accordion .code-wrapper, 
-.accordion .code-wrapper div, 
+.accordion .code-wrapper,
+.accordion .code-wrapper div,
 .accordion .note-wrapper,
 .accordion .note-wrapper div {
   margin-left: 0;
