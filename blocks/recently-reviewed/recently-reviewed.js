@@ -32,9 +32,9 @@ export function updateCopyFromTarget(data, heading, subheading, taglineCta, tagl
     data.meta['tagline-cta-url'].trim() !== ''
   ) {
     taglineCta.innerHTML = `
-        <a href="${data.meta['tagline-cta-url']}" title="${data.meta['tagline-cta-text']}">
+<a href="${data.meta['tagline-cta-url']}" title="${data.meta['tagline-cta-text']}">
           ${data.meta['tagline-cta-text']}
-        </a>
+</a>
       `;
   } else {
     taglineCta?.remove();
@@ -71,17 +71,26 @@ export function setTargetDataAsBlockAttribute(data, block) {
 
 function renderNavigationArrows(titleContainer) {
   const navigationElements = htmlToElement(`
-        <div class="recently-viewed-nav-section">
-            <button class="prev-nav" disabled>
-                <span class="icon icon-chevron-gray"></span>
-            </button>
-            <button class="next-nav" disabled>
-                <span class="icon icon-chevron-gray"></span>
-            </button
-        </div>
+<div class="recently-viewed-nav-section">
+<button class="prev-nav" disabled>
+<span class="icon icon-chevron-gray"></span>
+</button>
+<button class="next-nav" disabled>
+<span class="icon icon-chevron-gray"></span>
+</button
+</div>
     `);
   decorateIcons(navigationElements);
   titleContainer.appendChild(navigationElements);
+}
+
+function removeEmptySection(block) {
+  block.parentElement.remove();
+  document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
+    if (element.textContent.trim() === '') {
+      element.remove();
+    }
+  });
 }
 
 export default async function decorate(block) {
@@ -138,12 +147,7 @@ export default async function decorate(block) {
         } else {
           buildNoResultsContent(contentDiv, true);
           if (!UEAuthorMode && !displayBlock) {
-            block.parentElement.remove();
-            document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
-              if (element.textContent.trim() === '') {
-                element.remove();
-              }
-            });
+            removeEmptySection(block);
           }
         }
         buildCardsShimmer.remove();
@@ -160,12 +164,7 @@ export default async function decorate(block) {
     }
 
     if (!targetSupport && !UEAuthorMode) {
-      block.parentElement.remove();
-      document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
-        if (element.textContent.trim() === '') {
-          element.remove();
-        }
-      });
+      removeEmptySection(block);
     }
 
     if (targetSupport && block.dataset.targetScope) {
