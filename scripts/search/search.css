@@ -1,124 +1,124 @@
 .search-picker-popover,
 .search-suggestions-popover {
-    position: absolute;
-    z-index: 1;
-    right: 0;
-    top: 50px;
-    background-color: var(--background-color);
-    box-shadow: 0 8px 8px rgba(10, 10, 10, 0.1);
-    border: 1px solid var(--spectrum-gray-400);
-    padding: 8px 0;
-    border-radius: 6px;
-    visibility: hidden;
-    opacity: 0;
-    transition: transform 130ms ease-in-out, opacity 130ms ease-in-out, visibility 0ms linear 130ms;
-    pointer-events: none;
-    touch-action: none;
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  top: 50px;
+  background-color: var(--background-color);
+  box-shadow: 0 8px 8px rgba(10, 10, 10, 0.1);
+  border: 1px solid var(--spectrum-gray-400);
+  padding: 8px 0;
+  border-radius: 6px;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    transform 130ms ease-in-out,
+    opacity 130ms ease-in-out,
+    visibility 0ms linear 130ms;
+  pointer-events: none;
+  touch-action: none;
 }
-
 
 .search-container .icon svg {
-    width: 14px;
-    height: 14px;
+  width: 14px;
+  height: 14px;
 }
 
-
 .search-container .icon.search-clear-icon {
-    display: none;
+  display: none;
 }
 
 .search-container .icon.search-clear-icon.search-icon-show {
-    display: flex;
-    width: 6px;
-    height: 6px;
-    padding: 4px;
-    background: var(--non-spectrum-silver-mist);
-    border-radius: 100%;
-    right: 4px;
-    cursor: pointer;
+  display: flex;
+  width: 6px;
+  height: 6px;
+  padding: 4px;
+  background: var(--non-spectrum-silver-mist);
+  border-radius: 100%;
+  right: 4px;
+  cursor: pointer;
 }
 
 .search-container.browse-filters-search .icon.search-clear-icon.search-icon-show {
-    position: absolute;
-    height: 10px;
-    width: 10px;
-    top: 6px;
-    right: 6px;
-    background: transparent;
+  position: absolute;
+  height: 10px;
+  width: 10px;
+  top: 6px;
+  right: 6px;
+  background: transparent;
 }
-
 
 .search-picker-popover.search-picker-popover-visible,
 .search-picker-popover.search-suggestions-popover-visible,
 .search-suggestions-popover.search-picker-popover-visible,
 .search-suggestions-popover.search-suggestions-popover-visible {
-    visibility: visible;
-    opacity: 1;
-    pointer-events: auto;
-    touch-action: auto;
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  touch-action: auto;
 }
 
 .search-picker-popover ul {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .search-suggestions-popover {
-    left: 0;
-    top: 32px;
+  left: 0;
+  top: 32px;
 }
 
 .search-suggestions-popover ul {
-    margin: 0;
-    list-style: none;
+  margin: 0;
+  list-style: none;
 }
 
 .search-suggestions-popover li.search-picker-label {
-    border-top: 1px solid var(--non-spectrum-bg);
-    padding: 3px 12px;
-    font-size: var(--spectrum-font-size-100);
-    line-height: 18px;
-    color: var(--non-spectrum-charcoal-gray);
+  border-top: 1px solid var(--non-spectrum-bg);
+  padding: 3px 12px;
+  font-size: var(--spectrum-font-size-100);
+  line-height: 18px;
+  color: var(--non-spectrum-charcoal-gray);
 }
 
 .search-suggestions-popover li.search-picker-label:first-child {
-    border-top: none;
+  border-top: none;
 }
 
 .search-suggestions-popover li.search-picker-label .search-highlight-text {
-    color: var(--text-color);
+  color: var(--text-color);
 }
 
 .search-picker-popover .search-picker-label,
 .search-suggestions-popover .search-picker-label {
-    margin: 0;
-    padding: 7px 12px 7px 32px;
-    position: relative;
-    color: var(--spectrum-gray-800);
-    font-size: var(--spectrum-font-size-100);
-    line-height: var(--exlm-line-height-h6);
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    min-width: auto;
+  margin: 0;
+  padding: 7px 12px 7px 32px;
+  position: relative;
+  color: var(--spectrum-gray-800);
+  font-size: var(--spectrum-font-size-100);
+  line-height: var(--exlm-line-height-h6);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: auto;
 }
 
 .search-picker-popover .search-picker-label:hover,
 .search-suggestions-popover .search-picker-label:hover {
-    background: rgba(0, 0, 0, 0.04);
-    cursor: pointer;
+  background: rgba(0, 0, 0, 0.04);
+  cursor: pointer;
 }
 
 .search-picker-popover .search-picker-label .icon,
 .search-suggestions-popover .search-picker-label .icon {
-    position: absolute;
-    height: 28px;
-    width: 28px;
-    left: 8px;
-    top: 4px;
+  position: absolute;
+  height: 28px;
+  width: 28px;
+  left: 8px;
+  top: 4px;
 }
 
 .search-picker-popover .search-picker-label .icon path,
 .search-suggestions-popover .search-picker-label .icon path {
-    fill: var(--non-spectrum-azure-blue);
+  fill: var(--non-spectrum-azure-blue);
 }

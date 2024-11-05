@@ -84,7 +84,12 @@
 .load-fail-card.browse-card .browse-card-banner {
   height: 32px;
   width: 132px;
-  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
+  background-image: linear-gradient(
+    90deg,
+    var(--shimmer-image-slide-start) 0px,
+    var(--shimmer-image-slide-end) 40px,
+    var(--shimmer-image-slide-start) 80px
+  );
   background-size: 200% 100%;
   animation: placeholder-wave 1.5s infinite;
 }
@@ -93,7 +98,12 @@
   height: 21px;
   width: 100px;
   margin-bottom: 16px;
-  background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
+  background-image: linear-gradient(
+    90deg,
+    var(--shimmer-image-slide-start) 0px,
+    var(--shimmer-image-slide-end) 40px,
+    var(--shimmer-image-slide-start) 80px
+  );
   background-size: 200% 100%;
   animation: placeholder-wave 1.5s infinite;
 }
@@ -372,7 +382,7 @@
   border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
   border-style: solid;
   border-width: 4px;
-  content: "";
+  content: '';
   display: inline-block;
   margin-top: -4px;
   position: absolute;
@@ -408,7 +418,7 @@
 .browse-card .skill-bar-value {
   height: 4px;
   float: left;
-  background: var(--spectrum-blue-900)
+  background: var(--spectrum-blue-900);
 }
 .browse-card .course-duration {
   color: var(--spectrum-gray-700);

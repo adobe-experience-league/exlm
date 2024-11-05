@@ -1,60 +1,60 @@
 .guide-list-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .guide-list-header {
-    border-bottom: 3px solid var(--non-spectrum-grey);
-    margin-bottom: 10px;
+  border-bottom: 3px solid var(--non-spectrum-grey);
+  margin-bottom: 10px;
 }
 
 .section .guides-list-wrapper {
-    margin: 0;
-    width: 100%;
+  margin: 0;
+  width: 100%;
 }
 
 .guides-list .guide-list-container {
-    margin: 0;
+  margin: 0;
 }
 
 .guide-list-box .guide-list-container li {
-    list-style: none;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    font-size: var(--spectrum-font-size-200);
-    color: var(--spectrum-gray-800);
+  list-style: none;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  font-size: var(--spectrum-font-size-200);
+  color: var(--spectrum-gray-800);
 }
 
 .guide-list-box .guide-list-container a {
-    color: var(--non-spectrum-link);
-    font-weight: var(--font-weight-700);
+  color: var(--non-spectrum-link);
+  font-weight: var(--font-weight-700);
 }
 
 .guide-list-box .guide-list-container a:hover {
-    color: var(--non-spectrum-custom-dark);
+  color: var(--non-spectrum-custom-dark);
 }
 
-.guide-list-box ul.guide-list-container>li>ul,
-.guide-list-box ul.guide-list-container>li>ul>li {
-    margin: 0;
-    padding: 0;
-    display: block;
+.guide-list-box ul.guide-list-container > li > ul,
+.guide-list-box ul.guide-list-container > li > ul > li {
+  margin: 0;
+  padding: 0;
+  display: block;
 }
 
-.guide-list-box ul.guide-list-container>li>ul>li {
-    width: 100%;
+.guide-list-box ul.guide-list-container > li > ul > li {
+  width: 100%;
 }
 
 @media (width >= 600px) {
-    .guide-list-box .guide-list-container li {
-        width: 48%;
-    }
+  .guide-list-box .guide-list-container li {
+    width: 48%;
+  }
 }
 
 @media (width >= 900px) {
-    .guide-list-box .guide-list-container li {
-        width: calc(33.33% - 20px);
-    }
+  .guide-list-box .guide-list-container li {
+    width: calc(33.33% - 20px);
+  }
 }

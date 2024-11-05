@@ -2,20 +2,25 @@
   body.browse-all main {
     max-width: 1440px;
   }
+
   body.browse-all main > div.section:not(.browse-rail-section) {
     padding: 30px 32px 30px 56px;
   }
+
   body.browse-all main > div.section:not(.browse-rail-section).browse-filters-container {
     padding-top: 50px;
   }
+
   body.browse-all main > div.section.browse-breadcrumb-container {
     padding-top: 24px;
     padding-bottom: 0;
   }
+
   body.browse-all main > div.section.sign-up-container {
     padding-top: 0;
     padding-bottom: 0;
   }
+
   body.browse-all .section.browse-filters-container {
     padding-top: 0;
     padding-bottom: 0;

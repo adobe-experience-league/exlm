@@ -11,6 +11,7 @@
   box-shadow: var(--box-shadow-1);
   text-rendering: optimizelegibility;
 }
+
 .related-articles div:first-child > div {
   color: var(--text-color);
   display: flex;
@@ -20,15 +21,18 @@
   line-height: 21px;
   margin-bottom: 8px;
 }
+
 .related-articles ul {
   margin-top: 0;
   margin-bottom: 0;
 }
+
 .related-articles ul li {
   line-height: 24px;
   font-weight: 400;
   margin-bottom: 14px;
 }
+
 .related-articles ul li:last-child {
   margin-bottom: 0;
 }

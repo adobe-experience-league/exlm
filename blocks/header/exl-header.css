@@ -51,8 +51,8 @@
   --font-weight-600: 600;
   --font-weight-700: 700;
   /* fonts */
-  --body-font-family: "Adobe Clean", adobe-clean, "Source Sans Pro", -apple-system, system-ui, "Segoe UI", roboto,
-    ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif;
+  --body-font-family: 'Adobe Clean', adobe-clean, 'Source Sans Pro', -apple-system, system-ui, 'Segoe UI', roboto,
+    ubuntu, 'Trebuchet MS', 'Lucida Grande', sans-serif;
 }
 @media (min-width: 1024px) {
   :host {
@@ -129,7 +129,7 @@
 }
 
 .language-selector-label[selected] {
-  background: url("/icons/checkmark.svg");
+  background: url('/icons/checkmark.svg');
   background-size: 10px;
   background-repeat: no-repeat;
   background-position-y: center;
@@ -313,12 +313,12 @@
   transform-origin: 75% 75%;
   transform: rotateZ(45deg);
   transition: transform 0.1s ease;
-  content: "";
+  content: '';
   margin-top: -5px;
   right: 16px;
   color: var(--non-spectrum-grey-updated);
 }
-.search-picker-button[aria-expanded=true]::after {
+.search-picker-button[aria-expanded='true']::after {
   transform: rotateZ(-135deg);
 }
 .search-picker-button.search-picker-open::after {
@@ -358,7 +358,10 @@ button > .search-picker-label {
   border-radius: 6px;
   visibility: hidden;
   opacity: 0;
-  transition: transform 130ms ease-in-out, opacity 130ms ease-in-out, visibility 0ms linear 130ms;
+  transition:
+    transform 130ms ease-in-out,
+    opacity 130ms ease-in-out,
+    visibility 0ms linear 130ms;
   pointer-events: none;
   touch-action: none;
 }
@@ -545,7 +548,7 @@ button:focus {
 }
 .header > nav {
   display: grid;
-  grid-template-areas: "nav brand search sign-in";
+  grid-template-areas: 'nav brand search sign-in';
   height: 100%;
   grid-template-columns: min-content auto min-content min-content;
 }
@@ -553,7 +556,7 @@ button:focus {
   .header > nav {
     width: 100%;
     justify-content: initial;
-    grid-template-areas: "adobe-logo brand nav sign-in search notification language product-grid signed-in";
+    grid-template-areas: 'adobe-logo brand nav sign-in search notification language product-grid signed-in';
     grid-template-columns: min-content min-content max-content min-content auto max-content max-content max-content max-content;
   }
 }
@@ -642,7 +645,7 @@ button:focus {
   margin: 0;
 }
 .header .signed-in .profile .icon-profile {
-  background: url("../../icons/profile.svg") no-repeat center center;
+  background: url('../../icons/profile.svg') no-repeat center center;
   background-size: 24px 24px;
   border-radius: 50%;
   display: flex;
@@ -667,7 +670,7 @@ button:focus {
   width: 100%;
   text-wrap: wrap;
 }
-.header .signed-in .profile a[data-id=sign-out] {
+.header .signed-in .profile a[data-id='sign-out'] {
   border-top: 0 none;
   color: var(--spectrum-blue-900);
   font-weight: var(--font-weight-400);
@@ -675,7 +678,7 @@ button:focus {
   margin: 10px 0 0;
 }
 @media (min-width: 1024px) {
-  .header .signed-in .profile a[data-id=sign-out] {
+  .header .signed-in .profile a[data-id='sign-out'] {
     color: var(--spectrum-blue-900);
   }
 }
@@ -980,7 +983,7 @@ button:focus {
   transform-origin: 75% 75%;
   transform: rotateZ(45deg);
   transition: transform 0.1s ease;
-  content: "";
+  content: '';
   box-sizing: content-box;
 }
 @media (min-width: 1024px) {
@@ -1017,20 +1020,20 @@ button:focus {
     margin-bottom: 2px;
   }
 }
-.header .nav-item-toggle[aria-expanded=true] {
+.header .nav-item-toggle[aria-expanded='true'] {
   border-bottom: 2px solid var(--non-spectrum-silver);
 }
 @media (min-width: 1024px) {
-  .header .nav-item-toggle[aria-expanded=true] {
+  .header .nav-item-toggle[aria-expanded='true'] {
     border-bottom: none;
     background-color: var(--hover-backgroud);
   }
 }
-.header .nav-item-toggle[aria-expanded=true]::after {
+.header .nav-item-toggle[aria-expanded='true']::after {
   transform: rotateZ(-135deg);
 }
 @media (min-width: 1024px) {
-  .header .nav-item-toggle[aria-expanded=true].nav-item-toggle-root {
+  .header .nav-item-toggle[aria-expanded='true'].nav-item-toggle-root {
     border-bottom: var(--nav-item-expanded-border);
   }
 }
@@ -1120,7 +1123,7 @@ button:focus {
     transform-origin: 75% 75%;
     transform: rotateZ(45deg);
     transition: transform 0.1s ease;
-    content: "";
+    content: '';
     transform: rotateZ(-45deg);
     right: 5px;
     top: 13px;
@@ -1145,19 +1148,19 @@ button:focus {
   font-weight: 300;
 }
 .header .nav-hamburger::before {
-  content: "☰";
+  content: '☰';
 }
 @media (min-width: 1024px) {
   .header .nav-hamburger::before {
-    content: "";
+    content: '';
   }
 }
-.header .nav-hamburger[aria-expanded=true]::before {
-  content: "✕";
+.header .nav-hamburger[aria-expanded='true']::before {
+  content: '✕';
 }
 @media (min-width: 1024px) {
-  .header .nav-hamburger[aria-expanded=true]::before {
-    content: "";
+  .header .nav-hamburger[aria-expanded='true']::before {
+    content: '';
   }
 }
 .header .notification {
@@ -1186,8 +1189,8 @@ button:focus {
   padding: 0 var(--nav-item-padding-x);
   box-sizing: border-box;
 }
-.header .profile-toggle[aria-expanded=true],
-.header .product-toggle[aria-expanded=true] {
+.header .profile-toggle[aria-expanded='true'],
+.header .product-toggle[aria-expanded='true'] {
   background: var(--spectrum-gray-100);
 }
 .header img.profile-picture {
@@ -1259,7 +1262,7 @@ button:focus {
   }
 }
 .header .product-toggle .icon-grid {
-  background: url("../../icons/apps_gray.svg") no-repeat center center;
+  background: url('../../icons/apps_gray.svg') no-repeat center center;
   background-size: 18px;
   color: var(--spectrum-gray-800);
   cursor: pointer;

@@ -14,7 +14,7 @@
   flex-direction: row;
   justify-content: left;
   flex: 5;
-  padding-right:20px;
+  padding-right: 20px;
 }
 
 .filtered-result-left-container .filtered-result-title-description-container,
@@ -88,7 +88,7 @@
 }
 
 .filtered-result-date {
-  font-family: "adobe-clean";
+  font-family: 'adobe-clean';
   font-size: 12px;
 }
 
@@ -101,14 +101,13 @@
   padding: 4px 14px;
   position: relative;
   line-height: 19px;
-  background: #FAFAFA;
+  background: #fafafa;
 }
 
-.filtered-result-content-type span{
+.filtered-result-content-type span {
   margin-left: 8px;
   font-size: 12px;
 }
-
 
 .filtered-result-content-type img {
   width: 18px;
@@ -116,14 +115,13 @@
 }
 
 .filtered-result-content-type.tutorial {
-  border: 1px solid #C4A600;
-  color: #C4A600;
+  border: 1px solid #c4a600;
+  color: #c4a600;
 }
 
-
 .filtered-result-content-type.documentation {
-  border: 1px solid #0F797D;
-  color: #0F797D;
+  border: 1px solid #0f797d;
+  color: #0f797d;
 }
 
 .filtered-result-content-type.community {
@@ -131,19 +129,17 @@
   color: #379947;
 }
 
-
 .filtered-result-content-type.event {
-  border: 1px solid #A228AD;
-  color: #A228AD;
+  border: 1px solid #a228ad;
+  color: #a228ad;
 }
 
 .filtered-result-content-type.troubleshooting {
-  border: 1px solid #7A42BF;
-  color: #7A42BF;
+  border: 1px solid #7a42bf;
+  color: #7a42bf;
 }
 
-
-@media (max-width: 1024px) { 
+@media (max-width: 1024px) {
   .filtered-result-content {
     flex-direction: column;
   }
@@ -153,7 +149,7 @@
   }
 }
 
-@media (max-width: 600px) { 
+@media (max-width: 600px) {
   .filtered-result-content {
     flex-direction: column;
   }
@@ -167,6 +163,5 @@
   .filtered-result-left-container .filtered-result-video,
   .filtered-result-left-container .filtered-result-video img {
     margin-top: 10px;
-  } 
-
+  }
 }

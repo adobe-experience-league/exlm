@@ -44,20 +44,20 @@
   flex: 0 0 auto;
 }
 
-
-.playlist-actions > button:hover, .playlist-actions > button:focus {
+.playlist-actions > button:hover,
+.playlist-actions > button:focus {
   background-color: #d6d6d6;
 }
 
-
-.playlist-actions > button:disabled, .playlist-actions > button:disabled:hover {
+.playlist-actions > button:disabled,
+.playlist-actions > button:disabled:hover {
   background-color: var(--overlay-background-color);
   color: var(--spectrum-gray-500);
   cursor: unset;
 }
 
 .playlist-action-label::before {
-  content: " ";
+  content: ' ';
   display: inline-block;
   width: 1ch;
   height: 1ch;
@@ -97,7 +97,7 @@
 .playlist-modal .playlist-modal-close::after {
   background-color: black;
   box-sizing: inherit;
-  content: "";
+  content: '';
   display: block;
   height: 2px;
   left: 50%;
@@ -154,42 +154,41 @@
   border-width: 4px;
   border-style: solid;
   border-color: var(--spectrum-gray-600) transparent transparent transparent;
-  content: "";
+  content: '';
   left: 50%;
   margin-left: -4px;
   position: absolute;
   top: 100%;
 }
 
-[data-bookmarked="true"] .icon-bookmark-active {
+[data-bookmarked='true'] .icon-bookmark-active {
   display: block;
 }
 
-[data-bookmarked="false"] .icon-bookmark-active {
+[data-bookmarked='false'] .icon-bookmark-active {
   display: none;
 }
 
-[data-bookmarked="true"] .icon-bookmark {
+[data-bookmarked='true'] .icon-bookmark {
   display: none;
 }
 
-[data-bookmarked="false"] .icon-bookmark {
+[data-bookmarked='false'] .icon-bookmark {
   display: block;
 }
 
-
-[data-action="bookmark"]:hover .playlist-action-tooltip-label {
+[data-action='bookmark']:hover .playlist-action-tooltip-label {
   display: block;
 }
 
-.playlist-actions [data-signed-in="false"]:hover [data-signed-in="false"]{
+.playlist-actions [data-signed-in='false']:hover [data-signed-in='false'] {
   display: block !important;
 }
 
-.playlist-actions [data-bookmarked="true"]:hover  [data-bookmarked="true"]{
+.playlist-actions [data-bookmarked='true']:hover [data-bookmarked='true'] {
   display: block !important;
 }
 
-.playlist-actions [data-bookmarked="false"]:hover [data-bookmarked="false"]{
+.playlist-actions [data-bookmarked='false']:hover [data-bookmarked='false'] {
   display: block !important;
 }

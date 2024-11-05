@@ -5,11 +5,8 @@
   min-block-size: 24px; /* Small size height */
   max-inline-size: 100%;
   vertical-align: top;
-  /* Hover state */
-  /* Checked state */
-  /* Focus-visible state */
-  /* Disabled state */
 }
+
 .spectrum-switch .spectrum-switch-input {
   position: absolute;
   width: 100%;
@@ -18,9 +15,11 @@
   z-index: 1;
   cursor: pointer;
 }
+
 .spectrum-switch .spectrum-switch-input:disabled {
   cursor: default;
 }
+
 .spectrum-switch .spectrum-switch-switch {
   display: inline-block;
   position: relative;
@@ -29,10 +28,13 @@
   height: 16px; /* Small size height */
   background-color: #e6e6e6;
   border-radius: 8px;
-  transition: background 0.2s ease-in-out, border 0.2s ease-in-out;
+  transition:
+    background 0.2s ease-in-out,
+    border 0.2s ease-in-out;
 }
+
 .spectrum-switch .spectrum-switch-switch::before {
-  content: "";
+  content: '';
   position: absolute;
   width: 12px;
   height: 12px;
@@ -44,40 +46,48 @@
   border-width: 2px;
   border-style: solid;
 }
+
 .spectrum-switch .spectrum-switch-switch::after {
-  content: "";
+  content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   border-radius: 12px;
   margin: 0;
-  transition: opacity 0.2s ease-out, margin 0.2s ease-out;
+  transition:
+    opacity 0.2s ease-out,
+    margin 0.2s ease-out;
 }
+
 .spectrum-switch:hover .spectrum-switch-switch {
   background-color: #d9d9d9;
 }
+
 .spectrum-switch:hover .spectrum-switch-switch::before {
   border-color: #999;
 }
+
 .spectrum-switch .spectrum-switch-input:checked + .spectrum-switch-switch {
   background-color: #007acb;
 }
+
 .spectrum-switch .spectrum-switch-input:checked + .spectrum-switch-switch::before {
   background-color: #fff;
   border-color: #007acb;
   transform: translateX(100%);
 }
+
 .spectrum-switch .spectrum-switch-input:focus-visible + .spectrum-switch-switch::after {
   margin: -3px;
 }
+
 .spectrum-switch .spectrum-switch-input:disabled + .spectrum-switch-switch {
-  background-color: #cccccc;
+  background-color: #ccc;
 }
+
 .spectrum-switch .spectrum-switch-input:disabled + .spectrum-switch-switch::before {
   border-color: #999;
 }
+
 .spectrum-switch .spectrum-switch-label {
   margin-inline: 8px;
   font-size: 12px; /* Small font size */

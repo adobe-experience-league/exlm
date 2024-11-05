@@ -13,7 +13,7 @@
 }
 
 .columns > div > div,
-.columns > div > div > div[data-aue-type^="richtext"] {
+.columns > div > div > div[data-aue-type^='richtext'] {
   padding: 16px;
 }
 
@@ -26,7 +26,7 @@
 }
 
 .columns.block.b-alt-row > div > div,
-.columns.block.b-alt-row > div > div > div[data-aue-type^="richtext"] {
+.columns.block.b-alt-row > div > div > div[data-aue-type^='richtext'] {
   border: 1px solid var(--non-spectrum-gainsboro-gray);
   border-bottom: none;
   display: inline-flex;
@@ -73,7 +73,7 @@
   }
 
   .columns.block.b-alt-row > div > div,
-  .columns.block.b-alt-row > div > div > div[data-aue-type^="richtext"] {
+  .columns.block.b-alt-row > div > div > div[data-aue-type^='richtext'] {
     display: flex;
     flex: 1;
     margin-bottom: 0;
