@@ -705,7 +705,7 @@ export default async function decorate(block) {
   });
 
   defaultAdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
-    if (targetCriteriaId) {
+    if (targetCriteriaId || !targetSupport) {
       renderBlock({ targetSupport, targetCriteriaScopeId: targetCriteriaId });
     }
   });
