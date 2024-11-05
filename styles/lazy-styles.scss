@@ -2,7 +2,7 @@
 
 div.doc-pagination {
   display: flex;
-  margin-top: 48px;
+  margin: 48px 0;
 }
 
 .btn-goto {
@@ -57,9 +57,9 @@ a.pagination-btn > span {
 span.pagination-btn-title {
   display: block;
   font-family: var(--heading-font-family);
-  font-size: var(--spectrum-body-size-s);
+  font-size: 11px;
   font-weight: var(--font-weight-700);
-  color: var(--spectrum-gray-500);
+  color: #6e6e6e;
   margin: 15px 0 55px;
   text-transform: uppercase;
 

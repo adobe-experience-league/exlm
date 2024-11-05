@@ -34,6 +34,10 @@
     left: 0;
     transform: scaleX(-1);
   }
+  .docs main .section.rail.rail-left {
+    padding-left: 12px;
+    padding-right: 0;
+  }
   .docs main .section.rail.rail-left .rail-toggle {
     right: 0;
   }

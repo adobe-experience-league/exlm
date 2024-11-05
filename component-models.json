@@ -4175,5 +4175,18 @@
         "description": "Sets the description for the recently reviewed."
       }
     ]
+  },
+  {
+    "id": "qualtrics",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "qualtrics-selector",
+        "value": "",
+        "label": "Qualtrics selector",
+        "description": "Enter the 'Qualtrics selector'."
+      }
+    ]
   }
 ]
