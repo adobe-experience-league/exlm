@@ -806,7 +806,7 @@ export function getConfig() {
     communityAccountURL: isProd
       ? `https://experienceleaguecommunities.adobe.com/?profile.language=${communityLocale}`
       : `https://experienceleaguecommunities-dev.adobe.com/?profile.language=${communityLocale}`,
-    interestsUrl: `https://experienceleague.adobe.com/api/interests?page_size=200&sort=Order&lang=${lang}`,
+    interestsUrl: `${cdnOrigin}/api/interests?page_size=200&sort=Order&lang=${lang}`,
     // Param for localized Community Profile URL
     localizedCommunityProfileParam: `?profile.language=${communityLocale}`,
   };

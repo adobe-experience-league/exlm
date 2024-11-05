@@ -395,6 +395,13 @@
   src: local('Arial');
 }
 
+:lang(zh-hans),
+:lang(zh-hant),
+:lang(ja),
+:lang(ko) {
+  font-synthesis: weight small-caps;
+}
+
 html {
   -webkit-font-smoothing: antialiased;
 }
@@ -1006,4 +1013,5 @@ body[class^='browse-'] .browse-filters-full-container {
   min-width: var(--placeholder-width);
   display: inline-block;
   min-height: 1em;
+  height: var(--placeholder-height);
 }

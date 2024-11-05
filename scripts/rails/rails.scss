@@ -44,6 +44,9 @@
     }
 
     &.rail-left {
+      padding-left: 12px;
+      padding-right: 0;
+
       .rail-toggle {
         right: 0;
       }
