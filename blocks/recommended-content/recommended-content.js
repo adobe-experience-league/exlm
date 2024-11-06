@@ -12,7 +12,7 @@ import getEmitter from '../../scripts/events.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
-import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-card-target-data-adapter.js';
+import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
