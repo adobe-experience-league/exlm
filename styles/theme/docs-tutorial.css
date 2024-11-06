@@ -3,32 +3,37 @@
   border-bottom: 3px solid var(--non-spectrum-grey);
   margin-bottom: 12px;
 }
+
 .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul {
   margin: 0;
   display: flex;
   flex-wrap: wrap;
   flex-direction: inherit;
 }
+
 .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
   list-style: none;
   width: 100%;
   margin: 0 14px 7px 0;
 }
+
 .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li a {
   line-height: 24px;
   font-weight: var(--font-weight-700);
   color: var(--non-spectrum-link);
 }
 
-@media (min-width: 600px) {
+@media (width >= 600px) {
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
     width: 50%;
   }
 }
-@media (min-width: 900px) {
+
+@media (width >= 900px) {
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper h2 {
     font-size: var(--spectrum-font-size-700);
   }
+
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {
     width: calc(33.33% - 16px);
   }

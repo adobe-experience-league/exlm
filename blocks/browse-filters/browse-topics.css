@@ -1,63 +1,64 @@
 .browse-topics {
-    margin: 20px 0 48px;
+  margin: 20px 0 48px;
 }
 
 .browse-topics-block-content {
-    display: inline-flex;
-    flex-wrap: nowrap;
-    gap: 16px;
-    max-width: 100%;
-    max-height: 128px;
-    overflow-y: hidden;
-    padding: 8px 0;
+  display: inline-flex;
+  flex-wrap: nowrap;
+  gap: 16px;
+  max-width: 100%;
+  max-height: 128px;
+  overflow-y: hidden;
+  padding: 8px 0;
 }
 
 .browse-topics-item {
-    display: flex;
-    align-items: center;
-    border-radius: 8px;
-    border: 1px solid var(--spectrum-gray-200);
-    background: var(--spectrum-gray-50);
-    height: 40px;
-    color: var(--spectrum-gray-800);
-    font-size: var(--spectrum-font-size-100);
-    margin: 0;
-    padding: 11.5px 19px;
-    flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  border: 1px solid var(--spectrum-gray-200);
+  background: var(--spectrum-gray-50);
+  height: 40px;
+  color: var(--spectrum-gray-800);
+  font-size: var(--spectrum-font-size-100);
+  margin: 0;
+  padding: 11.5px 19px;
+  flex-shrink: 0;
 }
 
 .browse-topics-item:hover,
 .browse-topics-item:focus {
-    background-color: var(--spectrum-gray-50);
+  background-color: var(--spectrum-gray-50);
 }
 
 .browse-topics-item.browse-topics-item-active {
-    background-color: var(--spectrum-blue-900);
-    color: var(--spectrum-gray-50);
+  background-color: var(--spectrum-blue-900);
+  color: var(--spectrum-gray-50);
 }
 
-.browse-topics-block-title h1, 
+.browse-topics-block-title h1,
 .browse-topics-block-title h2,
 .browse-topics-block-title h3,
 .browse-topics-block-title h4,
 .browse-topics-block-title h5,
 .browse-topics-block-title h6 {
-    color: var(--spectrum-gray-800);
-}     
+  color: var(--spectrum-gray-800);
+}
 
-.browse-topics-block-title h2, .browse-topics-block-title h3 {
-    margin-top: 12px;
+.browse-topics-block-title h2,
+.browse-topics-block-title h3 {
+  margin-top: 12px;
 }
 
 @media (min-width: 900px) {
-    .browse-topics-block-content {
-        flex-wrap: wrap;
-        padding: 0;
-    }
+  .browse-topics-block-content {
+    flex-wrap: wrap;
+    padding: 0;
+  }
 
-    .browse-topics-item {
-        height: 55px;
-        padding: 16.5px 17px 16.5px 18px;
-        font-size: var(--spectrum-font-size-300);
-    }
+  .browse-topics-item {
+    height: 55px;
+    padding: 16.5px 17px 16.5px 18px;
+    font-size: var(--spectrum-font-size-300);
+  }
 }

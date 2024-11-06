@@ -4,8 +4,9 @@
   border-radius: 7px;
   margin-bottom: 28px;
 }
+
 .tabs::before {
-  content: "";
+  content: '';
   display: block;
   width: 100%;
   height: 2px;
@@ -13,10 +14,12 @@
   position: relative;
   top: 56px;
 }
+
 .tabs .tab-list {
   overflow-x: auto;
   white-space: nowrap;
 }
+
 .tabs .tab-list button.tab-title {
   background: none;
   color: var(--spectrum-gray-700);
@@ -32,14 +35,17 @@
   border-radius: 0;
   position: relative;
 }
+
 .tabs .tab-list button.tab-title:not(:first-child) {
   margin-left: 24px;
 }
-.tabs .tab-list button.tab-title[aria-selected=true] {
+
+.tabs .tab-list button.tab-title[aria-selected='true'] {
   color: var(--text-color);
   border-bottom: 2px solid var(--text-color);
   border-radius: 0;
 }
+
 .tabs .tab-content {
   padding: 10.5px 0;
   color: var(--spectrum-gray-800);
@@ -47,10 +53,12 @@
   font-size: var(--exlm-font-size-content);
   font-weight: 400;
 }
+
 .tabs .tab-content .tabpanel {
   display: none;
   margin-bottom: 12px;
 }
+
 .tabs .tab-content .tabpanel.active {
   display: block;
 }

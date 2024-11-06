@@ -3,12 +3,14 @@
   padding-top: 24px;
   width: auto;
 }
-@media (min-width: 600px) {
+
+@media (width >= 600px) {
   .docs.docs-landing main {
     padding: 28px 46px 48px;
   }
 }
-@media (min-width: 900px) {
+
+@media (width >= 900px) {
   .docs.docs-landing main {
     grid-template-columns: 0 5fr 0;
     padding: 42px 46 48px 46px;

@@ -33,24 +33,23 @@
   margin: 2px 0 0 0;
 }
 
-
 @media only screen and (min-width: 600px) {
   .tutorial-widgets {
-      gap: 25px;
-      overflow-x: auto;
-      overflow-y: hidden;
+    gap: 25px;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
   .tutorial-widgets > div {
-      flex: 0 0 286px;
-  } 
+    flex: 0 0 286px;
+  }
 }
 
 @media only screen and (min-width: 900px) {
   .tutorial-widgets {
-      gap: 32px;
+    gap: 32px;
   }
   .tutorial-widgets > div {
-      flex: 0 0 256px;
+    flex: 0 0 256px;
   }
 }
 

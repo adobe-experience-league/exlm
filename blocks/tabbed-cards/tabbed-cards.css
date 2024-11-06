@@ -1,63 +1,63 @@
-@import "../../scripts/browse-card/browse-cards-block.css";
+@import '../../scripts/browse-card/browse-cards-block.css';
 
 .tabbed-cards-label {
-    border-bottom: 1px solid var(--spectrum-gray-500);
-    color: var(--spectrum-gray-700);
-    display: flex;
-    font-size: var(--spectrum-font-size-200);
-    line-height: 20.8px;
-    justify-content: space-between;
+  border-bottom: 1px solid var(--spectrum-gray-500);
+  color: var(--spectrum-gray-700);
+  display: flex;
+  font-size: var(--spectrum-font-size-200);
+  line-height: 20.8px;
+  justify-content: space-between;
 }
 
-.tabbed-cards-label>ul {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    gap: 23px;
+.tabbed-cards-label > ul {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: 23px;
 }
 
-.tabbed-cards-label>ul li {
-    cursor: pointer;
-    margin: 0;
-    padding: 0;
-    position: relative;
-    white-space: pre;
-    font-size: var(--spectrum-font-size-200);
+.tabbed-cards-label > ul li {
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  white-space: pre;
+  font-size: var(--spectrum-font-size-200);
 }
 
-.tabbed-cards-label>ul li.active {
-    color: var(--spectrum-blue-900);
+.tabbed-cards-label > ul li.active {
+  color: var(--spectrum-blue-900);
 }
 
-.tabbed-cards-label>ul li.active::after {
-    border-bottom: 3px solid var(--spectrum-blue-900);
-    content: "";
-    position: absolute;
-    bottom: -14px;
-    left: 0;
-    width: 100%;
+.tabbed-cards-label > ul li.active::after {
+  border-bottom: 3px solid var(--spectrum-blue-900);
+  content: '';
+  position: absolute;
+  bottom: -14px;
+  left: 0;
+  width: 100%;
 }
 
-.tabbed-cards-label>a {
-    color: var(--spectrum-blue-900);
-    font-size: var(--spectrum-font-size-300);
-    line-height: 23.4px;
+.tabbed-cards-label > a {
+  color: var(--spectrum-blue-900);
+  font-size: var(--spectrum-font-size-300);
+  line-height: 23.4px;
 }
 
 @media (max-width: 1024px) {
-    .tabbed-cards-label {
-        border-bottom: 0 none;
-        display: block;
-    }
+  .tabbed-cards-label {
+    border-bottom: 0 none;
+    display: block;
+  }
 
-    .tabbed-cards-label>ul {
-        border-bottom: 1px solid var(--spectrum-gray-500);
-        margin-bottom: 20px;
-        overflow: hidden;
-        overflow-x: scroll;
-        padding-bottom: 12px;
-    }
+  .tabbed-cards-label > ul {
+    border-bottom: 1px solid var(--spectrum-gray-500);
+    margin-bottom: 20px;
+    overflow: hidden;
+    overflow-x: scroll;
+    padding-bottom: 12px;
+  }
 }

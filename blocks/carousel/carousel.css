@@ -1,5 +1,5 @@
-@import "../teaser/teaser.css";
-@import "../detailed-teaser/detailed-teaser.css";
+@import '../teaser/teaser.css';
+@import '../detailed-teaser/detailed-teaser.css';
 
 /* carousel wrapper stretches over complete width */
 .section div.carousel-wrapper {
@@ -24,7 +24,7 @@
 }
 
 .carousel.block > .panel-container::-webkit-scrollbar {
-  display:none;
+  display: none;
 }
 
 /* teaser inside carousel have same height and texts are centered */
@@ -32,7 +32,7 @@
 .carousel.block > .panel-container > .teaser.block {
   flex-shrink: 0;
   scroll-snap-align: start;
-  height:auto;
+  height: auto;
 }
 
 .carousel.block > .panel-container > .detailed-teaser.block > .foreground,
@@ -47,10 +47,10 @@
 
 /* contains the carousel buttons */
 .carousel.block > .button-container {
-  display:flex;
+  display: flex;
   justify-content: center;
   gap: 4px;
-  padding-top:22px;
+  padding-top: 22px;
 }
 
 /* defines look of a button */

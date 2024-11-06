@@ -19,7 +19,7 @@
   --exlm-toc-solution-16: #000b1d;
 }
 
-.toc ul li a.toc-item.is-active  {
+.toc ul li a.toc-item.is-active {
   margin-left: 0;
   background-color: var(--spectrum-gray-100);
   color: var(--non-spectrum-eerie-black);
@@ -32,13 +32,12 @@
   padding-left: 10px;
 }
 
-
 .toc ul > li > a.toc-toggle.is-active {
   padding-left: 0;
 }
 
 .toc ul > li > a.toc-toggle.is-active::before {
-  content: "•";
+  content: '•';
   font-size: 20px;
   opacity: 1;
   padding-bottom: 3px;
@@ -46,18 +45,17 @@
   color: var(--exlm-toc-active-color);
 }
 
-.toc.DataAnalytics { 
+.toc.DataAnalytics {
   --exlm-toc-active-color: var(--exlm-toc-solution-1);
 }
 
-.toc.CircleExpCloud{
-  --exlm-toc-active-color:var(--exlm-toc-solution-2);
+.toc.CircleExpCloud {
+  --exlm-toc-active-color: var(--exlm-toc-solution-2);
 }
 
 .toc.AdminConsole {
   --exlm-toc-active-color: var(--exlm-toc-solution-3);
 }
-
 
 .toc.AppDevelopment {
   --exlm-toc-active-color: var(--exlm-toc-solution-4);
@@ -67,28 +65,23 @@
   --exlm-toc-active-color: var(--exlm-toc-solution-5);
 }
 
-
-
 .toc.BoxSearch {
   --exlm-toc-active-color: var(--exlm-toc-solution-3);
 }
-
 
 .toc.CircleAdvertisingCloud {
   --exlm-toc-active-color: var(--exlm-toc-solution-2);
 }
 
-
 .toc.acrobat-dc {
   --exlm-toc-active-color: var(--exlm-toc-solution-2);
 }
-
 
 .toc.adobe-sign {
   --exlm-toc-active-color: var(--exlm-toc-solution-15);
 }
 
-.toc.CircleExperiencePlatform  {
+.toc.CircleExperiencePlatform {
   --exlm-toc-active-color: var(--exlm-toc-solution-16);
 }
 
@@ -104,10 +97,9 @@
   --exlm-toc-active-color: var(--exlm-toc-solution-2);
 }
 
-.toc.DynamicChat  {
+.toc.DynamicChat {
   --exlm-toc-active-color: var(--exlm-toc-solution-8);
 }
-
 
 .toc.Efficient {
   --exlm-toc-active-color: var(--exlm-toc-solution-13);
@@ -153,7 +145,6 @@
   --exlm-toc-active-color: var(--exlm-toc-solution-11);
 }
 
-
 .toc.MarketoEngage {
   --exlm-toc-active-color: var(--exlm-toc-solution-8);
 }
@@ -177,7 +168,6 @@
 .toc.target {
   --exlm-toc-active-color: var(--exlm-toc-solution-8);
 }
-
 
 .toc.UserAdmin {
   --exlm-toc-active-color: var(--exlm-toc-solution-8);
