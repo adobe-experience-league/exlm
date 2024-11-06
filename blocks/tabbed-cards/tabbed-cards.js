@@ -1,6 +1,6 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, decorateExternalLinks, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { COVEO_SORT_OPTIONS, COVEO_DATE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
@@ -127,8 +127,7 @@ export default async function decorate(block) {
     contentDiv = document.createElement('div');
     contentDiv.classList.add('browse-cards-block-content', 'tabbed-cards-block');
 
-    buildCardsShimmer = new BuildPlaceholder();
-    buildCardsShimmer.add(block);
+    buildCardsShimmer = BrowseCardShimmer.create(4, block);
   }
 
   let placeholders = {};
@@ -223,7 +222,7 @@ export default async function decorate(block) {
         viewLinkURLElement.innerHTML = placeholders[`tabbedCard${contentTypeTitleCase}ViewAllLabel`] || 'View All';
         viewLinkURLElement.setAttribute('href', urlMap[contentTypeLowerCase]);
         tabList.appendChild(viewLinkURLElement);
-        buildCardsShimmer.add(block);
+        block.append(buildCardsShimmer);
         fetchDataAndRenderBlock(contentTypeLowerCase);
       });
       tabListUlElement.appendChild(tabLabel);
@@ -241,7 +240,7 @@ export default async function decorate(block) {
     // Append tab list and Shimmer Card after Tab Label
     const shimmerClass = block.querySelector('.browse-card-shimmer');
     block.insertBefore(tabList, shimmerClass);
-    buildCardsShimmer.add(block);
+    block.append(buildCardsShimmer);
 
     // Update view link for initial content type
     viewLinkURLElement.innerHTML =

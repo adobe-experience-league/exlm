@@ -9,7 +9,7 @@ import {
 } from '../../scripts/browse-card/browse-card-utils.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import getEmitter from '../../scripts/events.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
@@ -136,11 +136,10 @@ const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
   if (renderCardsFlag) {
     contentDiv.appendChild(cardDiv);
   }
+  const shimmerEl = BrowseCardShimmer.create(1, cardDiv);
 
-  const cardPlaceholder = new BuildPlaceholder(1);
-  cardPlaceholder.add(cardDiv);
   return {
-    shimmer: cardPlaceholder,
+    shimmer: shimmerEl,
     wrapper: cardDiv,
   };
 };
@@ -185,8 +184,8 @@ export default async function decorate(block) {
     `);
   const tempContentSection = tempWrapper.querySelector('.recommended-content-block-section');
   countNumberAsArray(4).forEach(() => {
-    const { shimmer: shimmerInstance, wrapper } = renderCardPlaceholders(tempWrapper);
-    wrapper.appendChild(shimmerInstance.shimmer);
+    const { shimmer, wrapper } = renderCardPlaceholders(tempWrapper);
+    wrapper.appendChild(shimmer);
     tempContentSection.appendChild(wrapper);
   });
 
