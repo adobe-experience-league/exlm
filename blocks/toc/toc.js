@@ -88,17 +88,41 @@ function buildTocMobileDropdown() {
  * @param {HTMLElement} tocContent - The container with overflow and scroll
  * @param {HTMLElement} element - The element to bring into view
  */
-function ensureElementInView(tocContent, element) {
+function ensureElementInView(tocContent, element, tocHeaderSelector = '.toc .toc-header', tocTreeSelector = 'ul') {
   if (!tocContent || !element) {
-    console.error('tocContent or element is null', { tocContent, element }); // eslint-disable-line no-console
+    // eslint-disable-next-line no-console
+    console.error('tocContent or element is null', { tocContent, element });
     return;
   }
 
-  const elementRect = element.getBoundingClientRect();
-  const tocContentRect = tocContent.getBoundingClientRect();
-  const scrollPosition = elementRect.top - tocContentRect.top + tocContent.scrollTop;
+  const tocHeader = document.querySelector(tocHeaderSelector);
+  const tocTree = tocContent.querySelector(tocTreeSelector);
 
-  tocContent.scrollTop = scrollPosition;
+  if (!tocHeader || !tocTree) {
+    // eslint-disable-next-line no-console
+    console.error('tocHeader or tocTree not found', { tocHeaderSelector, tocTreeSelector });
+    return;
+  }
+
+  const updateContainerHeight = () => {
+    tocContent.style.height = `calc(100vh - calc(${tocHeader.getBoundingClientRect().height}px + 65px))`;
+  };
+
+  const scrollToElement = () => {
+    const elementRect = element.getBoundingClientRect();
+    const tocTreeRect = tocTree.getBoundingClientRect();
+    const scrollPosition = elementRect.top - tocTreeRect.top;
+
+    tocContent.scrollTop = scrollPosition;
+  };
+
+  updateContainerHeight();
+  scrollToElement();
+
+  window.addEventListener('resize', () => {
+    updateContainerHeight();
+    scrollToElement();
+  });
 }
 
 /**

@@ -269,7 +269,7 @@ button.toc-dropdown-button {
 
     .toc-wrapper {
       position: sticky;
-      top: 0;
+      top: 15px;
       display: flex;
       flex-direction: column;
 
@@ -283,7 +283,6 @@ button.toc-dropdown-button {
           touch-action: pan-y;
           scrollbar-width: auto;
           scrollbar-color: var(--spectrum-gray-200) var(--spectrum-gray-50);
-          max-height: 100vh;
 
           &::-webkit-scrollbar {
             width: 0;
