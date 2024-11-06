@@ -1,3 +1,4 @@
+import { decorateIcons } from '../lib-franklin.js';
 /**
  * Creates a tooltip and attaches event listeners to show/hide it.
  * @param {HTMLElement} container - The HTML element serving as the tooltip container.
@@ -64,6 +65,7 @@ export const createTooltip = (container, element, config) => {
    */
   const init = () => {
     element.innerHTML = createTooltipHTML();
+    decorateIcons(element);
     attachTooltipEvents();
   };
 

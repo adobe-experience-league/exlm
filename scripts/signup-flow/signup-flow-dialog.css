@@ -1,382 +1,382 @@
 .signup-dialog {
-    background: var(--non-spectrum-bg);
-    border: 0;
-    border-radius: 16px;
-    box-shadow: 0px 3px 24px rgba(0,0,0,0.16);
-    height: auto;
-    left: 0;
-    margin: 72px 16px 16px;
-    overflow: hidden;
-    padding: 0;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 999;
+  background: var(--non-spectrum-bg);
+  border: 0;
+  border-radius: 16px;
+  box-shadow: 0px 3px 24px rgba(0, 0, 0, 0.16);
+  height: auto;
+  left: 0;
+  margin: 72px 16px 16px;
+  overflow: hidden;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999;
 }
 .signup-dialog::backdrop {
-    background: rgba(0,0,0,0.8);
+  background: rgba(0, 0, 0, 0.8);
 }
 .signup-dialog-close-bar {
-    position: fixed;
-    top: 16px;
-    width: calc(100% - 32px);
+  position: fixed;
+  top: 16px;
+  width: calc(100% - 32px);
 }
 .signup-dialog-close-btn,
 .signup-dialog-close-btn:hover,
 .signup-dialog-close-btn:visited {
-    align-items: center;  
-    display: flex;
-    float: right;
-    margin: 0;
-    padding: 0;
+  align-items: center;
+  display: flex;
+  float: right;
+  margin: 0;
+  padding: 0;
 }
 .signup-dialog-close-btn .close-text {
-    color: var(--spectrum-gray-50);
-    font-size: 16px;
-    letter-spacing: 0.96px;
-    line-height: 20px;
-    margin-right: 16px;    
-    opacity: 0.6;
-    text-transform: uppercase;
+  color: var(--spectrum-gray-50);
+  font-size: 16px;
+  letter-spacing: 0.96px;
+  line-height: 20px;
+  margin-right: 16px;
+  opacity: 0.6;
+  text-transform: uppercase;
 }
 .signup-dialog-close-btn .close-icon-holder {
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 50%;
-    height: 40px;
-    width: 40px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
 }
 .signup-dialog-close-btn .icon-close-light {
-    height: 16px;
-    width: 16px;
+  height: 16px;
+  width: 16px;
 }
 .signup-dialog-close-btn .icon-close-light img {
-    margin: 12px;
+  margin: 12px;
 }
 .signup-dialog-close-btn .icon-close-light .a {
-    fill: var(--spectrum-gray-50);
+  fill: var(--spectrum-gray-50);
 }
 .signup-dialog-container {
-    position: relative;
-    height: calc(100% - 16px);
-    margin-top: 16px;
-    overflow-x: hidden;
-    overflow-y: auto;
+  position: relative;
+  height: calc(100% - 16px);
+  margin-top: 16px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .signup-dialog-header {
-    background: var(--non-spectrum-bg);
-    padding: 0 20px 20px;
-    position: relative;
-    text-align: center; 
-    z-index: 3;
+  background: var(--non-spectrum-bg);
+  padding: 0 20px 20px;
+  position: relative;
+  text-align: center;
+  z-index: 3;
 }
 .signup-dialog-header.sticky {
-    background: var(--non-spectrum-bg);
-    box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.08);
-    padding-top: 1px;
-    position: sticky;
-    top: -1px;
+  background: var(--non-spectrum-bg);
+  box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.08);
+  padding-top: 1px;
+  position: sticky;
+  top: -1px;
 }
 .signup-dialog-header h4 {
-    font-size: 18px;
-    line-height: 22px;
-    margin: 0 0 4px;
-    padding: 0;
+  font-size: 18px;
+  line-height: 22px;
+  margin: 0 0 4px;
+  padding: 0;
 }
 .signup-dialog-header p {
-    font-size: var(--spectrum-body-size-s);
-    line-height: 17px;
-    margin: 0;
-    padding: 0;
+  font-size: var(--spectrum-body-size-s);
+  line-height: 17px;
+  margin: 0;
+  padding: 0;
 }
 .signup-dialog-nav-bar {
-    align-items: flex-start;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
-.signup-dialog-nav-bar button {    
-    font-size: 17px;
-    font-weight: var(--font-weight-700);
-    line-height: 21px;
-    margin: 0;
-    padding: 6px 26px 9px;
+.signup-dialog-nav-bar button {
+  font-size: 17px;
+  font-weight: var(--font-weight-700);
+  line-height: 21px;
+  margin: 0;
+  padding: 6px 26px 9px;
 }
 .signup-dialog-nav-bar button.prev-btn {
-    order: 1;
+  order: 1;
 }
 .signup-dialog-nav-bar .signup-dialog-actions {
-    order: 2;
+  order: 2;
 }
 .signup-dialog-title {
-    margin-top: 20px;
-    order: 3;
-    width: 100%;
+  margin-top: 20px;
+  order: 3;
+  width: 100%;
 }
 .signup-dialog-steps {
-    margin: 0 auto 34px;
-    max-width: 272px;
+  margin: 0 auto 34px;
+  max-width: 272px;
 }
 .signup-dialog-step-flow {
-    align-items: center;
-    display: flex;
-    justify-content: center;    
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }
 .signup-dialog-step-flow hr {
-    border-color: var(--spectrum-gray-400);
-    margin: 0 10px;
-    padding: 0;
-    width: 65px;
+  border-color: var(--spectrum-gray-400);
+  margin: 0 10px;
+  padding: 0;
+  width: 65px;
 }
 .signup-dialog-step-flow .check-icon-shell {
-    background: var(--spectrum-green-700);
-    border-radius: 50%;
-    height: 32px;
-    width: 32px;
+  background: var(--spectrum-green-700);
+  border-radius: 50%;
+  height: 32px;
+  width: 32px;
 }
 .signup-dialog-step-flow .icon-checkmark-light {
-    height: 17px;
-    width: 17px;
+  height: 17px;
+  width: 17px;
 }
 .signup-dialog-step-flow .icon-checkmark-light img {
-    margin: 8px;
+  margin: 8px;
 }
 .confirm-container .signup-dialog-step-flow .check-icon-shell {
-    height: 40px;
-    width: 40px;
+  height: 40px;
+  width: 40px;
 }
 .confirm-container .signup-dialog-step-flow .icon-checkmark-light img {
-    margin: 11px;
+  margin: 11px;
 }
 .signup-dialog-step {
-    background-color: var(--spectrum-gray-50);
-    border: 1px solid var(--spectrum-gray-900);
-    border-radius: 50%;
-    color: var(--spectrum-gray-900);
-    font-size: var(--spectrum-body-size-l);
-    font-weight: var(--font-weight-700);
-    height: 30.4px;
-    line-height: 27px;
-    margin: 0;
-    text-align: center;
-    width: 30.4px;
+  background-color: var(--spectrum-gray-50);
+  border: 1px solid var(--spectrum-gray-900);
+  border-radius: 50%;
+  color: var(--spectrum-gray-900);
+  font-size: var(--spectrum-body-size-l);
+  font-weight: var(--font-weight-700);
+  height: 30.4px;
+  line-height: 27px;
+  margin: 0;
+  text-align: center;
+  width: 30.4px;
 }
 .signup-dialog-step.current-step {
-    background-color: var(--spectrum-gray-900);
-    color: var(--spectrum-gray-50);
+  background-color: var(--spectrum-gray-900);
+  color: var(--spectrum-gray-50);
 }
 .signup-dialog-body {
-    min-height: calc(100% - 105px);
-    padding: 1px 24px 16px; 
-    position: relative;
-    z-index: 2;
+  min-height: calc(100% - 105px);
+  padding: 1px 24px 16px;
+  position: relative;
+  z-index: 2;
 }
 .signup-dialog-content {
-    position: relative;
-    z-index: 2;
+  position: relative;
+  z-index: 2;
 }
 .signup-dialog-content > .section {
-    padding: 0 0 20px 0;    
+  padding: 0 0 20px 0;
 }
 .signup-dialog-content > .section > .default-content-wrapper > * {
-    color: var(--text-color);
-    margin: 0;
-    padding: 0;
-    text-align: center;
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+  text-align: center;
 }
-.signup-dialog-content > .section > .default-content-wrapper :where(h1,h2,h3,h4,h5,h6)  {
-    margin-bottom: 8px;
+.signup-dialog-content > .section > .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) {
+  margin-bottom: 8px;
 }
 /* Overriding Block Specific CSS */
 .signup-dialog-content .user-profile-card-wrapper {
-    padding: 16px 0;
+  padding: 16px 0;
 }
 
 .signup-dialog-content .user-profile-card-wrapper + .default-content-wrapper {
-    max-width: 318px;
+  max-width: 318px;
 }
 .signup-dialog-content .user-profile-card-wrapper + .default-content-wrapper p,
 .signup-dialog-content .user-profile-card-wrapper + .default-content-wrapper p a {
-    color: var(--spectrum-gray-600);
-    font-size: 12px;
-    font-style: italic;
-    line-height: 15px;
-    text-align: left;
+  color: var(--spectrum-gray-600);
+  font-size: 12px;
+  font-style: italic;
+  line-height: 15px;
+  text-align: left;
 }
 .signup-dialog-content .user-profile-card-wrapper + .default-content-wrapper p a {
-    color: var(--text-color);
-    text-decoration: underline;
+  color: var(--text-color);
+  text-decoration: underline;
 }
 .signup-dialog-content .icon-block-wrapper {
-    margin-top: 32px;
+  margin-top: 32px;
 }
 .signup-dialog-content .icon-block {
-    max-width: 250px;
+  max-width: 250px;
 }
 .signup-dialog-content .icon-block-center-align > div {
-    margin: 0;
-    width: 250px;
+  margin: 0;
+  width: 250px;
 }
 .signup-dialog-content .product-experience-level {
-    max-width: unset;
+  max-width: unset;
 }
 /* Styles for Sign up - Finish */
 .confirm-container .signup-dialog-header {
-    padding-bottom: 20px;
+  padding-bottom: 20px;
 }
 .confirm-container .signup-dialog-header.sticky {
-    padding-bottom: 20px;
+  padding-bottom: 20px;
 }
 .confirm-container .signup-dialog-steps {
-    margin: 20px auto 8px;
+  margin: 20px auto 8px;
 }
 
 @media (min-width: 600px) {
-    .signup-dialog {
-        margin: 72px auto 16px;
-        max-width: 568px;
-    }
-    .signup-dialog-close-bar {
-        width: 568px;
-    }
-    .signup-dialog-header {    
-        padding: 20px;
-    } 
-    .signup-dialog-header.sticky {
-        padding-top: 20px;
-    }  
-    .signup-dialog-body {
-        padding-bottom: 20px;
-    } 
-    .signup-dialog-title {
-        margin-top: -3px;
-        max-width: 60%;
-        order: 2;
-        width: auto;
-    }    
-    .signup-dialog-nav-bar .signup-dialog-actions {
-        order: 3;
-    }
-    .step2-container .signup-dialog-steps,
-    .step3-container .signup-dialog-steps {
-        margin-bottom: 20px;
-    }
-    .signup-dialog-content {        
-        margin: 0 auto;
-        max-width: 440px;
-    }
-    .signup-dialog-content .user-profile-card-wrapper + .default-content-wrapper {
-        max-width: 387px;
-    }
+  .signup-dialog {
+    margin: 72px auto 16px;
+    max-width: 568px;
+  }
+  .signup-dialog-close-bar {
+    width: 568px;
+  }
+  .signup-dialog-header {
+    padding: 20px;
+  }
+  .signup-dialog-header.sticky {
+    padding-top: 20px;
+  }
+  .signup-dialog-body {
+    padding-bottom: 20px;
+  }
+  .signup-dialog-title {
+    margin-top: -3px;
+    max-width: 60%;
+    order: 2;
+    width: auto;
+  }
+  .signup-dialog-nav-bar .signup-dialog-actions {
+    order: 3;
+  }
+  .step2-container .signup-dialog-steps,
+  .step3-container .signup-dialog-steps {
+    margin-bottom: 20px;
+  }
+  .signup-dialog-content {
+    margin: 0 auto;
+    max-width: 440px;
+  }
+  .signup-dialog-content .user-profile-card-wrapper + .default-content-wrapper {
+    max-width: 387px;
+  }
 }
 @media (min-width: 900px) {
-    .signup-dialog {
-        max-width: 736px;
-    }
-    .signup-dialog-close-bar {
-        width: 736px;
-    }
-    .signup-dialog-container {
-        height: 100%;
-        margin-top: 0;
-    }
-    .signup-dialog-nav-bar {
-        position: relative;
-        z-index: 2;
-    }
-    .signup-dialog-content {
-        max-width: 636px;
-    }
-    .step1-container .signup-dialog-header-decor {
-        background: url('/images/top-frame-decor.svg') no-repeat top left;
-        height: 112px;
-        left: -1px;
-        position: absolute;
-        top: -1px;
-        width: 260px;
-        z-index: 1;
-    }    
-    .step1-container .signup-dialog-middle-decor {
-        background: url('/images/dual-color-right-decor.svg') no-repeat top right;
-        height: 426px;
-        position: absolute;
-        right: 0;
-        top: 40%;
-        width: 135px;
-        z-index: 1;
-    }
-    .step2-container .signup-dialog-body-top-decor {
-        background: url('/images/square-box-decor.svg') no-repeat top left;
-        height: 186px;
-        left: -13px;
-        position: absolute;
-        top: -53px;
-        width: 197px;
-        z-index: 1;
-    }  
-    .step2-container .signup-dialog-middle-decor {
-        background: url('/images/pentagon-stripes-right-decor.svg') no-repeat top right;
-        height: 350px;
-        position: absolute;
-        right: 0;
-        top: 70%;
-        width: 112px;
-        z-index: 1;
-    }    
-    .step3-container .signup-dialog-bottom-decor {
-        background: url('/images/mountain-background-decor.svg') no-repeat bottom;
-        bottom: 0;
-        height: 245px;
-        left: 0;
-        position: relative;
-        width: 100%;
-        z-index: 1;
-    }
-    .confirm-container .signup-dialog-steps {
-        margin-top: 0;
-    }
-    .signup-dialog-content .icon-block {
-        max-width: 520px;
-        gap: 20px;
-    }
-    .signup-dialog-content .icon-block-center-align > div {
-        margin: 0;
-        width: 250px;
-        max-width: 250px;
-    }
-    .signup-dialog-content .product-interests .interests-container {
-        max-height: 280px;
-    }
-    .signup-dialog-content .product-interests .interests-container li {
-        max-width: calc(33% - 10px);
-    }
+  .signup-dialog {
+    max-width: 736px;
+  }
+  .signup-dialog-close-bar {
+    width: 736px;
+  }
+  .signup-dialog-container {
+    height: 100%;
+    margin-top: 0;
+  }
+  .signup-dialog-nav-bar {
+    position: relative;
+    z-index: 2;
+  }
+  .signup-dialog-content {
+    max-width: 636px;
+  }
+  .step1-container .signup-dialog-header-decor {
+    background: url('/images/top-frame-decor.svg') no-repeat top left;
+    height: 112px;
+    left: -1px;
+    position: absolute;
+    top: -1px;
+    width: 260px;
+    z-index: 1;
+  }
+  .step1-container .signup-dialog-middle-decor {
+    background: url('/images/dual-color-right-decor.svg') no-repeat top right;
+    height: 426px;
+    position: absolute;
+    right: 0;
+    top: 40%;
+    width: 135px;
+    z-index: 1;
+  }
+  .step2-container .signup-dialog-body-top-decor {
+    background: url('/images/square-box-decor.svg') no-repeat top left;
+    height: 186px;
+    left: -13px;
+    position: absolute;
+    top: -53px;
+    width: 197px;
+    z-index: 1;
+  }
+  .step2-container .signup-dialog-middle-decor {
+    background: url('/images/pentagon-stripes-right-decor.svg') no-repeat top right;
+    height: 350px;
+    position: absolute;
+    right: 0;
+    top: 70%;
+    width: 112px;
+    z-index: 1;
+  }
+  .step3-container .signup-dialog-bottom-decor {
+    background: url('/images/mountain-background-decor.svg') no-repeat bottom;
+    bottom: 0;
+    height: 245px;
+    left: 0;
+    position: relative;
+    width: 100%;
+    z-index: 1;
+  }
+  .confirm-container .signup-dialog-steps {
+    margin-top: 0;
+  }
+  .signup-dialog-content .icon-block {
+    max-width: 520px;
+    gap: 20px;
+  }
+  .signup-dialog-content .icon-block-center-align > div {
+    margin: 0;
+    width: 250px;
+    max-width: 250px;
+  }
+  .signup-dialog-content .product-interests .interests-container {
+    max-height: 280px;
+  }
+  .signup-dialog-content .product-interests .interests-container li {
+    max-width: calc(33% - 10px);
+  }
 }
 @media (min-width: 1200px) {
-    .signup-dialog {
-        max-width: 996px;
-    }
-    .signup-dialog-close-bar {
-        width: 996px;
-    }
-    .step1-container .signup-dialog-content,
-    .step3-container .signup-dialog-content {
-        max-width: 590px;
-    }
-    .step2-container .signup-dialog-content,
-    .confirm-container .signup-dialog-content {
-        max-width: 795px;
-    }
-    .signup-dialog-content .icon-block {
-        max-width: 795px;
-    }
+  .signup-dialog {
+    max-width: 996px;
+  }
+  .signup-dialog-close-bar {
+    width: 996px;
+  }
+  .step1-container .signup-dialog-content,
+  .step3-container .signup-dialog-content {
+    max-width: 590px;
+  }
+  .step2-container .signup-dialog-content,
+  .confirm-container .signup-dialog-content {
+    max-width: 795px;
+  }
+  .signup-dialog-content .icon-block {
+    max-width: 795px;
+  }
 }
 
 @media (min-width: 1400px) {
-    .signup-dialog {
-        margin: 32px auto;
-    }
-    .signup-dialog-close-bar {
-        right: 32px;
-        top: 32px;
-        width: auto;
-    }
+  .signup-dialog {
+    margin: 32px auto;
+  }
+  .signup-dialog-close-bar {
+    right: 32px;
+    top: 32px;
+    width: auto;
+  }
 }

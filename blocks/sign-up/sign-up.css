@@ -1,375 +1,370 @@
 .section.sign-up-container {
-    padding-top: 0;
-  }
-  
-  div.sign-up-wrapper {
-    max-width: unset;
-    margin-left: calc(-1 * var(--space-token-xs));
-    margin-right: calc(-1 * var(--space-token-xs));
-  }
-  
-  .sign-up {
-    position: relative;
-  }
-  
-  .signup-foreground {
-    display: flex;
-    flex-direction: column-reverse;
-    max-width: var(--default-max-width);
-    margin: auto;
-  }
-  
-  .signup-subject {
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .signup-subject img {
-    padding: 10px;
-    position: relative;
-    z-index: 2;
-  }
-  
-  .signup-text {
-    position: relative;
-    z-index: 2;
-    padding: 30px 16px;
-    background-color: var(--background-color);
-  }
-  
-  .signup-eyebrow {
-    font-family: var(--body-font-family);
-    font-size: var(--spectrum-font-size-75);
-    font-weight: var(--font-weight-700);
-    color: var(--spectrum-gray-700);
-    margin-bottom: var(--space-token-xs);
-    line-height: 18px;
-  }
-  
-  .signup-title {
-    font-family: var(--body-font-family);
-    font-size: var(--spectrum-font-size-900);
-    font-weight: var(--font-weight-700);
-    line-height: var(--spectrum-line-height-xxxl);
-    margin-bottom: var(--space-token-xs);
+  padding-top: 0;
+}
+
+div.sign-up-wrapper {
+  max-width: unset;
+  margin-left: calc(-1 * var(--space-token-xs));
+  margin-right: calc(-1 * var(--space-token-xs));
+}
+
+.sign-up {
+  position: relative;
+}
+
+.signup-foreground {
+  display: flex;
+  flex-direction: column-reverse;
+  max-width: var(--default-max-width);
+  margin: auto;
+}
+
+.signup-subject {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signup-subject img {
+  padding: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.signup-text {
+  position: relative;
+  z-index: 2;
+  padding: 30px 16px;
+  background-color: var(--background-color);
+}
+
+.signup-eyebrow {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-700);
+  color: var(--spectrum-gray-700);
+  margin-bottom: var(--space-token-xs);
+  line-height: 18px;
+}
+
+.signup-title {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-900);
+  font-weight: var(--font-weight-700);
+  line-height: var(--spectrum-line-height-xxxl);
+  margin-bottom: var(--space-token-xs);
+}
+
+.signup-title :where(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+  font: inherit;
+  color: inherit;
+}
+
+.signup-short-description,
+.signup-short-description * {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-600);
+  font-weight: var(--font-weight-700);
+  line-height: var(--spectrum-line-height-l);
+  color: var(--background-color);
+  margin: 0;
+}
+
+.signup-long-description,
+.signup-long-description * {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-300);
+  line-height: var(--spectrum-line-height-l);
+  margin: 0;
+}
+
+.signup-cta {
+  display: flex;
+  flex-direction: column-reverse;
+  font-size: 19px;
+  gap: var(--spectrum-spacing-400);
+  margin-top: var(--spectrum-spacing-400);
+  padding: 0;
+  align-items: center;
+}
+
+.signup-cta:empty {
+  margin-top: 0;
+}
+
+.signup-cta > a.button {
+  font-size: 19px;
+  margin: 0;
+  padding: 8px 40px;
+  width: min-content;
+  min-width: 264px;
+  background-color: var(--non-spectrum-true-blue);
+  border: 2px solid var(--non-spectrum-true-blue);
+  color: var(--background-color);
+}
+
+.signup-cta > a > span.icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 7px;
+}
+
+.signup-cta > a.button.primary {
+  background-color: var(--non-spectrum-true-blue);
+  border: 2px solid var(--non-spectrum-true-blue);
+  color: var(--background-color);
+}
+
+.signup-cta > a.button.secondary {
+  background-color: var(--background-color);
+  border: 2px solid var(--spectrum-gray-700);
+  color: var(--spectrum-gray-700);
+}
+
+.signup-background {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  overflow: hidden;
+  background-color: inherit;
+}
+
+.signup-background svg {
+  display: none;
+}
+
+.signup-spacer {
+  display: none;
+  width: 40%;
+}
+
+.signup.no-subject {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.signup.no-subject > .signup-background {
+  position: unset;
+  min-height: unset;
+}
+
+.signup.no-subject > .signup-background img {
+  transform: none;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (min-width: 600px) {
+  .section.sign-up-container {
+    padding: 0 56px;
   }
 
-  .signup-title :where(h1,h2,h3,h4,h5,h6) {
-    margin: 0;
-    font: inherit;
-    color: inherit;
+  .section div.sign-up-wrapper {
+    margin-left: calc(-1 * var(--space-token-xl));
+    margin-right: calc(-1 * var(--space-token-xl));
   }
-  
-  .signup-short-description,
-  .signup-short-description * {
-    font-family: var(--body-font-family);
-    font-size: var(--spectrum-font-size-600);
-    font-weight: var(--font-weight-700);
-    line-height: var(--spectrum-line-height-l);
-    color: var(--background-color);
-    margin: 0;
+
+  .signup-subject {
+    min-height: 350px;
+    background: none !important;
   }
-  
-  .signup-long-description,
-  .signup-long-description * {
-    font-family: var(--body-font-family);
-    font-size: var(--spectrum-font-size-300);
-    line-height: var(--spectrum-line-height-l);
-    margin: 0;
+
+  .signup-subject img {
+    position: relative;
+    z-index: 2;
+    max-width: 400px;
   }
-  
+
+  .signup-background {
+    min-height: 350px;
+    height: 100%;
+    width: 100%;
+    bottom: 0;
+    overflow: hidden;
+  }
+
+  .signup-background svg {
+    display: inline-block;
+    transform: translate(-320px, 70px) scale(3);
+  }
+
+  .signup-foreground {
+    min-height: 420px;
+  }
+
+  .signup-text {
+    padding: var(--space-token-m) var(--space-token-xl);
+    background-color: var(--background-color);
+  }
+
   .signup-cta {
-    display: flex;
-    flex-direction: column-reverse;
-    font-size: 19px;
-    gap: var(--spectrum-spacing-400);
-    margin-top: var(--spectrum-spacing-400);
-    padding: 0;
-    align-items: center;
-  }
-  
-  .signup-cta:empty{
-    margin-top: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 
   .signup-cta > a.button {
-    font-size: 19px;
-    margin: 0;
-    padding: 8px 40px;
-    width: min-content;
-    min-width: 264px;
-    background-color: var( --non-spectrum-true-blue);
-    border: 2px solid var(--non-spectrum-true-blue);
-    color: var(--background-color);
+    padding: 8px 20px;
   }
-  
-  .signup-cta > a > span.icon {
-    width: 14px;
-    height: 14px;
-    margin-right: 7px;
-  }
-  
-  .signup-cta > a.button.primary {
-    background-color: var( --non-spectrum-true-blue);
-    border: 2px solid var(--non-spectrum-true-blue);
-    color: var(--background-color);
-  }
-  
-  .signup-cta > a.button.secondary {
-    background-color: var(--background-color);
-    border: 2px solid var(--spectrum-gray-700);
-    color: var(--spectrum-gray-700);
-  }
-  
-  .signup-background {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    overflow: hidden;
-    background-color: inherit;
-  }
-  
-  .signup-background svg {
-    display: none;
-  }
-  
-  .signup-spacer {
-    display: none;
-    width: 40%;
-  }
-  
-  .signup.no-subject {
-    display: flex;
-    flex-direction: column-reverse;
-  }
-  
-  .signup.no-subject > .signup-background {
-    position: unset;
-    min-height: unset;
-  }
-  
-  .signup.no-subject > .signup-background img {
-    transform: none;
-    object-fit: cover;
-    object-position: center;
-  }
-  
-  
-  @media (min-width: 600px) {
-    .section.sign-up-container {
-      padding: 0 56px;
-    }
-  
-    .section div.sign-up-wrapper {
-      margin-left: calc(-1 * var(--space-token-xl));
-      margin-right: calc(-1 * var(--space-token-xl));
-    }
-  
-    .signup-subject {
-      min-height: 350px;
-      background: none !important;
-    }
-    
-    .signup-subject img {
-      position: relative;
-      z-index: 2;
-      max-width: 400px;
-    }
-  
-    .signup-background {
-      min-height: 350px;
-      height: 100%;
-      width: 100%;
-      bottom: 0;
-      overflow: hidden;
-    }
-  
-    .signup-background svg {
-      display: inline-block;
-      transform: translate(-320px, 70px) scale(3);
-    }
-  
-    .signup-foreground {
-      min-height: 420px;
-    }
-  
-    .signup-text {
-      padding: var(--space-token-m) var(--space-token-xl);
-      background-color: var(--background-color);
-    }
-  
-    .signup-cta {
-      flex-direction: row;
-      flex-wrap: wrap;
-    }
-  
-    .signup-cta > a.button { 
-      padding: 8px 20px;
-    }
-  
-    .signup-spacer {
-      display: block;
-      order: 1;
-    }
-  }
-  
-  @media (min-width: 900px) {
-    .sign-up {
-      overflow: hidden;
-    }
-  
-    .signup-foreground {
-      padding: 0 var(--space-token-xl);
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      width: 100%;
-   }
 
-   
-  body[class ^= 'browse-'] .signup-foreground,
-  body[class ^= 'article-'] .signup-foreground {
+  .signup-spacer {
+    display: block;
+    order: 1;
+  }
+}
+
+@media (min-width: 900px) {
+  .sign-up {
+    overflow: hidden;
+  }
+
+  .signup-foreground {
+    padding: 0 var(--space-token-xl);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+  }
+
+  body[class^='browse-'] .signup-foreground,
+  body[class^='article-'] .signup-foreground {
     min-height: 260px;
   }
-  
-    .signup-text {
-      padding: 0;
-      width: 50%;
-      max-width: 500px;
-      margin: auto 0;
-      background: none ;
-    }
-  
-    .signup-title {
-      font-size: var(--spectrum-font-size-1100);
-    }
-  
-    .signup-cta {
-      flex-wrap: nowrap;
-    }
-  
-    .signup-cta > a.button { 
-      min-width: auto;
-      padding: 10px 22px;
-    }
-    
-    .signup-subject {
-      width: 40%;
-      min-width: 400px;
-      display: block;
-      margin: auto;
-      overflow: hidden;
-    }
-  
-    .signup-subject img {
-      object-fit: cover;
-      width: 100%;
-      position: relative;
-      z-index: 2;
-    }
-  
-    .signup-background svg {
-      transform: none;
-      min-width: 105%;
-      min-height: 100%;
-    }
-  
-    .signup.no-subject {
-      display: block;
-    }
-  
-    .signup.no-subject > .signup-background {
-      position: absolute;
-      min-height: 100%;
-    }
-  } 
-  
-  /* when shown on a page with a rail */
-  @media (min-width: 1024px) {
-    /* no longer goes from end to end */
-    body[class ^= 'browse-'] .section div.sign-up-wrapper,
-    body[class ^= 'article-'] .section div.sign-up-wrapper {
-      margin-left: unset;
-      margin-right: unset;
-    }
-  
-    /* title */
-    body[class ^= 'browse-'] .signup-title,
-    body[class ^= 'article-'] .signup-title {
-      font-size: var( --spectrum-font-size-900);
-      line-height: 36px;
-      margin-bottom: var(--space-token-xxs);
-  
-    }
-  
-   /* description */
-    body[class ^= 'browse-'] .signup-long-description,
-    body[class ^= 'article-'] .signup-long-description,
-    body[class ^= 'browse-'] .signup-long-description * ,
-    body[class ^= 'article-'] .signup-long-description * {
-      line-height: 23.4px;
-    }
-  
-    /* cta */
-    body[class ^= 'browse-'] .signup-cta a.button ,
-    body[class ^= 'article-'] .signup-cta a.button {
-      font-size: 17px;
-      line-height: 21px;
-      padding: 6px 16px 9px 20px; 
-    }
-  
-    body[class ^= 'browse-'] .section div.sign-up-wrapper .signup-foreground,
-    body[class ^= 'article-'] .section div.sign-up-wrapper .signup-foreground {
-      padding: 0;
-      justify-content:space-between;
-    }
-  
-    /* text block */
-    body[class ^= 'browse-'] .signup-text,
-    body[class ^= 'article-'] .signup-text {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      margin: 0;
-      padding: 20px 0 23px 36px;
-      flex-grow: 1;
-      max-width: 500px;
-    }
-  
-    /* subject image */
-    body[class ^= 'browse-'] .signup-subject,
-    body[class ^= 'article-'] .signup-subject {
-      min-width: unset;
-      min-height: unset;
-      width: 320px;
-      z-index: 1;
-      margin: unset;
-    }
-  
-    body[class ^= 'browse-'] .signup-subject img,
-    body[class ^= 'article-'] .signup-subject img {
-      display: block;
-      min-width: unset;
-      padding: 0;
-      height:260px;
-    }
-  
-    body[class ^= 'browse-'] .section div.sign-up-wrapper .signup-background, 
-    body[class ^= 'article-'] .section div.sign-up-wrapper .signup-background {
-      min-height: 240px;
-      border: 1px solid var(--spectrum-gray-200);
-      border-radius: 4px;
-      box-sizing: border-box;
-      background-color: var(--background-color);
-    }
-  
-    body[class ^= 'browse-'] .section div.sign-up-wrapper .signup-background svg,
-    body[class ^= 'article-'] .section div.sign-up-wrapper .signup-background svg {
-      min-width: 130%;
-      min-height: 0%;
-    }
+
+  .signup-text {
+    padding: 0;
+    width: 50%;
+    max-width: 500px;
+    margin: auto 0;
+    background: none;
   }
-  
-  
+
+  .signup-title {
+    font-size: var(--spectrum-font-size-1100);
+  }
+
+  .signup-cta {
+    flex-wrap: nowrap;
+  }
+
+  .signup-cta > a.button {
+    min-width: auto;
+    padding: 10px 22px;
+  }
+
+  .signup-subject {
+    width: 40%;
+    min-width: 400px;
+    display: block;
+    margin: auto;
+    overflow: hidden;
+  }
+
+  .signup-subject img {
+    object-fit: cover;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .signup-background svg {
+    transform: none;
+    min-width: 105%;
+    min-height: 100%;
+  }
+
+  .signup.no-subject {
+    display: block;
+  }
+
+  .signup.no-subject > .signup-background {
+    position: absolute;
+    min-height: 100%;
+  }
+}
+
+/* when shown on a page with a rail */
+@media (min-width: 1024px) {
+  /* no longer goes from end to end */
+  body[class^='browse-'] .section div.sign-up-wrapper,
+  body[class^='article-'] .section div.sign-up-wrapper {
+    margin-left: unset;
+    margin-right: unset;
+  }
+
+  /* title */
+  body[class^='browse-'] .signup-title,
+  body[class^='article-'] .signup-title {
+    font-size: var(--spectrum-font-size-900);
+    line-height: 36px;
+    margin-bottom: var(--space-token-xxs);
+  }
+
+  /* description */
+  body[class^='browse-'] .signup-long-description,
+  body[class^='article-'] .signup-long-description,
+  body[class^='browse-'] .signup-long-description *,
+  body[class^='article-'] .signup-long-description * {
+    line-height: 23.4px;
+  }
+
+  /* cta */
+  body[class^='browse-'] .signup-cta a.button,
+  body[class^='article-'] .signup-cta a.button {
+    font-size: 17px;
+    line-height: 21px;
+    padding: 6px 16px 9px 20px;
+  }
+
+  body[class^='browse-'] .section div.sign-up-wrapper .signup-foreground,
+  body[class^='article-'] .section div.sign-up-wrapper .signup-foreground {
+    padding: 0;
+    justify-content: space-between;
+  }
+
+  /* text block */
+  body[class^='browse-'] .signup-text,
+  body[class^='article-'] .signup-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0;
+    padding: 20px 0 23px 36px;
+    flex-grow: 1;
+    max-width: 500px;
+  }
+
+  /* subject image */
+  body[class^='browse-'] .signup-subject,
+  body[class^='article-'] .signup-subject {
+    min-width: unset;
+    min-height: unset;
+    width: 320px;
+    z-index: 1;
+    margin: unset;
+  }
+
+  body[class^='browse-'] .signup-subject img,
+  body[class^='article-'] .signup-subject img {
+    display: block;
+    min-width: unset;
+    padding: 0;
+    height: 260px;
+  }
+
+  body[class^='browse-'] .section div.sign-up-wrapper .signup-background,
+  body[class^='article-'] .section div.sign-up-wrapper .signup-background {
+    min-height: 240px;
+    border: 1px solid var(--spectrum-gray-200);
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: var(--background-color);
+  }
+
+  body[class^='browse-'] .section div.sign-up-wrapper .signup-background svg,
+  body[class^='article-'] .section div.sign-up-wrapper .signup-background svg {
+    min-width: 130%;
+    min-height: 0%;
+  }
+}

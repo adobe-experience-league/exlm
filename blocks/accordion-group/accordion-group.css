@@ -1,5 +1,5 @@
-@import "../shade-box/shade-box.css";
-@import "../accordion/accordion.css";
+@import '../shade-box/shade-box.css';
+@import '../accordion/accordion.css';
 
 /* inside accordion group we can have text below first div */
 .accordion-group > .accordion details div {

@@ -1,7 +1,7 @@
 /* breadcrumb has its own section */
 .section.browse-breadcrumb-container {
   padding-top: 24px;
-  padding-bottom: 0; 
+  padding-bottom: 0;
 }
 
 /* a flex list of links /spans */
@@ -29,10 +29,10 @@
 /* chevron on the left of crumb entry */
 .browse-breadcrumb.block > span::before,
 .browse-breadcrumb.block > a::before {
-  background-image: url("../../icons/chevron_right.svg");
+  background-image: url('../../icons/chevron_right.svg');
   background-size: 16px;
   bottom: -3px;
-  content: "";
+  content: '';
   display: inline-block;
   height: 16px;
   margin-right: 5px;

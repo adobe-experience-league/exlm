@@ -1,68 +1,68 @@
 /* mobile */
 .email-card {
-    box-sizing: border-box;
-    max-width: 318px;
-    padding: 24px 24px 32px 24px;
-    background-color: var(--spectrum-gray-50);
-    box-shadow: 0px 3px 8px #00000014;
-    border-radius: 4px;
+  box-sizing: border-box;
+  max-width: 318px;
+  padding: 24px 24px 32px 24px;
+  background-color: var(--spectrum-gray-50);
+  box-shadow: 0px 3px 8px #00000014;
+  border-radius: 4px;
 }
 
 .email-card-title {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-    gap: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 8px;
 }
 
 .email-card-title h6 {
-    font-size: var(--spectrum-font-size-75);
-    font-weight: 700;
-    color: var(--spectrum-gray-900);
-    text-transform: uppercase;
-    letter-spacing: 0.72px;
-    margin: 0px;
+  font-size: var(--spectrum-font-size-75);
+  font-weight: 700;
+  color: var(--spectrum-gray-900);
+  text-transform: uppercase;
+  letter-spacing: 0.72px;
+  margin: 0px;
 }
 
 .email-card-title a {
-    display: flex;
-    align-items: center;
-    font-size: var(--spectrum-font-size-100);
-    font-weight: 500;
-    color: var(--spectrum-gray-800);
-    margin: 0px;
-    gap: 4px;
+  display: flex;
+  align-items: center;
+  font-size: var(--spectrum-font-size-100);
+  font-weight: 500;
+  color: var(--spectrum-gray-800);
+  margin: 0px;
+  gap: 4px;
 }
 
 .email-card-user-email {
-    font-size: var(--spectrum-font-size-200);
-    font-weight: 500;
-    color: var(--spectrum-gray-800);
-    word-break: break-word;
+  font-size: var(--spectrum-font-size-200);
+  font-weight: 500;
+  color: var(--spectrum-gray-800);
+  word-break: break-word;
 }
 
 /* tablet */
 @media (min-width: 600px) {
-    .email-card {
-        max-width: 308px;
-    }
+  .email-card {
+    max-width: 308px;
+  }
 }
 
 /* desktop */
 @media (min-width: 900px) {
-    .email-card {
-        max-width: 386px;
-        padding: 32px 36px 40px 24px;
-    }
+  .email-card {
+    max-width: 386px;
+    padding: 32px 36px 40px 24px;
+  }
 
-    .email-card-title {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-        gap: 0px;
-    }
+  .email-card-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 0px;
+  }
 }

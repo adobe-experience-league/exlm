@@ -1,18 +1,17 @@
-@import "../../scripts/profile/profile.css";
+@import '../../scripts/profile/profile.css';
 .adobe-account-card-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .adobe-account-card {
-    background-color: var(--spectrum-gray-50);
-    border: 1px solid var(--shimmer-image-slide-mid);
-    border-radius: 4px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 24px;
-    width: 386px;
-    box-sizing: border-box;
+  background-color: var(--spectrum-gray-50);
+  border: 1px solid var(--shimmer-image-slide-mid);
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  width: 386px;
+  box-sizing: border-box;
 }
-

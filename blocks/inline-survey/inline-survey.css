@@ -2,7 +2,8 @@
   display: none;
 }
 
-.inline-survey-view, .inline-survey-form {
+.inline-survey-view,
+.inline-survey-form {
   padding: 1em;
   background-color: #f9f9f9;
   border: 1px solid #e0e0e0;
@@ -19,7 +20,8 @@
   background-color: transparent !important;
 }
 
-.inline-survey-view, .inline-survey-form-header  {
+.inline-survey-view,
+.inline-survey-form-header {
   display: flex;
   flex-direction: row;
   justify-content: space-around;

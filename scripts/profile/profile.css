@@ -1,183 +1,187 @@
 .profile-row {
-    margin-bottom: 24px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--shimmer-image-slide-mid);
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--shimmer-image-slide-mid);
 }
 
 .profile-row:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .profile-card-header {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 13px;
-    line-height: 15px;
-    gap: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 13px;
+  line-height: 15px;
+  gap: 8px;
 }
 
 .profile-card-header .my-adobe-account,
 .profile-card-header .my-community-account {
-    font-size: var(--spectrum-font-size-75);
-    font-weight: var(--font-weight-700);
-    letter-spacing: 0.72px;
-    color: var(--text-color);
-    text-transform: uppercase;
-    margin: 0px;
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-700);
+  letter-spacing: 0.72px;
+  color: var(--text-color);
+  text-transform: uppercase;
+  margin: 0px;
 }
 
 .profile-card-header .manage-adobe-account,
 .profile-card-header .manage-community-account {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .profile-card-header .manage-adobe-account a,
 .profile-card-header .manage-community-account a {
-    font-size: var(--spectrum-font-size-75);
-    color: var(--spectrum-gray-800);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    margin: 0;
-    line-height: 17px;
+  font-size: var(--spectrum-font-size-75);
+  color: var(--spectrum-gray-800);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  line-height: 17px;
 }
 
-.profile-card-header .manage-adobe-account a>.icon-new-tab,
-.profile-card-header .manage-community-account a>.icon-new-tab {
-    margin-right: 2px;
+.profile-card-header .manage-adobe-account a > .icon-new-tab,
+.profile-card-header .manage-community-account a > .icon-new-tab {
+  margin-right: 2px;
 }
 
 .manage-adobe-account .icon-new-tab img {
-    width: 24px;
-    height: 24px;
+  width: 24px;
+  height: 24px;
 }
 
 .profile-card-body {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .profile-avatar {
-    width: 64px;
-    min-width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background-color: var(--non-spectrum-navy-blue);
-    color: var(--spectrum-gray-50);
-    overflow: hidden;
+  width: 64px;
+  min-width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--non-spectrum-navy-blue);
+  color: var(--spectrum-gray-50);
+  overflow: hidden;
 }
 
 .profile-avatar .icon-profile {
-    width: 64px;
-    height: 64px;
+  width: 64px;
+  height: 64px;
 }
 
 .profile-user-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    word-break: break-word;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  word-break: break-word;
 }
 
 .profile-user-info .heading {
-    text-transform: uppercase;
-    font-weight: bold;
-    color: var(--text-color);
+  text-transform: uppercase;
+  font-weight: bold;
+  color: var(--text-color);
 }
 
 .profile-user-info .display-name {
-    font-size: var(--spectrum-font-size-300);
-    font-weight: bold;
-    color: #000;
+  font-size: var(--spectrum-font-size-300);
+  font-weight: bold;
+  color: #000;
 }
 
 .profile-user-info .community-display-name {
-    font-size: var(--spectrum-font-size-300);
-    font-weight: bold;
-    color: var(--non-spectrum-blue-cobalt);
+  font-size: var(--spectrum-font-size-300);
+  font-weight: bold;
+  color: var(--non-spectrum-blue-cobalt);
 }
 
 .profile-user-info div {
-    font-size: var(--spectrum-font-size-100);
-    font-weight: normal;
-    color: var(--spectrum-gray-800);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: normal;
+  color: var(--spectrum-gray-800);
 }
 
-.product-interests-container[data-section-status="initialized"],
-.product-interests-container[data-section-status="loading"],
-.user-profile-card-container[data-section-status="initialized"],
-.user-profile-card-container[data-section-status="loading"],
-.email-card-container[data-section-status="loading"],
-.email-card-container[data-section-status="initialized"] {
-    visibility: hidden;
+.product-interests-container[data-section-status='initialized'],
+.product-interests-container[data-section-status='loading'],
+.user-profile-card-container[data-section-status='initialized'],
+.user-profile-card-container[data-section-status='loading'],
+.email-card-container[data-section-status='loading'],
+.email-card-container[data-section-status='initialized'] {
+  visibility: hidden;
 }
 
-.product-interests-container[data-section-status="loaded"],
-.email-card-container[data-section-status="loaded"] {
-    visibility: visible;
+.product-interests-container[data-section-status='loaded'],
+.email-card-container[data-section-status='loaded'] {
+  visibility: visible;
 }
 
 .user-profile-card-box .profile-row-shimmer {
-    background-image: linear-gradient(90deg, var(--shimmer-image-slide-start) 0px, var(--shimmer-image-slide-end) 40px, var(--shimmer-image-slide-start) 80px);
-    background-size: 200% 100%;
-    animation: placeholder-wave 1.5s infinite;
+  background-image: linear-gradient(
+    90deg,
+    var(--shimmer-image-slide-start) 0px,
+    var(--shimmer-image-slide-end) 40px,
+    var(--shimmer-image-slide-start) 80px
+  );
+  background-size: 200% 100%;
+  animation: placeholder-wave 1.5s infinite;
 }
 
 .profile-row.adobe-account.loading {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .profile-row.adobe-account.loading .adobe-account-logo {
-    height: 64px;
-    width: 64px;
-    border-radius: 100%;
+  height: 64px;
+  width: 64px;
+  border-radius: 100%;
 }
 
 .profile-row.adobe-account.loading .adobe-account-text {
-    height: 56px;
-    width: 200px;
+  height: 56px;
+  width: 200px;
 }
 
 .profile-row.additional-data.loading {
-    height: 160px;
-    width: 332px;
+  height: 160px;
+  width: 332px;
 }
 
 .profile-row.community-account.loading {
-    height: 60px;
-    width: 332px;
-    padding: 0;
+  height: 60px;
+  width: 332px;
+  padding: 0;
 }
 
 .profile-row.community-account.loading .profile-row-shimmer {
-    height: 40px;
+  height: 40px;
 }
 
 @media (min-width: 600px) {
-    body.profile .profile-card-header {
-        flex-direction: column;
-    }
+  body.profile .profile-card-header {
+    flex-direction: column;
+  }
 
-    .profile-card-header {
-        flex-direction: row;
-    }
+  .profile-card-header {
+    flex-direction: row;
+  }
 }
 
 @media (min-width: 900px) {
-
-    body.profile .profile-card-header,
-    .profile-card-header {
-        flex-direction: row;
-        align-items: center;
-        gap: 0;
-    }
+  body.profile .profile-card-header,
+  .profile-card-header {
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+  }
 }

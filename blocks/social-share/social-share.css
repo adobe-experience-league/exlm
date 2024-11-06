@@ -1,33 +1,33 @@
 .social-share .social-share-title {
-    font-weight: var(--spectrum-extra-bold-font-weight);
-    font-size: var(--spectrum-body-size-xs);
-    margin-bottom: 6px;
+  font-weight: var(--spectrum-extra-bold-font-weight);
+  font-size: var(--spectrum-body-size-xs);
+  margin-bottom: 6px;
 }
 
 .social-share .social-share-view {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .social-share .social-share-view a {
-    margin: 0px;
+  margin: 0px;
 }
 
 .social-share .social-share-name {
-    color: var(--non-spectrum-grey-updated);
-    font-size: var(--spectrum-body-size-xs);
+  color: var(--non-spectrum-grey-updated);
+  font-size: var(--spectrum-body-size-xs);
 }
 
 .social-share .social-share-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .social-share .social-share-item .icon {
-    display: flex;
-    align-items: center;
-    height: 16px;
-    width: 16px;
+  display: flex;
+  align-items: center;
+  height: 16px;
+  width: 16px;
 }

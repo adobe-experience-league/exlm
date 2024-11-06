@@ -125,7 +125,8 @@
   margin-right: -0.75em;
 }
 
-.playlist-action-button:hover, .playlist-action-button:focus {
+.playlist-action-button:hover,
+.playlist-action-button:focus {
   background-color: transparent;
 }
 
@@ -138,7 +139,6 @@
   width: 100%;
   max-height: calc(var(--playlist-max-height) - 30vh);
   aspect-ratio: 16/9;
-
 }
 
 .playlist-player-video-overlay {
@@ -146,7 +146,7 @@
   overflow: hidden;
   box-sizing: border-box;
   z-index: 0;
-  font-family: "Noto Sans", sans-serif;
+  font-family: 'Noto Sans', sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -197,7 +197,7 @@
 
 [data-playlist-item-progress-box]::after,
 [data-playlist-progress-box]::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0;
   left: 0;
@@ -210,7 +210,7 @@
 }
 
 [data-playlist-progress-box]::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: -3px;
   left: 0;
@@ -225,7 +225,7 @@
 
 .playlist-item img {
   border-top-left-radius: var(--playlist-border-radius-inner);
-  border-top-right-radius: var(--playlist-border-radius-inner);;
+  border-top-right-radius: var(--playlist-border-radius-inner);
 }
 
 .playlist-item picture,
@@ -248,7 +248,7 @@
   font-size: 12px;
 }
 
-.playlist-options-autoplay input[type="checkbox"] {
+.playlist-options-autoplay input[type='checkbox'] {
   --switch-on-background: #464646;
   --switch-off-background: #d5d5d5;
   --switch-knob-background: #fff;
@@ -270,15 +270,15 @@
   border: 0;
 }
 
-.playlist-options-autoplay input[type="checkbox"]:checked {
+.playlist-options-autoplay input[type='checkbox']:checked {
   background: var(--switch-on-background);
 }
 
-.playlist-options-autoplay input[type="checkbox"]::after {
+.playlist-options-autoplay input[type='checkbox']::after {
   position: absolute;
   top: var(--switch-knob-offset);
   right: calc(var(--switch-width) - var(--switch-knob-offset) - var(--switch-knob-size));
-  content: "";
+  content: '';
   width: var(--switch-knob-size);
   height: var(--switch-knob-size);
   border-radius: 50%;
@@ -288,7 +288,7 @@
   transition: all 0.2s ease-in-out;
 }
 
-.playlist-options-autoplay input[type="checkbox"]:checked::after {
+.playlist-options-autoplay input[type='checkbox']:checked::after {
   right: var(--switch-knob-offset);
   border: 0;
   outline: 2px solid var(--switch-on-background);

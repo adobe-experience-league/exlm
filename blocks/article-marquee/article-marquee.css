@@ -12,9 +12,12 @@
   background-color: var(--non-spectrum-bg);
 }
 
-.article-marquee h1, .article-marquee h2, 
-.article-marquee h3, .article-marquee h4,
-.article-marquee h5, .article-marquee h6 {
+.article-marquee h1,
+.article-marquee h2,
+.article-marquee h3,
+.article-marquee h4,
+.article-marquee h5,
+.article-marquee h6 {
   color: var(--non-spectrum-dark-charcoal);
   margin-top: 12px;
 }
@@ -38,7 +41,6 @@
   z-index: 1;
   margin-right: -2px;
   background-color: var(--non-spectrum-bg);
-
 }
 
 .article-marquee .author-info {
@@ -93,7 +95,7 @@
   margin-bottom: 1em;
 }
 
-.article-marquee .breadcrumb > a ,
+.article-marquee .breadcrumb > a,
 .article-marquee .breadcrumb > span {
   color: var(--spectrum-gray-500);
   display: inline-block;
@@ -108,10 +110,10 @@
 
 .article-marquee .breadcrumb > span::after,
 .article-marquee .breadcrumb > a::after {
-  background-image: url("../../icons/chevron_right.svg");
+  background-image: url('../../icons/chevron_right.svg');
   background-size: 16px;
   bottom: -3px;
-  content: "";
+  content: '';
   display: inline-block;
   height: 16px;
   margin-right: 5px;
@@ -200,7 +202,7 @@
     gap: 0px;
   }
 
-  .article-marquee .breadcrumb > span { 
+  .article-marquee .breadcrumb > span {
     display: inline;
     margin-top: 0;
     font-size: var(--spectrum-font-size-200);
@@ -212,14 +214,14 @@
 
   .article-marquee .author-card .author-image {
     display: none;
-  } 
+  }
 
   .article-marquee .author-card:only-child .author-image {
     display: block;
-  } 
+  }
 }
 
- @media (min-width: 900px) {
+@media (min-width: 900px) {
   .article-marquee-info-container {
     justify-content: space-between;
   }
@@ -245,19 +247,22 @@
   .article-marquee .author-card .author-image {
     display: block;
   }
-  
+
   .article-marquee .author-info > div:not(.article-marquee-bg-container) {
     margin-left: 200px;
   }
 
-  .article-marquee h1, .article-marquee h2, 
-  .article-marquee h3, .article-marquee h4,
-  .article-marquee h5, .article-marquee h6 {
+  .article-marquee h1,
+  .article-marquee h2,
+  .article-marquee h3,
+  .article-marquee h4,
+  .article-marquee h5,
+  .article-marquee h6 {
     color: var(--spectrum-gray-900);
   }
- }
+}
 
- @media (min-width: 1024px) {
+@media (min-width: 1024px) {
   .article-marquee-large-bg {
     display: block;
     position: absolute;
@@ -270,15 +275,15 @@
   .article-marquee-large-bg.adobe {
     background-color: var(--spectrum-red-1400);
   }
- }
+}
 
 /* Aricle Marquee background styles */
 
-.article-marquee-bg-container path:first-child{
+.article-marquee-bg-container path:first-child {
   fill: var(--spectrum-indigo-1400);
 }
 
-.article-marquee-bg-container.adobe  path:first-child{
+.article-marquee-bg-container.adobe path:first-child {
   fill: var(--spectrum-red-1400);
 }
 
