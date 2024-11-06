@@ -3,7 +3,7 @@ import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import Swiper from '../../scripts/swiper/swiper.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-card-target-data-adapter.js';
+import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import getEmitter from '../../scripts/events.js';
 
