@@ -1,7 +1,7 @@
 import { buildCard } from '../browse-card/browse-card.js';
 import { loadCSS } from '../lib-franklin.js';
 import BrowseCardsDelegate from '../browse-card/browse-cards-delegate.js';
-import BuildPlaceholder from '../browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../browse-card/browse-card-shimmer.js';
 import { COVEO_SORT_OPTIONS } from '../browse-card/browse-cards-constants.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.css`);
@@ -36,8 +36,7 @@ export default function decorate() {
   };
 
   // Create a placeholder for the widgets while they are loading
-  const buildCardsShimmer = new BuildPlaceholder();
-  buildCardsShimmer.add(container);
+  const buildCardsShimmer = BrowseCardShimmer.create(4, container);
 
   // Fetch the card/widget data
   const tutorialWidgetsContent = BrowseCardsDelegate.fetchCardData(param);

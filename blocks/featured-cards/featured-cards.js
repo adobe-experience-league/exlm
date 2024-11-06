@@ -1,7 +1,7 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { roleOptions } from '../browse-filters/browse-filter-utils.js';
@@ -280,8 +280,7 @@ export default async function decorate(block) {
 
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
-    const buildCardsShimmer = new BuildPlaceholder();
-    buildCardsShimmer.add(block);
+    const buildCardsShimmer = BrowseCardShimmer.create(4, block);
     headerDiv.after(block.querySelector('.shimmer-placeholder'));
 
     /* Remove No Results Content and Show Card Content Info if they were hidden earlier */

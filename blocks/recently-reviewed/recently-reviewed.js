@@ -1,5 +1,5 @@
 import { htmlToElement } from '../../scripts/scripts.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import Swiper from '../../scripts/swiper/swiper.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
@@ -108,7 +108,7 @@ export default async function decorate(block) {
     const navContainer = document.createElement('div');
     const contentDiv = document.createElement('div');
     contentDiv.className = 'browse-cards-block-content';
-    const buildCardsShimmer = new BuildPlaceholder();
+    const buildCardsShimmer = BrowseCardShimmer.create(4);
 
     function appendNavAndContent() {
       navContainer.classList.add('recently-viewed-nav-container');
@@ -126,7 +126,7 @@ export default async function decorate(block) {
         if (resp?.data?.length) {
           displayBlock = true;
           appendNavAndContent();
-          buildCardsShimmer.add(block);
+          block.append(buildCardsShimmer);
 
           const cardData = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(resp.data);
           cardData.forEach((item) => {
@@ -154,7 +154,7 @@ export default async function decorate(block) {
     if (UEAuthorMode) {
       displayBlock = true;
       appendNavAndContent();
-      buildCardsShimmer.add(block);
+      block.append(buildCardsShimmer);
       const authorInfo = 'Based on profile context, if the customer has enabled the necessary cookies';
       buildNoResultsContent(contentDiv, true, authorInfo);
       buildCardsShimmer.remove();
