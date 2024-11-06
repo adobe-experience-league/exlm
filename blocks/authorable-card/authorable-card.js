@@ -2,7 +2,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { getCardData } from '../../scripts/browse-card/browse-card-utils.js';
 
 /**
@@ -40,8 +40,8 @@ export default async function decorate(block) {
 
   block.replaceChildren(headerDiv);
 
-  const buildCardsShimmer = new BuildPlaceholder();
-  buildCardsShimmer.add(block);
+  const buildCardsShimmer = BrowseCardShimmer.create(4, block);
+
   const contentDiv = document.createElement('div');
   contentDiv.className = 'browse-cards-block-content';
 

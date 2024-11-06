@@ -5,7 +5,7 @@ import { htmlToElement, fetchLanguagePlaceholders, getConfig, getLanguageCode } 
 import BrowseCardsPathsAdaptor from '../../scripts/browse-card/browse-cards-paths-adaptor.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 
@@ -217,8 +217,7 @@ export default async function decorate(block) {
       const contentDiv = document.createElement('div');
       contentDiv.classList.add('browse-cards-block-content');
 
-      buildCardsShimmer = new BuildPlaceholder(noOfResults, block);
-      buildCardsShimmer.add(block);
+      buildCardsShimmer = BrowseCardShimmer.create(noOfResults, block);
 
       // Fetching user profile data
       defaultProfileClient.getMergedProfile().then(async (data) => {

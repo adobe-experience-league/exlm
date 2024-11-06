@@ -2,7 +2,7 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { extractCapability, removeProductDuplicates } from '../../scripts/browse-card/browse-card-utils.js';
 /**
@@ -59,8 +59,7 @@ export default async function decorate(block) {
     noOfResults,
   };
 
-  const buildCardsShimmer = new BuildPlaceholder();
-  buildCardsShimmer.add(block);
+  const buildCardsShimmer = BrowseCardShimmer.create(4, block);
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent

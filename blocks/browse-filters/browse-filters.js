@@ -28,7 +28,7 @@ import {
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery } from './browse-topics.js';
 import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
@@ -103,7 +103,7 @@ const dropdownOptions = [roleOptions, contentTypeOptions];
 
 const tags = [];
 let tagsProxy;
-const buildCardsShimmer = new BuildPlaceholder(getBrowseFiltersResultCount());
+const buildCardsShimmer = BrowseCardShimmer.create(getBrowseFiltersResultCount());
 
 function enableTagsAsProxy(block) {
   tagsProxy = new Proxy(tags, {
@@ -963,7 +963,7 @@ function handleCoveoHeadlessSearch(
         () => {
           const newResultsPerPage = getBrowseFiltersResultCount();
           if (window.headlessResultsPerPage.state.numberOfResults !== newResultsPerPage) {
-            buildCardsShimmer.updateCount(newResultsPerPage);
+            BrowseCardShimmer.updateCount(buildCardsShimmer, newResultsPerPage);
             window.headlessResultsPerPage.set(newResultsPerPage);
           }
         },
@@ -979,7 +979,7 @@ function handleCoveoHeadlessSearch(
       if (clearFilterBtn?.disabled) {
         return;
       }
-      buildCardsShimmer.add(browseFiltersSection);
+      browseFiltersSection.append(buildCardsShimmer);
       filterResultsEl.style.display = 'none';
       filtersPaginationEl.style.display = 'none';
       browseFiltersSection.insertBefore(
