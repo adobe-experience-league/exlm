@@ -168,8 +168,15 @@ class AdobeTargetClient {
     const blockIds = new Set(this.targetArray.map((item) => item.blockId));
 
     this.blocks.forEach((blockElem) => {
-      if (!blockIds.has(blockElem.id)) blockElem.remove();
+      if (!blockIds.has(blockElem.id)) blockElem.parentElement.remove();
     });
+
+    document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
+      if (element.textContent.trim() === '') {
+        element.remove();
+      }
+    });
+
     this.handleAction();
   }
 
