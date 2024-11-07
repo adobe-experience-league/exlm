@@ -149,13 +149,13 @@ export default async function buildProductCard(element, model) {
 
   // Add to DOM
   element.appendChild(card);
-
+  const dropdownId = `${product}-${Math.random().toString(36).substring(2)}`;
   const cardDropdown = new Dropdown(
     content,
     dropdownOptions[0].value,
     dropdownOptions,
     DROPDOWN_VARIANTS.DEFAULT,
-    product,
+    dropdownId,
   );
   cardDropdown.handleOnChange(async (level) => {
     const profileData = await defaultProfileClient.getMergedProfile();

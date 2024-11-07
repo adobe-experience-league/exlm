@@ -231,6 +231,54 @@
   margin-top: 3px;
 }
 
+.profile-welcome .profile-user-card-mini {
+  flex-direction: row;
+  padding: 16px;
+  margin: auto;
+  min-height: 80px;
+  width: fit-content;
+  align-items: center;
+  flex-grow: 0;
+}
+
+.profile-welcome .profile-user-card-mini .profile-user-card-avatar {
+  width: 45px;
+  min-width: 45px;
+  height: 45px;
+}
+
+.profile-welcome .profile-user-card-mini .profile-user-card-left {
+  border: none;
+  padding: 0;
+}
+
+.profile-welcome .profile-user-card-mini .profile-user-card-left .profile-user-card-info {
+  width: max-content;
+  max-width: 120px;
+}
+
+.profile-welcome .profile-user-card-mini .profile-user-card-left .profile-user-card-info .profile-user-card-name {
+  font-size: var(--spectrum-font-size-200);
+  margin-bottom: 0;
+}
+
+.profile-welcome .profile-user-card-mini .profile-user-card-left .profile-user-card-avatar-company-info {
+  margin-bottom: 0;
+  align-items: center;
+}
+
+.profile-welcome .profile-user-card-mini .profile-user-card-cta > a.button {
+  margin-top: 0;
+  font-size: var(--spectrum-font-size-75);
+  height: 24px;
+  border-radius: 12px;
+  padding: 0 12px;
+  min-width: 100px;
+}
+.profile-welcome .profile-user-card-mini .profile-user-card-right {
+  padding: 0 0 0 16px;
+}
+
 /* tablet */
 @media (min-width: 600px) {
   .profile-welcome {
@@ -257,6 +305,11 @@
     padding-left: 22px;
     padding-top: 0px;
   }
+
+  .profile-welcome .profile-user-card-mini .profile-user-card-left {
+    border: none;
+    padding: 0;
+  }
 }
 
 /* desktop */
@@ -282,5 +335,8 @@
 
   .profile-welcome .profile-curated-card .profile-curated-card-description {
     text-align: left;
+  }
+  .profile-welcome .profile-user-card-mini {
+    margin: auto;
   }
 }
