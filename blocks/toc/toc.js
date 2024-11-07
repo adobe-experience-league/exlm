@@ -244,43 +244,58 @@ function activateCurrentPage(tocContent) {
 /**
  * Filters TOC items based on the input query without altering the original structure.
  * @param {string} query - The search input value
+ * @returns {void}
  */
 function tocFilter(query) {
   const tocItems = document.querySelectorAll('.toc-tree li');
   const filterQuery = query.toLowerCase();
 
-  tocItems.forEach((item) => {
-    const text = item.textContent.toLowerCase();
-    let hasMatchingDescendants = false;
+  tocItems.forEach(item => {
+    // Check if the element is a .toc-item
+    const isTocItem = item.querySelector('.toc-item') !== null;
 
-    // Recursively check for matches in descendants
+    let hasMatchingDescendants = false;
+    let hasVisibleChildren = false;
+
     function checkForMatches(element) {
       const childItems = Array.from(element.querySelectorAll('li'));
-      childItems.forEach((child) => {
+      childItems.forEach(child => {
+        // Check if the child is a .toc-item
+        const isChildTocItem = child.querySelector('.toc-item') !== null;
+
         const childText = child.textContent.toLowerCase();
-        if (childText.includes(filterQuery)) {
+        if (isChildTocItem && childText.includes(filterQuery)) {
           hasMatchingDescendants = true;
           child.style.display = '';
         } else {
           child.style.display = 'none';
         }
-        // Recursive call for deeper nesting
         checkForMatches(child);
+
+        if (child.style.display !== 'none') {
+          hasVisibleChildren = true;
+        }
       });
     }
 
-    checkForMatches(item); // Start from the current item
+    checkForMatches(item);
 
-    if (text.includes(filterQuery) || hasMatchingDescendants) {
+    // Show/hide the item itself based on the query and whether it's a .toc-item
+    if (isTocItem && item.textContent.toLowerCase().includes(filterQuery) || hasMatchingDescendants) {
       item.style.display = '';
     } else {
       item.style.display = 'none';
     }
 
-    // Expand/collapse toggles based on parent/child visibility
-    const toggle = item.querySelector('a');
+    const toggle = item.querySelector('.toc-toggle');
     if (toggle) {
-      toggle.setAttribute('aria-expanded', hasMatchingDescendants ? 'true' : 'false');
+      if (hasVisibleChildren) {
+        item.style.display = '';
+        toggle.setAttribute('aria-expanded', 'true');
+      } else {
+        item.style.display = 'none';
+        toggle.setAttribute('aria-expanded', 'false');
+      }
     }
   });
 }
