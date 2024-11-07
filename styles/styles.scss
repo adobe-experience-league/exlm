@@ -842,7 +842,7 @@ main > div.browse-rail {
   display: none;
 }
 
-body[class^='browse-'] main.browse-background-img {
+body[class^='browse-'] main {
   background-image: url('/solutions/icons/BrowseDecorationMobile.svg');
   background-repeat: no-repeat;
   background-position: top right;
@@ -897,7 +897,7 @@ body[class^='browse-'] .browse-filters-full-container {
   }
 
   body[class^='browse-'] {
-    & main.browse-background-img {
+    & main {
       background-image: url('/solutions/icons/BrowseDecoration.svg');
       background-size: contain;
     }
@@ -912,12 +912,6 @@ body[class^='browse-'] .browse-filters-full-container {
 @include breakpoint('desktop') {
   .docs {
     & main.rail-left-closed.rail-right-closed {
-      .section.content-section-first.content-section-last {
-        padding-right: 0;
-        margin-right: 0;
-        max-width: calc(100vw - 100px);
-      }
-
       .default-content-wrapper p {
         max-width: 95%;
       }
@@ -983,14 +977,6 @@ body[class^='browse-'] .browse-filters-full-container {
     width: 224px;
     height: 100%;
     padding: 0 0 0 32px;
-  }
-}
-
-@media (width >= 1440px) {
-  body[class^='browse-'] {
-    & main {
-      background-position: -36px 0;
-    }
   }
 }
 

@@ -1,6 +1,7 @@
 import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
-import { rewriteDocsPath, fetchLanguagePlaceholders } from '../scripts.js';
+import { fetchLanguagePlaceholders } from '../scripts.js';
+import { rewriteDocsPath } from '../utils/path-utils.js';
 
 /**
  * Module that provides functionality for adapting Coveo search results to BrowseCards data model.

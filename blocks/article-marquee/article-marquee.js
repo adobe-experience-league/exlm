@@ -4,11 +4,11 @@ import {
   getPathDetails,
   createPlaceholderSpan,
   fetchLanguagePlaceholders,
-  fetchAuthorBio,
 } from '../../scripts/scripts.js';
 import { createOptimizedPicture, decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import ffetch from '../../scripts/ffetch.js';
 import UserActions from '../../scripts/user-actions/user-actions.js';
+import { fetchAuthorBio } from '../../scripts/utils/author-utils.js';
 
 const metadataProperties = {
   adobe: 'adobe',
