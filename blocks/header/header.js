@@ -435,7 +435,7 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   // add origin to relative links - this is especially useful when we need to
   // configure navLinkOrigin in header. Eg. on community.
   updateLinks(navBlock, (currentHref) => {
-    const url = new URL(currentHref, origin);
+    const url = new URL(currentHref, decoratorOptions.navLinkOrigin);
     return url.href;
   });
 
