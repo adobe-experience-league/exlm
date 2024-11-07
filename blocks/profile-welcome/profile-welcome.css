@@ -267,6 +267,10 @@
   align-items: center;
 }
 
+.profile-welcome .profile-user-card-mini .profile-user-card-cta {
+  padding-top: 6px;
+}
+
 .profile-welcome .profile-user-card-mini .profile-user-card-cta > a.button {
   margin-top: 0;
   font-size: var(--spectrum-font-size-75);
