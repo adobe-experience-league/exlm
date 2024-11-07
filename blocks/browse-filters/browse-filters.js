@@ -2,7 +2,6 @@ import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import {
   createTag,
   htmlToElement,
-  debounce,
   getPathDetails,
   fetchLanguagePlaceholders,
   matchesAnyTheme,
@@ -35,6 +34,19 @@ import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js'
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 
 const ffetchModulePromise = import('../../scripts/ffetch.js');
+
+/**
+ * debounce fn execution
+ */
+const debounce = (ms, fn) => {
+  let timer;
+  // eslint-disable-next-line func-names
+  return function (...args) {
+    clearTimeout(timer);
+    args.unshift(this);
+    timer = setTimeout(fn(args), ms);
+  };
+};
 
 const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
@@ -958,17 +970,13 @@ function handleCoveoHeadlessSearch(
   window.addEventListener('hashchange', handleUriHash);
   if (window.headlessResultsPerPage) {
     window.addEventListener('resize', () => {
-      debounce(
-        'win-resize-browse-filters',
-        () => {
-          const newResultsPerPage = getBrowseFiltersResultCount();
-          if (window.headlessResultsPerPage.state.numberOfResults !== newResultsPerPage) {
-            buildCardsShimmer.updateCount(newResultsPerPage);
-            window.headlessResultsPerPage.set(newResultsPerPage);
-          }
-        },
-        50,
-      );
+      debounce(50, () => {
+        const newResultsPerPage = getBrowseFiltersResultCount();
+        if (window.headlessResultsPerPage.state.numberOfResults !== newResultsPerPage) {
+          buildCardsShimmer.updateCount(newResultsPerPage);
+          window.headlessResultsPerPage.set(newResultsPerPage);
+        }
+      });
     });
   }
   const filtersPaginationEl = browseFiltersSection.querySelector('.browse-filters-pagination');

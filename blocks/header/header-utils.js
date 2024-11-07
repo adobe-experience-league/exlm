@@ -25,9 +25,6 @@ export const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
 /**
  * debounce fn execution
- * @param {number} ms
- * @param {Function} fn
- * @returns {Function} debounced function
  */
 export const debounce = (ms, fn) => {
   let timer;
