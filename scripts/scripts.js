@@ -676,6 +676,7 @@ export function getConfig() {
       authorUrl: 'author-p122525-e1219150.adobeaemcloud.com',
       hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
+      community: 'experienceleaguecommunities.adobe.com',
     },
     {
       env: 'STAGE',
@@ -683,6 +684,7 @@ export function getConfig() {
       authorUrl: 'author-p122525-e1219192.adobeaemcloud.com',
       hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm-stage--adobe-experience-league.live',
+      community: 'experienceleaguecommunities-dev.adobe.com',
     },
     {
       env: 'DEV',
@@ -690,6 +692,7 @@ export function getConfig() {
       authorUrl: 'author-p122525-e1200861.adobeaemcloud.com',
       hlxPreview: 'main--exlm--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm--adobe-experience-league.hlx.live',
+      community: 'experienceleaguecommunities-dev.adobe.com',
     },
   ];
 
@@ -731,6 +734,7 @@ export function getConfig() {
   const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
   const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
+  const communityHost = currentEnv?.community || defaultEnv.community;
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
   // Locale param for Community page URL
@@ -762,6 +766,7 @@ export function getConfig() {
     currentEnv,
     cdnOrigin,
     cdnHost,
+    communityHost,
     prodAssetsCdnOrigin,
     ppsOrigin,
     launchScriptSrc,
