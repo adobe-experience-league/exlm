@@ -61,7 +61,7 @@ class AdobeTargetClient {
               event.detail.$rule.name === 'AT: PHP: Handle response propositions'
             ) {
               await this.handleTargetEvent();
-              if (window?.exlm?.targetData.length) resolve(true);
+              if (window?.exlm?.targetData?.length) resolve(true);
               else resolve(false);
             } else {
               resolve(false);
@@ -168,15 +168,12 @@ class AdobeTargetClient {
     const blockIds = new Set(this.targetArray.map((item) => item.blockId));
 
     this.blocks.forEach((blockElem) => {
-      if (!blockIds.has(blockElem.id)) blockElem.parentElement.remove();
-    });
-
-    document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
-      if (element.textContent.trim() === '') {
-        element.remove();
+      if (!blockIds.has(blockElem.id)) {
+        const section = blockElem.closest('.section');
+        blockElem.parentElement.remove();
+        if (section?.children?.length === 0) section.remove();
       }
     });
-
     this.handleAction();
   }
 
