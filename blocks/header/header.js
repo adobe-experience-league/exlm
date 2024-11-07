@@ -14,7 +14,7 @@ import {
   registerHeaderResizeHandler,
   getCell,
   getFirstChildTextNodes,
-  addOriginToRelativeLinks,
+  updateLinks,
 } from './header-utils.js';
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import LanguageBlock from '../language/language.js';
@@ -36,7 +36,7 @@ import Profile from './load-profile.js';
 const HEADER_CSS = `/blocks/header/exl-header.css`;
 
 let searchElementPromise = null;
-const { khorosProfileUrl } = getConfig();
+const { khorosProfileUrl, communityHost } = getConfig();
 
 const getPPSProfilePicture = async () => {
   try {
@@ -165,7 +165,10 @@ const brandDecorator = (brandBlock, decoratorOptions) => {
   simplifySingleCellBlock(brandBlock);
   const brandLink = brandBlock.querySelector('a');
   brandBlock.replaceChildren(brandLink);
-  addOriginToRelativeLinks(brandBlock, decoratorOptions.navLinkOrigin);
+  updateLinks(brandBlock, (currentHref) => {
+    const url = new URL(currentHref, decoratorOptions.navLinkOrigin);
+    return url.href;
+  });
   return brandBlock;
 };
 
@@ -431,7 +434,20 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   }
   // add origin to relative links - this is especially useful when we need to
   // configure navLinkOrigin in header. Eg. on community.
-  addOriginToRelativeLinks(navBlock, decoratorOptions.navLinkOrigin);
+  updateLinks(navBlock, (currentHref) => {
+    const url = new URL(currentHref, origin);
+    return url.href;
+  });
+
+  // update community links to use proper host for current environment
+  updateLinks(navBlock, (currentHref) => {
+    if (currentHref.includes('https://experienceleaguecommunities')) {
+      const url = new URL(currentHref);
+      url.host = communityHost;
+      return url.href;
+    }
+    return currentHref;
+  });
 };
 
 /**
