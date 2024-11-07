@@ -284,7 +284,8 @@ button.toc-dropdown-button {
           scrollbar-color: var(--spectrum-gray-200) var(--spectrum-gray-50);
 
           &::-webkit-scrollbar {
-            width: 0;
+            display: inherit;
+            width: 8px;
           }
 
           &::-webkit-scrollbar-thumb {
