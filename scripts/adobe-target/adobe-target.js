@@ -176,7 +176,7 @@ class AdobeTargetClient {
         element.remove();
       }
     });
-    
+
     this.handleAction();
   }
 
