@@ -1167,16 +1167,14 @@ function createDocColumns() {
 }
 
 /** handles a set of 1-1 redirects */
-function handleHashRedirects() {
-  const redirects = ['/#feedback:/home#feedback', '/docs:/en/docs'].map((p) =>
-    p.split(':').map((s) => new URL(s, window.location.href)),
-  );
+function handleRedirects() {
+  const redirects = ['/#feedback:/home#feedback'].map((p) => p.split(':').map((s) => new URL(s, window.location.href)));
   const redirect = redirects.find(([from]) => window.location.href === from.href);
   if (redirect) window.location.href = redirect[1].href;
 }
 
 async function loadPage() {
-  handleHashRedirects();
+  handleRedirects();
   await loadEager(document);
   createDocColumns();
   loadRails();
