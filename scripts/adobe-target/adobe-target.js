@@ -61,7 +61,7 @@ class AdobeTargetClient {
               event.detail.$rule.name === 'AT: PHP: Handle response propositions'
             ) {
               await this.handleTargetEvent();
-              if (window?.exlm?.targetData.length) resolve(true);
+              if (window?.exlm?.targetData?.length) resolve(true);
               else resolve(false);
             } else {
               resolve(false);
