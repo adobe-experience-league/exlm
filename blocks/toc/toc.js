@@ -250,7 +250,7 @@ function tocFilter(query) {
   const tocItems = document.querySelectorAll('.toc-tree li');
   const filterQuery = query.toLowerCase();
 
-  tocItems.forEach(item => {
+  tocItems.forEach((item) => {
     // Check if the element is a .toc-item
     const isTocItem = item.querySelector('.toc-item') !== null;
 
@@ -259,7 +259,7 @@ function tocFilter(query) {
 
     function checkForMatches(element) {
       const childItems = Array.from(element.querySelectorAll('li'));
-      childItems.forEach(child => {
+      childItems.forEach((child) => {
         // Check if the child is a .toc-item
         const isChildTocItem = child.querySelector('.toc-item') !== null;
 
@@ -281,7 +281,7 @@ function tocFilter(query) {
     checkForMatches(item);
 
     // Show/hide the item itself based on the query and whether it's a .toc-item
-    if (isTocItem && item.textContent.toLowerCase().includes(filterQuery) || hasMatchingDescendants) {
+    if ((isTocItem && item.textContent.toLowerCase().includes(filterQuery)) || hasMatchingDescendants) {
       item.style.display = '';
     } else {
       item.style.display = 'none';
