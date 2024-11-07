@@ -44,7 +44,6 @@
 .toc ul {
   list-style: none;
   margin-left: 0;
-  margin-left: var(--spectrum-spacing-200);
 }
 
 .toc ul > li ul {
