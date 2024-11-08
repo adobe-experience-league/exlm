@@ -1202,9 +1202,9 @@ async function loadPage() {
  * This is used for target A/B testing of home page, and should be removed after the test is done.
  */
 function prehidePageForTarget() {
-  const syleEl = htmlToElement(`<style> body { opacity: 0 !important } </style>`);
-  document.head.appendChild(syleEl);
-  setTimeout(() => syleEl?.parentNode?.removeChild(syleEl), 3000);
+  const styleEl = htmlToElement(`<style> body { opacity: 0 !important } </style>`);
+  document.head.appendChild(styleEl);
+  setTimeout(() => styleEl?.parentNode?.removeChild(styleEl), 3000);
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
