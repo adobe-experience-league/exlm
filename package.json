@@ -24,14 +24,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adobe-experience-league/exlm.git"
+    "url": "git+https://github.com/adobe-experience-league/exlm-stage.git"
   },
   "author": "Adobe",
   "license": "Apache License 2.0",
   "bugs": {
-    "url": "https://github.com/adobe-experience-league/exlm/issues"
+    "url": "https://github.com/adobe-experience-league/exlm-stage/issues"
   },
-  "homepage": "https://main--exlm--adobe-experience-league.hlx.live/",
+  "homepage": "https://main--exlm-stage--adobe-experience-league.hlx.live/",
   "devDependencies": {
     "@babel/core": "7.21.0",
     "@babel/eslint-parser": "7.19.1",
