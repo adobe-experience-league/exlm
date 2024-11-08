@@ -250,13 +250,13 @@ function tocFilter(query) {
   const tocItems = document.querySelectorAll('.toc-tree li');
   const filterQuery = query.toLowerCase();
 
-  tocItems.forEach(item => {
+  tocItems.forEach((item) => {
     let hasMatchingDescendants = false;
 
     // Recursively check for matches in descendants, excluding href attributes
     function checkForMatches(element) {
       const childItems = Array.from(element.querySelectorAll('li'));
-      childItems.forEach(child => {
+      childItems.forEach((child) => {
         const childText = child.textContent.toLowerCase();
         const isTocItem = child.querySelector('.toc-item') !== null;
 
@@ -288,7 +288,9 @@ function tocFilter(query) {
 
     const toggle = item.querySelector('.toc-toggle');
     if (toggle) {
-      const hasVisibleChildren = Array.from(item.querySelectorAll('li')).some(child => child.style.display !== 'none');
+      const hasVisibleChildren = Array.from(item.querySelectorAll('li')).some(
+        (child) => child.style.display !== 'none',
+      );
       if (!hasVisibleChildren) {
         item.style.display = 'none';
         toggle.setAttribute('aria-expanded', 'false');
