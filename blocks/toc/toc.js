@@ -251,36 +251,35 @@ function tocFilter(query) {
   const filterQuery = query.toLowerCase();
 
   tocItems.forEach((item) => {
-    // Check if the element is a .toc-item
-    const isTocItem = item.querySelector('.toc-item') !== null;
-
     let hasMatchingDescendants = false;
-    let hasVisibleChildren = false;
 
+    // Recursively check for matches in descendants, excluding href attributes
     function checkForMatches(element) {
       const childItems = Array.from(element.querySelectorAll('li'));
       childItems.forEach((child) => {
-        // Check if the child is a .toc-item
-        const isChildTocItem = child.querySelector('.toc-item') !== null;
-
         const childText = child.textContent.toLowerCase();
-        if (isChildTocItem && childText.includes(filterQuery)) {
-          hasMatchingDescendants = true;
-          child.style.display = '';
+        const isTocItem = child.querySelector('.toc-item') !== null;
+
+        // Check if the child is a .toc-item and matches the query (excluding href)
+        if (isTocItem && childText.includes(filterQuery)) {
+          const childLinkText = child.querySelector('.toc-item').textContent.toLowerCase(); // Get text content of the link
+          if (childLinkText.includes(filterQuery)) {
+            hasMatchingDescendants = true;
+            child.style.display = '';
+          } else {
+            child.style.display = 'none';
+          }
         } else {
           child.style.display = 'none';
         }
         checkForMatches(child);
-
-        if (child.style.display !== 'none') {
-          hasVisibleChildren = true;
-        }
       });
     }
 
     checkForMatches(item);
 
-    // Show/hide the item itself based on the query and whether it's a .toc-item
+    // Show/hide the item itself based on the query and matching descendants
+    const isTocItem = item.querySelector('.toc-item') !== null;
     if ((isTocItem && item.textContent.toLowerCase().includes(filterQuery)) || hasMatchingDescendants) {
       item.style.display = '';
     } else {
@@ -289,12 +288,14 @@ function tocFilter(query) {
 
     const toggle = item.querySelector('.toc-toggle');
     if (toggle) {
-      if (hasVisibleChildren) {
-        item.style.display = '';
-        toggle.setAttribute('aria-expanded', 'true');
-      } else {
+      const hasVisibleChildren = Array.from(item.querySelectorAll('li')).some(
+        (child) => child.style.display !== 'none',
+      );
+      if (!hasVisibleChildren) {
         item.style.display = 'none';
         toggle.setAttribute('aria-expanded', 'false');
+      } else {
+        toggle.setAttribute('aria-expanded', 'true');
       }
     }
   });
