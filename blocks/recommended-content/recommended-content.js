@@ -128,6 +128,8 @@ async function findEmptyFilters(targetCriteriaId, profileInterests = []) {
 
 const interestDataPromise = fetchInterestData();
 
+const cardShimmerInstance = new BuildPlaceholder(1);
+
 const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
 
 const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
@@ -137,10 +139,11 @@ const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
     contentDiv.appendChild(cardDiv);
   }
 
-  const cardPlaceholder = new BuildPlaceholder(1);
-  cardPlaceholder.add(cardDiv);
+  // const cardPlaceholder = new BuildPlaceholder(1);
+  cardShimmerInstance.addShimmer(cardDiv);
+  // cardPlaceholder.add(cardDiv);
   return {
-    shimmer: cardPlaceholder,
+    shimmer: cardShimmerInstance,
     wrapper: cardDiv,
   };
 };
@@ -228,7 +231,7 @@ export default async function decorate(block) {
               if (delayedCardData.length === 0) {
                 if (renderCards) {
                   cardData.shimmers?.forEach((shimmerEl, index) => {
-                    shimmerEl.remove();
+                    shimmerEl.removeShimmer();
                     cardData.wrappers[index].style.display = 'none';
                   });
                 }
@@ -238,7 +241,7 @@ export default async function decorate(block) {
                   const wrapperDiv = cardData.wrappers[index];
                   if (renderCards) {
                     if (shimmer) {
-                      shimmer.remove();
+                      shimmer.removeShimmer();
                     }
                     wrapperDiv.innerHTML = '';
                   }
@@ -332,9 +335,17 @@ export default async function decorate(block) {
       const [profileData, interestsDataArray] = promiseResponses;
       const {
         role: profileRoles = [],
-        interests: profileInterests = [],
+        interests: profileInterestssss = [],
         solutionLevels: profileSolutionLevels = [],
       } = profileData || {};
+
+      const profileInterests = [
+        "Acrobat",
+        "Experience Manager",
+        "Real-Time Customer Data Platform",
+        "Target",
+        "Workfront"
+    ];
 
       if (profileInterests.length === 0) {
         filterSectionElement.style.display = 'none';
@@ -397,7 +408,7 @@ export default async function decorate(block) {
           data = cardResponse?.data ?? [];
           const { shimmers, params, optionType } = apiConfigObject;
           shimmers.forEach((shimmer) => {
-            shimmer.remove();
+            shimmer.removeShimmer();
           });
           if (optionType.toLowerCase() !== defaultOptionsKey[0].toLowerCase()) {
             if (defaultOptionsKey.length > 1 && optionType.toLowerCase() === defaultOptionsKey[1].toLowerCase()) {
@@ -434,7 +445,7 @@ export default async function decorate(block) {
               }
               const cardShimmer = cardShimmers.shift();
               if (cardShimmer) {
-                cardShimmer.remove();
+                cardShimmer.removeShimmer();
               }
             });
           } else {
