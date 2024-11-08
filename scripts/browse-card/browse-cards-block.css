@@ -39,7 +39,7 @@
   font-size: 12px;
   font-weight: normal;
   left: -999px;
-  line-height: 15px;
+  line-height: var(--spectrum-line-height-xs);
   margin-left: 10px;
   margin-top: -16px;
   opacity: 0;
@@ -72,7 +72,7 @@
 }
 .browse-cards-block-view a {
   font-size: 18px;
-  line-height: 17px;
+  line-height: var(--spectrum-line-height-s);
   margin: 2px 0 0 0;
 }
 .browse-cards-block-content {
@@ -108,9 +108,6 @@
     margin-bottom: 56px;
     margin-top: 16px;
   }
-  .browse-cards-block-content > div {
-    flex: 0 0 286px;
-  }
 }
 @media only screen and (min-width: 900px) {
   .browse-cards-block-header {
@@ -122,8 +119,5 @@
     gap: 32px;
     margin-bottom: 80px;
     margin-top: 24px;
-  }
-  .browse-cards-block-content > div {
-    flex: 0 0 256px;
   }
 }

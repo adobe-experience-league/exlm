@@ -155,16 +155,15 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
 const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }) => {
   if (viewLinkText) {
     let icon = null;
-    let isLeftPlacement = false;
-    if (contentType?.toLowerCase() === CONTENT_TYPES.TUTORIAL.MAPPING_KEY) {
-      icon = 'play-outline';
-      isLeftPlacement = false;
-    } else if (
+    const isLeftPlacement = false;
+    if (
       [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
         contentType?.toLowerCase(),
       )
     ) {
       icon = 'new-tab-blue';
+    } else {
+      icon = 'chevron-right-blue';
     }
     const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
     const linkText = htmlToElement(`
@@ -304,7 +303,7 @@ export const buildNoResultsContent = (block, show, placeholder = placeholders.no
  * @param {string} [model.viewLink] - URL link to view more details about the card content.
  * @param {string} [model.copyLink] - URL link for a copy/share action on the card.
  * @returns {Promise<void>} Resolves when the card is fully built and added to the DOM.
-*/
+ */
 export async function buildCard(container, element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
 
@@ -335,6 +334,10 @@ export async function buildCard(container, element, model) {
   const cardFigure = card.querySelector('.browse-card-figure');
   const cardContent = card.querySelector('.browse-card-content');
 
+  if (type) {
+    cardFigure.style.backgroundColor = `var(--browse-card-color-${type}-secondary)`;
+  }
+
   if (
     (type === courseMappingKey ||
       type === tutorialMappingKey ||
@@ -342,6 +345,17 @@ export async function buildCard(container, element, model) {
       type === recommededMappingKey) &&
     thumbnail
   ) {
+    const laptopContainer = document.createElement('div');
+    laptopContainer.classList.add('laptop-container');
+    const laptopScreen = document.createElement('div');
+    const laptopKeyboard = document.createElement('div');
+    laptopContainer.append(laptopScreen, laptopKeyboard);
+    if (type) {
+      laptopScreen.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
+      laptopKeyboard.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
+    }
+
+    cardFigure.appendChild(laptopContainer);
     const img = document.createElement('img');
     img.src = thumbnail;
     img.loading = 'lazy';
@@ -356,10 +370,10 @@ export async function buildCard(container, element, model) {
       cardFigure.classList.add('img-custom-height');
     });
   }
-
   if (badgeTitle || failedToLoad) {
     const bannerElement = createTag('h3', { class: 'browse-card-banner' });
     bannerElement.innerText = badgeTitle || '';
+    bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
     cardFigure.appendChild(bannerElement);
   }
 
