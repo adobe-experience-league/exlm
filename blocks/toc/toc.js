@@ -1,12 +1,12 @@
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import {
   htmlToElement,
-  rewriteDocsPath,
   getLanguageCode,
   createPlaceholderSpan,
   getConfig,
   matchesAnyTheme,
 } from '../../scripts/scripts.js';
+import { rewriteDocsPath } from '../../scripts/utils/path-utils.js';
 import getSolutionByName from './toc-solutions.js';
 
 /**

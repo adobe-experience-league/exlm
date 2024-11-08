@@ -1,5 +1,5 @@
 import { createOptimizedPicture, getMetadata } from '../../scripts/lib-franklin.js';
-import { fetchAuthorBio } from '../../scripts/scripts.js';
+import { fetchAuthorBio } from '../../scripts/utils/author-utils.js';
 
 export default async function decorate(block) {
   let links = getMetadata('author-bio-page');

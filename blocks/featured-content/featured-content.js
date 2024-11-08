@@ -1,6 +1,7 @@
 import { div, h2, p } from '../../scripts/dom-helpers.js';
 import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
-import { fetchAuthorBio, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { fetchAuthorBio } from '../../scripts/utils/author-utils.js';
 
 let placeholders = {};
 try {
