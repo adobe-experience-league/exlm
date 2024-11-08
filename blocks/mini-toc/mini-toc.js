@@ -1,6 +1,19 @@
-import { debounce, fetchLanguagePlaceholders, isPerspectivePage } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, isPerspectivePage } from '../../scripts/scripts.js';
 import { highlight, setLevels, hashFragment } from './utils.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
+
+/**
+ * debounce fn execution
+ */
+const debounce = (ms, fn) => {
+  let timer;
+  // eslint-disable-next-line func-names
+  return function (...args) {
+    clearTimeout(timer);
+    args.unshift(this);
+    timer = setTimeout(fn(args), ms);
+  };
+};
 
 function setPadding(arg = '') {
   const num = parseInt(arg.split('')[1], 10);
@@ -111,7 +124,7 @@ function buildMiniToc(block, placeholders) {
             highlight(false);
           }
         });
-        window.addEventListener('scroll', () => debounce('scroll', () => highlight(false, isAnchorScroll), 10));
+        window.addEventListener('scroll', () => debounce(10, () => highlight(false, isAnchorScroll)));
       }
     });
   } else {

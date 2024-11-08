@@ -1,4 +1,5 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchAuthorBio } from '../../scripts/utils/author-utils.js';
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -7,31 +8,6 @@ try {
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
-}
-
-// loads author info from author bio page
-export async function fetchAuthorBio(link) {
-  return fetch(link)
-    .then((response) => response.text())
-    .then((html) => {
-      const parser = new DOMParser();
-      const htmlDoc = parser.parseFromString(html, 'text/html');
-      const authorInfo = [...htmlDoc.querySelector('.author-bio').children].map((row) => row.firstElementChild);
-
-      return {
-        authorImage: authorInfo[0].querySelector('img')?.src,
-        authorName: authorInfo[1].textContent,
-        authorTitle: authorInfo[2].textContent,
-        authorCompany: authorInfo[3].textContent,
-        authorDescription: authorInfo[4].textContent,
-        authorSocialLinkText: authorInfo[5].textContent,
-        authorSocialLinkURL: authorInfo[6].querySelector('a')?.href,
-      };
-    })
-    .catch((error) => {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    });
 }
 
 /**

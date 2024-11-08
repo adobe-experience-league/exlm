@@ -1,5 +1,6 @@
 import { loadBlocks } from '../../scripts/lib-franklin.js';
-import { createTag, moveInstrumentation } from '../../scripts/scripts.js';
+import { createTag } from '../../scripts/scripts.js';
+import { moveInstrumentation } from '../../scripts/utils/ue-utils.js';
 
 function changeTabs(e) {
   const { target } = e;
