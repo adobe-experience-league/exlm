@@ -27,14 +27,14 @@ try {
 const countNumberAsArray = (n) => Array.from({ length: n }, (_, i) => n - i);
 
 /**
- * Generates HTML for loading shimmer animation with customizable sizes and an optional CSS class 
- * 
+ * Generates HTML for loading shimmer animation with customizable sizes and an optional CSS class
+ *
  * @param {Array} shimmerSizes - An array of arrays, where each inner array contains width (percentage) and height (pixels)
  *                                 for individual shimmer divs.
  * @param {string} shimmerClass - A CSS class to be added to each shimmer div. Default is an empty string.
- * 
+ *
  * @returns {string} - A string of HTML containing the shimmer divs with inline styles for width and height.
- * 
+ *
  */
 
 function generateLoadingShimmer(shimmerSizes = [[100, 14]], shimmerClass = '') {
