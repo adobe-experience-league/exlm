@@ -1202,7 +1202,7 @@ async function loadPage() {
  * This is used for target A/B testing of home page, and should be removed after the test is done.
  */
 function prehidePageForTarget() {
-  const syleEl = htmlToElement(`<style id="alloy-prehiding"> body { opacity: 0 !important } </style>`);
+  const syleEl = htmlToElement(`<style> body { opacity: 0 !important } </style>`);
   document.head.appendChild(syleEl);
   setTimeout(() => syleEl?.parentNode?.removeChild(syleEl), 3000);
 }
