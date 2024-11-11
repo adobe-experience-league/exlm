@@ -25,9 +25,6 @@ export const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
 /**
  * debounce fn execution
- * @param {number} ms
- * @param {Function} fn
- * @returns {Function} debounced function
  */
 export const debounce = (ms, fn) => {
   let timer;
@@ -87,17 +84,14 @@ export function getFirstChildTextNodes(el) {
   }
   return textNodes;
 }
-
 /**
  * add the given origin to every relative link in the container
  * @param {HTMLElement} container
- * @param {String} origin
+ * @param {function(string): string} replacer
  */
-export function addOriginToRelativeLinks(container, origin) {
+export function updateLinks(container, replacer) {
   container.querySelectorAll('a').forEach((anchor) => {
-    // if anchor link is relative, add the origin
     const href = anchor.getAttribute('href');
-    const url = new URL(href, origin);
-    anchor.setAttribute('href', url.href);
+    anchor.setAttribute('href', replacer(href));
   });
 }

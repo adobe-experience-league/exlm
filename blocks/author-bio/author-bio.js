@@ -1,5 +1,6 @@
 import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
-import { htmlToElement, extractAuthorInfo } from '../../scripts/scripts.js';
+import { htmlToElement } from '../../scripts/scripts.js';
+import { extractAuthorInfo } from '../../scripts/utils/author-utils.js';
 
 export default function decorate(block) {
   const {

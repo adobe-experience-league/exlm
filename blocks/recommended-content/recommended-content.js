@@ -27,6 +27,25 @@ try {
 const countNumberAsArray = (n) => Array.from({ length: n }, (_, i) => n - i);
 
 /**
+ * Generates HTML for loading shimmer animation with customizable sizes and an optional CSS class
+ *
+ * @param {Array} shimmerSizes - An array of arrays, where each inner array contains width (percentage) and height (pixels)
+ *                                 for individual shimmer divs.
+ *
+ * @returns {string} - A string of HTML containing the shimmer divs with inline styles for width and height.
+ *
+ */
+
+function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
+  return shimmerSizes
+    .map(
+      ([width, height]) =>
+        `<div class="loading-shimmer" style="--placeholder-width: ${width}%; --placeholder-height: ${height}px"></div>`,
+    )
+    .join('');
+}
+
+/**
  * Update the copy from the target
  * @param {Object} data
  * @param {HTMLElement} heading
@@ -158,18 +177,22 @@ export default async function decorate(block) {
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
-
+  const recommendedContentShimmer = `
+  <div class="recommended-content-header">${generateLoadingShimmer([[50, 14]])}</div>
+  <div class="recommended-content-description">${generateLoadingShimmer([[50, 10]])}</div>
+`;
   // Clearing the block's content and adding CSS class
   block.innerHTML = '';
-  headingElement.classList.add('recommended-content-header');
-  descriptionElement.classList.add('recommended-content-description');
+
   filterSectionElement.classList.add('recommended-content-filter-heading');
   const blockHeader = createTag('div', { class: 'recommended-content-block-header' });
-  block.appendChild(headingElement);
-  block.appendChild(descriptionElement);
+  blockHeader.innerHTML = generateLoadingShimmer([[80, 30]]);
+  block.insertAdjacentHTML('afterbegin', recommendedContentShimmer);
   block.appendChild(filterSectionElement);
   block.appendChild(blockHeader);
 
+  const headerContainer = block.querySelector('.recommended-content-header');
+  const descriptionContainer = block.querySelector('.recommended-content-description');
   const reversedDomElements = remainingElements.reverse();
   const [firstEl, secondEl, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
   const targetCriteriaId = block.dataset.targetScope;
@@ -177,9 +200,6 @@ export default async function decorate(block) {
 
   const tempWrapper = htmlToElement(`
       <div class="recommended-content-temp-wrapper">
-        <div class="recommended-tab-headers">
-          <p class="loading-shimmer" style="--placeholder-width: 100%; height: 48px"></p>
-        </div>
         <div class="browse-cards-block-content recommended-content-block-section recommended-content-shimmer-wrapper"></div>
       </div>
     `);
@@ -307,12 +327,12 @@ export default async function decorate(block) {
     }
   };
 
-  const getListOfFilterOptions = async (targetSupport, profileInterests) => {
+  const getListOfFilterOptions = async (targetSupport, profileInterests, targetCriteriaScopeId) => {
     const sortedProfileInterests = profileInterests.sort();
     let filterOptions = [...new Set(sortedProfileInterests)];
     filterOptions.unshift(...defaultOptionsKey);
     if (targetSupport) {
-      const emptyFilters = await findEmptyFilters(targetCriteriaId, profileInterests);
+      const emptyFilters = await findEmptyFilters(targetCriteriaScopeId, profileInterests);
       filterOptions = filterOptions.filter((ele) => !emptyFilters.includes(ele));
     }
     return filterOptions;
@@ -348,6 +368,8 @@ export default async function decorate(block) {
       }
 
       if (!(targetSupport && targetCriteriaScopeId)) {
+        headerContainer.innerHTML = headingElement.innerText;
+        descriptionContainer.innerHTML = descriptionElement.innerText;
         block.style.display = 'block';
       }
 
@@ -387,7 +409,7 @@ export default async function decorate(block) {
         ? profileRoles
         : fourthEl?.innerText?.trim().split(',').filter(Boolean);
 
-      const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests);
+      const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
       const [defaultFilterOption = ''] = filterOptions;
       const containsAllAdobeProductsTab = filterOptions.includes(ALL_ADOBE_OPTIONS_KEY);
 
@@ -523,16 +545,13 @@ export default async function decorate(block) {
                 .then(async (resp) => {
                   if (!resp) {
                     if (!UEAuthorMode) {
+                      const section = block.closest('.section');
                       block.parentElement.remove();
-                      document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
-                        if (element.textContent.trim() === '') {
-                          element.remove();
-                        }
-                      });
+                      if (section?.children?.length === 0) section.remove();
                     }
                   }
                   if (resp?.data) {
-                    updateCopyFromTarget(resp, headingElement, descriptionElement, firstEl, secondEl);
+                    updateCopyFromTarget(resp, headerContainer, descriptionContainer, firstEl, secondEl);
                     block.style.display = 'block';
                     setTargetDataAsBlockAttribute(resp, block);
                   }
