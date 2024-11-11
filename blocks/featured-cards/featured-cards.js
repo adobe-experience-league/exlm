@@ -281,7 +281,7 @@ export default async function decorate(block) {
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
     const buildCardsShimmer = BrowseCardShimmer.create(4, block);
-    headerDiv.after(block.querySelector('.shimmer-placeholder'));
+    headerDiv.after(block.querySelector('.browse-card-shimmer'));
 
     /* Remove No Results Content and Show Card Content Info if they were hidden earlier */
     buildNoResultsContent(block, false);

@@ -79,14 +79,14 @@
   white-space: nowrap;
 }
 
-.recommended-content.block .shimmer-placeholder {
+.recommended-content.block .browse-card-shimmer {
   min-width: 100%;
   max-height: 404px;
   overflow: hidden;
   margin-top: 0;
 }
 
-.recommended-content.block .shimmer-placeholder-isloading .shimmer-placeholder-description {
+.recommended-content.block .browse-card-shimmer-isloading .browse-card-shimmer-description {
   max-height: 84px;
 }
 
@@ -195,7 +195,7 @@
   display: none;
 }
 
-.recommended-content.block .browse-cards-block-content .card-wrapper:has(.shimmer-placeholder) {
+.recommended-content.block .browse-cards-block-content .card-wrapper:has(.browse-card-shimmer) {
   display: block;
 }
 

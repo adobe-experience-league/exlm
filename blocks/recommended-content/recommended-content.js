@@ -622,7 +622,7 @@ export default async function decorate(block) {
             }
             const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
             if (cardsCount === 0) {
-              Array.from(contentDiv.querySelectorAll('.shimmer-placeholder')).forEach((shimmer) => {
+              Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((shimmer) => {
                 shimmer.remove();
               });
               buildNoResultsContent(contentDiv, false);
@@ -647,7 +647,7 @@ export default async function decorate(block) {
               contentDiv.style.display = 'block';
             } else {
               // In the unlikely scenario that some card promises were successfully resolved, while some others failed. Try to show the rendered cards.
-              Array.from(contentDiv.querySelectorAll('.shimmer-placeholder')).forEach((element) => {
+              Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((element) => {
                 element.remove();
               });
             }

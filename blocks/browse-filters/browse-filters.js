@@ -991,7 +991,7 @@ function handleCoveoHeadlessSearch(
       filterResultsEl.style.display = 'none';
       filtersPaginationEl.style.display = 'none';
       browseFiltersSection.insertBefore(
-        document.querySelector('.browse-filters-form .shimmer-placeholder'),
+        document.querySelector('.browse-filters-form .browse-card-shimmer'),
         browseFiltersSection.childNodes[document.querySelector('.browse-topics') ? 4 : 3],
       );
     }

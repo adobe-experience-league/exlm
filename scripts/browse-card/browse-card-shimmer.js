@@ -7,20 +7,20 @@ const DEFAULT_SHIMMER_COUNT = 4;
 export default class BrowseCardShimmer {
   static renderShimmer(count = DEFAULT_SHIMMER_COUNT, element = null) {
     const shimmer = element || document.createElement('div');
-    shimmer.className = 'shimmer-placeholder';
+    shimmer.className = 'browse-card-shimmer';
     if (element) {
       shimmer.innerHTML = ``;
     }
     for (let i = 0; i < count; i += 1) {
-      shimmer.innerHTML += `<div class="shimmer-placeholder-isloading">
-          <div class="shimmer-placeholder-image"></div>
-          <div class="shimmer-placeholder-content">
-            <div class="shimmer-placeholder-description"></div>
-            <div class="shimmer-placeholder-text-container">
-              <div class="shimmer-placeholder-main-text"></div>
-              <div class="shimmer-placeholder-sub-text"></div>
+      shimmer.innerHTML += `<div class="browse-card-shimmer-isloading">
+          <div class="browse-card-shimmer-image"></div>
+          <div class="browse-card-shimmer-content">
+            <div class="browse-card-shimmer-description"></div>
+            <div class="browse-card-shimmer-text-container">
+              <div class="browse-card-shimmer-main-text"></div>
+              <div class="browse-card-shimmer-sub-text"></div>
             </div>
-            <div class="shimmer-placeholder-btn"></div>
+            <div class="browse-card-shimmer-btn"></div>
           </div>
         </div>`;
     }
