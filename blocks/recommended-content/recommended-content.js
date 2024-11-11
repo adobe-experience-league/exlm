@@ -194,7 +194,8 @@ export default async function decorate(block) {
   const headerContainer = block.querySelector('.recommended-content-header');
   const descriptionContainer = block.querySelector('.recommended-content-description');
   const reversedDomElements = remainingElements.reverse();
-  const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] = reversedDomElements;
+  const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
+    reversedDomElements;
   const targetCriteriaId = block.dataset.targetScope;
   const profileDataPromise = defaultProfileClient.getMergedProfile();
 
@@ -406,7 +407,7 @@ export default async function decorate(block) {
       });
       const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase() ?? 'MOST_POPULAR'];
       const filterProductByOption = filterProductByOptionEl?.innerText?.trim() ?? '';
-      const role = filterProductByOption?.includes('profile_context')
+      const role = roleEl?.innerText?.trim()?.includes('profile_context')
         ? profileRoles
         : roleEl?.innerText?.trim().split(',').filter(Boolean);
 
@@ -502,10 +503,16 @@ export default async function decorate(block) {
           if (filterProductByOption === 'all_adobe_products') {
             clonedProducts.length = 0;
           } else if (filterProductByOption === 'profile_context') {
-            // show everything for default tab
+            // show everything from profile for default tab
             clonedProducts = [...new Set([...sortedProfileInterests])];
-          } else if (filterProductByOption === 'specific_products') {
-            clonedProducts = [...new Set([...products])];
+          } else {
+            const { products: filterProductList } = extractCapability(filterProductByOption);
+            if (filterProductList?.length) {
+              const uniqueFilterProductList = structuredClone(removeProductDuplicates(filterProductList));
+              clonedProducts = [...uniqueFilterProductList];
+            } else {
+              clonedProducts = [];
+            }
           }
         }
 
