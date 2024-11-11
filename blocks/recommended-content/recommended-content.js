@@ -36,7 +36,7 @@ const countNumberAsArray = (n) => Array.from({ length: n }, (_, i) => n - i);
  *
  */
 
-function generateLoadingShimmer(shimmerSizes = [[100, 14]]) {
+function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
   return shimmerSizes
     .map(
       ([width, height]) =>
@@ -177,7 +177,7 @@ export default async function decorate(block) {
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
-  const defaultContentHtml = `
+  const recommendedContentShimmer = `
   <div class="recommended-content-header">${generateLoadingShimmer([[50, 14]])}</div>
   <div class="recommended-content-description">${generateLoadingShimmer([[50, 10]])}</div>
 `;
@@ -187,7 +187,7 @@ export default async function decorate(block) {
   filterSectionElement.classList.add('recommended-content-filter-heading');
   const blockHeader = createTag('div', { class: 'recommended-content-block-header' });
   blockHeader.innerHTML = generateLoadingShimmer([[80, 30]]);
-  block.insertAdjacentHTML('afterbegin', defaultContentHtml);
+  block.insertAdjacentHTML('afterbegin', recommendedContentShimmer);
   block.appendChild(filterSectionElement);
   block.appendChild(blockHeader);
 
