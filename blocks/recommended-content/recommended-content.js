@@ -508,7 +508,7 @@ export default async function decorate(block) {
             clonedProducts = [...new Set([...products])];
           }
         }
-        
+
         const params = {
           contentType: null,
           product: clonedProducts,
