@@ -22,59 +22,12 @@ import {
   toClassName,
 } from './lib-franklin.js';
 
+/**
+ * please do not import any other modules here, as this file is used in the critical path.
+ * Load files async using import() if you must.
+ */
+
 const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
-export const timers = new Map();
-
-/**
- * Moves all the attributes from a given elmenet to another given element.
- * @param {Element} from the element to copy attributes from
- * @param {Element} to the element to copy attributes to
- */
-export function moveAttributes(from, to, attributes) {
-  if (!attributes) {
-    // eslint-disable-next-line no-param-reassign
-    attributes = [...from.attributes].map(({ nodeName }) => nodeName);
-  }
-  attributes.forEach((attr) => {
-    const value = from.getAttribute(attr);
-    if (value) {
-      to.setAttribute(attr, value);
-      from.removeAttribute(attr);
-    }
-  });
-}
-
-/**
- * Move instrumentation attributes from a given element to another given element.
- * @param {Element} from the element to copy attributes from
- * @param {Element} to the element to copy attributes to
- */
-export function moveInstrumentation(from, to) {
-  moveAttributes(
-    from,
-    to,
-    [...from.attributes]
-      .map(({ nodeName }) => nodeName)
-      .filter((attr) => attr.startsWith('data-aue-') || attr.startsWith('data-richtext-')),
-  );
-}
-
-// eslint-disable-next-line
-export function debounce(id = '', fn = () => void 0, ms = 250) {
-  if (id.length > 0) {
-    if (timers.has(id)) {
-      clearTimeout(timers.get(id));
-    }
-
-    timers.set(
-      id,
-      setTimeout(() => {
-        timers.delete(id);
-        fn();
-      }, ms),
-    );
-  }
-}
 
 /**
  * load fonts.css and set a session storage flag
@@ -227,46 +180,6 @@ function addBrowseBreadCrumb(main) {
 }
 
 /**
- * Extract author information from the author page.
- * @param {HTMLElement} block
- */
-export function extractAuthorInfo(block) {
-  const authorInfo = [...block.children].map((row) => row.firstElementChild);
-  return {
-    authorImage: authorInfo[0]?.querySelector('img')?.getAttribute('src'),
-    authorName: authorInfo[1]?.textContent.trim(),
-    authorTitle: authorInfo[2]?.textContent.trim(),
-    authorCompany: authorInfo[3]?.textContent.trim(),
-    authorDescription: authorInfo[4],
-    authorSocialLinkText: authorInfo[5]?.textContent.trim(),
-    authorSocialLinkURL: authorInfo[6]?.textContent.trim(),
-  };
-}
-
-/**
- * Fetch the author information from the author page.
- * @param {HTMLAnchorElement} anchor || {string} link
- */
-export async function fetchAuthorBio(anchor) {
-  const link = anchor.href ? anchor.href : anchor;
-  return fetch(link)
-    .then((response) => response.text())
-    .then((html) => {
-      const parser = new DOMParser();
-      const htmlDoc = parser.parseFromString(html, 'text/html');
-      const authorInfoEl = htmlDoc.querySelector('.author-bio');
-      if (!authorInfoEl) {
-        return null;
-      }
-      const authorInfo = extractAuthorInfo(authorInfoEl);
-      return authorInfo;
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-}
-
-/**
  * Add a left rail to the profile page.
  * @param {HTMLElement} main
  *
@@ -283,11 +196,7 @@ function addProfileRail(main) {
  * @param {HTMLElement} main
  */
 function addMiniToc(main) {
-  if (
-    document.querySelectorAll('.mini-toc').forEach((toc) => {
-      toc.remove();
-    })
-  );
+  document.querySelectorAll('.mini-toc').forEach((toc) => toc.remove());
   const tocSection = document.createElement('div');
   tocSection.classList.add('mini-toc-section');
   const miniTocBlock = buildBlock('mini-toc', []);
@@ -447,24 +356,6 @@ export const decorateLinks = (block) => {
 };
 
 /**
- * set attributes needed for the docs pages grid to work properly
- * @param {Element} main the main element
- */
-function decorateContentSections(main) {
-  const contentSections = main.querySelectorAll('.section:not(.toc-container, .mini-toc-container)');
-  contentSections.forEach((row, i) => {
-    if (i === 0) {
-      row.classList.add('content-section-first');
-    }
-    if (i === contentSections.length - 1) {
-      row.classList.add('content-section-last');
-    }
-  });
-
-  main.style.setProperty('--content-sections-count', contentSections.length);
-}
-
-/**
  * see: https://github.com/adobe-experience-league/exlm-converter/pull/208
  * @param {HTMLElement} main
  */
@@ -532,7 +423,6 @@ export const getDecoratedInlineHtml = (inputStr) => {
 };
 
 /**
- *
  * @param {Node} textNode
  */
 export function decorateInlineText(textNode) {
@@ -633,7 +523,6 @@ export function decorateMain(main) {
   decorateSections(main);
   decorateBlocks(main);
   buildSectionBasedAutoBlocks(main);
-  decorateContentSections(main);
 }
 
 /**
@@ -659,8 +548,6 @@ async function loadEager(doc) {
   }
 }
 
-export const isHelixDomain = () => ['hlx.page', 'hlx.live'].some((sfx) => window.location.hostname.endsWith(sfx));
-
 /**
  * get site config
  */
@@ -676,6 +563,7 @@ export function getConfig() {
       authorUrl: 'author-p122525-e1219150.adobeaemcloud.com',
       hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
+      community: 'experienceleaguecommunities.adobe.com',
     },
     {
       env: 'STAGE',
@@ -683,6 +571,7 @@ export function getConfig() {
       authorUrl: 'author-p122525-e1219192.adobeaemcloud.com',
       hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm-stage--adobe-experience-league.live',
+      community: 'experienceleaguecommunities-dev.adobe.com',
     },
     {
       env: 'DEV',
@@ -690,6 +579,7 @@ export function getConfig() {
       authorUrl: 'author-p122525-e1200861.adobeaemcloud.com',
       hlxPreview: 'main--exlm--adobe-experience-league.hlx.page',
       hlxLive: 'main--exlm--adobe-experience-league.hlx.live',
+      community: 'experienceleaguecommunities-dev.adobe.com',
     },
   ];
 
@@ -731,6 +621,7 @@ export function getConfig() {
   const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
   const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
+  const communityHost = currentEnv?.community || defaultEnv.community;
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
   // Locale param for Community page URL
@@ -762,6 +653,7 @@ export function getConfig() {
     currentEnv,
     cdnOrigin,
     cdnHost,
+    communityHost,
     prodAssetsCdnOrigin,
     ppsOrigin,
     launchScriptSrc,
@@ -912,6 +804,9 @@ const loadMartech = async (headerPromise, footerPromise) => {
   });
 };
 
+/**
+ * based on `template`/`theme` metadata, loads the corresponding CSS theme files
+ */
 async function loadThemes() {
   const toClassNames = (classes) =>
     classes
@@ -997,8 +892,18 @@ function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
-  // eslint-disable-next-line import/no-cycle
   addMetaTagsToWindow();
+}
+
+/** load and execute the default export of the given js module path */
+async function loadDefaultModule(jsPath) {
+  try {
+    const mod = await import(jsPath);
+    if (mod.default) await mod.default();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(`failed to load module for ${jsPath}`, error);
+  }
 }
 
 /**
@@ -1007,10 +912,7 @@ function loadDelayed() {
 async function loadRails() {
   if (isDocPage) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/rails/rails.css`);
-    const mod = await import('./rails/rails.js');
-    if (mod.default) {
-      await mod.default();
-    }
+    loadDefaultModule('./rails/rails.js');
   }
 }
 
@@ -1020,29 +922,7 @@ async function loadRails() {
 export async function loadArticles() {
   if (isPerspectivePage) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/articles/articles.css`);
-    const mod = await import('./articles/articles.js');
-    if (mod.default) {
-      await mod.default();
-    }
-    const contentContainer = document.createElement('div');
-    contentContainer.classList.add('article-content-container');
-    if (!document.querySelector('main > .article-content-section, main > .tab-section')) {
-      document.querySelector('main > .mini-toc-section').remove();
-    } else {
-      if (document.querySelector('.mini-toc')) {
-        document.querySelector('.mini-toc').style.display = null;
-      }
-      document
-        .querySelectorAll('main > .article-content-section, main > .tab-section, main > .mini-toc-section')
-        .forEach((section) => {
-          contentContainer.append(section);
-        });
-      if (document.querySelector('.article-header-section')) {
-        document.querySelector('.article-header-section').after(contentContainer);
-      } else {
-        document.querySelector('main').prepend(contentContainer);
-      }
-    }
+    loadDefaultModule('./articles/articles.js');
   }
 }
 
@@ -1056,13 +936,6 @@ function showSignupDialog() {
   }
 }
 
-function showBrowseBackgroundGraphic() {
-  if (isBrowsePage) {
-    const main = document.querySelector('main');
-    main.classList.add('browse-background-img');
-  }
-}
-
 /**
  * Helper function that converts an AEM path into an EDS path.
  */
@@ -1070,46 +943,21 @@ export function getEDSLink(aemPath) {
   return window.hlx.aemRoot ? aemPath.replace(window.hlx.aemRoot, '').replace('.html', '') : aemPath;
 }
 
-/**
- * Helper function that adapts the path to work on EDS and AEM rendering
- */
+/** Helper function that adapts the path to work on EDS and AEM rendering */
 export function getLink(edsPath) {
   return window.hlx.aemRoot && !edsPath.startsWith(window.hlx.aemRoot) && edsPath.indexOf('.html') === -1
     ? `${window.hlx.aemRoot}${edsPath}.html`
     : edsPath;
 }
 
-export const removeExtension = (pathStr) => {
-  const parts = pathStr.split('.');
-  if (parts.length === 1) return parts[0];
-  return parts.slice(0, -1).join('.');
-};
-
-// Convert the given String to Pascal Case
-export const toPascalCase = (name) => (name ? `${name.charAt(0).toUpperCase()}${name.slice(1)}` : '');
-
-export function rewriteDocsPath(docsPath) {
-  const PROD_BASE = 'https://experienceleague.adobe.com';
-  const url = new URL(docsPath, PROD_BASE);
-  if (!url.pathname.startsWith('/docs') || url.pathname.startsWith('/docs/courses/')) {
-    return docsPath; // not a docs path, return as is
-  }
-  // eslint-disable-next-line no-use-before-define
-  const { lang } = getPathDetails();
-  const language = url.searchParams.get('lang') || lang;
-  url.searchParams.delete('lang');
-  let pathname = `${language.toLowerCase()}${url.pathname}`;
-  pathname = removeExtension(pathname); // new URLs are extensionless
-  url.pathname = pathname;
-  return url.toString().replace(PROD_BASE, ''); // always remove PROD_BASE if exists
-}
-
+/** fetch first path, if non 200, fetch the second */
 export async function fetchWithFallback(path, fallbackPath) {
   const response = await fetch(path);
   if (response.ok) return response;
   return fetch(fallbackPath);
 }
 
+/** fetch fragment relative to /fragments/{lang} */
 export async function fetchFragment(rePath, lang) {
   const path = `${window.hlx.codeBasePath}/fragments/${lang}/${rePath}.plain.html`;
   const fallback = `${window.hlx.codeBasePath}/fragments/en/${rePath}.plain.html`;
@@ -1117,6 +965,7 @@ export async function fetchFragment(rePath, lang) {
   return response.text();
 }
 
+/* fetch language specific placeholders, fallback to english */
 export async function fetchLanguagePlaceholders(lang) {
   const langCode = lang || getPathDetails()?.lang || 'en';
   try {
@@ -1158,42 +1007,12 @@ export async function getLanguageCode() {
   return window.languageCode;
 }
 
-async function loadDefaultModule(jsPath) {
-  try {
-    const mod = await import(jsPath);
-    if (mod.default) await mod.default();
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(`failed to load module for ${jsPath}`, error);
-  }
-}
-
-export function isFeatureEnabled(name) {
-  return getMetadata('feature-flags')
-    .split(',')
-    .map((t) => t.toLowerCase().trim())
-    .includes(name);
-}
-
 /**
- * THIS IS TEMPORARY FOR SUMMIT
- */
-function handleHomePageHashes() {
-  // home page AND #feedback hash
-  const { pathname, search = '', hash = '' } = window.location;
-  if (pathname === '/') {
-    if (hash === '#feedback' || hash === '#dashboard/profile') {
-      window.location.href = `/home${search}${hash}`;
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * @param {string} placeholderKey
- * @param {string} fallbackText
- * @returns
+ * @param {string} placeholderKey the camelcase key of the placeholder
+ * @param {string} fallbackText the text to display if the placeholder is not found.
+ * @param {function} onResolved callback function to execute when the placeholder is resolved
+ * @param {function} onRejected callback function to execute when the placeholder is rejected/error
+ * @returns {HTMLSpanElement}
  */
 export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, onRejected) {
   const span = document.createElement('span');
@@ -1347,18 +1166,21 @@ function createDocColumns() {
   });
 }
 
-async function loadPage() {
-  // THIS IS TEMPORARY FOR SUMMIT.
-  if (handleHomePageHashes()) return;
-  // END OF TEMPORARY FOR SUMMIT.
+/** handles a set of 1-1 redirects */
+function handleRedirects() {
+  const redirects = ['/#feedback:/home#feedback'].map((p) => p.split(':').map((s) => new URL(s, window.location.href)));
+  const redirect = redirects.find(([from]) => window.location.href === from.href);
+  if (redirect) window.location.href = redirect[1].href;
+}
 
+async function loadPage() {
+  handleRedirects();
   await loadEager(document);
   createDocColumns();
   loadRails();
   await loadLazy(document);
   loadArticles();
   loadDelayed();
-  showBrowseBackgroundGraphic();
   showSignupDialog();
 
   if (isDocPage) {
@@ -1376,32 +1198,13 @@ async function loadPage() {
 }
 
 /**
- * WARNING: DO NOT MODIFY - This function is referenced from Target
- * https://experienceleague.adobe.com/en/docs/experience-platform/web-sdk/personalization/manage-flicker#manage-flicker-for-asynchronous-deployments
- *
- * Prehides content by adding a temporary style element to the document that hides the body.
- * The style element is automatically removed after a specified timeout.
- *
- * @param {Document} e - The document object (usually `document`).
- * @param {boolean} a - A boolean flag that determines whether to skip prehiding.
- *                      If `true`, the function returns early and does nothing.
- * @param {string} n - The CSS styles to apply, typically used to hide content (e.g., `body { opacity: 0 !important }`).
- * @param {number} t - The timeout in milliseconds after which the style element is removed.
+ * A simple shorter impl of alloy prehide script.
+ * This is used for target A/B testing of home page, and should be removed after the test is done.
  */
-function prehideFunction(e, a, n, t) {
-  if (a) return;
-  const i = e.head;
-  if (i) {
-    const o = e.createElement('style');
-    o.id = 'alloy-prehiding';
-    o.innerText = n;
-    i.appendChild(o);
-    setTimeout(() => {
-      if (o.parentNode) {
-        o.parentNode.removeChild(o);
-      }
-    }, t);
-  }
+function prehidePageForTarget() {
+  const styleEl = htmlToElement(`<style> body { opacity: 0 !important } </style>`);
+  document.head.appendChild(styleEl);
+  setTimeout(() => styleEl?.parentNode?.removeChild(styleEl), 3000);
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
@@ -1449,12 +1252,7 @@ function prehideFunction(e, a, n, t) {
       if (signedIn) {
         // Execute the prehiding function
         if (!sessionStorage.getItem(PHP_AB)) {
-          prehideFunction(
-            document,
-            window.location.href.indexOf('adobeaemcloud.com') !== -1,
-            'body { opacity: 0 !important }',
-            3000,
-          );
+          prehidePageForTarget();
         }
         if (personalizedHomeLink && sessionStorage.getItem(PHP_AB) === 'authHP') {
           window.location.pathname = `${lang}${personalizedHomeLink}`;

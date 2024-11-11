@@ -1,0 +1,38 @@
+name: Update PR Description
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+
+jobs:
+  update-description:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.UPDATE_PR_GITHUB_TOKEN }}
+      OWNER: ${{ github.repository_owner }}
+      REPO: ${{ github.event.repository.name }}
+      BRANCH: ${{ github.head_ref }}
+      PR_NUMBER: ${{ github.event.number }}
+      ORIGIN: https://${{ github.head_ref}}--${{ github.event.repository.name }}--${{ github.repository_owner }}.aem.page
+    steps:
+      - name: Prepare Env Variables
+        run: |
+          PREFIX="- After: ${ORIGIN}"
+          PREFIX=$(printf '%s\n' "${PREFIX}" | sed -e 's/[\/&]/\\&/g')
+          echo "PREFIX=${PREFIX}" >> $GITHUB_ENV
+      - name: Update PR Description
+        run: |
+          echo PREFIX: $PREFIX
+          echo "${{ env.PREFIX }}"
+          echo GITHUB_ENV: $GITHUB_ENV
+
+          PR_UPDATED_BODY="$(
+            gh api /repos/$OWNER/$REPO/pulls/$PR_NUMBER | jq -r '.body' | \
+            sed 's/{repo}/${{ env.REPO }}/g' | \
+            sed 's/{branch}/${{ env.BRANCH }}/g' | \
+            sed 's/{owner}/${{ env.OWNER }}/g' | \
+            sed "s/\\$/${{ env.PREFIX}}/g"
+          )"
+          echo "New PR Body: $PR_UPDATED_BODY"
+          gh api --method PATCH /repos/$OWNER/$REPO/pulls/$PR_NUMBER -f body="$PR_UPDATED_BODY"

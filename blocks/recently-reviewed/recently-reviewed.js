@@ -85,12 +85,9 @@ function renderNavigationArrows(titleContainer) {
 }
 
 function removeEmptySection(block) {
+  const section = block.closest('.section');
   block.parentElement.remove();
-  document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
-    if (element.textContent.trim() === '') {
-      element.remove();
-    }
-  });
+  if (section?.children?.length === 0) section.remove();
 }
 
 export default async function decorate(block) {

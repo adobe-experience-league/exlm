@@ -1,5 +1,6 @@
-import { createTag, fetchLanguagePlaceholders, rewriteDocsPath } from './scripts.js';
+import { createTag, fetchLanguagePlaceholders } from './scripts.js';
 import { getMetadata } from './lib-franklin.js';
+import { rewriteDocsPath } from './utils/path-utils.js';
 
 export default async function loadPrevNextBtn() {
   const placeholders = await fetchLanguagePlaceholders();

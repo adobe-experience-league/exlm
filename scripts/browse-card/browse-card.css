@@ -87,6 +87,20 @@
   background-size: 200% 100%;
   animation: placeholder-wave 1.5s infinite;
 }
+
+.browse-card.browse-card-frozen .browse-card-tag-text {
+  height: 21px;
+  width: 100px;
+  margin-bottom: 16px;
+  background-image: linear-gradient(
+    90deg,
+    var(--shimmer-image-slide-start) 0px,
+    var(--shimmer-image-slide-end) 40px,
+    var(--shimmer-image-slide-start) 80px
+  );
+  background-size: 200% 100%;
+  animation: placeholder-wave 1.5s infinite;
+}
 .browse-card .browse-card-tag-text h4 {
   text-transform: uppercase;
   margin: 0;

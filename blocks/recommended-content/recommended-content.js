@@ -306,12 +306,12 @@ export default async function decorate(block) {
     }
   };
 
-  const getListOfFilterOptions = async (targetSupport, profileInterests) => {
+  const getListOfFilterOptions = async (targetSupport, profileInterests, targetCriteriaScopeId) => {
     const sortedProfileInterests = profileInterests.sort();
     let filterOptions = [...new Set(sortedProfileInterests)];
     filterOptions.unshift(...defaultOptionsKey);
     if (targetSupport) {
-      const emptyFilters = await findEmptyFilters(targetCriteriaId, profileInterests);
+      const emptyFilters = await findEmptyFilters(targetCriteriaScopeId, profileInterests);
       filterOptions = filterOptions.filter((ele) => !emptyFilters.includes(ele));
     }
     return filterOptions;
@@ -386,7 +386,7 @@ export default async function decorate(block) {
         ? profileRoles
         : fourthEl?.innerText?.trim().split(',').filter(Boolean);
 
-      const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests);
+      const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
       const [defaultFilterOption = ''] = filterOptions;
       const containsAllAdobeProductsTab = filterOptions.includes(ALL_ADOBE_OPTIONS_KEY);
 
@@ -522,12 +522,9 @@ export default async function decorate(block) {
                 .then(async (resp) => {
                   if (!resp) {
                     if (!UEAuthorMode) {
+                      const section = block.closest('.section');
                       block.parentElement.remove();
-                      document.querySelectorAll('.section:not(.profile-rail-section)').forEach((element) => {
-                        if (element.textContent.trim() === '') {
-                          element.remove();
-                        }
-                      });
+                      if (section?.children?.length === 0) section.remove();
                     }
                   }
                   if (resp?.data) {
@@ -625,7 +622,7 @@ export default async function decorate(block) {
             }
             const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
             if (cardsCount === 0) {
-              Array.from(contentDiv.querySelectorAll('.shimmer-placeholder')).forEach((shimmer) => {
+              Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((shimmer) => {
                 shimmer.remove();
               });
               buildNoResultsContent(contentDiv, false);
@@ -650,7 +647,7 @@ export default async function decorate(block) {
               contentDiv.style.display = 'block';
             } else {
               // In the unlikely scenario that some card promises were successfully resolved, while some others failed. Try to show the rendered cards.
-              Array.from(contentDiv.querySelectorAll('.shimmer-placeholder')).forEach((element) => {
+              Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((element) => {
                 element.remove();
               });
             }

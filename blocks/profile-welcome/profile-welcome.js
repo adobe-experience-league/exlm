@@ -140,50 +140,19 @@ async function decorateProfileWelcomeBlock(block) {
     });
     communityProfilePromise.then(async (communityProfileData) => {
       const { adobeDisplayName, company, interests } = await getProfileInfoData();
-      const {
-        username: communityUserName = UEAuthorMode ? 'Community User Name' : '',
-        title: communityUserTitle = UEAuthorMode ? 'Community User Title' : '',
-        location: communityUserLocation = UEAuthorMode ? 'Community User Location' : '',
-      } = communityProfileData || {};
+      const { username: communityUserName = UEAuthorMode ? 'Community User Name' : '' } = communityProfileData || {};
       const hasInterests = checkIfInterestsExist(interests);
-      const communityDataEl = `<div class="profile-user-card-name">${adobeDisplayName}</div>
-                          ${communityUserName ? `<div class="profile-user-card-tag">@${communityUserName}</div>` : ''}
-                          <div class="profile-user-card-org">${company}</div>`;
+      const communityDataEl =
+        hasInterests && !UEAuthorMode
+          ? `<div class="profile-user-card-name">${adobeDisplayName}</div>
+     ${communityUserName ? `<div class="profile-user-card-tag">@${communityUserName}</div>` : ''}`
+          : `<div class="profile-user-card-name">${adobeDisplayName}</div>
+     ${communityUserName ? `<div class="profile-user-card-tag">@${communityUserName}</div>` : ''}
+     <div class="profile-user-card-org">${company}</div>`;
+
       const userCardInfoEl = block.querySelector('.profile-user-card-info');
       if (userCardInfoEl) {
         userCardInfoEl.innerHTML = communityDataEl;
-      }
-      const profileCardWrapSectionEl = block.querySelector('.profile-card-wrap-section');
-      if (profileCardWrapSectionEl) {
-        profileCardWrapSectionEl.innerHTML = `
-          ${
-            hasInterests && !UEAuthorMode
-              ? `${
-                  communityUserTitle
-                    ? `<div class="profile-user-card-title">
-                          <span class="title-heading">${
-                            placeholders?.title || 'TITLE'
-                          }: </span><span class="content">${communityUserTitle}</span></div>`
-                    : ''
-                }
-            ${
-              communityUserLocation
-                ? `<div class="profile-user-card-location"><span class="location-heading">${
-                    placeholders?.location || 'LOCATION'
-                  }: </span><span class="content">${communityUserLocation}</span></div>`
-                : ''
-            }
-            `
-              : `<span class="icon icon-exclamation"></span>
-             ${incompleteProfileText.innerHTML}
-            `
-          }`;
-        if (hasInterests && !UEAuthorMode) {
-          profileCardWrapSectionEl.classList.add('profile-user-card-community-info');
-        } else {
-          profileCardWrapSectionEl.classList.add('profile-user-card-incomplete');
-        }
-        decorateIcons(profileCardWrapSectionEl);
       }
     });
 
@@ -195,7 +164,7 @@ async function decorateProfileWelcomeBlock(block) {
                         <p class="loading-shimmer" style="--placeholder-width: 100%; --placeholder-height: 75px"></p>
                         </div>
                         <div class="profile-user-card-info">
-                            <p class="loading-shimmer" style="--placeholder-width: 100%; --placeholder-height: 44px"></p>
+                        <p class="profile-text-shimmer loading-shimmer" style="--placeholder-width: 100px; --placeholder-height: 100%"></p>
                         </div> 
                   </div>
                   <div class="profile-card-wrap-section">
@@ -233,46 +202,64 @@ async function decorateProfileWelcomeBlock(block) {
 
   getProfileInfoData().then(({ interests, industry, adobeFirstName, roles, profilePicture }) => {
     const hasInterests = checkIfInterestsExist(interests);
+    const profileCardWrapSectionEl = block.querySelector('.profile-card-wrap-section');
+    if (hasInterests && !UEAuthorMode) {
+      const profileUserCardParent = block.querySelector('.profile-user-card');
+      profileUserCardParent?.classList.add('profile-user-card-mini');
+      block.querySelector('.profile-user-card-details')?.remove();
+
+      if (profileCardWrapSectionEl && !UEAuthorMode) {
+        profileCardWrapSectionEl.remove();
+      }
+    } else {
+      profileCardWrapSectionEl.innerHTML = `<span class="icon icon-exclamation"></span>
+             ${incompleteProfileText.innerHTML}
+            `;
+      profileCardWrapSectionEl.classList.add('profile-user-card-incomplete');
+      decorateIcons(profileCardWrapSectionEl);
+    }
     const hasIndustry = checkIfIndustryExists(industry);
     const profileUserCardIndustryPlaceholder = block.querySelector('.profile-user-card-industry');
-    const fetchIndustryData = new Promise((resolve) => {
-      if (hasIndustry) {
-        fetchIndustryOptions().then((industryData) => {
-          resolve(industryData);
-        });
-      } else {
-        resolve(null);
-      }
-    });
-    fetchIndustryData.then((industryOptions) => {
-      if (hasIndustry && industryOptions) {
-        if (Array.isArray(industry)) {
-          industryName = getIndustryNameById(industry[0], industryOptions);
+    if (profileUserCardIndustryPlaceholder) {
+      const fetchIndustryData = new Promise((resolve) => {
+        if (hasIndustry) {
+          fetchIndustryOptions().then((industryData) => {
+            resolve(industryData);
+          });
+        } else {
+          resolve(null);
         }
-        if (typeof industryName === 'string') {
-          industryName = getIndustryNameById(industry, industryOptions);
+      });
+      fetchIndustryData.then((industryOptions) => {
+        if (hasIndustry && industryOptions) {
+          if (Array.isArray(industry)) {
+            industryName = getIndustryNameById(industry[0], industryOptions);
+          }
+          if (typeof industryName === 'string') {
+            industryName = getIndustryNameById(industry, industryOptions);
+          }
         }
-      }
-      const hasIndustryName = industryName.trim() !== '';
+        const hasIndustryName = industryName.trim() !== '';
 
-      let industryContent = '';
-      if (hasIndustryName) {
-        industryContent = `
-            <span class="industry-heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
-            <span class="${!hasInterests ? 'incomplete-profile' : ''}">
-              ${industryName}
-            </span>`;
-      } else if (!hasInterests || UEAuthorMode) {
-        industryContent = `
-            <span class="industry-heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
-            <span class="${!hasInterests ? 'incomplete-profile' : ''}">
-              ${placeholders?.unknown || 'Unknown'}
-            </span>`;
-      }
-      if (profileUserCardIndustryPlaceholder) {
-        profileUserCardIndustryPlaceholder.innerHTML = industryContent;
-      }
-    });
+        let industryContent = '';
+        if (hasIndustryName) {
+          industryContent = `
+              <span class="industry-heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
+              <span class="${!hasInterests ? 'incomplete-profile' : ''}">
+                ${industryName}
+              </span>`;
+        } else if (!hasInterests || UEAuthorMode) {
+          industryContent = `
+              <span class="industry-heading">${placeholders?.myIndustry || 'MY INDUSTRY'}: </span>
+              <span class="${!hasInterests ? 'incomplete-profile' : ''}">
+                ${placeholders?.unknown || 'Unknown'}
+              </span>`;
+        }
+        if (profileUserCardIndustryPlaceholder) {
+          profileUserCardIndustryPlaceholder.innerHTML = industryContent;
+        }
+      });
+    }
 
     const eyebrowTextEl = block.querySelector('.profile-curated-eyebrowtext');
     if (eyebrowTextEl) {

@@ -1,7 +1,8 @@
-import { htmlToElement, moveInstrumentation, decorateExternalLinks } from '../../scripts/scripts.js';
+import { htmlToElement, decorateExternalLinks } from '../../scripts/scripts.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { loadBlocks, decorateSections, decorateBlocks } from '../../scripts/lib-franklin.js';
 import getEmitter from '../../scripts/events.js';
+import { moveInstrumentation } from '../../scripts/utils/ue-utils.js';
 
 const signupDialogEventEmitter = getEmitter('signupDialog');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');

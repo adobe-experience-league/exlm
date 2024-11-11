@@ -1,12 +1,12 @@
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import {
   htmlToElement,
-  rewriteDocsPath,
   getLanguageCode,
   createPlaceholderSpan,
   getConfig,
   matchesAnyTheme,
 } from '../../scripts/scripts.js';
+import { rewriteDocsPath } from '../../scripts/utils/path-utils.js';
 import getSolutionByName from './toc-solutions.js';
 
 /**
@@ -88,17 +88,41 @@ function buildTocMobileDropdown() {
  * @param {HTMLElement} tocContent - The container with overflow and scroll
  * @param {HTMLElement} element - The element to bring into view
  */
-function ensureElementInView(tocContent, element) {
+function ensureElementInView(tocContent, element, tocHeaderSelector = '.toc .toc-header', tocTreeSelector = 'ul') {
   if (!tocContent || !element) {
-    console.error('tocContent or element is null', { tocContent, element }); // eslint-disable-line no-console
+    // eslint-disable-next-line no-console
+    console.error('tocContent or element is null', { tocContent, element });
     return;
   }
 
-  const elementRect = element.getBoundingClientRect();
-  const tocContentRect = tocContent.getBoundingClientRect();
-  const scrollPosition = elementRect.top - tocContentRect.top + tocContent.scrollTop;
+  const tocHeader = document.querySelector(tocHeaderSelector);
+  const tocTree = tocContent.querySelector(tocTreeSelector);
 
-  tocContent.scrollTop = scrollPosition;
+  if (!tocHeader || !tocTree) {
+    // eslint-disable-next-line no-console
+    console.error('tocHeader or tocTree not found', { tocHeaderSelector, tocTreeSelector });
+    return;
+  }
+
+  const updateContainerHeight = () => {
+    tocContent.style.height = `calc(100vh - calc(${tocHeader.getBoundingClientRect().height}px + 65px))`;
+  };
+
+  const scrollToElement = () => {
+    const elementRect = element.getBoundingClientRect();
+    const tocTreeRect = tocTree.getBoundingClientRect();
+    const scrollPosition = elementRect.top - tocTreeRect.top;
+
+    tocContent.scrollTop = scrollPosition;
+  };
+
+  updateContainerHeight();
+  scrollToElement();
+
+  window.addEventListener('resize', () => {
+    updateContainerHeight();
+    scrollToElement();
+  });
 }
 
 /**
@@ -220,43 +244,59 @@ function activateCurrentPage(tocContent) {
 /**
  * Filters TOC items based on the input query without altering the original structure.
  * @param {string} query - The search input value
+ * @returns {void}
  */
 function tocFilter(query) {
   const tocItems = document.querySelectorAll('.toc-tree li');
   const filterQuery = query.toLowerCase();
 
   tocItems.forEach((item) => {
-    const text = item.textContent.toLowerCase();
     let hasMatchingDescendants = false;
 
-    // Recursively check for matches in descendants
+    // Recursively check for matches in descendants, excluding href attributes
     function checkForMatches(element) {
       const childItems = Array.from(element.querySelectorAll('li'));
       childItems.forEach((child) => {
         const childText = child.textContent.toLowerCase();
-        if (childText.includes(filterQuery)) {
-          hasMatchingDescendants = true;
-          child.style.display = '';
+        const isTocItem = child.querySelector('.toc-item') !== null;
+
+        // Check if the child is a .toc-item and matches the query (excluding href)
+        if (isTocItem && childText.includes(filterQuery)) {
+          const childLinkText = child.querySelector('.toc-item').textContent.toLowerCase(); // Get text content of the link
+          if (childLinkText.includes(filterQuery)) {
+            hasMatchingDescendants = true;
+            child.style.display = '';
+          } else {
+            child.style.display = 'none';
+          }
         } else {
           child.style.display = 'none';
         }
-        // Recursive call for deeper nesting
         checkForMatches(child);
       });
     }
 
-    checkForMatches(item); // Start from the current item
+    checkForMatches(item);
 
-    if (text.includes(filterQuery) || hasMatchingDescendants) {
+    // Show/hide the item itself based on the query and matching descendants
+    const isTocItem = item.querySelector('.toc-item') !== null;
+    if ((isTocItem && item.textContent.toLowerCase().includes(filterQuery)) || hasMatchingDescendants) {
       item.style.display = '';
     } else {
       item.style.display = 'none';
     }
 
-    // Expand/collapse toggles based on parent/child visibility
-    const toggle = item.querySelector('a');
+    const toggle = item.querySelector('.toc-toggle');
     if (toggle) {
-      toggle.setAttribute('aria-expanded', hasMatchingDescendants ? 'true' : 'false');
+      const hasVisibleChildren = Array.from(item.querySelectorAll('li')).some(
+        (child) => child.style.display !== 'none',
+      );
+      if (!hasVisibleChildren) {
+        item.style.display = 'none';
+        toggle.setAttribute('aria-expanded', 'false');
+      } else {
+        toggle.setAttribute('aria-expanded', 'true');
+      }
     }
   });
 }

@@ -1,5 +1,5 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, toPascalCase, fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
@@ -9,6 +9,8 @@ import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 // eslint-disable-next-line import/no-cycle
 const ffetchModulePromise = import('../../scripts/ffetch.js');
+
+export const toPascalCase = (name) => (name ? `${name.charAt(0).toUpperCase()}${name.slice(1)}` : '');
 
 let placeholders = {};
 try {
@@ -279,7 +281,7 @@ export default async function decorate(block) {
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
     const buildCardsShimmer = BrowseCardShimmer.create(4, block);
-    headerDiv.after(block.querySelector('.shimmer-placeholder'));
+    headerDiv.after(block.querySelector('.browse-card-shimmer'));
 
     /* Remove No Results Content and Show Card Content Info if they were hidden earlier */
     buildNoResultsContent(block, false);

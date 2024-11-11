@@ -1,4 +1,5 @@
-import { URL_SPECIAL_CASE_LOCALES, fetchLanguagePlaceholders, getConfig, rewriteDocsPath } from '../../scripts.js';
+import { URL_SPECIAL_CASE_LOCALES, fetchLanguagePlaceholders, getConfig } from '../../scripts.js';
+import { rewriteDocsPath } from '../../utils/path-utils.js';
 import CoveoDataService from './coveo-data-service.js';
 import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET } from './coveo-exl-pipeline-constants.js';
 
