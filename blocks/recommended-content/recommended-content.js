@@ -31,19 +31,16 @@ const countNumberAsArray = (n) => Array.from({ length: n }, (_, i) => n - i);
  *
  * @param {Array} shimmerSizes - An array of arrays, where each inner array contains width (percentage) and height (pixels)
  *                                 for individual shimmer divs.
- * @param {string} shimmerClass - A CSS class to be added to each shimmer div. Default is an empty string.
  *
  * @returns {string} - A string of HTML containing the shimmer divs with inline styles for width and height.
  *
  */
 
-function generateLoadingShimmer(shimmerSizes = [[100, 14]], shimmerClass = '') {
+function generateLoadingShimmer(shimmerSizes = [[100, 14]]) {
   return shimmerSizes
     .map(
       ([width, height]) =>
-        `<div class="loading-shimmer${
-          shimmerClass ? ` ${shimmerClass}` : ''
-        }" style="--placeholder-width: ${width}%; --placeholder-height: ${height}px"></div>`,
+        `<div class="loading-shimmer" style="--placeholder-width: ${width}%; --placeholder-height: ${height}px"></div>`,
     )
     .join('');
 }
@@ -189,7 +186,7 @@ export default async function decorate(block) {
 
   filterSectionElement.classList.add('recommended-content-filter-heading');
   const blockHeader = createTag('div', { class: 'recommended-content-block-header' });
-  blockHeader.innerHTML = generateLoadingShimmer([[80, 30]], 'shimmer-block-header');
+  blockHeader.innerHTML = generateLoadingShimmer([[80, 30]]);
   block.insertAdjacentHTML('afterbegin', defaultContentHtml);
   block.appendChild(filterSectionElement);
   block.appendChild(blockHeader);
