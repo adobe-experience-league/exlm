@@ -58,7 +58,7 @@ body.profile .section:not(.profile-rail-section) > div.bookmarks-wrapper {
   }
 
   .bookmarks-content .bookmarks-card,
-  .bookmarks .browse-card-shimmer-isloading,
+  .bookmarks .browse-card-shimmer-wrapper,
   .bookmarks-content .bookmarks-card .browse-card {
     width: 308px;
   }
@@ -67,7 +67,7 @@ body.profile .section:not(.profile-rail-section) > div.bookmarks-wrapper {
     overflow-x: hidden;
   }
 
-  .bookmarks .browse-card-shimmer-isloading {
+  .bookmarks .browse-card-shimmer-wrapper {
     margin: 0;
     border: none;
   }
@@ -81,7 +81,7 @@ body.profile .section:not(.profile-rail-section) > div.bookmarks-wrapper {
   }
 
   .bookmarks-content .bookmarks-card,
-  .bookmarks .browse-card-shimmer-isloading,
+  .bookmarks .browse-card-shimmer-wrapper,
   .bookmarks-content .bookmarks-card .browse-card {
     width: 256px;
   }

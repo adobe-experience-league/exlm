@@ -1,42 +1,57 @@
 import { loadCSS } from '../lib-franklin.js';
 
-loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-shimmer.css`); // load placeholder css dynamically
-
 const DEFAULT_SHIMMER_COUNT = 4;
 
 export default class BrowseCardShimmer {
-  static renderShimmer(count = DEFAULT_SHIMMER_COUNT, element = null) {
-    const shimmer = element || document.createElement('div');
-    shimmer.className = 'browse-card-shimmer';
-    if (element) {
-      shimmer.innerHTML = ``;
-    }
-    for (let i = 0; i < count; i += 1) {
-      shimmer.innerHTML += `<div class="browse-card-shimmer-isloading">
-          <div class="browse-card-shimmer-image"></div>
-          <div class="browse-card-shimmer-content">
-            <div class="browse-card-shimmer-description"></div>
-            <div class="browse-card-shimmer-text-container">
-              <div class="browse-card-shimmer-main-text"></div>
-              <div class="browse-card-shimmer-sub-text"></div>
-            </div>
-            <div class="browse-card-shimmer-btn"></div>
-          </div>
-        </div>`;
-    }
-    return shimmer;
+  constructor(count = DEFAULT_SHIMMER_COUNT) {
+    this.count = count;
+    this.shimmerContainer = document.createElement('div');
+    this.shimmerContainer.className = 'browse-card-shimmer';
+    this.loadCSS();
   }
 
-  static create(count, block) {
-    const shimmer = this.renderShimmer(count);
-    if (block) {
-      block.append(shimmer);
-    }
-    return shimmer;
+  loadCSS() {
+    loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-shimmer.css`);
   }
 
-  static updateCount(shimmerEl, count = DEFAULT_SHIMMER_COUNT) {
-    const shimmer = this.renderShimmer(count, shimmerEl);
-    return shimmer;
+  renderAnimationStrip(width, height) {
+    return `<p class="loading-shimmer" style="--placeholder-width: ${width}; max-width:${width}; ${height ? `--placeholder-height: ${height}` : ''}"></p>`
+  }
+
+  render() {
+    this.shimmerContainer.innerHTML = '';
+    for (let i = 0; i < this.count; i++) {
+      this.shimmerContainer.innerHTML += `
+     <div class="browse-card-shimmer-wrapper">
+      ${this.renderAnimationStrip('100%', '198px')}
+      <div class="browse-card-shimmer-text-wrapper">
+        ${this.renderAnimationStrip('100px', '14px')}
+        ${this.renderAnimationStrip('100%', '24px')}
+        ${this.renderAnimationStrip('100%', '36px')}
+      </div>
+      <div class="browse-card-shimmer-cta-wrapper" >
+        ${this.renderAnimationStrip('44px', '20px')}
+        ${this.renderAnimationStrip('64px', '20px')}
+      </div>
+     </div>`;
+    }
+  }
+
+  addShimmer(targetElement) {
+    this.render();
+    if (targetElement) {
+      targetElement.appendChild(this.shimmerContainer);
+    }
+  }
+
+  removeShimmer() {
+    if (this.shimmerContainer.parentNode) {
+      this.shimmerContainer.parentNode.removeChild(this.shimmerContainer);
+    }
+  }
+
+  updateCount(newCount) {
+    this.count = newCount;
+    this.render();
   }
 }

@@ -108,7 +108,7 @@ export default async function decorate(block) {
     const navContainer = document.createElement('div');
     const contentDiv = document.createElement('div');
     contentDiv.className = 'browse-cards-block-content';
-    const buildCardsShimmer = BrowseCardShimmer.create(4);
+    const buildCardsShimmer = new BrowseCardShimmer();
 
     function appendNavAndContent() {
       navContainer.classList.add('recently-viewed-nav-container');
@@ -126,7 +126,7 @@ export default async function decorate(block) {
         if (resp?.data?.length) {
           displayBlock = true;
           appendNavAndContent();
-          block.append(buildCardsShimmer);
+          buildCardsShimmer.addShimmer(block);
 
           const cardData = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(resp.data);
           cardData.forEach((item) => {
@@ -147,17 +147,17 @@ export default async function decorate(block) {
             removeEmptySection(block);
           }
         }
-        buildCardsShimmer.remove();
+        buildCardsShimmer.removeShimmer();
       });
     }
 
     if (UEAuthorMode) {
       displayBlock = true;
       appendNavAndContent();
-      block.append(buildCardsShimmer);
+      buildCardsShimmer.addShimmer(block);
       const authorInfo = 'Based on profile context, if the customer has enabled the necessary cookies';
       buildNoResultsContent(contentDiv, true, authorInfo);
-      buildCardsShimmer.remove();
+      buildCardsShimmer.removeShimmer();
     }
 
     if (!targetSupport && !UEAuthorMode) {

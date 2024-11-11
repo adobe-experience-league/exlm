@@ -36,13 +36,14 @@ export default function decorate() {
   };
 
   // Create a placeholder for the widgets while they are loading
-  const buildCardsShimmer = BrowseCardShimmer.create(4, container);
+  const buildCardsShimmer = new BrowseCardShimmer();
+  buildCardsShimmer.addShimmer(container);
 
   // Fetch the card/widget data
   const tutorialWidgetsContent = BrowseCardsDelegate.fetchCardData(param);
   tutorialWidgetsContent
     .then((data) => {
-      buildCardsShimmer.remove();
+      buildCardsShimmer.removeShimmer();
 
       // If data is present, build and append the widgets
       if (data?.length) {
@@ -61,7 +62,7 @@ export default function decorate() {
       }
     })
     .catch((err) => {
-      buildCardsShimmer.remove();
+      buildCardsShimmer.removeShimmer();
       /* eslint-disable-next-line no-console */
       console.error(err);
     });

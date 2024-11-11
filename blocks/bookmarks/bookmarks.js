@@ -13,7 +13,7 @@ const BOOKMARKS_BY_PG_CONFIG = {};
 const CARDS_MODEL = {};
 const bookmarksEventEmitter = getEmitter('bookmarks');
 
-const buildCardsShimmer = BrowseCardShimmer.create(Pagination.getItemsCount());
+const buildCardsShimmer = new BrowseCardShimmer(Pagination.getItemsCount());
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -75,7 +75,7 @@ async function renderCards({ pgNum, block }) {
   const { lang: languageCode } = getPathDetails();
   const wrapper = (block || document).querySelector('.bookmarks-content');
   wrapper.innerHTML = '';
-  wrapper.parentElement.append(buildCardsShimmer);
+  buildCardsShimmer.addShimmer(wrapper.parentElement);
   wrapper.style.display = 'none';
   const bookmarkIds = BOOKMARKS_BY_PG_CONFIG[pgNum];
   const bookmarkPromises = bookmarkIds.map((bookmarkId) => {
@@ -114,7 +114,7 @@ async function renderCards({ pgNum, block }) {
     buildCard(wrapper, cardDiv, cardData);
     wrapper.appendChild(cardDiv);
   });
-  buildCardsShimmer.remove();
+  buildCardsShimmer.removeShimmer();
   wrapper.style.display = '';
 }
 

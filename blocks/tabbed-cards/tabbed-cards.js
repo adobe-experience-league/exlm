@@ -127,7 +127,8 @@ export default async function decorate(block) {
     contentDiv = document.createElement('div');
     contentDiv.classList.add('browse-cards-block-content', 'tabbed-cards-block');
 
-    buildCardsShimmer = BrowseCardShimmer.create(4, block);
+    buildCardsShimmer = new BrowseCardShimmer();
+    buildCardsShimmer.addShimmer(block);
   }
 
   let placeholders = {};
@@ -151,7 +152,7 @@ export default async function decorate(block) {
     browseCardsContent
       .then((data) => {
         // Hide shimmer placeholders
-        buildCardsShimmer.remove();
+        buildCardsShimmer.removeShimmer();
         if (data?.length) {
           // Render cards
           for (let i = 0; i < Math.min(numberOfResults, data.length); i += 1) {
@@ -166,14 +167,14 @@ export default async function decorate(block) {
           /* Hide Tooltip while scrolling the cards layout */
           hideTooltipOnScroll(contentDiv);
         } else {
-          buildCardsShimmer.remove();
+          buildCardsShimmer.removeShimmer();
           buildNoResultsContent(block, true);
           contentDiv.style.display = 'none';
         }
       })
       .catch((err) => {
         // Hide shimmer placeholders on error
-        buildCardsShimmer.remove();
+        buildCardsShimmer.removeShimmer();
         buildNoResultsContent(block, true);
         contentDiv.style.display = 'none';
         /* eslint-disable-next-line no-console */

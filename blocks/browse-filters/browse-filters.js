@@ -115,7 +115,7 @@ const dropdownOptions = [roleOptions, contentTypeOptions];
 
 const tags = [];
 let tagsProxy;
-const buildCardsShimmer = BrowseCardShimmer.create(getBrowseFiltersResultCount());
+const buildCardsShimmer = new BrowseCardShimmer(getBrowseFiltersResultCount());
 
 function enableTagsAsProxy(block) {
   tagsProxy = new Proxy(tags, {
@@ -196,7 +196,7 @@ function updateClearFilterStatus(block) {
     dispatchCoveoQuery = true;
     clearFilterBtn.disabled = true;
     hideSectionsBelowFilter(block, true);
-    buildCardsShimmer.remove();
+    buildCardsShimmer.removeShimmer();
     browseFiltersContainer.classList.remove('browse-filters-full-container');
     selectionContainer.classList.remove('browse-filters-input-selected');
     hideSectionsWithinFilter(browseFiltersSection, false);
@@ -973,7 +973,7 @@ function handleCoveoHeadlessSearch(
       debounce(50, () => {
         const newResultsPerPage = getBrowseFiltersResultCount();
         if (window.headlessResultsPerPage.state.numberOfResults !== newResultsPerPage) {
-          BrowseCardShimmer.updateCount(buildCardsShimmer, newResultsPerPage);
+          buildCardsShimmer.updateCount(newResultsPerPage);
           window.headlessResultsPerPage.set(newResultsPerPage);
         }
       });
@@ -987,7 +987,7 @@ function handleCoveoHeadlessSearch(
       if (clearFilterBtn?.disabled) {
         return;
       }
-      browseFiltersSection.append(buildCardsShimmer);
+      buildCardsShimmer.addShimmer(browseFiltersSection);
       filterResultsEl.style.display = 'none';
       filtersPaginationEl.style.display = 'none';
       browseFiltersSection.insertBefore(
@@ -999,7 +999,7 @@ function handleCoveoHeadlessSearch(
   document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PROCESS_SEARCH_RESPONSE, () => {
     filterResultsEl.style.display = '';
     filtersPaginationEl.style.display = '';
-    buildCardsShimmer.remove();
+    buildCardsShimmer.removeShimmer();
   });
 
   handleUriHash();

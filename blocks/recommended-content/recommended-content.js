@@ -136,10 +136,11 @@ const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
   if (renderCardsFlag) {
     contentDiv.appendChild(cardDiv);
   }
-  const shimmerEl = BrowseCardShimmer.create(1, cardDiv);
+  const shimmerInstance = new BrowseCardShimmer(1);
+  shimmerInstance.addShimmer(cardDiv);
 
   return {
-    shimmer: shimmerEl,
+    shimmer: shimmerInstance,
     wrapper: cardDiv,
   };
 };
@@ -184,8 +185,8 @@ export default async function decorate(block) {
     `);
   const tempContentSection = tempWrapper.querySelector('.recommended-content-block-section');
   countNumberAsArray(4).forEach(() => {
-    const { shimmer, wrapper } = renderCardPlaceholders(tempWrapper);
-    wrapper.appendChild(shimmer);
+    const { shimmer: shimmerInstance, wrapper } = renderCardPlaceholders(tempWrapper);
+    shimmerInstance.add(wrapper);
     tempContentSection.appendChild(wrapper);
   });
 
@@ -226,8 +227,8 @@ export default async function decorate(block) {
               const cardModelsList = [];
               if (delayedCardData.length === 0) {
                 if (renderCards) {
-                  cardData.shimmers?.forEach((shimmerEl, index) => {
-                    shimmerEl.remove();
+                  cardData.shimmers?.forEach((shimmerInstance, index) => {
+                    shimmerInstance.remove();
                     cardData.wrappers[index].style.display = 'none';
                   });
                 }
@@ -237,7 +238,7 @@ export default async function decorate(block) {
                   const wrapperDiv = cardData.wrappers[index];
                   if (renderCards) {
                     if (shimmer) {
-                      shimmer.remove();
+                      shimmer.removeShimmer();
                     }
                     wrapperDiv.innerHTML = '';
                   }
@@ -396,7 +397,7 @@ export default async function decorate(block) {
           data = cardResponse?.data ?? [];
           const { shimmers, params, optionType } = apiConfigObject;
           shimmers.forEach((shimmer) => {
-            shimmer.remove();
+            shimmer.removeShimmer();
           });
           if (optionType.toLowerCase() !== defaultOptionsKey[0].toLowerCase()) {
             if (defaultOptionsKey.length > 1 && optionType.toLowerCase() === defaultOptionsKey[1].toLowerCase()) {
@@ -433,7 +434,7 @@ export default async function decorate(block) {
               }
               const cardShimmer = cardShimmers.shift();
               if (cardShimmer) {
-                cardShimmer.remove();
+                cardShimmer.removeShimmer();
               }
             });
           } else {
@@ -622,8 +623,8 @@ export default async function decorate(block) {
             }
             const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
             if (cardsCount === 0) {
-              Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((shimmer) => {
-                shimmer.remove();
+              Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((shimmerEl) => {
+                shimmerEl.remove();
               });
               buildNoResultsContent(contentDiv, false);
               buildNoResultsContent(contentDiv, true);

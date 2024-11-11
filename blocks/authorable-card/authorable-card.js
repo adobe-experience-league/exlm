@@ -40,7 +40,8 @@ export default async function decorate(block) {
 
   block.replaceChildren(headerDiv);
 
-  const buildCardsShimmer = BrowseCardShimmer.create(4, block);
+  const buildCardsShimmer = new BrowseCardShimmer();
+  buildCardsShimmer.addShimmer(block);
 
   const contentDiv = document.createElement('div');
   contentDiv.className = 'browse-cards-block-content';
@@ -75,7 +76,7 @@ export default async function decorate(block) {
   );
 
   cardLoading$.then((cards) => {
-    buildCardsShimmer.remove();
+    buildCardsShimmer.removeShimmer();
     contentDiv.append(...cards);
     block.appendChild(contentDiv);
   });

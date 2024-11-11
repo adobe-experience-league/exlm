@@ -57,12 +57,13 @@ export default async function decorate(block) {
     contentType,
   };
 
-  const buildCardsShimmer = BrowseCardShimmer.create(4, block);
+  const buildCardsShimmer = new BrowseCardShimmer();
+  buildCardsShimmer.addShimmer(block);
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent
     .then((data) => {
-      buildCardsShimmer.remove();
+      buildCardsShimmer.removeShimmer();
       if (data?.length) {
         for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
           const cardData = data[i];
@@ -76,7 +77,7 @@ export default async function decorate(block) {
       }
     })
     .catch((err) => {
-      buildCardsShimmer.remove();
+      buildCardsShimmer.removeShimmer();
       /* eslint-disable-next-line no-console */
       console.error(err);
     });

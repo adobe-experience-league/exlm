@@ -59,12 +59,13 @@ export default async function decorate(block) {
     noOfResults,
   };
 
-  const buildCardsShimmer = BrowseCardShimmer.create(4, block);
+  const buildCardsShimmer = new BrowseCardShimmer();
+  buildCardsShimmer.addShimmer(block);
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
   browseCardsContent
     .then((data) => {
-      buildCardsShimmer.remove();
+      buildCardsShimmer.removeShimmer();
       if (data?.length) {
         const contentDiv = document.createElement('div');
         contentDiv.classList.add('browse-cards-block-content');
@@ -81,7 +82,7 @@ export default async function decorate(block) {
       }
     })
     .catch((err) => {
-      buildCardsShimmer.remove();
+      buildCardsShimmer.removeShimmer();
       /* eslint-disable-next-line no-console */
       console.error(err);
     });
