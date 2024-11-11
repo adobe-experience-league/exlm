@@ -26,19 +26,20 @@ const experiencedDescription =
   'You know the selected product inside and out and use your advanced skills to achieve complex objectives.';
 const formErrorMessage = placeholders?.formFieldGroupError || 'Please select at least one option.';
 
-const renderCards = (resultsEl) => {
+const renderCards = (resultsEl, isInSignUpFlow) => {
   const interests = interestsEventEmitter.get('interests_data') ?? [];
   interests
     .filter((interest) => interest.selected)
     .forEach((interestData) => {
       const cardDiv = document.createElement('div');
       cardDiv.classList.add('card-item');
-      buildProductCard(cardDiv, interestData);
+      buildProductCard(cardDiv, interestData, isInSignUpFlow);
       resultsEl.appendChild(cardDiv);
     });
 };
 
 function decorateContent(block) {
+  const isInSignUpFlow = !!block.closest('.sign-up-flow-section');
   const [firstLevel, secondLevel] = block.children;
   const heading = firstLevel.querySelector('h1, h2, h3, h4, h5, h6');
   heading?.classList.add('product-experience-level-header');
@@ -92,7 +93,7 @@ function decorateContent(block) {
   </div>`);
   block.appendChild(content);
   const resultsEl = block.querySelector('.personalize-interest-results');
-  renderCards(resultsEl);
+  renderCards(resultsEl, isInSignUpFlow);
 
   interestsEventEmitter.on('dataChange', (data) => {
     const { key, value } = data;
@@ -103,7 +104,7 @@ function decorateContent(block) {
     if (model) {
       model.selected = value;
       resultsEl.innerHTML = '';
-      renderCards(resultsEl);
+      renderCards(resultsEl, isInSignUpFlow);
     }
   });
 }
