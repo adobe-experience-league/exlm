@@ -505,11 +505,9 @@ export default async function decorate(block) {
           } else if (filterProductByOption === 'profile_context') {
             // show everything from profile for default tab
             clonedProducts = [...new Set([...sortedProfileInterests])];
-          } else {
-            const { products: filterProductList } = extractCapability(filterProductByOption);
-            if (filterProductList?.length) {
-              const uniqueFilterProductList = structuredClone(removeProductDuplicates(filterProductList));
-              clonedProducts = [...uniqueFilterProductList];
+          } else if (filterProductByOption === 'specific_products') {
+            if (products?.length) {
+              clonedProducts = [...products];
             } else {
               clonedProducts = [];
             }
