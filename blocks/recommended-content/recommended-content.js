@@ -405,9 +405,10 @@ export default async function decorate(block) {
         return expLevel;
       });
       const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase() ?? 'MOST_POPULAR'];
-      const role = fourthEl?.innerText?.trim()?.includes('profile_context')
+      const filterProductByOption = fourthEl?.innerText?.trim() ?? '';
+      const role = filterProductByOption?.includes('profile_context')
         ? profileRoles
-        : fourthEl?.innerText?.trim().split(',').filter(Boolean);
+        : fourthEl?.innerText?.trim().split(',').filter(Boolean); // TODO : How to get roles now?
 
       const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
       const [defaultFilterOption = ''] = filterOptions;
@@ -489,19 +490,25 @@ export default async function decorate(block) {
         dataConfiguration[lowercaseOptionType].renderedCardIds = [];
         contentDiv.dataset.selected = lowercaseOptionType;
         contentDiv.setAttribute('data-analytics-filter-id', lowercaseOptionType);
-        const showProfileOptions = defaultOptionsKey.some((key) => lowercaseOptionType === key.toLowerCase());
+        const showDefaultOptions = defaultOptionsKey.some((key) => lowercaseOptionType === key.toLowerCase());
         const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
         const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
         const expLevel = experienceLevels[expLevelIndex] ?? 'Beginner';
         let clonedProducts = structuredClone(removeProductDuplicates(products));
-        if (!showProfileOptions && !clonedProducts.find((c) => c.toLowerCase() === lowercaseOptionType)) {
+        if (!showDefaultOptions && !clonedProducts.find((c) => c.toLowerCase() === lowercaseOptionType)) {
           clonedProducts.push(interest);
         }
-
-        if (showProfileOptions) {
-          // show everything for default tab
-          clonedProducts = [...new Set([...products, ...sortedProfileInterests])];
+        if (showDefaultOptions) {
+          if (filterProductByOption === 'all_adobe_products') {
+            clonedProducts.length = 0;
+          } else if (filterProductByOption === 'profile_context') {
+            // show everything for default tab
+            clonedProducts = [...new Set([...sortedProfileInterests])];
+          } else if (filterProductByOption === 'specific_products') {
+            clonedProducts = [...new Set([...products])];
+          }
         }
+
         const params = {
           contentType: null,
           product: clonedProducts,
@@ -510,8 +517,8 @@ export default async function decorate(block) {
           role: role?.length ? role : profileRoles,
           sortCriteria,
           noOfResults: numberOfResults,
-          aq: !showProfileOptions && cardIdsToExclude.length ? prepareExclusionQuery(cardIdsToExclude) : undefined,
-          context: showProfileOptions
+          aq: !showDefaultOptions && cardIdsToExclude.length ? prepareExclusionQuery(cardIdsToExclude) : undefined,
+          context: showDefaultOptions
             ? { role: profileRoles, interests: sortedProfileInterests, experience: experienceLevels }
             : { interests: [interest], experience: [expLevel], role: profileRoles },
         };
