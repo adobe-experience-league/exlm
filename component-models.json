@@ -3887,6 +3887,30 @@
         ]
       },
       {
+        "component": "radio-group",
+        "name": "filterProductBy",
+        "value": "",
+        "label": "Filter Product By:",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "All Adobe Products ",
+            "value": "all_adobe_products"
+          },
+          {
+            "name": "Profile Context",
+            "value": "profile_context"
+          },
+          {
+            "name": "Specific Products",
+            "value": "specific_products"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "filterProductBy" }, "specific_products"]
+        },
         "component": "aem-tag",
         "name": "tags",
         "label": "Solution(s) or Feature(s)",
