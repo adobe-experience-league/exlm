@@ -4,7 +4,6 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { htmlToElement, fetchLanguagePlaceholders, getConfig, getLanguageCode } from '../../scripts/scripts.js';
 import BrowseCardsPathsAdaptor from '../../scripts/browse-card/browse-cards-paths-adaptor.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
-import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
@@ -207,8 +206,6 @@ export default async function decorate(block) {
 
   // Appending header div to the block
   block.appendChild(headerDiv);
-
-  decorateIcons(headerDiv);
 
   // Checking if the user is signed in before proceeding
   isSignedInUser().then((isSignedIn) => {

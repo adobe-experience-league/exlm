@@ -86,6 +86,10 @@
   margin-top: 0;
 }
 
+.recommended-content.block .recommended-content-block-header .loading-shimmer {
+  margin: 30px 0;
+}
+
 .recommended-content.block .shimmer-placeholder-isloading .shimmer-placeholder-description {
   max-height: 84px;
 }

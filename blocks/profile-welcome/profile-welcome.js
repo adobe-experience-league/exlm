@@ -126,7 +126,7 @@ async function decorateProfileWelcomeBlock(block) {
   block.append(profileWelcomeBlock);
 
   // Conditionally display the profile card based on showProfileCard toggle
-  if (showProfileCard.textContent.trim() === 'true') {
+  if (showProfileCard?.textContent?.trim() === 'true') {
     // eslint-disable-next-line no-async-promise-executor
     const communityProfilePromise = new Promise(async (resolve) => {
       const isSignedIn = await isSignedInUser();

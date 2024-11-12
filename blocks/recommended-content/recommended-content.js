@@ -27,6 +27,25 @@ try {
 const countNumberAsArray = (n) => Array.from({ length: n }, (_, i) => n - i);
 
 /**
+ * Generates HTML for loading shimmer animation with customizable sizes and an optional CSS class
+ *
+ * @param {Array} shimmerSizes - An array of arrays, where each inner array contains width (percentage) and height (pixels)
+ *                                 for individual shimmer divs.
+ *
+ * @returns {string} - A string of HTML containing the shimmer divs with inline styles for width and height.
+ *
+ */
+
+function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
+  return shimmerSizes
+    .map(
+      ([width, height]) =>
+        `<div class="loading-shimmer" style="--placeholder-width: ${width}%; --placeholder-height: ${height}px"></div>`,
+    )
+    .join('');
+}
+
+/**
  * Update the copy from the target
  * @param {Object} data
  * @param {HTMLElement} heading
@@ -158,28 +177,30 @@ export default async function decorate(block) {
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
-
+  const recommendedContentShimmer = `
+  <div class="recommended-content-header">${generateLoadingShimmer([[50, 14]])}</div>
+  <div class="recommended-content-description">${generateLoadingShimmer([[50, 10]])}</div>
+`;
   // Clearing the block's content and adding CSS class
   block.innerHTML = '';
-  headingElement.classList.add('recommended-content-header');
-  descriptionElement.classList.add('recommended-content-description');
+
   filterSectionElement.classList.add('recommended-content-filter-heading');
   const blockHeader = createTag('div', { class: 'recommended-content-block-header' });
-  block.appendChild(headingElement);
-  block.appendChild(descriptionElement);
+  blockHeader.innerHTML = generateLoadingShimmer([[80, 30]]);
+  block.insertAdjacentHTML('afterbegin', recommendedContentShimmer);
   block.appendChild(filterSectionElement);
   block.appendChild(blockHeader);
 
+  const headerContainer = block.querySelector('.recommended-content-header');
+  const descriptionContainer = block.querySelector('.recommended-content-description');
   const reversedDomElements = remainingElements.reverse();
-  const [firstEl, secondEl, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
+  const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
+    reversedDomElements;
   const targetCriteriaId = block.dataset.targetScope;
   const profileDataPromise = defaultProfileClient.getMergedProfile();
 
   const tempWrapper = htmlToElement(`
       <div class="recommended-content-temp-wrapper">
-        <div class="recommended-tab-headers">
-          <p class="loading-shimmer" style="--placeholder-width: 100%; height: 48px"></p>
-        </div>
         <div class="browse-cards-block-content recommended-content-block-section recommended-content-shimmer-wrapper"></div>
       </div>
     `);
@@ -296,13 +317,13 @@ export default async function decorate(block) {
     const contentDiv = document.createElement('div');
     contentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
     parentDiv.appendChild(contentDiv);
-    secondEl.classList.add('recommended-content-discover-resource');
-    firstEl.classList.add('recommended-content-result-link');
-    if (firstEl.innerHTML || secondEl.innerHTML) {
+    resultTextEl.classList.add('recommended-content-discover-resource');
+    linkEl.classList.add('recommended-content-result-link');
+    if (linkEl.innerHTML || resultTextEl.innerHTML) {
       const seeMoreEl = document.createElement('div');
       seeMoreEl.classList.add('recommended-content-result-text');
-      seeMoreEl.appendChild(secondEl);
-      seeMoreEl.appendChild(firstEl);
+      seeMoreEl.appendChild(resultTextEl);
+      seeMoreEl.appendChild(linkEl);
       parentDiv.appendChild(seeMoreEl);
     }
   };
@@ -348,11 +369,13 @@ export default async function decorate(block) {
       }
 
       if (!(targetSupport && targetCriteriaScopeId)) {
+        headerContainer.innerHTML = headingElement.innerText;
+        descriptionContainer.innerHTML = descriptionElement.innerText;
         block.style.display = 'block';
       }
 
-      const sortByContent = thirdEl?.innerText?.trim();
-      const contentTypes = otherEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse() || [];
+      const sortByContent = sortEl?.innerText?.trim();
+      const contentTypes = contentTypesEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse() || [];
       const contentTypeIsEmpty = contentTypes?.length === 0;
       const numberOfResults = contentTypeIsEmpty ? DEFAULT_NUM_CARDS : 1;
 
@@ -367,7 +390,7 @@ export default async function decorate(block) {
             return acc;
           }, {});
 
-      const encodedSolutionsText = fifthEl.innerText?.trim() ?? '';
+      const encodedSolutionsText = solutionEl.innerText?.trim() ?? '';
       const { products, versions, features } = extractCapability(encodedSolutionsText);
       const sortedProfileInterests = profileInterests.sort();
       const experienceLevels = sortedProfileInterests.map((interestName) => {
@@ -383,9 +406,10 @@ export default async function decorate(block) {
         return expLevel;
       });
       const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase() ?? 'MOST_POPULAR'];
-      const role = fourthEl?.innerText?.trim()?.includes('profile_context')
+      const filterProductByOption = filterProductByOptionEl?.innerText?.trim() ?? '';
+      const role = roleEl?.innerText?.trim()?.includes('profile_context')
         ? profileRoles
-        : fourthEl?.innerText?.trim().split(',').filter(Boolean);
+        : roleEl?.innerText?.trim().split(',').filter(Boolean);
 
       const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
       const [defaultFilterOption = ''] = filterOptions;
@@ -467,19 +491,29 @@ export default async function decorate(block) {
         dataConfiguration[lowercaseOptionType].renderedCardIds = [];
         contentDiv.dataset.selected = lowercaseOptionType;
         contentDiv.setAttribute('data-analytics-filter-id', lowercaseOptionType);
-        const showProfileOptions = defaultOptionsKey.some((key) => lowercaseOptionType === key.toLowerCase());
+        const showDefaultOptions = defaultOptionsKey.some((key) => lowercaseOptionType === key.toLowerCase());
         const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
         const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
         const expLevel = experienceLevels[expLevelIndex] ?? 'Beginner';
         let clonedProducts = structuredClone(removeProductDuplicates(products));
-        if (!showProfileOptions && !clonedProducts.find((c) => c.toLowerCase() === lowercaseOptionType)) {
+        if (!showDefaultOptions && !clonedProducts.find((c) => c.toLowerCase() === lowercaseOptionType)) {
           clonedProducts.push(interest);
         }
-
-        if (showProfileOptions) {
-          // show everything for default tab
-          clonedProducts = [...new Set([...products, ...sortedProfileInterests])];
+        if (showDefaultOptions) {
+          if (filterProductByOption === 'all_adobe_products') {
+            clonedProducts.length = 0;
+          } else if (filterProductByOption === 'profile_context') {
+            // show everything from profile for default tab
+            clonedProducts = [...new Set([...sortedProfileInterests])];
+          } else if (filterProductByOption === 'specific_products') {
+            if (products?.length) {
+              clonedProducts = [...products];
+            } else {
+              clonedProducts = [];
+            }
+          }
         }
+
         const params = {
           contentType: null,
           product: clonedProducts,
@@ -488,8 +522,8 @@ export default async function decorate(block) {
           role: role?.length ? role : profileRoles,
           sortCriteria,
           noOfResults: numberOfResults,
-          aq: !showProfileOptions && cardIdsToExclude.length ? prepareExclusionQuery(cardIdsToExclude) : undefined,
-          context: showProfileOptions
+          aq: !showDefaultOptions && cardIdsToExclude.length ? prepareExclusionQuery(cardIdsToExclude) : undefined,
+          context: showDefaultOptions
             ? { role: profileRoles, interests: sortedProfileInterests, experience: experienceLevels }
             : { interests: [interest], experience: [expLevel], role: profileRoles },
         };
@@ -529,7 +563,7 @@ export default async function decorate(block) {
                     }
                   }
                   if (resp?.data) {
-                    updateCopyFromTarget(resp, headingElement, descriptionElement, firstEl, secondEl);
+                    updateCopyFromTarget(resp, headerContainer, descriptionContainer, linkEl, resultTextEl);
                     block.style.display = 'block';
                     setTargetDataAsBlockAttribute(resp, block);
                   }
