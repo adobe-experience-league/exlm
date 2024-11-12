@@ -14,9 +14,6 @@ import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-card-target-data-adapter.js';
 
-const targetEventEmitter = getEmitter('loadTargetBlocks');
-const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
-const DEFAULT_NUM_CARDS = 4;
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -24,18 +21,23 @@ try {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
 }
+
+const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
+const DEFAULT_NUM_CARDS = 4;
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+
+// Event for target data change (Updating the block based on target data)
+const targetEventEmitter = getEmitter('loadTargetBlocks');
+
+// Create array of numbers from 1 to n
 const countNumberAsArray = (n) => Array.from({ length: n }, (_, i) => n - i);
 
 /**
  * Generates HTML for loading shimmer animation with customizable sizes and an optional CSS class
- *
- * @param {Array} shimmerSizes - An array of arrays, where each inner array contains width (percentage) and height (pixels)
- *                                 for individual shimmer divs.
- *
+ * @param {Array} shimmerSizes - An array of arrays, where each inner array
+ *  contains width (percentage) and height (pixels) for individual shimmer divs.
  * @returns {string} - A string of HTML containing the shimmer divs with inline styles for width and height.
- *
  */
-
 function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
   return shimmerSizes
     .map(
@@ -50,6 +52,8 @@ function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
  * @param {Object} data
  * @param {HTMLElement} heading
  * @param {HTMLElement} subheading
+ * @param {HTMLElement} taglineCta
+ * @param {HTMLElement} taglineText
  * @returns {void}
  */
 export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
@@ -102,6 +106,7 @@ export function setTargetDataAsBlockAttribute(data, block) {
   }
 }
 
+// fetch list of all interests
 async function fetchInterestData() {
   try {
     let data;
@@ -119,36 +124,24 @@ async function fetchInterestData() {
     return [];
   }
 }
+const interestDataPromise = fetchInterestData();
 
+// Create a query string for coveo to exclude the card ids
 const prepareExclusionQuery = (cardIdsToExclude) => {
   // eslint-disable-next-line no-useless-escape
   const query = cardIdsToExclude.map((id) => `(@el_id NOT \"${id}\")`).join(' AND ');
   return cardIdsToExclude.length <= 1 ? query : `(${query})`;
 };
 
+// Find the interests that are not present in the target data
 async function findEmptyFilters(targetCriteriaId, profileInterests = []) {
-  const removeFilters = [];
   const resp = await defaultAdobeTargetClient.getTargetData(targetCriteriaId);
-  if (resp?.data) {
-    const { data } = resp;
-    profileInterests.forEach((interest) => {
-      let found = false;
-      for (let i = 0; i < data?.length ? data.length : 0; i += 1) {
-        if (data[i].product.split(',').includes(interest)) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) removeFilters.push(interest);
-    });
-  }
-  return removeFilters;
+  const data = resp?.data || [];
+
+  return profileInterests.filter((interest) => !data.some(({ product }) => product.split(',').includes(interest)));
 }
 
-const interestDataPromise = fetchInterestData();
-
-const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
-
+// Build a placeholder for the card
 const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
   const cardDiv = document.createElement('div');
   cardDiv.classList.add('card-wrapper');
@@ -169,11 +162,6 @@ const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
-  if (block.dataset.targetScope) {
-    for (let i = 0; i < 13; i += 1) {
-      block.innerHTML += '<div><div></div></div>';
-    }
-  }
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
