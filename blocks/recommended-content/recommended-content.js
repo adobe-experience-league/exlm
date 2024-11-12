@@ -102,6 +102,20 @@ export function setTargetDataAsBlockAttribute(data, block) {
   }
 }
 
+/**
+ * Adds a data-analytics-coveo-meta attribute to each recommended-content block on the page.
+ * Value is in the format coveo-X, where X represents the order of the block on the page.
+ */
+function setCoveoCountAsBlockAttribute() {
+  const recommendedBlocks = document.querySelectorAll('.recommended-content.block');
+  let coveoCount = 1;
+
+  recommendedBlocks.forEach((block) => {
+    block.setAttribute('data-analytics-coveo-meta', `coveo-${coveoCount}`);
+    coveoCount += 1;
+  });
+}
+
 async function fetchInterestData() {
   try {
     let data;
@@ -371,6 +385,7 @@ export default async function decorate(block) {
       if (!(targetSupport && targetCriteriaScopeId)) {
         headerContainer.innerHTML = headingElement.innerText;
         descriptionContainer.innerHTML = descriptionElement.innerText;
+        setCoveoCountAsBlockAttribute();
         block.style.display = 'block';
       }
 
