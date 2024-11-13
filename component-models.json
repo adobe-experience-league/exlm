@@ -4077,25 +4077,20 @@
         "label": "Description"
       },
       {
-        "component": "multiselect",
+        "component": "select",
         "name": "classes",
-        "label": "Style",
+        "value": "",
+        "label": "Theme",
+        "description": "Select light or dark theme",
         "valueType": "string",
-        "required": true,
-        "maxSize": 1,
         "options": [
           {
-            "name": "Theme",
-            "children": [
-              {
-                "name": "Light",
-                "value": "light"
-              },
-              {
-                "name": "Dark",
-                "value": "dark"
-              }
-            ]
+            "name": "Light",
+            "value": "light"
+          },
+          {
+            "name": "Dark",
+            "value": "dark"
           }
         ]
       },
@@ -4104,7 +4099,7 @@
         "name": "backgroundColor",
         "value": "",
         "label": "Background Color",
-        "description": "The marquee background color",
+        "description": "The announcement ribbon background color",
         "valueType": "string",
         "options": [
           {
