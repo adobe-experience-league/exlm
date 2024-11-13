@@ -45,6 +45,23 @@
   cursor: pointer;
 }
 
+.announcement-ribbon.block.dark .ribbon-heading :where(h1, h2, h3, h4, h5, h6),
+.announcement-ribbon.block.dark .ribbon-description {
+  color: var(--background-color);
+}
+
+.announcement-ribbon.block.dark .ribbon-button-container a.button.primary {
+  background-color: var(--background-color);
+  border: 2px solid transparent;
+  color: currentcolor;
+}
+
+.announcement-ribbon.block.dark .ribbon-button-container a.button.secondary {
+  background-color: unset;
+  border: 2px solid currentcolor;
+  color: var(--background-color);
+}
+
 /* Tablet (600px to 899px) */
 @media (min-width: 600px) {
   .announcement-ribbon {
