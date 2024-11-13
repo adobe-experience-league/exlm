@@ -1,4 +1,3 @@
-import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
@@ -83,5 +82,4 @@ export default async function decorate(block) {
 
   /* Hide Tooltip while scrolling the cards layout */
   hideTooltipOnScroll(contentDiv);
-  decorateIcons(block);
 }

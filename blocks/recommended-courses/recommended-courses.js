@@ -208,8 +208,6 @@ export default async function decorate(block) {
   // Appending header div to the block
   block.appendChild(headerDiv);
 
-  decorateIcons(headerDiv);
-
   // Checking if the user is signed in before proceeding
   isSignedInUser().then((isSignedIn) => {
     if (isSignedIn) {
