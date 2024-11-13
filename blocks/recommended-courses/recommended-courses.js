@@ -4,7 +4,6 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { htmlToElement, fetchLanguagePlaceholders, getConfig, getLanguageCode } from '../../scripts/scripts.js';
 import BrowseCardsPathsAdaptor from '../../scripts/browse-card/browse-cards-paths-adaptor.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
-import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';

@@ -280,7 +280,7 @@ export default async function decorate(block) {
 
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
-    const buildCardsShimmer = new BrowseCardShimmer()
+    const buildCardsShimmer = new BrowseCardShimmer();
     buildCardsShimmer.addShimmer(block);
     headerDiv.after(block.querySelector('.browse-card-shimmer'));
 

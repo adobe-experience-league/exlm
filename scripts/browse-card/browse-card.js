@@ -303,7 +303,7 @@ export const buildNoResultsContent = (block, show, placeholder = placeholders.no
  * @param {string} [model.viewLink] - URL link to view more details about the card content.
  * @param {string} [model.copyLink] - URL link for a copy/share action on the card.
  * @returns {Promise<void>} Resolves when the card is fully built and added to the DOM.
-*/
+ */
 export async function buildCard(container, element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
 
