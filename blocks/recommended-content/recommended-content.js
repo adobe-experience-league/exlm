@@ -497,19 +497,17 @@ export default async function decorate(block) {
         const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
         const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
         const expLevel = experienceLevels[expLevelIndex] ?? 'Beginner';
-        let clonedProducts = showDefaultOptions
-          ? structuredClone(removeProductDuplicates(products))
-          : [interest];
+        let clonedProducts = showDefaultOptions ? structuredClone(removeProductDuplicates(products)) : [interest];
         if (showDefaultOptions) {
           switch (filterProductByOption) {
-            case 'all_adobe_products':
-              clonedProducts = [];
-              break;
             case 'profile_context':
               clonedProducts = [...new Set(sortedProfileInterests)];
               break;
             case 'specific_products':
               clonedProducts = products?.length ? [...products] : [];
+              break;
+            default:
+              clonedProducts = [];
               break;
           }
         }
