@@ -73,11 +73,6 @@ class AdobeTargetClient {
         },
         { once: true },
       );
-      // web-sdk-send-event-complete will be dispatched regardless of target failing or passing
-      // This timeout is to handle the case if event not at all dispatched
-      setTimeout(() => {
-        resolve(false);
-      }, 5000);
     });
   }
 
