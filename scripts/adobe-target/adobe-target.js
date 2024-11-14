@@ -1,4 +1,4 @@
-import { buildBlock, decorateBlock, decorateSections, loadBlock } from '../lib-franklin.js';
+import { buildBlock, decorateBlock, decorateSections, loadBlock, updateSectionsStatus } from '../lib-franklin.js';
 import getCookie from '../utils/cookie-utils.js';
 import getEmitter from '../events.js';
 
@@ -73,11 +73,6 @@ class AdobeTargetClient {
         },
         { once: true },
       );
-      // web-sdk-send-event-complete will be dispatched regardless of target failing or passing
-      // This timeout is to handle the case if event not at all dispatched
-      setTimeout(() => {
-        resolve(false);
-      }, 5000);
     });
   }
 
@@ -206,14 +201,22 @@ class AdobeTargetClient {
   }
 
   async createBlock(currentBlock) {
-    const blockEl = buildBlock(this.currentItem.newBlock, []);
+    const main = document.querySelector('main');
+    let blockEl;
+    if (this.currentItem.newBlock === 'recently-reviewed') {
+      blockEl = buildBlock(this.currentItem.newBlock, []);
+    } else {
+      blockEl = buildBlock(
+        this.currentItem.newBlock,
+        Array.from({ length: 13 }, () => ['']),
+      );
+    }
     if (this.currentItem.mode === 'replace' && currentBlock) {
       const containerSection = currentBlock?.parentElement?.parentElement;
       containerSection.replaceChild(blockEl, currentBlock?.parentElement);
     } else {
       const containerSection = document.createElement('div');
       containerSection.classList.add('section', 'profile-section');
-      const main = document.querySelector('main');
       main.appendChild(containerSection);
       decorateSections(main);
       containerSection.appendChild(blockEl);
@@ -222,6 +225,7 @@ class AdobeTargetClient {
     blockEl.dataset.targetScope = this.currentItem.scope;
     decorateBlock(blockEl);
     await loadBlock(blockEl);
+    updateSectionsStatus(main);
   }
 }
 

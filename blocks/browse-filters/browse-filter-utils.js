@@ -226,7 +226,14 @@ export function getObjectById(obj, ID) {
   return obj.find((option) => option.id === ID);
 }
 
-export const getFiltersPaginationText = (pgCount) => `of ${pgCount} page${pgCount > 1 ? 's' : ''}`;
+export const getFiltersPaginationText = (pgCount) => {
+  if (pgCount > 1) {
+    return placeholders?.filterPagesLabel
+      ? placeholders?.filterPagesLabel?.replace('{}', pgCount)
+      : `of ${pgCount} pages`;
+  }
+  return placeholders?.filterPageLabel ? placeholders?.filterPageLabel?.replace('{}', pgCount) : `of ${pgCount} page`;
+};
 
 export const getBrowseFiltersResultCount = () => {
   let resultCount = FILTER_RESULTS_COUNT.MOBILE;

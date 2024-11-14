@@ -9,7 +9,6 @@ div.list-placeholder-wrapper .list-item {
     var(--shimmer-image-slide-start) 80px
   );
   animation: wave 2s linear 0s infinite normal forwards;
-  animation: wave 2s linear 0s infinite normal forwards;
 }
 
 div.list-placeholder-wrapper .line {
