@@ -497,22 +497,20 @@ export default async function decorate(block) {
         const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
         const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
         const expLevel = experienceLevels[expLevelIndex] ?? 'Beginner';
-        let clonedProducts = structuredClone(removeProductDuplicates(products));
-        if (!showDefaultOptions && !clonedProducts.find((c) => c.toLowerCase() === lowercaseOptionType)) {
-          clonedProducts.push(interest);
-        }
+        let clonedProducts = showDefaultOptions
+          ? structuredClone(removeProductDuplicates(products))
+          : [interest];
         if (showDefaultOptions) {
-          if (filterProductByOption === 'all_adobe_products') {
-            clonedProducts.length = 0;
-          } else if (filterProductByOption === 'profile_context') {
-            // show everything from profile for default tab
-            clonedProducts = [...new Set([...sortedProfileInterests])];
-          } else if (filterProductByOption === 'specific_products') {
-            if (products?.length) {
-              clonedProducts = [...products];
-            } else {
+          switch (filterProductByOption) {
+            case 'all_adobe_products':
               clonedProducts = [];
-            }
+              break;
+            case 'profile_context':
+              clonedProducts = [...new Set(sortedProfileInterests)];
+              break;
+            case 'specific_products':
+              clonedProducts = products?.length ? [...products] : [];
+              break;
           }
         }
 
