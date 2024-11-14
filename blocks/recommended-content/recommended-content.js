@@ -120,7 +120,6 @@ function setCoveoCountAsBlockAttribute() {
   });
 }
 
-
 // fetch list of all interests
 async function fetchInterestData() {
   try {
