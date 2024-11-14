@@ -1,4 +1,5 @@
 import { convertToTitleCase } from './browse-card-utils.js';
+import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import { fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 
 const BrowseCardsTargetDataAdapter = (() => {
@@ -9,12 +10,13 @@ const BrowseCardsTargetDataAdapter = (() => {
    * @returns {Object} The BrowseCards data model.
    */
   const mapResultsToCardsDataModel = (data) => {
+    const contentTypeKey = data?.contentType?.toUpperCase();
     const articlePath = `/${getPathDetails().lang}${data?.path}`;
     const fullURL = new URL(articlePath, window.location.origin).href;
     const solutions = data?.product.split(',').map((s) => s.trim());
     return {
       ...data,
-      badgeTitle: data?.contentType,
+      badgeTitle: CONTENT_TYPES[contentTypeKey]?.LABEL,
       type: data?.contentType,
       authorInfo: data?.authorInfo || {
         name: [''],
