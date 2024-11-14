@@ -300,7 +300,6 @@ export default async function decorate(block) {
           }
         }),
     );
-    contentDiv.style.display = 'flex';
     return promises;
   };
 
@@ -666,7 +665,6 @@ export default async function decorate(block) {
               buildNoResultsContent(contentDiv, false);
               buildNoResultsContent(contentDiv, true);
               recommendedContentNoResults(contentDiv);
-              contentDiv.style.display = 'block';
               return;
             }
 
@@ -682,7 +680,6 @@ export default async function decorate(block) {
             if (cardsBlockCount === 0) {
               buildNoResultsContent(contentDiv, true);
               recommendedContentNoResults(contentDiv);
-              contentDiv.style.display = 'block';
             } else {
               // In the unlikely scenario that some card promises were successfully resolved, while some others failed. Try to show the rendered cards.
               Array.from(contentDiv.querySelectorAll('.shimmer-placeholder')).forEach((element) => {
