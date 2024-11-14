@@ -286,7 +286,8 @@
                   "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt",
                   "cta1Type": "primary",
                   "cta2Type": "primary",
-                  "customHexCode": "FFFFFF"
+                  "customHexCode": "FFFFFF",
+                  "classes": "light"
                 }
               }
             }
