@@ -61,6 +61,11 @@ mappings:
   - /content/exlm/global/zh-CN/placeholders:/zh-hans/placeholders.json
   - /content/exlm/global/zh-TW/placeholders:/zh-hant/placeholders.json
 
+  # taxonomy
+  - /content/exlm/feature-taxonomy:/feature-taxonomy.json
+  - /content/exlm/role-taxonomy:/role-taxonomy.json
+  - /content/exlm/level-taxonomy:/level-taxonomy.json
+
   # browse inidices
   - /content/exlm.resource/en/browse-index.json:/en/browse-index.json
   - /content/exlm.resource/fr/browse-index.json:/fr/browse-index.json
