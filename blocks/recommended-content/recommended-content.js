@@ -524,9 +524,7 @@ export default async function decorate(block) {
           sortCriteria,
           noOfResults: numberOfResults,
           aq: !showDefaultOptions && cardIdsToExclude.length ? prepareExclusionQuery(cardIdsToExclude) : undefined,
-          context: showDefaultOptions
-            ? { role: profileRoles, interests: sortedProfileInterests, experience: experienceLevels }
-            : { interests: [interest], experience: [expLevel], role: profileRoles },
+          context: showDefaultOptions ? {} : { interests: [interest], experience: [expLevel], role: profileRoles },
         };
 
         if (renderCards) {
