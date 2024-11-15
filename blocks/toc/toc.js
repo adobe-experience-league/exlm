@@ -356,11 +356,17 @@ function clearFilter() {
 function initializeTocFilter() {
   const tocFilterInput = document.querySelector('.toc-filter-input');
   const tocFilterClearIcon = document.querySelector('.toc-clear-icon');
+  const spectrumSwitch = document.querySelector('.spectrum-switch input');
 
   // Apply the debounced filter function
   const debouncedFilter = tocFilterDebounce((event) => {
     const query = event.target.value;
     tocFilter(query);
+
+    // Set spectrumSwitch to checked when filtering
+    if (query !== '') {
+      spectrumSwitch.checked = true;
+    }
   }, 300); // 300ms debounce delay
 
   // Add input event listener for filtering
@@ -369,6 +375,7 @@ function initializeTocFilter() {
   // Clear filter on clear icon click
   tocFilterClearIcon.addEventListener('click', () => {
     tocFilterInput.value = '';
+    spectrumSwitch.checked = false;
     clearFilter(); // Restore the original or user structure
   });
 }

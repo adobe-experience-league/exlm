@@ -1204,7 +1204,7 @@ async function loadPage() {
 function prehidePageForTarget() {
   const styleEl = htmlToElement(`<style> body { opacity: 0 !important } </style>`);
   document.head.appendChild(styleEl);
-  setTimeout(() => styleEl?.parentNode?.removeChild(styleEl), 3000);
+  setTimeout(() => styleEl?.parentNode?.removeChild(styleEl), 5000);
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
