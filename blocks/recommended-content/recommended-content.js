@@ -414,6 +414,9 @@ export default async function decorate(block) {
         : roleEl?.innerText?.trim().split(',').filter(Boolean);
 
       const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
+      if (filterOptions.length <= 1) {
+        filterSectionElement.style.display = 'none';
+      }
       const [defaultFilterOption = ''] = filterOptions;
       const containsAllAdobeProductsTab = filterOptions.includes(ALL_ADOBE_OPTIONS_KEY);
 
