@@ -16,6 +16,13 @@
   max-width: 1096px;
 }
 
+.recommended-content-description a{
+  font-size: var(--spectrum-font-size-200);
+  line-height: 20px;
+  margin-bottom: 30px;
+  color: var(--non-spectrum-link);
+}
+
 .recommended-content-filter-heading {
   font-size: var(--spectrum-font-size-75);
   line-height: 15px;
