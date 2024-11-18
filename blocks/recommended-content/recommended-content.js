@@ -359,11 +359,11 @@ export default async function decorate(block) {
       } = profileData || {};
 
       if (profileInterests.length === 0) {
-        filterSectionElement.style.display = 'none';
-        blockHeader.style.display = 'none';
+        if (!UEAuthorMode) filterSectionElement.style.display = 'none';
+        if (!UEAuthorMode) blockHeader.style.display = 'none';
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       } else if (profileInterests.length === 1) {
-        filterSectionElement.style.display = 'none';
+        if (!UEAuthorMode) filterSectionElement.style.display = 'none';
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       } else {
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
@@ -414,6 +414,9 @@ export default async function decorate(block) {
         : roleEl?.innerText?.trim().split(',').filter(Boolean);
 
       const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
+      if (filterOptions.length <= 1 && !UEAuthorMode) {
+        filterSectionElement.style.display = 'none';
+      }
       const [defaultFilterOption = ''] = filterOptions;
       const containsAllAdobeProductsTab = filterOptions.includes(ALL_ADOBE_OPTIONS_KEY);
 
@@ -521,9 +524,7 @@ export default async function decorate(block) {
           sortCriteria,
           noOfResults: numberOfResults,
           aq: !showDefaultOptions && cardIdsToExclude.length ? prepareExclusionQuery(cardIdsToExclude) : undefined,
-          context: showDefaultOptions
-            ? { role: profileRoles, interests: sortedProfileInterests, experience: experienceLevels }
-            : { interests: [interest], experience: [expLevel], role: profileRoles },
+          context: showDefaultOptions ? {} : { interests: [interest], experience: [expLevel], role: profileRoles },
         };
 
         if (renderCards) {
