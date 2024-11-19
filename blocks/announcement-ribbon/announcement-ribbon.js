@@ -80,8 +80,10 @@ export default async function decorate(block) {
   decorateIcons(block);
 
   // Add close button functionality
-  const closeIcon = block.querySelector('.icon-close-black');
-  if (closeIcon && !window.location.href.includes('.html')) {
-    closeIcon.addEventListener('click', () => hideRibbon(block));
-  }
+  ['.icon-close-black', '.icon-close-light'].forEach((selectedIcon) => {
+    const closeIcon = block.querySelector(selectedIcon);
+    if (closeIcon && !window.location.href.includes('.html')) {
+      closeIcon.addEventListener('click', () => hideRibbon(block));
+    }
+  });
 }
