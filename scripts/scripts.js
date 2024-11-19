@@ -796,6 +796,7 @@ const loadMartech = async (headerPromise, footerPromise) => {
   });
 
   // footer and one trust loaded, add event listener to open one trust popup,
+  // footer and one trust loaded, add event listener to open one trust popup,
   Promise.all([footerPromise, oneTrustPromise]).then(() => {
     document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
       e.preventDefault();
