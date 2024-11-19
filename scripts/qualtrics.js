@@ -10,6 +10,22 @@ const defaultProfile = {
   exlExperienceLevel: [],
 };
 
+// Map from our url langs to qualtrics lang codes
+const langMap = {
+  en: 'EN',
+  de: 'DE',
+  es: 'ES',
+  fr: 'FR',
+  it: 'IT',
+  ja: 'JA',
+  ko: 'KO',
+  nl: 'NL',
+  'pt-br': 'PT',
+  sv: 'SV',
+  'zh-hans': 'ZH-S',
+  'zh-hant': 'ZH-T',
+};
+
 // Set the EXL_PROFILE object for the Qualtrics survey - UGP-10760
 const setExlProfile = async () => {
   try {
@@ -33,7 +49,30 @@ const setExlProfile = async () => {
   }
 };
 
+/**
+ * Copies all meta tags to window.EXL_META
+ * These are consumed by Qualtrics to pass additional data along with intercepts.
+ */
+const addMetaTagsToWindow = () => {
+  window.EXL_META = {};
+
+  document.querySelectorAll('meta').forEach((tag) => {
+    if (
+      typeof tag.name === 'string' &&
+      tag.name.length > 0 &&
+      typeof tag.content === 'string' &&
+      tag.content.length > 0
+    ) {
+      window.EXL_META[tag.name] = tag.content;
+    }
+  });
+
+  window.EXL_META.lang = document.documentElement.lang || 'en';
+  window.EXL_META.qualtricsLang = langMap[document.documentElement.lang] || 'EN';
+};
+
 export default async function loadQualtrics() {
+  addMetaTagsToWindow();
   const profilePromise = setExlProfile();
   const fetchPromise = fetch('/qualtrics.json').then((resp) => {
     if (resp.ok) {
