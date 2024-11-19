@@ -41,7 +41,8 @@
   max-width: none;
 }
 
-.announcement-ribbon .icon-close-black {
+.announcement-ribbon .icon-close-black,
+.announcement-ribbon .icon-close-light {
   cursor: pointer;
 }
 
@@ -112,7 +113,8 @@
     width: auto;
   }
 
-  .announcement-ribbon .icon-close-black {
+  .announcement-ribbon .icon-close-black,
+  .announcement-ribbon .icon-close-light {
     margin: 0 12px 0 16px;
   }
 }

@@ -207,11 +207,8 @@ async function decorateProfileWelcomeBlock(block) {
       const profileUserCardParent = block.querySelector('.profile-user-card');
       profileUserCardParent?.classList.add('profile-user-card-mini');
       block.querySelector('.profile-user-card-details')?.remove();
-
-      if (profileCardWrapSectionEl && !UEAuthorMode) {
-        profileCardWrapSectionEl.remove();
-      }
-    } else {
+      profileCardWrapSectionEl?.remove();
+    } else if (profileCardWrapSectionEl) {
       profileCardWrapSectionEl.innerHTML = `<span class="icon icon-exclamation"></span>
              ${incompleteProfileText.innerHTML}
             `;
