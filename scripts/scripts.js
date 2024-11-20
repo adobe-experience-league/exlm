@@ -27,7 +27,7 @@ import {
  * Load files async using import() if you must.
  */
 
-const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
+const LCP_BLOCKS = ['marquee']; // add your LCP blocks to the list
 
 /**
  * load fonts.css and set a session storage flag
@@ -1154,9 +1154,9 @@ function handleRedirects() {
 async function loadPage() {
   handleRedirects();
   await loadEager(document);
-  loadArticles();
   createDocColumns();
   loadRails();
+  loadArticles();
   await loadLazy(document);
   loadDelayed();
   showSignupDialog();
