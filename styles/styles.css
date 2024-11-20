@@ -933,6 +933,16 @@ picture[align=right] {
 .section.curated-cards-container, .section.events-cards-container {
   padding-bottom: 0;
 }
+.section.article-content-section {
+  max-width: 1280px;
+  margin: auto;
+  padding: 42px 0;
+}
+.section.article-content-section > div {
+  max-width: 765px;
+  padding-left: 40px;
+  margin: 0;
+}
 
 /* the browse rail is hidden by default */
 main > div.browse-rail {
