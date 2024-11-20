@@ -898,10 +898,10 @@ async function loadRails() {
  * Custom - Loads and builds layout for articles page
  */
 export async function loadArticles() {
-  if (isPerspectivePage) {
+  window.setTimeout(() => {
     loadCSS(`${window.hlx.codeBasePath}/scripts/articles/articles.css`);
     loadDefaultModule('./articles/articles.js');
-  }
+  }, 3000);
 }
 
 function showSignupDialog() {
@@ -1156,8 +1156,10 @@ async function loadPage() {
   await loadEager(document);
   createDocColumns();
   loadRails();
-  // loadArticles();
   await loadLazy(document);
+  if (isPerspectivePage) {
+    loadArticles();
+  }
   loadDelayed();
   showSignupDialog();
 
