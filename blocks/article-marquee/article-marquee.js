@@ -170,42 +170,50 @@ export default async function ArticleMarquee(block) {
 
     if (Array.isArray(links) && links.length > 0) {
       // Filter out null, empty and duplicate links and map to fetchAuthorBio
-      const authorPromises = Array.from(new Set(links.filter((link) => link))).map((link) => fetchAuthorBio(link));
-      const authorsInfo = await Promise.all(authorPromises);
-      const authorInfoContainer = block.querySelector('.author-details');
-      let isExternal = false;
-
-      authorsInfo.slice(0, 2).forEach((authorInfo) => {
-        if (authorInfo) {
-          let tagname = placeholders.articleAdobeTag;
-          let articleType = authorInfo?.authorCompany?.toLowerCase();
-          if (!articleType) articleType = metadataProperties.adobe;
-          if (articleType !== metadataProperties.adobe) {
-            tagname = placeholders.articleExternalTag;
+      const uniqueLinks = Array.from(new Set(links.filter((link) => link)));
+      const authorPromises = uniqueLinks.map((link) => fetchAuthorBio(link));
+    
+      // Process each promise individually to avoid blocking rendering
+      Promise.allSettled(authorPromises).then((results) => {
+        const authorsInfo = results
+          .filter((result) => result.status === 'fulfilled') // Only process successfully resolved promises
+          .map((result) => result.value);
+    
+        const authorInfoContainer = block.querySelector('.author-details');
+        let isExternal = false;
+    
+        authorsInfo.slice(0, 2).forEach((authorInfo) => {
+          if (authorInfo) {
+            let tagname = placeholders.articleAdobeTag;
+            let articleType = authorInfo?.authorCompany?.toLowerCase() || metadataProperties.adobe;
+            if (articleType !== metadataProperties.adobe) {
+              tagname = placeholders.articleExternalTag;
+            }
+            const authorHTML = `<div class="author-card">
+                                  <div class="author-image">${
+                                    createOptimizedPicture(authorInfo?.authorImage).outerHTML
+                                  }</div>
+                                  <div class="author-info-text">
+                                    <div class="author-name">${authorInfo?.authorName}</div>
+                                    <div class="author-title">${authorInfo?.authorTitle}</div>
+                                    <div class="article-marquee-tag">${tagname}</div>
+                                  </div>
+                                </div>`;
+            authorInfoContainer.innerHTML += authorHTML;
+            if (articleType === 'external') {
+              isExternal = true;
+            }
           }
-          const authorHTML = `<div class="author-card">
-                              <div class="author-image">${
-                                createOptimizedPicture(authorInfo?.authorImage).outerHTML
-                              }</div>
-                              <div class="author-info-text">
-                                <div class="author-name">${authorInfo?.authorName}</div>
-                                <div class="author-title">${authorInfo?.authorTitle}</div>
-                                <div class="article-marquee-tag">${tagname}</div>
-                              </div>
-                            </div>`;
-          authorInfoContainer.innerHTML += authorHTML;
-          if (articleType === 'external') {
-            isExternal = true;
-          }
+        });
+    
+        if (isExternal) {
+          block.querySelector('.article-marquee-large-bg').classList.add('external');
+          block.querySelector('.article-marquee-bg-container').classList.add('external');
+        } else {
+          block.querySelector('.article-marquee-large-bg').classList.add('adobe');
+          block.querySelector('.article-marquee-bg-container').classList.add('adobe');
         }
       });
-      if (isExternal) {
-        block.querySelector('.article-marquee-large-bg').classList.add('external');
-        block.querySelector('.article-marquee-bg-container').classList.add('external');
-      } else {
-        block.querySelector('.article-marquee-large-bg').classList.add('adobe');
-        block.querySelector('.article-marquee-bg-container').classList.add('adobe');
-      }
     }
   }
 }
