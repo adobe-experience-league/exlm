@@ -185,7 +185,7 @@ export default async function ArticleMarquee(block) {
         authorsInfo.slice(0, 2).forEach((authorInfo) => {
           if (authorInfo) {
             let tagname = placeholders.articleAdobeTag;
-            let articleType = authorInfo?.authorCompany?.toLowerCase() || metadataProperties.adobe;
+            const articleType = authorInfo?.authorCompany?.toLowerCase() || metadataProperties.adobe;
             if (articleType !== metadataProperties.adobe) {
               tagname = placeholders.articleExternalTag;
             }
