@@ -45,7 +45,7 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-async function createOptions(container, readTimeText) {
+function createOptions(container, readTimeText) {
   const { lang } = getPathDetails();
   const options = document.createElement('div');
   options.classList.add('article-marquee-options');
@@ -163,7 +163,7 @@ export default async function ArticleMarquee(block) {
     block.innerHTML = articleDetails;
 
     const infoContainer = block.querySelector('.article-marquee-info');
-    await createOptions(infoContainer, readTime.textContent.trim());
+    createOptions(infoContainer, readTime.textContent.trim());
 
     const breadcrumbContainer = block.querySelector('.breadcrumb');
     createBreadcrumb(breadcrumbContainer);
