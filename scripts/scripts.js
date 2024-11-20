@@ -201,7 +201,7 @@ function addMiniToc(main) {
   tocSection.classList.add('mini-toc-section');
   const miniTocBlock = buildBlock('mini-toc', []);
   tocSection.append(miniTocBlock);
-  // miniTocBlock.style.display = 'none';
+  miniTocBlock.style.display = 'none';
   main.append(tocSection);
 }
 
