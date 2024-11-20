@@ -129,7 +129,7 @@ function buildMiniToc(block, placeholders) {
     });
   } else {
     render(() => {
-      block.classList.add('is-hidden');
+      block.classList.add('hidden');
     });
   }
 }
