@@ -16,6 +16,13 @@
   max-width: 1096px;
 }
 
+.recommended-content-description a {
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  margin: 0;
+}
+
 .recommended-content-filter-heading {
   font-size: var(--spectrum-font-size-75);
   line-height: 15px;
