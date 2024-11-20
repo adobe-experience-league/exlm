@@ -1156,8 +1156,8 @@ async function loadPage() {
   await loadEager(document);
   createDocColumns();
   loadRails();
+  await loadArticles();
   await loadLazy(document);
-  loadArticles();
   loadDelayed();
   showSignupDialog();
 
