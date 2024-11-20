@@ -17,10 +17,10 @@
 }
 
 .recommended-content-description a {
-  font-size: var(--spectrum-font-size-200);
-  line-height: 20px;
-  margin-bottom: 30px;
-  color: var(--non-spectrum-link);
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  margin-bottom: 0;
 }
 
 .recommended-content-filter-heading {
