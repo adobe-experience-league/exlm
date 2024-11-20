@@ -16,6 +16,13 @@
   max-width: 1096px;
 }
 
+.recommended-content-description a {
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  margin: 0;
+}
+
 .recommended-content-filter-heading {
   font-size: var(--spectrum-font-size-75);
   line-height: 15px;
@@ -183,8 +190,16 @@
   height: 20px;
 }
 
+.recommended-content.block .browse-cards-block-content {
+  display: flex;
+}
+
 .recommended-content.block:has(.browse-card-no-results) .recommended-content-nav-section {
   display: none;
+}
+
+.recommended-content.block .browse-cards-block-content:has(.browse-card-no-results) {
+  display: block;
 }
 
 .recommended-content.block .browse-cards-block-content .card-wrapper:not(:has(.browse-card)) {

@@ -864,27 +864,6 @@ export function createTag(tag, attributes, html) {
 }
 
 /**
- * Copies all meta tags to window.EXL_META
- * These are consumed by Qualtrics to pass additional data along with the feedback survey.
- */
-function addMetaTagsToWindow() {
-  window.EXL_META = {};
-
-  document.querySelectorAll('meta').forEach((tag) => {
-    if (
-      typeof tag.name === 'string' &&
-      tag.name.length > 0 &&
-      typeof tag.content === 'string' &&
-      tag.content.length > 0
-    ) {
-      window.EXL_META[tag.name] = tag.content;
-    }
-  });
-
-  window.EXL_META.lang = document.documentElement.lang;
-}
-
-/**
  * Loads everything that happens a lot later,
  * without impacting the user experience.
  */
@@ -892,7 +871,6 @@ function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
-  addMetaTagsToWindow();
 }
 
 /** load and execute the default export of the given js module path */
@@ -1204,7 +1182,7 @@ async function loadPage() {
 function prehidePageForTarget() {
   const styleEl = htmlToElement(`<style> body { opacity: 0 !important } </style>`);
   document.head.appendChild(styleEl);
-  setTimeout(() => styleEl?.parentNode?.removeChild(styleEl), 3000);
+  setTimeout(() => styleEl?.parentNode?.removeChild(styleEl), 5000);
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC

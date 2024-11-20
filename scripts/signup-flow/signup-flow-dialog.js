@@ -239,7 +239,11 @@ export default class SignupFlowDialog {
     // Generate step flow content based on the current step index
     let flow = '';
     if (pageIndex < this.pages.length - 1) {
-      dialogTitle.innerHTML = `<h4>${data.title}</h4><p>Step ${pageIndex + 1} of ${this.pages.length - 1}</p>`;
+      dialogTitle.innerHTML = `<h4>${data.title}</h4><p>${
+        this.placeholders?.signupStepProgress
+          ? this.placeholders.signupStepProgress.replace('{}', pageIndex + 1).replace('{}', this.pages.length - 1)
+          : `Step ${pageIndex + 1} of ${this.pages.length - 1}`
+      }</p>`;
       flow = `<div class="signup-dialog-step-flow">
                 ${this.pages
                   .map((step, index) => {

@@ -285,7 +285,9 @@
                   "titleType": "h3",
                   "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt",
                   "cta1Type": "primary",
-                  "cta2Type": "primary"
+                  "cta2Type": "primary",
+                  "customHexCode": "FFFFFF",
+                  "classes": "light"
                 }
               }
             }
@@ -920,6 +922,23 @@
           }
         },
         {
+          "title": "Recommendation Marquee",
+          "id": "recommendation-marquee",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Recommendation Marquee",
+                  "model": "recommendation-marquee",
+                  "roles": ["profile_context"],
+                  "filterProductBy": "all_adobe_products"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Recommended Content",
           "id": "recommended-content",
           "plugins": {
@@ -930,7 +949,6 @@
                   "name": "Recommended Content",
                   "model": "recommended-content",
                   "roles": ["profile_context"],
-                  "sortTargetResultsBy": "",
                   "filterProductBy": "all_adobe_products"
                 }
               }
