@@ -1154,10 +1154,10 @@ function handleRedirects() {
 async function loadPage() {
   handleRedirects();
   await loadEager(document);
+  loadArticles();
   createDocColumns();
   loadRails();
   await loadLazy(document);
-  loadArticles();
   loadDelayed();
   showSignupDialog();
 
