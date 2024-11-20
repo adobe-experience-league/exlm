@@ -172,16 +172,16 @@ export default async function ArticleMarquee(block) {
       // Filter out null, empty and duplicate links and map to fetchAuthorBio
       const uniqueLinks = Array.from(new Set(links.filter((link) => link)));
       const authorPromises = uniqueLinks.map((link) => fetchAuthorBio(link));
-    
+
       // Process each promise individually to avoid blocking rendering
       Promise.allSettled(authorPromises).then((results) => {
         const authorsInfo = results
           .filter((result) => result.status === 'fulfilled') // Only process successfully resolved promises
           .map((result) => result.value);
-    
+
         const authorInfoContainer = block.querySelector('.author-details');
         let isExternal = false;
-    
+
         authorsInfo.slice(0, 2).forEach((authorInfo) => {
           if (authorInfo) {
             let tagname = placeholders.articleAdobeTag;
@@ -205,7 +205,7 @@ export default async function ArticleMarquee(block) {
             }
           }
         });
-    
+
         if (isExternal) {
           block.querySelector('.article-marquee-large-bg').classList.add('external');
           block.querySelector('.article-marquee-bg-container').classList.add('external');
