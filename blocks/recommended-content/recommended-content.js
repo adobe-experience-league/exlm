@@ -209,7 +209,7 @@ export default async function decorate(block) {
   const tempContentSection = tempWrapper.querySelector('.recommended-content-block-section');
   countNumberAsArray(4).forEach(() => {
     const { shimmer: shimmerInstance, wrapper } = renderCardPlaceholders(tempWrapper);
-    shimmerInstance.add(wrapper);
+    shimmerInstance.addShimmer(wrapper);
     tempContentSection.appendChild(wrapper);
   });
 
@@ -251,7 +251,7 @@ export default async function decorate(block) {
               if (delayedCardData.length === 0) {
                 if (renderCards) {
                   cardData.shimmers?.forEach((shimmerInstance, index) => {
-                    shimmerInstance.remove();
+                    shimmerInstance.removeShimmer();
                     cardData.wrappers[index].style.display = 'none';
                   });
                 }
@@ -663,6 +663,10 @@ export default async function decorate(block) {
               buildNoResultsContent(contentDiv, true);
               recommendedContentNoResults(contentDiv);
               return;
+            }
+            const noResultsContent = block.querySelector('.browse-card-no-results');
+            if (noResultsContent) {
+              noResultsContent.remove();
             }
 
             const navSectionEl = block.querySelector('.recommended-content-nav-section');
