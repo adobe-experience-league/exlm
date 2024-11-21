@@ -6,8 +6,6 @@ import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
-loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
-
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
   CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
@@ -22,25 +20,6 @@ try {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
 }
-
-const { lang } = getPathDetails();
-
-/* User Info for Community Section - Will accomodate once we have KHOROS integration */
-// const generateContributorsMarkup = (contributor) => {
-//   const { name, thumbnail, level, date } = contributor;
-//   return htmlToElement(`
-//         <div class="browse-card-contributor-info">
-//             <img src="${thumbnail}">
-//             <div class="browse-card-name-plate">
-//             <span class="browse-card-contributor-name">${name}</span>
-//             <div class="browse-card-contributor-level">
-//                 <span>L</span>
-//                 <span>Level ${level}</span>
-//             </div>
-//             <span>${date}</span>
-//             </div>
-//         </div>`);
-// };
 
 // Function to parse a duration string and convert it to total hours
 const parseTotalDuration = (durationStr) => {
@@ -128,21 +107,6 @@ const buildTagsContent = (cardMeta, tags = []) => {
   });
 };
 
-/* Default No Results Content from Placeholder */
-export const buildNoResultsContent = (block, show, placeholder = placeholders.noResultsText) => {
-  if (show) {
-    const noResultsInfo = htmlToElement(`
-    <div class="browse-card-no-results">${placeholder}</div>
-  `);
-    block.appendChild(noResultsInfo);
-  } else {
-    const existingNoResultsInfo = block.querySelector('.browse-card-no-results');
-    if (existingNoResultsInfo) {
-      block.removeChild(existingNoResultsInfo);
-    }
-  }
-};
-
 const buildEventContent = ({ event, cardContent, card }) => {
   const { time } = event;
   const eventInfo = htmlToElement(`
@@ -176,6 +140,7 @@ const buildInProgressBarContent = ({ inProgressStatus, cardFigure, card }) => {
 
 const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardContent }) => {
   const titleElement = createTag('p', { class: 'course-duration' });
+  const { lang } = getPathDetails();
   if (lang === 'en') {
     const remainingTime = calculateRemainingTime(inProgressText, inProgressStatus);
     const timeleftLabel = placeholders?.recommendedCoursesTimeLeftLabel || 'You have $[TIME_LEFT] left in this course';
@@ -190,16 +155,15 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
 const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }) => {
   if (viewLinkText) {
     let icon = null;
-    let isLeftPlacement = false;
-    if (contentType?.toLowerCase() === CONTENT_TYPES.TUTORIAL.MAPPING_KEY) {
-      icon = 'play-outline';
-      isLeftPlacement = false;
-    } else if (
+    const isLeftPlacement = false;
+    if (
       [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
         contentType?.toLowerCase(),
       )
     ) {
       icon = 'new-tab-blue';
+    } else {
+      icon = 'chevron-right-blue';
     }
     const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
     const linkText = htmlToElement(`
@@ -260,16 +224,6 @@ const buildCardContent = async (card, model) => {
 
   cardContent.appendChild(cardMeta);
 
-  /* User Info for Community Section - Will accomodate once we have KHOROS integration */
-  // if (contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
-  //   const contributorInfo = document.createElement('div');
-  //   contributorInfo.classList.add('browse-card-contributor-info');
-  //   const contributorElement = generateContributorsMarkup(contributor);
-  //   contributorInfo.appendChild(contributorElement);
-  //   buildTagsContent(cardMeta, tags);
-  //   cardContent.insertBefore(contributorInfo, cardMeta);
-  // }
-
   if (contentType === CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY) {
     buildEventContent({ event, cardContent, card });
   }
@@ -318,21 +272,37 @@ const buildCardContent = async (card, model) => {
   buildCardCtaContent({ cardFooter, contentType, viewLinkText, viewLink });
 };
 
-/**
- * @typedef {Object} CardModel
- * @property {string} thumbnail
- * @property {string[]} product
- * @property {string} title
- * @property {string} contentType
- * @property {string} badgeTitle
- * @property {number} inProgressStatus
- */
+/* Default No Results Content from Placeholder */
+export const buildNoResultsContent = (block, show, placeholder = placeholders.noResultsText) => {
+  if (show) {
+    const noResultsInfo = htmlToElement(`
+    <div class="browse-card-no-results">${placeholder}</div>
+  `);
+    block.appendChild(noResultsInfo);
+  } else {
+    const existingNoResultsInfo = block.querySelector('.browse-card-no-results');
+    if (existingNoResultsInfo) {
+      block.removeChild(existingNoResultsInfo);
+    }
+  }
+};
 
 /**
+ * Builds a browse card element with various components based on the provided model data.
  *
- * @param {HTMLElement} container
- * @param {HTMLElement} element
- * @param {*} model
+ * @param {HTMLElement} container - The container element for the browse card.
+ * @param {HTMLElement} element - The element where the card will be appended.
+ * @param {Object} model - The data model containing information about the card.
+ * @param {string} model.thumbnail - URL for the card thumbnail image.
+ * @param {string} model.product - Product information to be displayed, which can include multiple solutions.
+ * @param {string} model.title - Title of the card.
+ * @param {string} model.contentType - Type of the content, used for CSS styling and analytics.
+ * @param {string} model.badgeTitle - Title of the badge, displayed as a banner.
+ * @param {string} model.inProgressStatus - Status information for progress-related content types.
+ * @param {boolean} [model.failedToLoad=false] - Indicates if the card failed to load, triggering specific styles.
+ * @param {string} [model.viewLink] - URL link to view more details about the card content.
+ * @param {string} [model.copyLink] - URL link for a copy/share action on the card.
+ * @returns {Promise<void>} Resolves when the card is fully built and added to the DOM.
  */
 export async function buildCard(container, element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
@@ -358,11 +328,15 @@ export async function buildCard(container, element, model) {
   }
   const card = createTag(
     'div',
-    { class: `browse-card ${type}-card ${failedToLoad ? 'load-fail-card' : ''}` },
+    { class: `browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}` },
     `<div class="browse-card-figure"></div><div class="browse-card-content"></div><div class="browse-card-footer"></div>`,
   );
   const cardFigure = card.querySelector('.browse-card-figure');
   const cardContent = card.querySelector('.browse-card-content');
+
+  if (type) {
+    cardFigure.style.backgroundColor = `var(--browse-card-color-${type}-secondary)`;
+  }
 
   if (
     (type === courseMappingKey ||
@@ -371,6 +345,17 @@ export async function buildCard(container, element, model) {
       type === recommededMappingKey) &&
     thumbnail
   ) {
+    const laptopContainer = document.createElement('div');
+    laptopContainer.classList.add('laptop-container');
+    const laptopScreen = document.createElement('div');
+    const laptopKeyboard = document.createElement('div');
+    laptopContainer.append(laptopScreen, laptopKeyboard);
+    if (type) {
+      laptopScreen.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
+      laptopKeyboard.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
+    }
+
+    cardFigure.appendChild(laptopContainer);
     const img = document.createElement('img');
     img.src = thumbnail;
     img.loading = 'lazy';
@@ -385,10 +370,10 @@ export async function buildCard(container, element, model) {
       cardFigure.classList.add('img-custom-height');
     });
   }
-
   if (badgeTitle || failedToLoad) {
     const bannerElement = createTag('h3', { class: 'browse-card-banner' });
     bannerElement.innerText = badgeTitle || '';
+    bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
     cardFigure.appendChild(bannerElement);
   }
 
@@ -424,6 +409,7 @@ export async function buildCard(container, element, model) {
     titleElement.textContent = title;
     cardContent.appendChild(titleElement);
   }
+  await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
   await buildCardContent(card, model);
   if (model.viewLink) {
     const cardContainer = document.createElement('a');

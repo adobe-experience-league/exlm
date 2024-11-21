@@ -9,10 +9,10 @@ import {
 } from '../../scripts/browse-card/browse-card-utils.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import getEmitter from '../../scripts/events.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
-import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-card-target-data-adapter.js';
+import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 
 let placeholders = {};
 try {
@@ -162,11 +162,11 @@ const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
   if (renderCardsFlag) {
     contentDiv.appendChild(cardDiv);
   }
+  const shimmerInstance = new BrowseCardShimmer(1);
+  shimmerInstance.addShimmer(cardDiv);
 
-  const cardPlaceholder = new BuildPlaceholder(1);
-  cardPlaceholder.add(cardDiv);
   return {
-    shimmer: cardPlaceholder,
+    shimmer: shimmerInstance,
     wrapper: cardDiv,
   };
 };
@@ -209,7 +209,7 @@ export default async function decorate(block) {
   const tempContentSection = tempWrapper.querySelector('.recommended-content-block-section');
   countNumberAsArray(4).forEach(() => {
     const { shimmer: shimmerInstance, wrapper } = renderCardPlaceholders(tempWrapper);
-    wrapper.appendChild(shimmerInstance.shimmer);
+    shimmerInstance.add(wrapper);
     tempContentSection.appendChild(wrapper);
   });
 
@@ -250,8 +250,8 @@ export default async function decorate(block) {
               const cardModelsList = [];
               if (delayedCardData.length === 0) {
                 if (renderCards) {
-                  cardData.shimmers?.forEach((shimmerEl, index) => {
-                    shimmerEl.remove();
+                  cardData.shimmers?.forEach((shimmerInstance, index) => {
+                    shimmerInstance.remove();
                     cardData.wrappers[index].style.display = 'none';
                   });
                 }
@@ -261,7 +261,7 @@ export default async function decorate(block) {
                   const wrapperDiv = cardData.wrappers[index];
                   if (renderCards) {
                     if (shimmer) {
-                      shimmer.remove();
+                      shimmer.removeShimmer();
                     }
                     wrapperDiv.innerHTML = '';
                   }
@@ -426,7 +426,7 @@ export default async function decorate(block) {
           data = cardResponse?.data ?? [];
           const { shimmers, params, optionType } = apiConfigObject;
           shimmers.forEach((shimmer) => {
-            shimmer.remove();
+            shimmer.removeShimmer();
           });
           if (optionType.toLowerCase() !== defaultOptionsKey[0].toLowerCase()) {
             if (defaultOptionsKey.length > 1 && optionType.toLowerCase() === defaultOptionsKey[1].toLowerCase()) {
@@ -463,7 +463,7 @@ export default async function decorate(block) {
               }
               const cardShimmer = cardShimmers.shift();
               if (cardShimmer) {
-                cardShimmer.remove();
+                cardShimmer.removeShimmer();
               }
             });
           } else {
@@ -656,8 +656,8 @@ export default async function decorate(block) {
             }
             const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
             if (cardsCount === 0) {
-              Array.from(contentDiv.querySelectorAll('.shimmer-placeholder')).forEach((shimmer) => {
-                shimmer.remove();
+              Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((shimmerEl) => {
+                shimmerEl.remove();
               });
               buildNoResultsContent(contentDiv, false);
               buildNoResultsContent(contentDiv, true);
@@ -679,7 +679,7 @@ export default async function decorate(block) {
               recommendedContentNoResults(contentDiv);
             } else {
               // In the unlikely scenario that some card promises were successfully resolved, while some others failed. Try to show the rendered cards.
-              Array.from(contentDiv.querySelectorAll('.shimmer-placeholder')).forEach((element) => {
+              Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((element) => {
                 element.remove();
               });
             }

@@ -1,30 +1,24 @@
+/* ==========================================================================
+   browse-cards-block.css
+   ==========================================================================
+   Styles for the "browse-cards-block" wrapper, including its header, title, view-all link, and overall layout. 
+   This is used across multiple card types (e.g., Curated cards, Events cards, ADLS cards, Recommended content cards, 
+   Recently reviewed cards, Featured cards, Authorable cards, Browse Filter cards)
+   ========================================================================== */
 .browse-cards-block {
   min-height: 532px;
   position: relative;
-}
-.browse-cards-block-content {
-  margin-top: 16px;
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 16px;
-  margin-bottom: 40px;
-  transition: all 0.5s ease-in-out;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding-bottom: 2px;
-  min-height: 400px;
-}
-.browse-cards-block-content > div {
-  flex: 0 0 264px;
-}
-.browse-cards-block-header h4 {
-  padding: 0;
-  margin: 0;
 }
 .browse-cards-block-title {
   position: relative;
   margin: 0;
   max-width: 300px;
+}
+.browse-cards-block-title :where(h2, .h2) {
+  display: inline;
+  margin: 0;
+  color: var(--text-color);
+  word-break: break-word;
 }
 .browse-cards-block-title .tooltip {
   display: inline;
@@ -45,7 +39,7 @@
   font-size: 12px;
   font-weight: normal;
   left: -999px;
-  line-height: 15px;
+  line-height: var(--spectrum-line-height-xs);
   margin-left: 10px;
   margin-top: -16px;
   opacity: 0;
@@ -73,19 +67,28 @@
   right: 100%;
   top: 50%;
 }
-.browse-cards-block-title :where(h2, .h2) {
-  display: inline;
-  margin: 0;
-  color: var(--text-color);
-  word-break: break-word;
-}
 .browse-cards-block-title .tooltip-placeholder {
   display: inline-block;
 }
 .browse-cards-block-view a {
   font-size: 18px;
-  line-height: 17px;
+  line-height: var(--spectrum-line-height-s);
   margin: 2px 0 0 0;
+}
+.browse-cards-block-content {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 16px;
+  margin-bottom: 40px;
+  transition: all 0.5s ease-in-out;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 2px;
+  min-height: 400px;
+}
+.browse-cards-block-content > div {
+  flex: 0 0 264px;
 }
 .browse-cards-block-content > div:first-child .browse-card .user-actions .action-tooltip {
   left: 100%;
@@ -105,9 +108,6 @@
     margin-bottom: 56px;
     margin-top: 16px;
   }
-  .browse-cards-block-content > div {
-    flex: 0 0 286px;
-  }
 }
 @media only screen and (min-width: 900px) {
   .browse-cards-block-header {
@@ -119,15 +119,5 @@
     gap: 32px;
     margin-bottom: 80px;
     margin-top: 24px;
-  }
-  .browse-cards-block-content > div {
-    flex: 0 0 256px;
-  }
-}
-@media only screen and (min-width: 1200px) {
-  .browse-cards-block-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   }
 }
