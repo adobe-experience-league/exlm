@@ -777,6 +777,8 @@ const decorateNewTabLinks = (block) => {
  * Main header decorator, calls all the other decorators
  */
 class ExlHeader extends HTMLElement {
+  isLoaded = false;
+
   /**
    * @param {DecoratorOptions} options
    */
@@ -884,9 +886,11 @@ class ExlHeader extends HTMLElement {
 
   async connectedCallback() {
     this.style.display = 'none';
-    this.loadStyles();
-    await this.decorate();
+    await Promise.allSettled([this.loadStyles(), this.decorate()]);
     this.style.display = '';
+    // used when the header is embeded on coimmunity/legacy pages.
+    this.dispatchEvent(new Event('header-loaded'));
+    this.isLoaded = true;
   }
 }
 
@@ -898,5 +902,8 @@ customElements.define('exl-header', ExlHeader);
  */
 export default async function decorate(headerBlock, options = {}) {
   const exlHeader = new ExlHeader(options);
+  exlHeader.addEventListener('header-loaded', () => {
+    console.log('Header loaded');
+  });
   headerBlock.replaceChildren(exlHeader);
 }
