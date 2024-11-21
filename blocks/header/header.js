@@ -1,3 +1,9 @@
+/**
+ * IMPORTANT:
+ * This header will also be embeded in community and legacy pages so please make
+ * sure to test it in those environments as well when you make changes to the header.
+ */
+
 import {
   htmlToElement,
   decorateLinks,
@@ -560,13 +566,14 @@ async function decorateCommunityBlock(header, decoratorOptions) {
   communityActionsWrapper.style.display = 'none';
   const messagesMarked = decoratorOptions?.community?.hasMessages ? 'community-action-is-marked' : '';
   const notificationsMarked = decoratorOptions?.community?.hasNotifications ? 'community-action-is-marked' : '';
+  // note: data-community-action is used by community code when this header is used community.
   communityActionsWrapper.innerHTML = `  
-    <div class="community-action ${notificationsMarked}">
+    <div class="community-action ${notificationsMarked}" data-community-action="notifications">
         <a href="/t5/notificationfeed/page" data-id="notifications" title="notifications">
           <span class="icon icon-bell"></span>
         </a>
     </div>
-    <div class="community-action ${messagesMarked}">   
+    <div class="community-action ${messagesMarked}" data-community-action="messages">   
         <a href="/t5/notes/privatenotespage" data-id="messages" title="messages">
           <span class ="icon icon-emailOutline"></span>
         </a> 
