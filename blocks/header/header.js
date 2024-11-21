@@ -21,12 +21,19 @@ import LanguageBlock from '../language/language.js';
 import Profile from './load-profile.js';
 
 /**
+ *  @typedef {Object} CommunityOptions
+ *  @property {boolean} active
+ *  @property {boolean} hasMessages
+ *  @property {boolean} hasNotifications
+ */
+
+/**
  * @typedef {Object} DecoratorOptions
  * @property {() => Promise<boolean>} isUserSignedIn - header uses this to check if the user is signed in or not
  * @property {() => {}} onSignOut - called when signout happens.
  * @property {string} profilePicture - url to profile picture to display in header
  * @property {string} khorosProfileUrl - url to fetch community profile data
- * @property {boolean} isCommunity - is this a community header
+ * @property {CommunityOptions} community - is this a community header
  * @property {boolean} lang - language code
  * @property {string} navLinkOrigin - origin to be added to relative links in the nav
  * @property {import('../language/language.js').Language[]} languages - array of languages to dispay in language selector
@@ -534,7 +541,7 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
     showSearchSuggestions: true,
   });
 
-  if (decoratorOptions.isCommunity) {
+  if (decoratorOptions?.community?.active) {
     searchItem.setSelectedSearchOption('Community');
   }
   decorateIcons(searchBlock);
@@ -548,29 +555,31 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
  */
 async function decorateCommunityBlock(header, decoratorOptions) {
   const communityBlock = header.querySelector('nav');
-  const notificationWrapper = document.createElement('div');
-  notificationWrapper.classList.add('notification');
-  notificationWrapper.style.display = 'none';
-  notificationWrapper.innerHTML = `  
-    <div class="notification-icon">
+  const communityActionsWrapper = document.createElement('div');
+  communityActionsWrapper.classList.add('community-actions');
+  communityActionsWrapper.style.display = 'none';
+  const messagesMarked = decoratorOptions?.community?.hasMessages ? 'community-action-is-marked' : '';
+  const notificationsMarked = decoratorOptions?.community?.hasNotifications ? 'community-action-is-marked' : '';
+  communityActionsWrapper.innerHTML = `  
+    <div class="community-action ${notificationsMarked}">
         <a href="/t5/notificationfeed/page" data-id="notifications" title="notifications">
           <span class="icon icon-bell"></span>
         </a>
     </div>
-    <div class="notification-icon">   
+    <div class="community-action ${messagesMarked}">   
         <a href="/t5/notes/privatenotespage" data-id="messages" title="messages">
-          <span class ="icon icon-email"></span>
+          <span class ="icon icon-emailOutline"></span>
         </a> 
-    <div>  
+    <div>
 `;
-  decorateIcons(notificationWrapper);
-  communityBlock.appendChild(notificationWrapper);
+  decorateIcons(communityActionsWrapper);
+  communityBlock.appendChild(communityActionsWrapper);
   const isSignedIn = await decoratorOptions.isUserSignedIn();
   const languageBlock = header.querySelector('.language-selector');
-  if (decoratorOptions.isCommunity) {
+  if (decoratorOptions?.community?.active) {
     languageBlock.classList.add('community');
-    if (isSignedIn && !isMobile()) {
-      notificationWrapper.style.display = 'flex';
+    if (isSignedIn) {
+      communityActionsWrapper.style.display = 'flex';
     }
   }
 }
@@ -781,7 +790,7 @@ class ExlHeader extends HTMLElement {
     options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
     options.onSignOut = options.onSignOut || doSignOut;
     options.profilePicture = options.profilePicture || profilePicture;
-    options.isCommunity = options.isCommunity ?? false;
+    options.community = options.community ?? { active: false };
     options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
     options.lang = options.lang || getPathDetails().lang || 'en';
     options.navLinkOrigin = options.navLinkOrigin || window.location.origin;
