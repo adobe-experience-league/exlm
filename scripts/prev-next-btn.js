@@ -4,8 +4,10 @@ import { rewriteDocsPath } from './utils/path-utils.js';
 
 export default async function loadPrevNextBtn() {
   const placeholders = await fetchLanguagePlaceholders();
-  const mainDoc = document.querySelector('main div.content-section-last');
-  if (!mainDoc) return;
+  const mainDoc = document.querySelector('main > div > div.section');
+  if (!mainDoc) {
+    return;
+  }
 
   const prevPageMeta = getMetadata('prev-page');
   const prevPageMetaTitle = getMetadata('prev-page-title') || '';
@@ -29,7 +31,7 @@ export default async function loadPrevNextBtn() {
     };
     const anchorLeft = createTag('a', anchorLeftAttr);
     const spanLeft = createTag('span', '', PREV_PAGE);
-    const titleLeft = prevPageMetaTitle ? createTag('span', { class: 'pagination-btn-title' }, prevPageMetaTitle) : '';
+    const titleLeft = createTag('span', { class: 'pagination-btn-title' }, prevPageMetaTitle || '');
 
     anchorLeft.append(spanLeft);
     btnGotoLeft.append(anchorLeft, titleLeft);
@@ -45,19 +47,17 @@ export default async function loadPrevNextBtn() {
     };
     const anchorRight = createTag('a', anchorRightAttr);
     const spanRight = createTag('span', '', NEXT_PAGE);
-    const titleRight = nextPageMetaTitle ? createTag('span', { class: 'pagination-btn-title' }, nextPageMetaTitle) : '';
+    const titleRight = createTag('span', { class: 'pagination-btn-title' }, nextPageMetaTitle || '');
 
     anchorRight.append(spanRight);
     btnGotoRight.append(anchorRight, titleRight);
 
     if (!prevPageMeta || prevPageMetaContent === '') {
       anchorLeft.classList.add('is-disabled');
-      titleLeft.classList.add('is-hidden');
     }
 
     if (!nextPageMeta || nextPageMetaContent === '') {
       anchorRight.classList.add('is-disabled');
-      titleRight.classList.add('is-hidden');
     }
 
     docPagination.append(btnGotoLeft, btnGotoRight);
