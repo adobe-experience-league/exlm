@@ -4,10 +4,14 @@ import { rewriteDocsPath } from './utils/path-utils.js';
 
 export default async function loadPrevNextBtn() {
   const placeholders = await fetchLanguagePlaceholders();
-  const mainDoc = document.querySelector('main > div > div.section');
-  if (!mainDoc) {
+  const mainDiv = document.querySelector('main > div');
+  if (!mainDiv) {
     return;
   }
+
+  // Create the prev-next container
+  const prevNextContainer = createTag('div', { class: 'section prev-next-container' });
+  mainDiv.append(prevNextContainer);
 
   const prevPageMeta = getMetadata('prev-page');
   const prevPageMetaTitle = getMetadata('prev-page-title') || '';
@@ -31,8 +35,8 @@ export default async function loadPrevNextBtn() {
     };
     const anchorLeft = createTag('a', anchorLeftAttr);
     const spanLeft = createTag('span', '', PREV_PAGE);
-    const titleLeft = createTag('span', { class: 'pagination-btn-title' }, prevPageMetaTitle || '');
-
+    const titleLeft = prevPageMetaTitle ? createTag('span', { class: 'pagination-btn-title' }, prevPageMetaTitle) : '';
+ 
     anchorLeft.append(spanLeft);
     btnGotoLeft.append(anchorLeft, titleLeft);
 
@@ -47,7 +51,7 @@ export default async function loadPrevNextBtn() {
     };
     const anchorRight = createTag('a', anchorRightAttr);
     const spanRight = createTag('span', '', NEXT_PAGE);
-    const titleRight = createTag('span', { class: 'pagination-btn-title' }, nextPageMetaTitle || '');
+    const titleRight = nextPageMetaTitle ? createTag('span', { class: 'pagination-btn-title' }, nextPageMetaTitle) : '';
 
     anchorRight.append(spanRight);
     btnGotoRight.append(anchorRight, titleRight);
@@ -61,6 +65,7 @@ export default async function loadPrevNextBtn() {
     }
 
     docPagination.append(btnGotoLeft, btnGotoRight);
-    mainDoc.append(docPagination);
+    prevNextContainer.append(docPagination);
+    prevNextContainer.setAttribute('data-section-status', 'loaded');
   }
 }
