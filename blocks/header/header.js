@@ -230,7 +230,7 @@ const hamburgerButton = (navWrapper, navOverlay) => {
  * Builds nav items from the provided basic list
  * @param {HTMLUListElement} ul
  */
-const buildNavItems = async (ul, level = 0) => {
+const buildNavItems = (ul, level = 0) => {
   /**
    * @param {HTMLElement} navItem
    */
@@ -379,10 +379,59 @@ const buildNavItems = async (ul, level = 0) => {
       );
       decorateNavItem(navItem);
     };
-    await addMobileLangSelector();
+    addMobileLangSelector();
   }
 
   [...ul.children].forEach(decorateNavItem);
+};
+
+/**
+ * Adds the featured products to the nav links
+ * @param {HTMLElement} navBlock
+ * @param {string} lang
+ */
+const buildFeaturedProductsNavLinks = async (navBlock, lang) => {
+  const productList = await getProducts(lang, 'browse');
+  [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
+    // featured-products property is expected to be present on header.
+    if (navItemEl.querySelector(':scope > a[featured-products]')) {
+      const featuredProductLi = navBlock.querySelector('li.nav-item a[featured-products]');
+      // Remove the <li> element from the DOM
+      featuredProductLi.remove();
+      productList.forEach((item) => {
+        if (item.featured) {
+          const newLi = document.createElement('li');
+          newLi.className = 'nav-item nav-item-leaf';
+          newLi.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
+          navItemEl.parentNode.appendChild(newLi);
+        }
+      });
+    }
+  });
+};
+
+/**
+ * Runs gneral updates on nav links
+ * @param {HTMLElement} navBlock
+ * @param {string} navLinkOrigin the link origin to be used for relative links
+ */
+const updateNavLinks = (navBlock, navLinkOrigin) => {
+  // add origin to relative links - this is especially useful when we need to
+  // configure navLinkOrigin in header. Eg. on community.
+  updateLinks(navBlock, (currentHref) => {
+    const url = new URL(currentHref, navLinkOrigin);
+    return url.href;
+  });
+
+  // update community links to use proper host for current environment
+  updateLinks(navBlock, (currentHref) => {
+    if (currentHref.includes('https://experienceleaguecommunities')) {
+      const url = new URL(currentHref);
+      url.host = communityHost;
+      return url.href;
+    }
+    return currentHref;
+  });
 };
 
 /**
@@ -402,51 +451,13 @@ const navDecorator = async (navBlock, decoratorOptions) => {
 
   // build navItems
   const ul = navWrapper.querySelector(':scope > ul');
-  await buildNavItems(ul);
+  buildNavItems(ul);
 
-  const productList = await getProducts(decoratorOptions.lang, 'browse');
-
-  [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
-    if (navItemEl.querySelector(':scope > a[featured-products]')) {
-      const featuredProductLi = navBlock.querySelector('li.nav-item a[featured-products]');
-      // Remove the <li> element from the DOM
-      featuredProductLi.remove();
-      productList.forEach((item) => {
-        if (item.featured) {
-          const newLi = document.createElement('li');
-          newLi.className = 'nav-item nav-item-leaf';
-          newLi.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
-          navItemEl.parentNode.appendChild(newLi);
-        }
-      });
-    }
-  });
-
-  const isSignedIn = await decoratorOptions.isUserSignedIn();
-
-  if (!isSignedIn) {
-    // hide auth-only nav items - see decorateLinks method for details
-    [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
-      if (navItemEl.querySelector(':scope > a[auth-only]')) {
-        navItemEl.style.display = 'none';
-      }
-    });
-  }
-  // add origin to relative links - this is especially useful when we need to
-  // configure navLinkOrigin in header. Eg. on community.
-  updateLinks(navBlock, (currentHref) => {
-    const url = new URL(currentHref, decoratorOptions.navLinkOrigin);
-    return url.href;
-  });
-
-  // update community links to use proper host for current environment
-  updateLinks(navBlock, (currentHref) => {
-    if (currentHref.includes('https://experienceleaguecommunities')) {
-      const url = new URL(currentHref);
-      url.host = communityHost;
-      return url.href;
-    }
-    return currentHref;
+  // build featured products nav links
+  buildFeaturedProductsNavLinks(navBlock, decoratorOptions.lang).then(() => {
+    // this needs to run at the end of navDecorator,
+    // it is here since it needs to run after all nav items are built.
+    updateNavLinks(navBlock, decoratorOptions.navLinkOrigin);
   });
 };
 
@@ -592,7 +603,6 @@ const languageDecorator = async (languageBlock, decoratorOptions) => {
 const signInDecorator = async (signInBlock, decoratorOptions) => {
   simplifySingleCellBlock(signInBlock);
   const isSignedIn = await decoratorOptions.isUserSignedIn();
-
   if (isSignedIn) {
     signInBlock.classList.add('signed-in');
     const profile = new Profile(decoratorOptions);
@@ -838,7 +848,9 @@ class ExlHeader extends HTMLElement {
 
       const decorateHeaderBlock = async (className, decorator, options) => {
         const block = nav.querySelector(`:scope > .${className}`);
+        block.style.visibility = 'hidden';
         await decorator(block, options);
+        block.style.visibility = 'visible';
       };
       // Do this first to ensure all links are decorated correctly before they are used.
       decorateLinks(header);
@@ -855,8 +867,10 @@ class ExlHeader extends HTMLElement {
   }
 
   async connectedCallback() {
-    await this.loadStyles();
+    this.style.display = 'none';
+    this.loadStyles();
     await this.decorate();
+    this.style.display = '';
   }
 }
 
