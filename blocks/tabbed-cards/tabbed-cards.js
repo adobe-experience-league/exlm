@@ -223,7 +223,7 @@ export default async function decorate(block) {
         viewLinkURLElement.innerHTML = placeholders[`tabbedCard${contentTypeTitleCase}ViewAllLabel`] || 'View All';
         viewLinkURLElement.setAttribute('href', urlMap[contentTypeLowerCase]);
         tabList.appendChild(viewLinkURLElement);
-        block.append(buildCardsShimmer);
+        buildCardsShimmer.addShimmer(block);
         fetchDataAndRenderBlock(contentTypeLowerCase);
       });
       tabListUlElement.appendChild(tabLabel);
@@ -241,7 +241,7 @@ export default async function decorate(block) {
     // Append tab list and Shimmer Card after Tab Label
     const shimmerClass = block.querySelector('.browse-card-shimmer');
     block.insertBefore(tabList, shimmerClass);
-    block.append(buildCardsShimmer);
+    buildCardsShimmer.addShimmer(block);
 
     // Update view link for initial content type
     viewLinkURLElement.innerHTML =
