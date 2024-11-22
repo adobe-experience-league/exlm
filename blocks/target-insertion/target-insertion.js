@@ -1,4 +1,4 @@
-import { htmlToElement } from '../../scripts/scripts.js';
+import { getLastDocsSection, htmlToElement } from '../../scripts/scripts.js';
 
 /**
  * Adobe Target Insertion point.
@@ -21,7 +21,7 @@ export default function decorate(block) {
   block.replaceChildren(replacement);
   if (wrapperId === 'recommendation-more-help') {
     block.remove();
-    const lastSection = document.querySelector('.content-section-last');
+    const lastSection = getLastDocsSection();
     lastSection?.append(block);
   }
 }

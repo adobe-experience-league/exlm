@@ -1143,6 +1143,16 @@ function createDocColumns() {
   mainSections.forEach((section) => {
     mainContent.append(section);
   });
+  // create last section, used for elements that should be at the bottom of the page
+  const lastSection = createTag('div', { class: 'section last', 'data-section-status': 'initialized' });
+  mainContent.append(lastSection);
+}
+
+/**
+ * @returns {HTMLDivElement} the last section of the document, was added by createDocColumns
+ */
+export function getLastDocsSection() {
+  return document.querySelector('main > div > div.section.last');
 }
 
 /** handles a set of 1-1 redirects */

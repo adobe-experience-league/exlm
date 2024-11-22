@@ -3,13 +3,14 @@ import { loadCSS } from '../lib-franklin.js';
 import BrowseCardsDelegate from '../browse-card/browse-cards-delegate.js';
 import BrowseCardShimmer from '../browse-card/browse-card-shimmer.js';
 import { COVEO_SORT_OPTIONS } from '../browse-card/browse-cards-constants.js';
+import { getLastDocsSection } from '../scripts.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.css`);
 
 // Decorate the page with tutorial widgets
 export default function decorate() {
   // Select the main content section of the page
-  const mainDoc = document.querySelector('main div.content-section-last');
+  const mainDoc = getLastDocsSection();
 
   // Create a new div element to contain the tutorial widgets and the header
   const wrapper = document.createElement('div');
