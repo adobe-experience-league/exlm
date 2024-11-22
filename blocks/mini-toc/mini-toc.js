@@ -65,7 +65,6 @@ function buildMiniToc(block, placeholders) {
       const anchors = Array.from(block.querySelectorAll('a'));
 
       if (isPerspectivePage) {
-        
         const anchorTexts = anchors.map((anchor) => {
           const content = anchor.textContent;
           return {
@@ -76,8 +75,8 @@ function buildMiniToc(block, placeholders) {
         });
         // eslint-disable-next-line no-new
         new Dropdown(block, 'Summary', anchorTexts, DROPDOWN_VARIANTS.ANCHOR); // Initialise mini-toc dropdown for mobile view
-        const acontainer = document.querySelector(".article-content-container")
-        if(acontainer) acontainer.style.paddingTop = "0";
+        const articleContainer = document.querySelector('.article-content-container');
+        if (articleContainer) articleContainer.style.paddingTop = '0';
         window.addEventListener('hashchange', () => {
           const { hash } = window.location;
           const matchFound = anchorTexts.find((a) => {

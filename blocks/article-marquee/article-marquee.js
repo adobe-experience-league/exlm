@@ -4,7 +4,7 @@ import {
   getPathDetails,
   createPlaceholderSpan,
   fetchLanguagePlaceholders,
-  htmlToElement
+  htmlToElement,
 } from '../../scripts/scripts.js';
 import { createOptimizedPicture, decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import ffetch from '../../scripts/ffetch.js';
@@ -170,7 +170,7 @@ export default async function ArticleMarquee(block) {
 
     const breadcrumbContainer = articleDetails.querySelector('.breadcrumb');
     createBreadcrumb(breadcrumbContainer);
-    
+
     block.append(articleDetails);
 
     if (Array.isArray(links) && links.length > 0) {

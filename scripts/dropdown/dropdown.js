@@ -1,9 +1,6 @@
 import { loadCSS, decorateIcons } from '../lib-franklin.js';
 import { htmlToElement } from '../scripts.js';
 
-// eslint-disable-next-line no-return-await
-await loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
-
 export const DROPDOWN_VARIANTS = {
   DEFAULT: 'default',
   ANCHOR: 'anchor-menu',
@@ -20,6 +17,7 @@ export default class Dropdown {
    * @param {String} variant - Dropdown variant
    */
   constructor(parentFormElement, defaultValue, optionsArray, variant = DROPDOWN_VARIANTS.DEFAULT, id = null) {
+    this.loadStyles();
     this.parentFormElement = parentFormElement;
     this.defaultValue = defaultValue;
     this.optionsArray = optionsArray;
@@ -27,6 +25,11 @@ export default class Dropdown {
     this.variant = variant;
     this.initFormElements();
     this.handleClickEvents();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async loadStyles() {
+    await loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
   }
 
   /**
