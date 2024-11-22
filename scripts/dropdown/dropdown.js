@@ -29,7 +29,12 @@ export default class Dropdown {
 
   // eslint-disable-next-line class-methods-use-this
   async loadStyles() {
-    await loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
+    try {
+      await loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
+    } catch(error) {
+      // eslint-disable-next-line no-console
+      console.error('Error loading styles: ', error);
+    }
   }
 
   /**
