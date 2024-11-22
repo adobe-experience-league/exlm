@@ -1,10 +1,10 @@
-import { createTag, fetchLanguagePlaceholders } from './scripts.js';
+import { createTag, fetchLanguagePlaceholders, getLastDocsSection } from './scripts.js';
 import { getMetadata } from './lib-franklin.js';
 import { rewriteDocsPath } from './utils/path-utils.js';
 
 export default async function loadPrevNextBtn() {
   const placeholders = await fetchLanguagePlaceholders();
-  const mainDoc = document.querySelector('main div.content-section-last');
+  const mainDoc = getLastDocsSection();
   if (!mainDoc) return;
 
   const prevPageMeta = getMetadata('prev-page');
