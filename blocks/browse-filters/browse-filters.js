@@ -27,7 +27,7 @@ import {
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery } from './browse-topics.js';
 import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
@@ -115,7 +115,7 @@ const dropdownOptions = [roleOptions, contentTypeOptions];
 
 const tags = [];
 let tagsProxy;
-const buildCardsShimmer = new BuildPlaceholder(getBrowseFiltersResultCount());
+const buildCardsShimmer = new BrowseCardShimmer(getBrowseFiltersResultCount());
 
 function enableTagsAsProxy(block) {
   tagsProxy = new Proxy(tags, {
@@ -196,7 +196,7 @@ function updateClearFilterStatus(block) {
     dispatchCoveoQuery = true;
     clearFilterBtn.disabled = true;
     hideSectionsBelowFilter(block, true);
-    buildCardsShimmer.remove();
+    buildCardsShimmer.removeShimmer();
     browseFiltersContainer.classList.remove('browse-filters-full-container');
     selectionContainer.classList.remove('browse-filters-input-selected');
     hideSectionsWithinFilter(browseFiltersSection, false);
@@ -987,11 +987,11 @@ function handleCoveoHeadlessSearch(
       if (clearFilterBtn?.disabled) {
         return;
       }
-      buildCardsShimmer.add(browseFiltersSection);
+      buildCardsShimmer.addShimmer(browseFiltersSection);
       filterResultsEl.style.display = 'none';
       filtersPaginationEl.style.display = 'none';
       browseFiltersSection.insertBefore(
-        document.querySelector('.browse-filters-form .shimmer-placeholder'),
+        document.querySelector('.browse-filters-form .browse-card-shimmer'),
         browseFiltersSection.childNodes[document.querySelector('.browse-topics') ? 4 : 3],
       );
     }
@@ -999,7 +999,7 @@ function handleCoveoHeadlessSearch(
   document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PROCESS_SEARCH_RESPONSE, () => {
     filterResultsEl.style.display = '';
     filtersPaginationEl.style.display = '';
-    buildCardsShimmer.remove();
+    buildCardsShimmer.removeShimmer();
   });
 
   handleUriHash();

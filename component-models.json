@@ -3657,7 +3657,7 @@
         "component": "select",
         "valueType": "string",
         "name": "headingType",
-        "value": "h3",
+        "value": "h2",
         "label": "Heading Type",
         "options": [
           {
@@ -3845,6 +3845,347 @@
         "name": "cardFour",
         "value": "",
         "label": "Card Four",
+        "description": "Recommendation results will be placed on the page based on content type by order selected, if no content type is selected will be dynamic based on profile context.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "radio-group",
+        "name": "filterProductBy",
+        "value": "",
+        "label": "Filter Product By:",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "All Adobe Products ",
+            "value": "all_adobe_products"
+          },
+          {
+            "name": "Profile Context",
+            "value": "profile_context"
+          },
+          {
+            "name": "Specific Products",
+            "value": "specific_products"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "filterProductBy" }, "specific_products"]
+        },
+        "component": "aem-tag",
+        "name": "tags",
+        "label": "Solution(s) or Feature(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl",
+        "description": "Optional - based on Profile Context if no selection is made."
+      },
+      {
+        "component": "multiselect",
+        "name": "roles",
+        "label": "Role(s)",
+        "valueType": "string",
+        "description": "Sets the Role(s).",
+        "options": [
+          {
+            "name": "Profile Context",
+            "value": "profile_context"
+          },
+          {
+            "name": "Admin",
+            "value": "Admin"
+          },
+          {
+            "name": "Developer",
+            "value": "Developer"
+          },
+          {
+            "name": "Leader",
+            "value": "Leader"
+          },
+          {
+            "name": "User",
+            "value": "User"
+          }
+        ]
+      },
+      {
+        "component": "radio-group",
+        "name": "sortBy",
+        "value": "",
+        "label": "Sort by",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Relevance",
+            "value": "RELEVANCE"
+          },
+          {
+            "name": "Most recent",
+            "value": "MOST_RECENT"
+          },
+          {
+            "name": "Most popular",
+            "value": "MOST_POPULAR"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "resultText",
+        "value": "",
+        "label": "Result text",
+        "description": "Sets the result text."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "linkText",
+        "value": "",
+        "label": "Link text",
+        "description": "Sets the text for link."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Link URL",
+        "description": "Sets the text url."
+      }
+    ]
+  },
+  {
+    "id": "recommendation-marquee",
+    "fields": [
+      {
+        "component": "select",
+        "name": "cardOne",
+        "value": "",
+        "label": "Card One",
+        "description": "Recommendation results will be placed on the page based on content type by order selected, if no content type is selected will be dynamic based on profile context.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "cardTwo",
+        "value": "",
+        "label": "Card Two",
+        "description": "Recommendation results will be placed on the page based on content type by order selected, if no content type is selected will be dynamic based on profile context.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "cardThree",
+        "value": "",
+        "label": "Card Three",
+        "description": "Recommendation results will be placed on the page based on content type by order selected, if no content type is selected will be dynamic based on profile context.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "cardFour",
+        "value": "",
+        "label": "Card Four",
+        "description": "Recommendation results will be placed on the page based on content type by order selected, if no content type is selected will be dynamic based on profile context.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Certification",
+            "value": "certification"
+          },
+          {
+            "name": "Communities",
+            "value": "community"
+          },
+          {
+            "name": "Documentation",
+            "value": "documentation"
+          },
+          {
+            "name": "On-Demand Event",
+            "value": "event"
+          },
+          {
+            "name": "Playlists",
+            "value": "playlist"
+          },
+          {
+            "name": "Perspectives",
+            "value": "perspective"
+          },
+          {
+            "name": "Troubleshooting",
+            "value": "troubleshooting"
+          },
+          {
+            "name": "Tutorials",
+            "value": "tutorial"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "cardFive",
+        "value": "",
+        "label": "Card Five",
         "description": "Recommendation results will be placed on the page based on content type by order selected, if no content type is selected will be dynamic based on profile context.",
         "valueType": "string",
         "options": [

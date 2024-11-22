@@ -631,7 +631,7 @@ button.browse-tags:focus {
   }
 
   .browse-filters-results {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .browse-filters-input-container:has(.filter-dropdown:nth-child(4)) {
@@ -664,5 +664,11 @@ button.browse-tags:focus {
     ):not(:has(.browse-experience-level-dropdown)) {
     grid-template-areas: 'label role ctype exp search cfilter';
     grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
+  }
+}
+
+@media (min-width: 1400px) {
+  .browse-filters-results {
+    grid-template-columns: repeat(4, 1fr);
   }
 }

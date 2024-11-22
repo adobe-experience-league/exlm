@@ -1,6 +1,6 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, decorateExternalLinks, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { COVEO_SORT_OPTIONS, COVEO_DATE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
@@ -127,8 +127,8 @@ export default async function decorate(block) {
     contentDiv = document.createElement('div');
     contentDiv.classList.add('browse-cards-block-content', 'tabbed-cards-block');
 
-    buildCardsShimmer = new BuildPlaceholder();
-    buildCardsShimmer.add(block);
+    buildCardsShimmer = new BrowseCardShimmer();
+    buildCardsShimmer.addShimmer(block);
   }
 
   let placeholders = {};
@@ -152,7 +152,7 @@ export default async function decorate(block) {
     browseCardsContent
       .then((data) => {
         // Hide shimmer placeholders
-        buildCardsShimmer.remove();
+        buildCardsShimmer.removeShimmer();
         if (data?.length) {
           // Render cards
           for (let i = 0; i < Math.min(numberOfResults, data.length); i += 1) {
@@ -167,14 +167,14 @@ export default async function decorate(block) {
           /* Hide Tooltip while scrolling the cards layout */
           hideTooltipOnScroll(contentDiv);
         } else {
-          buildCardsShimmer.remove();
+          buildCardsShimmer.removeShimmer();
           buildNoResultsContent(block, true);
           contentDiv.style.display = 'none';
         }
       })
       .catch((err) => {
         // Hide shimmer placeholders on error
-        buildCardsShimmer.remove();
+        buildCardsShimmer.removeShimmer();
         buildNoResultsContent(block, true);
         contentDiv.style.display = 'none';
         /* eslint-disable-next-line no-console */
@@ -223,7 +223,7 @@ export default async function decorate(block) {
         viewLinkURLElement.innerHTML = placeholders[`tabbedCard${contentTypeTitleCase}ViewAllLabel`] || 'View All';
         viewLinkURLElement.setAttribute('href', urlMap[contentTypeLowerCase]);
         tabList.appendChild(viewLinkURLElement);
-        buildCardsShimmer.add(block);
+        buildCardsShimmer.addShimmer(block);
         fetchDataAndRenderBlock(contentTypeLowerCase);
       });
       tabListUlElement.appendChild(tabLabel);
@@ -241,7 +241,7 @@ export default async function decorate(block) {
     // Append tab list and Shimmer Card after Tab Label
     const shimmerClass = block.querySelector('.browse-card-shimmer');
     block.insertBefore(tabList, shimmerClass);
-    buildCardsShimmer.add(block);
+    buildCardsShimmer.addShimmer(block);
 
     // Update view link for initial content type
     viewLinkURLElement.innerHTML =
