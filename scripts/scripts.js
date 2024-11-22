@@ -263,9 +263,9 @@ function buildAutoBlocks(main) {
       addBrowseBreadCrumb(main);
       addBrowseRail(main);
     }
-    if (isPerspectivePage) {
-      addMiniToc(main);
-    }
+    // if (isPerspectivePage) {
+    //   addMiniToc(main);
+    // }
     if (isProfilePage) {
       addProfileRail(main);
     }
