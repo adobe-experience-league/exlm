@@ -3,7 +3,7 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { fetchArticleByID } from '../../scripts/data-service/article-data-service.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import getEmitter from '../../scripts/events.js';
 import { getCardData, convertToTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
 import Pagination from '../../scripts/pagination/pagination.js';
@@ -13,8 +13,7 @@ const BOOKMARKS_BY_PG_CONFIG = {};
 const CARDS_MODEL = {};
 const bookmarksEventEmitter = getEmitter('bookmarks');
 
-const buildCardsShimmer = new BuildPlaceholder(Pagination.getItemsCount());
-
+const buildCardsShimmer = new BrowseCardShimmer(Pagination.getItemsCount());
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -76,7 +75,7 @@ async function renderCards({ pgNum, block }) {
   const { lang: languageCode } = getPathDetails();
   const wrapper = (block || document).querySelector('.bookmarks-content');
   wrapper.innerHTML = '';
-  buildCardsShimmer.add(wrapper.parentElement);
+  buildCardsShimmer.addShimmer(wrapper.parentElement);
   wrapper.style.display = 'none';
   const bookmarkIds = BOOKMARKS_BY_PG_CONFIG[pgNum];
   const bookmarkPromises = bookmarkIds.map((bookmarkId) => {
@@ -115,7 +114,7 @@ async function renderCards({ pgNum, block }) {
     buildCard(wrapper, cardDiv, cardData);
     wrapper.appendChild(cardDiv);
   });
-  buildCardsShimmer.remove();
+  buildCardsShimmer.removeShimmer();
   wrapper.style.display = '';
 }
 

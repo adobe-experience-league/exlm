@@ -15,7 +15,7 @@
   border-bottom: 1px solid var(--spectrum-gray-300);
 }
 
-.bookmarks .shimmer-placeholder {
+.bookmarks .browse-card-shimmer {
   display: flex;
   flex-direction: column;
 }
@@ -40,7 +40,7 @@ body.profile .section:not(.profile-rail-section) > div.bookmarks-wrapper {
 
 @media (min-width: 600px) {
   .bookmarks-content,
-  .bookmarks .shimmer-placeholder {
+  .bookmarks .browse-card-shimmer {
     display: grid;
     grid-template-columns: 1fr 1fr;
     row-gap: 32px;
@@ -58,16 +58,16 @@ body.profile .section:not(.profile-rail-section) > div.bookmarks-wrapper {
   }
 
   .bookmarks-content .bookmarks-card,
-  .bookmarks .shimmer-placeholder-isloading,
+  .bookmarks .browse-card-shimmer-wrapper,
   .bookmarks-content .bookmarks-card .browse-card {
     width: 308px;
   }
 
-  .bookmarks .shimmer-placeholder {
+  .bookmarks .browse-card-shimmer {
     overflow-x: hidden;
   }
 
-  .bookmarks .shimmer-placeholder-isloading {
+  .bookmarks .browse-card-shimmer-wrapper {
     margin: 0;
     border: none;
   }
@@ -75,13 +75,13 @@ body.profile .section:not(.profile-rail-section) > div.bookmarks-wrapper {
 
 @media (min-width: 900px) {
   .bookmarks-content,
-  .bookmarks .shimmer-placeholder {
+  .bookmarks .browse-card-shimmer {
     grid-template-columns: repeat(3, 1fr);
     column-gap: 16px;
   }
 
   .bookmarks-content .bookmarks-card,
-  .bookmarks .shimmer-placeholder-isloading,
+  .bookmarks .browse-card-shimmer-wrapper,
   .bookmarks-content .bookmarks-card .browse-card {
     width: 256px;
   }

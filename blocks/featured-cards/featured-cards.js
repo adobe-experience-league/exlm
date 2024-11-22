@@ -1,7 +1,7 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { roleOptions } from '../browse-filters/browse-filter-utils.js';
@@ -280,9 +280,9 @@ export default async function decorate(block) {
 
   /* eslint-disable-next-line */
   const fetchDataAndRenderBlock = (param, contentType, block, contentDiv) => {
-    const buildCardsShimmer = new BuildPlaceholder();
-    buildCardsShimmer.add(block);
-    headerDiv.after(block.querySelector('.shimmer-placeholder'));
+    const buildCardsShimmer = new BrowseCardShimmer();
+    buildCardsShimmer.addShimmer(block);
+    headerDiv.after(block.querySelector('.browse-card-shimmer'));
 
     /* Remove No Results Content and Show Card Content Info if they were hidden earlier */
     buildNoResultsContent(block, false);
@@ -293,7 +293,7 @@ export default async function decorate(block) {
       .then((data) => {
         /* eslint-disable-next-line */
         data = filterResults(data, contentType);
-        buildCardsShimmer.remove();
+        buildCardsShimmer.removeShimmer();
 
         if (data?.length) {
           for (let i = 0; i < Math.min(4, data.length); i += 1) {
@@ -304,14 +304,14 @@ export default async function decorate(block) {
           }
         } else {
           /* Add No Results Content and Remove Card Content View Info and Shimmer */
-          buildCardsShimmer.remove();
+          buildCardsShimmer.removeShimmer();
           buildNoResultsContent(block, true);
           toggleCardInfo(true);
         }
       })
       .catch((err) => {
         // Hide shimmer placeholders on error
-        buildCardsShimmer.remove();
+        buildCardsShimmer.removeShimmer();
         /* Add No Results Content and Remove Card Content View Info and Shimmer */
         buildNoResultsContent(block, true);
         toggleCardInfo(true);
