@@ -903,6 +903,7 @@ customElements.define('exl-header', ExlHeader);
 export default async function decorate(headerBlock, options = {}) {
   const exlHeader = new ExlHeader(options);
   exlHeader.addEventListener('header-loaded', () => {
+    // eslint-disable-next-line no-console
     console.log('Header loaded');
   });
   headerBlock.replaceChildren(exlHeader);

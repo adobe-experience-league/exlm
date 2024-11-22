@@ -371,7 +371,7 @@ export default async function decorate(block) {
 
       if (!(targetSupport && targetCriteriaScopeId)) {
         headerContainer.innerHTML = headingElement.innerText;
-        descriptionContainer.innerHTML = descriptionElement.innerText;
+        descriptionContainer.innerHTML = descriptionElement.innerHTML;
         setCoveoCountAsBlockAttribute();
         block.style.display = 'block';
       }
