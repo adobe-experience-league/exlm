@@ -3,6 +3,10 @@ body > .QSIFeedbackButton #QSIFeedbackButton-btn {
   border-radius: 0;
 }
 
+.container.prev-next-container {
+  visibility: visible;
+}
+
 div.doc-pagination {
   display: flex;
   margin: 48px 0;
