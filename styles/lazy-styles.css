@@ -3,62 +3,9 @@ body > .QSIFeedbackButton #QSIFeedbackButton-btn {
   border-radius: 0;
 }
 
-.section.prev-next-container {
-  margin: 32px 0;
-  visibility: visible;
-
-  .doc-pagination {
-    display: flex;
-
-    .pagination-btn {
-      background-color: var(--spectrum-button-background-color-default);
-      border-color: var(--spectrum-blue-900);
-      color: var(--spectrum-blue-900);
-      border: 2px solid var(--spectrum-blue-900);
-      border-radius: 16px;
-      padding: 0 14px;
-      line-height: 18.2px;
-      display: inline-flex;
-      font-size: var(--spectrum-body-size-s);
-      font-weight: var(--font-weight-700);
-      margin: 0;
-
-      &:hover {
-        background-color: var(--spectrum-blue-200);
-        border-color: var(--spectrum-blue-1000);
-        color: var(--spectrum-blue-1000);
-      }
-
-      &.is-disabled {
-        pointer-events: none;
-        cursor: none;
-        background-color: var(--spectrum-button-background-color-default);
-        border-color: var(--spectrum-gray-300);
-        color: var(--spectrum-gray-400);
-      }
-
-      & > span {
-        padding-block: 5px 6px;
-        line-height: 16.8px;
-        white-space: nowrap;
-        align-self: start;
-      }
-    }
-
-    .pagination-btn-title {
-      display: block;
-      font-family: var(--heading-font-family);
-      font-size: 11px;
-      font-weight: var(--font-weight-700);
-      color: #6e6e6e;
-      margin: 15px 0 55px;
-      text-transform: uppercase;
-
-      &.is-hidden {
-        display: none;
-      }
-    }
-  }
+div.doc-pagination {
+  display: flex;
+  margin: 48px 0;
 }
 
 .btn-goto {
@@ -73,4 +20,53 @@ body > .QSIFeedbackButton #QSIFeedbackButton-btn {
 
 .btn-goto.is-right-desktop {
   text-align: right;
+}
+
+a.pagination-btn {
+  background-color: var(--spectrum-button-background-color-default);
+  border-color: var(--spectrum-blue-900);
+  color: var(--spectrum-blue-900);
+  border: 2px solid var(--spectrum-blue-900);
+  border-radius: 16px;
+  padding: 0 14px;
+  line-height: 18.2px;
+  display: inline-flex;
+  font-size: var(--spectrum-body-size-s);
+  font-weight: var(--font-weight-700);
+  margin: 0;
+}
+
+a.pagination-btn:hover {
+  background-color: var(--spectrum-blue-200);
+  border-color: var(--spectrum-blue-1000);
+  color: var(--spectrum-blue-1000);
+}
+
+a.pagination-btn.is-disabled {
+  pointer-events: none;
+  cursor: none;
+  background-color: var(--spectrum-button-background-color-default);
+  border-color: var(--spectrum-gray-300);
+  color: var(--spectrum-gray-400);
+}
+
+a.pagination-btn > span {
+  padding-block: 5px 6px;
+  line-height: 16.8px;
+  white-space: nowrap;
+  align-self: start;
+}
+
+span.pagination-btn-title {
+  display: block;
+  font-family: var(--heading-font-family);
+  font-size: 11px;
+  font-weight: var(--font-weight-700);
+  color: #6e6e6e;
+  margin: 15px 0 55px;
+  text-transform: uppercase;
+}
+
+span.pagination-btn-title.is-hidden {
+  display: none;
 }
