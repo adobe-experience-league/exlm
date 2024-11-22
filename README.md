@@ -58,7 +58,8 @@ Use this only if you need sign-in to work locally for development purposes.
    `127.0.0.1 experienceleague-local.adobe.com`
    (you likely will need `sudo` to save this file)
 2. run `npm run up-secure` (instead of `npm run up`)
+   > you can use `npm run up-secure-prod` if you want to use production content.
 3. Browser should automatically open at `https://experienceleague-local.adobe.com`
-   > if asked to trust the certificate on the browser, do trust it. Might also need to allow runnig nas admin (`sudo`)
+   > if asked to trust the certificate on the browser, do trust it. Might also need to allow runnig as admin (`sudo`)
 
 > If you have a Windows machine, please add any learnings to this Doc. The current dev team uses MacOs.

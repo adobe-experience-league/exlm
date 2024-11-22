@@ -1,3 +1,9 @@
+/**
+ * IMPORTANT:
+ * This header will also be embeded in community and legacy pages so please make
+ * sure to test it in those environments as well when you make changes to the header.
+ */
+
 import {
   htmlToElement,
   decorateLinks,
@@ -21,12 +27,19 @@ import LanguageBlock from '../language/language.js';
 import Profile from './load-profile.js';
 
 /**
+ *  @typedef {Object} CommunityOptions
+ *  @property {boolean} active
+ *  @property {boolean} hasMessages
+ *  @property {boolean} hasNotifications
+ */
+
+/**
  * @typedef {Object} DecoratorOptions
  * @property {() => Promise<boolean>} isUserSignedIn - header uses this to check if the user is signed in or not
  * @property {() => {}} onSignOut - called when signout happens.
  * @property {string} profilePicture - url to profile picture to display in header
  * @property {string} khorosProfileUrl - url to fetch community profile data
- * @property {boolean} isCommunity - is this a community header
+ * @property {CommunityOptions} community - is this a community header
  * @property {boolean} lang - language code
  * @property {string} navLinkOrigin - origin to be added to relative links in the nav
  * @property {import('../language/language.js').Language[]} languages - array of languages to dispay in language selector
@@ -230,7 +243,7 @@ const hamburgerButton = (navWrapper, navOverlay) => {
  * Builds nav items from the provided basic list
  * @param {HTMLUListElement} ul
  */
-const buildNavItems = async (ul, level = 0) => {
+const buildNavItems = (ul, level = 0) => {
   /**
    * @param {HTMLElement} navItem
    */
@@ -379,10 +392,59 @@ const buildNavItems = async (ul, level = 0) => {
       );
       decorateNavItem(navItem);
     };
-    await addMobileLangSelector();
+    addMobileLangSelector();
   }
 
   [...ul.children].forEach(decorateNavItem);
+};
+
+/**
+ * Adds the featured products to the nav links
+ * @param {HTMLElement} navBlock
+ * @param {string} lang
+ */
+const buildFeaturedProductsNavLinks = async (navBlock, lang) => {
+  const productList = await getProducts(lang, 'browse');
+  [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
+    // featured-products property is expected to be present on header.
+    if (navItemEl.querySelector(':scope > a[featured-products]')) {
+      const featuredProductLi = navBlock.querySelector('li.nav-item a[featured-products]');
+      // Remove the <li> element from the DOM
+      featuredProductLi.remove();
+      productList.forEach((item) => {
+        if (item.featured) {
+          const newLi = document.createElement('li');
+          newLi.className = 'nav-item nav-item-leaf';
+          newLi.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
+          navItemEl.parentNode.appendChild(newLi);
+        }
+      });
+    }
+  });
+};
+
+/**
+ * Runs gneral updates on nav links
+ * @param {HTMLElement} navBlock
+ * @param {string} navLinkOrigin the link origin to be used for relative links
+ */
+const updateNavLinks = (navBlock, navLinkOrigin) => {
+  // add origin to relative links - this is especially useful when we need to
+  // configure navLinkOrigin in header. Eg. on community.
+  updateLinks(navBlock, (currentHref) => {
+    const url = new URL(currentHref, navLinkOrigin);
+    return url.href;
+  });
+
+  // update community links to use proper host for current environment
+  updateLinks(navBlock, (currentHref) => {
+    if (currentHref.includes('https://experienceleaguecommunities')) {
+      const url = new URL(currentHref);
+      url.host = communityHost;
+      return url.href;
+    }
+    return currentHref;
+  });
 };
 
 /**
@@ -402,51 +464,13 @@ const navDecorator = async (navBlock, decoratorOptions) => {
 
   // build navItems
   const ul = navWrapper.querySelector(':scope > ul');
-  await buildNavItems(ul);
+  buildNavItems(ul);
 
-  const productList = await getProducts(decoratorOptions.lang, 'browse');
-
-  [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
-    if (navItemEl.querySelector(':scope > a[featured-products]')) {
-      const featuredProductLi = navBlock.querySelector('li.nav-item a[featured-products]');
-      // Remove the <li> element from the DOM
-      featuredProductLi.remove();
-      productList.forEach((item) => {
-        if (item.featured) {
-          const newLi = document.createElement('li');
-          newLi.className = 'nav-item nav-item-leaf';
-          newLi.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
-          navItemEl.parentNode.appendChild(newLi);
-        }
-      });
-    }
-  });
-
-  const isSignedIn = await decoratorOptions.isUserSignedIn();
-
-  if (!isSignedIn) {
-    // hide auth-only nav items - see decorateLinks method for details
-    [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
-      if (navItemEl.querySelector(':scope > a[auth-only]')) {
-        navItemEl.style.display = 'none';
-      }
-    });
-  }
-  // add origin to relative links - this is especially useful when we need to
-  // configure navLinkOrigin in header. Eg. on community.
-  updateLinks(navBlock, (currentHref) => {
-    const url = new URL(currentHref, decoratorOptions.navLinkOrigin);
-    return url.href;
-  });
-
-  // update community links to use proper host for current environment
-  updateLinks(navBlock, (currentHref) => {
-    if (currentHref.includes('https://experienceleaguecommunities')) {
-      const url = new URL(currentHref);
-      url.host = communityHost;
-      return url.href;
-    }
-    return currentHref;
+  // build featured products nav links
+  buildFeaturedProductsNavLinks(navBlock, decoratorOptions.lang).then(() => {
+    // this needs to run at the end of navDecorator,
+    // it is here since it needs to run after all nav items are built.
+    updateNavLinks(navBlock, decoratorOptions.navLinkOrigin);
   });
 };
 
@@ -523,7 +547,7 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
     showSearchSuggestions: true,
   });
 
-  if (decoratorOptions.isCommunity) {
+  if (decoratorOptions?.community?.active) {
     searchItem.setSelectedSearchOption('Community');
   }
   decorateIcons(searchBlock);
@@ -537,29 +561,32 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
  */
 async function decorateCommunityBlock(header, decoratorOptions) {
   const communityBlock = header.querySelector('nav');
-  const notificationWrapper = document.createElement('div');
-  notificationWrapper.classList.add('notification');
-  notificationWrapper.style.display = 'none';
-  notificationWrapper.innerHTML = `  
-    <div class="notification-icon">
+  const communityActionsWrapper = document.createElement('div');
+  communityActionsWrapper.classList.add('community-actions');
+  communityActionsWrapper.style.display = 'none';
+  const messagesMarked = decoratorOptions?.community?.hasMessages ? 'community-action-is-marked' : '';
+  const notificationsMarked = decoratorOptions?.community?.hasNotifications ? 'community-action-is-marked' : '';
+  // note: data-community-action is used by community code when this header is used community.
+  communityActionsWrapper.innerHTML = `  
+    <div class="community-action ${notificationsMarked}" data-community-action="notifications">
         <a href="/t5/notificationfeed/page" data-id="notifications" title="notifications">
           <span class="icon icon-bell"></span>
         </a>
     </div>
-    <div class="notification-icon">   
+    <div class="community-action ${messagesMarked}" data-community-action="messages">   
         <a href="/t5/notes/privatenotespage" data-id="messages" title="messages">
-          <span class ="icon icon-email"></span>
+          <span class ="icon icon-emailOutline"></span>
         </a> 
-    <div>  
+    <div>
 `;
-  decorateIcons(notificationWrapper);
-  communityBlock.appendChild(notificationWrapper);
+  decorateIcons(communityActionsWrapper);
+  communityBlock.appendChild(communityActionsWrapper);
   const isSignedIn = await decoratorOptions.isUserSignedIn();
   const languageBlock = header.querySelector('.language-selector');
-  if (decoratorOptions.isCommunity) {
+  if (decoratorOptions?.community?.active) {
     languageBlock.classList.add('community');
-    if (isSignedIn && !isMobile()) {
-      notificationWrapper.style.display = 'flex';
+    if (isSignedIn) {
+      communityActionsWrapper.style.display = 'flex';
     }
   }
 }
@@ -592,7 +619,6 @@ const languageDecorator = async (languageBlock, decoratorOptions) => {
 const signInDecorator = async (signInBlock, decoratorOptions) => {
   simplifySingleCellBlock(signInBlock);
   const isSignedIn = await decoratorOptions.isUserSignedIn();
-
   if (isSignedIn) {
     signInBlock.classList.add('signed-in');
     const profile = new Profile(decoratorOptions);
@@ -751,6 +777,8 @@ const decorateNewTabLinks = (block) => {
  * Main header decorator, calls all the other decorators
  */
 class ExlHeader extends HTMLElement {
+  isLoaded = false;
+
   /**
    * @param {DecoratorOptions} options
    */
@@ -771,7 +799,7 @@ class ExlHeader extends HTMLElement {
     options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
     options.onSignOut = options.onSignOut || doSignOut;
     options.profilePicture = options.profilePicture || profilePicture;
-    options.isCommunity = options.isCommunity ?? false;
+    options.community = options.community ?? { active: false };
     options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
     options.lang = options.lang || getPathDetails().lang || 'en';
     options.navLinkOrigin = options.navLinkOrigin || window.location.origin;
@@ -838,7 +866,9 @@ class ExlHeader extends HTMLElement {
 
       const decorateHeaderBlock = async (className, decorator, options) => {
         const block = nav.querySelector(`:scope > .${className}`);
+        block.style.visibility = 'hidden';
         await decorator(block, options);
+        block.style.visibility = 'visible';
       };
       // Do this first to ensure all links are decorated correctly before they are used.
       decorateLinks(header);
@@ -855,8 +885,12 @@ class ExlHeader extends HTMLElement {
   }
 
   async connectedCallback() {
-    await this.loadStyles();
-    await this.decorate();
+    this.style.display = 'none';
+    await Promise.allSettled([this.loadStyles(), this.decorate()]);
+    this.style.display = '';
+    // used when the header is embeded on coimmunity/legacy pages.
+    this.dispatchEvent(new Event('header-loaded'));
+    this.isLoaded = true;
   }
 }
 
@@ -868,5 +902,8 @@ customElements.define('exl-header', ExlHeader);
  */
 export default async function decorate(headerBlock, options = {}) {
   const exlHeader = new ExlHeader(options);
+  exlHeader.addEventListener('header-loaded', () => {
+    console.log('Header loaded');
+  });
   headerBlock.replaceChildren(exlHeader);
 }
