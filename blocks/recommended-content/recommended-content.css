@@ -260,6 +260,41 @@
   .recommended-content.block .browse-cards-block-content {
     overflow: hidden;
     margin-top: 24px;
+    transition: all 0.5s allow-discrete;
+  }
+
+  .recommended-content.block .browse-cards-block-content.fade-in {
+    animation: fade-in 0.5s forwards;
+  }
+
+  .recommended-content.block .browse-cards-block-content.fade-out {
+    animation: fade-out 0.5s forwards;
+  }
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(-50px);
+      display: none;
+    }
+    100% {
+      transform: translateY(0px);
+      opacity: 1;
+      display: flex;
+    }
+  }
+
+  @keyframes fade-out {
+    0% {
+      transform: translateY(0px);
+      opacity: 1;
+      display: flex;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-50px);
+      display: none;
+    }
   }
 
   .recommended-content-see-more-btn {

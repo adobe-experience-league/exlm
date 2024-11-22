@@ -74,38 +74,68 @@ function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
   if (!block.querySelector('.recommended-content-see-more-btn')) {
     const btnContainer = document.createElement('div');
     const btn = document.createElement('button');
-    btn.innerHTML = 'See more Recommendations';
+    btn.innerHTML = placeholders?.recommendedContentSeeMoreButtonText || 'See more Recommendations';
     btnContainer.classList.add('recommended-content-see-more-btn');
     btnContainer.appendChild(btn);
     contentDiv.insertAdjacentElement('afterend', btnContainer);
 
     btn.addEventListener('click', () => {
-      block.dataset.browseCardRows = block.dataset.browseCardRows ? parseInt(block.dataset.browseCardRows, 10) + 1 : 2;
-      if (block.dataset.allRowsLoaded === 'true' && block.dataset.browseCardRows > seeMoreConfig.noOfRows.toString()) {
-        const contentDivs = block.querySelectorAll('.recommended-content-block-section');
+      const contentDivs = block.querySelectorAll('.recommended-content-block-section');
+      const currentRow = parseInt(block.dataset.browseCardRows, 10);
+      const maxRows = parseInt(block.dataset.maxRows, 10);
+      const newRow = currentRow ? currentRow + 1 : 2;
+      block.dataset.browseCardRows = newRow;
+      const { allRowsLoaded } = block.dataset;
+
+      function hideSeeMoreRows() {
         contentDivs.forEach((div, index) => {
           if (index > 0) {
-            div.style.display = 'none';
+            div.classList.add('fade-out');
+            div.classList.remove('fade-in');
           }
         });
-        btn.innerHTML = 'See more Recommendations';
-        // block.dataset.allRowsLoaded = false;
+        btn.innerHTML = placeholders?.recommendedContentSeeMoreButtonText || 'See more Recommendations';
         block.dataset.browseCardRows = 1;
-      } else if (block.dataset.allRowsLoaded === 'true') {
-        if (block.dataset.browseCardRows === seeMoreConfig.noOfRows.toString()) {
-          btn.innerHTML = 'See Less Recommendations';
-        }
-        const contentDivs = block.querySelectorAll('.recommended-content-block-section');
+      }
+
+      function showNewRow() {
         contentDivs.forEach((div, index) => {
-          div.style.display = 'flex';
-          if (index > parseInt(block.dataset.browseCardRows, 10) - 1) {
-            div.style.display = 'none';
+          // div.style.display = 'flex';
+
+          if (index > newRow - 1) {
+            // div.style.display = 'none';
+            div.classList.remove('fade-in');
+            div.classList.add('fade-out');
+          } else {
+            div.classList.add('fade-in');
+            div.classList.remove('fade-out');
           }
         });
+        setTimeout(() => {
+          contentDivs[contentDivs.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
+
+      if (allRowsLoaded === 'true' && newRow > seeMoreConfig.noOfRows) {
+        hideSeeMoreRows();
+      } else if (allRowsLoaded === 'true' && maxRows) {
+        if (newRow > maxRows) {
+          hideSeeMoreRows();
+        } else {
+          if (newRow === maxRows) {
+            btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+          }
+          showNewRow();
+        }
+      } else if (allRowsLoaded === 'true') {
+        if (newRow === seeMoreConfig.noOfRows) {
+          btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+        }
+        showNewRow();
       } else {
-        if (block.dataset.browseCardRows === seeMoreConfig.noOfRows.toString()) {
+        if (newRow === seeMoreConfig.noOfRows) {
           block.dataset.allRowsLoaded = true;
-          btn.innerHTML = 'See less Recommendations';
+          btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
         }
         const optionType = block.querySelector('.browse-cards-block-content').dataset.selected;
         fetchDataAndRenderBlock(optionType, { renderCards: true, createRow: true, clearSeeMoreRows: false });
@@ -296,7 +326,7 @@ export default async function decorate(block) {
 
   const tempWrapper = htmlToElement(`
       <div class="recommended-content-temp-wrapper">
-        <div class="browse-cards-block-content recommended-content-block-section recommended-content-shimmer-wrapper"></div>
+        <div class="browse-cards-block-content recommended-content-block-section recommended-content-shimmer-wrapper fadein"></div>
       </div>
     `);
   const tempContentSection = tempWrapper.querySelector('.recommended-content-block-section');
@@ -566,9 +596,10 @@ export default async function decorate(block) {
           if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
             const btn = block.querySelector('.recommended-content-see-more-btn > button');
             if (btn) {
-              btn.innerHTML = 'See less Recommendations';
+              btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
             }
             block.dataset.allRowsLoaded = true;
+            block.dataset.maxRows = block.dataset.browseCardRows;
           }
           data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(index, index + DEFAULT_NUM_CARDS));
         } else {
@@ -672,7 +703,7 @@ export default async function decorate(block) {
 
         if (args.createRow) {
           const newContentDiv = document.createElement('div');
-          newContentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
+          newContentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section', 'fade-in');
           const contentDivs = block.querySelectorAll('.recommended-content-block-section');
           if (contentDivs.length) {
             contentDivs[contentDivs.length - 1].insertAdjacentElement('afterEnd', newContentDiv);
@@ -681,7 +712,11 @@ export default async function decorate(block) {
           }
           contentDiv = newContentDiv;
           firstResult = contentDivs.length * DEFAULT_NUM_CARDS;
+          setTimeout(() => {
+            contentDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
         }
+
         const lowercaseOptionType = optionType?.toLowerCase();
         const saveCardResponse =
           [ALL_ADOBE_OPTIONS_KEY.toLowerCase()].includes(lowercaseOptionType) && cardIdsToExclude.length === 0;
