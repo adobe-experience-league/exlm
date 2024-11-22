@@ -1,6 +1,7 @@
 .article-content-container {
   display: grid;
   grid-template-rows: auto auto;
+  padding-top: 150px;
 }
 
 .article-content-container .mini-toc-section {
