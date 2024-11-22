@@ -62,7 +62,7 @@ export default function decorate() {
           // Build the widget and append it to the contentDiv
           buildCard(container, widgetDiv, widgetData);
         }
-        mainDoc.appendChild(wrapper);
+        mainDiv.appendChild(wrapper);
       }
     })
     .catch((err) => {
