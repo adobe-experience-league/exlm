@@ -15,6 +15,16 @@ const debounce = (ms, fn) => {
   };
 };
 
+/**
+ * Registers a resize observer for the wrapper, executing the callback on resize events.
+ * @param {Function} callback - The callback to execute on resize.
+ */
+function registerWrapperResizeHandler(callback, block) {
+  const debouncedCallback = debounce(200, callback);
+  const wrapperResizeObserver = new ResizeObserver(debouncedCallback);
+  wrapperResizeObserver.observe(block);
+}
+
 function setPadding(arg = '') {
   const num = parseInt(arg.split('')[1], 10);
   const indent = '-big';
@@ -73,20 +83,25 @@ function buildMiniToc(block, placeholders) {
             title: content,
           };
         });
-        // eslint-disable-next-line no-new
-        new Dropdown(block, 'Summary', anchorTexts, DROPDOWN_VARIANTS.ANCHOR); // Initialise mini-toc dropdown for mobile view
-        const articleContainer = document.querySelector('.article-content-container');
-        if (articleContainer) articleContainer.style.paddingTop = '0';
-        window.addEventListener('hashchange', () => {
-          const { hash } = window.location;
-          const matchFound = anchorTexts.find((a) => {
-            const [, linkHash] = a.value.split('#');
-            return `#${linkHash}` === hash;
-          });
-          if (matchFound) {
-            Dropdown.closeAllDropdowns();
+
+        registerWrapperResizeHandler(() => {
+          if (window.innerWidth < 900 && !block.querySelector('.custom-filter-dropdown')) {
+            // eslint-disable-next-line no-new
+            new Dropdown(block, 'Summary', anchorTexts, DROPDOWN_VARIANTS.ANCHOR); // Initialise mini-toc dropdown for mobile view
+            const articleContainer = document.querySelector('.article-content-container');
+            if (articleContainer) articleContainer.style.paddingTop = '0';
+            window.addEventListener('hashchange', () => {
+              const { hash } = window.location;
+              const matchFound = anchorTexts.find((a) => {
+                const [, linkHash] = a.value.split('#');
+                return `#${linkHash}` === hash;
+              });
+              if (matchFound && Dropdown) {
+                Dropdown.closeAllDropdowns();
+              }
+            });
           }
-        });
+        }, block);
       }
 
       let isAnchorScroll = false;
