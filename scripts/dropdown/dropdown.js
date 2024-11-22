@@ -6,6 +6,8 @@ export const DROPDOWN_VARIANTS = {
   ANCHOR: 'anchor-menu',
 };
 
+await loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
+
 export default class Dropdown {
   /**
    * Constructor for initializing dropdown using parent form element, default values, options arrays, and id.
@@ -17,7 +19,6 @@ export default class Dropdown {
    * @param {String} variant - Dropdown variant
    */
   constructor(parentFormElement, defaultValue, optionsArray, variant = DROPDOWN_VARIANTS.DEFAULT, id = null) {
-    this.loadStyles();
     this.parentFormElement = parentFormElement;
     this.defaultValue = defaultValue;
     this.optionsArray = optionsArray;
@@ -25,16 +26,6 @@ export default class Dropdown {
     this.variant = variant;
     this.initFormElements();
     this.handleClickEvents();
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  async loadStyles() {
-    try {
-      await loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
-    } catch(error) {
-      // eslint-disable-next-line no-console
-      console.error('Error loading styles: ', error);
-    }
   }
 
   /**
