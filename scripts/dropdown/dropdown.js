@@ -1,7 +1,8 @@
 import { loadCSS, decorateIcons } from '../lib-franklin.js';
 import { htmlToElement } from '../scripts.js';
 
-loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
+// eslint-disable-next-line no-return-await
+(async () => await loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`))();
 
 export const DROPDOWN_VARIANTS = {
   DEFAULT: 'default',
