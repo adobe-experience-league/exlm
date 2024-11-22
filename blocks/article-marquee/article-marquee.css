@@ -93,6 +93,7 @@
 
 .article-marquee .breadcrumb {
   margin-bottom: 1em;
+  min-height: 25px;
 }
 
 .article-marquee .breadcrumb > a,
