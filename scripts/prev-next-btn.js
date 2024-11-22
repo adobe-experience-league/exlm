@@ -36,7 +36,7 @@ export default async function loadPrevNextBtn() {
     const anchorLeft = createTag('a', anchorLeftAttr);
     const spanLeft = createTag('span', '', PREV_PAGE);
     const titleLeft = prevPageMetaTitle ? createTag('span', { class: 'pagination-btn-title' }, prevPageMetaTitle) : '';
- 
+
     anchorLeft.append(spanLeft);
     btnGotoLeft.append(anchorLeft, titleLeft);
 
@@ -66,6 +66,5 @@ export default async function loadPrevNextBtn() {
 
     docPagination.append(btnGotoLeft, btnGotoRight);
     prevNextContainer.append(docPagination);
-    prevNextContainer.setAttribute('data-section-status', 'loaded');
   }
 }
