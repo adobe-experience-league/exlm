@@ -25,6 +25,25 @@ function registerWrapperResizeHandler(callback, block) {
   wrapperResizeObserver.observe(block);
 }
 
+function createDropdown(anchorTexts, block) {
+  if (window.innerWidth < 900 && !block.querySelector('.custom-filter-dropdown')) {
+    // eslint-disable-next-line no-new
+    new Dropdown(block, 'Summary', anchorTexts, DROPDOWN_VARIANTS.ANCHOR); // Initialise mini-toc dropdown for mobile view
+    const articleContainer = document.querySelector('.article-content-container');
+    if (articleContainer) articleContainer.style.paddingTop = '0';
+    window.addEventListener('hashchange', () => {
+      const { hash } = window.location;
+      const matchFound = anchorTexts.find((a) => {
+        const [, linkHash] = a.value.split('#');
+        return `#${linkHash}` === hash;
+      });
+      if (matchFound && Dropdown) {
+        Dropdown.closeAllDropdowns();
+      }
+    });
+  }
+}
+
 function setPadding(arg = '') {
   const num = parseInt(arg.split('')[1], 10);
   const indent = '-big';
@@ -83,24 +102,9 @@ function buildMiniToc(block, placeholders) {
             title: content,
           };
         });
-
+        createDropdown(anchorTexts, block);
         registerWrapperResizeHandler(() => {
-          if (window.innerWidth < 900 && !block.querySelector('.custom-filter-dropdown')) {
-            // eslint-disable-next-line no-new
-            new Dropdown(block, 'Summary', anchorTexts, DROPDOWN_VARIANTS.ANCHOR); // Initialise mini-toc dropdown for mobile view
-            const articleContainer = document.querySelector('.article-content-container');
-            if (articleContainer) articleContainer.style.paddingTop = '0';
-            window.addEventListener('hashchange', () => {
-              const { hash } = window.location;
-              const matchFound = anchorTexts.find((a) => {
-                const [, linkHash] = a.value.split('#');
-                return `#${linkHash}` === hash;
-              });
-              if (matchFound && Dropdown) {
-                Dropdown.closeAllDropdowns();
-              }
-            });
-          }
+          createDropdown(anchorTexts, block);
         }, block);
       }
 
