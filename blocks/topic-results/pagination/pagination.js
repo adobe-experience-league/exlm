@@ -98,9 +98,9 @@ export function initPagination(totalItems, itemsPerPage, onPageChange) {
   if (!container) {
     container = document.createElement('div');
     container.className = 'pagination-container';
-    const mainDoc = document.querySelector('main > div.content-section-last');
-    if (mainDoc) {
-      mainDoc.appendChild(container);
+    const mainDiv = document.querySelector('main > div');
+    if (mainDiv) {
+      mainDiv.appendChild(container);
     } else {
       document.body.appendChild(container);
     }
