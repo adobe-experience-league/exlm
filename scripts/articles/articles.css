@@ -1,7 +1,7 @@
 .article-content-container {
   display: grid;
   grid-template-rows: auto auto;
-  padding-top: 150px;
+  padding-top: 131px;
 }
 
 .article-content-container .mini-toc-section {
@@ -104,6 +104,10 @@
 }
 
 @media (min-width: 600px) {
+  .article-content-container {
+    padding-top: 131px;
+  }
+  
   .article-content-container .mini-toc-wrapper {
     padding: 0;
     margin: 0;
