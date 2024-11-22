@@ -4,6 +4,7 @@ import {
   getPathDetails,
   createPlaceholderSpan,
   fetchLanguagePlaceholders,
+  htmlToElement
 } from '../../scripts/scripts.js';
 import { createOptimizedPicture, decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import ffetch from '../../scripts/ffetch.js';
@@ -133,6 +134,8 @@ function createBreadcrumb(container) {
  */
 export default async function ArticleMarquee(block) {
   const [readTime, headingType] = block.querySelectorAll(':scope div > div');
+  block.textContent = '';
+
   let links = getMetadata('author-bio-page');
   if (links) {
     if (window.hlx.aemRoot) {
@@ -141,32 +144,34 @@ export default async function ArticleMarquee(block) {
       links = links.split(',').map((link) => link.trim());
     }
 
-    const articleDetails = `<div class="article-marquee-info-container">
-                              <div class="article-info">
-                                <div class="breadcrumb"></div>
-                                <${headingType.textContent ? headingType.textContent : 'h1'}>${document.title}</${
-                                  headingType.textContent ? headingType.textContent : 'h1'
-                                }>
-                                <div class="article-marquee-info"></div>
-                              </div>
-                              <div class="author-info">
-                                <div class="article-marquee-bg-container">
-                                ${mobileSvg}
-                                ${tabletSvg}
-                                ${desktopSvg}
-                                </div>
-                                <div class="author-details"></div>
-                              </div>
-                            </div>
-                            <div class="article-marquee-large-bg"></div>`;
+    const articleDetails = htmlToElement(`
+      <div class="article-marquee-info-container">
+          <div class="article-info">
+            <div class="breadcrumb"></div>
+            <${headingType.textContent ? headingType.textContent : 'h1'}>${document.title}</${
+              headingType.textContent ? headingType.textContent : 'h1'
+            }>
+            <div class="article-marquee-info"></div>
+          </div>
+          <div class="author-info">
+            <div class="article-marquee-bg-container">
+            ${mobileSvg}
+            ${tabletSvg}
+            ${desktopSvg}
+            </div>
+            <div class="author-details"></div>
+          </div>
+        </div>
+        <div class="article-marquee-large-bg"></div>
+    `);
 
-    block.innerHTML = articleDetails;
-
-    const infoContainer = block.querySelector('.article-marquee-info');
+    const infoContainer = articleDetails.querySelector('.article-marquee-info');
     await createOptions(infoContainer, readTime.textContent.trim());
 
-    const breadcrumbContainer = block.querySelector('.breadcrumb');
+    const breadcrumbContainer = articleDetails.querySelector('.breadcrumb');
     createBreadcrumb(breadcrumbContainer);
+    
+    block.append(articleDetails);
 
     if (Array.isArray(links) && links.length > 0) {
       // Filter out null, empty and duplicate links and map to fetchAuthorBio
