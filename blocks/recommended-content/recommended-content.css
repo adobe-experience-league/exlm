@@ -1,5 +1,16 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
+body.profile
+  .recommended-content-container
+  .recommended-content-wrapper
+  .recommended-content
+  .recommended-content-header
+  :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--spectrum-gray-800);
+  margin-bottom: 16px;
+  margin-top: 0px;
+}
+
 .recommended-content-header {
   font-size: var(--spectrum-font-size-700);
   line-height: 35px;
