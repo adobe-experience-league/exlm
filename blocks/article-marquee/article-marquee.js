@@ -4,7 +4,7 @@ import {
   getPathDetails,
   createPlaceholderSpan,
   fetchLanguagePlaceholders,
-  htmlToElement
+  htmlToElement,
 } from '../../scripts/scripts.js';
 import { createOptimizedPicture, decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 
@@ -67,21 +67,20 @@ function createOptions(container, readTimeText) {
   const options = document.createElement('div');
   options.classList.add('article-marquee-options');
 
-
   container.appendChild(options);
   container.appendChild(lastUpdated);
   if (readTimeText) container.appendChild(readTime);
 
   // Delay loading the UserActions script to avoid render-blocking during initial page load
-  setTimeout(async() => {
+  setTimeout(async () => {
     const { default: UserActions } = await import('../../scripts/user-actions/user-actions.js');
     if (UserActions) {
       const cardAction = UserActions({
-      container: options,
-      id: window.location.pathname,
-      link: window.location.href,
-    });
-    cardAction.decorate();
+        container: options,
+        id: window.location.pathname,
+        link: window.location.href,
+      });
+      cardAction.decorate();
     }
   }, 3000);
 }
@@ -178,7 +177,7 @@ export default async function ArticleMarquee(block) {
     setTimeout(() => {
       createBreadcrumb(breadcrumbContainer);
     }, 3000);
-    
+
     block.append(articleDetails);
 
     if (Array.isArray(links) && links.length > 0) {
