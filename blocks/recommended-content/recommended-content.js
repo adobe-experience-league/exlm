@@ -111,9 +111,6 @@ function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
             div.classList.remove('fade-out');
           }
         });
-        setTimeout(() => {
-          contentDivs[contentDivs.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
       }
 
       if (allRowsLoaded === 'true' && newRow > seeMoreConfig.noOfRows) {
@@ -712,9 +709,6 @@ export default async function decorate(block) {
           }
           contentDiv = newContentDiv;
           firstResult = contentDivs.length * DEFAULT_NUM_CARDS;
-          setTimeout(() => {
-            contentDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }, 100);
         }
 
         const lowercaseOptionType = optionType?.toLowerCase();

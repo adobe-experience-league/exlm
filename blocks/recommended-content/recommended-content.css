@@ -260,7 +260,6 @@
   .recommended-content.block .browse-cards-block-content {
     overflow: hidden;
     margin-top: 24px;
-    transition: all 0.5s allow-discrete;
   }
 
   .recommended-content.block .browse-cards-block-content.fade-in {
