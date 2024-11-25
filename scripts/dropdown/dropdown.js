@@ -1,12 +1,12 @@
 import { loadCSS, decorateIcons } from '../lib-franklin.js';
 import { htmlToElement } from '../scripts.js';
 
-loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
-
 export const DROPDOWN_VARIANTS = {
   DEFAULT: 'default',
   ANCHOR: 'anchor-menu',
 };
+
+await loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
 
 export default class Dropdown {
   /**

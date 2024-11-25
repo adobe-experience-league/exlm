@@ -1,4 +1,4 @@
-import { htmlToElement } from '../../../scripts/scripts.js';
+import { getLastDocsSection, htmlToElement } from '../../../scripts/scripts.js';
 import { loadCSS } from '../../../scripts/lib-franklin.js';
 
 let currentPage = 0;
@@ -98,7 +98,7 @@ export function initPagination(totalItems, itemsPerPage, onPageChange) {
   if (!container) {
     container = document.createElement('div');
     container.className = 'pagination-container';
-    const mainDoc = document.querySelector('main > div.content-section-last');
+    const mainDoc = getLastDocsSection();
     if (mainDoc) {
       mainDoc.appendChild(container);
     } else {

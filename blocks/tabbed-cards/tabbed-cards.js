@@ -212,6 +212,7 @@ export default async function decorate(block) {
         tabLabel.classList.add('active');
         if (tabbedContent) {
           tabbedContent.innerHTML = '';
+          tabbedContent.style.display = 'none';
         }
 
         // Clear No Results Content if avaliabel

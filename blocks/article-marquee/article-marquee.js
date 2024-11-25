@@ -4,12 +4,9 @@ import {
   getPathDetails,
   createPlaceholderSpan,
   fetchLanguagePlaceholders,
-  htmlToElement
+  htmlToElement,
 } from '../../scripts/scripts.js';
 import { createOptimizedPicture, decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
-import ffetch from '../../scripts/ffetch.js';
-import UserActions from '../../scripts/user-actions/user-actions.js';
-import { fetchAuthorBio } from '../../scripts/utils/author-utils.js';
 
 const metadataProperties = {
   adobe: 'adobe',
@@ -48,16 +45,6 @@ try {
 
 function createOptions(container, readTimeText) {
   const { lang } = getPathDetails();
-  const options = document.createElement('div');
-  options.classList.add('article-marquee-options');
-  const cardAction = UserActions({
-    container: options,
-    id: window.location.pathname,
-    link: window.location.href,
-  });
-
-  cardAction.decorate();
-
   const lastUpdated = document.createElement('div');
   lastUpdated.classList.add('article-marquee-last-updated');
   const lastUpdatedData = document.querySelector('meta[name="published-time"]').getAttribute('content');
@@ -77,12 +64,28 @@ function createOptions(container, readTimeText) {
   readTime.innerHTML = `<span class="icon icon-time"></span> <span>${readTimeText} ${placeholders.articleMarqueeReadTimeText}</span>`;
   decorateIcons(readTime);
 
+  const options = document.createElement('div');
+  options.classList.add('article-marquee-options');
+
   container.appendChild(options);
   container.appendChild(lastUpdated);
   if (readTimeText) container.appendChild(readTime);
+
+  // Delay loading the UserActions script to avoid render-blocking during initial page load
+  setTimeout(async () => {
+    const { default: UserActions } = await import('../../scripts/user-actions/user-actions.js');
+    if (UserActions) {
+      const cardAction = UserActions({
+        container: options,
+        id: window.location.pathname,
+        link: window.location.href,
+      });
+      cardAction.decorate();
+    }
+  }, 3000);
 }
 
-function createBreadcrumb(container) {
+async function createBreadcrumb(container) {
   // get current page path
   const currentPath = getEDSLink(document.location.pathname);
 
@@ -99,6 +102,7 @@ function createBreadcrumb(container) {
   container.append(rootCrumbElem);
 
   // get the browse index
+  const { default: ffetch } = await import('../../scripts/ffetch.js');
   ffetch(`/${getPathDetails().lang}/perspective-index.json`)
     .all()
     .then((index) => {
@@ -169,11 +173,15 @@ export default async function ArticleMarquee(block) {
     createOptions(infoContainer, readTime.textContent.trim());
 
     const breadcrumbContainer = articleDetails.querySelector('.breadcrumb');
-    createBreadcrumb(breadcrumbContainer);
-    
+    // Delay the creation of breadcrumbs to improve initial page load performance
+    setTimeout(() => {
+      createBreadcrumb(breadcrumbContainer);
+    }, 3000);
+
     block.append(articleDetails);
 
     if (Array.isArray(links) && links.length > 0) {
+      const { fetchAuthorBio } = await import('../../scripts/utils/author-utils.js');
       // Filter out null, empty and duplicate links and map to fetchAuthorBio
       const uniqueLinks = Array.from(new Set(links.filter((link) => link)));
       const authorPromises = uniqueLinks.map((link) => fetchAuthorBio(link));

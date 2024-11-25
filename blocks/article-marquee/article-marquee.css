@@ -147,6 +147,8 @@
   width: 100%;
   gap: 10px;
   margin-left: -5px;
+  min-width: 48px;
+  min-height: 24px;
 }
 
 .article-marquee-options .user-actions .icon {
