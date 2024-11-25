@@ -4,11 +4,9 @@ import {
   getPathDetails,
   createPlaceholderSpan,
   fetchLanguagePlaceholders,
+  htmlToElement
 } from '../../scripts/scripts.js';
 import { createOptimizedPicture, decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
-import ffetch from '../../scripts/ffetch.js';
-import UserActions from '../../scripts/user-actions/user-actions.js';
-import { fetchAuthorBio } from '../../scripts/utils/author-utils.js';
 
 const metadataProperties = {
   adobe: 'adobe',
@@ -45,18 +43,8 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-async function createOptions(container, readTimeText) {
+function createOptions(container, readTimeText) {
   const { lang } = getPathDetails();
-  const options = document.createElement('div');
-  options.classList.add('article-marquee-options');
-  const cardAction = UserActions({
-    container: options,
-    id: window.location.pathname,
-    link: window.location.href,
-  });
-
-  cardAction.decorate();
-
   const lastUpdated = document.createElement('div');
   lastUpdated.classList.add('article-marquee-last-updated');
   const lastUpdatedData = document.querySelector('meta[name="published-time"]').getAttribute('content');
@@ -76,12 +64,29 @@ async function createOptions(container, readTimeText) {
   readTime.innerHTML = `<span class="icon icon-time"></span> <span>${readTimeText} ${placeholders.articleMarqueeReadTimeText}</span>`;
   decorateIcons(readTime);
 
+  const options = document.createElement('div');
+  options.classList.add('article-marquee-options');
+
+
   container.appendChild(options);
   container.appendChild(lastUpdated);
   if (readTimeText) container.appendChild(readTime);
+
+  // Delay loading the UserActions script to avoid render-blocking during initial page load
+  setTimeout(async() => {
+    const { default: UserActions } = await import('../../scripts/user-actions/user-actions.js');
+    if (UserActions) {
+      const cardAction = UserActions({
+      container: options,
+      id: window.location.pathname,
+      link: window.location.href,
+    });
+    cardAction.decorate();
+    }
+  }, 3000);
 }
 
-function createBreadcrumb(container) {
+async function createBreadcrumb(container) {
   // get current page path
   const currentPath = getEDSLink(document.location.pathname);
 
@@ -98,6 +103,7 @@ function createBreadcrumb(container) {
   container.append(rootCrumbElem);
 
   // get the browse index
+  const { default: ffetch } = await import('../../scripts/ffetch.js');
   ffetch(`/${getPathDetails().lang}/perspective-index.json`)
     .all()
     .then((index) => {
@@ -133,6 +139,8 @@ function createBreadcrumb(container) {
  */
 export default async function ArticleMarquee(block) {
   const [readTime, headingType] = block.querySelectorAll(':scope div > div');
+  block.textContent = '';
+
   let links = getMetadata('author-bio-page');
   if (links) {
     if (window.hlx.aemRoot) {
@@ -141,71 +149,85 @@ export default async function ArticleMarquee(block) {
       links = links.split(',').map((link) => link.trim());
     }
 
-    const articleDetails = `<div class="article-marquee-info-container">
-                              <div class="article-info">
-                                <div class="breadcrumb"></div>
-                                <${headingType.textContent ? headingType.textContent : 'h1'}>${document.title}</${
-                                  headingType.textContent ? headingType.textContent : 'h1'
-                                }>
-                                <div class="article-marquee-info"></div>
-                              </div>
-                              <div class="author-info">
-                                <div class="article-marquee-bg-container">
-                                ${mobileSvg}
-                                ${tabletSvg}
-                                ${desktopSvg}
-                                </div>
-                                <div class="author-details"></div>
-                              </div>
-                            </div>
-                            <div class="article-marquee-large-bg"></div>`;
+    const articleDetails = htmlToElement(`
+      <div class="article-marquee-info-container">
+          <div class="article-info">
+            <div class="breadcrumb"></div>
+            <${headingType.textContent ? headingType.textContent : 'h1'}>${document.title}</${
+              headingType.textContent ? headingType.textContent : 'h1'
+            }>
+            <div class="article-marquee-info"></div>
+          </div>
+          <div class="author-info">
+            <div class="article-marquee-bg-container">
+            ${mobileSvg}
+            ${tabletSvg}
+            ${desktopSvg}
+            </div>
+            <div class="author-details"></div>
+          </div>
+        </div>
+        <div class="article-marquee-large-bg"></div>
+    `);
 
-    block.innerHTML = articleDetails;
+    const infoContainer = articleDetails.querySelector('.article-marquee-info');
+    createOptions(infoContainer, readTime.textContent.trim());
 
-    const infoContainer = block.querySelector('.article-marquee-info');
-    await createOptions(infoContainer, readTime.textContent.trim());
-
-    const breadcrumbContainer = block.querySelector('.breadcrumb');
-    createBreadcrumb(breadcrumbContainer);
+    const breadcrumbContainer = articleDetails.querySelector('.breadcrumb');
+    // Delay the creation of breadcrumbs to improve initial page load performance
+    setTimeout(() => {
+      createBreadcrumb(breadcrumbContainer);
+    }, 3000);
+    
+    block.append(articleDetails);
 
     if (Array.isArray(links) && links.length > 0) {
+      const { fetchAuthorBio } = await import('../../scripts/utils/author-utils.js');
       // Filter out null, empty and duplicate links and map to fetchAuthorBio
-      const authorPromises = Array.from(new Set(links.filter((link) => link))).map((link) => fetchAuthorBio(link));
-      const authorsInfo = await Promise.all(authorPromises);
-      const authorInfoContainer = block.querySelector('.author-details');
-      let isExternal = false;
+      const uniqueLinks = Array.from(new Set(links.filter((link) => link)));
+      const authorPromises = uniqueLinks.map((link) => fetchAuthorBio(link));
 
-      authorsInfo.slice(0, 2).forEach((authorInfo) => {
-        if (authorInfo) {
-          let tagname = placeholders.articleAdobeTag;
-          let articleType = authorInfo?.authorCompany?.toLowerCase();
-          if (!articleType) articleType = metadataProperties.adobe;
-          if (articleType !== metadataProperties.adobe) {
-            tagname = placeholders.articleExternalTag;
+      // Process each promise individually to avoid blocking rendering
+      Promise.allSettled(authorPromises).then((results) => {
+        const authorsInfo = results
+          .filter((result) => result.status === 'fulfilled') // Only process successfully resolved promises
+          .map((result) => result.value);
+
+        const authorInfoContainer = block.querySelector('.author-details');
+        let isExternal = false;
+
+        authorsInfo.slice(0, 2).forEach((authorInfo) => {
+          if (authorInfo) {
+            let tagname = placeholders.articleAdobeTag;
+            const articleType = authorInfo?.authorCompany?.toLowerCase() || metadataProperties.adobe;
+            if (articleType !== metadataProperties.adobe) {
+              tagname = placeholders.articleExternalTag;
+            }
+            const authorHTML = `<div class="author-card">
+                                  <div class="author-image">${
+                                    createOptimizedPicture(authorInfo?.authorImage).outerHTML
+                                  }</div>
+                                  <div class="author-info-text">
+                                    <div class="author-name">${authorInfo?.authorName}</div>
+                                    <div class="author-title">${authorInfo?.authorTitle}</div>
+                                    <div class="article-marquee-tag">${tagname}</div>
+                                  </div>
+                                </div>`;
+            authorInfoContainer.innerHTML += authorHTML;
+            if (articleType === 'external') {
+              isExternal = true;
+            }
           }
-          const authorHTML = `<div class="author-card">
-                              <div class="author-image">${
-                                createOptimizedPicture(authorInfo?.authorImage).outerHTML
-                              }</div>
-                              <div class="author-info-text">
-                                <div class="author-name">${authorInfo?.authorName}</div>
-                                <div class="author-title">${authorInfo?.authorTitle}</div>
-                                <div class="article-marquee-tag">${tagname}</div>
-                              </div>
-                            </div>`;
-          authorInfoContainer.innerHTML += authorHTML;
-          if (articleType === 'external') {
-            isExternal = true;
-          }
+        });
+
+        if (isExternal) {
+          block.querySelector('.article-marquee-large-bg').classList.add('external');
+          block.querySelector('.article-marquee-bg-container').classList.add('external');
+        } else {
+          block.querySelector('.article-marquee-large-bg').classList.add('adobe');
+          block.querySelector('.article-marquee-bg-container').classList.add('adobe');
         }
       });
-      if (isExternal) {
-        block.querySelector('.article-marquee-large-bg').classList.add('external');
-        block.querySelector('.article-marquee-bg-container').classList.add('external');
-      } else {
-        block.querySelector('.article-marquee-large-bg').classList.add('adobe');
-        block.querySelector('.article-marquee-bg-container').classList.add('adobe');
-      }
     }
   }
 }
