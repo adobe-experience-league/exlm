@@ -25,7 +25,7 @@ async function setAuthorInfo(authorElem) {
   authorElem.classList.add('author');
 
   // add the author image
-  if (authorInfo?.authorImage) {
+  if (authorInfo && authorInfo.authorImage) {
     const imageDiv = document.createElement('div');
     imageDiv.classList.add('author-image');
     const authorPict = document.createElement('picture');
@@ -53,7 +53,7 @@ async function setAuthorInfo(authorElem) {
   authorName.textContent = authorInfo.authorName;
   const authorTitle = document.createElement('div');
   authorTitle.classList.add('author-title');
-  authorTitle.textContent = authorInfo.authorTitle;
+  authorTitle.textContent = authorInfo?.authorTitle;
   authorInfoDiv.append(authorName, authorTitle);
 
   // if a social link is present, add it to the author info div
@@ -62,7 +62,7 @@ async function setAuthorInfo(authorElem) {
     const socialLinkElem = document.createElement('a');
     socialLinkElem.classList.add('author-social-link');
     authorInfoDiv.append(socialLinkElem);
-    socialLinkElem.textContent = authorInfo.authorSocialLinkText;
+    socialLinkElem.textContent = authorInfo?.authorSocialLinkText;
     socialLinkElem.href = socialLink;
   }
 
