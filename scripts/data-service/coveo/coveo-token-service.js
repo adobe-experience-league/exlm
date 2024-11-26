@@ -13,7 +13,7 @@ const { coveoTokenUrl } = getConfig();
  */
 
 function decodeCoveoTokenValidity(token) {
-  const tokenPayload = token.split('.')[1]; // Get the payload
+  const tokenPayload = token?.split('.')[1]; // Get the payload
   const jsonPayload = JSON.parse(atob(tokenPayload)); // Decode the Base64-encoded token payload and parse it into a JSON object.
   return jsonPayload?.exp;
 }
