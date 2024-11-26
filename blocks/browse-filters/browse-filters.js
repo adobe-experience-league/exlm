@@ -24,7 +24,7 @@ import {
   authorOptions,
   fetchPerspectiveIndex,
 } from './browse-filter-utils.js';
-import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
+// import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
@@ -1293,26 +1293,26 @@ export default async function decorate(block) {
   appendToForm(block, renderTags());
   appendToForm(block, renderFilterResultsHeader());
   decorateBrowseTopics(block);
-  initiateCoveoHeadlessSearch({
-    handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
-    renderPageNumbers,
-    numberOfResults: getBrowseFiltersResultCount(),
-    renderSearchQuerySummary,
-    handleSearchBoxSubscription,
-  })
-    .then(
-      (data) => {
-        handleCoveoHeadlessSearch(block, data);
-      },
-      (err) => {
-        throw new Error(err);
-      },
-    )
-    .finally(() => {
-      // enable/disable the clear filter btn based on latest data
-      updateClearFilterStatus(block);
-      decorateIcons(block);
-    });
+  // initiateCoveoHeadlessSearch({
+  //   handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
+  //   renderPageNumbers,
+  //   numberOfResults: getBrowseFiltersResultCount(),
+  //   renderSearchQuerySummary,
+  //   handleSearchBoxSubscription,
+  // })
+  //   .then(
+  //     (data) => {
+  //       handleCoveoHeadlessSearch(block, data);
+  //     },
+  //     (err) => {
+  //       throw new Error(err);
+  //     },
+  //   )
+  //   .finally(() => {
+  //     // enable/disable the clear filter btn based on latest data
+  //     updateClearFilterStatus(block);
+  //     decorateIcons(block);
+  //   });
   handleDropdownToggle();
   onInputSearch(block);
   handleClearFilter(block);
