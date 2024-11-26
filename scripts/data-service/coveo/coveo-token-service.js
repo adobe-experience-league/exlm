@@ -13,15 +13,9 @@ const { coveoTokenUrl } = getConfig();
  */
 
 function decodeCoveoTokenValidity(token) {
-  const base64Url = token.split('.')[1]; // Get the payload
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); // Convert URL-safe to standard base64
-  const jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split('')
-      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-      .join(''),
-  );
-  return JSON.parse(jsonPayload).exp;
+  const tokenPayload = token.split('.')[1]; // Get the payload
+  const jsonPayload = JSON.parse(atob(tokenPayload)); // Decode the Base64-encoded token payload and parse it into a JSON object.
+  return jsonPayload.exp;
 }
 
 async function retrieveCoveoToken(email = '', token = '') {
@@ -108,8 +102,7 @@ async function fetchAndStoreCoveoToken() {
   }
 
   if (coveoToken.length > 0) {
-    const coveoTokenExpirationTime = decodeCoveoTokenValidity(coveoToken);
-    sessionStorage.setItem(COVEO_TOKEN, JSON.stringify({ coveoToken, coveoTokenExpirationTime }));
+    sessionStorage.setItem(COVEO_TOKEN, coveoToken);
   } else {
     sessionStorage.removeItem(COVEO_TOKEN);
   }
@@ -118,18 +111,19 @@ async function fetchAndStoreCoveoToken() {
 }
 
 let coveoResponseToken = '';
+let coveoTokenExpirationTime = '';
 export default async function loadCoveoToken() {
   const storedCoveoToken = sessionStorage.getItem(COVEO_TOKEN);
 
   if (storedCoveoToken) {
-    const tokenObj = JSON.parse(storedCoveoToken);
     const currentTime = Math.floor(Date.now() / 1000);
-
-    if (tokenObj?.coveoTokenExpirationTime > currentTime) {
+    coveoTokenExpirationTime = coveoTokenExpirationTime || decodeCoveoTokenValidity(storedCoveoToken);
+    if (coveoTokenExpirationTime > currentTime) {
       coveoResponseToken = '';
-      return tokenObj?.coveoToken;
+      return storedCoveoToken;
     }
     const token = await fetchAndStoreCoveoToken();
+    coveoTokenExpirationTime = decodeCoveoTokenValidity(token);
     return token;
   }
 
@@ -146,11 +140,14 @@ export default async function loadCoveoToken() {
       }
       const signedIn = await isSignedInUser();
       if (signedIn) {
-        await loadJWT();
+        loadJWT().then(async () => {
+          const token = await fetchAndStoreCoveoToken();
+          resolve(token);
+        });
+      } else {
+        const token = await fetchAndStoreCoveoToken();
+        resolve(token);
       }
-
-      const token = await fetchAndStoreCoveoToken();
-      resolve(token);
     });
   return coveoResponseToken;
 }

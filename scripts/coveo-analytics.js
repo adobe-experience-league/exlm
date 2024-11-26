@@ -41,8 +41,7 @@ async function postCoveoAnalytics(type, body) {
   try {
     // Load the Coveo Token
     // const coveoToken = await loadCoveoToken(); - Causes cyclic dependency that breaks build
-    const storedCoveoObj = JSON.parse(sessionStorage.getItem(COVEO_TOKEN));
-    const { coveoToken } = storedCoveoObj;
+    const coveoToken = sessionStorage.getItem(COVEO_TOKEN);
 
     const response = await fetch(
       `${COVEO_ANALYTICS_URL[window.exlm.config?.currentEnv?.env] || COVEO_ANALYTICS_URL.STAGE}${type}`,
