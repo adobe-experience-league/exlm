@@ -6,7 +6,23 @@ import { isSignedInUser } from '../../auth/profile.js';
 
 const { coveoTokenUrl } = getConfig();
 
-const timers = new Map();
+/**
+ * Decodes a Coveo token to extract its expiration time (`exp`).
+ * @param {string} token - The JSON Web Token (JWT) as a string.
+ * @returns {number} The expiration time (`exp`) as a Unix timestamp.
+ */
+
+function decodeCoveoTokenValidity(token) {
+  const base64Url = token.split('.')[1]; // Get the payload
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); // Convert URL-safe to standard base64
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split('')
+      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+      .join(''),
+  );
+  return JSON.parse(jsonPayload).exp;
+}
 
 async function retrieveCoveoToken(email = '', token = '') {
   let result = null;
@@ -60,7 +76,6 @@ async function fetchAndStoreCoveoToken() {
   let retryCount = 0;
   const maxRetries = 5;
   const retryAttempts = Array.from({ length: 10 }, (_, idx) => idx + 1);
-  let retryInterval = 50;
 
   while (csrfToken.length === 0 && retryCount < maxRetries) {
     try {
@@ -93,30 +108,31 @@ async function fetchAndStoreCoveoToken() {
   }
 
   if (coveoToken.length > 0) {
-    sessionStorage.setItem(COVEO_TOKEN, coveoToken);
-    retryInterval = 6e4 * 5;
+    const coveoTokenExpirationTime = decodeCoveoTokenValidity(coveoToken);
+    sessionStorage.setItem(COVEO_TOKEN, JSON.stringify({ coveoToken, coveoTokenExpirationTime }));
   } else {
     sessionStorage.removeItem(COVEO_TOKEN);
   }
-
-  if (timers.has(COVEO_TOKEN)) {
-    clearTimeout(timers.get(COVEO_TOKEN));
-  }
-
-  timers.set(
-    COVEO_TOKEN,
-    () => {
-      timers.delete(COVEO_TOKEN);
-      fetchAndStoreCoveoToken();
-    },
-    retryInterval,
-  );
 
   return coveoToken;
 }
 
 let coveoResponseToken = '';
 export default async function loadCoveoToken() {
+  const storedCoveoToken = sessionStorage.getItem(COVEO_TOKEN);
+
+  if (storedCoveoToken) {
+    const tokenObj = JSON.parse(storedCoveoToken);
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    if (tokenObj?.coveoTokenExpirationTime > currentTime) {
+      coveoResponseToken = '';
+      return tokenObj?.coveoToken;
+    }
+    const token = await fetchAndStoreCoveoToken();
+    return token;
+  }
+
   coveoResponseToken =
     coveoResponseToken ||
     // eslint-disable-next-line no-async-promise-executor
@@ -130,23 +146,11 @@ export default async function loadCoveoToken() {
       }
       const signedIn = await isSignedInUser();
       if (signedIn) {
-        loadJWT().then(async () => {
-          if (sessionStorage[COVEO_TOKEN]) {
-            resolve(sessionStorage.getItem(COVEO_TOKEN));
-          } else {
-            const token = await fetchAndStoreCoveoToken();
-            resolve(token);
-          }
-        });
-      } else {
-        // eslint-disable-next-line no-lonely-if
-        if (sessionStorage[COVEO_TOKEN]) {
-          resolve(sessionStorage.getItem(COVEO_TOKEN));
-        } else {
-          const token = await fetchAndStoreCoveoToken();
-          resolve(token);
-        }
+        await loadJWT();
       }
+
+      const token = await fetchAndStoreCoveoToken();
+      resolve(token);
     });
   return coveoResponseToken;
 }
