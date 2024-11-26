@@ -157,7 +157,7 @@
   overflow: hidden;
 }
 .browse-card .browse-card-figure {
-  border-radius: 8px;
+  border-radius: 7px 7px 0px 0px;
   height: 198px;
   max-height: 198px;
   overflow: hidden;
