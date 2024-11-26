@@ -221,6 +221,10 @@ body.profile
   display: block;
 }
 
+.recommended-content-see-more-btn {
+  display: none;
+}
+
 @media (min-width: 420px) {
   .recommended-content.block .custom-filter-dropdown {
     min-width: 360px;
@@ -260,5 +264,59 @@ body.profile
   }
   .recommended-content-result-link {
     margin-right: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .recommended-content.block .browse-cards-block-content {
+    overflow: hidden;
+    margin-top: 24px;
+  }
+
+  .recommended-content.block .browse-cards-block-content.fade-in {
+    animation: fade-in 0.5s forwards;
+  }
+
+  .recommended-content.block .browse-cards-block-content.fade-out {
+    animation: fade-out 0.5s forwards;
+  }
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(-50px);
+      display: none;
+    }
+    100% {
+      transform: translateY(0px);
+      opacity: 1;
+      display: flex;
+    }
+  }
+
+  @keyframes fade-out {
+    0% {
+      transform: translateY(0px);
+      opacity: 1;
+      display: flex;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-50px);
+      display: none;
+    }
+  }
+
+  .recommended-content-see-more-btn {
+    display: flex;
+    justify-content: center;
+  }
+
+  .recommended-content-see-more-btn button {
+    background: none;
+    border: 2px solid var(--spectrum-gray-300);
+    color: black;
+    padding: 10px 20px;
+    margin-top: 24px;
   }
 }
