@@ -9,7 +9,7 @@ class AdobeTargetClient {
     this.cookieConsentName = 'OptanonConsent';
     this.targetCookieEnabled = this.checkIsTargetCookieEnabled();
     const main = document.querySelector('main');
-    this.blocks = main.querySelectorAll('.recommended-content, .recently-reviewed');
+    this.blocks = main.querySelectorAll('.recommended-content, .recently-reviewed, .recommendation-marquee');
     this.targetArray = [];
     this.currentItem = null;
   }
@@ -115,6 +115,27 @@ class AdobeTargetClient {
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  sanitizeTargetData(targetData) {
+    if (!targetData?.length) {
+      return targetData;
+    }
+    const recommendedMarqueeItem = targetData.find((item) => item.meta.scope === 'exl-hp-auth-recs');
+    if (recommendedMarqueeItem) {
+      return targetData;
+    }
+    targetData.forEach(({ meta }) => {
+      const { scope } = meta;
+      const indexMatch = scope.match(/-(\d+)$/) || [];
+      const [scopeAttr, currentScope] = indexMatch;
+      if (scopeAttr) {
+        meta.scope =
+          currentScope === '1' ? scope.replace(scopeAttr, '') : scope.replace(scopeAttr, `-${currentScope - 1}`);
+      }
+    });
+    return targetData;
+  }
+
   /**
    * Fetches target data and maps it to the appropriate DOM components for processing.
    * It determines whether to update, replace, or add new blocks to the DOM.
@@ -123,10 +144,13 @@ class AdobeTargetClient {
     const targetData = await this.getTargetData();
 
     if (targetData.length) {
+      this.sanitizeTargetData(targetData);
       this.targetArray = targetData.map(({ meta }) => {
         const { scope, 'criteria.title': criteriaTitle } = meta;
         const indexMatch = scope.match(/-(\d+)$/);
-        const targetIndex = indexMatch ? indexMatch[1] - 1 : null;
+        const considerMarquee = scope === 'exl-hp-auth-recs';
+        // eslint-disable-next-line no-nested-ternary
+        const targetIndex = considerMarquee ? 0 : indexMatch ? indexMatch[1] : null;
         const blockElement = this.blocks[targetIndex];
         let blockId;
         if (blockElement) {
@@ -136,14 +160,17 @@ class AdobeTargetClient {
         const blockName = blockElement?.dataset.blockName;
 
         // eslint-disable-next-line no-nested-ternary
-        const mode = blockId
+        let mode = blockId
           ? (criteriaTitle === 'exl-php-recently-viewed-content' && blockName === 'recently-reviewed') ||
             (criteriaTitle !== 'exl-php-recently-viewed-content' && blockName === 'recommended-content')
             ? 'update'
             : 'replace'
           : 'new';
+        if (considerMarquee && blockId) {
+          mode = blockName !== 'recommendation-marquee' ? 'replace' : 'update';
+        }
 
-        let newBlock = 'recommended-content';
+        let newBlock = considerMarquee ? 'recommendation-marquee' : 'recommended-content';
         if (criteriaTitle === 'exl-php-recently-viewed-content') {
           newBlock = 'recently-reviewed';
         }

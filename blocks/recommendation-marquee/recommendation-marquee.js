@@ -183,11 +183,6 @@ const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
-  if (block.dataset.targetScope) {
-    for (let i = 0; i < 13; i += 1) {
-      block.innerHTML += '<div><div></div></div>';
-    }
-  }
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
@@ -749,6 +744,7 @@ export default async function decorate(block) {
   }
 
   targetEventEmitter.on('dataChange', async (data) => {
+    console.log('-------------------- targetEventEmitter::', data);
     const blockId = block.id;
     const { blockId: targetBlockId, scope } = data.value;
     if (targetBlockId === blockId) {
