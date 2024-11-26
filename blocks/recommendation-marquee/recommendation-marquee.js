@@ -520,12 +520,16 @@ export default async function decorate(block) {
           switch (filterProductByOption) {
             case 'profile_context':
               clonedProducts = [...new Set(sortedProfileInterests)];
+              features.length = 0;
+              versions.length = 0;
               break;
             case 'specific_products':
               clonedProducts = products?.length ? [...products] : [];
               break;
             default:
               clonedProducts = [];
+              features.length = 0;
+              versions.length = 0;
               break;
           }
         }
@@ -533,8 +537,8 @@ export default async function decorate(block) {
         const params = {
           contentType: null,
           product: clonedProducts,
-          feature: features.length ? [...new Set(features)] : null,
-          version: versions.length ? [...new Set(versions)] : null,
+          feature: showDefaultOptions && features.length ? [...new Set(features)] : null,
+          version: showDefaultOptions && versions.length ? [...new Set(versions)] : null,
           role: role?.length ? role : profileRoles,
           sortCriteria,
           noOfResults: numberOfResults,
