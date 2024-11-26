@@ -25,15 +25,15 @@ import {
   fetchPerspectiveIndex,
 } from './browse-filter-utils.js';
 import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
-// import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
-// import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery } from './browse-topics.js';
 import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 
-// const ffetchModulePromise = import('../../scripts/ffetch.js');
+const ffetchModulePromise = import('../../scripts/ffetch.js');
 
 /**
  * debounce fn execution
@@ -48,13 +48,15 @@ const debounce = (ms, fn) => {
   };
 };
 
-// const coveoFacetMap = {
-//   el_role: 'headlessRoleFacet',
-//   el_contenttype: 'headlessTypeFacet',
-//   el_level: 'headlessExperienceFacet',
-//   el_product: 'headlessProductFacet',
-//   author_type: 'headlessAuthorTypeFacet',
-// };
+const coveoFacetMap = {
+  el_role: 'headlessRoleFacet',
+  el_contenttype: 'headlessTypeFacet',
+  el_level: 'headlessExperienceFacet',
+  el_product: 'headlessProductFacet',
+  author_type: 'headlessAuthorTypeFacet',
+};
+
+const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
 
 let placeholders = {};
 try {
@@ -64,57 +66,68 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-// function isArticleLandingPage() {
-//   return matchesAnyTheme(/^article-.*/);
-// }
+function isArticleLandingPage() {
+  return matchesAnyTheme(/^article-.*/);
+}
 
-// // Helper function thats returns a list of all Featured Card Products //
-// async function getFeaturedCardSolutions() {
-//   const ffetch = (await ffetchModulePromise).default;
-//   // Load the Featured Card Solution list
-//   const solutionList = await ffetch(`/featured-card-products.json`).all();
-//   // Gets Values from Column Solution in Featured Card Solution list
-//   const solutionValues = solutionList.map((solution) => solution.Solution);
-//   return solutionValues;
-// }
+// Helper function thats returns a list of all Featured Card Products //
+async function getFeaturedCardSolutions() {
+  const ffetch = (await ffetchModulePromise).default;
+  // Load the Featured Card Solution list
+  const solutionList = await ffetch(`/featured-card-products.json`).all();
+  // Gets Values from Column Solution in Featured Card Solution list
+  const solutionValues = solutionList.map((solution) => solution.Solution);
+  return solutionValues;
+}
 
-// const handleSolutionsService = async () => {
-//   const solutions = await getFeaturedCardSolutions();
-//   if (!solutions) {
-//     throw new Error('An error occurred');
-//   }
-//   if (solutions?.length) {
-//     return solutions;
-//   }
-//   return [];
-// };
+const handleSolutionsService = async () => {
+  const solutions = await getFeaturedCardSolutions();
+  if (!solutions) {
+    throw new Error('An error occurred');
+  }
+  if (solutions?.length) {
+    return solutions;
+  }
+  return [];
+};
 
-// const solutions = await handleSolutionsService();
+const solutions = await handleSolutionsService();
 
-// const solutionsList = [];
-// solutions.forEach((solution) => {
-//   solutionsList.push({
-//     id: solution,
-//     value: solution,
-//     title: solution,
-//     description: '',
-//   });
-// });
+const solutionsList = [];
+solutions.forEach((solution) => {
+  solutionsList.push({
+    id: solution,
+    value: solution,
+    title: solution,
+    description: '',
+  });
+});
 
-// const productOptions = {
-//   id: 'el_product',
-//   name: placeholders.featuredCardProductLabel || 'Product',
-//   items: solutionsList,
-//   selected: 0,
-// };
+const productOptions = {
+  id: 'el_product',
+  name: placeholders.featuredCardProductLabel || 'Product',
+  items: solutionsList,
+  selected: 0,
+};
 
-// const theme = getMetadata('theme').trim();
+const theme = getMetadata('theme').trim();
 const dropdownOptions = [roleOptions, contentTypeOptions];
 
 const tags = [];
 let tagsProxy;
 const buildCardsShimmer = new BrowseCardShimmer(getBrowseFiltersResultCount());
 
+function enableTagsAsProxy(block) {
+  tagsProxy = new Proxy(tags, {
+    set(target, property, value) {
+      // Intercepting array updates
+      target[property] = value;
+      // eslint-disable-next-line no-use-before-define
+      tagsUpdateHandler(block);
+      return true;
+    },
+  });
+}
 
 /**
  * Hides or shows sections below a given filter.
@@ -198,47 +211,35 @@ function tagsUpdateHandler(block) {
   updateClearFilterStatus(block);
 }
 
+if (theme === 'browse-all') dropdownOptions.push(productOptions);
+if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
 
-function enableTagsAsProxy(block) {
-  tagsProxy = new Proxy(tags, {
-    set(target, property, value) {
-      // Intercepting array updates
-      target[property] = value;
-      tagsUpdateHandler(block);
-      return true;
-    },
-  });
+if (isArticleLandingPage()) {
+  const perspectiveIndex = await fetchPerspectiveIndex();
+  const coveoSolutions = perspectiveIndex.reduce((acc, curr) => {
+    if (curr?.coveoSolution) {
+      // eslint-disable-next-line no-param-reassign
+      acc += `,${curr.coveoSolution}`;
+    }
+    return acc;
+  }, '');
+
+  const coveoSolutionArr = coveoSolutions.split(/[,;]/).filter((solution) => solution && !solution.includes('|'));
+  const coveoSolutionOptionsList = Array.from(new Set(coveoSolutionArr)).sort();
+  const coveoSolutionOptions = coveoSolutionOptionsList.map((solution) => ({
+    description: '',
+    id: solution.toLowerCase(),
+    title: solution,
+    value: solution,
+  }));
+  productTypeOptions.items = coveoSolutionOptions;
+  dropdownOptions.length = 0;
+  if (productTypeOptions.items.length > 0) {
+    dropdownOptions.push(productTypeOptions);
+  }
+  dropdownOptions.push(roleOptions);
+  dropdownOptions.push(authorOptions);
 }
-
-// if (theme === 'browse-all') dropdownOptions.push(productOptions);
-// if (theme === 'browse-product') dropdownOptions.push(expTypeOptions);
-
-// if (isArticleLandingPage()) {
-//   const perspectiveIndex = await fetchPerspectiveIndex();
-//   const coveoSolutions = perspectiveIndex.reduce((acc, curr) => {
-//     if (curr?.coveoSolution) {
-//       // eslint-disable-next-line no-param-reassign
-//       acc += `,${curr.coveoSolution}`;
-//     }
-//     return acc;
-//   }, '');
-
-//   const coveoSolutionArr = coveoSolutions.split(/[,;]/).filter((solution) => solution && !solution.includes('|'));
-//   const coveoSolutionOptionsList = Array.from(new Set(coveoSolutionArr)).sort();
-//   const coveoSolutionOptions = coveoSolutionOptionsList.map((solution) => ({
-//     description: '',
-//     id: solution.toLowerCase(),
-//     title: solution,
-//     value: solution,
-//   }));
-//   productTypeOptions.items = coveoSolutionOptions;
-//   dropdownOptions.length = 0;
-//   if (productTypeOptions.items.length > 0) {
-//     dropdownOptions.push(productTypeOptions);
-//   }
-//   dropdownOptions.push(roleOptions);
-//   dropdownOptions.push(authorOptions);
-// }
 
 /**
  * Generate HTML for a single checkbox item.
@@ -305,87 +306,87 @@ function renderTags() {
   return htmlToElement(tagEl);
 }
 
-// async function appendTag(block, tag, source = 'checkboxChange') {
-//   const tagsContainer = block.querySelector('.browse-tags-container');
-//   const tagEl = htmlToElement(`
-//     <button class="browse-tags" value="${tag.value}">
-//       <span>${tag.name}</span>
-//       <span>: </span>
-//       <span>${tag.label}</span>
-//       <span class="icon icon-close"></span>
-//     </button>
-//   `);
-//   if (source === 'checkboxChange') {
-//     decorateIcons(tagEl);
-//   }
-//   tagsContainer.append(tagEl);
-//   tagsProxy.push({
-//     name: tag.name,
-//     value: tag.value,
-//   });
-// }
+async function appendTag(block, tag, source = 'checkboxChange') {
+  const tagsContainer = block.querySelector('.browse-tags-container');
+  const tagEl = htmlToElement(`
+    <button class="browse-tags" value="${tag.value}">
+      <span>${tag.name}</span>
+      <span>: </span>
+      <span>${tag.label}</span>
+      <span class="icon icon-close"></span>
+    </button>
+  `);
+  if (source === 'checkboxChange') {
+    decorateIcons(tagEl);
+  }
+  tagsContainer.append(tagEl);
+  tagsProxy.push({
+    name: tag.name,
+    value: tag.value,
+  });
+}
 
-// function removeFromTags(block, value) {
-//   const tagsContainer = block.querySelector('.browse-tags-container');
-//   [...tagsContainer.children].forEach((tag) => {
-//     if (tag.value === value) {
-//       tag.remove();
-//       const itemToRemove = tagsProxy.findIndex((obj) => obj.value === value);
-//       if (itemToRemove !== -1) {
-//         tagsProxy.splice(itemToRemove, 1);
-//       }
-//     }
-//   });
-// }
+function removeFromTags(block, value) {
+  const tagsContainer = block.querySelector('.browse-tags-container');
+  [...tagsContainer.children].forEach((tag) => {
+    if (tag.value === value) {
+      tag.remove();
+      const itemToRemove = tagsProxy.findIndex((obj) => obj.value === value);
+      if (itemToRemove !== -1) {
+        tagsProxy.splice(itemToRemove, 1);
+      }
+    }
+  });
+}
 
-// function updateCountAndCheckedState(block, name, value) {
-//   const ddObject = getObjectByName(dropdownOptions, name);
-//   const tagRole = block.querySelector(`.filter-dropdown[data-filter-type="${ddObject.id}"]`);
-//   const btnEl = tagRole.querySelector(':scope > button');
-//   const ddOptions = [...tagRole.querySelector('.filter-dropdown-content').children];
+function updateCountAndCheckedState(block, name, value) {
+  const ddObject = getObjectByName(dropdownOptions, name);
+  const tagRole = block.querySelector(`.filter-dropdown[data-filter-type="${ddObject.id}"]`);
+  const btnEl = tagRole.querySelector(':scope > button');
+  const ddOptions = [...tagRole.querySelector('.filter-dropdown-content').children];
 
-//   ddObject.selected = 0;
+  ddObject.selected = 0;
 
-//   function syncCheckedState(option) {
-//     const selected = option.querySelector(`input[type="checkbox"][value="${value}"]`);
-//     if (selected) selected.checked = false;
-//     if (option.querySelector('input[type="checkbox"]').checked) {
-//       ddObject.selected += 1;
-//     }
-//   }
+  function syncCheckedState(option) {
+    const selected = option.querySelector(`input[type="checkbox"][value="${value}"]`);
+    if (selected) selected.checked = false;
+    if (option.querySelector('input[type="checkbox"]').checked) {
+      ddObject.selected += 1;
+    }
+  }
 
-//   ddOptions.forEach((option) => {
-//     syncCheckedState(option);
-//   });
+  ddOptions.forEach((option) => {
+    syncCheckedState(option);
+  });
 
-//   if (ddObject.selected !== 0) btnEl.firstChild.textContent = `${name} (${ddObject.selected})`;
-//   if (ddObject.selected === 0) btnEl.firstChild.textContent = `${name}`;
-// }
+  if (ddObject.selected !== 0) btnEl.firstChild.textContent = `${name} (${ddObject.selected})`;
+  if (ddObject.selected === 0) btnEl.firstChild.textContent = `${name}`;
+}
 
-// function handleTagsClick(block) {
-//   block.addEventListener('click', (event) => {
-//     const isTag = event.target.closest('.browse-tags');
-//     if (isTag) {
-//       const name = isTag.querySelector('span:nth-child(1)').textContent.trim();
-//       const dropDownObj = getObjectByName(dropdownOptions, name);
-//       const { value } = isTag;
-//       const coveoFacetKey = coveoFacetMap[dropDownObj.id];
-//       const coveoFacet = window[coveoFacetKey];
-//       if (coveoFacet) {
-//         const facets = getCoveoFacets(value, false);
-//         facets.forEach(({ state, value: facetValue }) => {
-//           coveoFacet.toggleSelect({
-//             state,
-//             value: facetValue,
-//           });
-//         });
-//       }
-//       removeFromTags(block, value);
-//       // TODO: Update checked state and numbers
-//       updateCountAndCheckedState(block, name, value);
-//     }
-//   });
-// }
+function handleTagsClick(block) {
+  block.addEventListener('click', (event) => {
+    const isTag = event.target.closest('.browse-tags');
+    if (isTag) {
+      const name = isTag.querySelector('span:nth-child(1)').textContent.trim();
+      const dropDownObj = getObjectByName(dropdownOptions, name);
+      const { value } = isTag;
+      const coveoFacetKey = coveoFacetMap[dropDownObj.id];
+      const coveoFacet = window[coveoFacetKey];
+      if (coveoFacet) {
+        const facets = getCoveoFacets(value, false);
+        facets.forEach(({ state, value: facetValue }) => {
+          coveoFacet.toggleSelect({
+            state,
+            value: facetValue,
+          });
+        });
+      }
+      removeFromTags(block, value);
+      // TODO: Update checked state and numbers
+      updateCountAndCheckedState(block, name, value);
+    }
+  });
+}
 
 function handleCheckboxClick(block, el, options) {
   const checkboxes = el.querySelectorAll('.custom-checkbox input[type="checkbox"]');
@@ -493,25 +494,25 @@ function constructKeywordSearchEl(block) {
   appendToFormInputContainer(block, searchEl);
 }
 
-// function onInputSearch(block) {
-//   const searchEl = block.querySelector('.filter-input-search .search-input');
-//   if (!searchEl) {
-//     return;
-//   }
-//   searchEl.addEventListener('keypress', (event) => {
-//     if (event.key === 'Enter') {
-//       event.preventDefault();
-//       // eslint-disable-next-line no-console
-//       console.log('add search logic here');
-//     }
-//   });
-// }
+function onInputSearch(block) {
+  const searchEl = block.querySelector('.filter-input-search .search-input');
+  if (!searchEl) {
+    return;
+  }
+  searchEl.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      // eslint-disable-next-line no-console
+      console.log('add search logic here');
+    }
+  });
+}
 
-// function removeTopicSelections(block) {
-//   block
-//     .querySelectorAll('.browse-topics-item-active')
-//     .forEach((element) => element.classList.remove('browse-topics-item-active'));
-// }
+function removeTopicSelections(block) {
+  block
+    .querySelectorAll('.browse-topics-item-active')
+    .forEach((element) => element.classList.remove('browse-topics-item-active'));
+}
 
 function uncheckAllFiltersFromDropdown(block) {
   const dropdownFilters = block.querySelectorAll('.filter-dropdown');
@@ -535,47 +536,47 @@ function clearAllSelectedTag(block) {
   tagsEl.innerHTML = '';
 }
 
-// function clearSearchQuery(block) {
-//   const searchEl = block.querySelector('.filter-input-search input');
-//   searchEl.value = '';
-// }
+function clearSearchQuery(block) {
+  const searchEl = block.querySelector('.filter-input-search input');
+  searchEl.value = '';
+}
 
-// function clearSelectedFilters(block) {
-//   removeTopicSelections(block);
-//   uncheckAllFiltersFromDropdown(block);
-//   clearAllSelectedTag(block);
-//   clearSearchQuery(block);
-//   updateClearFilterStatus(block);
+function clearSelectedFilters(block) {
+  removeTopicSelections(block);
+  uncheckAllFiltersFromDropdown(block);
+  clearAllSelectedTag(block);
+  clearSearchQuery(block);
+  updateClearFilterStatus(block);
 
-//   const hash = window.location.hash.substr(1); // Remove the '#' character
-//   let params = new URLSearchParams(hash);
+  const hash = window.location.hash.substr(1); // Remove the '#' character
+  let params = new URLSearchParams(hash);
 
-//   // Get the value of 'aq'
-//   const aqValue = params.get('aq');
+  // Get the value of 'aq'
+  const aqValue = params.get('aq');
 
-//   // Clear all parameters
-//   params = new URLSearchParams();
+  // Clear all parameters
+  params = new URLSearchParams();
 
-//   // Set only 'aq' with its value if it was present
-//   if (aqValue !== null) {
-//     params.set('aq', aqValue);
-//   }
+  // Set only 'aq' with its value if it was present
+  if (aqValue !== null) {
+    params.set('aq', aqValue);
+  }
 
-//   // Set the modified hash back to the URL
-//   window.location.hash = params.toString();
-//   // window.location.hash = '';
-// }
+  // Set the modified hash back to the URL
+  window.location.hash = params.toString();
+  // window.location.hash = '';
+}
 
-// function handleClearFilter(block) {
-//   // show the hidden sections again
-//   const clearFilterEl = block.querySelector('.browse-filters-clear');
-//   if (!clearFilterEl) {
-//     return;
-//   }
-//   clearFilterEl.addEventListener('click', () => {
-//     clearSelectedFilters(block);
-//   });
-// }
+function handleClearFilter(block) {
+  // show the hidden sections again
+  const clearFilterEl = block.querySelector('.browse-filters-clear');
+  if (!clearFilterEl) {
+    return;
+  }
+  clearFilterEl.addEventListener('click', () => {
+    clearSelectedFilters(block);
+  });
+}
 
 function constructClearFilterBtn(block) {
   const clearBtn = htmlToElement(`
@@ -584,39 +585,39 @@ function constructClearFilterBtn(block) {
   appendToFormInputContainer(block, clearBtn);
 }
 
-// function closeOpenDropdowns() {
-//   document.querySelectorAll('.filter-dropdown.open')?.forEach((dropdown) => {
-//     dropdown.classList.remove('open');
-//     dropdown.querySelector('.filter-dropdown-content').style.display = 'none';
-//   });
-// }
+function closeOpenDropdowns() {
+  document.querySelectorAll('.filter-dropdown.open')?.forEach((dropdown) => {
+    dropdown.classList.remove('open');
+    dropdown.querySelector('.filter-dropdown-content').style.display = 'none';
+  });
+}
 
-// /**
-//  * Handles the toggle behavior for filter dropdowns.
-//  * Closes open dropdowns if a click occurs outside of the current dropdown.
-//  * Toggles the display of the clicked dropdown and updates its state.
-//  *
-//  * @param {Event} event - The click event.
-//  */
-// function handleDropdownToggle() {
-//   document.addEventListener('click', (event) => {
-//     const openDropdowns = document.querySelectorAll('.filter-dropdown.open');
-//     const dropdownEl = event.target.closest('.filter-dropdown');
-//     const isCurrentDropDownOpen = event.target.closest('.filter-dropdown.open');
+/**
+ * Handles the toggle behavior for filter dropdowns.
+ * Closes open dropdowns if a click occurs outside of the current dropdown.
+ * Toggles the display of the clicked dropdown and updates its state.
+ *
+ * @param {Event} event - The click event.
+ */
+function handleDropdownToggle() {
+  document.addEventListener('click', (event) => {
+    const openDropdowns = document.querySelectorAll('.filter-dropdown.open');
+    const dropdownEl = event.target.closest('.filter-dropdown');
+    const isCurrentDropDownOpen = event.target.closest('.filter-dropdown.open');
 
-//     if (openDropdowns && !isCurrentDropDownOpen) closeOpenDropdowns();
+    if (openDropdowns && !isCurrentDropDownOpen) closeOpenDropdowns();
 
-//     if (dropdownEl && !isCurrentDropDownOpen) {
-//       if (document.activeElement?.className?.includes('search-input')) {
-//         return;
-//       }
-//       dropdownEl.querySelector('.filter-dropdown-content').style.display = 'block';
-//       dropdownEl.classList.add('open');
-//     } else {
-//       closeOpenDropdowns();
-//     }
-//   });
-// }
+    if (dropdownEl && !isCurrentDropDownOpen) {
+      if (document.activeElement?.className?.includes('search-input')) {
+        return;
+      }
+      dropdownEl.querySelector('.filter-dropdown-content').style.display = 'block';
+      dropdownEl.classList.add('open');
+    } else {
+      closeOpenDropdowns();
+    }
+  });
+}
 
 function handleUriHash() {
   const browseFiltersSection = document.querySelector('.browse-filters-form');
@@ -1005,72 +1006,72 @@ function handleCoveoHeadlessSearch(
   renderPageNumbers();
 }
 
-// /**
-//  * Retrieves selected dropdown labels based on the field type.
-//  * @param {HTMLElement} block - The parent element containing the dropdowns.
-//  * @param {string} field - The type of field to retrieve labels for.
-//  * @returns {string} - The selected labels separated by '|', or an empty string if no selection.
-//  */
-// function getSelectedDropdownLabels(block, field) {
-//   const fieldSelectors = {
-//     el_role: '.filter-dropdown[data-filter-type="el_role"] .custom-checkbox input[type="checkbox"]:checked',
-//     el_contenttype:
-//       '.filter-dropdown[data-filter-type="el_contenttype"] .custom-checkbox input[type="checkbox"]:checked',
-//     el_level: '.filter-dropdown[data-filter-type="el_level"] .custom-checkbox input[type="checkbox"]:checked',
-//     search: '.filter-input-search .search-input',
-//     topics: '.browse-topics .browse-topics-item-active',
-//   };
+/**
+ * Retrieves selected dropdown labels based on the field type.
+ * @param {HTMLElement} block - The parent element containing the dropdowns.
+ * @param {string} field - The type of field to retrieve labels for.
+ * @returns {string} - The selected labels separated by '|', or an empty string if no selection.
+ */
+function getSelectedDropdownLabels(block, field) {
+  const fieldSelectors = {
+    el_role: '.filter-dropdown[data-filter-type="el_role"] .custom-checkbox input[type="checkbox"]:checked',
+    el_contenttype:
+      '.filter-dropdown[data-filter-type="el_contenttype"] .custom-checkbox input[type="checkbox"]:checked',
+    el_level: '.filter-dropdown[data-filter-type="el_level"] .custom-checkbox input[type="checkbox"]:checked',
+    search: '.filter-input-search .search-input',
+    topics: '.browse-topics .browse-topics-item-active',
+  };
 
-//   // Select appropriate elements based on the field type
-//   const fieldSelector = fieldSelectors[field];
+  // Select appropriate elements based on the field type
+  const fieldSelector = fieldSelectors[field];
 
-//   if (fieldSelector) {
-//     if (field === 'search') {
-//       const element = block.querySelector(fieldSelector);
-//       return element.value;
-//     }
-//     const elements = block.querySelectorAll(fieldSelector);
-//     return [...elements].map((el) => el.dataset.label).join('|');
-//   }
-//   return null;
-// }
+  if (fieldSelector) {
+    if (field === 'search') {
+      const element = block.querySelector(fieldSelector);
+      return element.value;
+    }
+    const elements = block.querySelectorAll(fieldSelector);
+    return [...elements].map((el) => el.dataset.label).join('|');
+  }
+  return null;
+}
 
-// /**
-//  * Generates analytics filters based on selected dropdown values.
-//  * @param {HTMLElement} block - The parent element containing the dropdowns.
-//  * @param {String} totalCount - The total count.
-//  * @returns {Object|null} - The analytics filters object or null if no non-empty values.
-//  */
-// function generateAnalyticsFilters(block, totalCount) {
-//   const filterFields = {
-//     el_role: 'Role',
-//     el_contenttype: 'ContentType',
-//     el_level: 'ExperienceLevel',
-//     search: 'KeywordSearch',
-//     topics: 'BrowseByTopic',
-//   };
-//   const filterKeys = Object.keys(filterFields);
-//   const filters = {};
-//   let hasNonEmptyValue = false;
-//   for (let i = 0; i < filterKeys.length; i += 1) {
-//     const field = filterKeys[i];
-//     const selectedValue = getSelectedDropdownLabels(block, field);
-//     if (selectedValue !== '') {
-//       filters[filterFields[field]] = selectedValue;
-//       hasNonEmptyValue = true;
-//     }
-//   }
+/**
+ * Generates analytics filters based on selected dropdown values.
+ * @param {HTMLElement} block - The parent element containing the dropdowns.
+ * @param {String} totalCount - The total count.
+ * @returns {Object|null} - The analytics filters object or null if no non-empty values.
+ */
+function generateAnalyticsFilters(block, totalCount) {
+  const filterFields = {
+    el_role: 'Role',
+    el_contenttype: 'ContentType',
+    el_level: 'ExperienceLevel',
+    search: 'KeywordSearch',
+    topics: 'BrowseByTopic',
+  };
+  const filterKeys = Object.keys(filterFields);
+  const filters = {};
+  let hasNonEmptyValue = false;
+  for (let i = 0; i < filterKeys.length; i += 1) {
+    const field = filterKeys[i];
+    const selectedValue = getSelectedDropdownLabels(block, field);
+    if (selectedValue !== '') {
+      filters[filterFields[field]] = selectedValue;
+      hasNonEmptyValue = true;
+    }
+  }
 
-//   if (hasNonEmptyValue) {
-//     filters.BrowseResults = totalCount;
-//     return filters;
-//   }
+  if (hasNonEmptyValue) {
+    filters.BrowseResults = totalCount;
+    return filters;
+  }
 
-//   return null;
-// }
+  return null;
+}
 
 async function handleSearchEngineSubscription(block) {
-  const browseFilterForm = document.querySelector('.browse-filters-form');
+  const browseFilterForm = document.querySelector(CLASS_BROWSE_FILTER_FORM);
   const filterResultsEl = browseFilterForm?.querySelector('.browse-filters-results');
   if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
     return;
@@ -1143,45 +1144,45 @@ async function handleSearchEngineSubscription(block) {
   }
 }
 
-// function renderSortContainer(block) {
-//   const wrapper = block.querySelector('.browse-filters-form .browse-filters-results-header');
-//   if (!wrapper) {
-//     return;
-//   }
-//   const sortContainer = document.createElement('div');
-//   sortContainer.classList.add('sort-container');
-//   sortContainer.innerHTML = `<span>${placeholders.filterSortLabel}</span>
-//                   <button class="sort-drop-btn">${placeholders.filterSortRelevanceLabel}</button>`;
+function renderSortContainer(block) {
+  const wrapper = block.querySelector('.browse-filters-form .browse-filters-results-header');
+  if (!wrapper) {
+    return;
+  }
+  const sortContainer = document.createElement('div');
+  sortContainer.classList.add('sort-container');
+  sortContainer.innerHTML = `<span>${placeholders.filterSortLabel}</span>
+                  <button class="sort-drop-btn">${placeholders.filterSortRelevanceLabel}</button>`;
 
-//   wrapper.appendChild(sortContainer);
+  wrapper.appendChild(sortContainer);
 
-//   const dropDownBtn = document.querySelector('.sort-drop-btn');
+  const dropDownBtn = document.querySelector('.sort-drop-btn');
 
-//   if (dropDownBtn) {
-//     dropDownBtn.addEventListener('click', () => {
-//       dropDownBtn.classList.toggle('active');
-//       dropDownBtn.nextSibling.classList.toggle('show');
-//       setTimeout(() => {
-//         // Close the dropdown menu if the user clicks outside of it
-//         document.addEventListener(
-//           'click',
-//           (event) => {
-//             let hideDropdown = !event.target || !dropDownBtn.nextSibling.contains(event.target);
-//             if (event.target === dropDownBtn && dropDownBtn.classList.contains('active')) {
-//               hideDropdown = false;
-//             }
-//             if (hideDropdown) {
-//               dropDownBtn.nextSibling.classList.remove('show');
-//             }
-//           },
-//           {
-//             once: true,
-//           },
-//         );
-//       });
-//     });
-//   }
-// }
+  if (dropDownBtn) {
+    dropDownBtn.addEventListener('click', () => {
+      dropDownBtn.classList.toggle('active');
+      dropDownBtn.nextSibling.classList.toggle('show');
+      setTimeout(() => {
+        // Close the dropdown menu if the user clicks outside of it
+        document.addEventListener(
+          'click',
+          (event) => {
+            let hideDropdown = !event.target || !dropDownBtn.nextSibling.contains(event.target);
+            if (event.target === dropDownBtn && dropDownBtn.classList.contains('active')) {
+              hideDropdown = false;
+            }
+            if (hideDropdown) {
+              dropDownBtn.nextSibling.classList.remove('show');
+            }
+          },
+          {
+            once: true,
+          },
+        );
+      });
+    });
+  }
+}
 
 function decorateBrowseTopics(block) {
   const { lang } = getPathDetails();
@@ -1289,10 +1290,8 @@ export default async function decorate(block) {
   });
   constructKeywordSearchEl(block);
   constructClearFilterBtn(block);
-  const tags = renderTags();
-  const resultsHeader = renderFilterResultsHeader();
-  appendToForm(block, tags);
-  appendToForm(block, resultsHeader);
+  appendToForm(block, renderTags());
+  appendToForm(block, renderFilterResultsHeader());
   decorateBrowseTopics(block);
   initiateCoveoHeadlessSearch({
     handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
@@ -1314,10 +1313,10 @@ export default async function decorate(block) {
       updateClearFilterStatus(block);
       decorateIcons(block);
     });
-  // handleDropdownToggle();
-  // onInputSearch(block);
-  // handleClearFilter(block);
-  // handleTagsClick(block);
-  // updateClearFilterStatus(block);
-  // renderSortContainer(block);
+  handleDropdownToggle();
+  onInputSearch(block);
+  handleClearFilter(block);
+  handleTagsClick(block);
+  updateClearFilterStatus(block);
+  renderSortContainer(block);
 }
