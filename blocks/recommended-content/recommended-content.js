@@ -23,7 +23,15 @@ try {
 }
 
 const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
-const DEFAULT_NUM_CARDS = 4;
+let DEFAULT_NUM_CARDS = 4;
+let resizeObserved;
+let cardsWidth;
+let cardsGap;
+const seeMoreConfig = {
+  minWidth: 1024,
+  noOfRows: 4,
+};
+
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
 // Event for target data change (Updating the block based on target data)
@@ -45,6 +53,118 @@ function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
         `<div class="loading-shimmer" style="--placeholder-width: ${width}%; --placeholder-height: ${height}px"></div>`,
     )
     .join('');
+}
+
+function calculateNumberOfCardsToRender(container) {
+  if (window.innerWidth < seeMoreConfig.minWidth) {
+    DEFAULT_NUM_CARDS = 4;
+  } else {
+    const cardsContainer = container.querySelector('.card-wrapper');
+    const containerWidth = container.offsetWidth;
+    if (!cardsWidth) cardsWidth = cardsContainer?.offsetWidth || 256;
+    if (!cardsGap) cardsGap = parseInt(getComputedStyle(cardsContainer).gap, 10) || 24;
+    const visibleItems = Math.floor((containerWidth + cardsGap) / (cardsWidth + cardsGap));
+    if (visibleItems) {
+      DEFAULT_NUM_CARDS = visibleItems;
+    }
+  }
+}
+
+function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
+  if (!block.querySelector('.recommended-content-see-more-btn')) {
+    const btnContainer = document.createElement('div');
+    const btn = document.createElement('button');
+    btn.innerHTML = placeholders?.recommendedContentSeeMoreButtonText || 'See more Recommendations';
+    btnContainer.classList.add('recommended-content-see-more-btn');
+    btnContainer.appendChild(btn);
+    contentDiv.insertAdjacentElement('afterend', btnContainer);
+
+    btn.addEventListener('click', () => {
+      const contentDivs = block.querySelectorAll('.recommended-content-block-section');
+      const currentRow = parseInt(block.dataset.browseCardRows, 10);
+      const maxRows = parseInt(block.dataset.maxRows, 10);
+      const newRow = currentRow ? currentRow + 1 : 2;
+      block.dataset.browseCardRows = newRow;
+      const { allRowsLoaded } = block.dataset;
+
+      function hideSeeMoreRows() {
+        contentDivs.forEach((div, index) => {
+          if (index > 0) {
+            div.classList.add('fade-out');
+            div.classList.remove('fade-in');
+          }
+        });
+        btn.innerHTML = placeholders?.recommendedContentSeeMoreButtonText || 'See more Recommendations';
+        block.dataset.browseCardRows = 1;
+      }
+
+      function showNewRow() {
+        contentDivs.forEach((div, index) => {
+          // div.style.display = 'flex';
+
+          if (index > newRow - 1) {
+            // div.style.display = 'none';
+            div.classList.remove('fade-in');
+            div.classList.add('fade-out');
+          } else {
+            div.classList.add('fade-in');
+            div.classList.remove('fade-out');
+          }
+        });
+      }
+
+      if (allRowsLoaded === 'true' && newRow > seeMoreConfig.noOfRows) {
+        hideSeeMoreRows();
+      } else if (allRowsLoaded === 'true' && maxRows) {
+        if (newRow > maxRows) {
+          hideSeeMoreRows();
+        } else {
+          if (newRow === maxRows) {
+            btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+          }
+          showNewRow();
+        }
+      } else if (allRowsLoaded === 'true') {
+        if (newRow === seeMoreConfig.noOfRows) {
+          btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+        }
+        showNewRow();
+      } else {
+        if (newRow === seeMoreConfig.noOfRows) {
+          block.dataset.allRowsLoaded = true;
+          btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+        }
+        const optionType = block.querySelector('.browse-cards-block-content').dataset.selected;
+        fetchDataAndRenderBlock(optionType, { renderCards: true, createRow: true, clearSeeMoreRows: false });
+      }
+    });
+  }
+}
+
+/**
+ * Debounces a function call to limit its execution rate.
+ * @param {number} ms - The debounce delay in milliseconds.
+ * @param {Function} fn - The function to debounce.
+ * @returns {Function} - The debounced function.
+ */
+// eslint-disable-next-line class-methods-use-this
+function debounce(func, delay) {
+  let timeoutId;
+
+  return function debounced(...args) {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
+}
+
+function resizeObserverHandler(callback, block) {
+  const debouncedCallback = debounce(callback, 500);
+  const wrapperResizeObserver = new ResizeObserver(debouncedCallback);
+  wrapperResizeObserver.observe(block);
 }
 
 /**
@@ -203,23 +323,46 @@ export default async function decorate(block) {
 
   const tempWrapper = htmlToElement(`
       <div class="recommended-content-temp-wrapper">
-        <div class="browse-cards-block-content recommended-content-block-section recommended-content-shimmer-wrapper"></div>
+        <div class="browse-cards-block-content recommended-content-block-section recommended-content-shimmer-wrapper fadein"></div>
       </div>
     `);
   const tempContentSection = tempWrapper.querySelector('.recommended-content-block-section');
-  countNumberAsArray(4).forEach(() => {
+  block.appendChild(tempWrapper);
+  countNumberAsArray(DEFAULT_NUM_CARDS).forEach(() => {
     const { shimmer: shimmerInstance, wrapper } = renderCardPlaceholders(tempWrapper);
     shimmerInstance.addShimmer(wrapper);
     tempContentSection.appendChild(wrapper);
   });
-
-  block.appendChild(tempWrapper);
 
   const defaultOptionsKey = [];
   let contentTypesFetchMap = {};
   const cardIdsToExclude = [];
   const allMyProductsCardModels = [];
   const dataConfiguration = {};
+
+  resizeObserved = false;
+
+  function calculateNumberOfCardsOnResize(fetchDataAndRenderBlock) {
+    if (!resizeObserved) {
+      let previousWidth = block.offsetWidth;
+      resizeObserverHandler((entries) => {
+        if (resizeObserved) {
+          entries.forEach((entry) => {
+            const { width } = entry.contentRect;
+            if (Math.abs(entry.contentRect.width - previousWidth) > 1) {
+              const optionType = block.querySelector('.browse-cards-block-content').dataset.selected;
+              // Calculate no. of cards that fits
+              calculateNumberOfCardsToRender(block);
+              // Render the new set of cards
+              fetchDataAndRenderBlock(optionType, { renderCards: true, createRow: true, clearAllRows: true });
+              previousWidth = width;
+            }
+          });
+        }
+        resizeObserved = true;
+      }, block);
+    }
+  }
 
   const getCardsData = (payload) =>
     new Promise((resolve) => {
@@ -318,6 +461,7 @@ export default async function decorate(block) {
     const contentDiv = document.createElement('div');
     contentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
     parentDiv.appendChild(contentDiv);
+
     resultTextEl.classList.add('recommended-content-discover-resource');
     linkEl.classList.add('recommended-content-result-link');
     if (linkEl.innerHTML || resultTextEl.innerHTML) {
@@ -376,21 +520,9 @@ export default async function decorate(block) {
         block.style.display = 'block';
       }
 
-      const sortByContent = sortEl?.innerText?.trim();
-      const contentTypes = contentTypesEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse() || [];
-      const contentTypeIsEmpty = contentTypes?.length === 0;
-      const numberOfResults = contentTypeIsEmpty ? DEFAULT_NUM_CARDS : 1;
+      calculateNumberOfCardsToRender(block);
 
-      contentTypesFetchMap = contentTypeIsEmpty
-        ? { '': DEFAULT_NUM_CARDS }
-        : contentTypes.reduce((acc, curr) => {
-            if (!acc[curr]) {
-              acc[curr] = 1;
-            } else {
-              acc[curr] += 1;
-            }
-            return acc;
-          }, {});
+      const sortByContent = sortEl?.innerText?.trim();
 
       const encodedSolutionsText = solutionEl.innerText?.trim() ?? '';
       const { products, versions, features } = extractCapability(encodedSolutionsText);
@@ -450,7 +582,23 @@ export default async function decorate(block) {
               data = cardResponse.allAdobeProducts;
             }
           }
-          data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(0, 4));
+          const numberOfExistingCards = block.querySelectorAll('.card-wrapper');
+          const index = numberOfExistingCards.length ? numberOfExistingCards.length - DEFAULT_NUM_CARDS : 0;
+          if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
+            const btn = block.querySelector('.recommended-content-see-more-btn');
+            if (btn) {
+              btn.style.display = 'none';
+            }
+          }
+          if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
+            const btn = block.querySelector('.recommended-content-see-more-btn > button');
+            if (btn) {
+              btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+            }
+            block.dataset.allRowsLoaded = true;
+            block.dataset.maxRows = block.dataset.browseCardRows;
+          }
+          data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(index, index + DEFAULT_NUM_CARDS));
         } else {
           const { data: cards = [], contentType: ctType } = cardResponse || {};
           const { shimmers: cardShimmers, payload: apiPayload, wrappers: cardWrappers } = apiConfigObject;
@@ -471,7 +619,7 @@ export default async function decorate(block) {
             const payloadInfo = {
               ...apiPayload,
               contentType: null,
-              noOfResults: 4,
+              noOfResults: DEFAULT_NUM_CARDS,
             };
             data.push({
               cardPromise: getCardsData(payloadInfo),
@@ -485,8 +633,84 @@ export default async function decorate(block) {
         return data;
       }
 
-      const fetchDataAndRenderBlock = async (optionType, renderCards = true) => {
-        const contentDiv = block.querySelector('.recommended-content-block-section');
+      /**
+       * Fetches data based on optionType and renders browse card content.
+       *
+       * @async
+       * @function fetchDataAndRenderBlock
+       * @param {string} optionType - The type of option to determine the cards fetching.
+       * @param {Object} [args] - The configuration options for rendering.
+       * @param {boolean} [args.renderCards=true] - Whether to render cards in the block.
+       * @param {boolean} [args.createRow=false] - Whether to create a new row for the data.
+       * @param {boolean} [args.clearAllRows=false] - Whether to clear all existing rows before rendering.
+       * @param {boolean} [args.clearSeeMoreRows=true] - Whether to clear "See More" rows before rendering.
+       */
+      const fetchDataAndRenderBlock = async (
+        optionType,
+        args = { renderCards: true, createRow: false, clearAllRows: false, clearSeeMoreRows: true },
+      ) => {
+        const btn = block.querySelector('.recommended-content-see-more-btn');
+        if (btn) {
+          btn.style.display = 'flex';
+        }
+
+        let contentTypes = contentTypesEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse() || [];
+        contentTypes = contentTypes.slice(0, DEFAULT_NUM_CARDS);
+        const contentTypeIsEmpty = contentTypes?.length === 0;
+        let noOfRows = parseInt(block.dataset.browseCardRows, 10);
+        if (!noOfRows) noOfRows = 1;
+        const numberOfResults = contentTypeIsEmpty ? DEFAULT_NUM_CARDS * noOfRows : 1 * noOfRows;
+        let firstResult = 0;
+
+        contentTypesFetchMap = contentTypeIsEmpty
+          ? { '': DEFAULT_NUM_CARDS }
+          : contentTypes.reduce((acc, curr) => {
+              if (!acc[curr]) {
+                acc[curr] = 1;
+              } else {
+                acc[curr] += 1;
+              }
+              return acc;
+            }, {});
+
+        let contentDiv = block.querySelector('.recommended-content-block-section');
+
+        if (args.clearAllRows) {
+          // Remove the existing cards container
+          block.removeAttribute('data-all-rows-loaded');
+          block.removeAttribute('data-browse-card-rows');
+          block.removeAttribute('data-max-rows');
+          block.querySelectorAll('.recommended-content-block-section').forEach((div) => {
+            div.remove();
+          });
+        }
+
+        if (args.clearSeeMoreRows) {
+          block.removeAttribute('data-all-rows-loaded');
+          block.removeAttribute('data-browse-card-rows');
+          block.removeAttribute('data-max-rows');
+          const contentDivs = block.querySelectorAll('.recommended-content-block-section');
+          contentDivs.forEach((div, index) => {
+            if (index > 0) {
+              div.remove();
+            }
+          });
+          block.removeAttribute('data-browse-card-rows');
+        }
+
+        if (args.createRow) {
+          const newContentDiv = document.createElement('div');
+          newContentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section', 'fade-in');
+          const contentDivs = block.querySelectorAll('.recommended-content-block-section');
+          if (contentDivs.length) {
+            contentDivs[contentDivs.length - 1].insertAdjacentElement('afterEnd', newContentDiv);
+          } else {
+            block.querySelector('.recommended-content-block-header')?.insertAdjacentElement('afterEnd', newContentDiv);
+          }
+          contentDiv = newContentDiv;
+          firstResult = contentDivs.length * DEFAULT_NUM_CARDS;
+        }
+
         const lowercaseOptionType = optionType?.toLowerCase();
         const saveCardResponse =
           [ALL_ADOBE_OPTIONS_KEY.toLowerCase()].includes(lowercaseOptionType) && cardIdsToExclude.length === 0;
@@ -516,6 +740,7 @@ export default async function decorate(block) {
         }
 
         const params = {
+          firstResult,
           contentType: null,
           product: clonedProducts,
           feature: features.length ? [...new Set(features)] : null,
@@ -527,7 +752,7 @@ export default async function decorate(block) {
           context: showDefaultOptions ? {} : { interests: [interest], experience: [expLevel], role: profileRoles },
         };
 
-        if (renderCards) {
+        if (args.renderCards) {
           resetContentDiv(contentDiv);
         }
 
@@ -536,17 +761,17 @@ export default async function decorate(block) {
           const cardShimmers = [];
           const wrappers = [];
           countNumberAsArray(DEFAULT_NUM_CARDS).forEach(() => {
-            const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, renderCards);
+            const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, args.renderCards);
             cardShimmers.push(shimmer);
             wrappers.push(wrapper);
           });
           const payloadConfig = {
             targetSupport: true,
             shimmers: cardShimmers,
+            renderCards: args.renderCards,
             wrappers,
             params,
             optionType,
-            renderCards,
             lowercaseOptionType,
           };
           targetPromises.push(
@@ -600,7 +825,7 @@ export default async function decorate(block) {
             const cardShimmers = [];
             const wrappers = [];
             countNumberAsArray(noOfResults).forEach(() => {
-              const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, renderCards);
+              const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, args.renderCards);
               cardShimmers.push(shimmer);
               wrappers.push(wrapper);
             });
@@ -609,8 +834,8 @@ export default async function decorate(block) {
               payload,
               shimmers: cardShimmers,
               contentType: payloadContentType,
+              renderCards: args.renderCards,
               wrappers,
-              renderCards,
               lowercaseOptionType,
             };
             return new Promise((resolve) => {
@@ -655,6 +880,10 @@ export default async function decorate(block) {
               return;
             }
             const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
+            if (cardsCount !== 0) {
+              calculateNumberOfCardsOnResize(fetchDataAndRenderBlock);
+              createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock);
+            }
             if (cardsCount === 0) {
               Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((shimmerEl) => {
                 shimmerEl.remove();
@@ -664,6 +893,7 @@ export default async function decorate(block) {
               recommendedContentNoResults(contentDiv);
               return;
             }
+
             const noResultsContent = block.querySelector('.browse-card-no-results');
             if (noResultsContent) {
               noResultsContent.remove();
@@ -714,14 +944,14 @@ export default async function decorate(block) {
           fetchDataAndRenderBlock(defaultOption);
           if (containsAllAdobeProductsTab && defaultOption !== ALL_ADOBE_OPTIONS_KEY) {
             setTimeout(() => {
-              fetchDataAndRenderBlock(ALL_ADOBE_OPTIONS_KEY, false); // pre-fetch all my tab cards to avoid duplicates in indvidual tab. Timeout helps with 429 status code of v2 calls.
+              fetchDataAndRenderBlock(ALL_ADOBE_OPTIONS_KEY, { renderCards: false }); // pre-fetch all my tab cards to avoid duplicates in indvidual tab. Timeout helps with 429 status code of v2 calls.
             }, 500);
           }
         },
         onSelectCallback: (selectedItem) => {
           /* Reused the existing method */
           if (selectedItem) {
-            fetchDataAndRenderBlock(selectedItem);
+            fetchDataAndRenderBlock(selectedItem, { renderCards: true, createRow: false, clearSeeMoreRows: true });
           }
         },
       });
