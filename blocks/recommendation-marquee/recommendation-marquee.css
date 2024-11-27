@@ -3,7 +3,7 @@
 .recommendation-marquee-header {
   font-size: var(--spectrum-font-size-700);
   line-height: 35px;
-  font-weight: bold;
+  font-weight: var(--font-weight-700);
   color: var(--spectrum-gray-800);
   margin-bottom: 16px;
 }
@@ -48,7 +48,7 @@
 .recommendation-marquee-discover-resource {
   font-size: var(--spectrum-font-size-500);
   line-height: 27px;
-  font-weight: bold;
+  font-weight: var(--font-weight-700);
   color: var(--spectrum-gray-900);
 }
 
@@ -68,7 +68,7 @@
 .recommendation-marquee-result-link a {
   font-size: var(--spectrum-font-size-200);
   line-height: 20px;
-  font-weight: bold;
+  font-weight: var(--font-weight-700);
   color: var(--spectrum-gray-800);
   margin: 0;
   white-space: nowrap;
@@ -100,6 +100,7 @@
   overflow: hidden;
   box-shadow: var(--box-shadow-2);
 }
+
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card .browse-card-content {
   order: 1;
 }
@@ -206,9 +207,11 @@
   .recommendation-marquee.block .browse-cards-block-content .card-wrapper {
     min-width: 256px;
   }
+
   .recommendation-marquee-result-text {
     gap: 148px;
   }
+
   .recommendation-marquee-result-link {
     margin-right: 0;
   }
@@ -216,6 +219,7 @@
   .recommendation-marquee.block .browse-cards-block-content .card-wrapper {
     flex: 0 0 calc(50% - 10px);
   }
+
   .recommendation-marquee.block .browse-cards-block-content .card-wrapper:nth-child(1) {
     flex: 0 0 100%;
     min-height: 299.5px;
@@ -272,6 +276,7 @@
   .recommendation-marquee.block .browse-cards-block-content .card-wrapper {
     min-width: 360px;
   }
+
   .recommendation-marquee.block .browse-cards-block-content .card-wrapper {
     flex: 0 0 calc(33.33% - 24px);
   }

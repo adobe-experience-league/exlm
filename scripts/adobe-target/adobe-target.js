@@ -149,8 +149,14 @@ class AdobeTargetClient {
         const { scope, 'criteria.title': criteriaTitle } = meta;
         const indexMatch = scope.match(/-(\d+)$/);
         const considerMarquee = scope === 'exl-hp-auth-recs';
-        // eslint-disable-next-line no-nested-ternary
-        const targetIndex = considerMarquee ? 0 : indexMatch ? indexMatch[1] : null;
+
+        let targetIndex = null;
+        if (considerMarquee) {
+          targetIndex = 0;
+        } else if (indexMatch) {
+          const [, indexVal] = indexMatch;
+          targetIndex = indexVal;
+        }
         const blockElement = this.blocks[targetIndex];
         let blockId;
         if (blockElement) {

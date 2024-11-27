@@ -18,12 +18,7 @@ const targetEventEmitter = getEmitter('loadTargetBlocks');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const DEFAULT_NUM_CARDS = 5;
 let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
+
 const countNumberAsArray = (n) => Array.from({ length: n }, (_, i) => n - i);
 
 /**
@@ -146,14 +141,14 @@ async function findEmptyFilters(targetCriteriaId, profileInterests = []) {
   if (resp?.data) {
     const { data } = resp;
     profileInterests.forEach((interest) => {
-      let found = false;
+      let includesProfileInterest = false;
       for (let i = 0; i < data?.length ? data.length : 0; i += 1) {
         if (data[i].product.split(',').includes(interest)) {
-          found = true;
+          includesProfileInterest = true;
           break;
         }
       }
-      if (!found) removeFilters.push(interest);
+      if (!includesProfileInterest) removeFilters.push(interest);
     });
   }
   return removeFilters;
@@ -183,6 +178,7 @@ const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
+  const placeholderPromise = fetchLanguagePlaceholders();
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
@@ -669,7 +665,6 @@ export default async function decorate(block) {
               return;
             }
             const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
-            console.log('----------------cardsCount::', cardsCount);
             if (cardsCount === 0) {
               Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((shimmerEl) => {
                 shimmerEl.remove();
@@ -743,8 +738,14 @@ export default async function decorate(block) {
     });
   }
 
+  try {
+    placeholders = await placeholderPromise;
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
   targetEventEmitter.on('dataChange', async (data) => {
-    console.log('-------------------- targetEventEmitter::', data);
     const blockId = block.id;
     const { blockId: targetBlockId, scope } = data.value;
     if (targetBlockId === blockId) {
