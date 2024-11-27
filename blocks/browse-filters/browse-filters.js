@@ -24,7 +24,6 @@ import {
   authorOptions,
   fetchPerspectiveIndex,
 } from './browse-filter-utils.js';
-import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
@@ -32,8 +31,6 @@ import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery } from 
 import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
-
-const ffetchModulePromise = import('../../scripts/ffetch.js');
 
 /**
  * debounce fn execution
@@ -66,13 +63,15 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
+const fragment = () => window.location.hash.slice(1);
+
 function isArticleLandingPage() {
   return matchesAnyTheme(/^article-.*/);
 }
 
 // Helper function thats returns a list of all Featured Card Products //
 async function getFeaturedCardSolutions() {
-  const ffetch = (await ffetchModulePromise).default;
+  const { default: ffetch } = await import('../../scripts/ffetch.js');
   // Load the Featured Card Solution list
   const solutionList = await ffetch(`/featured-card-products.json`).all();
   // Gets Values from Column Solution in Featured Card Solution list
@@ -1279,20 +1278,8 @@ function decorateBrowseTopics(block) {
   (contentTypeElement.parentNode || contentTypeElement).remove();
 }
 
-export default async function decorate(block) {
-  window.headlessBaseSolutionQuery = BASE_COVEO_ADVANCED_QUERY;
-  enableTagsAsProxy(block);
-  appendFormEl(block);
-  constructFilterInputContainer(block);
-  addLabel(block);
-  dropdownOptions.forEach((options, index) => {
-    constructMultiSelectDropdown(block, options, index + 1);
-  });
-  constructKeywordSearchEl(block);
-  constructClearFilterBtn(block);
-  appendToForm(block, renderTags());
-  appendToForm(block, renderFilterResultsHeader());
-  decorateBrowseTopics(block);
+async function initiateCoveoHeadless(block) {
+  const { default: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
   initiateCoveoHeadlessSearch({
     handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
     renderPageNumbers,
@@ -1313,10 +1300,51 @@ export default async function decorate(block) {
       updateClearFilterStatus(block);
       decorateIcons(block);
     });
+}
+
+function observeAndInitiateSearch(block) {
+  const blockObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach(async (entry) => {
+        if (entry.isIntersecting) {
+          initiateCoveoHeadless(block);
+          // Stop observing after the method is triggered
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1 },
+  ); // Adjust the threshold based on when you want to trigger the search
+
+  // Start observing the block
+  blockObserver.observe(block);
+}
+
+export default async function decorate(block) {
+  window.headlessBaseSolutionQuery = BASE_COVEO_ADVANCED_QUERY;
+  enableTagsAsProxy(block);
+  appendFormEl(block);
+  constructFilterInputContainer(block);
+  addLabel(block);
+  dropdownOptions.forEach((options, index) => {
+    constructMultiSelectDropdown(block, options, index + 1);
+  });
+  constructKeywordSearchEl(block);
+  constructClearFilterBtn(block);
+  appendToForm(block, renderTags());
+  appendToForm(block, renderFilterResultsHeader());
+  decorateBrowseTopics(block);
+
   handleDropdownToggle();
   onInputSearch(block);
   handleClearFilter(block);
   handleTagsClick(block);
   updateClearFilterStatus(block);
   renderSortContainer(block);
+  const hash = fragment();
+  if (!hash) {
+    observeAndInitiateSearch(block);
+  } else {
+    initiateCoveoHeadless(block);
+  }
 }
