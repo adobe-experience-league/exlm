@@ -123,12 +123,15 @@ export default async function loadCoveoToken() {
     }
   }
 
+  // `coveoResponseToken` ensures that repeated calls to loadCoveoToken() return the same Promise while a token is being fetched.
+
   coveoResponseToken =
     coveoResponseToken ||
     // eslint-disable-next-line no-async-promise-executor
-    new Promise(async (resolve) => {
+    new Promise(async (resolve, reject) => {
       // this is temporary code, will be reverted.
       // Token allows acces to staging search functionality, but not analytics
+
       const { isProd, coveoToken } = getConfig();
       if (!isProd) {
         resolve(coveoToken);
@@ -136,17 +139,32 @@ export default async function loadCoveoToken() {
       }
       const signedIn = await isSignedInUser();
       if (signedIn) {
-        loadJWT().then(async () => {
-          const token = await fetchAndStoreCoveoToken();
+        loadJWT()
+          .then(async () => {
+            const token = await fetchAndStoreCoveoToken();
+            if (token) {
+              coveoTokenExpirationTime = decodeCoveoTokenValidity(token);
+              resolve(token);
+              coveoResponseToken = ''; // variable is cleared to allow a new token fetch
+            } else {
+              reject(new Error('Error fetching new coveo token'));
+              coveoResponseToken = ''; // variable is cleared to allow a new token fetch
+            }
+          })
+          .catch((err) => {
+            reject(new Error(`Error fetching new coveo token : ${err}`));
+            coveoResponseToken = '';
+          });
+      } else {
+        const token = await fetchAndStoreCoveoToken();
+        if (token) {
           coveoTokenExpirationTime = decodeCoveoTokenValidity(token);
           resolve(token);
           coveoResponseToken = '';
-        });
-      } else {
-        const token = await fetchAndStoreCoveoToken();
-        coveoTokenExpirationTime = decodeCoveoTokenValidity(token);
-        resolve(token);
-        coveoResponseToken = '';
+        } else {
+          reject(new Error('Error fetching new coveo token'));
+          coveoResponseToken = '';
+        }
       }
     });
   return coveoResponseToken;
