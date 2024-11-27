@@ -119,12 +119,8 @@ export default async function loadCoveoToken() {
     const currentTime = Math.floor(Date.now() / 1000);
     coveoTokenExpirationTime = coveoTokenExpirationTime || decodeCoveoTokenValidity(storedCoveoToken);
     if (coveoTokenExpirationTime > currentTime) {
-      coveoResponseToken = '';
       return storedCoveoToken;
     }
-    const token = await fetchAndStoreCoveoToken();
-    coveoTokenExpirationTime = decodeCoveoTokenValidity(token);
-    return token;
   }
 
   coveoResponseToken =
@@ -142,11 +138,15 @@ export default async function loadCoveoToken() {
       if (signedIn) {
         loadJWT().then(async () => {
           const token = await fetchAndStoreCoveoToken();
+          coveoTokenExpirationTime = decodeCoveoTokenValidity(token);
           resolve(token);
+          coveoResponseToken = '';
         });
       } else {
         const token = await fetchAndStoreCoveoToken();
+        coveoTokenExpirationTime = decodeCoveoTokenValidity(token);
         resolve(token);
+        coveoResponseToken = '';
       }
     });
   return coveoResponseToken;
