@@ -72,7 +72,7 @@ function createOptions(container, readTimeText) {
   if (readTimeText) container.appendChild(readTime);
 
   // Delay loading the UserActions script to avoid render-blocking during initial page load
-  window.addEventListener('delayed-loaded', async() => {
+  window.addEventListener('delayed-load', async() => {
     const { default: UserActions } = await import('../../scripts/user-actions/user-actions.js');
     if (UserActions) {
       const cardAction = UserActions({
@@ -174,7 +174,7 @@ export default async function ArticleMarquee(block) {
 
     const breadcrumbContainer = articleDetails.querySelector('.breadcrumb');
     // Delay the creation of breadcrumbs to improve initial page load performance
-    window.addEventListener('delayed-loaded', async() => {
+    window.addEventListener('delayed-load', async() => {
       createBreadcrumb(breadcrumbContainer);
     });
 

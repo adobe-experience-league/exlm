@@ -59,4 +59,4 @@ if (window.location.search?.indexOf('martech=off') === -1) {
   sendCoveoPageViewEvent();
 }
 
-window.dispatchEvent(new Event('delayed-loaded'));
+window.dispatchEvent(new Event('delayed-load'));
