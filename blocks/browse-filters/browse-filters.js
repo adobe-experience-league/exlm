@@ -1284,7 +1284,7 @@ function observeAndInitiateSearch(block) {
     entries.forEach(async (entry) => {
       if (entry.isIntersecting) {
         // Trigger the Coveo Headless Search method
-        const { defualt: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
+        const { default: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
         initiateCoveoHeadlessSearch({
           handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
           renderPageNumbers,
