@@ -24,7 +24,6 @@ import {
   authorOptions,
   fetchPerspectiveIndex,
 } from './browse-filter-utils.js';
-import initiateCoveoHeadlessSearch, { fragment } from '../../scripts/coveo-headless/index.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
@@ -33,6 +32,7 @@ import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-card
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 
+const fragment = () => window.location.hash.slice(1);
 const ffetchModulePromise = import('../../scripts/ffetch.js');
 
 /**
@@ -1281,9 +1281,10 @@ function decorateBrowseTopics(block) {
 
 function observeAndInitiateSearch(block) {
   const observer = new IntersectionObserver((entries, observer) => {
-    entries.forEach((entry) => {
+    entries.forEach(async (entry) => {
       if (entry.isIntersecting) {
         // Trigger the Coveo Headless Search method
+        const { initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
         initiateCoveoHeadlessSearch({
           handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
           renderPageNumbers,
@@ -1329,6 +1330,7 @@ export default async function decorate(block) {
   appendToForm(block, renderTags());
   appendToForm(block, renderFilterResultsHeader());
   decorateBrowseTopics(block);
+
   handleDropdownToggle();
   onInputSearch(block);
   handleClearFilter(block);
