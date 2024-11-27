@@ -1279,6 +1279,42 @@ function decorateBrowseTopics(block) {
   (contentTypeElement.parentNode || contentTypeElement).remove();
 }
 
+function observeAndInitiateSearch(block) {
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        // Trigger the Coveo Headless Search method
+        initiateCoveoHeadlessSearch({
+          handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
+          renderPageNumbers,
+          numberOfResults: getBrowseFiltersResultCount(),
+          renderSearchQuerySummary,
+          handleSearchBoxSubscription,
+        })
+          .then(
+            (data) => {
+              handleCoveoHeadlessSearch(block, data);
+            },
+            (err) => {
+              throw new Error(err);
+            }
+          )
+          .finally(() => {
+            // enable/disable the clear filter btn based on latest data
+            updateClearFilterStatus(block);
+            decorateIcons(block);
+          });
+
+        // Stop observing after the method is triggered
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 }); // Adjust the threshold based on when you want to trigger the search
+
+  // Start observing the block
+  observer.observe(block);
+}
+
 export default async function decorate(block) {
   window.headlessBaseSolutionQuery = BASE_COVEO_ADVANCED_QUERY;
   enableTagsAsProxy(block);
@@ -1293,30 +1329,11 @@ export default async function decorate(block) {
   appendToForm(block, renderTags());
   appendToForm(block, renderFilterResultsHeader());
   decorateBrowseTopics(block);
-  initiateCoveoHeadlessSearch({
-    handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
-    renderPageNumbers,
-    numberOfResults: getBrowseFiltersResultCount(),
-    renderSearchQuerySummary,
-    handleSearchBoxSubscription,
-  })
-    .then(
-      (data) => {
-        handleCoveoHeadlessSearch(block, data);
-      },
-      (err) => {
-        throw new Error(err);
-      },
-    )
-    .finally(() => {
-      // enable/disable the clear filter btn based on latest data
-      updateClearFilterStatus(block);
-      decorateIcons(block);
-    });
   handleDropdownToggle();
   onInputSearch(block);
   handleClearFilter(block);
   handleTagsClick(block);
   updateClearFilterStatus(block);
   renderSortContainer(block);
+  observeAndInitiateSearch(block);
 }
