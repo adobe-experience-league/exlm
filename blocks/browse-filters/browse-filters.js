@@ -1279,42 +1279,22 @@ function decorateBrowseTopics(block) {
   (contentTypeElement.parentNode || contentTypeElement).remove();
 }
 
-function observeAndInitiateSearch(block) {
-  const observer = new IntersectionObserver((entries, observer) => {
-    entries.forEach(async (entry) => {
-      if (entry.isIntersecting) {
-        // Trigger the Coveo Headless Search method
-        const { default: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
-        initiateCoveoHeadlessSearch({
-          handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
-          renderPageNumbers,
-          numberOfResults: getBrowseFiltersResultCount(),
-          renderSearchQuerySummary,
-          handleSearchBoxSubscription,
-        })
-          .then(
-            (data) => {
-              handleCoveoHeadlessSearch(block, data);
-            },
-            (err) => {
-              throw new Error(err);
-            }
-          )
-          .finally(() => {
-            // enable/disable the clear filter btn based on latest data
-            updateClearFilterStatus(block);
-            decorateIcons(block);
-          });
+// function observeAndInitiateSearch(block) {
+//   const observer = new IntersectionObserver((entries, observer) => {
+//     entries.forEach(async (entry) => {
+//       if (entry.isIntersecting) {
+//         // Trigger the Coveo Headless Search method
+       
 
-        // Stop observing after the method is triggered
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 }); // Adjust the threshold based on when you want to trigger the search
+//         // Stop observing after the method is triggered
+//         observer.unobserve(entry.target);
+//       }
+//     });
+//   }, { threshold: 0.1 }); // Adjust the threshold based on when you want to trigger the search
 
-  // Start observing the block
-  observer.observe(block);
-}
+//   // Start observing the block
+//   observer.observe(block);
+// }
 
 export default async function decorate(block) {
   window.headlessBaseSolutionQuery = BASE_COVEO_ADVANCED_QUERY;
@@ -1337,5 +1317,28 @@ export default async function decorate(block) {
   handleTagsClick(block);
   updateClearFilterStatus(block);
   renderSortContainer(block);
-  observeAndInitiateSearch(block);
+  // observeAndInitiateSearch(block);
+  window.addEventListener('delayed-loaded', async() => {
+    const { default: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
+    initiateCoveoHeadlessSearch({
+      handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
+      renderPageNumbers,
+      numberOfResults: getBrowseFiltersResultCount(),
+      renderSearchQuerySummary,
+      handleSearchBoxSubscription,
+    })
+      .then(
+      (data) => {
+          handleCoveoHeadlessSearch(block, data);
+        },
+        (err) => {
+          throw new Error(err);
+        }
+      )
+      .finally(() => {
+        // enable/disable the clear filter btn based on latest data
+        updateClearFilterStatus(block);
+        decorateIcons(block);
+      });
+  });
 }
