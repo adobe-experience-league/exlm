@@ -60,7 +60,18 @@ function calculateNumberOfCardsToRender(container) {
     DEFAULT_NUM_CARDS = 4;
   } else {
     const cardsContainer = container.querySelector('.card-wrapper');
-    const containerWidth = container.offsetWidth;
+    let containerWidth = container.offsetWidth;
+    
+    if(!containerWidth) {
+      const section = container.closest('.section');
+      const originalDisplay = section.style.display;
+      section.style.display = 'block';
+      section.style.visibility = 'hidden';
+      containerWidth = container.offsetWidth;
+      section.style.display = originalDisplay;
+      section.style.visibility = 'visible'; 
+    }
+
     if (!cardsWidth) cardsWidth = cardsContainer?.offsetWidth || 256;
     if (!cardsGap) cardsGap = parseInt(getComputedStyle(cardsContainer).gap, 10) || 24;
     const visibleItems = Math.floor((containerWidth + cardsGap) / (cardsWidth + cardsGap));
