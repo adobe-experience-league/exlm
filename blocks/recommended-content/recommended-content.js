@@ -61,15 +61,17 @@ function calculateNumberOfCardsToRender(container) {
   } else {
     const cardsContainer = container.querySelector('.card-wrapper');
     let containerWidth = container.offsetWidth;
-    
-    if(!containerWidth) {
+
+    if (!containerWidth) {
       const section = container.closest('.section');
-      const originalDisplay = section.style.display;
-      section.style.display = 'block';
-      section.style.visibility = 'hidden';
-      containerWidth = container.offsetWidth;
-      section.style.display = originalDisplay;
-      section.style.visibility = 'visible'; 
+      if (section) {
+        const originalDisplay = section.style.display;
+        section.style.display = 'block';
+        section.style.visibility = 'hidden';
+        containerWidth = container.offsetWidth;
+        section.style.display = originalDisplay;
+        section.style.visibility = 'visible';
+      }
     }
 
     if (!cardsWidth) cardsWidth = cardsContainer?.offsetWidth || 256;
