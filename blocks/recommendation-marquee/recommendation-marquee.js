@@ -14,38 +14,23 @@ import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
-
-const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
-let DEFAULT_NUM_CARDS = 4;
-let resizeObserved;
-let cardsWidth;
-let cardsGap;
-const seeMoreConfig = {
-  minWidth: 1024,
-  noOfRows: 4,
-};
-
-const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
-
-// Event for target data change (Updating the block based on target data)
 const targetEventEmitter = getEmitter('loadTargetBlocks');
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+const DEFAULT_NUM_CARDS = 5;
+let placeholders = {};
 
-// Create array of numbers from 1 to n
 const countNumberAsArray = (n) => Array.from({ length: n }, (_, i) => n - i);
 
 /**
  * Generates HTML for loading shimmer animation with customizable sizes and an optional CSS class
- * @param {Array} shimmerSizes - An array of arrays, where each inner array
- *  contains width (percentage) and height (pixels) for individual shimmer divs.
+ *
+ * @param {Array} shimmerSizes - An array of arrays, where each inner array contains width (percentage) and height (pixels)
+ *                                 for individual shimmer divs.
+ *
  * @returns {string} - A string of HTML containing the shimmer divs with inline styles for width and height.
+ *
  */
+
 function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
   return shimmerSizes
     .map(
@@ -55,138 +40,11 @@ function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
     .join('');
 }
 
-function calculateNumberOfCardsToRender(container) {
-  if (window.innerWidth < seeMoreConfig.minWidth) {
-    DEFAULT_NUM_CARDS = 4;
-  } else {
-    const cardsContainer = container.querySelector('.card-wrapper');
-    let containerWidth = container.offsetWidth;
-
-    if (!containerWidth) {
-      const section = container.closest('.section');
-      if (section) {
-        const originalDisplay = section.style.display;
-        section.style.display = 'block';
-        section.style.visibility = 'hidden';
-        containerWidth = container.offsetWidth;
-        section.style.display = originalDisplay;
-        section.style.visibility = 'visible';
-      }
-    }
-
-    if (!cardsWidth) cardsWidth = cardsContainer?.offsetWidth || 256;
-    if (!cardsGap) cardsGap = parseInt(getComputedStyle(cardsContainer).gap, 10) || 24;
-    const visibleItems = Math.floor((containerWidth + cardsGap) / (cardsWidth + cardsGap));
-    if (visibleItems) {
-      DEFAULT_NUM_CARDS = visibleItems;
-    }
-  }
-}
-
-function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
-  if (!block.querySelector('.recommended-content-see-more-btn')) {
-    const btnContainer = document.createElement('div');
-    const btn = document.createElement('button');
-    btn.innerHTML = placeholders?.recommendedContentSeeMoreButtonText || 'See more Recommendations';
-    btnContainer.classList.add('recommended-content-see-more-btn');
-    btnContainer.appendChild(btn);
-    contentDiv.insertAdjacentElement('afterend', btnContainer);
-
-    btn.addEventListener('click', () => {
-      const contentDivs = block.querySelectorAll('.recommended-content-block-section');
-      const currentRow = parseInt(block.dataset.browseCardRows, 10);
-      const maxRows = parseInt(block.dataset.maxRows, 10);
-      const newRow = currentRow ? currentRow + 1 : 2;
-      block.dataset.browseCardRows = newRow;
-      const { allRowsLoaded } = block.dataset;
-
-      function hideSeeMoreRows() {
-        contentDivs.forEach((div, index) => {
-          if (index > 0) {
-            div.classList.add('fade-out');
-            div.classList.remove('fade-in');
-          }
-        });
-        btn.innerHTML = placeholders?.recommendedContentSeeMoreButtonText || 'See more Recommendations';
-        block.dataset.browseCardRows = 1;
-      }
-
-      function showNewRow() {
-        contentDivs.forEach((div, index) => {
-          // div.style.display = 'flex';
-
-          if (index > newRow - 1) {
-            // div.style.display = 'none';
-            div.classList.remove('fade-in');
-            div.classList.add('fade-out');
-          } else {
-            div.classList.add('fade-in');
-            div.classList.remove('fade-out');
-          }
-        });
-      }
-
-      if (allRowsLoaded === 'true' && newRow > seeMoreConfig.noOfRows) {
-        hideSeeMoreRows();
-      } else if (allRowsLoaded === 'true' && maxRows) {
-        if (newRow > maxRows) {
-          hideSeeMoreRows();
-        } else {
-          if (newRow === maxRows) {
-            btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
-          }
-          showNewRow();
-        }
-      } else if (allRowsLoaded === 'true') {
-        if (newRow === seeMoreConfig.noOfRows) {
-          btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
-        }
-        showNewRow();
-      } else {
-        if (newRow === seeMoreConfig.noOfRows) {
-          block.dataset.allRowsLoaded = true;
-          btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
-        }
-        const optionType = block.querySelector('.browse-cards-block-content').dataset.selected;
-        fetchDataAndRenderBlock(optionType, { renderCards: true, createRow: true, clearSeeMoreRows: false });
-      }
-    });
-  }
-}
-
-/**
- * Debounces a function call to limit its execution rate.
- * @param {number} ms - The debounce delay in milliseconds.
- * @param {Function} fn - The function to debounce.
- * @returns {Function} - The debounced function.
- */
-// eslint-disable-next-line class-methods-use-this
-function debounce(func, delay) {
-  let timeoutId;
-
-  return function debounced(...args) {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-      func.apply(this, args);
-    }, delay);
-  };
-}
-
-function resizeObserverHandler(callback, block) {
-  const debouncedCallback = debounce(callback, 500);
-  const wrapperResizeObserver = new ResizeObserver(debouncedCallback);
-  wrapperResizeObserver.observe(block);
-}
-
 /**
  * Update the copy from the target
  * @param {Object} data
  * @param {HTMLElement} heading
  * @param {HTMLElement} subheading
- * @param {HTMLElement} taglineCta
- * @param {HTMLElement} taglineText
  * @returns {void}
  */
 export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
@@ -215,7 +73,7 @@ export function updateCopyFromTarget(data, heading, subheading, taglineCta, tagl
     taglineText?.remove();
   }
   if (!document.contains(taglineCta) && !document.contains(taglineText)) {
-    const taglineParentBlock = document.querySelector('.recommended-content-result-text');
+    const taglineParentBlock = document.querySelector('.recommendation-marquee-result-text');
     if (taglineParentBlock) {
       taglineParentBlock?.remove();
     }
@@ -240,11 +98,11 @@ export function setTargetDataAsBlockAttribute(data, block) {
 }
 
 /**
- * Adds a data-analytics-coveo-meta attribute to each recommended-content block on the page.
+ * Adds a data-analytics-coveo-meta attribute to each recommendation-marquee block on the page.
  * Value is in the format coveo-X, where X represents the order of the block on the page.
  */
 function setCoveoCountAsBlockAttribute() {
-  const recommendedBlocks = document.querySelectorAll('.recommended-content.block');
+  const recommendedBlocks = document.querySelectorAll('.recommendation-marquee.block');
   let coveoCount = 1;
 
   recommendedBlocks.forEach((block) => {
@@ -253,7 +111,6 @@ function setCoveoCountAsBlockAttribute() {
   });
 }
 
-// fetch list of all interests
 async function fetchInterestData() {
   try {
     let data;
@@ -271,24 +128,36 @@ async function fetchInterestData() {
     return [];
   }
 }
-const interestDataPromise = fetchInterestData();
 
-// Create a query string for coveo to exclude the card ids
 const prepareExclusionQuery = (cardIdsToExclude) => {
   // eslint-disable-next-line no-useless-escape
   const query = cardIdsToExclude.map((id) => `(@el_id NOT \"${id}\")`).join(' AND ');
   return cardIdsToExclude.length <= 1 ? query : `(${query})`;
 };
 
-// Find the interests that are not present in the target data
 async function findEmptyFilters(targetCriteriaId, profileInterests = []) {
+  const removeFilters = [];
   const resp = await defaultAdobeTargetClient.getTargetData(targetCriteriaId);
-  const data = resp?.data || [];
-
-  return profileInterests.filter((interest) => !data.some(({ product }) => product.split(',').includes(interest)));
+  if (resp?.data) {
+    const { data } = resp;
+    profileInterests.forEach((interest) => {
+      let includesProfileInterest = false;
+      for (let i = 0; i < data?.length ? data.length : 0; i += 1) {
+        if (data[i].product.split(',').includes(interest)) {
+          includesProfileInterest = true;
+          break;
+        }
+      }
+      if (!includesProfileInterest) removeFilters.push(interest);
+    });
+  }
+  return removeFilters;
 }
 
-// Build a placeholder for the card
+const interestDataPromise = fetchInterestData();
+
+const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
+
 const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
   const cardDiv = document.createElement('div');
   cardDiv.classList.add('card-wrapper');
@@ -309,73 +178,53 @@ const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
+  const placeholderPromise = fetchLanguagePlaceholders();
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
-  const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
+  const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
+    htmlElementData.reverse();
   const recommendedContentShimmer = `
-  <div class="recommended-content-header">${generateLoadingShimmer([[50, 14]])}</div>
-  <div class="recommended-content-description">${generateLoadingShimmer([[50, 10]])}</div>
+  <div class="recommendation-marquee-header">${generateLoadingShimmer([[50, 14]])}</div>
+  <div class="recommendation-marquee-description">${generateLoadingShimmer([[50, 10]])}</div>
 `;
   // Clearing the block's content and adding CSS class
   block.innerHTML = '';
 
-  filterSectionElement.classList.add('recommended-content-filter-heading');
-  const blockHeader = createTag('div', { class: 'recommended-content-block-header' });
+  //   filterSectionElement.classList.add('recommendation-marquee-filter-heading');
+  const blockHeader = createTag('div', { class: 'recommendation-marquee-block-header' });
   blockHeader.innerHTML = generateLoadingShimmer([[80, 30]]);
   block.insertAdjacentHTML('afterbegin', recommendedContentShimmer);
-  block.appendChild(filterSectionElement);
+  //   block.appendChild(filterSectionElement);
   block.appendChild(blockHeader);
 
-  const headerContainer = block.querySelector('.recommended-content-header');
-  const descriptionContainer = block.querySelector('.recommended-content-description');
-  const reversedDomElements = remainingElements.reverse();
-  const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
-    reversedDomElements;
+  const headerContainer = block.querySelector('.recommendation-marquee-header');
+  const descriptionContainer = block.querySelector('.recommendation-marquee-description');
+
+  headerContainer.style.display = 'none';
+  descriptionContainer.style.display = 'none';
+
   const targetCriteriaId = block.dataset.targetScope;
   const profileDataPromise = defaultProfileClient.getMergedProfile();
 
   const tempWrapper = htmlToElement(`
-      <div class="recommended-content-temp-wrapper">
-        <div class="browse-cards-block-content recommended-content-block-section recommended-content-shimmer-wrapper fadein"></div>
+      <div class="recommendation-marquee-temp-wrapper">
+        <div class="browse-cards-block-content recommendation-marquee-block-section recommendation-marquee-shimmer-wrapper"></div>
       </div>
     `);
-  const tempContentSection = tempWrapper.querySelector('.recommended-content-block-section');
-  block.appendChild(tempWrapper);
+  const tempContentSection = tempWrapper.querySelector('.recommendation-marquee-block-section');
   countNumberAsArray(DEFAULT_NUM_CARDS).forEach(() => {
     const { shimmer: shimmerInstance, wrapper } = renderCardPlaceholders(tempWrapper);
     shimmerInstance.addShimmer(wrapper);
     tempContentSection.appendChild(wrapper);
   });
 
+  block.appendChild(tempWrapper);
+
   const defaultOptionsKey = [];
   let contentTypesFetchMap = {};
   const cardIdsToExclude = [];
   const allMyProductsCardModels = [];
   const dataConfiguration = {};
-
-  resizeObserved = false;
-
-  function calculateNumberOfCardsOnResize(fetchDataAndRenderBlock) {
-    if (!resizeObserved) {
-      let previousWidth = block.offsetWidth;
-      resizeObserverHandler((entries) => {
-        if (resizeObserved) {
-          entries.forEach((entry) => {
-            const { width } = entry.contentRect;
-            if (Math.abs(entry.contentRect.width - previousWidth) > 1) {
-              const optionType = block.querySelector('.browse-cards-block-content').dataset.selected;
-              // Calculate no. of cards that fits
-              calculateNumberOfCardsToRender(block);
-              // Render the new set of cards
-              fetchDataAndRenderBlock(optionType, { renderCards: true, createRow: true, clearAllRows: true });
-              previousWidth = width;
-            }
-          });
-        }
-        resizeObserved = true;
-      }, block);
-    }
-  }
 
   const getCardsData = (payload) =>
     new Promise((resolve) => {
@@ -456,6 +305,7 @@ export default async function decorate(block) {
           }
         }),
     );
+    contentDiv.style.display = 'flex';
     return promises;
   };
 
@@ -472,14 +322,13 @@ export default async function decorate(block) {
       block.removeChild(tempWrapper);
     }
     const contentDiv = document.createElement('div');
-    contentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
+    contentDiv.classList.add('browse-cards-block-content', 'recommendation-marquee-block-section');
     parentDiv.appendChild(contentDiv);
-
-    resultTextEl.classList.add('recommended-content-discover-resource');
-    linkEl.classList.add('recommended-content-result-link');
+    resultTextEl.classList.add('recommendation-marquee-discover-resource');
+    linkEl.classList.add('recommendation-marquee-result-link');
     if (linkEl.innerHTML || resultTextEl.innerHTML) {
       const seeMoreEl = document.createElement('div');
-      seeMoreEl.classList.add('recommended-content-result-text');
+      seeMoreEl.classList.add('recommendation-marquee-result-text');
       seeMoreEl.appendChild(resultTextEl);
       seeMoreEl.appendChild(linkEl);
       parentDiv.appendChild(seeMoreEl);
@@ -516,26 +365,38 @@ export default async function decorate(block) {
       } = profileData || {};
 
       if (profileInterests.length === 0) {
-        if (!UEAuthorMode) filterSectionElement.style.display = 'none';
-        if (!UEAuthorMode) blockHeader.style.display = 'none';
+        // filterSectionElement.style.display = 'none';
+        blockHeader.style.display = 'none';
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       } else if (profileInterests.length === 1) {
-        if (!UEAuthorMode) filterSectionElement.style.display = 'none';
+        // filterSectionElement.style.display = 'none';
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       } else {
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       }
 
       if (!(targetSupport && targetCriteriaScopeId)) {
-        headerContainer.innerHTML = headingElement.innerHTML;
-        descriptionContainer.innerHTML = descriptionElement.innerHTML;
+        // headerContainer.innerHTML = headingElement.innerText;
+        // descriptionContainer.innerHTML = descriptionElement.innerText;
         setCoveoCountAsBlockAttribute();
         block.style.display = 'block';
       }
 
-      calculateNumberOfCardsToRender(block);
-
       const sortByContent = sortEl?.innerText?.trim();
+      const contentTypes = contentTypesEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse() || [];
+      const contentTypeIsEmpty = contentTypes?.length === 0;
+      const numberOfResults = contentTypeIsEmpty ? DEFAULT_NUM_CARDS : 1;
+
+      contentTypesFetchMap = contentTypeIsEmpty
+        ? { '': DEFAULT_NUM_CARDS }
+        : contentTypes.reduce((acc, curr) => {
+            if (!acc[curr]) {
+              acc[curr] = 1;
+            } else {
+              acc[curr] += 1;
+            }
+            return acc;
+          }, {});
 
       const encodedSolutionsText = solutionEl.innerText?.trim() ?? '';
       const { products, versions, features } = extractCapability(encodedSolutionsText);
@@ -559,9 +420,6 @@ export default async function decorate(block) {
         : roleEl?.innerText?.trim().split(',').filter(Boolean);
 
       const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
-      if (filterOptions.length <= 1 && !UEAuthorMode) {
-        filterSectionElement.style.display = 'none';
-      }
       const [defaultFilterOption = ''] = filterOptions;
       const containsAllAdobeProductsTab = filterOptions.includes(ALL_ADOBE_OPTIONS_KEY);
 
@@ -595,23 +453,7 @@ export default async function decorate(block) {
               data = cardResponse.allAdobeProducts;
             }
           }
-          const numberOfExistingCards = block.querySelectorAll('.card-wrapper');
-          const index = numberOfExistingCards.length ? numberOfExistingCards.length - DEFAULT_NUM_CARDS : 0;
-          if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
-            const btn = block.querySelector('.recommended-content-see-more-btn');
-            if (btn) {
-              btn.style.display = 'none';
-            }
-          }
-          if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
-            const btn = block.querySelector('.recommended-content-see-more-btn > button');
-            if (btn) {
-              btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
-            }
-            block.dataset.allRowsLoaded = true;
-            block.dataset.maxRows = block.dataset.browseCardRows;
-          }
-          data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(index, index + DEFAULT_NUM_CARDS));
+          data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(0, DEFAULT_NUM_CARDS));
         } else {
           const { data: cards = [], contentType: ctType } = cardResponse || {};
           const { shimmers: cardShimmers, payload: apiPayload, wrappers: cardWrappers } = apiConfigObject;
@@ -646,84 +488,8 @@ export default async function decorate(block) {
         return data;
       }
 
-      /**
-       * Fetches data based on optionType and renders browse card content.
-       *
-       * @async
-       * @function fetchDataAndRenderBlock
-       * @param {string} optionType - The type of option to determine the cards fetching.
-       * @param {Object} [args] - The configuration options for rendering.
-       * @param {boolean} [args.renderCards=true] - Whether to render cards in the block.
-       * @param {boolean} [args.createRow=false] - Whether to create a new row for the data.
-       * @param {boolean} [args.clearAllRows=false] - Whether to clear all existing rows before rendering.
-       * @param {boolean} [args.clearSeeMoreRows=true] - Whether to clear "See More" rows before rendering.
-       */
-      const fetchDataAndRenderBlock = async (
-        optionType,
-        args = { renderCards: true, createRow: false, clearAllRows: false, clearSeeMoreRows: true },
-      ) => {
-        const btn = block.querySelector('.recommended-content-see-more-btn');
-        if (btn) {
-          btn.style.display = 'flex';
-        }
-
-        let contentTypes = contentTypesEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse() || [];
-        contentTypes = contentTypes.slice(0, DEFAULT_NUM_CARDS);
-        const contentTypeIsEmpty = contentTypes?.length === 0;
-        let noOfRows = parseInt(block.dataset.browseCardRows, 10);
-        if (!noOfRows) noOfRows = 1;
-        const numberOfResults = contentTypeIsEmpty ? DEFAULT_NUM_CARDS * noOfRows : 1 * noOfRows;
-        let firstResult = 0;
-
-        contentTypesFetchMap = contentTypeIsEmpty
-          ? { '': DEFAULT_NUM_CARDS }
-          : contentTypes.reduce((acc, curr) => {
-              if (!acc[curr]) {
-                acc[curr] = 1;
-              } else {
-                acc[curr] += 1;
-              }
-              return acc;
-            }, {});
-
-        let contentDiv = block.querySelector('.recommended-content-block-section');
-
-        if (args.clearAllRows) {
-          // Remove the existing cards container
-          block.removeAttribute('data-all-rows-loaded');
-          block.removeAttribute('data-browse-card-rows');
-          block.removeAttribute('data-max-rows');
-          block.querySelectorAll('.recommended-content-block-section').forEach((div) => {
-            div.remove();
-          });
-        }
-
-        if (args.clearSeeMoreRows) {
-          block.removeAttribute('data-all-rows-loaded');
-          block.removeAttribute('data-browse-card-rows');
-          block.removeAttribute('data-max-rows');
-          const contentDivs = block.querySelectorAll('.recommended-content-block-section');
-          contentDivs.forEach((div, index) => {
-            if (index > 0) {
-              div.remove();
-            }
-          });
-          block.removeAttribute('data-browse-card-rows');
-        }
-
-        if (args.createRow) {
-          const newContentDiv = document.createElement('div');
-          newContentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section', 'fade-in');
-          const contentDivs = block.querySelectorAll('.recommended-content-block-section');
-          if (contentDivs.length) {
-            contentDivs[contentDivs.length - 1].insertAdjacentElement('afterEnd', newContentDiv);
-          } else {
-            block.querySelector('.recommended-content-block-header')?.insertAdjacentElement('afterEnd', newContentDiv);
-          }
-          contentDiv = newContentDiv;
-          firstResult = contentDivs.length * DEFAULT_NUM_CARDS;
-        }
-
+      const fetchDataAndRenderBlock = async (optionType, renderCards = true) => {
+        const contentDiv = block.querySelector('.recommendation-marquee-block-section');
         const lowercaseOptionType = optionType?.toLowerCase();
         const saveCardResponse =
           [ALL_ADOBE_OPTIONS_KEY.toLowerCase()].includes(lowercaseOptionType) && cardIdsToExclude.length === 0;
@@ -737,27 +503,33 @@ export default async function decorate(block) {
         const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
         const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
         const expLevel = experienceLevels[expLevelIndex] ?? 'Beginner';
-        let clonedProducts = showDefaultOptions ? structuredClone(removeProductDuplicates(products)) : [interest];
+        let clonedProducts = structuredClone(removeProductDuplicates(products));
+        if (!showDefaultOptions && !clonedProducts.find((c) => c.toLowerCase() === lowercaseOptionType)) {
+          clonedProducts.push(interest);
+        }
         if (showDefaultOptions) {
           switch (filterProductByOption) {
             case 'profile_context':
               clonedProducts = [...new Set(sortedProfileInterests)];
+              features.length = 0;
+              versions.length = 0;
               break;
             case 'specific_products':
               clonedProducts = products?.length ? [...products] : [];
               break;
             default:
               clonedProducts = [];
+              features.length = 0;
+              versions.length = 0;
               break;
           }
         }
 
         const params = {
-          firstResult,
           contentType: null,
           product: clonedProducts,
-          feature: features.length ? [...new Set(features)] : null,
-          version: versions.length ? [...new Set(versions)] : null,
+          feature: showDefaultOptions && features.length ? [...new Set(features)] : null,
+          version: showDefaultOptions && versions.length ? [...new Set(versions)] : null,
           role: role?.length ? role : profileRoles,
           sortCriteria,
           noOfResults: numberOfResults,
@@ -765,7 +537,7 @@ export default async function decorate(block) {
           context: showDefaultOptions ? {} : { interests: [interest], experience: [expLevel], role: profileRoles },
         };
 
-        if (args.renderCards) {
+        if (renderCards) {
           resetContentDiv(contentDiv);
         }
 
@@ -774,17 +546,17 @@ export default async function decorate(block) {
           const cardShimmers = [];
           const wrappers = [];
           countNumberAsArray(DEFAULT_NUM_CARDS).forEach(() => {
-            const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, args.renderCards);
+            const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, renderCards);
             cardShimmers.push(shimmer);
             wrappers.push(wrapper);
           });
           const payloadConfig = {
             targetSupport: true,
             shimmers: cardShimmers,
-            renderCards: args.renderCards,
             wrappers,
             params,
             optionType,
+            renderCards,
             lowercaseOptionType,
           };
           targetPromises.push(
@@ -838,7 +610,7 @@ export default async function decorate(block) {
             const cardShimmers = [];
             const wrappers = [];
             countNumberAsArray(noOfResults).forEach(() => {
-              const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, args.renderCards);
+              const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, renderCards);
               cardShimmers.push(shimmer);
               wrappers.push(wrapper);
             });
@@ -847,8 +619,8 @@ export default async function decorate(block) {
               payload,
               shimmers: cardShimmers,
               contentType: payloadContentType,
-              renderCards: args.renderCards,
               wrappers,
+              renderCards,
               lowercaseOptionType,
             };
             return new Promise((resolve) => {
@@ -871,7 +643,7 @@ export default async function decorate(block) {
         const cardPromises = targetSupport ? prepareTargetBlockCardPromise() : prepareV2CardPromise();
 
         block
-          .querySelector('.recommended-content-block-section')
+          .querySelector('.recommendation-marquee-block-section')
           ?.setAttribute('data-analytics-rec-source', targetSupport ? 'target' : 'coveo');
 
         Promise.all(cardPromises)
@@ -893,10 +665,6 @@ export default async function decorate(block) {
               return;
             }
             const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
-            if (cardsCount !== 0) {
-              calculateNumberOfCardsOnResize(fetchDataAndRenderBlock);
-              createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock);
-            }
             if (cardsCount === 0) {
               Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((shimmerEl) => {
                 shimmerEl.remove();
@@ -906,7 +674,6 @@ export default async function decorate(block) {
               recommendedContentNoResults(contentDiv);
               return;
             }
-
             const noResultsContent = block.querySelector('.browse-card-no-results');
             if (noResultsContent) {
               noResultsContent.remove();
@@ -957,18 +724,25 @@ export default async function decorate(block) {
           fetchDataAndRenderBlock(defaultOption);
           if (containsAllAdobeProductsTab && defaultOption !== ALL_ADOBE_OPTIONS_KEY) {
             setTimeout(() => {
-              fetchDataAndRenderBlock(ALL_ADOBE_OPTIONS_KEY, { renderCards: false }); // pre-fetch all my tab cards to avoid duplicates in indvidual tab. Timeout helps with 429 status code of v2 calls.
+              fetchDataAndRenderBlock(ALL_ADOBE_OPTIONS_KEY, false); // pre-fetch all my tab cards to avoid duplicates in indvidual tab. Timeout helps with 429 status code of v2 calls.
             }, 500);
           }
         },
         onSelectCallback: (selectedItem) => {
           /* Reused the existing method */
           if (selectedItem) {
-            fetchDataAndRenderBlock(selectedItem, { renderCards: true, createRow: false, clearSeeMoreRows: true });
+            fetchDataAndRenderBlock(selectedItem);
           }
         },
       });
     });
+  }
+
+  try {
+    placeholders = await placeholderPromise;
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
   }
 
   targetEventEmitter.on('dataChange', async (data) => {
