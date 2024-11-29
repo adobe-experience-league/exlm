@@ -7,6 +7,7 @@ class AdobeTargetClient {
   constructor() {
     this.targetDataEventName = 'target-recs-ready';
     this.cookieConsentName = 'OptanonConsent';
+    this.recommendationMarqueeScopeName = 'exl-hp-auth-recs-1';
     this.targetCookieEnabled = this.checkIsTargetCookieEnabled();
     const main = document.querySelector('main');
     this.blocks = main.querySelectorAll('.recommended-content, .recently-reviewed, .recommendation-marquee');
@@ -51,7 +52,7 @@ class AdobeTargetClient {
    */
   async loadTargetData() {
     return new Promise((resolve) => {
-      if (window?.exlm?.targetData?.length) resolve(true);
+      if (window?.exlm?.targetData?.length || window?.exlm?.recommendationMarqueeTargetData?.length) resolve(true);
       document.addEventListener(
         'web-sdk-send-event-complete',
         async (event) => {
@@ -61,7 +62,8 @@ class AdobeTargetClient {
               event.detail.$rule.name === 'AT: PHP: Handle response propositions'
             ) {
               await this.handleTargetEvent();
-              if (window?.exlm?.targetData?.length) resolve(true);
+              if (window?.exlm?.targetData?.length || window?.exlm?.recommendationMarqueeTargetData?.length)
+                resolve(true);
               else resolve(false);
             } else {
               resolve(false);
@@ -85,8 +87,13 @@ class AdobeTargetClient {
     return new Promise((resolve) => {
       function targetEventHandler(event) {
         if (!window?.exlm?.targetData) window.exlm.targetData = [];
+        if (!window?.exlm?.recommendationMarqueeTargetData) window.exlm.recommendationMarqueeTargetData = [];
         if (!window?.exlm?.targetData.filter((data) => data?.meta?.scope === event?.detail?.meta?.scope).length) {
-          window.exlm.targetData.push(event.detail);
+          if (event?.detail?.meta?.scope === this.recommendationMarqueeScopeName) {
+            window.exlm.recommendationMarqueeTargetData.push(event.detail);
+          } else {
+            window.exlm.targetData.push(event.detail);
+          }
         }
         resolve(true);
       }
@@ -105,8 +112,15 @@ class AdobeTargetClient {
   // eslint-disable-next-line class-methods-use-this
   getTargetData(criteria) {
     return new Promise((resolve) => {
-      if (!criteria) resolve(window.exlm.targetData);
-      else {
+      if (!criteria) {
+        const data = window.exlm?.targetData?.length
+          ? window.exlm.targetData
+          : window.exlm?.recommendationMarqueeTargetData;
+        resolve(data);
+      } else if (criteria === this.recommendationMarqueeScopeName) {
+        const [data] = window.exlm.recommendationMarqueeTargetData || [];
+        resolve(data);
+      } else {
         window.exlm.targetData.forEach((data) => {
           if (data?.meta.scope === criteria) resolve(data);
         });
@@ -115,48 +129,20 @@ class AdobeTargetClient {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  sanitizeTargetData(targetData) {
-    if (!targetData?.length) {
-      return targetData;
-    }
-    const recommendedMarqueeItem = targetData.find((item) => item.meta.scope === 'exl-hp-auth-recs');
-    if (recommendedMarqueeItem) {
-      return targetData;
-    }
-    targetData.forEach(({ meta }) => {
-      const { scope } = meta;
-      const indexMatch = scope.match(/-(\d+)$/) || [];
-      const [scopeAttr, currentScope] = indexMatch;
-      if (scopeAttr) {
-        meta.scope =
-          currentScope === '1' ? scope.replace(scopeAttr, '') : scope.replace(scopeAttr, `-${currentScope - 1}`);
-      }
-    });
-    return targetData;
-  }
-
   /**
    * Fetches target data and maps it to the appropriate DOM components for processing.
    * It determines whether to update, replace, or add new blocks to the DOM.
    */
   async mapComponentsToTarget() {
     const targetData = await this.getTargetData();
-
+    const marqueeTargetData = await this.getTargetData(this.recommendationMarqueeScopeName);
+    let blockRevisionNeeded = false;
     if (targetData.length) {
-      this.sanitizeTargetData(targetData);
+      blockRevisionNeeded = true;
       this.targetArray = targetData.map(({ meta }) => {
         const { scope, 'criteria.title': criteriaTitle } = meta;
         const indexMatch = scope.match(/-(\d+)$/);
-        const considerMarquee = scope === 'exl-hp-auth-recs';
-
-        let targetIndex = null;
-        if (considerMarquee) {
-          targetIndex = 0;
-        } else if (indexMatch) {
-          const [, indexVal] = indexMatch;
-          targetIndex = indexVal;
-        }
+        const targetIndex = indexMatch ? indexMatch[1] - 1 : null;
         const blockElement = this.blocks[targetIndex];
         let blockId;
         if (blockElement) {
@@ -172,17 +158,32 @@ class AdobeTargetClient {
             ? 'update'
             : 'replace'
           : 'new';
-        if (considerMarquee && blockId) {
-          mode = blockName !== 'recommendation-marquee' ? 'replace' : 'update';
+        if (blockName === 'recommendation-marquee') {
+          mode = 'replace'; // If authored block is marquee, replace it with recommended-block as, this block is not the first one and marquee is always reserved as first block.
         }
-
-        let newBlock = considerMarquee ? 'recommendation-marquee' : 'recommended-content';
+        let newBlock = 'recommended-content';
         if (criteriaTitle === 'exl-php-recently-viewed-content') {
           newBlock = 'recently-reviewed';
         }
 
         return { blockId, scope, mode, criteriaTitle, newBlock };
       });
+    }
+    if (marqueeTargetData?.meta) {
+      blockRevisionNeeded = true;
+      const [firstBlockEl] = this.blocks; // Marquee should always be the first block.
+      let marqueeBlockId = '';
+      if (firstBlockEl) {
+        marqueeBlockId = `rm-${Math.random().toString(36).substring(2)}`;
+        firstBlockEl.id = marqueeBlockId;
+      }
+      const blockName = firstBlockEl?.dataset.blockName;
+      const { 'criteria.title': criteriaTitle, scope } = marqueeTargetData.meta;
+      const mode = blockName === 'recommendation-marquee' ? 'update' : 'replace';
+      const newBlock = 'recommendation-marquee';
+      this.targetArray.unshift({ blockId: marqueeBlockId, scope, mode, criteriaTitle, newBlock });
+    }
+    if (blockRevisionNeeded) {
       this.reviseBlocks();
     }
   }
