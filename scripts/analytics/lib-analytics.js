@@ -2,8 +2,8 @@
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
-export const browse = document.querySelector('meta[name="theme"]')?.content.indexOf('browse-') !== -1;
-export const browseProduct = document.querySelector('meta[name="theme"]')?.content.indexOf('browse-product') !== -1;
+export const browse = document.querySelector('meta[name="theme"]')?.content.includes('browse-') || false;
+export const browseProduct = document.querySelector('meta[name="theme"]')?.content.includes('browse-product') || false;
 export const playlist = window.location.pathname.indexOf('/playlists') !== -1;
 export const solution = document.querySelector('meta[name="solution"]')?.content?.split(',')[0].toLowerCase() || '';
 export const type = document.querySelector('meta[name="type"]')?.content?.toLowerCase() || '';
@@ -125,7 +125,7 @@ export async function pushPageDataLayer(language) {
     web: {
       webPageDetails: {
         URL: window.location.href,
-        cleanURL: window.location.href.replace(/^https?:\/\//, ''),
+        cleanURL: window.location.href.replace(/^https?:\/\//, '').replace(/#.*$/, ''),
         domain: window.location.host,
         docrole: role,
         doctype: docType,
