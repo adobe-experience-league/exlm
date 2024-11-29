@@ -406,11 +406,8 @@ export async function buildCard(container, element, model) {
   }
 
   if (title) {
-    const titleHtmlElement = document.createElement('div');
-    titleHtmlElement.innerHTML = title;
-    const decodedTitle = titleHtmlElement.textContent;
     const titleElement = createTag('h5', { class: 'browse-card-title-text' });
-    titleElement.textContent = decodedTitle;
+    titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }
   await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
