@@ -96,7 +96,7 @@ class AdobeTargetClient {
           }
         }
         resolve(true);
-      }
+      };
       document.addEventListener(this.targetDataEventName, targetEventHandler);
       resolve(false);
     });
