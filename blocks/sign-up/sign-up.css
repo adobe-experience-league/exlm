@@ -288,7 +288,8 @@ div.sign-up-wrapper {
 @media (min-width: 1024px) {
   /* no longer goes from end to end */
   body[class^='browse-'] .section div.sign-up-wrapper,
-  body[class^='article-'] .section div.sign-up-wrapper {
+  body[class^='article-'] .section div.sign-up-wrapper,
+  body[class*='profile-home-page'] .section div.sign-up-wrapper {
     margin-left: unset;
     margin-right: unset;
   }
