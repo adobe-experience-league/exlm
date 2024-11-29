@@ -85,7 +85,7 @@ class AdobeTargetClient {
    */
   handleTargetEvent() {
     return new Promise((resolve) => {
-      function targetEventHandler(event) {
+      const targetEventHandler = (event) => {
         if (!window?.exlm?.targetData) window.exlm.targetData = [];
         if (!window?.exlm?.recommendationMarqueeTargetData) window.exlm.recommendationMarqueeTargetData = [];
         if (!window?.exlm?.targetData.filter((data) => data?.meta?.scope === event?.detail?.meta?.scope).length) {
