@@ -296,7 +296,8 @@
   /* when shown on a page with a rail 
    no longer goes from end to end */
   body[class^='browse-'] .section div.detailed-teaser-wrapper,
-  body[class^='article-'] .section div.detailed-teaser-wrapper {
+  body[class^='article-'] .section div.detailed-teaser-wrapper,
+  body[class*='profile-home-page'] .section div.detailed-teaser-wrapper {
     margin-left: unset;
     margin-right: unset;
   }
