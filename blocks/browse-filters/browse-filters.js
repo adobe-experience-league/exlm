@@ -1104,7 +1104,6 @@ function constructMultiSelectDropdown(block, options, index) {
 
   appendToFormInputContainer(block, dropdownEl);
   handleCheckboxClick(block, dropdownEl, options);
-  decorateIcons(dropdownEl);
   return dropdownEl;
 }
 
