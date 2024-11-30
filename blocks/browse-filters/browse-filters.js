@@ -32,6 +32,8 @@ import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-card
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 
+let isCoveoHeadlessLoaded = false;
+
 /**
  * debounce fn execution
  */
@@ -495,16 +497,22 @@ function constructKeywordSearchEl(block) {
 
 function onInputSearch(block) {
   const searchEl = block.querySelector('.filter-input-search .search-input');
-  if (!searchEl) {
-    return;
-  }
-  searchEl.addEventListener('keypress', (event) => {
+  if (!searchEl) return;
+
+  const handleFocus = () => {
+    if (!isCoveoHeadlessLoaded) {
+      loadCoveoHeadless(block);
+    }
+  };
+
+  const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      // eslint-disable-next-line no-console
-      console.log('add search logic here');
     }
-  });
+  };
+
+  searchEl.addEventListener('focus', handleFocus);
+  searchEl.addEventListener('keypress', handleKeyPress);
 }
 
 function removeTopicSelections(block) {
@@ -598,7 +606,7 @@ function closeOpenDropdowns() {
  *
  * @param {Event} event - The click event.
  */
-function handleDropdownToggle() {
+function handleDropdownToggle(block) {
   document.addEventListener('click', (event) => {
     const openDropdowns = document.querySelectorAll('.filter-dropdown.open');
     const dropdownEl = event.target.closest('.filter-dropdown');
@@ -612,6 +620,9 @@ function handleDropdownToggle() {
       }
       dropdownEl.querySelector('.filter-dropdown-content').style.display = 'block';
       dropdownEl.classList.add('open');
+      if (!isCoveoHeadlessLoaded) {
+        loadCoveoHeadless(block);
+      }
     } else {
       closeOpenDropdowns();
     }
@@ -1278,46 +1289,31 @@ function decorateBrowseTopics(block) {
   (contentTypeElement.parentNode || contentTypeElement).remove();
 }
 
-async function initiateCoveoHeadless(block) {
+async function loadCoveoHeadless(block) {
   const { default: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
-  initiateCoveoHeadlessSearch({
-    handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
-    renderPageNumbers,
-    numberOfResults: getBrowseFiltersResultCount(),
-    renderSearchQuerySummary,
-    handleSearchBoxSubscription,
-  })
-    .then(
-      (data) => {
-        handleCoveoHeadlessSearch(block, data);
-      },
-      (err) => {
-        throw new Error(err);
-      },
-    )
-    .finally(() => {
-      // enable/disable the clear filter btn based on latest data
-      updateClearFilterStatus(block);
-      decorateIcons(block);
-    });
-}
-
-function observeAndInitiateSearch(block) {
-  const blockObserver = new IntersectionObserver(
-    (entries, observer) => {
-      entries.forEach(async (entry) => {
-        if (entry.isIntersecting) {
-          initiateCoveoHeadless(block);
-          // Stop observing after the method is triggered
-          observer.unobserve(entry.target);
-        }
+  if (initiateCoveoHeadlessSearch) {
+    isCoveoHeadlessLoaded = true;
+    initiateCoveoHeadlessSearch({
+      handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
+      renderPageNumbers,
+      numberOfResults: getBrowseFiltersResultCount(),
+      renderSearchQuerySummary,
+      handleSearchBoxSubscription,
+    })
+      .then(
+        (data) => {
+          handleCoveoHeadlessSearch(block, data);
+        },
+        (err) => {
+          throw new Error(err);
+        },
+      )
+      .finally(() => {
+        // enable/disable the clear filter btn based on latest data
+        updateClearFilterStatus(block);
+        decorateIcons(block);
       });
-    },
-    { threshold: 0.1 },
-  ); // Adjust the threshold based on when you want to trigger the search
-
-  // Start observing the block
-  blockObserver.observe(block);
+    }
 }
 
 export default async function decorate(block) {
@@ -1335,16 +1331,14 @@ export default async function decorate(block) {
   appendToForm(block, renderFilterResultsHeader());
   decorateBrowseTopics(block);
 
-  handleDropdownToggle();
+  handleDropdownToggle(block);
   onInputSearch(block);
   handleClearFilter(block);
   handleTagsClick(block);
   updateClearFilterStatus(block);
   renderSortContainer(block);
   const hash = fragment();
-  if (!hash) {
-    observeAndInitiateSearch(block);
-  } else {
-    initiateCoveoHeadless(block);
+  if (hash && !isCoveoHeadlessLoaded) {
+    loadCoveoHeadless(block);
   }
 }
