@@ -337,7 +337,8 @@ div.marquee-wrapper {
 @media (min-width: 1024px) {
   /* no longer goes from end to end */
   body[class^='browse-'] .section div.marquee-wrapper,
-  body[class^='article-'] .section div.marquee-wrapper {
+  body[class^='article-'] .section div.marquee-wrapper,
+  body[class*='profile-home-page'] .section div.marquee-wrapper {
     margin-left: unset;
     margin-right: unset;
   }
@@ -414,5 +415,13 @@ div.marquee-wrapper {
   body[class^='article-'] .section div.marquee-wrapper .marquee-background svg {
     min-width: 130%;
     min-height: 0%;
+  }
+
+  body[class*='profile-home-page'] .section div.marquee-wrapper .marquee-foreground {
+    margin: 0;
+  }
+
+  body[class*='profile-home-page'] div.section.marquee-container {
+    overflow: hidden;
   }
 }
