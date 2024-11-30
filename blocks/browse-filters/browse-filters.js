@@ -809,7 +809,6 @@ async function loadCoveoHeadless(block) {
       .finally(() => {
         // enable/disable the clear filter btn based on latest data
         updateClearFilterStatus(block);
-        decorateIcons(block);
       });
   }
 }
@@ -1426,4 +1425,5 @@ export default async function decorate(block) {
   if (hash && !isCoveoHeadlessLoaded) {
     loadCoveoHeadless(block);
   }
+  decorateIcons(block);
 }
