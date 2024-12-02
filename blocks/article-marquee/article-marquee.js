@@ -72,7 +72,7 @@ function createOptions(container, readTimeText) {
   if (readTimeText) container.appendChild(readTime);
 
   // Delay loading the UserActions script to avoid render-blocking during initial page load
-  setTimeout(async () => {
+  window.addEventListener('delayed-load', async () => {
     const { default: UserActions } = await import('../../scripts/user-actions/user-actions.js');
     if (UserActions) {
       const cardAction = UserActions({
@@ -82,7 +82,7 @@ function createOptions(container, readTimeText) {
       });
       cardAction.decorate();
     }
-  }, 3000);
+  });
 }
 
 async function createBreadcrumb(container) {
@@ -174,9 +174,9 @@ export default async function ArticleMarquee(block) {
 
     const breadcrumbContainer = articleDetails.querySelector('.breadcrumb');
     // Delay the creation of breadcrumbs to improve initial page load performance
-    setTimeout(() => {
+    window.addEventListener('delayed-load', async () => {
       createBreadcrumb(breadcrumbContainer);
-    }, 3000);
+    });
 
     block.append(articleDetails);
 

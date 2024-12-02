@@ -58,3 +58,5 @@ if (window.location.search?.indexOf('martech=off') === -1) {
   loadQualtrics();
   sendCoveoPageViewEvent();
 }
+
+window.dispatchEvent(new Event('delayed-load'));
