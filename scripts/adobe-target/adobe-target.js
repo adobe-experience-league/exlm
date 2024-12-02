@@ -53,28 +53,37 @@ class AdobeTargetClient {
   async loadTargetData() {
     return new Promise((resolve) => {
       if (window?.exlm?.targetData?.length || window?.exlm?.recommendationMarqueeTargetData?.length) resolve(true);
-      document.addEventListener(
-        'web-sdk-send-event-complete',
-        async (event) => {
-          try {
-            if (
-              event.detail.$type === 'adobe-alloy.send-event-complete' &&
-              event.detail.$rule.name === 'AT: PHP: Handle response propositions'
-            ) {
-              await this.handleTargetEvent();
-              if (window?.exlm?.targetData?.length || window?.exlm?.recommendationMarqueeTargetData?.length)
-                resolve(true);
-              else resolve(false);
-            } else {
-              resolve(false);
-            }
-          } catch (error) {
-            // eslint-disable-next-line no-console
-            console.log(error);
+
+      function handleTargetError(event) {
+        if (event) {
+          // eslint-disable-next-line no-console
+          console.error('Error loading target data', event?.detail);
+          resolve(false);
+        }
+      }
+
+      async function handleTargetLoad(event) {
+        document.removeEventListener('web-sdk-send-event-error', handleTargetError);
+        try {
+          if (
+            event.detail.$type === 'adobe-alloy.send-event-complete' &&
+            event.detail.$rule.name === 'AT: PHP: Handle response propositions'
+          ) {
+            await this.handleTargetEvent();
+            if (window?.exlm?.targetData?.length || window?.exlm?.recommendationMarqueeTargetData?.length)
+              resolve(true);
+            else resolve(false);
+          } else {
+            resolve(false);
           }
-        },
-        { once: true },
-      );
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.log(error);
+        }
+      }
+
+      document.addEventListener('web-sdk-send-event-error', handleTargetError, { once: true });
+      document.addEventListener('web-sdk-send-event-complete', handleTargetLoad.bind(this), { once: true });
     });
   }
 
