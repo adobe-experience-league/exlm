@@ -30,12 +30,8 @@ export default function decorate(block) {
     });
     block.append(wrapper);
   } else {
-    const observer = new IntersectionObserver((entries) => {
-      if (entries.some((e) => e.isIntersecting)) {
-        observer.disconnect();
-        loadEmbed(block, link);
-      }
+    window.addEventListener('delayed-load', async () => {
+      loadEmbed(block, link);
     });
-    observer.observe(block);
   }
 }
