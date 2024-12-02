@@ -32,10 +32,10 @@ export default function decorate(block) {
   } else {
     const observer = new IntersectionObserver((entries) => {
       if (entries.some((e) => e.isIntersecting)) {
-        observer.disconnect();
-        window.addEventListener('delayed-load', async () => {
+        setTimeout(() => {
           loadEmbed(block, link);
-        });
+          observer.disconnect();
+        }, 3000);
       }
     });
     observer.observe(block);
