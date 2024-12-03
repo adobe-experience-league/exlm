@@ -801,6 +801,10 @@ async function loadCoveoHeadless(block) {
       .then(
         (data) => {
           handleCoveoHeadlessSearch(block, data);
+          const tagsContainerEl = block.querySelector('.browse-tags-container');
+          if (tagsContainerEl) {
+            decorateIcons(tagsContainerEl);
+          }
         },
         (err) => {
           throw new Error(err);
