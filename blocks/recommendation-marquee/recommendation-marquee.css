@@ -217,11 +217,13 @@
 
   .recommendation-marquee.block .browse-cards-block-content .card-wrapper {
     flex: 0 0 calc(50% - 10px);
+    max-width: 360px;
   }
 
   .recommendation-marquee.block .browse-cards-block-content .card-wrapper:nth-child(1) {
     flex: 0 0 100%;
     min-height: 299.5px;
+    max-width: 740px;
   }
 
   .recommendation-marquee.block .browse-cards-block-content .card-wrapper:nth-child(1) .browse-card {
@@ -237,6 +239,34 @@
     height: 100%;
     float: left;
     max-height: 100%;
+  }
+
+  .recommendation-marquee.block .browse-cards-block-content .card-wrapper:nth-child(1) .browse-card-figure > div {
+    width: 255px;
+    height: 155px;
+  }
+
+  .recommendation-marquee.block
+    .browse-cards-block-content
+    .card-wrapper:nth-child(1)
+    .laptop-container
+    > div:first-child {
+    width: 228px;
+    height: 147px;
+  }
+
+  .recommendation-marquee.block
+    .browse-cards-block-content
+    .card-wrapper:nth-child(1)
+    .laptop-container
+    > div:last-child {
+    width: 255px;
+    height: 11px;
+  }
+
+  .recommendation-marquee.block .browse-cards-block-content .card-wrapper:nth-child(1) .browse-card-figure img {
+    width: 219px;
+    height: 132px;
   }
 
   .recommendation-marquee.block
