@@ -121,7 +121,7 @@
   min-height: auto;
 }
 
-.recommendation-marquee.block:has(.responsive-list) .recommendation-marquee-block-header {
+.recommendation-marquee.block:has(.responsive-pill-list) .recommendation-marquee-block-header {
   margin-top: 28px;
   margin-bottom: 32px;
 }
@@ -314,5 +314,6 @@
 @media (min-width: 1440px) {
   .recommendation-marquee.block .browse-cards-block-content .card-wrapper:nth-child(1) {
     flex: 0 0 calc(66.67% - 20px);
+    min-width: 740px;
   }
 }
