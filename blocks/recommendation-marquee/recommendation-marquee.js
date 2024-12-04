@@ -286,6 +286,7 @@ export default async function decorate(block) {
                     if (cardModel.id) {
                       dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
                     }
+                    cardModel.truncateDescription = false;
                     buildCard(contentDiv, wrapperDiv, cardModel);
                   }
                   cardModelsList.push(cardModel);
@@ -297,6 +298,7 @@ export default async function decorate(block) {
             if (renderCards) {
               cardDiv.innerHTML = '';
               if (cardData.id) {
+                cardData.truncateDescription = false;
                 dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardData.id);
               }
               buildCard(contentDiv, cardDiv, cardData);
