@@ -129,7 +129,7 @@
 }
 
 .recommendation-marquee.block .custom-filter-dropdown {
-  width: fit-content;
+  width: 100%;
   min-width: 320px;
   margin-top: 16px;
   margin-bottom: 32px;
@@ -252,6 +252,10 @@
 
   .recommendation-marquee-result-link {
     margin-right: 0;
+  }
+
+  .recommendation-marquee.block .custom-filter-dropdown {
+    width: fit-content;
   }
 
   .recommendation-marquee.block .browse-cards-block-content .card-wrapper {

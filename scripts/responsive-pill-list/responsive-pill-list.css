@@ -116,10 +116,6 @@
   }
 
   .responsive-pill-list ul {
-    border-bottom: 1px solid var(--spectrum-gray-500);
-    margin-bottom: 20px;
-    overflow: hidden;
-    overflow-x: scroll;
     padding-bottom: 12px;
   }
 }
