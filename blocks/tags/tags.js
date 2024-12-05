@@ -1,19 +1,19 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { getMetadata } from '../../scripts/lib-franklin.js';
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
+function getPreferredMetadata(primaryMetadataKey, fallbackMetadataKey) {
+  return getMetadata(primaryMetadataKey) ? getMetadata(primaryMetadataKey) : getMetadata(fallbackMetadataKey);
 }
 
-const TOPICS = placeholders?.topics || 'TOPICS:';
-const CREATED_FOR = placeholders?.createdFor || 'CREATED FOR:';
-const TAGS_BLOCK_PRODUCTS = placeholders?.tagsBlockProducts || 'PRODUCTS:';
+export default async function decorate(block) {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
 
-export default function decorate(block) {
   const coveosolutions = getMetadata('coveo-solution');
   const solutions = [
     ...new Set(
@@ -24,9 +24,9 @@ export default function decorate(block) {
     ),
   ].join(',');
 
-  const features = getMetadata('feature');
-  const roles = getMetadata('role');
-  const experienceLevels = getMetadata('level');
+  const features = getPreferredMetadata('loc-feature', 'feature');
+  const roles = getPreferredMetadata('loc-role', 'role');
+  const experienceLevels = getPreferredMetadata('loc-level', 'level');
 
   function createTagsHTML(values) {
     return values
@@ -45,7 +45,7 @@ export default function decorate(block) {
     productSection.classList.add('article-tags-product');
     productSection.innerHTML = `
       <div class="article-tags-product-heading">
-        ${TAGS_BLOCK_PRODUCTS}
+        ${placeholders?.tagsBlockProducts || 'PRODUCTS:'}
       </div>
       ${createTagsHTML(solutions)}
     `;
@@ -57,7 +57,7 @@ export default function decorate(block) {
     topicsSection.classList.add('article-tags-topics');
     topicsSection.innerHTML = `
       <div class="article-tags-topics-heading">
-        ${TOPICS}
+        ${placeholders?.topics || 'TOPICS:'}
       </div>
       ${createTagsHTML(features)}
     `;
@@ -70,7 +70,7 @@ export default function decorate(block) {
     createdForSection.classList.add('article-tags-createdFor');
     createdForSection.innerHTML = `
       <div class="article-tags-createdFor-heading">
-        ${CREATED_FOR}
+        ${placeholders?.createdFor || 'CREATED FOR:'}
       </div>
       ${createdForContent}
     `;
