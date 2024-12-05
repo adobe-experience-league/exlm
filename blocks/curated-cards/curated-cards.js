@@ -18,7 +18,6 @@ export default async function decorate(block) {
   const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase() ?? 'RELEVANCE'];
   const noOfResults = 4;
   const { products, features, versions } = extractCapability(capabilities);
-  headingElement.firstElementChild?.classList.add('h2');
 
   // Clearing the block's content
   block.innerHTML = '';

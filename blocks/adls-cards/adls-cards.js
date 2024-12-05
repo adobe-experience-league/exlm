@@ -18,8 +18,6 @@ export default async function decorate(block) {
   const contentType = CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY;
   const noOfResults = 4;
 
-  headingElement.firstElementChild?.classList.add('h2');
-
   // Clearing the block's content
   block.innerHTML = '';
   block.classList.add('browse-cards-block');

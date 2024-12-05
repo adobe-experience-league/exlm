@@ -14,7 +14,6 @@ export default async function decorate(block) {
     (row) => row.firstElementChild,
   );
 
-  headingElement.firstElementChild?.classList.add('h2');
   block.classList.add('browse-cards-block');
 
   const headerDiv = htmlToElement(`

@@ -182,8 +182,6 @@ export default async function decorate(block) {
   // Parameters for fetching card data
   const parameters = { contentType };
 
-  headingElement.firstElementChild.classList.add('h2');
-
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">
