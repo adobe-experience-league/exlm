@@ -128,8 +128,6 @@ export default async function decorate(block) {
   const sortCriteria = COVEO_SORT_OPTIONS[sortBy];
   const noOfResults = 16;
 
-  headingElement.firstElementChild?.classList.add('h2');
-
   block.innerHTML = '';
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
