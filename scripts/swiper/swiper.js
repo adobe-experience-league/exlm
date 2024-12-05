@@ -29,6 +29,7 @@ export default class Swiper {
 
   init() {
     this.container.classList.add('swiper-container');
+    this.container.style.overflow = 'hidden';
     this.container.addEventListener('touchstart', (e) => {
       this.startX = e.touches[0].clientX;
     });
