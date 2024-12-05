@@ -192,13 +192,14 @@ const buildCardContent = async (card, model) => {
     inProgressText,
     inProgressStatus = {},
     failedToLoad = false,
+    truncateDescription = true
   } = model;
   const contentType = type?.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
   const cardFooter = card.querySelector('.browse-card-footer');
 
   if (description) {
-    const stringContent = description.length > 100 ? `${description.substring(0, 100).trim()}...` : description;
+    const stringContent = description.length > 100 && truncateDescription ? `${description.substring(0, 100).trim()}...` : description;
     const descriptionElement = document.createElement('p');
     descriptionElement.classList.add('browse-card-description-text');
     descriptionElement.innerHTML = stripScriptTags(stringContent);
