@@ -179,7 +179,7 @@
   transition: transform 0.2s;
 }
 
-.browse-card:hover .browse-card-figure .laptop-container {
+.browse-card .browse-card-figure:hover .laptop-container {
   transform: scale(2.2);
 }
 
@@ -216,7 +216,7 @@
     width 0.2s;
 }
 
-.browse-card:hover .browse-card-figure img {
+.browse-card .browse-card-figure:hover img {
   width: 100%;
   height: 204px;
 }
