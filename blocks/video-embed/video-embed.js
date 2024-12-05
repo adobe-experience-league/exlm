@@ -1,4 +1,4 @@
-import { htmlToElement } from "../../scripts/scripts.js";
+import { htmlToElement } from '../../scripts/scripts.js';
 
 const getDefaultEmbed = (url, options) => `<div class="video-frame">
     <iframe 
@@ -21,8 +21,8 @@ const embedMpc = (url, options = { autoplay: false }) => {
   return getDefaultEmbed(urlObject, options);
 };
 
-const getMpcVideoDetailsByUrl = (url) => {
-  return new Promise((resolve, reject) => {
+const getMpcVideoDetailsByUrl = (url) =>
+  new Promise((resolve, reject) => {
     try {
       const urlObj = new URL(url);
       urlObj.searchParams.set('format', 'json');
@@ -31,15 +31,16 @@ const getMpcVideoDetailsByUrl = (url) => {
         .then((response) => response.json())
         .then((data) => resolve(data))
         .catch((error) => {
+          // eslint-disable-next-line no-console
           console.error('Error while fetching url', error);
-          resolve(undefined); // Fallback to `undefined` on fetch failure
+          resolve(undefined);
         });
     } catch (error) {
-      console.error('Error while processing the URL', error);
-      reject(undefined); // Fallback to `undefined` on URL processing failure
+      // eslint-disable-next-line no-console
+      console.error('Failed to process the URL:', error);
+      reject(new Error(`'Failed to process the URL:' ${error?.message})`));
     }
   });
-};
 
 const loadEmbed = (block, link) => {
   if (block.classList.contains('embed-is-loaded')) {
@@ -48,7 +49,7 @@ const loadEmbed = (block, link) => {
 
   const url = new URL(link);
   const options = {
-    autoplay: true
+    autoplay: true,
   };
   url.searchParams.set('autoplay', options.autoplay);
   block.innerHTML = embedMpc(url, options);
@@ -60,7 +61,7 @@ export default async function decorate(block) {
   const anchor = block.querySelector('a');
   if (!anchor) return;
 
-  const href = anchor.href;
+  const { href } = anchor;
   block.textContent = '';
 
   if (href) {
@@ -68,16 +69,17 @@ export default async function decorate(block) {
     wrapper.className = 'video-frame';
 
     getMpcVideoDetailsByUrl(href)
-    .then((videoDetails) => {
-      const poster = videoDetails?.video?.poster;
-      if (poster) {
-        const videoImg = htmlToElement(`<img class="video-poster" src=${poster} alt="video-poster"></img>`)
-        wrapper.appendChild(videoImg);
-      }
-    })
-    .catch((error) => {
-      console.error('Error fetching video details:', error);
-    });
+      .then((videoDetails) => {
+        const poster = videoDetails?.video?.poster;
+        if (poster) {
+          const videoImg = htmlToElement(`<img class="video-poster" src=${poster} alt="video-poster"></img>`);
+          wrapper.appendChild(videoImg);
+        }
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error('Error fetching video details:', error);
+      });
 
     const videoOverlay = htmlToElement(`<div class="video-overlay">
       <button aria-label="play" class="video-overlay-play-button">
