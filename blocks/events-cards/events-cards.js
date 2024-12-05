@@ -33,8 +33,6 @@ export default async function decorate(block) {
   const noOfResults = 4;
   const solutionsParam = solutions !== '' ? formattedSolutionTags(solutions) : '';
 
-  headingElement.firstElementChild?.classList.add('h2');
-
   // Clearing the block's content
   block.innerHTML = '';
   block.classList.add('browse-cards-block');
