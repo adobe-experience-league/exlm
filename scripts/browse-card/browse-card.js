@@ -1,10 +1,12 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
+import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails, getConfig } from '../scripts.js';
 import { createTooltip } from './browse-card-tooltip.js';
 import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
+
+const { isStage, isProd } = getConfig();
 
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
@@ -412,7 +414,11 @@ export async function buildCard(container, element, model) {
     titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }
-  await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
+  if (isStage || isProd) {
+    await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
+  } else {
+    await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-v2.css`);
+  }
   await buildCardContent(card, model);
   if (model.viewLink) {
     const cardContainer = document.createElement('a');
