@@ -1186,6 +1186,13 @@ async function loadPage() {
   }
 }
 
+export function isFeatureEnabled(name) {
+  return getMetadata('feature-flags')
+    .split(',')
+    .map((t) => t.toLowerCase().trim())
+    .includes(name);
+}
+
 /**
  * A simple shorter impl of alloy prehide script.
  * This is used for target A/B testing of home page, and should be removed after the test is done.
