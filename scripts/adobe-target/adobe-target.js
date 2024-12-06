@@ -99,7 +99,7 @@ class AdobeTargetClient {
         if (!window?.exlm?.targetData) window.exlm.targetData = [];
         if (!window?.exlm?.recommendationMarqueeTargetData) window.exlm.recommendationMarqueeTargetData = [];
         if (!window?.exlm?.targetData.filter((data) => data?.meta?.scope === event?.detail?.meta?.scope).length) {
-          //
+          // TODO - remove dependecy on feature flag once browse card v2 theme is live
           if (isFeatureEnabled('browsecardv2') && event?.detail?.meta?.scope === this.recommendationMarqueeScopeName) {
             window.exlm.recommendationMarqueeTargetData.push(event.detail);
           } else {
