@@ -378,7 +378,9 @@ export async function buildCard(container, element, model) {
   if (badgeTitle || failedToLoad) {
     const bannerElement = createTag('h3', { class: 'browse-card-banner' });
     bannerElement.innerText = badgeTitle || '';
-    bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
+    if (isStage || isProd) {
+      bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
+    }
     cardFigure.appendChild(bannerElement);
   }
 
@@ -415,9 +417,9 @@ export async function buildCard(container, element, model) {
     cardContent.appendChild(titleElement);
   }
   if (isStage || isProd) {
-    await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
-  } else {
     await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-v2.css`);
+  } else {
+    await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
   }
   await buildCardContent(card, model);
   if (model.viewLink) {
