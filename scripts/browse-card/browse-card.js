@@ -376,6 +376,7 @@ export async function buildCard(container, element, model) {
   if (badgeTitle || failedToLoad) {
     const bannerElement = createTag('h3', { class: 'browse-card-banner' });
     bannerElement.innerText = badgeTitle || '';
+    // TODO - remove dependecy on feature flag once browse card v2 theme is live
     if (isFeatureEnabled('browsecardv2')) {
       bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
     }
@@ -414,6 +415,7 @@ export async function buildCard(container, element, model) {
     titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }
+  // TODO - remove dependecy on feature flag once browse card v2 theme is live
   if (isFeatureEnabled('browsecardv2')) {
     await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-v2.css`);
   } else {
