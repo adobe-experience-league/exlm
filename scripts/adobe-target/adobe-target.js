@@ -1,6 +1,7 @@
 import { buildBlock, decorateBlock, decorateSections, loadBlock, updateSectionsStatus } from '../lib-franklin.js';
 import getCookie from '../utils/cookie-utils.js';
 import getEmitter from '../events.js';
+import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
 class AdobeTargetClient {
@@ -98,12 +99,12 @@ class AdobeTargetClient {
         if (!window?.exlm?.targetData) window.exlm.targetData = [];
         if (!window?.exlm?.recommendationMarqueeTargetData) window.exlm.recommendationMarqueeTargetData = [];
         if (!window?.exlm?.targetData.filter((data) => data?.meta?.scope === event?.detail?.meta?.scope).length) {
-          // Revert after prod release
-          // if (event?.detail?.meta?.scope === this.recommendationMarqueeScopeName) {
-          //   window.exlm.recommendationMarqueeTargetData.push(event.detail);
-          // } else {
-          window.exlm.targetData.push(event.detail);
-          // }
+          // TODO - remove dependecy on feature flag once browse card v2 theme is live
+          if (isFeatureEnabled('browsecardv2') && event?.detail?.meta?.scope === this.recommendationMarqueeScopeName) {
+            window.exlm.recommendationMarqueeTargetData.push(event.detail);
+          } else {
+            window.exlm.targetData.push(event.detail);
+          }
         }
         resolve(true);
       };
