@@ -98,11 +98,12 @@ class AdobeTargetClient {
         if (!window?.exlm?.targetData) window.exlm.targetData = [];
         if (!window?.exlm?.recommendationMarqueeTargetData) window.exlm.recommendationMarqueeTargetData = [];
         if (!window?.exlm?.targetData.filter((data) => data?.meta?.scope === event?.detail?.meta?.scope).length) {
-          if (event?.detail?.meta?.scope === this.recommendationMarqueeScopeName) {
-            window.exlm.recommendationMarqueeTargetData.push(event.detail);
-          } else {
-            window.exlm.targetData.push(event.detail);
-          }
+          // Revert after prod release
+          // if (event?.detail?.meta?.scope === this.recommendationMarqueeScopeName) {
+          //   window.exlm.recommendationMarqueeTargetData.push(event.detail);
+          // } else {
+          window.exlm.targetData.push(event.detail);
+          // }
         }
         resolve(true);
       };
