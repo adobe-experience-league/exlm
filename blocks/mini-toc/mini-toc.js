@@ -144,7 +144,8 @@ function buildMiniToc(block, placeholders) {
             highlight(false);
           }
         });
-        window.addEventListener('scroll', () => debounce(10, () => highlight(false, isAnchorScroll)));
+        const debounceHighlight = debounce(10, () => highlight(false, isAnchorScroll));
+        window.addEventListener('scroll', debounceHighlight);
       }
     });
   } else {
