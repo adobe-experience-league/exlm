@@ -81,7 +81,7 @@
   position: relative;
 }
 
-.load-fail-card.browse-card .browse-card-banner {
+.browse-card-frozen.browse-card .browse-card-banner {
   height: 32px;
   width: 132px;
   background-image: linear-gradient(
@@ -94,7 +94,7 @@
   animation: placeholder-wave 1.5s infinite;
 }
 
-.load-fail-card.browse-card .browse-card-tag-text {
+.browse-card-frozen.browse-card .browse-card-tag-text {
   height: 21px;
   width: 100px;
   margin-bottom: 16px;
