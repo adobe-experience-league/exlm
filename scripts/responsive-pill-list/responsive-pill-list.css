@@ -1,0 +1,121 @@
+.responsive-pill-list {
+  color: var(--spectrum-gray-700);
+  font-size: var(--spectrum-font-size-200);
+  justify-content: space-between;
+  line-height: 20.8px;
+}
+
+.responsive-pill-list ul {
+  align-items: center;
+  display: inline-flex;
+  flex-wrap: nowrap;
+  gap: 16px;
+  justify-content: space-between;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  cursor: default;
+}
+
+.responsive-pill-list .responsive-pill-list-option-overlay {
+  position: absolute;
+  top: 48px;
+  left: 0;
+  z-index: 2;
+  display: none;
+  background-color: var(--spectrum-gray-50);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(177, 177, 177, 0.6);
+  box-shadow: 0px 1px 4px #00000026;
+  cursor: default;
+}
+
+.responsive-pill-list .responsive-pill-list-items-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.responsive-pill-list .responsive-pill-list-more-option {
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: normal;
+  color: var(--non-spectrum-dark-gray);
+  border-radius: 100%;
+  border: 2px solid var(--spectrum-gray-300);
+}
+
+.responsive-pill-list .responsive-pill-list-more-option.responsive-pill-list-btn-active {
+  background: var(--spectrum-gray-800);
+  color: var(--spectrum-gray-50);
+  border-color: var(--spectrum-gray-800);
+}
+
+.responsive-pill-list .responsive-pill-list-more-option span {
+  height: 30px;
+  letter-spacing: 2.2px;
+  font-weight: var(--font-weight-900);
+  margin-left: 2px;
+}
+
+.responsive-pill-list .responsive-pill-list-option-overlay.responsive-pill-list-option-overlay-visible {
+  display: block;
+}
+
+.responsive-pill-list .responsive-pill-list-option-overlay p {
+  text-align: center;
+  font-size: 12px;
+  line-height: 15px;
+  opacity: 0.6;
+  color: var(--text-color);
+  font-weight: var(--font-weight-600);
+  text-transform: uppercase;
+}
+
+.responsive-pill-list .responsive-pill-list-option-overlay li {
+  width: calc(100% - 48px);
+}
+
+.responsive-pill-list ul li {
+  color: var(--spectrum-gray-800);
+  cursor: pointer;
+  font-size: var(--spectrum-font-size-200);
+  line-height: 20px;
+  margin: 0;
+  padding: 9px 20px 11px 20px;
+  border: 2px solid var(--spectrum-gray-300);
+  border-radius: 20px;
+  position: relative;
+  white-space: pre;
+  font-weight: var(--font-weight-700);
+}
+
+.responsive-pill-list ul li.active {
+  background-color: var(--spectrum-gray-800);
+  color: var(--spectrum-gray-50);
+  border-color: var(--spectrum-gray-800);
+}
+
+.responsive-pill-list ul li.responsive-pill-list-more-options-wrapper {
+  padding: 0;
+  position: relative;
+  border: none;
+  white-space: normal;
+}
+
+@media (max-width: 1024px) {
+  .responsive-pill-list {
+    border-bottom: 0 none;
+    display: block;
+  }
+
+  .responsive-pill-list ul {
+    padding-bottom: 12px;
+  }
+}

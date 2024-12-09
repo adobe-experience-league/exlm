@@ -27,7 +27,7 @@ import {
  * Load files async using import() if you must.
  */
 
-const LCP_BLOCKS = ['marquee', 'article-marquee']; // add your LCP blocks to the list
+const LCP_BLOCKS = ['video-embed', 'marquee', 'article-marquee']; // add your LCP blocks to the list
 
 /**
  * load fonts.css and set a session storage flag

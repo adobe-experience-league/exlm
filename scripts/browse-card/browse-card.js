@@ -5,6 +5,7 @@ import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-const
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
+import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
@@ -192,13 +193,15 @@ const buildCardContent = async (card, model) => {
     inProgressText,
     inProgressStatus = {},
     failedToLoad = false,
+    truncateDescription = true,
   } = model;
   const contentType = type?.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
   const cardFooter = card.querySelector('.browse-card-footer');
 
   if (description) {
-    const stringContent = description.length > 100 ? `${description.substring(0, 100).trim()}...` : description;
+    const stringContent =
+      description.length > 100 && truncateDescription ? `${description.substring(0, 100).trim()}...` : description;
     const descriptionElement = document.createElement('p');
     descriptionElement.classList.add('browse-card-description-text');
     descriptionElement.innerHTML = stripScriptTags(stringContent);
@@ -374,7 +377,10 @@ export async function buildCard(container, element, model) {
   if (badgeTitle || failedToLoad) {
     const bannerElement = createTag('h3', { class: 'browse-card-banner' });
     bannerElement.innerText = badgeTitle || '';
-    bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
+    // TODO - remove dependecy on feature flag once browse card v2 theme is live
+    if (isFeatureEnabled('browsecardv2')) {
+      bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
+    }
     cardFigure.appendChild(bannerElement);
   }
 
@@ -410,7 +416,12 @@ export async function buildCard(container, element, model) {
     titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }
-  await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
+  // TODO - remove dependecy on feature flag once browse card v2 theme is live
+  if (isFeatureEnabled('browsecardv2')) {
+    await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-v2.css`);
+  } else {
+    await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
+  }
   await buildCardContent(card, model);
   if (model.viewLink) {
     const cardContainer = document.createElement('a');

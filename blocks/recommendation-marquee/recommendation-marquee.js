@@ -10,7 +10,7 @@ import {
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import getEmitter from '../../scripts/events.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
+import ResponsivePillList from '../../scripts/responsive-pill-list/responsive-pill-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 
@@ -286,6 +286,7 @@ export default async function decorate(block) {
                     if (cardModel.id) {
                       dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
                     }
+                    cardModel.truncateDescription = false;
                     buildCard(contentDiv, wrapperDiv, cardModel);
                   }
                   cardModelsList.push(cardModel);
@@ -297,6 +298,7 @@ export default async function decorate(block) {
             if (renderCards) {
               cardDiv.innerHTML = '';
               if (cardData.id) {
+                cardData.truncateDescription = false;
                 dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardData.id);
               }
               buildCard(contentDiv, cardDiv, cardData);
@@ -714,7 +716,7 @@ export default async function decorate(block) {
       const defaultOption = defaultFilterOption ? convertToTitleCase(defaultFilterOption) : null;
 
       // eslint-disable-next-line no-new
-      new ResponsiveList({
+      new ResponsivePillList({
         wrapper: blockHeader,
         items: listItems,
         defaultSelected: defaultOption,
