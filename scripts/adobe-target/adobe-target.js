@@ -145,7 +145,9 @@ class AdobeTargetClient {
    */
   async mapComponentsToTarget() {
     const main = document.querySelector('main');
-    this.blocks = main.querySelectorAll('.recommended-content, .recently-reviewed, .recommendation-marquee');
+    this.blocks = main.querySelectorAll(
+      '.recommended-content:not(.recommended-content.coveo-only), .recently-reviewed, .recommendation-marquee:not(.recommendation-marquee.coveo-only)',
+    );
     const targetData = await this.getTargetData();
     const marqueeTargetData = await this.getTargetData(this.recommendationMarqueeScopeName);
     let blockRevisionNeeded = false;

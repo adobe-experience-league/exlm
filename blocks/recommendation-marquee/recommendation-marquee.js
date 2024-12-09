@@ -184,6 +184,9 @@ export default async function decorate(block) {
   const [coveoToggle, linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
     htmlElementData.reverse();
   const showOnlyCoveo = coveoToggle?.textContent?.toLowerCase() === 'true';
+  if (showOnlyCoveo) {
+    block.classList.add('coveo-only');
+  }
   const recommendedContentShimmer = `
   <div class="recommendation-marquee-header">${generateLoadingShimmer([[50, 14]])}</div>
   <div class="recommendation-marquee-description">${generateLoadingShimmer([[50, 10]])}</div>

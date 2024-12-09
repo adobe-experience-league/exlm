@@ -332,6 +332,9 @@ export default async function decorate(block) {
   const [coveoToggle, linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
     reversedDomElements;
   const showOnlyCoveo = coveoToggle?.textContent?.toLowerCase() === 'true';
+  if (showOnlyCoveo) {
+    block.classList.add('coveo-only');
+  }
   const targetCriteriaId = block.dataset.targetScope;
   const profileDataPromise = defaultProfileClient.getMergedProfile();
 
