@@ -178,7 +178,8 @@ export default class ResponsivePillList {
       if (moreOptionsOverlay.classList.contains('responsive-pill-list-option-overlay-visible')) {
         e.stopPropagation();
         moreOptionsButton.classList.add('responsive-pill-list-btn-active');
-        const rightEdge = moreOptionsOverlay.getBoundingClientRect().right;
+        const edgeScrollBuffer = 20;
+        const rightEdge = moreOptionsOverlay.getBoundingClientRect().right + edgeScrollBuffer;
         const delta = rightEdge > window.innerWidth ? rightEdge - window.innerWidth : 0;
         if (delta) {
           moreOptionsOverlay.style.left = `-${delta + 24}px`;
