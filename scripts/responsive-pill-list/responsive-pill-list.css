@@ -30,6 +30,7 @@
   border: 1px solid rgba(177, 177, 177, 0.6);
   box-shadow: 0px 1px 4px #00000026;
   cursor: default;
+  min-width: 120px;
 }
 
 .responsive-pill-list .responsive-pill-list-items-wrapper {
@@ -80,6 +81,7 @@
 
 .responsive-pill-list .responsive-pill-list-option-overlay li {
   width: calc(100% - 48px);
+  text-align: center;
 }
 
 .responsive-pill-list ul li {
