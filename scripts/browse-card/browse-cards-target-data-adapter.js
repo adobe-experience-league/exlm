@@ -18,9 +18,9 @@ const BrowseCardsTargetDataAdapter = (() => {
       ...data,
       badgeTitle: CONTENT_TYPES[contentTypeKey]?.LABEL,
       type: data?.contentType,
-      authorInfo: data?.authorInfo || {
-        name: [''],
-        type: [''],
+      authorInfo: {
+        name: data?.authorName ? [data?.authorName] : '',
+        type: data?.authorType ? [data?.authorType] : '',
       },
       product: solutions,
       tags: [],
