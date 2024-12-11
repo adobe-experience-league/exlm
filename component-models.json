@@ -3991,6 +3991,13 @@
         "value": "",
         "label": "Link URL",
         "description": "Sets the text url."
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "default-to-coveo",
+        "label": "Default to Coveo",
+        "description": "Show results from Coveo instead of Adobe Target"
       }
     ]
   },
@@ -4332,6 +4339,13 @@
         "value": "",
         "label": "Link URL",
         "description": "Sets the text url."
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "default-to-coveo",
+        "label": "Default to Coveo",
+        "description": "Show results from Coveo instead of Adobe Target"
       }
     ]
   },
