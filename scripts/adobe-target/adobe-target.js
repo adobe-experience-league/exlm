@@ -8,9 +8,9 @@ class AdobeTargetClient {
   constructor() {
     this.targetDataEventName = 'target-recs-ready';
     this.cookieConsentName = 'OptanonConsent';
-    if(isFeatureEnabled('browsecardv2')) {
-       this.recommendationMarqueeScopeName = 'exl-hp-auth-recs-1'; 
-    }    
+    if (isFeatureEnabled('browsecardv2')) {
+      this.recommendationMarqueeScopeName = 'exl-hp-auth-recs-1';
+    }
     this.targetCookieEnabled = this.checkIsTargetCookieEnabled();
     const main = document.querySelector('main');
     this.blocks = main.querySelectorAll('.recommended-content, .recently-reviewed, .recommendation-marquee');
