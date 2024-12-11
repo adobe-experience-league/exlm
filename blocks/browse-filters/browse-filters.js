@@ -173,9 +173,9 @@ function updateClearFilterStatus(block) {
   }, []);
   const hasActiveTopics = block.querySelector('.browse-topics') !== null && selectedTopics.length > 0;
   const browseFiltersContainer = document.querySelector('.browse-filters-container');
-  const browseFiltersSection = block.matches('.browse-filters-form') 
-  ? block 
-  : block.querySelector('.browse-filters-form');
+  const browseFiltersSection = block.matches('.browse-filters-form')
+    ? block
+    : block.querySelector('.browse-filters-form');
   if (!browseFiltersSection) {
     return;
   }
