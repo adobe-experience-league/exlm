@@ -200,7 +200,7 @@ function updateClearFilterStatus(block) {
   }, []);
   const hasActiveTopics = block.querySelector('.browse-topics') !== null && selectedTopics.length > 0;
   const browseFiltersContainer = document.querySelector('.browse-filters-container');
-  const browseFiltersSection = browseFiltersContainer.querySelector('.browse-filters-form');
+  const browseFiltersSection = block.querySelector('.browse-filters-form');
   if (!browseFiltersSection) {
     return;
   }
@@ -1395,7 +1395,7 @@ function decorateBrowseTopics(block) {
     div.append(headerDiv);
     div.append(contentDiv);
     /* Append browse topics right above the filters section */
-    const filtersFormEl = document.querySelector('.browse-filters-form');
+    const filtersFormEl = block.querySelector('.browse-filters-form');
     filtersFormEl.insertBefore(div, filtersFormEl.children[4]);
   }
   (solutionsElement.parentNode || solutionsElement).remove();
