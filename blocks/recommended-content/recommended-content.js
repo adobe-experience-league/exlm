@@ -13,6 +13,7 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 let placeholders = {};
 try {
@@ -364,8 +365,10 @@ export default async function decorate(block) {
             const { width } = entry.contentRect;
             if (Math.abs(entry.contentRect.width - previousWidth) > 1) {
               const optionType = block.querySelector('.browse-cards-block-content').dataset.selected;
-              // Calculate no. of cards that fits
-              calculateNumberOfCardsToRender(block);
+              if (isFeatureEnabled('browsecardv2')) {
+                // Calculate no. of cards that fits
+                calculateNumberOfCardsToRender(block);
+              }
               // Render the new set of cards
               fetchDataAndRenderBlock(optionType, { renderCards: true, createRow: true, clearAllRows: true });
               previousWidth = width;
@@ -532,8 +535,9 @@ export default async function decorate(block) {
         setCoveoCountAsBlockAttribute();
         block.style.display = 'block';
       }
-
-      calculateNumberOfCardsToRender(block);
+      if (isFeatureEnabled('browsecardv2')) {
+        calculateNumberOfCardsToRender(block);
+      }
 
       const sortByContent = sortEl?.innerText?.trim();
 
@@ -894,8 +898,10 @@ export default async function decorate(block) {
             }
             const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
             if (cardsCount !== 0) {
-              calculateNumberOfCardsOnResize(fetchDataAndRenderBlock);
-              createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock);
+              if (isFeatureEnabled('browsecardv2')) {
+                calculateNumberOfCardsOnResize(fetchDataAndRenderBlock);
+                createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock);
+              }
             }
             if (cardsCount === 0) {
               Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((shimmerEl) => {
