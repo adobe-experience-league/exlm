@@ -54,6 +54,7 @@ const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
 let tagsProxy;
 const buildCardsShimmer = new BrowseCardShimmer(getBrowseFiltersResultCount());
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
 function isArticleLandingPage() {
   return matchesAnyTheme(/^article-.*/);
@@ -200,7 +201,8 @@ function updateClearFilterStatus(block) {
   }, []);
   const hasActiveTopics = block.querySelector('.browse-topics') !== null && selectedTopics.length > 0;
   const browseFiltersContainer = document.querySelector('.browse-filters-container');
-  const browseFiltersSection = block.querySelector('.browse-filters-form');
+  const browseFiltersSection = browseFiltersContainer.querySelector('.browse-filters-form');
+  const browseFiltersSectionUE = block.querySelector('.browse-filters-form');
   if (!browseFiltersSection) {
     return;
   }
@@ -218,7 +220,7 @@ function updateClearFilterStatus(block) {
       coveoQueryConfig.fireSelection = false;
       dispatchCoveoQuery = true;
     }
-    hideSectionsWithinFilter(browseFiltersSection, true);
+    hideSectionsWithinFilter(UEAuthorMode ? browseFiltersSectionUE : browseFiltersSection, true);
   } else {
     dispatchCoveoQuery = true;
     clearFilterBtn.disabled = true;
@@ -226,7 +228,7 @@ function updateClearFilterStatus(block) {
     buildCardsShimmer.removeShimmer();
     browseFiltersContainer.classList.remove('browse-filters-full-container');
     selectionContainer.classList.remove('browse-filters-input-selected');
-    hideSectionsWithinFilter(browseFiltersSection, false);
+    hideSectionsWithinFilter(UEAuthorMode ? browseFiltersSectionUE : browseFiltersSection, false);
   }
   if (dispatchCoveoQuery) {
     dispatchCoveoAdvancedQuery(coveoQueryConfig);
