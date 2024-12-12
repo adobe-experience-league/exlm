@@ -241,8 +241,8 @@ class ProfileClient {
           .then((res) => res.json())
           .then(async (data) => {
             // eslint-disable-next-line import/no-cycle
-            const { default: showSignupDialog } = await import('../signup-flow/signup-flow-handler.js');
-            showSignupDialog();
+            const { default: initSignupFlowHandler } = await import('../signup-flow/signup-flow-handler.js');
+            initSignupFlowHandler();
             if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));
             resolve(structuredClone(data.data));
           })
