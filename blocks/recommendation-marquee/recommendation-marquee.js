@@ -181,8 +181,12 @@ export default async function decorate(block) {
   const placeholderPromise = fetchLanguagePlaceholders();
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
-  const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
+  const [coveoToggle, linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
     htmlElementData.reverse();
+  const showOnlyCoveo = coveoToggle?.textContent?.toLowerCase() === 'true';
+  if (showOnlyCoveo) {
+    block.classList.add('coveo-only');
+  }
   const recommendedContentShimmer = `
   <div class="recommendation-marquee-header">${generateLoadingShimmer([[50, 14]])}</div>
   <div class="recommendation-marquee-description">${generateLoadingShimmer([[50, 10]])}</div>
@@ -750,14 +754,18 @@ export default async function decorate(block) {
   targetEventEmitter.on('dataChange', async (data) => {
     const blockId = block.id;
     const { blockId: targetBlockId, scope } = data.value;
-    if (targetBlockId === blockId) {
+    if (targetBlockId === blockId && !showOnlyCoveo) {
       renderBlock({ targetSupport: true, targetCriteriaScopeId: scope });
     }
   });
 
   defaultAdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
     if (targetCriteriaId || !targetSupport) {
-      renderBlock({ targetSupport, targetCriteriaScopeId: targetCriteriaId });
+      if (showOnlyCoveo) {
+        renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
+      } else {
+        renderBlock({ targetSupport, targetCriteriaScopeId: targetCriteriaId });
+      }
     }
   });
 }
