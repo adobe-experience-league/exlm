@@ -8,7 +8,9 @@ class AdobeTargetClient {
   constructor() {
     this.targetDataEventName = 'target-recs-ready';
     this.cookieConsentName = 'OptanonConsent';
-    this.recommendationMarqueeScopeName = 'exl-hp-auth-recs-1';
+    if (isFeatureEnabled('browsecardv2')) {
+      this.recommendationMarqueeScopeName = 'exl-hp-auth-recs-1';
+    }
     this.targetCookieEnabled = this.checkIsTargetCookieEnabled();
     this.blocks = [];
     this.targetArray = [];
