@@ -27,10 +27,10 @@ import {
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery } from './browse-topics.js';
 import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
+import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery, coveoFacetMap } from './browse-topics.js';
 
 let placeholders = {};
 try {
@@ -41,14 +41,9 @@ try {
 }
 
 let isCoveoHeadlessLoaded = false;
+let coveoHeadlessPromise = null;
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
-const coveoFacetMap = {
-  el_role: 'headlessRoleFacet',
-  el_contenttype: 'headlessTypeFacet',
-  el_level: 'headlessExperienceFacet',
-  el_product: 'headlessProductFacet',
-  author_type: 'headlessAuthorTypeFacet',
-};
+
 const fragment = () => window.location.hash.slice(1);
 const dropdownOptions = [roleOptions, contentTypeOptions];
 const tags = [];
@@ -127,7 +122,7 @@ function renderPageNumbers() {
 async function appendTag(block, tag, source = 'checkboxChange') {
   const tagsContainer = block.querySelector('.browse-tags-container');
   const tagEl = htmlToElement(`
-    <button class="browse-tags" value="${tag.value}">
+    <button class="browse-tags" ${tag.id ? `data-type="${tag.id}"` : ''} value="${tag.value}">
       <span>${tag.name}</span>
       <span>: </span>
       <span>${tag.label}</span>
@@ -184,6 +179,23 @@ function hideSectionsBelowFilter(block, show) {
   }
 }
 
+function isFilterSelectionActive(block) {
+  if (!block) {
+    return false;
+  }
+  const searchEl = block.querySelector('.filter-input-search > .search-input');
+  const selectedTopics = Array.from(block.querySelectorAll('.browse-topics-item-active')).reduce((acc, curr) => {
+    const id = curr.dataset.topicname;
+    acc.push(id);
+    return acc;
+  }, []);
+  const hasActiveTopics = block.querySelector('.browse-topics') !== null && selectedTopics.length > 0;
+  if (hasActiveTopics || tagsProxy?.length !== 0 || searchEl.value) {
+    return true;
+  }
+  return false;
+}
+
 /**
  * Updates the status of the clear filter button and filter-related UI elements based on the current state.
  * It also dispatches a coveo query if necessary.
@@ -191,14 +203,7 @@ function hideSectionsBelowFilter(block, show) {
  * @param {HTMLElement} block
  */
 function updateClearFilterStatus(block) {
-  const searchEl = block.querySelector('.filter-input-search > .search-input');
   const clearFilterBtn = block.querySelector('.browse-filters-clear');
-  const selectedTopics = Array.from(block.querySelectorAll('.browse-topics-item-active')).reduce((acc, curr) => {
-    const id = curr.dataset.topicname;
-    acc.push(id);
-    return acc;
-  }, []);
-  const hasActiveTopics = block.querySelector('.browse-topics') !== null && selectedTopics.length > 0;
   const browseFiltersContainer = document.querySelector('.browse-filters-container');
   const browseFiltersSection = browseFiltersContainer.querySelector('.browse-filters-form');
   if (!browseFiltersSection) {
@@ -208,7 +213,8 @@ function updateClearFilterStatus(block) {
   const containsSelection = selectionContainer.classList.contains('browse-filters-input-selected');
   const coveoQueryConfig = { query: '', fireSelection: true };
   let dispatchCoveoQuery = false;
-  if (hasActiveTopics || tagsProxy.length !== 0 || searchEl.value) {
+  const isActive = isFilterSelectionActive(block);
+  if (isActive) {
     clearFilterBtn.disabled = false;
     hideSectionsBelowFilter(block, false);
     browseFiltersContainer.classList.add('browse-filters-full-container');
@@ -268,9 +274,13 @@ function uncheckAllFiltersFromDropdown(block) {
 /**
  * Handles the parsing and updating of filters, search terms, and pagination from the URL hash.
  */
-function handleUriHash() {
+function handleUriHash(onload) {
   const browseFiltersSection = document.querySelector('.browse-filters-form');
   if (!browseFiltersSection) {
+    return;
+  }
+  const userSelectionExists = isFilterSelectionActive(browseFiltersSection.parentElement);
+  if (userSelectionExists && onload === true) {
     return;
   }
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
@@ -309,6 +319,7 @@ function handleUriHash() {
             appendTag(
               browseFiltersSection,
               {
+                id: keyName,
                 name,
                 label,
                 value: facetValue,
@@ -528,7 +539,7 @@ function handleCoveoHeadlessSearch(
     buildCardsShimmer.removeShimmer();
   });
 
-  handleUriHash();
+  handleUriHash(true);
   renderPageNumbers();
 }
 
@@ -780,14 +791,7 @@ async function handleSearchEngineSubscription(block) {
   }
 }
 
-/**
- * Dynamically loads and initializes the Coveo Headless module.
- *
- * @param {HTMLElement} block - The container block element to initialize the Coveo Headless instance.
- * @returns {Promise<void>} - A promise that resolves when the Coveo Headless initialization is complete.
- *
- */
-async function loadCoveoHeadless(block) {
+async function loadCoveoHeadlessScript(block) {
   const { default: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
   if (initiateCoveoHeadlessSearch) {
     isCoveoHeadlessLoaded = true;
@@ -802,7 +806,7 @@ async function loadCoveoHeadless(block) {
         (data) => {
           handleCoveoHeadlessSearch(block, data);
           const tagsContainerEl = block.querySelector('.browse-tags-container');
-          if (tagsContainerEl) {
+          if (tagsContainerEl && !tagsContainerEl.querySelector(`[data-icon-name="close"]`)) {
             decorateIcons(tagsContainerEl);
           }
         },
@@ -815,6 +819,21 @@ async function loadCoveoHeadless(block) {
         updateClearFilterStatus(block);
       });
   }
+}
+
+/**
+ * Dynamically loads and initializes the Coveo Headless module.
+ *
+ * @param {HTMLElement} block - The container block element to initialize the Coveo Headless instance.
+ * @returns {Promise<void>} - A promise that resolves when the Coveo Headless initialization is complete.
+ *
+ */
+async function loadCoveoHeadless(block) {
+  if (coveoHeadlessPromise) {
+    return coveoHeadlessPromise;
+  }
+  coveoHeadlessPromise = loadCoveoHeadlessScript(block);
+  return coveoHeadlessPromise;
 }
 
 /**
@@ -1055,6 +1074,7 @@ function handleCheckboxClick(block, el, options) {
     if (isChecked) {
       options.selected += 1;
       appendTag(block, {
+        id: filterType,
         name,
         label,
         value,
@@ -1373,6 +1393,9 @@ function decorateBrowseTopics(block) {
         } else {
           e.target.classList.add('browse-topics-item-active');
         }
+        if (!isCoveoHeadlessLoaded) {
+          loadCoveoHeadless(block);
+        }
         handleTopicSelection(contentDiv);
         updateClearFilterStatus(browseFiltersSection);
       }
@@ -1389,6 +1412,9 @@ function decorateBrowseTopics(block) {
             element.classList.add('browse-topics-item-active');
           }
         });
+        if (!isCoveoHeadlessLoaded) {
+          loadCoveoHeadless(block);
+        }
         handleTopicSelection(contentDiv);
       }
     }
