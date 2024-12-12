@@ -754,7 +754,7 @@ export default async function decorate(block) {
   targetEventEmitter.on('dataChange', async (data) => {
     const blockId = block.id;
     const { blockId: targetBlockId, scope } = data.value;
-    if (targetBlockId === blockId && showOnlyCoveo) {
+    if (targetBlockId === blockId && !showOnlyCoveo) {
       renderBlock({ targetSupport: true, targetCriteriaScopeId: scope });
     }
   });
