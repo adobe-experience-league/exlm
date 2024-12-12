@@ -8,7 +8,6 @@ import csrf from './csrf.js';
 
 const { profileUrl, JWTTokenUrl, ppsOrigin, ims, khorosProfileDetailsUrl } = getConfig();
 
-const postSignInStreamKey = 'POST_SIGN_IN_STREAM';
 const override = /^(recommended|votes)$/;
 
 /**
@@ -24,7 +23,7 @@ export async function isSignedInUser() {
 }
 
 export async function signOut() {
-  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile', postSignInStreamKey].forEach((key) =>
+  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile'].forEach((key) =>
     sessionStorage.removeItem(key),
   );
   window.adobeIMS?.signOut();
@@ -241,12 +240,9 @@ class ProfileClient {
         })
           .then((res) => res.json())
           .then(async (data) => {
-            if (!sessionStorage.getItem(postSignInStreamKey)) {
-              // eslint-disable-next-line import/no-cycle
-              const { default: showSignupDialog } = await import('../signup-flow/signup-flow-handler.js');
-              showSignupDialog();
-              sessionStorage.setItem(postSignInStreamKey, 'true');
-            }
+            // eslint-disable-next-line import/no-cycle
+            const { default: showSignupDialog } = await import('../signup-flow/signup-flow-handler.js');
+            showSignupDialog();
             if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));
             resolve(structuredClone(data.data));
           })
