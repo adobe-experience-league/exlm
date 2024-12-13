@@ -12,8 +12,7 @@ class AdobeTargetClient {
       this.recommendationMarqueeScopeName = 'exl-hp-auth-recs-1';
     }
     this.targetCookieEnabled = this.checkIsTargetCookieEnabled();
-    const main = document.querySelector('main');
-    this.blocks = main.querySelectorAll('.recommended-content, .recently-reviewed, .recommendation-marquee');
+    this.blocks = [];
     this.targetArray = [];
     this.currentItem = null;
   }
@@ -126,9 +125,7 @@ class AdobeTargetClient {
   getTargetData(criteria) {
     return new Promise((resolve) => {
       if (!criteria) {
-        const data = window.exlm?.targetData?.length
-          ? window.exlm.targetData
-          : window.exlm?.recommendationMarqueeTargetData;
+        const data = window.exlm?.targetData;
         resolve(data);
       } else if (criteria === this.recommendationMarqueeScopeName) {
         const [data] = window.exlm.recommendationMarqueeTargetData || [];
@@ -147,6 +144,10 @@ class AdobeTargetClient {
    * It determines whether to update, replace, or add new blocks to the DOM.
    */
   async mapComponentsToTarget() {
+    const main = document.querySelector('main');
+    this.blocks = main.querySelectorAll(
+      '.recommended-content:not(.recommended-content.coveo-only), .recently-reviewed, .recommendation-marquee:not(.recommendation-marquee.coveo-only)',
+    );
     const targetData = await this.getTargetData();
     const marqueeTargetData = await this.getTargetData(this.recommendationMarqueeScopeName);
     let blockRevisionNeeded = false;
