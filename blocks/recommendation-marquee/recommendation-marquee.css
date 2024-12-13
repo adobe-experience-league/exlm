@@ -206,6 +206,14 @@
   height: 314px;
 }
 
+.recommendation-marquee.block .browse-cards-block-content > div .browse-card .user-actions .action-tooltip {
+  left: 100%;
+  transform: translateX(-20%);
+}
+.recommendation-marquee.block .browse-cards-block-content > div .browse-card .user-actions .action-tooltip::after {
+  left: 10%;
+}
+
 @media (min-width: 420px) {
   .recommendation-marquee.block .custom-filter-dropdown {
     min-width: 360px;
