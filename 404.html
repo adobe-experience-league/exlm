@@ -49,10 +49,7 @@
       };
 
       window.addEventListener('load', () => {
-        sampleRUM('404', {
-          source: document.referrer,
-          target: window.location.href,
-        });
+        sampleRUM('404', { source: document.referrer });
         fetchAndParseHTML('main');
       });
     </script>
