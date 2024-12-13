@@ -34,7 +34,7 @@ function subtractMonths(date, months) {
  *   modal should be re-displayed based on the `modalReDisplayDuration` value (in months).
  *
  */
-export default async function showSignupDialog() {
+export default async function initSignupFlowHandler() {
   if (!isSignedInUser()) {
     return;
   }
