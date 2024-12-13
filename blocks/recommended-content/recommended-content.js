@@ -989,11 +989,15 @@ export default async function decorate(block) {
     }
   });
 
-  defaultAdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
-    if (showOnlyCoveo || !targetSupport) {
-      renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
-    } else if (targetCriteriaId) {
-      renderBlock({ targetSupport, targetCriteriaScopeId: targetCriteriaId });
-    }
-  });
+  if (showOnlyCoveo) {
+    renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
+  } else {
+    defaultAdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
+      if (!targetSupport) {
+        renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
+      } else if (targetCriteriaId) {
+        renderBlock({ targetSupport, targetCriteriaScopeId: targetCriteriaId });
+      }
+    });
+  }
 }
