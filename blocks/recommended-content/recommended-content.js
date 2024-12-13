@@ -990,12 +990,10 @@ export default async function decorate(block) {
   });
 
   defaultAdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
-    if (targetCriteriaId || !targetSupport) {
-      if (showOnlyCoveo) {
-        renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
-      } else {
-        renderBlock({ targetSupport, targetCriteriaScopeId: targetCriteriaId });
-      }
+    if (showOnlyCoveo || !targetSupport) {
+      renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
+    } else if (targetCriteriaId) {
+      renderBlock({ targetSupport, targetCriteriaScopeId: targetCriteriaId });
     }
   });
 }

@@ -125,9 +125,7 @@ class AdobeTargetClient {
   getTargetData(criteria) {
     return new Promise((resolve) => {
       if (!criteria) {
-        const data = window.exlm?.targetData?.length
-          ? window.exlm.targetData
-          : window.exlm?.recommendationMarqueeTargetData;
+        const data = window.exlm?.targetData;
         resolve(data);
       } else if (criteria === this.recommendationMarqueeScopeName) {
         const [data] = window.exlm.recommendationMarqueeTargetData || [];
