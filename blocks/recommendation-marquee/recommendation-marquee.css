@@ -96,7 +96,6 @@
 
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card {
   border-radius: 16px;
-  overflow: hidden;
   box-shadow: var(--box-shadow-2);
 }
 
