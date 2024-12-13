@@ -3,6 +3,7 @@ export const CUSTOM_CONTEXT_LIST = ['entitlements', 'role', 'interests', 'indust
 export const COVEO_SEARCH_CUSTOM_EVENTS = {
   PREPROCESS: 'PREPROCESS_COVEO_REQUEST',
   PROCESS_SEARCH_RESPONSE: 'PROCESS_SEARCH_RESPONSE',
+  READY: 'COVEO_SEARCH_READY',
 };
 
 export const getUserData = (key) => {
