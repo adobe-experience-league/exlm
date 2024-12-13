@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { loadCSS} from './lib-franklin.js';
+import { loadCSS } from './lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 import loadGainsight from './gainsight/gainsight.js';
 import loadQualtrics from './qualtrics.js';
