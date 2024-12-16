@@ -8,7 +8,7 @@ import csrf from './csrf.js';
 
 const { profileUrl, JWTTokenUrl, ppsOrigin, ims, khorosProfileDetailsUrl } = getConfig();
 
-const signupModelSeenKey = 'signupModelSeen';
+const signupModalSeenKey = 'signupModalSeen';
 const override = /^(recommended|votes)$/;
 
 /**
@@ -24,7 +24,7 @@ export async function isSignedInUser() {
 }
 
 export async function signOut() {
-  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile', signupModelSeenKey].forEach((key) =>
+  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile', signupModalSeenKey].forEach((key) =>
     sessionStorage.removeItem(key),
   );
   window.adobeIMS?.signOut();
@@ -240,11 +240,11 @@ class ProfileClient {
         })
           .then((res) => res.json())
           .then(async (data) => {
-            if (!sessionStorage.getItem(signupModelSeenKey)) {
+            if (!sessionStorage.getItem(signupModalSeenKey)) {
               // eslint-disable-next-line import/no-cycle
               const { default: initSignupFlowHandler } = await import('../signup-flow/signup-flow-handler.js');
               initSignupFlowHandler();
-              sessionStorage.setItem(signupModelSeenKey, 'true');
+              sessionStorage.setItem(signupModalSeenKey, 'true');
             }
             if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));
             resolve(structuredClone(data.data));
