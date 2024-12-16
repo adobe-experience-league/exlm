@@ -181,12 +181,16 @@ export default async function decorate(block) {
   const placeholderPromise = fetchLanguagePlaceholders();
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
-  const [coveoToggle, linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
+
+  const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...restOfEl] =
     htmlElementData.reverse();
+
   const showOnlyCoveo = coveoToggle?.textContent?.toLowerCase() === 'true';
   if (showOnlyCoveo) {
     block.classList.add('coveo-only');
   }
+
+  const [headingElement, descriptionElement, ...contentTypesEl] = restOfEl.reverse();
   const recommendedContentShimmer = `
   <div class="recommendation-marquee-header">${generateLoadingShimmer([[50, 14]])}</div>
   <div class="recommendation-marquee-description">${generateLoadingShimmer([[50, 10]])}</div>
@@ -203,9 +207,6 @@ export default async function decorate(block) {
 
   const headerContainer = block.querySelector('.recommendation-marquee-header');
   const descriptionContainer = block.querySelector('.recommendation-marquee-description');
-
-  headerContainer.style.display = 'none';
-  descriptionContainer.style.display = 'none';
 
   const targetCriteriaId = block.dataset.targetScope;
   const profileDataPromise = defaultProfileClient.getMergedProfile();
@@ -382,14 +383,18 @@ export default async function decorate(block) {
       }
 
       if (!(targetSupport && targetCriteriaScopeId)) {
-        // headerContainer.innerHTML = headingElement.innerText;
-        // descriptionContainer.innerHTML = descriptionElement.innerText;
+        headerContainer.innerHTML = headingElement.innerHTML;
+        descriptionContainer.innerHTML = descriptionElement.innerHTML;
         setCoveoCountAsBlockAttribute();
         block.style.display = 'block';
       }
 
       const sortByContent = sortEl?.innerText?.trim();
-      const contentTypes = contentTypesEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse() || [];
+      const contentTypes =
+        contentTypesEl
+          ?.reverse()
+          ?.map((contentTypeEL) => contentTypeEL?.innerText?.trim())
+          .reverse() || [];
       const contentTypeIsEmpty = contentTypes?.length === 0;
       const numberOfResults = contentTypeIsEmpty ? DEFAULT_NUM_CARDS : 1;
 
