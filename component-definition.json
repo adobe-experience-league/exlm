@@ -933,7 +933,8 @@
                   "name": "Recommendation Marquee",
                   "model": "recommendation-marquee",
                   "roles": ["profile_context"],
-                  "filterProductBy": "all_adobe_products"
+                  "filterProductBy": "all_adobe_products",
+                  "headingType": "h2"
                 }
               }
             }
