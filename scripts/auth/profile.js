@@ -8,6 +8,7 @@ import csrf from './csrf.js';
 
 const { profileUrl, JWTTokenUrl, ppsOrigin, ims, khorosProfileDetailsUrl } = getConfig();
 
+const modalSeenKey = 'modal-seen';
 const override = /^(recommended|votes)$/;
 
 /**
@@ -23,7 +24,7 @@ export async function isSignedInUser() {
 }
 
 export async function signOut() {
-  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile'].forEach((key) =>
+  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile', modalSeenKey].forEach((key) =>
     sessionStorage.removeItem(key),
   );
   window.adobeIMS?.signOut();
@@ -55,7 +56,6 @@ class ProfileClient {
     this.url = url;
     this.jwt = loadJWT();
     this.isSignedIn = isSignedInUser();
-    this.isModalSeen = false;
     this.store = new PromiseSessionStore();
   }
 
@@ -240,11 +240,11 @@ class ProfileClient {
         })
           .then((res) => res.json())
           .then(async (data) => {
-            if (!this.isModalSeen) {
+            if (!sessionStorage.getItem(modalSeenKey)) {
               // eslint-disable-next-line import/no-cycle
               const { default: initSignupFlowHandler } = await import('../signup-flow/signup-flow-handler.js');
               initSignupFlowHandler();
-              this.isModalSeen = true;
+              sessionStorage.setItem(modalSeenKey, 'true');
             }
             if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));
             resolve(structuredClone(data.data));
