@@ -40,6 +40,7 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
+const SCROLL_ADJUSTMENT_OFFSET = -12;
 let isCoveoHeadlessLoaded = false;
 let coveoHeadlessPromise = null;
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
@@ -759,7 +760,7 @@ async function handleSearchEngineSubscription(block) {
       browseFilterForm.classList.add('is-result');
       filterResultsEl.classList.remove('no-results');
       browseFilterForm.scrollIntoView({ behavior: 'auto' });
-      window.scrollBy({ top: -12 });
+      window.scrollBy({ top: SCROLL_ADJUSTMENT_OFFSET });
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log('*** failed to create card because of the error:', err);
