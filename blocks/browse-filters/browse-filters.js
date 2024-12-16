@@ -40,6 +40,7 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
+const SCROLL_ADJUSTMENT_OFFSET = -12;
 let isCoveoHeadlessLoaded = false;
 let coveoHeadlessPromise = null;
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
@@ -205,7 +206,9 @@ function isFilterSelectionActive(block) {
 function updateClearFilterStatus(block) {
   const clearFilterBtn = block.querySelector('.browse-filters-clear');
   const browseFiltersContainer = document.querySelector('.browse-filters-container');
-  const browseFiltersSection = browseFiltersContainer.querySelector('.browse-filters-form');
+  const browseFiltersSection = block.matches('.browse-filters-form')
+    ? block
+    : block.querySelector('.browse-filters-form');
   if (!browseFiltersSection) {
     return;
   }
@@ -718,7 +721,7 @@ function generateAnalyticsFilters(block, totalCount) {
  * @param {HTMLElement} block - The container block element for managing the browse filters.
  */
 async function handleSearchEngineSubscription(block) {
-  const browseFilterForm = document.querySelector(CLASS_BROWSE_FILTER_FORM);
+  const browseFilterForm = (block || document).querySelector(CLASS_BROWSE_FILTER_FORM);
   const filterResultsEl = browseFilterForm?.querySelector('.browse-filters-results');
   if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
     return;
@@ -756,6 +759,8 @@ async function handleSearchEngineSubscription(block) {
       });
       browseFilterForm.classList.add('is-result');
       filterResultsEl.classList.remove('no-results');
+      browseFilterForm.scrollIntoView({ behavior: 'auto' });
+      window.scrollBy({ top: SCROLL_ADJUSTMENT_OFFSET });
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log('*** failed to create card because of the error:', err);
@@ -1421,7 +1426,7 @@ function decorateBrowseTopics(block) {
     div.append(headerDiv);
     div.append(contentDiv);
     /* Append browse topics right above the filters section */
-    const filtersFormEl = document.querySelector('.browse-filters-form');
+    const filtersFormEl = block.querySelector('.browse-filters-form');
     filtersFormEl.insertBefore(div, filtersFormEl.children[4]);
   }
   (solutionsElement.parentNode || solutionsElement).remove();

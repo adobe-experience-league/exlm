@@ -1,5 +1,11 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
+.recommendation-marquee-header:where(h1, h2, h3, h4, h5, h6) {
+  color: var(--spectrum-gray-800);
+  margin-bottom: 16px;
+  margin-top: 0px;
+}
+
 .recommendation-marquee-header {
   font-size: var(--spectrum-font-size-700);
   line-height: 35px;
@@ -96,7 +102,6 @@
 
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card {
   border-radius: 16px;
-  overflow: hidden;
   box-shadow: var(--box-shadow-2);
 }
 
@@ -205,6 +210,14 @@
 .recommendation-marquee.block .browse-cards-block-content .browse-card .browse-card-figure:hover img {
   width: 100%;
   height: 314px;
+}
+
+.recommendation-marquee.block .browse-cards-block-content > div .browse-card .user-actions .action-tooltip {
+  left: 100%;
+  transform: translateX(-20%);
+}
+.recommendation-marquee.block .browse-cards-block-content > div .browse-card .user-actions .action-tooltip::after {
+  left: 10%;
 }
 
 @media (min-width: 420px) {
@@ -331,6 +344,13 @@
     line-clamp: 4;
     -webkit-line-clamp: 4;
     max-height: 72px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .recommendation-marquee-header,
+  .recommendation-marquee-description {
+    max-width: 645px;
   }
 }
 
