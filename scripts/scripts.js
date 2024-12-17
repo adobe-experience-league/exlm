@@ -912,6 +912,7 @@ async function showSignupDialog() {
   if (!isProd && urlParams.get('signup-wizard') === 'on') {
     // eslint-disable-next-line import/no-cycle
     import('./signup-flow/signup-flow-dialog.js').then((mod) => mod.default.init());
+    return;
   }
 
   const { default: initSignupFlowHandler } = await import('./signup-flow/signup-flow-handler.js');
