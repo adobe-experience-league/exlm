@@ -1,10 +1,11 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, decorateExternalLinks, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import { COVEO_SORT_OPTIONS, COVEO_DATE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
+import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { formatTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
+import { createDateCriteria } from '../../scripts/utils/date-utils.js';
 
 const lang = document.querySelector('html').lang || 'en';
 
@@ -38,59 +39,6 @@ export default async function decorate(block) {
   let viewLink = '';
   let tabList = '';
   let viewLinkURLElement = '';
-
-  /**
-   * Formats a date object into a string with the format "YYYY/MM/DD@HH:MM:SS".
-   * @param {Date} dateObj - The date object to be formatted.
-   * @returns {string} The formatted date string.
-   */
-  const getFormattedDate = (dateObj) => {
-    const year = dateObj.getUTCFullYear();
-    const month = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(dateObj.getUTCDate()).padStart(2, '0');
-    const hours = String(dateObj.getUTCHours()).padStart(2, '0');
-    const minutes = String(dateObj.getUTCMinutes()).padStart(2, '0');
-    const seconds = String(dateObj.getUTCSeconds()).padStart(2, '0');
-
-    return `${year}/${month}/${day}@${hours}:${minutes}:${seconds}`;
-  };
-
-  /**
-   * Calculates the date range between two dates and returns it in Coveo-compatible format.
-   * @param {Date} startDate - The start date of the range.
-   * @param {Date} endDate - The end date of the range.
-   * @returns {string} The date range string in Coveo-compatible format.
-   */
-  const getDateRange = (startDate, endDate) => `${getFormattedDate(startDate)}..${getFormattedDate(endDate)}`;
-
-  /**
-   * Constructs date criteria based on a list of date options.
-   * @returns {Array} Array of date criteria.
-   */
-  const createDateCriteria = () => {
-    const dateCriteria = [];
-    const dateOptions = {
-      [COVEO_DATE_OPTIONS.WITHIN_ONE_MONTH]: { monthsAgo: 1 },
-      [COVEO_DATE_OPTIONS.WITHIN_SIX_MONTHS]: { monthsAgo: 6 },
-      [COVEO_DATE_OPTIONS.WITHIN_ONE_YEAR]: { yearsAgo: 1 },
-      [COVEO_DATE_OPTIONS.MORE_THAN_ONE_YEAR_AGO]: { yearsAgo: 50 }, // Assuming 50 years ago as the "more than one year ago" option
-    };
-    dateList.forEach((date) => {
-      if (dateOptions[date]) {
-        const { monthsAgo, yearsAgo } = dateOptions[date];
-        const currentDate = new Date();
-        const startDate = new Date();
-        startDate.setMonth(startDate.getMonth() - (monthsAgo || 0));
-        startDate.setFullYear(startDate.getFullYear() - (yearsAgo || 0));
-        if (date === COVEO_DATE_OPTIONS.MORE_THAN_ONE_YEAR_AGO) {
-          // For "MORE_THAN_ONE_YEAR_AGO", adjust startDate by adding one more year
-          currentDate.setFullYear(currentDate.getFullYear() - 1);
-        }
-        dateCriteria.push(getDateRange(startDate, currentDate));
-      }
-    });
-    return dateCriteria;
-  };
 
   // Clearing the block's content and applying CSS class
   block.innerHTML = '';
@@ -145,7 +93,7 @@ export default async function decorate(block) {
       contentType: contentType && contentType.split(','),
       sortCriteria,
       numberOfResults,
-      dateCriteria: dateList && createDateCriteria(),
+      dateCriteria: dateList && createDateCriteria(dateList),
     };
 
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(params);
