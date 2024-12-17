@@ -80,7 +80,7 @@ const getBookmarkId = ({ id, viewLink, contentType }) => {
   return viewLink ? new URL(viewLink).pathname : '';
 };
 
-const formatDate = (dateString, timeString, contentType) => {
+const formatDate = (dateString) => {
   const date = new Date(dateString);
   const optionsDate = { month: 'short', day: '2-digit' };
   const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' };
@@ -91,8 +91,6 @@ const formatDate = (dateString, timeString, contentType) => {
   const [time, period] = formattedTime.split(' ');
   const formattedTimeWithoutZone = `${time} ${period}`;
   // Return date and time without timezone
-  if (contentType === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY) return `${timeString} | ${dateString}`;
-
   return `${formattedDate} | ${formattedTimeWithoutZone}`;
 };
 
@@ -116,7 +114,11 @@ const buildEventContent = ({ event, contentType, cardContent, card }) => {
     <div class="browse-card-event-info">
         <span class="icon icon-time"></span>
         <div class="browse-card-event-time">
-            <h6>${formatDate(time, date, contentType)}</h6>
+        ${
+          contentType === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY
+            ? `<h6>${date} | ${time}</h6>`
+            : `<h6>${formatDate(time)}</h6>`
+        }
         </div>
     </div>
   `);
