@@ -902,14 +902,20 @@ export async function loadArticles() {
   }
 }
 
-function showSignupDialog() {
-  const urlParams = new URLSearchParams(window.location.search);
+async function showSignupDialog() {
   const isSignedIn = window?.adobeIMS?.isSignedInUser();
-  const { isProd } = getConfig();
-  if (isSignedIn && !isProd && urlParams.get('signup-wizard') === 'on') {
+  if (!isSignedIn) return;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const { isProd, signUpFlowConfigDate, modalReDisplayDuration } = getConfig();
+
+  if (!isProd && urlParams.get('signup-wizard') === 'on') {
     // eslint-disable-next-line import/no-cycle
     import('./signup-flow/signup-flow-dialog.js').then((mod) => mod.default.init());
   }
+
+  const { default: initSignupFlowHandler } = await import('./signup-flow/signup-flow-handler.js');
+  await initSignupFlowHandler(signUpFlowConfigDate, modalReDisplayDuration);
 }
 
 /**
@@ -1167,7 +1173,7 @@ async function loadPage() {
   loadArticles();
   await loadLazy(document);
   loadDelayed();
-  showSignupDialog();
+  await showSignupDialog();
 
   if (isDocPage) {
     // load prex/next buttons

@@ -67,12 +67,12 @@ export default class SignupFlowDialog {
     Promise.all([
       fetchLanguagePlaceholders(lang),
       loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow-dialog.css`),
-      this.addModalSeenInteraction(),
     ]).then(([placeholders]) => {
       this.placeholders = placeholders;
       this.lang = lang;
       this.createSignupDialog();
       this.initNavigation();
+      this.addModalSeenInteraction();
     });
   }
 
