@@ -88,7 +88,7 @@ const BrowseCardsDelegate = (() => {
   const handleCoveoService = async () => {
     const { contentType } = param;
 
-    if (contentType.includes(CONTENT_TYPES.COMMUNITY.MAPPING_KEY) && !param.dateCriteria) {
+    if (contentType?.includes(CONTENT_TYPES.COMMUNITY.MAPPING_KEY) && !param?.dateCriteria) {
       param.dateCriteria = createDateCriteria(['within_one_year']);
     }
 
