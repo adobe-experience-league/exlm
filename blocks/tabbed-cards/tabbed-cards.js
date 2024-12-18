@@ -4,8 +4,7 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import { formatTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
-import { createDateCriteria } from '../../scripts/utils/date-utils.js';
+import { createDateCriteria, formatTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
 
 const lang = document.querySelector('html').lang || 'en';
 

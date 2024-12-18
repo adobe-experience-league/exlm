@@ -9,7 +9,7 @@ import PathsDataService from '../data-service/paths-data-service.js';
 import { URL_SPECIAL_CASE_LOCALES, getConfig, getPathDetails } from '../scripts.js';
 import { getExlPipelineDataSourceParams } from '../data-service/coveo/coveo-exl-pipeline-helpers.js';
 import { RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
-import { createDateCriteria } from '../utils/date-utils.js';
+import { createDateCriteria } from './browse-card-utils.js';
 
 const { liveEventsUrl, adlsUrl, pathsUrl } = getConfig();
 

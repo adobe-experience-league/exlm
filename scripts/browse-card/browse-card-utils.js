@@ -1,5 +1,7 @@
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
+import { COVEO_DATE_OPTIONS } from './browse-cards-constants.js';
 import { getConfig } from '../scripts.js';
+import { getDateRange } from '../utils/date-utils.js';
 
 const domParser = new DOMParser();
 const { cdnOrigin } = getConfig();
@@ -159,6 +161,35 @@ export const removeProductDuplicates = (products) => {
     }
   }
   return filteredProducts;
+};
+
+/**
+ * Constructs date criteria based on a list of date options.
+ * @returns {Array} Array of date criteria.
+ */
+export const createDateCriteria = (dateList) => {
+  const dateCriteria = [];
+  const dateOptions = {
+    [COVEO_DATE_OPTIONS.WITHIN_ONE_MONTH]: { monthsAgo: 1 },
+    [COVEO_DATE_OPTIONS.WITHIN_SIX_MONTHS]: { monthsAgo: 6 },
+    [COVEO_DATE_OPTIONS.WITHIN_ONE_YEAR]: { yearsAgo: 1 },
+    [COVEO_DATE_OPTIONS.MORE_THAN_ONE_YEAR_AGO]: { yearsAgo: 50 }, // Assuming 50 years ago as the "more than one year ago" option
+  };
+  dateList.forEach((date) => {
+    if (dateOptions[date]) {
+      const { monthsAgo, yearsAgo } = dateOptions[date];
+      const currentDate = new Date();
+      const startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - (monthsAgo || 0));
+      startDate.setFullYear(startDate.getFullYear() - (yearsAgo || 0));
+      if (date === COVEO_DATE_OPTIONS.MORE_THAN_ONE_YEAR_AGO) {
+        // For "MORE_THAN_ONE_YEAR_AGO", adjust startDate by adding one more year
+        currentDate.setFullYear(currentDate.getFullYear() - 1);
+      }
+      dateCriteria.push(getDateRange(startDate, currentDate));
+    }
+  });
+  return dateCriteria;
 };
 
 // Function to convert a string to title case
