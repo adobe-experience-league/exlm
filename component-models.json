@@ -2832,6 +2832,13 @@
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl/experience-level",
         "description": "Sets the level(s) in page meta."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Perspective Backgroud Image Name",
+        "description": "Sets the name of the background image for Perspective page."
       }
     ]
   },
