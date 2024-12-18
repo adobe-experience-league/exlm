@@ -166,7 +166,6 @@ export default async function ArticleMarquee(block) {
             <div class="author-details"></div>
           </div>
         </div>
-        <div class="article-marquee-large-bg"></div>
     `);
 
     const infoContainer = articleDetails.querySelector('.article-marquee-info');
@@ -179,6 +178,7 @@ export default async function ArticleMarquee(block) {
     });
 
     block.append(articleDetails);
+    block.insertAdjacentHTML('beforeend', '<div class="article-marquee-large-bg"></div>');
 
     if (Array.isArray(links) && links.length > 0) {
       const { fetchAuthorBio } = await import('../../scripts/utils/author-utils.js');
