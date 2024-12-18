@@ -2836,9 +2836,9 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "bg-name",
-        "label": "Perspective Backgroud Image Name",
-        "description": "Sets the name of the background image for Perspective page."
+        "name": "php-bg-image-name",
+        "label": "Personalized Home Page Backgroud Image Name",
+        "description": "Sets the name of the background image for Personalized Home Page."
       }
     ]
   },
