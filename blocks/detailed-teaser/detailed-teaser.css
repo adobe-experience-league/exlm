@@ -101,16 +101,12 @@
 /* the main title */
 /* stylelint-disable-next-line no-descending-specificity */
 .detailed-teaser.block > .foreground > .text > .title {
-  font-size: 24px;
-  font-weight: var(--font-weight-700);
-  line-height: 27px;
   color: var(--non-spectrum-custom-dark);
 }
 
 .detailed-teaser.block > .foreground > .text > .title :where(h1, h2, h3, h4, h5, h6) {
   margin: 0;
   color: inherit;
-  font: inherit;
 }
 
 /* description */
@@ -220,11 +216,6 @@
   body[class^='browse-'] .detailed-teaser.block > .foreground > .text,
   body[class^='article-'] .detailed-teaser.block > .foreground > .text {
     min-width: unset;
-  }
-
-  .detailed-teaser.block > .foreground > .text > .title {
-    font-size: 32px;
-    font-weight: 800;
   }
 
   /* spacer/subject image */
