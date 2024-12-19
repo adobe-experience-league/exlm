@@ -262,18 +262,10 @@ body.profile
     margin-top: 28px;
   }
 
-  body.profile-home-page
-    .section:not(
-      .sign-up-flow-section,
-      .profile-rail-section,
-      .personalized-section,
-      .personalized-content-placeholder-container
-    ):first-child {
+  body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):first-of-type > :first-child {
     max-width: calc(100% - 145px);
-  }
-
-  body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):nth-child(2) {
-    max-width: calc(100% - 145px);
+    margin-left: 0;
+    margin-right: 0;
   }
 
   body.profile div.profile-rail-wrapper {
