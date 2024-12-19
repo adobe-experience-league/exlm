@@ -1,16 +1,157 @@
-import { htmlToElement } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
-import Swiper from '../../scripts/swiper/swiper.js';
-import { decorateIcons } from '../../scripts/lib-franklin.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import getEmitter from '../../scripts/events.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 let displayBlock = false;
+
+let DEFAULT_NUM_CARDS = 4;
+let resizeObserved;
+let cardsWidth;
+let cardsGap;
+const seeMoreConfig = {
+  minWidth: 1024,
+  noOfRows: 4,
+};
+
+/**
+ * Debounces a function call to limit its execution rate.
+ * @param {number} ms - The debounce delay in milliseconds.
+ * @param {Function} fn - The function to debounce.
+ * @returns {Function} - The debounced function.
+ */
+// eslint-disable-next-line class-methods-use-this
+function debounce(func, delay) {
+  let timeoutId;
+
+  return function debounced(...args) {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
+}
+
+function resizeObserverHandler(callback, block) {
+  const debouncedCallback = debounce(callback, 500);
+  const wrapperResizeObserver = new ResizeObserver(debouncedCallback);
+  wrapperResizeObserver.observe(block);
+}
+
+function calculateNumberOfCardsToRender(container) {
+  if (window.innerWidth < seeMoreConfig.minWidth) {
+    DEFAULT_NUM_CARDS = 4;
+  } else {
+    let cardsContainer = container.querySelector('.card-wrapper');
+    if (!cardsContainer) cardsContainer = container.querySelector('.browse-card-shimmer');
+    let containerWidth = container.offsetWidth;
+
+    if (!containerWidth) {
+      const section = container.closest('.section');
+      if (section) {
+        const originalDisplay = section.style.display;
+        section.style.display = 'block';
+        section.style.visibility = 'hidden';
+        containerWidth = container.offsetWidth;
+        section.style.display = originalDisplay;
+        section.style.visibility = 'visible';
+      }
+    }
+
+    if (!cardsWidth) cardsWidth = cardsContainer?.offsetWidth || 256;
+    if (!cardsGap) cardsGap = parseInt(getComputedStyle(cardsContainer).gap, 10) || 24;
+    const visibleItems = Math.floor((containerWidth + cardsGap) / (cardsWidth + cardsGap));
+    if (visibleItems) {
+      DEFAULT_NUM_CARDS = visibleItems;
+    }
+  }
+}
+
+function createSeeMoreButton(block, contentDiv, addNewRowOfCards, cardData) {
+  if (!block.querySelector('.recently-reviewed-see-more-btn')) {
+    const btnContainer = document.createElement('div');
+    const btn = document.createElement('button');
+    btn.innerHTML = placeholders?.recentlyReviewedSeeMoreButtonText || 'See more Recently viewed';
+    btnContainer.classList.add('recently-reviewed-see-more-btn');
+    btnContainer.appendChild(btn);
+    contentDiv.insertAdjacentElement('afterend', btnContainer);
+
+    btn.addEventListener('click', () => {
+      const contentDivs = block.querySelectorAll('.browse-cards-block-content');
+      const currentRow = parseInt(block.dataset.browseCardRows, 10);
+      const maxRows = parseInt(block.dataset.maxRows, 10);
+      const newRow = currentRow ? currentRow + 1 : 2;
+      block.dataset.browseCardRows = newRow;
+      const { allRowsLoaded } = block.dataset;
+
+      function hideSeeMoreRows() {
+        contentDivs.forEach((div, index) => {
+          if (index > 0) {
+            div.classList.add('fade-out');
+            div.classList.remove('fade-in');
+          }
+        });
+        btn.innerHTML = placeholders?.recentlyReviewedSeeMoreButtonText || 'See more Recently viewed';
+        block.dataset.browseCardRows = 1;
+      }
+
+      function showNewRow() {
+        contentDivs.forEach((div, index) => {
+          // div.style.display = 'flex';
+
+          if (index > newRow - 1) {
+            // div.style.display = 'none';
+            div.classList.remove('fade-in');
+            div.classList.add('fade-out');
+          } else {
+            div.classList.add('fade-in');
+            div.classList.remove('fade-out');
+          }
+        });
+      }
+
+      if (allRowsLoaded === 'true' && newRow > seeMoreConfig.noOfRows) {
+        hideSeeMoreRows();
+      } else if (allRowsLoaded === 'true' && maxRows) {
+        if (newRow > maxRows) {
+          hideSeeMoreRows();
+        } else {
+          if (newRow === maxRows) {
+            btn.innerHTML = placeholders?.recentlyReviewedSeeLessButtonText || 'See Less Recently Reviewed';
+          }
+          showNewRow();
+        }
+      } else if (allRowsLoaded === 'true') {
+        if (newRow === seeMoreConfig.noOfRows) {
+          btn.innerHTML = placeholders?.recentlyReviewedSeeLessButtonText || 'See Less Recently Reviewed';
+        }
+        showNewRow();
+      } else {
+        if (newRow === seeMoreConfig.noOfRows) {
+          block.dataset.allRowsLoaded = true;
+          btn.innerHTML = placeholders?.recentlyReviewedSeeLessButtonText || 'See Less Recently Reviewed';
+        }
+        addNewRowOfCards(cardData);
+      }
+    });
+  }
+}
 
 /**
  * Update the copy from the target
@@ -69,21 +210,6 @@ export function setTargetDataAsBlockAttribute(data, block) {
   }
 }
 
-function renderNavigationArrows(titleContainer) {
-  const navigationElements = htmlToElement(`
-<div class="recently-viewed-nav-section">
-<button class="prev-nav" disabled>
-<span class="icon icon-chevron-gray"></span>
-</button>
-<button class="next-nav" disabled>
-<span class="icon icon-chevron-gray"></span>
-</button
-</div>
-    `);
-  decorateIcons(navigationElements);
-  titleContainer.appendChild(navigationElements);
-}
-
 function removeEmptySection(block) {
   const section = block.closest('.section');
   block.parentElement.remove();
@@ -106,8 +232,6 @@ export default async function decorate(block) {
     descriptionElement.classList.add('recently-reviewed-description');
     const titleContainer = document.createElement('div');
     const navContainer = document.createElement('div');
-    const contentDiv = document.createElement('div');
-    contentDiv.className = 'browse-cards-block-content';
     const buildCardsShimmer = new BrowseCardShimmer();
 
     function appendNavAndContent() {
@@ -115,9 +239,71 @@ export default async function decorate(block) {
       navContainer.appendChild(titleContainer);
       titleContainer.appendChild(headingElement);
       titleContainer.appendChild(descriptionElement);
-      renderNavigationArrows(navContainer);
       block.appendChild(navContainer);
-      block.appendChild(contentDiv);
+    }
+
+    resizeObserved = false;
+
+    function addNewRowOfCards(cardData, args = { clear: false }) {
+      let contentDivs = block.querySelectorAll('.browse-cards-block-content');
+      if (args.clear) {
+        contentDivs.forEach((el) => el.remove());
+        contentDivs = [];
+        // Remove the existing cards container
+        block.removeAttribute('data-all-rows-loaded');
+        block.removeAttribute('data-browse-card-rows');
+        block.removeAttribute('data-max-rows');
+      }
+
+      const contentDiv = document.createElement('div');
+      contentDiv.classList.add('browse-cards-block-content', 'fade-in');
+
+      if (contentDivs.length) {
+        contentDivs[contentDivs.length - 1].insertAdjacentElement('afterEnd', contentDiv);
+      } else {
+        block.querySelector('.recently-viewed-nav-container')?.insertAdjacentElement('afterEnd', contentDiv);
+      }
+      const noOfCards = block.querySelectorAll('.card-wrapper').length;
+      cardData.slice(noOfCards, noOfCards + DEFAULT_NUM_CARDS).forEach((item) => {
+        const cardDiv = document.createElement('div');
+        cardDiv.classList.add('card-wrapper');
+        buildCard(contentDiv, cardDiv, item);
+        contentDiv.appendChild(cardDiv);
+      });
+      if (!cardData[noOfCards + DEFAULT_NUM_CARDS + 1]) {
+        block.dataset.allRowsLoaded = true;
+        block.dataset.maxRows = block.dataset.browseCardRows;
+        block.querySelector('.recently-reviewed-see-more-btn > button').innerHTML =
+          placeholders?.recentlyReviewedSeeLessButtonText || 'See Less Recently Reviewed';
+      }
+
+      if (cardData.length > DEFAULT_NUM_CARDS) {
+        createSeeMoreButton(block, contentDiv, addNewRowOfCards, cardData);
+      }
+    }
+
+    function calculateNumberOfCardsOnResize(cardData) {
+      if (!resizeObserved) {
+        let previousWidth = block.offsetWidth;
+        resizeObserverHandler((entries) => {
+          if (resizeObserved) {
+            entries.forEach((entry) => {
+              const { width } = entry.contentRect;
+              if (!previousWidth) previousWidth = block.offsetWidth;
+              if (Math.abs(entry.contentRect.width - previousWidth) > 1) {
+                if (isFeatureEnabled('browsecardv2')) {
+                  // Calculate no. of cards that fits
+                  calculateNumberOfCardsToRender(block);
+                  addNewRowOfCards(cardData, { clear: true });
+                }
+                // Render the new set of cards
+                previousWidth = width;
+              }
+            });
+          }
+          resizeObserved = true;
+        }, block);
+      }
     }
 
     function renderCards() {
@@ -127,21 +313,15 @@ export default async function decorate(block) {
           displayBlock = true;
           appendNavAndContent();
           buildCardsShimmer.addShimmer(block);
-
           const cardData = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(resp.data);
-          cardData.forEach((item) => {
-            const cardDiv = document.createElement('div');
-            buildCard(contentDiv, cardDiv, item);
-            contentDiv.appendChild(cardDiv);
-          });
-
-          const prevButton = block.querySelector('.recently-viewed-nav-section > .prev-nav');
-          const nextButton = block.querySelector('.recently-viewed-nav-section > .next-nav');
-          const items = contentDiv.querySelectorAll('.browse-cards-block-content > div');
-          // eslint-disable-next-line no-new
-          new Swiper(contentDiv, items, true, null, prevButton, nextButton);
+          calculateNumberOfCardsToRender(block);
+          addNewRowOfCards(cardData, { clear: true }); // eslint-disable-next-line no-new
+          calculateNumberOfCardsOnResize(addNewRowOfCards, cardData);
           setTargetDataAsBlockAttribute(resp, block);
         } else {
+          const contentDiv = document.createElement('div');
+          contentDiv.classList.add('browse-cards-block-content');
+          block.appendChild(contentDiv);
           buildNoResultsContent(contentDiv, true);
           if (!UEAuthorMode && !displayBlock) {
             removeEmptySection(block);
@@ -155,6 +335,9 @@ export default async function decorate(block) {
       displayBlock = true;
       appendNavAndContent();
       buildCardsShimmer.addShimmer(block);
+      const contentDiv = document.createElement('div');
+      contentDiv.classList.add('browse-cards-block-content');
+      block.appendChild(contentDiv);
       const authorInfo = 'Based on profile context, if the customer has enabled the necessary cookies';
       buildNoResultsContent(contentDiv, true, authorInfo);
       buildCardsShimmer.removeShimmer();
