@@ -24,8 +24,9 @@ const BrowseCardsADLSAdaptor = (() => {
    */
   const mapResultToCardsDataModel = (result) => {
     const contentType = CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY;
-    const { solution, name, description, path } = result || {};
+    const { solution, name, description, path, dates, time } = result || {};
     const adlsDomain = extractDomain(adlsUrl);
+    const formattedPath = path && !path.startsWith('/') ? `/${path}` : path;
 
     return {
       ...browseCardDataModel,
@@ -33,9 +34,13 @@ const BrowseCardsADLSAdaptor = (() => {
       badgeTitle: CONTENT_TYPES.INSTRUCTOR_LED.LABEL,
       product: solution && (Array.isArray(solution) ? solution : solution.split(/,\s*/)),
       title: name || '',
+      event: {
+        date: dates,
+        time,
+      },
       description: description || '',
-      copyLink: `${adlsDomain}${path}` || '',
-      viewLink: `${adlsDomain}${path}` || '',
+      copyLink: `${adlsDomain}${formattedPath}` || '',
+      viewLink: `${adlsDomain}${formattedPath}` || '',
       viewLinkText: placeholders.browseCardInstructorLedViewLabel || 'View course',
     };
   };

@@ -55,7 +55,6 @@ class ProfileClient {
     this.url = url;
     this.jwt = loadJWT();
     this.isSignedIn = isSignedInUser();
-    this.isModalSeen = false;
     this.store = new PromiseSessionStore();
   }
 
@@ -240,12 +239,6 @@ class ProfileClient {
         })
           .then((res) => res.json())
           .then(async (data) => {
-            if (!this.isModalSeen) {
-              // eslint-disable-next-line import/no-cycle
-              const { default: initSignupFlowHandler } = await import('../signup-flow/signup-flow-handler.js');
-              initSignupFlowHandler();
-              this.isModalSeen = true;
-            }
             if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));
             resolve(structuredClone(data.data));
           })

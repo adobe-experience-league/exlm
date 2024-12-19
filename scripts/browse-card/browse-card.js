@@ -108,13 +108,17 @@ const buildTagsContent = (cardMeta, tags = []) => {
   });
 };
 
-const buildEventContent = ({ event, cardContent, card }) => {
-  const { time } = event;
+const buildEventContent = ({ event, contentType, cardContent, card }) => {
+  const { time, date } = event;
   const eventInfo = htmlToElement(`
     <div class="browse-card-event-info">
         <span class="icon icon-time"></span>
         <div class="browse-card-event-time">
-            <h6>${formatDate(time)}</h6>
+        ${
+          contentType === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY
+            ? `<h6>${date} | ${time}</h6>`
+            : `<h6>${formatDate(time)}</h6>`
+        }
         </div>
     </div>
   `);
@@ -227,8 +231,11 @@ const buildCardContent = async (card, model) => {
 
   cardContent.appendChild(cardMeta);
 
-  if (contentType === CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY) {
-    buildEventContent({ event, cardContent, card });
+  if (
+    contentType === CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY ||
+    contentType === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY
+  ) {
+    buildEventContent({ event, contentType, cardContent, card });
   }
 
   if (contentType === CONTENT_TYPES.PERSPECTIVE.MAPPING_KEY) {
