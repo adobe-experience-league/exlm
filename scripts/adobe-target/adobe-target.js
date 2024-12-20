@@ -102,7 +102,13 @@ class AdobeTargetClient {
         if (!window?.exlm?.targetData.filter((data) => data?.meta?.scope === event?.detail?.meta?.scope).length) {
           // TODO - remove dependecy on feature flag once browse card v2 theme is live
           if (isFeatureEnabled('browsecardv2') && event?.detail?.meta?.scope === this.recommendationMarqueeScopeName) {
-            window.exlm.recommendationMarqueeTargetData.push(event.detail);
+            if (
+              !window?.exlm?.recommendationMarqueeTargetData.filter(
+                (data) => data?.meta?.scope === event?.detail?.meta?.scope,
+              ).length
+            ) {
+              window.exlm.recommendationMarqueeTargetData.push(event.detail);
+            }
           } else {
             window.exlm.targetData.push(event.detail);
           }
