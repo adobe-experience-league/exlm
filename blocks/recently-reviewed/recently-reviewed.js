@@ -59,7 +59,7 @@ function calculateNumberOfCardsToRender(container) {
     DEFAULT_NUM_CARDS = 4;
   } else {
     let cardsContainer = container.querySelector('.card-wrapper');
-    if (!cardsContainer) cardsContainer = container.querySelector('.browse-card-shimmer');
+    if (!cardsContainer) cardsContainer = container.querySelector('.browse-card-shimmer-wrapper');
     let containerWidth = container.offsetWidth;
 
     if (!containerWidth) {
@@ -270,11 +270,13 @@ export default async function decorate(block) {
         buildCard(contentDiv, cardDiv, item);
         contentDiv.appendChild(cardDiv);
       });
-      if (!cardData[noOfCards + DEFAULT_NUM_CARDS + 1]) {
+      if (!cardData[noOfCards + DEFAULT_NUM_CARDS]) {
         block.dataset.allRowsLoaded = true;
         block.dataset.maxRows = block.dataset.browseCardRows;
-        block.querySelector('.recently-reviewed-see-more-btn > button').innerHTML =
-          placeholders?.recentlyReviewedSeeLessButtonText || 'See Less Recently Reviewed';
+        if (block.querySelector('.recently-reviewed-see-more-btn > button')) {
+          block.querySelector('.recently-reviewed-see-more-btn > button').innerHTML =
+            placeholders?.recentlyReviewedSeeLessButtonText || 'See Less Recently Reviewed';
+        }
       }
 
       if (cardData.length > DEFAULT_NUM_CARDS) {
@@ -316,7 +318,7 @@ export default async function decorate(block) {
           const cardData = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(resp.data);
           calculateNumberOfCardsToRender(block);
           addNewRowOfCards(cardData, { clear: true }); // eslint-disable-next-line no-new
-          calculateNumberOfCardsOnResize(addNewRowOfCards, cardData);
+          calculateNumberOfCardsOnResize(cardData);
           setTargetDataAsBlockAttribute(resp, block);
         } else {
           const contentDiv = document.createElement('div');
