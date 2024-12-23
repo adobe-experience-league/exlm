@@ -107,6 +107,7 @@ function createSeeMoreButton(block, contentDiv, addNewRowOfCards, cardData) {
             div.classList.remove('fade-in');
             const handleTransitionEnd = () => {
               div.style.display = 'none';
+              div.removeEventListener('animationend', handleTransitionEnd);
             };
             div.addEventListener('animationend', handleTransitionEnd);
           }
@@ -117,16 +118,11 @@ function createSeeMoreButton(block, contentDiv, addNewRowOfCards, cardData) {
 
       function showNewRow() {
         contentDivs.forEach((div, index) => {
-          // div.style.display = 'flex';
-
+          div.style.display = 'flex';
           if (index > newRow - 1) {
-            // div.style.display = 'none';
             div.classList.remove('fade-in');
             div.classList.add('fade-out');
-            const handleTransitionEnd = () => {
-              div.style.display = 'none';
-            };
-            div.addEventListener('animationend', handleTransitionEnd);
+            div.style.display = 'none';
           } else {
             div.classList.add('fade-in');
             div.classList.remove('fade-out');
