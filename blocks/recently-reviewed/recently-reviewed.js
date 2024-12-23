@@ -120,9 +120,9 @@ function createSeeMoreButton(block, contentDiv, addNewRowOfCards, cardData) {
         contentDivs.forEach((div, index) => {
           div.style.display = 'flex';
           if (index > newRow - 1) {
+            div.style.display = 'none';
             div.classList.remove('fade-in');
             div.classList.add('fade-out');
-            div.style.display = 'none';
           } else {
             div.classList.add('fade-in');
             div.classList.remove('fade-out');
