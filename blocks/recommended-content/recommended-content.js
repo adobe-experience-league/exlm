@@ -106,6 +106,11 @@ function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
           if (index > 0) {
             div.classList.add('fade-out');
             div.classList.remove('fade-in');
+            const handleTransitionEnd = () => {
+              div.style.display = 'none';
+              div.removeEventListener('animationend', handleTransitionEnd);
+            };
+            div.addEventListener('animationend', handleTransitionEnd);
           }
         });
         btn.innerHTML = placeholders?.recommendedContentSeeMoreButtonText || 'See more Recommendations';
@@ -114,10 +119,10 @@ function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
 
       function showNewRow() {
         contentDivs.forEach((div, index) => {
-          // div.style.display = 'flex';
+          div.style.display = 'flex';
 
           if (index > newRow - 1) {
-            // div.style.display = 'none';
+            div.style.display = 'none';
             div.classList.remove('fade-in');
             div.classList.add('fade-out');
           } else {
