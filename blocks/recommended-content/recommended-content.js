@@ -115,6 +115,9 @@ function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
         });
         btn.innerHTML = placeholders?.recommendedContentSeeMoreButtonText || 'See more Recommendations';
         block.dataset.browseCardRows = 1;
+        setTimeout(() => {
+          block.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
       }
 
       function showNewRow() {

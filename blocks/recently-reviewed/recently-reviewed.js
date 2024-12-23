@@ -114,6 +114,9 @@ function createSeeMoreButton(block, contentDiv, addNewRowOfCards, cardData) {
         });
         btn.innerHTML = placeholders?.recentlyReviewedSeeMoreButtonText || 'See more Recently viewed';
         block.dataset.browseCardRows = 1;
+        setTimeout(() => {
+          block.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
       }
 
       function showNewRow() {
