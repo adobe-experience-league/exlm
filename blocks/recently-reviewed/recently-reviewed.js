@@ -105,6 +105,10 @@ function createSeeMoreButton(block, contentDiv, addNewRowOfCards, cardData) {
           if (index > 0) {
             div.classList.add('fade-out');
             div.classList.remove('fade-in');
+            const handleTransitionEnd = () => {
+              div.style.display = 'none';
+            };
+            div.addEventListener('animationend', handleTransitionEnd);
           }
         });
         btn.innerHTML = placeholders?.recentlyReviewedSeeMoreButtonText || 'See more Recently viewed';
@@ -119,6 +123,10 @@ function createSeeMoreButton(block, contentDiv, addNewRowOfCards, cardData) {
             // div.style.display = 'none';
             div.classList.remove('fade-in');
             div.classList.add('fade-out');
+            const handleTransitionEnd = () => {
+              div.style.display = 'none';
+            };
+            div.addEventListener('animationend', handleTransitionEnd);
           } else {
             div.classList.add('fade-in');
             div.classList.remove('fade-out');
