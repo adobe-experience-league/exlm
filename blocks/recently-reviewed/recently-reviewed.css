@@ -113,12 +113,10 @@
     0% {
       opacity: 0;
       transform: translateY(-50px);
-      display: none;
     }
     100% {
       transform: translateY(0px);
       opacity: 1;
-      display: flex;
     }
   }
 
@@ -126,12 +124,10 @@
     0% {
       transform: translateY(0px);
       opacity: 1;
-      display: flex;
     }
     100% {
       opacity: 0;
       transform: translateY(-50px);
-      display: none;
     }
   }
 
