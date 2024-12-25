@@ -14,7 +14,7 @@ body.profile .product-experience-level:not(.sign-up-flow-section .product-experi
 .product-experience-level-header {
   line-height: 35px;
   font-weight: 700;
-  padding: 0 0 16px 0;
+  padding: 0 0 16px;
   margin: 0;
   border-bottom: 1px solid #d6d6d6;
   color: var(--text-color);
@@ -60,7 +60,7 @@ body.profile .product-experience-level:not(.sign-up-flow-section .product-experi
 .product-experience-level-item p {
   font-size: 16px;
   line-height: 21px;
-  color: #222222;
+  color: #222;
   margin: 0;
 }
 

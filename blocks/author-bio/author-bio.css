@@ -37,18 +37,18 @@
   color: var(--non-spectrum-grey);
 }
 
-.author-description-socialLink-container .author-description .author-socialLink {
+.author-description-social-link-container .author-social-link {
+  color: var(--non-spectrum-navy-blue);
+}
+
+.author-description-social-link-container .author-description .author-social-link {
   font-size: var(--spectrum-font-size-100);
 }
 
-.author-description-socialLink-container .author-description {
+.author-description-social-link-container .author-description {
   color: var(--non-spectrum-grey);
   padding-bottom: 24px;
   padding-top: 24px;
-}
-
-.author-description-socialLink-container .author-socialLink {
-  color: var(--non-spectrum-navy-blue);
 }
 
 .author-bio .author-bio-content .external {

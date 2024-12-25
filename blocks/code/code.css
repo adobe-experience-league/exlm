@@ -10,7 +10,6 @@
 code[class*='language-'],
 pre[class*='language-'] {
   border-radius: 6px;
-  color: #ccc;
   background: 0 0;
   font-size: 1em;
   text-align: left;
@@ -21,17 +20,22 @@ pre[class*='language-'] {
   line-height: 1.5;
   tab-size: 4;
   hyphens: none;
+  color: #c5c8c6;
+  text-shadow: 0 1px rgb(0 0 0 / 30%);
+  font-family: Inconsolata, Monaco, Consolas, 'Courier New', Courier, monospace;
+  direction: ltr;
 }
 
 pre[class*='language-'] {
   padding: 1em;
   margin: 0.5em 0;
   overflow: auto;
+  border-radius: 0.3em;
 }
 
 :not(pre) > code[class*='language-'],
 pre[class*='language-'] {
-  background: #2d2d2d;
+  background: #1d1f21;
 }
 
 :not(pre) > code[class*='language-'] {
@@ -49,7 +53,7 @@ pre[class*='language-'] {
 }
 
 .token.punctuation {
-  color: #ccc;
+  color: #c5c8c6;
 }
 
 .token.attr-name,
@@ -92,10 +96,14 @@ pre[class*='language-'] {
   color: #7ec699;
 }
 
-.token.entity,
 .token.operator,
 .token.url {
   color: #67cdcc;
+}
+
+.token.entity {
+  color: #ffffb6;
+  cursor: help;
 }
 
 .token.bold,
@@ -105,10 +113,6 @@ pre[class*='language-'] {
 
 .token.italic {
   font-style: italic;
-}
-
-.token.entity {
-  cursor: help;
 }
 
 .token.inserted {
@@ -126,7 +130,6 @@ pre[data-line] {
   right: 0;
   padding: inherit 0;
   margin-top: 1em;
-  background: rgb(153 122 102 / 30%);
   background: linear-gradient(to right, hsl(24deg 20% 50% / 30%) 70%, hsl(24deg 20% 50% / 0%));
   pointer-events: none;
   line-height: inherit;
@@ -160,6 +163,14 @@ pre[data-line] {
 .line-numbers .line-highlight::after,
 .line-numbers .line-highlight::before {
   content: none;
+}
+
+.line-numbers-rows > span::before {
+  content: counter(linenumber);
+  color: #999;
+  display: block;
+  padding-right: 0.8em;
+  text-align: right;
 }
 
 pre[id].linkable-line-numbers span.line-numbers-rows {
@@ -200,14 +211,6 @@ pre[class*='language-'].line-numbers > code {
 .line-numbers-rows > span {
   display: block;
   counter-increment: linenumber;
-}
-
-.line-numbers-rows > span::before {
-  content: counter(linenumber);
-  color: #999;
-  display: block;
-  padding-right: 0.8em;
-  text-align: right;
 }
 
 .token a {
@@ -261,7 +264,6 @@ div.code-toolbar > .toolbar > .toolbar-item > span {
   color: #bbb;
   font-size: 0.8em;
   padding: 0.5em;
-  background: #f5f2f0;
   background: rgb(224 224 224 / 20%);
   box-shadow: 0 2px 0 0 rgb(0 0 0 / 20%);
   border-radius: 6px;
@@ -277,47 +279,11 @@ div.code-toolbar > .toolbar > .toolbar-item > span:hover {
   text-decoration: none;
 }
 
-code[class*='language-'],
-pre[class*='language-'] {
-  color: #c5c8c6;
-  text-shadow: 0 1px rgb(0 0 0 / 30%);
-  font-family: Inconsolata, Monaco, Consolas, 'Courier New', Courier, monospace;
-  direction: ltr;
-  text-align: left;
-  white-space: pre;
-  word-spacing: normal;
-  word-break: normal;
-  line-height: 1.5;
-  tab-size: 4;
-  hyphens: none;
-}
-
-pre[class*='language-'] {
-  padding: 1em;
-  margin: 0.5em 0;
-  overflow: auto;
-  border-radius: 0.3em;
-}
-
-:not(pre) > code[class*='language-'],
-pre[class*='language-'] {
-  background: #1d1f21;
-}
-
-:not(pre) > code[class*='language-'] {
-  padding: 0.1em;
-  border-radius: 0.3em;
-}
-
 .token.comment,
 .token.prolog,
 .token.doctype,
 .token.cdata {
   color: #7c7c7c;
-}
-
-.token.punctuation {
-  color: #c5c8c6;
 }
 
 .namespace {
@@ -366,11 +332,6 @@ pre[class*='language-'] {
   color: #ededed;
 }
 
-.token.entity {
-  color: #ffffb6;
-  cursor: help;
-}
-
 .token.url {
   color: #96cbfe;
 }
@@ -395,15 +356,6 @@ pre[class*='language-'] {
 
 .token.important {
   color: #fd971f;
-}
-
-.token.important,
-.token.bold {
-  font-weight: bold;
-}
-
-.token.italic {
-  font-style: italic;
 }
 
 div.code-toolbar > .toolbar > .toolbar-item > button > span:hover {

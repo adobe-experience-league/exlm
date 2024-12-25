@@ -9,7 +9,7 @@
 
 .article-tags-product,
 .article-tags-topics,
-.article-tags-createdFor {
+.article-tags-createdfor {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -18,7 +18,7 @@
 
 .article-tags-product-heading,
 .article-tags-topics-heading,
-.article-tags-createdFor-heading {
+.article-tags-createdfor-heading {
   font-size: var(--spectrum-body-size-xs);
   font-weight: 700;
 }

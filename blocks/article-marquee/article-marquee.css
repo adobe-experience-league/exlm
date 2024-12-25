@@ -206,7 +206,7 @@
 
   .article-marquee-options {
     width: auto;
-    gap: 0px;
+    gap: 0;
   }
 
   .article-marquee .breadcrumb > span {
@@ -275,12 +275,10 @@
   .article-marquee-large-bg {
     display: block;
     position: absolute;
-    right: 0;
-    left: 50%;
-    top: 0;
-    bottom: 1px;
+    inset: 0 0 1px 50%;
     background-color: var(--spectrum-indigo-1400);
   }
+
   .article-marquee-large-bg.adobe {
     background-color: var(--spectrum-red-1400);
   }
@@ -312,6 +310,7 @@
   .article-marquee-bg-mobile {
     display: none;
   }
+
   .article-marquee-bg-tablet {
     display: block;
     position: absolute;
@@ -327,6 +326,7 @@
   .article-marquee-bg-tablet {
     display: none;
   }
+
   .article-marquee-bg-desktop {
     display: block;
     position: absolute;

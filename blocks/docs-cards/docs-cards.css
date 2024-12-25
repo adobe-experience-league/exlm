@@ -1,5 +1,6 @@
 .docs-cards {
   --content-padding: 1rem;
+
   display: grid;
   grid-template-columns: 1fr;
   grid-gap: 20px;
@@ -9,8 +10,8 @@
   background-color: #fff;
   border-radius: 0.25rem;
   box-shadow:
-    0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
-    0 0 0 1px rgba(10, 10, 10, 0.02);
+    0 0.5em 1em -0.125em rgb(10 10 10 / 10%),
+    0 0 0 1px rgb(10 10 10 / 2%);
   color: #4a4a4a;
   max-width: 100%;
   position: relative;
@@ -29,12 +30,10 @@
   width: 100%;
   display: block;
 }
+
 .docs-cards-image img {
-  bottom: 0;
-  left: 0;
+  inset: 0;
   position: absolute;
-  right: 0;
-  top: 0;
   border-radius: 4px 4px 0 0;
 }
 
@@ -61,6 +60,7 @@
   justify-content: space-between;
   box-sizing: border-box;
 }
+
 .docs-cards-button {
   flex-grow: 1;
   display: flex;

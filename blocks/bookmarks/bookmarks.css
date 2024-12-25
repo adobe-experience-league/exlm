@@ -30,12 +30,12 @@ body.profile .bookmarks-wrapper .bookmarks .bookmarks-header > *:first-child {
   margin: 0;
 }
 
-body.profile:has(.bookmarks-empty) .section:not(.profile-rail-section) > div.bookmarks-wrapper {
-  display: none;
-}
-
 body.profile .section:not(.profile-rail-section) > div.bookmarks-wrapper {
   border: none;
+}
+
+body.profile:has(.bookmarks-empty) .section:not(.profile-rail-section) > div.bookmarks-wrapper {
+  display: none;
 }
 
 @media (min-width: 600px) {
@@ -43,8 +43,7 @@ body.profile .section:not(.profile-rail-section) > div.bookmarks-wrapper {
   .bookmarks .browse-card-shimmer {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    row-gap: 32px;
-    column-gap: 20px;
+    gap: 32px 20px;
     align-items: stretch;
   }
 

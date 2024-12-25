@@ -39,8 +39,8 @@
   line-height: 13px;
 }
 
-.filter-input > button,
-.filter-input > input {
+.filter-input>button,
+.filter-input>input {
   cursor: pointer;
   position: relative;
   height: 32px;
@@ -50,6 +50,7 @@
   padding: 9px 12px;
   width: 100%;
   font-size: 16px;
+
   /* https://defensivecss.dev/tip/input-zoom-safari/ */
   text-align: left;
   color: var(--spectrum-gray-700);
@@ -58,15 +59,15 @@
   margin: 0;
 }
 
-.filter-input > button {
+.filter-input>button {
   padding-right: 24px;
 }
 
-.filter-input > input {
+.filter-input>input {
   padding-left: 28px;
 }
 
-.filter-input > input::placeholder {
+.filter-input>input::placeholder {
   font-family: var(--body-font-family);
   color: var(--spectrum-gray-700);
   font-size: var(--spectrum-body-size-m);
@@ -91,9 +92,30 @@
   height: fit-content;
 }
 
-.browse-filters-search > input {
+.browse-filters-search>input {
   padding-left: 32px;
   max-width: 100%;
+}
+
+.search-picker-popover,
+.search-suggestions-popover {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  top: 32px;
+  background-color: var(--background-color);
+  box-shadow: 0 8px 8px rgb(10 10 10 / 10%);
+  border: 1px solid var(--spectrum-gray-400);
+  padding: 8px 0;
+  border-radius: 6px;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    transform 130ms ease-in-out,
+    opacity 130ms ease-in-out,
+    visibility 0ms linear 130ms;
+  pointer-events: none;
+  touch-action: none;
 }
 
 .browse-filters-search .search-suggestions-popover {
@@ -118,13 +140,25 @@
   box-sizing: border-box;
   padding: 12px;
   border-radius: 4px;
-  box-shadow: 0px 1px 4px rgba(0 0 0 / 15%);
+  box-shadow: 0 1px 4px rgba(0 0 0 / 15%);
   border: 1px solid var(--spectrum-gray-400);
 }
 
 .filter-dropdown .custom-checkbox {
   padding: 8px 0;
   line-height: 16px;
+}
+
+.browse-filters-pagination input {
+  width: 49px;
+  height: 32px;
+  margin: 0 8px;
+  border-radius: 4px;
+  border: 1px solid var(--spectrum-gray-200);
+  font-size: var(--spectrum-font-size-100);
+  line-height: 17px;
+  color: var(--spectrum-gray-700);
+  font-family: var(--body-font-family);
 }
 
 .filter-dropdown .custom-checkbox input {
@@ -166,7 +200,7 @@
   display: none;
 }
 
-.filter-dropdown .custom-checkbox input:checked + label .icon-checked {
+.filter-dropdown .custom-checkbox input:checked+label .icon-checked {
   font-size: var(--spectrum-body-size-s);
   color: var(--non-spectrum-grey-333);
   text-align: center;
@@ -251,10 +285,6 @@ button.browse-filters-clear:disabled:hover {
   display: none;
 }
 
-.browse-filters-search {
-  position: relative;
-}
-
 .browse-filters-pagination {
   display: flex;
   justify-content: center;
@@ -274,7 +304,7 @@ button.browse-tags:focus {
   cursor: pointer;
 }
 
-.browse-filters-results > div {
+.browse-filters-results>div {
   min-width: 0;
   min-height: 330px;
 }
@@ -287,18 +317,6 @@ button.browse-tags:focus {
   font-size: var(--spectrum-font-size-100);
   line-height: 17px;
   color: var(--spectrum-gray-700);
-}
-
-.browse-filters-pagination input {
-  width: 49px;
-  height: 32px;
-  margin: 0 8px;
-  border-radius: 4px;
-  border: 1px solid var(--spectrum-gray-200);
-  font-size: var(--spectrum-font-size-100);
-  line-height: 17px;
-  color: var(--spectrum-gray-700);
-  font-family: var(--body-font-family);
 }
 
 .browse-filters-pagination.browse-filters-pagination-hidden {
@@ -388,7 +406,7 @@ button.browse-tags:focus {
   text-align: left;
 }
 
-.browse-filters-form .sort-container .sort-drop-btn:after {
+.browse-filters-form .sort-container .sort-drop-btn::after {
   background-image: url('../../icons/down-arrow.svg');
   background-position: 0 0;
   background-repeat: no-repeat;
@@ -474,27 +492,6 @@ button.browse-tags:focus {
   display: none;
 }
 
-.search-picker-popover,
-.search-suggestions-popover {
-  position: absolute;
-  z-index: 1;
-  right: 0;
-  top: 32px;
-  background-color: var(--background-color);
-  box-shadow: 0 8px 8px rgba(10, 10, 10, 0.1);
-  border: 1px solid var(--spectrum-gray-400);
-  padding: 8px 0;
-  border-radius: 6px;
-  visibility: hidden;
-  opacity: 0;
-  transition:
-    transform 130ms ease-in-out,
-    opacity 130ms ease-in-out,
-    visibility 0ms linear 130ms;
-  pointer-events: none;
-  touch-action: none;
-}
-
 .search-picker-popover.search-picker-popover-visible,
 .search-picker-popover.search-suggestions-popover-visible,
 .search-suggestions-popover.search-picker-popover-visible,
@@ -541,7 +538,7 @@ button.browse-tags:focus {
 }
 
 .search-suggestions-popover .search-picker-label:hover {
-  background: rgba(0, 0, 0, 0.04);
+  background: rgb(0 0 0 / 4%);
   cursor: pointer;
 }
 
@@ -597,12 +594,8 @@ button.browse-tags:focus {
     padding: 0;
   }
 
-  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(
-      .browse-product-dropdown.filter-dropdown
-    ),
-  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(
-      .browse-experience-level-dropdown.filter-dropdown
-    ) {
+  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-product-dropdown.filter-dropdown),
+  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-experience-level-dropdown.filter-dropdown) {
     grid-template-areas:
       'label label'
       'ctype author'
@@ -611,9 +604,7 @@ button.browse-tags:focus {
     grid-template-columns: 1fr 1fr;
   }
 
-  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(
-      .browse-author-type-dropdown
-    ):not(:has(.browse-experience-level-dropdown)) {
+  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(.browse-author-type-dropdown):not(:has(.browse-experience-level-dropdown)) {
     grid-template-areas:
       'label label label label label label'
       'role role ctype ctype exp exp'
@@ -639,19 +630,8 @@ button.browse-tags:focus {
     grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
   }
 
-  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(
-      .browse-author-type-dropdown
-    ):not(:has(.browse-experience-level-dropdown)) {
-    grid-template-areas: 'label role ctype exp search cfilter';
-    grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
-  }
-
-  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(
-      .browse-product-dropdown.filter-dropdown
-    ),
-  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(
-      .browse-experience-level-dropdown.filter-dropdown
-    ) {
+  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-product-dropdown.filter-dropdown),
+  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-experience-level-dropdown.filter-dropdown) {
     grid-template-areas:
       'label label label label'
       'ctype author role exp'
@@ -659,9 +639,7 @@ button.browse-tags:focus {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 
-  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(
-      .browse-author-type-dropdown
-    ):not(:has(.browse-experience-level-dropdown)) {
+  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(.browse-author-type-dropdown):not(:has(.browse-experience-level-dropdown)) {
     grid-template-areas: 'label role ctype exp search cfilter';
     grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
   }

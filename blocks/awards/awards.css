@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   background-color: #e63524;
-  padding: 32px 16px 16px 16px;
+  padding: 32px 16px 16px;
   min-height: 390px;
   justify-content: space-between;
   box-sizing: border-box;
@@ -31,7 +31,7 @@
   font-size: var(--spectrum-font-size-75);
   margin-bottom: 8px;
   border-bottom: 2px var(--spectrum-gray-50) solid;
-  padding: 0 0 8px 0;
+  padding: 0 0 8px;
 }
 
 .awards .awards-description {

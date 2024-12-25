@@ -1,5 +1,6 @@
 /* stylelint-disable media-feature-range-notation */
 /* stylelint-disable declaration-block-no-redundant-longhand-properties */
+
 /* ----- mobile ------ */
 
 .featured-content-wrapper * {
@@ -165,6 +166,10 @@
 .featured-content.block div.author-header h3 {
   margin: 0;
   text-transform: uppercase;
+  font-size: var(--spectrum-font-size-75);
+  line-height: 16px;
+  color: var(--non-spectrum-dark-charcoal);
+  letter-spacing: 0.72px;
 }
 
 /* the author details */
@@ -235,13 +240,6 @@
   color: var(--non-spectrum-navy-blue);
 }
 
-.featured-content.block div.author-header h3 {
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--non-spectrum-dark-charcoal);
-  letter-spacing: 0.72px;
-}
-
 .featured-content.block div.description p {
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -300,6 +298,10 @@
     align-self: center;
   }
 
+  .featured-content.block > div:has(.author) {
+    justify-self: left;
+  }
+
   .featured-content.block.right > div:has(.description) {
     padding-right: 48px;
     padding-left: 0;
@@ -311,11 +313,6 @@
     height: 286px;
     margin: 0;
     position: relative;
-  }
-
-  /* author blocks */
-  .featured-content.block > div:has(.author) {
-    justify-self: left;
   }
 
   .featured-content.block .author-container {

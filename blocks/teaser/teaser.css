@@ -295,11 +295,6 @@
     object-position: right;
   }
 
-  body[class^='browse-'] .teaser.block.right > .background img,
-  body[class^='article-'] .teaser.block.right > .background img {
-    object-position: left;
-  }
-
   /* it gets a border */
   body[class^='browse-'] .section div.teaser-wrapper,
   body[class^='article-'] .section div.teaser-wrapper {
@@ -310,6 +305,11 @@
   body[class^='browse-'] .section div.teaser-wrapper .background img,
   body[class^='article-'] .section div.teaser-wrapper .background img {
     border-radius: 4px;
+  }
+
+  body[class^='browse-'] .teaser.block.right > .background img,
+  body[class^='article-'] .teaser.block.right > .background img {
+    object-position: left;
   }
 
   body[class^='browse-'] .section div.teaser-wrapper .foreground,
