@@ -24,9 +24,9 @@ export default function decorate(block) {
         ${authorTitle ?? ''} ${authorCompany ?? ''}
       </div>
     </div>
-    <div class="author-description-socialLink-container">
+    <div class="author-description-social-link-container">
       <div class='author-description'>${authorDescription?.innerHTML ?? ''}</div>
-      <a href='${authorSocialLinkElement}' class='author-socialLink' title='${authorSocialLinkElement}'>
+      <a href='${authorSocialLinkElement}' class='author-social-link' title='${authorSocialLinkElement}'>
         ${authorSocialLinkText ?? ''}
       </a>
     </div>

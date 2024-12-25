@@ -1,7 +1,7 @@
 .filtered-result-content {
   display: flex;
   flex-direction: row;
-  padding: 30px 0 0 0;
+  padding: 30px 0 0;
   border-bottom: 1px solid #e9ecef;
 }
 
@@ -27,6 +27,11 @@
   padding-right: 15px;
 }
 
+.filtered-result-content-type img {
+  width: 18px;
+  height: 18px;
+}
+
 .filtered-result-left-container .filtered-result-video,
 .filtered-result-left-container .filtered-result-video img,
 .thumbnail .filtered-result-video,
@@ -43,7 +48,7 @@
 }
 
 .filtered-result-title {
-  padding-top: 0px;
+  padding-top: 0;
   margin: 0;
   color: var(--non-spectrum-grey);
   font-family: var(--body-font-family);
@@ -88,7 +93,7 @@
 }
 
 .filtered-result-date {
-  font-family: 'adobe-clean';
+  font-family: var(--body-font-family);;
   font-size: 12px;
 }
 
@@ -107,11 +112,6 @@
 .filtered-result-content-type span {
   margin-left: 8px;
   font-size: 12px;
-}
-
-.filtered-result-content-type img {
-  width: 18px;
-  height: 18px;
 }
 
 .filtered-result-content-type.tutorial {
@@ -143,6 +143,7 @@
   .filtered-result-content {
     flex-direction: column;
   }
+
   .filtered-result-content .filtered-result-left-container,
   .filtered-result-content .thumbnail {
     padding: 0;
@@ -153,15 +154,17 @@
   .filtered-result-content {
     flex-direction: column;
   }
+
   .filtered-result-content .thumbnail {
     flex-direction: column;
-    .filtered-result-video img {
-      width: 100%;
-    }
   }
 
   .filtered-result-left-container .filtered-result-video,
   .filtered-result-left-container .filtered-result-video img {
     margin-top: 10px;
+  }
+
+  .filtered-result-content .thumbnail .filtered-result-video img {
+    width: 100%;
   }
 }

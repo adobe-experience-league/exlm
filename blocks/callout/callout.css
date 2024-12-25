@@ -12,6 +12,7 @@
   border-top-width: 6px;
   border-radius: 4px;
 }
+
 .callout-card-tag {
   position: absolute;
   text-transform: uppercase;
@@ -22,8 +23,9 @@
   background-color: var(--spectrum-red-1400);
   font-weight: bold;
   color: var(--color-white);
-  border-radius: 0px 4px;
+  border-radius: 0 4px;
 }
+
 .callout-card-header h1 {
   font-weight: 700;
   font-size: 24px;
@@ -31,6 +33,7 @@
   color: var(--non-spectrum-dark-charcoal);
   margin: 0 0 16px;
 }
+
 .callout-card-header p {
   font-size: var(--spectrum-font-size-200);
   line-height: 21px;

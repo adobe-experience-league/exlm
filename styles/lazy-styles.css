@@ -24,7 +24,6 @@ div.doc-pagination {
 
 a.pagination-btn {
   background-color: var(--spectrum-button-background-color-default);
-  border-color: var(--spectrum-blue-900);
   color: var(--spectrum-blue-900);
   border: 2px solid var(--spectrum-blue-900);
   border-radius: 16px;

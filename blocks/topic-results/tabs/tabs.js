@@ -208,10 +208,10 @@ export default async function decorateTabs(block) {
       const tabSelectArrow = document.querySelector('.tab-select-arrow');
       if (dropdown.classList.contains('open')) {
         dropdown.classList.remove('open');
-        tabSelectArrow?.classList.add?.('downArrow');
+        tabSelectArrow?.classList.add?.('tab-down-arrow');
       } else {
         dropdown.classList.add('open');
-        tabSelectArrow?.classList.remove?.('downArrow');
+        tabSelectArrow?.classList.remove?.('tab-down-arrow');
       }
     }
   });

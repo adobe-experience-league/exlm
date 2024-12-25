@@ -1,5 +1,6 @@
 /* stylelint-disable media-feature-range-notation */
 /* stylelint-disable declaration-block-no-redundant-longhand-properties */
+
 /* ----- mobile ------ */
 
 /* the order is different from properties rail */
@@ -212,6 +213,10 @@
     align-self: center;
   }
 
+  .featured-authors.block > div:has(.author) {
+    justify-self: center;
+  }
+
   .featured-authors.block.right > div:has(.description) {
     padding-right: 48px;
     padding-left: 0;
@@ -228,11 +233,6 @@
   .featured-authors.block .featured-authors-image img {
     width: 286px;
     height: 286px;
-  }
-
-  /* author blocks */
-  .featured-authors.block > div:has(.author) {
-    justify-self: center;
   }
 
   .featured-authors.block .author {
@@ -268,6 +268,10 @@
     align-self: center;
   }
 
+  .featured-authors.block > div:has(.author) {
+    justify-self: left;
+  }
+
   .featured-authors.block.right > div:has(.description) {
     padding: 0;
   }
@@ -283,10 +287,6 @@
 
   .featured-authors.block.right .featured-authors-image {
     margin-left: 70px;
-  }
-
-  .featured-authors.block > div:has(.author) {
-    justify-self: left;
   }
 
   .featured-authors.block .featured-authors-image img {

@@ -8,6 +8,8 @@
     "lint:js": "eslint .",
     "lint:sass": "stylelint blocks/**/*.scss styles/*.scss styles/theme/*.scss",
     "lint:sass:fix": "stylelint blocks/**/*.scss styles/*.scss --fix",
+    "lint:css": "stylelint blocks/**/*.css styles/*.css styles/theme/*.css",
+    "lint:css:fix": "stylelint blocks/**/*.css styles/*.css --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "npm run lint:js && npm run lint:sass",
@@ -54,10 +56,11 @@
     "sass": "^1.68.0",
     "semantic-release": "21.0.5",
     "sinon": "15.0.1",
-    "stylelint": "^15.2.0",
-    "stylelint-config-standard": "30.0.1",
-    "stylelint-config-standard-scss": "^11.0.0",
-    "stylelint-scss": "^5.2.1"
+    "stylelint": "^16.12.0",
+    "stylelint-config-recommended": "^14.0.1",
+    "stylelint-config-standard": "^36.0.1",
+    "stylelint-config-standard-scss": "^14.0.0",
+    "stylelint-scss": "^6.10.0"
   },
   "lint-staged": {
     "*.js": [

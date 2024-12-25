@@ -3,13 +3,13 @@
   border: none;
 }
 
-.docs .cloud-solutions-container .default-content-wrapper h1 {
-  margin-top: 4px;
-}
-
 .cloud-solutions-container h1 {
   font-size: 44px;
   line-height: var(--spectrum-line-height-xxxl);
+}
+
+.docs .cloud-solutions-container .default-content-wrapper h1 {
+  margin-top: 4px;
 }
 
 .cloud-solutions-container h2 {
@@ -33,15 +33,15 @@
   margin-bottom: 20px;
 }
 
+.cloud-solutions-list li {
+  height: auto;
+  line-height: 21px;
+}
+
 .cloud-solutions-content .cloud-solutions-list ul,
 .cloud-solutions-content .cloud-solutions-list li {
   margin: 0;
   list-style: none;
-}
-
-.cloud-solutions-list li {
-  height: auto;
-  line-height: 21px;
 }
 
 .cloud-solutions-list a {

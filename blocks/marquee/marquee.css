@@ -166,11 +166,8 @@ div.marquee-wrapper {
 .marquee .modal {
   position: fixed;
   z-index: 10;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(10, 10, 10, 0.86);
+  inset: 0;
+  background-color: rgb(10 10 10 / 86%);
   justify-content: center;
   align-items: center;
   overflow: hidden;
@@ -187,7 +184,7 @@ div.marquee-wrapper {
 }
 
 .marquee .modal .icon:hover {
-  background-color: rgba(10, 10, 10, 0.3);
+  background-color: rgb(10 10 10 / 30%);
   border-radius: 50%;
 }
 
@@ -249,8 +246,7 @@ div.marquee-wrapper {
   }
 
   .marquee-cta {
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-flow: row wrap;
   }
 
   .marquee-cta > a.button {

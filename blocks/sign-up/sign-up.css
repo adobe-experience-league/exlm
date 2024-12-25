@@ -200,8 +200,7 @@ div.sign-up-wrapper {
   }
 
   .signup-cta {
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-flow: row wrap;
   }
 
   .signup-cta > a.button {

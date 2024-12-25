@@ -45,7 +45,7 @@
 
 .role-and-industry .role-cards-checkbox input {
   width: 14px;
-  margin: 0px;
+  margin: 0;
   accent-color: var(--non-spectrum-navy-blue);
 }
 
@@ -72,7 +72,7 @@
 }
 
 .role-and-industry .role-cards-description h3 {
-  margin: 0px;
+  margin: 0;
   font-size: 18px;
   line-height: 22px;
 }
@@ -87,7 +87,7 @@
 }
 
 .role-and-industry .role-cards-default-selection p {
-  margin: 0px 0px 10px 0px;
+  margin: 0 0 10px;
   min-height: 18px;
   font-size: 14px;
   line-height: 17px;
@@ -135,15 +135,15 @@ body.profile
   .role-and-industry
   .industry-selection-title
   :where(h1, h2, h3, h4, h5, h6):not(.signup-dialog .role-and-industry .industry-selection-title) {
-  margin-top: 0px;
-  margin-bottom: 0px;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 body.profile
   .role-and-industry
   .industry-selection-description:not(.signup-dialog .role-and-industry .industry-selection-description) {
   font-size: 16px;
-  color: #222222;
+  color: #222;
   font-style: italic;
   font-weight: 500;
 }
@@ -161,7 +161,7 @@ body.profile
   .role-and-industry
   .role-cards-description
   h3:not(.signup-dialog .role-and-industry .role-cards-description h3) {
-  margin-top: 0px;
+  margin-top: 0;
 }
 
 /* tablet */
@@ -172,6 +172,7 @@ body.profile
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
   }
+
   body.profile
     .role-and-industry
     .industry-selection-holder:not(.signup-dialog .role-and-industry .industry-selection-holder) {

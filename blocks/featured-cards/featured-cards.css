@@ -59,6 +59,7 @@
   margin-bottom: 8px;
   gap: 16px;
 }
+
 .featured-cards .browse-card-dropdown > label {
   font-size: var(--spectrum-body-size-l);
   font-weight: 700;
