@@ -32,8 +32,8 @@
 .teaser.block > .foreground > .text > .eyebrow {
   display: none;
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-75);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-xs);
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-700);
   margin-bottom: var(--space-token-xs);
 }
@@ -43,7 +43,7 @@
   display: none;
   font-family: var(--body-font-family);
   font-size: var(--spectrum-heading-size-l);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   line-height: var(--spectrum-line-height-xxl);
   margin-bottom: var(--space-token-xxs);
 }
@@ -56,8 +56,8 @@
 .teaser.block > .foreground > .text > .short-description,
 .teaser.block > .foreground > .text > .short-description * {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-300);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-md);
+  font-weight: var(--font-weight-bold);
   line-height: var(--spectrum-line-height-l);
   color: var(--background-color);
   margin: 0;
@@ -101,8 +101,8 @@
   color: var(--teaser-background-color);
   margin: 0;
   font-family: var(--body-font-family);
-  font-size: 15px;
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-sm);
+  font-weight: var(--font-weight-bold);
   line-height: 15px;
   padding: 5px 14px 6px;
 }
@@ -321,7 +321,7 @@
   /* the main title, hidden in mobile */
   body[class^='browse-'] .teaser.block > .foreground > .text > .title,
   body[class^='article-'] .teaser.block > .foreground > .text > .title {
-    font-size: var(--spectrum-font-size-600);
+    font-size: var(--spectrum-font-size-2xl);
     line-height: 37.5px;
   }
 
@@ -335,7 +335,7 @@
 
   body[class^='browse-'] .teaser.block > .foreground > .text > .cta > a.button,
   body[class^='article-'] .teaser.block > .foreground > .text > .cta > a.button {
-    font-size: 13px;
+    font-size: var(--spectrum-font-size-xs);
     line-height: 16px;
     padding: 4px 14px 6px;
   }
@@ -385,7 +385,7 @@
   /* when shown on a page with a rail he eybrow title */
   body:not([class^='browse-']) .teaser.block > .foreground > .text > .eyebrow,
   body:not([class^='article-']) .teaser.block > .foreground > .text > .eyebrow {
-    font-size: var(--spectrum-font-size-100);
+    font-size: var(--spectrum-font-size-sm);
   }
 
   body[class^='browse-'] .section div.teaser-wrapper .foreground,

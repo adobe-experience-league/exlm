@@ -8,11 +8,11 @@
 
 .article-metadata-topics li {
   display: inline-block;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-sm);
 }
 
 .article-metadata-topics li:first-child {
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-xs);
   text-transform: uppercase;
   font-weight: bold;
   padding-right: 4px;
@@ -33,6 +33,6 @@
   text-decoration: none;
   cursor: default;
   color: inherit;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-sm);
   margin-right: 7px;
 }

@@ -11,8 +11,8 @@
 }
 
 .profile-welcome .profile-curated-card .profile-curated-eyebrowtext {
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-sm);
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-900);
   text-align: center;
   text-transform: uppercase;
@@ -25,8 +25,8 @@
 }
 
 .profile-welcome .profile-curated-card .profile-curated-card-description {
-  font-size: var(--spectrum-font-size-400);
-  font-weight: var(--font-weight-400);
+  font-size: var(--spectrum-font-size-lg);
+  font-weight: var(--font-weight-normal);
   color: var(--spectrum-gray-800);
   text-align: center;
 }
@@ -110,8 +110,8 @@
 
 .profile-welcome .profile-user-card-left .profile-user-card-title .title-heading,
 .profile-user-card-location .location-heading {
-  font-size: var(--spectrum-font-size-75);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-xs);
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-900);
   text-transform: uppercase;
   line-height: 15px;
@@ -122,55 +122,55 @@
 .profile-welcome .profile-user-card-right .profile-user-card-role .incomplete-profile {
   font-style: italic;
   line-height: 17px;
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   color: var(--spectrum-gray-800);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
 }
 
 .profile-user-card-industry .content,
 .profile-user-card-interests .content {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   color: var(--spectrum-gray-800);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   line-height: 17px;
 }
 
 .profile-user-card-location .content,
 .profile-welcome .profile-user-card-left .profile-user-card-title .content {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   color: var(--spectrum-gray-800);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   line-height: 17px;
 }
 
 .profile-welcome .profile-user-card-right .profile-user-card-role .content {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   color: var(--spectrum-gray-800);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   line-height: 17px;
 }
 
 .profile-welcome .profile-user-card-left .profile-user-card-incomplete {
   display: flex;
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   color: var(--spectrum-gray-800);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   gap: 8px;
 }
 
 .profile-welcome .profile-user-card-right .profile-user-card-role .role-heading,
 .profile-user-card-industry .industry-heading,
 .profile-user-card-interests .interest-heading {
-  font-size: var(--spectrum-font-size-75);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-xs);
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-900);
   text-transform: uppercase;
   line-height: 15px;
 }
 
 .profile-welcome .profile-user-card-left .profile-user-card-info .profile-user-card-name {
-  font-size: var(--spectrum-font-size-300);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-md);
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-900);
   margin-bottom: 8px;
   line-height: 22px;
@@ -181,22 +181,22 @@
 }
 
 .profile-welcome .profile-user-card-left .profile-user-card-info .profile-user-card-tag {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   color: var(--spectrum-blue-900);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   line-height: 20px;
 }
 
 .profile-welcome .profile-user-card-left .profile-user-card-info .profile-user-card-org {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   color: var(--spectrum-gray-800);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   line-height: 20px;
 }
 
 .profile-welcome .profile-user-card-cta > a.button {
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-sm);
+  font-weight: var(--font-weight-bold);
   width: min-content;
   min-width: 152px;
   background-color: var(--non-spectrum-true-blue);
@@ -258,7 +258,7 @@
 }
 
 .profile-welcome .profile-user-card-mini .profile-user-card-left .profile-user-card-info .profile-user-card-name {
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   margin-bottom: 0;
 }
 
@@ -273,7 +273,7 @@
 
 .profile-welcome .profile-user-card-mini .profile-user-card-cta > a.button {
   margin-top: 0;
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   height: 24px;
   border-radius: 12px;
   padding: 0 12px;

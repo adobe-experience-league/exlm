@@ -36,7 +36,7 @@
   border-radius: 4px;
   color: var(--spectrum-gray-50);
   display: inline-block;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-xs);
   font-weight: normal;
   left: -999px;
   line-height: var(--spectrum-line-height-xs);
@@ -71,7 +71,7 @@
   display: inline-block;
 }
 .browse-cards-block-view a {
-  font-size: 18px;
+  font-size: var(--spectrum-font-size-md);
   line-height: var(--spectrum-line-height-s);
   margin: 2px 0 0 0;
 }

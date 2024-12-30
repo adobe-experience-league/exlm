@@ -4,7 +4,7 @@
 h1 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h1),
-    $font-weight: var(--font-weight-700),
+    $font-weight: var(--font-weight-bold),
     $line-height: var(--exlm-line-height-h1),
     $color: var(--non-spectrum-grey)
   );
@@ -14,7 +14,7 @@ h1 {
 h2 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h2),
-    $font-weight: var(--font-weight-700),
+    $font-weight: var(--font-weight-bold),
     $line-height: var(--exlm-line-height-h2),
     $margin-top: 40px,
     $margin-bottom: 7px,
@@ -26,7 +26,7 @@ h2 {
 h3 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h3),
-    $font-weight: var(--font-weight-700),
+    $font-weight: var(--font-weight-bold),
     $line-height: var(--exlm-line-height-h3),
     $margin-top: 40px,
     $margin-bottom: 5.5px,
@@ -38,7 +38,7 @@ h3 {
 h4 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h4),
-    $font-weight: var(--font-weight-700),
+    $font-weight: var(--font-weight-bold),
     $line-height: var(--exlm-line-height-h4),
     $margin-bottom: 7px,
     $color: var(--text-color)
@@ -49,7 +49,7 @@ h4 {
 h5 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h5),
-    $font-weight: var(--font-weight-700),
+    $font-weight: var(--font-weight-bold),
     $line-height: var(--exlm-line-height-h5),
     $margin-bottom: 7px,
     $color: var(--text-color)
@@ -60,7 +60,7 @@ h5 {
 h6 {
   @include text-styles(
     $font-size: var(--exlm-font-size-h6),
-    $font-weight: var(--font-weight-700),
+    $font-weight: var(--font-weight-bold),
     $line-height: var(--exlm-line-height-h6),
     $margin-bottom: 7px,
     $color: var(--text-color)
@@ -88,7 +88,7 @@ a {
 
 .last-updated {
   @include text-styles(
-    $font-size: var(--spectrum-font-size-75),
+    $font-size: var(--spectrum-font-size-xs),
     $line-height: var(--spectrum-line-height-s),
     $color: var(--non-spectrum-grey-updated),
     $margin-top: 4px,

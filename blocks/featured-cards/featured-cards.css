@@ -8,7 +8,7 @@
 .featured-cards .browse-cards-block-header .browse-card-description-text {
   text-align: center;
   color: var(--spectrum-gray-800);
-  font-size: 18px;
+  font-size: var(--spectrum-font-size-md);
   line-height: 23.4px;
   margin-bottom: 16px;
 }
@@ -62,7 +62,7 @@
 
 .featured-cards .browse-card-dropdown > label {
   font-size: var(--spectrum-body-size-l);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   color: #363636;
 }
 

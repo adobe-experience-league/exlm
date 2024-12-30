@@ -19,8 +19,8 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: var(--spectrum-font-size-200);
-  font-weight: var(--font-weight-400);
+  font-size: var(--spectrum-font-size-base);
+  font-weight: var(--font-weight-normal);
   color: var(--spectrum-gray-700);
   margin: 0;
   position: relative;
@@ -64,7 +64,6 @@
   margin-left: 16px;
 }
 
-
 @media (max-width: 1024px) {
   .topic-results-dropdown {
     display: flex;
@@ -106,7 +105,7 @@
     cursor: pointer;
     text-align: left;
     font-family: var(--body-font-family);
-    font-weight: 400;
+    font-weight: var(--font-weight-normal);
 
     &:focus {
       outline: none;

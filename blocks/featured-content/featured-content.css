@@ -75,10 +75,10 @@
   right: 0;
   color: white;
   letter-spacing: 0.6px;
-  font-size: 10px;
+  font-size: var(--non-spectrum-font-size-10);
   line-height: 14px;
   text-transform: uppercase;
-  font-weight: var(--font-weight-900);
+  font-weight: var(--font-weight-black);
   max-width: fit-content;
   padding: 4px 10px;
   border-radius: 0 0 0 4px;
@@ -99,7 +99,7 @@
 }
 
 .featured-content .cta a {
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   line-height: 20px;
   margin-bottom: 0;
 }
@@ -108,8 +108,8 @@
 .featured-content.block .description :where(h1, h2, h3, h4, h5, h6) {
   margin: 0;
   margin-bottom: 16px;
-  font-size: var(--spectrum-font-size-800);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-4xl);
+  font-weight: var(--font-weight-bold);
   line-height: 40px;
   color: var(--non-spectrum-dark-charcoal);
 }
@@ -166,7 +166,7 @@
 .featured-content.block div.author-header h3 {
   margin: 0;
   text-transform: uppercase;
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   line-height: 16px;
   color: var(--non-spectrum-dark-charcoal);
   letter-spacing: 0.72px;
@@ -178,9 +178,9 @@
   flex-direction: column;
   gap: 8px;
   margin-left: 16px;
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-700);
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 18.2px;
 }
 
@@ -201,7 +201,7 @@
 /* the author cta link */
 .featured-content.block .author .author-details .author-cta {
   text-decoration: none;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-xs);
   line-height: 15px;
   font-weight: bold;
   color: #505050;
@@ -228,14 +228,14 @@
 
 .featured-content.block .author .author-title {
   line-height: 21px;
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   color: var(--non-spectrum-grey);
 }
 
 .featured-content.block .author .author-social {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 17px;
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   margin: 0;
   color: var(--non-spectrum-navy-blue);
 }
@@ -246,7 +246,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin: 0;
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   line-height: 21px;
   color: var(--non-spectrum-grey);
 }
@@ -394,7 +394,7 @@
   }
 
   .featured-content.block .featured-content-image .source-tag {
-    font-size: 12px;
+    font-size: var(--spectrum-font-size-xs);
     line-height: 17px;
   }
 }

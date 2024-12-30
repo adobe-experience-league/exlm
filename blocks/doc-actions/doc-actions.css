@@ -2,7 +2,7 @@
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   margin: 10px;
 }
 
@@ -71,7 +71,7 @@
 }
 
 .doc-mt-feedback .prompt {
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
 }
 
 .doc-mt-toggle .doc-mt-feedback-radio {

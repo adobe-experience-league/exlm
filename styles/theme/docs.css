@@ -2,7 +2,7 @@
 .docs {
   --exlm-font-size-h1: var(--spectrum-heading-size-l);
   --exlm-font-size-h2: 24px;
-  --exlm-font-size-h3: var(--spectrum-font-size-400);
+  --exlm-font-size-h3: var(--spectrum-font-size-lg);
   --exlm-font-size-h4: var(--spectrum-heading-size-s);
   --exlm-font-size-h5: var(--spectrum-heading-size-s);
   --exlm-font-size-h6: var(--spectrum-heading-size-s);
@@ -37,14 +37,14 @@
 .docs pre,
 .docs samp {
   font-family: var(--fixed-font-family);
-  font-size: 12.25px;
+  font-size: var(--spectrum-font-size-xs);
   line-height: 18.375px;
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
 }
 
 .docs code:not([class^='language-']) {
   font-family: var(--spectrum-code-font-family);
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   background-color: unset;
   line-height: 21px;
   padding: 0;
@@ -67,7 +67,7 @@
 .docs p {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: var(--spectrum-line-height-m);
   color: var(--spectrum-gray-800);
@@ -78,7 +78,7 @@
 .docs ol {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: 24px;
   color: var(--non-spectrum-grey);
@@ -89,7 +89,7 @@
 .docs ul {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: 24px;
   color: var(--non-spectrum-grey);
@@ -304,9 +304,9 @@
   border-radius: 4px;
   color: white;
   display: inline-block;
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   line-height: 15px;
   padding: 5px 9px;
   text-decoration: none;

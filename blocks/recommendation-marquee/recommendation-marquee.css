@@ -7,15 +7,15 @@
 }
 
 .recommendation-marquee-header {
-  font-size: var(--spectrum-font-size-700);
+  font-size: var(--spectrum-font-size-3xl);
   line-height: 35px;
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-800);
   margin-bottom: 16px;
 }
 
 .recommendation-marquee-description {
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   line-height: 20px;
   color: var(--spectrum-gray-800);
   margin-bottom: 30px;
@@ -23,7 +23,7 @@
 }
 
 .recommendation-marquee-filter-heading {
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   line-height: 15px;
   text-transform: uppercase;
   letter-spacing: 0.72px;
@@ -52,9 +52,9 @@
 }
 
 .recommendation-marquee-discover-resource {
-  font-size: var(--spectrum-font-size-500);
+  font-size: var(--spectrum-font-size-xl);
   line-height: 27px;
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-900);
 }
 
@@ -71,9 +71,9 @@
 }
 
 .recommendation-marquee-result-link a {
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   line-height: 20px;
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-50);
   margin: 0;
   white-space: nowrap;
@@ -152,7 +152,7 @@
 }
 
 .recommendation-marquee.block .custom-filter-dropdown button span.custom-filter-dropdown-name {
-  font-size: 17px;
+  font-size: var(--spectrum-font-size-base);
   line-height: 21px;
   color: var(--non-spectrum-article-dark-gray);
 }

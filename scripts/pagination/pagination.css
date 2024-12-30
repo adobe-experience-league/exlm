@@ -7,7 +7,7 @@
 }
 
 .pagination span {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 17px;
   color: var(--spectrum-gray-700);
 }
@@ -18,7 +18,7 @@
   margin: 0 8px;
   border-radius: 4px;
   border: 1px solid var(--spectrum-gray-200);
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 17px;
   color: var(--spectrum-gray-700);
   font-family: var(--body-font-family);

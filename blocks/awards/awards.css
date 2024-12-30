@@ -21,27 +21,27 @@
 }
 
 .awards .awards-title {
-  font-size: var(--spectrum-font-size-500);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-xl);
+  font-weight: var(--font-weight-bold);
   margin-bottom: 8px;
   line-height: var(--spectrum-line-height-l);
 }
 
 .awards .awards-time {
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   margin-bottom: 8px;
   border-bottom: 2px var(--spectrum-gray-50) solid;
   padding: 0 0 8px;
 }
 
 .awards .awards-description {
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   line-height: var(--spectrum-line-height-m);
 }
 
 .awards .nil-awards {
   color: var(--color-black);
-  font-size: var(--spectrum-font-size-300);
+  font-size: var(--spectrum-font-size-md);
 }
 
 @media (min-width: 600px) {

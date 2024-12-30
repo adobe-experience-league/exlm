@@ -18,7 +18,7 @@
 .language-selector-label {
   cursor: pointer;
   display: block;
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   padding: 5px 15px;
   margin: 0;
 }
@@ -28,7 +28,7 @@
 }
 
 .language-selector-label[selected] {
-  background: url("/icons/checkmark.svg");
+  background: url('/icons/checkmark.svg');
   background-size: 10px;
   background-repeat: no-repeat;
   background-position-y: center;

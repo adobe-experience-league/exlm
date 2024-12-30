@@ -1,7 +1,7 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
 .recently-reviewed .recently-reviewed-header {
-  font-size: var(--spectrum-font-size-700);
+  font-size: var(--spectrum-font-size-3xl);
   line-height: 35px;
   font-weight: bold;
   color: var(--spectrum-gray-800);
@@ -9,7 +9,7 @@
 }
 
 .recently-reviewed .recently-reviewed-description {
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   line-height: 20px;
   color: var(--spectrum-gray-800);
   margin-bottom: 30px;

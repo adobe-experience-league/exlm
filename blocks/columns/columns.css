@@ -1,7 +1,7 @@
 .columns {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: var(--spectrum-line-height-l);
   color: var(--spectrum-gray-800);

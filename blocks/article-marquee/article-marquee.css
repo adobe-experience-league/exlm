@@ -87,8 +87,8 @@
 }
 
 .article-marquee .author-info .author-card .author-info-text .author-name {
-  font-size: var(--spectrum-font-size-100);
-  font-weight: 600;
+  font-size: var(--spectrum-font-size-sm);
+  font-weight: var(--font-weight-semi-bold);
 }
 
 .article-marquee .breadcrumb {
@@ -100,7 +100,7 @@
 .article-marquee .breadcrumb > span {
   color: var(--spectrum-gray-700);
   display: inline-block;
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   line-height: 24px;
   margin: 0;
 }
@@ -131,8 +131,8 @@
   display: block;
   margin-top: 8px;
   color: var(--spectrum-gray-800);
-  font-size: 22px;
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-xl);
+  font-weight: var(--font-weight-bold);
 }
 
 .article-marquee-info {
@@ -169,8 +169,8 @@
 .article-marquee-tag {
   width: max-content;
   color: #000;
-  font-size: 10px;
-  font-weight: 600;
+  font-size: var(--non-spectrum-font-size-10);
+  font-weight: var(--font-weight-semi-bold);
   padding: 2px 4px;
   margin-top: 1em;
   border-radius: 2px;
@@ -212,7 +212,7 @@
   .article-marquee .breadcrumb > span {
     display: inline;
     margin-top: 0;
-    font-size: var(--spectrum-font-size-200);
+    font-size: var(--spectrum-font-size-base);
   }
 
   .article-marquee .author-info .author-details {
@@ -238,7 +238,7 @@
   }
 
   .article-marquee .author-info .author-card .author-info-text .author-name {
-    font-size: var(--spectrum-font-size-200);
+    font-size: var(--spectrum-font-size-base);
   }
 
   .article-marquee .author-info {

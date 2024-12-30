@@ -25,8 +25,8 @@
   --nav-item-text-color: #2c2c2c;
   --color-white: #fff;
   --color-black: #000;
-  --spectrum-font-size-100: 14px;
-  --spectrum-font-size-75: 12px;
+  --font-size-sm: 14px;
+  --font-size-xs: 12px;
   --spectrum-line-height-l: 21px;
   --spectrum-gray-200: #f3f3f3;
   --spectrum-gray-400: #d1d1d1;
@@ -48,9 +48,9 @@
   --link-hover-color: #0055b3;
   --nav-height: 4rem;
   --exlm-font-size-content: 14px;
-  --font-weight-400: 400;
-  --font-weight-600: 600;
-  --font-weight-700: 700;
+  --font-weight-normal: 400;
+  --font-weight-semi-bold: 600;
+  --font-weight-bold: 700;
 
   /* fonts */
   --body-font-family: 'Adobe Clean', adobe-clean, 'Source Sans Pro', -apple-system, system-ui, 'Segoe UI', roboto,
@@ -122,7 +122,7 @@
 .language-selector-label {
   cursor: pointer;
   display: block;
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   padding: 5px var(--nav-root-item-padding-x);
   margin: 0;
 }
@@ -257,7 +257,7 @@
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
   outline: none;
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   font-family: var(--body-font-family);
   color: var(--non-spectrum-graphite-gray);
   line-height: 15px;
@@ -271,11 +271,11 @@
 
 .search-input::placeholder {
   font-style: italic;
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   letter-spacing: 0.14px;
   color: var(--spectrum-gray-600);
   opacity: 0.8;
-  font-weight: 100;
+  font-weight: var(--font-weight-thin);
 }
 
 .search-picker-button {
@@ -295,7 +295,7 @@
   box-shadow: none;
   color: var(--spectrum-gray-700);
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   height: 32px;
   line-height: 15px;
   text-align: right;
@@ -339,7 +339,7 @@
 
 button > .search-picker-label {
   color: var(--spectrum-gray-700);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
 }
 
 .search-picker-popover,
@@ -420,7 +420,7 @@ button > .search-picker-label {
 .search-suggestions-popover li.search-picker-label {
   border-top: 1px solid var(--non-spectrum-bg);
   padding: 3px 12px;
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 18px;
   color: var(--non-spectrum-charcoal-gray);
 }
@@ -439,7 +439,7 @@ button > .search-picker-label {
   padding: 7px 12px 7px 32px;
   position: relative;
   color: var(--spectrum-gray-800);
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: var(--exlm-line-height-h6);
   overflow: hidden;
   white-space: nowrap;
@@ -487,7 +487,7 @@ button > .search-picker-label {
 a:any-link {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: var(--spectrum-line-height-l);
   color: var(--non-spectrum-link);
@@ -512,7 +512,7 @@ button {
   padding: 5px 30px;
   text-align: center;
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--font-weight-semi-bold);
   cursor: pointer;
   color: var(--background-color);
   background-color: var(--link-color);
@@ -592,8 +592,8 @@ button:focus {
   justify-content: center;
   padding: var(--nav-root-item-padding);
   order: var(--brand-order);
-  font-size: 17px;
-  font-weight: 700;
+  font-size: var(--spectrum-font-size-base);
+  font-weight: var(--font-weight-bold);
   white-space: nowrap;
 }
 
@@ -625,8 +625,8 @@ button:focus {
   background: var(--spectrum-blue-900);
   border-radius: 16px;
   color: var(--spectrum-gray-50);
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-600);
+  font-size: var(--spectrum-font-size-sm);
+  font-weight: var(--font-weight-semi-bold);
   padding: 5px 16px;
   white-space: nowrap;
   line-height: unset;
@@ -645,8 +645,8 @@ button:focus {
 }
 
 .header .signed-in .profile .profile-menu h2 {
-  font-size: var(--spectrum-font-size-75);
-  font-weight: var(--font-weight-600);
+  font-size: var(--spectrum-font-size-xs);
+  font-weight: var(--font-weight-semi-bold);
   line-height: 18px;
   letter-spacing: 0.72px;
   margin: 15px 0 0;
@@ -677,8 +677,8 @@ button:focus {
 
 .header .product-dropdown a {
   color: var(--non-spectrum-grey);
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-400);
+  font-size: var(--spectrum-font-size-sm);
+  font-weight: var(--font-weight-normal);
   line-height: 21px;
 }
 
@@ -688,7 +688,7 @@ button:focus {
   line-height: 24px;
   position: relative;
   margin: 0;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-sm);
   font-weight: inherit;
   padding: var(--nav-item-padding-x);
 }
@@ -702,8 +702,8 @@ button:focus {
   border-top: 1px solid var(--spectrum-gray-200);
   color: var(--spectrum-gray-700);
   display: block;
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-400);
+  font-size: var(--spectrum-font-size-sm);
+  font-weight: var(--font-weight-normal);
   letter-spacing: normal;
   line-height: 17px;
   padding: 10px 0 8px 10px;
@@ -714,7 +714,7 @@ button:focus {
 .header .signed-in .profile a[data-id='sign-out'] {
   border-top: 0 none;
   color: var(--spectrum-blue-900);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   padding: 10px 0 8px;
   margin: 10px 0 0;
 }
@@ -762,8 +762,8 @@ button:focus {
   background: var(--spectrum-blue-900);
   border-radius: 16px;
   color: var(--spectrum-gray-50);
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-600);
+  font-size: var(--spectrum-font-size-sm);
+  font-weight: var(--font-weight-semi-bold);
   padding: 5px 16px;
   white-space: nowrap;
   line-height: unset;
@@ -1003,7 +1003,7 @@ button:focus {
 @media (min-width: 1024px) {
   .header .nav-item-subtitle {
     display: block;
-    font-size: 11px;
+    font-size: var(--spectrum-font-size-xxs);
   }
 }
 
@@ -1015,7 +1015,7 @@ button:focus {
   text-align: left;
   background: none;
   font-weight: initial;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-sm);
   color: var(--spectrum-gray-800);
   justify-content: space-between;
   position: relative;
@@ -1231,8 +1231,8 @@ button:focus {
   box-shadow: none;
   color: #2d2d2d;
   cursor: pointer;
-  font-size: 20px;
-  font-weight: 300;
+  font-size: var(--spectrum-font-size-lg);
+  font-weight: var(--font-weight-light);
 }
 
 .header .nav-hamburger::before {

@@ -12,7 +12,7 @@
 
 .browse-rail > ul > li > a,
 .browse-rail > ul > li > span {
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   font-weight: bold;
   flex: 88%;
 }
@@ -21,7 +21,7 @@
 .browse-rail ul li span,
 .browse-rail ul li ul li a,
 .browse-rail ul li ul li span {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 21px;
   min-height: 32px;
   box-sizing: border-box;
@@ -36,7 +36,6 @@
   text-transform: none;
 }
 
-
 .browse-rail .browse-more-products a {
   color: var(--non-spectrum-dark-navy-blue);
   margin: 20px 0 24px;
@@ -45,7 +44,7 @@
   gap: 4px;
   position: relative;
   font-weight: normal;
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 17px;
   padding-left: 5px;
 }
@@ -131,7 +130,7 @@
 
 .browse-rail ul li .left-rail-view-more span,
 .browse-rail ul li .left-rail-view-less span {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   color: var(--non-spectrum-link);
   cursor: pointer;
   text-transform: none;

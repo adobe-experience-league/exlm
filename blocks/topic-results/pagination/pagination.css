@@ -19,7 +19,7 @@
   padding: 5px 30px;
   text-align: center;
   font-style: normal;
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
   color: var(--text-color);
   background-color: unset;

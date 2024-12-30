@@ -1,6 +1,6 @@
 .responsive-pill-list {
   color: var(--spectrum-gray-700);
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   justify-content: space-between;
   line-height: 20.8px;
 }
@@ -61,7 +61,7 @@
 .responsive-pill-list .responsive-pill-list-more-option span {
   height: 30px;
   letter-spacing: 2.2px;
-  font-weight: var(--font-weight-900);
+  font-weight: var(--font-weight-black);
   margin-left: 2px;
 }
 
@@ -71,11 +71,11 @@
 
 .responsive-pill-list .responsive-pill-list-option-overlay p {
   text-align: center;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-xs);
   line-height: 15px;
   opacity: 0.6;
   color: var(--text-color);
-  font-weight: var(--font-weight-600);
+  font-weight: var(--font-weight-semi-bold);
   text-transform: uppercase;
 }
 
@@ -87,7 +87,7 @@
 .responsive-pill-list ul li {
   color: var(--spectrum-gray-800);
   cursor: pointer;
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   line-height: 20px;
   margin: 0;
   padding: 9px 20px 11px 20px;
@@ -95,7 +95,7 @@
   border-radius: 20px;
   position: relative;
   white-space: pre;
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
 }
 
 .responsive-pill-list ul li.active {

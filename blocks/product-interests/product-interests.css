@@ -20,7 +20,7 @@ body.profile > main > .section:not(.profile-rail-section, .sign-up-flow-section)
 }
 
 .product-interests .product-interest-description {
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
 }
 
 .product-interests .sub-interests-container {
@@ -38,7 +38,7 @@ body.profile > main > .section:not(.profile-rail-section, .sign-up-flow-section)
 
 .product-interests label.checkbox {
   cursor: pointer;
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   display: inline-flex;
   justify-content: flex-start;
   align-items: flex-start;
@@ -72,6 +72,6 @@ body.profile > main > .section:not(.profile-rail-section, .sign-up-flow-section)
   }
 
   .product-interests label.checkbox {
-    font-size: var(--spectrum-font-size-100);
+    font-size: var(--spectrum-font-size-sm);
   }
 }
