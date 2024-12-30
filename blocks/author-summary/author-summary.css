@@ -5,16 +5,15 @@
   background-color: var(--non-spectrum-bg);
   display: grid;
   grid-auto-columns: 1fr;
-  grid-template: 
-    "author-image author-details" auto
-    "author-description author-description" auto
+  grid-template:
+    'author-image author-details' auto
+    'author-description author-description' auto
     / 0.1fr auto;
   gap: 0;
   min-height: 100px;
   min-width: 200px;
   margin-bottom: 20px;
 }
-
 
 .author-summary-grid.adobe {
   border-color: var(--spectrum-red-1400);
@@ -60,13 +59,13 @@
 }
 
 .author-summary .author-details > div:first-child {
-  font-size: var(--spectrum-font-size-400);
-  font-weight: 600;
+  font-size: var(--spectrum-font-size-lg);
+  font-weight: var(--font-weight-semi-bold);
   color: var(--spectrum-gray-900);
 }
 
 .author-summary .author-description a {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   text-decoration: underline;
 }
 

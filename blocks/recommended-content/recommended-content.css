@@ -12,7 +12,7 @@ body.profile
 }
 
 .recommended-content-header {
-  font-size: var(--spectrum-font-size-700);
+  font-size: var(--spectrum-font-size-3xl);
   line-height: 35px;
   font-weight: bold;
   color: var(--spectrum-gray-800);
@@ -20,7 +20,7 @@ body.profile
 }
 
 .recommended-content-description {
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   line-height: 20px;
   color: var(--spectrum-gray-800);
   margin-bottom: 30px;
@@ -35,7 +35,7 @@ body.profile
 }
 
 .recommended-content-filter-heading {
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   line-height: 15px;
   text-transform: uppercase;
   letter-spacing: 0.72px;
@@ -70,7 +70,7 @@ body.profile
 }
 
 .recommended-content-discover-resource {
-  font-size: var(--spectrum-font-size-500);
+  font-size: var(--spectrum-font-size-xl);
   line-height: 27px;
   font-weight: bold;
   color: var(--spectrum-gray-900);
@@ -89,7 +89,7 @@ body.profile
 }
 
 .recommended-content-result-link a {
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   line-height: 20px;
   font-weight: bold;
   color: var(--spectrum-gray-800);
@@ -188,7 +188,7 @@ body.profile
 }
 
 .recommended-content.block .custom-filter-dropdown button span.custom-filter-dropdown-name {
-  font-size: 17px;
+  font-size: var(--spectrum-font-size-base);
   line-height: 21px;
   color: var(--non-spectrum-article-dark-gray);
 }
@@ -206,7 +206,6 @@ body.profile
 .recommended-content.block:has(.browse-card-no-results) .recommended-content-nav-section {
   display: none;
 }
-
 
 .recommended-content.block .browse-cards-block-content .card-wrapper:not(:has(.browse-card)) {
   display: none;

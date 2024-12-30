@@ -39,8 +39,8 @@
   line-height: 13px;
 }
 
-.filter-input>button,
-.filter-input>input {
+.filter-input > button,
+.filter-input > input {
   cursor: pointer;
   position: relative;
   height: 32px;
@@ -49,7 +49,7 @@
   border-radius: 4px;
   padding: 9px 12px;
   width: 100%;
-  font-size: 16px;
+  font-size: var(--spectrum-font-size-base);
 
   /* https://defensivecss.dev/tip/input-zoom-safari/ */
   text-align: left;
@@ -59,15 +59,15 @@
   margin: 0;
 }
 
-.filter-input>button {
+.filter-input > button {
   padding-right: 24px;
 }
 
-.filter-input>input {
+.filter-input > input {
   padding-left: 28px;
 }
 
-.filter-input>input::placeholder {
+.filter-input > input::placeholder {
   font-family: var(--body-font-family);
   color: var(--spectrum-gray-700);
   font-size: var(--spectrum-body-size-m);
@@ -92,7 +92,7 @@
   height: fit-content;
 }
 
-.browse-filters-search>input {
+.browse-filters-search > input {
   padding-left: 32px;
   max-width: 100%;
 }
@@ -155,7 +155,7 @@
   margin: 0 8px;
   border-radius: 4px;
   border: 1px solid var(--spectrum-gray-200);
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 17px;
   color: var(--spectrum-gray-700);
   font-family: var(--body-font-family);
@@ -186,7 +186,7 @@
 
 .filter-dropdown .custom-checkbox label .description {
   font-weight: normal;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-xs);
   line-height: 16px;
   text-align: left;
   color: var(--spectrum-gray-500);
@@ -200,7 +200,7 @@
   display: none;
 }
 
-.filter-dropdown .custom-checkbox input:checked+label .icon-checked {
+.filter-dropdown .custom-checkbox input:checked + label .icon-checked {
   font-size: var(--spectrum-body-size-s);
   color: var(--non-spectrum-grey-333);
   text-align: center;
@@ -216,7 +216,7 @@
 }
 
 button.browse-filters-clear {
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   font-size: var(--spectrum-body-size-s);
   text-align: left;
   color: var(--spectrum-blue-900);
@@ -251,7 +251,7 @@ button.browse-filters-clear:disabled:hover {
   padding: 4px 25px 5px 12px;
   margin-bottom: 10px;
   font-weight: normal;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-xs);
   text-align: left;
   color: var(--spectrum-gray-500);
   line-height: normal;
@@ -304,7 +304,7 @@ button.browse-tags:focus {
   cursor: pointer;
 }
 
-.browse-filters-results>div {
+.browse-filters-results > div {
   min-width: 0;
   min-height: 330px;
 }
@@ -314,7 +314,7 @@ button.browse-tags:focus {
 }
 
 .browse-filters-pagination span {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 17px;
   color: var(--spectrum-gray-700);
 }
@@ -379,7 +379,7 @@ button.browse-tags:focus {
 .browse-filters-form .sort-container {
   align-items: center;
   color: var(--spectrum-gray-700);
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   display: none;
   justify-content: flex-end;
   line-height: 15.6px;
@@ -397,7 +397,7 @@ button.browse-tags:focus {
   color: var(--spectrum-gray-700);
   border: 0 none;
   border-radius: 4px;
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   font-weight: normal;
   line-height: 17px;
   margin: 0 0 0 8px;
@@ -426,7 +426,7 @@ button.browse-tags:focus {
   color: var(--non-spectrum-input-text);
   cursor: pointer;
   display: none;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-sm);
   font-weight: normal;
   position: absolute;
   right: 0;
@@ -440,7 +440,7 @@ button.browse-tags:focus {
   border: none;
   color: var(--non-spectrum-charcoal-gray);
   display: block;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-sm);
   font-weight: normal;
   text-decoration: none;
   margin: 0;
@@ -474,7 +474,7 @@ button.browse-tags:focus {
 .browse-filters-results.no-results {
   background-color: var(--spectrum-gray-200);
   color: var(--non-spectrum-grey);
-  font-size: 16px;
+  font-size: var(--spectrum-font-size-base);
   min-height: 346px;
   padding-top: 72px;
   text-align: center;
@@ -511,7 +511,7 @@ button.browse-tags:focus {
 .search-suggestions-popover li.search-picker-label {
   border-top: 1px solid var(--non-spectrum-bg);
   padding: 3px 12px;
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 18px;
   color: var(--non-spectrum-charcoal-gray);
 }
@@ -529,7 +529,7 @@ button.browse-tags:focus {
   padding: 7px 12px 7px 32px;
   position: relative;
   color: var(--spectrum-gray-800);
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: var(--exlm-line-height-h6);
   overflow: hidden;
   white-space: nowrap;
@@ -594,8 +594,12 @@ button.browse-tags:focus {
     padding: 0;
   }
 
-  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-product-dropdown.filter-dropdown),
-  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-experience-level-dropdown.filter-dropdown) {
+  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(
+      .browse-product-dropdown.filter-dropdown
+    ),
+  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(
+      .browse-experience-level-dropdown.filter-dropdown
+    ) {
     grid-template-areas:
       'label label'
       'ctype author'
@@ -604,7 +608,9 @@ button.browse-tags:focus {
     grid-template-columns: 1fr 1fr;
   }
 
-  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(.browse-author-type-dropdown):not(:has(.browse-experience-level-dropdown)) {
+  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(
+      .browse-author-type-dropdown
+    ):not(:has(.browse-experience-level-dropdown)) {
     grid-template-areas:
       'label label label label label label'
       'role role ctype ctype exp exp'
@@ -630,8 +636,12 @@ button.browse-tags:focus {
     grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
   }
 
-  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-product-dropdown.filter-dropdown),
-  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(.browse-experience-level-dropdown.filter-dropdown) {
+  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(
+      .browse-product-dropdown.filter-dropdown
+    ),
+  .browse-filters-input-container:has(.filter-dropdown.browse-author-type-dropdown):has(
+      .browse-experience-level-dropdown.filter-dropdown
+    ) {
     grid-template-areas:
       'label label label label'
       'ctype author role exp'
@@ -639,7 +649,9 @@ button.browse-tags:focus {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 
-  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(.browse-author-type-dropdown):not(:has(.browse-experience-level-dropdown)) {
+  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(
+      .browse-author-type-dropdown
+    ):not(:has(.browse-experience-level-dropdown)) {
     grid-template-areas: 'label role ctype exp search cfilter';
     grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
   }

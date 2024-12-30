@@ -41,8 +41,8 @@ div.marquee-wrapper {
 
 .marquee-eyebrow {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-75);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-xs);
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-700);
   margin-bottom: var(--space-token-xs);
   line-height: 18px;
@@ -50,8 +50,8 @@ div.marquee-wrapper {
 
 .marquee-title {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-900);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-5xl);
+  font-weight: var(--font-weight-bold);
   line-height: var(--spectrum-line-height-xxxl);
   margin-bottom: var(--space-token-xs);
 }
@@ -64,8 +64,8 @@ div.marquee-wrapper {
 .marquee-short-description,
 .marquee-short-description * {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-600);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-2xl);
+  font-weight: var(--font-weight-bold);
   line-height: var(--spectrum-line-height-l);
   color: var(--background-color);
   margin: 0;
@@ -74,7 +74,7 @@ div.marquee-wrapper {
 .marquee-long-description,
 .marquee-long-description * {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-300);
+  font-size: var(--spectrum-font-size-md);
   line-height: var(--spectrum-line-height-l);
   margin: 0;
 }
@@ -82,7 +82,7 @@ div.marquee-wrapper {
 .marquee-cta {
   display: flex;
   flex-direction: column-reverse;
-  font-size: 19px;
+  font-size: var(--spectrum-font-size-md);
   gap: var(--spectrum-spacing-400);
   margin-top: var(--spectrum-spacing-400);
   padding: 0;
@@ -94,7 +94,7 @@ div.marquee-wrapper {
 }
 
 .marquee-cta > a.button {
-  font-size: 19px;
+  font-size: var(--spectrum-font-size-md);
   margin: 0;
   padding: 8px 40px;
   width: min-content;
@@ -286,7 +286,7 @@ div.marquee-wrapper {
   }
 
   .marquee-title {
-    font-size: var(--spectrum-font-size-1100);
+    font-size: var(--spectrum-font-size-7xl);
   }
 
   .marquee-cta {
@@ -342,7 +342,7 @@ div.marquee-wrapper {
   /* title */
   body[class^='browse-'] .marquee-title,
   body[class^='article-'] .marquee-title {
-    font-size: var(--spectrum-font-size-900);
+    font-size: var(--spectrum-font-size-5xl);
     line-height: 36px;
     margin-bottom: var(--space-token-xxs);
   }
@@ -357,7 +357,7 @@ div.marquee-wrapper {
   /* cta */
   body[class^='browse-'] .marquee-cta a.button,
   body[class^='article-'] .marquee-cta a.button {
-    font-size: 17px;
+    font-size: var(--spectrum-font-size-base);
     line-height: 21px;
     padding: 6px 16px 9px 20px;
   }

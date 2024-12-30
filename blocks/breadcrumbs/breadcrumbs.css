@@ -7,7 +7,7 @@
 .breadcrumbs > div > div > a {
   color: var(--spectrum-gray-700);
   display: inline-block;
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   margin: 0;
   line-height: 33px;
 }
@@ -31,5 +31,5 @@
 
 .breadcrumbs > div > div > a:last-child {
   color: var(--spectrum-gray-900);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
 }

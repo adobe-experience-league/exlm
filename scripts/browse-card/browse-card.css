@@ -27,9 +27,9 @@
   padding: 8px 16px;
   border-radius: 0 4px 4px 0;
   text-transform: uppercase;
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   line-height: 17px;
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   letter-spacing: 0.72px;
   margin: 0;
 }
@@ -40,8 +40,8 @@
 .browse-card .browse-card-tag-text h4 {
   text-transform: uppercase;
   margin: 0;
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-400);
+  font-size: var(--spectrum-font-size-sm);
+  font-weight: var(--font-weight-normal);
   line-height: 21px;
   color: var(--spectrum-gray-700);
 }
@@ -49,7 +49,7 @@
   margin: 8px 0;
   line-height: 22.5px;
   color: var(--non-spectrum-raisin-black);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
 }
 .browse-card .browse-card-event-info {
   display: flex;
@@ -70,7 +70,7 @@
 .browse-card .browse-card-description-text,
 .browse-card .browse-card-description-text * {
   margin: 0;
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 21px;
   color: var(--spectrum-gray-700);
 }
@@ -127,7 +127,7 @@
 }
 .browse-card .browse-card-meta-info span {
   color: var(--non-spectrum-grey-updated);
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   line-height: 17px;
 }
 .browse-card .browse-card-event-info .icon {
@@ -142,22 +142,22 @@
   gap: 10px 0;
 }
 .browse-card .browse-card-author-prefix {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   font-weight: normal;
   line-height: 18.2px;
   color: var(--spectrum-gray-900);
   margin-right: 8px;
 }
 .browse-card .browse-card-author-name {
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-sm);
+  font-weight: var(--font-weight-bold);
   line-height: 18.2px;
   color: var(--spectrum-gray-900);
   margin-right: 11px;
 }
 .browse-card .browse-card-author-badge {
-  font-size: 10px;
-  font-weight: var(--font-weight-700);
+  font-size: var(--non-spectrum-font-size-10);
+  font-weight: var(--font-weight-bold);
   line-height: 18.2px;
   background-color: var(--spectrum-red-1400);
   border-radius: 2px;
@@ -189,8 +189,8 @@
   gap: 4px;
   top: 4px;
   position: relative;
-  font-weight: var(--font-weight-600);
-  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-semi-bold);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 17px;
 }
 .browse-card .browse-card-footer .browse-card-cta-element .icon {
@@ -206,7 +206,7 @@
   gap: 4px;
   color: var(--non-spectrum-grey-updated);
   text-decoration: none;
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
 }
 .browse-card .browse-card-contributor-info {
   display: flex;
@@ -223,7 +223,7 @@
   background-color: var(--non-spectrum-dim-orange);
   color: var(--background-color);
   border-radius: 1px;
-  font-size: 9px;
+  font-size: var(--non-spectrum-font-size-9);
   height: 12px;
   width: 12px;
   display: flex;
@@ -242,12 +242,12 @@
   border-radius: 100%;
 }
 .browse-card .browse-card-name-plate span {
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   line-height: 18px;
   color: var(--non-spectrum-grey-updated);
 }
 .browse-card .browse-card-name-plate .browse-card-contributor-name {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   color: var(--non-spectrum-navy-blue);
 }
 /* Content Type specific styles */
@@ -324,7 +324,7 @@
   background: var(--spectrum-gray-200);
   border-radius: 4px;
   color: var(--non-spectrum-grey);
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   line-height: 21px;
   letter-spacing: normal;
   padding: 74px 0;
@@ -352,7 +352,7 @@
   border-radius: 4px;
   color: var(--spectrum-gray-50);
   display: inline-block;
-  font-size: 11px;
+  font-size: var(--spectrum-font-size-xxs);
   font-weight: normal;
   left: -999px;
   line-height: 14.3px;
@@ -422,7 +422,7 @@
 }
 .browse-card .course-duration {
   color: var(--spectrum-gray-700);
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-xs);
   font-style: italic;
 }
 @media only screen and (min-width: 900px) {

@@ -68,7 +68,7 @@
   text-transform: uppercase;
   color: white;
   letter-spacing: 0.6px;
-  font-size: 10px;
+  font-size: var(--non-spectrum-font-size-10);
   max-width: fit-content;
   padding: 8px 14px;
   border-radius: 0 0 0 4px;
@@ -88,8 +88,8 @@
 .featured-authors.block .description :where(h1, h2, h3, h4, h5, h6) {
   margin: 0;
   margin-bottom: 16px;
-  font-size: 40px;
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-6xl);
+  font-weight: var(--font-weight-bold);
   line-height: var(--exlm-line-height-h1);
   color: var(--non-spectrum-dark-charcoal);
 }
@@ -173,7 +173,7 @@
 /* the author cta link */
 .featured-authors.block .author .author-details .author-cta {
   text-decoration: none;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-xs);
   line-height: 15px;
   font-weight: bold;
   color: #505050;

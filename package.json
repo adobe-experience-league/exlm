@@ -60,6 +60,7 @@
     "stylelint-config-recommended": "^14.0.1",
     "stylelint-config-standard": "^36.0.1",
     "stylelint-config-standard-scss": "^14.0.0",
+    "stylelint-prettier": "^5.0.2",
     "stylelint-scss": "^6.10.0"
   },
   "lint-staged": {

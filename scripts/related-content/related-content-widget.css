@@ -9,7 +9,7 @@
 }
 
 .related-content-wrapper .related-content-toggle h2 {
-  font-size: var(--spectrum-font-size-50);
+  font-size: var(--spectrum-font-size-xxs);
   font-weight: var(--spectrum-extra-bold-font-weight);
   text-transform: uppercase;
   line-height: 31px;
@@ -66,7 +66,7 @@
 }
 
 .related-content-wrapper ul.related-content li .related-content-icon .related-content-tooltip .tooltip-label-wrapper {
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-xs);
   position: absolute;
   visibility: hidden;
   transition: all 130ms ease-in-out;
@@ -86,7 +86,7 @@
   bottom: 3em;
   left: 0.5em;
   color: var(--spectrum-gray-50);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   padding: 2px 8px 4px;
   text-align: center;
   text-wrap: nowrap;
@@ -118,7 +118,7 @@
 }
 
 .related-content-wrapper ul.related-content a {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   display: inline-flex;
   min-height: 32px;
   box-sizing: border-box;

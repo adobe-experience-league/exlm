@@ -1,14 +1,11 @@
 {
-  "extends": [
-    "stylelint-config-standard",
-    "stylelint-config-recommended",
-    "stylelint-config-standard-scss"
-  ],
-  "plugins": ["stylelint-scss"],
+  "extends": ["stylelint-config-standard", "stylelint-config-recommended", "stylelint-config-standard-scss"],
+  "plugins": ["stylelint-scss", "stylelint-prettier"],
   "rules": {
     "color-hex-length": "short",
     "no-empty-source": null,
     "declaration-block-no-duplicate-properties": true,
-    "media-feature-range-notation": null
+    "media-feature-range-notation": null,
+    "prettier/prettier": true
   }
 }

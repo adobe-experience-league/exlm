@@ -12,7 +12,7 @@
   border-radius: 4px;
   padding: 9px 12px;
   width: 100%;
-  font-size: 16px;
+  font-size: var(--spectrum-font-size-base);
   text-align: left;
   color: var(--spectrum-gray-700);
   line-height: 10px;
@@ -86,7 +86,7 @@
 
 .custom-filter-dropdown .custom-checkbox label .description {
   font-weight: normal;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-xs);
   line-height: 16px;
   text-align: left;
   color: var(--spectrum-gray-500);

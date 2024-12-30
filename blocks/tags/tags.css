@@ -20,7 +20,7 @@
 .article-tags-topics-heading,
 .article-tags-createdfor-heading {
   font-size: var(--spectrum-body-size-xs);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .article-tags-name {

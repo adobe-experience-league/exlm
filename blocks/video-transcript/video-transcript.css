@@ -4,7 +4,7 @@
   color: var(--non-spectrum-grey);
   margin: 0 25px;
   padding: 0 var(--space-token-xs);
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 21px;
 }
 
@@ -14,7 +14,7 @@
 }
 
 .video-transcript.block details p {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   color: var(--spectrum-gray-800);
   line-height: 21px;
   margin-bottom: 12px;
@@ -26,9 +26,9 @@
 
 .video-transcript.block details summary {
   list-style: none;
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   color: var(--non-spectrum-navy-blue);
   padding: var(--space-token-xs) 0;
 }
@@ -50,7 +50,7 @@
   content: '>';
   display: inline-block;
   margin-left: 5px;
-  font-weight: var(--font-weight-900);
+  font-weight: var(--font-weight-black);
   transition: transform 0.15s ease-in-out;
 }
 

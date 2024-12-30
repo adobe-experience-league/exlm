@@ -15,7 +15,7 @@
 }
 
 .mini-toc-wrapper .mini-toc {
-  font-size: var(--spectrum-font-size-50);
+  font-size: var(--spectrum-font-size-xxs);
   font-weight: var(--spectrum-extra-bold-font-weight);
   padding-left: 0;
   overflow: visible;
@@ -31,7 +31,7 @@
 }
 
 .mini-toc-wrapper .mini-toc h2 {
-  font-size: var(--spectrum-font-size-50);
+  font-size: var(--spectrum-font-size-xxs);
   font-weight: var(--spectrum-extra-bold-font-weight);
   text-transform: uppercase;
   margin: 0;
@@ -75,7 +75,7 @@
 }
 
 .mini-toc-wrapper .mini-toc ul li a {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 21px;
   display: inline-flex;
   min-height: 32px;
@@ -93,7 +93,7 @@
 }
 
 .mini-toc-wrapper .mini-toc ul li a.is-active {
-  font-weight: var(--font-weight-600);
+  font-weight: var(--font-weight-semi-bold);
   background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
   color: #1e1e1e;
 }

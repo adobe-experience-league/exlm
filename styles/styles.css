@@ -4,7 +4,7 @@
 h1 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h1);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   font-style: normal;
   line-height: var(--exlm-line-height-h1);
   color: var(--non-spectrum-grey);
@@ -16,7 +16,7 @@ h1 {
 h2 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h2);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   font-style: normal;
   line-height: var(--exlm-line-height-h2);
   color: var(--non-spectrum-grey);
@@ -28,7 +28,7 @@ h2 {
 h3 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h3);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   font-style: normal;
   line-height: var(--exlm-line-height-h3);
   color: var(--text-color);
@@ -40,7 +40,7 @@ h3 {
 h4 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h4);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   font-style: normal;
   line-height: var(--exlm-line-height-h4);
   color: var(--text-color);
@@ -52,7 +52,7 @@ h4 {
 h5 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h5);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   font-style: normal;
   line-height: var(--exlm-line-height-h5);
   color: var(--text-color);
@@ -64,7 +64,7 @@ h5 {
 h6 {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-h6);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   font-style: normal;
   line-height: var(--exlm-line-height-h6);
   color: var(--text-color);
@@ -76,7 +76,7 @@ h6 {
 p {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: var(--spectrum-line-height-l);
   color: var(--spectrum-gray-800);
@@ -89,7 +89,7 @@ h2 + p,
 h3 + p {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: var(--spectrum-line-height-l);
   color: var(--spectrum-gray-800);
@@ -101,7 +101,7 @@ h3 + p {
 a {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: var(--spectrum-line-height-l);
   color: var(--non-spectrum-link);
@@ -113,8 +113,8 @@ a {
 
 .last-updated {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-75);
-  font-weight: var(--font-weight-400);
+  font-size: var(--spectrum-font-size-xs);
+  font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: var(--spectrum-line-height-s);
   color: var(--non-spectrum-grey-updated);
@@ -158,28 +158,36 @@ strong {
   --spectrum-code-font-family: "Source Code Pro", "monaco", monospace;
 
   /* default font sizes */
-  --spectrum-font-size-50: 11px;
-  --spectrum-font-size-75: 12px;
-  --spectrum-font-size-100: 14px;
-  --spectrum-font-size-200: 16px;
-  --spectrum-font-size-300: 18px;
-  --spectrum-font-size-400: 20px;
-  --spectrum-font-size-500: 22px;
-  --spectrum-font-size-600: 25px;
-  --spectrum-font-size-700: 28px;
-  --spectrum-font-size-800: 32px;
-  --spectrum-font-size-900: 36px;
-  --spectrum-font-size-1000: 40px;
-  --spectrum-font-size-1100: 45px;
-  --spectrum-font-size-1200: 50px;
-  --spectrum-font-size-1300: 60px;
+  --spectrum-font-size-xxs: 0.6875rem;  /* 11px */
+  --spectrum-font-size-xs: 0.75rem;     /* 12px */
+  --spectrum-font-size-sm: 0.875rem;    /* 14px */
+  --spectrum-font-size-base: 1rem;      /* 16px */
+  --spectrum-font-size-md: 1.125rem;    /* 18px */
+  --spectrum-font-size-lg: 1.25rem;     /* 20px */
+  --spectrum-font-size-xl: 1.375rem;    /* 22px */
+  --spectrum-font-size-2xl: 1.5625rem;  /* 25px */
+  --spectrum-font-size-3xl: 1.75rem;    /* 28px */
+  --spectrum-font-size-4xl: 2rem;       /* 32px */
+  --spectrum-font-size-5xl: 2.25rem;    /* 36px */
+  --spectrum-font-size-6xl: 2.5rem;     /* 40px */
+  --spectrum-font-size-7xl: 2.8125rem;  /* 45px */
+  --spectrum-font-size-8xl: 3.125rem;   /* 50px */
+  --spectrum-font-size-9xl: 3.75rem;    /* 60px */
+  --non-spectrum-font-size-9: 0.5625rem; /* 9px */
+  --non-spectrum-font-size-10: 0.625rem; /* 10px */
+
 
   /* font weight */
-  --font-weight-900: 900;
-  --font-weight-700: 700;
-  --font-weight-600: 600;
-  --font-weight-400: 400;
-  --spectrum-extra-bold-font-weight: 800;
+  --font-weight-thin: 100;
+  --font-weight-extra-light: 200;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semi-bold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extra-bold: 800;
+  --font-weight-black: 900;
+  --spectrum-extra-bold-font-weight: var(--font-weight-extra-bold);
 
   /* line height */
   --spectrum-line-height-xxxl: 57.2px;
@@ -191,23 +199,23 @@ strong {
   --spectrum-line-height-xs: 15.6px;
 
   /* heading font sizes */
-  --spectrum-heading-size-xxxl: var(--spectrum-font-size-1300);
-  --spectrum-heading-size-xxl: var(--spectrum-font-size-1100);
-  --spectrum-heading-size-xl: var(--spectrum-font-size-900);
-  --spectrum-heading-size-l: var(--spectrum-font-size-700);
-  --spectrum-heading-size-m: var(--spectrum-font-size-500);
-  --spectrum-heading-size-s: var(--spectrum-font-size-300);
-  --spectrum-heading-size-xs: var(--spectrum-font-size-200);
-  --spectrum-heading-size-xxs: var(--spectrum-font-size-100);
+  --spectrum-heading-size-xxxl: var(--spectrum-font-size-9xl);
+  --spectrum-heading-size-xxl: var(--spectrum-font-size-7xl);
+  --spectrum-heading-size-xl: var(--spectrum-font-size-5xl);
+  --spectrum-heading-size-l: var(--spectrum-font-size-3xl);
+  --spectrum-heading-size-m: var(--spectrum-font-size-xl);
+  --spectrum-heading-size-s: var(--spectrum-font-size-md);
+  --spectrum-heading-size-xs: var(--spectrum-font-size-base);
+  --spectrum-heading-size-xxs: var(--spectrum-font-size-sm);
 
   /* body font sizes */
-  --spectrum-body-size-xxxl: var(--spectrum-font-size-600);
-  --spectrum-body-size-xxl: var(--spectrum-font-size-500);
-  --spectrum-body-size-xl: var(--spectrum-font-size-400);
-  --spectrum-body-size-l: var(--spectrum-font-size-300);
-  --spectrum-body-size-m: var(--spectrum-font-size-200);
-  --spectrum-body-size-s: var(--spectrum-font-size-100);
-  --spectrum-body-size-xs: var(--spectrum-font-size-75);
+  --spectrum-body-size-xxxl: var(--spectrum-font-size-2xl);
+  --spectrum-body-size-xxl: var(--spectrum-font-size-xl);
+  --spectrum-body-size-xl: var(--spectrum-font-size-lg);
+  --spectrum-body-size-l: var(--spectrum-font-size-md);
+  --spectrum-body-size-m: var(--spectrum-font-size-base);
+  --spectrum-body-size-s: var(--spectrum-font-size-sm);
+  --spectrum-body-size-xs: var(--spectrum-font-size-xs);
   --spectrum-body-line-height: var(--spectrum-line-height-200);
   --spectrum-body-color: var(--spectrum-gray-800);
 
@@ -603,7 +611,7 @@ ul {
 ul > li {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: 27px;
   color: var(--non-spectrum-grey);
@@ -624,7 +632,7 @@ ol {
 ol > li {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: 27px;
   color: var(--non-spectrum-grey);
@@ -658,7 +666,7 @@ pre,
 samp {
   font-family: var(--fixed-font-family);
   font-size: var(--spectrum-body-size-l);
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   line-height: 27px;
 }
 
@@ -678,7 +686,7 @@ pre {
 a:any-link {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: var(--spectrum-line-height-l);
   color: var(--non-spectrum-link);
@@ -699,7 +707,7 @@ button {
   padding: 5px 30px;
   text-align: center;
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--font-weight-semi-bold);
   cursor: pointer;
   color: var(--background-color);
   background-color: var(--link-color);
@@ -746,8 +754,8 @@ button.secondary:disabled:hover {
 }
 
 .button-container a.button {
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-sm);
+  font-weight: var(--font-weight-bold);
   line-height: 16.8px;
   margin: 0;
   padding: 7px 14px 8px;
@@ -769,7 +777,7 @@ button.secondary:disabled:hover {
 }
 
 input {
-  font-size: 1.25rem;
+  font-size: var(--spectrum-font-size-lg);
   width: 100%;
   max-width: 50rem;
   display: block;
@@ -897,7 +905,7 @@ picture[align="right"] {
   border-right: 1px solid rgb(255 255 255 / 25%);
   color: var(--spectrum-gray-50);
   flex-grow: 1;
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   line-height: 18.2px;
   padding: 7px 15px 7px 5px;
   margin: 8px 0;
@@ -955,7 +963,7 @@ picture[align="right"] {
 }
 
 .section.highlight.icon-block-container > div > h3 {
-  font-size: 28px;
+  font-size: var(--spectrum-font-size-3xl);
   line-height: 42px;
   text-align: center;
   margin: 0 0 36px;

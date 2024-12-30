@@ -1,5 +1,5 @@
 .docs.docs-solution-landing.docs-tutorial .default-content-wrapper h2 {
-  font-size: 24px;
+  font-size: var(--spectrum-font-size-2xl);
   border-bottom: 3px solid var(--non-spectrum-grey);
   margin-bottom: 12px;
 }
@@ -19,7 +19,7 @@
 
 .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li a {
   line-height: 24px;
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   color: var(--non-spectrum-link);
 }
 
@@ -31,7 +31,7 @@
 
 @media (width >= 900px) {
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper h2 {
-    font-size: var(--spectrum-font-size-700);
+    font-size: var(--spectrum-font-size-3xl);
   }
 
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {

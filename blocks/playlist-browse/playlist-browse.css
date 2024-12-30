@@ -165,12 +165,11 @@
 .playlist-filter-dropdown .filter-option label .description {
   display: block;
   font-weight: normal;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-xs);
   line-height: 16px;
   text-align: left;
   color: var(--spectrum-gray-500);
 }
-
 
 .filter-option input:checked + label .icon-checked {
   font-size: var(--spectrum-body-size-s);
@@ -208,7 +207,7 @@
   border-radius: 4px;
   padding: 9px 12px;
   width: 100%;
-  font-size: 16px;
+  font-size: var(--spectrum-font-size-base);
 
   /* https://defensivecss.dev/tip/input-zoom-safari/ */
   text-align: left;
@@ -235,7 +234,7 @@
   border-radius: 50%;
   text-align: center;
   line-height: 15px;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-xs);
 }
 
 .playlist-browse-filter-button::after {
@@ -319,13 +318,13 @@
   padding-left: 1em;
   margin: 0 !important;
   color: #4a4a4a !important;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-sm);
 }
 
 /* Clear filters button */
 .filters-clear {
   grid-area: clear;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   font-size: var(--spectrum-body-size-s);
   text-align: left;
   color: var(--spectrum-blue-900);
@@ -365,7 +364,7 @@
   padding: 4px 25px 5px 12px;
   margin-bottom: 10px;
   font-weight: normal;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-xs);
   text-align: left;
   color: var(--spectrum-gray-500);
   line-height: normal;
