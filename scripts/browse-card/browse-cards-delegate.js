@@ -88,8 +88,13 @@ const BrowseCardsDelegate = (() => {
   const handleCoveoService = async () => {
     const { contentType } = param;
 
-    if (contentType?.includes(CONTENT_TYPES.COMMUNITY.MAPPING_KEY) && !param?.dateCriteria) {
-      param.dateCriteria = createDateCriteria(['within_one_year']);
+    if (contentType?.includes(CONTENT_TYPES.COMMUNITY.MAPPING_KEY)) {
+      if (param?.role) {
+        param.role = [];
+      }
+      if (!param?.dateCriteria) {
+        param.dateCriteria = createDateCriteria(['within_one_year']);
+      }
     }
 
     const dataSource = getExlPipelineDataSourceParams(param, fieldsToInclude);
