@@ -19,6 +19,19 @@ function newActionButton({ labelKey, labelFallback, icons, action, onButtonReady
   label.classList.add('playlist-action-label');
   const button = htmlToElement(`<button data-action="${action}">${iconSpans}</button>`);
   button.appendChild(label);
+  // Add tooltips for copy and info
+  const tooltips = {
+    copy: { placeholderKey: 'userActionCopylinkTooltip', fallback: 'Copy link URL' },
+    info: { placeholderKey: 'playlistAboutPlaylistTooltip', fallback: 'About playlist' },
+  };
+
+  if (tooltips[action]) {
+    const { placeholderKey, fallback } = tooltips[action];
+    const actionTooltip = createPlaceholderSpan(placeholderKey, fallback, (span) => {
+      span.classList.add('playlist-action-tooltip-label');
+    });
+    button.appendChild(actionTooltip);
+  }
   if (onButtonReady) {
     onButtonReady(button);
   }
