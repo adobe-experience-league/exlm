@@ -150,6 +150,11 @@
   z-index: 2;
 }
 
+.playlist-actions [data-action='copy'] .playlist-action-tooltip-label,
+.playlist-actions [data-action='info'] .playlist-action-tooltip-label {
+  left: 0;
+}
+
 .playlist-actions [data-action] .playlist-action-tooltip-label::after {
   border-width: 4px;
   border-style: solid;
@@ -177,7 +182,9 @@
   display: block;
 }
 
-[data-action='bookmark']:hover .playlist-action-tooltip-label {
+[data-action='bookmark']:hover .playlist-action-tooltip-label,
+[data-action='copy']:hover .playlist-action-tooltip-label,
+[data-action='info']:hover .playlist-action-tooltip-label {
   display: block;
 }
 

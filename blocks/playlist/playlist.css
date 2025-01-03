@@ -94,7 +94,7 @@
   border-bottom-left-radius: var(--playlist-border-radius);
   border-bottom-right-radius: var(--playlist-border-radius);
   flex: 1 1 auto;
-  overflow: scroll;
+  overflow: auto;
   position: relative;
   scroll-behavior: smooth;
 }
