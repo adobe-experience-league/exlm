@@ -20,7 +20,7 @@
   background: var(--spectrum-gray-50);
   height: 40px;
   color: var(--spectrum-gray-800);
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   margin: 0;
   padding: 11.5px 19px;
   flex-shrink: 0;
@@ -59,6 +59,6 @@
   .browse-topics-item {
     height: 55px;
     padding: 16.5px 17px 16.5px 18px;
-    font-size: var(--spectrum-font-size-300);
+    font-size: var(--spectrum-font-size-md);
   }
 }

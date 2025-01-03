@@ -92,7 +92,7 @@ export default class LanguageBlock extends HTMLElement {
   buildLanguageBlock = async () => {
     const popoverClass =
       this.position === 'top'
-        ? 'language-selector-popover language-selector-popover--top'
+        ? 'language-selector-popover language-selector-popover-top'
         : 'language-selector-popover';
 
     const spans = this.languages.map((option) => {

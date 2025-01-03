@@ -13,22 +13,20 @@ body.profile > main > .section:not(.profile-rail-section, .sign-up-flow-section)
 }
 
 .product-interests .interests-container {
-  margin: 16px 0 0 0;
+  margin: 16px 0 0;
   display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
+  flex-flow: column wrap;
   gap: 8px 10px;
 }
 
 .product-interests .product-interest-description {
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
 }
 
 .product-interests .sub-interests-container {
   margin: 8px 0 0 28px;
   display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
+  flex-flow: column wrap;
   gap: 8px 10px;
 }
 
@@ -40,7 +38,7 @@ body.profile > main > .section:not(.profile-rail-section, .sign-up-flow-section)
 
 .product-interests label.checkbox {
   cursor: pointer;
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-base);
   display: inline-flex;
   justify-content: flex-start;
   align-items: flex-start;
@@ -62,6 +60,7 @@ body.profile > main > .section:not(.profile-rail-section, .sign-up-flow-section)
   .product-interests .interests-container {
     max-height: 540px;
   }
+
   .product-interests .interests-container li {
     max-width: calc(50% - 10px);
   }
@@ -71,7 +70,8 @@ body.profile > main > .section:not(.profile-rail-section, .sign-up-flow-section)
   .product-interests .interests-container {
     gap: 8px 20px;
   }
+
   .product-interests label.checkbox {
-    font-size: var(--spectrum-font-size-100);
+    font-size: var(--spectrum-font-size-sm);
   }
 }

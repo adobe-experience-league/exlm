@@ -39,8 +39,8 @@ button:disabled:hover {
 .user-actions button label {
   color: var(--non-spectrum-grey);
   cursor: pointer;
-  font-size: var(--spectrum-font-size-75);
-  font-weight: var(--font-weight-400);
+  font-size: var(--spectrum-font-size-xs);
+  font-weight: var(--font-weight-normal);
   line-height: 28px;
   margin-left: 5px;
   vertical-align: 5px;
@@ -63,8 +63,8 @@ button:disabled:hover {
   bottom: 120%;
   color: var(--spectrum-gray-50);
   display: none;
-  font-size: 12px;
-  font-weight: var(--font-weight-400);
+  font-size: var(--spectrum-font-size-xs);
+  font-weight: var(--font-weight-normal);
   left: 50%;
   padding: 2px 8px 4px;
   position: absolute;

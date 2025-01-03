@@ -90,7 +90,7 @@
 
 .spectrum-switch .spectrum-switch-label {
   margin-inline: 8px;
-  font-size: 12px; /* Small font size */
+  font-size: var(--spectrum-font-size-xs); /* Small font size */
   line-height: 1.5;
   color: #333;
   transition: color 0.2s ease-in-out;

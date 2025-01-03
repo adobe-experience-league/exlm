@@ -1,7 +1,7 @@
 @mixin text-styles(
   $font-family: var(--body-font-family),
   $font-size: var(--exlm-font-size-content),
-  $font-weight: var(--font-weight-400),
+  $font-weight: var(--font-weight-normal),
   $font-style: normal,
   $line-height: var(--spectrum-line-height-l),
   $color: var(--spectrum-gray-800),
@@ -22,8 +22,8 @@
   background: var(--spectrum-blue-900);
   border-radius: 16px;
   color: var(--spectrum-gray-50);
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-600);
+  font-size: var(--spectrum-font-size-sm);
+  font-weight: var(--font-weight-semi-bold);
   padding: 5px 16px;
   white-space: nowrap;
   line-height: unset;

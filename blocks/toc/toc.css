@@ -53,7 +53,7 @@
 .toc a {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: var(--spectrum-line-height-m);
   color: var(--spectrum-gray-800);
@@ -104,7 +104,7 @@
 }
 
 .toc-header-content > h3 {
-  font-size: var(--spectrum-font-size-300);
+  font-size: var(--spectrum-font-size-md);
   margin: 0;
 }
 
@@ -114,7 +114,7 @@
   position: relative;
   align-items: center;
   justify-content: start;
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 21px;
   min-height: 32px;
   box-sizing: border-box;
@@ -125,13 +125,13 @@
 }
 
 .toc > ul > li > a {
-  font-size: var(--spectrum-font-size-75);
+  font-size: var(--spectrum-font-size-xs);
   font-weight: bold;
   flex: 88%;
 }
 
 .toc ul li ul li a {
-  font-size: var(--spectrum-font-size-100);
+  font-size: var(--spectrum-font-size-sm);
   line-height: 21px;
   min-height: 32px;
   box-sizing: border-box;
@@ -147,11 +147,11 @@
 }
 
 .toc div > ul > li:first-child a:not(.toc-toggle) {
-  font-weight: 800;
+  font-weight: var(--font-weight-extra-bold);
 }
 
 .toc a.toc-toggle {
-  font-size: var(--spectrum-font-size-50);
+  font-size: var(--spectrum-font-size-xxs);
   color: var(--non-spectrum-eerie-black);
   display: flex;
   align-items: center;
@@ -214,7 +214,7 @@ button.toc-dropdown-button {
   border-radius: 4px;
   box-shadow: none;
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-300);
+  font-size: var(--spectrum-font-size-md);
   height: 32px;
   line-height: 15px;
   text-align: right;
@@ -222,7 +222,7 @@ button.toc-dropdown-button {
   margin: 0;
   width: 100%;
   color: var(--spectrum-gray-800);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
 }
 
 .toc-dropdown-button:hover {

@@ -168,7 +168,7 @@
   color: var(--non-spectrum-navy-blue);
   font-size: var(--spectrum-body-size-m);
   line-height: var(--spectrum-line-height-m);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .table table tbody td em {

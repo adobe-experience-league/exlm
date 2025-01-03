@@ -81,15 +81,15 @@
 
 /* the eyebrow titles */
 .detailed-teaser.block > .foreground > .text > .eyebrow > .title {
-  font-size: var(--spectrum-font-size-300);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-md);
+  font-weight: var(--font-weight-bold);
   color: var(--non-spectrum-grey);
   margin: 0;
 }
 
 .detailed-teaser.block > .foreground > .text > .eyebrow > .subtitle {
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-sm);
+  font-weight: var(--font-weight-bold);
   color: #8c8c8c;
   margin: 0;
 }
@@ -112,7 +112,7 @@
 /* description */
 .detailed-teaser.block > .foreground > .text > .description,
 .detailed-teaser.block > .foreground > .text > .description * {
-  font-size: 22px;
+  font-size: var(--spectrum-font-size-xl);
   color: var(--non-spectrum-custom-dark);
   line-height: 30px;
   margin-top: 10px;
@@ -145,8 +145,8 @@
 /* the cta buttons */
 .detailed-teaser.block > .foreground > .text > .cta > a.button {
   margin: 0;
-  font-size: 15px;
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-sm);
+  font-weight: var(--font-weight-bold);
   line-height: 15px;
   padding: 5px 14px 6px;
 }
