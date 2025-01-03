@@ -1,5 +1,6 @@
 import { htmlToElement } from '../scripts.js';
 import { loadCSS } from '../lib-franklin.js';
+import { getFiltersPaginationText } from '../../blocks/browse-filters/browse-filter-utils.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/pagination/pagination.css`);
 
@@ -77,7 +78,7 @@ export default class Pagination {
     const [leftNavArrow, rightNavArrow] = paginationBlock.querySelectorAll('.nav-arrow');
     const leftNavEnabled = currentPageNumber > 0;
     const rightNavEnabled = currentPageNumber < totalPages - 1;
-    const paginationText = `of ${totalPages} page${totalPages > 1 ? 's' : ''}`;
+    const paginationText = getFiltersPaginationText(totalPages);
 
     if (totalPages === 1) {
       paginationEl.classList.add('pagination-hidden');
