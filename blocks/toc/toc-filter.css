@@ -25,7 +25,7 @@
   border-radius: 4px;
   padding: 8px 32px;
   margin-bottom: 16px;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   color: var(--spectrum-gray-800);
   background-color: white;
   outline: none;
@@ -62,7 +62,7 @@
 /* 1024 breakpoint */
 @media (width <= 1024px) {
   .toc-filter-input {
-    font-size: var(--spectrum-font-size-xs);
+    font-size: var(--spectrum-font-size-75);
     padding: 8px 24px;
   }
 }

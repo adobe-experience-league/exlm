@@ -59,7 +59,7 @@
 }
 
 .filtered-result-description {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-normal);
   color: var(--spectrum-gray-700);
   margin-top: 10px;
@@ -81,7 +81,7 @@
 }
 
 .filtered-result-product-name {
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   color: #707070;
 }
 
@@ -94,7 +94,7 @@
 
 .filtered-result-date {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
 }
 
 .filtered-result-content-type {
@@ -111,7 +111,7 @@
 
 .filtered-result-content-type span {
   margin-left: 8px;
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
 }
 
 .filtered-result-content-type.tutorial {

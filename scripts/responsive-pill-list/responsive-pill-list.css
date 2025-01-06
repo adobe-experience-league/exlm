@@ -1,6 +1,6 @@
 .responsive-pill-list {
   color: var(--spectrum-gray-700);
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   justify-content: space-between;
   line-height: 20.8px;
 }
@@ -71,7 +71,7 @@
 
 .responsive-pill-list .responsive-pill-list-option-overlay p {
   text-align: center;
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   line-height: 15px;
   opacity: 0.6;
   color: var(--text-color);
@@ -87,7 +87,7 @@
 .responsive-pill-list ul li {
   color: var(--spectrum-gray-800);
   cursor: pointer;
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   line-height: 20px;
   margin: 0;
   padding: 9px 20px 11px 20px;

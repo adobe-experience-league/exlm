@@ -11,7 +11,7 @@
   list-style: none;
   padding: 16px 0;
   font-weight: var(--font-weight-bold);
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: 21px;
 }
 
@@ -40,7 +40,7 @@
 
 .accordion details div > div {
   color: var(--non-spectrum-raisin-black);
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   line-height: var(--spectrum-line-height-m);
   margin-left: 14px;
   margin-top: 14px;
@@ -87,7 +87,7 @@ ol .accordion ul {
 }
 
 ol .accordion summary {
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
 }
 
 .accordion details .accordion {
@@ -95,7 +95,7 @@ ol .accordion summary {
 }
 
 .accordion details details summary {
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   line-height: 24px;
 }
 
@@ -121,7 +121,7 @@ ol .accordion summary {
 }
 
 .accordion .code code {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
 }
 
 .shade-box .accordion-wrapper:first-child details {

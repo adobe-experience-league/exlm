@@ -88,7 +88,7 @@
 .featured-authors.block .description :where(h1, h2, h3, h4, h5, h6) {
   margin: 0;
   margin-bottom: 16px;
-  font-size: var(--spectrum-font-size-6xl);
+  font-size: var(--spectrum-font-size-1000);
   font-weight: var(--font-weight-bold);
   line-height: var(--exlm-line-height-h1);
   color: var(--non-spectrum-dark-charcoal);
@@ -173,7 +173,7 @@
 /* the author cta link */
 .featured-authors.block .author .author-details .author-cta {
   text-decoration: none;
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   line-height: 15px;
   font-weight: bold;
   color: #505050;

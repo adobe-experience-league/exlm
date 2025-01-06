@@ -14,7 +14,7 @@
 }
 
 .docs.docs-solution-landing main .default-content-wrapper h1 {
-  font-size: var(--spectrum-font-size-7xl);
+  font-size: var(--spectrum-font-size-1100);
 
   /* This font is not avaliable in spectrum so we are hardcoding it */
   line-height: var(--spectrum-line-height-xxxl);
@@ -22,13 +22,13 @@
 }
 
 .docs.docs-solution-landing main .default-content-wrapper h2 {
-  font-size: var(--spectrum-font-size-2xl);
+  font-size: var(--spectrum-font-size-600);
   border-bottom: 3px solid var(--non-spectrum-grey);
   margin-bottom: 8px;
 }
 
 .docs.docs-solution-landing main .default-content-wrapper h3 {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   margin-top: 40px;
   margin-bottom: 16px;
 }
@@ -44,7 +44,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   color: var(--spectrum-gray-800);
 }
 
@@ -79,7 +79,7 @@
 
 @media (width >= 900px) {
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper h2 {
-    font-size: var(--spectrum-font-size-3xl);
+    font-size: var(--spectrum-font-size-700);
   }
 
   .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li {

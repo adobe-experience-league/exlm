@@ -3,18 +3,18 @@
   background-color: var(--background-color);
   color: var(--non-spectrum-grey);
   margin: 0 25px;
-  padding: 0 var(--space-token-xs);
-  font-size: var(--spectrum-font-size-sm);
+  padding: 0 var(--spectrum-spacing-300);
+  font-size: var(--spectrum-font-size-100);
   line-height: 21px;
 }
 
 .video-transcript.block details[open] {
-  padding: var(--space-token-xs);
+  padding: var(--spectrum-spacing-300);
   padding-top: 0;
 }
 
 .video-transcript.block details p {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   color: var(--spectrum-gray-800);
   line-height: 21px;
   margin-bottom: 12px;
@@ -28,9 +28,9 @@
   list-style: none;
   font-weight: var(--font-weight-bold);
   cursor: pointer;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   color: var(--non-spectrum-navy-blue);
-  padding: var(--space-token-xs) 0;
+  padding: var(--spectrum-spacing-300) 0;
 }
 
 .video-transcript.block details summary:focus {

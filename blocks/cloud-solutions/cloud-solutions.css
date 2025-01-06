@@ -4,7 +4,7 @@
 }
 
 .cloud-solutions-container h1 {
-  font-size: var(--spectrum-font-size-7xl);
+  font-size: var(--spectrum-font-size-1100);
   line-height: var(--spectrum-line-height-xxxl);
 }
 
@@ -23,7 +23,7 @@
 }
 
 .cloud-solutions-content h3 {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   margin: 40px 0 10px;
 }
 
@@ -45,7 +45,7 @@
 }
 
 .cloud-solutions-list a {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: 30px;
   color: var(--non-spectrum-link);
 }

@@ -12,7 +12,7 @@
 .block-quote-content * {
   font-style: italic;
   font-weight: normal;
-  font-size: var(--spectrum-font-size-xl);
+  font-size: var(--spectrum-font-size-500);
   line-height: 32px;
   font-family: 'Adobe Clean', sans-serif;
   color: var(--non-spectrum-grey-updated);

@@ -25,7 +25,7 @@
 }
 
 .announcement-ribbon .ribbon-description {
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   color: var(--spectrum-gray-800);
   line-height: 19px;
 }

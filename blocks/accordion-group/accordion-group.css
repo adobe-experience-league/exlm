@@ -11,6 +11,6 @@
 
 /* override /docs font size */
 .accordion-group > .accordion details summary {
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   line-height: var(--exlm-line-height-h4);
 }

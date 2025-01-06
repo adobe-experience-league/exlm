@@ -16,7 +16,7 @@
 .browse-breadcrumb.block > a {
   color: var(--spectrum-gray-500);
   display: inline-block;
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   line-height: 24px;
   margin: 0;
 }

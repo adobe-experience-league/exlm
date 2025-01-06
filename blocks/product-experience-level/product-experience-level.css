@@ -21,7 +21,7 @@ body.profile .product-experience-level:not(.sign-up-flow-section .product-experi
 }
 
 .product-experience-level-para {
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   line-height: 20px;
   font-style: italic;
   margin: 16px 0;
@@ -51,14 +51,14 @@ body.profile .product-experience-level:not(.sign-up-flow-section .product-experi
 }
 
 .product-experience-level-item h3 {
-  font-size: var(--spectrum-font-size-md);
+  font-size: var(--spectrum-font-size-300);
   line-height: 22px;
   font-weight: var(--font-weight-bold);
   margin: 10px 0 8px;
 }
 
 .product-experience-level-item p {
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   line-height: 21px;
   color: #222;
   margin: 0;
@@ -135,7 +135,7 @@ body.profile .product-experience-level:not(.sign-up-flow-section .product-experi
 
 @media (min-width: 900px) {
   .product-experience-level-item p {
-    font-size: var(--spectrum-font-size-sm);
+    font-size: var(--spectrum-font-size-100);
   }
 
   .product-experience-level-type {

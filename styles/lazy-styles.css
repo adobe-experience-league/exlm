@@ -59,7 +59,7 @@ a.pagination-btn > span {
 span.pagination-btn-title {
   display: block;
   font-family: var(--heading-font-family);
-  font-size: var(--spectrum-font-size-xxs);
+  font-size: var(--spectrum-font-size-50);
   font-weight: var(--font-weight-bold);
   color: #6e6e6e;
   margin: 15px 0 55px;

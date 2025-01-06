@@ -18,7 +18,7 @@
 }
 
 .data-and-email-consent .notification .checkbox > label {
-  font-size: var(--spectrum-font-size-md);
+  font-size: var(--spectrum-font-size-300);
   letter-spacing: 0;
   font-weight: var(--font-weight-bold);
   line-height: 22px;
@@ -41,7 +41,7 @@
 .data-and-email-consent .notification p {
   letter-spacing: 0;
   color: var(--spectrum-gray-800);
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   margin: 0;
   margin-top: 8px;
   line-height: 17px;
@@ -51,14 +51,14 @@
 .data-and-email-consent .notification a {
   letter-spacing: 0;
   color: var(--spectrum-gray-800);
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   margin: 0;
   margin-top: 8px;
   text-decoration: underline;
 }
 
 .data-and-email-consent .notification-container .legal p {
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   font-style: italic;
   color: var(--spectrum-gray-600);
   letter-spacing: 0;
@@ -66,7 +66,7 @@
 }
 
 .data-and-email-consent .notification-container .legal a {
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   font-style: italic;
   color: var(--text-color);
   letter-spacing: 0;
@@ -76,7 +76,7 @@
 }
 
 body.profile .data-and-email-consent .notification p:not(.signup-dialog .data-and-email-consent .notification p) {
-  font-size: var(--spectrum-font-size-md);
+  font-size: var(--spectrum-font-size-300);
 }
 
 body.profile
@@ -100,7 +100,7 @@ body.profile
     .notification-container
     .legal
     p:not(.signup-dialog .data-and-email-consent .notification-container .legal p) {
-    font-size: var(--spectrum-font-size-sm);
+    font-size: var(--spectrum-font-size-100);
     font-style: normal;
     color: var(--spectrum-gray-800);
   }

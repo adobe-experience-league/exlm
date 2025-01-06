@@ -88,7 +88,7 @@ body.profile:has(.bookmarks-empty) .section:not(.profile-rail-section) > div.boo
 
 @media (max-width: 600px) {
   .bookmarks-header h4 {
-    font-size: var(--spectrum-font-size-xl);
+    font-size: var(--spectrum-font-size-500);
     line-height: 27px;
   }
 }

@@ -9,7 +9,7 @@
 }
 
 .related-content-wrapper .related-content-toggle h2 {
-  font-size: var(--spectrum-font-size-xxs);
+  font-size: var(--spectrum-font-size-50);
   font-weight: var(--spectrum-extra-bold-font-weight);
   text-transform: uppercase;
   line-height: 31px;
@@ -66,7 +66,7 @@
 }
 
 .related-content-wrapper ul.related-content li .related-content-icon .related-content-tooltip .tooltip-label-wrapper {
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   position: absolute;
   visibility: hidden;
   transition: all 130ms ease-in-out;
@@ -118,7 +118,7 @@
 }
 
 .related-content-wrapper ul.related-content a {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   display: inline-flex;
   min-height: 32px;
   box-sizing: border-box;

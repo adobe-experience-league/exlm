@@ -12,7 +12,7 @@
 }
 
 .article-metadata-createdby ul > li {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   color: var(--non-spectrum-dim-gray);
   padding: 0 5px;
   cursor: default;
@@ -31,7 +31,7 @@
 }
 
 .article-metadata-createdby p {
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   text-transform: uppercase;
   font-weight: bold;
   padding-right: 4px;

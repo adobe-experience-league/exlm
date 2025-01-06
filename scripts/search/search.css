@@ -76,7 +76,7 @@
 .search-suggestions-popover li.search-picker-label {
   border-top: 1px solid var(--non-spectrum-bg);
   padding: 3px 12px;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: 18px;
   color: var(--non-spectrum-charcoal-gray);
 }
@@ -95,7 +95,7 @@
   padding: 7px 12px 7px 32px;
   position: relative;
   color: var(--spectrum-gray-800);
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: var(--exlm-line-height-h6);
   overflow: hidden;
   white-space: nowrap;

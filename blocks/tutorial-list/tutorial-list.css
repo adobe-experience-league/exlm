@@ -25,7 +25,7 @@
   list-style: none;
   width: 100%;
   margin: 0;
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   color: var(--spectrum-gray-800);
   border: 1px solid var(--non-spectrurm-whisper-gray);
   padding: 10.5px;
@@ -39,7 +39,7 @@
 
 .tutorial-list-box .tutorial-list-container .tutorial-list-heading {
   color: var(--non-spectrum-grey);
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-bold);
   margin-bottom: 12px;
   line-height: 21px;
@@ -50,7 +50,7 @@
 
 .tutorial-list-box .tutorial-list-container a {
   color: var(--non-spectrum-link);
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-bold);
 }
 

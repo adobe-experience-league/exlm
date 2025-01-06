@@ -19,7 +19,7 @@
   top: -6px;
   right: 0;
   padding: 8px 16px;
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   background-color: var(--spectrum-red-1400);
   font-weight: bold;
   color: var(--color-white);
@@ -28,14 +28,14 @@
 
 .callout-card-header h1 {
   font-weight: var(--font-weight-bold);
-  font-size: var(--spectrum-font-size-2xl);
+  font-size: var(--spectrum-font-size-600);
   line-height: 32px;
   color: var(--non-spectrum-dark-charcoal);
   margin: 0 0 16px;
 }
 
 .callout-card-header p {
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   line-height: 21px;
   color: var(--non-spectrum-grey);
   margin: 0;

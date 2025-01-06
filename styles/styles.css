@@ -113,7 +113,7 @@ a {
 
 .last-updated {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: var(--spectrum-line-height-s);
@@ -158,23 +158,23 @@ strong {
   --spectrum-code-font-family: "Source Code Pro", "monaco", monospace;
 
   /* default font sizes */
-  --spectrum-font-size-xxs: 0.6875rem;  /* 11px */
-  --spectrum-font-size-xs: 0.75rem;     /* 12px */
-  --spectrum-font-size-sm: 0.875rem;    /* 14px */
-  --spectrum-font-size-base: 1rem;      /* 16px */
-  --spectrum-font-size-md: 1.125rem;    /* 18px */
-  --spectrum-font-size-lg: 1.25rem;     /* 20px */
-  --spectrum-font-size-xl: 1.375rem;    /* 22px */
-  --spectrum-font-size-2xl: 1.5625rem;  /* 25px */
-  --spectrum-font-size-3xl: 1.75rem;    /* 28px */
-  --spectrum-font-size-4xl: 2rem;       /* 32px */
-  --spectrum-font-size-5xl: 2.25rem;    /* 36px */
-  --spectrum-font-size-6xl: 2.5rem;     /* 40px */
-  --spectrum-font-size-7xl: 2.8125rem;  /* 45px */
-  --spectrum-font-size-8xl: 3.125rem;   /* 50px */
-  --spectrum-font-size-9xl: 3.75rem;    /* 60px */
-  --non-spectrum-font-size-9: 0.5625rem; /* 9px */
-  --non-spectrum-font-size-10: 0.625rem; /* 10px */
+  --spectrum-font-size-50: 11px;
+  --spectrum-font-size-75: 12px;
+  --spectrum-font-size-100: 14px;
+  --spectrum-font-size-200: 16px;
+  --spectrum-font-size-300: 18px;
+  --spectrum-font-size-400: 20px;
+  --spectrum-font-size-500: 22px;
+  --spectrum-font-size-600: 25px;
+  --spectrum-font-size-700: 28px;
+  --spectrum-font-size-800: 32px;
+  --spectrum-font-size-900: 36px;
+  --spectrum-font-size-1000: 40px;
+  --spectrum-font-size-1100: 45px;
+  --spectrum-font-size-1200: 50px;
+  --spectrum-font-size-1300: 60px;
+  --non-spectrum-font-size-9: 9px;
+  --non-spectrum-font-size-10: 10px;
 
 
   /* font weight */
@@ -199,23 +199,23 @@ strong {
   --spectrum-line-height-xs: 15.6px;
 
   /* heading font sizes */
-  --spectrum-heading-size-xxxl: var(--spectrum-font-size-9xl);
-  --spectrum-heading-size-xxl: var(--spectrum-font-size-7xl);
-  --spectrum-heading-size-xl: var(--spectrum-font-size-5xl);
-  --spectrum-heading-size-l: var(--spectrum-font-size-3xl);
-  --spectrum-heading-size-m: var(--spectrum-font-size-xl);
-  --spectrum-heading-size-s: var(--spectrum-font-size-md);
-  --spectrum-heading-size-xs: var(--spectrum-font-size-base);
-  --spectrum-heading-size-xxs: var(--spectrum-font-size-sm);
+  --spectrum-heading-size-xxxl: var(--spectrum-font-size-1300);
+  --spectrum-heading-size-xxl: var(--spectrum-font-size-1100);
+  --spectrum-heading-size-xl: var(--spectrum-font-size-900);
+  --spectrum-heading-size-l: var(--spectrum-font-size-700);
+  --spectrum-heading-size-m: var(--spectrum-font-size-500);
+  --spectrum-heading-size-s: var(--spectrum-font-size-300);
+  --spectrum-heading-size-xs: var(--spectrum-font-size-200);
+  --spectrum-heading-size-xxs: var(--spectrum-font-size-100);
 
   /* body font sizes */
-  --spectrum-body-size-xxxl: var(--spectrum-font-size-2xl);
-  --spectrum-body-size-xxl: var(--spectrum-font-size-xl);
-  --spectrum-body-size-xl: var(--spectrum-font-size-lg);
-  --spectrum-body-size-l: var(--spectrum-font-size-md);
-  --spectrum-body-size-m: var(--spectrum-font-size-base);
-  --spectrum-body-size-s: var(--spectrum-font-size-sm);
-  --spectrum-body-size-xs: var(--spectrum-font-size-xs);
+  --spectrum-body-size-xxxl: var(--spectrum-font-size-600);
+  --spectrum-body-size-xxl: var(--spectrum-font-size-500);
+  --spectrum-body-size-xl: var(--spectrum-font-size-400);
+  --spectrum-body-size-l: var(--spectrum-font-size-300);
+  --spectrum-body-size-m: var(--spectrum-font-size-200);
+  --spectrum-body-size-s: var(--spectrum-font-size-100);
+  --spectrum-body-size-xs: var(--spectrum-font-size-75);
   --spectrum-body-line-height: var(--spectrum-line-height-200);
   --spectrum-body-color: var(--spectrum-gray-800);
 
@@ -418,9 +418,12 @@ strong {
   --spectrum-spacing-500: 32px;
   --spectrum-spacing-600: 40px;
   --spectrum-spacing-700: 48px;
-  --spectrum-spacing-800: 64px;
-  --spectrum-spacing-900: 80px;
-  --spectrum-spacing-1000: 96px;
+  --spectrum-spacing-800: 56px;
+  --spectrum-spacing-900: 64px;
+  --spectrum-spacing-1000: 72px;
+  --spectrum-spacing-1100: 80px;
+  --spectrum-spacing-1200: 88px;
+  --spectrum-spacing-1300: 96px;
 
   /* mini toc spectrum vars */
   --spectrum-sidenav-item-background-color-hover: ButtonFace;
@@ -478,16 +481,6 @@ strong {
 
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
-
-  /* Spacing Tokens */
-  --space-token-xxs: 8px;
-  --space-token-xs: 16px;
-  --space-token-s: 24px;
-  --space-token-m: 32px;
-  --space-token-l: 40px;
-  --space-token-xl: 56px;
-  --space-token-xxl: 80px;
-  --space-token-xxxl: 104px;
 
   /* Box Shadows */
   --box-shadow-1: 0 0.5em 1em -0.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
@@ -754,7 +747,7 @@ button.secondary:disabled:hover {
 }
 
 .button-container a.button {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-bold);
   line-height: 16.8px;
   margin: 0;
@@ -777,7 +770,7 @@ button.secondary:disabled:hover {
 }
 
 input {
-  font-size: var(--spectrum-font-size-lg);
+  font-size: var(--spectrum-font-size-400);
   width: 100%;
   max-width: 50rem;
   display: block;
@@ -963,7 +956,7 @@ picture[align="right"] {
 }
 
 .section.highlight.icon-block-container > div > h3 {
-  font-size: var(--spectrum-font-size-3xl);
+  font-size: var(--spectrum-font-size-700);
   line-height: 42px;
   text-align: center;
   margin: 0 0 36px;

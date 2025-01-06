@@ -9,7 +9,7 @@
 }
 
 .role-and-industry .industry-selection-title {
-  font-size: var(--spectrum-font-size-3xl);
+  font-size: var(--spectrum-font-size-700);
   font-weight: var(--font-weight-bold);
   color: #000;
 }
@@ -23,7 +23,7 @@
 }
 
 .role-and-industry .industry-selection-dropdown label {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   color: #464646;
   font-weight: var(--font-weight-medium);
 }
@@ -50,7 +50,7 @@
 }
 
 .role-and-industry .role-cards-checkbox label {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   cursor: pointer;
 }
 
@@ -73,12 +73,12 @@
 
 .role-and-industry .role-cards-description h3 {
   margin: 0;
-  font-size: var(--spectrum-font-size-md);
+  font-size: var(--spectrum-font-size-300);
   line-height: 22px;
 }
 
 .role-and-industry .role-cards-description p {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: 17px;
 }
 
@@ -89,7 +89,7 @@
 .role-and-industry .role-cards-default-selection p {
   margin: 0 0 10px;
   min-height: 18px;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: 17px;
   font-style: italic;
 }
@@ -126,7 +126,7 @@ body.profile
 body.profile
   .role-and-industry
   .industry-selection-title:not(.signup-dialog .role-and-industry .industry-selection-title) {
-  font-size: var(--spectrum-font-size-xl);
+  font-size: var(--spectrum-font-size-500);
   font-weight: var(--font-weight-bold);
   color: #000;
 }
@@ -142,7 +142,7 @@ body.profile
 body.profile
   .role-and-industry
   .industry-selection-description:not(.signup-dialog .role-and-industry .industry-selection-description) {
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   color: #222;
   font-style: italic;
   font-weight: var(--font-weight-medium);

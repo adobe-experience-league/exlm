@@ -1,6 +1,6 @@
 .responsive-list {
   color: var(--spectrum-gray-700);
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   justify-content: space-between;
   line-height: 20.8px;
 }
@@ -21,7 +21,7 @@
 .responsive-list ul li {
   color: var(--non-spectrum-dim-gray);
   cursor: pointer;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: 17px;
   margin: 0;
   padding: 0;

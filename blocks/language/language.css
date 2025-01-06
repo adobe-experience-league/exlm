@@ -18,7 +18,7 @@
 .language-selector-label {
   cursor: pointer;
   display: block;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   padding: 5px 15px;
   margin: 0;
 }

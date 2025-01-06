@@ -28,7 +28,7 @@
 }
 
 .tutorial-widgets a {
-  font-size: var(--spectrum-font-size-md);
+  font-size: var(--spectrum-font-size-300);
   line-height: 17px;
   margin: 2px 0 0 0;
 }

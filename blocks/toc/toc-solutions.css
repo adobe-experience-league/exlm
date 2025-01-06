@@ -38,7 +38,7 @@
 
 .toc ul > li > a.toc-toggle.is-active::before {
   content: '•';
-  font-size: var(--spectrum-font-size-lg);
+  font-size: var(--spectrum-font-size-400);
   opacity: 1;
   padding-bottom: 3px;
   margin-right: 3px;

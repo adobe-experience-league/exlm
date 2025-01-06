@@ -28,12 +28,12 @@
 
 .author-name-title-container .author-name {
   font-weight: bold;
-  font-size: var(--spectrum-font-size-md);
+  font-size: var(--spectrum-font-size-300);
   padding-bottom: 8px;
 }
 
 .author-name-title-container .author-title-company {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   color: var(--non-spectrum-grey);
 }
 
@@ -42,7 +42,7 @@
 }
 
 .author-description-social-link-container .author-description .author-social-link {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
 }
 
 .author-description-social-link-container .author-description {

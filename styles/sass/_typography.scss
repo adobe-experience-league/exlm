@@ -88,7 +88,7 @@ a {
 
 .last-updated {
   @include text-styles(
-    $font-size: var(--spectrum-font-size-xs),
+    $font-size: var(--spectrum-font-size-75),
     $line-height: var(--spectrum-line-height-s),
     $color: var(--non-spectrum-grey-updated),
     $margin-top: 4px,

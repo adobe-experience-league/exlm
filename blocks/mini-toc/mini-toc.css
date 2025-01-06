@@ -15,7 +15,7 @@
 }
 
 .mini-toc-wrapper .mini-toc {
-  font-size: var(--spectrum-font-size-xxs);
+  font-size: var(--spectrum-font-size-50);
   font-weight: var(--spectrum-extra-bold-font-weight);
   padding-left: 0;
   overflow: visible;
@@ -31,7 +31,7 @@
 }
 
 .mini-toc-wrapper .mini-toc h2 {
-  font-size: var(--spectrum-font-size-xxs);
+  font-size: var(--spectrum-font-size-50);
   font-weight: var(--spectrum-extra-bold-font-weight);
   text-transform: uppercase;
   margin: 0;
@@ -75,7 +75,7 @@
 }
 
 .mini-toc-wrapper .mini-toc ul li a {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: 21px;
   display: inline-flex;
   min-height: 32px;

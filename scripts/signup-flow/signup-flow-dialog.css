@@ -32,7 +32,7 @@
 }
 .signup-dialog-close-btn .close-text {
   color: var(--spectrum-gray-50);
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   letter-spacing: 0.96px;
   line-height: 20px;
   margin-right: 16px;
@@ -77,7 +77,7 @@
   top: -1px;
 }
 .signup-dialog-header h4 {
-  font-size: var(--spectrum-font-size-md);
+  font-size: var(--spectrum-font-size-300);
   line-height: 22px;
   margin: 0 0 4px;
   padding: 0;
@@ -95,7 +95,7 @@
   justify-content: space-between;
 }
 .signup-dialog-nav-bar button {
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   font-weight: var(--font-weight-bold);
   line-height: 21px;
   margin: 0;
@@ -197,7 +197,7 @@
 .signup-dialog-content .user-profile-card-wrapper + .default-content-wrapper p,
 .signup-dialog-content .user-profile-card-wrapper + .default-content-wrapper p a {
   color: var(--spectrum-gray-600);
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   font-style: italic;
   line-height: 15px;
   text-align: left;

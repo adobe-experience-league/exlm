@@ -2,7 +2,7 @@
 .docs {
   --exlm-font-size-h1: var(--spectrum-heading-size-l);
   --exlm-font-size-h2: 24px;
-  --exlm-font-size-h3: var(--spectrum-font-size-lg);
+  --exlm-font-size-h3: var(--spectrum-font-size-400);
   --exlm-font-size-h4: var(--spectrum-heading-size-s);
   --exlm-font-size-h5: var(--spectrum-heading-size-s);
   --exlm-font-size-h6: var(--spectrum-heading-size-s);
@@ -37,14 +37,14 @@
 .docs pre,
 .docs samp {
   font-family: var(--fixed-font-family);
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   line-height: 18.375px;
   font-weight: var(--font-weight-normal);
 }
 
 .docs code:not([class^='language-']) {
   font-family: var(--spectrum-code-font-family);
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   background-color: unset;
   line-height: 21px;
   padding: 0;
@@ -304,7 +304,7 @@
   border-radius: 4px;
   color: white;
   display: inline-block;
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   font-style: normal;
   font-weight: var(--font-weight-normal);
   line-height: 15px;

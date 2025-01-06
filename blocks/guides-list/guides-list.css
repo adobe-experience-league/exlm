@@ -23,7 +23,7 @@
   width: 100%;
   padding: 0;
   margin: 0;
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   color: var(--spectrum-gray-800);
 }
 

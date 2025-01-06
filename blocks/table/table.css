@@ -115,7 +115,7 @@
 
 .table table tbody tr {
   border: 1px solid var(--non-spectrum-gainsboro-gray);
-  margin-bottom: var(--space-token-xs);
+  margin-bottom: var(--spectrum-spacing-300);
 }
 
 @media (width >= 600px) {

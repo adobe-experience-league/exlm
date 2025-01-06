@@ -7,7 +7,7 @@
 }
 
 .recommendation-marquee-header {
-  font-size: var(--spectrum-font-size-3xl);
+  font-size: var(--spectrum-font-size-700);
   line-height: 35px;
   font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-800);
@@ -15,7 +15,7 @@
 }
 
 .recommendation-marquee-description {
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   line-height: 20px;
   color: var(--spectrum-gray-800);
   margin-bottom: 30px;
@@ -23,7 +23,7 @@
 }
 
 .recommendation-marquee-filter-heading {
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   line-height: 15px;
   text-transform: uppercase;
   letter-spacing: 0.72px;
@@ -52,7 +52,7 @@
 }
 
 .recommendation-marquee-discover-resource {
-  font-size: var(--spectrum-font-size-xl);
+  font-size: var(--spectrum-font-size-500);
   line-height: 27px;
   font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-900);
@@ -71,7 +71,7 @@
 }
 
 .recommendation-marquee-result-link a {
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   line-height: 20px;
   font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-50);
@@ -152,7 +152,7 @@
 }
 
 .recommendation-marquee.block .custom-filter-dropdown button span.custom-filter-dropdown-name {
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   line-height: 21px;
   color: var(--non-spectrum-article-dark-gray);
 }

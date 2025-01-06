@@ -122,7 +122,7 @@
 .language-selector-label {
   cursor: pointer;
   display: block;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   padding: 5px var(--nav-root-item-padding-x);
   margin: 0;
 }
@@ -257,7 +257,7 @@
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
   outline: none;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   font-family: var(--body-font-family);
   color: var(--non-spectrum-graphite-gray);
   line-height: 15px;
@@ -271,7 +271,7 @@
 
 .search-input::placeholder {
   font-style: italic;
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   letter-spacing: 0.14px;
   color: var(--spectrum-gray-600);
   opacity: 0.8;
@@ -295,7 +295,7 @@
   box-shadow: none;
   color: var(--spectrum-gray-700);
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   height: 32px;
   line-height: 15px;
   text-align: right;
@@ -420,7 +420,7 @@ button > .search-picker-label {
 .search-suggestions-popover li.search-picker-label {
   border-top: 1px solid var(--non-spectrum-bg);
   padding: 3px 12px;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: 18px;
   color: var(--non-spectrum-charcoal-gray);
 }
@@ -439,7 +439,7 @@ button > .search-picker-label {
   padding: 7px 12px 7px 32px;
   position: relative;
   color: var(--spectrum-gray-800);
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: var(--exlm-line-height-h6);
   overflow: hidden;
   white-space: nowrap;
@@ -592,7 +592,7 @@ button:focus {
   justify-content: center;
   padding: var(--nav-root-item-padding);
   order: var(--brand-order);
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   font-weight: var(--font-weight-bold);
   white-space: nowrap;
 }
@@ -625,7 +625,7 @@ button:focus {
   background: var(--spectrum-blue-900);
   border-radius: 16px;
   color: var(--spectrum-gray-50);
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-semi-bold);
   padding: 5px 16px;
   white-space: nowrap;
@@ -645,7 +645,7 @@ button:focus {
 }
 
 .header .signed-in .profile .profile-menu h2 {
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   font-weight: var(--font-weight-semi-bold);
   line-height: 18px;
   letter-spacing: 0.72px;
@@ -677,7 +677,7 @@ button:focus {
 
 .header .product-dropdown a {
   color: var(--non-spectrum-grey);
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-normal);
   line-height: 21px;
 }
@@ -688,7 +688,7 @@ button:focus {
   line-height: 24px;
   position: relative;
   margin: 0;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   font-weight: inherit;
   padding: var(--nav-item-padding-x);
 }
@@ -702,7 +702,7 @@ button:focus {
   border-top: 1px solid var(--spectrum-gray-200);
   color: var(--spectrum-gray-700);
   display: block;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-normal);
   letter-spacing: normal;
   line-height: 17px;
@@ -762,7 +762,7 @@ button:focus {
   background: var(--spectrum-blue-900);
   border-radius: 16px;
   color: var(--spectrum-gray-50);
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-semi-bold);
   padding: 5px 16px;
   white-space: nowrap;
@@ -1003,7 +1003,7 @@ button:focus {
 @media (min-width: 1024px) {
   .header .nav-item-subtitle {
     display: block;
-    font-size: var(--spectrum-font-size-xxs);
+    font-size: var(--spectrum-font-size-50);
   }
 }
 
@@ -1015,7 +1015,7 @@ button:focus {
   text-align: left;
   background: none;
   font-weight: initial;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   color: var(--spectrum-gray-800);
   justify-content: space-between;
   position: relative;
@@ -1231,7 +1231,7 @@ button:focus {
   box-shadow: none;
   color: #2d2d2d;
   cursor: pointer;
-  font-size: var(--spectrum-font-size-lg);
+  font-size: var(--spectrum-font-size-400);
   font-weight: var(--font-weight-light);
 }
 

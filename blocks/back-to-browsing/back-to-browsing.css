@@ -2,7 +2,7 @@
   display: none;
 
   a {
-    font-size: var(--spectrum-font-size-sm);
+    font-size: var(--spectrum-font-size-100);
     font-style: italic;
     color: var(--spectrum-gray-800);
     text-decoration: none;

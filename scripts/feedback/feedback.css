@@ -57,7 +57,7 @@
   margin: 0;
   display: inline-block;
   color: var(--non-spectrum-grey);
-  font-size: var(--spectrum-font-size-lg);
+  font-size: var(--spectrum-font-size-400);
 }
 
 .feedback-ui .left .icon,
@@ -144,7 +144,7 @@
   box-shadow: none;
   width: 100%;
   border-radius: 4px;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   font-family: var(--body-font-family);
   font-style: italic;
 }
@@ -228,7 +228,7 @@
   color: var(--non-spectrum-link);
   display: block;
   margin: 0;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
 }
 
 .feedback-ui .expanded-controls a:hover {
@@ -308,7 +308,7 @@
 
 .feedback-ui .left .subtitle,
 .feedback-ui .error {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: normal;
 }
 
@@ -380,7 +380,7 @@
   }
 
   .feedback-ui .left h3 {
-    font-size: var(--spectrum-font-size-base);
+    font-size: var(--spectrum-font-size-200);
   }
 
   .feedback-ui .left .icon-chevron-gray {

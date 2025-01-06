@@ -32,8 +32,8 @@
   position: relative;
   max-width: unset !important;
   box-sizing: content-box;
-  margin-left: calc(-1 * var(--space-token-xl)) !important;
-  margin-right: calc(-1 * var(--space-token-xl)) !important;
+  margin-left: calc(-1 * var(--spectrum-spacing-800)) !important;
+  margin-right: calc(-1 * var(--spectrum-spacing-800)) !important;
 }
 
 .playlist-browse-marquee-background {
@@ -66,8 +66,8 @@
 @media (width >= 900px) {
   .playlist-browse-marquee {
     grid-template-columns: 1fr 1fr;
-    margin-left: calc(-1 * var(--space-token-xl)) !important;
-    margin-right: calc(-1 * var(--space-token-xl)) !important;
+    margin-left: calc(-1 * var(--spectrum-spacing-800)) !important;
+    margin-right: calc(-1 * var(--spectrum-spacing-800)) !important;
     padding-left: 4em;
     padding-top: 5em;
     padding-bottom: 1em;
@@ -85,8 +85,8 @@
 
 .playlist-browse-marquee-content {
   max-width: var(--default-max-width);
-  padding-left: var(--space-token-xl) !important;
-  padding-right: var(--space-token-xl) !important;
+  padding-left: var(--spectrum-spacing-800) !important;
+  padding-right: var(--spectrum-spacing-800) !important;
 }
 
 /* playlist filter */
@@ -165,7 +165,7 @@
 .playlist-filter-dropdown .filter-option label .description {
   display: block;
   font-weight: normal;
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   line-height: 16px;
   text-align: left;
   color: var(--spectrum-gray-500);
@@ -207,7 +207,7 @@
   border-radius: 4px;
   padding: 9px 12px;
   width: 100%;
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
 
   /* https://defensivecss.dev/tip/input-zoom-safari/ */
   text-align: left;
@@ -234,7 +234,7 @@
   border-radius: 50%;
   text-align: center;
   line-height: 15px;
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
 }
 
 .playlist-browse-filter-button::after {
@@ -318,7 +318,7 @@
   padding-left: 1em;
   margin: 0 !important;
   color: #4a4a4a !important;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
 }
 
 /* Clear filters button */
@@ -364,7 +364,7 @@
   padding: 4px 25px 5px 12px;
   margin-bottom: 10px;
   font-weight: normal;
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   text-align: left;
   color: var(--spectrum-gray-500);
   line-height: normal;

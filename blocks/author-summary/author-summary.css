@@ -59,13 +59,13 @@
 }
 
 .author-summary .author-details > div:first-child {
-  font-size: var(--spectrum-font-size-lg);
+  font-size: var(--spectrum-font-size-400);
   font-weight: var(--font-weight-semi-bold);
   color: var(--spectrum-gray-900);
 }
 
 .author-summary .author-description a {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   text-decoration: underline;
 }
 

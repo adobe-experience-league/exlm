@@ -8,7 +8,7 @@
 .featured-cards .browse-cards-block-header .browse-card-description-text {
   text-align: center;
   color: var(--spectrum-gray-800);
-  font-size: var(--spectrum-font-size-md);
+  font-size: var(--spectrum-font-size-300);
   line-height: 23.4px;
   margin-bottom: 16px;
 }

@@ -4,7 +4,7 @@
   border-bottom: 1px solid var(--spectrum-gray-500);
   color: var(--spectrum-gray-700);
   display: flex;
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   line-height: 20.8px;
   justify-content: space-between;
 }
@@ -25,7 +25,7 @@
   padding: 0;
   position: relative;
   white-space: pre;
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
 }
 
 .tabbed-cards-label > ul li.active {
@@ -43,7 +43,7 @@
 
 .tabbed-cards-label > a {
   color: var(--spectrum-blue-900);
-  font-size: var(--spectrum-font-size-md);
+  font-size: var(--spectrum-font-size-300);
   line-height: 23.4px;
 }
 

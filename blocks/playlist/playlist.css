@@ -3,7 +3,7 @@
   --playlist-border-radius: 10px;
   --playlist-border-radius-inner: calc(var(--playlist-border-radius) - 4px);
   --playlist-max-height: calc(100vh - 1em - var(--nav-height) - 1em);
-  --playlist-header-size: var(--spectrum-font-size-xl);
+  --playlist-header-size: var(--spectrum-font-size-500);
 
   max-width: 1440px;
   margin: 0 auto;
@@ -245,7 +245,7 @@
   flex-direction: row;
   justify-content: space-between;
   padding: 0.5em 0 0;
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
 }
 
 .playlist-options-autoplay input[type='checkbox'] {
@@ -306,7 +306,7 @@
 
 .playlist-now-viewing {
   color: #6e6e6e;
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
 }
 
 .playlist-player-video-overlay-play {

@@ -49,7 +49,7 @@
   border-radius: 4px;
   padding: 9px 12px;
   width: 100%;
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
 
   /* https://defensivecss.dev/tip/input-zoom-safari/ */
   text-align: left;
@@ -155,7 +155,7 @@
   margin: 0 8px;
   border-radius: 4px;
   border: 1px solid var(--spectrum-gray-200);
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: 17px;
   color: var(--spectrum-gray-700);
   font-family: var(--body-font-family);
@@ -186,7 +186,7 @@
 
 .filter-dropdown .custom-checkbox label .description {
   font-weight: normal;
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   line-height: 16px;
   text-align: left;
   color: var(--spectrum-gray-500);
@@ -251,7 +251,7 @@ button.browse-filters-clear:disabled:hover {
   padding: 4px 25px 5px 12px;
   margin-bottom: 10px;
   font-weight: normal;
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   text-align: left;
   color: var(--spectrum-gray-500);
   line-height: normal;
@@ -314,7 +314,7 @@ button.browse-tags:focus {
 }
 
 .browse-filters-pagination span {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: 17px;
   color: var(--spectrum-gray-700);
 }
@@ -379,7 +379,7 @@ button.browse-tags:focus {
 .browse-filters-form .sort-container {
   align-items: center;
   color: var(--spectrum-gray-700);
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   display: none;
   justify-content: flex-end;
   line-height: 15.6px;
@@ -397,7 +397,7 @@ button.browse-tags:focus {
   color: var(--spectrum-gray-700);
   border: 0 none;
   border-radius: 4px;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   font-weight: normal;
   line-height: 17px;
   margin: 0 0 0 8px;
@@ -426,7 +426,7 @@ button.browse-tags:focus {
   color: var(--non-spectrum-input-text);
   cursor: pointer;
   display: none;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   font-weight: normal;
   position: absolute;
   right: 0;
@@ -440,7 +440,7 @@ button.browse-tags:focus {
   border: none;
   color: var(--non-spectrum-charcoal-gray);
   display: block;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   font-weight: normal;
   text-decoration: none;
   margin: 0;
@@ -474,7 +474,7 @@ button.browse-tags:focus {
 .browse-filters-results.no-results {
   background-color: var(--spectrum-gray-200);
   color: var(--non-spectrum-grey);
-  font-size: var(--spectrum-font-size-base);
+  font-size: var(--spectrum-font-size-200);
   min-height: 346px;
   padding-top: 72px;
   text-align: center;
@@ -511,7 +511,7 @@ button.browse-tags:focus {
 .search-suggestions-popover li.search-picker-label {
   border-top: 1px solid var(--non-spectrum-bg);
   padding: 3px 12px;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: 18px;
   color: var(--non-spectrum-charcoal-gray);
 }
@@ -529,7 +529,7 @@ button.browse-tags:focus {
   padding: 7px 12px 7px 32px;
   position: relative;
   color: var(--spectrum-gray-800);
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: var(--exlm-line-height-h6);
   overflow: hidden;
   white-space: nowrap;

@@ -1,6 +1,6 @@
 .article-metadata > div > div {
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: var(--spectrum-line-height-s);

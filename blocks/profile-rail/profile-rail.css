@@ -24,7 +24,7 @@
 .profile-rail .profile-rail-links li > a {
   display: none;
   align-items: center;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   color: var(--spectrum-gray-700);
   margin: 0;
   padding: 8px 12px;
@@ -90,7 +90,7 @@
 
   .profile-rail .profile-rail-heading {
     display: block;
-    font-size: var(--spectrum-font-size-xs);
+    font-size: var(--spectrum-font-size-75);
     text-transform: uppercase;
     font-weight: var(--font-weight-semi-bold);
     color: var(--spectrum-gray-700);

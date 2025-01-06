@@ -104,7 +104,7 @@
 }
 
 .toc-header-content > h3 {
-  font-size: var(--spectrum-font-size-md);
+  font-size: var(--spectrum-font-size-300);
   margin: 0;
 }
 
@@ -114,7 +114,7 @@
   position: relative;
   align-items: center;
   justify-content: start;
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: 21px;
   min-height: 32px;
   box-sizing: border-box;
@@ -125,13 +125,13 @@
 }
 
 .toc > ul > li > a {
-  font-size: var(--spectrum-font-size-xs);
+  font-size: var(--spectrum-font-size-75);
   font-weight: bold;
   flex: 88%;
 }
 
 .toc ul li ul li a {
-  font-size: var(--spectrum-font-size-sm);
+  font-size: var(--spectrum-font-size-100);
   line-height: 21px;
   min-height: 32px;
   box-sizing: border-box;
@@ -151,7 +151,7 @@
 }
 
 .toc a.toc-toggle {
-  font-size: var(--spectrum-font-size-xxs);
+  font-size: var(--spectrum-font-size-50);
   color: var(--non-spectrum-eerie-black);
   display: flex;
   align-items: center;
@@ -214,7 +214,7 @@ button.toc-dropdown-button {
   border-radius: 4px;
   box-shadow: none;
   font-family: var(--body-font-family);
-  font-size: var(--spectrum-font-size-md);
+  font-size: var(--spectrum-font-size-300);
   height: 32px;
   line-height: 15px;
   text-align: right;
