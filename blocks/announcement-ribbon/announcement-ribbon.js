@@ -16,13 +16,13 @@ function decorateButtons(...buttons) {
 }
 
 // Function to hide a ribbon and update the key in the browser storage
-function hideRibbon(block, storage) {
+function hideRibbon(block, storage = 'sessionstorage') {
   block.style.display = 'none';
   window[storage].setItem('hideRibbonBlock', 'true');
 }
 
 // Function to check browser storage and hide the ribbon if it was previously closed
-function isRibbonHidden(storage) {
+function isRibbonHidden(storage = 'sessionstorage') {
   return window[storage].getItem('hideRibbonBlock') === 'true';
 }
 
@@ -31,7 +31,7 @@ export default async function decorate(block) {
     (row) => row.firstElementChild,
   );
 
-  if (isRibbonHidden(storage.textContent)) {
+  if (isRibbonHidden(storage?.textContent)) {
     block.style.display = 'none';
     return;
   }
