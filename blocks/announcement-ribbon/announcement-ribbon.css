@@ -63,6 +63,9 @@
   color: var(--background-color);
 }
 
+.section.announcement-ribbon-container .announcement-ribbon-wrapper:has(.announcement-ribbon[style*='display: none']) {
+  padding: 0;
+}
 /* Tablet (600px to 899px) */
 @media (min-width: 600px) {
   .announcement-ribbon {
