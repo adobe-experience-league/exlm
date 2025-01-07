@@ -315,7 +315,8 @@
                   "cta1Type": "primary",
                   "cta2Type": "primary",
                   "customHexCode": "FFFFFF",
-                  "classes": "light"
+                  "classes": "light",
+                  "dismissalTime": "sessionStorage"
                 }
               }
             }
