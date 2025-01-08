@@ -343,7 +343,7 @@
     display: -webkit-box;
     line-clamp: 4;
     -webkit-line-clamp: 4;
-    max-height: 72px;
+    max-height: 85px;
   }
 }
 
