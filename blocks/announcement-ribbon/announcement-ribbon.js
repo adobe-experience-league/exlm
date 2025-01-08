@@ -19,6 +19,8 @@ function decorateButtons(...buttons) {
 function hideRibbon(block, storage = 'sessionStorage') {
   block.style.display = 'none';
   window[storage].setItem('hideRibbonBlock', 'true');
+  const otherStorage = storage === 'sessionStorage' ? 'localStorage' : 'sessionStorage'; // remove the previouly added key from other storage
+  window[otherStorage].removeItem('hideRibbonBlock');
 }
 
 // Function to check browser storage and hide the ribbon if it was previously closed
