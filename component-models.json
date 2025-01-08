@@ -4650,6 +4650,24 @@
         "value": "",
         "label": "Second CTA Link",
         "description": "What link to open when clicking the button."
+      },
+      {
+        "component": "radio-group",
+        "name": "dismissalTime",
+        "value": "",
+        "label": "Banner Dismissal Time",
+        "description": "Hide the banner based on Session or Local storage",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Session storage",
+            "value": "sessionStorage"
+          },
+          {
+            "name": "Local storage",
+            "value": "localStorage"
+          }
+        ]
       }
     ]
   },
