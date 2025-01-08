@@ -15,12 +15,19 @@ function decorateButtons(...buttons) {
     .join('');
 }
 
+// Function to remove previously added keys from the browser storage
+function removeStorageKeys() {
+  const browserStorage = ['localStorage', 'sessionStorage'];
+  browserStorage.forEach((storage) => {
+    window[storage].removeItem('hideRibbonBlock');
+  });
+}
+
 // Function to hide a ribbon and update the key in the browser storage
 function hideRibbon(block, storage = 'sessionStorage') {
   block.style.display = 'none';
+  removeStorageKeys();
   window[storage].setItem('hideRibbonBlock', 'true');
-  const otherStorage = storage === 'sessionStorage' ? 'localStorage' : 'sessionStorage'; // remove the previouly added key from other storage
-  window[otherStorage].removeItem('hideRibbonBlock');
 }
 
 // Function to check browser storage and hide the ribbon if it was previously closed
@@ -32,7 +39,8 @@ export default async function decorate(block) {
   const [image, heading, description, bgColor, hexcode, firstCta, secondCta, storage] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-
+  // The `storage` value will be either 'localStorage' or 'sessionStorage',
+  // as defined in the `components-models.json` file.
   if (isRibbonHidden(storage?.textContent)) {
     block.style.display = 'none';
     return;
