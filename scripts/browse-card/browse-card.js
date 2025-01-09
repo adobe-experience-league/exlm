@@ -323,8 +323,6 @@ export async function buildCard(container, element, model) {
   model.copyLink = model.copyLink?.toLowerCase();
 
   let type = contentType?.toLowerCase();
-  const courseMappingKey = CONTENT_TYPES.PLAYLIST.MAPPING_KEY.toLowerCase();
-  const tutorialMappingKey = CONTENT_TYPES.TUTORIAL.MAPPING_KEY.toLowerCase();
   const inProgressMappingKey = RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY.toLowerCase();
   const recommededMappingKey = RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY.toLowerCase();
   if (contentType === inProgressMappingKey || contentType === recommededMappingKey) {
@@ -348,13 +346,7 @@ export async function buildCard(container, element, model) {
     cardFigure.style.backgroundColor = `var(--browse-card-color-${type}-secondary)`;
   }
 
-  if (
-    (type === courseMappingKey ||
-      type === tutorialMappingKey ||
-      type === inProgressMappingKey ||
-      type === recommededMappingKey) &&
-    thumbnail
-  ) {
+  if (thumbnail) {
     const laptopContainer = document.createElement('div');
     laptopContainer.classList.add('laptop-container');
     const laptopScreen = document.createElement('div');
