@@ -82,7 +82,7 @@
 
 .filtered-result-product-name {
   font-size: var(--spectrum-font-size-75);
-  color: #707070;
+  color: var(--non-spectrum-web-gray);
 }
 
 .filtered-result-date-container {
@@ -106,7 +106,7 @@
   padding: 4px 14px;
   position: relative;
   line-height: 19px;
-  background: #fafafa;
+  background: var(--non-spectrum-bg);
 }
 
 .filtered-result-content-type span {

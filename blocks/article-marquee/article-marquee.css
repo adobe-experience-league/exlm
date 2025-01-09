@@ -169,7 +169,7 @@
 .article-marquee-tag {
   width: max-content;
   color: #000;
-  font-size: var(--non-spectrum-font-size-10);
+  font-size: var(--spectrum-font-size-40);
   font-weight: var(--font-weight-semi-bold);
   padding: 2px 4px;
   margin-top: 1em;

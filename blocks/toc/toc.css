@@ -159,7 +159,7 @@
   padding: 0 30px 0 12px;
   cursor: pointer;
   text-transform: uppercase;
-  font-weight: var(--spectrum-extra-bold-font-weight);
+  font-weight: var(--font-weight-extra-bold);
 }
 
 .toc ul li ul {

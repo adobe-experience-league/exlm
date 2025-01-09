@@ -27,7 +27,7 @@
   letter-spacing: 0.72px;
   color: var(--text-color);
   text-transform: uppercase;
-  margin: 0px;
+  margin: 0;
 }
 
 .profile-card-header .manage-adobe-account,
@@ -127,7 +127,7 @@
 .user-profile-card-box .profile-row-shimmer {
   background-image: linear-gradient(
     90deg,
-    var(--shimmer-image-slide-start) 0px,
+    var(--shimmer-image-slide-start) 0,
     var(--shimmer-image-slide-end) 40px,
     var(--shimmer-image-slide-start) 80px
   );
@@ -168,18 +168,18 @@
 }
 
 @media (min-width: 600px) {
-  body.profile .profile-card-header {
-    flex-direction: column;
-  }
-
   .profile-card-header {
     flex-direction: row;
+  }
+
+  body.profile .profile-card-header {
+    flex-direction: column;
   }
 }
 
 @media (min-width: 900px) {
-  body.profile .profile-card-header,
-  .profile-card-header {
+  .profile-card-header,
+  body.profile .profile-card-header {
     flex-direction: row;
     align-items: center;
     gap: 0;

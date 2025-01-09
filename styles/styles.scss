@@ -29,6 +29,8 @@
   --spectrum-code-font-family: 'Source Code Pro', 'monaco', monospace;
 
   /* default font sizes */
+  --spectrum-font-size-30: 9px;
+  --spectrum-font-size-40: 10px;
   --spectrum-font-size-50: 11px;
   --spectrum-font-size-75: 12px;
   --spectrum-font-size-100: 14px;
@@ -44,8 +46,6 @@
   --spectrum-font-size-1100: 45px;
   --spectrum-font-size-1200: 50px;
   --spectrum-font-size-1300: 60px;
-  --non-spectrum-font-size-9: 9px;
-  --non-spectrum-font-size-10: 10px;
 
   /* font weight */
   --font-weight-thin: 100;
@@ -56,8 +56,7 @@
   --font-weight-semi-bold: 600;
   --font-weight-bold: 700;
   --font-weight-extra-bold: 800;
-  --font-weight-black: 900;
-  --spectrum-extra-bold-font-weight: var(--font-weight-extra-bold);
+  --font-weight-heavy: 900;
 
   /* line height */
   --spectrum-line-height-xxxl: 57.2px;
@@ -351,8 +350,6 @@
 
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
-
-  
 
   /* Box Shadows */
   --box-shadow-1: 0 0.5em 1em -0.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;

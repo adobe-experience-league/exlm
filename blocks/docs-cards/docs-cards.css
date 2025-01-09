@@ -7,12 +7,12 @@
 }
 
 .docs-cards-card {
-  background-color: #fff;
+  background-color: var(--spectrum-gray-50);
   border-radius: 0.25rem;
   box-shadow:
     0 0.5em 1em -0.125em rgb(10 10 10 / 10%),
     0 0 0 1px rgb(10 10 10 / 2%);
-  color: #4a4a4a;
+  color: var(--non-spectrum-grey);
   max-width: 100%;
   position: relative;
   display: flex;

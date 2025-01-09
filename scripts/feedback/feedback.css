@@ -25,6 +25,18 @@
   display: block;
 }
 
+.feedback-ui .like-btns {
+  display: inline-block;
+  flex: auto;
+  margin-left: 1em;
+}
+
+.feedback-ui .right {
+  display: block;
+  border-top: 2px solid var(--spectrum-gray-200);
+  color: var(--non-spectrum-grey);
+}
+
 .feedback-ui.no-git .right {
   display: none !important;
 }
@@ -82,12 +94,6 @@
 .feedback-ui .right .icon-chevron-gray {
   display: none;
   transform: translateY(-1px);
-}
-
-.feedback-ui .like-btns {
-  display: inline-block;
-  flex: auto;
-  margin-left: 1em;
 }
 
 .feedback-ui .like-btns button {
@@ -154,12 +160,6 @@
   background-color: var(--spectrum-gray-200);
   border-color: transparent;
   color: var(--spectrum-gray-500);
-}
-
-.feedback-ui .right {
-  display: block;
-  border-top: 2px solid var(--spectrum-gray-200);
-  color: var(--non-spectrum-grey);
 }
 
 .feedback-ui .header-text-mobile > span {

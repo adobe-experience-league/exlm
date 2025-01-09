@@ -83,7 +83,7 @@ body.profile
   align-items: center;
   justify-content: center;
   border-radius: 20px;
-  background-color: #fff0;
+  background-color: var(--non-spectrum-transparent-white);
   padding: 12px 25px 14px;
   margin-right: 0;
 }

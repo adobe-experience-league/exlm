@@ -3,51 +3,46 @@
     opacity: 0.6;
   }
 }
+
 .browse-card-shimmer {
   position: relative;
   height: 100%;
-}
-.browse-card-shimmer {
   display: flex;
   flex-wrap: nowrap;
   gap: 16px;
   transition: all 0.5s ease-in-out;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: auto hidden;
   min-height: 400px;
   margin: 0;
   z-index: 1;
   margin-top: 16px;
 }
+
 .browse-card-shimmer-text-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   margin: 0 16px;
 }
+
 .browse-card-shimmer-cta-wrapper {
   display: flex;
   justify-content: space-around;
 }
+
 .browse-card-shimmer.hide-shimmer {
-  height: 0px;
+  height: 0;
   margin: 0;
   z-index: 0;
   visibility: hidden;
 }
+
 .browse-filters-wrapper .browse-card-shimmer.hide-shimmer {
   display: none;
 }
+
 .browse-filters-wrapper .browse-card-shimmer {
   position: relative;
-}
-.featured-cards .browse-card-shimmer {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 32px;
-  margin-top: 24px;
-}
-.browse-filters-wrapper .browse-card-shimmer {
   gap: 8px;
   display: grid;
   grid-template-columns: 1fr;
@@ -55,6 +50,14 @@
   height: fit-content;
   margin-top: 0;
 }
+
+.featured-cards .browse-card-shimmer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  margin-top: 24px;
+}
+
 .browse-card-shimmer-wrapper {
   width: 100%;
   height: 100%;
@@ -63,6 +66,7 @@
   flex: 0 0 264px;
   border: 1px solid var(--spectrum-gray-200);
 }
+
 .browse-filters-wrapper .browse-card-shimmer-wrapper,
 .featured-cards .browse-card-shimmer-wrapper {
   min-height: 380px;
@@ -71,39 +75,46 @@
 @media only screen and (min-width: 600px) {
   .browse-card-shimmer {
     gap: 25px;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: auto hidden;
     margin-top: 16px;
   }
+
   .featured-cards .browse-card-shimmer,
   .browse-filters-wrapper .browse-card-shimmer {
     grid-template-columns: 1fr 1fr;
   }
+
   .browse-filters-wrapper .browse-card-shimmer {
     margin-top: 0;
   }
+
   .browse-card-shimmer-wrapper {
     flex: 0 0 286px;
   }
 }
+
 @media only screen and (min-width: 900px) {
   .browse-card-shimmer {
     gap: 32px;
     margin-top: 24px;
   }
+
+  .browse-card-shimmer-wrapper {
+    flex: 0 0 256px;
+  }
+
   .featured-cards .browse-card-shimmer {
     display: flex;
     gap: 32px;
   }
+
   .featured-cards .browse-card-shimmer-wrapper {
     flex: 0 0 295px;
   }
+
   .browse-filters-wrapper .browse-card-shimmer {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     margin-top: 0;
-  }
-  .browse-card-shimmer-wrapper {
-    flex: 0 0 256px;
   }
 }

@@ -50,7 +50,7 @@
   content: '>';
   display: inline-block;
   margin-left: 5px;
-  font-weight: var(--font-weight-black);
+  font-weight: var(--font-weight-heavy);
   transition: transform 0.15s ease-in-out;
 }
 

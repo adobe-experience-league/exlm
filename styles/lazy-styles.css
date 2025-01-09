@@ -61,7 +61,7 @@ span.pagination-btn-title {
   font-family: var(--heading-font-family);
   font-size: var(--spectrum-font-size-50);
   font-weight: var(--font-weight-bold);
-  color: #6e6e6e;
+  color: var(--non-spectrum-grey-updated);
   margin: 15px 0 55px;
   text-transform: uppercase;
 }

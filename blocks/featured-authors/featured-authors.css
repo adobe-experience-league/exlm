@@ -68,7 +68,7 @@
   text-transform: uppercase;
   color: white;
   letter-spacing: 0.6px;
-  font-size: var(--non-spectrum-font-size-10);
+  font-size: var(--spectrum-font-size-40);
   max-width: fit-content;
   padding: 8px 14px;
   border-radius: 0 0 0 4px;
@@ -176,8 +176,8 @@
   font-size: var(--spectrum-font-size-75);
   line-height: 15px;
   font-weight: bold;
-  color: #505050;
-  border: 2px solid #505050;
+  color: var(--non-spectrum-charcoal-gray);
+  border: 2px solid var(--non-spectrum-charcoal-gray);
   border-radius: 14px;
   height: 18px;
   width: fit-content;

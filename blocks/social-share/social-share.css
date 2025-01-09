@@ -1,5 +1,5 @@
 .social-share .social-share-title {
-  font-weight: var(--spectrum-extra-bold-font-weight);
+  font-weight: var(--font-weight-extra-bold);
   font-size: var(--spectrum-body-size-xs);
   margin-bottom: 6px;
 }

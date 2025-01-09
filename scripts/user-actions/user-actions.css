@@ -20,15 +20,15 @@
   position: relative;
 }
 
+button:disabled,
+button:disabled:hover {
+  background: none;
+}
+
 .user-actions button:hover,
 .user-actions button:focus {
   background-color: none;
   cursor: pointer;
-}
-
-button:disabled,
-button:disabled:hover {
-  background: none;
 }
 
 .user-actions button .icon {

@@ -10,7 +10,7 @@
 
 .related-content-wrapper .related-content-toggle h2 {
   font-size: var(--spectrum-font-size-50);
-  font-weight: var(--spectrum-extra-bold-font-weight);
+  font-weight: var(--font-weight-extra-bold);
   text-transform: uppercase;
   line-height: 31px;
   margin: 0;

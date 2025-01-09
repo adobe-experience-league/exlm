@@ -317,7 +317,7 @@
 .playlist-browse-filter-panel li {
   padding-left: 1em;
   margin: 0 !important;
-  color: #4a4a4a !important;
+  color: var(--non-spectrum-grey) !important;
   font-size: var(--spectrum-font-size-100);
 }
 

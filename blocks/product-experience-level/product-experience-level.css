@@ -60,7 +60,7 @@ body.profile .product-experience-level:not(.sign-up-flow-section .product-experi
 .product-experience-level-item p {
   font-size: var(--spectrum-font-size-200);
   line-height: 21px;
-  color: #222;
+  color: var(--spectrum-gray-800);
   margin: 0;
 }
 

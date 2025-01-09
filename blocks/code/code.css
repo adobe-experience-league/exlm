@@ -20,7 +20,7 @@ pre[class*='language-'] {
   line-height: 1.5;
   tab-size: 4;
   hyphens: none;
-  color: #c5c8c6;
+  color: var(--non-spectrum-silver-chalice);
   text-shadow: 0 1px rgb(0 0 0 / 30%);
   font-family: Inconsolata, Monaco, Consolas, 'Courier New', Courier, monospace;
   direction: ltr;
@@ -35,7 +35,7 @@ pre[class*='language-'] {
 
 :not(pre) > code[class*='language-'],
 pre[class*='language-'] {
-  background: #1d1f21;
+  background: var(--non-spectrum-jet-black);
 }
 
 :not(pre) > code[class*='language-'] {
@@ -53,7 +53,7 @@ pre[class*='language-'] {
 }
 
 .token.punctuation {
-  color: #c5c8c6;
+  color: var(--non-spectrum-silver-chalice);
 }
 
 .token.attr-name,
@@ -102,7 +102,7 @@ pre[class*='language-'] {
 }
 
 .token.entity {
-  color: #ffffb6;
+  color: var(--non-spectrum-lemon-meringue);
   cursor: help;
 }
 
@@ -151,7 +151,7 @@ pre[data-line] {
   vertical-align: 0.3em;
   border-radius: 999px;
   text-shadow: none;
-  box-shadow: 0 1px #fff;
+  box-shadow: 0 1px var(--spectrum-gray-50);
 }
 
 .line-highlight[data-end]::after {
@@ -297,7 +297,7 @@ div.code-toolbar > .toolbar > .toolbar-item > span:hover {
 }
 
 .token.class-name {
-  color: #ffffb6;
+  color: var(--non-spectrum-lemon-meringue);
   text-decoration: underline;
 }
 
