@@ -30,7 +30,7 @@ let cardsWidth;
 let cardsGap;
 const seeMoreConfig = {
   minWidth: 1024,
-  noOfRows: 4,
+  noOfRows: 2,
 };
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
