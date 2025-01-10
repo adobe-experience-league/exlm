@@ -1,7 +1,8 @@
 .back-to-browsing {
   display: none;
+
   a {
-    font-size: 14px;
+    font-size: var(--spectrum-font-size-100);
     font-style: italic;
     color: var(--spectrum-gray-800);
     text-decoration: none;

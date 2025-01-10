@@ -16,8 +16,7 @@
   justify-content: space-between;
   flex-wrap: nowrap;
   gap: 16px;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: auto hidden;
   padding-bottom: 2px;
   min-height: 400px;
 }
@@ -28,17 +27,17 @@
 }
 
 .tutorial-widgets a {
-  font-size: 18px;
+  font-size: var(--spectrum-font-size-300);
   line-height: 17px;
-  margin: 2px 0 0 0;
+  margin: 2px 0 0;
 }
 
 @media only screen and (min-width: 600px) {
   .tutorial-widgets {
     gap: 25px;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: auto hidden;
   }
+
   .tutorial-widgets > div {
     flex: 0 0 286px;
   }
@@ -48,6 +47,7 @@
   .tutorial-widgets {
     gap: 32px;
   }
+
   .tutorial-widgets > div {
     flex: 0 0 256px;
   }

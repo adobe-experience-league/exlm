@@ -7,16 +7,20 @@
   border-radius: 5px;
   word-break: break-word;
 }
+
 .browse-card:hover {
   box-shadow: var(--box-shadow-2);
 }
+
 .browse-card * {
   box-sizing: border-box;
 }
+
 .browse-card > * {
   flex-grow: 1;
   margin-bottom: 0;
 }
+
 .browse-card .browse-card-banner {
   position: absolute;
   top: 32px;
@@ -29,44 +33,51 @@
   text-transform: uppercase;
   font-size: var(--spectrum-font-size-75);
   line-height: 17px;
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   letter-spacing: 0.72px;
   margin: 0;
 }
+
 .browse-card .browse-card-tag-text {
   display: flex;
   margin: 0 0 8px;
 }
+
 .browse-card .browse-card-tag-text h4 {
   text-transform: uppercase;
   margin: 0;
   font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   line-height: 21px;
   color: var(--spectrum-gray-700);
 }
+
 .browse-card .browse-card-title-text {
   margin: 8px 0;
   line-height: 22.5px;
   color: var(--non-spectrum-raisin-black);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
 }
+
 .browse-card .browse-card-event-info {
   display: flex;
   gap: 4px;
   margin: 8px 0;
   line-height: 0;
 }
+
 .browse-card .browse-card-event-time {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
+
 .browse-card .browse-card-event-time > * {
   color: var(--spectrum-gray-700);
   line-height: 17px;
   margin: 0;
 }
+
 .browse-card .browse-card-description-text,
 .browse-card .browse-card-description-text * {
   margin: 0;
@@ -74,6 +85,7 @@
   line-height: 21px;
   color: var(--spectrum-gray-700);
 }
+
 .browse-card .browse-card-figure {
   max-height: 200px;
   min-height: 72px;
@@ -86,7 +98,7 @@
   width: 132px;
   background-image: linear-gradient(
     90deg,
-    var(--shimmer-image-slide-start) 0px,
+    var(--shimmer-image-slide-start) 0,
     var(--shimmer-image-slide-end) 40px,
     var(--shimmer-image-slide-start) 80px
   );
@@ -100,47 +112,55 @@
   margin-bottom: 16px;
   background-image: linear-gradient(
     90deg,
-    var(--shimmer-image-slide-start) 0px,
+    var(--shimmer-image-slide-start) 0,
     var(--shimmer-image-slide-end) 40px,
     var(--shimmer-image-slide-start) 80px
   );
   background-size: 200% 100%;
   animation: placeholder-wave 1.5s infinite;
 }
+
 .browse-card .browse-card-figure.img-custom-height {
   min-height: 153px;
 }
+
 .browse-card .browse-card-figure img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-bottom: 1px solid var(--spectrum-gray-200);
 }
+
 .browse-card .browse-card-content {
   padding: 16px 16px 12px 15px;
   min-height: 190px;
 }
+
 .browse-card .browse-card-meta-info {
   display: flex;
   gap: 12px;
   margin: 8px 0;
 }
+
 .browse-card .browse-card-meta-info span {
   color: var(--non-spectrum-grey-updated);
   font-size: var(--spectrum-font-size-75);
   line-height: 17px;
 }
+
 .browse-card .browse-card-event-info .icon {
   height: 16px;
   width: 16px;
   margin-top: 2px;
 }
+
 .browse-card .browse-card-author-info {
   display: flex;
   margin-top: 16px;
   flex-wrap: wrap;
   gap: 10px 0;
 }
+
 .browse-card .browse-card-author-prefix {
   font-size: var(--spectrum-font-size-100);
   font-weight: normal;
@@ -148,26 +168,30 @@
   color: var(--spectrum-gray-900);
   margin-right: 8px;
 }
+
 .browse-card .browse-card-author-name {
   font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   line-height: 18.2px;
   color: var(--spectrum-gray-900);
   margin-right: 11px;
 }
+
 .browse-card .browse-card-author-badge {
-  font-size: 10px;
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-40);
+  font-weight: var(--font-weight-bold);
   line-height: 18.2px;
   background-color: var(--spectrum-red-1400);
   border-radius: 2px;
   color: var(--spectrum-gray-50);
   align-self: center;
-  padding: 0px 3px;
+  padding: 0 3px;
 }
+
 .browse-card .browse-card-author-badge.author-badge-external {
   background-color: var(--spectrum-indigo-1400);
 }
+
 .browse-card .browse-card-footer {
   padding: 0 16px 22px 15px;
   display: flex;
@@ -175,11 +199,13 @@
   justify-content: space-between;
   width: 100%;
 }
+
 .browse-card .browse-card-footer .browse-card-options {
   position: relative;
   display: flex;
   top: 8px;
 }
+
 .browse-card .browse-card-footer .browse-card-cta-element {
   background-color: var(--background-color);
   color: var(--non-spectrum-dark-navy-blue);
@@ -189,15 +215,17 @@
   gap: 4px;
   top: 4px;
   position: relative;
-  font-weight: var(--font-weight-600);
+  font-weight: var(--font-weight-semi-bold);
   font-size: var(--spectrum-font-size-100);
   line-height: 17px;
 }
+
 .browse-card .browse-card-footer .browse-card-cta-element .icon {
   height: 22px;
   width: 22px;
   fill: var(--non-spectrum-navy-blue);
 }
+
 .browse-card .browse-card-meta-anchor {
   margin: 0;
   display: flex;
@@ -208,99 +236,122 @@
   text-decoration: none;
   font-size: var(--spectrum-font-size-75);
 }
+
 .browse-card .browse-card-contributor-info {
   display: flex;
   gap: 12px;
   align-items: center;
   margin: 16px 0 8px;
 }
+
 .browse-card .browse-card-contributor-level {
   display: flex;
   gap: 4px;
   align-items: center;
 }
+
+.browse-card .browse-card-name-plate span {
+  font-size: var(--spectrum-font-size-75);
+  line-height: 18px;
+  color: var(--non-spectrum-grey-updated);
+}
+
 .browse-card .browse-card-contributor-level span:first-child {
   background-color: var(--non-spectrum-dim-orange);
   color: var(--background-color);
   border-radius: 1px;
-  font-size: 9px;
+  font-size: var(--spectrum-font-size-30);
   height: 12px;
   width: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .browse-card .browse-card-name-plate {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
 }
+
 .browse-card .browse-card-contributor-info img {
   height: 48px;
   width: 48px;
   border-radius: 100%;
 }
-.browse-card .browse-card-name-plate span {
-  font-size: var(--spectrum-font-size-75);
-  line-height: 18px;
-  color: var(--non-spectrum-grey-updated);
-}
+
 .browse-card .browse-card-name-plate .browse-card-contributor-name {
   font-size: var(--spectrum-font-size-100);
   color: var(--non-spectrum-navy-blue);
 }
+
 /* Content Type specific styles */
 .browse-card.event-card .browse-card-banner {
   background-color: var(--spectrum-magenta-1000);
 }
+
 .browse-card.certificate-card .browse-card-banner,
 .browse-card.certification-card .browse-card-banner {
   background-color: var(--spectrum-purple-900);
 }
+
 .browse-card.tutorial-card .browse-card-banner {
   background-color: var(--spectrum-celery-600);
 }
+
 .browse-card.playlist-card .browse-card-banner {
   background-color: var(--spectrum-blue-800);
 }
+
 .browse-card.documentation-card .browse-card-banner {
   background-color: var(--spectrum-celery-900);
 }
+
 .browse-card.perspective-card .browse-card-banner {
   background-color: var(--spectrum-gray-600);
 }
+
 .browse-card.troubleshooting-card .browse-card-banner {
   background-color: var(--spectrum-orange-700);
 }
+
 .browse-card.community-card .browse-card-banner {
   background-color: var(--spectrum-seafoam-700);
 }
+
 .browse-card.live-event-card .browse-card-banner {
   background-color: var(--spectrum-magenta-900);
 }
+
 .browse-card.instructor-led-training-card .browse-card-banner {
   background-color: var(--spectrum-blue-1100);
 }
+
 .browse-card.playlist-card .browse-card-figure {
   max-height: 143px;
 }
+
 .browse-card.playlist-card .browse-card-meta-info .icon {
   height: 11px;
   width: 11px;
   margin-right: 0;
   margin-top: -2px;
 }
+
 .browse-card.playlist-card .browse-card-content {
   padding: 16px 16px 0;
 }
+
 .browse-card.playlist-card .browse-card-meta-info,
 .browse-card.playlist-card .browse-card-title-text {
   margin: 0;
 }
+
 .browse-card.tutorial-card .browse-card-figure {
   max-height: 140px;
 }
+
 .browse-card.perspective-card .browse-card-figure,
 .browse-card.troubleshooting-card .browse-card-figure,
 .browse-card.certificate-card .browse-card-figure,
@@ -308,17 +359,21 @@
 .browse-card.instructor-led-training-card .browse-card-figure {
   min-height: 85px;
 }
+
 .browse-card.community-card .browse-card-meta-info {
   margin: 0;
 }
+
 .browse-card.community-card .browse-card-meta-anchor .icon {
   height: 15px;
   width: 15px;
 }
+
 .browse-card.community-card .browse-card-meta-anchor .icon.icon-book {
   height: 12px;
   width: 11px;
 }
+
 /* No Results */
 .browse-card-no-results {
   background: var(--spectrum-gray-200);
@@ -331,28 +386,33 @@
   text-align: center;
   margin-top: 24px;
 }
+
 /* Tooltip */
 .browse-card .tooltip-placeholder {
   align-self: center;
   line-height: 0;
 }
+
 .browse-card .tooltip {
   display: inline;
   margin: 2px 0 0 5px;
 }
+
 .browse-card .tooltip .icon-info {
   width: 14px;
   height: 14px;
 }
+
 .browse-card .tooltip svg {
   pointer-events: none;
 }
+
 .browse-card .tooltip .tooltip-text {
   background-color: var(--non-spectrum-royal-blue);
   border-radius: 4px;
   color: var(--spectrum-gray-50);
   display: inline-block;
-  font-size: 11px;
+  font-size: var(--spectrum-font-size-50);
   font-weight: normal;
   left: -999px;
   line-height: 14.3px;
@@ -369,15 +429,18 @@
   max-width: 155px;
   z-index: 1;
 }
+
 .browse-card .tooltip-top .tooltip-text {
   transform: translateX(-45%);
   margin-left: 0;
   margin-top: 0;
 }
+
 .browse-card .tooltip .tooltip-text.tooltip-visible {
   visibility: visible;
   opacity: 1;
 }
+
 .browse-card .tooltip .tooltip-text::before {
   border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
   border-style: solid;
@@ -389,6 +452,7 @@
   right: 100%;
   top: 50%;
 }
+
 .browse-card .tooltip-top .tooltip-text::before {
   margin-top: 0;
   right: unset;
@@ -397,42 +461,51 @@
   bottom: -8px;
   transform: rotate(-90deg);
 }
+
 .browse-card .tooltip-grey .tooltip-text {
   background-color: var(--non-spectrum-dim-gray);
 }
+
 .browse-card .tooltip-grey .tooltip-text::before {
   border-color: transparent var(--non-spectrum-dim-gray) transparent transparent;
 }
+
 /* Skill-Bar */
 .browse-card .skill-bar {
   width: 100%;
   position: absolute;
   bottom: 0;
 }
+
 .browse-card .skill-bar-container {
   width: 100%;
   max-width: 350px;
   overflow: hidden;
   background-color: var(--spectrum-gray-200);
 }
+
 .browse-card .skill-bar-value {
   height: 4px;
   float: left;
   background: var(--spectrum-blue-900);
 }
+
 .browse-card .course-duration {
   color: var(--spectrum-gray-700);
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-75);
   font-style: italic;
 }
+
 @media only screen and (min-width: 900px) {
   .browse-card.tutorial-card .browse-card-figure,
   .browse-card.playlist-card .browse-card-figure {
     max-height: 199px;
   }
+
   .browse-card.playlist-card .browse-card-content {
     padding: 16px 16px 12px;
   }
+
   .browse-card.playlist-card .browse-card-meta-info,
   .browse-card.playlist-card .browse-card-title-text {
     margin: 8px 0;

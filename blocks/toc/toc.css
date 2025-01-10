@@ -53,7 +53,7 @@
 .toc a {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: var(--spectrum-line-height-m);
   color: var(--spectrum-gray-800);
@@ -147,7 +147,7 @@
 }
 
 .toc div > ul > li:first-child a:not(.toc-toggle) {
-  font-weight: 800;
+  font-weight: var(--font-weight-extra-bold);
 }
 
 .toc a.toc-toggle {
@@ -159,7 +159,7 @@
   padding: 0 30px 0 12px;
   cursor: pointer;
   text-transform: uppercase;
-  font-weight: var(--spectrum-extra-bold-font-weight);
+  font-weight: var(--font-weight-extra-bold);
 }
 
 .toc ul li ul {
@@ -222,7 +222,7 @@ button.toc-dropdown-button {
   margin: 0;
   width: 100%;
   color: var(--spectrum-gray-800);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
 }
 
 .toc-dropdown-button:hover {

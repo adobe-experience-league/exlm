@@ -40,19 +40,19 @@
 .media.block > .text > .eyebrow {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-700);
   line-height: 18px;
-  margin-bottom: var(--space-token-xxs);
+  margin-bottom: var(--spectrum-spacing-100);
 }
 
 /* the main title */
 .media.block > .text > .title {
   font-family: var(--body-font-family);
-  font-size: 24px;
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-600);
+  font-weight: var(--font-weight-bold);
   line-height: 30px;
-  margin-bottom: var(--space-token-xxs);
+  margin-bottom: var(--spectrum-spacing-100);
   color: var(--spectrum-gray-800);
 }
 
@@ -107,7 +107,7 @@
   .media.block {
     flex-flow: row nowrap;
     align-items: center;
-    gap: var(--space-token-xxl);
+    gap: var(--spectrum-spacing-1100);
   }
 
   /* the image */
@@ -133,8 +133,8 @@
   .media.block .text > .cta > a.button {
     margin: 0;
     font-family: var(--body-font-family);
-    font-size: 15px;
-    font-weight: var(--font-weight-700);
+    font-size: var(--spectrum-font-size-100);
+    font-weight: var(--font-weight-bold);
     line-height: 15px;
     padding: 5px 14px 6px;
   }

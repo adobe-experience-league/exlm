@@ -31,5 +31,5 @@
 
 .breadcrumbs > div > div > a:last-child {
   color: var(--spectrum-gray-900);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
 }

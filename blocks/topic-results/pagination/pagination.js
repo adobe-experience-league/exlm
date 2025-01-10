@@ -16,8 +16,8 @@ function getTotalPages(totalItems, itemsPerPage) {
  */
 function createPageButton(pageNum, isActive) {
   return htmlToElement(`
-    <li class="pagination__item ${isActive ? 'pagination__item--active' : ''}">
-      <input type="button" class="pagination__link pagination__num" value="${pageNum}" aria-label="Page ${pageNum}">
+    <li class="pagination-item ${isActive ? 'pagination-item-active' : ''}">
+      <input type="button" class="pagination-link pagination-num" value="${pageNum}" aria-label="Page ${pageNum}">
     </li>
   `);
 }
@@ -31,8 +31,8 @@ function createPageButton(pageNum, isActive) {
 function createNavButton(type, isDisabled) {
   const label = type === 'prev' ? 'Previous' : 'Next';
   return htmlToElement(`
-    <li class="pagination__item pagination__item--${type} ${isDisabled ? 'disabled' : ''}">
-      <input type="button" class="pagination__link" value="${label}" aria-label="${label}">
+    <li class="pagination-item pagination-item-${type} ${isDisabled ? 'disabled' : ''}">
+      <input type="button" class="pagination-link" value="${label}" aria-label="${label}">
     </li>
   `);
 }
