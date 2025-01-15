@@ -284,18 +284,21 @@
     width: fit-content;
   }
 
-  .recommendation-marquee.block .browse-cards-block-content:first-child .card-wrapper:first-child {
+  .recommendation-marquee.block .browse-cards-block-content.recommendation-marquee-wrap .card-wrapper:first-child {
     flex: 0 0 100%;
     min-height: 299.5px;
     max-width: 740px;
   }
 
-  .recommendation-marquee.block .browse-cards-block-content:first-child .card-wrapper:first-child .browse-card {
+  .recommendation-marquee.block
+    .browse-cards-block-content.recommendation-marquee-wrap
+    .card-wrapper:first-child
+    .browse-card {
     display: block;
   }
 
   .recommendation-marquee.block
-    .browse-cards-block-content:first-child
+    .browse-cards-block-content.recommendation-marquee-wrap
     .card-wrapper:first-child
     .browse-card
     .browse-card-figure {
@@ -307,7 +310,7 @@
   }
 
   .recommendation-marquee.block
-    .browse-cards-block-content:first-child
+    .browse-cards-block-content.recommendation-marquee-wrap
     .card-wrapper:first-child
     .browse-card
     .browse-card-content {
@@ -317,7 +320,7 @@
   }
 
   .recommendation-marquee.block
-    .browse-cards-block-content:first-child
+    .browse-cards-block-content.recommendation-marquee-wrap
     .card-wrapper:first-child
     .browse-card
     .browse-card-footer {
@@ -327,7 +330,7 @@
   }
 
   .recommendation-marquee.block
-    .browse-cards-block-content:first-child
+    .browse-cards-block-content.recommendation-marquee-wrap
     .card-wrapper:first-child
     .browse-card-description-text {
     display: -webkit-box;
@@ -362,17 +365,19 @@
       opacity: 0;
       transform: translateY(-50px);
     }
+
     100% {
-      transform: translateY(0px);
+      transform: translateY(0);
       opacity: 1;
     }
   }
 
   @keyframes fade-out {
     0% {
-      transform: translateY(0px);
+      transform: translateY(0);
       opacity: 1;
     }
+
     100% {
       opacity: 0;
       transform: translateY(-50px);
@@ -401,7 +406,7 @@
 }
 
 @media (min-width: 1440px) {
-  .recommendation-marquee.block .browse-cards-block-content:first-child .card-wrapper:first-child {
+  .recommendation-marquee.block .browse-cards-block-content.recommendation-marquee-wrap .card-wrapper:first-child {
     flex: 0 0 calc(66.67% - 20px);
     min-width: 740px;
   }

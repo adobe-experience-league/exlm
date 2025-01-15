@@ -420,7 +420,11 @@ export default async function decorate(block) {
       block.removeChild(tempWrapper);
     }
     const contentDiv = document.createElement('div');
-    contentDiv.classList.add('browse-cards-block-content', 'recommendation-marquee-block-section');
+    contentDiv.classList.add(
+      'browse-cards-block-content',
+      'recommendation-marquee-block-section',
+      'recommendation-marquee-wrap',
+    );
     parentDiv.appendChild(contentDiv);
     resultTextEl.classList.add('recommendation-marquee-discover-resource');
     linkEl.classList.add('recommendation-marquee-result-link');
