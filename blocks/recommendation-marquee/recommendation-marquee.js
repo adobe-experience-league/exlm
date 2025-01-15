@@ -537,7 +537,13 @@ export default async function decorate(block) {
               data = cardResponse.allAdobeProducts;
             }
           }
-          data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(0, DEFAULT_NUM_CARDS));
+          if (seeMoreFlag) {
+            data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(
+              data.slice(0, window.innerWidth > 1432 ? 3 : 2),
+            );
+          } else {
+            data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(0, DEFAULT_NUM_CARDS));
+          }
         } else {
           const { data: cards = [], contentType: ctType } = cardResponse || {};
           const { shimmers: cardShimmers, payload: apiPayload, wrappers: cardWrappers } = apiConfigObject;
