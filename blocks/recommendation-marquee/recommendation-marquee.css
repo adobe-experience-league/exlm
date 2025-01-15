@@ -265,7 +265,7 @@
   }
 }
 
-  @media (min-width: 600px) {
+@media (min-width: 600px) {
   .recommendation-marquee.block .browse-cards-block-content .card-wrapper {
     min-width: 256px;
     flex: 0 0 calc(50% - 10px);
