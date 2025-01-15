@@ -27,8 +27,8 @@
   background-color: var(--spectrum-gray-50);
   border-radius: 16px;
   padding: 24px;
-  border: 1px solid rgba(177, 177, 177, 0.6);
-  box-shadow: 0px 1px 4px #00000026;
+  border: 1px solid rgb(177 177 177 / 60%);
+  box-shadow: 0 1px 4px #00000026;
   cursor: default;
   min-width: 120px;
 }
@@ -52,6 +52,20 @@
   border: 2px solid var(--spectrum-gray-300);
 }
 
+.responsive-pill-list ul li {
+  color: var(--spectrum-gray-800);
+  cursor: pointer;
+  font-size: var(--spectrum-font-size-200);
+  line-height: 20px;
+  margin: 0;
+  padding: 9px 20px 11px;
+  border: 2px solid var(--spectrum-gray-300);
+  border-radius: 20px;
+  position: relative;
+  white-space: pre;
+  font-weight: var(--font-weight-bold);
+}
+
 .responsive-pill-list .responsive-pill-list-more-option.responsive-pill-list-btn-active {
   background: var(--spectrum-gray-800);
   color: var(--spectrum-gray-50);
@@ -61,7 +75,7 @@
 .responsive-pill-list .responsive-pill-list-more-option span {
   height: 30px;
   letter-spacing: 2.2px;
-  font-weight: var(--font-weight-900);
+  font-weight: var(--font-weight-heavy);
   margin-left: 2px;
 }
 
@@ -71,31 +85,17 @@
 
 .responsive-pill-list .responsive-pill-list-option-overlay p {
   text-align: center;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-75);
   line-height: 15px;
   opacity: 0.6;
   color: var(--text-color);
-  font-weight: var(--font-weight-600);
+  font-weight: var(--font-weight-semi-bold);
   text-transform: uppercase;
 }
 
 .responsive-pill-list .responsive-pill-list-option-overlay li {
   width: calc(100% - 48px);
   text-align: center;
-}
-
-.responsive-pill-list ul li {
-  color: var(--spectrum-gray-800);
-  cursor: pointer;
-  font-size: var(--spectrum-font-size-200);
-  line-height: 20px;
-  margin: 0;
-  padding: 9px 20px 11px 20px;
-  border: 2px solid var(--spectrum-gray-300);
-  border-radius: 20px;
-  position: relative;
-  white-space: pre;
-  font-weight: var(--font-weight-700);
 }
 
 .responsive-pill-list ul li.active {

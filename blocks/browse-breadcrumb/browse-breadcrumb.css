@@ -44,7 +44,7 @@
 /* current page entry is a span, bold */
 .browse-breadcrumb.block > span {
   color: var(--spectrum-gray-800);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
 }
 
 /* root crumb has no chevron on the left side */
@@ -54,5 +54,5 @@
 
 /* the root crumb is never bold */
 .browse-breadcrumb.block > a:first-child {
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
 }

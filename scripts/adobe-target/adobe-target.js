@@ -100,18 +100,7 @@ class AdobeTargetClient {
         if (!window?.exlm?.targetData) window.exlm.targetData = [];
         if (!window?.exlm?.recommendationMarqueeTargetData) window.exlm.recommendationMarqueeTargetData = [];
         if (!window?.exlm?.targetData.filter((data) => data?.meta?.scope === event?.detail?.meta?.scope).length) {
-          // TODO - remove dependecy on feature flag once browse card v2 theme is live
-          if (isFeatureEnabled('browsecardv2') && event?.detail?.meta?.scope === this.recommendationMarqueeScopeName) {
-            if (
-              !window?.exlm?.recommendationMarqueeTargetData.filter(
-                (data) => data?.meta?.scope === event?.detail?.meta?.scope,
-              ).length
-            ) {
-              window.exlm.recommendationMarqueeTargetData.push(event.detail);
-            }
-          } else {
-            window.exlm.targetData.push(event.detail);
-          }
+          window.exlm.targetData.push(event.detail);
         }
         resolve(true);
       };
@@ -145,6 +134,54 @@ class AdobeTargetClient {
     });
   }
 
+  sanitizeTargetData() {
+    if (!window?.exlm?.targetData?.length || !isFeatureEnabled('browsecardv2')) {
+      return;
+    }
+
+    const possibleMarqueeData = window.exlm.targetData.reduce((acc, curr) => {
+      let newAcc = acc;
+
+      if (window.exlm.targetData.length === 1) {
+        if (curr.meta['criteria.title'] !== 'exl-php-recently-viewed-content') {
+          newAcc = curr;
+        }
+        return newAcc;
+      }
+
+      if (!curr.meta.scope.startsWith('exl-hp-auth-recs-')) {
+        return newAcc;
+      }
+
+      if (!newAcc) {
+        newAcc = curr;
+        return newAcc;
+      }
+
+      const [currScope] = curr.meta.scope.match(/\d/);
+      const [accScope] = newAcc.meta.scope.match(/\d/);
+
+      if (accScope && currScope && parseInt(currScope, 10) < parseInt(accScope, 10)) {
+        newAcc = curr;
+      }
+
+      return newAcc;
+    }, null);
+
+    if (!possibleMarqueeData) {
+      return;
+    }
+
+    this.recommendationMarqueeScopeName = possibleMarqueeData.meta.scope;
+
+    const marqueeIndex = window.exlm.targetData.findIndex(
+      (data) => data.meta.scope === this.recommendationMarqueeScopeName,
+    );
+
+    window.exlm.targetData.splice(marqueeIndex, 1);
+    window.exlm.recommendationMarqueeTargetData.push(possibleMarqueeData);
+  }
+
   /**
    * Fetches target data and maps it to the appropriate DOM components for processing.
    * It determines whether to update, replace, or add new blocks to the DOM.
@@ -154,6 +191,7 @@ class AdobeTargetClient {
     this.blocks = main.querySelectorAll(
       '.recommended-content:not(.recommended-content.coveo-only), .recently-reviewed, .recommendation-marquee:not(.recommendation-marquee.coveo-only)',
     );
+    this.sanitizeTargetData();
     const targetData = await this.getTargetData();
     const marqueeTargetData = await this.getTargetData(this.recommendationMarqueeScopeName);
     let blockRevisionNeeded = false;

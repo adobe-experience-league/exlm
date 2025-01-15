@@ -31,7 +31,7 @@
 }
 
 .article-metadata-createdby p {
-  font-size: 0.75rem;
+  font-size: var(--spectrum-font-size-75);
   text-transform: uppercase;
   font-weight: bold;
   padding-right: 4px;

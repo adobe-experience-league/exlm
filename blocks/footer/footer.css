@@ -46,7 +46,7 @@
 
 .footer-copyrights {
   color: var(--non-spectrum-charcoal-gray);
-  font-size: 1rem;
+  font-size: var(--spectrum-font-size-200);
   padding: 0.5rem 0;
   line-height: 1;
   margin: 24px 0 0;
@@ -60,7 +60,7 @@
 
 .footer-copyrights a {
   color: var(--non-spectrum-dark-gray);
-  font-size: 1rem;
+  font-size: var(--spectrum-font-size-200);
   line-height: 1.6875rem;
   margin: 0;
   padding: 0.2rem;
@@ -75,7 +75,7 @@
 .footer-item h2 {
   border-bottom: 1px solid var(--footer-border-color);
   color: var(--non-spectrum-charcoal-gray);
-  font-size: 0.875rem;
+  font-size: var(--spectrum-font-size-100);
   line-height: 1.4;
   margin: 0;
   padding: 12px 44px 12px 0;
@@ -85,7 +85,7 @@
 @media (width >= 900px) {
   .footer-item h2 {
     color: var(--non-spectrum-charcoal-gray);
-    font-weight: 600;
+    font-weight: var(--font-weight-semi-bold);
     padding: 12px 0;
     border-bottom: none;
     cursor: default;
@@ -135,7 +135,7 @@
 .footer-item li a {
   color: var(--non-spectrum-dark-gray);
   display: block;
-  font-size: 0.75rem;
+  font-size: var(--spectrum-font-size-75);
   line-height: 1.6875rem;
   margin: 0;
 }
@@ -194,7 +194,7 @@
 
 .footer-lang-social .language-selector a {
   color: var(--non-spectrum-dark-gray);
-  font-size: 0.75rem;
+  font-size: var(--spectrum-font-size-75);
   line-height: 1.6875rem;
 }
 
@@ -320,7 +320,7 @@
 .footer-lang-social .language-selector .dropdown-content a {
   margin: 0;
   padding: 5px 35px 5px 30px;
-  font-size: 0.875rem;
+  font-size: var(--spectrum-font-size-100);
   line-height: 1.5;
   display: block;
   width: 100%;
@@ -328,7 +328,7 @@
 }
 
 .footer-lang-social .language-selector .dropdown-content a[selected] {
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .footer-lang-social .language-selector .dropdown-content a::after {
@@ -364,7 +364,7 @@
   .footer-breadcrumb a {
     cursor: default;
     color: var(--non-spectrum-charcoal-gray);
-    font-size: 0.75rem;
+    font-size: var(--spectrum-font-size-75);
   }
 
   .footer-breadcrumb a:not(:last-child)::after {

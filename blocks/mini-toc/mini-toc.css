@@ -16,7 +16,7 @@
 
 .mini-toc-wrapper .mini-toc {
   font-size: var(--spectrum-font-size-50);
-  font-weight: var(--spectrum-extra-bold-font-weight);
+  font-weight: var(--font-weight-extra-bold);
   padding-left: 0;
   overflow: visible;
 }
@@ -27,13 +27,12 @@
 }
 
 .mini-toc-wrapper .mini-toc .scrollable-div:hover {
-  overflow-y: scroll;
-  overflow-x: hidden;
+  overflow: hidden scroll;
 }
 
 .mini-toc-wrapper .mini-toc h2 {
   font-size: var(--spectrum-font-size-50);
-  font-weight: var(--spectrum-extra-bold-font-weight);
+  font-weight: var(--font-weight-extra-bold);
   text-transform: uppercase;
   margin: 0;
   line-height: 31px;
@@ -94,7 +93,7 @@
 }
 
 .mini-toc-wrapper .mini-toc ul li a.is-active {
-  font-weight: var(--font-weight-600);
+  font-weight: var(--font-weight-semi-bold);
   background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
   color: #1e1e1e;
 }

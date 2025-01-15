@@ -29,6 +29,8 @@
   --spectrum-code-font-family: 'Source Code Pro', 'monaco', monospace;
 
   /* default font sizes */
+  --spectrum-font-size-30: 9px;
+  --spectrum-font-size-40: 10px;
   --spectrum-font-size-50: 11px;
   --spectrum-font-size-75: 12px;
   --spectrum-font-size-100: 14px;
@@ -46,11 +48,15 @@
   --spectrum-font-size-1300: 60px;
 
   /* font weight */
-  --font-weight-900: 900;
-  --font-weight-700: 700;
-  --font-weight-600: 600;
-  --font-weight-400: 400;
-  --spectrum-extra-bold-font-weight: 800;
+  --font-weight-thin: 100;
+  --font-weight-extra-light: 200;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semi-bold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extra-bold: 800;
+  --font-weight-heavy: 900;
 
   /* line height */
   --spectrum-line-height-xxxl: 57.2px;
@@ -281,9 +287,12 @@
   --spectrum-spacing-500: 32px;
   --spectrum-spacing-600: 40px;
   --spectrum-spacing-700: 48px;
-  --spectrum-spacing-800: 64px;
-  --spectrum-spacing-900: 80px;
-  --spectrum-spacing-1000: 96px;
+  --spectrum-spacing-800: 56px;
+  --spectrum-spacing-900: 64px;
+  --spectrum-spacing-1000: 72px;
+  --spectrum-spacing-1100: 80px;
+  --spectrum-spacing-1200: 88px;
+  --spectrum-spacing-1300: 96px;
 
   /* mini toc spectrum vars */
   --spectrum-sidenav-item-background-color-hover: ButtonFace;
@@ -341,16 +350,6 @@
 
   /* rgba transparent values */
   --spectrum-button-background-color-default: rgb(0 0 0 / 0%);
-
-  /* Spacing Tokens */
-  --space-token-xxs: 8px;
-  --space-token-xs: 16px;
-  --space-token-s: 24px;
-  --space-token-m: 32px;
-  --space-token-l: 40px;
-  --space-token-xl: 56px;
-  --space-token-xxl: 80px;
-  --space-token-xxxl: 104px;
 
   /* Box Shadows */
   --box-shadow-1: 0 0.5em 1em -0.125em #0a0a0a1a, 0 0 0 1px #0a0a0a05;
@@ -516,7 +515,7 @@ pre,
 samp {
   font-family: var(--fixed-font-family);
   font-size: var(--spectrum-body-size-l);
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   line-height: 27px;
 }
 
@@ -555,7 +554,7 @@ button {
   padding: 5px 30px;
   text-align: center;
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--font-weight-semi-bold);
   cursor: pointer;
   color: var(--background-color);
   background-color: var(--link-color);
@@ -602,7 +601,7 @@ button.secondary:disabled:hover {
 
   a.button {
     font-size: var(--spectrum-font-size-100);
-    font-weight: var(--font-weight-700);
+    font-weight: var(--font-weight-bold);
     line-height: 16.8px;
     margin: 0;
     padding: 7px 14px 8px;
@@ -625,7 +624,7 @@ button.secondary:disabled:hover {
 }
 
 input {
-  font-size: 1.25rem;
+  font-size: var(--spectrum-font-size-400);
   width: 100%;
   max-width: 50rem;
   display: block;
@@ -755,7 +754,7 @@ picture {
   border-right: 1px solid rgb(255 255 255 / 25%);
   color: var(--spectrum-gray-50);
   flex-grow: 1;
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   line-height: 18.2px;
   padding: 7px 15px 7px 5px;
   margin: 8px 0;
@@ -809,7 +808,7 @@ picture {
       padding: 32px 36px 48px;
 
       & > div > h3 {
-        font-size: 28px;
+        font-size: var(--spectrum-font-size-700);
         line-height: 42px;
         text-align: center;
         margin: 0 0 36px;

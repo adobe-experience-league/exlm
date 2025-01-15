@@ -29,7 +29,7 @@
 
 .guide-list-box .guide-list-container a {
   color: var(--non-spectrum-link);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
 }
 
 .guide-list-box .guide-list-container a:hover {

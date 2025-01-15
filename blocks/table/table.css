@@ -115,7 +115,7 @@
 
 .table table tbody tr {
   border: 1px solid var(--non-spectrum-gainsboro-gray);
-  margin-bottom: var(--space-token-xs);
+  margin-bottom: var(--spectrum-spacing-300);
 }
 
 @media (width >= 600px) {
@@ -168,7 +168,7 @@
   color: var(--non-spectrum-navy-blue);
   font-size: var(--spectrum-body-size-m);
   line-height: var(--spectrum-line-height-m);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .table table tbody td em {

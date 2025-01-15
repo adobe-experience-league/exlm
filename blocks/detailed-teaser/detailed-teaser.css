@@ -5,8 +5,8 @@
   max-width: unset;
 
   /* stretches to window edge in mobile view */
-  margin-left: calc(-1 * var(--space-token-xs));
-  margin-right: calc(-1 * var(--space-token-xs));
+  margin-left: calc(-1 * var(--spectrum-spacing-300));
+  margin-right: calc(-1 * var(--spectrum-spacing-300));
 }
 
 .detailed-teaser.block {
@@ -52,7 +52,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: var(--spectrum-spacing-400) var(--space-token-xs);
+  padding: var(--spectrum-spacing-400) var(--spectrum-spacing-300);
   max-width: 550px;
 }
 
@@ -82,14 +82,14 @@
 /* the eyebrow titles */
 .detailed-teaser.block > .foreground > .text > .eyebrow > .title {
   font-size: var(--spectrum-font-size-300);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   color: var(--non-spectrum-grey);
   margin: 0;
 }
 
 .detailed-teaser.block > .foreground > .text > .eyebrow > .subtitle {
   font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   color: #8c8c8c;
   margin: 0;
 }
@@ -112,7 +112,7 @@
 /* description */
 .detailed-teaser.block > .foreground > .text > .description,
 .detailed-teaser.block > .foreground > .text > .description * {
-  font-size: 22px;
+  font-size: var(--spectrum-font-size-500);
   color: var(--non-spectrum-custom-dark);
   line-height: 30px;
   margin-top: 10px;
@@ -145,8 +145,8 @@
 /* the cta buttons */
 .detailed-teaser.block > .foreground > .text > .cta > a.button {
   margin: 0;
-  font-size: 15px;
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-bold);
   line-height: 15px;
   padding: 5px 14px 6px;
 }
@@ -174,7 +174,7 @@
 .detailed-teaser.block > .foreground > .spacer {
   display: block;
   order: 1;
-  padding: 0 var(--space-token-xs) var(--spectrum-spacing-400) var(--space-token-xs);
+  padding: 0 var(--spectrum-spacing-300) var(--spectrum-spacing-400) var(--spectrum-spacing-300);
 }
 
 /* change the order if text should be on the right */
@@ -197,13 +197,13 @@
 @media (min-width: 600px) {
   .section div.detailed-teaser-wrapper {
     /* stretches to window edge, cover section padding */
-    margin-left: calc(-1 * var(--space-token-xl));
-    margin-right: calc(-1 * var(--space-token-xl));
+    margin-left: calc(-1 * var(--spectrum-spacing-800));
+    margin-right: calc(-1 * var(--spectrum-spacing-800));
   }
 
   /* foreground container, flex (text + spacer), always on top */
   .detailed-teaser.block > .foreground {
-    padding: 0 var(--space-token-xl);
+    padding: 0 var(--spectrum-spacing-800);
     min-height: 320px;
   }
 
@@ -244,7 +244,7 @@
   body[class^='browse-'] .section div.detailed-teaser-wrapper .foreground,
   body[class^='article-'] .section div.detailed-teaser-wrapper .foreground {
     min-height: 240px;
-    padding: 0 var(--space-token-xxl);
+    padding: 0 var(--spectrum-spacing-1100);
   }
 }
 
@@ -295,7 +295,7 @@
 
   body[class^='browse-'] .section div.detailed-teaser-wrapper .foreground,
   body[class^='article-'] .section div.detailed-teaser-wrapper .foreground {
-    padding: 0 var(--space-token-l);
+    padding: 0 var(--spectrum-spacing-600);
   }
 }
 

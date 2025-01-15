@@ -8,7 +8,7 @@ body.profile
   :where(h1, h2, h3, h4, h5, h6) {
   color: var(--spectrum-gray-800);
   margin-bottom: 16px;
-  margin-top: 0px;
+  margin-top: 0;
 }
 
 .recommended-content-header {
@@ -83,8 +83,8 @@ body.profile
   align-items: center;
   justify-content: center;
   border-radius: 20px;
-  background-color: #ffffff00;
-  padding: 12px 25px 14px 25px;
+  background-color: var(--non-spectrum-transparent-white);
+  padding: 12px 25px 14px;
   margin-right: 0;
 }
 
@@ -109,6 +109,7 @@ body.profile
   margin-bottom: 0;
   padding-bottom: 4px;
   gap: 24px;
+  display: flex;
 }
 
 .recommended-content.block .browse-cards-block-content .card-wrapper {
@@ -123,6 +124,7 @@ body.profile
 
 .recommended-content.block .browse-cards-block-content:has(.browse-card-no-results) {
   min-height: auto;
+  display: block;
 }
 
 .recommended-content.block:has(.responsive-list) .recommended-content-block-header {
@@ -186,7 +188,7 @@ body.profile
 }
 
 .recommended-content.block .custom-filter-dropdown button span.custom-filter-dropdown-name {
-  font-size: 17px;
+  font-size: var(--spectrum-font-size-200);
   line-height: 21px;
   color: var(--non-spectrum-article-dark-gray);
 }
@@ -201,16 +203,8 @@ body.profile
   height: 20px;
 }
 
-.recommended-content.block .browse-cards-block-content {
-  display: flex;
-}
-
 .recommended-content.block:has(.browse-card-no-results) .recommended-content-nav-section {
   display: none;
-}
-
-.recommended-content.block .browse-cards-block-content:has(.browse-card-no-results) {
-  display: block;
 }
 
 .recommended-content.block .browse-cards-block-content .card-wrapper:not(:has(.browse-card)) {
@@ -259,9 +253,11 @@ body.profile
   .recommended-content.block .browse-cards-block-content .card-wrapper {
     min-width: 256px;
   }
+
   .recommended-content-result-text {
     gap: 148px;
   }
+
   .recommended-content-result-link {
     margin-right: 0;
   }
@@ -286,17 +282,19 @@ body.profile
       opacity: 0;
       transform: translateY(-50px);
     }
+
     100% {
-      transform: translateY(0px);
+      transform: translateY(0);
       opacity: 1;
     }
   }
 
   @keyframes fade-out {
     0% {
-      transform: translateY(0px);
+      transform: translateY(0);
       opacity: 1;
     }
+
     100% {
       opacity: 0;
       transform: translateY(-50px);

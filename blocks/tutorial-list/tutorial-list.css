@@ -40,7 +40,7 @@
 .tutorial-list-box .tutorial-list-container .tutorial-list-heading {
   color: var(--non-spectrum-grey);
   font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   margin-bottom: 12px;
   line-height: 21px;
   height: auto;
@@ -51,7 +51,7 @@
 .tutorial-list-box .tutorial-list-container a {
   color: var(--non-spectrum-link);
   font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
 }
 
 .tutorial-list-box .tutorial-list-container a:hover {
