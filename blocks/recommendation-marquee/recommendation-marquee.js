@@ -243,8 +243,6 @@ async function findEmptyFilters(targetCriteriaId, profileInterests = []) {
 
 const interestDataPromise = fetchInterestData();
 
-const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
-
 const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
   const cardDiv = document.createElement('div');
   cardDiv.classList.add('card-wrapper');
@@ -265,7 +263,15 @@ const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
-  const placeholderPromise = fetchLanguagePlaceholders();
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
+  const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
+
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
 
@@ -969,13 +975,6 @@ export default async function decorate(block) {
         },
       });
     });
-  }
-
-  try {
-    placeholders = await placeholderPromise;
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
   }
 
   targetEventEmitter.on('dataChange', async (data) => {
