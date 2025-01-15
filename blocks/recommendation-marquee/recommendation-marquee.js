@@ -176,9 +176,8 @@ const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
-  const placeholderPromise = fetchLanguagePlaceholders();
   try {
-    placeholders = await placeholderPromise;
+    placeholders = await fetchLanguagePlaceholders();
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
