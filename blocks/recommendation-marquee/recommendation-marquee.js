@@ -547,13 +547,13 @@ export default async function decorate(block) {
               ? numberOfExistingCards.length - (window.innerWidth > 1432 ? 3 : 2)
               : 0;
             if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
-              const btn = block.querySelector('.recommended-content-see-more-btn');
+              const btn = block.querySelector('.recommendation-marquee-see-more-btn');
               if (btn) {
                 btn.style.display = 'none';
               }
             }
             if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
-              const btn = block.querySelector('.recommended-content-see-more-btn > button');
+              const btn = block.querySelector('.recommendation-marquee-see-more-btn > button');
               if (btn) {
                 btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
               }
