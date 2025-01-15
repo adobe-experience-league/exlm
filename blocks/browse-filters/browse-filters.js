@@ -1337,15 +1337,26 @@ function renderSortContainer(block) {
 function decorateBrowseTopics(block) {
   const { lang } = getPathDetails();
   const [...configs] = [...block.children].map((row) => row.firstElementChild);
-
-  const [solutionsElement, headingElement, topicsElement, contentTypeElement] = configs.map((cell) => cell);
+  // 'customElement' can either be a Form Element or localized tag values returned by the converter.
+  const [solutionsElement, headingElement, topicsElement, contentTypeElement, customElement] = configs.map(
+    (cell) => cell,
+  );
   const [solutionsContent, headingContent, topicsContent, contentTypeContent] = configs.map(
     (cell) => cell?.textContent?.trim() ?? '',
   );
-
+  const isFormElement = customElement?.classList?.contains('browse-filters-input-container');
+  const localizedTopicsContent = isFormElement ? '' : customElement?.textContent?.trim() ?? '';
   // eslint-disable-next-line no-unused-vars
   const allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
   const allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
+  const localizedTopicsTags = localizedTopicsContent
+    ? localizedTopicsContent.split(',')?.reduce((acc, pair) => {
+        const [key, value] = pair.split(':').map((str) => str.trim());
+        if (key) acc[key] = value || '';
+        return acc;
+      }, {})
+    : '';
+
   const supportedProducts = [];
   if (allSolutionsTags.length) {
     const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allSolutionsTags);
@@ -1378,7 +1389,7 @@ function decorateBrowseTopics(block) {
   contentDiv.classList.add('browse-topics-block-content');
   const browseFiltersSection = document.querySelector('.browse-filters-form');
 
-  if (allTopicsTags.length > 0 && lang === 'en') {
+  if (allTopicsTags.length > 0) {
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
@@ -1387,7 +1398,16 @@ function decorateBrowseTopics(block) {
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicsButtonTitle;
         topicsButtonDiv.dataset.label = topicName;
-        topicsButtonDiv.innerHTML = topicName;
+        if (lang === 'en' || window.location.href.includes('.html') || localizedTopicsTags === '') {
+          topicsButtonDiv.innerHTML = topicName;
+        } else {
+          const topicTag = topicsButtonTitle.slice(4); // Remove "exl:" prefix
+          topicsButtonDiv.innerHTML =
+            localizedTopicsTags[topicTag] && localizedTopicsTags[topicTag] !== 'undefined'
+              ? localizedTopicsTags[topicTag]
+              : topicName;
+        }
+
         contentDiv.appendChild(topicsButtonDiv);
       });
 
@@ -1433,6 +1453,9 @@ function decorateBrowseTopics(block) {
   (headingElement.parentNode || headingElement).remove();
   (topicsElement.parentNode || topicsElement).remove();
   (contentTypeElement.parentNode || contentTypeElement).remove();
+  if (!isFormElement) {
+    (customElement?.parentNode || customElement)?.remove();
+  }
 }
 
 export default async function decorate(block) {
