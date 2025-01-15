@@ -5,8 +5,8 @@
   max-width: unset;
 
   /* stretches to window edge in mobile view */
-  margin-left: calc(-1 * var(--space-token-xs));
-  margin-right: calc(-1 * var(--space-token-xs));
+  margin-left: calc(-1 * var(--spectrum-spacing-300));
+  margin-right: calc(-1 * var(--spectrum-spacing-300));
 }
 
 .teaser.block {
@@ -25,7 +25,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: var(--spectrum-spacing-400) var(--space-token-xs);
+  padding: var(--spectrum-spacing-400) var(--spectrum-spacing-300);
 }
 
 /* the eybrow title, hidden in mobile */
@@ -33,9 +33,9 @@
   display: none;
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-700);
-  margin-bottom: var(--space-token-xs);
+  margin-bottom: var(--spectrum-spacing-300);
 }
 
 /* the main title, hidden in mobile */
@@ -43,9 +43,9 @@
   display: none;
   font-family: var(--body-font-family);
   font-size: var(--spectrum-heading-size-l);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   line-height: var(--spectrum-line-height-xxl);
-  margin-bottom: var(--space-token-xxs);
+  margin-bottom: var(--spectrum-spacing-100);
 }
 
 .teaser.block.dark > .foreground > .text > .title {
@@ -57,7 +57,7 @@
 .teaser.block > .foreground > .text > .short-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   line-height: var(--spectrum-line-height-l);
   color: var(--background-color);
   margin: 0;
@@ -101,8 +101,8 @@
   color: var(--teaser-background-color);
   margin: 0;
   font-family: var(--body-font-family);
-  font-size: 15px;
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-bold);
   line-height: 15px;
   padding: 5px 14px 6px;
 }
@@ -142,8 +142,8 @@
 
   .section div.teaser-wrapper {
     /* stretches to window edge, cover section padding */
-    margin-left: calc(-1 * var(--space-token-xl));
-    margin-right: calc(-1 * var(--space-token-xl));
+    margin-left: calc(-1 * var(--spectrum-spacing-800));
+    margin-right: calc(-1 * var(--spectrum-spacing-800));
   }
 
   /* remove background color , add border */
@@ -158,7 +158,7 @@
   .teaser.block > .foreground {
     position: relative;
     display: flex;
-    padding: 0 var(--space-token-xl);
+    padding: 0 var(--spectrum-spacing-800);
     background-color: unset;
     min-height: 420px;
   }
@@ -295,11 +295,6 @@
     object-position: right;
   }
 
-  body[class^='browse-'] .teaser.block.right > .background img,
-  body[class^='article-'] .teaser.block.right > .background img {
-    object-position: left;
-  }
-
   /* it gets a border */
   body[class^='browse-'] .section div.teaser-wrapper,
   body[class^='article-'] .section div.teaser-wrapper {
@@ -312,10 +307,15 @@
     border-radius: 4px;
   }
 
+  body[class^='browse-'] .teaser.block.right > .background img,
+  body[class^='article-'] .teaser.block.right > .background img {
+    object-position: left;
+  }
+
   body[class^='browse-'] .section div.teaser-wrapper .foreground,
   body[class^='article-'] .section div.teaser-wrapper .foreground {
     min-height: 240px;
-    padding: 0 var(--space-token-xl);
+    padding: 0 var(--spectrum-spacing-800);
   }
 
   /* the main title, hidden in mobile */
@@ -335,7 +335,7 @@
 
   body[class^='browse-'] .teaser.block > .foreground > .text > .cta > a.button,
   body[class^='article-'] .teaser.block > .foreground > .text > .cta > a.button {
-    font-size: 13px;
+    font-size: var(--spectrum-font-size-75);
     line-height: 16px;
     padding: 4px 14px 6px;
   }
@@ -377,7 +377,7 @@
 
   body[class^='browse-'] .section div.teaser-wrapper .foreground,
   body[class^='article-'] .section div.teaser-wrapper .foreground {
-    padding: 0 var(--space-token-l);
+    padding: 0 var(--spectrum-spacing-600);
   }
 }
 

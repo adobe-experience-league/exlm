@@ -7,8 +7,8 @@
   max-width: unset;
 
   /* stretches to window edge in mobile view */
-  margin-left: calc(-1 * var(--space-token-xs));
-  margin-right: calc(-1 * var(--space-token-xs));
+  margin-left: calc(-1 * var(--spectrum-spacing-300));
+  margin-right: calc(-1 * var(--spectrum-spacing-300));
 }
 
 /* contains all teaser divs */
@@ -73,8 +73,8 @@
 @media (min-width: 600px) {
   .section div.carousel-wrapper {
     /* stretches to window edge, cover section padding */
-    margin-left: calc(-1 * var(--space-token-xl));
-    margin-right: calc(-1 * var(--space-token-xl));
+    margin-left: calc(-1 * var(--spectrum-spacing-800));
+    margin-right: calc(-1 * var(--spectrum-spacing-800));
   }
 }
 

@@ -4,7 +4,7 @@
   --exlm-toc-solution-1: #864ccc;
   --exlm-toc-solution-2: #fa0f00;
   --exlm-toc-solution-3: #5c5ce0;
-  --exlm-toc-solution-4: #505050;
+  --exlm-toc-solution-4: var(--non-spectrum-charcoal-gray);
   --exlm-toc-solution-5: #7cc33f;
   --exlm-toc-solution-6: #d73320;
   --exlm-toc-solution-7: #3da74e;
@@ -13,7 +13,7 @@
   --exlm-toc-solution-10: #ff1828;
   --exlm-toc-solution-11: #16878c;
   --exlm-toc-solution-12: #16868b;
-  --exlm-toc-solution-13: #6e6e6e;
+  --exlm-toc-solution-13: var(--non-spectrum-grey-updated);
   --exlm-toc-solution-14: #3da64e;
   --exlm-toc-solution-15: #584ccc;
   --exlm-toc-solution-16: #000b1d;
@@ -23,7 +23,7 @@
   margin-left: 0;
   background-color: var(--spectrum-gray-100);
   color: var(--non-spectrum-eerie-black);
-  font-weight: 600;
+  font-weight: var(--font-weight-semi-bold);
   border-left: 4px solid var(--exlm-toc-active-color);
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
@@ -38,7 +38,7 @@
 
 .toc ul > li > a.toc-toggle.is-active::before {
   content: '•';
-  font-size: 20px;
+  font-size: var(--spectrum-font-size-400);
   opacity: 1;
   padding-bottom: 3px;
   margin-right: 3px;

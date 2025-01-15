@@ -12,7 +12,7 @@
   border-radius: 4px;
   padding: 9px 12px;
   width: 100%;
-  font-size: 16px;
+  font-size: var(--spectrum-font-size-200);
   text-align: left;
   color: var(--spectrum-gray-700);
   line-height: 10px;
@@ -45,7 +45,7 @@
   box-sizing: border-box;
   padding: 12px;
   border-radius: 4px;
-  box-shadow: 0px 1px 4px rgba(0 0 0 / 15%);
+  box-shadow: 0 1px 4px rgba(0 0 0 / 15%);
   border: 1px solid var(--spectrum-gray-400);
   max-height: 400px;
   overflow-y: auto;
@@ -86,7 +86,7 @@
 
 .custom-filter-dropdown .custom-checkbox label .description {
   font-weight: normal;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-75);
   line-height: 16px;
   text-align: left;
   color: var(--spectrum-gray-500);

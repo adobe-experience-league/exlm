@@ -1,5 +1,5 @@
 .docs.docs-solution-landing.docs-tutorial .default-content-wrapper h2 {
-  font-size: 24px;
+  font-size: var(--spectrum-font-size-600);
   border-bottom: 3px solid var(--non-spectrum-grey);
   margin-bottom: 12px;
 }
@@ -19,7 +19,7 @@
 
 .docs.docs-solution-landing.docs-tutorial .default-content-wrapper ul li a {
   line-height: 24px;
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   color: var(--non-spectrum-link);
 }
 

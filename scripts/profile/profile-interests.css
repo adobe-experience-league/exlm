@@ -11,7 +11,7 @@
 }
 
 .profile-interest-card-selected {
-  box-shadow: 0px 3px 8px var(--spectrum-blue-100);
+  box-shadow: 0 3px 8px var(--spectrum-blue-100);
   border: 1px solid var(--non-spectrum-navy-blue);
 }
 
@@ -24,7 +24,7 @@
 
 .profile-interest-logo-text {
   color: var(--spectrum-gray-700);
-  font-size: 15px;
+  font-size: var(--spectrum-font-size-100);
   line-height: 19px;
 }
 
@@ -41,16 +41,16 @@
 }
 
 .profile-interest-header h3 {
-  font-size: 20px;
+  font-size: var(--spectrum-font-size-400);
   line-height: 25px;
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-900);
   margin: 0 0 20px;
 }
 
 .profile-interest-content label {
   color: var(--spectrum-gray-700);
-  font-size: 15px;
+  font-size: var(--spectrum-font-size-100);
   line-height: 19px;
   margin-bottom: 6px;
 }
@@ -62,7 +62,7 @@
 }
 
 .profile-interest-checkbox label {
-  font-size: 17px;
+  font-size: var(--spectrum-font-size-200);
   line-height: 21px;
   color: var(--spectrum-gray-800);
   cursor: pointer;
@@ -79,22 +79,22 @@
   }
 
   .profile-interest-logo-text {
-    font-size: 12px;
+    font-size: var(--spectrum-font-size-75);
     line-height: 15px;
   }
 
   .profile-interest-header h3 {
-    font-size: 18px;
+    font-size: var(--spectrum-font-size-300);
     line-height: 22px;
   }
 
   .profile-interest-content label {
-    font-size: 12px;
+    font-size: var(--spectrum-font-size-75);
     line-height: 15px;
   }
 
   .profile-interest-checkbox label {
-    font-size: 14px;
+    font-size: var(--spectrum-font-size-100);
     line-height: 17px;
   }
 

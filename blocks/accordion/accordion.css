@@ -10,7 +10,7 @@
   cursor: pointer;
   list-style: none;
   padding: 16px 0;
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   font-size: var(--spectrum-font-size-100);
   line-height: 21px;
 }
@@ -56,6 +56,10 @@
   margin-top: 14px;
 }
 
+.accordion ol li p {
+  margin-bottom: 8px;
+}
+
 .accordion p:last-child {
   margin-bottom: 0;
 }
@@ -74,20 +78,16 @@
   margin-bottom: 0;
 }
 
+ol .accordion ul {
+  margin-bottom: 14px;
+}
+
 .accordion ul li ul {
   margin-bottom: 14px;
 }
 
-.accordion ol li p {
-  margin-bottom: 8px;
-}
-
 ol .accordion summary {
   font-size: var(--spectrum-font-size-200);
-}
-
-ol .accordion ul {
-  margin-bottom: 14px;
 }
 
 .accordion details .accordion {

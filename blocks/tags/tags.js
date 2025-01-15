@@ -67,9 +67,9 @@ export default async function decorate(block) {
   const createdForContent = [roles, experienceLevels].filter(Boolean).map(createTagsHTML).join('');
   if (createdForContent) {
     const createdForSection = document.createElement('div');
-    createdForSection.classList.add('article-tags-createdFor');
+    createdForSection.classList.add('article-tags-createdfor');
     createdForSection.innerHTML = `
-      <div class="article-tags-createdFor-heading">
+      <div class="article-tags-createdfor-heading">
         ${placeholders?.createdFor || 'CREATED FOR:'}
       </div>
       ${createdForContent}

@@ -4,8 +4,8 @@
 
 div.sign-up-wrapper {
   max-width: unset;
-  margin-left: calc(-1 * var(--space-token-xs));
-  margin-right: calc(-1 * var(--space-token-xs));
+  margin-left: calc(-1 * var(--spectrum-spacing-300));
+  margin-right: calc(-1 * var(--spectrum-spacing-300));
 }
 
 .sign-up {
@@ -42,18 +42,18 @@ div.sign-up-wrapper {
 .signup-eyebrow {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-700);
-  margin-bottom: var(--space-token-xs);
+  margin-bottom: var(--spectrum-spacing-300);
   line-height: 18px;
 }
 
 .signup-title {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-900);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   line-height: var(--spectrum-line-height-xxxl);
-  margin-bottom: var(--space-token-xs);
+  margin-bottom: var(--spectrum-spacing-300);
 }
 
 .signup-title :where(h1, h2, h3, h4, h5, h6) {
@@ -66,7 +66,7 @@ div.sign-up-wrapper {
 .signup-short-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-600);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   line-height: var(--spectrum-line-height-l);
   color: var(--background-color);
   margin: 0;
@@ -83,7 +83,7 @@ div.sign-up-wrapper {
 .signup-cta {
   display: flex;
   flex-direction: column-reverse;
-  font-size: 19px;
+  font-size: var(--spectrum-font-size-300);
   gap: var(--spectrum-spacing-400);
   margin-top: var(--spectrum-spacing-400);
   padding: 0;
@@ -95,7 +95,7 @@ div.sign-up-wrapper {
 }
 
 .signup-cta > a.button {
-  font-size: 19px;
+  font-size: var(--spectrum-font-size-300);
   margin: 0;
   padding: 8px 40px;
   width: min-content;
@@ -162,8 +162,8 @@ div.sign-up-wrapper {
   }
 
   .section div.sign-up-wrapper {
-    margin-left: calc(-1 * var(--space-token-xl));
-    margin-right: calc(-1 * var(--space-token-xl));
+    margin-left: calc(-1 * var(--spectrum-spacing-800));
+    margin-right: calc(-1 * var(--spectrum-spacing-800));
   }
 
   .signup-subject {
@@ -195,13 +195,12 @@ div.sign-up-wrapper {
   }
 
   .signup-text {
-    padding: var(--space-token-m) var(--space-token-xl);
+    padding: var(--spectrum-spacing-500) var(--spectrum-spacing-800);
     background-color: var(--background-color);
   }
 
   .signup-cta {
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-flow: row wrap;
   }
 
   .signup-cta > a.button {
@@ -220,7 +219,7 @@ div.sign-up-wrapper {
   }
 
   .signup-foreground {
-    padding: 0 var(--space-token-xl);
+    padding: 0 var(--spectrum-spacing-800);
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -299,7 +298,7 @@ div.sign-up-wrapper {
   body[class^='article-'] .signup-title {
     font-size: var(--spectrum-font-size-900);
     line-height: 36px;
-    margin-bottom: var(--space-token-xxs);
+    margin-bottom: var(--spectrum-spacing-100);
   }
 
   /* description */
@@ -313,7 +312,7 @@ div.sign-up-wrapper {
   /* cta */
   body[class^='browse-'] .signup-cta a.button,
   body[class^='article-'] .signup-cta a.button {
-    font-size: 17px;
+    font-size: var(--spectrum-font-size-200);
     line-height: 21px;
     padding: 6px 16px 9px 20px;
   }
