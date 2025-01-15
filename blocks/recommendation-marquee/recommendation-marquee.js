@@ -538,8 +538,26 @@ export default async function decorate(block) {
             }
           }
           if (seeMoreFlag) {
+            const numberOfExistingCards = block.querySelectorAll('.card-wrapper');
+            const index = numberOfExistingCards.length
+              ? numberOfExistingCards.length - (window.innerWidth > 1432 ? 3 : 2)
+              : 0;
+            if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
+              const btn = block.querySelector('.recommended-content-see-more-btn');
+              if (btn) {
+                btn.style.display = 'none';
+              }
+            }
+            if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
+              const btn = block.querySelector('.recommended-content-see-more-btn > button');
+              if (btn) {
+                btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+              }
+              block.dataset.allRowsLoaded = true;
+              block.dataset.maxRows = block.dataset.browseCardRows;
+            }
             data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(
-              data.slice(0, window.innerWidth > 1432 ? 3 : 2),
+              data.slice(index, index + (window.innerWidth > 1432 ? 3 : 2)),
             );
           } else {
             data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(0, DEFAULT_NUM_CARDS));
