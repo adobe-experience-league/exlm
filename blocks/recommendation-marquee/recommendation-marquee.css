@@ -188,7 +188,7 @@
 }
 
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card-title-text {
-  line-clamp: 2;
+  display: -webkit-box;
   -webkit-line-clamp: 2;
 }
 
@@ -219,6 +219,10 @@
 
 .recommendation-marquee.block .browse-cards-block-content > div .browse-card .user-actions .action-tooltip::after {
   left: 10%;
+}
+
+.recommendation-marquee-see-more-btn {
+  display: none;
 }
 
 @media (min-width: 420px) {
@@ -334,7 +338,6 @@
     .card-wrapper:first-child
     .browse-card-description-text {
     display: -webkit-box;
-    line-clamp: 4;
     -webkit-line-clamp: 4;
     max-height: 85px;
   }
