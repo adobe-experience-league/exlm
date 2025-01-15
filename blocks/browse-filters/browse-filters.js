@@ -1337,14 +1337,15 @@ function renderSortContainer(block) {
 function decorateBrowseTopics(block) {
   const { lang } = getPathDetails();
   const [...configs] = [...block.children].map((row) => row.firstElementChild);
-  const isFormElement = configs[4]?.classList?.contains('browse-filters-input-container');
-  const [solutionsElement, headingElement, topicsElement, contentTypeElement, localizedTopicsElement] = configs.map(
-    (cell, index) => (index === 4 && isFormElement ? null : cell),
+  // 'customElement' can either be a Form Element or localized tag values returned by the converter.
+  const [solutionsElement, headingElement, topicsElement, contentTypeElement, customElement] = configs.map(
+    (cell) => cell,
   );
-  const [solutionsContent, headingContent, topicsContent, contentTypeContent, localizedTopicsContent] = configs.map(
-    (cell, index) => (index === 4 && isFormElement ? '' : cell?.textContent?.trim() ?? ''),
+  const [solutionsContent, headingContent, topicsContent, contentTypeContent] = configs.map(
+    (cell) => cell?.textContent?.trim() ?? '',
   );
-
+  const isFormElement = customElement?.classList?.contains('browse-filters-input-container');
+  const localizedTopicsContent = isFormElement ? '' : customElement?.textContent?.trim() ?? '';
   // eslint-disable-next-line no-unused-vars
   const allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
   const allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
@@ -1452,7 +1453,9 @@ function decorateBrowseTopics(block) {
   (headingElement.parentNode || headingElement).remove();
   (topicsElement.parentNode || topicsElement).remove();
   (contentTypeElement.parentNode || contentTypeElement).remove();
-  (localizedTopicsElement?.parentNode || localizedTopicsElement)?.remove();
+  if (!isFormElement) {
+    (customElement?.parentNode || customElement)?.remove();
+  }
 }
 
 export default async function decorate(block) {
