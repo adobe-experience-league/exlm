@@ -1,16 +1,13 @@
 import { buildBlock, decorateBlock, decorateSections, loadBlock, updateSectionsStatus } from '../lib-franklin.js';
 import getCookie from '../utils/cookie-utils.js';
 import getEmitter from '../events.js';
-import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
 class AdobeTargetClient {
   constructor() {
     this.targetDataEventName = 'target-recs-ready';
     this.cookieConsentName = 'OptanonConsent';
-    if (isFeatureEnabled('browsecardv2')) {
-      this.recommendationMarqueeScopeName = 'exl-hp-auth-recs-1';
-    }
+    this.recommendationMarqueeScopeName = 'exl-hp-auth-recs-1';
     this.targetCookieEnabled = this.checkIsTargetCookieEnabled();
     this.blocks = [];
     this.targetArray = [];
@@ -135,7 +132,7 @@ class AdobeTargetClient {
   }
 
   sanitizeTargetData() {
-    if (!window?.exlm?.targetData?.length || !isFeatureEnabled('browsecardv2')) {
+    if (!window?.exlm?.targetData?.length) {
       return;
     }
 
