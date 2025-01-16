@@ -16,7 +16,6 @@ export default function decorate(block) {
     const heading = headingWrapper?.firstElementChild;
     if (heading) {
       heading.classList.add('icon-heading');
-      heading.remove();
       headingWrapper?.replaceWith(heading);
     } else {
       headingWrapper?.remove();
@@ -25,7 +24,7 @@ export default function decorate(block) {
     const link = linkWrapper?.querySelector('a');
     if (link) {
       link.classList.add('icon-link');
-      if (link.closest('.signup-dialog-content') || linkTargetElement?.textContent === 'true') {
+      if (link.closest('.signup-dialog-content') || linkTargetElement?.textContent.trim() === 'true') {
         link.setAttribute('target', '_blank');
       }
       linkWrapper?.replaceWith(link);
