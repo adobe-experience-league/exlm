@@ -20,7 +20,7 @@ const DEFAULT_NUM_CARDS = 5;
 let seeMoreFlag = false;
 const seeMoreConfig = {
   minWidth: 1024,
-  noOfRows: 4,
+  noOfRows: 2,
 };
 
 let placeholders = {};
