@@ -411,7 +411,7 @@ export async function buildCard(container, element, model) {
     titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }
-  await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-v2.css`);
+  await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
   await buildCardContent(card, model);
   if (model.viewLink) {
     const cardContainer = document.createElement('a');
