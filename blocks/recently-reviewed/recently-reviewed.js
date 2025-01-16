@@ -4,7 +4,6 @@ import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/brow
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import getEmitter from '../../scripts/events.js';
-import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 let placeholders = {};
 try {
@@ -300,11 +299,9 @@ export default async function decorate(block) {
               const { width } = entry.contentRect;
               if (!previousWidth) previousWidth = block.offsetWidth;
               if (Math.abs(entry.contentRect.width - previousWidth) > 1) {
-                if (isFeatureEnabled('browsecardv2')) {
-                  // Calculate no. of cards that fits
-                  calculateNumberOfCardsToRender(block);
-                  addNewRowOfCards(cardData, { clear: true });
-                }
+                // Calculate no. of cards that fits
+                calculateNumberOfCardsToRender(block);
+                addNewRowOfCards(cardData, { clear: true });
                 // Render the new set of cards
                 previousWidth = width;
               }
