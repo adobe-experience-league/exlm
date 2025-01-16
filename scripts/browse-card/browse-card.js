@@ -5,7 +5,6 @@ import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-const
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
-import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
@@ -376,10 +375,7 @@ export async function buildCard(container, element, model) {
   if (badgeTitle || failedToLoad) {
     const bannerElement = createTag('h3', { class: 'browse-card-banner' });
     bannerElement.innerText = badgeTitle || '';
-    // TODO - remove dependecy on feature flag once browse card v2 theme is live
-    if (isFeatureEnabled('browsecardv2')) {
-      bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
-    }
+    bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
     cardFigure.appendChild(bannerElement);
   }
 
@@ -415,12 +411,7 @@ export async function buildCard(container, element, model) {
     titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }
-  // TODO - remove dependecy on feature flag once browse card v2 theme is live
-  if (isFeatureEnabled('browsecardv2')) {
-    await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-v2.css`);
-  } else {
-    await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
-  }
+  await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-v2.css`);
   await buildCardContent(card, model);
   if (model.viewLink) {
     const cardContainer = document.createElement('a');
