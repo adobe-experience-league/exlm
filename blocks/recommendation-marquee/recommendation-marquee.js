@@ -13,6 +13,7 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import ResponsivePillList from '../../scripts/responsive-pill-list/responsive-pill-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -135,8 +136,15 @@ function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
  * @returns {void}
  */
 export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
-  heading?.remove();
-  subheading?.remove();
+  if (isFeatureEnabled('marqueetargetheadings')) {
+    if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
+    else heading?.remove();
+    if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
+    else subheading?.remove();
+  } else {
+    heading?.remove();
+    subheading?.remove();
+  }
   if (
     taglineCta &&
     data?.meta['tagline-cta-text'] &&
