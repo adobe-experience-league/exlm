@@ -38,7 +38,7 @@ export default function decorate(block) {
   decorateExternalLinks(block);
 
   block.querySelectorAll('a[target="_blank"]').forEach((a) => {
-    const icon = '<span class="icon icon-new-tab"></span>';
+    const icon = '<span class="icon icon-new-tab-blue"></span>';
     a.classList.add('external');
     a.insertAdjacentHTML('beforeend', icon);
   });
