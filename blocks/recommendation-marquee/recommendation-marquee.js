@@ -135,10 +135,8 @@ function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
  * @returns {void}
  */
 export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
-  if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
-  else heading?.remove();
-  if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
-  else subheading?.remove();
+  heading?.remove();
+  subheading?.remove();
   if (
     taglineCta &&
     data?.meta['tagline-cta-text'] &&
