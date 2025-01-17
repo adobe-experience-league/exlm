@@ -799,6 +799,13 @@
         "value": "",
         "label": "Link URL",
         "description": "Sets the link URL for Card."
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "linkTarget",
+        "label": "Open Link in a New Tab?",
+        "description": "Enabling this option will open the link in a new tab."
       }
     ]
   },
