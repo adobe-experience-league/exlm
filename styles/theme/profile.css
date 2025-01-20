@@ -135,7 +135,9 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) .default
   line-height: 22px;
 }
 
-body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section) > div:not(.default-content-wrapper) {
+body.profile-home-page
+  .section:not(.profile-rail-section, .sign-up-flow-section)
+  > div:not(.default-content-wrapper, .profile-welcome-wrapper) {
   padding-bottom: 40px;
 }
 
@@ -218,7 +220,7 @@ body.profile
 
   body.profile-home-page
     .section:not(.profile-rail-section, .sign-up-flow-section)
-    > div:not(.default-content-wrapper) {
+    > div:not(.default-content-wrapper, .profile-welcome-wrapper) {
     padding-bottom: 48px;
   }
 
