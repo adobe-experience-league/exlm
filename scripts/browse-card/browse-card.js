@@ -1,7 +1,7 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { createTooltip } from './browse-card-tooltip.js';
-import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
+import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS, VIDEO_THUMBNAIL_FORMAT } from './browse-cards-constants.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
@@ -196,7 +196,7 @@ const buildCardContent = async (card, model) => {
     inProgressText,
     inProgressStatus = {},
     failedToLoad = false,
-    truncateDescription = true,
+    truncateDescription = false,
   } = model;
   const contentType = type?.toLowerCase();
   const cardContent = card.querySelector('.browse-card-content');
@@ -351,12 +351,21 @@ export async function buildCard(container, element, model) {
     const laptopScreen = document.createElement('div');
     const laptopKeyboard = document.createElement('div');
     laptopContainer.append(laptopScreen, laptopKeyboard);
-    if (type) {
-      laptopScreen.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
-      laptopKeyboard.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
-    }
 
     cardFigure.appendChild(laptopContainer);
+
+    if (
+      VIDEO_THUMBNAIL_FORMAT.test(thumbnail) ||
+      type === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
+      type === CONTENT_TYPES.TUTORIAL.MAPPING_KEY
+    ) {
+      const playButton = document.createElement('div');
+      playButton.classList.add('play-button');
+      playButton.innerHTML = '<span class="icon icon-play-outline-white"></span>';
+      cardFigure.appendChild(playButton);
+      decorateIcons(playButton);
+    }
+
     const img = document.createElement('img');
     img.src = thumbnail;
     img.loading = 'lazy';
@@ -370,6 +379,7 @@ export async function buildCard(container, element, model) {
     });
     img.addEventListener('load', () => {
       cardFigure.classList.add('img-custom-height');
+      card.classList.add('thumbnail-loaded');
     });
   }
   if (badgeTitle || failedToLoad) {
