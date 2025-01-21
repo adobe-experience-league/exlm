@@ -24,6 +24,10 @@
     "components": ["sign-up-flow-section"]
   },
   {
+    "id": "main-events",
+    "components": ["section", "events-section"]
+  },
+  {
     "id": "section",
     "components": [
       "text",
@@ -236,6 +240,10 @@
   {
     "id": "article-header-section",
     "components": []
+  },
+  {
+    "id": "events-section",
+    "components": ["text", "title", "button", "image", "upcoming-events"]
   },
   {
     "id": "columns",
