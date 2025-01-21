@@ -392,6 +392,10 @@
     justify-content: center;
   }
 
+  .recommendation-marquee-see-more-btn.hide {
+    display: none;
+  }
+
   .recommendation-marquee-see-more-btn button {
     background: none;
     border: 2px solid var(--spectrum-gray-300);

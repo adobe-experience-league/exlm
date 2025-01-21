@@ -423,7 +423,7 @@ export default async function decorate(block) {
     recommendedContentNoResultsElement.innerHTML = noResultsText;
     const btn = block.querySelector('.recommendation-marquee-see-more-btn');
     if (btn) {
-      btn.style.display = 'none';
+      btn.classList.add('hide');
     }
   };
 
@@ -561,7 +561,7 @@ export default async function decorate(block) {
             if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
               const btn = block.querySelector('.recommendation-marquee-see-more-btn');
               if (btn) {
-                btn.style.display = 'none';
+                btn.classList.add('hide');
               }
             }
             if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
@@ -576,7 +576,25 @@ export default async function decorate(block) {
               data.slice(index, index + (window.innerWidth > 1432 ? 3 : 2)),
             );
           } else {
-            data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(0, DEFAULT_NUM_CARDS));
+            const numberOfExistingCards = block.querySelectorAll('.card-wrapper');
+            const index = numberOfExistingCards.length ? numberOfExistingCards.length - DEFAULT_NUM_CARDS : 0;
+            if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
+              const btn = block.querySelector('.recommendation-marquee-see-more-btn');
+              if (btn) {
+                btn.classList.add('hide');
+              }
+            }
+            if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
+              const btn = block.querySelector('.recommendation-marquee-see-more-btn > button');
+              if (btn) {
+                btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+              }
+              block.dataset.allRowsLoaded = true;
+              block.dataset.maxRows = block.dataset.browseCardRows;
+            }
+            data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(
+              data.slice(index, index + DEFAULT_NUM_CARDS),
+            );
           }
         } else {
           const { data: cards = [], contentType: ctType } = cardResponse || {};
@@ -618,7 +636,7 @@ export default async function decorate(block) {
       ) => {
         const btn = block.querySelector('.recommendation-marquee-see-more-btn');
         if (btn) {
-          btn.style.display = 'flex';
+          btn.classList.remove('hide');
         }
         let contentTypes = contentTypesEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse() || [];
         contentTypes = contentTypes.slice(0, DEFAULT_NUM_CARDS);
@@ -956,6 +974,14 @@ export default async function decorate(block) {
 
       const defaultOption = defaultFilterOption ? convertToTitleCase(defaultFilterOption) : null;
 
+      function renderButtonPlaceholder() {
+        seeMoreFlag = false;
+        const btn = block.querySelector('.recommendation-marquee-see-more-btn > button');
+        if (btn) {
+          btn.innerHTML = placeholders?.recommendedContentSeeMoreButtonText || 'See more Recommendations';
+        }
+      }
+
       // eslint-disable-next-line no-new
       new ResponsivePillList({
         wrapper: blockHeader,
@@ -963,8 +989,8 @@ export default async function decorate(block) {
         defaultSelected: defaultOption,
         onInitCallback: () => {
           /* Reused the existing method */
-          seeMoreFlag = false;
-          renderCardBlock(block);
+          renderButtonPlaceholder(block);
+          renderCardBlock();
           fetchDataAndRenderBlock(defaultOption);
           if (containsAllAdobeProductsTab && defaultOption !== ALL_ADOBE_OPTIONS_KEY) {
             setTimeout(() => {
@@ -973,8 +999,8 @@ export default async function decorate(block) {
           }
         },
         onSelectCallback: (selectedItem) => {
-          seeMoreFlag = false;
           /* Reused the existing method */
+          renderButtonPlaceholder();
           if (selectedItem) {
             fetchDataAndRenderBlock(selectedItem, { renderCards: true, createRow: false, clearSeeMoreRows: true });
           }
