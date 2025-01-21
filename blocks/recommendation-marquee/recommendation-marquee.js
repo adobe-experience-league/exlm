@@ -576,7 +576,25 @@ export default async function decorate(block) {
               data.slice(index, index + (window.innerWidth > 1432 ? 3 : 2)),
             );
           } else {
-            data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(0, DEFAULT_NUM_CARDS));
+            const numberOfExistingCards = block.querySelectorAll('.card-wrapper');
+            const index = numberOfExistingCards.length ? numberOfExistingCards.length - DEFAULT_NUM_CARDS : 0;
+            if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
+              const btn = block.querySelector('.recommendation-marquee-see-more-btn');
+              if (btn) {
+                btn.style.display = 'none';
+              }
+            }
+            if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
+              const btn = block.querySelector('.recommendation-marquee-see-more-btn > button');
+              if (btn) {
+                btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+              }
+              block.dataset.allRowsLoaded = true;
+              block.dataset.maxRows = block.dataset.browseCardRows;
+            }
+            data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(
+              data.slice(index, index + DEFAULT_NUM_CARDS),
+            );
           }
         } else {
           const { data: cards = [], contentType: ctType } = cardResponse || {};
