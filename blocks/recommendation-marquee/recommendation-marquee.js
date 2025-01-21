@@ -553,6 +553,11 @@ export default async function decorate(block) {
               data = cardResponse.allAdobeProducts;
             }
           }
+          const cardWithThumbnail = data.find((res) => res.thumbnail !== '');
+          if (cardWithThumbnail) {
+            data = data.filter((item) => item !== cardWithThumbnail);
+            data.unshift(cardWithThumbnail);
+          }
           if (seeMoreFlag) {
             const numberOfExistingCards = block.querySelectorAll('.card-wrapper');
             const index = numberOfExistingCards.length
