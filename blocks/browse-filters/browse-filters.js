@@ -1345,7 +1345,7 @@ function decorateBrowseTopics(block) {
     (cell) => cell?.textContent?.trim() ?? '',
   );
   const isFormElement = customElement?.classList?.contains('browse-filters-input-container');
-  const localizedTopicsContent = isFormElement ? '' : customElement?.textContent?.trim() ?? '';
+  const localizedTopicsContent = isFormElement ? '' : (customElement?.textContent?.trim() ?? '');
   // eslint-disable-next-line no-unused-vars
   const allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
   const allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];

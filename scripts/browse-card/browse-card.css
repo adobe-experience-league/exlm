@@ -388,9 +388,9 @@
   color: var(--non-spectrum-navy-blue);
 }
 
-.browse-card .user-actions {  
-  gap: 8px;  
-  align-items: center;  
+.browse-card .user-actions {
+  gap: 8px;
+  align-items: center;
 }
 
 .browse-card.playlist-card .browse-card-meta-info .icon {
