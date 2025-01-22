@@ -461,7 +461,7 @@ indices:
       - '/en/docs/experience-cloud-kcs/**'
       - '/en/docs/experience-manager-learn/**'
       - '/en/docs/experience-manager-cloud-service/**'
-      - '/en/*.json'
+      - '/en/**.json'
     properties:
       robots:
         select: head > meta[name="robots"]
@@ -500,7 +500,7 @@ indices:
       - '/fr/docs/experience-cloud-kcs/**'
       - '/fr/docs/experience-manager-learn/**'
       - '/fr/docs/experience-manager-cloud-service/**'
-      - '/fr/*.json'
+      - '/fr/**.json'
 
   sitemap-de-1:
     <<: *base-sitemap-1
@@ -532,7 +532,7 @@ indices:
       - '/de/docs/experience-cloud-kcs/**'
       - '/de/docs/experience-manager-learn/**'
       - '/de/docs/experience-manager-cloud-service/**'
-      - '/de/*.json'
+      - '/de/**.json'
 
   sitemap-es-1:
     <<: *base-sitemap-1
@@ -564,7 +564,7 @@ indices:
       - '/es/docs/experience-cloud-kcs/**'
       - '/es/docs/experience-manager-learn/**'
       - '/es/docs/experience-manager-cloud-service/**'
-      - '/es/*.json'
+      - '/es/**.json'
 
   sitemap-it-1:
     <<: *base-sitemap-1
@@ -596,7 +596,7 @@ indices:
       - '/it/docs/experience-cloud-kcs/**'
       - '/it/docs/experience-manager-learn/**'
       - '/it/docs/experience-manager-cloud-service/**'
-      - '/it/*.json'
+      - '/it/**.json'
 
   sitemap-nl-1:
     <<: *base-sitemap-1
@@ -628,7 +628,7 @@ indices:
       - '/nl/docs/experience-cloud-kcs/**'
       - '/nl/docs/experience-manager-learn/**'
       - '/nl/docs/experience-manager-cloud-service/**'
-      - '/nl/*.json'
+      - '/nl/**.json'
 
   sitemap-pt-br-1:
     <<: *base-sitemap-1
@@ -660,7 +660,7 @@ indices:
       - '/pt-br/docs/experience-cloud-kcs/**'
       - '/pt-br/docs/experience-manager-learn/**'
       - '/pt-br/docs/experience-manager-cloud-service/**'
-      - '/pt-br/*.json'
+      - '/pt-br/**.json'
 
   sitemap-ko-1:
     <<: *base-sitemap-1
@@ -692,7 +692,7 @@ indices:
       - '/ko/docs/experience-cloud-kcs/**'
       - '/ko/docs/experience-manager-learn/**'
       - '/ko/docs/experience-manager-cloud-service/**'
-      - '/ko/*.json'
+      - '/ko/**.json'
 
   sitemap-ja-1:
     <<: *base-sitemap-1
@@ -724,7 +724,7 @@ indices:
       - '/ja/docs/experience-cloud-kcs/**'
       - '/ja/docs/experience-manager-learn/**'
       - '/ja/docs/experience-manager-cloud-service/**'
-      - '/ja/*.json'
+      - '/ja/**.json'
 
   sitemap-sv-1:
     <<: *base-sitemap-1
@@ -756,7 +756,7 @@ indices:
       - '/sv/docs/experience-cloud-kcs/**'
       - '/sv/docs/experience-manager-learn/**'
       - '/sv/docs/experience-manager-cloud-service/**'
-      - '/sv/*.json'
+      - '/sv/**.json'
 
   sitemap-zh-hans-1:
     <<: *base-sitemap-1
@@ -788,7 +788,7 @@ indices:
       - '/zh-hans/docs/experience-cloud-kcs/**'
       - '/zh-hans/docs/experience-manager-learn/**'
       - '/zh-hans/docs/experience-manager-cloud-service/**'
-      - '/zh-hans/*.json'
+      - '/zh-hans/**.json'
 
   sitemap-zh-hant-1:
     <<: *base-sitemap-1
@@ -820,7 +820,7 @@ indices:
       - '/zh-hant/docs/experience-cloud-kcs/**'
       - '/zh-hant/docs/experience-manager-learn/**'
       - '/zh-hant/docs/experience-manager-cloud-service/**'
-      - '/zh-hant/*.json'
+      - '/zh-hant/**.json'
 
   playlists-en: &base-playlists
     target: /en/playlists.json
