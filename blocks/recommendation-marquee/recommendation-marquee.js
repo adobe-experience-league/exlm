@@ -567,7 +567,7 @@ export default async function decorate(block) {
           if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
             const btn = block.querySelector('.recommendation-marquee-see-more-btn');
             if (btn) {
-              btn.style.display = 'none';
+              btn.classList.add('hide');
             }
           }
           if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
@@ -980,8 +980,8 @@ export default async function decorate(block) {
         defaultSelected: defaultOption,
         onInitCallback: () => {
           /* Reused the existing method */
-          renderButtonPlaceholder(block);
-          renderCardBlock();
+          renderButtonPlaceholder();
+          renderCardBlock(block);
           fetchDataAndRenderBlock(defaultOption);
           if (containsAllAdobeProductsTab && defaultOption !== ALL_ADOBE_OPTIONS_KEY) {
             setTimeout(() => {
