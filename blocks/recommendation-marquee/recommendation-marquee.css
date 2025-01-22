@@ -92,6 +92,7 @@
   padding-bottom: 4px;
   gap: 20px;
   flex-wrap: wrap;
+  overflow: visible;
 }
 
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper {
@@ -134,7 +135,8 @@
   .browse-card
   .browse-card-figure.img-custom-height
   .play-button {
-  top: 15%;
+  top: 37%;
+  z-index: 1;
 }
 
 .recommendation-marquee.block
@@ -227,21 +229,21 @@
 
 .recommendation-marquee.block .browse-cards-block-content .browse-card .browse-card-figure .laptop-container {
   transform: scale(1.4);
-  margin-top: 150px;
+  margin-top: 129px;
 }
 
 .recommendation-marquee.block .browse-cards-block-content .browse-card .browse-card-figure:hover .laptop-container {
   transform: scale(4.4);
 }
 
-.recommendation-marquee.block .browse-cards-block-content .browse-card .browse-card-figure img {
+.recommendation-marquee.block .browse-cards-block-content .browse-card .browse-card-figure > img {
   width: 255px;
   height: 132px;
-  top: 88%;
+  top: 81%;
   border-radius: 3px 3px 0 0;
 }
 
-.recommendation-marquee.block .browse-cards-block-content .browse-card .browse-card-figure:hover img {
+.recommendation-marquee.block .browse-cards-block-content .browse-card .browse-card-figure:hover > img {
   width: 100%;
   height: 314px;
 }
@@ -354,7 +356,7 @@
     .card-wrapper:first-child
     .browse-card
     .browse-card-figure
-    img {
+    > img {
     min-height: 160px;
     top: 49%;
   }
@@ -365,7 +367,7 @@
     .browse-card
     .browse-card-figure.img-custom-height
     .play-button {
-    top: 25%;
+    top: 42%;
   }
 }
 
@@ -451,7 +453,7 @@
   }
 
   .recommendation-marquee.block .browse-cards-block-content {
-    overflow: hidden;
+    overflow: visible;
     margin-top: 24px;
     min-height: auto;
   }
