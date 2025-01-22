@@ -553,49 +553,34 @@ export default async function decorate(block) {
               data = cardResponse.allAdobeProducts;
             }
           }
-          if (seeMoreFlag) {
-            const numberOfExistingCards = block.querySelectorAll('.card-wrapper');
-            const index = numberOfExistingCards.length
-              ? numberOfExistingCards.length - (window.innerWidth > 1432 ? 3 : 2)
-              : 0;
-            if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
-              const btn = block.querySelector('.recommendation-marquee-see-more-btn');
-              if (btn) {
-                btn.classList.add('hide');
-              }
-            }
-            if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
-              const btn = block.querySelector('.recommendation-marquee-see-more-btn > button');
-              if (btn) {
-                btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
-              }
-              block.dataset.allRowsLoaded = true;
-              block.dataset.maxRows = block.dataset.browseCardRows;
-            }
-            data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(
-              data.slice(index, index + (window.innerWidth > 1432 ? 3 : 2)),
-            );
-          } else {
-            const numberOfExistingCards = block.querySelectorAll('.card-wrapper');
-            const index = numberOfExistingCards.length ? numberOfExistingCards.length - DEFAULT_NUM_CARDS : 0;
-            if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
-              const btn = block.querySelector('.recommendation-marquee-see-more-btn');
-              if (btn) {
-                btn.classList.add('hide');
-              }
-            }
-            if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
-              const btn = block.querySelector('.recommendation-marquee-see-more-btn > button');
-              if (btn) {
-                btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
-              }
-              block.dataset.allRowsLoaded = true;
-              block.dataset.maxRows = block.dataset.browseCardRows;
-            }
-            data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(
-              data.slice(index, index + DEFAULT_NUM_CARDS),
-            );
+          const cardWithThumbnail = data.find((res) => res.thumbnail !== '');
+          if (cardWithThumbnail) {
+            data = data.filter((item) => item !== cardWithThumbnail);
+            data.unshift(cardWithThumbnail);
           }
+          const numberOfExistingCards = block.querySelectorAll('.card-wrapper');
+          const isWideScreen = window.innerWidth > 1432;
+          const defaultCardCount = isWideScreen ? 3 : 2;
+          const index = numberOfExistingCards.length
+            ? numberOfExistingCards.length - (seeMoreFlag ? defaultCardCount : DEFAULT_NUM_CARDS)
+            : 0;
+          if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
+            const btn = block.querySelector('.recommendation-marquee-see-more-btn');
+            if (btn) {
+              btn.style.display = 'none';
+            }
+          }
+          if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
+            const btn = block.querySelector('.recommendation-marquee-see-more-btn > button');
+            if (btn) {
+              btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+            }
+            block.dataset.allRowsLoaded = true;
+            block.dataset.maxRows = block.dataset.browseCardRows;
+          }
+          data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(
+            data.slice(index, index + (seeMoreFlag ? defaultCardCount : DEFAULT_NUM_CARDS)),
+          );
         } else {
           const { data: cards = [], contentType: ctType } = cardResponse || {};
           const { shimmers: cardShimmers, payload: apiPayload, wrappers: cardWrappers } = apiConfigObject;
@@ -713,7 +698,13 @@ export default async function decorate(block) {
         }
         dataConfiguration[lowercaseOptionType].renderedCardIds = [];
         contentDiv.dataset.selected = lowercaseOptionType;
-        contentDiv.setAttribute('data-analytics-filter-id', lowercaseOptionType);
+        let analyticsProductName = '';
+        if ([ALL_ADOBE_OPTIONS_KEY.toLowerCase()].includes(lowercaseOptionType)) {
+          analyticsProductName = 'all adobe products';
+        } else {
+          analyticsProductName = lowercaseOptionType;
+        }
+        contentDiv.setAttribute('data-analytics-filter-id', analyticsProductName);
         const showDefaultOptions = defaultOptionsKey.some((key) => lowercaseOptionType === key.toLowerCase());
         const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
         const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
