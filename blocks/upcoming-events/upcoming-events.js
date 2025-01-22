@@ -73,7 +73,7 @@ export default async function decorate(block) {
   contentDiv.classList.add('browse-cards-block-content');
 
   const parameters = {
-    contentType: CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
+    contentType: CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
   };
 
   const buildCardsShimmer = new BrowseCardShimmer();
