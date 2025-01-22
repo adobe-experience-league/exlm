@@ -364,7 +364,6 @@ export async function buildCard(container, element, model) {
     img.addEventListener('error', () => {
       img.style.display = 'none';
       laptopContainer.style.display = 'none';
-
     });
     img.addEventListener('load', () => {
       cardFigure.classList.add('img-custom-height');
