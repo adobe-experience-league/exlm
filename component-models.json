@@ -4796,6 +4796,14 @@
         "value": "",
         "label": "Description",
         "description": "Sets the description for the Upcoming Events."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "filterLabel",
+        "value": "",
+        "label": "Filter Label",
+        "description": "Sets the text for filter label in dropdown"
       }
     ]
   }

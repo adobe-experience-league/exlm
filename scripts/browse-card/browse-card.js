@@ -8,6 +8,7 @@ import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constant
 
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
+  CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
   CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
   CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
 ];
@@ -161,7 +162,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
     let icon = null;
     const isLeftPlacement = false;
     if (
-      [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
+      [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
         contentType?.toLowerCase(),
       )
     ) {
@@ -232,6 +233,7 @@ const buildCardContent = async (card, model) => {
 
   if (
     contentType === CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY ||
+    contentType === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY ||
     contentType === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY
   ) {
     buildEventContent({ event, contentType, cardContent, card });
@@ -433,7 +435,7 @@ export async function buildCard(container, element, model) {
       }
     });
     if (
-      [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
+      [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
         contentType?.toLowerCase(),
       )
     ) {
