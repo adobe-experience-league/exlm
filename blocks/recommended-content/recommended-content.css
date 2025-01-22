@@ -306,6 +306,10 @@ body.profile
     justify-content: center;
   }
 
+  .recommended-content-see-more-btn.hide {
+    display: none;
+  }
+
   .recommended-content-see-more-btn button {
     background: none;
     border: 2px solid var(--spectrum-gray-300);
