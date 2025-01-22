@@ -612,7 +612,7 @@ export default async function decorate(block) {
           if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
             const btn = block.querySelector('.recommended-content-see-more-btn');
             if (btn) {
-              btn.style.display = 'none';
+              btn.classList.add('hide');
             }
           }
           if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
@@ -676,7 +676,7 @@ export default async function decorate(block) {
       ) => {
         const btn = block.querySelector('.recommended-content-see-more-btn');
         if (btn) {
-          btn.style.display = 'flex';
+          btn.classList.remove('hide');
         }
 
         let contentTypes = contentTypesEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse() || [];
@@ -964,6 +964,13 @@ export default async function decorate(block) {
 
       const defaultOption = defaultFilterOption ? convertToTitleCase(defaultFilterOption) : null;
 
+      function renderButtonPlaceholder() {
+        const btn = block.querySelector('.recommended-content-see-more-btn > button');
+        if (btn) {
+          btn.innerHTML = placeholders?.recommendedContentSeeMoreButtonText || 'See more Recommendations';
+        }
+      }
+
       // eslint-disable-next-line no-new
       new ResponsiveList({
         wrapper: blockHeader,
@@ -971,6 +978,7 @@ export default async function decorate(block) {
         defaultSelected: defaultOption,
         onInitCallback: () => {
           /* Reused the existing method */
+          renderButtonPlaceholder();
           renderCardBlock(block);
           fetchDataAndRenderBlock(defaultOption);
           if (containsAllAdobeProductsTab && defaultOption !== ALL_ADOBE_OPTIONS_KEY) {
@@ -982,6 +990,7 @@ export default async function decorate(block) {
         onSelectCallback: (selectedItem) => {
           /* Reused the existing method */
           if (selectedItem) {
+            renderButtonPlaceholder();
             fetchDataAndRenderBlock(selectedItem, { renderCards: true, createRow: false, clearSeeMoreRows: true });
           }
         },
