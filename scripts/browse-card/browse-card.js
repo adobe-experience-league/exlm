@@ -354,18 +354,6 @@ export async function buildCard(container, element, model) {
 
     cardFigure.appendChild(laptopContainer);
 
-    if (
-      VIDEO_THUMBNAIL_FORMAT.test(thumbnail) ||
-      type === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
-      type === CONTENT_TYPES.TUTORIAL.MAPPING_KEY
-    ) {
-      const playButton = document.createElement('div');
-      playButton.classList.add('play-button');
-      playButton.innerHTML = '<span class="icon icon-play-outline-white"></span>';
-      cardFigure.appendChild(playButton);
-      decorateIcons(playButton);
-    }
-
     const img = document.createElement('img');
     img.src = thumbnail;
     img.loading = 'lazy';
@@ -380,6 +368,17 @@ export async function buildCard(container, element, model) {
     img.addEventListener('load', () => {
       cardFigure.classList.add('img-custom-height');
       card.classList.add('thumbnail-loaded');
+      if (
+        VIDEO_THUMBNAIL_FORMAT.test(thumbnail) ||
+        type === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
+        type === CONTENT_TYPES.TUTORIAL.MAPPING_KEY
+      ) {
+        const playButton = document.createElement('div');
+        playButton.classList.add('play-button');
+        playButton.innerHTML = '<span class="icon icon-play-outline-white"></span>';
+        cardFigure.appendChild(playButton);
+        decorateIcons(playButton);
+      }
     });
   }
   if (badgeTitle || failedToLoad) {
