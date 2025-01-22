@@ -452,7 +452,7 @@
   visibility: hidden;
   width: max-content;
   max-width: 155px;
-  z-index: 1;
+  z-index: 11;
 }
 
 .browse-card .tooltip-top .tooltip-text {
