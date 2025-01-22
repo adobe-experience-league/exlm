@@ -461,6 +461,9 @@ indices:
       - '/en/docs/experience-cloud-kcs/**'
       - '/en/docs/experience-manager-learn/**'
       - '/en/docs/experience-manager-cloud-service/**'
+      - '/en/placeholders.json'
+      - '/en/top-products.json'
+      - '/en/fragments.json'
     properties:
       robots:
         select: head > meta[name="robots"]
@@ -499,6 +502,9 @@ indices:
       - '/fr/docs/experience-cloud-kcs/**'
       - '/fr/docs/experience-manager-learn/**'
       - '/fr/docs/experience-manager-cloud-service/**'
+      - '/fr/placeholders.json'
+      - '/fr/top-products.json'
+      - '/fr/fragments.json'
 
   sitemap-de-1:
     <<: *base-sitemap-1
@@ -530,6 +536,9 @@ indices:
       - '/de/docs/experience-cloud-kcs/**'
       - '/de/docs/experience-manager-learn/**'
       - '/de/docs/experience-manager-cloud-service/**'
+      - '/de/placeholders.json'
+      - '/de/top-products.json'
+      - '/de/fragments.json'
 
   sitemap-es-1:
     <<: *base-sitemap-1
@@ -561,6 +570,9 @@ indices:
       - '/es/docs/experience-cloud-kcs/**'
       - '/es/docs/experience-manager-learn/**'
       - '/es/docs/experience-manager-cloud-service/**'
+      - '/es/placeholders.json'
+      - '/es/top-products.json'
+      - '/es/fragments.json'
 
   sitemap-it-1:
     <<: *base-sitemap-1
@@ -592,6 +604,9 @@ indices:
       - '/it/docs/experience-cloud-kcs/**'
       - '/it/docs/experience-manager-learn/**'
       - '/it/docs/experience-manager-cloud-service/**'
+      - '/it/placeholders.json'
+      - '/it/top-products.json'
+      - '/it/fragments.json'
 
   sitemap-nl-1:
     <<: *base-sitemap-1
@@ -623,6 +638,9 @@ indices:
       - '/nl/docs/experience-cloud-kcs/**'
       - '/nl/docs/experience-manager-learn/**'
       - '/nl/docs/experience-manager-cloud-service/**'
+      - '/nl/placeholders.json'
+      - '/nl/top-products.json'
+      - '/nl/fragments.json'
 
   sitemap-pt-br-1:
     <<: *base-sitemap-1
@@ -654,6 +672,9 @@ indices:
       - '/pt-br/docs/experience-cloud-kcs/**'
       - '/pt-br/docs/experience-manager-learn/**'
       - '/pt-br/docs/experience-manager-cloud-service/**'
+      - '/pt-br/placeholders.json'
+      - '/pt-br/top-products.json'
+      - '/pt-br/fragments.json'
 
   sitemap-ko-1:
     <<: *base-sitemap-1
@@ -685,6 +706,9 @@ indices:
       - '/ko/docs/experience-cloud-kcs/**'
       - '/ko/docs/experience-manager-learn/**'
       - '/ko/docs/experience-manager-cloud-service/**'
+      - '/ko/placeholders.json'
+      - '/ko/top-products.json'
+      - '/ko/fragments.json'
 
   sitemap-ja-1:
     <<: *base-sitemap-1
@@ -716,6 +740,9 @@ indices:
       - '/ja/docs/experience-cloud-kcs/**'
       - '/ja/docs/experience-manager-learn/**'
       - '/ja/docs/experience-manager-cloud-service/**'
+      - '/ja/placeholders.json'
+      - '/ja/top-products.json'
+      - '/ja/fragments.json'
 
   sitemap-sv-1:
     <<: *base-sitemap-1
@@ -747,6 +774,9 @@ indices:
       - '/sv/docs/experience-cloud-kcs/**'
       - '/sv/docs/experience-manager-learn/**'
       - '/sv/docs/experience-manager-cloud-service/**'
+      - '/sv/placeholders.json'
+      - '/sv/top-products.json'
+      - '/sv/fragments.json'
 
   sitemap-zh-hans-1:
     <<: *base-sitemap-1
@@ -778,6 +808,9 @@ indices:
       - '/zh-hans/docs/experience-cloud-kcs/**'
       - '/zh-hans/docs/experience-manager-learn/**'
       - '/zh-hans/docs/experience-manager-cloud-service/**'
+      - '/zh-hans/placeholders.json'
+      - '/zh-hans/top-products.json'
+      - '/zh-hans/fragments.json'
 
   sitemap-zh-hant-1:
     <<: *base-sitemap-1
@@ -809,6 +842,9 @@ indices:
       - '/zh-hant/docs/experience-cloud-kcs/**'
       - '/zh-hant/docs/experience-manager-learn/**'
       - '/zh-hant/docs/experience-manager-cloud-service/**'
+      - '/zh-hant/placeholders.json'
+      - '/zh-hant/top-products.json'
+      - '/zh-hant/fragments.json'
 
   playlists-en: &base-playlists
     target: /en/playlists.json

@@ -13,6 +13,7 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import ResponsivePillList from '../../scripts/responsive-pill-list/responsive-pill-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -135,10 +136,15 @@ function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
  * @returns {void}
  */
 export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
-  if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
-  else heading?.remove();
-  if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
-  else subheading?.remove();
+  if (isFeatureEnabled('recMarqueeTargetHeading')) {
+    if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
+    else heading?.remove();
+    if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
+    else subheading?.remove();
+  } else {
+    heading?.remove();
+    subheading?.remove();
+  }
   if (
     taglineCta &&
     data?.meta['tagline-cta-text'] &&
@@ -547,31 +553,34 @@ export default async function decorate(block) {
               data = cardResponse.allAdobeProducts;
             }
           }
-          if (seeMoreFlag) {
-            const numberOfExistingCards = block.querySelectorAll('.card-wrapper');
-            const index = numberOfExistingCards.length
-              ? numberOfExistingCards.length - (window.innerWidth > 1432 ? 3 : 2)
-              : 0;
-            if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
-              const btn = block.querySelector('.recommendation-marquee-see-more-btn');
-              if (btn) {
-                btn.style.display = 'none';
-              }
-            }
-            if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
-              const btn = block.querySelector('.recommendation-marquee-see-more-btn > button');
-              if (btn) {
-                btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
-              }
-              block.dataset.allRowsLoaded = true;
-              block.dataset.maxRows = block.dataset.browseCardRows;
-            }
-            data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(
-              data.slice(index, index + (window.innerWidth > 1432 ? 3 : 2)),
-            );
-          } else {
-            data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(0, DEFAULT_NUM_CARDS));
+          const cardWithThumbnail = data.find((res) => res.thumbnail !== '');
+          if (cardWithThumbnail) {
+            data = data.filter((item) => item !== cardWithThumbnail);
+            data.unshift(cardWithThumbnail);
           }
+          const numberOfExistingCards = block.querySelectorAll('.card-wrapper');
+          const isWideScreen = window.innerWidth > 1432;
+          const defaultCardCount = isWideScreen ? 3 : 2;
+          const index = numberOfExistingCards.length
+            ? numberOfExistingCards.length - (seeMoreFlag ? defaultCardCount : DEFAULT_NUM_CARDS)
+            : 0;
+          if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
+            const btn = block.querySelector('.recommendation-marquee-see-more-btn');
+            if (btn) {
+              btn.style.display = 'none';
+            }
+          }
+          if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
+            const btn = block.querySelector('.recommendation-marquee-see-more-btn > button');
+            if (btn) {
+              btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+            }
+            block.dataset.allRowsLoaded = true;
+            block.dataset.maxRows = block.dataset.browseCardRows;
+          }
+          data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(
+            data.slice(index, index + (seeMoreFlag ? defaultCardCount : DEFAULT_NUM_CARDS)),
+          );
         } else {
           const { data: cards = [], contentType: ctType } = cardResponse || {};
           const { shimmers: cardShimmers, payload: apiPayload, wrappers: cardWrappers } = apiConfigObject;
@@ -689,7 +698,13 @@ export default async function decorate(block) {
         }
         dataConfiguration[lowercaseOptionType].renderedCardIds = [];
         contentDiv.dataset.selected = lowercaseOptionType;
-        contentDiv.setAttribute('data-analytics-filter-id', lowercaseOptionType);
+        let analyticsProductName = '';
+        if ([ALL_ADOBE_OPTIONS_KEY.toLowerCase()].includes(lowercaseOptionType)) {
+          analyticsProductName = 'all adobe products';
+        } else {
+          analyticsProductName = lowercaseOptionType;
+        }
+        contentDiv.setAttribute('data-analytics-filter-id', analyticsProductName);
         const showDefaultOptions = defaultOptionsKey.some((key) => lowercaseOptionType === key.toLowerCase());
         const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
         const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
