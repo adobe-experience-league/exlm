@@ -991,8 +991,8 @@ export default async function decorate(block) {
         },
         onSelectCallback: (selectedItem) => {
           /* Reused the existing method */
-          renderButtonPlaceholder();
           if (selectedItem) {
+            renderButtonPlaceholder();
             fetchDataAndRenderBlock(selectedItem, { renderCards: true, createRow: false, clearSeeMoreRows: true });
           }
         },
