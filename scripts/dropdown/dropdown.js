@@ -4,6 +4,7 @@ import { htmlToElement } from '../scripts.js';
 export const DROPDOWN_VARIANTS = {
   DEFAULT: 'default',
   ANCHOR: 'anchor-menu',
+  MULTISELECT: 'multi-select',
 };
 
 await loadCSS(`${window.hlx.codeBasePath}/scripts/dropdown/dropdown.css`);
@@ -58,12 +59,18 @@ export default class Dropdown {
    * @return {type} - No return value.
    */
   updateDropdownValue(value) {
+    let count = 0;
     this.dropdown.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach((checkbox) => {
+      count = checkbox.checked ? count + 1 : count;
       if (checkbox.value === value) {
-        this.dropdown.dataset.selected = value;
         const label = this.dropdown.querySelector('button > span');
-        label.innerText = checkbox.dataset.label;
         checkbox.checked = true;
+        this.dropdown.dataset.selected = value;
+        if (this.variant === DROPDOWN_VARIANTS.MULTISELECT) {
+          label.innerText = count > 0 ? `${this.defaultValue} (${count})` : this.defaultValue;
+        } else {
+          label.innerText = checkbox.dataset.label;
+        }
       }
     });
   }
@@ -108,30 +115,52 @@ export default class Dropdown {
         const { variant } = dropdown.dataset;
         const button = dropdown.children[0];
 
-        dropdown.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach((checkbox) => {
-          if (event.target.value !== checkbox.value) checkbox.checked = false;
-        });
+        if (variant !== DROPDOWN_VARIANTS.MULTISELECT) {
+          dropdown.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach((checkbox) => {
+            if (event.target.value !== checkbox.value) checkbox.checked = false;
+          });
+
+          if (dropdown.classList.contains('open')) {
+            dropdown.classList.remove('open');
+            button.nextElementSibling.style.display = 'none';
+          }
+        }
 
         const updateButtonText = variant !== DROPDOWN_VARIANTS.ANCHOR;
         let buttonText;
-        if (event.target.value === dropdown.dataset.selected) {
-          dropdown.dataset.selected = dropdown.dataset.filterType;
-          buttonText = dropdown.dataset.filterType;
-          dropdown.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach((checkbox) => {
-            if (dropdown.dataset.selected === checkbox.value) checkbox.checked = true;
-          });
+        if (variant === DROPDOWN_VARIANTS.MULTISELECT) {
+          const selectedValues = dropdown.dataset.selected ? dropdown.dataset.selected.split(',') : [];
+          if (selectedValues.includes(event.target.value)) {
+            selectedValues.splice(selectedValues.indexOf(event.target.value), 1);
+            dropdown.dataset.selected = selectedValues.join(',');
+            buttonText =
+              selectedValues.length > 0
+                ? `${dropdown.dataset.filterType} (${selectedValues.length})`
+                : dropdown.dataset.filterType;
+          } else {
+            selectedValues.push(event.target.value);
+            dropdown.dataset.selected = selectedValues.join(',');
+            buttonText =
+              selectedValues.length > 0
+                ? `${dropdown.dataset.filterType} (${selectedValues.length})`
+                : dropdown.dataset.filterType;
+          }
         } else {
-          dropdown.dataset.selected = event.target.value;
-          buttonText = event.target.dataset.label;
+          const selectedValue = dropdown.dataset.selected;
+          if (event.target.value === selectedValue) {
+            dropdown.dataset.selected = dropdown.dataset.filterType;
+            buttonText = dropdown.dataset.filterType;
+            dropdown.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach((checkbox) => {
+              if (dropdown.dataset.selected === checkbox.value) checkbox.checked = true;
+            });
+          } else {
+            dropdown.dataset.selected = event.target.value;
+            buttonText = event.target.dataset.label;
+          }
         }
 
         if (updateButtonText) {
           button.children[0].textContent = buttonText;
-        }
-
-        if (dropdown.classList.contains('open')) {
-          dropdown.classList.remove('open');
-          button.nextElementSibling.style.display = 'none';
         }
       }
     }
