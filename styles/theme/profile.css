@@ -39,28 +39,6 @@ body.profile-home-page .profile-shimmer span {
   }
 }
 
-body.profile-home-page .profile-background {
-  position: absolute;
-  overflow: hidden;
-  left: 0;
-  right: 0;
-  height: 109px;
-  top: var(--nav-height);
-}
-
-body.profile-home-page .profile-background::before {
-  content: '';
-  position: absolute;
-  top: -113px;
-  left: 43%;
-  width: 109px;
-  height: 336px;
-  background: url('/images/pentagon-stripes-right-decor.svg') no-repeat center center;
-  background-size: cover;
-  transform: rotate(-90deg);
-  z-index: -1;
-}
-
 body.profile .section .product-experience-level-wrapper ~ .default-content-wrapper p {
   text-align: center;
 }
@@ -179,16 +157,6 @@ body.profile
 }
 
 @media (width >= 600px) {
-  body.profile-home-page .profile-background {
-    height: 145px;
-  }
-
-  body.profile-home-page .profile-background::before {
-    top: -167px;
-    width: 145px;
-    height: 452px;
-  }
-
   body.profile .section:not(.profile-rail-section, .sign-up-flow-section) {
     margin: 0 16px 24px;
     padding: 48px 52px 64px;
@@ -241,19 +209,6 @@ body.profile
     min-height: 400px;
   }
 
-  body.profile-home-page .profile-background {
-    left: auto;
-    right: 0;
-    height: 452px;
-    width: 145px;
-  }
-
-  body.profile-home-page .profile-background::before {
-    top: 0;
-    left: 0;
-    transform: none;
-  }
-
   body.profile > main > .section.profile-rail-section {
     grid-column: 1;
     padding: 0;
@@ -262,12 +217,6 @@ body.profile
 
   body.profile .section[data-two-column-layout='true']:nth-child(3) > div:nth-child(1) {
     margin-top: 28px;
-  }
-
-  body.profile-home-page .section:not(.sign-up-flow-section, .profile-rail-section):first-of-type > :first-child {
-    max-width: calc(100% - 145px);
-    margin-left: 0;
-    margin-right: 0;
   }
 
   body.profile div.profile-rail-wrapper {
@@ -281,10 +230,6 @@ body.profile
   body.profile .profile-rail {
     position: sticky;
     top: 10px;
-  }
-
-  body.profile-home-page:has(.profile-background) main {
-    grid-template-columns: 264px minmax(50vw, calc(100vw - 264px));
   }
 
   body.profile:not(.profile-home-page) .section:first-child:not(.sign-up-flow-section) {
@@ -321,10 +266,6 @@ body.profile
   body.profile .section:not(.sign-up-flow-section):first-child {
     margin-top: 0;
     max-width: 100%;
-  }
-
-  body.profile-home-page .section:not(.sign-up-flow-section):first-child {
-    margin-top: 80px;
   }
 
   body.profile-home-page .section:not(.profile-rail-section, .sign-up-flow-section):nth-last-of-type(2) {

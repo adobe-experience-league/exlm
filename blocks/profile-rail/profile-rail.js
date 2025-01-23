@@ -91,7 +91,7 @@ export default async function ProfileRail(block) {
       }
     } else {
       profileRailOverlay.classList.add('hidden');
-      block.querySelector('.profile-rail-links > li > a.active').classList.remove('overlay-active');
+      block.querySelector('.profile-rail-links > li > a.active')?.classList.remove('overlay-active');
     }
   });
 

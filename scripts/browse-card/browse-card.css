@@ -10,8 +10,8 @@
   --browse-card-color-documentation-secondary: #e2f5d4;
   --browse-card-color-community-primary: #ffde2c;
   --browse-card-color-community-secondary: #fffcea;
-  --browse-card-color-perspective-primary: #b3b3b3;
-  --browse-card-color-perspective-secondary: #f0f0f0;
+  --browse-card-color-certification-primary: #b3b3b3;
+  --browse-card-color-certification-secondary: #f0f0f0;
   --browse-card-color-troubleshooting-primary: #ffa213;
   --browse-card-color-troubleshooting-secondary: #fff3df;
   --browse-card-color-live-event-primary: #eb1000;
@@ -20,8 +20,8 @@
   --browse-card-color-event-secondary: #ffe2ec;
   --browse-card-color-instructor-led-training-primary: #7a6afd;
   --browse-card-color-instructor-led-training-secondary: #e4e1ff;
-  --browse-card-color-certification-primary: #c844dc;
-  --browse-card-color-certification-secondary: #f4daf8;
+  --browse-card-color-perspective-primary: #c844dc;
+  --browse-card-color-perspective-secondary: #f4daf8;
 }
 
 .browse-card {
@@ -390,6 +390,7 @@
 
 .browse-card .user-actions {
   gap: 8px;
+  align-items: center;
 }
 
 .browse-card.playlist-card .browse-card-meta-info .icon {
