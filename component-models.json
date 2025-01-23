@@ -4803,7 +4803,7 @@
         "name": "filterLabel",
         "value": "",
         "label": "Filter Label",
-        "description": "Sets the text for filter label in dropdown"
+        "description": "Sets the text for Products filter label in dropdown."
       }
     ]
   }
