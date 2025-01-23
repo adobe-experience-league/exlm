@@ -5,6 +5,9 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 
+/**
+ * Retrieves a list of unique product focus items from live events data.
+ */
 async function getListofProducts() {
   try {
     let data;
@@ -40,7 +43,7 @@ export default async function decorate(block) {
 
   const headerDiv = htmlToElement(`
     <div class="upcoming-events-block-header">
-      <div class="content">
+      <div class="upcoming-events-block-heading">
         <div class="upcoming-events-block-title">
           ${headingElement?.innerHTML || ''}
         </div>
@@ -48,11 +51,14 @@ export default async function decorate(block) {
           ${descriptionElement?.innerHTML || ''}
         </div>
       </div>
+      <div class="upcoming-events-block-filter">
       <form class="upcoming-events-products-dropdown"></form>
+      </div>
     </div>
   `);
 
   block.appendChild(headerDiv);
+
   const products = await getListofProducts();
   const productsList = [];
   products.forEach((product) => {
@@ -67,6 +73,7 @@ export default async function decorate(block) {
     block.querySelector('.upcoming-events-products-dropdown'),
     `${filterLabelElement?.innerHTML}`,
     productsList,
+    'multi-select',
   );
 
   const contentDiv = document.createElement('div');
@@ -95,10 +102,13 @@ export default async function decorate(block) {
       block.appendChild(contentDiv);
     }
 
-    productDropdown.handleOnChange((value) => {
-      const productValue = value === 'Filters' ? [] : [value];
+    productDropdown.handleOnChange((selectedValues) => {
+      const selectedFilters = Array.isArray(selectedValues)
+        ? selectedValues
+        : selectedValues.split(',').map((item) => item.trim());
       // eslint-disable-next-line no-use-before-define
-      const updatedData = fetchFilteredCardData(browseCardsContent, productValue);
+      const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
+
       contentDiv.innerHTML = ''; // Clear previous cards
       updatedData.forEach((cardData) => {
         const cardDiv = document.createElement('div');
@@ -112,20 +122,28 @@ export default async function decorate(block) {
     console.error('Error loading upcoming event cards:', err);
   }
 
+  /**
+   * Fetches filtered card data based on selected parameters.
+   * @param {Array} data - List of card data objects.
+   * @param {Array} params - Selected filter parameters.
+   * @returns {Array} - Filtered and sorted card data.
+   */
   function fetchFilteredCardData(data, params) {
     if (!data) return [];
     const solutionsList = Array.isArray(params) ? params : [params];
-    if (solutionsList.length === 0 || solutionsList.some((param) => param === '')) {
-      return data
-        .filter((card) => card.event.time)
-        .sort((card1, card2) => new Date(card1.event.time) - new Date(card2.event.time));
+
+    // If no filters are selected, return all data sorted by event time
+    if (solutionsList.length === 0) {
+      return data.filter((card) => card.event?.time).sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
     }
 
+    // Filter events that match any of the selected filters
     return data
       .filter((event) => {
         const productArray = Array.isArray(event.product) ? event.product : [event.product];
-        return solutionsList.some((parameter) => productArray.includes(parameter));
+        return solutionsList.some((filter) => productArray.includes(filter));
       })
-      .sort((card1, card2) => new Date(card1.event.time) - new Date(card2.event.time));
+      .filter((card) => card.event?.time) // Ensure valid event time
+      .sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
   }
 }

@@ -1,41 +1,13 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
-.navigation {
-  display: flex;
-  justify-content: flex-start;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.filters {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-
-.filters-button {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  padding: 5px 10px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-}
-
-.filters-icon {
-  width: 16px;
-  height: 16px;
-}
-
 .upcoming-events-block-header {
   display: flex;
-  width: 100%;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.upcoming-events-products-dropdown {
-  width: 50%;
-  margin-top: 50px;
+.upcoming-events-block-filter {
+  width: 25%;
 }
 
 .browse-cards-block-content {
