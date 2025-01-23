@@ -15,7 +15,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
    */
   const mapResultToCardsDataModel = (result) => {
     const contentType = CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY;
-    const { productFocus, eventTitle, eventDescription, startTime, endTime, time, cta } = result || {};
+    const { eventImage, productFocus, eventTitle, eventDescription, startTime, endTime, time, cta } = result || {};
     const product = productFocus && (Array.isArray(productFocus) ? productFocus : productFocus.split(/,\s*/));
     const { ctaLabel, ctaLink } = cta || {};
     const eventStartTime = new Date(`${startTime}`);
@@ -26,6 +26,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
         ...browseCardDataModel,
         contentType,
         badgeTitle: CONTENT_TYPES.LIVE_EVENT.LABEL,
+        thumbnail: eventImage,
         product,
         title: eventTitle || '',
         description: eventDescription || '',
