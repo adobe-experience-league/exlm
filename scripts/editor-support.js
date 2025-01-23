@@ -151,12 +151,6 @@ function updateUEInstrumentation() {
       setUEFilter(elem, 'sign-up-flow-section');
     });
   }
-
-  // ----- if events page, identified by theme
-  if (document.querySelector('body[class^=events]') || getMetadata('theme') === 'events') {
-    // update available sections
-    setUEFilter(main, 'main-events');
-  }
 }
 
 /**
