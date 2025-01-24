@@ -1,4 +1,39 @@
 import { decorateIcons } from '../lib-franklin.js';
+
+let isGlobalScrollListenerAdded = false;
+
+/**
+ * Debounces a function call to limit its execution rate.
+ * @param {number} ms - The debounce delay in milliseconds.
+ * @param {Function} fn - The function to debounce.
+ * @returns {Function} - The debounced function.
+ */
+// eslint-disable-next-line class-methods-use-this
+function debounce(func, delay) {
+  let timeoutId;
+
+  return function debounced(...args) {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
+}
+
+/**
+ * Handles the scroll event on the container or document to hide all the tooltips.
+ */
+const handleScroll = (container) => {
+  const targetContainer = container || document; // Use container if provided, otherwise default to document
+  const tooltips = targetContainer.querySelectorAll('.tooltip-text');
+  tooltips.forEach((elem) => {
+    elem.style.left = '-999px';
+    elem.classList.remove('tooltip-visible');
+  });
+};
+
 /**
  * Creates a tooltip and attaches event listeners to show/hide it.
  * @param {HTMLElement} container - The HTML element serving as the tooltip container.
@@ -15,8 +50,19 @@ export const createTooltip = (container, element, config) => {
   const handleTooltipEvent = (event) => {
     try {
       const tooltipText = element.querySelector('.tooltip-text');
+      if (!isGlobalScrollListenerAdded) {
+        window.addEventListener(
+          'scroll',
+          debounce(() => handleScroll(), 50),
+        );
+        isGlobalScrollListenerAdded = true;
+      }
       if (event.type === 'mouseover' || event.type === 'mouseenter' || event.type === 'click') {
         tooltipText.classList.add('tooltip-visible');
+        if (event.type === 'click') {
+          event.stopPropagation();
+          event.preventDefault();
+        }
         if (position === 'top') {
           const topSpacer = 5;
           const leftSpacer = 5;
@@ -78,21 +124,13 @@ export const createTooltip = (container, element, config) => {
  * @param {HTMLElement} container - The HTML element serving as the tooltip container.
  */
 export const hideTooltipOnScroll = (container) => {
-  /**
-   * Handles the scroll event on the container to hide all the tooltips.
-   */
-  const handleContainerScroll = () => {
-    const tooltips = container.querySelectorAll('.tooltip-text');
-    tooltips.forEach((elem) => {
-      elem.style.left = '-999px';
-      elem.classList.remove('tooltip-visible');
-    });
-  };
-
   const resizeObserver = new ResizeObserver(() => {
     if (container.scrollWidth > container.clientWidth) {
       // Add scroll event listener when the container is scrollable
-      container.addEventListener('scroll', handleContainerScroll);
+      container.addEventListener(
+        'scroll',
+        debounce(() => handleScroll(container), 10),
+      );
     }
   });
 
