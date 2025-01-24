@@ -333,12 +333,6 @@
   background-color: white;
 }
 
-@media (min-width: 420px) {
-  .recommendation-marquee.block .custom-filter-dropdown {
-    min-width: 360px;
-  }
-}
-
 @media (min-width: 600px) {
   .recommendation-marquee.block .browse-cards-block-content .card-wrapper {
     min-width: 286px;
