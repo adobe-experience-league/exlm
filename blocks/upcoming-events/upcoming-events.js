@@ -1,5 +1,5 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, getConfig } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
@@ -34,6 +34,14 @@ async function getListofProducts() {
 }
 
 export default async function decorate(block) {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
   const [headingElement, descriptionElement, filterLabelElement] = [...block.children].map(
     (row) => row.firstElementChild,
   );
@@ -49,7 +57,9 @@ export default async function decorate(block) {
         <div class="browse-card-description-text">
           ${descriptionElement?.innerHTML || ''}
         </div>
-      <form class="browse-card-dropdown"></form>
+      <form class="browse-card-dropdown">
+      <label>${filterLabelElement?.innerHTML}</label>
+      </form>
     </div>
   `);
 
@@ -67,7 +77,7 @@ export default async function decorate(block) {
   // Initialize the dropdown with product options
   const productDropdown = new Dropdown(
     block.querySelector('.browse-card-dropdown'),
-    `${filterLabelElement?.innerHTML}`,
+    `${placeholders?.filterProductLabel || 'Product'}`,
     productsList,
     'multi-select',
   );
