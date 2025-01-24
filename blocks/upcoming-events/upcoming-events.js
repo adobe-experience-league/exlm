@@ -42,18 +42,14 @@ export default async function decorate(block) {
   block.classList.add('upcoming-events-block');
 
   const headerDiv = htmlToElement(`
-    <div class="upcoming-events-block-header">
-      <div class="upcoming-events-block-heading">
-        <div class="upcoming-events-block-title">
+    <div class="browse-cards-block-header">
+        <div class="browse-cards-block-title">
           ${headingElement?.innerHTML || ''}
         </div>
-        <div class="upcoming-events-block-description">
+        <div class="browse-card-description-text">
           ${descriptionElement?.innerHTML || ''}
         </div>
-      </div>
-      <div class="upcoming-events-block-filter">
-      <form class="upcoming-events-products-dropdown"></form>
-      </div>
+      <form class="browse-card-dropdown"></form>
     </div>
   `);
 
@@ -70,7 +66,7 @@ export default async function decorate(block) {
 
   // Initialize the dropdown with product options
   const productDropdown = new Dropdown(
-    block.querySelector('.upcoming-events-products-dropdown'),
+    block.querySelector('.browse-card-dropdown'),
     `${filterLabelElement?.innerHTML}`,
     productsList,
     'multi-select',
