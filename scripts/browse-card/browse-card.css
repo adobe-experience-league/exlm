@@ -529,5 +529,5 @@
 }
 
 .browse-card .browse-card-figure:hover .play-button .icon {
-  transform: scale(1.6);
+  display: none;
 }
