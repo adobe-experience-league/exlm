@@ -385,11 +385,6 @@
     .play-button {
     top: 42%;
   }
-
-  .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card.no-thumbnail-bg {
-    background-image: url('../../images/rec-marquee-no-thumbnail-bg.svg');
-    background-position: center;
-  }
 }
 
 @media (min-width: 600px) {
@@ -477,6 +472,11 @@
     overflow: visible;
     margin-top: 24px;
     min-height: auto;
+  }
+
+  .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card.no-thumbnail-bg {
+    background-image: url('../../images/rec-marquee-no-thumbnail-bg.svg');
+    background-position: center;
   }
 }
 
