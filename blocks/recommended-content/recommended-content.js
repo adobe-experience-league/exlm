@@ -13,6 +13,7 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
+import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 
 let placeholders = {};
 try {
@@ -31,7 +32,6 @@ const seeMoreConfig = {
   minWidth: 1024,
   noOfRows: 2,
 };
-
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
 // Event for target data change (Updating the block based on target data)
@@ -364,7 +364,7 @@ export default async function decorate(block) {
   const cardIdsToExclude = [];
   const allMyProductsCardModels = [];
   const dataConfiguration = {};
-
+  let isTooltipListenerAdded = false;
   resizeObserved = false;
 
   function calculateNumberOfCardsOnResize(fetchDataAndRenderBlock) {
@@ -914,6 +914,10 @@ export default async function decorate(block) {
             if (cardsCount !== 0) {
               calculateNumberOfCardsOnResize(fetchDataAndRenderBlock);
               createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock);
+              if (!isTooltipListenerAdded) {
+                hideTooltipOnScroll(contentDiv);
+                isTooltipListenerAdded = true;
+              }
             }
             if (cardsCount === 0) {
               Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((shimmerEl) => {
