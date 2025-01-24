@@ -423,6 +423,7 @@
     float: left;
     max-height: 100%;
     border-radius: 16px 0 0 16px;
+    background-color: transparent !important;
   }
 
   .recommendation-marquee.block
@@ -468,7 +469,10 @@
     min-height: auto;
   }
 
-  .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card.no-thumbnail-bg {
+  .recommendation-marquee.block
+    .browse-cards-block-content.recommendation-marquee-wrap
+    .card-wrapper:first-child
+    .browse-card:not(.thumbnail-loaded) {
     background-image: url('../../images/rec-marquee-no-thumbnail-bg.svg');
     background-position: center;
   }
