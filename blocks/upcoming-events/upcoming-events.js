@@ -91,9 +91,9 @@ export default async function decorate(block) {
 
   const buildCardsShimmer = new BrowseCardShimmer();
   buildCardsShimmer.addShimmer(block);
-
+  let browseCardsContent;
   try {
-    const browseCardsContent = await BrowseCardsDelegate.fetchCardData(parameters);
+    browseCardsContent = await BrowseCardsDelegate.fetchCardData(parameters);
     // eslint-disable-next-line no-use-before-define
     const filteredLiveEventsData = fetchFilteredCardData(browseCardsContent, []);
 
@@ -107,26 +107,29 @@ export default async function decorate(block) {
       });
       block.appendChild(contentDiv);
     }
-
-    productDropdown.handleOnChange((selectedValues) => {
-      const selectedFilters = Array.isArray(selectedValues)
-        ? selectedValues
-        : selectedValues.split(',').map((item) => item.trim());
-      // eslint-disable-next-line no-use-before-define
-      const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
-
-      contentDiv.innerHTML = ''; // Clear previous cards
-      updatedData.forEach((cardData) => {
-        const cardDiv = document.createElement('div');
-        buildCard(contentDiv, cardDiv, cardData);
-        contentDiv.appendChild(cardDiv);
-      });
-    });
   } catch (err) {
     buildCardsShimmer.removeShimmer();
     // eslint-disable-next-line no-console
     console.error('Error loading upcoming event cards:', err);
   }
+
+  productDropdown.handleOnChange((selectedValues) => {
+    const selectedFilters = Array.isArray(selectedValues)
+      ? selectedValues.filter((item) => item.trim() !== '')
+      : selectedValues
+          .split(',')
+          .map((item) => item.trim())
+          .filter((item) => item !== '');
+    // eslint-disable-next-line no-use-before-define
+    const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
+
+    contentDiv.innerHTML = ''; // Clear previous cards
+    updatedData.forEach((cardData) => {
+      const cardDiv = document.createElement('div');
+      buildCard(contentDiv, cardDiv, cardData);
+      contentDiv.appendChild(cardDiv);
+    });
+  });
 
   /**
    * Fetches filtered card data based on selected parameters.
