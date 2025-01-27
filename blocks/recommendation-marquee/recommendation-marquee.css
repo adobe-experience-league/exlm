@@ -79,6 +79,10 @@
   white-space: nowrap;
 }
 
+.recommendation-marquee.block {
+  position: relative;
+}
+
 .recommendation-marquee.block .browse-card-shimmer {
   min-width: 100%;
   max-height: 404px;
