@@ -368,7 +368,6 @@
     float: left;
     max-height: 100%;
     border-radius: 16px 0 0 16px;
-    background-color: transparent !important;
   }
 
   .recommendation-marquee.block
