@@ -413,7 +413,10 @@
     min-height: auto;
   }
 
-  .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card.no-thumbnail-bg {
+  .recommendation-marquee.block
+    .browse-cards-block-content.recommendation-marquee-wrap
+    .card-wrapper:first-child
+    .browse-card:not(.thumbnail-loaded) {
     background-image: url('../../images/rec-marquee-no-thumbnail-bg.svg');
     background-position: center;
   }

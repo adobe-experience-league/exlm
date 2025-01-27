@@ -612,13 +612,6 @@ export default async function decorate(block) {
             });
           }
         }
-        if (!data[0].thumbnail) {
-          const firstCardWrapper = block.querySelector('.card-wrapper');
-          const browseCard = firstCardWrapper.querySelector('.browse-card');
-          const browseCardFigure = firstCardWrapper.querySelector('.browse-card-figure');
-          browseCard?.classList.add('no-thumbnail-bg');
-          if (browseCardFigure) browseCardFigure.style.backgroundColor = 'transparent';
-        }
         return data;
       }
 
