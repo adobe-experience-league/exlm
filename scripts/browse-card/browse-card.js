@@ -341,10 +341,6 @@ export async function buildCard(container, element, model) {
   const cardFigure = card.querySelector('.browse-card-figure');
   const cardContent = card.querySelector('.browse-card-content');
 
-  if (type) {
-    cardFigure.style.backgroundColor = `var(--browse-card-color-${type}-secondary)`;
-  }
-
   if (thumbnail) {
     const laptopContainer = document.createElement('div');
     laptopContainer.classList.add('laptop-container');
