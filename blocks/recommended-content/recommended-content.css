@@ -97,6 +97,10 @@ body.profile
   white-space: nowrap;
 }
 
+.recommended-content.block {
+  position: relative;
+}
+
 .recommended-content.block .browse-card-shimmer {
   min-width: 100%;
   max-height: 404px;

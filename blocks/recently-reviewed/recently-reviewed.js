@@ -4,6 +4,7 @@ import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/brow
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import getEmitter from '../../scripts/events.js';
+import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 
 let placeholders = {};
 try {
@@ -248,6 +249,7 @@ export default async function decorate(block) {
       block.appendChild(navContainer);
     }
 
+    let isTooltipListenerAdded = false;
     resizeObserved = false;
 
     function addNewRowOfCards(cardData, args = { clear: false }) {
@@ -276,6 +278,10 @@ export default async function decorate(block) {
         buildCard(contentDiv, cardDiv, item);
         contentDiv.appendChild(cardDiv);
       });
+      if (!isTooltipListenerAdded) {
+        hideTooltipOnScroll(contentDiv);
+        isTooltipListenerAdded = true;
+      }
       if (!cardData[noOfCards + DEFAULT_NUM_CARDS]) {
         block.dataset.allRowsLoaded = true;
         block.dataset.maxRows = block.dataset.browseCardRows;
