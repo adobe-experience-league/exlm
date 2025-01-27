@@ -22,6 +22,10 @@
   margin: 0;
 }
 
+.recently-reviewed.block {
+  position: relative;
+}
+
 .recently-reviewed.block .browse-cards-block-content {
   margin-top: 0;
   margin-bottom: 0;
