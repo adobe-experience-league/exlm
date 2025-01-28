@@ -33,8 +33,13 @@ export default function decorate(block) {
     searchInterface.executeFirstSearch();
 
   };
+  const atomicUI1 = htmlToElement(` <atomic-search-box
+    number-of-queries="8"
+  >
+    <atomic-search-box-query-suggestions></atomic-search-box-query-suggestions>
+  </atomic-search-box>`)
   const atomicUI = htmlToElement(`
-    <atomic-search-interface fields-to-include='["el_contenttype","el_product"]'>
+    <atomic-search-interface language="fr" fields-to-include='["el_contenttype","el_product"]'>
     <style>
       atomic-search-layout {
         grid-template-columns: 0 1fr 4fr 0 !important;
@@ -55,7 +60,12 @@ export default function decorate(block) {
           padding: 4px 16px;
         }
       </style>
-        <atomic-search-box></atomic-search-box>
+        <atomic-search-box
+          suggestion-timeout="5000"
+          number-of-queries="8"
+        >
+          <atomic-search-box-query-suggestions></atomic-search-box-query-suggestions>
+        </atomic-search-box>
       </atomic-layout-section>
       <atomic-layout-section section="facets">
         <atomic-facet-manager>
