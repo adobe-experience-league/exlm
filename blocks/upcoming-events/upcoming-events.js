@@ -75,7 +75,6 @@ export default async function decorate(block) {
   products.forEach((product) => {
     productsList.push({
       title: product,
-      name: product,
     });
   });
 
