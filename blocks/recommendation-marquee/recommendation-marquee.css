@@ -79,6 +79,10 @@
   white-space: nowrap;
 }
 
+.recommendation-marquee.block {
+  position: relative;
+}
+
 .recommendation-marquee.block .browse-card-shimmer {
   min-width: 100%;
   max-height: 404px;
@@ -107,10 +111,12 @@
 }
 
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card .browse-card-content {
+  border-radius: 16px 16px 0 0;
   order: 1;
 }
 
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card .browse-card-footer {
+  border-radius: 0;
   order: 2;
 }
 
@@ -261,69 +267,23 @@
   display: none;
 }
 
-@media (min-width: 420px) {
-  .recommendation-marquee.block .custom-filter-dropdown {
-    min-width: 360px;
-  }
+.recommendation-marquee.block
+  .browse-cards-block-content.recommendation-marquee-wrap
+  .card-wrapper:first-child
+  .browse-card
+  .browse-card-content {
+  background-color: white;
+}
+
+.recommendation-marquee.block
+  .browse-cards-block-content.recommendation-marquee-wrap
+  .card-wrapper:first-child
+  .browse-card
+  .browse-card-footer {
+  background-color: white;
 }
 
 @media (min-width: 600px) {
-  .recommendation-marquee.block
-    .browse-cards-block-content.recommendation-marquee-wrap
-    .card-wrapper:first-child
-    .browse-card.tutorial-card {
-    background-color: var(--browse-card-color-tutorial-secondary);
-  }
-
-  .recommendation-marquee.block
-    .browse-cards-block-content.recommendation-marquee-wrap
-    .card-wrapper:first-child
-    .browse-card.playlist-card {
-    background-color: var(--browse-card-color-playlist-secondary);
-  }
-
-  .recommendation-marquee.block
-    .browse-cards-block-content.recommendation-marquee-wrap
-    .card-wrapper:first-child
-    .browse-card.documentation-card {
-    background-color: var(--browse-card-color-documentation-secondary);
-  }
-
-  .recommendation-marquee.block
-    .browse-cards-block-content.recommendation-marquee-wrap
-    .card-wrapper:first-child
-    .browse-card.community-card {
-    background-color: var(--browse-card-color-community-secondary);
-  }
-
-  .recommendation-marquee.block
-    .browse-cards-block-content.recommendation-marquee-wrap
-    .card-wrapper:first-child
-    .browse-card.perspective-card {
-    background-color: var(--browse-card-color-perspective-secondary);
-  }
-
-  .recommendation-marquee.block
-    .browse-cards-block-content.recommendation-marquee-wrap
-    .card-wrapper:first-child
-    .browse-card.troubleshooting-card {
-    background-color: var(--browse-card-color-troubleshooting-secondary);
-  }
-
-  .recommendation-marquee.block
-    .browse-cards-block-content.recommendation-marquee-wrap
-    .card-wrapper:first-child
-    .browse-card.event-card {
-    background-color: var(--browse-card-color-event-secondary);
-  }
-
-  .recommendation-marquee.block
-    .browse-cards-block-content.recommendation-marquee-wrap
-    .card-wrapper:first-child
-    .browse-card.certification-card {
-    background-color: var(--browse-card-color-certification-secondary);
-  }
-
   .recommendation-marquee.block .browse-cards-block-content .card-wrapper {
     min-width: 286px;
   }
@@ -456,6 +416,14 @@
     overflow: visible;
     margin-top: 24px;
     min-height: auto;
+  }
+
+  .recommendation-marquee.block
+    .browse-cards-block-content.recommendation-marquee-wrap
+    .card-wrapper:first-child
+    .browse-card:not(.thumbnail-loaded) {
+    background-image: url('../../images/rec-marquee-no-thumbnail-bg.svg');
+    background-position: center;
   }
 }
 

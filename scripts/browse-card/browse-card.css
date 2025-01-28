@@ -10,8 +10,8 @@
   --browse-card-color-documentation-secondary: #e2f5d4;
   --browse-card-color-community-primary: #ffde2c;
   --browse-card-color-community-secondary: #fffcea;
-  --browse-card-color-certification-primary: #b3b3b3;
-  --browse-card-color-certification-secondary: #f0f0f0;
+  --browse-card-color-certification-primary: #b6db00;
+  --browse-card-color-certification-secondary: #f8fbe6;
   --browse-card-color-troubleshooting-primary: #ffa213;
   --browse-card-color-troubleshooting-secondary: #fff3df;
   --browse-card-color-live-event-primary: #eb1000;
@@ -45,6 +45,46 @@
 .browse-card > * {
   flex-grow: 1;
   margin-bottom: 0;
+}
+
+.browse-card.playlist-card {
+  background-color: var(--browse-card-color-playlist-secondary);
+}
+
+.browse-card.tutorial-card {
+  background-color: var(--browse-card-color-tutorial-secondary);
+}
+
+.browse-card.documentation-card {
+  background-color: var(--browse-card-color-documentation-secondary);
+}
+
+.browse-card.community-card {
+  background-color: var(--browse-card-color-community-secondary);
+}
+
+.browse-card.certification-card {
+  background-color: var(--browse-card-color-certification-secondary);
+}
+
+.browse-card.troubleshooting-card {
+  background-color: var(--browse-card-color-troubleshooting-secondary);
+}
+
+.browse-card.live-event-card {
+  background-color: var(--browse-card-color-live-event-secondary);
+}
+
+.browse-card.event-card {
+  background-color: var(--browse-card-color-event-secondary);
+}
+
+.browse-card.instructor-led-training-card {
+  background-color: var(--browse-card-color-instructor-led-training-secondary);
+}
+
+.browse-card.perspective-card {
+  background-color: var(--browse-card-color-perspective-secondary);
 }
 
 .browse-card .browse-card-banner {
@@ -163,7 +203,6 @@
   max-height: 54px;
   overflow: hidden;
   position: relative;
-  background-color: var(--spectrum-gray-200);
   background-position: center;
   display: flex;
   align-items: center;
@@ -237,6 +276,7 @@
 
 .browse-card .browse-card-content {
   padding: 24px 16px 16px;
+  background-color: var(--background-color);
 }
 
 .browse-card .browse-card-meta-info {
@@ -297,10 +337,12 @@
 
 .browse-card .browse-card-footer {
   padding: 0 16px 24px;
+  background-color: var(--background-color);
   display: flex;
   flex-grow: 0;
   align-self: flex-end;
   align-items: center;
+  border-radius: 0 0 16px 16px;
   justify-content: space-between;
   width: 100%;
 }
@@ -529,5 +571,5 @@
 }
 
 .browse-card .browse-card-figure:hover .play-button .icon {
-  transform: scale(1.6);
+  display: none;
 }
