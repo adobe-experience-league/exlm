@@ -4,6 +4,7 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 /**
  * Retrieves a list of unique product focus items from live events data.
@@ -63,6 +64,10 @@ export default async function decorate(block) {
     </div>
   `);
 
+  const tagsContainer = document.createElement('div');
+  tagsContainer.classList.add('browse-card-tags');
+  headerDiv.appendChild(tagsContainer);
+
   block.appendChild(headerDiv);
 
   const products = await getListofProducts();
@@ -120,6 +125,29 @@ export default async function decorate(block) {
           .split(',')
           .map((item) => item.trim())
           .filter((item) => item !== '');
+
+    const tags = [...tagsContainer.querySelectorAll('.browse-tags')].map((tag) => tag.value);
+
+    selectedFilters
+      .filter((filter) => !tags.includes(filter))
+      .forEach((filter) => {
+        const tagElement = document.createElement('button');
+        tagElement.classList.add('browse-tags');
+        tagElement.value = filter;
+        tagElement.innerHTML = `<span>${
+          placeholders?.filterProductLabel || 'Product'
+        }: ${filter}</span><span class="icon icon-close"></span>`;
+        tagsContainer.appendChild(tagElement);
+        decorateIcons(tagElement);
+        tagElement.addEventListener('click', (event) => {
+          const { value } = event.target.closest('.browse-tags');
+          tagElement.remove();
+          [...block.querySelectorAll('.browse-card-dropdown .custom-checkbox input')].forEach((checkbox) => {
+            if (checkbox.value === value) checkbox.click();
+          });
+        });
+      });
+
     // eslint-disable-next-line no-use-before-define
     const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
 

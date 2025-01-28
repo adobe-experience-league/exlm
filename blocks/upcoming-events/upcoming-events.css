@@ -28,6 +28,38 @@
   align-items: center;
 }
 
+.upcoming-events .browse-cards-block-header .browse-card-tags {
+  margin-top: 1em;
+  align-self: flex-start;
+}
+
+.upcoming-events .browse-cards-block-header .browse-tags {
+  border-radius: 4px;
+  background: var(--background-color);
+  border: 1px solid var(--spectrum-gray-500);
+  margin-right: 10px;
+  padding: 4px 25px 5px 12px;
+  margin-bottom: 10px;
+  font-weight: normal;
+  font-size: 12px;
+  text-align: left;
+  color: var(--spectrum-gray-500);
+  line-height: normal;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  margin-top: 0;
+}
+
+.upcoming-events .browse-cards-block-header .browse-tags .icon-close {
+  width: 13px;
+  height: auto;
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-6px);
+}
+
 .upcoming-events .browse-cards-block-view {
   text-align: center;
 }
