@@ -558,19 +558,17 @@ export default async function decorate(block) {
             data = data.filter((item) => item !== cardWithThumbnail);
             data.unshift(cardWithThumbnail);
           }
-          const numberOfExistingCards = block.querySelectorAll('.card-wrapper');
+          const numberOfExistingCards = block.querySelectorAll('.card-wrapper a');
           const isWideScreen = window.innerWidth > 1432;
           const defaultCardCount = isWideScreen ? 3 : 2;
-          const index = numberOfExistingCards.length
-            ? numberOfExistingCards.length - (seeMoreFlag ? defaultCardCount : DEFAULT_NUM_CARDS)
-            : 0;
-          if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
+          const index = numberOfExistingCards.length ? numberOfExistingCards.length : 0;
+          if (!data[index + (seeMoreFlag ? defaultCardCount : DEFAULT_NUM_CARDS)] && !block.dataset.browseCardRows) {
             const btn = block.querySelector('.recommendation-marquee-see-more-btn');
             if (btn) {
               btn.classList.add('hide');
             }
           }
-          if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
+          if (!data[index + (seeMoreFlag ? defaultCardCount : DEFAULT_NUM_CARDS)] && block.dataset.browseCardRows) {
             const btn = block.querySelector('.recommendation-marquee-see-more-btn > button');
             if (btn) {
               btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
