@@ -73,9 +73,14 @@ function calculateNumberOfCardsToRender(container) {
         section.style.visibility = 'visible';
       }
     }
-
-    if (!cardsWidth) cardsWidth = cardsContainer?.offsetWidth || 256;
-    if (!cardsGap) cardsGap = parseInt(getComputedStyle(cardsContainer).gap, 10) || 24;
+    const DEFAULT_CARD_WIDTH = 256;
+    const DEFAULT_CARD_GAP = 24;
+    if (!cardsWidth) cardsWidth = cardsContainer?.offsetWidth || DEFAULT_CARD_WIDTH;
+    if (!cardsGap) {
+      cardsGap = cardsContainer
+        ? parseInt(getComputedStyle(cardsContainer).gap, 10) || DEFAULT_CARD_GAP
+        : DEFAULT_CARD_GAP;
+    }
     const visibleItems = Math.floor((containerWidth + cardsGap) / (cardsWidth + cardsGap));
     if (visibleItems) {
       DEFAULT_NUM_CARDS = visibleItems;
@@ -353,6 +358,7 @@ export default async function decorate(block) {
     `);
   const tempContentSection = tempWrapper.querySelector('.recommended-content-block-section');
   block.appendChild(tempWrapper);
+  calculateNumberOfCardsToRender(block);
   countNumberAsArray(DEFAULT_NUM_CARDS).forEach(() => {
     const { shimmer: shimmerInstance, wrapper } = renderCardPlaceholders(tempWrapper);
     shimmerInstance.addShimmer(wrapper);
