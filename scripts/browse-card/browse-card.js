@@ -360,6 +360,7 @@ export async function buildCard(container, element, model) {
     img.addEventListener('error', () => {
       img.style.display = 'none';
       laptopContainer.style.display = 'none';
+      card.classList.add('thumbnail-not-loaded');
     });
     img.addEventListener('load', () => {
       cardFigure.classList.add('img-custom-height');
@@ -376,6 +377,8 @@ export async function buildCard(container, element, model) {
         decorateIcons(playButton);
       }
     });
+  } else {
+    card.classList.add('thumbnail-not-loaded');
   }
   if (badgeTitle || failedToLoad) {
     const bannerElement = createTag('h3', { class: 'browse-card-banner' });

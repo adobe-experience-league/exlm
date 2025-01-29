@@ -421,7 +421,7 @@
   .recommendation-marquee.block
     .browse-cards-block-content.recommendation-marquee-wrap
     .card-wrapper:first-child
-    .browse-card:not(.thumbnail-loaded) {
+    .browse-card.thumbnail-not-loaded {
     background-image: url('../../images/rec-marquee-no-thumbnail-bg.svg');
     background-position: center;
   }
