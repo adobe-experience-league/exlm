@@ -127,6 +127,10 @@ export default async function decorate(block) {
 
     const tags = [...tagsContainer.querySelectorAll('.browse-tags')].map((tag) => tag.value);
 
+    tags.filter((tag)=> !selectedFilters.includes(tag)).forEach((tag)=>{
+      [...tagsContainer.querySelectorAll('.browse-tags')].forEach((existingTag) =>{ if(existingTag.value === tag) existingTag.remove()});
+    })
+
     selectedFilters
       .filter((filter) => !tags.includes(filter))
       .forEach((filter) => {
