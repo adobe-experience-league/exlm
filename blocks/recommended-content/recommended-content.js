@@ -932,7 +932,7 @@ export default async function decorate(block) {
               buildNoResultsContent(contentDiv, false);
               buildNoResultsContent(contentDiv, true);
               recommendedContentNoResults(contentDiv);
-              
+
               if (!block.dataset.browseCardRows) {
                 if (btn) btn.style.display = 'none';
               }
