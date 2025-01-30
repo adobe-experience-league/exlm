@@ -348,8 +348,6 @@ export async function buildCard(container, element, model) {
     const laptopKeyboard = document.createElement('div');
     laptopContainer.append(laptopScreen, laptopKeyboard);
 
-    cardFigure.appendChild(laptopContainer);
-
     const img = document.createElement('img');
     img.src = thumbnail;
     img.loading = 'lazy';
@@ -365,6 +363,7 @@ export async function buildCard(container, element, model) {
     img.addEventListener('load', () => {
       cardFigure.classList.add('img-custom-height');
       card.classList.add('thumbnail-loaded');
+      cardFigure.appendChild(laptopContainer);
       if (
         VIDEO_THUMBNAIL_FORMAT.test(thumbnail) ||
         type === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
