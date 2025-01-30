@@ -48,7 +48,7 @@ export default async function decorate(block) {
   );
 
   block.innerHTML = '';
-  block.classList.add('upcoming-events-block');
+  block.classList.add('upcoming-event-block');
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
