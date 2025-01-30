@@ -932,6 +932,20 @@ export default async function decorate(block) {
               buildNoResultsContent(contentDiv, false);
               buildNoResultsContent(contentDiv, true);
               recommendedContentNoResults(contentDiv);
+              
+              if (!block.dataset.browseCardRows) {
+                if (btn) btn.style.display = 'none';
+              }
+
+              if (block.dataset.browseCardRows) {
+                if (btn) {
+                  btn.firstElementChild.innerHTML =
+                    placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+                }
+                block.dataset.allRowsLoaded = true;
+                block.dataset.maxRows = block.dataset.browseCardRows;
+              }
+
               return;
             }
 

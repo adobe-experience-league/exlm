@@ -922,6 +922,22 @@ export default async function decorate(block) {
               buildNoResultsContent(contentDiv, false);
               buildNoResultsContent(contentDiv, true);
               recommendedContentNoResults(contentDiv);
+
+              if (!block.dataset.browseCardRows) {
+                if (btn) {
+                  btn?.classList.add('hide');
+                }
+              }
+
+              if (block.dataset.browseCardRows) {
+                if (btn) {
+                  btn.firstElementChild.innerHTML =
+                    placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+                }
+                block.dataset.allRowsLoaded = true;
+                block.dataset.maxRows = block.dataset.browseCardRows;
+              }
+
               return;
             }
             const noResultsContent = block.querySelector('.browse-card-no-results');
