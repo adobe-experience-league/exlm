@@ -162,7 +162,7 @@
                 "template": {
                   "name": "Profile Section",
                   "model": "profile-section",
-                  "style": "profile-section",
+                  "style": "profile-section default",
                   "filter": "profile-section"
                 }
               }
