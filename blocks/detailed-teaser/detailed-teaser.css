@@ -197,8 +197,8 @@
 @media (min-width: 600px) {
   .section div.detailed-teaser-wrapper {
     /* stretches to window edge, cover section padding */
-    margin-left: calc(-1 * var(--spectrum-spacing-800));
-    margin-right: calc(-1 * var(--spectrum-spacing-800));
+    margin-left: calc(-1 * var(--spectrum-spacing-700));
+    margin-right: calc(-1 * var(--spectrum-spacing-700));
   }
 
   /* foreground container, flex (text + spacer), always on top */

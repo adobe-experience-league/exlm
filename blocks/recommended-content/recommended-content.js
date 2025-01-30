@@ -73,9 +73,14 @@ function calculateNumberOfCardsToRender(container) {
         section.style.visibility = 'visible';
       }
     }
-
-    if (!cardsWidth) cardsWidth = cardsContainer?.offsetWidth || 256;
-    if (!cardsGap) cardsGap = parseInt(getComputedStyle(cardsContainer).gap, 10) || 24;
+    const DEFAULT_CARD_WIDTH = 256;
+    const DEFAULT_CARD_GAP = 24;
+    if (!cardsWidth) cardsWidth = cardsContainer?.offsetWidth || DEFAULT_CARD_WIDTH;
+    if (!cardsGap) {
+      cardsGap = cardsContainer
+        ? parseInt(getComputedStyle(cardsContainer).gap, 10) || DEFAULT_CARD_GAP
+        : DEFAULT_CARD_GAP;
+    }
     const visibleItems = Math.floor((containerWidth + cardsGap) / (cardsWidth + cardsGap));
     if (visibleItems) {
       DEFAULT_NUM_CARDS = visibleItems;
@@ -353,6 +358,7 @@ export default async function decorate(block) {
     `);
   const tempContentSection = tempWrapper.querySelector('.recommended-content-block-section');
   block.appendChild(tempWrapper);
+  calculateNumberOfCardsToRender(block);
   countNumberAsArray(DEFAULT_NUM_CARDS).forEach(() => {
     const { shimmer: shimmerInstance, wrapper } = renderCardPlaceholders(tempWrapper);
     shimmerInstance.addShimmer(wrapper);
@@ -446,7 +452,7 @@ export default async function decorate(block) {
                     delayedCardData.splice(0, 1);
                   }
                   if (renderCards) {
-                    if (cardModel.id) {
+                    if (cardModel && cardModel.id) {
                       dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
                     }
                     buildCard(contentDiv, wrapperDiv, cardModel);
@@ -939,6 +945,23 @@ export default async function decorate(block) {
               const classOp =
                 contentDiv?.scrollWidth && contentDiv.scrollWidth <= contentDiv.offsetWidth ? 'add' : 'remove';
               navSectionEl.classList[classOp]('recommended-content-hidden');
+            }
+
+            if (contentDiv.querySelectorAll('.browse-card').length < DEFAULT_NUM_CARDS) {
+              if (!block.dataset.browseCardRows) {
+                if (btn) btn.style.display = 'none';
+              }
+
+              if (block.dataset.browseCardRows) {
+                if (btn) {
+                  btn.firstElementChild.innerHTML =
+                    placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+                }
+                block.dataset.allRowsLoaded = true;
+                block.dataset.maxRows = block.dataset.browseCardRows;
+              }
+            } else if (btn) {
+              btn.style.display = 'flex';
             }
           })
           .catch((err) => {

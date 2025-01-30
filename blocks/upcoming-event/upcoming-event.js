@@ -48,7 +48,7 @@ export default async function decorate(block) {
   );
 
   block.innerHTML = '';
-  block.classList.add('upcoming-events-block');
+  block.classList.add('upcoming-event-block');
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
@@ -126,6 +126,14 @@ export default async function decorate(block) {
           .filter((item) => item !== '');
 
     const tags = [...tagsContainer.querySelectorAll('.browse-tags')].map((tag) => tag.value);
+
+    tags
+      .filter((tag) => !selectedFilters.includes(tag))
+      .forEach((tag) => {
+        [...tagsContainer.querySelectorAll('.browse-tags')].forEach((existingTag) => {
+          if (existingTag.value === tag) existingTag.remove();
+        });
+      });
 
     selectedFilters
       .filter((filter) => !tags.includes(filter))
