@@ -20,7 +20,7 @@ const langMap = {
   ja: 'JA',
   ko: 'KO',
   nl: 'NL',
-  'pt-br': 'PT',
+  'pt-br': 'PT-BR',
   sv: 'SV',
   'zh-hans': 'ZH-S',
   'zh-hant': 'ZH-T',

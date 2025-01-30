@@ -4761,7 +4761,7 @@
     ]
   },
   {
-    "id": "upcoming-events",
+    "id": "upcoming-event",
     "fields": [
       {
         "component": "text",
