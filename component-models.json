@@ -3231,7 +3231,7 @@
         "valueType": "string",
         "options": [
           {
-            "name": "default",
+            "name": "Default",
             "value": "default"
           },
           {
