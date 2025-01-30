@@ -387,10 +387,10 @@ export default async function decorate(block) {
                     delayedCardData.splice(0, 1);
                   }
                   if (renderCards) {
-                    if (cardModel.id) {
+                    if (cardModel && cardModel.id) {
                       dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
+                      cardModel.truncateDescription = false;
                     }
-                    cardModel.truncateDescription = false;
                     buildCard(contentDiv, wrapperDiv, cardModel);
                   }
                   cardModelsList.push(cardModel);
@@ -934,6 +934,25 @@ export default async function decorate(block) {
               const classOp =
                 contentDiv?.scrollWidth && contentDiv.scrollWidth <= contentDiv.offsetWidth ? 'add' : 'remove';
               navSectionEl.classList[classOp]('recommended-content-hidden');
+            }
+
+            if (contentDiv.querySelectorAll('.browse-card').length < DEFAULT_NUM_CARDS) {
+              if (!block.dataset.browseCardRows) {
+                if (btn) {
+                  btn?.classList.add('hide');
+                }
+              }
+
+              if (block.dataset.browseCardRows) {
+                if (btn) {
+                  btn.firstElementChild.innerHTML =
+                    placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+                }
+                block.dataset.allRowsLoaded = true;
+                block.dataset.maxRows = block.dataset.browseCardRows;
+              }
+            } else if (btn) {
+              btn.classList.remove('hide');
             }
           })
           .catch((err) => {
