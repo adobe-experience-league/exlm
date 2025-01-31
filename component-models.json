@@ -3251,16 +3251,8 @@
         "label": "Style",
         "description": "The section style",
         "valueType": "string",
-        "options": [
-          {
-            "name": "default",
-            "value": "default"
-          },
-          {
-            "name": "highlight",
-            "value": "highlight"
-          }
-        ]
+        "hidden": true,
+        "options": []
       }
     ]
   },
