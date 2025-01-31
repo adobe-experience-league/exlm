@@ -3232,15 +3232,15 @@
         "options": [
           {
             "name": "Default",
-            "value": "default"
+            "value": ["profile-section", "default"]
           },
           {
             "name": "Highlight - Dark grey",
-            "value": "highlight-dark-bg"
+            "value": ["profile-section", "highlight-dark-bg"]
           },
           {
             "name": "Highlight - Light grey",
-            "value": "highlight-light-bg"
+            "value": ["profile-section", "highlight-light-bg"]
           }
         ]
       },
