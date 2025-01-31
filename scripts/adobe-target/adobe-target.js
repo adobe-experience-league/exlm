@@ -136,34 +136,16 @@ class AdobeTargetClient {
       return;
     }
 
-    const possibleMarqueeData = window.exlm.targetData.reduce((acc, curr) => {
-      let newAcc = acc;
+    window.exlm.targetData = window.exlm.targetData.sort((data1, data2) => {
+      const numA = parseInt(data1?.meta?.scope.match(/\d+$/)[0], 10);
+      const numB = parseInt(data2?.meta?.scope.match(/\d+$/)[0], 10);
+      return numA - numB;
+    }).map((data, i) =>{
+      data.meta.scope = data.meta.scope.replace(/\d+$/, i + 1)
+      return data;
+    })
 
-      if (window.exlm.targetData.length === 1) {
-        if (curr.meta['criteria.title'] !== 'exl-php-recently-viewed-content') {
-          newAcc = curr;
-        }
-        return newAcc;
-      }
-
-      if (!curr.meta.scope.startsWith('exl-hp-auth-recs-')) {
-        return newAcc;
-      }
-
-      if (!newAcc) {
-        newAcc = curr;
-        return newAcc;
-      }
-
-      const [currScope] = curr.meta.scope.match(/\d/);
-      const [accScope] = newAcc.meta.scope.match(/\d/);
-
-      if (accScope && currScope && parseInt(currScope, 10) < parseInt(accScope, 10)) {
-        newAcc = curr;
-      }
-
-      return newAcc;
-    }, null);
+    const possibleMarqueeData = window.exlm.targetData[0]
 
     if (!possibleMarqueeData) {
       return;
