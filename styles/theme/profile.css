@@ -237,7 +237,7 @@ body.profile
 
 @media (width >= 1200px) {
   body.profile > main {
-    grid-template-columns: 264px 1fr;
+    grid-template-columns: 264px calc(100% - 264px);
   }
 
   body.profile div.profile-rail-wrapper {

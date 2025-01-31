@@ -168,8 +168,15 @@ function createSeeMoreButton(block, contentDiv, addNewRowOfCards, cardData) {
  * @returns {void}
  */
 export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
-  if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
-  else heading?.remove();
+  if (data?.meta?.heading && heading) {
+    if (heading.firstElementChild) {
+      heading.firstElementChild.innerHTML = data.meta.heading;
+    } else {
+      heading.innerHTML = data.meta.heading;
+    }
+  } else {
+    heading?.remove();
+  }
   if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
   else subheading?.remove();
   if (
