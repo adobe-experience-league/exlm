@@ -3251,8 +3251,16 @@
         "label": "Style",
         "description": "The section style",
         "valueType": "string",
-        "hidden": true,
-        "options": []
+        "options": [
+          {
+            "name": "default",
+            "value": ["profile-bottom-section", "default"]
+          },
+          {
+            "name": "highlight",
+            "value": ["profile-bottom-section", "highlight"]
+          }
+        ]
       }
     ]
   },
