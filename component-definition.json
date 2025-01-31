@@ -170,6 +170,23 @@
           }
         },
         {
+          "title": "Profile Bottom Section",
+          "id": "profile-bottom-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "Profile Bottom Section",
+                  "model": "profile-bottom-section",
+                  "style": "profile-bottom-section default",
+                  "filter": "profile-bottom-section"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Section",
           "id": "section",
           "plugins": {
