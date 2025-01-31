@@ -258,6 +258,7 @@
   height: 116px;
   border-bottom: 1px solid var(--spectrum-gray-200);
   object-fit: cover;
+  z-index: 9;
   transition:
     height 0.2s,
     width 0.2s;
