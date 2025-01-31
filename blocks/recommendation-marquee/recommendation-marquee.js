@@ -137,8 +137,15 @@ function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
  */
 export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
   if (isFeatureEnabled('recMarqueeTargetHeading')) {
-    if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
-    else heading?.remove();
+    if (data?.meta?.heading && heading) {
+      if (heading.firstElementChild && !heading.firstElementChild.className.includes('loading-shimmer')) {
+        heading.firstElementChild.innerHTML = data.meta.heading;
+      } else {
+        heading.innerHTML = data.meta.heading;
+      }
+    } else {
+      heading?.remove();
+    }
     if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
     else subheading?.remove();
   } else {
@@ -290,6 +297,7 @@ export default async function decorate(block) {
   }
 
   const [headingElement, descriptionElement, ...contentTypesEl] = restOfEl.reverse();
+  const headingElementNode = htmlToElement(headingElement.innerHTML);
   const recommendedContentShimmer = `
   <div class="recommendation-marquee-header">${generateLoadingShimmer([[50, 14]])}</div>
   <div class="recommendation-marquee-description">${generateLoadingShimmer([[50, 10]])}</div>
@@ -488,8 +496,12 @@ export default async function decorate(block) {
       } else {
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       }
-
-      if (!(targetSupport && targetCriteriaScopeId)) {
+      const coveoFlowDetection = !(targetSupport && targetCriteriaScopeId);
+      if (headingElementNode) {
+        headerContainer.innerHTML = '';
+        headerContainer.appendChild(headingElementNode);
+      }
+      if (coveoFlowDetection) {
         headerContainer.innerHTML = headingElement.innerHTML;
         descriptionContainer.innerHTML = descriptionElement.innerHTML;
         setCoveoCountAsBlockAttribute();
@@ -922,6 +934,22 @@ export default async function decorate(block) {
               buildNoResultsContent(contentDiv, false);
               buildNoResultsContent(contentDiv, true);
               recommendedContentNoResults(contentDiv);
+
+              if (!block.dataset.browseCardRows) {
+                if (btn) {
+                  btn?.classList.add('hide');
+                }
+              }
+
+              if (block.dataset.browseCardRows) {
+                if (btn) {
+                  btn.firstElementChild.innerHTML =
+                    placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+                }
+                block.dataset.allRowsLoaded = true;
+                block.dataset.maxRows = block.dataset.browseCardRows;
+              }
+
               return;
             }
             const noResultsContent = block.querySelector('.browse-card-no-results');
