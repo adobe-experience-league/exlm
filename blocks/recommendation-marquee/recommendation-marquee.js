@@ -490,20 +490,14 @@ export default async function decorate(block) {
       if (profileInterests.length === 0) {
         // filterSectionElement.style.display = 'none';
         blockHeader.style.display = 'none';
-        if (defaultOptionsKey.length === 0) {
-          defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
-        }
       } else if (profileInterests.length === 1) {
         // filterSectionElement.style.display = 'none';
         blockHeader.style.display = 'block';
-        if (defaultOptionsKey.length === 0) {
-          defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
-        }
       } else {
         blockHeader.style.display = 'block';
-        if (defaultOptionsKey.length === 0) {
-          defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
-        }
+      }
+      if (defaultOptionsKey.length === 0) {
+        defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       }
       const coveoFlowDetection = !(targetSupport && targetCriteriaScopeId);
       if (headingElementNode) {
@@ -1062,7 +1056,7 @@ export default async function decorate(block) {
     }
   });
 
-  const handleTargetSupportAndRender = (targetScopeId = '') => {
+  function handleTargetSupportAndRender(targetScopeId = '') {
     defaultAdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
       if (!targetSupport) {
         renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
@@ -1070,7 +1064,7 @@ export default async function decorate(block) {
         renderBlock({ targetSupport, targetCriteriaScopeId: targetScopeId });
       }
     });
-  };
+  }
 
   signupDialogEventEmitter.on('signupDialogClose', () => {
     profileDataPromise = defaultProfileClient.getMergedProfile();
