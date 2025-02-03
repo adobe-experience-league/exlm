@@ -155,7 +155,7 @@ export default async function loadCoveoToken() {
                 coveoResponseToken = '';
               });
           } else {
-            await processToken();
+            processToken();
           }
         } catch (error) {
           reject(new Error(`Error fetching new coveo token: ${error.message}`));
