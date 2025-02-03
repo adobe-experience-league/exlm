@@ -6,8 +6,9 @@
   --link-color: #035fe6;
   --link-hover-color: #136ff6;
   --background-color: #fff;
+  --highlight-light-background-color: #f8f8f8;
+  --highlight-dark-background-color: #efefef;
   --overlay-background-color: #eee;
-  --highlight-background-color: #f8f8f8;
   --text-color: #000;
   --footer-background-color: #fafafa;
   --footer-border-color: #e1e1e1;
@@ -802,7 +803,7 @@ picture {
 
   /* section metadata */
   &.highlight {
-    background-color: var(--highlight-background-color);
+    background-color: var(--highlight-light-background-color);
 
     &.icon-block-container {
       padding: 32px 36px 48px;

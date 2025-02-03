@@ -3263,8 +3263,20 @@
         "label": "Style",
         "description": "The section style",
         "valueType": "string",
-        "hidden": true,
-        "options": []
+        "options": [
+          {
+            "name": "Default",
+            "value": ["profile-bottom-section", "default"]
+          },
+          {
+            "name": "Highlight - Dark grey",
+            "value": ["profile-bottom-section", "highlight-dark-bg"]
+          },
+          {
+            "name": "Highlight - Light grey",
+            "value": ["profile-bottom-section", "highlight-light-bg"]
+          }
+        ]
       }
     ]
   },

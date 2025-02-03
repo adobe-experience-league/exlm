@@ -26,7 +26,7 @@ import {
  * Load files async using import() if you must.
  */
 
-const LCP_BLOCKS = ['video-embed', 'marquee', 'article-marquee']; // add your LCP blocks to the list
+const LCP_BLOCKS = ['video-embed', 'marquee', 'article-marquee', 'personalized-content-placeholder']; // add your LCP blocks to the list
 
 /**
  * load fonts.css and set a session storage flag
@@ -666,11 +666,10 @@ export function getConfig() {
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/coveo-token?lang=${lang}`,
-    coveoSearchResultsUrl:
-      isProd || isStage
-        ? 'https://platform.cloud.coveo.com/rest/search/v2'
-        : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
-    coveoOrganizationId: isProd || isStage ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
+    coveoSearchResultsUrl: isProd
+      ? 'https://platform.cloud.coveo.com/rest/search/v2'
+      : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
+    coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     coveoToken: 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
     liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
