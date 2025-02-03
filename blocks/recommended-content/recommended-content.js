@@ -34,6 +34,8 @@ const seeMoreConfig = {
 };
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
+const signupDialogEventEmitter = getEmitter('signupDialog');
+
 // Event for target data change (Updating the block based on target data)
 const targetEventEmitter = getEmitter('loadTargetBlocks');
 
@@ -357,7 +359,7 @@ export default async function decorate(block) {
     block.classList.add('coveo-only');
   }
   const targetCriteriaId = block.dataset.targetScope;
-  const profileDataPromise = defaultProfileClient.getMergedProfile();
+  let profileDataPromise = defaultProfileClient.getMergedProfile();
 
   const tempWrapper = htmlToElement(`
       <div class="recommended-content-temp-wrapper">
@@ -544,12 +546,21 @@ export default async function decorate(block) {
       if (profileInterests.length === 0) {
         if (!UEAuthorMode) filterSectionElement.style.display = 'none';
         if (!UEAuthorMode) blockHeader.style.display = 'none';
-        defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
+        if (defaultOptionsKey.length === 0) {
+          defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
+        }
       } else if (profileInterests.length === 1) {
         if (!UEAuthorMode) filterSectionElement.style.display = 'none';
-        defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
+        blockHeader.style.display = 'block';
+        if (defaultOptionsKey.length === 0) {
+          defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
+        }
       } else {
-        defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
+        filterSectionElement.style.display = 'block';
+        blockHeader.style.display = 'block';
+        if (defaultOptionsKey.length === 0) {
+          defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
+        }
       }
       const coveoFlowDetection = !(targetSupport && targetCriteriaScopeId);
       if (headingElementNode) {
@@ -1059,15 +1070,24 @@ export default async function decorate(block) {
     }
   });
 
-  if (showOnlyCoveo) {
-    renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
-  } else {
+  const handleTargetSupportAndRender = (targetScopeId = '') => {
     defaultAdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
       if (!targetSupport) {
         renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
-      } else if (targetCriteriaId) {
-        renderBlock({ targetSupport, targetCriteriaScopeId: targetCriteriaId });
+      } else if (targetScopeId) {
+        renderBlock({ targetSupport, targetCriteriaScopeId: targetScopeId });
       }
     });
+  };
+
+  signupDialogEventEmitter.on('signupDialogClose', () => {
+    profileDataPromise = defaultProfileClient.getMergedProfile();
+    handleTargetSupportAndRender(block.dataset.targetScope);
+  });
+
+  if (showOnlyCoveo) {
+    renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
+  } else {
+    handleTargetSupportAndRender(targetCriteriaId);
   }
 }
