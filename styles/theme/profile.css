@@ -73,7 +73,7 @@ body.profile .section.highlight-dark-bg {
 }
 
 body.profile .section.highlight-light-bg {
-  background-color: var(--highlight-background-color);
+  background-color: var(--highlight-light-background-color);
 }
 
 body.profile-home-page .section:nth-last-of-type(2),
