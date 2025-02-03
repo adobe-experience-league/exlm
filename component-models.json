@@ -3253,12 +3253,16 @@
         "valueType": "string",
         "options": [
           {
-            "name": "default",
+            "name": "Default",
             "value": ["profile-bottom-section", "default"]
           },
           {
-            "name": "highlight",
-            "value": ["profile-bottom-section", "highlight"]
+            "name": "Highlight - Dark grey",
+            "value": ["profile-bottom-section", "highlight-dark-bg"]
+          },
+          {
+            "name": "Highlight - Light grey",
+            "value": ["profile-bottom-section", "highlight-light-bg"]
           }
         ]
       }

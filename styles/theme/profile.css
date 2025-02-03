@@ -68,7 +68,11 @@ body.profile-home-page .section:not(.sign-up-flow-section) {
   border-bottom: 1px solid var(--spectrum-gray-300);
 }
 
-body.profile .section.highlight {
+body.profile .section.highlight-dark-bg {
+  background-color: var(--highlight-dark-background-color);
+}
+
+body.profile .section.highlight-light-bg {
   background-color: var(--highlight-background-color);
 }
 
