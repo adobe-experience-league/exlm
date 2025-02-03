@@ -1085,12 +1085,12 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination
 @media (min-width: 1024px) {
   body[class^="browse-"] > main {
     display: grid;
-    grid-template: "browse-rail main"/256px 1fr;
+    grid-template: auto auto / 256px calc(100% - 256px);
+    grid-template-areas: "browse-rail main";
 
     /* on pages with rails the max width must be on main */
     max-width: var(--default-max-width);
     margin: auto;
-    grid-template-rows: auto auto;
   }
 
   main > div.section {

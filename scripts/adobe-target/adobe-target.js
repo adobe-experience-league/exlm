@@ -307,7 +307,10 @@ class AdobeTargetClient {
       const containerSection = document.createElement('div');
       containerSection.classList.add('section', 'profile-section');
       const profileRailSection = main.querySelector('.profile-rail-section');
-      if (profileRailSection) {
+      const profileBottomSections = main.querySelectorAll('.profile-bottom-section');
+      if (profileBottomSections.length) {
+        main.insertBefore(containerSection, profileBottomSections[0]);
+      } else if (profileRailSection) {
         main.insertBefore(containerSection, profileRailSection);
       } else {
         main.appendChild(containerSection);

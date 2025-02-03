@@ -203,8 +203,15 @@ function resizeObserverHandler(callback, block) {
  * @returns {void}
  */
 export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
-  if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
-  else heading?.remove();
+  if (data?.meta?.heading && heading) {
+    if (heading.firstElementChild && !heading.firstElementChild.className.includes('loading-shimmer')) {
+      heading.firstElementChild.innerHTML = data.meta.heading;
+    } else {
+      heading.innerHTML = data.meta.heading;
+    }
+  } else {
+    heading?.remove();
+  }
   if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
   else subheading?.remove();
   if (
@@ -333,6 +340,7 @@ export default async function decorate(block) {
   block.innerHTML = '';
 
   filterSectionElement.classList.add('recommended-content-filter-heading');
+  const headingElementNode = htmlToElement(headingElement.innerHTML);
   const blockHeader = createTag('div', { class: 'recommended-content-block-header' });
   blockHeader.innerHTML = generateLoadingShimmer([[80, 30]]);
   block.insertAdjacentHTML('afterbegin', recommendedContentShimmer);
@@ -452,7 +460,7 @@ export default async function decorate(block) {
                     delayedCardData.splice(0, 1);
                   }
                   if (renderCards) {
-                    if (cardModel.id) {
+                    if (cardModel && cardModel.id) {
                       dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
                     }
                     buildCard(contentDiv, wrapperDiv, cardModel);
@@ -543,8 +551,12 @@ export default async function decorate(block) {
       } else {
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       }
-
-      if (!(targetSupport && targetCriteriaScopeId)) {
+      const coveoFlowDetection = !(targetSupport && targetCriteriaScopeId);
+      if (headingElementNode) {
+        headerContainer.innerHTML = '';
+        headerContainer.appendChild(headingElementNode);
+      }
+      if (coveoFlowDetection) {
         headerContainer.innerHTML = headingElement.innerHTML;
         descriptionContainer.innerHTML = descriptionElement.innerHTML;
         setCoveoCountAsBlockAttribute();
@@ -932,6 +944,20 @@ export default async function decorate(block) {
               buildNoResultsContent(contentDiv, false);
               buildNoResultsContent(contentDiv, true);
               recommendedContentNoResults(contentDiv);
+
+              if (!block.dataset.browseCardRows) {
+                if (btn) btn.style.display = 'none';
+              }
+
+              if (block.dataset.browseCardRows) {
+                if (btn) {
+                  btn.firstElementChild.innerHTML =
+                    placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+                }
+                block.dataset.allRowsLoaded = true;
+                block.dataset.maxRows = block.dataset.browseCardRows;
+              }
+
               return;
             }
 
@@ -945,6 +971,23 @@ export default async function decorate(block) {
               const classOp =
                 contentDiv?.scrollWidth && contentDiv.scrollWidth <= contentDiv.offsetWidth ? 'add' : 'remove';
               navSectionEl.classList[classOp]('recommended-content-hidden');
+            }
+
+            if (contentDiv.querySelectorAll('.browse-card').length < DEFAULT_NUM_CARDS) {
+              if (!block.dataset.browseCardRows) {
+                if (btn) btn.style.display = 'none';
+              }
+
+              if (block.dataset.browseCardRows) {
+                if (btn) {
+                  btn.firstElementChild.innerHTML =
+                    placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+                }
+                block.dataset.allRowsLoaded = true;
+                block.dataset.maxRows = block.dataset.browseCardRows;
+              }
+            } else if (btn) {
+              btn.style.display = 'flex';
             }
           })
           .catch((err) => {
