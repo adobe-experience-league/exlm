@@ -114,8 +114,8 @@ let coveoResponseToken = '';
 let coveoTokenExpirationTime = '';
 export default async function loadCoveoToken() {
   const storedCoveoToken = sessionStorage.getItem(COVEO_TOKEN);
-
-  if (storedCoveoToken) {
+  const { isProd, coveoToken } = getConfig();
+  if (storedCoveoToken && isProd) {
     const currentTime = Math.floor(Date.now() / 1000);
     coveoTokenExpirationTime = coveoTokenExpirationTime || decodeCoveoTokenValidity(storedCoveoToken);
     if (coveoTokenExpirationTime > currentTime) {
@@ -131,8 +131,6 @@ export default async function loadCoveoToken() {
     new Promise(async (resolve, reject) => {
       // this is temporary code, will be reverted.
       // Token allows acces to staging search functionality, but not analytics
-
-      const { isProd, coveoToken } = getConfig();
       if (!isProd) {
         resolve(coveoToken);
         return;
