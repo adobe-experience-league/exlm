@@ -16,6 +16,7 @@ import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards
 import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
+const signupDialogEventEmitter = getEmitter('signupDialog');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const DEFAULT_NUM_CARDS = 5;
 let seeMoreFlag = false;
@@ -316,7 +317,7 @@ export default async function decorate(block) {
   const descriptionContainer = block.querySelector('.recommendation-marquee-description');
 
   const targetCriteriaId = block.dataset.targetScope;
-  const profileDataPromise = defaultProfileClient.getMergedProfile();
+  let profileDataPromise = defaultProfileClient.getMergedProfile();
 
   const tempWrapper = htmlToElement(`
       <div class="recommendation-marquee-temp-wrapper">
@@ -489,11 +490,13 @@ export default async function decorate(block) {
       if (profileInterests.length === 0) {
         // filterSectionElement.style.display = 'none';
         blockHeader.style.display = 'none';
-        defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       } else if (profileInterests.length === 1) {
         // filterSectionElement.style.display = 'none';
-        defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
+        blockHeader.style.display = 'block';
       } else {
+        blockHeader.style.display = 'block';
+      }
+      if (defaultOptionsKey.length === 0) {
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       }
       const coveoFlowDetection = !(targetSupport && targetCriteriaScopeId);
@@ -1053,15 +1056,24 @@ export default async function decorate(block) {
     }
   });
 
-  if (showOnlyCoveo) {
-    renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
-  } else {
+  function handleTargetSupportAndRender(targetScopeId = '') {
     defaultAdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
       if (!targetSupport) {
         renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
-      } else if (targetCriteriaId) {
-        renderBlock({ targetSupport, targetCriteriaScopeId: targetCriteriaId });
+      } else if (targetScopeId) {
+        renderBlock({ targetSupport, targetCriteriaScopeId: targetScopeId });
       }
     });
+  }
+
+  signupDialogEventEmitter.on('signupDialogClose', () => {
+    profileDataPromise = defaultProfileClient.getMergedProfile();
+    handleTargetSupportAndRender(block.dataset.targetScope);
+  });
+
+  if (showOnlyCoveo) {
+    renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
+  } else {
+    handleTargetSupportAndRender(targetCriteriaId);
   }
 }
