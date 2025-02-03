@@ -39,6 +39,14 @@ body.profile-home-page .section:not(.sign-up-flow-section) {
   border-bottom: 1px solid var(--spectrum-gray-300);
 }
 
+body.profile .section.highlight-dark-bg {
+  background-color: var(--highlight-dark-background-color);
+}
+
+body.profile .section.highlight-light-bg {
+  background-color: var(--highlight-light-background-color);
+}
+
 body.profile-home-page .section:nth-last-of-type(2),
 body.profile-home-page .section:not(.sign-up-flow-section):last-child {
   border: none;

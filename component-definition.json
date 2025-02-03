@@ -179,7 +179,7 @@
                 "template": {
                   "name": "Profile Bottom Section",
                   "model": "profile-bottom-section",
-                  "style": "profile-bottom-section",
+                  "style": ["profile-bottom-section", "default"],
                   "filter": "profile-bottom-section"
                 }
               }
