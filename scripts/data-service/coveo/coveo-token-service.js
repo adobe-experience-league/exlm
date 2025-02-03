@@ -113,8 +113,6 @@ async function fetchAndStoreCoveoToken() {
 let coveoResponseToken = '';
 let coveoTokenExpirationTime = '';
 export default async function loadCoveoToken() {
-  // this is temporary code, will be reverted.
-  // Token allows acces to staging search functionality, but not analytics
   const { isProd, coveoToken } = getConfig();
   if (!isProd) {
     return coveoToken;
