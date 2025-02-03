@@ -136,16 +136,18 @@ class AdobeTargetClient {
       return;
     }
 
-    window.exlm.targetData = window.exlm.targetData.sort((data1, data2) => {
-      const numA = parseInt(data1?.meta?.scope.match(/\d+$/)[0], 10);
-      const numB = parseInt(data2?.meta?.scope.match(/\d+$/)[0], 10);
-      return numA - numB;
-    }).map((data, i) =>{
-      data.meta.scope = data.meta.scope.replace(/\d+$/, i + 1)
-      return data;
-    })
+    window.exlm.targetData = window.exlm.targetData
+      .sort((data1, data2) => {
+        const numA = parseInt(data1?.meta?.scope.match(/\d+$/)[0], 10);
+        const numB = parseInt(data2?.meta?.scope.match(/\d+$/)[0], 10);
+        return numA - numB;
+      })
+      .map((data, i) => {
+        data.meta.scope = data.meta.scope.replace(/\d+$/, i + 1);
+        return data;
+      });
 
-    const possibleMarqueeData = window.exlm.targetData[0]
+    const possibleMarqueeData = window.exlm.targetData[0];
 
     if (!possibleMarqueeData) {
       return;
