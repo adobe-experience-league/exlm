@@ -35,7 +35,7 @@
   height: 18px;
   content: '';
   box-sizing: content-box;
-  background: rgb(0 0 0 / 0%) url('/icons/chevron_down.svg') no-repeat right center;
+  background: rgb(0 0 0 / 0%) url('/icons/chevron-down.svg') no-repeat right center;
   transform: rotate(180deg);
   transition: transform 300ms;
 }

@@ -104,7 +104,7 @@ ol .accordion summary {
 }
 
 .accordion details[open] summary::before {
-  content: url('../../icons/chevron_down.svg');
+  content: url('../../icons/chevron-down.svg');
 }
 
 .accordion .code-wrapper,
