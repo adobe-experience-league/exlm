@@ -636,7 +636,7 @@ export default async function decorate(block) {
         if (btn) {
           btn.classList.remove('hide');
         }
-        let contentTypes = contentTypesEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse() || [];
+        let contentTypes = contentTypesEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()) || [];
         contentTypes = contentTypes.slice(0, DEFAULT_NUM_CARDS);
         const contentTypeIsEmpty = contentTypes?.length === 0;
         let noOfRows = parseInt(block.dataset.browseCardRows, 10);
