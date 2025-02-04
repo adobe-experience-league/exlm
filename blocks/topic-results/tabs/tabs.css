@@ -85,7 +85,7 @@
     top: 50%;
     right: 0;
     transform: translateY(-50%) rotate(180deg);
-    background: url('../../../icons/chevron_down.svg') no-repeat right 8.9px center;
+    background: url('../../../icons/chevron-down.svg') no-repeat right 8.9px center;
   }
 
   .tab-down-arrow {

@@ -22,13 +22,16 @@
 
 .profile-rail .profile-rail-overlay a,
 .profile-rail .profile-rail-links li > a {
-  display: none;
   align-items: center;
   font-size: var(--spectrum-font-size-100);
   color: var(--spectrum-gray-700);
   margin: 0;
   padding: 8px 12px;
   border-radius: 4px;
+}
+
+.profile-rail .profile-rail-links li > a {
+  display: none;
 }
 
 .profile-rail .profile-rail-overlay a:hover,
