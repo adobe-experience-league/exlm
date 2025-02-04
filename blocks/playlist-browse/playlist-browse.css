@@ -251,11 +251,11 @@
 }
 
 .playlist-browse-filter-button[aria-expanded='false']::after {
-  background-image: url('/icons/chevron_down.svg');
+  background-image: url('/icons/chevron-down.svg');
 }
 
 .playlist-browse-filter-button[aria-expanded='true']::after {
-  background-image: url('/icons/chevron_down.svg');
+  background-image: url('/icons/chevron-down.svg');
   transform: translateX(-30%) translateY(-30%) rotate(180deg);
 }
 
