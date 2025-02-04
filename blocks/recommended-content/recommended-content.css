@@ -124,6 +124,7 @@ body.profile
 
 .recommended-content.block .browse-card-no-results {
   margin-top: 0;
+  flex: 0 0 100%;
 }
 
 .recommended-content.block .browse-cards-block-content:has(.browse-card-no-results) {

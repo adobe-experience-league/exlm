@@ -245,7 +245,7 @@
   display: grid;
   place-items: center;
   position: absolute;
-  z-index: 10;
+  z-index: 9;
 }
 
 .browse-card .browse-card-figure > img {

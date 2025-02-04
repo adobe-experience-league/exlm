@@ -636,7 +636,7 @@ export default async function decorate(block) {
         if (btn) {
           btn.classList.remove('hide');
         }
-        let contentTypes = contentTypesEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse() || [];
+        let contentTypes = contentTypesEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()) || [];
         contentTypes = contentTypes.slice(0, DEFAULT_NUM_CARDS);
         const contentTypeIsEmpty = contentTypes?.length === 0;
         let noOfRows = parseInt(block.dataset.browseCardRows, 10);
@@ -938,19 +938,21 @@ export default async function decorate(block) {
               buildNoResultsContent(contentDiv, true);
               recommendedContentNoResults(contentDiv);
 
-              if (!block.dataset.browseCardRows) {
-                if (btn) {
-                  btn?.classList.add('hide');
+              if (!targetSupport) {
+                if (!block.dataset.browseCardRows) {
+                  if (btn) {
+                    btn?.classList.add('hide');
+                  }
                 }
-              }
 
-              if (block.dataset.browseCardRows) {
-                if (btn) {
-                  btn.firstElementChild.innerHTML =
-                    placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+                if (block.dataset.browseCardRows) {
+                  if (btn) {
+                    btn.firstElementChild.innerHTML =
+                      placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+                  }
+                  block.dataset.allRowsLoaded = true;
+                  block.dataset.maxRows = block.dataset.browseCardRows;
                 }
-                block.dataset.allRowsLoaded = true;
-                block.dataset.maxRows = block.dataset.browseCardRows;
               }
 
               return;
@@ -967,23 +969,25 @@ export default async function decorate(block) {
               navSectionEl.classList[classOp]('recommended-content-hidden');
             }
 
-            if (contentDiv.querySelectorAll('.browse-card').length < DEFAULT_NUM_CARDS) {
-              if (!block.dataset.browseCardRows) {
-                if (btn) {
-                  btn?.classList.add('hide');
+            if (!targetSupport) {
+              if (contentDiv.querySelectorAll('.browse-card').length < DEFAULT_NUM_CARDS) {
+                if (!block.dataset.browseCardRows) {
+                  if (btn) {
+                    btn?.classList.add('hide');
+                  }
                 }
-              }
 
-              if (block.dataset.browseCardRows) {
-                if (btn) {
-                  btn.firstElementChild.innerHTML =
-                    placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+                if (block.dataset.browseCardRows) {
+                  if (btn) {
+                    btn.firstElementChild.innerHTML =
+                      placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+                  }
+                  block.dataset.allRowsLoaded = true;
+                  block.dataset.maxRows = block.dataset.browseCardRows;
                 }
-                block.dataset.allRowsLoaded = true;
-                block.dataset.maxRows = block.dataset.browseCardRows;
+              } else if (btn) {
+                btn.classList.remove('hide');
               }
-            } else if (btn) {
-              btn.classList.remove('hide');
             }
           })
           .catch((err) => {
