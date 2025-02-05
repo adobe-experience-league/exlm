@@ -3229,8 +3229,20 @@
         "label": "Style",
         "description": "The section style",
         "valueType": "string",
-        "hidden": true,
-        "options": []
+        "options": [
+          {
+            "name": "Default",
+            "value": ["profile-section", "default"]
+          },
+          {
+            "name": "Highlight - Dark grey",
+            "value": ["profile-section", "highlight-dark-bg"]
+          },
+          {
+            "name": "Highlight - Light grey",
+            "value": ["profile-section", "highlight-light-bg"]
+          }
+        ]
       },
       {
         "component": "boolean",

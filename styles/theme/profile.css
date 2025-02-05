@@ -2,10 +2,6 @@ body.profile {
   background-color: var(--background-color);
 }
 
-body.profile-home-page {
-  background-color: var(--spectrum-gray-100);
-}
-
 body.profile-home-page > main {
   min-height: 500px;
 }
