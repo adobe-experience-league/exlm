@@ -108,12 +108,14 @@ async function renderCards({ pgNum, block }) {
     return parsedCard;
   });
 
-  cardsData.forEach((cardData) => {
-    const cardDiv = document.createElement('div');
-    cardDiv.classList.add('bookmarks-card');
-    buildCard(wrapper, cardDiv, cardData);
-    wrapper.appendChild(cardDiv);
-  });
+  cardsData
+    .filter((cardData) => !cardData.failedToLoad)
+    .forEach((cardData) => {
+      const cardDiv = document.createElement('div');
+      cardDiv.classList.add('bookmarks-card');
+      buildCard(wrapper, cardDiv, cardData);
+      wrapper.appendChild(cardDiv);
+    });
   buildCardsShimmer.removeShimmer();
   wrapper.style.display = '';
 }
