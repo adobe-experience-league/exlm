@@ -52,8 +52,6 @@ export default async function ProfileRail(block) {
   });
 
   block.querySelectorAll('.profile-rail-links > li').forEach((navLink) => {
-    // Remove &nbsp; characters between <li> and <a> elements
-    navLink.innerHTML = navLink.innerHTML.replace(/&nbsp;/g, '');
     // In case of no awards for the profile
     if (!awards && !UEAuthorMode) {
       // remove the Awards link from left rail
