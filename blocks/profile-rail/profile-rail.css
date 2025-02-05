@@ -111,11 +111,16 @@
 
   .profile-rail .profile-rail-links li {
     margin: 8px 0;
+    display: flex;
+
+    /** To remove the visual rendering of inline non-breaking space (`&nbsp;`) characters that appear between child elements */
+    font-size: 0;
   }
 
   .profile-rail .profile-rail-links li > a {
     display: flex;
     padding: 5px 12px;
+    flex: 1;
   }
 
   .profile-rail .profile-rail-links li > a.active {
