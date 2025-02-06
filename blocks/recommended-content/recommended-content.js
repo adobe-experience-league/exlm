@@ -91,6 +91,24 @@ function calculateNumberOfCardsToRender(container) {
   }
 }
 
+function getSavedCardsCount(dataConfiguration) {
+  return Object.values(dataConfiguration.savedCardsResponse || {}).reduce((acc, curr) => acc + curr.models.length, 0);
+}
+
+function getSavedCardModel(dataConfiguration) {
+  const savedCardContentTypes = Object.keys(dataConfiguration.savedCardsResponse || {});
+  return savedCardContentTypes.reduce((acc, curr) => {
+    if (acc) {
+      return acc;
+    }
+    const savedCardResponse = dataConfiguration.savedCardsResponse[curr];
+    const cardModels = savedCardResponse.models || [];
+    const model = cardModels.pop();
+
+    return model || acc;
+  }, null);
+}
+
 function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
   if (!block.querySelector('.recommended-content-see-more-btn')) {
     const btnContainer = document.createElement('div');
@@ -513,6 +531,10 @@ export default async function decorate(block) {
               resolve(cardModelsList);
             });
           } else {
+            if (seeMoreConfig.prefetchCards && cardData.cardPromise === null) {
+              resolve([cardData]);
+              return;
+            }
             if (renderCards) {
               cardDiv.innerHTML = '';
               if (cardData.id) {
@@ -689,7 +711,7 @@ export default async function decorate(block) {
           data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(index, index + DEFAULT_NUM_CARDS));
         } else {
           const { data: cards = [], contentType: ctType } = cardResponse || {};
-          const { shimmers: cardShimmers, payload: apiPayload, wrappers: cardWrappers } = apiConfigObject;
+          const { shimmers: cardShimmers, payload: apiPayload, wrappers: cardWrappers, contentDiv } = apiConfigObject;
           const { noOfResults } = apiPayload;
           if (cards.length) {
             countNumberAsArray(noOfResults).forEach(() => {
@@ -703,18 +725,35 @@ export default async function decorate(block) {
               }
             });
           } else {
+            const cardsHaveBeenSaved = getSavedCardsCount(dataConfiguration) > 0;
+            if (seeMoreConfig.prefetchCards) {
+              if (!dataConfiguration.savedCardsResponse[ctType]) {
+                dataConfiguration.savedCardsResponse[ctType] = {};
+              }
+              dataConfiguration.savedCardsResponse[ctType].models = [];
+            } else if (cardsHaveBeenSaved) {
+              // delete the shimmer and wrapper as this instance of saved card was already rendered in first row.
+              // seeMoreConfig.prefetchCards will be false for the second row.
+              cardWrappers.forEach((wrapper, index) => {
+                wrapper.remove();
+                cardShimmers[index].removeShimmer();
+              });
+            }
             // Remove contentType and make new call.
             const payloadInfo = {
               ...apiPayload,
               contentType: null,
               noOfResults: DEFAULT_NUM_CARDS,
             };
+
             data.push({
-              cardPromise: getCardsData(payloadInfo),
+              cardPromise: seeMoreConfig.prefetchCards || cardsHaveBeenSaved ? null : getCardsData(payloadInfo),
               shimmers: cardShimmers,
               contentType: ctType,
               wrappers: cardWrappers,
               cardsToRenderCount: noOfResults,
+              replaceCard: seeMoreConfig.prefetchCards,
+              contentDiv,
             });
           }
         }
@@ -937,11 +976,12 @@ export default async function decorate(block) {
               renderCards: args.renderCards,
               wrappers,
               lowercaseOptionType,
+              contentDiv,
             };
             return new Promise((resolve) => {
               const savedCardModels = dataConfiguration.savedCardsResponse[payloadContentType]?.models;
               let promise;
-              if (savedCardModels?.length) {
+              if (Array.isArray(savedCardModels)) {
                 promise = Promise.resolve({
                   contentType,
                   data: savedCardModels,
@@ -972,8 +1012,30 @@ export default async function decorate(block) {
           ?.setAttribute('data-analytics-rec-source', targetSupport ? 'target' : 'coveo');
 
         Promise.all(cardPromises)
-          .then((finalPromiseResponse) => {
+          .then(async (finalPromiseResponse) => {
             const dontRenderCards = finalPromiseResponse.some((data) => data?.payloadConfig?.renderCards === false);
+            const cardsToBeReplaced = seeMoreConfig.prefetchCards
+              ? finalPromiseResponse.filter((response) =>
+                  response.data.some((cardData) => cardData.replaceCard === true),
+                )
+              : [];
+
+            if (cardsToBeReplaced.length) {
+              const cardReplacementPromises = [];
+              cardsToBeReplaced.forEach((responseInfo) => {
+                const { data = [] } = responseInfo;
+
+                data.forEach(({ shimmers, wrappers, contentDiv: contentWrapper }) => {
+                  wrappers.forEach((wrapper, index) => {
+                    const model = getSavedCardModel(dataConfiguration);
+                    shimmers[index].removeShimmer();
+                    cardReplacementPromises.push(buildCard(contentWrapper, wrapper, model));
+                  });
+                });
+              });
+              await Promise.all(cardReplacementPromises);
+            }
+
             if (saveCardResponse) {
               const renderedModels = finalPromiseResponse.reduce((acc, curr) => {
                 curr.renderedCardModels?.flat()?.forEach((d) => acc.push(d));
@@ -1038,9 +1100,7 @@ export default async function decorate(block) {
 
             if (!targetSupport) {
               const containsLessResponse = contentDiv.querySelectorAll('.browse-card').length < DEFAULT_NUM_CARDS;
-              const savedCardsCount = seeMoreConfig.prefetchCards
-                ? Object.values(dataConfiguration.savedCardsResponse).reduce((acc, curr) => acc + curr.models.length, 0)
-                : 1;
+              const savedCardsCount = seeMoreConfig.prefetchCards ? getSavedCardsCount(dataConfiguration) : 1;
               const seeMoreBtn = block.querySelector('.recommended-content-see-more-btn');
 
               if (containsLessResponse || savedCardsCount === 0) {
@@ -1050,7 +1110,7 @@ export default async function decorate(block) {
 
                 if (block.dataset.browseCardRows) {
                   if (seeMoreBtn) {
-                    btn.firstElementChild.innerHTML =
+                    seeMoreBtn.firstElementChild.innerHTML =
                       placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
                   }
                   block.dataset.allRowsLoaded = true;
@@ -1105,7 +1165,11 @@ export default async function decorate(block) {
           renderButtonPlaceholder();
           renderCardBlock(block);
           fetchDataAndRenderBlock(defaultOption);
-          if (containsAllAdobeProductsTab && defaultOption !== ALL_ADOBE_OPTIONS_KEY) {
+          if (
+            containsAllAdobeProductsTab &&
+            defaultOption &&
+            defaultOption.toLowerCase() !== ALL_ADOBE_OPTIONS_KEY.toLowerCase()
+          ) {
             setTimeout(() => {
               fetchDataAndRenderBlock(ALL_ADOBE_OPTIONS_KEY, { renderCards: false }); // pre-fetch all my tab cards to avoid duplicates in indvidual tab. Timeout helps with 429 status code of v2 calls.
             }, 500);
