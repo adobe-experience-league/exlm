@@ -14,6 +14,7 @@ import ResponsivePillList from '../../scripts/responsive-pill-list/responsive-pi
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
+import { setCoveoCountAsBlockAttribute, setTargetDataAsBlockAttribute } from '../../scripts/analytics/analytics.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
 const signupDialogEventEmitter = getEmitter('signupDialog');
@@ -179,37 +180,6 @@ export function updateCopyFromTarget(data, heading, subheading, taglineCta, tagl
       taglineParentBlock?.remove();
     }
   }
-}
-
-/**
- * Sets target data as a data attribute on the given block element.
- *
- * This function checks if the provided `data` object contains a `meta` property.
- * If the `meta` property exists, it serializes the metadata as a JSON string and
- * adds it to the specified block element as a custom data attribute `data-analytics-target-meta`.
- *
- * @param {Object} data - The data returned from target.
- * @param {HTMLElement} block - The DOM element to which the meta data will be added as an attribute.
- *
- */
-export function setTargetDataAsBlockAttribute(data, block) {
-  if (data?.meta) {
-    block.setAttribute('data-analytics-target-meta', JSON.stringify(data?.meta));
-  }
-}
-
-/**
- * Adds a data-analytics-coveo-meta attribute to each recommendation-marquee block on the page.
- * Value is in the format block-name-coveo-X, where X represents the order of the block on the page.
- */
-function setCoveoCountAsBlockAttribute() {
-  const recommendedBlocks = document.querySelectorAll('.recommendation-marquee.block');
-  let coveoCount = 1;
-
-  recommendedBlocks.forEach((block) => {
-    block.setAttribute('data-analytics-coveo-meta', `recommendation-marquee-coveo-${coveoCount}`);
-    coveoCount += 1;
-  });
 }
 
 async function fetchInterestData() {
@@ -507,7 +477,7 @@ export default async function decorate(block) {
       if (coveoFlowDetection) {
         headerContainer.innerHTML = headingElement.innerHTML;
         descriptionContainer.innerHTML = descriptionElement.innerHTML;
-        setCoveoCountAsBlockAttribute();
+        setCoveoCountAsBlockAttribute(block);
         block.style.display = 'block';
       }
 

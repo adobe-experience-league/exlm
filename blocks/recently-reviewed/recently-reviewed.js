@@ -5,6 +5,7 @@ import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import getEmitter from '../../scripts/events.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
+import { setTargetDataAsBlockAttribute } from '../../scripts/analytics/analytics.js';
 
 let placeholders = {};
 try {
@@ -204,23 +205,6 @@ export function updateCopyFromTarget(data, heading, subheading, taglineCta, tagl
     if (taglineParentBlock) {
       taglineParentBlock?.remove();
     }
-  }
-}
-
-/**
- * Sets target data as a data attribute on the given block element.
- *
- * This function checks if the provided `data` object contains a `meta` property.
- * If the `meta` property exists, it serializes the metadata as a JSON string and
- * adds it to the specified block element as a custom data attribute `data-analytics-target-meta`.
- *
- * @param {Object} data - The data returned from target.
- * @param {HTMLElement} block - The DOM element to which the meta data will be added as an attribute.
- *
- */
-export function setTargetDataAsBlockAttribute(data, block) {
-  if (data?.meta) {
-    block.setAttribute('data-analytics-target-meta', JSON.stringify(data?.meta));
   }
 }
 
