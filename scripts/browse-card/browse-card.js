@@ -348,6 +348,10 @@ export async function buildCard(container, element, model) {
     const laptopKeyboard = document.createElement('div');
     laptopContainer.append(laptopScreen, laptopKeyboard);
 
+    cardFigure.classList.add('img-custom-height');
+    card.classList.add('thumbnail-loaded');
+    cardFigure.appendChild(laptopContainer);
+
     const img = document.createElement('img');
     img.src = thumbnail;
     img.loading = 'lazy';
@@ -356,14 +360,19 @@ export async function buildCard(container, element, model) {
     img.height = 153;
     cardFigure.appendChild(img);
     img.addEventListener('error', () => {
+      cardFigure.classList.remove('img-custom-height');
+      card.classList.remove('thumbnail-loaded');
+      card.classList.add('thumbnail-not-loaded');
       img.style.display = 'none';
       laptopContainer.style.display = 'none';
-      card.classList.add('thumbnail-not-loaded');
     });
+
+    if (img.complete) {
+      img.classList.add('img-loaded');
+    }
+
     img.addEventListener('load', () => {
-      cardFigure.classList.add('img-custom-height');
-      card.classList.add('thumbnail-loaded');
-      cardFigure.appendChild(laptopContainer);
+      img.classList.add('img-loaded');
       if (
         VIDEO_THUMBNAIL_FORMAT.test(thumbnail) ||
         type === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
