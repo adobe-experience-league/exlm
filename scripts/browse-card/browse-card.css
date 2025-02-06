@@ -259,9 +259,15 @@
   border-bottom: 1px solid var(--spectrum-gray-200);
   object-fit: cover;
   z-index: 9;
+  opacity: 0;
   transition:
     height 0.2s,
-    width 0.2s;
+    width 0.2s,
+    opacity 0.2s;
+}
+
+.browse-card .browse-card-figure > img.img-loaded {
+  opacity: 1;
 }
 
 .browse-card .browse-card-contributor-info img {
