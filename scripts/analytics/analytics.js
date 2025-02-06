@@ -3,12 +3,11 @@
  * Value is in the format block-name-coveo-X, where X represents the order of the block on the page.
  */
 export function setCoveoCountAsBlockAttribute(block) {
-  const blocks = document.querySelectorAll(`.${block}.block`);
-  let coveoCount = 1;
+  const blockClassName = block.className?.replace('block', '').trim();
+  const blocks = document.querySelectorAll(`.${blockClassName}`);
 
-  blocks.forEach((el) => {
-    el.setAttribute('data-analytics-coveo-meta', `${block}-coveo-${coveoCount}`);
-    coveoCount += 1;
+  blocks.forEach((el, index) => {
+    el.setAttribute('data-analytics-coveo-meta', `${blockClassName}-coveo-${index + 1}`);
   });
 }
 
