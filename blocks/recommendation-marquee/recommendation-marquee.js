@@ -200,14 +200,14 @@ export function setTargetDataAsBlockAttribute(data, block) {
 
 /**
  * Adds a data-analytics-coveo-meta attribute to each recommendation-marquee block on the page.
- * Value is in the format coveo-X, where X represents the order of the block on the page.
+ * Value is in the format block-name-coveo-X, where X represents the order of the block on the page.
  */
 function setCoveoCountAsBlockAttribute() {
   const recommendedBlocks = document.querySelectorAll('.recommendation-marquee.block');
   let coveoCount = 1;
 
   recommendedBlocks.forEach((block) => {
-    block.setAttribute('data-analytics-coveo-meta', `coveo-${coveoCount}`);
+    block.setAttribute('data-analytics-coveo-meta', `recommendation-marquee-coveo-${coveoCount}`);
     coveoCount += 1;
   });
 }
