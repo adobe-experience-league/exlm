@@ -1108,7 +1108,7 @@ export default async function decorate(block) {
 
                 if (block.dataset.browseCardRows) {
                   if (seeMoreBtn) {
-                    btn.firstElementChild.innerHTML =
+                    seeMoreBtn.firstElementChild.innerHTML =
                       placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
                   }
                   block.dataset.allRowsLoaded = true;
