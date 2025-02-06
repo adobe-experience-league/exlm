@@ -367,10 +367,10 @@ export async function buildCard(container, element, model) {
       laptopContainer.style.display = 'none';
     });
 
-    if(img.complete) {
+    if (img.complete) {
       img.classList.add('img-loaded');
     }
-    
+
     img.addEventListener('load', () => {
       img.classList.add('img-loaded');
       if (
