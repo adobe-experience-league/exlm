@@ -16,7 +16,6 @@ import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards
 import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
-const signupDialogEventEmitter = getEmitter('signupDialog');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const DEFAULT_NUM_CARDS = 5;
 let seeMoreFlag = false;
@@ -337,7 +336,7 @@ export default async function decorate(block) {
   const descriptionContainer = block.querySelector('.recommendation-marquee-description');
 
   const targetCriteriaId = block.dataset.targetScope;
-  let profileDataPromise = defaultProfileClient.getMergedProfile();
+  const profileDataPromise = defaultProfileClient.getMergedProfile();
 
   const tempWrapper = htmlToElement(`
       <div class="recommendation-marquee-temp-wrapper">
@@ -1202,11 +1201,6 @@ export default async function decorate(block) {
       }
     });
   }
-
-  signupDialogEventEmitter.on('signupDialogClose', () => {
-    profileDataPromise = defaultProfileClient.getMergedProfile();
-    handleTargetSupportAndRender(block.dataset.targetScope);
-  });
 
   if (showOnlyCoveo) {
     renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
