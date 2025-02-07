@@ -20,6 +20,7 @@ import {
   createOptimizedPicture,
   toClassName,
 } from './lib-franklin.js';
+import { setCoveoCountAsBlockAttribute } from './utils/analytics-utils.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -1220,6 +1221,8 @@ async function loadPage() {
         const isTargetSupported = await defaultAdobeTargetClient.checkTargetSupport();
         if (isTargetSupported) {
           defaultAdobeTargetClient.mapComponentsToTarget();
+        } else {
+          setCoveoCountAsBlockAttribute();
         }
       } else {
         await window?.adobeIMS?.signIn();

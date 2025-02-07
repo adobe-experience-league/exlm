@@ -2,13 +2,16 @@
  * Adds a data-analytics-coveo-meta attribute to each PHP block on the page.
  * Value is in the format block-name-coveo-X, where X represents the order of the block on the page.
  */
-export function setCoveoCountAsBlockAttribute(block) {
-  if (!block) return;
-  const blockClassName = block.className?.replace('block', '').trim();
-  const blocks = document.querySelectorAll(`.${blockClassName}`);
+export function setCoveoCountAsBlockAttribute() {
+  const selectors = ['.recommended-content', '.recommendation-marquee'];
 
-  blocks.forEach((el, index) => {
-    el.setAttribute('data-analytics-coveo-meta', `${blockClassName}-coveo-${index + 1}`);
+  selectors.forEach((selector) => {
+    const elements = document.querySelectorAll(selector);
+
+    elements.forEach((el, index) => {
+      const blockType = selector.replace('.', '');
+      el.setAttribute('data-analytics-coveo-meta', `${blockType}-coveo-${index + 1}`);
+    });
   });
 }
 

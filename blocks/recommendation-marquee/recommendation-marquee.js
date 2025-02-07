@@ -14,7 +14,7 @@ import ResponsivePillList from '../../scripts/responsive-pill-list/responsive-pi
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
-import { setCoveoCountAsBlockAttribute, setTargetDataAsBlockAttribute } from '../../scripts/utils/analytics-utils.js';
+import { setTargetDataAsBlockAttribute } from '../../scripts/utils/analytics-utils.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -546,7 +546,6 @@ export default async function decorate(block) {
       if (coveoFlowDetection) {
         headerContainer.innerHTML = headingElement.innerHTML;
         descriptionContainer.innerHTML = descriptionElement.innerHTML;
-        setCoveoCountAsBlockAttribute(block);
         block.style.display = 'block';
       }
 
