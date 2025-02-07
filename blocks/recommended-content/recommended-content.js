@@ -89,20 +89,48 @@ function calculateNumberOfCardsToRender(container) {
   }
 }
 
-function getSavedCardsCount(dataConfiguration) {
-  return Object.values(dataConfiguration.savedCardsResponse || {}).reduce((acc, curr) => acc + curr.models.length, 0);
+function ensureDataSaveConfigExists(dataConfiguration, lowercaseOptionType, ctType) {
+  if (!dataConfiguration.savedCardsResponse[lowercaseOptionType]) {
+    dataConfiguration.savedCardsResponse[lowercaseOptionType] = {};
+  }
+  if (!dataConfiguration.savedCardsResponse[lowercaseOptionType][ctType]) {
+    dataConfiguration.savedCardsResponse[lowercaseOptionType][ctType] = {
+      models: [],
+    };
+  }
 }
 
-function getSavedCardModel(dataConfiguration) {
-  const savedCardContentTypes = Object.keys(dataConfiguration.savedCardsResponse || {});
+function getSavedCardsCount(dataConfiguration, optionType) {
+  return Object.values(dataConfiguration.savedCardsResponse[optionType] || {}).reduce(
+    (acc, curr) => acc + curr.models.length,
+    0,
+  );
+}
+
+function restoreSavedCardsModelState(dataConfiguration, optionType) {
+  const savedCardResponseModel = dataConfiguration.savedCardsResponse[optionType] || {};
+  const contentTypes = Object.keys(savedCardResponseModel);
+  contentTypes.forEach((contentType) => {
+    const savedCardResponse = dataConfiguration.savedCardsResponse[optionType][contentType];
+    const cardModels = savedCardResponse.models || [];
+    cardModels.forEach((cardModel) => {
+      delete cardModel.markedForReplacement;
+    });
+  });
+}
+
+function getSavedCardModel(dataConfiguration, optionType) {
+  const savedCardContentTypes = Object.keys(dataConfiguration.savedCardsResponse[optionType] || {});
   return savedCardContentTypes.reduce((acc, curr) => {
     if (acc) {
       return acc;
     }
-    const savedCardResponse = dataConfiguration.savedCardsResponse[curr];
+    const savedCardResponse = dataConfiguration.savedCardsResponse[optionType][curr];
     const cardModels = savedCardResponse.models || [];
-    const model = cardModels.pop();
-
+    const model = cardModels.find((modelInfo) => modelInfo.markedForReplacement !== true);
+    if (model) {
+      model.markedForReplacement = true;
+    }
     return model || acc;
   }, null);
 }
@@ -451,13 +479,8 @@ export default async function decorate(block) {
         const { noOfResults } = payload;
         const renderCount = noOfResults / 2;
         if (index + 1 > renderCount) {
-          if (!dataConfiguration.savedCardsResponse[contentType]) {
-            dataConfiguration.savedCardsResponse[contentType] = {
-              models: [],
-              payload,
-            };
-          }
-          dataConfiguration.savedCardsResponse[contentType].models.push(model);
+          ensureDataSaveConfigExists(dataConfiguration, lowercaseOptionType, contentType);
+          dataConfiguration.savedCardsResponse[lowercaseOptionType][contentType].models.push(model);
           return null;
         }
         return model;
@@ -471,7 +494,6 @@ export default async function decorate(block) {
           if (cardData?.cardPromise) {
             cardData.cardPromise.then((cardDataResponse) => {
               const { cardsToRenderCount } = cardData;
-              const validCardsCount = seeMoreConfig.prefetchCards ? cardsToRenderCount / 2 : cardsToRenderCount;
               const { data: delayedCardData = [] } = cardDataResponse;
               const cardModelsList = [];
               if (delayedCardData.length === 0) {
@@ -482,48 +504,34 @@ export default async function decorate(block) {
                   });
                 }
               } else {
-                const { contentType, payload } = payloadConfig;
                 countNumberAsArray(cardsToRenderCount).forEach((_, index) => {
-                  if (seeMoreConfig.prefetchCards && index + 1 > validCardsCount) {
-                    if (!dataConfiguration.savedCardsResponse[contentType]) {
-                      dataConfiguration.savedCardsResponse[contentType] = {
-                        models: [],
-                        payload,
-                      };
+                  const shimmer = cardData.shimmers[index];
+                  const wrapperDiv = cardData.wrappers[index];
+                  if (renderCards) {
+                    if (shimmer) {
+                      shimmer.removeShimmer();
                     }
-                    const cardInfoToSave = delayedCardData[index];
-                    if (cardInfoToSave) {
-                      dataConfiguration.savedCardsResponse[contentType].models.push(cardInfoToSave);
-                    }
-                  } else {
-                    const shimmer = cardData.shimmers[index];
-                    const wrapperDiv = cardData.wrappers[index];
-                    if (renderCards) {
-                      if (shimmer) {
-                        shimmer.removeShimmer();
-                      }
-                      wrapperDiv.innerHTML = '';
-                    }
-                    const [defaultCardModel] = delayedCardData;
-                    const targetIndex = delayedCardData.findIndex((delayData) =>
-                      delayData.id ? !alreadyRenderedCardIds.includes(delayData.id) : false,
-                    );
-                    let cardModel;
-                    if (targetIndex !== -1) {
-                      cardModel = delayedCardData[targetIndex];
-                      delayedCardData.splice(targetIndex, 1);
-                    } else {
-                      cardModel = defaultCardModel;
-                      delayedCardData.splice(0, 1);
-                    }
-                    if (renderCards) {
-                      if (cardModel && cardModel.id) {
-                        dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
-                      }
-                      buildCard(contentDiv, wrapperDiv, cardModel);
-                    }
-                    cardModelsList.push(cardModel);
+                    wrapperDiv.innerHTML = '';
                   }
+                  const [defaultCardModel] = delayedCardData;
+                  const targetIndex = delayedCardData.findIndex((delayData) =>
+                    delayData.id ? !alreadyRenderedCardIds.includes(delayData.id) : false,
+                  );
+                  let cardModel;
+                  if (targetIndex !== -1) {
+                    cardModel = delayedCardData[targetIndex];
+                    delayedCardData.splice(targetIndex, 1);
+                  } else {
+                    cardModel = defaultCardModel;
+                    delayedCardData.splice(0, 1);
+                  }
+                  if (renderCards) {
+                    if (cardModel && cardModel.id) {
+                      dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
+                    }
+                    buildCard(contentDiv, wrapperDiv, cardModel);
+                  }
+                  cardModelsList.push(cardModel);
                 });
               }
               resolve(cardModelsList);
@@ -709,7 +717,13 @@ export default async function decorate(block) {
           data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(index, index + DEFAULT_NUM_CARDS));
         } else {
           const { data: cards = [], contentType: ctType } = cardResponse || {};
-          const { shimmers: cardShimmers, payload: apiPayload, wrappers: cardWrappers, contentDiv } = apiConfigObject;
+          const {
+            shimmers: cardShimmers,
+            payload: apiPayload,
+            wrappers: cardWrappers,
+            contentDiv,
+            lowercaseOptionType,
+          } = apiConfigObject;
           const { noOfResults } = apiPayload;
           if (cards.length) {
             countNumberAsArray(noOfResults).forEach(() => {
@@ -723,12 +737,10 @@ export default async function decorate(block) {
               }
             });
           } else {
-            const cardsHaveBeenSaved = getSavedCardsCount(dataConfiguration) > 0;
+            const cardsHaveBeenSaved = getSavedCardsCount(dataConfiguration, lowercaseOptionType) > 0;
             if (seeMoreConfig.prefetchCards) {
-              if (!dataConfiguration.savedCardsResponse[ctType]) {
-                dataConfiguration.savedCardsResponse[ctType] = {};
-              }
-              dataConfiguration.savedCardsResponse[ctType].models = [];
+              ensureDataSaveConfigExists(dataConfiguration, lowercaseOptionType, ctType);
+              dataConfiguration.savedCardsResponse[lowercaseOptionType][ctType].models = [];
             } else if (cardsHaveBeenSaved) {
               // delete the shimmer and wrapper as this instance of saved card was already rendered in first row.
               // seeMoreConfig.prefetchCards will be false for the second row.
@@ -977,7 +989,9 @@ export default async function decorate(block) {
               contentDiv,
             };
             return new Promise((resolve) => {
-              const savedCardModels = dataConfiguration.savedCardsResponse[payloadContentType]?.models;
+              const savedCardModels = dataConfiguration.savedCardsResponse[lowercaseOptionType]?.[
+                payloadContentType
+              ]?.models?.filter((model) => model.markedForReplacement !== true);
               let promise;
               if (Array.isArray(savedCardModels)) {
                 promise = Promise.resolve({
@@ -1025,9 +1039,11 @@ export default async function decorate(block) {
 
                 data.forEach(({ shimmers, wrappers, contentDiv: contentWrapper }) => {
                   wrappers.forEach((wrapper, index) => {
-                    const model = getSavedCardModel(dataConfiguration);
+                    const model = getSavedCardModel(dataConfiguration, lowercaseOptionType);
                     shimmers[index].removeShimmer();
-                    cardReplacementPromises.push(buildCard(contentWrapper, wrapper, model));
+                    if (model) {
+                      cardReplacementPromises.push(buildCard(contentWrapper, wrapper, model));
+                    }
                   });
                 });
               });
@@ -1098,7 +1114,9 @@ export default async function decorate(block) {
 
             if (!targetSupport) {
               const containsLessResponse = contentDiv.querySelectorAll('.browse-card').length < DEFAULT_NUM_CARDS;
-              const savedCardsCount = seeMoreConfig.prefetchCards ? getSavedCardsCount(dataConfiguration) : 1;
+              const savedCardsCount = seeMoreConfig.prefetchCards
+                ? getSavedCardsCount(dataConfiguration, lowercaseOptionType)
+                : 1;
               const seeMoreBtn = block.querySelector('.recommended-content-see-more-btn');
 
               if (containsLessResponse || savedCardsCount === 0) {
@@ -1176,6 +1194,8 @@ export default async function decorate(block) {
         onSelectCallback: (selectedItem) => {
           /* Reused the existing method */
           if (selectedItem) {
+            seeMoreConfig.prefetchCards = true;
+            restoreSavedCardsModelState(dataConfiguration, selectedItem.toLowerCase());
             renderButtonPlaceholder();
             fetchDataAndRenderBlock(selectedItem, { renderCards: true, createRow: false, clearSeeMoreRows: true });
           }
