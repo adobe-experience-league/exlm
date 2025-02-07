@@ -469,10 +469,10 @@ export default async function decorate(block) {
     });
 
   const renderCardsBlock = (cardModels, payloadConfig, contentDiv) => {
-    const { renderCards = true, lowercaseOptionType } = payloadConfig;
+    const { renderCards = true, lowercaseOptionType, targetSupport } = payloadConfig;
     const cardModelsToRender = cardModels
       .filter((model, index) => {
-        if (!seeMoreConfig.prefetchCards || !model) {
+        if (!seeMoreConfig.prefetchCards || targetSupport || !model) {
           return model;
         }
         const { payload, contentType } = payloadConfig;
