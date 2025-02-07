@@ -644,6 +644,13 @@
       {
         "component": "boolean",
         "valueType": "boolean",
+        "name": "alignment",
+        "label": "Align the default blocks in this section to the center.",
+        "description": "Enabling this option will align the default blocks in this section to the center."
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
         "name": "always-show",
         "label": "Do NOT hide on browse filter results?",
         "description": "When browse-filter block is used, on browse-filter results, all sections below the browse-filter is hidden. Above toggle makes an exception to show this section even if the browse filter results are displayed."
@@ -714,6 +721,13 @@
         "valueType": "string",
         "hidden": true,
         "options": []
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "alignment",
+        "label": "Align the default blocks in this section to the center.",
+        "description": "Enabling this option will align the default blocks in this section to the center."
       }
     ]
   },
@@ -3250,6 +3264,13 @@
         "name": "two-column-layout",
         "label": "Enable two-column layout for this section?",
         "description": "This will enable two-column layout for this particular section."
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "alignment",
+        "label": "Align the default blocks in this section to the center.",
+        "description": "Enabling this option will align the default blocks in this section to the center."
       }
     ]
   },
@@ -3277,6 +3298,13 @@
             "value": ["profile-bottom-section", "highlight-light-bg"]
           }
         ]
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "alignment",
+        "label": "Align the default blocks in this section to the center.",
+        "description": "Enabling this option will align the default blocks in this section to the center."
       }
     ]
   },
