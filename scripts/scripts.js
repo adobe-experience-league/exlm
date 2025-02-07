@@ -1166,6 +1166,21 @@ function handleRedirects() {
   if (redirect) window.location.href = redirect[1].href;
 }
 
+/**
+ * Adds a data-analytics-coveo-meta attribute to each PHP block on the page.
+ * Value is in the format block-name-coveo-X, where X represents the order of the block on the page.
+ */
+function setCoveoAnalyticsAttribute(blocks) {
+  blocks.forEach((block) => {
+    const elements = document.querySelectorAll(block);
+
+    elements.forEach((el, index) => {
+      const blockType = block.replace('.', '');
+      el.setAttribute('data-analytics-coveo-meta', `${blockType}-coveo-${index + 1}`);
+    });
+  });
+}
+
 async function loadPage() {
   handleRedirects();
   await loadEager(document);
@@ -1220,6 +1235,13 @@ async function loadPage() {
         const isTargetSupported = await defaultAdobeTargetClient.checkTargetSupport();
         if (isTargetSupported) {
           defaultAdobeTargetClient.mapComponentsToTarget();
+        } else {
+          const blocks = ['.recommended-content', '.recommendation-marquee'];
+          const isBlockPresent = blocks.some((selector) => document.querySelector(selector));
+
+          if (isBlockPresent) {
+            setCoveoAnalyticsAttribute(blocks);
+          }
         }
       } else {
         await window?.adobeIMS?.signIn();
