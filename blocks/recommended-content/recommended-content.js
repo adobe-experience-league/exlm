@@ -14,7 +14,7 @@ import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import setTargetDataAsBlockAttribute from '../../scripts/utils/analytics-utils.js';
+import { setTargetDataAsBlockAttribute, setCoveoAnalyticsAttribute } from '../../scripts/utils/analytics-utils.js';
 
 let placeholders = {};
 try {
@@ -602,6 +602,7 @@ export default async function decorate(block) {
       if (coveoFlowDetection) {
         headerContainer.innerHTML = headingElement.innerHTML;
         descriptionContainer.innerHTML = descriptionElement.innerHTML;
+        setCoveoAnalyticsAttribute(block);
         block.style.display = 'block';
       }
 
