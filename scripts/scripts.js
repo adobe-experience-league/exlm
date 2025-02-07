@@ -20,7 +20,6 @@ import {
   createOptimizedPicture,
   toClassName,
 } from './lib-franklin.js';
-import { setCoveoCountAsBlockAttribute } from './utils/analytics-utils.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -1167,6 +1166,21 @@ function handleRedirects() {
   if (redirect) window.location.href = redirect[1].href;
 }
 
+/**
+ * Adds a data-analytics-coveo-meta attribute to each PHP block on the page.
+ * Value is in the format block-name-coveo-X, where X represents the order of the block on the page.
+ */
+function setCoveoAnalyticsAttribute(blocks) {
+  blocks.forEach((block) => {
+    const elements = document.querySelectorAll(block);
+
+    elements.forEach((el, index) => {
+      const blockType = block.replace('.', '');
+      el.setAttribute('data-analytics-coveo-meta', `${blockType}-coveo-${index + 1}`);
+    });
+  });
+}
+
 async function loadPage() {
   handleRedirects();
   await loadEager(document);
@@ -1222,7 +1236,12 @@ async function loadPage() {
         if (isTargetSupported) {
           defaultAdobeTargetClient.mapComponentsToTarget();
         } else {
-          setCoveoCountAsBlockAttribute();
+          const blocks = ['.recommended-content', '.recommendation-marquee'];
+          const isBlockPresent = blocks.some((selector) => document.querySelector(selector));
+
+          if (isBlockPresent) {
+            setCoveoAnalyticsAttribute(blocks);
+          }
         }
       } else {
         await window?.adobeIMS?.signIn();
