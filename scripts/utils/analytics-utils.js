@@ -3,6 +3,7 @@
  * Value is in the format block-name-coveo-X, where X represents the order of the block on the page.
  */
 export function setCoveoCountAsBlockAttribute(block) {
+  if (!block) return;
   const blockClassName = block.className?.replace('block', '').trim();
   const blocks = document.querySelectorAll(`.${blockClassName}`);
 
