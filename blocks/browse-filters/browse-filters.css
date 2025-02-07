@@ -135,7 +135,7 @@
   overflow-y: auto;
   background-color: var(--non-spectrum-grey-100);
   min-width: 160px;
-  z-index: 2;
+  z-index: 10;
   width: 100%;
   box-sizing: border-box;
   padding: 12px;
