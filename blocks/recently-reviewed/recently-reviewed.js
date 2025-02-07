@@ -5,7 +5,7 @@ import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import getEmitter from '../../scripts/events.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import { setTargetDataAsBlockAttribute } from '../../scripts/analytics/analytics.js';
+import { setTargetDataAsBlockAttribute } from '../../scripts/utils/analytics-utils.js';
 
 let placeholders = {};
 try {

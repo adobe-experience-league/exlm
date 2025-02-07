@@ -1,5 +1,5 @@
 /**
- * Adds a data-analytics-coveo-meta attribute to each recommendation-marquee block on the page.
+ * Adds a data-analytics-coveo-meta attribute to each PHP block on the page.
  * Value is in the format block-name-coveo-X, where X represents the order of the block on the page.
  */
 export function setCoveoCountAsBlockAttribute(block) {
