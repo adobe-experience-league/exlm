@@ -35,8 +35,6 @@ const seeMoreConfig = {
 };
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
-const signupDialogEventEmitter = getEmitter('signupDialog');
-
 // Event for target data change (Updating the block based on target data)
 const targetEventEmitter = getEmitter('loadTargetBlocks');
 
@@ -361,7 +359,7 @@ export default async function decorate(block) {
     block.classList.add('coveo-only');
   }
   const targetCriteriaId = block.dataset.targetScope;
-  let profileDataPromise = defaultProfileClient.getMergedProfile();
+  const profileDataPromise = defaultProfileClient.getMergedProfile();
 
   const tempWrapper = htmlToElement(`
       <div class="recommended-content-temp-wrapper">
@@ -1139,11 +1137,6 @@ export default async function decorate(block) {
       }
     });
   }
-
-  signupDialogEventEmitter.on('signupDialogClose', () => {
-    profileDataPromise = defaultProfileClient.getMergedProfile();
-    handleTargetSupportAndRender(block.dataset.targetScope);
-  });
 
   if (showOnlyCoveo) {
     renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
