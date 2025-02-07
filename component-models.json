@@ -644,7 +644,7 @@
       {
         "component": "boolean",
         "valueType": "boolean",
-        "name": "alignment",
+        "name": "center-aligned",
         "label": "Align the default blocks in this section to the center.",
         "description": "Enabling this option will align the default blocks in this section to the center."
       },
@@ -725,7 +725,7 @@
       {
         "component": "boolean",
         "valueType": "boolean",
-        "name": "alignment",
+        "name": "center-aligned",
         "label": "Align the default blocks in this section to the center.",
         "description": "Enabling this option will align the default blocks in this section to the center."
       }
@@ -3268,7 +3268,7 @@
       {
         "component": "boolean",
         "valueType": "boolean",
-        "name": "alignment",
+        "name": "center-aligned",
         "label": "Align the default blocks in this section to the center.",
         "description": "Enabling this option will align the default blocks in this section to the center."
       }
@@ -3302,7 +3302,7 @@
       {
         "component": "boolean",
         "valueType": "boolean",
-        "name": "alignment",
+        "name": "center-aligned",
         "label": "Align the default blocks in this section to the center.",
         "description": "Enabling this option will align the default blocks in this section to the center."
       }
