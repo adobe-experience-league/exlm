@@ -906,7 +906,7 @@ export default async function decorate(block) {
                   if (resp?.data) {
                     updateCopyFromTarget(resp, headerContainer, descriptionContainer, linkEl, resultTextEl);
                     block.style.display = 'block';
-                    setTargetDataAsBlockAttribute(resp, block);
+                    setTargetDataAsBlockAttribute(block, resp);
                   }
                   const cardModels = await parseCardResponseData(resp, payloadConfig);
                   let renderedCardModels = [];

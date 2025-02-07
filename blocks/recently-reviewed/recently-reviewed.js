@@ -320,7 +320,7 @@ export default async function decorate(block) {
           calculateNumberOfCardsToRender(block);
           addNewRowOfCards(cardData, { clear: true }); // eslint-disable-next-line no-new
           calculateNumberOfCardsOnResize(cardData);
-          setTargetDataAsBlockAttribute(resp, block);
+          setTargetDataAsBlockAttribute(block, resp);
         } else {
           const contentDiv = document.createElement('div');
           contentDiv.classList.add('browse-cards-block-content');

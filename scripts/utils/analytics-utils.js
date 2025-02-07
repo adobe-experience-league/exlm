@@ -9,7 +9,7 @@
  * @param {HTMLElement} block - The DOM element to which the meta data will be added as an attribute.
  *
  */
-export default function setTargetDataAsBlockAttribute(data, block) {
+export default function setTargetDataAsBlockAttribute(block, data) {
   if (data?.meta) {
     block.setAttribute('data-analytics-target-meta', JSON.stringify(data?.meta));
   }
