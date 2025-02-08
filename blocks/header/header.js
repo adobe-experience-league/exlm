@@ -875,18 +875,24 @@ class ExlHeader extends HTMLElement {
         block.style.visibility = 'hidden';
         await decorator(block, options);
         block.style.visibility = 'visible';
+        this.dispatchEvent(new Event(`${className}-decorated`));
       };
       // Do this first to ensure all links are decorated correctly before they are used.
       decorateLinks(header);
-      decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator, this.decoratorOptions);
-      decorateHeaderBlock('brand', this.brandDecorator, this.decoratorOptions);
-      decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
-      decorateHeaderBlock('language-selector', this.languageDecorator, this.decoratorOptions);
-      decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
-      decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);
-      decorateHeaderBlock('profile-menu', this.profileMenuDecorator, this.decoratorOptions);
-      decorateNewTabLinks(header);
+      const logoP = decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator, this.decoratorOptions);
+      const brandP = decorateHeaderBlock('brand', this.brandDecorator, this.decoratorOptions);
+      const searchP = decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
+      const languageP = decorateHeaderBlock('language-selector', this.languageDecorator, this.decoratorOptions);
+      const productGridP = decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
+      const signInP = decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);
+      const profileP = decorateHeaderBlock('profile-menu', this.profileMenuDecorator, this.decoratorOptions);
+      const newTabLinkP = decorateNewTabLinks(header);
       await decorateHeaderBlock('nav', this.navDecorator, this.decoratorOptions);
+
+      Promise.allSettled([logoP, brandP, searchP, languageP, productGridP, signInP, profileP, newTabLinkP]).then(() => {
+        // used when the header is embeded on coimmunity/legacy pages to listen for when the header is completely decorated.
+        this.dispatchEvent(new Event('header-decorated'));
+      });
     }
   }
 
