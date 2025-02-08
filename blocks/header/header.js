@@ -37,6 +37,7 @@ import Profile from './load-profile.js';
  * @typedef {Object} DecoratorOptions
  * @property {() => Promise<boolean>} isUserSignedIn - header uses this to check if the user is signed in or not
  * @property {() => {}} onSignOut - called when signout happens.
+ * @property {() => {}} onSignIn - called when sign in happens.
  * @property {string} profilePicture - url to profile picture to display in header
  * @property {string} khorosProfileUrl - url to fetch community profile data
  * @property {CommunityOptions} community - is this a community header
@@ -626,7 +627,7 @@ const signInDecorator = async (signInBlock, decoratorOptions) => {
   } else {
     signInBlock.classList.remove('signed-in');
     signInBlock.firstChild.addEventListener('click', async () => {
-      window.adobeIMS.signIn();
+      decoratorOptions.onSignIn();
     });
   }
   return signInBlock;
@@ -795,9 +796,14 @@ class ExlHeader extends HTMLElement {
       return signOut();
     };
 
+    const doSignIn = async () => {
+      window.adobeIMS.signIn();
+    };
+
     this.decoratorOptions = options;
     options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
     options.onSignOut = options.onSignOut || doSignOut;
+    options.onSignIn = options.onSignIn || doSignIn;
     options.profilePicture = options.profilePicture || profilePicture;
     options.community = options.community ?? { active: false };
     options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
