@@ -447,6 +447,13 @@
         "description": "A descriptive text of the subject image."
       },
       {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "popUpSubject",
+        "label": "Pop up the subject image",
+        "description": "Elevates the subject image above the background."
+      },
+      {
         "component": "select",
         "name": "cta1Type",
         "value": "primary",
