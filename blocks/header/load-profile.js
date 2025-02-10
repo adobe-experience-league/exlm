@@ -3,10 +3,13 @@ import { isMobile, registerHeaderResizeHandler } from './header-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 export default class Profile extends HTMLElement {
+  /**
+   *
+   * @param {import('./header.js').DecoratorOptions} options
+   */
   constructor(options = {}) {
     super();
     this.options = options;
-    this.profilePicture = options.profilePicture;
   }
 
   async createProfile() {
@@ -22,11 +25,13 @@ export default class Profile extends HTMLElement {
     decorateIcons(profile);
     this.appendChild(profile);
 
-    if (this.profilePicture) {
-      const profileToggle = profile.querySelector('.profile-toggle');
-      profileToggle.replaceChildren(
-        htmlToElement(`<img class="profile-picture" src="${this.profilePicture}" alt="profile picture" />`),
-      );
+    if (this.options.getProfilePicture) {
+      this.options.getProfilePicture().then((profilePicture) => {
+        const profileToggle = profile.querySelector('.profile-toggle');
+        profileToggle.replaceChildren(
+          htmlToElement(`<img class="profile-picture" src="${profilePicture}" alt="profile picture" />`),
+        );
+      });
     }
 
     const toggler = profile.querySelector('.profile-toggle');
