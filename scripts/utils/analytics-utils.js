@@ -24,7 +24,7 @@ const updatedBlocks = new Set();
 export function setCoveoAnalyticsAttribute(block) {
   if (!block) return;
 
-  const blockClassName = block.className?.replace('block', '').trim();
+  const blockClassName = block.className?.split(' ')[0] || '';
   if (updatedBlocks.has(blockClassName)) return;
 
   const blocks = document.querySelectorAll(`.${blockClassName}`);
