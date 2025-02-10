@@ -1126,12 +1126,12 @@
         "valueType": "string",
         "options": [
           {
-            "name": "Straight",
-            "value": "straight"
+            "name": "Curved",
+            "value": ""
           },
           {
-            "name": "Curved",
-            "value": "curved"
+            "name": "Straight",
+            "value": "straight"
           }
         ]
       },
