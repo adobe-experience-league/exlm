@@ -1080,6 +1080,28 @@
     "id": "marquee",
     "fields": [
       {
+        "component": "select",
+        "name": "marqueeSize",
+        "value": "",
+        "label": "Marquee Size",
+        "description": "The Marquee Size",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Large",
+            "value": "large"
+          },
+          {
+            "name": "Medium",
+            "value": "medium"
+          },
+          {
+            "name": "Small",
+            "value": "small"
+          }
+        ]
+      },
+      {
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
@@ -1094,6 +1116,24 @@
         "value": "",
         "label": "Subject Image Description",
         "description": "A descriptive text of the image will be shown as tooltip."
+      },
+      {
+        "component": "select",
+        "name": "bgColorShape",
+        "value": "",
+        "label": "Background color shape",
+        "description": "The marquee background color shape",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Straight",
+            "value": "straight"
+          },
+          {
+            "name": "Curved",
+            "value": "curved"
+          }
+        ]
       },
       {
         "component": "select",
