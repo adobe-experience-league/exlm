@@ -31,6 +31,8 @@ import Profile from './load-profile.js';
  *  @property {boolean} active
  *  @property {boolean} hasMessages
  *  @property {boolean} hasNotifications
+ *  @property {string} notificationsUrl
+ *  @property {string} messagesUrl
  */
 
 /**
@@ -567,15 +569,17 @@ async function decorateCommunityBlock(header, decoratorOptions) {
   communityActionsWrapper.style.display = 'none';
   const messagesMarked = decoratorOptions?.community?.hasMessages ? 'community-action-is-marked' : '';
   const notificationsMarked = decoratorOptions?.community?.hasNotifications ? 'community-action-is-marked' : '';
+  const notificationsUrl = decoratorOptions?.community?.notificationsUrl;
+  const messagesUrl = decoratorOptions?.community?.messagesUrl;
   // note: data-community-action is used by community code when this header is used community.
   communityActionsWrapper.innerHTML = `  
     <div class="community-action ${notificationsMarked}" data-community-action="notifications">
-        <a href="/t5/notificationfeed/page" data-id="notifications" title="notifications">
+        <a href="${notificationsUrl}" data-id="notifications" title="notifications">
           <span class="icon icon-bell"></span>
         </a>
     </div>
     <div class="community-action ${messagesMarked}" data-community-action="messages">   
-        <a href="/t5/notes/privatenotespage" data-id="messages" title="messages">
+        <a href="${messagesUrl}" data-id="messages" title="messages">
           <span class ="icon icon-emailOutline"></span>
         </a> 
     <div>
@@ -806,6 +810,8 @@ class ExlHeader extends HTMLElement {
     options.onSignIn = options.onSignIn || doSignIn;
     options.profilePicture = options.profilePicture || profilePicture;
     options.community = options.community ?? { active: false };
+    options.community.notificationsUrl = options.community.notificationsUrl || '/t5/notificationfeed/page';
+    options.community.messagesUrl = options.community.messagesUrl || '/t5/notes/privatenotespage';
     options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
     options.lang = options.lang || getPathDetails().lang || 'en';
     options.navLinkOrigin = options.navLinkOrigin || window.location.origin;
