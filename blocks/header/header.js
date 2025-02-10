@@ -37,6 +37,7 @@ import Profile from './load-profile.js';
  * @typedef {Object} DecoratorOptions
  * @property {() => Promise<boolean>} isUserSignedIn - header uses this to check if the user is signed in or not
  * @property {() => {}} onSignOut - called when signout happens.
+ * @property {() => {}} onSignIn - called when sign in happens.
  * @property {string} profilePicture - url to profile picture to display in header
  * @property {string} khorosProfileUrl - url to fetch community profile data
  * @property {CommunityOptions} community - is this a community header
@@ -626,7 +627,7 @@ const signInDecorator = async (signInBlock, decoratorOptions) => {
   } else {
     signInBlock.classList.remove('signed-in');
     signInBlock.firstChild.addEventListener('click', async () => {
-      window.adobeIMS.signIn();
+      decoratorOptions.onSignIn();
     });
   }
   return signInBlock;
@@ -795,9 +796,14 @@ class ExlHeader extends HTMLElement {
       return signOut();
     };
 
+    const doSignIn = async () => {
+      window.adobeIMS.signIn();
+    };
+
     this.decoratorOptions = options;
     options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
     options.onSignOut = options.onSignOut || doSignOut;
+    options.onSignIn = options.onSignIn || doSignIn;
     options.profilePicture = options.profilePicture || profilePicture;
     options.community = options.community ?? { active: false };
     options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
@@ -869,18 +875,24 @@ class ExlHeader extends HTMLElement {
         block.style.visibility = 'hidden';
         await decorator(block, options);
         block.style.visibility = 'visible';
+        this.dispatchEvent(new Event(`${className}-decorated`));
       };
       // Do this first to ensure all links are decorated correctly before they are used.
       decorateLinks(header);
-      decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator, this.decoratorOptions);
-      decorateHeaderBlock('brand', this.brandDecorator, this.decoratorOptions);
-      decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
-      decorateHeaderBlock('language-selector', this.languageDecorator, this.decoratorOptions);
-      decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
-      decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);
-      decorateHeaderBlock('profile-menu', this.profileMenuDecorator, this.decoratorOptions);
-      decorateNewTabLinks(header);
+      const logoP = decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator, this.decoratorOptions);
+      const brandP = decorateHeaderBlock('brand', this.brandDecorator, this.decoratorOptions);
+      const searchP = decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
+      const languageP = decorateHeaderBlock('language-selector', this.languageDecorator, this.decoratorOptions);
+      const productGridP = decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
+      const signInP = decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);
+      const profileP = decorateHeaderBlock('profile-menu', this.profileMenuDecorator, this.decoratorOptions);
+      const newTabLinkP = decorateNewTabLinks(header);
       await decorateHeaderBlock('nav', this.navDecorator, this.decoratorOptions);
+
+      Promise.allSettled([logoP, brandP, searchP, languageP, productGridP, signInP, profileP, newTabLinkP]).then(() => {
+        // used when the header is embeded on coimmunity/legacy pages to listen for when the header is completely decorated.
+        this.dispatchEvent(new Event('header-decorated'));
+      });
     }
   }
 

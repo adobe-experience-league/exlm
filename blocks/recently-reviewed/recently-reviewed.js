@@ -5,6 +5,7 @@ import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import getEmitter from '../../scripts/events.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
+import setTargetDataAsBlockAttribute from '../../scripts/utils/analytics-utils.js';
 
 let placeholders = {};
 try {
@@ -207,23 +208,6 @@ export function updateCopyFromTarget(data, heading, subheading, taglineCta, tagl
   }
 }
 
-/**
- * Sets target data as a data attribute on the given block element.
- *
- * This function checks if the provided `data` object contains a `meta` property.
- * If the `meta` property exists, it serializes the metadata as a JSON string and
- * adds it to the specified block element as a custom data attribute `data-analytics-target-meta`.
- *
- * @param {Object} data - The data returned from target.
- * @param {HTMLElement} block - The DOM element to which the meta data will be added as an attribute.
- *
- */
-export function setTargetDataAsBlockAttribute(data, block) {
-  if (data?.meta) {
-    block.setAttribute('data-analytics-target-meta', JSON.stringify(data?.meta));
-  }
-}
-
 function removeEmptySection(block) {
   const section = block.closest('.section');
   block.parentElement.remove();
@@ -336,7 +320,7 @@ export default async function decorate(block) {
           calculateNumberOfCardsToRender(block);
           addNewRowOfCards(cardData, { clear: true }); // eslint-disable-next-line no-new
           calculateNumberOfCardsOnResize(cardData);
-          setTargetDataAsBlockAttribute(resp, block);
+          setTargetDataAsBlockAttribute(block, resp);
         } else {
           const contentDiv = document.createElement('div');
           contentDiv.classList.add('browse-cards-block-content');
