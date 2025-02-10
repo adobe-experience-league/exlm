@@ -3,7 +3,7 @@ import { decorateButtons } from '../teaser/teaser.js';
 // eslint-disable-next-line no-unused-vars
 export function generateDetailedTeaserDOM(props, classes) {
   // Extract properties, always same order as in model, empty string if not set
-  const [backImage, eyebrowContent, title, description, subjectImage, firstCta, secondCta] = props;
+  const [backImage, eyebrowContent, title, description, subjectImage, popSubjectImage, firstCta, secondCta] = props;
   const backPicture = backImage.querySelector('picture');
   const subjectPicture = subjectImage.querySelector('picture');
 
@@ -32,7 +32,7 @@ export function generateDetailedTeaserDOM(props, classes) {
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
     <div class='background'>${backPicture ? backPicture.outerHTML : ''}</div>
-    <div class='foreground'>
+    <div class='foreground${popSubjectImage?.textContent === 'true' ? ' pop-subject-image' : ''}'>
       <div class='text'>
         ${eyebrowContent.outerHTML}
         <div class='title'>${title.innerHTML}</div>
