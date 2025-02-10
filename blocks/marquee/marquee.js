@@ -80,7 +80,9 @@ export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
   const [
+    marqueeSizeType,
     img,
+    bgColorShape,
     hexcode,
     backgroundHexcode,
     eyebrow,
@@ -92,7 +94,9 @@ export default async function decorate(block) {
     secondCtaLinkType,
   ] = block.querySelectorAll(':scope div > div');
 
+  const marqueeSize = marqueeSizeType?.textContent?.trim();
   const subjectPicture = img.querySelector('picture');
+  const bgShape = bgColorShape?.textContent?.trim();
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${hexcode.innerHTML}`;
   const eyebrowText = eyebrow?.textContent?.trim();
@@ -139,7 +143,14 @@ export default async function decorate(block) {
   if (!subjectPicture) {
     block.classList.add('no-subject');
   }
+  if (marqueeSize) {
+    block.classList.add(marqueeSize);
+  }
+
   block.append(marqueeDOM);
+  if (bgShape) {
+    block.querySelector('.marquee-subject')?.classList.add(bgShape);
+  }
 
   if (!((firstCta && firstCtaLinkType) || (secondCta && secondCtaLinkType))) {
     return; // Exit early if no CTA or link type is present
