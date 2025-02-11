@@ -1213,16 +1213,17 @@ async function loadPage() {
   document.documentElement.lang = lang || 'en';
   const isMainPage = window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
 
-  const isUserSignedIn = async () => {
-    await loadIms();
-    return window?.adobeIMS?.isSignedInUser();
-  };
+  const isUserSignedIn = async () => 
+     true
+    // await loadIms();
+    // return window?.adobeIMS?.isSignedInUser();
+  ;
 
   const handleProfilePage = async () => {
     if (window.location.href.includes('.html')) {
       loadPage();
     } else {
-      const signedIn = await isUserSignedIn();
+      const signedIn = true; // await isUserSignedIn();
       if (signedIn) {
         loadPage();
         const mod = await import('./adobe-target/adobe-target.js');

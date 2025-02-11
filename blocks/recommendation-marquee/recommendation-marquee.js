@@ -530,7 +530,33 @@ export default async function decorate(block) {
 
   async function renderBlock({ targetSupport, targetCriteriaScopeId }) {
     Promise.all([profileDataPromise, interestDataPromise]).then(async (promiseResponses) => {
-      const [profileData, interestsDataArray] = promiseResponses;
+      // eslint-disable-next-line prefer-const
+      let [profileData, interestsDataArray] = promiseResponses;
+      if (!profileData) {
+        profileData = {};
+      }
+      profileData.interests = [
+        "Acrobat",
+        "Acrobat Services",
+        "Acrobat Sign",
+        "Advertising",
+        "Audience Manager",
+        "Campaign Classic",
+        "Campaign Classic v7",
+        "Campaign Standard",
+        "Commerce",
+        "Customer Journey Analytics",
+        "Experience Manager Forms",
+        "Experience Manager Screens",
+        "Experience Manager Sites",
+        "Experience Platform",
+        "Journey Optimizer",
+        "Journey Orchestration",
+        "Marketo Engage",
+        "Real-Time Customer Data Platform",
+        "Target",
+        "Workfront"
+    ];
       const {
         role: profileRoles = [],
         interests: profileInterests = [],
