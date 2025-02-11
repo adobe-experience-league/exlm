@@ -93,17 +93,19 @@ export default class ResponsivePillList {
     });
     tempWrapper.appendChild(tempUl);
     tempWrapper.style.visibility = 'hidden';
+    const maxWidth = this.wrapper.parentElement.offsetWidth || CARDS_MAX_WIDTH;
     main.appendChild(tempWrapper);
     const wrapperWidth = tempWrapper.getBoundingClientRect().width;
     const listWidth = tempUl.getBoundingClientRect().width;
     const listItems = tempUl.querySelectorAll('li');
     const gapValueInPx = getComputedStyle(tempUl).gap;
+    
     const gapValue = gapValueInPx ? parseInt(gapValueInPx, 10) : 0;
     const { items } = Array.from(listItems).reduce(
       (acc, curr) => {
         const itemWidth = curr.getBoundingClientRect().width;
         acc.width += itemWidth + gapValue;
-        if (acc.width <= wrapperWidth && acc.width <= CARDS_MAX_WIDTH) {
+        if (acc.width <= wrapperWidth && acc.width <= maxWidth) {
           acc.items.push(curr.innerHTML);
         }
         return acc;
