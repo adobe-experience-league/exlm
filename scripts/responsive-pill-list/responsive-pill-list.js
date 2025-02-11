@@ -1,5 +1,5 @@
 import { fetchLanguagePlaceholders, getPathDetails, htmlToElement } from '../scripts.js';
-import { loadCSS } from '../lib-franklin.js';
+import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../dropdown/dropdown.js';
 
 const CARDS_MAX_WIDTH = 645;
@@ -93,17 +93,19 @@ export default class ResponsivePillList {
     });
     tempWrapper.appendChild(tempUl);
     tempWrapper.style.visibility = 'hidden';
+    const maxWidth = this.wrapper.parentElement.offsetWidth || CARDS_MAX_WIDTH;
     main.appendChild(tempWrapper);
     const wrapperWidth = tempWrapper.getBoundingClientRect().width;
     const listWidth = tempUl.getBoundingClientRect().width;
     const listItems = tempUl.querySelectorAll('li');
     const gapValueInPx = getComputedStyle(tempUl).gap;
     const gapValue = gapValueInPx ? parseInt(gapValueInPx, 10) : 0;
+    
     const { items } = Array.from(listItems).reduce(
       (acc, curr) => {
         const itemWidth = curr.getBoundingClientRect().width;
         acc.width += itemWidth + gapValue;
-        if (acc.width <= wrapperWidth && acc.width <= CARDS_MAX_WIDTH) {
+        if (acc.width <= wrapperWidth && acc.width <= maxWidth) {
           acc.items.push(curr.innerHTML);
         }
         return acc;
@@ -211,26 +213,102 @@ export default class ResponsivePillList {
     const fitItemsCount = fitItems.length;
     const tabList = document.createElement('ul');
     const overlayItems = [];
+    this.scrollSteps = [];
     this.items.forEach((item, index) => {
       if (!fitItemsCount || (fitItemsCount && index < fitItemsCount)) {
         const tabItem = this.prepareTabItemStructure(item);
         tabList.appendChild(tabItem);
       } else {
+        const tabItem = this.prepareTabItemStructure(item);
+        tabList.appendChild(tabItem);
         overlayItems.push(item);
       }
     });
 
-    if (overlayItems.length) {
-      this.renderMoreOptionsOverlay(overlayItems, tabList);
-    }
-
+    // if (overlayItems.length) {
+    //   this.renderMoreOptionsOverlay(overlayItems, tabList);
+    // }
+    const leftButton = htmlToElement(`
+      <button class="response-pill-list-nav-btn responsive-pill-list-left-nav">
+        <span class="icon icon-chevron"></span>
+      </button>`
+    );
+    const rightButton = htmlToElement(`
+      <button class="response-pill-list-nav-btn responsive-pill-list-right-nav">
+        <span class="icon icon-chevron"></span>
+      </button>`
+    );
+    tabWrapper.appendChild(leftButton);
     tabWrapper.appendChild(tabList);
+    tabWrapper.appendChild(rightButton);
     this.wrapper.appendChild(tabWrapper);
+    leftButton.addEventListener('click', () => {
+      this.navigatePills(false);
+    });
+    rightButton.addEventListener('click', () => {
+      this.navigatePills(true);
+    });
+    this.handleNavButtonVisiblity();
 
     if (this.selectedItem) {
       const defaultTabItem = tabList.querySelector(`[data-tab-id="${this.selectedItem}"]`);
       if (defaultTabItem) {
         this.selectTab(defaultTabItem);
+      }
+    }
+    decorateIcons(this.wrapper);
+  }
+
+  navigatePills (forward) {
+    const wrapperEl = this.wrapper.querySelector('ul');
+    if (forward) {
+      const elements = Array.from(wrapperEl.children);
+      const currentOffset = wrapperEl.scrollLeft;
+      const edgeValue = wrapperEl.offsetLeft + wrapperEl.offsetWidth;
+      const targetElement = elements.reduce((acc, curr) => {
+
+        if (!acc) {
+          return curr;
+        }
+        const startEdge = curr.offsetLeft - currentOffset;
+        const elementEdge = curr.offsetLeft + curr.offsetWidth - currentOffset;
+        const accEdge = acc.offsetLeft + acc.offsetWidth - currentOffset;
+        if (elementEdge > accEdge && startEdge <= edgeValue && accEdge <= edgeValue) {
+          return curr;
+        }
+        return acc;
+      }, null);
+      wrapperEl.scrollLeft = targetElement.offsetLeft;
+      if (wrapperEl.scrollLeft !== currentOffset) {
+        this.scrollSteps.push(currentOffset);
+      }
+      
+    } else {
+      const scrollValue = this.scrollSteps.pop();
+      wrapperEl.scrollLeft = scrollValue;
+    }
+    this.handleNavButtonVisiblity();
+  }
+
+  handleNavButtonVisiblity() {
+    const wrapperEl = this.wrapper.querySelector('ul');
+    const {scrollLeft} = wrapperEl;
+    const elements = Array.from(wrapperEl.children);
+    const [firstElementChild] = elements;
+    const lastElementChild = elements[elements.length - 1];
+    const [leftButton, rightButton] = this.wrapper.querySelectorAll('.response-pill-list-nav-btn');
+    if (leftButton) {
+      if (scrollLeft > firstElementChild.offsetLeft) {
+        leftButton.classList.add('responsive-pill-list-nav-visible');
+      } else {
+        leftButton.classList.remove('responsive-pill-list-nav-visible');
+      }
+    }
+    if (rightButton) {
+      if (lastElementChild.offsetLeft - scrollLeft < wrapperEl.offsetWidth - 44) {
+        rightButton.classList.remove('responsive-pill-list-nav-visible');
+      } else {
+        rightButton.classList.add('responsive-pill-list-nav-visible');
       }
     }
   }
