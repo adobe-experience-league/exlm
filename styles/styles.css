@@ -927,6 +927,10 @@ picture[align="right"] {
   color: var(--spectrum-red-900);
 }
 
+.section[data-center-aligned='true'] .default-content-wrapper > * {
+  text-align: center;
+}
+
 @media (min-width: 600px) {
   .exl-toast {
     width: auto;

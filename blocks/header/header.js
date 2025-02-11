@@ -31,6 +31,8 @@ import Profile from './load-profile.js';
  *  @property {boolean} active
  *  @property {boolean} hasMessages
  *  @property {boolean} hasNotifications
+ *  @property {string} notificationsUrl
+ *  @property {string} messagesUrl
  */
 
 /**
@@ -38,7 +40,7 @@ import Profile from './load-profile.js';
  * @property {() => Promise<boolean>} isUserSignedIn - header uses this to check if the user is signed in or not
  * @property {() => {}} onSignOut - called when signout happens.
  * @property {() => {}} onSignIn - called when sign in happens.
- * @property {string} profilePicture - url to profile picture to display in header
+ * @property {() => Promise<string>} getProfilePicture - url to profile picture to display in header
  * @property {string} khorosProfileUrl - url to fetch community profile data
  * @property {CommunityOptions} community - is this a community header
  * @property {boolean} lang - language code
@@ -52,6 +54,10 @@ const HEADER_CSS = `/blocks/header/exl-header.css`;
 let searchElementPromise = null;
 const { khorosProfileUrl, communityHost } = getConfig();
 
+/**
+ *
+ * @returns {Promise<string>}
+ */
 const getPPSProfilePicture = async () => {
   try {
     const { defaultProfileClient } = await import('../../scripts/auth/profile.js');
@@ -67,8 +73,6 @@ const getPPSProfilePicture = async () => {
     return err; // or any other default value
   }
 };
-
-const profilePicture = await getPPSProfilePicture();
 
 async function loadSearchElement() {
   const [solutionTag] = getMetadata('solution').trim().split(',');
@@ -567,15 +571,17 @@ async function decorateCommunityBlock(header, decoratorOptions) {
   communityActionsWrapper.style.display = 'none';
   const messagesMarked = decoratorOptions?.community?.hasMessages ? 'community-action-is-marked' : '';
   const notificationsMarked = decoratorOptions?.community?.hasNotifications ? 'community-action-is-marked' : '';
+  const notificationsUrl = decoratorOptions?.community?.notificationsUrl;
+  const messagesUrl = decoratorOptions?.community?.messagesUrl;
   // note: data-community-action is used by community code when this header is used community.
   communityActionsWrapper.innerHTML = `  
     <div class="community-action ${notificationsMarked}" data-community-action="notifications">
-        <a href="/t5/notificationfeed/page" data-id="notifications" title="notifications">
+        <a href="${notificationsUrl}" data-id="notifications" title="notifications">
           <span class="icon icon-bell"></span>
         </a>
     </div>
     <div class="community-action ${messagesMarked}" data-community-action="messages">   
-        <a href="/t5/notes/privatenotespage" data-id="messages" title="messages">
+        <a href="${messagesUrl}" data-id="messages" title="messages">
           <span class ="icon icon-emailOutline"></span>
         </a> 
     <div>
@@ -804,8 +810,10 @@ class ExlHeader extends HTMLElement {
     options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
     options.onSignOut = options.onSignOut || doSignOut;
     options.onSignIn = options.onSignIn || doSignIn;
-    options.profilePicture = options.profilePicture || profilePicture;
+    options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
     options.community = options.community ?? { active: false };
+    options.community.notificationsUrl = options.community.notificationsUrl || '/t5/notificationfeed/page';
+    options.community.messagesUrl = options.community.messagesUrl || '/t5/notes/privatenotespage';
     options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
     options.lang = options.lang || getPathDetails().lang || 'en';
     options.navLinkOrigin = options.navLinkOrigin || window.location.origin;
