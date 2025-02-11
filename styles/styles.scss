@@ -782,7 +782,7 @@ picture {
 
 .section[data-center-aligned='true'] .default-content-wrapper {
   justify-content: center;
-  display: flex;
+  display: grid;
 }
 
 @include breakpoint(tablet) {
