@@ -102,10 +102,10 @@ function ensureDataSaveConfigExists(dataConfiguration, lowercaseOptionType, ctTy
 }
 
 function getSavedCardsCount(dataConfiguration, optionType) {
-  return Object.values(dataConfiguration.savedCardsResponse[optionType] || {}).reduce(
-    (acc, curr) => acc + curr.models.length,
-    0,
-  );
+  return Object.values(dataConfiguration.savedCardsResponse[optionType] || {}).reduce((acc, curr) => {
+    const availableModels = curr.models.filter((model) => !model.markedForReplacement);
+    return acc + availableModels.length;
+  }, 0);
 }
 
 function restoreSavedCardsModelState(dataConfiguration, optionType) {
