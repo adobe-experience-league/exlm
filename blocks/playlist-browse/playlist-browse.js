@@ -221,18 +221,19 @@ const updateCards = (filters) => {
     };
 
     pagination = newPagination({
-      previousLabel: createPlaceholderSpan('playlistPreviousLabel', 'Previous'),
+      previousLabel: `<span data-placeholder="${'playlistPreviousLabel'}">Previous</span>`,
       previousClass: 'playlist-browse-pagination-previous button secondary',
-      nextLabel: createPlaceholderSpan('playlistNextLabel', 'Next'),
+      nextLabel: `<span data-placeholder="${'playlistNextLabel'}">Next</span>`,
       nextClass: 'playlist-browse-pagination-next button secondary',
       paginationLabelClass: 'playlist-browse-pagination-label',
-      ofLabel: createPlaceholderSpan('playlistOfLabel', 'of'),
+      ofLabel: `<span data-placeholder="${'playlistOfLabel'}">of</span>`,
       currentPage: 1,
       items: filteredPlaylists,
       onPageChange,
     });
 
     pagination.classList.add('playlist-browse-pagination');
+    decoratePlaceholders(pagination);
     cards.after(pagination);
   });
 };
