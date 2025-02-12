@@ -1,5 +1,6 @@
 Please provide the Jira Issue your PR is for.
-Please also provide test paths following the template below.
+
+<!-- Please also provide test paths following the template below. -->
 
 Jira ID:
 
