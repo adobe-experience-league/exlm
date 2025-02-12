@@ -43,6 +43,14 @@ const ROLE_PLACEHOLDERS = [
   },
 ];
 
+const PLACEHOLDERS = {
+  previous: 'playlistPreviousLabel',
+  next: 'playlistNextLabel',
+  of: 'playlistOfLabel',
+  filter: 'filterLabel',
+  clearFilter: 'filterClearLabel',
+};
+
 async function fetchPlaylists() {
   const { lang } = getPathDetails();
   const resp = await fetch(`/${lang}/playlists.json`);
@@ -221,12 +229,12 @@ const updateCards = (filters) => {
     };
 
     pagination = newPagination({
-      previousLabel: `<span data-placeholder="${'playlistPreviousLabel'}">Previous</span>`,
+      previousLabel: `<span data-placeholder="${PLACEHOLDERS.previous}">Previous</span>`,
       previousClass: 'playlist-browse-pagination-previous button secondary',
-      nextLabel: `<span data-placeholder="${'playlistNextLabel'}">Next</span>`,
+      nextLabel: `<span data-placeholder="${PLACEHOLDERS.next}">Next</span>`,
       nextClass: 'playlist-browse-pagination-next button secondary',
       paginationLabelClass: 'playlist-browse-pagination-label',
-      ofLabel: `<span data-placeholder="${'playlistOfLabel'}">of</span>`,
+      ofLabel: `<span data-placeholder="${PLACEHOLDERS.of}">of</span>`,
       currentPage: 1,
       items: filteredPlaylists,
       onPageChange,
@@ -346,10 +354,10 @@ class Filter {
     this.filterContainer = htmlToElement('<div class="playlist-filter-container"></div>');
     this.filterPill = htmlToElement('<div class="filter-pill-container"></div>');
     this.filterWrapper = htmlToElement(
-      `<div class="playlist-filter-wrapper"><label class="playlist-filter-label"><span data-placeholder="${'filterLabel'}"></span></label></div>`,
+      `<div class="playlist-filter-wrapper"><label class="playlist-filter-label"><span data-placeholder="${PLACEHOLDERS.filter}">Filters</span></label></div>`,
     );
     this.clearButton = htmlToElement(
-      `<button class="filters-clear" disabled><span data-placeholder="${'filterClearLabel'}"></span></button>`,
+      `<button class="filters-clear" disabled><span data-placeholder="${PLACEHOLDERS.clearFilter}">Clear filters</span></button>`,
     );
 
     const filterOptionsPromises = filterOptions.map(
