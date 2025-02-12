@@ -1,4 +1,4 @@
-import { decoratePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { createPlaceholderSpan, decoratePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 
 /**
  * @typedef {Object} MultiSelectOption
@@ -150,12 +150,12 @@ export function newShowHidePanel({
  * @returns
  */
 export function newPagination({
-  previousLabel = 'Previous',
+  previousLabel = createPlaceholderSpan('playlistPreviousLabel', 'Previous'),
   previousClass = 'pagination-previous',
-  nextLabel = 'Next',
+  nextLabel = createPlaceholderSpan('playlistNextLabel', 'Next'),
   nextClass = 'pagination-next',
   paginationLabelClass = 'pagination-label',
-  ofLabel = 'of',
+  ofLabel = createPlaceholderSpan('playlistOfLabel', 'of'),
   currentPage = 1,
   items = [],
   itemsPerPage = 12,

@@ -396,9 +396,18 @@ export default function decorate(block) {
     videoDataCell.append(
       htmlToElement(`<div class="playlist-item-meta">
               <div data-progress-status="not-started"></div>
-              <div data-progress-status="in-progress">${iconSpan('check')} In Progress</div>
-              <div data-progress-status="completed">${iconSpan('check-filled')} Completed</div>
-              <div>${iconSpan('time')} ${toTimeInMinutes(video.duration)} MIN</div>
+              <div data-progress-status="in-progress">${iconSpan('check')} ${createPlaceholderSpan(
+                'playlistInProgress',
+                'In Progress',
+              )}</div>
+              <div data-progress-status="completed">${iconSpan('check-filled')} ${createPlaceholderSpan(
+                'playlistCompleted',
+                'Completed',
+              )}</div>
+              <div>${iconSpan('time')} ${toTimeInMinutes(video.duration)} ${createPlaceholderSpan(
+                'playlistMin',
+                'MIN',
+              )}</div>
           </div>`),
     );
 

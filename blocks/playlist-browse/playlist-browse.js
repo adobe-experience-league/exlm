@@ -221,12 +221,12 @@ const updateCards = (filters) => {
     };
 
     pagination = newPagination({
-      previousLabel: 'Previous',
+      previousLabel: createPlaceholderSpan('playlistPreviousLabel', 'Previous'),
       previousClass: 'playlist-browse-pagination-previous button secondary',
-      nextLabel: 'Next',
+      nextLabel: createPlaceholderSpan('playlistNextLabel', 'Next'),
       nextClass: 'playlist-browse-pagination-next button secondary',
       paginationLabelClass: 'playlist-browse-pagination-label',
-      ofLabel: 'of',
+      ofLabel: createPlaceholderSpan('playlistOfLabel', 'of'),
       currentPage: 1,
       items: filteredPlaylists,
       onPageChange,
