@@ -1,4 +1,4 @@
-import decorateCustomButtons from "../../scripts/utils/button-utils.js";
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 // eslint-disable-next-line no-unused-vars
 export function generateDetailedTeaserDOM(props, classes) {

@@ -875,7 +875,15 @@
                   "title": "Lorem ipsum",
                   "titleType": "h3",
                   "description": "<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</p>",
-                  "classes": "left"
+                  "classes": "left",
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "bg-spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "bg-spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customHexCode": "000000"
                 }
               }
             }
