@@ -72,7 +72,7 @@ export async function decorateBookmark(bookmarkButton) {
   const isBookmarked = !!currentlyBookmarkedId;
   bookmarkButton.dataset.bookmarked = isBookmarked;
 
-  const bookmarkTooltip = createPlaceholderSpan('playlistBookmark', 'Bookmark Playlist', (span) => {
+  const bookmarkTooltip = createPlaceholderSpan('playlistBookmarkPlaylist', 'Bookmark Playlist', (span) => {
     span.dataset.signedIn = 'true';
     span.dataset.bookmarked = 'false';
     span.classList.add('playlist-action-tooltip-label');
@@ -80,7 +80,7 @@ export async function decorateBookmark(bookmarkButton) {
   bookmarkTooltip.style.display = 'none';
   bookmarkButton.appendChild(bookmarkTooltip);
 
-  const removeBookmarkTooltip = createPlaceholderSpan('playlistRemoveBookmark', 'Remove Bookmark', (span) => {
+  const removeBookmarkTooltip = createPlaceholderSpan('userActionRemoveBookmarkTooltip', 'Remove Bookmark', (span) => {
     span.dataset.signedIn = 'true';
     span.dataset.bookmarked = 'true';
     span.classList.add('playlist-action-tooltip-label');
