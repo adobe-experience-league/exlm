@@ -695,10 +695,10 @@
       },
       {
         "component": "select",
-        "name": "cta1Type",
+        "name": "cta1_Type",
         "value": "primary",
         "label": "First CTA Type",
-        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
         "valueType": "string",
         "options": [
           {
@@ -708,13 +708,133 @@
           {
             "name": "Secondary",
             "value": "secondary"
+          },
+          {
+            "name": "Tertiary",
+            "value": "tertiary"
+          },
+          {
+            "name": "Custom",
+            "value": "custom"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "cta1_Type" }, "custom"]
+        },
+        "component": "select",
+        "name": "cta1_customBgColor",
+        "value": "",
+        "label": "First CTA Background Color",
+        "description": "Select First CTA background color. Select 'Custom Hexcode' to enter the custom color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Gray",
+            "value": "bg-spectrum-gray-700"
+          },
+          {
+            "name": "Blue",
+            "value": "bg-spectrum-blue-700"
+          },
+          {
+            "name": "Green",
+            "value": "bg-spectrum-green-700"
+          },
+          {
+            "name": "Orange",
+            "value": "bg-spectrum-orange-700"
+          },
+          {
+            "name": "Red",
+            "value": "bg-spectrum-red-700"
+          },
+          {
+            "name": "Celery",
+            "value": "bg-spectrum-celery-700"
+          },
+          {
+            "name": "Chartreuse",
+            "value": "bg-spectrum-chartreuse-700"
+          },
+          {
+            "name": "Cyan",
+            "value": "bg-spectrum-cyan-700"
+          },
+          {
+            "name": "Fuchsia",
+            "value": "bg-spectrum-fuchsia-700"
+          },
+          {
+            "name": "Indigo",
+            "value": "bg-spectrum-indigo-700"
+          },
+          {
+            "name": "Magenta",
+            "value": "bg-spectrum-magenta-700"
+          },
+          {
+            "name": "Purple",
+            "value": "bg-spectrum-purple-700"
+          },
+          {
+            "name": "Seafoam",
+            "value": "bg-spectrum-seafoam-700"
+          },
+          {
+            "name": "Yellow",
+            "value": "bg-spectrum-yellow-700"
+          },
+          {
+            "name": "Adobe Red",
+            "value": "bg-non-spectrum-adobe-red"
+          },
+          {
+            "name": "Custom Hexcode",
+            "value": "custom-hexcode"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "and": [
+            { "===": [{ "var": "cta1_customBgColor" }, "custom-hexcode"] },
+            { "===": [{ "var": "cta1_Type" }, "custom"] }
+          ]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_customHexCode",
+        "value": "",
+        "label": "First CTA Custom Hexcode",
+        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "cta1_Type" }, "custom"]
+        },
+        "component": "select",
+        "valueType": "string",
+        "name": "cta1_textColor",
+        "value": "white",
+        "label": "First CTA Text Color",
+        "description": "Select the text color",
+        "options": [
+          {
+            "name": "White",
+            "value": "white"
+          },
+          {
+            "name": "Black",
+            "value": "black"
           }
         ]
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "cta1Text",
+        "name": "cta1_linkText",
         "value": "",
         "label": "First CTA Text",
         "description": "Text to be shown inside button."
@@ -722,17 +842,17 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "cta1",
+        "name": "cta1_link",
         "value": "",
         "label": "First CTA Link",
         "description": "What link to open when clicking the button."
       },
       {
         "component": "select",
-        "name": "cta2Type",
+        "name": "cta2_Type",
         "value": "primary",
         "label": "Second CTA Type",
-        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
         "valueType": "string",
         "options": [
           {
@@ -742,13 +862,133 @@
           {
             "name": "Secondary",
             "value": "secondary"
+          },
+          {
+            "name": "Tertiary",
+            "value": "tertiary"
+          },
+          {
+            "name": "Custom",
+            "value": "custom"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "cta2_Type" }, "custom"]
+        },
+        "component": "select",
+        "name": "cta2_customBgColor",
+        "value": "",
+        "label": "Second CTA Background Color",
+        "description": "Select Second CTA background color. Select 'Custom Hexcode' to enter the custom color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Gray",
+            "value": "bg-spectrum-gray-700"
+          },
+          {
+            "name": "Blue",
+            "value": "bg-spectrum-blue-700"
+          },
+          {
+            "name": "Green",
+            "value": "bg-spectrum-green-700"
+          },
+          {
+            "name": "Orange",
+            "value": "bg-spectrum-orange-700"
+          },
+          {
+            "name": "Red",
+            "value": "bg-spectrum-red-700"
+          },
+          {
+            "name": "Celery",
+            "value": "bg-spectrum-celery-700"
+          },
+          {
+            "name": "Chartreuse",
+            "value": "bg-spectrum-chartreuse-700"
+          },
+          {
+            "name": "Cyan",
+            "value": "bg-spectrum-cyan-700"
+          },
+          {
+            "name": "Fuchsia",
+            "value": "bg-spectrum-fuchsia-700"
+          },
+          {
+            "name": "Indigo",
+            "value": "bg-spectrum-indigo-700"
+          },
+          {
+            "name": "Magenta",
+            "value": "bg-spectrum-magenta-700"
+          },
+          {
+            "name": "Purple",
+            "value": "bg-spectrum-purple-700"
+          },
+          {
+            "name": "Seafoam",
+            "value": "bg-spectrum-seafoam-700"
+          },
+          {
+            "name": "Yellow",
+            "value": "bg-spectrum-yellow-700"
+          },
+          {
+            "name": "Adobe Red",
+            "value": "bg-non-spectrum-adobe-red"
+          },
+          {
+            "name": "Custom Hexcode",
+            "value": "custom-hexcode"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "and": [
+            { "===": [{ "var": "cta2_customBgColor" }, "custom-hexcode"] },
+            { "===": [{ "var": "cta2_Type" }, "custom"] }
+          ]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta2_customHexCode",
+        "value": "",
+        "label": "Second CTA Custom Hexcode",
+        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "cta2_Type" }, "custom"]
+        },
+        "component": "select",
+        "valueType": "string",
+        "name": "cta2_textColor",
+        "value": "white",
+        "label": "Second CTA Text Color",
+        "description": "Select the text color",
+        "options": [
+          {
+            "name": "White",
+            "value": "white"
+          },
+          {
+            "name": "Black",
+            "value": "black"
           }
         ]
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "cta2Text",
+        "name": "cta2_linkText",
         "value": "",
         "label": "Second CTA Text",
         "description": "Text to be shown inside button."
@@ -756,7 +996,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "cta2",
+        "name": "cta2_link",
         "value": "",
         "label": "Second CTA Link",
         "description": "What link to open when clicking the button."
