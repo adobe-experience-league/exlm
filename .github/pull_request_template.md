@@ -1,9 +1,16 @@
 Please provide the Jira Issue your PR is for.
-Please also provide test paths following the template below.
+
+<!-- Please also provide test paths following the template below. -->
 
 Jira ID:
 
-> NOTE: `$` will be automatically replaced with the proper origin (using your branch) to test performance against with AEM Sync Bot.
+<!--
+    NOTE: when you raise this PR, `$` will be automatically replaced with your brnach url to test agains.
+    this is done via the github action located at `/.github/workflows/update-pr-description.yaml`
+
+    Use the list below as a guide, keep the paths you need, remove ones you dont, or add your own.
+    Just be sure to follow the pattern of prefixing your paths with `$`
+-->
 
 Test URLs:
 
