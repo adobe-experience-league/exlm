@@ -13,6 +13,9 @@ export const LABELS = {
   aboutPlaylist: 'playlistAboutPlaylist',
   transcriptNotAvailable: 'playlistTranscriptNotAvailable',
   courseReplacedNotice: 'playlistCourseReplacedNotice',
+  inProgress: 'playlistInProgressLabel',
+  completed: 'playlistCompletedLabel',
+  minLabel: 'playlistMinLabel',
 };
 
 /**
