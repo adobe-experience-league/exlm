@@ -32,7 +32,7 @@ jobs:
             sed 's/{repo}/${{ env.REPO }}/g' | \
             sed 's/{branch}/${{ env.BRANCH }}/g' | \
             sed 's/{owner}/${{ env.OWNER }}/g' | \
-            sed "s/\\$/${{ env.PREFIX}}/g"
+            perl -pe 's/(?<!`)\\$/${{ env.PREFIX}}/g'
           )"
           echo "New PR Body: $PR_UPDATED_BODY"
           gh api --method PATCH /repos/$OWNER/$REPO/pulls/$PR_NUMBER -f body="$PR_UPDATED_BODY"
