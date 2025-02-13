@@ -4908,9 +4908,9 @@
       },
       {
         "component": "select",
-        "name": "cta1Type",
+        "name": "ctaType",
         "value": "primary",
-        "label": "First CTA Type",
+        "label": "CTA Type",
         "description": "'Primary' will render button filled, 'Secondary' with an outline.",
         "valueType": "string",
         "options": [
@@ -4927,17 +4927,17 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "cta1Text",
+        "name": "ctaText",
         "value": "",
-        "label": "First CTA Text",
+        "label": "CTA Text",
         "description": "Text to be shown inside button."
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "cta1",
+        "name": "cta",
         "value": "",
-        "label": "First CTA Link",
+        "label": "CTA Link",
         "description": "What link to open when clicking the button."
       },
       {
@@ -4957,6 +4957,14 @@
             "value": "localStorage"
           }
         ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "sessionVariable",
+        "value": "",
+        "label": "Session variable value",
+        "description": "Sets the session variable value in session/local storage. Should be incremented for every new banner. E.g. banner-X"
       },
       {
         "component": "select",
