@@ -4880,5 +4880,106 @@
         "description": "Sets the text for Products filter label in dropdown."
       }
     ]
+  },
+  {
+    "id": "site-wide-banner",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "iconImage",
+        "label": "Icon Image",
+        "description": "Sets the Icon Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "iconImageAlt",
+        "label": "Icon Image Alt Text",
+        "description": "Sets the icon image's alternative text"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description"
+      },
+      {
+        "component": "select",
+        "name": "cta1Type",
+        "value": "primary",
+        "label": "First CTA Type",
+        "description": "'Primary' will render button filled, 'Secondary' with an outline.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1Text",
+        "value": "",
+        "label": "First CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1",
+        "value": "",
+        "label": "First CTA Link",
+        "description": "What link to open when clicking the button."
+      },
+      {
+        "component": "radio-group",
+        "name": "dismissalTime",
+        "value": "",
+        "label": "Banner Dismissal Time",
+        "description": "Hide the banner based on Session or Local storage",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Session storage",
+            "value": "sessionStorage"
+          },
+          {
+            "name": "Local storage",
+            "value": "localStorage"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "backgroundColor",
+        "value": "",
+        "label": "Background Color",
+        "description": "The sitewide banner background color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Blue",
+            "value": "bg-spectrum-blue-700"
+          },
+          {
+            "name": "Black",
+            "value": "bg-spectrum-black-700"
+          },
+          {
+            "name": "Red",
+            "value": "bg-spectrum-red-700"
+          }
+        ]
+      }
+    ]
   }
 ]
