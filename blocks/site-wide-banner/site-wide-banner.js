@@ -22,19 +22,19 @@ export default async function decorate(block) {
   const storageType = storage?.textContent.trim();
   const sessionValue = sessionVariable?.textContent.trim();
 
-  const currentBanner = window[storageType].getItem('site-wide-banner');
-  const previousBanner = window[storageType].getItem('previous-banner');
+  let bannerState = JSON.parse(window[storageType].getItem('site-wide-banner') || '[]');
+  bannerState = Array.isArray(bannerState) && bannerState.length ? bannerState[0] : {};
 
   // If the banner was dismissed and the authored value has not changed, keep it hidden
-  if (currentBanner === 'dismissed' && previousBanner === sessionValue) {
+  if (bannerState.dismissed && bannerState.value === sessionValue) {
     block.style.display = 'none';
     return;
   }
 
   // If the authored value changes, update the session variable and show the banner again
-  if (sessionValue && previousBanner !== sessionValue) {
-    window[storageType].setItem('site-wide-banner', sessionValue);
-    window[storageType].setItem('previous-banner', sessionValue);
+  if (sessionValue && bannerState.value !== sessionValue) {
+    bannerState = [{ value: sessionValue, dismissed: false }];
+    window[storageType].setItem('site-wide-banner', JSON.stringify(bannerState));
   }
 
   description?.classList.add('site-wide-banner-description');
@@ -81,7 +81,8 @@ export default async function decorate(block) {
     if (closeIcon && !window.location.href.includes('.html')) {
       closeIcon.addEventListener('click', () => {
         block.style.display = 'none';
-        window[storageType].setItem('site-wide-banner', 'dismissed');
+        bannerState[0].dismissed = true;
+        window[storageType].setItem('site-wide-banner', JSON.stringify(bannerState));
       });
     }
   });
