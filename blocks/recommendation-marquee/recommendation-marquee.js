@@ -360,6 +360,9 @@ export default async function decorate(block) {
 
   const getCardsData = (payload) =>
     new Promise((resolve) => {
+      if (payload.feature?.length) {
+        payload.feature = null;
+      }
       BrowseCardsDelegate.fetchCardData(payload)
         .then((data) => {
           const [ct] = payload.contentType || [''];
