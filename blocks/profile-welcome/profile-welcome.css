@@ -199,25 +199,10 @@
   font-weight: var(--font-weight-bold);
   width: min-content;
   min-width: 152px;
-  background-color: var(--non-spectrum-true-blue);
-  border: 2px solid var(--non-spectrum-true-blue);
-  color: var(--background-color);
   margin-top: 16px;
   margin-bottom: 0;
   padding: 6px 16px;
   line-height: 21px;
-}
-
-.profile-welcome .profile-user-card-cta > a.button.primary {
-  background-color: var(--non-spectrum-true-blue);
-  border: 2px solid var(--non-spectrum-true-blue);
-  color: var(--background-color);
-}
-
-.profile-welcome .profile-user-card-cta > a.button.secondary {
-  background-color: var(--background-color);
-  border: 2px solid var(--spectrum-gray-800);
-  color: var(--spectrum-gray-800);
 }
 
 .profile-welcome .profile-user-card-incomplete .icon {
