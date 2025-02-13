@@ -51,18 +51,6 @@
   color: var(--background-color);
 }
 
-.announcement-ribbon.block.dark .ribbon-button-container a.button.primary {
-  background-color: var(--background-color);
-  border: 2px solid transparent;
-  color: currentcolor;
-}
-
-.announcement-ribbon.block.dark .ribbon-button-container a.button.secondary {
-  background-color: unset;
-  border: 2px solid currentcolor;
-  color: var(--background-color);
-}
-
 .section.announcement-ribbon-container .announcement-ribbon-wrapper:has(.announcement-ribbon[style*='display: none']) {
   padding: 0;
 }
