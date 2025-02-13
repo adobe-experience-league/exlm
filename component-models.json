@@ -3009,7 +3009,7 @@
         "component": "select",
         "name": "cta1_customBgColor",
         "value": "",
-        "label": "First CTA Background Color",
+        "label": "CTA Background Color",
         "description": "Select First CTA background color. Select 'Custom Hexcode' to enter the custom color",
         "valueType": "string",
         "options": [
@@ -3090,7 +3090,7 @@
         "valueType": "string",
         "name": "cta1_customHexCode",
         "value": "",
-        "label": "First CTA Custom Hexcode",
+        "label": "CTA Custom Hexcode",
         "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
       },
       {
@@ -3101,7 +3101,7 @@
         "valueType": "string",
         "name": "cta1_textColor",
         "value": "white",
-        "label": "First CTA Text Color",
+        "label": "CTA Text Color",
         "description": "Select the text color",
         "options": [
           {
@@ -4518,7 +4518,7 @@
         "component": "select",
         "name": "cta1_Type",
         "value": "primary",
-        "label": "First CTA Type",
+        "label": "CTA Type",
         "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
         "valueType": "string",
         "options": [
@@ -4547,7 +4547,7 @@
         "component": "select",
         "name": "cta1_customBgColor",
         "value": "",
-        "label": "First CTA Background Color",
+        "label": "CTA Background Color",
         "description": "Select First CTA background color. Select 'Custom Hexcode' to enter the custom color",
         "valueType": "string",
         "options": [
@@ -4628,7 +4628,7 @@
         "valueType": "string",
         "name": "cta1_customHexCode",
         "value": "",
-        "label": "First CTA Custom Hexcode",
+        "label": "CTA Custom Hexcode",
         "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
       },
       {
@@ -4639,7 +4639,7 @@
         "valueType": "string",
         "name": "cta1_textColor",
         "value": "white",
-        "label": "First CTA Text Color",
+        "label": "CTA Text Color",
         "description": "Select the text color",
         "options": [
           {
@@ -4657,7 +4657,7 @@
         "valueType": "string",
         "name": "cta1_linkText",
         "value": "",
-        "label": "First CTA Text",
+        "label": "CTA Text",
         "description": "Text to be shown inside button."
       },
       {
@@ -4665,7 +4665,7 @@
         "valueType": "string",
         "name": "cta1_link",
         "value": "",
-        "label": "First CTA Link",
+        "label": "CTA Link",
         "description": "What link to open when clicking the button."
       },
       {
