@@ -425,6 +425,9 @@ export default async function decorate(block) {
 
   const getCardsData = (payload) =>
     new Promise((resolve) => {
+      if (payload.feature?.length) {
+        payload.feature = null;
+      }
       BrowseCardsDelegate.fetchCardData(payload)
         .then((data) => {
           const [ct] = payload.contentType || [''];
@@ -959,9 +962,11 @@ export default async function decorate(block) {
               contentDiv,
             };
             return new Promise((resolve) => {
-              const savedCardModels = dataConfiguration.savedCardsResponse[lowercaseOptionType]?.[
-                payloadContentType
-              ]?.models?.filter((model) => model.markedForReplacement !== true);
+              const savedCardModels = seeMoreConfig.prefetchCards
+                ? false
+                : dataConfiguration.savedCardsResponse[lowercaseOptionType]?.[payloadContentType]?.models?.filter(
+                    (model) => model.markedForReplacement !== true,
+                  );
               let promise;
               if (Array.isArray(savedCardModels)) {
                 promise = Promise.resolve({
