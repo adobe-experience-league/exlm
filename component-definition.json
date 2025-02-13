@@ -719,7 +719,11 @@
                   "model": "featured-content",
                   "content_cta": "Read Article",
                   "classes": ["adobe", "left"],
-                  "linkText": "Read Article"
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "bg-spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customHexCode": "000000",
+                  "cta1_linkText": "Read Article"
                 }
               }
             }
