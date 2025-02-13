@@ -1005,7 +1005,13 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, 
   span.style.setProperty('--placeholder-width', `${fallbackText.length}ch`);
   fetchLanguagePlaceholders()
     .then((placeholders) => {
-      span.textContent = placeholders[placeholderKey] || fallbackText;
+      if (placeholders[placeholderKey]) {
+        span.textContent = placeholders[placeholderKey];
+        span.setAttribute('data-placeholder-resolved-key', placeholderKey);
+      } else {
+        span.textContent = fallbackText;
+        span.setAttribute('data-placeholder-resolved-fallback-text', 'fallback');
+      }
       span.removeAttribute('data-placeholder');
       span.removeAttribute('data-placeholder-fallback');
       span.style.removeProperty('--placeholder-width');
