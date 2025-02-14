@@ -86,6 +86,14 @@
     margin-left: 16px;
   }
 
+  .profile-rail .profile-rail-heading.hidden {
+    display: none;
+  }
+
+  .profile-rail .profile-rail-links.hidden {
+    display: none;
+  }
+
   .profile-rail > div:first-child {
     margin-left: auto;
     max-width: 212px;

@@ -1,6 +1,7 @@
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getPathDetails, htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { formatId } from '../../scripts/browse-card/browse-card-utils.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const { lang } = getPathDetails();
@@ -10,6 +11,14 @@ try {
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
+}
+
+function debounce(func, delay) {
+  let timer;
+  return function debouncedFunction(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func.apply(this, args), delay);
+  };
 }
 
 const awardsPage = '/home/awards';
@@ -47,13 +56,6 @@ function getHeadings() {
     document.querySelectorAll('.recommendation-marquee-header, .recommended-content-header, .recently-reviewed-header'),
   ).filter((heading) => heading.textContent.trim());
   return headings;
-}
-
-function formatId(text) {
-  return text
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '');
 }
 
 export default async function ProfileRail(block) {
@@ -121,7 +123,6 @@ export default async function ProfileRail(block) {
   });
 
   const firstUl = block.querySelector('ul');
-
   const heading = document.createElement('p');
   heading.classList.add('profile-rail-heading', 'hidden');
   heading.textContent = `${placeholders?.jumpToSection || 'Jump to section'}`;
@@ -155,32 +156,20 @@ export default async function ProfileRail(block) {
 
     const navLinks = Array.from(newUl.querySelectorAll('a'));
 
-    function windowLinkActive() {
-      const anySectionActive = [...navLinks].some((link) => link.classList.contains('active'));
-      const pageNavLink = [...document.querySelectorAll('.profile-rail-links a')].find(
-        (link) => link.href.split('#')[0] === window.location.href.split('#')[0],
-      );
-      pageNavLink?.classList.toggle('active', !anySectionActive);
-    }
-
     function clearActiveLinks() {
       navLinks.forEach((link) => link.classList.remove('active'));
-      windowLinkActive();
     }
 
     function updateActiveLink(targetId) {
       clearActiveLinks();
       const activeLink = [...navLinks].find((link) => link.getAttribute('href') === `#${targetId}`);
       if (activeLink) activeLink.classList.add('active');
-      windowLinkActive();
     }
 
     function scrollToElement(targetId) {
       const targetElement = document.getElementById(targetId);
       if (targetElement) {
-        const yOffset = -100;
-        const y = targetElement.getBoundingClientRect().top + window.scrollY + yOffset;
-        window.scrollTo({ top: y, behavior: 'smooth' });
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
         updateActiveLink(targetId);
       }
     }
@@ -190,31 +179,42 @@ export default async function ProfileRail(block) {
         event.preventDefault();
         const targetId = link.getAttribute('href').substring(1);
         scrollToElement(targetId);
-        window.history.replaceState(null, null, `#${targetId}`);
       });
     });
 
-    const observerOptions = {
-      root: null,
-      rootMargin: '0px 0px -80% 0px',
-      threshold: 0,
-    };
+    const pageNavLink = [...document.querySelectorAll('.profile-rail-links a')].find(
+      (link) => link.href.split('#')[0] === window.location.href.split('#')[0],
+    );
 
-    const observer = new IntersectionObserver((entries) => {
+    pageNavLink.addEventListener('click', () => {
+      document.body.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    function handleScroll() {
       let mostVisibleSection = null;
-      let maxIntersectionRatio = 0;
 
-      entries.forEach((entry) => {
-        const firstDivChild = entry.target.querySelector('div');
+      function getCurrentActiveLink() {
+        const href = newUl.querySelector('li a.active')?.getAttribute('href') || null;
+        return href?.startsWith('#') ? href.substring(1) : href;
+      }
+
+      headings.forEach((el) => {
+        const parentSection = el.closest('.block');
+        if (!parentSection) return;
+
+        const firstDivChild = parentSection.querySelector('.rec-heading');
         if (!firstDivChild) return;
 
         const id = firstDivChild.getAttribute('id');
+        const rect = parentSection.getBoundingClientRect();
+        const sectionHeight = rect.height;
+        const visibleHeight = Math.min(window.innerHeight, rect.bottom) - Math.max(0, rect.top);
+        const visibleRatio = visibleHeight / sectionHeight;
 
-        if (entry.isIntersecting) {
-          if (entry.intersectionRatio > maxIntersectionRatio) {
-            mostVisibleSection = id;
-            maxIntersectionRatio = entry.intersectionRatio;
-          }
+        if (visibleRatio >= 0.8) {
+          mostVisibleSection = id;
+        } else if (visibleRatio >= 0.2 && id === getCurrentActiveLink()) {
+          mostVisibleSection = id;
         }
       });
 
@@ -223,19 +223,10 @@ export default async function ProfileRail(block) {
       } else {
         clearActiveLinks();
       }
-    }, observerOptions);
-
-    headings.forEach((el) => {
-      const parentSection = el.parentElement;
-      if (parentSection) {
-        observer.observe(parentSection);
-      }
-    });
-
-    if (window.location.hash) {
-      const targetId = window.location.hash.substring(1);
-      scrollToElement(targetId);
     }
+
+    const debouncedHandleScroll = debounce(handleScroll, 10);
+    window.addEventListener('scroll', debouncedHandleScroll);
   }
 
   updateList();
@@ -246,9 +237,7 @@ export default async function ProfileRail(block) {
     updateList();
   });
 
-  document
-    .querySelectorAll('.recommendation-marquee-header, .recommended-content-header, .recently-reviewed-header')
-    .forEach((el) => mutationObserver.observe(el, observerConfig));
+  document.querySelectorAll('.profile-section').forEach((el) => mutationObserver.observe(el, observerConfig));
 
   decorateIcons(block);
 }
