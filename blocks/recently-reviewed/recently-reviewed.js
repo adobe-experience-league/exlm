@@ -6,6 +6,7 @@ import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js
 import getEmitter from '../../scripts/events.js';
 import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import setTargetDataAsBlockAttribute from '../../scripts/utils/analytics-utils.js';
+import { formatId } from '../../scripts/browse-card/browse-card-utils.js';
 
 let placeholders = {};
 try {
@@ -226,7 +227,7 @@ export default async function decorate(block) {
       block.prepend(headingElement);
       block.prepend(descriptionElement);
     }
-    headingElement.classList.add('recently-reviewed-header');
+    headingElement.classList.add('recently-reviewed-header', 'rec-heading');
     descriptionElement.classList.add('recently-reviewed-description');
     const titleContainer = document.createElement('div');
     const navContainer = document.createElement('div');
@@ -312,6 +313,7 @@ export default async function decorate(block) {
     function renderCards() {
       defaultAdobeTargetClient.getTargetData(block.dataset.targetScope).then(async (resp) => {
         updateCopyFromTarget(resp, headingElement, descriptionElement);
+        headingElement.id = formatId(headingElement.innerHTML);
         if (resp?.data?.length) {
           displayBlock = true;
           appendNavAndContent();
