@@ -41,7 +41,7 @@ export default function decorateCustomButtons(...buttonElements) {
 
         // Apply background color (spectrum or hexcode)
         if (buttonCustomColor !== 'custom-hexcode') {
-          link.style.backgroundColor = `var(--${buttonCustomColor.slice(3)})`; // Remove 'bg-' prefix
+          link.style.backgroundColor = `var(${buttonCustomColor})`;
         } else if (buttonHexCode) {
           link.style.backgroundColor = `#${buttonHexCode}`;
         }
