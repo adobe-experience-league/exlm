@@ -96,21 +96,12 @@
 
 /* the cta buttons in mobile view */
 .teaser.block > .foreground > .text > .cta > a.button {
-  background-color: var(--background-color);
-  border: 2px solid transparent;
-  color: var(--teaser-background-color);
   margin: 0;
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-bold);
   line-height: 15px;
   padding: 5px 14px 6px;
-}
-
-.teaser.block > .foreground > .text > .cta > a.button.secondary {
-  background-color: unset;
-  border: 2px solid var(--background-color);
-  color: var(--background-color);
 }
 
 /* spacer div */
@@ -212,31 +203,6 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  /* revert to normal button behavior for primary and secondary */
-  .teaser.block > .foreground > .text > .cta > a.button {
-    background-color: var(--link-color);
-    border: 2px solid transparent;
-    color: var(--background-color);
-  }
-
-  .teaser.block > .foreground > .text > .cta > a.button.secondary {
-    background-color: unset;
-    border: 2px solid currentcolor;
-    color: currentcolor;
-  }
-
-  .teaser.block.dark > .foreground > .text > .cta > a.button {
-    background-color: var(--background-color);
-    border: 2px solid transparent;
-    color: currentcolor;
-  }
-
-  .teaser.block.dark > .foreground > .text > .cta > a.button.secondary {
-    background-color: unset;
-    border: 2px solid currentcolor;
-    color: var(--background-color);
   }
 
   /* spacer */
