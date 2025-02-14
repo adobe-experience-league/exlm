@@ -1,19 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-
-function decorateButtons(...buttons) {
-  return buttons
-    .map((button) => {
-      const link = button?.querySelector('a');
-      if (link) {
-        link.classList.add('button');
-        if (link.parentElement.tagName === 'EM') link.classList.add('secondary');
-        if (link.parentElement.tagName === 'STRONG') link.classList.add('primary');
-        return link.outerHTML;
-      }
-      return '';
-    })
-    .join('');
-}
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 // Function to remove previously added keys from the browser storage
 function removeStorageKeys() {
@@ -66,7 +52,7 @@ export default async function decorate(block) {
       ${description ? description.outerHTML : ''}
     </div>
     <div class="ribbon-button-container">
-      ${decorateButtons(firstCta, secondCta)}
+      ${decorateCustomButtons(firstCta, secondCta)}
     </div>
     </div>
     <span class="icon icon-close-black"></span>

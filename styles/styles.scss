@@ -597,6 +597,22 @@ button.secondary:disabled:hover {
   background-color: transparent;
 }
 
+a.button.tertiary,
+button.tertiary {
+  background-color: var(--spectrum-gray-900);
+  color: var(--spectrum-gray-50);
+}
+
+a.button.custom.text-white,
+button.custom.text-white {
+  color: var(--spectrum-gray-50);
+}
+
+a.button.custom.text-black,
+button.custom.text-black {
+  color: var(--spectrum-gray-900);
+}
+
 .button-container {
   margin: 0;
 
