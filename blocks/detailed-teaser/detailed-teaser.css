@@ -225,8 +225,8 @@
   }
 
   /* it gets a border */
-  body[class^='browse-'] .section div.detailed-teaser-wrapper,
-  body[class^='article-'] .section div.detailed-teaser-wrapper {
+  body[class^='browse-'] .section div.detailed-teaser-wrapper .detailed-teaser.block,
+  body[class^='article-'] .section div.detailed-teaser-wrapper .detailed-teaser.block {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
   }
@@ -249,6 +249,11 @@
 }
 
 @media (min-width: 1024px) {
+  .detailed-teaser.block:has(.pop-subject-image) {
+    margin-top: 50px;
+    overflow-x: visible;
+  }
+
   /* switch to left right */
   .detailed-teaser.block .foreground {
     flex-direction: row;
@@ -273,6 +278,19 @@
     display: flex;
     align-items: center;
     padding: var(--spectrum-spacing-500) 0;
+  }
+
+  .detailed-teaser.block > .foreground.pop-subject-image > .spacer {
+    position: relative;
+    width: 100%;
+    max-width: 550px;
+    padding: 0;
+  }
+
+  /* elevate subject image above forground */
+  .detailed-teaser.block > .foreground.pop-subject-image > .spacer picture {
+    position: absolute;
+    top: -50px;
   }
 
   .detailed-teaser.block > .foreground > .spacer img {

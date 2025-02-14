@@ -14,9 +14,9 @@ import ResponsivePillList from '../../scripts/responsive-pill-list/responsive-pi
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
+import { setTargetDataAsBlockAttribute, setCoveoAnalyticsAttribute } from '../../scripts/utils/analytics-utils.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
-const signupDialogEventEmitter = getEmitter('signupDialog');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const DEFAULT_NUM_CARDS = 5;
 let seeMoreFlag = false;
@@ -49,20 +49,48 @@ function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
     .join('');
 }
 
-function getSavedCardsCount(dataConfiguration) {
-  return Object.values(dataConfiguration.savedCardsResponse || {}).reduce((acc, curr) => acc + curr.models.length, 0);
+function ensureDataSaveConfigExists(dataConfiguration, lowercaseOptionType, ctType) {
+  if (!dataConfiguration.savedCardsResponse[lowercaseOptionType]) {
+    dataConfiguration.savedCardsResponse[lowercaseOptionType] = {};
+  }
+  if (!dataConfiguration.savedCardsResponse[lowercaseOptionType][ctType]) {
+    dataConfiguration.savedCardsResponse[lowercaseOptionType][ctType] = {
+      models: [],
+    };
+  }
 }
 
-function getSavedCardModel(dataConfiguration) {
-  const savedCardContentTypes = Object.keys(dataConfiguration.savedCardsResponse || {});
+function getSavedCardsCount(dataConfiguration, optionType) {
+  return Object.values(dataConfiguration.savedCardsResponse[optionType] || {}).reduce((acc, curr) => {
+    const availableModels = curr.models.filter((model) => !model.markedForReplacement);
+    return acc + availableModels.length;
+  }, 0);
+}
+
+function restoreSavedCardsModelState(dataConfiguration, optionType) {
+  const savedCardResponseModel = dataConfiguration.savedCardsResponse[optionType] || {};
+  const contentTypes = Object.keys(savedCardResponseModel);
+  contentTypes.forEach((contentType) => {
+    const savedCardResponse = dataConfiguration.savedCardsResponse[optionType][contentType];
+    const cardModels = savedCardResponse.models || [];
+    cardModels.forEach((cardModel) => {
+      delete cardModel.markedForReplacement;
+    });
+  });
+}
+
+function getSavedCardModel(dataConfiguration, optionType) {
+  const savedCardContentTypes = Object.keys(dataConfiguration.savedCardsResponse[optionType] || {});
   return savedCardContentTypes.reduce((acc, curr) => {
     if (acc) {
       return acc;
     }
-    const savedCardResponse = dataConfiguration.savedCardsResponse[curr];
+    const savedCardResponse = dataConfiguration.savedCardsResponse[optionType][curr];
     const cardModels = savedCardResponse.models || [];
-    const model = cardModels.pop();
-
+    const model = cardModels.find((modelInfo) => modelInfo.markedForReplacement !== true);
+    if (model) {
+      model.markedForReplacement = true;
+    }
     return model || acc;
   }, null);
 }
@@ -201,37 +229,6 @@ export function updateCopyFromTarget(data, heading, subheading, taglineCta, tagl
   }
 }
 
-/**
- * Sets target data as a data attribute on the given block element.
- *
- * This function checks if the provided `data` object contains a `meta` property.
- * If the `meta` property exists, it serializes the metadata as a JSON string and
- * adds it to the specified block element as a custom data attribute `data-analytics-target-meta`.
- *
- * @param {Object} data - The data returned from target.
- * @param {HTMLElement} block - The DOM element to which the meta data will be added as an attribute.
- *
- */
-export function setTargetDataAsBlockAttribute(data, block) {
-  if (data?.meta) {
-    block.setAttribute('data-analytics-target-meta', JSON.stringify(data?.meta));
-  }
-}
-
-/**
- * Adds a data-analytics-coveo-meta attribute to each recommendation-marquee block on the page.
- * Value is in the format coveo-X, where X represents the order of the block on the page.
- */
-function setCoveoCountAsBlockAttribute() {
-  const recommendedBlocks = document.querySelectorAll('.recommendation-marquee.block');
-  let coveoCount = 1;
-
-  recommendedBlocks.forEach((block) => {
-    block.setAttribute('data-analytics-coveo-meta', `coveo-${coveoCount}`);
-    coveoCount += 1;
-  });
-}
-
 async function fetchInterestData() {
   try {
     let data;
@@ -337,7 +334,7 @@ export default async function decorate(block) {
   const descriptionContainer = block.querySelector('.recommendation-marquee-description');
 
   const targetCriteriaId = block.dataset.targetScope;
-  let profileDataPromise = defaultProfileClient.getMergedProfile();
+  const profileDataPromise = defaultProfileClient.getMergedProfile();
 
   const tempWrapper = htmlToElement(`
       <div class="recommendation-marquee-temp-wrapper">
@@ -363,6 +360,9 @@ export default async function decorate(block) {
 
   const getCardsData = (payload) =>
     new Promise((resolve) => {
+      if (payload.feature?.length) {
+        payload.feature = null;
+      }
       BrowseCardsDelegate.fetchCardData(payload)
         .then((data) => {
           const [ct] = payload.contentType || [''];
@@ -377,23 +377,18 @@ export default async function decorate(block) {
     });
 
   const renderCardsBlock = (cardModels, payloadConfig, contentDiv) => {
-    const { renderCards = true, lowercaseOptionType } = payloadConfig;
+    const { renderCards = true, lowercaseOptionType, targetSupport } = payloadConfig;
     const cardModelsToRender = cardModels
       .filter((model, index) => {
-        if (!seeMoreConfig.prefetchCards || !model) {
+        if (!seeMoreConfig.prefetchCards || !model || targetSupport) {
           return model;
         }
         const { payload, contentType } = payloadConfig;
         const { noOfResults } = payload;
         const renderCount = noOfResults / 2;
         if (index + 1 > renderCount) {
-          if (!dataConfiguration.savedCardsResponse[contentType]) {
-            dataConfiguration.savedCardsResponse[contentType] = {
-              models: [],
-              payload,
-            };
-          }
-          dataConfiguration.savedCardsResponse[contentType].models.push(model);
+          ensureDataSaveConfigExists(dataConfiguration, lowercaseOptionType, contentType);
+          dataConfiguration.savedCardsResponse[lowercaseOptionType][contentType].models.push(model);
           return null;
         }
         return model;
@@ -407,7 +402,6 @@ export default async function decorate(block) {
           if (cardData?.cardPromise) {
             cardData.cardPromise.then((cardDataResponse) => {
               const { cardsToRenderCount } = cardData;
-              const validCardsCount = seeMoreConfig.prefetchCards ? cardsToRenderCount / 2 : cardsToRenderCount;
               const { data: delayedCardData = [] } = cardDataResponse;
               const cardModelsList = [];
               if (delayedCardData.length === 0) {
@@ -418,49 +412,35 @@ export default async function decorate(block) {
                   });
                 }
               } else {
-                const { contentType, payload } = payloadConfig;
                 countNumberAsArray(cardsToRenderCount).forEach((_, index) => {
-                  if (seeMoreConfig.prefetchCards && index + 1 > validCardsCount) {
-                    if (!dataConfiguration.savedCardsResponse[contentType]) {
-                      dataConfiguration.savedCardsResponse[contentType] = {
-                        models: [],
-                        payload,
-                      };
+                  const shimmer = cardData.shimmers[index];
+                  const wrapperDiv = cardData.wrappers[index];
+                  if (renderCards) {
+                    if (shimmer) {
+                      shimmer.removeShimmer();
                     }
-                    const cardInfoToSave = delayedCardData[index];
-                    if (cardInfoToSave) {
-                      dataConfiguration.savedCardsResponse[contentType].models.push(cardInfoToSave);
-                    }
-                  } else {
-                    const shimmer = cardData.shimmers[index];
-                    const wrapperDiv = cardData.wrappers[index];
-                    if (renderCards) {
-                      if (shimmer) {
-                        shimmer.removeShimmer();
-                      }
-                      wrapperDiv.innerHTML = '';
-                    }
-                    const [defaultCardModel] = delayedCardData;
-                    const targetIndex = delayedCardData.findIndex((delayData) =>
-                      delayData.id ? !alreadyRenderedCardIds.includes(delayData.id) : false,
-                    );
-                    let cardModel;
-                    if (targetIndex !== -1) {
-                      cardModel = delayedCardData[targetIndex];
-                      delayedCardData.splice(targetIndex, 1);
-                    } else {
-                      cardModel = defaultCardModel;
-                      delayedCardData.splice(0, 1);
-                    }
-                    if (renderCards) {
-                      if (cardModel && cardModel.id) {
-                        dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
-                        cardModel.truncateDescription = false;
-                      }
-                      buildCard(contentDiv, wrapperDiv, cardModel);
-                    }
-                    cardModelsList.push(cardModel);
+                    wrapperDiv.innerHTML = '';
                   }
+                  const [defaultCardModel] = delayedCardData;
+                  const targetIndex = delayedCardData.findIndex((delayData) =>
+                    delayData.id ? !alreadyRenderedCardIds.includes(delayData.id) : false,
+                  );
+                  let cardModel;
+                  if (targetIndex !== -1) {
+                    cardModel = delayedCardData[targetIndex];
+                    delayedCardData.splice(targetIndex, 1);
+                  } else {
+                    cardModel = defaultCardModel;
+                    delayedCardData.splice(0, 1);
+                  }
+                  if (renderCards) {
+                    if (cardModel && cardModel.id) {
+                      dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
+                      cardModel.truncateDescription = false;
+                    }
+                    buildCard(contentDiv, wrapperDiv, cardModel);
+                  }
+                  cardModelsList.push(cardModel);
                 });
               }
               resolve(cardModelsList);
@@ -569,7 +549,7 @@ export default async function decorate(block) {
       if (coveoFlowDetection) {
         headerContainer.innerHTML = headingElement.innerHTML;
         descriptionContainer.innerHTML = descriptionElement.innerHTML;
-        setCoveoCountAsBlockAttribute();
+        setCoveoAnalyticsAttribute(block);
         block.style.display = 'block';
       }
 
@@ -658,7 +638,13 @@ export default async function decorate(block) {
           );
         } else {
           const { data: cards = [], contentType: ctType } = cardResponse || {};
-          const { shimmers: cardShimmers, payload: apiPayload, wrappers: cardWrappers, contentDiv } = apiConfigObject;
+          const {
+            shimmers: cardShimmers,
+            payload: apiPayload,
+            wrappers: cardWrappers,
+            contentDiv,
+            lowercaseOptionType,
+          } = apiConfigObject;
           const { noOfResults } = apiPayload;
           if (cards.length) {
             countNumberAsArray(noOfResults).forEach(() => {
@@ -672,12 +658,10 @@ export default async function decorate(block) {
               }
             });
           } else {
-            const cardsHaveBeenSaved = getSavedCardsCount(dataConfiguration) > 0;
+            const cardsHaveBeenSaved = getSavedCardsCount(dataConfiguration, lowercaseOptionType) > 0;
             if (seeMoreConfig.prefetchCards) {
-              if (!dataConfiguration.savedCardsResponse[ctType]) {
-                dataConfiguration.savedCardsResponse[ctType] = {};
-              }
-              dataConfiguration.savedCardsResponse[ctType].models = [];
+              ensureDataSaveConfigExists(dataConfiguration, lowercaseOptionType, ctType);
+              dataConfiguration.savedCardsResponse[lowercaseOptionType][ctType].models = [];
             } else if (cardsHaveBeenSaved) {
               // delete the shimmer and wrapper as this instance of saved card was already rendered in first row.
               // seeMoreConfig.prefetchCards will be false for the second row.
@@ -878,7 +862,7 @@ export default async function decorate(block) {
                   if (resp?.data) {
                     updateCopyFromTarget(resp, headerContainer, descriptionContainer, linkEl, resultTextEl);
                     block.style.display = 'block';
-                    setTargetDataAsBlockAttribute(resp, block);
+                    setTargetDataAsBlockAttribute(block, resp);
                   }
                   const cardModels = await parseCardResponseData(resp, payloadConfig);
                   let renderedCardModels = [];
@@ -910,11 +894,22 @@ export default async function decorate(block) {
             const wrappers = [];
             const { noOfResults } = payload;
             const savedModels = [];
-            countNumberAsArray(noOfResults).forEach(() => {
+            const savedContentTypes = Object.keys(dataConfiguration.savedCardsResponse[lowercaseOptionType] || {});
+            const allSavedCardModels = savedContentTypes.reduce((acc, curr) => {
+              const models = dataConfiguration.savedCardsResponse[lowercaseOptionType][curr].models || [];
+              models.forEach((model) => {
+                if (model.markedForReplacement !== true) {
+                  acc.push(model);
+                }
+              });
+              return acc;
+            }, []);
+
+            countNumberAsArray(noOfResults).forEach((_, i) => {
               const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, args.renderCards);
               cardShimmers.push(shimmer);
               wrappers.push(wrapper);
-              const model = getSavedCardModel(dataConfiguration);
+              const model = allSavedCardModels[i];
               if (model) {
                 savedModels.push(model);
               }
@@ -986,7 +981,9 @@ export default async function decorate(block) {
               contentDiv,
             };
             return new Promise((resolve) => {
-              const savedCardModels = dataConfiguration.savedCardsResponse[payloadContentType]?.models;
+              const savedCardModels = dataConfiguration.savedCardsResponse[lowercaseOptionType]?.[
+                payloadContentType
+              ]?.models?.filter((model) => model.markedForReplacement !== true);
               let promise;
               if (Array.isArray(savedCardModels)) {
                 promise = Promise.resolve({
@@ -1034,9 +1031,11 @@ export default async function decorate(block) {
 
                 data.forEach(({ shimmers, wrappers, contentDiv: contentWrapper }) => {
                   wrappers.forEach((wrapper, index) => {
-                    const model = getSavedCardModel(dataConfiguration);
+                    const model = getSavedCardModel(dataConfiguration, lowercaseOptionType);
                     shimmers[index].removeShimmer();
-                    cardReplacementPromises.push(buildCard(contentWrapper, wrapper, model));
+                    if (model) {
+                      cardReplacementPromises.push(buildCard(contentWrapper, wrapper, model));
+                    }
                   });
                 });
               });
@@ -1070,7 +1069,9 @@ export default async function decorate(block) {
               recommendedContentNoResults(contentDiv);
 
               if (!targetSupport) {
-                const savedCardsCount = seeMoreConfig.prefetchCards ? getSavedCardsCount(dataConfiguration) : 1;
+                const savedCardsCount = seeMoreConfig.prefetchCards
+                  ? getSavedCardsCount(dataConfiguration, lowercaseOptionType)
+                  : 1;
                 const seeMoreBtn = block.querySelector('.recommended-content-see-more-btn');
                 if (!block.dataset.browseCardRows || savedCardsCount === 0) {
                   if (seeMoreBtn) {
@@ -1178,6 +1179,8 @@ export default async function decorate(block) {
           /* Reused the existing method */
           if (selectedItem) {
             renderButtonPlaceholder();
+            seeMoreConfig.prefetchCards = true;
+            restoreSavedCardsModelState(dataConfiguration, selectedItem.toLowerCase());
             fetchDataAndRenderBlock(selectedItem, { renderCards: true, createRow: false, clearSeeMoreRows: true });
           }
         },
@@ -1202,11 +1205,6 @@ export default async function decorate(block) {
       }
     });
   }
-
-  signupDialogEventEmitter.on('signupDialogClose', () => {
-    profileDataPromise = defaultProfileClient.getMergedProfile();
-    handleTargetSupportAndRender(block.dataset.targetScope);
-  });
 
   if (showOnlyCoveo) {
     renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });

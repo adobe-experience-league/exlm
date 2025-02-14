@@ -780,6 +780,10 @@ picture {
   color: var(--spectrum-red-900);
 }
 
+.section[data-center-aligned='true'] .default-content-wrapper > * {
+  text-align: center;
+}
+
 @include breakpoint(tablet) {
   .exl-toast {
     width: auto;
