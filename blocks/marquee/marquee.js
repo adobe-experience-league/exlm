@@ -156,6 +156,16 @@ export default async function decorate(block) {
   const isSigninLinkType =
     firstCtaLinkType?.textContent?.trim() === 'signin' || secondCtaLinkType?.textContent?.trim() === 'signin';
 
+  function addCtaClass(ctaType, selector) {
+    const ctaText = ctaType?.textContent?.trim();
+    if (ctaText === 'video' || ctaText === 'signin') {
+      marqueeDOM.querySelector(selector).classList.add(ctaText);
+    }
+  }
+    
+  addCtaClass(firstCtaLinkType, '.marquee-cta > a:first-child');
+  addCtaClass(secondCtaLinkType, '.marquee-cta > a:last-child');
+
   if (isVideoLinkType) {
     const videoLinkElems = marqueeDOM.querySelectorAll('.marquee-cta > .video');
     handleVideoLinks(videoLinkElems, block);

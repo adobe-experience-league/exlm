@@ -1918,7 +1918,7 @@
         "component": "select",
         "name": "firstCTALinkFunction",
         "value": "",
-        "label": "First CTA Type",
+        "label": "First CTA Function",
         "description": "The 'Link' option will render a standard anchor button, the 'Video' option will render a button that opens the video player when clicked, and the 'Sign In' option will trigger the sign-in process.",
         "valueType": "string",
         "options": [
@@ -2094,7 +2094,7 @@
         "component": "select",
         "name": "secondCTALinkFunction",
         "value": "",
-        "label": "Second CTA Type",
+        "label": "Second CTA Function",
         "description": "The 'Link' option will render a standard anchor button, the 'Video' option will render a button that opens the video player when clicked, and the 'Sign In' option will trigger the sign-in process.",
         "valueType": "string",
         "options": [
