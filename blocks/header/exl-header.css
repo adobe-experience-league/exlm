@@ -1,3 +1,5 @@
+/* stylelint-enforce-no-external-css-vars - this is used in header when included externally, it has to be all-inclusive, including variables */
+
 @charset "UTF-8";
 /* stylelint-disable  color-hex-length */
 :host {
@@ -43,6 +45,10 @@
   --non-spectrum-article-dark-gray: #6a6a6a;
   --non-spectrum-silver-mist: #d1d1d1;
   --non-spectrum-grey-updated: #8e8e8e;
+  --non-spectrum-silver: #f5f5f5;
+  --non-spectrum-grey: #4a4a4a;
+  --non-spectrum-charcoal-gray: #505050;
+  --non-spectrum-azure-blue: #378ef0;
   --background-color: #fff;
   --link-color: #0066cc;
   --link-hover-color: #0055b3;
@@ -51,6 +57,16 @@
   --font-weight-normal: 400;
   --font-weight-semi-bold: 600;
   --font-weight-bold: 700;
+  --font-weight-thin: 100;
+  --font-weight-light: 300;
+  --non-spectrum-graphite-gray: #4b4b4b;
+  --text-color: #000;
+  --spectrum-font-size-50: 11px;
+  --spectrum-font-size-75: 12px;
+  --spectrum-font-size-100: 14px;
+  --spectrum-font-size-200: 16px;
+  --spectrum-font-size-400: 20px;
+  --exlm-line-height-h6: 23.4px;
 
   /* fonts */
   --body-font-family: 'Adobe Clean', adobe-clean, 'Source Sans Pro', -apple-system, system-ui, 'Segoe UI', roboto,
