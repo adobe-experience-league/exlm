@@ -396,12 +396,18 @@ export default function decorate(block) {
     videoDataCell.append(
       htmlToElement(`<div class="playlist-item-meta">
               <div data-progress-status="not-started"></div>
-              <div data-progress-status="in-progress">${iconSpan('check')} In Progress</div>
-              <div data-progress-status="completed">${iconSpan('check-filled')} Completed</div>
-              <div>${iconSpan('time')} ${toTimeInMinutes(video.duration)} MIN</div>
+              <div data-progress-status="in-progress">${iconSpan('check')} <span data-placeholder="${
+                LABELS.inProgress
+              }">In Progress</span></div>
+              <div data-progress-status="completed">${iconSpan('check-filled')} <span data-placeholder="${
+                LABELS.completed
+              }">Completed</span></div>
+              <div>${iconSpan('time')} ${toTimeInMinutes(video.duration)} <span data-placeholder="${
+                LABELS.minLabel
+              }">MIN</span></div>
           </div>`),
     );
-
+    decoratePlaceholders(videoDataCell);
     videoRow.addEventListener('click', () => {
       playlist.activateVideoByIndex(videoIndex);
     });
