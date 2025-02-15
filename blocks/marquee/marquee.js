@@ -1,20 +1,6 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-
-function decorateButtons(buttons) {
-  return buttons
-    .map(({ ctaElem, ctaStyle, ctaLinkType = 'link' }) => {
-      if (ctaElem && ctaElem.textContent?.trim() !== '') {
-        const a = ctaElem.querySelector('a');
-        if (a) {
-          a.classList.add('button', ctaStyle, ctaLinkType);
-          return a.outerHTML;
-        }
-      }
-      return '';
-    })
-    .join('');
-}
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 function handleVideoLinks(videoLinkElems, block) {
   videoLinkElems.forEach((videoLinkElem) => {
@@ -110,18 +96,7 @@ export default async function decorate(block) {
         <div class='marquee-title'>${title.innerHTML}</div>
         <div class='marquee-long-description'>${longDescr.innerHTML}</div>
         <div class='marquee-cta'>
-          ${decorateButtons([
-            {
-              ctaElem: firstCta,
-              ctaStyle: 'secondary',
-              ctaLinkType: firstCtaLinkType?.textContent?.trim() || 'link',
-            },
-            {
-              ctaElem: secondCta,
-              ctaStyle: 'primary',
-              ctaLinkType: secondCtaLinkType?.textContent?.trim() || 'link',
-            },
-          ])}
+          ${decorateCustomButtons(firstCta, secondCta)}
         </div>
       </div>
     </div>
