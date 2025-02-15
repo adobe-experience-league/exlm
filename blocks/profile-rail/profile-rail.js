@@ -132,9 +132,11 @@ export default async function ProfileRail(block) {
   newUl.classList.add('profile-rail-links', 'hidden');
   heading.insertAdjacentElement('afterend', newUl);
 
+  let activeLink = null;
+  let isAnchorScroll = false;
+
   function updateList() {
     newUl.innerHTML = '';
-
     const headings = getHeadings();
     const hasHeadings = headings.length > 0;
     heading.classList.toggle('hidden', !hasHeadings);
@@ -156,47 +158,38 @@ export default async function ProfileRail(block) {
 
     const navLinks = Array.from(newUl.querySelectorAll('a'));
 
-    function clearActiveLinks() {
-      navLinks.forEach((link) => link.classList.remove('active'));
-    }
-
-    function updateActiveLink(targetId) {
-      clearActiveLinks();
-      const activeLink = [...navLinks].find((link) => link.getAttribute('href') === `#${targetId}`);
-      if (activeLink) activeLink.classList.add('active');
-    }
-
-    function scrollToElement(targetId) {
-      const targetElement = document.getElementById(targetId);
-      if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        updateActiveLink(targetId);
-      }
-    }
-
     navLinks.forEach((link) => {
-      link.addEventListener('click', (event) => {
-        event.preventDefault();
+      link.addEventListener('click', () => {
+        navLinks.forEach((a) => a.classList.remove('active'));
+        link.classList.add('active');
+        activeLink = link;
+        isAnchorScroll = true;
         const targetId = link.getAttribute('href').substring(1);
-        scrollToElement(targetId);
+        const targetElement = document.getElementById(targetId);
+        targetElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => {
+          isAnchorScroll = false;
+        }, 1000);
       });
-    });
-
-    const pageNavLink = [...document.querySelectorAll('.profile-rail-links a')].find(
-      (link) => link.href.split('#')[0] === window.location.href.split('#')[0],
-    );
-
-    pageNavLink.addEventListener('click', () => {
-      document.body.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (activeLink && link.href === activeLink.href) {
+        link.classList.add('active');
+      }
     });
 
     function handleScroll() {
+      if (isAnchorScroll) return;
+
       let mostVisibleSection = null;
+      const viewportHeight = window.innerHeight;
+      const topThreshold = viewportHeight * 0.2;
 
       function getCurrentActiveLink() {
-        const href = newUl.querySelector('li a.active')?.getAttribute('href') || null;
-        return href?.startsWith('#') ? href.substring(1) : href;
+        const currentActiveLink = newUl.querySelector('a.active');
+        return currentActiveLink ? currentActiveLink.getAttribute('href').substring(1) : null;
       }
+
+      const currentActive = getCurrentActiveLink();
+      let sectionInViewport = false;
 
       headings.forEach((el) => {
         const parentSection = el.closest('.block');
@@ -207,35 +200,46 @@ export default async function ProfileRail(block) {
 
         const id = firstDivChild.getAttribute('id');
         const rect = parentSection.getBoundingClientRect();
-        const sectionHeight = rect.height;
-        const visibleHeight = Math.min(window.innerHeight, rect.bottom) - Math.max(0, rect.top);
-        const visibleRatio = visibleHeight / sectionHeight;
 
-        if (visibleRatio >= 0.8) {
+        if (rect.top <= topThreshold && rect.bottom > 0) {
           mostVisibleSection = id;
-        } else if (visibleRatio >= 0.2 && id === getCurrentActiveLink()) {
-          mostVisibleSection = id;
+          sectionInViewport = true;
         }
       });
 
+      if (!mostVisibleSection) {
+        mostVisibleSection = currentActive;
+      }
+
+      if (!sectionInViewport) {
+        mostVisibleSection = null;
+      }
+
+      navLinks.forEach((link) => link.classList.remove('active'));
+
       if (mostVisibleSection) {
-        updateActiveLink(mostVisibleSection);
-      } else {
-        clearActiveLinks();
+        const activeSection = navLinks.find((link) => link.getAttribute('href') === `#${mostVisibleSection}`);
+        activeSection?.classList.add('active');
       }
     }
 
-    const debouncedHandleScroll = debounce(handleScroll, 10);
+    const debouncedHandleScroll = debounce(() => {
+      if (!isAnchorScroll) handleScroll();
+    }, 50);
     window.addEventListener('scroll', debouncedHandleScroll);
   }
 
-  updateList();
+  const pageNavLink = [...document.querySelectorAll('.profile-rail-links a')].find(
+    (link) => link.href.split('#')[0] === window.location.href.split('#')[0],
+  );
+
+  pageNavLink?.addEventListener('click', () => {
+    document.body.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 
   const observerConfig = { childList: true, subtree: true, characterData: true };
 
-  const mutationObserver = new MutationObserver(() => {
-    updateList();
-  });
+  const mutationObserver = new MutationObserver(debounce(updateList, 100));
 
   document.querySelectorAll('.profile-section').forEach((el) => mutationObserver.observe(el, observerConfig));
 
