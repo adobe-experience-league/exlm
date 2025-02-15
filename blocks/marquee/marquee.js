@@ -84,7 +84,7 @@ export default async function decorate(block) {
     img,
     bgColorShape,
     hexcode,
-    backgroundHexcode,
+    fillBackground,
     eyebrow,
     title,
     longDescr,
@@ -96,13 +96,14 @@ export default async function decorate(block) {
 
   const marqueeSize = marqueeSizeType?.textContent?.trim();
   const subjectPicture = img.querySelector('picture');
-  const bgShape = bgColorShape?.textContent?.trim();
+  const bgShape = bgColorShape?.textContent?.toLowerCase().trim();
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${hexcode.innerHTML}`;
   const eyebrowText = eyebrow?.textContent?.trim();
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
+    <div class='marquee-content-container'>
     <div class='marquee-foreground'>
       <div class='marquee-text'>
         ${eyebrowText !== '' ? `<div class='marquee-eyebrow'>${eyebrowText?.toUpperCase()}</div>` : ``}
@@ -123,34 +124,53 @@ export default async function decorate(block) {
           ])}
         </div>
       </div>
-      ${
-        subjectPicture
-          ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
-          : `<div class='marquee-spacer'></div>`
-      }
     </div>
-    <div class='marquee-background'>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1562 571.212">
-        <path fill="${
-          backgroundHexcode.innerHTML === 'true' ? bgColor : '#fff'
-        }" d="M0 1.212h1562v570H0z" data-name="Rectangle 1"></path>
-        <path class="bg" fill="${bgColor}" d="M752.813-1495s115.146 210.072 471.053 309.516 291.355 261.7 291.355 261.7h150.039V-1495Z" data-name="Path 1" transform="translate(-103.26 1495)"></path>
-      </svg>
+    <div class='marquee-background ${bgShape}' ${bgShape === 'straight' ? `style="background-color: ${bgColor}"` : ''}>
+          ${
+            subjectPicture
+              ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
+              : `<div class='marquee-spacer'></div>`
+          } 
+      <div class="marquee-background-fill">
+      ${
+        bgShape !== 'straight'
+          ? `
+          <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
+            <path
+              id="Path_1"
+              data-name="Path 1"
+              d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
+              transform="translate(-738.685 1.777)"
+              fill="${bgColor}"
+            />
+          </svg>`
+          : ' '
+      }
+      </div>
+      <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
+
+      </div>
+    </div>
     </div>
   `);
 
   block.textContent = '';
+
   if (!subjectPicture) {
     block.classList.add('no-subject');
   }
   if (marqueeSize) {
     block.classList.add(marqueeSize);
   }
+  if (bgShape) {
+    block.classList.add(bgShape);
+  }
+
+  if (fillBackground?.textContent?.toLowerCase()?.trim() === 'true') {
+    block.style.backgroundColor = bgColor;
+  }
 
   block.append(marqueeDOM);
-  if (bgShape) {
-    block.querySelector('.marquee-subject')?.classList.add(bgShape);
-  }
 
   if (!((firstCta && firstCtaLinkType) || (secondCta && secondCtaLinkType))) {
     return; // Exit early if no CTA or link type is present
