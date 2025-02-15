@@ -6,6 +6,7 @@ import {
   convertToTitleCase,
   extractCapability,
   removeProductDuplicates,
+  formatId,
 } from '../../scripts/browse-card/browse-card-utils.js';
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import getEmitter from '../../scripts/events.js';
@@ -351,7 +352,7 @@ export default async function decorate(block) {
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
   const recommendedContentShimmer = `
-  <div class="recommended-content-header">${generateLoadingShimmer([[50, 14]])}</div>
+  <div class="recommended-content-header rec-heading">${generateLoadingShimmer([[50, 14]])}</div>
   <div class="recommended-content-description">${generateLoadingShimmer([[50, 10]])}</div>
 `;
   // Clearing the block's content and adding CSS class
@@ -604,6 +605,7 @@ export default async function decorate(block) {
       }
       if (coveoFlowDetection) {
         headerContainer.innerHTML = headingElement.innerHTML;
+        headerContainer.id = formatId(headingElement.innerHTML);
         descriptionContainer.innerHTML = descriptionElement.innerHTML;
         setCoveoAnalyticsAttribute(block);
         block.style.display = 'block';
@@ -909,6 +911,7 @@ export default async function decorate(block) {
                   }
                   if (resp?.data) {
                     updateCopyFromTarget(resp, headerContainer, descriptionContainer, linkEl, resultTextEl);
+                    headerContainer.id = formatId(headerContainer.innerHTML);
                     block.style.display = 'block';
                     setTargetDataAsBlockAttribute(block, resp);
                   }

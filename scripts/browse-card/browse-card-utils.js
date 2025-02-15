@@ -194,3 +194,9 @@ export const createDateCriteria = (dateList) => {
 
 // Function to convert a string to title case
 export const formatTitleCase = (str) => str.replace(/[-\s]/g, '').replace(/\b\w/g, (match) => match.toUpperCase());
+// Function to convert headings to id format
+export const formatId = (text) =>
+  text
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
