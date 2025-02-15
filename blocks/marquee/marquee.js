@@ -159,7 +159,7 @@ export default async function decorate(block) {
   function addCtaClass(ctaType, selector) {
     const ctaText = ctaType?.textContent?.trim();
     if (ctaText === 'video' || ctaText === 'signin') {
-      marqueeDOM.querySelector(selector).classList.add(ctaText);
+      block.querySelector(selector).classList.add(ctaText);
     }
   }
     
@@ -167,7 +167,7 @@ export default async function decorate(block) {
   addCtaClass(secondCtaLinkType, '.marquee-cta > a:last-child');
 
   if (isVideoLinkType) {
-    const videoLinkElems = marqueeDOM.querySelectorAll('.marquee-cta > .video');
+    const videoLinkElems = block.querySelectorAll('.marquee-cta > .video');
     handleVideoLinks(videoLinkElems, block);
   } else if (isSigninLinkType) {
     handleSigninLinks(block);
