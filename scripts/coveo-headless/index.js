@@ -333,7 +333,7 @@ export default async function initiateCoveoHeadlessSearch({
           let criteria = [[]];
           const isSortValueInHash = hashURL.split('&');
           // eslint-disable-next-line
-          isSortValueInHash.filter((item) => {
+          isSortValueInHash.forEach((item) => {
             if (item.includes('sortCriteria')) {
               const scValue = decodeURIComponent(item.split('=')[1]);
               // eslint-disable-next-line
