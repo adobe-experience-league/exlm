@@ -1159,7 +1159,7 @@ export default async function decorate(block) {
         }
       }
 
-      const responsiveList = new ResponsivePillList({
+      const responsivePillList = new ResponsivePillList({
         wrapper: blockHeader,
         items: listItems,
         defaultSelected: defaultOption,
@@ -1184,7 +1184,7 @@ export default async function decorate(block) {
           }
         },
       });
-      responsiveList.initialize();
+      responsivePillList.initialize();
     });
   }
 
