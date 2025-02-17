@@ -434,8 +434,8 @@ div.marquee-wrapper {
     padding: 6px 16px 9px 20px;
   }
 
-  body[class^='browse-'] .section div.marquee-wrapper .marquee-content-container,
-  body[class^='article-'] .section div.marquee-wrapper .marquee-content-container {
+  body[class^='browse-'] .section div.marquee-wrapper .marquee,
+  body[class^='article-'] .section div.marquee-wrapper .marquee {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
     background-color: var(--background-color);
