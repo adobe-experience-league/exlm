@@ -86,10 +86,7 @@
     margin-left: 16px;
   }
 
-  .profile-rail .profile-rail-heading.hidden {
-    display: none;
-  }
-
+  .profile-rail .profile-rail-heading.hidden,
   .profile-rail .profile-rail-links.hidden {
     display: none;
   }
