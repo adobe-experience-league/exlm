@@ -318,7 +318,7 @@ export default async function decorate(block) {
   const [headingElement, descriptionElement, ...contentTypesEl] = restOfEl.reverse();
   const headingElementNode = htmlToElement(headingElement.innerHTML);
   const recommendedContentShimmer = `
-  <div class="recommendation-marquee-header rec-heading">${generateLoadingShimmer([[50, 14]])}</div>
+  <div class="recommendation-marquee-header rec-block-header">${generateLoadingShimmer([[50, 14]])}</div>
   <div class="recommendation-marquee-description">${generateLoadingShimmer([[50, 10]])}</div>
 `;
   // Clearing the block's content and adding CSS class

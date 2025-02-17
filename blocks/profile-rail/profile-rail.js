@@ -200,7 +200,7 @@ export default async function ProfileRail(block) {
         const parentSection = el.closest('.block');
         if (!parentSection) return;
 
-        const firstDivChild = parentSection.querySelector('.rec-heading');
+        const firstDivChild = parentSection.querySelector('.rec-block-header');
         if (!firstDivChild) return;
 
         const id = firstDivChild.getAttribute('id');

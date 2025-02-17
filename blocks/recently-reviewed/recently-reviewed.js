@@ -227,7 +227,7 @@ export default async function decorate(block) {
       block.prepend(headingElement);
       block.prepend(descriptionElement);
     }
-    headingElement.classList.add('recently-reviewed-header', 'rec-heading');
+    headingElement.classList.add('recently-reviewed-header', 'rec-block-header');
     descriptionElement.classList.add('recently-reviewed-description');
     const titleContainer = document.createElement('div');
     const navContainer = document.createElement('div');

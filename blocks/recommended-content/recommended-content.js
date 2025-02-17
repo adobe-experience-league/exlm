@@ -352,7 +352,7 @@ export default async function decorate(block) {
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
   const recommendedContentShimmer = `
-  <div class="recommended-content-header rec-heading">${generateLoadingShimmer([[50, 14]])}</div>
+  <div class="recommended-content-header rec-block-header">${generateLoadingShimmer([[50, 14]])}</div>
   <div class="recommended-content-description">${generateLoadingShimmer([[50, 10]])}</div>
 `;
   // Clearing the block's content and adding CSS class
