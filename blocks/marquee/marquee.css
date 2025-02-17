@@ -280,11 +280,6 @@ div.marquee-wrapper {
     overflow: visible;
   }
 
-  body[class^='browse-'] .marquee-foreground,
-  body[class^='article-'] .marquee-foreground {
-    min-height: 260px;
-  }
-
   .marquee-text {
     background: none;
     margin-bottom: 30px;
@@ -326,8 +321,6 @@ div.marquee-wrapper {
   }
 
   .marquee-background svg {
-    /* height: var(--marquee-height-medium); */
-
     position: absolute;
     height: 100%;
     top: 0;
@@ -396,7 +389,7 @@ div.marquee-wrapper {
   }
 
   .marquee.small .marquee-background-fill svg {
-    right: -180px;
+    right: -200px;
   }
 
   .marquee.straight .marquee-subject {
@@ -441,62 +434,11 @@ div.marquee-wrapper {
     padding: 6px 16px 9px 20px;
   }
 
-  body[class^='browse-'] .section div.marquee-wrapper .marquee-foreground,
-  body[class^='article-'] .section div.marquee-wrapper .marquee-foreground {
-    padding: 0;
-    justify-content: space-between;
-  }
-
-  /* text block */
-  body[class^='browse-'] .marquee-text,
-  body[class^='article-'] .marquee-text {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: 0;
-    padding: 20px 0 23px 36px;
-    flex-grow: 1;
-    max-width: 500px;
-  }
-
-  /* subject image */
-  body[class^='browse-'] .marquee-subject,
-  body[class^='article-'] .marquee-subject {
-    min-width: unset;
-    min-height: unset;
-    width: 320px;
-    z-index: 1;
-    margin: unset;
-  }
-
-  body[class^='browse-'] .marquee-subject img,
-  body[class^='article-'] .marquee-subject img {
-    display: block;
-    min-width: unset;
-    padding: 0;
-    height: 260px;
-  }
-
-  body[class^='browse-'] .section div.marquee-wrapper .marquee-background,
-  body[class^='article-'] .section div.marquee-wrapper .marquee-background {
-    min-height: 240px;
+  body[class^='browse-'] .section div.marquee-wrapper .marquee-content-container,
+  body[class^='article-'] .section div.marquee-wrapper .marquee-content-container {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
-    box-sizing: border-box;
     background-color: var(--background-color);
-  }
-
-  body[class^='browse-'] .section div.marquee-wrapper .marquee-background svg,
-  body[class^='article-'] .section div.marquee-wrapper .marquee-background svg {
-    min-width: 130%;
-    min-height: 0%;
-  }
-
-  body[class*='profile-home-page'] .section div.marquee-wrapper .marquee-foreground {
-    margin: 0;
-  }
-
-  body[class*='profile-home-page'] div.section.marquee-container {
-    overflow: hidden;
+    box-sizing: border-box;
   }
 }
