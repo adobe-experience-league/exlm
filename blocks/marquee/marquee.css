@@ -1,9 +1,3 @@
-:root {
-  --marquee-height-small: 300px;
-  --marquee-height-medium: 400px;
-  --marquee-height-large: 560px;
-}
-
 .section.marquee-container {
   padding-top: 0;
 }
@@ -15,22 +9,26 @@ div.marquee-wrapper {
 }
 
 .marquee {
+  --marquee-height-small: 300px;
+  --marquee-height-medium: 400px;
+  --marquee-height-large: 560px;
+
   position: relative;
 }
 
-.marquee-content-container {
+.marquee .marquee-content-container {
   display: flex;
   flex-direction: column-reverse;
 }
 
-.marquee-text {
+.marquee .marquee-text {
   position: relative;
   z-index: 2;
   padding: 30px 16px;
   background-color: var(--background-color);
 }
 
-.marquee-eyebrow {
+.marquee .marquee-eyebrow {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
   font-weight: var(--font-weight-bold);
@@ -39,7 +37,7 @@ div.marquee-wrapper {
   line-height: 18px;
 }
 
-.marquee-title {
+.marquee .marquee-title {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-900);
   font-weight: var(--font-weight-bold);
@@ -47,13 +45,13 @@ div.marquee-wrapper {
   margin-bottom: var(--spectrum-spacing-300);
 }
 
-.marquee-title :where(h1, h2, h3, h4, h5, h6) {
+.marquee .marquee-title :where(h1, h2, h3, h4, h5, h6) {
   margin: 0;
   color: inherit;
 }
 
-.marquee-short-description,
-.marquee-short-description * {
+.marquee .marquee-short-description,
+.marquee .marquee-short-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-600);
   font-weight: var(--font-weight-bold);
@@ -62,15 +60,15 @@ div.marquee-wrapper {
   margin: 0;
 }
 
-.marquee-long-description,
-.marquee-long-description * {
+.marquee .marquee-long-description,
+.marquee .marquee-long-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
   line-height: var(--spectrum-line-height-l);
   margin: 0;
 }
 
-.marquee-cta {
+.marquee .marquee-cta {
   display: flex;
   flex-direction: column-reverse;
   font-size: var(--spectrum-font-size-300);
@@ -80,11 +78,11 @@ div.marquee-wrapper {
   align-items: center;
 }
 
-.marquee-cta:empty {
+.marquee .marquee-cta:empty {
   margin-top: 0;
 }
 
-.marquee-cta > a.button {
+.marquee .marquee-cta > a.button {
   font-size: var(--spectrum-font-size-300);
   margin: 0;
   padding: 8px 40px;
@@ -92,50 +90,50 @@ div.marquee-wrapper {
   min-width: 264px;
 }
 
-.marquee-cta > a > span.icon {
+.marquee .marquee-cta > a > span.icon {
   width: 14px;
   height: 14px;
   margin-right: 7px;
 }
 
-.marquee-cta > .signin {
+.marquee .marquee-cta > .signin {
   visibility: hidden;
 }
 
-.unauthenticated .marquee-cta > .signin {
+.marquee.unauthenticated .marquee-cta > .signin {
   visibility: unset;
 }
 
-.marquee-background svg {
+.marquee .marquee-background svg {
   display: none;
 }
 
-.marquee-spacer {
+.marquee .marquee-spacer {
   display: none;
   width: 40%;
 }
 
-.marquee-bg-filler {
+.marquee .marquee-bg-filler {
   display: none;
 }
 
-.marquee.no-subject {
+.marquee .marquee.no-subject {
   display: flex;
   flex-direction: column-reverse;
 }
 
-.marquee.no-subject > .marquee-background {
+.marquee .marquee.no-subject > .marquee-background {
   position: unset;
   min-height: unset;
 }
 
-.marquee.no-subject > .marquee-background img {
+.marquee .marquee.no-subject > .marquee-background img {
   transform: none;
   object-fit: cover;
   object-position: center;
 }
 
-.marquee-background-fill {
+.marquee .marquee-background-fill {
   display: none;
 }
 
@@ -188,7 +186,7 @@ div.marquee-wrapper {
     margin-right: calc(-1 * var(--spectrum-spacing-800));
   }
 
-  .marquee-subject {
+  .marquee .marquee-subject {
     min-height: 350px;
     background: none !important;
     display: flex;
@@ -196,13 +194,13 @@ div.marquee-wrapper {
     justify-content: center;
   }
 
-  .marquee-subject img {
+  .marquee .marquee-subject img {
     position: relative;
     z-index: 2;
     max-width: 400px;
   }
 
-  .marquee-background {
+  .marquee .marquee-background {
     min-height: 350px;
     height: 100%;
     width: 100%;
@@ -211,7 +209,7 @@ div.marquee-wrapper {
     position: relative;
   }
 
-  .marquee-background-fill {
+  .marquee .marquee-background-fill {
     display: block;
     position: absolute;
     top: -100px;
@@ -220,33 +218,33 @@ div.marquee-wrapper {
     height: 100%;
   }
 
-  .marquee-background-fill svg {
+  .marquee .marquee-background-fill svg {
     display: block;
   }
 
-  .marquee-foreground {
+  .marquee .marquee-foreground {
     min-height: var(--marquee-height-medium);
   }
 
-  .marquee-text {
+  .marquee .marquee-text {
     padding: var(--spectrum-spacing-500) var(--spectrum-spacing-800);
     background-color: var(--background-color);
   }
 
-  .marquee-cta {
+  .marquee .marquee-cta {
     flex-flow: row wrap;
   }
 
-  .marquee-cta > a.button {
+  .marquee .marquee-cta > a.button {
     padding: 8px 20px;
   }
 
-  .marquee-spacer {
+  .marquee .marquee-spacer {
     display: block;
     order: 1;
   }
 
-  .marquee.no-subject > .marquee-background {
+  .marquee .marquee.no-subject > .marquee-background {
     position: relative;
     min-height: 350px;
   }
@@ -257,7 +255,7 @@ div.marquee-wrapper {
     overflow: hidden;
   }
 
-  .marquee-content-container {
+  .marquee .marquee-content-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     flex-direction: row;
@@ -265,14 +263,14 @@ div.marquee-wrapper {
     margin: 0 auto;
   }
 
-  .marquee-foreground {
+  .marquee .marquee-foreground {
     width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
   }
 
-  .marquee-background {
+  .marquee .marquee-background {
     width: 100%;
     height: 100%;
     min-height: var(--marquee-height-medium);
@@ -280,25 +278,25 @@ div.marquee-wrapper {
     overflow: visible;
   }
 
-  .marquee-text {
+  .marquee .marquee-text {
     background: none;
     margin-bottom: 30px;
   }
 
-  .marquee-title {
+  .marquee .marquee-title {
     font-size: var(--spectrum-font-size-1100);
   }
 
-  .marquee-cta {
+  .marquee .marquee-cta {
     flex-wrap: nowrap;
   }
 
-  .marquee-cta > a.button {
+  .marquee .marquee-cta > a.button {
     min-width: auto;
     padding: 10px 22px;
   }
 
-  .marquee-subject {
+  .marquee .marquee-subject {
     display: block;
     overflow: hidden;
     min-height: unset;
@@ -307,7 +305,7 @@ div.marquee-wrapper {
     left: 50px;
   }
 
-  .marquee-subject img {
+  .marquee .marquee-subject img {
     object-fit: cover;
     position: relative;
     z-index: 2;
@@ -315,12 +313,12 @@ div.marquee-wrapper {
     height: 100%;
   }
 
-  .marquee-background-fill {
+  .marquee .marquee-background-fill {
     position: static;
     min-height: var(--marquee-height-medium);
   }
 
-  .marquee-background svg {
+  .marquee .marquee-background svg {
     position: absolute;
     height: 100%;
     top: 0;
@@ -328,7 +326,7 @@ div.marquee-wrapper {
     right: -130px;
   }
 
-  .marquee-bg-filler {
+  .marquee .marquee-bg-filler {
     display: block;
     position: absolute;
     height: 100%;
@@ -337,66 +335,66 @@ div.marquee-wrapper {
     width: 1000px;
   }
 
-  .marquee.no-subject {
+  .marquee .marquee.no-subject {
     display: block;
   }
 
-  .marquee.no-subject > .marquee-background {
+  .marquee .marquee.no-subject > .marquee-background {
     position: absolute;
     min-height: 100%;
   }
 
-  .marquee.large .marquee-foreground,
-  .marquee.large .marquee-background,
-  .marquee.large .marquee-bg-filler,
-  .marquee.large .marquee-background svg {
+  .marquee .marquee.large .marquee-foreground,
+  .marquee .marquee.large .marquee-background,
+  .marquee .marquee.large .marquee-bg-filler,
+  .marquee .marquee.large .marquee-background svg {
     min-height: var(--marquee-height-large);
   }
 
-  .marquee.large .marquee-background-fill svg {
+  .marquee .marquee.large .marquee-background-fill svg {
     right: -30px;
   }
 
-  .marquee.large .marquee-eyebrow {
+  .marquee .marquee.large .marquee-eyebrow {
     font-size: var(--spectrum-font-size-10);
   }
 
-  .marquee.large .marquee-long-description {
+  .marquee .marquee.large .marquee-long-description {
     font-size: var(--spectrum-font-size-400);
   }
 
-  .marquee.large .marquee-subject,
-  .marquee.large .marquee-subject img {
+  .marquee .marquee.large .marquee-subject,
+  .marquee .marquee.large .marquee-subject img {
     min-width: 480px;
   }
 
-  .marquee.small .marquee-foreground,
-  .marquee.small .marquee-background,
-  .marquee.small,
-  .marquee-background-fill,
-  .marquee.small .marquee-bg-filler {
+  .marquee .marquee.small .marquee-foreground,
+  .marquee .marquee.small .marquee-background,
+  .marquee .marquee.small,
+  .marquee .marquee-background-fill,
+  .marquee .marquee.small .marquee-bg-filler {
     min-height: var(--marquee-height-small);
   }
 
-  .marquee.small .marquee-subject {
+  .marquee .marquee.small .marquee-subject {
     min-height: unset;
     top: 40px;
     left: 100px;
   }
 
-  .marquee.small .marquee-subject img {
+  .marquee .marquee.small .marquee-subject img {
     max-width: 320px;
   }
 
-  .marquee.small .marquee-background-fill svg {
+  .marquee .marquee.small .marquee-background-fill svg {
     right: -200px;
   }
 
-  .marquee.straight .marquee-subject {
+  .marquee .marquee.straight .marquee-subject {
     inset: 0;
   }
 
-  .marquee.straight .marquee-subject img {
+  .marquee .marquee.straight .marquee-subject img {
     max-width: 100%;
   }
 }
@@ -412,23 +410,23 @@ div.marquee-wrapper {
   }
 
   /* title */
-  body[class^='browse-'] .marquee-title,
-  body[class^='article-'] .marquee-title {
+  body[class^='browse-'] .marquee .marquee-title,
+  body[class^='article-'] .marquee .marquee-title {
     font-size: var(--spectrum-font-size-900);
     line-height: 36px;
     margin-bottom: var(--spectrum-spacing-100);
   }
 
   /* description */
-  body[class^='browse-'] .marquee-long-description,
-  body[class^='article-'] .marquee-long-description,
-  body[class^='browse-'] .marquee-long-description * body[class^='article-'] .marquee-long-description * {
+  body[class^='browse-'] .marquee .marquee-long-description,
+  body[class^='article-'] .marquee .marquee-long-description,
+  body[class^='browse-'] .marquee .marquee-long-description * body[class^='article-'] .marquee-long-description * {
     line-height: 23.4px;
   }
 
   /* cta */
-  body[class^='browse-'] .marquee-cta a.button,
-  body[class^='article-'] .marquee-cta a.button {
+  body[class^='browse-'] .marquee .marquee-cta a.button,
+  body[class^='article-'] .marquee .marquee-cta a.button {
     font-size: var(--spectrum-font-size-200);
     line-height: 21px;
     padding: 6px 16px 9px 20px;
