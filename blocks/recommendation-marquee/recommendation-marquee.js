@@ -1066,7 +1066,7 @@ export default async function decorate(block) {
               });
               buildNoResultsContent(contentDiv, false);
               buildNoResultsContent(contentDiv, true);
-              recommendedContentNoResults(contentDiv);
+              recommendedContentNoResults();
 
               if (!targetSupport) {
                 const savedCardsCount = seeMoreConfig.prefetchCards
@@ -1128,7 +1128,7 @@ export default async function decorate(block) {
             const cardsBlockCount = contentDiv.querySelectorAll('.browse-card').length;
             if (cardsBlockCount === 0) {
               buildNoResultsContent(contentDiv, true);
-              recommendedContentNoResults(contentDiv);
+              recommendedContentNoResults();
             } else {
               // In the unlikely scenario that some card promises were successfully resolved, while some others failed. Try to show the rendered cards.
               Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((element) => {
