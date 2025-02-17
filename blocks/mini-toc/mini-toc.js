@@ -27,8 +27,7 @@ function registerWrapperResizeHandler(callback, block) {
 
 function createDropdown(anchorTexts, block) {
   if (window.innerWidth < 900 && !block.querySelector('.custom-filter-dropdown')) {
-    // eslint-disable-next-line no-new
-    new Dropdown(block, 'Summary', anchorTexts, DROPDOWN_VARIANTS.ANCHOR); // Initialise mini-toc dropdown for mobile view
+    const dropDown = new Dropdown(block, 'Summary', anchorTexts, DROPDOWN_VARIANTS.ANCHOR); // Initialise mini-toc dropdown for mobile view
     const articleContainer = document.querySelector('.article-content-container');
     if (articleContainer) articleContainer.style.paddingTop = '0';
     window.addEventListener('hashchange', () => {
@@ -37,8 +36,8 @@ function createDropdown(anchorTexts, block) {
         const [, linkHash] = a.value.split('#');
         return `#${linkHash}` === hash;
       });
-      if (matchFound && Dropdown) {
-        Dropdown.closeAllDropdowns();
+      if (matchFound && dropDown) {
+        dropDown.closeAllDropdowns();
       }
     });
   }

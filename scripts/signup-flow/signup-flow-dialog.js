@@ -416,7 +416,7 @@ export default class SignupFlowDialog {
    * @returns {Promise<void>}
    */
   static async init(modalType = SIGNUP_DIALOG_TYPE.NEW_PROFILE, defaultPageIndex = 0) {
-    // eslint-disable-next-line no-new
-    new SignupFlowDialog(modalType, defaultPageIndex);
+    const signupFlowDialog = new SignupFlowDialog(modalType, defaultPageIndex);
+    signupFlowDialog.initialize();
   }
 }
