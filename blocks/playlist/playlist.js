@@ -238,7 +238,7 @@ function updateTranscript(transcriptDetail) {
       getCaptionParagraphs(transcriptUrl)
         .then((paragraphs) => {
           clearTranscript();
-          if (!paragraphs?.length || !paragraphs?.join('').trim()) {
+          if (!paragraphs || !paragraphs.length || !paragraphs.join('').trim()) {
             showTranscriptNotAvailable();
           } else paragraphs.forEach((paragraph) => transcriptDetail.append(htmlToElement(`<p>${paragraph}</p>`)));
         })
