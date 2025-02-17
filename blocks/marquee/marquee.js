@@ -162,7 +162,7 @@ export default async function decorate(block) {
       block.querySelector(selector).classList.add(ctaText);
     }
   }
-    
+
   addCtaClass(firstCtaLinkType, '.marquee-cta > a:first-child');
   addCtaClass(secondCtaLinkType, '.marquee-cta > a:last-child');
 
