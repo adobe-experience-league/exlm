@@ -260,7 +260,7 @@ export default class ResponsivePillList {
       const { fitItems } = this.evaluateWidth();
       this.renderTabbedLayout(fitItems);
     } else {
-      this.items = this.items.sort((a, b) => a.value - b.value);
+      this.items = this.items.toSorted((a, b) => a.value - b.value);
       this.renderDropdown();
     }
   }
