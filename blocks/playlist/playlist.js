@@ -137,7 +137,7 @@ function newPlayer(playlist) {
     iframeTemplate.remove();
     // wait for loaded
     iframe.addEventListener('load', () => {
-      iframe.contentWindow.postMessage({ type: 'mpcAction', action: 'play' }, '*');
+      iframe.contentWindow.postMessage({ type: 'mpcAction', action: 'play' }, 'https://video.tv.adobe.com');
     });
   };
 
@@ -238,7 +238,7 @@ function updateTranscript(transcriptDetail) {
       getCaptionParagraphs(transcriptUrl)
         .then((paragraphs) => {
           clearTranscript();
-          if (!paragraphs || !paragraphs.length || !paragraphs.join('').trim()) {
+          if (!paragraphs?.length || !paragraphs?.join('').trim()) {
             showTranscriptNotAvailable();
           } else paragraphs.forEach((paragraph) => transcriptDetail.append(htmlToElement(`<p>${paragraph}</p>`)));
         })
