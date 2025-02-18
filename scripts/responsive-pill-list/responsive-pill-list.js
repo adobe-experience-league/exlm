@@ -157,11 +157,13 @@ export default class ResponsivePillList {
           </div>
           <div class="responsive-pill-list-option-overlay">
             <p>${moreProductsLabel}</p>
-            <ul class="responsive-pill-list-items-wrapper"></ul>
+            <div class="responsive-pill-list-items-wrapper">
+              <ul></ul>
+            </div>
           <div>
         </li>`);
 
-    const wrapperEl = moreItemsWrapper.querySelector('.responsive-pill-list-items-wrapper');
+    const wrapperEl = moreItemsWrapper.querySelector('.responsive-pill-list-items-wrapper ul');
     const moreOptionsButton = moreItemsWrapper.querySelector('.responsive-pill-list-more-option');
     const moreOptionsOverlay = moreItemsWrapper.querySelector('.responsive-pill-list-option-overlay');
 
