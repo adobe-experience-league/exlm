@@ -320,6 +320,6 @@ body.profile
     border: 2px solid var(--spectrum-gray-300);
     color: black;
     padding: 10px 20px;
-    margin-top: 24px;
+    margin: 24px 0 0;
   }
 }

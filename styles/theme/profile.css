@@ -131,6 +131,12 @@ body.profile
   border-top: 0;
 }
 
+body.profile-home-page
+  .section:not(.profile-rail-section, .sign-up-flow-section):has(> div.qualtrics-wrapper:last-child)
+  > div:nth-last-child(2) {
+  padding-bottom: 0;
+}
+
 @media (width >= 600px) {
   body.profile .section:not(.profile-rail-section, .sign-up-flow-section) {
     margin: 0 16px 24px;
