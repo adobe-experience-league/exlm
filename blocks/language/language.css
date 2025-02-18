@@ -1,4 +1,10 @@
+/* stylelint-enforce-no-external-css-vars - this is used in header when included externally, it has to be all-inclusive, including variables */
+
 .language-selector-popover {
+  --non-spectrum-bg: #fff;
+  --spectrum-font-size-100: 14px;
+  --non-spectrum-hover-bg: #f8f8f8;
+
   background: var(--non-spectrum-bg);
   box-shadow: 0 8px 8px rgb(10 10 10 / 10%);
   display: none;

@@ -1,17 +1,4 @@
-function decorateButtons(...buttons) {
-  return buttons
-    .map((div) => {
-      const a = div.querySelector('a');
-      if (a) {
-        a.classList.add('button');
-        if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
-        if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
-        return a.outerHTML;
-      }
-      return '';
-    })
-    .join('');
-}
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 /* eslint-disable no-plusplus */
 export default function decorate(block) {
@@ -33,7 +20,7 @@ export default function decorate(block) {
       }
       <div class='title'>${title.innerHTML}</div>
       <div class='description'>${description.innerHTML}</div>
-      <div class='cta'>${decorateButtons(firstCta, secondCta)}</div>
+      <div class='cta'>${decorateCustomButtons(firstCta, secondCta)}</div>
     </div>
   `);
 

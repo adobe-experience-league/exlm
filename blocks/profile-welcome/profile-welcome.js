@@ -3,6 +3,7 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchIndustryOptions, getIndustryNameById } from '../../scripts/profile/profile.js';
 import getEmitter from '../../scripts/events.js';
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 const profileEventEmitter = getEmitter('profile');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -13,17 +14,6 @@ try {
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
-}
-
-function decorateButton(button) {
-  const a = button.querySelector('a');
-  if (a) {
-    a.classList.add('button');
-    if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
-    if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
-    return a.outerHTML;
-  }
-  return '';
 }
 
 function replaceProfileText(field, value) {
@@ -193,7 +183,7 @@ async function decorateProfileWelcomeBlock(block) {
                       </span>
                     </div>
                   </div>
-                    <div class="profile-user-card-cta">${decorateButton(profileCta)}</div>
+                    <div class="profile-user-card-cta">${decorateCustomButtons(profileCta)}</div>
                 </div>    
               </div>
         `);

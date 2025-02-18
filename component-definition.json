@@ -329,8 +329,14 @@
                   "title": "Announcement Ribbon Title",
                   "titleType": "h3",
                   "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt",
-                  "cta1Type": "primary",
-                  "cta2Type": "primary",
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000",
                   "customHexCode": "FFFFFF",
                   "classes": "light",
                   "dismissalTime": "sessionStorage"
@@ -618,7 +624,15 @@
                   "titleType": "h3",
                   "description": "Description",
                   "subject": "/content/dam/summit-subject.png",
-                  "classes": ["light", "left"]
+                  "classes": ["light", "left"],
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000"
                 }
               }
             }
@@ -705,7 +719,11 @@
                   "model": "featured-content",
                   "content_cta": "Read Article",
                   "classes": ["adobe", "left"],
-                  "linkText": "Read Article"
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta1_linkText": "Read Article"
                 }
               }
             }
@@ -841,7 +859,16 @@
                   "title": "Marquee Title",
                   "titleType": "h2",
                   "longDescr": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt",
-                  "customHexCode": "FFFFFF"
+                  "customHexCode": "FFFFFF",
+                  "marqueeSize": "medium",
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000"
                 }
               }
             }
@@ -861,7 +888,15 @@
                   "title": "Lorem ipsum",
                   "titleType": "h3",
                   "description": "<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</p>",
-                  "classes": "left"
+                  "classes": "left",
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000"
                 }
               }
             }
@@ -927,8 +962,11 @@
                   "heading": "Your Experience League just got more personal.",
                   "description": "Reaching your career goals has never been easier. Explore learning recommendations we made just for you based on your product interests, experience level, and role.",
                   "incompleteProfileText": "Complete your profile for a more personalized experience.",
-                  "cta1Type": "primary",
-                  "cta1Text": "Manage profile",
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta1_linkText": "Manage profile",
                   "showProfileCard": true
                 }
               }
@@ -1170,7 +1208,15 @@
                   "title": "Teaser Title",
                   "titleType": "h3",
                   "longDescr": "<p>Teaser Description</p>",
-                  "classes": ["light", "left"]
+                  "classes": ["light", "left"],
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000"
                 }
               }
             }

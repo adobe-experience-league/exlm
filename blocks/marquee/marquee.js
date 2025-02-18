@@ -1,20 +1,6 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-
-function decorateButtons(buttons) {
-  return buttons
-    .map(({ ctaElem, ctaStyle, ctaLinkType = 'link' }) => {
-      if (ctaElem && ctaElem.textContent?.trim() !== '') {
-        const a = ctaElem.querySelector('a');
-        if (a) {
-          a.classList.add('button', ctaStyle, ctaLinkType);
-          return a.outerHTML;
-        }
-      }
-      return '';
-    })
-    .join('');
-}
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 function handleVideoLinks(videoLinkElems, block) {
   videoLinkElems.forEach((videoLinkElem) => {
@@ -80,9 +66,11 @@ export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
   const [
+    marqueeSizeType,
     img,
+    bgColorShape,
     hexcode,
-    backgroundHexcode,
+    fillBackground,
     eyebrow,
     title,
     longDescr,
@@ -92,53 +80,71 @@ export default async function decorate(block) {
     secondCtaLinkType,
   ] = block.querySelectorAll(':scope div > div');
 
+  const marqueeSize = marqueeSizeType?.textContent?.trim();
   const subjectPicture = img.querySelector('picture');
+  const bgShape = bgColorShape?.textContent?.toLowerCase().trim();
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${hexcode.innerHTML}`;
   const eyebrowText = eyebrow?.textContent?.trim();
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
+    <div class='marquee-content-container'>
     <div class='marquee-foreground'>
       <div class='marquee-text'>
         ${eyebrowText !== '' ? `<div class='marquee-eyebrow'>${eyebrowText?.toUpperCase()}</div>` : ``}
         <div class='marquee-title'>${title.innerHTML}</div>
         <div class='marquee-long-description'>${longDescr.innerHTML}</div>
         <div class='marquee-cta'>
-          ${decorateButtons([
-            {
-              ctaElem: firstCta,
-              ctaStyle: 'secondary',
-              ctaLinkType: firstCtaLinkType?.textContent?.trim() || 'link',
-            },
-            {
-              ctaElem: secondCta,
-              ctaStyle: 'primary',
-              ctaLinkType: secondCtaLinkType?.textContent?.trim() || 'link',
-            },
-          ])}
+          ${decorateCustomButtons(firstCta, secondCta)}
         </div>
       </div>
-      ${
-        subjectPicture
-          ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
-          : `<div class='marquee-spacer'></div>`
-      }
     </div>
-    <div class='marquee-background'>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1562 571.212">
-        <path fill="${
-          backgroundHexcode.innerHTML === 'true' ? bgColor : '#fff'
-        }" d="M0 1.212h1562v570H0z" data-name="Rectangle 1"></path>
-        <path class="bg" fill="${bgColor}" d="M752.813-1495s115.146 210.072 471.053 309.516 291.355 261.7 291.355 261.7h150.039V-1495Z" data-name="Path 1" transform="translate(-103.26 1495)"></path>
-      </svg>
+    <div class='marquee-background ${bgShape}' ${bgShape === 'straight' ? `style="background-color: ${bgColor}"` : ''}>
+          ${
+            subjectPicture
+              ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
+              : `<div class='marquee-spacer'></div>`
+          } 
+      <div class="marquee-background-fill">
+      ${
+        bgShape !== 'straight'
+          ? `
+          <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
+            <path
+              id="Path_1"
+              data-name="Path 1"
+              d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
+              transform="translate(-738.685 1.777)"
+              fill="${bgColor}"
+            />
+          </svg>`
+          : ' '
+      }
+      </div>
+      <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
+
+      </div>
+    </div>
     </div>
   `);
 
   block.textContent = '';
+
   if (!subjectPicture) {
     block.classList.add('no-subject');
   }
+  if (marqueeSize) {
+    block.classList.add(marqueeSize);
+  }
+  if (bgShape) {
+    block.classList.add(bgShape);
+  }
+
+  if (fillBackground?.textContent?.toLowerCase()?.trim() === 'true') {
+    block.style.backgroundColor = bgColor;
+  }
+
   block.append(marqueeDOM);
 
   if (!((firstCta && firstCtaLinkType) || (secondCta && secondCtaLinkType))) {
@@ -150,8 +156,18 @@ export default async function decorate(block) {
   const isSigninLinkType =
     firstCtaLinkType?.textContent?.trim() === 'signin' || secondCtaLinkType?.textContent?.trim() === 'signin';
 
+  function addCtaClass(ctaType, selector) {
+    const ctaText = ctaType?.textContent?.trim();
+    if (ctaText === 'video' || ctaText === 'signin') {
+      block.querySelector(selector).classList.add(ctaText);
+    }
+  }
+
+  addCtaClass(firstCtaLinkType, '.marquee-cta > a:first-child');
+  addCtaClass(secondCtaLinkType, '.marquee-cta > a:last-child');
+
   if (isVideoLinkType) {
-    const videoLinkElems = marqueeDOM.querySelectorAll('.marquee-cta > .video');
+    const videoLinkElems = block.querySelectorAll('.marquee-cta > .video');
     handleVideoLinks(videoLinkElems, block);
   } else if (isSigninLinkType) {
     handleSigninLinks(block);
