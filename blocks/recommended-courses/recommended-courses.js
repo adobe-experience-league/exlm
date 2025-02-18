@@ -247,7 +247,7 @@ export default async function decorate(block) {
                 block.appendChild(contentDiv);
               } else {
                 buildNoResultsContent(block, true);
-                recommendedCoursesInterestContent(block);
+                recommendedCoursesInterestContent();
               }
               /* Hide Tooltip while scrolling the cards  layout */
               hideTooltipOnScroll(contentDiv);
@@ -256,7 +256,7 @@ export default async function decorate(block) {
               // Hide shimmer placeholders on error
               buildCardsShimmer.removeShimmer();
               buildNoResultsContent(block, true);
-              recommendedCoursesInterestContent(block);
+              recommendedCoursesInterestContent();
               // eslint-disable-next-line no-console
               console.error('Recommended Cards:', err);
             });
@@ -264,7 +264,7 @@ export default async function decorate(block) {
       });
     } else if (window.hlx.aemRoot) {
       buildNoResultsContent(block, true);
-      recommendedCoursesInterestContent(block);
+      recommendedCoursesInterestContent();
     } else {
       const recommendedCoursesContainer = document.querySelector('.recommended-courses-container');
       if (recommendedCoursesContainer) {

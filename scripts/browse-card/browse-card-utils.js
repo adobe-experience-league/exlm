@@ -63,7 +63,8 @@ export const getCardData = async (articlePath, placeholders) => {
   let fullURL = new URL(articlePath, window.location.origin).href;
   if (window.hlx.aemRoot || window.location.href.includes('.html')) {
     if (fullURL.includes('/docs/')) {
-      fullURL = `${cdnOrigin}${articlePath.replace(`${window.hlx.codeBasePath}`, '')}`;
+      const pathWithoutCodeBase = articlePath.replace(`${window.hlx.codeBasePath}`, '');
+      fullURL = `${cdnOrigin}${pathWithoutCodeBase}`;
     } else {
       const nonDocPath = new URL(
         articlePath.replace(window.hlx.codeBasePath, window.hlx.aemRoot),
