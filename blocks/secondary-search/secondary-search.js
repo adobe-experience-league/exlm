@@ -1,5 +1,5 @@
 import { loadScript } from '../../scripts/lib-franklin.js';
-import { htmlToElement, getConfig } from '../../scripts/scripts.js';
+import { htmlToElement, getPathDetails, getConfig } from '../../scripts/scripts.js';
 
 async function initiateCoveoAtomicSearch() {
   return new Promise((resolve, reject) => {
@@ -33,13 +33,15 @@ export default function decorate(block) {
     searchInterface.executeFirstSearch();
 
   };
+    const { lang: languageCode } = getPathDetails();
+  
   const atomicUI1 = htmlToElement(` <atomic-search-box
     number-of-queries="8"
   >
     <atomic-search-box-query-suggestions></atomic-search-box-query-suggestions>
   </atomic-search-box>`)
   const atomicUI = htmlToElement(`
-    <atomic-search-interface language="fr" fields-to-include='["el_contenttype","el_product"]'>
+    <atomic-search-interface language=${languageCode} fields-to-include='["el_contenttype","el_product"]'>
     <style>
       atomic-search-layout {
         grid-template-columns: 0 1fr 4fr 0 !important;
