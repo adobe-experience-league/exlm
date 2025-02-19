@@ -19,7 +19,7 @@
 }
 
 .block-quote.external {
-  border-color: var(--spectrum-indigo-1400);
+  border-color: var(--spectrum-gray-900);
 }
 
 .block-quote.adobe {
