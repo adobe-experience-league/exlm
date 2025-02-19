@@ -741,6 +741,9 @@ export const URL_SPECIAL_CASE_LOCALES = new Map([
 ]);
 
 export async function loadIms() {
+  // if adobe IMS was loaded already, return. Especially useful when embedding this code outside this site.
+  // eg. embedding header in community which has it's own IMS setup.
+  if (!window.imsLoaded && window.adobeIMS) return Promise.resolve();
   const { ims } = getConfig();
   window.imsLoaded =
     window.imsLoaded ||
