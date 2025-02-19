@@ -8,7 +8,7 @@ import {
   removeProductDuplicates,
   formatId,
 } from '../../scripts/browse-card/browse-card-utils.js';
-import { defaultProfileClient } from '../../scripts/auth/profile.js';
+import { isSignedInUser, defaultProfileClient } from '../../scripts/auth/profile.js';
 import getEmitter from '../../scripts/events.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
@@ -348,6 +348,11 @@ const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
+  isSignedInUser().then((isUserSignedIn) => {
+    if (!isUserSignedIn && !UEAuthorMode) {
+      block.parentElement.style.display = 'none';
+    }
+  });
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
