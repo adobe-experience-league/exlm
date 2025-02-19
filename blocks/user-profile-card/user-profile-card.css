@@ -27,10 +27,6 @@ body.profile .user-profile-card:not(.sign-up-flow-section .user-profile-card) {
   z-index: 2;
 }
 
-.user-profile-card-decor {
-  display: none;
-}
-
 @media (min-width: 600px) {
   .user-profile-card-box {
     width: 387px;
@@ -46,19 +42,5 @@ body.profile .user-profile-card:not(.sign-up-flow-section .user-profile-card) {
 
   body.profile .user-profile-card:not(.sign-up-flow-section .user-profile-card) {
     max-width: none;
-  }
-}
-
-@media (min-width: 900px) {
-  .sign-up-flow-section .user-profile-card-decor {
-    background: url('/images/bee-background-decor.svg') no-repeat bottom;
-    display: block;
-    height: 520px;
-    left: 50%;
-    position: absolute;
-    top: 45%;
-    transform: translate(-50%, -50%);
-    width: 672px;
-    z-index: 1;
   }
 }
