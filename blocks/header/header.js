@@ -10,7 +10,6 @@ import {
   getConfig,
   getLink,
   fetchFragment,
-  fetchLanguagePlaceholders,
   getPathDetails,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
@@ -21,10 +20,12 @@ import {
   getCell,
   getFirstChildTextNodes,
   updateLinks,
+  getBlockFirstRow,
+  simplifySingleCellBlock,
 } from './header-utils.js';
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import LanguageBlock from '../language/language.js';
-import Profile from './load-profile.js';
+import ProfileMenu from './profile-menu.js';
 
 /**
  *  @typedef {Object} CommunityOptions
@@ -94,77 +95,6 @@ async function loadSearchElement() {
     });
   return searchElementPromise;
 }
-
-let cachedPlaceholders;
-
-const getPlaceholders = async (langCode) => {
-  if (cachedPlaceholders) {
-    return Promise.resolve(cachedPlaceholders);
-  }
-  const result = await fetchLanguagePlaceholders(langCode);
-  cachedPlaceholders = result;
-  return result;
-};
-
-const communityLocalesMap = new Map([
-  ['de', 'de'],
-  ['en', 'en'],
-  ['ja', 'ja'],
-  ['fr', 'fr'],
-  ['es', 'es'],
-  ['pt-br', 'pt'],
-  ['ko', 'ko'],
-  ['sv', 'en'],
-  ['nl', 'en'],
-  ['it', 'en'],
-  ['zh-hans', 'en'],
-  ['zh-hant', 'en'],
-]);
-
-// eslint-disable-next-line
-async function fetchCommunityProfileData(url = khorosProfileUrl) {
-  const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
-  try {
-    const response = await fetch(`${url}?lang=${locale}`, {
-      method: 'GET',
-      headers: {
-        'x-ims-token': await window.adobeIMS?.getAccessToken().token,
-      },
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    }
-  } catch (err) {
-    // eslint-disable-next-line
-    console.log('Error fetching data!!', err);
-  }
-}
-
-/**
- * @param {HTMLElement} block
- * @returns {HTMLElement}
- */
-const getBlockFirstCell = (block) => block.querySelector(':scope > div > div');
-
-/**
- * @param {HTMLElement} block
- * @returns {HTMLElement}
- */
-const getBlockFirstRow = (block) => block.querySelector(':scope > div');
-
-/**
- * simplified single cell block to one wrapper div.
- * @param {HTMLElement} el
- * @param {string} selector
- * @returns {HTMLElement}
- */
-const simplifySingleCellBlock = (block) => {
-  const firstRowFirstCell = getBlockFirstCell(block);
-  block.innerHTML = firstRowFirstCell.innerHTML;
-  return block;
-};
 
 /**
  * https://www.codemzy.com/blog/random-unique-id-javascript
@@ -628,8 +558,9 @@ const signInDecorator = async (signInBlock, decoratorOptions) => {
   const isSignedIn = await decoratorOptions.isUserSignedIn();
   if (isSignedIn) {
     signInBlock.classList.add('signed-in');
-    const profile = new Profile(decoratorOptions);
-    signInBlock.replaceChildren(profile);
+    const profileMenuBlock = signInBlock.closest('nav').querySelector('.profile-menu');
+    const profileMenu = new ProfileMenu(decoratorOptions, profileMenuBlock);
+    signInBlock.replaceChildren(profileMenu);
   } else {
     signInBlock.classList.remove('signed-in');
     signInBlock.firstChild.addEventListener('click', async () => {
@@ -690,71 +621,6 @@ const productGridDecorator = async (productGridBlock, decoratorOptions) => {
     }
   }
   return productGridBlock;
-};
-
-/**
- * Decorates the profile-menu block
- * @param {HTMLElement} profileMenu
- * @param {DecoratorOptions} decoratorOptions
- */
-const profileMenuDecorator = async (profileMenuBlock, decoratorOptions) => {
-  const shadowHost = document.querySelector('exl-header');
-  const isSignedIn = await decoratorOptions.isUserSignedIn();
-  if (isSignedIn) {
-    simplifySingleCellBlock(profileMenuBlock);
-    profileMenuBlock.querySelectorAll('p').forEach((ptag) => {
-      if (ptag) {
-        ptag.outerHTML = ptag.querySelector('a').outerHTML;
-      }
-    });
-    const profileMenuWrapper = shadowHost.shadowRoot.querySelector('.profile-menu');
-    const communityHeading = document.createElement('h2');
-    const placeholders = await getPlaceholders(decoratorOptions.lang);
-    communityHeading.textContent = placeholders?.headerCommunityLabel || 'Community';
-    if (profileMenuWrapper) {
-      profileMenuWrapper.innerHTML = `<h2>${placeholders?.headerLearningLabel || 'Learning'}</h2>${
-        profileMenuBlock.innerHTML
-      }`;
-      profileMenuWrapper.lastElementChild.setAttribute('data-id', 'sign-out');
-      profileMenuWrapper.insertBefore(communityHeading, profileMenuWrapper.lastElementChild);
-    }
-    fetchCommunityProfileData(decoratorOptions.khorosProfileUrl)
-      .then((res) => {
-        if (res) {
-          const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
-          if (res.data.menu.length > 0) {
-            res.data.menu.forEach((item) => {
-              if (item.title && item.url) {
-                const communityProfile = document.createElement('a');
-                communityProfile.href = item.url;
-                communityProfile.textContent = item.title;
-                profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
-              }
-            });
-          } else {
-            const communityProfile = document.createElement('a');
-            communityProfile.href = `https://experienceleaguecommunities.adobe.com/?profile.language=${locale}`;
-            communityProfile.textContent = placeholders?.createYourCommunityProfile || 'Create your community profile';
-            profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
-          }
-        }
-      })
-      .catch((err) => {
-        /* eslint-disable-next-line no-console */
-        console.error(err);
-      });
-
-    if (profileMenuWrapper.querySelector('[data-id="sign-out"]')) {
-      profileMenuWrapper.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
-        decoratorOptions.onSignOut();
-      });
-    }
-  } else {
-    const isProfileMenu = document.querySelector('.profile-menu');
-    if (isProfileMenu) {
-      document.querySelector('nav').removeChild(isProfileMenu);
-    }
-  }
 };
 
 /**
@@ -826,7 +692,6 @@ class ExlHeader extends HTMLElement {
     this.languageDecorator = languageDecorator.bind(this);
     this.productGridDecorator = productGridDecorator.bind(this);
     this.signInDecorator = signInDecorator.bind(this);
-    this.profileMenuDecorator = profileMenuDecorator.bind(this);
     this.attachShadow({ mode: 'open' });
   }
 
@@ -893,11 +758,10 @@ class ExlHeader extends HTMLElement {
       const languageP = decorateHeaderBlock('language-selector', this.languageDecorator, this.decoratorOptions);
       const productGridP = decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
       const signInP = decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);
-      const profileP = decorateHeaderBlock('profile-menu', this.profileMenuDecorator, this.decoratorOptions);
       const newTabLinkP = decorateNewTabLinks(header);
       await decorateHeaderBlock('nav', this.navDecorator, this.decoratorOptions);
 
-      Promise.allSettled([logoP, brandP, searchP, languageP, productGridP, signInP, profileP, newTabLinkP]).then(() => {
+      Promise.allSettled([logoP, brandP, searchP, languageP, productGridP, signInP, newTabLinkP]).then(() => {
         // used when the header is embeded on coimmunity/legacy pages to listen for when the header is completely decorated.
         this.dispatchEvent(new Event('header-decorated'));
       });

@@ -1000,12 +1000,12 @@ export async function getLanguageCode() {
  * @param {function} onRejected callback function to execute when the placeholder is rejected/error
  * @returns {HTMLSpanElement}
  */
-export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, onRejected) {
+export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, onRejected, lang) {
   const span = document.createElement('span');
   span.setAttribute('data-placeholder', placeholderKey);
   span.setAttribute('data-placeholder-fallback', fallbackText);
   span.style.setProperty('--placeholder-width', `${fallbackText.length}ch`);
-  fetchLanguagePlaceholders()
+  fetchLanguagePlaceholders(lang)
     .then((placeholders) => {
       if (placeholders[placeholderKey]) {
         span.textContent = placeholders[placeholderKey];
@@ -1029,11 +1029,12 @@ export function createPlaceholderSpan(placeholderKey, fallbackText, onResolved, 
 /**
  * decorates placeholder spans in a given element
  * @param {HTMLElement} element
+ * @param {string} lang
  */
-export function decoratePlaceholders(element) {
+export function decoratePlaceholders(element, lang) {
   const placeholdersEls = [...element.querySelectorAll('[data-placeholder]')];
   placeholdersEls.forEach((el) => {
-    el.replaceWith(createPlaceholderSpan(el.dataset.placeholder, el.textContent));
+    el.replaceWith(createPlaceholderSpan(el.dataset.placeholder, el.textContent, undefined, undefined, lang));
   });
 }
 
