@@ -131,6 +131,12 @@ body.profile
   border-top: 0;
 }
 
+body.profile-home-page
+  .section:not(.profile-rail-section, .sign-up-flow-section):has(> div.qualtrics-wrapper:last-child)
+  > div:nth-last-child(2) {
+  padding-bottom: 0;
+}
+
 @media (width >= 600px) {
   body.profile .section:not(.profile-rail-section, .sign-up-flow-section) {
     margin: 0 16px 24px;
@@ -205,12 +211,6 @@ body.profile
   body.profile .profile-rail {
     position: sticky;
     top: 10px;
-  }
-
-  body.profile:not(.profile-home-page) .section:first-child:not(.sign-up-flow-section) {
-    background-image: url('/solutions/icons/profileDecoration.svg');
-    background-repeat: no-repeat;
-    padding-top: 60px;
   }
 }
 
