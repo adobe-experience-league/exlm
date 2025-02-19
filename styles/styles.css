@@ -943,7 +943,8 @@ picture[align="right"] {
   color: var(--spectrum-red-900);
 }
 
-.section[data-center-aligned='true'] .default-content-wrapper > * {
+.section[data-center-aligned='true'] .default-content-wrapper > *,
+.section.highlight[data-center-aligned='true'] .default-content-wrapper > * {
   text-align: center;
 }
 
