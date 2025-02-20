@@ -42,17 +42,6 @@
   justify-content: end;
 }
 
-.playlist-browse-marquee-background::after {
-  content: ' ';
-  background: url('/images/playlist-marquee-decoration.svg') no-repeat top left;
-  height: 112px;
-  left: -1px;
-  position: absolute;
-  top: -1px;
-  width: 260px;
-  z-index: -1;
-}
-
 .playlist-browse-marquee-background picture,
 .playlist-browse-marquee-background img {
   display: block;

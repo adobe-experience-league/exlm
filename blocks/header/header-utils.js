@@ -95,3 +95,24 @@ export function updateLinks(container, replacer) {
     anchor.setAttribute('href', replacer(href));
   });
 }
+/**
+ * @param {HTMLElement} block
+ * @returns {HTMLElement}
+ */
+const getBlockFirstCell = (block) => block.querySelector(':scope > div > div');
+/**
+ * @param {HTMLElement} block
+ * @returns {HTMLElement}
+ */
+export const getBlockFirstRow = (block) => block.querySelector(':scope > div');
+/**
+ * simplified single cell block to one wrapper div.
+ * @param {HTMLElement} el
+ * @param {string} selector
+ * @returns {HTMLElement}
+ */
+export const simplifySingleCellBlock = (block) => {
+  const firstRowFirstCell = getBlockFirstCell(block);
+  block.innerHTML = firstRowFirstCell.innerHTML;
+  return block;
+};

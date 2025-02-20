@@ -212,12 +212,6 @@ body.profile-home-page
     position: sticky;
     top: 10px;
   }
-
-  body.profile:not(.profile-home-page) .section:first-child:not(.sign-up-flow-section) {
-    background-image: url('/solutions/icons/profileDecoration.svg');
-    background-repeat: no-repeat;
-    padding-top: 60px;
-  }
 }
 
 @media (width >= 1200px) {

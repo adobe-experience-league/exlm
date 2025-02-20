@@ -166,10 +166,12 @@ export default async function decorate(block) {
   addCtaClass(firstCtaLinkType, '.marquee-cta > a:first-child');
   addCtaClass(secondCtaLinkType, '.marquee-cta > a:last-child');
 
+  if (isSigninLinkType) {
+    handleSigninLinks(block);
+  }
+
   if (isVideoLinkType) {
     const videoLinkElems = block.querySelectorAll('.marquee-cta > .video');
     handleVideoLinks(videoLinkElems, block);
-  } else if (isSigninLinkType) {
-    handleSigninLinks(block);
   }
 }

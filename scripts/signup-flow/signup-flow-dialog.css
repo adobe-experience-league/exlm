@@ -343,56 +343,6 @@
     max-width: 636px;
   }
 
-  .step1-container .signup-dialog-header-decor {
-    background: url('/images/top-frame-decor.svg') no-repeat top left;
-    height: 112px;
-    left: -1px;
-    position: absolute;
-    top: -1px;
-    width: 260px;
-    z-index: 1;
-  }
-
-  .step1-container .signup-dialog-middle-decor {
-    background: url('/images/dual-color-right-decor.svg') no-repeat top right;
-    height: 426px;
-    position: absolute;
-    right: 0;
-    top: 40%;
-    width: 135px;
-    z-index: 1;
-  }
-
-  .step2-container .signup-dialog-body-top-decor {
-    background: url('/images/square-box-decor.svg') no-repeat top left;
-    height: 186px;
-    left: -13px;
-    position: absolute;
-    top: -53px;
-    width: 197px;
-    z-index: 1;
-  }
-
-  .step2-container .signup-dialog-middle-decor {
-    background: url('/images/pentagon-stripes-right-decor.svg') no-repeat top right;
-    height: 350px;
-    position: absolute;
-    right: 0;
-    top: 70%;
-    width: 112px;
-    z-index: 1;
-  }
-
-  .step3-container .signup-dialog-bottom-decor {
-    background: url('/images/mountain-background-decor.svg') no-repeat bottom;
-    bottom: 0;
-    height: 245px;
-    left: 0;
-    position: relative;
-    width: 100%;
-    z-index: 1;
-  }
-
   .confirm-container .signup-dialog-steps {
     margin-top: 0;
   }

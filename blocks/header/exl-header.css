@@ -675,6 +675,10 @@ button:focus {
   margin: 0;
 }
 
+.header .signed-in .profile .profile-menu .profile-menu-section {
+  width: 100%;
+}
+
 .header .signed-in .profile .icon-profile {
   background: url('../../icons/profile.svg') no-repeat center center;
   background-size: 24px 24px;
@@ -1424,4 +1428,18 @@ profile-block {
   .header .nav-item .nav-item a {
     padding: 5px var(--nav-item-padding-x);
   }
+}
+
+@keyframes shimmer {
+  50% {
+    opacity: 0.6;
+  }
+}
+
+[profile-placeholder] {
+  width: min-content;
+  background-image: linear-gradient(90deg, #ececec 0, #f4f4f4 40px, #ececec 80px);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  display: inline-block;
 }
