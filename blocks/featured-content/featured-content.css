@@ -126,7 +126,7 @@
 
 /* the dashed border around the image */
 .featured-content.block .author .author-image {
-  box-sizing: content-box;
+  box-sizing: unset;
   position: relative;
   width: 52px;
   height: 52px;
