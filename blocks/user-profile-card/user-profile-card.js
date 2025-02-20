@@ -1,6 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { generateProfileDOM } from '../../scripts/profile/profile.js';
-import { htmlToElement } from '../../scripts/scripts.js';
 import getEmitter from '../../scripts/events.js';
 
 const profileEventEmitter = getEmitter('profile');
@@ -37,8 +36,6 @@ async function decorateUserProfileCard(block) {
   block.textContent = '';
   block.append(userProfileDOM);
 
-  const cardDecor = htmlToElement(`<div class="user-profile-card-decor"></div>`);
-  block.append(cardDecor);
   loadCommunityAccountDOM(block);
   profileInfoPromise.then(async ({ adobeAccountDOM, additionalProfileInfoDOM }) => {
     const adobeAccountElement = block.querySelector('.profile-row.adobe-account');
