@@ -49,7 +49,7 @@
 }
 
 .featured-authors.block.external .featured-authors-image {
-  border: 6px solid var(--spectrum-indigo-1400);
+  border: 6px solid var(--spectrum-gray-900);
 }
 
 .featured-authors.block .featured-authors-image img {
@@ -81,7 +81,7 @@
 
 .featured-authors.block.external .featured-authors-image .source-tag {
   display: block;
-  background-color: var(--spectrum-indigo-1400);
+  background-color: var(--spectrum-gray-900);
 }
 
 /* the featured authors title */
@@ -108,40 +108,19 @@
 /* the dashed border around the image */
 .featured-authors.block .author .author-image {
   position: relative;
-  width: 53px;
-  height: 53px;
-  border: 2px dashed black;
+  width: 52px;
+  height: 52px;
+  border: 2px solid var(--spectrum-gray-900);
   border-radius: 50%;
   margin-top: 10px;
+  padding: 4px;
 }
 
 /* the image itself */
 .featured-authors.block .author .author-image img {
-  position: absolute;
-  top: -10px;
-  left: -10px;
-  width: 53px;
-  height: 53px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-}
-
-/* the company dot (adobe or external) */
-.featured-authors.block .author .author-image .company-dot {
-  position: absolute;
-  top: -10px;
-  left: 30px;
-  width: 21px;
-  height: 21px;
-  border-radius: 50%;
-  background-color: var(--spectrum-red-1400);
-}
-
-.featured-authors.block .author .author-image .company-dot.adobe {
-  background-color: var(--spectrum-red-1400);
-}
-
-.featured-authors.block .author .author-image .company-dot.external {
-  background-color: var(--spectrum-indigo-1400);
 }
 
 /* the author details */

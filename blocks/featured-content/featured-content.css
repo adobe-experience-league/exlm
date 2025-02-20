@@ -58,7 +58,7 @@
 }
 
 .featured-content.block.external .featured-content-image {
-  border: 6px solid var(--spectrum-indigo-1400);
+  border: 6px solid var(--spectrum-gray-900);
 }
 
 .featured-content.block .featured-content-image img {
@@ -91,7 +91,7 @@
 
 .featured-content.block.external .featured-content-image .source-tag {
   display: block;
-  background-color: var(--spectrum-indigo-1400);
+  background-color: var(--spectrum-gray-900);
 }
 
 .featured-content .description {
@@ -117,6 +117,7 @@
 /*  the author info entries */
 .featured-content.block .author {
   display: flex;
+  align-items: center;
   margin-top: 8px;
   margin-left: 0;
 }
@@ -125,42 +126,21 @@
 
 /* the dashed border around the image */
 .featured-content.block .author .author-image {
+  box-sizing: unset;
   position: relative;
   width: 52px;
   height: 52px;
   min-width: 52px;
-  border: 1px dashed black;
+  border: 2px solid var(--spectrum-gray-900);
   border-radius: 50%;
-  margin-top: 10px;
+  padding: 4px;
 }
 
 /* the image itself */
 .featured-content.block .author .author-image img {
-  position: absolute;
-  top: -10px;
-  left: -10px;
-  width: 53px;
-  height: 53px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-}
-
-/* the company dot (adobe or external) */
-.featured-content.block .author .author-image .company-dot {
-  position: absolute;
-  top: -10px;
-  left: 30px;
-  width: 21px;
-  height: 21px;
-  border-radius: 50%;
-  background-color: var(--spectrum-red-1400);
-}
-
-.featured-content.block .author .author-image .company-dot.adobe {
-  background-color: var(--spectrum-red-1400);
-}
-
-.featured-content.block .author .author-image .company-dot.external {
-  background-color: var(--spectrum-indigo-1400);
 }
 
 .featured-content.block div.author-header h3 {

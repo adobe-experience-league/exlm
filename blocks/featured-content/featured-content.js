@@ -98,21 +98,10 @@ async function buildFeaturedContent(block, contentArray) {
     authorHeader.innerHTML = `<h3>${headerText}</h3>`;
   }
   authorInfo.forEach((author) => {
-    const {
-      authorName: name,
-      authorImage: pic,
-      authorTitle,
-      authorCompany = '',
-      authorSocialLinkURL,
-      authorSocialLinkText,
-    } = author;
+    const { authorName: name, authorImage: pic, authorTitle, authorSocialLinkURL, authorSocialLinkText } = author;
     const authorDiv = div(
       { class: 'author' },
-      div(
-        { class: 'author-image' },
-        createOptimizedPicture(pic, name, 'eager', [{ width: '100' }]),
-        div({ class: `company-dot ${authorCompany.toLowerCase()}` }),
-      ),
+      div({ class: 'author-image' }, createOptimizedPicture(pic, name, 'eager', [{ width: '100' }])),
     );
     if (authorDiv) {
       const socialDetails = authorSocialLinkURL && authorSocialLinkText;
