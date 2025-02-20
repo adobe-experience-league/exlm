@@ -34,12 +34,6 @@ async function setAuthorInfo(authorElem) {
     authorImg.alt = authorInfo.authorName;
     authorPict.append(authorImg);
     imageDiv.append(authorPict);
-
-    // add empty div for company dot
-    const companyDot = document.createElement('div');
-    companyDot.classList.add('company-dot', authorInfo.authorCompany.toLowerCase());
-    imageDiv.append(companyDot);
-
     authorElem.append(imageDiv);
   }
 
