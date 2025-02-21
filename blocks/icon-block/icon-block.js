@@ -11,7 +11,11 @@ export default function decorate(block) {
   [...block.children].forEach((column) => {
     const [, headingWrapper, descriptionWrapper, linkWrapper, linkTargetElement] = column.children;
 
-    descriptionWrapper?.classList.add('icon-description');
+    if (descriptionWrapper?.textContent.trim()) {
+      descriptionWrapper.classList.add('icon-description');
+    } else {
+      descriptionWrapper?.remove();
+    }
 
     const heading = headingWrapper?.firstElementChild;
     if (heading) {
