@@ -6397,5 +6397,110 @@
         "description": "Sets the text for Products filter label in dropdown."
       }
     ]
+  },
+  {
+    "id": "notification-banner",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "iconSrc",
+        "label": "Icon Source",
+        "description": "Sets the icon source",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "iconAlt",
+        "label": "Icon Alternative Text",
+        "description": "Sets the alternative text for the icon"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_linkText",
+        "value": "",
+        "label": "CTA Text",
+        "description": "Text displayed on the button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_link",
+        "value": "",
+        "label": "CTA Link",
+        "description": "URL to open when the button is clicked."
+      },
+      {
+        "component": "select",
+        "name": "backgroundColor",
+        "value": "",
+        "label": "Background Color",
+        "description": "Banner background color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Dark Gray",
+            "value": "--spectrum-gray-800"
+          },
+          {
+            "name": "Blue",
+            "value": "--non-spectrum-navy-blue"
+          },
+          {
+            "name": "Red",
+            "value": "--spectrum-red-1100"
+          },
+          {
+            "name": "Custom",
+            "value": "custom"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "backgroundColor" }, "custom"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "customHexCode",
+        "value": "",
+        "label": "Custom Hexcode",
+        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
+      },
+      {
+        "component": "radio-group",
+        "name": "dismissalOptions",
+        "value": "",
+        "label": "Banner Dismissal Options",
+        "description": "Hide the banner based on Session or Local storage",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Session storage",
+            "value": "sessionStorage"
+          },
+          {
+            "name": "Local storage",
+            "value": "localStorage"
+          }
+        ]
+      }
+    ]
   }
 ]
