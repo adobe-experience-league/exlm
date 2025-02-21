@@ -4141,11 +4141,11 @@
         "options": [
           {
             "name": "Adobe",
-            "value": "adobe"
+            "value": "Adobe"
           },
           {
             "name": "External",
-            "value": "external"
+            "value": "External"
           }
         ]
       },
