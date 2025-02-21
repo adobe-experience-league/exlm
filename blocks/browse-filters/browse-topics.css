@@ -4,7 +4,7 @@
 
 .browse-topics-block-content {
   display: inline-flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 16px;
   max-width: 100%;
   padding: 8px 0;
