@@ -276,7 +276,7 @@
     display: block;
     position: absolute;
     inset: 0 0 1px 50%;
-    background-color: var(--spectrum-indigo-1400);
+    background-color: var(--spectrum-gray-900);
   }
 
   .article-marquee-large-bg.adobe {
@@ -287,7 +287,7 @@
 /* Aricle Marquee background styles */
 
 .article-marquee-bg-container path:first-child {
-  fill: var(--spectrum-indigo-1400);
+  fill: var(--spectrum-gray-900);
 }
 
 .article-marquee-bg-container.adobe path:first-child {

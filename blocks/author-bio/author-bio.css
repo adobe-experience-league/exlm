@@ -2,7 +2,7 @@
   background: var(--non-spectrum-bg);
   border-radius: 6px;
   position: relative;
-  border: 6px solid var(--spectrum-indigo-1400);
+  border: 6px solid;
   border-width: 6px 0 0;
   padding: 38px 28px 32px;
 }
@@ -51,10 +51,10 @@
   padding-top: 24px;
 }
 
-.author-bio .author-bio-content .external {
-  border-color: var(--spectrum-indigo-1400);
+.author-bio:has(.author-bio-content.external) {
+  border-color: var(--spectrum-gray-900);
 }
 
-.author-bio .author-bio-content .adobe {
+.author-bio:has(.author-bio-content.adobe) {
   border-color: var(--spectrum-red-1400);
 }
