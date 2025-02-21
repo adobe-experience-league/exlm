@@ -24,6 +24,7 @@ export const redirectToSearchPage = (searchInput, filters = '') => {
     const filterValueEncoded = encodeURIComponent(`[${filterValue}]`);
     targetUrlWithLanguage += `&f:@el_contenttype=${filterValueEncoded}`;
   }
+
   if (solution) {
     const solutionEncoded = encodeURIComponent(`[${solution}]`);
     targetUrlWithLanguage += `&f:el_product=${solutionEncoded}`;

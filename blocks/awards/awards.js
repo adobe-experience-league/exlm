@@ -76,8 +76,14 @@ export default async function decorate(block) {
         decorateIcons(blockEl);
       };
       block.innerHTML = `<div class="awards-holder"></div>`;
-      // eslint-disable-next-line no-new
-      new Pagination({ wrapper: block, identifier: 'awards', renderItems, pgNumber: pgNum, totalPages });
+      const pagination = new Pagination({
+        wrapper: block,
+        identifier: 'awards',
+        renderItems,
+        pgNumber: pgNum,
+        totalPages,
+      });
+      pagination.initialize();
       renderItems({ pgNum, block });
     } else {
       // eslint-disable-next-line no-lonely-if

@@ -61,7 +61,7 @@ const UserActions = (config) => {
     }
     if (onButtonClick) {
       button.addEventListener('click', (event) => {
-        if (event.target === 'button' || event.target.closest('button')) {
+        if (event.target.tagName === 'BUTTON' || event.target.closest('button')) {
           onButtonClick(button);
           if (callback) {
             callback();

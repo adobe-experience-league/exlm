@@ -17,7 +17,10 @@ export default class Pagination {
     this.totalPageNumbers = totalPages;
 
     this.pageChangeHandler = this.onPageChange.bind(this);
+    this.initialize();
+  }
 
+  initialize() {
     this.renderBlock();
     this.setupInputBoxListener();
     this.updatePageNumberStyles();

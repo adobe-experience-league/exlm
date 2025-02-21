@@ -1168,8 +1168,7 @@ export default async function decorate(block) {
         }
       }
 
-      // eslint-disable-next-line no-new
-      new ResponsivePillList({
+      const responsivePillList = new ResponsivePillList({
         wrapper: blockHeader,
         items: listItems,
         defaultSelected: defaultOption,
@@ -1194,6 +1193,7 @@ export default async function decorate(block) {
           }
         },
       });
+      responsivePillList.initialize();
     });
   }
 
