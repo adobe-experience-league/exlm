@@ -51,10 +51,10 @@
   padding-top: 24px;
 }
 
-.author-bio:has([class*='External']) {
+.author-bio:has(.author-bio-content.external) {
   border-color: var(--spectrum-gray-900);
 }
 
-.author-bio:has([class*='Adobe']) {
+.author-bio:has(.author-bio-content.adobe) {
   border-color: var(--spectrum-red-1400);
 }
