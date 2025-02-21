@@ -6404,16 +6404,16 @@
       {
         "component": "reference",
         "valueType": "string",
-        "name": "iconSrc",
-        "label": "Icon Source",
+        "name": "bannerIcon",
+        "label": "Banner Icon Source",
         "description": "Sets the icon source",
         "multi": false
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "iconAlt",
-        "label": "Icon Alternative Text",
+        "name": "bannerIconAlt",
+        "label": "Banner Icon Alternative Text",
         "description": "Sets the alternative text for the icon"
       },
       {
