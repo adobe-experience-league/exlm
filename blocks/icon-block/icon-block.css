@@ -100,7 +100,7 @@
 
 @media (width >= 900px) {
   .icon-block {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     column-gap: 16px;
     max-width: 1278px;
   }
