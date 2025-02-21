@@ -1,7 +1,7 @@
 .author-summary-grid {
   padding: 28px 38px;
   border-radius: 6px;
-  border-top: 6px solid var(--spectrum-indigo-1400);
+  border-top: 6px solid var(--spectrum-gray-900);
   background-color: var(--non-spectrum-bg);
   display: grid;
   grid-auto-columns: 1fr;

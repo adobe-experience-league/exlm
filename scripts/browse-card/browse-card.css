@@ -339,7 +339,7 @@
 }
 
 .browse-card .browse-card-author-badge.author-badge-external {
-  background-color: var(--spectrum-indigo-1400);
+  background-color: var(--spectrum-gray-900);
 }
 
 .browse-card .browse-card-footer {
