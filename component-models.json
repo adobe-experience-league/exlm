@@ -6402,6 +6402,13 @@
     "id": "notification-banner",
     "fields": [
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "bannerId",
+        "label": "Banner ID",
+        "description": "A unique identifier - New banners should have a different ID to ensure they appear even if a previous banner was dismissed."
+      },
+      {
         "component": "reference",
         "valueType": "string",
         "name": "bannerIcon",
