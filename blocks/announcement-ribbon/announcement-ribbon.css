@@ -1,6 +1,5 @@
 /* Mobile (<600px) */
 .announcement-ribbon {
-  width: fit-content;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
