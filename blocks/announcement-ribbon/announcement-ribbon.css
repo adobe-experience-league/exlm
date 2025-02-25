@@ -1,6 +1,5 @@
 /* Mobile (<600px) */
 .announcement-ribbon {
-  width: fit-content;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -17,6 +16,10 @@
 
 .announcement-ribbon :where(h1, h2, h3, h4, h5, h6) {
   margin: 0 0 4px;
+}
+
+.announcement-ribbon .ribbon-default-content {
+  width: 100%;
 }
 
 .announcement-ribbon .ribbon-default-content,
@@ -95,6 +98,7 @@
   .announcement-ribbon .ribbon-content-container {
     display: flex;
     gap: 24px;
+    width: 100%;
   }
 
   .announcement-ribbon .ribbon-button-container {
