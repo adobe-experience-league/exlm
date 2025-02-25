@@ -18,6 +18,10 @@
   margin: 0 0 4px;
 }
 
+.announcement-ribbon .ribbon-default-content {
+  width: 100%;
+}
+
 .announcement-ribbon .ribbon-default-content,
 .announcement-ribbon .ribbon-description {
   margin-bottom: 8px;
@@ -94,6 +98,7 @@
   .announcement-ribbon .ribbon-content-container {
     display: flex;
     gap: 24px;
+    width: 100%;
   }
 
   .announcement-ribbon .ribbon-button-container {
