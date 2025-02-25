@@ -6405,23 +6405,9 @@
         "component": "text",
         "valueType": "string",
         "name": "bannerId",
+        "value": "banner-1",
         "label": "Banner ID",
         "description": "A unique identifier - New banners should have a different ID to ensure they appear even if a previous banner was dismissed."
-      },
-      {
-        "component": "reference",
-        "valueType": "string",
-        "name": "bannerIcon",
-        "label": "Banner Icon Source",
-        "description": "Sets the icon source",
-        "multi": false
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "bannerIconAlt",
-        "label": "Banner Icon Alternative Text",
-        "description": "Sets the alternative text for the icon"
       },
       {
         "component": "text",
@@ -6472,23 +6458,8 @@
           {
             "name": "Red",
             "value": "--spectrum-red-1100"
-          },
-          {
-            "name": "Custom",
-            "value": "custom"
           }
         ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "backgroundColor" }, "custom"]
-        },
-        "component": "text",
-        "valueType": "string",
-        "name": "customHexCode",
-        "value": "",
-        "label": "Custom Hexcode",
-        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
       },
       {
         "component": "radio-group",
