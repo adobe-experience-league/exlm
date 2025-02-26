@@ -53,11 +53,32 @@
   overflow: hidden;
   z-index: 1;
   background-color: var(--non-spectrum-bg);
+  min-width: 30%;
 }
 
 .article-marquee .author-info > div {
   z-index: 1;
   text-align: center;
+}
+
+.article-marquee .author-info.adobe {
+  background-color: var(--spectrum-red-1400);
+}
+
+.article-marquee .author-info.external {
+  background-color: var(--spectrum-gray-900);
+}
+
+.article-marquee.marquee-curved .author-info {
+  background: none;
+}
+
+.article-marquee .author-info .author-card .author-image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
 }
 
 .article-marquee .author-card {
@@ -79,11 +100,18 @@
 }
 
 .article-marquee .author-info .author-card .author-image {
-  width: 75px;
-  height: 75px;
-  border-radius: 50px;
+  box-sizing: border-box;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
   overflow: hidden;
+  border: 2px solid var(--spectrum-gray-900);
   margin-bottom: 10px;
+  padding: 5px;
+}
+
+.article-marquee .author-info.external .author-card .author-image {
+  border: 2px solid var(--spectrum-gray-50);
 }
 
 .article-marquee .author-info .author-card .author-info-text .author-name {
@@ -216,6 +244,10 @@
   }
 
   .article-marquee .author-info .author-details {
+    margin-left: 0;
+  }
+
+  .article-marquee.marquee-curved .author-info .author-details {
     margin-left: 50px;
   }
 
@@ -241,7 +273,7 @@
     font-size: var(--spectrum-font-size-200);
   }
 
-  .article-marquee .author-info {
+  .article-marquee.marquee-curved .author-info {
     min-width: 500px;
     overflow: visible;
   }
@@ -250,11 +282,20 @@
     display: inline-flex;
     gap: 30px;
     width: auto;
-    margin-left: 200px;
+    align-items: center;
+  }
+
+  .article-marquee .author-info .author-details > :only-child {
+    width: 100%;
+  }
+
+  .article-marquee.marquee-curved .author-info .author-details {
+    margin-left: 124px;
   }
 
   .article-marquee .author-card {
     margin-bottom: 0;
+    width: 50%;
   }
 
   .article-marquee .author-card .author-image {
@@ -275,22 +316,30 @@
   .article-marquee-large-bg {
     display: block;
     position: absolute;
-    inset: 0 0 1px 50%;
-    background-color: var(--spectrum-gray-900);
+    inset: 0 0 0 50%;
+    background-color: var(--non-spectrum-bg);
   }
 
   .article-marquee-large-bg.adobe {
     background-color: var(--spectrum-red-1400);
   }
+
+  .article-marquee-large-bg.external {
+    background-color: var(--spectrum-gray-900);
+  }
 }
 
 /* Aricle Marquee background styles */
 
-.article-marquee-bg-container path:first-child {
+.article-marquee .author-info .article-marquee-bg-container path:first-child {
+  fill: var(--non-spectrum-bg);
+}
+
+.article-marquee .author-info.external .article-marquee-bg-container path:first-child {
   fill: var(--spectrum-gray-900);
 }
 
-.article-marquee-bg-container.adobe path:first-child {
+.article-marquee .author-info.adobe .article-marquee-bg-container path:first-child {
   fill: var(--spectrum-red-1400);
 }
 

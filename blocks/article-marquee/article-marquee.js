@@ -138,6 +138,7 @@ async function createBreadcrumb(container) {
  */
 export default async function ArticleMarquee(block) {
   const [readTime, headingType] = block.querySelectorAll(':scope div > div');
+  const isCurvedVariant = block.classList.contains('marquee-curved');
   block.textContent = '';
 
   let links = getMetadata('author-bio-page');
@@ -158,11 +159,15 @@ export default async function ArticleMarquee(block) {
             <div class="article-marquee-info"></div>
           </div>
           <div class="author-info">
-            <div class="article-marquee-bg-container">
-            ${mobileSvg}
-            ${tabletSvg}
-            ${desktopSvg}
-            </div>
+          ${
+            isCurvedVariant
+              ? `<div class="article-marquee-bg-container">
+                 ${mobileSvg}
+                 ${tabletSvg}
+                 ${desktopSvg}
+               </div>`
+              : ''
+          }
             <div class="author-details"></div>
           </div>
         </div>
@@ -220,11 +225,11 @@ export default async function ArticleMarquee(block) {
         });
 
         if (isExternal) {
-          block.querySelector('.article-marquee-large-bg').classList.add('external');
-          block.querySelector('.article-marquee-bg-container').classList.add('external');
+          block.querySelector('.article-marquee-large-bg')?.classList.add('external');
+          block.querySelector('.author-info')?.classList.add('external');
         } else {
-          block.querySelector('.article-marquee-large-bg').classList.add('adobe');
-          block.querySelector('.article-marquee-bg-container').classList.add('adobe');
+          block.querySelector('.article-marquee-large-bg')?.classList.add('adobe');
+          block.querySelector('.author-info')?.classList.add('adobe');
         }
       });
     }
