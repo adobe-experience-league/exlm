@@ -26,7 +26,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
         ...browseCardDataModel,
         contentType,
         badgeTitle: CONTENT_TYPES.LIVE_EVENT.LABEL,
-        thumbnail: eventImage,
+        thumbnail: eventImage || '',
         product,
         title: eventTitle || '',
         description: eventDescription || '',
