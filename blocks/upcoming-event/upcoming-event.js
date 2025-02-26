@@ -185,29 +185,29 @@ export default async function decorate(block) {
 
     updateFiltersAndCards(selectedFilters);
   });
-}
 
-/**
- * Fetches filtered card data based on selected parameters.
- * @param {Array} data - List of card data objects.
- * @param {Array} params - Selected filter parameters.
- * @returns {Array} - Filtered and sorted card data.
- */
-function fetchFilteredCardData(data, params) {
-  if (!data) return [];
-  const solutionsList = Array.isArray(params) ? params : [params];
+  /**
+   * Fetches filtered card data based on selected parameters.
+   * @param {Array} data - List of card data objects.
+   * @param {Array} params - Selected filter parameters.
+   * @returns {Array} - Filtered and sorted card data.
+   */
+  function fetchFilteredCardData(data, params) {
+    if (!data) return [];
+    const solutionsList = Array.isArray(params) ? params : [params];
 
-  // If no filters are selected, return all data sorted by event time
-  if (solutionsList.length === 0) {
-    return data.filter((card) => card.event?.time).sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
+    // If no filters are selected, return all data sorted by event time
+    if (solutionsList.length === 0) {
+      return data.filter((card) => card.event?.time).sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
+    }
+
+    // Filter events that match any of the selected filters
+    return data
+      .filter((event) => {
+        const productArray = Array.isArray(event.product) ? event.product : [event.product];
+        return solutionsList.some((filter) => productArray.includes(filter));
+      })
+      .filter((card) => card.event?.time) // Ensure valid event time
+      .sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
   }
-
-  // Filter events that match any of the selected filters
-  return data
-    .filter((event) => {
-      const productArray = Array.isArray(event.product) ? event.product : [event.product];
-      return solutionsList.some((filter) => productArray.includes(filter));
-    })
-    .filter((card) => card.event?.time) // Ensure valid event time
-    .sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
 }
