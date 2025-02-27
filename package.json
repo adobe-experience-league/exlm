@@ -55,5 +55,9 @@
     "*.{ejs,html,md,mdx,toml,yaml,xml}": [
       "prettier --write"
     ]
+  },
+  "engines": {
+    "node": ">=22",
+    "npm": ">=10"
   }
 }
