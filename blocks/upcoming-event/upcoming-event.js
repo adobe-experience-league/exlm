@@ -23,8 +23,17 @@ async function getListofProducts() {
 
     const events = data?.eventList?.events || [];
 
+    const currentDate = new Date();
+
+    // Filter events within their own show window
+    const filteredEvents = events.filter((event) => {
+      const eventStartTime = new Date(event.startTime);
+      const eventEndTime = new Date(event.endTime);
+      return currentDate >= eventStartTime && currentDate <= eventEndTime;
+    });
+
     // Extract unique productFocus items and sort alphabetically
-    const products = Array.from(new Set(events.flatMap((event) => event.productFocus || []))).sort();
+    const products = Array.from(new Set(filteredEvents.flatMap((event) => event.productFocus || []))).sort();
 
     return products;
   } catch (error) {
