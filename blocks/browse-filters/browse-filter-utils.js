@@ -245,19 +245,34 @@ export const getBrowseFiltersResultCount = () => {
   return resultCount;
 };
 
-export const getSelectedTopics = (filterInfo) => {
-  if (!filterInfo) {
+export const getSelectedTopics = (decodedHash) => {
+  if (!decodedHash) {
     return [];
   }
-  const solutionsCheck = filterInfo.match(/@el_solution=("[^"]*")/g) ?? [];
-  const featuresCheck = filterInfo.match(/@el_features=("[^"]*")/g) ?? [];
-  const selectedTopics = featuresCheck.concat(solutionsCheck).reduce((acc, curr) => {
-    const [, featureName] = curr.split('=');
-    if (featureName) {
-      acc.push(featureName.trim().replace(/"/g, ''));
-    }
-    return acc;
-  }, []);
+  const hashesList = decodedHash.split('&');
+  const filterInfo = hashesList.find((hash) => hash.includes('aq='));
+  const selectedTopics = [];
+  if (filterInfo) {
+    const solutionsCheck = filterInfo.match(/@el_solution=("[^"]*")/g) ?? [];
+    const featuresCheck = filterInfo.match(/@el_features=("[^"]*")/g) ?? [];
+    featuresCheck.concat(solutionsCheck).reduce((acc, curr) => {
+      const [, featureName] = curr.split('=');
+      if (featureName) {
+        acc.push(featureName.trim().replace(/"/g, ''));
+      }
+      return acc;
+    }, selectedTopics);
+  }
+  const elProductInfo = hashesList.find((hash) => hash.includes('f-el_product='));
+  if (elProductInfo) {
+    const [, productsListString] = elProductInfo.split('=');
+    productsListString.split(',').forEach((product) => {
+      if (product) {
+        selectedTopics.push(product);
+      }
+    });
+  }
+
   return selectedTopics;
 };
 
