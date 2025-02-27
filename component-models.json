@@ -2118,6 +2118,24 @@
     "id": "article-marquee",
     "fields": [
       {
+        "component": "select",
+        "name": "classes",
+        "value": "",
+        "label": "Content Creator Callout Shape",
+        "description": "Article marquee background shape",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Straight",
+            "value": "marquee-straight"
+          },
+          {
+            "name": "Curved",
+            "value": "marquee-curved"
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "articleReadingTime",
