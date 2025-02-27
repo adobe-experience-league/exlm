@@ -25,6 +25,7 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
+const REMOVE_DUPLICATES_BY_EXCLUSION = false;
 const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
 let DEFAULT_NUM_CARDS = 4;
 let resizeObserved;
@@ -876,7 +877,10 @@ export default async function decorate(block) {
           role: role?.length ? role : profileRoles,
           sortCriteria,
           noOfResults: numberOfResults,
-          aq: !showDefaultOptions && cardIdsToExclude.length ? prepareExclusionQuery(cardIdsToExclude) : undefined,
+          aq:
+            !showDefaultOptions && cardIdsToExclude.length && REMOVE_DUPLICATES_BY_EXCLUSION
+              ? prepareExclusionQuery(cardIdsToExclude)
+              : undefined,
           context: showDefaultOptions ? {} : { interests: [interest], experience: [expLevel], role: profileRoles },
         };
 
