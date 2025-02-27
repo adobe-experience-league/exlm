@@ -2121,7 +2121,7 @@
         "component": "select",
         "name": "classes",
         "value": "",
-        "label": "Background shape",
+        "label": "Content Creator Callout Shape",
         "description": "Article marquee background shape",
         "valueType": "string",
         "options": [
