@@ -20,6 +20,7 @@ import { setTargetDataAsBlockAttribute, setCoveoAnalyticsAttribute } from '../..
 const targetEventEmitter = getEmitter('loadTargetBlocks');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const DEFAULT_NUM_CARDS = 5;
+const REMOVE_DUPLICATES_BY_EXCLUSION = false;
 let seeMoreFlag = false;
 const seeMoreConfig = {
   minWidth: 1024,
@@ -829,7 +830,10 @@ export default async function decorate(block) {
           role: role?.length ? role : profileRoles,
           sortCriteria,
           noOfResults: numberOfResults,
-          aq: !showDefaultOptions && cardIdsToExclude.length ? prepareExclusionQuery(cardIdsToExclude) : undefined,
+          aq:
+            !showDefaultOptions && cardIdsToExclude.length && REMOVE_DUPLICATES_BY_EXCLUSION
+              ? prepareExclusionQuery(cardIdsToExclude)
+              : undefined,
           context: showDefaultOptions ? {} : { interests: [interest], experience: [expLevel], role: profileRoles },
         };
 
