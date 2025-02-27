@@ -53,6 +53,7 @@ export const generateQuery = (topic) => {
   return {
     query,
     product,
+    forceQuery: true,
   };
 };
 
@@ -116,16 +117,42 @@ export function handleTopicSelection(block, fireSelection, resetPage) {
 
   if (window.headlessQueryActionCreators) {
     let query = window.headlessBaseSolutionQuery || '';
+    const currentProductFacetValues = window.headlessProductFacet?.state?.values || [];
+    if (currentProductFacetValues.length) {
+      currentProductFacetValues.forEach(({ value, state }) => {
+        if (state === 'selected') {
+          window.headlessProductFacet.toggleSelect({
+            value,
+            state: 'idle',
+          });
+        }
+      });
+    }
+
     if (selectedTopics.length) {
+      const decodedHash = window.location.hash ? decodeURIComponent(window.location.hash) : '';
+      const elProductHash = decodedHash.split('&').find((hashInfo) => hashInfo.includes('f-el_product='));
+      const [, productsList = ''] = elProductHash?.split('=') || [];
+      const productsInUrl = productsList.split(',').filter(Boolean);
       const topicQueryItems = `${selectedTopics
         .map((topic) => {
-          const { query: advancedQuery } = generateQuery(topic);
+          const { query: advancedQuery, forceQuery = false, product } = generateQuery(topic);
+          if (!forceQuery && window.headlessProductFacet && !productsInUrl.includes(product)) {
+            window.headlessProductFacet.toggleSelect({
+              value: product,
+              state: 'selected',
+            });
+            return null;
+          }
           return advancedQuery;
         })
+        .filter(Boolean)
         .join(' OR ')}`;
-      const topicsQuery = selectedTopics.length > 1 ? `(${topicQueryItems})` : topicQueryItems;
+      const topicsQuery = selectedTopics.length > 1 && topicQueryItems ? `(${topicQueryItems})` : topicQueryItems;
       if (window.headlessBaseSolutionQuery) {
-        query = `(${window.headlessBaseSolutionQuery} AND ${topicsQuery})`;
+        query = topicsQuery
+          ? `(${window.headlessBaseSolutionQuery} AND ${topicsQuery})`
+          : window.headlessBaseSolutionQuery;
       } else {
         query = topicsQuery;
       }
