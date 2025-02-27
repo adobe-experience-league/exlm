@@ -247,6 +247,19 @@ async function buildTabSection(main) {
   });
 }
 
+function addFragmentSection(main) {
+  if (getMetadata('fragment')) {
+    const fragmentUrl = getMetadata('fragment');
+    const div = document.createElement('div');
+    div.classList.add('fragment-section');
+    const a = document.createElement('a');
+    a.href = fragmentUrl;
+    a.textContent = fragmentUrl;
+    div.append(buildBlock('fragment', [[a]]));
+    main.prepend(div);
+  }
+}
+
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
@@ -254,19 +267,24 @@ async function buildTabSection(main) {
 function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
-    if (!isProfilePage && !isDocPage && !isSignUpPage) {
-      buildTabSection(main);
-    }
-    // if we are on a product browse page
-    if (isBrowsePage) {
-      addBrowseBreadCrumb(main);
-      addBrowseRail(main);
-    }
-    if (isPerspectivePage) {
-      addMiniToc(main);
-    }
-    if (isProfilePage) {
-      addProfileRail(main);
+
+    if (!main.classList.contains('fragment')) {
+      addFragmentSection(main);
+
+      if (!isProfilePage && !isDocPage && !isSignUpPage) {
+        buildTabSection(main);
+      }
+      // if we are on a product browse page
+      if (isBrowsePage) {
+        addBrowseBreadCrumb(main);
+        addBrowseRail(main);
+      }
+      if (isPerspectivePage) {
+        addMiniToc(main);
+      }
+      if (isProfilePage) {
+        addProfileRail(main);
+      }
     }
   } catch (error) {
     // eslint-disable-next-line no-console
