@@ -277,13 +277,9 @@ function uncheckAllFiltersFromDropdown(block) {
 /**
  * Handles the parsing and updating of filters, search terms, and pagination from the URL hash.
  */
-function handleUriHash(onload) {
+function handleUriHash() {
   const browseFiltersSection = document.querySelector('.browse-filters-form');
   if (!browseFiltersSection) {
-    return;
-  }
-  const userSelectionExists = isFilterSelectionActive(browseFiltersSection.parentElement);
-  if (userSelectionExists && onload === true) {
     return;
   }
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
@@ -357,11 +353,11 @@ function handleUriHash(onload) {
         searchInput.value = '';
       }
     } else if (keyName === 'aq' && filterInfo) {
-      const selectedTopics = getSelectedTopics(filterInfo);
+      const selectedTopics = getSelectedTopics(decodedHash);
       const contentDiv = document.querySelector('.browse-topics');
       const buttons = contentDiv?.querySelectorAll('button') ?? [];
       Array.from(buttons).forEach((button) => {
-        const matchFound = selectedTopics.find((topic) => button.dataset.topicname?.includes(topic));
+        const matchFound = selectedTopics.find((topic) => button.dataset.label?.includes(topic));
         if (matchFound) {
           button.classList.add('browse-topics-item-active');
         } else {
@@ -542,7 +538,7 @@ function handleCoveoHeadlessSearch(
     buildCardsShimmer.removeShimmer();
   });
 
-  handleUriHash(true);
+  handleUriHash();
   renderPageNumbers();
 }
 
@@ -1426,10 +1422,8 @@ function decorateBrowseTopics(block) {
       }
     });
     const decodedHash = decodeURIComponent(window.location.hash);
-    const filtersInfo = decodedHash.split('&').find((s) => s.includes('@el_features'));
-
-    if (filtersInfo) {
-      const selectedTopics = getSelectedTopics(filtersInfo);
+    if (decodedHash) {
+      const selectedTopics = getSelectedTopics(decodedHash);
       if (selectedTopics && selectedTopics.length > 0) {
         selectedTopics.forEach((topic) => {
           const element = contentDiv.querySelector(`.browse-topics-item[data-topicname*="${topic}"]`);
