@@ -5,8 +5,6 @@
 
 .notification-banner-container .fragment-wrapper {
   max-width: unset;
-  margin-left: calc(-1 * var(--spectrum-spacing-300));
-  margin-right: calc(-1 * var(--spectrum-spacing-300));
 }
 
 .notification-banner-container .notification-banner-wrapper {
@@ -59,20 +57,6 @@
   cursor: pointer;
   width: 14px;
   height: 14px;
-}
-
-body[class^='browse-'] .notification-banner-container .fragment-wrapper,
-body[class^='article-'] .notification-banner-container .fragment-wrapper,
-body[class*='profile-home-page'] .notification-banner-container .fragment-wrapper {
-  margin-left: unset;
-  margin-right: unset;
-}
-
-@media (min-width: 600px) {
-  .notification-banner-container .fragment-wrapper {
-    margin-left: calc(-1 * var(--spectrum-spacing-800));
-    margin-right: calc(-1 * var(--spectrum-spacing-800));
-  }
 }
 
 @media (min-width: 900px) {
