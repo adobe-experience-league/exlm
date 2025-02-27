@@ -81,6 +81,19 @@ function createOptions(container, readTimeText) {
         link: window.location.href,
       });
       cardAction.decorate();
+      options
+        .querySelector('.icon-bookmark-active')
+        ?.insertAdjacentHTML(
+          'afterend',
+          `<span class="bookmark-label">${placeholders?.userActionBookmarkTooltip || 'Bookmark page'}</span>`,
+        );
+
+      options
+        .querySelector('.icon-copy')
+        ?.insertAdjacentHTML(
+          'afterend',
+          `<span class="copylink-label">${placeholders?.userActionCopylinkTooltip || 'Copy link URL'}</span>`,
+        );
     }
   });
 }

@@ -1,3 +1,4 @@
+/* Styles for the article marquee component with marquee-straight as the default variation and marquee-curved as the additional variation */
 .article-marquee-container {
   padding: 0;
 }
@@ -47,7 +48,7 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  padding: 6em 4em 3em;
+  padding: 2em 4em;
   position: relative;
   color: var(--background-color);
   overflow: hidden;
@@ -70,6 +71,7 @@
 }
 
 .article-marquee.marquee-curved .author-info {
+  padding: 6em 4em 3em;
   background: none;
 }
 
@@ -115,13 +117,19 @@
 }
 
 .article-marquee .author-info .author-card .author-info-text .author-name {
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-semi-bold);
+  font-size: var(--spectrum-font-size-300);
+  font-weight: var(--font-weight-bold);
+}
+
+.article-marquee .author-info .author-card .author-info-text .author-title {
+  max-width: 256px;
 }
 
 .article-marquee .breadcrumb {
-  margin-bottom: 1em;
-  min-height: 80px;
+  min-height: 25px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .article-marquee .breadcrumb > a,
@@ -156,10 +164,10 @@
 }
 
 .article-marquee .breadcrumb > span {
-  display: block;
+  display: inline;
   margin-top: 8px;
   color: var(--spectrum-gray-800);
-  font-size: var(--spectrum-font-size-500);
+  font-size: var(--spectrum-font-size-200);
   font-weight: var(--font-weight-bold);
 }
 
@@ -213,6 +221,16 @@
   min-height: 160px;
 }
 
+.article-marquee .user-actions .bookmark-label,
+.copylink-label {
+  padding-left: 10px;
+  font-size: var(--spectrum-font-size-200);
+}
+
+.article-marquee .user-actions .bookmark {
+  margin-right: 16px;
+}
+
 @media (min-width: 600px) {
   .article-marquee-info-container {
     flex-direction: row;
@@ -221,6 +239,7 @@
   }
 
   .article-marquee .article-info {
+    max-width: 50%;
     min-height: 200px;
     padding: 40px;
     width: 100%;
@@ -228,8 +247,12 @@
 
   .article-marquee .author-info {
     padding: 1em;
-    min-width: 30%;
+    min-width: 35%;
     justify-content: center;
+  }
+
+  .article-marquee.marquee-curved .author-info {
+    padding: 1em;
   }
 
   .article-marquee-options {
@@ -258,6 +281,15 @@
   .article-marquee .author-card:only-child .author-image {
     display: block;
   }
+
+  .article-marquee .user-actions .bookmark-label,
+  .copylink-label {
+    display: none;
+  }
+
+  .article-marquee .user-actions .bookmark {
+    margin-right: 0;
+  }
 }
 
 @media (min-width: 900px) {
@@ -267,6 +299,7 @@
 
   .article-marquee .breadcrumb {
     min-height: 25px;
+    margin-bottom: 15px;
   }
 
   .article-marquee .author-info .author-card .author-info-text .author-name {
@@ -274,7 +307,7 @@
   }
 
   .article-marquee.marquee-curved .author-info {
-    min-width: 500px;
+    min-width: 40%;
     overflow: visible;
   }
 
