@@ -65,9 +65,5 @@
     "*.{ejs,html,md,mdx,toml,yaml,xml}": [
       "prettier --write"
     ]
-  },
-  "dependencies": {
-    "jsdom": "^24.0.0",
-    "open": "^9.1.0"
   }
 }
