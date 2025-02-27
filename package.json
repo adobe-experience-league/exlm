@@ -16,7 +16,6 @@
     "up-secure": "sudo aem up --tls-cert=local-cert/server.crt --tls-key=local-cert/server.key --port=443 --open https://experienceleague-local.adobe.com",
     "up-secure-prod": "sudo aem up --url https://main--exlm-prod--adobe-experience-league.aem.page --tls-cert=local-cert/server.crt --tls-key=local-cert/server.key --port=443 --open https://experienceleague-local.adobe.com",
     "prepare": "husky install",
-    "preview": "node preview.js",
     "validate:paths": "node validate-paths.js",
     "quality": "npm run format:check && npm run lint && npm run validate:paths",
     "check:branch-name": "node check-branch-name.js"
