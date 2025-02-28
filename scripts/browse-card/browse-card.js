@@ -81,16 +81,35 @@ const getBookmarkId = ({ id, viewLink, contentType }) => {
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const optionsDate = { month: 'short', day: '2-digit' };
-  const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' };
+  const optionsTime = {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: userTimeZone,
+  };
 
   const formattedDate = date.toLocaleDateString(undefined, optionsDate).toUpperCase();
   const formattedTime = date.toLocaleTimeString(undefined, optionsTime);
 
-  const [time, period] = formattedTime.split(' ');
-  const formattedTimeWithoutZone = `${time} ${period}`;
-  // Return date and time without timezone
-  return `${formattedDate} | ${formattedTimeWithoutZone}`;
+  // Get timezone abbreviation
+  const timeZoneAbbr =
+    {
+      'America/Los_Angeles': 'PT',
+      'America/Denver': 'MT',
+      'America/Chicago': 'CT',
+      'America/New_York': 'ET',
+      'Pacific/Honolulu': 'HT',
+      'Australia/Sydney': 'AEST',
+      'Europe/London': 'BST',
+      'Europe/Paris': 'CET',
+      'Asia/Calcutta': 'IST',
+      'Asia/Kolkata': 'IST',
+      'Etc/GMT': 'GMT',
+    }[userTimeZone] || `UTC${(date.getTimezoneOffset() / -60 >= 0 ? '+' : '') + date.getTimezoneOffset() / -60}`;
+
+  return `${formattedDate} | ${formattedTime} ${timeZoneAbbr}`;
 };
 
 const buildTagsContent = (cardMeta, tags = []) => {
