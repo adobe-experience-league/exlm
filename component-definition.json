@@ -122,7 +122,8 @@
                   "article-marquee": {
                     "sling:resourceType": "core/franklin/components/block/v1/block",
                     "name": "Article Marquee",
-                    "model": "article-marquee"
+                    "model": "article-marquee",
+                    "classes": "marquee-straight"
                   }
                 }
               }
@@ -355,7 +356,7 @@
                 "template": {
                   "name": "Article Marquee",
                   "model": "article-marquee",
-                  "fileReference": "/content/dam/exlm/Community_headshot_single.png"
+                  "classes": "marquee-straight"
                 }
               }
             }

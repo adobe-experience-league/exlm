@@ -9,6 +9,8 @@ Experience League site implementation on https://aem.live
 
 ## Getting started
 
+> ensure you have nodejs 22. do this manually or install [nvm](https://github.com/nvm-sh/nvm) and run `nvm install` then `nvm use` on this directory and node 22 will be installed and used.
+
 1. Clone or fork this repo (see note below on forking)
 2. Create your brannch - (keep it < 18 chars to avoid domain length limits)
 3. Install the [AEM CLI](https://github.com/adobe/aem-cli): `npm install -g @adobe/aem-cli`
