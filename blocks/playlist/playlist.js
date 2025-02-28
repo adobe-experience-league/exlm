@@ -137,7 +137,7 @@ function newPlayer(playlist) {
     iframeTemplate.remove();
     // wait for loaded
     iframe.addEventListener('load', () => {
-      iframe.contentWindow.postMessage({ type: 'mpcAction', action: 'play' }, '*');
+      iframe.contentWindow.postMessage({ type: 'mpcAction', action: 'play' }, 'https://video.tv.adobe.com');
     });
   };
 

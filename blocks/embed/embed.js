@@ -19,7 +19,7 @@ const loadScript = (url, callback, type) => {
 };
 
 export function getMetadata(name, win = window) {
-  const attr = name && name.includes(':') ? 'property' : 'name';
+  const attr = name?.includes(':') ? 'property' : 'name';
   const meta = [...win.document.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((m) => m.content).join(', ');
   return meta || '';
 }
@@ -54,6 +54,7 @@ const embedMpc = (url, options = { autoplay: false }) => {
   window.addEventListener(
     'message',
     (event) => {
+      if (event.origin !== 'https://video.tv.adobe.com') return;
       if (event.data?.type === 'mpcStatus') {
         if (event.data.state === 'play') {
           pushVideoEvent({
