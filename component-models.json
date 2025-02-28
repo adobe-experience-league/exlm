@@ -6420,6 +6420,47 @@
     "id": "notification-banner",
     "fields": [
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 2,
+        "options": [
+          {
+            "name": "Background Color",
+            "children": [
+              {
+                "name": "Dark Gray",
+                "value": "bg-dark-gray"
+              },
+              {
+                "name": "Blue (default)",
+                "value": "bg-blue"
+              },
+              {
+                "name": "Red",
+                "value": "bg-red"
+              }
+            ]
+          },
+          {
+            "name": "Dismissable",
+            "children": [
+              {
+                "name": "Yes",
+                "value": "dismissable"
+              },
+              {
+                "name": "No",
+                "value": "non-dismissable"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "bannerId",
@@ -6456,46 +6497,6 @@
         "value": "",
         "label": "CTA Link",
         "description": "URL to open when the button is clicked."
-      },
-      {
-        "component": "select",
-        "name": "backgroundColor",
-        "value": "",
-        "label": "Background Color",
-        "description": "Banner background color",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Dark Gray",
-            "value": "--spectrum-gray-800"
-          },
-          {
-            "name": "Blue",
-            "value": "--non-spectrum-navy-blue"
-          },
-          {
-            "name": "Red",
-            "value": "--spectrum-red-1100"
-          }
-        ]
-      },
-      {
-        "component": "radio-group",
-        "name": "dismissalOptions",
-        "value": "",
-        "label": "Banner Dismissal Options",
-        "description": "Hide the banner based on Session or Local storage",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Session storage",
-            "value": "sessionStorage"
-          },
-          {
-            "name": "Local storage",
-            "value": "localStorage"
-          }
-        ]
       }
     ]
   }

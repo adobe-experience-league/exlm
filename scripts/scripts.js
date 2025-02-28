@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import {
   buildBlock,
   loadHeader,
@@ -502,9 +504,28 @@ export function decorateInlineAttributes(element) {
   }
 }
 
+/**
+ * Helper function that converts an AEM path into an EDS path.
+ */
+export function getEDSLink(aemPath) {
+  return window.hlx.aemRoot ? aemPath.replace(window.hlx.aemRoot, '').replace('.html', '') : aemPath;
+}
+
+/** Helper function that adapts the path to work on EDS and AEM rendering */
+export function getLink(edsPath) {
+  return window.hlx.aemRoot && !edsPath.startsWith(window.hlx.aemRoot) && edsPath.indexOf('.html') === -1
+    ? `${window.hlx.aemRoot}${edsPath}.html`
+    : edsPath;
+}
+
 /** @param {HTMLMapElement} main */
 async function buildPreMain(main) {
   const fragmentUrl = getMetadata('fragment');
+  const fragmentPath = fragmentUrl ? new URL(fragmentUrl, window.location).pathname : '';
+  const currentPath = window.location.pathname?.replace('.html', '');
+  if (currentPath.endsWith(fragmentPath)) {
+    return; // do not load fragment if it is the same as the current page
+  }
   if (fragmentUrl) {
     const preMain = htmlToElement(
       `<aside><div><div class="fragment"><a href="${fragmentUrl}"></a></div></div></aside>`,
@@ -934,20 +955,6 @@ async function showSignupDialog() {
 
   const { default: initSignupFlowHandler } = await import('./signup-flow/signup-flow-handler.js');
   await initSignupFlowHandler(signUpFlowConfigDate, modalReDisplayDuration);
-}
-
-/**
- * Helper function that converts an AEM path into an EDS path.
- */
-export function getEDSLink(aemPath) {
-  return window.hlx.aemRoot ? aemPath.replace(window.hlx.aemRoot, '').replace('.html', '') : aemPath;
-}
-
-/** Helper function that adapts the path to work on EDS and AEM rendering */
-export function getLink(edsPath) {
-  return window.hlx.aemRoot && !edsPath.startsWith(window.hlx.aemRoot) && edsPath.indexOf('.html') === -1
-    ? `${window.hlx.aemRoot}${edsPath}.html`
-    : edsPath;
 }
 
 /** fetch first path, if non 200, fetch the second */
