@@ -503,7 +503,7 @@ a:hover {
   color: var(--non-spectrum-custom-dark);
 }
 
-strong {
+strong:not(a strong) {
   color: var(--non-spectrum-custom-dark);
 }
 
