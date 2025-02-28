@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable no-bitwise */
 import {
   buildBlock,
   loadHeader,
@@ -247,25 +245,6 @@ async function buildTabSection(main) {
   });
 }
 
-async function addFragmentSection(main) {
-  const fragmentUrl = getMetadata('fragment');
-  if (fragmentUrl) {
-    const fragmentContainer = document.createElement('div');
-    fragmentContainer.classList.add('fragment-container');
-    const fragmentSection = document.createElement('div');
-    fragmentSection.classList.add('fragment-section');
-    const a = document.createElement('a');
-    a.href = fragmentUrl;
-    a.textContent = fragmentUrl;
-    fragmentSection.append(buildBlock('fragment', [[a]]));
-    fragmentContainer.append(fragmentSection);
-    main.insertAdjacentElement('beforeBegin', fragmentContainer);
-    // eslint-disable-next-line no-use-before-define
-    decorateMain(fragmentContainer);
-    await loadBlocks(fragmentContainer);
-  }
-}
-
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
@@ -273,24 +252,19 @@ async function addFragmentSection(main) {
 function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
-
-    if (!main.classList.contains('fragment-container') && !main.classList.contains('fragment')) {
-      addFragmentSection(main);
-
-      if (!isProfilePage && !isDocPage && !isSignUpPage) {
-        buildTabSection(main);
-      }
-      // if we are on a product browse page
-      if (isBrowsePage) {
-        addBrowseBreadCrumb(main);
-        addBrowseRail(main);
-      }
-      if (isPerspectivePage) {
-        addMiniToc(main);
-      }
-      if (isProfilePage) {
-        addProfileRail(main);
-      }
+    if (!isProfilePage && !isDocPage && !isSignUpPage) {
+      buildTabSection(main);
+    }
+    // if we are on a product browse page
+    if (isBrowsePage) {
+      addBrowseBreadCrumb(main);
+      addBrowseRail(main);
+    }
+    if (isPerspectivePage) {
+      addMiniToc(main);
+    }
+    if (isProfilePage) {
+      addProfileRail(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -528,6 +502,21 @@ export function decorateInlineAttributes(element) {
   }
 }
 
+/** @param {HTMLMapElement} main */
+async function buildPreMain(main) {
+  const fragmentUrl = getMetadata('fragment');
+  if (fragmentUrl) {
+    const preMain = htmlToElement(
+      `<aside><div><div class="fragment"><a href="${fragmentUrl}"></a></div></div></aside>`,
+    );
+    // add fragment as first section in preMain
+    main.before(preMain);
+    decorateSections(preMain);
+    decorateBlocks(preMain);
+    loadBlocks(preMain);
+  }
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -556,6 +545,7 @@ async function loadEager(doc) {
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
+    buildPreMain(main);
     decorateMain(main);
     document.body.classList.add('appear');
     await waitForLCP(LCP_BLOCKS);

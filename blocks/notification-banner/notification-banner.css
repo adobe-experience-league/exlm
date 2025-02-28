@@ -8,25 +8,26 @@
 }
 
 .notification-banner-container .notification-banner-wrapper {
-  margin: 0;
   max-width: unset;
 }
 
-.notification-banner {
-  background-color: var(--non-spectrum-dark-gray);
+.notification-banner > div {
   color: var(--spectrum-gray-50);
   display: flex;
-  padding: 16px 32px 20px 24px;
   align-items: center;
-  gap: 24px;
   justify-content: space-between;
+  max-width: var(--default-max-width); /* match header/footer */
+  margin: 0 auto;
+  padding: 15px;
+  box-sizing: content-box;
+  gap: 10px;
 }
 
-.notification-banner .notification-banner-content {
+.notification-banner-content {
   flex: 1;
 }
 
-.notification-banner .notification-banner-content :where(h1, h2, h3, h4, h5, h6) {
+.notification-banner-content :where(h1, h2, h3, h4, h5, h6) {
   color: inherit;
   font-size: var(--spectrum-heading-size-s);
   line-height: var(--spectrum-line-height-s);
@@ -34,7 +35,7 @@
   padding: 0;
 }
 
-.notification-banner .notification-banner-content p {
+.notification-banner-content p {
   color: inherit;
   font-size: var(--spectrum-body-size-s);
   line-height: var(--spectrum-line-height-s);
@@ -42,25 +43,26 @@
   padding: 0;
 }
 
-.notification-banner .notification-banner-actions {
+.notification-banner-actions {
   display: flex;
   flex-wrap: nowrap;
-  gap: 32px;
+  gap: 5px;
   align-items: center;
 }
 
-.notification-banner .notification-banner-cta a {
+.notification-banner-cta a {
   color: inherit;
 }
 
-.notification-banner .notification-banner-close .icon {
-  cursor: pointer;
-  width: 14px;
-  height: 14px;
+.notification-banner-close {
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-@media (min-width: 900px) {
-  .notification-banner {
-    padding-left: 118px;
-  }
+.notification-banner-close .icon {
+  cursor: pointer;
+  width: 14px;
+  height: 100%;
 }
