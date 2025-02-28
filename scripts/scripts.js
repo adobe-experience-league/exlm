@@ -247,6 +247,25 @@ async function buildTabSection(main) {
   });
 }
 
+async function addFragmentSection(main) {
+  const fragmentUrl = getMetadata('fragment');
+  if (fragmentUrl) {
+    const fragmentContainer = document.createElement('div');
+    fragmentContainer.classList.add('fragment-container');
+    const fragmentSection = document.createElement('div');
+    fragmentSection.classList.add('fragment-section');
+    const a = document.createElement('a');
+    a.href = fragmentUrl;
+    a.textContent = fragmentUrl;
+    fragmentSection.append(buildBlock('fragment', [[a]]));
+    fragmentContainer.append(fragmentSection);
+    main.insertAdjacentElement('beforeBegin', fragmentContainer);
+    // eslint-disable-next-line no-use-before-define
+    decorateMain(fragmentContainer);
+    await loadBlocks(fragmentContainer);
+  }
+}
+
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
@@ -254,19 +273,24 @@ async function buildTabSection(main) {
 function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
-    if (!isProfilePage && !isDocPage && !isSignUpPage) {
-      buildTabSection(main);
-    }
-    // if we are on a product browse page
-    if (isBrowsePage) {
-      addBrowseBreadCrumb(main);
-      addBrowseRail(main);
-    }
-    if (isPerspectivePage) {
-      addMiniToc(main);
-    }
-    if (isProfilePage) {
-      addProfileRail(main);
+
+    if (!main.classList.contains('fragment-container') && !main.classList.contains('fragment')) {
+      addFragmentSection(main);
+
+      if (!isProfilePage && !isDocPage && !isSignUpPage) {
+        buildTabSection(main);
+      }
+      // if we are on a product browse page
+      if (isBrowsePage) {
+        addBrowseBreadCrumb(main);
+        addBrowseRail(main);
+      }
+      if (isPerspectivePage) {
+        addMiniToc(main);
+      }
+      if (isProfilePage) {
+        addProfileRail(main);
+      }
     }
   } catch (error) {
     // eslint-disable-next-line no-console
