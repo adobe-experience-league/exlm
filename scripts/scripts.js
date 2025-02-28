@@ -247,16 +247,22 @@ async function buildTabSection(main) {
   });
 }
 
-function addFragmentSection(main) {
-  if (getMetadata('fragment')) {
-    const fragmentUrl = getMetadata('fragment');
-    const div = document.createElement('div');
-    div.classList.add('fragment-section');
+async function addFragmentSection(main) {
+  const fragmentUrl = getMetadata('fragment');
+  if (fragmentUrl) {
+    const fragmentContainer = document.createElement('div');
+    fragmentContainer.classList.add('fragment-container');
+    const fragmentSection = document.createElement('div');
+    fragmentSection.classList.add('fragment-section');
     const a = document.createElement('a');
     a.href = fragmentUrl;
     a.textContent = fragmentUrl;
-    div.append(buildBlock('fragment', [[a]]));
-    main.prepend(div);
+    fragmentSection.append(buildBlock('fragment', [[a]]));
+    fragmentContainer.append(fragmentSection);
+    main.insertAdjacentElement('beforeBegin', fragmentContainer);
+    // eslint-disable-next-line no-use-before-define
+    decorateMain(fragmentContainer);
+    await loadBlocks(fragmentContainer);
   }
 }
 
@@ -268,7 +274,7 @@ function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
 
-    if (!main.classList.contains('fragment')) {
+    if (!main.classList.contains('fragment-container') && !main.classList.contains('fragment')) {
       addFragmentSection(main);
 
       if (!isProfilePage && !isDocPage && !isSignUpPage) {
