@@ -1,0 +1,68 @@
+.notification-banner-container {
+  margin: 0;
+  padding: 0;
+}
+
+.notification-banner-container .fragment-wrapper {
+  max-width: unset;
+}
+
+.notification-banner-container .notification-banner-wrapper {
+  max-width: unset;
+}
+
+.notification-banner > div {
+  color: var(--spectrum-gray-50);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: var(--default-max-width); /* match header/footer */
+  margin: 0 auto;
+  padding: 15px;
+  box-sizing: content-box;
+  gap: 10px;
+}
+
+.notification-banner-content {
+  flex: 1;
+}
+
+.notification-banner-content :where(h1, h2, h3, h4, h5, h6) {
+  color: inherit;
+  font-size: var(--spectrum-heading-size-s);
+  line-height: var(--spectrum-line-height-s);
+  margin: 0 0 4px;
+  padding: 0;
+}
+
+.notification-banner-content p {
+  color: inherit;
+  font-size: var(--spectrum-body-size-s);
+  line-height: var(--spectrum-line-height-s);
+  margin: 0;
+  padding: 0;
+}
+
+.notification-banner-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 5px;
+  align-items: center;
+}
+
+.notification-banner-cta a {
+  color: inherit;
+}
+
+.notification-banner-close {
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-banner-close .icon {
+  cursor: pointer;
+  width: 14px;
+  height: 100%;
+}

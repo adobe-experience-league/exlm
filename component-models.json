@@ -6415,5 +6415,88 @@
         "description": "Sets the text for Products filter label in dropdown."
       }
     ]
+  },
+  {
+    "id": "notification-banner",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "bannerId",
+        "value": "banner-1",
+        "label": "Banner ID",
+        "description": "A unique identifier - New banners should have a different ID to ensure they appear even if a previous banner was dismissed."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_linkText",
+        "value": "",
+        "label": "CTA Text",
+        "description": "Text displayed on the button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_link",
+        "value": "",
+        "label": "CTA Link",
+        "description": "URL to open when the button is clicked."
+      },
+      {
+        "component": "select",
+        "name": "backgroundColor",
+        "value": "",
+        "label": "Background Color",
+        "description": "Banner background color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Dark Gray",
+            "value": "--spectrum-gray-800"
+          },
+          {
+            "name": "Blue",
+            "value": "--non-spectrum-navy-blue"
+          },
+          {
+            "name": "Red",
+            "value": "--spectrum-red-1100"
+          }
+        ]
+      },
+      {
+        "component": "radio-group",
+        "name": "dismissalOptions",
+        "value": "",
+        "label": "Banner Dismissal Options",
+        "description": "Hide the banner based on Session or Local storage",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Session storage",
+            "value": "sessionStorage"
+          },
+          {
+            "name": "Local storage",
+            "value": "localStorage"
+          }
+        ]
+      }
+    ]
   }
 ]
