@@ -18,9 +18,13 @@
   margin: 0 auto;
   justify-content: space-between;
   max-width: var(--secondary-max-width); /* match header/footer */
-  padding: 10px 0 10px 15px; /* match header/footer */
+  padding: 10px 15px; /* match header/footer */
   box-sizing: border-box;
   gap: 10px;
+}
+
+.notification-banner > div:has(.notification-banner-close) {
+  padding-right: 0;
 }
 
 .notification-banner {
