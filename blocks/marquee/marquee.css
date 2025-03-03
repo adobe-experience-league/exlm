@@ -332,7 +332,7 @@ div.marquee-wrapper {
     height: 100%;
     left: 100%;
     top: 0;
-    width: 4000px;
+    width: 100%;
   }
 
   .marquee.no-subject {
