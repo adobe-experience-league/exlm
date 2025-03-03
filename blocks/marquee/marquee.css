@@ -8,23 +8,35 @@ div.marquee-wrapper {
   margin-right: calc(-1 * var(--spectrum-spacing-300));
 }
 
-.marquee {
-  --marquee-height-small: 300px;
-  --marquee-height-medium: 400px;
-  --marquee-height-large: 560px;
-
-  position: relative;
-}
-
 .marquee-content-container {
+  --marquee-height-small: 200px;
+  --marquee-height-medium: 300px;
+  --marquee-height-large: 400px;
+
   display: flex;
   flex-direction: column-reverse;
+}
+
+.marquee-subject {
+  width: 100%;
+  height: 100%;
+}
+
+.marquee-subject img,
+.marquee-subject picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+  z-index: 2;
+  display: block;
 }
 
 .marquee-text {
   position: relative;
   z-index: 2;
   background-color: var(--background-color);
+  padding-right: 15px;
 }
 
 .marquee-eyebrow {
@@ -185,20 +197,6 @@ div.marquee-wrapper {
     margin-right: calc(-1 * var(--spectrum-spacing-800));
   }
 
-  .marquee-subject {
-    min-height: 350px;
-    background: none !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .marquee-subject img {
-    position: relative;
-    z-index: 2;
-    max-width: 400px;
-  }
-
   .marquee-background {
     min-height: 350px;
     height: 100%;
@@ -258,6 +256,7 @@ div.marquee-wrapper {
     grid-template-columns: 1fr 1fr;
     flex-direction: row;
     margin: 0 auto;
+    min-height: var(--marquee-height-medium);
   }
 
   .marquee-foreground {
@@ -266,8 +265,8 @@ div.marquee-wrapper {
     align-items: center;
     justify-self: flex-end;
     max-width: calc(var(--default-max-width) / 2);
-    box-sizing: content-box;
-    padding: 30px 15px;
+    box-sizing: border-box;
+    margin-left: var(--spectrum-spacing-800);
   }
 
   .marquee-background {
@@ -280,7 +279,6 @@ div.marquee-wrapper {
 
   .marquee-text {
     background: none;
-    margin-bottom: 30px;
   }
 
   .marquee-title {
@@ -294,23 +292,6 @@ div.marquee-wrapper {
   .marquee-cta > a.button {
     min-width: auto;
     padding: 10px 22px;
-  }
-
-  .marquee-subject {
-    display: block;
-    overflow: hidden;
-    min-height: unset;
-    position: absolute;
-    top: 50px;
-    left: 50px;
-  }
-
-  .marquee-subject img {
-    object-fit: cover;
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    height: 100%;
   }
 
   .marquee-background-fill {
@@ -348,7 +329,7 @@ div.marquee-wrapper {
   .marquee.large .marquee-background,
   .marquee.large .marquee-bg-filler,
   .marquee.large .marquee-background svg {
-    min-height: var(--marquee-height-large);
+    max-height: var(--marquee-height-large);
   }
 
   .marquee.large .marquee-background-fill svg {
@@ -363,11 +344,6 @@ div.marquee-wrapper {
     font-size: var(--spectrum-font-size-400);
   }
 
-  .marquee.large .marquee-subject,
-  .marquee.large .marquee-subject img {
-    min-width: 480px;
-  }
-
   .marquee.small .marquee-foreground,
   .marquee.small .marquee-background,
   .marquee.small,
@@ -376,26 +352,8 @@ div.marquee-wrapper {
     min-height: var(--marquee-height-small);
   }
 
-  .marquee.small .marquee-subject {
-    min-height: unset;
-    top: 40px;
-    left: 100px;
-  }
-
-  .marquee.small .marquee-subject img {
-    max-width: 320px;
-  }
-
   .marquee.small .marquee-background-fill svg {
     right: -200px;
-  }
-
-  .marquee.straight .marquee-subject {
-    inset: 0;
-  }
-
-  .marquee.straight .marquee-subject img {
-    max-width: 100%;
   }
 }
 
