@@ -442,7 +442,16 @@ div.marquee-wrapper {
 }
 
 @media (min-width: 1280px) {
-  .marquee .marquee-text {
-    padding-left: calc(56px - ((100vw - 1280px) / 2));
+  .marquee.large.straight .marquee-content-container {
+    max-width: unset;
+  }
+
+  .marquee.large.straight .marquee-foreground {
+    max-width: calc(var(--default-max-width) / 2);
+    margin-left: auto;
+  }
+
+  .marquee.large.straight .marquee-text {
+    padding-left: calc(56px - ((100vw - var(--default-max-width)) / 2));
   }
 }
