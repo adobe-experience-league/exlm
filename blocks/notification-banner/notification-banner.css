@@ -79,6 +79,8 @@
 .notification-banner-cta a {
   color: inherit;
   margin: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 .notification-banner-close {
