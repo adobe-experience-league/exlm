@@ -34,7 +34,7 @@
   background: none;
   background-color: transparent !important;
   font-weight: initial;
-  padding: 15px;
+  padding: 15px 15px 15px 0;
   position: relative;
   top: 2px;
 }
@@ -406,8 +406,8 @@
 }
 
 .footer-last-row .footer-lang-social {
-  flex-direction: row;
-  gap: 30px;
+  flex-flow: row wrap;
+  gap: 15px;
   margin-top: 0;
   width: 100%;
 }
@@ -415,6 +415,8 @@
 @media (width >= 900px) {
   .footer-last-row .footer-lang-social {
     width: auto;
+    gap: 30px;
+    flex-wrap: nowrap;
   }
 }
 
