@@ -332,7 +332,7 @@ div.marquee-wrapper {
     height: 100%;
     left: 100%;
     top: 0;
-    width: 1000px;
+    width: 4000px;
   }
 
   .marquee.no-subject {
@@ -438,5 +438,11 @@ div.marquee-wrapper {
     border-radius: 4px;
     background-color: var(--background-color);
     box-sizing: border-box;
+  }
+}
+
+@media (min-width: 1280px) {
+  .marquee .marquee-text {
+    padding-left: calc(56px - ((100vw - 1280px) / 2));
   }
 }
