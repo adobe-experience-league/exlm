@@ -251,22 +251,24 @@ async function buildTabSection(main) {
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
-function buildAutoBlocks(main) {
+function buildAutoBlocks(main, isFragment = false) {
   try {
     buildSyntheticBlocks(main);
     if (!isProfilePage && !isDocPage && !isSignUpPage) {
       buildTabSection(main);
     }
-    // if we are on a product browse page
-    if (isBrowsePage) {
-      addBrowseBreadCrumb(main);
-      addBrowseRail(main);
-    }
-    if (isPerspectivePage) {
-      addMiniToc(main);
-    }
-    if (isProfilePage) {
-      addProfileRail(main);
+    if (!isFragment) {
+      // if we are on a product browse page
+      if (isBrowsePage) {
+        addBrowseBreadCrumb(main);
+        addBrowseRail(main);
+      }
+      if (isPerspectivePage) {
+        addMiniToc(main);
+      }
+      if (isProfilePage) {
+        addProfileRail(main);
+      }
     }
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -543,7 +545,7 @@ async function buildPreMain(main) {
  * @param {Element} main The main element
  */
 // eslint-disable-next-line import/prefer-default-export
-export function decorateMain(main) {
+export function decorateMain(main, isFragment = false) {
   // docs pages do not use buttons, only links
   if (!isDocPage) {
     decorateButtons(main);
@@ -552,7 +554,7 @@ export function decorateMain(main) {
   decorateIcons(main);
   decorateInlineAttributes(main);
   decorateExternalLinks(main);
-  buildAutoBlocks(main);
+  buildAutoBlocks(main, isFragment);
   decorateSections(main);
   decorateBlocks(main);
   buildSectionBasedAutoBlocks(main);
