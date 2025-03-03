@@ -550,13 +550,13 @@
       {
         "component": "select",
         "name": "variantType",
-        "value": "detailed-teaser",
+        "value": "",
         "label": "Variant Type",
         "valueType": "string",
         "options": [
           {
-            "name": "Detailed Teaser",
-            "value": "detailed-teaser"
+            "name": "Detailed Teaser (Default)",
+            "value": ""
           },
           {
             "name": "Inline Banner",

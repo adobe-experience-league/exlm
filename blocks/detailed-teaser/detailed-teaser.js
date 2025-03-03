@@ -1,5 +1,4 @@
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
-import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 // eslint-disable-next-line no-unused-vars
 export function generateDetailedTeaserDOM(props, classes) {
@@ -53,11 +52,12 @@ export default async function decorate(block) {
   // get the first and only cell from each row
   const [variantElement, hideInlineBannerElement, ...props] = [...block.children].map((row) => row.firstElementChild);
   const variant = variantElement?.textContent?.trim();
-  const hideInlineBanner = hideInlineBannerElement?.textContent?.trim();
   const teaserDOM = generateDetailedTeaserDOM(props, block.classList);
   block.textContent = '';
   if (variant === 'inline-banner') {
     block.classList.add(variant);
+    const hideInlineBanner = hideInlineBannerElement?.textContent?.trim();
+    const { isSignedInUser } = await import('../../scripts/auth/profile.js');
     const isSignedIn = await isSignedInUser();
     if (hideInlineBanner === 'true' && isSignedIn) {
       block.classList.add('hide-inline-banner');
