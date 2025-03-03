@@ -10,8 +10,7 @@
 }
 
 .section div.detailed-teaser-wrapper:has(.inline-banner) {
-  margin-left: unset;
-  margin-right: unset;
+  margin: 0;
 }
 
 .detailed-teaser-wrapper:has(.hide-inline-banner) {
