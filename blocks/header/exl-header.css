@@ -606,11 +606,16 @@ button:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--nav-root-item-padding);
   order: var(--brand-order);
   font-size: var(--spectrum-font-size-200);
   font-weight: var(--font-weight-bold);
   white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+  .header .brand {
+    padding: var(--nav-root-item-padding);
+  }
 }
 
 .header .brand a {
