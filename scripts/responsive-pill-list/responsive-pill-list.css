@@ -1,8 +1,38 @@
 .responsive-pill-list {
+  display: flex;
+  gap: 20px;
   color: var(--spectrum-gray-700);
   font-size: var(--spectrum-font-size-200);
-  justify-content: space-between;
+  justify-content: flex-start;
+  align-items: center;
   line-height: 20.8px;
+}
+
+.response-pill-list-nav-btn {
+  height: 24px;
+  width: 24px;
+  background-color: transparent;
+  color: #000;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  min-width: 24px;
+  position: relative;
+  display: none;
+  transform: rotate(270deg);
+}
+
+.response-pill-list-nav-btn.responsive-pill-list-left-nav {
+  transform: rotate(90deg);
+}
+
+.response-pill-list-nav-btn.responsive-pill-list-nav-visible {
+  display: block;
+}
+
+.response-pill-list-nav-btn:hover,
+.response-pill-list-nav-btn:focus {
+  background-color: transparent;
 }
 
 .responsive-pill-list ul {
@@ -16,6 +46,34 @@
   padding: 0;
   position: relative;
   cursor: default;
+  max-width: calc(100% - 32px);
+  overflow-x: hidden;
+}
+
+.responsive-pill-list .responsive-pill-list-items-wrapper ul {
+  display: flex;
+  flex-direction: column;
+}
+
+.responsive-pill-list:has(.responsive-pill-list-left-nav.responsive-pill-list-nav-visible) ul {
+  mask-image: linear-gradient(to right, rgb(0 0 0 / 0%) 0, rgb(0 0 0 / 100%) 50px, rgb(0 0 0 / 100%) 100%);
+}
+
+.responsive-pill-list:has(.responsive-pill-list-right-nav.responsive-pill-list-nav-visible) ul {
+  mask-image: linear-gradient(to right, rgb(0 0 0 / 100%) calc(100% - 50px), rgb(0 0 0 / 0%) 100%);
+}
+
+.responsive-pill-list:has(.responsive-pill-list-left-nav.responsive-pill-list-nav-visible):has(
+    .responsive-pill-list-right-nav.responsive-pill-list-nav-visible
+  )
+  ul {
+  mask-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0%) 0,
+    rgb(0 0 0 / 100%) 50px,
+    rgb(0 0 0 / 100%) calc(100% - 50px),
+    rgb(0 0 0 / 0%) 100%
+  );
 }
 
 .responsive-pill-list .responsive-pill-list-option-overlay {
@@ -37,11 +95,6 @@
   max-height: 400px;
   overflow-y: auto;
   padding: 0 20px;
-}
-
-.responsive-pill-list .responsive-pill-list-items-wrapper ul {
-  display: flex;
-  flex-direction: column;
 }
 
 .responsive-pill-list .responsive-pill-list-more-option {
