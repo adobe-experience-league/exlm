@@ -254,19 +254,21 @@ async function buildTabSection(main) {
 function buildAutoBlocks(main) {
   try {
     buildSyntheticBlocks(main);
-    if (!isProfilePage && !isDocPage && !isSignUpPage) {
-      buildTabSection(main);
-    }
-    // if we are on a product browse page
-    if (isBrowsePage) {
-      addBrowseBreadCrumb(main);
-      addBrowseRail(main);
-    }
-    if (isPerspectivePage) {
-      addMiniToc(main);
-    }
-    if (isProfilePage) {
-      addProfileRail(main);
+    if(!main.classList.contains('fragment')) {
+      if (!isProfilePage && !isDocPage && !isSignUpPage) {
+        buildTabSection(main);
+      }
+      // if we are on a product browse page
+      if (isBrowsePage) {
+        addBrowseBreadCrumb(main);
+        addBrowseRail(main);
+      }
+      if (isPerspectivePage) {
+        addMiniToc(main);
+      }
+      if (isProfilePage) {
+        addProfileRail(main);
+      }
     }
   } catch (error) {
     // eslint-disable-next-line no-console
