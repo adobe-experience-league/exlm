@@ -100,7 +100,7 @@ export default class ResponsivePillList {
     const listItems = tempUl.querySelectorAll('li');
     const gapValueInPx = getComputedStyle(tempUl).gap;
     const gapValue = gapValueInPx ? parseInt(gapValueInPx, 10) : 0;
-    
+
     const { items } = Array.from(listItems).reduce(
       (acc, curr) => {
         const itemWidth = curr.getBoundingClientRect().width;
@@ -207,37 +207,24 @@ export default class ResponsivePillList {
   /**
    * Renders the tabbed layout based on the provided items.
    */
-  renderTabbedLayout(fitItems = []) {
+  renderTabbedLayout() {
     const tabWrapper = document.createElement('div');
     tabWrapper.classList.add('responsive-pill-list');
-    const fitItemsCount = fitItems.length;
     const tabList = document.createElement('ul');
-    const overlayItems = [];
     this.scrollSteps = [];
-    this.items.forEach((item, index) => {
-      if (!fitItemsCount || (fitItemsCount && index < fitItemsCount)) {
-        const tabItem = this.prepareTabItemStructure(item);
-        tabList.appendChild(tabItem);
-      } else {
-        const tabItem = this.prepareTabItemStructure(item);
-        tabList.appendChild(tabItem);
-        overlayItems.push(item);
-      }
+    this.items.forEach((item) => {
+      const tabItem = this.prepareTabItemStructure(item);
+      tabList.appendChild(tabItem);
     });
 
-    // if (overlayItems.length) {
-    //   this.renderMoreOptionsOverlay(overlayItems, tabList);
-    // }
     const leftButton = htmlToElement(`
       <button class="response-pill-list-nav-btn responsive-pill-list-left-nav">
         <span class="icon icon-chevron"></span>
-      </button>`
-    );
+      </button>`);
     const rightButton = htmlToElement(`
       <button class="response-pill-list-nav-btn responsive-pill-list-right-nav">
         <span class="icon icon-chevron"></span>
-      </button>`
-    );
+      </button>`);
     tabWrapper.appendChild(leftButton);
     tabWrapper.appendChild(tabList);
     tabWrapper.appendChild(rightButton);
@@ -259,14 +246,13 @@ export default class ResponsivePillList {
     decorateIcons(this.wrapper);
   }
 
-  navigatePills (forward) {
+  navigatePills(forward) {
     const wrapperEl = this.wrapper.querySelector('ul');
     if (forward) {
       const elements = Array.from(wrapperEl.children);
       const currentOffset = wrapperEl.scrollLeft;
       const edgeValue = wrapperEl.offsetLeft + wrapperEl.offsetWidth;
       const targetElement = elements.reduce((acc, curr) => {
-
         if (!acc) {
           return curr;
         }
@@ -282,7 +268,6 @@ export default class ResponsivePillList {
       if (wrapperEl.scrollLeft !== currentOffset) {
         this.scrollSteps.push(currentOffset);
       }
-      
     } else {
       const scrollValue = this.scrollSteps.pop();
       wrapperEl.scrollLeft = scrollValue;
@@ -292,7 +277,7 @@ export default class ResponsivePillList {
 
   handleNavButtonVisiblity() {
     const wrapperEl = this.wrapper.querySelector('ul');
-    const {scrollLeft} = wrapperEl;
+    const { scrollLeft } = wrapperEl;
     const elements = Array.from(wrapperEl.children);
     const [firstElementChild] = elements;
     const lastElementChild = elements[elements.length - 1];
@@ -305,7 +290,8 @@ export default class ResponsivePillList {
       }
     }
     if (rightButton) {
-      if (lastElementChild.offsetLeft - scrollLeft < wrapperEl.offsetWidth - 44) {
+      const offetDelta = 44;
+      if (lastElementChild.offsetLeft - scrollLeft < wrapperEl.offsetWidth - offetDelta) {
         rightButton.classList.remove('responsive-pill-list-nav-visible');
       } else {
         rightButton.classList.add('responsive-pill-list-nav-visible');
@@ -337,8 +323,7 @@ export default class ResponsivePillList {
     const isDesktop = window.matchMedia('(min-width:1024px)').matches;
     this.wrapper.textContent = '';
     if (isDesktop) {
-      const { fitItems } = this.evaluateWidth();
-      this.renderTabbedLayout(fitItems);
+      this.renderTabbedLayout();
     } else {
       this.items = this.items.toSorted((a, b) => a.value - b.value);
       this.renderDropdown();
