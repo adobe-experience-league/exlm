@@ -331,10 +331,6 @@
     width: 100%;
   }
 
-  .detailed-teaser.block.inline-banner .foreground {
-    justify-content: unset;
-  }
-
   /* the cta buttons */
   .detailed-teaser.block > .foreground > .text > .cta > a.button {
     line-height: unset;
