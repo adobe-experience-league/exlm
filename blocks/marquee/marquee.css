@@ -16,19 +16,19 @@ div.marquee-wrapper {
   position: relative;
 }
 
-.marquee .marquee-content-container {
+.marquee-content-container {
   display: flex;
   flex-direction: column-reverse;
 }
 
-.marquee .marquee-text {
+.marquee-text {
   position: relative;
   z-index: 2;
   padding: 30px 16px;
   background-color: var(--background-color);
 }
 
-.marquee .marquee-eyebrow {
+.marquee-eyebrow {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
   font-weight: var(--font-weight-bold);
@@ -37,7 +37,7 @@ div.marquee-wrapper {
   line-height: 18px;
 }
 
-.marquee .marquee-title {
+.marquee-title {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-900);
   font-weight: var(--font-weight-bold);
@@ -45,13 +45,13 @@ div.marquee-wrapper {
   margin-bottom: var(--spectrum-spacing-300);
 }
 
-.marquee .marquee-title :where(h1, h2, h3, h4, h5, h6) {
+.marquee-title :where(h1, h2, h3, h4, h5, h6) {
   margin: 0;
   color: inherit;
 }
 
-.marquee .marquee-short-description,
-.marquee .marquee-short-description * {
+.marquee-short-description,
+.marquee-short-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-600);
   font-weight: var(--font-weight-bold);
@@ -60,15 +60,15 @@ div.marquee-wrapper {
   margin: 0;
 }
 
-.marquee .marquee-long-description,
-.marquee .marquee-long-description * {
+.marquee-long-description,
+.marquee-long-description * {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-300);
   line-height: var(--spectrum-line-height-l);
   margin: 0;
 }
 
-.marquee .marquee-cta {
+.marquee-cta {
   display: flex;
   flex-direction: column-reverse;
   font-size: var(--spectrum-font-size-300);
@@ -78,11 +78,11 @@ div.marquee-wrapper {
   align-items: center;
 }
 
-.marquee .marquee-cta:empty {
+.marquee-cta:empty {
   margin-top: 0;
 }
 
-.marquee .marquee-cta > a.button {
+.marquee-cta > a.button {
   font-size: var(--spectrum-font-size-300);
   margin: 0;
   padding: 8px 40px;
@@ -90,13 +90,13 @@ div.marquee-wrapper {
   min-width: 264px;
 }
 
-.marquee .marquee-cta > a > span.icon {
+.marquee-cta > a > span.icon {
   width: 14px;
   height: 14px;
   margin-right: 7px;
 }
 
-.marquee .marquee-cta > .signin {
+.marquee-cta > .signin {
   visibility: hidden;
 }
 
@@ -104,16 +104,16 @@ div.marquee-wrapper {
   visibility: unset;
 }
 
-.marquee .marquee-background svg {
+.marquee-background svg {
   display: none;
 }
 
-.marquee .marquee-spacer {
+.marquee-spacer {
   display: none;
   width: 40%;
 }
 
-.marquee .marquee-bg-filler {
+.marquee-bg-filler {
   display: none;
 }
 
@@ -133,7 +133,7 @@ div.marquee-wrapper {
   object-position: center;
 }
 
-.marquee .marquee-background-fill {
+.marquee-background-fill {
   display: none;
 }
 
@@ -186,7 +186,7 @@ div.marquee-wrapper {
     margin-right: calc(-1 * var(--spectrum-spacing-800));
   }
 
-  .marquee .marquee-subject {
+  .marquee-subject {
     min-height: 350px;
     background: none !important;
     display: flex;
@@ -194,13 +194,13 @@ div.marquee-wrapper {
     justify-content: center;
   }
 
-  .marquee .marquee-subject img {
+  .marquee-subject img {
     position: relative;
     z-index: 2;
     max-width: 400px;
   }
 
-  .marquee .marquee-background {
+  .marquee-background {
     min-height: 350px;
     height: 100%;
     width: 100%;
@@ -209,7 +209,7 @@ div.marquee-wrapper {
     position: relative;
   }
 
-  .marquee .marquee-background-fill {
+  .marquee-background-fill {
     display: block;
     position: absolute;
     top: -100px;
@@ -218,28 +218,28 @@ div.marquee-wrapper {
     height: 100%;
   }
 
-  .marquee .marquee-background-fill svg {
+  .marquee-background-fill svg {
     display: block;
   }
 
-  .marquee .marquee-foreground {
+  .marquee-foreground {
     min-height: var(--marquee-height-medium);
   }
 
-  .marquee .marquee-text {
+  .marquee-text {
     padding: var(--spectrum-spacing-500) var(--spectrum-spacing-800);
     background-color: var(--background-color);
   }
 
-  .marquee .marquee-cta {
+  .marquee-cta {
     flex-flow: row wrap;
   }
 
-  .marquee .marquee-cta > a.button {
+  .marquee-cta > a.button {
     padding: 8px 20px;
   }
 
-  .marquee .marquee-spacer {
+  .marquee-spacer {
     display: block;
     order: 1;
   }
@@ -255,7 +255,7 @@ div.marquee-wrapper {
     overflow: hidden;
   }
 
-  .marquee .marquee-content-container {
+  .marquee-content-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     flex-direction: row;
@@ -263,14 +263,14 @@ div.marquee-wrapper {
     margin: 0 auto;
   }
 
-  .marquee .marquee-foreground {
+  .marquee-foreground {
     width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
   }
 
-  .marquee .marquee-background {
+  .marquee-background {
     width: 100%;
     height: 100%;
     min-height: var(--marquee-height-medium);
@@ -278,25 +278,25 @@ div.marquee-wrapper {
     overflow: visible;
   }
 
-  .marquee .marquee-text {
+  .marquee-text {
     background: none;
     margin-bottom: 30px;
   }
 
-  .marquee .marquee-title {
+  .marquee-title {
     font-size: var(--spectrum-font-size-1100);
   }
 
-  .marquee .marquee-cta {
+  .marquee-cta {
     flex-wrap: nowrap;
   }
 
-  .marquee .marquee-cta > a.button {
+  .marquee-cta > a.button {
     min-width: auto;
     padding: 10px 22px;
   }
 
-  .marquee .marquee-subject {
+  .marquee-subject {
     display: block;
     overflow: hidden;
     min-height: unset;
@@ -305,7 +305,7 @@ div.marquee-wrapper {
     left: 50px;
   }
 
-  .marquee .marquee-subject img {
+  .marquee-subject img {
     object-fit: cover;
     position: relative;
     z-index: 2;
@@ -313,12 +313,12 @@ div.marquee-wrapper {
     height: 100%;
   }
 
-  .marquee .marquee-background-fill {
+  .marquee-background-fill {
     position: static;
     min-height: var(--marquee-height-medium);
   }
 
-  .marquee .marquee-background svg {
+  .marquee-background svg {
     position: absolute;
     height: 100%;
     top: 0;
@@ -326,7 +326,7 @@ div.marquee-wrapper {
     right: -130px;
   }
 
-  .marquee .marquee-bg-filler {
+  .marquee-bg-filler {
     display: block;
     position: absolute;
     height: 100%;
@@ -371,7 +371,7 @@ div.marquee-wrapper {
   .marquee.small .marquee-foreground,
   .marquee.small .marquee-background,
   .marquee.small,
-  .marquee .marquee-background-fill,
+  .marquee-background-fill,
   .marquee.small .marquee-bg-filler {
     min-height: var(--marquee-height-small);
   }
@@ -410,23 +410,23 @@ div.marquee-wrapper {
   }
 
   /* title */
-  body[class^='browse-'] .marquee .marquee-title,
-  body[class^='article-'] .marquee .marquee-title {
+  body[class^='browse-'] .marquee-title,
+  body[class^='article-'] .marquee-title {
     font-size: var(--spectrum-font-size-900);
     line-height: 36px;
     margin-bottom: var(--spectrum-spacing-100);
   }
 
   /* description */
-  body[class^='browse-'] .marquee .marquee-long-description,
-  body[class^='article-'] .marquee .marquee-long-description,
-  body[class^='browse-'] .marquee .marquee-long-description * body[class^='article-'] .marquee-long-description * {
+  body[class^='browse-'] .marquee-long-description,
+  body[class^='article-'] .marquee-long-description,
+  body[class^='browse-'] .marquee-long-description * body[class^='article-'] .marquee-long-description * {
     line-height: 23.4px;
   }
 
   /* cta */
-  body[class^='browse-'] .marquee .marquee-cta a.button,
-  body[class^='article-'] .marquee .marquee-cta a.button {
+  body[class^='browse-'] .marquee-cta a.button,
+  body[class^='article-'] .marquee-cta a.button {
     font-size: var(--spectrum-font-size-200);
     line-height: 21px;
     padding: 6px 16px 9px 20px;
