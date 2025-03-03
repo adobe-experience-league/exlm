@@ -3,6 +3,7 @@ import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../dropdown/dropdown.js';
 
 const CARDS_MAX_WIDTH = 645;
+const PILLS_OFFSET_DELTA = 44;
 
 export default class ResponsivePillList {
   /**
@@ -101,21 +102,23 @@ export default class ResponsivePillList {
     const gapValueInPx = getComputedStyle(tempUl).gap;
     const gapValue = gapValueInPx ? parseInt(gapValueInPx, 10) : 0;
 
-    const { items } = Array.from(listItems).reduce(
+    const { items, fitWidth } = Array.from(listItems).reduce(
       (acc, curr) => {
         const itemWidth = curr.getBoundingClientRect().width;
         acc.width += itemWidth + gapValue;
         if (acc.width <= wrapperWidth && acc.width <= maxWidth) {
+          acc.fitWidth = acc.width;
           acc.items.push(curr.innerHTML);
         }
         return acc;
       },
-      { width: 0, items: [] },
+      { width: 0, items: [], fitWidth: 0 },
     );
     const widthInfo = {
       wrapperWidth,
       listWidth,
       fitItems: items,
+      fitWidth,
     };
     main.removeChild(tempWrapper);
     return widthInfo;
@@ -208,8 +211,10 @@ export default class ResponsivePillList {
    * Renders the tabbed layout based on the provided items.
    */
   renderTabbedLayout() {
+    const { fitWidth } = this.evaluateWidth();
     const tabWrapper = document.createElement('div');
     tabWrapper.classList.add('responsive-pill-list');
+    tabWrapper.style.maxWidth = `${fitWidth + PILLS_OFFSET_DELTA}px`;
     const tabList = document.createElement('ul');
     this.scrollSteps = [];
     this.items.forEach((item) => {
@@ -290,8 +295,7 @@ export default class ResponsivePillList {
       }
     }
     if (rightButton) {
-      const offetDelta = 44;
-      if (lastElementChild.offsetLeft - scrollLeft < wrapperEl.offsetWidth - offetDelta) {
+      if (lastElementChild.offsetLeft - scrollLeft < wrapperEl.offsetWidth - PILLS_OFFSET_DELTA) {
         rightButton.classList.remove('responsive-pill-list-nav-visible');
       } else {
         rightButton.classList.add('responsive-pill-list-nav-visible');

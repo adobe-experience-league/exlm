@@ -171,10 +171,5 @@
 @media (max-width: 1024px) {
   .responsive-pill-list {
     border-bottom: 0 none;
-    display: block;
-  }
-
-  .responsive-pill-list ul {
-    padding-bottom: 12px;
   }
 }
