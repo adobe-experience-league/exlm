@@ -616,6 +616,8 @@
                 "template": {
                   "name": "Detailed Teaser",
                   "model": "detailed-teaser",
+                  "variantType": "",
+                  "hideInlineBanner": "false",
                   "fileReference": "/content/dam/adobe-summit-background.jpeg",
                   "eyebrow_logo": "/content/dam/summit-logo.png",
                   "eyebrow_title": "Eyebrow title",
