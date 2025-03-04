@@ -217,6 +217,10 @@ body[class^='article-'] .section div.detailed-teaser-wrapper .detailed-teaser.bl
   margin-top: var(--spectrum-spacing-300);
 }
 
+.detailed-teaser.block.fifty-split-layout > .foreground > .text > .description {
+  font-size: var(--spectrum-font-size-300);
+}
+
 .detailed-teaser.block.fifty-split-layout > .foreground > .text > .cta {
   margin-top: var(--spectrum-spacing-400);
 }
@@ -409,10 +413,6 @@ body[class^='article-'] .section div.detailed-teaser-wrapper .detailed-teaser.bl
 
   .detailed-teaser.fifty-split-layout.right > .foreground {
     flex-direction: row;
-  }
-
-  .detailed-teaser.block.inline-banner .foreground {
-    justify-content: unset;
   }
 
   /* the cta buttons */
