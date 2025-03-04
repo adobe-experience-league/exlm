@@ -36,7 +36,7 @@ div.marquee-wrapper {
   position: relative;
   z-index: 2;
   background-color: var(--background-color);
-  padding-right: 15px;
+  padding: 15px;
 }
 
 .marquee-eyebrow {
@@ -224,6 +224,7 @@ div.marquee-wrapper {
   }
 
   .marquee-text {
+    padding: 56px;
     background-color: var(--background-color);
   }
 
@@ -278,6 +279,7 @@ div.marquee-wrapper {
   }
 
   .marquee-text {
+    padding: 0 56px 0 0;
     background: none;
   }
 

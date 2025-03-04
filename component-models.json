@@ -1613,7 +1613,7 @@
         "valueType": "string",
         "name": "fileReference",
         "label": "Subject Image",
-        "description": "The marquee subject image (Aspect Ratio of the image should based on the height of the marquee. e.g. Small - 640px * 300px, Medium - 640px * 400px & Large - 640px * 560px)",
+        "description": "The marquee subject image (Aspect Ratio of the image should based on the height of the marquee)",
         "multi": false
       },
       {
