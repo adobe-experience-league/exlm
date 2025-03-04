@@ -187,6 +187,10 @@ div.marquee-wrapper {
   max-height: 95vh;
 }
 
+body[class^='article-'] .marquee-content-container {
+  background-color: var(--background-color);
+}
+
 @media (min-width: 600px) {
   .section.marquee-container {
     padding: 0 56px;
