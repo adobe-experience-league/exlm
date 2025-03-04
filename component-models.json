@@ -548,33 +548,6 @@
     "id": "detailed-teaser",
     "fields": [
       {
-        "component": "select",
-        "name": "variantType",
-        "value": "",
-        "label": "Variant Type",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Detailed Teaser (Default)",
-            "value": ""
-          },
-          {
-            "name": "Inline Banner",
-            "value": "inline-banner"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "variantType" }, "inline-banner"]
-        },
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "hideInlineBanner",
-        "label": "Hide inline banner if user is logged in?",
-        "description": "This option allows to hide the banner when user is logged in."
-      },
-      {
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
@@ -587,7 +560,7 @@
         "label": "Style",
         "valueType": "string",
         "required": true,
-        "maxSize": 2,
+        "maxSize": 3,
         "options": [
           {
             "name": "Theme",
@@ -614,8 +587,35 @@
                 "value": "right"
               }
             ]
+          },
+          {
+            "name": "Variant Type",
+            "children": [
+              {
+                "name": "Detailed Teaser (Default)",
+                "value": ""
+              },
+              {
+                "name": "Inline Banner",
+                "value": "inline-banner"
+              },
+              {
+                "name": "50-50 Split Layout",
+                "value": "fifty-split-layout"
+              }
+            ]
           }
         ]
+      },
+      {
+        "condition": {
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "inline-banner"] }]
+        },
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "hideInlineBanner",
+        "label": "Hide inline banner if user is logged in?",
+        "description": "This option allows to hide the banner when user is logged in."
       },
       {
         "component": "reference",
