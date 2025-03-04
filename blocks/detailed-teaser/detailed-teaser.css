@@ -92,7 +92,7 @@ body[class^='article-'] .section div.detailed-teaser-wrapper .detailed-teaser.bl
 }
 
 .detailed-teaser.block.fifty-split-layout > .foreground > .text {
-  padding: 32px;
+  padding: var(--spectrum-spacing-500);
 }
 
 /* eyebrow content */
@@ -303,7 +303,8 @@ body[class^='article-'] .section div.detailed-teaser-wrapper .detailed-teaser.bl
   }
 
   .detailed-teaser.block.fifty-split-layout > .foreground > .text {
-    padding: 64px 32px 64px 56px;
+    padding: var(--spectrum-spacing-500) var(--spectrum-spacing-900) var(--spectrum-spacing-800)
+      var(--spectrum-spacing-900);
     box-sizing: border-box;
     max-width: unset;
   }
@@ -429,7 +430,7 @@ body[class^='article-'] .section div.detailed-teaser-wrapper .detailed-teaser.bl
     min-width: unset;
     width: 50%;
     max-width: unset;
-    padding: 56px 118px;
+    padding: var(--spectrum-spacing-800) 118px;
   }
 
   /* the subject image /spacer */
