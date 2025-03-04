@@ -50,12 +50,10 @@ export function generateDetailedTeaserDOM(props, classes) {
 
 export default async function decorate(block) {
   // get the first and only cell from each row
-  const [variantElement, hideInlineBannerElement, ...props] = [...block.children].map((row) => row.firstElementChild);
-  const variant = variantElement?.textContent?.trim();
-  const teaserDOM = generateDetailedTeaserDOM(props, block.classList);
+  const [imageElement, hideInlineBannerElement, ...props] = [...block.children].map((row) => row.firstElementChild);
+  const teaserDOM = generateDetailedTeaserDOM([imageElement, ...props], block.classList);
   block.textContent = '';
-  if (variant === 'inline-banner') {
-    block.classList.add(variant);
+  if (block.classList.contains('inline-banner')) {
     const hideInlineBanner = hideInlineBannerElement?.textContent?.trim();
     const { isSignedInUser } = await import('../../scripts/auth/profile.js');
     const isSignedIn = await isSignedInUser();
