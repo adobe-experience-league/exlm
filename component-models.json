@@ -672,7 +672,7 @@
                 "name": "Adobe Red",
                 "value": "bg-non-spectrum-adobe-red"
               }
-            ] 
+            ]
           }
         ]
       },
@@ -1682,7 +1682,7 @@
         "valueType": "string",
         "name": "fileReference",
         "label": "Subject Image",
-        "description": "The marquee subject image (Aspect Ratio of the image should based on the height of the marquee. e.g. Small - 640px * 300px, Medium - 640px * 400px & Large - 640px * 560px)",
+        "description": "The marquee subject image (Aspect Ratio of the image should based on the height of the marquee)",
         "multi": false
       },
       {
@@ -6509,6 +6509,90 @@
         "value": "",
         "label": "Filter Label",
         "description": "Sets the text for Products filter label in dropdown."
+      }
+    ]
+  },
+  {
+    "id": "notification-banner",
+    "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 2,
+        "options": [
+          {
+            "name": "Background Color",
+            "children": [
+              {
+                "name": "Dark Gray",
+                "value": "bg-dark-gray"
+              },
+              {
+                "name": "Blue (default)",
+                "value": "bg-blue"
+              },
+              {
+                "name": "Red",
+                "value": "bg-red"
+              }
+            ]
+          },
+          {
+            "name": "Dismissable",
+            "children": [
+              {
+                "name": "Yes",
+                "value": "dismissable"
+              },
+              {
+                "name": "No",
+                "value": "non-dismissable"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "bannerId",
+        "value": "banner-1",
+        "label": "Banner ID",
+        "description": "A unique identifier - New banners should have a different ID to ensure they appear even if a previous banner was dismissed."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_linkText",
+        "value": "",
+        "label": "CTA Text",
+        "description": "Text displayed on the button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_link",
+        "value": "",
+        "label": "CTA Link",
+        "description": "URL to open when the button is clicked."
       }
     ]
   }

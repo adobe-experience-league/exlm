@@ -299,7 +299,7 @@
   }
 
   .detailed-teaser.block.inline-banner > .foreground > .text > .cta {
-    margin-top: var(--spectrum-font-size-600);
+    margin-top: var(--spectrum-spacing-400);
   }
 
   /* teaser on browse pages has different width for text */
