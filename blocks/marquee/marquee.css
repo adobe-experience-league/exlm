@@ -363,15 +363,13 @@ div.marquee-wrapper {
 @media (min-width: 1024px) {
   /* no longer goes from end to end */
   body[class^='browse-'] .section div.marquee-wrapper,
-  body[class^='article-'] .section div.marquee-wrapper,
   body[class*='profile-home-page'] .section div.marquee-wrapper {
     margin-left: unset;
     margin-right: unset;
   }
 
   /* title */
-  body[class^='browse-'] .marquee-title,
-  body[class^='article-'] .marquee-title {
+  body[class^='browse-'] .marquee-title {
     font-size: var(--spectrum-font-size-900);
     line-height: 36px;
     margin-bottom: var(--spectrum-spacing-100);
@@ -379,21 +377,18 @@ div.marquee-wrapper {
 
   /* description */
   body[class^='browse-'] .marquee-long-description,
-  body[class^='article-'] .marquee-long-description,
   body[class^='browse-'] .marquee-long-description * body[class^='article-'] .marquee-long-description * {
     line-height: 23.4px;
   }
 
   /* cta */
-  body[class^='browse-'] .marquee-cta a.button,
-  body[class^='article-'] .marquee-cta a.button {
+  body[class^='browse-'] .marquee-cta a.button {
     font-size: var(--spectrum-font-size-200);
     line-height: 21px;
     padding: 6px 16px 9px 20px;
   }
 
-  body[class^='browse-'] .section div.marquee-wrapper .marquee,
-  body[class^='article-'] .section div.marquee-wrapper .marquee {
+  body[class^='browse-'] .section div.marquee-wrapper .marquee {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
     background-color: var(--background-color);
