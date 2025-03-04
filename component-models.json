@@ -610,7 +610,7 @@
             "children": [
               {
                 "name": "Black",
-                "value": "bg-spectrum-gray-700"
+                "value": "bg-spectrum-gray-900"
               },
               {
                 "name": "Gray",
