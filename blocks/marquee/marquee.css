@@ -377,7 +377,7 @@ div.marquee-wrapper {
 
   /* description */
   body[class^='browse-'] .marquee-long-description,
-  body[class^='browse-'] .marquee-long-description * body[class^='article-'] .marquee-long-description * {
+  body[class^='browse-'] .marquee-long-description * {
     line-height: 23.4px;
   }
 
