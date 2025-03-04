@@ -176,6 +176,7 @@
 }
 
 .detailed-teaser.block.dark > .foreground > .text > .title,
+.detailed-teaser.block.dark > .foreground > .text > .eyebrow,
 .detailed-teaser.block.dark > .foreground > .text > .eyebrow > .title,
 .detailed-teaser.block.dark > .foreground > .text > .description,
 .detailed-teaser.block.dark > .foreground > .text > .description * {
@@ -288,6 +289,7 @@
   .detailed-teaser.block.fifty-split-layout > .foreground > .text {
     padding: 64px 32px 64px 56px;
     box-sizing: border-box;
+    max-width: unset;
   }
 
   .detailed-teaser.block.inline-banner > .foreground > .text {
@@ -373,6 +375,7 @@
   .detailed-teaser.block.fifty-split-layout .foreground {
     gap: 0;
     justify-content: unset;
+    max-width: none;
   }
 
   .detailed-teaser.fifty-split-layout.right > .foreground {
@@ -397,7 +400,7 @@
     min-width: unset;
     width: 50%;
     max-width: unset;
-    padding: 112px 56px;
+    padding: 56px 118px;
   }
 
   /* the subject image /spacer */

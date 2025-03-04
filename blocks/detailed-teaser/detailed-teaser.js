@@ -61,5 +61,10 @@ export default async function decorate(block) {
       block.classList.add('hide-inline-banner');
     }
   }
+  const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
+  if (bgColorCls) {
+    const bgColor = `var(--${bgColorCls.substr(3)})`;
+    block.style.backgroundColor = bgColor;
+  }
   block.append(teaserDOM);
 }
