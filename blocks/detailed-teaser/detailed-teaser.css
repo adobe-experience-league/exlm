@@ -31,6 +31,12 @@
   border-radius: 16px;
 }
 
+body[class^='browse-'] .section div.detailed-teaser-wrapper .detailed-teaser.block.inline-banner,
+body[class^='article-'] .section div.detailed-teaser-wrapper .detailed-teaser.block.inline-banner {
+  border: 1px solid var(--non-spectrum-unicorn-silver);
+  border-radius: 16px;
+}
+
 /* the background image container */
 .detailed-teaser.block > .background {
   display: block;
@@ -289,6 +295,11 @@
   body[class^='browse-'] .section div.detailed-teaser-wrapper .background img,
   body[class^='article-'] .section div.detailed-teaser-wrapper .background img {
     border-radius: 4px;
+  }
+
+  .detailed-teaser.block.inline-banner > .foreground > .spacer img {
+    max-height: unset;
+    max-width: 300px;
   }
 
   body[class^='browse-'] .detailed-teaser.block > .foreground > .spacer img,
