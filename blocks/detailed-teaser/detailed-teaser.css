@@ -258,8 +258,12 @@ body[class^='article-'] .section div.detailed-teaser-wrapper .detailed-teaser.bl
   height: 100%;
 }
 
+.detailed-teaser.block.fifty-split-layout > .foreground > .spacer picture {
+  width: 100%;
+}
+
 .detailed-teaser.block.inline-banner > .foreground > .text {
-  padding: 20px 24px;
+  padding: 24px 20px;
 }
 
 /* ----- TABLET ----- */
