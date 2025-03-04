@@ -4,7 +4,8 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons, decorateSections, decorateBlocks, loadBlocks } from '../../scripts/lib-franklin.js';
+import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 
 /**
  * Retrieves a list of unique product focus items from live events data.
@@ -43,7 +44,32 @@ async function getListofProducts() {
   }
 }
 
+async function showEventsBanner(block, urlEl) {
+  let fragmentURL = urlEl?.textContent?.trim();
+  if (fragmentURL) {
+    if (fragmentURL?.startsWith('/content')) {
+      fragmentURL = fragmentURL.replace(/^\/content\/[^/]+\/global/, '');
+    }
+    const fragmentPath = new URL(fragmentURL, window.location).pathname;
+    const currentPath = window.location.pathname?.replace('.html', '');
+    if (currentPath.endsWith(fragmentPath)) {
+      return;
+    }
+
+    const eventBanner = htmlToElement(
+      `<div><div><div class="fragment"><a href="${fragmentURL}"></a></div></div></div>`,
+    );
+    block.appendChild(eventBanner);
+    decorateSections(eventBanner);
+    decorateBlocks(eventBanner);
+    await loadBlocks(eventBanner);
+    eventBanner.querySelector('.fragment-container')?.classList.remove('section');
+  }
+}
+
 export default async function decorate(block) {
+  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
@@ -52,7 +78,7 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
-  const [headingElement, descriptionElement, filterLabelElement] = [...block.children].map(
+  const [headingElement, descriptionElement, filterLabelElement, linkElement] = [...block.children].map(
     (row) => row.firstElementChild,
   );
 
@@ -78,6 +104,11 @@ export default async function decorate(block) {
   headerDiv.appendChild(tagsContainer);
 
   block.appendChild(headerDiv);
+
+  const isSignedIn = await isSignedInUser();
+  if (UEAuthorMode || (isSignedIn && (await defaultProfileClient.getMergedProfile())?.email?.includes('@adobe.com'))) {
+    await showEventsBanner(block, linkElement);
+  }
 
   const products = await getListofProducts();
   const productsList = [];
