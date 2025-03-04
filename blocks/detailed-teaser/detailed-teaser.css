@@ -291,10 +291,6 @@
     border-radius: 4px;
   }
 
-  .detailed-teaser.block.inline-banner > .foreground > .spacer img {
-    max-height: unset;
-  }
-
   body[class^='browse-'] .detailed-teaser.block > .foreground > .spacer img,
   body[class^='article-'] .detailed-teaser.block > .foreground > .spacer img {
     object-position: left;
