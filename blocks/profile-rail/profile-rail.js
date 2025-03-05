@@ -16,6 +16,7 @@ function debounce(func, delay) {
 const formatId = (text) =>
   text
     .toLowerCase()
+    .trim()
     .replace(/\s+/g, '-')
     .replace(/[^\p{L}\p{N}-]/gu, '');
 

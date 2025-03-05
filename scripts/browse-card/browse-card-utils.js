@@ -199,5 +199,6 @@ export const formatTitleCase = (str) => str.replace(/[-\s]/g, '').replace(/\b\w/
 export const formatId = (text) =>
   text
     .toLowerCase()
+    .trim()
     .replace(/\s+/g, '-')
     .replace(/[^\p{L}\p{N}-]/gu, '');
