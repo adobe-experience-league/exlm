@@ -198,6 +198,7 @@ export const formatTitleCase = (str) => str.replace(/[-\s]/g, '').replace(/\b\w/
 // Function to convert headings to id format
 export const formatId = (text) =>
   text
-    .toLowerCase()
+    ?.toLowerCase()
+    .trim()
     .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '');
+    .replace(/[^\p{L}\p{N}-]/gu, '') || '';
