@@ -174,10 +174,11 @@ export default class ResponsiveList {
   render() {
     const isDesktop = window.matchMedia('(min-width:1024px)').matches;
     const CARDS_MAX_WIDTH = 1096;
+    const LIST_OFFSET_WIDTH = 5;
     this.wrapper.textContent = '';
     if (isDesktop) {
       const { wrapperWidth, listWidth } = this.evaluateWidth();
-      if (listWidth <= wrapperWidth && listWidth <= CARDS_MAX_WIDTH) {
+      if (listWidth + LIST_OFFSET_WIDTH <= wrapperWidth && listWidth <= CARDS_MAX_WIDTH) {
         this.renderTabbedLayout();
       } else {
         this.renderDropdown();
