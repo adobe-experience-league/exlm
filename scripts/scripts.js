@@ -1200,14 +1200,11 @@ function handleRedirects() {
 }
 
 export async function loadFragment(fragmentURL) {
-  let fragmentLink = fragmentURL;
-  if (!fragmentLink) {
-    return null;
-  }
+  if (!fragmentURL) return null;
 
-  if (fragmentLink.startsWith('/content')) {
-    fragmentLink = fragmentLink.replace(/^\/content\/[^/]+\/global/, '');
-  }
+  const fragmentLink = fragmentURL.startsWith('/content')
+    ? fragmentURL.replace(/^\/content\/[^/]+\/global/, '')
+    : fragmentURL;
 
   const fragmentPath = new URL(fragmentLink, window.location).pathname;
   const currentPath = window.location.pathname?.replace('.html', '');
