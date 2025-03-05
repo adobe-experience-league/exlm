@@ -1199,26 +1199,30 @@ function handleRedirects() {
   if (redirect) window.location.href = redirect[1].href;
 }
 
-export async function loadFragment(block, fragmentURL) {
+export async function loadFragment(fragmentURL) {
   let fragmentLink = fragmentURL;
-  if (fragmentLink) {
-    if (fragmentLink?.startsWith('/content')) {
-      fragmentLink = fragmentLink.replace(/^\/content\/[^/]+\/global/, '');
-    }
-    const fragmentPath = new URL(fragmentLink, window.location).pathname;
-    const currentPath = window.location.pathname?.replace('.html', '');
-    if (currentPath.endsWith(fragmentPath)) {
-      return;
-    }
-
-    const fragmentEl = htmlToElement(
-      `<div><div><div class="fragment"><a href="${fragmentLink}"></a></div></div></div>`,
-    );
-    block.appendChild(fragmentEl);
-    decorateSections(fragmentEl);
-    decorateBlocks(fragmentEl);
-    await loadBlocks(fragmentEl);
+  if (!fragmentLink) {
+    return null;
   }
+
+  if (fragmentLink.startsWith('/content')) {
+    fragmentLink = fragmentLink.replace(/^\/content\/[^/]+\/global/, '');
+  }
+
+  const fragmentPath = new URL(fragmentLink, window.location).pathname;
+  const currentPath = window.location.pathname?.replace('.html', '');
+
+  if (currentPath.endsWith(fragmentPath)) {
+    return null;
+  }
+
+  const fragmentEl = htmlToElement(`<div><div><div class="fragment"><a href="${fragmentLink}"></a></div></div></div>`);
+
+  decorateSections(fragmentEl);
+  decorateBlocks(fragmentEl);
+  await loadBlocks(fragmentEl);
+
+  return fragmentEl;
 }
 
 async function loadPage() {

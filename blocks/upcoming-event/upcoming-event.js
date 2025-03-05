@@ -85,8 +85,11 @@ export default async function decorate(block) {
   const isSignedIn = await isSignedInUser();
   if (UEAuthorMode || (isSignedIn && (await defaultProfileClient.getMergedProfile())?.email?.includes('@adobe.com'))) {
     const fragmentLink = linkElement?.textContent?.trim();
-    await loadFragment(block, fragmentLink);
-    block.querySelector('.fragment-container')?.classList.remove('section');
+    const fragment = await loadFragment(fragmentLink);
+    if (fragment) {
+      block.appendChild(fragment);
+      block.querySelector('.fragment-container')?.classList.remove('section');
+    }
   }
 
   const products = await getListofProducts();
