@@ -71,16 +71,13 @@
 
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
+  .section.carousel-container {
+    padding: 0 var(--spectrum-spacing-800);
+  }
+
   .section div.carousel-wrapper {
     /* stretches to window edge, cover section padding */
     margin-left: calc(-1 * var(--spectrum-spacing-800));
     margin-right: calc(-1 * var(--spectrum-spacing-800));
-  }
-}
-
-@media (min-width: 600px) {
-  .section.carousel-container {
-    padding-top: 0;
-    padding-bottom: 0;
   }
 }
