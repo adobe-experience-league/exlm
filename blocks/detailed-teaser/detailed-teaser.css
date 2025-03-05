@@ -10,7 +10,8 @@
 }
 
 .section div.detailed-teaser-wrapper:has(.inline-banner) {
-  margin: 0;
+  max-width: var(--default-max-width);
+  margin: 0 auto;
 }
 
 .detailed-teaser-wrapper:has(.hide-inline-banner) {
