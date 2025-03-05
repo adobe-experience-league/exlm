@@ -3,6 +3,10 @@
   z-index: 5;
 }
 
+.profile-rail .profile-rail-links.jump-to-list {
+  display: none;
+}
+
 .profile-rail .profile-rail-heading {
   display: none;
 }
@@ -84,6 +88,10 @@
   .profile-rail {
     width: auto;
     margin-left: 16px;
+  }
+
+  .profile-rail .profile-rail-links.jump-to-list {
+    display: block;
   }
 
   .profile-rail .profile-rail-heading.hidden,
