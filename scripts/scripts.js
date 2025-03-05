@@ -1199,6 +1199,29 @@ function handleRedirects() {
   if (redirect) window.location.href = redirect[1].href;
 }
 
+export async function loadFragment(fragmentURL) {
+  if (!fragmentURL) return null;
+
+  const fragmentLink = fragmentURL.startsWith('/content')
+    ? fragmentURL.replace(/^\/content\/[^/]+\/global/, '')
+    : fragmentURL;
+
+  const fragmentPath = new URL(fragmentLink, window.location).pathname;
+  const currentPath = window.location.pathname?.replace('.html', '');
+
+  if (currentPath.endsWith(fragmentPath)) {
+    return null;
+  }
+
+  const fragmentEl = htmlToElement(`<div><div><div class="fragment"><a href="${fragmentLink}"></a></div></div></div>`);
+
+  decorateSections(fragmentEl);
+  decorateBlocks(fragmentEl);
+  await loadBlocks(fragmentEl);
+
+  return fragmentEl;
+}
+
 async function loadPage() {
   handleRedirects();
   await loadEager(document);
