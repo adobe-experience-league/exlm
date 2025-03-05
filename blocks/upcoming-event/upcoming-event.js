@@ -1,10 +1,10 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, htmlToElement, getConfig, loadFragment } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
-import { decorateIcons, decorateSections, decorateBlocks, loadBlocks } from '../../scripts/lib-franklin.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 
 /**
@@ -41,29 +41,6 @@ async function getListofProducts() {
     // eslint-disable-next-line no-console
     console.error('Error fetching data', error);
     return [];
-  }
-}
-
-async function showEventsBanner(block, urlEl) {
-  let fragmentURL = urlEl?.textContent?.trim();
-  if (fragmentURL) {
-    if (fragmentURL?.startsWith('/content')) {
-      fragmentURL = fragmentURL.replace(/^\/content\/[^/]+\/global/, '');
-    }
-    const fragmentPath = new URL(fragmentURL, window.location).pathname;
-    const currentPath = window.location.pathname?.replace('.html', '');
-    if (currentPath.endsWith(fragmentPath)) {
-      return;
-    }
-
-    const eventBanner = htmlToElement(
-      `<div><div><div class="fragment"><a href="${fragmentURL}"></a></div></div></div>`,
-    );
-    block.appendChild(eventBanner);
-    decorateSections(eventBanner);
-    decorateBlocks(eventBanner);
-    await loadBlocks(eventBanner);
-    eventBanner.querySelector('.fragment-container')?.classList.remove('section');
   }
 }
 
@@ -107,7 +84,9 @@ export default async function decorate(block) {
 
   const isSignedIn = await isSignedInUser();
   if (UEAuthorMode || (isSignedIn && (await defaultProfileClient.getMergedProfile())?.email?.includes('@adobe.com'))) {
-    await showEventsBanner(block, linkElement);
+    const fragmentLink = linkElement?.textContent?.trim();
+    await loadFragment(block, fragmentLink);
+    block.querySelector('.fragment-container')?.classList.remove('section');
   }
 
   const products = await getListofProducts();
