@@ -15,10 +15,10 @@ function debounce(func, delay) {
 
 const formatId = (text) =>
   text
-    .toLowerCase()
+    ?.toLowerCase()
     .trim()
     .replace(/\s+/g, '-')
-    .replace(/[^\p{L}\p{N}-]/gu, '');
+    .replace(/[^\p{L}\p{N}-]/gu, '') || '';
 
 const awardsPage = '/home/awards';
 const navPage = `${lang}/home/nav`;
