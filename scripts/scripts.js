@@ -529,7 +529,7 @@ async function buildPreMain(main) {
   const hideBanner = getMetadata('feature-flags')
     .split(',')
     .map((t) => t.toLowerCase().trim())
-    .includes('hide-notification-banner');
+    .includes('hide-fragment');
 
   if (currentPath.endsWith(fragmentPath) || hideBanner) {
     return; // do not load fragment if it is the same as the current page or feature flag is present
