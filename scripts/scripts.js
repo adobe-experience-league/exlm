@@ -525,7 +525,13 @@ async function buildPreMain(main) {
   const fragmentUrl = getMetadata('fragment');
   const fragmentPath = fragmentUrl ? new URL(fragmentUrl, window.location).pathname : '';
   const currentPath = window.location.pathname?.replace('.html', '');
-  if (currentPath.endsWith(fragmentPath)) {
+
+  const hideBanner = getMetadata('feature-flags')
+    .split(',')
+    .map((t) => t.toLowerCase().trim())
+    .includes("hide-notification-banner");
+
+  if (currentPath.endsWith(fragmentPath) || hideBanner) {
     return; // do not load fragment if it is the same as the current page
   }
   if (fragmentUrl) {
