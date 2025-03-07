@@ -333,7 +333,7 @@ body[class^='article-'] .marquee-content-container {
     overflow: hidden;
     min-height: unset;
     position: absolute;
-    top: 20%;
+    top: 10%;
     left: 100px;
   }
 
