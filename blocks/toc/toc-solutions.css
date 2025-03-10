@@ -149,6 +149,10 @@
   --exlm-toc-active-color: var(--exlm-toc-solution-8);
 }
 
+.toc.MixModeler {
+  --exlm-toc-active-color: var(--exlm-toc-solution-9);
+}
+
 .toc.Primetime {
   --exlm-toc-active-color: var(--exlm-toc-solution-10);
 }
