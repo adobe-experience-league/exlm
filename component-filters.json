@@ -307,7 +307,7 @@
     "id": "notification-banner",
     "components": [],
     "rte": {
-      "format": ["bold", "italic"],
+      "format": ["bold", "italic", "underline"],
       "alignment": [],
       "indentation": [],
       "sr_script": ["superscript", "subscript"],
