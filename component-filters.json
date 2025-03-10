@@ -304,6 +304,22 @@
     }
   },
   {
+    "id": "notification-banner",
+    "components": [],
+    "rte": {
+      "format": ["bold", "italic", "underline"],
+      "alignment": [],
+      "indentation": [],
+      "sr_script": ["superscript", "subscript"],
+      "list": [],
+      "insert": ["link"],
+      "advanced": [],
+      "extensions": [],
+      "editor": ["removeformat"],
+      "blocks": []
+    }
+  },
+  {
     "id": "cards",
     "components": ["card"]
   },
