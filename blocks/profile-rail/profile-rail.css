@@ -1,6 +1,10 @@
 .profile-rail {
   position: relative;
-  z-index: 5;
+  z-index: 9;
+}
+
+.profile-rail .profile-rail-links.jump-to-list {
+  display: none;
 }
 
 .profile-rail .profile-rail-heading {
@@ -68,7 +72,7 @@
   position: absolute;
   width: 100%;
   background-color: var(--non-spectrum-grey-100);
-  z-index: 5;
+  z-index: 9;
   box-sizing: border-box;
   padding: 12px;
   border-radius: 4px;
@@ -84,6 +88,10 @@
   .profile-rail {
     width: auto;
     margin-left: 16px;
+  }
+
+  .profile-rail .profile-rail-links.jump-to-list {
+    display: block;
   }
 
   .profile-rail .profile-rail-heading.hidden,

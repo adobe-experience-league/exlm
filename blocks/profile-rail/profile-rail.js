@@ -15,9 +15,10 @@ function debounce(func, delay) {
 
 const formatId = (text) =>
   text
-    .toLowerCase()
+    ?.toLowerCase()
+    .trim()
     .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '');
+    .replace(/[^\p{L}\p{N}-]/gu, '') || '';
 
 const awardsPage = '/home/awards';
 const navPage = `${lang}/home/nav`;
@@ -134,7 +135,7 @@ export default async function ProfileRail(block) {
   firstUl.insertAdjacentElement('afterend', heading);
 
   const newUl = document.createElement('ul');
-  newUl.classList.add('profile-rail-links', 'hidden');
+  newUl.classList.add('profile-rail-links', 'hidden', 'jump-to-list');
   heading.insertAdjacentElement('afterend', newUl);
 
   let activeLink = null;

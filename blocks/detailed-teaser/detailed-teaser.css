@@ -10,7 +10,8 @@
 }
 
 .section div.detailed-teaser-wrapper:has(.inline-banner) {
-  margin: 0;
+  max-width: var(--default-max-width);
+  margin: 0 auto;
 }
 
 .detailed-teaser-wrapper:has(.hide-inline-banner) {
@@ -348,6 +349,11 @@ body[class^='article-'] .section div.detailed-teaser-wrapper .detailed-teaser.bl
     object-position: left;
   }
 
+  body[class*='profile-home-page'] .section div.detailed-teaser-wrapper {
+    margin-left: unset;
+    margin-right: unset;
+  }
+
   body[class^='browse-'] .section div.detailed-teaser-wrapper .foreground,
   body[class^='article-'] .section div.detailed-teaser-wrapper .foreground {
     min-height: 240px;
@@ -469,8 +475,7 @@ body[class^='article-'] .section div.detailed-teaser-wrapper .detailed-teaser.bl
   /* when shown on a page with a rail 
    no longer goes from end to end */
   body[class^='browse-'] .section div.detailed-teaser-wrapper,
-  body[class^='article-'] .section div.detailed-teaser-wrapper,
-  body[class*='profile-home-page'] .section div.detailed-teaser-wrapper {
+  body[class^='article-'] .section div.detailed-teaser-wrapper {
     margin-left: unset;
     margin-right: unset;
   }

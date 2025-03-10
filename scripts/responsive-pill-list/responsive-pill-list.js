@@ -119,6 +119,7 @@ export default class ResponsivePillList {
       listWidth,
       fitItems: items,
       fitWidth,
+      maxWidth,
     };
     main.removeChild(tempWrapper);
     return widthInfo;
@@ -211,10 +212,11 @@ export default class ResponsivePillList {
    * Renders the tabbed layout based on the provided items.
    */
   renderTabbedLayout() {
-    const { fitWidth } = this.evaluateWidth();
+    const { maxWidth } = this.evaluateWidth();
     const tabWrapper = document.createElement('div');
     tabWrapper.classList.add('responsive-pill-list');
-    tabWrapper.style.maxWidth = `${fitWidth + PILLS_OFFSET_DELTA}px`;
+    const delta = 4;
+    tabWrapper.style.maxWidth = `${maxWidth - delta}px`;
     const tabList = document.createElement('ul');
     this.scrollSteps = [];
     this.items.forEach((item) => {
