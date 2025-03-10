@@ -17,7 +17,7 @@ const solutionMap = new Map([
   ['Connect', { class: 'CircleExperienceCloud', name: 'Connect' }],
   ['Creative Cloud', { class: 'CircleExperienceCloud', name: 'Creative Cloud' }],
   ['Customer Experience Management', { class: 'ExperienceManager', name: 'Customer Experience Management' }],
-  ['Customer Journey Analytics', { class: 'UserAnalytics', name: 'Customer Journey Analytics' }], //
+  ['Customer Journey Analytics', { class: 'UserAnalytics', name: 'Customer Journey Analytics' }],
   ['Data Collection', { class: 'Launch', name: 'Data Collection' }],
   ['Document Cloud', { class: 'CircleExperienceCloud', name: 'Document Cloud' }],
   ['Dynamic Media Classic', { class: 'Asset', name: 'Dynamic Media Classic' }],
