@@ -311,7 +311,7 @@
       "alignment": [],
       "indentation": [],
       "sr_script": ["superscript", "subscript"],
-      "list": ["bullist", "numlist"],
+      "list": [],
       "insert": ["link"],
       "advanced": [],
       "extensions": [],
