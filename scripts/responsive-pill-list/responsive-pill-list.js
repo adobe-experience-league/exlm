@@ -276,7 +276,11 @@ export default class ResponsivePillList {
         this.scrollSteps.push(currentOffset);
       }
     } else {
-      const scrollValue = this.scrollSteps.pop();
+      const currentScrollValue = wrapperEl.scrollLeft;
+      let scrollValue = this.scrollSteps.pop();
+      if (scrollValue === currentScrollValue && this.scrollSteps.length) {
+        scrollValue = this.scrollSteps.pop();
+      }
       wrapperEl.scrollLeft = scrollValue;
     }
     this.handleNavButtonVisiblity();
