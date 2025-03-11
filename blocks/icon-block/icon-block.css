@@ -25,7 +25,6 @@
 }
 
 .icon-block .icon-heading {
-  font-size: var(--spectrum-font-size-500);
   margin: 0 auto;
   line-height: 33px;
   color: var(--non-spectrum-custom-dark);
