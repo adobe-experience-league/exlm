@@ -94,5 +94,5 @@
 .notification-banner-close .icon {
   cursor: pointer;
   width: 14px;
-  height: 100%;
+  margin-top: 4px;
 }
