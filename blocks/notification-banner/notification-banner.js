@@ -38,11 +38,11 @@ function decorateBanner({ block, bannerId, headingElem, descriptionElem, ctaElem
   block.innerHTML = `
     <div>
       <div class='notification-banner-content'>
-        ${headingElem.textContent ? `<h3>${headingElem.innerHTML}</h3>` : ''}
-        ${descriptionElem.textContent ? `<p>${descriptionElem.innerHTML}</p>` : ''}
+        ${headingElem?.textContent.trim() ? `<h3>${headingElem.innerHTML}</h3>` : ''}
+        ${descriptionElem?.textContent.trim() ? `<p>${descriptionElem.innerHTML}</p>` : ''}
         </div>
         <div class="notification-banner-actions">
-          ${ctaElem.textContent ? `<div class='notification-banner-cta'>${ctaElem?.innerHTML}</div>` : ''}
+          ${ctaElem?.textContent.trim() ? `<div class='notification-banner-cta'>${ctaElem?.innerHTML}</div>` : ''}
           ${dismissable ? dismissButton : ''}
         </div>
       </div>

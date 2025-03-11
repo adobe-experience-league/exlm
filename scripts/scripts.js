@@ -526,10 +526,8 @@ async function buildPreMain(main) {
   const fragmentUrl = getMetadata('fragment');
 
   const fragmentPath = fragmentUrl ? new URL(fragmentUrl, window.location).pathname : '';
-  let fragmentLangUrl;
-  if (fragmentPath.startsWith('/en/')) {
-    fragmentLangUrl = fragmentPath.replace('/en/', `/${lang}/`);
-  }
+  if (!fragmentUrl) return;
+  const fragmentLangUrl = fragmentUrl.startsWith('/en/') ? fragmentUrl.replace('/en/', `/${lang}/`) : fragmentUrl;
 
   const currentPath = window.location.pathname?.replace('.html', '');
   if (currentPath.endsWith(fragmentPath)) {
@@ -537,7 +535,7 @@ async function buildPreMain(main) {
   }
   if (fragmentUrl) {
     const preMain = htmlToElement(
-      `<aside><div><div class="fragment"><a href="${fragmentLangUrl ?? fragmentUrl}"></a></div></div></aside>`,
+      `<aside><div><div class="fragment"><a href="${fragmentLangUrl}"></a></div></div></aside>`,
     );
     // add fragment as first section in preMain
     main.before(preMain);
