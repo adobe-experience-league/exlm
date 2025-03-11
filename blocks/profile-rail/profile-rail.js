@@ -149,6 +149,13 @@ export default async function ProfileRail(block) {
     newUl.classList.toggle('hidden', !hasHeadings);
     if (!hasHeadings) return;
 
+    const moveToTopLi = document.createElement('li');
+    const moveToTopLink = document.createElement('a');
+    moveToTopLink.textContent = `${placeholders?.moveToTop || 'Move to top'}`;
+    moveToTopLink.href = '#';
+    moveToTopLi.appendChild(moveToTopLink);
+    newUl.prepend(moveToTopLi);
+
     headings.forEach((h) => {
       const sectionId = formatId(h.textContent.trim());
       if (!h.id) {
@@ -171,8 +178,12 @@ export default async function ProfileRail(block) {
         activeLink = link;
         isAnchorScroll = true;
         const targetId = link.getAttribute('href').substring(1);
-        const targetElement = document.getElementById(targetId);
-        targetElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (targetId === '') {
+          document.body.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          const targetElement = document.getElementById(targetId);
+          targetElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
         setTimeout(() => {
           isAnchorScroll = false;
         }, 1000);
@@ -226,6 +237,13 @@ export default async function ProfileRail(block) {
       if (mostVisibleSection) {
         const activeSection = navLinks.find((link) => link.getAttribute('href') === `#${mostVisibleSection}`);
         activeSection?.classList.add('active');
+      }
+
+      const anyActiveLink = navLinks.some((link) => link.classList.contains('active'));
+      if (!anyActiveLink) {
+        moveToTopLink.classList.add('active');
+      } else {
+        moveToTopLink.classList.remove('active');
       }
     }
 
