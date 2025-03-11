@@ -529,7 +529,7 @@ async function buildPreMain(main) {
 
   const fragmentLangUrl = fragmentUrl.startsWith('/en/') ? fragmentUrl.replace('/en/', `/${lang}/`) : fragmentUrl;
   const fragmentPath = new URL(fragmentLangUrl, window.location).pathname;
-  
+
   const currentPath = window.location.pathname?.replace('.html', '');
   if (currentPath.endsWith(fragmentPath)) {
     return; // do not load fragment if it is the same as the current page
