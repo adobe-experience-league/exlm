@@ -525,14 +525,16 @@ async function buildPreMain(main) {
   const { lang } = getPathDetails();
   const fragmentUrl = getMetadata('fragment');
 
-  const fragmentPath = fragmentUrl ? new URL(fragmentUrl, window.location).pathname : '';
   if (!fragmentUrl) return;
-  const fragmentLangUrl = fragmentUrl.startsWith('/en/') ? fragmentUrl.replace('/en/', `/${lang}/`) : fragmentUrl;
 
+  const fragmentLangUrl = fragmentUrl.startsWith('/en/') ? fragmentUrl.replace('/en/', `/${lang}/`) : fragmentUrl;
+  const fragmentPath = new URL(fragmentLangUrl, window.location).pathname;
+  
   const currentPath = window.location.pathname?.replace('.html', '');
   if (currentPath.endsWith(fragmentPath)) {
     return; // do not load fragment if it is the same as the current page
   }
+
   if (fragmentUrl) {
     const preMain = htmlToElement(
       `<aside><div><div class="fragment"><a href="${fragmentLangUrl}"></a></div></div></aside>`,
