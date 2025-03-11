@@ -27,8 +27,8 @@ const bannerStore = {
 function decorateBanner({ block, bannerId, headingElem, descriptionElem, ctaElem, dismissable }) {
   block.textContent = '';
 
-  const cta = ctaElem.querySelector('a');
-  cta.classList.add('button', 'secondary', 'custom', 'text-white');
+  const cta = ctaElem?.querySelector('a');
+  cta?.classList.add('button', 'secondary', 'custom', 'text-white');
 
   const dismissButton = `
   <div class='notification-banner-close'>
@@ -38,11 +38,11 @@ function decorateBanner({ block, bannerId, headingElem, descriptionElem, ctaElem
   block.innerHTML = `
     <div>
       <div class='notification-banner-content'>
-          <h3>${headingElem.innerHTML}</h3>
-          <p>${descriptionElem.innerHTML}</p>
+        ${headingElem.textContent ? `<h3>${headingElem.innerHTML}</h3>` : ''}
+        ${descriptionElem.textContent ? `<p>${descriptionElem.innerHTML}</p>` : ''}
         </div>
         <div class="notification-banner-actions">
-          <div class='notification-banner-cta'>${ctaElem.innerHTML}</div>
+          ${ctaElem.textContent ? `<div class='notification-banner-cta'>${ctaElem?.innerHTML}</div>` : ''}
           ${dismissable ? dismissButton : ''}
         </div>
       </div>
