@@ -22,6 +22,7 @@ export default class ResponsivePillList {
     this.onInitCallback = onInitCallback;
     this.onSelectCallback = onSelectCallback;
     this.isSelectedFromUser = false;
+    this.scrollMaxReached = false;
     this.initialize();
     this.main = document.querySelector('main');
   }
@@ -254,6 +255,7 @@ export default class ResponsivePillList {
   }
 
   navigatePills(forward) {
+    this.scrollMaxReached = false;
     const wrapperEl = this.wrapper.querySelector('ul');
     if (forward) {
       const elements = Array.from(wrapperEl.children);
@@ -271,7 +273,9 @@ export default class ResponsivePillList {
         }
         return acc;
       }, null);
-      wrapperEl.scrollLeft = targetElement.offsetLeft;
+      const targetScrollLeft = targetElement.offsetLeft;
+      this.scrollMaxReached = wrapperEl.offsetWidth + targetScrollLeft >= wrapperEl.scrollWidth;
+      wrapperEl.scrollLeft = targetScrollLeft;
       if (wrapperEl.scrollLeft !== currentOffset) {
         this.scrollSteps.push(currentOffset);
       }
@@ -301,7 +305,10 @@ export default class ResponsivePillList {
       }
     }
     if (rightButton) {
-      if (lastElementChild.offsetLeft - scrollLeft < wrapperEl.offsetWidth - PILLS_OFFSET_DELTA) {
+      if (
+        lastElementChild.offsetLeft - scrollLeft < wrapperEl.offsetWidth - PILLS_OFFSET_DELTA ||
+        this.scrollMaxReached
+      ) {
         rightButton.classList.remove('responsive-pill-list-nav-visible');
       } else {
         rightButton.classList.add('responsive-pill-list-nav-visible');
