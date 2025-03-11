@@ -805,6 +805,7 @@
                 "template": {
                   "name": "Icon Card",
                   "model": "icon-card",
+                  "filter": "icon-card",
                   "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                   "cardHeading": "Default Heading",
                   "cardHeadingType": "h3",
