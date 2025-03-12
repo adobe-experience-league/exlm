@@ -82,20 +82,24 @@ export default async function decorate(block) {
 
   block.appendChild(headerDiv);
 
-  const isSignedIn = await isSignedInUser();
-  let isAdobeUser = false;
+  let showEventsBanner = false;
 
-  if (isSignedIn) {
-    try {
-      const profile = await defaultProfileClient.getMergedProfile();
-      isAdobeUser = profile?.email?.includes('@adobe.com');
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to fetch profile:', error);
+  if (UEAuthorMode) {
+    showEventsBanner = true;
+  } else {
+    const isSignedIn = await isSignedInUser();
+    if (isSignedIn) {
+      try {
+        const profile = await defaultProfileClient.getMergedProfile();
+        showEventsBanner = profile?.email?.includes('@adobe.com');
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch profile:', error);
+      }
     }
   }
 
-  if (UEAuthorMode || isAdobeUser) {
+  if (showEventsBanner) {
     const fragmentLink = linkElement?.textContent?.trim();
     const fragment = await loadFragment(fragmentLink);
     if (fragment) {
