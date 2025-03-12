@@ -17,40 +17,38 @@ export default function decorateCustomButtons(...buttonElements) {
     black: 'text-black',
   };
 
-  return (
-    buttonElements
-      // TODO: filter undefined
-      .map((buttonElement) => {
-        const link = buttonElement.querySelector('a');
-        if (!link) return ''; // Early return for elements without a link
+  return buttonElements
+    .filter((buttonElement) => buttonElement)
+    .map((buttonElement) => {
+      const link = buttonElement.querySelector('a');
+      if (!link) return ''; // Early return for elements without a link
 
-        const [buttonType, buttonCustomColor, buttonHexCode, buttonTextColor] = [...buttonElement.children].map(
-          (child) => child.textContent.trim(),
-        );
+      const [buttonType, buttonCustomColor, buttonHexCode, buttonTextColor] = [...buttonElement.children].map((child) =>
+        child.textContent.trim(),
+      );
 
-        link.classList.add('button');
+      link.classList.add('button');
 
-        // Assign button type class if it exists
-        if (buttonType in buttonTypeClasses) {
-          link.classList.add(buttonTypeClasses[buttonType]);
+      // Assign button type class if it exists
+      if (buttonType in buttonTypeClasses) {
+        link.classList.add(buttonTypeClasses[buttonType]);
+      }
+
+      if (buttonType === 'custom') {
+        // Assign text color class
+        if (buttonTextColor in textColorClasses) {
+          link.classList.add(textColorClasses[buttonTextColor]);
         }
 
-        if (buttonType === 'custom') {
-          // Assign text color class
-          if (buttonTextColor in textColorClasses) {
-            link.classList.add(textColorClasses[buttonTextColor]);
-          }
-
-          // Apply background color (spectrum or hexcode)
-          if (buttonCustomColor !== 'custom-hexcode') {
-            link.style.backgroundColor = `var(${buttonCustomColor})`;
-          } else if (buttonHexCode) {
-            link.style.backgroundColor = `#${buttonHexCode}`;
-          }
+        // Apply background color (spectrum or hexcode)
+        if (buttonCustomColor !== 'custom-hexcode') {
+          link.style.backgroundColor = `var(${buttonCustomColor})`;
+        } else if (buttonHexCode) {
+          link.style.backgroundColor = `#${buttonHexCode}`;
         }
+      }
 
-        return link.outerHTML;
-      })
-      .join('')
-  );
+      return link.outerHTML;
+    })
+    .join('');
 }
