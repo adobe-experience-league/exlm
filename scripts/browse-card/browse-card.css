@@ -101,6 +101,7 @@
   font-weight: var(--font-weight-heavy);
   line-height: var(--spectrum-line-height-s);
   margin: 0;
+  z-index: 8;
 }
 
 .browse-card.browse-card-frozen .browse-card-banner {
@@ -245,7 +246,7 @@
   display: grid;
   place-items: center;
   position: absolute;
-  z-index: 9;
+  z-index: 8;
 }
 
 .browse-card .browse-card-figure > img {
@@ -258,7 +259,7 @@
   height: 116px;
   border-bottom: 1px solid var(--spectrum-gray-200);
   object-fit: cover;
-  z-index: 9;
+  z-index: 8;
   opacity: 0;
   transition:
     height 0.2s,
