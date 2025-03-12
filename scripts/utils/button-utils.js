@@ -18,6 +18,7 @@ export default function decorateCustomButtons(...buttonElements) {
   };
 
   return buttonElements
+    .filter((buttonElement) => buttonElement)
     .map((buttonElement) => {
       const link = buttonElement.querySelector('a');
       if (!link) return ''; // Early return for elements without a link
