@@ -59,6 +59,7 @@
   display: flex;
   align-items: center;
   margin-top: 0;
+  font-weight: bold;
 }
 
 .icon-block .icon-link::after,
