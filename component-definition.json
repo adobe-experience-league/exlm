@@ -933,6 +933,7 @@
                 "template": {
                   "name": "Notification Banner",
                   "model": "notification-banner",
+                  "filter": "notification-banner",
                   "bannerId": "banner-1",
                   "title": "Notification Banner Title",
                   "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt"
