@@ -761,6 +761,7 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Icon Card",
                     "model": "icon-card",
+                    "filter": "icon-card",
                     "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                     "cardHeading": "Default Heading",
                     "cardHeadingType": "h3",
@@ -772,6 +773,7 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Icon Card",
                     "model": "icon-card",
+                    "filter": "icon-card",
                     "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                     "cardHeading": "Default Heading",
                     "cardHeadingType": "h3",
@@ -783,6 +785,7 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Icon Card",
                     "model": "icon-card",
+                    "filter": "icon-card",
                     "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                     "cardHeading": "Default Heading",
                     "cardHeadingType": "h3",
@@ -805,6 +808,7 @@
                 "template": {
                   "name": "Icon Card",
                   "model": "icon-card",
+                  "filter": "icon-card",
                   "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                   "cardHeading": "Default Heading",
                   "cardHeadingType": "h3",
@@ -929,6 +933,7 @@
                 "template": {
                   "name": "Notification Banner",
                   "model": "notification-banner",
+                  "filter": "notification-banner",
                   "bannerId": "banner-1",
                   "title": "Notification Banner Title",
                   "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt"
