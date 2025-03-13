@@ -154,20 +154,20 @@ export default class ProfileMenu extends HTMLElement {
       return section;
     };
 
-    const getSignOutRedirectUrl = (signOutRedirectUrl, lang) => {
-      if (!signOutRedirectUrl) {
+    const getSignOutRedirectUrl = (targetUrl, lang) => {
+      if (!targetUrl) {
         return isProfilePage ? `/${lang}` : '';
       }
 
-      if (signOutRedirectUrl === '/') {
-        return signOutRedirectUrl.replace('/', `/${lang}`);
+      if (targetUrl === '/') {
+        return targetUrl.replace('/', `/${lang}`);
       }
 
-      if (signOutRedirectUrl.startsWith('/en/')) {
-        return signOutRedirectUrl.replace('/en/', `/${lang}/`);
+      if (targetUrl.startsWith('/en/')) {
+        return targetUrl.replace('/en/', `/${lang}/`);
       }
 
-      return signOutRedirectUrl;
+      return targetUrl;
     };
 
     const isSignedIn = await this.decoratorOptions.isUserSignedIn();
