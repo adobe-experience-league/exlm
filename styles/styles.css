@@ -977,14 +977,6 @@ picture[align="right"] {
   background-color: var(--highlight-light-background-color);
 }
 
-.section.highlight.icon-block-container {
-  padding: 32px 36px 48px;
-}
-
-.section.icon-block-container > div > :is(h1, h2, h3, h4, h5, h6) {
-  margin: 0 0 40px;
-}
-
 .section.tabs-container {
   padding-top: 0;
   padding-bottom: 0;
@@ -1046,14 +1038,6 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination
 }
 
 @media (min-width: 600px) {
-  .section.highlight.icon-block-container {
-    padding: 80px 86px;
-  }
-
-  .section.highlight.icon-block-container > div > h3 {
-    text-align: left;
-  }
-
   body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination, body[class^="browse-"] .browse-filters-full-container .browse-filters-one-pg-result {
     margin-bottom: 58px;
   }

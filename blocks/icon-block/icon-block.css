@@ -1,3 +1,12 @@
+.section.icon-block-container > div > :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0 0 40px;
+  text-align: center;
+}
+
+.section.icon-block-container {
+  padding: 32px 36px 48px;
+}
+
 .icon-block {
   display: grid;
   min-width: 275px;
@@ -82,6 +91,14 @@
 }
 
 @media (width >= 600px) {
+  .section.icon-block-container {
+    padding: 80px 86px;
+  }
+
+  .section.icon-block-container > div > :is(h1, h2, h3, h4, h5, h6) {
+    text-align: left;
+  }
+
   .icon-block {
     grid-template-columns: repeat(auto-fit, minmax(286px, 1fr));
     column-gap: 24px;
