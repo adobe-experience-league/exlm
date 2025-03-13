@@ -188,11 +188,7 @@ export default class ProfileMenu extends HTMLElement {
         const { cdnOrigin } = getConfig();
         const signOutRedirectUrl = getMetadata('signout-redirect-url');
         const redirectURL = getSignOutRedirectUrl(signOutRedirectUrl, this.decoratorOptions.lang);
-
-        const signOutRedirectPath = `${cdnOrigin}${redirectURL}`;
-        const signoutOptions = { redirect_uri: signOutRedirectPath };
-
-        this.decoratorOptions.onSignOut(signoutOptions);
+        this.decoratorOptions.onSignOut({ redirect_uri: `${cdnOrigin}${redirectURL}` });
       });
       profileMenuBlock.append(signoutLink);
 
