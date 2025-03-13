@@ -1,6 +1,6 @@
-import { fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, htmlToElement, isProfilePage, getConfig } from '../../scripts/scripts.js';
 import { isMobile, registerHeaderResizeHandler, simplifySingleCellBlock } from './header-utils.js';
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 
 const communityLocalesMap = new Map([
   ['de', 'de'],
@@ -154,6 +154,22 @@ export default class ProfileMenu extends HTMLElement {
       return section;
     };
 
+    const getSignOutRedirectUrl = (signOutRedirectUrl, lang) => {
+      if (!signOutRedirectUrl) {
+        return isProfilePage ? `/${lang}` : '';
+      }
+
+      if (signOutRedirectUrl === '/') {
+        return signOutRedirectUrl.replace('/', `/${lang}`);
+      }
+
+      if (signOutRedirectUrl.startsWith('/en/')) {
+        return signOutRedirectUrl.replace('/en/', `/${lang}/`);
+      }
+
+      return signOutRedirectUrl;
+    };
+
     const isSignedIn = await this.decoratorOptions.isUserSignedIn();
     if (isSignedIn) {
       const links = Array.from(profileMenuBlock.querySelectorAll('a')).map((link) => link.cloneNode(true));
@@ -169,13 +185,14 @@ export default class ProfileMenu extends HTMLElement {
 
       signoutLink.dataset.id = 'sign-out';
       signoutLink.addEventListener('click', async () => {
-        await this.decoratorOptions.onSignOut();
-        const { personalizedHomeLink } = getConfig();
-        if (window.location.pathname === `/${this.decoratorOptions.lang}${personalizedHomeLink}`) {
-          setTimeout(() => {
-            window.location.pathname = this.decoratorOptions.lang === 'en' ? '/' : `/${this.decoratorOptions.lang}`;
-          }, 1000);
-        }
+        const { cdnOrigin } = getConfig();
+        const signOutRedirectUrl = getMetadata('signout-redirect-url');
+        const redirectURL = getSignOutRedirectUrl(signOutRedirectUrl, this.decoratorOptions.lang);
+
+        const signOutRedirectPath = `${cdnOrigin}${redirectURL}`;
+        const signoutOptions = { redirect_uri: signOutRedirectPath };
+
+        this.decoratorOptions.onSignOut(signoutOptions);
       });
       profileMenuBlock.append(signoutLink);
 

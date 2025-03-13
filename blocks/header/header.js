@@ -663,9 +663,10 @@ class ExlHeader extends HTMLElement {
       return isSignedInUser();
     };
 
-    const doSignOut = async () => {
+    const doSignOut = async (signoutOptions) => {
       const { signOut } = await import('../../scripts/auth/profile.js');
-      return signOut();
+
+      return signOut(signoutOptions);
     };
 
     const doSignIn = async () => {
