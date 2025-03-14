@@ -428,9 +428,9 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   decoratorState.searchLinkHtml = searchLink.outerHTML;
 
   // get search placeholder
-  const searchPlaceholder = getCell(searchBlock, 1, 2)?.firstChild;
+  const searchPlaceholder = getCell(searchBlock, 2, 1)?.firstChild;
   // build search options
-  const searchOptions = getCell(searchBlock, 1, 3)?.firstElementChild?.children || [];
+  const searchOptions = getCell(searchBlock, 3, 1)?.firstElementChild?.children || [];
   const options = [...searchOptions].map((option) => option.textContent);
 
   searchBlock.innerHTML = '';
