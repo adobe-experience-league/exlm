@@ -32,13 +32,9 @@ export async function signOut() {
     sessionStorage.removeItem(key),
   );
   const signOutRedirectUrl = getMetadata('signout-redirect-url');
-  const signoutOptions = {};
 
   if (signOutRedirectUrl) {
-    signoutOptions.redirect_uri = signOutRedirectUrl;
-  }
-
-  if (Object.keys(signoutOptions).length > 0) {
+    const signoutOptions = { redirect_uri: signOutRedirectUrl };
     window.adobeIMS?.signOut(signoutOptions);
   } else {
     window.adobeIMS?.signOut();
