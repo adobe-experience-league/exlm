@@ -26,18 +26,19 @@ export async function isSignedInUser() {
 /**
  * @see: https://git.corp.adobe.com/IMS/imslib2.js#documentation
  * @see: https://wiki.corp.adobe.com/display/ims/IMS+API+-+logout#IMSApi-logout-signout_options
- * @param {Object} [signoutOptions]
- * @param {string} [signoutOptions.redirect_uri] - A URL to which the user agent is redirected on successful logout.
  */
-export async function signOut(signoutOptions = {}) {
+export async function signOut() {
   ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile'].forEach((key) =>
     sessionStorage.removeItem(key),
   );
   const signOutRedirectUrl = getMetadata('signout-redirect-url');
+  const signoutOptions = {};
+
   if (signOutRedirectUrl) {
     signoutOptions.redirect_uri = signOutRedirectUrl;
   }
-  if (signoutOptions) {
+
+  if (Object.keys(signoutOptions).length > 0) {
     window.adobeIMS?.signOut(signoutOptions);
   } else {
     window.adobeIMS?.signOut();
