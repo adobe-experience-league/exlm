@@ -3,6 +3,7 @@ import { getConfig, loadIms } from '../scripts.js';
 // eslint-disable-next-line import/no-cycle
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
+import { getMetadata } from '../lib-franklin.js';
 
 // NOTE: to keep this viatl utility small, please do not increase the number of imports or use dynamic imports when needed.
 
@@ -28,10 +29,14 @@ export async function isSignedInUser() {
  * @param {Object} [signoutOptions]
  * @param {string} [signoutOptions.redirect_uri] - A URL to which the user agent is redirected on successful logout.
  */
-export async function signOut(signoutOptions) {
+export async function signOut(signoutOptions = {}) {
   ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile'].forEach((key) =>
     sessionStorage.removeItem(key),
   );
+  const signOutRedirectUrl = getMetadata('signout-redirect-url');
+  if (signOutRedirectUrl) {
+    signoutOptions.redirect_uri = signOutRedirectUrl;
+  }
   if (signoutOptions) {
     window.adobeIMS?.signOut(signoutOptions);
   } else {

@@ -1,6 +1,6 @@
-import { fetchLanguagePlaceholders, htmlToElement, isProfilePage, getConfig } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 import { isMobile, registerHeaderResizeHandler, simplifySingleCellBlock } from './header-utils.js';
-import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 const communityLocalesMap = new Map([
   ['de', 'de'],
@@ -154,22 +154,6 @@ export default class ProfileMenu extends HTMLElement {
       return section;
     };
 
-    const getSignOutRedirectUrl = (targetUrl, lang) => {
-      if (!targetUrl) {
-        return isProfilePage ? `/${lang}` : '';
-      }
-
-      if (targetUrl === '/') {
-        return targetUrl.replace('/', `/${lang}`);
-      }
-
-      if (targetUrl.startsWith('/en/')) {
-        return targetUrl.replace('/en/', `/${lang}/`);
-      }
-
-      return targetUrl;
-    };
-
     const isSignedIn = await this.decoratorOptions.isUserSignedIn();
     if (isSignedIn) {
       const links = Array.from(profileMenuBlock.querySelectorAll('a')).map((link) => link.cloneNode(true));
@@ -185,10 +169,7 @@ export default class ProfileMenu extends HTMLElement {
 
       signoutLink.dataset.id = 'sign-out';
       signoutLink.addEventListener('click', async () => {
-        const { cdnOrigin } = getConfig();
-        const signOutRedirectUrl = getMetadata('signout-redirect-url');
-        const redirectURL = getSignOutRedirectUrl(signOutRedirectUrl, this.decoratorOptions.lang);
-        this.decoratorOptions.onSignOut({ redirect_uri: `${cdnOrigin}${redirectURL}` });
+        this.decoratorOptions.onSignOut();
       });
       profileMenuBlock.append(signoutLink);
 
