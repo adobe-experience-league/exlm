@@ -4140,7 +4140,10 @@
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
-        "label": "Sign out Redirect URL"
+        "label": "Sign out Redirect URL",
+        "validation": {
+          "rootPath": "/content/exlm/global"
+        }
       }
     ]
   },
