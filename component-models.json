@@ -613,6 +613,10 @@
                 "value": "bg-spectrum-gray-900"
               },
               {
+                "name": "White",
+                "value": "bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "bg-spectrum-gray-700"
               },
@@ -4131,6 +4135,15 @@
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl/experience-level",
         "description": "Sets the level(s) in page meta."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "signout-redirect-url",
+        "label": "Sign out Redirect URL",
+        "validation": {
+          "rootPath": "/content/exlm/global"
+        }
       }
     ]
   },
