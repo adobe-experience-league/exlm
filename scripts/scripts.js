@@ -543,7 +543,6 @@ async function buildPreMain(main) {
     main.before(preMain);
     decorateSections(preMain);
     decorateBlocks(preMain);
-    loadBlocks(preMain);
   }
 }
 
@@ -871,8 +870,10 @@ async function loadThemes() {
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
+  const preMain = doc.body.querySelector(':scope > aside');
   loadIms(); // start it early, asyncronously
   await loadThemes();
+  if (preMain) await loadBlocks(preMain);
   await loadBlocks(main);
 
   const { hash } = window.location;
