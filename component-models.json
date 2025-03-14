@@ -613,6 +613,10 @@
                 "value": "bg-spectrum-gray-900"
               },
               {
+                "name": "White",
+                "value": "bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "bg-spectrum-gray-700"
               },

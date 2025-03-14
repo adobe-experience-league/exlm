@@ -977,17 +977,6 @@ picture[align="right"] {
   background-color: var(--highlight-light-background-color);
 }
 
-.section.highlight.icon-block-container {
-  padding: 32px 36px 48px;
-}
-
-.section.highlight.icon-block-container > div > h3 {
-  font-size: var(--spectrum-font-size-700);
-  line-height: 42px;
-  text-align: center;
-  margin: 0 0 36px;
-}
-
 .section.tabs-container {
   padding-top: 0;
   padding-bottom: 0;
@@ -1049,14 +1038,6 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination
 }
 
 @media (min-width: 600px) {
-  .section.highlight.icon-block-container {
-    padding: 80px 86px;
-  }
-
-  .section.highlight.icon-block-container > div > h3 {
-    text-align: left;
-  }
-
   body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination, body[class^="browse-"] .browse-filters-full-container .browse-filters-one-pg-result {
     margin-bottom: 58px;
   }
