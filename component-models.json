@@ -6622,11 +6622,12 @@
     "id": "adobe-logo",
     "fields": [
       {
-        "component": "text",
+        "component": "richtext",
         "valueType": "string",
         "name": "text",
-        "value": "",
-        "label": "Text"
+        "value": "<a href=\"/\">:adobe-red-logo:</a>",
+        "label": "Brand Link",
+        "description": "Should only be the icon as a link to the home page."
       }
     ]
   },
@@ -6671,7 +6672,7 @@
         "component": "text",
         "valueType": "string",
         "name": "placeholder",
-        "value": "",
+        "value": "Search Experience League",
         "label": "Placeholder Text",
         "description": "Text to be shown as a placeholder in the search input field."
       },
