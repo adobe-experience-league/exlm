@@ -9,8 +9,8 @@ import {
   decorateLinks,
   getConfig,
   getLink,
-  fetchFragment,
   getPathDetails,
+  fetchWithFallback,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
 import {
@@ -74,6 +74,14 @@ const getPPSProfilePicture = async () => {
     return err; // or any other default value
   }
 };
+
+/** TODO: remove in favor of metadata os better specific location */
+export async function fetchGlobalFragment(rePath, lang) {
+  const path = `${window.hlx.codeBasePath}/${lang}/global-fragments/${rePath}.plain.html`;
+  const fallback = `${window.hlx.codeBasePath}/en/global-fragments/${rePath}.plain.html`;
+  const response = await fetchWithFallback(path, fallback);
+  return response.text();
+}
 
 async function loadSearchElement() {
   const [solutionTag] = getMetadata('solution').trim().split(',');
@@ -420,9 +428,9 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   decoratorState.searchLinkHtml = searchLink.outerHTML;
 
   // get search placeholder
-  const searchPlaceholder = getCell(searchBlock, 1, 2)?.firstChild;
+  const searchPlaceholder = getCell(searchBlock, 2, 1)?.firstChild;
   // build search options
-  const searchOptions = getCell(searchBlock, 1, 3)?.firstElementChild?.children || [];
+  const searchOptions = getCell(searchBlock, 3, 1)?.firstElementChild?.children || [];
   const options = [...searchOptions].map((option) => option.textContent);
 
   searchBlock.innerHTML = '';
@@ -720,7 +728,7 @@ class ExlHeader extends HTMLElement {
   }
 
   async decorate() {
-    const headerFragment = await fetchFragment('header/header', this.decoratorOptions.lang);
+    const headerFragment = await fetchGlobalFragment('header', this.decoratorOptions.lang);
     if (headerFragment) {
       loadSearchElement();
 
