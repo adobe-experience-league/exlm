@@ -34,8 +34,7 @@
 }
 
 .recently-reviewed .browse-cards-block-content .card-wrapper {
-  flex: 1;
-  min-width: 264px;
+  min-height: 400px;
   max-width: 552px;
 }
 
@@ -46,7 +45,6 @@
 
 .recently-reviewed .browse-cards-block-content > .browse-card-no-results {
   margin-top: 0;
-  flex: 1;
   display: block;
 }
 
@@ -87,21 +85,8 @@
   display: none;
 }
 
-@media (min-width: 600px) {
-  .recently-reviewed.block .browse-cards-block-content .card-wrapper {
-    min-width: 286px;
-  }
-}
-
-@media (min-width: 900px) {
-  .recently-reviewed.block .browse-cards-block-content .card-wrapper {
-    min-width: 256px;
-  }
-}
-
 @media (min-width: 1024px) {
   .recently-reviewed.block .browse-cards-block-content {
-    overflow: hidden;
     margin-top: 24px;
   }
 

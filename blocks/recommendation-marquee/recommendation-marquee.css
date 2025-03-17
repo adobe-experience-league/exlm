@@ -84,6 +84,7 @@
 }
 
 .recommendation-marquee.block .browse-card-shimmer {
+  grid-template-columns: 1fr;
   min-width: 100%;
   max-height: 404px;
   overflow: hidden;
@@ -91,6 +92,7 @@
 }
 
 .recommendation-marquee.block .browse-cards-block-content {
+  display: flex;
   margin-top: 0;
   margin-bottom: 0;
   padding-bottom: 4px;
