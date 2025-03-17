@@ -28,6 +28,11 @@ async function getListofProducts() {
 
     // Filter events within their own show window
     const filteredEvents = events.filter((event) => {
+      if (!event.startTime || !event.endTime || !event.time) {
+        // eslint-disable-next-line no-console
+        console.error(`Event ${event.eventTitle} has invalid format. Missing startTime, endTime or time attribute.`);
+        return false;
+      }
       const eventStartTime = new Date(event.startTime);
       const eventEndTime = new Date(event.endTime);
       return currentDate >= eventStartTime && currentDate <= eventEndTime;
@@ -82,8 +87,24 @@ export default async function decorate(block) {
 
   block.appendChild(headerDiv);
 
-  const isSignedIn = await isSignedInUser();
-  if (UEAuthorMode || (isSignedIn && (await defaultProfileClient.getMergedProfile())?.email?.includes('@adobe.com'))) {
+  let showEventsBanner = false;
+
+  if (UEAuthorMode) {
+    showEventsBanner = true;
+  } else {
+    const isSignedIn = await isSignedInUser();
+    if (isSignedIn) {
+      try {
+        const profile = await defaultProfileClient.getMergedProfile();
+        showEventsBanner = profile?.email?.includes('@adobe.com');
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch profile:', error);
+      }
+    }
+  }
+
+  if (showEventsBanner) {
     const fragmentLink = linkElement?.textContent?.trim();
     const fragment = await loadFragment(fragmentLink);
     if (fragment) {

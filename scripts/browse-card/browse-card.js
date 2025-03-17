@@ -80,6 +80,7 @@ const getBookmarkId = ({ id, viewLink, contentType }) => {
 };
 
 const formatDate = (dateString) => {
+  if (!dateString) return null;
   const date = new Date(dateString);
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const optionsDate = { month: 'short', day: '2-digit' };
@@ -94,22 +95,35 @@ const formatDate = (dateString) => {
   const formattedTime = date.toLocaleTimeString(undefined, optionsTime);
 
   // Get timezone abbreviation
-  const timeZoneAbbr =
-    {
-      'America/Los_Angeles': 'PT',
-      'America/Denver': 'MT',
-      'America/Chicago': 'CT',
-      'America/New_York': 'ET',
-      'Pacific/Honolulu': 'HT',
-      'Australia/Sydney': 'AEST',
-      'Europe/London': 'BST',
-      'Europe/Paris': 'CET',
-      'Asia/Calcutta': 'IST',
-      'Asia/Kolkata': 'IST',
-      'Etc/GMT': 'GMT',
-    }[userTimeZone] || `UTC${(date.getTimezoneOffset() / -60 >= 0 ? '+' : '') + date.getTimezoneOffset() / -60}`;
+  const timeZoneAbbr = {
+    'America/Los_Angeles': 'PT',
+    'America/Denver': 'MT',
+    'America/Chicago': 'CT',
+    'America/New_York': 'ET',
+    'Pacific/Honolulu': 'HT',
+    'Australia/Sydney': 'AEST',
+    'Europe/London': 'BST',
+    'Europe/Paris': 'CET',
+    'Asia/Calcutta': 'IST',
+    'Asia/Kolkata': 'IST',
+    'Etc/GMT': 'GMT',
+  }[userTimeZone];
 
-  return `${formattedDate} | ${formattedTime} ${timeZoneAbbr}`;
+  let finalTimeZone = timeZoneAbbr;
+
+  if (!timeZoneAbbr) {
+    const offsetMinutes = date.getTimezoneOffset();
+    const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);
+    const offsetMins = Math.abs(offsetMinutes) % 60;
+    const sign = offsetMinutes <= 0 ? '+' : '-';
+
+    const paddedHours = offsetHours.toString();
+    const paddedMinutes = offsetMins.toString().padStart(2, '0');
+
+    finalTimeZone = `UTC${sign}${paddedHours}:${paddedMinutes}`;
+  }
+
+  return `${formattedDate} | ${formattedTime} ${finalTimeZone}`;
 };
 
 const buildTagsContent = (cardMeta, tags = []) => {
