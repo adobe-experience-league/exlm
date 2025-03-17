@@ -38,7 +38,7 @@ function decorateBanner({ block, bannerId, headingElem, descriptionElem, ctaElem
   block.innerHTML = `
     <div>
     <div class='notification-banner-content'>
-      <div id="notification-banner-text">
+      <div class="notification-banner-text">
         ${headingElem?.textContent.trim() ? `<h3>${headingElem.innerHTML}</h3>` : ''}
         ${descriptionElem?.textContent.trim() ? `<p>${descriptionElem.innerHTML}</p>` : ''}
       </div>

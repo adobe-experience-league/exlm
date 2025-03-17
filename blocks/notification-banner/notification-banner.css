@@ -42,24 +42,24 @@
   background-color: var(--spectrum-red-1100);
 }
 
-.notification-banner-content #notification-banner-text :where(h1, h2, h3, h4, h5, h6) {
+.notification-banner-content :where(h1, h2, h3, h4, h5, h6) {
   color: inherit;
   font-size: var(--spectrum-heading-size-s);
   font-weight: var(--font-weight-bold);
   font-style: normal;
   line-height: var(--spectrum-line-height-s);
-  margin: 0 0 4px;
-  padding: 0;
+  margin: 0 0 4px !important;
+  padding: 0 !important;
 }
 
-.notification-banner-content #notification-banner-text p {
+.notification-banner-content p {
   color: inherit;
   font-size: var(--spectrum-body-size-s);
   font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: var(--spectrum-line-height-s);
-  margin: 0;
-  padding: 0;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .notification-banner-cta {
