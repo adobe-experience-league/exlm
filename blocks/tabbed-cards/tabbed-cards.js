@@ -110,20 +110,21 @@ export default async function decorate(block) {
           }
           // Append content div to shimmer card parent and decorate icons
           block.appendChild(contentDiv);
-          contentDiv.style.display = 'grid';
+          contentDiv.classList.remove('hide-tab');
+          contentDiv.classList.add('show-tab');
           /* Hide Tooltip while scrolling the cards layout */
           hideTooltipOnScroll(contentDiv);
         } else {
           buildCardsShimmer.removeShimmer();
           buildNoResultsContent(block, true);
-          contentDiv.style.display = 'none';
+          contentDiv.classList.add('hide-tab');
         }
       })
       .catch((err) => {
         // Hide shimmer placeholders on error
         buildCardsShimmer.removeShimmer();
         buildNoResultsContent(block, true);
-        contentDiv.style.display = 'none';
+        contentDiv.classList.add('hide-tab');
         /* eslint-disable-next-line no-console */
         console.error(err);
       });
@@ -159,7 +160,7 @@ export default async function decorate(block) {
         tabLabel.classList.add('active');
         if (tabbedContent) {
           tabbedContent.innerHTML = '';
-          tabbedContent.style.display = 'none';
+          contentDiv.classList.add('hide-tab');
         }
 
         // Clear No Results Content if avaliabel
