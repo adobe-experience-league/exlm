@@ -25,7 +25,7 @@
 
 @container browse-cards-block (min-width: 1024px) {
   .browse-card-shimmer {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 }
 

@@ -966,7 +966,6 @@ export default async function decorate(block) {
             }
             const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
             if (cardsCount !== 0) {
-              contentDiv.querySelectorAll(':scope > *:not(:has(.browse-card)').forEach((card) => card?.remove()); // Remove empty cards
               createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock);
               if (!isTooltipListenerAdded) {
                 hideTooltipOnScroll(contentDiv);
