@@ -28,6 +28,11 @@ async function getListofProducts() {
 
     // Filter events within their own show window
     const filteredEvents = events.filter((event) => {
+      if (!event.startTime || !event.endTime || !event.time) {
+        // eslint-disable-next-line no-console
+        console.error(`Event ${event.eventTitle} has invalid format. Missing startTime, endTime or time attribute.`);
+        return false;
+      }
       const eventStartTime = new Date(event.startTime);
       const eventEndTime = new Date(event.endTime);
       return currentDate >= eventStartTime && currentDate <= eventEndTime;
