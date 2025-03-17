@@ -34,7 +34,11 @@ export async function signOut() {
   const signOutRedirectUrl = getMetadata('signout-redirect-url');
 
   if (signOutRedirectUrl) {
-    const signoutOptions = { redirect_uri: `${cdnOrigin}${signOutRedirectUrl}` };
+    const redirectUrl =
+      signOutRedirectUrl.startsWith('/') || signOutRedirectUrl === '/'
+        ? `${cdnOrigin}${signOutRedirectUrl}`
+        : signOutRedirectUrl;
+    const signoutOptions = { redirect_uri: redirectUrl };
     window.adobeIMS?.signOut(signoutOptions);
   } else {
     window.adobeIMS?.signOut();
