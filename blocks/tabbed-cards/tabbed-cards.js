@@ -110,7 +110,7 @@ export default async function decorate(block) {
           }
           // Append content div to shimmer card parent and decorate icons
           block.appendChild(contentDiv);
-          contentDiv.style.display = 'flex';
+          contentDiv.style.display = 'grid';
           /* Hide Tooltip while scrolling the cards layout */
           hideTooltipOnScroll(contentDiv);
         } else {
