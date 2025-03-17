@@ -167,7 +167,6 @@ export default async function decorateBlock(block) {
         await renderCards(block);
       }
     });
-
     await renderCards(block);
   }
 }

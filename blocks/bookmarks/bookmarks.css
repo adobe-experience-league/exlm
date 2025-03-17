@@ -1,9 +1,10 @@
 .bookmarks .bookmarks-content {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(318px, 1fr));
+  place-items: center;
+  align-items: stretch;
   gap: 16px;
+  padding-bottom: 32px;
 }
 
 .bookmarks-header {
@@ -37,7 +38,6 @@ body.profile:has(.bookmarks-empty) .section:not(.profile-rail-section) > div.boo
 @media (min-width: 600px) {
   .bookmarks .bookmarks-content {
     gap: 32px;
-    justify-content: space-around;
   }
 
   .bookmarks-header {
@@ -47,12 +47,6 @@ body.profile:has(.bookmarks-empty) .section:not(.profile-rail-section) > div.boo
     padding-bottom: 26px;
     margin-bottom: 32px;
     border-bottom: 1px solid var(--spectrum-gray-300);
-  }
-
-  .bookmarks-content .bookmarks-card,
-  .bookmarks .browse-card-shimmer-wrapper,
-  .bookmarks-content .bookmarks-card .browse-card {
-    width: 308px;
   }
 
   .bookmarks .browse-card-shimmer {
@@ -66,6 +60,12 @@ body.profile:has(.bookmarks-empty) .section:not(.profile-rail-section) > div.boo
 }
 
 @media (min-width: 900px) {
+  .bookmarks .bookmarks-content {
+    grid-template-columns: repeat(auto-fit, minmax(256px, 1fr));
+    place-items: center;
+    align-items: stretch;
+  }
+
   .bookmarks-content .bookmarks-card,
   .bookmarks .browse-card-shimmer-wrapper,
   .bookmarks-content .bookmarks-card .browse-card {
