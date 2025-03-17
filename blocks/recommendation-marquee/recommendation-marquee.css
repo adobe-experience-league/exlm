@@ -108,6 +108,7 @@
 }
 
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card {
+  min-height: auto;
   border-radius: 16px;
   box-shadow: var(--box-shadow-2);
 }

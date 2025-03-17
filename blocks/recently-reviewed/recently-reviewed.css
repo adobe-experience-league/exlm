@@ -34,7 +34,6 @@
 }
 
 .recently-reviewed .browse-cards-block-content .card-wrapper {
-  min-height: 400px;
   max-width: 552px;
 }
 
@@ -83,6 +82,14 @@
 
 .recently-reviewed-see-more-btn {
   display: none;
+}
+
+.recently-reviewed.block .hide-see-more-row {
+  display: none;
+}
+
+.recently-reviewed.block .show-see-more-row {
+  display: grid;
 }
 
 @media (min-width: 1024px) {

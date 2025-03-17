@@ -117,7 +117,6 @@ body.profile
 }
 
 .recommended-content.block .browse-cards-block-content .card-wrapper {
-  min-height: 400px;
   max-width: 552px;
 }
 
@@ -221,6 +220,14 @@ body.profile
 
 .recommended-content-see-more-btn {
   display: none;
+}
+
+.recommended-content.block .hide-see-more-row {
+  display: none;
+}
+
+.recommended-content.block .show-see-more-row {
+  display: grid;
 }
 
 @media (min-width: 420px) {

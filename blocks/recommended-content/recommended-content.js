@@ -125,7 +125,8 @@ function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
             div.classList.add('fade-out');
             div.classList.remove('fade-in');
             const handleTransitionEnd = () => {
-              div.style.display = 'none';
+              div.classList.add('hide-see-more-row');
+              div.classList.remove('show-see-more-row');
               div.removeEventListener('animationend', handleTransitionEnd);
             };
             div.addEventListener('animationend', handleTransitionEnd);
@@ -140,12 +141,12 @@ function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
 
       function showNewRow() {
         contentDivs.forEach((div, index) => {
-          div.style.display = 'grid';
+          div.classList.add('show-see-more-row');
+          div.classList.remove('hide-see-more-row');
 
           if (index > newRow - 1) {
-            div.style.display = 'none';
-            div.classList.remove('fade-in');
-            div.classList.add('fade-out');
+            div.classList.remove('fade-in', 'show-see-more-row');
+            div.classList.add('fade-out', 'hide-see-more-row');
           } else {
             div.classList.add('fade-in');
             div.classList.remove('fade-out');
