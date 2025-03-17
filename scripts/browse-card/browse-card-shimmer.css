@@ -7,15 +7,26 @@
 .browse-card-shimmer {
   position: relative;
   height: 100%;
-  display: flex;
-  flex-wrap: nowrap;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 16px;
   transition: all 0.5s ease-in-out;
-  overflow: auto hidden;
   min-height: 400px;
   margin: 0;
   z-index: 1;
   margin-top: 16px;
+}
+
+@container browse-cards-block (min-width: 600px) {
+  .browse-card-shimmer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@container browse-cards-block (min-width: 1024px) {
+  .browse-card-shimmer {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .browse-card-shimmer-text-wrapper {
@@ -52,9 +63,6 @@
 }
 
 .featured-cards .browse-card-shimmer {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 32px;
   margin-top: 24px;
 }
 
@@ -63,7 +71,6 @@
   height: 100%;
   border-radius: 4px;
   overflow: hidden;
-  flex: 0 0 264px;
   border: 1px solid var(--spectrum-gray-200);
 }
 
@@ -75,21 +82,12 @@
 @media only screen and (min-width: 600px) {
   .browse-card-shimmer {
     gap: 25px;
-    overflow: auto hidden;
     margin-top: 16px;
   }
 
-  .featured-cards .browse-card-shimmer,
   .browse-filters-wrapper .browse-card-shimmer {
     grid-template-columns: 1fr 1fr;
-  }
-
-  .browse-filters-wrapper .browse-card-shimmer {
     margin-top: 0;
-  }
-
-  .browse-card-shimmer-wrapper {
-    flex: 0 0 286px;
   }
 }
 
@@ -97,19 +95,6 @@
   .browse-card-shimmer {
     gap: 32px;
     margin-top: 24px;
-  }
-
-  .browse-card-shimmer-wrapper {
-    flex: 0 0 256px;
-  }
-
-  .featured-cards .browse-card-shimmer {
-    display: flex;
-    gap: 32px;
-  }
-
-  .featured-cards .browse-card-shimmer-wrapper {
-    flex: 0 0 295px;
   }
 
   .browse-filters-wrapper .browse-card-shimmer {
