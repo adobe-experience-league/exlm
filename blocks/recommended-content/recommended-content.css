@@ -222,7 +222,7 @@ body.profile
   display: none;
 }
 
-.recommended-content.block .hide-see-more-row {
+.recommended-content.block .browse-cards-block-content.hide-see-more-row {
   display: none;
 }
 
