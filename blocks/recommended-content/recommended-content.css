@@ -226,10 +226,6 @@ body.profile
   display: none;
 }
 
-.recommended-content.block .show-see-more-row {
-  display: grid;
-}
-
 @media (min-width: 420px) {
   .recommended-content.block .custom-filter-dropdown {
     min-width: 360px;

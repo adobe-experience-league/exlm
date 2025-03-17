@@ -88,10 +88,6 @@
   display: none;
 }
 
-.recently-reviewed.block .show-see-more-row {
-  display: grid;
-}
-
 @media (min-width: 1024px) {
   .recently-reviewed.block .browse-cards-block-content {
     margin-top: 24px;

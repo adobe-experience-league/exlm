@@ -47,10 +47,6 @@
   line-height: 23.4px;
 }
 
-.tabbed-cards .show-tab {
-  display: grid;
-}
-
 .tabbed-cards .hide-tab {
   display: none;
 }

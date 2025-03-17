@@ -111,7 +111,6 @@ export default async function decorate(block) {
           // Append content div to shimmer card parent and decorate icons
           block.appendChild(contentDiv);
           contentDiv.classList.remove('hide-tab');
-          contentDiv.classList.add('show-tab');
           /* Hide Tooltip while scrolling the cards layout */
           hideTooltipOnScroll(contentDiv);
         } else {
