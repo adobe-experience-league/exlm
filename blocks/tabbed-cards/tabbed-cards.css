@@ -47,6 +47,10 @@
   line-height: 23.4px;
 }
 
+.tabbed-cards .browse-cards-block-content.hide-tab {
+  display: none;
+}
+
 @media (max-width: 1024px) {
   .tabbed-cards-label {
     border-bottom: 0 none;
