@@ -341,7 +341,8 @@
                   "cta2_customBgHexCode": "000000",
                   "customHexCode": "FFFFFF",
                   "classes": "light",
-                  "dismissalTime": "sessionStorage"
+                  "dismissalTime": "sessionStorage",
+                  "isAdobeOnlyBanner": false
                 }
               }
             }

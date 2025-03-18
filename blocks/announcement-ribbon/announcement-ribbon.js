@@ -1,5 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 
 // Function to remove previously added keys from the browser storage
 function removeStorageKeys() {
@@ -22,9 +23,33 @@ function isRibbonHidden(storage = 'sessionStorage') {
 }
 
 export default async function decorate(block) {
-  const [image, heading, description, bgColor, hexcode, firstCta, secondCta, storage] = [...block.children].map(
-    (row) => row.firstElementChild,
-  );
+  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+  const [image, heading, description, bgColor, hexcode, firstCta, secondCta, storage, isAdobeOnlyBanner] = [
+    ...block.children,
+  ].map((row) => row.firstElementChild);
+
+  if (isAdobeOnlyBanner?.textContent?.trim() === 'true') {
+    let displayBlock = false;
+
+    if (UEAuthorMode) {
+      displayBlock = true;
+    } else {
+      const isSignedIn = await isSignedInUser();
+      if (isSignedIn) {
+        try {
+          const profile = await defaultProfileClient.getMergedProfile();
+          displayBlock = profile?.email?.includes('@adobe.com');
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to fetch profile:', error);
+        }
+      }
+    }
+
+    if (!displayBlock) {
+      block.parentElement.remove();
+    }
+  }
   // The `storage` value will be either 'localStorage' or 'sessionStorage',
   // as defined in the `components-models.json` file.
   if (isRibbonHidden(storage?.textContent)) {

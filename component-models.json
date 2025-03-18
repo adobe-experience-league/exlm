@@ -6393,6 +6393,13 @@
             "value": "localStorage"
           }
         ]
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "isAdobeOnlyBanner",
+        "label": "Banner for Adobe employee only?",
+        "description": "Enabling this option will show the banner only to internal Adobe employees."
       }
     ]
   },
@@ -6522,15 +6529,6 @@
         "value": "",
         "label": "Filter Label",
         "description": "Sets the text for Products filter label in dropdown."
-      },
-      {
-        "component": "aem-content",
-        "valueType": "string",
-        "name": "eventFragmentURL",
-        "label": "Event Banner Fragment URL",
-        "validation": {
-          "rootPath": "/content/exlm/global/en/events"
-        }
       }
     ]
   },
