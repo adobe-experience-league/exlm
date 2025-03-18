@@ -129,6 +129,7 @@ export default async function decorate(block) {
   const noOfResults = 16;
 
   block.innerHTML = '';
+  block.classList.add('browse-cards-block');
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-cards-block-title">

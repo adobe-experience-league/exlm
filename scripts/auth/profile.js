@@ -3,10 +3,11 @@ import { getConfig, loadIms } from '../scripts.js';
 // eslint-disable-next-line import/no-cycle
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
+import { getMetadata } from '../lib-franklin.js';
 
 // NOTE: to keep this viatl utility small, please do not increase the number of imports or use dynamic imports when needed.
 
-const { profileUrl, JWTTokenUrl, ppsOrigin, ims, khorosProfileDetailsUrl } = getConfig();
+const { profileUrl, JWTTokenUrl, ppsOrigin, ims, khorosProfileDetailsUrl, cdnOrigin } = getConfig();
 
 const override = /^(recommended|votes)$/;
 
@@ -25,14 +26,19 @@ export async function isSignedInUser() {
 /**
  * @see: https://git.corp.adobe.com/IMS/imslib2.js#documentation
  * @see: https://wiki.corp.adobe.com/display/ims/IMS+API+-+logout#IMSApi-logout-signout_options
- * @param {Object} [signoutOptions]
- * @param {string} [signoutOptions.redirect_uri] - A URL to which the user agent is redirected on successful logout.
  */
-export async function signOut(signoutOptions) {
+export async function signOut() {
   ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile'].forEach((key) =>
     sessionStorage.removeItem(key),
   );
-  if (signoutOptions) {
+  const signOutRedirectUrl = getMetadata('signout-redirect-url');
+
+  if (signOutRedirectUrl) {
+    const redirectUrl =
+      signOutRedirectUrl.startsWith('/') || signOutRedirectUrl === '/'
+        ? `${cdnOrigin}${signOutRedirectUrl}`
+        : signOutRedirectUrl;
+    const signoutOptions = { redirect_uri: redirectUrl };
     window.adobeIMS?.signOut(signoutOptions);
   } else {
     window.adobeIMS?.signOut();

@@ -8,6 +8,9 @@
 .browse-cards-block {
   min-height: 532px;
   position: relative;
+  display: block;
+  container-type: inline-size;
+  container-name: browse-cards-block;
 }
 
 .browse-cards-block-title {
@@ -87,19 +90,26 @@
 }
 
 .browse-cards-block-content {
+  display: grid;
+  grid-template-columns: 1fr;
   margin-top: 16px;
-  display: flex;
-  flex-wrap: nowrap;
   gap: 16px;
   margin-bottom: 40px;
   transition: all 0.5s ease-in-out;
-  overflow: auto hidden;
   padding-bottom: 2px;
   min-height: 400px;
 }
 
-.browse-cards-block-content > div {
-  flex: 0 0 264px;
+@container browse-cards-block (min-width: 600px) {
+  .browse-cards-block-content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@container browse-cards-block (min-width: 1024px) {
+  .browse-cards-block-content {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
 }
 
 .browse-cards-block-content > div:first-child .browse-card .user-actions .action-tooltip {
@@ -118,7 +128,6 @@
 
   .browse-cards-block-content {
     gap: 25px;
-    overflow: auto hidden;
     margin-bottom: 56px;
     margin-top: 16px;
   }

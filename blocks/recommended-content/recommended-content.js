@@ -27,10 +27,7 @@ try {
 
 const REMOVE_DUPLICATES_BY_EXCLUSION = false;
 const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
-let DEFAULT_NUM_CARDS = 4;
-let resizeObserved;
-let cardsWidth;
-let cardsGap;
+const DEFAULT_NUM_CARDS = 4;
 const seeMoreConfig = {
   minWidth: 1024,
   noOfRows: 2,
@@ -57,39 +54,6 @@ function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
         `<div class="loading-shimmer" style="--placeholder-width: ${width}%; --placeholder-height: ${height}px"></div>`,
     )
     .join('');
-}
-
-function calculateNumberOfCardsToRender(container) {
-  if (window.innerWidth < seeMoreConfig.minWidth) {
-    DEFAULT_NUM_CARDS = 4;
-  } else {
-    const cardsContainer = container.querySelector('.card-wrapper');
-    let containerWidth = container.offsetWidth;
-
-    if (!containerWidth) {
-      const section = container.closest('.section');
-      if (section) {
-        const originalDisplay = section.style.display;
-        section.style.display = 'block';
-        section.style.visibility = 'hidden';
-        containerWidth = container.offsetWidth;
-        section.style.display = originalDisplay;
-        section.style.visibility = 'visible';
-      }
-    }
-    const DEFAULT_CARD_WIDTH = 256;
-    const DEFAULT_CARD_GAP = 24;
-    if (!cardsWidth) cardsWidth = cardsContainer?.offsetWidth || DEFAULT_CARD_WIDTH;
-    if (!cardsGap) {
-      cardsGap = cardsContainer
-        ? parseInt(getComputedStyle(cardsContainer).gap, 10) || DEFAULT_CARD_GAP
-        : DEFAULT_CARD_GAP;
-    }
-    const visibleItems = Math.floor((containerWidth + cardsGap) / (cardsWidth + cardsGap));
-    if (visibleItems) {
-      DEFAULT_NUM_CARDS = visibleItems;
-    }
-  }
 }
 
 function ensureDataSaveConfigExists(dataConfiguration, lowercaseOptionType, ctType) {
@@ -161,7 +125,7 @@ function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
             div.classList.add('fade-out');
             div.classList.remove('fade-in');
             const handleTransitionEnd = () => {
-              div.style.display = 'none';
+              div.classList.add('hide-see-more-row');
               div.removeEventListener('animationend', handleTransitionEnd);
             };
             div.addEventListener('animationend', handleTransitionEnd);
@@ -176,12 +140,11 @@ function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
 
       function showNewRow() {
         contentDivs.forEach((div, index) => {
-          div.style.display = 'flex';
+          div.classList.remove('hide-see-more-row');
 
           if (index > newRow - 1) {
-            div.style.display = 'none';
             div.classList.remove('fade-in');
-            div.classList.add('fade-out');
+            div.classList.add('fade-out', 'hide-see-more-row');
           } else {
             div.classList.add('fade-in');
             div.classList.remove('fade-out');
@@ -216,32 +179,6 @@ function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
       }
     });
   }
-}
-
-/**
- * Debounces a function call to limit its execution rate.
- * @param {number} ms - The debounce delay in milliseconds.
- * @param {Function} fn - The function to debounce.
- * @returns {Function} - The debounced function.
- */
-// eslint-disable-next-line class-methods-use-this
-function debounce(func, delay) {
-  let timeoutId;
-
-  return function debounced(...args) {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-      func.apply(this, args);
-    }, delay);
-  };
-}
-
-function resizeObserverHandler(callback, block) {
-  const debouncedCallback = debounce(callback, 500);
-  const wrapperResizeObserver = new ResizeObserver(debouncedCallback);
-  wrapperResizeObserver.observe(block);
 }
 
 /**
@@ -363,7 +300,7 @@ export default async function decorate(block) {
 `;
   // Clearing the block's content and adding CSS class
   block.innerHTML = '';
-
+  block.classList.add('browse-cards-block');
   filterSectionElement.classList.add('recommended-content-filter-heading');
   const headingElementNode = htmlToElement(headingElement.innerHTML);
   const blockHeader = createTag('div', { class: 'recommended-content-block-header' });
@@ -391,7 +328,6 @@ export default async function decorate(block) {
     `);
   const tempContentSection = tempWrapper.querySelector('.recommended-content-block-section');
   block.appendChild(tempWrapper);
-  calculateNumberOfCardsToRender(block);
   countNumberAsArray(DEFAULT_NUM_CARDS).forEach(() => {
     const { shimmer: shimmerInstance, wrapper } = renderCardPlaceholders(tempWrapper);
     shimmerInstance.addShimmer(wrapper);
@@ -406,29 +342,6 @@ export default async function decorate(block) {
     savedCardsResponse: {},
   };
   let isTooltipListenerAdded = false;
-  resizeObserved = false;
-
-  function calculateNumberOfCardsOnResize(fetchDataAndRenderBlock) {
-    if (!resizeObserved) {
-      let previousWidth = block.offsetWidth;
-      resizeObserverHandler((entries) => {
-        if (resizeObserved) {
-          entries.forEach((entry) => {
-            const { width } = entry.contentRect;
-            if (Math.abs(entry.contentRect.width - previousWidth) > 1) {
-              const optionType = block.querySelector('.browse-cards-block-content').dataset.selected;
-              // Calculate no. of cards that fits
-              calculateNumberOfCardsToRender(block);
-              // Render the new set of cards
-              fetchDataAndRenderBlock(optionType, { renderCards: true, createRow: true, clearAllRows: true });
-              previousWidth = width;
-            }
-          });
-        }
-        resizeObserved = true;
-      }, block);
-    }
-  }
 
   const getCardsData = (payload) =>
     new Promise((resolve) => {
@@ -616,8 +529,6 @@ export default async function decorate(block) {
         setCoveoAnalyticsAttribute(block);
         block.style.display = 'block';
       }
-
-      calculateNumberOfCardsToRender(block);
 
       const sortByContent = sortEl?.innerText?.trim();
 
@@ -1054,7 +965,6 @@ export default async function decorate(block) {
             }
             const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
             if (cardsCount !== 0) {
-              calculateNumberOfCardsOnResize(fetchDataAndRenderBlock);
               createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock);
               if (!isTooltipListenerAdded) {
                 hideTooltipOnScroll(contentDiv);
