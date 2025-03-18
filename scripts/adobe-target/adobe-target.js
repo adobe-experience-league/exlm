@@ -97,7 +97,7 @@ class AdobeTargetClient {
         if (!window?.exlm?.targetData) window.exlm.targetData = [];
         if (!window?.exlm?.recommendationMarqueeTargetData) window.exlm.recommendationMarqueeTargetData = [];
         if (!window?.exlm?.targetData.filter((data) => data?.meta?.scope === event?.detail?.meta?.scope).length) {
-          window.exlm.targetData.push(event.detail);
+          window.exlm.targetData.push(structuredClone(event.detail));
         }
         resolve(true);
       };
