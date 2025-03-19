@@ -10,7 +10,7 @@ import {
   getConfig,
   getLink,
   getPathDetails,
-  fetchWithFallback,
+  fetchGlobalFragment,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
 import {
@@ -74,14 +74,6 @@ const getPPSProfilePicture = async () => {
     return err; // or any other default value
   }
 };
-
-/** TODO: remove in favor of metadata os better specific location */
-export async function fetchGlobalFragment(rePath, lang) {
-  const path = `${window.hlx.codeBasePath}/${lang}/global-fragments/${rePath}.plain.html`;
-  const fallback = `${window.hlx.codeBasePath}/en/global-fragments/${rePath}.plain.html`;
-  const response = await fetchWithFallback(path, fallback);
-  return response.text();
-}
 
 async function loadSearchElement() {
   const [solutionTag] = getMetadata('solution').trim().split(',');
@@ -728,7 +720,9 @@ class ExlHeader extends HTMLElement {
   }
 
   async decorate() {
-    const headerFragment = await fetchGlobalFragment('header', this.decoratorOptions.lang);
+    const headerMeta = 'header-fragment';
+    const fallback = '/en/global-fragments/header';
+    const headerFragment = await fetchGlobalFragment(headerMeta, fallback, this.decoratorOptions.lang);
     if (headerFragment) {
       loadSearchElement();
 
