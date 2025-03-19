@@ -1461,7 +1461,7 @@
             "children": [
               {
                 "name": "Left",
-                "value": "header-left"
+                "value": ""
               },
               {
                 "name": "Center",
