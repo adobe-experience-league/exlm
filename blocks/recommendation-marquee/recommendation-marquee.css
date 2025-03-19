@@ -352,7 +352,10 @@
     width: fit-content;
   }
 
-  .recommendation-marquee.block .browse-cards-block-content.recommendation-marquee-wrap .card-wrapper:first-child {
+  .recommendation-marquee.block .browse-cards-block-content.recommendation-marquee-wrap .card-wrapper:first-child,
+  .recommendation-marquee.block
+    .browse-cards-block-content.recommendation-marquee-shimmer-wrapper
+    .card-wrapper:first-child {
     flex: 0 0 100%;
     min-height: 299.5px;
     max-width: 740px;
