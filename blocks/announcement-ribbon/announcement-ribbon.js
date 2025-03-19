@@ -23,12 +23,12 @@ function isRibbonHidden(storage = 'sessionStorage') {
 }
 
 export default async function decorate(block) {
-  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
   const [image, heading, description, bgColor, hexcode, firstCta, secondCta, storage] = [...block.children].map(
     (row) => row.firstElementChild,
   );
 
   if (block.classList.contains('internal-banner')) {
+    const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
     let displayBlock = false;
 
     if (UEAuthorMode) {
