@@ -475,8 +475,7 @@ button.browse-tags:focus {
   background-color: var(--spectrum-gray-200);
   color: var(--non-spectrum-grey);
   font-size: var(--spectrum-font-size-200);
-  min-height: 346px;
-  padding-top: 72px;
+  padding: 72px 0;
   text-align: center;
   width: 100%;
   box-sizing: border-box;
