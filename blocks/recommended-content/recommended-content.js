@@ -563,7 +563,12 @@ export default async function decorate(block) {
       async function parseCardResponseData(cardResponse, apiConfigObject) {
         let data = [];
         if (targetSupport) {
-          data = cardResponse?.data ?? [];
+          data = Array.from(cardResponse?.data) ?? [];
+
+          if (cardResponse?.meta?.sort === 'shuffled') {
+            data = data?.sort(() => Math.random() - 0.5);
+          }
+
           const { shimmers, params, optionType } = apiConfigObject;
           shimmers.forEach((shimmer) => {
             shimmer.removeShimmer();
@@ -576,7 +581,7 @@ export default async function decorate(block) {
                 data = data.filter((pageData) =>
                   params.context.interests.some((ele) => pageData.product.toLowerCase().includes(ele.toLowerCase())),
                 );
-                cardResponse.allMyProducts = Array.from(data).sort(() => Math.random() - 0.5);
+                cardResponse.allMyProducts = Array.from(data);
               }
             } else {
               data = data.filter((pageData) => pageData.product.toLowerCase().includes(optionType.toLowerCase()));
@@ -586,7 +591,7 @@ export default async function decorate(block) {
             if (cardResponse?.allAdobeProducts) {
               data = cardResponse.allAdobeProducts;
             } else {
-              cardResponse.allAdobeProducts = Array.from(data).sort(() => Math.random() - 0.5);
+              cardResponse.allAdobeProducts = Array.from(data);
               data = cardResponse.allAdobeProducts;
             }
           }
