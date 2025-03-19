@@ -63,15 +63,7 @@
       "announcement-ribbon",
       "qualtrics",
       "upcoming-event",
-      "notification-banner",
-      "adobe-logo",
-      "brand",
-      "nav",
-      "search",
-      "language-selector",
-      "sign-in",
-      "profile-menu",
-      "product-grid"
+      "notification-banner"
     ]
   },
   {
@@ -209,6 +201,19 @@
   {
     "id": "section-author-bio",
     "components": ["author-bio"]
+  },
+  {
+    "id": "section-header",
+    "components": [
+      "adobe-logo",
+      "brand",
+      "nav",
+      "search",
+      "language-selector",
+      "sign-in",
+      "profile-menu",
+      "product-grid"
+    ]
   },
   {
     "id": "profile-section",
