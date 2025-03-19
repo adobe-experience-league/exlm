@@ -24,11 +24,11 @@ function isRibbonHidden(storage = 'sessionStorage') {
 
 export default async function decorate(block) {
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
-  const [image, heading, description, bgColor, hexcode, firstCta, secondCta, storage, isAdobeOnlyBanner] = [
-    ...block.children,
-  ].map((row) => row.firstElementChild);
+  const [image, heading, description, bgColor, hexcode, firstCta, secondCta, storage] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
 
-  if (isAdobeOnlyBanner?.textContent?.trim() === 'true') {
+  if (block.classList.contains('internal-banner')) {
     let displayBlock = false;
 
     if (UEAuthorMode) {

@@ -5966,20 +5966,34 @@
         "label": "Description"
       },
       {
-        "component": "select",
+        "component": "multiselect",
         "name": "classes",
-        "value": "",
-        "label": "Theme",
-        "description": "Select light or dark theme",
+        "label": "Block options",
         "valueType": "string",
+        "required": true,
+        "maxSize": 2,
         "options": [
           {
-            "name": "Light",
-            "value": "light"
+            "name": "Theme",
+            "children": [
+              {
+                "name": "Light",
+                "value": "light"
+              },
+              {
+                "name": "Dark",
+                "value": "dark"
+              }
+            ]
           },
           {
-            "name": "Dark",
-            "value": "dark"
+            "name": "Toggle Options",
+            "children": [
+              {
+                "name": "Banner for Adobe employee only?",
+                "value": "internal-banner"
+              }
+            ]
           }
         ]
       },
@@ -6393,13 +6407,6 @@
             "value": "localStorage"
           }
         ]
-      },
-      {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "isAdobeOnlyBanner",
-        "label": "Banner for Adobe employee only?",
-        "description": "Enabling this option will show the banner only to internal Adobe employees."
       }
     ]
   },
