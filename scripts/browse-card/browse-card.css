@@ -32,6 +32,7 @@
   height: 100%;
   border-radius: 16px;
   word-break: break-word;
+  min-height: 400px;
 }
 
 .browse-card:hover {

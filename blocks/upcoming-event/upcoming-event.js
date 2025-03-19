@@ -1,11 +1,10 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { fetchLanguagePlaceholders, htmlToElement, getConfig, loadFragment } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 
 /**
  * Retrieves a list of unique product focus items from live events data.
@@ -28,6 +27,11 @@ async function getListofProducts() {
 
     // Filter events within their own show window
     const filteredEvents = events.filter((event) => {
+      if (!event.startTime || !event.endTime || !event.time) {
+        // eslint-disable-next-line no-console
+        console.error(`Event ${event.eventTitle} has invalid format. Missing startTime, endTime or time attribute.`);
+        return false;
+      }
       const eventStartTime = new Date(event.startTime);
       const eventEndTime = new Date(event.endTime);
       return currentDate >= eventStartTime && currentDate <= eventEndTime;
@@ -45,8 +49,6 @@ async function getListofProducts() {
 }
 
 export default async function decorate(block) {
-  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
-
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
@@ -55,7 +57,7 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
-  const [headingElement, descriptionElement, filterLabelElement, linkElement] = [...block.children].map(
+  const [headingElement, descriptionElement, filterLabelElement] = [...block.children].map(
     (row) => row.firstElementChild,
   );
 
@@ -81,33 +83,6 @@ export default async function decorate(block) {
   headerDiv.appendChild(tagsContainer);
 
   block.appendChild(headerDiv);
-
-  let showEventsBanner = false;
-
-  if (UEAuthorMode) {
-    showEventsBanner = true;
-  } else {
-    const isSignedIn = await isSignedInUser();
-    if (isSignedIn) {
-      try {
-        const profile = await defaultProfileClient.getMergedProfile();
-        showEventsBanner = profile?.email?.includes('@adobe.com');
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to fetch profile:', error);
-      }
-    }
-  }
-
-  if (showEventsBanner) {
-    const fragmentLink = linkElement?.textContent?.trim();
-    const fragment = await loadFragment(fragmentLink);
-    if (fragment) {
-      block.appendChild(fragment);
-      block.querySelector('.fragment-container')?.classList.remove('section');
-    }
-  }
-
   const products = await getListofProducts();
   const productsList = [];
   products.forEach((product) => {

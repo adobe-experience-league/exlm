@@ -37,15 +37,14 @@ function decorateBanner({ block, bannerId, headingElem, descriptionElem, ctaElem
 
   block.innerHTML = `
     <div>
-      <div class='notification-banner-content'>
+    <div class='notification-banner-content'>
+      <div class='notification-banner-text'>
         ${headingElem?.textContent.trim() ? `<h3>${headingElem.innerHTML}</h3>` : ''}
         ${descriptionElem?.textContent.trim() ? `<p>${descriptionElem.innerHTML}</p>` : ''}
-        </div>
-        <div class="notification-banner-actions">
-          ${ctaElem?.textContent.trim() ? `<div class='notification-banner-cta'>${ctaElem?.innerHTML}</div>` : ''}
-          ${dismissable ? dismissButton : ''}
-        </div>
       </div>
+      ${ctaElem?.textContent.trim() ? `<div class='notification-banner-cta'>${ctaElem?.innerHTML}</div>` : ''}
+    </div>
+      ${dismissable ? dismissButton : ''}
     </div>
   `;
 

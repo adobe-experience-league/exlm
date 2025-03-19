@@ -31,6 +31,8 @@ const BrowseCardsLiveEventsAdaptor = (() => {
         description: eventDescription || '',
         event: {
           time,
+          startTime,
+          endTime,
         },
         copyLink: ctaLink || '',
         viewLink: ctaLink || '',
