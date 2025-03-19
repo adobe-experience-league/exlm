@@ -3057,6 +3057,29 @@
     "id": "authorable-card",
     "fields": [
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Style",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-align-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-align-center"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "heading",
@@ -3593,6 +3616,29 @@
     "id": "events-cards",
     "fields": [
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Style",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-align-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-align-center"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "heading",
@@ -3670,6 +3716,29 @@
   {
     "id": "adls-cards",
     "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Style",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-align-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-align-center"
+              }
+            ]
+          }
+        ]
+      },
       {
         "component": "text",
         "valueType": "string",
@@ -3868,6 +3937,29 @@
   {
     "id": "tabbed-cards",
     "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Style",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-align-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-align-center"
+              }
+            ]
+          }
+        ]
+      },
       {
         "component": "text",
         "valueType": "string",

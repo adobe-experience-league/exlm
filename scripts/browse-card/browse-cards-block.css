@@ -100,6 +100,13 @@
   min-height: 400px;
 }
 
+.browse-cards-block.header-align-center .browse-cards-block-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
 @container browse-cards-block (min-width: 600px) {
   .browse-cards-block-content {
     grid-template-columns: repeat(2, 1fr);
