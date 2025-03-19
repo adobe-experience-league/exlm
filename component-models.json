@@ -1451,7 +1451,7 @@
       {
         "component": "multiselect",
         "name": "classes",
-        "label": "Style",
+        "label": "Block Style",
         "valueType": "string",
         "required": true,
         "maxSize": 1,
@@ -1461,11 +1461,11 @@
             "children": [
               {
                 "name": "Left",
-                "value": ""
+                "value": "header-align-left"
               },
               {
                 "name": "Center",
-                "value": "header-center"
+                "value": "header-align-center"
               }
             ]
           }
