@@ -566,7 +566,7 @@ export default async function decorate(block) {
           data = Array.from(cardResponse?.data) ?? [];
 
           if (cardResponse?.meta?.sort === 'shuffled') {
-            data = data.sort(() => Math.random() - 0.5);
+            data = data?.sort(() => Math.random() - 0.5);
           }
 
           const { shimmers, params, optionType } = apiConfigObject;
