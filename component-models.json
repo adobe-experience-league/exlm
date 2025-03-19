@@ -5966,20 +5966,34 @@
         "label": "Description"
       },
       {
-        "component": "select",
+        "component": "multiselect",
         "name": "classes",
-        "value": "",
-        "label": "Theme",
-        "description": "Select light or dark theme",
+        "label": "Block options",
         "valueType": "string",
+        "required": true,
+        "maxSize": 2,
         "options": [
           {
-            "name": "Light",
-            "value": "light"
+            "name": "Theme",
+            "children": [
+              {
+                "name": "Light",
+                "value": "light"
+              },
+              {
+                "name": "Dark",
+                "value": "dark"
+              }
+            ]
           },
           {
-            "name": "Dark",
-            "value": "dark"
+            "name": "Toggle Options",
+            "children": [
+              {
+                "name": "Banner for Adobe employee only?",
+                "value": "internal-banner"
+              }
+            ]
           }
         ]
       },
@@ -6522,15 +6536,6 @@
         "value": "",
         "label": "Filter Label",
         "description": "Sets the text for Products filter label in dropdown."
-      },
-      {
-        "component": "aem-content",
-        "valueType": "string",
-        "name": "eventFragmentURL",
-        "label": "Event Banner Fragment URL",
-        "validation": {
-          "rootPath": "/content/exlm/global/en/events"
-        }
       }
     ]
   },
