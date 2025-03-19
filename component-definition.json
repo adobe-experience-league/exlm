@@ -586,6 +586,7 @@
                 "template": {
                   "name": "Curated Cards",
                   "model": "curated-cards",
+                  "classes": ["header-left"],
                   "headingType": "h2"
                 }
               }
