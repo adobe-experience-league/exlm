@@ -187,7 +187,7 @@ body.profile-home-page
     margin: 0 auto;
     max-width: var(--secondary-max-width);
     grid-template-columns: 214px 1fr;
-    min-height: 400px;
+    min-height: 540px;
   }
 
   body.profile > main > .section.profile-rail-section {

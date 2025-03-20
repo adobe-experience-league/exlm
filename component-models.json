@@ -6624,6 +6624,126 @@
     ]
   },
   {
+    "id": "adobe-logo",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "<a href=\"/\">:adobe-red-logo:</a>",
+        "label": "Brand Link",
+        "description": "Should only be the icon as a link to the home page."
+      }
+    ]
+  },
+  {
+    "id": "brand",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "<a href=\"/\">Experience League</a>",
+        "label": "Brand Link",
+        "description": "Should only include the brand name and link to the brand page."
+      }
+    ]
+  },
+  {
+    "id": "nav",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "Nav List",
+        "description": "Should be authores as a nested list ... more details tbd..."
+      }
+    ]
+  },
+  {
+    "id": "search",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "link",
+        "value": "<a href=\"/search.html\">Search</a>",
+        "label": "Seach Link/Text",
+        "description": "Should be a link to the search page. The text should be the search label."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "placeholder",
+        "value": "Search Experience League",
+        "label": "Placeholder Text",
+        "description": "Text to be shown as a placeholder in the search input field."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "list",
+        "value": "<ul><li>All:All</li><li>Certification:Certification</li><li>Community:Community</li><li>Documentation:Documentation</li><li>Events:Event</li><li>Perspectives:Perspective</li><li>Playlists:Playlist</li><li>Troubleshooting:Troubleshooting</li><li>Tutorials:Tutorial</li></ul>",
+        "label": "Seach Dropdown list",
+        "description": "a list of items shown in the search dropdown"
+      }
+    ]
+  },
+  {
+    "id": "language-selector",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "change-region-text",
+        "value": "Change Region",
+        "label": "Change Region Text",
+        "description": "The text for the change region button."
+      }
+    ]
+  },
+  {
+    "id": "sign-in",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "sign-in-link",
+        "value": "<a href=\"#\">Sign in</a>",
+        "label": "Sign In Link/Text",
+        "description": "Should be a link for the sign-in page. The text should be the sign-in label."
+      }
+    ]
+  },
+  {
+    "id": "profile-menu",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "profile-menu-links",
+        "value": "<a href=\"/en/home/profile-settings\" title=\"My learning profile\">My learning profile</a><a href=\"/en/home/bookmarks\" title=\"Bookmarked content\">Bookmarked content</a><a href=\"#\" title=\"Sign out\">Sign out</a>",
+        "label": "Profile Menu Links",
+        "description": "Links for the profile menu. Last one has to be a sign out link."
+      }
+    ]
+  },
+  {
+    "id": "product-grid",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "product-grid-links",
+        "value": "<a href=\"https://experience.adobe.com/\" title=\"Adobe Experience Cloud\">Adobe Experience Cloud</a><a href=\"https://documentcloud.adobe.com/link/home/\" title=\"Adobe Document Cloud\">Adobe Document Cloud</a>",
+        "label": "Product Grid Links",
+        "description": "Links for the product grid."
+      }
+    ]
+  },
+  {
     "id": "code",
     "fields": [
       {
@@ -6657,6 +6777,10 @@
               {
                 "name": "HTML",
                 "value": "language-html"
+              },
+              {
+                "name": "Java",
+                "value": "language-java"
               }
             ]
           },
@@ -6678,6 +6802,22 @@
         "value": "",
         "label": "Code",
         "description": "Enter the code."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "start-line",
+        "value": "",
+        "label": "Line numbering",
+        "description": "Add a number to start the numbering the code on a number other than 1."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "highlight",
+        "value": "",
+        "label": "Line highlighting",
+        "description": "Add number to highlight rows within a code block. E.g. 1-3, 6 will highlight lines 1 through 3 and 6."
       }
     ]
   }
