@@ -46,13 +46,16 @@ export async function signOut() {
 }
 
 // A store that saves promises and their results in sessionStorage
+// Initialize custom storage on the window object
+window.exlProfile = window.exlProfile || {};
+
 class PromiseSessionStore {
   constructor() {
     this.store = {};
   }
 
   async get(key) {
-    const fromStorage = sessionStorage.getItem(key);
+    const fromStorage = window.exlProfile[key];
     if (fromStorage) return JSON.parse(fromStorage);
     if (this.store[key]) return this.store[key];
     return null;
@@ -61,7 +64,7 @@ class PromiseSessionStore {
   async set(key, promise) {
     this.store[key] = promise;
     promise.then((data) => {
-      sessionStorage.setItem(key, JSON.stringify(data));
+      window.exlProfile[key] = JSON.stringify(data);
     });
   }
 }
@@ -141,7 +144,7 @@ class ProfileClient {
       Promise.all([this.getProfile(refresh), window.adobeIMS?.getProfile()])
         .then(([profile, imsProfile]) => {
           const mergedProfile = { ...profile, ...imsProfile };
-          sessionStorage.setItem(storageKey, JSON.stringify(mergedProfile));
+          window.exlProfile[storageKey] = JSON.stringify(mergedProfile);
           resolve(mergedProfile);
         })
         .catch(reject);
@@ -255,7 +258,7 @@ class ProfileClient {
         })
           .then((res) => res.json())
           .then(async (data) => {
-            if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));
+            if (storageKey) window.exlProfile[storageKey] = JSON.stringify(data.data);
             resolve(structuredClone(data.data));
           })
           .catch(reject);
