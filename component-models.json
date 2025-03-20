@@ -6622,5 +6622,62 @@
         "description": "URL to open when the button is clicked."
       }
     ]
+  },
+  {
+    "id": "code",
+    "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 2,
+        "options": [
+          {
+            "name": "Code Language",
+            "children": [
+              {
+                "name": "None",
+                "value": "language-none"
+              },
+              {
+                "name": "JSON",
+                "value": "language-json"
+              },
+              {
+                "name": "Javascript",
+                "value": "language-javascript"
+              },
+              {
+                "name": "Markdown",
+                "value": "language-markdown"
+              },
+              {
+                "name": "HTML",
+                "value": "language-html"
+              }
+            ]
+          },
+          {
+            "name": "Toggle Options",
+            "children": [
+              {
+                "name": "Enable line numbering",
+                "value": "line-numbers"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Code"
+      }
+    ]
   }
 ]
