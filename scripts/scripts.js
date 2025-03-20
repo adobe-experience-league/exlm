@@ -982,6 +982,15 @@ export async function fetchFragment(rePath, lang) {
   return response.text();
 }
 
+/** fetch fragment relative to /${lang}/global-fragments/ */
+export async function fetchGlobalFragment(metaName, fallback, lang) {
+  const fragmentPath = getMetadata(metaName);
+  const fragmentUrl = fragmentPath?.startsWith('/en/') ? fragmentPath.replace('/en/', `/${lang}/`) : fallback;
+  const path = `${window.hlx.codeBasePath}${fragmentUrl}.plain.html`;
+  const response = await fetch(path);
+  return response.text();
+}
+
 /* fetch language specific placeholders, fallback to english */
 export async function fetchLanguagePlaceholders(lang) {
   const langCode = lang || getPathDetails()?.lang || 'en';

@@ -203,6 +203,19 @@
     "components": ["author-bio"]
   },
   {
+    "id": "section-header",
+    "components": [
+      "adobe-logo",
+      "brand",
+      "nav",
+      "search",
+      "language-selector",
+      "sign-in",
+      "profile-menu",
+      "product-grid"
+    ]
+  },
+  {
     "id": "profile-section",
     "components": [
       "text",
