@@ -6676,7 +6676,8 @@
         "valueType": "string",
         "name": "description",
         "value": "",
-        "label": "Code"
+        "label": "Code",
+        "description": "Enter the code."
       }
     ]
   }
