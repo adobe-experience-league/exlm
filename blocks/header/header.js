@@ -636,19 +636,17 @@ const adobeLogoDecorator = async (adobeLogoBlock) => {
 
 /** @param {HTMLElement} block  */
 const decorateNewTabLinks = (block) => {
-  const links = block.querySelectorAll('a');
+  const links = block.querySelectorAll('a[target="_blank"], a[href*="#_blank"]');
   links.forEach((link) => {
-    const href = link?.getAttribute('href');
+    const href = link.getAttribute('href');
     if (href?.includes('#_blank')) {
       link.setAttribute('target', '_blank');
     }
-    if (link?.getAttribute('target') === '_blank') {
-      link.setAttribute('rel', 'noopener noreferrer');
-      // insert before first text child node
-      const icon = htmlToElement('<span class="icon icon-link-out"></span>');
-      link.firstChild.after(icon);
-      decorateIcons(link);
-    }
+    link.setAttribute('rel', 'noopener noreferrer');
+    // insert before first text child node
+    const icon = htmlToElement('<span class="icon icon-link-out"></span>');
+    link.firstChild.after(icon);
+    decorateIcons(link);
   });
 };
 
