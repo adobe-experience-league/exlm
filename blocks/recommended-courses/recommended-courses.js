@@ -5,7 +5,7 @@ import { htmlToElement, fetchLanguagePlaceholders, getConfig, getLanguageCode } 
 import BrowseCardsPathsAdaptor from '../../scripts/browse-card/browse-cards-paths-adaptor.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
+import createTooltip from '../../scripts/browse-card/browse-card-tooltip.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 
 /**
@@ -249,8 +249,6 @@ export default async function decorate(block) {
                 buildNoResultsContent(block, true);
                 recommendedCoursesInterestContent();
               }
-              /* Hide Tooltip while scrolling the cards  layout */
-              hideTooltipOnScroll(contentDiv);
             })
             .catch((err) => {
               // Hide shimmer placeholders on error

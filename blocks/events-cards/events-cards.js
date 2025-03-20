@@ -1,7 +1,7 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
-import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
+import createTooltip from '../../scripts/browse-card/browse-card-tooltip.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 
@@ -84,8 +84,6 @@ export default async function decorate(block) {
           contentDiv.appendChild(cardDiv);
         }
         block.appendChild(contentDiv);
-        /* Hide Tooltip while scrolling the cards layout */
-        hideTooltipOnScroll(contentDiv);
       }
     })
     .catch((err) => {

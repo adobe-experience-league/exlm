@@ -40,7 +40,7 @@ const handleScroll = (container) => {
  * @param {HTMLElement} element - The HTML element to which the tooltip is attached.
  * @param {object} config - The configuration of the tooltip.
  */
-export const createTooltip = (container, element, config) => {
+const createTooltip = (container, element, config) => {
   const { position = 'right', color = 'blue', content } = config;
 
   /**
@@ -119,20 +119,4 @@ export const createTooltip = (container, element, config) => {
   init();
 };
 
-/**
- * Hides all tooltips when the container is scrolled.
- * @param {HTMLElement} container - The HTML element serving as the tooltip container.
- */
-export const hideTooltipOnScroll = (container) => {
-  const resizeObserver = new ResizeObserver(() => {
-    if (container.scrollWidth > container.clientWidth) {
-      // Add scroll event listener when the container is scrollable
-      container.addEventListener(
-        'scroll',
-        debounce(() => handleScroll(container), 10),
-      );
-    }
-  });
-
-  resizeObserver.observe(container);
-};
+export default createTooltip;
