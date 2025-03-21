@@ -312,12 +312,9 @@ export default async function decorate(block) {
   const headerContainer = block.querySelector('.recommended-content-header');
   const descriptionContainer = block.querySelector('.recommended-content-description');
   const reversedDomElements = remainingElements.reverse();
-  const [coveoToggle, linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
+  const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
     reversedDomElements;
-  const showOnlyCoveo = coveoToggle?.textContent?.toLowerCase() === 'true';
-  if (showOnlyCoveo) {
-    block.classList.add('coveo-only');
-  }
+  const showOnlyCoveo = block.classList.contains('coveo-only');
   const targetCriteriaId = block.dataset.targetScope;
   const profileDataPromise = defaultProfileClient.getMergedProfile();
 
