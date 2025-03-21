@@ -135,14 +135,14 @@
     max-width: none;
   }
 
-  .icon-block-center-align {
+  .center-align {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 24px;
   }
 
-  .icon-block-center-align > div {
+  .center-align > div {
     width: 230px;
   }
 }

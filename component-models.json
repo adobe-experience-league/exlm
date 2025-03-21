@@ -1402,11 +1402,19 @@
         "description": "Sets the link URL for Card."
       },
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "linkTarget",
-        "label": "Open Link in a New Tab?",
-        "description": "Enabling this option will open the link in a new tab."
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Open Link in a New Tab?",
+            "value": "new-tab"
+          }
+        ]
       }
     ]
   },
@@ -4722,11 +4730,19 @@
     "id": "icon-block",
     "fields": [
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "allow-center",
-        "label": "Center the section?",
-        "description": "This will center the entire Icon Cards Block."
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Center align Icon Cards Block",
+            "value": "center-align"
+          }
+        ]
       }
     ]
   },
@@ -5478,11 +5494,19 @@
         "description": "Sets the text url."
       },
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "default-to-coveo",
-        "label": "Default to Coveo",
-        "description": "Show results from Coveo instead of Adobe Target"
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Default to Coveo",
+            "value": "coveo-only"
+          }
+        ]
       }
     ]
   },
@@ -5875,11 +5899,19 @@
         "description": "Sets the text url."
       },
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "default-to-coveo",
-        "label": "Default to Coveo",
-        "description": "Show results from Coveo instead of Adobe Target"
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Default to Coveo",
+            "value": "coveo-only"
+          }
+        ]
       }
     ]
   },
