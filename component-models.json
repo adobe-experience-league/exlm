@@ -4153,7 +4153,7 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "block-quote-source",
+        "name": "classes",
         "label": "Block Quote source",
         "value": "",
         "options": [
@@ -5119,11 +5119,19 @@
         "label": "Text to be shown for incomplete profile."
       },
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "showProfileCard",
-        "label": "Show profile card?",
-        "description": "This will enable profile card for this block."
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Enable profile card",
+            "value": "enable-profile-card"
+          }
+        ]
       }
     ]
   },
@@ -6569,15 +6577,11 @@
             ]
           },
           {
-            "name": "Dismissable",
+            "name": "Toggle Options",
             "children": [
               {
-                "name": "Yes",
+                "name": "Dismissable",
                 "value": "dismissable"
-              },
-              {
-                "name": "No",
-                "value": "non-dismissable"
               }
             ]
           }
@@ -6798,10 +6802,10 @@
       {
         "component": "richtext",
         "valueType": "string",
-        "name": "description",
+        "name": "code",
         "value": "",
         "label": "Code",
-        "description": "Enter the code."
+        "description": "Enter the code and ensure the text is wrapped inside a preformatted <pre> tag."
       },
       {
         "component": "text",
