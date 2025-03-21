@@ -4740,7 +4740,7 @@
         "options": [
           {
             "name": "Center align Icon Cards Block",
-            "value": "center-align"
+            "value": "icon-block-center-align"
           }
         ]
       }
