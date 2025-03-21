@@ -285,7 +285,8 @@
       "inline-survey",
       "featured-content",
       "note",
-      "qualtrics"
+      "qualtrics",
+      "code"
     ]
   },
   {
