@@ -1097,8 +1097,7 @@
                   "cta1_customBgColor": "--spectrum-gray-700",
                   "cta1_textColor": "white",
                   "cta1_customBgHexCode": "000000",
-                  "cta1_linkText": "Manage profile",
-                  "showProfileCard": true
+                  "cta1_linkText": "Manage profile"
                 }
               }
             }
