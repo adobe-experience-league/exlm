@@ -63,7 +63,8 @@
       "announcement-ribbon",
       "qualtrics",
       "upcoming-event",
-      "notification-banner"
+      "notification-banner",
+      "code"
     ]
   },
   {
@@ -144,7 +145,8 @@
       "browse-filters",
       "topic-results",
       "article-tags",
-      "qualtrics"
+      "qualtrics",
+      "code"
     ]
   },
   {
