@@ -46,14 +46,18 @@ export async function signOut() {
 }
 
 // A store that saves promises and their results in sessionStorage
+
+// Initialize in-memory storage
+const profileData = {};
+
 class PromiseSessionStore {
   constructor() {
     this.store = {};
   }
 
   async get(key) {
-    const fromStorage = sessionStorage.getItem(key);
-    if (fromStorage) return JSON.parse(fromStorage);
+    const fromStorage = profileData[key];
+    if (fromStorage) return fromStorage;
     if (this.store[key]) return this.store[key];
     return null;
   }
@@ -61,7 +65,7 @@ class PromiseSessionStore {
   async set(key, promise) {
     this.store[key] = promise;
     promise.then((data) => {
-      sessionStorage.setItem(key, JSON.stringify(data));
+      profileData[key] = data;
     });
   }
 }
@@ -141,7 +145,7 @@ class ProfileClient {
       Promise.all([this.getProfile(refresh), window.adobeIMS?.getProfile()])
         .then(([profile, imsProfile]) => {
           const mergedProfile = { ...profile, ...imsProfile };
-          sessionStorage.setItem(storageKey, JSON.stringify(mergedProfile));
+          profileData[storageKey] = mergedProfile;
           resolve(mergedProfile);
         })
         .catch(reject);
@@ -255,7 +259,7 @@ class ProfileClient {
         })
           .then((res) => res.json())
           .then(async (data) => {
-            if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));
+            if (storageKey) profileData[storageKey] = data.data;
             resolve(structuredClone(data.data));
           })
           .catch(reject);
