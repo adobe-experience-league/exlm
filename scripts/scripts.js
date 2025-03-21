@@ -334,18 +334,25 @@ export function decorateExternalLinks(main) {
  * Example: <a href="https://example.com#target=_blank&auth-only=true">link</a>
  * becomes: <a href="https://example.com" target="_blank" auth-only="true">link</a>
  *
- * Hash fragments without key-value pairs (e.g., #support) are ignored.
  * @param {HTMLElement} block
  */
-export const decorateLinks = (block) => {
-  block.querySelectorAll('a').forEach((link) => {
-    const href = link?.href;
-    if (!href) return;
+const ALLOWED_PARAMS = ['target', 'featured-products', 'auth-only'];
 
-    const [baseUrl, hashParams] = href.split('#');
-    link.href = baseUrl;
-    const params = new URLSearchParams(hashParams);
-    params.forEach((value, key) => link.setAttribute(key, value));
+export const decorateLinks = (block) => {
+  block.querySelectorAll('a[href*="#"]').forEach((link) => {
+    const [baseUrl, hash] = link.getAttribute('href').split('#');
+    const simpleHashes = [];
+
+    hash.split('&').forEach((part) => {
+      const [key, value] = part.split('=');
+      if (value && ALLOWED_PARAMS.includes(key)) {
+        link.setAttribute(key, value);
+      } else if (!value) {
+        simpleHashes.push(part);
+      }
+    });
+
+    link.setAttribute('href', simpleHashes.length ? `${baseUrl}#${simpleHashes.join('&')}` : baseUrl);
   });
 };
 
