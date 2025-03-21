@@ -4742,47 +4742,47 @@
         "options": [
           {
             "name": "Note",
-            "value": "NOTE"
+            "value": "note"
           },
           {
             "name": "Tip",
-            "value": "TIP"
+            "value": "tip"
           },
           {
             "name": "Important",
-            "value": "IMPORTANT"
+            "value": "important"
           },
           {
             "name": "Warning",
-            "value": "WARNING"
+            "value": "warning"
           },
           {
             "name": "Caution",
-            "value": "CAUTION"
+            "value": "caution"
           },
           {
             "name": "Admin",
-            "value": "ADMIN"
+            "value": "admin"
           },
           {
             "name": "Availability",
-            "value": "AVAILABILITY"
+            "value": "availability"
           },
           {
             "name": "Prerequisites",
-            "value": "PREREQUISITES"
+            "value": "prerequisites"
           },
           {
             "name": "Info",
-            "value": "INFO"
+            "value": "info"
           },
           {
             "name": "Error",
-            "value": "ERROR"
+            "value": "error"
           },
           {
             "name": "Success",
-            "value": "SUCCESS"
+            "value": "success"
           }
         ]
       },
