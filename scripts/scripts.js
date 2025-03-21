@@ -343,7 +343,6 @@ export const decorateLinks = (block) => {
     if (!href) return;
 
     const [baseUrl, hashParams] = href.split('#');
-    if (!hashParams?.includes('=')) return;
     link.href = baseUrl;
     const params = new URLSearchParams(hashParams);
     params.forEach((value, key) => link.setAttribute(key, value));
