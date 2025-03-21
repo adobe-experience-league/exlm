@@ -1,6 +1,6 @@
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { getPathDetails, decorateLinks, fetchFragment } from '../../scripts/scripts.js';
+import { getPathDetails, decorateFooterLinks, fetchFragment } from '../../scripts/scripts.js';
 import LanguageBlock from '../language/language.js';
 
 async function decorateMenu(footer) {
@@ -8,7 +8,7 @@ async function decorateMenu(footer) {
   const childElements = footer.querySelectorAll('.footer-item');
   const groupDiv = document.createElement('div');
   groupDiv.classList.add('footer-menu');
-  decorateLinks(footer);
+  decorateFooterLinks(footer);
   childElements.forEach((child) => {
     const h2Elements = Array.from(child.querySelectorAll('h2'));
     const ulElements = Array.from(child.querySelectorAll('ul'));

@@ -335,7 +335,7 @@ export function decorateExternalLinks(main) {
  * will be translated to <a href="https://example.com" target="_blank" auth-only="true">link</a>
  * @param {HTMLElement} block
  */
-export const decorateLinks = (block) => {
+export const decorateFooterLinks = (block) => {
   const links = block.querySelectorAll('a');
   links.forEach((link) => {
     const decodedHref = decodeURIComponent(link.getAttribute('href'));
@@ -352,6 +352,40 @@ export const decorateLinks = (block) => {
       // remove the JSON string from the hash, if JSON string is the only thing in the hash, remove the hash as well.
       const endIndex = decodedHref.charAt(firstCurlyIndex - 1) === '#' ? firstCurlyIndex - 1 : firstCurlyIndex;
       link.href = decodedHref.substring(0, endIndex);
+    }
+  });
+};
+
+/**
+ * Links that have URLs with hash fragments; the hash fragments will be translated to attributes.
+ * Example: <a href="https://example.com#target=_blank&auth-only=true">link</a>
+ * will be translated to <a href="https://example.com" target="_blank" auth-only="true">link</a>
+ *
+ * Hash fragments without key-value pairs (e.g., #support) are ignored.
+ * @param {HTMLElement} block
+ */
+export const decorateLinks = (block) => {
+  const links = Array.from(block.querySelectorAll('a'));
+
+  links.forEach((link) => {
+    const href = link.getAttribute('href');
+    if (!href) return;
+
+    const hashIndex = href.indexOf('#');
+    if (hashIndex === -1) return;
+
+    const baseUrl = href.slice(0, hashIndex);
+    const hashParams = href.slice(hashIndex + 1);
+
+    // Process only if hash contains '=' indicating key=value pairs
+    if (hashParams.includes('=')) {
+      const params = new URLSearchParams(hashParams);
+      params.forEach((value, key) => {
+        link.setAttribute(key, value);
+      });
+
+      // Clean href by removing hash
+      link.setAttribute('href', baseUrl);
     }
   });
 };

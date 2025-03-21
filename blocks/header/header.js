@@ -342,8 +342,8 @@ const buildFeaturedProductsNavLinks = async (navBlock, lang) => {
   const productList = await getProducts(lang, 'browse');
   [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
     // featured-products property is expected to be present on header.
-    if (navItemEl.querySelector(':scope > a[href*="#_featured-products"]')) {
-      const featuredProductLi = navBlock.querySelector('li.nav-item a[href*="#_featured-products"]');
+    if (navItemEl.querySelector(':scope > a[href*="#featured-products=true"]')) {
+      const featuredProductLi = navBlock.querySelector('li.nav-item a[href*="#featured-products=true"]');
       // Remove the <li> element from the DOM
       featuredProductLi.remove();
       productList.forEach((item) => {
@@ -636,11 +636,8 @@ const adobeLogoDecorator = async (adobeLogoBlock) => {
 
 /** @param {HTMLElement} block  */
 const decorateNewTabLinks = (block) => {
-  const links = block.querySelectorAll('a[href*="#_blank"]');
+  const links = block.querySelectorAll('a[target="_blank"]');
   links.forEach((link) => {
-    const href = link.getAttribute('href');
-    link.setAttribute('href', href.replace('#_blank', ''));
-    link.setAttribute('target', '_blank');
     link.setAttribute('rel', 'noopener noreferrer');
     // insert before first text child node
     const icon = htmlToElement('<span class="icon icon-link-out"></span>');
@@ -755,6 +752,7 @@ class ExlHeader extends HTMLElement {
         block.style.visibility = 'visible';
         this.dispatchEvent(new Event(`${className}-decorated`));
       };
+
       // Do this first to ensure all links are decorated correctly before they are used.
       decorateLinks(header);
       const logoP = decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator, this.decoratorOptions);
