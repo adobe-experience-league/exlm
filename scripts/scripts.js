@@ -330,29 +330,25 @@ export function decorateExternalLinks(main) {
 }
 
 /**
- * Links that have URLs with hash fragments; the hash fragments will be translated to attributes.
- * Example: <a href="https://example.com#target=_blank&auth-only=true">link</a>
- * becomes: <a href="https://example.com" target="_blank" auth-only="true">link</a>
+ * Converts URL parameters after '??' into attributes on <a> tags.
+ * Example: <a href="https://example.com??target=_blank"> becomes <a href="https://example.com" target="_blank">
  *
  * @param {HTMLElement} block
  */
-const ALLOWED_PARAMS = ['target', 'featured-products', 'auth-only'];
-
 export const decorateLinks = (block) => {
-  block.querySelectorAll('a[href*="#"]').forEach((link) => {
-    const [baseUrl, hash] = link.getAttribute('href').split('#');
-    const simpleHashes = [];
+  const ALLOWED_PARAMS = ['target', 'featured-products'];
 
-    hash.split('&').forEach((part) => {
-      const [key, value] = part.split('=');
-      if (value && ALLOWED_PARAMS.includes(key)) {
-        link.setAttribute(key, value);
-      } else if (!value) {
-        simpleHashes.push(part);
-      }
-    });
+  block.querySelectorAll('a[href*="??"]').forEach((link) => {
+    const [baseHref, paramString] = link.href.split('??');
 
-    link.setAttribute('href', simpleHashes.length ? `${baseUrl}#${simpleHashes.join('&')}` : baseUrl);
+    if (paramString) {
+      const params = new URLSearchParams(paramString);
+      ALLOWED_PARAMS.forEach((key) => {
+        if (params.has(key)) link.setAttribute(key, params.get(key));
+      });
+    }
+
+    link.href = baseHref;
   });
 };
 
