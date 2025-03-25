@@ -752,6 +752,7 @@ class ExlHeader extends HTMLElement {
         block.style.visibility = 'visible';
         this.dispatchEvent(new Event(`${className}-decorated`));
       };
+
       // Do this first to ensure all links are decorated correctly before they are used.
       decorateLinks(header);
       const logoP = decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator, this.decoratorOptions);

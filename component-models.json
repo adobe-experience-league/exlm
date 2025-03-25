@@ -6802,10 +6802,10 @@
       {
         "component": "richtext",
         "valueType": "string",
-        "name": "description",
+        "name": "code",
         "value": "",
         "label": "Code",
-        "description": "Enter the code."
+        "description": "Enter the code and ensure the text is wrapped inside a preformatted <pre> tag."
       },
       {
         "component": "text",
