@@ -1101,7 +1101,7 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination
     grid-row: 1/100;
     width: 224px;
     height: 100%;
-    padding: 0 0 0 32px;
+    padding: 0;
   }
 }
 
