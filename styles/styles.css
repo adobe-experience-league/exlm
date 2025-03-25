@@ -961,6 +961,7 @@ picture[align="right"] {
 
 .section {
   padding: 30px 16px;
+  background-color: var(--highlight-light-background-color);
 
   /* section metadata */
 }
@@ -973,8 +974,12 @@ picture[align="right"] {
   margin-bottom: 0;
 }
 
-.section.highlight {
-  background-color: var(--highlight-light-background-color);
+.section.white {
+  background-color: var(--background-color);
+}
+
+.section.dark-grey {
+  background-color: var(--highlight-dark-background-color);
 }
 
 .section.tabs-container {

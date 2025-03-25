@@ -1219,12 +1219,16 @@
         "valueType": "string",
         "options": [
           {
-            "name": "default",
+            "name": "Default",
             "value": "default"
           },
           {
-            "name": "highlight",
-            "value": "highlight"
+            "name": "White",
+            "value": "white"
+          },
+          {
+            "name": "Dark Gray",
+            "value": "dark-gray"
           }
         ]
       },
