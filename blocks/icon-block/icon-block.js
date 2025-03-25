@@ -3,7 +3,7 @@ import { decorateExternalLinks } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   [...block.children].forEach((column) => {
-    const [, headingWrapper, descriptionWrapper, linkWrapper] = column.children;
+    const [, headingWrapper, descriptionWrapper, linkWrapper, linkTargetElement] = column.children;
 
     if (descriptionWrapper?.textContent.trim()) {
       descriptionWrapper.classList.add('icon-description');
@@ -22,12 +22,14 @@ export default function decorate(block) {
     const link = linkWrapper?.querySelector('a');
     if (link) {
       link.classList.add('icon-link');
-      if (link.closest('.signup-dialog-content') || block.classList.contains('new-tab')) {
+      if (link.closest('.signup-dialog-content') || linkTargetElement?.textContent.trim() === 'true') {
         link.setAttribute('target', '_blank');
       }
       linkWrapper?.replaceWith(link);
+      linkTargetElement?.remove();
     } else {
       linkWrapper?.remove();
+      linkTargetElement?.remove();
     }
   });
 

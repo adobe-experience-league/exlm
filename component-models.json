@@ -1402,22 +1402,11 @@
         "description": "Sets the link URL for Card."
       },
       {
-        "component": "select",
-        "name": "classes",
-        "label": "Block options",
-        "description": "Options that affect block appearance and behavior.",
-        "valueType": "string",
-        "value": "",
-        "options": [
-          {
-            "name": "Default",
-            "value": ""
-          },
-          {
-            "name": "Open Link in a New Tab",
-            "value": "new-tab"
-          }
-        ]
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "linkTarget",
+        "label": "Open Link in a New Tab?",
+        "description": "Enabling this option will open the link in a new tab."
       }
     ]
   },
