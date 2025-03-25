@@ -1116,3 +1116,30 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination
   min-height: 1em;
   height: var(--placeholder-height);
 }
+
+.ue-table-block {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+}
+
+.ue-table-block > div {
+  display: table-row;
+}
+
+.ue-table-block > div > div {
+  display: table-cell;
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.ue-table-block::before {
+  content: attr(data-block-name);
+  display: table-cell;
+  padding: 8px;
+  border: 1px solid #ddd;
+  background-color: #f5cbcd;
+}
+
+

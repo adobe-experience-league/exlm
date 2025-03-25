@@ -63,7 +63,8 @@
       "announcement-ribbon",
       "qualtrics",
       "upcoming-event",
-      "notification-banner"
+      "notification-banner",
+      "code"
     ]
   },
   {
@@ -144,7 +145,8 @@
       "browse-filters",
       "topic-results",
       "article-tags",
-      "qualtrics"
+      "qualtrics",
+      "code"
     ]
   },
   {
@@ -201,6 +203,19 @@
   {
     "id": "section-author-bio",
     "components": ["author-bio"]
+  },
+  {
+    "id": "section-header",
+    "components": [
+      "adobe-logo",
+      "brand",
+      "nav",
+      "search",
+      "language-selector",
+      "sign-in",
+      "profile-menu",
+      "product-grid"
+    ]
   },
   {
     "id": "profile-section",
@@ -270,7 +285,8 @@
       "inline-survey",
       "featured-content",
       "note",
-      "qualtrics"
+      "qualtrics",
+      "code"
     ]
   },
   {

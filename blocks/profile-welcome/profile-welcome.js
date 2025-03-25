@@ -21,7 +21,7 @@ function replaceProfileText(field, value) {
 }
 
 async function decorateProfileWelcomeBlock(block) {
-  const [profileEyebrowText, profileHeading, profileDescription, profileCta, incompleteProfileText, showProfileCard] =
+  const [profileEyebrowText, profileHeading, profileDescription, profileCta, incompleteProfileText] =
     block.querySelectorAll(':scope div > div');
 
   const eyebrowText = profileEyebrowText.innerHTML;
@@ -115,8 +115,8 @@ async function decorateProfileWelcomeBlock(block) {
   block.textContent = '';
   block.append(profileWelcomeBlock);
 
-  // Conditionally display the profile card based on showProfileCard toggle
-  if (showProfileCard?.textContent?.trim() === 'true') {
+  // Conditionally display the profile card based on enable-profile-card class
+  if (block.classList.contains('enable-profile-card')) {
     // eslint-disable-next-line no-async-promise-executor
     const communityProfilePromise = new Promise(async (resolve) => {
       const isSignedIn = await isSignedInUser();

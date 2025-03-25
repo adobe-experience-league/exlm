@@ -330,29 +330,23 @@ export function decorateExternalLinks(main) {
 }
 
 /**
- * Links that have urls with JSON the hash, the JSON will be translated to attributes
- * eg <a href="https://example.com#{"target":"_blank", "auth-only": "true"}">link</a>
- * will be translated to <a href="https://example.com" target="_blank" auth-only="true">link</a>
+ * Links that have URLs with hash fragments; the hash fragments will be translated to attributes.
+ * Example: <a href="https://example.com#target=_blank&auth-only=true">link</a>
+ * becomes: <a href="https://example.com" target="_blank" auth-only="true">link</a>
+ *
+ * Hash fragments without key-value pairs (e.g., #support) are ignored.
  * @param {HTMLElement} block
  */
 export const decorateLinks = (block) => {
-  const links = block.querySelectorAll('a');
-  links.forEach((link) => {
-    const decodedHref = decodeURIComponent(link.getAttribute('href'));
-    const firstCurlyIndex = decodedHref.indexOf('{');
-    const lastCurlyIndex = decodedHref.lastIndexOf('}');
-    if (firstCurlyIndex > -1 && lastCurlyIndex > -1) {
-      // everything between curly braces is treated as JSON string.
-      const optionsJsonStr = decodedHref.substring(firstCurlyIndex, lastCurlyIndex + 1);
-      const fixedJsonString = optionsJsonStr.replace(/'/g, '"'); // JSON.parse function expects JSON strings to be formatted with double quotes
-      const parsedJSON = JSON.parse(fixedJsonString);
-      Object.entries(parsedJSON).forEach(([key, value]) => {
-        link.setAttribute(key.trim(), value);
-      });
-      // remove the JSON string from the hash, if JSON string is the only thing in the hash, remove the hash as well.
-      const endIndex = decodedHref.charAt(firstCurlyIndex - 1) === '#' ? firstCurlyIndex - 1 : firstCurlyIndex;
-      link.href = decodedHref.substring(0, endIndex);
-    }
+  block.querySelectorAll('a').forEach((link) => {
+    const href = link?.href;
+    if (!href) return;
+
+    const [baseUrl, hashParams] = href.split('#');
+    if (!hashParams?.includes('=')) return;
+    link.href = baseUrl;
+    const params = new URLSearchParams(hashParams);
+    params.forEach((value, key) => link.setAttribute(key, value));
   });
 };
 
@@ -979,6 +973,16 @@ export async function fetchFragment(rePath, lang) {
   const path = `${window.hlx.codeBasePath}/fragments/${lang}/${rePath}.plain.html`;
   const fallback = `${window.hlx.codeBasePath}/fragments/en/${rePath}.plain.html`;
   const response = await fetchWithFallback(path, fallback);
+  return response.text();
+}
+
+/** fetch fragment relative to /${lang}/global-fragments/ */
+export async function fetchGlobalFragment(metaName, fallback, lang) {
+  const fragmentPath = getMetadata(metaName);
+  const fragmentUrl = fragmentPath?.startsWith('/en/') ? fragmentPath.replace('/en/', `/${lang}/`) : fallback;
+  const path = `${window.hlx.codeBasePath}${fragmentUrl}.plain.html`;
+  const fallbackPath = `${window.hlx.codeBasePath}${fallback}.plain.html`;
+  const response = await fetchWithFallback(path, fallbackPath);
   return response.text();
 }
 

@@ -9,8 +9,8 @@ import {
   decorateLinks,
   getConfig,
   getLink,
-  fetchFragment,
   getPathDetails,
+  fetchGlobalFragment,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
 import {
@@ -420,9 +420,9 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   decoratorState.searchLinkHtml = searchLink.outerHTML;
 
   // get search placeholder
-  const searchPlaceholder = getCell(searchBlock, 1, 2)?.firstChild;
+  const searchPlaceholder = getCell(searchBlock, 2, 1)?.firstChild;
   // build search options
-  const searchOptions = getCell(searchBlock, 1, 3)?.firstElementChild?.children || [];
+  const searchOptions = getCell(searchBlock, 3, 1)?.firstElementChild?.children || [];
   const options = [...searchOptions].map((option) => option.textContent);
 
   searchBlock.innerHTML = '';
@@ -720,7 +720,9 @@ class ExlHeader extends HTMLElement {
   }
 
   async decorate() {
-    const headerFragment = await fetchFragment('header/header', this.decoratorOptions.lang);
+    const headerMeta = 'header-fragment';
+    const fallback = '/en/global-fragments/header';
+    const headerFragment = await fetchGlobalFragment(headerMeta, fallback, this.decoratorOptions.lang);
     if (headerFragment) {
       loadSearchElement();
 
@@ -750,6 +752,7 @@ class ExlHeader extends HTMLElement {
         block.style.visibility = 'visible';
         this.dispatchEvent(new Event(`${className}-decorated`));
       };
+
       // Do this first to ensure all links are decorated correctly before they are used.
       decorateLinks(header);
       const logoP = decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator, this.decoratorOptions);
