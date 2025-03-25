@@ -159,6 +159,12 @@ export default class ProfileMenu extends HTMLElement {
       const links = Array.from(profileMenuBlock.querySelectorAll('a')).map((link) => link.cloneNode(true));
       // all links except last one
       const learnLinks = links.slice(0, links.length - 1);
+      learnLinks.forEach((link) => {
+        const href = link.getAttribute('href');
+        const url = new URL(href, this.decoratorOptions.navLinkOrigin);
+        link.setAttribute('href', url.href);
+        return url.href;
+      });
       const signoutLink = links[links.length - 1];
 
       profileMenuBlock.innerHTML = '';
