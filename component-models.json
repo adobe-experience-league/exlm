@@ -5128,8 +5128,13 @@
         "maxSize": 1,
         "options": [
           {
-            "name": "Enable profile card",
-            "value": "enable-profile-card"
+            "name": "Toggle Options",
+            "children": [
+              {
+                "name": "Enable profile card",
+                "value": "enable-profile-card"
+              }
+            ]
           }
         ]
       }
