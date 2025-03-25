@@ -50,7 +50,7 @@ export async function signOut() {
 // Initialize in-memory storage
 const profileData = {};
 
-class PromiseSessionStore {
+class PromiseStore {
   constructor() {
     this.store = {};
   }
@@ -75,7 +75,7 @@ class ProfileClient {
     this.url = url;
     this.jwt = loadJWT();
     this.isSignedIn = isSignedInUser();
-    this.store = new PromiseSessionStore();
+    this.store = new PromiseStore();
   }
 
   async getAttributes() {
