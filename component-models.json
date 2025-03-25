@@ -4722,11 +4722,22 @@
     "id": "icon-block",
     "fields": [
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "allow-center",
-        "label": "Center the section?",
-        "description": "This will center the entire Icon Cards Block."
+        "component": "select",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Center align Icon Cards Block",
+            "value": "icon-block-center-align"
+          }
+        ]
       }
     ]
   },
@@ -5489,11 +5500,22 @@
         "description": "Sets the text url."
       },
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "default-to-coveo",
-        "label": "Default to Coveo",
-        "description": "Show results from Coveo instead of Adobe Target"
+        "component": "select",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Default to Coveo",
+            "value": "coveo-only"
+          }
+        ]
       }
     ]
   },
@@ -5886,11 +5908,22 @@
         "description": "Sets the text url."
       },
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "default-to-coveo",
-        "label": "Default to Coveo",
-        "description": "Show results from Coveo instead of Adobe Target"
+        "component": "select",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Default to Coveo",
+            "value": "coveo-only"
+          }
+        ]
       }
     ]
   },
