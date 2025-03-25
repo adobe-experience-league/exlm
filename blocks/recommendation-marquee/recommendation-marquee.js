@@ -314,13 +314,10 @@ export default async function decorate(block) {
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
 
-  const [coveoToggle, linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...restOfEl] =
+  const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...restOfEl] =
     htmlElementData.reverse();
 
-  const showOnlyCoveo = coveoToggle?.textContent?.toLowerCase() === 'true';
-  if (showOnlyCoveo) {
-    block.classList.add('coveo-only');
-  }
+  const showOnlyCoveo = block.classList.contains('coveo-only');
 
   const [headingElement, descriptionElement, ...contentTypesEl] = restOfEl.reverse();
   const headingElementNode = htmlToElement(headingElement.innerHTML);
