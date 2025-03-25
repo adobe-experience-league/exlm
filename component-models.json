@@ -1402,16 +1402,19 @@
         "description": "Sets the link URL for Card."
       },
       {
-        "component": "multiselect",
+        "component": "select",
         "name": "classes",
         "label": "Block options",
         "description": "Options that affect block appearance and behavior.",
         "valueType": "string",
-        "required": true,
-        "maxSize": 1,
+        "value": "",
         "options": [
           {
-            "name": "Open Link in a New Tab?",
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Open Link in a New Tab",
             "value": "new-tab"
           }
         ]
@@ -4730,14 +4733,17 @@
     "id": "icon-block",
     "fields": [
       {
-        "component": "multiselect",
+        "component": "select",
         "name": "classes",
         "label": "Block options",
         "description": "Options that affect block appearance and behavior.",
         "valueType": "string",
-        "required": true,
-        "maxSize": 1,
+        "value": "",
         "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
           {
             "name": "Center align Icon Cards Block",
             "value": "icon-block-center-align"
@@ -5494,14 +5500,17 @@
         "description": "Sets the text url."
       },
       {
-        "component": "multiselect",
+        "component": "select",
         "name": "classes",
         "label": "Block options",
         "description": "Options that affect block appearance and behavior.",
         "valueType": "string",
-        "required": true,
-        "maxSize": 1,
+        "value": "",
         "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
           {
             "name": "Default to Coveo",
             "value": "coveo-only"
@@ -5899,14 +5908,17 @@
         "description": "Sets the text url."
       },
       {
-        "component": "multiselect",
+        "component": "select",
         "name": "classes",
         "label": "Block options",
         "description": "Options that affect block appearance and behavior.",
         "valueType": "string",
-        "required": true,
-        "maxSize": 1,
+        "value": "",
         "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
           {
             "name": "Default to Coveo",
             "value": "coveo-only"
