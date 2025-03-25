@@ -1,6 +1,5 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
-import createTooltip from './browse-card-tooltip.js';
 import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS, VIDEO_THUMBNAIL_FORMAT } from './browse-cards-constants.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
@@ -438,16 +437,23 @@ export async function buildCard(container, element, model) {
       tagElement = createTag(
         'div',
         { class: 'browse-card-tag-text' },
-        `<h4>${placeholders.multiSolutionText || 'multisolution'}</h4><div class="tooltip-placeholder"></div>`,
+        `<h4>${placeholders.multiSolutionText || 'multisolution'}</h4>`,
       );
+      const tooltip = htmlToElement(`
+        <div class="tooltip-placeholder">
+          <div class="tooltip tooltip-top tooltip-grey">
+            <span class="icon icon-info"></span>
+            <span class="tooltip-text">${product.join(', ')}</span>
+          </div>
+         </div>
+      `);
+      tooltip.addEventListener('click', (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+      });
+      tagElement.append(tooltip);
+      decorateIcons(tagElement);
       cardContent.appendChild(tagElement);
-      const tooltipElem = cardContent.querySelector('.tooltip-placeholder');
-      const tooltipConfig = {
-        position: 'top',
-        color: 'grey',
-        content: product.join(', '),
-      };
-      createTooltip(container, tooltipElem, tooltipConfig);
     } else {
       const tagText = product ? product.join(', ') : '';
       tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${tagText}</h4>`);

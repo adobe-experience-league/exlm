@@ -14,9 +14,11 @@
 }
 
 .browse-cards-block-title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   position: relative;
   margin: 0;
-  max-width: 300px;
 }
 
 .browse-cards-block-title :where(h1, h2, h3, h4, h5, h6) {
@@ -28,6 +30,7 @@
 
 .browse-cards-block-title .tooltip {
   display: inline;
+  position: relative;
   margin: 0 0 0 9px;
 }
 
@@ -47,40 +50,42 @@
   display: inline-block;
   font-size: var(--spectrum-font-size-75);
   font-weight: normal;
-  left: -999px;
   line-height: var(--spectrum-line-height-xs);
-  margin-left: 10px;
-  margin-top: -16px;
+  margin-top: -2px;
+  margin-right: 20px;
   opacity: 0;
   padding: 4px 9px 5px 10px;
   position: absolute;
-  top: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
   transition: opacity 0.3s;
   visibility: hidden;
   width: max-content;
-  max-width: 155px;
+  max-width: 120px;
   z-index: 1;
 }
 
-.browse-cards-block-title .tooltip .tooltip-text.tooltip-visible {
+.browse-cards-block-title .tooltip:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
 }
 
 .browse-cards-block-title .tooltip .tooltip-text::before {
-  border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
+  border-color: transparent transparent transparent var(--non-spectrum-royal-blue);
   border-style: solid;
   border-width: 4px;
   content: '';
   display: inline-block;
   margin-top: -4px;
   position: absolute;
-  right: 100%;
+  left: 100%;
   top: 50%;
 }
 
 .browse-cards-block-title .tooltip-placeholder {
   display: inline-block;
+  margin-top: 10px;
 }
 
 .browse-cards-block-view a {
@@ -130,7 +135,7 @@
 
 @media only screen and (min-width: 600px) {
   .browse-cards-block-title {
-    max-width: unset;
+    max-width: 90%;
   }
 
   .browse-cards-block-content {
@@ -151,5 +156,23 @@
     margin-bottom: 80px;
     margin-top: 24px;
     padding-bottom: 8px;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .browse-cards-block.header-align-center .browse-cards-block-header .browse-cards-block-title {
+    max-width: 70%;
+  }
+
+  .browse-cards-block-title .tooltip .tooltip-text {
+    margin-right: 0;
+    margin-left: 10px;
+    right: unset;
+  }
+
+  .browse-cards-block-title .tooltip .tooltip-text::before {
+    border-color: transparent var(--non-spectrum-royal-blue) transparent transparent;
+    left: unset;
+    right: 100%;
   }
 }
