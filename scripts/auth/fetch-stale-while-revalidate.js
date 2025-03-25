@@ -19,35 +19,7 @@ const base64String = (data) => btoa(JSON.stringify(data));
 const getCacheKey = (url, options) => `${cacheKeyPrefix}_${url}_${base64String(options)}`;
 const getCacheTimestampKey = (url, options) => `${cacheTimestampPrefix}_${url}_${base64String(options)}`;
 
-const parseTimestampKey = (timestampKey) => {
-  const [, url, options] = timestampKey.split('_');
-  return { url, options };
-};
-
-/**
- * Check if the timestamp is expired
- * @param {string} timestamp - The timestamp to check
- */
-const isExpired = (timestamp) => {
-  const now = Date.now();
-  return now - parseInt(timestamp, 10) > CACHE_EXPIRATION_TIME;
-};
-
-/**
- * Cleans up stale cache entries in session storage
- */
-const cleanUpStaleCache = () => {
-  Object.keys(sessionStorage)
-    .filter((key) => key.startsWith(cacheTimestampPrefix))
-    .filter((key) => isExpired(sessionStorage.getItem(key)))
-    .forEach((key) => {
-      const { url, options } = parseTimestampKey(key);
-      const cacheKey = getCacheKey(url, options);
-      const cacheTimestampKey = getCacheTimestampKey(url, options);
-      sessionStorage.removeItem(cacheKey);
-      sessionStorage.removeItem(cacheTimestampKey);
-    });
-};
+const promises = new Map();
 
 /**
  * Custom fetch function that serves stale data while revalidating
@@ -61,13 +33,10 @@ export default function fetchStaleWhileRevalidate(url, options) {
   const cachedData = sessionStorage.getItem(cacheKey);
   const cacheTimestamp = sessionStorage.getItem(cacheTimestampKey);
 
-  cleanUpStaleCache();
-
   const currentTime = Date.now();
 
-  const fetchAndCache = async () => {
-    // eslint-disable-next-line no-console
-    console.log('[fetcher] fetching new data', url);
+  const doFetchAndCache = async () => {
+    // console.debug('[fetcher] fetching new data', url);
     try {
       const response = await fetch(url, options);
       const data = await response.json();
@@ -81,11 +50,22 @@ export default function fetchStaleWhileRevalidate(url, options) {
       return cachedData ? JSON.parse(cachedData) : null;
     }
   };
+
+  const fetchAndCache = async () => {
+    if (promises.has(cacheKey)) {
+      return promises.get(cacheKey);
+    }
+    const promise = doFetchAndCache();
+    promises.set(cacheKey, promise);
+    return promise;
+  };
+
   if (cachedData && cacheTimestamp) {
+    const expired = Date.now() - parseInt(cacheTimestamp, 10) > CACHE_EXPIRATION_TIME;
     // if the data is expired, fetch and cache the new data
-    if (isExpired(cacheTimestamp)) fetchAndCache();
+    if (expired) fetchAndCache();
     // eslint-disable-next-line no-console
-    console.log('[fetcher] serving stale data', url);
+    // console.debug('[fetcher] serving stale data', url);
     return JSON.parse(cachedData);
   }
   return fetchAndCache();
