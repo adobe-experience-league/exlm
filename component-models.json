@@ -5119,22 +5119,20 @@
         "label": "Text to be shown for incomplete profile."
       },
       {
-        "component": "multiselect",
+        "component": "select",
         "name": "classes",
         "label": "Block options",
         "description": "Options that affect block appearance and behavior.",
         "valueType": "string",
-        "required": true,
-        "maxSize": 1,
+        "value": "",
         "options": [
           {
-            "name": "Toggle Options",
-            "children": [
-              {
-                "name": "Enable profile card",
-                "value": "enable-profile-card"
-              }
-            ]
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Enable profile card",
+            "value": "enable-profile-card"
           }
         ]
       }
