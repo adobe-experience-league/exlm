@@ -6818,7 +6818,7 @@
         "name": "text",
         "value": "",
         "label": "Nav List",
-        "description": "Should be authores as a nested list ... more details tbd..."
+        "description": "Should be authored as a nested list. Link attributes should be defined explicitly. For example: https://example.com$newtab will open link in new tab."
       }
     ]
   },
