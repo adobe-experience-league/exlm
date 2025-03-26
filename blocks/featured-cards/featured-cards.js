@@ -2,7 +2,6 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { roleOptions } from '../browse-filters/browse-filter-utils.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
@@ -347,7 +346,4 @@ export default async function decorate(block) {
     updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.PRODUCT.toLowerCase(), value);
     fetchNewCards();
   });
-
-  /* Hide Tooltip while scrolling the cards layout */
-  hideTooltipOnScroll(contentDiv);
 }
