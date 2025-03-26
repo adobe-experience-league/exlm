@@ -105,7 +105,7 @@
   min-height: 400px;
 }
 
-.browse-cards-block.browse-card-header-center .browse-cards-block-header {
+.browse-cards-block.header-center .browse-cards-block-header {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -160,7 +160,7 @@
 }
 
 @media only screen and (min-width: 1024px) {
-  .browse-cards-block.browse-card-header-center .browse-cards-block-header .browse-cards-block-title {
+  .browse-cards-block.header-center .browse-cards-block-title {
     max-width: 70%;
   }
 

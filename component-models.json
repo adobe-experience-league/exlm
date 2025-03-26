@@ -1462,11 +1462,11 @@
             "children": [
               {
                 "name": "Left",
-                "value": "browse-card-header-left"
+                "value": "header-left"
               },
               {
                 "name": "Center",
-                "value": "browse-card-header-center"
+                "value": "header-center"
               }
             ]
           }
@@ -3071,11 +3071,11 @@
             "children": [
               {
                 "name": "Left",
-                "value": "browse-card-header-left"
+                "value": "header-left"
               },
               {
                 "name": "Center",
-                "value": "browse-card-header-center"
+                "value": "header-center"
               }
             ]
           }
@@ -3631,11 +3631,11 @@
             "children": [
               {
                 "name": "Left",
-                "value": "browse-card-header-left"
+                "value": "header-left"
               },
               {
                 "name": "Center",
-                "value": "browse-card-header-center"
+                "value": "header-center"
               }
             ]
           }
@@ -3733,11 +3733,11 @@
             "children": [
               {
                 "name": "Left",
-                "value": "browse-card-header-left"
+                "value": "header-left"
               },
               {
                 "name": "Center",
-                "value": "browse-card-header-center"
+                "value": "header-center"
               }
             ]
           }
@@ -3955,11 +3955,11 @@
             "children": [
               {
                 "name": "Left",
-                "value": "browse-card-header-left"
+                "value": "header-left"
               },
               {
                 "name": "Center",
-                "value": "browse-card-header-center"
+                "value": "header-center"
               }
             ]
           }
