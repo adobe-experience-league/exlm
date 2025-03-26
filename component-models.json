@@ -6031,7 +6031,7 @@
             ]
           },
           {
-            "name": "Toggle Options",
+            "name": "Display Preferences",
             "children": [
               {
                 "name": "Banner for Adobe employee only?",
@@ -6613,7 +6613,7 @@
             ]
           },
           {
-            "name": "Toggle Options",
+            "name": "Features",
             "children": [
               {
                 "name": "Dismissable",
@@ -6825,7 +6825,7 @@
             ]
           },
           {
-            "name": "Toggle Options",
+            "name": "Style Options",
             "children": [
               {
                 "name": "Enable line numbering",
