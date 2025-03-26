@@ -14,7 +14,6 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
-import { hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { setTargetDataAsBlockAttribute, setCoveoAnalyticsAttribute } from '../../scripts/utils/analytics-utils.js';
 
 let placeholders = {};
@@ -338,7 +337,6 @@ export default async function decorate(block) {
   const dataConfiguration = {
     savedCardsResponse: {},
   };
-  let isTooltipListenerAdded = false;
 
   const getCardsData = (payload) =>
     new Promise((resolve) => {
@@ -968,10 +966,6 @@ export default async function decorate(block) {
             const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
             if (cardsCount !== 0) {
               createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock);
-              if (!isTooltipListenerAdded) {
-                hideTooltipOnScroll(contentDiv);
-                isTooltipListenerAdded = true;
-              }
             }
             if (cardsCount === 0) {
               Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((shimmerEl) => {

@@ -3,8 +3,8 @@ import { htmlToElement, decorateExternalLinks, fetchLanguagePlaceholders } from 
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
-import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import { createDateCriteria, formatTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 const lang = document.querySelector('html').lang || 'en';
 
@@ -53,14 +53,15 @@ export default async function decorate(block) {
   `);
 
   if (toolTipElement?.textContent?.trim()) {
-    headerDiv
-      .querySelector('h1,h2,h3,h4,h5,h6')
-      ?.insertAdjacentHTML('afterend', '<div class="tooltip-placeholder"></div>');
-    const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
-    const tooltipConfig = {
-      content: toolTipElement.textContent.trim(),
-    };
-    createTooltip(block, tooltipElem, tooltipConfig);
+    const tooltip = htmlToElement(`
+    <div class="tooltip-placeholder">
+    <div class="tooltip tooltip-right">
+      <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement.textContent.trim()}</span>
+    </div>
+    </div>
+  `);
+    decorateIcons(tooltip);
+    headerDiv.querySelector('h1,h2,h3,h4,h5,h6')?.insertAdjacentElement('afterend', tooltip);
   }
 
   // Appending header div to the block
@@ -111,8 +112,6 @@ export default async function decorate(block) {
           // Append content div to shimmer card parent and decorate icons
           block.appendChild(contentDiv);
           contentDiv.classList.remove('hide-tab');
-          /* Hide Tooltip while scrolling the cards layout */
-          hideTooltipOnScroll(contentDiv);
         } else {
           buildCardsShimmer.removeShimmer();
           buildNoResultsContent(block, true);
