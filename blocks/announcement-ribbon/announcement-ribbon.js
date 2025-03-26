@@ -1,32 +1,69 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
+import { getPathDetails } from '../../scripts/scripts.js';
 
-// Function to remove previously added keys from the browser storage
-function removeStorageKeys() {
-  const browserStorage = ['localStorage', 'sessionStorage'];
-  browserStorage.forEach((storage) => {
-    window[storage].removeItem('hideRibbonBlock');
-  });
-}
+const STORAGE_KEY = 'hide-ribbon-block';
+const ribbonStore = {
+  /**
+   * Removes the entry matching the page path and ribbon id from the store.
+   * @param {string} pagePath
+   * @param {string} id
+   */
+  remove: (pagePath, id) => {
+    const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const updatedStore = existingStore.filter((entry) => {
+      const entryIdPrefix = entry.id.split('-')[0];
+      const targetIdPrefix = id.split('-')[0];
+      return !(entry.pagePath === pagePath && entryIdPrefix === targetIdPrefix);
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
+  },
+  /**
+   * @param {string} pagePath
+   * @param {string} id
+   * @param {boolean} dismissed
+   */
+  set: (pagePath, id, dismissed) => {
+    const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const updatedStore = [...existingStore, { pagePath, id, dismissed }];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
+  },
+  /**
+   * Retrieves the entry matching the page path and ribbon id from the store.
+   * @param {string} pagePath
+   * @param {string} id
+   * @returns {{pagePath: string, id: string, dismissed: boolean} | null}
+   */
+  get: (pagePath, id) => {
+    const storedData = localStorage.getItem(STORAGE_KEY);
+    if (storedData) {
+      const entries = JSON.parse(storedData);
+      return entries.find((entry) => entry.pagePath === pagePath && entry.id === id) || null;
+    }
+    return null;
+  },
+};
 
 // Function to hide a ribbon and update the key in the browser storage
-function hideRibbon(block, storage = 'sessionStorage') {
-  block.style.display = 'none';
-  removeStorageKeys();
-  window[storage].setItem('hideRibbonBlock', 'true');
+function hideRibbon(block, pagePath, ribbonId) {
+  block.parentElement.remove();
+  ribbonStore.remove(pagePath, ribbonId);
+  ribbonStore.set(pagePath, ribbonId, true);
 }
 
-// Function to check browser storage and hide the ribbon if it was previously closed
-function isRibbonHidden(storage = 'sessionStorage') {
-  return window[storage].getItem('hideRibbonBlock') === 'true';
-}
-
-export default async function decorate(block) {
-  const [image, heading, description, bgColor, hexcode, firstCta, secondCta, storage] = [...block.children].map(
-    (row) => row.firstElementChild,
-  );
-
+async function decorateRibbon({
+  block,
+  image,
+  heading,
+  description,
+  pagePath,
+  ribbonId,
+  dismissable,
+  hexcode,
+  firstCta,
+  secondCta,
+}) {
   if (block.classList.contains('internal-banner')) {
     const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
     let displayBlock = false;
@@ -50,22 +87,20 @@ export default async function decorate(block) {
       block.parentElement.remove();
     }
   }
-  // The `storage` value will be either 'localStorage' or 'sessionStorage',
-  // as defined in the `components-models.json` file.
-  if (isRibbonHidden(storage?.textContent)) {
-    block.style.display = 'none';
-    return;
-  }
 
   heading?.classList.add('ribbon-heading');
   description?.classList.add('ribbon-description');
   let bgColorVariable;
-  if (bgColor.innerHTML.includes('bg-')) {
-    const bgSpectrumColor = bgColor.innerHTML.substr(3); // Remove 'bg-' prefix
+  const classes = block.classList;
+  const backgroundColorClass = [...classes].find((cls) => cls.startsWith('bg-'));
+  if (backgroundColorClass) {
+    const bgSpectrumColor = backgroundColorClass.substr(3); // Remove 'bg-' prefix
     bgColorVariable = `var(--${bgSpectrumColor})`; // Use the CSS variable
   } else {
     bgColorVariable = `#${hexcode.innerHTML}`; // Use the hex code directly
   }
+
+  const dismissButton = `<span class="icon icon-close-black"></span>`;
 
   const ribbonDom = document.createRange().createContextualFragment(`
   <div class="ribbon-image">
@@ -80,7 +115,7 @@ export default async function decorate(block) {
       ${decorateCustomButtons(firstCta, secondCta)}
     </div>
     </div>
-    <span class="icon icon-close-black"></span>
+    ${dismissable ? dismissButton : ''}
   `);
 
   block.textContent = '';
@@ -105,7 +140,39 @@ export default async function decorate(block) {
   ['.icon-close-black', '.icon-close-light'].forEach((selectedIcon) => {
     const closeIcon = block.querySelector(selectedIcon);
     if (closeIcon && !window.location.href.includes('.html')) {
-      closeIcon.addEventListener('click', () => hideRibbon(block, storage?.textContent));
+      closeIcon.addEventListener('click', () => hideRibbon(block, pagePath, ribbonId));
     }
   });
+}
+
+export default async function decorate(block) {
+  const [image, heading, description, hexcode, idElem, firstCta, secondCta] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
+  const { lang } = getPathDetails();
+  const dismissable = block.classList.contains('dismissable');
+  const url = window.location.href;
+  const parts = url.split('/');
+  const langIndex = parts.indexOf(lang);
+  const pagePath = langIndex !== -1 ? `/${parts.slice(langIndex + 1).join('/')}` : '';
+
+  const ribbonId = idElem?.textContent?.trim();
+  const ribbonState = ribbonStore.get(pagePath, ribbonId);
+
+  if (dismissable && ribbonState && ribbonState.id === ribbonId && ribbonState.dismissed) {
+    block.remove(); // remove the banner section if it was dismissed
+  } else {
+    decorateRibbon({
+      block,
+      image,
+      heading,
+      description,
+      pagePath,
+      ribbonId,
+      dismissable,
+      hexcode,
+      firstCta,
+      secondCta,
+    });
+  }
 }
