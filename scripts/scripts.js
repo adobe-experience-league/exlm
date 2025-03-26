@@ -332,29 +332,16 @@ export function decorateExternalLinks(main) {
 /**
  * Adds attributes to <a> tags based on special keys in the URL.
  *
- * - If a URL contains '$newtab', it adds target="_blank".
- * - If a URL contains '$featured-products', it adds featured-products="true".
+ * If a URL contains '$newtab', it adds target="_blank".
  * Example:
  * <a href="https://example.com$newtab"> → <a href="https://example.com" target="_blank">
- * <a href="https://example.com$featured-products"> → <a href="https://example.com" featured-products="true">
  *
  * @param {HTMLElement} block
  */
 export const decorateLinks = (block) => {
-  block.querySelectorAll('a[href*="$newtab"], a[href*="$featured-products"]').forEach((link) => {
-    let href = link.getAttribute('href');
-
-    if (href.includes('$newtab')) {
-      link.setAttribute('target', '_blank');
-      href = href.replace('$newtab', '');
-    }
-
-    if (href.includes('$featured-products')) {
-      link.setAttribute('featured-products', 'true');
-      href = href.replace('$featured-products', '');
-    }
-
-    link.href = href;
+  block.querySelectorAll('a[href*=$newtab]').forEach((link) => {
+    link.href = link.href.replace('$newtab', '');
+    link.setAttribute('target', '_blank');
   });
 };
 
