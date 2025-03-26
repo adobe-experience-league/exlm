@@ -330,25 +330,31 @@ export function decorateExternalLinks(main) {
 }
 
 /**
- * Converts URL parameters after '??' into attributes on <a> tags.
- * Example: <a href="https://example.com??target=_blank"> becomes <a href="https://example.com" target="_blank">
+ * Adds attributes to <a> tags based on special keys in the URL.
+ *
+ * - If a URL contains '$newtab', it adds target="_blank".
+ * - If a URL contains '$featured-products', it adds featured-products="true".
+ * Example:
+ * <a href="https://example.com$newtab"> → <a href="https://example.com" target="_blank">
+ * <a href="https://example.com$featured-products"> → <a href="https://example.com" featured-products="true">
  *
  * @param {HTMLElement} block
  */
 export const decorateLinks = (block) => {
-  const ALLOWED_PARAMS = ['target', 'featured-products'];
+  block.querySelectorAll('a[href*="$newtab"], a[href*="$featured-products"]').forEach((link) => {
+    let href = link.getAttribute('href');
 
-  block.querySelectorAll('a[href*="??"]').forEach((link) => {
-    const [baseHref, paramString] = link.href.split('??');
-
-    if (paramString) {
-      const params = new URLSearchParams(paramString);
-      ALLOWED_PARAMS.forEach((key) => {
-        if (params.has(key)) link.setAttribute(key, params.get(key));
-      });
+    if (href.includes('$newtab')) {
+      link.setAttribute('target', '_blank');
+      href = href.replace('$newtab', '');
     }
 
-    link.href = baseHref;
+    if (href.includes('$featured-products')) {
+      link.setAttribute('featured-products', 'true');
+      href = href.replace('$featured-products', '');
+    }
+
+    link.href = href;
   });
 };
 
