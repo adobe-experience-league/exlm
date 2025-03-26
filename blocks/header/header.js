@@ -342,8 +342,8 @@ const buildFeaturedProductsNavLinks = async (navBlock, lang) => {
   const productList = await getProducts(lang, 'browse');
   [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
     // featured-products property is expected to be present on header.
-    if (navItemEl.querySelector(':scope > a[featured-products]')) {
-      const featuredProductLi = navBlock.querySelector('li.nav-item a[featured-products]');
+    if (navItemEl.querySelector(':scope > a[href*=@featured-products]')) {
+      const featuredProductLi = navBlock.querySelector('li.nav-item a[href*=@featured-products]');
       // Remove the <li> element from the DOM
       featuredProductLi.remove();
       productList.forEach((item) => {
