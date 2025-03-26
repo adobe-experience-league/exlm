@@ -1449,6 +1449,30 @@
     "id": "curated-cards",
     "fields": [
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "heading",
@@ -3034,6 +3058,30 @@
     "id": "authorable-card",
     "fields": [
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "heading",
@@ -3570,6 +3618,30 @@
     "id": "events-cards",
     "fields": [
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "heading",
@@ -3647,6 +3719,30 @@
   {
     "id": "adls-cards",
     "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
       {
         "component": "text",
         "valueType": "string",
@@ -3845,6 +3941,30 @@
   {
     "id": "tabbed-cards",
     "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
       {
         "component": "text",
         "valueType": "string",

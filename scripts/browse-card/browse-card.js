@@ -1,6 +1,5 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
-import { createTooltip } from './browse-card-tooltip.js';
 import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS, VIDEO_THUMBNAIL_FORMAT } from './browse-cards-constants.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
@@ -432,27 +431,35 @@ export async function buildCard(container, element, model) {
     buildInProgressBarContent({ inProgressStatus, cardFigure, card });
   }
 
-  if (product || failedToLoad) {
-    let tagElement;
-    if (product?.length > 1) {
-      tagElement = createTag(
-        'div',
-        { class: 'browse-card-tag-text' },
-        `<h4>${placeholders.multiSolutionText || 'multisolution'}</h4><div class="tooltip-placeholder"></div>`,
-      );
-      cardContent.appendChild(tagElement);
-      const tooltipElem = cardContent.querySelector('.tooltip-placeholder');
-      const tooltipConfig = {
-        position: 'top',
-        color: 'grey',
-        content: product.join(', '),
-      };
-      createTooltip(container, tooltipElem, tooltipConfig);
-    } else {
-      const tagText = product ? product.join(', ') : '';
-      tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${tagText}</h4>`);
-      cardContent.appendChild(tagElement);
+  if (product?.length > 0 || failedToLoad) {
+    const tagText = product?.join(', ') || '';
+    const isMultiSolution = product?.length > 1;
+
+    const tagElement = createTag(
+      'div',
+      { class: 'browse-card-tag-text' },
+      `<h4>${isMultiSolution ? placeholders.multiSolutionText || 'multisolution' : tagText}</h4>`,
+    );
+
+    if (isMultiSolution) {
+      const tooltip = htmlToElement(`
+        <div class="tooltip-placeholder">
+          <div class="tooltip tooltip-top tooltip-grey">
+            <span class="icon icon-info"></span>
+            <span class="tooltip-text">${tagText}</span>
+          </div>
+        </div>
+      `);
+      // Eventlistener to make the tooltip clickable inside the anchor tag
+      tooltip.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      });
+
+      tagElement.appendChild(tooltip);
+      decorateIcons(tagElement);
     }
+    cardContent.appendChild(tagElement);
   }
 
   if (title) {

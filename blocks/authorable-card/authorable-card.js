@@ -1,8 +1,8 @@
 import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
-import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { getCardData } from '../../scripts/browse-card/browse-card-utils.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -26,14 +26,15 @@ export default async function decorate(block) {
   `);
 
   if (toolTipElement?.textContent?.trim()) {
-    headerDiv
-      .querySelector('h1,h2,h3,h4,h5,h6')
-      ?.insertAdjacentHTML('afterend', '<div class="tooltip-placeholder"></div>');
-    const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
-    const tooltipConfig = {
-      content: toolTipElement.textContent.trim(),
-    };
-    createTooltip(block, tooltipElem, tooltipConfig);
+    const tooltip = htmlToElement(`
+    <div class="tooltip-placeholder">
+    <div class="tooltip tooltip-right">
+      <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement.textContent.trim()}</span>
+    </div>
+    </div>
+  `);
+    decorateIcons(tooltip);
+    headerDiv.querySelector('h1,h2,h3,h4,h5,h6')?.insertAdjacentElement('afterend', tooltip);
   }
 
   block.replaceChildren(headerDiv);
@@ -78,7 +79,4 @@ export default async function decorate(block) {
     contentDiv.append(...cards);
     block.appendChild(contentDiv);
   });
-
-  /* Hide Tooltip while scrolling the cards layout */
-  hideTooltipOnScroll(contentDiv);
 }
