@@ -295,7 +295,7 @@
                 "template": {
                   "name": "ADLS Cards",
                   "model": "adls-cards",
-                  "classes": ["header-align-left"],
+                  "classes": ["browse-card-header-left"],
                   "headingType": "h2",
                   "sortby": "recommended"
                 }
@@ -420,7 +420,7 @@
                   "filter": "authorable-card",
                   "name": "Authorable Card",
                   "model": "authorable-card",
-                  "classes": ["header-align-left"],
+                  "classes": ["browse-card-header-left"],
                   "headingType": "h2",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -633,7 +633,7 @@
                 "template": {
                   "name": "Curated Cards",
                   "model": "curated-cards",
-                  "classes": ["header-align-left"],
+                  "classes": ["browse-card-header-left"],
                   "headingType": "h2"
                 }
               }
@@ -714,7 +714,7 @@
                 "template": {
                   "name": "Events Cards",
                   "model": "events-cards",
-                  "classes": ["header-align-left"],
+                  "classes": ["browse-card-header-left"],
                   "headingType": "h2"
                 }
               }
@@ -1298,7 +1298,7 @@
                 "template": {
                   "name": "Tabbed Cards",
                   "model": "tabbed-cards",
-                  "classes": ["header-align-left"],
+                  "classes": ["browse-card-header-left"],
                   "headingType": "h2"
                 }
               }

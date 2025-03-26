@@ -447,10 +447,13 @@ export async function buildCard(container, element, model) {
           </div>
          </div>
       `);
+
+      // Eventlistener to make the tooltip clickable inside the anchor tag
       tooltip.addEventListener('click', (event) => {
         event.stopPropagation();
         event.preventDefault();
       });
+
       tagElement.append(tooltip);
       decorateIcons(tagElement);
       cardContent.appendChild(tagElement);

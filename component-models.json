@@ -1451,7 +1451,8 @@
       {
         "component": "multiselect",
         "name": "classes",
-        "label": "Block Style",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
         "valueType": "string",
         "required": true,
         "maxSize": 1,
@@ -1461,11 +1462,11 @@
             "children": [
               {
                 "name": "Left",
-                "value": "header-align-left"
+                "value": "browse-card-header-left"
               },
               {
                 "name": "Center",
-                "value": "header-align-center"
+                "value": "browse-card-header-center"
               }
             ]
           }
@@ -3059,7 +3060,8 @@
       {
         "component": "multiselect",
         "name": "classes",
-        "label": "Block Style",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
         "valueType": "string",
         "required": true,
         "maxSize": 1,
@@ -3069,11 +3071,11 @@
             "children": [
               {
                 "name": "Left",
-                "value": "header-align-left"
+                "value": "browse-card-header-left"
               },
               {
                 "name": "Center",
-                "value": "header-align-center"
+                "value": "browse-card-header-center"
               }
             ]
           }
@@ -3618,7 +3620,8 @@
       {
         "component": "multiselect",
         "name": "classes",
-        "label": "Block Style",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
         "valueType": "string",
         "required": true,
         "maxSize": 1,
@@ -3628,11 +3631,11 @@
             "children": [
               {
                 "name": "Left",
-                "value": "header-align-left"
+                "value": "browse-card-header-left"
               },
               {
                 "name": "Center",
-                "value": "header-align-center"
+                "value": "browse-card-header-center"
               }
             ]
           }
@@ -3719,7 +3722,8 @@
       {
         "component": "multiselect",
         "name": "classes",
-        "label": "Block Style",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
         "valueType": "string",
         "required": true,
         "maxSize": 1,
@@ -3729,11 +3733,11 @@
             "children": [
               {
                 "name": "Left",
-                "value": "header-align-left"
+                "value": "browse-card-header-left"
               },
               {
                 "name": "Center",
-                "value": "header-align-center"
+                "value": "browse-card-header-center"
               }
             ]
           }
@@ -3940,7 +3944,8 @@
       {
         "component": "multiselect",
         "name": "classes",
-        "label": "Block Style",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
         "valueType": "string",
         "required": true,
         "maxSize": 1,
@@ -3950,11 +3955,11 @@
             "children": [
               {
                 "name": "Left",
-                "value": "header-align-left"
+                "value": "browse-card-header-left"
               },
               {
                 "name": "Center",
-                "value": "header-align-center"
+                "value": "browse-card-header-center"
               }
             ]
           }
