@@ -4153,7 +4153,7 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "block-quote-source",
+        "name": "classes",
         "label": "Block Quote source",
         "value": "",
         "options": [
@@ -4722,11 +4722,22 @@
     "id": "icon-block",
     "fields": [
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "allow-center",
-        "label": "Center the section?",
-        "description": "This will center the entire Icon Cards Block."
+        "component": "select",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Center align Icon Cards Block",
+            "value": "icon-block-center-align"
+          }
+        ]
       }
     ]
   },
@@ -5119,11 +5130,22 @@
         "label": "Text to be shown for incomplete profile."
       },
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "showProfileCard",
-        "label": "Show profile card?",
-        "description": "This will enable profile card for this block."
+        "component": "select",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Enable profile card",
+            "value": "enable-profile-card"
+          }
+        ]
       }
     ]
   },
@@ -5478,11 +5500,22 @@
         "description": "Sets the text url."
       },
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "default-to-coveo",
-        "label": "Default to Coveo",
-        "description": "Show results from Coveo instead of Adobe Target"
+        "component": "select",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Default to Coveo",
+            "value": "coveo-only"
+          }
+        ]
       }
     ]
   },
@@ -5875,11 +5908,22 @@
         "description": "Sets the text url."
       },
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "default-to-coveo",
-        "label": "Default to Coveo",
-        "description": "Show results from Coveo instead of Adobe Target"
+        "component": "select",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Default to Coveo",
+            "value": "coveo-only"
+          }
+        ]
       }
     ]
   },
@@ -6558,15 +6602,11 @@
             ]
           },
           {
-            "name": "Dismissable",
+            "name": "Toggle Options",
             "children": [
               {
-                "name": "Yes",
+                "name": "Dismissable",
                 "value": "dismissable"
-              },
-              {
-                "name": "No",
-                "value": "non-dismissable"
               }
             ]
           }
