@@ -339,7 +339,7 @@ export function decorateExternalLinks(main) {
  * @param {HTMLElement} block
  */
 export const decorateLinks = (block) => {
-  block.querySelectorAll('a[href*=@newtab]').forEach((link) => {
+  block.querySelectorAll('a[href*="@newtab"]').forEach((link) => {
     link.href = link.href.replace('@newtab', '');
     link.setAttribute('target', '_blank');
   });
