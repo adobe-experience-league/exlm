@@ -1449,6 +1449,30 @@
     "id": "curated-cards",
     "fields": [
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "heading",
@@ -3034,6 +3058,30 @@
     "id": "authorable-card",
     "fields": [
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "heading",
@@ -3570,6 +3618,30 @@
     "id": "events-cards",
     "fields": [
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "heading",
@@ -3647,6 +3719,30 @@
   {
     "id": "adls-cards",
     "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
       {
         "component": "text",
         "valueType": "string",
@@ -3845,6 +3941,30 @@
   {
     "id": "tabbed-cards",
     "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
       {
         "component": "text",
         "valueType": "string",
@@ -6031,7 +6151,7 @@
             ]
           },
           {
-            "name": "Toggle Options",
+            "name": "Display Preferences",
             "children": [
               {
                 "name": "Banner for Adobe employee only?",
@@ -6613,7 +6733,7 @@
             ]
           },
           {
-            "name": "Toggle Options",
+            "name": "Features",
             "children": [
               {
                 "name": "Dismissable",
@@ -6698,7 +6818,7 @@
         "name": "text",
         "value": "",
         "label": "Nav List",
-        "description": "Should be authores as a nested list ... more details tbd..."
+        "description": "Should be authored as a nested list. Link attributes should be defined explicitly. For example: https://example.com@newtab will open link in new tab."
       }
     ]
   },
@@ -6825,7 +6945,7 @@
             ]
           },
           {
-            "name": "Toggle Options",
+            "name": "Style Options",
             "children": [
               {
                 "name": "Enable line numbering",
