@@ -1734,10 +1734,6 @@
             "name": "Background Color",
             "children": [
               {
-                "name": "White",
-                "value": "bg-spectrum-gray-50"
-              },
-              {
                 "name": "Gray",
                 "value": "bg-spectrum-gray-700"
               },

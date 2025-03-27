@@ -71,7 +71,7 @@ export default async function decorate(block) {
   const subjectPicture = img.querySelector('picture');
   const isStraightVariant = block.classList.contains('straight');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
-  const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim()}` || '#FFFFFF';
+  const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
   const eyebrowText = eyebrow?.textContent?.trim();
 
   // Build DOM

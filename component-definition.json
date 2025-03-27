@@ -924,7 +924,7 @@
                 "template": {
                   "name": "Marquee",
                   "model": "marquee",
-                  "classes": ["medium", "curved", "bg-spectrum-gray-50"],
+                  "classes": ["medium", "curved", "bg-spectrum-gray-700"],
                   "fileReference": "/content/dam/exlm/en/images/subjects/Community_headshot_single.png",
                   "title": "Marquee Title",
                   "titleType": "h2",
