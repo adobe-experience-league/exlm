@@ -4,10 +4,11 @@ import { getConfig, loadIms } from '../scripts.js';
 import loadJWT from './jwt.js';
 import csrf from './csrf.js';
 import { getMetadata } from '../lib-franklin.js';
+import fetchStaleWhileRevalidate from './fetch-stale-while-revalidate.js';
 
 // NOTE: to keep this viatl utility small, please do not increase the number of imports or use dynamic imports when needed.
 
-const { profileUrl, JWTTokenUrl, ppsOrigin, ims, khorosProfileDetailsUrl, cdnOrigin } = getConfig();
+const { profileUrl, JWTTokenUrl, ppsOrigin, ims, khorosProfileDetailsUrl } = getConfig();
 
 const override = /^(recommended|votes)$/;
 
@@ -28,41 +29,20 @@ export async function isSignedInUser() {
  * @see: https://wiki.corp.adobe.com/display/ims/IMS+API+-+logout#IMSApi-logout-signout_options
  */
 export async function signOut() {
-  ['JWT', 'coveoToken', 'attributes', 'exl-profile', 'profile', 'pps-profile'].forEach((key) =>
+  ['JWT', 'coveoToken', 'exl-profile', 'attributes', 'profile', 'pps-profile'].forEach((key) =>
     sessionStorage.removeItem(key),
   );
   const signOutRedirectUrl = getMetadata('signout-redirect-url');
 
   if (signOutRedirectUrl) {
-    const redirectUrl =
-      signOutRedirectUrl.startsWith('/') || signOutRedirectUrl === '/'
-        ? `${cdnOrigin}${signOutRedirectUrl}`
-        : signOutRedirectUrl;
+    const currentOrigin = window.location.origin;
+    const redirectUrl = signOutRedirectUrl.startsWith('/')
+      ? `${currentOrigin}${signOutRedirectUrl}`
+      : signOutRedirectUrl;
     const signoutOptions = { redirect_uri: redirectUrl };
     window.adobeIMS?.signOut(signoutOptions);
   } else {
     window.adobeIMS?.signOut();
-  }
-}
-
-// A store that saves promises and their results in sessionStorage
-class PromiseSessionStore {
-  constructor() {
-    this.store = {};
-  }
-
-  async get(key) {
-    const fromStorage = sessionStorage.getItem(key);
-    if (fromStorage) return JSON.parse(fromStorage);
-    if (this.store[key]) return this.store[key];
-    return null;
-  }
-
-  async set(key, promise) {
-    this.store[key] = promise;
-    promise.then((data) => {
-      sessionStorage.setItem(key, JSON.stringify(data));
-    });
   }
 }
 
@@ -71,11 +51,10 @@ class ProfileClient {
     this.url = url;
     this.jwt = loadJWT();
     this.isSignedIn = isSignedInUser();
-    this.store = new PromiseSessionStore();
   }
 
   async getAttributes() {
-    const attributes = await this.fetchProfile({ method: 'OPTIONS' }, 'attributes');
+    const attributes = await this.fetchProfile({ method: 'OPTIONS' });
     return structuredClone(attributes);
   }
 
@@ -93,61 +72,37 @@ class ProfileClient {
     return profile;
   }
 
-  async getProfile(refresh = false) {
-    const profile = await this.fetchProfile({}, 'exl-profile', refresh);
+  async getProfile() {
+    const profile = await this.fetchProfile({});
     return structuredClone(profile);
   }
 
   async getPPSProfile() {
-    const PPS_PROFILE = 'pps-profile';
     const signedIn = await this.isSignedIn;
     if (!signedIn) return null;
-
-    const fromStorage = await this.store.get(PPS_PROFILE);
-    if (fromStorage) return fromStorage;
 
     const { token } = window.adobeIMS.getAccessToken();
     const accountId = (await window.adobeIMS.getProfile()).userId;
 
-    const promise = new Promise((resolve, reject) => {
-      fetch(`${ppsOrigin}/api/profile`, {
-        headers: {
-          'X-Api-Key': ims.client_id,
-          'X-Account-Id': accountId,
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => (res.ok ? res.json() : undefined))
-        .then((json) => {
-          if (json) resolve(json);
-          else reject(new Error('Failed to fetch PPS profile'));
-        })
-        .catch(reject);
+    const ppsProfile = await fetchStaleWhileRevalidate(`${ppsOrigin}/api/profile`, {
+      headers: {
+        'X-Api-Key': ims.client_id,
+        'X-Account-Id': accountId,
+        Authorization: `Bearer ${token}`,
+      },
     });
-    this.store.set(PPS_PROFILE, promise);
-    return promise;
+
+    if (!ppsProfile) throw new Error('Failed to fetch PPS profile');
+    return structuredClone(ppsProfile);
   }
 
-  async getMergedProfile(refresh) {
+  async getMergedProfile() {
     const signedIn = await this.isSignedIn;
     if (!signedIn) return null;
-    const storageKey = 'profile';
-    if (!refresh) {
-      const fromStore = await this.store.get(storageKey);
-      if (fromStore) return fromStore;
-    }
 
-    const promise = new Promise((resolve, reject) => {
-      Promise.all([this.getProfile(refresh), window.adobeIMS?.getProfile()])
-        .then(([profile, imsProfile]) => {
-          const mergedProfile = { ...profile, ...imsProfile };
-          sessionStorage.setItem(storageKey, JSON.stringify(mergedProfile));
-          resolve(mergedProfile);
-        })
-        .catch(reject);
-    });
-    this.store.set(storageKey, promise);
-    return promise;
+    const [profile, imsProfile] = await Promise.all([this.getProfile(), window.adobeIMS?.getProfile()]);
+    const mergedProfile = { ...profile, ...imsProfile };
+    return mergedProfile;
   }
 
   async updateProfile(key, val, replace = false) {
@@ -237,32 +192,19 @@ class ProfileClient {
    * @param {boolean} refresh
    * @returns
    */
-  async fetchProfile(options, storageKey, refresh) {
-    if (storageKey && !refresh) {
-      const fromStorage = await this.store.get(storageKey);
-      if (fromStorage) return fromStorage;
-    }
-    const promise = new Promise((resolve, reject) => {
-      this.jwt.then((jwt) => {
-        fetch(this.url, {
-          ...options,
-          credentials: 'include',
-          headers: {
-            authorization: jwt,
-            accept: 'application/json',
-            ...options.headers,
-          },
-        })
-          .then((res) => res.json())
-          .then(async (data) => {
-            if (storageKey) sessionStorage.setItem(storageKey, JSON.stringify(data.data));
-            resolve(structuredClone(data.data));
-          })
-          .catch(reject);
-      });
+  async fetchProfile(options) {
+    const jwt = await this.jwt;
+    const data = await fetchStaleWhileRevalidate(this.url, {
+      ...options,
+      credentials: 'include',
+      headers: {
+        authorization: jwt,
+        accept: 'application/json',
+        ...options.headers,
+      },
     });
-    this.store.set(storageKey, promise);
-    return promise;
+
+    return structuredClone(data.data);
   }
 
   /**

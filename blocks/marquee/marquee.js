@@ -65,26 +65,13 @@ function handleSigninLinks(block) {
 export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
-  const [
-    marqueeSizeType,
-    img,
-    bgColorShape,
-    hexcode,
-    fillBackground,
-    eyebrow,
-    title,
-    longDescr,
-    firstCta,
-    firstCtaLinkType,
-    secondCta,
-    secondCtaLinkType,
-  ] = block.querySelectorAll(':scope div > div');
+  const [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] =
+    block.querySelectorAll(':scope div > div');
 
-  const marqueeSize = marqueeSizeType?.textContent?.trim();
   const subjectPicture = img.querySelector('picture');
-  const bgShape = bgColorShape?.textContent?.toLowerCase().trim();
+  const isStraightVariant = block.classList.contains('straight');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
-  const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${hexcode.innerHTML}`;
+  const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
   const eyebrowText = eyebrow?.textContent?.trim();
 
   // Build DOM
@@ -100,7 +87,7 @@ export default async function decorate(block) {
         </div>
       </div>
     </div>
-    <div class='marquee-background ${bgShape}' ${bgShape === 'straight' ? `style="background-color: ${bgColor}"` : ''}>
+    <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
           ${
             subjectPicture
               ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
@@ -108,7 +95,7 @@ export default async function decorate(block) {
           } 
       <div class="marquee-background-fill">
       ${
-        bgShape !== 'straight'
+        !isStraightVariant
           ? `
           <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
             <path
@@ -134,14 +121,8 @@ export default async function decorate(block) {
   if (!subjectPicture) {
     block.classList.add('no-subject');
   }
-  if (marqueeSize) {
-    block.classList.add(marqueeSize);
-  }
-  if (bgShape) {
-    block.classList.add(bgShape);
-  }
 
-  if (fillBackground?.textContent?.toLowerCase()?.trim() === 'true') {
+  if (block.classList.contains('fill-background')) {
     block.style.backgroundColor = bgColor;
   }
 

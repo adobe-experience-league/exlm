@@ -3,7 +3,7 @@ import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 // eslint-disable-next-line no-unused-vars
 export function generateDetailedTeaserDOM(props, classes) {
   // Extract properties, always same order as in model, empty string if not set
-  const [backImage, eyebrowContent, title, description, subjectImage, popSubjectImage, firstCta, secondCta] = props;
+  const [backImage, eyebrowContent, title, description, subjectImage, firstCta, secondCta] = props;
   const backPicture = backImage.querySelector('picture');
   const subjectPicture = subjectImage.querySelector('picture');
 
@@ -32,7 +32,7 @@ export function generateDetailedTeaserDOM(props, classes) {
   // Build DOM
   const teaserDOM = document.createRange().createContextualFragment(`
     <div class='background'>${backPicture ? backPicture.outerHTML : ''}</div>
-    <div class='foreground${popSubjectImage?.textContent === 'true' ? ' pop-subject-image' : ''}'>
+    <div class='foreground'>
       <div class='text'>
         ${eyebrowContent.outerHTML}
         <div class='title'>${title.innerHTML}</div>
@@ -49,22 +49,30 @@ export function generateDetailedTeaserDOM(props, classes) {
 }
 
 export default async function decorate(block) {
+  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
   // get the first and only cell from each row
-  const [imageElement, hideInlineBannerElement, ...props] = [...block.children].map((row) => row.firstElementChild);
+  const [imageElement, ...props] = [...block.children].map((row) => row.firstElementChild);
   const teaserDOM = generateDetailedTeaserDOM([imageElement, ...props], block.classList);
   block.textContent = '';
-  if (block.classList.contains('inline-banner')) {
-    const hideInlineBanner = hideInlineBannerElement?.textContent?.trim();
-    const { isSignedInUser } = await import('../../scripts/auth/profile.js');
-    const isSignedIn = await isSignedInUser();
-    if (hideInlineBanner === 'true' && isSignedIn) {
-      block.classList.add('hide-inline-banner');
-    }
-  }
+
+  block.append(teaserDOM);
+
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   if (bgColorCls) {
     const bgColor = `var(--${bgColorCls.substr(3)})`;
     block.style.backgroundColor = bgColor;
   }
-  block.append(teaserDOM);
+
+  if (block.classList.contains('inline-banner') && block.classList.contains('hide-banner') && !UEAuthorMode) {
+    try {
+      const { isSignedInUser } = await import('../../scripts/auth/profile.js');
+      const isSignedIn = await isSignedInUser();
+      if (isSignedIn) {
+        block.style.display = 'none';
+      }
+    } catch (error) {
+      /* eslint-disable-next-line no-console */
+      console.error('Error fetching profile data: ', error);
+    }
+  }
 }
