@@ -65,22 +65,13 @@ function handleSigninLinks(block) {
 export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
-  const [
-    customBgColor,
-    img,
-    eyebrow,
-    title,
-    longDescr,
-    firstCta,
-    firstCtaLinkType,
-    secondCta,
-    secondCtaLinkType,
-  ] = block.querySelectorAll(':scope div > div');
+  const [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] =
+    block.querySelectorAll(':scope div > div');
 
   const subjectPicture = img.querySelector('picture');
   const isStraightVariant = block.classList.contains('straight');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
-  const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : (`#${customBgColor?.textContent?.trim()}` || '#FFFFFF');
+  const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim()}` || '#FFFFFF';
   const eyebrowText = eyebrow?.textContent?.trim();
 
   // Build DOM

@@ -68,7 +68,7 @@ export default async function decorate(block) {
       const { isSignedInUser } = await import('../../scripts/auth/profile.js');
       const isSignedIn = await isSignedInUser();
       if (isSignedIn) {
-          block.style.display = 'none';
+        block.style.display = 'none';
       }
     } catch (error) {
       /* eslint-disable-next-line no-console */

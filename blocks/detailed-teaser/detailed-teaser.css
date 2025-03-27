@@ -398,7 +398,7 @@ body[class^='article-'] .section div.detailed-teaser-wrapper .detailed-teaser.bl
     margin-top: 50px;
     overflow-x: visible;
   }
-  
+
   .detailed-teaser.block .foreground {
     flex-direction: row;
     gap: 40px;
@@ -445,7 +445,7 @@ body[class^='article-'] .section div.detailed-teaser-wrapper .detailed-teaser.bl
     width: 50%;
   }
 
-  .detailed-teaser.elevated-image > .foreground > .spacer {
+  .detailed-teaser.block.elevated-image > .foreground > .spacer {
     position: relative;
     width: 100%;
     max-width: 550px;
