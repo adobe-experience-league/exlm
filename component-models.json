@@ -1817,7 +1817,7 @@
         "valueType": "string",
         "name": "fileReference",
         "label": "Subject Image",
-        "description": "Aspect Ratios & Recommended Image Dimensions:\nLarge - 12:7 (960x560px)\nMedium - 12:5 (960x400px)\nSmall - 16:5 (960x300px).\n\nThe image fills the banner width with a fixed height, cropping top/bottom on larger screens and left/right on smaller screens.\n\nKeep key content in the central safe zone to prevent cropping.\n\nTo avoid unexpected cropping, please preview the banner at different screen sizes (desktop, tablet, and mobile) and adjust the image if needed to ensure key content remains visible.",
+        "description": "Aspect Ratios & Recommended Image Dimensions:\nLarge - 12:7 (960x560px)\nMedium - 12:5 (960x400px)\nSmall - 16:5 (960x300px).\n\nThe image fills the screen width with a fixed height, cropping top/bottom on larger screens and left/right on smaller screens.\n\nKeep key content in the central safe zone to prevent cropping.\n\nTo avoid unexpected cropping, please preview the banner at different screen sizes (desktop, tablet, and mobile) and adjust the image if needed to ensure key content remains visible.",
         "multi": false
       },
       {
