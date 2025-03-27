@@ -1310,8 +1310,20 @@
         "label": "Style",
         "description": "The section style",
         "valueType": "string",
-        "hidden": true,
-        "options": []
+        "options": [
+          {
+            "name": "Default",
+            "value": "default"
+          },
+          {
+            "name": "White",
+            "value": "white"
+          },
+          {
+            "name": "Dark Gray",
+            "value": "dark-gray"
+          }
+        ]
       },
       {
         "component": "boolean",
