@@ -1792,12 +1792,19 @@
               {
                 "name": "Adobe Red",
                 "value": "bg-non-spectrum-adobe-red"
+              },
+              {
+                "name": "Custom",
+                "value": "custom"
               }
             ]
           }
         ]
       },
       {
+        "condition": {
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "custom"] }]
+        },
         "component": "text",
         "valueType": "string",
         "name": "customHexCode",
