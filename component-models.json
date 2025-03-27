@@ -4594,15 +4594,15 @@
         "options": [
           {
             "name": "Default Background",
-            "value": ["profile-section", "default"]
+            "value": ["profile-bottom-section", "default"]
           },
           {
             "name": "White Background",
-            "value": ["profile-section", "bg-white"]
+            "value": ["profile-bottom-section", "bg-white"]
           },
           {
             "name": "Dark Gray Background",
-            "value": ["profile-section", "bg-dark-gray"]
+            "value": ["profile-bottom-section", "bg-dark-gray"]
           }
         ]
       },
