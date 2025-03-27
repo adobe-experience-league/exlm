@@ -4625,8 +4625,20 @@
         "label": "Style",
         "description": "The section style",
         "valueType": "string",
-        "hidden": true,
-        "options": []
+        "options": [
+                    {
+            "name": "Default Background",
+            "value": "default"
+          },
+          {
+            "name": "White Background",
+            "value": "bg-white"
+          },
+          {
+            "name": "Dark Gray Bacground",
+            "value": "bg-dark-gray"
+          }
+        ]
       }
     ]
   },
