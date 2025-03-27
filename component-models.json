@@ -1817,7 +1817,7 @@
         "valueType": "string",
         "name": "fileReference",
         "label": "Subject Image",
-        "description": "The marquee subject image (Aspect Ratio of the image should based on the height of the marquee)",
+        "description": "Aspect Ratios & Recommended Image Dimensions: 'Large' - 12:7 (960x560px), 'Medium' - 12:5 (960x400px), 'Small' - 16:5 (960x300px). The image fills the screen width with a fixed height, causing cropping at top/bottom on larger screens and left/right on smaller screens. Keep key content in the 'central safe zone'. To avoid unexpected cropping, please preview the banner at different screen sizes (desktop, tablet, and mobile) and adjust the image if needed to ensure key content remains visible.",
         "multi": false
       },
       {
