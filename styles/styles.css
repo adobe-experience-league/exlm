@@ -974,11 +974,11 @@ picture[align="right"] {
   margin-bottom: 0;
 }
 
-.section.white {
+.section.bg-white {
   background-color: var(--background-color);
 }
 
-.section.dark-gray {
+.section.bg-dark-gray {
   background-color: var(--highlight-dark-background-color);
 }
 

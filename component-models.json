@@ -1219,16 +1219,16 @@
         "valueType": "string",
         "options": [
           {
-            "name": "Default",
+            "name": "Default Background",
             "value": "default"
           },
           {
-            "name": "White",
-            "value": "white"
+            "name": "White Background",
+            "value": "bg-white"
           },
           {
-            "name": "Dark Gray",
-            "value": "dark-gray"
+            "name": "Dark Gray Background",
+            "value": "bg-dark-gray"
           }
         ]
       },
@@ -1312,16 +1312,16 @@
         "valueType": "string",
         "options": [
           {
-            "name": "Default",
+            "name": "Default Background",
             "value": "default"
           },
           {
-            "name": "White",
-            "value": "white"
+            "name": "White Background",
+            "value": "bg-white"
           },
           {
-            "name": "Dark Gray",
-            "value": "dark-gray"
+            "name": "Dark Gray Background",
+            "value": "bg-dark-gray"
           }
         ]
       },
@@ -4552,16 +4552,16 @@
         "valueType": "string",
         "options": [
           {
-            "name": "Default",
+            "name": "Default Background",
             "value": ["profile-section", "default"]
           },
           {
-            "name": "Highlight - Dark grey",
-            "value": ["profile-section", "highlight-dark-bg"]
+            "name": "White Background",
+            "value": ["profile-section", "bg-white"]
           },
           {
-            "name": "Highlight - Light grey",
-            "value": ["profile-section", "highlight-light-bg"]
+            "name": "Dark Gray Background",
+            "value": ["profile-section", "bg-dark-gray"]
           }
         ]
       },
@@ -4593,16 +4593,16 @@
         "valueType": "string",
         "options": [
           {
-            "name": "Default",
-            "value": ["profile-bottom-section", "default"]
+            "name": "Default Background",
+            "value": ["profile-section", "default"]
           },
           {
-            "name": "Highlight - Dark grey",
-            "value": ["profile-bottom-section", "highlight-dark-bg"]
+            "name": "White Background",
+            "value": ["profile-section", "bg-white"]
           },
           {
-            "name": "Highlight - Light grey",
-            "value": ["profile-bottom-section", "highlight-light-bg"]
+            "name": "Dark Gray Background",
+            "value": ["profile-section", "bg-dark-gray"]
           }
         ]
       },
