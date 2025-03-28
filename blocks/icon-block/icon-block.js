@@ -2,12 +2,6 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { decorateExternalLinks } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  const toggleDiv = block.querySelector('div');
-  if (toggleDiv && toggleDiv.firstElementChild.textContent === 'true') {
-    block.classList.add('icon-block-center-align');
-  }
-  toggleDiv?.remove();
-
   [...block.children].forEach((column) => {
     const [, headingWrapper, descriptionWrapper, linkWrapper, linkTargetElement] = column.children;
 

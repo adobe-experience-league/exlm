@@ -472,6 +472,7 @@
 
 .browse-card .tooltip {
   display: inline;
+  position: relative;
   margin: 2px 0 0 5px;
 }
 
@@ -491,10 +492,8 @@
   display: inline-block;
   font-size: var(--spectrum-font-size-50);
   font-weight: normal;
-  left: -999px;
   line-height: var(--spectrum-line-height-xs);
   margin-left: 10px;
-  margin-top: -16px;
   opacity: 0;
   padding: 4px 9px 5px 10px;
   position: absolute;
@@ -508,14 +507,11 @@
 }
 
 .browse-card .tooltip-top .tooltip-text {
-  transform: translateX(-45%);
-  margin-left: 0;
-  margin-top: 0;
-}
-
-.browse-card .tooltip .tooltip-text.tooltip-visible {
-  visibility: visible;
-  opacity: 1;
+  transform: translateX(-50%);
+  top: unset;
+  left: 50%;
+  bottom: 100%;
+  margin: 0 0 2px;
 }
 
 .browse-card .tooltip .tooltip-text::before {
@@ -535,7 +531,7 @@
   right: unset;
   top: unset;
   left: calc(50% - 4px);
-  bottom: -8px;
+  bottom: -7px;
   transform: rotate(-90deg);
 }
 
@@ -545,6 +541,11 @@
 
 .browse-card .tooltip-grey .tooltip-text::before {
   border-color: transparent var(--non-spectrum-dim-gray) transparent transparent;
+}
+
+.browse-card .tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }
 
 /* Skill-Bar */

@@ -334,23 +334,18 @@ export function decorateExternalLinks(main) {
 }
 
 /**
- * Links that have URLs with hash fragments; the hash fragments will be translated to attributes.
- * Example: <a href="https://example.com#target=_blank&auth-only=true">link</a>
- * becomes: <a href="https://example.com" target="_blank" auth-only="true">link</a>
+ * Adds attributes to <a> tags based on special keys in the URL.
  *
- * Hash fragments without key-value pairs (e.g., #support) are ignored.
+ * If a URL contains '@newtab', it adds target="_blank".
+ * Example:
+ * <a href="https://example.com@newtab"> → <a href="https://example.com" target="_blank">
+ *
  * @param {HTMLElement} block
  */
 export const decorateLinks = (block) => {
-  block.querySelectorAll('a').forEach((link) => {
-    const href = link?.href;
-    if (!href) return;
-
-    const [baseUrl, hashParams] = href.split('#');
-    if (!hashParams?.includes('=')) return;
-    link.href = baseUrl;
-    const params = new URLSearchParams(hashParams);
-    params.forEach((value, key) => link.setAttribute(key, value));
+  block.querySelectorAll('a[href*="@newtab"]').forEach((link) => {
+    link.href = link.href.replace('@newtab', '');
+    link.setAttribute('target', '_blank');
   });
 };
 

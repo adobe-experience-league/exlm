@@ -560,7 +560,7 @@
         "label": "Style",
         "valueType": "string",
         "required": true,
-        "maxSize": 4,
+        "maxSize": 6,
         "options": [
           {
             "name": "Theme",
@@ -593,7 +593,7 @@
             "children": [
               {
                 "name": "Detailed Teaser (Default)",
-                "value": ""
+                "value": "detailed-teaser"
               },
               {
                 "name": "Inline Banner",
@@ -602,6 +602,24 @@
               {
                 "name": "50-50 Split Layout",
                 "value": "fifty-split-layout"
+              }
+            ]
+          },
+          {
+            "name": "Style Options",
+            "children": [
+              {
+                "name": "Elevates the image above the block",
+                "value": "elevated-image"
+              }
+            ]
+          },
+          {
+            "name": "Display Preferences",
+            "children": [
+              {
+                "name": "Hide Inline Banner for authenticated user",
+                "value": "hide-banner"
               }
             ]
           },
@@ -679,16 +697,6 @@
             ]
           }
         ]
-      },
-      {
-        "condition": {
-          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "inline-banner"] }]
-        },
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "hideInlineBanner",
-        "label": "Hide inline banner if user is logged in?",
-        "description": "This option allows to hide the banner when user is logged in."
       },
       {
         "component": "reference",
@@ -785,13 +793,6 @@
         "value": "",
         "label": "Subject Alt Text",
         "description": "A descriptive text of the subject image."
-      },
-      {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "popUpSubject",
-        "label": "Pop up the subject image",
-        "description": "Elevates the subject image above the background."
       },
       {
         "component": "select",
@@ -1465,6 +1466,30 @@
     "id": "curated-cards",
     "fields": [
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "heading",
@@ -1676,33 +1701,139 @@
     "id": "marquee",
     "fields": [
       {
-        "component": "select",
-        "name": "marqueeSize",
-        "value": "",
-        "label": "Marquee Size",
-        "description": "The Marquee Size",
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Style",
         "valueType": "string",
+        "required": true,
         "options": [
           {
-            "name": "Large",
-            "value": "large"
+            "name": "Size Variant",
+            "children": [
+              {
+                "name": "Large",
+                "value": "large"
+              },
+              {
+                "name": "Medium",
+                "value": "medium"
+              },
+              {
+                "name": "Small",
+                "value": "small"
+              }
+            ]
           },
           {
-            "name": "Medium",
-            "value": "medium"
+            "name": "Style Variant",
+            "children": [
+              {
+                "name": "Curved",
+                "value": "curved"
+              },
+              {
+                "name": "Straight",
+                "value": "straight"
+              }
+            ]
           },
           {
-            "name": "Small",
-            "value": "small"
+            "name": "Style Options",
+            "children": [
+              {
+                "name": "Fill marquee with given background color",
+                "value": "fill-background"
+              }
+            ]
+          },
+          {
+            "name": "Background Color",
+            "children": [
+              {
+                "name": "Gray",
+                "value": "bg-spectrum-gray-700"
+              },
+              {
+                "name": "Blue",
+                "value": "bg-spectrum-blue-700"
+              },
+              {
+                "name": "Green",
+                "value": "bg-spectrum-green-700"
+              },
+              {
+                "name": "Orange",
+                "value": "bg-spectrum-orange-700"
+              },
+              {
+                "name": "Red",
+                "value": "bg-spectrum-red-700"
+              },
+              {
+                "name": "Celery",
+                "value": "bg-spectrum-celery-700"
+              },
+              {
+                "name": "Chartreuse",
+                "value": "bg-spectrum-chartreuse-700"
+              },
+              {
+                "name": "Cyan",
+                "value": "bg-spectrum-cyan-700"
+              },
+              {
+                "name": "Fuchsia",
+                "value": "bg-spectrum-fuchsia-700"
+              },
+              {
+                "name": "Indigo",
+                "value": "bg-spectrum-indigo-700"
+              },
+              {
+                "name": "Magenta",
+                "value": "bg-spectrum-magenta-700"
+              },
+              {
+                "name": "Purple",
+                "value": "bg-spectrum-purple-700"
+              },
+              {
+                "name": "Seafoam",
+                "value": "bg-spectrum-seafoam-700"
+              },
+              {
+                "name": "Yellow",
+                "value": "bg-spectrum-yellow-700"
+              },
+              {
+                "name": "Adobe Red",
+                "value": "bg-non-spectrum-adobe-red"
+              },
+              {
+                "name": "Custom",
+                "value": "custom"
+              }
+            ]
           }
         ]
+      },
+      {
+        "condition": {
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "custom"] }]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "customHexCode",
+        "value": "",
+        "label": "Custom Background Color",
+        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
       },
       {
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
         "label": "Subject Image",
-        "description": "The marquee subject image (Aspect Ratio of the image should based on the height of the marquee)",
+        "description": "Aspect Ratios & Recommended Image Dimensions: 'Large' - 12:7 (960x560px), 'Medium' - 12:5 (960x400px), 'Small' - 16:5 (960x300px). The image fills the screen width with a fixed height, causing cropping at top/bottom on larger screens and left/right on smaller screens. Keep key content in the 'central safe zone'. To avoid unexpected cropping, please preview the banner at different screen sizes (desktop, tablet, and mobile) and adjust the image if needed to ensure key content remains visible.",
         "multi": false
       },
       {
@@ -1712,116 +1843,6 @@
         "value": "",
         "label": "Subject Image Description",
         "description": "A descriptive text of the image will be shown as tooltip."
-      },
-      {
-        "component": "select",
-        "name": "bgColorShape",
-        "value": "",
-        "label": "Background color shape",
-        "description": "The marquee background color shape",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Curved",
-            "value": ""
-          },
-          {
-            "name": "Straight",
-            "value": "straight"
-          }
-        ]
-      },
-      {
-        "component": "select",
-        "name": "classes",
-        "value": "",
-        "label": "Background Color",
-        "description": "The marquee background color",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Gray",
-            "value": "bg-spectrum-gray-700"
-          },
-          {
-            "name": "Blue",
-            "value": "bg-spectrum-blue-700"
-          },
-          {
-            "name": "Green",
-            "value": "bg-spectrum-green-700"
-          },
-          {
-            "name": "Orange",
-            "value": "bg-spectrum-orange-700"
-          },
-          {
-            "name": "Red",
-            "value": "bg-spectrum-red-700"
-          },
-          {
-            "name": "Celery",
-            "value": "bg-spectrum-celery-700"
-          },
-          {
-            "name": "Chartreuse",
-            "value": "bg-spectrum-chartreuse-700"
-          },
-          {
-            "name": "Cyan",
-            "value": "bg-spectrum-cyan-700"
-          },
-          {
-            "name": "Fuchsia",
-            "value": "bg-spectrum-fuchsia-700"
-          },
-          {
-            "name": "Indigo",
-            "value": "bg-spectrum-indigo-700"
-          },
-          {
-            "name": "Magenta",
-            "value": "bg-spectrum-magenta-700"
-          },
-          {
-            "name": "Purple",
-            "value": "bg-spectrum-purple-700"
-          },
-          {
-            "name": "Seafoam",
-            "value": "bg-spectrum-seafoam-700"
-          },
-          {
-            "name": "Yellow",
-            "value": "bg-spectrum-yellow-700"
-          },
-          {
-            "name": "Adobe Red",
-            "value": "bg-non-spectrum-adobe-red"
-          },
-          {
-            "name": "Custom",
-            "value": "custom"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "classes" }, "custom"]
-        },
-        "component": "text",
-        "valueType": "string",
-        "name": "customHexCode",
-        "value": "",
-        "label": "Custom Hexcode",
-        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
-      },
-      {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "backgroundHexCode",
-        "label": "Fill marquee with background color",
-        "description": "This option allows to fill marquee with the above selected background color."
       },
       {
         "component": "text",
@@ -3050,6 +3071,30 @@
     "id": "authorable-card",
     "fields": [
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "heading",
@@ -3586,6 +3631,30 @@
     "id": "events-cards",
     "fields": [
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "heading",
@@ -3663,6 +3732,30 @@
   {
     "id": "adls-cards",
     "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
       {
         "component": "text",
         "valueType": "string",
@@ -3861,6 +3954,30 @@
   {
     "id": "tabbed-cards",
     "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block Options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Header Alignment",
+            "children": [
+              {
+                "name": "Left",
+                "value": "header-left"
+              },
+              {
+                "name": "Center",
+                "value": "header-center"
+              }
+            ]
+          }
+        ]
+      },
       {
         "component": "text",
         "valueType": "string",
@@ -4750,11 +4867,22 @@
     "id": "icon-block",
     "fields": [
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "allow-center",
-        "label": "Center the section?",
-        "description": "This will center the entire Icon Cards Block."
+        "component": "select",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Center align Icon Cards Block",
+            "value": "icon-block-center-align"
+          }
+        ]
       }
     ]
   },
@@ -5517,11 +5645,22 @@
         "description": "Sets the text url."
       },
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "default-to-coveo",
-        "label": "Default to Coveo",
-        "description": "Show results from Coveo instead of Adobe Target"
+        "component": "select",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Default to Coveo",
+            "value": "coveo-only"
+          }
+        ]
       }
     ]
   },
@@ -5914,11 +6053,22 @@
         "description": "Sets the text url."
       },
       {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "default-to-coveo",
-        "label": "Default to Coveo",
-        "description": "Show results from Coveo instead of Adobe Target"
+        "component": "select",
+        "name": "classes",
+        "label": "Block options",
+        "description": "Options that affect block appearance and behavior.",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Default to Coveo",
+            "value": "coveo-only"
+          }
+        ]
       }
     ]
   },
@@ -6026,7 +6176,7 @@
             ]
           },
           {
-            "name": "Toggle Options",
+            "name": "Display Preferences",
             "children": [
               {
                 "name": "Banner for Adobe employee only?",
@@ -6608,7 +6758,7 @@
             ]
           },
           {
-            "name": "Toggle Options",
+            "name": "Features",
             "children": [
               {
                 "name": "Dismissable",
@@ -6693,7 +6843,7 @@
         "name": "text",
         "value": "",
         "label": "Nav List",
-        "description": "Should be authores as a nested list ... more details tbd..."
+        "description": "Should be authored as a nested list. Link attributes should be defined explicitly. For example: https://example.com@newtab will open link in new tab."
       }
     ]
   },
@@ -6820,7 +6970,7 @@
             ]
           },
           {
-            "name": "Toggle Options",
+            "name": "Style Options",
             "children": [
               {
                 "name": "Enable line numbering",
