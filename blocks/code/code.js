@@ -7,17 +7,51 @@ function getDataLineValue(arr) {
 }
 
 export default function decorate(block) {
-  const attributes = {};
+  const htmlElementData = [...block.children].map((row) => row.firstElementChild);
+  const [preElement, lineNumberingEl, lineHighlightingEl] = htmlElementData;
+
+  const preTagAttributes = {};
+  block.innerHTML = preElement.outerHTML;
+  const dataLine = [];
   const pre = block.querySelector('pre');
-  attributes.dataLine = [];
+
   block.classList.forEach((className) => {
-    if (className === 'line-number') pre.classList.add(className);
-    if (className.startsWith('language-')) pre.classList.add(className);
-    if (className.startsWith('data-start-')) attributes.dataStart = className.slice(11);
-    if (className.startsWith('data-line-offset-')) attributes.dataLineOffset = className.slice(17);
-    if (className.startsWith('h-')) attributes.dataLine.push(className);
+    switch (true) {
+      case className === 'line-number':
+      case className.startsWith('language-'):
+        pre.classList.add(className);
+        break;
+
+      case className.startsWith('data-start-'):
+        preTagAttributes['data-start'] = className.slice(11);
+        break;
+
+      case className.startsWith('data-line-offset-'):
+        preTagAttributes['data-line-offset'] = className.slice(17);
+        break;
+
+      case className.startsWith('h-'):
+        dataLine.push(className);
+        break;
+
+      default:
+        break;
+    }
   });
-  if (attributes.dataStart) pre.setAttribute('data-start', attributes.dataStart);
-  if (attributes.dataLineOffset) pre.setAttribute('data-line-offset', attributes.dataLineOffset);
-  if (attributes.dataLine.length) pre.setAttribute('data-line', getDataLineValue(attributes.dataLine));
+
+  if (lineNumberingEl?.textContent) {
+    preTagAttributes['data-start'] = parseInt(lineNumberingEl.textContent, 10);
+  }
+
+  if (lineHighlightingEl?.innerText) {
+    preTagAttributes['data-line'] = lineHighlightingEl.innerText;
+  } else if (dataLine.length) {
+    preTagAttributes['data-line'] = getDataLineValue(dataLine);
+  }
+
+  Object.entries(preTagAttributes).forEach(([key, value]) => {
+    if (value) {
+      pre.setAttribute(key, value);
+    }
+  });
 }
