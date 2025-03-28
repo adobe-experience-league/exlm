@@ -548,7 +548,7 @@ body {
   font-family: var(--body-font-family);
   line-height: 1.6;
   color: var(--text-color);
-  background-color: var(--background-color);
+  background-color: var(--highlight-light-background-color);
   display: none;
   overflow-wrap: break-word;
 }
@@ -961,6 +961,7 @@ picture[align="right"] {
 
 .section {
   padding: 30px 16px;
+  background-color: var(--highlight-light-background-color);
 
   /* section metadata */
 }
@@ -973,8 +974,12 @@ picture[align="right"] {
   margin-bottom: 0;
 }
 
-.section.highlight {
-  background-color: var(--highlight-light-background-color);
+.section.bg-white {
+  background-color: var(--background-color);
+}
+
+.section.bg-dark-gray {
+  background-color: var(--highlight-dark-background-color);
 }
 
 .section.tabs-container {
@@ -1096,7 +1101,7 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination
     grid-row: 1/100;
     width: 224px;
     height: 100%;
-    padding: 0 0 0 32px;
+    padding: 0;
   }
 }
 

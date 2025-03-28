@@ -1,5 +1,5 @@
 .signup-dialog {
-  background: var(--non-spectrum-bg);
+  background: var(--highlight-light-background-color);
   border: 0;
   border-radius: 16px;
   box-shadow: 0 3px 24px rgb(0 0 0 / 16%);
@@ -72,7 +72,7 @@
 }
 
 .signup-dialog-header {
-  background: var(--non-spectrum-bg);
+  background: var(--highlight-light-background-color);
   padding: 0 20px 20px;
   position: relative;
   text-align: center;
@@ -80,7 +80,7 @@
 }
 
 .signup-dialog-header.sticky {
-  background: var(--non-spectrum-bg);
+  background: var(--highlight-light-background-color);
   box-shadow: 0 3px 16px rgb(0 0 0 / 8%);
   padding-top: 1px;
   position: sticky;

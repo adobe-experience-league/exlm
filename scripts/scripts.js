@@ -171,10 +171,14 @@ function addBrowseRail(main) {
 
 function addBrowseBreadCrumb(main) {
   if (!main.querySelector('.browse-breadcrumb.block')) {
-    // add new section at the top
-    const section = document.createElement('div');
-    main.prepend(section);
-    section.append(buildBlock('browse-breadcrumb', []));
+    const section = main.querySelector('main > div');
+    if (section) {
+      section.prepend(buildBlock('browse-breadcrumb', []));
+    } else {
+      const newSection = document.createElement('div');
+      main.prepend(newSection);
+      newSection.append(buildBlock('browse-breadcrumb', []));
+    }
   }
 }
 

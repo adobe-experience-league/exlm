@@ -71,10 +71,6 @@
   width: 100%;
 }
 
-.browse-rail ul li > ul li {
-  margin-left: 12px;
-}
-
 .browse-rail li > span.js-toggle {
   position: relative;
   cursor: pointer;
