@@ -4626,7 +4626,7 @@
         "description": "The section style",
         "valueType": "string",
         "options": [
-                    {
+          {
             "name": "Default Background",
             "value": "default"
           },
