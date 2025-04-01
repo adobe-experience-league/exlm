@@ -6181,7 +6181,12 @@
               {
                 "name": "Banner for Adobe employee only?",
                 "value": "internal-banner"
-              },
+              }
+            ]
+          },
+          {
+            "name": "Features",
+            "children": [
               {
                 "name": "Dismissable",
                 "value": "dismissable"
