@@ -11,11 +11,6 @@
     padding-top: 50px;
   }
 
-  body.browse-all main > div.section.browse-breadcrumb-container {
-    padding-top: 24px;
-    padding-bottom: 0;
-  }
-
   body.browse-all main > div.section.sign-up-container {
     padding-top: 0;
     padding-bottom: 0;

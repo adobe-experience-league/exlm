@@ -329,6 +329,28 @@ export const buildNoResultsContent = (block, show, placeholder = placeholders.no
 };
 
 /**
+ * Lowercases the url if it is the same origin, handles relative urls as well
+ * @param {string} url - The url to lowercase
+ * @returns {string} The lowercase url
+ */
+function lowerCaseSameOriginUrls(url) {
+  if (url) {
+    let urlObj;
+    try {
+      urlObj = new URL(url, window.location.origin);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('Error parsing url:', e);
+      return url; // gracefully handle malformed urls
+    }
+    if (urlObj.origin === window.location.origin) {
+      return urlObj.toString().toLowerCase();
+    }
+  }
+  return url;
+}
+
+/**
  * Builds a browse card element with various components based on the provided model data.
  *
  * @param {HTMLElement} container - The container element for the browse card.
@@ -350,8 +372,8 @@ export async function buildCard(container, element, model) {
 
   element.setAttribute('data-analytics-content-type', contentType);
   // lowercase all urls - because all of our urls are lower-case
-  model.viewLink = model.viewLink?.toLowerCase();
-  model.copyLink = model.copyLink?.toLowerCase();
+  model.viewLink = lowerCaseSameOriginUrls(model.viewLink);
+  model.copyLink = lowerCaseSameOriginUrls(model.copyLink);
 
   let type = contentType?.toLowerCase();
   const inProgressMappingKey = RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY.toLowerCase();
