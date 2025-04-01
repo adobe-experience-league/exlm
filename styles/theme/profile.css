@@ -1,5 +1,5 @@
 body.profile {
-  background-color: var(--background-color);
+  background-color: var(--highlight-light-background-color);
 }
 
 body.profile-home-page > main {
@@ -35,12 +35,12 @@ body.profile-home-page .section:not(.sign-up-flow-section) {
   border-bottom: 1px solid var(--spectrum-gray-300);
 }
 
-body.profile .section.highlight-dark-bg {
-  background-color: var(--highlight-dark-background-color);
+body.profile .section.bg-white {
+  background-color: var(--background-color);
 }
 
-body.profile .section.highlight-light-bg {
-  background-color: var(--highlight-light-background-color);
+body.profile .section.bg-dark-gray {
+  background-color: var(--highlight-dark-background-color);
 }
 
 body.profile-home-page .section:nth-last-of-type(2),

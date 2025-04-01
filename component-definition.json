@@ -295,6 +295,7 @@
                 "template": {
                   "name": "ADLS Cards",
                   "model": "adls-cards",
+                  "classes": ["header-left"],
                   "headingType": "h2",
                   "sortby": "recommended"
                 }
@@ -418,6 +419,7 @@
                   "filter": "authorable-card",
                   "name": "Authorable Card",
                   "model": "authorable-card",
+                  "classes": ["header-left"],
                   "headingType": "h2",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -630,6 +632,7 @@
                 "template": {
                   "name": "Curated Cards",
                   "model": "curated-cards",
+                  "classes": ["header-left"],
                   "headingType": "h2"
                 }
               }
@@ -661,8 +664,7 @@
                 "template": {
                   "name": "Detailed Teaser",
                   "model": "detailed-teaser",
-                  "variantType": "",
-                  "hideInlineBanner": "false",
+                  "classes": ["light", "left", "detailed-teaser"],
                   "fileReference": "/content/dam/adobe-summit-background.jpeg",
                   "eyebrow_logo": "/content/dam/summit-logo.png",
                   "eyebrow_title": "Eyebrow title",
@@ -671,7 +673,6 @@
                   "titleType": "h3",
                   "description": "Description",
                   "subject": "/content/dam/summit-subject.png",
-                  "classes": ["light", "left"],
                   "cta1_Type": "primary",
                   "cta1_customBgColor": "--spectrum-gray-700",
                   "cta1_textColor": "white",
@@ -710,6 +711,7 @@
                 "template": {
                   "name": "Events Cards",
                   "model": "events-cards",
+                  "classes": ["header-left"],
                   "headingType": "h2"
                 }
               }
@@ -921,12 +923,11 @@
                 "template": {
                   "name": "Marquee",
                   "model": "marquee",
+                  "classes": ["medium", "curved", "bg-spectrum-gray-700"],
                   "fileReference": "/content/dam/exlm/en/images/subjects/Community_headshot_single.png",
                   "title": "Marquee Title",
                   "titleType": "h2",
                   "longDescr": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt",
-                  "customHexCode": "FFFFFF",
-                  "marqueeSize": "medium",
                   "cta1_Type": "primary",
                   "cta1_customBgColor": "--spectrum-gray-700",
                   "cta1_textColor": "white",
@@ -1293,6 +1294,7 @@
                 "template": {
                   "name": "Tabbed Cards",
                   "model": "tabbed-cards",
+                  "classes": ["header-left"],
                   "headingType": "h2"
                 }
               }

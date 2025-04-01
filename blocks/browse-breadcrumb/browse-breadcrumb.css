@@ -1,9 +1,3 @@
-/* breadcrumb has its own section */
-.section.browse-breadcrumb-container {
-  padding-top: 24px;
-  padding-bottom: 0;
-}
-
 /* a flex list of links /spans */
 .browse-breadcrumb.block {
   align-items: center;

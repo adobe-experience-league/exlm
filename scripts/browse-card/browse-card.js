@@ -1,6 +1,5 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
-import { createTooltip } from './browse-card-tooltip.js';
 import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS, VIDEO_THUMBNAIL_FORMAT } from './browse-cards-constants.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
@@ -330,6 +329,28 @@ export const buildNoResultsContent = (block, show, placeholder = placeholders.no
 };
 
 /**
+ * Lowercases the url if it is the same origin, handles relative urls as well
+ * @param {string} url - The url to lowercase
+ * @returns {string} The lowercase url
+ */
+function lowerCaseSameOriginUrls(url) {
+  if (url) {
+    let urlObj;
+    try {
+      urlObj = new URL(url, window.location.origin);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('Error parsing url:', e);
+      return url; // gracefully handle malformed urls
+    }
+    if (urlObj.origin === window.location.origin) {
+      return urlObj.toString().toLowerCase();
+    }
+  }
+  return url;
+}
+
+/**
  * Builds a browse card element with various components based on the provided model data.
  *
  * @param {HTMLElement} container - The container element for the browse card.
@@ -351,8 +372,8 @@ export async function buildCard(container, element, model) {
 
   element.setAttribute('data-analytics-content-type', contentType);
   // lowercase all urls - because all of our urls are lower-case
-  model.viewLink = model.viewLink?.toLowerCase();
-  model.copyLink = model.copyLink?.toLowerCase();
+  model.viewLink = lowerCaseSameOriginUrls(model.viewLink);
+  model.copyLink = lowerCaseSameOriginUrls(model.copyLink);
 
   let type = contentType?.toLowerCase();
   const inProgressMappingKey = RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY.toLowerCase();
@@ -432,27 +453,35 @@ export async function buildCard(container, element, model) {
     buildInProgressBarContent({ inProgressStatus, cardFigure, card });
   }
 
-  if (product || failedToLoad) {
-    let tagElement;
-    if (product?.length > 1) {
-      tagElement = createTag(
-        'div',
-        { class: 'browse-card-tag-text' },
-        `<h4>${placeholders.multiSolutionText || 'multisolution'}</h4><div class="tooltip-placeholder"></div>`,
-      );
-      cardContent.appendChild(tagElement);
-      const tooltipElem = cardContent.querySelector('.tooltip-placeholder');
-      const tooltipConfig = {
-        position: 'top',
-        color: 'grey',
-        content: product.join(', '),
-      };
-      createTooltip(container, tooltipElem, tooltipConfig);
-    } else {
-      const tagText = product ? product.join(', ') : '';
-      tagElement = createTag('div', { class: 'browse-card-tag-text' }, `<h4>${tagText}</h4>`);
-      cardContent.appendChild(tagElement);
+  if (product?.length > 0 || failedToLoad) {
+    const tagText = product?.join(', ') || '';
+    const isMultiSolution = product?.length > 1;
+
+    const tagElement = createTag(
+      'div',
+      { class: 'browse-card-tag-text' },
+      `<h4>${isMultiSolution ? placeholders.multiSolutionText || 'multisolution' : tagText}</h4>`,
+    );
+
+    if (isMultiSolution) {
+      const tooltip = htmlToElement(`
+        <div class="tooltip-placeholder">
+          <div class="tooltip tooltip-top tooltip-grey">
+            <span class="icon icon-info"></span>
+            <span class="tooltip-text">${tagText}</span>
+          </div>
+        </div>
+      `);
+      // Eventlistener to make the tooltip clickable inside the anchor tag
+      tooltip.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      });
+
+      tagElement.appendChild(tooltip);
+      decorateIcons(tagElement);
     }
+    cardContent.appendChild(tagElement);
   }
 
   if (title) {
