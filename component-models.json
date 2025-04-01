@@ -1215,20 +1215,20 @@
         "component": "select",
         "name": "style",
         "value": "",
-        "label": "Style",
-        "description": "The section style",
+        "label": "Background Color",
+        "description": "Section background color",
         "valueType": "string",
         "options": [
           {
-            "name": "Default Background",
+            "name": "Default",
             "value": "default"
           },
           {
-            "name": "White Background",
+            "name": "White",
             "value": "bg-white"
           },
           {
-            "name": "Dark Gray Background",
+            "name": "Dark Gray",
             "value": "bg-dark-gray"
           }
         ]
@@ -1308,20 +1308,20 @@
         "component": "select",
         "name": "style",
         "value": "",
-        "label": "Style",
-        "description": "The section style",
+        "label": "Background Color",
+        "description": "Section background color",
         "valueType": "string",
         "options": [
           {
-            "name": "Default Background",
+            "name": "Default",
             "value": "default"
           },
           {
-            "name": "White Background",
+            "name": "White",
             "value": "bg-white"
           },
           {
-            "name": "Dark Gray Background",
+            "name": "Dark Gray",
             "value": "bg-dark-gray"
           }
         ]
@@ -4664,20 +4664,20 @@
         "component": "select",
         "name": "style",
         "value": "",
-        "label": "Style",
-        "description": "The section style",
+        "label": "Background Color",
+        "description": "Section background color",
         "valueType": "string",
         "options": [
           {
-            "name": "Default Background",
+            "name": "Default",
             "value": ["profile-section", "default"]
           },
           {
-            "name": "White Background",
+            "name": "White",
             "value": ["profile-section", "bg-white"]
           },
           {
-            "name": "Dark Gray Background",
+            "name": "Dark Gray",
             "value": ["profile-section", "bg-dark-gray"]
           }
         ]
@@ -4705,20 +4705,20 @@
         "component": "select",
         "name": "style",
         "value": "",
-        "label": "Style",
-        "description": "The section style",
+        "label": "Background Color",
+        "description": "Section background color",
         "valueType": "string",
         "options": [
           {
-            "name": "Default Background",
+            "name": "Default",
             "value": ["profile-bottom-section", "default"]
           },
           {
-            "name": "White Background",
+            "name": "White",
             "value": ["profile-bottom-section", "bg-white"]
           },
           {
-            "name": "Dark Gray Background",
+            "name": "Dark Gray",
             "value": ["profile-bottom-section", "bg-dark-gray"]
           }
         ]
@@ -4739,20 +4739,20 @@
         "component": "select",
         "name": "style",
         "value": "",
-        "label": "Style",
-        "description": "The section style",
+        "label": "Background Color",
+        "description": "Section background color",
         "valueType": "string",
         "options": [
           {
-            "name": "Default Background",
+            "name": "Default",
             "value": "default"
           },
           {
-            "name": "White Background",
+            "name": "White",
             "value": "bg-white"
           },
           {
-            "name": "Dark Gray Bacground",
+            "name": "Dark Gray",
             "value": "bg-dark-gray"
           }
         ]
