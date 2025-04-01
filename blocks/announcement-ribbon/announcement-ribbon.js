@@ -5,20 +5,21 @@ import { getPathDetails } from '../../scripts/scripts.js';
 
 const STORAGE_KEY = 'hide-ribbon-block';
 const ribbonStore = {
+  // TODO: update the remove function
   /**
    * Removes the entry matching the page path and ribbon id from the store.
    * @param {string} pagePath
    * @param {string} id
    */
-  remove: (pagePath, id) => {
+  /*
+  remove: (pagePath, ribbonId) => {
     const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    const updatedStore = existingStore.filter((entry) => {
-      const entryIdPrefix = entry.id.split('-')[0];
-      const targetIdPrefix = id.split('-')[0];
-      return !(entry.pagePath === pagePath && entryIdPrefix === targetIdPrefix);
-    });
+    const updatedStore = existingStore.filter((entry) =>
+      !(entry.pagePath === pagePath && entry.id === ribbonId)
+    );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
   },
+  */
   /**
    * @param {string} pagePath
    * @param {string} id
@@ -32,24 +33,28 @@ const ribbonStore = {
   /**
    * Retrieves the entry matching the page path and ribbon id from the store.
    * @param {string} pagePath
-   * @param {string} id
    * @returns {{pagePath: string, id: string, dismissed: boolean} | null}
    */
-  get: (pagePath, id) => {
+  get: (pagePath) => {
     const storedData = localStorage.getItem(STORAGE_KEY);
     if (storedData) {
       const entries = JSON.parse(storedData);
-      return entries.find((entry) => entry.pagePath === pagePath && entry.id === id) || null;
+      return entries.filter((entry) => entry.pagePath === pagePath);
     }
-    return null;
+    return [];
   },
 };
 
 // Function to hide a ribbon and update the key in the browser storage
 function hideRibbon(block, pagePath, ribbonId) {
   block.parentElement.remove();
-  ribbonStore.remove(pagePath, ribbonId);
   ribbonStore.set(pagePath, ribbonId, true);
+}
+
+function generateHash(content) {
+  if (!content || typeof content !== 'string') return '';
+  const base64 = btoa(unescape(encodeURIComponent(content)));
+  return base64.slice(2, 10) + base64.slice(-8);
 }
 
 async function decorateRibbon({
@@ -146,21 +151,19 @@ async function decorateRibbon({
 }
 
 export default async function decorate(block) {
-  const [image, heading, description, hexcode, idElem, firstCta, secondCta] = [...block.children].map(
+  const [image, heading, description, hexcode, firstCta, secondCta] = [...block.children].map(
     (row) => row.firstElementChild,
   );
   const { lang } = getPathDetails();
   const dismissable = block.classList.contains('dismissable');
   const url = window.location.href;
-  const parts = url.split('/');
-  const langIndex = parts.indexOf(lang);
-  const pagePath = langIndex !== -1 ? `/${parts.slice(langIndex + 1).join('/')}` : '';
+  const pagePath = url.includes(`/${lang}/`) ? `/${url.split(`/${lang}/`)[1]}` : '';
+  const ribbonId = generateHash(`${heading?.textContent?.trim() || ''} ${description?.textContent?.trim() || ''}`);
+  const ribbonStates = ribbonStore.get(pagePath);
+  const isDismissed = ribbonStates?.some((entry) => entry.id === ribbonId && entry.dismissed);
 
-  const ribbonId = idElem?.textContent?.trim();
-  const ribbonState = ribbonStore.get(pagePath, ribbonId);
-
-  if (dismissable && ribbonState && ribbonState.id === ribbonId && ribbonState.dismissed) {
-    block.remove(); // remove the banner section if it was dismissed
+  if (dismissable && isDismissed) {
+    block.remove(); // remove the block section if any matching entry was dismissed
   } else {
     decorateRibbon({
       block,
