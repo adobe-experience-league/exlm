@@ -6126,14 +6126,6 @@
         "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
       },
       {
-        "component": "text",
-        "valueType": "string",
-        "name": "bannerId",
-        "value": "",
-        "label": "Banner ID",
-        "description": "A unique identifier - New banners should have a different ID to ensure they appear even if a previous banner was dismissed."
-      },
-      {
         "component": "select",
         "name": "cta1_Type",
         "value": "primary",

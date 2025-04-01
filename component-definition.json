@@ -355,8 +355,7 @@
                   "cta2_textColor": "white",
                   "cta2_customBgHexCode": "000000",
                   "customHexCode": "FFFFFF",
-                  "classes": "light",
-                  "bannerId": "banner-1"
+                  "classes": "light"
                 }
               }
             }
