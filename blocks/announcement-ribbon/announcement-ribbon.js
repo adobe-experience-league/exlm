@@ -8,20 +8,6 @@ const STORAGE_KEY = 'hide-ribbon-block';
 const ribbonStore = {
   // TODO: update the remove function
   /**
-   * Removes the entry matching the page path and ribbon id from the store.
-   * @param {string} pagePath
-   * @param {string} id
-   */
-  /*
-  remove: (pagePath, ribbonId) => {
-    const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    const updatedStore = existingStore.filter((entry) =>
-      !(entry.pagePath === pagePath && entry.id === ribbonId)
-    );
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
-  },
-  */
-  /**
    * @param {string} pagePath
    * @param {string} id
    * @param {boolean} dismissed
