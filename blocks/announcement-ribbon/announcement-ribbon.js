@@ -6,7 +6,7 @@ import { MD5 } from '../../scripts/crypto.js';
 
 const STORAGE_KEY = 'hide-ribbon-block';
 const ribbonStore = {
-  // TODO: update the remove function
+  // TODO: Create the remove function to delete duplicate ribbon objects from local storage.
   /**
    * @param {string} pagePath
    * @param {string} id
@@ -123,56 +123,53 @@ async function decorateRibbon({
   block.append(ribbonDom);
   block.style.backgroundColor = bgColorVariable;
 
-  const icon = block.querySelector('.icon');
-  if (icon) {
-    if (block.classList.contains('dark')) {
-      // If dark class is present, change the icon to light
-      icon.classList.remove('icon-close-black');
-      icon.classList.add('icon-close-light');
-    } else {
-      // Otherwise default icon
-      icon.classList.remove('icon-close-light');
-      icon.classList.add('icon-close-black');
+  if (dismissable) {
+    const icon = block.querySelector('.icon');
+    if (icon) {
+      if (block.classList.contains('dark')) {
+        // If dark class is present, change the icon to light
+        icon.classList.remove('icon-close-black');
+        icon.classList.add('icon-close-light');
+      } else {
+        // Otherwise default icon
+        icon.classList.remove('icon-close-light');
+        icon.classList.add('icon-close-black');
+      }
     }
+
+    // Add close button functionality
+    ['.icon-close-black', '.icon-close-light'].forEach((selectedIcon) => {
+      const closeIcon = block.querySelector(selectedIcon);
+      if (closeIcon && !window.location.href.includes('.html')) {
+        closeIcon.addEventListener('click', () => hideRibbon(block, pagePath, ribbonId));
+      }
+    });
   }
   decorateIcons(block);
-
-  // Add close button functionality
-  ['.icon-close-black', '.icon-close-light'].forEach((selectedIcon) => {
-    const closeIcon = block.querySelector(selectedIcon);
-    if (closeIcon && !window.location.href.includes('.html')) {
-      closeIcon.addEventListener('click', () => hideRibbon(block, pagePath, ribbonId));
-    }
-  });
 }
 
 export default async function decorate(block) {
   const [image, heading, description, hexcode, firstCta, secondCta] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-
-  const firstCtaData = extractAnchorData(firstCta);
-  const secondCtaData = extractAnchorData(secondCta);
-
-  const { lang } = getPathDetails();
   const dismissable = block.classList.contains('dismissable');
-  const url = window.location.href;
-  const pagePath = url.includes(`/${lang}/`) ? `/${url.split(`/${lang}/`)[1]}` : '';
-  const ribbonComponents = [
-    heading,
-    description,
-    firstCtaData.text,
-    firstCtaData.href,
-    secondCtaData.text,
-    secondCtaData.href,
-  ]
-    .filter(Boolean)
-    .map((el) => el?.textContent?.trim() || el)
-    .join(' ');
-  const ribbonId = generateHash(ribbonComponents);
-  const ribbonStates = ribbonStore.get(pagePath);
-  const isDismissed = ribbonStates?.some((entry) => entry.id === ribbonId && entry.dismissed);
-
+  let pagePath = '';
+  let ribbonId = '';
+  let isDismissed = false;
+  if (dismissable) {
+    const firstCtaData = extractAnchorData(firstCta);
+    const secondCtaData = extractAnchorData(secondCta);
+    const { lang } = getPathDetails();
+    const url = window.location.href;
+    pagePath = url.includes(`/${lang}/`) ? `/${url.split(`/${lang}/`)[1]}` : '';
+    ribbonId = generateHash(
+      [heading, description, firstCtaData.text, firstCtaData.href, secondCtaData.text, secondCtaData.href]
+        .filter(Boolean)
+        .map((el) => el?.textContent?.trim() || el)
+        .join(' '),
+    );
+    isDismissed = ribbonStore.get(pagePath)?.some((entry) => entry.id === ribbonId && entry.dismissed);
+  }
   if (dismissable && isDismissed) {
     block.remove(); // remove the block section if any matching entry was dismissed
   } else {
