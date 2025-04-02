@@ -2,6 +2,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { getPathDetails } from '../../scripts/scripts.js';
+import { MD5 } from '../../scripts/crypto.js';
 
 const STORAGE_KEY = 'hide-ribbon-block';
 const ribbonStore = {
@@ -52,10 +53,17 @@ function hideRibbon(block, pagePath, ribbonId) {
 }
 
 function generateHash(content) {
-  if (!content || typeof content !== 'string') return '';
-  const base64 = btoa(unescape(encodeURIComponent(content)));
-  return base64.slice(2, 10) + base64.slice(-8);
+  if (typeof content !== 'string') return '';
+  return MD5(content);
 }
+
+function extractAnchorData(cta) {
+  const anchor = cta?.querySelector("p > a");
+  return anchor ? {
+    href: anchor.getAttribute("href"),
+    text: anchor.textContent.trim(),
+  } : { href: '', text: '' };
+};
 
 async function decorateRibbon({
   block,
@@ -154,11 +162,19 @@ export default async function decorate(block) {
   const [image, heading, description, hexcode, firstCta, secondCta] = [...block.children].map(
     (row) => row.firstElementChild,
   );
+
+  const firstCtaData = extractAnchorData(firstCta);
+  const secondCtaData = extractAnchorData(secondCta);
+
   const { lang } = getPathDetails();
   const dismissable = block.classList.contains('dismissable');
   const url = window.location.href;
   const pagePath = url.includes(`/${lang}/`) ? `/${url.split(`/${lang}/`)[1]}` : '';
-  const ribbonId = generateHash(`${heading?.textContent?.trim() || ''} ${description?.textContent?.trim() || ''}`);
+  const ribbonComponents = [heading, description, firstCtaData.text, firstCtaData.href, secondCtaData.text, secondCtaData.href]
+  .filter(Boolean)
+  .map(el => el?.textContent?.trim() || el)
+  .join(" ");
+  const ribbonId = generateHash(ribbonComponents);
   const ribbonStates = ribbonStore.get(pagePath);
   const isDismissed = ribbonStates?.some((entry) => entry.id === ribbonId && entry.dismissed);
 
