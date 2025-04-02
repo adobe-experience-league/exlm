@@ -58,12 +58,14 @@ function generateHash(content) {
 }
 
 function extractAnchorData(cta) {
-  const anchor = cta?.querySelector("p > a");
-  return anchor ? {
-    href: anchor.getAttribute("href"),
-    text: anchor.textContent.trim(),
-  } : { href: '', text: '' };
-};
+  const anchor = cta?.querySelector('p > a');
+  return anchor
+    ? {
+        href: anchor.getAttribute('href'),
+        text: anchor.textContent.trim(),
+      }
+    : { href: '', text: '' };
+}
 
 async function decorateRibbon({
   block,
@@ -170,10 +172,17 @@ export default async function decorate(block) {
   const dismissable = block.classList.contains('dismissable');
   const url = window.location.href;
   const pagePath = url.includes(`/${lang}/`) ? `/${url.split(`/${lang}/`)[1]}` : '';
-  const ribbonComponents = [heading, description, firstCtaData.text, firstCtaData.href, secondCtaData.text, secondCtaData.href]
-  .filter(Boolean)
-  .map(el => el?.textContent?.trim() || el)
-  .join(" ");
+  const ribbonComponents = [
+    heading,
+    description,
+    firstCtaData.text,
+    firstCtaData.href,
+    secondCtaData.text,
+    secondCtaData.href,
+  ]
+    .filter(Boolean)
+    .map((el) => el?.textContent?.trim() || el)
+    .join(' ');
   const ribbonId = generateHash(ribbonComponents);
   const ribbonStates = ribbonStore.get(pagePath);
   const isDismissed = ribbonStates?.some((entry) => entry.id === ribbonId && entry.dismissed);
