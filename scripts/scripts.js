@@ -516,7 +516,7 @@ export function getLink(edsPath) {
 /** @param {HTMLMapElement} main */
 async function buildPreMain(main) {
   const { lang } = getPathDetails();
-  const fragmentUrl = getMetadata('fragment');
+  const fragmentUrl = getMetadata('site-wide-banner-fragment');
 
   if (!fragmentUrl) return;
 
