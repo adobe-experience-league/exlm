@@ -126,15 +126,9 @@ async function decorateRibbon({
   if (dismissable) {
     const icon = block.querySelector('.icon');
     if (icon) {
-      if (block.classList.contains('dark')) {
-        // If dark class is present, change the icon to light
-        icon.classList.remove('icon-close-black');
-        icon.classList.add('icon-close-light');
-      } else {
-        // Otherwise default icon
-        icon.classList.remove('icon-close-light');
-        icon.classList.add('icon-close-black');
-      }
+      const isDark = block.classList.contains('dark');
+      icon.classList.toggle('icon-close-light', isDark);
+      icon.classList.toggle('icon-close-black', !isDark);
     }
 
     // Add close button functionality
