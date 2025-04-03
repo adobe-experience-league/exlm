@@ -356,8 +356,7 @@
                   "cta2_textColor": "white",
                   "cta2_customBgHexCode": "000000",
                   "customHexCode": "FFFFFF",
-                  "classes": "light",
-                  "dismissalTime": "sessionStorage"
+                  "classes": "light"
                 }
               }
             }
