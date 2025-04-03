@@ -1,4 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { MD5 } from '../../scripts/crypto.js';
 
 const STORAGE_KEY = 'notification-banner';
 
@@ -13,6 +14,11 @@ const bannerStore = {
   /** @returns {id: string, dismissed: boolean} */
   get: () => (localStorage.getItem(STORAGE_KEY) !== undefined ? JSON.parse(localStorage.getItem(STORAGE_KEY)) : null),
 };
+
+function generateHash(content) {
+  if (typeof content !== 'string') return '';
+  return MD5(content);
+}
 
 /**
  * Initializes the banner by setting up its content and event listeners.
@@ -50,20 +56,34 @@ function decorateBanner({ block, bannerId, headingElem, descriptionElem, ctaElem
 
   decorateIcons(block);
 
-  const closeIcon = block.querySelector('.notification-banner-close');
-  closeIcon?.addEventListener('click', () => {
-    block.parentElement.remove();
-    bannerStore.set(bannerId, true); // dismissed
-  });
+  if(dismissable) {
+    const closeIcon = block.querySelector('.notification-banner-close');
+    closeIcon?.addEventListener('click', () => {
+      block.parentElement.remove();
+      bannerStore.set(bannerId, true); // dismissed
+    });
+  }
 }
 
 export default async function decorate(block) {
-  const [idElem, headingElem, descriptionElem, ctaElem] = [...block.children].map((row) => row.firstElementChild);
+  const [headingElem, descriptionElem, ctaElem] = [...block.children].map((row) => row.firstElementChild);
   const classes = Array.of(...block.classList);
   const dismissable = classes.includes('dismissable');
+  let bannerId = '';
+  let bannerState = null;
 
-  const bannerId = idElem?.textContent?.trim();
-  const bannerState = bannerStore.get();
+  if (dismissable) {
+    const ctaData = ctaElem?.querySelector('a');
+    const ctaLink = ctaData?.getAttribute('href');
+    const ctaText = ctaData?.textContent.trim();
+    bannerId = generateHash(
+      [headingElem, descriptionElem, ctaText, ctaLink]
+        .filter(Boolean)
+        .map((el) => el?.textContent?.trim() || el)
+        .join(' '),
+    );
+    bannerState = bannerStore.get();
+  }
 
   if (dismissable && bannerState && bannerState.id === bannerId && bannerState.dismissed) {
     block.remove(); // remove the banner section if it was dismissed
