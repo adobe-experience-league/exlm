@@ -7,11 +7,10 @@ const bannerStore = {
   remove: () => localStorage.removeItem(STORAGE_KEY),
   /**
    * @param {string} id
-   * @param {boolean} dismissed
-   * @returns {id: string, dismissed: boolean}
+   * @returns {id: string}
    */
-  set: (id, dismissed) => localStorage.setItem(STORAGE_KEY, JSON.stringify({ id, dismissed })),
-  /** @returns {id: string, dismissed: boolean} */
+  set: (id) => localStorage.setItem(STORAGE_KEY, JSON.stringify({ id })),
+  /** @returns {id: string} */
   get: () => (localStorage.getItem(STORAGE_KEY) !== undefined ? JSON.parse(localStorage.getItem(STORAGE_KEY)) : null),
 };
 
@@ -23,7 +22,6 @@ function generateHash(content) {
 /**
  * Initializes the banner by setting up its content and event listeners.
  * @param {HTMLElement} block - The notification banner block.
- * @param {string} bannerId - The unique identifier for the banner.
  * @param {string} storage - The storage type (sessionStorage/localStorage).
  * @param {HTMLElement} headingElem - The heading element.
  * @param {HTMLElement} descriptionElem - The description element.
@@ -56,11 +54,11 @@ function decorateBanner({ block, bannerId, headingElem, descriptionElem, ctaElem
 
   decorateIcons(block);
 
-  if(dismissable) {
+  if (dismissable) {
     const closeIcon = block.querySelector('.notification-banner-close');
     closeIcon?.addEventListener('click', () => {
       block.parentElement.remove();
-      bannerStore.set(bannerId, true); // dismissed
+      bannerStore.set(bannerId); // dismissed
     });
   }
 }
@@ -85,7 +83,7 @@ export default async function decorate(block) {
     bannerState = bannerStore.get();
   }
 
-  if (dismissable && bannerState && bannerState.id === bannerId && bannerState.dismissed) {
+  if (dismissable && bannerState && bannerState.id === bannerId) {
     block.remove(); // remove the banner section if it was dismissed
   } else {
     decorateBanner({ block, bannerId, headingElem, descriptionElem, ctaElem, dismissable });
