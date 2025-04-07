@@ -388,7 +388,7 @@ export function decorateNewTabLinks(block) {
     link.firstChild.after(icon);
     decorateIcons(link);
   });
-};
+}
 
 const encodeHTML = (str) => str.replace(/[\u00A0-\u9999<>&]/g, (i) => `&#${i.charCodeAt(0)};`);
 
