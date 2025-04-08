@@ -21,13 +21,19 @@ const getCacheTimestampKey = (url, options) => `${cacheTimestampPrefix}_${url}_$
 
 const promises = new Map();
 
+const FORCE_REFRESH_METHODS = ['PATCH', 'POST', 'PUT', 'DELETE'];
+
 /**
  * Custom fetch function that serves stale data while revalidating
  * @param {string} url - The URL to fetch
  * @param {RequestInit} options - The options for the fetch request
  * @returns {Promise<any>} A promise that resolves with the response data
  */
-export default function fetchStaleWhileRevalidate(url, options) {
+export default async function fetchStaleWhileRevalidate(url, options, forceRefresh = false) {
+  if (FORCE_REFRESH_METHODS.includes(options.method)) {
+    // eslint-disable-next-line no-param-reassign
+    forceRefresh = true;
+  }
   const cacheKey = getCacheKey(url, options);
   const cacheTimestampKey = getCacheTimestampKey(url, options);
   const cachedData = sessionStorage.getItem(cacheKey);
@@ -50,6 +56,10 @@ export default function fetchStaleWhileRevalidate(url, options) {
       return cachedData ? JSON.parse(cachedData) : null;
     }
   };
+
+  if (forceRefresh) {
+    return doFetchAndCache();
+  }
 
   const fetchAndCache = async () => {
     if (promises.has(cacheKey)) {
