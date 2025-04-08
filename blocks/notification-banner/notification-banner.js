@@ -67,24 +67,25 @@ export default async function decorate(block) {
   const [headingElem, descriptionElem, ctaElem] = [...block.children].map((row) => row.firstElementChild);
   const classes = Array.of(...block.classList);
   const dismissable = classes.includes('dismissable');
-  const ctaData = ctaElem?.querySelector('a');
-  const ctaLink = ctaData?.getAttribute('href');
-  const ctaText = ctaData?.textContent.trim();
-  const bannerId = generateHash(
-    [headingElem, descriptionElem, ctaText, ctaLink]
-      .filter(Boolean)
-      .map((el) => el?.textContent?.trim() || el)
-      .join(' '),
-  );
-  const bannerState = bannerStore.get();
+  let bannerId = '';
+  let bannerState = null;
+  if (dismissable) {
+    const ctaData = ctaElem?.querySelector('a');
+    const ctaLink = ctaData?.getAttribute('href');
+    const ctaText = ctaData?.textContent.trim();
+    bannerId = generateHash(
+      [headingElem, descriptionElem, ctaText, ctaLink]
+        .filter(Boolean)
+        .map((el) => el?.textContent?.trim() || el)
+        .join(' '),
+    );
+    bannerState = bannerStore.get();
+  }
 
   if (dismissable && bannerState && bannerState.id === bannerId) {
     block.remove(); // remove the banner section if it was dismissed
   } else {
-    // if the banner ID is different, clear the local storage
-    if (bannerState && bannerState.id !== bannerId) {
-      bannerStore.remove();
-    }
+    bannerStore.remove();
     decorateBanner({ block, bannerId, headingElem, descriptionElem, ctaElem, dismissable });
   }
 }
