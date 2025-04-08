@@ -18,6 +18,7 @@ function generateHash(content) {
   return import('../../scripts/crypto.js')
     .then((module) => module.MD5(content))
     .catch((error) => {
+      // eslint-disable-next-line no-console
       console.error('Error importing MD5:', error);
       return '';
     });
