@@ -1,5 +1,4 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { MD5 } from '../../scripts/crypto.js';
 
 const STORAGE_KEY = 'notification-banner';
 
@@ -16,7 +15,12 @@ const bannerStore = {
 
 function generateHash(content) {
   if (typeof content !== 'string') return '';
-  return MD5(content);
+  return import('../../scripts/crypto.js')
+    .then((module) => module.MD5(content))
+    .catch((error) => {
+      console.error('Error importing MD5:', error);
+      return '';
+    });
 }
 
 /**
@@ -54,13 +58,11 @@ function decorateBanner({ block, bannerId, headingElem, descriptionElem, ctaElem
 
   decorateIcons(block);
 
-  if (dismissable) {
-    const closeIcon = block.querySelector('.notification-banner-close');
-    closeIcon?.addEventListener('click', () => {
-      block.parentElement.remove();
-      bannerStore.set(bannerId); // dismissed
-    });
-  }
+  const closeIcon = block.querySelector('.notification-banner-close');
+  closeIcon?.addEventListener('click', () => {
+    block.parentElement.remove();
+    bannerStore.set(bannerId); // dismissed
+  });
 }
 
 export default async function decorate(block) {
@@ -73,7 +75,7 @@ export default async function decorate(block) {
     const ctaData = ctaElem?.querySelector('a');
     const ctaLink = ctaData?.getAttribute('href');
     const ctaText = ctaData?.textContent.trim();
-    bannerId = generateHash(
+    bannerId = await generateHash(
       [headingElem, descriptionElem, ctaText, ctaLink]
         .filter(Boolean)
         .map((el) => el?.textContent?.trim() || el)
