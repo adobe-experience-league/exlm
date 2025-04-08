@@ -35,7 +35,7 @@ async function isBookmarked(bookmarkId) {
 export async function bookmarkHandler(config) {
   const { element, id: idValue, tooltips } = config;
   const { lang: languageCode } = getPathDetails();
-  const profileData = await defaultProfileClient.getMergedProfile();
+  const profileData = await defaultProfileClient.getMergedProfile(true);
   let id = idValue;
   if (idValue.includes(`/${languageCode}`)) {
     id = idValue.replace(`/${languageCode}`, '');

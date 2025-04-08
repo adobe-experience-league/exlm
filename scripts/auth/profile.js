@@ -72,8 +72,8 @@ class ProfileClient {
     return profile;
   }
 
-  async getProfile() {
-    const profile = await this.fetchProfile({});
+  async getProfile(refresh = false) {
+    const profile = await this.fetchProfile({}, refresh);
     return structuredClone(profile);
   }
 
@@ -96,11 +96,11 @@ class ProfileClient {
     return structuredClone(ppsProfile);
   }
 
-  async getMergedProfile() {
+  async getMergedProfile(refresh = false) {
     const signedIn = await this.isSignedIn;
     if (!signedIn) return null;
 
-    const [profile, imsProfile] = await Promise.all([this.getProfile(), window.adobeIMS?.getProfile()]);
+    const [profile, imsProfile] = await Promise.all([this.getProfile(refresh), window.adobeIMS?.getProfile()]);
     const mergedProfile = { ...profile, ...imsProfile };
     return mergedProfile;
   }
@@ -192,17 +192,21 @@ class ProfileClient {
    * @param {boolean} refresh
    * @returns
    */
-  async fetchProfile(options) {
+  async fetchProfile(options, refresh = false) {
     const jwt = await this.jwt;
-    const data = await fetchStaleWhileRevalidate(this.url, {
-      ...options,
-      credentials: 'include',
-      headers: {
-        authorization: jwt,
-        accept: 'application/json',
-        ...options.headers,
+    const data = await fetchStaleWhileRevalidate(
+      this.url,
+      {
+        ...options,
+        credentials: 'include',
+        headers: {
+          authorization: jwt,
+          accept: 'application/json',
+          ...options.headers,
+        },
       },
-    });
+      refresh,
+    );
 
     return structuredClone(data.data);
   }
