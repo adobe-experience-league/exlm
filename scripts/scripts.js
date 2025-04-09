@@ -378,18 +378,6 @@ export function htmlToElement(html) {
   return template.content.firstElementChild;
 }
 
-/** @param {HTMLElement} block  */
-export function decorateNewTabLinks(block) {
-  const links = block.querySelectorAll('a[target="_blank"]');
-  links.forEach((link) => {
-    link.setAttribute('rel', 'noopener noreferrer');
-    // insert before first text child node
-    const icon = htmlToElement('<span class="icon icon-link-out"></span>');
-    link.firstChild.after(icon);
-    decorateIcons(link);
-  });
-}
-
 const encodeHTML = (str) => str.replace(/[\u00A0-\u9999<>&]/g, (i) => `&#${i.charCodeAt(0)};`);
 
 /**
