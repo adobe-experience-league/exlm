@@ -4,7 +4,7 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import { getPathDetails } from '../../scripts/scripts.js';
 import { MD5 } from '../../scripts/crypto.js';
 
-const STORAGE_KEY = 'hide-ribbon-block';
+const STORAGE_KEY = 'announcement-ribbon';
 const ribbonStore = {
   // TODO: Create the remove function to delete duplicate ribbon objects from local storage.
   /**
