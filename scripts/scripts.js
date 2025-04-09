@@ -1275,7 +1275,7 @@ async function loadPage() {
     return window?.adobeIMS?.isSignedInUser();
   };
 
-  const loadTargetIfApplicable = async () => {
+  const loadTarget = async (skipSignInCheck = false) => {
     const targetSupportedPaths = ['/perspectives', '/home'];
     if (targetSupportedPaths.includes(currentPagePath)) {
       const loadTargetModule = async () => {
@@ -1287,7 +1287,7 @@ async function loadPage() {
         }
       };
 
-      if (currentPagePath === '/home') {
+      if (skipSignInCheck) {
         loadTargetModule();
         return;
       }
@@ -1306,7 +1306,7 @@ async function loadPage() {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
         loadPage();
-        loadTargetIfApplicable();
+        loadTarget(true);
       } else {
         await window?.adobeIMS?.signIn();
       }
@@ -1333,6 +1333,6 @@ async function loadPage() {
     await handleMainPage();
   } else {
     loadPage();
-    loadTargetIfApplicable();
+    loadTarget();
   }
 })();

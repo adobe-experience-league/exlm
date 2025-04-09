@@ -223,16 +223,23 @@ class AdobeTargetClient {
         }
         const blockName = blockElement?.dataset.blockName;
         if (this.currentPageConfig?.pagePath === PHP) {
-          // eslint-disable-next-line no-nested-ternary
-          let mode = blockId
-            ? (criteriaTitle === 'exl-php-recently-viewed-content' && blockName === 'recently-reviewed') ||
-              (criteriaTitle !== 'exl-php-recently-viewed-content' && blockName === 'recommended-content')
-              ? 'update'
-              : 'replace'
-            : 'new';
+          let mode;
+
+          if (blockId) {
+            const isRecentlyViewed =
+              criteriaTitle === 'exl-php-recently-viewed-content' && blockName === 'recently-reviewed';
+            const isRecommendedContent =
+              criteriaTitle !== 'exl-php-recently-viewed-content' && blockName === 'recommended-content';
+
+            mode = isRecentlyViewed || isRecommendedContent ? 'update' : 'replace';
+          } else {
+            mode = 'new';
+          }
+
           if (blockName === 'recommendation-marquee') {
             mode = 'replace'; // If authored block is marquee, replace it with recommended-block as, this block is not the first one and marquee is always reserved as first block.
           }
+
           let newBlock = 'recommended-content';
           if (criteriaTitle === 'exl-php-recently-viewed-content') {
             newBlock = 'recently-reviewed';
