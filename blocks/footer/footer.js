@@ -116,7 +116,7 @@ function decorateBreadcrumb(footer) {
 }
 
 function decorateCopyrightsMenu(footer) {
-  const footerLastRow = footer.querySelector('footer .footer-last-row');
+  const footerLastRow = footer.querySelector('.footer-last-row');
   const footerRights = document.querySelector('.footer-copyrights');
   footerLastRow.appendChild(footerRights);
   const firstFooterAnchor = footerRights.querySelector('a');
