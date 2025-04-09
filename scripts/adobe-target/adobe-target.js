@@ -3,8 +3,21 @@ import getCookie from '../utils/cookie-utils.js';
 import getEmitter from '../events.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
+const [PHP, PERSPECTIVES_HOME] = ['/home', '/perspectives'];
 class AdobeTargetClient {
   constructor() {
+    this.pageConfig = [
+      {
+        pagePath: PHP,
+        supportedBlocks: ['recommended-content', 'recently-reviewed', 'recommendation-marquee'],
+        targetEventRule: 'AT: PHP: Handle response propositions',
+      },
+      {
+        pagePath: PERSPECTIVES_HOME,
+        supportedBlocks: ['recommended-content'],
+        targetEventRule: 'AT: Perspectives: Handle response propositions',
+      },
+    ];
     this.targetDataEventName = 'target-recs-ready';
     this.cookieConsentName = 'OptanonConsent';
     this.recommendationMarqueeScopeName = 'exl-hp-auth-recs-1';
@@ -12,6 +25,7 @@ class AdobeTargetClient {
     this.blocks = [];
     this.targetArray = [];
     this.currentItem = null;
+    this.currentPageConfig = null;
   }
 
   /**
@@ -32,8 +46,12 @@ class AdobeTargetClient {
    * Check if the user has accepted the cookie policy for target and loads target
    * @returns {Promise}
    */
-  async checkTargetSupport() {
-    if (this.targetCookieEnabled) {
+  async checkTargetSupport(pagePath) {
+    if (!this.currentPageConfig && pagePath) {
+      this.currentPageConfig = this.pageConfig.find((data) => data.pagePath === pagePath);
+    }
+
+    if (this.currentPageConfig && this.targetCookieEnabled) {
       try {
         const isTargetDataLoaded = await this.loadTargetData();
         return isTargetDataLoaded;
@@ -66,7 +84,7 @@ class AdobeTargetClient {
         try {
           if (
             event.detail.$type === 'adobe-alloy.send-event-complete' &&
-            event.detail.$rule.name === 'AT: PHP: Handle response propositions'
+            event.detail.$rule.name === this.currentPageConfig?.targetEventRule
           ) {
             await this.handleTargetEvent();
             if (window?.exlm?.targetData?.length || window?.exlm?.recommendationMarqueeTargetData?.length)
@@ -95,7 +113,10 @@ class AdobeTargetClient {
     return new Promise((resolve) => {
       const targetEventHandler = (event) => {
         if (!window?.exlm?.targetData) window.exlm.targetData = [];
-        if (!window?.exlm?.recommendationMarqueeTargetData) window.exlm.recommendationMarqueeTargetData = [];
+        if (this.currentPageConfig?.supportedBlocks?.includes('recommendation-marquee')) {
+          if (!window?.exlm?.recommendationMarqueeTargetData) window.exlm.recommendationMarqueeTargetData = [];
+        }
+
         if (!window?.exlm?.targetData.filter((data) => data?.meta?.scope === event?.detail?.meta?.scope).length) {
           window.exlm.targetData.push(structuredClone(event.detail));
         }
@@ -120,10 +141,10 @@ class AdobeTargetClient {
         const data = window.exlm?.targetData;
         resolve(data);
       } else if (criteria === this.recommendationMarqueeScopeName) {
-        const [data] = window.exlm.recommendationMarqueeTargetData || [];
+        const [data] = window.exlm?.recommendationMarqueeTargetData || [];
         resolve(data);
       } else {
-        window.exlm.targetData.forEach((data) => {
+        window.exlm?.targetData.forEach((data) => {
           if (data?.meta.scope === criteria) resolve(data);
         });
         resolve(null);
@@ -147,20 +168,22 @@ class AdobeTargetClient {
         return data;
       });
 
-    const possibleMarqueeData = window.exlm.targetData[0];
+    if (this.currentPageConfig?.supportedBlocks?.includes('recommendation-marquee')) {
+      const possibleMarqueeData = window.exlm.targetData[0];
 
-    if (!possibleMarqueeData) {
-      return;
+      if (!possibleMarqueeData) {
+        return;
+      }
+
+      this.recommendationMarqueeScopeName = possibleMarqueeData.meta.scope;
+
+      const marqueeIndex = window.exlm.targetData.findIndex(
+        (data) => data.meta.scope === this.recommendationMarqueeScopeName,
+      );
+
+      window.exlm.targetData.splice(marqueeIndex, 1);
+      window.exlm.recommendationMarqueeTargetData?.push(possibleMarqueeData);
     }
-
-    this.recommendationMarqueeScopeName = possibleMarqueeData.meta.scope;
-
-    const marqueeIndex = window.exlm.targetData.findIndex(
-      (data) => data.meta.scope === this.recommendationMarqueeScopeName,
-    );
-
-    window.exlm.targetData.splice(marqueeIndex, 1);
-    window.exlm.recommendationMarqueeTargetData.push(possibleMarqueeData);
   }
 
   /**
@@ -169,9 +192,19 @@ class AdobeTargetClient {
    */
   async mapComponentsToTarget() {
     const main = document.querySelector('main');
-    this.blocks = main.querySelectorAll(
-      '.recommended-content:not(.recommended-content.coveo-only), .recently-reviewed, .recommendation-marquee:not(.recommendation-marquee.coveo-only)',
-    );
+
+    // Construct query selectors for blocks defined in the current page
+    const selectors = this.currentPageConfig.supportedBlocks
+      .map((block) => {
+        // Add `:not()` condition for specific block types to ignore coveo-only blocks
+        if (block === 'recommended-content' || block === 'recommendation-marquee') {
+          return `.${block}:not(.${block}.coveo-only)`;
+        }
+        return `.${block}`;
+      })
+      .join(', ');
+
+    this.blocks = main.querySelectorAll(selectors);
     this.sanitizeTargetData();
     const targetData = await this.getTargetData();
     const marqueeTargetData = await this.getTargetData(this.recommendationMarqueeScopeName);
@@ -189,26 +222,31 @@ class AdobeTargetClient {
           blockElement.id = blockId;
         }
         const blockName = blockElement?.dataset.blockName;
+        if (this.currentPageConfig?.pagePath === PHP) {
+          // eslint-disable-next-line no-nested-ternary
+          let mode = blockId
+            ? (criteriaTitle === 'exl-php-recently-viewed-content' && blockName === 'recently-reviewed') ||
+              (criteriaTitle !== 'exl-php-recently-viewed-content' && blockName === 'recommended-content')
+              ? 'update'
+              : 'replace'
+            : 'new';
+          if (blockName === 'recommendation-marquee') {
+            mode = 'replace'; // If authored block is marquee, replace it with recommended-block as, this block is not the first one and marquee is always reserved as first block.
+          }
+          let newBlock = 'recommended-content';
+          if (criteriaTitle === 'exl-php-recently-viewed-content') {
+            newBlock = 'recently-reviewed';
+          }
 
-        // eslint-disable-next-line no-nested-ternary
-        let mode = blockId
-          ? (criteriaTitle === 'exl-php-recently-viewed-content' && blockName === 'recently-reviewed') ||
-            (criteriaTitle !== 'exl-php-recently-viewed-content' && blockName === 'recommended-content')
-            ? 'update'
-            : 'replace'
-          : 'new';
-        if (blockName === 'recommendation-marquee') {
-          mode = 'replace'; // If authored block is marquee, replace it with recommended-block as, this block is not the first one and marquee is always reserved as first block.
-        }
-        let newBlock = 'recommended-content';
-        if (criteriaTitle === 'exl-php-recently-viewed-content') {
-          newBlock = 'recently-reviewed';
+          return { blockId, scope, mode, criteriaTitle, newBlock };
         }
 
+        const mode = blockId ? 'update' : 'new';
+        const newBlock = 'recommended-content';
         return { blockId, scope, mode, criteriaTitle, newBlock };
       });
     }
-    if (marqueeTargetData?.meta) {
+    if (this.currentPageConfig?.supportedBlocks?.includes('recommendation-marquee') && marqueeTargetData?.meta) {
       blockRevisionNeeded = true;
       const [firstBlockEl] = this.blocks; // Marquee should always be the first block.
       let marqueeBlockId = '';
@@ -289,16 +327,22 @@ class AdobeTargetClient {
       containerSection.replaceChild(blockEl, currentBlock?.parentElement);
     } else {
       const containerSection = document.createElement('div');
-      containerSection.classList.add('section', 'profile-section');
-      const profileRailSection = main.querySelector('.profile-rail-section');
-      const profileBottomSections = main.querySelectorAll('.profile-bottom-section');
-      if (profileBottomSections.length) {
-        main.insertBefore(containerSection, profileBottomSections[0]);
-      } else if (profileRailSection) {
-        main.insertBefore(containerSection, profileRailSection);
+      containerSection.classList.add('section');
+      if (this.currentPageConfig?.pagePath === PHP) {
+        containerSection.classList.add('profile-section');
+        const profileRailSection = main.querySelector('.profile-rail-section');
+        const profileBottomSections = main.querySelectorAll('.profile-bottom-section');
+        if (profileBottomSections.length) {
+          main.insertBefore(containerSection, profileBottomSections[0]);
+        } else if (profileRailSection) {
+          main.insertBefore(containerSection, profileRailSection);
+        } else {
+          main.appendChild(containerSection);
+        }
       } else {
         main.appendChild(containerSection);
       }
+
       decorateSections(main);
       containerSection.appendChild(blockEl);
     }
