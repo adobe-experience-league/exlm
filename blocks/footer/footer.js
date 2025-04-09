@@ -117,7 +117,7 @@ function decorateBreadcrumb(footer) {
 
 function decorateCopyrightsMenu(footer) {
   const footerLastRow = footer.querySelector('.footer-last-row');
-  const footerRights = document.querySelector('.footer-copyrights');
+  const footerRights = footer.querySelector('.footer-copyrights');
   footerLastRow.appendChild(footerRights);
   const firstFooterAnchor = footerRights.querySelector('a');
   const copyRightWrapper = firstFooterAnchor.parentElement;
@@ -141,7 +141,7 @@ function decorateCopyrightsMenu(footer) {
   }
 
   copyRightWrapper.classList.add('footer-copyrights-element');
-  const footerMenu = document.querySelector('.footer-menu');
+  const footerMenu = footer.querySelector('.footer-menu');
   footerMenu.parentElement.appendChild(footerLastRow);
   const languageSelector = footer.querySelector('.language-selector');
   const languageBlock = new LanguageBlock({
