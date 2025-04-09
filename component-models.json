@@ -6757,14 +6757,6 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "bannerId",
-        "value": "banner-1",
-        "label": "Banner ID",
-        "description": "A unique identifier - New banners should have a different ID to ensure they appear even if a previous banner was dismissed."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
         "name": "title",
         "value": "",
         "label": "Heading"

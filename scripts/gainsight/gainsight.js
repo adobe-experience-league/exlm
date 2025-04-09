@@ -64,7 +64,7 @@ async function loadGinsightScript(tagId, co) {
 export default async function loadGainsight() {
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
-    const profilePromise = defaultProfileClient.getMergedProfile(true);
+    const profilePromise = defaultProfileClient.getMergedProfile();
     const loadGainsightPromise = loadGinsightScript('AP-PCBATQJJQHRG-2');
     Promise.all([profilePromise, loadGainsightPromise]).then(([profileData]) => {
       identify(profileData);
