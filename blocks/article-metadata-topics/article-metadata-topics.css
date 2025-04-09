@@ -1,7 +1,6 @@
 .article-metadata-topics ul {
   list-style: none;
-  margin-top: 4px;
-  margin-bottom: 9px;
+  margin: 4px 0;
   margin-left: 0;
   line-height: 25.6px;
 }
