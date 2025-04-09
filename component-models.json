@@ -6985,12 +6985,61 @@
     ]
   },
   {
+    "id": "footer-breadcrumb",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "<a href='/'>Home</a><a data-id='footer-breadcrumb' href='/'>Experience League</a>",
+        "label": "Footer Breadcrumb"
+      }
+    ]
+  },
+  {
+    "id": "footer-item",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "Footer List",
+        "description": "Should be authores as a nested list."
+      }
+    ]
+  },
+  {
+    "id": "social",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "Social Links"
+      }
+    ]
+  },
+  {
+    "id": "footer-copyrights",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "Footer copyrights"
+      }
+    ]
+  },
+  {
     "id": "playlist-browse",
     "fields": [
       {
         "component": "richtext",
         "valueType": "string",
-        "name": "description",
+        "name": "text",
         "value": "",
         "label": "Marquee Content"
       }

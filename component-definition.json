@@ -779,6 +779,51 @@
           }
         },
         {
+          "title": "Footer Breadcrumb",
+          "id": "footer-breadcrumb",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Footer Breadcrumb",
+                  "model": "footer-breadcrumb"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Footer Copyrights",
+          "id": "footer-copyrights",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Footer Copyrights",
+                  "model": "footer-copyrights"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Footer Item",
+          "id": "footer-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Footer Item",
+                  "model": "footer-item"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "HTML App",
           "id": "html-app",
           "plugins": {
@@ -1278,6 +1323,21 @@
                   "title": "Sign up Title",
                   "titleType": "h3",
                   "longDescr": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Social",
+          "id": "social",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Social",
+                  "model": "social"
                 }
               }
             }
