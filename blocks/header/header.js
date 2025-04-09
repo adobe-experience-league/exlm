@@ -635,7 +635,7 @@ const adobeLogoDecorator = async (adobeLogoBlock) => {
 };
 
 /** @param {HTMLElement} block  */
-export function decorateNewTabLinks(block) {
+const decorateNewTabLinks = (block) => {
   const links = block.querySelectorAll('a[target="_blank"]');
   links.forEach((link) => {
     link.setAttribute('rel', 'noopener noreferrer');
@@ -644,7 +644,7 @@ export function decorateNewTabLinks(block) {
     link.firstChild.after(icon);
     decorateIcons(link);
   });
-}
+};
 
 /**
  * Main header decorator, calls all the other decorators

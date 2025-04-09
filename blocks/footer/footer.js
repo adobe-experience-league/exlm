@@ -3,7 +3,7 @@ import { getPathDetails, fetchGlobalFragment, htmlToElement } from '../../script
 import LanguageBlock from '../language/language.js';
 
 /** @param {HTMLElement} block  */
-export function decorateFooterLinks(block) {
+const decorateFooterLinks = (block) => {
   const links = block.querySelectorAll('a[href*="@newtab"]');
   links.forEach((link) => {
     link.href = link.href.replace('@newtab', '');
@@ -14,7 +14,7 @@ export function decorateFooterLinks(block) {
     link.firstChild.after(icon);
     decorateIcons(link);
   });
-}
+};
 
 async function decorateMenu(footer) {
   const childElements = footer.querySelectorAll('.footer-item');
