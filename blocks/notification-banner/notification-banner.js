@@ -78,9 +78,13 @@ export default async function decorate(block) {
     const ctaText = ctaData?.textContent.trim();
     bannerId = await generateHash(
       [headingElem, descriptionElem, ctaText, ctaLink]
+        .map((el) => {
+          if (typeof el === 'string') return el.trim();
+          if (el?.textContent?.trim()) return el.textContent.trim();
+          return '';
+        })
         .filter(Boolean)
-        .map((el) => el?.textContent?.trim() || el)
-        .join(' '),
+        .join('|'),
     );
     bannerState = bannerStore.get();
   }
