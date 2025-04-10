@@ -1290,13 +1290,32 @@ async function loadPage() {
     decodeAemPageMetaTags();
   }
 
-  const { lang } = getPathDetails();
+  const { suffix: currentPagePath, lang } = getPathDetails();
   document.documentElement.lang = lang || 'en';
   const isMainPage = window?.location.pathname === '/' || window?.location.pathname === `/${lang}`;
 
   const isUserSignedIn = async () => {
     await loadIms();
     return window?.adobeIMS?.isSignedInUser();
+  };
+
+  const loadTarget = async (isAlreadySignedIn = false) => {
+    const targetSupportedPaths = ['/perspectives', '/home'];
+    if (targetSupportedPaths.includes(currentPagePath)) {
+      const loadTargetModule = async () => {
+        const mod = await import('./adobe-target/adobe-target.js');
+        const defaultAdobeTargetClient = mod.default;
+        const isTargetSupported = await defaultAdobeTargetClient.checkTargetSupport(currentPagePath);
+        if (isTargetSupported) {
+          defaultAdobeTargetClient.mapComponentsToTarget();
+        }
+      };
+
+      const isSignedIn = isAlreadySignedIn || (await isUserSignedIn());
+      if (isSignedIn) {
+        loadTargetModule();
+      }
+    }
   };
 
   const handleProfilePage = async () => {
@@ -1306,12 +1325,7 @@ async function loadPage() {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
         loadPage();
-        const mod = await import('./adobe-target/adobe-target.js');
-        const defaultAdobeTargetClient = mod.default;
-        const isTargetSupported = await defaultAdobeTargetClient.checkTargetSupport();
-        if (isTargetSupported) {
-          defaultAdobeTargetClient.mapComponentsToTarget();
-        }
+        loadTarget(signedIn);
       } else {
         await window?.adobeIMS?.signIn();
       }
@@ -1338,5 +1352,6 @@ async function loadPage() {
     await handleMainPage();
   } else {
     loadPage();
+    loadTarget();
   }
 })();
