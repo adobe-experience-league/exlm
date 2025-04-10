@@ -20,6 +20,13 @@
   padding: 0;
 }
 
+.footer .icon.icon-link-out img {
+  height: 12px;
+  width: 12px;
+  vertical-align: middle;
+  padding-left: 5px;
+}
+
 @media (width >= 900px) {
   .footer {
     padding: 0 32px;
@@ -138,10 +145,6 @@
   font-size: var(--spectrum-font-size-75);
   line-height: 1.6875rem;
   margin: 0;
-}
-
-.footer-item .footer-link-hidden {
-  display: none;
 }
 
 .footer-container {
