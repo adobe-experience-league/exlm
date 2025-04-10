@@ -82,6 +82,13 @@
   position: relative;
 }
 
+.icon.icon-link-out img {
+  height: 12px;
+  width: 12px;
+  vertical-align: middle;
+  padding-left: 5px;
+}
+
 @media (width >= 900px) {
   .footer-item h2 {
     color: var(--non-spectrum-charcoal-gray);
