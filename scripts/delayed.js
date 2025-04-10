@@ -11,16 +11,19 @@ import { sendCoveoPageViewEvent } from './coveo-analytics.js';
  * Loads prism for syntax highlighting
  * @param {Document} document
  */
-function loadPrism(document) {
+// eslint-disable-next-line import/prefer-default-export
+export async function loadPrism(document) {
   const highlightable = document.querySelector(
     'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code',
   );
-  if (!highlightable) return; // exit, no need to load prism if nothing to highlight
-
+  if (!highlightable) return Promise.resolve(null); // exit, no need to load prism if nothing to highlight
+  if (window.PrismLoadPromise) {
+    return window.PrismLoadPromise;
+  }
   // see: https://prismjs.com/docs/Prism.html#.manual
   window.Prism = window.Prism || {};
   window.Prism.manual = true;
-  import('./prism.js')
+  window.PrismLoadPromise = import('./prism.js')
     .then(() => {
       // see: https://prismjs.com/plugins/autoloader/
       window.Prism.plugins.autoloader.languages_path = '/scripts/prism-grammars/';
@@ -43,6 +46,7 @@ function loadPrism(document) {
     })
     // eslint-disable-next-line no-console
     .catch((err) => console.error(err));
+  return window.PrismLoadPromise;
 }
 
 loadCSS(`${window.hlx.codeBasePath}/styles/print/print.css`);
