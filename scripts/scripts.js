@@ -1275,7 +1275,7 @@ async function loadPage() {
     return window?.adobeIMS?.isSignedInUser();
   };
 
-  const loadTarget = async (skipSignInCheck = false) => {
+  const loadTarget = async (isAlreadySignedIn = false) => {
     const targetSupportedPaths = ['/perspectives', '/home'];
     if (targetSupportedPaths.includes(currentPagePath)) {
       const loadTargetModule = async () => {
@@ -1287,13 +1287,8 @@ async function loadPage() {
         }
       };
 
-      if (skipSignInCheck) {
-        loadTargetModule();
-        return;
-      }
-
-      const signedIn = await isUserSignedIn();
-      if (signedIn) {
+      const isSignedIn = isAlreadySignedIn || (await isUserSignedIn());
+      if (isSignedIn) {
         loadTargetModule();
       }
     }
