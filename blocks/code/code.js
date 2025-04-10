@@ -1,3 +1,4 @@
+import { loadPrism } from '../../scripts/delayed.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 
 function getDataLineValue(arr) {
@@ -72,11 +73,21 @@ export default function decorate(block) {
   });
 
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
-  if (UEAuthorMode && window.Prism) {
-    // This block is to re-highlight the code block once UE changes the block content.
-    setTimeout(() => {
-      // Wait until the newly updated block is added to DOM and ready for Prism to highlight.
-      window.Prism.highlightAllUnder(block, true);
-    }, 250);
+  if (UEAuthorMode) {
+    if (window.Prism) {
+      // This block is to re-highlight the code block once UE changes the block content.
+      setTimeout(() => {
+        // Wait until the newly updated block is added to DOM and ready for Prism to highlight.
+        window.Prism.highlightAllUnder(block, true);
+      }, 250);
+    } else {
+      // Prism library is not available. Probably the code block was newly authored to the page.
+      loadPrism(document).then(() => {
+        setTimeout(() => {
+          // Wait until the newly updated block is added to DOM and ready for Prism to highlight.
+          window.Prism.highlightAllUnder(block, true);
+        }, 250);
+      });
+    }
   }
 }
