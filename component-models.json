@@ -7035,14 +7035,6 @@
   },
   {
     "id": "playlist-browse",
-    "fields": [
-      {
-        "component": "richtext",
-        "valueType": "string",
-        "name": "text",
-        "value": "",
-        "label": "Marquee Content"
-      }
-    ]
+    "fields": []
   }
 ]
