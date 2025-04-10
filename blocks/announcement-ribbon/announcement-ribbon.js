@@ -5,7 +5,6 @@ import { MD5 } from '../../scripts/crypto.js';
 
 const STORAGE_KEY = 'announcement-ribbon';
 const ribbonStore = {
-  // TODO: Create the remove function to delete duplicate ribbon objects from local storage.
   /**
    * @param {string} pagePath
    * @param {string} id
@@ -32,7 +31,7 @@ const ribbonStore = {
 
 // Function to hide a ribbon and update the key in the browser storage
 function hideRibbon(block, pagePath, ribbonId) {
-  block.style.display = 'none';
+  block.parentElement.style.display = 'none';
   ribbonStore.set(pagePath, ribbonId, true);
 }
 
@@ -155,14 +154,21 @@ export default async function decorate(block) {
     pagePath = url.pathname;
     ribbonId = generateHash(
       [heading, description, firstCtaData.text, firstCtaData.href, secondCtaData.text, secondCtaData.href]
+        .map((el) => {
+          if (typeof el === 'string') return el.trim();
+          if (el?.textContent?.trim()) return el.textContent.trim();
+          return '';
+        })
         .filter(Boolean)
-        .map((el) => el?.textContent?.trim() || el)
-        .join(' '),
+        .join('|'),
     );
+    if (ribbonId) {
+      block.parentElement?.setAttribute('data-id', ribbonId);
+    }
     isDismissed = ribbonStore.get(pagePath)?.some((entry) => entry.id === ribbonId);
   }
   if (dismissable && isDismissed) {
-    block.remove(); // remove the block section if any matching entry was dismissed
+    block.parentElement.style.display = 'none';
   } else {
     decorateRibbon({
       block,
