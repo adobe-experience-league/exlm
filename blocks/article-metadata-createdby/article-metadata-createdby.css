@@ -45,9 +45,7 @@
     display: inline-block;
     margin-top: 0;
   }
-}
 
-@media (width >= 600px) {
   .article-metadata-createdby > div > div {
     flex-direction: row;
     align-items: center;
