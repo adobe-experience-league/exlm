@@ -1301,7 +1301,7 @@ async function loadPage() {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
         loadPage();
-        loadTarget(true);
+        loadTarget(signedIn);
       } else {
         await window?.adobeIMS?.signIn();
       }
