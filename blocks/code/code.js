@@ -1,3 +1,6 @@
+import { loadPrism } from '../../scripts/delayed.js';
+import { htmlToElement } from '../../scripts/scripts.js';
+
 function getDataLineValue(arr) {
   let dataLineValue = '';
   arr.forEach((className) => {
@@ -11,7 +14,21 @@ export default function decorate(block) {
   const [preElement, lineNumberingEl, lineHighlightingEl] = htmlElementData;
 
   const preTagAttributes = {};
-  block.innerHTML = preElement.outerHTML;
+  let preTagElement = preElement.childElementCount === 1 ? preElement.firstElementChild : preElement;
+  if (preTagElement.tagName !== 'PRE') {
+    const newPre = htmlToElement(`<pre>${preTagElement.innerHTML}</pre>`);
+    preElement.innerHTML = '';
+    preElement.appendChild(newPre);
+    preTagElement = newPre;
+  }
+
+  if (!preTagElement.querySelector('code')) {
+    const codeEl = htmlToElement(`<code>${preTagElement.innerHTML}</code>`);
+    preTagElement.innerHTML = '';
+    preTagElement.appendChild(codeEl);
+  }
+  preTagElement.innerHTML = preTagElement.innerHTML.replace(/<br>/g, '\n');
+  block.innerHTML = preTagElement.outerHTML;
   const dataLine = [];
   const pre = block.querySelector('pre');
 
@@ -54,4 +71,23 @@ export default function decorate(block) {
       pre.setAttribute(key, value);
     }
   });
+
+  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+  if (UEAuthorMode) {
+    if (window.Prism) {
+      // This block is to re-highlight the code block once UE changes the block content.
+      setTimeout(() => {
+        // Wait until the newly updated block is added to DOM and ready for Prism to highlight.
+        window.Prism.highlightAllUnder(block, true);
+      }, 250);
+    } else {
+      // Prism library is not available. Probably the code block was newly authored to the page.
+      loadPrism(document).then(() => {
+        setTimeout(() => {
+          // Wait until the newly updated block is added to DOM and ready for Prism to highlight.
+          window.Prism.highlightAllUnder(block, true);
+        }, 250);
+      });
+    }
+  }
 }
