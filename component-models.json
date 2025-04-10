@@ -6983,5 +6983,54 @@
         "description": "Add number to highlight rows within a code block. E.g. 1-3, 6 will highlight lines 1 through 3 and 6."
       }
     ]
+  },
+  {
+    "id": "footer-breadcrumb",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "<a href='/'>Home</a><a data-id='footer-breadcrumb' href='/'>Experience League</a>",
+        "label": "Footer Breadcrumb"
+      }
+    ]
+  },
+  {
+    "id": "footer-item",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "Footer List",
+        "description": "Should be authores as a nested list."
+      }
+    ]
+  },
+  {
+    "id": "social",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "Social Links"
+      }
+    ]
+  },
+  {
+    "id": "footer-copyrights",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "Footer copyrights"
+      }
+    ]
   }
 ]
