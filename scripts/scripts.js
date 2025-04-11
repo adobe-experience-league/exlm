@@ -588,10 +588,7 @@ async function cleanUpLocalRibbonEntries() {
     localStorage.removeItem('hideRibbonBlock');
   }
   const pagePath = window.location.pathname;
-  const storedData = localStorage.getItem('announcement-ribbon');
-  if (!storedData) return;
-
-  const storedEntries = JSON.parse(storedData);
+  const storedEntries = JSON.parse(localStorage.getItem('announcement-ribbon') || '[]');
   if (!storedEntries.length) return;
 
   const domRibbonIds = Array.from(document.querySelectorAll('.announcement-ribbon.dismissable'))
