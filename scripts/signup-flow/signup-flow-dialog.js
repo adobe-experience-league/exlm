@@ -9,6 +9,17 @@ import { sendNotice } from '../toast/toast.js';
 import getEmitter from '../events.js';
 import { pushSignupEvent } from '../analytics/lib-analytics.js';
 
+/* Spike UGP-12844: Profile Data for RTCDP
+------------
+This file manages the multi-step onboarding flow that collects additional profile data.
+Key findings:
+- This is where many Priority 1/2 fields are collected:
+  - Role information
+  - Industry information
+  - Product interests
+- The onboarding process directly impacts data completeness for RTCDP
+*/
+
 const signupDialogEventEmitter = getEmitter('signupDialog');
 
 /**
@@ -76,6 +87,11 @@ export default class SignupFlowDialog {
     });
   }
 
+  /* Spike UGP-12844
+------------
+This defines the steps in the onboarding flow, where priority fields are collected.
+Steps include role selection, industry selection, and product interests.
+*/
   /**
    * Sets up the configuration for the signup pages.
    */
@@ -338,6 +354,11 @@ export default class SignupFlowDialog {
     return false;
   }
 
+  /* Spike UGP-12844
+------------
+Form validation logic for the onboarding flow.
+This impacts data quality for priority fields since it enforces completeness.
+*/
   /**
    * Handles the navigation between pages in the signup dialog.
    * Validates forms on the current page before navigating to the next page.

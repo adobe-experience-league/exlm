@@ -3,6 +3,15 @@ import SignupFlowDialog from './signup-flow-dialog.js';
 // eslint-disable-next-line import/no-cycle
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 
+/* Spike UGP-12844: Profile Data for RTCDP
+------------
+This file controls when the onboarding flow appears to users.
+Key findings:
+- Differentiates between NEW_PROFILE and INCOMPLETE_PROFILE users
+- This distinction could potentially be used to derive "Profile Source"
+- Handles re-displaying onboarding modal if profile is incomplete
+*/
+
 /**
  * Safely subtracts months from a given date, handling edge cases (e.g., February).
  * @param {Date} date - The original date
@@ -23,6 +32,14 @@ function subtractMonths(date, months) {
   return newDate;
 }
 
+/* Spike UGP-12844
+------------
+This function determines when to show the signup flow based on:
+- Profile timestamp (corresponds to "Profile Created Date")
+- Previous interactions (has onboarding been seen)
+- Profile completeness (are interests set)
+- Maybe populate the Origin field in the profile?
+*/
 /**
  * Displays the signup modal based on the user's profile timestamp and interactions.
  *

@@ -5,6 +5,15 @@ import loadJWT from './jwt.js';
 import csrf from './csrf.js';
 import { getMetadata } from '../lib-franklin.js';
 import fetchStaleWhileRevalidate from './fetch-stale-while-revalidate.js';
+/* Spike UGP-12844: Profile Data for RTCDP
+------------
+This file contains the core logic for profile management in ExL.
+Key findings for priority fields:
+- Profile Creation is handled via IMS integration
+- "timestamp" field corresponds to "Profile Created Date" (Priority 1)
+- Profile data is retrieved via getProfile() and getMergedProfile() methods
+- No explicit field for "Profile Source" exists but can be derived
+*/
 
 // NOTE: to keep this viatl utility small, please do not increase the number of imports or use dynamic imports when needed.
 
@@ -96,6 +105,13 @@ class ProfileClient {
     return structuredClone(ppsProfile);
   }
 
+  /* Spike UGP-12844
+------------
+This method provides the complete profile data including IMS fields.
+Important for RTCDP mapping:
+- Returns combined profile with all priority fields
+- Contains timestamp, role, and industryInterests needed for P1/P2 fields
+*/
   async getMergedProfile(forceRefresh = false) {
     const signedIn = await this.isSignedIn;
     if (!signedIn) return null;
@@ -105,6 +121,10 @@ class ProfileClient {
     return mergedProfile;
   }
 
+  /* Spike UGP-12844
+------------
+This method updates profile fields and would update the "last modified" timestamp.
+*/
   async updateProfile(key, val, replace = false) {
     const profile = await this.getProfile();
     const attriubutes = await this.getAttributes();

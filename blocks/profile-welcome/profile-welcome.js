@@ -5,6 +5,16 @@ import { fetchIndustryOptions, getIndustryNameById } from '../../scripts/profile
 import getEmitter from '../../scripts/events.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
+/* Spike UGP-12844: Profile Data for RTCDP
+------------
+This file handles the welcome experience for users with profiles.
+Key findings:
+- Reads "role" field which maps to the four Experience League Role fields (Priority 2)
+- Reads "industryInterests" field which maps to Industry field (Priority 2)
+- Uses roleMappings to standardize role names
+- Contains the UI logic for displaying profile data
+*/
+
 const profileEventEmitter = getEmitter('profile');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
@@ -44,6 +54,12 @@ async function decorateProfileWelcomeBlock(block) {
     resolve({ profileData: profileDataValue, ppsProfileData: ppsProfileDataValue });
   });
 
+  /* Spike UGP-12844
+------------
+This function retrieves profile data including key priority fields:
+- industry (from industryInterests array) - maps to "Experience League Industry"
+- roles array - maps to "Experience League Role" boolean fields
+*/
   const getProfileInfoData = async () => {
     const { profileData, ppsProfileData } = await fetchProfileData;
     const {
@@ -66,6 +82,15 @@ async function decorateProfileWelcomeBlock(block) {
     };
   };
 
+  /* Spike UGP-12844
+------------
+This mapping translates role values to display names:
+- Developer → "Developer"
+- User → "Business User"
+- Leader → "Business Leader"
+- Admin → "Administrator"
+These directly correspond to the Priority 2 Experience League Role fields.
+*/
   const roleMappings = {
     Developer: placeholders?.roleCardDeveloperTitle || 'Developer',
     User: placeholders?.roleCardUserTitle || 'Business User',
