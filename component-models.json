@@ -7032,5 +7032,9 @@
         "label": "Footer copyrights"
       }
     ]
+  },
+  {
+    "id": "playlist-browse",
+    "fields": []
   }
 ]

@@ -1,16 +1,16 @@
-.article-metadata-topics ul {
+.article-metadata-appliesto ul {
   list-style: none;
   margin: 4px 0;
   margin-left: 0;
-  line-height: 25.6px;
 }
 
-.article-metadata-topics li {
+.article-metadata-appliesto li {
   display: inline-block;
+  margin-top: unset;
   font-size: var(--spectrum-font-size-100);
 }
 
-.article-metadata-topics li:first-child {
+.article-metadata-appliesto li:first-child {
   font-size: var(--spectrum-font-size-75);
   text-transform: uppercase;
   font-weight: bold;
@@ -18,20 +18,26 @@
   margin-bottom: 0;
 }
 
-.article-metadata-topics ul > li:not(:first-child) {
+.article-metadata-appliesto ul > li:not(:first-child) {
   margin-bottom: 14px;
   margin-right: 8px;
 }
 
-.article-metadata-topics ul > li:last-child {
+.article-metadata-appliesto ul > li:last-child {
   margin-bottom: 0;
   margin-right: 0;
 }
 
-.article-metadata-topics li a {
+.article-metadata-appliesto li a {
   text-decoration: none;
   cursor: default;
   color: inherit;
   font-size: var(--spectrum-font-size-100);
   margin-right: 7px;
+}
+
+.article-metadata-container .article-metadata-appliesto-wrapper {
+  border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
+  padding-bottom: 38px;
+  margin-bottom: 32px;
 }
