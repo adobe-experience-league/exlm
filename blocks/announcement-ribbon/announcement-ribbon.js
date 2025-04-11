@@ -1,26 +1,23 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
-import { getPathDetails } from '../../scripts/scripts.js';
 import { MD5 } from '../../scripts/crypto.js';
 
 const STORAGE_KEY = 'announcement-ribbon';
 const ribbonStore = {
-  // TODO: Create the remove function to delete duplicate ribbon objects from local storage.
   /**
    * @param {string} pagePath
    * @param {string} id
-   * @param {boolean} dismissed
    */
-  set: (pagePath, id, dismissed) => {
+  set: (pagePath, id) => {
     const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    const updatedStore = [...existingStore, { pagePath, id, dismissed }];
+    const updatedStore = [...existingStore, { pagePath, id }];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
   },
   /**
    * Retrieves the entry matching the page path and ribbon id from the store.
    * @param {string} pagePath
-   * @returns {{pagePath: string, id: string, dismissed: boolean} | null}
+   * @returns {{pagePath: string, id: string} | null}
    */
   get: (pagePath) => {
     const storedData = localStorage.getItem(STORAGE_KEY);
@@ -34,7 +31,7 @@ const ribbonStore = {
 
 // Function to hide a ribbon and update the key in the browser storage
 function hideRibbon(block, pagePath, ribbonId) {
-  block.parentElement.remove();
+  block.parentElement.style.display = 'none';
   ribbonStore.set(pagePath, ribbonId, true);
 }
 
@@ -153,19 +150,25 @@ export default async function decorate(block) {
   if (dismissable) {
     const firstCtaData = extractAnchorData(firstCta);
     const secondCtaData = extractAnchorData(secondCta);
-    const { lang } = getPathDetails();
-    const url = window.location.href;
-    pagePath = url.includes(`/${lang}/`) ? `/${url.split(`/${lang}/`)[1]}` : '';
+    const url = new URL(window.location.href);
+    pagePath = url.pathname;
     ribbonId = generateHash(
       [heading, description, firstCtaData.text, firstCtaData.href, secondCtaData.text, secondCtaData.href]
+        .map((el) => {
+          if (typeof el === 'string') return el.trim();
+          if (el?.textContent?.trim()) return el.textContent.trim();
+          return '';
+        })
         .filter(Boolean)
-        .map((el) => el?.textContent?.trim() || el)
-        .join(' '),
+        .join('|'),
     );
-    isDismissed = ribbonStore.get(pagePath)?.some((entry) => entry.id === ribbonId && entry.dismissed);
+    if (ribbonId) {
+      block.parentElement?.setAttribute('data-id', ribbonId);
+    }
+    isDismissed = ribbonStore.get(pagePath)?.some((entry) => entry.id === ribbonId);
   }
   if (dismissable && isDismissed) {
-    block.remove(); // remove the block section if any matching entry was dismissed
+    block.parentElement.style.display = 'none';
   } else {
     decorateRibbon({
       block,
