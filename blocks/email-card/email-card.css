@@ -2,9 +2,9 @@
 .email-card {
   box-sizing: border-box;
   max-width: 318px;
-  padding: 24px 24px 32px 24px;
+  padding: 24px 24px 32px;
   background-color: var(--spectrum-gray-50);
-  box-shadow: 0px 3px 8px #00000014;
+  box-shadow: 0 3px 8px #00000014;
   border-radius: 4px;
 }
 
@@ -19,26 +19,26 @@
 
 .email-card-title h6 {
   font-size: var(--spectrum-font-size-75);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-900);
   text-transform: uppercase;
   letter-spacing: 0.72px;
-  margin: 0px;
+  margin: 0;
 }
 
 .email-card-title a {
   display: flex;
   align-items: center;
   font-size: var(--spectrum-font-size-100);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--spectrum-gray-800);
-  margin: 0px;
+  margin: 0;
   gap: 4px;
 }
 
 .email-card-user-email {
   font-size: var(--spectrum-font-size-200);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--spectrum-gray-800);
   word-break: break-word;
 }
@@ -63,6 +63,6 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
-    gap: 0px;
+    gap: 0;
   }
 }

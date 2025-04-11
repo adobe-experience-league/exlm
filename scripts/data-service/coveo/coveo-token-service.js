@@ -6,7 +6,17 @@ import { isSignedInUser } from '../../auth/profile.js';
 
 const { coveoTokenUrl } = getConfig();
 
-const timers = new Map();
+/**
+ * Decodes a Coveo token to extract its expiration time (`exp`).
+ * @param {string} token - The JSON Web Token (JWT) as a string.
+ * @returns {number} The expiration time (`exp`) as a Unix timestamp.
+ */
+
+function decodeCoveoTokenValidity(token) {
+  const tokenPayload = token?.split('.')[1]; // Get the payload
+  const jsonPayload = JSON.parse(atob(tokenPayload)); // Decode the Base64-encoded token payload and parse it into a JSON object.
+  return jsonPayload?.exp;
+}
 
 async function retrieveCoveoToken(email = '', token = '') {
   let result = null;
@@ -60,7 +70,6 @@ async function fetchAndStoreCoveoToken() {
   let retryCount = 0;
   const maxRetries = 5;
   const retryAttempts = Array.from({ length: 10 }, (_, idx) => idx + 1);
-  let retryInterval = 50;
 
   while (csrfToken.length === 0 && retryCount < maxRetries) {
     try {
@@ -94,59 +103,65 @@ async function fetchAndStoreCoveoToken() {
 
   if (coveoToken.length > 0) {
     sessionStorage.setItem(COVEO_TOKEN, coveoToken);
-    retryInterval = 6e4 * 5;
   } else {
     sessionStorage.removeItem(COVEO_TOKEN);
   }
-
-  if (timers.has(COVEO_TOKEN)) {
-    clearTimeout(timers.get(COVEO_TOKEN));
-  }
-
-  timers.set(
-    COVEO_TOKEN,
-    () => {
-      timers.delete(COVEO_TOKEN);
-      fetchAndStoreCoveoToken();
-    },
-    retryInterval,
-  );
 
   return coveoToken;
 }
 
 let coveoResponseToken = '';
+let coveoTokenExpirationTime = '';
 export default async function loadCoveoToken() {
+  const { isProd, coveoToken } = getConfig();
+  if (!isProd) {
+    return coveoToken;
+  }
+  const storedCoveoToken = sessionStorage.getItem(COVEO_TOKEN);
+
+  if (storedCoveoToken) {
+    const currentTime = Math.floor(Date.now() / 1000);
+    coveoTokenExpirationTime = coveoTokenExpirationTime || decodeCoveoTokenValidity(storedCoveoToken);
+    if (coveoTokenExpirationTime > currentTime) {
+      return storedCoveoToken;
+    }
+  }
+
+  // `coveoResponseToken` ensures that repeated calls to loadCoveoToken() return the same Promise while a token is being fetched.
+
   coveoResponseToken =
     coveoResponseToken ||
-    // eslint-disable-next-line no-async-promise-executor
-    new Promise(async (resolve) => {
-      // this is temporary code, will be reverted.
-      // Token allows acces to staging search functionality, but not analytics
-      const { isProd, coveoToken } = getConfig();
-      if (!isProd) {
-        resolve(coveoToken);
-        return;
-      }
-      const signedIn = await isSignedInUser();
-      if (signedIn) {
-        loadJWT().then(async () => {
-          if (sessionStorage[COVEO_TOKEN]) {
-            resolve(sessionStorage.getItem(COVEO_TOKEN));
-          } else {
+    new Promise((resolve, reject) => {
+      (async () => {
+        try {
+          const signedIn = await isSignedInUser();
+
+          const processToken = async () => {
             const token = await fetchAndStoreCoveoToken();
-            resolve(token);
+            if (token) {
+              coveoTokenExpirationTime = decodeCoveoTokenValidity(token);
+              resolve(token);
+            } else {
+              reject(new Error('Error fetching new coveo token'));
+            }
+            coveoResponseToken = ''; // Reset the token
+          };
+
+          if (signedIn) {
+            loadJWT()
+              .then(processToken)
+              .catch((error) => {
+                reject(new Error(`Error in loadJWT: ${error.message}`));
+                coveoResponseToken = '';
+              });
+          } else {
+            processToken();
           }
-        });
-      } else {
-        // eslint-disable-next-line no-lonely-if
-        if (sessionStorage[COVEO_TOKEN]) {
-          resolve(sessionStorage.getItem(COVEO_TOKEN));
-        } else {
-          const token = await fetchAndStoreCoveoToken();
-          resolve(token);
+        } catch (error) {
+          reject(new Error(`Error fetching new coveo token: ${error.message}`));
+          coveoResponseToken = '';
         }
-      }
+      })();
     });
   return coveoResponseToken;
 }

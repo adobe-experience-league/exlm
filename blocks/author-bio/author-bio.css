@@ -2,7 +2,7 @@
   background: var(--non-spectrum-bg);
   border-radius: 6px;
   position: relative;
-  border: 6px solid var(--spectrum-indigo-1400);
+  border: 6px solid;
   border-width: 6px 0 0;
   padding: 38px 28px 32px;
 }
@@ -28,7 +28,7 @@
 
 .author-name-title-container .author-name {
   font-weight: bold;
-  font-size: 19px;
+  font-size: var(--spectrum-font-size-300);
   padding-bottom: 8px;
 }
 
@@ -37,24 +37,24 @@
   color: var(--non-spectrum-grey);
 }
 
-.author-description-socialLink-container .author-description .author-socialLink {
+.author-description-social-link-container .author-social-link {
+  color: var(--non-spectrum-navy-blue);
+}
+
+.author-description-social-link-container .author-description .author-social-link {
   font-size: var(--spectrum-font-size-100);
 }
 
-.author-description-socialLink-container .author-description {
+.author-description-social-link-container .author-description {
   color: var(--non-spectrum-grey);
   padding-bottom: 24px;
   padding-top: 24px;
 }
 
-.author-description-socialLink-container .author-socialLink {
-  color: var(--non-spectrum-navy-blue);
+.author-bio:has(.author-bio-content.external) {
+  border-color: var(--spectrum-gray-900);
 }
 
-.author-bio .author-bio-content .external {
-  border-color: var(--spectrum-indigo-1400);
-}
-
-.author-bio .author-bio-content .adobe {
+.author-bio:has(.author-bio-content.adobe) {
   border-color: var(--spectrum-red-1400);
 }

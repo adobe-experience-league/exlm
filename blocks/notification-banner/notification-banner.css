@@ -1,0 +1,113 @@
+.notification-banner-container {
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.notification-banner-container .fragment-wrapper {
+  max-width: unset;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+.notification-banner-container .notification-banner-wrapper {
+  max-width: unset;
+}
+
+.notification-banner > div {
+  color: var(--spectrum-gray-50);
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: var(--secondary-max-width); /* match header/footer */
+  padding: 16px 15px 20px; /* match header/footer */
+  box-sizing: border-box;
+}
+
+.notification-banner {
+  background-color: var(--non-spectrum-navy-blue);
+}
+
+.notification-banner.bg-dark-gray {
+  background-color: var(--spectrum-gray-800);
+}
+
+.notification-banner.bg-blue {
+  background-color: var(--non-spectrum-navy-blue);
+}
+
+.notification-banner.bg-red {
+  background-color: var(--spectrum-red-1100);
+}
+
+.notification-banner-content :where(h1, h2, h3, h4, h5, h6) {
+  color: inherit;
+  font-size: var(--spectrum-heading-size-s);
+  font-weight: var(--font-weight-bold);
+  font-style: normal;
+  line-height: var(--spectrum-line-height-s);
+  margin: 0 0 4px !important;
+  padding: 0 !important;
+}
+
+.notification-banner-content p {
+  color: inherit;
+  font-size: var(--spectrum-body-size-s);
+  font-weight: var(--font-weight-normal);
+  font-style: normal;
+  line-height: var(--spectrum-line-height-s);
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.notification-banner-cta {
+  margin-top: 16px;
+  width: 100%;
+}
+
+.notification-banner-cta a:any-link {
+  font-size: var(--spectrum-body-size-m);
+  line-height: var(--spectrum-line-height-s);
+  color: inherit;
+  margin: 0;
+  padding: 6px 20px 8px;
+  width: 100%;
+}
+
+.notification-banner-close {
+  margin: 0;
+  margin-left: 10px;
+}
+
+.notification-banner-close .icon {
+  cursor: pointer;
+  width: 14px;
+}
+
+@media (min-width: 600px) {
+  .notification-banner-cta,
+  .notification-banner-cta a:any-link {
+    width: auto;
+  }
+}
+
+@media (min-width: 900px) {
+  .notification-banner .notification-banner-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .notification-banner-cta {
+    margin: 8px 32px 0;
+  }
+
+  .notification-banner-close {
+    display: flex;
+    align-items: center;
+    margin: 0;
+  }
+}

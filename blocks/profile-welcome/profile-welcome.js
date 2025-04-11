@@ -3,6 +3,7 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchIndustryOptions, getIndustryNameById } from '../../scripts/profile/profile.js';
 import getEmitter from '../../scripts/events.js';
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 const profileEventEmitter = getEmitter('profile');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -15,23 +16,12 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-function decorateButton(button) {
-  const a = button.querySelector('a');
-  if (a) {
-    a.classList.add('button');
-    if (a.parentElement.tagName === 'EM') a.classList.add('secondary');
-    if (a.parentElement.tagName === 'STRONG') a.classList.add('primary');
-    return a.outerHTML;
-  }
-  return '';
-}
-
 function replaceProfileText(field, value) {
   return field.replace('{adobeIMS.first_name}', value);
 }
 
 async function decorateProfileWelcomeBlock(block) {
-  const [profileEyebrowText, profileHeading, profileDescription, profileCta, incompleteProfileText, showProfileCard] =
+  const [profileEyebrowText, profileHeading, profileDescription, profileCta, incompleteProfileText] =
     block.querySelectorAll(':scope div > div');
 
   const eyebrowText = profileEyebrowText.innerHTML;
@@ -125,8 +115,8 @@ async function decorateProfileWelcomeBlock(block) {
   block.textContent = '';
   block.append(profileWelcomeBlock);
 
-  // Conditionally display the profile card based on showProfileCard toggle
-  if (showProfileCard.textContent.trim() === 'true') {
+  // Conditionally display the profile card based on enable-profile-card class
+  if (block.classList.contains('enable-profile-card')) {
     // eslint-disable-next-line no-async-promise-executor
     const communityProfilePromise = new Promise(async (resolve) => {
       const isSignedIn = await isSignedInUser();
@@ -193,7 +183,7 @@ async function decorateProfileWelcomeBlock(block) {
                       </span>
                     </div>
                   </div>
-                    <div class="profile-user-card-cta">${decorateButton(profileCta)}</div>
+                    <div class="profile-user-card-cta">${decorateCustomButtons(profileCta)}</div>
                 </div>    
               </div>
         `);
@@ -207,11 +197,8 @@ async function decorateProfileWelcomeBlock(block) {
       const profileUserCardParent = block.querySelector('.profile-user-card');
       profileUserCardParent?.classList.add('profile-user-card-mini');
       block.querySelector('.profile-user-card-details')?.remove();
-
-      if (profileCardWrapSectionEl && !UEAuthorMode) {
-        profileCardWrapSectionEl.remove();
-      }
-    } else {
+      profileCardWrapSectionEl?.remove();
+    } else if (profileCardWrapSectionEl) {
       profileCardWrapSectionEl.innerHTML = `<span class="icon icon-exclamation"></span>
              ${incompleteProfileText.innerHTML}
             `;

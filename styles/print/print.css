@@ -25,7 +25,7 @@
 
   html,
   body {
-    background-color: #fff !important;
+    background-color: var(--spectrum-gray-50) !important;
     color: #000 !important;
   }
 

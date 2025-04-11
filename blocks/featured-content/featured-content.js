@@ -1,7 +1,8 @@
-import { div, h2, p } from '../../scripts/dom-helpers.js';
+import { div } from '../../scripts/dom-helpers.js';
 import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 import { fetchAuthorBio } from '../../scripts/utils/author-utils.js';
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 let placeholders = {};
 try {
@@ -9,20 +10,6 @@ try {
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
-}
-
-export function decorateButton(button) {
-  const link = button.querySelector('a');
-  if (link) {
-    link.classList.add('button');
-    if (link.parentElement.tagName === 'EM') {
-      link.classList.add('secondary');
-    } else if (link.parentElement.tagName === 'STRONG') {
-      link.classList.add('primary');
-    }
-    return link;
-  }
-  return '';
 }
 
 /**
@@ -92,12 +79,13 @@ async function buildFeaturedContent(block, contentArray) {
   const contentDescription = desc.textContent || contentInfo.contentDescription.replace(/^SUMMARY: /, '');
   desc.parentElement.remove();
 
-  const contentDiv = div(
-    { class: 'description' },
-    h2(contentInfo.contentTitle),
-    p(contentDescription),
-    div({ class: 'cta' }, decorateButton(cta)),
-  );
+  const contentDiv = htmlToElement(`
+  <div class="description">
+    <h2>${contentInfo.contentTitle}</h2>
+    <p>${contentDescription}</p>
+    <div class="cta">${decorateCustomButtons(cta)}</div>
+  </div>
+`);
   const authorContainer = div({ class: 'author-container' });
   const authorWrapper = div({ class: 'author-wrapper' });
   const authorHeader = div({ class: 'author-header' });
@@ -110,21 +98,10 @@ async function buildFeaturedContent(block, contentArray) {
     authorHeader.innerHTML = `<h3>${headerText}</h3>`;
   }
   authorInfo.forEach((author) => {
-    const {
-      authorName: name,
-      authorImage: pic,
-      authorTitle,
-      authorCompany = '',
-      authorSocialLinkURL,
-      authorSocialLinkText,
-    } = author;
+    const { authorName: name, authorImage: pic, authorTitle, authorSocialLinkURL, authorSocialLinkText } = author;
     const authorDiv = div(
       { class: 'author' },
-      div(
-        { class: 'author-image' },
-        createOptimizedPicture(pic, name, 'eager', [{ width: '100' }]),
-        div({ class: `company-dot ${authorCompany.toLowerCase()}` }),
-      ),
+      div({ class: 'author-image' }, createOptimizedPicture(pic, name, 'eager', [{ width: '100' }])),
     );
     if (authorDiv) {
       const socialDetails = authorSocialLinkURL && authorSocialLinkText;

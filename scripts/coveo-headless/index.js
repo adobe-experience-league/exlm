@@ -1,6 +1,7 @@
 import buildHeadlessSearchEngine from './engine.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
 import { handleCoverSearchSubmit } from '../../blocks/browse-filters/browse-filter-utils.js';
+import { COVEO_SEARCH_CUSTOM_EVENTS } from '../search/search-utils.js';
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -332,7 +333,7 @@ export default async function initiateCoveoHeadlessSearch({
           let criteria = [[]];
           const isSortValueInHash = hashURL.split('&');
           // eslint-disable-next-line
-          isSortValueInHash.filter((item) => {
+          isSortValueInHash.forEach((item) => {
             if (item.includes('sortCriteria')) {
               const scValue = decodeURIComponent(item.split('=')[1]);
               // eslint-disable-next-line
@@ -400,7 +401,8 @@ export default async function initiateCoveoHeadlessSearch({
             });
           }
         }
-
+        const readyEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.READY);
+        document.dispatchEvent(readyEvent);
         resolve({
           submitSearchHandler,
           searchInputKeydownHandler,

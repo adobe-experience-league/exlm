@@ -73,7 +73,35 @@
                   "filter": "article-content-section",
                   "name": "Article Content Section",
                   "model": "article-content-section",
-                  "style": "article-content-section"
+                  "style": "article-content-section",
+                  "text1": {
+                    "sling:resourceType": "core/franklin/components/text/v1/text",
+                    "name": "Text",
+                    "model": "text",
+                    "text": "<p>[Insert page summary here. 1-2 sentences are recommended for the page summary.]<br><br>To configure the page title, article author(s), and tags, navigate to Page-level properties by clicking Content Tree -&gt; Page -&gt; Properties. (remove this with text)</p>"
+                  },
+                  "article-tags": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block",
+                    "name": "Tags",
+                    "model": "article-tags"
+                  },
+                  "text2": {
+                    "sling:resourceType": "core/franklin/components/text/v1/text",
+                    "name": "Text",
+                    "model": "text",
+                    "text": "<p>[Insert article body content here. Add additional blocks below as needed]</p>"
+                  },
+                  "social-share": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block",
+                    "name": "Social Share",
+                    "model": "social-share",
+                    "social network": ["facebook", "twitter", "linkedin"]
+                  },
+                  "author-summary": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block",
+                    "name": "Author Summary",
+                    "model": "author-summary"
+                  }
                 }
               }
             }
@@ -94,7 +122,8 @@
                   "article-marquee": {
                     "sling:resourceType": "core/franklin/components/block/v1/block",
                     "name": "Article Marquee",
-                    "model": "article-marquee"
+                    "model": "article-marquee",
+                    "classes": "marquee-straight"
                   }
                 }
               }
@@ -134,8 +163,25 @@
                 "template": {
                   "name": "Profile Section",
                   "model": "profile-section",
-                  "style": "profile-section",
+                  "style": ["profile-section", "default"],
                   "filter": "profile-section"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Profile Bottom Section",
+          "id": "profile-bottom-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "Profile Bottom Section",
+                  "model": "profile-bottom-section",
+                  "style": ["profile-bottom-section", "default"],
+                  "filter": "profile-bottom-section"
                 }
               }
             }
@@ -249,6 +295,7 @@
                 "template": {
                   "name": "ADLS Cards",
                   "model": "adls-cards",
+                  "classes": ["header-left"],
                   "headingType": "h2",
                   "sortby": "recommended"
                 }
@@ -272,6 +319,21 @@
           }
         },
         {
+          "title": "Adobe Logo",
+          "id": "adobe-logo",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Adobe Logo",
+                  "model": "adobe-logo"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Announcement Ribbon",
           "id": "announcement-ribbon",
           "plugins": {
@@ -281,11 +343,20 @@
                 "template": {
                   "name": "Announcement Ribbon",
                   "model": "announcement-ribbon",
+                  "filter": "rte-custom-options",
                   "title": "Announcement Ribbon Title",
                   "titleType": "h3",
                   "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt",
-                  "cta1Type": "primary",
-                  "cta2Type": "primary"
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000",
+                  "customHexCode": "FFFFFF",
+                  "classes": "light"
                 }
               }
             }
@@ -301,7 +372,7 @@
                 "template": {
                   "name": "Article Marquee",
                   "model": "article-marquee",
-                  "fileReference": "/content/dam/exlm/Community_headshot_single.png"
+                  "classes": "marquee-straight"
                 }
               }
             }
@@ -348,6 +419,7 @@
                   "filter": "authorable-card",
                   "name": "Authorable Card",
                   "model": "authorable-card",
+                  "classes": ["header-left"],
                   "headingType": "h2",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -436,6 +508,21 @@
           }
         },
         {
+          "title": "Brand",
+          "id": "brand",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Brand",
+                  "model": "brand"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Browse Filters",
           "id": "browse-filters",
           "plugins": {
@@ -444,7 +531,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Browse Filters",
-                  "model": "browse-filters"
+                  "model": "browse-filters",
+                  "headingType": "h2"
                 }
               }
             }
@@ -508,6 +596,21 @@
           }
         },
         {
+          "title": "Code",
+          "id": "code",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Code",
+                  "model": "code"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Columns",
           "id": "columns",
           "plugins": {
@@ -519,7 +622,6 @@
             }
           }
         },
-
         {
           "title": "Curated Cards",
           "id": "curated-cards",
@@ -530,6 +632,7 @@
                 "template": {
                   "name": "Curated Cards",
                   "model": "curated-cards",
+                  "classes": ["header-left"],
                   "headingType": "h2"
                 }
               }
@@ -561,6 +664,7 @@
                 "template": {
                   "name": "Detailed Teaser",
                   "model": "detailed-teaser",
+                  "classes": ["light", "left", "detailed-teaser"],
                   "fileReference": "/content/dam/adobe-summit-background.jpeg",
                   "eyebrow_logo": "/content/dam/summit-logo.png",
                   "eyebrow_title": "Eyebrow title",
@@ -569,7 +673,14 @@
                   "titleType": "h3",
                   "description": "Description",
                   "subject": "/content/dam/summit-subject.png",
-                  "classes": ["light", "left"]
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000"
                 }
               }
             }
@@ -600,6 +711,7 @@
                 "template": {
                   "name": "Events Cards",
                   "model": "events-cards",
+                  "classes": ["header-left"],
                   "headingType": "h2"
                 }
               }
@@ -656,7 +768,56 @@
                   "model": "featured-content",
                   "content_cta": "Read Article",
                   "classes": ["adobe", "left"],
-                  "linkText": "Read Article"
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta1_linkText": "Read Article"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Footer Breadcrumb",
+          "id": "footer-breadcrumb",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Footer Breadcrumb",
+                  "model": "footer-breadcrumb"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Footer Copyrights",
+          "id": "footer-copyrights",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Footer Copyrights",
+                  "model": "footer-copyrights"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Footer Item",
+          "id": "footer-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Footer Item",
+                  "model": "footer-item"
                 }
               }
             }
@@ -692,6 +853,7 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Icon Card",
                     "model": "icon-card",
+                    "filter": "rte-custom-options",
                     "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                     "cardHeading": "Default Heading",
                     "cardHeadingType": "h3",
@@ -703,6 +865,7 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Icon Card",
                     "model": "icon-card",
+                    "filter": "rte-custom-options",
                     "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                     "cardHeading": "Default Heading",
                     "cardHeadingType": "h3",
@@ -714,6 +877,7 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Icon Card",
                     "model": "icon-card",
+                    "filter": "rte-custom-options",
                     "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                     "cardHeading": "Default Heading",
                     "cardHeadingType": "h3",
@@ -736,6 +900,7 @@
                 "template": {
                   "name": "Icon Card",
                   "model": "icon-card",
+                  "filter": "rte-custom-options",
                   "cardIcon": "/content/dam/exlm/icons/S_ExperienceManager_24_N.svg",
                   "cardHeading": "Default Heading",
                   "cardHeadingType": "h3",
@@ -779,6 +944,21 @@
           }
         },
         {
+          "title": "Language Selector",
+          "id": "language-selector",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Language Selector",
+                  "model": "language-selector"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Marquee",
           "id": "marquee",
           "plugins": {
@@ -788,11 +968,19 @@
                 "template": {
                   "name": "Marquee",
                   "model": "marquee",
-                  "fileReference": "/content/dam/exlm/Community_headshot_single.png",
+                  "classes": ["medium", "curved", "bg-spectrum-gray-700"],
+                  "fileReference": "/content/dam/exlm/en/images/subjects/Community_headshot_single.png",
                   "title": "Marquee Title",
                   "titleType": "h2",
                   "longDescr": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt",
-                  "customHexCode": "FFFFFF"
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000"
                 }
               }
             }
@@ -812,7 +1000,30 @@
                   "title": "Lorem ipsum",
                   "titleType": "h3",
                   "description": "<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</p>",
-                  "classes": "left"
+                  "classes": "left",
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Nav",
+          "id": "nav",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Nav",
+                  "model": "nav"
                 }
               }
             }
@@ -834,6 +1045,24 @@
           }
         },
         {
+          "title": "Notification Banner",
+          "id": "notification-banner",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Notification Banner",
+                  "model": "notification-banner",
+                  "filter": "rte-custom-options",
+                  "title": "Notification Banner Title",
+                  "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Personalized Content Placeholder",
           "id": "personalized-content-placeholder",
           "plugins": {
@@ -843,6 +1072,21 @@
                 "template": {
                   "name": "Personalized Content Placeholder",
                   "model": "personalized-content-placeholder"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Product Grid",
+          "id": "product-grid",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Product Grid",
+                  "model": "product-grid"
                 }
               }
             }
@@ -864,6 +1108,21 @@
           }
         },
         {
+          "title": "Profile Menu",
+          "id": "profile-menu",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Profile Menu",
+                  "model": "profile-menu"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Profile Welcome",
           "id": "profile-welcome",
           "plugins": {
@@ -878,9 +1137,11 @@
                   "heading": "Your Experience League just got more personal.",
                   "description": "Reaching your career goals has never been easier. Explore learning recommendations we made just for you based on your product interests, experience level, and role.",
                   "incompleteProfileText": "Complete your profile for a more personalized experience.",
-                  "cta1Type": "primary",
-                  "cta1Text": "Manage profile",
-                  "showProfileCard": true
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta1_linkText": "Manage profile"
                 }
               }
             }
@@ -920,6 +1181,24 @@
           }
         },
         {
+          "title": "Recommendation Marquee",
+          "id": "recommendation-marquee",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Recommendation Marquee",
+                  "model": "recommendation-marquee",
+                  "roles": ["profile_context"],
+                  "filterProductBy": "all_adobe_products",
+                  "headingType": "h2"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Recommended Content",
           "id": "recommended-content",
           "plugins": {
@@ -930,7 +1209,8 @@
                   "name": "Recommended Content",
                   "model": "recommended-content",
                   "roles": ["profile_context"],
-                  "sortTargetResultsBy": ""
+                  "filterProductBy": "all_adobe_products",
+                  "headingType": "h2"
                 }
               }
             }
@@ -969,6 +1249,21 @@
           }
         },
         {
+          "title": "Search",
+          "id": "search",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Search",
+                  "model": "search"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Secondary Search",
           "id": "secondary-search",
           "plugins": {
@@ -979,6 +1274,21 @@
                   "name": "Secondary Search",
                   "model": "secondary-search",
                   "headingType": "h2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Sign In",
+          "id": "sign-in",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Sign In",
+                  "model": "sign-in"
                 }
               }
             }
@@ -998,6 +1308,21 @@
                   "title": "Sign up Title",
                   "titleType": "h3",
                   "longDescr": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Social",
+          "id": "social",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Social",
+                  "model": "social"
                 }
               }
             }
@@ -1028,6 +1353,7 @@
                 "template": {
                   "name": "Tabbed Cards",
                   "model": "tabbed-cards",
+                  "classes": ["header-left"],
                   "headingType": "h2"
                 }
               }
@@ -1102,7 +1428,15 @@
                   "title": "Teaser Title",
                   "titleType": "h3",
                   "longDescr": "<p>Teaser Description</p>",
-                  "classes": ["light", "left"]
+                  "classes": ["light", "left"],
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000",
+                  "cta2_Type": "primary",
+                  "cta2_customBgColor": "--spectrum-gray-700",
+                  "cta2_textColor": "white",
+                  "cta2_customBgHexCode": "000000"
                 }
               }
             }
@@ -1117,6 +1451,22 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Topic Results"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Upcoming Event",
+          "id": "upcoming-event",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Upcoming Event",
+                  "model": "upcoming-event",
+                  "headingType": "h2"
                 }
               }
             }

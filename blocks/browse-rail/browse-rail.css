@@ -1,9 +1,44 @@
 .browse-rail {
   display: none;
 }
+
+.browse-rail ul li a,
+.browse-rail ul li span {
+  text-transform: uppercase;
+  width: 100%;
+  display: inline-block;
+  position: relative;
+}
+
+.browse-rail > ul > li > a,
+.browse-rail > ul > li > span {
+  font-size: var(--spectrum-font-size-75);
+  font-weight: bold;
+  flex: 88%;
+}
+
+.browse-rail ul li a,
+.browse-rail ul li span,
+.browse-rail ul li ul li a,
+.browse-rail ul li ul li span {
+  font-size: var(--spectrum-font-size-100);
+  line-height: 21px;
+  min-height: 32px;
+  box-sizing: border-box;
+  margin: 0;
+  border-radius: 4px;
+  padding: 5px 0 5px 12px;
+  color: var(--spectrum-gray-700);
+}
+
+.browse-rail ul li ul li a,
+.browse-rail ul li ul li span {
+  text-transform: none;
+}
+
 .browse-rail .browse-more-products a {
   color: var(--non-spectrum-dark-navy-blue);
-  margin: 20px 0 24px 0;
+  margin: 20px 0 24px;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -36,24 +71,13 @@
   width: 100%;
 }
 
-.browse-rail ul li > ul li {
-  margin-left: 12px;
-}
-
-.browse-rail ul li a,
-.browse-rail ul li span {
-  text-transform: uppercase;
-  width: 100%;
-  display: inline-block;
-  position: relative;
-}
-
 .browse-rail li > span.js-toggle {
   position: relative;
   cursor: pointer;
   flex: 12%;
 }
-.browse-rail li > span.js-toggle:after {
+
+.browse-rail li > span.js-toggle::after {
   position: absolute;
   right: 40%;
   top: 38%;
@@ -69,33 +93,14 @@
   box-sizing: content-box;
 }
 
-.browse-rail li > span.js-toggle.collapsed:after {
+.browse-rail li > span.js-toggle.collapsed::after {
   transform: rotate(45deg);
 }
 
 .browse-rail li.other-product-first-item {
   border-top: 1px solid var(--spectrum-gray-200);
-  margin: 24px 0 0 0;
+  margin: 24px 0 0;
   padding: 24px 0 0 12px;
-}
-
-.browse-rail ul li ul li a,
-.browse-rail ul li ul li span {
-  text-transform: none;
-}
-
-.browse-rail ul li a,
-.browse-rail ul li span,
-.browse-rail ul li ul li a,
-.browse-rail ul li ul li span {
-  font-size: var(--spectrum-font-size-100);
-  line-height: 21px;
-  min-height: 32px;
-  box-sizing: border-box;
-  margin: 0;
-  border-radius: 4px;
-  padding: 5px 0 5px 12px;
-  color: var(--spectrum-gray-700);
 }
 
 .browse-rail ul li.hidden {
@@ -103,25 +108,22 @@
 }
 
 .browse-rail > ul > li > ul a:hover,
-.browse-rail > ul > li > ul .is-active,
-.browse-rail > ul > li .is-active {
+.browse-rail > ul > li .is-active,
+.browse-rail > ul > li > ul .is-active {
   background-color: var(--spectrum-gray-200);
   border-radius: 4px;
 }
+
 .browse-rail .browse-by {
   border-bottom: 1px solid var(--spectrum-gray-200);
   margin-bottom: 24px;
   padding-bottom: 24px;
 }
-.browse-rail > ul > li > a,
-.browse-rail > ul > li > span {
-  font-size: var(--spectrum-font-size-75);
-  font-weight: bold;
-  flex: 88%;
-}
+
 .browse-rail .browse-by li {
   flex-direction: column;
 }
+
 .browse-rail ul li .left-rail-view-more span,
 .browse-rail ul li .left-rail-view-less span {
   font-size: var(--spectrum-font-size-100);
@@ -130,6 +132,7 @@
   text-transform: none;
   padding: 5px 0 5px 12px;
 }
+
 @media only screen and (min-width: 900px) {
   .browse-rail {
     display: block;

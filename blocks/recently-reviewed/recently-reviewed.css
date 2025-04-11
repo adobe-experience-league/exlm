@@ -15,6 +15,28 @@
   margin-bottom: 30px;
 }
 
+.recently-reviewed-description a {
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  margin: 0;
+}
+
+.recently-reviewed.block {
+  position: relative;
+}
+
+.recently-reviewed.block .browse-cards-block-content {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-bottom: 4px;
+  gap: 24px;
+}
+
+.recently-reviewed .browse-cards-block-content .card-wrapper {
+  max-width: 552px;
+}
+
 .recently-reviewed .browse-cards-block-content:has(.browse-card-no-results) {
   display: block;
   min-height: auto;
@@ -22,7 +44,6 @@
 
 .recently-reviewed .browse-cards-block-content > .browse-card-no-results {
   margin-top: 0;
-  flex: 1;
   display: block;
 }
 
@@ -57,4 +78,63 @@
   border-color: var(--spectrum-gray-300);
   color: var(--spectrum-gray-400);
   cursor: default;
+}
+
+.recently-reviewed-see-more-btn {
+  display: none;
+}
+
+.recently-reviewed.block .browse-cards-block-content.hide-see-more-row {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .recently-reviewed.block .browse-cards-block-content {
+    margin-top: 24px;
+  }
+
+  .recently-reviewed.block .browse-cards-block-content.fade-in {
+    animation: fade-in 0.5s forwards;
+  }
+
+  .recently-reviewed.block .browse-cards-block-content.fade-out {
+    animation: fade-out 0.5s forwards;
+  }
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+  }
+
+  .recently-reviewed-see-more-btn {
+    display: flex;
+    justify-content: center;
+  }
+
+  .recently-reviewed-see-more-btn button {
+    background: none;
+    border: 2px solid var(--spectrum-gray-300);
+    color: black;
+    padding: 10px 20px;
+    margin: 24px 0 0;
+  }
 }

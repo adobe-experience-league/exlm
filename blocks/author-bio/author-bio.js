@@ -16,7 +16,7 @@ export default function decorate(block) {
   const authorBioPicture = createOptimizedPicture(authorImage, 'author-bio-picture');
   const authorSocialLinkElement = authorSocialLinkURL ?? '#';
   const authorBioDOM = htmlToElement(`
-  <div class='author-bio-content ${authorCompany ?? 'external'}'>
+  <div class='author-bio-content ${authorCompany?.toLowerCase() ?? 'external'}'>
     <div class='author-image'>${authorBioPicture ? authorBioPicture.outerHTML : ''}</div>
     <div class="author-name-title-container">
       <div class='author-name'>${authorName ?? ''}</div>
@@ -24,9 +24,9 @@ export default function decorate(block) {
         ${authorTitle ?? ''} ${authorCompany ?? ''}
       </div>
     </div>
-    <div class="author-description-socialLink-container">
+    <div class="author-description-social-link-container">
       <div class='author-description'>${authorDescription?.innerHTML ?? ''}</div>
-      <a href='${authorSocialLinkElement}' class='author-socialLink' title='${authorSocialLinkElement}'>
+      <a href='${authorSocialLinkElement}' class='author-social-link' title='${authorSocialLinkElement}'>
         ${authorSocialLinkText ?? ''}
       </a>
     </div>

@@ -10,7 +10,7 @@
 
 .related-content-wrapper .related-content-toggle h2 {
   font-size: var(--spectrum-font-size-50);
-  font-weight: var(--spectrum-extra-bold-font-weight);
+  font-weight: var(--font-weight-extra-bold);
   text-transform: uppercase;
   line-height: 31px;
   margin: 0;
@@ -35,7 +35,7 @@
   height: 18px;
   content: '';
   box-sizing: content-box;
-  background: rgb(0 0 0 / 0%) url('/icons/chevron_down.svg') no-repeat right center;
+  background: rgb(0 0 0 / 0%) url('/icons/chevron-down.svg') no-repeat right center;
   transform: rotate(180deg);
   transition: transform 300ms;
 }
@@ -66,7 +66,7 @@
 }
 
 .related-content-wrapper ul.related-content li .related-content-icon .related-content-tooltip .tooltip-label-wrapper {
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-75);
   position: absolute;
   visibility: hidden;
   transition: all 130ms ease-in-out;
@@ -86,7 +86,7 @@
   bottom: 3em;
   left: 0.5em;
   color: var(--spectrum-gray-50);
-  font-weight: var(--font-weight-400);
+  font-weight: var(--font-weight-normal);
   padding: 2px 8px 4px;
   text-align: center;
   text-wrap: nowrap;

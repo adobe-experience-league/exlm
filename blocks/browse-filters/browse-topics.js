@@ -1,3 +1,14 @@
+import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
+import { getCoveoFacets } from './browse-filter-utils.js';
+
+export const coveoFacetMap = {
+  el_role: 'headlessRoleFacet',
+  el_contenttype: 'headlessTypeFacet',
+  el_level: 'headlessExperienceFacet',
+  el_product: 'headlessProductFacet',
+  author_type: 'headlessAuthorTypeFacet',
+};
+
 /**
  * formattedTags returns the array of base64 encoded tags after extracting from the tags selected in dialog
  * @param {string} inputString - The topics tag. E.g. exl:topic/QXBwIEJ1aWxkZXI=
@@ -42,6 +53,7 @@ export const generateQuery = (topic) => {
   return {
     query,
     product,
+    forceQuery: true,
   };
 };
 
@@ -63,6 +75,38 @@ export function dispatchCoveoAdvancedQuery({ query, fireSelection = true, resetP
   }
 }
 
+const reInitTopicSelection = () => {
+  let fireSelection = document.querySelectorAll('.browse-topics-item-active').length > 0;
+  const selectedDropdownItems = Array.from(document.querySelectorAll('.browse-tags')).reduce((acc, curr) => {
+    const { type } = curr.dataset;
+    if (!acc[type]) {
+      acc[type] = [];
+    }
+    acc[type].push(curr.value);
+    return acc;
+  }, {});
+
+  Object.keys(selectedDropdownItems).forEach((key) => {
+    const coveoFacetKey = coveoFacetMap[key];
+    const coveoFacet = window[coveoFacetKey];
+    const facetValues = selectedDropdownItems[key];
+    fireSelection = true;
+    facetValues.forEach((value) => {
+      const facets = getCoveoFacets(value, true);
+      facets.forEach(({ state, value: facetValue }) => {
+        coveoFacet.toggleSelect({
+          state,
+          value: facetValue,
+        });
+      });
+    });
+  });
+  if (fireSelection) {
+    // eslint-disable-next-line no-use-before-define
+    handleTopicSelection();
+  }
+};
+
 export function handleTopicSelection(block, fireSelection, resetPage) {
   const wrapper = block || document;
   const selectedTopics = Array.from(wrapper.querySelectorAll('.browse-topics-item-active')).reduce((acc, curr) => {
@@ -73,20 +117,49 @@ export function handleTopicSelection(block, fireSelection, resetPage) {
 
   if (window.headlessQueryActionCreators) {
     let query = window.headlessBaseSolutionQuery || '';
+    const currentProductFacetValues = window.headlessProductFacet?.state?.values || [];
+    if (currentProductFacetValues.length) {
+      currentProductFacetValues.forEach(({ value, state }) => {
+        if (state === 'selected') {
+          window.headlessProductFacet.toggleSelect({
+            value,
+            state: 'idle',
+          });
+        }
+      });
+    }
+
     if (selectedTopics.length) {
+      const decodedHash = window.location.hash ? decodeURIComponent(window.location.hash) : '';
+      const elProductHash = decodedHash.split('&').find((hashInfo) => hashInfo.includes('f-el_product='));
+      const [, productsList = ''] = elProductHash?.split('=') || [];
+      const productsInUrl = productsList.split(',').filter(Boolean);
       const topicQueryItems = `${selectedTopics
         .map((topic) => {
-          const { query: advancedQuery } = generateQuery(topic);
+          const { query: advancedQuery, forceQuery = false, product } = generateQuery(topic);
+          if (!forceQuery && window.headlessProductFacet && !productsInUrl.includes(product)) {
+            window.headlessProductFacet.toggleSelect({
+              value: product,
+              state: 'selected',
+            });
+            return null;
+          }
           return advancedQuery;
         })
+        .filter(Boolean)
         .join(' OR ')}`;
-      const topicsQuery = selectedTopics.length > 1 ? `(${topicQueryItems})` : topicQueryItems;
+      const topicsQuery = selectedTopics.length > 1 && topicQueryItems ? `(${topicQueryItems})` : topicQueryItems;
       if (window.headlessBaseSolutionQuery) {
-        query = `(${window.headlessBaseSolutionQuery} AND ${topicsQuery})`;
+        query = topicsQuery
+          ? `(${window.headlessBaseSolutionQuery} AND ${topicsQuery})`
+          : window.headlessBaseSolutionQuery;
       } else {
         query = topicsQuery;
       }
     }
     dispatchCoveoAdvancedQuery({ query, fireSelection, resetPage });
+  } else {
+    document.removeEventListener(COVEO_SEARCH_CUSTOM_EVENTS.READY, reInitTopicSelection);
+    document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.READY, reInitTopicSelection);
   }
 }

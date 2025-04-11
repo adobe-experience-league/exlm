@@ -49,7 +49,7 @@
 .toc-clear-icon {
   position: absolute;
   right: 0;
-  top: 10px; /* Positioned inside the right side of the input */
+  top: 10px;
   cursor: pointer;
   color: var(--spectrum-gray-600);
 }
@@ -57,4 +57,12 @@
 /* Show clear icon when input has text */
 .toc-filter-input:not(:placeholder-shown) + .toc-filter-clear-icon {
   display: inline;
+}
+
+/* 1024 breakpoint */
+@media (width <= 1024px) {
+  .toc-filter-input {
+    font-size: var(--spectrum-font-size-75);
+    padding: 8px 24px;
+  }
 }

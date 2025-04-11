@@ -1,3 +1,12 @@
+.section.icon-block-container > div > :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0 0 40px;
+  text-align: center;
+}
+
+.section.icon-block-container {
+  padding: 32px 36px 48px;
+}
+
 .icon-block {
   display: grid;
   min-width: 275px;
@@ -25,9 +34,7 @@
 }
 
 .icon-block .icon-heading {
-  font-size: 22px;
   margin: 0 auto;
-  line-height: 33px;
   color: var(--non-spectrum-custom-dark);
   font-weight: bold;
   margin-bottom: 8px;
@@ -37,7 +44,7 @@
 }
 
 .icon-block .icon-description {
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-100);
   margin-bottom: 16px;
   line-height: 18.2px;
   color: var(--spectrum-gray-700);
@@ -48,8 +55,9 @@
   display: -webkit-box;
 }
 
-.icon-block .icon-link {
-  font-size: 14px;
+.icon-block .icon-link,
+.icon-block .icon-description a {
+  font-size: var(--spectrum-font-size-100);
   line-height: 18.2px;
   color: var(--spectrum-blue-900);
   white-space: nowrap;
@@ -59,18 +67,22 @@
   display: flex;
   align-items: center;
   margin-top: 0;
+  font-weight: bold;
 }
 
-.icon-block .icon-link::after {
+.icon-block .icon-link::after,
+.icon-block .icon-description a::after {
   content: '>';
   padding-left: 4px;
 }
 
-.icon-block .icon-link.external::after {
+.icon-block .icon-link.external::after,
+.icon-block .icon-description a.external::after {
   content: '';
 }
 
-.icon-block .icon-new-tab-blue {
+.icon-block .icon-new-tab-blue,
+.icon-block .icon-description img {
   position: relative;
   top: 1px;
   width: 17px;
@@ -78,6 +90,14 @@
 }
 
 @media (width >= 600px) {
+  .section.icon-block-container {
+    padding: 80px 86px;
+  }
+
+  .section.icon-block-container > div > :is(h1, h2, h3, h4, h5, h6) {
+    text-align: left;
+  }
+
   .icon-block {
     grid-template-columns: repeat(auto-fit, minmax(286px, 1fr));
     column-gap: 24px;
@@ -96,7 +116,7 @@
 
 @media (width >= 900px) {
   .icon-block {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     column-gap: 16px;
     max-width: 1278px;
   }

@@ -1,14 +1,13 @@
 div.list-placeholder-wrapper .list-item {
   margin: 15px 0;
   border-radius: 4px;
-  background-color: var(--shimmer-content-background);
-  background: linear-gradient(
-    90deg,
-    var(--shimmer-image-slide-start) 0,
-    var(--shimmer-image-slide-end) 40px,
-    var(--shimmer-image-slide-start) 80px
-  );
-  animation: wave 2s linear 0s infinite normal forwards;
+  background: var(--shimmer-content-background),
+    linear-gradient(
+      90deg,
+      var(--shimmer-image-slide-start) 0,
+      var(--shimmer-image-slide-end) 40px,
+      var(--shimmer-image-slide-start) 80px
+    );
   animation: wave 2s linear 0s infinite normal forwards;
 }
 

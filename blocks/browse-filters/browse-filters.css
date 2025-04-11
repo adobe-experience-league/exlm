@@ -49,7 +49,8 @@
   border-radius: 4px;
   padding: 9px 12px;
   width: 100%;
-  font-size: 16px;
+  font-size: var(--spectrum-font-size-200);
+
   /* https://defensivecss.dev/tip/input-zoom-safari/ */
   text-align: left;
   color: var(--spectrum-gray-700);
@@ -96,6 +97,27 @@
   max-width: 100%;
 }
 
+.search-picker-popover,
+.search-suggestions-popover {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  top: 32px;
+  background-color: var(--background-color);
+  box-shadow: 0 8px 8px rgb(10 10 10 / 10%);
+  border: 1px solid var(--spectrum-gray-400);
+  padding: 8px 0;
+  border-radius: 6px;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    transform 130ms ease-in-out,
+    opacity 130ms ease-in-out,
+    visibility 0ms linear 130ms;
+  pointer-events: none;
+  touch-action: none;
+}
+
 .browse-filters-search .search-suggestions-popover {
   width: 100%;
   position: absolute;
@@ -113,18 +135,30 @@
   overflow-y: auto;
   background-color: var(--non-spectrum-grey-100);
   min-width: 160px;
-  z-index: 2;
+  z-index: 9;
   width: 100%;
   box-sizing: border-box;
   padding: 12px;
   border-radius: 4px;
-  box-shadow: 0px 1px 4px rgba(0 0 0 / 15%);
+  box-shadow: 0 1px 4px rgba(0 0 0 / 15%);
   border: 1px solid var(--spectrum-gray-400);
 }
 
 .filter-dropdown .custom-checkbox {
   padding: 8px 0;
   line-height: 16px;
+}
+
+.browse-filters-pagination input {
+  width: 49px;
+  height: 32px;
+  margin: 0 8px;
+  border-radius: 4px;
+  border: 1px solid var(--spectrum-gray-200);
+  font-size: var(--spectrum-font-size-100);
+  line-height: 17px;
+  color: var(--spectrum-gray-700);
+  font-family: var(--body-font-family);
 }
 
 .filter-dropdown .custom-checkbox input {
@@ -152,7 +186,7 @@
 
 .filter-dropdown .custom-checkbox label .description {
   font-weight: normal;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-75);
   line-height: 16px;
   text-align: left;
   color: var(--spectrum-gray-500);
@@ -182,7 +216,7 @@
 }
 
 button.browse-filters-clear {
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   font-size: var(--spectrum-body-size-s);
   text-align: left;
   color: var(--spectrum-blue-900);
@@ -217,7 +251,7 @@ button.browse-filters-clear:disabled:hover {
   padding: 4px 25px 5px 12px;
   margin-bottom: 10px;
   font-weight: normal;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-75);
   text-align: left;
   color: var(--spectrum-gray-500);
   line-height: normal;
@@ -249,10 +283,6 @@ button.browse-filters-clear:disabled:hover {
   color: var(--spectrum-gray-700);
   line-height: 18px;
   display: none;
-}
-
-.browse-filters-search {
-  position: relative;
 }
 
 .browse-filters-pagination {
@@ -287,18 +317,6 @@ button.browse-tags:focus {
   font-size: var(--spectrum-font-size-100);
   line-height: 17px;
   color: var(--spectrum-gray-700);
-}
-
-.browse-filters-pagination input {
-  width: 49px;
-  height: 32px;
-  margin: 0 8px;
-  border-radius: 4px;
-  border: 1px solid var(--spectrum-gray-200);
-  font-size: var(--spectrum-font-size-100);
-  line-height: 17px;
-  color: var(--spectrum-gray-700);
-  font-family: var(--body-font-family);
 }
 
 .browse-filters-pagination.browse-filters-pagination-hidden {
@@ -388,7 +406,7 @@ button.browse-tags:focus {
   text-align: left;
 }
 
-.browse-filters-form .sort-container .sort-drop-btn:after {
+.browse-filters-form .sort-container .sort-drop-btn::after {
   background-image: url('../../icons/down-arrow.svg');
   background-position: 0 0;
   background-repeat: no-repeat;
@@ -408,7 +426,7 @@ button.browse-tags:focus {
   color: var(--non-spectrum-input-text);
   cursor: pointer;
   display: none;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-100);
   font-weight: normal;
   position: absolute;
   right: 0;
@@ -422,7 +440,7 @@ button.browse-tags:focus {
   border: none;
   color: var(--non-spectrum-charcoal-gray);
   display: block;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-100);
   font-weight: normal;
   text-decoration: none;
   margin: 0;
@@ -456,9 +474,8 @@ button.browse-tags:focus {
 .browse-filters-results.no-results {
   background-color: var(--spectrum-gray-200);
   color: var(--non-spectrum-grey);
-  font-size: 16px;
-  min-height: 346px;
-  padding-top: 72px;
+  font-size: var(--spectrum-font-size-200);
+  padding: 72px 0;
   text-align: center;
   width: 100%;
   box-sizing: border-box;
@@ -472,27 +489,6 @@ button.browse-tags:focus {
 .browse-filters-search input::-webkit-search-decoration,
 .browse-filters-search input::-webkit-search-results-decoration {
   display: none;
-}
-
-.search-picker-popover,
-.search-suggestions-popover {
-  position: absolute;
-  z-index: 1;
-  right: 0;
-  top: 32px;
-  background-color: var(--background-color);
-  box-shadow: 0 8px 8px rgba(10, 10, 10, 0.1);
-  border: 1px solid var(--spectrum-gray-400);
-  padding: 8px 0;
-  border-radius: 6px;
-  visibility: hidden;
-  opacity: 0;
-  transition:
-    transform 130ms ease-in-out,
-    opacity 130ms ease-in-out,
-    visibility 0ms linear 130ms;
-  pointer-events: none;
-  touch-action: none;
 }
 
 .search-picker-popover.search-picker-popover-visible,
@@ -541,7 +537,7 @@ button.browse-tags:focus {
 }
 
 .search-suggestions-popover .search-picker-label:hover {
-  background: rgba(0, 0, 0, 0.04);
+  background: rgb(0 0 0 / 4%);
   cursor: pointer;
 }
 
@@ -631,17 +627,10 @@ button.browse-tags:focus {
   }
 
   .browse-filters-results {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .browse-filters-input-container:has(.filter-dropdown:nth-child(4)) {
-    grid-template-areas: 'label role ctype exp search cfilter';
-    grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
-  }
-
-  .browse-filters-input-container:has(.browse-product-dropdown):has(.browse-role-dropdown):has(
-      .browse-author-type-dropdown
-    ):not(:has(.browse-experience-level-dropdown)) {
     grid-template-areas: 'label role ctype exp search cfilter';
     grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
   }
@@ -664,5 +653,11 @@ button.browse-tags:focus {
     ):not(:has(.browse-experience-level-dropdown)) {
     grid-template-areas: 'label role ctype exp search cfilter';
     grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
+  }
+}
+
+@media (min-width: 1400px) {
+  .browse-filters-results {
+    grid-template-columns: repeat(4, 1fr);
   }
 }

@@ -4,11 +4,9 @@
 
 .browse-topics-block-content {
   display: inline-flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 16px;
   max-width: 100%;
-  max-height: 128px;
-  overflow-y: hidden;
   padding: 8px 0;
 }
 

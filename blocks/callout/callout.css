@@ -12,6 +12,7 @@
   border-top-width: 6px;
   border-radius: 4px;
 }
+
 .callout-card-tag {
   position: absolute;
   text-transform: uppercase;
@@ -21,16 +22,18 @@
   font-size: var(--spectrum-font-size-75);
   background-color: var(--spectrum-red-1400);
   font-weight: bold;
-  color: var(--color-white);
-  border-radius: 0px 4px;
+  color: var(--spectrum-gray-50);
+  border-radius: 0 4px;
 }
+
 .callout-card-header h1 {
-  font-weight: 700;
-  font-size: 24px;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--spectrum-font-size-600);
   line-height: 32px;
   color: var(--non-spectrum-dark-charcoal);
   margin: 0 0 16px;
 }
+
 .callout-card-header p {
   font-size: var(--spectrum-font-size-200);
   line-height: 21px;
@@ -39,12 +42,12 @@
 }
 
 .callout-card.callout-card-external {
-  border-color: var(--spectrum-indigo-1400);
+  border-color: var(--spectrum-gray-900);
 }
 
 .callout-card.callout-card-external .callout-card-tag {
-  border-color: var(--spectrum-indigo-1400);
-  background-color: var(--spectrum-indigo-1400);
+  border-color: var(--spectrum-gray-900);
+  background-color: var(--spectrum-gray-900);
 }
 
 .callout-card-wrapper.callout-card-wrapper-full {

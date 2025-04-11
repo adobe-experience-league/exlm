@@ -8,7 +8,7 @@
 .featured-cards .browse-cards-block-header .browse-card-description-text {
   text-align: center;
   color: var(--spectrum-gray-800);
-  font-size: 18px;
+  font-size: var(--spectrum-font-size-300);
   line-height: 23.4px;
   margin-bottom: 16px;
 }
@@ -34,8 +34,6 @@
 }
 
 .featured-cards .browse-cards-block-content {
-  display: grid;
-  grid-template-columns: 1fr;
   gap: 32px;
   min-height: 284px;
   margin-bottom: 24px;
@@ -47,7 +45,6 @@
 
 .featured-cards .browse-cards-block-content > div {
   min-height: 284px;
-  flex: 0 0 320px;
 }
 
 .featured-cards .browse-card-dropdown {
@@ -59,9 +56,10 @@
   margin-bottom: 8px;
   gap: 16px;
 }
+
 .featured-cards .browse-card-dropdown > label {
   font-size: var(--spectrum-body-size-l);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   color: #363636;
 }
 
@@ -75,16 +73,8 @@
     padding-bottom: 30px;
   }
 
-  .featured-cards .browse-cards-block-content {
-    grid-template-columns: 1fr 1fr;
-  }
-
   .featured-cards .browse-cards-block-view {
     text-align: center;
-  }
-
-  .featured-cards .featured-cards .browse-cards-block-content > div {
-    flex: 0 0 286px;
   }
 
   .featured-cards .browse-cards-block-header .browse-card-description-text {
@@ -106,8 +96,6 @@
   }
 
   .featured-cards .browse-cards-block-content {
-    display: flex;
-    gap: 32px;
     text-align: center;
     margin-bottom: 84px;
   }
@@ -127,10 +115,6 @@
 
   .featured-cards .browse-card {
     text-align: left;
-  }
-
-  .featured-cards .browse-cards-block-content > div {
-    flex: 0 0 295px;
   }
 
   .featured-cards .custom-filter-dropdown {

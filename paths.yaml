@@ -13,6 +13,10 @@ mappings:
   - /content/exlm/languages:/languages.json
   - /content/exlm/qualtrics:/qualtrics.json
   - /content/exlm/featured-card-products:/featured-card-products.json
+  # taxonomy
+  - /content/exlm/taxonomy/features:/features.json
+  - /content/exlm/taxonomy/roles:/roles.json
+  - /content/exlm/taxonomy/levels:/levels.json
   - /content/exlm/configuration:/.helix/config.json
   - /content/exlm/headers:/.helix/headers.json
   # force load some paths as resource from codebus in the editor (sw.js)

@@ -137,6 +137,24 @@ function updateUEInstrumentation() {
     }
   }
 
+  // ----- if header, identified by theme
+  if (document.querySelector('body[class^=header]') || getMetadata('theme') === 'header') {
+    // update available sections
+    setUEFilter(main, 'empty');
+    // update the only available default section
+    const section = main.querySelector('.section');
+    setUEFilter(section, 'section-header');
+  }
+
+  // ----- if footer, identified by theme
+  if (document.querySelector('body[class^=footer]') || getMetadata('theme') === 'footer') {
+    // update available sections
+    setUEFilter(main, 'empty');
+    // update the only available default section
+    const section = main.querySelector('.section');
+    setUEFilter(section, 'section-footer');
+  }
+
   // ----- if profile pages, identified by theme
   if (document.querySelector('body[class^=profile]') || getMetadata('theme') === 'profile') {
     // update available sections

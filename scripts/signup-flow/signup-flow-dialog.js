@@ -67,12 +67,12 @@ export default class SignupFlowDialog {
     Promise.all([
       fetchLanguagePlaceholders(lang),
       loadCSS(`${window.hlx.codeBasePath}/scripts/signup-flow/signup-flow-dialog.css`),
-      this.addModalSeenInteraction(),
     ]).then(([placeholders]) => {
       this.placeholders = placeholders;
       this.lang = lang;
       this.createSignupDialog();
       this.initNavigation();
+      this.addModalSeenInteraction();
     });
   }
 
@@ -164,7 +164,6 @@ export default class SignupFlowDialog {
         </div>
         <div class="signup-dialog-container">                                           
           <div class="signup-dialog-header">
-            <div class="signup-dialog-header-decor"></div>
             <div class="signup-dialog-nav-bar">
               <button class="secondary prev-btn">${this.placeholders?.backBtnLabel}</button>
               <div class="signup-dialog-title"></div>
@@ -174,13 +173,10 @@ export default class SignupFlowDialog {
               </div>
             </div>
           </div>
-          <div class="signup-dialog-middle-decor"></div>
           <div class="signup-dialog-body">
-            <div class="signup-dialog-body-top-decor"></div>
             <div class="signup-dialog-steps"></div>
             <div class="signup-dialog-content"></div>
           </div>
-          <div class="signup-dialog-bottom-decor"></div>
         </div>
       </dialog>
     `);
@@ -239,7 +235,11 @@ export default class SignupFlowDialog {
     // Generate step flow content based on the current step index
     let flow = '';
     if (pageIndex < this.pages.length - 1) {
-      dialogTitle.innerHTML = `<h4>${data.title}</h4><p>Step ${pageIndex + 1} of ${this.pages.length - 1}</p>`;
+      dialogTitle.innerHTML = `<h4>${data.title}</h4><p>${
+        this.placeholders?.signupStepProgress
+          ? this.placeholders.signupStepProgress.replace('{}', pageIndex + 1).replace('{}', this.pages.length - 1)
+          : `Step ${pageIndex + 1} of ${this.pages.length - 1}`
+      }</p>`;
       flow = `<div class="signup-dialog-step-flow">
                 ${this.pages
                   .map((step, index) => {

@@ -25,6 +25,18 @@
   display: block;
 }
 
+.feedback-ui .like-btns {
+  display: inline-block;
+  flex: auto;
+  margin-left: 1em;
+}
+
+.feedback-ui .right {
+  display: block;
+  border-top: 2px solid var(--spectrum-gray-200);
+  color: var(--non-spectrum-grey);
+}
+
 .feedback-ui.no-git .right {
   display: none !important;
 }
@@ -57,7 +69,7 @@
   margin: 0;
   display: inline-block;
   color: var(--non-spectrum-grey);
-  font-size: 20px;
+  font-size: var(--spectrum-font-size-400);
 }
 
 .feedback-ui .left .icon,
@@ -82,12 +94,6 @@
 .feedback-ui .right .icon-chevron-gray {
   display: none;
   transform: translateY(-1px);
-}
-
-.feedback-ui .like-btns {
-  display: inline-block;
-  flex: auto;
-  margin-left: 1em;
 }
 
 .feedback-ui .like-btns button {
@@ -144,7 +150,7 @@
   box-shadow: none;
   width: 100%;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-100);
   font-family: var(--body-font-family);
   font-style: italic;
 }
@@ -156,19 +162,13 @@
   color: var(--spectrum-gray-500);
 }
 
-.feedback-ui .right {
-  display: block;
-  border-top: 2px solid var(--spectrum-gray-200);
-  color: var(--non-spectrum-grey);
-}
-
 .feedback-ui .header-text-mobile > span {
   color: var(--non-spectrum-grey);
 }
 
 .feedback-ui .opened-controls > span {
   display: none;
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
 }
 
 .feedback-ui .cta button span:nth-child(1) {
@@ -228,7 +228,7 @@
   color: var(--non-spectrum-link);
   display: block;
   margin: 0;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-100);
 }
 
 .feedback-ui .expanded-controls a:hover {
@@ -380,7 +380,7 @@
   }
 
   .feedback-ui .left h3 {
-    font-size: 17.5px;
+    font-size: var(--spectrum-font-size-200);
   }
 
   .feedback-ui .left .icon-chevron-gray {

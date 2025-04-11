@@ -9,6 +9,7 @@ import PathsDataService from '../data-service/paths-data-service.js';
 import { URL_SPECIAL_CASE_LOCALES, getConfig, getPathDetails } from '../scripts.js';
 import { getExlPipelineDataSourceParams } from '../data-service/coveo/coveo-exl-pipeline-helpers.js';
 import { RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
+import { createDateCriteria } from './browse-card-utils.js';
 
 const { liveEventsUrl, adlsUrl, pathsUrl } = getConfig();
 
@@ -85,6 +86,17 @@ const BrowseCardsDelegate = (() => {
    * @private
    */
   const handleCoveoService = async () => {
+    const { contentType } = param;
+
+    if (contentType?.includes(CONTENT_TYPES.COMMUNITY.MAPPING_KEY)) {
+      if (param?.role) {
+        param.role = [];
+      }
+      if (!param?.dateCriteria) {
+        param.dateCriteria = createDateCriteria(['within_one_year']);
+      }
+    }
+
     const dataSource = getExlPipelineDataSourceParams(param, fieldsToInclude);
     const coveoService = new CoveoDataService(dataSource);
     const cardData = await coveoService.fetchDataFromSource();

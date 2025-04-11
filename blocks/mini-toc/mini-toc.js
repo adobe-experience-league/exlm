@@ -15,6 +15,35 @@ const debounce = (ms, fn) => {
   };
 };
 
+/**
+ * Registers a resize observer for the wrapper, executing the callback on resize events.
+ * @param {Function} callback - The callback to execute on resize.
+ */
+function registerWrapperResizeHandler(callback, block) {
+  const debouncedCallback = debounce(200, callback);
+  const wrapperResizeObserver = new ResizeObserver(debouncedCallback);
+  wrapperResizeObserver.observe(block);
+}
+
+function createDropdown(anchorTexts, block) {
+  if (window.innerWidth < 900 && !block.querySelector('.custom-filter-dropdown')) {
+    // eslint-disable-next-line no-new
+    new Dropdown(block, 'Summary', anchorTexts, DROPDOWN_VARIANTS.ANCHOR); // Initialise mini-toc dropdown for mobile view
+    const articleContainer = document.querySelector('.article-content-container');
+    if (articleContainer) articleContainer.style.paddingTop = '0';
+    window.addEventListener('hashchange', () => {
+      const { hash } = window.location;
+      const matchFound = anchorTexts.find((a) => {
+        const [, linkHash] = a.value.split('#');
+        return `#${linkHash}` === hash;
+      });
+      if (matchFound && Dropdown) {
+        Dropdown.closeAllDropdowns();
+      }
+    });
+  }
+}
+
 function setPadding(arg = '') {
   const num = parseInt(arg.split('')[1], 10);
   const indent = '-big';
@@ -73,19 +102,10 @@ function buildMiniToc(block, placeholders) {
             title: content,
           };
         });
-        // eslint-disable-next-line no-new
-        new Dropdown(block, 'Summary', anchorTexts, DROPDOWN_VARIANTS.ANCHOR); // Initialise mini-toc dropdown for mobile view
-
-        window.addEventListener('hashchange', () => {
-          const { hash } = window.location;
-          const matchFound = anchorTexts.find((a) => {
-            const [, linkHash] = a.value.split('#');
-            return `#${linkHash}` === hash;
-          });
-          if (matchFound) {
-            Dropdown.closeAllDropdowns();
-          }
-        });
+        createDropdown(anchorTexts, block);
+        registerWrapperResizeHandler(() => {
+          createDropdown(anchorTexts, block);
+        }, block);
       }
 
       let isAnchorScroll = false;
@@ -124,12 +144,13 @@ function buildMiniToc(block, placeholders) {
             highlight(false);
           }
         });
-        window.addEventListener('scroll', () => debounce(10, () => highlight(false, isAnchorScroll)));
+        const debounceHighlight = debounce(10, () => highlight(false, isAnchorScroll));
+        window.addEventListener('scroll', debounceHighlight);
       }
     });
   } else {
     render(() => {
-      block.parentElement.parentElement.classList.add('is-hidden');
+      block.classList.add('hidden');
     });
   }
 }

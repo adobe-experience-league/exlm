@@ -5,8 +5,13 @@
   max-width: unset;
 
   /* stretches to window edge in mobile view */
-  margin-left: calc(-1 * var(--space-token-xs));
-  margin-right: calc(-1 * var(--space-token-xs));
+  margin-left: calc(-1 * var(--spectrum-spacing-300));
+  margin-right: calc(-1 * var(--spectrum-spacing-300));
+}
+
+.section div.detailed-teaser-wrapper:has(.inline-banner) {
+  max-width: var(--default-max-width);
+  margin: 0 auto;
 }
 
 .detailed-teaser.block {
@@ -16,6 +21,17 @@
   overflow-x: hidden;
   display: flex;
   flex-direction: row;
+}
+
+.detailed-teaser.inline-banner {
+  border: 1px solid var(--non-spectrum-unicorn-silver);
+  border-radius: 16px;
+}
+
+body[class^='browse-'] .section div.detailed-teaser-wrapper .detailed-teaser.block.inline-banner,
+body[class^='article-'] .section div.detailed-teaser-wrapper .detailed-teaser.block.inline-banner {
+  border: 1px solid var(--non-spectrum-unicorn-silver);
+  border-radius: 16px;
 }
 
 /* the background image container */
@@ -46,13 +62,24 @@
   margin: auto;
 }
 
+.detailed-teaser.inline-banner > .foreground,
+.detailed-teaser.fifty-split-layout > .foreground {
+  width: 100%;
+  flex-direction: column-reverse;
+}
+
+.detailed-teaser.inline-banner.right > .foreground,
+.detailed-teaser.fifty-split-layout.right > .foreground {
+  flex-direction: column;
+}
+
 /* the text block (eyebrow content, title , descr , cta) */
 .detailed-teaser.block > .foreground > .text {
   order: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: var(--spectrum-spacing-400) var(--space-token-xs);
+  padding: var(--spectrum-spacing-400) var(--spectrum-spacing-300);
   max-width: 550px;
 }
 
@@ -61,9 +88,18 @@
   order: 1;
 }
 
+.detailed-teaser.block.fifty-split-layout > .foreground > .text {
+  padding: var(--spectrum-spacing-500);
+}
+
 /* eyebrow content */
 .detailed-teaser.block > .foreground > .text > .eyebrow {
   margin-bottom: 26px;
+}
+
+.detailed-teaser.block.inline-banner > .foreground > .text > .eyebrow,
+.detailed-teaser.block.fifty-split-layout > .foreground > .text > .eyebrow {
+  margin-bottom: var(--spectrum-spacing-100);
 }
 
 .detailed-teaser.block > .foreground > .text > .eyebrow:empty {
@@ -75,6 +111,26 @@
   margin: 0;
 }
 
+.detailed-teaser.block.inline-banner > .foreground > .spacer img {
+  border-radius: 0;
+  min-height: unset;
+  display: block;
+  height: 100%;
+  width: 100%;
+  max-height: 265px;
+  object-fit: cover;
+}
+
+.detailed-teaser.block.fifty-split-layout > .foreground > .spacer img {
+  border-radius: 0;
+  display: block;
+  min-height: unset;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  max-height: unset;
+}
+
 .detailed-teaser.block > .foreground > .text > .eyebrow > .logo img {
   height: 32px;
 }
@@ -82,14 +138,14 @@
 /* the eyebrow titles */
 .detailed-teaser.block > .foreground > .text > .eyebrow > .title {
   font-size: var(--spectrum-font-size-300);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   color: var(--non-spectrum-grey);
   margin: 0;
 }
 
 .detailed-teaser.block > .foreground > .text > .eyebrow > .subtitle {
   font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
   color: #8c8c8c;
   margin: 0;
 }
@@ -101,22 +157,18 @@
 /* the main title */
 /* stylelint-disable-next-line no-descending-specificity */
 .detailed-teaser.block > .foreground > .text > .title {
-  font-size: 24px;
-  font-weight: var(--font-weight-700);
-  line-height: 27px;
   color: var(--non-spectrum-custom-dark);
 }
 
 .detailed-teaser.block > .foreground > .text > .title :where(h1, h2, h3, h4, h5, h6) {
   margin: 0;
   color: inherit;
-  font: inherit;
 }
 
 /* description */
 .detailed-teaser.block > .foreground > .text > .description,
 .detailed-teaser.block > .foreground > .text > .description * {
-  font-size: 22px;
+  font-size: var(--spectrum-font-size-500);
   color: var(--non-spectrum-custom-dark);
   line-height: 30px;
   margin-top: 10px;
@@ -127,6 +179,7 @@
 }
 
 .detailed-teaser.block.dark > .foreground > .text > .title,
+.detailed-teaser.block.dark > .foreground > .text > .eyebrow,
 .detailed-teaser.block.dark > .foreground > .text > .eyebrow > .title,
 .detailed-teaser.block.dark > .foreground > .text > .description,
 .detailed-teaser.block.dark > .foreground > .text > .description * {
@@ -149,36 +202,31 @@
 /* the cta buttons */
 .detailed-teaser.block > .foreground > .text > .cta > a.button {
   margin: 0;
-  font-size: 15px;
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-bold);
   line-height: 15px;
   padding: 5px 14px 6px;
 }
 
-/* behavior for primary and secondary */
-.detailed-teaser.block > .foreground > .text > .cta > a.button.secondary {
-  background-color: unset;
-  border: 2px solid currentcolor;
-  color: currentcolor;
+.detailed-teaser.block.inline-banner > .foreground > .text > .description,
+.detailed-teaser.block.fifty-split-layout > .foreground > .text > .description,
+.detailed-teaser.block.inline-banner > .foreground > .text > .cta {
+  margin-top: var(--spectrum-spacing-300);
 }
 
-.detailed-teaser.block.dark > .foreground > .text > .cta > a.button {
-  background-color: var(--background-color);
-  border: 2px solid transparent;
-  color: currentcolor;
+.detailed-teaser.block.fifty-split-layout > .foreground > .text > .description {
+  font-size: var(--spectrum-font-size-300);
 }
 
-.detailed-teaser.block.dark > .foreground > .text > .cta > a.button.secondary {
-  background-color: unset;
-  border: 2px solid currentcolor;
-  color: var(--background-color);
+.detailed-teaser.block.fifty-split-layout > .foreground > .text > .cta {
+  margin-top: var(--spectrum-spacing-400);
 }
 
 /* spacer/subject image */
 .detailed-teaser.block > .foreground > .spacer {
   display: block;
   order: 1;
-  padding: 0 var(--space-token-xs) var(--spectrum-spacing-400) var(--space-token-xs);
+  padding: 0 var(--spectrum-spacing-300) var(--spectrum-spacing-400) var(--spectrum-spacing-300);
 }
 
 /* change the order if text should be on the right */
@@ -186,6 +234,15 @@
   order: 0;
   padding-bottom: 0;
   padding-top: var(--spectrum-spacing-400);
+}
+
+.detailed-teaser.block.inline-banner > .foreground > .spacer,
+.detailed-teaser.block.fifty-split-layout > .foreground > .spacer {
+  padding: 0;
+}
+
+.detailed-teaser.block.fifty-split-layout > .foreground > .spacer {
+  height: 100%;
 }
 
 .detailed-teaser.block > .foreground > .spacer:empty {
@@ -197,18 +254,44 @@
   border-radius: 30px;
 }
 
+.detailed-teaser.block.inline-banner > .foreground > .spacer picture,
+.detailed-teaser.block.fifty-split-layout > .foreground > .spacer picture {
+  height: 100%;
+}
+
+.detailed-teaser.block.fifty-split-layout > .foreground > .spacer picture {
+  width: 100%;
+}
+
+.detailed-teaser.block.inline-banner > .foreground > .text {
+  padding: 24px 20px;
+}
+
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
   .section div.detailed-teaser-wrapper {
     /* stretches to window edge, cover section padding */
-    margin-left: calc(-1 * var(--space-token-xl));
-    margin-right: calc(-1 * var(--space-token-xl));
+    margin-left: calc(-1 * var(--spectrum-spacing-700));
+    margin-right: calc(-1 * var(--spectrum-spacing-700));
   }
 
   /* foreground container, flex (text + spacer), always on top */
   .detailed-teaser.block > .foreground {
-    padding: 0 var(--space-token-xl);
+    padding: 0 var(--spectrum-spacing-800);
     min-height: 320px;
+  }
+
+  .detailed-teaser.fifty-split-layout > .foreground {
+    padding: 0;
+    width: 100%;
+    flex-direction: column-reverse;
+  }
+
+  .detailed-teaser.block.inline-banner > .foreground {
+    width: 100%;
+    margin: unset;
+    padding: 0;
+    min-height: 240px;
   }
 
   /* limit width of text part and set order */
@@ -216,15 +299,27 @@
     padding: var(--spectrum-spacing-500) 0;
   }
 
+  .detailed-teaser.block.fifty-split-layout > .foreground > .text {
+    padding: var(--spectrum-spacing-500) var(--spectrum-spacing-900) var(--spectrum-spacing-800)
+      var(--spectrum-spacing-900);
+    box-sizing: border-box;
+    max-width: unset;
+  }
+
+  .detailed-teaser.block.inline-banner > .foreground > .text {
+    min-width: unset;
+    flex-grow: 1;
+    max-width: unset;
+  }
+
+  .detailed-teaser.block.inline-banner > .foreground > .text > .cta {
+    margin-top: var(--spectrum-spacing-400);
+  }
+
   /* teaser on browse pages has different width for text */
   body[class^='browse-'] .detailed-teaser.block > .foreground > .text,
   body[class^='article-'] .detailed-teaser.block > .foreground > .text {
     min-width: unset;
-  }
-
-  .detailed-teaser.block > .foreground > .text > .title {
-    font-size: 32px;
-    font-weight: 800;
   }
 
   /* spacer/subject image */
@@ -234,8 +329,8 @@
   }
 
   /* it gets a border */
-  body[class^='browse-'] .section div.detailed-teaser-wrapper,
-  body[class^='article-'] .section div.detailed-teaser-wrapper {
+  body[class^='browse-'] .section div.detailed-teaser-wrapper .detailed-teaser.block,
+  body[class^='article-'] .section div.detailed-teaser-wrapper .detailed-teaser.block {
     border: 1px solid var(--spectrum-gray-200);
     border-radius: 4px;
   }
@@ -250,21 +345,76 @@
     object-position: left;
   }
 
+  body[class*='profile-home-page'] .section div.detailed-teaser-wrapper {
+    margin-left: unset;
+    margin-right: unset;
+  }
+
   body[class^='browse-'] .section div.detailed-teaser-wrapper .foreground,
   body[class^='article-'] .section div.detailed-teaser-wrapper .foreground {
     min-height: 240px;
-    padding: 0 var(--space-token-xxl);
+    padding: 0 var(--spectrum-spacing-1100);
+  }
+
+  body[class^='browse-'] .section div.detailed-teaser-wrapper:has(.inline-banner) .foreground,
+  body[class^='article-'] .section div.detailed-teaser-wrapper:has(.inline-banner) .foreground {
+    padding: 0;
+  }
+
+  .detailed-teaser.block.inline-banner > .foreground > .spacer {
+    width: 100%;
+  }
+}
+
+@media (min-width: 900px) {
+  .detailed-teaser.block.inline-banner > .foreground,
+  .detailed-teaser.block.inline-banner.right > .foreground {
+    flex-direction: row;
+    gap: 40px;
+  }
+
+  .detailed-teaser.block.inline-banner > .foreground > .spacer img {
+    max-height: unset;
+    max-width: 300px;
+  }
+
+  .detailed-teaser.block.inline-banner > .foreground > .spacer {
+    max-width: 50%;
+    width: auto;
+  }
+
+  .detailed-teaser.block.inline-banner > .foreground > .text {
+    width: 40%;
+    padding: var(--spectrum-spacing-600) 0 var(--spectrum-spacing-600) var(--spectrum-spacing-800);
+  }
+
+  .detailed-teaser.block.inline-banner.right > .foreground > .text {
+    padding: var(--spectrum-spacing-600) var(--spectrum-spacing-800) var(--spectrum-spacing-600) 0;
   }
 }
 
 @media (min-width: 1024px) {
-  /* switch to left right */
+  .detailed-teaser.block:has(.elevated-image) {
+    margin-top: 50px;
+    overflow-x: visible;
+  }
+
   .detailed-teaser.block .foreground {
     flex-direction: row;
     gap: 40px;
     justify-content: space-between;
     max-width: var(--default-max-width);
     width: 100%;
+  }
+
+  .detailed-teaser.block.fifty-split-layout .foreground {
+    gap: 0;
+    justify-content: unset;
+    max-width: none;
+  }
+
+  .detailed-teaser.fifty-split-layout.right > .foreground {
+    flex-direction: row;
   }
 
   /* the cta buttons */
@@ -277,11 +427,35 @@
     min-width: 550px;
   }
 
+  .detailed-teaser.block.fifty-split-layout > .foreground > .text {
+    min-width: unset;
+    width: 50%;
+    max-width: unset;
+    padding: var(--spectrum-spacing-800) 118px;
+  }
+
   /* the subject image /spacer */
   .detailed-teaser.block > .foreground > .spacer {
     display: flex;
     align-items: center;
     padding: var(--spectrum-spacing-500) 0;
+  }
+
+  .detailed-teaser.block.fifty-split-layout > .foreground > .spacer {
+    width: 50%;
+  }
+
+  .detailed-teaser.block.elevated-image > .foreground > .spacer {
+    position: relative;
+    width: 100%;
+    max-width: 550px;
+    padding: 0;
+  }
+
+  /* elevate subject image above foreground */
+  .detailed-teaser.elevated-image > .foreground > .spacer picture {
+    position: absolute;
+    top: -50px;
   }
 
   .detailed-teaser.block > .foreground > .spacer img {
@@ -303,7 +477,7 @@
 
   body[class^='browse-'] .section div.detailed-teaser-wrapper .foreground,
   body[class^='article-'] .section div.detailed-teaser-wrapper .foreground {
-    padding: 0 var(--space-token-l);
+    padding: 0 var(--spectrum-spacing-600);
   }
 }
 

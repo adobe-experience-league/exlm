@@ -5,7 +5,7 @@
   right: 0;
   top: 50px;
   background-color: var(--background-color);
-  box-shadow: 0 8px 8px rgba(10, 10, 10, 0.1);
+  box-shadow: 0 8px 8px rgb(10 10 10 / 10%);
   border: 1px solid var(--spectrum-gray-400);
   padding: 8px 0;
   border-radius: 6px;
@@ -105,7 +105,7 @@
 
 .search-picker-popover .search-picker-label:hover,
 .search-suggestions-popover .search-picker-label:hover {
-  background: rgba(0, 0, 0, 0.04);
+  background: rgb(0 0 0 / 4%);
   cursor: pointer;
 }
 

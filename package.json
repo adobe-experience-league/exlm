@@ -6,18 +6,16 @@
   "type": "module",
   "scripts": {
     "lint:js": "eslint .",
-    "lint:sass": "stylelint blocks/**/*.scss styles/*.scss styles/theme/*.scss",
-    "lint:sass:fix": "stylelint blocks/**/*.scss styles/*.scss --fix",
+    "lint:css": "stylelint **.css -f verbose",
+    "lint:css:fix": "stylelint **.css -f verbose --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "npm run lint:js && npm run lint:sass",
+    "lint": "npm run lint:js && npm run lint:css",
     "semantic-release": "semantic-release --debug",
-    "sass:watch": "node sass-compile.js --watch",
-    "sass:compile": "node sass-compile.js --compile",
-    "up": "npm run sass:watch & aem up",
-    "up-secure": "npm run sass:watch & sudo aem up --tls-cert=local-cert/server.crt --tls-key=local-cert/server.key --port=443 --open https://experienceleague-local.adobe.com",
+    "up": "aem up",
+    "up-secure": "sudo aem up --tls-cert=local-cert/server.crt --tls-key=local-cert/server.key --port=443 --open https://experienceleague-local.adobe.com",
+    "up-secure-prod": "sudo aem up --url https://main--exlm-prod--adobe-experience-league.aem.page --tls-cert=local-cert/server.crt --tls-key=local-cert/server.key --port=443 --open https://experienceleague-local.adobe.com",
     "prepare": "husky install",
-    "preview": "node preview.js",
     "validate:paths": "node validate-paths.js",
     "quality": "npm run format:check && npm run lint && npm run validate:paths",
     "check:branch-name": "node check-branch-name.js"
@@ -35,13 +33,6 @@
   "devDependencies": {
     "@babel/core": "7.21.0",
     "@babel/eslint-parser": "7.19.1",
-    "@esm-bundle/chai": "4.3.4-fix.0",
-    "@semantic-release/changelog": "6.0.3",
-    "@semantic-release/exec": "6.0.3",
-    "@semantic-release/git": "10.0.1",
-    "@web/test-runner": "0.15.1",
-    "@web/test-runner-commands": "0.6.5",
-    "chai": "4.3.7",
     "eslint": "8.35.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-config-prettier": "^9.0.0",
@@ -50,19 +41,14 @@
     "js-yaml": "^4.1.0",
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.3",
-    "sass": "^1.68.0",
-    "semantic-release": "21.0.5",
-    "sinon": "15.0.1",
-    "stylelint": "^15.2.0",
-    "stylelint-config-standard": "30.0.1",
-    "stylelint-config-standard-scss": "^11.0.0",
-    "stylelint-scss": "^5.2.1"
+    "stylelint": "^16.12.0",
+    "stylelint-config-standard": "^36.0.1"
   },
   "lint-staged": {
     "*.js": [
       "eslint"
     ],
-    "*.scss": [
+    "*.css": [
       "stylelint --fix",
       "prettier --write"
     ],
@@ -70,8 +56,8 @@
       "prettier --write"
     ]
   },
-  "dependencies": {
-    "jsdom": "^24.0.0",
-    "open": "^9.1.0"
+  "engines": {
+    "node": ">=22",
+    "npm": ">=10"
   }
 }

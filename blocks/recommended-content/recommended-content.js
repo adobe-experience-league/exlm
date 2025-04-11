@@ -6,17 +6,16 @@ import {
   convertToTitleCase,
   extractCapability,
   removeProductDuplicates,
+  formatId,
 } from '../../scripts/browse-card/browse-card-utils.js';
-import { defaultProfileClient } from '../../scripts/auth/profile.js';
+import { isSignedInUser, defaultProfileClient } from '../../scripts/auth/profile.js';
 import getEmitter from '../../scripts/events.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
-import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-card-target-data-adapter.js';
+import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
+import { setTargetDataAsBlockAttribute, setCoveoAnalyticsAttribute } from '../../scripts/utils/analytics-utils.js';
 
-const targetEventEmitter = getEmitter('loadTargetBlocks');
-const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
-const DEFAULT_NUM_CARDS = 4;
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -24,18 +23,29 @@ try {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
 }
+
+const REMOVE_DUPLICATES_BY_EXCLUSION = false;
+const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
+const DEFAULT_NUM_CARDS = 4;
+const seeMoreConfig = {
+  minWidth: 1024,
+  noOfRows: 2,
+  prefetchCards: false,
+};
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+
+// Event for target data change (Updating the block based on target data)
+const targetEventEmitter = getEmitter('loadTargetBlocks');
+
+// Create array of numbers from 1 to n
 const countNumberAsArray = (n) => Array.from({ length: n }, (_, i) => n - i);
 
 /**
  * Generates HTML for loading shimmer animation with customizable sizes and an optional CSS class
- *
- * @param {Array} shimmerSizes - An array of arrays, where each inner array contains width (percentage) and height (pixels)
- *                                 for individual shimmer divs.
- *
+ * @param {Array} shimmerSizes - An array of arrays, where each inner array
+ *  contains width (percentage) and height (pixels) for individual shimmer divs.
  * @returns {string} - A string of HTML containing the shimmer divs with inline styles for width and height.
- *
  */
-
 function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
   return shimmerSizes
     .map(
@@ -45,16 +55,150 @@ function generateLoadingShimmer(shimmerSizes = [[100, 30]]) {
     .join('');
 }
 
+function ensureDataSaveConfigExists(dataConfiguration, lowercaseOptionType, ctType) {
+  if (!dataConfiguration.savedCardsResponse[lowercaseOptionType]) {
+    dataConfiguration.savedCardsResponse[lowercaseOptionType] = {};
+  }
+  if (!dataConfiguration.savedCardsResponse[lowercaseOptionType][ctType]) {
+    dataConfiguration.savedCardsResponse[lowercaseOptionType][ctType] = {
+      models: [],
+    };
+  }
+}
+
+function getSavedCardsCount(dataConfiguration, optionType) {
+  return Object.values(dataConfiguration.savedCardsResponse[optionType] || {}).reduce((acc, curr) => {
+    const availableModels = curr.models.filter((model) => !model.markedForReplacement);
+    return acc + availableModels.length;
+  }, 0);
+}
+
+function restoreSavedCardsModelState(dataConfiguration, optionType) {
+  const savedCardResponseModel = dataConfiguration.savedCardsResponse[optionType] || {};
+  const contentTypes = Object.keys(savedCardResponseModel);
+  contentTypes.forEach((contentType) => {
+    const savedCardResponse = dataConfiguration.savedCardsResponse[optionType][contentType];
+    const cardModels = savedCardResponse.models || [];
+    cardModels.forEach((cardModel) => {
+      delete cardModel.markedForReplacement;
+    });
+  });
+}
+
+function getSavedCardModel(dataConfiguration, optionType) {
+  const savedCardContentTypes = Object.keys(dataConfiguration.savedCardsResponse[optionType] || {});
+  return savedCardContentTypes.reduce((acc, curr) => {
+    if (acc) {
+      return acc;
+    }
+    const savedCardResponse = dataConfiguration.savedCardsResponse[optionType][curr];
+    const cardModels = savedCardResponse.models || [];
+    const model = cardModels.find((modelInfo) => modelInfo.markedForReplacement !== true);
+    if (model) {
+      model.markedForReplacement = true;
+    }
+    return model || acc;
+  }, null);
+}
+
+function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
+  if (!block.querySelector('.recommended-content-see-more-btn')) {
+    const btnContainer = document.createElement('div');
+    const btn = document.createElement('button');
+    btn.innerHTML = placeholders?.recommendedContentSeeMoreButtonText || 'See more Recommendations';
+    btnContainer.classList.add('recommended-content-see-more-btn');
+    btnContainer.appendChild(btn);
+    contentDiv.insertAdjacentElement('afterend', btnContainer);
+
+    btn.addEventListener('click', () => {
+      const contentDivs = block.querySelectorAll('.recommended-content-block-section');
+      const currentRow = parseInt(block.dataset.browseCardRows, 10);
+      const maxRows = parseInt(block.dataset.maxRows, 10);
+      const newRow = currentRow ? currentRow + 1 : 2;
+      block.dataset.browseCardRows = newRow;
+      const { allRowsLoaded } = block.dataset;
+
+      function hideSeeMoreRows() {
+        contentDivs.forEach((div, index) => {
+          if (index > 0) {
+            div.classList.add('fade-out');
+            div.classList.remove('fade-in');
+            const handleTransitionEnd = () => {
+              div.classList.add('hide-see-more-row');
+              div.removeEventListener('animationend', handleTransitionEnd);
+            };
+            div.addEventListener('animationend', handleTransitionEnd);
+          }
+        });
+        btn.innerHTML = placeholders?.recommendedContentSeeMoreButtonText || 'See more Recommendations';
+        block.dataset.browseCardRows = 1;
+        setTimeout(() => {
+          block.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+      }
+
+      function showNewRow() {
+        contentDivs.forEach((div, index) => {
+          div.classList.remove('hide-see-more-row');
+
+          if (index > newRow - 1) {
+            div.classList.remove('fade-in');
+            div.classList.add('fade-out', 'hide-see-more-row');
+          } else {
+            div.classList.add('fade-in');
+            div.classList.remove('fade-out');
+          }
+        });
+      }
+
+      if (allRowsLoaded === 'true' && newRow > seeMoreConfig.noOfRows) {
+        hideSeeMoreRows();
+      } else if (allRowsLoaded === 'true' && maxRows) {
+        if (newRow > maxRows) {
+          hideSeeMoreRows();
+        } else {
+          if (newRow === maxRows) {
+            btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+          }
+          showNewRow();
+        }
+      } else if (allRowsLoaded === 'true') {
+        if (newRow === seeMoreConfig.noOfRows) {
+          btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+        }
+        showNewRow();
+      } else {
+        if (newRow === seeMoreConfig.noOfRows) {
+          block.dataset.allRowsLoaded = true;
+          btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+        }
+        seeMoreConfig.prefetchCards = false;
+        const optionType = block.querySelector('.browse-cards-block-content').dataset.selected;
+        fetchDataAndRenderBlock(optionType, { renderCards: true, createRow: true, clearSeeMoreRows: false });
+      }
+    });
+  }
+}
+
 /**
  * Update the copy from the target
  * @param {Object} data
  * @param {HTMLElement} heading
  * @param {HTMLElement} subheading
+ * @param {HTMLElement} taglineCta
+ * @param {HTMLElement} taglineText
  * @returns {void}
  */
 export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
-  if (data?.meta?.heading && heading) heading.innerHTML = data.meta.heading;
-  else heading?.remove();
+  if (data?.meta?.heading && heading) {
+    if (heading.firstElementChild && !heading.firstElementChild.className.includes('loading-shimmer')) {
+      heading.firstElementChild.innerHTML = data.meta.heading;
+    } else {
+      heading.innerHTML = data.meta.heading;
+    }
+  } else {
+    heading?.remove();
+  }
   if (data?.meta?.subheading && subheading) subheading.innerHTML = data.meta.subheading;
   else subheading?.remove();
   if (
@@ -85,23 +229,7 @@ export function updateCopyFromTarget(data, heading, subheading, taglineCta, tagl
   }
 }
 
-/**
- * Sets target data as a data attribute on the given block element.
- *
- * This function checks if the provided `data` object contains a `meta` property.
- * If the `meta` property exists, it serializes the metadata as a JSON string and
- * adds it to the specified block element as a custom data attribute `data-analytics-target-meta`.
- *
- * @param {Object} data - The data returned from target.
- * @param {HTMLElement} block - The DOM element to which the meta data will be added as an attribute.
- *
- */
-export function setTargetDataAsBlockAttribute(data, block) {
-  if (data?.meta) {
-    block.setAttribute('data-analytics-target-meta', JSON.stringify(data?.meta));
-  }
-}
-
+// fetch list of all interests
 async function fetchInterestData() {
   try {
     let data;
@@ -119,47 +247,35 @@ async function fetchInterestData() {
     return [];
   }
 }
+const interestDataPromise = fetchInterestData();
 
+// Create a query string for coveo to exclude the card ids
 const prepareExclusionQuery = (cardIdsToExclude) => {
   // eslint-disable-next-line no-useless-escape
   const query = cardIdsToExclude.map((id) => `(@el_id NOT \"${id}\")`).join(' AND ');
   return cardIdsToExclude.length <= 1 ? query : `(${query})`;
 };
 
+// Find the interests that are not present in the target data
 async function findEmptyFilters(targetCriteriaId, profileInterests = []) {
-  const removeFilters = [];
   const resp = await defaultAdobeTargetClient.getTargetData(targetCriteriaId);
-  if (resp?.data) {
-    const { data } = resp;
-    profileInterests.forEach((interest) => {
-      let found = false;
-      for (let i = 0; i < data?.length ? data.length : 0; i += 1) {
-        if (data[i].product.split(',').includes(interest)) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) removeFilters.push(interest);
-    });
-  }
-  return removeFilters;
+  const data = resp?.data || [];
+
+  return profileInterests.filter((interest) => !data.some(({ product }) => product.split(',').includes(interest)));
 }
 
-const interestDataPromise = fetchInterestData();
-
-const ALL_ADOBE_OPTIONS_KEY = placeholders?.allAdobeProducts || 'All Adobe Products';
-
+// Build a placeholder for the card
 const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
   const cardDiv = document.createElement('div');
   cardDiv.classList.add('card-wrapper');
   if (renderCardsFlag) {
     contentDiv.appendChild(cardDiv);
   }
+  const shimmerInstance = new BrowseCardShimmer(1);
+  shimmerInstance.addShimmer(cardDiv);
 
-  const cardPlaceholder = new BuildPlaceholder(1);
-  cardPlaceholder.add(cardDiv);
   return {
-    shimmer: cardPlaceholder,
+    shimmer: shimmerInstance,
     wrapper: cardDiv,
   };
 };
@@ -169,22 +285,23 @@ const renderCardPlaceholders = (contentDiv, renderCardsFlag = true) => {
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
-  if (block.dataset.targetScope) {
-    for (let i = 0; i < 13; i += 1) {
-      block.innerHTML += '<div><div></div></div>';
+  isSignedInUser().then((isUserSignedIn) => {
+    if (!isUserSignedIn && !UEAuthorMode) {
+      block.parentElement.style.display = 'none';
     }
-  }
+  });
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [headingElement, descriptionElement, filterSectionElement, ...remainingElements] = htmlElementData;
   const recommendedContentShimmer = `
-  <div class="recommended-content-header">${generateLoadingShimmer([[50, 14]])}</div>
+  <div class="recommended-content-header rec-block-header">${generateLoadingShimmer([[50, 14]])}</div>
   <div class="recommended-content-description">${generateLoadingShimmer([[50, 10]])}</div>
 `;
   // Clearing the block's content and adding CSS class
   block.innerHTML = '';
-
+  block.classList.add('browse-cards-block');
   filterSectionElement.classList.add('recommended-content-filter-heading');
+  const headingElementNode = htmlToElement(headingElement.innerHTML);
   const blockHeader = createTag('div', { class: 'recommended-content-block-header' });
   blockHeader.innerHTML = generateLoadingShimmer([[80, 30]]);
   block.insertAdjacentHTML('afterbegin', recommendedContentShimmer);
@@ -194,32 +311,38 @@ export default async function decorate(block) {
   const headerContainer = block.querySelector('.recommended-content-header');
   const descriptionContainer = block.querySelector('.recommended-content-description');
   const reversedDomElements = remainingElements.reverse();
-  const [firstEl, secondEl, thirdEl, fourthEl, fifthEl, ...otherEl] = reversedDomElements;
+  const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
+    reversedDomElements;
+  const showOnlyCoveo = block.classList.contains('coveo-only');
   const targetCriteriaId = block.dataset.targetScope;
   const profileDataPromise = defaultProfileClient.getMergedProfile();
 
   const tempWrapper = htmlToElement(`
       <div class="recommended-content-temp-wrapper">
-        <div class="browse-cards-block-content recommended-content-block-section recommended-content-shimmer-wrapper"></div>
+        <div class="browse-cards-block-content recommended-content-block-section recommended-content-shimmer-wrapper fadein"></div>
       </div>
     `);
   const tempContentSection = tempWrapper.querySelector('.recommended-content-block-section');
-  countNumberAsArray(4).forEach(() => {
+  block.appendChild(tempWrapper);
+  countNumberAsArray(DEFAULT_NUM_CARDS).forEach(() => {
     const { shimmer: shimmerInstance, wrapper } = renderCardPlaceholders(tempWrapper);
-    wrapper.appendChild(shimmerInstance.shimmer);
+    shimmerInstance.addShimmer(wrapper);
     tempContentSection.appendChild(wrapper);
   });
-
-  block.appendChild(tempWrapper);
 
   const defaultOptionsKey = [];
   let contentTypesFetchMap = {};
   const cardIdsToExclude = [];
   const allMyProductsCardModels = [];
-  const dataConfiguration = {};
+  const dataConfiguration = {
+    savedCardsResponse: {},
+  };
 
   const getCardsData = (payload) =>
     new Promise((resolve) => {
+      if (payload.feature?.length) {
+        payload.feature = null;
+      }
       BrowseCardsDelegate.fetchCardData(payload)
         .then((data) => {
           const [ct] = payload.contentType || [''];
@@ -234,8 +357,24 @@ export default async function decorate(block) {
     });
 
   const renderCardsBlock = (cardModels, payloadConfig, contentDiv) => {
-    const { renderCards = true, lowercaseOptionType } = payloadConfig;
-    const promises = cardModels.map(
+    const { renderCards = true, lowercaseOptionType, targetSupport } = payloadConfig;
+    const cardModelsToRender = cardModels
+      .filter((model, index) => {
+        if (!seeMoreConfig.prefetchCards || targetSupport || !model) {
+          return model;
+        }
+        const { payload, contentType } = payloadConfig;
+        const { noOfResults } = payload;
+        const renderCount = noOfResults / 2;
+        if (index + 1 > renderCount) {
+          ensureDataSaveConfigExists(dataConfiguration, lowercaseOptionType, contentType);
+          dataConfiguration.savedCardsResponse[lowercaseOptionType][contentType].models.push(model);
+          return null;
+        }
+        return model;
+      })
+      .filter(Boolean);
+    const promises = cardModelsToRender.map(
       (cardData, i) =>
         new Promise((resolve) => {
           const cardDiv = payloadConfig.wrappers[i];
@@ -247,8 +386,8 @@ export default async function decorate(block) {
               const cardModelsList = [];
               if (delayedCardData.length === 0) {
                 if (renderCards) {
-                  cardData.shimmers?.forEach((shimmerEl, index) => {
-                    shimmerEl.remove();
+                  cardData.shimmers?.forEach((shimmerInstance, index) => {
+                    shimmerInstance.removeShimmer();
                     cardData.wrappers[index].style.display = 'none';
                   });
                 }
@@ -258,7 +397,7 @@ export default async function decorate(block) {
                   const wrapperDiv = cardData.wrappers[index];
                   if (renderCards) {
                     if (shimmer) {
-                      shimmer.remove();
+                      shimmer.removeShimmer();
                     }
                     wrapperDiv.innerHTML = '';
                   }
@@ -275,7 +414,7 @@ export default async function decorate(block) {
                     delayedCardData.splice(0, 1);
                   }
                   if (renderCards) {
-                    if (cardModel.id) {
+                    if (cardModel && cardModel.id) {
                       dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
                     }
                     buildCard(contentDiv, wrapperDiv, cardModel);
@@ -286,6 +425,10 @@ export default async function decorate(block) {
               resolve(cardModelsList);
             });
           } else {
+            if (seeMoreConfig.prefetchCards && cardData.cardPromise === null) {
+              resolve([cardData]);
+              return;
+            }
             if (renderCards) {
               cardDiv.innerHTML = '';
               if (cardData.id) {
@@ -297,7 +440,6 @@ export default async function decorate(block) {
           }
         }),
     );
-    contentDiv.style.display = 'flex';
     return promises;
   };
 
@@ -316,13 +458,14 @@ export default async function decorate(block) {
     const contentDiv = document.createElement('div');
     contentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
     parentDiv.appendChild(contentDiv);
-    secondEl.classList.add('recommended-content-discover-resource');
-    firstEl.classList.add('recommended-content-result-link');
-    if (firstEl.innerHTML || secondEl.innerHTML) {
+
+    resultTextEl.classList.add('recommended-content-discover-resource');
+    linkEl.classList.add('recommended-content-result-link');
+    if (linkEl.innerHTML || resultTextEl.innerHTML) {
       const seeMoreEl = document.createElement('div');
       seeMoreEl.classList.add('recommended-content-result-text');
-      seeMoreEl.appendChild(secondEl);
-      seeMoreEl.appendChild(firstEl);
+      seeMoreEl.appendChild(resultTextEl);
+      seeMoreEl.appendChild(linkEl);
       parentDiv.appendChild(seeMoreEl);
     }
   };
@@ -357,39 +500,34 @@ export default async function decorate(block) {
       } = profileData || {};
 
       if (profileInterests.length === 0) {
-        filterSectionElement.style.display = 'none';
-        blockHeader.style.display = 'none';
-        defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
+        if (!UEAuthorMode) filterSectionElement.style.display = 'none';
+        if (!UEAuthorMode) blockHeader.style.display = 'none';
       } else if (profileInterests.length === 1) {
-        filterSectionElement.style.display = 'none';
-        defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
+        if (!UEAuthorMode) filterSectionElement.style.display = 'none';
+        blockHeader.style.display = 'block';
       } else {
+        filterSectionElement.style.display = 'block';
+        blockHeader.style.display = 'block';
+      }
+      if (defaultOptionsKey.length === 0) {
         defaultOptionsKey.push(ALL_ADOBE_OPTIONS_KEY);
       }
-
-      if (!(targetSupport && targetCriteriaScopeId)) {
-        headerContainer.innerHTML = headingElement.innerText;
-        descriptionContainer.innerHTML = descriptionElement.innerText;
+      const coveoFlowDetection = !(targetSupport && targetCriteriaScopeId);
+      if (headingElementNode) {
+        headerContainer.innerHTML = '';
+        headerContainer.appendChild(headingElementNode);
+      }
+      if (coveoFlowDetection) {
+        headerContainer.innerHTML = headingElement.innerHTML;
+        headerContainer.id = formatId(headingElement.innerHTML);
+        descriptionContainer.innerHTML = descriptionElement.innerHTML;
+        setCoveoAnalyticsAttribute(block);
         block.style.display = 'block';
       }
 
-      const sortByContent = thirdEl?.innerText?.trim();
-      const contentTypes = otherEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse() || [];
-      const contentTypeIsEmpty = contentTypes?.length === 0;
-      const numberOfResults = contentTypeIsEmpty ? DEFAULT_NUM_CARDS : 1;
+      const sortByContent = sortEl?.innerText?.trim();
 
-      contentTypesFetchMap = contentTypeIsEmpty
-        ? { '': DEFAULT_NUM_CARDS }
-        : contentTypes.reduce((acc, curr) => {
-            if (!acc[curr]) {
-              acc[curr] = 1;
-            } else {
-              acc[curr] += 1;
-            }
-            return acc;
-          }, {});
-
-      const encodedSolutionsText = fifthEl.innerText?.trim() ?? '';
+      const encodedSolutionsText = solutionEl.innerText?.trim() ?? '';
       const { products, versions, features } = extractCapability(encodedSolutionsText);
       const sortedProfileInterests = profileInterests.sort();
       const experienceLevels = sortedProfileInterests.map((interestName) => {
@@ -405,21 +543,30 @@ export default async function decorate(block) {
         return expLevel;
       });
       const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase() ?? 'MOST_POPULAR'];
-      const role = fourthEl?.innerText?.trim()?.includes('profile_context')
+      const filterProductByOption = filterProductByOptionEl?.innerText?.trim() ?? '';
+      const role = roleEl?.innerText?.trim()?.includes('profile_context')
         ? profileRoles
-        : fourthEl?.innerText?.trim().split(',').filter(Boolean);
+        : roleEl?.innerText?.trim().split(',').filter(Boolean);
 
       const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
+      if (filterOptions.length <= 1 && !UEAuthorMode) {
+        filterSectionElement.style.display = 'none';
+      }
       const [defaultFilterOption = ''] = filterOptions;
       const containsAllAdobeProductsTab = filterOptions.includes(ALL_ADOBE_OPTIONS_KEY);
 
       async function parseCardResponseData(cardResponse, apiConfigObject) {
         let data = [];
         if (targetSupport) {
-          data = cardResponse?.data ?? [];
+          data = Array.from(cardResponse?.data) ?? [];
+
+          if (cardResponse?.meta?.sort === 'shuffled') {
+            data = data?.sort(() => Math.random() - 0.5);
+          }
+
           const { shimmers, params, optionType } = apiConfigObject;
           shimmers.forEach((shimmer) => {
-            shimmer.remove();
+            shimmer.removeShimmer();
           });
           if (optionType.toLowerCase() !== defaultOptionsKey[0].toLowerCase()) {
             if (defaultOptionsKey.length > 1 && optionType.toLowerCase() === defaultOptionsKey[1].toLowerCase()) {
@@ -429,7 +576,7 @@ export default async function decorate(block) {
                 data = data.filter((pageData) =>
                   params.context.interests.some((ele) => pageData.product.toLowerCase().includes(ele.toLowerCase())),
                 );
-                cardResponse.allMyProducts = Array.from(data).sort(() => Math.random() - 0.5);
+                cardResponse.allMyProducts = Array.from(data);
               }
             } else {
               data = data.filter((pageData) => pageData.product.toLowerCase().includes(optionType.toLowerCase()));
@@ -439,14 +586,36 @@ export default async function decorate(block) {
             if (cardResponse?.allAdobeProducts) {
               data = cardResponse.allAdobeProducts;
             } else {
-              cardResponse.allAdobeProducts = Array.from(data).sort(() => Math.random() - 0.5);
+              cardResponse.allAdobeProducts = Array.from(data);
               data = cardResponse.allAdobeProducts;
             }
           }
-          data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(0, 4));
+          const numberOfExistingCards = block.querySelectorAll('.card-wrapper');
+          const index = numberOfExistingCards.length ? numberOfExistingCards.length - DEFAULT_NUM_CARDS : 0;
+          if (!data[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
+            const btn = block.querySelector('.recommended-content-see-more-btn');
+            if (btn) {
+              btn.classList.add('hide');
+            }
+          }
+          if (!data[index + DEFAULT_NUM_CARDS] && block.dataset.browseCardRows) {
+            const btn = block.querySelector('.recommended-content-see-more-btn > button');
+            if (btn) {
+              btn.innerHTML = placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+            }
+            block.dataset.allRowsLoaded = true;
+            block.dataset.maxRows = block.dataset.browseCardRows;
+          }
+          data = await BrowseCardsTargetDataAdapter.mapResultsToCardsData(data.slice(index, index + DEFAULT_NUM_CARDS));
         } else {
           const { data: cards = [], contentType: ctType } = cardResponse || {};
-          const { shimmers: cardShimmers, payload: apiPayload, wrappers: cardWrappers } = apiConfigObject;
+          const {
+            shimmers: cardShimmers,
+            payload: apiPayload,
+            wrappers: cardWrappers,
+            contentDiv,
+            lowercaseOptionType,
+          } = apiConfigObject;
           const { noOfResults } = apiPayload;
           if (cards.length) {
             countNumberAsArray(noOfResults).forEach(() => {
@@ -456,30 +625,126 @@ export default async function decorate(block) {
               }
               const cardShimmer = cardShimmers.shift();
               if (cardShimmer) {
-                cardShimmer.remove();
+                cardShimmer.removeShimmer();
               }
             });
           } else {
+            const cardsHaveBeenSaved = getSavedCardsCount(dataConfiguration, lowercaseOptionType) > 0;
+            if (seeMoreConfig.prefetchCards) {
+              ensureDataSaveConfigExists(dataConfiguration, lowercaseOptionType, ctType);
+              dataConfiguration.savedCardsResponse[lowercaseOptionType][ctType].models = [];
+            } else if (cardsHaveBeenSaved) {
+              // delete the shimmer and wrapper as this instance of saved card was already rendered in first row.
+              // seeMoreConfig.prefetchCards will be false for the second row.
+              cardWrappers.forEach((wrapper, index) => {
+                wrapper.remove();
+                cardShimmers[index].removeShimmer();
+              });
+            }
             // Remove contentType and make new call.
             const payloadInfo = {
               ...apiPayload,
               contentType: null,
-              noOfResults: 4,
+              noOfResults: DEFAULT_NUM_CARDS,
             };
+
             data.push({
-              cardPromise: getCardsData(payloadInfo),
+              cardPromise: seeMoreConfig.prefetchCards || cardsHaveBeenSaved ? null : getCardsData(payloadInfo),
               shimmers: cardShimmers,
               contentType: ctType,
               wrappers: cardWrappers,
               cardsToRenderCount: noOfResults,
+              replaceCard: seeMoreConfig.prefetchCards,
+              contentDiv,
             });
           }
         }
         return data;
       }
 
-      const fetchDataAndRenderBlock = async (optionType, renderCards = true) => {
-        const contentDiv = block.querySelector('.recommended-content-block-section');
+      /**
+       * Fetches data based on optionType and renders browse card content.
+       *
+       * @async
+       * @function fetchDataAndRenderBlock
+       * @param {string} optionType - The type of option to determine the cards fetching.
+       * @param {Object} [args] - The configuration options for rendering.
+       * @param {boolean} [args.renderCards=true] - Whether to render cards in the block.
+       * @param {boolean} [args.createRow=false] - Whether to create a new row for the data.
+       * @param {boolean} [args.clearAllRows=false] - Whether to clear all existing rows before rendering.
+       * @param {boolean} [args.clearSeeMoreRows=true] - Whether to clear "See More" rows before rendering.
+       */
+      const fetchDataAndRenderBlock = async (
+        optionType,
+        args = { renderCards: true, createRow: false, clearAllRows: false, clearSeeMoreRows: true },
+      ) => {
+        const btn = block.querySelector('.recommended-content-see-more-btn');
+        if (btn) {
+          btn.classList.remove('hide');
+        }
+
+        let contentTypes = contentTypesEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse() || [];
+        contentTypes = contentTypes.slice(0, DEFAULT_NUM_CARDS);
+        const contentTypeIsEmpty = contentTypes?.length === 0;
+        let noOfRows = parseInt(block.dataset.browseCardRows, 10);
+        if (!noOfRows) noOfRows = 1;
+        const numberOfResults = contentTypeIsEmpty ? DEFAULT_NUM_CARDS * noOfRows : 1 * noOfRows;
+        let firstResult = 0;
+
+        contentTypesFetchMap = contentTypeIsEmpty
+          ? { '': DEFAULT_NUM_CARDS }
+          : contentTypes.reduce((acc, curr) => {
+              if (!acc[curr]) {
+                acc[curr] = 1;
+              } else {
+                acc[curr] += 1;
+              }
+              return acc;
+            }, {});
+
+        let contentDiv = block.querySelector('.recommended-content-block-section');
+
+        if (args.clearAllRows) {
+          // Remove the existing cards container
+          block.removeAttribute('data-all-rows-loaded');
+          block.removeAttribute('data-browse-card-rows');
+          block.removeAttribute('data-max-rows');
+          block.querySelectorAll('.recommended-content-block-section').forEach((div) => {
+            div.remove();
+          });
+        }
+
+        if (args.clearSeeMoreRows) {
+          block.removeAttribute('data-all-rows-loaded');
+          block.removeAttribute('data-browse-card-rows');
+          block.removeAttribute('data-max-rows');
+          const contentDivs = block.querySelectorAll('.recommended-content-block-section');
+          contentDivs.forEach((div, index) => {
+            if (index > 0) {
+              div.remove();
+            }
+          });
+          block.removeAttribute('data-browse-card-rows');
+        }
+        if (args.createRow) {
+          const newContentDiv = document.createElement('div');
+          newContentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section', 'fade-in');
+          const contentDivs = block.querySelectorAll('.recommended-content-block-section');
+          if (contentDivs.length) {
+            contentDivs[contentDivs.length - 1].insertAdjacentElement('afterEnd', newContentDiv);
+          } else {
+            block.querySelector('.recommended-content-block-header')?.insertAdjacentElement('afterEnd', newContentDiv);
+          }
+          contentDiv = newContentDiv;
+          firstResult = contentDivs.length * DEFAULT_NUM_CARDS;
+        } else {
+          Object.keys(contentTypesFetchMap).forEach((key) => {
+            const count = contentTypesFetchMap[key];
+            contentTypesFetchMap[key] = count * 2;
+          });
+          seeMoreConfig.prefetchCards = true;
+        }
+
         const lowercaseOptionType = optionType?.toLowerCase();
         const saveCardResponse =
           [ALL_ADOBE_OPTIONS_KEY.toLowerCase()].includes(lowercaseOptionType) && cardIdsToExclude.length === 0;
@@ -488,21 +753,34 @@ export default async function decorate(block) {
         }
         dataConfiguration[lowercaseOptionType].renderedCardIds = [];
         contentDiv.dataset.selected = lowercaseOptionType;
-        contentDiv.setAttribute('data-analytics-filter-id', lowercaseOptionType);
-        const showProfileOptions = defaultOptionsKey.some((key) => lowercaseOptionType === key.toLowerCase());
+        let analyticsProductName = '';
+        if ([ALL_ADOBE_OPTIONS_KEY.toLowerCase()].includes(lowercaseOptionType)) {
+          analyticsProductName = 'all adobe products';
+        } else {
+          analyticsProductName = lowercaseOptionType;
+        }
+        contentDiv.setAttribute('data-analytics-filter-id', analyticsProductName);
+        const showDefaultOptions = defaultOptionsKey.some((key) => lowercaseOptionType === key.toLowerCase());
         const interest = filterOptions.find((opt) => opt.toLowerCase() === lowercaseOptionType);
         const expLevelIndex = sortedProfileInterests.findIndex((s) => s === interest);
         const expLevel = experienceLevels[expLevelIndex] ?? 'Beginner';
-        let clonedProducts = structuredClone(removeProductDuplicates(products));
-        if (!showProfileOptions && !clonedProducts.find((c) => c.toLowerCase() === lowercaseOptionType)) {
-          clonedProducts.push(interest);
+        let clonedProducts = showDefaultOptions ? structuredClone(removeProductDuplicates(products)) : [interest];
+        if (showDefaultOptions) {
+          switch (filterProductByOption) {
+            case 'profile_context':
+              clonedProducts = [...new Set(sortedProfileInterests)];
+              break;
+            case 'specific_products':
+              clonedProducts = products?.length ? [...products] : [];
+              break;
+            default:
+              clonedProducts = [];
+              break;
+          }
         }
 
-        if (showProfileOptions) {
-          // show everything for default tab
-          clonedProducts = [...new Set([...products, ...sortedProfileInterests])];
-        }
         const params = {
+          firstResult,
           contentType: null,
           product: clonedProducts,
           feature: features.length ? [...new Set(features)] : null,
@@ -510,13 +788,14 @@ export default async function decorate(block) {
           role: role?.length ? role : profileRoles,
           sortCriteria,
           noOfResults: numberOfResults,
-          aq: !showProfileOptions && cardIdsToExclude.length ? prepareExclusionQuery(cardIdsToExclude) : undefined,
-          context: showProfileOptions
-            ? { role: profileRoles, interests: sortedProfileInterests, experience: experienceLevels }
-            : { interests: [interest], experience: [expLevel], role: profileRoles },
+          aq:
+            !showDefaultOptions && cardIdsToExclude.length && REMOVE_DUPLICATES_BY_EXCLUSION
+              ? prepareExclusionQuery(cardIdsToExclude)
+              : undefined,
+          context: showDefaultOptions ? {} : { interests: [interest], experience: [expLevel], role: profileRoles },
         };
 
-        if (renderCards) {
+        if (args.renderCards) {
           resetContentDiv(contentDiv);
         }
 
@@ -525,17 +804,17 @@ export default async function decorate(block) {
           const cardShimmers = [];
           const wrappers = [];
           countNumberAsArray(DEFAULT_NUM_CARDS).forEach(() => {
-            const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, renderCards);
+            const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, args.renderCards);
             cardShimmers.push(shimmer);
             wrappers.push(wrapper);
           });
           const payloadConfig = {
             targetSupport: true,
             shimmers: cardShimmers,
+            renderCards: args.renderCards,
             wrappers,
             params,
             optionType,
-            renderCards,
             lowercaseOptionType,
           };
           targetPromises.push(
@@ -551,9 +830,10 @@ export default async function decorate(block) {
                     }
                   }
                   if (resp?.data) {
-                    updateCopyFromTarget(resp, headerContainer, descriptionContainer, firstEl, secondEl);
+                    updateCopyFromTarget(resp, headerContainer, descriptionContainer, linkEl, resultTextEl);
+                    headerContainer.id = formatId(headerContainer.innerHTML);
                     block.style.display = 'block';
-                    setTargetDataAsBlockAttribute(resp, block);
+                    setTargetDataAsBlockAttribute(block, resp);
                   }
                   const cardModels = await parseCardResponseData(resp, payloadConfig);
                   let renderedCardModels = [];
@@ -586,10 +866,11 @@ export default async function decorate(block) {
               payload.noOfResults = contentTypesFetchMap[contentType];
             }
             const { noOfResults } = payload;
+            const shimmersCount = seeMoreConfig.prefetchCards ? noOfResults / 2 : noOfResults;
             const cardShimmers = [];
             const wrappers = [];
-            countNumberAsArray(noOfResults).forEach(() => {
-              const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, renderCards);
+            countNumberAsArray(shimmersCount).forEach(() => {
+              const { shimmer, wrapper } = renderCardPlaceholders(contentDiv, args.renderCards);
               cardShimmers.push(shimmer);
               wrappers.push(wrapper);
             });
@@ -598,12 +879,27 @@ export default async function decorate(block) {
               payload,
               shimmers: cardShimmers,
               contentType: payloadContentType,
+              renderCards: args.renderCards,
               wrappers,
-              renderCards,
               lowercaseOptionType,
+              contentDiv,
             };
             return new Promise((resolve) => {
-              getCardsData(payload).then(async (resp) => {
+              const savedCardModels = seeMoreConfig.prefetchCards
+                ? false
+                : dataConfiguration.savedCardsResponse[lowercaseOptionType]?.[payloadContentType]?.models?.filter(
+                    (model) => model.markedForReplacement !== true,
+                  );
+              let promise;
+              if (Array.isArray(savedCardModels)) {
+                promise = Promise.resolve({
+                  contentType,
+                  data: savedCardModels,
+                });
+              } else {
+                promise = getCardsData(payload);
+              }
+              promise.then(async (resp) => {
                 const cardModels = await parseCardResponseData(resp, payloadConfig);
                 let renderedCardModels = [];
                 if (cardModels?.length) {
@@ -626,8 +922,32 @@ export default async function decorate(block) {
           ?.setAttribute('data-analytics-rec-source', targetSupport ? 'target' : 'coveo');
 
         Promise.all(cardPromises)
-          .then((finalPromiseResponse) => {
+          .then(async (finalPromiseResponse) => {
             const dontRenderCards = finalPromiseResponse.some((data) => data?.payloadConfig?.renderCards === false);
+            const cardsToBeReplaced = seeMoreConfig.prefetchCards
+              ? finalPromiseResponse.filter((response) =>
+                  response.data.some((cardData) => cardData.replaceCard === true),
+                )
+              : [];
+
+            if (cardsToBeReplaced.length) {
+              const cardReplacementPromises = [];
+              cardsToBeReplaced.forEach((responseInfo) => {
+                const { data = [] } = responseInfo;
+
+                data.forEach(({ shimmers, wrappers, contentDiv: contentWrapper }) => {
+                  wrappers.forEach((wrapper, index) => {
+                    const model = getSavedCardModel(dataConfiguration, lowercaseOptionType);
+                    shimmers[index].removeShimmer();
+                    if (model) {
+                      cardReplacementPromises.push(buildCard(contentWrapper, wrapper, model));
+                    }
+                  });
+                });
+              });
+              await Promise.all(cardReplacementPromises);
+            }
+
             if (saveCardResponse) {
               const renderedModels = finalPromiseResponse.reduce((acc, curr) => {
                 curr.renderedCardModels?.flat()?.forEach((d) => acc.push(d));
@@ -644,15 +964,38 @@ export default async function decorate(block) {
               return;
             }
             const cardsCount = contentDiv.querySelectorAll('.browse-card').length;
+            if (cardsCount !== 0) {
+              createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock);
+            }
             if (cardsCount === 0) {
-              Array.from(contentDiv.querySelectorAll('.shimmer-placeholder')).forEach((shimmer) => {
-                shimmer.remove();
+              Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((shimmerEl) => {
+                shimmerEl.remove();
               });
               buildNoResultsContent(contentDiv, false);
               buildNoResultsContent(contentDiv, true);
-              recommendedContentNoResults(contentDiv);
-              contentDiv.style.display = 'block';
+              recommendedContentNoResults();
+
+              if (!targetSupport) {
+                if (!block.dataset.browseCardRows) {
+                  if (btn) btn.classList.add('hide');
+                }
+
+                if (block.dataset.browseCardRows) {
+                  if (btn) {
+                    btn.firstElementChild.innerHTML =
+                      placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+                  }
+                  block.dataset.allRowsLoaded = true;
+                  block.dataset.maxRows = block.dataset.browseCardRows;
+                }
+              }
+
               return;
+            }
+
+            const noResultsContent = block.querySelector('.browse-card-no-results');
+            if (noResultsContent) {
+              noResultsContent.remove();
             }
 
             const navSectionEl = block.querySelector('.recommended-content-nav-section');
@@ -661,16 +1004,40 @@ export default async function decorate(block) {
                 contentDiv?.scrollWidth && contentDiv.scrollWidth <= contentDiv.offsetWidth ? 'add' : 'remove';
               navSectionEl.classList[classOp]('recommended-content-hidden');
             }
+
+            if (!targetSupport) {
+              const containsLessResponse = contentDiv.querySelectorAll('.browse-card').length < DEFAULT_NUM_CARDS;
+              const savedCardsCount = seeMoreConfig.prefetchCards
+                ? getSavedCardsCount(dataConfiguration, lowercaseOptionType)
+                : 1;
+              const seeMoreBtn = block.querySelector('.recommended-content-see-more-btn');
+
+              if (containsLessResponse || savedCardsCount === 0) {
+                if (!block.dataset.browseCardRows) {
+                  if (seeMoreBtn) seeMoreBtn.classList.add('hide');
+                }
+
+                if (block.dataset.browseCardRows) {
+                  if (seeMoreBtn) {
+                    seeMoreBtn.firstElementChild.innerHTML =
+                      placeholders?.recommendedContentSeeLessButtonText || 'See Less Recommendations';
+                  }
+                  block.dataset.allRowsLoaded = true;
+                  block.dataset.maxRows = block.dataset.browseCardRows;
+                }
+              } else if (seeMoreBtn) {
+                seeMoreBtn.classList.remove('hide');
+              }
+            }
           })
           .catch((err) => {
             const cardsBlockCount = contentDiv.querySelectorAll('.browse-card').length;
             if (cardsBlockCount === 0) {
               buildNoResultsContent(contentDiv, true);
-              recommendedContentNoResults(contentDiv);
-              contentDiv.style.display = 'block';
+              recommendedContentNoResults();
             } else {
               // In the unlikely scenario that some card promises were successfully resolved, while some others failed. Try to show the rendered cards.
-              Array.from(contentDiv.querySelectorAll('.shimmer-placeholder')).forEach((element) => {
+              Array.from(contentDiv.querySelectorAll('.browse-card-shimmer')).forEach((element) => {
                 element.remove();
               });
             }
@@ -690,6 +1057,13 @@ export default async function decorate(block) {
 
       const defaultOption = defaultFilterOption ? convertToTitleCase(defaultFilterOption) : null;
 
+      function renderButtonPlaceholder() {
+        const btn = block.querySelector('.recommended-content-see-more-btn > button');
+        if (btn) {
+          btn.innerHTML = placeholders?.recommendedContentSeeMoreButtonText || 'See more Recommendations';
+        }
+      }
+
       // eslint-disable-next-line no-new
       new ResponsiveList({
         wrapper: blockHeader,
@@ -697,18 +1071,26 @@ export default async function decorate(block) {
         defaultSelected: defaultOption,
         onInitCallback: () => {
           /* Reused the existing method */
+          renderButtonPlaceholder();
           renderCardBlock(block);
           fetchDataAndRenderBlock(defaultOption);
-          if (containsAllAdobeProductsTab && defaultOption !== ALL_ADOBE_OPTIONS_KEY) {
+          if (
+            containsAllAdobeProductsTab &&
+            defaultOption &&
+            defaultOption.toLowerCase() !== ALL_ADOBE_OPTIONS_KEY.toLowerCase()
+          ) {
             setTimeout(() => {
-              fetchDataAndRenderBlock(ALL_ADOBE_OPTIONS_KEY, false); // pre-fetch all my tab cards to avoid duplicates in indvidual tab. Timeout helps with 429 status code of v2 calls.
+              fetchDataAndRenderBlock(ALL_ADOBE_OPTIONS_KEY, { renderCards: false }); // pre-fetch all my tab cards to avoid duplicates in indvidual tab. Timeout helps with 429 status code of v2 calls.
             }, 500);
           }
         },
         onSelectCallback: (selectedItem) => {
           /* Reused the existing method */
           if (selectedItem) {
-            fetchDataAndRenderBlock(selectedItem);
+            seeMoreConfig.prefetchCards = true;
+            restoreSavedCardsModelState(dataConfiguration, selectedItem.toLowerCase());
+            renderButtonPlaceholder();
+            fetchDataAndRenderBlock(selectedItem, { renderCards: true, createRow: false, clearSeeMoreRows: true });
           }
         },
       });
@@ -718,14 +1100,24 @@ export default async function decorate(block) {
   targetEventEmitter.on('dataChange', async (data) => {
     const blockId = block.id;
     const { blockId: targetBlockId, scope } = data.value;
-    if (targetBlockId === blockId) {
+    if (targetBlockId === blockId && !showOnlyCoveo) {
       renderBlock({ targetSupport: true, targetCriteriaScopeId: scope });
     }
   });
 
-  defaultAdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
-    if (targetCriteriaId || !targetSupport) {
-      renderBlock({ targetSupport, targetCriteriaScopeId: targetCriteriaId });
-    }
-  });
+  function handleTargetSupportAndRender(targetScopeId = '') {
+    defaultAdobeTargetClient.checkTargetSupport().then(async (targetSupport) => {
+      if (!targetSupport) {
+        renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
+      } else if (targetScopeId) {
+        renderBlock({ targetSupport, targetCriteriaScopeId: targetScopeId });
+      }
+    });
+  }
+
+  if (showOnlyCoveo) {
+    renderBlock({ targetSupport: false, targetCriteriaScopeId: '' });
+  } else {
+    handleTargetSupportAndRender(targetCriteriaId);
+  }
 }

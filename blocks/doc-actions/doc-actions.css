@@ -43,7 +43,7 @@
   border-radius: 50%;
   outline: 2px solid var(--spectrum-blue-900);
   outline-offset: -1px;
-  background: #fff;
+  background: var(--spectrum-gray-50);
   transform: scale(0.7);
   left: calc(100% - 0.95rem);
   transition: all 0.2s ease-in-out;
@@ -71,7 +71,7 @@
 }
 
 .doc-mt-feedback .prompt {
-  font-weight: var(--font-weight-700);
+  font-weight: var(--font-weight-bold);
 }
 
 .doc-mt-toggle .doc-mt-feedback-radio {

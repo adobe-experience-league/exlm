@@ -1,0 +1,175 @@
+.responsive-pill-list {
+  display: flex;
+  gap: 20px;
+  color: var(--spectrum-gray-700);
+  font-size: var(--spectrum-font-size-200);
+  justify-content: flex-start;
+  align-items: center;
+  line-height: 20.8px;
+}
+
+.response-pill-list-nav-btn {
+  height: 24px;
+  width: 24px;
+  background-color: transparent;
+  color: #000;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  min-width: 24px;
+  position: relative;
+  display: none;
+  transform: rotate(270deg);
+}
+
+.response-pill-list-nav-btn.responsive-pill-list-left-nav {
+  transform: rotate(90deg);
+}
+
+.response-pill-list-nav-btn.responsive-pill-list-nav-visible {
+  display: block;
+}
+
+.response-pill-list-nav-btn:hover,
+.response-pill-list-nav-btn:focus {
+  background-color: transparent;
+}
+
+.responsive-pill-list ul {
+  align-items: center;
+  display: inline-flex;
+  flex-wrap: nowrap;
+  gap: 16px;
+  justify-content: space-between;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  cursor: default;
+  max-width: calc(100% - 32px);
+  overflow-x: hidden;
+}
+
+.responsive-pill-list .responsive-pill-list-items-wrapper ul {
+  display: flex;
+  flex-direction: column;
+}
+
+.responsive-pill-list:has(.responsive-pill-list-left-nav.responsive-pill-list-nav-visible) ul {
+  mask-image: linear-gradient(to right, rgb(0 0 0 / 0%) 0, rgb(0 0 0 / 100%) 50px, rgb(0 0 0 / 100%) 100%);
+}
+
+.responsive-pill-list:has(.responsive-pill-list-right-nav.responsive-pill-list-nav-visible) ul {
+  mask-image: linear-gradient(to right, rgb(0 0 0 / 100%) calc(100% - 50px), rgb(0 0 0 / 0%) 100%);
+}
+
+.responsive-pill-list:has(.responsive-pill-list-left-nav.responsive-pill-list-nav-visible):has(
+    .responsive-pill-list-right-nav.responsive-pill-list-nav-visible
+  )
+  ul {
+  mask-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0%) 0,
+    rgb(0 0 0 / 100%) 50px,
+    rgb(0 0 0 / 100%) calc(100% - 50px),
+    rgb(0 0 0 / 0%) 100%
+  );
+}
+
+.responsive-pill-list .responsive-pill-list-option-overlay {
+  position: absolute;
+  top: 48px;
+  left: 0;
+  z-index: 11;
+  display: none;
+  background-color: var(--spectrum-gray-50);
+  border-radius: 16px;
+  padding: 24px 4px;
+  border: 1px solid rgb(177 177 177 / 60%);
+  box-shadow: 0 1px 4px #00000026;
+  cursor: default;
+  min-width: 120px;
+}
+
+.responsive-pill-list .responsive-pill-list-items-wrapper {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0 20px;
+}
+
+.responsive-pill-list .responsive-pill-list-more-option {
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: normal;
+  color: var(--non-spectrum-dark-gray);
+  border-radius: 100%;
+  border: 2px solid var(--spectrum-gray-300);
+}
+
+.responsive-pill-list ul li {
+  color: var(--spectrum-gray-800);
+  cursor: pointer;
+  font-size: var(--spectrum-font-size-200);
+  line-height: 20px;
+  margin: 0;
+  padding: 9px 20px 11px;
+  border: 2px solid var(--spectrum-gray-300);
+  border-radius: 20px;
+  position: relative;
+  white-space: pre;
+  font-weight: var(--font-weight-bold);
+}
+
+.responsive-pill-list .responsive-pill-list-more-option.responsive-pill-list-btn-active {
+  background: var(--spectrum-gray-800);
+  color: var(--spectrum-gray-50);
+  border-color: var(--spectrum-gray-800);
+}
+
+.responsive-pill-list .responsive-pill-list-more-option span {
+  height: 30px;
+  letter-spacing: 2.2px;
+  font-weight: var(--font-weight-heavy);
+  margin-left: 2px;
+}
+
+.responsive-pill-list .responsive-pill-list-option-overlay.responsive-pill-list-option-overlay-visible {
+  display: block;
+}
+
+.responsive-pill-list .responsive-pill-list-option-overlay p {
+  text-align: center;
+  font-size: var(--spectrum-font-size-75);
+  line-height: 15px;
+  opacity: 0.6;
+  color: var(--text-color);
+  font-weight: var(--font-weight-semi-bold);
+  text-transform: uppercase;
+}
+
+.responsive-pill-list .responsive-pill-list-option-overlay li {
+  width: calc(100% - 48px);
+  text-align: center;
+}
+
+.responsive-pill-list ul li.active {
+  background-color: var(--spectrum-gray-800);
+  color: var(--spectrum-gray-50);
+  border-color: var(--spectrum-gray-800);
+}
+
+.responsive-pill-list ul li.responsive-pill-list-more-options-wrapper {
+  padding: 0;
+  position: relative;
+  border: none;
+  white-space: normal;
+}
+
+@media (max-width: 1024px) {
+  .responsive-pill-list {
+    border-bottom: 0 none;
+  }
+}

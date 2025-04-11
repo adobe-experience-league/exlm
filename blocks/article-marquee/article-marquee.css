@@ -1,3 +1,4 @@
+/* Styles for the article marquee component with marquee-straight as the default variation and marquee-curved as the additional variation */
 .article-marquee-container {
   padding: 0;
 }
@@ -47,17 +48,39 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  padding: 6em 4em 3em;
+  padding: 2em 4em;
   position: relative;
   color: var(--background-color);
   overflow: hidden;
   z-index: 1;
   background-color: var(--non-spectrum-bg);
+  min-width: 30%;
 }
 
 .article-marquee .author-info > div {
   z-index: 1;
   text-align: center;
+}
+
+.article-marquee .author-info.adobe {
+  background-color: var(--spectrum-red-1400);
+}
+
+.article-marquee .author-info.external {
+  background-color: var(--spectrum-gray-900);
+}
+
+.article-marquee.marquee-curved .author-info {
+  padding: 6em 4em 3em;
+  background: none;
+}
+
+.article-marquee .author-info .author-card .author-image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
 }
 
 .article-marquee .author-card {
@@ -79,25 +102,39 @@
 }
 
 .article-marquee .author-info .author-card .author-image {
-  width: 75px;
-  height: 75px;
-  border-radius: 50px;
+  box-sizing: border-box;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
   overflow: hidden;
+  border: 2px solid var(--spectrum-gray-900);
   margin-bottom: 10px;
+  padding: 5px;
+}
+
+.article-marquee .author-info.external .author-card .author-image {
+  border: 2px solid var(--spectrum-gray-50);
 }
 
 .article-marquee .author-info .author-card .author-info-text .author-name {
-  font-size: var(--spectrum-font-size-100);
-  font-weight: 600;
+  font-size: var(--spectrum-font-size-300);
+  font-weight: var(--font-weight-bold);
+}
+
+.article-marquee .author-info .author-card .author-info-text .author-title {
+  max-width: 256px;
 }
 
 .article-marquee .breadcrumb {
-  margin-bottom: 1em;
+  min-height: 25px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .article-marquee .breadcrumb > a,
 .article-marquee .breadcrumb > span {
-  color: var(--spectrum-gray-500);
+  color: var(--spectrum-gray-700);
   display: inline-block;
   font-size: var(--spectrum-font-size-200);
   line-height: 24px;
@@ -127,11 +164,11 @@
 }
 
 .article-marquee .breadcrumb > span {
-  display: block;
+  display: inline;
   margin-top: 8px;
   color: var(--spectrum-gray-800);
-  font-size: 22px;
-  font-weight: var(--font-weight-700);
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-bold);
 }
 
 .article-marquee-info {
@@ -146,6 +183,8 @@
   width: 100%;
   gap: 10px;
   margin-left: -5px;
+  min-width: 48px;
+  min-height: 24px;
 }
 
 .article-marquee-options .user-actions .icon {
@@ -154,20 +193,20 @@
 }
 
 .article-marquee-last-updated {
-  color: var(--spectrum-gray-500);
+  color: var(--spectrum-gray-700);
 }
 
 .article-marquee-read-time {
   display: flex;
   gap: 5px;
-  color: var(--spectrum-gray-500);
+  color: var(--spectrum-gray-700);
 }
 
 .article-marquee-tag {
   width: max-content;
   color: #000;
-  font-size: 10px;
-  font-weight: 600;
+  font-size: var(--spectrum-font-size-40);
+  font-weight: var(--font-weight-semi-bold);
   padding: 2px 4px;
   margin-top: 1em;
   border-radius: 2px;
@@ -178,6 +217,20 @@
   display: none;
 }
 
+.article-marquee .author-info .author-details {
+  min-height: 160px;
+}
+
+.article-marquee .user-actions .bookmark-label,
+.copylink-label {
+  padding-left: 10px;
+  font-size: var(--spectrum-font-size-200);
+}
+
+.article-marquee .user-actions .bookmark {
+  margin-right: 16px;
+}
+
 @media (min-width: 600px) {
   .article-marquee-info-container {
     flex-direction: row;
@@ -186,6 +239,7 @@
   }
 
   .article-marquee .article-info {
+    max-width: 50%;
     min-height: 200px;
     padding: 40px;
     width: 100%;
@@ -193,13 +247,17 @@
 
   .article-marquee .author-info {
     padding: 1em;
-    min-width: 30%;
+    min-width: 35%;
     justify-content: center;
+  }
+
+  .article-marquee.marquee-curved .author-info {
+    padding: 1em;
   }
 
   .article-marquee-options {
     width: auto;
-    gap: 0px;
+    gap: 0;
   }
 
   .article-marquee .breadcrumb > span {
@@ -208,7 +266,11 @@
     font-size: var(--spectrum-font-size-200);
   }
 
-  .article-marquee .author-info > div:not(.article-marquee-bg-container) {
+  .article-marquee .author-info .author-details {
+    margin-left: 0;
+  }
+
+  .article-marquee.marquee-curved .author-info .author-details {
     margin-left: 50px;
   }
 
@@ -219,18 +281,33 @@
   .article-marquee .author-card:only-child .author-image {
     display: block;
   }
+
+  .article-marquee .user-actions .bookmark-label,
+  .copylink-label {
+    display: none;
+  }
+
+  .article-marquee .user-actions .bookmark {
+    margin-right: 0;
+  }
 }
 
 @media (min-width: 900px) {
   .article-marquee-info-container {
     justify-content: space-between;
   }
+
+  .article-marquee .breadcrumb {
+    min-height: 25px;
+    margin-bottom: 15px;
+  }
+
   .article-marquee .author-info .author-card .author-info-text .author-name {
     font-size: var(--spectrum-font-size-200);
   }
 
-  .article-marquee .author-info {
-    min-width: 500px;
+  .article-marquee.marquee-curved .author-info {
+    min-width: 40%;
     overflow: visible;
   }
 
@@ -238,18 +315,24 @@
     display: inline-flex;
     gap: 30px;
     width: auto;
+    align-items: center;
+  }
+
+  .article-marquee .author-info .author-details > :only-child {
+    width: 100%;
+  }
+
+  .article-marquee.marquee-curved .author-info .author-details {
+    margin-left: 124px;
   }
 
   .article-marquee .author-card {
     margin-bottom: 0;
+    width: 50%;
   }
 
   .article-marquee .author-card .author-image {
     display: block;
-  }
-
-  .article-marquee .author-info > div:not(.article-marquee-bg-container) {
-    margin-left: 200px;
   }
 
   .article-marquee h1,
@@ -266,24 +349,30 @@
   .article-marquee-large-bg {
     display: block;
     position: absolute;
-    right: 0;
-    left: 50%;
-    top: 0;
-    bottom: 1px;
-    background-color: var(--spectrum-indigo-1400);
+    inset: 0 0 0 50%;
+    background-color: var(--non-spectrum-bg);
   }
+
   .article-marquee-large-bg.adobe {
     background-color: var(--spectrum-red-1400);
+  }
+
+  .article-marquee-large-bg.external {
+    background-color: var(--spectrum-gray-900);
   }
 }
 
 /* Aricle Marquee background styles */
 
-.article-marquee-bg-container path:first-child {
-  fill: var(--spectrum-indigo-1400);
+.article-marquee .author-info .article-marquee-bg-container path:first-child {
+  fill: var(--non-spectrum-bg);
 }
 
-.article-marquee-bg-container.adobe path:first-child {
+.article-marquee .author-info.external .article-marquee-bg-container path:first-child {
+  fill: var(--spectrum-gray-900);
+}
+
+.article-marquee .author-info.adobe .article-marquee-bg-container path:first-child {
   fill: var(--spectrum-red-1400);
 }
 
@@ -303,6 +392,7 @@
   .article-marquee-bg-mobile {
     display: none;
   }
+
   .article-marquee-bg-tablet {
     display: block;
     position: absolute;
@@ -318,6 +408,7 @@
   .article-marquee-bg-tablet {
     display: none;
   }
+
   .article-marquee-bg-desktop {
     display: block;
     position: absolute;

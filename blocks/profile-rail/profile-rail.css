@@ -1,6 +1,10 @@
 .profile-rail {
   position: relative;
-  z-index: 5;
+  z-index: 9;
+}
+
+.profile-rail .profile-rail-links.jump-to-list {
+  display: none;
 }
 
 .profile-rail .profile-rail-heading {
@@ -16,24 +20,27 @@
   margin: 0;
 }
 
-.profile-rail .profile-rail-links li > a,
 .profile-rail .profile-rail-overlay a {
-  display: none;
+  display: flex;
+}
+
+.profile-rail .profile-rail-overlay a,
+.profile-rail .profile-rail-links li > a {
   align-items: center;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-100);
   color: var(--spectrum-gray-700);
   margin: 0;
   padding: 8px 12px;
   border-radius: 4px;
 }
 
-.profile-rail .profile-rail-links li > a:hover,
-.profile-rail .profile-rail-overlay a:hover {
-  background-color: var(--spectrum-gray-200);
+.profile-rail .profile-rail-links li > a {
+  display: none;
 }
 
-.profile-rail .profile-rail-overlay a {
-  display: flex;
+.profile-rail .profile-rail-overlay a:hover,
+.profile-rail .profile-rail-links li > a:hover {
+  background-color: var(--spectrum-gray-200);
 }
 
 .profile-rail .profile-rail-links li > a.active {
@@ -50,12 +57,12 @@
   margin-bottom: 2px;
 }
 
-.profile-rail .profile-rail-links a .icon-chevron_down {
+.profile-rail .profile-rail-links a .icon-chevron-down {
   margin-left: auto;
   margin-top: 5px;
 }
 
-.profile-rail .profile-rail-links li > a.active.overlay-active .icon-chevron_down {
+.profile-rail .profile-rail-links li > a.active.overlay-active .icon-chevron-down {
   transform: rotate(180deg);
 }
 
@@ -65,11 +72,11 @@
   position: absolute;
   width: 100%;
   background-color: var(--non-spectrum-grey-100);
-  z-index: 5;
+  z-index: 9;
   box-sizing: border-box;
   padding: 12px;
   border-radius: 4px;
-  box-shadow: 0px 1px 4px rgba(0 0 0 / 15%);
+  box-shadow: 0 1px 4px rgba(0 0 0 / 15%);
   border: 1px solid var(--spectrum-gray-400);
 }
 
@@ -82,16 +89,28 @@
     width: auto;
     margin-left: 16px;
   }
+
+  .profile-rail .profile-rail-links.jump-to-list {
+    display: block;
+  }
+
+  .profile-rail .profile-rail-heading.hidden,
+  .profile-rail .profile-rail-links.hidden {
+    display: none;
+  }
+
   .profile-rail > div:first-child {
     margin-left: auto;
     max-width: 212px;
+    max-height: 100vh;
+    overflow-y: auto;
   }
 
   .profile-rail .profile-rail-heading {
     display: block;
-    font-size: 12px;
+    font-size: var(--spectrum-font-size-75);
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: var(--font-weight-semi-bold);
     color: var(--spectrum-gray-700);
     margin-top: 32px;
     letter-spacing: 0.72px;
@@ -107,11 +126,20 @@
 
   .profile-rail .profile-rail-links li {
     margin: 8px 0;
+    display: flex;
+
+    /** To remove the visual rendering of inline non-breaking space (`&nbsp;`) characters that appear between child elements */
+    font-size: 0;
+  }
+
+  .profile-rail .profile-rail-links:last-child li:last-child {
+    margin-bottom: 20px;
   }
 
   .profile-rail .profile-rail-links li > a {
     display: flex;
     padding: 5px 12px;
+    flex: 1;
   }
 
   .profile-rail .profile-rail-links li > a.active {
@@ -119,9 +147,10 @@
     border: none;
   }
 
-  .profile-rail .profile-rail-links a .icon-chevron_down {
+  .profile-rail .profile-rail-links a .icon-chevron-down {
     display: none;
   }
+
   .profile-rail .profile-rail-overlay {
     display: none;
   }

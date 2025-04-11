@@ -1,11 +1,16 @@
+/**
+ * IMPORTANT:
+ * This header will also be embeded in community and legacy pages so please make
+ * sure to test it in those environments as well when you make changes to the header.
+ */
+
 import {
   htmlToElement,
   decorateLinks,
   getConfig,
   getLink,
-  fetchFragment,
-  fetchLanguagePlaceholders,
   getPathDetails,
+  fetchGlobalFragment,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
 import {
@@ -15,18 +20,30 @@ import {
   getCell,
   getFirstChildTextNodes,
   updateLinks,
+  getBlockFirstRow,
+  simplifySingleCellBlock,
 } from './header-utils.js';
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import LanguageBlock from '../language/language.js';
-import Profile from './load-profile.js';
+import ProfileMenu from './profile-menu.js';
+
+/**
+ *  @typedef {Object} CommunityOptions
+ *  @property {boolean} active
+ *  @property {boolean} hasMessages
+ *  @property {boolean} hasNotifications
+ *  @property {string} notificationsUrl
+ *  @property {string} messagesUrl
+ */
 
 /**
  * @typedef {Object} DecoratorOptions
  * @property {() => Promise<boolean>} isUserSignedIn - header uses this to check if the user is signed in or not
  * @property {() => {}} onSignOut - called when signout happens.
- * @property {string} profilePicture - url to profile picture to display in header
+ * @property {() => {}} onSignIn - called when sign in happens.
+ * @property {() => Promise<string>} getProfilePicture - url to profile picture to display in header
  * @property {string} khorosProfileUrl - url to fetch community profile data
- * @property {boolean} isCommunity - is this a community header
+ * @property {CommunityOptions} community - is this a community header
  * @property {boolean} lang - language code
  * @property {string} navLinkOrigin - origin to be added to relative links in the nav
  * @property {import('../language/language.js').Language[]} languages - array of languages to dispay in language selector
@@ -38,6 +55,10 @@ const HEADER_CSS = `/blocks/header/exl-header.css`;
 let searchElementPromise = null;
 const { khorosProfileUrl, communityHost } = getConfig();
 
+/**
+ *
+ * @returns {Promise<string>}
+ */
 const getPPSProfilePicture = async () => {
   try {
     const { defaultProfileClient } = await import('../../scripts/auth/profile.js');
@@ -53,8 +74,6 @@ const getPPSProfilePicture = async () => {
     return err; // or any other default value
   }
 };
-
-const profilePicture = await getPPSProfilePicture();
 
 async function loadSearchElement() {
   const [solutionTag] = getMetadata('solution').trim().split(',');
@@ -76,77 +95,6 @@ async function loadSearchElement() {
     });
   return searchElementPromise;
 }
-
-let cachedPlaceholders;
-
-const getPlaceholders = async (langCode) => {
-  if (cachedPlaceholders) {
-    return Promise.resolve(cachedPlaceholders);
-  }
-  const result = await fetchLanguagePlaceholders(langCode);
-  cachedPlaceholders = result;
-  return result;
-};
-
-const communityLocalesMap = new Map([
-  ['de', 'de'],
-  ['en', 'en'],
-  ['ja', 'ja'],
-  ['fr', 'fr'],
-  ['es', 'es'],
-  ['pt-br', 'pt'],
-  ['ko', 'ko'],
-  ['sv', 'en'],
-  ['nl', 'en'],
-  ['it', 'en'],
-  ['zh-hans', 'en'],
-  ['zh-hant', 'en'],
-]);
-
-// eslint-disable-next-line
-async function fetchCommunityProfileData(url = khorosProfileUrl) {
-  const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
-  try {
-    const response = await fetch(`${url}?lang=${locale}`, {
-      method: 'GET',
-      headers: {
-        'x-ims-token': await window.adobeIMS?.getAccessToken().token,
-      },
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    }
-  } catch (err) {
-    // eslint-disable-next-line
-    console.log('Error fetching data!!', err);
-  }
-}
-
-/**
- * @param {HTMLElement} block
- * @returns {HTMLElement}
- */
-const getBlockFirstCell = (block) => block.querySelector(':scope > div > div');
-
-/**
- * @param {HTMLElement} block
- * @returns {HTMLElement}
- */
-const getBlockFirstRow = (block) => block.querySelector(':scope > div');
-
-/**
- * simplified single cell block to one wrapper div.
- * @param {HTMLElement} el
- * @param {string} selector
- * @returns {HTMLElement}
- */
-const simplifySingleCellBlock = (block) => {
-  const firstRowFirstCell = getBlockFirstCell(block);
-  block.innerHTML = firstRowFirstCell.innerHTML;
-  return block;
-};
 
 /**
  * https://www.codemzy.com/blog/random-unique-id-javascript
@@ -230,7 +178,7 @@ const hamburgerButton = (navWrapper, navOverlay) => {
  * Builds nav items from the provided basic list
  * @param {HTMLUListElement} ul
  */
-const buildNavItems = async (ul, level = 0) => {
+const buildNavItems = (ul, level = 0) => {
   /**
    * @param {HTMLElement} navItem
    */
@@ -379,10 +327,59 @@ const buildNavItems = async (ul, level = 0) => {
       );
       decorateNavItem(navItem);
     };
-    await addMobileLangSelector();
+    addMobileLangSelector();
   }
 
   [...ul.children].forEach(decorateNavItem);
+};
+
+/**
+ * Adds the featured products to the nav links
+ * @param {HTMLElement} navBlock
+ * @param {string} lang
+ */
+const buildFeaturedProductsNavLinks = async (navBlock, lang) => {
+  const productList = await getProducts(lang, 'browse');
+  [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
+    // featured-products property is expected to be present on header.
+    if (navItemEl.querySelector(':scope > a[href*="@featured-products"]')) {
+      const featuredProductLi = navBlock.querySelector('li.nav-item a[href*="@featured-products"]');
+      // Remove the <li> element from the DOM
+      featuredProductLi.remove();
+      productList.forEach((item) => {
+        if (item.featured) {
+          const newLi = document.createElement('li');
+          newLi.className = 'nav-item nav-item-leaf';
+          newLi.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
+          navItemEl.parentNode.appendChild(newLi);
+        }
+      });
+    }
+  });
+};
+
+/**
+ * Runs gneral updates on nav links
+ * @param {HTMLElement} navBlock
+ * @param {string} navLinkOrigin the link origin to be used for relative links
+ */
+const updateNavLinks = (navBlock, navLinkOrigin) => {
+  // add origin to relative links - this is especially useful when we need to
+  // configure navLinkOrigin in header. Eg. on community.
+  updateLinks(navBlock, (currentHref) => {
+    const url = new URL(currentHref, navLinkOrigin);
+    return url.href;
+  });
+
+  // update community links to use proper host for current environment
+  updateLinks(navBlock, (currentHref) => {
+    if (currentHref.includes('https://experienceleaguecommunities')) {
+      const url = new URL(currentHref);
+      url.host = communityHost;
+      return url.href;
+    }
+    return currentHref;
+  });
 };
 
 /**
@@ -402,51 +399,13 @@ const navDecorator = async (navBlock, decoratorOptions) => {
 
   // build navItems
   const ul = navWrapper.querySelector(':scope > ul');
-  await buildNavItems(ul);
+  buildNavItems(ul);
 
-  const productList = await getProducts(decoratorOptions.lang, 'browse');
-
-  [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
-    if (navItemEl.querySelector(':scope > a[featured-products]')) {
-      const featuredProductLi = navBlock.querySelector('li.nav-item a[featured-products]');
-      // Remove the <li> element from the DOM
-      featuredProductLi.remove();
-      productList.forEach((item) => {
-        if (item.featured) {
-          const newLi = document.createElement('li');
-          newLi.className = 'nav-item nav-item-leaf';
-          newLi.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
-          navItemEl.parentNode.appendChild(newLi);
-        }
-      });
-    }
-  });
-
-  const isSignedIn = await decoratorOptions.isUserSignedIn();
-
-  if (!isSignedIn) {
-    // hide auth-only nav items - see decorateLinks method for details
-    [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
-      if (navItemEl.querySelector(':scope > a[auth-only]')) {
-        navItemEl.style.display = 'none';
-      }
-    });
-  }
-  // add origin to relative links - this is especially useful when we need to
-  // configure navLinkOrigin in header. Eg. on community.
-  updateLinks(navBlock, (currentHref) => {
-    const url = new URL(currentHref, decoratorOptions.navLinkOrigin);
-    return url.href;
-  });
-
-  // update community links to use proper host for current environment
-  updateLinks(navBlock, (currentHref) => {
-    if (currentHref.includes('https://experienceleaguecommunities')) {
-      const url = new URL(currentHref);
-      url.host = communityHost;
-      return url.href;
-    }
-    return currentHref;
+  // build featured products nav links
+  buildFeaturedProductsNavLinks(navBlock, decoratorOptions.lang).then(() => {
+    // this needs to run at the end of navDecorator,
+    // it is here since it needs to run after all nav items are built.
+    updateNavLinks(navBlock, decoratorOptions.navLinkOrigin);
   });
 };
 
@@ -461,9 +420,9 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   decoratorState.searchLinkHtml = searchLink.outerHTML;
 
   // get search placeholder
-  const searchPlaceholder = getCell(searchBlock, 1, 2)?.firstChild;
+  const searchPlaceholder = getCell(searchBlock, 2, 1)?.firstChild;
   // build search options
-  const searchOptions = getCell(searchBlock, 1, 3)?.firstElementChild?.children || [];
+  const searchOptions = getCell(searchBlock, 3, 1)?.firstElementChild?.children || [];
   const options = [...searchOptions].map((option) => option.textContent);
 
   searchBlock.innerHTML = '';
@@ -523,7 +482,7 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
     showSearchSuggestions: true,
   });
 
-  if (decoratorOptions.isCommunity) {
+  if (decoratorOptions?.community?.active) {
     searchItem.setSelectedSearchOption('Community');
   }
   decorateIcons(searchBlock);
@@ -537,29 +496,34 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
  */
 async function decorateCommunityBlock(header, decoratorOptions) {
   const communityBlock = header.querySelector('nav');
-  const notificationWrapper = document.createElement('div');
-  notificationWrapper.classList.add('notification');
-  notificationWrapper.style.display = 'none';
-  notificationWrapper.innerHTML = `  
-    <div class="notification-icon">
-        <a href="/t5/notificationfeed/page" data-id="notifications" title="notifications">
+  const communityActionsWrapper = document.createElement('div');
+  communityActionsWrapper.classList.add('community-actions');
+  communityActionsWrapper.style.display = 'none';
+  const messagesMarked = decoratorOptions?.community?.hasMessages ? 'community-action-is-marked' : '';
+  const notificationsMarked = decoratorOptions?.community?.hasNotifications ? 'community-action-is-marked' : '';
+  const notificationsUrl = decoratorOptions?.community?.notificationsUrl;
+  const messagesUrl = decoratorOptions?.community?.messagesUrl;
+  // note: data-community-action is used by community code when this header is used community.
+  communityActionsWrapper.innerHTML = `  
+    <div class="community-action ${notificationsMarked}" data-community-action="notifications">
+        <a href="${notificationsUrl}" data-id="notifications" title="notifications">
           <span class="icon icon-bell"></span>
         </a>
     </div>
-    <div class="notification-icon">   
-        <a href="/t5/notes/privatenotespage" data-id="messages" title="messages">
-          <span class ="icon icon-email"></span>
+    <div class="community-action ${messagesMarked}" data-community-action="messages">   
+        <a href="${messagesUrl}" data-id="messages" title="messages">
+          <span class ="icon icon-emailOutline"></span>
         </a> 
-    <div>  
+    <div>
 `;
-  decorateIcons(notificationWrapper);
-  communityBlock.appendChild(notificationWrapper);
+  decorateIcons(communityActionsWrapper);
+  communityBlock.appendChild(communityActionsWrapper);
   const isSignedIn = await decoratorOptions.isUserSignedIn();
   const languageBlock = header.querySelector('.language-selector');
-  if (decoratorOptions.isCommunity) {
+  if (decoratorOptions?.community?.active) {
     languageBlock.classList.add('community');
-    if (isSignedIn && !isMobile()) {
-      notificationWrapper.style.display = 'flex';
+    if (isSignedIn) {
+      communityActionsWrapper.style.display = 'flex';
     }
   }
 }
@@ -592,15 +556,15 @@ const languageDecorator = async (languageBlock, decoratorOptions) => {
 const signInDecorator = async (signInBlock, decoratorOptions) => {
   simplifySingleCellBlock(signInBlock);
   const isSignedIn = await decoratorOptions.isUserSignedIn();
-
   if (isSignedIn) {
     signInBlock.classList.add('signed-in');
-    const profile = new Profile(decoratorOptions);
-    signInBlock.replaceChildren(profile);
+    const profileMenuBlock = signInBlock.closest('nav').querySelector('.profile-menu');
+    const profileMenu = new ProfileMenu(decoratorOptions, profileMenuBlock);
+    signInBlock.replaceChildren(profileMenu);
   } else {
     signInBlock.classList.remove('signed-in');
     signInBlock.firstChild.addEventListener('click', async () => {
-      window.adobeIMS.signIn();
+      decoratorOptions.onSignIn();
     });
   }
   return signInBlock;
@@ -660,71 +624,6 @@ const productGridDecorator = async (productGridBlock, decoratorOptions) => {
 };
 
 /**
- * Decorates the profile-menu block
- * @param {HTMLElement} profileMenu
- * @param {DecoratorOptions} decoratorOptions
- */
-const profileMenuDecorator = async (profileMenuBlock, decoratorOptions) => {
-  const shadowHost = document.querySelector('exl-header');
-  const isSignedIn = await decoratorOptions.isUserSignedIn();
-  if (isSignedIn) {
-    simplifySingleCellBlock(profileMenuBlock);
-    profileMenuBlock.querySelectorAll('p').forEach((ptag) => {
-      if (ptag) {
-        ptag.outerHTML = ptag.querySelector('a').outerHTML;
-      }
-    });
-    const profileMenuWrapper = shadowHost.shadowRoot.querySelector('.profile-menu');
-    const communityHeading = document.createElement('h2');
-    const placeholders = await getPlaceholders(decoratorOptions.lang);
-    communityHeading.textContent = placeholders?.headerCommunityLabel || 'Community';
-    if (profileMenuWrapper) {
-      profileMenuWrapper.innerHTML = `<h2>${placeholders?.headerLearningLabel || 'Learning'}</h2>${
-        profileMenuBlock.innerHTML
-      }`;
-      profileMenuWrapper.lastElementChild.setAttribute('data-id', 'sign-out');
-      profileMenuWrapper.insertBefore(communityHeading, profileMenuWrapper.lastElementChild);
-    }
-    fetchCommunityProfileData(decoratorOptions.khorosProfileUrl)
-      .then((res) => {
-        if (res) {
-          const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
-          if (res.data.menu.length > 0) {
-            res.data.menu.forEach((item) => {
-              if (item.title && item.url) {
-                const communityProfile = document.createElement('a');
-                communityProfile.href = item.url;
-                communityProfile.textContent = item.title;
-                profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
-              }
-            });
-          } else {
-            const communityProfile = document.createElement('a');
-            communityProfile.href = `https://experienceleaguecommunities.adobe.com/?profile.language=${locale}`;
-            communityProfile.textContent = placeholders?.createYourCommunityProfile || 'Create your community profile';
-            profileMenuWrapper.insertBefore(communityProfile, profileMenuWrapper.lastElementChild);
-          }
-        }
-      })
-      .catch((err) => {
-        /* eslint-disable-next-line no-console */
-        console.error(err);
-      });
-
-    if (profileMenuWrapper.querySelector('[data-id="sign-out"]')) {
-      profileMenuWrapper.querySelector('[data-id="sign-out"]').addEventListener('click', async () => {
-        decoratorOptions.onSignOut();
-      });
-    }
-  } else {
-    const isProfileMenu = document.querySelector('.profile-menu');
-    if (isProfileMenu) {
-      document.querySelector('nav').removeChild(isProfileMenu);
-    }
-  }
-};
-
-/**
  * Decorates the adobe-logo block
  * @param {HTMLElement} adobeLogoBlock
  */
@@ -751,6 +650,8 @@ const decorateNewTabLinks = (block) => {
  * Main header decorator, calls all the other decorators
  */
 class ExlHeader extends HTMLElement {
+  isLoaded = false;
+
   /**
    * @param {DecoratorOptions} options
    */
@@ -767,11 +668,18 @@ class ExlHeader extends HTMLElement {
       return signOut();
     };
 
+    const doSignIn = async () => {
+      window.adobeIMS.signIn();
+    };
+
     this.decoratorOptions = options;
     options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
     options.onSignOut = options.onSignOut || doSignOut;
-    options.profilePicture = options.profilePicture || profilePicture;
-    options.isCommunity = options.isCommunity ?? false;
+    options.onSignIn = options.onSignIn || doSignIn;
+    options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
+    options.community = options.community ?? { active: false };
+    options.community.notificationsUrl = options.community.notificationsUrl || '/t5/notificationfeed/page';
+    options.community.messagesUrl = options.community.messagesUrl || '/t5/notes/privatenotespage';
     options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
     options.lang = options.lang || getPathDetails().lang || 'en';
     options.navLinkOrigin = options.navLinkOrigin || window.location.origin;
@@ -784,7 +692,6 @@ class ExlHeader extends HTMLElement {
     this.languageDecorator = languageDecorator.bind(this);
     this.productGridDecorator = productGridDecorator.bind(this);
     this.signInDecorator = signInDecorator.bind(this);
-    this.profileMenuDecorator = profileMenuDecorator.bind(this);
     this.attachShadow({ mode: 'open' });
   }
 
@@ -813,7 +720,9 @@ class ExlHeader extends HTMLElement {
   }
 
   async decorate() {
-    const headerFragment = await fetchFragment('header/header', this.decoratorOptions.lang);
+    const headerMeta = 'header-fragment';
+    const fallback = '/en/global-fragments/header';
+    const headerFragment = await fetchGlobalFragment(headerMeta, fallback, this.decoratorOptions.lang);
     if (headerFragment) {
       loadSearchElement();
 
@@ -838,25 +747,37 @@ class ExlHeader extends HTMLElement {
 
       const decorateHeaderBlock = async (className, decorator, options) => {
         const block = nav.querySelector(`:scope > .${className}`);
+        block.style.visibility = 'hidden';
         await decorator(block, options);
+        block.style.visibility = 'visible';
+        this.dispatchEvent(new Event(`${className}-decorated`));
       };
+
       // Do this first to ensure all links are decorated correctly before they are used.
       decorateLinks(header);
-      decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator, this.decoratorOptions);
-      decorateHeaderBlock('brand', this.brandDecorator, this.decoratorOptions);
-      decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
-      decorateHeaderBlock('language-selector', this.languageDecorator, this.decoratorOptions);
-      decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
-      decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);
-      decorateHeaderBlock('profile-menu', this.profileMenuDecorator, this.decoratorOptions);
-      decorateNewTabLinks(header);
+      const logoP = decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator, this.decoratorOptions);
+      const brandP = decorateHeaderBlock('brand', this.brandDecorator, this.decoratorOptions);
+      const searchP = decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
+      const languageP = decorateHeaderBlock('language-selector', this.languageDecorator, this.decoratorOptions);
+      const productGridP = decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
+      const signInP = decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);
+      const newTabLinkP = decorateNewTabLinks(header);
       await decorateHeaderBlock('nav', this.navDecorator, this.decoratorOptions);
+
+      Promise.allSettled([logoP, brandP, searchP, languageP, productGridP, signInP, newTabLinkP]).then(() => {
+        // used when the header is embeded on coimmunity/legacy pages to listen for when the header is completely decorated.
+        this.dispatchEvent(new Event('header-decorated'));
+      });
     }
   }
 
   async connectedCallback() {
-    await this.loadStyles();
-    await this.decorate();
+    this.style.display = 'none';
+    await Promise.allSettled([this.loadStyles(), this.decorate()]);
+    this.style.display = '';
+    // used when the header is embeded on coimmunity/legacy pages.
+    this.dispatchEvent(new Event('header-loaded'));
+    this.isLoaded = true;
   }
 }
 

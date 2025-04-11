@@ -2,7 +2,6 @@
 import SignupFlowDialog from './signup-flow-dialog.js';
 // eslint-disable-next-line import/no-cycle
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
-import { getConfig } from '../scripts.js';
 
 /**
  * Safely subtracts months from a given date, handling edge cases (e.g., February).
@@ -34,7 +33,7 @@ function subtractMonths(date, months) {
  *   modal should be re-displayed based on the `modalReDisplayDuration` value (in months).
  *
  */
-export default async function showSignupDialog() {
+export default async function initSignupFlowHandler(signUpFlowConfigDate, modalReDisplayDuration) {
   if (!isSignedInUser()) {
     return;
   }
@@ -43,9 +42,6 @@ export default async function showSignupDialog() {
     INCOMPLETE_PROFILE: 'incomplete-profile',
     NEW_PROFILE: 'new-profile',
   };
-
-  // This value is hard-coded because using a Bulk metadata value failed due to CDN issues.
-  const { signUpFlowConfigDate, modalReDisplayDuration } = getConfig();
 
   const configDate = new Date(signUpFlowConfigDate);
   const profileData = await defaultProfileClient.getMergedProfile();

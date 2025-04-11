@@ -2,26 +2,24 @@
   background: var(--non-spectrum-bg);
   border-radius: 6px;
   position: relative;
-  padding-left: 20px;
   padding: 20px;
-  border-style: solid;
-  border: 6px solid var(--spectrum-indigo-1400);
-  border-top: 0px;
-  border-right: 0px;
-  border-bottom: 0px;
+  border: 6px solid var(--spectrum-gray-900);
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
 }
 
 .block-quote-content * {
   font-style: italic;
   font-weight: normal;
-  font-size: 22px;
+  font-size: var(--spectrum-font-size-500);
   line-height: 32px;
   font-family: 'Adobe Clean', sans-serif;
   color: var(--non-spectrum-grey-updated);
 }
 
 .block-quote.external {
-  border-color: var(--spectrum-indigo-1400);
+  border-color: var(--spectrum-gray-900);
 }
 
 .block-quote.adobe {

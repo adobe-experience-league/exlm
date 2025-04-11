@@ -1,9 +1,9 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
-import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 /**
  * formattedSolutionTags returns the solution type by stripping off the exl:solution/ string
@@ -33,8 +33,6 @@ export default async function decorate(block) {
   const noOfResults = 4;
   const solutionsParam = solutions !== '' ? formattedSolutionTags(solutions) : '';
 
-  headingElement.firstElementChild?.classList.add('h2');
-
   // Clearing the block's content
   block.innerHTML = '';
   block.classList.add('browse-cards-block');
@@ -49,14 +47,15 @@ export default async function decorate(block) {
   `);
 
   if (toolTipElement?.textContent?.trim()) {
-    headerDiv
-      .querySelector('h1,h2,h3,h4,h5,h6')
-      ?.insertAdjacentHTML('afterend', '<div class="tooltip-placeholder"></div>');
-    const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
-    const tooltipConfig = {
-      content: toolTipElement.textContent.trim(),
-    };
-    createTooltip(block, tooltipElem, tooltipConfig);
+    const tooltip = htmlToElement(`
+    <div class="tooltip-placeholder">
+    <div class="tooltip tooltip-right">
+      <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement.textContent.trim()}</span>
+    </div>
+    </div>
+  `);
+    decorateIcons(tooltip);
+    headerDiv.querySelector('h1,h2,h3,h4,h5,h6')?.insertAdjacentElement('afterend', tooltip);
   }
 
   // Appending header div to the block
@@ -69,15 +68,15 @@ export default async function decorate(block) {
     contentType,
   };
 
-  const buildCardsShimmer = new BuildPlaceholder();
-  buildCardsShimmer.add(block);
+  const buildCardsShimmer = new BrowseCardShimmer();
+  buildCardsShimmer.addShimmer(block);
 
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(parameters);
   browseCardsContent
     .then((data) => {
       // eslint-disable-next-line no-use-before-define
       const filteredLiveEventsData = fetchFilteredCardData(data, solutionsParam);
-      buildCardsShimmer.remove();
+      buildCardsShimmer.removeShimmer();
       if (filteredLiveEventsData?.length) {
         for (let i = 0; i < Math.min(noOfResults, filteredLiveEventsData.length); i += 1) {
           const cardData = filteredLiveEventsData[i];
@@ -86,12 +85,10 @@ export default async function decorate(block) {
           contentDiv.appendChild(cardDiv);
         }
         block.appendChild(contentDiv);
-        /* Hide Tooltip while scrolling the cards layout */
-        hideTooltipOnScroll(contentDiv);
       }
     })
     .catch((err) => {
-      buildCardsShimmer.remove();
+      buildCardsShimmer.removeShimmer();
       // eslint-disable-next-line no-console
       console.error('Events Cards:', err);
     });

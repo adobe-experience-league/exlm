@@ -1,4 +1,4 @@
-import { decorateButtons } from '../teaser/teaser.js';
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 // eslint-disable-next-line no-unused-vars
 export function generateDetailedTeaserDOM(props, classes) {
@@ -37,7 +37,7 @@ export function generateDetailedTeaserDOM(props, classes) {
         ${eyebrowContent.outerHTML}
         <div class='title'>${title.innerHTML}</div>
         <div class='description'>${description.innerHTML}</div>
-        <div class='cta'>${decorateButtons(firstCta, secondCta)}</div>
+        <div class='cta'>${decorateCustomButtons(firstCta, secondCta)}</div>
       </div>
       <div class='spacer'>
         ${subjectPicture ? subjectPicture.outerHTML : ''}
@@ -48,10 +48,31 @@ export function generateDetailedTeaserDOM(props, classes) {
   return teaserDOM;
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
+  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
   // get the first and only cell from each row
-  const props = [...block.children].map((row) => row.firstElementChild);
-  const teaserDOM = generateDetailedTeaserDOM(props, block.classList);
+  const [imageElement, ...props] = [...block.children].map((row) => row.firstElementChild);
+  const teaserDOM = generateDetailedTeaserDOM([imageElement, ...props], block.classList);
   block.textContent = '';
+
   block.append(teaserDOM);
+
+  const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
+  if (bgColorCls) {
+    const bgColor = `var(--${bgColorCls.substr(3)})`;
+    block.style.backgroundColor = bgColor;
+  }
+
+  if (block.classList.contains('inline-banner') && block.classList.contains('hide-banner') && !UEAuthorMode) {
+    try {
+      const { isSignedInUser } = await import('../../scripts/auth/profile.js');
+      const isSignedIn = await isSignedInUser();
+      if (isSignedIn) {
+        block.style.display = 'none';
+      }
+    } catch (error) {
+      /* eslint-disable-next-line no-console */
+      console.error('Error fetching profile data: ', error);
+    }
+  }
 }

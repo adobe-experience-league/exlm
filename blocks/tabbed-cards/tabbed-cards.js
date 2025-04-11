@@ -1,10 +1,10 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, decorateExternalLinks, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import BuildPlaceholder from '../../scripts/browse-card/browse-card-placeholder.js';
-import { COVEO_SORT_OPTIONS, COVEO_DATE_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
+import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
-import { createTooltip, hideTooltipOnScroll } from '../../scripts/browse-card/browse-card-tooltip.js';
-import { formatTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
+import { createDateCriteria, formatTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 const lang = document.querySelector('html').lang || 'en';
 
@@ -39,59 +39,6 @@ export default async function decorate(block) {
   let tabList = '';
   let viewLinkURLElement = '';
 
-  /**
-   * Formats a date object into a string with the format "YYYY/MM/DD@HH:MM:SS".
-   * @param {Date} dateObj - The date object to be formatted.
-   * @returns {string} The formatted date string.
-   */
-  const getFormattedDate = (dateObj) => {
-    const year = dateObj.getUTCFullYear();
-    const month = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(dateObj.getUTCDate()).padStart(2, '0');
-    const hours = String(dateObj.getUTCHours()).padStart(2, '0');
-    const minutes = String(dateObj.getUTCMinutes()).padStart(2, '0');
-    const seconds = String(dateObj.getUTCSeconds()).padStart(2, '0');
-
-    return `${year}/${month}/${day}@${hours}:${minutes}:${seconds}`;
-  };
-
-  /**
-   * Calculates the date range between two dates and returns it in Coveo-compatible format.
-   * @param {Date} startDate - The start date of the range.
-   * @param {Date} endDate - The end date of the range.
-   * @returns {string} The date range string in Coveo-compatible format.
-   */
-  const getDateRange = (startDate, endDate) => `${getFormattedDate(startDate)}..${getFormattedDate(endDate)}`;
-
-  /**
-   * Constructs date criteria based on a list of date options.
-   * @returns {Array} Array of date criteria.
-   */
-  const createDateCriteria = () => {
-    const dateCriteria = [];
-    const dateOptions = {
-      [COVEO_DATE_OPTIONS.WITHIN_ONE_MONTH]: { monthsAgo: 1 },
-      [COVEO_DATE_OPTIONS.WITHIN_SIX_MONTHS]: { monthsAgo: 6 },
-      [COVEO_DATE_OPTIONS.WITHIN_ONE_YEAR]: { yearsAgo: 1 },
-      [COVEO_DATE_OPTIONS.MORE_THAN_ONE_YEAR_AGO]: { yearsAgo: 50 }, // Assuming 50 years ago as the "more than one year ago" option
-    };
-    dateList.forEach((date) => {
-      if (dateOptions[date]) {
-        const { monthsAgo, yearsAgo } = dateOptions[date];
-        const currentDate = new Date();
-        const startDate = new Date();
-        startDate.setMonth(startDate.getMonth() - (monthsAgo || 0));
-        startDate.setFullYear(startDate.getFullYear() - (yearsAgo || 0));
-        if (date === COVEO_DATE_OPTIONS.MORE_THAN_ONE_YEAR_AGO) {
-          // For "MORE_THAN_ONE_YEAR_AGO", adjust startDate by adding one more year
-          currentDate.setFullYear(currentDate.getFullYear() - 1);
-        }
-        dateCriteria.push(getDateRange(startDate, currentDate));
-      }
-    });
-    return dateCriteria;
-  };
-
   // Clearing the block's content and applying CSS class
   block.innerHTML = '';
   block.classList.add('browse-cards-block');
@@ -106,14 +53,15 @@ export default async function decorate(block) {
   `);
 
   if (toolTipElement?.textContent?.trim()) {
-    headerDiv
-      .querySelector('h1,h2,h3,h4,h5,h6')
-      ?.insertAdjacentHTML('afterend', '<div class="tooltip-placeholder"></div>');
-    const tooltipElem = headerDiv.querySelector('.tooltip-placeholder');
-    const tooltipConfig = {
-      content: toolTipElement.textContent.trim(),
-    };
-    createTooltip(block, tooltipElem, tooltipConfig);
+    const tooltip = htmlToElement(`
+    <div class="tooltip-placeholder">
+    <div class="tooltip tooltip-right">
+      <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement.textContent.trim()}</span>
+    </div>
+    </div>
+  `);
+    decorateIcons(tooltip);
+    headerDiv.querySelector('h1,h2,h3,h4,h5,h6')?.insertAdjacentElement('afterend', tooltip);
   }
 
   // Appending header div to the block
@@ -127,8 +75,8 @@ export default async function decorate(block) {
     contentDiv = document.createElement('div');
     contentDiv.classList.add('browse-cards-block-content', 'tabbed-cards-block');
 
-    buildCardsShimmer = new BuildPlaceholder();
-    buildCardsShimmer.add(block);
+    buildCardsShimmer = new BrowseCardShimmer();
+    buildCardsShimmer.addShimmer(block);
   }
 
   let placeholders = {};
@@ -145,14 +93,14 @@ export default async function decorate(block) {
       contentType: contentType && contentType.split(','),
       sortCriteria,
       numberOfResults,
-      dateCriteria: dateList && createDateCriteria(),
+      dateCriteria: dateList && createDateCriteria(dateList),
     };
 
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(params);
     browseCardsContent
       .then((data) => {
         // Hide shimmer placeholders
-        buildCardsShimmer.remove();
+        buildCardsShimmer.removeShimmer();
         if (data?.length) {
           // Render cards
           for (let i = 0; i < Math.min(numberOfResults, data.length); i += 1) {
@@ -163,20 +111,18 @@ export default async function decorate(block) {
           }
           // Append content div to shimmer card parent and decorate icons
           block.appendChild(contentDiv);
-          contentDiv.style.display = 'flex';
-          /* Hide Tooltip while scrolling the cards layout */
-          hideTooltipOnScroll(contentDiv);
+          contentDiv.classList.remove('hide-tab');
         } else {
-          buildCardsShimmer.remove();
+          buildCardsShimmer.removeShimmer();
           buildNoResultsContent(block, true);
-          contentDiv.style.display = 'none';
+          contentDiv.classList.add('hide-tab');
         }
       })
       .catch((err) => {
         // Hide shimmer placeholders on error
-        buildCardsShimmer.remove();
+        buildCardsShimmer.removeShimmer();
         buildNoResultsContent(block, true);
-        contentDiv.style.display = 'none';
+        contentDiv.classList.add('hide-tab');
         /* eslint-disable-next-line no-console */
         console.error(err);
       });
@@ -212,6 +158,7 @@ export default async function decorate(block) {
         tabLabel.classList.add('active');
         if (tabbedContent) {
           tabbedContent.innerHTML = '';
+          contentDiv.classList.add('hide-tab');
         }
 
         // Clear No Results Content if avaliabel
@@ -223,7 +170,7 @@ export default async function decorate(block) {
         viewLinkURLElement.innerHTML = placeholders[`tabbedCard${contentTypeTitleCase}ViewAllLabel`] || 'View All';
         viewLinkURLElement.setAttribute('href', urlMap[contentTypeLowerCase]);
         tabList.appendChild(viewLinkURLElement);
-        buildCardsShimmer.add(block);
+        buildCardsShimmer.addShimmer(block);
         fetchDataAndRenderBlock(contentTypeLowerCase);
       });
       tabListUlElement.appendChild(tabLabel);
@@ -241,7 +188,7 @@ export default async function decorate(block) {
     // Append tab list and Shimmer Card after Tab Label
     const shimmerClass = block.querySelector('.browse-card-shimmer');
     block.insertBefore(tabList, shimmerClass);
-    buildCardsShimmer.add(block);
+    buildCardsShimmer.addShimmer(block);
 
     // Update view link for initial content type
     viewLinkURLElement.innerHTML =
