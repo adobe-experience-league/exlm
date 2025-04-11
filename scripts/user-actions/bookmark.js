@@ -33,10 +33,10 @@ async function isBookmarked(bookmarkId) {
  * @param {string} config.tooltips - tooltips object to be displayed in a toast notification.
  */
 export async function bookmarkHandler(config) {
-  const { element, id: idValue, tooltips } = config;
+  const { element, id: idValue, bookmarkPath, tooltips } = config;
   const { lang: languageCode } = getPathDetails();
-  const profileData = await defaultProfileClient.getMergedProfile();
-  let id = idValue;
+  const profileData = await defaultProfileClient.getMergedProfile(true);
+  let id = bookmarkPath || idValue;
   if (idValue.includes(`/${languageCode}`)) {
     id = idValue.replace(`/${languageCode}`, '');
   }
@@ -78,7 +78,8 @@ export async function bookmarkHandler(config) {
  * @param {string} config.tooltips - Object for creating the tooltips.
  */
 export async function decorateBookmark(config) {
-  const { element, id, tooltips } = config;
+  const { element, id, bookmarkPath, tooltips } = config;
+
   const isSignedIn = await isSignedInUser();
 
   if (isSignedIn) {
@@ -94,7 +95,10 @@ export async function decorateBookmark(config) {
     element.appendChild(bookmarkTooltip);
     element.appendChild(removeBookmarkTooltip);
 
-    element.dataset.bookmarked = id ? await isBookmarked(id) : false;
+    let isPageBookmarked = bookmarkPath ? await isBookmarked(bookmarkPath) : false;
+    if (!isPageBookmarked) isPageBookmarked = id ? await isBookmarked(id) : false;
+
+    element.dataset.bookmarked = isPageBookmarked;
   } else {
     const signInToBookmarkTooltip = htmlToElement(
       `<span class="action-tooltip signedin-tooltip">${

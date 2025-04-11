@@ -78,6 +78,13 @@ const getBookmarkId = ({ id, viewLink, contentType }) => {
   return viewLink ? new URL(viewLink).pathname : '';
 };
 
+const getBookmarkPath = ({ id, viewLink, contentType }) => {
+  if (contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY && id) {
+    return `/playlists/${id}`;
+  }
+  return viewLink ? new URL(viewLink).pathname : '';
+};
+
 const formatDate = (dateString) => {
   if (!dateString) return null;
   const date = new Date(dateString);
@@ -302,6 +309,7 @@ const buildCardContent = async (card, model) => {
   const cardAction = UserActions({
     container: cardOptions,
     id: getBookmarkId({ id, viewLink, contentType }),
+    bookmarkPath: getBookmarkPath({ id, viewLink, contentType }),
     link: copyLink,
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,

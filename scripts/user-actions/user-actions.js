@@ -27,7 +27,7 @@ try {
  * @returns {Object} - Object with a decorate method to render user actions.
  */
 const UserActions = (config) => {
-  const { container, id, link, bookmarkConfig, copyConfig, callback } = config;
+  const { container, id, bookmarkPath, link, bookmarkConfig, copyConfig, callback } = config;
 
   /**
    * Renders an icon as an HTML string.
@@ -88,6 +88,7 @@ const UserActions = (config) => {
           decorateBookmark({
             element,
             id,
+            bookmarkPath,
             tooltips: {
               bookmarkTooltip: placeholders?.userActionBookmarkTooltip || 'Bookmark page',
               removeBookmarkTooltip: placeholders?.userActionRemoveBookmarkTooltip || 'Remove Bookmark',
@@ -98,6 +99,7 @@ const UserActions = (config) => {
           bookmarkHandler({
             element,
             id,
+            bookmarkPath,
             tooltips: {
               bookmarkToastText:
                 placeholders?.userActionBookmarkToastText || 'Success! This is bookmarked to your profile.',
