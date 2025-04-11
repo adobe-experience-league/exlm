@@ -184,19 +184,19 @@ div.marquee-wrapper {
 .marquee.straight.small .marquee-subject,
 .marquee.straight.small .marquee-background,
 .marquee.straight.small .marquee-subject img {
-  min-height: 150px;
+  height: 150px;
 }
 
 .marquee.straight.medium .marquee-subject,
 .marquee.straight.medium .marquee-background,
 .marquee.straight.medium .marquee-subject img {
-  min-height: 200px;
+  height: 200px;
 }
 
 .marquee.straight.large .marquee-subject,
 .marquee.straight.large .marquee-background,
 .marquee.straight.large .marquee-subject img {
-  min-height: 280px;
+  height: 280px;
 }
 
 body[class^='article-'] .marquee-content-container {
@@ -292,18 +292,19 @@ body[class^='article-'] .marquee-content-container {
   .marquee.straight.small .marquee-background,
   .marquee.straight.small .marquee-subject img {
     min-height: var(--marquee-height-small);
+    height: var(--marquee-height-small);
   }
 
   .marquee.straight.medium .marquee-subject,
   .marquee.straight.medium .marquee-background,
   .marquee.straight.medium .marquee-subject img {
-    min-height: var(--marquee-height-medium);
+    height: var(--marquee-height-medium);
   }
 
   .marquee.straight.large .marquee-subject,
   .marquee.straight.large .marquee-background,
   .marquee.straight.large .marquee-subject img {
-    min-height: var(--marquee-height-large);
+    height: var(--marquee-height-large);
   }
 }
 
@@ -459,6 +460,24 @@ body[class^='article-'] .marquee-content-container {
 
   .marquee.small .marquee-bg-filler {
     left: 400px;
+  }
+
+  .marquee.straight.small .marquee-subject,
+  .marquee.straight.small .marquee-background,
+  .marquee.straight.small .marquee-subject img {
+    min-height: var(--marquee-height-small);
+  }
+
+  .marquee.straight.medium .marquee-subject,
+  .marquee.straight.medium .marquee-background,
+  .marquee.straight.medium .marquee-subject img {
+    min-height: var(--marquee-height-medium);
+  }
+
+  .marquee.straight.large .marquee-subject,
+  .marquee.straight.large .marquee-background,
+  .marquee.straight.large .marquee-subject img {
+    min-height: var(--marquee-height-large);
   }
 }
 
