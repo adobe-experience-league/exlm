@@ -72,12 +72,12 @@ mappings:
   - /content/exlm.resource/es/browse-index.json:/es/browse-index.json
   - /content/exlm.resource/it/browse-index.json:/it/browse-index.json
   - /content/exlm.resource/nl/browse-index.json:/nl/browse-index.json
-  - /content/exlm.resource/pt-BR/browse-index.json:/pt-br/browse-index.json
+  - /content/exlm.resource/pt-br/browse-index.json:/pt-br/browse-index.json
   - /content/exlm.resource/ko/browse-index.json:/ko/browse-index.json
   - /content/exlm.resource/ja/browse-index.json:/ja/browse-index.json
   - /content/exlm.resource/sv/browse-index.json:/sv/browse-index.json
-  - /content/exlm.resource/zh-CN/browse-index.json:/zh-hans/browse-index.json
-  - /content/exlm.resource/zh-TW/browse-index.json:/zh-hant/browse-index.json
+  - /content/exlm.resource/zh-hans/browse-index.json:/zh-hans/browse-index.json
+  - /content/exlm.resource/zh-hant/browse-index.json:/zh-hant/browse-index.json
 
   # perspective indices
   - /content/exlm.resource/en/perspective-index.json:/en/perspective-index.json
@@ -86,12 +86,12 @@ mappings:
   - /content/exlm.resource/es/perspective-index.json:/es/perspective-index.json
   - /content/exlm.resource/it/perspective-index.json:/it/perspective-index.json
   - /content/exlm.resource/nl/perspective-index.json:/nl/perspective-index.json
-  - /content/exlm.resource/pt-BR/perspective-index.json:/pt-br/perspective-index.json
+  - /content/exlm.resource/pt-br/perspective-index.json:/pt-br/perspective-index.json
   - /content/exlm.resource/ko/perspective-index.json:/ko/perspective-index.json
   - /content/exlm.resource/ja/perspective-index.json:/ja/perspective-index.json
   - /content/exlm.resource/sv/perspective-index.json:/sv/perspective-index.json
-  - /content/exlm.resource/zh-CN/perspective-index.json:/zh-hans/perspective-index.json
-  - /content/exlm.resource/zh-TW/perspective-index.json:/zh-hant/perspective-index.json
+  - /content/exlm.resource/zh-hans/perspective-index.json:/zh-hans/perspective-index.json
+  - /content/exlm.resource/zh-hant/perspective-index.json:/zh-hant/perspective-index.json
 
   # playlists inidices
   - /content/exlm.resource/en/playlists.json:/en/playlists.json
@@ -106,20 +106,6 @@ mappings:
   - /content/exlm.resource/sv/playlists.json:/sv/playlists.json
   - /content/exlm.resource/zh-hans/playlists.json:/zh-hans/playlists.json
   - /content/exlm.resource/zh-hant/playlists.json:/zh-hant/playlists.json
-
-    # profile indices
-  - /content/exlm.resource/en/profile-index.json:/en/profile-index.json
-  - /content/exlm.resource/fr/profile-index.json:/fr/profile-index.json
-  - /content/exlm.resource/de/profile-index.json:/de/profile-index.json
-  - /content/exlm.resource/es/profile-index.json:/es/profile-index.json
-  - /content/exlm.resource/it/profile-index.json:/it/profile-index.json
-  - /content/exlm.resource/nl/profile-index.json:/nl/profile-index.json
-  - /content/exlm.resource/pt-BR/profile-index.json:/pt-br/profile-index.json
-  - /content/exlm.resource/ko/profile-index.json:/ko/profile-index.json
-  - /content/exlm.resource/ja/profile-index.json:/ja/profile-index.json
-  - /content/exlm.resource/sv/profile-index.json:/sv/profile-index.json
-  - /content/exlm.resource/zh-CN/profile-index.json:/zh-hans/profile-index.json
-  - /content/exlm.resource/zh-TW/profile-index.json:/zh-hant/profile-index.json
 
   # site indices - for sitemaps
   - /content/exlm.resource/en/query-index.json:/en/query-index.json
