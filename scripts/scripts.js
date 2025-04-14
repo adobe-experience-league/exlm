@@ -151,6 +151,7 @@ export const isPerspectivePage = matchesAnyTheme(/articles/);
 export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
+export const ANNOUNCEMENT_RIBBON_STORAGE_KEY = 'announcement-ribbon';
 
 /**
  * add a section for the left rail when on a browse page.
@@ -583,23 +584,22 @@ async function loadEager(doc) {
   }
 }
 
-async function cleanUpLocalRibbonEntries() {
+function cleanUpLocalRibbonEntries() {
   if (localStorage.getItem('hideRibbonBlock')) {
     localStorage.removeItem('hideRibbonBlock');
   }
-  const pagePath = window.location.pathname;
-  const storedEntries = JSON.parse(localStorage.getItem('announcement-ribbon') || '[]');
-  if (!storedEntries.length) return;
+  const storedEntries = JSON.parse(localStorage.getItem(ANNOUNCEMENT_RIBBON_STORAGE_KEY));
 
+  const pagePath = window.location.pathname;
   const domRibbonIds = Array.from(document.querySelectorAll('.announcement-ribbon.dismissable'))
     .map((block) => block.parentElement?.getAttribute('data-id'))
     .filter(Boolean);
 
   const newStore = storedEntries.filter((entry) => entry.pagePath !== pagePath || domRibbonIds.includes(entry.id));
   if (newStore.length === 0) {
-    localStorage.removeItem('announcement-ribbon');
+    localStorage.removeItem(ANNOUNCEMENT_RIBBON_STORAGE_KEY);
   } else {
-    localStorage.setItem('announcement-ribbon', JSON.stringify(newStore));
+    localStorage.setItem(ANNOUNCEMENT_RIBBON_STORAGE_KEY, JSON.stringify(newStore));
   }
 }
 
@@ -1275,7 +1275,9 @@ async function loadPage() {
       loadDefaultModule(`${window.hlx.codeBasePath}/scripts/related-content/related-content-widget.js`);
     }
   }
-  await cleanUpLocalRibbonEntries();
+  if (document.querySelector('.announcement-ribbon-wrapper') && localStorage.getItem(ANNOUNCEMENT_RIBBON_STORAGE_KEY)) {
+    cleanUpLocalRibbonEntries();
+  }
 }
 
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC

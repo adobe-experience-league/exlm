@@ -2,17 +2,17 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { MD5 } from '../../scripts/crypto.js';
+import { ANNOUNCEMENT_RIBBON_STORAGE_KEY } from '../../scripts/scripts.js';
 
-const STORAGE_KEY = 'announcement-ribbon';
 const ribbonStore = {
   /**
    * @param {string} pagePath
    * @param {string} id
    */
   set: (pagePath, id) => {
-    const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const existingStore = JSON.parse(localStorage.getItem(ANNOUNCEMENT_RIBBON_STORAGE_KEY)) || [];
     const updatedStore = [...existingStore, { pagePath, id }];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
+    localStorage.setItem(ANNOUNCEMENT_RIBBON_STORAGE_KEY, JSON.stringify(updatedStore));
   },
   /**
    * Retrieves the entry matching the page path and ribbon id from the store.
@@ -20,7 +20,7 @@ const ribbonStore = {
    * @returns {{pagePath: string, id: string} | null}
    */
   get: (pagePath) => {
-    const storedData = localStorage.getItem(STORAGE_KEY);
+    const storedData = localStorage.getItem(ANNOUNCEMENT_RIBBON_STORAGE_KEY);
     if (storedData) {
       const entries = JSON.parse(storedData);
       return entries.filter((entry) => entry.pagePath === pagePath);
@@ -150,8 +150,7 @@ export default async function decorate(block) {
   if (dismissable) {
     const firstCtaData = extractAnchorData(firstCta);
     const secondCtaData = extractAnchorData(secondCta);
-    const url = new URL(window.location.href);
-    pagePath = url.pathname;
+    pagePath = window.location.pathname;
     ribbonId = generateHash(
       [heading, description, firstCtaData.text, firstCtaData.href, secondCtaData.text, secondCtaData.href]
         .map((el) => {
