@@ -100,12 +100,12 @@ mappings:
   - /content/exlm.resource/es/playlists.json:/es/playlists.json
   - /content/exlm.resource/it/playlists.json:/it/playlists.json
   - /content/exlm.resource/nl/playlists.json:/nl/playlists.json
-  - /content/exlm.resource/pt-BR/playlists.json:/pt-br/playlists.json
+  - /content/exlm.resource/pt-br/playlists.json:/pt-br/playlists.json
   - /content/exlm.resource/ko/playlists.json:/ko/playlists.json
   - /content/exlm.resource/ja/playlists.json:/ja/playlists.json
   - /content/exlm.resource/sv/playlists.json:/sv/playlists.json
-  - /content/exlm.resource/zh-CN/playlists.json:/zh-hans/playlists.json
-  - /content/exlm.resource/zh-TW/playlists.json:/zh-hant/playlists.json
+  - /content/exlm.resource/zh-hans/playlists.json:/zh-hans/playlists.json
+  - /content/exlm.resource/zh-hant/playlists.json:/zh-hant/playlists.json
 
     # profile indices
   - /content/exlm.resource/en/profile-index.json:/en/profile-index.json
