@@ -2,17 +2,17 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { MD5 } from '../../scripts/crypto.js';
-import { ANNOUNCEMENT_RIBBON_STORAGE_KEY } from '../../scripts/scripts.js';
 
+const STORAGE_KEY = 'announcement-ribbon';
 const ribbonStore = {
   /**
    * @param {string} pagePath
    * @param {string} id
    */
   set: (pagePath, id) => {
-    const existingStore = JSON.parse(localStorage.getItem(ANNOUNCEMENT_RIBBON_STORAGE_KEY)) || [];
+    const existingStore = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     const updatedStore = [...existingStore, { pagePath, id }];
-    localStorage.setItem(ANNOUNCEMENT_RIBBON_STORAGE_KEY, JSON.stringify(updatedStore));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStore));
   },
   /**
    * Retrieves the entry matching the page path and ribbon id from the store.
@@ -20,7 +20,7 @@ const ribbonStore = {
    * @returns {{pagePath: string, id: string} | null}
    */
   get: (pagePath) => {
-    const storedData = localStorage.getItem(ANNOUNCEMENT_RIBBON_STORAGE_KEY);
+    const storedData = localStorage.getItem(STORAGE_KEY);
     if (storedData) {
       const entries = JSON.parse(storedData);
       return entries.filter((entry) => entry.pagePath === pagePath);
@@ -183,3 +183,26 @@ export default async function decorate(block) {
     });
   }
 }
+
+window.addEventListener('delayed-load', async () => {
+  if (localStorage.getItem('hideRibbonBlock')) {
+    localStorage.removeItem('hideRibbonBlock');
+  }
+
+  const storedEntries = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+  if (storedEntries) {
+    const pagePath = window.location.pathname;
+    const domRibbonIds = Array.from(document.querySelectorAll('.announcement-ribbon.dismissable'))
+      .map((block) => block.parentElement?.getAttribute('data-id'))
+      .filter(Boolean);
+
+    const newStore = storedEntries.filter((entry) => entry.pagePath !== pagePath || domRibbonIds.includes(entry.id));
+
+    if (newStore.length === 0) {
+      localStorage.removeItem(STORAGE_KEY);
+    } else {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newStore));
+    }
+  }
+});

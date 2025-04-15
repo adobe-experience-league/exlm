@@ -151,7 +151,6 @@ export const isPerspectivePage = matchesAnyTheme(/articles/);
 export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
-export const ANNOUNCEMENT_RIBBON_STORAGE_KEY = 'announcement-ribbon';
 
 /**
  * add a section for the left rail when on a browse page.
@@ -581,25 +580,6 @@ async function loadEager(doc) {
     }
   } catch (e) {
     // do nothing
-  }
-}
-
-function cleanUpLocalRibbonEntries() {
-  if (localStorage.getItem('hideRibbonBlock')) {
-    localStorage.removeItem('hideRibbonBlock');
-  }
-  const storedEntries = JSON.parse(localStorage.getItem(ANNOUNCEMENT_RIBBON_STORAGE_KEY));
-
-  const pagePath = window.location.pathname;
-  const domRibbonIds = Array.from(document.querySelectorAll('.announcement-ribbon.dismissable'))
-    .map((block) => block.parentElement?.getAttribute('data-id'))
-    .filter(Boolean);
-
-  const newStore = storedEntries.filter((entry) => entry.pagePath !== pagePath || domRibbonIds.includes(entry.id));
-  if (newStore.length === 0) {
-    localStorage.removeItem(ANNOUNCEMENT_RIBBON_STORAGE_KEY);
-  } else {
-    localStorage.setItem(ANNOUNCEMENT_RIBBON_STORAGE_KEY, JSON.stringify(newStore));
   }
 }
 
@@ -1274,9 +1254,6 @@ async function loadPage() {
       loadDefaultModule(`${window.hlx.codeBasePath}/scripts/tutorial-widgets/tutorial-widgets.js`);
       loadDefaultModule(`${window.hlx.codeBasePath}/scripts/related-content/related-content-widget.js`);
     }
-  }
-  if (document.querySelector('.announcement-ribbon-wrapper') && localStorage.getItem(ANNOUNCEMENT_RIBBON_STORAGE_KEY)) {
-    cleanUpLocalRibbonEntries();
   }
 }
 
