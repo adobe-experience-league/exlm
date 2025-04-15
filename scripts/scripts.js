@@ -69,7 +69,7 @@ export function getPathDetails() {
   // 1 is the index of the language in the path for EDS paths like /en/path/to/content
   let lang = isContentPath ? languagesMap.get(safeLangGet(4)) : safeLangGet(1);
   // remove suffix from lang if any
-  if (lang.indexOf('.') > -1) {
+  if (lang?.indexOf('.') > -1) {
     lang = lang.substring(0, lang.indexOf('.'));
   }
   if (!lang) lang = 'en'; // default to en
