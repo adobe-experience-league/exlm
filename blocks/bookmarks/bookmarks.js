@@ -7,7 +7,7 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import getEmitter from '../../scripts/events.js';
 import { getCardData, convertToTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
-import sanitizeBookmarks from '../../scripts/sanitize-bookmarks.js';
+import { sanitizeBookmarks } from '../../scripts/user-actions/bookmark.js';
 
 const BATCH_SIZE = 6;
 const bookmarksEventEmitter = getEmitter('bookmarks');
