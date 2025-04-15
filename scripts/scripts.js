@@ -46,6 +46,15 @@ async function loadFonts() {
  */
 export function getPathDetails() {
   const languagesMap = new Map([
+    ['en', 'en'],
+    ['de', 'de'],
+    ['es', 'es'],
+    ['fr', 'fr'],
+    ['it', 'it'],
+    ['nl', 'nl'],
+    ['sv', 'sv'],
+    ['ja', 'ja'],
+    ['ko', 'ko'],
     ['pt-BR', 'pt-br'],
     ['zh-CN', 'zh-hans'],
     ['zh-TW', 'zh-hant'],
