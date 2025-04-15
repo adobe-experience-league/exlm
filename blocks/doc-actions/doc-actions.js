@@ -116,6 +116,7 @@ export default async function decorate(block) {
           container,
           id: ((document.querySelector('meta[name="id"]') || {}).content || '').trim(),
           link: window.location.href,
+          bookmarkPath: new URL(window.location.href).pathname,
           bookmarkConfig: {
             label: placeholders?.userActionBookmarkLabel || 'Bookmark',
           },
