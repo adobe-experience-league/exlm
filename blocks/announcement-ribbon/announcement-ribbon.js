@@ -7,8 +7,8 @@ const STORAGE_KEY = 'announcement-ribbon';
 const ribbonStore = {
   remove: () => {
     // Storage key name has been updated. It is a temporary condition to remove the old key.
-    if (localStorage.getItem('hideRibbonBlock')) {
-      localStorage.removeItem('hideRibbonBlock');
+    if (localStorage.getItem('hide-ribbon-block')) {
+      localStorage.removeItem('hide-ribbon-block');
     }
     const storedEntries = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (storedEntries) {
