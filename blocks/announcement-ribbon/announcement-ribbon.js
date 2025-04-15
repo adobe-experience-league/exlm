@@ -5,6 +5,25 @@ import { MD5 } from '../../scripts/crypto.js';
 
 const STORAGE_KEY = 'announcement-ribbon';
 const ribbonStore = {
+  remove: () => {
+    // Storage key name has been updated. It is a temporary condition to remove the old key.
+    if (localStorage.getItem('hideRibbonBlock')) {
+      localStorage.removeItem('hideRibbonBlock');
+    }
+    const storedEntries = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (storedEntries) {
+      const pagePath = window.location.pathname;
+      const ribbonIds = Array.from(document.querySelectorAll('.announcement-ribbon.dismissable'))
+        .map((block) => block.parentElement?.getAttribute('data-id'))
+        .filter(Boolean);
+      const newStore = storedEntries.filter((entry) => entry.pagePath !== pagePath || ribbonIds.includes(entry.id));
+      if (newStore.length === 0) {
+        localStorage.removeItem(STORAGE_KEY);
+      } else {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newStore));
+      }
+    }
+  },
   /**
    * @param {string} pagePath
    * @param {string} id
@@ -185,24 +204,5 @@ export default async function decorate(block) {
 }
 
 window.addEventListener('delayed-load', async () => {
-  if (localStorage.getItem('hideRibbonBlock')) {
-    localStorage.removeItem('hideRibbonBlock');
-  }
-
-  const storedEntries = JSON.parse(localStorage.getItem(STORAGE_KEY));
-
-  if (storedEntries) {
-    const pagePath = window.location.pathname;
-    const domRibbonIds = Array.from(document.querySelectorAll('.announcement-ribbon.dismissable'))
-      .map((block) => block.parentElement?.getAttribute('data-id'))
-      .filter(Boolean);
-
-    const newStore = storedEntries.filter((entry) => entry.pagePath !== pagePath || domRibbonIds.includes(entry.id));
-
-    if (newStore.length === 0) {
-      localStorage.removeItem(STORAGE_KEY);
-    } else {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newStore));
-    }
-  }
+  ribbonStore.remove();
 });
