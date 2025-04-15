@@ -107,20 +107,6 @@ mappings:
   - /content/exlm.resource/zh-CN/playlists.json:/zh-hans/playlists.json
   - /content/exlm.resource/zh-TW/playlists.json:/zh-hant/playlists.json
 
-    # profile indices
-  - /content/exlm.resource/en/profile-index.json:/en/profile-index.json
-  - /content/exlm.resource/fr/profile-index.json:/fr/profile-index.json
-  - /content/exlm.resource/de/profile-index.json:/de/profile-index.json
-  - /content/exlm.resource/es/profile-index.json:/es/profile-index.json
-  - /content/exlm.resource/it/profile-index.json:/it/profile-index.json
-  - /content/exlm.resource/nl/profile-index.json:/nl/profile-index.json
-  - /content/exlm.resource/pt-BR/profile-index.json:/pt-br/profile-index.json
-  - /content/exlm.resource/ko/profile-index.json:/ko/profile-index.json
-  - /content/exlm.resource/ja/profile-index.json:/ja/profile-index.json
-  - /content/exlm.resource/sv/profile-index.json:/sv/profile-index.json
-  - /content/exlm.resource/zh-CN/profile-index.json:/zh-hans/profile-index.json
-  - /content/exlm.resource/zh-TW/profile-index.json:/zh-hant/profile-index.json
-
   # site indices - for sitemaps
   - /content/exlm.resource/en/query-index.json:/en/query-index.json
   - /content/exlm.resource/fr/query-index.json:/fr/query-index.json

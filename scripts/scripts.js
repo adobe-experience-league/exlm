@@ -45,6 +45,11 @@ async function loadFonts() {
  * Considers pathnames like /en/path/to/content and /content/exl/global/en/path/to/content.html for both EDS and AEM
  */
 export function getPathDetails() {
+  const languagesMap = new Map([
+    ['pt-BR', 'pt-br'],
+    ['zh-CN', 'zh-hans'],
+    ['zh-TW', 'zh-hant'],
+  ]);
   const { pathname } = window.location;
   const extParts = pathname.split('.');
   const ext = extParts.length > 1 ? extParts[extParts.length - 1] : '';
@@ -53,9 +58,10 @@ export function getPathDetails() {
   const safeLangGet = (index) => (parts.length > index ? parts[index] : 'en');
   // 4 is the index of the language in the path for AEM content paths like  /content/exl/global/en/path/to/content.html
   // 1 is the index of the language in the path for EDS paths like /en/path/to/content
-  let lang = isContentPath ? safeLangGet(4) : safeLangGet(1);
+  const rawLang = isContentPath ? safeLangGet(4) : safeLangGet(1);
+  let lang = languagesMap.get(rawLang) || rawLang;
   // remove suffix from lang if any
-  if (lang.indexOf('.') > -1) {
+  if (lang?.indexOf('.') > -1) {
     lang = lang.substring(0, lang.indexOf('.'));
   }
   if (!lang) lang = 'en'; // default to en
