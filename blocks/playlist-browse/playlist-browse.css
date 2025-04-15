@@ -26,58 +26,6 @@
   margin: 0 auto;
 }
 
-.playlist-browse-marquee {
-  display: grid;
-  grid-template-columns: 1fr;
-  position: relative;
-  max-width: unset !important;
-  box-sizing: content-box;
-  margin-left: calc(-1 * var(--spectrum-spacing-800)) !important;
-  margin-right: calc(-1 * var(--spectrum-spacing-800)) !important;
-}
-
-.playlist-browse-marquee-background {
-  display: flex;
-  flex-direction: column;
-  justify-content: end;
-}
-
-.playlist-browse-marquee-background picture,
-.playlist-browse-marquee-background img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: left;
-  max-height: 275px;
-}
-
-@media (width >= 900px) {
-  .playlist-browse-marquee {
-    grid-template-columns: 1fr 1fr;
-    margin-left: calc(-1 * var(--spectrum-spacing-800)) !important;
-    margin-right: calc(-1 * var(--spectrum-spacing-800)) !important;
-    padding-left: 4em;
-    padding-top: 5em;
-    padding-bottom: 1em;
-  }
-
-  .playlist-browse-marquee-background {
-    order: 1;
-  }
-
-  .playlist-browse-marquee-background picture,
-  .playlist-browse-marquee-background img {
-    object-fit: cover;
-  }
-}
-
-.playlist-browse-marquee-content {
-  max-width: var(--default-max-width);
-  padding-left: var(--spectrum-spacing-800) !important;
-  padding-right: var(--spectrum-spacing-800) !important;
-}
-
 /* playlist filter */
 .playlist-filter-container {
   display: flex;
