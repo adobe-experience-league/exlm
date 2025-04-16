@@ -35,9 +35,3 @@
   font-size: var(--spectrum-font-size-100);
   margin-right: 7px;
 }
-
-.article-metadata-container .article-metadata-appliesto-wrapper {
-  border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
-  padding-bottom: 38px;
-  margin-bottom: 32px;
-}
