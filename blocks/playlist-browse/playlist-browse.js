@@ -1,5 +1,11 @@
 import { createOptimizedPicture, decorateIcons } from '../../scripts/lib-franklin.js';
-import { createPlaceholderSpan, decoratePlaceholders, getPathDetails, htmlToElement } from '../../scripts/scripts.js';
+import {
+  createPlaceholderSpan,
+  decoratePlaceholders,
+  getPathDetails,
+  htmlToElement,
+  fetchWithFallback,
+} from '../../scripts/scripts.js';
 import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.js';
 
 const EXPERIENCE_LEVEL_PLACEHOLDERS = [
@@ -53,7 +59,9 @@ const PLACEHOLDERS = {
 
 async function fetchPlaylists() {
   const { lang } = getPathDetails();
-  const resp = await fetch(`/${lang}/playlists.json`);
+  const path = `${window.hlx.codeBasePath}/${lang}/playlists.json`;
+  const fallback = `${window.hlx.codeBasePath}/en/playlists.json`;
+  const resp = await fetchWithFallback(path, fallback);
   return resp.json();
 }
 
