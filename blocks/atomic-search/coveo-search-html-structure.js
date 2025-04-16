@@ -284,7 +284,6 @@ const getCoveoAtomicMarkup = () => {
               atomic-layout-section[section='main'] {
                 padding-left: 36px;
                 padding-right: 20px;
-                background-color: white;
                 border-top: 1px solid #E1E1E1;
                 @media(max-width: 1024px) {
                   padding-left: 20px;

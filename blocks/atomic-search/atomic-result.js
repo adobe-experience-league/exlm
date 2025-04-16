@@ -70,8 +70,8 @@ export default function atomicResultHandler() {
         }
 
         const productElWrap = resultItem?.querySelector('.result-product')?.firstElementChild?.shadowRoot;
-        const productElements = productElWrap.querySelectorAll('li');
-        const contentTypeElements = contentTypeElParent.querySelectorAll('li');
+        const productElements = productElWrap?.querySelectorAll('li') || [];
+        const contentTypeElements = contentTypeElParent?.querySelectorAll('li') || [];
 
         contentTypeElements.forEach((contentTypeEl) => {
           const contentType = contentTypeEl.textContent.toLowerCase().trim();
