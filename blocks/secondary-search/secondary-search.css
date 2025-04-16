@@ -1,6 +1,12 @@
 .section.secondary-search-container {
   margin-top: 0;
-  padding: 40px 20px 56px;
+  width: 100%;
+  padding: 8px 20px 56px;
+  box-sizing: border-box;
+}
+
+.secondary-search-container * {
+  box-sizing: border-box;
 }
 
 .secondary-search > div {
@@ -67,9 +73,26 @@
   margin-right: 5px;
 }
 
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 .secondary-search .icon {
   width: 16px;
   height: 16px;
+}
+
+.secondary-search .facet-modal {
+  display: none;
+  background-color: white;
+  position: absolute;
+  z-index: 1;
+  max-width: calc(100% - 40px);
 }
 
 @media (min-width: 600px) {
