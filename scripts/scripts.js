@@ -716,7 +716,7 @@ export function getConfig() {
     liveEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
-    searchUrl: `${cdnOrigin}/search.html`,
+    searchUrl: `https://atomic-search--exlm--adobe-experience-league.aem.page/en/test-folder/test-page/test-page2`,
     articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
