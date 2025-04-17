@@ -53,5 +53,7 @@
 }
 
 .article-metadata-container .article-metadata-createdby-wrapper {
-  margin-bottom: 5px;
+  border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
+  padding-bottom: 38px;
+  margin-bottom: 32px;
 }
