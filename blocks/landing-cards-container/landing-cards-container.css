@@ -1,0 +1,170 @@
+.landing-cards-container {
+  margin: 0 auto;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* grid layout */
+.landing-cards-container > div > div {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* individual card styling */
+.landing-cards-container > div > div > div {
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: 0 4px 15px rgb(0 0 0 / 10%);
+  overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.landing-cards-container > div > div > div:hover {
+  box-shadow: 0 10px 25px rgb(0 0 0 / 15%);
+}
+
+.landing-cards-container br {
+  display: block;
+  content: '';
+}
+
+/* image container (if present - not sure about the if present part) */
+.landing-cards-container picture {
+  width: 100%;
+  display: block;
+}
+
+.landing-cards-container img {
+  width: 100%;
+  display: block;
+}
+
+/* spacing after images */
+.landing-cards-container img + br {
+  margin-top: 10px;
+}
+
+/* text content padding */
+.landing-cards-container > div > div > div > h4,
+.landing-cards-container > div > div > div > p {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+/* title styling - with picture */
+.landing-cards-container > div > div > div > picture + br + text {
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* description styling - with picture */
+.landing-cards-container > div > div > div > picture + br + text + br + text {
+  font-size: 18px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* body styling - with picture */
+.landing-cards-container > div > div > div > picture + br + text + br + text + br + text {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 15px;
+  display: block;
+}
+
+/* content without images - apply padding at the top */
+.landing-cards-container > div > div > div > br:first-child {
+  margin-top: 20px;
+}
+
+/* title styling - without picture */
+.landing-cards-container > div > div > div > br:nth-of-type(1) + text {
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* description styling - without picture */
+.landing-cards-container > div > div > div > br:nth-of-type(2) + text {
+  font-size: 18px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* body styling - without picture */
+.landing-cards-container > div > div > div > br:nth-of-type(3) + text {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 15px;
+  display: block;
+}
+
+/* link styling */
+.landing-cards-container a {
+  color: #1473e6;
+  text-decoration: none;
+  font-weight: 500;
+  margin-top: 10px;
+  display: inline-block;
+}
+
+.landing-cards-container a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .landing-cards-container > div > div {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 16px;
+  }
+
+  .landing-cards-container > div > div > div > picture + br + text {
+    font-size: 20px;
+  }
+
+  .landing-cards-container > div > div > div > br:nth-of-type(1) + text {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .landing-cards-container > div > div {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 16px;
+  }
+
+  .landing-cards-container > div > div > div > picture + br + text {
+    font-size: 20px;
+  }
+
+  .landing-cards-container > div > div > div > picture + br + text + br + text {
+    font-size: 16px;
+  }
+
+  .landing-cards-container > div > div > div > br:nth-of-type(1) + text {
+    font-size: 20px;
+  }
+
+  .landing-cards-container > div > div > div > br:nth-of-type(2) + text {
+    font-size: 16px;
+  }
+}
