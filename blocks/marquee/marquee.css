@@ -447,6 +447,12 @@ body[class^='article-'] .marquee-content-container {
     right: -200px;
   }
 
+  .marquee.straight.large .marquee-background,
+  .marquee.straight.medium .marquee-background,
+  .marquee.straight.small .marquee-background {
+    height: unset;
+  }
+
   .marquee.straight .marquee-subject {
     inset: 0;
   }
@@ -457,18 +463,6 @@ body[class^='article-'] .marquee-content-container {
 
   .marquee.small .marquee-bg-filler {
     left: 400px;
-  }
-
-  .marquee.straight.small .marquee-background {
-    min-height: var(--marquee-height-small);
-  }
-
-  .marquee.straight.medium .marquee-background {
-    min-height: var(--marquee-height-medium);
-  }
-
-  .marquee.straight.large .marquee-background {
-    min-height: var(--marquee-height-large);
   }
 }
 
