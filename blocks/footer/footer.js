@@ -143,17 +143,21 @@ function decorateCopyrightsMenu(footer) {
   copyRightWrapper.classList.add('footer-copyrights-element');
   const footerMenu = footer.querySelector('.footer-menu');
   footerMenu.parentElement.appendChild(footerLastRow);
+  decorateIcons(footerRights);
+}
+
+function decorateLanguageSelector(footer, lang) {
   const languageSelector = footer.querySelector('.language-selector');
   const languageBlock = new LanguageBlock({
     position: 'top',
     popoverId: 'language-picker-popover-footer',
     block: languageSelector,
+    selectedLanguage: lang,
   });
   languageSelector.appendChild(languageBlock);
   const languageSelectorDiv = languageSelector.querySelector('div');
   const languageBlockButton = languageBlock.querySelector('.language-selector-button');
   languageBlockButton.appendChild(languageSelectorDiv);
-  decorateIcons(footerRights);
 }
 
 function handleSocialIconStyles(footer) {
@@ -199,5 +203,6 @@ export default async function decorate(block) {
     await decorateMenu(footer);
     handleSocialIconStyles(footer);
     decorateCopyrightsMenu(footer);
+    decorateLanguageSelector(footer, lang);
   }
 }

@@ -1,4 +1,4 @@
-import { loadPrism } from '../../scripts/delayed.js';
+import { loadPrism } from '../../scripts/utils/prism-utils.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 
 function getDataLineValue(arr) {

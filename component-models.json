@@ -7036,5 +7036,9 @@
   {
     "id": "playlist-browse",
     "fields": []
+  },
+  {
+    "id": "atomic-search",
+    "fields": []
   }
 ]
