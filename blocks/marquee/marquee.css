@@ -181,22 +181,26 @@ div.marquee-wrapper {
   object-position: center;
 }
 
-.marquee.straight.small .marquee-subject,
-.marquee.straight.small .marquee-background,
-.marquee.straight.small .marquee-subject img {
+.marquee.straight .marquee-background,
+.marquee.straight .marquee-subject {
+  min-height: unset;
+}
+
+.marquee.straight.small .marquee-background {
   height: 150px;
 }
 
-.marquee.straight.medium .marquee-subject,
-.marquee.straight.medium .marquee-background,
-.marquee.straight.medium .marquee-subject img {
+.marquee.straight.medium .marquee-background {
   height: 200px;
 }
 
-.marquee.straight.large .marquee-subject,
-.marquee.straight.large .marquee-background,
-.marquee.straight.large .marquee-subject img {
+.marquee.straight.large .marquee-background {
   height: 280px;
+}
+
+.marquee.straight .marquee-subject,
+.marquee.straight .marquee-subject img {
+  height: 100%;
 }
 
 body[class^='article-'] .marquee-content-container {
@@ -288,22 +292,15 @@ body[class^='article-'] .marquee-content-container {
     max-width: 100%;
   }
 
-  .marquee.straight.small .marquee-subject,
-  .marquee.straight.small .marquee-background,
-  .marquee.straight.small .marquee-subject img {
-    min-height: var(--marquee-height-small);
+  .marquee.straight.small .marquee-background {
     height: var(--marquee-height-small);
   }
 
-  .marquee.straight.medium .marquee-subject,
-  .marquee.straight.medium .marquee-background,
-  .marquee.straight.medium .marquee-subject img {
+  .marquee.straight.medium .marquee-background {
     height: var(--marquee-height-medium);
   }
 
-  .marquee.straight.large .marquee-subject,
-  .marquee.straight.large .marquee-background,
-  .marquee.straight.large .marquee-subject img {
+  .marquee.straight.large .marquee-background {
     height: var(--marquee-height-large);
   }
 }
@@ -462,21 +459,15 @@ body[class^='article-'] .marquee-content-container {
     left: 400px;
   }
 
-  .marquee.straight.small .marquee-subject,
-  .marquee.straight.small .marquee-background,
-  .marquee.straight.small .marquee-subject img {
+  .marquee.straight.small .marquee-background {
     min-height: var(--marquee-height-small);
   }
 
-  .marquee.straight.medium .marquee-subject,
-  .marquee.straight.medium .marquee-background,
-  .marquee.straight.medium .marquee-subject img {
+  .marquee.straight.medium .marquee-background {
     min-height: var(--marquee-height-medium);
   }
 
-  .marquee.straight.large .marquee-subject,
-  .marquee.straight.large .marquee-background,
-  .marquee.straight.large .marquee-subject img {
+  .marquee.straight.large .marquee-background {
     min-height: var(--marquee-height-large);
   }
 }
