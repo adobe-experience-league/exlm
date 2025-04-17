@@ -629,7 +629,6 @@ const productGridDecorator = async (productGridBlock, decoratorOptions) => {
  */
 const adobeLogoDecorator = async (adobeLogoBlock) => {
   simplifySingleCellBlock(adobeLogoBlock);
-  adobeLogoBlock.querySelector('a').setAttribute('title', 'logo');
   decorateIcons(adobeLogoBlock);
   return adobeLogoBlock;
 };
