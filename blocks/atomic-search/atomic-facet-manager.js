@@ -24,12 +24,12 @@ export default function atomicFacetManagerHandler() {
 
     facetModalSlot.appendChild(facetManagerElement);
     positionModal();
-    modal.style.backgroundColor = "white";
-    modal.style.width = "100%";
-    modal.style.display = "block";
-    modal.style.position = "absolute";
-    modal.style.zIndex = "1";
-    modal.style.maxWidth = "calc(100% - 40px)";
+    modal.style.backgroundColor = 'white';
+    modal.style.width = '100%';
+    modal.style.display = 'block';
+    modal.style.position = 'absolute';
+    modal.style.zIndex = '1';
+    modal.style.maxWidth = 'calc(100% - 40px)';
     const resultSectionEl = document.querySelector('atomic-layout-section[section="results"]');
     resultSectionEl.style.display = 'none';
     document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate);

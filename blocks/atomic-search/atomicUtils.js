@@ -2,7 +2,10 @@ const DEFAULT_WAIT_TIME = 100; // 100ms.
 
 export const CUSTOM_EVENTS = {
   RESULT_UPDATED: 'COVEO_RESULTS_UPDATED',
+  FILTER_UPDATED: 'COVEO_FILTER_UPDATED',
 };
+
+export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_status', 'el_reply_status'];
 
 export const waitFor = (callback, delay = DEFAULT_WAIT_TIME) => {
   setTimeout(callback, delay);
@@ -49,4 +52,19 @@ export const debounce = (ms, fn) => {
     args.unshift(this);
     timer = setTimeout(fn(args), ms);
   };
+};
+
+export const fragment = () => window.location.hash.slice(1);
+
+export const getFiltersFromUrl = () => {
+  const hash = fragment();
+  const decodedHash = decodeURIComponent(hash);
+  const filtersInfo = decodedHash.split('&').filter((s) => !!s);
+  return filtersInfo.reduce((acc, curr) => {
+    const [facetKeys, facetValueInfo] = curr.split('=');
+    const facetValues = facetValueInfo.split(',');
+    const keyName = facetKeys.replace('f-', '');
+    acc[keyName] = facetValues;
+    return acc;
+  }, {});
 };

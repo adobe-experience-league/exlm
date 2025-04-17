@@ -71,7 +71,6 @@ const getCoveoAtomicMarkup = () => {
                 border-bottom: 2px solid #E1E1E1;
                 border-radius: 4px 4px 0 0;
                 position: relative;
-                background: white;
               }
               atomic-search-box::part(textarea) {
                 display: flex;
@@ -149,6 +148,7 @@ const getCoveoAtomicMarkup = () => {
                 <atomic-search-box
                   suggestion-timeout="5000"
                   number-of-queries="8"
+                  clear-filters="false"
                 >
                   <atomic-search-box-query-suggestions></atomic-search-box-query-suggestions>
                 </atomic-search-box>
@@ -261,16 +261,19 @@ const getCoveoAtomicMarkup = () => {
                 }
               </style>
               <atomic-facet
+                  sort-criteria="alphanumericNaturalDescending"
                   field="el_contenttype"
                   label="Content Type"
                   display-values-as="checkbox"
                 ></atomic-facet>
               <atomic-facet
+                sort-criteria="alphanumericNaturalDescending"
                 field="el_product"
                 label="Product"
                 display-values-as="checkbox"
               ></atomic-facet>
               <atomic-facet
+                sort-criteria="alphanumericNaturalDescending"
                 field="el_role"
                 label="Role"
                 display-values-as="checkbox"
@@ -422,6 +425,10 @@ const getCoveoAtomicMarkup = () => {
                 <atomic-sort-expression
                   label="Newest First"
                   expression="date descending"
+                ></atomic-sort-expression>
+                <atomic-sort-expression
+                  label="Oldest First"
+                  expression="date ascending"
                 ></atomic-sort-expression>
               </atomic-sort-dropdown>
               <atomic-did-you-mean></atomic-did-you-mean>
@@ -678,24 +685,30 @@ const getCoveoAtomicMarkup = () => {
                           
                         </div>
                         <div class="result-icons-wrapper">
-                          <div class="result-icon-item">
-                            ${viewIconSvg}
-                            <span class="icon-text">
-                              <atomic-result-number field="score" number-format="decimal"></atomic-result-number>
-                            </span>
-                          </div>
-                          <div class="result-icon-item">
-                            ${likeIconSvg}
-                            <span class="icon-text">
-                              <atomic-result-number field="score" number-format="decimal"></atomic-result-number>
-                            </span>
-                          </div>
-                          <div class="result-icon-item">
-                            ${shareIconSvg}
-                            <span class="icon-text">
-                              <atomic-result-number field="score" number-format="decimal"></atomic-result-number>
-                            </span>
-                          </div>
+                          <atomic-field-condition if-defined="el_view_status">
+                            <div class="result-icon-item">
+                              ${viewIconSvg}
+                              <span class="icon-text">
+                                <atomic-result-number field="el_view_status" number-format="decimal"></atomic-result-number>
+                              </span>
+                            </div>
+                          </atomic-field-condition>
+                          <atomic-field-condition if-defined="el_kudo_status">
+                            <div class="result-icon-item">
+                              ${likeIconSvg}
+                              <span class="icon-text">
+                                <atomic-result-text field="el_kudo_status"></atomic-result-text>
+                              </span>
+                            </div>
+                          </atomic-field-condition>
+                          <atomic-field-condition if-defined="el_reply_status">
+                            <div class="result-icon-item">
+                              ${shareIconSvg}
+                              <span class="icon-text">
+                                <atomic-result-text field="el_reply_status"></atomic-result-text>
+                              </span>
+                            </div>
+                          </atomic-field-condition>
                         </div>
                         <div>
                           <atomic-result-section-excerpt>
