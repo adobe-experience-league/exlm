@@ -10,4 +10,127 @@
   padding: 0 !important;
   margin: 0 !important;
   max-width: initial !important;
+
+  .h1,
+  h1,
+  .h2,
+  h2,
+  .h3,
+  h3,
+  .h4,
+  h4,
+  .h5,
+  h5,
+  .h6,
+  h6 {
+    font-family: initial;
+    font-size: initial;
+    font-weight: normal;
+    font-style: normal;
+    line-height: normal;
+    color: inherit;
+    margin: 0;
+  }
+
+  /* Reset for paragraphs */
+  .p,
+  p {
+    font-family: initial;
+    font-size: initial;
+    font-weight: normal;
+    font-style: normal;
+    line-height: normal;
+    color: inherit;
+    margin: 0;
+  }
+
+  /* Reset for links */
+  .a,
+  a {
+    font-family: initial;
+    font-size: initial;
+    font-weight: normal;
+    font-style: normal;
+    line-height: normal;
+    color: initial;
+    margin: 0;
+    cursor: auto;
+    text-decoration: underline;
+  }
+
+  /* Reset for lists */
+  ul,
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Reset for tables */
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  /* Reset for sections and divs */
+  .section,
+  div {
+    padding: 0;
+    background-color: transparent;
+  }
+
+  /* Reset for buttons */
+  button {
+    font-family: initial;
+    font-size: initial;
+    font-weight: normal;
+    font-style: normal;
+    cursor: auto;
+    color: initial;
+    background-color: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Reset for images */
+  img {
+    max-width: none;
+    width: auto;
+    height: auto;
+  }
+
+  /* Reset for inputs */
+  input {
+    font-size: initial;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    display: inline;
+  }
+
+  /* Additional global resets */
+  body,
+  html {
+    margin: 0;
+    padding: 0;
+    font-size: 100%;
+    font-family: sans-serif;
+    background-color: transparent;
+    box-sizing: border-box;
+    text-decoration: none;
+  }
+
+  /* Reset other block elements */
+  blockquote,
+  pre,
+  code {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+  }
 }
