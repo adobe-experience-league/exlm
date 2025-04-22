@@ -52,7 +52,8 @@ export default function atomicResultHandler(baseElement) {
         }
 
         const resultItem = resultShadow.querySelector(`.result-item.${isMobileView ? 'mobile-only' : 'desktop-only'}`);
-        const contentTypeElWrap = resultItem?.querySelector('.result-content-type')?.firstElementChild?.shadowRoot;
+        const resultContentType = resultItem?.querySelector('.result-content-type');
+        const contentTypeElWrap = resultContentType?.firstElementChild?.shadowRoot;
 
         if (!resultItem || !contentTypeElWrap) {
           waitFor(hydrateResult);
@@ -89,41 +90,8 @@ export default function atomicResultHandler(baseElement) {
             }
           } else if (!isMobileView) {
             // UI effect is only for desktop.
-            let colourCodes;
-            switch (contentType) {
-              case 'community':
-                colourCodes = '#379947';
-                break;
-              case 'troubleshoot':
-              case 'troubleshooting':
-                colourCodes = '#7A42BF';
-                break;
-              case 'course':
-                colourCodes = '#5151D3';
-                break;
-              case 'tutorial':
-                colourCodes = '#C4A600';
-                break;
-              case 'event':
-                colourCodes = '#A228AD';
-                break;
-              case 'documentation':
-                colourCodes = '#0F797D';
-                break;
-              case 'playlist':
-                colourCodes = '#30a7ff';
-                break;
-
-              case 'perspective':
-                colourCodes = '#F29423';
-                break;
-
-              default:
-                colourCodes = '#6E6E6E';
-                break;
-            }
             const svgIcon = ContentTypeIcons[contentType] || '';
-            contentTypeEl.style.setProperty('--content-type-color', colourCodes);
+            resultContentType.classList.add(contentType);
             const svgElement = contentTypeEl.querySelector('span.svg-element');
             if (svgElement) {
               contentTypeEl.removeChild(svgElement);

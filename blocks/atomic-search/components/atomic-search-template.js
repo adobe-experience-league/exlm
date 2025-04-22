@@ -591,7 +591,17 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 <atomic-result-template>
                   <template>
                   <style>
-                  
+                    :host {
+                      --content-type-playlist-color: #30a7ff;
+                      --content-type-tutorial-color: #10cfa9;
+                      --content-type-documentation-color: #0aa35b;
+                      --content-type-community-color: #ffde2c;
+                      --content-type-certification-color: #b6db00;
+                      --content-type-troubleshooting-color: #ffa213;
+                      --content-type-event-color: #ff709f;
+                      --content-type-perspective-color: #c844dc;
+                      --content-type-default-color: #000000
+                    }
                     .result-root {
                       @media(max-width: 1024px) {
                         max-width: calc(100% - 40px);
@@ -673,18 +683,51 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       flex-wrap: wrap;
                     }
                     .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      border: 1px solid var(--content-type-color);
+                      border: 1px solid var(--content-type-default-color);
                       border-radius: 4px;
                       padding: 4px 8px;
                       width: fit-content;
                       font-size: 12px;
-                      var(--background-color)-space: pre;
-                      color: var(--content-type-color);
+                      white-space: pre;
+                      color: var(--content-type-default-color);
                       display: flex;
                       align-items: center;
                       flex-direction: row-reverse;
                       gap: 4px;
                       white-space: nowrap;
+                    }
+                    .result-content-type.troubleshooting atomic-result-multi-value-text::part(result-multi-value-text-value),
+                    .result-content-type.troubleshoot atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                      border: 1px solid var(--content-type-troubleshooting-color);
+                      color: var(--content-type-troubleshooting-color);
+                    }
+                    .result-content-type.playlist atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                      border: 1px solid var(--content-type-playlist-color);
+                      color: var(--content-type-playlist-color);
+                    }
+                    .result-content-type.tutorial atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                      border: 1px solid var(--content-type-tutorial-color);
+                      color: var(--content-type-tutorial-color);
+                    }
+                    .result-content-type.documentation atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                      border: 1px solid var(--content-type-documentation-color);
+                      color: var(--content-type-documentation-color);
+                    }
+                    .result-content-type.community atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                      border: 1px solid var(--content-type-community-color);
+                      color: var(--content-type-community-color);
+                    }
+                    .result-content-type.certification atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                      border: 1px solid var(--content-type-certification-color);
+                      color: var(--content-type-certification-color);
+                    }
+                    .result-content-type.event atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                      border: 1px solid var(--content-type-event-color);
+                      color: var(--content-type-event-color);
+                    }
+                    .result-content-type.perspective atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                      border: 1px solid var(--content-type-perspective-color);
+                      color: var(--content-type-perspective-color);
                     }
                     .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-separator) {
                       display: none;
