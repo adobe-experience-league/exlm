@@ -24,6 +24,6 @@
   max-width: initial !important;
 }
 
-.html-app-block {
+.html-app.block {
   height: calc(100vh - var(--nav-height));
 }
