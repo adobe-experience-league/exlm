@@ -23,7 +23,3 @@
   margin: 0 !important;
   max-width: initial !important;
 }
-
-.html-app.block {
-  height: calc(100vh - var(--nav-height));
-}
