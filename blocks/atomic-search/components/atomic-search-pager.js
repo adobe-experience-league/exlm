@@ -1,8 +1,6 @@
-import { CUSTOM_EVENTS, waitFor } from './atomicUtils.js';
+import { CUSTOM_EVENTS, waitFor } from './atomic-search-utils.js';
 
-export default function atomicPagerHandler() {
-  const baseElement = document.querySelector('atomic-pager');
-
+export default function atomicPagerHandler(baseElement) {
   function updateNavIconVisibility() {
     const previousElement = baseElement.shadowRoot.querySelector('[part="previous-button"]');
     const nextButton = baseElement.shadowRoot.querySelector('[part="next-button"]');

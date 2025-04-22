@@ -1,8 +1,6 @@
-import { CUSTOM_EVENTS, waitForChildElement } from './atomicUtils.js';
+import { CUSTOM_EVENTS, waitForChildElement } from './atomic-search-utils.js';
 
-export default function atomicFacetHandler() {
-  const atomicFacetElement = document.querySelector('atomic-facet');
-
+export default function atomicFacetHandler(baseElement) {
   const adjustChildElementsPosition = (facet) => {
     if (facet.dataset.childfacet === 'true') {
       const parentName = facet.dataset.parent;
@@ -17,11 +15,11 @@ export default function atomicFacetHandler() {
         }
         const facetParentLabel = facetParentEl.querySelector('label');
         if (facetParentLabel) {
-          facetParentLabel.style.cssText = `padding-botton: 4px`;
+          facetParentLabel.part.add('facet-parent-label');
         }
         const facetParentButton = facetParentEl.querySelector('button');
         if (facetParentButton) {
-          facetParentButton.style.cssText = `margin-top: 4px`;
+          facetParentButton.part.add('facet-parent-button');
         }
       }
     }
@@ -43,9 +41,9 @@ export default function atomicFacetHandler() {
         const spanElement = facet.querySelector('.value-label');
         if (spanElement) {
           spanElement.textContent = facetName;
-          facet.style.cssText = `margin-left: 32px;`;
+          facet.part.add('facet-child-element');
           const labelElement = facet.querySelector('label');
-          labelElement.style.cssText = `padding-top: 6px; padding-bottom: 6px;`;
+          labelElement.part.add('facet-child-label');
           adjustChildElementsPosition(facet);
         }
       }
@@ -126,5 +124,5 @@ export default function atomicFacetHandler() {
     });
   };
   document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate);
-  waitForChildElement(atomicFacetElement, initAtomicFacetUI);
+  waitForChildElement(baseElement, initAtomicFacetUI);
 }

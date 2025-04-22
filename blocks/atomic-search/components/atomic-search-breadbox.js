@@ -1,8 +1,6 @@
-import { CUSTOM_EVENTS } from './atomicUtils.js';
+import { CUSTOM_EVENTS } from './atomic-search-utils.js';
 
-export default function atomicBreadBoxHandler() {
-  const baseElement = document.querySelector('atomic-breadbox');
-
+export default function atomicBreadBoxHandler(baseElement) {
   function updateFilterClearBtnStyles(enabled) {
     const clearBtn = document.querySelector('.clear-label');
     if (enabled) {

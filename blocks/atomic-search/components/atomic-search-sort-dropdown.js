@@ -1,4 +1,3 @@
-import { isMobile } from '../header/header-utils.js';
 import {
   waitForChildElement,
   debounce,
@@ -6,15 +5,18 @@ import {
   getFiltersFromUrl,
   COMMUNITY_SUPPORTED_SORT_ELEMENTS,
   fragment,
-} from './atomicUtils.js';
+  isMobile,
+} from './atomic-search-utils.js';
 
-export default function atomicSortDropdownHandler() {
-  const atomicSortElement = document.querySelector('atomic-sort-dropdown');
+export default function atomicSortDropdownHandler(baseElement) {
+  baseElement.dataset.view = isMobile() ? 'mobile' : 'desktop';
 
   function updateSortUI() {
-    atomicSortElement.style.cssText = isMobile()
-      ? `width: 100%; padding-left: 50px; display: flex; justify-content: flex-end`
-      : '';
+    if (isMobile()) {
+      baseElement.classList.add('atomic-sort-mweb');
+    } else {
+      baseElement.classList.remove('atomic-sort-mweb');
+    }
   }
 
   function updateSortPosition() {
@@ -23,12 +25,12 @@ export default function atomicSortDropdownHandler() {
     if (isMobile()) {
       const exists = !!mobileBase.querySelector('atomic-sort-dropdown');
       if (!exists) {
-        mobileBase.appendChild(atomicSortElement);
+        mobileBase.appendChild(baseElement);
       }
     } else {
       const exists = !!desktopBase.querySelector('atomic-sort-dropdown');
       if (!exists) {
-        desktopBase.appendChild(atomicSortElement);
+        desktopBase.appendChild(baseElement);
       }
     }
   }
@@ -52,7 +54,7 @@ export default function atomicSortDropdownHandler() {
       window.location.hash = updatedHash;
     }
 
-    const selectElement = atomicSortElement.shadowRoot.querySelector('[part="select"]');
+    const selectElement = baseElement.shadowRoot.querySelector('[part="select"]');
     const optionElements = selectElement ? Array.from(selectElement.children) : [];
     optionElements.forEach((option) => {
       const optionKey = option.value;
@@ -63,8 +65,8 @@ export default function atomicSortDropdownHandler() {
   }
 
   const initAtomicSortUI = () => {
-    if (!atomicSortElement.shadowRoot) {
-      waitForChildElement(atomicSortElement, initAtomicSortUI);
+    if (!baseElement.shadowRoot) {
+      waitForChildElement(baseElement, initAtomicSortUI);
       return;
     }
     updateSortUI();
@@ -75,19 +77,20 @@ export default function atomicSortDropdownHandler() {
   function onResize() {
     const isMobileView = isMobile();
     const view = isMobileView ? 'mobile' : 'desktop';
-    if (view !== atomicSortElement.dataset.view) {
-      atomicSortElement.dataset.view = view;
+    if (view !== baseElement.dataset.view) {
+      baseElement.dataset.view = view;
       updateSortUI();
       updateSortPosition();
     }
   }
   const debouncedResize = debounce(200, onResize);
-  window.addEventListener('resize', debouncedResize);
+
   document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, () => {
     setTimeout(() => {
       updateSortOptions();
     }, 250);
   });
+  document.addEventListener(CUSTOM_EVENTS.RESIZED, debouncedResize);
 
   initAtomicSortUI();
 }

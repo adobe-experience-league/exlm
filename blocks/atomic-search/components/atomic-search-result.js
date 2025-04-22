@@ -1,23 +1,24 @@
-import createAtomicSkeleton from './atomic-skeleton.js';
-import { waitForChildElement, waitFor, debounce, CUSTOM_EVENTS } from './atomicUtils.js';
-import { ContentTypeIcons } from './icons.js';
-import { isMobile } from '../header/header-utils.js';
+import createAtomicSkeleton from './atomic-search-skeleton.js';
+import { waitForChildElement, waitFor, debounce, CUSTOM_EVENTS, isMobile } from './atomic-search-utils.js';
+import { ContentTypeIcons } from './atomic-search-icons.js';
+import { decorateIcons } from '../../../scripts/lib-franklin.js';
 
-export default function atomicResultHandler() {
-  const resultList = document.getElementById('coveo-results-list-wrapper');
-  const shadow = resultList.shadowRoot;
+export default function atomicResultHandler(baseElement) {
+  const shadow = baseElement.shadowRoot;
   const container = shadow?.querySelector('[part="result-list"]');
 
   if (!container) {
-    // console.log('[Coveo] Waiting for [part="result-list"] inside atomic-result-list...');
-    waitFor(atomicResultHandler);
+    waitFor(() => {
+      atomicResultHandler(baseElement);
+    });
     return;
   }
 
   // Make result section hidden and start adding skeleton.
   container.style.cssText = 'display: none;';
+  container.dataset.view = isMobile() ? 'mobile' : 'desktop';
   const skeletonWrapper = document.createElement('div');
-  skeletonWrapper.style.cssText = 'display: flex; flex-direction: column';
+  skeletonWrapper.setAttribute('part', 'skeleton');
   skeletonWrapper.innerHTML = `${[...Array(10)]
     .map((_, i) => 10 - i)
     .map(() => {
@@ -62,6 +63,11 @@ export default function atomicResultHandler() {
           waitFor(hydrateResult);
           return;
         }
+        if (!resultItem.dataset.decorated) {
+          decorateIcons(resultItem);
+          resultItem.dataset.decorated = 'true';
+        }
+
         // Remove skeleton
         const skeleton = container.parentElement.querySelector('.atomic-skeleton');
         if (skeleton) {
@@ -124,13 +130,16 @@ export default function atomicResultHandler() {
             }
             if (svgIcon) {
               const svgWrapper = document.createElement('span');
+              svgWrapper.setAttribute('part', 'svg-element');
               svgWrapper.className = 'svg-element';
-              svgWrapper.style.cssText = `top: 2px; position: relative; max-height: 18px`; // For some reason stylesheet css was not working.
-              svgWrapper.innerHTML = svgIcon;
+              svgWrapper.innerHTML = `<span class="icon icon-${svgIcon}"></span>`;
               contentTypeEl.appendChild(svgWrapper);
             }
           }
         });
+        if (contentTypeElements.length) {
+          decorateIcons(contentTypeElParent);
+        }
 
         productElements.forEach((productElement) => {
           const product = productElement.textContent.toLowerCase().trim();
@@ -157,7 +166,8 @@ export default function atomicResultHandler() {
     }
   };
   const debouncedResize = debounce(200, onResize);
-  window.addEventListener('resize', debouncedResize);
+  const resizeObserver = new ResizeObserver(debouncedResize);
+  resizeObserver.observe(container);
 
   // Add observer to check the loading of result items.
   const observer = new MutationObserver(updateAtomicResultUI);

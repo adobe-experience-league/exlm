@@ -1,11 +1,15 @@
 const DEFAULT_WAIT_TIME = 100; // 100ms.
 
 export const CUSTOM_EVENTS = {
-  RESULT_UPDATED: 'COVEO_RESULTS_UPDATED',
-  FILTER_UPDATED: 'COVEO_FILTER_UPDATED',
+  RESULT_UPDATED: 'ATOMIC_SEARCH_RESULTS_UPDATED',
+  FILTER_UPDATED: 'ATOMIC_SEARCH_FILTER_UPDATED',
+  RESIZED: 'ATOMIC_SEARCH_RESIZED',
 };
 
 export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_status', 'el_reply_status'];
+
+// Mobile Only (Until 1024px)
+export const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
 export const waitFor = (callback, delay = DEFAULT_WAIT_TIME) => {
   setTimeout(callback, delay);

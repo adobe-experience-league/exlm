@@ -1,21 +1,19 @@
-import { isMobile } from '../header/header-utils.js';
-import { waitFor, waitForChildElement, debounce } from './atomicUtils.js';
+import { waitFor, waitForChildElement, CUSTOM_EVENTS, isMobile } from './atomic-search-utils.js';
 
-export default function atomicQuerySummaryHandler() {
-  const baseElement = document.querySelector('atomic-query-summary');
+export default function atomicQuerySummaryHandler(baseElement, placeholders) {
+  baseElement.dataset.view = isMobile() ? 'mobile' : 'desktop';
 
   const updateQuerySummaryUI = () => {
     const atomicChildElement = baseElement.shadowRoot.firstElementChild;
     const resultTextElement = baseElement.shadowRoot.querySelector('.result-query');
+    const lastSpan = resultTextElement.querySelector('span:last-child');
     atomicChildElement.style.display = 'none';
+    resultTextElement.setAttribute('part', 'results');
+    lastSpan.setAttribute('part', 'duration');
     if (isMobile()) {
-      resultTextElement.style.cssText = `display: flex; flex-direction: column; font-size: 18px; color: #2C2C2C`;
-      const lastSpan = resultTextElement.querySelector('span:last-child');
-      lastSpan.style.cssText = `font-size: 14px; color: #4B4B4B`;
+      baseElement.setAttribute('mobile', '');
     } else {
-      resultTextElement.style.cssText = '';
-      const lastSpan = resultTextElement.querySelector('span:last-child');
-      lastSpan.style.cssText = '';
+      baseElement.removeAttribute('mobile');
     }
   };
 
@@ -40,8 +38,8 @@ export default function atomicQuerySummaryHandler() {
           return;
         }
         const resultTextElement = queryElementWrap || document.createElement('div');
-
-        resultTextElement.innerHTML = `<span style="margin-right: 8px;" class="search-result-left">Search Results for: ${searchQuery}</span> <span class="search-right">${pageText}</span>`;
+        const resultText = placeholders.atomicSearchResultText || 'Search Results for';
+        resultTextElement.innerHTML = `<span style="margin-right: 8px;" class="search-result-left">${resultText}: ${searchQuery}</span> <span class="search-right">${pageText}</span>`;
         resultTextElement.dataset.searchkey = searchQuery;
         resultTextElement.dataset.pagekey = pageText;
         if (!queryElementWrap) {
@@ -85,8 +83,7 @@ export default function atomicQuerySummaryHandler() {
       updateQuerySummaryUI();
     }
   }
-  const debouncedResize = debounce(200, onResize);
-  window.addEventListener('resize', debouncedResize);
+  document.addEventListener(CUSTOM_EVENTS.RESIZED, onResize);
 
   initAtomicQuerySummaryUI();
 }

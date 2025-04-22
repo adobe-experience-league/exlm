@@ -1,13 +1,17 @@
-import { loadScript } from '../../scripts/lib-franklin.js';
-import { getConfig } from '../../scripts/scripts.js';
-import atomicFacetHandler from './atomic-facet.js';
-import atomicResultHandler from './atomic-result.js';
-import atomicSortDropdownHandler from './atomic-sort-dropdown.js';
-import atomicFacetManagerHandler from './atomic-facet-manager.js';
-import atomicQuerySummaryHandler from './atomic-query-summary.js';
-import atomicBreadBoxHandler from './atomic-breadbox.js';
-import atomicPagerHandler from './atomic-pager.js';
-import getCoveoAtomicMarkup from './coveo-search-html-structure.js';
+import { decorateIcons, loadScript } from '../../scripts/lib-franklin.js';
+import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import atomicFacetHandler from './components/atomic-search-facet.js';
+import atomicResultHandler from './components/atomic-search-result.js';
+import atomicSortDropdownHandler from './components/atomic-search-sort-dropdown.js';
+import atomicFacetManagerHandler from './components/atomic-search-facet-manager.js';
+import atomicQuerySummaryHandler from './components/atomic-search-query-summary.js';
+import atomicBreadBoxHandler from './components/atomic-search-breadbox.js';
+import atomicPagerHandler from './components/atomic-search-pager.js';
+import getCoveoAtomicMarkup from './components/atomic-search-template.js';
+import { CUSTOM_EVENTS, debounce } from './components/atomic-search-utils.js';
+import { isMobile } from '../header/header-utils.js';
+
+let placeholders = {};
 
 async function initiateCoveoAtomicSearch() {
   return new Promise((resolve, reject) => {
@@ -32,9 +36,10 @@ const handleHeaderSearchVisibility = () => {
 };
 
 export default function decorate(block) {
+  const placeHolderPromise = fetchLanguagePlaceholders();
   const handleAtomicLibLoad = async () => {
     await customElements.whenDefined('atomic-search-interface');
-    const searchInterface = document.querySelector('atomic-search-interface');
+    const searchInterface = block.querySelector('atomic-search-interface');
     const { coveoOrganizationId } = getConfig();
 
     // Initialization
@@ -56,19 +61,39 @@ export default function decorate(block) {
       customElements.whenDefined('atomic-breadbox'),
       customElements.whenDefined('atomic-pager'),
     ]).then(() => {
-      atomicFacetHandler();
-      atomicResultHandler();
-      atomicSortDropdownHandler();
-      atomicFacetManagerHandler();
-      atomicQuerySummaryHandler();
-      atomicBreadBoxHandler();
-      atomicPagerHandler();
+      atomicFacetHandler(block.querySelector('atomic-facet'));
+      atomicResultHandler(block.querySelector('atomic-result-list'));
+      atomicSortDropdownHandler(block.querySelector('atomic-sort-dropdown'));
+      atomicFacetManagerHandler(block.querySelector('atomic-facet-manager'));
+      atomicQuerySummaryHandler(block.querySelector('atomic-query-summary'), placeholders);
+      atomicBreadBoxHandler(block.querySelector('atomic-breadbox'));
+      atomicPagerHandler(block.querySelector('atomic-pager'));
 
       handleHeaderSearchVisibility();
+      decorateIcons(block);
+      const onResize = () => {
+        const isMobileView = isMobile();
+        const view = isMobileView ? 'mobile' : 'desktop';
+        if (view !== searchInterface.dataset.view) {
+          searchInterface.dataset.view = view;
+          const event = new CustomEvent(CUSTOM_EVENTS.RESIZED);
+          document.dispatchEvent(event);
+        }
+      };
+      const debouncedResize = debounce(200, onResize);
+      const resizeObserver = new ResizeObserver(debouncedResize);
+      resizeObserver.observe(searchInterface);
     });
   };
 
-  const atomicUIElements = getCoveoAtomicMarkup();
-  initiateCoveoAtomicSearch().then(handleAtomicLibLoad);
-  block.appendChild(atomicUIElements);
+  initiateCoveoAtomicSearch().then(async () => {
+    try {
+      placeholders = await placeHolderPromise;
+    } catch {
+      // no-op
+    }
+    const atomicUIElements = getCoveoAtomicMarkup(placeholders);
+    block.appendChild(atomicUIElements);
+    handleAtomicLibLoad();
+  });
 }

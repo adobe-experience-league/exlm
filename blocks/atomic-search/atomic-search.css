@@ -1,3 +1,27 @@
+@media only screen and (min-width: 1024px) {
+  .atomic-search atomic-search-interface atomic-search-layout[id^='atomic-search-layout'] {
+    grid-template-columns: 0 18% 72% 0 !important;
+    grid-column-gap: 16px;
+
+    /* background-color: #FAFAFA; */
+  }
+
+  /* .atomic-search atomic-search-layout atomic-layout-section[section="search"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+  .atomic-search atomic-search-layout atomic-layout-section[section='pagination'] {
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    @media(min-width: 1024px) {
+      flex-direction: row;
+    }
+  } */
+}
+
 .section.atomic-search-container {
   margin-top: 0;
   width: 100%;
@@ -77,6 +101,7 @@
   0% {
     background-position: 100% 0;
   }
+
   100% {
     background-position: -100% 0;
   }
