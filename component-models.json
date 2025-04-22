@@ -4230,9 +4230,9 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "jcr:title",
-        "label": "Just to see the change",
-        "description": "Sets the title of the page in page meta."
+        "name": "customTitle",
+        "label": "Dummy text",
+        "description": "Just to see the change."
       },
       {
         "component": "aem-content",
