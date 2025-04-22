@@ -1,0 +1,120 @@
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.section.atomic-search-container {
+  margin-top: 0;
+  width: 100%;
+  padding: 8px 20px 56px;
+  box-sizing: border-box;
+}
+
+.atomic-search-container * {
+  box-sizing: border-box;
+}
+
+.atomic-search > div {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.atomic-search :where(h1, h2, h3, h4, h5, h6) {
+  text-align: center;
+  margin: 0 0 24px;
+  color: var(--spectrum-gray-900);
+}
+
+.atomic-search form {
+  display: flex;
+  border: 1px solid var(--spectrum-gray-900);
+  border-radius: 50px;
+  width: 90%;
+  max-width: 540px;
+  padding: 11px 16px;
+  background-color: var(--background-color);
+}
+
+.atomic-search input {
+  border: none;
+  background: inherit;
+  text-overflow: ellipsis;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  position: relative;
+  font-size: var(--spectrum-font-size-200);
+}
+
+.atomic-search input:focus {
+  outline: none;
+}
+
+.atomic-search input[type='search']::-webkit-search-decoration,
+.atomic-search input[type='search']::-webkit-search-cancel-button,
+.atomic-search input[type='search']::-webkit-search-results-button,
+.atomic-search input[type='search']::-webkit-search-results-decoration {
+  display: none;
+}
+
+.atomic-search input::-ms-clear {
+  display: none;
+}
+
+.atomic-search input::placeholder {
+  font-style: italic;
+  color: var(--spectrum-gray-200);
+}
+
+.atomic-search button {
+  background: none;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  margin-right: 5px;
+}
+
+.atomic-search .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.atomic-search .facet-modal {
+  display: none;
+  background-color: white;
+  position: absolute;
+  z-index: 1;
+  max-width: calc(100% - 40px);
+}
+
+@media (min-width: 600px) {
+  .atomic-search form {
+    padding: 13px 18px;
+  }
+
+  .atomic-search input {
+    font-size: var(--spectrum-font-size-200);
+  }
+}
+
+@media (min-width: 900px) {
+  .atomic-search :where(h1, h2, h3, h4, h5, h6) {
+    margin-bottom: 32px;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .atomic-search atomic-search-interface atomic-search-layout[id^='atomic-search-layout'] {
+    grid-template-columns: 0 18% 72% 0 !important;
+    grid-column-gap: 16px;
+  }
+}

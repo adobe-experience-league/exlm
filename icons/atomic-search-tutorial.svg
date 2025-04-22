@@ -1,0 +1,34 @@
+<svg id="Decorative_icon" data-name="Decorative icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15">
+    <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+      <rect width="15" height="15" stroke="none"/>
+      <rect x="0.5" y="0.5" width="14" height="14" fill="none"/>
+    </g>
+    <g id="Icon">
+      <g id="Canvas" fill="#10cfa9" stroke="#6e6e6e" stroke-width="1" opacity="0">
+        <rect width="15" height="15" stroke="none"/>
+        <rect x="0.5" y="0.5" width="14" height="14" fill="none"/>
+      </g>
+      <path id="Path_103008" data-name="Path 103008" d="M8.552,3.96A3.379,3.379,0,0,0,5.064,7.227c0,.075,0,.149,0,.224A3.744,3.744,0,0,0,6.135,9.94a2.472,2.472,0,0,1,.708,1.41V13.51a.833.833,0,0,0,.265.609l.637.6a.417.417,0,0,0,.288.112H9.068a.417.417,0,0,0,.284-.113l.64-.6a.828.828,0,0,0,.264-.609V11.592a1.993,1.993,0,0,1,.221-.963c.292-.531.75-.952,1.068-1.469a3.238,3.238,0,0,0,.495-1.707A3.381,3.381,0,0,0,8.776,3.96C8.7,3.957,8.627,3.957,8.552,3.96Zm1.641,5.357a4.769,4.769,0,0,0-.812,1.245,2.682,2.682,0,0,0-.146.924H7.872a2.946,2.946,0,0,0-.048-.583,2.506,2.506,0,0,0-.287-.73,6.909,6.909,0,0,0-.628-.861,2.809,2.809,0,0,1-.85-1.859,2.364,2.364,0,0,1,2.225-2.5,2.19,2.19,0,0,1,.267,0,2.366,2.366,0,0,1,2.492,2.494,2.814,2.814,0,0,1-.851,1.865Z" transform="translate(-0.844 -0.66)" fill="#10cfa9"/>
+      <g id="Rectangle_174702" data-name="Rectangle 174702" transform="translate(7.198)" fill="#10cfa9" stroke="#10cfa9" stroke-width="1">
+        <rect width="1.023" height="2.387" rx="0.409" stroke="none"/>
+        <rect x="0.5" y="0.5" width="0.023" height="1.387" rx="0.011" fill="none"/>
+      </g>
+      <g id="Rectangle_174703" data-name="Rectangle 174703" transform="translate(12.14 6.477)" fill="#10cfa9" stroke="#10cfa9" stroke-width="1">
+        <rect width="2.387" height="1.023" rx="0.409" stroke="none"/>
+        <rect x="0.5" y="0.5" width="1.387" height="0.023" rx="0.011" fill="none"/>
+      </g>
+      <g id="Rectangle_174704" data-name="Rectangle 174704" transform="translate(0.89 6.477)" fill="#10cfa9" stroke="#10cfa9" stroke-width="1">
+        <rect width="2.387" height="1.023" rx="0.409" stroke="none"/>
+        <rect x="0.5" y="0.5" width="1.387" height="0.023" rx="0.011" fill="none"/>
+      </g>
+      <g id="Rectangle_174705" data-name="Rectangle 174705" transform="translate(1.919 2.666) rotate(-45)" fill="#10cfa9" stroke="#10cfa9" stroke-width="1">
+        <rect width="1.023" height="2.386" rx="0.409" stroke="none"/>
+        <rect x="0.5" y="0.5" width="0.023" height="1.386" rx="0.011" fill="none"/>
+      </g>
+      <g id="Rectangle_174706" data-name="Rectangle 174706" transform="translate(11.086 3.629) rotate(-45)" fill="#10cfa9" stroke="#10cfa9" stroke-width="1">
+        <rect width="2.386" height="1.023" rx="0.409" stroke="none"/>
+        <rect x="0.5" y="0.5" width="1.386" height="0.023" rx="0.011" fill="none"/>
+      </g>
+    </g>
+  </svg>
+  
