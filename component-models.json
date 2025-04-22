@@ -4228,6 +4228,13 @@
         "description": "Sets the title of the page in page meta."
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Just to see the change",
+        "description": "Sets the title of the page in page meta."
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "author-bio-page",
