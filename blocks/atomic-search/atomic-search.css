@@ -1,25 +1,11 @@
-@media only screen and (min-width: 1024px) {
-  .atomic-search atomic-search-interface atomic-search-layout[id^='atomic-search-layout'] {
-    grid-template-columns: 0 18% 72% 0 !important;
-    grid-column-gap: 16px;
-
-    /* background-color: #FAFAFA; */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
   }
 
-  /* .atomic-search atomic-search-layout atomic-layout-section[section="search"] {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
+  100% {
+    background-position: -100% 0;
   }
-  .atomic-search atomic-search-layout atomic-layout-section[section='pagination'] {
-    flex-direction: column;
-    gap: 20px;
-    justify-content: center;
-    align-items: center;
-    @media(min-width: 1024px) {
-      flex-direction: row;
-    }
-  } */
 }
 
 .section.atomic-search-container {
@@ -97,16 +83,6 @@
   margin-right: 5px;
 }
 
-@keyframes skeleton-shimmer {
-  0% {
-    background-position: 100% 0;
-  }
-
-  100% {
-    background-position: -100% 0;
-  }
-}
-
 .atomic-search .icon {
   width: 16px;
   height: 16px;
@@ -133,5 +109,12 @@
 @media (min-width: 900px) {
   .atomic-search :where(h1, h2, h3, h4, h5, h6) {
     margin-bottom: 32px;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .atomic-search atomic-search-interface atomic-search-layout[id^='atomic-search-layout'] {
+    grid-template-columns: 0 18% 72% 0 !important;
+    grid-column-gap: 16px;
   }
 }
