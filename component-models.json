@@ -4286,7 +4286,7 @@
         }
       },
       {
-        "component": "custom-field",
+        "component": "exlm-tq-custom-field",
         "name": "tqTags",
         "label": "Generate TQ Tags",
         "valueType": "string",
