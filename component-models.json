@@ -4228,13 +4228,6 @@
         "description": "Sets the title of the page in page meta."
       },
       {
-        "component": "text",
-        "valueType": "string",
-        "name": "customTitle",
-        "label": "Dummy text",
-        "description": "Just to see the change."
-      },
-      {
         "component": "aem-content",
         "valueType": "string",
         "name": "author-bio-page",
@@ -4243,6 +4236,14 @@
         "validation": {
           "rootPath": "/content/exlm/global/en/perspectives/authors"
         }
+      },
+      {
+        "component": "exlm-tq-custom-field",
+        "name": "tqTags",
+        "label": "Generate TQ Tags",
+        "valueType": "string",
+        "extensionId": "exlm-ue-custom-field",
+        "description": "Click the button to generate TQ tags for this content"
       },
       {
         "component": "aem-tag",
@@ -4284,14 +4285,6 @@
         "validation": {
           "rootPath": "/content/exlm/global"
         }
-      },
-      {
-        "component": "exlm-tq-custom-field",
-        "name": "tqTags",
-        "label": "Generate TQ Tags",
-        "valueType": "string",
-        "extensionId": "exlm-ue-custom-field",
-        "description": "Click the button to generate TQ tags for this content"
       }
     ]
   },
