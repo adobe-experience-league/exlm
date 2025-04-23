@@ -683,52 +683,58 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       flex-wrap: wrap;
                     }
                     .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      border: 1px solid var(--content-type-default-color);
-                      border-radius: 4px;
-                      padding: 4px 8px;
                       width: fit-content;
                       font-size: 12px;
                       white-space: pre;
-                      color: var(--content-type-default-color);
-                      display: flex;
-                      align-items: center;
-                      flex-direction: row-reverse;
-                      gap: 4px;
                       white-space: nowrap;
                     }
-                    .result-content-type.troubleshooting atomic-result-multi-value-text::part(result-multi-value-text-value),
-                    .result-content-type.troubleshoot atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      border: 1px solid var(--content-type-troubleshooting-color);
-                      color: var(--content-type-troubleshooting-color);
+
+                    @media(min-width: 1024px) {
+                      .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                        border: 1px solid var(--content-type-default-color);
+                        border-radius: 4px;
+                        padding: 4px 8px;
+                        color: var(--content-type-default-color);
+                        display: flex;
+                        align-items: center;
+                        flex-direction: row-reverse;
+                        gap: 4px;
+                      }
+                      .result-content-type.troubleshooting atomic-result-multi-value-text::part(result-multi-value-text-value),
+                      .result-content-type.troubleshoot atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                        border: 1px solid var(--content-type-troubleshooting-color);
+                        color: var(--content-type-troubleshooting-color);
+                      }
+                      .result-content-type.playlist atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                        border: 1px solid var(--content-type-playlist-color);
+                        color: var(--content-type-playlist-color);
+                      }
+                      .result-content-type.tutorial atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                        border: 1px solid var(--content-type-tutorial-color);
+                        color: var(--content-type-tutorial-color);
+                      }
+                      .result-content-type.documentation atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                        border: 1px solid var(--content-type-documentation-color);
+                        color: var(--content-type-documentation-color);
+                      }
+                      .result-content-type.community atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                        border: 1px solid var(--content-type-community-color);
+                        color: var(--content-type-community-color);
+                      }
+                      .result-content-type.certification atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                        border: 1px solid var(--content-type-certification-color);
+                        color: var(--content-type-certification-color);
+                      }
+                      .result-content-type.event atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                        border: 1px solid var(--content-type-event-color);
+                        color: var(--content-type-event-color);
+                      }
+                      .result-content-type.perspective atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                        border: 1px solid var(--content-type-perspective-color);
+                        color: var(--content-type-perspective-color);
+                      }
                     }
-                    .result-content-type.playlist atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      border: 1px solid var(--content-type-playlist-color);
-                      color: var(--content-type-playlist-color);
-                    }
-                    .result-content-type.tutorial atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      border: 1px solid var(--content-type-tutorial-color);
-                      color: var(--content-type-tutorial-color);
-                    }
-                    .result-content-type.documentation atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      border: 1px solid var(--content-type-documentation-color);
-                      color: var(--content-type-documentation-color);
-                    }
-                    .result-content-type.community atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      border: 1px solid var(--content-type-community-color);
-                      color: var(--content-type-community-color);
-                    }
-                    .result-content-type.certification atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      border: 1px solid var(--content-type-certification-color);
-                      color: var(--content-type-certification-color);
-                    }
-                    .result-content-type.event atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      border: 1px solid var(--content-type-event-color);
-                      color: var(--content-type-event-color);
-                    }
-                    .result-content-type.perspective atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      border: 1px solid var(--content-type-perspective-color);
-                      color: var(--content-type-perspective-color);
-                    }
+                    
                     .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-separator) {
                       display: none;
                     }
