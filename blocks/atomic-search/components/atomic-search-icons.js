@@ -2,11 +2,11 @@ export const ContentTypeIcons = {
   event: `atomic-search-event`,
   documentation: `atomic-search-documentation`,
   troubleshooting: `atomic-search-troubleshoot`,
-  course: `atomic-search-course`,
   tutorial: `atomic-search-tutorial`,
   playlist: `atomic-search-playlist`,
   community: `atomic-search-community`,
   perspective: `atomic-search-perspective`,
+  certification: 'atomic-search-certification',
 };
 
 export const nextNavigationArrow = `<svg xmlns='http://www.w3.org/2000/svg' width='8' height='14' viewBox='0 0 8 14'>
