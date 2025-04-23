@@ -1806,6 +1806,10 @@
                 "value": "bg-spectrum-yellow-700"
               },
               {
+                "name": "White",
+                "value": "bg-spectrum-gray-50"
+              },
+              {
                 "name": "Adobe Red",
                 "value": "bg-non-spectrum-adobe-red"
               },

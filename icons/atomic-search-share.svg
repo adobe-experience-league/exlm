@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
+  <g id="Icon" transform="translate(-7 -7)">
+    <g id="Canvas" transform="translate(7 7)" fill="#6e6e6e" stroke="#6e6e6e" stroke-width="1" opacity="0">
+      <rect width="12" height="12" stroke="none"/>
+      <rect x="0.5" y="0.5" width="11" height="11" fill="none"/>
+    </g>
+    <path id="Path_102996" data-name="Path 102996" d="M5.343,4H5V2.267A.267.267,0,0,0,4.733,2h0a.262.262,0,0,0-.187.079L1.069,5.821a.267.267,0,0,0,0,.357L4.545,9.921A.262.262,0,0,0,4.731,10,.267.267,0,0,0,5,9.735V8a6.57,6.57,0,0,1,6.264,2.27.223.223,0,0,0,.4-.133C11.667,9.151,10.577,4,5.343,4Z" transform="translate(6.667 6.333)" fill="#6e6e6e"/>
+  </g>
+</svg>
