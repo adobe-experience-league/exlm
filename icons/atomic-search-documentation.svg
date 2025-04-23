@@ -1,0 +1,38 @@
+<svg id="Decorative_icon" data-name="Decorative icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13">
+    <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="0.7" opacity="0">
+      <rect width="13" height="13" stroke="none"/>
+      <rect x="0.35" y="0.35" width="12.3" height="12.3" fill="none"/>
+    </g>
+    <g id="Icon">
+      <g id="Canvas" fill="#fff" stroke="#0f797d" stroke-width="0.7" opacity="0">
+        <rect width="13" height="13" stroke="none"/>
+        <rect x="0.35" y="0.35" width="12.3" height="12.3" fill="none"/>
+      </g>
+      <g id="Rectangle_174696" data-name="Rectangle 174696" transform="translate(7.222 3.611)" fill="#fff" stroke="#0f797d" stroke-width="0.7">
+        <rect width="3.611" height="0.722" stroke="none"/>
+        <rect x="0.35" y="0.35" width="2.911" height="0.022" fill="none"/>
+      </g>
+      <g id="Rectangle_174697" data-name="Rectangle 174697" transform="translate(7.222 6.5)" fill="#fff" stroke="#0f797d" stroke-width="0.7">
+        <rect width="3.611" height="0.722" stroke="none"/>
+        <rect x="0.35" y="0.35" width="2.911" height="0.022" fill="none"/>
+      </g>
+      <g id="Rectangle_174698" data-name="Rectangle 174698" transform="translate(2.167 7.944)" fill="#fff" stroke="#0f797d" stroke-width="0.7">
+        <rect width="4.333" height="0.722" stroke="none"/>
+        <rect x="0.35" y="0.35" width="3.633" height="0.022" fill="none"/>
+      </g>
+      <g id="Rectangle_174699" data-name="Rectangle 174699" transform="translate(7.222 5.056)" fill="#fff" stroke="#0f797d" stroke-width="0.7">
+        <rect width="3.611" height="0.722" stroke="none"/>
+        <rect x="0.35" y="0.35" width="2.911" height="0.022" fill="none"/>
+      </g>
+      <g id="Rectangle_174700" data-name="Rectangle 174700" transform="translate(7.222 7.944)" fill="#fff" stroke="#0f797d" stroke-width="0.7">
+        <rect width="3.611" height="0.722" stroke="none"/>
+        <rect x="0.35" y="0.35" width="2.911" height="0.022" fill="none"/>
+      </g>
+      <g id="Rectangle_174701" data-name="Rectangle 174701" transform="translate(2.167 3.611)" fill="none" stroke="#0f797d" stroke-width="0.7">
+        <rect width="4.333" height="3.611" stroke="none"/>
+        <rect x="0.35" y="0.35" width="3.633" height="2.911" fill="none"/>
+      </g>
+      <path id="Path_103007" data-name="Path 103007" d="M12.194,2H1.361A.361.361,0,0,0,1,2.361v8.667a.361.361,0,0,0,.361.361H12.194a.361.361,0,0,0,.361-.361V2.361A.361.361,0,0,0,12.194,2ZM1.722,10.667V2.722H11.833v7.944Z" transform="translate(-0.278 -0.556)" fill="#fff" stroke="#0f797d" stroke-width="0.7"/>
+    </g>
+  </svg>
+  
