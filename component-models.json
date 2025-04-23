@@ -4242,7 +4242,7 @@
         "name": "tqTags",
         "label": "Generate TQ Tags",
         "valueType": "string",
-        "extensionId": "exlm-ue-custom-field",
+        "extensionId": "exlm-ue-custom-field"
       },
       {
         "component": "aem-tag",
