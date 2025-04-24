@@ -768,6 +768,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       position: absolute;
                       left: 0;
                     }
+                    atomic-result-link > a img {
+                      height: 14px;
+                      width: 14px;
+                    }
                     atomic-result-link > a > atomic-result-text {
                       visibility: hidden
                     }
