@@ -4,6 +4,7 @@ export const CUSTOM_EVENTS = {
   RESULT_UPDATED: 'ATOMIC_SEARCH_RESULTS_UPDATED',
   FILTER_UPDATED: 'ATOMIC_SEARCH_FILTER_UPDATED',
   RESIZED: 'ATOMIC_SEARCH_RESIZED',
+  FACET_LOADED: 'ATOMIC_SEARCH_FACET_LOADED',
 };
 
 export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_status', 'el_reply_status'];
@@ -71,4 +72,18 @@ export const getFiltersFromUrl = () => {
     acc[keyName] = facetValues;
     return acc;
   }, {});
+};
+
+export const handleHeaderSearchVisibility = () => {
+  const exlHeader = document.querySelector('exl-header');
+  if (exlHeader) {
+    const searchElement = exlHeader.shadowRoot.querySelector('.search');
+    if (searchElement) {
+      searchElement.style.visibility = 'hidden';
+    }
+    exlHeader.addEventListener('search-decorated', () => {
+      const element = exlHeader.shadowRoot.querySelector('.search');
+      element.style.visibility = 'hidden';
+    });
+  }
 };

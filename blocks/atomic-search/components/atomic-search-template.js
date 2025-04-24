@@ -175,6 +175,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(facet-child-element) {
                   margin-left: 32px;
                 }
+                atomic-facet::part(facet-hide-element) {
+                  display: none;
+                }
                 atomic-facet::part(facet-child-label) {
                   padding-top: 6px;
                   padding-bottom: 6px;
@@ -205,12 +208,16 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(label-button-icon) {
                   margin-left: 0;
                 }
-                atomic-facet::part(values) {
-                  grid-template-columns: 1fr;
-                  gap: 0;
-                  margin-top: 0;
+                atomic-facet::part(facet) {
+                  padding-right: 0;
                 }
-                atomic-facet::part(show-more) {
+                atomic-facet::part(values) {
+                  max-height: 500px;
+                  overflow-y: auto;
+                  margin-top: 0;
+                  padding-right: 16px;
+                }
+                atomic-facet::part(show-more), atomic-facet::part(show-less) {
                   color: var(--non-spectrum-input-text);
                 }
                 atomic-facet::part(value-label) {
@@ -260,6 +267,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 sort-criteria="alphanumericNaturalDescending"
                 field="el_product"
                 label="Product"
+                number-of-values="60"
                 display-values-as="checkbox"
               ></atomic-facet>
               <atomic-facet
