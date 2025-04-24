@@ -132,8 +132,8 @@ export default function atomicResultHandler(baseElement) {
           }
         });
 
-        const anchorTag = resultItem.querySelector('atomic-result-link > a');
-        const hasSpan = anchorTag.querySelector('span');
+        const anchorTag = resultItem?.querySelector('atomic-result-link > a');
+        const hasSpan = anchorTag?.querySelector('span');
         if (anchorTag && !hasSpan) {
           decorateExternalLink(anchorTag);
           decorateIcons(anchorTag);

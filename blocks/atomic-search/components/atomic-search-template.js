@@ -764,6 +764,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     atomic-result-link > a:not([slot="label"]) {
                       display: inline-flex;
                       align-items: center;
+                      gap: 2px;
                       position: absolute;
                       left: 0;
                     }
