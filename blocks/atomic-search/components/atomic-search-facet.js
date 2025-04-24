@@ -67,13 +67,6 @@ export default function atomicFacetHandler(baseElement) {
         adjustChildElementsPosition(facet, atomicFacet);
       });
     }
-    if (atomicFacet.dataset.clickmore === 'true') {
-      atomicFacet.dataset.clickmore = '';
-      const showMoreBtn = atomicFacet.shadowRoot.querySelector(`[part="show-more"]`);
-      if (showMoreBtn) {
-        showMoreBtn.click();
-      }
-    }
   };
 
   const observeFacetValuesList = (atomicFacet) => {
