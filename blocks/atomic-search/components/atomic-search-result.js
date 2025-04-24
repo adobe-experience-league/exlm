@@ -109,6 +109,9 @@ export default function atomicResultHandler(baseElement) {
           decorateIcons(contentTypeElParent);
         }
 
+        const iconElement = contentTypeElParent.querySelectorAll('img');
+        iconElement?.forEach((icon) => icon?.setAttribute('part', 'icon-element'));
+
         productElements.forEach((productElement) => {
           const product = productElement.textContent.toLowerCase().trim();
           if (product?.includes('|')) {

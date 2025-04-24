@@ -671,9 +671,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       justify-content: flex-start;
                     }
                     atomic-result-multi-value-text::part(svg-element) {
-                      top: 2px;
+                      top: 3px;
                       position: relative;
-                      max-height: 18px
+                    }
+                    atomic-result-multi-value-text::part(icon-element) {
+                      height: 18px;
+                      width: 18px;
                     }
                     .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-list) {
                       margin: 0 8px 0 0;
