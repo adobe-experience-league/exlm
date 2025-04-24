@@ -36,6 +36,18 @@ export default function atomicResultHandler(baseElement) {
     }
   }
 
+  function decorateExternalLink(link) {
+    const href = link?.getAttribute('href');
+    if (!href) return;
+    const url = new URL(href, window.location.origin);
+    if (url?.hostname && !url?.hostname.startsWith('experienceleague')) {
+      link.setAttribute('target', '_blank');
+      const iconEl = document.createElement('span');
+      iconEl.classList.add('icon', 'icon-external-link');
+      link.appendChild(iconEl);
+    }
+  }
+
   const clearAllBtn = document.querySelector('.clear-label');
   clearAllBtn.addEventListener('click', onClearBtnClick);
 
@@ -119,6 +131,13 @@ export default function atomicResultHandler(baseElement) {
             }
           }
         });
+
+        const anchorTag = resultItem.querySelector('atomic-result-link > a');
+        const hasSpan = anchorTag.querySelector('span');
+        if (anchorTag && !hasSpan) {
+          decorateExternalLink(anchorTag);
+          decorateIcons(anchorTag);
+        }
       };
       hydrateResult();
     });
