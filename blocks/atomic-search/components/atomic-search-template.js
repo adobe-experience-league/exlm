@@ -762,8 +762,15 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       cursor: pointer;
                     }
                     atomic-result-link > a:not([slot="label"]) {
+                      display: inline-flex;
+                      align-items: center;
+                      gap: 2px;
                       position: absolute;
                       left: 0;
+                    }
+                    atomic-result-link > a img {
+                      height: 14px;
+                      width: 14px;
                     }
                     atomic-result-link > a > atomic-result-text {
                       visibility: hidden
