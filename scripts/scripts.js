@@ -1211,7 +1211,10 @@ export function getLastDocsSection() {
 
 /** handles a set of 1-1 redirects */
 function handleRedirects() {
-  const redirects = ['/#feedback:/home#feedback'].map((p) => p.split(':').map((s) => new URL(s, window.location.href)));
+  const { lang } = getPathDetails();
+  const redirects = [`/#feedback:/${lang}/feedback-program`].map((p) =>
+    p.split(':').map((s) => new URL(s, window.location.href)),
+  );
   const redirect = redirects.find(([from]) => window.location.href === from.href);
   if (redirect) window.location.href = redirect[1].href;
 }
