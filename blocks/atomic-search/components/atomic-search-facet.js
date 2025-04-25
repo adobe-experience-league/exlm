@@ -105,7 +105,7 @@ export default function atomicFacetHandler(baseElement) {
           setTimeout(() => {
             facets.forEach((facet) => {
               adjustChildElementsPosition(facet, atomicFacet);
-            });  
+            });
           }, 200);
         }
       }

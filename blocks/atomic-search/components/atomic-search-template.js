@@ -260,20 +260,20 @@ const getCoveoAtomicMarkup = (placeholders) => {
               <atomic-facet
                   sort-criteria="alphanumericNaturalDescending"
                   field="el_contenttype"
-                  label="Content Type"
+                  label=${placeholders.searchContentTypeLabel || 'Content Type'}
                   display-values-as="checkbox"
                 ></atomic-facet>
               <atomic-facet
                 sort-criteria="alphanumericNaturalDescending"
                 field="el_product"
-                label="Product"
+                label=${placeholders.searchProductLabel || 'Product'}
                 number-of-values="60"
                 display-values-as="checkbox"
               ></atomic-facet>
               <atomic-facet
                 sort-criteria="alphanumericNaturalDescending"
                 field="el_role"
-                label="Role"
+                label=${placeholders.searchRoleLabel || 'Role'}
                 display-values-as="checkbox"
               ></atomic-facet>
               
@@ -479,16 +479,16 @@ const getCoveoAtomicMarkup = (placeholders) => {
               </style>
               <div class="result-header-section desktop-only">
                 <div class="result-header-item">
-                  <label>NAME</label>
+                  <label>${placeholders.searchNameLabel || 'NAME'}</label>
                 </div>
                 <div class="result-header-item">
-                  <label>CONTENT TYPE</label>
+                  <label>${placeholders.searchContentTypeLabel || 'CONTENT TYPE'}</label>
                 </div>
                 <div class="result-header-item">
-                  <label>PRODUCT</label>
+                  <label>${placeholders.searchProductLabel || 'PRODUCT'}</label>
                 </div>
                 <div class="result-header-item">
-                  <label>UPDATED</label>
+                  <label>${placeholders.searchUpdatedLabel || 'UPDATED'}</label>
                 </div>
               </div>
               <atomic-result-list id="coveo-results-list-wrapper">
