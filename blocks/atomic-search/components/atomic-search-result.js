@@ -1,5 +1,12 @@
 import createAtomicSkeleton from './atomic-search-skeleton.js';
-import { waitForChildElement, waitFor, debounce, CUSTOM_EVENTS, isMobile } from './atomic-search-utils.js';
+import {
+  waitForChildElement,
+  waitFor,
+  debounce,
+  CUSTOM_EVENTS,
+  isMobile,
+  handleHeaderSearchVisibility,
+} from './atomic-search-utils.js';
 import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
 
@@ -27,12 +34,25 @@ export default function atomicResultHandler(baseElement) {
     })
     .join('')}`;
   container.parentElement.appendChild(skeletonWrapper);
+  handleHeaderSearchVisibility();
 
   function onClearBtnClick() {
     const atomicBreadBox = document.querySelector('atomic-breadbox');
     const coveoClearBtn = atomicBreadBox?.shadowRoot?.querySelector('[part="clear"]');
     if (coveoClearBtn) {
       coveoClearBtn.click();
+    }
+  }
+
+  function decorateExternalLink(link) {
+    const href = link?.getAttribute('href');
+    if (!href) return;
+    const url = new URL(href, window.location.origin);
+    if (url?.hostname && !url?.hostname.startsWith('experienceleague')) {
+      link.setAttribute('target', '_blank');
+      const iconEl = document.createElement('span');
+      iconEl.classList.add('icon', 'icon-external-link');
+      link.appendChild(iconEl);
     }
   }
 
@@ -119,6 +139,13 @@ export default function atomicResultHandler(baseElement) {
             }
           }
         });
+
+        const anchorTag = resultItem?.querySelector('atomic-result-link > a');
+        const hasSpan = anchorTag?.querySelector('span');
+        if (anchorTag && !hasSpan) {
+          decorateExternalLink(anchorTag);
+          decorateIcons(anchorTag);
+        }
       };
       hydrateResult();
     });
