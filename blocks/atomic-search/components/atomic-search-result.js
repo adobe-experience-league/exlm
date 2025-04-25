@@ -1,5 +1,12 @@
 import createAtomicSkeleton from './atomic-search-skeleton.js';
-import { waitForChildElement, waitFor, debounce, CUSTOM_EVENTS, isMobile } from './atomic-search-utils.js';
+import {
+  waitForChildElement,
+  waitFor,
+  debounce,
+  CUSTOM_EVENTS,
+  isMobile,
+  handleHeaderSearchVisibility,
+} from './atomic-search-utils.js';
 import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
 
@@ -27,6 +34,7 @@ export default function atomicResultHandler(baseElement) {
     })
     .join('')}`;
   container.parentElement.appendChild(skeletonWrapper);
+  handleHeaderSearchVisibility();
 
   function onClearBtnClick() {
     const atomicBreadBox = document.querySelector('atomic-breadbox');

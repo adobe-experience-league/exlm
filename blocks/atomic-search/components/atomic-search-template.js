@@ -175,6 +175,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(facet-child-element) {
                   margin-left: 32px;
                 }
+                atomic-facet::part(facet-hide-element) {
+                  display: none;
+                }
                 atomic-facet::part(facet-child-label) {
                   padding-top: 6px;
                   padding-bottom: 6px;
@@ -205,12 +208,16 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(label-button-icon) {
                   margin-left: 0;
                 }
-                atomic-facet::part(values) {
-                  grid-template-columns: 1fr;
-                  gap: 0;
-                  margin-top: 0;
+                atomic-facet::part(facet) {
+                  padding-right: 0;
                 }
-                atomic-facet::part(show-more) {
+                atomic-facet::part(values) {
+                  max-height: 500px;
+                  overflow-y: auto;
+                  margin-top: 0;
+                  padding-right: 16px;
+                }
+                atomic-facet::part(show-more), atomic-facet::part(show-less) {
                   color: var(--non-spectrum-input-text);
                 }
                 atomic-facet::part(value-label) {
@@ -253,19 +260,20 @@ const getCoveoAtomicMarkup = (placeholders) => {
               <atomic-facet
                   sort-criteria="alphanumericNaturalDescending"
                   field="el_contenttype"
-                  label="Content Type"
+                  label=${placeholders.searchContentTypeLabel || 'Content Type'}
                   display-values-as="checkbox"
                 ></atomic-facet>
               <atomic-facet
                 sort-criteria="alphanumericNaturalDescending"
                 field="el_product"
-                label="Product"
+                label=${placeholders.searchProductLabel || 'Product'}
+                number-of-values="60"
                 display-values-as="checkbox"
               ></atomic-facet>
               <atomic-facet
                 sort-criteria="alphanumericNaturalDescending"
                 field="el_role"
-                label="Role"
+                label=${placeholders.searchRoleLabel || 'Role'}
                 display-values-as="checkbox"
               ></atomic-facet>
               
@@ -471,16 +479,16 @@ const getCoveoAtomicMarkup = (placeholders) => {
               </style>
               <div class="result-header-section desktop-only">
                 <div class="result-header-item">
-                  <label>NAME</label>
+                  <label>${placeholders.searchNameLabel || 'NAME'}</label>
                 </div>
                 <div class="result-header-item">
-                  <label>CONTENT TYPE</label>
+                  <label>${placeholders.searchContentTypeLabel || 'CONTENT TYPE'}</label>
                 </div>
                 <div class="result-header-item">
-                  <label>PRODUCT</label>
+                  <label>${placeholders.searchProductLabel || 'PRODUCT'}</label>
                 </div>
                 <div class="result-header-item">
-                  <label>UPDATED</label>
+                  <label>${placeholders.searchUpdatedLabel || 'UPDATED'}</label>
                 </div>
               </div>
               <atomic-result-list id="coveo-results-list-wrapper">
@@ -883,11 +891,6 @@ const getCoveoAtomicMarkup = (placeholders) => {
                           <atomic-result-section-excerpt>
                             <atomic-result-text field="excerpt" should-highlight="false"></atomic-result-text>
                           </atomic-result-section-excerpt>
-                        </div>
-                        <div>
-                          <atomic-result-link>
-                            <span slot="label">Quick View</span>
-                          </atomic-result-link>
                         </div>
                     </div>
                     <div class="result-field result-content-type">

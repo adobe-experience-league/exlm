@@ -1,11 +1,12 @@
 import { CUSTOM_EVENTS, waitForChildElement } from './atomic-search-utils.js';
 
 export default function atomicFacetHandler(baseElement) {
-  const adjustChildElementsPosition = (facet) => {
+  const adjustChildElementsPosition = (facet, atomicElement) => {
     if (facet.dataset.childfacet === 'true') {
       const parentName = facet.dataset.parent;
       const facetParentEl = facet.parentElement.querySelector(`[data-contenttype="${parentName}"]`);
       if (facetParentEl) {
+        facet.part.remove('facet-hide-element');
         const previousSiblingEl = facet.previousElementSibling;
         if (
           !previousSiblingEl ||
@@ -21,11 +22,16 @@ export default function atomicFacetHandler(baseElement) {
         if (facetParentButton) {
           facetParentButton.part.add('facet-parent-button');
         }
+      } else {
+        facet.part.add('facet-hide-element');
+        if (facet.querySelector('button.selected')) {
+          atomicElement.dataset.clickmore = 'true';
+        }
       }
     }
   };
 
-  const updateFacetUI = (facet, forceUpdate = false) => {
+  const updateFacetUI = (facet, atomicElement, forceUpdate = false) => {
     const forceUpdateElement = forceUpdate === true;
     if (facet && (facet.dataset.updated !== 'true' || forceUpdateElement)) {
       const contentType =
@@ -44,7 +50,7 @@ export default function atomicFacetHandler(baseElement) {
           facet.part.add('facet-child-element');
           const labelElement = facet.querySelector('label');
           labelElement.part.add('facet-child-label');
-          adjustChildElementsPosition(facet);
+          adjustChildElementsPosition(facet, atomicElement);
         }
       }
     }
@@ -54,8 +60,12 @@ export default function atomicFacetHandler(baseElement) {
     const parentWrapper = atomicFacet.shadowRoot.querySelector('[part="values"]');
     if (parentWrapper) {
       const facets = Array.from(parentWrapper.children);
-      facets.forEach(updateFacetUI);
-      facets.forEach(adjustChildElementsPosition);
+      facets.forEach((facet) => {
+        updateFacetUI(facet, atomicFacet, false);
+      });
+      facets.forEach((facet) => {
+        adjustChildElementsPosition(facet, atomicFacet);
+      });
     }
   };
 
@@ -76,14 +86,13 @@ export default function atomicFacetHandler(baseElement) {
   const handleShowMoreClick = (atomicFacet) => {
     const facetParent = atomicFacet.shadowRoot.querySelector('[part="facet"]');
     if (!facetParent || facetParent.dataset.observed === 'true') return;
-
     const observer = new MutationObserver((mutationsList) => {
       let updatedFlag = false;
       mutationsList.forEach((mutation) => {
         if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
           mutation.addedNodes.forEach((node) => {
             if (node.nodeType === Node.ELEMENT_NODE && node.matches?.('li.relative.flex.items-center')) {
-              updateFacetUI(node, true);
+              updateFacetUI(node, atomicFacet, true);
               updatedFlag = true;
             }
           });
@@ -93,7 +102,11 @@ export default function atomicFacetHandler(baseElement) {
         const parentWrapper = atomicFacet.shadowRoot.querySelector('[part="values"]');
         if (parentWrapper) {
           const facets = Array.from(parentWrapper.children);
-          facets.forEach(adjustChildElementsPosition);
+          setTimeout(() => {
+            facets.forEach((facet) => {
+              adjustChildElementsPosition(facet, atomicFacet);
+            });
+          }, 200);
         }
       }
     });
@@ -111,18 +124,21 @@ export default function atomicFacetHandler(baseElement) {
   };
 
   const initAtomicFacetUI = () => {
+    const event = new CustomEvent(CUSTOM_EVENTS.FACET_LOADED);
+    document.dispatchEvent(event);
+
     const atomicFacets = document.querySelectorAll('atomic-facet');
     atomicFacets.forEach((atomicFacet) => {
-      handleAtomicFacetUI(atomicFacet);
       const showMoreBtn = atomicFacet.shadowRoot.querySelector('[part="show-more"]');
       if (showMoreBtn) {
-        showMoreBtn.addEventListener('click', () => {
-          handleShowMoreClick(atomicFacet);
+        showMoreBtn.addEventListener('click', (e) => {
+          handleShowMoreClick(atomicFacet, e);
         });
       }
       observeFacetValuesList(atomicFacet);
+      handleAtomicFacetUI(atomicFacet);
     });
+    document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate);
   };
-  document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate);
   waitForChildElement(baseElement, initAtomicFacetUI);
 }
