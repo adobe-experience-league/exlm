@@ -102,9 +102,11 @@ export default function atomicFacetHandler(baseElement) {
         const parentWrapper = atomicFacet.shadowRoot.querySelector('[part="values"]');
         if (parentWrapper) {
           const facets = Array.from(parentWrapper.children);
-          facets.forEach((facet) => {
-            adjustChildElementsPosition(facet, atomicFacet);
-          });
+          setTimeout(() => {
+            facets.forEach((facet) => {
+              adjustChildElementsPosition(facet, atomicFacet);
+            });  
+          }, 200);
         }
       }
     });

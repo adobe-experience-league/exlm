@@ -885,11 +885,6 @@ const getCoveoAtomicMarkup = (placeholders) => {
                             <atomic-result-text field="excerpt" should-highlight="false"></atomic-result-text>
                           </atomic-result-section-excerpt>
                         </div>
-                        <div>
-                          <atomic-result-link>
-                            <span slot="label">Quick View</span>
-                          </atomic-result-link>
-                        </div>
                     </div>
                     <div class="result-field result-content-type">
                         <atomic-result-multi-value-text field="el_contenttype">
