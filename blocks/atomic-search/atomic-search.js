@@ -109,6 +109,9 @@ export default function decorate(block) {
         Date: placeholders.searchDateLabel || 'Date',
         'Newest First': placeholders.searchNewestFirstLabel || 'Newest First',
         'Oldest First': placeholders.searchOldesFirstLabel || 'Oldest First',
+        'Most Likes': placeholders.searchMostLikesLabel || 'Most Likes',
+        'Most Replies': placeholders.searchMostRepliesLabel || 'Most Replies',
+        'Most Views': placeholders.searchMostViewsLabel || 'Most Views',
       });
 
       document.addEventListener(
