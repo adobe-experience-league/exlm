@@ -10,13 +10,14 @@ import {
 import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
 
-export default function atomicResultHandler(baseElement) {
+export default function atomicResultHandler(block) {
+  const baseElement = block.querySelector('atomic-result-list');
   const shadow = baseElement.shadowRoot;
   const container = shadow?.querySelector('[part="result-list"]');
 
   if (!container) {
     waitFor(() => {
-      atomicResultHandler(baseElement);
+      atomicResultHandler(block);
     });
     return;
   }
@@ -149,6 +150,14 @@ export default function atomicResultHandler(baseElement) {
       };
       hydrateResult();
     });
+
+    const layoutSectionEl = block.querySelector('atomic-layout-section[section="results"]');
+    const resultHeader = layoutSectionEl ? layoutSectionEl.querySelector('.result-header-section') : null;
+    if (resultHeader) {
+      resultHeader.classList.remove('result-header-inactive');
+    }
+    const searchLayoutEl = block.querySelector('atomic-search-layout');
+    searchLayoutEl.dataset.result = 'found';
     const event = new CustomEvent(CUSTOM_EVENTS.RESULT_UPDATED);
     document.dispatchEvent(event);
   };
@@ -166,6 +175,6 @@ export default function atomicResultHandler(baseElement) {
 
   // Add observer to check the loading of result items.
   const observer = new MutationObserver(updateAtomicResultUI);
-
   observer.observe(container, { childList: true, subtree: false });
+  updateAtomicResultUI();
 }
