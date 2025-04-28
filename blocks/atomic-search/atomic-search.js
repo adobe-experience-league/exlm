@@ -28,7 +28,6 @@ async function initiateCoveoAtomicSearch() {
 }
 
 export default function decorate(block) {
-
   const handleAtomicLibLoad = async () => {
     await customElements.whenDefined('atomic-search-interface');
     const searchInterface = block.querySelector('atomic-search-interface');
