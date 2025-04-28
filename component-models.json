@@ -4242,6 +4242,13 @@
         }
       },
       {
+        "component": "exlm-tq-custom-field",
+        "name": "tqTags",
+        "label": "Generate TQ Tags",
+        "valueType": "string",
+        "extensionId": "exlm-ue-custom-field"
+      },
+      {
         "component": "aem-tag",
         "valueType": "string",
         "name": "coveo-solution",
