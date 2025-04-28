@@ -5,6 +5,8 @@ export const CUSTOM_EVENTS = {
   FILTER_UPDATED: 'ATOMIC_SEARCH_FILTER_UPDATED',
   RESIZED: 'ATOMIC_SEARCH_RESIZED',
   FACET_LOADED: 'ATOMIC_SEARCH_FACET_LOADED',
+  NO_RESULT_FOUND: 'ATOMIC_RESULT_NOT_FOUND',
+  RESULT_FOUND: 'ATOMIC_RESULT_FOUND',
 };
 
 export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_status', 'el_reply_status'];
@@ -87,3 +89,50 @@ export const handleHeaderSearchVisibility = () => {
     });
   }
 };
+
+export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutation } = {}) {
+  const ready = () => {
+    const root = host.shadowRoot;
+    if (!root) {
+      waitFor(ready, 250);
+      return;
+    }
+
+    const hasContent = () =>
+      !!host.shadowRoot.firstElementChild &&
+      !!Array.from(host.shadowRoot.children).find((el) => el.tagName !== 'STYLE');
+    let populated = hasContent();
+
+    if (populated) {
+      if (onPopulate) {
+        onPopulate(root);
+      }
+    } else if (onEmpty) {
+      onEmpty(root);
+    }
+
+    const obs = new MutationObserver((muts) => {
+      if (onMutation) {
+        onMutation(muts, root);
+      }
+
+      const nowPopulated = hasContent();
+
+      if (!populated && nowPopulated) {
+        populated = true;
+        if (onPopulate) {
+          onPopulate(root);
+        }
+      } else if (populated && !nowPopulated) {
+        populated = false;
+        if (onClear) {
+          onClear(root);
+        }
+      }
+    });
+
+    obs.observe(root, { childList: true, subtree: true, attributes: true });
+  };
+
+  ready();
+}

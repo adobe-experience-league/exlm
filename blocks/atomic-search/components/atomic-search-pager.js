@@ -4,8 +4,12 @@ export default function atomicPagerHandler(baseElement) {
   function updateNavIconVisibility() {
     const previousElement = baseElement.shadowRoot.querySelector('[part="previous-button"]');
     const nextButton = baseElement.shadowRoot.querySelector('[part="next-button"]');
-    previousElement.style.cssText = `visibility: ${previousElement.disabled ? 'hidden' : 'visible'}`;
-    nextButton.style.cssText = `visibility: ${nextButton.disabled ? 'hidden' : 'visible'}`;
+    if (previousElement) {
+      previousElement.style.cssText = `visibility: ${previousElement.disabled ? 'hidden' : 'visible'}`;
+    }
+    if (nextButton) {
+      nextButton.style.cssText = `visibility: ${nextButton.disabled ? 'hidden' : 'visible'}`;
+    }
   }
 
   function initAtomicPagerUI() {
