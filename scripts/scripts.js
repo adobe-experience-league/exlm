@@ -1096,68 +1096,69 @@ function decodeAemPageMetaTags() {
   const features = featureMeta ? formatPageMetaTags(featureMeta.content) : [];
   const roles = roleMeta ? formatPageMetaTags(roleMeta.content) : [];
   const experienceLevels = levelMeta ? formatPageMetaTags(levelMeta.content) : [];
-  let decodedSolutions = [];
-  decodedSolutions = solutions.map((solution) => {
-    // In case of sub-solutions. E.g. exl:solution/campaign/standard
-    const parts = solution.split('/');
-    const decodedParts = parts.map((part) => atob(part));
+  const cqTags = cqTagsMeta ? formatPageMetaTags(cqTagsMeta.content) : [];
+  // let decodedSolutions = [];
+  // decodedSolutions = solutions.map((solution) => {
+  //   // In case of sub-solutions. E.g. exl:solution/campaign/standard
+  //   const parts = solution.split('/');
+  //   const decodedParts = parts.map((part) => atob(part));
 
-    // If it's a sub-solution, create a version meta tag
-    if (parts.length > 1) {
-      const versionMeta = document.createElement('meta');
-      versionMeta.name = 'version';
-      versionMeta.content = atob(parts.slice(1).join('/'));
-      document.head.appendChild(versionMeta);
+  //   // If it's a sub-solution, create a version meta tag
+  //   if (parts.length > 1) {
+  //     const versionMeta = document.createElement('meta');
+  //     versionMeta.name = 'version';
+  //     versionMeta.content = atob(parts.slice(1).join('/'));
+  //     document.head.appendChild(versionMeta);
 
-      // If there are multiple parts, join them with ";"
-      const product = atob(parts[0]);
-      const version = atob(parts[1]);
-      return `${product}|${product} ${version}`;
-    }
+  //     // If there are multiple parts, join them with ";"
+  //     const product = atob(parts[0]);
+  //     const version = atob(parts[1]);
+  //     return `${product}|${product} ${version}`;
+  //   }
 
-    return decodedParts[0];
-  });
+  //   return decodedParts[0];
+  // });
 
-  const decodedFeatures = features
-    .map((feature) => {
-      const parts = feature.split('/');
-      if (parts.length > 1) {
-        const product = atob(parts[0]);
-        if (!decodedSolutions.includes(product)) {
-          decodedSolutions.push(product);
-        }
-        const featureTag = atob(parts[1]);
-        return `${featureTag}`;
-      }
-      decodedSolutions.push(atob(parts[0]));
-      return '';
-    })
-    .filter((feature) => feature !== '');
+  // const decodedFeatures = features
+  //   .map((feature) => {
+  //     const parts = feature.split('/');
+  //     if (parts.length > 1) {
+  //       const product = atob(parts[0]);
+  //       if (!decodedSolutions.includes(product)) {
+  //         decodedSolutions.push(product);
+  //       }
+  //       const featureTag = atob(parts[1]);
+  //       return `${featureTag}`;
+  //     }
+  //     decodedSolutions.push(atob(parts[0]));
+  //     return '';
+  //   })
+  //   .filter((feature) => feature !== '');
 
-  const decodedRoles = roles.map((role) => atob(role));
-  const decodedLevels = experienceLevels.map((level) => atob(level));
+  // const decodedRoles = roles.map((role) => atob(role));
+  // const decodedLevels = experienceLevels.map((level) => atob(level));
 
   if (solutionMeta) {
-    solutionMeta.content = decodedSolutions.join(';');
+    solutionMeta.content = solutions.join(';');
   }
   if (featureMeta) {
-    featureMeta.content = decodedFeatures.join(',');
+    featureMeta.content = features.join(',');
   }
   if (roleMeta) {
-    roleMeta.content = decodedRoles.join(',');
+    roleMeta.content = roles.join(',');
   }
   if (levelMeta) {
-    levelMeta.content = decodedLevels.join(',');
+    levelMeta.content = experienceLevels.join(',');
   }
   if (cqTagsMeta) {
-    const segments = cqTagsMeta.content.split(', ');
-    const decodedCQTags = segments.map((segment) =>
-      segment
-        .split('/')
-        .map((part, index) => (index > 0 ? atob(part) : part))
-        .join('/'),
-    );
-    cqTagsMeta.content = decodedCQTags.join(', ');
+    // const segments = cqTagsMeta.content.split(', ');
+    // const decodedCQTags = segments.map((segment) =>
+    //   segment
+    //     .split('/')
+    //     .map((part, index) => (index > 0 ? atob(part) : part))
+    //     .join('/'),
+    // );
+    cqTagsMeta.content = cqTags.join(', ');
   }
 }
 
