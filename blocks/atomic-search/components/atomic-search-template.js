@@ -668,18 +668,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       font-size: 14px;
                       color: var(--non-spectrum-dark-charcoal);
                       font-weight: bold;
-                      display: -webkit-box;
-                      -webkit-line-clamp: 1; 
-                      -webkit-box-orient: vertical;
                       overflow: hidden;
-                      text-overflow: ellipsis;
                       max-width: 90vw;
                     }
                     .result-title atomic-result-text atomic-result-link, .mobile-result-title atomic-result-text atomic-result-link {
                       width: 100%;
                       display: block;
-                      height: 20px;
-                      position: absolute;
                     }
                     .result-content-type {
                       display: flex;
@@ -777,13 +771,13 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       cursor: pointer;
                     }
                     atomic-result-link > a:not([slot="label"]) {
-                      display: inline-flex;
-                      align-items: center;
-                      gap: 2px;
                       position: absolute;
                       left: 0;
                     }
                     atomic-result-link > a img {
+                      display: inline-block;
+                      margin-bottom: 6px;
+                      margin-left: 4px;
                       height: 14px;
                       width: 14px;
                     }
