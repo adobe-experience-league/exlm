@@ -7,6 +7,7 @@ import atomicFacetManagerHandler from './components/atomic-search-facet-manager.
 import atomicQuerySummaryHandler from './components/atomic-search-query-summary.js';
 import atomicBreadBoxHandler from './components/atomic-search-breadbox.js';
 import atomicPagerHandler from './components/atomic-search-pager.js';
+import atomicNoResultHandler from './components/atomic-search-no-results.js';
 import getCoveoAtomicMarkup from './components/atomic-search-template.js';
 import { CUSTOM_EVENTS, debounce, handleHeaderSearchVisibility } from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
@@ -27,8 +28,6 @@ async function initiateCoveoAtomicSearch() {
 }
 
 export default function decorate(block) {
-  const placeHolderPromise = fetchLanguagePlaceholders();
-
   const handleAtomicLibLoad = async () => {
     await customElements.whenDefined('atomic-search-interface');
     const searchInterface = block.querySelector('atomic-search-interface');
@@ -44,6 +43,16 @@ export default function decorate(block) {
     // Trigger a first search
     searchInterface.executeFirstSearch();
 
+    const commonActionHandler = () => {
+      atomicFacetHandler(block.querySelector('atomic-facet'));
+      atomicResultHandler(block);
+      atomicSortDropdownHandler(block.querySelector('atomic-sort-dropdown'));
+      atomicFacetManagerHandler(block.querySelector('atomic-facet-manager'));
+      atomicQuerySummaryHandler(block.querySelector('atomic-query-summary'), placeholders);
+      atomicBreadBoxHandler(block.querySelector('atomic-breadbox'));
+      atomicPagerHandler(block.querySelector('atomic-pager'));
+    };
+
     Promise.all([
       customElements.whenDefined('atomic-result-list'),
       customElements.whenDefined('atomic-result'),
@@ -53,14 +62,10 @@ export default function decorate(block) {
       customElements.whenDefined('atomic-query-summary'),
       customElements.whenDefined('atomic-breadbox'),
       customElements.whenDefined('atomic-pager'),
+      customElements.whenDefined('atomic-no-results'),
     ]).then(() => {
-      atomicFacetHandler(block.querySelector('atomic-facet'));
-      atomicResultHandler(block.querySelector('atomic-result-list'));
-      atomicSortDropdownHandler(block.querySelector('atomic-sort-dropdown'));
-      atomicFacetManagerHandler(block.querySelector('atomic-facet-manager'));
-      atomicQuerySummaryHandler(block.querySelector('atomic-query-summary'), placeholders);
-      atomicBreadBoxHandler(block.querySelector('atomic-breadbox'));
-      atomicPagerHandler(block.querySelector('atomic-pager'));
+      atomicNoResultHandler(block);
+      commonActionHandler();
 
       handleHeaderSearchVisibility();
       decorateIcons(block);
@@ -124,6 +129,23 @@ export default function decorate(block) {
         },
         { once: true },
       );
+
+      document.addEventListener(CUSTOM_EVENTS.NO_RESULT_FOUND, () => {
+        const skeleton = block.querySelector('.atomic-search-load-skeleton');
+        if (skeleton) {
+          block.removeChild(skeleton);
+        }
+        const baseSummaryQueryEl = block.querySelector('atomic-query-summary');
+        if (baseSummaryQueryEl) {
+          baseSummaryQueryEl.dataset.observed = '';
+        }
+      });
+
+      document.addEventListener(CUSTOM_EVENTS.RESULT_FOUND, () => {
+        setTimeout(() => {
+          commonActionHandler();
+        }, 200);
+      });
     });
   };
 
@@ -179,7 +201,7 @@ export default function decorate(block) {
 
   initiateCoveoAtomicSearch().then(async () => {
     try {
-      placeholders = await placeHolderPromise;
+      placeholders = await fetchLanguagePlaceholders();
     } catch {
       // no-op
     }

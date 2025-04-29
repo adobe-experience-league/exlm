@@ -25,6 +25,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     "atomic-breadbox";
                 }
               }
+              atomic-search-interface  atomic-search-layout {
+                z-index: 1;
+                position: relative;
+              }
               atomic-search-interface:not(.atomic-search-interface-no-results, .atomic-search-interface-error) atomic-search-layout {
                 grid-template-areas: 
                   ". .                      atomic-section-search ."
@@ -258,20 +262,20 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
               </style>
               <atomic-facet
-                  sort-criteria="alphanumericNaturalDescending"
+                  sort-criteria="alphanumericNatural"
                   field="el_contenttype"
                   label=${placeholders.searchContentTypeLabel || 'Content Type'}
                   display-values-as="checkbox"
                 ></atomic-facet>
               <atomic-facet
-                sort-criteria="alphanumericNaturalDescending"
+                sort-criteria="alphanumericNatural"
                 field="el_product"
                 label=${placeholders.searchProductLabel || 'Product'}
                 number-of-values="60"
                 display-values-as="checkbox"
               ></atomic-facet>
               <atomic-facet
-                sort-criteria="alphanumericNaturalDescending"
+                sort-criteria="alphanumericNatural"
                 field="el_role"
                 label=${placeholders.searchRoleLabel || 'Role'}
                 display-values-as="checkbox"
@@ -470,6 +474,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   font-size: 11px;
                   color: var(--non-spectrum-web-gray);
                 }
+               .result-header-section.result-header-inactive {
+                  display: none !important;
+                }
                 @media(min-width: 1024px) {
                   .result-header-section {
                     display: grid;
@@ -477,7 +484,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   }
                 }
               </style>
-              <div class="result-header-section desktop-only">
+              <div part="result-header result-header-inactive" class="result-header-section desktop-only">
                 <div class="result-header-item">
                   <label>${placeholders.searchNameLabel || 'NAME'}</label>
                 </div>
@@ -661,18 +668,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       font-size: 14px;
                       color: var(--non-spectrum-dark-charcoal);
                       font-weight: bold;
-                      display: -webkit-box;
-                      -webkit-line-clamp: 1; 
-                      -webkit-box-orient: vertical;
                       overflow: hidden;
-                      text-overflow: ellipsis;
                       max-width: 90vw;
                     }
                     .result-title atomic-result-text atomic-result-link, .mobile-result-title atomic-result-text atomic-result-link {
                       width: 100%;
                       display: block;
-                      height: 20px;
-                      position: absolute;
                     }
                     .result-content-type {
                       display: flex;
@@ -770,13 +771,13 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       cursor: pointer;
                     }
                     atomic-result-link > a:not([slot="label"]) {
-                      display: inline-flex;
-                      align-items: center;
-                      gap: 2px;
                       position: absolute;
                       left: 0;
                     }
                     atomic-result-link > a img {
+                      display: inline-block;
+                      margin-bottom: 6px;
+                      margin-left: 4px;
                       height: 14px;
                       width: 14px;
                     }
