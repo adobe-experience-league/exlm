@@ -71,6 +71,10 @@ export default function atomicResultHandler(block) {
           waitForChildElement(resultEl, hydrateResult);
           return;
         }
+        const blockLevelSkeleton = block.querySelector('.atomic-search-load-skeleton');
+        if (blockLevelSkeleton) {
+          block.removeChild(blockLevelSkeleton);
+        }
 
         const resultItem = resultShadow.querySelector(`.result-item.${isMobileView ? 'mobile-only' : 'desktop-only'}`);
         const resultContentType = resultItem?.querySelector('.result-content-type');

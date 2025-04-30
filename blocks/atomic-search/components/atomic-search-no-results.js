@@ -1,3 +1,4 @@
+import { clearIconHandler } from './atomic-search-box.js';
 import { waitFor, CUSTOM_EVENTS, observeShadowRoot } from './atomic-search-utils.js';
 
 export default function atomicNoResultHandler(block) {
@@ -15,10 +16,19 @@ export default function atomicNoResultHandler(block) {
           }
         };
 
+        const handleSearchClearIcon = () => {
+          const searchElement = block.querySelector('atomic-search-box');
+          const clearIcon = searchElement?.shadowRoot?.querySelector('[part="clear-button"]');
+          clearIconHandler(clearIcon);
+        };
+
         observeShadowRoot(baseElement, {
           onPopulate: () => {
             toggleResultHeaderClass(true);
             document.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NO_RESULT_FOUND));
+            setTimeout(() => {
+              handleSearchClearIcon();
+            }, 100);
           },
           onClear: () => {
             toggleResultHeaderClass(false);

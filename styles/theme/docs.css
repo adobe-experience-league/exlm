@@ -321,8 +321,11 @@
   background-color: var(--spectrum-red-900);
 }
 
-.docs .badge.neutral,
-.docs .badge.caution,
 .docs .badge.yellow {
+  background-color: var(--spectrum-yellow-500);
+}
+
+.docs .badge.neutral,
+.docs .badge.caution {
   background-color: var(--spectrum-gray-600);
 }

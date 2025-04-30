@@ -5,11 +5,14 @@ const getCoveoAtomicMarkup = (placeholders) => {
   const { lang: languageCode } = getPathDetails();
   const atomicUIElements = htmlToElement(`
         <atomic-search-interface language=${languageCode} fields-to-include='["@foldingchild","@foldingcollection","@foldingparent","author","author_bio_page","author_name","author_type","authorname","authortype","collection","connectortype","contenttype","date","documenttype","el_author_type","el_contenttype","el_id","el_interactionstyle","el_kudo_status","el_lirank","el_product","el_rank_icon","el_reply_status","el_solution","el_solutions_authored","el_type","el_usergenerictext","el_version","el_view_status","exl_description","exl_thumbnail","filetype","id","language","liMessageLabels","liboardinteractionstyle","licommunityurl","lithreadhassolution","objecttype","outlookformacuri","outlookuri","permanentid","role","source","sourcetype","sysdocumenttype","type","urihash","video_url", "sysdate", "el_kudo_status"]'>
-        <style>
-        atomic-search-layout {
-          // background-color: var(--spectrum-gray-900);
-        }
-        </style>
+          <script type="application/json" id="atomic-search-interface-config">
+            {
+              "search": {
+                "freezeFacetOrder": true
+              }
+            }
+          </script>
+
         <atomic-search-layout>
           <div class="header-bg"></div>
           <atomic-layout-section section="search">
@@ -73,6 +76,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
               atomic-search-box::part(query-suggestion-item) {
                 font-size: 14px;
                 color: var(--non-spectrum-article-dark-gray);
+                --atomic-neutral-light: var(--non-spectrum-hover-bg);
               }
               atomic-search-box::part(clear-button) {
                 background: var(--non-spectrum-silver-mist);
@@ -161,7 +165,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 color: #767676;
                 
               }
-              .clear-label.clear-btn-enabled {
+              .clear-label.clear-btn-enabled, .clear-label.clear-btn-enabled label {
                 color: var(--non-spectrum-navy-blue);
                 cursor: pointer;
               }
@@ -262,12 +266,14 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
               </style>
               <atomic-facet
+                  id="facetContentType"
                   sort-criteria="alphanumericNatural"
                   field="el_contenttype"
                   label=${placeholders.searchContentTypeLabel || 'Content Type'}
                   display-values-as="checkbox"
                 ></atomic-facet>
               <atomic-facet
+                id="facetProduct"
                 sort-criteria="alphanumericNatural"
                 field="el_product"
                 label=${placeholders.searchProductLabel || 'Product'}
@@ -275,6 +281,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 display-values-as="checkbox"
               ></atomic-facet>
               <atomic-facet
+                id="facetRole"
                 sort-criteria="alphanumericNatural"
                 field="el_role"
                 label=${placeholders.searchRoleLabel || 'Role'}
@@ -842,8 +849,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                           </atomic-result-multi-value-text>
                       </div>
                       <div class="result-field result-updated">
-                          <atomic-result-date field="sysdate">
-                              <atomic-format-date format="LL" locale="en-US"></atomic-format-date>
+                          <atomic-result-date format="YYYY-MM-DD" field="sysdate">
                           </atomic-result-date>
                       </div>
                     </div>
@@ -903,8 +909,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </atomic-result-multi-value-text>
                     </div>
                     <div class="result-field result-updated">
-                          <atomic-result-date field="sysdate">
-                              <atomic-format-date format="LL" locale="en-US"></atomic-format-date>
+                          <atomic-result-date format="YYYY-MM-DD" field="sysdate">
                           </atomic-result-date>
                     </div>
                   </div>

@@ -1,7 +1,21 @@
 import { waitForChildElement, debounce, CUSTOM_EVENTS, isMobile } from './atomic-search-utils.js';
 
+const orderedFacetIds = ['facetContentType', 'facetProduct', 'facetRole'];
+
 export default function atomicFacetManagerHandler(baseElement) {
   let resizeObserver;
+  let debounceTimer;
+
+  const reorderFacets = () => {
+    const currentOrder = Array.from(baseElement.querySelectorAll('atomic-facet')).map((el) => el.id);
+    const isCorrectOrder = orderedFacetIds.every((id, index) => currentOrder[index] === id);
+    if (isCorrectOrder) return;
+
+    const facetsInOrder = orderedFacetIds.map((id) => document.getElementById(id)).filter(Boolean);
+    facetsInOrder.forEach((facet) => {
+      baseElement.appendChild(facet);
+    });
+  };
 
   function positionModal() {
     const modal = document.querySelector('.facet-modal');
@@ -89,6 +103,13 @@ export default function atomicFacetManagerHandler(baseElement) {
 
     resizeObserver = new ResizeObserver(debounce(200, onResize));
     resizeObserver.observe(atomicSearchContainer);
+
+    const managerObserver = new MutationObserver(() => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(reorderFacets, 100);
+    });
+
+    managerObserver.observe(baseElement, { childList: true });
   }
 
   initAtomicFacetManagerUI();
