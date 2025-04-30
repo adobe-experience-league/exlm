@@ -1,6 +1,6 @@
 import { CUSTOM_EVENTS, sleep, waitFor } from './atomic-search-utils.js';
 
-export default function atomicPagerHandler(baseElement) {
+export default function atomicResultPageHandler(baseElement) {
   function attachClickHandler(element) {
     if (!element || element.dataset.evented === 'true') {
       return;
@@ -20,17 +20,7 @@ export default function atomicPagerHandler(baseElement) {
   }
 
   function updatePagerUI() {
-    const previousElement = baseElement.shadowRoot.querySelector('[part="previous-button"]');
-    const nextButton = baseElement.shadowRoot.querySelector('[part="next-button"]');
-    if (previousElement) {
-      previousElement.style.cssText = `visibility: ${previousElement.disabled ? 'hidden' : 'visible'}`;
-      attachClickHandler(previousElement);
-    }
-    if (nextButton) {
-      nextButton.style.cssText = `visibility: ${nextButton.disabled ? 'hidden' : 'visible'}`;
-      attachClickHandler(nextButton);
-    }
-    const pageButtons = Array.from(baseElement.shadowRoot.querySelector('[part="page-buttons"]')?.children || []);
+    const pageButtons = Array.from(baseElement.shadowRoot.querySelector('[part="buttons"]')?.children || []);
     pageButtons.forEach((buttonEl) => {
       attachClickHandler(buttonEl);
     });
@@ -42,9 +32,9 @@ export default function atomicPagerHandler(baseElement) {
     }
   }
 
-  function initAtomicPagerUI() {
+  function initAtomicPageResultUI() {
     if (!baseElement.shadowRoot || !baseElement.shadowRoot.firstElementChild) {
-      waitFor(initAtomicPagerUI);
+      waitFor(initAtomicPageResultUI);
       return;
     }
     updatePagerUI();
@@ -53,5 +43,6 @@ export default function atomicPagerHandler(baseElement) {
   document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, () => {
     updatePagerUI();
   });
-  initAtomicPagerUI();
+
+  initAtomicPageResultUI();
 }
