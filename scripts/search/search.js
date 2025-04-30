@@ -21,12 +21,12 @@ export const redirectToSearchPage = (searchInput, filters = '') => {
     targetUrlWithLanguage += '#sort=relevancy';
   }
   if (filterValue) {
-    const filterValueEncoded = encodeURIComponent(`[${filterValue}]`);
-    targetUrlWithLanguage += `&f:@el_contenttype=${filterValueEncoded}`;
+    const filterValueEncoded = encodeURIComponent(filterValue);
+    targetUrlWithLanguage += `&f-@el_contenttype=${filterValueEncoded}`;
   }
   if (solution) {
-    const solutionEncoded = encodeURIComponent(`[${solution}]`);
-    targetUrlWithLanguage += `&f:el_product=${solutionEncoded}`;
+    const solutionEncoded = encodeURIComponent(solution);
+    targetUrlWithLanguage += `&f-el_product=${solutionEncoded}`;
   }
 
   window.location.href = targetUrlWithLanguage;
