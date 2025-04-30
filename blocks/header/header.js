@@ -29,7 +29,7 @@ import ProfileMenu from './profile-menu.js';
 
 /**
  *  @typedef {Object} CommunityOptions
- *  @property {boolean} active
+ *  @property {boolean | undefined} active
  *  @property {boolean} hasMessages
  *  @property {boolean} hasNotifications
  *  @property {string} notificationsUrl
@@ -81,18 +81,7 @@ async function loadSearchElement() {
     window.headlessSolutionProductKey = solutionTag;
   }
   searchElementPromise =
-    searchElementPromise ??
-    new Promise((resolve, reject) => {
-      // eslint-disable-next-line
-      Promise.all([import('../../scripts/search/search.js')])
-        .then((results) => {
-          const [mod] = results;
-          resolve(mod.default ?? mod);
-        })
-        .catch((e) => {
-          reject(e);
-        });
-    });
+    searchElementPromise ?? import('../../scripts/search/search.js').then((mod) => mod.default ?? mod);
   return searchElementPromise;
 }
 
@@ -476,7 +465,7 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   const Search = await loadSearchElement();
   searchBlock.append(searchWrapper);
 
-  const searchItem = new Search({ searchBlock });
+  const searchItem = new Search({ searchBlock, searchUrl: searchLink?.href });
   searchItem.configureAutoComplete({
     searchOptions: options,
     showSearchSuggestions: true,
