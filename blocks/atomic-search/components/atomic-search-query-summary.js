@@ -49,6 +49,8 @@ export default function atomicQuerySummaryHandler(baseElement, placeholders) {
           baseElement.shadowRoot.appendChild(resultTextElement);
           updateQuerySummaryUI();
         }
+        const event = new CustomEvent(CUSTOM_EVENTS.SEARCH_QUERY_CHANGED);
+        document.dispatchEvent(event);
       }
       if (!baseElement.dataset.observed) {
         const observer = new MutationObserver((mutationsList) => {

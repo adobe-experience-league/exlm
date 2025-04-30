@@ -7,6 +7,7 @@ export const CUSTOM_EVENTS = {
   FACET_LOADED: 'ATOMIC_SEARCH_FACET_LOADED',
   NO_RESULT_FOUND: 'ATOMIC_RESULT_NOT_FOUND',
   RESULT_FOUND: 'ATOMIC_RESULT_FOUND',
+  SEARCH_QUERY_CHANGED: 'ATOMIC_SEARCH_QUERY_CHANGED',
 };
 
 export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_status', 'el_reply_status'];
@@ -136,3 +137,14 @@ export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutati
 
   ready();
 }
+
+export const sleep = (callback, timeout = 20) => {
+  const promise = new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, timeout);
+  });
+  promise.then(() => {
+    callback();
+  });
+};
