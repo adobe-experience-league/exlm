@@ -9,7 +9,8 @@ const solution = getMetadata('solution')?.split(',')[0].trim();
 
 // Redirects to the search page based on the provided search input and filters
 export const redirectToSearchPage = (searchUrl, searchInput, filters = '') => {
-  let targetUrlWithLanguage = `${searchUrl}?lang=${languageCode}`;
+  const isLegacySearch = searchUrl.includes('.html');
+  let targetUrlWithLanguage = isLegacySearch ? `${searchUrl}?lang=${languageCode}` : searchUrl;
   const filterValue = filters && filters.toLowerCase() === 'all' ? '' : filters;
   if (searchInput) {
     const trimmedSearchInput = encodeURIComponent(searchInput.trim());
@@ -19,11 +20,13 @@ export const redirectToSearchPage = (searchUrl, searchInput, filters = '') => {
   }
   if (filterValue) {
     const filterValueEncoded = encodeURIComponent(filterValue);
-    targetUrlWithLanguage += `&f-@el_contenttype=${filterValueEncoded}`;
+    targetUrlWithLanguage += isLegacySearch
+      ? `&f:@el_contenttype=[${filterValueEncoded}]`
+      : `&f-@el_contenttype=${filterValueEncoded}`;
   }
   if (solution) {
     const solutionEncoded = encodeURIComponent(solution);
-    targetUrlWithLanguage += `&f-el_product=${solutionEncoded}`;
+    targetUrlWithLanguage += isLegacySearch ? `&f:el_product=[${solutionEncoded}]` : `&f-el_product=${solutionEncoded}`;
   }
 
   window.location.href = targetUrlWithLanguage;
