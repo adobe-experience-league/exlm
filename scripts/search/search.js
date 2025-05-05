@@ -19,11 +19,15 @@ export const redirectToSearchPage = (searchUrl, searchInput, filters = '') => {
   }
   if (filterValue) {
     const filterValueEncoded = encodeURIComponent(filterValue);
-    targetUrlWithLanguage += `&f-@el_contenttype=${filterValueEncoded}`;
+    targetUrlWithLanguage += targetUrlWithLanguage.includes('.html')
+      ? `&f:@el_contenttype=[${filterValueEncoded}]`
+      : `&f-@el_contenttype=${filterValueEncoded}`;
   }
   if (solution) {
     const solutionEncoded = encodeURIComponent(solution);
-    targetUrlWithLanguage += `&f-el_product=${solutionEncoded}`;
+    targetUrlWithLanguage += targetUrlWithLanguage.includes('.html')
+      ? `&f:el_product=[${solutionEncoded}]`
+      : `&f-el_product=${solutionEncoded}`;
   }
 
   window.location.href = targetUrlWithLanguage;
