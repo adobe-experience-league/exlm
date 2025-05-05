@@ -54,9 +54,29 @@
 
 /* title styling */
 .landing-cards-container > div > div > div > p:has(picture) + p,
-.landing-cards-container > div > div > div > p:first-child:not(:has(picture)) {
+.landing-cards-container > div > div > div > p:first-child:not(:has(picture)),
+.landing-cards-container > div > div > div > .icon-content-wrapper p:not(.icon) {
   font-size: 18px !important;
   font-weight: 600 !important;
+}
+
+.icon-content-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 10px 10px 0;
+}
+
+.landing-cards-container > div > div > div > .icon-content-wrapper p:not(.icon) {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* icon styling */
+.landing-cards-container p.icon {
+  margin: 0;
+  padding: 0;
 }
 
 /* content without images - apply padding at the top */
