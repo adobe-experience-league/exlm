@@ -14,8 +14,8 @@
   --browse-card-color-certification-secondary: #f8fbe6;
   --browse-card-color-troubleshooting-primary: #ffa213;
   --browse-card-color-troubleshooting-secondary: #fff3df;
-  --browse-card-color-live-event-primary: #eb1000;
-  --browse-card-color-live-event-secondary: #ffc0c0;
+  --browse-card-color-upcoming-event-primary: #eb1000;
+  --browse-card-color-upcoming-event-secondary: #ffc0c0;
   --browse-card-color-event-primary: #ff709f;
   --browse-card-color-event-secondary: #ffe2ec;
   --browse-card-color-instructor-led-training-primary: #7a6afd;
@@ -72,8 +72,8 @@
   background-color: var(--browse-card-color-troubleshooting-secondary);
 }
 
-.browse-card.live-event-card {
-  background-color: var(--browse-card-color-live-event-secondary);
+.browse-card.upcoming-event-card {
+  background-color: var(--browse-card-color-upcoming-event-secondary);
 }
 
 .browse-card.event-card {
