@@ -9,7 +9,7 @@ const solution = getMetadata('solution')?.split(',')[0].trim();
 
 // Redirects to the search page based on the provided search input and filters
 export const redirectToSearchPage = (searchUrl, searchInput, filters = '') => {
-  const isLegacySearch = searchUrl.includes('search.html');
+  const isLegacySearch = searchUrl.includes('.html');
   let targetUrlWithLanguage = isLegacySearch ? `${searchUrl}?lang=${languageCode}` : searchUrl;
   const filterValue = filters && filters.toLowerCase() === 'all' ? '' : filters;
   if (searchInput) {
