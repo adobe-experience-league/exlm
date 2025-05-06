@@ -120,6 +120,8 @@ async function renderCards(block) {
     });
   }
 
+  buildCardsShimmer.shimmerContainer.classList.remove('browse-card-shimmer');
+
   async function processBookmarksInBatches(bookmarksIds) {
     for (let i = 0; i < bookmarksIds.length; i += BATCH_SIZE) {
       const batch = bookmarksIds.slice(i, i + BATCH_SIZE);
