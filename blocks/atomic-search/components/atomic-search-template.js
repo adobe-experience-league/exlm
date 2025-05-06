@@ -988,6 +988,19 @@ const getCoveoAtomicMarkup = (placeholders) => {
               <atomic-results-per-page></atomic-results-per-page>
             </atomic-layout-section>
           </atomic-layout-section>
+          <style>
+            @media only screen and (min-width: 1024px) {
+              atomic-search-interface.atomic-search-interface-no-results atomic-search-layout {
+                    grid-template-areas:
+                    '. .                     atomic-section-search .'
+                    '. atomic-section-facets   atomic-section-main   .' !important;
+                    grid-template-columns:
+                  }
+                  atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='facets'] {
+                    display: block;
+                  }
+                }
+        </style>
         </atomic-search-layout>
       </atomic-search-interface>
       `);
