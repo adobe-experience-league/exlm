@@ -4249,6 +4249,20 @@
         "extensionId": "exlm-ue-custom-field"
       },
       {
+        "component": "exlm-feature-field",
+        "name": "customFeatures",
+        "label": "Feature(s)",
+        "valueType": "string",
+        "extensionId": "exlm-ue-custom-field"
+      },
+      {
+        "component": "exlm-industry-field",
+        "name": "customIndustry",
+        "label": "Industries",
+        "valueType": "string",
+        "extensionId": "exlm-ue-custom-field"
+      },
+      {
         "component": "aem-tag",
         "valueType": "string",
         "name": "coveo-solution",
