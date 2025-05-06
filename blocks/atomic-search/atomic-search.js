@@ -7,10 +7,13 @@ import atomicFacetManagerHandler from './components/atomic-search-facet-manager.
 import atomicQuerySummaryHandler from './components/atomic-search-query-summary.js';
 import atomicBreadBoxHandler from './components/atomic-search-breadbox.js';
 import atomicPagerHandler from './components/atomic-search-pager.js';
+import atomicNoResultHandler from './components/atomic-search-no-results.js';
 import getCoveoAtomicMarkup from './components/atomic-search-template.js';
 import { CUSTOM_EVENTS, debounce, handleHeaderSearchVisibility } from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
 import createAtomicSkeleton from './components/atomic-search-skeleton.js';
+import atomicSearchBoxHandler from './components/atomic-search-box.js';
+import atomicResultPageHandler from './components/atomic-search-results-per-page.js';
 
 let placeholders = {};
 
@@ -27,8 +30,61 @@ async function initiateCoveoAtomicSearch() {
 }
 
 export default function decorate(block) {
-  const placeHolderPromise = fetchLanguagePlaceholders();
-
+  const renderAtomicShimmer = (insertBefore) => {
+    const skeletonWrapper = htmlToElement(`<div class="atomic-search-load-skeleton">
+      <div class="atomic-load-skeleton-head">
+        <div class="atomic-load-skeleton"></div>
+      </div>
+      <div class="atomic-load-skeleton-main">
+        <div></div>
+        <div class="atomic-load-skeleton-left">
+          <div class="atomic-load-mobile-header">
+            <div class="atomic-load-mobile-query">
+              <div class="atomic-load-mobile-search-text atomic-load-skeleton"></div>
+              <div class="atomic-load-mobile-count atomic-load-skeleton"></div>
+            </div>
+            <div class="atomic-load-mobile-filter">
+              <div class="atomic-load-mobile-icon atomic-load-skeleton"></div>
+              <div class="atomic-load-mobile-sort atomic-load-skeleton"></div>
+            </div>
+          </div>
+          <div class="atomic-load-facet-header">
+            <div class="atomic-load-skeleton"></div>
+          </div>
+          <div class="atomic-load-facet-item">
+            <div class="atomic-load-skeleton"></div>
+          </div>
+          <div class="atomic-load-facet-item">
+            <div class="atomic-load-skeleton"></div>
+          </div>
+          <div  class="atomic-load-facet-item">
+            <div class="atomic-load-skeleton"></div>
+          </div>
+        </div>
+        <div class="atomic-load-skeleton-right">
+          <div class="atomic-load-skeleton-filter">
+            <div class="atomic-load-skeleton"></div>
+            <div class="atomic-load-skeleton"></div>
+          </div>
+          <div class="atomic-load-skeleton-result">
+            ${`${[...Array(10)]
+              .map((_, i) => 10 - i)
+              .map(() => {
+                const element = createAtomicSkeleton();
+                return element.innerHTML;
+              })
+              .join('')}`}
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>`);
+    if (insertBefore && block.firstElementChild) {
+      block.insertBefore(skeletonWrapper, block.firstElementChild);
+    } else {
+      block.appendChild(skeletonWrapper);
+    }
+  };
   const handleAtomicLibLoad = async () => {
     await customElements.whenDefined('atomic-search-interface');
     const searchInterface = block.querySelector('atomic-search-interface');
@@ -44,6 +100,18 @@ export default function decorate(block) {
     // Trigger a first search
     searchInterface.executeFirstSearch();
 
+    const commonActionHandler = () => {
+      atomicFacetHandler(block.querySelector('atomic-facet'));
+      atomicSearchBoxHandler(block.querySelector('atomic-search-box'));
+      atomicResultHandler(block);
+      atomicSortDropdownHandler(block.querySelector('atomic-sort-dropdown'));
+      atomicFacetManagerHandler(block.querySelector('atomic-facet-manager'));
+      atomicQuerySummaryHandler(block.querySelector('atomic-query-summary'), placeholders);
+      atomicBreadBoxHandler(block.querySelector('atomic-breadbox'));
+      atomicPagerHandler(block.querySelector('atomic-pager'));
+      atomicResultPageHandler(block.querySelector('atomic-results-per-page'));
+    };
+
     Promise.all([
       customElements.whenDefined('atomic-result-list'),
       customElements.whenDefined('atomic-result'),
@@ -53,14 +121,12 @@ export default function decorate(block) {
       customElements.whenDefined('atomic-query-summary'),
       customElements.whenDefined('atomic-breadbox'),
       customElements.whenDefined('atomic-pager'),
+      customElements.whenDefined('atomic-no-results'),
+      customElements.whenDefined('atomic-search-box'),
+      customElements.whenDefined('atomic-results-per-page'),
     ]).then(() => {
-      atomicFacetHandler(block.querySelector('atomic-facet'));
-      atomicResultHandler(block.querySelector('atomic-result-list'));
-      atomicSortDropdownHandler(block.querySelector('atomic-sort-dropdown'));
-      atomicFacetManagerHandler(block.querySelector('atomic-facet-manager'));
-      atomicQuerySummaryHandler(block.querySelector('atomic-query-summary'), placeholders);
-      atomicBreadBoxHandler(block.querySelector('atomic-breadbox'));
-      atomicPagerHandler(block.querySelector('atomic-pager'));
+      atomicNoResultHandler(block);
+      commonActionHandler();
 
       handleHeaderSearchVisibility();
       decorateIcons(block);
@@ -77,6 +143,7 @@ export default function decorate(block) {
       const debouncedResize = debounce(200, onResize);
       const resizeObserver = new ResizeObserver(debouncedResize);
       resizeObserver.observe(searchInterface);
+
       searchInterface.language = languageCode;
       searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_contenttype', {
         Community: placeholders.searchContentTypeCommunityLabel || 'Community',
@@ -124,62 +191,33 @@ export default function decorate(block) {
         },
         { once: true },
       );
+
+      document.addEventListener(CUSTOM_EVENTS.NO_RESULT_FOUND, () => {
+        const skeleton = block.querySelector('.atomic-search-load-skeleton');
+        if (skeleton) {
+          block.removeChild(skeleton);
+        }
+        const baseSummaryQueryEl = block.querySelector('atomic-query-summary');
+        if (baseSummaryQueryEl) {
+          baseSummaryQueryEl.dataset.observed = '';
+        }
+      });
+
+      document.addEventListener(CUSTOM_EVENTS.RESULT_FOUND, () => {
+        if (!block.querySelector('.atomic-search-load-skeleton')) {
+          renderAtomicShimmer(true);
+        }
+        setTimeout(() => {
+          commonActionHandler();
+        }, 200);
+      });
     });
   };
 
-  const skeletonWrapper = htmlToElement(`<div class="atomic-search-load-skeleton">
-    <div class="atomic-load-skeleton-head">
-      <div class="atomic-load-skeleton"></div>
-    </div>
-    <div class="atomic-load-skeleton-main">
-      <div></div>
-      <div class="atomic-load-skeleton-left">
-        <div class="atomic-load-mobile-header">
-          <div class="atomic-load-mobile-query">
-            <div class="atomic-load-mobile-search-text atomic-load-skeleton"></div>
-            <div class="atomic-load-mobile-count atomic-load-skeleton"></div>
-          </div>
-          <div class="atomic-load-mobile-filter">
-            <div class="atomic-load-mobile-icon atomic-load-skeleton"></div>
-            <div class="atomic-load-mobile-sort atomic-load-skeleton"></div>
-          </div>
-        </div>
-        <div class="atomic-load-facet-header">
-          <div class="atomic-load-skeleton"></div>
-        </div>
-        <div class="atomic-load-facet-item">
-          <div class="atomic-load-skeleton"></div>
-        </div>
-        <div class="atomic-load-facet-item">
-          <div class="atomic-load-skeleton"></div>
-        </div>
-        <div  class="atomic-load-facet-item">
-          <div class="atomic-load-skeleton"></div>
-        </div>
-      </div>
-      <div class="atomic-load-skeleton-right">
-        <div class="atomic-load-skeleton-filter">
-          <div class="atomic-load-skeleton"></div>
-          <div class="atomic-load-skeleton"></div>
-        </div>
-        <div class="atomic-load-skeleton-result">
-          ${`${[...Array(10)]
-            .map((_, i) => 10 - i)
-            .map(() => {
-              const element = createAtomicSkeleton();
-              return element.innerHTML;
-            })
-            .join('')}`}
-        </div>
-      </div>
-      <div></div>
-    </div>
-  </div>`);
-  block.appendChild(skeletonWrapper);
-
+  renderAtomicShimmer();
   initiateCoveoAtomicSearch().then(async () => {
     try {
-      placeholders = await placeHolderPromise;
+      placeholders = await fetchLanguagePlaceholders();
     } catch {
       // no-op
     }

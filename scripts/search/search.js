@@ -1,8 +1,6 @@
 import { getMetadata } from '../lib-franklin.js';
-import { htmlToElement, loadIms, getLanguageCode, getConfig } from '../scripts.js';
+import { htmlToElement, loadIms, getLanguageCode } from '../scripts.js';
 import SearchDelegate from './search-delegate.js';
-
-const { searchUrl } = getConfig();
 
 // Get language code from URL
 const languageCode = await getLanguageCode();
@@ -10,9 +8,9 @@ const languageCode = await getLanguageCode();
 const solution = getMetadata('solution')?.split(',')[0].trim();
 
 // Redirects to the search page based on the provided search input and filters
-export const redirectToSearchPage = (searchInput, filters = '') => {
-  const baseTargetUrl = searchUrl;
-  let targetUrlWithLanguage = `${baseTargetUrl}?lang=${languageCode}`;
+export const redirectToSearchPage = (searchUrl, searchInput, filters = '') => {
+  const isLegacySearch = searchUrl.includes('.html');
+  let targetUrlWithLanguage = isLegacySearch ? `${searchUrl}?lang=${languageCode}` : searchUrl;
   const filterValue = filters && filters.toLowerCase() === 'all' ? '' : filters;
   if (searchInput) {
     const trimmedSearchInput = encodeURIComponent(searchInput.trim());
@@ -21,23 +19,26 @@ export const redirectToSearchPage = (searchInput, filters = '') => {
     targetUrlWithLanguage += '#sort=relevancy';
   }
   if (filterValue) {
-    const filterValueEncoded = encodeURIComponent(`[${filterValue}]`);
-    targetUrlWithLanguage += `&f:@el_contenttype=${filterValueEncoded}`;
+    const filterValueEncoded = encodeURIComponent(filterValue);
+    targetUrlWithLanguage += isLegacySearch
+      ? `&f:@el_contenttype=[${filterValueEncoded}]`
+      : `&f-@el_contenttype=${filterValueEncoded}`;
   }
   if (solution) {
-    const solutionEncoded = encodeURIComponent(`[${solution}]`);
-    targetUrlWithLanguage += `&f:el_product=${solutionEncoded}`;
+    const solutionEncoded = encodeURIComponent(solution);
+    targetUrlWithLanguage += isLegacySearch ? `&f:el_product=[${solutionEncoded}]` : `&f-el_product=${solutionEncoded}`;
   }
 
   window.location.href = targetUrlWithLanguage;
 };
 
 export default class Search {
-  constructor({ searchBlock }) {
+  constructor({ searchBlock, searchUrl }) {
     this.searchBlock = searchBlock;
     this.callbackFn = null;
     this.searchQuery = '';
     this.initTokens();
+    this.searchUrl = searchUrl;
   }
 
   async initTokens() {
@@ -93,7 +94,7 @@ export default class Search {
         iconSearchElement.addEventListener('click', () => {
           const searchInputValue = this.searchInput.value.trim();
           const { filterValue } = this.searchPickerLabelEl.dataset;
-          redirectToSearchPage(searchInputValue, filterValue);
+          redirectToSearchPage(this.searchUrl, searchInputValue, filterValue);
         });
       }
     }
@@ -155,7 +156,7 @@ export default class Search {
       searchIcon.addEventListener('click', () => {
         const searchInputValue = this.searchInput.value.trim();
         const { filterValue } = this.searchPickerLabelEl.dataset;
-        redirectToSearchPage(searchInputValue, filterValue);
+        redirectToSearchPage(this.searchUrl, searchInputValue, filterValue);
       });
     }
   }
@@ -165,7 +166,7 @@ export default class Search {
     if (e.key === 'Enter') {
       const searchInputValue = this.searchInput.value.trim();
       const { filterValue } = this.searchPickerLabelEl.dataset;
-      redirectToSearchPage(searchInputValue, filterValue);
+      redirectToSearchPage(this.searchUrl, searchInputValue, filterValue);
     }
   }
 
@@ -327,7 +328,7 @@ export default class Search {
       this.clearSearchIcon.classList.add('search-icon-show');
     }
     this.hideSearchSuggestions(e, true);
-    redirectToSearchPage(suggestion, this.searchPickerLabelEl.dataset.filterValue);
+    redirectToSearchPage(this.searchUrl, suggestion, this.searchPickerLabelEl.dataset.filterValue);
   }
 
   setSelectedSearchOption(filterValue) {

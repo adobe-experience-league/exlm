@@ -41,6 +41,17 @@ export default function atomicBreadBoxHandler(baseElement) {
     onFilterUpdate();
   }
 
+  function hideSection() {
+    baseElement.style.display = 'none';
+  }
+
+  function showSection() {
+    baseElement.style.display = '';
+  }
+
   document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate, { once: true });
+  document.addEventListener(CUSTOM_EVENTS.NO_RESULT_FOUND, hideSection);
+  document.addEventListener(CUSTOM_EVENTS.RESULT_FOUND, showSection);
+
   observer.observe(baseElement, { attributes: true, attributeFilter: ['class'] });
 }

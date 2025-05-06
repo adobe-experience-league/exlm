@@ -38,7 +38,9 @@ export default function atomicQuerySummaryHandler(baseElement, placeholders) {
           return;
         }
         const resultTextElement = queryElementWrap || document.createElement('div');
-        const resultText = placeholders.atomicSearchResultText || 'Search Results for';
+        const resultText = searchQuery
+          ? placeholders.atomicSearchResultText || 'Search Results for'
+          : placeholders.atomicSearchNoQueryResultText || 'Search Results';
         resultTextElement.innerHTML = `<span style="margin-right: 8px;" class="search-result-left">${resultText}: ${searchQuery}</span> <span class="search-right">${pageText}</span>`;
         resultTextElement.dataset.searchkey = searchQuery;
         resultTextElement.dataset.pagekey = pageText;
@@ -47,6 +49,8 @@ export default function atomicQuerySummaryHandler(baseElement, placeholders) {
           baseElement.shadowRoot.appendChild(resultTextElement);
           updateQuerySummaryUI();
         }
+        const event = new CustomEvent(CUSTOM_EVENTS.SEARCH_QUERY_CHANGED);
+        document.dispatchEvent(event);
       }
       if (!baseElement.dataset.observed) {
         const observer = new MutationObserver((mutationsList) => {
@@ -84,6 +88,13 @@ export default function atomicQuerySummaryHandler(baseElement, placeholders) {
     }
   }
   document.addEventListener(CUSTOM_EVENTS.RESIZED, onResize);
+
+  document.addEventListener(CUSTOM_EVENTS.NO_RESULT_FOUND, () => {
+    const resultQueryEl = baseElement.shadowRoot.querySelector('.result-query');
+    if (resultQueryEl) {
+      baseElement.shadowRoot.removeChild(resultQueryEl);
+    }
+  });
 
   initAtomicQuerySummaryUI();
 }
