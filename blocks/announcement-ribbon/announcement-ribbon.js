@@ -188,7 +188,7 @@ export default async function decorate(block) {
   if (dismissable && isDismissed) {
     block.parentElement.style.display = 'none';
   } else {
-    decorateRibbon({
+    await decorateRibbon({
       block,
       image,
       heading,
