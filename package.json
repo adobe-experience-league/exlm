@@ -14,6 +14,7 @@
     "semantic-release": "semantic-release --debug",
     "up": "aem up",
     "up-secure": "sudo aem up --tls-cert=local-cert/server.crt --tls-key=local-cert/server.key --port=443 --open https://experienceleague-local.adobe.com",
+    "up-secure-stage": "sudo aem up --url https://main--exlm-stage--adobe-experience-league.aem.page --tls-cert=local-cert/server.crt --tls-key=local-cert/server.key --port=443 --open https://experienceleague-local.adobe.com",
     "up-secure-prod": "sudo aem up --url https://main--exlm-prod--adobe-experience-league.aem.page --tls-cert=local-cert/server.crt --tls-key=local-cert/server.key --port=443 --open https://experienceleague-local.adobe.com",
     "prepare": "husky install",
     "validate:paths": "node validate-paths.js",
