@@ -917,7 +917,40 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 </atomic-result-template>
               </atomic-result-list>
               <atomic-query-error></atomic-query-error>
-              <atomic-no-results></atomic-no-results>
+              <atomic-no-results enable-cancel-last-action="false">
+              <style>
+              atomic-no-results::part(icon) {
+                display:none;
+              }
+              atomic-no-results::part(no-results) {
+                font-size: 18px;
+                text-align: left;
+              }
+              atomic-no-results::part(highlight) {
+                font-weight: bold;
+              }
+
+              atomic-no-results::part(search-tips) {
+                display:none;
+              }
+              atomic-no-results atomic-breadbox::part(clear){
+                display: block;
+              }
+              atomic-no-results ul > li {
+                color: inherit;
+              }
+              </style>
+              <atomic-breadbox></atomic-breadbox>
+              <div class="atomic-no-results-text">
+                  <p><strong>Search suggestions:</strong></p>
+                  <ul>
+                    <li>Make sure keywords are spelled correctly.</li>
+                    <li>Try rephrasing or using synonyms.</li>
+                    <li>Use less specific keywords.</li>
+                    <li class="clear-filters-text" >Clear your filters.</li>
+                  </ul>
+                </div>
+            </atomic-no-results>
             </atomic-layout-section>
             <atomic-layout-section section="pagination">
               <style>
@@ -998,6 +1031,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   }
                   atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='facets'] {
                     display: block;
+                  }
+                  atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='facets'].all-facets-hidden {
+                    display: none;
                   }
                 }
         </style>

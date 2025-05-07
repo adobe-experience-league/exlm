@@ -2,12 +2,9 @@ import { waitForChildElement, debounce, CUSTOM_EVENTS, isMobile } from './atomic
 
 const orderedFacetIds = ['facetContentType', 'facetProduct', 'facetRole'];
 
-export default function atomicFacetManagerHandler(block) {
+export default function atomicFacetManagerHandler(baseElement) {
   let resizeObserver;
   let debounceTimer;
-  let hideTimeout;
-
-  const baseElement = block.querySelector('atomic-facet-manager')
 
   const reorderFacets = () => {
     const currentOrder = Array.from(baseElement.querySelectorAll('atomic-facet')).map((el) => el.id);
@@ -97,27 +94,7 @@ export default function atomicFacetManagerHandler(block) {
         <button id="close-modal-btn">Close</button>
       </div>
     `;
-    const hideFacet = () => {
-      console.log(baseElement);
-      console.log(block);
-      const isNoResultsPage = block.querySelector('atomic-search-interface');
-      console.log('isNo', isNoResultsPage);
-      const allFacets = baseElement.querySelectorAll('atomic-facet');
-      console.log(allFacets);
-      const isFacetsSelected = Array.from(allFacets).every(facet => {
-       
-        console.log(facet.classList.contains('atomic-hidden'))
-        return  facet.classList.contains('atomic-hidden');
-      }
 
-      );
-    
-      console.log(isFacetsSelected);
-    }
-    // document.addEventListener(CUSTOM_EVENTS.FACET_LOADED, () => {
-    //   console.log('event riggered');
-    //   hideFacet();
-    // });
     const atomicSearchContainer = document.querySelector('atomic-search-interface');
     atomicSearchContainer.appendChild(modal);
 
@@ -129,14 +106,11 @@ export default function atomicFacetManagerHandler(block) {
 
     const managerObserver = new MutationObserver(() => {
       clearTimeout(debounceTimer);
-      clearTimeout(hideTimeout);
       debounceTimer = setTimeout(reorderFacets, 100);
-      hideTimeout = setTimeout(hideFacet, 300);
     });
 
     managerObserver.observe(baseElement, { childList: true });
   }
-   // Re-check when any facet is re-rendered
 
   initAtomicFacetManagerUI();
 }
