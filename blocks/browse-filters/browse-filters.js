@@ -8,7 +8,6 @@ import {
 } from '../../scripts/scripts.js';
 import {
   roleOptions,
-  contentTypeOptions,
   expTypeOptions,
   productTypeOptions,
   getObjectByName,
@@ -30,7 +29,13 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
-import { formattedTags, handleTopicSelection, dispatchCoveoAdvancedQuery, coveoFacetMap } from './browse-topics.js';
+import {
+  formattedTags,
+  handleTopicSelection,
+  dispatchCoveoAdvancedQuery,
+  coveoFacetMap,
+  dropdownOptions,
+} from './browse-topics.js';
 
 let placeholders = {};
 try {
@@ -46,7 +51,7 @@ let coveoHeadlessPromise = null;
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
 
 const fragment = () => window.location.hash.slice(1);
-const dropdownOptions = [roleOptions, contentTypeOptions];
+
 const tags = [];
 let tagsProxy;
 const buildCardsShimmer = new BrowseCardShimmer(getBrowseFiltersResultCount());
