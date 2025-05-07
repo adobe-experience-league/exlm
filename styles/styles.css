@@ -553,6 +553,10 @@ body {
   overflow-wrap: break-word;
 }
 
+body[class^="docs"] {
+  background-color: var(--background-color);
+}
+
 body[class^="browse-"],
 body[class^="article-"] {
   /* default background color for browse pages */
@@ -964,6 +968,10 @@ picture[align="right"] {
   background-color: var(--highlight-light-background-color);
 
   /* section metadata */
+}
+
+body[class^="docs"] .section {
+  background-color: var(--background-color);
 }
 
 .section:not([data-section-status="loaded"]) {
