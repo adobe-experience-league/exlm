@@ -2620,7 +2620,15 @@
         "name": "searchBar",
         "value": "",
         "label": "Search Bar Text",
-        "description": "Search the search bar Placeholder Text"
+        "description": "Search Bar Placeholder Text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Search Page URL",
+        "description": "Search Page URL"
       }
     ]
   },

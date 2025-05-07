@@ -1,15 +1,17 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, getConfig } from '../../scripts/scripts.js';
 import { redirectToSearchPage } from '../../scripts/search/search.js';
 
-function redirectTo(inputElement, event) {
+const { fallBackSearchUrl } = getConfig();
+
+function redirectTo(searchUrl, inputElement, event) {
   event.preventDefault();
-  const SearchInputValue = inputElement?.value.trim();
-  redirectToSearchPage(SearchInputValue);
+  const searchInputValue = inputElement?.value.trim();
+  redirectToSearchPage(searchUrl, searchInputValue);
 }
 
 export default function decorate(block) {
-  const [heading, placeholder] = [...block.children].map((row) => row.firstElementChild);
+  const [heading, placeholder, searchLink] = [...block.children].map((row) => row.firstElementChild);
 
   if (heading.firstElementChild) {
     const label = document.createElement('label');
@@ -41,14 +43,15 @@ export default function decorate(block) {
   const searchInput = block.querySelector('#secondary-search');
   const searchIcon = block.querySelector('.icon-search');
 
+  const searchRedirectUrl = searchLink || fallBackSearchUrl;
   searchIcon?.addEventListener('click', (e) => {
-    redirectTo(searchInput, e);
+    redirectTo(searchRedirectUrl, searchInput, e);
   });
 
   searchInput?.addEventListener('keydown', (e) => {
     if (e.repeat) return;
     if (e.key === 'Enter') {
-      redirectTo(searchInput, e);
+      redirectTo(searchRedirectUrl, searchInput, e);
     }
   });
 }
