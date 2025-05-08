@@ -43,7 +43,7 @@ export default function decorate(block) {
 
   const { lang } = getPathDetails();
   const fallbackSearchUrl = `${window.location.origin}/${lang}/search`;
-  const searchRedirectUrl = searchUrl?.textContent.trim() || fallbackSearchUrl;
+  const searchRedirectUrl = searchUrl.textContent?.trim() || fallbackSearchUrl;
   searchIcon?.addEventListener('click', (e) => {
     redirectTo(searchRedirectUrl, searchInput, e);
   });
