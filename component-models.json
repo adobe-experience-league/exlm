@@ -4250,9 +4250,18 @@
       },
       {
         "component": "exlm-aem-tag",
-        "name": "customFeatures",
+        "name": "exlm-products",
+        "label": "Solution(s)",
+        "valueType": "string",
+        "rootPath": "",
+        "extensionId": "exlm-ue-custom-field"
+      },
+      {
+        "component": "exlm-aem-tag",
+        "name": "exlm-features",
         "label": "Feature(s)",
         "valueType": "string",
+        "rootPath": "",
         "extensionId": "exlm-ue-custom-field"
       },
       {
