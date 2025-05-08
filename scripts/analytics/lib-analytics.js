@@ -91,6 +91,7 @@ export async function pushPageDataLayer(language) {
         role: userData.role || [],
         experienceLevel: userData.level || [],
         solutionLevel: userData.solutionLevels || [],
+        certifications: userData.certifications || [],
         industry: userData.industryInterests || [],
         notificationPref: userData.emailOptIn === true,
         org: userData.org || '',

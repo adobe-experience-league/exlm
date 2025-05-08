@@ -1,5 +1,5 @@
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
-import { getCoveoFacets } from './browse-filter-utils.js';
+import { getCoveoFacets, roleOptions, contentTypeOptions, productTypeOptions } from './browse-filter-utils.js';
 
 export const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
@@ -8,6 +8,8 @@ export const coveoFacetMap = {
   el_product: 'headlessProductFacet',
   author_type: 'headlessAuthorTypeFacet',
 };
+
+export const dropdownOptions = [roleOptions, contentTypeOptions];
 
 /**
  * formattedTags returns the array of base64 encoded tags after extracting from the tags selected in dialog
@@ -118,7 +120,8 @@ export function handleTopicSelection(block, fireSelection, resetPage) {
   if (window.headlessQueryActionCreators) {
     let query = window.headlessBaseSolutionQuery || '';
     const currentProductFacetValues = window.headlessProductFacet?.state?.values || [];
-    if (currentProductFacetValues.length) {
+    const productTypeDropdownExists = !!dropdownOptions.find((opt) => opt.id === productTypeOptions.id);
+    if (currentProductFacetValues.length && !productTypeDropdownExists) {
       currentProductFacetValues.forEach(({ value, state }) => {
         if (state === 'selected') {
           window.headlessProductFacet.toggleSelect({
