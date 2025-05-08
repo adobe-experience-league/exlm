@@ -42,8 +42,8 @@ export default function decorate(block) {
   const searchIcon = block.querySelector('.icon-search');
 
   const { lang } = getPathDetails();
-  const fallBacksearchUrl = `${window.location.origin}/${lang}/search`;
-  const searchRedirectUrl = searchUrl || fallBacksearchUrl;
+  const fallbackSearchUrl = `${window.location.origin}/${lang}/search`;
+  const searchRedirectUrl = searchUrl || fallbackSearchUrl;
   searchIcon?.addEventListener('click', (e) => {
     redirectTo(searchRedirectUrl, searchInput, e);
   });
