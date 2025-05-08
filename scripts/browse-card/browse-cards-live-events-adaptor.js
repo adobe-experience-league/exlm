@@ -14,7 +14,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
    * @returns {Object} The BrowseCards data model.
    */
   const mapResultToCardsDataModel = (result) => {
-    const contentType = CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY;
+    const contentType = CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
     const { productFocus, eventTitle, eventDescription, startTime, endTime, time, cta } = result || {};
     const product = productFocus && (Array.isArray(productFocus) ? productFocus : productFocus.split(/,\s*/));
     const { ctaLabel, ctaLink } = cta || {};
@@ -25,7 +25,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
       return {
         ...browseCardDataModel,
         contentType,
-        badgeTitle: CONTENT_TYPES.LIVE_EVENT.LABEL,
+        badgeTitle: CONTENT_TYPES.UPCOMING_EVENT.LABEL,
         product,
         title: eventTitle || '',
         description: eventDescription || '',

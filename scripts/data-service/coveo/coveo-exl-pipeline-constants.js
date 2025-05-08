@@ -56,7 +56,7 @@ export const CONTENT_TYPES = Object.freeze({
     MAPPING_KEY: 'certification',
     LABEL: placeholders.browseCardCertificationLabel || 'Certification',
   },
-  LIVE_EVENT: {
+  UPCOMING_EVENT: {
     MAPPING_KEY: 'upcoming-event',
     LABEL: placeholders.browseCardUpcomingEventLabel || 'Upcoming Event',
   },
