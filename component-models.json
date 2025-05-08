@@ -4253,7 +4253,6 @@
         "name": "customFeatures",
         "label": "Feature(s)",
         "valueType": "string",
-        "field": "test",
         "extensionId": "exlm-ue-custom-field"
       },
       {
