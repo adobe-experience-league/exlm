@@ -1,17 +1,15 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { htmlToElement, getConfig } from '../../scripts/scripts.js';
+import { htmlToElement, getPathDetails } from '../../scripts/scripts.js';
 import { redirectToSearchPage } from '../../scripts/search/search.js';
 
-const { fallBackSearchUrl } = getConfig();
-
-function redirectTo(searchUrl, inputElement, event) {
+function redirectTo(searchPageUrl, inputElement, event) {
   event.preventDefault();
   const searchInputValue = inputElement?.value.trim();
-  redirectToSearchPage(searchUrl, searchInputValue);
+  redirectToSearchPage(searchPageUrl, searchInputValue);
 }
 
 export default function decorate(block) {
-  const [heading, placeholder, searchLink] = [...block.children].map((row) => row.firstElementChild);
+  const [heading, placeholder, searchUrl] = [...block.children].map((row) => row.firstElementChild);
 
   if (heading.firstElementChild) {
     const label = document.createElement('label');
@@ -43,7 +41,9 @@ export default function decorate(block) {
   const searchInput = block.querySelector('#secondary-search');
   const searchIcon = block.querySelector('.icon-search');
 
-  const searchRedirectUrl = searchLink || fallBackSearchUrl;
+  const { lang } = getPathDetails();
+  const fallBacksearchUrl = `${window.location.origin}/${lang}/search`;
+  const searchRedirectUrl = searchUrl || fallBacksearchUrl;
   searchIcon?.addEventListener('click', (e) => {
     redirectTo(searchRedirectUrl, searchInput, e);
   });
