@@ -14,6 +14,7 @@
   --exlm-line-height-h5: 23.4px;
   --exlm-line-height-h6: 23.4px;
   --exlm-line-height-content: 25.6px;
+  --highlight-light-background-color: #fff; /* change background color for docs from the set default in styles.css */
 }
 
 @media (width >= 900px) {
