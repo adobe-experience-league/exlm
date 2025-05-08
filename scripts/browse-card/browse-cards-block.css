@@ -88,6 +88,10 @@
   margin-top: 10px;
 }
 
+.browse-cards-block-view {
+  margin-top: 5px;
+}
+
 .browse-cards-block-view a {
   font-size: var(--spectrum-font-size-300);
   line-height: var(--spectrum-line-height-s);
@@ -122,6 +126,10 @@
   .browse-cards-block-content {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
+
+  .browse-cards-block-content:has(> div:only-child) {
+    grid-template-columns: 50% 50%;
+  }
 }
 
 .browse-cards-block-content > div:first-child .browse-card .user-actions .action-tooltip {
@@ -146,12 +154,6 @@
 }
 
 @media only screen and (min-width: 900px) {
-  .browse-cards-block-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
   .browse-cards-block-content {
     margin-bottom: 80px;
     margin-top: 24px;
