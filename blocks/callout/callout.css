@@ -8,7 +8,7 @@
 .callout-card {
   position: relative;
   padding: 39px 28px 28px;
-  border: 1px solid var(--spectrum-red-1400);
+  border: 1px solid var(--non-spectrum-adobe-dark-red);
   border-top-width: 6px;
   border-radius: 4px;
 }
@@ -20,7 +20,7 @@
   right: 0;
   padding: 8px 16px;
   font-size: var(--spectrum-font-size-75);
-  background-color: var(--spectrum-red-1400);
+  background-color: var(--non-spectrum-adobe-dark-red);
   font-weight: bold;
   color: var(--spectrum-gray-50);
   border-radius: 0 4px;

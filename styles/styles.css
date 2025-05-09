@@ -157,7 +157,6 @@
   --spectrum-red-1100: #930000;
   --spectrum-red-1200: #740000;
   --spectrum-red-1300: #590000;
-  --spectrum-red-1400: #eb1000;
   --spectrum-celery-100: #cdfcbf;
   --spectrum-celery-200: #aef69d;
   --spectrum-celery-300: #96ee85;
@@ -223,7 +222,6 @@
   --spectrum-indigo-1100: #3236a8;
   --spectrum-indigo-1200: #262986;
   --spectrum-indigo-1300: #1b1e64;
-  --spectrum-indigo-1400: #4c50cc;
   --spectrum-magenta-100: #ffeaf1;
   --spectrum-magenta-200: #ffdce8;
   --spectrum-magenta-300: #ffcadd;
@@ -309,7 +307,6 @@
   --non-spectrum-dark-charcoal: #323232;
   --non-spectrum-true-blue: #0469e3;
   --non-spectrum-tawny-orange: #d16100;
-  --non-spectrum-ue-red: #bb0202;
   --non-spectrum-viridian: #007e50;
   --non-spectrum-grey: #4a4a4a;
   --non-spectrum-grey-updated: #6e6e6e;
@@ -342,6 +339,8 @@
   --non-spectrum-silver-mist: #d2d2d2;
   --non-spectrum-blue-cobalt: #0364dc;
   --non-spectrum-adobe-red: #f00;
+  --non-spectrum-adobe-dark-red: #eb1000;
+  --non-spectrum-ue-red: #bb0202;
   --non-spectrum-pale-grey: #d6d6d6;
   --non-spectrum-sapphire-blue: #005bc2;
   --non-spectrum-transparent-white: #fff0;
