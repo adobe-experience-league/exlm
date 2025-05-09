@@ -1030,6 +1030,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
             </atomic-layout-section>
           </atomic-layout-section>
           <style>
+            atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='status'] {
+              display: none;
+            }
+            atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='query'] {
+              display: none;
+            }
             @media only screen and (min-width: 1024px) {
               atomic-search-interface.atomic-search-interface-no-results atomic-search-layout {
                     grid-template-areas:
