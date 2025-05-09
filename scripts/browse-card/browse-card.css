@@ -333,7 +333,7 @@
   font-size: var(--spectrum-font-size-50);
   font-weight: var(--font-weight-bold);
   line-height: var(--spectrum-line-height-s);
-  background-color: var(--exlm-spectrum-red-1400);
+  background-color: var(--non-spectrum-adobe-dark-red);
   color: var(--spectrum-gray-50);
   border-radius: 2px;
   align-self: center;
