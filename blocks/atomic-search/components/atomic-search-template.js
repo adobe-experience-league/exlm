@@ -925,29 +925,37 @@ const getCoveoAtomicMarkup = (placeholders) => {
               atomic-no-results::part(no-results) {
                 font-size: 18px;
                 text-align: left;
+                font-weight: normal;
               }
               atomic-no-results::part(highlight) {
                 font-weight: bold;
               }
-
               atomic-no-results::part(search-tips) {
                 display:none;
-              }
-              atomic-no-results atomic-breadbox::part(clear){
-                display: block;
               }
               atomic-no-results ul > li {
                 color: inherit;
               }
+              atomic-no-results::part(clear-button) {
+                font-size: var(--spectrum-font-size-75);
+                text-align: left;
+                text-decoration: underline;
+                margin-bottom: 10px;
+                color: var(--link-color);
+              }
               </style>
               <atomic-breadbox></atomic-breadbox>
               <div class="atomic-no-results-text">
-                  <p><strong>Search suggestions:</strong></p>
+                  <p><strong>${placeholders.searchNoResultsSuggestionLabel || 'Search suggestions:'}</strong></p>
                   <ul>
-                    <li>Make sure keywords are spelled correctly.</li>
-                    <li>Try rephrasing or using synonyms.</li>
-                    <li>Use less specific keywords.</li>
-                    <li class="clear-filters-text" >Clear your filters.</li>
+                    <li>${
+                      placeholders.searchNoResultsSpellCheckText || 'Make sure keywords are spelled correctly.'
+                    }</li>
+                    <li>${placeholders.searchNoResultsRephraseText || 'Try rephrasing or using synonyms.'}</li>
+                    <li>${placeholders.searchNoResultsSpecificKeywordText || 'Use less specific keywords.'}</li>
+                    <li class="clear-filters-text" >${
+                      placeholders.searchNoResultsClearFiltersText || 'Clear your filters.'
+                    }</li>
                   </ul>
                 </div>
             </atomic-no-results>
@@ -1031,9 +1039,17 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   }
                   atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='facets'] {
                     display: block;
+                    height: fit-content;
                   }
                   atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='facets'].all-facets-hidden {
                     display: none;
+                  }
+                  atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='pagination'] {
+                    display: none;
+                  }
+                  atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='main'].atomic-no-result {
+                    padding-left: 0;
+                    border: none;
                   }
                 }
         </style>
