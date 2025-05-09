@@ -3,10 +3,10 @@ import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constant
 import { fetchLanguagePlaceholders } from '../scripts.js';
 
 /**
- * Module that provides functionality for adapting live event results to BrowseCards data model.
- * @module BrowseCardsLiveEventsAdaptor
+ * Module that provides functionality for adapting upcoming event results to BrowseCards data model.
+ * @module BrowseCardsUpcomingEventsAdaptor
  */
-const BrowseCardsLiveEventsAdaptor = (() => {
+const BrowseCardsUpcomingEventsAdaptor = (() => {
   let placeholders = {};
   /**
    * Maps a result to the BrowseCards data model.
@@ -14,7 +14,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
    * @returns {Object} The BrowseCards data model.
    */
   const mapResultToCardsDataModel = (result) => {
-    const contentType = CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY;
+    const contentType = CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
     const { productFocus, eventTitle, eventDescription, startTime, endTime, time, cta } = result || {};
     const product = productFocus && (Array.isArray(productFocus) ? productFocus : productFocus.split(/,\s*/));
     const { ctaLabel, ctaLink } = cta || {};
@@ -25,7 +25,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
       return {
         ...browseCardDataModel,
         contentType,
-        badgeTitle: CONTENT_TYPES.LIVE_EVENT.LABEL,
+        badgeTitle: CONTENT_TYPES.UPCOMING_EVENT.LABEL,
         product,
         title: eventTitle || '',
         description: eventDescription || '',
@@ -36,7 +36,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
         },
         copyLink: ctaLink || '',
         viewLink: ctaLink || '',
-        viewLinkText: ctaLabel || placeholders.browseCardLiveEventViewLabel || 'Register',
+        viewLinkText: ctaLabel || placeholders.browseCardUpcomingEventViewLabel || 'Register',
       };
     }
     return null;
@@ -62,4 +62,4 @@ const BrowseCardsLiveEventsAdaptor = (() => {
   };
 })();
 
-export default BrowseCardsLiveEventsAdaptor;
+export default BrowseCardsUpcomingEventsAdaptor;
