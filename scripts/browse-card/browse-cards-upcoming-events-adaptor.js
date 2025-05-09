@@ -3,10 +3,10 @@ import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constant
 import { fetchLanguagePlaceholders } from '../scripts.js';
 
 /**
- * Module that provides functionality for adapting live event results to BrowseCards data model.
- * @module BrowseCardsLiveEventsAdaptor
+ * Module that provides functionality for adapting upcoming event results to BrowseCards data model.
+ * @module BrowseCardsUpcomingEventsAdaptor
  */
-const BrowseCardsLiveEventsAdaptor = (() => {
+const BrowseCardsUpcomingEventsAdaptor = (() => {
   let placeholders = {};
   /**
    * Maps a result to the BrowseCards data model.
@@ -36,7 +36,7 @@ const BrowseCardsLiveEventsAdaptor = (() => {
         },
         copyLink: ctaLink || '',
         viewLink: ctaLink || '',
-        viewLinkText: ctaLabel || placeholders.browseCardLiveEventViewLabel || 'Register',
+        viewLinkText: ctaLabel || placeholders.browseCardUpcomingEventViewLabel || 'Register',
       };
     }
     return null;
@@ -62,4 +62,4 @@ const BrowseCardsLiveEventsAdaptor = (() => {
   };
 })();
 
-export default BrowseCardsLiveEventsAdaptor;
+export default BrowseCardsUpcomingEventsAdaptor;
