@@ -4253,7 +4253,7 @@
         "name": "exlm-products",
         "label": "Solution(s)",
         "valueType": "string",
-        "rootPath": "",
+        "rootPath": "https://51837-exlmia-dev.adobeio-static.net/api/v1/web/exlia/getTQTags?taxonomyType=product",
         "extensionId": "exlm-ue-custom-field"
       },
       {
@@ -4261,7 +4261,7 @@
         "name": "exlm-features",
         "label": "Feature(s)",
         "valueType": "string",
-        "rootPath": "",
+        "rootPath": "https://51837-exlmia-dev.adobeio-static.net/api/v1/web/exlia/getTQTags?taxonomyType=feature",
         "extensionId": "exlm-ue-custom-field"
       },
       {
