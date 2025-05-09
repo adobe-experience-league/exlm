@@ -63,7 +63,7 @@
 }
 
 .article-marquee .author-info.adobe {
-  background-color: var(--spectrum-red-1400);
+  background-color: var(--exlm-spectrum-red-1400);
 }
 
 .article-marquee .author-info.external {
@@ -354,7 +354,7 @@
   }
 
   .article-marquee-large-bg.adobe {
-    background-color: var(--spectrum-red-1400);
+    background-color: var(--exlm-spectrum-red-1400);
   }
 
   .article-marquee-large-bg.external {
@@ -373,7 +373,7 @@
 }
 
 .article-marquee .author-info.adobe .article-marquee-bg-container path:first-child {
-  fill: var(--spectrum-red-1400);
+  fill: var(--exlm-spectrum-red-1400);
 }
 
 .article-marquee-bg-mobile {

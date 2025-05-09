@@ -56,5 +56,5 @@
 }
 
 .author-bio:has(.author-bio-content.adobe) {
-  border-color: var(--spectrum-red-1400);
+  border-color: var(--exlm-spectrum-red-1400);
 }
