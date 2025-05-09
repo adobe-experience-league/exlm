@@ -1,8 +1,9 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { htmlToElement, getPathDetails } from '../../scripts/scripts.js';
+import { htmlToElement } from '../../scripts/scripts.js';
 import { redirectToSearchPage } from '../../scripts/search/search.js';
 
 function redirectTo(searchPageUrl, inputElement, event) {
+  if (!searchPageUrl) return;
   event.preventDefault();
   const searchInputValue = inputElement?.value.trim();
   redirectToSearchPage(searchPageUrl, searchInputValue);
@@ -41,9 +42,7 @@ export default function decorate(block) {
   const searchInput = block.querySelector('#secondary-search');
   const searchIcon = block.querySelector('.icon-search');
 
-  const { lang } = getPathDetails();
-  const fallbackSearchUrl = `${window.location.origin}/${lang}/search`;
-  const searchRedirectUrl = searchUrl.textContent?.trim() || fallbackSearchUrl;
+  const searchRedirectUrl = searchUrl.textContent?.trim();
   searchIcon?.addEventListener('click', (e) => {
     redirectTo(searchRedirectUrl, searchInput, e);
   });
