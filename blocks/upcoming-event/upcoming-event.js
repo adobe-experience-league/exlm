@@ -12,8 +12,8 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 async function getListofProducts() {
   try {
     let data;
-    const { liveEventsUrl } = getConfig();
-    const response = await fetch(liveEventsUrl, {
+    const { upcomingEventsUrl } = getConfig();
+    const response = await fetch(upcomingEventsUrl, {
       method: 'GET',
     });
 
