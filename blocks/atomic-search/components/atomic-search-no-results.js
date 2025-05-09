@@ -53,7 +53,7 @@ export default function atomicNoResultHandler(block, placeholders) {
               const mainSection = block.querySelector("atomic-layout-section[section='main']");
               const clearFiltersText = baseElement.querySelector('.clear-filters-text');
               if (noResultsText) {
-                noResultsText.firstChild.textContent = `${labels.noResultsText  } `;
+                noResultsText.firstChild.textContent = `${labels.noResultsText} `;
               }
               if (!buildBreadcrumbManagerFn) {
                 // eslint-disable-next-line import/no-relative-packages

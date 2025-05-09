@@ -180,8 +180,8 @@ export default function decorate(block) {
         'Most Likes': placeholders.searchMostLikesLabel || 'Most Likes',
         'Most Replies': placeholders.searchMostRepliesLabel || 'Most Replies',
         'Most Views': placeholders.searchMostViewsLabel || 'Most Views',
-        clear: placeholders.searchClearLabel || "Clear",
-        filters: placeholders.searchFiltersLabel || "Filters"
+        clear: placeholders.searchClearLabel || 'Clear',
+        filters: placeholders.searchFiltersLabel || 'Filters',
       });
 
       document.addEventListener(
