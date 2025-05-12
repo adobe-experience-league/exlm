@@ -1,12 +1,12 @@
 import { LIVE_EVENTS } from '../session-keys.js';
 
 /**
- * LiveEventsDataService class for fetching data from a Upcoming Events Service API.
+ * UpcomingEventsDataService class for fetching data from a Upcoming Events Service API.
  */
-export default class LiveEventsDataService {
+export default class UpcomingEventsDataService {
   /**
-   * Creates an instance of LiveEventsDataService.
-   * @param {Object} dataSource - The data source configuration for Live Events Service.
+   * Creates an instance of UpcomingEventsDataService.
+   * @param {Object} dataSource - The data source configuration for Upcoming Events Service.
    */
   constructor(url) {
     this.url = url;
