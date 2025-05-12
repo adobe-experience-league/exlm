@@ -51,6 +51,15 @@ const embedMpc = (url, options = { autoplay: false }) => {
   if (options.autoplay) {
     urlObject.searchParams.set('autoplay', 'true');
   }
+  const videoId = url.href.match(/\/v\/(\d+)/)?.[1];
+  const web = window.adobeDataLayer?.[1]?.web;
+  if (web && videoId) {
+    web.videoMetadata = {
+      videoId,
+      thumbnailUrl: `https://video.tv.adobe.com/v/${videoId}?format=jpeg`,
+      videoUrl: url.href,
+    };
+  }
   window.addEventListener(
     'message',
     (event) => {
