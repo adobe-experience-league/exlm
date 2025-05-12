@@ -7050,5 +7050,18 @@
   {
     "id": "atomic-search",
     "fields": []
+  },
+  {
+    "id": "kt-block",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "kt-block"
+      }
+    ]
   }
+
 ]
