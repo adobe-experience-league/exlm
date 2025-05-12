@@ -77,6 +77,20 @@ export const getFiltersFromUrl = () => {
   }, {});
 };
 
+export const hasContentTypeFilter = (contentTypes = []) => {
+  const { el_contenttype: selectedContentType = [] } = getFiltersFromUrl();
+  if (contentTypes.length === 0) return selectedContentType.length > 0;
+  if (selectedContentType.length === 0) return false;
+  const hasSpecificFilters = contentTypes.some((type) => selectedContentType.includes(type));
+  return hasSpecificFilters;
+};
+
+export const updateHash = (filterCondition, joinWith = '&') => {
+  const currentHash = fragment();
+  const updatedParts = currentHash.split('&').filter(filterCondition);
+  window.location.hash = updatedParts.join(joinWith);
+};
+
 export const handleHeaderSearchVisibility = () => {
   const exlHeader = document.querySelector('exl-header');
   if (exlHeader) {

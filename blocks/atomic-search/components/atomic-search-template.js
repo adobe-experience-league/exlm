@@ -183,6 +183,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(facet-child-element) {
                   margin-left: 32px;
                 }
+                atomic-facet.hide-facet {
+                  display: none;
+                }
                 atomic-facet::part(facet-hide-element) {
                   display: none;
                 }
@@ -272,12 +275,19 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   label=${placeholders.searchContentTypeLabel || 'Content Type'}
                   display-values-as="checkbox"
                 ></atomic-facet>
+                <atomic-facet
+                id="facetStatus"
+                sort-criteria="alphanumericNatural"
+                field="el_status"
+                label=${placeholders.searchAnsweredLabel || 'Answered'}
+                display-values-as="checkbox"
+              ></atomic-facet>
               <atomic-facet
                 id="facetProduct"
                 sort-criteria="alphanumericNatural"
                 field="el_product"
                 label=${placeholders.searchProductLabel || 'Product'}
-                number-of-values="60"
+                number-of-values="45"
                 display-values-as="checkbox"
               ></atomic-facet>
               <atomic-facet
@@ -287,7 +297,44 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 label=${placeholders.searchRoleLabel || 'Role'}
                 display-values-as="checkbox"
               ></atomic-facet>
-              
+              <atomic-facet
+              id="facetDate"
+              sort-criteria="automatic"
+              field="date"
+              label=${placeholders.searchDateLabel || 'date'}
+              display-values-as="checkbox"
+            ></atomic-facet>
+            <atomic-timeframe-facet
+              facet-id="dateFacet"
+              field="date"
+              injection-depth="1000"
+              filter-facet-count
+              enable-custom-range="false"
+            >
+              <!-- Past one month -->
+              <atomic-timeframe
+                amount="1"
+                unit="month"
+                period="past"
+                label="Within one month"
+              ></atomic-timeframe>
+
+              <!-- Past six months -->
+              <atomic-timeframe
+                amount="6"
+                unit="month"
+                period="past"
+                label="Within six months"
+              ></atomic-timeframe>
+
+              <!-- Past one year -->
+              <atomic-timeframe
+                amount="1"
+                unit="year"
+                period="past"
+                label="Within one year"
+              ></atomic-timeframe>
+            </atomic-timeframe-facet>
             
             </atomic-facet-manager>
           </atomic-layout-section>

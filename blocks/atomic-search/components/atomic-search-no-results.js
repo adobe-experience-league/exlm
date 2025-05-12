@@ -1,5 +1,5 @@
 import { clearIconHandler } from './atomic-search-box.js';
-import { waitFor, CUSTOM_EVENTS, observeShadowRoot, fragment } from './atomic-search-utils.js';
+import { waitFor, CUSTOM_EVENTS, observeShadowRoot, fragment, hasContentTypeFilter } from './atomic-search-utils.js';
 import { htmlToElement } from '../../../scripts/scripts.js';
 
 export default function atomicNoResultHandler(block, placeholders) {
@@ -44,6 +44,17 @@ export default function atomicNoResultHandler(block, placeholders) {
         const clearSearchButton = createButton(labels.clearSearch, () => updateHash((key) => !key.includes('q='), '&'));
 
         const decorateNoResults = async () => {
+          if (
+            !hasContentTypeFilter([
+              'Community',
+              'Community|Questions',
+              'Community|Blogs',
+              'Community|Discussions',
+              'Community|Ideas',
+            ])
+          ) {
+            updateHash((key) => !key.includes('f-el_status'), '&');
+          }
           const shadowElement = baseElement?.shadowRoot;
           if (shadowElement) {
             const defaultAtomicContent = shadowElement.querySelector('div');
