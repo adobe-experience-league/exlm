@@ -14,19 +14,13 @@
 
 /* individual card styling */
 .landing-cards-container > div > div > div {
-  border-radius: 12px;
-  background-color: white;
+  border-radius: 8px;
+  background-color: #f7f7f7;
   box-shadow: 0 4px 15px rgb(0 0 0 / 10%);
   overflow: hidden;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
-}
-
-.landing-cards-container > div > div > div:hover {
-  box-shadow: 0 10px 25px rgb(0 0 0 / 15%);
+  border: 1px solid #e0e0e0;
 }
 
 /* image container (if present - not sure about the if present part) */
@@ -52,27 +46,6 @@
   margin-bottom: 0 !important;
 }
 
-/* title styling */
-.landing-cards-container > div > div > div > p:has(picture) + p,
-.landing-cards-container > div > div > div > p:first-child:not(:has(picture)),
-.landing-cards-container > div > div > div > .icon-content-wrapper p:not(.icon) {
-  font-size: 18px !important;
-  font-weight: 600 !important;
-}
-
-.icon-content-wrapper {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 10px 10px 0;
-}
-
-.landing-cards-container > div > div > div > .icon-content-wrapper p:not(.icon) {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
 /* icon styling */
 .landing-cards-container p.icon {
   margin: 0;
@@ -84,13 +57,46 @@
   margin-top: 20px;
 }
 
+.icon-content-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 10px 10px 0;
+}
+
+/* title styling */
+.landing-cards-container > div > div > div > p:has(picture) + p {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+/* description paragraph styling */
+.landing-cards-container > div > div > div > p:last-child {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: calc(var(--spectrum-line-height-200) + 0.1);
+}
+
+.landing-cards-container > div > div > div > p:first-child:not(:has(picture)) {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+.landing-cards-container > div > div > div > .icon-content-wrapper p:not(.icon) {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 /* link styling */
 .landing-cards-container a {
   color: #1473e6;
   text-decoration: none;
-  font-weight: 500;
-  margin-top: 10px;
+  font-weight: bold;
   display: inline-block;
+  font-size: 14px;
 }
 
 .landing-cards-container a:hover {
@@ -105,7 +111,7 @@
   }
 
   .landing-cards-container > div > div > div > picture + br + text {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .landing-cards-container > div > div > div > br:nth-of-type(1) + text {
@@ -121,7 +127,7 @@
   }
 
   .landing-cards-container > div > div > div > picture + br + text {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .landing-cards-container > div > div > div > picture + br + text + br + text {
@@ -129,7 +135,7 @@
   }
 
   .landing-cards-container > div > div > div > br:nth-of-type(1) + text {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .landing-cards-container > div > div > div > br:nth-of-type(2) + text {
