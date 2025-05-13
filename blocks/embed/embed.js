@@ -103,7 +103,11 @@ export default function decorate(block) {
   const link = block.querySelector('a').href;
   if (link?.includes('tv.adobe.com')) {
     const videoId = link.match(/\/v\/(\d+)/)?.[1];
-    pushVideoMetadataOnLoad(videoId, link);
+    const videoUrl = link;
+    const thumbnailUrl = `https://video.tv.adobe.com/v/${videoId}?format=jpeg`;
+    if (videoId && videoUrl && thumbnailUrl) {
+      pushVideoMetadataOnLoad(videoId, videoUrl, thumbnailUrl);
+    }
   }
 
   block.textContent = '';

@@ -310,12 +310,12 @@ export function pushSignupEvent(target, action) {
 
 /**
  * Pushes video metadata to the data layer on page load,
- * including videoId, thumbnail URL,video URL.
- * @param {string} videoId - The MPC video ID
- * @param {string} videoUrl-URL to the MPC video
+ * including videoId, thumbnail URL, and video URL.
+ * @param {string} videoId - The MPC video ID.
+ * @param {string} videoUrl - URL to the MPC video.
+ * @param {string} thumbnailUrl - Thumbnail image URL.
  */
-export function pushVideoMetadataOnLoad(videoId, videoUrl) {
-  const thumbnailUrl = `https://video.tv.adobe.com/v/${videoId}?format=jpeg`;
+export function pushVideoMetadataOnLoad(videoId, videoUrl, thumbnailUrl) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   window.adobeDataLayer.push({
