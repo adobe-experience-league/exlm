@@ -1,0 +1,144 @@
+.landing-cards-container {
+  margin: 0 auto;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* grid layout */
+.landing-cards-container > div > div {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* individual card styling */
+.landing-cards-container > div > div > div {
+  border-radius: 8px;
+  background-color: #f7f7f7;
+  box-shadow: 0 4px 15px rgb(0 0 0 / 10%);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e0e0e0;
+}
+
+/* image container (if present - not sure about the if present part) */
+.landing-cards-container picture {
+  width: 100%;
+  display: block;
+}
+
+.landing-cards-container img {
+  width: 100%;
+  display: block;
+}
+
+/* spacing after images */
+.landing-cards-container img + br {
+  margin-top: 10px;
+}
+
+/* text content padding */
+.landing-cards-container > div > div > div > p {
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-bottom: 0 !important;
+}
+
+/* icon styling */
+.landing-cards-container p.icon {
+  margin: 0;
+  padding: 0;
+}
+
+/* content without images - apply padding at the top */
+.landing-cards-container > div > div > div > br:first-child {
+  margin-top: 20px;
+}
+
+.icon-content-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 10px 10px 0;
+}
+
+/* title styling */
+.landing-cards-container > div > div > div > p:has(picture) + p {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+/* description paragraph styling */
+.landing-cards-container > div > div > div > p:last-child {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: calc(var(--spectrum-line-height-200) + 0.1);
+}
+
+.landing-cards-container > div > div > div > p:first-child:not(:has(picture)) {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+.landing-cards-container > div > div > div > .icon-content-wrapper p:not(.icon) {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* link styling */
+.landing-cards-container a {
+  color: #1473e6;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  font-size: 14px;
+}
+
+.landing-cards-container a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .landing-cards-container > div > div {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 16px;
+  }
+
+  .landing-cards-container > div > div > div > picture + br + text {
+    font-size: 18px;
+  }
+
+  .landing-cards-container > div > div > div > br:nth-of-type(1) + text {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .landing-cards-container > div > div {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 16px;
+  }
+
+  .landing-cards-container > div > div > div > picture + br + text {
+    font-size: 18px;
+  }
+
+  .landing-cards-container > div > div > div > picture + br + text + br + text {
+    font-size: 16px;
+  }
+
+  .landing-cards-container > div > div > div > br:nth-of-type(1) + text {
+    font-size: 18px;
+  }
+
+  .landing-cards-container > div > div > div > br:nth-of-type(2) + text {
+    font-size: 16px;
+  }
+}

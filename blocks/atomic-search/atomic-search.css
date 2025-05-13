@@ -13,6 +13,7 @@
   width: 100%;
   padding: 8px 20px 56px;
   box-sizing: border-box;
+  background-color: var(--non-spectrum-silver);
 }
 
 .atomic-search-container * {
@@ -111,7 +112,7 @@
 }
 
 .atomic-load-skeleton-head {
-  min-height: 128px;
+  min-height: 88px;
   width: 100%;
 }
 
@@ -181,7 +182,7 @@
 
 .atomic-load-skeleton-head .atomic-load-skeleton {
   height: 40px;
-  margin: 32px 0 30px;
+  margin: 20px 0 16px;
   width: 100%;
   max-width: 678px;
   margin-left: 0;
@@ -207,7 +208,7 @@
 .atomic-load-skeleton-result .atomic-skeleton,
 .atomic-load-skeleton-result .atomic-mobile-view {
   gap: 4px;
-  margin: 24px 0;
+  margin: 40px 0 24px;
 }
 
 .atomic-load-skeleton-result .atomic-skeleton-line {
@@ -261,8 +262,8 @@
 
 .atomic-load-skeleton-result .atomic-skeleton-desktop-line-heading {
   width: 100%;
-  height: 21px;
-  margin-bottom: 6px;
+  height: 26px;
+  margin-bottom: 8px;
 }
 
 .atomic-load-skeleton-result .atomic-skeleton-desktop-line-subheading {
@@ -273,7 +274,7 @@
 
 .atomic-load-skeleton-result .atomic-skeleton-desktop-line-content {
   width: 100%;
-  height: 36px;
+  height: 44px;
   margin-bottom: 8px;
 }
 
@@ -391,5 +392,11 @@
     min-height: 24px;
     height: 24px;
     margin-left: -32px;
+  }
+}
+
+@media only screen and (min-width: 1440px) {
+  .section.atomic-search-container .atomic-search-wrapper {
+    max-width: 90%;
   }
 }

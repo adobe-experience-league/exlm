@@ -1,2 +1,3 @@
-/* stylelint-disable */
-/* stylelint-enable */
+.articles {
+  --highlight-light-background-color: #fff; /* change background color for perspectives article pages from the set default in styles.css */
+}
