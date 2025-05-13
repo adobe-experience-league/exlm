@@ -1,6 +1,6 @@
 .article-metadata-createdby > div > div {
   display: flex;
-  align-items: center;
+  align-items: baseline;
 }
 
 .article-metadata-createdby ul {
@@ -56,6 +56,6 @@
 
   .article-metadata-createdby > div > div {
     flex-direction: row;
-    align-items: center;
+    align-items: baseline;
   }
 }
