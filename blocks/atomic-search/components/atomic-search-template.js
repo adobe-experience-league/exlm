@@ -1,5 +1,6 @@
 import { htmlToElement, getPathDetails } from '../../../scripts/scripts.js';
 import { nextNavigationArrow, previousNavigationArrow } from './atomic-search-icons.js';
+import { allowedProducts } from './atomic-search-utils.js';
 
 const getCoveoAtomicMarkup = (placeholders) => {
   const { lang: languageCode } = getPathDetails();
@@ -203,24 +204,25 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   border-bottom: 2px solid var(--footer-border-color);
                   border-radius: 1px;
                 }
-                atomic-facet::part(facet), atomic-facet::part(placeholder) {
+                atomic-facet::part(placeholder) {
                     border: none;
                 }
                 atomic-facet::part(search-wrapper) {
                   display: none;
                 }
-                atomic-facet::part(label-button) {
+                atomic-facet::part(label-button), atomic-timeframe-facet::part(label-button) {
                   font-weight: 700;
                   color: var(--non-spectrum-input-text);
                   justify-content: flex-end;
                   flex-direction: row-reverse;
                   gap: 16px;
                 }
-                atomic-facet::part(label-button-icon) {
+                atomic-facet::part(label-button-icon), atomic-timeframe-facet::part(label-button-icon){
                   margin-left: 0;
                 }
-                atomic-facet::part(facet) {
+                atomic-facet::part(facet), atomic-timeframe-facet::part(facet) {
                   padding-right: 0;
+                  border: none;
                 }
                 atomic-facet::part(values) {
                   max-height: 500px;
@@ -230,13 +232,6 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
                 atomic-facet::part(show-more), atomic-facet::part(show-less) {
                   color: var(--non-spectrum-input-text);
-                }
-                atomic-facet::part(value-label) {
-                  width: auto;
-                }
-                atomic-facet::part(value-count) {
-                  width: auto;
-                  margin: 0;
                 }
                 atomic-facet::part(value-box) {
                   border: none;
@@ -253,14 +248,17 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   background-color: var(--non-spectrum-grey-updated);
                   border-color: var(--non-spectrum-grey-updated);
                 }
-                atomic-facet::part(value-count) {
+                atomic-facet::part(value-count), atomic-timeframe-facet::part(value-count) {
                   color: var(--non-spectrum-article-dark-gray);
+                  width: auto;
+                  margin: 0;
                 }
-                atomic-facet::part(value-label) {
+                atomic-facet::part(value-label), atomic-timeframe-facet::part(value-label) {
                   margin-right: 4px;
+                  width: auto;
                   color: var(--non-spectrum-article-dark-gray);
                 }
-                atomic-facet::part(clear-button) {
+                atomic-facet::part(clear-button), atomic-timeframe-facet::part(clear-button) {
                   display: none;
                 }
                 
@@ -269,73 +267,63 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
               </style>
               <atomic-facet
-                  id="facetContentType"
-                  sort-criteria="alphanumericNatural"
-                  field="el_contenttype"
-                  label=${placeholders.searchContentTypeLabel || 'Content Type'}
-                  display-values-as="checkbox"
-                ></atomic-facet>
-                <atomic-facet
+                id="facetContentType"
+                sort-criteria="alphanumericNatural"
+                field="el_contenttype"
+                label=${placeholders.searchContentTypeLabel || 'Content Type'}
+                display-values-as="checkbox">
+              </atomic-facet>
+              <atomic-facet
                 id="facetStatus"
                 sort-criteria="alphanumericNatural"
                 field="el_status"
                 label=${placeholders.searchAnsweredLabel || 'Answered'}
-                display-values-as="checkbox"
-              ></atomic-facet>
+                display-values-as="checkbox">
+              </atomic-facet>
               <atomic-facet
                 id="facetProduct"
                 sort-criteria="alphanumericNatural"
                 field="el_product"
                 label=${placeholders.searchProductLabel || 'Product'}
-                number-of-values="45"
+                number-of-values="100"
                 display-values-as="checkbox"
-              ></atomic-facet>
+                with-search="false"
+                allowed-values='${JSON.stringify(allowedProducts)}'>
+                </atomic-facet>
               <atomic-facet
                 id="facetRole"
                 sort-criteria="alphanumericNatural"
                 field="el_role"
                 label=${placeholders.searchRoleLabel || 'Role'}
-                display-values-as="checkbox"
-              ></atomic-facet>
-              <atomic-facet
-              id="facetDate"
-              sort-criteria="automatic"
-              field="date"
-              label=${placeholders.searchDateLabel || 'date'}
-              display-values-as="checkbox"
-            ></atomic-facet>
-            <atomic-timeframe-facet
-              facet-id="dateFacet"
-              field="date"
-              injection-depth="1000"
-              filter-facet-count
-              enable-custom-range="false"
-            >
-              <!-- Past one month -->
-              <atomic-timeframe
-                amount="1"
-                unit="month"
-                period="past"
-                label="Within one month"
-              ></atomic-timeframe>
-
-              <!-- Past six months -->
-              <atomic-timeframe
-                amount="6"
-                unit="month"
-                period="past"
-                label="Within six months"
-              ></atomic-timeframe>
-
-              <!-- Past one year -->
-              <atomic-timeframe
-                amount="1"
-                unit="year"
-                period="past"
-                label="Within one year"
-              ></atomic-timeframe>
-            </atomic-timeframe-facet>
+                display-values-as="checkbox">
+              </atomic-facet>
             
+              <atomic-timeframe-facet
+                id="facetDate"
+                field="date"
+                label="Date"
+                injection-depth="1000"
+                filter-facet-count
+                enable-custom-range="false">
+                  <atomic-timeframe
+                    amount="1"
+                    unit="month"
+                    period="past"
+                    label="Within one month">
+                  </atomic-timeframe>
+                  <atomic-timeframe
+                    amount="6"
+                    unit="month"
+                    period="past"
+                    label="Within six months">
+                  </atomic-timeframe>
+                  <atomic-timeframe
+                    amount="1"
+                    unit="year"
+                    period="past"
+                    label="Within one year">
+                  </atomic-timeframe>
+              </atomic-timeframe-facet>
             </atomic-facet-manager>
           </atomic-layout-section>
           <atomic-layout-section section="main">

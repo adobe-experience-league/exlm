@@ -1,5 +1,12 @@
 import { clearIconHandler } from './atomic-search-box.js';
-import { waitFor, CUSTOM_EVENTS, observeShadowRoot, fragment, hasContentTypeFilter } from './atomic-search-utils.js';
+import {
+  waitFor,
+  CUSTOM_EVENTS,
+  observeShadowRoot,
+  updateHash,
+  hasContentTypeFilter,
+  COMMUNITY_CONTENT_TYPES,
+} from './atomic-search-utils.js';
 import { htmlToElement } from '../../../scripts/scripts.js';
 
 export default function atomicNoResultHandler(block, placeholders) {
@@ -33,26 +40,13 @@ export default function atomicNoResultHandler(block, placeholders) {
           return button;
         };
 
-        const updateHash = (filterCondition, joinWith = '&') => {
-          const currentHash = fragment();
-          const updatedParts = currentHash.split('&').filter(filterCondition);
-          window.location.hash = updatedParts.join(joinWith);
-        };
-
         const clearFiltersButton = createButton(labels.clearFilters, () => updateHash((key) => key.includes('q='), ''));
 
         const clearSearchButton = createButton(labels.clearSearch, () => updateHash((key) => !key.includes('q='), '&'));
 
         const decorateNoResults = async () => {
-          if (
-            !hasContentTypeFilter([
-              'Community',
-              'Community|Questions',
-              'Community|Blogs',
-              'Community|Discussions',
-              'Community|Ideas',
-            ])
-          ) {
+          // Remove the 'f-el_status' when community content type is unchecked
+          if (!hasContentTypeFilter(COMMUNITY_CONTENT_TYPES)) {
             updateHash((key) => !key.includes('f-el_status'), '&');
           }
           const shadowElement = baseElement?.shadowRoot;

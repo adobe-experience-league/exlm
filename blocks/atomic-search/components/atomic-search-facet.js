@@ -1,4 +1,10 @@
-import { CUSTOM_EVENTS, waitForChildElement, hasContentTypeFilter, updateHash } from './atomic-search-utils.js';
+import {
+  CUSTOM_EVENTS,
+  waitForChildElement,
+  hasContentTypeFilter,
+  updateHash,
+  COMMUNITY_CONTENT_TYPES,
+} from './atomic-search-utils.js';
 
 export default function atomicFacetHandler(baseElement) {
   const adjustChildElementsPosition = (facet, atomicElement) => {
@@ -59,19 +65,11 @@ export default function atomicFacetHandler(baseElement) {
   const handleAtomicFacetUI = (atomicFacet) => {
     if (atomicFacet.getAttribute('id') === 'facetStatus') {
       if (!hasContentTypeFilter()) {
-        atomicFacet?.classList.add('hide-facet');
+        atomicFacet?.classList?.add('hide-facet');
       } else {
-        atomicFacet?.classList.remove('hide-facet');
+        atomicFacet?.classList?.remove('hide-facet');
       }
-      if (
-        !hasContentTypeFilter([
-          'Community',
-          'Community|Questions',
-          'Community|Blogs',
-          'Community|Discussions',
-          'Community|Ideas',
-        ])
-      ) {
+      if (!hasContentTypeFilter(COMMUNITY_CONTENT_TYPES)) {
         updateHash((key) => !key.includes('f-el_status'), '&');
       }
       const labels = atomicFacet.shadowRoot?.querySelectorAll('[part="value-label"]');

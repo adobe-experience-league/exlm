@@ -10,6 +10,42 @@ export const CUSTOM_EVENTS = {
   SEARCH_QUERY_CHANGED: 'ATOMIC_SEARCH_QUERY_CHANGED',
 };
 
+export const allowedProducts = [
+  'Acrobat',
+  'Acrobat Services',
+  'Advertising',
+  'Analytics',
+  'Audience Manager',
+  'Campaign',
+  'Commerce',
+  'Commerce Intelligence',
+  'Creative Cloud',
+  'Customer Journey Analytics',
+  'Document Cloud',
+  'Experience Cloud',
+  'Experience Cloud Services',
+  'Experience Manager',
+  'Experience Manager|as a Cloud Service',
+  'Experience Manager|Assets',
+  'Experience Manager|Cloud Manager',
+  'Experience Platform',
+  'GenStudio for Performance Marketing',
+  'Journey Optimizer',
+  'Journey Optimizer B2B Edition',
+  'Journey Orchestration',
+  'Marketo Engage',
+  'Marketo Measure',
+  'Mix Modeler',
+];
+
+export const COMMUNITY_CONTENT_TYPES = [
+  'Community',
+  'Community|Questions',
+  'Community|Blogs',
+  'Community|Discussions',
+  'Community|Ideas',
+];
+
 export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_status', 'el_reply_status'];
 
 // Mobile Only (Until 1024px)
